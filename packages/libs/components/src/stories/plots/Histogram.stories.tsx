@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import {
+  NumberRange,
   NumberOrDateRange,
   NumberOrTimeDelta,
   TimeDelta,
@@ -82,9 +83,10 @@ const TemplateWithSelectedRangeControls: Story<Omit<HistogramProps, 'data'>> = (
   const [binWidth, setBinWidth] = useState<number>(500);
   const [selectedRange, setSelectedRange] = useState<NumberOrDateRange>();
   const [loading, setLoading] = useState<boolean>(true);
-  const [independentAxisRange, setIndependentAxisRange] = useState<
-    NumberOrDateRange
-  >();
+  const [
+    independentAxisRange,
+    setIndependentAxisRange,
+  ] = useState<NumberOrDateRange>();
 
   const handleBinWidthChange = async (newBinWidth: NumberOrTimeDelta) => {
     if (newBinWidth > 0) {
@@ -209,16 +211,16 @@ RepoMonthsNoControls.loaders = [
   }),
 ];
 
-const TemplateWithSelectedDateRangeControls: Story<Omit<
-  HistogramProps,
-  'data'
->> = (args) => {
+const TemplateWithSelectedDateRangeControls: Story<
+  Omit<HistogramProps, 'data'>
+> = (args) => {
   const [data, setData] = useState<HistogramData>();
   const [selectedRange, setSelectedRange] = useState<NumberOrDateRange>();
   const [loading, setLoading] = useState<boolean>(true);
-  const [independentAxisRange, setIndependentAxisRange] = useState<
-    NumberOrDateRange
-  >();
+  const [
+    independentAxisRange,
+    setIndependentAxisRange,
+  ] = useState<NumberOrDateRange>();
   const [binWidth, setBinWidth] = useState<NumberOrTimeDelta>({
     value: 1,
     unit: 'month',
@@ -344,4 +346,72 @@ export const EmptyDataLoading: Story<HistogramProps> = (args) => (
 EmptyDataLoading.args = {
   ...EmptyData.args,
   showSpinner: true,
+};
+
+const TemplateStaticWithRangeControls: Story<HistogramProps> = (args) => {
+  const [dependentAxisRange, setDependentAxisRange] = useState<NumberRange>();
+  const [
+    independentAxisRange,
+    setIndependentAxisRange,
+  ] = useState<NumberOrDateRange>();
+
+  const handleDependentAxisRangeChange = async (
+    newRange?: NumberOrDateRange
+  ) => {
+    setDependentAxisRange(newRange as NumberRange);
+  };
+
+  const handleIndependentAxisRangeChange = async (
+    newRange?: NumberOrDateRange
+  ) => {
+    setIndependentAxisRange(newRange);
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <Histogram
+        {...args}
+        independentAxisRange={independentAxisRange}
+        dependentAxisRange={dependentAxisRange}
+      />
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+        }}
+      >
+        <AxisRangeControl
+          label="Y-Axis Range"
+          range={dependentAxisRange}
+          onRangeChange={handleDependentAxisRangeChange}
+        />
+        <AxisRangeControl
+          label="X-Axis Range"
+          range={independentAxisRange}
+          onRangeChange={handleIndependentAxisRangeChange}
+        />
+      </div>
+    </div>
+  );
+};
+
+export const StaticDataWithRangeControls = TemplateStaticWithRangeControls.bind(
+  {}
+);
+StaticDataWithRangeControls.args = {
+  data: {
+    series: [
+      {
+        name: 'penguins',
+        bins: [42, 11, 99, 23, 7, 9].map((num, index) => ({
+          binStart: index + 1,
+          binEnd: index + 2,
+          binLabel: `${index + 1} to ${index + 2}`,
+          count: num,
+        })),
+      },
+    ],
+  },
+  interactive: true,
 };

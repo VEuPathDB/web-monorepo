@@ -13,11 +13,19 @@ import {
   DependentAxisLogScaleAddon,
   DependentAxisLogScaleDefault,
 } from '../types/plots';
-import { NumberOrDate, NumberOrDateRange, NumberRange } from '../types/general';
+import { NumberOrDateRange, NumberRange } from '../types/general';
 
 // Libraries
 import * as DateMath from 'date-arithmetic';
-import { sortBy, sortedUniqBy, orderBy, some } from 'lodash';
+import {
+  sortBy,
+  sortedUniqBy,
+  some,
+  find,
+  findLast,
+  first,
+  last,
+} from 'lodash';
 
 // Components
 import PlotlyPlot, { PlotProps } from './PlotlyPlot';
@@ -52,11 +60,13 @@ export interface HistogramProps
   /** function to call upon selecting a range (in independent axis) */
   onSelectedRangeChange?: (newRange?: NumberOrDateRange) => void;
   /** Min and max allowed values for the selected range.
-   *  Used to keep graphical range selections within the range of the data. Optional. */
+   *  Used to keep graphical range selections within the range of the data. Optional.
+   *  And now DEPRECATED. Do not use. */
   selectedRangeBounds?: NumberOrDateRange; // TO DO: handle DateRange too
-  /** Relevant to range selection - flag to indicate if the data is zoomed in. Default false. */
+  /** Relevant to range selection - flag to indicate if the data is zoomed in. Default false.
+   * Also DEPRECATED along with selectedRangeBounds */
   isZoomed?: boolean;
-  /** independent axis range min and max (this will be widened to include data if needed) */
+  /** independent axis range min and max */
   independentAxisRange?: NumberOrDateRange;
   /** if true (default false), adjust binEnds to the end of the day */
   adjustBinEndToEndOfDay?: boolean;
@@ -81,6 +91,11 @@ export default function Histogram({
   adjustBinEndToEndOfDay = false,
   ...restProps
 }: HistogramProps) {
+  if (selectedRangeBounds || isZoomed)
+    console.log(
+      'WARNING: Histogram.selectedRangeBounds and isZoomed are deprecated - behaviour may be unexpected'
+    );
+
   /**
    * Determine bar opacity. Only applicable when in overlay
    * mode and there are >1 series.
@@ -90,28 +105,6 @@ export default function Histogram({
   const calculatedBarOpacity: number = useMemo(() => {
     return barLayout === 'overlay' && data.series.length > 1 ? opacity : 1;
   }, [barLayout, data.series.length, opacity]);
-
-  /**
-   * Calculate min binStart and max binEnd values
-   */
-  const minBinStart: NumberOrDate = useMemo(() => {
-    return data.series.length > 0
-      ? orderBy(
-          data.series.flatMap((series) => series.bins),
-          [(bin) => bin.binStart],
-          'asc'
-        )[0].binStart
-      : 0;
-  }, [data.series]);
-  const maxBinEnd: NumberOrDate = useMemo(() => {
-    return data.series.length > 0
-      ? orderBy(
-          data.series.flatMap((series) => series.bins),
-          [(bin) => bin.binEnd],
-          'desc'
-        )[0].binEnd
-      : 10;
-  }, [data.series]);
 
   // Transform `data` into a Plot.ly friendly format.
   const plotlyFriendlyData: PlotParams['data'] = useMemo(
@@ -192,46 +185,26 @@ export default function Histogram({
     const uniqueBins = sortedUniqBy(sortedBins, (bin) => bin.binLabel);
 
     // return the list of summaries - note the binMiddle prop
-    return uniqueBins.map((bin, index) => ({
-      binStart:
-        // The first bin's binStart can outside the allowed range bounds.
-        // If we are not zoomed in, adjust the first bin's binStart to
-        // selectedRangeBounds.min if needed
-        index === 0 &&
-        selectedRangeBounds?.min != null &&
-        (!isZoomed || selectedRangeBounds.min > bin.binStart)
-          ? selectedRangeBounds.min
-          : bin.binStart,
-      binEnd:
-        // do similar for the last bin and binEnd
-        index === uniqueBins.length - 1 &&
-        selectedRangeBounds?.max != null &&
-        (!isZoomed || selectedRangeBounds.max < bin.binEnd)
-          ? selectedRangeBounds.max
-          : bin.binEnd,
+    return uniqueBins.map(({ binStart, binEnd }) => ({
+      binStart,
+      binEnd,
       binMiddle:
         data.valueType === 'date'
           ? DateMath.add(
-              new Date(bin.binStart as string),
+              new Date(binStart as string),
               DateMath.diff(
-                new Date(bin.binStart as string),
+                new Date(binStart as string),
                 adjustBinEndToEndOfDay
-                  ? DateMath.endOf(new Date(bin.binEnd as string), 'day')
-                  : new Date(bin.binEnd as string),
+                  ? DateMath.endOf(new Date(binEnd as string), 'day')
+                  : new Date(binEnd as string),
                 'seconds',
                 false
               ) * 500,
               'milliseconds'
             ).toISOString()
-          : ((bin.binStart as number) + (bin.binEnd as number)) / 2.0,
+          : ((binStart as number) + (binEnd as number)) / 2.0,
     }));
-  }, [
-    data.series,
-    data.valueType,
-    isZoomed,
-    selectedRangeBounds,
-    adjustBinEndToEndOfDay,
-  ]);
+  }, [data.series, data.valueType, adjustBinEndToEndOfDay]);
 
   // local state for range **while selecting** graphically
   const [selectingRange, setSelectingRange] = useState<NumberOrDateRange>();
@@ -338,15 +311,30 @@ export default function Histogram({
   ]);
 
   const plotlyIndependentAxisRange = useMemo(() => {
-    // here we ensure that no data bins are excluded/hidden from view
+    if (binSummaries.length === 0) return [undefined, undefined];
+
+    // If independentAxisRange (x-axis) is provided
+    // adjust the min of the range to the binStart of the bin that contains that value.
+    // Likewise, adjust the max of the range to the binEnd of the bin that contains it.
+    // This avoids partial bins being displayed.
     const range = [
-      independentAxisRange && independentAxisRange.min < minBinStart
-        ? independentAxisRange.min
-        : minBinStart,
-      independentAxisRange && independentAxisRange?.max > maxBinEnd
-        ? independentAxisRange.max
-        : maxBinEnd,
-    ];
+      independentAxisRange?.min != null
+        ? (
+            findLast(
+              binSummaries,
+              (bs) => independentAxisRange?.min >= bs.binStart
+            ) ?? { binStart: independentAxisRange?.min }
+          )?.binStart
+        : first(binSummaries)?.binStart,
+      independentAxisRange?.max != null
+        ? (
+            find(
+              binSummaries,
+              (bs) => independentAxisRange?.max <= bs.binEnd
+            ) ?? { binEnd: independentAxisRange?.max }
+          )?.binEnd
+        : last(binSummaries)?.binEnd,
+    ] as (number | string)[];
     // extend date-based range.max to the end of the day
     // (this also avoids excluding a the final bin if binWidth=='day')
     if (data?.valueType === 'date') {
@@ -362,8 +350,7 @@ export default function Histogram({
   }, [
     data?.valueType,
     independentAxisRange,
-    minBinStart,
-    maxBinEnd,
+    binSummaries,
     adjustBinEndToEndOfDay,
   ]);
 
