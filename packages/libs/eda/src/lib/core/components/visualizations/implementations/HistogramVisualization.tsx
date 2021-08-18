@@ -39,6 +39,10 @@ import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import histogram from './selectorIcons/histogram.svg';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
+import {
+  vocabularyWithMissingData,
+  grayOutLastSeries,
+} from '../../../utils/analysis';
 
 type HistogramDataWithCoverageStatistics = HistogramData & CoverageStatistics;
 
@@ -90,6 +94,7 @@ const HistogramConfig = t.intersection([
     facetVariable: VariableDescriptor,
     binWidth: t.number,
     binWidthTimeUnit: t.string, // TO DO: constrain to weeks, months etc like Unit from date-arithmetic and/or R
+    showMissingness: t.boolean,
   }),
 ]);
 
@@ -175,22 +180,21 @@ function HistogramViz(props: Props) {
     [updateVizConfig]
   );
 
-  const onDependentAxisLogScaleChange = useCallback(
-    (newState?: boolean) => {
+  // prettier-ignore
+  const onChangeHandlerFactory = useCallback(
+    < ValueType,>(key: keyof HistogramConfig) => (newValue?: ValueType) => {
       updateVizConfig({
-        dependentAxisLogScale: newState,
+        [key]: newValue,
       });
     },
     [updateVizConfig]
   );
-
-  const onValueSpecChange = useCallback(
-    (newValueSpec: ValueSpec) => {
-      updateVizConfig({
-        valueSpec: newValueSpec,
-      });
-    },
-    [updateVizConfig]
+  const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
+    'dependentAxisLogScale'
+  );
+  const onValueSpecChange = onChangeHandlerFactory<ValueSpec>('valueSpec');
+  const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
+    'showMissingness'
   );
 
   const { xAxisVariable, outputEntity, valueType } = useMemo(() => {
@@ -228,9 +232,15 @@ function HistogramViz(props: Props) {
         vizConfig
       );
       const response = dataClient.getHistogram(computation.type, params);
-      return reorderData(
-        histogramResponseToData(await response, xAxisVariable.type),
-        overlayVariable?.vocabulary
+      return grayOutLastSeries(
+        reorderData(
+          histogramResponseToData(await response, xAxisVariable.type),
+          vocabularyWithMissingData(
+            overlayVariable?.vocabulary,
+            vizConfig.showMissingness
+          )
+        ),
+        vizConfig.showMissingness && overlayVariable != null
       );
     }, [
       vizConfig.xAxisVariable,
@@ -239,6 +249,7 @@ function HistogramViz(props: Props) {
       vizConfig.overlayVariable,
       vizConfig.facetVariable,
       vizConfig.valueSpec,
+      vizConfig.showMissingness,
       studyId,
       filters,
       dataClient,
@@ -257,10 +268,12 @@ function HistogramViz(props: Props) {
               {
                 name: 'xAxisVariable',
                 label: 'Main',
+                role: 'primary',
               },
               {
                 name: 'overlayVariable',
-                label: 'Overlay (optional)',
+                label: 'Overlay',
+                role: 'stratification',
               },
             ]}
             entities={entities}
@@ -273,6 +286,10 @@ function HistogramViz(props: Props) {
             dataElementDependencyOrder={dataElementDependencyOrder}
             starredVariables={starredVariables}
             toggleStarredVariable={toggleStarredVariable}
+            enableShowMissingnessToggle={overlayVariable != null}
+            showMissingness={vizConfig.showMissingness}
+            onShowMissingnessChange={onShowMissingnessChange}
+            outputEntity={outputEntity}
           />
         </div>
       )}
@@ -524,7 +541,9 @@ export function histogramResponseToData(
     binWidthRange,
     binWidthStep,
     completeCases: response.completeCasesTable,
-    outputSize: response.histogram.config.completeCases,
+    outputSize:
+      response.histogram.config.completeCases +
+      response.histogram.config.plottedIncompleteCases,
   };
 }
 
@@ -540,6 +559,7 @@ function getRequestParams(
     valueSpec,
     overlayVariable,
     xAxisVariable,
+    showMissingness,
   } = vizConfig;
 
   const binSpec = binWidth
@@ -562,6 +582,7 @@ function getRequestParams(
       overlayVariable,
       valueSpec,
       ...binSpec,
+      showMissingness: showMissingness ? 'TRUE' : 'FALSE',
     },
   } as HistogramRequestParams;
 }

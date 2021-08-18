@@ -413,14 +413,17 @@ function MosaicViz(props: Props) {
               {
                 name: 'xAxisVariable',
                 label: 'X-axis',
+                role: 'primary',
               },
               {
                 name: 'yAxisVariable',
                 label: 'Y-axis',
+                role: 'primary',
               },
               {
                 name: 'facetVariable',
-                label: 'Facet (optional)',
+                label: 'Facet (placeholder)',
+                role: 'stratification',
               },
             ]}
             entities={entities}
@@ -510,7 +513,9 @@ export function contTableResponseToData(
     degreesFreedom: response.statsTable[0].degreesFreedom,
     chisq: response.statsTable[0].chisq,
     completeCases: response.completeCasesTable,
-    outputSize: response.mosaic.config.completeCases,
+    outputSize:
+      response.mosaic.config.completeCases +
+      response.mosaic.config.plottedIncompleteCases,
   };
 }
 

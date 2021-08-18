@@ -5,7 +5,6 @@ import {
   useRouteMatch,
   Redirect,
 } from 'react-router';
-import { NewAnalysis } from './NewAnalysis';
 import { EDAAnalysisList } from './EDAAnalysisList';
 import { WorkspaceContainer } from './WorkspaceContainer';
 import { mockAnalysisStore } from './Mocks';
@@ -70,11 +69,11 @@ export function WorkspaceRouter({
       />
       <Route
         path={`${path}/:studyId/new`}
-        exact
         render={(props: RouteComponentProps<{ studyId: string }>) => (
-          <NewAnalysis
+          <WorkspaceContainer
             {...props.match.params}
-            analysisClient={mockAnalysisStore}
+            subsettingServiceUrl={subsettingServiceUrl}
+            dataServiceUrl={dataServiceUrl}
           />
         )}
       />

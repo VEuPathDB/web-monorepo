@@ -23,29 +23,15 @@ export function LatestAnalysis(props: Props) {
     }
 
     return Task.fromPromise(() => analysisClient.getAnalyses())
-      .map((analyses) =>
-        orderBy(
-          analyses.filter((analysis) => analysis.studyId === studyId),
-          (analysis) => analysis.modified
-        )
+      .map(
+        (analyses) =>
+          orderBy(
+            analyses.filter((analysis) => analysis.studyId === studyId),
+            (analysis) => analysis.modified
+          )[0]
       )
-      .chain((analyses) =>
-        analyses.length === 0
-          ? Task.fromPromise(() =>
-              analysisClient.createAnalysis({
-                name: 'Unnamed Analysis',
-                studyId,
-                filters: [],
-                starredVariables: [],
-                derivedVariables: [],
-                visualizations: [],
-                computations: [],
-                variableUISettings: {},
-              })
-            )
-          : Task.of(analyses[0])
-      )
-      .run(({ id }) => {
+      .run((analysis) => {
+        const id = analysis?.id ?? 'new';
         const newLocation = {
           ...history.location,
           pathname: history.location.pathname.replace(replaceRegexp, id),
