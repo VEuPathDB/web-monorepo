@@ -492,18 +492,6 @@ function HistogramPlotWithControls({
     return { min: filter.min, max: filter.max } as NumberOrDateRange;
   }, [filter]);
 
-  const selectedRangeBounds = useMemo((): NumberOrDateRange | undefined => {
-    return data?.series[0]?.summary && data?.valueType
-      ? fullISODateRange(
-          {
-            min: data.series[0].summary.min,
-            max: data.series[0].summary.max,
-          } as NumberOrDateRange,
-          data.valueType
-        )
-      : undefined;
-  }, [data?.series, data?.valueType]);
-
   const widgetHeight = '4em';
 
   return (
@@ -512,7 +500,6 @@ function HistogramPlotWithControls({
         label={`Subset on ${variableName}`}
         valueType={data?.valueType}
         selectedRange={selectedRange}
-        selectedRangeBounds={selectedRangeBounds}
         onSelectedRangeChange={handleSelectedRangeChange}
       />
       <Histogram
@@ -520,7 +507,6 @@ function HistogramPlotWithControls({
         data={data}
         interactive={true}
         selectedRange={selectedRange}
-        selectedRangeBounds={selectedRangeBounds}
         opacity={opacity}
         displayLegend={displayLegend}
         displayLibraryControls={displayLibraryControls}
@@ -529,7 +515,6 @@ function HistogramPlotWithControls({
         dependentAxisLabel={`Count of ${entityName}`}
         // add independentAxisLabel
         independentAxisLabel={variableName}
-        isZoomed={uiState.independentAxisRange ? true : false}
         independentAxisRange={uiState.independentAxisRange}
         dependentAxisRange={uiState.dependentAxisRange}
         dependentAxisLogScale={uiState.dependentAxisLogScale}
