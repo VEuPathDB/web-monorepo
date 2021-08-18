@@ -19,7 +19,9 @@ export function filterVariablesByConstraint(
 ): StudyEntity {
   if (
     constraint == null ||
-    (constraint.allowedShapes == null && constraint.allowedTypes == null)
+    (constraint.allowedShapes == null &&
+      constraint.allowedTypes == null &&
+      constraint.allowMultiValued)
   )
     return rootEntity;
   return mapStructure(
@@ -109,10 +111,14 @@ export function flattenConstraints(
       const value = values[variableName];
       // If a value (variable) has not been user-selected for this constraint, then it is considered to be "in-play"
       if (value == null) return true;
-      // If a constraint does not declare shapes or types, then any value is allowed, thus the constraint is "in-play"
-      if (isEmpty(constraint.allowedShapes) || isEmpty(constraint.allowedTypes))
+      // If a constraint does not declare shapes or types and it allows multivalued variables, then any value is allowed, thus the constraint is "in-play"
+      if (
+        isEmpty(constraint.allowedShapes) &&
+        isEmpty(constraint.allowedTypes) &&
+        constraint.allowMultiValued
+      )
         return true;
-      // Check that the value's associated variable has a compatible type and shape
+      // Check that the value's associated variable has compatible characteristics
       const entityAndVariable = findEntityAndVariable(entities, value);
       if (entityAndVariable == null)
         throw new Error(
@@ -125,7 +131,9 @@ export function flattenConstraints(
       const shapeIsValid =
         isEmpty(constraint.allowedShapes) ||
         constraint.allowedShapes?.includes(variable.dataShape!);
-      return typeIsValid && shapeIsValid;
+      const passesMultivalueConstraint =
+        constraint.allowMultiValued || !variable.isMultiValued;
+      return typeIsValid && shapeIsValid && passesMultivalueConstraint;
     })
   );
   if (compatibleConstraints.length === 0)
@@ -173,6 +181,8 @@ export function mergeConstraints(
                 constraintA.allowedTypes,
                 constraintB.allowedTypes
               ),
+              allowMultiValued:
+                constraintA.allowMultiValued && constraintB.allowMultiValued,
             },
       ];
     })
