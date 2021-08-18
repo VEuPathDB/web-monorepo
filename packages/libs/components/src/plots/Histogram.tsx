@@ -68,8 +68,6 @@ export interface HistogramProps
   isZoomed?: boolean;
   /** independent axis range min and max */
   independentAxisRange?: NumberOrDateRange;
-  /** if true (default false), adjust binEnds to the end of the day */
-  adjustBinEndToEndOfDay?: boolean;
 }
 
 /** A Plot.ly based histogram component. */
@@ -88,7 +86,6 @@ export default function Histogram({
   selectedRangeBounds,
   isZoomed = false,
   independentAxisRange,
-  adjustBinEndToEndOfDay = false,
   ...restProps
 }: HistogramProps) {
   if (selectedRangeBounds || isZoomed)
@@ -120,9 +117,7 @@ export default function Histogram({
             return (
               DateMath.diff(
                 new Date(bin.binStart as string),
-                adjustBinEndToEndOfDay
-                  ? DateMath.endOf(new Date(bin.binEnd as string), 'day')
-                  : new Date(bin.binEnd as string),
+                new Date(bin.binEnd as string),
                 'seconds',
                 false
               ) * 1000
@@ -163,14 +158,7 @@ export default function Histogram({
           },
         };
       }),
-    [
-      data,
-      orientation,
-      calculatedBarOpacity,
-      selectedRange,
-      showValues,
-      adjustBinEndToEndOfDay,
-    ]
+    [data, orientation, calculatedBarOpacity, selectedRange, showValues]
   );
 
   /**
@@ -194,9 +182,7 @@ export default function Histogram({
               new Date(binStart as string),
               DateMath.diff(
                 new Date(binStart as string),
-                adjustBinEndToEndOfDay
-                  ? DateMath.endOf(new Date(binEnd as string), 'day')
-                  : new Date(binEnd as string),
+                new Date(binEnd as string),
                 'seconds',
                 false
               ) * 500,
@@ -204,7 +190,7 @@ export default function Histogram({
             ).toISOString()
           : ((binStart as number) + (binEnd as number)) / 2.0,
     }));
-  }, [data.series, data.valueType, adjustBinEndToEndOfDay]);
+  }, [data.series, data.valueType]);
 
   // local state for range **while selecting** graphically
   const [selectingRange, setSelectingRange] = useState<NumberOrDateRange>();
@@ -232,21 +218,28 @@ export default function Histogram({
         const leftBin = binSummaries.find(
           (bin) => rawRange.min < bin.binMiddle
         );
-        const rightBin = binSummaries
-          .slice()
-          .reverse()
-          .find((bin) => rawRange.max > bin.binMiddle);
+        const rightBin = findLast(
+          binSummaries,
+          (bin) => rawRange.max > bin.binMiddle
+        );
         if (leftBin && rightBin && leftBin.binStart <= rightBin.binStart) {
           setSelectingRange({
             min: leftBin.binStart,
-            max: rightBin.binEnd,
+            max:
+              data.valueType === 'date'
+                ? DateMath.subtract(
+                    new Date(rightBin.binEnd),
+                    1,
+                    'day'
+                  ).toISOString()
+                : rightBin.binEnd,
           } as NumberOrDateRange);
         } else {
           setSelectingRange(undefined);
         }
       }
     },
-    [orientation, binSummaries]
+    [orientation, binSummaries, data.valueType]
   );
 
   // handle finshed/completed (graphical) range selection
@@ -268,9 +261,7 @@ export default function Histogram({
       const rightCoordinate =
         data.valueType === 'number'
           ? range.max
-          : adjustBinEndToEndOfDay
-          ? DateMath.endOf(new Date(range.max), 'day').toISOString()
-          : range.max;
+          : DateMath.endOf(new Date(range.max), 'day').toISOString();
       return [
         {
           type: 'rect',
@@ -302,13 +293,7 @@ export default function Histogram({
     } else {
       return [];
     }
-  }, [
-    selectingRange,
-    selectedRange,
-    orientation,
-    data.series,
-    adjustBinEndToEndOfDay,
-  ]);
+  }, [selectingRange, selectedRange, orientation, data.series]);
 
   const plotlyIndependentAxisRange = useMemo(() => {
     if (binSummaries.length === 0) return [undefined, undefined];
@@ -317,7 +302,7 @@ export default function Histogram({
     // adjust the min of the range to the binStart of the bin that contains that value.
     // Likewise, adjust the max of the range to the binEnd of the bin that contains it.
     // This avoids partial bins being displayed.
-    const range = [
+    return [
       independentAxisRange?.min != null
         ? (
             findLast(
@@ -335,24 +320,7 @@ export default function Histogram({
           )?.binEnd
         : last(binSummaries)?.binEnd,
     ] as (number | string)[];
-    // extend date-based range.max to the end of the day
-    // (this also avoids excluding a the final bin if binWidth=='day')
-    if (data?.valueType === 'date') {
-      return [
-        range[0],
-        adjustBinEndToEndOfDay
-          ? DateMath.endOf(new Date(range[1]), 'day').toISOString()
-          : range[1],
-      ];
-    } else {
-      return range;
-    }
-  }, [
-    data?.valueType,
-    independentAxisRange,
-    binSummaries,
-    adjustBinEndToEndOfDay,
-  ]);
+  }, [data?.valueType, independentAxisRange, binSummaries]);
 
   const independentAxisLayout: Layout['xaxis'] | Layout['yaxis'] = {
     type: data?.valueType === 'date' ? 'date' : 'linear',
