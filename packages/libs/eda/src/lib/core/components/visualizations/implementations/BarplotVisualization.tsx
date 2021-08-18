@@ -246,6 +246,7 @@ function BarplotViz(props: Props) {
             constraints={dataElementConstraints}
             dataElementDependencyOrder={dataElementDependencyOrder}
             starredVariables={starredVariables}
+            enableShowMissingnessToggle={overlayVariable != null}
             toggleStarredVariable={toggleStarredVariable}
             onShowMissingnessChange={onShowMissingnessChange}
             showMissingness={vizConfig.showMissingness}

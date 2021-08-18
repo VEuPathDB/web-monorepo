@@ -274,6 +274,7 @@ function BoxplotViz(props: Props) {
             dataElementDependencyOrder={dataElementDependencyOrder}
             starredVariables={starredVariables}
             toggleStarredVariable={toggleStarredVariable}
+            enableShowMissingnessToggle={overlayVariable != null}
             showMissingness={vizConfig.showMissingness}
             onShowMissingnessChange={onShowMissingnessChange}
             outputEntity={outputEntity}

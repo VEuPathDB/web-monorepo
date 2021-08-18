@@ -60,6 +60,8 @@ export interface Props {
    * A callback for toggling the starred state of a variable with a given ID
    */
   toggleStarredVariable: (targetVariableId: string) => void;
+  /** When false, disable (gray out) the showMissingness toggle */
+  enableShowMissingnessToggle?: boolean;
   /** controlled state of stratification variables' showMissingness toggle switch (optional) */
   showMissingness?: boolean;
   /** handler for showMissingness state change */
@@ -111,6 +113,7 @@ export function InputVariables(props: Props) {
     dataElementDependencyOrder,
     starredVariables,
     toggleStarredVariable,
+    enableShowMissingnessToggle = false,
     showMissingness,
     onShowMissingnessChange,
     outputEntity,
@@ -193,16 +196,6 @@ export function InputVariables(props: Props) {
     [dataElementDependencyOrder, entities, flattenedConstraints, inputs, values]
   );
 
-  const stratificationIsActive: boolean = useMemo(() => {
-    // are any of the stratification inputs currently set to a variable?
-    // e.g. values['overlayVariable'] is truthy
-    return (
-      inputs.filter(
-        (input) => input.role === 'stratification' && values[input.name]
-      ).length > 0
-    );
-  }, [inputs, values]);
-
   return (
     <div>
       <div className={classes.inputs}>
@@ -238,7 +231,7 @@ export function InputVariables(props: Props) {
                 } with no data for selected stratification variable(s)`}
                 state={showMissingness}
                 onStateChange={onShowMissingnessChange}
-                disabled={!stratificationIsActive}
+                disabled={!enableShowMissingnessToggle}
               />
             </div>
           )}
