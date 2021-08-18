@@ -321,31 +321,35 @@ function MosaicViz(props: Props) {
     <div className="MosaicVisualization">
       <div className="MosaicVisualization-Plot">
         <Tabs
-          items={[
-            [
-              'Mosaic',
-              <MosaicPlotWithControls
-                data={data.value && !data.pending ? data.value : undefined}
-                containerStyles={{
-                  width: width,
-                  height: height,
-                }}
-                independentAxisLabel={xAxisLabel ?? 'X-axis'}
-                dependentAxisLabel={yAxisLabel ?? 'Y-axis'}
-                displayLegend={true}
-                interactive
-                showSpinner={data.pending}
-              />,
-            ],
-            [
-              'Table',
-              <ContingencyTable
-                data={data.value}
-                containerStyles={{ width: width }}
-                independentVariable={xAxisLabel ?? 'X-axis'}
-                dependentVariable={yAxisLabel ?? 'Y-axis'}
-              />,
-            ],
+          tabs={[
+            {
+              name: 'Mosaic',
+              content: (
+                <MosaicPlotWithControls
+                  data={data.value && !data.pending ? data.value : undefined}
+                  containerStyles={{
+                    width: width,
+                    height: height,
+                  }}
+                  independentAxisLabel={xAxisLabel ?? 'X-axis'}
+                  dependentAxisLabel={yAxisLabel ?? 'Y-axis'}
+                  displayLegend={true}
+                  interactive
+                  showSpinner={data.pending}
+                />
+              ),
+            },
+            {
+              name: 'Table',
+              content: (
+                <ContingencyTable
+                  data={data.value}
+                  containerStyles={{ width: width }}
+                  independentVariable={xAxisLabel ?? 'X-axis'}
+                  dependentVariable={yAxisLabel ?? 'Y-axis'}
+                />
+              ),
+            },
           ]}
         />
       </div>
