@@ -508,7 +508,7 @@ function HistogramPlotWithControls({
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data, updateFilter]
+    [updateFilter, selectedRangeBounds]
   );
 
   const widgetHeight = '4em';
