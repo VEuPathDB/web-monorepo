@@ -80,6 +80,7 @@ export interface HistogramRequestParams {
       xMin: string;
       xMax: string;
     };
+    showMissingness?: 'TRUE' | 'FALSE';
   };
 }
 
@@ -105,6 +106,7 @@ export const HistogramResponse = type({
     ),
     config: type({
       completeCases: number,
+      plottedIncompleteCases: number,
       binSlider: type({
         min: number,
         max: number,
@@ -148,6 +150,7 @@ export interface BarplotRequestParams {
     xAxisVariable: VariableDescriptor;
     // barplot add prop
     overlayVariable?: VariableDescriptor;
+    showMissingness?: 'TRUE' | 'FALSE';
   };
 }
 
@@ -156,6 +159,7 @@ export const BarplotResponse = type({
   barplot: type({
     config: type({
       completeCases: number,
+      plottedIncompleteCases: number,
       xVariableDetails: type({
         variableId: string,
         entityId: string,
@@ -202,6 +206,7 @@ export interface ScatterplotRequestParams {
     xAxisVariable: VariableDescriptor;
     yAxisVariable: VariableDescriptor;
     overlayVariable?: VariableDescriptor;
+    showMissingness?: 'TRUE' | 'FALSE';
   };
 }
 
@@ -238,6 +243,7 @@ export const ScatterplotResponse = type({
     data: ScatterplotResponseData,
     config: type({
       completeCases: number,
+      plottedIncompleteCases: number,
       xVariableDetails: type({
         variableId: string,
         entityId: string,
@@ -264,6 +270,7 @@ export interface LineplotRequestParams {
     xAxisVariable: VariableDescriptor;
     yAxisVariable: VariableDescriptor;
     overlayVariable?: VariableDescriptor;
+    showMissingness?: 'TRUE' | 'FALSE';
   };
 }
 
@@ -293,6 +300,7 @@ export const LineplotResponse = type({
     data: LineplotResponseData,
     config: type({
       completeCases: number,
+      plottedIncompleteCases: number,
       xVariableDetails: type({
         variableId: string,
         entityId: string,
@@ -329,6 +337,7 @@ export const MosaicResponse = type({
     ),
     config: type({
       completeCases: number,
+      plottedIncompleteCases: number,
       xVariableDetails: type({
         variableId: string,
         entityId: string,
@@ -394,6 +403,7 @@ export interface BoxplotRequestParams {
     xAxisVariable: VariableDescriptor;
     yAxisVariable: VariableDescriptor;
     overlayVariable?: VariableDescriptor;
+    showMissingness?: 'TRUE' | 'FALSE';
   };
 }
 
@@ -409,11 +419,13 @@ const BoxplotResponseData = array(
       label: array(string),
     }),
     partial({
-      // outliers type
-      outliers: union([number, array(number), array(array(number))]),
-      rawData: union([number, array(number), array(array(number))]),
+      // outliers
+      // back end is returning {} instead of [], e.g.
+      // [ {}, [1,2,3], [4,5,6] ]
+      outliers: array(union([array(number), type({})])),
+      rawData: array(array(number)),
       // mean: array(number),
-      mean: union([number, array(number)]),
+      mean: array(number),
       seriesX: union([array(string), array(number)]),
       seriesY: array(number),
       // need to make sure if below is correct (untested)
@@ -436,6 +448,7 @@ export const BoxplotResponse = type({
     data: BoxplotResponseData,
     config: type({
       completeCases: number,
+      plottedIncompleteCases: number,
       xVariableDetails: type({
         variableId: string,
         entityId: string,

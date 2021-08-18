@@ -13,10 +13,13 @@ import {
   mapStructure,
   preorder,
 } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import Switch from '@veupathdb/components/lib/components/widgets/Switch';
+import { makeEntityDisplayName } from '../../utils/study-metadata';
 
 interface InputSpec {
   name: string;
   label: string;
+  role: 'primary' | 'stratification';
 }
 
 export interface Props {
@@ -57,12 +60,21 @@ export interface Props {
    * A callback for toggling the starred state of a variable with a given ID
    */
   toggleStarredVariable: (targetVariableId: string) => void;
+  /** When false, disable (gray out) the showMissingness toggle */
+  enableShowMissingnessToggle?: boolean;
+  /** controlled state of stratification variables' showMissingness toggle switch (optional) */
+  showMissingness?: boolean;
+  /** handler for showMissingness state change */
+  onShowMissingnessChange?: (newState: boolean) => void;
+  /** output entity, required for toggle switch label */
+  outputEntity?: StudyEntity;
 }
 
 const useStyles = makeStyles(
   {
     inputs: {
       display: 'flex',
+      flexWrap: 'wrap',
       marginBottom: '0.5em',
     },
     input: {
@@ -82,6 +94,17 @@ const useStyles = makeStyles(
       fontSize: '1.35em',
       fontWeight: 500,
     },
+    primary: {
+      order: 0,
+    },
+    showMissing: {
+      order: 1,
+      flexBasis: '100%',
+      marginTop: '1em',
+    },
+    stratification: {
+      order: 2,
+    },
   },
   {
     name: 'InputVariables',
@@ -98,6 +121,10 @@ export function InputVariables(props: Props) {
     dataElementDependencyOrder,
     starredVariables,
     toggleStarredVariable,
+    enableShowMissingnessToggle = false,
+    showMissingness,
+    onShowMissingnessChange,
+    outputEntity,
   } = props;
   const classes = useStyles();
   const handleChange = (inputName: string, value?: VariableDescriptor) => {
@@ -181,7 +208,12 @@ export function InputVariables(props: Props) {
     <div>
       <div className={classes.inputs}>
         {inputs.map((input, index) => (
-          <div key={input.name} className={classes.input}>
+          <div
+            key={input.name}
+            className={[classes.input, classes[input.role ?? 'primary']].join(
+              ' '
+            )}
+          >
             <div className={classes.label}>{input.label}</div>
             <VariableTreeDropdown
               rootEntity={entities[0]}
@@ -196,6 +228,26 @@ export function InputVariables(props: Props) {
             />
           </div>
         ))}
+        {onShowMissingnessChange &&
+          inputs.filter((input) => input.role === 'stratification').length && (
+            <div className={[classes.input, classes.showMissing].join(' ')}>
+              <h4>Stratification (optional)</h4>
+              <Switch
+                label={`Include ${
+                  outputEntity
+                    ? makeEntityDisplayName(outputEntity, true)
+                    : 'points'
+                } with no data for selected stratification variable(s)`}
+                state={showMissingness}
+                onStateChange={onShowMissingnessChange}
+                disabled={!enableShowMissingnessToggle}
+                labelPosition="after"
+                containerStyles={{
+                  marginLeft: '20px',
+                }}
+              />
+            </div>
+          )}
       </div>
       {/* <div className={`${classes.label} ${classes.dataLabel}`}>Data inputs</div> */}
     </div>

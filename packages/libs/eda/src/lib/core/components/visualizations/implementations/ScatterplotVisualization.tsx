@@ -48,6 +48,10 @@ import { XYPlotData } from '@veupathdb/components/lib/types/plots';
 import { CoverageStatistics } from '../../../types/visualization';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
+import { StudyEntity } from '../../../types/study';
+import { vocabularyWithMissingData } from '../../../utils/analysis';
+import { gray } from '../colors';
+import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 
 // define PromiseXYPlotData
 interface PromiseXYPlotData extends CoverageStatistics {
@@ -102,6 +106,7 @@ export const ScatterplotConfig = t.partial({
   overlayVariable: VariableDescriptor,
   facetVariable: VariableDescriptor,
   valueSpecConfig: t.string,
+  showMissingness: t.boolean,
 });
 
 type Props = VisualizationProps & {
@@ -200,14 +205,18 @@ function ScatterplotViz(props: Props) {
     [updateVizConfig, findEntityAndVariable, vizConfig.valueSpecConfig]
   );
 
-  // XYPlotControls: add valueSpec option
-  const onValueSpecChange = useCallback(
-    (value: string) => {
+  // prettier-ignore
+  const onChangeHandlerFactory = useCallback(
+    < ValueType,>(key: keyof ScatterplotConfig) => (newValue?: ValueType) => {
       updateVizConfig({
-        valueSpecConfig: value,
+        [key]: newValue,
       });
     },
     [updateVizConfig]
+  );
+  const onValueSpecChange = onChangeHandlerFactory<string>('valueSpecConfig');
+  const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
+    'showMissingness'
   );
 
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
@@ -241,15 +250,9 @@ function ScatterplotViz(props: Props) {
       const params = getRequestParams(
         studyId,
         filters ?? [],
-        vizConfig.xAxisVariable,
-        vizConfig.yAxisVariable,
-        vizConfig.overlayVariable,
-        // pass outputEntity.id
-        outputEntity?.id,
-        // add visualization.type
-        visualization.type,
-        // XYPlotControls
-        vizConfig.valueSpecConfig ? vizConfig.valueSpecConfig : 'Raw'
+        vizConfig,
+        outputEntity,
+        visualization.type
       );
 
       // scatterplot, lineplot
@@ -267,10 +270,17 @@ function ScatterplotViz(props: Props) {
 
       // send visualization.type, independentValueType, and dependentValueType as well
       return scatterplotResponseToData(
-        reorderResponse(await response, overlayVariable?.vocabulary),
+        reorderResponse(
+          await response,
+          vocabularyWithMissingData(
+            overlayVariable?.vocabulary,
+            vizConfig.showMissingness
+          )
+        ),
         visualization.type,
         independentValueType,
-        dependentValueType
+        dependentValueType,
+        vizConfig.showMissingness && overlayVariable != null
       );
     }, [
       studyId,
@@ -294,14 +304,17 @@ function ScatterplotViz(props: Props) {
               {
                 name: 'xAxisVariable',
                 label: 'X-axis',
+                role: 'primary',
               },
               {
                 name: 'yAxisVariable',
                 label: 'Y-axis',
+                role: 'primary',
               },
               {
                 name: 'overlayVariable',
-                label: 'Overlay (optional)',
+                label: 'Overlay',
+                role: 'stratification',
               },
             ]}
             entities={entities}
@@ -315,6 +328,10 @@ function ScatterplotViz(props: Props) {
             dataElementDependencyOrder={dataElementDependencyOrder}
             starredVariables={starredVariables}
             toggleStarredVariable={toggleStarredVariable}
+            enableShowMissingnessToggle={overlayVariable != null}
+            showMissingness={vizConfig.showMissingness}
+            onShowMissingnessChange={onShowMissingnessChange}
+            outputEntity={outputEntity}
           />
         </div>
       )}
@@ -539,7 +556,8 @@ export function scatterplotResponseToData(
   // vizType may be used for handling other plots in this component like line and density
   vizType: string,
   independentValueType: string,
-  dependentValueType: string
+  dependentValueType: string,
+  showMissingness: boolean = false
 ): PromiseXYPlotData {
   const modeValue = vizType === 'lineplot' ? 'lines' : 'markers'; // for scatterplot
 
@@ -548,7 +566,8 @@ export function scatterplotResponseToData(
     vizType,
     modeValue,
     independentValueType,
-    dependentValueType
+    dependentValueType,
+    showMissingness
   );
 
   return {
@@ -556,7 +575,10 @@ export function scatterplotResponseToData(
     yMin: yMin,
     yMax: yMax,
     completeCases: response.completeCasesTable,
-    outputSize: response.scatterplot.config.completeCases, // TO DO: won't work with densityplot response, when that's implemented
+    outputSize:
+      response.scatterplot.config.completeCases +
+      response.scatterplot.config.plottedIncompleteCases,
+    // TO DO: won't work with densityplot response, when that's implemented
   };
 }
 
@@ -572,17 +594,18 @@ type getRequestParamsProps =
 function getRequestParams(
   studyId: string,
   filters: Filter[],
-  xAxisVariable: VariableDescriptor,
-  // set yAxisVariable as optional for densityplot
-  yAxisVariable?: VariableDescriptor,
-  overlayVariable?: VariableDescriptor,
-  // pass outputEntityId
-  outputEntityId?: string,
-  // add visualization.type
-  vizType?: string,
-  // XYPlotControls
-  valueSpecConfig?: string
+  vizConfig: ScatterplotConfig,
+  outputEntity?: StudyEntity,
+  vizType?: string
 ): getRequestParamsProps {
+  const {
+    xAxisVariable,
+    yAxisVariable,
+    overlayVariable,
+    valueSpecConfig,
+    showMissingness,
+  } = vizConfig;
+
   // valueSpec
   let valueSpecValue = 'raw';
   if (valueSpecConfig === 'Smoothed mean with raw') {
@@ -597,10 +620,11 @@ function getRequestParams(
       filters,
       config: {
         // add outputEntityId
-        outputEntityId: outputEntityId,
+        outputEntityId: outputEntity?.id,
         xAxisVariable: xAxisVariable,
         yAxisVariable: yAxisVariable,
         overlayVariable: overlayVariable,
+        showMissingness: showMissingness ? 'TRUE' : 'FALSE',
       },
     } as LineplotRequestParams;
   } else {
@@ -610,12 +634,13 @@ function getRequestParams(
       filters,
       config: {
         // add outputEntityId
-        outputEntityId: outputEntityId,
+        outputEntityId: outputEntity?.id,
         // XYPlotControls
         valueSpec: valueSpecValue,
         xAxisVariable: xAxisVariable,
         yAxisVariable: yAxisVariable,
         overlayVariable: overlayVariable,
+        showMissingness: showMissingness ? 'TRUE' : 'FALSE',
       },
     } as ScatterplotRequestParams;
   }
@@ -629,7 +654,8 @@ function processInputData<T extends number | string>(
   modeValue: string,
   // use independentValueType & dependentValueType to distinguish btw number and date string
   independentValueType: string,
-  dependentValueType: string
+  dependentValueType: string,
+  showMissingness: boolean
 ) {
   // set fillAreaValue for densityplot
   const fillAreaValue = vizType === 'densityplot' ? 'toself' : '';
@@ -647,19 +673,18 @@ function processInputData<T extends number | string>(
   let yMin: number | string | undefined;
   let yMax: number | string | undefined;
 
-  // coloring: using plotly.js default colors
-  const markerColors = [
-    '31, 119, 180', //'#1f77b4',  // muted blue
-    '255, 127, 14', //'#ff7f0e',  // safety orange
-    '44, 160, 44', //'#2ca02c',  // cooked asparagus green
-    '214, 39, 40', //'#d62728',  // brick red
-    '148, 103, 189', //'#9467bd',  // muted purple
-    '140, 86, 75', //'#8c564b',  // chestnut brown
-    '227, 119, 194', //'#e377c2',  // raspberry yogurt pink
-    '127, 127, 127', //'#7f7f7f',  // middle gray
-    '188, 189, 34', //'#bcbd22',  // curry yellow-green
-    '23, 190, 207', //'#17becf'   // blue-teal
-  ];
+  // function to return color or gray where needed if showMissingness == true
+  const markerColor = (index: number) => {
+    if (showMissingness && index === plotDataSet.data.length - 1) {
+      return gray;
+    } else {
+      return ColorPaletteDefault[index] ?? 'black'; // TO DO: decide on overflow behaviour
+    }
+  };
+  const markerSymbol = (index: number) =>
+    showMissingness && index === plotDataSet.data.length - 1
+      ? 'x'
+      : 'circle-open';
 
   // set dataSetProcess as any for now
   let dataSetProcess: any = [];
@@ -729,14 +754,14 @@ function processInputData<T extends number | string>(
             ? 'scatter'
             : 'scattergl', // for the raw data of the scatterplot
         fill: fillAreaValue,
+        opacity: 0.7,
         marker: {
-          color: 'rgba(' + markerColors[index] + ',0.7)',
-          // size: 6,
-          // line: { color: 'rgba(' + markerColors[index] + ',0.7)', width: 2 },
+          color: markerColor(index),
+          symbol: markerSymbol(index),
         },
         // this needs to be here for the case of markers with line or lineplot.
         // always use spline?
-        line: { color: 'rgba(' + markerColors[index] + ',1)', shape: 'spline' },
+        line: { color: markerColor(index), shape: 'spline' },
       });
     }
   });
@@ -819,7 +844,7 @@ function processInputData<T extends number | string>(
           : 'Smoothed mean',
         mode: 'lines', // no data point is displayed: only line
         line: {
-          color: 'rgba(' + markerColors[index] + ',1)',
+          color: markerColor(index),
           shape: 'spline',
           width: 2,
         },
@@ -861,7 +886,8 @@ function processInputData<T extends number | string>(
           : '95% Confidence interval',
         // this is better to be tozeroy, not tozerox
         fill: 'tozeroy',
-        fillcolor: 'rgba(' + markerColors[index] + ',0.2)',
+        opacity: 0.2,
+        fillcolor: markerColor(index),
         // type: 'line',
         type: 'scattergl',
         // here, line means upper and lower bounds
@@ -911,7 +937,7 @@ function processInputData<T extends number | string>(
           : 'Best fit, R² = ' + el.r2,
         mode: 'lines', // no data point is displayed: only line
         line: {
-          color: 'rgba(' + markerColors[index] + ',1)',
+          color: markerColor(index),
           shape: 'spline',
         },
         // use scattergl

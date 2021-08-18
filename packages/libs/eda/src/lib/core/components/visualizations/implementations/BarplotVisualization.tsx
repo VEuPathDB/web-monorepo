@@ -34,6 +34,10 @@ import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import bar from './selectorIcons/bar.svg';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
+import {
+  grayOutLastSeries,
+  vocabularyWithMissingData,
+} from '../../../utils/analysis';
 
 export const barplotVisualization: VisualizationType = {
   gridComponent: GridComponent,
@@ -77,6 +81,7 @@ const BarplotConfig = t.intersection([
     xAxisVariable: VariableDescriptor,
     overlayVariable: VariableDescriptor,
     facetVariable: VariableDescriptor,
+    showMissingness: t.boolean,
   }),
 ]);
 
@@ -145,22 +150,21 @@ function BarplotViz(props: Props) {
     [updateVizConfig]
   );
 
-  const onDependentAxisLogScaleChange = useCallback(
-    (newState?: boolean) => {
+  // prettier-ignore
+  const onChangeHandlerFactory = useCallback(
+    < ValueType,>(key: keyof BarplotConfig) => (newValue?: ValueType) => {
       updateVizConfig({
-        dependentAxisLogScale: newState,
+        [key]: newValue,
       });
     },
     [updateVizConfig]
   );
-
-  const onValueSpecChange = useCallback(
-    (newValueSpec: ValueSpec) => {
-      updateVizConfig({
-        valueSpec: newValueSpec,
-      });
-    },
-    [updateVizConfig]
+  const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
+    'dependentAxisLogScale'
+  );
+  const onValueSpecChange = onChangeHandlerFactory<ValueSpec>('valueSpec');
+  const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
+    'showMissingness'
   );
 
   const findEntityAndVariable = useFindEntityAndVariable(entities);
@@ -189,10 +193,16 @@ function BarplotViz(props: Props) {
         params as BarplotRequestParams
       );
 
-      return reorderData(
-        barplotResponseToData(await response),
-        variable?.vocabulary,
-        overlayVariable?.vocabulary
+      return grayOutLastSeries(
+        reorderData(
+          barplotResponseToData(await response),
+          variable?.vocabulary,
+          vocabularyWithMissingData(
+            overlayVariable?.vocabulary,
+            vizConfig.showMissingness
+          )
+        ),
+        vizConfig.showMissingness && overlayVariable != null
       );
     }, [
       studyId,
@@ -202,6 +212,7 @@ function BarplotViz(props: Props) {
       vizConfig.overlayVariable,
       vizConfig.facetVariable,
       vizConfig.valueSpec,
+      vizConfig.showMissingness,
       variable,
       overlayVariable,
       computation.type,
@@ -217,10 +228,12 @@ function BarplotViz(props: Props) {
               {
                 name: 'xAxisVariable',
                 label: 'Main',
+                role: 'primary',
               },
               {
                 name: 'overlayVariable',
-                label: 'Overlay (optional)',
+                label: 'Overlay',
+                role: 'stratification',
               },
             ]}
             entities={entities}
@@ -233,7 +246,11 @@ function BarplotViz(props: Props) {
             constraints={dataElementConstraints}
             dataElementDependencyOrder={dataElementDependencyOrder}
             starredVariables={starredVariables}
+            enableShowMissingnessToggle={overlayVariable != null}
             toggleStarredVariable={toggleStarredVariable}
+            onShowMissingnessChange={onShowMissingnessChange}
+            showMissingness={vizConfig.showMissingness}
+            outputEntity={entity}
           />
         </div>
       )}
@@ -418,7 +435,9 @@ export function barplotResponseToData(
       value: data.value,
     })),
     completeCases: response.completeCasesTable,
-    outputSize: response.barplot.config.completeCases,
+    outputSize:
+      response.barplot.config.completeCases +
+      response.barplot.config.plottedIncompleteCases,
   };
 }
 
@@ -438,6 +457,7 @@ function getRequestParams(
       // valueSpec: manually inputted for now
       valueSpec: vizConfig.valueSpec,
       barMode: 'group', // or 'stack'
+      showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
     },
   } as BarplotRequestParams;
 }

@@ -30,6 +30,10 @@ import { CoverageStatistics } from '../../../types/visualization';
 import { at } from 'lodash';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
+import {
+  grayOutLastSeries,
+  vocabularyWithMissingData,
+} from '../../../utils/analysis';
 
 interface PromiseBoxplotData extends CoverageStatistics {
   series: BoxplotData;
@@ -67,6 +71,7 @@ const BoxplotConfig = t.partial({
   yAxisVariable: VariableDescriptor,
   overlayVariable: VariableDescriptor,
   facetVariable: VariableDescriptor,
+  showMissingness: t.boolean,
 });
 
 type Props = VisualizationProps & {
@@ -159,6 +164,19 @@ function BoxplotViz(props: Props) {
     vizConfig.overlayVariable,
   ]);
 
+  // prettier-ignore
+  const onChangeHandlerFactory = useCallback(
+    < ValueType,>(key: keyof BoxplotConfig) => (newValue?: ValueType) => {
+      updateVizConfig({
+        [key]: newValue,
+      });
+    },
+    [updateVizConfig]
+  );
+  const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
+    'showMissingness'
+  );
+
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
   const outputEntity = useFindOutputEntity(
     dataElementDependencyOrder,
@@ -187,7 +205,8 @@ function BoxplotViz(props: Props) {
         vizConfig.yAxisVariable,
         vizConfig.overlayVariable,
         // pass outputEntity.id
-        outputEntity?.id
+        outputEntity?.id,
+        vizConfig.showMissingness
       );
 
       // boxplot
@@ -197,10 +216,16 @@ function BoxplotViz(props: Props) {
       );
 
       // send visualization.type as well
-      return reorderData(
-        boxplotResponseToData(await response),
-        xAxisVariable.vocabulary,
-        overlayVariable?.vocabulary
+      return grayOutLastSeries(
+        reorderData(
+          boxplotResponseToData(await response),
+          xAxisVariable.vocabulary,
+          vocabularyWithMissingData(
+            overlayVariable?.vocabulary,
+            vizConfig.showMissingness
+          )
+        ),
+        vizConfig.showMissingness && overlayVariable != null
       );
     }, [
       studyId,
@@ -225,14 +250,17 @@ function BoxplotViz(props: Props) {
               {
                 name: 'xAxisVariable',
                 label: 'X-axis',
+                role: 'primary',
               },
               {
                 name: 'yAxisVariable',
                 label: 'Y-axis',
+                role: 'primary',
               },
               {
                 name: 'overlayVariable',
-                label: 'Overlay (Optional)',
+                label: 'Overlay',
+                role: 'stratification',
               },
             ]}
             entities={entities}
@@ -246,6 +274,10 @@ function BoxplotViz(props: Props) {
             dataElementDependencyOrder={dataElementDependencyOrder}
             starredVariables={starredVariables}
             toggleStarredVariable={toggleStarredVariable}
+            enableShowMissingnessToggle={overlayVariable != null}
+            showMissingness={vizConfig.showMissingness}
+            onShowMissingnessChange={onShowMissingnessChange}
+            outputEntity={outputEntity}
           />
         </div>
       )}
@@ -395,28 +427,31 @@ export function boxplotResponseToData(
   response: PromiseType<ReturnType<DataClient['getBoxplot']>>
 ): PromiseBoxplotData {
   return {
-    series: response.boxplot.data.map(
-      (data: { [key: string]: any }, index) => ({
-        lowerfence: data.lowerfence,
-        upperfence: data.upperfence,
-        q1: data.q1,
-        q3: data.q3,
-        median: data.median,
-        mean: data.mean ? data.mean : undefined,
-        outliers: data.outliers ? data.outliers : undefined,
-        // currently returns seriesX and seriesY for points: 'all' option
-        // it is necessary to rely on rawData (or seriesX/Y) for boxplot if points: 'all'
-        rawData: data.rawData ? data.rawData : undefined,
-        // this will be used as legend
-        name: data.overlayVariableDetails
-          ? data.overlayVariableDetails.value
-          : 'Data',
-        // this will be used as x-axis tick labels
-        label: data.label, // [response.boxplot.config.xVariableDetails.variableId],
-      })
-    ),
+    series: response.boxplot.data.map((data) => ({
+      lowerfence: data.lowerfence,
+      upperfence: data.upperfence,
+      q1: data.q1,
+      q3: data.q3,
+      median: data.median,
+      mean: data.mean,
+      // correct the {} from back end into []
+      outliers: data.outliers
+        ? data.outliers.map((x: number[] | {}) => (Array.isArray(x) ? x : []))
+        : undefined,
+      // currently returns seriesX and seriesY for points: 'all' option
+      // it is necessary to rely on rawData (or seriesX/Y) for boxplot if points: 'all'
+      rawData: data.rawData ? data.rawData : undefined,
+      // this will be used as legend
+      name: data.overlayVariableDetails
+        ? data.overlayVariableDetails.value
+        : 'Data',
+      // this will be used as x-axis tick labels
+      label: data.label, // [response.boxplot.config.xVariableDetails.variableId],
+    })),
     completeCases: response.completeCasesTable,
-    outputSize: response.boxplot.config.completeCases,
+    outputSize:
+      response.boxplot.config.completeCases +
+      response.boxplot.config.plottedIncompleteCases,
   };
 }
 
@@ -430,7 +465,8 @@ function getRequestParams(
   yAxisVariable: VariableDescriptor,
   overlayVariable?: VariableDescriptor,
   // pass outputEntityId
-  outputEntityId?: string
+  outputEntityId?: string,
+  showMissingness?: boolean
 ): getRequestParamsProps {
   return {
     studyId,
@@ -444,6 +480,7 @@ function getRequestParams(
       xAxisVariable: xAxisVariable,
       yAxisVariable: yAxisVariable,
       overlayVariable: overlayVariable,
+      showMissingness: showMissingness ? 'TRUE' : 'FALSE',
     },
   } as BoxplotRequestParams;
 }
