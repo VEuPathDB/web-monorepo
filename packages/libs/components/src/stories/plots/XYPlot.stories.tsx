@@ -1053,7 +1053,10 @@ function processInputData<T extends number | string>(
         // type: 'line',
         type: 'scattergl',
         // here, line means upper and lower bounds
-        line: { color: 'transparent', shape: 'spline' },
+        line: {
+          color: defineColors ? 'transparent' : undefined,
+          shape: 'spline',
+        },
       });
     }
 
