@@ -553,7 +553,7 @@ function HistogramPlotWithControls({
             onClick={handleDependentAxisSettingsReset}
             containerStyles={{
               paddingTop: '1.0em',
-              width: '50%',
+              width: '60%',
               float: 'right',
             }}
           />
@@ -588,7 +588,7 @@ function HistogramPlotWithControls({
             onClick={handleIndependentAxisSettingsReset}
             containerStyles={{
               paddingTop: '1.0em',
-              width: '50%',
+              width: '60%',
               float: 'right',
             }}
           />
