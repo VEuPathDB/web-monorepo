@@ -492,6 +492,20 @@ function HistogramPlotWithControls({
     return { min: filter.min, max: filter.max } as NumberOrDateRange;
   }, [filter]);
 
+  // selectedRangeBounds is used for auto-filling the start (or end)
+  // in the SelectedRangeControl
+  const selectedRangeBounds = useMemo((): NumberOrDateRange | undefined => {
+    return data?.series[0]?.summary && data?.valueType
+      ? fullISODateRange(
+          {
+            min: data.series[0].summary.min,
+            max: data.series[0].summary.max,
+          } as NumberOrDateRange,
+          data.valueType
+        )
+      : undefined;
+  }, [data?.series, data?.valueType]);
+
   const widgetHeight = '4em';
 
   return (
@@ -500,6 +514,7 @@ function HistogramPlotWithControls({
         label={`Subset on ${variableName}`}
         valueType={data?.valueType}
         selectedRange={selectedRange}
+        selectedRangeBounds={selectedRangeBounds}
         onSelectedRangeChange={handleSelectedRangeChange}
       />
       <Histogram
