@@ -127,7 +127,7 @@ export function RecordHeading(props) {
 
         {eupath_release ? (
           <div className="eupathdb-RecordOverviewItem">
-            <strong>VEuPathDB release # / date: </strong>
+            <strong>Release # / date: </strong>
             <span>{eupath_release}</span>
           </div>
         ) : null}
