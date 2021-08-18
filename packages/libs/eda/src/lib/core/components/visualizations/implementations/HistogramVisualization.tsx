@@ -272,7 +272,7 @@ function HistogramViz(props: Props) {
               },
               {
                 name: 'overlayVariable',
-                label: 'Overlay (optional)',
+                label: 'Overlay',
                 role: 'stratification',
               },
             ]}

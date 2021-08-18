@@ -74,6 +74,7 @@ const useStyles = makeStyles(
   {
     inputs: {
       display: 'flex',
+      flexWrap: 'wrap',
       marginBottom: '0.5em',
     },
     input: {
@@ -93,9 +94,16 @@ const useStyles = makeStyles(
       fontSize: '1.35em',
       fontWeight: 500,
     },
-    primary: {},
+    primary: {
+      order: 0,
+    },
+    showMissing: {
+      order: 1,
+      flexBasis: '100%',
+      marginTop: '1em',
+    },
     stratification: {
-      border: '1px solid pink',
+      order: 2,
     },
   },
   {
@@ -222,7 +230,8 @@ export function InputVariables(props: Props) {
         ))}
         {onShowMissingnessChange &&
           inputs.filter((input) => input.role === 'stratification').length && (
-            <div className={[classes.input, classes.stratification].join(' ')}>
+            <div className={[classes.input, classes.showMissing].join(' ')}>
+              <h4>Stratification (optional)</h4>
               <Switch
                 label={`Include ${
                   outputEntity
@@ -232,6 +241,10 @@ export function InputVariables(props: Props) {
                 state={showMissingness}
                 onStateChange={onShowMissingnessChange}
                 disabled={!enableShowMissingnessToggle}
+                labelPosition="after"
+                containerStyles={{
+                  marginLeft: '20px',
+                }}
               />
             </div>
           )}

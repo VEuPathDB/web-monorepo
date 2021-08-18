@@ -398,7 +398,7 @@ function MosaicViz(props: Props) {
               },
               {
                 name: 'facetVariable',
-                label: 'Facet (optional)',
+                label: 'Facet (placeholder)',
                 role: 'stratification',
               },
             ]}

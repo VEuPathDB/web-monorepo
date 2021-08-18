@@ -313,7 +313,7 @@ function ScatterplotViz(props: Props) {
               },
               {
                 name: 'overlayVariable',
-                label: 'Overlay (optional)',
+                label: 'Overlay',
                 role: 'stratification',
               },
             ]}

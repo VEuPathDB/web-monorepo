@@ -259,7 +259,7 @@ function BoxplotViz(props: Props) {
               },
               {
                 name: 'overlayVariable',
-                label: 'Overlay (Optional)',
+                label: 'Overlay',
                 role: 'stratification',
               },
             ]}
