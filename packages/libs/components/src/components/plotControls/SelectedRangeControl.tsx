@@ -5,6 +5,7 @@ import {
 import LabelledGroup from '../widgets/LabelledGroup';
 import { NumberOrDateRange, NumberRange, DateRange } from '../../types/general';
 import { ContainerStylesAddon, ValueTypeAddon } from '../../types/plots';
+import { useCallback } from 'react';
 
 export interface SelectedRangeControlProps
   extends ValueTypeAddon,
@@ -15,8 +16,10 @@ export interface SelectedRangeControlProps
   selectedRange?: NumberOrDateRange;
   /** function to call upon selecting a range (in independent axis). Optional */
   onSelectedRangeChange?: (newRange?: NumberOrDateRange) => void;
-  /** Min and max allowed values for the selected range. Optional */
+  /** Min and max allowed values for the selected range. Used to auto-fill start or end. Optional */
   selectedRangeBounds?: NumberOrDateRange; // TO DO: handle DateRange too
+  /** Do we enforce the range bounds? Default is false */
+  enforceBounds?: boolean;
   /** show a clear button, optional, default is true */
   showClearButton?: boolean;
 }
@@ -27,9 +30,25 @@ export default function SelectedRangeControl({
   selectedRange,
   onSelectedRangeChange,
   selectedRangeBounds,
+  enforceBounds = false,
   showClearButton = true,
   containerStyles,
 }: SelectedRangeControlProps) {
+  const validator = enforceBounds
+    ? undefined
+    : // use a custom validator when we don't want to
+      // actually constrain the range between the bounds.
+      useCallback((range?: NumberOrDateRange) => {
+        if (range && range?.min > range?.max) {
+          return {
+            validity: false,
+            message: 'Range start cannot be above range end',
+          };
+        } else {
+          return { validity: true, message: '' };
+        }
+      }, []);
+
   return onSelectedRangeChange ? (
     <LabelledGroup label={label}>
       {valueType != null && valueType === 'date' ? (
@@ -40,6 +59,7 @@ export default function SelectedRangeControl({
           allowPartialRange={false}
           showClearButton={showClearButton}
           containerStyles={containerStyles}
+          validator={validator}
         />
       ) : (
         <NumberRangeInput
@@ -49,6 +69,7 @@ export default function SelectedRangeControl({
           allowPartialRange={false}
           showClearButton={showClearButton}
           containerStyles={containerStyles}
+          validator={validator}
         />
       )}
     </LabelledGroup>
