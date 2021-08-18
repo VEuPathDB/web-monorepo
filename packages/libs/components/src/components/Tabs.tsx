@@ -3,7 +3,10 @@ import { Tabs as MUITabs, Tab, AppBar } from '@material-ui/core';
 import { TabPanel, TabContext } from '@material-ui/lab';
 
 interface Props {
-  items: Array<[string, React.ReactElement]>;
+  tabs: Array<{
+    name: string;
+    content: React.ReactElement;
+  }>;
 }
 
 export default function Tabs(props: Props) {
@@ -18,14 +21,14 @@ export default function Tabs(props: Props) {
       <TabContext value={activeTab}>
         <AppBar position="static">
           <MUITabs value={Number(activeTab)} onChange={handleChange}>
-            {props.items.map((item, index) => (
-              <Tab key={index} label={item[0]} />
+            {props.tabs.map((tab, index) => (
+              <Tab key={index} label={tab.name} />
             ))}
           </MUITabs>
         </AppBar>
-        {props.items.map((item, index) => (
+        {props.tabs.map((tab, index) => (
           <TabPanel key={index} value={String(index)}>
-            {item[1]}
+            {tab.content}
           </TabPanel>
         ))}
       </TabContext>
