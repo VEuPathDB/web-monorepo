@@ -2251,6 +2251,18 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/eslint-config/-/eslint-config-1.0.0.tgz#40dc855b263bd3fd68f8f61508ef55b1dc163caf"
   integrity sha512-UDgRQYsIdfB9KCkBmeqMjVQOQAAGB8RLFUj4KlLAxRcT5TlRI47ZmofB3/NMbpIHP27/pk1bryPo7z4DMwWyeQ==
 
+"@veupathdb/preferred-organisms@^0.1.1-beta.7":
+  version "0.1.1-beta.7"
+  resolved "https://registry.yarnpkg.com/@veupathdb/preferred-organisms/-/preferred-organisms-0.1.1-beta.7.tgz#3f5be1734828fd963e03c927911ce60960315f55"
+  integrity sha512-YRZAmYjsH3sbtmXALB8U89UcKgvu4nLfZIXVGvpla3wsP6AKCjV9C+tswfKK+dM0cSodr6g3oaLwgcg3YULqYw==
+  dependencies:
+    "@veupathdb/wdk-client" "^0.3.0"
+    "@veupathdb/web-common" "^0.1.5"
+    lodash "^4.17.21"
+    react "^17.0.1"
+    react-dom "^17.0.1"
+    recoil "^0.2.0"
+
 "@veupathdb/prettier-config@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@veupathdb/prettier-config/-/prettier-config-1.0.0.tgz#6c138be7ce1c4418c7cac5609acdbc5e98bad94c"
@@ -2323,6 +2335,15 @@
   version "0.1.1-alpha.11"
   resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.1.1-alpha.11.tgz#66598c0433755ef7961571d9939c0b5932a76610"
   integrity sha512-0oIKjRjaiO27T1JFEbRRqeDYwHqMmrtOxrCbkmvIytkeaONiiLXNWNyhEIs9UnWtYDebYX9+LVMCQUD6v9BXCA==
+  dependencies:
+    custom-event-polyfill "^1.0.7"
+    md5 "^2.3.0"
+    whatwg-fetch "^3.5.0"
+
+"@veupathdb/web-common@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.1.5.tgz#3d664a8d815fb9731433fe0895fe7e4810f334c2"
+  integrity sha512-SSHbv3ZIho3xmkIY9prkpw/S5EKRumZj05RxfjtLkwBKiZ9k31Nd6owBD/ykmF3rwOwm4UST1PQMv3jL23zKuA==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
@@ -5945,6 +5966,11 @@ gzip-size@5.1.1:
     duplexer "^0.1.1"
     pify "^4.0.1"
 
+hamt_plus@1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/hamt_plus/-/hamt_plus-1.0.2.tgz#e21c252968c7e33b20f6a1b094cd85787a265601"
+  integrity sha1-4hwlKWjH4zsg9qGwlM2FeHomVgE=
+
 handle-thing@^2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/handle-thing/-/handle-thing-2.0.1.tgz#857f79ce359580c340d43081cc648970d0bb234e"
@@ -7749,7 +7775,7 @@ lodash.uniq@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"
   integrity sha512-PlhdFcillOINfeV7Ni6oF1TAEayyZBoZ8bcshTHqOYJYlrqzRK5hagpagky5o4HfCzzd1TRkXPMFq6cKk9rGmA==
 
-lodash@^4.17.5:
+lodash@^4.17.21, lodash@^4.17.5:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
@@ -10339,6 +10365,13 @@ readdirp@~3.5.0:
   integrity sha512-cMhu7c/8rdhkHXWsY+osBhfSy0JikwpHK/5+imo+LpeasTF8ouErHrlYkwT0++njiyuDvc7OFY5T3ukvZ8qmFQ==
   dependencies:
     picomatch "^2.2.1"
+
+recoil@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/recoil/-/recoil-0.2.0.tgz#69344b5bec3129272560d8d9d6001ada3ee4d80c"
+  integrity sha512-VOJfYVQ3VgmfS7L5tV9QdOR+AJhvll8yGr1+3nJPCqADulImuScGZ2sJtejPps3zfTu/o98y5kO4lje8Tx6XHw==
+  dependencies:
+    hamt_plus "1.0.2"
 
 recursive-readdir@2.2.2:
   version "2.2.2"
