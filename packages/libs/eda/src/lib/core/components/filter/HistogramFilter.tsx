@@ -387,27 +387,6 @@ function HistogramPlotWithControls({
   entityName,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
-  const handleSelectedRangeChange = useCallback(
-    (range?: NumberOrDateRange) => {
-      if (range) {
-        updateFilter({
-          min:
-            typeof range.min === 'string'
-              ? padISODateTime(range.min)
-              : range.min,
-          max:
-            typeof range.max === 'string'
-              ? padISODateTime(range.max)
-              : range.max,
-        } as NumberOrDateRange);
-      } else {
-        updateFilter(); // clear the filter if range is undefined
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data, updateFilter]
-  );
-
   const handleBinWidthChange = useCallback(
     (newBinWidth: NumberOrTimeDelta) => {
       updateUIState({
@@ -492,6 +471,8 @@ function HistogramPlotWithControls({
     return { min: filter.min, max: filter.max } as NumberOrDateRange;
   }, [filter]);
 
+  // selectedRangeBounds is used for auto-filling the start (or end)
+  // in the SelectedRangeControl
   const selectedRangeBounds = useMemo((): NumberOrDateRange | undefined => {
     return data?.series[0]?.summary && data?.valueType
       ? fullISODateRange(
@@ -503,6 +484,32 @@ function HistogramPlotWithControls({
         )
       : undefined;
   }, [data?.series, data?.valueType]);
+
+  const handleSelectedRangeChange = useCallback(
+    (range?: NumberOrDateRange) => {
+      if (range) {
+        updateFilter(
+          enforceBounds(
+            {
+              min:
+                typeof range.min === 'string'
+                  ? padISODateTime(range.min)
+                  : range.min,
+              max:
+                typeof range.max === 'string'
+                  ? padISODateTime(range.max)
+                  : range.max,
+            } as NumberOrDateRange,
+            selectedRangeBounds
+          )
+        );
+      } else {
+        updateFilter(); // clear the filter if range is undefined
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [updateFilter, selectedRangeBounds]
+  );
 
   const widgetHeight = '4em';
 
@@ -520,7 +527,6 @@ function HistogramPlotWithControls({
         data={data}
         interactive={true}
         selectedRange={selectedRange}
-        selectedRangeBounds={selectedRangeBounds}
         opacity={opacity}
         displayLegend={displayLegend}
         displayLibraryControls={displayLibraryControls}
@@ -529,7 +535,6 @@ function HistogramPlotWithControls({
         dependentAxisLabel={`Count of ${entityName}`}
         // add independentAxisLabel
         independentAxisLabel={variableName}
-        isZoomed={uiState.independentAxisRange ? true : false}
         independentAxisRange={uiState.independentAxisRange}
         dependentAxisRange={uiState.dependentAxisRange}
         dependentAxisLogScale={uiState.dependentAxisLogScale}
@@ -568,7 +573,7 @@ function HistogramPlotWithControls({
             onClick={handleDependentAxisSettingsReset}
             containerStyles={{
               paddingTop: '1.0em',
-              width: '50%',
+              width: '60%',
               float: 'right',
             }}
           />
@@ -603,7 +608,7 @@ function HistogramPlotWithControls({
             onClick={handleIndependentAxisSettingsReset}
             containerStyles={{
               paddingTop: '1.0em',
-              width: '50%',
+              width: '60%',
               float: 'right',
             }}
           />
@@ -669,5 +674,19 @@ function computeBinSlider(
       const min = rangeSize / 1000;
       return { min, max, step: min };
     }
+  }
+}
+
+function enforceBounds(
+  range: NumberOrDateRange,
+  bounds: NumberOrDateRange | undefined
+) {
+  if (bounds) {
+    return {
+      min: range.min < bounds.min ? bounds.min : range.min,
+      max: range.max > bounds.max ? bounds.max : range.max,
+    } as NumberOrDateRange;
+  } else {
+    return range;
   }
 }
