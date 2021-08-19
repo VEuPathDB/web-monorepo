@@ -264,6 +264,7 @@ const NewSearchForm = ({
         submissionMetadata: submissionMetadata,
         submitButtonText: 'Continue...'
       }}
+      fallback={<Loading />}
     />
   );
 }
@@ -367,5 +368,6 @@ const ColocationOperatorForm = (
           submissionMetadata: submissionMetadata,
           FormComponent: FormComponent
         }}
+        fallback={<Loading />}
       />;
 };

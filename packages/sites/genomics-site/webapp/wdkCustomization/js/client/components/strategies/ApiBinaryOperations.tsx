@@ -6,6 +6,7 @@ import { Props as FormProps } from '@veupathdb/wdk-client/lib/Views/Question/Def
 import { ColocateStepMenu } from './ColocateStepMenu';
 import { ColocateStepForm } from './ColocateStepForm';
 import { SpanLogicForm } from '../questions/SpanLogicForm';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import { NewStepSpec, Step } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { SubmissionMetadata } from '@veupathdb/wdk-client/lib/Actions/QuestionActions';
@@ -148,6 +149,7 @@ export const apiBinaryOperations: BinaryOperation[] = [
                 FormComponent: FormComponent,
                 submitButtonText: 'Revise'
               }}
+              fallback={<Loading />}
             />;
       }
     },

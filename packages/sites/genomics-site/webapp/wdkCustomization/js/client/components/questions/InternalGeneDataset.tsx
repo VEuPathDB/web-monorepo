@@ -419,6 +419,7 @@ function InternalGeneDatasetContent(props: Props) {
                               shouldChangeDocumentTitle: false
                             }}
                             defaultComponent={QuestionController}
+                            fallback={<Loading />}
                           />
                         )
                       };
