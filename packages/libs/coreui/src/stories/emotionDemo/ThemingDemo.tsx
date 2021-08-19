@@ -4,7 +4,7 @@ import H2 from '../../components/headers/H2';
 import styleDefinitions from '../../styleDefinitions';
 
 export default function ThemingDemo() {
-  const theme = useTheme();
+  const theme: any = useTheme();
 
   return (
     <div
@@ -16,9 +16,12 @@ export default function ThemingDemo() {
         width: '50%',
       }}
     >
-      <H1 color={theme.primaryColor} additionalStyles={{ margin: 0 }}>
-        Hello There
-      </H1>
+      <H1
+        color={theme.primaryColor}
+        additionalStyles={{ margin: 0 }}
+        text={'Hello There'}
+      />
+
       <p css={[styleDefinitions.typography.p, { color: theme.secondaryColor }]}>
         Emotion has built-in theming support. It will be easy to start using
         themes in our apps. You can adjust the theme colors using the Storybook

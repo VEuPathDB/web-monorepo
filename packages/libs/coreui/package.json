@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/core-components",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Core components and style definitions for VEuPath applications.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

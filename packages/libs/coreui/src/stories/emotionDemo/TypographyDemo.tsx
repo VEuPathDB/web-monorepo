@@ -138,13 +138,9 @@ export default function TypographyDemo() {
             <H3 color={DARK_RED} textTransform="lowercase">Prebuilt H3</H3>`}
           </pre>
         </div>
-        <H1 underline>Prebuilt H1</H1>
-        <H2 color={DARK_BLUE} textTransform='uppercase'>
-          Prebuilt H2
-        </H2>
-        <H3 color={DARK_RED} textTransform='lowercase'>
-          Prebuilt H3
-        </H3>
+        <H1 underline text='Prebuilt H1' />
+        <H2 color={DARK_BLUE} textTransform='uppercase' text='Prebuilt H2' />
+        <H3 color={DARK_RED} textTransform='lowercase' text='Prebuilt H3' />
       </div>
     </div>
   );
