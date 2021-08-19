@@ -2300,10 +2300,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/tsconfig/-/tsconfig-1.0.1.tgz#a2b748b46838af1337ca9f23d969993fb952def4"
   integrity sha512-i6gq7mgnyEN8/xW5EaI9RiWCwS1oB8cgWqx9h5w4vZtnb10oiyyepD640l9x/gZf6IWecjynRs7weDgSRs7l0Q==
 
-"@veupathdb/wdk-client@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.1.1.tgz#4c4dafbc3366af7827a0892ccbc5e862b8a2a608"
-  integrity sha512-MvnHXTmk9gs99Wh38taH1W5C7t+GI6llHPSaqJVp4gpd0AaM3997EF7sdqLXq70lzjQ5ViTjEXqZfU1iuJEDsQ==
+"@veupathdb/wdk-client@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.3.0.tgz#50faecbfe8128b598aed6e5c8e44796bb661a17f"
+  integrity sha512-hXW0z5xbOacog01jrDy3r5ElkuSaKhD+Jzeg5JLwZSKfjWS1vBgKXUFAJrLnfwNDsYdjCRxvYv6kYLQfqcy/sQ==
   dependencies:
     "@types/datatables.net" "^1.10.5"
     "@types/flot" "^0.0.31"
@@ -2347,10 +2347,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.1.1-alpha.11":
-  version "0.1.1-alpha.11"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.1.1-alpha.11.tgz#66598c0433755ef7961571d9939c0b5932a76610"
-  integrity sha512-0oIKjRjaiO27T1JFEbRRqeDYwHqMmrtOxrCbkmvIytkeaONiiLXNWNyhEIs9UnWtYDebYX9+LVMCQUD6v9BXCA==
+"@veupathdb/web-common@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.1.5.tgz#3d664a8d815fb9731433fe0895fe7e4810f334c2"
+  integrity sha512-SSHbv3ZIho3xmkIY9prkpw/S5EKRumZj05RxfjtLkwBKiZ9k31Nd6owBD/ykmF3rwOwm4UST1PQMv3jL23zKuA==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
