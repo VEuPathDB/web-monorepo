@@ -532,7 +532,7 @@ function HistogramPlotWithControls({
         displayLibraryControls={displayLibraryControls}
         onSelectedRangeChange={handleSelectedRangeChange}
         barLayout={barLayout}
-        dependentAxisLabel={`Count of ${entityName}`}
+        dependentAxisLabel="Count"
         // add independentAxisLabel
         independentAxisLabel={variableName}
         independentAxisRange={uiState.independentAxisRange}
