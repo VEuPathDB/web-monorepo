@@ -367,6 +367,64 @@ const TemplateStaticWithRangeControls: Story<HistogramProps> = (args) => {
     setIndependentAxisRange(newRange);
   };
 
+  // here we figure out if any of the axes are truncated
+  useEffect(() => {
+    if (args.data == null) return;
+    const allBins = args.data.series.flatMap((series) => series.bins);
+
+    // left truncation
+    if (independentAxisRange?.min != null) {
+      // if min is to the right of more than one binStart
+      // then it's truncated. (Histogram now adjusts the x-range to include partially cut off bins.)
+      if (
+        allBins.filter((bin) => independentAxisRange.min >= bin.binStart)
+          .length > 1
+      ) {
+        console.log('x-axis left-truncated');
+      }
+    }
+
+    // right truncation
+    if (independentAxisRange?.max != null) {
+      // if max is to the left of more than one binEnd
+      // then it's truncated. (Histogram now adjusts the x-range to include partially cut off bins.)
+      if (
+        allBins.filter((bin) => independentAxisRange.max <= bin.binEnd).length >
+        1
+      ) {
+        console.log('x-axis right-truncated');
+      }
+    }
+
+    const xFilteredBins = allBins.filter(
+      (bin) =>
+        (independentAxisRange?.min == null ||
+          bin.binEnd > independentAxisRange?.min) &&
+        (independentAxisRange?.max == null ||
+          bin.binStart < independentAxisRange?.max)
+    );
+
+    // top truncation
+    if (dependentAxisRange?.max != null) {
+      if (
+        xFilteredBins.filter((bin) => bin.count > dependentAxisRange.max).length
+      ) {
+        console.log('truncated top');
+      }
+    }
+
+    // bottom truncation (doesn't detect bars with bottoms shaved off but does
+    // catch when a bar is completely missing)
+    if (dependentAxisRange?.min != null) {
+      if (
+        xFilteredBins.filter((bin) => bin.count <= dependentAxisRange.min)
+          .length
+      ) {
+        console.log('truncated bottom');
+      }
+    }
+  }, [args.data, dependentAxisRange, independentAxisRange]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Histogram
