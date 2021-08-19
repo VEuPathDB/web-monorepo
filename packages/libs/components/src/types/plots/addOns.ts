@@ -83,6 +83,23 @@ export type ContainerStylesAddon = {
   containerStyles?: CSSProperties;
 };
 
+/** truncated axis flags */
+export type AxisTruncationAddon = {
+  /** truncation config (flags) to show truncated axis (true) or not (false) */
+  truncationConfig?: TruncationConfig;
+};
+
+export type TruncationConfig = {
+  independentAxis?: {
+    min?: boolean;
+    max?: boolean;
+  };
+  dependentAxis?: {
+    min?: boolean;
+    max?: boolean;
+  };
+};
+
 /** PlotData addons */
 export type AvailableUnitsAddon =
   | {

@@ -12,7 +12,7 @@ import HistogramControls from '../../components/plotControls/HistogramControls';
 import AxisRangeControl from '../../components/plotControls/AxisRangeControl';
 import { binDailyCovidStats } from '../api/covidData';
 import { binGithubEventDates } from '../api/githubDates';
-import { HistogramData } from '../../types/plots';
+import { HistogramData, TruncationConfig } from '../../types/plots';
 
 export default {
   title: 'Plots/Histogram',
@@ -355,6 +355,10 @@ const TemplateStaticWithRangeControls: Story<HistogramProps> = (args) => {
     setIndependentAxisRange,
   ] = useState<NumberOrDateRange>();
 
+  const [truncationConfig, setTruncationConfig] = useState<TruncationConfig>(
+    {}
+  );
+
   const handleDependentAxisRangeChange = async (
     newRange?: NumberOrDateRange
   ) => {
@@ -369,33 +373,28 @@ const TemplateStaticWithRangeControls: Story<HistogramProps> = (args) => {
 
   // here we figure out if any of the axes are truncated
   useEffect(() => {
-    if (args.data == null) return;
+    if (args.data == null) {
+      setTruncationConfig({});
+      return;
+    }
+
     const allBins = args.data.series.flatMap((series) => series.bins);
 
-    // left truncation
-    if (independentAxisRange?.min != null) {
-      // if min is to the right of more than one binStart
-      // then it's truncated. (Histogram now adjusts the x-range to include partially cut off bins.)
-      if (
-        allBins.filter((bin) => independentAxisRange.min >= bin.binStart)
-          .length > 1
-      ) {
-        console.log('x-axis left-truncated');
-      }
-    }
+    // if min is to the right of more than one binStart
+    // then it's left-truncated. (Histogram now adjusts the x-range to include partially cut off bins.)
+    const leftTruncated =
+      independentAxisRange?.min != null &&
+      allBins.filter((bin) => independentAxisRange.min >= bin.binStart).length >
+        1;
 
-    // right truncation
-    if (independentAxisRange?.max != null) {
-      // if max is to the left of more than one binEnd
-      // then it's truncated. (Histogram now adjusts the x-range to include partially cut off bins.)
-      if (
-        allBins.filter((bin) => independentAxisRange.max <= bin.binEnd).length >
-        1
-      ) {
-        console.log('x-axis right-truncated');
-      }
-    }
+    // if max is to the left of more than one binEnd
+    // then it's right-truncated. (Histogram now adjusts the x-range to include partially cut off bins.)
+    const rightTruncated =
+      independentAxisRange?.max != null &&
+      allBins.filter((bin) => independentAxisRange.max <= bin.binEnd).length >
+        1;
 
+    // filter to keep only bins that would be kept on the x-axis
     const xFilteredBins = allBins.filter(
       (bin) =>
         (independentAxisRange?.min == null ||
@@ -404,31 +403,29 @@ const TemplateStaticWithRangeControls: Story<HistogramProps> = (args) => {
           bin.binStart < independentAxisRange?.max)
     );
 
-    // top truncation
-    if (dependentAxisRange?.max != null) {
-      if (
-        xFilteredBins.filter((bin) => bin.count > dependentAxisRange.max).length
-      ) {
-        console.log('truncated top');
-      }
-    }
+    const topTruncated =
+      dependentAxisRange?.max != null &&
+      xFilteredBins.filter((bin) => bin.count > dependentAxisRange.max).length >
+        0;
 
     // bottom truncation (doesn't detect bars with bottoms shaved off but does
     // catch when a bar is completely missing)
-    if (dependentAxisRange?.min != null) {
-      if (
-        xFilteredBins.filter((bin) => bin.count <= dependentAxisRange.min)
-          .length
-      ) {
-        console.log('truncated bottom');
-      }
-    }
+    const bottomTruncated =
+      dependentAxisRange?.min != null &&
+      xFilteredBins.filter((bin) => bin.count <= dependentAxisRange.min)
+        .length > 0;
+
+    setTruncationConfig({
+      independentAxis: { min: leftTruncated, max: rightTruncated },
+      dependentAxis: { min: bottomTruncated, max: topTruncated },
+    });
   }, [args.data, dependentAxisRange, independentAxisRange]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Histogram
         {...args}
+        truncationConfig={truncationConfig}
         independentAxisRange={independentAxisRange}
         dependentAxisRange={dependentAxisRange}
       />

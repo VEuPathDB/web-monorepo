@@ -12,6 +12,7 @@ import {
   BarLayoutAddon,
   DependentAxisLogScaleAddon,
   DependentAxisLogScaleDefault,
+  AxisTruncationAddon,
 } from '../types/plots';
 import { NumberOrDateRange, NumberRange } from '../types/general';
 
@@ -45,7 +46,8 @@ export interface HistogramProps
     OrientationAddon,
     OpacityAddon,
     BarLayoutAddon<'overlay' | 'stack'>,
-    DependentAxisLogScaleAddon {
+    DependentAxisLogScaleAddon,
+    AxisTruncationAddon {
   /** Label for independent axis. Defaults to `Bins`. */
   independentAxisLabel?: string;
   /** Label for dependent axis. Defaults to `Count`. */
@@ -86,6 +88,7 @@ export default function Histogram({
   selectedRangeBounds,
   isZoomed = false,
   independentAxisRange,
+  truncationConfig,
   ...restProps
 }: HistogramProps) {
   if (selectedRangeBounds || isZoomed)
