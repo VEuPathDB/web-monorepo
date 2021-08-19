@@ -6,10 +6,6 @@
         { "runtime": "automatic", "importSource": "@emotion/react" }
       ]
     ],
-    "plugins": ["@emotion/babel-plugin"],
-    "ignore": [
-      "stories",
-      "src/stories"
-    ]
+    "plugins": ["@emotion/babel-plugin"]
   }
 

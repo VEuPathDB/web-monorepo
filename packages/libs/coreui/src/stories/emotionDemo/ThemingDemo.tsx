@@ -1,6 +1,7 @@
 import { useTheme } from '@emotion/react';
-import H1 from '../../components/H1';
-import H2 from './H2';
+import H1 from '../../components/headers/H1';
+import H2 from '../../components/headers/H2';
+import styleDefinitions from '../../styleDefinitions';
 
 export default function ThemingDemo() {
   const theme = useTheme();
@@ -15,13 +16,20 @@ export default function ThemingDemo() {
         width: '50%',
       }}
     >
-      <H1 color={theme.primaryColor}>Hello There</H1>
-      <p css={{ color: theme.secondaryColor }}>
+      <H1 color={theme.primaryColor} additionalStyles={{ margin: 0 }}>
+        Hello There
+      </H1>
+      <p css={[styleDefinitions.typography.p, { color: theme.secondaryColor }]}>
         Emotion has built-in theming support. It will be easy to start using
         themes in our apps. You can adjust the theme colors using the Storybook
         controls below.
       </p>
-      <p css={{ color: theme.secondaryColor, marginBottom: 30 }}>
+      <p
+        css={[
+          styleDefinitions.typography.p,
+          { color: theme.secondaryColor, marginBottom: 30 },
+        ]}
+      >
         This is a very simplistic example where I have only added a handful of
         items to the theme, but you can essentially have whatever level of
         complexity you'd like.

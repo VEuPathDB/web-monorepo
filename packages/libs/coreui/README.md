@@ -16,10 +16,11 @@ Our goal is to ameliorate (sorry, word nerd) this problem in the following ways 
 
 1. Install the package: `yarn add @veupathdb/core-components --save` (feel free to substitute NPM for Yarn if you prefer...)
 2. I haven't quite got it figured out how to make sure the right peer dependencies are also installed automatically when you get the package, so you'll need to also install them manually for the moment. You can see what they are by looking at the `peerDependencies` section of the `package.json` file.
-3. Add the following Google font link to your `index.html` file (or equivalent).
+3. Add the following Google font links to your `index.html` file (or equivalent).
    ```
-   <link
-       href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
-       rel="stylesheet"
-   />
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
    ```
+
+## E

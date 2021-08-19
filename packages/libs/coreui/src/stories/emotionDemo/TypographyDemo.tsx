@@ -5,10 +5,10 @@ import {
   LIGHT_COLORS,
   LIGHT_ORANGE,
 } from '../../constants/colors';
-import typographyStyles from '../../styles/typography';
-import H1 from '../../components/H1';
-import H2 from '../../components/H2';
-import H3 from '../../components/H3';
+import typographyStyles from '../../styleDefinitions/typography';
+import H1 from '../../components/headers/H1';
+import H2 from '../../components/headers/H2';
+import H3 from '../../components/headers/H3';
 
 export default function TypographyDemo() {
   return (
