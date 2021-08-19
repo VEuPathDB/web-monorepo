@@ -53,13 +53,15 @@ import { OrganismPreferencesWarning } from './OrganismPreferencesWarning';
 
 type FlatEnumParam = SelectEnumParam | CheckBoxEnumParam | TypeAheadEnumParam;
 
-const ORGANISM_PROPERTIES_KEY = 'organismProperties';
+export const ORGANISM_PROPERTIES_KEY = 'organismProperties';
 
-const PRUNE_NODES_WITH_SINGLE_EXTENDING_CHILD_PROPERTY =
+export const PRUNE_NODES_WITH_SINGLE_EXTENDING_CHILD_PROPERTY =
   'pruneNodesWithSingleExtendingChild';
-const SHOW_ONLY_PREFERRED_ORGANISMS_PROPERTY = 'showOnlyPreferredOrganisms';
-const HIGHLIGHT_REFERENCE_ORGANISMS_PROPERTY = 'highlightReferenceOrganisms';
-const IS_SPECIES_PARAM_PROPERTY = 'isSpeciesParam';
+export const SHOW_ONLY_PREFERRED_ORGANISMS_PROPERTY =
+  'showOnlyPreferredOrganisms';
+export const HIGHLIGHT_REFERENCE_ORGANISMS_PROPERTY =
+  'highlightReferenceOrganisms';
+export const IS_SPECIES_PARAM_PROPERTY = 'isSpeciesParam';
 
 export function OrganismParam(props: Props<Parameter, State>) {
   if (!isOrganismParamProps(props)) {
