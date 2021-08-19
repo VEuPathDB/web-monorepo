@@ -13,6 +13,7 @@ import {
   DependentAxisLogScaleAddon,
   DependentAxisLogScaleDefault,
   AxisTruncationAddon,
+  TruncationConfig,
 } from '../types/plots';
 import { NumberOrDateRange, NumberRange } from '../types/general';
 
@@ -298,32 +299,53 @@ export default function Histogram({
     }
   }, [selectingRange, selectedRange, orientation, data.series]);
 
-  const plotlyIndependentAxisRange = useMemo(() => {
-    if (binSummaries.length === 0) return [undefined, undefined];
+  const standardIndependentAxisRange:
+    | NumberOrDateRange
+    | undefined = useMemo(() => {
+    if (binSummaries.length === 0) return undefined;
 
     // If independentAxisRange (x-axis) is provided
     // adjust the min of the range to the binStart of the bin that contains that value.
     // Likewise, adjust the max of the range to the binEnd of the bin that contains it.
     // This avoids partial bins being displayed.
-    return [
-      independentAxisRange?.min != null
-        ? (
-            findLast(
-              binSummaries,
-              (bs) => independentAxisRange?.min >= bs.binStart
-            ) ?? { binStart: independentAxisRange?.min }
-          )?.binStart
-        : first(binSummaries)?.binStart,
-      independentAxisRange?.max != null
-        ? (
-            find(
-              binSummaries,
-              (bs) => independentAxisRange?.max <= bs.binEnd
-            ) ?? { binEnd: independentAxisRange?.max }
-          )?.binEnd
-        : last(binSummaries)?.binEnd,
-    ] as (number | string)[];
+    return {
+      min:
+        independentAxisRange?.min != null
+          ? (
+              findLast(
+                binSummaries,
+                (bs) => independentAxisRange?.min >= bs.binStart
+              ) ?? { binStart: independentAxisRange?.min }
+            )?.binStart
+          : first(binSummaries)?.binStart,
+      max:
+        independentAxisRange?.max != null
+          ? (
+              find(
+                binSummaries,
+                (bs) => independentAxisRange?.max <= bs.binEnd
+              ) ?? { binEnd: independentAxisRange?.max }
+            )?.binEnd
+          : last(binSummaries)?.binEnd,
+    } as NumberOrDateRange;
   }, [data?.valueType, independentAxisRange, binSummaries]);
+
+  const extendedIndependentAxisRange = extendAxisRangeForTruncations(
+    standardIndependentAxisRange,
+    truncationConfig?.independentAxis,
+    data.valueType
+  );
+
+  /**
+   * TO DO:
+   * Here we would compare extendedIndependentAxisRange.min with standardIndependentAxisRange.min and add
+   * a rectangle shape on the left if needed.  Same for *.max and the right rectangle.
+   */
+
+  const plotlyIndependentAxisRange = [
+    extendedIndependentAxisRange?.min,
+    extendedIndependentAxisRange?.max,
+  ];
 
   const independentAxisLayout: Layout['xaxis'] | Layout['yaxis'] = {
     type: data?.valueType === 'date' ? 'date' : 'linear',
@@ -348,6 +370,18 @@ export default function Histogram({
     );
   }, [data.series]);
 
+  // just rename this for symmetry/clarity
+  const standardDependentAxisRange = dependentAxisRange;
+
+  /**
+   * TO DO: compare extended vs standard and add rectangles where necessary
+   */
+
+  const extendedDependentAxisRange = extendAxisRangeForTruncations(
+    standardDependentAxisRange,
+    truncationConfig?.dependentAxis
+  ) as NumberRange | undefined;
+
   const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
     type: dependentAxisLogScale ? 'log' : 'linear',
     tickformat: dependentAxisLogScale ? ',.1r' : undefined, // comma-separated thousands, rounded to 1 significant digit
@@ -362,7 +396,10 @@ export default function Histogram({
     },
     // range should be an array
     range: data.series.length
-      ? [dependentAxisRange?.min, dependentAxisRange?.max].map((val) =>
+      ? [
+          extendedDependentAxisRange?.min,
+          extendedDependentAxisRange?.max,
+        ].map((val) =>
           dependentAxisLogScale && val != null ? Math.log10(val || 1) : val
         )
       : [0, 10],
@@ -396,4 +433,28 @@ export default function Histogram({
       {...restProps}
     />
   );
+}
+
+/**
+ * This can probably be moved to a utils directory when re-used by other plots
+ *
+ */
+function extendAxisRangeForTruncations(
+  axisRange?: NumberOrDateRange,
+  config?: TruncationConfig['independentAxis' | 'dependentAxis'],
+  valueType: 'number' | 'date' = 'number'
+): NumberOrDateRange | undefined {
+  return axisRange; // no-op placeholder
+
+  /*
+     If axisRange undefined, or its min or max are undefined, just `return axisRange`
+
+     if config.min is true, the returned axisRange should have an extra 5% added below its min
+     (e.g. newMin = oldMin - 0.05*(oldMax-oldMin) (a bit more code needed for dates...))
+     otherwise the returned axisRange.min should be unchanged
+
+     if config.max is true, the returned axisRange should have an extra 5% added above its max
+     otherwise return unchanged axisRange.max
+
+   */
 }
