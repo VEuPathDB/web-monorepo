@@ -23,12 +23,13 @@ import { GenesByBindingSiteFeature } from './components/questions/GenesByBinding
 import { GenesByOrthologPattern } from './components/questions/GenesByOrthologPattern';
 import { InternalGeneDataset } from './components/questions/InternalGeneDataset';
 import { hasChromosomeAndSequenceIDXorGroup } from './components/questions/MutuallyExclusiveParams/utils';
-import { OrganismParam, isOrganismParam } from './components/questions/OrganismParam';
 import { CompoundsByFoldChangeForm, GenericFoldChangeForm } from './components/questions/foldChange';
 
 import { BlastForm } from '@veupathdb/multi-blast/lib/components/BlastForm';
 import { BlastController } from '@veupathdb/multi-blast/lib/controllers/BlastController';
 import { isMultiBlastQuestion } from '@veupathdb/multi-blast/lib/utils/pluginConfig';
+
+import { OrganismParam, isOrganismParam } from '@veupathdb/preferred-organisms/lib/components/OrganismParam';
 
 const isInternalGeneDatasetQuestion: ClientPluginRegistryEntry<any>['test'] =
   ({ question }) => (

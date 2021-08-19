@@ -20,11 +20,11 @@ import { QuestionHeader } from '@veupathdb/wdk-client/lib/Views/Question/Default
 
 import { formatLink } from '@veupathdb/web-common/lib/components/records/DatasetRecordClasses.DatasetRecordClass';
 
+import { OrganismPreferencesWarning } from '@veupathdb/preferred-organisms/lib/components/OrganismPreferencesWarning';
 import { usePreferredOrganismsState, usePreferredOrganismsEnabledState } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
 
 import { isPreferredDataset } from '../../util/preferredOrganisms';
 
-import { OrganismPreferencesWarning } from '../common/OrganismPreferencesWarning';
 import { PreferredOrganismsPageLoading } from '../common/PreferredOrganismsPageLoading';
 
 import './InternalGeneDataset.scss';
