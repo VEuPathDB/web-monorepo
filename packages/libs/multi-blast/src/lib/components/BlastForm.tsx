@@ -14,6 +14,7 @@ import { fromPairs, keyBy } from 'lodash';
 import { updateDependentParams } from '@veupathdb/wdk-client/lib/Actions/QuestionActions';
 import {
   IconAlt,
+  Loading,
   RadioList,
   TextArea,
 } from '@veupathdb/wdk-client/lib/Components';
@@ -279,8 +280,9 @@ function BlastFormWithTransformedQuestion(props: Props) {
     BLAST_FORM_CONTAINER_NAME
   )}`;
 
-  return enabledAlgorithms == null ||
-    defaultAdvancedParamsMetadata == null ? null : props.isMultiBlast ? (
+  return enabledAlgorithms == null || defaultAdvancedParamsMetadata == null ? (
+    <Loading />
+  ) : props.isMultiBlast ? (
     <NewJobForm
       {...props}
       containerClassName={containerClassName}

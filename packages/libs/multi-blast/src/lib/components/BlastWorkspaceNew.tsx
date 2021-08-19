@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { RouteComponentProps, StaticContext } from 'react-router';
 
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { QuestionController } from '@veupathdb/wdk-client/lib/Controllers';
 import { Plugin } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
 import { ParameterValues } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
@@ -41,6 +42,7 @@ export function BlastWorkspaceNew(
         FormComponent,
       }}
       defaultComponent={QuestionController}
+      fallback={<Loading />}
     />
   );
 }
