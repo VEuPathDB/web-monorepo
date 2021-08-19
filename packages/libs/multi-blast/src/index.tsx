@@ -1,6 +1,7 @@
 import './globals';
 import React from 'react';
 import { RouteComponentProps } from 'react-router';
+import { RecoilRoot } from 'recoil';
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
 import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
 import {
@@ -10,6 +11,11 @@ import {
 } from '@veupathdb/wdk-client/lib/Plugins';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import { ClientPluginRegistryEntry } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
+
+import {
+  OrganismParam,
+  isOrganismParam,
+} from '@veupathdb/preferred-organisms/lib/components/OrganismParam';
 
 import Header from './Header';
 import Home from './Home';
@@ -68,6 +74,11 @@ initialize({
   ],
   componentWrappers: {
     SiteHeader: () => Header,
+    Page: (DefaultComponent: React.ComponentType) => (props: any) => (
+      <RecoilRoot>
+        <DefaultComponent {...props} />
+      </RecoilRoot>
+    ),
   },
   pluginConfig: [
     {
@@ -94,6 +105,11 @@ initialize({
       type: 'summaryView',
       name: 'blast-view',
       component: BlastSummaryViewPlugin,
+    },
+    {
+      type: 'questionFormParameter',
+      test: ({ parameter }) => parameter != null && isOrganismParam(parameter),
+      component: OrganismParam,
     },
   ] as ClientPluginRegistryEntry<any>[],
   wrapWdkService,
