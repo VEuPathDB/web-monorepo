@@ -288,12 +288,13 @@
   resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-8.3.0.tgz#215c231dff736d5ba92410e6d602050cce7e273f"
   integrity sha512-eQ9qFW/fhfGJF8WKHGEHZEyVWfZxrT+6CLIJGBcZPfxUh/+BnEj+UCGYMlr9qZuX/2AltsvwrGqp0LhEW8D0zQ==
 
-"@veupathdb/multi-blast@^0.2.0-alpha.2":
-  version "0.2.0-alpha.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/multi-blast/-/multi-blast-0.2.0-alpha.2.tgz#eeba10a65edb8a948051d7ae77328f0b81493d7c"
-  integrity sha512-1fmQA9NL1VRv+4YscvSx4CwKeYwupFMUD2VlJmSV70NbCV2LXxiUrlEkJ3gvRSbqKkr+RvE4LXKO6+r5Dq63Yw==
+"@veupathdb/multi-blast@^0.2.0-alpha.3":
+  version "0.2.0-alpha.3"
+  resolved "https://registry.yarnpkg.com/@veupathdb/multi-blast/-/multi-blast-0.2.0-alpha.3.tgz#78e9df91ae4d9a6f1b48f84bcb3d775347b490e3"
+  integrity sha512-mJ1mUbVHevjyRDuPflUQ8ouJGzNIttYfQuj4swIo+6vgwdr8T35iAp0d2vOSb9skWaGvmz2h1Uqpv84vi8Q8uQ==
   dependencies:
     "@types/react-redux" "^7.1.5"
+    "@veupathdb/preferred-organisms" "^0.1.1-beta.8"
     "@veupathdb/wdk-client" "^0.3.0"
     "@veupathdb/web-common" "^0.1.1-alpha.11"
     lodash "^4.17.20"
@@ -302,10 +303,10 @@
     react-redux "^7.1.5"
     react-select "^3.0.4"
 
-"@veupathdb/preferred-organisms@^0.1.1-beta.7":
-  version "0.1.1-beta.7"
-  resolved "https://registry.yarnpkg.com/@veupathdb/preferred-organisms/-/preferred-organisms-0.1.1-beta.7.tgz#3f5be1734828fd963e03c927911ce60960315f55"
-  integrity sha512-YRZAmYjsH3sbtmXALB8U89UcKgvu4nLfZIXVGvpla3wsP6AKCjV9C+tswfKK+dM0cSodr6g3oaLwgcg3YULqYw==
+"@veupathdb/preferred-organisms@^0.1.1-beta.8":
+  version "0.1.1-beta.8"
+  resolved "https://registry.yarnpkg.com/@veupathdb/preferred-organisms/-/preferred-organisms-0.1.1-beta.8.tgz#e094e922ab0f7ccc15af6fe4707c68cb7a001c59"
+  integrity sha512-yXQovnF+dd4IL96q2j04zKDVLXnF4sa748oZxSIfrs+M/pPxGOsVWCpZW+FNhnElkJjBmr6Upcx/RvxNJjfV3g==
   dependencies:
     "@veupathdb/wdk-client" "^0.3.0"
     "@veupathdb/web-common" "^0.1.5"
