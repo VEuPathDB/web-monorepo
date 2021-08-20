@@ -9,6 +9,12 @@ import {
 } from '@veupathdb/wdk-client/lib/Views/Question/Params/EnumParamUtils';
 
 import {
+  IS_SPECIES_PARAM_PROPERTY,
+  ORGANISM_PROPERTIES_KEY,
+  SHOW_ONLY_PREFERRED_ORGANISMS_PROPERTY,
+} from '@veupathdb/preferred-organisms/lib/components/OrganismParam';
+
+import {
   IoBlastCompBasedStats,
   IoBlastConfig,
   IoBlastNDust,
@@ -330,4 +336,36 @@ export function organismParamValueToFilenames(
 
 function stringToBoolean(str: string) {
   return str === 'true';
+}
+
+export function transformOrganismParameter(
+  parameter: Parameter,
+  targetRecordType: string
+): Parameter {
+  const organismProperties =
+    parameter.properties?.[ORGANISM_PROPERTIES_KEY] ?? [];
+
+  const preferredOrganismProperties =
+    targetRecordType === 'popsetSequence'
+      ? []
+      : targetRecordType === 'est'
+      ? [SHOW_ONLY_PREFERRED_ORGANISMS_PROPERTY, IS_SPECIES_PARAM_PROPERTY]
+      : [SHOW_ONLY_PREFERRED_ORGANISMS_PROPERTY];
+
+  const otherOrganismProperties = organismProperties.filter(
+    (property) =>
+      property !== SHOW_ONLY_PREFERRED_ORGANISMS_PROPERTY &&
+      property !== IS_SPECIES_PARAM_PROPERTY
+  );
+
+  return {
+    ...parameter,
+    properties: {
+      ...parameter.properties,
+      [ORGANISM_PROPERTIES_KEY]: [
+        ...preferredOrganismProperties,
+        ...otherOrganismProperties,
+      ],
+    },
+  };
 }
