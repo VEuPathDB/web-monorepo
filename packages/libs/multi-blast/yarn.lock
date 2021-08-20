@@ -2251,10 +2251,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/eslint-config/-/eslint-config-1.0.0.tgz#40dc855b263bd3fd68f8f61508ef55b1dc163caf"
   integrity sha512-UDgRQYsIdfB9KCkBmeqMjVQOQAAGB8RLFUj4KlLAxRcT5TlRI47ZmofB3/NMbpIHP27/pk1bryPo7z4DMwWyeQ==
 
-"@veupathdb/preferred-organisms@^0.1.1-beta.7":
-  version "0.1.1-beta.7"
-  resolved "https://registry.yarnpkg.com/@veupathdb/preferred-organisms/-/preferred-organisms-0.1.1-beta.7.tgz#3f5be1734828fd963e03c927911ce60960315f55"
-  integrity sha512-YRZAmYjsH3sbtmXALB8U89UcKgvu4nLfZIXVGvpla3wsP6AKCjV9C+tswfKK+dM0cSodr6g3oaLwgcg3YULqYw==
+"@veupathdb/preferred-organisms@^0.1.1-beta.8":
+  version "0.1.1-beta.8"
+  resolved "https://registry.yarnpkg.com/@veupathdb/preferred-organisms/-/preferred-organisms-0.1.1-beta.8.tgz#e094e922ab0f7ccc15af6fe4707c68cb7a001c59"
+  integrity sha512-yXQovnF+dd4IL96q2j04zKDVLXnF4sa748oZxSIfrs+M/pPxGOsVWCpZW+FNhnElkJjBmr6Upcx/RvxNJjfV3g==
   dependencies:
     "@veupathdb/wdk-client" "^0.3.0"
     "@veupathdb/web-common" "^0.1.5"
