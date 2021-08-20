@@ -1,10 +1,4 @@
-import React, {
-  Suspense,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-} from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useLocation } from 'react-router';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
@@ -32,7 +26,7 @@ import TreeBoxEnumParamComponent, {
   State,
 } from '@veupathdb/wdk-client/lib/Views/Question/Params/TreeBoxEnumParam';
 import {
-  Props,
+  Props as DefaultParamProps,
   isPropsType,
 } from '@veupathdb/wdk-client/lib/Views/Question/Params/Utils';
 
@@ -63,7 +57,12 @@ export const HIGHLIGHT_REFERENCE_ORGANISMS_PROPERTY =
   'highlightReferenceOrganisms';
 export const IS_SPECIES_PARAM_PROPERTY = 'isSpeciesParam';
 
-export function OrganismParam(props: Props<Parameter, State>) {
+interface OrganismParamProps<T extends Parameter, S = void>
+  extends DefaultParamProps<T, S> {
+  isSearchPage?: boolean;
+}
+
+export function OrganismParam(props: OrganismParamProps<Parameter, State>) {
   if (!isOrganismParamProps(props)) {
     throw new Error(
       `Tried to render non-organism parameter ${props.parameter.name} with OrganismParam.`
@@ -79,21 +78,30 @@ export function OrganismParam(props: Props<Parameter, State>) {
   );
 }
 
-export function ValidatedOrganismParam(props: Props<EnumParam, State>) {
+export function ValidatedOrganismParam(
+  props: OrganismParamProps<EnumParam, State>
+) {
   return props.parameter.displayType === 'treeBox' ? (
-    <TreeBoxOrganismEnumParam {...(props as Props<TreeBoxEnumParam, State>)} />
+    <TreeBoxOrganismEnumParam
+      {...(props as OrganismParamProps<TreeBoxEnumParam, State>)}
+    />
   ) : (
-    <FlatOrganismEnumParam {...(props as Props<FlatEnumParam, State>)} />
+    <FlatOrganismEnumParam
+      {...(props as OrganismParamProps<FlatEnumParam, State>)}
+    />
   );
 }
 
-function TreeBoxOrganismEnumParam(props: Props<TreeBoxEnumParam, State>) {
+function TreeBoxOrganismEnumParam(
+  props: OrganismParamProps<TreeBoxEnumParam, State>
+) {
   const { selectedValues, onChange } = useEnumParamSelectedValues(props);
 
   const paramWithPrunedVocab = useTreeBoxParamWithPrunedVocab(
     props.parameter,
     selectedValues,
-    onChange
+    onChange,
+    props.isSearchPage
   );
 
   const referenceStrains = useReferenceStrains();
@@ -132,13 +140,16 @@ function TreeBoxOrganismEnumParam(props: Props<TreeBoxEnumParam, State>) {
   );
 }
 
-function FlatOrganismEnumParam(props: Props<FlatEnumParam, State>) {
+function FlatOrganismEnumParam(
+  props: OrganismParamProps<FlatEnumParam, State>
+) {
   const { selectedValues, onChange } = useEnumParamSelectedValues(props);
 
   const paramWithPrunedVocab = useFlatParamWithPrunedVocab(
     props.parameter,
     selectedValues,
-    onChange
+    onChange,
+    props.isSearchPage
   );
 
   return hasEmptyVocabularly(paramWithPrunedVocab) ? (
@@ -151,9 +162,14 @@ function FlatOrganismEnumParam(props: Props<FlatEnumParam, State>) {
 function useTreeBoxParamWithPrunedVocab(
   parameter: TreeBoxEnumParam,
   selectedValues: string[],
-  onChange: (newValue: string[]) => void
+  onChange: (newValue: string[]) => void,
+  isSearchPage?: boolean
 ) {
-  const preferredValues = usePreferredValues(parameter, selectedValues);
+  const preferredValues = usePreferredValues(
+    parameter,
+    selectedValues,
+    isSearchPage
+  );
 
   const [preferredOrganismsEnabled] = usePreferredOrganismsEnabledState();
 
@@ -200,9 +216,14 @@ function useTreeBoxParamWithPrunedVocab(
 function useFlatParamWithPrunedVocab(
   parameter: FlatEnumParam,
   selectedValues: string[],
-  onChange: (newValue: string[]) => void
+  onChange: (newValue: string[]) => void,
+  isSearchPage?: boolean
 ) {
-  const preferredValues = usePreferredValues(parameter, selectedValues);
+  const preferredValues = usePreferredValues(
+    parameter,
+    selectedValues,
+    isSearchPage
+  );
 
   const [preferredOrganismsEnabled] = usePreferredOrganismsEnabledState();
 
@@ -231,7 +252,9 @@ function useFlatParamWithPrunedVocab(
   return paramWithPrunedVocab;
 }
 
-function useEnumParamSelectedValues(props: Props<EnumParam, State>) {
+function useEnumParamSelectedValues(
+  props: OrganismParamProps<EnumParam, State>
+) {
   const selectedValues = useMemo(() => {
     return isMultiPick(props.parameter)
       ? toMultiValueArray(props.value)
@@ -264,12 +287,15 @@ function useEnumParamSelectedValues(props: Props<EnumParam, State>) {
   };
 }
 
-function usePreferredValues(parameter: EnumParam, selectedValues: string[]) {
+function usePreferredValues(
+  parameter: EnumParam,
+  selectedValues: string[],
+  isSearchPage?: boolean
+) {
   const [preferredOrganisms] = usePreferredOrganismsState();
   const preferredSpecies = usePreferredSpecies();
 
   const { pathname } = useLocation();
-  const isSearchPage = pathname.startsWith('/search');
 
   const preferredValues = useMemo(
     () =>
@@ -278,7 +304,7 @@ function usePreferredValues(parameter: EnumParam, selectedValues: string[]) {
         preferredSpecies,
         selectedValues,
         parameter.vocabulary,
-        isSearchPage,
+        isSearchPage ?? pathname.startsWith('/search'),
         findPreferenceType(parameter)
       ),
     [parameter, isSearchPage, preferredOrganisms, preferredSpecies]
@@ -327,8 +353,8 @@ function useRestrictSelectedValues(
 }
 
 function isOrganismParamProps<S = void>(
-  props: Props<Parameter, S>
-): props is Props<EnumParam, S> {
+  props: OrganismParamProps<Parameter, S>
+): props is OrganismParamProps<EnumParam, S> {
   return isPropsType(props, isOrganismParam);
 }
 
