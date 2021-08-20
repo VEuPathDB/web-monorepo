@@ -6,14 +6,18 @@ import { Loading, RadioList, TextArea } from '@veupathdb/wdk-client/lib/Componen
 import { DispatchAction } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { QuestionState, DEFAULT_STRATEGY_NAME } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
+import { Plugin } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { CheckBoxEnumParam, RecordInstance, StringParam } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { CheckBoxEnumParam, Parameter, RecordInstance, StringParam, } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { Props as FormProps } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 import { DEFAULT_COLS, calculateRows } from '@veupathdb/wdk-client/lib/Views/Question/Params/StringParam';
 import { useChangeParamValue } from '@veupathdb/wdk-client/lib/Views/Question/Params/Utils';
 import { EbrcDefaultQuestionForm } from '@veupathdb/web-common/lib/components/questions/EbrcDefaultQuestionForm';
 
+import { transformOrganismParameter } from '@veupathdb/multi-blast/lib/utils/params';
+
 const BLAST_DATABASE_TYPE_PARAM = 'BlastDatabaseType';
+const BLAST_DATABASE_ORGANISM_PARAM = 'BlastDatabaseOrganism';
 const BLAST_ALGORITHM_PARAM = 'BlastAlgorithm';
 const BLAST_RECORD_CLASS_PARAM = 'BlastRecordClass';
 const BLAST_QUERY_SEQUENCE_PARAM = 'BlastQuerySequence';
@@ -21,13 +25,14 @@ const EXPECTATION_VALUE_PARAM = '-e';
 
 type Props = FormProps;
 
-type TargetDataType = 'Transcripts' | 'Proteins' | 'Genome' | 'EST' | 'ORF' | 'PopSet';
+type TargetDataType = 'Transcripts' | 'Proteins' | 'Genome' | 'EST' | 'PopSet';
 
 type BlastDatabase = 'blast-est-ontology' | 'blast-orf-ontology';
 
 type TargetMetadata = {
   blastDatabase: BlastDatabase,
   recordClassFullName: string,
+  recordClassUrlSegment: string;
   searchName: string
 };
 
@@ -36,7 +41,7 @@ type AlgorithmOntologyTerm = {
   internal: string
 };
 
-export const BlastQuestionForm = (props: Props) => {
+export const BlastQuestionForm = withDynamicOrganismProperties((props: Props) => {
   const targetDataType = props.state.paramValues[BLAST_DATABASE_TYPE_PARAM] as TargetDataType;
 
   const enabledAlgorithms = useEnabledAlgorithms(targetDataType);
@@ -62,6 +67,37 @@ export const BlastQuestionForm = (props: Props) => {
       <div>Maximum allowed sequence length is 31K bases.</div>
     </React.Fragment>
   );
+  const dynamicOrganismParam = props.state.question.parametersByName[BLAST_DATABASE_ORGANISM_PARAM];
+  const dynamicOrganismParamElement = (
+    <Plugin
+      context={{
+        type: 'questionFormParameter',
+        name: dynamicOrganismParam.name,
+        paramName: dynamicOrganismParam.name,
+        searchName: props.state.question.urlSegment,
+        recordClassName: props.state.recordClass.urlSegment
+      }}
+      pluginProps={{
+        ctx: {
+          searchName: props.state.question.urlSegment,
+          parameter: dynamicOrganismParam,
+          paramValues: props.state.paramValues
+        },
+        parameter: dynamicOrganismParam,
+        value: props.state.paramValues[BLAST_DATABASE_ORGANISM_PARAM],
+        uiState: props.state.paramUIState[BLAST_DATABASE_ORGANISM_PARAM],
+        onParamValueChange: (paramValue: string) => {
+          props.eventHandlers.updateParamValue({
+            searchName: props.state.question.urlSegment,
+            parameter: dynamicOrganismParam,
+            paramValues: props.state.paramValues,
+            paramValue
+          })
+        },
+        dispatch: props.dispatchAction
+      }}
+    />
+  );
 
   return !enabledAlgorithms
     ? <Loading />
@@ -72,43 +108,44 @@ export const BlastQuestionForm = (props: Props) => {
             ...props.parameterElements,
             [BLAST_DATABASE_TYPE_PARAM]: targetParamElement,
             [BLAST_ALGORITHM_PARAM]: algorithmParamElement,
-            [BLAST_QUERY_SEQUENCE_PARAM]: sequenceParamElement
+            [BLAST_QUERY_SEQUENCE_PARAM]: sequenceParamElement,
+            [BLAST_DATABASE_ORGANISM_PARAM]: dynamicOrganismParamElement
           }
         }
         submissionMetadata={submissionMetadata}
         onSubmit={onSubmit}
       />;
-};
+});
 
 const targetMetadataByDataType: Record<TargetDataType, TargetMetadata> = {
   Transcripts: {
     blastDatabase: 'blast-est-ontology',
     recordClassFullName: 'TranscriptRecordClasses.TranscriptRecordClass',
+    recordClassUrlSegment: 'transcript',
     searchName: 'GenesBySimilarity'
   },
   Proteins: {
     blastDatabase: 'blast-orf-ontology',
     recordClassFullName: 'TranscriptRecordClasses.TranscriptRecordClass',
+    recordClassUrlSegment: 'transcript',
     searchName: 'GenesBySimilarity'
   },
   Genome: {
     blastDatabase: 'blast-est-ontology',
     recordClassFullName: 'SequenceRecordClasses.SequenceRecordClass',
+    recordClassUrlSegment: 'genomic-sequence',
     searchName: 'SequencesBySimilarity'
   },
   EST: {
     blastDatabase: 'blast-est-ontology',
     recordClassFullName: 'EstRecordClasses.EstRecordClass',
+    recordClassUrlSegment: 'est',
     searchName: 'EstsBySimilarity'
-  },
-  ORF: {
-    blastDatabase: 'blast-orf-ontology',
-    recordClassFullName: 'OrfRecordClasses.OrfRecordClass',
-    searchName: 'OrfsBySimilarity'
   },
   PopSet: {
     blastDatabase: 'blast-est-ontology',
     recordClassFullName: 'PopsetRecordClasses.PopsetRecordClass',
+    recordClassUrlSegment: 'popsetSequence',
     searchName: 'PopsetsBySimilarity'
   }
 };
@@ -374,3 +411,41 @@ const reportValidationFailure = (message: string) => {
   alert(message);
   return false;
 };
+
+function withDynamicOrganismProperties(Component: React.ComponentType<Props>): React.ComponentType<Props> {
+  return function(props: Props) {
+    const targetDataType = props.state.paramValues[BLAST_DATABASE_TYPE_PARAM] as TargetDataType;
+    const targetRecordType = targetMetadataByDataType[targetDataType].recordClassUrlSegment;
+
+    const parameters: Parameter[] = props.state.question.parameters.reduce((memo, parameter) => {
+      if (parameter.name === BLAST_DATABASE_ORGANISM_PARAM) {
+        const newOrganismParam = transformOrganismParameter(
+          parameter,
+          targetRecordType
+        );
+
+        memo.push(newOrganismParam);
+        return memo;
+      }
+
+      memo.push(parameter);
+      return memo;
+    }, [] as Parameter[]);
+
+    const parametersByName = keyBy(parameters, 'name');
+
+    const propsWithDynamicOrganismProperties = {
+      ...props,
+      state: {
+        ...props.state,
+        question: {
+          ...props.state.question,
+          parameters,
+          parametersByName
+        }
+      }
+    };
+
+    return <Component {...propsWithDynamicOrganismProperties} />;
+  };
+}
