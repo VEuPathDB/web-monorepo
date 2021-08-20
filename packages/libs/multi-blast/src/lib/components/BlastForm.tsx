@@ -31,6 +31,7 @@ import DefaultQuestionForm, {
   SubmitButton,
   renderDefaultParamGroup,
 } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
+import { Plugin } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
 import { useChangeParamValue } from '@veupathdb/wdk-client/lib/Views/Question/Params/Utils';
 
 import { useBlastApi } from '../hooks/api';
@@ -52,6 +53,7 @@ import {
   isOmittedParam,
   organismParamValueToFilenames,
   paramValuesToBlastConfig,
+  transformOrganismParameter,
 } from '../utils/params';
 import { fetchOrganismToFilenameMaps } from '../utils/organisms';
 import {
@@ -74,9 +76,13 @@ export interface Props extends DefaultQuestionFormProps {
 }
 
 export function BlastForm(props: Props) {
+  const targetType = props.state.paramValues[BLAST_DATABASE_TYPE_PARAM_NAME];
+  const targetMetadataByDataType = useContext(TargetMetadataByDataType);
+
   const formPropsWithTransformedQuestion = transformFormQuestion(
     props,
-    props.isMultiBlast
+    props.isMultiBlast,
+    targetMetadataByDataType[targetType].recordClassUrlSegment
   );
 
   return (
@@ -221,12 +227,46 @@ function BlastFormWithTransformedQuestion(props: Props) {
       />
     </div>
   );
+  const dynamicOrganismParam =
+    props.state.question.parametersByName[BLAST_DATABASE_ORGANISM_PARAM_NAME];
+  const organismParamElement = (
+    <Plugin
+      context={{
+        type: 'questionFormParameter',
+        name: dynamicOrganismParam.name,
+        paramName: dynamicOrganismParam.name,
+        searchName: props.state.question.urlSegment,
+        recordClassName: props.state.recordClass.urlSegment,
+      }}
+      pluginProps={{
+        ctx: {
+          searchName: props.state.question.urlSegment,
+          parameter: dynamicOrganismParam,
+          paramValues: props.state.paramValues,
+        },
+        parameter: dynamicOrganismParam,
+        value: props.state.paramValues[BLAST_DATABASE_ORGANISM_PARAM_NAME],
+        uiState: props.state.paramUIState[BLAST_DATABASE_ORGANISM_PARAM_NAME],
+        onParamValueChange: (paramValue: string) => {
+          props.eventHandlers.updateParamValue({
+            searchName: props.state.question.urlSegment,
+            parameter: dynamicOrganismParam,
+            paramValues: props.state.paramValues,
+            paramValue,
+          });
+        },
+        dispatch: props.dispatchAction,
+        isSearchPage: props.submissionMetadata.type === 'create-strategy',
+      }}
+    />
+  );
 
   const parameterElements = {
     ...props.parameterElements,
     [BLAST_DATABASE_TYPE_PARAM_NAME]: targetParamElement,
     [BLAST_ALGORITHM_PARAM_NAME]: algorithmParamElement,
     [BLAST_QUERY_SEQUENCE_PARAM_NAME]: sequenceParamElement,
+    [BLAST_DATABASE_ORGANISM_PARAM_NAME]: organismParamElement,
   };
 
   const renderBlastParamGroup = useCallback(
@@ -430,7 +470,8 @@ function NewJobForm(props: NewJobFormProps) {
 
 function transformFormQuestion(
   formProps: Props,
-  isMultiBlast?: boolean
+  isMultiBlast: boolean = false,
+  targetRecordType: string
 ): Props {
   const transformedParameters = formProps.state.question.parameters.reduce(
     (memo, parameter) => {
@@ -446,6 +487,15 @@ function transformFormQuestion(
           help:
             'Paste your Input Sequence(s) in the text box, or upload a FASTA file.',
         });
+
+        return memo;
+      } else if (parameter.name === BLAST_DATABASE_ORGANISM_PARAM_NAME) {
+        const organismParameter = transformOrganismParameter(
+          parameter,
+          targetRecordType
+        );
+
+        memo.push(organismParameter);
 
         return memo;
       } else {
