@@ -314,7 +314,7 @@ function MosaicViz(props: Props) {
 
   const xAxisLabel = axisLabelWithUnit(xAxisVariable);
   const yAxisLabel = axisLabelWithUnit(yAxisVariable);
-  const width = '705px';
+  const width = '750px';
   const height = '450px';
 
   const plotComponent = fullscreen ? (
