@@ -1,5 +1,5 @@
 import './globals';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { RouteComponentProps } from 'react-router';
 import { RecoilRoot } from 'recoil';
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
@@ -16,6 +16,7 @@ import {
   OrganismParam,
   isOrganismParam,
 } from '@veupathdb/preferred-organisms/lib/components/OrganismParam';
+import { PreferredOrganismsConfigController } from '@veupathdb/preferred-organisms/lib/controllers/PreferredOrganismsConfigController';
 
 import Header from './Header';
 import Home from './Home';
@@ -69,6 +70,14 @@ initialize({
           />
         );
       },
+    },
+    {
+      path: '/preferred-organisms',
+      component: () => (
+        <Suspense fallback={null}>
+          <PreferredOrganismsConfigController />
+        </Suspense>
+      ),
     },
     ...routes,
   ],
