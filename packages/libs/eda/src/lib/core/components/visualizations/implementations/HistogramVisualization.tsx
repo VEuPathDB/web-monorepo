@@ -31,6 +31,7 @@ import { VariableDescriptor } from '../../../types/variable';
 import { CoverageStatistics } from '../../../types/visualization';
 import { findEntityAndVariable } from '../../../utils/study-metadata';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
+import { BirdsEyeView } from '../../BirdsEyeView';
 import { isHistogramVariable } from '../../filter/guards';
 import { HistogramVariable } from '../../filter/types';
 import { InputVariables } from '../InputVariables';
@@ -341,7 +342,13 @@ function HistogramViz(props: Props) {
           showSpinner={data.pending}
           filters={filters}
           completeCases={data.pending ? undefined : data.value?.completeCases}
-          outputSize={data.pending ? undefined : data.value?.outputSize}
+          plottedCompleteCases={
+            data.pending ? undefined : data.value?.plottedCompleteCases
+          }
+          plottedIncompleteCases={
+            data.pending ? undefined : data.value?.plottedIncompleteCases
+          }
+          showMissingness={vizConfig.showMissingness ?? false}
           overlayVariable={vizConfig.overlayVariable}
           overlayLabel={overlayVariable?.displayName}
           legendTitle={overlayVariable?.displayName}
@@ -388,6 +395,7 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   overlayLabel?: string;
   valueSpec: ValueSpec;
   onValueSpecChange: (newValueSpec: ValueSpec) => void;
+  showMissingness: boolean;
 } & Partial<CoverageStatistics>;
 
 function HistogramPlotWithControls({
@@ -396,18 +404,29 @@ function HistogramPlotWithControls({
   onDependentAxisLogScaleChange,
   filters,
   completeCases,
-  outputSize,
+  plottedCompleteCases,
+  plottedIncompleteCases,
   outputEntity,
   independentAxisVariable,
   overlayVariable,
   overlayLabel,
   valueSpec,
   onValueSpecChange,
+  showMissingness,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   const barLayout = 'stack';
   const displayLibraryControls = false;
   const opacity = 100;
+
+  const outputSize =
+    plottedCompleteCases != null
+      ? showMissingness
+        ? plottedIncompleteCases != null
+          ? plottedCompleteCases + plottedIncompleteCases
+          : undefined
+        : plottedCompleteCases
+      : undefined;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -427,24 +446,46 @@ function HistogramPlotWithControls({
           showValues={false}
           barLayout={barLayout}
         />
-        <VariableCoverageTable
-          completeCases={completeCases}
-          filters={filters}
-          outputEntityId={independentAxisVariable?.entityId}
-          variableSpecs={[
-            {
-              role: 'Main',
-              required: true,
-              display: histogramProps.independentAxisLabel,
-              variable: independentAxisVariable,
-            },
-            {
-              role: 'Overlay',
-              display: overlayLabel,
-              variable: overlayVariable,
-            },
-          ]}
-        />
+        <div className="temporaryWrapper">
+          <BirdsEyeView
+            isStratificationActive={overlayVariable != null}
+            plottedCompleteCases={plottedCompleteCases}
+            plottedIncompleteCases={plottedIncompleteCases}
+            filters={filters}
+            outputEntityId={independentAxisVariable?.entityId}
+            variableSpecs={[
+              {
+                role: 'Main',
+                required: true,
+                display: histogramProps.independentAxisLabel,
+                variable: independentAxisVariable,
+              },
+              {
+                role: 'Overlay',
+                display: overlayLabel,
+                variable: overlayVariable,
+              },
+            ]}
+          />
+          <VariableCoverageTable
+            completeCases={completeCases}
+            filters={filters}
+            outputEntityId={independentAxisVariable?.entityId}
+            variableSpecs={[
+              {
+                role: 'Main',
+                required: true,
+                display: histogramProps.independentAxisLabel,
+                variable: independentAxisVariable,
+              },
+              {
+                role: 'Overlay',
+                display: overlayLabel,
+                variable: overlayVariable,
+              },
+            ]}
+          />
+        </div>
       </div>
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <LabelledGroup label="Y-axis">
@@ -541,9 +582,8 @@ export function histogramResponseToData(
     binWidthRange,
     binWidthStep,
     completeCases: response.completeCasesTable,
-    outputSize:
-      response.histogram.config.completeCases +
-      response.histogram.config.plottedIncompleteCases,
+    plottedCompleteCases: response.histogram.config.completeCases,
+    plottedIncompleteCases: response.histogram.config.plottedIncompleteCases,
   };
 }
 
@@ -559,7 +599,6 @@ function getRequestParams(
     valueSpec,
     overlayVariable,
     xAxisVariable,
-    showMissingness,
   } = vizConfig;
 
   const binSpec = binWidth
@@ -582,7 +621,7 @@ function getRequestParams(
       overlayVariable,
       valueSpec,
       ...binSpec,
-      showMissingness: showMissingness ? 'TRUE' : 'FALSE',
+      showMissingness: 'TRUE', // always request missingness because we need plottedIncomplete to calculate #complete main vars
     },
   } as HistogramRequestParams;
 }

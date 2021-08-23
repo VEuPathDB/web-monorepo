@@ -84,5 +84,7 @@ export const ComputationAppOverview = intersection([
 
 export type CoverageStatistics = {
   completeCases: CompleteCasesTable;
-  outputSize: number;
+  plottedCompleteCases?: number; // TO DO: make mandatory after rolling out to all Viz's
+  plottedIncompleteCases?: number; // see above
+  outputSize?: number; ////////// TO DO: remove me!
 };
