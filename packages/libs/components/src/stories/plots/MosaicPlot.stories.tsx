@@ -43,8 +43,6 @@ TwoByThree.args = {
     independentLabels: ['Rabbit', 'Cat', 'Dog'],
     dependentLabels: ['Positive', 'Negative'],
   },
-  independentAxisLabel: 'Animal',
-  dependentAxisLabel: 'Rabies',
   showColumnLabels: false,
   displayLegend: false,
 };
@@ -64,7 +62,6 @@ FourByThree.args = {
   },
   independentAxisLabel: 'Planet',
   dependentAxisLabel: 'Atmospheric makeup',
-  title: 'Sex & Status Mosaic',
   interactive: true,
 };
 
