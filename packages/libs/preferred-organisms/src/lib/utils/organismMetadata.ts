@@ -20,9 +20,11 @@ export const makeOrganismMetadataRecoilState = memoize(
 
     const { wdkService } = wdkDependencies;
 
+    const organismMetadata$ = fetchOrganismMetadata(wdkService);
+
     const organismMetadata = selector({
       key: 'organism-metadata',
-      get: () => fetchOrganismMetadata(wdkService),
+      get: () => organismMetadata$,
     });
 
     return {

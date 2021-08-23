@@ -28,30 +28,34 @@ export const makeDatasetMetadataRecoilState = memoize(
 
     const { wdkService } = wdkDependencies;
 
+    const questions$: Promise<
+      Question[]
+    > = wdkService
+      .getQuestions()
+      .catch((e) => wdkService.submitError(e).then((_) => []));
+
     const questions = selector({
       key: 'questions',
-      get: (): Promise<Question[]> =>
-        wdkService
-          .getQuestions()
-          .catch((e) => wdkService.submitError(e).then((_) => [])),
+      get: () => questions$,
     });
+
+    const datasetRecords$: Promise<RecordInstance[]> = wdkService
+      .getAnswerJson(
+        {
+          searchName: ALL_DATASETS_SEARCH_NAME,
+          searchConfig: { parameters: {} },
+        },
+        {
+          attributes: [DATASET_ID_ATTRIBUTE],
+          tables: [ORGANISMS_TABLE, WDK_REFERENCES_TABLE],
+        }
+      )
+      .then((answer) => answer.records)
+      .catch((e) => wdkService.submitError(e).then((_) => []));
 
     const datasetRecords = selector({
       key: 'dataset-records',
-      get: (): Promise<RecordInstance[]> =>
-        wdkService
-          .getAnswerJson(
-            {
-              searchName: ALL_DATASETS_SEARCH_NAME,
-              searchConfig: { parameters: {} },
-            },
-            {
-              attributes: [DATASET_ID_ATTRIBUTE],
-              tables: [ORGANISMS_TABLE, WDK_REFERENCES_TABLE],
-            }
-          )
-          .then((answer) => answer.records)
-          .catch((e) => wdkService.submitError(e).then((_) => [])),
+      get: () => datasetRecords$,
     });
 
     const datasetMetadata = selector({
