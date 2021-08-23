@@ -1,16 +1,11 @@
-import './globals';
-import { endpoint, rootElement, rootUrl } from './constants';
 import React, { useEffect } from 'react';
-import reportWebVitals from './reportWebVitals';
 
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
-
 import { Props } from '@veupathdb/wdk-client/lib/Components/Layout/Page';
-
 import { DataRestrictionDaemon } from '@veupathdb/web-common/lib/App/DataRestriction';
 import {
   disableRestriction,
@@ -19,6 +14,9 @@ import {
 } from '@veupathdb/web-common/lib/App/DataRestriction/DataRestrictionUtils';
 import { useAttemptActionClickHandler } from '@veupathdb/web-common/lib/hooks/dataRestriction';
 
+import './globals';
+import { endpoint, rootElement, rootUrl } from './constants';
+import reportWebVitals from './reportWebVitals';
 import Header from './Header';
 import { MapVeuContainer } from './lib/mapveu';
 import { WorkspaceRouter } from './lib/workspace/WorkspaceRouter';
