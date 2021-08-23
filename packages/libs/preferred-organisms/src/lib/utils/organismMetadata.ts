@@ -4,6 +4,8 @@ import { memoize } from 'lodash';
 
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import { WdkDependencies } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { ok } from '@veupathdb/wdk-client/lib/Utils/Json';
+import { Answer } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 const ALL_ORGANISMS_SEARCH_NAME = 'GenomeDataTypes';
 const ORGANISM_NAME_ATTR = 'organism_name';
@@ -40,19 +42,27 @@ export interface OrganismMetadata {
 
 async function fetchOrganismMetadata(wdkService: WdkService) {
   try {
-    const organismRecords = await wdkService.getAnswerJson(
-      {
-        searchName: ALL_ORGANISMS_SEARCH_NAME,
+    // FIXME: Add an "answer" decoder to WDKClient to make this
+    // request type-safe
+    const organismRecords: Answer = await wdkService.sendRequest(ok, {
+      useCache: true,
+      cacheId: 'org-prefs-organism-metadata',
+      method: 'post',
+      path: wdkService.getStandardSearchReportEndpoint(
+        'organism',
+        ALL_ORGANISMS_SEARCH_NAME
+      ),
+      body: JSON.stringify({
         searchConfig: { parameters: {} },
-      },
-      {
-        attributes: [
-          ORGANISM_NAME_ATTR,
-          BUILD_INTRODUCED_ATTR,
-          IS_REFERENCE_STRAIN_ATTR,
-        ],
-      }
-    );
+        reportConfig: {
+          attributes: [
+            ORGANISM_NAME_ATTR,
+            BUILD_INTRODUCED_ATTR,
+            IS_REFERENCE_STRAIN_ATTR,
+          ],
+        },
+      }),
+    });
 
     return organismRecords.records.reduce((memo, record) => {
       const {

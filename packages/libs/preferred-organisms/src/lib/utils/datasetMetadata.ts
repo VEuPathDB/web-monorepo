@@ -3,6 +3,7 @@ import { selector } from 'recoil';
 import { memoize } from 'lodash';
 
 import { WdkDependencies } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { ok } from '@veupathdb/wdk-client/lib/Utils/Json';
 import {
   Question,
   RecordInstance,
@@ -39,17 +40,25 @@ export const makeDatasetMetadataRecoilState = memoize(
       get: () => questions$,
     });
 
+    // FIXME: Add an "answer" decoder to WDKClient to make this
+    // request type-safe
     const datasetRecords$: Promise<RecordInstance[]> = wdkService
-      .getAnswerJson(
-        {
-          searchName: ALL_DATASETS_SEARCH_NAME,
+      .sendRequest(ok, {
+        useCache: true,
+        cacheId: 'org-prefs-dataset-metadata',
+        method: 'post',
+        path: wdkService.getStandardSearchReportEndpoint(
+          'dataset',
+          ALL_DATASETS_SEARCH_NAME
+        ),
+        body: JSON.stringify({
           searchConfig: { parameters: {} },
-        },
-        {
-          attributes: [DATASET_ID_ATTRIBUTE],
-          tables: [ORGANISMS_TABLE, WDK_REFERENCES_TABLE],
-        }
-      )
+          reportConfig: {
+            attributes: [DATASET_ID_ATTRIBUTE],
+            tables: [ORGANISMS_TABLE, WDK_REFERENCES_TABLE],
+          },
+        }),
+      })
       .then((answer) => answer.records)
       .catch((e) => wdkService.submitError(e).then((_) => []));
 
