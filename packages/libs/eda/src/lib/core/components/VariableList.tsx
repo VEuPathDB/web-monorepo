@@ -10,6 +10,7 @@ import React, {
   useMemo,
   useRef,
   useState,
+  useContext,
 } from 'react';
 import { Link } from 'react-router-dom';
 //correct paths as this is a copy of FieldList component at @veupathdb/
@@ -40,6 +41,8 @@ import { cx } from '../../workspace/Utils';
 import { Tooltip } from '@material-ui/core';
 import { HtmlTooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+// import ShowHideVariableContext
+import { ShowHideVariableContext } from '../utils/show-hide-variable-context';
 
 //defining types - some are not used (need cleanup later)
 interface VariableField {
@@ -355,6 +358,12 @@ export default function VariableList(props: VariableListProps) {
     </>
   );
 
+  // useContext is used here with ShowHideVariableContext
+  const {
+    toggleShowHideVariable,
+    setToggleShowHideVariableHandler,
+  } = useContext(ShowHideVariableContext);
+
   return (
     <div className={cx('-VariableList')}>
       {disabledFields.size > 0 && (
@@ -379,6 +388,9 @@ export default function VariableList(props: VariableListProps) {
               type="button"
               onClick={() => {
                 setHideDisabledFields(!hideDisabledFields);
+                // store !hideDisabledFields boolean using ShowHideVariableContext
+                if (setToggleShowHideVariableHandler)
+                  setToggleShowHideVariableHandler(!hideDisabledFields);
               }}
             >
               <Toggle on={hideDisabledFields} /> Only show compatible variables
@@ -386,7 +398,8 @@ export default function VariableList(props: VariableListProps) {
           </HtmlTooltip>
         </div>
       )}
-      {allowedFeaturedFields.length && (
+      {/* minor bug fix, not to show 0 character for empty allowedFeaturedFields */}
+      {allowedFeaturedFields.length > 0 && (
         <div className="FeaturedVariables">
           <details
             open={Options.featuredVariablesOpen}

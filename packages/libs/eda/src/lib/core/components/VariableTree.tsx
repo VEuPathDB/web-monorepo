@@ -3,7 +3,7 @@ import { Button } from '@material-ui/core';
 import { getTree } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
 import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { keyBy } from 'lodash';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, useContext } from 'react';
 import { cx } from '../../workspace/Utils';
 import { StudyEntity } from '../types/study';
 import { VariableDescriptor } from '../types/variable';
@@ -11,6 +11,8 @@ import { edaVariableToWdkField } from '../utils/wdk-filter-param-adapter';
 import VariableList from './VariableList';
 import './VariableTree.scss';
 import { useStudyEntities } from '../hooks/study';
+// import ShowHideVariableContext
+import { ShowHideVariableContext } from '../utils/show-hide-variable-context';
 
 export interface Props {
   rootEntity: StudyEntity;
@@ -169,7 +171,16 @@ export function VariableTree(props: Props) {
 
 export function VariableTreeDropdown(props: Props) {
   const { rootEntity, entityId, variableId, onChange } = props;
-  const [hideDisabledFields, setHideDisabledFields] = useState(false);
+
+  // use ShowHideVariableContext for setting initial hideDisabledFields boolean
+  const {
+    toggleShowHideVariable,
+    setToggleShowHideVariableHandler,
+  } = useContext(ShowHideVariableContext);
+  const [hideDisabledFields, setHideDisabledFields] = useState(
+    toggleShowHideVariable
+  );
+
   const entities = useStudyEntities(rootEntity);
   const variable = entities
     .find((e) => e.id === entityId)

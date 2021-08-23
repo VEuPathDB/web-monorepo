@@ -25,6 +25,8 @@ import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import GlobalFiltersDialog from '../core/components/GlobalFiltersDialog';
 import { useStudyEntities } from '../core/hooks/study';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
+// import ShowHideVariableContextProvider
+import ShowHideVariableContextProvider from '../core/utils/show-hide-variable-context';
 
 interface Props {
   analysisState: AnalysisState;
@@ -175,10 +177,13 @@ export function AnalysisPanel(props: Props) {
           <Subsetting {...props.match.params} analysisState={analysisState} />
         )}
       />
-      <Route
-        path={`${routeBase}/visualizations`}
-        render={() => <ComputationRoute analysisState={analysisState} />}
-      />
+      {/* use ShowHideVariableContextProvider here for handling the state of show/hide variable toggle */}
+      <ShowHideVariableContextProvider>
+        <Route
+          path={`${routeBase}/visualizations`}
+          render={() => <ComputationRoute analysisState={analysisState} />}
+        />
+      </ShowHideVariableContextProvider>
     </div>
   );
 }
