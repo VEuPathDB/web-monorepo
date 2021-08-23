@@ -621,7 +621,7 @@ function getRequestParams(
       overlayVariable,
       valueSpec,
       ...binSpec,
-      showMissingness: 'TRUE', // always request missingness because we need plottedIncomplete to calculate #complete main vars
+      showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
     },
   } as HistogramRequestParams;
 }
