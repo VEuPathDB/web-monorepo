@@ -84,7 +84,7 @@ export default function MosaicPlot({
           marker: {
             line: {
               // Borders between blocks
-              width: 2,
+              width: 1,
               color: 'white',
             },
             color: colors ? colors[i] : undefined,
