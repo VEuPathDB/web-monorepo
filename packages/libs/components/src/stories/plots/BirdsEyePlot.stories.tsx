@@ -1,4 +1,5 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
+import { CSSProperties } from 'react';
 import BirdsEyePlot, { BirdsEyePlotProps } from '../../plots/BirdsEyePlot';
 import { BirdsEyePlotData } from '../../types/plots';
 
@@ -22,6 +23,7 @@ const dataSet: BirdsEyePlotData = {
     },
   ],
   bars: [
+    // total comes first, or the subset is hidden
     {
       name: 'total',
       value: [200],
@@ -37,10 +39,11 @@ const dataSet: BirdsEyePlotData = {
   ],
 };
 
-const containerStyles = {
-  height: '150px',
+// We don't need to set the height here
+// (the BirdsEyePlot component hardcodes it for you)
+const containerStyles: CSSProperties = {
   width: '500px',
-  border: '2px solid yellow',
+  border: '2px solid yellow', // obviously just for demo purposes
 };
 
 const spacingOptions = {
@@ -56,7 +59,6 @@ const Template: Story<BirdsEyePlotProps> = (args: any) => (
 export const Basic = Template.bind({});
 Basic.args = {
   data: dataSet,
-  interactive: true,
   dependentAxisLabel: 'Mermaids',
   containerStyles,
   spacingOptions,

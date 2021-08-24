@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { CSSProperties, ReactNode, useMemo, useState } from 'react';
 import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { BirdsEyePlotData } from '../types/plots';
 import { PlotParams } from 'react-plotly.js';
@@ -14,13 +14,23 @@ export interface BirdsEyePlotProps extends PlotProps<BirdsEyePlotData> {
 
 const EmptyBirdsEyePlotData: BirdsEyePlotData = { brackets: [], bars: [] };
 
+const defaultCountBoxStyle = {
+  background: 'transparent',
+  border: '1px solid gray',
+  padding: '5px',
+  fontSize: '80%',
+};
+
 /** A Plotly-based Barplot component. */
 export default function BirdsEyePlot({
   data = EmptyBirdsEyePlotData,
   dependentAxisLabel = '',
   bracketLineWidth = 3,
+  containerStyles,
   ...restProps
 }: BirdsEyePlotProps) {
+  const [focused, setFocused] = useState(false);
+
   // Transform `data.bars` into a Plot.ly friendly format.
   const plotlyFriendlyData: PlotParams['data'] = useMemo(
     () =>
@@ -83,8 +93,23 @@ export default function BirdsEyePlot({
           ] as Partial<Shape>[]; // TO DO: can we get rid of this?
         })
         .flat(),
-    [data.brackets]
+    [data.brackets, bracketLineWidth]
   );
+
+  const fullCounts: ReactNode[] = useMemo(() => {
+    const bracketCounts = data.brackets.map(({ label, value }) =>
+      CountBox({ label, value, focused })
+    );
+    const barCounts = data.bars.map((bar) =>
+      CountBox({
+        label: bar.name,
+        value: bar.value[0] ?? 0,
+        color: bar.color,
+        focused,
+      })
+    );
+    return [...[...bracketCounts].reverse(), ...[...barCounts].reverse()];
+  }, [data, focused]);
 
   const layout: Partial<Layout> = {
     xaxis: {
@@ -116,13 +141,56 @@ export default function BirdsEyePlot({
     },
     barmode: 'overlay',
     shapes: plotlyShapes,
+    hovermode: 'closest',
   };
 
   return (
-    <PlotlyPlot data={plotlyFriendlyData} layout={layout} {...restProps} />
+    <div
+      style={{ ...containerStyles, cursor: 'pointer' }}
+      onMouseOver={() => setFocused(true)}
+      onMouseOut={() => setFocused(false)}
+    >
+      <PlotlyPlot
+        data={plotlyFriendlyData}
+        layout={layout}
+        containerStyles={{ height: '100px' }}
+        {...restProps}
+      />
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+        }}
+      >
+        {fullCounts}
+      </div>
+    </div>
   );
 }
 
 function indexToY(index: number) {
   return index / 2 + 1;
+}
+
+type CountBoxProps = {
+  label: string;
+  value: number;
+  focused: boolean;
+  color?: string;
+};
+
+function CountBox({ label, value, color, focused }: CountBoxProps) {
+  const countBoxStyle: CSSProperties = {
+    ...defaultCountBoxStyle,
+    ...(color ? { background: color } : {}),
+    visibility: focused ? 'visible' : 'hidden',
+  };
+
+  // TO DO: render {value} with commas (or whatever locale specifies)
+  return (
+    <div style={countBoxStyle}>
+      <b>{label}:</b> {Number(value).toLocaleString()}
+    </div>
+  );
 }
