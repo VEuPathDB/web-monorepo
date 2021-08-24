@@ -187,7 +187,6 @@ function CountBox({ label, value, color, focused }: CountBoxProps) {
     visibility: focused ? 'visible' : 'hidden',
   };
 
-  // TO DO: render {value} with commas (or whatever locale specifies)
   return (
     <div style={countBoxStyle}>
       <b>{label}:</b> {Number(value).toLocaleString()}
