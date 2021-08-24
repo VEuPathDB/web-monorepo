@@ -1,20 +1,29 @@
 import React, { createContext, useState } from 'react';
 
 export const ShowHideVariableContext = createContext({
-  toggleShowHideVariable: false,
-  setToggleShowHideVariableHandler: (toggleShowHideVariable: boolean) => {},
+  showOnlyCompatibleVariables: false,
+  setShowOnlyCompatibleVariablesHandler: (
+    showOnlyCompatibleVariables: boolean
+  ) => {},
 });
 
 const ShowHideVariableContextProvider: React.FC<React.ReactNode> = ({
   children,
 }) => {
-  const [toggleShowHideVariable, setToggleShowHideVariable] = useState(false);
-  const setToggleShowHideVariableHandler = (toggleShowHideVariable: boolean) =>
-    setToggleShowHideVariable(toggleShowHideVariable);
+  const [
+    showOnlyCompatibleVariables,
+    setShowOnlyCompatibleVariables,
+  ] = useState(false);
+  const setShowOnlyCompatibleVariablesHandler = (
+    showOnlyCompatibleVariables: boolean
+  ) => setShowOnlyCompatibleVariables(showOnlyCompatibleVariables);
 
   return (
     <ShowHideVariableContext.Provider
-      value={{ toggleShowHideVariable, setToggleShowHideVariableHandler }}
+      value={{
+        showOnlyCompatibleVariables,
+        setShowOnlyCompatibleVariablesHandler,
+      }}
     >
       {children}
     </ShowHideVariableContext.Provider>

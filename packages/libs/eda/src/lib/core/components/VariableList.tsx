@@ -85,8 +85,6 @@ interface VariableListProps {
   starredVariables?: string[];
   toggleStarredVariable: (targetVariableId: string) => void;
   disabledFieldIds?: string[];
-  hideDisabledFields: boolean;
-  setHideDisabledFields: (hide: boolean) => void;
   featuredFields: VariableField[];
 }
 
@@ -116,9 +114,14 @@ export default function VariableList(props: VariableListProps) {
     autoFocus,
     starredVariables,
     toggleStarredVariable,
-    hideDisabledFields,
-    setHideDisabledFields,
   } = props;
+
+  // useContext is used here with ShowHideVariableContext
+  const {
+    showOnlyCompatibleVariables,
+    setShowOnlyCompatibleVariablesHandler,
+  } = useContext(ShowHideVariableContext);
+
   const [searchTerm, setSearchTerm] = useState<string>('');
   const getPathToField = useCallback(
     (field?: Field) => {
@@ -306,7 +309,7 @@ export default function VariableList(props: VariableListProps) {
 
   const isAdditionalFilterApplied = showOnlyStarredVariables;
 
-  const allowedFeaturedFields = hideDisabledFields
+  const allowedFeaturedFields = showOnlyCompatibleVariables
     ? featuredFields.filter((field) => !disabledFields.has(field.term))
     : featuredFields;
 
@@ -321,7 +324,7 @@ export default function VariableList(props: VariableListProps) {
               visibleStarredVariablesSet.has(node.field.term.split('/')[1]),
             fieldTree
           );
-    return hideDisabledFields
+    return showOnlyCompatibleVariables
       ? pruneDescendantNodes((node) => {
           if (disabledFields.size === 0) return true;
           if (node.field.type == null) return node.children.length > 0;
@@ -332,7 +335,7 @@ export default function VariableList(props: VariableListProps) {
     showOnlyStarredVariables,
     starredVariableToggleDisabled,
     fieldTree,
-    hideDisabledFields,
+    showOnlyCompatibleVariables,
     visibleStarredVariablesSet,
     disabledFields,
   ]);
@@ -358,12 +361,6 @@ export default function VariableList(props: VariableListProps) {
     </>
   );
 
-  // useContext is used here with ShowHideVariableContext
-  const {
-    toggleShowHideVariable,
-    setToggleShowHideVariableHandler,
-  } = useContext(ShowHideVariableContext);
-
   return (
     <div className={cx('-VariableList')}>
       {disabledFields.size > 0 && (
@@ -387,13 +384,14 @@ export default function VariableList(props: VariableListProps) {
               className="link"
               type="button"
               onClick={() => {
-                setHideDisabledFields(!hideDisabledFields);
-                // store !hideDisabledFields boolean using ShowHideVariableContext
-                if (setToggleShowHideVariableHandler)
-                  setToggleShowHideVariableHandler(!hideDisabledFields);
+                // useContext
+                setShowOnlyCompatibleVariablesHandler(
+                  !showOnlyCompatibleVariables
+                );
               }}
             >
-              <Toggle on={hideDisabledFields} /> Only show compatible variables
+              <Toggle on={showOnlyCompatibleVariables} /> Only show compatible
+              variables
             </button>
           </HtmlTooltip>
         </div>

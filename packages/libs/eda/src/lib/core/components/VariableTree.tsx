@@ -11,8 +11,6 @@ import { edaVariableToWdkField } from '../utils/wdk-filter-param-adapter';
 import VariableList from './VariableList';
 import './VariableTree.scss';
 import { useStudyEntities } from '../hooks/study';
-// import ShowHideVariableContext
-import { ShowHideVariableContext } from '../utils/show-hide-variable-context';
 
 export interface Props {
   rootEntity: StudyEntity;
@@ -23,8 +21,6 @@ export interface Props {
   disabledVariables?: VariableDescriptor[];
   /** term string is of format "entityId/variableId"  e.g. "PCO_0000024/EUPATH_0000714" */
   onChange: (variable?: VariableDescriptor) => void;
-  hideDisabledFields?: boolean;
-  setHideDisabledFields?: (hide: boolean) => void;
 }
 export function VariableTree(props: Props) {
   const {
@@ -35,8 +31,6 @@ export function VariableTree(props: Props) {
     entityId,
     variableId,
     onChange,
-    hideDisabledFields = false,
-    setHideDisabledFields = () => {},
   } = props;
   const entities = useStudyEntities(rootEntity);
 
@@ -163,23 +157,12 @@ export function VariableTree(props: Props) {
       autoFocus={false}
       starredVariables={starredVariables}
       toggleStarredVariable={toggleStarredVariable}
-      hideDisabledFields={hideDisabledFields}
-      setHideDisabledFields={setHideDisabledFields}
     />
   );
 }
 
 export function VariableTreeDropdown(props: Props) {
   const { rootEntity, entityId, variableId, onChange } = props;
-
-  // use ShowHideVariableContext for setting initial hideDisabledFields boolean
-  const {
-    toggleShowHideVariable,
-    setToggleShowHideVariableHandler,
-  } = useContext(ShowHideVariableContext);
-  const [hideDisabledFields, setHideDisabledFields] = useState(
-    toggleShowHideVariable
-  );
 
   const entities = useStudyEntities(rootEntity);
   const variable = entities
@@ -204,11 +187,7 @@ export function VariableTreeDropdown(props: Props) {
           </div>
         )}
         <div className={cx('-VariableTreeDropdownTreeContainer')}>
-          <VariableTree
-            {...props}
-            hideDisabledFields={hideDisabledFields}
-            setHideDisabledFields={setHideDisabledFields}
-          />
+          <VariableTree {...props} />
         </div>
       </PopoverButton>
     </div>
