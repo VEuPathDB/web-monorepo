@@ -423,7 +423,7 @@ function FieldsHit(props: HitProps) {
 }
 
 function StrategyLinkout(props: Props) {
-  const { response, documentType, filters = [], filterOrganisms = [], searchString } = props;
+  const { response, documentType, filters = [], filterOrganisms = [], searchString, organismTree } = props;
   const docType = response.documentTypes.find(d => d.id === documentType);
   const question = useWdkService(async wdkService =>
     docType == null || !docType.isWdkRecordType ? undefined :
@@ -454,10 +454,16 @@ function StrategyLinkout(props: Props) {
           }
           else {
             // take the intersection of the organism filter selection and the questions's organism param vocabulary
-            const paramSelection = filterOrganisms.length > 0 ? filterOrganisms : Object.keys(response.organismCounts); 
+            const organismFilterSelection = filterOrganisms.length > 0
+              ? filterOrganisms
+              : makeFullOrganismFilterSelection(
+                  response.organismCounts,
+                  props.organismTree
+                );
+
             const searchOrganismList = parameter.displayType === 'treeBox' ? getLeaves(parameter.vocabulary, node => node.children).map(n => n.data.term)
               : parameter.vocabulary.map(([ term ]) => term);
-            value = JSON.stringify(intersection(paramSelection, searchOrganismList));
+            value = JSON.stringify(intersection(organismFilterSelection, searchOrganismList));
             break;
           }
         }
@@ -489,7 +495,7 @@ function StrategyLinkout(props: Props) {
     };
     const strategyResp = await wdkService.createStrategy(strategySpec);
     history.push(`/workspace/strategies/${strategyResp.id}`);
-  }, [question, docType, filters, filterOrganisms, searchString]);
+  }, [question, docType, filters, filterOrganisms, searchString, organismTree, response.organismCounts]);
 
   const stringParam = question?.parameters.find(p => p.name === 'text_expression') as StringParam | undefined;
 
@@ -761,4 +767,33 @@ function findDocumentProject(
   const representativeOrganism = organisms[0];
 
   return organismToProject[representativeOrganism];
+}
+
+function makeFullOrganismFilterSelection(
+  organismCounts: SiteSearchResponse['organismCounts'],
+  organismTree: TreeBoxVocabNode | undefined
+) {
+  // A list of all organisms recognized by the site search service
+  const allSiteSearchOrganisms = Object.keys(organismCounts);
+
+  if (organismTree == null) {
+    // We could probably throw an error in this case, as we're in a
+    // circumstance where:
+    // 1. The site search org filter isn't actually offered, yet
+    // 2. We're trying to export a strategy with step that has an org param
+    return allSiteSearchOrganisms;
+  }
+
+  // Otherwise, "allSiteSearchOrganisms" needs to be restricted to organisms offered by the org filter
+  const organismFilterLeaves = getLeaves(
+    organismTree,
+    node => node.children
+  ).map(
+    node => node.data.term
+  );
+
+  return intersection(
+    allSiteSearchOrganisms,
+    organismFilterLeaves
+  );
 }
