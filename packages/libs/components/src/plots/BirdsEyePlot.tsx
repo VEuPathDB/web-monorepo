@@ -165,7 +165,7 @@ export default function BirdsEyePlot({
       >
         {fullCounts.length
           ? fullCounts
-          : [CountBox({ label: '', value: 0, focused: false })]}
+          : [CountBox({ label: 'placeholder', value: 0, focused: false })]}
       </div>
     </div>
   );
