@@ -2,7 +2,7 @@ import { CSSProperties, ReactNode, useMemo, useState } from 'react';
 import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { BirdsEyePlotData } from '../types/plots';
 import { PlotParams } from 'react-plotly.js';
-import { Layout, Shape, Annotations } from 'plotly.js';
+import { Layout, Shape } from 'plotly.js';
 
 // in this example, the main variable is 'country'
 export interface BirdsEyePlotProps extends PlotProps<BirdsEyePlotData> {
