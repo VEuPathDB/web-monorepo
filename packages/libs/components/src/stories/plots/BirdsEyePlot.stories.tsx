@@ -7,6 +7,9 @@ export default {
   component: BirdsEyePlot,
 } as Meta;
 
+const red = '#da7272';
+const gray = '#aaaaaa';
+
 const dataSet: BirdsEyePlotData = {
   brackets: [
     {
@@ -23,13 +26,13 @@ const dataSet: BirdsEyePlotData = {
       name: 'total',
       value: [200],
       label: [''],
-      color: 'gray',
+      color: gray,
     },
     {
       name: 'subset',
       value: [123],
       label: [''],
-      color: 'red',
+      color: red,
     },
   ],
 };

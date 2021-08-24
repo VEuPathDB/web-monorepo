@@ -34,7 +34,7 @@ export default function BirdsEyePlot({
             orientation: 'h',
             type: 'bar',
             marker: {
-              opacity: 0.5,
+              opacity: 1,
               ...(bar.color ? { color: bar.color } : {}),
             },
             showlegend: false,
@@ -98,6 +98,7 @@ export default function BirdsEyePlot({
         data.bars.length || data.brackets.length
           ? {}
           : { color: 'transparent' },
+      showline: data.bars.length > 0 || data.brackets.length > 0,
     },
     yaxis: {
       automargin: true,
