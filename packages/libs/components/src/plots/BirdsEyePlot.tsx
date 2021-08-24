@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { BirdsEyePlotData } from '../types/plots';
 import { PlotParams } from 'react-plotly.js';
-import { Layout, Shape } from 'plotly.js';
+import { Layout, Shape, Annotations } from 'plotly.js';
 
 // in this example, the main variable is 'country'
 export interface BirdsEyePlotProps extends PlotProps<BirdsEyePlotData> {
@@ -58,9 +58,9 @@ export default function BirdsEyePlot({
               xref: 'x',
               yref: 'y',
               x0: 0,
-              y0: index / 2 + 1,
+              y0: indexToY(index),
               x1: bracket.value,
-              y1: index / 2 + 1,
+              y1: indexToY(index),
               line: {
                 color: 'black',
                 width: bracketLineWidth,
@@ -72,9 +72,9 @@ export default function BirdsEyePlot({
               xref: 'x',
               yref: 'y',
               x0: bracket.value,
-              y0: index / 2 + 1 + 0.25,
+              y0: indexToY(index) + 0.25,
               x1: bracket.value,
-              y1: index / 2 + 1 - 0.25,
+              y1: indexToY(index) - 0.25,
               line: {
                 color: 'black',
                 width: bracketLineWidth,
@@ -109,6 +109,9 @@ export default function BirdsEyePlot({
         data.bars.length || data.brackets.length
           ? {}
           : { color: 'transparent' },
+      tickmode: 'array',
+      tickvals: data.brackets.map((_, index) => indexToY(index)),
+      ticktext: data.brackets.map((bracket) => bracket.label),
     },
     barmode: 'overlay',
     shapes: plotlyShapes,
@@ -117,4 +120,8 @@ export default function BirdsEyePlot({
   return (
     <PlotlyPlot data={plotlyFriendlyData} layout={layout} {...restProps} />
   );
+}
+
+function indexToY(index: number) {
+  return index / 2 + 1;
 }

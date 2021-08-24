@@ -35,9 +35,16 @@ const dataSet: BirdsEyePlotData = {
 };
 
 const containerStyles = {
-  height: '250px',
+  height: '150px',
   width: '500px',
   border: '2px solid yellow',
+};
+
+const spacingOptions = {
+  marginTop: 5,
+  marginBottom: 5,
+  marginLeft: 5,
+  marginRight: 5,
 };
 
 const Template: Story<BirdsEyePlotProps> = (args: any) => (
@@ -49,6 +56,7 @@ Basic.args = {
   interactive: true,
   dependentAxisLabel: 'Mermaids',
   containerStyles,
+  spacingOptions,
 };
 
 export const EmptyLoading = Template.bind({});
