@@ -46,13 +46,8 @@ export default function MosaicPlot({
       tickvals: column_centers,
       ticktext:
         showColumnLabels !== false
-          ? data.independentLabels.map(
-              (value, i) =>
-                `<b>${value}</b> ${percent_widths[i].toFixed(1)}% (${raw_widths[
-                  i
-                ].toLocaleString('en-US')})`
-            )
-          : undefined,
+          ? data.independentLabels
+          : new Array(data.independentLabels.length).fill(''),
       range: [0, 100] as number[],
     },
     yaxis: {
@@ -74,10 +69,9 @@ export default function MosaicPlot({
           hoverinfo: 'text',
           hovertext: counts.map(
             (count, j) =>
-              `<b>${data.dependentLabels[i]}</b> ${(
-                (count / raw_widths[j]) *
-                100
-              ).toFixed(1)}% (${count.toLocaleString('en-US')})`
+              `<b>${data.dependentLabels[i]}</b> ${count.toLocaleString(
+                'en-US'
+              )} (${((count / raw_widths[j]) * 100).toFixed(1)}%)`
           ),
           width: percent_widths,
           type: 'bar',
