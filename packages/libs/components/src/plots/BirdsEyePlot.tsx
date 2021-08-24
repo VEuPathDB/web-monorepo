@@ -163,7 +163,9 @@ export default function BirdsEyePlot({
           justifyContent: 'space-around',
         }}
       >
-        {fullCounts}
+        {fullCounts.length
+          ? fullCounts
+          : [CountBox({ label: '', value: 0, focused: false })]}
       </div>
     </div>
   );
