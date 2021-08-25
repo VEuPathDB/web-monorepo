@@ -1,13 +1,15 @@
 import PopoverButton from '@veupathdb/components/lib/components/widgets/PopoverButton';
 import { Button } from '@material-ui/core';
-import { getTree } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
-import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { keyBy } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
 import { cx } from '../../workspace/Utils';
 import { StudyEntity } from '../types/study';
 import { VariableDescriptor } from '../types/variable';
-import { edaVariableToWdkField } from '../utils/wdk-filter-param-adapter';
+import {
+  edaVariableToWdkField,
+  entitiesToFields,
+  makeFieldTree,
+} from '../utils/wdk-filter-param-adapter';
 import VariableList from './VariableList';
 import './VariableTree.scss';
 import { useStudyEntities } from '../hooks/study';
@@ -56,48 +58,7 @@ export function VariableTree(props: Props) {
     return valuesMap;
   }, [entities]);
 
-  const fields = useMemo(() => {
-    return entities.flatMap((entity) => {
-      // Create a Set of variableId so we can lookup parentIds
-      const variableIds = new Set(entity.variables.map((v) => v.id));
-      return [
-        // Create a non-filterable field for the entity.
-        // Note that we're prefixing the term. This avoids
-        // collisions with variables using the same term.
-        // This situation shouldn't happen in production,
-        // but there is nothing preventing it, so we need to
-        // handle the case.
-        {
-          term: `entity:${entity.id}`,
-          display: entity.displayName,
-        },
-        ...entity.variables
-          // Before handing off to edaVariableToWdkField, we will
-          // change the id of the variable to include the entityId.
-          // This will make the id unique across the tree and prevent
-          // duplication across entity subtrees.
-          .map((variable) => ({
-            ...variable,
-            id: `${entity.id}/${variable.id}`,
-            parentId:
-              // Use entity as parent under the following conditions:
-              // - if parentId is null
-              // - if the parentId is the same as the entityId
-              // - if the parentId does not exist in the provided list of variables
-              //
-              // Variables that meet any of these conditions will serve
-              // as the root nodes of the variable subtree, which will
-              // become the children of the entity node in the final tree.
-              variable.parentId == null ||
-              variable.parentId === entity.id ||
-              !variableIds.has(variable.parentId)
-                ? `entity:${entity.id}`
-                : `${entity.id}/${variable.parentId}`,
-          }))
-          .map(edaVariableToWdkField),
-      ];
-    });
-  }, [entities]);
+  const fields = useMemo(() => entitiesToFields(entities), [entities]);
 
   const featuredFields = useMemo(() => {
     return entities.flatMap((entity) =>
@@ -115,14 +76,7 @@ export function VariableTree(props: Props) {
   }, [entities]);
 
   // Construct the fieldTree using the fields defined above.
-  const fieldTree = useMemo(() => {
-    const initialTree = getTree(fields, { hideSingleRoot: false });
-    const tree = pruneDescendantNodes(
-      (node) => node.field.type != null || node.children.length > 0,
-      initialTree
-    );
-    return tree;
-  }, [fields]);
+  const fieldTree = useMemo(() => makeFieldTree(fields), [fields]);
 
   const disabledFields = useMemo(
     () => disabledVariables?.map((v) => `${v.entityId}/${v.variableId}`),

@@ -1,13 +1,13 @@
-import { Filter as EdaFilter } from '../types/filter';
+import { Filter as EdaFilter, StringSetFilter } from '../types/filter';
 import {
-  DateMemberFilter,
-  DateRangeFilter,
   Field,
+  FieldTreeNode,
   Filter as WdkFilter,
-  NumberRangeFilter,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 import { DistributionResponse } from '../api/subsetting-api';
-import { VariableTreeNode } from '../types/study';
+import { StudyEntity, VariableTreeNode } from '../types/study';
+import { getTree } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
+import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 /*
  * These adapters can be used to convert filter objects between EDA and WDK
@@ -19,51 +19,67 @@ import { VariableTreeNode } from '../types/study';
 export function toEdaFilter(filter: WdkFilter, entityId: string): EdaFilter {
   const variableId = filter.field;
   if ('__entityId' in filter) entityId = (filter as any).__entityId;
-  const type: EdaFilter['type'] = filter.isRange
-    ? filter.type === 'number'
-      ? 'numberRange'
-      : 'dateRange'
-    : filter.type === 'string'
-    ? 'stringSet'
-    : filter.type === 'number'
-    ? 'numberSet'
-    : 'dateSet';
-  return (type === 'dateSet'
-    ? {
-        entityId,
-        variableId,
-        type,
-        dateSet: (filter as DateMemberFilter).value.map((d) => d + 'T00:00:00'),
+  switch (filter.isRange) {
+    case true: {
+      switch (filter.type) {
+        case 'number':
+          return {
+            entityId,
+            variableId,
+            type: 'numberRange',
+            min: filter.value.min!,
+            max: filter.value.max!,
+          };
+        case 'date':
+          return {
+            entityId,
+            variableId,
+            type: 'dateRange',
+            min: filter.value.min! + 'T00:00:00',
+            max: filter.value.max! + 'T00:00:00',
+          };
+        default:
+          throw new Error('Unsupported filter');
       }
-    : type === 'numberSet'
-    ? {
-        entityId,
-        variableId,
-        type,
-        numberSet: filter.value,
+    }
+    case false: {
+      switch (filter.type) {
+        case 'date':
+          return {
+            entityId,
+            variableId,
+            type: 'dateSet',
+            dateSet: filter.value.map((date) => date + 'T00:00:00'),
+          };
+        case 'number':
+          return {
+            entityId,
+            variableId,
+            type: 'numberSet',
+            numberSet: filter.value.map((value) => value!),
+          };
+        case 'string':
+          return {
+            entityId,
+            variableId,
+            type: 'stringSet',
+            stringSet: filter.value.map((value) => value!),
+          };
+        case 'multiFilter':
+          return {
+            entityId,
+            variableId,
+            type: 'multiFilter',
+            operation: filter.value.operation,
+            subFilters: filter.value.filters.map(
+              (filter) => toEdaFilter(filter, entityId) as StringSetFilter
+            ),
+          };
+        default:
+          throw new Error('Unsupported filter');
       }
-    : type === 'stringSet'
-    ? {
-        entityId,
-        variableId,
-        type,
-        stringSet: filter.value,
-      }
-    : type === 'dateRange'
-    ? {
-        entityId,
-        variableId,
-        type,
-        min: (filter as DateRangeFilter).value.min + 'T00:00:00',
-        max: (filter as DateRangeFilter).value.max + 'T00:00:00',
-      }
-    : {
-        entityId,
-        variableId,
-        type,
-        min: (filter as NumberRangeFilter).value.min,
-        max: (filter as NumberRangeFilter).value.max,
-      }) as EdaFilter;
+    }
+  }
 }
 
 /** Convert an EDA Filter to a WDK Filter */
@@ -88,6 +104,13 @@ export function fromEdaFilter(filter: EdaFilter): WdkFilter {
         ? filter[filter.type].map((d) => d.replace('T00:00:00', ''))
         : filter.type === 'stringSet'
         ? filter[filter.type]
+        : filter.type === 'multiFilter'
+        ? {
+            filters: filter.subFilters.map((subFilter) =>
+              fromEdaFilter(subFilter as StringSetFilter)
+            ),
+            operation: filter.operation,
+          }
         : filter[filter.type],
     __entityId: filter.entityId,
   } as WdkFilter;
@@ -100,7 +123,12 @@ export function edaVariableToWdkField(variable: VariableTreeNode): Field {
     parent: variable.parentId,
     precision: 1,
     term: variable.id,
-    type: variable.type !== 'category' ? variable.type : undefined,
+    type:
+      variable.displayType === 'multifilter'
+        ? 'multiFilter'
+        : variable.type !== 'category'
+        ? variable.type
+        : undefined,
     variableName: variable.providerLabel,
     // cast to handle additional props `precision` and `variableName` that
     // do not exist on the `Field` type
@@ -122,4 +150,56 @@ export function toWdkVariableSummary(
     filteredEntitiesCount: foreground.statistics.numDistinctEntityRecords,
     activeField: edaVariableToWdkField(variable),
   };
+}
+
+export function entitiesToFields(entities: StudyEntity[]) {
+  return entities.flatMap((entity) => {
+    // Create a Set of variableId so we can lookup parentIds
+    const variableIds = new Set(entity.variables.map((v) => v.id));
+    return [
+      // Create a non-filterable field for the entity.
+      // Note that we're prefixing the term. This avoids
+      // collisions with variables using the same term.
+      // This situation shouldn't happen in production,
+      // but there is nothing preventing it, so we need to
+      // handle the case.
+      {
+        term: `entity:${entity.id}`,
+        display: entity.displayName,
+      },
+      ...entity.variables
+        // Before handing off to edaVariableToWdkField, we will
+        // change the id of the variable to include the entityId.
+        // This will make the id unique across the tree and prevent
+        // duplication across entity subtrees.
+        .map((variable) => ({
+          ...variable,
+          id: `${entity.id}/${variable.id}`,
+          parentId:
+            // Use entity as parent under the following conditions:
+            // - if parentId is null
+            // - if the parentId is the same as the entityId
+            // - if the parentId does not exist in the provided list of variables
+            //
+            // Variables that meet any of these conditions will serve
+            // as the root nodes of the variable subtree, which will
+            // become the children of the entity node in the final tree.
+            variable.parentId == null ||
+            variable.parentId === entity.id ||
+            !variableIds.has(variable.parentId)
+              ? `entity:${entity.id}`
+              : `${entity.id}/${variable.parentId}`,
+        }))
+        .map(edaVariableToWdkField),
+    ];
+  });
+}
+
+export function makeFieldTree(fields: Field[]): FieldTreeNode {
+  const initialTree = getTree(fields, { hideSingleRoot: false });
+  const tree = pruneDescendantNodes(
+    (node) => node.field.type != null || node.children.length > 0,
+    initialTree
+  );
+  return tree;
 }
