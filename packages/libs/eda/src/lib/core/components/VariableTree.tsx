@@ -1,7 +1,7 @@
 import PopoverButton from '@veupathdb/components/lib/components/widgets/PopoverButton';
 import { Button } from '@material-ui/core';
 import { keyBy } from 'lodash';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, useContext } from 'react';
 import { cx } from '../../workspace/Utils';
 import { StudyEntity } from '../types/study';
 import { VariableDescriptor } from '../types/variable';
@@ -23,8 +23,6 @@ export interface Props {
   disabledVariables?: VariableDescriptor[];
   /** term string is of format "entityId/variableId"  e.g. "PCO_0000024/EUPATH_0000714" */
   onChange: (variable?: VariableDescriptor) => void;
-  hideDisabledFields?: boolean;
-  setHideDisabledFields?: (hide: boolean) => void;
   includeMultiFilters?: boolean;
 }
 export function VariableTree(props: Props) {
@@ -36,8 +34,6 @@ export function VariableTree(props: Props) {
     entityId,
     variableId,
     onChange,
-    hideDisabledFields = false,
-    setHideDisabledFields = () => {},
     includeMultiFilters = false,
   } = props;
   const entities = useStudyEntities(rootEntity);
@@ -122,15 +118,13 @@ export function VariableTree(props: Props) {
       autoFocus={false}
       starredVariables={starredVariables}
       toggleStarredVariable={toggleStarredVariable}
-      hideDisabledFields={hideDisabledFields}
-      setHideDisabledFields={setHideDisabledFields}
     />
   );
 }
 
 export function VariableTreeDropdown(props: Props) {
   const { rootEntity, entityId, variableId, onChange } = props;
-  const [hideDisabledFields, setHideDisabledFields] = useState(false);
+
   const entities = useStudyEntities(rootEntity);
   const variable = entities
     .find((e) => e.id === entityId)
@@ -154,11 +148,7 @@ export function VariableTreeDropdown(props: Props) {
           </div>
         )}
         <div className={cx('-VariableTreeDropdownTreeContainer')}>
-          <VariableTree
-            {...props}
-            hideDisabledFields={hideDisabledFields}
-            setHideDisabledFields={setHideDisabledFields}
-          />
+          <VariableTree {...props} />
         </div>
       </PopoverButton>
     </div>

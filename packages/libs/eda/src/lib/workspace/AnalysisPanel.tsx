@@ -25,6 +25,8 @@ import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import GlobalFiltersDialog from '../core/components/GlobalFiltersDialog';
 import { useStudyEntities } from '../core/hooks/study';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
+// import ShowHideVariableContextProvider
+import ShowHideVariableContextProvider from '../core/utils/show-hide-variable-context';
 
 interface Props {
   analysisState: AnalysisState;
@@ -72,113 +74,117 @@ export function AnalysisPanel(props: Props) {
     );
   if (analysis == null) return <Loading />;
   return (
-    <div className={cx('-Analysis')}>
-      <AnalysisSummary
-        analysis={analysis}
-        setAnalysisName={setName}
-        copyAnalysis={hideCopyAndSave ? undefined : copyAnalysis}
-        saveAnalysis={saveAnalysis}
-        deleteAnalysis={hideCopyAndSave ? undefined : deleteAnalysis}
-        onFilterIconClick={() =>
-          setGlobalFiltersDialogOpen(!globalFiltersDialogOpen)
-        }
-        globalFiltersDialogOpen={globalFiltersDialogOpen}
-      />
-      <GlobalFiltersDialog
-        open={globalFiltersDialogOpen}
-        setOpen={setGlobalFiltersDialogOpen}
-        entities={entities}
-        filters={analysis.filters}
-        setFilters={setFilters}
-        removeFilter={(filter) =>
-          setFilters(analysis.filters.filter((f) => f !== filter))
-        }
-      />
-      <Route
-        path={[
-          `${routeBase}/variables/:entityId?/:variableId?`,
-          `${routeBase}`,
-        ]}
-        render={(
-          props: RouteComponentProps<{
-            entityId?: string;
-            variableId?: string;
-          }>
-        ) => (
-          <div className="Entities">
-            <EntityDiagram
-              expanded
-              orientation="horizontal"
-              selectedEntity={props.match.params.entityId}
-              selectedVariable={props.match.params.variableId}
-              entityCounts={totalCounts.value}
-              filteredEntityCounts={filteredCounts.value}
-              filteredEntities={filteredEntities}
+    <ShowHideVariableContextProvider>
+      <div className={cx('-Analysis')}>
+        <AnalysisSummary
+          analysis={analysis}
+          setAnalysisName={setName}
+          copyAnalysis={hideCopyAndSave ? undefined : copyAnalysis}
+          saveAnalysis={saveAnalysis}
+          deleteAnalysis={hideCopyAndSave ? undefined : deleteAnalysis}
+          onFilterIconClick={() =>
+            setGlobalFiltersDialogOpen(!globalFiltersDialogOpen)
+          }
+          globalFiltersDialogOpen={globalFiltersDialogOpen}
+        />
+        <GlobalFiltersDialog
+          open={globalFiltersDialogOpen}
+          setOpen={setGlobalFiltersDialogOpen}
+          entities={entities}
+          filters={analysis.filters}
+          setFilters={setFilters}
+          removeFilter={(filter) =>
+            setFilters(analysis.filters.filter((f) => f !== filter))
+          }
+        />
+        <Route
+          path={[
+            `${routeBase}/variables/:entityId?/:variableId?`,
+            `${routeBase}`,
+          ]}
+          render={(
+            props: RouteComponentProps<{
+              entityId?: string;
+              variableId?: string;
+            }>
+          ) => (
+            <div className="Entities">
+              <EntityDiagram
+                expanded
+                orientation="horizontal"
+                selectedEntity={props.match.params.entityId}
+                selectedVariable={props.match.params.variableId}
+                entityCounts={totalCounts.value}
+                filteredEntityCounts={filteredCounts.value}
+                filteredEntities={filteredEntities}
+              />
+            </div>
+          )}
+        />
+        <WorkspaceNavigation
+          heading={<></>}
+          routeBase={routeBase}
+          items={[
+            {
+              display: 'View study details',
+              route: `/details`,
+              exact: false,
+              replace: true,
+            },
+            {
+              display: 'Browse and subset',
+              route: `/variables${lastVarPath}`,
+              exact: false,
+              replace: true,
+            },
+            {
+              display: 'Visualize',
+              // check whether user is at viz
+              route: location.pathname
+                .replace(routeBase, '')
+                .startsWith('/visualizations')
+                ? '/visualizations'
+                : `/visualizations${lastVizPath}`,
+              exact: false,
+              replace: true,
+            },
+          ]}
+        />
+        <Route
+          path={routeBase}
+          exact
+          render={() => <Redirect to={`${routeBase}/variables`} />}
+        />
+        <Route
+          path={`${routeBase}/details`}
+          render={() => (
+            <RecordController
+              recordClass="dataset"
+              primaryKey={studyRecord.id.map((p) => p.value).join('/')}
             />
-          </div>
-        )}
-      />
-      <WorkspaceNavigation
-        heading={<></>}
-        routeBase={routeBase}
-        items={[
-          {
-            display: 'View study details',
-            route: `/details`,
-            exact: false,
-            replace: true,
-          },
-          {
-            display: 'Browse and subset',
-            route: `/variables${lastVarPath}`,
-            exact: false,
-            replace: true,
-          },
-          {
-            display: 'Visualize',
-            // check whether user is at viz
-            route: location.pathname
-              .replace(routeBase, '')
-              .startsWith('/visualizations')
-              ? '/visualizations'
-              : `/visualizations${lastVizPath}`,
-            exact: false,
-            replace: true,
-          },
-        ]}
-      />
-      <Route
-        path={routeBase}
-        exact
-        render={() => <Redirect to={`${routeBase}/variables`} />}
-      />
-      <Route
-        path={`${routeBase}/details`}
-        render={() => (
-          <RecordController
-            recordClass="dataset"
-            primaryKey={studyRecord.id.map((p) => p.value).join('/')}
-          />
-        )}
-      />
-      <Route
-        path={`${routeBase}/variables/:entityId?`}
-        exact
-        render={(props) => <DefaultVariableRedirect {...props.match.params} />}
-      />
-      <Route
-        path={`${routeBase}/variables/:entityId/:variableId`}
-        exact
-        render={(
-          props: RouteComponentProps<{ entityId: string; variableId: string }>
-        ) => (
-          <Subsetting {...props.match.params} analysisState={analysisState} />
-        )}
-      />
-      <Route
-        path={`${routeBase}/visualizations`}
-        render={() => <ComputationRoute analysisState={analysisState} />}
-      />
-    </div>
+          )}
+        />
+        <Route
+          path={`${routeBase}/variables/:entityId?`}
+          exact
+          render={(props) => (
+            <DefaultVariableRedirect {...props.match.params} />
+          )}
+        />
+        <Route
+          path={`${routeBase}/variables/:entityId/:variableId`}
+          exact
+          render={(
+            props: RouteComponentProps<{ entityId: string; variableId: string }>
+          ) => (
+            <Subsetting {...props.match.params} analysisState={analysisState} />
+          )}
+        />
+        <Route
+          path={`${routeBase}/visualizations`}
+          render={() => <ComputationRoute analysisState={analysisState} />}
+        />
+      </div>
+    </ShowHideVariableContextProvider>
   );
 }
