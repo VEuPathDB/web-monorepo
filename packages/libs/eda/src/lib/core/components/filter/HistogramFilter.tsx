@@ -356,7 +356,6 @@ export function HistogramFilter(props: Props) {
           defaultUIState={defaultUIState}
           updateUIState={updateUIState}
           variableName={variable.displayName}
-          entityName={entity.displayName}
           showSpinner={data.pending}
         />
       </div>
@@ -372,7 +371,6 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   filter?: DateRangeFilter | NumberRangeFilter;
   // add variableName for independentAxisLabel
   variableName: string;
-  entityName: string;
 };
 
 function HistogramPlotWithControls({
@@ -384,7 +382,6 @@ function HistogramPlotWithControls({
   filter,
   // variableName for independentAxisLabel
   variableName,
-  entityName,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   const handleBinWidthChange = useCallback(
@@ -532,7 +529,7 @@ function HistogramPlotWithControls({
         displayLibraryControls={displayLibraryControls}
         onSelectedRangeChange={handleSelectedRangeChange}
         barLayout={barLayout}
-        dependentAxisLabel={`Count of ${entityName}`}
+        dependentAxisLabel="Count"
         // add independentAxisLabel
         independentAxisLabel={variableName}
         independentAxisRange={uiState.independentAxisRange}
