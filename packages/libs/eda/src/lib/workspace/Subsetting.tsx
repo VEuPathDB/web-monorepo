@@ -51,6 +51,7 @@ export function Subsetting(props: Props) {
     <div className={cx('-Subsetting')}>
       <div className="Variables">
         <VariableTree
+          includeMultiFilters
           rootEntity={entities[0]}
           entityId={entity.id}
           starredVariables={analysisState.analysis?.starredVariables}

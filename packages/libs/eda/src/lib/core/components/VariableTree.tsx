@@ -25,6 +25,7 @@ export interface Props {
   onChange: (variable?: VariableDescriptor) => void;
   hideDisabledFields?: boolean;
   setHideDisabledFields?: (hide: boolean) => void;
+  includeMultiFilters?: boolean;
 }
 export function VariableTree(props: Props) {
   const {
@@ -37,6 +38,7 @@ export function VariableTree(props: Props) {
     onChange,
     hideDisabledFields = false,
     setHideDisabledFields = () => {},
+    includeMultiFilters = false,
   } = props;
   const entities = useStudyEntities(rootEntity);
 
@@ -58,7 +60,10 @@ export function VariableTree(props: Props) {
     return valuesMap;
   }, [entities]);
 
-  const fields = useMemo(() => entitiesToFields(entities), [entities]);
+  const fields = useMemo(
+    () => entitiesToFields(entities, { includeMultiFilters }),
+    [entities, includeMultiFilters]
+  );
 
   const featuredFields = useMemo(() => {
     return entities.flatMap((entity) =>
@@ -71,9 +76,11 @@ export function VariableTree(props: Props) {
           id: `${entity.id}/${variable.id}`,
           displayName: `<span class="Entity">${entity.displayName}</span>: ${variable.displayName}`,
         }))
-        .map(edaVariableToWdkField)
+        .map((variable) =>
+          edaVariableToWdkField(variable, { includeMultiFilters })
+        )
     );
-  }, [entities]);
+  }, [includeMultiFilters, entities]);
 
   // Construct the fieldTree using the fields defined above.
   const fieldTree = useMemo(() => makeFieldTree(fields), [fields]);

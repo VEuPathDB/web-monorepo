@@ -116,7 +116,14 @@ export function fromEdaFilter(filter: EdaFilter): WdkFilter {
   } as WdkFilter;
 }
 
-export function edaVariableToWdkField(variable: VariableTreeNode): Field {
+export interface EdaVariableToWdkFieldOptions {
+  includeMultiFilters?: boolean;
+}
+export function edaVariableToWdkField(
+  variable: VariableTreeNode,
+  options: EdaVariableToWdkFieldOptions = {}
+): Field {
+  const { includeMultiFilters = false } = options;
   return {
     display: variable.displayName,
     isRange: variable.dataShape === 'continuous',
@@ -124,7 +131,7 @@ export function edaVariableToWdkField(variable: VariableTreeNode): Field {
     precision: 1,
     term: variable.id,
     type:
-      variable.displayType === 'multifilter'
+      variable.displayType === 'multifilter' && includeMultiFilters
         ? 'multiFilter'
         : variable.type !== 'category'
         ? variable.type
@@ -152,7 +159,10 @@ export function toWdkVariableSummary(
   };
 }
 
-export function entitiesToFields(entities: StudyEntity[]) {
+export function entitiesToFields(
+  entities: StudyEntity[],
+  options?: EdaVariableToWdkFieldOptions
+) {
   return entities.flatMap((entity) => {
     // Create a Set of variableId so we can lookup parentIds
     const variableIds = new Set(entity.variables.map((v) => v.id));
@@ -190,7 +200,7 @@ export function entitiesToFields(entities: StudyEntity[]) {
               ? `entity:${entity.id}`
               : `${entity.id}/${variable.parentId}`,
         }))
-        .map(edaVariableToWdkField),
+        .map((variable) => edaVariableToWdkField(variable, options)),
     ];
   });
 }
