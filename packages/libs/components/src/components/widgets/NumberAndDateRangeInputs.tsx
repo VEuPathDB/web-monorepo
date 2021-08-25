@@ -21,7 +21,8 @@ export type BaseProps<M extends NumberOrDateRange> = {
   /** Minimum and maximum allowed values for the user-inputted range. Optional. */
   rangeBounds?: M;
   /** Optional validator function. Should return {validity: true, message: ''} if value is allowed.
-   * If provided, rangeBounds and required will have no effect.
+   * If a validator is provided, `required` is no longer useful, and
+   * rangeBounds will only be used for auto-filling empty inputs.
    */
   validator?: (
     newRange?: NumberOrDateRange
@@ -84,9 +85,9 @@ function BaseInput({
   //DKDK set default isAxisTruncated is false
   isAxisTruncated = false,
 }: BaseInputProps) {
-  if (validator && (required || rangeBounds))
+  if (validator && required)
     console.log(
-      'WARNING: NumberRangeInput or DateRangeInput will ignore props required and/or rangeBounds because validator was provided.'
+      'WARNING: NumberRangeInput or DateRangeInput will ignore `required` prop because validator was provided.'
     );
 
   const [focused, setFocused] = useState(false);
