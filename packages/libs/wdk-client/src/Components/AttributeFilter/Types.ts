@@ -106,7 +106,7 @@ export interface NumberRangeFilter extends BaseFilter {
 }
 
 export interface DateRangeFilter extends BaseFilter {
-  type: 'string';
+  type: 'date';
   isRange: true;
   value: RangeValue<string>;
 }
