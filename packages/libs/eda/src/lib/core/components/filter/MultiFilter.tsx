@@ -96,9 +96,14 @@ export function MultiFilter(props: Props) {
 
   const subsettingClient = useSubsettingClient();
 
-  const otherFilters = useMemo(() => {
-    return analysisState.analysis?.filters.filter(
-      (f) => f.entityId !== entity.id || f.variableId !== variable.id
+  // Serialize other filters to a string so that the same set of "otherFilters"
+  // doesn't trigger a new request for leafSummaries
+  const otherFiltersJson = useMemo(() => {
+    if (analysisState.analysis?.filters == null) return;
+    return JSON.stringify(
+      analysisState.analysis.filters.filter(
+        (f) => f.entityId !== entity.id || f.variableId !== variable.id
+      )
     );
   }, [analysisState.analysis?.filters, entity.id, variable.id]);
 
@@ -110,7 +115,7 @@ export function MultiFilter(props: Props) {
             {
               entityId: entity.id,
               variableId: leaf.term,
-              filters: otherFilters,
+              filters: otherFiltersJson ? JSON.parse(otherFiltersJson) : [],
             },
             (filters) =>
               subsettingClient.getDistribution(
@@ -151,7 +156,13 @@ export function MultiFilter(props: Props) {
           })
         )
       );
-    }, [leaves, entity.id, otherFilters, subsettingClient, studyMetadata.id])
+    }, [
+      leaves,
+      entity.id,
+      otherFiltersJson,
+      subsettingClient,
+      studyMetadata.id,
+    ])
   );
 
   const orderedLeafSummaries = useMemo(
