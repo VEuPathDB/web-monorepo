@@ -177,9 +177,17 @@ export function MultiFilter(props: Props) {
 
   const handleFiltereChange = useCallback(
     (nextFilters: WdkFilter[]) => {
-      const edaFilters = nextFilters.map((filter) =>
-        toEdaFilter(filter, entity.id)
-      );
+      const edaFilters = nextFilters
+        // this is needed because MultiFieldFilter will create subFilters with an
+        // empty set of values, which does not work w/ eda
+        .filter(
+          (filter) =>
+            filter.type !== 'multiFilter' ||
+            filter.value.filters.every(
+              (subFilter) => subFilter.value.length > 0
+            )
+        )
+        .map((filter) => toEdaFilter(filter, entity.id));
       analysisState.setFilters(edaFilters);
     },
     [analysisState, entity.id]
