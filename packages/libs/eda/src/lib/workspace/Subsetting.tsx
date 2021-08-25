@@ -1,6 +1,11 @@
 import React from 'react';
 import { useHistory } from 'react-router';
-import { useMakeVariableLink, useStudyMetadata } from '../core';
+import {
+  MultiFilterVariable,
+  useMakeVariableLink,
+  useStudyMetadata,
+  Variable,
+} from '../core';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { cx } from './Utils';
 import { VariableDetails } from './Variable';
@@ -32,7 +37,10 @@ export function Subsetting(props: Props) {
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
-  if (entity == null || variable == null || variable.type === 'category')
+  if (
+    entity == null ||
+    (!Variable.is(variable) && !MultiFilterVariable.is(variable))
+  )
     return <div>Could not find specified variable.</div>;
 
   const totalEntityCount = totalCounts.value && totalCounts.value[entity.id];

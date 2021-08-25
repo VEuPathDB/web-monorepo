@@ -59,6 +59,22 @@ export default function FilterChipList(props: Props) {
               case 'dateRange':
                 filterValueDisplay = `from ${filter.min} to ${filter.max}`;
                 break;
+              case 'multiFilter':
+                filterValueDisplay = filter.subFilters
+                  .map((subFilter) => {
+                    const entAndVar = findEntityAndVariable(props.entities, {
+                      entityId: filter.entityId,
+                      variableId: subFilter.variableId,
+                    });
+                    if (entAndVar == null) return '';
+                    return `${
+                      entAndVar.variable.displayName
+                    } = ${subFilter.stringSet.join(', ')}`;
+                  })
+                  .join(
+                    '\n' + (filter.operation === 'union' ? 'or' : 'and') + '\n'
+                  );
+                break;
               default:
                 filterValueDisplay = '';
             }
