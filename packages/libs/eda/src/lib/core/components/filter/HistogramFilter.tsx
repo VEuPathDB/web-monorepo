@@ -24,7 +24,7 @@ import UnknownCount from '@veupathdb/wdk-client/lib/Components/AttributeFilter/U
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import { number, partial, TypeOf, boolean, type, intersection } from 'io-ts';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useEffect } from 'react';
 import { usePromise } from '../../hooks/promise';
 import { AnalysisState } from '../../hooks/analysis';
 import { useSubsettingClient } from '../../hooks/workspace';
@@ -36,6 +36,11 @@ import { HistogramVariable } from './types';
 import { fullISODateRange, padISODateTime } from '../../utils/date-conversion';
 import { getDistribution } from './util';
 import { DistributionResponse } from '../../api/subsetting-api';
+//DKDK reusable utils?: will see if this is indeed reusable with other application
+import {
+  dataDependentAxisMinMax,
+  truncationConfig,
+} from '../../utils/truncation-config-utils';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -45,9 +50,10 @@ type Props = {
   analysisState: AnalysisState;
 };
 
-type UIState = TypeOf<typeof UIState>;
+//DKDK export UIState
+export type UIState = TypeOf<typeof UIState>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-const UIState = intersection([
+export const UIState = intersection([
   type({
     binWidth: number,
     independentAxisRange: NumberOrDateRange,
@@ -56,6 +62,9 @@ const UIState = intersection([
   partial({
     binWidthTimeUnit: TimeUnit,
     dependentAxisRange: NumberRange,
+    //DKDK set default dependent axis min max from data-driven initial min/max
+    defaultDependentAxisMin: number,
+    defaultDependentAxisMax: number,
   }),
 ]);
 
@@ -96,14 +105,15 @@ export function HistogramFilter(props: Props) {
       binWidth: binWidth ?? 1,
       binWidthTimeUnit: binUnits ?? variable.binUnits!, // bit nasty!
       independentAxisRange:
+        //DKDK use Zulu time here to be consistent with uiState.independentAxisRange
         variable.displayRangeMin != null && variable.displayRangeMax != null
           ? {
-              min: variable.displayRangeMin + 'T00:00:00',
-              max: variable.displayRangeMax + 'T00:00:00',
+              min: variable.displayRangeMin + 'T00:00:00Z',
+              max: variable.displayRangeMax + 'T00:00:00Z',
             }
           : {
-              min: variable.rangeMin + 'T00:00:00',
-              max: variable.rangeMax + 'T00:00:00',
+              min: variable.rangeMin + 'T00:00:00Z',
+              max: variable.rangeMax + 'T00:00:00Z',
             },
       ...otherDefaults,
     };
@@ -513,6 +523,102 @@ function HistogramPlotWithControls({
 
   const widgetHeight = '4em';
 
+  /*
+   * DKDK set default dependent min/max from data and configure truncation flags
+   * introduce reusable functions
+   *
+   **/
+  console.log('data =', data);
+  //DKDK find data-driven dependent axis min/max: : will see if this is reusable with other application
+  const { dependentAxisMin, dependentAxisMax } = useMemo(() => {
+    const { dependentAxisMin, dependentAxisMax } = dataDependentAxisMinMax(
+      data
+    );
+    return { dependentAxisMin, dependentAxisMax };
+  }, [data]);
+
+  //DKDK set default (initial) dependent axis min max
+  useEffect(() => {
+    if (
+      dependentAxisMin != null &&
+      uiState.defaultDependentAxisMin == null &&
+      dependentAxisMax != null &&
+      uiState.defaultDependentAxisMax == null
+    ) {
+      updateUIState({
+        defaultDependentAxisMin: dependentAxisMin,
+        defaultDependentAxisMax: dependentAxisMax,
+      });
+    }
+  }, [
+    data?.series,
+    dependentAxisMin,
+    dependentAxisMax,
+    updateUIState,
+    uiState.defaultDependentAxisMin,
+    uiState.defaultDependentAxisMax,
+    uiState.dependentAxisRange?.min,
+    uiState.dependentAxisRange?.max,
+  ]);
+
+  //DKDK set truncation flags: will see if this is reusable with other application
+  const {
+    truncationConfigIndependentAxisMin,
+    truncationConfigIndependentAxisMax,
+    truncationConfigDependentAxisMin,
+    truncationConfigDependentAxisMax,
+  } = useMemo(() => {
+    const {
+      truncationConfigIndependentAxisMin,
+      truncationConfigIndependentAxisMax,
+      truncationConfigDependentAxisMin,
+      truncationConfigDependentAxisMax,
+    } = truncationConfig(
+      defaultUIState,
+      uiState,
+      dependentAxisMin,
+      dependentAxisMax
+    );
+    return {
+      truncationConfigIndependentAxisMin,
+      truncationConfigIndependentAxisMax,
+      truncationConfigDependentAxisMin,
+      truncationConfigDependentAxisMax,
+    };
+  }, [defaultUIState, uiState, dependentAxisMin, dependentAxisMax]);
+
+  console.log(
+    'dependentAxisMin, dependentAxisMax =',
+    dependentAxisMin,
+    dependentAxisMax
+  );
+  console.log('uiState.dependentAxisRange =', uiState.dependentAxisRange);
+  console.log(
+    'uiState.defaultDependentAxisMin, uiState.dependentAxisRange?.min =',
+    uiState.defaultDependentAxisMin,
+    uiState.dependentAxisRange?.min
+  );
+  console.log(
+    'uiState.defaultDependentAxisMax, uiState.dependentAxisRange?.max =',
+    uiState.defaultDependentAxisMax,
+    uiState.dependentAxisRange?.max
+  );
+  console.log(
+    'defaultUIState.independentAxisRange.min, uiState.independentAxisRange.min = ',
+    defaultUIState.independentAxisRange.min,
+    uiState.independentAxisRange.min
+  );
+  console.log(
+    'truncationConfigIndependentAxisMin, truncationConfigIndependentAxisMax =',
+    truncationConfigIndependentAxisMin,
+    truncationConfigIndependentAxisMax
+  );
+  console.log(
+    'truncationConfigDependentAxisMin, truncationConfigDependentAxisMax =',
+    truncationConfigDependentAxisMin,
+    truncationConfigDependentAxisMax
+  );
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <SelectedRangeControl
@@ -544,6 +650,26 @@ function HistogramPlotWithControls({
           orientation: 'horizontal',
           verticalPaddingAdjustment: 20,
         }}
+        //DKDK pass data-driven dependent axis range
+        dataDependentAxisRange={
+          dependentAxisMin != null && dependentAxisMax != null
+            ? {
+                min: dependentAxisMin,
+                max: dependentAxisMax,
+              }
+            : undefined
+        }
+        //DKDK pass truncationConfig
+        axisTruncationConfig={{
+          independentAxis: {
+            min: truncationConfigIndependentAxisMin,
+            max: truncationConfigIndependentAxisMax,
+          },
+          dependentAxis: {
+            min: truncationConfigDependentAxisMin,
+            max: truncationConfigDependentAxisMax,
+          },
+        }}
       />
 
       <div style={{ display: 'flex', flexDirection: 'row' }}>
@@ -565,6 +691,8 @@ function HistogramPlotWithControls({
               handleDependentAxisRangeChange(newRange as NumberRange);
             }}
             allowPartialRange={false}
+            //DKDK pass isAxisTruncated boolean
+            isAxisTruncated={uiState.dependentAxisRange != null}
           />
 
           <Button
@@ -600,6 +728,11 @@ function HistogramPlotWithControls({
             range={uiState.independentAxisRange}
             onRangeChange={handleIndependentAxisRangeChange}
             valueType={data?.valueType}
+            //DKDK pass isAxisTruncated boolean
+            isAxisTruncated={
+              truncationConfigIndependentAxisMin ||
+              truncationConfigIndependentAxisMax
+            }
           />
 
           <Button
