@@ -105,8 +105,8 @@ export const HistogramResponse = type({
       ])
     ),
     config: type({
-      completeCases: number,
-      plottedIncompleteCases: number,
+      completeCasesAllVars: number,
+      completeCasesAxesVars: number,
       binSlider: type({
         min: number,
         max: number,
@@ -158,8 +158,8 @@ export type BarplotResponse = TypeOf<typeof BarplotResponse>;
 export const BarplotResponse = type({
   barplot: type({
     config: type({
-      completeCases: number,
-      plottedIncompleteCases: number,
+      completeCasesAllVars: number,
+      completeCasesAxesVars: number,
       xVariableDetails: type({
         variableId: string,
         entityId: string,
@@ -242,8 +242,8 @@ export const ScatterplotResponse = type({
   scatterplot: type({
     data: ScatterplotResponseData,
     config: type({
-      completeCases: number,
-      plottedIncompleteCases: number,
+      completeCasesAllVars: number,
+      completeCasesAxesVars: number,
       xVariableDetails: type({
         variableId: string,
         entityId: string,
@@ -299,8 +299,8 @@ export const LineplotResponse = type({
   scatterplot: type({
     data: LineplotResponseData,
     config: type({
-      completeCases: number,
-      plottedIncompleteCases: number,
+      completeCasesAllVars: number,
+      completeCasesAxesVars: number,
       xVariableDetails: type({
         variableId: string,
         entityId: string,
@@ -336,8 +336,8 @@ export const MosaicResponse = type({
       })
     ),
     config: type({
-      completeCases: number,
-      plottedIncompleteCases: number,
+      completeCasesAllVars: number,
+      completeCasesAxesVars: number,
       xVariableDetails: type({
         variableId: string,
         entityId: string,
@@ -447,8 +447,8 @@ export const BoxplotResponse = type({
   boxplot: type({
     data: BoxplotResponseData,
     config: type({
-      completeCases: number,
-      plottedIncompleteCases: number,
+      completeCasesAllVars: number,
+      completeCasesAxesVars: number,
       xVariableDetails: type({
         variableId: string,
         entityId: string,
