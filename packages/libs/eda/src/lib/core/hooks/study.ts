@@ -14,6 +14,7 @@ import {
   StudyMetadata,
   StudyRecordClass,
   StudyRecord,
+  Variable,
 } from '../types/study';
 import { usePromise } from './promise';
 import { SubsettingClient } from '../api/subsetting-api';
@@ -104,8 +105,14 @@ export function useStudyMetadata(datasetId: string, store: SubsettingClient) {
 
 export function useFindEntityAndVariable(entities: StudyEntity[]) {
   return useCallback(
-    (variable?: VariableDescriptor) =>
-      findEntityAndVariable(entities, variable),
+    (variable?: VariableDescriptor) => {
+      const entAndVar = findEntityAndVariable(entities, variable);
+      if (entAndVar == null || entAndVar.variable.type === 'category') return;
+      return entAndVar as {
+        entity: StudyEntity;
+        variable: Variable;
+      };
+    },
     [entities]
   );
 }
