@@ -18,6 +18,7 @@ export interface AxisRangeControlProps
   range?: NumberOrDateRange;
   /** function to call when widget updates the range */
   onRangeChange?: (newRange?: NumberOrDateRange) => void;
+  isAxisTruncated?: boolean;
 }
 
 export default function AxisRangeControl({
@@ -26,6 +27,8 @@ export default function AxisRangeControl({
   range,
   onRangeChange,
   containerStyles,
+  //DKDK show popup message: default = false
+  isAxisTruncated = false,
 }: AxisRangeControlProps) {
   const validator = useCallback((range?: NumberOrDateRange): {
     validity: boolean;
@@ -56,6 +59,8 @@ export default function AxisRangeControl({
         allowPartialRange={false}
         containerStyles={containerStyles}
         validator={validator}
+        //DKDK show popup
+        isAxisTruncated={isAxisTruncated}
       />
     ) : (
       <NumberRangeInput
@@ -65,6 +70,8 @@ export default function AxisRangeControl({
         allowPartialRange={false}
         containerStyles={containerStyles}
         validator={validator}
+        //DKDK show popup
+        isAxisTruncated={isAxisTruncated}
       />
     )
   ) : null;

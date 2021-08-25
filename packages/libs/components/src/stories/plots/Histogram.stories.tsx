@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import {
   NumberRange,
@@ -12,7 +12,10 @@ import HistogramControls from '../../components/plotControls/HistogramControls';
 import AxisRangeControl from '../../components/plotControls/AxisRangeControl';
 import { binDailyCovidStats } from '../api/covidData';
 import { binGithubEventDates } from '../api/githubDates';
-import { HistogramData, TruncationConfig } from '../../types/plots';
+import { HistogramData, AxisTruncationConfig } from '../../types/plots';
+
+//DKDK
+import { orderBy } from 'lodash';
 
 export default {
   title: 'Plots/Histogram',
@@ -355,9 +358,10 @@ const TemplateStaticWithRangeControls: Story<HistogramProps> = (args) => {
     setIndependentAxisRange,
   ] = useState<NumberOrDateRange>();
 
-  const [truncationConfig, setTruncationConfig] = useState<TruncationConfig>(
-    {}
-  );
+  const [
+    axisTruncationConfig,
+    setAxisTruncationConfig,
+  ] = useState<AxisTruncationConfig>({});
 
   const handleDependentAxisRangeChange = async (
     newRange?: NumberOrDateRange
@@ -371,10 +375,25 @@ const TemplateStaticWithRangeControls: Story<HistogramProps> = (args) => {
     setIndependentAxisRange(newRange);
   };
 
+  //DKDK initialize dependent axis min/max
+  let { dependentAxisMin, dependentAxisMax } = dataDependentAxisMinMax(
+    args.data
+  );
+
+  //DKDK for simplicity, set original data's min and max explicitly here
+  const defaultDependentAxisMin = 0;
+  const defaultDependentAxisMax = 99;
+
+  // console.log('defaultDependentAxisMin, defaultDependentAxisMax =', defaultDependentAxisMin, defaultDependentAxisMax)
+  // const dataDependentAxisRange: NumberRange = {
+  //   min: dependentAxisMin,
+  //   max: dependentAxisMax
+  // }
+
   // here we figure out if any of the axes are truncated
   useEffect(() => {
     if (args.data == null) {
-      setTruncationConfig({});
+      setAxisTruncationConfig({});
       return;
     }
 
@@ -403,19 +422,50 @@ const TemplateStaticWithRangeControls: Story<HistogramProps> = (args) => {
           bin.binStart < independentAxisRange?.max)
     );
 
+    //DKDK compute dependent axis min/max from data
+    // console.log('xFilteredBins =', xFilteredBins)
+    //DKDK for min, needs to check whether data.length = 1
+    dependentAxisMin =
+      xFilteredBins.length === 1
+        ? 0
+        : orderBy(
+            xFilteredBins.flatMap((series) => series),
+            [(bin) => bin.count],
+            'asc'
+          )[0].count;
+
+    dependentAxisMax = orderBy(
+      xFilteredBins.flatMap((series) => series),
+      [(bin) => bin.count],
+      'desc'
+    )[0].count;
+    console.log(
+      'dependentAxisMin, dependentAxisMax =',
+      dependentAxisMin,
+      dependentAxisMax
+    );
+
+    //DKDK in order to mimick the case that independent axis range control affects dependent axis min and/or max, use more condition here
     const topTruncated =
-      dependentAxisRange?.max != null &&
-      xFilteredBins.filter((bin) => bin.count > dependentAxisRange.max).length >
-        0;
+      (dependentAxisRange?.max != null &&
+        xFilteredBins.filter((bin) => bin.count > dependentAxisRange.max)
+          .length > 0) ||
+      (dependentAxisMax != null &&
+        defaultDependentAxisMax != null &&
+        defaultDependentAxisMax !== dependentAxisMax);
 
     // bottom truncation (doesn't detect bars with bottoms shaved off but does
     // catch when a bar is completely missing)
+    //DKDK in order to mimick the case that independent axis range control affects dependent axis min and/or max, use more condition here
     const bottomTruncated =
-      dependentAxisRange?.min != null &&
-      xFilteredBins.filter((bin) => bin.count <= dependentAxisRange.min)
-        .length > 0;
+      (dependentAxisRange?.min != null &&
+        xFilteredBins.filter((bin) => bin.count <= dependentAxisRange.min)
+          .length > 0) ||
+      (dependentAxisMin != null &&
+        defaultDependentAxisMin != null &&
+        defaultDependentAxisMin !== dependentAxisMin);
 
-    setTruncationConfig({
+    setAxisTruncationConfig({
       independentAxis: { min: leftTruncated, max: rightTruncated },
       dependentAxis: { min: bottomTruncated, max: topTruncated },
     });
@@ -425,9 +475,18 @@ const TemplateStaticWithRangeControls: Story<HistogramProps> = (args) => {
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Histogram
         {...args}
-        truncationConfig={truncationConfig}
+        axisTruncationConfig={axisTruncationConfig}
         independentAxisRange={independentAxisRange}
         dependentAxisRange={dependentAxisRange}
+        //DKDK need this data's min/max
+        dataDependentAxisRange={
+          dependentAxisMin != null && dependentAxisMax != null
+            ? {
+                min: dependentAxisMin,
+                max: dependentAxisMax,
+              }
+            : undefined
+        }
       />
       <div
         style={{
@@ -459,7 +518,8 @@ StaticDataWithRangeControls.args = {
     series: [
       {
         name: 'penguins',
-        bins: [42, 11, 99, 23, 7, 9].map((num, index) => ({
+        //DKDK added 0 for testing purpose
+        bins: [0, 42, 11, 99, 23, 7, 9].map((num, index) => ({
           binStart: index + 1,
           binEnd: index + 2,
           binLabel: `${index + 1} to ${index + 2}`,
@@ -470,3 +530,25 @@ StaticDataWithRangeControls.args = {
   },
   interactive: true,
 };
+
+function dataDependentAxisMinMax(data?: HistogramData) {
+  const dependentAxisMin: number | undefined =
+    data?.series != null && data.series.length > 0
+      ? orderBy(
+          data.series.flatMap((series) => series.bins),
+          [(bin) => bin.count],
+          'asc'
+        )[0].count
+      : undefined;
+
+  const dependentAxisMax: number | undefined =
+    data?.series != null && data.series.length > 0
+      ? orderBy(
+          data.series.flatMap((series) => series.bins),
+          [(bin) => bin.count],
+          'desc'
+        )[0].count
+      : undefined;
+
+  return { dependentAxisMin, dependentAxisMax };
+}

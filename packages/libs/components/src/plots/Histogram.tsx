@@ -13,7 +13,7 @@ import {
   DependentAxisLogScaleAddon,
   DependentAxisLogScaleDefault,
   AxisTruncationAddon,
-  TruncationConfig,
+  // AxisTruncationConfig,
 } from '../types/plots';
 import { NumberOrDateRange, NumberRange } from '../types/general';
 
@@ -32,6 +32,13 @@ import {
 // Components
 import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { Layout, Shape } from 'plotly.js';
+
+//DKDK import util function
+// import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations'
+import { extendIndependentAxisRangeForTruncations } from '../utils/extended-independent-axis-range-truncations';
+import { extendDependentAxisRangeForTruncations } from '../utils/extended-dependent-axis-range-truncations';
+import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
+import { truncatedDependentAxisLayoutRange } from '../utils/truncated-dependent-axis-layout-range';
 
 // bin middles needed for highlighting
 interface BinSummary {
@@ -71,6 +78,8 @@ export interface HistogramProps
   isZoomed?: boolean;
   /** independent axis range min and max */
   independentAxisRange?: NumberOrDateRange;
+  /** DKDK dependent axis min/max computed from data */
+  dataDependentAxisRange?: NumberRange;
 }
 
 /** A Plot.ly based histogram component. */
@@ -89,7 +98,9 @@ export default function Histogram({
   selectedRangeBounds,
   isZoomed = false,
   independentAxisRange,
-  truncationConfig,
+  axisTruncationConfig,
+  //DKDK
+  dataDependentAxisRange,
   ...restProps
 }: HistogramProps) {
   if (selectedRangeBounds || isZoomed)
@@ -330,9 +341,21 @@ export default function Histogram({
     } as NumberOrDateRange;
   }, [data?.valueType, independentAxisRange, binSummaries]);
 
-  const extendedIndependentAxisRange = extendAxisRangeForTruncations(
+  console.log('standardIndependentAxisRange =', standardIndependentAxisRange);
+
+  //DKDK separate range function
+  // const extendedIndependentAxisRange = extendAxisRangeForTruncations(
+  //   standardIndependentAxisRange,
+  //   axisTruncationConfig?.independentAxis,
+  //   data.valueType,
+  //   //DKDK add 'independentAxis' to handle both
+  //   'independentAxis',
+  //   //DKDK no need to pass this for independent axis but just for consistency
+  //   // independentAxisRange,
+  // );
+  const extendedIndependentAxisRange = extendIndependentAxisRangeForTruncations(
     standardIndependentAxisRange,
-    truncationConfig?.independentAxis,
+    axisTruncationConfig?.independentAxis,
     data.valueType
   );
 
@@ -371,16 +394,90 @@ export default function Histogram({
   }, [data.series]);
 
   // just rename this for symmetry/clarity
-  const standardDependentAxisRange = dependentAxisRange;
+  //DKDK this probably needs to be changed with dataDependentAxisRange because
+  // a) dependent axis range does not have initial value
+  // b) dependent axis range control does not requrest data to backend
+  // const standardDependentAxisRange = dependentAxisRange;
+  const standardDependentAxisRange = dataDependentAxisRange;
 
   /**
    * TO DO: compare extended vs standard and add rectangles where necessary
    */
 
-  const extendedDependentAxisRange = extendAxisRangeForTruncations(
+  //DKDK change this to return four keys: min, minStart, max, maxStart
+  // const extendedDependentAxisRange = extendAxisRangeForTruncations(
+  //   standardDependentAxisRange,
+  //   axisTruncationConfig?.dependentAxis,
+  //   'number',
+  //   //DKDK add 'dependentAxis' to handle both
+  //   'dependentAxis',
+  //   //DKDK this needs to be passed to the function
+  //   dependentAxisRange,
+  // ) as NumberRange | undefined;
+
+  const extendedDependentAxisRange = extendDependentAxisRangeForTruncations(
     standardDependentAxisRange,
-    truncationConfig?.dependentAxis
-  ) as NumberRange | undefined;
+    axisTruncationConfig?.dependentAxis,
+    'number',
+    //DKDK this needs to be passed to the function
+    dependentAxisRange
+  );
+
+  console.log(
+    'axisTruncationConfig.independentAxis.min, axisTruncationConfig.independentAxis.max =',
+    axisTruncationConfig?.independentAxis?.min,
+    axisTruncationConfig?.independentAxis?.max
+  );
+  console.log(
+    'axisTruncationConfig.dependentAxis.min, axisTruncationConfig.dependentAxis.max =',
+    axisTruncationConfig?.dependentAxis?.min,
+    axisTruncationConfig?.dependentAxis?.max
+  );
+  console.log(
+    'extendedIndependentAxisRange.min, extendedIndependentAxisRange.max =',
+    extendedIndependentAxisRange?.min,
+    extendedIndependentAxisRange?.max
+  );
+  console.log(
+    'extendedDependentAxisRange.min, extendedDependentAxisRange.max =',
+    extendedDependentAxisRange?.min,
+    extendedDependentAxisRange?.max
+  );
+
+  //DKDK make rectangular shapes for truncated axis/missing data
+  const truncatedAxisHighlighting:
+    | Partial<Shape>[]
+    | undefined = useMemo(() => {
+    //DKDK add condition... but this does not work as the case that only min or max changes do not work
+    if (data.series.length > 0) {
+      //DKDK make layout.shapes for truncated axis
+      const filteredTruncationLayoutShapes = truncationLayoutShapes(
+        orientation,
+        standardIndependentAxisRange,
+        // //DKDK here, send dependentAxisRange, not standardDependentAxisRange???
+        // standardDependentAxisRange,
+        extendedIndependentAxisRange,
+        extendedDependentAxisRange,
+        axisTruncationConfig
+      );
+
+      console.log(
+        'filteredTruncationLayoutShapes = ',
+        filteredTruncationLayoutShapes
+      );
+
+      // return truncationLayoutShapes != null ? truncationLayoutShapes : []
+      return filteredTruncationLayoutShapes;
+    } else {
+      return [];
+    }
+  }, [
+    independentAxisRange,
+    orientation,
+    data.series,
+    dataDependentAxisRange,
+    axisTruncationConfig,
+  ]);
 
   const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
     type: dependentAxisLogScale ? 'log' : 'linear',
@@ -395,24 +492,37 @@ export default function Histogram({
       text: dependentAxisLabel,
     },
     // range should be an array
+    //DKDK with the truncated axis, negative values need to be checked for log scale
+    // range: data.series.length
+    //   ? [
+    //       extendedDependentAxisRange?.min,
+    //       extendedDependentAxisRange?.max,
+    //     ].map((val) =>
+    //       dependentAxisLogScale && val != null ? Math.log10(val as number || 1) : val
+    //     )
+    //   : [0, 10],
     range: data.series.length
-      ? [
-          extendedDependentAxisRange?.min,
-          extendedDependentAxisRange?.max,
-        ].map((val) =>
-          dependentAxisLogScale && val != null ? Math.log10(val || 1) : val
-        )
+      ? truncatedDependentAxisLayoutRange(
+          axisTruncationConfig,
+          dataDependentAxisRange,
+          extendedDependentAxisRange,
+          dependentAxisLogScale
+        ) ?? [undefined, undefined]
       : [0, 10],
     dtick: dependentAxisLogScale ? 1 : undefined,
     tickfont: data.series.length ? {} : { color: 'transparent' },
     showline: true,
   };
 
+  //DKDK
+  console.log('dependentAxisLayout.range =', dependentAxisLayout.range);
+
   return (
     <PlotlyPlot
       useResizeHandler={true}
       layout={{
-        shapes: selectedRangeHighlighting,
+        //DKDK add truncatedAxisHighlighting for layout.shapes
+        shapes: [...selectedRangeHighlighting, ...truncatedAxisHighlighting],
         // when we implement zooming, we will still use Plotly's select mode
         dragmode: 'select',
         // with a histogram, we can always use 1D selection
@@ -433,28 +543,4 @@ export default function Histogram({
       {...restProps}
     />
   );
-}
-
-/**
- * This can probably be moved to a utils directory when re-used by other plots
- *
- */
-function extendAxisRangeForTruncations(
-  axisRange?: NumberOrDateRange,
-  config?: TruncationConfig['independentAxis' | 'dependentAxis'],
-  valueType: 'number' | 'date' = 'number'
-): NumberOrDateRange | undefined {
-  return axisRange; // no-op placeholder
-
-  /*
-     If axisRange undefined, or its min or max are undefined, just `return axisRange`
-
-     if config.min is true, the returned axisRange should have an extra 5% added below its min
-     (e.g. newMin = oldMin - 0.05*(oldMax-oldMin) (a bit more code needed for dates...))
-     otherwise the returned axisRange.min should be unchanged
-
-     if config.max is true, the returned axisRange should have an extra 5% added above its max
-     otherwise return unchanged axisRange.max
-
-   */
 }
