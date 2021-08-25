@@ -422,7 +422,7 @@ const BoxplotResponseData = array(
       // outliers
       // back end is returning {} instead of [], e.g.
       // [ {}, [1,2,3], [4,5,6] ]
-      outliers: array(union([array(number), type({})])),
+      outliers: array(array(number)),
       rawData: array(array(number)),
       // mean: array(number),
       mean: array(number),
