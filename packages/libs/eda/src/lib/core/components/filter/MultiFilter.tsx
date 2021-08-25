@@ -57,11 +57,14 @@ export function MultiFilter(props: Props) {
   const fields = useMemo(
     () =>
       entity.variables.map((variable) =>
-        edaVariableToWdkField({
-          ...variable,
-          parentId:
-            variable.parentId === entity.id ? undefined : variable.parentId,
-        })
+        edaVariableToWdkField(
+          {
+            ...variable,
+            parentId:
+              variable.parentId === entity.id ? undefined : variable.parentId,
+          },
+          { includeMultiFilters: true }
+        )
       ),
     [entity]
   );
@@ -93,6 +96,12 @@ export function MultiFilter(props: Props) {
 
   const subsettingClient = useSubsettingClient();
 
+  const otherFilters = useMemo(() => {
+    return analysisState.analysis?.filters.filter(
+      (f) => f.entityId !== entity.id || f.variableId !== variable.id
+    );
+  }, [analysisState.analysis?.filters, entity.id, variable.id]);
+
   const leafSummariesPromise = usePromise(
     useCallback(() => {
       return Promise.all(
@@ -101,7 +110,7 @@ export function MultiFilter(props: Props) {
             {
               entityId: entity.id,
               variableId: leaf.term,
-              filters: analysisState.analysis?.filters,
+              filters: otherFilters,
             },
             (filters) =>
               subsettingClient.getDistribution(
@@ -142,13 +151,7 @@ export function MultiFilter(props: Props) {
           })
         )
       );
-    }, [
-      analysisState.analysis?.filters,
-      entity.id,
-      leaves,
-      studyMetadata.id,
-      subsettingClient,
-    ])
+    }, [leaves, entity.id, otherFilters, subsettingClient, studyMetadata.id])
   );
 
   const orderedLeafSummaries = useMemo(
@@ -204,13 +207,16 @@ export function MultiFilter(props: Props) {
     [analysisState.analysis?.filters]
   );
 
-  if (leafSummariesPromise.pending) return <Loading />;
+  // if (leafSummariesPromise.pending) return <Loading />;
 
   if (leafSummariesPromise.error)
     return <div>{String(leafSummariesPromise.error)}</div>;
 
   return (
-    <div className="filter-param">
+    <div className="filter-param" style={{ position: 'relative' }}>
+      {leafSummariesPromise.pending && (
+        <Loading style={{ position: 'absolute', right: 0, left: 0, top: 0 }} />
+      )}
       <MultiFieldFilter
         displayName={entity.displayNamePlural}
         dataCount={totalEntityCount}
