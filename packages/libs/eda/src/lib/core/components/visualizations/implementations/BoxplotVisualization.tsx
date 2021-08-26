@@ -82,7 +82,7 @@ function BoxplotViz(props: Props) {
   const {
     computation,
     visualization,
-    updateVisualization,
+    updateConfiguration,
     filters,
     fullscreen,
     dataElementConstraints,
@@ -108,17 +108,9 @@ function BoxplotViz(props: Props) {
 
   const updateVizConfig = useCallback(
     (newConfig: Partial<BoxplotConfig>) => {
-      if (updateVisualization) {
-        updateVisualization({
-          ...visualization,
-          configuration: {
-            ...vizConfig,
-            ...newConfig,
-          },
-        });
-      }
+      updateConfiguration({ ...vizConfig, ...newConfig });
     },
-    [updateVisualization, visualization, vizConfig]
+    [updateConfiguration, vizConfig]
   );
 
   // TODO Handle facetVariable

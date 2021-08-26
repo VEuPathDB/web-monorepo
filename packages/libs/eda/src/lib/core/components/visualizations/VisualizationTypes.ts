@@ -13,7 +13,8 @@ export interface VisualizationProps {
   visualization: Visualization;
   dataElementConstraints?: Record<string, DataElementConstraint>[];
   dataElementDependencyOrder?: string[];
-  updateVisualization?: (newViz: Visualization) => void;
+  updateConfiguration: (configuration: unknown) => void;
+  updateThumbnail: (source: string) => void;
   computation: Computation;
   filters: Filter[];
   starredVariables: string[];

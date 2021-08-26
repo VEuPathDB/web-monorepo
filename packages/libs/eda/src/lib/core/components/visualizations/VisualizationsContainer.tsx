@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
   Route,
   Switch,
@@ -79,11 +79,7 @@ function ConfiguredVisualizations(props: Props) {
     addVisualization,
     deleteVisualization,
     visualizations,
-    visualizationTypes,
     visualizationsOverview,
-    filters,
-    starredVariables,
-    toggleStarredVariable,
   } = props;
   const { url } = useRouteMatch();
   const computation = useMemo(
@@ -104,10 +100,7 @@ function ConfiguredVisualizations(props: Props) {
       </Link>
       {scopedVisualizations
         .map((viz) => {
-          const type = visualizationTypes[viz.type];
           const meta = visualizationsOverview.find((v) => v.name === viz.type);
-          // dataElementDependencyOrder should be passed for grid view/thumbnail
-          const dataElementDependencyOrder = meta?.dataElementDependencyOrder;
           return (
             <div key={viz.id}>
               <div className={cx('-ConfiguredVisualization')}>
@@ -150,19 +143,7 @@ function ConfiguredVisualizations(props: Props) {
                     </Tooltip>
                   </div>
                 </div>
-                {type ? (
-                  <type.gridComponent
-                    visualization={viz}
-                    computation={computation}
-                    filters={filters}
-                    starredVariables={starredVariables}
-                    toggleStarredVariable={toggleStarredVariable}
-                    // dataElementDependencyOrder should be passed for grid view/thumbnail
-                    dataElementDependencyOrder={dataElementDependencyOrder}
-                  />
-                ) : (
-                  <div>Visualization type not implemented: {viz.type}</div>
-                )}
+                <img alt={viz.displayName} src={viz.thumbnail} />
               </div>
               <div className={cx('-ConfiguredVisualizationTitle')}>
                 {viz.displayName ?? 'Unnamed visualization'}
@@ -267,6 +248,21 @@ function FullScreenVisualization(props: Props & { id: string }) {
   const overview = visualizationsOverview.find((v) => v.name === viz?.type);
   const constraints = overview?.dataElementConstraints;
   const dataElementDependencyOrder = overview?.dataElementDependencyOrder;
+  const updateConfiguration = useCallback(
+    (configuration: unknown) => {
+      if (viz == null) return;
+      updateVisualization({ ...viz, configuration });
+    },
+    [updateVisualization, viz]
+  );
+
+  const updateThumbnail = useCallback(
+    (thumbnail: string) => {
+      if (viz == null) return;
+      updateVisualization({ ...viz, thumbnail });
+    },
+    [updateVisualization, viz]
+  );
   if (viz == null) return <div>Visualization not found.</div>;
   if (computation == null) return <div>Computation not found.</div>;
   if (vizType == null) return <div>Visualization type not implemented.</div>;
@@ -341,11 +337,12 @@ function FullScreenVisualization(props: Props & { id: string }) {
             dataElementConstraints={constraints}
             dataElementDependencyOrder={dataElementDependencyOrder}
             visualization={viz}
-            updateVisualization={updateVisualization}
             computation={computation}
             filters={filters}
             starredVariables={starredVariables}
             toggleStarredVariable={toggleStarredVariable}
+            updateConfiguration={updateConfiguration}
+            updateThumbnail={updateThumbnail}
           />
         </div>
       )}

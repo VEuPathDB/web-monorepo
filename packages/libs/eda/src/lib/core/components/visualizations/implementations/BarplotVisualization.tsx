@@ -93,7 +93,7 @@ function BarplotViz(props: Props) {
   const {
     computation,
     visualization,
-    updateVisualization,
+    updateConfiguration,
     filters,
     fullscreen,
     dataElementConstraints,
@@ -119,17 +119,9 @@ function BarplotViz(props: Props) {
 
   const updateVizConfig = useCallback(
     (newConfig: Partial<BarplotConfig>) => {
-      if (updateVisualization) {
-        updateVisualization({
-          ...visualization,
-          configuration: {
-            ...vizConfig,
-            ...newConfig,
-          },
-        });
-      }
+      updateConfiguration({ ...vizConfig, ...newConfig });
     },
-    [updateVisualization, visualization, vizConfig]
+    [updateConfiguration, vizConfig]
   );
 
   // TODO Handle facetVariable

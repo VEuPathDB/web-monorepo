@@ -106,7 +106,7 @@ function HistogramViz(props: Props) {
   const {
     computation,
     visualization,
-    updateVisualization,
+    updateConfiguration,
     filters,
     fullscreen,
     dataElementConstraints,
@@ -132,17 +132,9 @@ function HistogramViz(props: Props) {
 
   const updateVizConfig = useCallback(
     (newConfig: Partial<HistogramConfig>) => {
-      if (updateVisualization) {
-        updateVisualization({
-          ...visualization,
-          configuration: {
-            ...vizConfig,
-            ...newConfig,
-          },
-        });
-      }
+      updateConfiguration({ ...vizConfig, ...newConfig });
     },
-    [updateVisualization, visualization, vizConfig]
+    [updateConfiguration, vizConfig]
   );
 
   // TODO Handle facetVariable

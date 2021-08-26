@@ -117,7 +117,7 @@ function ScatterplotViz(props: Props) {
   const {
     computation,
     visualization,
-    updateVisualization,
+    updateConfiguration,
     filters,
     fullscreen,
     dataElementConstraints,
@@ -143,17 +143,9 @@ function ScatterplotViz(props: Props) {
 
   const updateVizConfig = useCallback(
     (newConfig: Partial<ScatterplotConfig>) => {
-      if (updateVisualization) {
-        updateVisualization({
-          ...visualization,
-          configuration: {
-            ...vizConfig,
-            ...newConfig,
-          },
-        });
-      }
+      updateConfiguration({ ...vizConfig, ...newConfig });
     },
-    [updateVisualization, visualization, vizConfig]
+    [updateConfiguration, vizConfig]
   );
 
   // moved the location of this findEntityAndVariable

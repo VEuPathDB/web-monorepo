@@ -121,7 +121,7 @@ function MosaicViz(props: Props) {
   const {
     computation,
     visualization,
-    updateVisualization,
+    updateConfiguration,
     filters,
     fullscreen,
     isTwoByTwo = false,
@@ -148,17 +148,9 @@ function MosaicViz(props: Props) {
 
   const updateVizConfig = useCallback(
     (newConfig: Partial<MosaicConfig>) => {
-      if (updateVisualization) {
-        updateVisualization({
-          ...visualization,
-          configuration: {
-            ...vizConfig,
-            ...newConfig,
-          },
-        });
-      }
+      updateConfiguration({ ...vizConfig, ...newConfig });
     },
-    [updateVisualization, visualization, vizConfig]
+    [updateConfiguration, vizConfig]
   );
 
   // TODO Handle facetVariable
