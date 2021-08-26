@@ -27,6 +27,7 @@ export const Visualization = intersection([
   }),
   partial({
     displayName: string,
+    thumbnail: string,
   }),
 ]);
 
