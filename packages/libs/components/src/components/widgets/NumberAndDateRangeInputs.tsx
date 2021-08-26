@@ -39,8 +39,6 @@ export type BaseProps<M extends NumberOrDateRange> = {
   showClearButton?: boolean;
   /** Text to adorn the clear button; Default is 'Clear' */
   clearButtonLabel?: string;
-  /** DKDK check truncated axis */
-  isAxisTruncated?: boolean;
 };
 
 export type NumberRangeInputProps = BaseProps<NumberRange>;
@@ -82,8 +80,6 @@ function BaseInput({
   containerStyles,
   showClearButton = false,
   clearButtonLabel = 'Clear',
-  //DKDK set default isAxisTruncated is false
-  isAxisTruncated = false,
 }: BaseInputProps) {
   if (validator && required)
     console.log(
@@ -97,23 +93,11 @@ function BaseInput({
   const [isReceiving, setIsReceiving] = useState<boolean>(false);
   const [validationWarning, setValidationWarning] = useState<string>('');
 
-  //DKDK
-  const [truncatedAxisWarning, setTruncatedAxisWarning] = useState<string>('');
-
   // handle incoming value changes
   useEffect(() => {
     setIsReceiving(true);
     setLocalRange(range);
   }, [range]);
-
-  // //DKDK
-  // console.log('range at NumberAndDateRangeInputs =', range?.min, range?.max);
-  // console.log('isAxisTruncated at NumberAndDateRangeInputs =', isAxisTruncated);
-
-  // //DKDK does not work
-  // // const span = <span> whatever your string </span>
-  // const truncatedAxisText = "Gray shadow(s) indicates that data is truncated/not shown<br />due to your range selection";
-  // const truncatedAxisTextSpan = `${truncatedAxisText}`
 
   // if we are not currently receiving incoming data
   // pass localRange (if it differs from `range`) out to consumer
@@ -134,18 +118,8 @@ function BaseInput({
             onRangeChange(localRange);
           }
           setValidationWarning('');
-          //DKDK
-          if (isAxisTruncated) {
-            // setTruncatedAxisWarning('Gray shadow(s) indicates that data is truncated/not shown due to your range selection');
-            // setTruncatedAxisWarning('Gray shadow(s) indicates that data is truncated/not shown' + <br /> + 'due to your range selection');
-            setTruncatedAxisWarning(
-              'Data is truncated (light gray area) by range selection'
-            );
-          }
         } else {
           setValidationWarning(message);
-          //DKDK
-          setTruncatedAxisWarning('');
         }
       } else if (
         localRange?.min == null &&
@@ -181,14 +155,9 @@ function BaseInput({
     allowPartialRange,
     rangeBounds,
     validator,
-    //DKDK
-    // isAxisTruncated,
   ]);
 
   const { min, max } = localRange ?? {};
-
-  console.log('clearButtonLabel =', clearButtonLabel);
-  console.log('truncatedAxisWarning =', truncatedAxisWarning);
 
   return (
     <div
@@ -297,20 +266,6 @@ function BaseInput({
           }}
         />
       ) : null}
-      {/* DKDK */}
-      {truncatedAxisWarning ? (
-        // <div style={{width: '80%'}}>
-        <Notification
-          title="Information"
-          text={truncatedAxisWarning}
-          //DKDK this was defined as LIGHT_BLUE
-          color={'#5586BE'}
-          onAcknowledgement={() => {
-            setTruncatedAxisWarning('');
-          }}
-        />
-      ) : // </div>
-      null}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { OrientationDefault, AxisTruncationConfig } from '../types/plots';
 import { Shape } from 'plotly.js';
-import { NumberOrDate, NumberOrDateRange, NumberRange } from '../types/general';
+import { NumberOrDateRange } from '../types/general';
 
 export type extendedDependentAxisRangeType = {
   minStart: number | string;
@@ -13,9 +13,9 @@ export type extendedDependentAxisRangeType = {
 export function truncationLayoutShapes(
   orientation = OrientationDefault,
   standardIndependentAxisRange: NumberOrDateRange | undefined,
-  // standardDependentAxisRange: NumberOrDateRange | undefined,
+  standardDependentAxisRange: NumberOrDateRange | undefined,
   extendedIndependentAxisRange: NumberOrDateRange | undefined,
-  extendedDependentAxisRange: extendedDependentAxisRangeType | undefined,
+  extendedDependentAxisRange: NumberOrDateRange | undefined,
   axisTruncationConfig?: AxisTruncationConfig
   // dependentAxisLogScale?: boolean,
 ) {
@@ -81,15 +81,9 @@ export function truncationLayoutShapes(
         opacity: 1,
         xref: orientation === 'vertical' ? 'paper' : 'x',
         yref: orientation === 'vertical' ? 'y' : 'paper',
-        // x0: orientation === 'vertical' ? 0 : standardDependentAxisRange?.max,
-        // x1: orientation === 'vertical' ? 1 : extendedDependentAxisRange?.max,
-        // y0: orientation === 'vertical' ? standardDependentAxisRange?.max : 0,
-        // y1: orientation === 'vertical' ? extendedDependentAxisRange?.max : 1,
-        x0:
-          orientation === 'vertical' ? 0 : extendedDependentAxisRange?.maxStart,
+        x0: orientation === 'vertical' ? 0 : standardDependentAxisRange?.max,
         x1: orientation === 'vertical' ? 1 : extendedDependentAxisRange?.max,
-        y0:
-          orientation === 'vertical' ? extendedDependentAxisRange?.maxStart : 0,
+        y0: orientation === 'vertical' ? standardDependentAxisRange?.max : 0,
         y1: orientation === 'vertical' ? extendedDependentAxisRange?.max : 1,
       },
     ];
@@ -109,15 +103,9 @@ export function truncationLayoutShapes(
         opacity: 1,
         xref: orientation === 'vertical' ? 'paper' : 'x',
         yref: orientation === 'vertical' ? 'y' : 'paper',
-        // x0: orientation === 'vertical' ? 0 : standardDependentAxisRange?.min,
-        // x1: orientation === 'vertical' ? 1 : extendedDependentAxisRange?.min,
-        // y0: orientation === 'vertical' ? standardDependentAxisRange?.min : 0,
-        // y1: orientation === 'vertical' ? extendedDependentAxisRange?.min : 1,
-        x0:
-          orientation === 'vertical' ? 0 : extendedDependentAxisRange?.minStart,
+        x0: orientation === 'vertical' ? 0 : standardDependentAxisRange?.min,
         x1: orientation === 'vertical' ? 1 : extendedDependentAxisRange?.min,
-        y0:
-          orientation === 'vertical' ? extendedDependentAxisRange?.minStart : 0,
+        y0: orientation === 'vertical' ? standardDependentAxisRange?.min : 0,
         y1: orientation === 'vertical' ? extendedDependentAxisRange?.min : 1,
       },
     ];

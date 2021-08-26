@@ -33,12 +33,9 @@ import {
 import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { Layout, Shape } from 'plotly.js';
 
-//DKDK import util function
-// import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations'
-import { extendIndependentAxisRangeForTruncations } from '../utils/extended-independent-axis-range-truncations';
-import { extendDependentAxisRangeForTruncations } from '../utils/extended-dependent-axis-range-truncations';
+//DKDK import util functions
+import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations';
 import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
-import { truncatedDependentAxisLayoutRange } from '../utils/truncated-dependent-axis-layout-range';
 
 // bin middles needed for highlighting
 interface BinSummary {
@@ -78,8 +75,6 @@ export interface HistogramProps
   isZoomed?: boolean;
   /** independent axis range min and max */
   independentAxisRange?: NumberOrDateRange;
-  /** DKDK dependent axis min/max computed from data */
-  dataDependentAxisRange?: NumberRange;
 }
 
 /** A Plot.ly based histogram component. */
@@ -99,8 +94,6 @@ export default function Histogram({
   isZoomed = false,
   independentAxisRange,
   axisTruncationConfig,
-  //DKDK
-  dataDependentAxisRange,
   ...restProps
 }: HistogramProps) {
   if (selectedRangeBounds || isZoomed)
@@ -343,27 +336,12 @@ export default function Histogram({
 
   console.log('standardIndependentAxisRange =', standardIndependentAxisRange);
 
-  //DKDK separate range function
-  // const extendedIndependentAxisRange = extendAxisRangeForTruncations(
-  //   standardIndependentAxisRange,
-  //   axisTruncationConfig?.independentAxis,
-  //   data.valueType,
-  //   //DKDK add 'independentAxis' to handle both
-  //   'independentAxis',
-  //   //DKDK no need to pass this for independent axis but just for consistency
-  //   // independentAxisRange,
-  // );
-  const extendedIndependentAxisRange = extendIndependentAxisRangeForTruncations(
+  //DKDKDK
+  const extendedIndependentAxisRange = extendAxisRangeForTruncations(
     standardIndependentAxisRange,
     axisTruncationConfig?.independentAxis,
     data.valueType
   );
-
-  /**
-   * TO DO:
-   * Here we would compare extendedIndependentAxisRange.min with standardIndependentAxisRange.min and add
-   * a rectangle shape on the left if needed.  Same for *.max and the right rectangle.
-   */
 
   const plotlyIndependentAxisRange = [
     extendedIndependentAxisRange?.min,
@@ -393,35 +371,15 @@ export default function Histogram({
     );
   }, [data.series]);
 
-  // just rename this for symmetry/clarity
-  //DKDK this probably needs to be changed with dataDependentAxisRange because
-  // a) dependent axis range does not have initial value
-  // b) dependent axis range control does not requrest data to backend
-  // const standardDependentAxisRange = dependentAxisRange;
-  const standardDependentAxisRange = dataDependentAxisRange;
+  //DKDKDK
+  const standardDependentAxisRange = dependentAxisRange;
 
-  /**
-   * TO DO: compare extended vs standard and add rectangles where necessary
-   */
-
-  //DKDK change this to return four keys: min, minStart, max, maxStart
-  // const extendedDependentAxisRange = extendAxisRangeForTruncations(
-  //   standardDependentAxisRange,
-  //   axisTruncationConfig?.dependentAxis,
-  //   'number',
-  //   //DKDK add 'dependentAxis' to handle both
-  //   'dependentAxis',
-  //   //DKDK this needs to be passed to the function
-  //   dependentAxisRange,
-  // ) as NumberRange | undefined;
-
-  const extendedDependentAxisRange = extendDependentAxisRangeForTruncations(
+  //DKDKDK
+  const extendedDependentAxisRange = extendAxisRangeForTruncations(
     standardDependentAxisRange,
     axisTruncationConfig?.dependentAxis,
-    'number',
-    //DKDK this needs to be passed to the function
-    dependentAxisRange
-  );
+    'number'
+  ) as NumberRange | undefined;
 
   console.log(
     'axisTruncationConfig.independentAxis.min, axisTruncationConfig.independentAxis.max =',
@@ -444,18 +402,16 @@ export default function Histogram({
     extendedDependentAxisRange?.max
   );
 
-  //DKDK make rectangular shapes for truncated axis/missing data
+  //DKDK make rectangular layout shapes for truncated axis/missing data
   const truncatedAxisHighlighting:
     | Partial<Shape>[]
     | undefined = useMemo(() => {
     //DKDK add condition... but this does not work as the case that only min or max changes do not work
     if (data.series.length > 0) {
-      //DKDK make layout.shapes for truncated axis
       const filteredTruncationLayoutShapes = truncationLayoutShapes(
         orientation,
         standardIndependentAxisRange,
-        // //DKDK here, send dependentAxisRange, not standardDependentAxisRange???
-        // standardDependentAxisRange,
+        standardDependentAxisRange,
         extendedIndependentAxisRange,
         extendedDependentAxisRange,
         axisTruncationConfig
@@ -473,9 +429,9 @@ export default function Histogram({
     }
   }, [
     independentAxisRange,
+    dependentAxisRange,
     orientation,
     data.series,
-    dataDependentAxisRange,
     axisTruncationConfig,
   ]);
 
@@ -492,22 +448,18 @@ export default function Histogram({
       text: dependentAxisLabel,
     },
     // range should be an array
-    //DKDK with the truncated axis, negative values need to be checked for log scale
-    // range: data.series.length
-    //   ? [
-    //       extendedDependentAxisRange?.min,
-    //       extendedDependentAxisRange?.max,
-    //     ].map((val) =>
-    //       dependentAxisLogScale && val != null ? Math.log10(val as number || 1) : val
-    //     )
-    //   : [0, 10],
+    //DKDKDK with the truncated axis, negative values need to be checked for log scale
     range: data.series.length
-      ? truncatedDependentAxisLayoutRange(
-          axisTruncationConfig,
-          dataDependentAxisRange,
-          extendedDependentAxisRange,
-          dependentAxisLogScale
-        ) ?? [undefined, undefined]
+      ? [
+          extendedDependentAxisRange?.min,
+          extendedDependentAxisRange?.max,
+        ].map((val) =>
+          dependentAxisLogScale && val != null
+            ? val < 0
+              ? 0
+              : Math.log10(val as number)
+            : val
+        )
       : [0, 10],
     dtick: dependentAxisLogScale ? 1 : undefined,
     tickfont: data.series.length ? {} : { color: 'transparent' },
