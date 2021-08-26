@@ -24,7 +24,6 @@ export interface VisualizationProps {
 export type SelectorProps = VisualizationOverview;
 
 export interface VisualizationType {
-  gridComponent: React.ComponentType<VisualizationProps>;
   fullscreenComponent: React.ComponentType<VisualizationProps>;
   selectorComponent: React.ComponentType<SelectorProps>;
   createDefaultConfig: () => unknown;

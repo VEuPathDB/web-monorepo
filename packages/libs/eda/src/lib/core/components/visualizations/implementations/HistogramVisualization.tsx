@@ -47,15 +47,10 @@ import {
 type HistogramDataWithCoverageStatistics = HistogramData & CoverageStatistics;
 
 export const histogramVisualization: VisualizationType = {
-  gridComponent: GridComponent,
   selectorComponent: SelectorComponent,
-  fullscreenComponent: FullscreenComponent,
+  fullscreenComponent: HistogramViz,
   createDefaultConfig: createDefaultConfig,
 };
-
-function GridComponent(props: VisualizationProps) {
-  return <HistogramViz {...props} fullscreen={false} />;
-}
 
 function SelectorComponent() {
   return (
@@ -65,10 +60,6 @@ function SelectorComponent() {
       src={histogram}
     />
   );
-}
-
-function FullscreenComponent(props: VisualizationProps) {
-  return <HistogramViz {...props} fullscreen />;
 }
 
 function createDefaultConfig(): HistogramConfig {
@@ -98,17 +89,12 @@ const HistogramConfig = t.intersection([
   }),
 ]);
 
-type Props = VisualizationProps & {
-  fullscreen: boolean;
-};
-
-function HistogramViz(props: Props) {
+function HistogramViz(props: VisualizationProps) {
   const {
     computation,
     visualization,
     updateConfiguration,
     filters,
-    fullscreen,
     dataElementConstraints,
     dataElementDependencyOrder,
     starredVariables,
@@ -253,40 +239,38 @@ function HistogramViz(props: Props) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      {fullscreen && (
-        <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
-          <InputVariables
-            inputs={[
-              {
-                name: 'xAxisVariable',
-                label: 'Main',
-                role: 'primary',
-              },
-              {
-                name: 'overlayVariable',
-                label: 'Overlay',
-                role: 'stratification',
-              },
-            ]}
-            entities={entities}
-            values={{
-              xAxisVariable: vizConfig.xAxisVariable,
-              overlayVariable: vizConfig.overlayVariable,
-            }}
-            onChange={handleInputVariableChange}
-            constraints={dataElementConstraints}
-            dataElementDependencyOrder={dataElementDependencyOrder}
-            starredVariables={starredVariables}
-            toggleStarredVariable={toggleStarredVariable}
-            enableShowMissingnessToggle={overlayVariable != null}
-            showMissingness={vizConfig.showMissingness}
-            onShowMissingnessChange={onShowMissingnessChange}
-            outputEntity={outputEntity}
-          />
-        </div>
-      )}
+      <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
+        <InputVariables
+          inputs={[
+            {
+              name: 'xAxisVariable',
+              label: 'Main',
+              role: 'primary',
+            },
+            {
+              name: 'overlayVariable',
+              label: 'Overlay',
+              role: 'stratification',
+            },
+          ]}
+          entities={entities}
+          values={{
+            xAxisVariable: vizConfig.xAxisVariable,
+            overlayVariable: vizConfig.overlayVariable,
+          }}
+          onChange={handleInputVariableChange}
+          constraints={dataElementConstraints}
+          dataElementDependencyOrder={dataElementDependencyOrder}
+          starredVariables={starredVariables}
+          toggleStarredVariable={toggleStarredVariable}
+          enableShowMissingnessToggle={overlayVariable != null}
+          showMissingness={vizConfig.showMissingness}
+          onShowMissingnessChange={onShowMissingnessChange}
+          outputEntity={outputEntity}
+        />
+      </div>
 
-      {data.error && fullscreen && (
+      {data.error && (
         <div
           style={{
             fontSize: '1.2em',
@@ -305,69 +289,41 @@ function HistogramViz(props: Props) {
             : String(data.error)}
         </div>
       )}
-      {fullscreen ? (
-        <HistogramPlotWithControls
-          data={data.value && !data.pending ? data.value : undefined}
-          onBinWidthChange={onBinWidthChange}
-          dependentAxisLogScale={vizConfig.dependentAxisLogScale}
-          onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
-          valueSpec={vizConfig.valueSpec}
-          onValueSpecChange={onValueSpecChange}
-          containerStyles={{
-            width: '750px',
-            height: '400px',
-          }}
-          spacingOptions={{
-            marginTop: 50,
-          }}
-          orientation={'vertical'}
-          barLayout={'stack'}
-          displayLegend={
-            data.value &&
-            (data.value.series.length > 1 || vizConfig.overlayVariable != null)
-          }
-          outputEntity={outputEntity}
-          independentAxisVariable={vizConfig.xAxisVariable}
-          independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'Main'}
-          interactive
-          showSpinner={data.pending}
-          filters={filters}
-          completeCases={data.pending ? undefined : data.value?.completeCases}
-          outputSize={
-            data.pending ? undefined : data.value?.completeCasesAllVars
-          }
-          overlayVariable={vizConfig.overlayVariable}
-          overlayLabel={overlayVariable?.displayName}
-          legendTitle={overlayVariable?.displayName}
-          dependentAxisLabel={
-            vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion'
-          }
-        />
-      ) : (
-        // thumbnail/grid view
-        <Histogram
-          data={data.value && !data.pending ? data.value : undefined}
-          containerStyles={{
-            width: '250px',
-            height: '180px',
-          }}
-          spacingOptions={{
-            marginLeft: 0,
-            marginRight: 30,
-            marginTop: 30,
-            marginBottom: 0,
-          }}
-          orientation={'vertical'}
-          barLayout={'stack'}
-          displayLibraryControls={false}
-          displayLegend={false}
-          independentAxisLabel=""
-          dependentAxisLabel=""
-          dependentAxisLogScale={vizConfig.dependentAxisLogScale}
-          interactive={false}
-          showSpinner={data.pending}
-        />
-      )}
+      <HistogramPlotWithControls
+        data={data.value && !data.pending ? data.value : undefined}
+        onBinWidthChange={onBinWidthChange}
+        dependentAxisLogScale={vizConfig.dependentAxisLogScale}
+        onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
+        valueSpec={vizConfig.valueSpec}
+        onValueSpecChange={onValueSpecChange}
+        containerStyles={{
+          width: '750px',
+          height: '400px',
+        }}
+        spacingOptions={{
+          marginTop: 50,
+        }}
+        orientation={'vertical'}
+        barLayout={'stack'}
+        displayLegend={
+          data.value &&
+          (data.value.series.length > 1 || vizConfig.overlayVariable != null)
+        }
+        outputEntity={outputEntity}
+        independentAxisVariable={vizConfig.xAxisVariable}
+        independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'Main'}
+        interactive
+        showSpinner={data.pending}
+        filters={filters}
+        completeCases={data.pending ? undefined : data.value?.completeCases}
+        outputSize={data.pending ? undefined : data.value?.completeCasesAllVars}
+        overlayVariable={vizConfig.overlayVariable}
+        overlayLabel={overlayVariable?.displayName}
+        legendTitle={overlayVariable?.displayName}
+        dependentAxisLabel={
+          vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion'
+        }
+      />
     </div>
   );
 }

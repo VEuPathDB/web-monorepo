@@ -40,15 +40,10 @@ import {
 } from '../../../utils/analysis';
 
 export const barplotVisualization: VisualizationType = {
-  gridComponent: GridComponent,
   selectorComponent: SelectorComponent,
   fullscreenComponent: FullscreenComponent,
   createDefaultConfig: createDefaultConfig,
 };
-
-function GridComponent(props: VisualizationProps) {
-  return <BarplotViz {...props} fullscreen={false} />;
-}
 
 function SelectorComponent() {
   return (
@@ -57,7 +52,7 @@ function SelectorComponent() {
 }
 
 function FullscreenComponent(props: VisualizationProps) {
-  return <BarplotViz {...props} fullscreen />;
+  return <BarplotViz {...props} />;
 }
 
 function createDefaultConfig(): BarplotConfig {
@@ -85,17 +80,12 @@ const BarplotConfig = t.intersection([
   }),
 ]);
 
-type Props = VisualizationProps & {
-  fullscreen: boolean;
-};
-
-function BarplotViz(props: Props) {
+function BarplotViz(props: VisualizationProps) {
   const {
     computation,
     visualization,
     updateConfiguration,
     filters,
-    fullscreen,
     dataElementConstraints,
     dataElementDependencyOrder,
     starredVariables,
@@ -213,41 +203,39 @@ function BarplotViz(props: Props) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      {fullscreen && (
-        <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
-          <InputVariables
-            inputs={[
-              {
-                name: 'xAxisVariable',
-                label: 'Main',
-                role: 'primary',
-              },
-              {
-                name: 'overlayVariable',
-                label: 'Overlay',
-                role: 'stratification',
-              },
-            ]}
-            entities={entities}
-            values={{
-              xAxisVariable: vizConfig.xAxisVariable,
-              overlayVariable: vizConfig.overlayVariable,
-              facetVariable: vizConfig.facetVariable,
-            }}
-            onChange={handleInputVariableChange}
-            constraints={dataElementConstraints}
-            dataElementDependencyOrder={dataElementDependencyOrder}
-            starredVariables={starredVariables}
-            enableShowMissingnessToggle={overlayVariable != null}
-            toggleStarredVariable={toggleStarredVariable}
-            onShowMissingnessChange={onShowMissingnessChange}
-            showMissingness={vizConfig.showMissingness}
-            outputEntity={entity}
-          />
-        </div>
-      )}
+      <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
+        <InputVariables
+          inputs={[
+            {
+              name: 'xAxisVariable',
+              label: 'Main',
+              role: 'primary',
+            },
+            {
+              name: 'overlayVariable',
+              label: 'Overlay',
+              role: 'stratification',
+            },
+          ]}
+          entities={entities}
+          values={{
+            xAxisVariable: vizConfig.xAxisVariable,
+            overlayVariable: vizConfig.overlayVariable,
+            facetVariable: vizConfig.facetVariable,
+          }}
+          onChange={handleInputVariableChange}
+          constraints={dataElementConstraints}
+          dataElementDependencyOrder={dataElementDependencyOrder}
+          starredVariables={starredVariables}
+          enableShowMissingnessToggle={overlayVariable != null}
+          toggleStarredVariable={toggleStarredVariable}
+          onShowMissingnessChange={onShowMissingnessChange}
+          showMissingness={vizConfig.showMissingness}
+          outputEntity={entity}
+        />
+      </div>
 
-      {data.error && fullscreen && (
+      {data.error && (
         <div
           style={{
             fontSize: '1.2em',
@@ -266,97 +254,60 @@ function BarplotViz(props: Props) {
             : String(data.error)}
         </div>
       )}
-      {fullscreen ? (
-        <>
-          <OutputEntityTitle
-            entity={entity}
-            outputSize={
-              data.pending ? undefined : data.value?.completeCasesAllVars
-            }
-          />
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignItems: 'flex-start',
-            }}
-          >
-            <BarplotWithControls
-              data={data.value && !data.pending ? data.value : { series: [] }}
-              containerStyles={{
-                width: '750px',
-                height: '450px',
-              }}
-              orientation={'vertical'}
-              barLayout={'group'}
-              displayLegend={
-                data.value &&
-                (data.value.series.length > 1 ||
-                  vizConfig.overlayVariable != null)
-              }
-              independentAxisLabel={axisLabelWithUnit(variable) ?? 'Main'}
-              dependentAxisLabel={
-                vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion'
-              }
-              legendTitle={overlayVariable?.displayName}
-              interactive
-              showSpinner={data.pending}
-              valueSpec={vizConfig.valueSpec}
-              onValueSpecChange={onValueSpecChange}
-              dependentAxisLogScale={vizConfig.dependentAxisLogScale}
-              onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
-            />
-            <VariableCoverageTable
-              completeCases={
-                data.pending ? undefined : data.value?.completeCases
-              }
-              filters={filters}
-              outputEntityId={vizConfig.xAxisVariable?.entityId}
-              variableSpecs={[
-                {
-                  role: 'Main',
-                  required: true,
-                  display: variable?.displayName,
-                  variable: vizConfig.xAxisVariable,
-                },
-                {
-                  role: 'Overlay',
-                  display: overlayVariable?.displayName,
-                  variable: vizConfig.overlayVariable,
-                },
-              ]}
-            />
-          </div>
-        </>
-      ) : (
-        // thumbnail/grid view
-        <Barplot
+      <OutputEntityTitle
+        entity={entity}
+        outputSize={data.pending ? undefined : data.value?.completeCasesAllVars}
+      />
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'flex-start',
+        }}
+      >
+        <BarplotWithControls
           data={data.value && !data.pending ? data.value : { series: [] }}
           containerStyles={{
-            width: '230px',
-            height: '150px',
+            width: '750px',
+            height: '450px',
           }}
-          // check this option (possibly plot control?)
           orientation={'vertical'}
           barLayout={'group'}
-          // show/hide independent/dependent axis tick label
-          showIndependentAxisTickLabel={false}
-          showDependentAxisTickLabel={false}
-          // new props for better displaying grid view
-          displayLegend={false}
-          displayLibraryControls={false}
-          interactive={false}
-          // set margin for better display at thumbnail/grid view
-          spacingOptions={{
-            marginLeft: 30,
-            marginRight: 20,
-            marginBottom: 0,
-            marginTop: 20,
-          }}
+          displayLegend={
+            data.value &&
+            (data.value.series.length > 1 || vizConfig.overlayVariable != null)
+          }
+          independentAxisLabel={axisLabelWithUnit(variable) ?? 'Main'}
+          dependentAxisLabel={
+            vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion'
+          }
+          legendTitle={overlayVariable?.displayName}
+          interactive
           showSpinner={data.pending}
+          valueSpec={vizConfig.valueSpec}
+          onValueSpecChange={onValueSpecChange}
           dependentAxisLogScale={vizConfig.dependentAxisLogScale}
+          onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
         />
-      )}
+        <VariableCoverageTable
+          completeCases={data.pending ? undefined : data.value?.completeCases}
+          filters={filters}
+          outputEntityId={vizConfig.xAxisVariable?.entityId}
+          variableSpecs={[
+            {
+              role: 'Main',
+              required: true,
+              display: variable?.displayName,
+              variable: vizConfig.xAxisVariable,
+            },
+            {
+              role: 'Overlay',
+              display: overlayVariable?.displayName,
+              variable: vizConfig.overlayVariable,
+            },
+          ]}
+        />
+      </div>
     </div>
   );
 }

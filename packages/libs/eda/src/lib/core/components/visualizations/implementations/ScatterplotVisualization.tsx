@@ -64,15 +64,10 @@ interface PromiseXYPlotData extends CoverageStatistics {
 type XYPlotDataResponse = ScatterplotResponse | LineplotResponse;
 
 export const scatterplotVisualization: VisualizationType = {
-  gridComponent: GridComponent,
   selectorComponent: SelectorComponent,
-  fullscreenComponent: FullscreenComponent,
+  fullscreenComponent: ScatterplotViz,
   createDefaultConfig: createDefaultConfig,
 };
-
-function GridComponent(props: VisualizationProps) {
-  return <ScatterplotViz {...props} fullscreen={false} />;
-}
 
 // this needs a handling of text/image for scatter, line, and density plots
 function SelectorComponent({ name }: SelectorProps) {
@@ -86,10 +81,6 @@ function SelectorComponent({ name }: SelectorProps) {
       src={src}
     />
   );
-}
-
-function FullscreenComponent(props: VisualizationProps) {
-  return <ScatterplotViz {...props} fullscreen />;
 }
 
 function createDefaultConfig(): ScatterplotConfig {
@@ -109,17 +100,12 @@ export const ScatterplotConfig = t.partial({
   showMissingness: t.boolean,
 });
 
-type Props = VisualizationProps & {
-  fullscreen: boolean;
-};
-
-function ScatterplotViz(props: Props) {
+function ScatterplotViz(props: VisualizationProps) {
   const {
     computation,
     visualization,
     updateConfiguration,
     filters,
-    fullscreen,
     dataElementConstraints,
     dataElementDependencyOrder,
     starredVariables,
@@ -289,46 +275,44 @@ function ScatterplotViz(props: Props) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      {fullscreen && (
-        <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
-          <InputVariables
-            inputs={[
-              {
-                name: 'xAxisVariable',
-                label: 'X-axis',
-                role: 'primary',
-              },
-              {
-                name: 'yAxisVariable',
-                label: 'Y-axis',
-                role: 'primary',
-              },
-              {
-                name: 'overlayVariable',
-                label: 'Overlay',
-                role: 'stratification',
-              },
-            ]}
-            entities={entities}
-            values={{
-              xAxisVariable: vizConfig.xAxisVariable,
-              yAxisVariable: vizConfig.yAxisVariable,
-              overlayVariable: vizConfig.overlayVariable,
-            }}
-            onChange={handleInputVariableChange}
-            constraints={dataElementConstraints}
-            dataElementDependencyOrder={dataElementDependencyOrder}
-            starredVariables={starredVariables}
-            toggleStarredVariable={toggleStarredVariable}
-            enableShowMissingnessToggle={overlayVariable != null}
-            showMissingness={vizConfig.showMissingness}
-            onShowMissingnessChange={onShowMissingnessChange}
-            outputEntity={outputEntity}
-          />
-        </div>
-      )}
+      <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
+        <InputVariables
+          inputs={[
+            {
+              name: 'xAxisVariable',
+              label: 'X-axis',
+              role: 'primary',
+            },
+            {
+              name: 'yAxisVariable',
+              label: 'Y-axis',
+              role: 'primary',
+            },
+            {
+              name: 'overlayVariable',
+              label: 'Overlay',
+              role: 'stratification',
+            },
+          ]}
+          entities={entities}
+          values={{
+            xAxisVariable: vizConfig.xAxisVariable,
+            yAxisVariable: vizConfig.yAxisVariable,
+            overlayVariable: vizConfig.overlayVariable,
+          }}
+          onChange={handleInputVariableChange}
+          constraints={dataElementConstraints}
+          dataElementDependencyOrder={dataElementDependencyOrder}
+          starredVariables={starredVariables}
+          toggleStarredVariable={toggleStarredVariable}
+          enableShowMissingnessToggle={overlayVariable != null}
+          showMissingness={vizConfig.showMissingness}
+          onShowMissingnessChange={onShowMissingnessChange}
+          outputEntity={outputEntity}
+        />
+      </div>
 
-      {data.error && fullscreen && (
+      {data.error && (
         <div
           style={{
             fontSize: '1.2em',
@@ -347,133 +331,91 @@ function ScatterplotViz(props: Props) {
             : String(data.error)}
         </div>
       )}
-      {fullscreen ? (
-        <>
-          <OutputEntityTitle
-            entity={outputEntity}
-            outputSize={
-              data.pending ? undefined : data.value?.completeCasesAllVars
-            }
-          />
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignItems: 'flex-start',
-            }}
-          >
-            <ScatterplotWithControls
-              // data.value
-              data={
-                data.value && !data.pending
-                  ? data.value.dataSetProcess
-                  : undefined
-              }
-              containerStyles={{
-                width: '750px',
-                height: '450px',
-              }}
-              // title={'Scatter plot'}
-              displayLegend={
-                data.value &&
-                (data.value.dataSetProcess.series.length > 1 ||
-                  vizConfig.overlayVariable != null)
-              }
-              independentAxisLabel={
-                axisLabelWithUnit(xAxisVariable) ?? 'X-Axis'
-              }
-              dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-Axis'}
-              dependentAxisRange={
-                data.value && !data.pending
-                  ? { min: data.value.yMin, max: data.value.yMax }
-                  : undefined
-              }
-              // set valueSpec as Raw when yAxisVariable = date
-              valueSpec={
-                yAxisVariable?.type === 'date'
-                  ? 'Raw'
-                  : vizConfig.valueSpecConfig
-              }
-              onValueSpecChange={onValueSpecChange}
-              // send visualization.type here
-              vizType={visualization.type}
-              interactive={true}
-              showSpinner={data.pending}
-              // add plotOptions to control the list of plot options
-              plotOptions={[
-                'Raw',
-                'Smoothed mean with raw',
-                'Best fit line with raw',
-              ]}
-              // disabledList prop is used to disable radio options (grayed out)
-              disabledList={
-                yAxisVariable?.type === 'date'
-                  ? ['Smoothed mean with raw', 'Best fit line with raw']
-                  : []
-              }
-              independentValueType={xAxisVariable?.type}
-              dependentValueType={yAxisVariable?.type}
-              legendTitle={overlayVariable?.displayName}
-            />
-            <VariableCoverageTable
-              completeCases={
-                data.value && !data.pending
-                  ? data.value?.completeCases
-                  : undefined
-              }
-              filters={filters}
-              outputEntityId={outputEntity?.id}
-              variableSpecs={[
-                {
-                  role: 'X-axis',
-                  required: true,
-                  display: xAxisVariable?.displayName,
-                  variable: vizConfig.xAxisVariable,
-                },
-                {
-                  role: 'Y-axis',
-                  required: true,
-                  display: yAxisVariable?.displayName,
-                  variable: vizConfig.yAxisVariable,
-                },
-                {
-                  role: 'Overlay',
-                  display: overlayVariable?.displayName,
-                  variable: vizConfig.overlayVariable,
-                },
-              ]}
-            />
-          </div>
-        </>
-      ) : (
-        // thumbnail/grid view
-        <XYPlot
+      <OutputEntityTitle
+        entity={outputEntity}
+        outputSize={data.pending ? undefined : data.value?.completeCasesAllVars}
+      />
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'flex-start',
+        }}
+      >
+        <ScatterplotWithControls
+          // data.value
           data={
             data.value && !data.pending ? data.value.dataSetProcess : undefined
           }
           containerStyles={{
-            width: '230px',
-            height: '150px',
+            width: '750px',
+            height: '450px',
           }}
+          // title={'Scatter plot'}
+          displayLegend={
+            data.value &&
+            (data.value.dataSetProcess.series.length > 1 ||
+              vizConfig.overlayVariable != null)
+          }
+          independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-Axis'}
+          dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-Axis'}
           dependentAxisRange={
             data.value && !data.pending
               ? { min: data.value.yMin, max: data.value.yMax }
               : undefined
           }
-          // new props for better displaying grid view
-          displayLegend={false}
-          displayLibraryControls={false}
-          interactive={false}
-          // margin is replaced with spacingOptions
-          spacingOptions={{
-            marginTop: 20,
-            marginRight: 20,
-            marginBottom: 20,
-            marginLeft: 30,
-          }}
+          // set valueSpec as Raw when yAxisVariable = date
+          valueSpec={
+            yAxisVariable?.type === 'date' ? 'Raw' : vizConfig.valueSpecConfig
+          }
+          onValueSpecChange={onValueSpecChange}
+          // send visualization.type here
+          vizType={visualization.type}
+          interactive={true}
           showSpinner={data.pending}
+          // add plotOptions to control the list of plot options
+          plotOptions={[
+            'Raw',
+            'Smoothed mean with raw',
+            'Best fit line with raw',
+          ]}
+          // disabledList prop is used to disable radio options (grayed out)
+          disabledList={
+            yAxisVariable?.type === 'date'
+              ? ['Smoothed mean with raw', 'Best fit line with raw']
+              : []
+          }
+          independentValueType={xAxisVariable?.type}
+          dependentValueType={yAxisVariable?.type}
+          legendTitle={overlayVariable?.displayName}
         />
-      )}
+        <VariableCoverageTable
+          completeCases={
+            data.value && !data.pending ? data.value?.completeCases : undefined
+          }
+          filters={filters}
+          outputEntityId={outputEntity?.id}
+          variableSpecs={[
+            {
+              role: 'X-axis',
+              required: true,
+              display: xAxisVariable?.displayName,
+              variable: vizConfig.xAxisVariable,
+            },
+            {
+              role: 'Y-axis',
+              required: true,
+              display: yAxisVariable?.displayName,
+              variable: vizConfig.yAxisVariable,
+            },
+            {
+              role: 'Overlay',
+              display: overlayVariable?.displayName,
+              variable: vizConfig.overlayVariable,
+            },
+          ]}
+        />
+      </div>
     </div>
   );
 }

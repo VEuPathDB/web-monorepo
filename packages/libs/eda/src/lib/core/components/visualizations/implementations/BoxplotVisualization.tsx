@@ -40,15 +40,10 @@ interface PromiseBoxplotData extends CoverageStatistics {
 }
 
 export const boxplotVisualization: VisualizationType = {
-  gridComponent: GridComponent,
   selectorComponent: SelectorComponent,
   fullscreenComponent: FullscreenComponent,
   createDefaultConfig: createDefaultConfig,
 };
-
-function GridComponent(props: VisualizationProps) {
-  return <BoxplotViz {...props} fullscreen={false} />;
-}
 
 function SelectorComponent() {
   return (
@@ -57,7 +52,7 @@ function SelectorComponent() {
 }
 
 function FullscreenComponent(props: VisualizationProps) {
-  return <BoxplotViz {...props} fullscreen />;
+  return <BoxplotViz {...props} />;
 }
 
 function createDefaultConfig(): BoxplotConfig {
@@ -74,17 +69,12 @@ const BoxplotConfig = t.partial({
   showMissingness: t.boolean,
 });
 
-type Props = VisualizationProps & {
-  fullscreen: boolean;
-};
-
-function BoxplotViz(props: Props) {
+function BoxplotViz(props: VisualizationProps) {
   const {
     computation,
     visualization,
     updateConfiguration,
     filters,
-    fullscreen,
     dataElementConstraints,
     dataElementDependencyOrder,
     starredVariables,
@@ -234,47 +224,44 @@ function BoxplotViz(props: Props) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      {/*  change title at viz page */}
-      {fullscreen && (
-        <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
-          <InputVariables
-            inputs={[
-              {
-                name: 'xAxisVariable',
-                label: 'X-axis',
-                role: 'primary',
-              },
-              {
-                name: 'yAxisVariable',
-                label: 'Y-axis',
-                role: 'primary',
-              },
-              {
-                name: 'overlayVariable',
-                label: 'Overlay',
-                role: 'stratification',
-              },
-            ]}
-            entities={entities}
-            values={{
-              xAxisVariable: vizConfig.xAxisVariable,
-              yAxisVariable: vizConfig.yAxisVariable,
-              overlayVariable: vizConfig.overlayVariable,
-            }}
-            onChange={handleInputVariableChange}
-            constraints={dataElementConstraints}
-            dataElementDependencyOrder={dataElementDependencyOrder}
-            starredVariables={starredVariables}
-            toggleStarredVariable={toggleStarredVariable}
-            enableShowMissingnessToggle={overlayVariable != null}
-            showMissingness={vizConfig.showMissingness}
-            onShowMissingnessChange={onShowMissingnessChange}
-            outputEntity={outputEntity}
-          />
-        </div>
-      )}
+      <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
+        <InputVariables
+          inputs={[
+            {
+              name: 'xAxisVariable',
+              label: 'X-axis',
+              role: 'primary',
+            },
+            {
+              name: 'yAxisVariable',
+              label: 'Y-axis',
+              role: 'primary',
+            },
+            {
+              name: 'overlayVariable',
+              label: 'Overlay',
+              role: 'stratification',
+            },
+          ]}
+          entities={entities}
+          values={{
+            xAxisVariable: vizConfig.xAxisVariable,
+            yAxisVariable: vizConfig.yAxisVariable,
+            overlayVariable: vizConfig.overlayVariable,
+          }}
+          onChange={handleInputVariableChange}
+          constraints={dataElementConstraints}
+          dataElementDependencyOrder={dataElementDependencyOrder}
+          starredVariables={starredVariables}
+          toggleStarredVariable={toggleStarredVariable}
+          enableShowMissingnessToggle={overlayVariable != null}
+          showMissingness={vizConfig.showMissingness}
+          onShowMissingnessChange={onShowMissingnessChange}
+          outputEntity={outputEntity}
+        />
+      </div>
 
-      {data.error && fullscreen && (
+      {data.error && (
         <div
           style={{
             fontSize: '1.2em',
@@ -293,102 +280,66 @@ function BoxplotViz(props: Props) {
             : String(data.error)}
         </div>
       )}
-      {fullscreen ? (
-        <>
-          <OutputEntityTitle
-            entity={outputEntity}
-            outputSize={
-              data.pending ? undefined : data.value?.completeCasesAllVars
-            }
-          />
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignItems: 'flex-start',
-            }}
-          >
-            <BoxplotWithControls
-              // data.value
-              data={data.value && !data.pending ? data.value.series : []}
-              containerStyles={{
-                width: '750px',
-                height: '450px',
-              }}
-              orientation={'vertical'}
-              // add condition to show legend when overlayVariable is used
-              displayLegend={
-                data.value &&
-                (data.value.series.length > 1 ||
-                  vizConfig.overlayVariable != null)
-              }
-              independentAxisLabel={
-                axisLabelWithUnit(xAxisVariable) ?? 'X-Axis'
-              }
-              dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-Axis'}
-              // show/hide independent/dependent axis tick label
-              showIndependentAxisTickLabel={true}
-              showDependentAxisTickLabel={true}
-              showMean={true}
-              interactive={true}
-              showSpinner={data.pending}
-              showRawData={true}
-              legendTitle={overlayVariable?.displayName}
-            />
-            <VariableCoverageTable
-              completeCases={
-                data.pending ? undefined : data.value?.completeCases
-              }
-              filters={filters}
-              outputEntityId={outputEntity?.id}
-              variableSpecs={[
-                {
-                  role: 'X-axis',
-                  required: true,
-                  display: xAxisVariable?.displayName,
-                  variable: vizConfig.xAxisVariable,
-                },
-                {
-                  role: 'Y-axis',
-                  required: true,
-                  display: yAxisVariable?.displayName,
-                  variable: vizConfig.yAxisVariable,
-                },
-                {
-                  role: 'Overlay',
-                  display: overlayVariable?.displayName,
-                  variable: vizConfig.overlayVariable,
-                },
-              ]}
-            />
-          </div>
-        </>
-      ) : (
-        // thumbnail/grid view
-        <Boxplot
+      <OutputEntityTitle
+        entity={outputEntity}
+        outputSize={data.pending ? undefined : data.value?.completeCasesAllVars}
+      />
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'flex-start',
+        }}
+      >
+        <BoxplotWithControls
+          // data.value
           data={data.value && !data.pending ? data.value.series : []}
           containerStyles={{
-            width: '230px',
-            height: '150px',
+            width: '750px',
+            height: '450px',
           }}
           orientation={'vertical'}
+          // add condition to show legend when overlayVariable is used
+          displayLegend={
+            data.value &&
+            (data.value.series.length > 1 || vizConfig.overlayVariable != null)
+          }
+          independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-Axis'}
+          dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-Axis'}
           // show/hide independent/dependent axis tick label
-          showIndependentAxisTickLabel={false}
-          showDependentAxisTickLabel={false}
+          showIndependentAxisTickLabel={true}
+          showDependentAxisTickLabel={true}
           showMean={true}
-          interactive={false}
-          displayLegend={false}
-          displayLibraryControls={false}
-          // margin is replaced with spacingOptions
-          spacingOptions={{
-            marginTop: 20,
-            marginRight: 20,
-            marginBottom: 15,
-            marginLeft: 30,
-          }}
+          interactive={true}
           showSpinner={data.pending}
+          showRawData={true}
+          legendTitle={overlayVariable?.displayName}
         />
-      )}
+        <VariableCoverageTable
+          completeCases={data.pending ? undefined : data.value?.completeCases}
+          filters={filters}
+          outputEntityId={outputEntity?.id}
+          variableSpecs={[
+            {
+              role: 'X-axis',
+              required: true,
+              display: xAxisVariable?.displayName,
+              variable: vizConfig.xAxisVariable,
+            },
+            {
+              role: 'Y-axis',
+              required: true,
+              display: yAxisVariable?.displayName,
+              variable: vizConfig.yAxisVariable,
+            },
+            {
+              role: 'Overlay',
+              display: overlayVariable?.displayName,
+              variable: vizConfig.overlayVariable,
+            },
+          ]}
+        />
+      </div>
     </div>
   );
 }
