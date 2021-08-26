@@ -85,5 +85,6 @@ export const ComputationAppOverview = intersection([
 
 export type CoverageStatistics = {
   completeCases: CompleteCasesTable;
-  outputSize: number;
+  completeCasesAllVars: number;
+  completeCasesAxesVars: number;
 };

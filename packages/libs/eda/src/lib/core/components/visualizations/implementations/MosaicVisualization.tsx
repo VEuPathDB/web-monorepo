@@ -459,7 +459,9 @@ function MosaicViz(props: Props) {
       {fullscreen && (
         <OutputEntityTitle
           entity={outputEntity}
-          outputSize={data.pending ? undefined : data.value?.outputSize}
+          outputSize={
+            data.pending ? undefined : data.value?.completeCasesAllVars
+          }
         />
       )}
       {plotComponent}
@@ -509,9 +511,8 @@ export function contTableResponseToData(
     degreesFreedom: response.statsTable[0].degreesFreedom,
     chisq: response.statsTable[0].chisq,
     completeCases: response.completeCasesTable,
-    outputSize:
-      response.mosaic.config.completeCases +
-      response.mosaic.config.plottedIncompleteCases,
+    completeCasesAllVars: response.mosaic.config.completeCasesAllVars,
+    completeCasesAxesVars: response.mosaic.config.completeCasesAxesVars,
   };
 }
 
@@ -539,7 +540,8 @@ export function twoByTwoResponseToData(
     oddsRatio: response.statsTable[0].oddsratio,
     orInterval: response.statsTable[0].orInterval,
     completeCases: response.completeCasesTable,
-    outputSize: response.mosaic.config.completeCases,
+    completeCasesAllVars: response.mosaic.config.completeCasesAllVars,
+    completeCasesAxesVars: response.mosaic.config.completeCasesAxesVars,
   };
 }
 

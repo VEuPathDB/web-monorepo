@@ -351,7 +351,9 @@ function ScatterplotViz(props: Props) {
         <>
           <OutputEntityTitle
             entity={outputEntity}
-            outputSize={data.pending ? undefined : data.value?.outputSize}
+            outputSize={
+              data.pending ? undefined : data.value?.completeCasesAllVars
+            }
           />
           <div
             style={{
@@ -567,9 +569,8 @@ export function scatterplotResponseToData(
     yMin: yMin,
     yMax: yMax,
     completeCases: response.completeCasesTable,
-    outputSize:
-      response.scatterplot.config.completeCases +
-      response.scatterplot.config.plottedIncompleteCases,
+    completeCasesAllVars: response.scatterplot.config.completeCasesAllVars,
+    completeCasesAxesVars: response.scatterplot.config.completeCasesAxesVars,
     // TO DO: won't work with densityplot response, when that's implemented
   };
 }

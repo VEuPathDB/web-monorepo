@@ -270,7 +270,9 @@ function BarplotViz(props: Props) {
         <>
           <OutputEntityTitle
             entity={entity}
-            outputSize={data.pending ? undefined : data.value?.outputSize}
+            outputSize={
+              data.pending ? undefined : data.value?.completeCasesAllVars
+            }
           />
           <div
             style={{
@@ -413,7 +415,7 @@ function BarplotWithControls({
 /**
  * Reformat response from Barplot endpoints into complete BarplotData
  * @param response
- * @returns BarplotData & completeCases & outputSize
+ * @returns BarplotData & completeCases & completeCasesAllVars & completeCasesAxesVars
  */
 export function barplotResponseToData(
   response: BarplotResponse
@@ -427,9 +429,8 @@ export function barplotResponseToData(
       value: data.value,
     })),
     completeCases: response.completeCasesTable,
-    outputSize:
-      response.barplot.config.completeCases +
-      response.barplot.config.plottedIncompleteCases,
+    completeCasesAllVars: response.barplot.config.completeCasesAllVars,
+    completeCasesAxesVars: response.barplot.config.completeCasesAxesVars,
   };
 }
 
