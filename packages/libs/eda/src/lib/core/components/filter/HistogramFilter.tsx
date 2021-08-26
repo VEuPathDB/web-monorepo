@@ -24,7 +24,7 @@ import UnknownCount from '@veupathdb/wdk-client/lib/Components/AttributeFilter/U
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import { number, partial, TypeOf, boolean, type, intersection } from 'io-ts';
-import React, { useCallback, useMemo, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { usePromise } from '../../hooks/promise';
 import { AnalysisState } from '../../hooks/analysis';
 import { useSubsettingClient } from '../../hooks/workspace';
@@ -36,11 +36,10 @@ import { HistogramVariable } from './types';
 import { fullISODateRange, padISODateTime } from '../../utils/date-conversion';
 import { getDistribution } from './util';
 import { DistributionResponse } from '../../api/subsetting-api';
-//DKDK reusable utils?: will see if this is indeed reusable with other application
-import {
-  dataDependentAxisMinMax,
-  truncationConfig,
-} from '../../utils/truncation-config-utils';
+//DKDK reusable util for computing truncationConfig
+import { truncationConfig } from '../../utils/truncation-config-utils';
+//DKDKDK use Notification for truncation warning message
+import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -62,9 +61,6 @@ export const UIState = intersection([
   partial({
     binWidthTimeUnit: TimeUnit,
     dependentAxisRange: NumberRange,
-    //DKDK set default dependent axis min max from data-driven initial min/max
-    defaultDependentAxisMin: number,
-    defaultDependentAxisMax: number,
   }),
 ]);
 
@@ -397,6 +393,16 @@ function HistogramPlotWithControls({
   entityName,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
+  //DKDKDK set the state of truncation warning message
+  const [
+    truncatedIndependentAxisWarning,
+    setTruncatedIndependentAxisWarning,
+  ] = useState<string>('');
+  const [
+    truncatedDependentAxisWarning,
+    setTruncatedDependentAxisWarning,
+  ] = useState<string>('');
+
   const handleBinWidthChange = useCallback(
     (newBinWidth: NumberOrTimeDelta) => {
       updateUIState({
@@ -435,6 +441,8 @@ function HistogramPlotWithControls({
       binWidth: defaultUIState.binWidth,
       binWidthTimeUnit: defaultUIState.binWidthTimeUnit,
     });
+    //DKDKDK add reset for truncation message as well
+    setTruncatedIndependentAxisWarning('');
   }, [
     defaultUIState.binWidth,
     defaultUIState.binWidthTimeUnit,
@@ -459,6 +467,8 @@ function HistogramPlotWithControls({
       dependentAxisRange: undefined,
       dependentAxisLogScale: defaultUIState.dependentAxisLogScale,
     });
+    //DKDKDK add reset for truncation message as well
+    setTruncatedDependentAxisWarning('');
   }, [defaultUIState.dependentAxisLogScale, updateUIState]);
 
   const handleDependentAxisLogScale = useCallback(
@@ -523,44 +533,6 @@ function HistogramPlotWithControls({
 
   const widgetHeight = '4em';
 
-  /*
-   * DKDK set default dependent min/max from data and configure truncation flags
-   * introduce reusable functions
-   *
-   **/
-  console.log('data =', data);
-  //DKDK find data-driven dependent axis min/max: : will see if this is reusable with other application
-  const { dependentAxisMin, dependentAxisMax } = useMemo(() => {
-    const { dependentAxisMin, dependentAxisMax } = dataDependentAxisMinMax(
-      data
-    );
-    return { dependentAxisMin, dependentAxisMax };
-  }, [data]);
-
-  //DKDK set default (initial) dependent axis min max
-  useEffect(() => {
-    if (
-      dependentAxisMin != null &&
-      uiState.defaultDependentAxisMin == null &&
-      dependentAxisMax != null &&
-      uiState.defaultDependentAxisMax == null
-    ) {
-      updateUIState({
-        defaultDependentAxisMin: dependentAxisMin,
-        defaultDependentAxisMax: dependentAxisMax,
-      });
-    }
-  }, [
-    data?.series,
-    dependentAxisMin,
-    dependentAxisMax,
-    updateUIState,
-    uiState.defaultDependentAxisMin,
-    uiState.defaultDependentAxisMax,
-    uiState.dependentAxisRange?.min,
-    uiState.dependentAxisRange?.max,
-  ]);
-
   //DKDK set truncation flags: will see if this is reusable with other application
   const {
     truncationConfigIndependentAxisMin,
@@ -573,36 +545,16 @@ function HistogramPlotWithControls({
       truncationConfigIndependentAxisMax,
       truncationConfigDependentAxisMin,
       truncationConfigDependentAxisMax,
-    } = truncationConfig(
-      defaultUIState,
-      uiState,
-      dependentAxisMin,
-      dependentAxisMax
-    );
+    } = truncationConfig(defaultUIState, uiState);
     return {
       truncationConfigIndependentAxisMin,
       truncationConfigIndependentAxisMax,
       truncationConfigDependentAxisMin,
       truncationConfigDependentAxisMax,
     };
-  }, [defaultUIState, uiState, dependentAxisMin, dependentAxisMax]);
+  }, [defaultUIState, uiState]);
 
-  console.log(
-    'dependentAxisMin, dependentAxisMax =',
-    dependentAxisMin,
-    dependentAxisMax
-  );
   console.log('uiState.dependentAxisRange =', uiState.dependentAxisRange);
-  console.log(
-    'uiState.defaultDependentAxisMin, uiState.dependentAxisRange?.min =',
-    uiState.defaultDependentAxisMin,
-    uiState.dependentAxisRange?.min
-  );
-  console.log(
-    'uiState.defaultDependentAxisMax, uiState.dependentAxisRange?.max =',
-    uiState.defaultDependentAxisMax,
-    uiState.dependentAxisRange?.max
-  );
   console.log(
     'defaultUIState.independentAxisRange.min, uiState.independentAxisRange.min = ',
     defaultUIState.independentAxisRange.min,
@@ -618,6 +570,26 @@ function HistogramPlotWithControls({
     truncationConfigDependentAxisMin,
     truncationConfigDependentAxisMax
   );
+
+  //DKDKDK set useEffect for changing truncation warning message
+  useEffect(() => {
+    if (
+      truncationConfigIndependentAxisMin ||
+      truncationConfigIndependentAxisMax
+    ) {
+      setTruncatedIndependentAxisWarning(
+        'Data is truncated (light gray area) by range selection'
+      );
+    }
+  }, [truncationConfigIndependentAxisMin, truncationConfigIndependentAxisMax]);
+
+  useEffect(() => {
+    if (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) {
+      setTruncatedDependentAxisWarning(
+        'Data is truncated (light gray area) by range selection'
+      );
+    }
+  }, [truncationConfigDependentAxisMin, truncationConfigDependentAxisMax]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -650,16 +622,7 @@ function HistogramPlotWithControls({
           orientation: 'horizontal',
           verticalPaddingAdjustment: 20,
         }}
-        //DKDK pass data-driven dependent axis range
-        dataDependentAxisRange={
-          dependentAxisMin != null && dependentAxisMax != null
-            ? {
-                min: dependentAxisMin,
-                max: dependentAxisMax,
-              }
-            : undefined
-        }
-        //DKDK pass truncationConfig
+        //DKDK pass axisTruncationConfig
         axisTruncationConfig={{
           independentAxis: {
             min: truncationConfigIndependentAxisMin,
@@ -691,10 +654,19 @@ function HistogramPlotWithControls({
               handleDependentAxisRangeChange(newRange as NumberRange);
             }}
             allowPartialRange={false}
-            //DKDK pass isAxisTruncated boolean
-            isAxisTruncated={uiState.dependentAxisRange != null}
           />
-
+          {/* DKDKDK truncation notification */}
+          {truncatedDependentAxisWarning ? (
+            <Notification
+              title="Information"
+              text={truncatedDependentAxisWarning}
+              //DKDK this was defined as LIGHT_BLUE
+              color={'#5586BE'}
+              onAcknowledgement={() => {
+                setTruncatedDependentAxisWarning('');
+              }}
+            />
+          ) : null}
           <Button
             type={'outlined'}
             text={'Reset Y-axis to defaults'}
@@ -728,13 +700,19 @@ function HistogramPlotWithControls({
             range={uiState.independentAxisRange}
             onRangeChange={handleIndependentAxisRangeChange}
             valueType={data?.valueType}
-            //DKDK pass isAxisTruncated boolean
-            isAxisTruncated={
-              truncationConfigIndependentAxisMin ||
-              truncationConfigIndependentAxisMax
-            }
           />
-
+          {/* DKDKDK truncation notification */}
+          {truncatedIndependentAxisWarning ? (
+            <Notification
+              title="Information"
+              text={truncatedIndependentAxisWarning}
+              //DKDK this was defined as LIGHT_BLUE
+              color={'#5586BE'}
+              onAcknowledgement={() => {
+                setTruncatedIndependentAxisWarning('');
+              }}
+            />
+          ) : null}
           <Button
             type={'outlined'}
             text={'Reset X-axis to defaults'}
