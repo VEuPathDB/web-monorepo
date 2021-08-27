@@ -1,7 +1,7 @@
 import React from 'react';
 import { Layout } from 'plotly.js';
 import { PlotParams } from 'react-plotly.js';
-import PlotlyPlot, { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
+import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
 import {
   BoxplotData,
   OpacityAddon,

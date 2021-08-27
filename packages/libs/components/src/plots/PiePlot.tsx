@@ -1,7 +1,7 @@
 import React from 'react';
 import { PlotData as PlotlyPlotData } from 'plotly.js';
 import { PlotParams } from 'react-plotly.js';
-import PlotlyPlot, { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
+import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
 // FIXME - confusing mix of imports from plotly and react-plotly
 //         isn't PlotlyPlotData the same as PlotParams['data'] ?
 

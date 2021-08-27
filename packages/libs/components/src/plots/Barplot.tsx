@@ -1,4 +1,4 @@
-import { Ref, useMemo } from 'react';
+import { useMemo } from 'react';
 import { PlotParams } from 'react-plotly.js';
 import {
   BarLayoutAddon,
@@ -10,14 +10,9 @@ import {
   DependentAxisLogScaleAddon,
   DependentAxisLogScaleDefault,
 } from '../types/plots';
-import PlotlyPlot, {
-  makePlotlyPlotComponent,
-  PlotProps,
-  PlotRef,
-} from './PlotlyPlot';
+import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
 import { Layout } from 'plotly.js';
 import { some } from 'lodash';
-import { forwardRef } from 'react';
 
 // in this example, the main variable is 'country'
 export interface BarplotProps

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import PlotlyPlot, { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
+import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
 import { Layout, Annotations } from 'plotly.js';
 import { HeatmapData } from '../types/plots';
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import PlotlyPlot, { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
+import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
 import { MosaicData } from '../types/plots';
 import { PlotParams } from 'react-plotly.js';
 import _ from 'lodash';

@@ -1,8 +1,4 @@
-/**
- * This component handles several plots such as marker, line, confidence interval,
- * density, and combinations of plots like marker + line + confidence interval
- */
-import PlotlyPlot, { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
+import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
 import { XYPlotData } from '../types/plots';
 import { Layout } from 'plotly.js';
 import { NumberOrDateRange } from '../types/general';
@@ -33,6 +29,10 @@ const EmptyXYPlotData: XYPlotData = {
   series: [],
 };
 
+/**
+ * This component handles several plots such as marker, line, confidence interval,
+ * density, and combinations of plots like marker + line + confidence interval
+ */
 const XYPlot = makePlotlyPlotComponent('XYPlot', (props: XYPlotProps) => {
   const {
     data = EmptyXYPlotData,

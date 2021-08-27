@@ -28,7 +28,7 @@ import {
 } from 'lodash';
 
 // Components
-import PlotlyPlot, { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
+import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
 import { Layout, Shape } from 'plotly.js';
 
 // bin middles needed for highlighting
