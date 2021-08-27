@@ -7,12 +7,12 @@ import { useSelector } from 'react-redux';
  * should be displayed.
  * @type {*[]}
  */
-const EMAIL_PREFERENCE_DATA_CLINEPI= [
+const EMAIL_PREFERENCE_DATA_CLINEPI = [
   {value:'preference_global_email_clinepidb', display:'ClinEpiDB'},
   {value:'preference_global_email_microbiomedb', display:'MicrobiomeDB'},
   {value:'preference_global_email_apidb', display:'VEuPathDB'}
 ];
-const EMAIL_PREFERENCE_DATA_MICROBIOME= [
+const EMAIL_PREFERENCE_DATA_MICROBIOME = [
   {value:'preference_global_email_microbiomedb', display:'MicrobiomeDB'},
   {value:'preference_global_email_clinepidb', display:'ClinEpiDB'},
   {value:'preference_global_email_apidb', display:'VEuPathDB'}
@@ -77,9 +77,12 @@ function ApiApplicationSpecificProperties(props) {
       : EMAIL_PREFERENCE_DATA_GENOMICS
   );
 
+  let showCrossBrcLink = (projectId != "ClinEpiDB" && projectId != "MicrobiomeDB");
+
   return (
       <fieldset>
         <legend>Preferences</legend>
+        { !showCrossBrcLink ? null : <p>Sign up for cross-BRC email alerts <a target="_blank" href="https://lists.bv-brc.org/mailman/listinfo">here</a>.</p> }
         <p>Send me email alerts about:</p>
         <CheckboxList name="emailAlerts" items={emailPrefData}
                       value={emailPrefValue} onChange={onEmailPreferenceChange}/>

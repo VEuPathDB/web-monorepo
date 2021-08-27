@@ -38,8 +38,7 @@ class UserMenu extends React.Component {
         { icon: 'sign-in', text: 'Login', onClick: () => actions.showLoginForm(window.location.href) },
         { icon: 'user-plus', text: 'Register', href: webAppUrl + '/app/user/registration', target: '_blank' }
       ] : [
-        { icon: 'vcard', text: [ firstName, lastName ].join(' '), href: webAppUrl + '/app/user/profile' },
-        // { icon: 'star', text: 'Favorites', href: webAppUrl + '/app/favorites' },
+        { icon: 'vcard', text: 'My Profile', href: webAppUrl + '/app/user/profile' },
         { icon: 'power-off', text: 'Log Out', onClick: () => actions.showLogoutWarning(window.location.href) }
       ];
 
