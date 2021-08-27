@@ -1,6 +1,6 @@
 import React from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import UserFormContainer, { UserFormContainerPropTypes } from 'wdk-client/Views/User/UserFormContainer';
+import UserFormContainer, { UserFormContainerPropTypes, OutroComponent } from 'wdk-client/Views/User/UserFormContainer';
 
 let interpretFormStatus = (formStatus, errorMessage) => {
   // configure properties for banner and submit button enabling based on status

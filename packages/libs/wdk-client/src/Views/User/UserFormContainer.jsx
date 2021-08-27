@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { getChangeHandler, wrappable } from 'wdk-client/Utils/ComponentUtils';
 import UserAccountForm from 'wdk-client/Views/User/UserAccountForm';
 
@@ -38,9 +39,35 @@ export function FormMessage({ message, messageClass }) {
 
 export function IntroComponent() {
   return (
-    <div> <a title="It will open in a new tab" target="_blank" href="/a/app/static-content/privacyPolicy.html">
-        <b>VEuPathDB Websites Privacy Policy</b></a> 
-   </div> );
+    <div style={{paddingBottom:"2em"}}>
+      Review our&nbsp;
+      <a title="It will open in a new tab" target="_blank" href="/a/app/static-content/privacyPolicy.html">
+        <b>VEuPathDB Websites Privacy Policy</b>
+      </a>.
+    </div>
+  );
+}
+
+export function OutroComponent({user}) {
+  const projectId = useSelector(state => state.globalData.siteConfig.projectId);
+  if (projectId == "ClinEpiDB" || projectId == "MicrobiomeDB") return null;
+  let clean = val => val ? encodeURIComponent(val) : "";
+  let userDataQueryString =
+    "?email=" + clean(user.email) +
+    "&username=" + clean(user.properties.username) +
+    "&first_name=" + clean(user.properties.firstName) +
+    "&middle_name=" + clean(user.properties.middleName) +
+    "&last_name=" + clean(user.properties.lastName) +
+    "&affiliation=" + clean(user.properties.organization) +
+    "&interests=" + clean(user.properties.interests);
+  return (
+    <div style={{padding:"1.5em 0 1.5em 0"}}>
+      Visit our partner Bioinformatics Resource Center,&nbsp;
+      <a target="_blank" href="https://www.bv-brc.org">BV-BRC</a>, and&nbsp;
+      <a target="_blank" href="https://www.bv-brc.org/login">log in</a> there or&nbsp;
+      <a target="_blank" href={'https://www.bv-brc.org/register' + userDataQueryString}>register</a>.
+    </div>
+  );
 }
 
 /**
@@ -62,7 +89,6 @@ class UserFormContainer extends React.Component {
   render() {
     let formInterpreter = this.props.statusDisplayFunction || interpretFormStatus;
     let formConfig = formInterpreter(this.props.formStatus, this.props.errorMessage);
-  //  let IntroComponent = this.props.introComponent || (() => <span/>);
 
     return (
       <div className="wdk-UserProfile">
@@ -70,9 +96,7 @@ class UserFormContainer extends React.Component {
           <div>{this.props.hiddenFormMessage}</div> :
           <div>
             <h1>{this.props.titleText}</h1>
-          {/*  <IntroComponent/> */}
-            <div style={{paddingBottom:"2em"}}>Review our <a title="It will open in a new tab" target="_blank" href="/a/app/static-content/privacyPolicy.html">
-        <b>VEuPathDB Websites Privacy Policy</b></a>.</div>
+            <IntroComponent/>
             <FormMessage {...formConfig}/>
             <UserAccountForm
               user={this.props.userFormData}
@@ -86,6 +110,7 @@ class UserFormContainer extends React.Component {
               submitButtonText={this.props.submitButtonText}
               wdkConfig={this.props.globalData.config}
             />
+            <OutroComponent user={this.props.userFormData}/>
           </div>
         }
       </div>

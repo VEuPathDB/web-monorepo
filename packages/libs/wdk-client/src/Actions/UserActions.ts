@@ -117,15 +117,17 @@ export type ProfileFormSubmissionStatusAction = {
   type: typeof PROFILE_FORM_SUBMISSION_STATUS,
   payload: {
     formStatus: FormStatus;
+    formData: UserProfileFormData;
     errorMessage: string | undefined;
   }
 }
 
-export function profileFormSubmissionStatus(formStatus: FormStatus, errorMessage?: string): ProfileFormSubmissionStatusAction {
+export function profileFormSubmissionStatus(formStatus: FormStatus, formData: UserProfileFormData, errorMessage?: string): ProfileFormSubmissionStatusAction {
   return {
     type: PROFILE_FORM_SUBMISSION_STATUS,
     payload: {
       formStatus,
+      formData,
       errorMessage
     }
   }
@@ -421,24 +423,27 @@ function sendPrefUpdateOnCompletion<PrefAction extends PreferenceUpdateAction | 
 
 /** Save user profile to DB */
 type SubmitProfileFormType = ActionThunk<UserUpdateAction|PreferencesUpdateAction|ProfileFormSubmissionStatusAction>;
-export function submitProfileForm(userProfileFormData: UserProfileFormData): SubmitProfileFormType {
+export function submitProfileForm(formData: UserProfileFormData): SubmitProfileFormType {
   return function run({ wdkService }) {
-    let partialUser: Partial<User> = <UserProfileFormData>filterOutProps(userProfileFormData, ["isGuest", "id", "confirmEmail", "preferences"]);
+    let partialUser: Partial<User> = <UserProfileFormData>filterOutProps(formData, ["isGuest", "id", "confirmEmail", "preferences"]);
     let userPromise = wdkService.getCurrentUser().then(user => wdkService.updateCurrentUser({ ...user, ...partialUser }));
-    let prefPromise = wdkService.patchUserPreferences(userProfileFormData.preferences as UserPreferences); // should never be null by this point
+    let prefPromise = wdkService.patchUserPreferences(formData.preferences as UserPreferences); // should never be null by this point
     return [
-      profileFormSubmissionStatus('pending'),
+      profileFormSubmissionStatus('pending', formData),
       Promise.all([userPromise, prefPromise]).then(([user]) => [
         // success; update user first, then prefs, then status in ProfileViewStore
         // NOTE: this prop name should be the same as that used in StaticDataActionCreator for 'user'
         // NOTE2: not all user props were sent to update but all should remain EXCEPT 'confirmEmail' and 'preferences'
         userUpdate(user),
-        preferencesUpdate(userProfileFormData.preferences as UserPreferences),
-        profileFormSubmissionStatus('success')
+        preferencesUpdate(formData.preferences as UserPreferences),
+        profileFormSubmissionStatus('success', formData)
       ])
       .catch((error) => {
-        console.error(error.response);
-        return profileFormSubmissionStatus('error', error.response);
+        let message = (error.status >= 500 ? error.response :
+          // happen to know that 400s will have a general validation error message
+          JSON.parse(error.response).errors.general[0]);
+        console.error(message);
+        return profileFormSubmissionStatus('error', formData, message);
       })
     ];
   };
@@ -454,16 +459,19 @@ export function submitRegistrationForm (formData: UserProfileFormData): SubmitRe
       preferences: formData.preferences as UserPreferences
     }
     return [
-      profileFormSubmissionStatus('pending'),
+      profileFormSubmissionStatus('pending', formData),
       wdkService.createNewUser(registrationData).then(responseData => [
         // success; clear the form in case user wants to register another user
         clearRegistrationForm(),
         // add success message to top of page
-        profileFormSubmissionStatus('success')
+        profileFormSubmissionStatus('success', formData)
       ])
       .catch((error) => {
-        console.error(error.response);
-        return profileFormSubmissionStatus('error', error.response);
+        let message = (error.status >= 500 ? error.response :
+          // happen to know that 400s will have a general validation error message
+          JSON.parse(error.response).errors.general[0]);
+        console.error(message);
+        return profileFormSubmissionStatus('error', formData, message);
       })
     ];
   };
