@@ -16,13 +16,15 @@ export type UserProfileFormData = Partial<User & {
 export type State = {
   userFormData?: UserProfileFormData;
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
+  previousUserFormData?: UserProfileFormData;
   errorMessage?: string;
 }
 
 const defaultState: State = {
   errorMessage: undefined,
   formStatus: 'new',
-  userFormData: undefined
+  userFormData: undefined,
+  previousUserFormData: undefined
 };
 
 export function reduce(state: State = defaultState, action: Action): State {
@@ -38,6 +40,7 @@ export function reduce(state: State = defaultState, action: Action): State {
       return {
         ...state,
         formStatus: action.payload.formStatus,
+        previousUserFormData: action.payload.formData,
         errorMessage: action.payload.errorMessage
       };
     default:

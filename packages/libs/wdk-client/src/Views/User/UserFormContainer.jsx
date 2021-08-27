@@ -4,9 +4,9 @@ import { useSelector } from 'react-redux';
 import { getChangeHandler, wrappable } from 'wdk-client/Utils/ComponentUtils';
 import UserAccountForm from 'wdk-client/Views/User/UserAccountForm';
 
-export function interpretFormStatus(formStatus, errorMessage) {
+export function interpretFormStatus(formStatus, userFormData, errorMessage) {
   // configure properties for banner and submit button enabling based on status
-  let messageClass = "wdk-UserProfile-banner ", message = "", disableSubmit = false;
+  let messageClass="wdk-UserProfile-banner ", message="", disableSubmit = false;
   switch (formStatus) {
     case 'new':
       disableSubmit = true;
@@ -29,12 +29,13 @@ export function interpretFormStatus(formStatus, errorMessage) {
       message = errorMessage;
       messageClass += "wdk-UserProfile-error";
   }
-  return { messageClass, message, disableSubmit };
+  let messageElement = ( <FormMessage messageClass={messageClass} message={message}/> );
+  return { messageElement, disableSubmit };
 }
 
 export function FormMessage({ message, messageClass }) {
   return ( message == '' ? <noscript/> :
-    <div className={messageClass}><span>{message}</span></div> );
+    <div className={messageClass}>{message}</div> );
 }
 
 export function IntroComponent() {
@@ -48,7 +49,11 @@ export function IntroComponent() {
   );
 }
 
-export function OutroComponent({user}) {
+export function OutroComponent(props) {
+  return <VisitOtherBrc {...props}/>
+}
+
+export function VisitOtherBrc({user}) {
   const projectId = useSelector(state => state.globalData.siteConfig.projectId);
   if (projectId == "ClinEpiDB" || projectId == "MicrobiomeDB") return null;
   let clean = val => val ? encodeURIComponent(val) : "";
@@ -61,7 +66,7 @@ export function OutroComponent({user}) {
     "&affiliation=" + clean(user.properties.organization) +
     "&interests=" + clean(user.properties.interests);
   return (
-    <div style={{padding:"1.5em 0 1.5em 0"}}>
+    <div style={{margin:"1.5em 0"}}>
       Visit our partner Bioinformatics Resource Center,&nbsp;
       <a target="_blank" href="https://www.bv-brc.org">BV-BRC</a>, and&nbsp;
       <a target="_blank" href="https://www.bv-brc.org/login">log in</a> there or&nbsp;
@@ -88,7 +93,7 @@ class UserFormContainer extends React.Component {
 
   render() {
     let formInterpreter = this.props.statusDisplayFunction || interpretFormStatus;
-    let formConfig = formInterpreter(this.props.formStatus, this.props.errorMessage);
+    let formConfig = formInterpreter(this.props.formStatus, this.props.previousUserFormData, this.props.errorMessage);
 
     return (
       <div className="wdk-UserProfile">
@@ -97,7 +102,7 @@ class UserFormContainer extends React.Component {
           <div>
             <h1>{this.props.titleText}</h1>
             <IntroComponent/>
-            <FormMessage {...formConfig}/>
+            {formConfig.messageElement}
             <UserAccountForm
               user={this.props.userFormData}
               showChangePasswordBox={this.props.showChangePasswordBox}

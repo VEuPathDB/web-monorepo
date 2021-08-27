@@ -1,8 +1,8 @@
 import React from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import UserFormContainer, { UserFormContainerPropTypes, OutroComponent } from 'wdk-client/Views/User/UserFormContainer';
+import UserFormContainer, { UserFormContainerPropTypes, FormMessage, VisitOtherBrc } from 'wdk-client/Views/User/UserFormContainer';
 
-let interpretFormStatus = (formStatus, errorMessage) => {
+let interpretFormStatus = (formStatus, userFormData, errorMessage) => {
   // configure properties for banner and submit button enabling based on status
   let messageClass = "wdk-UserProfile-banner ", message = "", disableSubmit = false;
   switch (formStatus) {
@@ -18,7 +18,13 @@ let interpretFormStatus = (formStatus, errorMessage) => {
       disableSubmit = true;
       break;
     case 'success':
-      message = "You have registered successfully.  Please check your email (inbox and spam folder) for a temporary password.";
+      // special case for success; include Joint-BRC advertisement
+      message = (
+        <div>
+          <p>You have registered successfully.  Please check your email (inbox and spam folder) for a temporary password.</p>
+          <VisitOtherBrc user={userFormData}/>
+        </div>
+      );
       messageClass += "wdk-UserProfile-success";
       disableSubmit = true; // same as 'new'
       break;
@@ -26,7 +32,8 @@ let interpretFormStatus = (formStatus, errorMessage) => {
       message = errorMessage;
       messageClass += "wdk-UserProfile-error";
   }
-  return { messageClass, message, disableSubmit };
+  let messageElement = ( <FormMessage messageClass={messageClass} message={message}/> );
+  return { messageElement, disableSubmit };
 }
 
 let IntroText = () => (
