@@ -1,6 +1,6 @@
 import { get, kebabCase } from 'lodash';
 import * as React from 'react';
-import {preorderSeq, getBranches} from 'wdk-client/Utils/TreeUtils';
+import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import {
   getTree,
   nodeHasChildren,
@@ -13,6 +13,7 @@ import {
 } from 'wdk-client/Utils/OntologyUtils';
 import {areTermsInString} from 'wdk-client/Utils/SearchUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
+import {preorderSeq, getBranches} from 'wdk-client/Utils/TreeUtils';
 import {Question, RecordClass} from 'wdk-client/Utils/WdkModel';
 
 export type Dict<T> = {
@@ -103,6 +104,14 @@ export function getDescription(node: CategoryTreeNode) {
 export function getTooltipContent(node: CategoryTreeNode) {
   return isIndividual(node) && nodeHasProperty('targetType', 'search', node) ? node.wdkReference.summary
        : getDescription(node);
+}
+
+export function getFormattedTooltipContent(node: CategoryTreeNode) {
+  const tooltipContent = getTooltipContent(node);
+
+  return tooltipContent == null
+    ? tooltipContent
+    : safeHtml(tooltipContent);
 }
 
 export function getSynonyms(node: CategoryTreeNode) {
