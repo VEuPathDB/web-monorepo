@@ -156,7 +156,13 @@ const routes: RouteEntry[] = [
 
   {
     path: '/user/registration',
-    component: () => <UserRegistrationController/>
+    component: (props: RouteComponentProps<void>) => {
+      const initialFormFields = props.location.search.length === 0
+        ? undefined
+        : parseQueryString(props);
+
+      return <UserRegistrationController initialFormFields={initialFormFields} />;
+    }
   },
 
   {
