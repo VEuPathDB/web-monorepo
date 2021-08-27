@@ -33,7 +33,7 @@ export function reduce(state: State = defaultState, action: Action): State {
     case 'user/profile-form-update':
       return {
         ...state,
-        userFormData: action.payload.user,
+        userFormData: action.payload.userFormContent,
         formStatus: "modified"
       };
     case 'user/profile-form-submission-status':
