@@ -297,7 +297,9 @@ function useSiteSearchResponse(searchSettings: SearchSettings, resultSettings: R
 
       const effectiveFilter = docTypesWithCounts[0].id;
 
-      // Get results with effective filter
+      // Get results with effective filter.
+      // This request will give us counts for fields hit.
+      // Unfiltered requests do not include such counts.
       const requestBody2 = {
         ...requestBody,
         documentTypeFilter: {
