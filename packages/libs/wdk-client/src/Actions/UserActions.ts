@@ -94,15 +94,15 @@ export const PROFILE_FORM_UPDATE = 'user/profile-form-update';
 export type ProfileFormUpdateAction = {
   type: typeof PROFILE_FORM_UPDATE,
   payload: {
-    user: User
+    userFormContent: UserProfileFormData
   }
 }
 
-export function profileFormUpdate(user: User): ProfileFormUpdateAction {
+export function profileFormUpdate(userFormContent: UserProfileFormData): ProfileFormUpdateAction {
   return {
     type: PROFILE_FORM_UPDATE,
     payload: {
-      user
+      userFormContent
     }
   }
 }

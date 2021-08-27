@@ -63,24 +63,40 @@ export interface ServiceConfig {
   projectId: string;
   releaseDate: string;
   startupTime: number;
+  userProfileProperties: Array<{
+    name: string;
+    displayName: string
+    isRequired: boolean;
+    isMultiLine: boolean;
+    isPublic: boolean;
+  }>;
 }
 
 const configDecoder: Decode.Decoder<ServiceConfig> =
-  Decode.combine(
-   Decode.field("authentication", Decode.combine(
-     Decode.field('method', Decode.oneOf(Decode.constant('OAUTH2'), Decode.constant('USER_DB'))),
-     Decode.field('oauthUrl', Decode.string),
-     Decode.field('oauthClientUrl', Decode.string),
-     Decode.field('oauthClientId', Decode.string)
-   )),
-   Decode.field('buildNumber', Decode.string),
-   Decode.field('categoriesOntologyName', Decode.string),
-   Decode.field('description', Decode.string),
-   Decode.field('displayName', Decode.string),
-   Decode.field('projectId', Decode.string),
-   Decode.field('releaseDate', Decode.string),
-   Decode.field('startupTime', Decode.number)
-  );
+  Decode.record({
+    authentication: Decode.record({
+      method: Decode.oneOf(Decode.constant('OAUTH2'), Decode.constant('USER_DB')),
+      oauthUrl: Decode.string,
+      oauthClientUrl: Decode.string,
+      oauthClientId: Decode.string
+    }),
+    buildNumber: Decode.string,
+    categoriesOntologyName: Decode.string,
+    description: Decode.string,
+    displayName: Decode.string,
+    projectId: Decode.string,
+    releaseDate: Decode.string,
+    startupTime: Decode.number,
+    userProfileProperties: Decode.arrayOf(
+      Decode.record({
+        name: Decode.string,
+        displayName: Decode.string,
+        isRequired: Decode.boolean,
+        isMultiLine: Decode.boolean,
+        isPublic: Decode.boolean
+      })
+    )
+  });
 
 
 

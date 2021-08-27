@@ -1,10 +1,12 @@
 import * as React from 'react';
+import { pick } from 'lodash';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import PageController from 'wdk-client/Core/Controllers/PageController';
 import UserRegistration from 'wdk-client/Views/User/Profile/UserRegistration';
 import { profileFormUpdate, submitRegistrationForm, conditionallyTransition } from 'wdk-client/Actions/UserActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { connect } from 'react-redux';
+import { GlobalData } from 'wdk-client/StoreModules/GlobalData';
 
 const actionCreators = {
   updateProfileForm: profileFormUpdate,
@@ -12,24 +14,35 @@ const actionCreators = {
   conditionallyTransition
 };
 
-type Props = {
+type Props = OwnProps & StateProps & DispatchProps;
+
+interface OwnProps {
+  initialFormFields?: Record<string, string>;
+};
+
+type StateProps = {
   globalData: RootState['globalData'];
+} & RootState['userProfile'];
+
+type DispatchProps = {
   userEvents: typeof actionCreators;
-} & RootState['userProfile']
+};
 
 class UserRegistrationController extends PageController<Props> {
+
+  private _formPrepopulated = false;
 
   getActionCreators() {
     return actionCreators;
   }
 
   isRenderDataLoaded() {
-    return (this.props.globalData.preferences != null &&
-            this.props.globalData.config != null &&
-            // show Loading if user is guest
-            //   (will transition to Profile page in loadData() if non-guest)
-            this.props.globalData.user != null &&
-            this.props.globalData.user.isGuest);
+    // show Loading if user is guest
+    //   (will transition to Profile page in loadData() if non-guest)
+    return (
+      isRenderGlobalDataLoaded(this.props.globalData) &&
+      this.props.globalData.user.isGuest
+    );
   }
 
   getTitle() {
@@ -42,14 +55,52 @@ class UserRegistrationController extends PageController<Props> {
 
   loadData() {
     this.props.userEvents.conditionallyTransition(user => !user.isGuest, '/user/profile');
+
+    if (
+      isRenderGlobalDataLoaded(this.props.globalData) &&
+      this.props.globalData.user.isGuest &&
+      this.props.initialFormFields != null &&
+      !this._formPrepopulated
+    ) {
+      const {
+        email,
+        ...initialUserProperties
+      } = this.props.initialFormFields;
+
+      const userProfilePropertyNames = this.props.globalData.config.userProfileProperties.map(({ name }) => name);
+
+      const restrictedInitialUserProperties = pick(initialUserProperties, userProfilePropertyNames);
+
+      this.props.userEvents.updateProfileForm({
+        ...this.props.userFormData,
+        email: email ?? '',
+        confirmEmail: email ?? '',
+        properties: {
+          ...this.props.userFormData?.properties,
+          ...restrictedInitialUserProperties
+        }
+      });
+
+      this._formPrepopulated = true;
+    }
   }
 }
 
-const enhance = connect((state: RootState) => ({
+const enhance = connect<StateProps, typeof actionCreators, OwnProps, Props, RootState>(state => ({
   globalData: state.globalData,
   ...state.userRegistration,
 }),
 actionCreators,
-(stateProps, dispatchProps) => ({ ...stateProps, userEvents: dispatchProps }))
+(stateProps, dispatchProps, ownProps) => ({ ...stateProps, userEvents: dispatchProps, ...ownProps }));
 
 export default enhance(wrappable(UserRegistrationController));
+
+type LoadedGlobalData = GlobalData & Required<Pick<GlobalData, 'config' | 'preferences' | 'user'>>;
+
+function isRenderGlobalDataLoaded(globalData: GlobalData): globalData is LoadedGlobalData {
+  return (
+    globalData.preferences != null &&
+    globalData.config != null &&
+    globalData.user != null
+  );
+}
