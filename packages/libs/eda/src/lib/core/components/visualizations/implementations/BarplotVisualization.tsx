@@ -402,7 +402,7 @@ function BarplotWithControls({
             onStateChange={onDependentAxisLogScaleChange}
           />
           <RadioButtonGroup
-            selectedOption={valueSpec === 'proportion' ? 'proportion' : 'count'}
+            selectedOption={valueSpec}
             options={['count', 'proportion']}
             onOptionSelected={(newOption) => {
               if (newOption === 'proportion') {
