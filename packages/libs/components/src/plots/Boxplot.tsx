@@ -1,7 +1,7 @@
 import React from 'react';
 import { Layout } from 'plotly.js';
 import { PlotParams } from 'react-plotly.js';
-import PlotlyPlot, { PlotProps } from './PlotlyPlot';
+import PlotlyPlot, { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
 import {
   BoxplotData,
   OpacityAddon,
@@ -35,7 +35,7 @@ export interface BoxplotProps
 }
 const EmptyBoxplotData: BoxplotData = [];
 
-export default function Boxplot(props: BoxplotProps) {
+const Boxplot = makePlotlyPlotComponent('Boxplot', (props: BoxplotProps) => {
   const {
     data: plotData = EmptyBoxplotData,
     showRawData,
@@ -150,5 +150,11 @@ export default function Boxplot(props: BoxplotProps) {
     boxmode: 'group',
   };
 
-  return <PlotlyPlot data={data} layout={layout} {...restProps} />;
-}
+  return {
+    data,
+    layout,
+    ...restProps,
+  };
+});
+
+export default Boxplot;

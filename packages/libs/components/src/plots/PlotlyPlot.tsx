@@ -23,6 +23,10 @@ import { select } from 'd3';
 import { ToImgopts, toImage } from 'plotly.js';
 import { uniqueId } from 'lodash';
 
+/**
+ * A generic imperative interface to plota. This allows us to create a facade
+ * to interact with plot internals, such as exporting an image.
+ */
 export interface PlotRef {
   toImage: (imageOpts: ToImgopts) => Promise<string>;
 }
@@ -218,4 +222,22 @@ function PlotlyPlot<T>(
   );
 }
 
-export default forwardRef(PlotlyPlot);
+const PlotlyPlotWithRef = forwardRef(PlotlyPlot);
+
+/**
+ * Factory function to create a component that delegates to `PlotlyPlotWithRef`.
+ * This encapsulates ref forwarding. See {@link PlotRef}.
+ */
+export function makePlotlyPlotComponent<S, T>(
+  displayName: string,
+  transformProps: (props: S) => Omit<PlotProps<T>, 'data'> & PlotParams
+) {
+  function PlotlyPlotComponent(props: S, ref: Ref<PlotRef>) {
+    const xformProps = transformProps(props);
+    return <PlotlyPlotWithRef {...xformProps} ref={ref} />;
+  }
+  PlotlyPlotComponent.displayName = displayName;
+  return forwardRef(PlotlyPlotComponent);
+}
+
+export default PlotlyPlotWithRef;
