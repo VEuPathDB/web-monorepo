@@ -19,7 +19,7 @@ const UserIdentity = props => {
         <label htmlFor="userEmail"><i className="fa fa-asterisk"></i>Email:</label>
         <TextBox type="email" id="userEmail" value={user.email} required="required"
             onChange={props.onEmailChange} maxLength="255" size="80"
-            placeholder="Your email will be your login username" />
+            placeholder="Your email or (optional) username can be used to log in" />
       </div>
       <div>
         <label htmlFor="confirmUserEmail"><i className="fa fa-asterisk"></i>Retype Email:</label>
