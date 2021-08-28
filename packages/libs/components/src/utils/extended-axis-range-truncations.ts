@@ -1,5 +1,5 @@
 import * as DateMath from 'date-arithmetic';
-import { NumberOrDate, NumberOrDateRange, NumberRange } from '../types/general';
+import { NumberOrDateRange } from '../types/general';
 // Definitions
 import { AxisTruncationConfig } from '../types/plots';
 
@@ -11,12 +11,10 @@ export function extendAxisRangeForTruncations(
   axisRange?: NumberOrDateRange,
   config?: AxisTruncationConfig['independentAxis' | 'dependentAxis'],
   valueType: 'number' | 'date' = 'number'
-  // axisType?: 'independentAxis' | 'dependentAxis',
-  // axisRangeControl?: NumberOrDateRange,
 ): NumberOrDateRange | undefined {
-  //DKDKDK compute truncated axis with 5 % area from the range of min and max
+  // compute truncated axis with 5 % area from the range of min and max
   if (valueType != null && valueType === 'date') {
-    //DKDKDK find date diff (days) between range.min and range.max, take 5 % of range, and round up!
+    // find date diff (days) between range.min and range.max, take 5 % of range, and round up!
     const dateRangeDiff = Math.round(
       DateMath.diff(
         new Date(axisRange?.min as string),
@@ -24,8 +22,6 @@ export function extendAxisRangeForTruncations(
         'day'
       ) * 0.05
     ); // unit in days
-
-    console.log('dateRangeDiff =', dateRangeDiff);
 
     const axisLowerExtensionStart = config?.min
       ? DateMath.subtract(

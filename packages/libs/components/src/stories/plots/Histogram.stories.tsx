@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import {
   NumberRange,

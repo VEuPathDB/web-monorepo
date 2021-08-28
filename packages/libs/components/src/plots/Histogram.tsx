@@ -13,7 +13,6 @@ import {
   DependentAxisLogScaleAddon,
   DependentAxisLogScaleDefault,
   AxisTruncationAddon,
-  // AxisTruncationConfig,
 } from '../types/plots';
 import { NumberOrDateRange, NumberRange } from '../types/general';
 
@@ -33,7 +32,7 @@ import {
 import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { Layout, Shape } from 'plotly.js';
 
-//DKDK import util functions
+// import truncation util functions
 import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations';
 import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
 
@@ -334,9 +333,7 @@ export default function Histogram({
     } as NumberOrDateRange;
   }, [data?.valueType, independentAxisRange, binSummaries]);
 
-  console.log('standardIndependentAxisRange =', standardIndependentAxisRange);
-
-  //DKDKDK
+  // truncation axis range
   const extendedIndependentAxisRange = extendAxisRangeForTruncations(
     standardIndependentAxisRange,
     axisTruncationConfig?.independentAxis,
@@ -371,42 +368,19 @@ export default function Histogram({
     );
   }, [data.series]);
 
-  //DKDKDK
   const standardDependentAxisRange = dependentAxisRange;
 
-  //DKDKDK
+  // truncation axis range
   const extendedDependentAxisRange = extendAxisRangeForTruncations(
     standardDependentAxisRange,
     axisTruncationConfig?.dependentAxis,
     'number'
   ) as NumberRange | undefined;
 
-  console.log(
-    'axisTruncationConfig.independentAxis.min, axisTruncationConfig.independentAxis.max =',
-    axisTruncationConfig?.independentAxis?.min,
-    axisTruncationConfig?.independentAxis?.max
-  );
-  console.log(
-    'axisTruncationConfig.dependentAxis.min, axisTruncationConfig.dependentAxis.max =',
-    axisTruncationConfig?.dependentAxis?.min,
-    axisTruncationConfig?.dependentAxis?.max
-  );
-  console.log(
-    'extendedIndependentAxisRange.min, extendedIndependentAxisRange.max =',
-    extendedIndependentAxisRange?.min,
-    extendedIndependentAxisRange?.max
-  );
-  console.log(
-    'extendedDependentAxisRange.min, extendedDependentAxisRange.max =',
-    extendedDependentAxisRange?.min,
-    extendedDependentAxisRange?.max
-  );
-
-  //DKDK make rectangular layout shapes for truncated axis/missing data
+  // make rectangular layout shapes for truncated axis/missing data
   const truncatedAxisHighlighting:
     | Partial<Shape>[]
     | undefined = useMemo(() => {
-    //DKDK add condition... but this does not work as the case that only min or max changes do not work
     if (data.series.length > 0) {
       const filteredTruncationLayoutShapes = truncationLayoutShapes(
         orientation,
@@ -417,12 +391,6 @@ export default function Histogram({
         axisTruncationConfig
       );
 
-      console.log(
-        'filteredTruncationLayoutShapes = ',
-        filteredTruncationLayoutShapes
-      );
-
-      // return truncationLayoutShapes != null ? truncationLayoutShapes : []
       return filteredTruncationLayoutShapes;
     } else {
       return [];
@@ -448,7 +416,7 @@ export default function Histogram({
       text: dependentAxisLabel,
     },
     // range should be an array
-    //DKDKDK with the truncated axis, negative values need to be checked for log scale
+    // with the truncated axis, negative values need to be checked for log scale
     range: data.series.length
       ? [
           extendedDependentAxisRange?.min,
@@ -466,14 +434,11 @@ export default function Histogram({
     showline: true,
   };
 
-  //DKDK
-  console.log('dependentAxisLayout.range =', dependentAxisLayout.range);
-
   return (
     <PlotlyPlot
       useResizeHandler={true}
       layout={{
-        //DKDK add truncatedAxisHighlighting for layout.shapes
+        // add truncatedAxisHighlighting for layout.shapes
         shapes: [...selectedRangeHighlighting, ...truncatedAxisHighlighting],
         // when we implement zooming, we will still use Plotly's select mode
         dragmode: 'select',

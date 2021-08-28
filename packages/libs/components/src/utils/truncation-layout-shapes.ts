@@ -9,7 +9,7 @@ export type extendedDependentAxisRangeType = {
   max: number | string;
 };
 
-//DKDK A function to generate layout.shapes for truncated axis
+// A function to generate layout.shapes for truncated axis
 export function truncationLayoutShapes(
   orientation = OrientationDefault,
   standardIndependentAxisRange: NumberOrDateRange | undefined,
@@ -17,12 +17,11 @@ export function truncationLayoutShapes(
   extendedIndependentAxisRange: NumberOrDateRange | undefined,
   extendedDependentAxisRange: NumberOrDateRange | undefined,
   axisTruncationConfig?: AxisTruncationConfig
-  // dependentAxisLogScale?: boolean,
 ) {
-  //DKDK this will be used with conditions
+  // this will be used with conditions
   let truncationLayoutShapes: Partial<Shape>[] = [{}];
 
-  //DKDK independent axis min
+  // independent axis min
   if (axisTruncationConfig?.independentAxis?.min) {
     truncationLayoutShapes = [
       ...truncationLayoutShapes,
@@ -44,7 +43,7 @@ export function truncationLayoutShapes(
     ];
   }
 
-  //DKDK independent axis max
+  // independent axis max
   if (axisTruncationConfig?.independentAxis?.max) {
     truncationLayoutShapes = [
       ...truncationLayoutShapes,
@@ -67,7 +66,7 @@ export function truncationLayoutShapes(
     ];
   }
 
-  //DKDK dependent axis max
+  // dependent axis max
   if (axisTruncationConfig?.dependentAxis?.max) {
     truncationLayoutShapes = [
       ...truncationLayoutShapes,
@@ -89,7 +88,7 @@ export function truncationLayoutShapes(
     ];
   }
 
-  //DKDK dependent axis min
+  // dependent axis min
   if (axisTruncationConfig?.dependentAxis?.min) {
     truncationLayoutShapes = [
       ...truncationLayoutShapes,
@@ -111,9 +110,7 @@ export function truncationLayoutShapes(
     ];
   }
 
-  console.log('truncationLayoutShapes = ', truncationLayoutShapes);
-
-  //DKDK remove undefined element (e.g., initial empty one)
+  // remove undefined element (e.g., initial empty one)
   const filteredTruncationLayoutShapes = truncationLayoutShapes.filter(
     (shape) => {
       if (
