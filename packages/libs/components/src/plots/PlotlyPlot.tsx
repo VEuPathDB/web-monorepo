@@ -22,6 +22,7 @@ import { LayoutLegendTitle } from '../types/plotly-omissions';
 import { select } from 'd3';
 import { ToImgopts, toImage } from 'plotly.js';
 import { uniqueId } from 'lodash';
+import { makeSharedPromise } from '../utils/promise-utils';
 
 /**
  * A generic imperative interface to plota. This allows us to create a facade
@@ -58,7 +59,10 @@ export interface PlotProps<T> extends ColorPaletteAddon {
   maxLegendTextLength?: number;
 }
 
-const Plot = lazy(() => import('react-plotly.js'));
+/** This is used both for React.lazy and the `toImage` function of PlotRef. */
+const sharedImport = makeSharedPromise(() => import('react-plotly.js'));
+
+const Plot = lazy(sharedImport.run);
 
 /**
  * Wrapper over the `react-plotly.js` `Plot` component
@@ -198,6 +202,8 @@ function PlotlyPlot<T>(
 
   useImperativeHandle<PlotRef, PlotRef>(ref, () => ({
     toImage: async (imageOpts: ToImgopts) => {
+      await sharedImport.promise;
+      await new Promise((resolve) => setTimeout(resolve, 0));
       return toImage(plotId, imageOpts);
     },
   }));
