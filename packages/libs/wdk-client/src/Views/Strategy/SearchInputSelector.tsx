@@ -5,12 +5,14 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createSelector } from 'reselect';
 
+import { HtmlTooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+
 import { requestBasketCounts } from 'wdk-client/Actions/BasketActions';
-import { CategoriesCheckboxTree, Icon, Tooltip, Link, Loading, Tabs, IconAlt } from 'wdk-client/Components';
+import { CategoriesCheckboxTree, Icon, Link, Loading, Tabs, IconAlt } from 'wdk-client/Components';
 import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import { DispatchAction } from 'wdk-client/Core/CommonTypes';
 import { RootState } from 'wdk-client/Core/State/Types';
-import { getDisplayName, getTargetType, getRecordClassUrlSegment, CategoryTreeNode, getTooltipContent, getAllBranchIds, getRecordClassName, EMPTY_CATEGORY_TREE_NODE, isQualifying, CategoryOntology } from 'wdk-client/Utils/CategoryUtils';
+import { getDisplayName, getTargetType, getRecordClassUrlSegment, CategoryTreeNode, getFormattedTooltipContent, getAllBranchIds, getRecordClassName, EMPTY_CATEGORY_TREE_NODE, isQualifying, CategoryOntology, isIndividual } from 'wdk-client/Utils/CategoryUtils';
 
 import { makeClassNameHelper, wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { pruneDescendantNodes, getLeaves, mapStructure } from 'wdk-client/Utils/TreeUtils';
@@ -106,31 +108,15 @@ export const SearchInputSelectorView = ({
   const [ expandedBranches, setExpandedBranches ] = useState(initialExpandedBranches);
   const [ searchTerm, setSearchTerm ] = useState('');
 
-  const renderNode = useCallback((node: any) => {
-    const displayName = getDisplayName(node);
-    const displayElement = getTargetType(node) === 'search'
-      ? <Link 
-          onClick={(e: Event) => {
-            e.preventDefault();
-            onCombineWithNewSearchSelected(node.wdkReference.urlSegment);
-          }}
-          to={`/search/${getRecordClassUrlSegment(node)}/${node.wdkReference.urlSegment}`}
-        >
-          <IconAlt fa="search" />
-          {displayName}
-        </Link>
-      : <span>{displayName}</span>
-  
-    const tooltipContent = getTooltipContent(node);
-    
-    return tooltipContent
-      ? (
-        <Tooltip content={tooltipContent}>
-          {displayElement}
-        </Tooltip>
-      )
-      : displayElement;
-  }, [ onCombineWithNewSearchSelected ]);
+  const renderNode = useCallback(
+    (node: CategoryTreeNode) => (
+      <SearchInputNode
+        node={node}
+        onCombineWithNewSearchSelected={onCombineWithNewSearchSelected}
+      />
+    ),
+    [ onCombineWithNewSearchSelected ]
+  );
 
   const noSelectedLeaves = useMemo(
     () => [] as string[],
@@ -350,3 +336,39 @@ const enhance = connect(
 );
 
 export const SearchInputSelector = enhance(wrappable(SearchInputSelectorView));
+
+interface SearchInputNodeProps {
+  node: CategoryTreeNode;
+  onCombineWithNewSearchSelected: (newSearch: string) => void;
+}
+
+function SearchInputNode({ node, onCombineWithNewSearchSelected }: SearchInputNodeProps) {
+  const [ offerTooltip, setOfferTooltip ] = useState(true);
+
+  const displayName = getDisplayName(node);
+  const nodeMetadata = isIndividual(node) && getTargetType(node) === 'search'
+    ? { isSearch: true, searchName: (node.wdkReference as any).urlSegment }
+    : { isSearch: false };
+
+  const displayElement = nodeMetadata.isSearch
+    ? <Link
+        onClick={(e: Event) => {
+          e.preventDefault();
+          setOfferTooltip(false);
+          onCombineWithNewSearchSelected(nodeMetadata.searchName);
+        }}
+        to={`/search/${getRecordClassUrlSegment(node)}/${nodeMetadata.searchName}`}
+      >
+        <IconAlt fa="search" />
+        {displayName}
+      </Link>
+    : <span>{displayName}</span>
+
+  const tooltipContent = getFormattedTooltipContent(node);
+
+  return tooltipContent && offerTooltip
+    ? <HtmlTooltip css={{}} title={tooltipContent}>
+        {displayElement}
+      </HtmlTooltip>
+    : displayElement;
+}
