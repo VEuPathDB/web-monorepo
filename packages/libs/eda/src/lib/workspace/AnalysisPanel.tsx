@@ -31,9 +31,20 @@ interface Props {
   hideCopyAndSave?: boolean;
 }
 
-export function AnalysisPanel(props: Props) {
-  const { analysisState, hideCopyAndSave = false } = props;
+/**
+ * Welcome citizen! You have finally transvered the many layered labyrinth
+ * of components to the place where an analysis is actually rendered.
+ *
+ * However, you aren't really done yet... there is some interesting
+ * stuff going on here... it is a component that is displaying UI but
+ * also acting as a router that toggles some of the displayed content.
+ */
+export function AnalysisPanel({
+  analysisState,
+  hideCopyAndSave = false,
+}: Props) {
   const studyRecord = useStudyRecord();
+
   const {
     status,
     analysis,
@@ -43,6 +54,7 @@ export function AnalysisPanel(props: Props) {
     deleteAnalysis,
     setFilters,
   } = analysisState;
+
   const { url: routeBase } = useRouteMatch();
   const totalCounts = useEntityCounts();
   const filteredCounts = useEntityCounts(analysis?.filters);
@@ -172,6 +184,7 @@ export function AnalysisPanel(props: Props) {
         render={(
           props: RouteComponentProps<{ entityId: string; variableId: string }>
         ) => (
+          // Corresponds to Browse and subset menu item...
           <Subsetting {...props.match.params} analysisState={analysisState} />
         )}
       />

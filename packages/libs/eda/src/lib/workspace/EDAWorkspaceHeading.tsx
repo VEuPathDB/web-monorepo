@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import Path from 'path';
+
 import { cx } from './Utils';
 import { useStudyRecord } from '../core';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -9,10 +10,12 @@ import { LinkAttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { useAttemptActionCallback } from '@veupathdb/web-common/lib/hooks/dataRestriction';
 import { Action } from '@veupathdb/web-common/lib/App/DataRestriction/DataRestrictionUtils';
 
+/** Study Header Component */
 export function EDAWorkspaceHeading() {
   const studyRecord = useStudyRecord();
   const { url } = useRouteMatch();
   const attemptAction = useAttemptActionCallback();
+
   return (
     <div className={cx('-Heading')}>
       <h1>{safeHtml(studyRecord.displayName)}</h1>

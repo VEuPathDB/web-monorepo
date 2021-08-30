@@ -5,6 +5,7 @@ import {
   useRouteMatch,
   Redirect,
 } from 'react-router';
+
 import { EDAAnalysisList } from './EDAAnalysisList';
 import { WorkspaceContainer } from './WorkspaceContainer';
 import { mockAnalysisStore } from './Mocks';
@@ -18,6 +19,9 @@ type Props = {
   dataServiceUrl: string;
 };
 
+/**
+ * Router component for application.
+ */
 export function WorkspaceRouter({
   subsettingServiceUrl,
   dataServiceUrl,

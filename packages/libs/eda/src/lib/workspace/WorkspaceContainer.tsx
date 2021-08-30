@@ -1,9 +1,10 @@
+import { useCallback, useMemo } from 'react';
+import { useRouteMatch } from 'react-router';
+
 import { find } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { RestrictedPage } from '@veupathdb/web-common/lib/App/DataRestriction/RestrictedPage';
 import { useApprovalStatus } from '@veupathdb/web-common/lib/hooks/dataRestriction';
-import React, { useCallback, useMemo } from 'react';
-import { useRouteMatch } from 'react-router';
 import {
   DataClient,
   EDAWorkspaceContainer,
@@ -23,15 +24,22 @@ interface Props {
   subsettingServiceUrl: string;
   dataServiceUrl: string;
 }
-export function WorkspaceContainer(props: Props) {
+
+/** Allows a user to create a new analysis or edit an existing one. */
+export function WorkspaceContainer({
+  studyId,
+  analysisId,
+  subsettingServiceUrl,
+  dataServiceUrl,
+}: Props) {
   const { url } = useRouteMatch();
   const subsettingClient = useMemo(
-    () => new SubsettingClient({ baseUrl: props.subsettingServiceUrl }),
-    [props.subsettingServiceUrl]
+    () => new SubsettingClient({ baseUrl: subsettingServiceUrl }),
+    [subsettingServiceUrl]
   );
   const dataClient = useMemo(
-    () => new DataClient({ baseUrl: props.dataServiceUrl }),
-    [props.dataServiceUrl]
+    () => new DataClient({ baseUrl: dataServiceUrl }),
+    [dataServiceUrl]
   );
   const makeVariableLink = useCallback(
     (
@@ -56,12 +64,12 @@ export function WorkspaceContainer(props: Props) {
     },
     [url]
   );
-  const approvalStatus = useApprovalStatus(props.studyId, 'analysis');
+  const approvalStatus = useApprovalStatus(studyId, 'analysis');
 
   return (
     <RestrictedPage approvalStatus={approvalStatus}>
       <EDAWorkspaceContainer
-        studyId={props.studyId}
+        studyId={studyId}
         className={cx()}
         analysisClient={mockAnalysisStore}
         dataClient={dataClient}
@@ -69,10 +77,10 @@ export function WorkspaceContainer(props: Props) {
         makeVariableLink={makeVariableLink}
       >
         <EDAWorkspaceHeading />
-        {props.analysisId == null ? (
+        {analysisId == null ? (
           <NewAnalysisPage />
         ) : (
-          <SavedAnalysis analysisId={props.analysisId} />
+          <SavedAnalysis analysisId={analysisId} />
         )}
       </EDAWorkspaceContainer>
     </RestrictedPage>
