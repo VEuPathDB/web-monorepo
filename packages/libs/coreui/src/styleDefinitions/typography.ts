@@ -9,8 +9,8 @@ export const h3 = css([primaryFont, { fontSize: '2.369rem', fontWeight: 500 }]);
 export const h4 = css([primaryFont, { fontSize: '1.777rem', fontWeight: 400 }]);
 export const h5 = css([primaryFont, { fontSize: '1.333rem', fontWeight: 400 }]);
 
-export const p = css([secondaryFont]);
-export const pre = css([{ fontSize: '.80rem' }]);
+export const p = css([secondaryFont, { fontSize: '1rem', fontWeight: 400 }]);
+export const pre = css([secondaryFont, { fontSize: '.80rem' }]);
 
 export default {
   primaryFont,
