@@ -11,6 +11,8 @@ export type FullScreenModalProps = {
   backgroundColor?: string;
   visible: boolean;
   children: ReactNode;
+  /** The CSS zIndex level to place the modal on. Defaults to 1000. */
+  zIndex?: number;
 };
 
 export default function FullScreenModal({
@@ -19,6 +21,7 @@ export default function FullScreenModal({
   backgroundColor = 'white',
   visible,
   children,
+  zIndex = 1000,
 }: FullScreenModalProps) {
   return (
     <ReactModal
@@ -31,6 +34,7 @@ export default function FullScreenModal({
           right: 0,
           bottom: 0,
           backgroundColor: 'rgba(0, 0, 0, 0.55)',
+          zIndex,
         },
         content: {
           position: 'absolute',
