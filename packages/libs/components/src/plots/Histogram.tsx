@@ -12,6 +12,7 @@ import {
   BarLayoutAddon,
   DependentAxisLogScaleAddon,
   DependentAxisLogScaleDefault,
+  AxisTruncationAddon,
 } from '../types/plots';
 import { NumberOrDateRange, NumberRange } from '../types/general';
 
@@ -31,6 +32,10 @@ import {
 import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { Layout, Shape } from 'plotly.js';
 
+// import truncation util functions
+import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations';
+import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
+
 // bin middles needed for highlighting
 interface BinSummary {
   binStart: HistogramBin['binStart'];
@@ -45,7 +50,8 @@ export interface HistogramProps
     OrientationAddon,
     OpacityAddon,
     BarLayoutAddon<'overlay' | 'stack'>,
-    DependentAxisLogScaleAddon {
+    DependentAxisLogScaleAddon,
+    AxisTruncationAddon {
   /** Label for independent axis. Defaults to `Bins`. */
   independentAxisLabel?: string;
   /** Label for dependent axis. Defaults to `Count`. */
@@ -86,6 +92,7 @@ export default function Histogram({
   selectedRangeBounds,
   isZoomed = false,
   independentAxisRange,
+  axisTruncationConfig,
   ...restProps
 }: HistogramProps) {
   if (selectedRangeBounds || isZoomed)
@@ -295,32 +302,48 @@ export default function Histogram({
     }
   }, [selectingRange, selectedRange, orientation, data.series]);
 
-  const plotlyIndependentAxisRange = useMemo(() => {
-    if (binSummaries.length === 0) return [undefined, undefined];
+  const standardIndependentAxisRange:
+    | NumberOrDateRange
+    | undefined = useMemo(() => {
+    if (binSummaries.length === 0) return undefined;
 
     // If independentAxisRange (x-axis) is provided
     // adjust the min of the range to the binStart of the bin that contains that value.
     // Likewise, adjust the max of the range to the binEnd of the bin that contains it.
     // This avoids partial bins being displayed.
-    return [
-      independentAxisRange?.min != null
-        ? (
-            findLast(
-              binSummaries,
-              (bs) => independentAxisRange?.min >= bs.binStart
-            ) ?? { binStart: independentAxisRange?.min }
-          )?.binStart
-        : first(binSummaries)?.binStart,
-      independentAxisRange?.max != null
-        ? (
-            find(
-              binSummaries,
-              (bs) => independentAxisRange?.max <= bs.binEnd
-            ) ?? { binEnd: independentAxisRange?.max }
-          )?.binEnd
-        : last(binSummaries)?.binEnd,
-    ] as (number | string)[];
+    return {
+      min:
+        independentAxisRange?.min != null
+          ? (
+              findLast(
+                binSummaries,
+                (bs) => independentAxisRange?.min >= bs.binStart
+              ) ?? { binStart: independentAxisRange?.min }
+            )?.binStart
+          : first(binSummaries)?.binStart,
+      max:
+        independentAxisRange?.max != null
+          ? (
+              find(
+                binSummaries,
+                (bs) => independentAxisRange?.max <= bs.binEnd
+              ) ?? { binEnd: independentAxisRange?.max }
+            )?.binEnd
+          : last(binSummaries)?.binEnd,
+    } as NumberOrDateRange;
   }, [data?.valueType, independentAxisRange, binSummaries]);
+
+  // truncation axis range
+  const extendedIndependentAxisRange = extendAxisRangeForTruncations(
+    standardIndependentAxisRange,
+    axisTruncationConfig?.independentAxis,
+    data.valueType
+  );
+
+  const plotlyIndependentAxisRange = [
+    extendedIndependentAxisRange?.min,
+    extendedIndependentAxisRange?.max,
+  ];
 
   const independentAxisLayout: Layout['xaxis'] | Layout['yaxis'] = {
     type: data?.valueType === 'date' ? 'date' : 'linear',
@@ -345,6 +368,41 @@ export default function Histogram({
     );
   }, [data.series]);
 
+  const standardDependentAxisRange = dependentAxisRange;
+
+  // truncation axis range
+  const extendedDependentAxisRange = extendAxisRangeForTruncations(
+    standardDependentAxisRange,
+    axisTruncationConfig?.dependentAxis,
+    'number'
+  ) as NumberRange | undefined;
+
+  // make rectangular layout shapes for truncated axis/missing data
+  const truncatedAxisHighlighting:
+    | Partial<Shape>[]
+    | undefined = useMemo(() => {
+    if (data.series.length > 0) {
+      const filteredTruncationLayoutShapes = truncationLayoutShapes(
+        orientation,
+        standardIndependentAxisRange,
+        standardDependentAxisRange,
+        extendedIndependentAxisRange,
+        extendedDependentAxisRange,
+        axisTruncationConfig
+      );
+
+      return filteredTruncationLayoutShapes;
+    } else {
+      return [];
+    }
+  }, [
+    independentAxisRange,
+    dependentAxisRange,
+    orientation,
+    data.series,
+    axisTruncationConfig,
+  ]);
+
   const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
     type: dependentAxisLogScale ? 'log' : 'linear',
     tickformat: dependentAxisLogScale ? ',.1r' : undefined, // comma-separated thousands, rounded to 1 significant digit
@@ -358,9 +416,17 @@ export default function Histogram({
       text: dependentAxisLabel,
     },
     // range should be an array
+    // with the truncated axis, negative values need to be checked for log scale
     range: data.series.length
-      ? [dependentAxisRange?.min, dependentAxisRange?.max].map((val) =>
-          dependentAxisLogScale && val != null ? Math.log10(val || 1) : val
+      ? [
+          extendedDependentAxisRange?.min,
+          extendedDependentAxisRange?.max,
+        ].map((val) =>
+          dependentAxisLogScale && val != null
+            ? val < 0
+              ? 0
+              : Math.log10(val as number)
+            : val
         )
       : [0, 10],
     dtick: dependentAxisLogScale ? 1 : undefined,
@@ -372,7 +438,8 @@ export default function Histogram({
     <PlotlyPlot
       useResizeHandler={true}
       layout={{
-        shapes: selectedRangeHighlighting,
+        // add truncatedAxisHighlighting for layout.shapes
+        shapes: [...selectedRangeHighlighting, ...truncatedAxisHighlighting],
         // when we implement zooming, we will still use Plotly's select mode
         dragmode: 'select',
         // with a histogram, we can always use 1D selection
