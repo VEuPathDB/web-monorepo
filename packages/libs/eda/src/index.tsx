@@ -1,3 +1,4 @@
+import './globals'; // Don't move this. There is a brittle dependency that relies on this being first.
 import React, { useEffect } from 'react';
 
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
@@ -14,7 +15,6 @@ import {
 } from '@veupathdb/web-common/lib/App/DataRestriction/DataRestrictionUtils';
 import { useAttemptActionClickHandler } from '@veupathdb/web-common/lib/hooks/dataRestriction';
 
-import './globals';
 import { endpoint, rootElement, rootUrl } from './constants';
 import reportWebVitals from './reportWebVitals';
 import Header from './Header';
