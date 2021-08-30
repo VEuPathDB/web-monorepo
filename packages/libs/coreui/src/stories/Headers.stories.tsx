@@ -1,5 +1,5 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
-import { HeaderProps } from '../components/Header';
+import { HeaderProps } from '../components/headers/Header';
 
 import {
   H1 as H1Component,

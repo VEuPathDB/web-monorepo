@@ -1,5 +1,5 @@
 import { DARK_GRAY } from '../../constants/colors';
-import Header, { HeaderProps } from '../Header';
+import Header, { HeaderProps } from './Header';
 
 export default function H2({
   text,
