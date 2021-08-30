@@ -2,7 +2,7 @@ import React, { Suspense, useState } from 'react';
 import { connect } from 'react-redux';
 import { intersection } from 'lodash/fp'
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
-import { TreeBoxVocabNode, SearchConfig } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { QuestionWithParameters, SearchConfig, TreeBoxVocabNode } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import WdkService from '@veupathdb/wdk-client/lib/Service/WdkService';
 import { Step } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { requestUpdateStepSearchConfig } from '@veupathdb/wdk-client/lib/Actions/StrategyActions';
@@ -14,6 +14,11 @@ import { areTermsInString, makeSearchHelpText } from '@veupathdb/wdk-client/lib/
 import { useWdkServiceWithRefresh } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 import { pruneNodesWithSingleExtendingChild } from '@veupathdb/web-common/lib/util/organisms';
+
+import {
+  ORGANISM_PROPERTIES_KEY,
+  SHOW_ONLY_PREFERRED_ORGANISMS_PROPERTY
+} from '@veupathdb/preferred-organisms/lib/components/OrganismParam';
 
 import {
   usePreferredOrganismsEnabledState,
@@ -154,6 +159,11 @@ function OrganismFilterForStep({ step, requestUpdateStepSearchConfig }: Organism
   const [ currentStep, setCurrentStep ] = useState<Step | null>(null);
   let [ searchConfigChangeRequested, setSearchConfigChangeRequested ] = useState<boolean>(false);
 
+  const stepQuestion = useWdkServiceWithRefresh(
+    wdkService => wdkService.getQuestionAndParameters(step.searchName),
+    [step.searchName]
+  );
+
   // organism param (including taxonomy data) retrieved from service when component is initially loaded
   const taxonomyTree = useWdkServiceWithRefresh(
     fetchTaxonomyTree,
@@ -200,8 +210,8 @@ function OrganismFilterForStep({ step, requestUpdateStepSearchConfig }: Organism
   }
 
   // assign record counts and short display names to tree nodes, and trim zeroes if necessary
-  let taxonomyTreeWithCounts: TaxonomyNodeWithCount | undefined = taxonomyTree && filterSummary
-    ? createDisplayableTree(taxonomyTree, filterSummary, hideZeroes, preferredOrganismsEnabled, preferredOrganisms)
+  let taxonomyTreeWithCounts: TaxonomyNodeWithCount | undefined = taxonomyTree && filterSummary && stepQuestion
+    ? createDisplayableTree(taxonomyTree, filterSummary, stepQuestion, hideZeroes, preferredOrganismsEnabled, preferredOrganisms)
     : undefined;
 
   // org filter config currently applied on the step (if any) - used for cancel button
@@ -319,6 +329,7 @@ function applyOrgFilterConfig(oldSearchConfig: SearchConfig, newFilterConfig: Or
 function createDisplayableTree(
   taxonomyTree: TreeBoxVocabNode,
   filterSummary: OrgFilterSummary,
+  stepQuestion: QuestionWithParameters,
   hideZeroes: boolean,
   preferredOrganismsEnabled: boolean,
   preferredOrganisms: string[]
@@ -352,7 +363,16 @@ function createDisplayableTree(
     taxonomyTree
   );
 
-  if (!preferredOrganismsEnabled) {
+  const hasPreferredOrganismParam = stepQuestion.parameters.some(
+    parameter => (
+      parameter.properties?.[ORGANISM_PROPERTIES_KEY]?.includes(SHOW_ONLY_PREFERRED_ORGANISMS_PROPERTY)
+    )
+  );
+
+  if (
+    !hasPreferredOrganismParam ||
+    !preferredOrganismsEnabled
+  ) {
     return taxonomyTreeWithCount;
   }
 
