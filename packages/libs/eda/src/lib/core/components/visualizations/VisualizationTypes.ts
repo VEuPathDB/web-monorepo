@@ -16,7 +16,7 @@ export interface VisualizationProps {
   updateConfiguration: (configuration: unknown) => void;
   updateThumbnail: (source: string) => void;
   computation: Computation;
-  filters: Filter[];
+  filters?: Filter[];
   starredVariables: string[];
   toggleStarredVariable: (targetVariableId: string) => void;
 }

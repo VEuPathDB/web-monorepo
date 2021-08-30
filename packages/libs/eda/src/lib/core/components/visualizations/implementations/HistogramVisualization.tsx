@@ -331,7 +331,7 @@ function HistogramViz(props: VisualizationProps) {
 type HistogramPlotWithControlsProps = HistogramProps & {
   onBinWidthChange: (newBinWidth: NumberOrTimeDelta) => void;
   onDependentAxisLogScaleChange: (newState?: boolean) => void;
-  filters: Filter[];
+  filters?: Filter[];
   outputEntity?: StudyEntity;
   independentAxisVariable?: VariableDescriptor;
   overlayVariable?: VariableDescriptor;

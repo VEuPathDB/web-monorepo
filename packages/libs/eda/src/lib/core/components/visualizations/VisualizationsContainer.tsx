@@ -30,9 +30,11 @@ interface Props {
   computationId: string;
   visualizations: Visualization[];
   computations: Computation[];
-  addVisualization: (visualization: Visualization) => void;
-  updateVisualization: (visualization: Visualization) => void;
-  deleteVisualization: (id: string) => void;
+  updateVisualizations: (
+    visualizations:
+      | Visualization[]
+      | ((visualizations: Visualization[]) => Visualization[])
+  ) => void;
   visualizationTypes: Partial<Record<string, VisualizationType>>;
   visualizationsOverview: VisualizationOverview[];
   filters: Filter[];
@@ -76,8 +78,7 @@ function ConfiguredVisualizations(props: Props) {
   const {
     computationId,
     computations,
-    addVisualization,
-    deleteVisualization,
+    updateVisualizations,
     visualizations,
     visualizationsOverview,
   } = props;
@@ -110,7 +111,11 @@ function ConfiguredVisualizations(props: Props) {
                       <button
                         type="button"
                         className="link"
-                        onClick={() => deleteVisualization(viz.id)}
+                        onClick={() =>
+                          updateVisualizations((visualizations) =>
+                            visualizations.filter((v) => v.id !== viz.id)
+                          )
+                        }
                       >
                         <i className="fa fa-trash"></i>
                       </button>
@@ -122,13 +127,15 @@ function ConfiguredVisualizations(props: Props) {
                         type="button"
                         className="link"
                         onClick={() =>
-                          addVisualization({
-                            ...viz,
-                            displayName: `Copy of ${
-                              viz.displayName ?? 'visualization'
-                            }`,
-                            id: uuid(),
-                          })
+                          updateVisualizations((visualizations) =>
+                            visualizations.concat({
+                              ...viz,
+                              displayName: `Copy of ${
+                                viz.displayName ?? 'visualization'
+                              }`,
+                              id: uuid(),
+                            })
+                          )
                         }
                       >
                         <i className="fa fa-clone"></i>
@@ -143,7 +150,7 @@ function ConfiguredVisualizations(props: Props) {
                     </Tooltip>
                   </div>
                 </div>
-                <img alt={viz.displayName} src={viz.thumbnail} />
+                <img alt={viz.displayName} src={viz.thumbnail} width="95%" />
               </div>
               <div className={cx('-ConfiguredVisualizationTitle')}>
                 {viz.displayName ?? 'Unnamed visualization'}
@@ -163,7 +170,7 @@ function NewVisualizationPicker(props: Props) {
   const {
     visualizationTypes,
     visualizationsOverview,
-    addVisualization,
+    updateVisualizations,
     computationId,
     computations,
   } = props;
@@ -196,13 +203,15 @@ function NewVisualizationPicker(props: Props) {
                   disabled={vizType == null}
                   onClick={async () => {
                     const id = uuid();
-                    addVisualization({
-                      id,
-                      computationId: computationId,
-                      type: vizOverview.name!,
-                      displayName: 'Unnamed visualization',
-                      configuration: vizType?.createDefaultConfig(),
-                    });
+                    updateVisualizations((visualizations) =>
+                      visualizations.concat({
+                        id,
+                        computationId: computationId,
+                        type: vizOverview.name!,
+                        displayName: 'Unnamed visualization',
+                        configuration: vizType?.createDefaultConfig(),
+                      })
+                    );
                     history.replace(`../${computationId}/${id}`);
                   }}
                 >
@@ -231,9 +240,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
     id,
     computationId,
     visualizations,
-    addVisualization,
-    deleteVisualization,
-    updateVisualization,
+    updateVisualizations,
     computations,
     filters,
     starredVariables,
@@ -250,18 +257,20 @@ function FullScreenVisualization(props: Props & { id: string }) {
   const dataElementDependencyOrder = overview?.dataElementDependencyOrder;
   const updateConfiguration = useCallback(
     (configuration: unknown) => {
-      if (viz == null) return;
-      updateVisualization({ ...viz, configuration });
+      updateVisualizations((visualizations) =>
+        visualizations.map((v) => (v.id !== id ? v : { ...v, configuration }))
+      );
     },
-    [updateVisualization, viz]
+    [updateVisualizations, id]
   );
 
   const updateThumbnail = useCallback(
     (thumbnail: string) => {
-      if (viz == null) return;
-      updateVisualization({ ...viz, thumbnail });
+      updateVisualizations((visualizations) =>
+        visualizations.map((v) => (v.id !== id ? v : { ...v, thumbnail }))
+      );
     },
-    [updateVisualization, viz]
+    [updateVisualizations, id]
   );
   if (viz == null) return <div>Visualization not found.</div>;
   if (computation == null) return <div>Computation not found.</div>;
@@ -277,7 +286,9 @@ function FullScreenVisualization(props: Props & { id: string }) {
               className="link"
               onClick={() => {
                 if (viz == null) return;
-                deleteVisualization(viz.id);
+                updateVisualizations((visualizations) =>
+                  visualizations.filter((v) => v.id !== id)
+                );
                 history.replace(Path.resolve(history.location.pathname, '..'));
               }}
             >
@@ -293,12 +304,14 @@ function FullScreenVisualization(props: Props & { id: string }) {
               onClick={() => {
                 if (viz == null) return;
                 const id = uuid();
-                addVisualization({
-                  ...viz,
-                  id,
-                  displayName:
-                    'Copy of ' + (viz.displayName || 'unnamed visualization'),
-                });
+                updateVisualizations((visualizations) =>
+                  visualizations.concat({
+                    ...viz,
+                    id,
+                    displayName:
+                      'Copy of ' + (viz.displayName || 'unnamed visualization'),
+                  })
+                );
                 history.replace(
                   Path.resolve(history.location.pathname, '..', id)
                 );
@@ -328,7 +341,11 @@ function FullScreenVisualization(props: Props & { id: string }) {
             <SaveableTextEditor
               value={viz.displayName ?? 'unnamed visualization'}
               onSave={(value) =>
-                updateVisualization({ ...viz, displayName: value })
+                updateVisualizations((visualizations) =>
+                  visualizations.map((v) =>
+                    v.id !== id ? v : { ...v, displayName: value }
+                  )
+                )
               }
             />
           </h3>
