@@ -9,7 +9,7 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 // need to set for Barplot
 import {
@@ -38,6 +38,11 @@ import {
   grayOutLastSeries,
   vocabularyWithMissingData,
 } from '../../../utils/analysis';
+import { PlotRef } from '../../../../../../../web-components/lib/plots/PlotlyPlot';
+
+const PLOT_HEIGHT = 450;
+const PLOT_WIDTH = 750;
+const EMPTY_SERIES = { series: [] };
 
 export const barplotVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -85,6 +90,7 @@ function BarplotViz(props: VisualizationProps) {
     computation,
     visualization,
     updateConfiguration,
+    updateThumbnail,
     filters,
     dataElementConstraints,
     dataElementDependencyOrder,
@@ -266,10 +272,10 @@ function BarplotViz(props: VisualizationProps) {
         }}
       >
         <BarplotWithControls
-          data={data.value && !data.pending ? data.value : { series: [] }}
+          data={data.value && !data.pending ? data.value : EMPTY_SERIES}
           containerStyles={{
-            width: '750px',
-            height: '450px',
+            width: PLOT_WIDTH,
+            height: PLOT_HEIGHT,
           }}
           orientation={'vertical'}
           barLayout={'group'}
@@ -286,6 +292,7 @@ function BarplotViz(props: VisualizationProps) {
           showSpinner={data.pending}
           valueSpec={vizConfig.valueSpec}
           onValueSpecChange={onValueSpecChange}
+          updateThumbnail={updateThumbnail}
           dependentAxisLogScale={vizConfig.dependentAxisLogScale}
           onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
         />
@@ -317,6 +324,7 @@ type BarplotWithControlsProps = BarplotProps & {
   onDependentAxisLogScaleChange: (newState: boolean) => void;
   valueSpec: ValueSpec;
   onValueSpecChange: (newValueSpec: ValueSpec) => void;
+  updateThumbnail: (src: string) => void;
 };
 
 function BarplotWithControls({
@@ -325,12 +333,20 @@ function BarplotWithControls({
   onDependentAxisLogScaleChange,
   valueSpec,
   onValueSpecChange,
+  updateThumbnail,
   ...barPlotProps
 }: BarplotWithControlsProps) {
+  const ref = useRef<PlotRef>(null);
+  useEffect(() => {
+    ref.current
+      ?.toImage({ format: 'svg', width: PLOT_WIDTH, height: PLOT_HEIGHT })
+      .then((src) => updateThumbnail(src));
+  }, [data, updateThumbnail]);
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Barplot
         {...barPlotProps}
+        ref={ref}
         dependentAxisLogScale={dependentAxisLogScale}
         data={data}
         // add controls
