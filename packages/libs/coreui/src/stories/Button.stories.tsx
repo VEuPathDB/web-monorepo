@@ -1,5 +1,4 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
-import { HeaderProps } from '../components/headers/Header';
 
 import Button, { ButtonProps } from '../components/buttons/Button';
 import { DARK_ORANGE, LIGHT_GREEN } from '../constants/colors';
