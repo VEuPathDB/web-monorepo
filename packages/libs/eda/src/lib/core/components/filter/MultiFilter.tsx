@@ -37,7 +37,7 @@ export function MultiFilter(props: Props) {
     filteredEntityCount,
     analysisState,
   } = props;
-  // TODO Gather props for MultiFieldFilter:
+  // Gather props for MultiFieldFilter:
   // - displayName: string
   // - dataCount: number
   // - filteredDataCount: number
@@ -226,7 +226,8 @@ export function MultiFilter(props: Props) {
     [analysisState.analysis?.filters]
   );
 
-  // if (leafSummariesPromise.pending) return <Loading />;
+  if (leafSummariesPromise.pending && leafSummariesPromise.value == null)
+    return <Loading>Loading data...</Loading>;
 
   if (leafSummariesPromise.error)
     return <div>{String(leafSummariesPromise.error)}</div>;
