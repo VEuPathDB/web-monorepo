@@ -305,7 +305,9 @@ function BoxplotViz(props: Props) {
         <>
           <OutputEntityTitle
             entity={outputEntity}
-            outputSize={data.pending ? undefined : data.value?.outputSize}
+            outputSize={
+              data.pending ? undefined : data.value?.completeCasesAllVars
+            }
           />
           <div
             style={{
@@ -449,9 +451,8 @@ export function boxplotResponseToData(
       label: data.label, // [response.boxplot.config.xVariableDetails.variableId],
     })),
     completeCases: response.completeCasesTable,
-    outputSize:
-      response.boxplot.config.completeCases +
-      response.boxplot.config.plottedIncompleteCases,
+    completeCasesAllVars: response.boxplot.config.completeCasesAllVars,
+    completeCasesAxesVars: response.boxplot.config.completeCasesAxesVars,
   };
 }
 

@@ -342,7 +342,9 @@ function HistogramViz(props: Props) {
           showSpinner={data.pending}
           filters={filters}
           completeCases={data.pending ? undefined : data.value?.completeCases}
-          outputSize={data.pending ? undefined : data.value?.outputSize}
+          outputSize={
+            data.pending ? undefined : data.value?.completeCasesAllVars
+          }
           overlayVariable={vizConfig.overlayVariable}
           overlayLabel={overlayVariable?.displayName}
           legendTitle={overlayVariable?.displayName}
@@ -389,6 +391,7 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   overlayLabel?: string;
   valueSpec: ValueSpec;
   onValueSpecChange: (newValueSpec: ValueSpec) => void;
+  outputSize?: number;
 } & Partial<CoverageStatistics>;
 
 function HistogramPlotWithControls({
@@ -542,9 +545,8 @@ export function histogramResponseToData(
     binWidthRange,
     binWidthStep,
     completeCases: response.completeCasesTable,
-    outputSize:
-      response.histogram.config.completeCases +
-      response.histogram.config.plottedIncompleteCases,
+    completeCasesAllVars: response.histogram.config.completeCasesAllVars,
+    completeCasesAxesVars: response.histogram.config.completeCasesAxesVars,
   };
 }
 
