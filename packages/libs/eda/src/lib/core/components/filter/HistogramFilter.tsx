@@ -536,20 +536,10 @@ function HistogramPlotWithControls({
     truncationConfigIndependentAxisMax,
     truncationConfigDependentAxisMin,
     truncationConfigDependentAxisMax,
-  } = useMemo(() => {
-    const {
-      truncationConfigIndependentAxisMin,
-      truncationConfigIndependentAxisMax,
-      truncationConfigDependentAxisMin,
-      truncationConfigDependentAxisMax,
-    } = truncationConfig(defaultUIState, uiState);
-    return {
-      truncationConfigIndependentAxisMin,
-      truncationConfigIndependentAxisMax,
-      truncationConfigDependentAxisMin,
-      truncationConfigDependentAxisMax,
-    };
-  }, [defaultUIState, uiState]);
+  } = useMemo(() => truncationConfig(defaultUIState, uiState), [
+    defaultUIState,
+    uiState,
+  ]);
 
   console.log('uiState.dependentAxisRange =', uiState.dependentAxisRange);
   console.log(
@@ -575,7 +565,7 @@ function HistogramPlotWithControls({
       truncationConfigIndependentAxisMax
     ) {
       setTruncatedIndependentAxisWarning(
-        'Data is truncated (light gray area) by range selection'
+        'Data has been truncated (light gray area) by range selection'
       );
     }
   }, [truncationConfigIndependentAxisMin, truncationConfigIndependentAxisMax]);
@@ -583,7 +573,7 @@ function HistogramPlotWithControls({
   useEffect(() => {
     if (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) {
       setTruncatedDependentAxisWarning(
-        'Data is truncated (light gray area) by range selection'
+        'Data may have been truncated (light gray area) by range selection'
       );
     }
   }, [truncationConfigDependentAxisMin, truncationConfigDependentAxisMax]);

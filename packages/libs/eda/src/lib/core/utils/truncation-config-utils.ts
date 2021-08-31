@@ -1,6 +1,8 @@
 import { UIState } from '../components/filter/HistogramFilter';
 
-//K function to compute truncation flags
+// function to compute truncation flags for Histogram-like
+// visualizations (continuous x-axis with known bounds, y-axis showing non-negative counts)
+// TO DO: move this into HistogramVisualization.tsx ?
 export function truncationConfig(defaultUIState: UIState, uiState: UIState) {
   //DKDK check whether truncated axis is required
   const truncationConfigIndependentAxisMin =
@@ -16,7 +18,10 @@ export function truncationConfig(defaultUIState: UIState, uiState: UIState) {
       ? true
       : false;
   const truncationConfigDependentAxisMin =
-    uiState.dependentAxisRange?.min != null ? true : false;
+    uiState.dependentAxisRange?.min != null &&
+    uiState.dependentAxisRange.min > 0
+      ? true
+      : false;
   const truncationConfigDependentAxisMax =
     uiState.dependentAxisRange?.max != null ? true : false;
 
