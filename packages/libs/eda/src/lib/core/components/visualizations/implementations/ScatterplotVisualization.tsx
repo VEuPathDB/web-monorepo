@@ -682,6 +682,28 @@ function processInputData<T extends number | string>(
       return ColorPaletteDefault[index] ?? 'black'; // TO DO: decide on overflow behaviour
     }
   };
+
+  // darker color pallette
+  const darkerColorPalette = [
+    'rgb(115, 28, 72)',
+    'rgb(113, 194, 234)',
+    'rgb(133, 133, 44)',
+    'rgb(43, 28, 115)',
+    'rgb(60, 151, 136)',
+    'rgb(215, 196, 98)',
+    'rgb(197, 82, 102)',
+    'rgb(13, 96, 41)',
+  ];
+
+  // function to return color or gray where needed if showMissingness == true
+  const darkerColor = (index: number) => {
+    if (showMissingness && index === plotDataSet.data.length - 1) {
+      return gray;
+    } else {
+      return darkerColorPalette[index] ?? 'black'; // TO DO: decide on overflow behaviour
+    }
+  };
+
   const markerSymbol = (index: number) =>
     showMissingness && index === plotDataSet.data.length - 1
       ? 'x'
@@ -845,7 +867,8 @@ function processInputData<T extends number | string>(
           : 'Smoothed mean',
         mode: 'lines', // no data point is displayed: only line
         line: {
-          color: markerColor(index),
+          // use darker color for smoothed mean line
+          color: darkerColor(index),
           shape: 'spline',
           width: 2,
         },
@@ -888,7 +911,8 @@ function processInputData<T extends number | string>(
         // this is better to be tozeroy, not tozerox
         fill: 'tozeroy',
         opacity: 0.2,
-        fillcolor: markerColor(index),
+        // use darker color for smoothed mean's confidence interval
+        fillcolor: darkerColor(index),
         // type: 'line',
         type: 'scattergl',
         // here, line means upper and lower bounds
@@ -938,7 +962,8 @@ function processInputData<T extends number | string>(
           : 'Best fit, R² = ' + el.r2,
         mode: 'lines', // no data point is displayed: only line
         line: {
-          color: markerColor(index),
+          // use darker color for best fit line
+          color: darkerColor(index),
           shape: 'spline',
         },
         // use scattergl
