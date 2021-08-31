@@ -27,6 +27,11 @@
     align-items: center;
     position: relative;
 
+    img {
+      width: 95%;
+      text-align: center;
+    }
+
     &Actions {
       display: flex;
       position: absolute;

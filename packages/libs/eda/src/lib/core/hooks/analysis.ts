@@ -95,14 +95,19 @@ export function useAnalysis(analysisId: string): AnalysisState {
   const useSetter = <T extends keyof Analysis>(propertyName: T) =>
     useCallback(
       (value: Analysis[T] | ((value: Analysis[T]) => Analysis[T])) => {
-        setCurrent(
-          (_a) =>
-            _a && {
-              ..._a,
-              [propertyName]:
-                typeof value === 'function' ? value(_a[propertyName]) : value,
-            }
-        );
+        setCurrent((_a) => {
+          const nextAnalysis = {
+            ..._a,
+            [propertyName]:
+              typeof value === 'function' ? value(_a[propertyName]) : value,
+          };
+          if (propertyName === 'filters') {
+            nextAnalysis.visualizations = nextAnalysis.visualizations.map(
+              (v) => ({ ...v, thumbnail: undefined })
+            );
+          }
+          return nextAnalysis;
+        });
         setHasUnsavedChanges(true);
       },
       [propertyName]
