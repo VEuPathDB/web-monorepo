@@ -158,6 +158,7 @@ function BaseInput({
   ]);
 
   const { min, max } = localRange ?? {};
+
   return (
     <div
       style={{ ...containerStyles }}

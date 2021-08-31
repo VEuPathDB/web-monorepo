@@ -113,3 +113,20 @@ export const ColorPaletteDefault: string[] = [
   'rgb(204,102,119)',
   'rgb(17,119,51)',
 ];
+
+/** truncated axis flags */
+export type AxisTruncationAddon = {
+  /** truncation config (flags) to show truncated axis (true) or not (false) */
+  axisTruncationConfig?: AxisTruncationConfig;
+};
+
+export type AxisTruncationConfig = {
+  independentAxis?: {
+    min?: boolean;
+    max?: boolean;
+  };
+  dependentAxis?: {
+    min?: boolean;
+    max?: boolean;
+  };
+};

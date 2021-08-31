@@ -28,6 +28,7 @@ import { makeSharedPromise } from '../utils/promise-utils';
  * A generic imperative interface to plota. This allows us to create a facade
  * to interact with plot internals, such as exporting an image.
  */
+
 export interface PlotRef {
   toImage: (imageOpts: ToImgopts) => Promise<string>;
 }
