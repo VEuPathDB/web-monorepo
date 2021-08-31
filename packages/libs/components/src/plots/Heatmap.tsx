@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import PlotlyPlot, { PlotProps } from './PlotlyPlot';
+import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
 import { Layout, Annotations } from 'plotly.js';
 import { HeatmapData } from '../types/plots';
 
@@ -21,7 +21,7 @@ const EmptyHeatmapData: HeatmapData = {
   values: [[]],
 };
 
-export default function Heatmap(props: HeatmapProps) {
+const Heatmap = makePlotlyPlotComponent('Heatmap', (props: HeatmapProps) => {
   const {
     data = EmptyHeatmapData,
     xAxisLabel,
@@ -94,5 +94,11 @@ export default function Heatmap(props: HeatmapProps) {
     },
   ];
 
-  return <PlotlyPlot data={finalData} layout={layout} {...restProps} />;
-}
+  return {
+    data: finalData,
+    layout,
+    ...restProps,
+  };
+});
+
+export default Heatmap;

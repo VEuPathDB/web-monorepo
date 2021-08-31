@@ -4,6 +4,9 @@ import React, {
   useMemo,
   useCallback,
   CSSProperties,
+  Ref,
+  useImperativeHandle,
+  forwardRef,
 } from 'react';
 import { PlotParams } from 'react-plotly.js';
 import { legendSpecification } from '../utils/plotly';
@@ -17,6 +20,18 @@ import {
 import { LayoutLegendTitle } from '../types/plotly-omissions';
 // add d3.select
 import { select } from 'd3';
+import { ToImgopts, toImage } from 'plotly.js';
+import { uniqueId } from 'lodash';
+import { makeSharedPromise } from '../utils/promise-utils';
+
+/**
+ * A generic imperative interface to plota. This allows us to create a facade
+ * to interact with plot internals, such as exporting an image.
+ */
+
+export interface PlotRef {
+  toImage: (imageOpts: ToImgopts) => Promise<string>;
+}
 
 export interface PlotProps<T> extends ColorPaletteAddon {
   /** plot data - following web-components' API, not Plotly's */
@@ -45,7 +60,10 @@ export interface PlotProps<T> extends ColorPaletteAddon {
   maxLegendTextLength?: number;
 }
 
-const Plot = lazy(() => import('react-plotly.js'));
+/** This is used both for React.lazy and the `toImage` function of PlotRef. */
+const sharedImport = makeSharedPromise(() => import('react-plotly.js'));
+
+const Plot = lazy(sharedImport.run);
 
 /**
  * Wrapper over the `react-plotly.js` `Plot` component
@@ -56,8 +74,9 @@ const Plot = lazy(() => import('react-plotly.js'));
  * controlling global things like spinner, library controls etc
  *
  */
-export default function PlotlyPlot<T>(
-  props: Omit<PlotProps<T>, 'data'> & PlotParams
+function PlotlyPlot<T>(
+  props: Omit<PlotProps<T>, 'data'> & PlotParams,
+  ref: Ref<PlotRef>
 ) {
   const {
     title,
@@ -180,11 +199,22 @@ export default function PlotlyPlot<T>(
         : d.name,
   }));
 
+  const plotId = useMemo(() => uniqueId('plotly_plot_div_'), []);
+
+  useImperativeHandle<PlotRef, PlotRef>(ref, () => ({
+    toImage: async (imageOpts: ToImgopts) => {
+      await sharedImport.promise;
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      return toImage(plotId, imageOpts);
+    },
+  }));
+
   return (
     <Suspense fallback="Loading...">
       <div style={{ ...containerStyles, position: 'relative' }}>
         <Plot
           {...plotlyProps}
+          divId={plotId}
           // need to set data props for modigying its name prop
           data={finalData}
           layout={finalLayout}
@@ -198,3 +228,23 @@ export default function PlotlyPlot<T>(
     </Suspense>
   );
 }
+
+const PlotlyPlotWithRef = forwardRef(PlotlyPlot);
+
+/**
+ * Factory function to create a component that delegates to `PlotlyPlotWithRef`.
+ * This encapsulates ref forwarding. See {@link PlotRef}.
+ */
+export function makePlotlyPlotComponent<S, T>(
+  displayName: string,
+  transformProps: (props: S) => Omit<PlotProps<T>, 'data'> & PlotParams
+) {
+  function PlotlyPlotComponent(props: S, ref: Ref<PlotRef>) {
+    const xformProps = transformProps(props);
+    return <PlotlyPlotWithRef {...xformProps} ref={ref} />;
+  }
+  PlotlyPlotComponent.displayName = displayName;
+  return forwardRef(PlotlyPlotComponent);
+}
+
+export default PlotlyPlotWithRef;
