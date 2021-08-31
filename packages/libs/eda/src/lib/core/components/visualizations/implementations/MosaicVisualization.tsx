@@ -29,7 +29,7 @@ import mosaic from './selectorIcons/mosaic.svg';
 import Tabs from '@veupathdb/components/lib/components/Tabs';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
-import { PlotRef } from '../../../../../../../web-components/lib/plots/PlotlyPlot';
+import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 
 const plotDimensions = {
   width: 750,

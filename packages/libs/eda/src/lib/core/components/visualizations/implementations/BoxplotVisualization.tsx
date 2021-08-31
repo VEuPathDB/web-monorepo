@@ -34,14 +34,16 @@ import {
   grayOutLastSeries,
   vocabularyWithMissingData,
 } from '../../../utils/analysis';
-import { PlotRef } from '../../../../../../../web-components/lib/plots/PlotlyPlot';
+import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 
 interface PromiseBoxplotData extends CoverageStatistics {
   series: BoxplotData;
 }
 
-const PLOT_WIDTH = 750;
-const PLOT_HEIGHT = 450;
+const plotDimensions = {
+  height: 450,
+  width: 750,
+};
 
 export const boxplotVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -300,10 +302,7 @@ function BoxplotViz(props: VisualizationProps) {
           // data.value
           data={data.value && !data.pending ? data.value.series : undefined}
           updateThumbnail={updateThumbnail}
-          containerStyles={{
-            width: PLOT_WIDTH,
-            height: PLOT_HEIGHT,
-          }}
+          containerStyles={plotDimensions}
           orientation={'vertical'}
           // add condition to show legend when overlayVariable is used
           displayLegend={
@@ -362,7 +361,7 @@ function BoxplotWithControls({
   const ref = useRef<PlotRef>(null);
   useEffect(() => {
     ref.current
-      ?.toImage({ format: 'svg', width: PLOT_WIDTH, height: PLOT_HEIGHT })
+      ?.toImage({ format: 'svg', ...plotDimensions })
       .then(updateThumbnail);
   }, [data, updateThumbnail]);
   return (

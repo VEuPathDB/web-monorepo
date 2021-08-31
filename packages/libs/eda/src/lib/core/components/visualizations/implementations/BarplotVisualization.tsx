@@ -38,10 +38,12 @@ import {
   grayOutLastSeries,
   vocabularyWithMissingData,
 } from '../../../utils/analysis';
-import { PlotRef } from '../../../../../../../web-components/lib/plots/PlotlyPlot';
+import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 
-const PLOT_HEIGHT = 450;
-const PLOT_WIDTH = 750;
+const plotDimensions = {
+  height: 450,
+  width: 750,
+};
 
 export const barplotVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -272,10 +274,7 @@ function BarplotViz(props: VisualizationProps) {
       >
         <BarplotWithControls
           data={data.value && !data.pending ? data.value : undefined}
-          containerStyles={{
-            width: PLOT_WIDTH,
-            height: PLOT_HEIGHT,
-          }}
+          containerStyles={plotDimensions}
           orientation={'vertical'}
           barLayout={'group'}
           displayLegend={
@@ -338,7 +337,7 @@ function BarplotWithControls({
   const ref = useRef<PlotRef>(null);
   useEffect(() => {
     ref.current
-      ?.toImage({ format: 'svg', width: PLOT_WIDTH, height: PLOT_HEIGHT })
+      ?.toImage({ format: 'svg', ...plotDimensions })
       .then((src) => updateThumbnail(src));
   }, [data, updateThumbnail]);
   return (
