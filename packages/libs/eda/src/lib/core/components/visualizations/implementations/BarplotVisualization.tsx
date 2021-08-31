@@ -324,12 +324,12 @@ function BarplotViz(props: Props) {
                 {
                   role: 'Main',
                   required: true,
-                  display: variable?.displayName,
+                  display: axisLabelWithUnit(variable),
                   variable: vizConfig.xAxisVariable,
                 },
                 {
                   role: 'Overlay',
-                  display: overlayVariable?.displayName,
+                  display: axisLabelWithUnit(overlayVariable),
                   variable: vizConfig.overlayVariable,
                 },
               ]}
