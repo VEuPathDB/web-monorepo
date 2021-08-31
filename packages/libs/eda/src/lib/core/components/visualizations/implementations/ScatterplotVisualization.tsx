@@ -1,11 +1,12 @@
 // load scatter plot component
 import XYPlot, { XYPlotProps } from '@veupathdb/components/lib/plots/XYPlot';
+import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 // need to set for Scatterplot
 import {
@@ -52,6 +53,11 @@ import { StudyEntity } from '../../../types/study';
 import { vocabularyWithMissingData } from '../../../utils/analysis';
 import { gray } from '../colors';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
+
+const plotDimensions = {
+  width: 750,
+  height: 450,
+};
 
 // define PromiseXYPlotData
 interface PromiseXYPlotData extends CoverageStatistics {
@@ -105,6 +111,7 @@ function ScatterplotViz(props: VisualizationProps) {
     computation,
     visualization,
     updateConfiguration,
+    updateThumbnail,
     filters,
     dataElementConstraints,
     dataElementDependencyOrder,
@@ -347,10 +354,8 @@ function ScatterplotViz(props: VisualizationProps) {
           data={
             data.value && !data.pending ? data.value.dataSetProcess : undefined
           }
-          containerStyles={{
-            width: '750px',
-            height: '450px',
-          }}
+          updateThumbnail={updateThumbnail}
+          containerStyles={plotDimensions}
           // title={'Scatter plot'}
           displayLegend={
             data.value &&
@@ -423,6 +428,7 @@ function ScatterplotViz(props: VisualizationProps) {
 type ScatterplotWithControlsProps = XYPlotProps & {
   valueSpec: string | undefined;
   onValueSpecChange: (value: string) => void;
+  updateThumbnail: (src: string) => void;
   vizType: string;
   plotOptions: string[];
   // add disabledList
@@ -439,6 +445,7 @@ function ScatterplotWithControls({
   plotOptions,
   // add disabledList
   disabledList,
+  updateThumbnail,
   ...scatterplotProps
 }: ScatterplotWithControlsProps) {
   // TODO Use UIState
@@ -451,10 +458,19 @@ function ScatterplotWithControls({
   //   };
   // }, []);
 
+  const ref = useRef<PlotRef>(null);
+
+  useEffect(() => {
+    ref.current
+      ?.toImage({ format: 'svg', ...plotDimensions })
+      .then(updateThumbnail);
+  }, [data, updateThumbnail]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <XYPlot
         {...scatterplotProps}
+        ref={ref}
         data={data}
         // add controls
         displayLibraryControls={false}

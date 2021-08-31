@@ -5,7 +5,7 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
 // need to set for Boxplot
 import { DataClient, BoxplotRequestParams } from '../../../api/data-api';
@@ -34,10 +34,14 @@ import {
   grayOutLastSeries,
   vocabularyWithMissingData,
 } from '../../../utils/analysis';
+import { PlotRef } from '../../../../../../../web-components/lib/plots/PlotlyPlot';
 
 interface PromiseBoxplotData extends CoverageStatistics {
   series: BoxplotData;
 }
+
+const PLOT_WIDTH = 750;
+const PLOT_HEIGHT = 450;
 
 export const boxplotVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -74,6 +78,7 @@ function BoxplotViz(props: VisualizationProps) {
     computation,
     visualization,
     updateConfiguration,
+    updateThumbnail,
     filters,
     dataElementConstraints,
     dataElementDependencyOrder,
@@ -293,10 +298,11 @@ function BoxplotViz(props: VisualizationProps) {
       >
         <BoxplotWithControls
           // data.value
-          data={data.value && !data.pending ? data.value.series : []}
+          data={data.value && !data.pending ? data.value.series : undefined}
+          updateThumbnail={updateThumbnail}
           containerStyles={{
-            width: '750px',
-            height: '450px',
+            width: PLOT_WIDTH,
+            height: PLOT_HEIGHT,
           }}
           orientation={'vertical'}
           // add condition to show legend when overlayVariable is used
@@ -344,16 +350,26 @@ function BoxplotViz(props: VisualizationProps) {
   );
 }
 
-type BoxplotWithControlsProps = BoxplotProps;
+interface BoxplotWithControlsProps extends BoxplotProps {
+  updateThumbnail: (src: string) => void;
+}
 
 function BoxplotWithControls({
   data,
-  ...BoxplotComponentProps
+  updateThumbnail,
+  ...boxplotComponentProps
 }: BoxplotWithControlsProps) {
+  const ref = useRef<PlotRef>(null);
+  useEffect(() => {
+    ref.current
+      ?.toImage({ format: 'svg', width: PLOT_WIDTH, height: PLOT_HEIGHT })
+      .then(updateThumbnail);
+  }, [data, updateThumbnail]);
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Boxplot
-        {...BoxplotComponentProps}
+        {...boxplotComponentProps}
+        ref={ref}
         data={data}
         // add controls
         displayLibraryControls={false}

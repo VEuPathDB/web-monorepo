@@ -42,7 +42,6 @@ import { PlotRef } from '../../../../../../../web-components/lib/plots/PlotlyPlo
 
 const PLOT_HEIGHT = 450;
 const PLOT_WIDTH = 750;
-const EMPTY_SERIES = { series: [] };
 
 export const barplotVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -272,7 +271,7 @@ function BarplotViz(props: VisualizationProps) {
         }}
       >
         <BarplotWithControls
-          data={data.value && !data.pending ? data.value : EMPTY_SERIES}
+          data={data.value && !data.pending ? data.value : undefined}
           containerStyles={{
             width: PLOT_WIDTH,
             height: PLOT_HEIGHT,

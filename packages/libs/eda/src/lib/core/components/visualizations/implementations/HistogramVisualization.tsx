@@ -17,7 +17,7 @@ import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import { isEqual } from 'lodash';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   DataClient,
   HistogramRequestParams,
@@ -43,8 +43,14 @@ import {
   vocabularyWithMissingData,
   grayOutLastSeries,
 } from '../../../utils/analysis';
+import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 
 type HistogramDataWithCoverageStatistics = HistogramData & CoverageStatistics;
+
+const plotDimensions = {
+  width: 750,
+  height: 400,
+};
 
 export const histogramVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -94,6 +100,7 @@ function HistogramViz(props: VisualizationProps) {
     computation,
     visualization,
     updateConfiguration,
+    updateThumbnail,
     filters,
     dataElementConstraints,
     dataElementDependencyOrder,
@@ -296,10 +303,8 @@ function HistogramViz(props: VisualizationProps) {
         onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
         valueSpec={vizConfig.valueSpec}
         onValueSpecChange={onValueSpecChange}
-        containerStyles={{
-          width: '750px',
-          height: '400px',
-        }}
+        updateThumbnail={updateThumbnail}
+        containerStyles={plotDimensions}
         spacingOptions={{
           marginTop: 50,
         }}
@@ -338,6 +343,7 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   overlayLabel?: string;
   valueSpec: ValueSpec;
   onValueSpecChange: (newValueSpec: ValueSpec) => void;
+  updateThumbnail: (src: string) => void;
   outputSize?: number;
 } & Partial<CoverageStatistics>;
 
@@ -354,11 +360,20 @@ function HistogramPlotWithControls({
   overlayLabel,
   valueSpec,
   onValueSpecChange,
+  updateThumbnail,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   const barLayout = 'stack';
   const displayLibraryControls = false;
   const opacity = 100;
+
+  const ref = useRef<PlotRef>(null);
+
+  useEffect(() => {
+    ref.current
+      ?.toImage({ format: 'svg', ...plotDimensions })
+      .then(updateThumbnail);
+  }, [updateThumbnail, data]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -372,6 +387,7 @@ function HistogramPlotWithControls({
       >
         <Histogram
           {...histogramProps}
+          ref={ref}
           data={data}
           opacity={opacity}
           displayLibraryControls={displayLibraryControls}

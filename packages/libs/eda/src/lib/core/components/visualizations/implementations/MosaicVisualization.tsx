@@ -10,7 +10,7 @@ import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import _ from 'lodash';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { DataClient, MosaicRequestParams } from '../../../api/data-api';
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
@@ -29,6 +29,12 @@ import mosaic from './selectorIcons/mosaic.svg';
 import Tabs from '@veupathdb/components/lib/components/Tabs';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
+import { PlotRef } from '../../../../../../../web-components/lib/plots/PlotlyPlot';
+
+const plotDimensions = {
+  width: 750,
+  height: 450,
+};
 
 interface MosaicDataWithCoverageStatistics
   extends MosaicData,
@@ -110,6 +116,7 @@ function MosaicViz(props: Props) {
   const {
     computation,
     visualization,
+    updateThumbnail,
     updateConfiguration,
     filters,
     isTwoByTwo = false,
@@ -294,8 +301,6 @@ function MosaicViz(props: Props) {
 
   const xAxisLabel = axisLabelWithUnit(xAxisVariable);
   const yAxisLabel = axisLabelWithUnit(yAxisVariable);
-  const width = '750px';
-  const height = '450px';
 
   const plotComponent = (
     <div className="MosaicVisualization">
@@ -306,11 +311,9 @@ function MosaicViz(props: Props) {
               name: 'Mosaic',
               content: (
                 <MosaicPlotWithControls
+                  updateThumbnail={updateThumbnail}
                   data={data.value && !data.pending ? data.value : undefined}
-                  containerStyles={{
-                    width: width,
-                    height: height,
-                  }}
+                  containerStyles={plotDimensions}
                   independentAxisLabel={xAxisLabel ?? 'X-axis'}
                   dependentAxisLabel={yAxisLabel ?? 'Y-axis'}
                   displayLegend={true}
@@ -324,7 +327,7 @@ function MosaicViz(props: Props) {
               content: (
                 <ContingencyTable
                   data={data.value}
-                  containerStyles={{ width: width }}
+                  containerStyles={{ width: plotDimensions.width }}
                   independentVariable={xAxisLabel ?? 'X-axis'}
                   dependentVariable={yAxisLabel ?? 'Y-axis'}
                 />
@@ -429,18 +432,29 @@ function MosaicViz(props: Props) {
   );
 }
 
-type MosaicPlotWithControlsProps = MosaicProps;
+interface MosaicPlotWithControlsProps extends MosaicProps {
+  updateThumbnail: (src: string) => void;
+}
 
 function MosaicPlotWithControls({
   data,
+  updateThumbnail,
   ...mosaicProps
 }: MosaicPlotWithControlsProps) {
   const displayLibraryControls = false;
+  const ref = useRef<PlotRef>(null);
+
+  useEffect(() => {
+    ref.current
+      ?.toImage({ format: 'svg', ...plotDimensions })
+      .then(updateThumbnail);
+  }, [updateThumbnail, data]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Mosaic
         {...mosaicProps}
+        ref={ref}
         data={data}
         displayLibraryControls={displayLibraryControls}
       />
