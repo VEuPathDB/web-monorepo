@@ -2,6 +2,15 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Webpack dependencies
+
+When consuming this library with webpack, the following development dependencies
+are required, due to [upstream
+dependencies](https://github.com/plotly/plotly.js/blob/master/BUILDING.md#webpack) of `Plotly.js`.
+
+- [ify-loader](https://www.npmjs.com/package/ify-loader)
+- [bubleify transform](https://www.npmjs.com/package/bubleify)
+
 ## Available Scripts
 
 In the project directory, you can run:
