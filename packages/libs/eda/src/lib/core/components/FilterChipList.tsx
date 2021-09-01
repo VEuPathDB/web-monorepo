@@ -4,6 +4,7 @@ import { VariableLink } from './VariableLink';
 import { makeStyles } from '@material-ui/core/styles';
 import { Filter } from '../types/filter';
 import { findEntityAndVariable } from '../utils/study-metadata';
+import { ReactNode } from 'react';
 
 // Material UI CSS declarations
 const useStyles = makeStyles((theme) => ({
@@ -42,7 +43,7 @@ export default function FilterChipList(props: Props) {
 
           if (entity && variable) {
             // The string to be displayed for the filter's value
-            let filterValueDisplay: string;
+            let filterValueDisplay: ReactNode;
 
             // Set filterValueDisplay based on the filter's type
             switch (filter.type) {
@@ -71,9 +72,12 @@ export default function FilterChipList(props: Props) {
                       entAndVar.variable.displayName
                     } = ${subFilter.stringSet.join(', ')}`;
                   })
-                  .join(
-                    '\n' + (filter.operation === 'union' ? 'or' : 'and') + '\n'
-                  );
+                  .flatMap((text, index) => (
+                    <>
+                      {text}
+                      {index < filter.subFilters.length ? <br /> : null}
+                    </>
+                  ));
                 break;
               default:
                 filterValueDisplay = '';
