@@ -17,11 +17,18 @@ export const VariableUISetting = t.UnknownRecord;
 /** Define types for Subsetting Data Table */
 export type DataTableSettings = t.TypeOf<typeof NewAnalysis>;
 export const DataTableSettings = t.type({
+  /** Information on the selected entity and child variables. */
   selectedVariables: t.record(t.string, t.array(t.string)),
-  sorting: t.type({
-    variable: t.string,
-    direction: t.union([t.literal('asc'), t.literal('desc')]),
-  }),
+  /**
+   * An array of sorting definitions. Used to specify variables to
+   * sort the table display with. For example, sort by column a, then column b.
+   */
+  sorting: t.array(
+    t.type({
+      variable: t.string,
+      direction: t.union([t.literal('asc'), t.literal('desc')]),
+    })
+  ),
 });
 
 export type NewAnalysis = t.TypeOf<typeof NewAnalysis>;

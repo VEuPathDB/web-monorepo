@@ -36,6 +36,7 @@ export type AnalysisState = {
   setDerivedVariables: Setter<'derivedVariables'>;
   setStarredVariables: Setter<'starredVariables'>;
   setVariableUISettings: Setter<'variableUISettings'>;
+  setDataTableSettings: Setter<'dataTableSettings'>;
   saveAnalysis: () => Promise<void>;
   copyAnalysis: () => Promise<{ id: string }>;
   deleteAnalysis: () => Promise<void>;
