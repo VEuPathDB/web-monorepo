@@ -192,7 +192,7 @@ export default function PlotlyPlot<T>(
           .text(legendTitle);
       }
     },
-    [storedLegendList]
+    [storedLegendList, legendTitle]
   );
 
   // set the number of characters to be displayed
