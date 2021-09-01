@@ -14,26 +14,40 @@ export const DerviedVariable = t.unknown;
 export type VariableUISetting = t.TypeOf<typeof VariableUISetting>;
 export const VariableUISetting = t.UnknownRecord;
 
-export type NewAnalysis = t.TypeOf<typeof NewAnalysis>;
-export const NewAnalysis = t.type({
-  /** User supplied same for the analysis. */
-  name: t.string,
-  /**
-   * Not sure yet, but this probably refers to the study for
-   * which the analysis is taking place. COULD also be a unique ID
-   * for the analysis.
-   */
-  studyId: t.string,
-  /** Array of filters applied to the underlying data. */
-  filters: t.array(Filter),
-  derivedVariables: t.array(DerviedVariable),
-  /** IDs of variables 'starred' by the user. */
-  starredVariables: t.array(t.string),
-  variableUISettings: t.record(t.string, VariableUISetting),
-  /** Array of visualizations created with the analysis. */
-  visualizations: t.array(Visualization),
-  computations: t.array(Computation),
+/** Define types for Subsetting Data Table */
+export type DataTableSettings = t.TypeOf<typeof NewAnalysis>;
+export const DataTableSettings = t.type({
+  selectedVariables: t.record(t.string, t.array(t.string)),
+  sorting: t.type({
+    variable: t.string,
+    direction: t.union([t.literal('asc'), t.literal('desc')]),
+  }),
 });
+
+export type NewAnalysis = t.TypeOf<typeof NewAnalysis>;
+export const NewAnalysis = t.intersection([
+  t.type({
+    /** User supplied same for the analysis. */
+    name: t.string,
+    /**
+     * Not sure yet, but this probably refers to the study for
+     * which the analysis is taking place. COULD also be a unique ID
+     * for the analysis.
+     */
+    studyId: t.string,
+    /** Array of filters applied to the underlying data. */
+    filters: t.array(Filter),
+    derivedVariables: t.array(DerviedVariable),
+    /** IDs of variables 'starred' by the user. */
+    starredVariables: t.array(t.string),
+    variableUISettings: t.record(t.string, VariableUISetting),
+    /** Array of visualizations created with the analysis. */
+    visualizations: t.array(Visualization),
+    computations: t.array(Computation),
+  }),
+  /** Data Table Settings */
+  t.partial({ dataTableSettings: DataTableSettings }),
+]);
 
 export type Analysis = t.TypeOf<typeof Analysis>;
 export const Analysis = t.intersection([

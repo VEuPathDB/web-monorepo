@@ -18,7 +18,7 @@ import {
 } from 'react-router';
 import { ComputationRoute } from './ComputationRoute';
 import { DefaultVariableRedirect } from './DefaultVariableRedirect';
-import { Subsetting } from './Subsetting';
+import Subsetting from './Subsetting';
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { uniq } from 'lodash';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
