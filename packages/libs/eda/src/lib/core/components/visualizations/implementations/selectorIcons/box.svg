@@ -1,43 +1,44 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="525px" height="436px" viewBox="0 0 525 436" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="background: #FFFFFF;">
-    <title>export area</title>
-    <defs>
-        <rect id="path-1" x="207" y="78" width="485" height="395" rx="9"></rect>
-        <filter x="-8.5%" y="-7.8%" width="116.9%" height="120.8%" filterUnits="objectBoundingBox" id="filter-2">
-            <feMorphology radius="6" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
-            <feOffset dx="0" dy="10" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
-            <feGaussianBlur stdDeviation="10" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
-            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"></feComposite>
-            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
-        </filter>
-    </defs>
-    <g id="viz-icons-for-EDA" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="Box" transform="translate(-190.000000, -54.000000)">
-            <text id="title" font-family="Rubik-Regular, Rubik" font-size="60" font-weight="normal" fill="#000000">
-                <tspan x="396" y="141">Box</tspan>
-            </text>
-            <g id="line" transform="translate(296.000000, 156.000000)">
-                <rect id="Rectangle" stroke="#979797" fill="#9B242C" x="0.5" y="5.5" width="44" height="15"></rect>
-                <rect id="Rectangle" fill="#A6CEE3" x="49" y="13" width="45" height="16"></rect>
-                <rect id="Rectangle" fill="#508E9D" x="100" y="5" width="45" height="16"></rect>
-                <rect id="Rectangle" fill="#9B242C" x="151" y="13" width="45" height="16"></rect>
-                <rect id="Rectangle" fill="#A6CEE3" x="200" y="5" width="45" height="16"></rect>
-                <rect id="Rectangle" fill="#508E9D" x="251" y="0" width="45" height="16"></rect>
-            </g>
-            <g id="plot-elements" transform="translate(227.000000, 225.000000)">
-                <path id="Line" d="M437.986779,-3.55990013 L438.012996,3.44005078 L425.512,3.486 L425.986,129.986 L438.486779,129.9401 L438.512996,136.940051 L406.513221,137.0599 L406.487004,130.059949 L418.987,130.013 L418.513,3.513 L406.013221,3.55990013 L405.987004,-3.44005078 L437.986779,-3.55990013 Z" fill="#508E9D" fill-rule="nonzero"></path>
-                <polygon id="Candle" fill="#508E9D" points="394 108 394 29 451 29 451 108"></polygon>
-                <path id="Line" d="M362.984831,6.43136334 L363.014874,13.4312989 L350.514,13.485 L350.984,122.985 L363.484831,122.931363 L363.514874,129.931299 L331.515169,130.068637 L331.485126,123.068701 L343.985,123.014 L343.515,13.514 L331.015169,13.5686367 L330.985126,6.56870113 L362.984831,6.43136334 Z" fill="#508E9D" fill-rule="nonzero"></path>
-                <polygon id="Candle" fill="#508E9D" points="319 103 319 34 376 34 376 103"></polygon>
-                <path id="Line" d="M205.481258,126.915394 L205.518294,133.915296 L193.018,133.981 L193.48,221.481 L205.981258,221.415394 L206.018294,228.415296 L174.018742,228.584606 L173.981706,221.584704 L186.481,221.518 L186.019,134.018 L173.518742,134.084606 L173.481706,127.084704 L205.481258,126.915394 Z" fill="#A6CEE3" fill-rule="nonzero"></path>
-                <polygon id="Candle" fill="#A6CEE3" points="161 200 161 158 218 158 218 200"></polygon>
-                <path id="Line" d="M279.979739,134.40863 L280.019738,141.408516 L267.519,141.479 L267.979,221.979 L280.479739,221.90863 L280.519738,228.908516 L248.520261,229.09137 L248.480262,222.091484 L260.98,222.02 L260.52,141.52 L248.020261,141.59137 L247.980262,134.591484 L279.979739,134.40863 Z" fill="#A6CEE3" fill-rule="nonzero"></path>
-                <polygon id="Candle" fill="#A6CEE3" points="236 203 236 153 293 153 293 203"></polygon>
-                <path id="Line" d="M45,22.5 L45,29.5 L32.5,29.5 L32.5,156.5 L45,156.5 L45,163.5 L13,163.5 L13,156.5 L25.5,156.5 L25.5,29.5 L13,29.5 L13,22.5 L45,22.5 Z" fill="#9B242C" fill-rule="nonzero"></path>
-                <polygon id="Candle" fill="#9B242C" points="0 135 0 51 57 51 57 135"></polygon>
-                <path id="Line" d="M118.979739,44.4086301 L119.019738,51.4085158 L106.519,51.479 L106.979,131.979 L119.479739,131.90863 L119.519738,138.908516 L87.5202609,139.09137 L87.4802615,132.091484 L99.98,132.02 L99.52,51.52 L87.0202609,51.5913699 L86.9802615,44.5914842 L118.979739,44.4086301 Z" fill="#9B242C" fill-rule="nonzero"></path>
-                <polygon id="Candle" fill="#9B242C" points="75 113 75 63 132 63 132 113"></polygon>
-            </g>
-        </g>
-    </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 25.4.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 500 500" style="enable-background:new 0 0 500 500;" xml:space="preserve">
+<style type="text/css">
+	<!-- Site colors -->
+    .primary-fill{fill:#85B3C3;}
+	.primary-stroke{stroke:#85B3C3;}
+	.secondary-fill{fill:#508E9D;}
+	.secondary-stroke{stroke:#508E9D;}
+	<!-- svg classes -->
+	.whisker{fill:none;stroke-width:4;stroke-miterlimit:10;}
+	.box{fill-rule:evenodd;clip-rule:evenodd;stroke:#FFFFFF;stroke-width:4;stroke-miterlimit:10;}
+	.median{fill-rule:evenodd;clip-rule:evenodd;stroke:#FFFFFF;stroke-width:4;stroke-miterlimit:10;}
+</style>
+<g class="primary-stroke">
+	<line class="whisker" x1="194.71" y1="103.657" x2="194.71" y2="322.919"/>
+	<line class="whisker" x1="207.5" y1="105.335" x2="181.754" y2="105.335"/>
+	<line class="whisker" x1="207.5" y1="321.651" x2="181.754" y2="321.651"/>
+	<line class="whisker" x1="305.373" y1="118.244" x2="305.373" y2="371.506"/>
+	<line class="whisker" x1="318.163" y1="119.922" x2="292.417" y2="119.922"/>
+	<line class="whisker" x1="318.163" y1="370.238" x2="292.417" y2="370.238"/>
+	<line class="whisker" x1="84.213" y1="229.197" x2="84.213" y2="448.458"/>
+	<line class="whisker" x1="97.003" y1="230.875" x2="71.258" y2="230.875"/>
+	<line class="whisker" x1="97.003" y1="447.191" x2="71.258" y2="447.191"/>
+	<line class="whisker" x1="415.953" y1="50.689" x2="415.953" y2="264.95"/>
+	<line class="whisker" x1="428.742" y1="52.367" x2="402.997" y2="52.367"/>
+	<line class="whisker" x1="428.742" y1="266.03" x2="402.997" y2="266.03"/>
+</g>
+<g class="primary-fill">
+	<polygon id="Candle_00000165209661459121844280000004251976946761757057_" class="box" points="50,366.685 50,264.042 
+		118.261,264.042 118.261,366.685 "/>
+	<polygon id="Candle_00000059269574352846140650000003074420534104876962_" class="box" points="160.58,273.725 160.58,138.502 
+		228.84,138.502 228.84,273.725 "/>
+	<polygon id="Candle_00000116199801190919802600000006047105043637310088_" class="box" points="271.16,282.106 271.16,146.883 
+		339.42,146.883 339.42,282.106 "/>
+	<polygon id="Candle_00000021087581734720710720000002982368070232113045_" class="box" points="381.739,221.61 381.739,86.386 
+		450,86.386 450,221.61 "/>
+</g>
+<line class="median" x1="118.261" y1="289.693" x2="50" y2="289.693"/>
+<line class="median" x1="228.84" y1="185.077" x2="160.58" y2="185.077"/>
+<line class="median" x1="339.42" y1="223.029" x2="271.16" y2="223.029"/>
+<line class="median" x1="450" y1="132.961" x2="381.739" y2="132.961"/>
 </svg>
