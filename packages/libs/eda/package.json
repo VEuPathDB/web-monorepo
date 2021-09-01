@@ -2,10 +2,14 @@
   "name": "@veupathdb/eda",
   "version": "0.10.6",
   "dependencies": {
+    "@emotion/babel-preset-css-prop": "^11.2.0",
+    "@emotion/react": "^11.4.1",
+    "@emotion/styled": "^11.3.0",
     "@material-ui/core": "^4.11.3",
     "@material-ui/lab": "^4.0.0-alpha.58",
     "@types/debounce-promise": "^3.1.3",
     "@veupathdb/components": "^0.7.1",
+    "@veupathdb/core-components": "^0.2.3",
     "@veupathdb/wdk-client": "^0.2.0",
     "@veupathdb/web-common": "^0.1.5",
     "debounce-promise": "^3.1.2",
@@ -16,6 +20,7 @@
     "react-dom": "^17.0.1",
     "react-draggable": "^4.4.3",
     "react-resizable": "^3.0.4",
+    "react-table": "^7.7.0",
     "uuid": "^8.3.2"
   },
   "sideEffects": [
@@ -86,6 +91,6 @@
   },
   "volta": {
     "node": "14.15.5",
-    "yarn": "1.22.10"
+    "yarn": "1.22.11"
   }
 }
