@@ -8,8 +8,10 @@ import { useAnalysisClient } from './workspace';
 import { Analysis, NewAnalysis } from '../types/analysis';
 import { AnalysisClient } from '../api/analysis-api';
 
+/** Type definition for function that will set an attribute of an Analysis. */
 type Setter<T extends keyof Analysis> = (value: Analysis[T]) => void;
 
+/** Status options for an analysis. */
 export enum Status {
   InProgress = 'in-progress',
   Loaded = 'loaded',
@@ -18,6 +20,7 @@ export enum Status {
 }
 
 export type AnalysisState = {
+  /** Current status of the analysis. */
   status: Status;
   hasUnsavedChanges: boolean;
   /** Optional. Previously saved analysis or analysis in construction. */
