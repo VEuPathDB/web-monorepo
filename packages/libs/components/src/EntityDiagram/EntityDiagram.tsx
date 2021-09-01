@@ -41,6 +41,7 @@ export interface Variables {
 export interface StudyData {
   id: string;
   displayName: string;
+  displayNamePlural?: string;
   description: string;
   children?: this[];
   variables: Variables[];
@@ -147,7 +148,7 @@ export default function EntityDiagram({
     const isHighlighted = highlightedEntityID == node.data.id;
 
     if (isExpanded) {
-      displayText = node.data.displayName;
+      displayText = node.data.displayNamePlural ?? node.data.displayName;
     } else {
       // get acronym of displayName
       const matches = node.data.displayName.match(/\b(\w)/g) as string[];
