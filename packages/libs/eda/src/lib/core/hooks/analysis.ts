@@ -1,11 +1,12 @@
+import { useCallback, useEffect, useState } from 'react';
+import { differenceWith } from 'lodash';
+
 import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 import { useStateWithHistory } from '@veupathdb/wdk-client/lib/Hooks/StateWithHistory';
-import { useCallback, useEffect, useState } from 'react';
+
 import { useAnalysisClient } from './workspace';
 import { Analysis, NewAnalysis } from '../types/analysis';
-import { usePromise } from './promise';
 import { AnalysisClient } from '../api/analysis-api';
-import { differenceWith } from 'lodash';
 
 type Setter<T extends keyof Analysis> = (value: Analysis[T]) => void;
 
@@ -19,6 +20,7 @@ export enum Status {
 export type AnalysisState = {
   status: Status;
   hasUnsavedChanges: boolean;
+  /** Optional. Previously saved analysis or analysis in construction. */
   analysis?: Analysis | NewAnalysis;
   error?: unknown;
   canUndo: boolean;
