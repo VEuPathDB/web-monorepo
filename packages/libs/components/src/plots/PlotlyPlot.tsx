@@ -96,6 +96,9 @@ function PlotlyPlot<T>(
     ...plotlyProps
   } = props;
 
+  // set max legend title length for ellipsis
+  const maxLegendTitleTextLength = maxLegendTextLength + 5;
+
   // config is derived purely from PlotProps props
   const finalConfig = useMemo(
     (): PlotParams['config'] => ({
@@ -138,7 +141,12 @@ function PlotlyPlot<T>(
       },
       legend: {
         title: {
-          text: legendTitle,
+          // add ellipsis for legendTitle
+          text:
+            (legendTitle || '').length > maxLegendTitleTextLength
+              ? (legendTitle || '').substring(0, maxLegendTitleTextLength) +
+                '...'
+              : legendTitle,
         },
         ...(legendOptions ? legendSpecification(legendOptions) : {}),
       },
@@ -172,6 +180,7 @@ function PlotlyPlot<T>(
   // add legend tooltip function
   const onUpdate = useCallback(
     (_, graphDiv: Readonly<HTMLElement>) => {
+      // legend tooltip
       // remove pre-existing title to avoid duplicates
       select(graphDiv)
         .select('g.legend')
@@ -184,8 +193,25 @@ function PlotlyPlot<T>(
         .selectAll('g.traces')
         .append('svg:title')
         .text((d) => storedLegendList[d[0].trace.index]);
+
+      // legend title tooltip
+      // remove pre-existing svg:title under legendtitletext to avoid duplicates
+      select(graphDiv)
+        .select('g.legend g.scrollbox text.legendtitletext')
+        .selectAll('title')
+        .remove();
+      // add tooltip: no need to show tooltip if legent title is not that long
+      if (
+        legendTitle != null &&
+        legendTitle.length > maxLegendTitleTextLength
+      ) {
+        select(graphDiv)
+          .select('g.legend g.scrollbox text.legendtitletext')
+          .append('svg:title')
+          .text(legendTitle);
+      }
     },
-    [storedLegendList]
+    [storedLegendList, legendTitle]
   );
 
   // set the number of characters to be displayed
