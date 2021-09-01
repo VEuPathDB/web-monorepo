@@ -1,24 +1,42 @@
-import React from 'react';
-import { useHistory } from 'react-router';
-import { useMakeVariableLink, useStudyMetadata } from '../core';
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { cx } from './Utils';
-import { VariableDetails } from './Variable';
-import { AnalysisState } from '../core/hooks/analysis';
-import { useEntityCounts } from '../core/hooks/entityCounts';
-import { useToggleStarredVariable } from '../core/hooks/starredVariables';
-import { VariableTree } from '../core/components/VariableTree';
-import FilterChipList from '../core/components/FilterChipList';
 import { Tooltip } from '@material-ui/core';
+import { useHistory } from 'react-router';
+import { useState } from 'react';
 
-interface Props {
+import { useMakeVariableLink, useStudyMetadata } from '../../core';
+import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { cx } from '../Utils';
+import { VariableDetails } from '../Variable';
+import { AnalysisState } from '../../core/hooks/analysis';
+import { useEntityCounts } from '../../core/hooks/entityCounts';
+import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
+import { VariableTree } from '../../core/components/VariableTree';
+import FilterChipList from '../../core/components/FilterChipList';
+
+import SubsettingDataGridModal from './SubsettingDataGridModal';
+
+interface SubsettingProps {
   analysisState: AnalysisState;
+  /** The ID of the currently selected entity in the entity tree. */
   entityId: string;
+  /**
+   * The ID of the currently selected entity variable. Remember that
+   * a variable is a child of an entity.
+   */
   variableId: string;
 }
 
-export function Subsetting(props: Props) {
-  const { entityId, variableId, analysisState } = props;
+/** Allow user to filter study data based on the value(s) of any available variable. */
+export default function Subsetting({
+  entityId,
+  variableId,
+  analysisState,
+}: SubsettingProps) {
+  console.log('entityId', entityId);
+  console.log('variableId', variableId);
+  console.log('analysisState', analysisState);
+
+  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
+
   const studyMetadata = useStudyMetadata();
   const entities = Array.from(
     preorder(studyMetadata.rootEntity, (e) => e.children || [])
@@ -41,6 +59,11 @@ export function Subsetting(props: Props) {
 
   return (
     <div className={cx('-Subsetting')}>
+      <SubsettingDataGridModal
+        displayModal={isDownloadModalOpen}
+        toggleDisplay={() => setIsDownloadModalOpen(false)}
+        analysisState={analysisState}
+      />
       <div className="Variables">
         <VariableTree
           rootEntity={entities[0]}
@@ -79,7 +102,7 @@ export function Subsetting(props: Props) {
           <button
             type="button"
             className="link"
-            onClick={() => alert('Coming soon')}
+            onClick={() => setIsDownloadModalOpen(true)}
           >
             <i className="fa fa-table" />
           </button>
