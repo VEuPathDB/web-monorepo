@@ -346,7 +346,7 @@ function HistogramViz(props: Props) {
             data.pending ? undefined : data.value?.completeCasesAllVars
           }
           overlayVariable={vizConfig.overlayVariable}
-          overlayLabel={overlayVariable?.displayName}
+          overlayLabel={axisLabelWithUnit(overlayVariable)}
           legendTitle={overlayVariable?.displayName}
           dependentAxisLabel={
             vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion'
