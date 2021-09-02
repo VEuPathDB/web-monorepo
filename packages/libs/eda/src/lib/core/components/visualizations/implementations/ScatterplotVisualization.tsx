@@ -52,7 +52,10 @@ import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 import { StudyEntity } from '../../../types/study';
 import { vocabularyWithMissingData } from '../../../utils/analysis';
 import { gray } from '../colors';
-import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
+import {
+  ColorPaletteDefault,
+  ColorPaletteDark,
+} from '@veupathdb/components/lib/types/plots/addOns';
 
 const plotDimensions = {
   width: 750,
@@ -632,6 +635,16 @@ function processInputData<T extends number | string>(
       return ColorPaletteDefault[index] ?? 'black'; // TO DO: decide on overflow behaviour
     }
   };
+
+  // using dark color: function to return color or gray where needed if showMissingness == true
+  const markerColorDark = (index: number) => {
+    if (showMissingness && index === plotDataSet.data.length - 1) {
+      return gray;
+    } else {
+      return ColorPaletteDark[index] ?? 'black'; // TO DO: decide on overflow behaviour
+    }
+  };
+
   const markerSymbol = (index: number) =>
     showMissingness && index === plotDataSet.data.length - 1
       ? 'x'
@@ -795,7 +808,8 @@ function processInputData<T extends number | string>(
           : 'Smoothed mean',
         mode: 'lines', // no data point is displayed: only line
         line: {
-          color: markerColor(index),
+          // use darker color for smoothed mean line
+          color: markerColorDark(index),
           shape: 'spline',
           width: 2,
         },
@@ -838,7 +852,8 @@ function processInputData<T extends number | string>(
         // this is better to be tozeroy, not tozerox
         fill: 'tozeroy',
         opacity: 0.2,
-        fillcolor: markerColor(index),
+        // use darker color for smoothed mean's confidence interval
+        fillcolor: markerColorDark(index),
         // type: 'line',
         type: 'scattergl',
         // here, line means upper and lower bounds
@@ -888,7 +903,8 @@ function processInputData<T extends number | string>(
           : 'Best fit, R² = ' + el.r2,
         mode: 'lines', // no data point is displayed: only line
         line: {
-          color: markerColor(index),
+          // use darker color for best fit line
+          color: markerColorDark(index),
           shape: 'spline',
         },
         // use scattergl
