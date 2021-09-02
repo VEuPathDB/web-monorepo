@@ -4,6 +4,7 @@ import { VariableLink } from './VariableLink';
 import { makeStyles } from '@material-ui/core/styles';
 import { Filter } from '../types/filter';
 import { findEntityAndVariable } from '../utils/study-metadata';
+import { ReactNode } from 'react';
 
 // Material UI CSS declarations
 const useStyles = makeStyles((theme) => ({
@@ -42,7 +43,7 @@ export default function FilterChipList(props: Props) {
 
           if (entity && variable) {
             // The string to be displayed for the filter's value
-            let filterValueDisplay: string;
+            let filterValueDisplay: ReactNode;
 
             // Set filterValueDisplay based on the filter's type
             switch (filter.type) {
@@ -58,6 +59,25 @@ export default function FilterChipList(props: Props) {
               case 'numberRange':
               case 'dateRange':
                 filterValueDisplay = `from ${filter.min} to ${filter.max}`;
+                break;
+              case 'multiFilter':
+                filterValueDisplay = filter.subFilters
+                  .map((subFilter) => {
+                    const entAndVar = findEntityAndVariable(props.entities, {
+                      entityId: filter.entityId,
+                      variableId: subFilter.variableId,
+                    });
+                    if (entAndVar == null) return '';
+                    return `${
+                      entAndVar.variable.displayName
+                    } = ${subFilter.stringSet.join(', ')}`;
+                  })
+                  .flatMap((text, index) => (
+                    <>
+                      {text}
+                      {index < filter.subFilters.length ? <br /> : null}
+                    </>
+                  ));
                 break;
               default:
                 filterValueDisplay = '';

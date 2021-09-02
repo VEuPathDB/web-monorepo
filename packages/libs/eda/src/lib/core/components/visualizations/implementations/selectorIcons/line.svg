@@ -1,38 +1,40 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="525px" height="436px" viewBox="0 0 525 436" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="background: #FFFFFF;">
-    <title>export area</title>
-    <defs>
-        <rect id="path-1" x="207" y="78" width="485" height="395" rx="9"></rect>
-        <filter x="-8.5%" y="-7.8%" width="116.9%" height="120.8%" filterUnits="objectBoundingBox" id="filter-2">
-            <feMorphology radius="6" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
-            <feOffset dx="0" dy="10" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
-            <feGaussianBlur stdDeviation="10" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
-            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"></feComposite>
-            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
-        </filter>
-    </defs>
-    <g id="viz-icons-for-EDA" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="Line" transform="translate(-190.000000, -54.000000)">
-            <g id="plot-elements" transform="translate(207.000000, 78.000000)">
-                <g id="Group"></g>
-                <path d="M22,338 C22,338 114,86 114,86 C114,86 191,87 191,87 C191,87 284,86 284,86 C284,86 360,86 360,86 C360,86 453,116 453,116" id="Line_1" stroke="#9B242C" stroke-width="6"></path>
-                <circle id="Dot_11" fill="#9B242C" cx="22" cy="338" r="15"></circle>
-                <circle id="Dot_12" fill="#9B242C" cx="114" cy="86" r="15"></circle>
-                <circle id="Dot_13" fill="#9B242C" cx="191" cy="86" r="15"></circle>
-                <circle id="Dot_14" fill="#9B242C" cx="284" cy="86" r="15"></circle>
-                <circle id="Dot_15" fill="#9B242C" cx="360" cy="86" r="15"></circle>
-                <circle id="Dot_16" fill="#9B242C" cx="453" cy="116" r="15"></circle>
-                <path d="M22,350 C22,350 114,146 114,146 C114,146 191,161 191,161 C191,161 284,335 284,335 C284,335 360,338.8 360,338.8 C360,338.8 453,335 453,335" id="Line_2" stroke="#508E9D" stroke-width="6"></path>
-                <circle id="Dot_21" fill="#508E9D" cx="22" cy="350" r="15"></circle>
-                <circle id="Dot_22" fill="#508E9D" cx="114" cy="146" r="15"></circle>
-                <circle id="Dot_23" fill="#508E9D" cx="191" cy="161" r="15"></circle>
-                <circle id="Dot_24" fill="#508E9D" cx="284" cy="335" r="15"></circle>
-                <circle id="Dot_25" fill="#508E9D" cx="360" cy="338" r="15"></circle>
-                <circle id="Dot_26" fill="#508E9D" cx="453" cy="335" r="15"></circle>
-            </g>
-            <text id="title" font-family="Rubik-Regular, Rubik" font-size="60" font-weight="normal" fill="#000000">
-                <tspan x="390" y="145">Line</tspan>
-            </text>
-        </g>
-    </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 25.4.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 500 500" style="enable-background:new 0 0 500 500;" xml:space="preserve">
+<style type="text/css">
+	<!-- Site colors -->
+    .primary-fill{fill:#85B3C3;}
+	.primary-stroke{stroke:#85B3C3;}
+	.secondary-fill{fill:#508E9D;}
+	.secondary-stroke{stroke:#508E9D;}
+	<!-- svg classes -->
+	.primary-markers{fill-rule:evenodd;clip-rule:evenodd;}
+	.primary-line{fill-rule:evenodd;clip-rule:evenodd;fill:none;stroke-width:5.6;stroke-miterlimit:10;}
+	.secondary-line{fill-rule:evenodd;clip-rule:evenodd;fill:none;stroke-width:5.6;stroke-miterlimit:10;}
+	.secondary-markers{fill-rule:evenodd;clip-rule:evenodd;}
+</style>
+<g class="primary-stroke">
+	<polyline class="primary-line" points="63.725,437.836 142.842,369.076 209.653,312.033 290.347,296.023 356.291,239.991 436.985,268.779 	
+		"/>
+</g>
+<g class="primary-fill">
+	<circle id="Dot_21_00000130635302015919128260000018061975041618698163_" class="primary-markers" cx="63.015" cy="436.296" r="13.015"/>
+	<circle id="Dot_21_00000029755810830341567330000002122079485100671919_" class="primary-markers" cx="142.842" cy="369.076" r="13.015"/>
+	<circle id="Dot_14_00000134213082090489820730000013566830415626196662_" class="primary-markers" cx="290.347" cy="295.31" r="13.015"/>
+	<circle id="Dot_15_00000141436812545117655690000008967750913116737411_" class="primary-markers" cx="356.291" cy="239.991" r="13.015"/>
+	<circle id="Dot_16_00000138557642759300424120000013538030141617711545_" class="primary-markers" cx="436.985" cy="268.108" r="13.015"/>
+	<circle id="Dot_23_00000163757305315056288930000000717920530852065695_" class="primary-markers" cx="209.653" cy="311.715" r="13.015"/>
+</g>
+<g class="secondary-stroke">
+	<polyline class="secondary-line" points="63.725,397.093 143.35,267.511 209.653,198.962 290.347,202.927 356.291,167.287 436.985,63.704 	"/>
+</g>
+<g class="secondary-fill">
+	<circle id="Dot_21_00000040552671929458408250000011056231864254503079_" class="secondary-markers" cx="63.015" cy="397.093" r="13.015"/>
+	<circle id="Dot_21_00000035527598586769324250000007911753213938969755_" class="secondary-markers" cx="142.842" cy="267.511" r="13.015"/>
+	<circle id="Dot_14_00000030462288161663853850000016730483946828549511_" class="secondary-markers" cx="290.347" cy="200.907" r="13.015"/>
+	<circle id="Dot_15_00000155864439392088445970000016657100952590455680_" class="secondary-markers" cx="356.291" cy="166.46" r="13.015"/>
+	<circle id="Dot_16_00000154407745321036594290000009983668136613457584_" class="secondary-markers" cx="436.985" cy="63.704" r="13.015"/>
+	<circle id="Dot_23_00000062187953010574172220000008058862219998238909_" class="secondary-markers" cx="209.653" cy="197.727" r="13.015"/>
+</g>
 </svg>

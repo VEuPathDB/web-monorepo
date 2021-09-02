@@ -142,6 +142,15 @@ export const LongitudeVariable = t.intersection([
   }),
 ]);
 
+export type MultiFilterVariable = t.TypeOf<typeof MultiFilterVariable>;
+export const MultiFilterVariable = t.intersection([
+  VariableTreeNode_Base,
+  t.type({
+    type: t.literal('category'),
+    displayType: t.literal('multifilter'),
+  }),
+]);
+
 export type VariableCategory = t.TypeOf<typeof VariableCategory>;
 export const VariableCategory = t.intersection([
   VariableTreeNode_Base,
@@ -150,20 +159,17 @@ export const VariableCategory = t.intersection([
   }),
 ]);
 
-export type Variable =
-  | StringVariable
-  | NumberVariable
-  | DateVariable
-  | LongitudeVariable;
-
-export type VariableTreeNode = t.TypeOf<typeof VariableTreeNode>;
-export const VariableTreeNode = t.union([
+export type Variable = t.TypeOf<typeof Variable>;
+export const Variable = t.union([
   StringVariable,
   NumberVariable,
   DateVariable,
   LongitudeVariable,
-  VariableCategory,
+  // MultiFilterVariable,
 ]);
+
+export type VariableTreeNode = t.TypeOf<typeof VariableTreeNode>;
+export const VariableTreeNode = t.union([Variable, VariableCategory]);
 
 // StudyEntity
 // -----------
