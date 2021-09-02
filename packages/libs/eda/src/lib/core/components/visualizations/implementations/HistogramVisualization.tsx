@@ -29,7 +29,6 @@ import { Filter } from '../../../types/filter';
 import { StudyEntity } from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
 import { CoverageStatistics } from '../../../types/visualization';
-import { findEntityAndVariable } from '../../../utils/study-metadata';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { isHistogramVariable } from '../../filter/guards';
 import { HistogramVariable } from '../../filter/types';
@@ -43,6 +42,7 @@ import {
   vocabularyWithMissingData,
   grayOutLastSeries,
 } from '../../../utils/analysis';
+import { useFindEntityAndVariable } from '../../../hooks/study';
 
 type HistogramDataWithCoverageStatistics = HistogramData & CoverageStatistics;
 
@@ -197,9 +197,11 @@ function HistogramViz(props: Props) {
     'showMissingness'
   );
 
+  const findEntityAndVariable = useFindEntityAndVariable(entities);
+
   const { xAxisVariable, outputEntity, valueType } = useMemo(() => {
     const { entity, variable } =
-      findEntityAndVariable(entities, vizConfig.xAxisVariable) ?? {};
+      findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
     const valueType: 'number' | 'date' =
       variable?.type === 'date' ? 'date' : 'number';
     return {
@@ -207,13 +209,12 @@ function HistogramViz(props: Props) {
       xAxisVariable: variable,
       valueType,
     };
-  }, [entities, vizConfig.xAxisVariable]);
+  }, [findEntityAndVariable, vizConfig.xAxisVariable]);
 
   const overlayVariable = useMemo(() => {
-    const { variable } =
-      findEntityAndVariable(entities, vizConfig.overlayVariable) ?? {};
+    const { variable } = findEntityAndVariable(vizConfig.overlayVariable) ?? {};
     return variable;
-  }, [entities, vizConfig.overlayVariable]);
+  }, [findEntityAndVariable, vizConfig.overlayVariable]);
 
   const data = usePromise(
     useCallback(async (): Promise<

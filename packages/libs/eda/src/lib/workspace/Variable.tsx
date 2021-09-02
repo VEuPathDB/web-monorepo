@@ -5,6 +5,7 @@ import {
   AnalysisState,
   useStudyMetadata,
   Variable,
+  MultiFilterVariable,
 } from '../core';
 import { FilterContainer } from '../core/components/filter/FilterContainer';
 import { cx } from './Utils';
@@ -15,7 +16,7 @@ interface Props {
   entity: StudyEntity;
   totalEntityCount?: number;
   filteredEntityCount?: number;
-  variable: Variable;
+  variable: Variable | MultiFilterVariable;
   analysisState: AnalysisState;
 }
 
