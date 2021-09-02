@@ -114,6 +114,18 @@ export const ColorPaletteDefault: string[] = [
   'rgb(17,119,51)',
 ];
 
+/** Darker color pallette for Scatter plot viz for now */
+export const ColorPaletteDark: string[] = [
+  'rgb(115, 28, 72)',
+  'rgb(113, 194, 234)',
+  'rgb(133, 133, 44)',
+  'rgb(43, 28, 115)',
+  'rgb(60, 151, 136)',
+  'rgb(215, 196, 98)',
+  'rgb(197, 82, 102)',
+  'rgb(13, 96, 41)',
+];
+
 /** truncated axis flags */
 export type AxisTruncationAddon = {
   /** truncation config (flags) to show truncated axis (true) or not (false) */
