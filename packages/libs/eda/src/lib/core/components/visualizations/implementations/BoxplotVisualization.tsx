@@ -353,18 +353,18 @@ function BoxplotViz(props: Props) {
                 {
                   role: 'X-axis',
                   required: true,
-                  display: xAxisVariable?.displayName,
+                  display: axisLabelWithUnit(xAxisVariable),
                   variable: vizConfig.xAxisVariable,
                 },
                 {
                   role: 'Y-axis',
                   required: true,
-                  display: yAxisVariable?.displayName,
+                  display: axisLabelWithUnit(yAxisVariable),
                   variable: vizConfig.yAxisVariable,
                 },
                 {
                   role: 'Overlay',
-                  display: overlayVariable?.displayName,
+                  display: axisLabelWithUnit(overlayVariable),
                   variable: vizConfig.overlayVariable,
                 },
               ]}
