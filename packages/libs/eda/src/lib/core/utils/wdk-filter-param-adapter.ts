@@ -178,6 +178,8 @@ export function entitiesToFields(
         display: entity.displayName,
       },
       ...entity.variables
+        // add condition not to include displayType === 'hidden'
+        .filter((variable) => variable.displayType !== 'hidden')
         // Before handing off to edaVariableToWdkField, we will
         // change the id of the variable to include the entityId.
         // This will make the id unique across the tree and prevent
