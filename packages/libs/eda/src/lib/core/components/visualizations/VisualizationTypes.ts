@@ -13,9 +13,10 @@ export interface VisualizationProps {
   visualization: Visualization;
   dataElementConstraints?: Record<string, DataElementConstraint>[];
   dataElementDependencyOrder?: string[];
-  updateVisualization?: (newViz: Visualization) => void;
+  updateConfiguration: (configuration: unknown) => void;
+  updateThumbnail: (source: string) => void;
   computation: Computation;
-  filters: Filter[];
+  filters?: Filter[];
   starredVariables: string[];
   toggleStarredVariable: (targetVariableId: string) => void;
 }
@@ -23,7 +24,6 @@ export interface VisualizationProps {
 export type SelectorProps = VisualizationOverview;
 
 export interface VisualizationType {
-  gridComponent: React.ComponentType<VisualizationProps>;
   fullscreenComponent: React.ComponentType<VisualizationProps>;
   selectorComponent: React.ComponentType<SelectorProps>;
   createDefaultConfig: () => unknown;
