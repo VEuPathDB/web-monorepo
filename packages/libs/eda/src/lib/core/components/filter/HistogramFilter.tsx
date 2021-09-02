@@ -40,6 +40,8 @@ import { DistributionResponse } from '../../api/subsetting-api';
 import { truncationConfig } from '../../utils/truncation-config-utils';
 // use Notification for truncation warning message
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
+// import axis label unit util
+import { axisLabelWithUnit } from '../../utils/axis-label-unit';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -361,8 +363,8 @@ export function HistogramFilter(props: Props) {
           uiState={uiState}
           defaultUIState={defaultUIState}
           updateUIState={updateUIState}
-          variableName={variable.displayName}
           showSpinner={data.pending}
+          variable={variable}
         />
       </div>
     </div>
@@ -375,8 +377,7 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   defaultUIState: UIState;
   updateUIState: (uiState: Partial<UIState>) => void;
   filter?: DateRangeFilter | NumberRangeFilter;
-  // add variableName for independentAxisLabel
-  variableName: string;
+  variable?: HistogramVariable;
 };
 
 function HistogramPlotWithControls({
@@ -386,8 +387,7 @@ function HistogramPlotWithControls({
   defaultUIState,
   updateUIState,
   filter,
-  // variableName for independentAxisLabel
-  variableName,
+  variable,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   // set the state of truncation warning message
@@ -564,7 +564,7 @@ function HistogramPlotWithControls({
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <SelectedRangeControl
-        label={`Subset on ${variableName}`}
+        label={'Subset on ' + axisLabelWithUnit(variable)}
         valueType={data?.valueType}
         selectedRange={selectedRange}
         selectedRangeBounds={selectedRangeBounds}
@@ -581,8 +581,7 @@ function HistogramPlotWithControls({
         onSelectedRangeChange={handleSelectedRangeChange}
         barLayout={barLayout}
         dependentAxisLabel="Count"
-        // add independentAxisLabel
-        independentAxisLabel={variableName}
+        independentAxisLabel={axisLabelWithUnit(variable)}
         independentAxisRange={uiState.independentAxisRange}
         dependentAxisRange={uiState.dependentAxisRange}
         dependentAxisLogScale={uiState.dependentAxisLogScale}

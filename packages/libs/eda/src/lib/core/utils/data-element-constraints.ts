@@ -125,6 +125,8 @@ export function flattenConstraints(
           `Could not find selected entity and variable: entityId = ${value.entityId}; variableId = ${value.variableId}.`
         );
       const { variable } = entityAndVariable;
+      if (variable.type === 'category')
+        throw new Error('Categories are not allowed for variable constraints.');
       const typeIsValid =
         isEmpty(constraint.allowedTypes) ||
         constraint.allowedTypes?.includes(variable.type);
