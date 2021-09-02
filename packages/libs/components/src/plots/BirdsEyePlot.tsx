@@ -8,7 +8,7 @@ import { Layout, Shape } from 'plotly.js';
 export interface BirdsEyePlotProps extends PlotProps<BirdsEyePlotData> {
   /** Label for dependent axis. Defaults to '' */
   dependentAxisLabel?: string;
-  /** bracket line width, default is 1 */
+  /** bracket line width, default is 2 */
   bracketLineWidth?: number;
   /** bracket head size, default is 0.15 */
   bracketHeadSize?: number;
@@ -18,17 +18,17 @@ const EmptyBirdsEyePlotData: BirdsEyePlotData = { brackets: [], bars: [] };
 
 const defaultCountBoxStyle = {
   background: 'transparent',
-  border: '1px solid gray',
+  border: '1px solid #bfbfbf',
   padding: '5px',
-  fontSize: '80%',
-  minWidth: '20%',
+  fontSize: '90%',
+  maxWidth: '25%',
 };
 
 /** A Plotly-based Barplot component. */
 export default function BirdsEyePlot({
   data = EmptyBirdsEyePlotData,
   dependentAxisLabel = '',
-  bracketLineWidth = 1,
+  bracketLineWidth = 2,
   bracketHeadSize = 0.15,
   containerStyles,
   ...restProps
@@ -100,6 +100,7 @@ export default function BirdsEyePlot({
     [data.brackets, bracketLineWidth, bracketHeadSize]
   );
 
+  const numCountBoxes = data.bars.length + data.brackets.length;
   const fullCounts: ReactNode[] = useMemo(() => {
     const bracketCounts = data.brackets.map(({ label, value }) =>
       CountBox({ label, value, focused })
@@ -115,31 +116,26 @@ export default function BirdsEyePlot({
     return [...[...bracketCounts].reverse(), ...[...barCounts].reverse()];
   }, [data, focused]);
 
+  const weHaveData = numCountBoxes > 0;
   const layout: Partial<Layout> = {
     xaxis: {
-      automargin: true,
+      automargin: weHaveData, // this avoids a console warning about too many auto-margin redraws that occur with empty data
       showgrid: false,
       title: {
-        text: dependentAxisLabel,
+        text: weHaveData ? dependentAxisLabel : undefined,
       },
       zeroline: false,
-      tickfont:
-        data.bars.length || data.brackets.length
-          ? {}
-          : { color: 'transparent' },
-      ticks: 'inside',
+      tickfont: weHaveData ? {} : { color: 'transparent' },
+      ticks: weHaveData ? 'inside' : undefined,
       showline: false, // data.bars.length > 0 || data.brackets.length > 0,
     },
     yaxis: {
-      automargin: true,
+      automargin: weHaveData,
       showgrid: false,
       zeroline: false,
-      showline: false,
+      showline: weHaveData,
       title: {},
-      tickfont:
-        data.bars.length || data.brackets.length
-          ? {}
-          : { color: 'transparent' },
+      tickfont: weHaveData ? {} : { color: 'transparent' },
       tickmode: 'array',
       tickvals: data.brackets.map((_, index) =>
         indexToY(index, bracketHeadSize)
@@ -168,6 +164,7 @@ export default function BirdsEyePlot({
           display: 'flex',
           flexDirection: 'row',
           justifyContent: 'space-around',
+          minHeight: '5em',
         }}
       >
         {fullCounts.length
