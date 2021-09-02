@@ -4,6 +4,17 @@ import { useSelector } from 'react-redux';
 import { getChangeHandler, wrappable } from 'wdk-client/Utils/ComponentUtils';
 import UserAccountForm from 'wdk-client/Views/User/UserAccountForm';
 
+export function getDescriptionBoxStyle() {
+  return {
+    align:"left",
+    width:"550px",
+    margin:"25px 20px",
+    border:"1px solid black",
+    padding:"1em",
+    lineHeight:"1.5em"
+  }
+};
+
 export function interpretFormStatus(formStatus, userFormData, errorMessage) {
   // configure properties for banner and submit button enabling based on status
   let messageClass="wdk-UserProfile-banner ", message="", disableSubmit = false;
@@ -49,8 +60,27 @@ export function IntroComponent() {
   );
 }
 
-export function OutroComponent(props) {
-  return <VisitOtherBrc {...props}/>
+function OutroComponent(props) {
+  const projectId = useSelector(state => state.globalData.siteConfig.projectId);
+  let showCrossBrcInfo = (projectId != "ClinEpiDB" && projectId != "MicrobiomeDB" && projectId != "AllClinEpiDB");
+  return !showCrossBrcInfo ? null : (
+    <div style={getDescriptionBoxStyle()}>
+      <h4>About Bioinformatics Resource Centers</h4>
+      <p>
+        The <a target="_blank" href="https://www.niaid.nih.gov/research/bioinformatics-resource-centers">
+        Bioinformatics Resource Centers</a> (BRCs) for Infectious Diseases program was initiated in 2004&nbsp;
+        with the main objective of providing public access to computational platforms and analysis tools&nbsp;
+        that enable  collecting, archiving, updating, and integrating a variety of genomics and related&nbsp;
+        research data relevant to infectious diseases, and pathogens and their interaction with hosts.
+      </p>
+      <p>
+        <VisitOtherBrc {...props}/>
+      </p>
+      <p>
+        Sign up for cross-BRC email alerts <a target="_blank" href="https://lists.brcgateway.org">here</a>.
+      </p>
+    </div>
+  );
 }
 
 export function VisitOtherBrc({user}) {

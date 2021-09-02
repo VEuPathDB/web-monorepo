@@ -1,6 +1,6 @@
 import React from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import UserFormContainer, { UserFormContainerPropTypes, FormMessage, VisitOtherBrc } from 'wdk-client/Views/User/UserFormContainer';
+import UserFormContainer, { UserFormContainerPropTypes, FormMessage, VisitOtherBrc, getDescriptionBoxStyle } from 'wdk-client/Views/User/UserFormContainer';
 
 let interpretFormStatus = (formStatus, userFormData, errorMessage) => {
   // configure properties for banner and submit button enabling based on status
@@ -45,36 +45,28 @@ let IntroText = () => (
   </div>
 );
 
-let descriptionBoxStyle = {
-  align:"left",
-  width:"550px",
-  margin:"25px 20px",
-  border:"1px solid black",
-  padding:"5px",
-  lineHeight:"1.5em"
-};
-
 let WhyRegister = () => (
-  <div style={descriptionBoxStyle}>
-    <p><b>Why register/subscribe?</b> So you can:</p>
+  <div style={getDescriptionBoxStyle()}>
+    <h4>Why register/subscribe?</h4>
     <div id="cirbulletlist">
       <ul>
-        <li>permanently save Search Strategies</li>
-        <li>use a Basket to make a set of IDs of interest</li>
-        <li>use Favorites to mark IDs of interest, for fast access</li>
-        <li>add a comment on Genes, Sequences and other record types</li>
-        <li>set site preferences</li>
+        <li>Permanently save Search Strategies</li>
+        <li>Use a Basket to make a set of IDs of interest</li>
+        <li>Use Favorites to mark IDs of interest, for fast access</li>
+        <li>Add a comment on Genes, Sequences and other record types</li>
+        <li>Set site preferences</li>
       </ul>
     </div>
   </div>
 );
 
 let PrivacyPolicy = () => (
-  <div style={descriptionBoxStyle}>
-    <div style={{fontSize:"1.2em"}}>
+  <div style={getDescriptionBoxStyle()}>
+    <h4>
       <a title="It will open in a new tab" target="_blank" href="/a/app/static-content/privacyPolicy.html">
-        <b>VEuPathDB Websites Privacy Policy</b></a> 
-    </div>
+        VEuPathDB Websites Privacy Policy
+      </a> 
+    </h4>
     <table>
       <tbody>
         <tr>
@@ -82,8 +74,8 @@ let PrivacyPolicy = () => (
             <p><b>How we will use your email:</b></p>
             <div id="cirbulletlist">
               <ul>
-                <li>confirm your subscription</li>
-                <li>if you subscribe to them, send infrequent email alerts</li>
+                <li>Confirm your subscription.</li>
+                <li>If you subscribe to them, send infrequent email alerts.</li>
                 <li>NOTHING ELSE.  We will not release the email list.</li>
               </ul>
             </div>
@@ -92,8 +84,8 @@ let PrivacyPolicy = () => (
             <p><b>How we will use your name and institution:</b></p>
             <div id="cirbulletlist">
               <ul>
-                <li>if you add a comment to a Gene or a Sequence, your name and institution will be displayed with the comment.</li>
-                <li>if you make a search strategy public, your name and institution will be displayed with it.</li>
+                <li>If you add a comment to a Gene or a Sequence, your name and institution will be displayed with the comment.</li>
+                <li>If you make a search strategy public, your name and institution will be displayed with it.</li>
                 <li>NOTHING ELSE.  We will not release your name or institution.</li>
               </ul>
             </div>
