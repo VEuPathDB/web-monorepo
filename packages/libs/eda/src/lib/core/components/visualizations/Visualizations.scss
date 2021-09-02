@@ -171,12 +171,6 @@ $data-table-inner-border: 1px solid #888;
   }
 }
 
-.BirdsEyeView {
-  @include data-table;
-  width: 500px;
-  margin-left: 3em;
-}
-
 .MosaicVisualization {
   display: flex;
   flex-wrap: wrap;
