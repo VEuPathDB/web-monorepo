@@ -5,15 +5,18 @@ import {
   AnalysisState,
   useStudyMetadata,
   Variable,
+  MultiFilterVariable,
 } from '../core';
 import { FilterContainer } from '../core/components/filter/FilterContainer';
 import { cx } from './Utils';
+// import axis label unit util
+import { axisLabelWithUnit } from '../core/utils/axis-label-unit';
 
 interface Props {
   entity: StudyEntity;
   totalEntityCount?: number;
   filteredEntityCount?: number;
-  variable: Variable;
+  variable: Variable | MultiFilterVariable;
   analysisState: AnalysisState;
 }
 
@@ -29,7 +32,7 @@ export function VariableDetails(props: Props) {
   return (
     <ErrorBoundary>
       <div>
-        <h3>{variable.displayName}</h3>
+        <h3>{axisLabelWithUnit(variable)}</h3>
         <div className={cx('-ProviderLabel')}>
           <div className={cx('-ProviderLabelPrefix')}>
             Original variable name:

@@ -2917,10 +2917,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.0.0.tgz#90ca79640ffbb195a87d4d65cd4b2f92342f8b76"
   integrity sha512-qfKu1z9gaaHdMgRGaZBiayuIh92ishsf14lR+Rj61CJF131XWq3+5e2VyLyOdKsYJ1EreAxgyC/0upIBEzwQJw==
 
-"@veupathdb/components@^0.7.3":
-  version "0.7.5"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.7.5.tgz#f85c933c9df5cbd5b1d458eb82b8f65dd293b056"
-  integrity sha512-gkYFUV9VTT54vW+WNnwbUYvGTgf5/E4t7nVDES5bkW/Z+EP61pV8RJLCLi0mse6JQMIhJS+QsIdtXKQZPSse4w==
+"@veupathdb/components@^0.7.6":
+  version "0.7.6"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.7.6.tgz#58dabf5a0f452b103b93d77c9f536d57c39c9d82"
+  integrity sha512-BXoy7luT/4yC90yXRCPaOyYl2PMt3za2NrsdHVsnKP+j7il8NY8oc+YLT2wpfEZmea0hZMnMLddSZPGL0yxPtw==
   dependencies:
     "@material-ui/core" "^4.11.2"
     "@material-ui/icons" "^4.11.2"
@@ -2978,10 +2978,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/tsconfig/-/tsconfig-1.0.1.tgz#a2b748b46838af1337ca9f23d969993fb952def4"
   integrity sha512-i6gq7mgnyEN8/xW5EaI9RiWCwS1oB8cgWqx9h5w4vZtnb10oiyyepD640l9x/gZf6IWecjynRs7weDgSRs7l0Q==
 
-"@veupathdb/wdk-client@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.2.0.tgz#6a3b8b267f55faf4a34e5a167e288028e3636a11"
-  integrity sha512-FbhCXTSUUXKKMUhuhnURmPyF1pIFDKyEMDkunw9XcCITeKckjv9Qxn031r14DjNeQqB1XPkqI/3FiOJ7uM67yA==
+"@veupathdb/wdk-client@^0.3.2":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.3.2.tgz#4793451a223e3ab5eb4c9f43bb4aab026ea1be40"
+  integrity sha512-cZVmnuBwPXLegZkkPWKtHmA3BK3Jec8Zjqf/3utWaMTSqh1TvaxleUxhwGUOJO35Rj1v4Y5GAFNDvAodQcWNww==
   dependencies:
     "@types/datatables.net" "^1.10.5"
     "@types/flot" "^0.0.31"

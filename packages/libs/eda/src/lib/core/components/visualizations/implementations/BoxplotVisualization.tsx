@@ -318,7 +318,7 @@ function BoxplotViz(props: VisualizationProps) {
           interactive={true}
           showSpinner={data.pending}
           showRawData={true}
-          legendTitle={overlayVariable?.displayName}
+          legendTitle={axisLabelWithUnit(overlayVariable)}
         />
         <VariableCoverageTable
           completeCases={data.pending ? undefined : data.value?.completeCases}
@@ -328,18 +328,18 @@ function BoxplotViz(props: VisualizationProps) {
             {
               role: 'X-axis',
               required: true,
-              display: xAxisVariable?.displayName,
+              display: axisLabelWithUnit(xAxisVariable),
               variable: vizConfig.xAxisVariable,
             },
             {
               role: 'Y-axis',
               required: true,
-              display: yAxisVariable?.displayName,
+              display: axisLabelWithUnit(yAxisVariable),
               variable: vizConfig.yAxisVariable,
             },
             {
               role: 'Overlay',
-              display: overlayVariable?.displayName,
+              display: axisLabelWithUnit(overlayVariable),
               variable: vizConfig.overlayVariable,
             },
           ]}
