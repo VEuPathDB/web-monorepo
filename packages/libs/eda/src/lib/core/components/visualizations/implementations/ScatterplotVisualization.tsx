@@ -51,7 +51,10 @@ import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 import { StudyEntity } from '../../../types/study';
 import { vocabularyWithMissingData } from '../../../utils/analysis';
 import { gray } from '../colors';
-import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
+import {
+  ColorPaletteDefault,
+  ColorPaletteDark,
+} from '@veupathdb/components/lib/types/plots/addOns';
 
 // define PromiseXYPlotData
 interface PromiseXYPlotData extends CoverageStatistics {
@@ -683,24 +686,12 @@ function processInputData<T extends number | string>(
     }
   };
 
-  // darker color pallette
-  const darkerColorPalette = [
-    'rgb(115, 28, 72)',
-    'rgb(113, 194, 234)',
-    'rgb(133, 133, 44)',
-    'rgb(43, 28, 115)',
-    'rgb(60, 151, 136)',
-    'rgb(215, 196, 98)',
-    'rgb(197, 82, 102)',
-    'rgb(13, 96, 41)',
-  ];
-
-  // function to return color or gray where needed if showMissingness == true
-  const darkerColor = (index: number) => {
+  // using dark color: function to return color or gray where needed if showMissingness == true
+  const markerColorDark = (index: number) => {
     if (showMissingness && index === plotDataSet.data.length - 1) {
       return gray;
     } else {
-      return darkerColorPalette[index] ?? 'black'; // TO DO: decide on overflow behaviour
+      return ColorPaletteDark[index] ?? 'black'; // TO DO: decide on overflow behaviour
     }
   };
 
@@ -868,7 +859,7 @@ function processInputData<T extends number | string>(
         mode: 'lines', // no data point is displayed: only line
         line: {
           // use darker color for smoothed mean line
-          color: darkerColor(index),
+          color: markerColorDark(index),
           shape: 'spline',
           width: 2,
         },
@@ -912,7 +903,7 @@ function processInputData<T extends number | string>(
         fill: 'tozeroy',
         opacity: 0.2,
         // use darker color for smoothed mean's confidence interval
-        fillcolor: darkerColor(index),
+        fillcolor: markerColorDark(index),
         // type: 'line',
         type: 'scattergl',
         // here, line means upper and lower bounds
@@ -963,7 +954,7 @@ function processInputData<T extends number | string>(
         mode: 'lines', // no data point is displayed: only line
         line: {
           // use darker color for best fit line
-          color: darkerColor(index),
+          color: markerColorDark(index),
           shape: 'spline',
         },
         // use scattergl
