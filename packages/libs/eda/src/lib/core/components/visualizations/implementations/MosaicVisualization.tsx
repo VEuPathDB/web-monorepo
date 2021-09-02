@@ -24,8 +24,8 @@ import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
-import contingency from './selectorIcons/contingency.svg';
-import mosaic from './selectorIcons/mosaic.svg';
+import rxc from './selectorIcons/RxC.svg';
+import twoxtwo from './selectorIcons/2x2.svg';
 import Tabs from '@veupathdb/components/lib/components/Tabs';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
@@ -73,7 +73,7 @@ function ContTableSelectorComponent() {
     <img
       alt="RxC contingency table"
       style={{ height: '100%', width: '100%' }}
-      src={mosaic}
+      src={rxc}
     />
   );
 }
@@ -91,7 +91,7 @@ function TwoByTwoSelectorComponent() {
     <img
       alt="2x2 contingency table"
       style={{ height: '100%', width: '100%' }}
-      src={contingency}
+      src={twoxtwo}
     />
   );
 }
