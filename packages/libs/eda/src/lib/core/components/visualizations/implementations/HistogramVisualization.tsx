@@ -374,7 +374,7 @@ function HistogramPlotWithControls({
     ref.current
       ?.toImage({ format: 'svg', ...plotDimensions })
       .then(updateThumbnail);
-  }, [updateThumbnail, data]);
+  }, [updateThumbnail, data, histogramProps.dependentAxisLogScale]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
