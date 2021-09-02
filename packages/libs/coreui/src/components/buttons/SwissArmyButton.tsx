@@ -1,9 +1,13 @@
 import React from 'react';
 import { useState } from 'react';
 
-import { DARK_BLUE, DARK_GRAY, LIGHT_BLUE } from '../../constants/colors';
+// Various Icon Imports
+import CloudDownload from '@material-ui/icons/CloudDownload';
+import AddCircle from '@material-ui/icons/AddCircle';
 
-export type ButtonProps = {
+import { DARK_BLUE, LIGHT_BLUE } from '../../constants/colors';
+
+export type SwissArmyButtonProps = {
   /** Text of the button */
   text: string;
   /** Action to take when the button is clicked. */
@@ -17,29 +21,33 @@ export type ButtonProps = {
    * valid CSS color definition. Defaults to LIGHT_BLUE */
   color?: string;
   /** Color to use for outline/fill when the button is pressed. */
-  onPressColor?: string;
+  pressedColor?: string;
   /** Button text color. Defaults to LIGHT_BLUE if type is
    * `outlined` or white if type is `solid`. */
   textColor?: string;
+  /** Optional. Icon selector. */
+  icon?: 'new' | 'download';
   /** Additional styles to apply to the widget container. */
   styleOverrides?: React.CSSProperties;
 };
 
 /** Basic button with a variety of customization options. */
-export default function Button({
+export default function SwissArmyButton({
   text,
   onPress,
   type = 'solid',
   size = 'medium',
   color = LIGHT_BLUE,
-  onPressColor,
+  pressedColor = DARK_BLUE,
   textColor,
+  icon,
   styleOverrides = {},
-}: ButtonProps) {
+}: SwissArmyButtonProps) {
   const [pressed, setPressed] = useState(false);
   // TODO: useTheme
 
-  const calculatedOnPressColor = onPressColor ? onPressColor : color;
+  const calculatedOnPressColor = pressedColor ? pressedColor : color;
+  console.log('INITIAL', pressedColor, color);
 
   /**
    * If textColor is specified, use it. Otherwise if `type` is solid, use
@@ -57,12 +65,27 @@ export default function Button({
   const calculatedFontSize = size === 'large' ? '1rem' : '.80rem';
   const horizontalPadding = size === 'large' ? 15 : 15;
 
+  const renderIcon = (icon: SwissArmyButtonProps['icon']) => {
+    // TODO: Make this more efficient.
+    switch (icon) {
+      case 'download':
+        return <CloudDownload css={{ paddingRight: 10 }} fontSize={size} />;
+      case 'new':
+        return <AddCircle css={{ paddingRight: 10 }} fontSize={size} />;
+
+      default:
+        break;
+    }
+  };
+
   return (
     <>
       <button
         css={[
           {
             height: size === 'large' ? 50 : size === 'medium' ? 35 : 25,
+            display: 'flex',
+            alignItems: 'center',
             paddingLeft: horizontalPadding,
             paddingRight: horizontalPadding,
             color: calculatedTextColor,
@@ -71,7 +94,7 @@ export default function Button({
             fontWeight: 600,
             fontSize: calculatedFontSize,
             filter:
-              pressed && !onPressColor ? 'brightness(75%)' : 'brightness(100%)',
+              pressed && !pressedColor ? 'brightness(75%)' : 'brightness(100%)',
           },
           type === 'solid'
             ? {
@@ -87,15 +110,14 @@ export default function Button({
           { ...styleOverrides },
         ]}
         onMouseDown={() => {
-          console.log('Hello');
           setPressed(true);
         }}
         onMouseUp={() => {
-          console.log(calculatedOnPressColor, onPressColor, color);
           setPressed(false);
         }}
         onClick={onPress}
       >
+        {icon && renderIcon(icon)}
         {text}
       </button>
     </>

@@ -1,14 +1,18 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
 
-import Button, { ButtonProps } from '../components/buttons/Button';
+import SwissArmyButton, {
+  SwissArmyButtonProps,
+} from '../components/buttons/SwissArmyButton';
 import { DARK_ORANGE, LIGHT_GREEN } from '../constants/colors';
 
 export default {
-  title: 'Controls/Button',
-  component: Button,
+  title: 'Controls/SwissArmyButton',
+  component: SwissArmyButton,
 } as Meta;
 
-const Template: Story<ButtonProps> = (args) => <Button {...args} />;
+const Template: Story<SwissArmyButtonProps> = (args) => (
+  <SwissArmyButton {...args} />
+);
 export const Default = Template.bind({});
 Default.args = {
   text: 'Hello Developer',
@@ -20,7 +24,16 @@ Outlined.args = {
   type: 'outlined',
 };
 
-export const CustomColors: Story<Omit<ButtonProps, 'type'>> = (args) => (
+export const WithIcon = Template.bind({});
+WithIcon.args = {
+  text: 'Button With Icon',
+  icon: 'download',
+  type: 'outlined',
+};
+
+export const CustomColors: Story<Omit<SwissArmyButtonProps, 'type'>> = (
+  args
+) => (
   <div
     css={{
       display: 'flex',
@@ -29,14 +42,14 @@ export const CustomColors: Story<Omit<ButtonProps, 'type'>> = (args) => (
       maxWidth: 200,
     }}
   >
-    <Button {...args} styleOverrides={{ marginBottom: 10 }} />
-    <Button {...args} type='outlined' />
+    <SwissArmyButton {...args} styleOverrides={{ marginBottom: 10 }} />
+    <SwissArmyButton {...args} type='outlined' />
   </div>
 );
 CustomColors.args = {
   text: 'Customized Colors',
   color: LIGHT_GREEN,
-  onPressColor: DARK_ORANGE,
+  pressedColor: DARK_ORANGE,
 };
 CustomColors.argTypes = {
   type: {

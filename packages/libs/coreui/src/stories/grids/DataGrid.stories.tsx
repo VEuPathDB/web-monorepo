@@ -1,5 +1,5 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
-import { DataGrid, DataGridProps } from '../../components/grids/DataGrid';
+import DataGrid, { DataGridProps } from '../../components/grids/DataGrid';
 
 export default {
   title: 'Grids/DataGrid',

@@ -4,4 +4,9 @@ export { default as H3 } from './components/headers/H3';
 export { default as H4 } from './components/headers/H3';
 export { default as H5 } from './components/headers/H3';
 
+export { default as SwissArmyButton } from './components/buttons/SwissArmyButton';
+
+export { default as DataGrid } from './components/grids/DataGrid';
+export { default as FullScreenModal } from './components/modals/FullScreenModal';
+
 export { default as styles } from './styleDefinitions';

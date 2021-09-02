@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/core-components",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Core components and style definitions for VEuPath applications.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -25,6 +25,8 @@
   },
   "homepage": "https://github.com/VEuPathDB/core-components#readme",
   "dependencies": {
+    "@material-ui/core": "^4.12.3",
+    "@material-ui/icons": "^4.11.2",
     "@types/react-table": "^7.7.2",
     "react-modal": "^3.14.3",
     "react-table": "^7.7.0"

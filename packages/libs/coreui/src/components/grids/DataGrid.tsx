@@ -16,7 +16,7 @@ export type DataGridProps = {
   };
 };
 
-export function DataGrid({
+export default function DataGrid({
   columns,
   data,
   title,
