@@ -937,15 +937,50 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/eda@^0.10.10":
-  version "0.10.10"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.10.10.tgz#e8d8c82e96933ceab1c496ddfb0f020b50fedc7b"
-  integrity sha512-NRRlkp26vhQsorm7Rpyg/+6bl620JRSMl2Ukl3bzIRszXYEftWhC5itbGjQuaNR87hdQW/hRrs0fwIZ/OCIwfQ==
+"@veupathdb/components@^0.7.6":
+  version "0.7.6"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.7.6.tgz#58dabf5a0f452b103b93d77c9f536d57c39c9d82"
+  integrity sha512-BXoy7luT/4yC90yXRCPaOyYl2PMt3za2NrsdHVsnKP+j7il8NY8oc+YLT2wpfEZmea0hZMnMLddSZPGL0yxPtw==
+  dependencies:
+    "@material-ui/core" "^4.11.2"
+    "@material-ui/icons" "^4.11.2"
+    "@material-ui/lab" "^4.0.0-alpha.57"
+    "@types/date-arithmetic" "^4.1.1"
+    "@visx/gradient" "^1.0.0"
+    "@visx/group" "^1.0.0"
+    "@visx/hierarchy" "^1.0.0"
+    "@visx/shape" "^1.4.0"
+    "@visx/text" "^1.3.0"
+    "@visx/tooltip" "^1.3.0"
+    "@visx/visx" "^1.1.0"
+    bootstrap "^4.5.2"
+    date-arithmetic "^4.1.0"
+    debounce-promise "^3.1.2"
+    latlon-geohash "^2.0.0"
+    leaflet "^1.6.0"
+    leaflet-drift-marker "^1.0.3"
+    luxon "^1.25.0"
+    plotly.js "^1.54.1"
+    re-resizable "^6.9.0"
+    react "^16.13.1"
+    react-bootstrap "^1.3.0"
+    react-cool-dimensions "^1.1.11"
+    react-dom "^16.13.1"
+    react-html-parser "^2.0.2"
+    react-leaflet "^2.7.0"
+    react-plotly.js "^2.4.0"
+    react-transition-group "^4.4.1"
+    shape2geohash "^1.2.5"
+
+"@veupathdb/eda@^0.11.2":
+  version "0.11.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.11.2.tgz#9bb8a43ec1575432e78fa18f4530e0acdb336bf5"
+  integrity sha512-z3QSUYEiHpqnWbzCg/ed2itwmW0jUqEZQBNcRfdKkVZ+pHl6x6d/x5Suwm5WWs6TF90I+Z7oW0XnUxfluzqA0Q==
   dependencies:
     "@material-ui/core" "^4.11.3"
     "@material-ui/lab" "^4.0.0-alpha.58"
     "@types/debounce-promise" "^3.1.3"
-    "@veupathdb/components" "^0.7.3"
+    "@veupathdb/components" "^0.7.6"
     "@veupathdb/wdk-client" "^0.2.0"
     "@veupathdb/web-common" "^0.1.5"
     debounce-promise "^3.1.2"
