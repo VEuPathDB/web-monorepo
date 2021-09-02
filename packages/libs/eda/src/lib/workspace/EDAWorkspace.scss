@@ -191,7 +191,7 @@
     grid:
       [row1-start] '.             filter-chips tabular-download' auto [row1-end]
       [row2-start] 'variables     filter       filter' 1fr [row2-end]
-      / auto 1fr auto;
+      / 20% 1fr auto;
     gap: 1em 3em;
     padding-top: 1em;
     .Variables {

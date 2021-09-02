@@ -24,7 +24,7 @@ import UnknownCount from '@veupathdb/wdk-client/lib/Components/AttributeFilter/U
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import { number, partial, TypeOf, boolean, type, intersection } from 'io-ts';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { usePromise } from '../../hooks/promise';
 import { AnalysisState } from '../../hooks/analysis';
 import { useSubsettingClient } from '../../hooks/workspace';
@@ -36,6 +36,10 @@ import { HistogramVariable } from './types';
 import { fullISODateRange, padISODateTime } from '../../utils/date-conversion';
 import { getDistribution } from './util';
 import { DistributionResponse } from '../../api/subsetting-api';
+// reusable util for computing truncationConfig
+import { truncationConfig } from '../../utils/truncation-config-utils';
+// use Notification for truncation warning message
+import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../utils/axis-label-unit';
 
@@ -47,9 +51,10 @@ type Props = {
   analysisState: AnalysisState;
 };
 
-type UIState = TypeOf<typeof UIState>;
+// export UIState
+export type UIState = TypeOf<typeof UIState>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-const UIState = intersection([
+export const UIState = intersection([
   type({
     binWidth: number,
     independentAxisRange: NumberOrDateRange,
@@ -98,14 +103,15 @@ export function HistogramFilter(props: Props) {
       binWidth: binWidth ?? 1,
       binWidthTimeUnit: binUnits ?? variable.binUnits!, // bit nasty!
       independentAxisRange:
+        // use Zulu time here to be consistent with uiState.independentAxisRange
         variable.displayRangeMin != null && variable.displayRangeMax != null
           ? {
-              min: variable.displayRangeMin + 'T00:00:00',
-              max: variable.displayRangeMax + 'T00:00:00',
+              min: variable.displayRangeMin + 'T00:00:00Z',
+              max: variable.displayRangeMax + 'T00:00:00Z',
             }
           : {
-              min: variable.rangeMin + 'T00:00:00',
-              max: variable.rangeMax + 'T00:00:00',
+              min: variable.rangeMin + 'T00:00:00Z',
+              max: variable.rangeMax + 'T00:00:00Z',
             },
       ...otherDefaults,
     };
@@ -384,6 +390,16 @@ function HistogramPlotWithControls({
   variable,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
+  // set the state of truncation warning message
+  const [
+    truncatedIndependentAxisWarning,
+    setTruncatedIndependentAxisWarning,
+  ] = useState<string>('');
+  const [
+    truncatedDependentAxisWarning,
+    setTruncatedDependentAxisWarning,
+  ] = useState<string>('');
+
   const handleBinWidthChange = useCallback(
     (newBinWidth: NumberOrTimeDelta) => {
       updateUIState({
@@ -422,6 +438,8 @@ function HistogramPlotWithControls({
       binWidth: defaultUIState.binWidth,
       binWidthTimeUnit: defaultUIState.binWidthTimeUnit,
     });
+    // add reset for truncation message as well
+    setTruncatedIndependentAxisWarning('');
   }, [
     defaultUIState.binWidth,
     defaultUIState.binWidthTimeUnit,
@@ -446,6 +464,8 @@ function HistogramPlotWithControls({
       dependentAxisRange: undefined,
       dependentAxisLogScale: defaultUIState.dependentAxisLogScale,
     });
+    // add reset for truncation message as well
+    setTruncatedDependentAxisWarning('');
   }, [defaultUIState.dependentAxisLogScale, updateUIState]);
 
   const handleDependentAxisLogScale = useCallback(
@@ -510,6 +530,37 @@ function HistogramPlotWithControls({
 
   const widgetHeight = '4em';
 
+  // set truncation flags: will see if this is reusable with other application
+  const {
+    truncationConfigIndependentAxisMin,
+    truncationConfigIndependentAxisMax,
+    truncationConfigDependentAxisMin,
+    truncationConfigDependentAxisMax,
+  } = useMemo(() => truncationConfig(defaultUIState, uiState), [
+    defaultUIState,
+    uiState,
+  ]);
+
+  // set useEffect for changing truncation warning message
+  useEffect(() => {
+    if (
+      truncationConfigIndependentAxisMin ||
+      truncationConfigIndependentAxisMax
+    ) {
+      setTruncatedIndependentAxisWarning(
+        'Data has been truncated (light gray area) by range selection'
+      );
+    }
+  }, [truncationConfigIndependentAxisMin, truncationConfigIndependentAxisMax]);
+
+  useEffect(() => {
+    if (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) {
+      setTruncatedDependentAxisWarning(
+        'Data may have been truncated (light gray area) by range selection'
+      );
+    }
+  }, [truncationConfigDependentAxisMin, truncationConfigDependentAxisMax]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <SelectedRangeControl
@@ -540,6 +591,17 @@ function HistogramPlotWithControls({
           orientation: 'horizontal',
           verticalPaddingAdjustment: 20,
         }}
+        // pass axisTruncationConfig
+        axisTruncationConfig={{
+          independentAxis: {
+            min: truncationConfigIndependentAxisMin,
+            max: truncationConfigIndependentAxisMax,
+          },
+          dependentAxis: {
+            min: truncationConfigDependentAxisMin,
+            max: truncationConfigDependentAxisMax,
+          },
+        }}
       />
 
       <div style={{ display: 'flex', flexDirection: 'row' }}>
@@ -562,7 +624,18 @@ function HistogramPlotWithControls({
             }}
             allowPartialRange={false}
           />
-
+          {/* truncation notification */}
+          {truncatedDependentAxisWarning ? (
+            <Notification
+              title="Information"
+              text={truncatedDependentAxisWarning}
+              // this was defined as LIGHT_BLUE
+              color={'#5586BE'}
+              onAcknowledgement={() => {
+                setTruncatedDependentAxisWarning('');
+              }}
+            />
+          ) : null}
           <Button
             type={'outlined'}
             text={'Reset Y-axis to defaults'}
@@ -597,7 +670,18 @@ function HistogramPlotWithControls({
             onRangeChange={handleIndependentAxisRangeChange}
             valueType={data?.valueType}
           />
-
+          {/* truncation notification */}
+          {truncatedIndependentAxisWarning ? (
+            <Notification
+              title="Information"
+              text={truncatedIndependentAxisWarning}
+              // this was defined as LIGHT_BLUE
+              color={'#5586BE'}
+              onAcknowledgement={() => {
+                setTruncatedIndependentAxisWarning('');
+              }}
+            />
+          ) : null}
           <Button
             type={'outlined'}
             text={'Reset X-axis to defaults'}
