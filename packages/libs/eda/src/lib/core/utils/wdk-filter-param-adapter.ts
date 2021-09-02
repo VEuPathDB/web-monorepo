@@ -76,7 +76,7 @@ export function toEdaFilter(filter: WdkFilter, entityId: string): EdaFilter {
             ),
           };
         default:
-          throw new Error('Unsupported filter');
+          throw new Error('Unsupported filter type: ' + (filter as any).type);
       }
     }
   }
