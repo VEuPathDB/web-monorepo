@@ -227,13 +227,21 @@ function PlotlyPlot<T>(
 
   const plotId = useMemo(() => uniqueId('plotly_plot_div_'), []);
 
-  useImperativeHandle<PlotRef, PlotRef>(ref, () => ({
-    toImage: async (imageOpts: ToImgopts) => {
-      await sharedImport.promise;
-      await new Promise((resolve) => setTimeout(resolve, 0));
-      return toImage(plotId, imageOpts);
-    },
-  }));
+  useImperativeHandle<PlotRef, PlotRef>(
+    ref,
+    () => ({
+      toImage: async (imageOpts: ToImgopts) => {
+        try {
+          await sharedImport.promise;
+          return await toImage(plotId, imageOpts);
+        } catch (error) {
+          console.error('Could not create image for plot:', error);
+        }
+        return '';
+      },
+    }),
+    [plotId]
+  );
 
   return (
     <Suspense fallback="Loading...">
