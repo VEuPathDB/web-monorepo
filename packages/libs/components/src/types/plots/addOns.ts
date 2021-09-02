@@ -114,7 +114,7 @@ export const ColorPaletteDefault: string[] = [
   'rgb(17,119,51)',
 ];
 
-/** Darker color pallette for Scatter plot viz for now */
+/** Darker color palette, useful for overlay traces, such as smoothed mean in scatter plots */
 export const ColorPaletteDark: string[] = [
   'rgb(115, 28, 72)',
   'rgb(113, 194, 234)',
