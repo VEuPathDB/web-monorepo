@@ -1,5 +1,5 @@
 import React from 'react';
-import PlotlyPlot, { PlotProps } from './PlotlyPlot';
+import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
 import { MosaicData } from '../types/plots';
 import { PlotParams } from 'react-plotly.js';
 import _ from 'lodash';
@@ -20,85 +20,82 @@ export const EmptyMosaicData: MosaicData = {
   dependentLabels: [],
 };
 
-export default function MosaicPlot({
-  data = EmptyMosaicData,
-  independentAxisLabel,
-  dependentAxisLabel,
-  colors,
-  showColumnLabels,
-  ...restProps
-}: MosaicPlotProps) {
-  // Column widths
-  const raw_widths = _.unzip(data.values).map((arr) => _.sum(arr));
-  const sum_raw_widths = _.sum(raw_widths);
-  const percent_widths = raw_widths.map(
-    (width) => (width / sum_raw_widths) * 100
-  );
+const MosaicPlot = makePlotlyPlotComponent(
+  'MosaicPlot',
+  ({
+    data = EmptyMosaicData,
+    independentAxisLabel,
+    dependentAxisLabel,
+    colors,
+    showColumnLabels,
+    ...restProps
+  }: MosaicPlotProps) => {
+    // Column widths
+    const raw_widths = _.unzip(data.values).map((arr) => _.sum(arr));
+    const sum_raw_widths = _.sum(raw_widths);
+    const percent_widths = raw_widths.map(
+      (width) => (width / sum_raw_widths) * 100
+    );
 
-  const column_centers = percent_widths.map((width, i) => {
-    // Sum of the widths of previous columns
-    const column_start = _.sum(percent_widths.slice(0, i));
-    return column_start + width / 2;
-  });
+    const column_centers = percent_widths.map((width, i) => {
+      // Sum of the widths of previous columns
+      const column_start = _.sum(percent_widths.slice(0, i));
+      return column_start + width / 2;
+    });
 
-  const layout = {
-    xaxis: {
-      tickvals: column_centers,
-      ticktext:
-        showColumnLabels !== false
-          ? data.independentLabels.map(
-              (value, i) =>
-                `<b>${value}</b> ${percent_widths[i].toFixed(1)}% (${raw_widths[
-                  i
-                ].toLocaleString('en-US')})`
-            )
-          : undefined,
-      range: [0, 100] as number[],
-    },
-    yaxis: {
-      title: dependentAxisLabel && dependentAxisLabel + ' (Proportion)',
-      range: [0, 100] as number[],
-      tickvals: [0, 20, 40, 60, 80, 100] as number[],
-    },
-    barmode: 'stack',
-    barnorm: 'percent',
-  } as const;
+    const layout = {
+      xaxis: {
+        tickvals: column_centers,
+        ticktext:
+          showColumnLabels !== false
+            ? data.independentLabels
+            : new Array(data.independentLabels.length).fill(''),
+        range: [0, 100] as number[],
+      },
+      yaxis: {
+        title: dependentAxisLabel && dependentAxisLabel + ' (Proportion)',
+        range: [0, 100] as number[],
+        tickvals: [0, 20, 40, 60, 80, 100] as number[],
+      },
+      barmode: 'stack',
+      barnorm: 'percent',
+    } as const;
 
-  const plotlyReadyData: PlotParams['data'] = data.values
-    .map(
-      (counts, i) =>
-        ({
-          x: column_centers,
-          y: counts,
-          name: data.dependentLabels[i],
-          hoverinfo: 'text',
-          hovertext: counts.map(
-            (count, j) =>
-              `<b>${data.dependentLabels[i]}</b> ${(
-                (count / raw_widths[j]) *
-                100
-              ).toFixed(1)}% (${count.toLocaleString('en-US')})`
-          ),
-          width: percent_widths,
-          type: 'bar',
-          marker: {
-            line: {
-              // Borders between blocks
-              width: 2,
-              color: 'white',
+    const plotlyReadyData: PlotParams['data'] = data.values
+      .map(
+        (counts, i) =>
+          ({
+            x: column_centers,
+            y: counts,
+            name: data.dependentLabels[i],
+            hoverinfo: 'text',
+            hovertext: counts.map(
+              (count, j) =>
+                `<b>${data.dependentLabels[i]}</b> ${count.toLocaleString(
+                  'en-US'
+                )} (${((count / raw_widths[j]) * 100).toFixed(1)}%)`
+            ),
+            width: percent_widths,
+            type: 'bar',
+            marker: {
+              line: {
+                // Borders between blocks
+                width: 1,
+                color: 'white',
+              },
+              color: colors ? colors[i] : undefined,
             },
-            color: colors ? colors[i] : undefined,
-          },
-        } as const)
-    )
-    .reverse(); // Reverse so first trace is on top, matching data array
+          } as const)
+      )
+      .reverse(); // Reverse so first trace is on top, matching data array
 
-  return (
-    <PlotlyPlot
-      data={plotlyReadyData}
-      layout={layout}
-      legendTitle={dependentAxisLabel}
-      {...restProps}
-    />
-  );
-}
+    return {
+      data: plotlyReadyData,
+      layout,
+      legendTitle: dependentAxisLabel,
+      ...restProps,
+    };
+  }
+);
+
+export default MosaicPlot;

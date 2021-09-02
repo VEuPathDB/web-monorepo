@@ -12,7 +12,7 @@ import HistogramControls from '../../components/plotControls/HistogramControls';
 import AxisRangeControl from '../../components/plotControls/AxisRangeControl';
 import { binDailyCovidStats } from '../api/covidData';
 import { binGithubEventDates } from '../api/githubDates';
-import { HistogramData } from '../../types/plots';
+import { HistogramData, AxisTruncationConfig } from '../../types/plots';
 
 export default {
   title: 'Plots/Histogram',
@@ -355,6 +355,11 @@ const TemplateStaticWithRangeControls: Story<HistogramProps> = (args) => {
     setIndependentAxisRange,
   ] = useState<NumberOrDateRange>();
 
+  const [
+    axisTruncationConfig,
+    setAxisTruncationConfig,
+  ] = useState<AxisTruncationConfig>({});
+
   const handleDependentAxisRangeChange = async (
     newRange?: NumberOrDateRange
   ) => {
@@ -367,10 +372,59 @@ const TemplateStaticWithRangeControls: Story<HistogramProps> = (args) => {
     setIndependentAxisRange(newRange);
   };
 
+  // here we figure out if any of the axes are truncated
+  useEffect(() => {
+    if (args.data == null) {
+      setAxisTruncationConfig({});
+      return;
+    }
+
+    const allBins = args.data.series.flatMap((series) => series.bins);
+
+    // if min is to the right of more than one binStart
+    // then it's left-truncated. (Histogram now adjusts the x-range to include partially cut off bins.)
+    const leftTruncated =
+      independentAxisRange?.min != null &&
+      allBins.filter((bin) => independentAxisRange.min >= bin.binStart).length >
+        1;
+
+    // if max is to the left of more than one binEnd
+    // then it's right-truncated. (Histogram now adjusts the x-range to include partially cut off bins.)
+    const rightTruncated =
+      independentAxisRange?.max != null &&
+      allBins.filter((bin) => independentAxisRange.max <= bin.binEnd).length >
+        1;
+
+    // filter to keep only bins that would be kept on the x-axis
+    const xFilteredBins = allBins.filter(
+      (bin) =>
+        (independentAxisRange?.min == null ||
+          bin.binEnd > independentAxisRange?.min) &&
+        (independentAxisRange?.max == null ||
+          bin.binStart < independentAxisRange?.max)
+    );
+
+    const topTruncated =
+      dependentAxisRange?.max != null &&
+      xFilteredBins.filter((bin) => bin.count > dependentAxisRange.max).length >
+        0;
+
+    const bottomTruncated =
+      dependentAxisRange?.min != null &&
+      xFilteredBins.filter((bin) => bin.count < dependentAxisRange.min).length >
+        0;
+
+    setAxisTruncationConfig({
+      independentAxis: { min: leftTruncated, max: rightTruncated },
+      dependentAxis: { min: bottomTruncated, max: topTruncated },
+    });
+  }, [args.data, dependentAxisRange, independentAxisRange]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Histogram
         {...args}
+        axisTruncationConfig={axisTruncationConfig}
         independentAxisRange={independentAxisRange}
         dependentAxisRange={dependentAxisRange}
       />
@@ -404,7 +458,8 @@ StaticDataWithRangeControls.args = {
     series: [
       {
         name: 'penguins',
-        bins: [42, 11, 99, 23, 7, 9].map((num, index) => ({
+        // added 0 for testing purpose
+        bins: [0, 42, 11, 99, 23, 7, 9].map((num, index) => ({
           binStart: index + 1,
           binEnd: index + 2,
           binLabel: `${index + 1} to ${index + 2}`,

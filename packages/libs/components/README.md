@@ -15,3 +15,20 @@ Clone this repo and run the following commands within the repo's directory:
 ## Storybook output for master
 
 See https://veupathdb.github.io/web-components
+
+## Troubleshooting
+
+This section documents issues that may arise during development.
+
+### "Can't resolve '\<module-name\>' ..."
+
+This is likely due to a module attempting to use a node library. This can be resolved by modifying [./.storybook/main.js](). For example, if the module name is "path", you would make the following change:
+
+```diff
+    config.node = {
+       ...config.node,
+       fs: 'empty',
++      path: 'empty',
+     }
+
+```
