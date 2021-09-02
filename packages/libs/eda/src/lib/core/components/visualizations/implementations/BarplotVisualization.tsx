@@ -339,7 +339,7 @@ function BarplotWithControls({
     ref.current
       ?.toImage({ format: 'svg', ...plotDimensions })
       .then((src) => updateThumbnail(src));
-  }, [data, updateThumbnail]);
+  }, [data, updateThumbnail, dependentAxisLogScale]);
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Barplot
