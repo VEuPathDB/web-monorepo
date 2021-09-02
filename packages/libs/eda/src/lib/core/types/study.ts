@@ -175,6 +175,11 @@ const _StudyEntityBase = t.intersection([
     idColumnName: t.string,
     displayName: t.string,
     description: t.string,
+    /**
+     * The variables associated with an entity. Note that this is
+     * separate from "children" (see `StudyEntitly`) which refers
+     * to actual sub-entities.
+     * */
     variables: t.array(VariableTreeNode),
   }),
   t.partial({
@@ -182,8 +187,10 @@ const _StudyEntityBase = t.intersection([
   }),
 ]);
 
-// export type StudyEntity = t.Unpack<typeof StudyEntity>;
 export type StudyEntity = _StudyEntityBase & {
+  /**
+   * Other entities which exist with a foreign key type parent-child relationship.
+   */
   children?: StudyEntity[];
 };
 export const StudyEntity: t.Type<StudyEntity> = t.recursion('StudyEntity', () =>
