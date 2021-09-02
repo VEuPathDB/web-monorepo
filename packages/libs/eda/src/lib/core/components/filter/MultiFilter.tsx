@@ -1,7 +1,17 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import { orderBy } from 'lodash';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import MultiFieldFilter from '@veupathdb/wdk-client/lib/Components/AttributeFilter/MultiFieldFilter';
-import { Filter as WdkFilter } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
+import {
+  FieldTreeNode,
+  Filter as WdkFilter,
+} from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
+
 import { AnalysisState } from '../../hooks/analysis';
+import { usePromise } from '../../hooks/promise';
+import { useSubsettingClient } from '../../hooks/workspace';
+import { MultiFilter as MultiFilterType } from '../../types/filter';
 import {
   MultiFilterVariable,
   StudyEntity,
@@ -9,15 +19,17 @@ import {
 } from '../../types/study';
 import {
   edaVariableToWdkField,
+  entitiesToFields,
   fromEdaFilter,
   makeFieldTree,
   toEdaFilter,
 } from '../../utils/wdk-filter-param-adapter';
-import { usePromise } from '../../hooks/promise';
-import { useSubsettingClient } from '../../hooks/workspace';
 import { getDistribution } from './util';
-import { orderBy } from 'lodash';
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { preorderSeq } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import {
+  isFilterField,
+  isMulti,
+} from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
 
 export interface Props {
   analysisState: AnalysisState;
@@ -54,26 +66,43 @@ export function MultiFilter(props: Props) {
   // - onRangeScaleChange
   // - hideFieldPanel
   // - selectByDefault
+
+  // Create WDK Fields
   const fields = useMemo(
     () =>
-      entity.variables.map((variable) =>
-        edaVariableToWdkField(
-          {
-            ...variable,
-            parentId:
-              variable.parentId === entity.id ? undefined : variable.parentId,
-          },
-          { includeMultiFilters: true }
-        )
-      ),
+      // This function uses {entity.id}/{variable.id} to generate a field's term
+      // and parent property value. That is not desired here, so we have to do
+      // some post-processing to use {variable.id} for those properties.
+      entitiesToFields([entity], { includeMultiFilters: true })
+        .filter((field) => !field.term.startsWith('entity:'))
+        .map((field) => ({
+          ...field,
+          term: field.term.split('/')[1],
+          parent: field.parent?.startsWith('entity:')
+            ? undefined
+            : field.parent?.split('/')[1],
+        })),
     [entity]
   );
+
+  // Create a WDK FieldTree
   const fieldTree = useMemo(() => makeFieldTree(fields), [fields]);
-  const activeField = fields.find((field) => field.term === variable.id);
-  if (activeField == null) throw new Error('Could not find active field');
+
+  // Find active field
+  const activeFieldNode: FieldTreeNode | undefined = preorderSeq(
+    fieldTree
+  ).find((node) => node.field.term === variable.id);
+  if (activeFieldNode == null) throw new Error('Could not find active field');
+  const activeField = activeFieldNode?.field;
+
+  // Find leaves
   const leaves = useMemo(
-    () => fields.filter((field) => field.parent === activeField.term),
-    [fields, activeField.term]
+    () =>
+      preorderSeq(activeFieldNode)
+        .filter((node) => isFilterField(node.field) && !isMulti(node.field))
+        .map((node) => node.field)
+        .toArray(),
+    [activeFieldNode]
   );
 
   const [sort, setSort] = useState<{
@@ -96,26 +125,69 @@ export function MultiFilter(props: Props) {
 
   const subsettingClient = useSubsettingClient();
 
-  // Serialize other filters to a string so that the same set of "otherFilters"
-  // doesn't trigger a new request for leafSummaries
-  const otherFiltersJson = useMemo(() => {
-    if (analysisState.analysis?.filters == null) return;
-    return JSON.stringify(
-      analysisState.analysis.filters.filter(
-        (f) => f.entityId !== entity.id || f.variableId !== variable.id
-      )
-    );
-  }, [analysisState.analysis?.filters, entity.id, variable.id]);
+  // Counts are only updated for this variable under two conditions:
+  // 1. Filters for other variables are changed
+  // 2. Subfilters for this variable are changed AND operation is intersect
+  //
+  // This is managed by holding the filter for this variable in a state variable.
+  // Users can demand counts be updated by clicking on an "Update counts" button.
 
+  // This value is used to update `countsAreCurrent`, and to update
+  // the state variable `thisFilter` when "Update counts" is clicked.
+  const _thisFilter = findThisFilter(analysisState, entity, variable);
+
+  // Filter assocated with this variable. This is used to retreive counts.
+  // We're using state so that we can defer updating counts until the user
+  // clicks on an "update counts" button.
+  const [thisFilter, setThisFilter] = useState<MultiFilterType | undefined>(
+    _thisFilter
+  );
+
+  // Use a JSON string here so that we don't udpate counts for every render.
+  // array.filter will always return a _new_ array, but strings are immutable,
+  // so this trick will cause same-valued arrays to be referentially equal.
+  const otherFiltersJson = useMemo(
+    () =>
+      JSON.stringify(
+        analysisState.analysis?.filters.filter(
+          (filter) =>
+            !(
+              filter.entityId === entity.id && filter.variableId === variable.id
+            )
+        )
+      ),
+    [analysisState.analysis?.filters, entity.id, variable.id]
+  );
+
+  // State used to control if the "Update counts" button is disabled.
+  const [countsAreCurrent, setCountsAreCurrent] = useState(true);
+
+  useEffect(() => {
+    setCountsAreCurrent(_thisFilter === thisFilter);
+  }, [_thisFilter, thisFilter]);
+
+  // Counts retrieved from the backend, used for the table display.
   const leafSummariesPromise = usePromise(
     useCallback(() => {
+      const otherFilters = JSON.parse(otherFiltersJson);
       return Promise.all(
-        leaves.map((leaf) =>
-          getDistribution(
+        leaves.map((leaf) => {
+          const thisFilterWithoutLeaf = thisFilter && {
+            ...thisFilter,
+            subFilters: thisFilter.subFilters.filter(
+              (f) => f.variableId !== leaf.term
+            ),
+          };
+          return getDistribution(
             {
               entityId: entity.id,
               variableId: leaf.term,
-              filters: otherFiltersJson ? JSON.parse(otherFiltersJson) : [],
+              filters:
+                thisFilterWithoutLeaf == null ||
+                thisFilterWithoutLeaf.subFilters.length === 0 ||
+                thisFilterWithoutLeaf.operation === 'union'
+                  ? otherFilters
+                  : [...(otherFilters || []), thisFilterWithoutLeaf],
             },
             (filters) =>
               subsettingClient.getDistribution(
@@ -153,18 +225,21 @@ export function MultiFilter(props: Props) {
               internalsFilteredCount:
                 distribution.foreground.statistics.numDistinctEntityRecords,
             };
-          })
-        )
+          });
+        })
       );
     }, [
+      thisFilter,
+      otherFiltersJson,
       leaves,
       entity.id,
-      otherFiltersJson,
       subsettingClient,
       studyMetadata.id,
     ])
   );
 
+  // Sorted counts. This is done separately from retrieving the data so that
+  // updates to sorting don't incur backend requests.
   const orderedLeafSummaries = useMemo(
     () =>
       orderBy(
@@ -186,6 +261,7 @@ export function MultiFilter(props: Props) {
     [leafSummariesPromise.value, sort.columnKey, sort.direction]
   );
 
+  // Update analysis filter - need to convert from WDK to EDA filter.
   const handleFiltereChange = useCallback(
     (nextFilters: WdkFilter[]) => {
       const edaFilters = nextFilters
@@ -204,6 +280,7 @@ export function MultiFilter(props: Props) {
     [analysisState, entity.id]
   );
 
+  // Compose activeFieldState, used by MultiFieldFilter
   const activeFieldState = useMemo(
     () => ({
       invalid: leafSummariesPromise.error != null,
@@ -221,14 +298,17 @@ export function MultiFilter(props: Props) {
     ]
   );
 
-  const filters = useMemo(
+  // Convert EDA filters to WDK filters.
+  const wdkFilters = useMemo(
     () => analysisState.analysis?.filters.map(fromEdaFilter),
     [analysisState.analysis?.filters]
   );
 
+  // Prevent table from displaying "no data" message
   if (leafSummariesPromise.pending && leafSummariesPromise.value == null)
     return <Loading>Loading data...</Loading>;
 
+  // Show error to user
   if (leafSummariesPromise.error)
     return <div>{String(leafSummariesPromise.error)}</div>;
 
@@ -237,11 +317,21 @@ export function MultiFilter(props: Props) {
       {leafSummariesPromise.pending && (
         <Loading style={{ position: 'absolute', right: 0, left: 0, top: 0 }} />
       )}
+      <button
+        className="btn"
+        type="button"
+        disabled={countsAreCurrent}
+        onClick={() => {
+          setThisFilter(_thisFilter);
+        }}
+      >
+        Update counts
+      </button>
       <MultiFieldFilter
         displayName={entity.displayNamePlural}
         dataCount={totalEntityCount}
         filteredDataCount={filteredEntityCount}
-        filters={filters}
+        filters={wdkFilters}
         activeField={activeField}
         activeFieldState={activeFieldState}
         fieldTree={fieldTree}
@@ -250,5 +340,43 @@ export function MultiFilter(props: Props) {
         onMemberSearch={onMemberSearch}
       />
     </div>
+  );
+}
+
+/**
+ * Helper function to find the filter associated with an entity/variable
+ * @param analysisState
+ * @param entity
+ * @param variable
+ */
+function findThisFilter(
+  analysisState: AnalysisState,
+  entity: StudyEntity,
+  variable: { id: string; providerLabel: string; displayName: string } & {
+    parentId?: string | undefined;
+    definition?: string | undefined;
+    displayOrder?: number | undefined;
+    displayType?: 'default' | 'multifilter' | 'hidden' | undefined;
+    dataShape?: 'categorical' | 'ordinal' | 'binary' | 'continuous' | undefined;
+  } & { type: 'category'; displayType: 'multifilter' }
+):
+  | ({ entityId: string; variableId: string } & {
+      type: 'multiFilter';
+      operation: 'union' | 'intersect';
+      subFilters: { variableId: string; stringSet: string[] }[];
+    })
+  | (() =>
+      | ({ entityId: string; variableId: string } & {
+          type: 'multiFilter';
+          operation: 'union' | 'intersect';
+          subFilters: { variableId: string; stringSet: string[] }[];
+        })
+      | undefined)
+  | undefined {
+  return analysisState.analysis?.filters.find(
+    (filter): filter is MultiFilterType =>
+      filter.entityId === entity.id &&
+      filter.variableId === variable.id &&
+      filter.type === 'multiFilter'
   );
 }
