@@ -77,12 +77,9 @@ function ApiApplicationSpecificProperties(props) {
       : EMAIL_PREFERENCE_DATA_GENOMICS
   );
 
-  let showCrossBrcLink = (projectId != "ClinEpiDB" && projectId != "MicrobiomeDB");
-
   return (
       <fieldset>
         <legend>Preferences</legend>
-        { !showCrossBrcLink ? null : <p>Sign up for cross-BRC email alerts <a target="_blank" href="https://lists.brcgateway.org">here</a>.</p> }
         <p>Send me email alerts about:</p>
         <CheckboxList name="emailAlerts" items={emailPrefData}
                       value={emailPrefValue} onChange={onEmailPreferenceChange}/>
