@@ -3,6 +3,7 @@ import Mosaic, {
   MosaicPlotProps as MosaicProps,
 } from '@veupathdb/components/lib/plots/MosaicPlot';
 import { MosaicData } from '@veupathdb/components/lib/types/plots';
+import { ContingencyTable } from '@veupathdb/components/lib/components/ContingencyTable';
 // import { ErrorManagement } from '@veupathdb/components/lib/types/general';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
@@ -25,6 +26,7 @@ import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import contingency from './selectorIcons/contingency.svg';
 import mosaic from './selectorIcons/mosaic.svg';
+import Tabs from '@veupathdb/components/lib/components/Tabs';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 
@@ -248,6 +250,7 @@ function MosaicViz(props: Props) {
       yAxisVariable,
       computation.type,
       isTwoByTwo,
+      outputEntity?.id,
     ])
   );
 
@@ -309,20 +312,45 @@ function MosaicViz(props: Props) {
     );
   }
 
+  const xAxisLabel = axisLabelWithUnit(xAxisVariable);
+  const yAxisLabel = axisLabelWithUnit(yAxisVariable);
+  const width = '750px';
+  const height = '450px';
+
   const plotComponent = fullscreen ? (
     <div className="MosaicVisualization">
       <div className="MosaicVisualization-Plot">
-        <MosaicPlotWithControls
-          data={data.value && !data.pending ? data.value : undefined}
-          containerStyles={{
-            width: '750px',
-            height: '450px',
-          }}
-          independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-axis'}
-          dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-axis'}
-          displayLegend={true}
-          interactive
-          showSpinner={data.pending}
+        <Tabs
+          tabs={[
+            {
+              name: 'Mosaic',
+              content: (
+                <MosaicPlotWithControls
+                  data={data.value && !data.pending ? data.value : undefined}
+                  containerStyles={{
+                    width: width,
+                    height: height,
+                  }}
+                  independentAxisLabel={xAxisLabel ?? 'X-axis'}
+                  dependentAxisLabel={yAxisLabel ?? 'Y-axis'}
+                  displayLegend={true}
+                  interactive
+                  showSpinner={data.pending}
+                />
+              ),
+            },
+            {
+              name: 'Table',
+              content: (
+                <ContingencyTable
+                  data={data.value}
+                  containerStyles={{ width: width }}
+                  independentVariable={xAxisLabel ?? 'X-axis'}
+                  dependentVariable={yAxisLabel ?? 'Y-axis'}
+                />
+              ),
+            },
+          ]}
         />
       </div>
       <div
@@ -439,7 +467,9 @@ function MosaicViz(props: Props) {
       {fullscreen && (
         <OutputEntityTitle
           entity={outputEntity}
-          outputSize={data.pending ? undefined : data.value?.outputSize}
+          outputSize={
+            data.pending ? undefined : data.value?.completeCasesAllVars
+          }
         />
       )}
       {plotComponent}
@@ -489,9 +519,8 @@ export function contTableResponseToData(
     degreesFreedom: response.statsTable[0].degreesFreedom,
     chisq: response.statsTable[0].chisq,
     completeCases: response.completeCasesTable,
-    outputSize:
-      response.mosaic.config.completeCases +
-      response.mosaic.config.plottedIncompleteCases,
+    completeCasesAllVars: response.mosaic.config.completeCasesAllVars,
+    completeCasesAxesVars: response.mosaic.config.completeCasesAxesVars,
   };
 }
 
@@ -519,7 +548,8 @@ export function twoByTwoResponseToData(
     oddsRatio: response.statsTable[0].oddsratio,
     orInterval: response.statsTable[0].orInterval,
     completeCases: response.completeCasesTable,
-    outputSize: response.mosaic.config.completeCases,
+    completeCasesAllVars: response.mosaic.config.completeCasesAllVars,
+    completeCasesAxesVars: response.mosaic.config.completeCasesAxesVars,
   };
 }
 

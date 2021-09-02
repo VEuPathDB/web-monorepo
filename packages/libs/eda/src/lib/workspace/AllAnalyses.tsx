@@ -104,10 +104,12 @@ export function AllAnalyses(props: Props) {
 
   const filteredAnalysesAndDatasets = useMemo(() => {
     if (!searchText) return analysesAndDatasets;
+    const lowerSearchText = searchText.toLowerCase();
+
     return analysesAndDatasets?.filter(
       ({ analysis, dataset }) =>
-        analysis.name.toLowerCase().includes(searchText) ||
-        dataset?.displayName.toLowerCase().includes(searchText)
+        analysis.name.toLowerCase().includes(lowerSearchText) ||
+        dataset?.displayName.toLowerCase().includes(lowerSearchText)
     );
   }, [searchText, analysesAndDatasets]);
 

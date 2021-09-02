@@ -16,8 +16,8 @@ export function BirdsEyeView(props: Props) {
     filters,
     variableSpecs,
     outputEntityId,
-    plottedCompleteCases,
-    plottedIncompleteCases,
+    completeCasesAllVars,
+    completeCasesAxesVars,
     completeCases,
   } = props;
 
@@ -37,8 +37,8 @@ export function BirdsEyeView(props: Props) {
       stratification is {isStratificationActive ? 'active' : 'inactive'} <br />
       total size {totalSize ?? 'NA'} <br />
       subset size {subsetSize ?? 'NA'} <br />
-      plotted complete {plottedCompleteCases ?? 'NA'} <br />
-      plotted incomplete {plottedIncompleteCases ?? 'NA'} <br />
+      plotted complete all {completeCasesAllVars ?? 'NA'} <br />
+      plotted complete axes {completeCasesAxesVars ?? 'NA'} <br />
     </div>
   );
 }

@@ -342,11 +342,11 @@ function HistogramViz(props: Props) {
           showSpinner={data.pending}
           filters={filters}
           completeCases={data.pending ? undefined : data.value?.completeCases}
-          plottedCompleteCases={
-            data.pending ? undefined : data.value?.plottedCompleteCases
+          completeCasesAllVars={
+            data.pending ? undefined : data.value?.completeCasesAllVars
           }
-          plottedIncompleteCases={
-            data.pending ? undefined : data.value?.plottedIncompleteCases
+          completeCasesAxesVars={
+            data.pending ? undefined : data.value?.completeCasesAxesVars
           }
           showMissingness={vizConfig.showMissingness ?? false}
           overlayVariable={vizConfig.overlayVariable}
@@ -404,8 +404,8 @@ function HistogramPlotWithControls({
   onDependentAxisLogScaleChange,
   filters,
   completeCases,
-  plottedCompleteCases,
-  plottedIncompleteCases,
+  completeCasesAllVars,
+  completeCasesAxesVars,
   outputEntity,
   independentAxisVariable,
   overlayVariable,
@@ -420,13 +420,9 @@ function HistogramPlotWithControls({
   const opacity = 100;
 
   const outputSize =
-    plottedCompleteCases != null
-      ? showMissingness
-        ? plottedIncompleteCases != null
-          ? plottedCompleteCases + plottedIncompleteCases
-          : undefined
-        : plottedCompleteCases
-      : undefined;
+    overlayVariable != null && !showMissingness
+      ? completeCasesAllVars
+      : completeCasesAxesVars;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -449,8 +445,8 @@ function HistogramPlotWithControls({
         <div className="temporaryWrapper">
           <BirdsEyeView
             isStratificationActive={overlayVariable != null}
-            plottedCompleteCases={plottedCompleteCases}
-            plottedIncompleteCases={plottedIncompleteCases}
+            completeCasesAllVars={completeCasesAllVars}
+            completeCasesAxesVars={completeCasesAxesVars}
             filters={filters}
             outputEntityId={independentAxisVariable?.entityId}
             variableSpecs={[
@@ -495,12 +491,10 @@ function HistogramPlotWithControls({
             onStateChange={onDependentAxisLogScaleChange}
           />
           <RadioButtonGroup
-            selectedOption={
-              valueSpec === 'proportion' ? 'proportional' : 'count'
-            }
-            options={['count', 'proportional']}
+            selectedOption={valueSpec}
+            options={['count', 'proportion']}
             onOptionSelected={(newOption) => {
-              if (newOption === 'proportional') {
+              if (newOption === 'proportion') {
                 onValueSpecChange('proportion');
               } else {
                 onValueSpecChange('count');
@@ -582,8 +576,8 @@ export function histogramResponseToData(
     binWidthRange,
     binWidthStep,
     completeCases: response.completeCasesTable,
-    plottedCompleteCases: response.histogram.config.completeCases,
-    plottedIncompleteCases: response.histogram.config.plottedIncompleteCases,
+    completeCasesAllVars: response.histogram.config.completeCasesAllVars,
+    completeCasesAxesVars: response.histogram.config.completeCasesAxesVars,
   };
 }
 
