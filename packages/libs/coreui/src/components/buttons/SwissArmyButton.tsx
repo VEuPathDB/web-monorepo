@@ -69,9 +69,19 @@ export default function SwissArmyButton({
     // TODO: Make this more efficient.
     switch (icon) {
       case 'download':
-        return <CloudDownload css={{ paddingRight: 10 }} fontSize={size} />;
+        return (
+          <CloudDownload
+            css={{ paddingRight: 10, boxSizing: 'initial' }}
+            fontSize={size}
+          />
+        );
       case 'new':
-        return <AddCircle css={{ paddingRight: 10 }} fontSize={size} />;
+        return (
+          <AddCircle
+            css={{ paddingRight: 10, boxSizing: 'initial' }}
+            fontSize={size}
+          />
+        );
 
       default:
         break;
