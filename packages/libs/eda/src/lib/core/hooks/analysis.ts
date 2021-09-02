@@ -3,11 +3,12 @@ import { useStateWithHistory } from '@veupathdb/wdk-client/lib/Hooks/StateWithHi
 import { useCallback, useEffect, useState } from 'react';
 import { useAnalysisClient } from './workspace';
 import { Analysis, NewAnalysis } from '../types/analysis';
-import { usePromise } from './promise';
 import { AnalysisClient } from '../api/analysis-api';
 import { differenceWith } from 'lodash';
 
-type Setter<T extends keyof Analysis> = (value: Analysis[T]) => void;
+type Setter<T extends keyof Analysis> = (
+  value: Analysis[T] | ((value: Analysis[T]) => Analysis[T])
+) => void;
 
 export enum Status {
   InProgress = 'in-progress',
@@ -93,8 +94,14 @@ export function useAnalysis(analysisId: string): AnalysisState {
 
   const useSetter = <T extends keyof Analysis>(propertyName: T) =>
     useCallback(
-      (value: Analysis[T]) => {
-        setCurrent((_a) => _a && { ..._a, [propertyName]: value });
+      (value: Analysis[T] | ((value: Analysis[T]) => Analysis[T])) => {
+        setCurrent((_a) => {
+          return {
+            ..._a,
+            [propertyName]:
+              typeof value === 'function' ? value(_a[propertyName]) : value,
+          };
+        });
         setHasUnsavedChanges(true);
       },
       [propertyName]

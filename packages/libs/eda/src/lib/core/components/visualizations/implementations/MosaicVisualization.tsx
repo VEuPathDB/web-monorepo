@@ -10,7 +10,7 @@ import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import _ from 'lodash';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { DataClient, MosaicRequestParams } from '../../../api/data-api';
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
@@ -29,6 +29,12 @@ import twoxtwo from './selectorIcons/2x2.svg';
 import Tabs from '@veupathdb/components/lib/components/Tabs';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
+import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
+
+const plotDimensions = {
+  width: 750,
+  height: 450,
+};
 
 interface MosaicDataWithCoverageStatistics
   extends MosaicData,
@@ -51,22 +57,16 @@ type TwoByTwoData = MosaicDataWithCoverageStatistics &
   }>;
 
 export const contTableVisualization: VisualizationType = {
-  gridComponent: ContTableGridComponent,
   selectorComponent: ContTableSelectorComponent,
   fullscreenComponent: ContTableFullscreenComponent,
   createDefaultConfig: createDefaultConfig,
 };
 
 export const twoByTwoVisualization: VisualizationType = {
-  gridComponent: TwoByTwoGridComponent,
   selectorComponent: TwoByTwoSelectorComponent,
   fullscreenComponent: TwoByTwoFullscreenComponent,
   createDefaultConfig: createDefaultConfig,
 };
-
-function ContTableGridComponent(props: VisualizationProps) {
-  return <MosaicViz {...props} fullscreen={false} />;
-}
 
 function ContTableSelectorComponent() {
   return (
@@ -79,11 +79,7 @@ function ContTableSelectorComponent() {
 }
 
 function ContTableFullscreenComponent(props: VisualizationProps) {
-  return <MosaicViz {...props} fullscreen />;
-}
-
-function TwoByTwoGridComponent(props: VisualizationProps) {
-  return <MosaicViz {...props} fullscreen={false} isTwoByTwo />;
+  return <MosaicViz {...props} />;
 }
 
 function TwoByTwoSelectorComponent() {
@@ -97,7 +93,7 @@ function TwoByTwoSelectorComponent() {
 }
 
 function TwoByTwoFullscreenComponent(props: VisualizationProps) {
-  return <MosaicViz {...props} fullscreen isTwoByTwo />;
+  return <MosaicViz {...props} isTwoByTwo />;
 }
 
 function createDefaultConfig(): MosaicConfig {
@@ -113,7 +109,6 @@ const MosaicConfig = t.partial({
 });
 
 type Props = VisualizationProps & {
-  fullscreen: boolean;
   isTwoByTwo?: boolean;
 };
 
@@ -121,9 +116,9 @@ function MosaicViz(props: Props) {
   const {
     computation,
     visualization,
-    updateVisualization,
+    updateThumbnail,
+    updateConfiguration,
     filters,
-    fullscreen,
     isTwoByTwo = false,
     dataElementConstraints,
     dataElementDependencyOrder,
@@ -148,17 +143,9 @@ function MosaicViz(props: Props) {
 
   const updateVizConfig = useCallback(
     (newConfig: Partial<MosaicConfig>) => {
-      if (updateVisualization) {
-        updateVisualization({
-          ...visualization,
-          configuration: {
-            ...vizConfig,
-            ...newConfig,
-          },
-        });
-      }
+      updateConfiguration({ ...vizConfig, ...newConfig });
     },
-    [updateVisualization, visualization, vizConfig]
+    [updateConfiguration, vizConfig]
   );
 
   // TODO Handle facetVariable
@@ -314,10 +301,8 @@ function MosaicViz(props: Props) {
 
   const xAxisLabel = axisLabelWithUnit(xAxisVariable);
   const yAxisLabel = axisLabelWithUnit(yAxisVariable);
-  const width = '750px';
-  const height = '450px';
 
-  const plotComponent = fullscreen ? (
+  const plotComponent = (
     <div className="MosaicVisualization">
       <div className="MosaicVisualization-Plot">
         <Tabs
@@ -326,11 +311,9 @@ function MosaicViz(props: Props) {
               name: 'Mosaic',
               content: (
                 <MosaicPlotWithControls
+                  updateThumbnail={updateThumbnail}
                   data={data.value && !data.pending ? data.value : undefined}
-                  containerStyles={{
-                    width: width,
-                    height: height,
-                  }}
+                  containerStyles={plotDimensions}
                   independentAxisLabel={xAxisLabel ?? 'X-axis'}
                   dependentAxisLabel={yAxisLabel ?? 'Y-axis'}
                   displayLegend={true}
@@ -344,7 +327,7 @@ function MosaicViz(props: Props) {
               content: (
                 <ContingencyTable
                   data={data.value}
-                  containerStyles={{ width: width }}
+                  containerStyles={{ width: plotDimensions.width }}
                   independentVariable={xAxisLabel ?? 'X-axis'}
                   dependentVariable={yAxisLabel ?? 'Y-axis'}
                 />
@@ -384,67 +367,43 @@ function MosaicViz(props: Props) {
         {statsTable}
       </div>
     </div>
-  ) : (
-    // thumbnail/grid view
-    <Mosaic
-      data={data.value && !data.pending ? data.value : undefined}
-      containerStyles={{
-        width: '250px',
-        height: '150px',
-      }}
-      spacingOptions={{
-        marginTop: 30,
-        marginBottom: 20,
-        marginLeft: 30,
-        marginRight: 20,
-      }}
-      showColumnLabels={false}
-      displayLibraryControls={false}
-      displayLegend={false}
-      interactive={false}
-      independentAxisLabel={''}
-      dependentAxisLabel={''}
-      showSpinner={data.pending}
-    />
   );
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      {fullscreen && (
-        <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
-          <InputVariables
-            inputs={[
-              {
-                name: 'xAxisVariable',
-                label: 'X-axis',
-                role: 'primary',
-              },
-              {
-                name: 'yAxisVariable',
-                label: 'Y-axis',
-                role: 'primary',
-              },
-              {
-                name: 'facetVariable',
-                label: 'Facet (placeholder)',
-                role: 'stratification',
-              },
-            ]}
-            entities={entities}
-            values={{
-              xAxisVariable: vizConfig.xAxisVariable,
-              yAxisVariable: vizConfig.yAxisVariable,
-            }}
-            onChange={handleInputVariableChange}
-            constraints={dataElementConstraints}
-            dataElementDependencyOrder={dataElementDependencyOrder}
-            starredVariables={starredVariables}
-            toggleStarredVariable={toggleStarredVariable}
-          />
-        </div>
-      )}
+      <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
+        <InputVariables
+          inputs={[
+            {
+              name: 'xAxisVariable',
+              label: 'X-axis',
+              role: 'primary',
+            },
+            {
+              name: 'yAxisVariable',
+              label: 'Y-axis',
+              role: 'primary',
+            },
+            {
+              name: 'facetVariable',
+              label: 'Facet (placeholder)',
+              role: 'stratification',
+            },
+          ]}
+          entities={entities}
+          values={{
+            xAxisVariable: vizConfig.xAxisVariable,
+            yAxisVariable: vizConfig.yAxisVariable,
+          }}
+          onChange={handleInputVariableChange}
+          constraints={dataElementConstraints}
+          dataElementDependencyOrder={dataElementDependencyOrder}
+          starredVariables={starredVariables}
+          toggleStarredVariable={toggleStarredVariable}
+        />
+      </div>
 
-      {data.error && fullscreen && (
+      {data.error && (
         <div
           style={{
             fontSize: '1.2em',
@@ -464,31 +423,38 @@ function MosaicViz(props: Props) {
         </div>
       )}
 
-      {fullscreen && (
-        <OutputEntityTitle
-          entity={outputEntity}
-          outputSize={
-            data.pending ? undefined : data.value?.completeCasesAllVars
-          }
-        />
-      )}
+      <OutputEntityTitle
+        entity={outputEntity}
+        outputSize={data.pending ? undefined : data.value?.completeCasesAllVars}
+      />
       {plotComponent}
     </div>
   );
 }
 
-type MosaicPlotWithControlsProps = MosaicProps;
+interface MosaicPlotWithControlsProps extends MosaicProps {
+  updateThumbnail: (src: string) => void;
+}
 
 function MosaicPlotWithControls({
   data,
+  updateThumbnail,
   ...mosaicProps
 }: MosaicPlotWithControlsProps) {
   const displayLibraryControls = false;
+  const ref = useRef<PlotRef>(null);
+
+  useEffect(() => {
+    ref.current
+      ?.toImage({ format: 'svg', ...plotDimensions })
+      .then(updateThumbnail);
+  }, [updateThumbnail, data]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Mosaic
         {...mosaicProps}
+        ref={ref}
         data={data}
         displayLibraryControls={displayLibraryControls}
       />

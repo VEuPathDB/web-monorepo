@@ -3,7 +3,6 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useLocation, useRouteMatch, useHistory } from 'react-router-dom';
 import {
   AnalysisState,
-  Filter,
   makeNewAnalysis,
   NewAnalysis,
   Status,
@@ -49,45 +48,44 @@ export function NewAnalysisPage() {
   const deleteAnalysis = useCallback(() => {
     throw new Error('Cannot delete an unsaved analysis.');
   }, []);
-  const setName = useCallback(
-    (name: string) => {
-      createAnalysis({ ...analysis, name });
-    },
-    [analysis, createAnalysis]
-  );
-  const setFilters = useCallback(
-    (filters: Filter[]) => {
-      createAnalysis({ ...analysis, filters });
-    },
-    [analysis, createAnalysis]
-  );
-  const setStarredVariables = useCallback(
-    (starredVariables: string[]) => {
-      createAnalysis({ ...analysis, starredVariables });
-    },
-    [analysis, createAnalysis]
+  const setName = useSetter('name', analysis, createAnalysis);
+  const setFilters = useSetter('filters', analysis, createAnalysis);
+  const setStarredVariables = useSetter(
+    'starredVariables',
+    analysis,
+    createAnalysis
   );
   const setDerivedVariables = useCallback(() => {}, []);
   const setVariableUISettings = useCallback(
-    (variableUISettings: Record<string, VariableUISetting>) => {
+    (
+      nextVariableUISettings:
+        | Record<string, VariableUISetting>
+        | ((
+            value: Record<string, VariableUISetting>
+          ) => Record<string, VariableUISetting>)
+    ) => {
+      const variableUISettings =
+        typeof nextVariableUISettings === 'function'
+          ? nextVariableUISettings(analysis.variableUISettings)
+          : nextVariableUISettings;
       setAnalysis((analysis) => ({ ...analysis, variableUISettings }));
     },
-    []
+    [analysis.variableUISettings]
   );
-  const setVisualizations = useCallback(
-    (visualizations: Visualization[]) => {
-      createAnalysis(
-        { ...analysis, visualizations },
-        Path.resolve(
+  const setVisualizations = useSetter(
+    'visualizations',
+    analysis,
+    createAnalysis,
+    useCallback(
+      (visualizations: Visualization[]) =>
+        Path.join(
           location.pathname.slice(url.length),
           '..',
           visualizations[0].id
-        )
-      );
-    },
-    [analysis, createAnalysis, location.pathname, url.length]
+        ),
+      [location.pathname, url.length]
+    )
   );
-
   const analysisState = useMemo(
     (): AnalysisState => ({
       analysis,
@@ -121,4 +119,24 @@ export function NewAnalysisPage() {
     ]
   );
   return <AnalysisPanel analysisState={analysisState} hideCopyAndSave />;
+}
+
+function useSetter<T extends keyof NewAnalysis>(
+  property: T,
+  analysis: NewAnalysis,
+  createAnalysis: (analysis: NewAnalysis, subPath?: string) => void,
+  getSubPath?: (value: NewAnalysis[T]) => string
+) {
+  return useCallback(
+    (value: NewAnalysis[T] | ((value: NewAnalysis[T]) => NewAnalysis[T])) => {
+      const nextValue =
+        typeof value === 'function' ? value(analysis[property]) : value;
+      const nextAnalysis = {
+        ...analysis,
+        [property]: nextValue,
+      };
+      createAnalysis(nextAnalysis, getSubPath && getSubPath(nextValue));
+    },
+    [analysis, createAnalysis, getSubPath, property]
+  );
 }

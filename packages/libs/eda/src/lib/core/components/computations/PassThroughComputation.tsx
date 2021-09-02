@@ -38,35 +38,18 @@ const visualizationTypes: Record<string, VisualizationType> = {
   boxplot: boxplotVisualization,
 };
 
+const computations = [
+  {
+    id: 'pass-through',
+    type: 'pass',
+    displayName: 'Passthrough',
+    configuration: undefined,
+  },
+];
+
 export function PassThroughComputation(props: Props) {
   const { analysisState, computationAppOverview } = props;
   const { analysis, setVisualizations } = analysisState;
-  const addVisualization = useCallback(
-    (visualization: Visualization) => {
-      setVisualizations([...(analysis?.visualizations ?? []), visualization]);
-    },
-    [setVisualizations, analysis]
-  );
-  const updateVisualization = useCallback(
-    (visualization: Visualization) => {
-      setVisualizations([
-        ...(analysis?.visualizations.filter(
-          (viz) => viz.id !== visualization.id
-        ) ?? []),
-        visualization,
-      ]);
-    },
-    [setVisualizations, analysis]
-  );
-
-  const deleteVisualization = useCallback(
-    (id: String) => {
-      if (analysis == null) return;
-      setVisualizations(analysis.visualizations.filter((v) => v.id !== id));
-    },
-    [analysis, setVisualizations]
-  );
-
   const filters = useMemo(() => analysis?.filters ?? [], [analysis?.filters]);
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
@@ -75,19 +58,10 @@ export function PassThroughComputation(props: Props) {
   return (
     <VisualizationsContainer
       computationId="pass-through"
-      computations={[
-        {
-          id: 'pass-through',
-          type: 'pass',
-          displayName: 'Passthrough',
-          configuration: undefined,
-        },
-      ]}
+      computations={computations}
       visualizations={analysis.visualizations}
       visualizationsOverview={computationAppOverview.visualizations!}
-      addVisualization={addVisualization}
-      updateVisualization={updateVisualization}
-      deleteVisualization={deleteVisualization}
+      updateVisualizations={setVisualizations}
       visualizationTypes={visualizationTypes}
       filters={filters}
       starredVariables={analysis.starredVariables}

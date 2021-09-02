@@ -6,14 +6,14 @@ import { red, gray } from './filter/colors';
 import { StudyEntity } from '../types/study';
 
 interface Props extends Partial<CoverageStatistics> {
-  filters: Filter[];
+  filters?: Filter[];
   outputEntity?: StudyEntity;
   stratificationIsActive: boolean;
 }
 
 export function BirdsEyeView(props: Props) {
   const {
-    filters,
+    filters = [],
     outputEntity,
     completeCasesAllVars,
     completeCasesAxesVars,
