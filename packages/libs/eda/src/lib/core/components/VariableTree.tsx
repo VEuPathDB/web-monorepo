@@ -90,6 +90,8 @@ export function VariableTree(props: Props) {
                 ? `entity:${entity.id}`
                 : `${entity.id}/${variable.parentId}`,
           }))
+          // add condition not to include displayType === 'hidden'
+          .filter((variable) => variable.displayType !== 'hidden')
           .map(edaVariableToWdkField),
       ];
     });
