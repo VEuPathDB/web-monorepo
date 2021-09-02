@@ -88,6 +88,9 @@ export function NewAnalysisPage() {
     [analysis, createAnalysis, location.pathname, url.length]
   );
 
+  // TODO
+  const setDataTableSettings = () => console.log('To be implemented.');
+
   const analysisState = useMemo(
     (): AnalysisState => ({
       analysis,
@@ -97,6 +100,7 @@ export function NewAnalysisPage() {
       setStarredVariables,
       setVariableUISettings,
       setVisualizations,
+      setDataTableSettings,
       saveAnalysis,
       copyAnalysis,
       deleteAnalysis,

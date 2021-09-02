@@ -113,6 +113,9 @@ export function useAnalysis(analysisId: string): AnalysisState {
   const setStarredVariables = useSetter('starredVariables');
   const setVariableUISettings = useSetter('variableUISettings');
 
+  // TODO
+  const setDataTableSettings = () => console.log('Not yet implemented');
+
   const saveAnalysis = useCallback(async () => {
     if (analysis == null)
       throw new Error("Attempt to save an analysis that hasn't been loaded.");
@@ -153,6 +156,7 @@ export function useAnalysis(analysisId: string): AnalysisState {
     setDerivedVariables,
     setStarredVariables,
     setVariableUISettings,
+    setDataTableSettings,
     copyAnalysis,
     deleteAnalysis,
     saveAnalysis,
