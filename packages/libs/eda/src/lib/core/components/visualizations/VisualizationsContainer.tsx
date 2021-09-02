@@ -150,7 +150,13 @@ function ConfiguredVisualizations(props: Props) {
                     </Tooltip>
                   </div>
                 </div>
-                <img alt={viz.displayName} src={viz.thumbnail} />
+                {viz.thumbnail ? (
+                  <img alt={viz.displayName} src={viz.thumbnail} />
+                ) : (
+                  <div className={cx('-ConfiguredVisualizationNoPreview')}>
+                    Preview unavaiable
+                  </div>
+                )}
               </div>
               <div className={cx('-ConfiguredVisualizationTitle')}>
                 {viz.displayName ?? 'Unnamed visualization'}
