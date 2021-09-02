@@ -15,23 +15,23 @@ const dataSet: BirdsEyePlotData = {
   brackets: [
     {
       value: 77,
-      label: 'Complete for x & y',
+      label: 'Has data for axis variables',
     },
     {
       value: 55,
-      label: 'Complete for x, y, & strata',
+      label: 'Has data for axis & stratification variables',
     },
   ],
   bars: [
     // total comes first, or the subset is hidden
     {
-      name: 'total',
+      name: 'Total',
       value: [200],
       label: [''],
       color: gray,
     },
     {
-      name: 'subset',
+      name: 'Subset',
       value: [123],
       label: [''],
       color: red,

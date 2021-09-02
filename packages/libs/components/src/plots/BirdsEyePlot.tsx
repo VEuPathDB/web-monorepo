@@ -8,8 +8,10 @@ import { Layout, Shape } from 'plotly.js';
 export interface BirdsEyePlotProps extends PlotProps<BirdsEyePlotData> {
   /** Label for dependent axis. Defaults to '' */
   dependentAxisLabel?: string;
-  /** bracket line width, default is 3 */
+  /** bracket line width, default is 1 */
   bracketLineWidth?: number;
+  /** bracket head size, default is 0.15 */
+  bracketHeadSize?: number;
 }
 
 const EmptyBirdsEyePlotData: BirdsEyePlotData = { brackets: [], bars: [] };
@@ -19,13 +21,15 @@ const defaultCountBoxStyle = {
   border: '1px solid gray',
   padding: '5px',
   fontSize: '80%',
+  minWidth: '20%',
 };
 
 /** A Plotly-based Barplot component. */
 export default function BirdsEyePlot({
   data = EmptyBirdsEyePlotData,
   dependentAxisLabel = '',
-  bracketLineWidth = 3,
+  bracketLineWidth = 1,
+  bracketHeadSize = 0.15,
   containerStyles,
   ...restProps
 }: BirdsEyePlotProps) {
@@ -68,9 +72,9 @@ export default function BirdsEyePlot({
               xref: 'x',
               yref: 'y',
               x0: 0,
-              y0: indexToY(index),
+              y0: indexToY(index, bracketHeadSize),
               x1: bracket.value,
-              y1: indexToY(index),
+              y1: indexToY(index, bracketHeadSize),
               line: {
                 color: 'black',
                 width: bracketLineWidth,
@@ -82,9 +86,9 @@ export default function BirdsEyePlot({
               xref: 'x',
               yref: 'y',
               x0: bracket.value,
-              y0: indexToY(index) + 0.25,
+              y0: indexToY(index, bracketHeadSize) + bracketHeadSize,
               x1: bracket.value,
-              y1: indexToY(index) - 0.25,
+              y1: indexToY(index, bracketHeadSize) - bracketHeadSize,
               line: {
                 color: 'black',
                 width: bracketLineWidth,
@@ -93,7 +97,7 @@ export default function BirdsEyePlot({
           ] as Partial<Shape>[]; // TO DO: can we get rid of this?
         })
         .flat(),
-    [data.brackets, bracketLineWidth]
+    [data.brackets, bracketLineWidth, bracketHeadSize]
   );
 
   const fullCounts: ReactNode[] = useMemo(() => {
@@ -123,7 +127,8 @@ export default function BirdsEyePlot({
         data.bars.length || data.brackets.length
           ? {}
           : { color: 'transparent' },
-      showline: data.bars.length > 0 || data.brackets.length > 0,
+      ticks: 'inside',
+      showline: false, // data.bars.length > 0 || data.brackets.length > 0,
     },
     yaxis: {
       automargin: true,
@@ -136,7 +141,9 @@ export default function BirdsEyePlot({
           ? {}
           : { color: 'transparent' },
       tickmode: 'array',
-      tickvals: data.brackets.map((_, index) => indexToY(index)),
+      tickvals: data.brackets.map((_, index) =>
+        indexToY(index, bracketHeadSize)
+      ),
       ticktext: data.brackets.map((bracket) => bracket.label),
     },
     barmode: 'overlay',
@@ -171,8 +178,8 @@ export default function BirdsEyePlot({
   );
 }
 
-function indexToY(index: number) {
-  return index / 2 + 1;
+function indexToY(index: number, bracketHeadSize: number) {
+  return 0.5 + bracketHeadSize + (index + bracketHeadSize) / 2;
 }
 
 type CountBoxProps = {
@@ -190,7 +197,7 @@ function CountBox({ label, value, color, focused }: CountBoxProps) {
   };
 
   return (
-    <div style={countBoxStyle}>
+    <div style={countBoxStyle} key={label}>
       <b>{label}:</b> {Number(value).toLocaleString()}
     </div>
   );
