@@ -442,26 +442,13 @@ function HistogramPlotWithControls({
           showValues={false}
           barLayout={barLayout}
         />
-        <div className="temporaryWrapper">
+        <div className="viz-plot-info">
           <BirdsEyeView
-            isStratificationActive={overlayVariable != null}
             completeCasesAllVars={completeCasesAllVars}
             completeCasesAxesVars={completeCasesAxesVars}
             filters={filters}
-            outputEntityId={independentAxisVariable?.entityId}
-            variableSpecs={[
-              {
-                role: 'Main',
-                required: true,
-                display: histogramProps.independentAxisLabel,
-                variable: independentAxisVariable,
-              },
-              {
-                role: 'Overlay',
-                display: overlayLabel,
-                variable: overlayVariable,
-              },
-            ]}
+            outputEntity={outputEntity}
+            stratificationIsActive={overlayVariable != null}
           />
           <VariableCoverageTable
             completeCases={completeCases}

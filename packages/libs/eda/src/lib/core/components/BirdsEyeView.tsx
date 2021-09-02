@@ -1,28 +1,28 @@
 import { Filter } from '../types/filter';
-import { VariableSpec } from './VariableCoverageTable';
 import { useEntityCounts } from '../hooks/entityCounts';
 import { CoverageStatistics } from '../types/visualization';
+import BirdsEyePlot from '@veupathdb/components/lib/plots/BirdsEyePlot';
+import { red, gray } from './filter/colors';
+import { StudyEntity } from '../types/study';
 
 interface Props extends Partial<CoverageStatistics> {
-  isStratificationActive: boolean;
   filters: Filter[];
-  variableSpecs: VariableSpec[];
-  outputEntityId?: string;
+  outputEntity?: StudyEntity;
+  stratificationIsActive: boolean;
 }
 
 export function BirdsEyeView(props: Props) {
   const {
-    isStratificationActive,
     filters,
-    variableSpecs,
-    outputEntityId,
+    outputEntity,
     completeCasesAllVars,
     completeCasesAxesVars,
-    completeCases,
+    stratificationIsActive,
   } = props;
 
   const unfilteredEntityCounts = useEntityCounts();
   const filteredEntityCounts = useEntityCounts(filters);
+  const outputEntityId = outputEntity?.id;
 
   const totalSize =
     unfilteredEntityCounts.value && outputEntityId
@@ -32,13 +32,63 @@ export function BirdsEyeView(props: Props) {
     filteredEntityCounts.value && outputEntityId
       ? filteredEntityCounts.value[outputEntityId]
       : undefined;
+
+  const birdsEyeData =
+    completeCasesAxesVars != null &&
+    completeCasesAllVars != null &&
+    totalSize != null &&
+    subsetSize != null
+      ? {
+          brackets: [
+            {
+              value: completeCasesAxesVars,
+              label: 'Has data for axis variables',
+            },
+            ...(stratificationIsActive
+              ? [
+                  {
+                    value: completeCasesAllVars,
+                    label: 'Has data for axis & stratification variables',
+                  },
+                ]
+              : []),
+          ],
+          bars: [
+            // total comes first, or the subset is hidden
+            {
+              name: 'Total',
+              value: [totalSize],
+              label: [''],
+              color: gray,
+            },
+            {
+              name: 'Subset',
+              value: [subsetSize],
+              label: [''],
+              color: red,
+            },
+          ],
+        }
+      : undefined;
+
   return (
-    <div className="BirdsEyeView">
-      stratification is {isStratificationActive ? 'active' : 'inactive'} <br />
-      total size {totalSize ?? 'NA'} <br />
-      subset size {subsetSize ?? 'NA'} <br />
-      plotted complete all {completeCasesAllVars ?? 'NA'} <br />
-      plotted complete axes {completeCasesAxesVars ?? 'NA'} <br />
-    </div>
+    <BirdsEyePlot
+      data={birdsEyeData}
+      containerClass="birds-eye-plot"
+      containerStyles={{
+        width: '500px',
+        marginLeft: '3em',
+      }}
+      spacingOptions={{
+        marginTop: 5,
+        marginBottom: 5,
+        marginLeft: 5,
+        marginRight: 5,
+      }}
+      dependentAxisLabel={
+        outputEntity?.displayNamePlural ?? outputEntity?.displayName
+      }
+      showSpinner={!birdsEyeData}
+    />
   );
 }
