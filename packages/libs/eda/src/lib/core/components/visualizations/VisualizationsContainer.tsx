@@ -229,7 +229,14 @@ function NewVisualizationPicker(props: Props) {
                 </button>
               </Tooltip>
               <div className={cx('-PickerEntryName')}>
-                <div>{vizOverview.displayName}</div>
+                {vizOverview.displayName?.includes(', ') ? (
+                  <div>
+                    {vizOverview.displayName.split(', ')[0]} <br />{' '}
+                    {vizOverview.displayName.split(', ')[1]}
+                  </div>
+                ) : (
+                  <div>{vizOverview.displayName}</div>
+                )}
               </div>
             </div>
           );
