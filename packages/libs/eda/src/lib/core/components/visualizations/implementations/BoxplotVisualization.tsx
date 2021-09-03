@@ -26,6 +26,7 @@ import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import box from './selectorIcons/box.svg';
 import { BoxplotData } from '@veupathdb/components/lib/types/plots';
 import { CoverageStatistics } from '../../../types/visualization';
+import { BirdsEyeView } from '../../BirdsEyeView';
 
 import { at } from 'lodash';
 // import axis label unit util
@@ -320,30 +321,44 @@ function BoxplotViz(props: VisualizationProps) {
           showRawData={true}
           legendTitle={axisLabelWithUnit(overlayVariable)}
         />
-        <VariableCoverageTable
-          completeCases={data.pending ? undefined : data.value?.completeCases}
-          filters={filters}
-          outputEntityId={outputEntity?.id}
-          variableSpecs={[
-            {
-              role: 'X-axis',
-              required: true,
-              display: axisLabelWithUnit(xAxisVariable),
-              variable: vizConfig.xAxisVariable,
-            },
-            {
-              role: 'Y-axis',
-              required: true,
-              display: axisLabelWithUnit(yAxisVariable),
-              variable: vizConfig.yAxisVariable,
-            },
-            {
-              role: 'Overlay',
-              display: axisLabelWithUnit(overlayVariable),
-              variable: vizConfig.overlayVariable,
-            },
-          ]}
-        />
+        <div className="viz-plot-info">
+          <BirdsEyeView
+            completeCasesAllVars={
+              data.pending ? undefined : data.value?.completeCasesAllVars
+            }
+            completeCasesAxesVars={
+              data.pending ? undefined : data.value?.completeCasesAxesVars
+            }
+            filters={filters}
+            outputEntity={outputEntity}
+            stratificationIsActive={overlayVariable != null}
+            enableSpinner={data.pending}
+          />
+          <VariableCoverageTable
+            completeCases={data.pending ? undefined : data.value?.completeCases}
+            filters={filters}
+            outputEntityId={outputEntity?.id}
+            variableSpecs={[
+              {
+                role: 'X-axis',
+                required: true,
+                display: axisLabelWithUnit(xAxisVariable),
+                variable: vizConfig.xAxisVariable,
+              },
+              {
+                role: 'Y-axis',
+                required: true,
+                display: axisLabelWithUnit(yAxisVariable),
+                variable: vizConfig.yAxisVariable,
+              },
+              {
+                role: 'Overlay',
+                display: axisLabelWithUnit(overlayVariable),
+                variable: vizConfig.overlayVariable,
+              },
+            ]}
+          />
+        </div>
       </div>
     </div>
   );
