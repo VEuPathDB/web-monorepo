@@ -374,6 +374,13 @@ function MosaicViz(props: Props) {
     </div>
   );
 
+  const facetingIsActive = false; // placeholders
+  const showMissingness = false; // for the future with faceting
+  const outputSize =
+    !facetingIsActive && !showMissingness
+      ? data.value?.completeCasesAllVars
+      : data.value?.completeCasesAxesVars;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -428,10 +435,7 @@ function MosaicViz(props: Props) {
         </div>
       )}
 
-      <OutputEntityTitle
-        entity={outputEntity}
-        outputSize={data.pending ? undefined : data.value?.completeCasesAllVars}
-      />
+      <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
       {plotComponent}
     </div>
   );
