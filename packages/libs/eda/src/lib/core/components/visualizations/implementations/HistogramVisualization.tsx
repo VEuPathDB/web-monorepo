@@ -323,8 +323,12 @@ function HistogramViz(props: VisualizationProps) {
         showSpinner={data.pending}
         filters={filters}
         completeCases={data.pending ? undefined : data.value?.completeCases}
-        completeCasesAllVars={data.value?.completeCasesAllVars}
-        completeCasesAxesVars={data.value?.completeCasesAxesVars}
+        completeCasesAllVars={
+          data.pending ? undefined : data.value?.completeCasesAllVars
+        }
+        completeCasesAxesVars={
+          data.pending ? undefined : data.value?.completeCasesAxesVars
+        }
         showMissingness={vizConfig.showMissingness ?? false}
         overlayVariable={vizConfig.overlayVariable}
         overlayLabel={axisLabelWithUnit(overlayVariable)}
@@ -412,6 +416,7 @@ function HistogramPlotWithControls({
             filters={filters}
             outputEntity={outputEntity}
             stratificationIsActive={overlayVariable != null}
+            enableSpinner={histogramProps.showSpinner}
           />
           <VariableCoverageTable
             completeCases={completeCases}

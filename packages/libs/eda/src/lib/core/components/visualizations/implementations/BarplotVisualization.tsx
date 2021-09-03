@@ -299,11 +299,16 @@ function BarplotViz(props: VisualizationProps) {
         />
         <div className="viz-plot-info">
           <BirdsEyeView
-            completeCasesAllVars={data.value?.completeCasesAllVars}
-            completeCasesAxesVars={data.value?.completeCasesAxesVars}
+            completeCasesAllVars={
+              data.pending ? undefined : data.value?.completeCasesAllVars
+            }
+            completeCasesAxesVars={
+              data.pending ? undefined : data.value?.completeCasesAxesVars
+            }
             filters={filters}
             outputEntity={entity}
             stratificationIsActive={overlayVariable != null}
+            enableSpinner={data.pending}
           />
           <VariableCoverageTable
             completeCases={data.pending ? undefined : data.value?.completeCases}

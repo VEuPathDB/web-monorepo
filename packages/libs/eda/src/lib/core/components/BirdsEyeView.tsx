@@ -6,9 +6,14 @@ import { red, gray } from './filter/colors';
 import { StudyEntity } from '../types/study';
 
 interface Props extends Partial<CoverageStatistics> {
+  /** Current active filters */
   filters?: Filter[];
+  /** The output entity */
   outputEntity?: StudyEntity;
+  /** Are any stratification variables active? */
   stratificationIsActive: boolean;
+  /** Should the spinner be enabled? This doesn't mean that it is shown. Just that it might be. */
+  enableSpinner?: boolean;
 }
 
 export function BirdsEyeView(props: Props) {
@@ -18,6 +23,7 @@ export function BirdsEyeView(props: Props) {
     completeCasesAllVars,
     completeCasesAxesVars,
     stratificationIsActive,
+    enableSpinner = false,
   } = props;
 
   const unfilteredEntityCounts = useEntityCounts();
@@ -88,7 +94,7 @@ export function BirdsEyeView(props: Props) {
       dependentAxisLabel={
         outputEntity?.displayNamePlural ?? outputEntity?.displayName
       }
-      showSpinner={!birdsEyeData}
+      showSpinner={enableSpinner && !birdsEyeData}
     />
   );
 }
