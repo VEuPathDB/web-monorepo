@@ -83,7 +83,6 @@ export function BirdsEyeView(props: Props) {
       containerClass="birds-eye-plot"
       containerStyles={{
         width: '500px',
-        marginLeft: '3em',
       }}
       spacingOptions={{
         marginTop: 5,

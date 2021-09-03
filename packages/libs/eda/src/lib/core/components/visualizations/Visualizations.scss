@@ -173,12 +173,18 @@ $data-table-inner-border: 1px solid #888;
   }
 }
 
+.viz-plot-info {
+  display: grid;
+  grid-auto-flow: row;
+  gap: 0.75em;
+  margin-left: 3em;
+  margin-top: 1.5em;
+  margin-left: 3em;
+}
+
 .VariableCoverageTable {
   @include data-table;
   width: 500px;
-
-  margin-top: 1.5em;
-  margin-left: 3em;
 
   .percentage {
     color: #333;
