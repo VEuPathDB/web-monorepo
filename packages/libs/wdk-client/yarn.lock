@@ -1147,10 +1147,10 @@
     "@typescript-eslint/types" "4.8.1"
     eslint-visitor-keys "^2.0.0"
 
-"@veupathdb/components@^0.7.3":
-  version "0.7.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.7.3.tgz#664fce29ca7b95530141007f50ea147ecd510992"
-  integrity sha512-gxedmoIuBLTZv3XOPmtZz6U4NWvCgGqXuckOm7pa4YKnNjFvxsRZWy67yslA3Locol0/UtGuTp1PxUUdZZFyrw==
+"@veupathdb/components@^0.7.9":
+  version "0.7.9"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.7.9.tgz#579a16fc7586857a369c46c06c0c9e164ca2e2d1"
+  integrity sha512-6o5YFG/9zvO/ci+9Lhh0MWSocl1BF9gulcggaKfrRkYRcIfbz+6ClWLtthFAeHdSw8QtEXY/R9jT+r9IAED62w==
   dependencies:
     "@material-ui/core" "^4.11.2"
     "@material-ui/icons" "^4.11.2"
