@@ -135,18 +135,26 @@ export function InputVariables(props: Props) {
 
   // Find entities that are excluded for each variable, and union their variables
   // with the disabled variables.
-  const disabledVariablesByInputIndex = useMemo(
+  const disabledVariablesByInputName: Record<
+    string,
+    VariableDescriptor[]
+  > = useMemo(
     () =>
-      inputs.map((input) => {
+      inputs.reduce((map, input) => {
         const disabledVariables = excludedVariables(
           entities[0],
           flattenedConstraints && flattenedConstraints[input.name]
         );
-        if (dataElementDependencyOrder == null) return disabledVariables;
-
+        if (dataElementDependencyOrder == null) {
+          map[input.name] = disabledVariables;
+          return map;
+        }
         const index = dataElementDependencyOrder.indexOf(input.name);
         // no change if dependencyOrder is not declared
-        if (index === -1) return disabledVariables;
+        if (index === -1) {
+          map[input.name] = disabledVariables;
+          return map;
+        }
 
         const prevValue = dataElementDependencyOrder
           .slice(0, index)
@@ -180,8 +188,10 @@ export function InputVariables(props: Props) {
         }
 
         // remove ancestors of previous input's entity
-        if (nextValue == null || nextValue.entityId === entities[0].id)
-          return disabledVariables;
+        if (nextValue == null || nextValue.entityId === entities[0].id) {
+          map[input.name] = disabledVariables;
+          return map;
+        }
         const ancestorTree = mapStructure<StudyEntity, StudyEntity>(
           (entity, children) => ({
             ...entity,
@@ -199,15 +209,16 @@ export function InputVariables(props: Props) {
           }))
         );
         disabledVariables.push(...ancestorVariables);
-        return disabledVariables;
-      }),
+        map[input.name] = disabledVariables;
+        return map;
+      }, {} as Record<string, VariableDescriptor[]>),
     [dataElementDependencyOrder, entities, flattenedConstraints, inputs, values]
   );
 
   return (
     <div>
       <div className={classes.inputs}>
-        {inputs.map((input, index) => (
+        {inputs.map((input) => (
           <div
             key={input.name}
             className={[classes.input, classes[input.role ?? 'primary']].join(
@@ -217,7 +228,7 @@ export function InputVariables(props: Props) {
             <div className={classes.label}>{input.label}</div>
             <VariableTreeDropdown
               rootEntity={entities[0]}
-              disabledVariables={disabledVariablesByInputIndex[index]}
+              disabledVariables={disabledVariablesByInputName[input.name]}
               starredVariables={starredVariables}
               toggleStarredVariable={toggleStarredVariable}
               entityId={values[input.name]?.entityId}
