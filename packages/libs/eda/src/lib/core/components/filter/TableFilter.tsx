@@ -309,7 +309,7 @@ export function TableFilter({
         tableSummary.value.entityId === entity.id &&
         tableSummary.value.variableId === variable.id && (
           <MembershipField
-            displayName={entity.displayName}
+            displayName={entity.displayNamePlural ?? entity.displayName}
             dataCount={totalEntityCount}
             filteredDataCount={filteredEntityCount}
             filter={tableFilter}
