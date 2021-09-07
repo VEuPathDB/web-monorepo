@@ -42,6 +42,7 @@ export type AnalysisState = {
   deleteAnalysis: () => Promise<void>;
 };
 
+// Used to store loaded analyses. Looks to be a performance enhancement.
 const analysisCache: Record<string, Analysis | undefined> = {};
 
 export function usePreloadAnalysis() {
@@ -51,9 +52,21 @@ export function usePreloadAnalysis() {
   };
 }
 
+/**
+ * Provide access to a user created analysis and associated functionality.
+ *
+ * Essentially, an "analysis" is a record of how a given user has
+ * interacted with a segment of a given study's data.
+ * */
 export function useAnalysis(analysisId: string): AnalysisState {
+  // Handles CRUD operations on Analysis objects.
   const analysisClient = useAnalysisClient();
+
+  // Does the analysis have changes that have not
+  // been permanently stored?
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+  // TOOD: Not sure yet how this is being used.
   const {
     current: analysis,
     setCurrent,
@@ -75,6 +88,7 @@ export function useAnalysis(analysisId: string): AnalysisState {
   const [status, setStatus] = useState<Status>(Status.InProgress);
   const [error, setError] = useState<unknown>();
 
+  // Retrieve an Analysis from the data store whenever `analysisID` updates.
   useEffect(() => {
     if (savedAnalysis) return;
     setStatus(Status.InProgress);
@@ -91,12 +105,19 @@ export function useAnalysis(analysisId: string): AnalysisState {
     );
   }, [analysisClient, analysisId, savedAnalysis]);
 
+  // Whenever `savedAnalysis` updates, set `current` to be the same object.
   useEffect(() => {
     if (savedAnalysis) {
       setCurrent(savedAnalysis);
     }
   }, [savedAnalysis, setCurrent]);
 
+  /**
+   * Factory function for creating useCallback hooks.
+   *
+   * Ultimately used to update a property on an Analysis.
+   * NOTE: Not sure where the `_a` variable comes from.
+   */
   const useSetter = <T extends keyof Analysis>(propertyName: T) =>
     useCallback(
       (value: Analysis[T]) => {
@@ -112,9 +133,7 @@ export function useAnalysis(analysisId: string): AnalysisState {
   const setDerivedVariables = useSetter('derivedVariables');
   const setStarredVariables = useSetter('starredVariables');
   const setVariableUISettings = useSetter('variableUISettings');
-
-  // TODO
-  const setDataTableSettings = () => console.log('Not yet implemented');
+  const setDataTableSettings = useSetter('dataTableSettings');
 
   const saveAnalysis = useCallback(async () => {
     if (analysis == null)

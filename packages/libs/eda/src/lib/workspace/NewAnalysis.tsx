@@ -3,6 +3,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useLocation, useRouteMatch, useHistory } from 'react-router-dom';
 import {
   AnalysisState,
+  DataTableSettings,
   Filter,
   makeNewAnalysis,
   NewAnalysis,
@@ -25,6 +26,7 @@ export function NewAnalysisPage() {
   const history = useHistory();
   const location = useLocation();
   const { url } = useRouteMatch();
+
   const createAnalysis = useCallback(
     async (
       newAnalysis: NewAnalysis,
@@ -40,15 +42,19 @@ export function NewAnalysisPage() {
     },
     [analysisClient, history, location, preloadAnalysis, url]
   );
+
   const saveAnalysis = useCallback(() => {
     return createAnalysis(analysis);
   }, [analysis, createAnalysis]);
+
   const copyAnalysis = useCallback(() => {
     throw new Error('Cannot copy an unsaved analysis.');
   }, []);
+
   const deleteAnalysis = useCallback(() => {
     throw new Error('Cannot delete an unsaved analysis.');
   }, []);
+
   const setName = useCallback(
     (name: string) => {
       createAnalysis({ ...analysis, name });
@@ -88,8 +94,12 @@ export function NewAnalysisPage() {
     [analysis, createAnalysis, location.pathname, url.length]
   );
 
-  // TODO
-  const setDataTableSettings = () => console.log('To be implemented.');
+  const setDataTableSettings = useCallback(
+    (dataTableSettings: DataTableSettings) => {
+      createAnalysis({ ...analysis, dataTableSettings });
+    },
+    [analysis, createAnalysis]
+  );
 
   const analysisState = useMemo(
     (): AnalysisState => ({
@@ -122,6 +132,7 @@ export function NewAnalysisPage() {
       setStarredVariables,
       setVariableUISettings,
       setVisualizations,
+      setDataTableSettings,
     ]
   );
   return <AnalysisPanel analysisState={analysisState} hideCopyAndSave />;

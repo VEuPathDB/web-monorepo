@@ -32,6 +32,10 @@ export function AnalysisList(props: Props) {
       starredVariables: [],
       filters: [],
       computations: [],
+      dataTableSettings: {
+        selectedVariables: {},
+        sorting: [],
+      },
     });
     history.push(`${url}/${id}`);
   }, [analysisStore, history, studyId, url]);
