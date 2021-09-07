@@ -279,46 +279,71 @@ function useSiteSearchResponse(searchSettings: SearchSettings, resultSettings: R
         }
       };
       const responseText = await runRequest(requestBody);
-      const validatedResonse = decode(siteSearchResponse, responseText);
+      const validatedResponse = decode(siteSearchResponse, responseText);
 
-      // The following logic adds a docType filter if the following conditions are met:
-      //   1. `documentType` is not specified
-      //   2. Exactly 1 document type has results
+      // The following logic...
+      //   1.  adds a docType filter if the following conditions are met:
+      //     i. `documentType` is not specified
+      //     ii. Exactly 1 document type has results
       //
-      // We will also mark the result as having an effective filter set.
+      //     (We will also mark the result as having an effective filter set.)
+      //
+      //   2.  resets the offset to 0 if the current offset is greater than or equal to the number of search results
 
-      const docTypesWithCounts = validatedResonse.documentTypes.filter(d => d.count > 0);
+      const docTypesWithCounts = validatedResponse.documentTypes.filter(d => d.count > 0);
 
-      if (documentType != null || docTypesWithCounts.length !== 1) {
+      const needToApplyEffectiveFilter = documentType == null && docTypesWithCounts.length === 1;
+
+      const needToAdjustOffset = resultSettings.offset >= validatedResponse.searchResults.totalCount;
+
+      if (
+        !needToApplyEffectiveFilter &&
+        !needToAdjustOffset
+      ) {
         return {
           type: 'success',
-          response: validatedResonse,
+          response: validatedResponse,
           searchSettings,
           resultSettings,
-        }
+        };
       }
 
-      const effectiveFilter = docTypesWithCounts[0].id;
+      const effectiveFilter = !needToApplyEffectiveFilter
+        ? undefined
+        : docTypesWithCounts[0].id;
 
-      // Get results with effective filter.
-      // This request will give us counts for fields hit.
-      // Unfiltered requests do not include such counts.
+      const documentTypeFilter = effectiveFilter == null
+        ? requestBody.documentTypeFilter
+        : {
+            documentType: effectiveFilter,
+            foundOnlyInFields: []
+          };
+
+      const adjustedResultSettings = !needToAdjustOffset
+        ? resultSettings
+        : {
+            ...resultSettings,
+            offset: 0
+          };
+
+      // If an effective filter is to be applied...
+      //   Get results with effective filter.
+      //   This request will give us counts for fields hit.
+      //   Unfiltered requests do not include such counts.
       const requestBody2 = {
         ...requestBody,
-        documentTypeFilter: {
-          documentType: effectiveFilter,
-          foundOnlyInFields: []
-        }
+        documentTypeFilter,
+        pagination: adjustedResultSettings
       };
       const responseText2 = await runRequest(requestBody2);
-      const validatedResonse2 = decode(siteSearchResponse, responseText2);
+      const validatedResponse2 = decode(siteSearchResponse, responseText2);
       return {
         type: 'success',
-        response: validatedResonse2,
+        response: validatedResponse2,
         searchSettings,
-        resultSettings,
+        resultSettings: adjustedResultSettings,
         effectiveFilter
-      }
+      };
     }
 
     catch(error) {
