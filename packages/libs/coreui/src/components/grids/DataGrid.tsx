@@ -4,6 +4,7 @@ import {
   HeaderGroup,
   usePagination,
   Cell,
+  Row,
 } from 'react-table';
 import { pickBy } from 'lodash';
 
@@ -248,7 +249,7 @@ export default function DataGrid({
   };
 
   /** Sorting controls are added to each column when requested by the user.*/
-  const renderSortingControls = (column: HeaderGroup) =>
+  const renderSortingControls = (column: HeaderGroup<object>) =>
     sortable && (
       <div
         css={{
@@ -260,6 +261,7 @@ export default function DataGrid({
       >
         <CaretUpIcon
           color={
+            // @ts-ignore
             column.isSorted && !column.isSortedDesc
               ? mergedStylesDefinitions.icons.activeColor
               : mergedStylesDefinitions.icons.inactiveColor
@@ -268,6 +270,7 @@ export default function DataGrid({
         <CaretDownIcon
           extraCSS={{ marginTop: 2 }}
           color={
+            // @ts-ignore
             column.isSorted && column.isSortedDesc
               ? mergedStylesDefinitions.icons.activeColor
               : mergedStylesDefinitions.icons.inactiveColor
@@ -350,7 +353,7 @@ export default function DataGrid({
         </thead>
 
         <tbody {...getTableBodyProps()}>
-          {page.map((row, index: number) => {
+          {page.map((row: Row, index: number) => {
             prepareRow(row);
 
             return (
