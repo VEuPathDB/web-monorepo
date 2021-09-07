@@ -77,7 +77,7 @@ function OutroComponent(props) {
         <VisitOtherBrc {...props}/>
       </p>
       <p>
-        Sign up for cross-BRC email alerts <a target="_blank" href="https://lists.brcgateway.org">here</a>.
+        Sign up for cross-BRC email alerts <a target="_blank" href="https://lists.brcgateway.org/mailman/listinfo/brc-all">here</a>.
       </p>
     </div>
   );
