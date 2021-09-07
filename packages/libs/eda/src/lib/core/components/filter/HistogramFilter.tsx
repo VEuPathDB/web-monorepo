@@ -548,7 +548,7 @@ function HistogramPlotWithControls({
       truncationConfigIndependentAxisMax
     ) {
       setTruncatedIndependentAxisWarning(
-        'Data has been truncated (light gray area) by range selection'
+        ' Data has been truncated (light gray area) by range selection'
       );
     }
   }, [truncationConfigIndependentAxisMin, truncationConfigIndependentAxisMax]);
@@ -556,7 +556,7 @@ function HistogramPlotWithControls({
   useEffect(() => {
     if (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) {
       setTruncatedDependentAxisWarning(
-        'Data may have been truncated (light gray area) by range selection'
+        ' Data may have been truncated (light gray area) by range selection'
       );
     }
   }, [truncationConfigDependentAxisMin, truncationConfigDependentAxisMax]);
@@ -627,13 +627,14 @@ function HistogramPlotWithControls({
           {/* truncation notification */}
           {truncatedDependentAxisWarning ? (
             <Notification
-              title="Information"
+              title={''}
               text={truncatedDependentAxisWarning}
               // this was defined as LIGHT_BLUE
               color={'#5586BE'}
               onAcknowledgement={() => {
                 setTruncatedDependentAxisWarning('');
               }}
+              showWarningIcon={true}
             />
           ) : null}
           <Button
@@ -673,13 +674,14 @@ function HistogramPlotWithControls({
           {/* truncation notification */}
           {truncatedIndependentAxisWarning ? (
             <Notification
-              title="Information"
+              title={''}
               text={truncatedIndependentAxisWarning}
               // this was defined as LIGHT_BLUE
               color={'#5586BE'}
               onAcknowledgement={() => {
                 setTruncatedIndependentAxisWarning('');
               }}
+              showWarningIcon={true}
             />
           ) : null}
           <Button
