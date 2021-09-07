@@ -36,6 +36,7 @@ import bar from './selectorIcons/bar.svg';
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 import {
   grayOutLastSeries,
+  omitEmptyNoDataSeries,
   vocabularyWithMissingData,
 } from '../../../utils/analysis';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
@@ -172,7 +173,9 @@ function BarplotViz(props: VisualizationProps) {
   ]);
 
   const data = usePromise(
-    useCallback(async (): Promise<any> => {
+    useCallback(async (): Promise<
+      (BarplotData & CoverageStatistics) | undefined
+    > => {
       if (variable == null) return undefined;
 
       const params = getRequestParams(studyId, filters ?? [], vizConfig);
@@ -182,16 +185,17 @@ function BarplotViz(props: VisualizationProps) {
         params as BarplotRequestParams
       );
 
-      return grayOutLastSeries(
-        reorderData(
-          barplotResponseToData(await response),
-          variable?.vocabulary,
-          vocabularyWithMissingData(
-            overlayVariable?.vocabulary,
-            vizConfig.showMissingness
-          )
+      const showMissing = vizConfig.showMissingness && overlayVariable != null;
+      return omitEmptyNoDataSeries(
+        grayOutLastSeries(
+          reorderData(
+            barplotResponseToData(await response),
+            variable?.vocabulary,
+            vocabularyWithMissingData(overlayVariable?.vocabulary, showMissing)
+          ),
+          showMissing
         ),
-        vizConfig.showMissingness && overlayVariable != null
+        showMissing
       );
     }, [
       studyId,
@@ -234,7 +238,11 @@ function BarplotViz(props: VisualizationProps) {
           constraints={dataElementConstraints}
           dataElementDependencyOrder={dataElementDependencyOrder}
           starredVariables={starredVariables}
-          enableShowMissingnessToggle={overlayVariable != null}
+          enableShowMissingnessToggle={
+            overlayVariable != null &&
+            data.value?.completeCasesAllVars !=
+              data.value?.completeCasesAxesVars
+          }
           toggleStarredVariable={toggleStarredVariable}
           onShowMissingnessChange={onShowMissingnessChange}
           showMissingness={vizConfig.showMissingness}
@@ -427,7 +435,7 @@ function getRequestParams(
  *
  */
 function reorderData(
-  data: BarplotData,
+  data: BarplotData & CoverageStatistics,
   labelVocabulary: string[] = [],
   overlayVocabulary: string[] = []
 ) {
