@@ -490,6 +490,8 @@ class MembershipTable extends React.PureComponent {
         count={row.count}
         filteredCount={row.filteredCount}
         populationSize={this.props.activeFieldState.summary.internalsCount || this.props.dataCount}
+        fillBarColor={this.props.fillBarColor}
+        fillFilteredBarColor={this.props.fillFilteredBarColor}
       />
     );
   }
