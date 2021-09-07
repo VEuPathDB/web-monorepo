@@ -72,31 +72,36 @@ export default function DataGrid({
 }: DataGridProps) {
   // Merge default styles with any style overrides provided by user.
   const mergedStylesDefinitions: StyleOverridesSpec = {
-    headerCells: {
-      border: 'none',
-      paddingLeft: 10,
-      paddingRight: 35,
-      paddingBottom: 5,
-      paddingTop: 5,
-      color: DARK_GRAY,
-      fontWeight: 600,
-      display: 'flex',
-      alignContent: 'center',
-      ...(styleOverrides?.headerCells ?? {}),
-    },
-    dataCells: {
-      padding: '10px',
-      border: 'solid 2px',
-      borderColor: MEDIUM_GRAY,
-      color: DARK_GRAY,
-      ...(styleOverrides?.dataCells ?? {}),
-    },
-    icons: {
-      inactiveColor: MEDIUM_GRAY,
-      activeColor: DARK_GRAY,
-
-      ...(styleOverrides?.icons ?? {}),
-    },
+    headerCells: Object.assign(
+      {
+        border: 'none',
+        paddingLeft: 10,
+        paddingRight: 35,
+        paddingBottom: 5,
+        paddingTop: 5,
+        color: DARK_GRAY,
+        fontWeight: 600,
+        display: 'flex',
+        alignContent: 'center',
+      },
+      styleOverrides?.headerCells ?? {}
+    ),
+    dataCells: Object.assign(
+      {
+        padding: '10px',
+        border: 'solid 2px',
+        borderColor: MEDIUM_GRAY,
+        color: DARK_GRAY,
+      },
+      styleOverrides?.dataCells ?? {}
+    ),
+    icons: Object.assign(
+      {
+        inactiveColor: MEDIUM_GRAY,
+        activeColor: DARK_GRAY,
+      },
+      styleOverrides?.icons ?? {}
+    ),
   };
 
   // Obtain data and data controls from react-table.
