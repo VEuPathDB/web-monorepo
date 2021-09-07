@@ -82,20 +82,20 @@ export default function DataGrid({
       fontWeight: 600,
       display: 'flex',
       alignContent: 'center',
-      ...styleOverrides?.headerCells,
+      ...(styleOverrides?.headerCells ?? {}),
     },
     dataCells: {
       padding: '10px',
       border: 'solid 2px',
       borderColor: MEDIUM_GRAY,
       color: DARK_GRAY,
-      ...styleOverrides?.dataCells,
+      ...(styleOverrides?.dataCells ?? {}),
     },
     icons: {
       inactiveColor: MEDIUM_GRAY,
       activeColor: DARK_GRAY,
 
-      ...styleOverrides?.icons,
+      ...(styleOverrides?.icons ?? {}),
     },
   };
 
