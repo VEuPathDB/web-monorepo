@@ -256,19 +256,16 @@ function ScatterplotViz(props: VisualizationProps) {
               params as ScatterplotRequestParams
             );
 
-      // send visualization.type, independentValueType, and dependentValueType as well
+      const showMissing = vizConfig.showMissingness && overlayVariable != null;
       return scatterplotResponseToData(
         reorderResponse(
           await response,
-          vocabularyWithMissingData(
-            overlayVariable?.vocabulary,
-            vizConfig.showMissingness
-          )
+          vocabularyWithMissingData(overlayVariable?.vocabulary, showMissing)
         ),
         visualization.type,
         independentValueType,
         dependentValueType,
-        vizConfig.showMissingness && overlayVariable != null
+        showMissing
       );
     }, [
       studyId,
@@ -645,6 +642,18 @@ function processInputData<T extends number | string>(
     }
   };
 
+  // determine conditions for not adding empty "No data" traces
+  // we want to stop at the penultimate series if showMissing is active and there is actually no missing data
+  const noMissingData =
+    dataSet.scatterplot.config.completeCasesAllVars ===
+    dataSet.scatterplot.config.completeCasesAxesVars;
+  // 'break' from the for loops (array.some(...)) if this is true
+  const breakAfterThisSeries = (index: number) => {
+    return (
+      showMissingness && noMissingData && index === plotDataSet.data.length - 2
+    );
+  };
+
   const markerSymbol = (index: number) =>
     showMissingness && index === plotDataSet.data.length - 1
       ? 'x'
@@ -654,7 +663,7 @@ function processInputData<T extends number | string>(
   let dataSetProcess: any = [];
 
   // drawing raw data (markers) at first
-  plotDataSet?.data.forEach(function (el: any, index: number) {
+  plotDataSet?.data.some(function (el: any, index: number) {
     // initialize seriesX/Y
     let seriesX = [];
     let seriesY = [];
@@ -727,11 +736,12 @@ function processInputData<T extends number | string>(
         // always use spline?
         line: { color: markerColor(index), shape: 'spline' },
       });
+      return breakAfterThisSeries(index);
     }
   });
 
   // after drawing raw data, smoothedMean and bestfitline plots are displayed
-  plotDataSet?.data.forEach(function (el: any, index: number) {
+  plotDataSet?.data.some(function (el: any, index: number) {
     // initialize variables: setting with union type for future, but this causes typescript issue in the current version
     let xIntervalLineValue: T[] = [];
     let yIntervalLineValue: number[] = [];
@@ -911,6 +921,7 @@ function processInputData<T extends number | string>(
         type: 'scattergl',
       });
     }
+    return breakAfterThisSeries(index);
   });
 
   // make some margin for y-axis range (5% of range for now)
