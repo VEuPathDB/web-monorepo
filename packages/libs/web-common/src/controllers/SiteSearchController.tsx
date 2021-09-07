@@ -1,5 +1,5 @@
 import { castArray, isArray } from 'lodash';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router';
 import SiteSearch from 'ebrc-client/components/SiteSearch/SiteSearch';
 import { getLeaves, pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
@@ -12,6 +12,7 @@ import { SiteSearchResponse, SiteSearchRequest, siteSearchResponse } from 'ebrc-
 import { siteSearchServiceUrl } from 'ebrc-client/config';
 import { decode } from '@veupathdb/wdk-client/lib/Utils/Json';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { TreeBoxVocabNode } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { SEARCH_TERM_PARAM, OFFSET_PARAM, DOCUMENT_TYPE_PARAM, ORGANISM_PARAM, FILTERS_PARAM } from 'ebrc-client/components/SiteSearch/SiteSearchConstants';
 
 interface Props {
@@ -144,6 +145,8 @@ export default function SiteSearchController({
       [FILTERS_PARAM]: filters
     });
   }, [ updateParams, searchString, documentType, organisms, value ]);
+
+  useResetOffsetWhenOrgTreeChanges(organismTree, setOffset);
 
   if (!siteSearchServiceUrl) {
     return (
@@ -340,4 +343,33 @@ async function runRequest(requestBody: SiteSearchRequest): Promise<string> {
     throw new Error(response.statusText);
   }
   return await response.text();
+}
+
+function useResetOffsetWhenOrgTreeChanges(
+  organismTree: TreeBoxVocabNode | undefined,
+  setOffset: (newOffset: number) => void,
+) {
+  const previousOrgTree = useRef<TreeBoxVocabNode | undefined>(undefined);
+
+  // Maintain a ref to the latest value of "setOffset" so that "setOffset",
+  // which is not referentially stable, can be kept out of the dependency array
+  // of the effect that resets the offset in response to changes in "organismTree"
+  const setOffsetRef = useRef(setOffset);
+
+  useEffect(() => {
+    setOffsetRef.current = setOffset;
+  }, [ setOffset ]);
+
+  // Whenever the "organismTree" value changes...
+  //   1. Check to see if the previous and current org tree are both non-nil
+  //      (that is, loaded trees).
+  //      If so, reset the offset to 0.
+  //   2. Update the ref to the previous org tree.
+  useEffect(() => {
+    if (previousOrgTree.current != null && organismTree != null) {
+      setOffsetRef.current(0);
+    }
+
+    previousOrgTree.current = organismTree;
+  }, [ organismTree ]);
 }
