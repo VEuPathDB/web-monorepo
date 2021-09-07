@@ -33,6 +33,13 @@ module.exports = function override(config, env) {
           enforce: 'pre',
           use: 'source-map-loader',
         },
+        // The ify-loader is needed for some plotly features.
+        // This also needs the bubleify packages installed as
+        // a dev dependency.
+        {
+          test: /node_modules/,
+          loader: 'ify-loader',
+        },
       ],
     },
   };

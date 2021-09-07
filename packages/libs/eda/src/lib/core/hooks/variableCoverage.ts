@@ -23,7 +23,7 @@ import { toPercentage } from '@veupathdb/wdk-client/lib/Components/AttributeFilt
  */
 export function useVariableCoverageTableRows(
   variableSpecs: VariableSpec[],
-  filters: Filter[],
+  filters?: Filter[],
   completeCases?: CompleteCasesTable,
   outputEntityId?: string
 ): VariableCoverageTableRow[] {
