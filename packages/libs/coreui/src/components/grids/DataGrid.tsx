@@ -37,7 +37,7 @@ export type DataGridProps = {
     controlsLocation: 'top' | 'bottom' | 'both';
   };
   /** Optional. Override default visual styles. */
-  styleOverrides?: Partial<StyleOverridesSpec>;
+  styleOverrides?: StyleOverridesSpec;
   /**
    * Optional (ADVANCED). An array of functions that take a
    * react-table HeaderGroup and return a component. This essentially
@@ -51,13 +51,13 @@ export type DataGridProps = {
 
 type StyleOverridesSpec = {
   /** Styles for header cells. */
-  headerCells: React.CSSProperties;
+  headerCells?: React.CSSProperties;
   /** Styles for data cells. */
-  dataCells: React.CSSProperties;
+  dataCells?: React.CSSProperties;
   /** Color directives for icons. */
-  icons: {
-    inactiveColor: React.CSSProperties['color'];
-    activeColor: React.CSSProperties['color'];
+  icons?: {
+    inactiveColor: NonNullable<React.CSSProperties['color']>;
+    activeColor: NonNullable<React.CSSProperties['color']>;
   };
 };
 
@@ -71,7 +71,7 @@ export default function DataGrid({
   extraHeaderControls = [],
 }: DataGridProps) {
   // Merge default styles with any style overrides provided by user.
-  const mergedStylesDefinitions: StyleOverridesSpec = {
+  const mergedStylesDefinitions: Required<StyleOverridesSpec> = {
     headerCells: Object.assign(
       {
         border: 'none',
