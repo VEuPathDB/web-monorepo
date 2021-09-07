@@ -352,7 +352,10 @@ const Histogram = makePlotlyPlotComponent(
       automargin: true,
       showgrid: false,
       zeroline: false,
-      showline: false,
+      showline:
+        orientation === 'vertical'
+          ? !axisTruncationConfig?.dependentAxis?.min
+          : !axisTruncationConfig?.independentAxis?.min,
       title: {
         text: independentAxisLabel,
       },
@@ -433,7 +436,10 @@ const Histogram = makePlotlyPlotComponent(
         : [0, 10],
       dtick: dependentAxisLogScale ? 1 : undefined,
       tickfont: data.series.length ? {} : { color: 'transparent' },
-      showline: true,
+      showline:
+        orientation === 'vertical'
+          ? !axisTruncationConfig?.independentAxis?.min
+          : !axisTruncationConfig?.dependentAxis?.min,
     };
 
     return {
