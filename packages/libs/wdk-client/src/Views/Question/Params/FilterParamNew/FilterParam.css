@@ -451,13 +451,9 @@
 }
 .filter-param .bar .fill {
   color: white;
-  background-color: #aaaaaa;
   height: 1em;
   position: absolute;
   min-width: 1px;
-}
-.filter-param .fill.filtered {
-  background-color: #DA7272;
 }
 .filter-param .filter-param-legend {
   float: right;
