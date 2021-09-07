@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/core-components",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Core components and style definitions for VEuPath applications.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -28,6 +28,7 @@
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
     "@types/react-table": "^7.7.2",
+    "lodash": "^4.17.21",
     "react-modal": "^3.14.3",
     "react-table": "^7.7.0"
   },
@@ -44,6 +45,7 @@
     "@storybook/addon-essentials": "^6.3.7",
     "@storybook/addon-links": "^6.3.7",
     "@storybook/react": "^6.3.7",
+    "@types/lodash": "^4.14.172",
     "@types/react-modal": "^3.12.1",
     "@veupathdb/tsconfig": "^1.0.1",
     "babel-loader": "^8.2.2",

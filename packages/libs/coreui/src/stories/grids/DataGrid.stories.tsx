@@ -1,5 +1,16 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
+import CancelIcon from '@material-ui/icons/Cancel';
+
 import DataGrid, { DataGridProps } from '../../components/grids/DataGrid';
+
+import {
+  DARK_GRAY,
+  DARK_ORANGE,
+  DARK_RED,
+  LIGHT_GRAY,
+  LIGHT_ORANGE,
+  MEDIUM_GRAY,
+} from '../../constants/colors';
 
 export default {
   title: 'Grids/DataGrid',
@@ -19,25 +30,33 @@ Basic.args = {
       Header: 'Participant Species',
       accessor: 'col2',
     },
+    {
+      Header: 'Favorite Jedi',
+      accessor: 'col3',
+    },
   ],
   data: [
     {
       col1: 'Michael',
       col2: 'Hutt',
+      col3: 'Palpatine ;)',
     },
 
     {
       col1: 'Shaun',
       col2: 'Wookie',
+      col3: 'Anakin',
     },
 
     {
       col1: 'DK',
       col2: 'Mandolorian',
+      col3: 'Ahsoka',
     },
     {
       col1: 'Connor',
       col2: 'Twilek',
+      col3: 'Yoda',
     },
   ],
 };
@@ -55,5 +74,51 @@ WithPagination.args = {
   title: 'Data Grid w/ Record Pagination',
   pagination: {
     recordsPerPage: 2,
+    controlsLocation: 'both',
   },
+};
+
+export const CustomStyling = Template.bind({});
+CustomStyling.args = {
+  ...Basic.args,
+  title: 'Data Grid w/ Custom Styling',
+  styleOverrides: {
+    headerCells: {
+      borderColor: DARK_GRAY,
+      borderWidth: 2,
+      borderStyle: 'solid',
+      color: LIGHT_GRAY,
+      fontSize: 16,
+      fontWeight: 400,
+      backgroundColor: DARK_GRAY,
+    },
+    dataCells: {
+      borderColor: DARK_ORANGE,
+      backgroundColor: LIGHT_ORANGE,
+      color: 'whitesmoke',
+    },
+    icons: {
+      activeColor: 'white',
+      inactiveColor: MEDIUM_GRAY,
+    },
+  },
+};
+
+export const HeaderAddOns = Template.bind({});
+HeaderAddOns.args = {
+  ...Basic.args,
+  title: 'Data Grid w/ Custom Header Functionality',
+  extraHeaderControls: [
+    (column) => (
+      <div onClick={() => alert('Do something supa supa evil!!!! MWA HA HA')}>
+        <CancelIcon
+          css={{
+            color: DARK_RED,
+            position: 'relative',
+            left: 20,
+          }}
+        />
+      </div>
+    ),
+  ],
 };
