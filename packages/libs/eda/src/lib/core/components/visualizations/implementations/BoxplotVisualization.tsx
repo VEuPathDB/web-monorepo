@@ -32,6 +32,7 @@ import { at } from 'lodash';
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 import {
   grayOutLastSeries,
+  omitEmptyNoDataSeries,
   vocabularyWithMissingData,
 } from '../../../utils/analysis';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
@@ -204,17 +205,17 @@ function BoxplotViz(props: VisualizationProps) {
         params as BoxplotRequestParams
       );
 
-      // send visualization.type as well
-      return grayOutLastSeries(
-        reorderData(
-          boxplotResponseToData(await response),
-          xAxisVariable.vocabulary,
-          vocabularyWithMissingData(
-            overlayVariable?.vocabulary,
-            vizConfig.showMissingness
-          )
+      const showMissing = vizConfig.showMissingness && overlayVariable != null;
+      return omitEmptyNoDataSeries(
+        grayOutLastSeries(
+          reorderData(
+            boxplotResponseToData(await response),
+            xAxisVariable.vocabulary,
+            vocabularyWithMissingData(overlayVariable?.vocabulary, showMissing)
+          ),
+          showMissing
         ),
-        vizConfig.showMissingness && overlayVariable != null
+        showMissing
       );
     }, [
       studyId,
@@ -261,7 +262,11 @@ function BoxplotViz(props: VisualizationProps) {
           dataElementDependencyOrder={dataElementDependencyOrder}
           starredVariables={starredVariables}
           toggleStarredVariable={toggleStarredVariable}
-          enableShowMissingnessToggle={overlayVariable != null}
+          enableShowMissingnessToggle={
+            overlayVariable != null &&
+            data.value?.completeCasesAllVars !=
+              data.value?.completeCasesAxesVars
+          }
           showMissingness={vizConfig.showMissingness}
           onShowMissingnessChange={onShowMissingnessChange}
           outputEntity={outputEntity}
