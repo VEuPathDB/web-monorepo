@@ -41,6 +41,7 @@ import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 import {
   vocabularyWithMissingData,
   grayOutLastSeries,
+  omitEmptyNoDataSeries,
 } from '../../../utils/analysis';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import { useFindEntityAndVariable } from '../../../hooks/study';
@@ -218,15 +219,16 @@ function HistogramViz(props: VisualizationProps) {
         vizConfig
       );
       const response = dataClient.getHistogram(computation.type, params);
-      return grayOutLastSeries(
-        reorderData(
-          histogramResponseToData(await response, xAxisVariable.type),
-          vocabularyWithMissingData(
-            overlayVariable?.vocabulary,
-            vizConfig.showMissingness
-          )
+      const showMissing = vizConfig.showMissingness && overlayVariable != null;
+      return omitEmptyNoDataSeries(
+        grayOutLastSeries(
+          reorderData(
+            histogramResponseToData(await response, xAxisVariable.type),
+            vocabularyWithMissingData(overlayVariable?.vocabulary, showMissing)
+          ),
+          showMissing
         ),
-        vizConfig.showMissingness && overlayVariable != null
+        showMissing
       );
     }, [
       vizConfig.xAxisVariable,
@@ -271,7 +273,11 @@ function HistogramViz(props: VisualizationProps) {
           dataElementDependencyOrder={dataElementDependencyOrder}
           starredVariables={starredVariables}
           toggleStarredVariable={toggleStarredVariable}
-          enableShowMissingnessToggle={overlayVariable != null}
+          enableShowMissingnessToggle={
+            overlayVariable != null &&
+            data.value?.completeCasesAllVars !=
+              data.value?.completeCasesAxesVars
+          }
           showMissingness={vizConfig.showMissingness}
           onShowMissingnessChange={onShowMissingnessChange}
           outputEntity={outputEntity}
