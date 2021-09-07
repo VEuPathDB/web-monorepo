@@ -14,6 +14,7 @@ import { fromEdaFilter } from '../../utils/wdk-filter-param-adapter';
 import { TableVariable } from './types';
 import { getDistribution } from './util';
 import { DistributionResponse } from '../../api/subsetting-api';
+import { gray, red } from './colors';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -321,6 +322,8 @@ export function TableFilter({
             onMemberChangeCurrentPage={handlePagination}
             onMemberChangeRowsPerPage={handleRowsPerPage}
             selectByDefault={false}
+            fillBarColor={gray}
+            fillFilteredBarColor={red}
             // set Heading1 prefix
             filteredCountHeadingPrefix={'Subset of'}
           />
