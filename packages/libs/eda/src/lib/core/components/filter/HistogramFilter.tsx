@@ -548,7 +548,7 @@ function HistogramPlotWithControls({
       truncationConfigIndependentAxisMax
     ) {
       setTruncatedIndependentAxisWarning(
-        ' Data has been truncated (light gray area) by range selection'
+        'Data has been truncated by range selection, as indicated by the light gray shading'
       );
     }
   }, [truncationConfigIndependentAxisMin, truncationConfigIndependentAxisMax]);
@@ -556,7 +556,7 @@ function HistogramPlotWithControls({
   useEffect(() => {
     if (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) {
       setTruncatedDependentAxisWarning(
-        ' Data may have been truncated (light gray area) by range selection'
+        'Data may have been truncated by range selection, as indicated by the light gray shading'
       );
     }
   }, [truncationConfigDependentAxisMin, truncationConfigDependentAxisMax]);
@@ -635,6 +635,7 @@ function HistogramPlotWithControls({
                 setTruncatedDependentAxisWarning('');
               }}
               showWarningIcon={true}
+              containerStyles={{ maxWidth: '38.5em' }}
             />
           ) : null}
           <Button
@@ -682,6 +683,9 @@ function HistogramPlotWithControls({
                 setTruncatedIndependentAxisWarning('');
               }}
               showWarningIcon={true}
+              containerStyles={{
+                maxWidth: data?.valueType === 'date' ? '34.5em' : '38.5em',
+              }}
             />
           ) : null}
           <Button
