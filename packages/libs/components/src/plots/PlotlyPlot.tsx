@@ -60,10 +60,7 @@ export interface PlotProps<T> extends ColorPaletteAddon {
   maxLegendTextLength?: number;
 }
 
-/** This is used both for React.lazy and the `toImage` function of PlotRef. */
-const sharedImport = makeSharedPromise(() => import('react-plotly.js'));
-
-const Plot = lazy(sharedImport.run);
+const Plot = lazy(() => import('react-plotly.js'));
 
 /**
  * Wrapper over the `react-plotly.js` `Plot` component
@@ -98,6 +95,12 @@ function PlotlyPlot<T>(
 
   // set max legend title length for ellipsis
   const maxLegendTitleTextLength = maxLegendTextLength + 5;
+
+  /** This is used to ensure toImage is called after the plot has been created */
+  const sharedPlotCreation = useMemo(
+    () => makeSharedPromise(async () => {}),
+    []
+  );
 
   // config is derived purely from PlotProps props
   const finalConfig = useMemo(
@@ -232,7 +235,7 @@ function PlotlyPlot<T>(
     () => ({
       toImage: async (imageOpts: ToImgopts) => {
         try {
-          await sharedImport.promise;
+          await sharedPlotCreation.promise;
           return await toImage(plotId, imageOpts);
         } catch (error) {
           console.error('Could not create image for plot:', error);
@@ -256,6 +259,7 @@ function PlotlyPlot<T>(
           config={finalConfig}
           // use onUpdate event handler for legend tooltip
           onUpdate={onUpdate}
+          onInitialized={sharedPlotCreation.run}
         />
         {showSpinner && <Spinner />}
       </div>
