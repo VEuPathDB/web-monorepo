@@ -599,6 +599,12 @@ const useHeaderMenuItems = (
           url: makeStaticPageRoute('/about.html')
         },
         { 
+          key: 'datasets-in-progress',
+          display: 'Datasets we are working on',
+          type: 'reactRoute',
+          url: makeStaticPageRoute('/dataInprogress.html')
+        },
+        { 
           key: 'switchsites',
           display: 'VEuPathDB sites',
           type: 'subMenu',
