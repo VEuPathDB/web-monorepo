@@ -296,8 +296,6 @@ export default function DataGrid({
       (value, key) => !key.includes('border')
     );
 
-    console.log('COLUMN', headerGroup);
-
     return (
       <th
         {...headerGroup.getHeaderProps()}

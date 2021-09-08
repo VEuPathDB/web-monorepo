@@ -14,10 +14,14 @@ module.exports = {
     "@storybook/addon-links",
     "@storybook/addon-essentials"
   ],
-  babel: async (options) => ({
-    ...options,
-    presets: [...options.presets, '@emotion/babel-preset-css-prop'],
-  }),
+  babel: async (options) => {
+    // console.log('BABEL OPTIONS', options)
+
+    return ({
+      ...options,
+      presets: [...options.presets, '@emotion/babel-preset-css-prop'],
+    })
+  },
   webpackFinal: async (config) => {
     const { mode: environment, plugins, module } = config;
     return {
@@ -32,7 +36,7 @@ module.exports = {
            *
            * Otherwise Storybook fails to compile with "Module not found: Error: Can't resolve '@emotion/styled/base'", etc.
            * It wasn't necessary to do this until we imported React component using "@emotion/styled".
-           * This issue is probably caused because Storybook uses Emotion 10 while we have Emotion 11 used by the Next.js app.
+           * This issue is probably caused because Storybook uses Emotion 10 while we have Emotion 11.
            *
            * @see https://github.com/storybookjs/storybook/issues/13277#issuecomment-751747964
            */
