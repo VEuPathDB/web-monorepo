@@ -44,6 +44,8 @@ export interface PlotProps<T> extends ColorPaletteAddon {
    * Default is { width: '100%', height: '400px' }
    */
   containerStyles?: CSSProperties;
+  /** class name for enclosing div. Default is web-components-plot */
+  containerClass?: string;
   /** Enables mouse-overs and interaction if true. Default false. */
   interactive?: boolean;
   /** show Plotly's mode bar (only shows if interactive == true) */
@@ -79,6 +81,7 @@ function PlotlyPlot<T>(
     title,
     displayLegend = true,
     containerStyles = { width: '100%', height: '400px' },
+    containerClass = 'web-components-plot',
     interactive = false,
     displayLibraryControls,
     legendOptions,
@@ -248,7 +251,10 @@ function PlotlyPlot<T>(
 
   return (
     <Suspense fallback="Loading...">
-      <div style={{ ...containerStyles, position: 'relative' }}>
+      <div
+        className={containerClass}
+        style={{ ...containerStyles, position: 'relative' }}
+      >
         <Plot
           {...plotlyProps}
           divId={plotId}
