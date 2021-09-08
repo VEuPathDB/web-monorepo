@@ -104,6 +104,7 @@ const useStyles = makeStyles(
     },
     primary: {},
     stratification: {},
+    showMissingness: {},
   },
   {
     name: 'InputVariables',
@@ -270,7 +271,7 @@ export function InputVariables(props: Props) {
                 </div>
               ))}
             {onShowMissingnessChange && (
-              <div className={classes.fullRow}>
+              <div className={classes.showMissingness}>
                 <Switch
                   label={`Include ${
                     outputEntity
