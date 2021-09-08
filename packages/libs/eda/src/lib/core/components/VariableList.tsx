@@ -73,20 +73,6 @@ interface FieldNodeProps {
 
 type valuesMapType = Record<string, string>;
 
-interface VariableListProps {
-  activeField?: VariableField;
-  onActiveFieldChange: (term: string) => void;
-  valuesMap: valuesMapType;
-  fieldTree: VariableFieldTreeNode;
-  autoFocus: boolean;
-  starredVariables?: string[];
-  toggleStarredVariable: (targetVariableId: string) => void;
-  disabledFieldIds?: string[];
-  hideDisabledFields: boolean;
-  setHideDisabledFields: (hide: boolean) => void;
-  featuredFields: VariableField[];
-}
-
 interface getNodeSearchStringType {
   field: {
     term: string;
@@ -101,21 +87,35 @@ interface getNodeSearchStringType {
 const Options = {
   featuredVariablesOpen: true,
 };
+// TODO: Needs documentation.
+interface VariableListProps {
+  activeField?: VariableField;
+  onActiveFieldChange: (term: string) => void;
+  valuesMap: valuesMapType;
+  fieldTree: VariableFieldTreeNode;
+  autoFocus: boolean;
+  starredVariables?: string[];
+  toggleStarredVariable: (targetVariableId: string) => void;
+  disabledFieldIds?: string[];
+  hideDisabledFields: boolean;
+  setHideDisabledFields: (hide: boolean) => void;
+  featuredFields: VariableField[];
+}
 
-export default function VariableList(props: VariableListProps) {
-  const {
-    activeField,
-    disabledFieldIds,
-    onActiveFieldChange,
-    valuesMap,
-    fieldTree,
-    featuredFields,
-    autoFocus,
-    starredVariables,
-    toggleStarredVariable,
-    hideDisabledFields,
-    setHideDisabledFields,
-  } = props;
+// TODO: Needs documentation of general component purpose.
+export default function VariableList({
+  activeField,
+  disabledFieldIds,
+  onActiveFieldChange,
+  valuesMap,
+  fieldTree,
+  featuredFields,
+  autoFocus,
+  starredVariables,
+  toggleStarredVariable,
+  hideDisabledFields,
+  setHideDisabledFields,
+}: VariableListProps) {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const getPathToField = useCallback(
     (field?: Field) => {
