@@ -416,7 +416,7 @@ function HistogramPlotWithControls({
             filters={filters}
             outputEntity={outputEntity}
             stratificationIsActive={overlayVariable != null}
-            enableSpinner={histogramProps.showSpinner}
+            enableSpinner={independentAxisVariable != null}
           />
           <VariableCoverageTable
             completeCases={completeCases}

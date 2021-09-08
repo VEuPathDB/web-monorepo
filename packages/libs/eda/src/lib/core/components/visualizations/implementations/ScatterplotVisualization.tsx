@@ -411,7 +411,7 @@ function ScatterplotViz(props: VisualizationProps) {
             filters={filters}
             outputEntity={outputEntity}
             stratificationIsActive={overlayVariable != null}
-            enableSpinner={data.pending}
+            enableSpinner={xAxisVariable != null && yAxisVariable != null}
           />
           <VariableCoverageTable
             completeCases={

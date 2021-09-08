@@ -348,7 +348,7 @@ function MosaicViz(props: Props) {
           filters={filters}
           outputEntity={outputEntity}
           stratificationIsActive={false}
-          enableSpinner={data.pending}
+          enableSpinner={xAxisVariable != null && yAxisVariable != null}
         />
         <VariableCoverageTable
           completeCases={data.pending ? undefined : data.value?.completeCases}
