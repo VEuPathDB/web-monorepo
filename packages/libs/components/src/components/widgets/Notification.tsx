@@ -83,7 +83,7 @@ export default function Notification({
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <span
           style={{
-            paddingRight: 50,
+            paddingRight: 20,
             color: 'white',
             fontSize: 13,
             flexGrow: 2,
@@ -91,10 +91,13 @@ export default function Notification({
           }}
         >
           {showWarningIcon && (
-            <WarningIcon
-              style={{ color: 'yellow', verticalAlign: 'middle' }}
-              fontSize="small"
-            />
+            <>
+              <WarningIcon
+                style={{ color: 'yellow', verticalAlign: 'middle' }}
+                fontSize="small"
+              />
+              <span>&nbsp;</span>
+            </>
           )}
           {text}
         </span>
