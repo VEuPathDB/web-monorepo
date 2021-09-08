@@ -318,7 +318,11 @@ function ScatterplotViz(props: VisualizationProps) {
           dataElementDependencyOrder={dataElementDependencyOrder}
           starredVariables={starredVariables}
           toggleStarredVariable={toggleStarredVariable}
-          enableShowMissingnessToggle={overlayVariable != null}
+          enableShowMissingnessToggle={
+            overlayVariable != null &&
+            data.value?.completeCasesAllVars !=
+              data.value?.completeCasesAxesVars
+          }
           showMissingness={vizConfig.showMissingness}
           onShowMissingnessChange={onShowMissingnessChange}
           outputEntity={outputEntity}
