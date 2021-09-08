@@ -10,7 +10,7 @@ import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import _ from 'lodash';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { DataClient, MosaicRequestParams } from '../../../api/data-api';
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
@@ -20,6 +20,7 @@ import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
 import { VariableDescriptor } from '../../../types/variable';
 import { CoverageStatistics } from '../../../types/visualization';
+import { BirdsEyeView } from '../../BirdsEyeView';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
@@ -336,15 +337,19 @@ function MosaicViz(props: Props) {
           ]}
         />
       </div>
-      <div
-        style={{
-          display: 'grid',
-          gridAutoFlow: 'row',
-          gap: '0.75em',
-          marginLeft: '3em',
-          marginTop: '1.5em',
-        }}
-      >
+      <div className="viz-plot-info">
+        <BirdsEyeView
+          completeCasesAllVars={
+            data.pending ? undefined : data.value?.completeCasesAllVars
+          }
+          completeCasesAxesVars={
+            data.pending ? undefined : data.value?.completeCasesAxesVars
+          }
+          filters={filters}
+          outputEntity={outputEntity}
+          stratificationIsActive={false}
+          enableSpinner={xAxisVariable != null && yAxisVariable != null}
+        />
         <VariableCoverageTable
           completeCases={data.pending ? undefined : data.value?.completeCases}
           filters={filters}
@@ -368,6 +373,13 @@ function MosaicViz(props: Props) {
       </div>
     </div>
   );
+
+  const facetingIsActive = false; // placeholders
+  const showMissingness = false; // for the future with faceting
+  const outputSize =
+    !facetingIsActive && !showMissingness
+      ? data.value?.completeCasesAllVars
+      : data.value?.completeCasesAxesVars;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -423,10 +435,7 @@ function MosaicViz(props: Props) {
         </div>
       )}
 
-      <OutputEntityTitle
-        entity={outputEntity}
-        outputSize={data.pending ? undefined : data.value?.completeCasesAllVars}
-      />
+      <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
       {plotComponent}
     </div>
   );

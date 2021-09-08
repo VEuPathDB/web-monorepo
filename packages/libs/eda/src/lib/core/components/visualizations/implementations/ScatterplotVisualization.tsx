@@ -27,6 +27,7 @@ import { PromiseType } from '../../../types/utility';
 import { VariableDescriptor } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
+import { BirdsEyeView } from '../../BirdsEyeView';
 
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
@@ -283,6 +284,11 @@ function ScatterplotViz(props: VisualizationProps) {
     ])
   );
 
+  const outputSize =
+    overlayVariable != null && !vizConfig.showMissingness
+      ? data.value?.completeCasesAllVars
+      : data.value?.completeCasesAxesVars;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -341,10 +347,7 @@ function ScatterplotViz(props: VisualizationProps) {
             : String(data.error)}
         </div>
       )}
-      <OutputEntityTitle
-        entity={outputEntity}
-        outputSize={data.pending ? undefined : data.value?.completeCasesAllVars}
-      />
+      <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
       <div
         style={{
           display: 'flex',
@@ -397,32 +400,48 @@ function ScatterplotViz(props: VisualizationProps) {
           dependentValueType={yAxisVariable?.type}
           legendTitle={axisLabelWithUnit(overlayVariable)}
         />
-        <VariableCoverageTable
-          completeCases={
-            data.value && !data.pending ? data.value?.completeCases : undefined
-          }
-          filters={filters}
-          outputEntityId={outputEntity?.id}
-          variableSpecs={[
-            {
-              role: 'X-axis',
-              required: true,
-              display: axisLabelWithUnit(xAxisVariable),
-              variable: vizConfig.xAxisVariable,
-            },
-            {
-              role: 'Y-axis',
-              required: true,
-              display: axisLabelWithUnit(yAxisVariable),
-              variable: vizConfig.yAxisVariable,
-            },
-            {
-              role: 'Overlay',
-              display: axisLabelWithUnit(overlayVariable),
-              variable: vizConfig.overlayVariable,
-            },
-          ]}
-        />
+        <div className="viz-plot-info">
+          <BirdsEyeView
+            completeCasesAllVars={
+              data.pending ? undefined : data.value?.completeCasesAllVars
+            }
+            completeCasesAxesVars={
+              data.pending ? undefined : data.value?.completeCasesAxesVars
+            }
+            filters={filters}
+            outputEntity={outputEntity}
+            stratificationIsActive={overlayVariable != null}
+            enableSpinner={xAxisVariable != null && yAxisVariable != null}
+          />
+          <VariableCoverageTable
+            completeCases={
+              data.value && !data.pending
+                ? data.value?.completeCases
+                : undefined
+            }
+            filters={filters}
+            outputEntityId={outputEntity?.id}
+            variableSpecs={[
+              {
+                role: 'X-axis',
+                required: true,
+                display: axisLabelWithUnit(xAxisVariable),
+                variable: vizConfig.xAxisVariable,
+              },
+              {
+                role: 'Y-axis',
+                required: true,
+                display: axisLabelWithUnit(yAxisVariable),
+                variable: vizConfig.yAxisVariable,
+              },
+              {
+                role: 'Overlay',
+                display: axisLabelWithUnit(overlayVariable),
+                variable: vizConfig.overlayVariable,
+              },
+            ]}
+          />
+        </div>
       </div>
     </div>
   );
