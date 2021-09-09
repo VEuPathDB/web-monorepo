@@ -396,11 +396,6 @@ function MosaicViz(props: Props) {
               label: 'Y-axis',
               role: 'primary',
             },
-            {
-              name: 'facetVariable',
-              label: 'Facet (placeholder)',
-              role: 'stratification',
-            },
           ]}
           entities={entities}
           values={{
