@@ -4,13 +4,13 @@ import { getTree } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/At
 import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { keyBy } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
-import { cx } from '../../workspace/Utils';
-import { StudyEntity } from '../types/study';
-import { VariableDescriptor } from '../types/variable';
-import { edaVariableToWdkField } from '../utils/wdk-filter-param-adapter';
-import VariableList from './VariableList';
+import { cx } from '../../../workspace/Utils';
+import { StudyEntity } from '../../types/study';
+import { VariableDescriptor } from '../../types/variable';
+import { edaVariableToWdkField } from '../../utils/wdk-filter-param-adapter';
+import VariableList from '../VariableList';
 import './VariableTree.scss';
-import { useStudyEntities } from '../hooks/study';
+import { useStudyEntities } from '../../hooks/study';
 
 export interface Props {
   rootEntity: StudyEntity;
