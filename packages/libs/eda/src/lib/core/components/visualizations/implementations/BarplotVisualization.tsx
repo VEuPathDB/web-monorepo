@@ -26,6 +26,7 @@ import { VariableDescriptor } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { CoverageStatistics } from '../../../types/visualization';
+import { BirdsEyeView } from '../../BirdsEyeView';
 
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
@@ -36,6 +37,7 @@ import bar from './selectorIcons/bar.svg';
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 import {
   grayOutLastSeries,
+  omitEmptyNoDataSeries,
   vocabularyWithMissingData,
 } from '../../../utils/analysis';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
@@ -172,7 +174,9 @@ function BarplotViz(props: VisualizationProps) {
   ]);
 
   const data = usePromise(
-    useCallback(async (): Promise<any> => {
+    useCallback(async (): Promise<
+      (BarplotData & CoverageStatistics) | undefined
+    > => {
       if (variable == null) return undefined;
 
       const params = getRequestParams(studyId, filters ?? [], vizConfig);
@@ -182,16 +186,17 @@ function BarplotViz(props: VisualizationProps) {
         params as BarplotRequestParams
       );
 
-      return grayOutLastSeries(
-        reorderData(
-          barplotResponseToData(await response),
-          variable?.vocabulary,
-          vocabularyWithMissingData(
-            overlayVariable?.vocabulary,
-            vizConfig.showMissingness
-          )
+      const showMissing = vizConfig.showMissingness && overlayVariable != null;
+      return omitEmptyNoDataSeries(
+        grayOutLastSeries(
+          reorderData(
+            barplotResponseToData(await response),
+            variable?.vocabulary,
+            vocabularyWithMissingData(overlayVariable?.vocabulary, showMissing)
+          ),
+          showMissing
         ),
-        vizConfig.showMissingness && overlayVariable != null
+        showMissing
       );
     }, [
       studyId,
@@ -207,6 +212,11 @@ function BarplotViz(props: VisualizationProps) {
       computation.type,
     ])
   );
+
+  const outputSize =
+    overlayVariable != null && !vizConfig.showMissingness
+      ? data.value?.completeCasesAllVars
+      : data.value?.completeCasesAxesVars;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -234,7 +244,11 @@ function BarplotViz(props: VisualizationProps) {
           constraints={dataElementConstraints}
           dataElementDependencyOrder={dataElementDependencyOrder}
           starredVariables={starredVariables}
-          enableShowMissingnessToggle={overlayVariable != null}
+          enableShowMissingnessToggle={
+            overlayVariable != null &&
+            data.value?.completeCasesAllVars !=
+              data.value?.completeCasesAxesVars
+          }
           toggleStarredVariable={toggleStarredVariable}
           onShowMissingnessChange={onShowMissingnessChange}
           showMissingness={vizConfig.showMissingness}
@@ -261,10 +275,7 @@ function BarplotViz(props: VisualizationProps) {
             : String(data.error)}
         </div>
       )}
-      <OutputEntityTitle
-        entity={entity}
-        outputSize={data.pending ? undefined : data.value?.completeCasesAllVars}
-      />
+      <OutputEntityTitle entity={entity} outputSize={outputSize} />
       <div
         style={{
           display: 'flex',
@@ -294,24 +305,38 @@ function BarplotViz(props: VisualizationProps) {
           dependentAxisLogScale={vizConfig.dependentAxisLogScale}
           onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
         />
-        <VariableCoverageTable
-          completeCases={data.pending ? undefined : data.value?.completeCases}
-          filters={filters}
-          outputEntityId={vizConfig.xAxisVariable?.entityId}
-          variableSpecs={[
-            {
-              role: 'Main',
-              required: true,
-              display: axisLabelWithUnit(variable),
-              variable: vizConfig.xAxisVariable,
-            },
-            {
-              role: 'Overlay',
-              display: axisLabelWithUnit(overlayVariable),
-              variable: vizConfig.overlayVariable,
-            },
-          ]}
-        />
+        <div className="viz-plot-info">
+          <BirdsEyeView
+            completeCasesAllVars={
+              data.pending ? undefined : data.value?.completeCasesAllVars
+            }
+            completeCasesAxesVars={
+              data.pending ? undefined : data.value?.completeCasesAxesVars
+            }
+            filters={filters}
+            outputEntity={entity}
+            stratificationIsActive={overlayVariable != null}
+            enableSpinner={vizConfig.xAxisVariable != null}
+          />
+          <VariableCoverageTable
+            completeCases={data.pending ? undefined : data.value?.completeCases}
+            filters={filters}
+            outputEntityId={vizConfig.xAxisVariable?.entityId}
+            variableSpecs={[
+              {
+                role: 'Main',
+                required: true,
+                display: axisLabelWithUnit(variable),
+                variable: vizConfig.xAxisVariable,
+              },
+              {
+                role: 'Overlay',
+                display: axisLabelWithUnit(overlayVariable),
+                variable: vizConfig.overlayVariable,
+              },
+            ]}
+          />
+        </div>
       </div>
     </div>
   );
@@ -427,7 +452,7 @@ function getRequestParams(
  *
  */
 function reorderData(
-  data: BarplotData,
+  data: BarplotData & CoverageStatistics,
   labelVocabulary: string[] = [],
   overlayVocabulary: string[] = []
 ) {

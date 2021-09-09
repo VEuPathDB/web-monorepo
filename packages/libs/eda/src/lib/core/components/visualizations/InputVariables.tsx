@@ -74,15 +74,20 @@ const useStyles = makeStyles(
   {
     inputs: {
       display: 'flex',
+      flexWrap: 'nowrap', // if it didn't wrap so aggressively, it would be good to allow wrapping
+      // perhaps after the Material UI capitalization is removed.
+      marginLeft: '0.5em', // this indent is only needed because the wdk-SaveableTextEditor above it is indented
+      alignItems: 'flex-start',
+    },
+    inputGroup: {
+      display: 'flex',
       flexWrap: 'wrap',
-      marginBottom: '0.5em',
     },
     input: {
       display: 'flex',
       alignItems: 'center',
-      '&:not(:last-of-type)': {
-        marginRight: '2em',
-      },
+      marginBottom: '0.5em', // in case they end up stacked vertically on a narrow screen
+      marginRight: '2em',
     },
     label: {
       marginRight: '1ex',
@@ -94,17 +99,12 @@ const useStyles = makeStyles(
       fontSize: '1.35em',
       fontWeight: 500,
     },
-    primary: {
-      order: 0,
-    },
-    showMissing: {
-      order: 1,
+    fullRow: {
       flexBasis: '100%',
-      marginTop: '1em',
     },
-    stratification: {
-      order: 2,
-    },
+    primary: {},
+    stratification: {},
+    showMissingness: {},
   },
   {
     name: 'InputVariables',
@@ -135,18 +135,26 @@ export function InputVariables(props: Props) {
 
   // Find entities that are excluded for each variable, and union their variables
   // with the disabled variables.
-  const disabledVariablesByInputIndex = useMemo(
+  const disabledVariablesByInputName: Record<
+    string,
+    VariableDescriptor[]
+  > = useMemo(
     () =>
-      inputs.map((input) => {
+      inputs.reduce((map, input) => {
         const disabledVariables = excludedVariables(
           entities[0],
           flattenedConstraints && flattenedConstraints[input.name]
         );
-        if (dataElementDependencyOrder == null) return disabledVariables;
-
+        if (dataElementDependencyOrder == null) {
+          map[input.name] = disabledVariables;
+          return map;
+        }
         const index = dataElementDependencyOrder.indexOf(input.name);
         // no change if dependencyOrder is not declared
-        if (index === -1) return disabledVariables;
+        if (index === -1) {
+          map[input.name] = disabledVariables;
+          return map;
+        }
 
         const prevValue = dataElementDependencyOrder
           .slice(0, index)
@@ -180,8 +188,10 @@ export function InputVariables(props: Props) {
         }
 
         // remove ancestors of previous input's entity
-        if (nextValue == null || nextValue.entityId === entities[0].id)
-          return disabledVariables;
+        if (nextValue == null || nextValue.entityId === entities[0].id) {
+          map[input.name] = disabledVariables;
+          return map;
+        }
         const ancestorTree = mapStructure<StudyEntity, StudyEntity>(
           (entity, children) => ({
             ...entity,
@@ -199,57 +209,85 @@ export function InputVariables(props: Props) {
           }))
         );
         disabledVariables.push(...ancestorVariables);
-        return disabledVariables;
-      }),
+        map[input.name] = disabledVariables;
+        return map;
+      }, {} as Record<string, VariableDescriptor[]>),
     [dataElementDependencyOrder, entities, flattenedConstraints, inputs, values]
   );
 
   return (
     <div>
       <div className={classes.inputs}>
-        {inputs.map((input, index) => (
-          <div
-            key={input.name}
-            className={[classes.input, classes[input.role ?? 'primary']].join(
-              ' '
-            )}
-          >
-            <div className={classes.label}>{input.label}</div>
-            <VariableTreeDropdown
-              rootEntity={entities[0]}
-              disabledVariables={disabledVariablesByInputIndex[index]}
-              starredVariables={starredVariables}
-              toggleStarredVariable={toggleStarredVariable}
-              entityId={values[input.name]?.entityId}
-              variableId={values[input.name]?.variableId}
-              onChange={(variable) => {
-                handleChange(input.name, variable);
-              }}
-            />
+        <div className={classes.inputGroup}>
+          <div className={classes.fullRow}>
+            <h4>Axis variables</h4>
           </div>
-        ))}
-        {onShowMissingnessChange &&
-          inputs.filter((input) => input.role === 'stratification').length && (
-            <div className={[classes.input, classes.showMissing].join(' ')}>
-              <h4>Stratification (optional)</h4>
-              <Switch
-                label={`Include ${
-                  outputEntity
-                    ? makeEntityDisplayName(outputEntity, true)
-                    : 'points'
-                } with no data for selected stratification variable(s)`}
-                state={showMissingness}
-                onStateChange={onShowMissingnessChange}
-                disabled={!enableShowMissingnessToggle}
-                labelPosition="after"
-                containerStyles={{
-                  marginLeft: '20px',
-                }}
-              />
+          {inputs
+            .filter((input) => input.role === 'primary')
+            .map((input) => (
+              <div
+                key={input.name}
+                className={[classes.input, 'primary'].join(' ')}
+              >
+                <div className={classes.label}>{input.label}</div>
+                <VariableTreeDropdown
+                  rootEntity={entities[0]}
+                  disabledVariables={disabledVariablesByInputName[input.name]}
+                  starredVariables={starredVariables}
+                  toggleStarredVariable={toggleStarredVariable}
+                  entityId={values[input.name]?.entityId}
+                  variableId={values[input.name]?.variableId}
+                  onChange={(variable) => {
+                    handleChange(input.name, variable);
+                  }}
+                />
+              </div>
+            ))}
+        </div>
+        {inputs.filter((input) => input.role === 'stratification').length && (
+          <div className={classes.inputGroup}>
+            <div className={classes.fullRow}>
+              <h4>Stratification variables (optional)</h4>
             </div>
-          )}
+            {inputs
+              .filter((input) => input.role === 'stratification')
+              .map((input) => (
+                <div
+                  key={input.name}
+                  className={[classes.input, 'stratification'].join(' ')}
+                >
+                  <div className={classes.label}>{input.label}</div>
+                  <VariableTreeDropdown
+                    rootEntity={entities[0]}
+                    disabledVariables={disabledVariablesByInputName[input.name]}
+                    starredVariables={starredVariables}
+                    toggleStarredVariable={toggleStarredVariable}
+                    entityId={values[input.name]?.entityId}
+                    variableId={values[input.name]?.variableId}
+                    onChange={(variable) => {
+                      handleChange(input.name, variable);
+                    }}
+                  />
+                </div>
+              ))}
+            {onShowMissingnessChange && (
+              <div className={classes.showMissingness}>
+                <Switch
+                  label={`Include ${
+                    outputEntity
+                      ? makeEntityDisplayName(outputEntity, true)
+                      : 'points'
+                  } with no data for selected stratification variable(s)`}
+                  state={showMissingness}
+                  onStateChange={onShowMissingnessChange}
+                  disabled={!enableShowMissingnessToggle}
+                  labelPosition="after"
+                />
+              </div>
+            )}
+          </div>
+        )}
       </div>
-      {/* <div className={`${classes.label} ${classes.dataLabel}`}>Data inputs</div> */}
     </div>
   );
 }

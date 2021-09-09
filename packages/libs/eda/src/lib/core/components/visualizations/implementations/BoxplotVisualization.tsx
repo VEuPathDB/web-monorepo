@@ -26,12 +26,14 @@ import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import box from './selectorIcons/box.svg';
 import { BoxplotData } from '@veupathdb/components/lib/types/plots';
 import { CoverageStatistics } from '../../../types/visualization';
+import { BirdsEyeView } from '../../BirdsEyeView';
 
 import { at } from 'lodash';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 import {
   grayOutLastSeries,
+  omitEmptyNoDataSeries,
   vocabularyWithMissingData,
 } from '../../../utils/analysis';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
@@ -204,17 +206,17 @@ function BoxplotViz(props: VisualizationProps) {
         params as BoxplotRequestParams
       );
 
-      // send visualization.type as well
-      return grayOutLastSeries(
-        reorderData(
-          boxplotResponseToData(await response),
-          xAxisVariable.vocabulary,
-          vocabularyWithMissingData(
-            overlayVariable?.vocabulary,
-            vizConfig.showMissingness
-          )
+      const showMissing = vizConfig.showMissingness && overlayVariable != null;
+      return omitEmptyNoDataSeries(
+        grayOutLastSeries(
+          reorderData(
+            boxplotResponseToData(await response),
+            xAxisVariable.vocabulary,
+            vocabularyWithMissingData(overlayVariable?.vocabulary, showMissing)
+          ),
+          showMissing
         ),
-        vizConfig.showMissingness && overlayVariable != null
+        showMissing
       );
     }, [
       studyId,
@@ -228,6 +230,11 @@ function BoxplotViz(props: VisualizationProps) {
       visualization.type,
     ])
   );
+
+  const outputSize =
+    overlayVariable != null && !vizConfig.showMissingness
+      ? data.value?.completeCasesAllVars
+      : data.value?.completeCasesAxesVars;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -261,7 +268,11 @@ function BoxplotViz(props: VisualizationProps) {
           dataElementDependencyOrder={dataElementDependencyOrder}
           starredVariables={starredVariables}
           toggleStarredVariable={toggleStarredVariable}
-          enableShowMissingnessToggle={overlayVariable != null}
+          enableShowMissingnessToggle={
+            overlayVariable != null &&
+            data.value?.completeCasesAllVars !=
+              data.value?.completeCasesAxesVars
+          }
           showMissingness={vizConfig.showMissingness}
           onShowMissingnessChange={onShowMissingnessChange}
           outputEntity={outputEntity}
@@ -287,10 +298,7 @@ function BoxplotViz(props: VisualizationProps) {
             : String(data.error)}
         </div>
       )}
-      <OutputEntityTitle
-        entity={outputEntity}
-        outputSize={data.pending ? undefined : data.value?.completeCasesAllVars}
-      />
+      <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
       <div
         style={{
           display: 'flex',
@@ -320,30 +328,44 @@ function BoxplotViz(props: VisualizationProps) {
           showRawData={true}
           legendTitle={axisLabelWithUnit(overlayVariable)}
         />
-        <VariableCoverageTable
-          completeCases={data.pending ? undefined : data.value?.completeCases}
-          filters={filters}
-          outputEntityId={outputEntity?.id}
-          variableSpecs={[
-            {
-              role: 'X-axis',
-              required: true,
-              display: axisLabelWithUnit(xAxisVariable),
-              variable: vizConfig.xAxisVariable,
-            },
-            {
-              role: 'Y-axis',
-              required: true,
-              display: axisLabelWithUnit(yAxisVariable),
-              variable: vizConfig.yAxisVariable,
-            },
-            {
-              role: 'Overlay',
-              display: axisLabelWithUnit(overlayVariable),
-              variable: vizConfig.overlayVariable,
-            },
-          ]}
-        />
+        <div className="viz-plot-info">
+          <BirdsEyeView
+            completeCasesAllVars={
+              data.pending ? undefined : data.value?.completeCasesAllVars
+            }
+            completeCasesAxesVars={
+              data.pending ? undefined : data.value?.completeCasesAxesVars
+            }
+            filters={filters}
+            outputEntity={outputEntity}
+            stratificationIsActive={overlayVariable != null}
+            enableSpinner={xAxisVariable != null && yAxisVariable != null}
+          />
+          <VariableCoverageTable
+            completeCases={data.pending ? undefined : data.value?.completeCases}
+            filters={filters}
+            outputEntityId={outputEntity?.id}
+            variableSpecs={[
+              {
+                role: 'X-axis',
+                required: true,
+                display: axisLabelWithUnit(xAxisVariable),
+                variable: vizConfig.xAxisVariable,
+              },
+              {
+                role: 'Y-axis',
+                required: true,
+                display: axisLabelWithUnit(yAxisVariable),
+                variable: vizConfig.yAxisVariable,
+              },
+              {
+                role: 'Overlay',
+                display: axisLabelWithUnit(overlayVariable),
+                variable: vizConfig.overlayVariable,
+              },
+            ]}
+          />
+        </div>
       </div>
     </div>
   );

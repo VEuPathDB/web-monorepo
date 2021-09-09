@@ -30,6 +30,7 @@ import { StudyEntity } from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
 import { CoverageStatistics } from '../../../types/visualization';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
+import { BirdsEyeView } from '../../BirdsEyeView';
 import { isHistogramVariable } from '../../filter/guards';
 import { HistogramVariable } from '../../filter/types';
 import { InputVariables } from '../InputVariables';
@@ -41,6 +42,7 @@ import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 import {
   vocabularyWithMissingData,
   grayOutLastSeries,
+  omitEmptyNoDataSeries,
 } from '../../../utils/analysis';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import { useFindEntityAndVariable } from '../../../hooks/study';
@@ -218,15 +220,16 @@ function HistogramViz(props: VisualizationProps) {
         vizConfig
       );
       const response = dataClient.getHistogram(computation.type, params);
-      return grayOutLastSeries(
-        reorderData(
-          histogramResponseToData(await response, xAxisVariable.type),
-          vocabularyWithMissingData(
-            overlayVariable?.vocabulary,
-            vizConfig.showMissingness
-          )
+      const showMissing = vizConfig.showMissingness && overlayVariable != null;
+      return omitEmptyNoDataSeries(
+        grayOutLastSeries(
+          reorderData(
+            histogramResponseToData(await response, xAxisVariable.type),
+            vocabularyWithMissingData(overlayVariable?.vocabulary, showMissing)
+          ),
+          showMissing
         ),
-        vizConfig.showMissingness && overlayVariable != null
+        showMissing
       );
     }, [
       vizConfig.xAxisVariable,
@@ -271,7 +274,11 @@ function HistogramViz(props: VisualizationProps) {
           dataElementDependencyOrder={dataElementDependencyOrder}
           starredVariables={starredVariables}
           toggleStarredVariable={toggleStarredVariable}
-          enableShowMissingnessToggle={overlayVariable != null}
+          enableShowMissingnessToggle={
+            overlayVariable != null &&
+            data.value?.completeCasesAllVars !=
+              data.value?.completeCasesAxesVars
+          }
           showMissingness={vizConfig.showMissingness}
           onShowMissingnessChange={onShowMissingnessChange}
           outputEntity={outputEntity}
@@ -322,7 +329,13 @@ function HistogramViz(props: VisualizationProps) {
         showSpinner={data.pending}
         filters={filters}
         completeCases={data.pending ? undefined : data.value?.completeCases}
-        outputSize={data.pending ? undefined : data.value?.completeCasesAllVars}
+        completeCasesAllVars={
+          data.pending ? undefined : data.value?.completeCasesAllVars
+        }
+        completeCasesAxesVars={
+          data.pending ? undefined : data.value?.completeCasesAxesVars
+        }
+        showMissingness={vizConfig.showMissingness ?? false}
         overlayVariable={vizConfig.overlayVariable}
         overlayLabel={axisLabelWithUnit(overlayVariable)}
         legendTitle={axisLabelWithUnit(overlayVariable)}
@@ -344,8 +357,8 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   overlayLabel?: string;
   valueSpec: ValueSpec;
   onValueSpecChange: (newValueSpec: ValueSpec) => void;
+  showMissingness: boolean;
   updateThumbnail: (src: string) => void;
-  outputSize?: number;
 } & Partial<CoverageStatistics>;
 
 function HistogramPlotWithControls({
@@ -354,19 +367,26 @@ function HistogramPlotWithControls({
   onDependentAxisLogScaleChange,
   filters,
   completeCases,
-  outputSize,
+  completeCasesAllVars,
+  completeCasesAxesVars,
   outputEntity,
   independentAxisVariable,
   overlayVariable,
   overlayLabel,
   valueSpec,
   onValueSpecChange,
+  showMissingness,
   updateThumbnail,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   const barLayout = 'stack';
   const displayLibraryControls = false;
   const opacity = 100;
+
+  const outputSize =
+    overlayVariable != null && !showMissingness
+      ? completeCasesAllVars
+      : completeCasesAxesVars;
 
   const ref = useRef<PlotRef>(null);
 
@@ -395,24 +415,34 @@ function HistogramPlotWithControls({
           showValues={false}
           barLayout={barLayout}
         />
-        <VariableCoverageTable
-          completeCases={completeCases}
-          filters={filters}
-          outputEntityId={independentAxisVariable?.entityId}
-          variableSpecs={[
-            {
-              role: 'Main',
-              required: true,
-              display: histogramProps.independentAxisLabel,
-              variable: independentAxisVariable,
-            },
-            {
-              role: 'Overlay',
-              display: overlayLabel,
-              variable: overlayVariable,
-            },
-          ]}
-        />
+        <div className="viz-plot-info">
+          <BirdsEyeView
+            completeCasesAllVars={completeCasesAllVars}
+            completeCasesAxesVars={completeCasesAxesVars}
+            filters={filters}
+            outputEntity={outputEntity}
+            stratificationIsActive={overlayVariable != null}
+            enableSpinner={independentAxisVariable != null}
+          />
+          <VariableCoverageTable
+            completeCases={completeCases}
+            filters={filters}
+            outputEntityId={independentAxisVariable?.entityId}
+            variableSpecs={[
+              {
+                role: 'Main',
+                required: true,
+                display: histogramProps.independentAxisLabel,
+                variable: independentAxisVariable,
+              },
+              {
+                role: 'Overlay',
+                display: overlayLabel,
+                variable: overlayVariable,
+              },
+            ]}
+          />
+        </div>
       </div>
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <LabelledGroup label="Y-axis">
@@ -524,7 +554,6 @@ function getRequestParams(
     valueSpec,
     overlayVariable,
     xAxisVariable,
-    showMissingness,
   } = vizConfig;
 
   const binSpec = binWidth
@@ -547,7 +576,7 @@ function getRequestParams(
       overlayVariable,
       valueSpec,
       ...binSpec,
-      showMissingness: showMissingness ? 'TRUE' : 'FALSE',
+      showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
     },
   } as HistogramRequestParams;
 }

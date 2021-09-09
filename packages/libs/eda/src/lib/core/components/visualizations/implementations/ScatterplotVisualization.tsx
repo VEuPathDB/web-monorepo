@@ -27,6 +27,7 @@ import { PromiseType } from '../../../types/utility';
 import { VariableDescriptor } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
+import { BirdsEyeView } from '../../BirdsEyeView';
 
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
@@ -256,19 +257,16 @@ function ScatterplotViz(props: VisualizationProps) {
               params as ScatterplotRequestParams
             );
 
-      // send visualization.type, independentValueType, and dependentValueType as well
+      const showMissing = vizConfig.showMissingness && overlayVariable != null;
       return scatterplotResponseToData(
         reorderResponse(
           await response,
-          vocabularyWithMissingData(
-            overlayVariable?.vocabulary,
-            vizConfig.showMissingness
-          )
+          vocabularyWithMissingData(overlayVariable?.vocabulary, showMissing)
         ),
         visualization.type,
         independentValueType,
         dependentValueType,
-        vizConfig.showMissingness && overlayVariable != null
+        showMissing
       );
     }, [
       studyId,
@@ -282,6 +280,11 @@ function ScatterplotViz(props: VisualizationProps) {
       visualization.type,
     ])
   );
+
+  const outputSize =
+    overlayVariable != null && !vizConfig.showMissingness
+      ? data.value?.completeCasesAllVars
+      : data.value?.completeCasesAxesVars;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -315,7 +318,11 @@ function ScatterplotViz(props: VisualizationProps) {
           dataElementDependencyOrder={dataElementDependencyOrder}
           starredVariables={starredVariables}
           toggleStarredVariable={toggleStarredVariable}
-          enableShowMissingnessToggle={overlayVariable != null}
+          enableShowMissingnessToggle={
+            overlayVariable != null &&
+            data.value?.completeCasesAllVars !=
+              data.value?.completeCasesAxesVars
+          }
           showMissingness={vizConfig.showMissingness}
           onShowMissingnessChange={onShowMissingnessChange}
           outputEntity={outputEntity}
@@ -341,10 +348,7 @@ function ScatterplotViz(props: VisualizationProps) {
             : String(data.error)}
         </div>
       )}
-      <OutputEntityTitle
-        entity={outputEntity}
-        outputSize={data.pending ? undefined : data.value?.completeCasesAllVars}
-      />
+      <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
       <div
         style={{
           display: 'flex',
@@ -397,32 +401,48 @@ function ScatterplotViz(props: VisualizationProps) {
           dependentValueType={yAxisVariable?.type}
           legendTitle={axisLabelWithUnit(overlayVariable)}
         />
-        <VariableCoverageTable
-          completeCases={
-            data.value && !data.pending ? data.value?.completeCases : undefined
-          }
-          filters={filters}
-          outputEntityId={outputEntity?.id}
-          variableSpecs={[
-            {
-              role: 'X-axis',
-              required: true,
-              display: axisLabelWithUnit(xAxisVariable),
-              variable: vizConfig.xAxisVariable,
-            },
-            {
-              role: 'Y-axis',
-              required: true,
-              display: axisLabelWithUnit(yAxisVariable),
-              variable: vizConfig.yAxisVariable,
-            },
-            {
-              role: 'Overlay',
-              display: axisLabelWithUnit(overlayVariable),
-              variable: vizConfig.overlayVariable,
-            },
-          ]}
-        />
+        <div className="viz-plot-info">
+          <BirdsEyeView
+            completeCasesAllVars={
+              data.pending ? undefined : data.value?.completeCasesAllVars
+            }
+            completeCasesAxesVars={
+              data.pending ? undefined : data.value?.completeCasesAxesVars
+            }
+            filters={filters}
+            outputEntity={outputEntity}
+            stratificationIsActive={overlayVariable != null}
+            enableSpinner={xAxisVariable != null && yAxisVariable != null}
+          />
+          <VariableCoverageTable
+            completeCases={
+              data.value && !data.pending
+                ? data.value?.completeCases
+                : undefined
+            }
+            filters={filters}
+            outputEntityId={outputEntity?.id}
+            variableSpecs={[
+              {
+                role: 'X-axis',
+                required: true,
+                display: axisLabelWithUnit(xAxisVariable),
+                variable: vizConfig.xAxisVariable,
+              },
+              {
+                role: 'Y-axis',
+                required: true,
+                display: axisLabelWithUnit(yAxisVariable),
+                variable: vizConfig.yAxisVariable,
+              },
+              {
+                role: 'Overlay',
+                display: axisLabelWithUnit(overlayVariable),
+                variable: vizConfig.overlayVariable,
+              },
+            ]}
+          />
+        </div>
       </div>
     </div>
   );
@@ -645,6 +665,18 @@ function processInputData<T extends number | string>(
     }
   };
 
+  // determine conditions for not adding empty "No data" traces
+  // we want to stop at the penultimate series if showMissing is active and there is actually no missing data
+  const noMissingData =
+    dataSet.scatterplot.config.completeCasesAllVars ===
+    dataSet.scatterplot.config.completeCasesAxesVars;
+  // 'break' from the for loops (array.some(...)) if this is true
+  const breakAfterThisSeries = (index: number) => {
+    return (
+      showMissingness && noMissingData && index === plotDataSet.data.length - 2
+    );
+  };
+
   const markerSymbol = (index: number) =>
     showMissingness && index === plotDataSet.data.length - 1
       ? 'x'
@@ -654,7 +686,7 @@ function processInputData<T extends number | string>(
   let dataSetProcess: any = [];
 
   // drawing raw data (markers) at first
-  plotDataSet?.data.forEach(function (el: any, index: number) {
+  plotDataSet?.data.some(function (el: any, index: number) {
     // initialize seriesX/Y
     let seriesX = [];
     let seriesY = [];
@@ -727,11 +759,12 @@ function processInputData<T extends number | string>(
         // always use spline?
         line: { color: markerColor(index), shape: 'spline' },
       });
+      return breakAfterThisSeries(index);
     }
   });
 
   // after drawing raw data, smoothedMean and bestfitline plots are displayed
-  plotDataSet?.data.forEach(function (el: any, index: number) {
+  plotDataSet?.data.some(function (el: any, index: number) {
     // initialize variables: setting with union type for future, but this causes typescript issue in the current version
     let xIntervalLineValue: T[] = [];
     let yIntervalLineValue: number[] = [];
@@ -911,6 +944,7 @@ function processInputData<T extends number | string>(
         type: 'scattergl',
       });
     }
+    return breakAfterThisSeries(index);
   });
 
   // make some margin for y-axis range (5% of range for now)

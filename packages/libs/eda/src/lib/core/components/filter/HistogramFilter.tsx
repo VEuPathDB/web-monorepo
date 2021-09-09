@@ -335,7 +335,7 @@ export function HistogramFilter(props: Props) {
                 summary: { internalsCount: data.value?.hasDataEntitiesCount },
               }}
               dataCount={totalEntityCount}
-              displayName={entity.displayName}
+              displayName={entity.displayNamePlural ?? entity.displayName}
             />
           </div>
         )}
