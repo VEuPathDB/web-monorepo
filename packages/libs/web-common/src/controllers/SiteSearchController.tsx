@@ -376,25 +376,22 @@ function useResetOffsetWhenOrgTreeChanges(
 ) {
   const previousOrgTree = useRef<TreeBoxVocabNode | undefined>(undefined);
 
-  // Maintain a ref to the latest value of "setOffset" so that "setOffset",
-  // which is not referentially stable, can be kept out of the dependency array
-  // of the effect that resets the offset in response to changes in "organismTree"
-  const setOffsetRef = useRef(setOffset);
-
   useEffect(() => {
-    setOffsetRef.current = setOffset;
-  }, [ setOffset ]);
-
-  // Whenever the "organismTree" value changes...
-  //   1. Check to see if the previous and current org tree are both non-nil
-  //      (that is, loaded trees).
-  //      If so, reset the offset to 0.
-  //   2. Update the ref to the previous org tree.
-  useEffect(() => {
-    if (previousOrgTree.current != null && organismTree != null) {
-      setOffsetRef.current(0);
+    // If...
+    //   1. The "organismTree" has changed between invocations of this effect
+    //     AND
+    //   2. Both the previous and current org tree are non-nil (that is, loaded trees)
+    //
+    // Then...
+    //   reset the offset to 0.
+    if (
+      previousOrgTree.current !== organismTree &&
+      previousOrgTree.current != null &&
+      organismTree != null
+    ) {
+      setOffset(0);
     }
 
     previousOrgTree.current = organismTree;
-  }, [ organismTree ]);
+  }, [ organismTree, setOffset ]);
 }
