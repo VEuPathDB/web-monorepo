@@ -1,3 +1,4 @@
+import { arrayOf, decode, decodeOrElse, string } from 'wdk-client/Utils/Json';
 import { EnumParam, Parameter } from 'wdk-client/Utils/WdkModel';
 
 export function countInBounds(count: number, lower: number, upper: number): boolean {
@@ -12,18 +13,14 @@ export function toMultiValueString(value: string[]): string {
   return JSON.stringify(value);
 }
 
+// NB: If "stableValue" is not a valid enum JSON string,
+// the associated multi value array defaults to the singleton [ stableValue ]
 export function toMultiValueArray(stableValue: string): string[] {
-  let parseFailureMessage = "Multi-value enum stable value '" + stableValue + "' could not be parsed into terms.";
-  try {
-    // FIXME: streamline; parsing twice here
-    if (!isValidEnumJson(stableValue)) {
-      throw new Error(parseFailureMessage);
-    }
-    return JSON.parse(stableValue);
-  }
-  catch (error) {
-    throw new Error(parseFailureMessage);
-  }
+  return decodeOrElse(
+    enumJsonDecoder,
+    [ stableValue ],
+    stableValue
+  );
 }
 
 export function isEnumParam(parameter: Parameter): parameter is EnumParam {
@@ -35,12 +32,9 @@ export function isMultiPick(parameter: Parameter): boolean {
 }
 
 export function isValidEnumJson(value: string): boolean {
-  try {
-    let parsedValue : Array<string> = JSON.parse(value);
-    if (Object.prototype.toString.call(parsedValue) !== '[object Array]') return false;
-    return parsedValue.reduce((valid: boolean, val: string) => valid && typeof val === 'string', true);
-  }
-  catch (error) {
-    return false;
-  }
+  const validationResult = enumJsonDecoder(value);
+
+  return validationResult.status === 'ok';
 }
+
+const enumJsonDecoder = arrayOf(string);
