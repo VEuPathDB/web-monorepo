@@ -30,6 +30,7 @@ import {
   isFilterField,
   isMulti,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
+import { gray, red } from './colors';
 
 export interface Props {
   analysisState: AnalysisState;
@@ -338,6 +339,8 @@ export function MultiFilter(props: Props) {
         onFiltersChange={handleFiltereChange}
         onMemberSort={onMemberSort}
         onMemberSearch={onMemberSearch}
+        fillBarColor={gray}
+        fillFilteredBarColor={red}
       />
     </div>
   );
