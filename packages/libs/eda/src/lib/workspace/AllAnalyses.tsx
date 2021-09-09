@@ -2,7 +2,7 @@ import { orderBy } from 'lodash';
 import Path from 'path';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useRouteMatch } from 'react-router';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 
 import {
   Button,
@@ -58,12 +58,15 @@ export function AllAnalyses(props: Props) {
   const { analysisClient } = props;
   const { url } = useRouteMatch();
   const history = useHistory();
+  const location = useLocation();
   const classes = useStyles();
+
+  const queryParams = new URLSearchParams(location.search);
+  const searchText = queryParams.get('s');
 
   const [selectedAnalyses, setSelectedAnalyses] = useState<Set<string>>(
     new Set()
   );
-  const [searchText, setSearchText] = useState('');
   const [sortPinned, setSortPinned] = useSessionBackedState<boolean>(
     true,
     'eda::allAnalysesPinned',
@@ -391,7 +394,14 @@ export function AllAnalyses(props: Props) {
                 label="Search analyses"
                 inputProps={{ size: 50 }}
                 value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
+                onChange={(e) => {
+                  e.target.value.length > 0
+                    ? queryParams.set('s', e.target.value)
+                    : queryParams.delete('s');
+                  history.replace(
+                    `${location.pathname}?${queryParams.toString()}`
+                  );
+                }}
               />
               <span>
                 Showing {filteredAnalysesAndDatasets?.length} of{' '}
