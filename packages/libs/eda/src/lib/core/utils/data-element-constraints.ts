@@ -63,11 +63,9 @@ export function excludedVariables(
  */
 function variableConstraintPredicate(
   constraint: DataElementConstraint,
+  //maybe this should be variable: Variable - from dave
   variable: VariableTreeNode
 ) {
-  console.log('variable: ' + variable.displayName);
-  console.log('variable num unique vals: ' + variable.distinctValuesCount);
-  console.log('variable constraint max values: ' + constraint.maxNumValues);
   return (
     variable.dataShape == null ||
     variable.type === 'category' ||
@@ -78,7 +76,7 @@ function variableConstraintPredicate(
       (constraint.maxNumValues == null ||
         //this case should be category anyway, but is that a strong enough thing to assume here?
         variable.distinctValuesCount === undefined ||
-        constraint.maxNumValues <= variable.distinctValuesCount) &&
+        constraint.maxNumValues >= variable.distinctValuesCount) &&
       (constraint.allowMultiValued || !variable.isMultiValued))
   );
 }
@@ -123,7 +121,7 @@ export function flattenConstraints(
       if (
         isEmpty(constraint.allowedShapes) &&
         isEmpty(constraint.allowedTypes) &&
-        isEmpty(constraint.maxNumValues) &&
+        constraint.maxNumValues === undefined &&
         constraint.allowMultiValued
       )
         return true;
@@ -145,7 +143,7 @@ export function flattenConstraints(
       const passesMaxValuesConstraint =
         constraint.maxNumValues === undefined ||
         variable.distinctValuesCount === undefined ||
-        constraint.maxNumValues <= variable.distinctValuesCount;
+        constraint.maxNumValues >= variable.distinctValuesCount;
       const passesMultivalueConstraint =
         constraint.allowMultiValued || !variable.isMultiValued;
       return (
@@ -210,8 +208,7 @@ export function mergeConstraints(
   );
 }
 
-//quess we could alternatively make maxNumValues required and explicitly set to Infinity in the DS?
-//or just let undef be reassigned to Infinity here?
+//quess we could just let undef be reassigned to Infinity here?
 export function mergeMaxNumValues(
   constraintA: DataElementConstraint,
   constraintB: DataElementConstraint
