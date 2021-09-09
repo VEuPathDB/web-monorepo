@@ -8,7 +8,7 @@ import {
   flattenConstraints,
   ValueByInputName,
 } from '../../utils/data-element-constraints';
-import { VariableTreeDropdown } from '../VariableTree';
+import VariableTreeDropdown from '../variableTrees/VariableTreeDropdown';
 import {
   mapStructure,
   preorder,
