@@ -9,10 +9,11 @@ import { VariableDetails } from '../Variable';
 import { AnalysisState } from '../../core/hooks/analysis';
 import { useEntityCounts } from '../../core/hooks/entityCounts';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
-import { VariableTree } from '../../core/components/VariableTree';
+import VariableTree from '../../core/components/variableTrees/VariableTree';
 import FilterChipList from '../../core/components/FilterChipList';
 
 import SubsettingDataGridModal from './SubsettingDataGridModal';
+import { useStudyEntities } from '../../core/hooks/study';
 
 interface SubsettingProps {
   analysisState: AnalysisState;
@@ -31,18 +32,23 @@ export default function Subsetting({
   variableId,
   analysisState,
 }: SubsettingProps) {
-  console.log('entityId', entityId);
-  console.log('variableId', variableId);
-  console.log('analysisState', analysisState);
+  // console.log('entityId', entityId);
+  // console.log('variableId', variableId);
+  // console.log('analysisState', analysisState);
 
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
 
   const studyMetadata = useStudyMetadata();
-  const entities = Array.from(
-    preorder(studyMetadata.rootEntity, (e) => e.children || [])
-  );
+
+  // Obtain all entities and associated variables.
+  const entities = useStudyEntities(studyMetadata.rootEntity);
+
+  // What is the current entity?
   const entity = entities.find((e) => e.id === entityId);
+
+  // What is the current variable?
   const variable = entity?.variables.find((v) => v.id === variableId);
+
   const history = useHistory();
   const totalCounts = useEntityCounts();
   const filteredCounts = useEntityCounts(analysisState.analysis?.filters);
@@ -63,6 +69,9 @@ export default function Subsetting({
         displayModal={isDownloadModalOpen}
         toggleDisplay={() => setIsDownloadModalOpen(false)}
         analysisState={analysisState}
+        currentEntityID={entityId}
+        currentVariableID={variableId}
+        entities={entities}
       />
       <div className="Variables">
         <VariableTree
