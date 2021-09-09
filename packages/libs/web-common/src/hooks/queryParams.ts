@@ -16,6 +16,6 @@ export function useQueryParams<T extends string>(...paramNames: T[]) {
     // remove empty items
     newParams = Object.fromEntries(Object.entries(newParams).filter(([key, value]) => !isEmpty(value))) as Params<T>;
     history.push(`${location.pathname}?${QueryString.stringify(newParams)}`);
-  }, [ history, location ]);
+  }, [ history, location.pathname ]);
   return [ params, updateParams ] as const;
 }
