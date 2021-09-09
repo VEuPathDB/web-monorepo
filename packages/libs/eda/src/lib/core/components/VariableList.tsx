@@ -10,6 +10,7 @@ import React, {
   useMemo,
   useRef,
   useState,
+  useContext,
 } from 'react';
 import { Link } from 'react-router-dom';
 //correct paths as this is a copy of FieldList component at @veupathdb/
@@ -40,6 +41,8 @@ import { cx } from '../../workspace/Utils';
 import { Tooltip } from '@material-ui/core';
 import { HtmlTooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+// import ShowHideVariableContext
+import { ShowHideVariableContext } from '../utils/show-hide-variable-context';
 
 //defining types - some are not used (need cleanup later)
 interface VariableField {
@@ -82,8 +85,6 @@ interface VariableListProps {
   starredVariables?: string[];
   toggleStarredVariable: (targetVariableId: string) => void;
   disabledFieldIds?: string[];
-  hideDisabledFields: boolean;
-  setHideDisabledFields: (hide: boolean) => void;
   featuredFields: VariableField[];
 }
 
@@ -113,9 +114,14 @@ export default function VariableList(props: VariableListProps) {
     autoFocus,
     starredVariables,
     toggleStarredVariable,
-    hideDisabledFields,
-    setHideDisabledFields,
   } = props;
+
+  // useContext is used here with ShowHideVariableContext
+  const {
+    showOnlyCompatibleVariables,
+    setShowOnlyCompatibleVariablesHandler,
+  } = useContext(ShowHideVariableContext);
+
   const [searchTerm, setSearchTerm] = useState<string>('');
   const getPathToField = useCallback(
     (field?: Field) => {
@@ -303,7 +309,7 @@ export default function VariableList(props: VariableListProps) {
 
   const isAdditionalFilterApplied = showOnlyStarredVariables;
 
-  const allowedFeaturedFields = hideDisabledFields
+  const allowedFeaturedFields = showOnlyCompatibleVariables
     ? featuredFields.filter((field) => !disabledFields.has(field.term))
     : featuredFields;
 
@@ -318,7 +324,7 @@ export default function VariableList(props: VariableListProps) {
               visibleStarredVariablesSet.has(node.field.term.split('/')[1]),
             fieldTree
           );
-    return hideDisabledFields
+    return showOnlyCompatibleVariables
       ? pruneDescendantNodes((node) => {
           if (disabledFields.size === 0) return true;
           if (node.field.type == null) return node.children.length > 0;
@@ -329,7 +335,7 @@ export default function VariableList(props: VariableListProps) {
     showOnlyStarredVariables,
     starredVariableToggleDisabled,
     fieldTree,
-    hideDisabledFields,
+    showOnlyCompatibleVariables,
     visibleStarredVariablesSet,
     disabledFields,
   ]);
@@ -378,15 +384,20 @@ export default function VariableList(props: VariableListProps) {
               className="link"
               type="button"
               onClick={() => {
-                setHideDisabledFields(!hideDisabledFields);
+                // useContext
+                setShowOnlyCompatibleVariablesHandler(
+                  !showOnlyCompatibleVariables
+                );
               }}
             >
-              <Toggle on={hideDisabledFields} /> Only show compatible variables
+              <Toggle on={showOnlyCompatibleVariables} /> Only show compatible
+              variables
             </button>
           </HtmlTooltip>
         </div>
       )}
-      {allowedFeaturedFields.length && (
+      {/* minor bug fix, not to show 0 character for empty allowedFeaturedFields */}
+      {allowedFeaturedFields.length > 0 && (
         <div className="FeaturedVariables">
           <details
             open={Options.featuredVariablesOpen}

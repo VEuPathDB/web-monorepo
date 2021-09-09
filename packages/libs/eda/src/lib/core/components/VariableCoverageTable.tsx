@@ -6,7 +6,7 @@ import { VariableDescriptor } from '../types/variable';
 export interface Props {
   containerClassName?: string;
   completeCases?: CompleteCasesTable;
-  filters: Filter[];
+  filters?: Filter[];
   variableSpecs: VariableSpec[];
   outputEntityId?: string;
 }

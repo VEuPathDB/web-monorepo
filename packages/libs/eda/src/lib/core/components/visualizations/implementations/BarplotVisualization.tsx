@@ -9,7 +9,7 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 // need to set for Barplot
 import {
@@ -26,6 +26,7 @@ import { VariableDescriptor } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { CoverageStatistics } from '../../../types/visualization';
+import { BirdsEyeView } from '../../BirdsEyeView';
 
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
@@ -36,19 +37,21 @@ import bar from './selectorIcons/bar.svg';
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 import {
   grayOutLastSeries,
+  omitEmptyNoDataSeries,
   vocabularyWithMissingData,
 } from '../../../utils/analysis';
+import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
+
+const plotDimensions = {
+  height: 450,
+  width: 750,
+};
 
 export const barplotVisualization: VisualizationType = {
-  gridComponent: GridComponent,
   selectorComponent: SelectorComponent,
   fullscreenComponent: FullscreenComponent,
   createDefaultConfig: createDefaultConfig,
 };
-
-function GridComponent(props: VisualizationProps) {
-  return <BarplotViz {...props} fullscreen={false} />;
-}
 
 function SelectorComponent() {
   return (
@@ -57,7 +60,7 @@ function SelectorComponent() {
 }
 
 function FullscreenComponent(props: VisualizationProps) {
-  return <BarplotViz {...props} fullscreen />;
+  return <BarplotViz {...props} />;
 }
 
 function createDefaultConfig(): BarplotConfig {
@@ -85,17 +88,13 @@ const BarplotConfig = t.intersection([
   }),
 ]);
 
-type Props = VisualizationProps & {
-  fullscreen: boolean;
-};
-
-function BarplotViz(props: Props) {
+function BarplotViz(props: VisualizationProps) {
   const {
     computation,
     visualization,
-    updateVisualization,
+    updateConfiguration,
+    updateThumbnail,
     filters,
-    fullscreen,
     dataElementConstraints,
     dataElementDependencyOrder,
     starredVariables,
@@ -119,17 +118,9 @@ function BarplotViz(props: Props) {
 
   const updateVizConfig = useCallback(
     (newConfig: Partial<BarplotConfig>) => {
-      if (updateVisualization) {
-        updateVisualization({
-          ...visualization,
-          configuration: {
-            ...vizConfig,
-            ...newConfig,
-          },
-        });
-      }
+      updateConfiguration({ ...vizConfig, ...newConfig });
     },
-    [updateVisualization, visualization, vizConfig]
+    [updateConfiguration, vizConfig]
   );
 
   // TODO Handle facetVariable
@@ -183,7 +174,9 @@ function BarplotViz(props: Props) {
   ]);
 
   const data = usePromise(
-    useCallback(async (): Promise<any> => {
+    useCallback(async (): Promise<
+      (BarplotData & CoverageStatistics) | undefined
+    > => {
       if (variable == null) return undefined;
 
       const params = getRequestParams(studyId, filters ?? [], vizConfig);
@@ -193,16 +186,17 @@ function BarplotViz(props: Props) {
         params as BarplotRequestParams
       );
 
-      return grayOutLastSeries(
-        reorderData(
-          barplotResponseToData(await response),
-          variable?.vocabulary,
-          vocabularyWithMissingData(
-            overlayVariable?.vocabulary,
-            vizConfig.showMissingness
-          )
+      const showMissing = vizConfig.showMissingness && overlayVariable != null;
+      return omitEmptyNoDataSeries(
+        grayOutLastSeries(
+          reorderData(
+            barplotResponseToData(await response),
+            variable?.vocabulary,
+            vocabularyWithMissingData(overlayVariable?.vocabulary, showMissing)
+          ),
+          showMissing
         ),
-        vizConfig.showMissingness && overlayVariable != null
+        showMissing
       );
     }, [
       studyId,
@@ -219,43 +213,50 @@ function BarplotViz(props: Props) {
     ])
   );
 
+  const outputSize =
+    overlayVariable != null && !vizConfig.showMissingness
+      ? data.value?.completeCasesAllVars
+      : data.value?.completeCasesAxesVars;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      {fullscreen && (
-        <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
-          <InputVariables
-            inputs={[
-              {
-                name: 'xAxisVariable',
-                label: 'Main',
-                role: 'primary',
-              },
-              {
-                name: 'overlayVariable',
-                label: 'Overlay',
-                role: 'stratification',
-              },
-            ]}
-            entities={entities}
-            values={{
-              xAxisVariable: vizConfig.xAxisVariable,
-              overlayVariable: vizConfig.overlayVariable,
-              facetVariable: vizConfig.facetVariable,
-            }}
-            onChange={handleInputVariableChange}
-            constraints={dataElementConstraints}
-            dataElementDependencyOrder={dataElementDependencyOrder}
-            starredVariables={starredVariables}
-            enableShowMissingnessToggle={overlayVariable != null}
-            toggleStarredVariable={toggleStarredVariable}
-            onShowMissingnessChange={onShowMissingnessChange}
-            showMissingness={vizConfig.showMissingness}
-            outputEntity={entity}
-          />
-        </div>
-      )}
+      <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
+        <InputVariables
+          inputs={[
+            {
+              name: 'xAxisVariable',
+              label: 'Main',
+              role: 'primary',
+            },
+            {
+              name: 'overlayVariable',
+              label: 'Overlay',
+              role: 'stratification',
+            },
+          ]}
+          entities={entities}
+          values={{
+            xAxisVariable: vizConfig.xAxisVariable,
+            overlayVariable: vizConfig.overlayVariable,
+            facetVariable: vizConfig.facetVariable,
+          }}
+          onChange={handleInputVariableChange}
+          constraints={dataElementConstraints}
+          dataElementDependencyOrder={dataElementDependencyOrder}
+          starredVariables={starredVariables}
+          enableShowMissingnessToggle={
+            overlayVariable != null &&
+            data.value?.completeCasesAllVars !=
+              data.value?.completeCasesAxesVars
+          }
+          toggleStarredVariable={toggleStarredVariable}
+          onShowMissingnessChange={onShowMissingnessChange}
+          showMissingness={vizConfig.showMissingness}
+          outputEntity={entity}
+        />
+      </div>
 
-      {data.error && fullscreen && (
+      {data.error && (
         <div
           style={{
             fontSize: '1.2em',
@@ -274,95 +275,69 @@ function BarplotViz(props: Props) {
             : String(data.error)}
         </div>
       )}
-      {fullscreen ? (
-        <>
-          <OutputEntityTitle
-            entity={entity}
-            outputSize={data.pending ? undefined : data.value?.outputSize}
-          />
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignItems: 'flex-start',
-            }}
-          >
-            <BarplotWithControls
-              data={data.value && !data.pending ? data.value : { series: [] }}
-              containerStyles={{
-                width: '750px',
-                height: '450px',
-              }}
-              orientation={'vertical'}
-              barLayout={'group'}
-              displayLegend={
-                data.value &&
-                (data.value.series.length > 1 ||
-                  vizConfig.overlayVariable != null)
-              }
-              independentAxisLabel={axisLabelWithUnit(variable) ?? 'Main'}
-              dependentAxisLabel={
-                vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion'
-              }
-              legendTitle={overlayVariable?.displayName}
-              interactive
-              showSpinner={data.pending}
-              valueSpec={vizConfig.valueSpec}
-              onValueSpecChange={onValueSpecChange}
-              dependentAxisLogScale={vizConfig.dependentAxisLogScale}
-              onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
-            />
-            <VariableCoverageTable
-              completeCases={
-                data.pending ? undefined : data.value?.completeCases
-              }
-              filters={filters}
-              outputEntityId={vizConfig.xAxisVariable?.entityId}
-              variableSpecs={[
-                {
-                  role: 'Main',
-                  required: true,
-                  display: variable?.displayName,
-                  variable: vizConfig.xAxisVariable,
-                },
-                {
-                  role: 'Overlay',
-                  display: overlayVariable?.displayName,
-                  variable: vizConfig.overlayVariable,
-                },
-              ]}
-            />
-          </div>
-        </>
-      ) : (
-        // thumbnail/grid view
-        <Barplot
-          data={data.value && !data.pending ? data.value : { series: [] }}
-          containerStyles={{
-            width: '230px',
-            height: '150px',
-          }}
-          // check this option (possibly plot control?)
+      <OutputEntityTitle entity={entity} outputSize={outputSize} />
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'flex-start',
+        }}
+      >
+        <BarplotWithControls
+          data={data.value && !data.pending ? data.value : undefined}
+          containerStyles={plotDimensions}
           orientation={'vertical'}
           barLayout={'group'}
-          // show/hide independent/dependent axis tick label
-          showIndependentAxisTickLabel={false}
-          showDependentAxisTickLabel={false}
-          // new props for better displaying grid view
-          displayLegend={false}
-          displayLibraryControls={false}
-          interactive={false}
-          // set margin for better display at thumbnail/grid view
-          spacingOptions={{
-            marginLeft: 30,
-            marginRight: 20,
-            marginBottom: 0,
-            marginTop: 20,
-          }}
+          displayLegend={
+            data.value &&
+            (data.value.series.length > 1 || vizConfig.overlayVariable != null)
+          }
+          independentAxisLabel={axisLabelWithUnit(variable) ?? 'Main'}
+          dependentAxisLabel={
+            vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion'
+          }
+          legendTitle={overlayVariable?.displayName}
+          interactive
           showSpinner={data.pending}
+          valueSpec={vizConfig.valueSpec}
+          onValueSpecChange={onValueSpecChange}
+          updateThumbnail={updateThumbnail}
           dependentAxisLogScale={vizConfig.dependentAxisLogScale}
+          onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
         />
-      )}
+        <div className="viz-plot-info">
+          <BirdsEyeView
+            completeCasesAllVars={
+              data.pending ? undefined : data.value?.completeCasesAllVars
+            }
+            completeCasesAxesVars={
+              data.pending ? undefined : data.value?.completeCasesAxesVars
+            }
+            filters={filters}
+            outputEntity={entity}
+            stratificationIsActive={overlayVariable != null}
+            enableSpinner={vizConfig.xAxisVariable != null}
+          />
+          <VariableCoverageTable
+            completeCases={data.pending ? undefined : data.value?.completeCases}
+            filters={filters}
+            outputEntityId={vizConfig.xAxisVariable?.entityId}
+            variableSpecs={[
+              {
+                role: 'Main',
+                required: true,
+                display: axisLabelWithUnit(variable),
+                variable: vizConfig.xAxisVariable,
+              },
+              {
+                role: 'Overlay',
+                display: axisLabelWithUnit(overlayVariable),
+                variable: vizConfig.overlayVariable,
+              },
+            ]}
+          />
+        </div>
+      </div>
     </div>
   );
 }
@@ -372,6 +347,7 @@ type BarplotWithControlsProps = BarplotProps & {
   onDependentAxisLogScaleChange: (newState: boolean) => void;
   valueSpec: ValueSpec;
   onValueSpecChange: (newValueSpec: ValueSpec) => void;
+  updateThumbnail: (src: string) => void;
 };
 
 function BarplotWithControls({
@@ -380,12 +356,20 @@ function BarplotWithControls({
   onDependentAxisLogScaleChange,
   valueSpec,
   onValueSpecChange,
+  updateThumbnail,
   ...barPlotProps
 }: BarplotWithControlsProps) {
+  const ref = useRef<PlotRef>(null);
+  useEffect(() => {
+    ref.current
+      ?.toImage({ format: 'svg', ...plotDimensions })
+      .then((src) => updateThumbnail(src));
+  }, [data, updateThumbnail, dependentAxisLogScale]);
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Barplot
         {...barPlotProps}
+        ref={ref}
         dependentAxisLogScale={dependentAxisLogScale}
         data={data}
         // add controls
@@ -400,12 +384,10 @@ function BarplotWithControls({
             onStateChange={onDependentAxisLogScaleChange}
           />
           <RadioButtonGroup
-            selectedOption={
-              valueSpec === 'proportion' ? 'proportional' : 'count'
-            }
-            options={['count', 'proportional']}
+            selectedOption={valueSpec}
+            options={['count', 'proportion']}
             onOptionSelected={(newOption) => {
-              if (newOption === 'proportional') {
+              if (newOption === 'proportion') {
                 onValueSpecChange('proportion');
               } else {
                 onValueSpecChange('count');
@@ -421,7 +403,7 @@ function BarplotWithControls({
 /**
  * Reformat response from Barplot endpoints into complete BarplotData
  * @param response
- * @returns BarplotData & completeCases & outputSize
+ * @returns BarplotData & completeCases & completeCasesAllVars & completeCasesAxesVars
  */
 export function barplotResponseToData(
   response: BarplotResponse
@@ -435,9 +417,8 @@ export function barplotResponseToData(
       value: data.value,
     })),
     completeCases: response.completeCasesTable,
-    outputSize:
-      response.barplot.config.completeCases +
-      response.barplot.config.plottedIncompleteCases,
+    completeCasesAllVars: response.barplot.config.completeCasesAllVars,
+    completeCasesAxesVars: response.barplot.config.completeCasesAxesVars,
   };
 }
 
@@ -471,7 +452,7 @@ function getRequestParams(
  *
  */
 function reorderData(
-  data: BarplotData,
+  data: BarplotData & CoverageStatistics,
   labelVocabulary: string[] = [],
   overlayVocabulary: string[] = []
 ) {

@@ -53,6 +53,24 @@ export const DateRangeFilter = t.intersection([
   }),
 ]);
 
+export type MultiFilter = t.TypeOf<typeof MultiFilter>;
+export const MultiFilter = t.intersection([
+  _FilterBase,
+  t.type({
+    type: t.literal('multiFilter'),
+    operation: t.keyof({
+      union: null,
+      intersect: null,
+    }),
+    subFilters: t.array(
+      t.type({
+        variableId: t.string,
+        stringSet: t.array(t.string),
+      })
+    ),
+  }),
+]);
+
 export type Filter = t.TypeOf<typeof Filter>;
 export const Filter = t.union([
   StringSetFilter,
@@ -60,4 +78,5 @@ export const Filter = t.union([
   DateSetFilter,
   NumberRangeFilter,
   DateRangeFilter,
+  MultiFilter,
 ]);

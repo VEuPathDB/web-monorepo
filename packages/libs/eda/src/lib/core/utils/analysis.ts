@@ -4,6 +4,7 @@ import {
   BoxplotData,
 } from '@veupathdb/components/lib/types/plots';
 import { gray } from '../components/visualizations/colors';
+import { CoverageStatistics } from '../types/visualization';
 
 export function vocabularyWithMissingData(
   vocabulary: string[] = [],
@@ -23,6 +24,20 @@ export function grayOutLastSeries<
       showMissingness && index === data.series.length - 1
         ? { ...series, color: gray }
         : series
+    ),
+  };
+}
+
+export function omitEmptyNoDataSeries<
+  T extends { series: any } & CoverageStatistics
+>(data: T, showMissingness: boolean = false) {
+  const noMissingData =
+    data.completeCasesAllVars === data.completeCasesAxesVars;
+  if (!showMissingness || !noMissingData) return data;
+  return {
+    ...data,
+    series: data.series.filter(
+      (_: any, index: number) => index !== data.series.length - 1
     ),
   };
 }

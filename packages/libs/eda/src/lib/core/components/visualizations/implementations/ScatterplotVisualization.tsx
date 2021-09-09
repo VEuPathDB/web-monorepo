@@ -1,11 +1,12 @@
 // load scatter plot component
 import XYPlot, { XYPlotProps } from '@veupathdb/components/lib/plots/XYPlot';
+import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 // need to set for Scatterplot
 import {
@@ -26,6 +27,7 @@ import { PromiseType } from '../../../types/utility';
 import { VariableDescriptor } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
+import { BirdsEyeView } from '../../BirdsEyeView';
 
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
@@ -51,7 +53,15 @@ import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 import { StudyEntity } from '../../../types/study';
 import { vocabularyWithMissingData } from '../../../utils/analysis';
 import { gray } from '../colors';
-import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
+import {
+  ColorPaletteDefault,
+  ColorPaletteDark,
+} from '@veupathdb/components/lib/types/plots/addOns';
+
+const plotDimensions = {
+  width: 750,
+  height: 450,
+};
 
 // define PromiseXYPlotData
 interface PromiseXYPlotData extends CoverageStatistics {
@@ -64,15 +74,10 @@ interface PromiseXYPlotData extends CoverageStatistics {
 type XYPlotDataResponse = ScatterplotResponse | LineplotResponse;
 
 export const scatterplotVisualization: VisualizationType = {
-  gridComponent: GridComponent,
   selectorComponent: SelectorComponent,
-  fullscreenComponent: FullscreenComponent,
+  fullscreenComponent: ScatterplotViz,
   createDefaultConfig: createDefaultConfig,
 };
-
-function GridComponent(props: VisualizationProps) {
-  return <ScatterplotViz {...props} fullscreen={false} />;
-}
 
 // this needs a handling of text/image for scatter, line, and density plots
 function SelectorComponent({ name }: SelectorProps) {
@@ -86,10 +91,6 @@ function SelectorComponent({ name }: SelectorProps) {
       src={src}
     />
   );
-}
-
-function FullscreenComponent(props: VisualizationProps) {
-  return <ScatterplotViz {...props} fullscreen />;
 }
 
 function createDefaultConfig(): ScatterplotConfig {
@@ -109,17 +110,13 @@ export const ScatterplotConfig = t.partial({
   showMissingness: t.boolean,
 });
 
-type Props = VisualizationProps & {
-  fullscreen: boolean;
-};
-
-function ScatterplotViz(props: Props) {
+function ScatterplotViz(props: VisualizationProps) {
   const {
     computation,
     visualization,
-    updateVisualization,
+    updateConfiguration,
+    updateThumbnail,
     filters,
-    fullscreen,
     dataElementConstraints,
     dataElementDependencyOrder,
     starredVariables,
@@ -143,17 +140,9 @@ function ScatterplotViz(props: Props) {
 
   const updateVizConfig = useCallback(
     (newConfig: Partial<ScatterplotConfig>) => {
-      if (updateVisualization) {
-        updateVisualization({
-          ...visualization,
-          configuration: {
-            ...vizConfig,
-            ...newConfig,
-          },
-        });
-      }
+      updateConfiguration({ ...vizConfig, ...newConfig });
     },
-    [updateVisualization, visualization, vizConfig]
+    [updateConfiguration, vizConfig]
   );
 
   // moved the location of this findEntityAndVariable
@@ -268,19 +257,16 @@ function ScatterplotViz(props: Props) {
               params as ScatterplotRequestParams
             );
 
-      // send visualization.type, independentValueType, and dependentValueType as well
+      const showMissing = vizConfig.showMissingness && overlayVariable != null;
       return scatterplotResponseToData(
         reorderResponse(
           await response,
-          vocabularyWithMissingData(
-            overlayVariable?.vocabulary,
-            vizConfig.showMissingness
-          )
+          vocabularyWithMissingData(overlayVariable?.vocabulary, showMissing)
         ),
         visualization.type,
         independentValueType,
         dependentValueType,
-        vizConfig.showMissingness && overlayVariable != null
+        showMissing
       );
     }, [
       studyId,
@@ -295,48 +281,55 @@ function ScatterplotViz(props: Props) {
     ])
   );
 
+  const outputSize =
+    overlayVariable != null && !vizConfig.showMissingness
+      ? data.value?.completeCasesAllVars
+      : data.value?.completeCasesAxesVars;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      {fullscreen && (
-        <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
-          <InputVariables
-            inputs={[
-              {
-                name: 'xAxisVariable',
-                label: 'X-axis',
-                role: 'primary',
-              },
-              {
-                name: 'yAxisVariable',
-                label: 'Y-axis',
-                role: 'primary',
-              },
-              {
-                name: 'overlayVariable',
-                label: 'Overlay',
-                role: 'stratification',
-              },
-            ]}
-            entities={entities}
-            values={{
-              xAxisVariable: vizConfig.xAxisVariable,
-              yAxisVariable: vizConfig.yAxisVariable,
-              overlayVariable: vizConfig.overlayVariable,
-            }}
-            onChange={handleInputVariableChange}
-            constraints={dataElementConstraints}
-            dataElementDependencyOrder={dataElementDependencyOrder}
-            starredVariables={starredVariables}
-            toggleStarredVariable={toggleStarredVariable}
-            enableShowMissingnessToggle={overlayVariable != null}
-            showMissingness={vizConfig.showMissingness}
-            onShowMissingnessChange={onShowMissingnessChange}
-            outputEntity={outputEntity}
-          />
-        </div>
-      )}
+      <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
+        <InputVariables
+          inputs={[
+            {
+              name: 'xAxisVariable',
+              label: 'X-axis',
+              role: 'primary',
+            },
+            {
+              name: 'yAxisVariable',
+              label: 'Y-axis',
+              role: 'primary',
+            },
+            {
+              name: 'overlayVariable',
+              label: 'Overlay',
+              role: 'stratification',
+            },
+          ]}
+          entities={entities}
+          values={{
+            xAxisVariable: vizConfig.xAxisVariable,
+            yAxisVariable: vizConfig.yAxisVariable,
+            overlayVariable: vizConfig.overlayVariable,
+          }}
+          onChange={handleInputVariableChange}
+          constraints={dataElementConstraints}
+          dataElementDependencyOrder={dataElementDependencyOrder}
+          starredVariables={starredVariables}
+          toggleStarredVariable={toggleStarredVariable}
+          enableShowMissingnessToggle={
+            overlayVariable != null &&
+            data.value?.completeCasesAllVars !=
+              data.value?.completeCasesAxesVars
+          }
+          showMissingness={vizConfig.showMissingness}
+          onShowMissingnessChange={onShowMissingnessChange}
+          outputEntity={outputEntity}
+        />
+      </div>
 
-      {data.error && fullscreen && (
+      {data.error && (
         <div
           style={{
             fontSize: '1.2em',
@@ -355,131 +348,102 @@ function ScatterplotViz(props: Props) {
             : String(data.error)}
         </div>
       )}
-      {fullscreen ? (
-        <>
-          <OutputEntityTitle
-            entity={outputEntity}
-            outputSize={data.pending ? undefined : data.value?.outputSize}
-          />
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignItems: 'flex-start',
-            }}
-          >
-            <ScatterplotWithControls
-              // data.value
-              data={
-                data.value && !data.pending
-                  ? data.value.dataSetProcess
-                  : undefined
-              }
-              containerStyles={{
-                width: '750px',
-                height: '450px',
-              }}
-              // title={'Scatter plot'}
-              displayLegend={
-                data.value &&
-                (data.value.dataSetProcess.series.length > 1 ||
-                  vizConfig.overlayVariable != null)
-              }
-              independentAxisLabel={
-                axisLabelWithUnit(xAxisVariable) ?? 'X-Axis'
-              }
-              dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-Axis'}
-              dependentAxisRange={
-                data.value && !data.pending
-                  ? { min: data.value.yMin, max: data.value.yMax }
-                  : undefined
-              }
-              // set valueSpec as Raw when yAxisVariable = date
-              valueSpec={
-                yAxisVariable?.type === 'date'
-                  ? 'Raw'
-                  : vizConfig.valueSpecConfig
-              }
-              onValueSpecChange={onValueSpecChange}
-              // send visualization.type here
-              vizType={visualization.type}
-              interactive={true}
-              showSpinner={data.pending}
-              // add plotOptions to control the list of plot options
-              plotOptions={[
-                'Raw',
-                'Smoothed mean with raw',
-                'Best fit line with raw',
-              ]}
-              // disabledList prop is used to disable radio options (grayed out)
-              disabledList={
-                yAxisVariable?.type === 'date'
-                  ? ['Smoothed mean with raw', 'Best fit line with raw']
-                  : []
-              }
-              independentValueType={xAxisVariable?.type}
-              dependentValueType={yAxisVariable?.type}
-              legendTitle={overlayVariable?.displayName}
-            />
-            <VariableCoverageTable
-              completeCases={
-                data.value && !data.pending
-                  ? data.value?.completeCases
-                  : undefined
-              }
-              filters={filters}
-              outputEntityId={outputEntity?.id}
-              variableSpecs={[
-                {
-                  role: 'X-axis',
-                  required: true,
-                  display: xAxisVariable?.displayName,
-                  variable: vizConfig.xAxisVariable,
-                },
-                {
-                  role: 'Y-axis',
-                  required: true,
-                  display: yAxisVariable?.displayName,
-                  variable: vizConfig.yAxisVariable,
-                },
-                {
-                  role: 'Overlay',
-                  display: overlayVariable?.displayName,
-                  variable: vizConfig.overlayVariable,
-                },
-              ]}
-            />
-          </div>
-        </>
-      ) : (
-        // thumbnail/grid view
-        <XYPlot
+      <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'flex-start',
+        }}
+      >
+        <ScatterplotWithControls
+          // data.value
           data={
             data.value && !data.pending ? data.value.dataSetProcess : undefined
           }
-          containerStyles={{
-            width: '230px',
-            height: '150px',
-          }}
+          updateThumbnail={updateThumbnail}
+          containerStyles={plotDimensions}
+          // title={'Scatter plot'}
+          displayLegend={
+            data.value &&
+            (data.value.dataSetProcess.series.length > 1 ||
+              vizConfig.overlayVariable != null)
+          }
+          independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-Axis'}
+          dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-Axis'}
           dependentAxisRange={
             data.value && !data.pending
               ? { min: data.value.yMin, max: data.value.yMax }
               : undefined
           }
-          // new props for better displaying grid view
-          displayLegend={false}
-          displayLibraryControls={false}
-          interactive={false}
-          // margin is replaced with spacingOptions
-          spacingOptions={{
-            marginTop: 20,
-            marginRight: 20,
-            marginBottom: 20,
-            marginLeft: 30,
-          }}
+          // set valueSpec as Raw when yAxisVariable = date
+          valueSpec={
+            yAxisVariable?.type === 'date' ? 'Raw' : vizConfig.valueSpecConfig
+          }
+          onValueSpecChange={onValueSpecChange}
+          // send visualization.type here
+          vizType={visualization.type}
+          interactive={true}
           showSpinner={data.pending}
+          // add plotOptions to control the list of plot options
+          plotOptions={[
+            'Raw',
+            'Smoothed mean with raw',
+            'Best fit line with raw',
+          ]}
+          // disabledList prop is used to disable radio options (grayed out)
+          disabledList={
+            yAxisVariable?.type === 'date'
+              ? ['Smoothed mean with raw', 'Best fit line with raw']
+              : []
+          }
+          independentValueType={xAxisVariable?.type}
+          dependentValueType={yAxisVariable?.type}
+          legendTitle={axisLabelWithUnit(overlayVariable)}
         />
-      )}
+        <div className="viz-plot-info">
+          <BirdsEyeView
+            completeCasesAllVars={
+              data.pending ? undefined : data.value?.completeCasesAllVars
+            }
+            completeCasesAxesVars={
+              data.pending ? undefined : data.value?.completeCasesAxesVars
+            }
+            filters={filters}
+            outputEntity={outputEntity}
+            stratificationIsActive={overlayVariable != null}
+            enableSpinner={xAxisVariable != null && yAxisVariable != null}
+          />
+          <VariableCoverageTable
+            completeCases={
+              data.value && !data.pending
+                ? data.value?.completeCases
+                : undefined
+            }
+            filters={filters}
+            outputEntityId={outputEntity?.id}
+            variableSpecs={[
+              {
+                role: 'X-axis',
+                required: true,
+                display: axisLabelWithUnit(xAxisVariable),
+                variable: vizConfig.xAxisVariable,
+              },
+              {
+                role: 'Y-axis',
+                required: true,
+                display: axisLabelWithUnit(yAxisVariable),
+                variable: vizConfig.yAxisVariable,
+              },
+              {
+                role: 'Overlay',
+                display: axisLabelWithUnit(overlayVariable),
+                variable: vizConfig.overlayVariable,
+              },
+            ]}
+          />
+        </div>
+      </div>
     </div>
   );
 }
@@ -487,6 +451,7 @@ function ScatterplotViz(props: Props) {
 type ScatterplotWithControlsProps = XYPlotProps & {
   valueSpec: string | undefined;
   onValueSpecChange: (value: string) => void;
+  updateThumbnail: (src: string) => void;
   vizType: string;
   plotOptions: string[];
   // add disabledList
@@ -503,6 +468,7 @@ function ScatterplotWithControls({
   plotOptions,
   // add disabledList
   disabledList,
+  updateThumbnail,
   ...scatterplotProps
 }: ScatterplotWithControlsProps) {
   // TODO Use UIState
@@ -515,10 +481,19 @@ function ScatterplotWithControls({
   //   };
   // }, []);
 
+  const ref = useRef<PlotRef>(null);
+
+  useEffect(() => {
+    ref.current
+      ?.toImage({ format: 'svg', ...plotDimensions })
+      .then(updateThumbnail);
+  }, [data, updateThumbnail]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <XYPlot
         {...scatterplotProps}
+        ref={ref}
         data={data}
         // add controls
         displayLibraryControls={false}
@@ -575,9 +550,8 @@ export function scatterplotResponseToData(
     yMin: yMin,
     yMax: yMax,
     completeCases: response.completeCasesTable,
-    outputSize:
-      response.scatterplot.config.completeCases +
-      response.scatterplot.config.plottedIncompleteCases,
+    completeCasesAllVars: response.scatterplot.config.completeCasesAllVars,
+    completeCasesAxesVars: response.scatterplot.config.completeCasesAxesVars,
     // TO DO: won't work with densityplot response, when that's implemented
   };
 }
@@ -681,6 +655,28 @@ function processInputData<T extends number | string>(
       return ColorPaletteDefault[index] ?? 'black'; // TO DO: decide on overflow behaviour
     }
   };
+
+  // using dark color: function to return color or gray where needed if showMissingness == true
+  const markerColorDark = (index: number) => {
+    if (showMissingness && index === plotDataSet.data.length - 1) {
+      return gray;
+    } else {
+      return ColorPaletteDark[index] ?? 'black'; // TO DO: decide on overflow behaviour
+    }
+  };
+
+  // determine conditions for not adding empty "No data" traces
+  // we want to stop at the penultimate series if showMissing is active and there is actually no missing data
+  const noMissingData =
+    dataSet.scatterplot.config.completeCasesAllVars ===
+    dataSet.scatterplot.config.completeCasesAxesVars;
+  // 'break' from the for loops (array.some(...)) if this is true
+  const breakAfterThisSeries = (index: number) => {
+    return (
+      showMissingness && noMissingData && index === plotDataSet.data.length - 2
+    );
+  };
+
   const markerSymbol = (index: number) =>
     showMissingness && index === plotDataSet.data.length - 1
       ? 'x'
@@ -690,7 +686,7 @@ function processInputData<T extends number | string>(
   let dataSetProcess: any = [];
 
   // drawing raw data (markers) at first
-  plotDataSet?.data.forEach(function (el: any, index: number) {
+  plotDataSet?.data.some(function (el: any, index: number) {
     // initialize seriesX/Y
     let seriesX = [];
     let seriesY = [];
@@ -763,11 +759,12 @@ function processInputData<T extends number | string>(
         // always use spline?
         line: { color: markerColor(index), shape: 'spline' },
       });
+      return breakAfterThisSeries(index);
     }
   });
 
   // after drawing raw data, smoothedMean and bestfitline plots are displayed
-  plotDataSet?.data.forEach(function (el: any, index: number) {
+  plotDataSet?.data.some(function (el: any, index: number) {
     // initialize variables: setting with union type for future, but this causes typescript issue in the current version
     let xIntervalLineValue: T[] = [];
     let yIntervalLineValue: number[] = [];
@@ -844,7 +841,8 @@ function processInputData<T extends number | string>(
           : 'Smoothed mean',
         mode: 'lines', // no data point is displayed: only line
         line: {
-          color: markerColor(index),
+          // use darker color for smoothed mean line
+          color: markerColorDark(index),
           shape: 'spline',
           width: 2,
         },
@@ -887,7 +885,8 @@ function processInputData<T extends number | string>(
         // this is better to be tozeroy, not tozerox
         fill: 'tozeroy',
         opacity: 0.2,
-        fillcolor: markerColor(index),
+        // use darker color for smoothed mean's confidence interval
+        fillcolor: markerColorDark(index),
         // type: 'line',
         type: 'scattergl',
         // here, line means upper and lower bounds
@@ -937,13 +936,15 @@ function processInputData<T extends number | string>(
           : 'Best fit, R² = ' + el.r2,
         mode: 'lines', // no data point is displayed: only line
         line: {
-          color: markerColor(index),
+          // use darker color for best fit line
+          color: markerColorDark(index),
           shape: 'spline',
         },
         // use scattergl
         type: 'scattergl',
       });
     }
+    return breakAfterThisSeries(index);
   });
 
   // make some margin for y-axis range (5% of range for now)

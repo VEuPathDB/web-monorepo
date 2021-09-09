@@ -27,6 +27,7 @@ export const Visualization = intersection([
   }),
   partial({
     displayName: string,
+    thumbnail: string,
   }),
 ]);
 
@@ -85,5 +86,6 @@ export const ComputationAppOverview = intersection([
 
 export type CoverageStatistics = {
   completeCases: CompleteCasesTable;
-  outputSize: number;
+  completeCasesAllVars: number;
+  completeCasesAxesVars: number;
 };
