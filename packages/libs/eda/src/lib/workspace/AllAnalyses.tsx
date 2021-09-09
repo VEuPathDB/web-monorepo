@@ -62,7 +62,7 @@ export function AllAnalyses(props: Props) {
   const classes = useStyles();
 
   const queryParams = new URLSearchParams(location.search);
-  const searchText = queryParams.get('s');
+  const searchText = queryParams.get('s') ?? '';
 
   const [selectedAnalyses, setSelectedAnalyses] = useState<Set<string>>(
     new Set()
