@@ -11,6 +11,7 @@ import { useStudyMetadata, useWdkStudyRecord } from '../hooks/study';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { createMuiTheme } from '@material-ui/core';
 import { workspaceTheme } from './workspaceTheme';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
 const theme = createMuiTheme(workspaceTheme);
 export interface Props {
@@ -45,7 +46,7 @@ export function EDAWorkspaceContainer(props: Props) {
         <pre>{String(studyMetadataError)}</pre>
       </ErrorStatus>
     );
-  if (wdkStudyRecordState == null || studyMetadata == null) return null;
+  if (wdkStudyRecordState == null || studyMetadata == null) return <Loading />;
   return (
     <WorkspaceContext.Provider
       value={{
