@@ -174,6 +174,8 @@ export default class MultiFieldFilter extends React.Component {
             count={getCount(row.summary, row.value)}
             filteredCount={getFilteredCount(row.summary, row.value)}
             populationSize={row.summary.internalsCount || this.props.dataCount}
+            fillBarColor={this.props.fillBarColor}
+            fillFilteredBarColor={this.props.fillFilteredBarColor}
           />
         </div>
       )
