@@ -169,6 +169,9 @@ export const VariableTreeNode = t.union([
 // -----------
 
 type _StudyEntityBase = t.TypeOf<typeof _StudyEntityBase>;
+
+// TODO: Add documentation on WHAT an entity is conceptually.
+// And for each property... except which is obviously self-evident.
 const _StudyEntityBase = t.intersection([
   t.type({
     id: t.string,
@@ -188,9 +191,9 @@ const _StudyEntityBase = t.intersection([
 ]);
 
 export type StudyEntity = _StudyEntityBase & {
-  /**
-   * Other entities which exist with a foreign key type parent-child relationship.
-   */
+  // Other entities which exist with a foreign key type parent-child relationship.
+  // TODO: @dmfalke Perhaps childEntities or subEntities would be more clear.
+  // As someone new to the code it was easy to think of variables as "children" as confuse the two.
   children?: StudyEntity[];
 };
 export const StudyEntity: t.Type<StudyEntity> = t.recursion('StudyEntity', () =>
