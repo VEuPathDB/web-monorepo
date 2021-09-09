@@ -45,6 +45,7 @@ const MosaicPlot = makePlotlyPlotComponent(
 
     const layout = {
       xaxis: {
+        title: independentAxisLabel,
         tickvals: column_centers,
         ticktext:
           showColumnLabels !== false
