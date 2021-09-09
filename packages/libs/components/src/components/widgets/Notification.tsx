@@ -3,6 +3,7 @@ import { Typography } from '@material-ui/core';
 
 import { LIGHT_GREEN } from '../../constants/colors';
 import Button from './Button';
+import WarningIcon from '@material-ui/icons/Warning';
 
 export type NotificationProps = {
   /** The title of the notificatin. */
@@ -21,6 +22,8 @@ export type NotificationProps = {
   /** Additional styles to apply to the component's outer div.
    * Can also be used to override existing styles on the div. */
   containerStyles?: React.CSSProperties;
+  /** add showWarningIcon to show warning icon */
+  showWarningIcon?: boolean;
 };
 
 /** A notification widget to alert the user to some event. */
@@ -31,6 +34,7 @@ export default function Notification({
   occurences,
   color = LIGHT_GREEN,
   containerStyles = {},
+  showWarningIcon = false,
 }: NotificationProps) {
   return (
     <div
@@ -79,13 +83,22 @@ export default function Notification({
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <span
           style={{
-            paddingRight: 50,
+            paddingRight: 20,
             color: 'white',
             fontSize: 13,
             flexGrow: 2,
             lineHeight: '1.1em',
           }}
         >
+          {showWarningIcon && (
+            <>
+              <WarningIcon
+                style={{ color: 'yellow', verticalAlign: 'middle' }}
+                fontSize="small"
+              />
+              <span>&nbsp;</span>
+            </>
+          )}
           {text}
         </span>
         <Button
