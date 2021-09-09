@@ -57,6 +57,9 @@ import {
   ColorPaletteDefault,
   ColorPaletteDark,
 } from '@veupathdb/components/lib/types/plots/addOns';
+// import variable's metadata-based independent axis range utils
+import { defaultIndependentAxisRange } from '../../../utils/default-independent-axis-range';
+import { independentAxisRangeMargin } from '../../../utils/independent-axis-range-margin';
 
 const plotDimensions = {
   width: 750,
@@ -286,6 +289,13 @@ function ScatterplotViz(props: VisualizationProps) {
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
 
+  // variable's metadata-based independent axis range with margin
+  const defaultIndependentRange = defaultIndependentAxisRange(xAxisVariable);
+  const defaultIndependentRangeMargin = independentAxisRangeMargin(
+    defaultIndependentRange,
+    xAxisVariable?.type
+  );
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -371,6 +381,21 @@ function ScatterplotViz(props: VisualizationProps) {
           }
           independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-Axis'}
           dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-Axis'}
+          // variable's metadata-based independent axis range with margin
+          independentAxisRange={
+            defaultIndependentRangeMargin &&
+            defaultIndependentRangeMargin != null
+              ? xAxisVariable?.type === 'date'
+                ? {
+                    min: defaultIndependentRangeMargin.min as string,
+                    max: defaultIndependentRangeMargin.max as string,
+                  }
+                : {
+                    min: defaultIndependentRangeMargin.min as number,
+                    max: defaultIndependentRangeMargin.max as number,
+                  }
+              : undefined
+          }
           dependentAxisRange={
             data.value && !data.pending
               ? { min: data.value.yMin, max: data.value.yMax }
