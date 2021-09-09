@@ -295,6 +295,21 @@ function ScatterplotViz(props: VisualizationProps) {
     defaultIndependentRange,
     xAxisVariable?.type
   );
+  const independentAxisRange = useMemo(
+    () =>
+      defaultIndependentRangeMargin && defaultIndependentRangeMargin != null
+        ? xAxisVariable?.type === 'date'
+          ? {
+              min: defaultIndependentRangeMargin.min as string,
+              max: defaultIndependentRangeMargin.max as string,
+            }
+          : {
+              min: defaultIndependentRangeMargin.min as number,
+              max: defaultIndependentRangeMargin.max as number,
+            }
+        : undefined,
+    [xAxisVariable, defaultIndependentRangeMargin]
+  );
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -382,20 +397,7 @@ function ScatterplotViz(props: VisualizationProps) {
           independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-Axis'}
           dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-Axis'}
           // variable's metadata-based independent axis range with margin
-          independentAxisRange={
-            defaultIndependentRangeMargin &&
-            defaultIndependentRangeMargin != null
-              ? xAxisVariable?.type === 'date'
-                ? {
-                    min: defaultIndependentRangeMargin.min as string,
-                    max: defaultIndependentRangeMargin.max as string,
-                  }
-                : {
-                    min: defaultIndependentRangeMargin.min as number,
-                    max: defaultIndependentRangeMargin.max as number,
-                  }
-              : undefined
-          }
+          independentAxisRange={independentAxisRange}
           dependentAxisRange={
             data.value && !data.pending
               ? { min: data.value.yMin, max: data.value.yMax }
