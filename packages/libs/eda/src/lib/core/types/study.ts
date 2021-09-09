@@ -57,13 +57,13 @@ export const VariableTreeNode_Base = t.intersection([
     displayOrder: t.number,
     displayType: VariableDisplayType,
     dataShape: VariableDataShape,
+    distinctValuesCount: t.number,
   }),
 ]);
 
 const Variable_Base = t.intersection([
   VariableTreeNode_Base,
   t.type({
-    distinctValuesCount: t.number,
     isTemporal: t.boolean,
     isFeatured: t.boolean,
     isMergeKey: t.boolean,
