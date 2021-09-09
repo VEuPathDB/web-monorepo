@@ -244,7 +244,8 @@ export function InputVariables(props: Props) {
               </div>
             ))}
         </div>
-        {inputs.filter((input) => input.role === 'stratification').length && (
+        {inputs.filter((input) => input.role === 'stratification').length >
+          0 && (
           <div className={classes.inputGroup}>
             <div className={classes.fullRow}>
               <h4>Stratification variables (optional)</h4>
