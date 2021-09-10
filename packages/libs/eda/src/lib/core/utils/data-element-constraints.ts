@@ -204,7 +204,6 @@ export function mergeConstraints(
   );
 }
 
-//quess we could just let undef be reassigned to Infinity here?
 export function mergeMaxNumValues(
   constraintA: DataElementConstraint,
   constraintB: DataElementConstraint
