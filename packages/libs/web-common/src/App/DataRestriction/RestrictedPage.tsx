@@ -3,6 +3,7 @@ import React, { ReactEventHandler, ReactNode } from 'react';
 import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
 
 import { ApprovalStatus } from 'ebrc-client/hooks/dataRestriction';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
 interface Props {
   approvalStatus: ApprovalStatus;
@@ -33,33 +34,38 @@ export function RestrictedPage({
   approvalStatus,
   children,
 }: Props) {
-  return approvalStatus === 'study-not-found' ? (
-    <NotFoundController />
-  ) : // wrap children with a div to prevent them from being unmounted
-      // (to prevent loss of component state, premature cleanup of effects, etc)
-  approvalStatus === 'loading' ? (
-    <div style={{ visibility: 'hidden' }}>{children}</div>
-  ) : approvalStatus === 'approved' ? (
-    <div>{children}</div>
-  ) : (
-    <div
-      style={{
-        pointerEvents: 'none',
-        filter: 'blur(6px)',
-      }}
-      onSubmit={stopEvent}
-      onSelect={stopEvent}
-      onClickCapture={stopEvent}
-      onChangeCapture={stopEvent}
-      onInputCapture={stopEvent}
-      onFocusCapture={stopEvent}
-      onKeyDownCapture={stopEvent}
-      onKeyUpCapture={stopEvent}
-      onKeyPressCapture={stopEvent}
-    >
-      {children}
-    </div>
-  );
+  if (approvalStatus === 'study-not-found') return <NotFoundController/>;
+  
+  // Note: in all cases that include children, a similar structure is used to prevent
+  // children from being remounted when approvalStatus changes. This prevents the loss
+  // of component state, premature cleanup of effects, etc.
+
+  const wrapperProps: JSX.IntrinsicElements['div'] = approvalStatus === 'loading' ? {
+    style: {
+      visibility: 'hidden'
+    }
+  } : approvalStatus === 'not-approved' ? {
+    style: {
+      pointerEvents: 'none',
+      filter: 'blur(6px)'
+    },
+    onSubmit: stopEvent,
+    onSelect: stopEvent,
+    onClickCapture: stopEvent,
+    onChangeCapture: stopEvent,
+    onInputCapture: stopEvent,
+    onFocusCapture: stopEvent,
+    onKeyDownCapture: stopEvent,
+    onKeyUpCapture: stopEvent,
+    onKeyPressCapture: stopEvent,
+
+  } : {};
+  return (
+    <>
+      {approvalStatus === 'loading' ? <Loading/> : <></>}
+      <div {...wrapperProps}>{children}</div>
+    </>
+  )
 }
 
 const stopEvent: ReactEventHandler = (event) => {
