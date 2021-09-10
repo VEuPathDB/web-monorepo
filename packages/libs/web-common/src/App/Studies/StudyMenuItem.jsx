@@ -56,7 +56,7 @@ class StudyMenuItem extends React.Component {
         { (!isPrereleaseStudy(study.access, study.id, user, permissions))
           ? useEda ? (
             <Link name="Explore the data" to={edaRoute}>
-              <i className="fa fa-area-chart"/>
+                  <i className="ebrc-icon-edaIcon"/>
             </Link>
           ) : searches.map(({ path, displayName, icon }) => <SearchLink key={path} path={path} displayName={displayName} icon={icon} />)
           : (

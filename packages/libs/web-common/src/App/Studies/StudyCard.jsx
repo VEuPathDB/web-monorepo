@@ -71,7 +71,7 @@ class StudyCard extends React.Component {
             ? useEda ? (
                 <div className="box">
                   <Link to={edaRoute}>
-                    <i className="fa fa-area-chart"/>
+                    <i className="ebrc-icon-edaIcon"/>
                   </Link>
                 </div>
               ) : searches.map(({ icon, displayName, path }) => {
