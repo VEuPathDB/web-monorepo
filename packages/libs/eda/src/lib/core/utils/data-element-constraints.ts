@@ -63,7 +63,6 @@ export function excludedVariables(
  */
 function variableConstraintPredicate(
   constraint: DataElementConstraint,
-  //maybe this should be variable: Variable - from dave
   variable: VariableTreeNode
 ) {
   return (
@@ -74,8 +73,6 @@ function variableConstraintPredicate(
       (constraint.allowedTypes == null ||
         constraint.allowedTypes.includes(variable.type)) &&
       (constraint.maxNumValues == null ||
-        //this case should be category anyway, but is that a strong enough thing to assume here?
-        variable.distinctValuesCount === undefined ||
         constraint.maxNumValues >= variable.distinctValuesCount) &&
       (constraint.allowMultiValued || !variable.isMultiValued))
   );
@@ -142,7 +139,6 @@ export function flattenConstraints(
         constraint.allowedShapes?.includes(variable.dataShape!);
       const passesMaxValuesConstraint =
         constraint.maxNumValues === undefined ||
-        variable.distinctValuesCount === undefined ||
         constraint.maxNumValues >= variable.distinctValuesCount;
       const passesMultivalueConstraint =
         constraint.allowMultiValued || !variable.isMultiValued;
