@@ -29,17 +29,17 @@ export function EDAAnalysisList(props: Props) {
   const approvalStatus = useApprovalStatus(props.studyId, 'analysis');
 
   return (
-    <RestrictedPage approvalStatus={approvalStatus}>
-      <EDAAnalysisListContainer
-        studyId={props.studyId}
-        subsettingClient={subsettingClient}
-        dataClient={dataClient}
-        className={cx()}
-        analysisClient={mockAnalysisStore}
-      >
+    <EDAAnalysisListContainer
+      studyId={props.studyId}
+      subsettingClient={subsettingClient}
+      dataClient={dataClient}
+      className={cx()}
+      analysisClient={mockAnalysisStore}
+    >
+      <RestrictedPage approvalStatus={approvalStatus}>
         <EDAWorkspaceHeading />
         <AnalysisList analysisStore={mockAnalysisStore} />
-      </EDAAnalysisListContainer>
-    </RestrictedPage>
+      </RestrictedPage>
+    </EDAAnalysisListContainer>
   );
 }
