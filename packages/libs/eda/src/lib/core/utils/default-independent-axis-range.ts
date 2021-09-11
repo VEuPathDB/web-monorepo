@@ -2,7 +2,8 @@ import { Variable } from '../types/study';
 import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
 
 export function defaultIndependentAxisRange(
-  variable: Variable | undefined
+  variable: Variable | undefined,
+  plotName: string
 ): NumberOrDateRange | undefined {
   // make universal range variable
   if (variable != null && variable.dataShape === 'continuous') {
@@ -13,7 +14,14 @@ export function defaultIndependentAxisRange(
             min: Math.min(variable.displayRangeMin, variable.rangeMax),
             max: Math.max(variable.displayRangeMax, variable.rangeMax),
           }
-        : { min: Math.min(0, variable.rangeMin), max: variable.rangeMax };
+        : {
+            // separate histogram following the criterion at histogram filter
+            min:
+              plotName === 'histogram'
+                ? Math.min(0, variable.rangeMin)
+                : variable.rangeMin,
+            max: variable.rangeMax,
+          };
     } else if (variable.type === 'date') {
       return variable.displayRangeMin != null &&
         variable.displayRangeMax != null

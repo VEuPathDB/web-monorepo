@@ -82,7 +82,7 @@ export function HistogramFilter(props: Props) {
 
   // compute default independent range from meta-data based util
   const defaultIndependentRange: NumberOrDateRange | undefined = useMemo(
-    () => defaultIndependentAxisRange(variable),
+    () => defaultIndependentAxisRange(variable, 'histogram'),
     [variable]
   );
 

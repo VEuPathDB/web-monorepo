@@ -291,7 +291,10 @@ function ScatterplotViz(props: VisualizationProps) {
 
   // variable's metadata-based independent axis range with margin
   const defaultIndependentRangeMargin = useMemo(() => {
-    const defaultIndependentRange = defaultIndependentAxisRange(xAxisVariable);
+    const defaultIndependentRange = defaultIndependentAxisRange(
+      xAxisVariable,
+      'scatterplot'
+    );
     return independentAxisRangeMargin(
       defaultIndependentRange,
       xAxisVariable?.type

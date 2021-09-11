@@ -252,7 +252,7 @@ function HistogramViz(props: VisualizationProps) {
 
   // variable's metadata-based independent axis range with margin
   const defaultIndependentRange = useMemo(
-    () => defaultIndependentAxisRange(xAxisVariable),
+    () => defaultIndependentAxisRange(xAxisVariable, 'histogram'),
     [xAxisVariable]
   );
 
