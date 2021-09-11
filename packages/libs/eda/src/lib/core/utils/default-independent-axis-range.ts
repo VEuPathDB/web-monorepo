@@ -4,18 +4,34 @@ import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
 export function defaultIndependentAxisRange(
   variable: Variable | undefined
 ): NumberOrDateRange | undefined {
+  // make universal range variable
   if (variable != null && variable.dataShape === 'continuous') {
     if (variable.type === 'number') {
       return variable.displayRangeMin != null &&
         variable.displayRangeMax != null
-        ? { min: variable.displayRangeMin, max: variable.displayRangeMax }
+        ? {
+            min: Math.min(variable.displayRangeMin, variable.rangeMax),
+            max: Math.max(variable.displayRangeMax, variable.rangeMax),
+          }
         : { min: Math.min(0, variable.rangeMin), max: variable.rangeMax };
     } else if (variable.type === 'date') {
       return variable.displayRangeMin != null &&
         variable.displayRangeMax != null
         ? {
-            min: variable.displayRangeMin + 'T00:00:00Z',
-            max: variable.displayRangeMax + 'T00:00:00Z',
+            min:
+              [variable.displayRangeMin, variable.rangeMin].reduce(function (
+                a,
+                b
+              ) {
+                return a < b ? a : b;
+              }) + 'T00:00:00Z',
+            max:
+              [variable.displayRangeMax, variable.rangeMax].reduce(function (
+                a,
+                b
+              ) {
+                return a > b ? a : b;
+              }) + 'T00:00:00Z',
           }
         : {
             min: variable.rangeMin + 'T00:00:00Z',

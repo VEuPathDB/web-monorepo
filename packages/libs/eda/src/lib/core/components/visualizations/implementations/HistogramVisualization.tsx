@@ -251,21 +251,9 @@ function HistogramViz(props: VisualizationProps) {
   );
 
   // variable's metadata-based independent axis range with margin
-  const defaultIndependentRange = defaultIndependentAxisRange(xAxisVariable);
-  const independentAxisRange = useMemo(
-    () =>
-      defaultIndependentRange && defaultIndependentRange != null
-        ? xAxisVariable?.type === 'date'
-          ? {
-              min: defaultIndependentRange.min as string,
-              max: defaultIndependentRange.max as string,
-            }
-          : {
-              min: defaultIndependentRange.min as number,
-              max: defaultIndependentRange.max as number,
-            }
-        : undefined,
-    [xAxisVariable, defaultIndependentRange]
+  const defaultIndependentRange = useMemo(
+    () => defaultIndependentAxisRange(xAxisVariable),
+    [xAxisVariable]
   );
 
   return (
@@ -345,8 +333,8 @@ function HistogramViz(props: VisualizationProps) {
         outputEntity={outputEntity}
         independentAxisVariable={vizConfig.xAxisVariable}
         independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'Main'}
-        // variable's metadata-based independent axis range with margin
-        independentAxisRange={independentAxisRange}
+        // variable's metadata-based independent axis range
+        independentAxisRange={defaultIndependentRange}
         interactive
         showSpinner={data.pending}
         filters={filters}
