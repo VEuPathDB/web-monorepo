@@ -13,7 +13,7 @@ import {
   LineplotRequestParams,
   ScatterplotResponse,
   LineplotResponse,
-} from '../../../api/data-api';
+} from '../../../api/dataClient/types';
 import DataClient from '../../../api/dataClient';
 
 import { usePromise } from '../../../hooks/promise';

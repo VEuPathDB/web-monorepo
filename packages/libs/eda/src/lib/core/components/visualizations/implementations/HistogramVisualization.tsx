@@ -21,7 +21,7 @@ import React, { useCallback, useMemo } from 'react';
 import {
   HistogramRequestParams,
   HistogramResponse,
-} from '../../../api/data-api';
+} from '../../../api/dataClient/types';
 import DataClient from '../../../api/dataClient';
 import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';

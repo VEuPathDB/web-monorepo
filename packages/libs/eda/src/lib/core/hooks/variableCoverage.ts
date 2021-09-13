@@ -2,7 +2,10 @@ import { useMemo } from 'react';
 
 import { keyBy, mapValues } from 'lodash';
 
-import { CompleteCasesTable, CompleteCasesTableRow } from '../api/data-api';
+import {
+  CompleteCasesTable,
+  CompleteCasesTableRow,
+} from '../api/dataClient/types';
 import {
   VariableCoverageTableRow,
   VariableSpec,

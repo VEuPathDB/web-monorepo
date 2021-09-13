@@ -11,7 +11,7 @@ import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import _ from 'lodash';
 import React, { useCallback, useMemo } from 'react';
-import { MosaicRequestParams } from '../../../api/data-api';
+import { MosaicRequestParams } from '../../../api/dataClient/types';
 import DataClient from '../../../api/dataClient';
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';

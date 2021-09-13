@@ -16,11 +16,11 @@ import {
   keyof,
   Decoder,
 } from 'io-ts';
-import { Filter } from '../types/filter';
-import { TimeUnit } from '../types/general';
-import { VariableDescriptor, StringVariableValue } from '../types/variable';
-import { ComputationAppOverview } from '../types/visualization';
-import { ioTransformer } from './ioTransformer';
+import { Filter } from '../../types/filter';
+import { TimeUnit } from '../../types/general';
+import { VariableDescriptor, StringVariableValue } from '../../types/variable';
+import { ComputationAppOverview } from '../../types/visualization';
+import { ioTransformer } from '../ioTransformer';
 
 export const AppsResponse = type({
   apps: array(ComputationAppOverview),

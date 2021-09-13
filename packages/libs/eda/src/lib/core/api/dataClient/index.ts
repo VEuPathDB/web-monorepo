@@ -19,9 +19,9 @@ import {
   TwoByTwoResponse,
   BoxplotRequestParams,
   BoxplotResponse,
-} from './data-api';
+} from './types';
 
-import { ioTransformer } from './ioTransformer';
+import { ioTransformer } from '../ioTransformer';
 
 export default class DataClient extends FetchClient {
   getApps(): Promise<TypeOf<typeof AppsResponse>> {
