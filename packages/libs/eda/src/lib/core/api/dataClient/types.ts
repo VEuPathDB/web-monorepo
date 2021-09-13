@@ -1,8 +1,3 @@
-/* eslint-disable @typescript-eslint/no-redeclare */
-import {
-  createJsonRequest,
-  FetchClient,
-} from '@veupathdb/web-common/lib/util/api';
 import {
   TypeOf,
   string,
@@ -14,13 +9,11 @@ import {
   intersection,
   partial,
   keyof,
-  Decoder,
 } from 'io-ts';
 import { Filter } from '../../types/filter';
 import { TimeUnit } from '../../types/general';
 import { VariableDescriptor, StringVariableValue } from '../../types/variable';
 import { ComputationAppOverview } from '../../types/visualization';
-import { ioTransformer } from '../ioTransformer';
 
 export const AppsResponse = type({
   apps: array(ComputationAppOverview),
@@ -256,6 +249,23 @@ export const ScatterplotResponse = type({
   }),
   sampleSizeTable: sampleSizeTableArray,
   completeCasesTable: completeCasesTableArray,
+});
+
+///////////
+// Table //
+///////////
+export interface TableDataRequestParams {
+  studyId: string;
+  config: {
+    outputEntityId: string;
+    outputVariable: Array<VariableDescriptor>;
+  };
+}
+
+export type TableDataResponse = TypeOf<typeof TableDataResponse>;
+export const TableDataResponse = type({
+  columns: array(VariableDescriptor),
+  rows: array(array(string)),
 });
 
 // lineplot

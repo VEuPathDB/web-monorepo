@@ -19,6 +19,8 @@ import {
   TwoByTwoResponse,
   BoxplotRequestParams,
   BoxplotResponse,
+  TableDataRequestParams,
+  TableDataResponse,
 } from './types';
 
 import { ioTransformer } from '../ioTransformer';
@@ -50,14 +52,18 @@ export default class DataClient extends FetchClient {
     );
   }
 
-  // TODO: Notes
-  /**
-   * computationName is effectively, atm, always "pass"
-   *
-   * In terms of the the POST body, it is JSON, and you can
-   * look at the params for other visualization requests for examples
-   * because they all follow the same structure.
-   */
+  // Table
+  getTableData(
+    computationName: string,
+    params: TableDataRequestParams
+  ): Promise<TableDataResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'table',
+      params, // POST Body
+      TableDataResponse // IO-TS Decoder / Validator
+    );
+  }
 
   // Histogram
   getHistogram(
