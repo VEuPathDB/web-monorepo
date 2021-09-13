@@ -5,7 +5,6 @@ import { RestrictedPage } from '@veupathdb/web-common/lib/App/DataRestriction/Re
 import { useApprovalStatus } from '@veupathdb/web-common/lib/hooks/dataRestriction';
 import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 import { AnalysisClient } from '../core';
-import { useRouteMatch } from 'react-router';
 
 interface Props {
   analysisClient: AnalysisClient;
