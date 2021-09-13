@@ -42,6 +42,8 @@ import { truncationConfig } from '../../utils/truncation-config-utils';
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../utils/axis-label-unit';
+// import variable's metadata-based independent axis range utils
+import { defaultIndependentAxisRange } from '../../utils/default-independent-axis-range';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -78,6 +80,12 @@ export function HistogramFilter(props: Props) {
   const filters = analysisState.analysis?.filters;
   const uiStateKey = `${entity.id}/${variable.id}`;
 
+  // compute default independent range from meta-data based util
+  const defaultIndependentRange: NumberOrDateRange | undefined = useMemo(
+    () => defaultIndependentAxisRange(variable, 'histogram'),
+    [variable]
+  );
+
   // get as much default UI state from variable annotations as possible
   const defaultUIState: UIState = useMemo(() => {
     const otherDefaults = {
@@ -88,10 +96,7 @@ export function HistogramFilter(props: Props) {
       return {
         binWidth: variable.binWidthOverride ?? variable.binWidth ?? 0.1,
         binWidthTimeUnit: undefined,
-        independentAxisRange:
-          variable.displayRangeMin != null && variable.displayRangeMax != null
-            ? { min: variable.displayRangeMin, max: variable.displayRangeMax }
-            : { min: Math.min(0, variable.rangeMin), max: variable.rangeMax },
+        independentAxisRange: defaultIndependentRange as NumberRange,
         ...otherDefaults,
       };
 
@@ -102,17 +107,7 @@ export function HistogramFilter(props: Props) {
     return {
       binWidth: binWidth ?? 1,
       binWidthTimeUnit: binUnits ?? variable.binUnits!, // bit nasty!
-      independentAxisRange:
-        // use Zulu time here to be consistent with uiState.independentAxisRange
-        variable.displayRangeMin != null && variable.displayRangeMax != null
-          ? {
-              min: variable.displayRangeMin + 'T00:00:00Z',
-              max: variable.displayRangeMax + 'T00:00:00Z',
-            }
-          : {
-              min: variable.rangeMin + 'T00:00:00Z',
-              max: variable.rangeMax + 'T00:00:00Z',
-            },
+      independentAxisRange: defaultIndependentRange as DateRange,
       ...otherDefaults,
     };
   }, [variable]);
