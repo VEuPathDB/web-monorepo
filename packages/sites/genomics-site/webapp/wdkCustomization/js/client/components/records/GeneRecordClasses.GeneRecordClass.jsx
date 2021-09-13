@@ -380,6 +380,35 @@ function makeDatasetGraphChildRow(dataTableName, facetMetadataTableName, contXAx
 // SequenceTable Components
 // ------------------------
 
+function makeGenomicRegions(
+  gen_rel_intron_utr_coords,
+  shouldOmitThreePrimeUtr,
+  threePrimeUtrLength
+) {
+  const allGenomicRegions = JSON.parse(gen_rel_intron_utr_coords || '[]');
+
+  if (!shouldOmitThreePrimeUtr) {
+    return allGenomicRegions;
+  }
+
+  const { genomicRegions } = allGenomicRegions.reverse().reduce(function (memo, region) {
+    const [ regionType, regionStart, regionEnd ] = region;
+
+    if (
+      memo.omissionLength < threePrimeUtrLength &&
+      regionType === 'UTR'
+    ) {
+      memo.omissionLength += regionEnd - regionStart + 1;
+    } else {
+      memo.genomicRegions.push(region);
+    }
+
+    return memo;
+  }, { genomicRegions: [], omissionLength: 0 });
+
+  return genomicRegions.reverse();
+}
+
 const renderUtr = str =>
   <span style={{ backgroundColor: '#cae4ff' }}>{str.toLowerCase()}</span>
 
@@ -398,16 +427,31 @@ const SequencesTableChildRow = pure(function SequencesTableChildRow(props) {
     genomic_sequence_length,
     five_prime_utr_coords,
     three_prime_utr_coords,
-    gen_rel_intron_utr_coords
+    gen_rel_intron_utr_coords,
+    transcript_type
   } = props.rowData;
+  let shouldOmitThreePrimeUtr = transcript_type === 'pseudogenic_transcript';
+  let threePrimeUtrCoords = useMemo(
+    () => JSON.parse(three_prime_utr_coords),
+    [ three_prime_utr_coords ]
+  );
   let transcriptRegions = [
     JSON.parse(five_prime_utr_coords) || undefined,
-    JSON.parse(three_prime_utr_coords) || undefined
+    (!shouldOmitThreePrimeUtr && threePrimeUtrCoords) || undefined
   ].filter(coords => coords != null)
   let transcriptHighlightRegions = transcriptRegions.map(coords => {
     return { renderRegion: renderUtr, start: coords[0], end: coords[1] };
   });
-  let genomicRegions = JSON.parse(gen_rel_intron_utr_coords || '[]');
+  let genomicRegions = useMemo(
+    () => makeGenomicRegions(
+      gen_rel_intron_utr_coords,
+      shouldOmitThreePrimeUtr,
+      !threePrimeUtrCoords
+        ? -Infinity
+        : threePrimeUtrCoords[1] - threePrimeUtrCoords[0] + 1
+    ),
+    [ gen_rel_intron_utr_coords, shouldOmitThreePrimeUtr, threePrimeUtrCoords ]
+  );
   let genomicHighlightRegions = genomicRegions.map(coord => {
     return {
       renderRegion: coord[0] === 'Intron' ? renderIntron : renderUtr,
