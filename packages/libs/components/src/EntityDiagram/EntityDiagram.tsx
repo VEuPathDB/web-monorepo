@@ -222,7 +222,6 @@ export default function EntityDiagram({
           fontWeight: isHighlighted && selectedTextBold ? 'bold' : undefined,
         }}
         dy={isExpanded ? -shadingHeight : 0}
-        width={isExpanded ? nodeWidth - 40 : undefined}
       >
         {displayText}
       </Text>
