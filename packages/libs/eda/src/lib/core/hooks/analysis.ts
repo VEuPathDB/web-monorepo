@@ -118,6 +118,7 @@ export function useAnalysis(analysisId: string): AnalysisState {
     if (analysis == null)
       throw new Error("Attempt to save an analysis that hasn't been loaded.");
     await analysisClient.updateAnalysis(analysis);
+    analysisCache[analysis.id] = analysis;
     setHasUnsavedChanges(false);
   }, [analysisClient, analysis]);
 
