@@ -10,7 +10,7 @@ import {
 import { AnalysisList } from './MapVeuAnalysisList';
 import { MapVeuAnalysis } from './MapVeuAnalysis';
 import { mockAnalysisStore } from './Mocks';
-import { DataClient } from '../core/api/data-api';
+import DataClient from '../core/api/dataClient';
 import { StudyList } from './StudyList';
 
 const edaClient = new (class extends SubsettingClient {

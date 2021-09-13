@@ -2,7 +2,7 @@ import React from 'react';
 import { useWdkStudyRecord, useStudyMetadata } from '../hooks/study';
 import { AnalysisClient } from '../api/analysis-api';
 import { SubsettingClient } from '../api/subsetting-api';
-import { DataClient } from '../api/data-api';
+import DataClient from '../api/dataClient';
 import { WorkspaceContext } from '../context/WorkspaceContext';
 import ErrorStatus from '@veupathdb/wdk-client/lib/Components/PageStatus/Error';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core';

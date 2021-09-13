@@ -19,10 +19,10 @@ import * as t from 'io-ts';
 import { isEqual } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 import {
-  DataClient,
   HistogramRequestParams,
   HistogramResponse,
 } from '../../../api/data-api';
+import DataClient from '../../../api/dataClient';
 import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';

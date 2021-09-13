@@ -9,12 +9,12 @@ import { useCallback, useMemo } from 'react';
 
 // need to set for Scatterplot
 import {
-  DataClient,
   ScatterplotRequestParams,
   LineplotRequestParams,
   ScatterplotResponse,
   LineplotResponse,
 } from '../../../api/data-api';
+import DataClient from '../../../api/dataClient';
 
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';

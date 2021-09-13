@@ -1,4 +1,4 @@
-import { DataClient } from '../api/data-api';
+import DataClient from '../api/dataClient';
 import {
   DateRangeFilter,
   DateSetFilter,

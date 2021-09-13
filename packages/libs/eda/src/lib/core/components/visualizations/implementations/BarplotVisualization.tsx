@@ -12,11 +12,8 @@ import * as t from 'io-ts';
 import { useCallback, useMemo } from 'react';
 
 // need to set for Barplot
-import {
-  DataClient,
-  BarplotResponse,
-  BarplotRequestParams,
-} from '../../../api/data-api';
+import { BarplotResponse, BarplotRequestParams } from '../../../api/data-api';
+import DataClient from '../../../api/dataClient';
 
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';

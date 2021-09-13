@@ -9,7 +9,7 @@ import { AnalysisList } from './AnalysisList';
 // Data and Utilities
 import { useApprovalStatus } from '@veupathdb/web-common/lib/hooks/dataRestriction';
 import { SubsettingClient } from '../core/api/subsetting-api';
-import { DataClient } from '../core/api/data-api';
+import DataClient from '../core/api/dataClient';
 import { mockAnalysisStore } from './Mocks';
 import { cx } from './Utils';
 

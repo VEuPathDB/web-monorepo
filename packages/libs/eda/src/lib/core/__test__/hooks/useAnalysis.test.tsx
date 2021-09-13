@@ -3,7 +3,7 @@ import { act, renderHook } from '@testing-library/react-hooks';
 import { useAnalysis, Status } from '../../hooks/analysis';
 import { Analysis, NewAnalysis } from '../../types/analysis';
 import { AnalysisClient } from '../../api/analysis-api';
-import { DataClient } from '../../api/data-api';
+import DataClient from '../../api/dataClient';
 import {
   StudyMetadata,
   StudyRecord,
@@ -21,6 +21,10 @@ const stubAnalysis: NewAnalysis = {
   variableUISettings: {},
   visualizations: [],
   computations: [],
+  dataTableSettings: {
+    selectedVariables: {},
+    sorting: [],
+  },
 };
 
 const key = '123';

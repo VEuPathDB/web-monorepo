@@ -8,7 +8,8 @@ import * as t from 'io-ts';
 import React, { useCallback, useMemo } from 'react';
 
 // need to set for Boxplot
-import { DataClient, BoxplotRequestParams } from '../../../api/data-api';
+import { BoxplotRequestParams } from '../../../api/data-api';
+import DataClient from '../../../api/dataClient';
 
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
