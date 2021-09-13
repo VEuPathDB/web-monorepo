@@ -41,3 +41,22 @@ export function omitEmptyNoDataSeries<
     ),
   };
 }
+
+/**
+ * Convert pvalue number into '< 0.001' or '< 0.01' or single digit precision string.
+ *
+ * If provided a string, just return the string, no questions asked.
+ *
+ */
+
+export function quantizePvalue(pvalue: number | string): string {
+  if (typeof pvalue === 'string') {
+    return pvalue;
+  } else if (pvalue < 0.001) {
+    return '< 0.001';
+  } else if (pvalue < 0.01) {
+    return '< 0.01';
+  } else {
+    return pvalue.toPrecision(1);
+  }
+}
