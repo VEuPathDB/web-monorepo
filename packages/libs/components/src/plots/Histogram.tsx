@@ -150,7 +150,9 @@ const Histogram = makePlotlyPlotComponent(
             text: showValues ? binCounts.map(String) : binLabels,
             textposition: showValues ? 'auto' : undefined,
             marker: {
-              ...(series.color ? { color: series.color } : {}),
+              ...(series.color
+                ? { color: series.color, line: { width: 1, color: '#d0d0d0' } }
+                : { line: { width: 1, color: 'white' } }),
             },
             offset: 0,
             width: binWidths,
