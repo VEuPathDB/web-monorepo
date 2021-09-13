@@ -208,6 +208,7 @@ export function HistogramFilter(props: Props) {
     [
       analysisState.analysis?.filters,
       entity.displayName,
+      entity.displayNamePlural,
       entity.id,
       studyMetadata.id,
       subsettingClient,
