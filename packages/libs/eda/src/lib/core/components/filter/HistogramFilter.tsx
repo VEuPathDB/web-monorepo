@@ -154,15 +154,18 @@ export function HistogramFilter(props: Props) {
         }
       );
 
+      const entityDisplayNamePlural =
+        entity.displayNamePlural ?? entity.displayName;
+
       const series = [
         distributionResponseToDataSeries(
-          `All ${entity.displayName}`,
+          `All ${entityDisplayNamePlural}`,
           distribution.background,
           gray,
           variable.type
         ),
         distributionResponseToDataSeries(
-          `Subset of ${entity.displayName}`,
+          `Subset of ${entityDisplayNamePlural}`,
           distribution.foreground,
           red,
           variable.type
