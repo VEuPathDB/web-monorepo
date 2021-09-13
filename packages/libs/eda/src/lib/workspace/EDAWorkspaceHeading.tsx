@@ -64,10 +64,7 @@ export function EDAWorkspaceHeading() {
               color="primary"
               startIcon={<Icon className="fa fa-table fa-fw" />}
               component={Link}
-              to={
-                '/eda?' +
-                new URLSearchParams('s=' + studyRecord.displayName).toString()
-              }
+              to={'/eda?s=' + encodeURIComponent(studyRecord.displayName)}
             >
               My analyses
             </Button>
