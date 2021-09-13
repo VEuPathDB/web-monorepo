@@ -156,13 +156,13 @@ export function HistogramFilter(props: Props) {
 
       const series = [
         distributionResponseToDataSeries(
-          `All ${entity.displayName}`,
+          `All ${entity.displayNamePlural ?? entity.displayName}`,
           distribution.background,
           gray,
           variable.type
         ),
         distributionResponseToDataSeries(
-          `Subset of ${entity.displayName}`,
+          `Subset of ${entity.displayNamePlural ?? entity.displayName}`,
           distribution.foreground,
           red,
           variable.type

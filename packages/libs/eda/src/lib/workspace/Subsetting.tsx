@@ -84,7 +84,11 @@ export function Subsetting(props: Props) {
         />
       </div>
       <div className="TabularDownload">
-        <Tooltip title={`Download current subset of ${entity.displayName}`}>
+        <Tooltip
+          title={`Download current subset of ${
+            entity.displayNamePlural ?? entity.displayName
+          }`}
+        >
           <button
             type="button"
             className="link"
