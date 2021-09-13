@@ -12,12 +12,12 @@ import {preorderSeq} from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 import DatasetGraph from '@veupathdb/web-common/lib/components/DatasetGraph';
 import ExternalResource from '@veupathdb/web-common/lib/components/ExternalResource';
+import Sequence from '@veupathdb/web-common/lib/components/records/Sequence';
 import {findChildren, isNodeOverflowing} from '@veupathdb/web-common/lib/util/domUtils';
 
 import { projectId, webAppUrl } from '../../config';
 import * as Gbrowse from '../common/Gbrowse';
 import {OverviewThumbnails} from '../common/OverviewThumbnails';
-import Sequence from '../common/Sequence';
 import {SnpsAlignmentForm} from '../common/Snps';
 import { addCommentLink } from '../common/UserComments';
 import { withRequestFields } from './utils';

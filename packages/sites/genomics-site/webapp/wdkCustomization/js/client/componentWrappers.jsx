@@ -12,7 +12,7 @@ import { useProjectUrls } from '@veupathdb/web-common/lib/hooks/projectUrls';
 import { submitAsForm } from '@veupathdb/wdk-client/lib/Utils/FormSubmitter';
 import { makeDynamicWrapper, findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
-import Sequence from './components/common/Sequence';
+import Sequence from '@veupathdb/web-common/lib/components/records/Sequence';
 import RecordTableContainer from './components/common/RecordTableContainer';
 import { loadPathwayGeneDynamicCols } from './actioncreators/RecordViewActionCreators';
 import ApiSiteHeader from './components/SiteHeader';
