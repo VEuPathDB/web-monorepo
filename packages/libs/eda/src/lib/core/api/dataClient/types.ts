@@ -259,6 +259,10 @@ export interface TableDataRequestParams {
   config: {
     outputEntityId: string;
     outputVariable: Array<VariableDescriptor>;
+    pagingConfig: {
+      numRows: number;
+      offset: number;
+    };
   };
 }
 
