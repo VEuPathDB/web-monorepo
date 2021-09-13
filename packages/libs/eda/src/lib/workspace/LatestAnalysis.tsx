@@ -26,7 +26,8 @@ export function LatestAnalysis(props: Props) {
         (analyses) =>
           orderBy(
             analyses.filter((analysis) => analysis.studyId === studyId),
-            (analysis) => analysis.modified
+            (analysis) => analysis.modified,
+            ['desc']
           )[0]
       )
       .run((analysis) => {
