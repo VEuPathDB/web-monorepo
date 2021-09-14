@@ -136,6 +136,8 @@ const Barplot = makePlotlyPlotComponent(
     return {
       data: plotlyFriendlyData,
       layout,
+      //DKDK handling long independent axis tick label
+      plotName: 'barplot',
       ...restProps,
     };
   }
