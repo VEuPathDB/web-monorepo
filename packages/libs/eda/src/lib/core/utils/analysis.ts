@@ -22,7 +22,12 @@ export function grayOutLastSeries<
     ...data,
     series: data.series.map((series, index) =>
       showMissingness && index === data.series.length - 1
-        ? { ...series, color: '#ffffff' }
+        ? {
+            ...series,
+            color: 'white',
+            borderColor: '#d0d0d0',
+            outlierSymbol: 'x',
+          }
         : series
     ),
   };
