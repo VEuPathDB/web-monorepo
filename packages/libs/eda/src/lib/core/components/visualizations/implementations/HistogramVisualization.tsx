@@ -46,6 +46,8 @@ import {
 } from '../../../utils/analysis';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import { useFindEntityAndVariable } from '../../../hooks/study';
+// import variable's metadata-based independent axis range utils
+import { defaultIndependentAxisRange } from '../../../utils/default-independent-axis-range';
 
 type HistogramDataWithCoverageStatistics = HistogramData & CoverageStatistics;
 
@@ -248,6 +250,12 @@ function HistogramViz(props: VisualizationProps) {
     ])
   );
 
+  // variable's metadata-based independent axis range with margin
+  const defaultIndependentRange = useMemo(
+    () => defaultIndependentAxisRange(xAxisVariable, 'histogram'),
+    [xAxisVariable]
+  );
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -325,6 +333,8 @@ function HistogramViz(props: VisualizationProps) {
         outputEntity={outputEntity}
         independentAxisVariable={vizConfig.xAxisVariable}
         independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'Main'}
+        // variable's metadata-based independent axis range
+        independentAxisRange={defaultIndependentRange}
         interactive
         showSpinner={data.pending}
         filters={filters}

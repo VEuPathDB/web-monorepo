@@ -21,6 +21,7 @@ export function filterVariablesByConstraint(
     constraint == null ||
     (constraint.allowedShapes == null &&
       constraint.allowedTypes == null &&
+      constraint.maxNumValues == null &&
       constraint.allowMultiValued)
   )
     return rootEntity;
@@ -71,6 +72,8 @@ function variableConstraintPredicate(
       constraint.allowedShapes.includes(variable.dataShape)) &&
       (constraint.allowedTypes == null ||
         constraint.allowedTypes.includes(variable.type)) &&
+      (constraint.maxNumValues == null ||
+        constraint.maxNumValues >= variable.distinctValuesCount) &&
       (constraint.allowMultiValued || !variable.isMultiValued))
   );
 }
@@ -115,6 +118,7 @@ export function flattenConstraints(
       if (
         isEmpty(constraint.allowedShapes) &&
         isEmpty(constraint.allowedTypes) &&
+        constraint.maxNumValues === undefined &&
         constraint.allowMultiValued
       )
         return true;
@@ -133,9 +137,17 @@ export function flattenConstraints(
       const shapeIsValid =
         isEmpty(constraint.allowedShapes) ||
         constraint.allowedShapes?.includes(variable.dataShape!);
+      const passesMaxValuesConstraint =
+        constraint.maxNumValues === undefined ||
+        constraint.maxNumValues >= variable.distinctValuesCount;
       const passesMultivalueConstraint =
         constraint.allowMultiValued || !variable.isMultiValued;
-      return typeIsValid && shapeIsValid && passesMultivalueConstraint;
+      return (
+        typeIsValid &&
+        shapeIsValid &&
+        passesMaxValuesConstraint &&
+        passesMultivalueConstraint
+      );
     })
   );
   if (compatibleConstraints.length === 0)
@@ -183,10 +195,24 @@ export function mergeConstraints(
                 constraintA.allowedTypes,
                 constraintB.allowedTypes
               ),
+              maxNumValues: mergeMaxNumValues(constraintA, constraintB),
               allowMultiValued:
                 constraintA.allowMultiValued && constraintB.allowMultiValued,
             },
       ];
     })
   );
+}
+
+export function mergeMaxNumValues(
+  constraintA: DataElementConstraint,
+  constraintB: DataElementConstraint
+) {
+  const mergedMaxNumValues = Math.min(
+    constraintA.maxNumValues === undefined
+      ? Infinity
+      : constraintA.maxNumValues,
+    constraintB.maxNumValues === undefined ? Infinity : constraintB.maxNumValues
+  );
+  return mergedMaxNumValues === Infinity ? undefined : mergedMaxNumValues;
 }
