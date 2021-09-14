@@ -3069,10 +3069,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/tsconfig/-/tsconfig-1.0.1.tgz#a2b748b46838af1337ca9f23d969993fb952def4"
   integrity sha512-i6gq7mgnyEN8/xW5EaI9RiWCwS1oB8cgWqx9h5w4vZtnb10oiyyepD640l9x/gZf6IWecjynRs7weDgSRs7l0Q==
 
-"@veupathdb/wdk-client@^0.4.3":
-  version "0.4.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.4.3.tgz#28773bc0b76956366bc429d24a73ca587f42b3f8"
-  integrity sha512-wlD/Laxom2KTAywUQkhQCzd32tHGofJ07DVy+679CdTR7FGrDBVHcCo6Jn6TXkjSdUDpamK9el/+LBWPLJad0g==
+"@veupathdb/wdk-client@^0.4.4":
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.4.4.tgz#357e9bad6c82250acf251bdc873c39379905e482"
+  integrity sha512-PvF2YsRVTyI+D+8EsHGyILpM5tCJMcPeOvqIraVKl1WzaPD6cC+pxT+zgQqkyUC1xoyYpAD+st4BVfS/M/uE9Q==
   dependencies:
     "@types/datatables.net" "^1.10.5"
     "@types/flot" "^0.0.31"
