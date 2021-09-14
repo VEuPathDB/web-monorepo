@@ -1,8 +1,8 @@
-import { orderBy } from 'lodash';
+import { debounce, orderBy } from 'lodash';
 import Path from 'path';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useRouteMatch } from 'react-router';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 
 import {
   Button,
@@ -58,12 +58,15 @@ export function AllAnalyses(props: Props) {
   const { analysisClient } = props;
   const { url } = useRouteMatch();
   const history = useHistory();
+  const location = useLocation();
   const classes = useStyles();
+
+  const queryParams = new URLSearchParams(location.search);
+  const searchText = queryParams.get('s') ?? '';
 
   const [selectedAnalyses, setSelectedAnalyses] = useState<Set<string>>(
     new Set()
   );
-  const [searchText, setSearchText] = useState('');
   const [sortPinned, setSortPinned] = useSessionBackedState<boolean>(
     true,
     'eda::allAnalysesPinned',
@@ -371,6 +374,26 @@ export function AllAnalyses(props: Props) {
     ]
   );
   const theme = createMuiTheme(workspaceTheme);
+
+  // Create a debounced function, which will update the query param
+  // at most once every 250ms. This prevents issues with UI lag
+  // caused by rerendering the table on every character input.
+  //
+  // NB: We want to minimize the number of dependencies so that this
+  // function is as stable as possible.
+  //
+  // NB2: TextField below is no longer a controlled input component.
+  // This makes it possible to have the input state and queryparam
+  // state be out of sync, which is necessary for debouncing.
+  const updateQueryParam = useMemo(
+    () =>
+      debounce((value: string) => {
+        const queryParams = value ? '?s=' + encodeURIComponent(value) : '';
+        history.replace(location.pathname + queryParams);
+      }, 250),
+    [history, location.pathname]
+  );
+
   return (
     <ThemeProvider theme={theme}>
       <div className={classes.root}>
@@ -390,8 +413,8 @@ export function AllAnalyses(props: Props) {
                 size="small"
                 label="Search analyses"
                 inputProps={{ size: 50 }}
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
+                defaultValue={searchText}
+                onChange={(e) => updateQueryParam(e.target.value)}
               />
               <span>
                 Showing {filteredAnalysesAndDatasets?.length} of{' '}
