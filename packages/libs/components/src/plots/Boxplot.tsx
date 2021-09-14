@@ -96,8 +96,14 @@ const Boxplot = makePlotlyPlotComponent('Boxplot', (props: BoxplotProps) => {
         jitter: 0.1, // should be dependent on the number of datapoints...?
         marker: {
           opacity: opacity,
-          color: d.color,
+          color: d.borderColor,
+          symbol: d.outlierSymbol ?? 'circle-open',
         },
+        line: {
+          width: 1,
+          color: d.borderColor,
+        },
+        fillcolor: d.color,
         ...orientationDependentProps,
         type: 'box',
         // `offsetgroup` somehow ensures that an overlay value with no data at all will

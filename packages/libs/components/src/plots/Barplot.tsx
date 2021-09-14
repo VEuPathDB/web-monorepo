@@ -71,7 +71,11 @@ const Barplot = makePlotlyPlotComponent(
               text: showValues ? el.value : undefined,
               textposition: showValues ? 'auto' : undefined,
               marker: {
-                ...(el.color ? { color: el.color } : {}),
+                color: el.color,
+                line: {
+                  width: el.borderColor ? 1 : 0,
+                  color: el.borderColor,
+                },
               },
             };
           } else {
