@@ -547,7 +547,7 @@ function HistogramPlotWithControls({
       truncationConfigIndependentAxisMax
     ) {
       setTruncatedIndependentAxisWarning(
-        'Data has been truncated by range selection, as indicated by the light gray shading'
+        'Data may have been truncated by range selection, as indicated by the light gray shading'
       );
     }
   }, [truncationConfigIndependentAxisMin, truncationConfigIndependentAxisMax]);
@@ -555,7 +555,7 @@ function HistogramPlotWithControls({
   useEffect(() => {
     if (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) {
       setTruncatedDependentAxisWarning(
-        'Data has been truncated by range selection, as indicated by the light gray shading'
+        'Data may have been truncated by range selection, as indicated by the light gray shading'
       );
     }
   }, [truncationConfigDependentAxisMin, truncationConfigDependentAxisMax]);
