@@ -135,11 +135,9 @@ export default function DataGrid({
     {
       columns,
       data,
-      // @ts-ignore
       initialState: {
-        ...(pagination
-          ? { pageSize: pagination.recordsPerPage }
-          : { pageSize: data.length }),
+        // @ts-ignore
+        pageSize: pagination?.recordsPerPage ?? -1,
       },
     },
     useSortBy,
@@ -225,9 +223,12 @@ export default function DataGrid({
               color: DARK_GRAY,
             }}
           >
-            {[10, 20, 30, 40, 50].map((pageSize) => (
-              <option key={pageSize} value={pageSize}>
-                Show {pageSize}
+            {[1, 2, 3, 4, 5].map((pageSizeMultiplier) => (
+              <option
+                key={pagination!.recordsPerPage * pageSizeMultiplier}
+                value={pagination!.recordsPerPage * pageSizeMultiplier}
+              >
+                Show {pagination!.recordsPerPage * pageSizeMultiplier}
               </option>
             ))}
           </select>
@@ -345,10 +346,7 @@ export default function DataGrid({
       {title && <H3 text={title} additionalStyles={{ marginBottom: 20 }} />}
       {['top', 'both'].includes(pagination?.controlsLocation ?? '') &&
         renderPaginationControls()}
-      <table
-        {...getTableProps()}
-        css={{ borderCollapse: 'collapse', overflowX: 'scroll' }}
-      >
+      <table {...getTableProps()} css={{ borderCollapse: 'collapse' }}>
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr
