@@ -30,6 +30,7 @@ import {
 import { combineEpics, StateObservable } from 'redux-observable';
 import { requestUpdateStepSearchConfig } from 'wdk-client/Actions/StrategyActions';
 import { RootState } from 'wdk-client/Core/State/Types';
+import { isDelayedResultError } from 'wdk-client/Service/DelayedResultError';
 import { Step } from 'wdk-client/Utils/WdkUser';
 
 export interface FilterValue {
@@ -134,13 +135,22 @@ async function getFulfillMatchedTransFilterSummary(
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof fulfillMatchedTransFilterSummary>> {
-  let summaryDecoder: Decoder<{ counts: FilterSummary }> = field('counts', objectOf(number));
-  let summary = await wdkService.getStepFilterSummary(
-    summaryDecoder,
-    requestAction.payload.stepId,
-    openAction.payload.filterKey
-  );
-  return fulfillMatchedTransFilterSummary(requestAction.payload.stepId, summary.counts);
+  try {
+    let summaryDecoder: Decoder<{ counts: FilterSummary }> = field('counts', objectOf(number));
+    let summary = await wdkService.getStepFilterSummary(
+      summaryDecoder,
+      requestAction.payload.stepId,
+      openAction.payload.filterKey
+    );
+
+    return fulfillMatchedTransFilterSummary(requestAction.payload.stepId, summary.counts);
+  } catch (error) {
+    if (!isDelayedResultError(error)) {
+      throw error;
+    }
+
+    return fulfillMatchedTransFilterSummary(requestAction.payload.stepId, {});
+  }
 }
 
 function filterFulfillMatchedTransFilterSummaryActions(
