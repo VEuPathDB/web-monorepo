@@ -137,7 +137,9 @@ export default function DataGrid({
       data,
       // @ts-ignore
       initialState: {
-        ...(pagination ? { pageSize: pagination.recordsPerPage } : {}),
+        ...(pagination
+          ? { pageSize: pagination.recordsPerPage }
+          : { pageSize: data.length }),
       },
     },
     useSortBy,
@@ -343,7 +345,10 @@ export default function DataGrid({
       {title && <H3 text={title} additionalStyles={{ marginBottom: 20 }} />}
       {['top', 'both'].includes(pagination?.controlsLocation ?? '') &&
         renderPaginationControls()}
-      <table {...getTableProps()} css={{ borderCollapse: 'collapse' }}>
+      <table
+        {...getTableProps()}
+        css={{ borderCollapse: 'collapse', overflowX: 'scroll' }}
+      >
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr

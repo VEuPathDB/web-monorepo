@@ -6,7 +6,7 @@ export const secondaryFont = css({ fontFamily: '"Roboto", sans-serif' });
 export const h1 = css([primaryFont, { fontSize: '4.209rem', fontWeight: 700 }]);
 export const h2 = css([primaryFont, { fontSize: '3.157rem', fontWeight: 600 }]);
 export const h3 = css([primaryFont, { fontSize: '2.369rem', fontWeight: 600 }]);
-export const h4 = css([primaryFont, { fontSize: '1.777rem', fontWeight: 600 }]);
+export const h4 = css([primaryFont, { fontSize: '1.777rem', fontWeight: 500 }]);
 export const h5 = css([primaryFont, { fontSize: '1.333rem', fontWeight: 500 }]);
 
 export const p = css([secondaryFont, { fontSize: '1rem', fontWeight: 400 }]);
