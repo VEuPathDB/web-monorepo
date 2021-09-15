@@ -46,6 +46,7 @@ import {
   switchMapRequestActionsToEpic as smrate,
   takeEpicInWindow
 } from 'wdk-client/Utils/ActionCreatorUtils';
+import { makeCommonErrorMessage } from 'wdk-client/Utils/Errors';
 import {
   getResultTableColumnsPref,
   getResultTablePageSizePref,
@@ -66,7 +67,6 @@ import {
 } from 'wdk-client/Utils/WdkModel';
 import { IndexedState, indexByActionProperty } from 'wdk-client/Utils/ReducerUtils';
 import {ResultType, getResultTypeDetails, getStandardReport, ResultTypeDetails} from 'wdk-client/Utils/WdkResult';
-import { ServiceError, isServiceError } from 'wdk-client/Service/ServiceError';
 
 export const key = 'resultTableSummaryView';
 
@@ -603,8 +603,8 @@ async function getFulfillAnswer(
     return fulfillAnswer(openAction.payload.viewId, r.resultType, r.columnsConfig, r.pagination, r.viewFilters, answer);
   }
   catch (error) {
-    wdkService.submitErrorIfNot500(error);
-    const message = isServiceError(error) ? error.response : String(error);
+    wdkService.submitErrorIfUndelayedAndNot500(error);
+    const message = makeCommonErrorMessage(error);
     return reportAnswerFulfillmentError(r.viewId, message)
   }
 }
