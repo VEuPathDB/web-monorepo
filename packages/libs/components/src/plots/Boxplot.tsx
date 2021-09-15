@@ -1,5 +1,5 @@
-import React from 'react';
-import { Layout } from 'plotly.js';
+import React, { useMemo } from 'react';
+import { Layout, Datum } from 'plotly.js';
 import { PlotParams } from 'react-plotly.js';
 import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
 import {
@@ -10,7 +10,7 @@ import {
   OrientationDefault,
 } from '../types/plots';
 import { NumberOrDateRange } from '../types/general';
-import { uniq, flatMap, at } from 'lodash';
+import { uniq, flatMap, at, omitBy, reduce, set } from 'lodash';
 
 export interface BoxplotProps
   extends PlotProps<BoxplotData>,
@@ -50,6 +50,9 @@ const Boxplot = makePlotlyPlotComponent('Boxplot', (props: BoxplotProps) => {
     dependentValueType = 'number',
     ...restProps
   } = props;
+
+  //DKDK
+  const maxIndependentTickLableLength = 20;
 
   // get the order of the provided category values (labels shown along x-axis)
   // get them in the given order, and trivially unique-ify them, if traces have different values
@@ -130,7 +133,16 @@ const Boxplot = makePlotlyPlotComponent('Boxplot', (props: BoxplotProps) => {
       showticklabels: showIndependentAxisTickLabel,
       // part 3 of the hack:
       categoryorder: 'array',
-      categoryarray: categoryOrder,
+      //DKDK DKDKDK this was the culprit!!!
+      categoryarray: categoryOrder.map((element: any) => {
+        return ((element as string) || '').length >
+          maxIndependentTickLableLength
+          ? ((element as string) || '').substring(
+              0,
+              maxIndependentTickLableLength
+            ) + '...'
+          : element;
+      }),
     },
     [dependentAxis]: {
       automargin: true,
@@ -151,8 +163,13 @@ const Boxplot = makePlotlyPlotComponent('Boxplot', (props: BoxplotProps) => {
   };
 
   return {
+    //DKDK
     data,
+    // data: finalData as PlotParams['data'],
     layout,
+    //DKDK handling long independent axis tick label
+    plotName: 'boxplot',
+    //DKDK need to send full axis tick label
     ...restProps,
   };
 });
