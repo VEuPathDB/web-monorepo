@@ -39,6 +39,18 @@ module.exports = function (app) {
     })
   );
   app.use(
+    '/eda-user-service',
+    createProxyMiddleware({
+      target: process.env.EDA_USER_SERVICE_URL,
+      pathRewrite: { [`^/eda-user-service`]: '' },
+      secure: false,
+      changeOrigin: true,
+      followRedirects: true,
+      logLevel: 'debug',
+      onProxyReq: addAuthCookie,
+    })
+  );
+  app.use(
     '/dataset-access',
     createProxyMiddleware({
       target: process.env.DATASET_ACCESS_SERVICE_URL,
