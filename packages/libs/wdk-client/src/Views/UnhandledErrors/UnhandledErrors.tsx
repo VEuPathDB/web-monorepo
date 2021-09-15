@@ -65,7 +65,7 @@ function ErrorDetail(props: { error: unknown, id: string, showStackTraces: boole
   const { error, id, showStackTraces, message, type } = props;
   return (
     <div>
-      <div><code>{capitalize(type)} error ({id})</code></div>
+      <div><code>{type.split('-').map(capitalize).join('-')} error ({id})</code></div>
       {message && <div className={cx('--Message')}>{formatInputErrorMessage(message)}</div>}
       {showStackTraces && (
         <pre className={cx('--Stack')}>
