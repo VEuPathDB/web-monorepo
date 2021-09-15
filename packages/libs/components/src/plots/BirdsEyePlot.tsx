@@ -148,11 +148,8 @@ export default function BirdsEyePlot({
   };
 
   return (
-    <div style={{ ...containerStyles, cursor: 'pointer' }}>
-      <div
-        onMouseOver={() => setFocused(true)}
-        onMouseOut={() => setFocused(false)}
-      >
+    <div style={{ ...containerStyles }} onMouseLeave={() => setFocused(false)}>
+      <div style={{ cursor: 'pointer' }} onMouseEnter={() => setFocused(true)}>
         <PlotlyPlot
           data={plotlyFriendlyData}
           layout={layout}
