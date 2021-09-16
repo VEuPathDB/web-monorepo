@@ -346,40 +346,42 @@ export default function DataGrid({
       {title && <H3 text={title} additionalStyles={{ marginBottom: 20 }} />}
       {['top', 'both'].includes(pagination?.controlsLocation ?? '') &&
         renderPaginationControls()}
-      <div css={{ overflowX: 'auto' }}>
-        <table
-          {...getTableProps()}
-          css={{ borderCollapse: 'collapse', marginBottom: 10 }}
-        >
-          <thead>
-            {headerGroups.map((headerGroup) => (
+      <table
+        {...getTableProps()}
+        css={{ borderCollapse: 'collapse', marginBottom: 10 }}
+      >
+        <thead>
+          {headerGroups.map((headerGroup) => (
+            <tr
+              {...headerGroup.getHeaderGroupProps()}
+              css={{
+                textAlign: 'left',
+                textTransform: 'capitalize',
+                verticalAlign: 'bottom',
+              }}
+            >
+              {headerGroup.headers.map((header) => renderHeaderGroup(header))}
+            </tr>
+          ))}
+        </thead>
+
+        <tbody {...getTableBodyProps()}>
+          {page.map((row: Row, index: number) => {
+            prepareRow(row);
+
+            return (
               <tr
-                // css={{ backgroundColor: 'green' }}
-                {...headerGroup.getHeaderGroupProps()}
+                {...row.getRowProps()}
+                css={{
+                  backgroundColor: index % 2 === 0 ? 'white' : LIGHT_GRAY,
+                }}
               >
-                {headerGroup.headers.map((header) => renderHeaderGroup(header))}
+                {row.cells.map((cell: Cell) => renderDataCell(cell))}
               </tr>
-            ))}
-          </thead>
-
-          <tbody {...getTableBodyProps()}>
-            {page.map((row: Row, index: number) => {
-              prepareRow(row);
-
-              return (
-                <tr
-                  {...row.getRowProps()}
-                  css={{
-                    backgroundColor: index % 2 === 0 ? 'white' : LIGHT_GRAY,
-                  }}
-                >
-                  {row.cells.map((cell: Cell) => renderDataCell(cell))}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+            );
+          })}
+        </tbody>
+      </table>
       {['bottom', 'both'].includes(pagination?.controlsLocation ?? '') &&
         renderPaginationControls()}
     </div>
