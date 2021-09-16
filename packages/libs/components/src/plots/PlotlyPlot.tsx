@@ -20,8 +20,7 @@ import {
 import { LayoutLegendTitle } from '../types/plotly-omissions';
 // add d3.select
 import { select } from 'd3';
-//DKDK import Datum ?
-import { ToImgopts, toImage, Datum } from 'plotly.js';
+import { ToImgopts, toImage } from 'plotly.js';
 import { uniqueId } from 'lodash';
 import { makeSharedPromise } from '../utils/promise-utils';
 
@@ -61,8 +60,10 @@ export interface PlotProps<T> extends ColorPaletteAddon {
   spacingOptions?: PlotSpacingAddon;
   /** maximum number of characters for legend ellipsis */
   maxLegendTextLength?: number;
-  /** DKDK plot name: this will be used for handling long independent axis tick label */
+  /** plot name: this will be used for handling long independent axis tick label (only for barplot and boxplot) */
   plotName?: string;
+  /** original independent axis tick labels as data is changed at each component (barplot and boxplot)*/
+  storedIndependentAxisTickLabel?: string[];
 }
 
 const Plot = lazy(() => import('react-plotly.js'));
@@ -95,15 +96,16 @@ function PlotlyPlot<T>(
     maxLegendTextLength = 20,
     // expose data for applying legend ellipsis
     data,
-    //DKDK handling long independent axis tick label
+    // handling long independent axis tick label only for barplot and boxplot
     plotName,
+    // original independent axis tick labels for tooltip text
+    storedIndependentAxisTickLabel,
     colorPalette = ColorPaletteDefault,
     ...plotlyProps
   } = props;
 
   // set max legend title length for ellipsis
   const maxLegendTitleTextLength = maxLegendTextLength + 5;
-  const maxIndependentTickLableLength = maxLegendTextLength;
 
   /** This is used to ensure toImage is called after the plot has been created */
   const sharedPlotCreation = useMemo(
@@ -189,25 +191,7 @@ function PlotlyPlot<T>(
     }
   }, [data]);
 
-  //DKDKDK storing full independent axis tick label
-  const storedIndependentAxisTickLabel = useMemo(() => {
-    if (data != null) {
-      if (plotName === 'barplot') return data[0]?.x;
-      // for boxplot, use no data's x
-      else if (plotName === 'boxplot') return data[data.length - 1]?.x;
-      else return [];
-    } else {
-      return [];
-    }
-  }, [data]);
-
-  // //DKDK
-  // if (plotName != null) {
-  //   console.log('plotName = ', plotName)
-  //   console.log('storedIndependentAxisTickLabel at PlotlyPlot= ', storedIndependentAxisTickLabel)
-  // }
-
-  // add legend & independent axis tick lable tooltip function
+  // ellipsis with tooltip for legend, legend title, and independent axis tick labels
   const onUpdate = useCallback(
     (_, graphDiv: Readonly<HTMLElement>) => {
       // legend tooltip
@@ -222,9 +206,7 @@ function PlotlyPlot<T>(
         .select('g.legend')
         .selectAll('g.traces')
         .append('svg:title')
-        // .text((d) => storedLegendList[d[0].trace.index]);
         .text((d) => {
-          // console.log('legend item d = ', d)
           return storedLegendList[d[0].trace.index];
         });
 
@@ -245,12 +227,12 @@ function PlotlyPlot<T>(
           .text(legendTitle);
       }
 
-      //DKDK independent axis tick label for barplot
+      // independent axis tick label for barplot and boxplot
       if (
         plotName != null &&
         (plotName === 'barplot' || plotName === 'boxplot')
       ) {
-        //DKDK remove pre-existing xtick.title
+        // remove pre-existing xtick.title
         select(graphDiv)
           .select(
             '.plot-container svg.main-svg g.cartesianlayer g.xaxislayer-above'
@@ -259,13 +241,13 @@ function PlotlyPlot<T>(
           .selectAll('title')
           .remove();
 
-        //DKDK add xtick.title (tooltip)
+        // add xtick.title (tooltip)
         select(graphDiv)
           .select(
             '.plot-container svg.main-svg g.cartesianlayer g.xaxislayer-above'
           )
           .selectAll('g.xtick')
-          //DKDK need this attribute for tooltip
+          // need this attribute for tooltip of axis tick label!
           .attr('pointer-events', 'all')
           .append('svg:title')
           .text((d, i) => {
@@ -278,37 +260,16 @@ function PlotlyPlot<T>(
     [storedLegendList, legendTitle, storedIndependentAxisTickLabel]
   );
 
-  //DKDK changing x data to have ellipsis
   const finalData = useMemo(() => {
     return data.map((d) => ({
       ...d,
-      //DKDK ellipsis for legend
+      // ellipsis for legend item
       name:
         (d.name || '').length > maxLegendTextLength
           ? (d.name || '').substring(0, maxLegendTextLength) + '...'
           : d.name,
-      //DKDK ellipsis for independent axis tick label
-      x:
-        plotName != null && (plotName === 'barplot' || plotName === 'boxplot')
-          ? d?.x?.map((element: any) => {
-              return ((element as string) || '').length >
-                maxIndependentTickLableLength
-                ? ((element as string) || '').substring(
-                    0,
-                    maxIndependentTickLableLength
-                  ) + '...'
-                : element;
-            })
-          : (d.x as Datum[]),
     }));
   }, [data]);
-
-  // //DKDK
-  // if (plotName != null) {
-  //   console.log('data at Plotlyplot =', data)
-  //   console.log('finalData at Plotlyplot =', finalData)
-  //   // console.log('finalData at Plotlyplot =', finalData[0].x)
-  // }
 
   const plotId = useMemo(() => uniqueId('plotly_plot_div_'), []);
 

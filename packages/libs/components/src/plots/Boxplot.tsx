@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Layout, Datum } from 'plotly.js';
+import { Layout } from 'plotly.js';
 import { PlotParams } from 'react-plotly.js';
 import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
 import {
@@ -10,7 +10,9 @@ import {
   OrientationDefault,
 } from '../types/plots';
 import { NumberOrDateRange } from '../types/general';
-import { uniq, flatMap, at, omitBy, reduce, set } from 'lodash';
+import { uniq, flatMap, at } from 'lodash';
+// util functions for handling long tick labels with ellipsis
+import { axisTickLableEllipsis } from '../utils/axis-tick-label-ellipsis';
 
 export interface BoxplotProps
   extends PlotProps<BoxplotData>,
@@ -51,12 +53,21 @@ const Boxplot = makePlotlyPlotComponent('Boxplot', (props: BoxplotProps) => {
     ...restProps
   } = props;
 
-  //DKDK
-  const maxIndependentTickLableLength = 20;
+  // set tick label Length for ellipsis
+  const maxIndependentTickLabelLength = 20;
 
   // get the order of the provided category values (labels shown along x-axis)
   // get them in the given order, and trivially unique-ify them, if traces have different values
-  const categoryOrder = uniq(flatMap(plotData, (d) => d.label));
+  // this will also be used as tooltip text for axis tick labels
+  const categoryOrder = useMemo(() => uniq(flatMap(plotData, (d) => d.label)), [
+    plotData,
+  ]);
+
+  // change categoriOrder to have ellipsis
+  const categoryOrderEllipsis = useMemo(
+    () => axisTickLableEllipsis(categoryOrder, maxIndependentTickLabelLength),
+    [plotData, categoryOrder]
+  );
 
   const [independentAxisName, dependentAxisName] =
     orientation === 'vertical' ? ['x', 'y'] : ['y', 'x'];
@@ -71,7 +82,15 @@ const Boxplot = makePlotlyPlotComponent('Boxplot', (props: BoxplotProps) => {
         .filter((x) => x != null) as number[];
 
       const orientationDependentProps: any = {
-        [independentAxisName]: at(d.label, definedDataIndices),
+        // mapping data based on categoryOrder and categoryOrderEllipsis
+        [independentAxisName]: at(d.label, definedDataIndices).map(
+          (d: string) => {
+            const findIndexValue = categoryOrder.findIndex(
+              (element: string) => element === d
+            );
+            return categoryOrderEllipsis[findIndexValue];
+          }
+        ),
         [dependentAxisName]:
           d.rawData && showRawData
             ? at(d.rawData, definedDataIndices)
@@ -111,8 +130,9 @@ const Boxplot = makePlotlyPlotComponent('Boxplot', (props: BoxplotProps) => {
     // the following is required because Plotly's 'categoryorder/categoryarray' props do not
     // introduce "empty" bars/boxes at the beginning or end of the x-axis
     .concat({
-      [independentAxisName]: categoryOrder,
-      [dependentAxisName]: categoryOrder.map(() => 0),
+      // use categoriOrderEllipsis instead of categoryOrder to have ellipsis
+      [independentAxisName]: categoryOrderEllipsis,
+      [dependentAxisName]: categoryOrderEllipsis.map(() => 0),
       type: 'bar',
       hoverinfo: 'none',
       showlegend: false,
@@ -133,16 +153,9 @@ const Boxplot = makePlotlyPlotComponent('Boxplot', (props: BoxplotProps) => {
       showticklabels: showIndependentAxisTickLabel,
       // part 3 of the hack:
       categoryorder: 'array',
-      //DKDK DKDKDK this was the culprit!!!
-      categoryarray: categoryOrder.map((element: any) => {
-        return ((element as string) || '').length >
-          maxIndependentTickLableLength
-          ? ((element as string) || '').substring(
-              0,
-              maxIndependentTickLableLength
-            ) + '...'
-          : element;
-      }),
+      // for boxplot, this should also be changed to have ellipsis!
+      // use categoriOrderEllipsis instead of categoryOrder to have ellipsis
+      categoryarray: categoryOrderEllipsis,
     },
     [dependentAxis]: {
       automargin: true,
@@ -163,13 +176,12 @@ const Boxplot = makePlotlyPlotComponent('Boxplot', (props: BoxplotProps) => {
   };
 
   return {
-    //DKDK
     data,
-    // data: finalData as PlotParams['data'],
     layout,
-    //DKDK handling long independent axis tick label
+    // handling long independent axis tick label
     plotName: 'boxplot',
-    //DKDK need to send full axis tick label
+    // original independent axis tick labels for tooltip
+    storedIndependentAxisTickLabel: categoryOrder,
     ...restProps,
   };
 });
