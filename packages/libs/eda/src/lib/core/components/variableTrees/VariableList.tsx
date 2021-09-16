@@ -1,7 +1,3 @@
-/*
- * This is based on FieldList.jsx for typing
- */
-
 import { uniq } from 'lodash';
 import React, {
   useCallback,
@@ -99,9 +95,12 @@ const Options = {
   featuredVariablesOpen: true,
 };
 // TODO: Needs documentation.
-interface VariableListProps {
+type VariableListProps = {
+  mode: 'singleSelection' | 'multiSelection';
   activeField?: VariableField;
   onActiveFieldChange: (term: string) => void;
+  selectedFields?: Array<VariableField>;
+  onSelectedFieldsChange?: (terms: Array<string>) => void;
   valuesMap: ValuesMap;
   fieldTree: VariableFieldTreeNode;
   autoFocus: boolean;
@@ -111,16 +110,19 @@ interface VariableListProps {
   hideDisabledFields: boolean;
   setHideDisabledFields: (hide: boolean) => void;
   featuredFields?: VariableField[];
-}
+};
 
 // TODO: Needs documentation of general component purpose.
 /**
  * Provide user
  */
 export default function VariableList({
+  mode,
   activeField,
-  disabledFieldIds,
   onActiveFieldChange,
+  selectedFields = [],
+  onSelectedFieldsChange,
+  disabledFieldIds,
   valuesMap,
   fieldTree,
   featuredFields = [],
@@ -175,6 +177,7 @@ export default function VariableList({
 
   const handleFieldSelect = useCallback(
     (field: Field) => {
+      console.log('Hello from VariableList', field);
       onActiveFieldChange(field.term);
     },
     [onActiveFieldChange]
@@ -452,14 +455,27 @@ export default function VariableList({
       {renderFeaturedFields()}
 
       <CheckboxTree
-        isMultiPick={true}
+        {...(mode === 'multiSelection' && {
+          selectedList: selectedFields.map((field) => field.term),
+          isSelectable: true,
+          isMultiPick: true,
+          onSelectionChange: onSelectedFieldsChange,
+        })}
+        // isMultiPick={true}
+        // selectedList={[
+        //   'PCO_0000024/EUPATH_0000006',
+        //   'PCO_0000024/EUPATH_0000025',
+        //   'EUPATH_0000776/EUPATH_0000335',
+        //   'EUPATH_0000776/EUPATH_0000722',
+        // ]}
+        // isSelectable={true}
+        // onSelectionChange={(ids) => console.log('MEMES', ids)}
         autoFocusSearchBox={autoFocus}
         tree={tree}
         expandedList={expandedNodes}
         getNodeId={getNodeId}
         getNodeChildren={getNodeChildren}
         onExpansionChange={setExpandedNodes}
-        isSelectable={false}
         isSearchable={true}
         searchBoxPlaceholder="Find a variable"
         searchBoxHelp={makeSearchHelpText(

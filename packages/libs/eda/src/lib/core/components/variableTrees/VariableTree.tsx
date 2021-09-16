@@ -1,4 +1,3 @@
-import { keyBy } from 'lodash';
 import { useCallback, useMemo } from 'react';
 
 import { StudyEntity } from '../../types/study';
@@ -70,6 +69,7 @@ export default function VariableTree({
 
   return (
     <VariableList
+      mode="singleSelection"
       activeField={activeField}
       disabledFieldIds={disabledFields}
       onActiveFieldChange={onActiveFieldChange}

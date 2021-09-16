@@ -1,13 +1,9 @@
-import PopoverButton from '@veupathdb/components/lib/components/widgets/PopoverButton';
-import { Button } from '@material-ui/core';
-import { getTree } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
-import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { keyBy } from 'lodash';
-import { useCallback, useMemo, useState } from 'react';
-import { cx } from '../../../workspace/Utils';
+import { useCallback, useMemo, useEffect } from 'react';
+
+import { Field } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
+
 import { StudyEntity } from '../../types/study';
 import { VariableDescriptor } from '../../types/variable';
-import { edaVariableToWdkField } from '../../utils/wdk-filter-param-adapter';
 import VariableList from './VariableList';
 import './VariableTree.scss';
 import { useStudyEntities } from '../../hooks/study';
@@ -19,29 +15,22 @@ import {
 } from './hooks';
 
 export interface MultiSelectVariableTreeProps {
-  /** The root (lowest level) */
+  /** The entity from which to derive the tree structure. */
   rootEntity: StudyEntity;
   /** Which variables have been selected? */
-  selectedVariables: Array<VariableDescriptor>;
-  onChange: (variable?: VariableDescriptor) => void;
-
-  // TODO: Add support back for these.
-  // starredVariables?: string[];
-  // disabledVariables?: VariableDescriptor[];
-  // toggleStarredVariable: (targetVariableId: string) => void;
-  // hideDisabledFields?: boolean;
-  // setHideDisabledFields?: (hide: boolean) => void;
+  selectedVariableDescriptors: Array<VariableDescriptor>;
+  /** Callback to invoke when selected variables change. */
+  onSelectedVariablesChange: (variables: Array<VariableDescriptor>) => void;
 }
 
 /**
  * A variable selection tree where the user is allowed to select multiple
  * variables concurrently.
- *
  */
 export default function MultiSelectVariableTree({
   rootEntity,
-  selectedVariables = [],
-  onChange,
+  selectedVariableDescriptors,
+  onSelectedVariablesChange,
 }: MultiSelectVariableTreeProps) {
   const entities = useStudyEntities(rootEntity);
   const valuesMap = useValuesMap(entities);
@@ -49,23 +38,54 @@ export default function MultiSelectVariableTree({
   const fieldsByTerm = useFlattenFieldsByTerm(flattenedFields);
   const fieldTree = useFieldTree(flattenedFields);
 
-  const onActiveFieldChange = useCallback(
-    (term?: string) => {
-      if (term == null) {
-        onChange(term);
-        return;
-      }
-      const [entityId, variableId] = term.split('/');
-      onChange({ entityId, variableId });
+  /**
+   * Translate selectedVariableTerms to corresponding Field objects.
+   */
+  const selectedVariableFields = useMemo(() => {
+    console.log(
+      'MultiSelect -> selectedVariableFields',
+      selectedVariableDescriptors,
+      fieldsByTerm
+    );
+
+    const selectedVariableTerms = selectedVariableDescriptors.map(
+      (descriptor) => `${descriptor.entityId}/${descriptor.variableId}`
+    );
+
+    const selectedVariableFields: Array<Field> = [];
+    selectedVariableTerms.forEach((term) => {
+      fieldsByTerm[term] && selectedVariableFields.push(fieldsByTerm[term]);
+    });
+
+    console.log('WILL RETURN', selectedVariableFields);
+    return selectedVariableFields;
+  }, [selectedVariableDescriptors, fieldsByTerm]);
+
+  const onActiveFieldChange = useCallback((term?: string) => {
+    console.log('Hello from Multi-Select onActiveFieldChange', term);
+  }, []);
+
+  // Seems weird to translate one way just to go back the other way.
+  // TODO: Should we just make VariableList accept variableDescriptors instead of doing this translation back and forth?
+  const onSelectedVariableTermsChange = useCallback(
+    (terms: Array<string>) => {
+      onSelectedVariablesChange(
+        terms.map((term) => {
+          const [entityId, variableId] = term.split('/');
+          return { entityId, variableId };
+        })
+      );
     },
-    [onChange]
+    [onSelectedVariablesChange]
   );
 
   return (
     // TODO: @dmfalke This is striped down to the minimum temporarily for MVP.
     <VariableList
+      mode="multiSelection"
+      selectedFields={selectedVariableFields}
+      onSelectedFieldsChange={onSelectedVariableTermsChange}
       onActiveFieldChange={onActiveFieldChange}
-      // featuredFields={featuredFields}
       valuesMap={valuesMap}
       fieldTree={fieldTree}
       autoFocus={false}

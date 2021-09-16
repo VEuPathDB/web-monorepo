@@ -70,7 +70,6 @@ export default function Subsetting({
         toggleDisplay={() => setIsDownloadModalOpen(false)}
         analysisState={analysisState}
         currentEntityID={entityId}
-        currentVariableID={variableId}
         entities={entities}
       />
       <div className="Variables">

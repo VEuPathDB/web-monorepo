@@ -251,9 +251,9 @@ export const ScatterplotResponse = type({
   completeCasesTable: completeCasesTableArray,
 });
 
-///////////
-// Table //
-///////////
+////////////////
+// Table Data //
+////////////////
 export interface TableDataRequestParams {
   studyId: string;
   config: {

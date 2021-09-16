@@ -114,9 +114,7 @@ export function useAnalysis(analysisId: string): AnalysisState {
 
   /**
    * Factory function for creating useCallback hooks.
-   *
    * Ultimately used to update a property on an Analysis.
-   * NOTE: Not sure where the `_a` variable comes from.
    */
   const useSetter = <T extends keyof Analysis>(propertyName: T) =>
     useCallback(

@@ -22,7 +22,6 @@ import {
   TableDataRequestParams,
   TableDataResponse,
 } from './types';
-
 import { ioTransformer } from '../ioTransformer';
 
 export default class DataClient extends FetchClient {
