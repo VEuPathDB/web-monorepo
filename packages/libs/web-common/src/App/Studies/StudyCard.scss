@@ -102,10 +102,13 @@ $myStripeBgColor: #e8e8e8;
       text-align: center;
 
       a { color: white; }
+    }
+  }
 
-      &:hover {
-        background-color: rgb(12,71,90);
-      }
+  .StudyCard-SearchLink:hover {
+    // handle case where the footer elements are children of the link element (eg, in eda)
+    &, .StudyCard-PreFooter, .StudyCard-Footer {
+      background-color: rgb(12,71,90);
     }
   }
 }

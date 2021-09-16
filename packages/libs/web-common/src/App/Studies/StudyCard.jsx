@@ -27,10 +27,77 @@ class StudyCard extends React.Component {
     this.setState({ searchType });
   }
 
+  renderFooter() {
+    const { card, user, permissions } = this.props;
+    if (useEda) {
+      const { disabled } = card;
+      const edaRoute = makeEdaRoute(card.id) + '/~latest';
+      return (
+        <Link className="StudyCard-SearchLink" to={edaRoute}>
+          <div className="box StudyCard-PreFooter">
+            { isPrereleaseStudy(card.access, card.id, user, permissions)
+              ? <span title="Please check the study page">Coming Soon!</span>
+              : <span>{disabled ? 'Explore Unavailable' : 'Explore The Data'}</span>
+            }
+          </div>
+          <div className="box StudyCard-Footer">
+            { (!isPrereleaseStudy(card.access, card.id, user, permissions))
+             ? (
+               <div className="box">
+                 <i className="ebrc-icon-edaIcon"/>
+               </div>
+             ) : (
+               <div className="emptybox">
+                 &nbsp;
+               </div>
+             )}
+          </div>
+        </Link>
+      );
+    }
+    else {
+      const { searchType } = this.state;
+      const { searches, disabled } = card;
+      return (
+        <>
+          <div className="box StudyCard-PreFooter">
+            { isPrereleaseStudy(card.access, card.id, user, permissions)
+              ? <span title="Please check the study page">Coming Soon!</span>
+              : searchType
+                ? <span>by <b>{searchType}</b></span>
+                : <span title="Click on an Icon">{disabled ? 'Explore Unavailable' : 'Explore The Data'}</span>
+            }
+          </div>
+          <div className="box StudyCard-Footer">
+            { (!isPrereleaseStudy(card.access, card.id, user, permissions) && searches.length)
+              ? searches.map(({ icon, displayName, path }) => {
+                  const route = `/search/${path}`;
+                  return (
+                    <div
+                      key={path}
+                      className="box"
+                      onMouseEnter={() => this.displaySearchType(displayName)}
+                      onMouseLeave={this.clearDisplaySearchType}>
+                      <Link className="StudyCard-SearchLink" to={route}>
+                        <i className={icon} />
+                      </Link>
+                    </div>
+                  );
+                })
+              : (
+                <div className="emptybox">
+                  &nbsp;
+                </div>
+              )}
+          </div>
+        </>
+      );
+    }
+  }
+
   render () {
-    const { card, user, permissions, prefix, attemptAction } = this.props;
-    const { searchType } = this.state;
-    const { id, access, name, categories, route, headline, points, searches, disabled } = card;
+    const { card, attemptAction } = this.props;
+    const { id, name, categories, route, headline, points, disabled } = card;
     const myStudyTitle = "Go to the Study Details page";
     const primaryCategory = categories[0];
     const edaRoute = makeEdaRoute(card.id) + '/~latest';
@@ -58,42 +125,7 @@ class StudyCard extends React.Component {
           </ul>
         </div>
         <DownloadLink className="box StudyCard-Download" linkText="Download Data" studyAccess={card.access} studyId={card.id} studyUrl={card.downloadUrl.url} attemptAction={attemptAction}/>
-        <div className="box StudyCard-PreFooter">
-          { isPrereleaseStudy(card.access, card.id, user, permissions)
-            ? <span title="Please check the study page">Coming Soon!</span>
-            : searchType
-              ? <span>by <b>{searchType}</b></span>
-              : <span title="Click on an Icon">{disabled ? 'Explore Unavailable' : 'Explore The Data'}</span>
-          }
-        </div>
-        <div className="box StudyCard-Footer">
-          { (!isPrereleaseStudy(card.access, card.id, user, permissions) && searches.length)
-            ? useEda ? (
-                <div className="box">
-                  <Link to={edaRoute}>
-                    <i className="ebrc-icon-edaIcon"/>
-                  </Link>
-                </div>
-              ) : searches.map(({ icon, displayName, path }) => {
-              const route = `/search/${path}`;
-              return (
-                <div
-                  key={path}
-                  className="box"
-                  onMouseEnter={() => this.displaySearchType(displayName)}
-                  onMouseLeave={this.clearDisplaySearchType}>
-                  <Link to={route}>
-                    <i className={icon} />
-                  </Link>
-                </div>
-              );
-            })
-            : (
-              <div className="emptybox">
-                &nbsp;
-              </div>
-            )}
-        </div>
+        {this.renderFooter()}
       </div>
     );
   }
