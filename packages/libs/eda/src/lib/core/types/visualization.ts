@@ -64,6 +64,8 @@ export const DataElementConstraint = intersection([
     allowedShapes: array(VariableDataShape),
     maxNumValues: number,
     allowMultiValued: boolean,
+    // description isn't yet present for the records visualization
+    description: string,
   }),
 ]);
 

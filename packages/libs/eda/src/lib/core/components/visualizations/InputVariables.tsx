@@ -233,6 +233,9 @@ export function InputVariables(props: Props) {
                 <VariableTreeDropdown
                   rootEntity={entities[0]}
                   disabledVariables={disabledVariablesByInputName[input.name]}
+                  customDisabledVariableMessage={
+                    flattenedConstraints?.[input.name].description
+                  }
                   starredVariables={starredVariables}
                   toggleStarredVariable={toggleStarredVariable}
                   entityId={values[input.name]?.entityId}
@@ -261,6 +264,9 @@ export function InputVariables(props: Props) {
                   <VariableTreeDropdown
                     rootEntity={entities[0]}
                     disabledVariables={disabledVariablesByInputName[input.name]}
+                    customDisabledVariableMessage={
+                      flattenedConstraints?.[input.name].description
+                    }
                     starredVariables={starredVariables}
                     toggleStarredVariable={toggleStarredVariable}
                     entityId={values[input.name]?.entityId}

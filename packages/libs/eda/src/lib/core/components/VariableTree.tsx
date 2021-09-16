@@ -21,6 +21,7 @@ export interface Props {
   entityId?: string;
   variableId?: string;
   disabledVariables?: VariableDescriptor[];
+  customDisabledVariableMessage?: string;
   /** term string is of format "entityId/variableId"  e.g. "PCO_0000024/EUPATH_0000714" */
   onChange: (variable?: VariableDescriptor) => void;
   includeMultiFilters?: boolean;
@@ -29,6 +30,7 @@ export function VariableTree(props: Props) {
   const {
     rootEntity,
     disabledVariables,
+    customDisabledVariableMessage,
     starredVariables,
     toggleStarredVariable,
     entityId,
@@ -111,6 +113,7 @@ export function VariableTree(props: Props) {
     <VariableList
       activeField={activeField}
       disabledFieldIds={disabledFields}
+      customDisabledVariableMessage={customDisabledVariableMessage}
       onActiveFieldChange={onActiveFieldChange}
       featuredFields={featuredFields}
       valuesMap={valuesMap}
