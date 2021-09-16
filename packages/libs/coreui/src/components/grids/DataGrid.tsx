@@ -76,11 +76,10 @@ export default function DataGrid({
       {
         border: 'none',
         paddingLeft: 10,
-        paddingRight: 35,
+        paddingRight: 30,
         paddingBottom: 5,
         paddingTop: 5,
         color: DARK_GRAY,
-        fontWeight: 600,
         display: 'flex',
         alignContent: 'center',
       },
@@ -264,7 +263,7 @@ export default function DataGrid({
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          marginLeft: 10,
+          marginLeft: 15,
         }}
       >
         <CaretUpIcon
@@ -291,12 +290,12 @@ export default function DataGrid({
   const renderHeaderGroup = (headerGroup: HeaderGroup) => {
     const borderCSSOverrides = pickBy(
       mergedStylesDefinitions?.headerCells,
-      (value, key) => key.includes('border')
+      (value, key) => key.includes('border') || key.includes('background')
     );
 
     const otherCSSOverrides = pickBy(
       mergedStylesDefinitions?.headerCells,
-      (value, key) => !key.includes('border')
+      (value, key) => !key.includes('border') && !key.includes('background')
     );
 
     return (
@@ -306,12 +305,15 @@ export default function DataGrid({
         {...(sortable && headerGroup.getSortByToggleProps())}
         css={{
           padding: 0,
+          textAlign: 'left',
+          textTransform: 'capitalize',
+          verticalAlign: 'bottom',
           ...borderCSSOverrides,
         }}
       >
         <div
           css={[
-            typography.p,
+            typography.th,
             otherCSSOverrides,
             { display: 'flex', alignItems: 'center' },
           ]}
@@ -330,7 +332,7 @@ export default function DataGrid({
       <td
         {...cell.getCellProps()}
         css={[
-          typography.p,
+          typography.td,
           {
             ...mergedStylesDefinitions.dataCells,
           },
@@ -352,14 +354,7 @@ export default function DataGrid({
       >
         <thead>
           {headerGroups.map((headerGroup) => (
-            <tr
-              {...headerGroup.getHeaderGroupProps()}
-              css={{
-                textAlign: 'left',
-                textTransform: 'capitalize',
-                verticalAlign: 'bottom',
-              }}
-            >
+            <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((header) => renderHeaderGroup(header))}
             </tr>
           ))}

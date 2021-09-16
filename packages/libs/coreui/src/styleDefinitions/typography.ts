@@ -12,6 +12,9 @@ export const h5 = css([primaryFont, { fontSize: '1.333rem', fontWeight: 500 }]);
 export const p = css([secondaryFont, { fontSize: '1rem', fontWeight: 400 }]);
 export const pre = css([secondaryFont, { fontSize: '.80rem' }]);
 
+export const th = css([secondaryFont, { fontSize: '.90rem', fontWeight: 500 }]);
+export const td = css([secondaryFont, { fontSize: '.90rem', fontWeight: 400 }]);
+
 export default {
   primaryFont,
   secondaryFont,
@@ -22,4 +25,6 @@ export default {
   h5,
   p,
   pre,
+  th,
+  td,
 };
