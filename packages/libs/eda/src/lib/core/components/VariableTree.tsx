@@ -16,8 +16,8 @@ import { useStudyEntities } from '../hooks/study';
 
 export interface Props {
   rootEntity: StudyEntity;
-  starredVariables?: string[];
-  toggleStarredVariable: (targetVariableId: string) => void;
+  starredVariables?: VariableDescriptor[];
+  toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
   entityId?: string;
   variableId?: string;
   disabledVariables?: VariableDescriptor[];

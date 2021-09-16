@@ -53,13 +53,13 @@ export interface Props {
    */
   dataElementDependencyOrder?: string[];
   /**
-   * An array of variable IDs for the user's "My Variables"
+   * An array of VariableDescriptors for the user's "My Variables"
    */
-  starredVariables: string[];
+  starredVariables: VariableDescriptor[];
   /**
    * A callback for toggling the starred state of a variable with a given ID
    */
-  toggleStarredVariable: (targetVariableId: string) => void;
+  toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
   /** When false, disable (gray out) the showMissingness toggle */
   enableShowMissingnessToggle?: boolean;
   /** controlled state of stratification variables' showMissingness toggle switch (optional) */

@@ -11,6 +11,7 @@ import { v4 as uuid } from 'uuid';
 import { Link, SaveableTextEditor } from '@veupathdb/wdk-client/lib/Components';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Filter } from '../../types/filter';
+import { VariableDescriptor } from '../../types/variable';
 import {
   Computation,
   Visualization,
@@ -38,8 +39,8 @@ interface Props {
   visualizationTypes: Partial<Record<string, VisualizationType>>;
   visualizationsOverview: VisualizationOverview[];
   filters: Filter[];
-  starredVariables: string[];
-  toggleStarredVariable: (targetVariableId: string) => void;
+  starredVariables: VariableDescriptor[];
+  toggleStarredVariable: (targetVariable: VariableDescriptor) => void;
 }
 
 /**

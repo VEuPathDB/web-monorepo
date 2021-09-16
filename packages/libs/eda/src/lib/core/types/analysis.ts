@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-redeclare */
 import * as t from 'io-ts';
 import { Filter } from './filter';
+import { VariableDescriptor } from './variable';
 import { Computation, Visualization } from './visualization';
 
 export type AnalysisPreferences = t.TypeOf<typeof AnalysisPreferences>;
@@ -20,7 +21,7 @@ export const NewAnalysis = t.type({
   studyId: t.string,
   filters: t.array(Filter),
   derivedVariables: t.array(DerviedVariable),
-  starredVariables: t.array(t.string),
+  starredVariables: t.array(VariableDescriptor),
   variableUISettings: t.record(t.string, VariableUISetting),
   visualizations: t.array(Visualization),
   computations: t.array(Computation),

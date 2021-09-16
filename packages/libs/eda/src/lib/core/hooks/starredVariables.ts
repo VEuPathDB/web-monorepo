@@ -1,4 +1,9 @@
 import { useCallback } from 'react';
+
+import { isEqual, negate } from 'lodash/fp';
+
+import { VariableDescriptor } from '../types/variable';
+
 import { AnalysisState } from './analysis';
 
 export function useToggleStarredVariable({
@@ -6,20 +11,20 @@ export function useToggleStarredVariable({
   setStarredVariables,
 }: AnalysisState) {
   return useCallback(
-    (targetVariableId: string) => {
+    (targetVariable: VariableDescriptor) => {
       if (analysis == null) {
         return;
       }
 
       const oldStarredVariables = analysis.starredVariables;
 
-      const newStarredVariables = !oldStarredVariables.includes(
-        targetVariableId
-      )
-        ? [...oldStarredVariables, targetVariableId]
-        : oldStarredVariables.filter(
-            (variableId) => variableId !== targetVariableId
-          );
+      const targetVariablePresent = oldStarredVariables.some(
+        isEqual(targetVariable)
+      );
+
+      const newStarredVariables = !targetVariablePresent
+        ? [...oldStarredVariables, targetVariable]
+        : oldStarredVariables.filter(negate(isEqual(targetVariable)));
 
       setStarredVariables(newStarredVariables);
     },
