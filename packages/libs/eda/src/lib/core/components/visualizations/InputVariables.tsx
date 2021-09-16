@@ -9,10 +9,7 @@ import {
   ValueByInputName,
 } from '../../utils/data-element-constraints';
 import { VariableTreeDropdown } from '../VariableTree';
-import {
-  mapStructure,
-  preorder,
-} from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import Switch from '@veupathdb/components/lib/components/widgets/Switch';
 import { makeEntityDisplayName } from '../../utils/study-metadata';
 
@@ -166,49 +163,51 @@ export function InputVariables(props: Props) {
           .map((n) => values[n])
           .find((v) => v != null);
 
-        // Remove descendants of next input's entity
+        // Remove variables for entities which are not part of the ancestor path of, or equal to, `prevValue`
         if (prevValue) {
-          const entity = entities.find(
-            (entity) => entity.id === prevValue.entityId
+          const ancestors = entities.reduceRight((ancestors, entity) => {
+            if (
+              entity.id === prevValue.entityId ||
+              entity.children?.includes(ancestors[0])
+            ) {
+              ancestors.unshift(entity);
+            }
+            return ancestors;
+          }, [] as StudyEntity[]);
+          const excludedEntities = entities.filter(
+            (entity) => !ancestors.includes(entity)
           );
-          if (entity == null) throw new Error('Unknown entity used.');
-          const childVariables = Array.from(
-            preorder(entity, (e) => e.children ?? [])
-          )
-            .slice(1)
-            .flatMap((e) =>
-              e.variables.map(
-                (variable): VariableDescriptor => ({
-                  variableId: variable.id,
-                  entityId: e.id,
-                })
-              )
-            );
-          disabledVariables.push(...childVariables);
+          const excludedVariables = excludedEntities.flatMap((entity) =>
+            entity.variables.map((variable) => ({
+              variableId: variable.id,
+              entityId: entity.id,
+            }))
+          );
+          disabledVariables.push(...excludedVariables);
         }
 
-        // remove ancestors of previous input's entity
-        if (nextValue == null || nextValue.entityId === entities[0].id) {
-          map[input.name] = disabledVariables;
-          return map;
+        // Remove variables for entities which are not descendants of, or equal to, `nextValue`
+        if (nextValue) {
+          const entity = entities.find(
+            (entity) => entity.id === nextValue.entityId
+          );
+          if (entity == null)
+            throw new Error('Unkonwn entity: ' + nextValue.entityId);
+          const descendants = Array.from(
+            preorder(entity, (entity) => entity.children ?? [])
+          );
+          const excludedEntities = entities.filter(
+            (entity) => !descendants.includes(entity)
+          );
+          const excludedVariables = excludedEntities.flatMap((entity) =>
+            entity.variables.map((variable) => ({
+              variableId: variable.id,
+              entityId: entity.id,
+            }))
+          );
+          disabledVariables.push(...excludedVariables);
         }
-        const ancestorTree = mapStructure<StudyEntity, StudyEntity>(
-          (entity, children) => ({
-            ...entity,
-            children: children.filter((e) => e.id !== nextValue.entityId),
-          }),
-          (entity) => entity.children ?? [],
-          entities[0]
-        );
-        const ancestorVariables = Array.from(
-          preorder(ancestorTree, (e) => e.children ?? [])
-        ).flatMap((e) =>
-          e.variables.map((variable) => ({
-            variableId: variable.id,
-            entityId: e.id,
-          }))
-        );
-        disabledVariables.push(...ancestorVariables);
+
         map[input.name] = disabledVariables;
         return map;
       }, {} as Record<string, VariableDescriptor[]>),
