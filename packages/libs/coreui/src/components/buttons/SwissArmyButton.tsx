@@ -47,7 +47,7 @@ export default function SwissArmyButton({
   // TODO: useTheme
 
   const calculatedOnPressColor = pressedColor ? pressedColor : color;
-  console.log('INITIAL', pressedColor, color);
+  // console.log('INITIAL', pressedColor, color);
 
   /**
    * If textColor is specified, use it. Otherwise if `type` is solid, use
@@ -111,11 +111,20 @@ export default function SwissArmyButton({
                 backgroundColor:
                   pressed === true ? calculatedOnPressColor : color,
                 border: 'none',
+                ':hover': {
+                  backgroundColor:
+                    pressed === true ? calculatedOnPressColor : color,
+                },
               }
             : {
                 borderColor: pressed === true ? calculatedOnPressColor : color,
                 backgroundColor: 'transparent',
                 borderStyle: 'solid',
+                ':hover': {
+                  backgroundColor: 'transparent',
+                  borderColor:
+                    pressed === true ? calculatedOnPressColor : color,
+                },
               },
           { ...styleOverrides },
         ]}
