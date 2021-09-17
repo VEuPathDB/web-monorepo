@@ -13,8 +13,8 @@ export type FullScreenModalProps = {
   children: ReactNode;
   /** The CSS zIndex level to place the modal on. Defaults to 1000. */
   zIndex?: number;
-  onOpen: () => void;
-  onClose: () => void;
+  onOpen?: () => void;
+  onClose?: () => void;
 };
 
 export default function FullScreenModal({
