@@ -12,7 +12,9 @@ import {
 } from '../types/plots';
 import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
 import { Layout } from 'plotly.js';
-import { some } from 'lodash';
+import { some, uniq, flatMap } from 'lodash';
+// util functions for handling long tick labels with ellipsis
+import { axisTickLableEllipsis } from '../utils/axis-tick-label-ellipsis';
 
 // in this example, the main variable is 'country'
 export interface BarplotProps
@@ -51,6 +53,23 @@ const Barplot = makePlotlyPlotComponent(
     dependentAxisLogScale = DependentAxisLogScaleDefault,
     ...restProps
   }: BarplotProps) => {
+    // set tick label Length for ellipsis
+    const maxIndependentTickLabelLength = 20;
+
+    // get the order of the provided category values (labels shown along x-axis)
+    // get them in the given order, and trivially unique-ify them, if traces have different values
+    // this will also be used as tooltip text for axis tick labels
+    const categoryOrder = useMemo(
+      () => uniq(flatMap(data.series, (d) => d.label)),
+      [data]
+    );
+
+    // change categoriOrder to have ellipsis
+    const categoryOrderEllipsis = useMemo(
+      () => axisTickLableEllipsis(categoryOrder, maxIndependentTickLabelLength),
+      [data, categoryOrder]
+    );
+
     // Transform `data` into a Plot.ly friendly format.
     const plotlyFriendlyData: PlotParams['data'] = useMemo(
       () =>
@@ -62,8 +81,25 @@ const Barplot = makePlotlyPlotComponent(
           // check data exist
           if (el.label && el.value) {
             return {
-              x: orientation === 'vertical' ? el.label : el.value,
-              y: orientation === 'vertical' ? el.value : el.label,
+              // mapping data based on categoryOrder and categoryOrderEllipsis
+              x:
+                orientation === 'vertical'
+                  ? el.label.map((d: string) => {
+                      const foundIndexValue = categoryOrder.findIndex(
+                        (element) => element === d
+                      );
+                      return categoryOrderEllipsis[foundIndexValue];
+                    })
+                  : el.value,
+              y:
+                orientation === 'vertical'
+                  ? el.value
+                  : el.label.map((d: string) => {
+                      const findIndexValue = categoryOrder.findIndex(
+                        (element) => element === d
+                      );
+                      return categoryOrderEllipsis[findIndexValue];
+                    }),
               name: el.name, // legend name
               orientation: orientation === 'vertical' ? 'v' : 'h',
               opacity: calculatedOpacity,
@@ -140,6 +176,8 @@ const Barplot = makePlotlyPlotComponent(
     return {
       data: plotlyFriendlyData,
       layout,
+      // original independent axis tick labels for tooltip
+      storedIndependentAxisTickLabel: categoryOrder,
       ...restProps,
     };
   }

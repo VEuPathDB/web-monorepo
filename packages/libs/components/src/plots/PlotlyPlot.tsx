@@ -60,6 +60,8 @@ export interface PlotProps<T> extends ColorPaletteAddon {
   spacingOptions?: PlotSpacingAddon;
   /** maximum number of characters for legend ellipsis */
   maxLegendTextLength?: number;
+  /** original independent axis tick labels as data is changed at each component (barplot and boxplot)*/
+  storedIndependentAxisTickLabel?: string[];
 }
 
 const Plot = lazy(() => import('react-plotly.js'));
@@ -92,6 +94,8 @@ function PlotlyPlot<T>(
     maxLegendTextLength = 20,
     // expose data for applying legend ellipsis
     data,
+    // original independent axis tick labels for tooltip text
+    storedIndependentAxisTickLabel,
     colorPalette = ColorPaletteDefault,
     ...plotlyProps
   } = props;
@@ -183,7 +187,7 @@ function PlotlyPlot<T>(
     }
   }, [data]);
 
-  // add legend tooltip function
+  // ellipsis with tooltip for legend, legend title, and independent axis tick labels
   const onUpdate = useCallback(
     (_, graphDiv: Readonly<HTMLElement>) => {
       // legend tooltip
@@ -198,7 +202,9 @@ function PlotlyPlot<T>(
         .select('g.legend')
         .selectAll('g.traces')
         .append('svg:title')
-        .text((d) => storedLegendList[d[0].trace.index]);
+        .text((d) => {
+          return storedLegendList[d[0].trace.index];
+        });
 
       // legend title tooltip
       // remove pre-existing svg:title under legendtitletext to avoid duplicates
@@ -216,20 +222,55 @@ function PlotlyPlot<T>(
           .append('svg:title')
           .text(legendTitle);
       }
+
+      // independent axis tick label for barplot and boxplot
+      if (
+        storedIndependentAxisTickLabel != null &&
+        storedIndependentAxisTickLabel.length > 0
+      ) {
+        // remove pre-existing xtick.title
+        select(graphDiv)
+          .select(
+            '.plot-container svg.main-svg g.cartesianlayer g.xaxislayer-above'
+          )
+          .selectAll('g.xtick')
+          .selectAll('title')
+          .remove();
+
+        // add xtick.title (tooltip)
+        select(graphDiv)
+          .select(
+            '.plot-container svg.main-svg g.cartesianlayer g.xaxislayer-above'
+          )
+          .selectAll('g.xtick')
+          // need this attribute for tooltip of axis tick label!
+          .attr('pointer-events', 'all')
+          .append('svg:title')
+          .text((d, i) => {
+            return storedIndependentAxisTickLabel != null
+              ? (storedIndependentAxisTickLabel[i] as string)
+              : '';
+          });
+      }
     },
-    [storedLegendList, legendTitle]
+    [
+      storedLegendList,
+      legendTitle,
+      maxLegendTitleTextLength,
+      storedIndependentAxisTickLabel,
+    ]
   );
 
-  // set the number of characters to be displayed
-  const maxLegendText = maxLegendTextLength;
-  // change data.name with ellipsis
-  const finalData = data.map((d) => ({
-    ...d,
-    name:
-      (d.name || '').length > maxLegendText
-        ? (d.name || '').substring(0, maxLegendText) + '...'
-        : d.name,
-  }));
+  const finalData = useMemo(() => {
+    return data.map((d) => ({
+      ...d,
+      // ellipsis for legend item
+      name:
+        (d.name || '').length > maxLegendTextLength
+          ? (d.name || '').substring(0, maxLegendTextLength) + '...'
+          : d.name,
+    }));
+  }, [data]);
 
   const plotId = useMemo(() => uniqueId('plotly_plot_div_'), []);
 
@@ -259,7 +300,7 @@ function PlotlyPlot<T>(
           {...plotlyProps}
           divId={plotId}
           // need to set data props for modigying its name prop
-          data={finalData}
+          data={finalData as Plotly.Data[]}
           layout={finalLayout}
           style={{ width: '100%', height: '100%' }}
           config={finalConfig}
