@@ -13,6 +13,8 @@ export type FullScreenModalProps = {
   children: ReactNode;
   /** The CSS zIndex level to place the modal on. Defaults to 1000. */
   zIndex?: number;
+  onOpen: () => void;
+  onClose: () => void;
 };
 
 export default function FullScreenModal({
@@ -22,10 +24,14 @@ export default function FullScreenModal({
   visible,
   children,
   zIndex = 1000,
+  onOpen,
+  onClose,
 }: FullScreenModalProps) {
   return (
     <ReactModal
       isOpen={visible}
+      onAfterOpen={onOpen}
+      onAfterClose={onClose}
       style={{
         overlay: {
           position: 'fixed',
