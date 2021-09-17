@@ -973,9 +973,9 @@
     shape2geohash "^1.2.5"
 
 "@veupathdb/eda@^0.11.9":
-  version "0.11.32"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.11.32.tgz#bff3ee26ac23e2b5df7cd5804383806ffdd3d95c"
-  integrity sha512-LxEuKCG68mnOKf+FyqrPHVgwTbEtMPTqLTxhQDtrK1/7yIM/YS0t0BWw+AmEOvSzXMr4wtQ2As0FllHrCI0CdA==
+  version "0.11.33"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.11.33.tgz#fe97912398f2ab5b9307351eac00eb1f3430c4d2"
+  integrity sha512-7TdUZ3GZdE5SP/dfqOxqz05YyGrtvgRRBje/8VhUsIazljZN9uG8id7vTcLxDA0ZfwfkqbcLnA3j6aM8L94q7Q==
   dependencies:
     "@material-ui/core" "^4.11.3"
     "@material-ui/lab" "^4.0.0-alpha.58"
