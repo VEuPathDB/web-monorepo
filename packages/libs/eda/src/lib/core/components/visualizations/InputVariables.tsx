@@ -6,7 +6,7 @@ import {
   DataElementConstraintRecord,
   excludedVariables,
   flattenConstraints,
-  ValueByInputName,
+  VariablesByInputName,
 } from '../../utils/data-element-constraints';
 import { VariableTreeDropdown } from '../VariableTree';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
@@ -22,7 +22,7 @@ interface InputSpec {
 export interface Props {
   /**
    * This defines the order the variables appear, and the names associated with
-   * their values. If the name properties exist in `constraints`, the
+   * their selectedVariable. If the name properties exist in `constraints`, the
    * associated constraint will be applied.
    */
   inputs: InputSpec[];
@@ -31,14 +31,14 @@ export interface Props {
    */
   entities: StudyEntity[];
   /**
-   * Current set of values for `inputs`.
+   * Current set of selectedVariables for `inputs`.
    * In other words, the currently selected variables.
    */
-  values: ValueByInputName;
+  selectedVariables: VariablesByInputName;
   /**
    * Change handler that is called when any input value is changed.
    */
-  onChange: (values: ValueByInputName) => void;
+  onChange: (selectedVariables: VariablesByInputName) => void;
   /**
    * Constraints to apply to `inputs`
    */
@@ -112,7 +112,7 @@ export function InputVariables(props: Props) {
   const {
     inputs,
     entities,
-    values,
+    selectedVariables,
     onChange,
     constraints,
     dataElementDependencyOrder,
@@ -124,11 +124,14 @@ export function InputVariables(props: Props) {
     outputEntity,
   } = props;
   const classes = useStyles();
-  const handleChange = (inputName: string, value?: VariableDescriptor) => {
-    onChange({ ...values, [inputName]: value });
+  const handleChange = (
+    inputName: string,
+    selectedVariable?: VariableDescriptor
+  ) => {
+    onChange({ ...selectedVariables, [inputName]: selectedVariable });
   };
   const flattenedConstraints =
-    constraints && flattenConstraints(values, entities, constraints);
+    constraints && flattenConstraints(selectedVariables, entities, constraints);
 
   // Find entities that are excluded for each variable, and union their variables
   // with the disabled variables.
@@ -153,21 +156,21 @@ export function InputVariables(props: Props) {
           return map;
         }
 
-        const prevValue = dataElementDependencyOrder
+        const prevSelectedVariable = dataElementDependencyOrder
           .slice(0, index)
-          .map((n) => values[n])
+          .map((n) => selectedVariables[n])
           .reverse()
           .find((v) => v != null);
-        const nextValue = dataElementDependencyOrder
+        const nextSelectedVariable = dataElementDependencyOrder
           .slice(index + 1)
-          .map((n) => values[n])
+          .map((n) => selectedVariables[n])
           .find((v) => v != null);
 
-        // Remove variables for entities which are not part of the ancestor path of, or equal to, `prevValue`
-        if (prevValue) {
+        // Remove variables for entities which are not part of the ancestor path of, or equal to, `prevSelectedVariable`
+        if (prevSelectedVariable) {
           const ancestors = entities.reduceRight((ancestors, entity) => {
             if (
-              entity.id === prevValue.entityId ||
+              entity.id === prevSelectedVariable.entityId ||
               entity.children?.includes(ancestors[0])
             ) {
               ancestors.unshift(entity);
@@ -186,13 +189,13 @@ export function InputVariables(props: Props) {
           disabledVariables.push(...excludedVariables);
         }
 
-        // Remove variables for entities which are not descendants of, or equal to, `nextValue`
-        if (nextValue) {
+        // Remove variables for entities which are not descendants of, or equal to, `nextSelectedVariable`
+        if (nextSelectedVariable) {
           const entity = entities.find(
-            (entity) => entity.id === nextValue.entityId
+            (entity) => entity.id === nextSelectedVariable.entityId
           );
           if (entity == null)
-            throw new Error('Unkonwn entity: ' + nextValue.entityId);
+            throw new Error('Unkonwn entity: ' + nextSelectedVariable.entityId);
           const descendants = Array.from(
             preorder(entity, (entity) => entity.children ?? [])
           );
@@ -211,7 +214,13 @@ export function InputVariables(props: Props) {
         map[input.name] = disabledVariables;
         return map;
       }, {} as Record<string, VariableDescriptor[]>),
-    [dataElementDependencyOrder, entities, flattenedConstraints, inputs, values]
+    [
+      dataElementDependencyOrder,
+      entities,
+      flattenedConstraints,
+      inputs,
+      selectedVariables,
+    ]
   );
 
   return (
@@ -234,8 +243,8 @@ export function InputVariables(props: Props) {
                   disabledVariables={disabledVariablesByInputName[input.name]}
                   starredVariables={starredVariables}
                   toggleStarredVariable={toggleStarredVariable}
-                  entityId={values[input.name]?.entityId}
-                  variableId={values[input.name]?.variableId}
+                  entityId={selectedVariables[input.name]?.entityId}
+                  variableId={selectedVariables[input.name]?.variableId}
                   onChange={(variable) => {
                     handleChange(input.name, variable);
                   }}
@@ -262,8 +271,8 @@ export function InputVariables(props: Props) {
                     disabledVariables={disabledVariablesByInputName[input.name]}
                     starredVariables={starredVariables}
                     toggleStarredVariable={toggleStarredVariable}
-                    entityId={values[input.name]?.entityId}
-                    variableId={values[input.name]?.variableId}
+                    entityId={selectedVariables[input.name]?.entityId}
+                    variableId={selectedVariables[input.name]?.variableId}
                     onChange={(variable) => {
                       handleChange(input.name, variable);
                     }}

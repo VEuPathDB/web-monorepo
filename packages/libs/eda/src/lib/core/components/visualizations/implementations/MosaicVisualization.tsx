@@ -32,6 +32,7 @@ import Tabs from '@veupathdb/components/lib/components/Tabs';
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import { quantizePvalue } from '../../../utils/analysis';
+import { VariablesByInputName } from '../../../utils/data-element-constraints';
 
 const plotDimensions = {
   width: 750,
@@ -152,13 +153,8 @@ function MosaicViz(props: Props) {
 
   // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
-    (
-      values: Record<
-        string,
-        { entityId: string; variableId: string } | undefined
-      >
-    ) => {
-      const { xAxisVariable, yAxisVariable, facetVariable } = values;
+    (selectedVariables: VariablesByInputName) => {
+      const { xAxisVariable, yAxisVariable, facetVariable } = selectedVariables;
 
       updateVizConfig({
         xAxisVariable,
@@ -407,7 +403,7 @@ function MosaicViz(props: Props) {
             },
           ]}
           entities={entities}
-          values={{
+          selectedVariables={{
             xAxisVariable: vizConfig.xAxisVariable,
             yAxisVariable: vizConfig.yAxisVariable,
           }}
