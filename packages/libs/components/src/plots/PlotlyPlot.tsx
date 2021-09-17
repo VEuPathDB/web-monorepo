@@ -60,8 +60,6 @@ export interface PlotProps<T> extends ColorPaletteAddon {
   spacingOptions?: PlotSpacingAddon;
   /** maximum number of characters for legend ellipsis */
   maxLegendTextLength?: number;
-  /** plot name: this will be used for handling long independent axis tick label (only for barplot and boxplot) */
-  plotName?: string;
   /** original independent axis tick labels as data is changed at each component (barplot and boxplot)*/
   storedIndependentAxisTickLabel?: string[];
 }
@@ -96,8 +94,6 @@ function PlotlyPlot<T>(
     maxLegendTextLength = 20,
     // expose data for applying legend ellipsis
     data,
-    // handling long independent axis tick label only for barplot and boxplot
-    plotName,
     // original independent axis tick labels for tooltip text
     storedIndependentAxisTickLabel,
     colorPalette = ColorPaletteDefault,
@@ -229,8 +225,8 @@ function PlotlyPlot<T>(
 
       // independent axis tick label for barplot and boxplot
       if (
-        plotName != null &&
-        (plotName === 'barplot' || plotName === 'boxplot')
+        storedIndependentAxisTickLabel != null &&
+        storedIndependentAxisTickLabel.length > 0
       ) {
         // remove pre-existing xtick.title
         select(graphDiv)
@@ -257,7 +253,12 @@ function PlotlyPlot<T>(
           });
       }
     },
-    [storedLegendList, legendTitle, storedIndependentAxisTickLabel]
+    [
+      storedLegendList,
+      legendTitle,
+      maxLegendTitleTextLength,
+      storedIndependentAxisTickLabel,
+    ]
   );
 
   const finalData = useMemo(() => {

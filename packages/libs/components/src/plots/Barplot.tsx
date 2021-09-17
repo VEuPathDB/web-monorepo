@@ -85,10 +85,10 @@ const Barplot = makePlotlyPlotComponent(
               x:
                 orientation === 'vertical'
                   ? el.label.map((d: string) => {
-                      const findIndexValue = categoryOrder.findIndex(
+                      const foundIndexValue = categoryOrder.findIndex(
                         (element) => element === d
                       );
-                      return categoryOrderEllipsis[findIndexValue];
+                      return categoryOrderEllipsis[foundIndexValue];
                     })
                   : el.value,
               y:
@@ -172,8 +172,6 @@ const Barplot = makePlotlyPlotComponent(
     return {
       data: plotlyFriendlyData,
       layout,
-      // handling long independent axis tick label
-      plotName: 'barplot',
       // original independent axis tick labels for tooltip
       storedIndependentAxisTickLabel: categoryOrder,
       ...restProps,

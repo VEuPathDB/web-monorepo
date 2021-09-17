@@ -19,21 +19,23 @@ export const axisTickLableEllipsis = (
   // looping object to map data's label and label with ellipsis
   Object.entries(duplicateIndexValue).forEach((entry: any) => {
     const [key, value] = entry;
-    // add space for duplicates
-    let addDot = ' ';
-    let multiStr = '';
     // starting from i = 1 so that the first item is not changed
     for (let i = 1; i < (value as number[]).length; i++) {
-      multiStr += addDot;
+      // add incremental space(s) for duplicates
       categoryOrderEllipsis[value[i]] =
-        categoryOrderEllipsis[value[i]] + multiStr;
+        categoryOrderEllipsis[value[i]] + ' '.repeat(i);
     }
   });
 
   return categoryOrderEllipsis;
 };
 
-// A function to return object comprised of duplicates and indices
+/**
+ *  Returning an object comprised of of duplicate(s) and corresponding index array
+ *    Input: an array that has duplicate elements
+ *    Output: an object, e.g.,
+ *      { 'duplicate element 1': [0, 1, 3], 'duplicate element 2': [5, 7], ... }
+ */
 const getDuplicates = (arr: string[]) => {
   var duplicates: any = {};
   for (var i = 0; i < arr.length; i++) {

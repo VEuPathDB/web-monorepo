@@ -85,10 +85,10 @@ const Boxplot = makePlotlyPlotComponent('Boxplot', (props: BoxplotProps) => {
         // mapping data based on categoryOrder and categoryOrderEllipsis
         [independentAxisName]: at(d.label, definedDataIndices).map(
           (d: string) => {
-            const findIndexValue = categoryOrder.findIndex(
+            const foundIndexValue = categoryOrder.findIndex(
               (element: string) => element === d
             );
-            return categoryOrderEllipsis[findIndexValue];
+            return categoryOrderEllipsis[foundIndexValue];
           }
         ),
         [dependentAxisName]:
@@ -178,8 +178,6 @@ const Boxplot = makePlotlyPlotComponent('Boxplot', (props: BoxplotProps) => {
   return {
     data,
     layout,
-    // handling long independent axis tick label
-    plotName: 'boxplot',
     // original independent axis tick labels for tooltip
     storedIndependentAxisTickLabel: categoryOrder,
     ...restProps,
