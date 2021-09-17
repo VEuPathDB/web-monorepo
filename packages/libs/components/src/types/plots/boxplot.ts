@@ -17,8 +17,12 @@ export type BoxplotData = {
   label: string[];
   /** legend name */
   name?: string;
-  /** color for this box */
+  /** color for this box. Optional. */
   color?: string;
+  /** color for the box border. Optional. */
+  borderColor?: string;
+  /** symbol to use for outlier markers. Optional. Default is 'circle-open' */
+  outlierSymbol?: 'x' | 'circle-open';
   /** optional complete data (not recommended for huge datasets) */
   rawData?: number[][] | string[][];
   /** outliers: data points outside upper and lower whiskers/fences (optional) */

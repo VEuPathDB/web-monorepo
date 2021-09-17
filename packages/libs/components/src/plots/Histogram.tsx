@@ -119,7 +119,14 @@ const Histogram = makePlotlyPlotComponent(
           const binStarts = series.bins.map((bin) => bin.binStart);
           const binLabels = series.bins.map((bin) => bin.binLabel); // see TO DO: below
           const binCounts = series.bins.map((bin) => bin.count);
-          const binWidths = series.bins.map((bin) => {
+          const binWidths = series.bins.map((bin, index) => {
+            // Final bar needs to be a tiny bit narrower, especially
+            // if you are using white bars with borderColor,
+            // so that the right hand border is visible.
+            // Might be worth checking in future versions of Plotly if this
+            // was a bug or not.
+            const barWidthAdjust =
+              index === series.bins.length - 1 ? 0.999 : 1.0;
             if (data.valueType != null && data.valueType === 'date') {
               // date, needs to be in milliseconds
               // TO DO: bars seem very slightly too narrow at monthly resolution (multiplying by 1009 fixes it)
@@ -129,10 +136,15 @@ const Histogram = makePlotlyPlotComponent(
                   new Date(bin.binEnd as string),
                   'seconds',
                   false
-                ) * 1000
+                ) *
+                1000 *
+                barWidthAdjust
               );
             } else {
-              return (bin.binEnd as number) - (bin.binStart as number);
+              return (
+                ((bin.binEnd as number) - (bin.binStart as number)) *
+                barWidthAdjust
+              );
             }
           });
 
@@ -150,7 +162,11 @@ const Histogram = makePlotlyPlotComponent(
             text: showValues ? binCounts.map(String) : binLabels,
             textposition: showValues ? 'auto' : undefined,
             marker: {
-              ...(series.color ? { color: series.color } : {}),
+              color: series.color,
+              line: {
+                width: series.borderColor ? 1 : 0,
+                color: series.borderColor,
+              },
             },
             offset: 0,
             width: binWidths,
