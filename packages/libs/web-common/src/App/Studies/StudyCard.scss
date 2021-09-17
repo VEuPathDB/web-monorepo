@@ -58,16 +58,18 @@ $myStripeBgColor: #e8e8e8;
     }
   }
 
-  .StudyCard-Download {
+  .StudyCard-Download, .StudyCard-MyAnalyses {
     flex: 0 0 auto;
-    padding: 5px;
+    padding: .35em 1.5em;
     text-align: center;
     font-size: 1em;
   }
-/*  .Card a {
-    color: $myLinkFooterColor;
+
+  .StudyCard-LinkOuts {
+    display: flex;
+    justify-content: space-between;
   }
-*/
+
   .StudyCard-PreFooter {
     flex: 0 0 auto;
     padding: 5px 5px 0;
@@ -88,7 +90,7 @@ $myStripeBgColor: #e8e8e8;
     background-color: $myLinkFooterColor;
     padding: 0;
     margin: 0;
-    
+
     .emptybox {
       padding: 5px 12px;
     }

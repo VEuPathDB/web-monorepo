@@ -9,7 +9,7 @@ import { connect } from 'react-redux'
 import { isPrereleaseStudy } from 'ebrc-client/App/DataRestriction/DataRestrictionUtils';
 
 function DownloadLink(props) {
-  const { attemptAction, studyAccess, studyId, studyUrl, user, permissions, className, linkText = '' } = props;
+  const { attemptAction, studyAccess, studyId, studyUrl, user, permissions, className, linkText = '', iconFirst = false } = props;
   const myDownloadTitle = "Download data files";
   return (
     <div className={className}> 
@@ -30,7 +30,10 @@ function DownloadLink(props) {
               }
             });
           }}>
-          {linkText} <Icon fa="download" />
+          {iconFirst
+            ? <><Icon fa="download" /> {linkText}</>
+            : <>{linkText} <Icon fa="download" /></>
+          }
         </button>
         </Mesa.AnchoredTooltip>
         : <span>&nbsp;</span>

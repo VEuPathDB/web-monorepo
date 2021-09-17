@@ -124,7 +124,13 @@ class StudyCard extends React.Component {
             {points.map((point, index) => <li key={index} dangerouslySetInnerHTML={{ __html: point }} />)}
           </ul>
         </div>
-        <DownloadLink className="box StudyCard-Download" linkText="Download Data" studyAccess={card.access} studyId={card.id} studyUrl={card.downloadUrl.url} attemptAction={attemptAction}/>
+        <div className="StudyCard-LinkOuts">
+          <DownloadLink className="box StudyCard-Download" linkText="Download" iconFirst studyAccess={card.access} studyId={card.id} studyUrl={card.downloadUrl.url} attemptAction={attemptAction}/>
+          {/*
+            TODO Show link if the user has analyses for this study
+            <div className="box StudyCard-MyAnalyses">My analyses</div>
+          */}
+        </div>
         {this.renderFooter()}
       </div>
     );
