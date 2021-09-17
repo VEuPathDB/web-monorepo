@@ -41,6 +41,7 @@ import {
   vocabularyWithMissingData,
 } from '../../../utils/analysis';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
+import { VariablesByInputName } from '../../../utils/data-element-constraints';
 
 const plotDimensions = {
   height: 450,
@@ -125,13 +126,12 @@ function BarplotViz(props: VisualizationProps) {
 
   // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
-    (
-      values: Record<
-        string,
-        { entityId: string; variableId: string } | undefined
-      >
-    ) => {
-      const { xAxisVariable, overlayVariable, facetVariable } = values;
+    (selectedVariables: VariablesByInputName) => {
+      const {
+        xAxisVariable,
+        overlayVariable,
+        facetVariable,
+      } = selectedVariables;
       updateVizConfig({
         xAxisVariable,
         overlayVariable,
@@ -235,7 +235,7 @@ function BarplotViz(props: VisualizationProps) {
             },
           ]}
           entities={entities}
-          values={{
+          selectedVariables={{
             xAxisVariable: vizConfig.xAxisVariable,
             overlayVariable: vizConfig.overlayVariable,
             facetVariable: vizConfig.facetVariable,

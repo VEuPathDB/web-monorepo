@@ -57,6 +57,10 @@ import {
   ColorPaletteDefault,
   ColorPaletteDark,
 } from '@veupathdb/components/lib/types/plots/addOns';
+// import variable's metadata-based independent axis range utils
+import { defaultIndependentAxisRange } from '../../../utils/default-independent-axis-range';
+import { independentAxisRangeMargin } from '../../../utils/independent-axis-range-margin';
+import { VariablesByInputName } from '../../../utils/data-element-constraints';
 
 const plotDimensions = {
   width: 750,
@@ -167,18 +171,13 @@ function ScatterplotViz(props: VisualizationProps) {
 
   // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
-    (
-      values: Record<
-        string,
-        { entityId: string; variableId: string } | undefined
-      >
-    ) => {
+    (selectedVariables: VariablesByInputName) => {
       const {
         xAxisVariable,
         yAxisVariable,
         overlayVariable,
         facetVariable,
-      } = values;
+      } = selectedVariables;
       updateVizConfig({
         xAxisVariable,
         yAxisVariable,
@@ -286,6 +285,18 @@ function ScatterplotViz(props: VisualizationProps) {
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
 
+  // variable's metadata-based independent axis range with margin
+  const defaultIndependentRangeMargin = useMemo(() => {
+    const defaultIndependentRange = defaultIndependentAxisRange(
+      xAxisVariable,
+      'scatterplot'
+    );
+    return independentAxisRangeMargin(
+      defaultIndependentRange,
+      xAxisVariable?.type
+    );
+  }, [xAxisVariable]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -308,7 +319,7 @@ function ScatterplotViz(props: VisualizationProps) {
             },
           ]}
           entities={entities}
-          values={{
+          selectedVariables={{
             xAxisVariable: vizConfig.xAxisVariable,
             yAxisVariable: vizConfig.yAxisVariable,
             overlayVariable: vizConfig.overlayVariable,
@@ -371,6 +382,8 @@ function ScatterplotViz(props: VisualizationProps) {
           }
           independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-Axis'}
           dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-Axis'}
+          // variable's metadata-based independent axis range with margin
+          independentAxisRange={defaultIndependentRangeMargin}
           dependentAxisRange={
             data.value && !data.pending
               ? { min: data.value.yMin, max: data.value.yMax }

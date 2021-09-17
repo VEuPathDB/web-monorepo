@@ -31,6 +31,8 @@ import Tabs from '@veupathdb/components/lib/components/Tabs';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
+import { quantizePvalue } from '../../../utils/analysis';
+import { VariablesByInputName } from '../../../utils/data-element-constraints';
 
 const plotDimensions = {
   width: 750,
@@ -151,13 +153,8 @@ function MosaicViz(props: Props) {
 
   // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
-    (
-      values: Record<
-        string,
-        { entityId: string; variableId: string } | undefined
-      >
-    ) => {
-      const { xAxisVariable, yAxisVariable, facetVariable } = values;
+    (selectedVariables: VariablesByInputName) => {
+      const { xAxisVariable, yAxisVariable, facetVariable } = selectedVariables;
 
       updateVizConfig({
         xAxisVariable,
@@ -258,7 +255,11 @@ function MosaicViz(props: Props) {
             </tr>
             <tr>
               <th>P-value</th>
-              <td>{twoByTwoData?.pValue ?? 'N/A'}</td>
+              <td>
+                {twoByTwoData?.pValue != null
+                  ? quantizePvalue(twoByTwoData.pValue)
+                  : 'N/A'}
+              </td>
               <td>N/A</td>
             </tr>
             <tr>
@@ -284,7 +285,11 @@ function MosaicViz(props: Props) {
           <tbody>
             <tr>
               <th>P-value</th>
-              <td>{contTableData?.pValue ?? 'N/A'}</td>
+              <td>
+                {contTableData?.pValue != null
+                  ? quantizePvalue(contTableData.pValue)
+                  : 'N/A'}
+              </td>
             </tr>
             <tr>
               <th>Degrees of freedom</th>
@@ -398,7 +403,7 @@ function MosaicViz(props: Props) {
             },
           ]}
           entities={entities}
-          values={{
+          selectedVariables={{
             xAxisVariable: vizConfig.xAxisVariable,
             yAxisVariable: vizConfig.yAxisVariable,
           }}
