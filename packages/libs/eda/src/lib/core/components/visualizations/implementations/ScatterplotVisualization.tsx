@@ -60,6 +60,7 @@ import {
 // import variable's metadata-based independent axis range utils
 import { defaultIndependentAxisRange } from '../../../utils/default-independent-axis-range';
 import { independentAxisRangeMargin } from '../../../utils/independent-axis-range-margin';
+import { VariablesByInputName } from '../../../utils/data-element-constraints';
 
 const plotDimensions = {
   width: 750,
@@ -170,18 +171,13 @@ function ScatterplotViz(props: VisualizationProps) {
 
   // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
-    (
-      values: Record<
-        string,
-        { entityId: string; variableId: string } | undefined
-      >
-    ) => {
+    (selectedVariables: VariablesByInputName) => {
       const {
         xAxisVariable,
         yAxisVariable,
         overlayVariable,
         facetVariable,
-      } = values;
+      } = selectedVariables;
       updateVizConfig({
         xAxisVariable,
         yAxisVariable,
@@ -323,7 +319,7 @@ function ScatterplotViz(props: VisualizationProps) {
             },
           ]}
           entities={entities}
-          values={{
+          selectedVariables={{
             xAxisVariable: vizConfig.xAxisVariable,
             yAxisVariable: vizConfig.yAxisVariable,
             overlayVariable: vizConfig.overlayVariable,

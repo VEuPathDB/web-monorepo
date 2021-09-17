@@ -78,7 +78,7 @@ function variableConstraintPredicate(
   );
 }
 
-export type ValueByInputName = Partial<Record<string, VariableDescriptor>>;
+export type VariablesByInputName = Partial<Record<string, VariableDescriptor>>;
 export type DataElementConstraintRecord = Record<string, DataElementConstraint>;
 
 /**
@@ -104,14 +104,14 @@ export type DataElementConstraintRecord = Record<string, DataElementConstraint>;
  *
  */
 export function flattenConstraints(
-  values: ValueByInputName,
+  variables: VariablesByInputName,
   entities: StudyEntity[],
   constraints: DataElementConstraintRecord[]
 ): DataElementConstraintRecord {
   // Find all compatible constraints
   const compatibleConstraints = constraints.filter((constraintRecord) =>
     Object.entries(constraintRecord).every(([variableName, constraint]) => {
-      const value = values[variableName];
+      const value = variables[variableName];
       // If a value (variable) has not been user-selected for this constraint, then it is considered to be "in-play"
       if (value == null) return true;
       // If a constraint does not declare shapes or types and it allows multivalued variables, then any value is allowed, thus the constraint is "in-play"
