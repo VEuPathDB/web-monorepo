@@ -37,8 +37,8 @@ export const axisTickLableEllipsis = (
  *      { 'duplicate element 1': [0, 1, 3], 'duplicate element 2': [5, 7], ... }
  */
 const getDuplicates = (arr: string[]) => {
-  var duplicates: any = {};
-  for (var i = 0; i < arr.length; i++) {
+  const duplicates: Record<string, number[]> = {};
+  for (let i = 0; i < arr.length; i++) {
     if (duplicates.hasOwnProperty(arr[i])) {
       duplicates[arr[i]].push(i);
     } else if (arr.lastIndexOf(arr[i]) !== i) {
