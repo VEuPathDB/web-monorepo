@@ -48,6 +48,7 @@ import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import { useFindEntityAndVariable } from '../../../hooks/study';
 // import variable's metadata-based independent axis range utils
 import { defaultIndependentAxisRange } from '../../../utils/default-independent-axis-range';
+import { VariablesByInputName } from '../../../utils/data-element-constraints';
 
 type HistogramDataWithCoverageStatistics = HistogramData & CoverageStatistics;
 
@@ -136,13 +137,12 @@ function HistogramViz(props: VisualizationProps) {
 
   // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
-    (
-      values: Record<
-        string,
-        { entityId: string; variableId: string } | undefined
-      >
-    ) => {
-      const { xAxisVariable, overlayVariable, facetVariable } = values;
+    (selectedVariables: VariablesByInputName) => {
+      const {
+        xAxisVariable,
+        overlayVariable,
+        facetVariable,
+      } = selectedVariables;
       const keepBin = isEqual(xAxisVariable, vizConfig.xAxisVariable);
       updateVizConfig({
         xAxisVariable,
@@ -273,7 +273,7 @@ function HistogramViz(props: VisualizationProps) {
             },
           ]}
           entities={entities}
-          values={{
+          selectedVariables={{
             xAxisVariable: vizConfig.xAxisVariable,
             overlayVariable: vizConfig.overlayVariable,
           }}
@@ -528,7 +528,7 @@ export function histogramResponseToData(
   return {
     series: response.histogram.data.map((data, index) => ({
       name: data.overlayVariableDetails?.value ?? `series ${index}`,
-      // color: TO DO
+      borderColor: 'white',
       bins: data.value.map((_, index) => ({
         binStart:
           type === 'number'

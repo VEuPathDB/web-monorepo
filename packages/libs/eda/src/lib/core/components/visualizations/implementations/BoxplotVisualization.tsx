@@ -37,6 +37,7 @@ import {
   vocabularyWithMissingData,
 } from '../../../utils/analysis';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
+import { VariablesByInputName } from '../../../utils/data-element-constraints';
 
 interface PromiseBoxplotData extends CoverageStatistics {
   series: BoxplotData;
@@ -114,18 +115,13 @@ function BoxplotViz(props: VisualizationProps) {
 
   // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
-    (
-      values: Record<
-        string,
-        { entityId: string; variableId: string } | undefined
-      >
-    ) => {
+    (selectedVariables: VariablesByInputName) => {
       const {
         xAxisVariable,
         yAxisVariable,
         overlayVariable,
         facetVariable,
-      } = values;
+      } = selectedVariables;
       updateVizConfig({
         xAxisVariable,
         yAxisVariable,
@@ -258,7 +254,7 @@ function BoxplotViz(props: VisualizationProps) {
             },
           ]}
           entities={entities}
-          values={{
+          selectedVariables={{
             xAxisVariable: vizConfig.xAxisVariable,
             yAxisVariable: vizConfig.yAxisVariable,
             overlayVariable: vizConfig.overlayVariable,
