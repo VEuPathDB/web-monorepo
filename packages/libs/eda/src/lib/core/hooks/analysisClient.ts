@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 import { NewAnalysisClient } from '../api/analysis-api';
 
@@ -32,7 +31,7 @@ export function useConfiguredAnalysisClient(
     return wdkCheckAuth;
   }, [user]);
 
-  return user == undefined || authKey == undefined
+  return user == null || authKey == null
     ? undefined
     : NewAnalysisClient.getClient({ userServiceUrl, userId: user.id, authKey });
 }
