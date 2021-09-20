@@ -1,11 +1,16 @@
 import { useMemo } from 'react';
 
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
-export function useAuthKey() {
+import { NewAnalysisClient } from '../api/analysis-api';
+
+export function useConfiguredAnalysisClient(
+  userServiceUrl: string
+): NewAnalysisClient | undefined {
   const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
 
-  return useMemo(() => {
+  const authKey = useMemo(() => {
     if (user == null) {
       return undefined;
     }
@@ -26,4 +31,8 @@ export function useAuthKey() {
 
     return wdkCheckAuth;
   }, [user]);
+
+  return user == undefined || authKey == undefined
+    ? undefined
+    : NewAnalysisClient.getClient({ userServiceUrl, userId: user.id, authKey });
 }

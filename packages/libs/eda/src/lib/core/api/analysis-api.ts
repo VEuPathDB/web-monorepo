@@ -100,14 +100,20 @@ export class AnalysisClient extends FetchClient {
   }
 }
 
+interface AnalysisClientConfiguration {
+  userServiceUrl: string;
+  userId: number;
+  authKey: string;
+}
+
 export class NewAnalysisClient extends FetchClient {
   static getClient = memoize(
-    (baseUrl: string, authKey: string): NewAnalysisClient =>
+    (config: AnalysisClientConfiguration): NewAnalysisClient =>
       new NewAnalysisClient({
-        baseUrl,
-        init: { headers: { 'Auth-Key': authKey } },
+        baseUrl: `${config.userServiceUrl}/${config.userId}`,
+        init: { headers: { 'Auth-Key': config.authKey } },
       }),
-    (baseUrl, authKey) => JSON.stringify({ baseUrl, authKey })
+    JSON.stringify
   );
 
   getPreferences(): Promise<AnalysisPreferences> {
