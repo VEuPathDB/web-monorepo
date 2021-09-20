@@ -172,7 +172,7 @@ export class NewAnalysisClient extends FetchClient {
     return this.fetch(
       createJsonRequest({
         path: `/analyses/${analysisId}`,
-        method: 'PUT',
+        method: 'PATCH',
         body: analysisPatch,
         transformResponse: ioTransformer(voidType),
       })
