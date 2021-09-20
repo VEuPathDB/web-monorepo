@@ -15,6 +15,33 @@ export const DerviedVariable = t.unknown;
 export type VariableUISetting = t.TypeOf<typeof VariableUISetting>;
 export const VariableUISetting = t.UnknownRecord;
 
+export type AnalysisBase = t.TypeOf<typeof AnalysisBase>;
+export const AnalysisBase = t.intersection([
+  t.type({
+    studyId: t.string,
+    studyVersion: t.string,
+    apiVersion: t.string,
+    isPublic: t.boolean,
+  }),
+  t.partial({
+    displayName: t.string,
+    description: t.string,
+  }),
+]);
+
+export type AnalysisSummary = t.TypeOf<typeof AnalysisBase>;
+export const AnalysisSummary = t.intersection([
+  AnalysisBase,
+  t.type({
+    analysisId: t.string,
+    creationTime: t.string,
+    modificationTime: t.string,
+    numFilters: t.number,
+    numComputations: t.number,
+    numVisualizations: t.number,
+  }),
+]);
+
 export type NewAnalysis = t.TypeOf<typeof NewAnalysis>;
 export const NewAnalysis = t.type({
   name: t.string,
