@@ -179,14 +179,11 @@ export class NewAnalysisClient extends FetchClient {
     );
   }
   deleteAnalysis(analysisId: string): Promise<void> {
-    return this.fetch(
-      createJsonRequest({
-        path: `/analyses/${analysisId}`,
-        method: 'DELETE',
-        body: { analysisId },
-        transformResponse: ioTransformer(voidType),
-      })
-    );
+    return this.fetch({
+      path: `/analyses/${analysisId}`,
+      method: 'DELETE',
+      transformResponse: ioTransformer(voidType),
+    });
   }
   deleteAnalyses(analysisIds: Iterable<string>): Promise<void> {
     return this.fetch(
