@@ -29,7 +29,7 @@ export const AnalysisBase = t.intersection([
   }),
 ]);
 
-export type AnalysisSummary = t.TypeOf<typeof AnalysisBase>;
+export type AnalysisSummary = t.TypeOf<typeof AnalysisSummary>;
 export const AnalysisSummary = t.intersection([
   AnalysisBase,
   t.type({
