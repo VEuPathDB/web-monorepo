@@ -32,6 +32,30 @@ export const Visualization = intersection([
 ]);
 
 /**
+ * Metadata for the visualization object stored in user's analysis
+ */
+export type VisualizationDescriptor = TypeOf<typeof VisualizationDescriptor>;
+export const VisualizationDescriptor = type({
+  type: string,
+  configuration: unknown,
+  thumbnail: string,
+});
+
+/**
+ * Visualization object stored in user's analysis
+ */
+export type NewVisualization = TypeOf<typeof NewVisualization>;
+export const NewVisualization = intersection([
+  type({
+    visualizationId: string,
+    descriptor: VisualizationDescriptor,
+  }),
+  partial({
+    displayName: string,
+  }),
+]);
+
+/**
  * App object stored in user's analysis
  */
 export type Computation = TypeOf<typeof Computation>;
@@ -40,6 +64,30 @@ export const Computation = intersection([
     id: string,
     type: string,
     configuration: unknown,
+  }),
+  partial({
+    displayName: string,
+  }),
+]);
+
+/**
+ * Type and configuration of the app object stored in user's analysis
+ */
+export type ComputationDescriptor = TypeOf<typeof ComputationDescriptor>;
+export const ComputationDescriptor = type({
+  type: string,
+  configuration: unknown,
+});
+
+/**
+ * App object stored in user's analysis
+ */
+export type NewComputation = TypeOf<typeof NewComputation>;
+export const NewComputation = intersection([
+  type({
+    computationId: string,
+    descriptor: ComputationDescriptor,
+    visualizations: array(NewVisualization),
   }),
   partial({
     displayName: string,
