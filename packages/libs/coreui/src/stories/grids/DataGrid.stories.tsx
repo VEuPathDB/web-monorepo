@@ -11,6 +11,8 @@ import {
   LIGHT_ORANGE,
   MEDIUM_GRAY,
 } from '../../constants/colors';
+import { COLUMNS, fetchGridData, ROWS } from './data';
+import { useCallback, useState } from 'react';
 
 export default {
   title: 'Grids/DataGrid',
@@ -21,44 +23,8 @@ const Template: Story<DataGridProps> = (args) => <DataGrid {...args} />;
 export const Basic = Template.bind({});
 Basic.args = {
   title: 'Basic Data Grid',
-  columns: [
-    {
-      Header: 'Participant Name',
-      accessor: 'col1', // accessor is the "key" in the data
-    },
-    {
-      Header: 'Participant Species',
-      accessor: 'col2',
-    },
-    {
-      Header: 'Favorite Jedi',
-      accessor: 'col3',
-    },
-  ],
-  data: [
-    {
-      col1: 'Michael',
-      col2: 'Hutt',
-      col3: 'Palpatine ;)',
-    },
-
-    {
-      col1: 'Shaun',
-      col2: 'Wookie',
-      col3: 'Anakin',
-    },
-
-    {
-      col1: 'DK',
-      col2: 'Mandolorian',
-      col3: 'Ahsoka',
-    },
-    {
-      col1: 'Connor',
-      col2: 'Twilek',
-      col3: 'Yoda',
-    },
-  ],
+  columns: COLUMNS,
+  data: ROWS,
 };
 
 export const WithSorting = Template.bind({});
@@ -78,6 +44,41 @@ WithPagination.args = {
   },
 };
 
+export const WithServerControlledPagination: Story<DataGridProps> = (args) => {
+  const [gridData, setGridData] = useState<Array<object>>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [pageCount, setPageCount] = useState(0);
+
+  const fetchPaginatedData = useCallback(({ pageSize, pageIndex }) => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setGridData(fetchGridData({ pageSize, pageIndex }));
+      setPageCount(20 / pageSize);
+      setIsLoading(false);
+    }, 1000);
+  }, []);
+
+  return (
+    <DataGrid
+      {...args}
+      data={gridData}
+      loading={isLoading}
+      pagination={{
+        recordsPerPage: 5,
+        controlsLocation: 'bottom',
+        serverSidePagination: {
+          pageCount,
+          fetchPaginatedData,
+        },
+      }}
+    />
+  );
+};
+WithServerControlledPagination.args = {
+  title: 'Data Grid w/ Server Pagination',
+  columns: COLUMNS,
+};
+
 export const CustomStyling = Template.bind({});
 CustomStyling.args = {
   ...Basic.args,
@@ -89,7 +90,6 @@ CustomStyling.args = {
       borderStyle: 'solid',
       color: LIGHT_GRAY,
       fontSize: 16,
-      fontWeight: 400,
       backgroundColor: DARK_GRAY,
     },
     dataCells: {

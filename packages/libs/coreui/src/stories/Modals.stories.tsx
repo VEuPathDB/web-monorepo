@@ -23,6 +23,7 @@ export const Default = Template.bind({});
 Default.args = {
   visible: true,
   title: 'Example Modal Title',
+  onOpen: () => console.log('Modal Opened'),
   children: (
     <div>
       {/* <H1 text='Hello,' additionalStyles={{ margin: 0 }} /> */}

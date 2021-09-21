@@ -1,3 +1,4 @@
+import { ReactNode, useEffect } from 'react';
 import {
   useTable,
   useSortBy,
@@ -6,7 +7,7 @@ import {
   Cell,
   Row,
 } from 'react-table';
-import { pickBy } from 'lodash';
+import { pickBy, ceil } from 'lodash';
 
 // Definitions
 import { DARK_GRAY, LIGHT_GRAY, MEDIUM_GRAY } from '../../constants/colors';
@@ -20,21 +21,53 @@ import CaretUpIcon from '../../assets/icons/CaretUp';
 import CaretDownIcon from '../../assets/icons/CaretDown';
 import DoubleArrow from '../../assets/icons/DoubleArrow';
 import Arrow from '../../assets/icons/Arrow';
-import { ReactNode } from 'react';
 
 export type DataGridProps = {
-  /** Column definitions. */
+  /**
+   * Column definitions. The header attribute is displayed to the user.
+   * The accessor attribute is used as a key to the column.
+   */
   columns: Array<{ Header: string; accessor: string }>;
   /** Data for rows. */
   data: Array<object>;
+  /** Optional. Indicates whether or not data is currently being loaded. */
+  loading?: boolean;
   /** Optional. Title for DataGrid */
   title?: string;
   /** Optional. Designates that the grid should be sortable. */
   sortable?: boolean;
   /** Optional. Controls pagination of grid. */
   pagination?: {
+    /** Number of records to display per page. */
     recordsPerPage: number;
+    /** Location of pagination controls. */
     controlsLocation: 'top' | 'bottom' | 'both';
+    /** Optional. Additional props for when you are controlling paging on the server. */
+    serverSidePagination?: {
+      /**
+       * Function to update the data for the current page.
+       * NOTE: To avoid infinite loops, define this function with
+       * useCallback. Here is an example to help you get started. :) 
+       * 
+       * const fetchPaginatedData = useCallback(({ pageSize, pageIndex }) => {
+            setIsLoading(true);
+            setTimeout(() => {
+              setGridData(fetchGridData({ pageSize, pageIndex }));
+              setPageCount(20 / pageSize);
+              setIsLoading(false);
+            }, 1000);
+          }, []);
+       * */
+      fetchPaginatedData: ({
+        pageSize,
+        pageIndex,
+      }: {
+        pageSize: number;
+        pageIndex: number;
+      }) => void;
+      /** Total available pages of data. */
+      pageCount: number;
+    };
   };
   /** Optional. Override default visual styles. */
   styleOverrides?: StyleOverridesSpec;
@@ -64,6 +97,7 @@ type StyleOverridesSpec = {
 export default function DataGrid({
   columns,
   data,
+  loading = false,
   title,
   sortable = false,
   pagination,
@@ -109,7 +143,6 @@ export default function DataGrid({
     getTableBodyProps,
     headerGroups,
     prepareRow,
-    rows,
     // @ts-ignore
     page,
     // @ts-ignore
@@ -136,12 +169,36 @@ export default function DataGrid({
       data,
       initialState: {
         // @ts-ignore
+        pageIndex: 0,
+        // @ts-ignore
         pageSize: pagination?.recordsPerPage ?? -1,
       },
+      ...(pagination && pagination.serverSidePagination
+        ? {
+            manualPagination: true,
+            pageCount: ceil(pagination.serverSidePagination.pageCount),
+            // manualSortBy: true,
+            autoResetSortBy: false,
+          }
+        : {}),
     },
     useSortBy,
     usePagination
   );
+
+  // Listen for changes in pagination and use the state to fetch our new data
+  useEffect(() => {
+    if (pagination?.serverSidePagination?.fetchPaginatedData) {
+      pagination.serverSidePagination.fetchPaginatedData({
+        pageIndex,
+        pageSize,
+      });
+    }
+  }, [
+    pagination?.serverSidePagination?.fetchPaginatedData,
+    pageIndex,
+    pageSize,
+  ]);
 
   /** Pagination controls are rendered when requested by the user. */
   const renderPaginationControls = () => {
@@ -159,7 +216,12 @@ export default function DataGrid({
     };
 
     return (
-      <div css={{ marginTop: 10 }}>
+      <div
+        css={[
+          { marginTop: 10 },
+          loading && { opacity: 0.5, pointerEvents: 'none' },
+        ]}
+      >
         <div css={{ marginBottom: 10, display: 'flex', alignItems: 'center' }}>
           <button
             css={{ marginRight: 5, ...commonButtonCSS }}
