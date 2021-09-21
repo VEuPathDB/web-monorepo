@@ -122,10 +122,9 @@ export function createFetchApiRequestHandler(options: FetchApiOptions): ApiReque
     const response = await fetchApi(request);
     // TODO Make this behavior configurable
     if (response.ok) {
-      const responseBody = response.headers.get('Content-Type')?.startsWith('application/json')
-        ? await response.json()
-        : await response.text();
-        return await transformResponse(responseBody);
+      const responseBody = await fetchResponseBody(response);
+
+      return await transformResponse(responseBody);
     }
     throw new Error(`${response.status} ${response.statusText}${'\n'}${await response.text()}`);
   }
@@ -157,11 +156,20 @@ export abstract class FetchClient {
     const response = await fetchApi(request);
     // TODO Make this behavior configurable
     if (response.ok) {
-      const responseBody = response.headers.get('Content-Type')?.startsWith('application/json')
-        ? await response.json()
-        : await response.text();
-        return await transformResponse(responseBody);
+      const responseBody = await fetchResponseBody(response);
+
+      return await transformResponse(responseBody);
     }
     throw new Error(`${response.status} ${response.statusText}${'\n'}${await response.text()}`);
   }
+}
+
+async function fetchResponseBody(response: Response) {
+  const contentType = response.headers.get('Content-Type');
+
+  return contentType == null
+    ? undefined
+    : contentType.startsWith('application/json')
+    ? response.json()
+    : response.text();
 }
