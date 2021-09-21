@@ -27,6 +27,29 @@ class StudyCard extends React.Component {
     this.setState({ searchType });
   }
 
+  renderLinkouts() {
+    const { analyses, attemptAction, card } = this.props;
+    if (useEda) {
+      return (
+        <div className="StudyCard-LinkOuts">
+          <DownloadLink className="box StudyCard-Download" linkText="Download" iconFirst studyAccess={card.access} studyId={card.id} studyUrl={card.downloadUrl.url} attemptAction={attemptAction}/>
+          {analyses?.some(analysis => analysis.studyId === card.id) &&
+            <div className="box StudyCard-MyAnalyses">
+              <Link to={{ pathname: makeEdaRoute(), search: `?s=${encodeURIComponent(card.name)}` }}>
+                <i className="fa fa-table"/> My analyses
+              </Link>
+            </div>
+          }
+        </div>
+      );
+    }
+    else {
+      return (
+        <DownloadLink className="box StudyCard-Download" linkText="Download Data" studyAccess={card.access} studyId={card.id} studyUrl={card.downloadUrl.url} attemptAction={attemptAction}/>
+      );
+    }
+  }
+
   renderFooter() {
     const { card, user, permissions } = this.props;
     if (useEda) {
@@ -96,7 +119,7 @@ class StudyCard extends React.Component {
   }
 
   render () {
-    const { card, attemptAction, analyses } = this.props;
+    const { card } = this.props;
     const { id, name, categories, route, headline, points, disabled } = card;
     const myStudyTitle = "Go to the Study Details page";
     const primaryCategory = categories[0];
@@ -124,16 +147,7 @@ class StudyCard extends React.Component {
             {points.map((point, index) => <li key={index} dangerouslySetInnerHTML={{ __html: point }} />)}
           </ul>
         </div>
-        <div className="StudyCard-LinkOuts">
-          <DownloadLink className="box StudyCard-Download" linkText="Download" iconFirst studyAccess={card.access} studyId={card.id} studyUrl={card.downloadUrl.url} attemptAction={attemptAction}/>
-          {analyses?.some(analysis => analysis.studyId === card.id) &&
-            <div className="box StudyCard-MyAnalyses">
-              <Link to={{ pathname: makeEdaRoute(), search: `?s=${encodeURIComponent(card.name)}` }}>
-                <i className="fa fa-table"/> My analyses
-              </Link>
-            </div>
-          }
-        </div>
+        {this.renderLinkouts()}
         {this.renderFooter()}
       </div>
     );
