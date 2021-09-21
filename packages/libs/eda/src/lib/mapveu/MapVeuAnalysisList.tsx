@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { useStudyRecord } from '../core';
+import { makeNewAnalysis, useStudyRecord } from '../core';
 import { useRouteMatch, Link, useHistory } from 'react-router-dom';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { AnalysisClient } from '../core/api/analysis-api';
@@ -17,23 +17,16 @@ export function AnalysisList(props: Props) {
   const list = usePromise(
     useCallback(async () => {
       const studies = await analysisStore.getAnalyses();
-      return studies.filter((study) => study.id === studyId);
+      return studies.filter((study) => study.analysisId === studyId);
     }, [studyId, analysisStore])
   );
   const { url } = useRouteMatch();
   const history = useHistory();
   const createAnalysis = useCallback(async () => {
-    const { id } = await analysisStore.createAnalysis({
-      name: 'Unnamed analysis',
-      studyId,
-      visualizations: [],
-      variableUISettings: {},
-      derivedVariables: [],
-      starredVariables: [],
-      filters: [],
-      computations: [],
-    });
-    history.push(`${url}/${id}`);
+    const { analysisId } = await analysisStore.createAnalysis(
+      makeNewAnalysis(studyId)
+    );
+    history.push(`${url}/${analysisId}`);
   }, [analysisStore, history, studyId, url]);
   return (
     <>
@@ -52,8 +45,8 @@ export function AnalysisList(props: Props) {
         <ul>
           {list.value?.map((analysis) => (
             <li>
-              <Link to={`${url}/${analysis.id}`}>
-                {safeHtml(analysis.name)}
+              <Link to={`${url}/${analysis.analysisId}`}>
+                {safeHtml(analysis.displayName)}
               </Link>
             </li>
           ))}

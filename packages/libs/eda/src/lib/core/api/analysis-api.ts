@@ -1,5 +1,5 @@
 import { type, voidType, string, array } from 'io-ts';
-import { memoize } from 'lodash';
+import { memoize, pick } from 'lodash';
 
 import {
   createJsonRequest,
@@ -8,97 +8,12 @@ import {
 
 import {
   Analysis,
-  AnalysisDetails,
   AnalysisPreferences,
   AnalysisSummary,
   NewAnalysis,
-  NewAnalysisDetails,
 } from '../types/analysis';
 
 import { ioTransformer } from './ioTransformer';
-
-export class AnalysisClient extends FetchClient {
-  getPreferences(): Promise<AnalysisPreferences> {
-    return this.fetch(
-      createJsonRequest({
-        path: '/preferences',
-        method: 'GET',
-        transformResponse: ioTransformer(AnalysisPreferences),
-      })
-    );
-  }
-  setPreferences(preferences: AnalysisPreferences): Promise<void> {
-    return this.fetch(
-      createJsonRequest({
-        path: '/preferences',
-        method: 'PUT',
-        body: preferences,
-        transformResponse: ioTransformer(voidType),
-      })
-    );
-  }
-  getAnalyses(): Promise<Analysis[]> {
-    return this.fetch(
-      createJsonRequest({
-        path: '/analyses',
-        method: 'GET',
-        transformResponse: ioTransformer(array(Analysis)),
-      })
-    );
-  }
-  getAnalysis(analysisId: string): Promise<Analysis> {
-    return this.fetch(
-      createJsonRequest({
-        path: `/analyses/${analysisId}`,
-        method: 'GET',
-        transformResponse: ioTransformer(Analysis),
-      })
-    );
-  }
-  createAnalysis(analysis: NewAnalysis): Promise<{ id: string }> {
-    return this.fetch(
-      createJsonRequest({
-        path: `/analyses`,
-        method: 'POST',
-        body: analysis,
-        transformResponse: ioTransformer(type({ id: string })),
-      })
-    );
-  }
-  updateAnalysis(analysis: Analysis): Promise<void> {
-    return this.fetch(
-      createJsonRequest({
-        path: `/analyses/${analysis.id}`,
-        method: 'PUT',
-        body: analysis,
-        transformResponse: ioTransformer(voidType),
-      })
-    );
-  }
-  deleteAnalysis(analysisId: string): Promise<void> {
-    return this.fetch(
-      createJsonRequest({
-        path: `/analyses/${analysisId}`,
-        method: 'DELETE',
-        body: { analysisId },
-        transformResponse: ioTransformer(voidType),
-      })
-    );
-  }
-  deleteAnalyses(analysisIds: Iterable<string>): Promise<void> {
-    return this.fetch(
-      createJsonRequest({
-        path: '/analyses',
-        method: 'PATCH',
-        body: Array.from(analysisIds).map((id) => ({
-          op: 'delete',
-          id,
-        })),
-        transformResponse: ioTransformer(voidType),
-      })
-    );
-  }
-}
 
 interface AnalysisClientConfiguration {
   userServiceUrl: string;
@@ -106,10 +21,14 @@ interface AnalysisClientConfiguration {
   authKey: string;
 }
 
-export class NewAnalysisClient extends FetchClient {
+export type SingleAnalysisPatchRequest = Partial<
+  Pick<Analysis, 'displayName' | 'description' | 'descriptor' | 'isPublic'>
+>;
+
+export class AnalysisClient extends FetchClient {
   static getClient = memoize(
-    (config: AnalysisClientConfiguration): NewAnalysisClient =>
-      new NewAnalysisClient({
+    (config: AnalysisClientConfiguration): AnalysisClient =>
+      new AnalysisClient({
         baseUrl: `${config.userServiceUrl}/${config.userId}`,
         init: { headers: { 'Auth-Key': config.authKey } },
       }),
@@ -144,18 +63,16 @@ export class NewAnalysisClient extends FetchClient {
       })
     );
   }
-  getAnalysis(analysisId: string): Promise<AnalysisDetails> {
+  getAnalysis(analysisId: string): Promise<Analysis> {
     return this.fetch(
       createJsonRequest({
         path: `/analyses/${analysisId}`,
         method: 'GET',
-        transformResponse: ioTransformer(AnalysisDetails),
+        transformResponse: ioTransformer(Analysis),
       })
     );
   }
-  createAnalysis(
-    analysis: NewAnalysisDetails
-  ): Promise<{ analysisId: string }> {
+  createAnalysis(analysis: NewAnalysis): Promise<{ analysisId: string }> {
     return this.fetch(
       createJsonRequest({
         path: `/analyses`,
@@ -167,13 +84,18 @@ export class NewAnalysisClient extends FetchClient {
   }
   updateAnalysis(
     analysisId: string,
-    analysisPatch: Partial<NewAnalysisDetails>
+    analysisPatch: SingleAnalysisPatchRequest
   ): Promise<void> {
     return this.fetch(
       createJsonRequest({
         path: `/analyses/${analysisId}`,
         method: 'PATCH',
-        body: analysisPatch,
+        body: pick(analysisPatch, [
+          'displayName',
+          'description',
+          'descriptor',
+          'isPublic',
+        ]),
         transformResponse: ioTransformer(voidType),
       })
     );

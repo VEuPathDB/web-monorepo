@@ -47,10 +47,11 @@ export function AnalysisPanel(props: Props) {
   } = analysisState;
   const { url: routeBase } = useRouteMatch();
   const totalCounts = useEntityCounts();
-  const filteredCounts = useEntityCounts(analysis?.filters);
+  const filters = analysis?.descriptor.subset.descriptor;
+  const filteredCounts = useEntityCounts(filters);
   const studyMetadata = useStudyMetadata();
   const entities = useStudyEntities(studyMetadata.rootEntity);
-  const filteredEntities = uniq(analysis?.filters.map((f) => f.entityId));
+  const filteredEntities = uniq(filters?.map((f) => f.entityId));
   const location = useLocation();
   const [lastVarPath, setLastVarPath] = useState('');
   const [lastVizPath, setLastVizPath] = useState('');
@@ -91,10 +92,12 @@ export function AnalysisPanel(props: Props) {
           open={globalFiltersDialogOpen}
           setOpen={setGlobalFiltersDialogOpen}
           entities={entities}
-          filters={analysis.filters}
+          filters={analysis.descriptor.subset.descriptor}
           setFilters={setFilters}
           removeFilter={(filter) =>
-            setFilters(analysis.filters.filter((f) => f !== filter))
+            setFilters(
+              analysis.descriptor.subset.descriptor.filter((f) => f !== filter)
+            )
           }
         />
         <Route

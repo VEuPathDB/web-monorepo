@@ -16,7 +16,7 @@ export function useToggleStarredVariable({
         return;
       }
 
-      const oldStarredVariables = analysis.starredVariables;
+      const oldStarredVariables = analysis.descriptor.starredVariables;
 
       const targetVariablePresent = oldStarredVariables.some(
         isEqual(targetVariable)

@@ -112,10 +112,10 @@ function BarplotViz(props: VisualizationProps) {
 
   const vizConfig = useMemo(() => {
     return pipe(
-      BarplotConfig.decode(visualization.configuration),
+      BarplotConfig.decode(visualization.descriptor.configuration),
       getOrElse((): t.TypeOf<typeof BarplotConfig> => createDefaultConfig())
     );
-  }, [visualization.configuration]);
+  }, [visualization.descriptor.configuration]);
 
   const updateVizConfig = useCallback(
     (newConfig: Partial<BarplotConfig>) => {
@@ -182,7 +182,7 @@ function BarplotViz(props: VisualizationProps) {
       const params = getRequestParams(studyId, filters ?? [], vizConfig);
 
       const response = dataClient.getBarplot(
-        computation.type,
+        computation.descriptor.type,
         params as BarplotRequestParams
       );
 
@@ -209,7 +209,7 @@ function BarplotViz(props: VisualizationProps) {
       vizConfig.showMissingness,
       variable,
       overlayVariable,
-      computation.type,
+      computation.descriptor.type,
     ])
   );
 

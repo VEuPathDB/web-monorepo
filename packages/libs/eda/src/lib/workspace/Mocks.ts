@@ -3,14 +3,12 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 import localforage from 'localforage';
 import {
   Analysis,
-  NewAnalysis,
   AnalysisClient,
-  AnalysisPreferences,
-  NewAnalysisClient,
-  AnalysisSummary,
-  AnalysisDetails,
-  NewAnalysisDetails,
   AnalysisDescriptor,
+  AnalysisPreferences,
+  AnalysisSummary,
+  NewAnalysis,
+  SingleAnalysisPatchRequest,
 } from '../core';
 import { max } from 'lodash';
 
@@ -30,56 +28,6 @@ export const mockAnalysisStore: AnalysisClient = {
     throw new Error(PathReporter.report(result).join('\n'));
   },
   async setPreferences(preferences: AnalysisPreferences) {
-    await preferenceStore.setItem('preferences', preferences);
-  },
-  async getAnalyses() {
-    const records: Analysis[] = [];
-    await analysisStore.iterate((value) => {
-      records.push(value as Analysis);
-    });
-    return records;
-  },
-  async createAnalysis(newAnalysis: NewAnalysis) {
-    const usedIds = await analysisStore.keys();
-    const id = String((max(usedIds.map((x) => Number(x))) ?? 0) + 1);
-    const now = new Date().toISOString();
-    await analysisStore.setItem<Analysis>(id, {
-      ...newAnalysis,
-      id,
-      created: now,
-      modified: now,
-    });
-    return { id };
-  },
-  async getAnalysis(id: string) {
-    const analysis = await analysisStore.getItem(id);
-    if (analysis) {
-      const result = Analysis.decode(analysis);
-      if (isRight(result)) return result.right;
-      throw new Error(PathReporter.report(result).join('\n'));
-    }
-    throw new Error(`Could not find analysis with id "${id}".`);
-  },
-  async updateAnalysis(analysis: Analysis) {
-    const now = new Date().toISOString();
-    await analysisStore.setItem(analysis.id, { ...analysis, modified: now });
-  },
-  async deleteAnalysis(id: string) {
-    await analysisStore.removeItem(id);
-  },
-  async deleteAnalyses(ids: string[]) {
-    for (const id of ids) await analysisStore.removeItem(id);
-  },
-} as AnalysisClient;
-
-export const newMockAnalysisStore: NewAnalysisClient = {
-  async getPreferences() {
-    const prefs = await preferenceStore.getItem('preferences');
-    const result = AnalysisPreferences.decode(prefs);
-    if (isRight(result)) return result.right;
-    throw new Error(PathReporter.report(result).join('\n'));
-  },
-  async setPreferences(preferences: AnalysisPreferences) {
     await preferenceStore.setItem<AnalysisPreferences>(
       'preferences',
       preferences
@@ -88,7 +36,7 @@ export const newMockAnalysisStore: NewAnalysisClient = {
   async getAnalyses() {
     const records: AnalysisSummary[] = [];
     await analysisStore.iterate((value) => {
-      const result = AnalysisDetails.decode(value);
+      const result = Analysis.decode(value);
       if (isLeft(result)) {
         throw new Error(PathReporter.report(result).join('\n'));
       }
@@ -97,11 +45,11 @@ export const newMockAnalysisStore: NewAnalysisClient = {
     });
     return records;
   },
-  async createAnalysis(newAnalysis: NewAnalysisDetails) {
+  async createAnalysis(newAnalysis: NewAnalysis) {
     const usedIds = await analysisStore.keys();
     const analysisId = String((max(usedIds.map((x) => Number(x))) ?? 0) + 1);
     const now = new Date().toISOString();
-    await analysisStore.setItem<AnalysisDetails>(analysisId, {
+    await analysisStore.setItem<Analysis>(analysisId, {
       ...newAnalysis,
       ...computeSummaryCounts(newAnalysis.descriptor),
       analysisId,
@@ -113,7 +61,7 @@ export const newMockAnalysisStore: NewAnalysisClient = {
   async getAnalysis(id: string) {
     const analysis = await analysisStore.getItem(id);
     if (analysis) {
-      const result = AnalysisDetails.decode(analysis);
+      const result = Analysis.decode(analysis);
       if (isRight(result)) return result.right;
       throw new Error(PathReporter.report(result).join('\n'));
     }
@@ -121,7 +69,7 @@ export const newMockAnalysisStore: NewAnalysisClient = {
   },
   async updateAnalysis(
     analysisId: string,
-    analysisPatch: Partial<NewAnalysisDetails>
+    analysisPatch: SingleAnalysisPatchRequest
   ) {
     const analysis = await analysisStore.getItem(analysisId);
     if (analysis == null) {
@@ -130,14 +78,14 @@ export const newMockAnalysisStore: NewAnalysisClient = {
       );
     }
 
-    const result = AnalysisDetails.decode(analysis);
+    const result = Analysis.decode(analysis);
     if (isLeft(result)) {
       throw new Error(PathReporter.report(result).join('\n'));
     }
 
     const decodedAnalysis = result.right;
     const now = new Date().toISOString();
-    await analysisStore.setItem<AnalysisDetails>(analysisId, {
+    await analysisStore.setItem<Analysis>(analysisId, {
       ...decodedAnalysis,
       ...analysisPatch,
       modificationTime: now,
@@ -153,7 +101,7 @@ export const newMockAnalysisStore: NewAnalysisClient = {
 
     await Promise.allSettled(deletionPromises);
   },
-} as NewAnalysisClient;
+} as AnalysisClient;
 
 function computeSummaryCounts(
   descriptor: AnalysisDescriptor

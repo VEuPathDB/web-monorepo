@@ -101,10 +101,10 @@ function BoxplotViz(props: VisualizationProps) {
 
   const vizConfig = useMemo(() => {
     return pipe(
-      BoxplotConfig.decode(visualization.configuration),
+      BoxplotConfig.decode(visualization.descriptor.configuration),
       getOrElse((): t.TypeOf<typeof BoxplotConfig> => createDefaultConfig())
     );
-  }, [visualization.configuration]);
+  }, [visualization.descriptor.configuration]);
 
   const updateVizConfig = useCallback(
     (newConfig: Partial<BoxplotConfig>) => {
@@ -198,7 +198,7 @@ function BoxplotViz(props: VisualizationProps) {
 
       // boxplot
       const response = dataClient.getBoxplot(
-        computation.type,
+        computation.descriptor.type,
         params as BoxplotRequestParams
       );
 
@@ -222,8 +222,8 @@ function BoxplotViz(props: VisualizationProps) {
       xAxisVariable,
       yAxisVariable,
       overlayVariable,
-      computation.type,
-      visualization.type,
+      computation.descriptor.type,
+      visualization.descriptor.type,
     ])
   );
 

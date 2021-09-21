@@ -15,55 +15,27 @@ import { VariableDataShape, VariableType } from './study';
 import { CompleteCasesTable } from '../api/data-api';
 
 /**
- * Visualization object stored in user's analysis
+ * Metadata for the visualization object stored in user's analysis
  */
-export type Visualization = TypeOf<typeof Visualization>;
-export const Visualization = intersection([
+export type VisualizationDescriptor = TypeOf<typeof VisualizationDescriptor>;
+export const VisualizationDescriptor = intersection([
   type({
-    id: string,
-    computationId: string,
     type: string,
     configuration: unknown,
   }),
   partial({
-    displayName: string,
     thumbnail: string,
   }),
 ]);
 
 /**
- * Metadata for the visualization object stored in user's analysis
- */
-export type VisualizationDescriptor = TypeOf<typeof VisualizationDescriptor>;
-export const VisualizationDescriptor = type({
-  type: string,
-  configuration: unknown,
-  thumbnail: string,
-});
-
-/**
  * Visualization object stored in user's analysis
  */
-export type NewVisualization = TypeOf<typeof NewVisualization>;
-export const NewVisualization = intersection([
+export type Visualization = TypeOf<typeof Visualization>;
+export const Visualization = intersection([
   type({
     visualizationId: string,
     descriptor: VisualizationDescriptor,
-  }),
-  partial({
-    displayName: string,
-  }),
-]);
-
-/**
- * App object stored in user's analysis
- */
-export type Computation = TypeOf<typeof Computation>;
-export const Computation = intersection([
-  type({
-    id: string,
-    type: string,
-    configuration: unknown,
   }),
   partial({
     displayName: string,
@@ -82,12 +54,12 @@ export const ComputationDescriptor = type({
 /**
  * App object stored in user's analysis
  */
-export type NewComputation = TypeOf<typeof NewComputation>;
-export const NewComputation = intersection([
+export type Computation = TypeOf<typeof Computation>;
+export const Computation = intersection([
   type({
     computationId: string,
     descriptor: ComputationDescriptor,
-    visualizations: array(NewVisualization),
+    visualizations: array(Visualization),
   }),
   partial({
     displayName: string,

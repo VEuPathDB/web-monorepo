@@ -32,7 +32,7 @@ export function MapVeuAnalysis(props: Props) {
       <dl>
         {' '}
         <dt>Name</dt>
-        <dd>{analysis?.name}</dd>
+        <dd>{analysis?.displayName}</dd>
         {/* <dt>Created</dt>
         <dd>{analysis.created}</dd> */}
       </dl>

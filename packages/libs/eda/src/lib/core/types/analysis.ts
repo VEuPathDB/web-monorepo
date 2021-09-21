@@ -2,7 +2,7 @@
 import * as t from 'io-ts';
 import { Filter } from './filter';
 import { VariableDescriptor } from './variable';
-import { Computation, NewComputation, Visualization } from './visualization';
+import { Computation } from './visualization';
 
 export type AnalysisPreferences = t.TypeOf<typeof AnalysisPreferences>;
 export const AnalysisPreferences = t.partial({
@@ -22,9 +22,9 @@ export const AnalysisBase = t.intersection([
     studyVersion: t.string,
     apiVersion: t.string,
     isPublic: t.boolean,
+    displayName: t.string,
   }),
   t.partial({
-    displayName: t.string,
     description: t.string,
   }),
 ]);
@@ -42,51 +42,29 @@ export const AnalysisSummary = t.intersection([
   }),
 ]);
 
-export type NewAnalysis = t.TypeOf<typeof NewAnalysis>;
-export const NewAnalysis = t.type({
-  name: t.string,
-  studyId: t.string,
-  filters: t.array(Filter),
-  derivedVariables: t.array(DerivedVariable),
-  starredVariables: t.array(VariableDescriptor),
-  variableUISettings: t.record(t.string, VariableUISetting),
-  visualizations: t.array(Visualization),
-  computations: t.array(Computation),
-});
-
-export type Analysis = t.TypeOf<typeof Analysis>;
-export const Analysis = t.intersection([
-  NewAnalysis,
-  t.type({
-    id: t.string,
-    created: t.string,
-    modified: t.string,
-  }),
-]);
-
 export type AnalysisDescriptor = t.TypeOf<typeof AnalysisDescriptor>;
 export const AnalysisDescriptor = t.type({
   subset: t.type({
     descriptor: t.array(Filter),
     uiSettings: t.record(t.string, VariableUISetting),
   }),
-  computations: t.array(NewComputation),
+  computations: t.array(Computation),
   starredVariables: t.array(VariableDescriptor),
   dataTableColumns: t.array(VariableDescriptor),
   derivedVariables: t.array(DerivedVariable),
 });
 
-export type NewAnalysisDetails = t.TypeOf<typeof NewAnalysisDetails>;
-export const NewAnalysisDetails = t.intersection([
+export type NewAnalysis = t.TypeOf<typeof NewAnalysis>;
+export const NewAnalysis = t.intersection([
   AnalysisBase,
   t.type({
     descriptor: AnalysisDescriptor,
   }),
 ]);
 
-export type AnalysisDetails = t.TypeOf<typeof AnalysisDetails>;
-export const AnalysisDetails = t.intersection([
-  NewAnalysisDetails,
+export type Analysis = t.TypeOf<typeof Analysis>;
+export const Analysis = t.intersection([
+  NewAnalysis,
   t.type({
     analysisId: t.string,
     creationTime: t.string,
@@ -99,13 +77,30 @@ export const AnalysisDetails = t.intersection([
 
 export function makeNewAnalysis(studyId: string): NewAnalysis {
   return {
-    name: 'Unnamed Analysis',
+    displayName: 'Unnamed Analysis',
     studyId,
-    filters: [],
-    starredVariables: [],
-    derivedVariables: [],
-    visualizations: [],
-    computations: [],
-    variableUISettings: {},
+    isPublic: false,
+    studyVersion: '',
+    apiVersion: '',
+    descriptor: {
+      subset: {
+        descriptor: [],
+        uiSettings: {},
+      },
+      starredVariables: [],
+      dataTableColumns: [],
+      derivedVariables: [],
+      computations: [
+        {
+          computationId: 'pass-through',
+          displayName: 'Passthrough',
+          descriptor: {
+            type: 'pass',
+            configuration: undefined,
+          },
+          visualizations: [],
+        },
+      ],
+    },
   };
 }

@@ -123,10 +123,10 @@ function HistogramViz(props: VisualizationProps) {
 
   const vizConfig = useMemo(() => {
     return pipe(
-      HistogramConfig.decode(visualization.configuration),
+      HistogramConfig.decode(visualization.descriptor.configuration),
       getOrElse((): t.TypeOf<typeof HistogramConfig> => createDefaultConfig())
     );
-  }, [visualization.configuration]);
+  }, [visualization.descriptor.configuration]);
 
   const updateVizConfig = useCallback(
     (newConfig: Partial<HistogramConfig>) => {
@@ -221,7 +221,10 @@ function HistogramViz(props: VisualizationProps) {
         valueType,
         vizConfig
       );
-      const response = dataClient.getHistogram(computation.type, params);
+      const response = dataClient.getHistogram(
+        computation.descriptor.type,
+        params
+      );
       const showMissing = vizConfig.showMissingness && overlayVariable != null;
       return omitEmptyNoDataSeries(
         grayOutLastSeries(
@@ -244,7 +247,7 @@ function HistogramViz(props: VisualizationProps) {
       studyId,
       filters,
       dataClient,
-      computation.type,
+      computation.descriptor.type,
       xAxisVariable,
       overlayVariable,
     ])

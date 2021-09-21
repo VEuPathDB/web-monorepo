@@ -5,11 +5,11 @@ import * as Path from 'path';
 import * as React from 'react';
 import { useHistory } from 'react-router';
 import {
-  NewAnalysis,
-  Analysis,
-  useStudyRecord,
   AnalysisClient,
+  AnalysisSummary,
+  NewAnalysis,
   useAnalysisList,
+  useStudyRecord,
 } from '../core';
 
 export interface Props {
@@ -69,31 +69,32 @@ export function AnalysisList(props: Props) {
   const tableState = React.useMemo(
     () => ({
       options: {
-        isRowSelected: (analysis: Analysis) => selected.has(analysis.id),
+        isRowSelected: (analysis: AnalysisSummary) =>
+          selected.has(analysis.analysisId),
       },
       eventHandlers: {
-        onRowSelect: (analysis: Analysis) =>
+        onRowSelect: (analysis: AnalysisSummary) =>
           setSelected((set) => {
             const newSet = new Set(set);
-            newSet.add(analysis.id);
+            newSet.add(analysis.analysisId);
             return newSet;
           }),
-        onRowDeselect: (analysis: Analysis) =>
+        onRowDeselect: (analysis: AnalysisSummary) =>
           setSelected((set) => {
             const newSet = new Set(set);
-            newSet.delete(analysis.id);
+            newSet.delete(analysis.analysisId);
             return newSet;
           }),
-        onMultipleRowSelect: (analyses: Analysis[]) =>
+        onMultipleRowSelect: (analyses: AnalysisSummary[]) =>
           setSelected((set) => {
             const newSet = new Set(set);
-            for (const analysis of analyses) newSet.add(analysis.id);
+            for (const analysis of analyses) newSet.add(analysis.analysisId);
             return newSet;
           }),
-        onMultipleRowDeselect: (analyses: Analysis[]) =>
+        onMultipleRowDeselect: (analyses: AnalysisSummary[]) =>
           setSelected((set) => {
             const newSet = new Set(set);
-            for (const analysis of analyses) newSet.delete(analysis.id);
+            for (const analysis of analyses) newSet.delete(analysis.analysisId);
             return newSet;
           }),
       },
@@ -134,23 +135,25 @@ export function AnalysisList(props: Props) {
         {
           key: 'name',
           name: 'Name',
-          renderCell: (data: { row: Analysis }) => (
-            <Link to={Path.join(history.location.pathname, data.row.id)}>
-              {data.row.name}
+          renderCell: (data: { row: AnalysisSummary }) => (
+            <Link
+              to={Path.join(history.location.pathname, data.row.analysisId)}
+            >
+              {data.row.displayName}
             </Link>
           ),
         },
-        { key: 'created', name: 'Created' },
-        { key: 'modified', name: 'Modified' },
+        { key: 'creationTime', name: 'Created' },
+        { key: 'modificationTime', name: 'Modified' },
         {
           key: 'download',
           name: 'Download JSON',
-          renderCell: (data: { row: Analysis }) => (
+          renderCell: (data: { row: AnalysisSummary }) => (
             <a
               href={`data:text/plain;charset=utf-8,${encodeURIComponent(
                 JSON.stringify(data.row, null, 2)
               )}`}
-              download={`${data.row.name}.json`}
+              download={`${data.row.displayName}.json`}
             >
               Download JSON
             </a>
