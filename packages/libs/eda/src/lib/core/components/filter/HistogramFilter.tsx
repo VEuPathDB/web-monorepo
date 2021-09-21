@@ -713,7 +713,7 @@ function distributionResponseToDataSeries(
     ({ value, binStart, binEnd, binLabel }) => ({
       binStart: type === 'date' ? binStart : Number(binStart),
       binEnd: type === 'date' ? binEnd : Number(binEnd),
-      binLabel,
+      binLabel: tidyBinLabel(binLabel),
       count: value,
     })
   );
@@ -730,6 +730,34 @@ function distributionResponseToDataSeries(
       median: undefined!,
     },
   };
+}
+
+/**
+ * If input matches the following style of non-exponent numbers (integer or floating point)
+ * "[71838.4,107757.59999999999)"
+ *
+ * then shorten the numbers whose string length is
+ * greater than 6, to a 3 significant figure version, and return the reconstructed label
+ * e.g. "[7.18e+5,10.8e+6)"
+ *
+ * Fails safe - returns the input if the various patterns don't match.
+ */
+function tidyBinLabel(
+  binLabel: string,
+  maxLength: number = 6,
+  precision: number = 3
+): string {
+  const matches = binLabel.match(/^\[(-?\d+(?:\.\d+)),(-?\d+(?:\.\d+))\)$/);
+  if (matches != null && matches.length == 3) {
+    // matches array starts with full match of pattern
+    const [binStart, binEnd] = matches
+      .slice(1)
+      .map((s) =>
+        s.length > maxLength ? Number(s).toPrecision(precision) : s
+      );
+    return `[${binStart},${binEnd})`;
+  }
+  return binLabel;
 }
 
 // TODO [2021-07-10] - Use variable.precision when avaiable
