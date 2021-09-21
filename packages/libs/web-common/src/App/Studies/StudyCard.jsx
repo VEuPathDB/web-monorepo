@@ -96,7 +96,7 @@ class StudyCard extends React.Component {
   }
 
   render () {
-    const { card, attemptAction } = this.props;
+    const { card, attemptAction, analyses } = this.props;
     const { id, name, categories, route, headline, points, disabled } = card;
     const myStudyTitle = "Go to the Study Details page";
     const primaryCategory = categories[0];
@@ -126,10 +126,13 @@ class StudyCard extends React.Component {
         </div>
         <div className="StudyCard-LinkOuts">
           <DownloadLink className="box StudyCard-Download" linkText="Download" iconFirst studyAccess={card.access} studyId={card.id} studyUrl={card.downloadUrl.url} attemptAction={attemptAction}/>
-          {/*
-            TODO Show link if the user has analyses for this study
-            <div className="box StudyCard-MyAnalyses">My analyses</div>
-          */}
+          {analyses?.some(analysis => analysis.studyId === card.id) &&
+            <div className="box StudyCard-MyAnalyses">
+              <Link to={{ pathname: makeEdaRoute(), search: `?s=${encodeURIComponent(card.name)}` }}>
+                <i className="fa fa-table"/> My analyses
+              </Link>
+            </div>
+          }
         </div>
         {this.renderFooter()}
       </div>

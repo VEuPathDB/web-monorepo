@@ -28,14 +28,14 @@ class Showcase extends React.Component {
   }
 
   renderCardList (contentType, Card, props) {
-    const { prefix, attemptAction, ...cardListProps } = props;
+    const { prefix, attemptAction, analyses, ...cardListProps } = props;
     return (
       <CardList
         {...cardListProps}
         attemptAction={attemptAction}
         additionalClassName={contentType}
         renderCard={(card) =>
-          <Card card={card} attemptAction={attemptAction} prefix={prefix} key={card.name} />
+          <Card analyses={analyses} card={card} attemptAction={attemptAction} prefix={prefix} key={card.name} />
         }
       />
     );
@@ -44,9 +44,10 @@ class Showcase extends React.Component {
   render () {
     const { handleFilter } = this;
     const { filteredItems: list } = this.state;
-    const { content, prefix, attemptAction } = this.props;
+    const { analyses, content, prefix, attemptAction } = this.props;
     const { title, viewAllUrl, viewAllAppUrl, filters, filtersLabel, contentType, contentNamePlural, items, description, isLoading, isExpandable, tableViewLink, cardComponent, getSearchStringForItem, matchPredicate, permissions } = content;
     const cards = this.renderCardList(contentType, cardComponent, {
+      analyses,
       attemptAction,
       contentNamePlural,
       filters,
