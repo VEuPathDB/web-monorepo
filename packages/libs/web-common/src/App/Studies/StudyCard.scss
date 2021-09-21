@@ -17,7 +17,6 @@ $myStripeBgColor: #e8e8e8;
     display: flex;
     a, a:link, a:visited, a:active {
       color: $textColor;
-      text-decoration: none;
     }
 
     h2 {
@@ -58,16 +57,18 @@ $myStripeBgColor: #e8e8e8;
     }
   }
 
-  .StudyCard-Download {
+  .StudyCard-Download, .StudyCard-MyAnalyses {
     flex: 0 0 auto;
-    padding: 5px;
+    padding: .35em 1.5em;
     text-align: center;
     font-size: 1em;
   }
-/*  .Card a {
-    color: $myLinkFooterColor;
+
+  .StudyCard-LinkOuts {
+    display: flex;
+    justify-content: space-between;
   }
-*/
+
   .StudyCard-PreFooter {
     flex: 0 0 auto;
     padding: 5px 5px 0;
@@ -88,7 +89,7 @@ $myStripeBgColor: #e8e8e8;
     background-color: $myLinkFooterColor;
     padding: 0;
     margin: 0;
-    
+
     .emptybox {
       padding: 5px 12px;
     }
@@ -102,10 +103,13 @@ $myStripeBgColor: #e8e8e8;
       text-align: center;
 
       a { color: white; }
+    }
+  }
 
-      &:hover {
-        background-color: rgb(12,71,90);
-      }
+  .StudyCard-SearchLink:hover {
+    // handle case where the footer elements are children of the link element (eg, in eda)
+    &, .StudyCard-PreFooter, .StudyCard-Footer {
+      background-color: rgb(12,71,90);
     }
   }
 }
