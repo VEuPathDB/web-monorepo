@@ -66,6 +66,7 @@ interface FieldNodeProps {
   searchTerm: string;
   isActive: boolean;
   isDisabled?: boolean;
+  customDisabledVariableMessage?: string;
   handleFieldSelect: (field: VariableField) => void;
   activeFieldEntity?: string;
   isStarred: boolean;
@@ -85,6 +86,7 @@ interface VariableListProps {
   starredVariables?: string[];
   toggleStarredVariable: (targetVariableId: string) => void;
   disabledFieldIds?: string[];
+  customDisabledVariableMessage?: string;
   featuredFields: VariableField[];
 }
 
@@ -107,6 +109,7 @@ export default function VariableList(props: VariableListProps) {
   const {
     activeField,
     disabledFieldIds,
+    customDisabledVariableMessage,
     onActiveFieldChange,
     valuesMap,
     fieldTree,
@@ -248,6 +251,7 @@ export default function VariableList(props: VariableListProps) {
           searchTerm={searchTerm}
           isActive={node.field.term === activeField?.term}
           isDisabled={disabledFields.has(node.field.term)}
+          customDisabledVariableMessage={customDisabledVariableMessage}
           handleFieldSelect={handleFieldSelect}
           //add activefieldEntity prop (parent entity obtained from activeField)
           //alternatively, send activeField and isActive is directly checked at FieldNode
@@ -423,6 +427,9 @@ export default function VariableList(props: VariableListProps) {
                         field={field}
                         isActive={isActive}
                         isDisabled={isDisabled}
+                        customDisabledVariableMessage={
+                          customDisabledVariableMessage
+                        }
                         searchTerm=""
                         handleFieldSelect={handleFieldSelect}
                         isStarred={starredVariablesSet.has(variableId)}
@@ -481,6 +488,7 @@ const FieldNode = ({
   searchTerm,
   isActive,
   isDisabled,
+  customDisabledVariableMessage,
   handleFieldSelect,
   activeFieldEntity,
   isStarred,
@@ -509,7 +517,8 @@ const FieldNode = ({
     <Tooltip
       title={
         isDisabled
-          ? 'This variable cannot be used with this plot and other variable selections.'
+          ? customDisabledVariableMessage ??
+            'This variable cannot be used with this plot and other variable selections.'
           : 'Select this variable.'
       }
     >

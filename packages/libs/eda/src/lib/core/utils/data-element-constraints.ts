@@ -198,6 +198,9 @@ export function mergeConstraints(
               maxNumValues: mergeMaxNumValues(constraintA, constraintB),
               allowMultiValued:
                 constraintA.allowMultiValued && constraintB.allowMultiValued,
+              // Since constraintA and constraintB are for the same variable slot
+              // (value of `key` above) they should have the same description
+              description: constraintA.description,
             },
       ];
     })
