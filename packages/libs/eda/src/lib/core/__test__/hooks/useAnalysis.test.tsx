@@ -1,5 +1,6 @@
 import { omit } from 'lodash';
 import { act, renderHook } from '@testing-library/react-hooks';
+import { computeSummaryCounts } from '../../Mocks';
 import { useAnalysis, Status } from '../../hooks/analysis';
 import { Analysis, NewAnalysis, makeNewAnalysis } from '../../types/analysis';
 import {
@@ -59,6 +60,9 @@ const analysisClient: AnalysisClient = {
     records[analysisId] = {
       ...records[analysisId],
       ...analysisPatch,
+      ...(analysisPatch.descriptor == null
+        ? {}
+        : computeSummaryCounts(analysisPatch.descriptor)),
       modificationTime: new Date().toISOString(),
     };
   },
@@ -150,8 +154,8 @@ describe('useAnalysis', () => {
     const newAnalysis = analyses.find(
       (analysis) => analysis.analysisId === res.analysisId
     );
-    expect(omit(result.current.analysis, 'id')).toEqual(
-      omit(newAnalysis, 'id')
+    expect(omit(result.current.analysis, 'analysisId')).toEqual(
+      omit(newAnalysis, 'analysisId')
     );
     expect(result.current.analysis).not.toBe(newAnalysis);
   });
