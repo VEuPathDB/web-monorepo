@@ -54,7 +54,7 @@ export interface Props {
    */
   starredVariables: VariableDescriptor[];
   /**
-   * A callback for toggling the starred state of a variable with a given ID
+   * A callback for toggling the starred state of a variable
    */
   toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
   /** When false, disable (gray out) the showMissingness toggle */
