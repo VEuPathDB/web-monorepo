@@ -77,7 +77,15 @@ export class AnalysisClient extends FetchClient {
       createJsonRequest({
         path: `/analyses`,
         method: 'POST',
-        body: analysis,
+        body: pick(analysis, [
+          'displayName',
+          'description',
+          'descriptor',
+          'isPublic',
+          'studyId',
+          'apiVersion',
+          'studyVersion',
+        ]),
         transformResponse: ioTransformer(type({ analysisId: string })),
       })
     );
