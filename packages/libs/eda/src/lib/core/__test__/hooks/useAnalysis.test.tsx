@@ -87,15 +87,15 @@ const wrapper: React.ComponentType = ({ children }) => (
 );
 
 beforeEach(() => {
+  const now = new Date().toISOString();
+
   records = {
     123: {
       ...stubAnalysis,
+      ...computeSummaryCounts(stubAnalysis.descriptor),
       analysisId: key,
-      creationTime: new Date().toISOString(),
-      modificationTime: new Date().toISOString(),
-      numComputations: 0,
-      numFilters: 0,
-      numVisualizations: 0,
+      creationTime: now,
+      modificationTime: now,
     },
   };
   nextId = 1;
