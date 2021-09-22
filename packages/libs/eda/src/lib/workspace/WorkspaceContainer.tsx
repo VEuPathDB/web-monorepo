@@ -1,3 +1,4 @@
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { find } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { RestrictedPage } from '@veupathdb/web-common/lib/App/DataRestriction/RestrictedPage';
@@ -10,9 +11,9 @@ import {
   StudyMetadata,
   SubsettingClient,
 } from '../core';
+import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
 import { VariableDescriptor } from '../core/types/variable';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
-import { mockAnalysisStore } from './Mocks';
 import { cx, findFirstVariable } from './Utils';
 import { SavedAnalysis } from './SavedAnalysis';
 import { NewAnalysisPage } from './NewAnalysis';
@@ -22,6 +23,7 @@ interface Props {
   analysisId?: string;
   subsettingServiceUrl: string;
   dataServiceUrl: string;
+  userServiceUrl: string;
 }
 export function WorkspaceContainer(props: Props) {
   const { url } = useRouteMatch();
@@ -33,6 +35,7 @@ export function WorkspaceContainer(props: Props) {
     () => new DataClient({ baseUrl: props.dataServiceUrl }),
     [props.dataServiceUrl]
   );
+  const analysisClient = useConfiguredAnalysisClient(props.userServiceUrl);
   const makeVariableLink = useCallback(
     (
       {
@@ -60,21 +63,25 @@ export function WorkspaceContainer(props: Props) {
 
   return (
     <RestrictedPage approvalStatus={approvalStatus}>
-      <EDAWorkspaceContainer
-        studyId={props.studyId}
-        className={cx()}
-        analysisClient={mockAnalysisStore}
-        dataClient={dataClient}
-        subsettingClient={subsettingClient}
-        makeVariableLink={makeVariableLink}
-      >
-        <EDAWorkspaceHeading />
-        {props.analysisId == null ? (
-          <NewAnalysisPage />
-        ) : (
-          <SavedAnalysis analysisId={props.analysisId} />
-        )}
-      </EDAWorkspaceContainer>
+      {analysisClient == null ? (
+        <Loading />
+      ) : (
+        <EDAWorkspaceContainer
+          studyId={props.studyId}
+          className={cx()}
+          analysisClient={analysisClient}
+          dataClient={dataClient}
+          subsettingClient={subsettingClient}
+          makeVariableLink={makeVariableLink}
+        >
+          <EDAWorkspaceHeading />
+          {props.analysisId == null ? (
+            <NewAnalysisPage />
+          ) : (
+            <SavedAnalysis analysisId={props.analysisId} />
+          )}
+        </EDAWorkspaceContainer>
+      )}
     </RestrictedPage>
   );
 }

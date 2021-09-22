@@ -5,37 +5,47 @@ import {
   useRouteMatch,
   Redirect,
 } from 'react-router';
-import { EDAAnalysisList } from './EDAAnalysisList';
-import { WorkspaceContainer } from './WorkspaceContainer';
-import { mockAnalysisStore } from './Mocks';
+
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
+
 import { SubsettingClient } from '../core/api/subsetting-api';
+import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
 import { AllAnalyses } from './AllAnalyses';
+import { EDAAnalysisList } from './EDAAnalysisList';
 import { LatestAnalysis } from './LatestAnalysis';
 import { StudyList } from './StudyList';
+import { WorkspaceContainer } from './WorkspaceContainer';
 
 type Props = {
   subsettingServiceUrl: string;
   dataServiceUrl: string;
+  userServiceUrl: string;
 };
 
 export function WorkspaceRouter({
   subsettingServiceUrl,
   dataServiceUrl,
+  userServiceUrl,
 }: Props) {
   const { path, url } = useRouteMatch();
   const subsettingClient = SubsettingClient.getClient(subsettingServiceUrl);
+  const analysisClient = useConfiguredAnalysisClient(userServiceUrl);
 
   return (
     <Switch>
       <Route
         path={path}
         exact
-        render={() => (
-          <AllAnalyses
-            analysisClient={mockAnalysisStore}
-            subsettingClient={subsettingClient}
-          />
-        )}
+        render={() =>
+          analysisClient == null ? (
+            <Loading />
+          ) : (
+            <AllAnalyses
+              analysisClient={analysisClient}
+              subsettingClient={subsettingClient}
+            />
+          )
+        }
       />
       {/* replacing/redirecting double slashes url with single slash one */}
       <Route
@@ -64,6 +74,7 @@ export function WorkspaceRouter({
             {...props.match.params}
             subsettingServiceUrl={subsettingServiceUrl}
             dataServiceUrl={dataServiceUrl}
+            userServiceUrl={userServiceUrl}
           />
         )}
       />
@@ -74,18 +85,23 @@ export function WorkspaceRouter({
             {...props.match.params}
             subsettingServiceUrl={subsettingServiceUrl}
             dataServiceUrl={dataServiceUrl}
+            userServiceUrl={userServiceUrl}
           />
         )}
       />
       <Route
         path={`${path}/:studyId/~latest`}
-        render={(props: RouteComponentProps<{ studyId: string }>) => (
-          <LatestAnalysis
-            {...props.match.params}
-            replaceRegexp={/~latest/}
-            analysisClient={mockAnalysisStore}
-          />
-        )}
+        render={(props: RouteComponentProps<{ studyId: string }>) =>
+          analysisClient == null ? (
+            <Loading />
+          ) : (
+            <LatestAnalysis
+              {...props.match.params}
+              replaceRegexp={/~latest/}
+              analysisClient={analysisClient}
+            />
+          )
+        }
       />
       <Route
         path={`${path}/:studyId/:analysisId`}
@@ -96,6 +112,7 @@ export function WorkspaceRouter({
             {...props.match.params}
             subsettingServiceUrl={subsettingServiceUrl}
             dataServiceUrl={dataServiceUrl}
+            userServiceUrl={userServiceUrl}
           />
         )}
       />
