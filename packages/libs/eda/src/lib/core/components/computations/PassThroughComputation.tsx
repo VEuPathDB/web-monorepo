@@ -1,9 +1,10 @@
 import React, { useCallback, useMemo } from 'react';
+
 import { AnalysisState } from '../../hooks/analysis';
 import { useToggleStarredVariable } from '../../hooks/starredVariables';
 import {
-  Visualization,
   ComputationAppOverview,
+  Visualization,
 } from '../../types/visualization';
 import { testVisualization } from '../visualizations/implementations/TestVisualization';
 import { histogramVisualization } from '../visualizations/implementations/HistogramVisualization';

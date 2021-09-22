@@ -18,7 +18,6 @@ import {
   StudyMetadata,
 } from '../../types/study';
 import {
-  edaVariableToWdkField,
   entitiesToFields,
   fromEdaFilter,
   makeFieldTree,

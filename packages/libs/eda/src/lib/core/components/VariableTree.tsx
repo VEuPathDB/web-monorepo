@@ -1,7 +1,7 @@
 import PopoverButton from '@veupathdb/components/lib/components/widgets/PopoverButton';
 import { Button } from '@material-ui/core';
 import { keyBy } from 'lodash';
-import { useCallback, useMemo, useState, useContext } from 'react';
+import { useCallback, useMemo } from 'react';
 import { cx } from '../../workspace/Utils';
 import { StudyEntity } from '../types/study';
 import { VariableDescriptor } from '../types/variable';
