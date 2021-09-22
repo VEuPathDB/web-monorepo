@@ -37,14 +37,10 @@ const analysisClient: AnalysisClient = {
     const analysisId = String(nextId++);
     records[analysisId] = {
       ...newAnalysis,
+      ...computeSummaryCounts(newAnalysis.descriptor),
       analysisId,
       creationTime: new Date().toISOString(),
       modificationTime: new Date().toISOString(),
-      numFilters: newAnalysis.descriptor.subset.descriptor.length,
-      numComputations: newAnalysis.descriptor.computations.length,
-      numVisualizations: newAnalysis.descriptor.computations
-        .map(({ visualizations }) => visualizations.length)
-        .reduce((memo, visualizationCount) => memo + visualizationCount, 0),
     };
     return { analysisId };
   },
