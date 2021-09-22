@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
 import { MosaicData } from '../types/plots';
 import { PlotParams } from 'react-plotly.js';
 import _ from 'lodash';
+// util functions for handling long tick labels with ellipsis
+import { axisTickLableEllipsis } from '../utils/axis-tick-label-ellipsis';
 
 export interface MosaicPlotProps extends PlotProps<MosaicData> {
   /** label for independent axis */
@@ -37,6 +39,19 @@ const MosaicPlot = makePlotlyPlotComponent(
       (width) => (width / sum_raw_widths) * 100
     );
 
+    // set tick label Length for ellipsis
+    const maxIndependentTickLabelLength = 20;
+
+    // change data.independentLabels to have ellipsis
+    const independentLabelsEllipsis = useMemo(
+      () =>
+        axisTickLableEllipsis(
+          data.independentLabels,
+          maxIndependentTickLabelLength
+        ),
+      [data]
+    );
+
     const column_centers = percent_widths.map((width, i) => {
       // Sum of the widths of previous columns
       const column_start = _.sum(percent_widths.slice(0, i));
@@ -49,9 +64,12 @@ const MosaicPlot = makePlotlyPlotComponent(
         tickvals: column_centers,
         ticktext:
           showColumnLabels !== false
-            ? data.independentLabels
+            ? // use ellipsis texts here
+              independentLabelsEllipsis
             : new Array(data.independentLabels.length).fill(''),
         range: [0, 100] as number[],
+        // this is required to separate axis tick label from axis title
+        automargin: true,
       },
       yaxis: {
         title: dependentAxisLabel && dependentAxisLabel + ' (Proportion)',
@@ -94,6 +112,8 @@ const MosaicPlot = makePlotlyPlotComponent(
       data: plotlyReadyData,
       layout,
       legendTitle: dependentAxisLabel,
+      // original independent axis tick labels for tooltip
+      storedIndependentAxisTickLabel: data.independentLabels,
       ...restProps,
     };
   }
