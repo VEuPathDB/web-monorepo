@@ -186,19 +186,18 @@ export default function DataGrid({
     usePagination
   );
 
-  // Listen for changes in pagination and use the state to fetch our new data
+  /**
+   * Listen for changes in pagination and use the state to fetch
+   * new data as long as another request isn't pending.
+   *  */
   useEffect(() => {
-    if (pagination?.serverSidePagination?.fetchPaginatedData) {
+    if (pagination?.serverSidePagination?.fetchPaginatedData && !loading) {
       pagination.serverSidePagination.fetchPaginatedData({
         pageIndex,
         pageSize,
       });
     }
-  }, [
-    pagination?.serverSidePagination?.fetchPaginatedData,
-    pageIndex,
-    pageSize,
-  ]);
+  }, [pageIndex, pageSize]);
 
   /** Pagination controls are rendered when requested by the user. */
   const renderPaginationControls = () => {
