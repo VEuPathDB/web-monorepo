@@ -355,27 +355,8 @@ export function MultiFilter(props: Props) {
 function findThisFilter(
   analysisState: AnalysisState,
   entity: StudyEntity,
-  variable: { id: string; providerLabel: string; displayName: string } & {
-    parentId?: string | undefined;
-    definition?: string | undefined;
-    displayOrder?: number | undefined;
-    displayType?: 'default' | 'multifilter' | 'hidden' | undefined;
-    dataShape?: 'categorical' | 'ordinal' | 'binary' | 'continuous' | undefined;
-  } & { type: 'category'; displayType: 'multifilter' }
-):
-  | ({ entityId: string; variableId: string } & {
-      type: 'multiFilter';
-      operation: 'union' | 'intersect';
-      subFilters: { variableId: string; stringSet: string[] }[];
-    })
-  | (() =>
-      | ({ entityId: string; variableId: string } & {
-          type: 'multiFilter';
-          operation: 'union' | 'intersect';
-          subFilters: { variableId: string; stringSet: string[] }[];
-        })
-      | undefined)
-  | undefined {
+  variable: MultiFilterVariable
+): MultiFilterType | (() => MultiFilterType | undefined) | undefined {
   return analysisState.analysis?.filters.find(
     (filter): filter is MultiFilterType =>
       filter.entityId === entity.id &&
