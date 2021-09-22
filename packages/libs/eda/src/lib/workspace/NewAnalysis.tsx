@@ -1,6 +1,6 @@
 import { Lens } from 'monocle-ts';
 import Path from 'path';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useLocation, useRouteMatch, useHistory } from 'react-router-dom';
 import {
   AnalysisState,
@@ -25,18 +25,22 @@ export function NewAnalysisPage() {
   const history = useHistory();
   const location = useLocation();
   const { url } = useRouteMatch();
+  const creatingAnalysis = useRef(false);
   const createAnalysis = useCallback(
     async (
       newAnalysis: NewAnalysis,
       subPath: string = location.pathname.slice(url.length)
     ) => {
-      const { analysisId } = await analysisClient.createAnalysis(newAnalysis);
-      await preloadAnalysis(analysisId);
-      const newLocation = {
-        ...location,
-        pathname: Path.resolve(url, '..', analysisId + subPath),
-      };
-      history.replace(newLocation);
+      if (!creatingAnalysis.current) {
+        creatingAnalysis.current = true;
+        const { analysisId } = await analysisClient.createAnalysis(newAnalysis);
+        await preloadAnalysis(analysisId);
+        const newLocation = {
+          ...location,
+          pathname: Path.resolve(url, '..', analysisId + subPath),
+        };
+        history.replace(newLocation);
+      }
     },
     [analysisClient, history, location, preloadAnalysis, url]
   );
