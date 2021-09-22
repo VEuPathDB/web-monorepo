@@ -15,6 +15,7 @@ export function isHistogramVariable(
       switch (variable.type) {
         case 'date':
         case 'number':
+        case 'integer':
           return true;
       }
   }

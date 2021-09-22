@@ -50,7 +50,7 @@ import { XYPlotData } from '@veupathdb/components/lib/types/plots';
 import { CoverageStatistics } from '../../../types/visualization';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
-import { StudyEntity } from '../../../types/study';
+import { NumberVariable, StudyEntity } from '../../../types/study';
 import { vocabularyWithMissingData } from '../../../utils/analysis';
 import { gray } from '../colors';
 import {
@@ -410,8 +410,12 @@ function ScatterplotViz(props: VisualizationProps) {
               ? ['Smoothed mean with raw', 'Best fit line with raw']
               : []
           }
-          independentValueType={xAxisVariable?.type}
-          dependentValueType={yAxisVariable?.type}
+          independentValueType={
+            NumberVariable.is(xAxisVariable) ? 'number' : 'date'
+          }
+          dependentValueType={
+            NumberVariable.is(yAxisVariable) ? 'number' : 'date'
+          }
           legendTitle={axisLabelWithUnit(overlayVariable)}
         />
         <div className="viz-plot-info">
