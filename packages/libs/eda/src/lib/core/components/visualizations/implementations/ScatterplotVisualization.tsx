@@ -494,19 +494,24 @@ function ScatterplotWithControls({
   //   };
   // }, []);
 
-  const ref = useRef<PlotRef>(null);
+  const plotRef = useRef<PlotRef>(null);
+
+  const updateThumbnailRef = useRef(updateThumbnail);
+  useEffect(() => {
+    updateThumbnailRef.current = updateThumbnail;
+  });
 
   useEffect(() => {
-    ref.current
+    plotRef.current
       ?.toImage({ format: 'svg', ...plotDimensions })
-      .then(updateThumbnail);
-  }, [data, updateThumbnail]);
+      .then(updateThumbnailRef.current);
+  }, [data]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <XYPlot
         {...scatterplotProps}
-        ref={ref}
+        ref={plotRef}
         data={data}
         // add controls
         displayLibraryControls={false}

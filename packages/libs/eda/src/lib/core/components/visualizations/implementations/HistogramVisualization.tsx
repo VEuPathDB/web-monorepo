@@ -401,13 +401,18 @@ function HistogramPlotWithControls({
       ? completeCasesAllVars
       : completeCasesAxesVars;
 
-  const ref = useRef<PlotRef>(null);
+  const plotRef = useRef<PlotRef>(null);
+
+  const updateThumbnailRef = useRef(updateThumbnail);
+  useEffect(() => {
+    updateThumbnailRef.current = updateThumbnail;
+  });
 
   useEffect(() => {
-    ref.current
+    plotRef.current
       ?.toImage({ format: 'svg', ...plotDimensions })
-      .then(updateThumbnail);
-  }, [updateThumbnail, data, histogramProps.dependentAxisLogScale]);
+      .then(updateThumbnailRef.current);
+  }, [data, histogramProps.dependentAxisLogScale]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -421,7 +426,7 @@ function HistogramPlotWithControls({
       >
         <Histogram
           {...histogramProps}
-          ref={ref}
+          ref={plotRef}
           data={data}
           opacity={opacity}
           displayLibraryControls={displayLibraryControls}

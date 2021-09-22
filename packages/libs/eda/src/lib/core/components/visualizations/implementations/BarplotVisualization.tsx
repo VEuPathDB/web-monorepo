@@ -359,17 +359,24 @@ function BarplotWithControls({
   updateThumbnail,
   ...barPlotProps
 }: BarplotWithControlsProps) {
-  const ref = useRef<PlotRef>(null);
+  const plotRef = useRef<PlotRef>(null);
+
+  const updateThumbnailRef = useRef(updateThumbnail);
   useEffect(() => {
-    ref.current
+    updateThumbnailRef.current = updateThumbnail;
+  });
+
+  useEffect(() => {
+    plotRef.current
       ?.toImage({ format: 'svg', ...plotDimensions })
-      .then((src) => updateThumbnail(src));
-  }, [data, updateThumbnail, dependentAxisLogScale]);
+      .then(updateThumbnailRef.current);
+  }, [data, dependentAxisLogScale]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Barplot
         {...barPlotProps}
-        ref={ref}
+        ref={plotRef}
         dependentAxisLogScale={dependentAxisLogScale}
         data={data}
         // add controls

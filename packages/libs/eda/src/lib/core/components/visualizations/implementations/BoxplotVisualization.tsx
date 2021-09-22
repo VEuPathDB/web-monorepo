@@ -376,17 +376,24 @@ function BoxplotWithControls({
   updateThumbnail,
   ...boxplotComponentProps
 }: BoxplotWithControlsProps) {
-  const ref = useRef<PlotRef>(null);
+  const plotRef = useRef<PlotRef>(null);
+
+  const updateThumbnailRef = useRef(updateThumbnail);
   useEffect(() => {
-    ref.current
+    updateThumbnailRef.current = updateThumbnail;
+  });
+
+  useEffect(() => {
+    plotRef.current
       ?.toImage({ format: 'svg', ...plotDimensions })
-      .then(updateThumbnail);
-  }, [data, updateThumbnail]);
+      .then(updateThumbnailRef.current);
+  }, [data]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Boxplot
         {...boxplotComponentProps}
-        ref={ref}
+        ref={plotRef}
         data={data}
         // add controls
         displayLibraryControls={false}

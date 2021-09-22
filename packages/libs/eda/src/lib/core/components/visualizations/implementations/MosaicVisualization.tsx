@@ -457,19 +457,25 @@ function MosaicPlotWithControls({
   ...mosaicProps
 }: MosaicPlotWithControlsProps) {
   const displayLibraryControls = false;
-  const ref = useRef<PlotRef>(null);
+
+  const plotRef = useRef<PlotRef>(null);
+
+  const updateThumbnailRef = useRef(updateThumbnail);
+  useEffect(() => {
+    updateThumbnailRef.current = updateThumbnail;
+  });
 
   useEffect(() => {
-    ref.current
+    plotRef.current
       ?.toImage({ format: 'svg', ...plotDimensions })
-      .then(updateThumbnail);
-  }, [updateThumbnail, data]);
+      .then(updateThumbnailRef.current);
+  }, [data]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Mosaic
         {...mosaicProps}
-        ref={ref}
+        ref={plotRef}
         data={data}
         displayLibraryControls={displayLibraryControls}
       />
