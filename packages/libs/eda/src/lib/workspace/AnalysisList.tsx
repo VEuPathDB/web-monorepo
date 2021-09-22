@@ -1,4 +1,5 @@
 import { Link, Mesa } from '@veupathdb/wdk-client/lib/Components';
+import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { isLeft } from 'fp-ts/Either';
 import { PathReporter } from 'io-ts/PathReporter';
 import * as Path from 'path';
@@ -169,6 +170,9 @@ export function AnalysisList(props: Props) {
       history.location.pathname,
     ]
   );
+
+  useSetDocumentTitle(`All Analyses - ${studyRecord.displayName}`);
+
   if (analysisList == null) return null;
   return <Mesa.Mesa state={tableState} />;
 }

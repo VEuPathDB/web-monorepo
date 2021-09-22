@@ -1,11 +1,11 @@
 {
   "name": "@veupathdb/eda",
-  "version": "0.11.36",
+  "version": "0.11.40",
   "dependencies": {
     "@material-ui/core": "^4.11.3",
     "@material-ui/lab": "^4.0.0-alpha.58",
     "@types/debounce-promise": "^3.1.3",
-    "@veupathdb/components": "^0.7.17",
+    "@veupathdb/components": "^0.7.18",
     "@veupathdb/wdk-client": "^0.4.4",
     "@veupathdb/web-common": "^0.1.7",
     "debounce-promise": "^3.1.2",
