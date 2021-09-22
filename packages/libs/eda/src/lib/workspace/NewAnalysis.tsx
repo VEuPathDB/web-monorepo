@@ -149,7 +149,9 @@ function useSetter<T>(
     (nestedValue: T | ((nestedValue: T) => T)) => {
       const nextNestedValue =
         typeof nestedValue === 'function'
-          ? nestedValueLens.get(analysis)
+          ? (nestedValue as (nestedValue: T) => T)(
+              nestedValueLens.get(analysis)
+            )
           : nestedValue;
       const nextAnalysis = nestedValueLens.set(nextNestedValue)(analysis);
       createAnalysis(nextAnalysis, getSubPath && getSubPath(nextNestedValue));

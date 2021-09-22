@@ -100,7 +100,7 @@ export function useAnalysis(analysisId: string): AnalysisState {
         setCurrent((_a) => {
           const newNestedValue =
             typeof nestedValue === 'function'
-              ? nestedValueLens.get(_a)
+              ? (nestedValue as (nestedValue: T) => T)(nestedValueLens.get(_a))
               : nestedValue;
 
           return nestedValueLens.set(newNestedValue)(_a);
