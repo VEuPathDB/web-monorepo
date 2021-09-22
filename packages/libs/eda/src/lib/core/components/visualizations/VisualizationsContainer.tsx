@@ -77,6 +77,23 @@ function ConfiguredVisualizations(props: Props) {
   const { computation, updateVisualizations, visualizationsOverview } = props;
   const { url } = useRouteMatch();
 
+  const clearThumbnail = useCallback(
+    (targetIndex) => {
+      updateVisualizations((oldVisualizations) => [
+        ...oldVisualizations.slice(0, targetIndex),
+        {
+          ...oldVisualizations[targetIndex],
+          descriptor: {
+            ...oldVisualizations[targetIndex].descriptor,
+            thumbnail: undefined,
+          },
+        },
+        ...oldVisualizations.slice(targetIndex + 1),
+      ]);
+    },
+    [updateVisualizations]
+  );
+
   return (
     <Grid>
       <Link replace to={`${url}/new`} className={cx('-NewVisualization')}>
@@ -84,7 +101,7 @@ function ConfiguredVisualizations(props: Props) {
         Select a visualization
       </Link>
       {computation.visualizations
-        .map((viz) => {
+        .map((viz, vizIndex) => {
           const meta = visualizationsOverview.find(
             (v) => v.name === viz.descriptor.type
           );
@@ -139,7 +156,13 @@ function ConfiguredVisualizations(props: Props) {
                   </div>
                 </div>
                 {viz.descriptor.thumbnail ? (
-                  <img alt={viz.displayName} src={viz.descriptor.thumbnail} />
+                  <img
+                    alt={viz.displayName}
+                    src={viz.descriptor.thumbnail}
+                    onError={() => {
+                      clearThumbnail(vizIndex);
+                    }}
+                  />
                 ) : (
                   <div className={cx('-ConfiguredVisualizationNoPreview')}>
                     Preview unavaiable
