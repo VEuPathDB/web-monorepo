@@ -356,7 +356,7 @@ function findThisFilter(
   analysisState: AnalysisState,
   entity: StudyEntity,
   variable: MultiFilterVariable
-): MultiFilterType | (() => MultiFilterType | undefined) | undefined {
+): MultiFilterType | undefined {
   return analysisState.analysis?.filters.find(
     (filter): filter is MultiFilterType =>
       filter.entityId === entity.id &&
