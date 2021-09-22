@@ -31,6 +31,7 @@ import {
   usePinnedAnalyses,
 } from '../core';
 import { workspaceTheme } from '../core/components/workspaceTheme';
+import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 interface AnalysisAndDataset {
   analysis: Analysis;
@@ -393,6 +394,8 @@ export function AllAnalyses(props: Props) {
       }, 250),
     [history, location.pathname]
   );
+
+  useSetDocumentTitle('My Analyses');
 
   return (
     <ThemeProvider theme={theme}>

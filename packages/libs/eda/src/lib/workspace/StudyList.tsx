@@ -1,6 +1,9 @@
 import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import {
+  safeHtml,
+  useSetDocumentTitle,
+} from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import React, { useCallback } from 'react';
 import { SubsettingClient } from '../core';
 import { usePromise } from '../core/hooks/promise';
@@ -32,6 +35,9 @@ export function StudyList(props: Props) {
   const studies = usePromise(
     useCallback(() => subsettingClient.getStudies(), [subsettingClient])
   );
+
+  useSetDocumentTitle('All studies');
+
   if (studies.error) return <div>{String(studies.error as any)}</div>;
   if (studies.value == null || datasets == null) return <Loading />;
   return (

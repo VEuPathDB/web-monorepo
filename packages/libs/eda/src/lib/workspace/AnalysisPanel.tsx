@@ -27,6 +27,7 @@ import { useStudyEntities } from '../core/hooks/study';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 // import ShowHideVariableContextProvider
 import ShowHideVariableContextProvider from '../core/utils/show-hide-variable-context';
+import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 interface Props {
   analysisState: AnalysisState;
@@ -64,6 +65,10 @@ export function AnalysisPanel(props: Props) {
       setLastVizPath(relativePath.replace('/visualizations', ''));
     }
   }, [location, routeBase]);
+
+  useSetDocumentTitle(
+    analysis ? `${analysis?.name} - ${studyRecord.displayName}` : 'Analysis'
+  );
 
   if (status === Status.Error)
     return (
