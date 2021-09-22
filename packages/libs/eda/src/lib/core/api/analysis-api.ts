@@ -73,19 +73,21 @@ export class AnalysisClient extends FetchClient {
     );
   }
   createAnalysis(analysis: NewAnalysis): Promise<{ analysisId: string }> {
+    const body: NewAnalysis = pick(analysis, [
+      'displayName',
+      'description',
+      'descriptor',
+      'isPublic',
+      'studyId',
+      'apiVersion',
+      'studyVersion',
+    ]);
+
     return this.fetch(
       createJsonRequest({
         path: `/analyses`,
         method: 'POST',
-        body: pick(analysis, [
-          'displayName',
-          'description',
-          'descriptor',
-          'isPublic',
-          'studyId',
-          'apiVersion',
-          'studyVersion',
-        ]),
+        body,
         transformResponse: ioTransformer(type({ analysisId: string })),
       })
     );
@@ -94,16 +96,18 @@ export class AnalysisClient extends FetchClient {
     analysisId: string,
     analysisPatch: SingleAnalysisPatchRequest
   ): Promise<void> {
+    const body: SingleAnalysisPatchRequest = pick(analysisPatch, [
+      'displayName',
+      'description',
+      'descriptor',
+      'isPublic',
+    ]);
+
     return this.fetch(
       createJsonRequest({
         path: `/analyses/${analysisId}`,
         method: 'PATCH',
-        body: pick(analysisPatch, [
-          'displayName',
-          'description',
-          'descriptor',
-          'isPublic',
-        ]),
+        body,
         transformResponse: ioTransformer(voidType),
       })
     );
