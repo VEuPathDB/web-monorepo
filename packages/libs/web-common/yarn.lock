@@ -824,9 +824,9 @@
     redux "^4.0.0"
 
 "@types/react-router-dom@^5.1.3":
-  version "5.1.9"
-  resolved "https://registry.yarnpkg.com/@types/react-router-dom/-/react-router-dom-5.1.9.tgz#e8a8f687351ecc8c68bb4161d7e4b9df4994416e"
-  integrity sha512-Go0vxZSigXTyXx8xPkGiBrrc3YbBs82KE14WENMLS6TSUKcRFSmYVbL19zFOnNFqJhqrPqEs2h5eUpJhSRrwZw==
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@types/react-router-dom/-/react-router-dom-5.3.0.tgz#8c4e0aa0ccaf638ba965829ad29a10ac3cbe2212"
+  integrity sha512-svUzpEpKDwK8nmfV2vpZNSsiijFNKY8+gUqGqvGGOVrXvX58k1JIJubZa5igkwacbq/0umphO5SsQn/BQsnKpw==
   dependencies:
     "@types/history" "*"
     "@types/react" "*"
@@ -857,9 +857,9 @@
     "@types/react" "*"
 
 "@types/react@*", "@types/react@>=16.14.8", "@types/react@>=16.9.11":
-  version "17.0.22"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.22.tgz#c80d1d0e87fe953bae3ab273bef451dea1a6291b"
-  integrity sha512-kq/BMeaAVLJM6Pynh8C2rnr/drCK+/5ksH0ch9asz+8FW3DscYCIEFtCeYTFeIx/ubvOsMXmRfy7qEJ76gM96A==
+  version "17.0.24"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.24.tgz#7e1b3f78d0fc53782543f9bce6d949959a5880bd"
+  integrity sha512-eIpyco99gTH+FTI3J7Oi/OH8MZoFMJuztNRimDOJwH4iGIsKV2qkGnk4M9VzlaVWeEEWLWSQRy0FEA0Kz218cg==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -902,10 +902,10 @@
   resolved "https://registry.yarnpkg.com/@types/warning/-/warning-3.0.0.tgz#0d2501268ad8f9962b740d387c4654f5f8e23e52"
   integrity sha1-DSUBJorY+ZYrdA04fEZU9fjiPlI=
 
-"@veupathdb/components@^0.7.17", "@veupathdb/components@^0.7.9":
-  version "0.7.17"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.7.17.tgz#310ed56375efbc9a2a7b7173be01780ab51cf890"
-  integrity sha512-Q8BCQJMC7PifeDiVR5q6AdwVECXuRcGE0uJg5dp25FZgM8aAuaNWztu6qgtQ9XD23TtAFNRBWxPnAs/0mletvA==
+"@veupathdb/components@^0.7.18", "@veupathdb/components@^0.7.9":
+  version "0.7.18"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.7.18.tgz#0c19ee4bc1245ea4e22871b700f5e784c07bd698"
+  integrity sha512-SphT00KQqgDVSDhzsj6YE5c5P/Aa3f/1ovgJ0iEcoohS4zGKSoSbbKlor93hmydi7FeawfJfkbZhchvusFeghA==
   dependencies:
     "@material-ui/core" "^4.11.2"
     "@material-ui/icons" "^4.11.2"
@@ -973,14 +973,14 @@
     shape2geohash "^1.2.5"
 
 "@veupathdb/eda@^0.11.9":
-  version "0.11.35"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.11.35.tgz#956fb7d1aa38cffb4f19c7d4ca14333366992abb"
-  integrity sha512-CmrOE2PkCEXtVxu5oQH0ZnVkuTrz7Xp5LiPk74qdzvuzH/IW5A+T7jccn2E+2VcEZXw+38LLqTkLkiisKYPU3A==
+  version "0.11.43"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.11.43.tgz#036be53e064a26dcf8763d13dbf5a0f65946085a"
+  integrity sha512-yqTdlV03tOERZMbF5/F/BRlGcCsqHd03+wm8gWW2Uk8UUebrv2jMek4mnW+6Vw5uh8UmlivHg6/EAKOBjpCKaQ==
   dependencies:
     "@material-ui/core" "^4.11.3"
     "@material-ui/lab" "^4.0.0-alpha.58"
     "@types/debounce-promise" "^3.1.3"
-    "@veupathdb/components" "^0.7.17"
+    "@veupathdb/components" "^0.7.18"
     "@veupathdb/wdk-client" "^0.4.4"
     "@veupathdb/web-common" "^0.1.6"
     debounce-promise "^3.1.2"
@@ -2959,9 +2959,9 @@ form-data@~2.3.2:
     mime-types "^2.1.12"
 
 fp-ts@^2.9.3:
-  version "2.11.2"
-  resolved "https://registry.yarnpkg.com/fp-ts/-/fp-ts-2.11.2.tgz#a3f5f74ac56f16c412044470a5fe3b51b94816dc"
-  integrity sha512-G1rD89nmbbgTNRBKohjB3Qv4IxOHQ5KV3ZvYfpaQZyrGt+ZQUFrcnCqE567bcEdvwoAUKDQM7isOcv7xcM/qAQ==
+  version "2.11.3"
+  resolved "https://registry.yarnpkg.com/fp-ts/-/fp-ts-2.11.3.tgz#e19444da75252e24f40766d1316dc6600f3499df"
+  integrity sha512-qHI5iaVSFNFmdl6yDensWfFMk32iafAINCnqx8m486DV1+Jht/bTnA9CyahL+Xm7h2y3erinviVBIAWvv5bPYw==
 
 from2-array@0.0.4:
   version "0.0.4"
