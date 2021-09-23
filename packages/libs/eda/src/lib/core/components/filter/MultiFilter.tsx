@@ -31,6 +31,7 @@ import {
   isMulti,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
 import { gray, red } from './colors';
+import { debounce } from 'lodash';
 
 export interface Props {
   analysisState: AnalysisState;
@@ -143,6 +144,19 @@ export function MultiFilter(props: Props) {
   const [thisFilter, setThisFilter] = useState<MultiFilterType | undefined>(
     _thisFilter
   );
+
+  // debounce time needs to be linear with the number of sub-filters, see notes at the end of this file
+  const debouncedSetThisFilter = useMemo(
+    () => debounce(setThisFilter, (1000 * leaves.length) / 10),
+    [leaves]
+  );
+  // Cancel any pending requests when this component is unmounted.
+  useEffect(() => debouncedSetThisFilter.cancel, []);
+  // watch for changes in _thisFilter, then setThisFilter in a regulated manner
+  useEffect(() => debouncedSetThisFilter(_thisFilter), [
+    debouncedSetThisFilter,
+    _thisFilter,
+  ]);
 
   // Use a JSON string here so that we don't udpate counts for every render.
   // array.filter will always return a _new_ array, but strings are immutable,
@@ -265,7 +279,6 @@ export function MultiFilter(props: Props) {
   // Update analysis filter - need to convert from WDK to EDA filter.
   const handleFilterChange = useCallback(
     (nextFilters: WdkFilter[]) => {
-      console.log(nextFilters);
       const edaFilters = nextFilters
         // the next two operations are needed because MultiFieldFilter will create subFilters with an
         // empty set of values, which does not work w/ eda
@@ -330,18 +343,22 @@ export function MultiFilter(props: Props) {
   return (
     <div className="filter-param" style={{ position: 'relative' }}>
       {leafSummariesPromise.pending && (
-        <Loading style={{ position: 'absolute', right: 0, left: 0, top: 0 }} />
+        <Loading
+          style={{ position: 'absolute', right: 0, left: 0, top: -20 }}
+        />
       )}
-      <button
-        className="btn"
-        type="button"
-        disabled={countsAreCurrent}
-        onClick={() => {
-          setThisFilter(_thisFilter);
-        }}
-      >
-        Update counts
-      </button>
+      {leaves.length > 15 && (
+        <button
+          className="btn"
+          type="button"
+          disabled={countsAreCurrent}
+          onClick={() => {
+            setThisFilter(_thisFilter);
+          }}
+        >
+          Update distributions now
+        </button>
+      )}
       <MultiFieldFilter
         displayName={entity.displayNamePlural}
         dataCount={totalEntityCount}
@@ -378,3 +395,13 @@ function findThisFilter(
       filter.type === 'multiFilter'
   );
 }
+
+/**
+ * timings for various multi-filter updates
+ *
+ * multi-variable		#vars	qa	bob's dev using qa
+ * animals on property		9	0.9	3.2
+ * cooking fuel			12	1.2	3.8
+ * drinking water source	18	1.9	5.7
+ * bacteria in stool		59	6.1	15.0
+ */
