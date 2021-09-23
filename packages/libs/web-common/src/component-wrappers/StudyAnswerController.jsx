@@ -1,14 +1,17 @@
 import { get } from 'lodash';
 import React, { useMemo } from 'react';
 import { connect, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import DownloadLink from 'ebrc-client/App/Studies/DownloadLink';
 import CategoryIcon from 'ebrc-client/App/Categories/CategoryIcon';
 import StudySearchIconLinks from 'ebrc-client/App/Studies/StudySearches';
 import { isPrereleaseStudy } from 'ebrc-client/App/DataRestriction/DataRestrictionUtils';
+import { makeEdaRoute } from 'ebrc-client/routes';
+import { useEda } from 'ebrc-client/config';
 
 // wrapping WDKClient AnswerController for specific rendering on certain columns
 function StudyAnswerController(props) {
-  const projectId = useSelector(state => state.globalData.siteConfig.projectId);
   const user = useSelector(state => state.globalData.user);
   const studyEntities = useSelector(state => state.studies && state.studies.entities);
 
@@ -89,6 +92,10 @@ const makeRenderCellContent = (user, permissions) => props => {
     user,
     permissions
   );
+
+  if (props.attribute.name === 'primary_key' && useEda) {
+    return <Link to={`${makeEdaRoute(props.record.id[0].value)}/~latest/details`}>{safeHtml(props.record.attributes.primary_key)}</Link>
+  }
 
   if (props.attribute.name === 'study_categories') {
     let studyCategories = JSON.parse(props.record.attributes.study_categories);
