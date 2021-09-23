@@ -146,9 +146,11 @@ export function MultiFilter(props: Props) {
   );
 
   // debounce time needs to be linear with the number of sub-filters, see notes at the end of this file
+  // but a minimum of 2 seconds seems reasonable too
+  const debounceTime = Math.max(2000, (1000 * leaves.length) / 10);
   const debouncedSetThisFilter = useMemo(
-    () => debounce(setThisFilter, (1000 * leaves.length) / 10),
-    [leaves]
+    () => debounce(setThisFilter, debounceTime),
+    [debounceTime]
   );
   // Cancel any pending requests when this component is unmounted.
   useEffect(() => debouncedSetThisFilter.cancel, []);
