@@ -32,6 +32,7 @@ export function isTableVariable(
       switch (variable.type) {
         case 'date':
         case 'number':
+        case 'integer':
         case 'string':
           return true;
       }
@@ -47,6 +48,7 @@ export function isScatterplotVariable(
       switch (variable.type) {
         case 'date':
         case 'number':
+        case 'integer':
           return true;
       }
   }
@@ -62,6 +64,7 @@ export function isMosaicVariable(
     case 'ordinal':
       switch (variable.type) {
         case 'number':
+        case 'integer':
         case 'string':
           return true;
       }

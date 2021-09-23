@@ -181,7 +181,7 @@ export function HistogramFilter(props: Props) {
         variable.type,
         dataParams.independentAxisRange
       );
-      const binWidthRange = (variable.type === 'number'
+      const binWidthRange = (NumberVariable.is(variable)
         ? { min, max }
         : {
             min,

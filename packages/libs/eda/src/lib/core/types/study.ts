@@ -86,11 +86,17 @@ export const StringVariable = t.intersection([
 export type NumberVariable = t.TypeOf<typeof NumberVariable>;
 export const NumberVariable = t.intersection([
   Variable_Base,
-  t.type({
-    type: t.union([t.literal('number'), t.literal('integer')]),
-    units: t.string,
-    precision: t.number,
-  }),
+  t.union([
+    t.type({
+      type: t.literal('number'),
+      units: t.string,
+      precision: t.number,
+    }),
+    t.type({
+      type: t.literal('integer'),
+      units: t.string,
+    }),
+  ]),
   t.union([
     t.type({
       dataShape: CategoryVariableDataShape,
