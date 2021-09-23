@@ -11,7 +11,7 @@ export function defaultIndependentAxisRange(
       return variable.displayRangeMin != null &&
         variable.displayRangeMax != null
         ? {
-            min: Math.min(variable.displayRangeMin, variable.rangeMax),
+            min: Math.min(variable.displayRangeMin, variable.rangeMin),
             max: Math.max(variable.displayRangeMax, variable.rangeMax),
           }
         : {
