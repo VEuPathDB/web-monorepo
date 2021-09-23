@@ -62,10 +62,11 @@ export default function Switch({
         <Typography
           variant="button"
           style={{
-            color: focused ? DARK_GRAY : MEDIUM_GRAY,
+            color: DARK_GRAY,
             ...(labelPosition === 'after'
               ? { paddingLeft: 5 }
               : { paddingRight: 5 }),
+            textTransform: 'none',
           }}
         >
           {label}
