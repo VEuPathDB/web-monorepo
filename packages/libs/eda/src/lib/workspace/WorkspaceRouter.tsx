@@ -6,8 +6,6 @@ import {
   Redirect,
 } from 'react-router';
 
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
-
 import { SubsettingClient } from '../core/api/subsetting-api';
 import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
 import { AllAnalyses } from './AllAnalyses';
@@ -36,16 +34,12 @@ export function WorkspaceRouter({
       <Route
         path={path}
         exact
-        render={() =>
-          analysisClient == null ? (
-            <Loading />
-          ) : (
-            <AllAnalyses
-              analysisClient={analysisClient}
-              subsettingClient={subsettingClient}
-            />
-          )
-        }
+        render={() => (
+          <AllAnalyses
+            analysisClient={analysisClient}
+            subsettingClient={subsettingClient}
+          />
+        )}
       />
       {/* replacing/redirecting double slashes url with single slash one */}
       <Route
@@ -91,17 +85,13 @@ export function WorkspaceRouter({
       />
       <Route
         path={`${path}/:studyId/~latest`}
-        render={(props: RouteComponentProps<{ studyId: string }>) =>
-          analysisClient == null ? (
-            <Loading />
-          ) : (
-            <LatestAnalysis
-              {...props.match.params}
-              replaceRegexp={/~latest/}
-              analysisClient={analysisClient}
-            />
-          )
-        }
+        render={(props: RouteComponentProps<{ studyId: string }>) => (
+          <LatestAnalysis
+            {...props.match.params}
+            replaceRegexp={/~latest/}
+            analysisClient={analysisClient}
+          />
+        )}
       />
       <Route
         path={`${path}/:studyId/:analysisId`}

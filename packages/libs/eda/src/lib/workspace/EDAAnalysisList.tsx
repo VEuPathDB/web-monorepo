@@ -1,7 +1,5 @@
 import React, { useMemo } from 'react';
 
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
-
 import { RestrictedPage } from '@veupathdb/web-common/lib/App/DataRestriction/RestrictedPage';
 import { useApprovalStatus } from '@veupathdb/web-common/lib/hooks/dataRestriction';
 
@@ -31,28 +29,24 @@ export function EDAAnalysisList(props: Props) {
     [props.dataServiceUrl]
   );
 
-  const analysisClient:
-    | AnalysisClient
-    | undefined = useConfiguredAnalysisClient(props.userServiceUrl);
+  const analysisClient: AnalysisClient = useConfiguredAnalysisClient(
+    props.userServiceUrl
+  );
 
   const approvalStatus = useApprovalStatus(props.studyId, 'analysis');
 
   return (
     <RestrictedPage approvalStatus={approvalStatus}>
-      {analysisClient == null ? (
-        <Loading />
-      ) : (
-        <EDAAnalysisListContainer
-          studyId={props.studyId}
-          subsettingClient={subsettingClient}
-          dataClient={dataClient}
-          className={cx()}
-          analysisClient={analysisClient}
-        >
-          <EDAWorkspaceHeading />
-          <AnalysisList analysisStore={analysisClient} />
-        </EDAAnalysisListContainer>
-      )}
+      <EDAAnalysisListContainer
+        studyId={props.studyId}
+        subsettingClient={subsettingClient}
+        dataClient={dataClient}
+        className={cx()}
+        analysisClient={analysisClient}
+      >
+        <EDAWorkspaceHeading />
+        <AnalysisList analysisStore={analysisClient} />
+      </EDAAnalysisListContainer>
     </RestrictedPage>
   );
 }

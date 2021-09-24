@@ -1,4 +1,3 @@
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { find } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { RestrictedPage } from '@veupathdb/web-common/lib/App/DataRestriction/RestrictedPage';
@@ -63,25 +62,21 @@ export function WorkspaceContainer(props: Props) {
 
   return (
     <RestrictedPage approvalStatus={approvalStatus}>
-      {analysisClient == null ? (
-        <Loading />
-      ) : (
-        <EDAWorkspaceContainer
-          studyId={props.studyId}
-          className={cx()}
-          analysisClient={analysisClient}
-          dataClient={dataClient}
-          subsettingClient={subsettingClient}
-          makeVariableLink={makeVariableLink}
-        >
-          <EDAWorkspaceHeading />
-          {props.analysisId == null ? (
-            <NewAnalysisPage />
-          ) : (
-            <SavedAnalysis analysisId={props.analysisId} />
-          )}
-        </EDAWorkspaceContainer>
-      )}
+      <EDAWorkspaceContainer
+        studyId={props.studyId}
+        className={cx()}
+        analysisClient={analysisClient}
+        dataClient={dataClient}
+        subsettingClient={subsettingClient}
+        makeVariableLink={makeVariableLink}
+      >
+        <EDAWorkspaceHeading />
+        {props.analysisId == null ? (
+          <NewAnalysisPage />
+        ) : (
+          <SavedAnalysis analysisId={props.analysisId} />
+        )}
+      </EDAWorkspaceContainer>
     </RestrictedPage>
   );
 }

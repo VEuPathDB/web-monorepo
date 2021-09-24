@@ -6,8 +6,6 @@ import {
   useRouteMatch,
 } from 'react-router';
 
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
-
 import { EDAAnalysisListContainer, EDAWorkspaceContainer } from '../core';
 import { DataClient } from '../core/api/data-api';
 import { SubsettingClient } from '../core/api/subsetting-api';
@@ -41,40 +39,32 @@ export function MapVeuContainer() {
           path={`${path}/:studyId/:analysisId`}
           render={(
             props: RouteComponentProps<{ studyId: string; analysisId: string }>
-          ) =>
-            analysisClient == null ? (
-              <Loading />
-            ) : (
-              <EDAWorkspaceContainer
-                studyId={props.match.params.studyId}
-                subsettingClient={edaClient}
-                analysisClient={analysisClient}
-                dataClient={dataClient}
-              >
-                <MapVeuAnalysis analysisId={props.match.params.analysisId} />
-              </EDAWorkspaceContainer>
-            )
-          }
+          ) => (
+            <EDAWorkspaceContainer
+              studyId={props.match.params.studyId}
+              subsettingClient={edaClient}
+              analysisClient={analysisClient}
+              dataClient={dataClient}
+            >
+              <MapVeuAnalysis analysisId={props.match.params.analysisId} />
+            </EDAWorkspaceContainer>
+          )}
         />
         <Route
           path={`${path}/:studyId`}
-          render={(props: RouteComponentProps<{ studyId: string }>) =>
-            analysisClient == null ? (
-              <Loading />
-            ) : (
-              <EDAAnalysisListContainer
+          render={(props: RouteComponentProps<{ studyId: string }>) => (
+            <EDAAnalysisListContainer
+              studyId={props.match.params.studyId}
+              analysisClient={analysisClient}
+              subsettingClient={edaClient}
+              dataClient={dataClient}
+            >
+              <AnalysisList
                 studyId={props.match.params.studyId}
-                analysisClient={analysisClient}
-                subsettingClient={edaClient}
-                dataClient={dataClient}
-              >
-                <AnalysisList
-                  studyId={props.match.params.studyId}
-                  analysisStore={analysisClient}
-                />
-              </EDAAnalysisListContainer>
-            )
-          }
+                analysisStore={analysisClient}
+              />
+            </EDAAnalysisListContainer>
+          )}
         />
         <Route path={path} component={StudyList} />
       </Switch>

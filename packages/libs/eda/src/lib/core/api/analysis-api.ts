@@ -1,9 +1,12 @@
 import { type, voidType, string, array } from 'io-ts';
 import { memoize, pick } from 'lodash';
 
+import { WdkService } from '@veupathdb/wdk-client/lib/Core';
+import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import {
-  createJsonRequest,
+  FetchApiOptions,
   FetchClient,
+  createJsonRequest,
 } from '@veupathdb/web-common/lib/util/api';
 
 import {
@@ -15,64 +18,104 @@ import {
 
 import { ioTransformer } from './ioTransformer';
 
-interface AnalysisClientConfiguration {
-  userServiceUrl: string;
-  userId: number;
-  authKey: string;
-}
-
 export type SingleAnalysisPatchRequest = Partial<
   Pick<Analysis, 'displayName' | 'description' | 'descriptor' | 'isPublic'>
 >;
 
 export class AnalysisClient extends FetchClient {
   static getClient = memoize(
-    (config: AnalysisClientConfiguration): AnalysisClient =>
-      new AnalysisClient({
-        baseUrl: `${config.userServiceUrl}/${config.userId}`,
-        init: { headers: { 'Auth-Key': config.authKey } },
-      }),
-    JSON.stringify
+    (userServiceUrl: string, wdkService: WdkService): AnalysisClient =>
+      new AnalysisClient(
+        {
+          baseUrl: userServiceUrl,
+        },
+        wdkService
+      )
   );
 
-  getPreferences(): Promise<AnalysisPreferences> {
+  constructor(options: FetchApiOptions, private wdkService: WdkService) {
+    super(options);
+  }
+
+  private async fetchUserRequestMetadata() {
+    const user = await this.wdkService.getCurrentUser();
+
+    return {
+      userPath: `/users/${user.id}`,
+      authHeaders: { 'Auth-Key': this.findUserRequestAuthKey(user) },
+    };
+  }
+
+  private findUserRequestAuthKey(wdkUser: User) {
+    if (wdkUser.isGuest) {
+      return String(wdkUser.id);
+    }
+
+    const wdkCheckAuthEntry = document.cookie
+      .split('; ')
+      .find((x) => x.startsWith('wdk_check_auth='));
+
+    if (wdkCheckAuthEntry == null) {
+      throw new Error(
+        `Tried to retrieve a non-existent WDK auth key for user ${wdkUser.id}`
+      );
+    }
+
+    return wdkCheckAuthEntry.replace(/^wdk_check_auth=/, '');
+  }
+
+  async getPreferences(): Promise<AnalysisPreferences> {
+    const { userPath, authHeaders } = await this.fetchUserRequestMetadata();
+
     return this.fetch(
       createJsonRequest({
-        path: '/preferences',
+        path: `${userPath}/preferences`,
+        headers: authHeaders,
         method: 'GET',
         transformResponse: ioTransformer(AnalysisPreferences),
       })
     );
   }
-  setPreferences(preferences: AnalysisPreferences): Promise<void> {
+  async setPreferences(preferences: AnalysisPreferences): Promise<void> {
+    const { userPath, authHeaders } = await this.fetchUserRequestMetadata();
+
     return this.fetch(
       createJsonRequest({
-        path: '/preferences',
+        path: `${userPath}/preferences`,
+        headers: authHeaders,
         method: 'PUT',
         body: preferences,
         transformResponse: ioTransformer(voidType),
       })
     );
   }
-  getAnalyses(): Promise<AnalysisSummary[]> {
+  async getAnalyses(): Promise<AnalysisSummary[]> {
+    const { userPath, authHeaders } = await this.fetchUserRequestMetadata();
+
     return this.fetch(
       createJsonRequest({
-        path: '/analyses',
+        path: `${userPath}/analyses`,
+        headers: authHeaders,
         method: 'GET',
         transformResponse: ioTransformer(array(AnalysisSummary)),
       })
     );
   }
-  getAnalysis(analysisId: string): Promise<Analysis> {
+  async getAnalysis(analysisId: string): Promise<Analysis> {
+    const { userPath, authHeaders } = await this.fetchUserRequestMetadata();
+
     return this.fetch(
       createJsonRequest({
-        path: `/analyses/${analysisId}`,
+        path: `${userPath}/analyses/${analysisId}`,
+        headers: authHeaders,
         method: 'GET',
         transformResponse: ioTransformer(Analysis),
       })
     );
   }
-  createAnalysis(analysis: NewAnalysis): Promise<{ analysisId: string }> {
+  async createAnalysis(analysis: NewAnalysis): Promise<{ analysisId: string }> {
+    const { userPath, authHeaders } = await this.fetchUserRequestMetadata();
+
     const body: NewAnalysis = pick(analysis, [
       'displayName',
       'description',
@@ -85,17 +128,20 @@ export class AnalysisClient extends FetchClient {
 
     return this.fetch(
       createJsonRequest({
-        path: `/analyses`,
+        path: `${userPath}/analyses`,
+        headers: authHeaders,
         method: 'POST',
         body,
         transformResponse: ioTransformer(type({ analysisId: string })),
       })
     );
   }
-  updateAnalysis(
+  async updateAnalysis(
     analysisId: string,
     analysisPatch: SingleAnalysisPatchRequest
   ): Promise<void> {
+    const { userPath, authHeaders } = await this.fetchUserRequestMetadata();
+
     const body: SingleAnalysisPatchRequest = pick(analysisPatch, [
       'displayName',
       'description',
@@ -105,24 +151,31 @@ export class AnalysisClient extends FetchClient {
 
     return this.fetch(
       createJsonRequest({
-        path: `/analyses/${analysisId}`,
+        path: `${userPath}/analyses/${analysisId}`,
+        headers: authHeaders,
         method: 'PATCH',
         body,
         transformResponse: ioTransformer(voidType),
       })
     );
   }
-  deleteAnalysis(analysisId: string): Promise<void> {
+  async deleteAnalysis(analysisId: string): Promise<void> {
+    const { userPath, authHeaders } = await this.fetchUserRequestMetadata();
+
     return this.fetch({
-      path: `/analyses/${analysisId}`,
+      path: `${userPath}/analyses/${analysisId}`,
+      headers: authHeaders,
       method: 'DELETE',
       transformResponse: ioTransformer(voidType),
     });
   }
-  deleteAnalyses(analysisIds: Iterable<string>): Promise<void> {
+  async deleteAnalyses(analysisIds: Iterable<string>): Promise<void> {
+    const { userPath, authHeaders } = await this.fetchUserRequestMetadata();
+
     return this.fetch(
       createJsonRequest({
-        path: '/analyses',
+        path: `${userPath}/analyses`,
+        headers: authHeaders,
         method: 'PATCH',
         body: {
           analysisIdsToDelete: [...analysisIds],
