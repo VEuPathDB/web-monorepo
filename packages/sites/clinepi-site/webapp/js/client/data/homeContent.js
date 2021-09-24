@@ -15,6 +15,7 @@ export default permissionsValue => ({ studies, searches, visualizations }) => ([
     isLoading: studies.loading || permissionsValue.loading,
     isExpandable: true,
     tableViewLink: '/search/dataset/Studies/result',
+    tableViewLinkText: 'Study summaries table',
     cardComponent: StudyCard,
     getSearchStringForItem: item => 
       item.searchString,
