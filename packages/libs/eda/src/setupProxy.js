@@ -1,12 +1,15 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const { endpoint } = require('./constants');
 
-module.exports = function (app) {
-  // Persist the JSESSIONID used by the WDK service,
-  // so as to keep the WDK user stable while the dev server
-  // is running
-  let wdkJSessionIdRef = { current: undefined };
+const { curry } = require('lodash/fp');
 
+// If a registered WDK user's auth key is not provided,
+// we will persist the JSESSIONID used by the WDK service,
+// so as to keep the (guest) WDK user stable while the
+// dev server is running
+const wdkCheckAuthProvided = process.env.WDK_CHECK_AUTH != null;
+
+module.exports = function (app) {
   app.use(
     endpoint,
     createProxyMiddleware({
@@ -17,11 +20,20 @@ module.exports = function (app) {
       followRedirects: true,
       logLevel: 'debug',
       onProxyReq: function (proxyReq) {
-        addJSessionId(proxyReq, wdkJSessionIdRef);
-        addAuthCookie(proxyReq);
+        addPrereleaseAuthCookieToProxyReq(proxyReq);
+
+        if (wdkCheckAuthProvided) {
+          addWdkCheckAuthCookieToProxyReq(proxyReq);
+        } else {
+          addJSessionIdCookieToProxyReq(proxyReq);
+        }
       },
-      onProxyRes: function (proxyReq) {
-        persistJSessionId(proxyReq, wdkJSessionIdRef);
+      onProxyRes: function (proxyRes) {
+        if (wdkCheckAuthProvided) {
+          addWdkCheckAuthCookieToProxyRes(proxyRes);
+        } else {
+          persistJSessionId(proxyRes);
+        }
       },
     })
   );
@@ -34,7 +46,7 @@ module.exports = function (app) {
       changeOrigin: true,
       followRedirects: true,
       logLevel: 'debug',
-      onProxyReq: addAuthCookie,
+      onProxyReq: addPrereleaseAuthCookieToProxyReq,
     })
   );
   app.use(
@@ -46,7 +58,7 @@ module.exports = function (app) {
       changeOrigin: true,
       followRedirects: true,
       logLevel: 'debug',
-      onProxyReq: addAuthCookie,
+      onProxyReq: addPrereleaseAuthCookieToProxyReq,
     })
   );
   app.use(
@@ -58,7 +70,7 @@ module.exports = function (app) {
       changeOrigin: true,
       followRedirects: true,
       logLevel: 'debug',
-      onProxyReq: addAuthCookie,
+      onProxyReq: addPrereleaseAuthCookieToProxyReq,
     })
   );
   app.use(
@@ -70,35 +82,47 @@ module.exports = function (app) {
       changeOrigin: true,
       followRedirects: true,
       logLevel: 'debug',
-      onProxyReq: addAuthCookie,
+      onProxyReq: addPrereleaseAuthCookieToProxyReq,
     })
   );
 };
 
-function addJSessionId(proxyReq, wdkJSessionIdRef) {
+const addCookieToProxyReq = curry(function (
+  cookieKey,
+  processEnvKey,
+  proxyReq
+) {
   if (proxyReq._isRedirect) return;
 
   const cookieRaw = proxyReq.getHeader('cookie');
 
-  const jSessionIdCookieValue = wdkJSessionIdRef.current;
+  const cookies = addCookieToRawStr(
+    cookieRaw,
+    cookieKey,
+    process.env[processEnvKey]
+  );
 
-  const cookies = addCookie(cookieRaw, 'JSESSIONID', jSessionIdCookieValue);
+  if (cookies != null) {
+    proxyReq.setHeader('cookie', cookies);
+  }
+});
 
-  proxyReq.setHeader('cookie', cookies);
-}
+const addJSessionIdCookieToProxyReq = addCookieToProxyReq(
+  'JSESSIONID',
+  'WDK_JSESSION_ID'
+);
 
-function addAuthCookie(proxyReq) {
-  if (proxyReq._isRedirect) return;
-  const cookieRaw = proxyReq.getHeader('cookie');
+const addWdkCheckAuthCookieToProxyReq = addCookieToProxyReq(
+  'wdk_check_auth',
+  'WDK_CHECK_AUTH'
+);
 
-  const authCookieValue = process.env.VEUPATHDB_AUTH_TKT;
+const addPrereleaseAuthCookieToProxyReq = addCookieToProxyReq(
+  'auth_tkt',
+  'VEUPATHDB_AUTH_TKT'
+);
 
-  const cookies = addCookie(cookieRaw, 'auth_tkt', authCookieValue);
-
-  proxyReq.setHeader('cookie', cookies);
-}
-
-function persistJSessionId(proxyRes, wdkJSessionIdRef) {
+function persistJSessionId(proxyRes) {
   const setCookieRawHeaderValue = proxyRes.headers['set-cookie'];
   const setCookieHeaderValues = rawCookieHeaderValueToArray(
     setCookieRawHeaderValue
@@ -109,13 +133,25 @@ function persistJSessionId(proxyRes, wdkJSessionIdRef) {
   );
 
   if (jSessionIdHeaderValue != null) {
-    wdkJSessionIdRef.current = jSessionIdHeaderValue
+    process.env.WDK_JSESSION_ID = jSessionIdHeaderValue
       .replace(/^JSESSIONID=/, '')
       .replace(/;.*/, '');
   }
 }
 
-function addCookie(cookieRaw, newKey, newValue) {
+function addWdkCheckAuthCookieToProxyRes(proxyRes) {
+  const setCookieRawHeaderValue = proxyRes.headers['set-cookie'];
+
+  const newSetCookies = addCookieToRawStr(
+    setCookieRawHeaderValue,
+    'wdk_check_auth',
+    `${process.env.WDK_CHECK_AUTH}; path=/; expires=Session`
+  );
+
+  proxyRes.headers['set-cookie'] = newSetCookies;
+}
+
+function addCookieToRawStr(cookieRaw, newKey, newValue) {
   if (newValue == null) {
     return cookieRaw;
   }
