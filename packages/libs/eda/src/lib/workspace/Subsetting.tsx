@@ -32,7 +32,8 @@ export function Subsetting(props: Props) {
   const variable = entity?.variables.find((v) => v.id === variableId);
   const history = useHistory();
   const totalCounts = useEntityCounts();
-  const filteredCounts = useEntityCounts(analysisState.analysis?.filters);
+  const filters = analysisState.analysis?.descriptor.subset.descriptor;
+  const filteredCounts = useEntityCounts(filters);
   const makeVariableLink = useMakeVariableLink();
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
@@ -54,7 +55,7 @@ export function Subsetting(props: Props) {
           includeMultiFilters
           rootEntity={entities[0]}
           entityId={entity.id}
-          starredVariables={analysisState.analysis?.starredVariables}
+          starredVariables={analysisState.analysis?.descriptor.starredVariables}
           toggleStarredVariable={toggleStarredVariable}
           variableId={variable.id}
           onChange={(variable) => {
@@ -69,13 +70,13 @@ export function Subsetting(props: Props) {
       </div>
       <div className="FilterChips">
         <FilterChipList
-          filters={analysisState.analysis?.filters.filter(
-            (f) => f.entityId === entity.id
-          )}
+          filters={filters?.filter((f) => f.entityId === entity.id)}
           removeFilter={(filter) =>
             analysisState.analysis &&
             analysisState.setFilters(
-              analysisState.analysis.filters.filter((f) => f !== filter)
+              analysisState.analysis.descriptor.subset.descriptor.filter(
+                (f) => f !== filter
+              )
             )
           }
           entities={entities}

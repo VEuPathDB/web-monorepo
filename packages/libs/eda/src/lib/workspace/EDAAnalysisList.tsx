@@ -1,10 +1,12 @@
+import React, { useMemo } from 'react';
+
 import { RestrictedPage } from '@veupathdb/web-common/lib/App/DataRestriction/RestrictedPage';
 import { useApprovalStatus } from '@veupathdb/web-common/lib/hooks/dataRestriction';
-import React, { useMemo } from 'react';
-import { EDAAnalysisListContainer } from '../core';
+
+import { AnalysisClient, EDAAnalysisListContainer } from '../core';
 import { SubsettingClient } from '../core/api/subsetting-api';
 import { DataClient } from '../core/api/data-api';
-import { mockAnalysisStore } from './Mocks';
+import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { AnalysisList } from './AnalysisList';
 import { cx } from './Utils';
@@ -13,6 +15,7 @@ export interface Props {
   studyId: string;
   subsettingServiceUrl: string;
   dataServiceUrl: string;
+  userServiceUrl: string;
 }
 
 export function EDAAnalysisList(props: Props) {
@@ -26,6 +29,10 @@ export function EDAAnalysisList(props: Props) {
     [props.dataServiceUrl]
   );
 
+  const analysisClient: AnalysisClient = useConfiguredAnalysisClient(
+    props.userServiceUrl
+  );
+
   const approvalStatus = useApprovalStatus(props.studyId, 'analysis');
 
   return (
@@ -35,10 +42,10 @@ export function EDAAnalysisList(props: Props) {
         subsettingClient={subsettingClient}
         dataClient={dataClient}
         className={cx()}
-        analysisClient={mockAnalysisStore}
+        analysisClient={analysisClient}
       >
         <EDAWorkspaceHeading />
-        <AnalysisList analysisStore={mockAnalysisStore} />
+        <AnalysisList analysisStore={analysisClient} />
       </EDAAnalysisListContainer>
     </RestrictedPage>
   );

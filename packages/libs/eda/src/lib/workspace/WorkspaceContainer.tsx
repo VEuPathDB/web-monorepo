@@ -10,9 +10,9 @@ import {
   StudyMetadata,
   SubsettingClient,
 } from '../core';
+import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
 import { VariableDescriptor } from '../core/types/variable';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
-import { mockAnalysisStore } from './Mocks';
 import { cx, findFirstVariable } from './Utils';
 import { SavedAnalysis } from './SavedAnalysis';
 import { NewAnalysisPage } from './NewAnalysis';
@@ -22,6 +22,7 @@ interface Props {
   analysisId?: string;
   subsettingServiceUrl: string;
   dataServiceUrl: string;
+  userServiceUrl: string;
 }
 export function WorkspaceContainer(props: Props) {
   const { url } = useRouteMatch();
@@ -33,6 +34,7 @@ export function WorkspaceContainer(props: Props) {
     () => new DataClient({ baseUrl: props.dataServiceUrl }),
     [props.dataServiceUrl]
   );
+  const analysisClient = useConfiguredAnalysisClient(props.userServiceUrl);
   const makeVariableLink = useCallback(
     (
       {
@@ -63,7 +65,7 @@ export function WorkspaceContainer(props: Props) {
       <EDAWorkspaceContainer
         studyId={props.studyId}
         className={cx()}
-        analysisClient={mockAnalysisStore}
+        analysisClient={analysisClient}
         dataClient={dataClient}
         subsettingClient={subsettingClient}
         makeVariableLink={makeVariableLink}

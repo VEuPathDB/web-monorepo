@@ -1,8 +1,12 @@
 import { omit } from 'lodash';
 import { act, renderHook } from '@testing-library/react-hooks';
+import { computeSummaryCounts } from '../../Mocks';
 import { useAnalysis, Status } from '../../hooks/analysis';
-import { Analysis, NewAnalysis } from '../../types/analysis';
-import { AnalysisClient } from '../../api/analysis-api';
+import { Analysis, NewAnalysis, makeNewAnalysis } from '../../types/analysis';
+import {
+  AnalysisClient,
+  SingleAnalysisPatchRequest,
+} from '../../api/analysis-api';
 import { DataClient } from '../../api/data-api';
 import {
   StudyMetadata,
@@ -12,42 +16,51 @@ import {
 } from '../..';
 import { SubsettingClient } from '../../api/subsetting-api';
 
-const stubAnalysis: NewAnalysis = {
-  name: 'My Analysis',
-  studyId: '123',
-  filters: [],
-  derivedVariables: [],
-  starredVariables: [],
-  variableUISettings: {},
-  visualizations: [],
-  computations: [],
-};
-
 const key = '123';
+
+const stubAnalysis: NewAnalysis = makeNewAnalysis(key);
 
 let records: Record<string, Analysis>;
 let nextId: number;
 
 const analysisClient: AnalysisClient = {
   async getAnalyses() {
-    return Object.values(records);
+    return Object.values(records).map(
+      ({ descriptor, ...analysisSummary }) => analysisSummary
+    );
   },
   async getAnalysis(id: string) {
     if (id in records) return records[id];
     throw new Error('Could not find analysis for id ' + id);
   },
   async createAnalysis(newAnalysis: NewAnalysis) {
-    const id = String(nextId++);
-    records[id] = {
+    const analysisId = String(nextId++);
+    records[analysisId] = {
       ...newAnalysis,
-      id,
-      created: new Date().toISOString(),
-      modified: new Date().toISOString(),
+      ...computeSummaryCounts(newAnalysis.descriptor),
+      analysisId,
+      creationTime: new Date().toISOString(),
+      modificationTime: new Date().toISOString(),
     };
-    return { id };
+    return { analysisId };
   },
-  async updateAnalysis(analysis: Analysis) {
-    records[analysis.id] = analysis;
+  async updateAnalysis(
+    analysisId: string,
+    analysisPatch: SingleAnalysisPatchRequest
+  ) {
+    if (!(analysisId in records))
+      throw new Error(
+        'Tried to update a nonexistent analysis with id ' + analysisId
+      );
+
+    records[analysisId] = {
+      ...records[analysisId],
+      ...analysisPatch,
+      ...(analysisPatch.descriptor == null
+        ? {}
+        : computeSummaryCounts(analysisPatch.descriptor)),
+      modificationTime: new Date().toISOString(),
+    };
   },
   async deleteAnalysis(id: string) {
     delete records[id];
@@ -70,12 +83,15 @@ const wrapper: React.ComponentType = ({ children }) => (
 );
 
 beforeEach(() => {
+  const now = new Date().toISOString();
+
   records = {
     123: {
       ...stubAnalysis,
-      id: key,
-      created: new Date().toISOString(),
-      modified: new Date().toISOString(),
+      ...computeSummaryCounts(stubAnalysis.descriptor),
+      analysisId: key,
+      creationTime: now,
+      modificationTime: now,
     },
   };
   nextId = 1;
@@ -102,7 +118,7 @@ describe('useAnalysis', () => {
     const { result, waitFor } = render();
     await waitFor(() => result.current.status === Status.Loaded);
     expect(result.current.analysis).toBeDefined();
-    expect(result.current.analysis?.name).toBe('My Analysis');
+    expect(result.current.analysis?.displayName).toBe('My Analysis');
   });
 
   it('should allow updates', async () => {
@@ -111,7 +127,7 @@ describe('useAnalysis', () => {
     act(() => {
       result.current.setName('New Name');
     });
-    expect(result.current.analysis?.name).toBe('New Name');
+    expect(result.current.analysis?.displayName).toBe('New Name');
   });
 
   it('should update store on save', async () => {
@@ -121,8 +137,8 @@ describe('useAnalysis', () => {
     expect(result.current.hasUnsavedChanges).toBeTruthy();
     await act(() => result.current.saveAnalysis());
     const analyses = await analysisClient.getAnalyses();
-    const analysis = analyses.find((analysis) => analysis.id === key);
-    expect(analysis?.name).toBe('New Name');
+    const analysis = analyses.find((analysis) => analysis.analysisId === key);
+    expect(analysis?.displayName).toBe('New Name');
     expect(result.current.hasUnsavedChanges).toBeFalsy();
   });
 
@@ -131,9 +147,11 @@ describe('useAnalysis', () => {
     await waitFor(() => result.current.status === Status.Loaded);
     const res = await result.current.copyAnalysis();
     const analyses = await analysisClient.getAnalyses();
-    const newAnalysis = analyses.find((analysis) => analysis.id === res.id);
-    expect(omit(result.current.analysis, 'id')).toEqual(
-      omit(newAnalysis, 'id')
+    const newAnalysis = analyses.find(
+      (analysis) => analysis.analysisId === res.analysisId
+    );
+    expect(omit(result.current.analysis, 'analysisId')).toEqual(
+      omit(newAnalysis, 'analysisId')
     );
     expect(result.current.analysis).not.toBe(newAnalysis);
   });
@@ -143,7 +161,7 @@ describe('useAnalysis', () => {
     await waitFor(() => result.current.status === Status.Loaded);
     await result.current.deleteAnalysis();
     const analyses = await analysisClient.getAnalyses();
-    const analysis = analyses.find((analysis) => analysis.id === key);
+    const analysis = analyses.find((analysis) => analysis.analysisId === key);
     expect(analysis).toBeUndefined();
   });
 });

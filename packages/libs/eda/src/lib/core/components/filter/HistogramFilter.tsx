@@ -77,7 +77,7 @@ export function HistogramFilter(props: Props) {
     totalEntityCount,
   } = props;
   const { setFilters } = analysisState;
-  const filters = analysisState.analysis?.filters;
+  const filters = analysisState.analysis?.descriptor.subset.descriptor;
   const uiStateKey = `${entity.id}/${variable.id}`;
 
   // compute default independent range from meta-data based util
@@ -112,12 +112,15 @@ export function HistogramFilter(props: Props) {
     };
   }, [variable]);
 
+  const variableUISettings =
+    analysisState.analysis?.descriptor.subset.uiSettings;
+
   const uiState = useMemo(() => {
     return pipe(
-      UIState.decode(analysisState.analysis?.variableUISettings[uiStateKey]),
+      UIState.decode(variableUISettings?.[uiStateKey]),
       getOrElse((): UIState => defaultUIState)
     );
-  }, [analysisState.analysis?.variableUISettings, uiStateKey, defaultUIState]);
+  }, [variableUISettings, uiStateKey, defaultUIState]);
   const subsettingClient = useSubsettingClient();
   const getData = useCallback(
     async (
@@ -133,7 +136,7 @@ export function HistogramFilter(props: Props) {
         {
           entityId: entity.id,
           variableId: variable.id,
-          filters: analysisState.analysis?.filters,
+          filters,
         },
         (filters) => {
           return subsettingClient.getDistribution(
@@ -205,7 +208,7 @@ export function HistogramFilter(props: Props) {
       };
     },
     [
-      analysisState.analysis?.filters,
+      filters,
       entity.displayName,
       entity.displayNamePlural,
       entity.id,
