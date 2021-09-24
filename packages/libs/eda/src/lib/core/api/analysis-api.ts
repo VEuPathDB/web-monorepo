@@ -4,6 +4,7 @@ import { memoize, pick } from 'lodash';
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import {
+  ApiRequest,
   FetchApiOptions,
   FetchClient,
   createJsonRequest,
@@ -37,12 +38,26 @@ export class AnalysisClient extends FetchClient {
     super(options);
   }
 
+  protected async fetch<T>(apiRequest: ApiRequest<T>): Promise<T> {
+    const apiRequestWithAuth: ApiRequest<T> = {
+      ...apiRequest,
+      headers: {
+        ...(apiRequest.headers ?? {}),
+        'Auth-Key': (await this.userRequestMetadata$).authKey,
+      },
+    };
+
+    return super.fetch(apiRequestWithAuth);
+  }
+
+  private readonly userRequestMetadata$ = this.fetchUserRequestMetadata();
+
   private async fetchUserRequestMetadata() {
     const user = await this.wdkService.getCurrentUser();
 
     return {
       userPath: `/users/${user.id}`,
-      authHeaders: { 'Auth-Key': this.findUserRequestAuthKey(user) },
+      authKey: this.findUserRequestAuthKey(user),
     };
   }
 
@@ -65,24 +80,22 @@ export class AnalysisClient extends FetchClient {
   }
 
   async getPreferences(): Promise<AnalysisPreferences> {
-    const { userPath, authHeaders } = await this.fetchUserRequestMetadata();
+    const { userPath } = await this.userRequestMetadata$;
 
     return this.fetch(
       createJsonRequest({
         path: `${userPath}/preferences`,
-        headers: authHeaders,
         method: 'GET',
         transformResponse: ioTransformer(AnalysisPreferences),
       })
     );
   }
   async setPreferences(preferences: AnalysisPreferences): Promise<void> {
-    const { userPath, authHeaders } = await this.fetchUserRequestMetadata();
+    const { userPath } = await this.userRequestMetadata$;
 
     return this.fetch(
       createJsonRequest({
         path: `${userPath}/preferences`,
-        headers: authHeaders,
         method: 'PUT',
         body: preferences,
         transformResponse: ioTransformer(voidType),
@@ -90,31 +103,29 @@ export class AnalysisClient extends FetchClient {
     );
   }
   async getAnalyses(): Promise<AnalysisSummary[]> {
-    const { userPath, authHeaders } = await this.fetchUserRequestMetadata();
+    const { userPath } = await this.userRequestMetadata$;
 
     return this.fetch(
       createJsonRequest({
         path: `${userPath}/analyses`,
-        headers: authHeaders,
         method: 'GET',
         transformResponse: ioTransformer(array(AnalysisSummary)),
       })
     );
   }
   async getAnalysis(analysisId: string): Promise<Analysis> {
-    const { userPath, authHeaders } = await this.fetchUserRequestMetadata();
+    const { userPath } = await this.userRequestMetadata$;
 
     return this.fetch(
       createJsonRequest({
         path: `${userPath}/analyses/${analysisId}`,
-        headers: authHeaders,
         method: 'GET',
         transformResponse: ioTransformer(Analysis),
       })
     );
   }
   async createAnalysis(analysis: NewAnalysis): Promise<{ analysisId: string }> {
-    const { userPath, authHeaders } = await this.fetchUserRequestMetadata();
+    const { userPath } = await this.userRequestMetadata$;
 
     const body: NewAnalysis = pick(analysis, [
       'displayName',
@@ -129,7 +140,6 @@ export class AnalysisClient extends FetchClient {
     return this.fetch(
       createJsonRequest({
         path: `${userPath}/analyses`,
-        headers: authHeaders,
         method: 'POST',
         body,
         transformResponse: ioTransformer(type({ analysisId: string })),
@@ -140,7 +150,7 @@ export class AnalysisClient extends FetchClient {
     analysisId: string,
     analysisPatch: SingleAnalysisPatchRequest
   ): Promise<void> {
-    const { userPath, authHeaders } = await this.fetchUserRequestMetadata();
+    const { userPath } = await this.userRequestMetadata$;
 
     const body: SingleAnalysisPatchRequest = pick(analysisPatch, [
       'displayName',
@@ -152,7 +162,6 @@ export class AnalysisClient extends FetchClient {
     return this.fetch(
       createJsonRequest({
         path: `${userPath}/analyses/${analysisId}`,
-        headers: authHeaders,
         method: 'PATCH',
         body,
         transformResponse: ioTransformer(voidType),
@@ -160,22 +169,20 @@ export class AnalysisClient extends FetchClient {
     );
   }
   async deleteAnalysis(analysisId: string): Promise<void> {
-    const { userPath, authHeaders } = await this.fetchUserRequestMetadata();
+    const { userPath } = await this.userRequestMetadata$;
 
     return this.fetch({
       path: `${userPath}/analyses/${analysisId}`,
-      headers: authHeaders,
       method: 'DELETE',
       transformResponse: ioTransformer(voidType),
     });
   }
   async deleteAnalyses(analysisIds: Iterable<string>): Promise<void> {
-    const { userPath, authHeaders } = await this.fetchUserRequestMetadata();
+    const { userPath } = await this.userRequestMetadata$;
 
     return this.fetch(
       createJsonRequest({
         path: `${userPath}/analyses`,
-        headers: authHeaders,
         method: 'PATCH',
         body: {
           analysisIdsToDelete: [...analysisIds],
