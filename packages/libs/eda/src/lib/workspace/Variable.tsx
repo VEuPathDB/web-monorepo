@@ -6,11 +6,13 @@ import {
   useStudyMetadata,
   Variable,
   MultiFilterVariable,
+  VariableTreeNode,
 } from '../core';
 import { FilterContainer } from '../core/components/filter/FilterContainer';
 import { cx } from './Utils';
 // import axis label unit util
 import { axisLabelWithUnit } from '../core/utils/axis-label-unit';
+import { groupBy } from 'lodash';
 
 interface Props {
   entity: StudyEntity;
@@ -37,7 +39,18 @@ export function VariableDetails(props: Props) {
           <div className={cx('-ProviderLabelPrefix')}>
             Original variable name:
           </div>
-          &nbsp;{variable.providerLabel}&nbsp;
+          &nbsp;
+          {MultiFilterVariable.is(variable)
+            ? findMultifilterVariableLeaves(
+                variable,
+                groupBy(entity.variables, (variable) => variable.parentId)
+              ).map((variable) => (
+                <div key={variable.id}>
+                  {variable.displayName}: {variable.providerLabel};&nbsp;
+                </div>
+              ))
+            : variable.providerLabel}
+          &nbsp;
           <HelpIcon>
             The name for this variable as provided with the original study's
             data set. The VEuPathDB team curates variable names and places
@@ -61,5 +74,21 @@ export function VariableDetails(props: Props) {
         />
       ) : null}
     </ErrorBoundary>
+  );
+}
+
+function findMultifilterVariableLeaves(
+  variable: MultiFilterVariable,
+  variablesByParentId: Record<string, VariableTreeNode[] | undefined>
+): Variable[] {
+  if (variable.parentId == null) return [];
+  const variables = variablesByParentId[variable.id] ?? [];
+  for (const child of variables) {
+    for (const grandchild of variablesByParentId[child.id] ?? []) {
+      if (grandchild) variables.push(grandchild);
+    }
+  }
+  return variables.filter(
+    (variable): variable is Variable => variable.type !== 'category'
   );
 }
