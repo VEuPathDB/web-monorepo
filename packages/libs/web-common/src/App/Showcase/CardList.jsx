@@ -31,6 +31,7 @@ export default function CardList(props) {
     filtersLabel = 'category',
     isExpandable,
     tableViewLink,
+    tableViewLinkText = 'Table view',
     contentNamePlural,
     getSearchStringForItem = () => '',
     matchPredicate = defaultMatchPredicate
@@ -142,7 +143,7 @@ export default function CardList(props) {
       onChange={option => setCategoryFilter(option && option.value)}
     />
   const tableLink = tableViewLink &&
-    <Link to={tableViewLink} className={ALLSTUDIES_LINK_CLASS_NAME} title="View content as a table"><i className="fa fa-th-list" aria-hidden="true"></i> Table view</Link>
+    <Link to={tableViewLink} className={ALLSTUDIES_LINK_CLASS_NAME} title="View content as a table"><i className="ebrc-icon-table" aria-hidden="true"></i> {tableViewLinkText}</Link>
 
   return (
     <div className={className}>
