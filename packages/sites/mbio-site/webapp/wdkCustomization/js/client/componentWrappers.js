@@ -83,6 +83,7 @@ function getHomeContent({ studies, searches, visualizations }) {
       isLoading: studies.loading,
       isExpandable: true,
       tableViewLink: '/search/dataset/Studies/result',
+      tableViewLinkText: 'Study summaries table',
       cardComponent: StudyCard,
       getSearchStringForItem: item => 
         item.searchString,
