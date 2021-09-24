@@ -20,6 +20,7 @@ export type StudyRecord = RecordInstance;
 export const VariableType = t.keyof({
   string: null,
   number: null,
+  integer: null,
   date: null,
   longitude: null,
 });
@@ -85,11 +86,17 @@ export const StringVariable = t.intersection([
 export type NumberVariable = t.TypeOf<typeof NumberVariable>;
 export const NumberVariable = t.intersection([
   Variable_Base,
-  t.type({
-    type: t.literal('number'),
-    units: t.string,
-    precision: t.number,
-  }),
+  t.union([
+    t.type({
+      type: t.literal('number'),
+      units: t.string,
+      precision: t.number,
+    }),
+    t.type({
+      type: t.literal('integer'),
+      units: t.string,
+    }),
+  ]),
   t.union([
     t.type({
       dataShape: CategoryVariableDataShape,

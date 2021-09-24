@@ -1,4 +1,5 @@
 import { Filter } from '../../types/filter';
+import { VariableDescriptor } from '../../types/variable';
 import {
   Computation,
   DataElementConstraint,
@@ -17,8 +18,8 @@ export interface VisualizationProps {
   updateThumbnail: (source: string) => void;
   computation: Computation;
   filters?: Filter[];
-  starredVariables: string[];
-  toggleStarredVariable: (targetVariableId: string) => void;
+  starredVariables: VariableDescriptor[];
+  toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
 }
 
 export type SelectorProps = VisualizationOverview;

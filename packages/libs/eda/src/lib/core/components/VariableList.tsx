@@ -42,6 +42,7 @@ import { Tooltip } from '@material-ui/core';
 import { HtmlTooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 // import ShowHideVariableContext
+import { VariableDescriptor } from '../types/variable';
 import { ShowHideVariableContext } from '../utils/show-hide-variable-context';
 
 //defining types - some are not used (need cleanup later)
@@ -83,8 +84,8 @@ interface VariableListProps {
   valuesMap: valuesMapType;
   fieldTree: VariableFieldTreeNode;
   autoFocus: boolean;
-  starredVariables?: string[];
-  toggleStarredVariable: (targetVariableId: string) => void;
+  starredVariables?: VariableDescriptor[];
+  toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
   disabledFieldIds?: string[];
   customDisabledVariableMessage?: string;
   featuredFields: VariableField[];
@@ -199,13 +200,13 @@ export default function VariableList(props: VariableListProps) {
     [getFieldSearchString]
   );
 
-  const availableVariables = useMemo(() => {
-    const availableVariablesArray = preorderSeq(fieldTree)
+  const availableVariableTerms = useMemo(() => {
+    const availableVariableTermsArray = preorderSeq(fieldTree)
       .filter((node) => isFilterField(node.field))
-      .map((node) => node.field.term.split('/')[1])
+      .map((node) => node.field.term)
       .toArray();
 
-    return new Set(availableVariablesArray);
+    return new Set(availableVariableTermsArray);
   }, [fieldTree]);
 
   const starredVariablesLoading = starredVariables == null;
@@ -215,27 +216,28 @@ export default function VariableList(props: VariableListProps) {
     false
   );
 
-  // make visibleStarredVariables state be used at MyVariable
-  const [visibleStarredVariables, setVisibleStarredVariables] = useState<
-    string[]
-  >([]);
+  // make visibleStarredVariableTerms state be used at MyVariable
+  const [
+    visibleStarredVariableTerms,
+    setVisibleStarredVariableTerms,
+  ] = useState<string[]>([]);
 
-  const starredVariablesSet = useMemo(() => {
-    const presentStarredVariables = starredVariables?.filter((variableId) =>
-      availableVariables.has(variableId)
-    );
+  const starredVariableTermsSet = useMemo(() => {
+    const presentStarredVariableTerms = starredVariables
+      ?.map(({ entityId, variableId }) => `${entityId}/${variableId}`)
+      .filter((variableTerm) => availableVariableTerms.has(variableTerm));
 
-    return new Set(presentStarredVariables);
-  }, [availableVariables, starredVariables]);
+    return new Set(presentStarredVariableTerms);
+  }, [availableVariableTerms, starredVariables]);
 
   // this will be used for MyVariable instead of starredVariableSet
-  const visibleStarredVariablesSet = useMemo(() => {
-    const presentStarredVariables = visibleStarredVariables?.filter(
-      (variableId) => availableVariables.has(variableId)
+  const visibleStarredVariableTermsSet = useMemo(() => {
+    const presentStarredVariableTerms = visibleStarredVariableTerms?.filter(
+      (variableTerm) => availableVariableTerms.has(variableTerm)
     );
 
-    return new Set(presentStarredVariables);
-  }, [availableVariables, visibleStarredVariables]);
+    return new Set(presentStarredVariableTerms);
+  }, [availableVariableTerms, visibleStarredVariableTerms]);
 
   const disabledFields = useMemo(() => new Set(disabledFieldIds), [
     disabledFieldIds,
@@ -243,7 +245,8 @@ export default function VariableList(props: VariableListProps) {
 
   const renderNode = useCallback(
     (node: FieldTreeNode) => {
-      const [, variableId] = node.field.term.split('/');
+      const fieldTerm = node.field.term;
+      const [entityId, variableId] = fieldTerm.split('/');
 
       return (
         <FieldNode
@@ -256,9 +259,9 @@ export default function VariableList(props: VariableListProps) {
           //add activefieldEntity prop (parent entity obtained from activeField)
           //alternatively, send activeField and isActive is directly checked at FieldNode
           activeFieldEntity={activeFieldEntity}
-          isStarred={starredVariablesSet.has(variableId)}
+          isStarred={starredVariableTermsSet.has(fieldTerm)}
           starredVariablesLoading={starredVariablesLoading}
-          onClickStar={() => toggleStarredVariable(variableId)}
+          onClickStar={() => toggleStarredVariable({ entityId, variableId })}
           scrollIntoView
         />
       );
@@ -270,18 +273,21 @@ export default function VariableList(props: VariableListProps) {
       handleFieldSelect,
       searchTerm,
       starredVariablesLoading,
-      starredVariablesSet,
+      starredVariableTermsSet,
       toggleStarredVariable,
     ]
   );
 
   const toggleShowOnlyStarredVariables = useCallback(() => {
     setShowOnlyStarredVariables((oldValue) => !oldValue);
-    setVisibleStarredVariables(starredVariables ?? []);
+    const newVisibleStarredVariableTerms = starredVariables?.map(
+      ({ entityId, variableId }) => `${entityId}/${variableId}`
+    );
+    setVisibleStarredVariableTerms(newVisibleStarredVariableTerms ?? []);
   }, [starredVariables]);
 
   const starredVariableToggleDisabled =
-    !showOnlyStarredVariables && starredVariablesSet.size === 0;
+    !showOnlyStarredVariables && starredVariableTermsSet.size === 0;
 
   const additionalFilters = useMemo(
     () => [
@@ -325,7 +331,7 @@ export default function VariableList(props: VariableListProps) {
             (node) =>
               node.children.length > 0 ||
               // visibleStarredVariablesSet is used for MyVariable instead of starredVariableSet
-              visibleStarredVariablesSet.has(node.field.term.split('/')[1]),
+              visibleStarredVariableTermsSet.has(node.field.term),
             fieldTree
           );
     return showOnlyCompatibleVariables
@@ -340,7 +346,7 @@ export default function VariableList(props: VariableListProps) {
     starredVariableToggleDisabled,
     fieldTree,
     showOnlyCompatibleVariables,
-    visibleStarredVariablesSet,
+    visibleStarredVariableTermsSet,
     disabledFields,
   ]);
 
@@ -416,7 +422,7 @@ export default function VariableList(props: VariableListProps) {
               {allowedFeaturedFields.map((field) => {
                 const isActive = field.term === activeField?.term;
                 const isDisabled = disabledFields.has(field.term);
-                const variableId = field.term.split('/')[1];
+                const [entityId, variableId] = field.term.split('/');
                 return (
                   <li
                     key={field.term}
@@ -432,9 +438,11 @@ export default function VariableList(props: VariableListProps) {
                         }
                         searchTerm=""
                         handleFieldSelect={handleFieldSelect}
-                        isStarred={starredVariablesSet.has(variableId)}
+                        isStarred={starredVariableTermsSet.has(field.term)}
                         starredVariablesLoading={starredVariablesLoading}
-                        onClickStar={() => toggleStarredVariable(variableId)}
+                        onClickStar={() =>
+                          toggleStarredVariable({ entityId, variableId })
+                        }
                         scrollIntoView={false}
                       />
                     </div>

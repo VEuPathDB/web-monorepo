@@ -3,7 +3,6 @@ import {
   BarplotData,
   BoxplotData,
 } from '@veupathdb/components/lib/types/plots';
-import { gray } from '../components/visualizations/colors';
 import { CoverageStatistics } from '../types/visualization';
 
 export function vocabularyWithMissingData(

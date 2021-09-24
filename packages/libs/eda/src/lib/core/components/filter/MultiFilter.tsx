@@ -18,7 +18,6 @@ import {
   StudyMetadata,
 } from '../../types/study';
 import {
-  edaVariableToWdkField,
   entitiesToFields,
   fromEdaFilter,
   makeFieldTree,
@@ -160,20 +159,22 @@ export function MultiFilter(props: Props) {
     _thisFilter,
   ]);
 
+  const filters = analysisState.analysis?.descriptor.subset.descriptor;
+
   // Use a JSON string here so that we don't udpate counts for every render.
   // array.filter will always return a _new_ array, but strings are immutable,
   // so this trick will cause same-valued arrays to be referentially equal.
   const otherFiltersJson = useMemo(
     () =>
       JSON.stringify(
-        analysisState.analysis?.filters.filter(
+        filters?.filter(
           (filter) =>
             !(
               filter.entityId === entity.id && filter.variableId === variable.id
             )
         )
       ),
-    [analysisState.analysis?.filters, entity.id, variable.id]
+    [filters, entity.id, variable.id]
   );
 
   // State used to control if the "Update counts" button is disabled.
@@ -329,10 +330,7 @@ export function MultiFilter(props: Props) {
   );
 
   // Convert EDA filters to WDK filters.
-  const wdkFilters = useMemo(
-    () => analysisState.analysis?.filters.map(fromEdaFilter),
-    [analysisState.analysis?.filters]
-  );
+  const wdkFilters = useMemo(() => filters?.map(fromEdaFilter), [filters]);
 
   // Prevent table from displaying "no data" message
   if (leafSummariesPromise.pending && leafSummariesPromise.value == null)
@@ -390,7 +388,7 @@ function findThisFilter(
   entity: StudyEntity,
   variable: MultiFilterVariable
 ): MultiFilterType | undefined {
-  return analysisState.analysis?.filters.find(
+  return analysisState.analysis?.descriptor.subset.descriptor.find(
     (filter): filter is MultiFilterType =>
       filter.entityId === entity.id &&
       filter.variableId === variable.id &&

@@ -29,7 +29,7 @@ import { usePromise } from '../../hooks/promise';
 import { AnalysisState } from '../../hooks/analysis';
 import { useSubsettingClient } from '../../hooks/workspace';
 import { DateRangeFilter, NumberRangeFilter } from '../../types/filter';
-import { StudyEntity, StudyMetadata } from '../../types/study';
+import { NumberVariable, StudyEntity, StudyMetadata } from '../../types/study';
 import { TimeUnit, NumberOrDateRange, NumberRange } from '../../types/general';
 import { gray, red } from './colors';
 import { HistogramVariable } from './types';
@@ -77,7 +77,7 @@ export function HistogramFilter(props: Props) {
     totalEntityCount,
   } = props;
   const { setFilters } = analysisState;
-  const filters = analysisState.analysis?.filters;
+  const filters = analysisState.analysis?.descriptor.subset.descriptor;
   const uiStateKey = `${entity.id}/${variable.id}`;
 
   // compute default independent range from meta-data based util
@@ -92,7 +92,7 @@ export function HistogramFilter(props: Props) {
       dependentAxisLogScale: false,
     };
 
-    if (variable.type === 'number')
+    if (NumberVariable.is(variable))
       return {
         binWidth: variable.binWidthOverride ?? variable.binWidth ?? 0.1,
         binWidthTimeUnit: undefined,
@@ -112,12 +112,15 @@ export function HistogramFilter(props: Props) {
     };
   }, [variable]);
 
+  const variableUISettings =
+    analysisState.analysis?.descriptor.subset.uiSettings;
+
   const uiState = useMemo(() => {
     return pipe(
-      UIState.decode(analysisState.analysis?.variableUISettings[uiStateKey]),
+      UIState.decode(variableUISettings?.[uiStateKey]),
       getOrElse((): UIState => defaultUIState)
     );
-  }, [analysisState.analysis?.variableUISettings, uiStateKey, defaultUIState]);
+  }, [variableUISettings, uiStateKey, defaultUIState]);
   const subsettingClient = useSubsettingClient();
   const getData = useCallback(
     async (
@@ -133,7 +136,7 @@ export function HistogramFilter(props: Props) {
         {
           entityId: entity.id,
           variableId: variable.id,
-          filters: analysisState.analysis?.filters,
+          filters,
         },
         (filters) => {
           return subsettingClient.getDistribution(
@@ -171,18 +174,17 @@ export function HistogramFilter(props: Props) {
           variable.type
         ),
       ];
-      const binWidth: NumberOrTimeDelta =
-        variable.type === 'number'
-          ? dataParams.binWidth
-          : {
-              value: dataParams.binWidth,
-              unit: dataParams.binWidthTimeUnit ?? 'year',
-            };
+      const binWidth: NumberOrTimeDelta = NumberVariable.is(variable)
+        ? dataParams.binWidth
+        : {
+            value: dataParams.binWidth,
+            unit: dataParams.binWidthTimeUnit ?? 'year',
+          };
       const { min, max, step } = computeBinSlider(
         variable.type,
         dataParams.independentAxisRange
       );
-      const binWidthRange = (variable.type === 'number'
+      const binWidthRange = (NumberVariable.is(variable)
         ? { min, max }
         : {
             min,
@@ -195,7 +197,7 @@ export function HistogramFilter(props: Props) {
         distribution.background.statistics.numDistinctEntityRecords;
 
       return {
-        valueType: variable.type,
+        valueType: NumberVariable.is(variable) ? 'number' : 'date',
         series,
         binWidth,
         binWidthRange,
@@ -206,7 +208,7 @@ export function HistogramFilter(props: Props) {
       };
     },
     [
-      analysisState.analysis?.filters,
+      filters,
       entity.displayName,
       entity.displayNamePlural,
       entity.id,
@@ -780,6 +782,7 @@ function computeBinSlider(
     case 'date': {
       return { min: 1, max: 60, step: 1 };
     }
+    case 'integer':
     case 'number': {
       const { min: rangeMin, max: rangeMax } = range as NumberRange;
       const rangeSize = Math.round((rangeMax - rangeMin) * 100) / 100;

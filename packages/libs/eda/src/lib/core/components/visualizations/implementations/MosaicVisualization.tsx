@@ -139,10 +139,10 @@ function MosaicViz(props: Props) {
 
   const vizConfig = useMemo(() => {
     return pipe(
-      MosaicConfig.decode(visualization.configuration),
+      MosaicConfig.decode(visualization.descriptor.configuration),
       getOrElse((): t.TypeOf<typeof MosaicConfig> => createDefaultConfig())
     );
-  }, [visualization.configuration]);
+  }, [visualization.descriptor.configuration]);
 
   const updateVizConfig = useCallback(
     (newConfig: Partial<MosaicConfig>) => {
@@ -210,7 +210,10 @@ function MosaicViz(props: Props) {
       );
 
       if (isTwoByTwo) {
-        const response = dataClient.getTwoByTwo(computation.type, params);
+        const response = dataClient.getTwoByTwo(
+          computation.descriptor.type,
+          params
+        );
 
         return reorderData(
           twoByTwoResponseToData(await response),
@@ -218,7 +221,10 @@ function MosaicViz(props: Props) {
           yAxisVariable.vocabulary
         );
       } else {
-        const response = dataClient.getContTable(computation.type, params);
+        const response = dataClient.getContTable(
+          computation.descriptor.type,
+          params
+        );
 
         return reorderData(
           contTableResponseToData(await response),
@@ -233,7 +239,7 @@ function MosaicViz(props: Props) {
       vizConfig,
       xAxisVariable,
       yAxisVariable,
-      computation.type,
+      computation.descriptor.type,
       isTwoByTwo,
       outputEntity?.id,
     ])
@@ -451,19 +457,25 @@ function MosaicPlotWithControls({
   ...mosaicProps
 }: MosaicPlotWithControlsProps) {
   const displayLibraryControls = false;
-  const ref = useRef<PlotRef>(null);
+
+  const plotRef = useRef<PlotRef>(null);
+
+  const updateThumbnailRef = useRef(updateThumbnail);
+  useEffect(() => {
+    updateThumbnailRef.current = updateThumbnail;
+  });
 
   useEffect(() => {
-    ref.current
+    plotRef.current
       ?.toImage({ format: 'svg', ...plotDimensions })
-      .then(updateThumbnail);
-  }, [updateThumbnail, data]);
+      .then(updateThumbnailRef.current);
+  }, [data]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Mosaic
         {...mosaicProps}
-        ref={ref}
+        ref={plotRef}
         data={data}
         displayLibraryControls={displayLibraryControls}
       />

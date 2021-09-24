@@ -123,10 +123,10 @@ function HistogramViz(props: VisualizationProps) {
 
   const vizConfig = useMemo(() => {
     return pipe(
-      HistogramConfig.decode(visualization.configuration),
+      HistogramConfig.decode(visualization.descriptor.configuration),
       getOrElse((): t.TypeOf<typeof HistogramConfig> => createDefaultConfig())
     );
-  }, [visualization.configuration]);
+  }, [visualization.descriptor.configuration]);
 
   const updateVizConfig = useCallback(
     (newConfig: Partial<HistogramConfig>) => {
@@ -221,7 +221,10 @@ function HistogramViz(props: VisualizationProps) {
         valueType,
         vizConfig
       );
-      const response = dataClient.getHistogram(computation.type, params);
+      const response = dataClient.getHistogram(
+        computation.descriptor.type,
+        params
+      );
       const showMissing = vizConfig.showMissingness && overlayVariable != null;
       return omitEmptyNoDataSeries(
         grayOutLastSeries(
@@ -244,7 +247,7 @@ function HistogramViz(props: VisualizationProps) {
       studyId,
       filters,
       dataClient,
-      computation.type,
+      computation.descriptor.type,
       xAxisVariable,
       overlayVariable,
     ])
@@ -398,13 +401,18 @@ function HistogramPlotWithControls({
       ? completeCasesAllVars
       : completeCasesAxesVars;
 
-  const ref = useRef<PlotRef>(null);
+  const plotRef = useRef<PlotRef>(null);
+
+  const updateThumbnailRef = useRef(updateThumbnail);
+  useEffect(() => {
+    updateThumbnailRef.current = updateThumbnail;
+  });
 
   useEffect(() => {
-    ref.current
+    plotRef.current
       ?.toImage({ format: 'svg', ...plotDimensions })
-      .then(updateThumbnail);
-  }, [updateThumbnail, data, histogramProps.dependentAxisLogScale]);
+      .then(updateThumbnailRef.current);
+  }, [data, histogramProps.dependentAxisLogScale]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -418,7 +426,7 @@ function HistogramPlotWithControls({
       >
         <Histogram
           {...histogramProps}
-          ref={ref}
+          ref={plotRef}
           data={data}
           opacity={opacity}
           displayLibraryControls={displayLibraryControls}
@@ -510,14 +518,14 @@ export function histogramResponseToData(
     throw Error(`Expected one or more data series, but got zero`);
 
   const binWidth =
-    type === 'number'
+    type === 'number' || type === 'integer'
       ? response.histogram.config.binSpec.value || 1
       : {
           value: response.histogram.config.binSpec.value || 1,
           unit: response.histogram.config.binSpec.units || 'month',
         };
   const { min, max, step } = response.histogram.config.binSlider;
-  const binWidthRange = (type === 'number'
+  const binWidthRange = (type === 'number' || type === 'integer'
     ? { min, max }
     : {
         min,
@@ -531,18 +539,18 @@ export function histogramResponseToData(
       borderColor: 'white',
       bins: data.value.map((_, index) => ({
         binStart:
-          type === 'number'
+          type === 'number' || type === 'integer'
             ? Number(data.binStart[index])
             : String(data.binStart[index]),
         binEnd:
-          type === 'number'
+          type === 'number' || type === 'integer'
             ? Number(data.binEnd[index])
             : String(data.binEnd[index]),
         binLabel: data.binLabel[index],
         count: data.value[index],
       })),
     })),
-    valueType: type,
+    valueType: type === 'integer' ? 'number' : type,
     binWidth,
     binWidthRange,
     binWidthStep,

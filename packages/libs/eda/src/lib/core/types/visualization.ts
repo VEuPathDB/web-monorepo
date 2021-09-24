@@ -15,21 +15,41 @@ import { VariableDataShape, VariableType } from './study';
 import { CompleteCasesTable } from '../api/data-api';
 
 /**
+ * Metadata for the visualization object stored in user's analysis
+ */
+export type VisualizationDescriptor = TypeOf<typeof VisualizationDescriptor>;
+export const VisualizationDescriptor = intersection([
+  type({
+    type: string,
+    configuration: unknown,
+  }),
+  partial({
+    thumbnail: string,
+  }),
+]);
+
+/**
  * Visualization object stored in user's analysis
  */
 export type Visualization = TypeOf<typeof Visualization>;
 export const Visualization = intersection([
   type({
-    id: string,
-    computationId: string,
-    type: string,
-    configuration: unknown,
+    visualizationId: string,
+    descriptor: VisualizationDescriptor,
   }),
   partial({
     displayName: string,
-    thumbnail: string,
   }),
 ]);
+
+/**
+ * Type and configuration of the app object stored in user's analysis
+ */
+export type ComputationDescriptor = TypeOf<typeof ComputationDescriptor>;
+export const ComputationDescriptor = type({
+  type: string,
+  configuration: unknown,
+});
 
 /**
  * App object stored in user's analysis
@@ -37,9 +57,9 @@ export const Visualization = intersection([
 export type Computation = TypeOf<typeof Computation>;
 export const Computation = intersection([
   type({
-    id: string,
-    type: string,
-    configuration: unknown,
+    computationId: string,
+    descriptor: ComputationDescriptor,
+    visualizations: array(Visualization),
   }),
   partial({
     displayName: string,
