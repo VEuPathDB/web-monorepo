@@ -29,6 +29,8 @@ export type AnalysisState = {
   undo: () => void;
   redo: () => void;
   setName: Setter<Analysis['displayName']>;
+  setDescription: Setter<Analysis['description']>;
+  setIsPublic: Setter<Analysis['isPublic']>;
   setFilters: Setter<Analysis['descriptor']['subset']['descriptor']>;
   setComputations: Setter<Analysis['descriptor']['computations']>;
   setDerivedVariables: Setter<Analysis['descriptor']['derivedVariables']>;
@@ -111,6 +113,8 @@ export function useAnalysis(analysisId: string): AnalysisState {
     );
 
   const setName = useSetter(analysisToNameLens);
+  const setDescription = useSetter(analysisToDescriptionLens);
+  const setIsPublic = useSetter(analysisToIsPublicLens);
   const setFilters = useSetter(analysisToFiltersLens);
   const setComputations = useSetter(analysisToComputationsLens);
   const setDerivedVariables = useSetter(analysisToDerivedVariablesLens);
@@ -153,6 +157,8 @@ export function useAnalysis(analysisId: string): AnalysisState {
     redo,
     undo,
     setName,
+    setDescription,
+    setIsPublic,
     setFilters,
     setComputations,
     setDerivedVariables,
@@ -286,6 +292,8 @@ export function usePinnedAnalyses(analysisClient: AnalysisClient) {
 }
 
 const analysisToNameLens = Lens.fromProp<Analysis>()('displayName');
+const analysisToDescriptionLens = Lens.fromProp<Analysis>()('description');
+const analysisToIsPublicLens = Lens.fromProp<Analysis>()('isPublic');
 const analysisToFiltersLens = Lens.fromPath<Analysis>()([
   'descriptor',
   'subset',
