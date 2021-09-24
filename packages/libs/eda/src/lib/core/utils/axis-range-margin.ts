@@ -1,7 +1,7 @@
 import * as DateMath from 'date-arithmetic';
 import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
 
-export function independentAxisRangeMargin(
+export function axisRangeMargin(
   axisRange?: NumberOrDateRange | undefined,
   valueType?: string | undefined
 ): NumberOrDateRange | undefined {

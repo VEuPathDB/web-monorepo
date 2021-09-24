@@ -264,17 +264,31 @@ export function MultiFilter(props: Props) {
   );
 
   // Update analysis filter - need to convert from WDK to EDA filter.
-  const handleFiltereChange = useCallback(
+  const handleFilterChange = useCallback(
     (nextFilters: WdkFilter[]) => {
+      console.log(nextFilters);
       const edaFilters = nextFilters
-        // this is needed because MultiFieldFilter will create subFilters with an
+        // the next two operations are needed because MultiFieldFilter will create subFilters with an
         // empty set of values, which does not work w/ eda
+        // first exclude all-empty filters
         .filter(
           (filter) =>
             filter.type !== 'multiFilter' ||
-            filter.value.filters.every(
-              (subFilter) => subFilter.value.length > 0
-            )
+            filter.value.filters.some((subFilter) => subFilter.value.length > 0)
+        )
+        // then remove individual subFilters that are empty
+        .map((filter) =>
+          filter.type !== 'multiFilter'
+            ? filter
+            : {
+                ...filter,
+                value: {
+                  ...filter.value,
+                  filters: filter.value.filters.filter(
+                    (subFilter) => subFilter.value.length > 0
+                  ),
+                },
+              }
         )
         .map((filter) => toEdaFilter(filter, entity.id));
       analysisState.setFilters(edaFilters);
@@ -334,7 +348,7 @@ export function MultiFilter(props: Props) {
         activeField={activeField}
         activeFieldState={activeFieldState}
         fieldTree={fieldTree}
-        onFiltersChange={handleFiltereChange}
+        onFiltersChange={handleFilterChange}
         onMemberSort={onMemberSort}
         onMemberSearch={onMemberSearch}
         fillBarColor={gray}

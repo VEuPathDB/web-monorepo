@@ -518,14 +518,14 @@ export function histogramResponseToData(
     throw Error(`Expected one or more data series, but got zero`);
 
   const binWidth =
-    type === 'number'
+    type === 'number' || type === 'integer'
       ? response.histogram.config.binSpec.value || 1
       : {
           value: response.histogram.config.binSpec.value || 1,
           unit: response.histogram.config.binSpec.units || 'month',
         };
   const { min, max, step } = response.histogram.config.binSlider;
-  const binWidthRange = (type === 'number'
+  const binWidthRange = (type === 'number' || type === 'integer'
     ? { min, max }
     : {
         min,
@@ -539,18 +539,18 @@ export function histogramResponseToData(
       borderColor: 'white',
       bins: data.value.map((_, index) => ({
         binStart:
-          type === 'number'
+          type === 'number' || type === 'integer'
             ? Number(data.binStart[index])
             : String(data.binStart[index]),
         binEnd:
-          type === 'number'
+          type === 'number' || type === 'integer'
             ? Number(data.binEnd[index])
             : String(data.binEnd[index]),
         binLabel: data.binLabel[index],
         count: data.value[index],
       })),
     })),
-    valueType: type,
+    valueType: type === 'integer' ? 'number' : type,
     binWidth,
     binWidthRange,
     binWidthStep,

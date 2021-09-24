@@ -50,7 +50,7 @@ import { XYPlotData } from '@veupathdb/components/lib/types/plots';
 import { CoverageStatistics } from '../../../types/visualization';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
-import { StudyEntity } from '../../../types/study';
+import { NumberVariable, StudyEntity } from '../../../types/study';
 import { vocabularyWithMissingData } from '../../../utils/analysis';
 import { gray } from '../colors';
 import {
@@ -59,8 +59,10 @@ import {
 } from '@veupathdb/components/lib/types/plots/addOns';
 // import variable's metadata-based independent axis range utils
 import { defaultIndependentAxisRange } from '../../../utils/default-independent-axis-range';
-import { independentAxisRangeMargin } from '../../../utils/independent-axis-range-margin';
+import { axisRangeMargin } from '../../../utils/axis-range-margin';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
+// util to find dependent axis range
+import { defaultDependentAxisRange } from '../../../utils/default-dependent-axis-range';
 
 const plotDimensions = {
   width: 750,
@@ -70,8 +72,9 @@ const plotDimensions = {
 // define PromiseXYPlotData
 interface PromiseXYPlotData extends CoverageStatistics {
   dataSetProcess: XYPlotData;
-  yMin: number;
-  yMax: number;
+  // change these types to be compatible with new axis range
+  yMin: number | string | undefined;
+  yMax: number | string | undefined;
 }
 
 // define XYPlotDataResponse
@@ -291,11 +294,25 @@ function ScatterplotViz(props: VisualizationProps) {
       xAxisVariable,
       'scatterplot'
     );
-    return independentAxisRangeMargin(
-      defaultIndependentRange,
-      xAxisVariable?.type
-    );
+    return axisRangeMargin(defaultIndependentRange, xAxisVariable?.type);
   }, [xAxisVariable]);
+
+  // find deependent axis range and its margin
+  const defaultDependentRangeMargin = useMemo(() => {
+    //K set yMinMaxRange using yMin/yMax obtained from processInputData()
+    const yMinMaxRange =
+      data.value != null
+        ? { min: data.value.yMin, max: data.value?.yMax }
+        : undefined;
+
+    const defaultDependentRange = defaultDependentAxisRange(
+      yAxisVariable,
+      'scatterplot',
+      yMinMaxRange
+    );
+
+    return axisRangeMargin(defaultDependentRange, yAxisVariable?.type);
+  }, [data, data.value, yAxisVariable]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -384,9 +401,10 @@ function ScatterplotViz(props: VisualizationProps) {
           dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-Axis'}
           // variable's metadata-based independent axis range with margin
           independentAxisRange={defaultIndependentRangeMargin}
+          // new dependent axis range
           dependentAxisRange={
             data.value && !data.pending
-              ? { min: data.value.yMin, max: data.value.yMax }
+              ? defaultDependentRangeMargin
               : undefined
           }
           // set valueSpec as Raw when yAxisVariable = date
@@ -410,8 +428,12 @@ function ScatterplotViz(props: VisualizationProps) {
               ? ['Smoothed mean with raw', 'Best fit line with raw']
               : []
           }
-          independentValueType={xAxisVariable?.type}
-          dependentValueType={yAxisVariable?.type}
+          independentValueType={
+            NumberVariable.is(xAxisVariable) ? 'number' : 'date'
+          }
+          dependentValueType={
+            NumberVariable.is(yAxisVariable) ? 'number' : 'date'
+          }
           legendTitle={axisLabelWithUnit(overlayVariable)}
         />
         <div className="viz-plot-info">
@@ -964,16 +986,6 @@ function processInputData<T extends number | string>(
     }
     return breakAfterThisSeries(index);
   });
-
-  // make some margin for y-axis range (5% of range for now)
-  if (typeof yMin == 'number' && typeof yMax == 'number') {
-    yMin = yMin - (yMax - yMin) * 0.05;
-    yMax = yMax + (yMax - yMin) * 0.05;
-  } else {
-    // set yMin/yMax to be NaN so that plotly uses autoscale for date type
-    yMin = NaN;
-    yMax = NaN;
-  }
 
   return { dataSetProcess: { series: dataSetProcess }, yMin, yMax };
 }
