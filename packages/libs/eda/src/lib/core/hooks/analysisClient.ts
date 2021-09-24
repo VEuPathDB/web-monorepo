@@ -28,7 +28,7 @@ export function useConfiguredAnalysisClient(
       );
     }
 
-    return wdkCheckAuth;
+    return wdkCheckAuth.replace(/^wdk_check_auth=/, '');
   }, [user]);
 
   return user == null || authKey == null
