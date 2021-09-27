@@ -37,7 +37,8 @@ export function VariableDetails(props: Props) {
         <h3>{axisLabelWithUnit(variable)}</h3>
         <div className={cx('-ProviderLabel')}>
           <div className={cx('-ProviderLabelPrefix')}>
-            Original variable name:
+            Original variable{' '}
+            {MultiFilterVariable.is(variable) ? 'names' : 'name'}:
           </div>
           &nbsp;
           {MultiFilterVariable.is(variable)
@@ -81,11 +82,14 @@ function findMultifilterVariableLeaves(
   variable: MultiFilterVariable,
   variablesByParentId: Record<string, VariableTreeNode[] | undefined>
 ): Variable[] {
-  if (variable.parentId == null) return [];
+  // Find all children of `variable`
   const variables = variablesByParentId[variable.id] ?? [];
-  for (const child of variables) {
-    for (const grandchild of variablesByParentId[child.id] ?? []) {
-      if (grandchild) variables.push(grandchild);
+  // For each item in `variables`, find its children and push to `variables`.
+  // These items will then be included in the iteration of `variables`, thus
+  // we will find all descendents of `variable` provided to this function.
+  for (const variable of variables) {
+    for (const child of variablesByParentId[variable.id] ?? []) {
+      if (child) variables.push(child);
     }
   }
   return variables.filter(
