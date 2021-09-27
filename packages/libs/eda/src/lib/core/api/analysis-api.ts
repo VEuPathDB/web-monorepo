@@ -15,6 +15,7 @@ import {
   AnalysisPreferences,
   AnalysisSummary,
   NewAnalysis,
+  PublicAnalysisSummary,
 } from '../types/analysis';
 
 import { ioTransformer } from './ioTransformer';
@@ -188,6 +189,15 @@ export class AnalysisClient extends FetchClient {
           analysisIdsToDelete: [...analysisIds],
         },
         transformResponse: ioTransformer(voidType),
+      })
+    );
+  }
+  async getPublicAnalyses(): Promise<PublicAnalysisSummary[]> {
+    return this.fetch(
+      createJsonRequest({
+        path: '/public/analyses',
+        method: 'GET',
+        transformResponse: ioTransformer(array(PublicAnalysisSummary)),
       })
     );
   }
