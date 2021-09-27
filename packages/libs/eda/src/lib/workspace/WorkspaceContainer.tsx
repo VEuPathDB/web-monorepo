@@ -11,7 +11,10 @@ import {
   SubsettingClient,
 } from '../core';
 import { VariableDescriptor } from '../core/types/variable';
-import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
+import {
+  AnalysisEDAWorkspaceHeading,
+  EDAWorkspaceHeading,
+} from './EDAWorkspaceHeading';
 import { mockAnalysisStore } from './Mocks';
 import { cx, findFirstVariable } from './Utils';
 import { SavedAnalysis } from './SavedAnalysis';
@@ -68,7 +71,11 @@ export function WorkspaceContainer(props: Props) {
         subsettingClient={subsettingClient}
         makeVariableLink={makeVariableLink}
       >
-        <EDAWorkspaceHeading />
+        {props.analysisId == null ? (
+          <EDAWorkspaceHeading />
+        ) : (
+          <AnalysisEDAWorkspaceHeading analysisId={props.analysisId} />
+        )}
         {props.analysisId == null ? (
           <NewAnalysisPage />
         ) : (
