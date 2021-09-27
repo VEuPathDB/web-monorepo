@@ -99,6 +99,16 @@ export function makeMockAnalysisStore(
 
       await Promise.allSettled(deletionPromises);
     },
+    async getPublicAnalyses() {
+      const analysisList = await this.getAnalyses();
+      return analysisList
+        .filter(({ isPublic }) => isPublic === true)
+        .map((analysisSummary) => ({
+          ...analysisSummary,
+          userName: 'You',
+          userOrganization: 'Your Organization',
+        }));
+    },
   } as AnalysisClient;
 }
 
