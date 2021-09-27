@@ -66,6 +66,10 @@ export function WorkspaceRouter({
         render={() => <PublicAnalysesRoute analysisClient={analysisClient} />}
       />
       <Route
+        path={`${path}/import/:studyId/:analysisId`}
+        render={() => <>Coming soon</>}
+      />
+      <Route
         path={`${path}/:studyId`}
         exact
         render={(props: RouteComponentProps<{ studyId: string }>) => (
