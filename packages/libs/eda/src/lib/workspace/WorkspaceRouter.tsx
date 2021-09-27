@@ -11,6 +11,7 @@ import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
 import { AllAnalyses } from './AllAnalyses';
 import { EDAAnalysisList } from './EDAAnalysisList';
 import { LatestAnalysis } from './LatestAnalysis';
+import { PublicAnalysesRoute } from './PublicAnalysesRoute';
 import { StudyList } from './StudyList';
 import { WorkspaceContainer } from './WorkspaceContainer';
 
@@ -59,6 +60,10 @@ export function WorkspaceRouter({
             subsettingServiceUrl={subsettingServiceUrl}
           />
         )}
+      />
+      <Route
+        path={`${path}/public`}
+        render={() => <PublicAnalysesRoute analysisClient={analysisClient} />}
       />
       <Route
         path={`${path}/:studyId`}
