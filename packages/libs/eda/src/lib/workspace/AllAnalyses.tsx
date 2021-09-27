@@ -155,9 +155,9 @@ export function AllAnalyses(props: Props) {
                     return analysis.description;
                   case 'isPublic':
                     return analysis.isPublic;
-                  case 'modified':
+                  case 'modificationTime':
                     return analysis.modificationTime;
-                  case 'created':
+                  case 'creationTime':
                     return analysis.creationTime;
                 }
               },
