@@ -5,7 +5,10 @@ import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 import { useStateWithHistory } from '@veupathdb/wdk-client/lib/Hooks/StateWithHistory';
 import { useCallback, useEffect, useState } from 'react';
 
-import { AnalysisClient } from '../api/analysis-api';
+import {
+  AnalysisClient,
+  SingleAnalysisPatchRequest,
+} from '../api/analysis-api';
 import { Analysis, AnalysisSummary, NewAnalysis } from '../types/analysis';
 
 import { useAnalysisClient } from './workspace';
@@ -229,12 +232,34 @@ export function useAnalysisList(analysisClient: AnalysisClient) {
     [analysisClient]
   );
 
+  const updateAnalysis = useCallback(
+    async (id: string, patch: SingleAnalysisPatchRequest) => {
+      setLoading(true);
+      try {
+        await analysisClient.updateAnalysis(id, patch);
+        setAnalyses(
+          (analyses) =>
+            analyses &&
+            analyses.map((analysis) =>
+              analysis.analysisId !== id ? analysis : { ...analysis, ...patch }
+            )
+        );
+      } catch (error) {
+        setError(error.message ?? String(error));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [analysisClient]
+  );
+
   return {
     analyses,
     loading,
     error,
     deleteAnalyses,
     deleteAnalysis,
+    updateAnalysis,
   };
 }
 

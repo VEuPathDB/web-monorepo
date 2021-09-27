@@ -16,7 +16,11 @@ import {
   ThemeProvider,
   Tooltip,
 } from '@material-ui/core';
-import { Loading, Mesa } from '@veupathdb/wdk-client/lib/Components';
+import {
+  Loading,
+  Mesa,
+  SaveableTextEditor,
+} from '@veupathdb/wdk-client/lib/Components';
 import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
@@ -88,9 +92,13 @@ export function AllAnalyses(props: Props) {
 
   const datasets = useDatasets();
 
-  const { analyses, deleteAnalyses, loading, error } = useAnalysisList(
-    analysisClient
-  );
+  const {
+    analyses,
+    deleteAnalyses,
+    updateAnalysis,
+    loading,
+    error,
+  } = useAnalysisList(analysisClient);
 
   const analysesAndDatasets = useMemo(
     () =>
@@ -141,8 +149,12 @@ export function AllAnalyses(props: Props) {
                         (d) => d.id[0].value === analysis.studyId
                       )?.displayName ?? 'Unknown study'
                     );
-                  case 'name':
+                  case 'displayName':
                     return analysis.displayName;
+                  case 'description':
+                    return analysis.description;
+                  case 'isPublic':
+                    return analysis.isPublic;
                   case 'modified':
                     return analysis.modificationTime;
                   case 'created':
@@ -343,6 +355,47 @@ export function AllAnalyses(props: Props) {
           },
         },
         {
+          key: 'description',
+          name: 'Description',
+          sortable: true,
+          style: { maxWidth: '300px' },
+          renderCell: (data: { row: AnalysisAndDataset }) => {
+            const analysisId = data.row.analysis.analysisId;
+            const descriptionStr = data.row.analysis.description || '';
+
+            return (
+              <div style={{ display: 'block', maxWidth: '100%' }}>
+                <SaveableTextEditor
+                  key={analysisId}
+                  multiLine
+                  rows={Math.max(2, descriptionStr.length / 30)}
+                  value={descriptionStr}
+                  onSave={(newDescription) => {
+                    updateAnalysis(analysisId, { description: newDescription });
+                  }}
+                />
+              </div>
+            );
+          },
+        },
+        {
+          key: 'isPublic',
+          name: 'Public',
+          sortable: true,
+          renderCell: (data: { row: AnalysisAndDataset }) => {
+            return (
+              <Checkbox
+                checked={data.row.analysis.isPublic}
+                onChange={(event) => {
+                  updateAnalysis(data.row.analysis.analysisId, {
+                    isPublic: event.target.checked,
+                  });
+                }}
+              />
+            );
+          },
+        },
+        {
           key: 'creationTime',
           name: 'Created',
           sortable: true,
@@ -368,6 +421,7 @@ export function AllAnalyses(props: Props) {
       datasets?.records,
       analyses,
       deleteAnalyses,
+      updateAnalysis,
       removeUnpinned,
       setSortPinned,
       setTableSort,
