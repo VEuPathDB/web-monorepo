@@ -255,7 +255,6 @@ export function AllAnalyses(props: Props) {
       ],
       eventHandlers: {
         onSort: (column: any, direction: any) => {
-          console.log({ column, direction });
           setTableSort([column.key, direction]);
         },
         onRowSelect: ({ analysis }: AnalysisAndDataset) =>
