@@ -42,6 +42,15 @@ export const AnalysisSummary = t.intersection([
   }),
 ]);
 
+export type PublicAnalysisSummary = t.TypeOf<typeof PublicAnalysisSummary>;
+export const PublicAnalysisSummary = t.intersection([
+  AnalysisSummary,
+  t.type({
+    userName: t.string,
+    userOrganization: t.string,
+  }),
+]);
+
 export type AnalysisDescriptor = t.TypeOf<typeof AnalysisDescriptor>;
 export const AnalysisDescriptor = t.type({
   subset: t.type({
