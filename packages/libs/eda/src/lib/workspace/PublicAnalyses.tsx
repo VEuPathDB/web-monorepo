@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { Link, Mesa } from '@veupathdb/wdk-client/lib/Components';
 import { create as createTableState } from '@veupathdb/wdk-client/lib/Components/Mesa/Utils/MesaState';
 import { MesaColumn } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+import { OverflowingTextCell } from '@veupathdb/wdk-client/lib/Views/Strategy/OverflowingTextCell';
 
 import {
   PromiseHookState,
@@ -75,6 +76,13 @@ function PublicAnalysesTable({
           {
             key: 'description',
             name: 'Description',
+            renderCell: (data: { row: PublicAnalysisSummary }) => (
+              <OverflowingTextCell
+                key={data.row.analysisId}
+                value={data.row.description}
+              />
+            ),
+            width: '25em',
           },
           {
             key: 'userName',
