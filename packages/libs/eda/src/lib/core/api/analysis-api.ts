@@ -192,6 +192,22 @@ export class AnalysisClient extends FetchClient {
       })
     );
   }
+  async copyAnalysis(
+    analysisId: string,
+    sourceUserId?: string
+  ): Promise<{ analysisId: string }> {
+    // Copy from self if no sourceUserId is provided
+    const sourceUserPath =
+      sourceUserId == null
+        ? (await this.userRequestMetadata$).userPath
+        : `/users/${sourceUserId}`;
+
+    return this.fetch({
+      path: `${sourceUserPath}/analyses/${analysisId}/copy`,
+      method: 'POST',
+      transformResponse: ioTransformer(type({ analysisId: string })),
+    });
+  }
   async getPublicAnalyses(): Promise<PublicAnalysisSummary[]> {
     return this.fetch(
       createJsonRequest({

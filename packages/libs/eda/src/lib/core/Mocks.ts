@@ -99,6 +99,10 @@ export function makeMockAnalysisStore(
 
       await Promise.allSettled(deletionPromises);
     },
+    async copyAnalysis(analysisId: string, sourceUserId?: string) {
+      const analysis = await this.getAnalysis(analysisId);
+      return await this.createAnalysis(analysis);
+    },
     async getPublicAnalyses() {
       const analysisList = await this.getAnalyses();
       return analysisList
