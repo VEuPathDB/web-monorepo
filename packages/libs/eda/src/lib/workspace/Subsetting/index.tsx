@@ -1,8 +1,15 @@
 import { Tooltip } from '@material-ui/core';
 import { useHistory } from 'react-router';
+
 import { useState } from 'react';
 
-import { useMakeVariableLink, useStudyMetadata } from '../../core';
+import {
+  MultiFilterVariable,
+  useMakeVariableLink,
+  useStudyMetadata,
+  Variable,
+} from '../../core';
+
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { cx } from '../Utils';
 import { VariableDetails } from '../Variable';
@@ -51,12 +58,16 @@ export default function Subsetting({
 
   const history = useHistory();
   const totalCounts = useEntityCounts();
-  const filteredCounts = useEntityCounts(analysisState.analysis?.filters);
+  const filters = analysisState.analysis?.descriptor.subset.descriptor;
+  const filteredCounts = useEntityCounts(filters);
   const makeVariableLink = useMakeVariableLink();
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
-  if (entity == null || variable == null || variable.type === 'category')
+  if (
+    entity == null ||
+    (!Variable.is(variable) && !MultiFilterVariable.is(variable))
+  )
     return <div>Could not find specified variable.</div>;
 
   const totalEntityCount = totalCounts.value && totalCounts.value[entity.id];
@@ -74,9 +85,10 @@ export default function Subsetting({
       />
       <div className="Variables">
         <VariableTree
+          includeMultiFilters
           rootEntity={entities[0]}
           entityId={entity.id}
-          starredVariables={analysisState.analysis?.starredVariables}
+          starredVariables={analysisState.analysis?.descriptor.starredVariables}
           toggleStarredVariable={toggleStarredVariable}
           variableId={variable.id}
           onChange={(variable) => {
@@ -91,13 +103,13 @@ export default function Subsetting({
       </div>
       <div className="FilterChips">
         <FilterChipList
-          filters={analysisState.analysis?.filters.filter(
-            (f) => f.entityId === entity.id
-          )}
+          filters={filters?.filter((f) => f.entityId === entity.id)}
           removeFilter={(filter) =>
             analysisState.analysis &&
             analysisState.setFilters(
-              analysisState.analysis.filters.filter((f) => f !== filter)
+              analysisState.analysis.descriptor.subset.descriptor.filter(
+                (f) => f !== filter
+              )
             )
           }
           entities={entities}
@@ -106,7 +118,11 @@ export default function Subsetting({
         />
       </div>
       <div className="TabularDownload">
-        <Tooltip title={`Download current subset of ${entity.displayName}`}>
+        <Tooltip
+          title={`Download current subset of ${
+            entity.displayNamePlural ?? entity.displayName
+          }`}
+        >
           <button
             type="button"
             className="link"

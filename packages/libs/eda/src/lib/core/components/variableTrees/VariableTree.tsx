@@ -15,8 +15,8 @@ import {
 
 export interface VariableTreeProps {
   rootEntity: StudyEntity;
-  starredVariables?: string[];
-  toggleStarredVariable: (targetVariableId: string) => void;
+  starredVariables?: VariableDescriptor[];
+  toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
   entityId?: string;
   variableId?: string;
   disabledVariables?: VariableDescriptor[];
@@ -24,6 +24,7 @@ export interface VariableTreeProps {
   onChange: (variable?: VariableDescriptor) => void;
   hideDisabledFields?: boolean;
   setHideDisabledFields?: (hide: boolean) => void;
+  customDisabledVariableMessage?: string;
 }
 
 export default function VariableTree({

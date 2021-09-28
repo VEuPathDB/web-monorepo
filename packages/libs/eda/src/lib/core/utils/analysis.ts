@@ -3,7 +3,7 @@ import {
   BarplotData,
   BoxplotData,
 } from '@veupathdb/components/lib/types/plots';
-import { gray } from '../components/visualizations/colors';
+import { CoverageStatistics } from '../types/visualization';
 
 export function vocabularyWithMissingData(
   vocabulary: string[] = [],
@@ -21,8 +21,46 @@ export function grayOutLastSeries<
     ...data,
     series: data.series.map((series, index) =>
       showMissingness && index === data.series.length - 1
-        ? { ...series, color: gray }
+        ? {
+            ...series,
+            color: 'white',
+            borderColor: '#d0d0d0',
+            outlierSymbol: 'x',
+          }
         : series
     ),
   };
+}
+
+export function omitEmptyNoDataSeries<
+  T extends { series: any } & CoverageStatistics
+>(data: T, showMissingness: boolean = false) {
+  const noMissingData =
+    data.completeCasesAllVars === data.completeCasesAxesVars;
+  if (!showMissingness || !noMissingData) return data;
+  return {
+    ...data,
+    series: data.series.filter(
+      (_: any, index: number) => index !== data.series.length - 1
+    ),
+  };
+}
+
+/**
+ * Convert pvalue number into '< 0.001' or '< 0.01' or single digit precision string.
+ *
+ * If provided a string, just return the string, no questions asked.
+ *
+ */
+
+export function quantizePvalue(pvalue: number | string): string {
+  if (typeof pvalue === 'string') {
+    return pvalue;
+  } else if (pvalue < 0.001) {
+    return '< 0.001';
+  } else if (pvalue < 0.01) {
+    return '< 0.01';
+  } else {
+    return pvalue.toPrecision(1);
+  }
 }

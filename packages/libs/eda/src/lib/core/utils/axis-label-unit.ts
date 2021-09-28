@@ -1,10 +1,10 @@
-import { Variable } from '../types/study';
+import { NumberVariable, VariableTreeNode } from '../types/study';
 
 export function axisLabelWithUnit(
-  axisVariableContent: Variable | undefined
+  axisVariableContent: VariableTreeNode | undefined
 ): string | undefined {
   if (
-    axisVariableContent?.type === 'number' &&
+    NumberVariable.is(axisVariableContent) &&
     axisVariableContent.units &&
     axisVariableContent.units != null
   )

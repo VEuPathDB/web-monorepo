@@ -1,8 +1,8 @@
-import { orderBy } from 'lodash';
+import { debounce, orderBy } from 'lodash';
 import Path from 'path';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useRouteMatch } from 'react-router';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 
 import {
   Button,
@@ -24,16 +24,17 @@ import { confirm } from '@veupathdb/wdk-client/lib/Utils/Platform';
 import { RecordInstance } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import {
-  Analysis,
   AnalysisClient,
+  AnalysisSummary,
   SubsettingClient,
   useAnalysisList,
   usePinnedAnalyses,
 } from '../core';
 import { workspaceTheme } from '../core/components/workspaceTheme';
+import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 interface AnalysisAndDataset {
-  analysis: Analysis;
+  analysis: AnalysisSummary;
   dataset?: RecordInstance;
 }
 
@@ -58,12 +59,15 @@ export function AllAnalyses(props: Props) {
   const { analysisClient } = props;
   const { url } = useRouteMatch();
   const history = useHistory();
+  const location = useLocation();
   const classes = useStyles();
+
+  const queryParams = new URLSearchParams(location.search);
+  const searchText = queryParams.get('s') ?? '';
 
   const [selectedAnalyses, setSelectedAnalyses] = useState<Set<string>>(
     new Set()
   );
-  const [searchText, setSearchText] = useState('');
   const [sortPinned, setSortPinned] = useSessionBackedState<boolean>(
     true,
     'eda::allAnalysesPinned',
@@ -104,17 +108,19 @@ export function AllAnalyses(props: Props) {
 
   const filteredAnalysesAndDatasets = useMemo(() => {
     if (!searchText) return analysesAndDatasets;
+    const lowerSearchText = searchText.toLowerCase();
+
     return analysesAndDatasets?.filter(
       ({ analysis, dataset }) =>
-        analysis.name.toLowerCase().includes(searchText) ||
-        dataset?.displayName.toLowerCase().includes(searchText)
+        analysis.displayName.toLowerCase().includes(lowerSearchText) ||
+        dataset?.displayName.toLowerCase().includes(lowerSearchText)
     );
   }, [searchText, analysesAndDatasets]);
 
   const removeUnpinned = useCallback(() => {
     if (filteredAnalysesAndDatasets == null) return;
     const idsToRemove = filteredAnalysesAndDatasets
-      .map(({ analysis }) => analysis.id)
+      .map(({ analysis }) => analysis.analysisId)
       .filter((id) => !isPinnedAnalysis(id));
     deleteAnalyses(idsToRemove);
   }, [filteredAnalysesAndDatasets, deleteAnalyses, isPinnedAnalysis]);
@@ -125,7 +131,7 @@ export function AllAnalyses(props: Props) {
         ? orderBy(
             filteredAnalysesAndDatasets,
             [
-              ({ analysis }) => (isPinnedAnalysis(analysis.id) ? 0 : 1),
+              ({ analysis }) => (isPinnedAnalysis(analysis.analysisId) ? 0 : 1),
               ({ analysis }) => {
                 const columnKey = tableSort[0];
                 switch (columnKey) {
@@ -136,11 +142,11 @@ export function AllAnalyses(props: Props) {
                       )?.displayName ?? 'Unknown study'
                     );
                   case 'name':
-                    return analysis.name;
+                    return analysis.displayName;
                   case 'modified':
-                    return analysis.modified;
+                    return analysis.modificationTime;
                   case 'created':
-                    return analysis.created;
+                    return analysis.creationTime;
                 }
               },
             ],
@@ -167,10 +173,12 @@ export function AllAnalyses(props: Props) {
           </div>
         ),
         deriveRowClassName: ({ analysis }: AnalysisAndDataset) => {
-          return isPinnedAnalysis(analysis.id) ? 'pinned' : 'not-pinned';
+          return isPinnedAnalysis(analysis.analysisId)
+            ? 'pinned'
+            : 'not-pinned';
         },
         isRowSelected: ({ analysis }: AnalysisAndDataset) =>
-          selectedAnalyses.has(analysis.id),
+          selectedAnalyses.has(analysis.analysisId),
       },
       actions: [
         {
@@ -241,25 +249,26 @@ export function AllAnalyses(props: Props) {
         onRowSelect: ({ analysis }: AnalysisAndDataset) =>
           setSelectedAnalyses((set) => {
             const newSet = new Set(set);
-            newSet.add(analysis.id);
+            newSet.add(analysis.analysisId);
             return newSet;
           }),
         onRowDeselect: ({ analysis }: AnalysisAndDataset) =>
           setSelectedAnalyses((set) => {
             const newSet = new Set(set);
-            newSet.delete(analysis.id);
+            newSet.delete(analysis.analysisId);
             return newSet;
           }),
         onMultipleRowSelect: (entries: AnalysisAndDataset[]) =>
           setSelectedAnalyses((set) => {
             const newSet = new Set(set);
-            for (const entry of entries) newSet.add(entry.analysis.id);
+            for (const entry of entries) newSet.add(entry.analysis.analysisId);
             return newSet;
           }),
         onMultipleRowDeselect: (entries: AnalysisAndDataset[]) =>
           setSelectedAnalyses((set) => {
             const newSet = new Set(set);
-            for (const entry of entries) newSet.delete(entry.analysis.id);
+            for (const entry of entries)
+              newSet.delete(entry.analysis.analysisId);
             return newSet;
           }),
       },
@@ -278,7 +287,7 @@ export function AllAnalyses(props: Props) {
             <>
               <Tooltip
                 title={
-                  isPinnedAnalysis(data.row.analysis.id)
+                  isPinnedAnalysis(data.row.analysis.analysisId)
                     ? 'Remove from pinned analyses'
                     : 'Add to pinned analyses'
                 }
@@ -296,11 +305,11 @@ export function AllAnalyses(props: Props) {
                       checkedIcon={
                         <Icon color="primary" className="fa fa-thumb-tack" />
                       }
-                      checked={isPinnedAnalysis(data.row.analysis.id)}
+                      checked={isPinnedAnalysis(data.row.analysis.analysisId)}
                       onChange={(e) => {
                         if (e.target.checked)
-                          addPinnedAnalysis(data.row.analysis.id);
-                        else removePinnedAnalysis(data.row.analysis.id);
+                          addPinnedAnalysis(data.row.analysis.analysisId);
+                        else removePinnedAnalysis(data.row.analysis.analysisId);
                       }}
                     />
                   }
@@ -311,10 +320,10 @@ export function AllAnalyses(props: Props) {
                 to={Path.join(
                   history.location.pathname,
                   data.row.analysis.studyId,
-                  data.row.analysis.id
+                  data.row.analysis.analysisId
                 )}
               >
-                {data.row.analysis.name}
+                {data.row.analysis.displayName}
               </Link>
             </>
           ),
@@ -334,18 +343,18 @@ export function AllAnalyses(props: Props) {
           },
         },
         {
-          key: 'created',
+          key: 'creationTime',
           name: 'Created',
           sortable: true,
           renderCell: (data: { row: AnalysisAndDataset }) =>
-            new Date(data.row.analysis.created).toUTCString().slice(5),
+            new Date(data.row.analysis.creationTime).toUTCString().slice(5),
         },
         {
-          key: 'modified',
+          key: 'modificationTime',
           name: 'Modified',
           sortable: true,
           renderCell: (data: { row: AnalysisAndDataset }) =>
-            new Date(data.row.analysis.modified).toUTCString().slice(5),
+            new Date(data.row.analysis.modificationTime).toUTCString().slice(5),
         },
       ],
     }),
@@ -369,6 +378,28 @@ export function AllAnalyses(props: Props) {
     ]
   );
   const theme = createMuiTheme(workspaceTheme);
+
+  // Create a debounced function, which will update the query param
+  // at most once every 250ms. This prevents issues with UI lag
+  // caused by rerendering the table on every character input.
+  //
+  // NB: We want to minimize the number of dependencies so that this
+  // function is as stable as possible.
+  //
+  // NB2: TextField below is no longer a controlled input component.
+  // This makes it possible to have the input state and queryparam
+  // state be out of sync, which is necessary for debouncing.
+  const updateQueryParam = useMemo(
+    () =>
+      debounce((value: string) => {
+        const queryParams = value ? '?s=' + encodeURIComponent(value) : '';
+        history.replace(location.pathname + queryParams);
+      }, 250),
+    [history, location.pathname]
+  );
+
+  useSetDocumentTitle('My Analyses');
+
   return (
     <ThemeProvider theme={theme}>
       <div className={classes.root}>
@@ -388,8 +419,8 @@ export function AllAnalyses(props: Props) {
                 size="small"
                 label="Search analyses"
                 inputProps={{ size: 50 }}
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
+                defaultValue={searchText}
+                onChange={(e) => updateQueryParam(e.target.value)}
               />
               <span>
                 Showing {filteredAnalysesAndDatasets?.length} of{' '}

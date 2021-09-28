@@ -1,11 +1,6 @@
 import { useMemo } from 'react';
 
-import { keyBy, mapValues } from 'lodash';
-
-import {
-  CompleteCasesTable,
-  CompleteCasesTableRow,
-} from '../api/dataClient/types';
+import { CompleteCasesTable } from '../api/dataClient/types';
 import {
   VariableCoverageTableRow,
   VariableSpec,
@@ -26,7 +21,7 @@ import { toPercentage } from '@veupathdb/wdk-client/lib/Components/AttributeFilt
  */
 export function useVariableCoverageTableRows(
   variableSpecs: VariableSpec[],
-  filters: Filter[],
+  filters?: Filter[],
   completeCases?: CompleteCasesTable,
   outputEntityId?: string
 ): VariableCoverageTableRow[] {

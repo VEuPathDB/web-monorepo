@@ -24,18 +24,26 @@ import UnknownCount from '@veupathdb/wdk-client/lib/Components/AttributeFilter/U
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import { number, partial, TypeOf, boolean, type, intersection } from 'io-ts';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { usePromise } from '../../hooks/promise';
 import { AnalysisState } from '../../hooks/analysis';
 import { useSubsettingClient } from '../../hooks/workspace';
 import { DateRangeFilter, NumberRangeFilter } from '../../types/filter';
-import { StudyEntity, StudyMetadata } from '../../types/study';
+import { NumberVariable, StudyEntity, StudyMetadata } from '../../types/study';
 import { TimeUnit, NumberOrDateRange, NumberRange } from '../../types/general';
 import { gray, red } from './colors';
 import { HistogramVariable } from './types';
 import { fullISODateRange, padISODateTime } from '../../utils/date-conversion';
 import { getDistribution } from './util';
 import { DistributionResponse } from '../../api/subsetting-api';
+// reusable util for computing truncationConfig
+import { truncationConfig } from '../../utils/truncation-config-utils';
+// use Notification for truncation warning message
+import Notification from '@veupathdb/components/lib/components/widgets//Notification';
+// import axis label unit util
+import { axisLabelWithUnit } from '../../utils/axis-label-unit';
+// import variable's metadata-based independent axis range utils
+import { defaultIndependentAxisRange } from '../../utils/default-independent-axis-range';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -45,9 +53,10 @@ type Props = {
   analysisState: AnalysisState;
 };
 
-type UIState = TypeOf<typeof UIState>;
+// export UIState
+export type UIState = TypeOf<typeof UIState>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-const UIState = intersection([
+export const UIState = intersection([
   type({
     binWidth: number,
     independentAxisRange: NumberOrDateRange,
@@ -68,8 +77,14 @@ export function HistogramFilter(props: Props) {
     totalEntityCount,
   } = props;
   const { setFilters } = analysisState;
-  const filters = analysisState.analysis?.filters;
+  const filters = analysisState.analysis?.descriptor.subset.descriptor;
   const uiStateKey = `${entity.id}/${variable.id}`;
+
+  // compute default independent range from meta-data based util
+  const defaultIndependentRange: NumberOrDateRange | undefined = useMemo(
+    () => defaultIndependentAxisRange(variable, 'histogram'),
+    [variable]
+  );
 
   // get as much default UI state from variable annotations as possible
   const defaultUIState: UIState = useMemo(() => {
@@ -77,14 +92,11 @@ export function HistogramFilter(props: Props) {
       dependentAxisLogScale: false,
     };
 
-    if (variable.type === 'number')
+    if (NumberVariable.is(variable))
       return {
         binWidth: variable.binWidthOverride ?? variable.binWidth ?? 0.1,
         binWidthTimeUnit: undefined,
-        independentAxisRange:
-          variable.displayRangeMin != null && variable.displayRangeMax != null
-            ? { min: variable.displayRangeMin, max: variable.displayRangeMax }
-            : { min: Math.min(0, variable.rangeMin), max: variable.rangeMax },
+        independentAxisRange: defaultIndependentRange as NumberRange,
         ...otherDefaults,
       };
 
@@ -95,26 +107,20 @@ export function HistogramFilter(props: Props) {
     return {
       binWidth: binWidth ?? 1,
       binWidthTimeUnit: binUnits ?? variable.binUnits!, // bit nasty!
-      independentAxisRange:
-        variable.displayRangeMin != null && variable.displayRangeMax != null
-          ? {
-              min: variable.displayRangeMin + 'T00:00:00',
-              max: variable.displayRangeMax + 'T00:00:00',
-            }
-          : {
-              min: variable.rangeMin + 'T00:00:00',
-              max: variable.rangeMax + 'T00:00:00',
-            },
+      independentAxisRange: defaultIndependentRange as DateRange,
       ...otherDefaults,
     };
   }, [variable]);
 
+  const variableUISettings =
+    analysisState.analysis?.descriptor.subset.uiSettings;
+
   const uiState = useMemo(() => {
     return pipe(
-      UIState.decode(analysisState.analysis?.variableUISettings[uiStateKey]),
+      UIState.decode(variableUISettings?.[uiStateKey]),
       getOrElse((): UIState => defaultUIState)
     );
-  }, [analysisState.analysis?.variableUISettings, uiStateKey, defaultUIState]);
+  }, [variableUISettings, uiStateKey, defaultUIState]);
   const subsettingClient = useSubsettingClient();
   const getData = useCallback(
     async (
@@ -130,7 +136,7 @@ export function HistogramFilter(props: Props) {
         {
           entityId: entity.id,
           variableId: variable.id,
-          filters: analysisState.analysis?.filters,
+          filters,
         },
         (filters) => {
           return subsettingClient.getDistribution(
@@ -151,32 +157,34 @@ export function HistogramFilter(props: Props) {
         }
       );
 
+      const entityDisplayNamePlural =
+        entity.displayNamePlural ?? entity.displayName;
+
       const series = [
         distributionResponseToDataSeries(
-          `All ${entity.displayName}`,
+          `All ${entityDisplayNamePlural}`,
           distribution.background,
           gray,
           variable.type
         ),
         distributionResponseToDataSeries(
-          `Subset of ${entity.displayName}`,
+          `Subset of ${entityDisplayNamePlural}`,
           distribution.foreground,
           red,
           variable.type
         ),
       ];
-      const binWidth: NumberOrTimeDelta =
-        variable.type === 'number'
-          ? dataParams.binWidth
-          : {
-              value: dataParams.binWidth,
-              unit: dataParams.binWidthTimeUnit ?? 'year',
-            };
+      const binWidth: NumberOrTimeDelta = NumberVariable.is(variable)
+        ? dataParams.binWidth
+        : {
+            value: dataParams.binWidth,
+            unit: dataParams.binWidthTimeUnit ?? 'year',
+          };
       const { min, max, step } = computeBinSlider(
         variable.type,
         dataParams.independentAxisRange
       );
-      const binWidthRange = (variable.type === 'number'
+      const binWidthRange = (NumberVariable.is(variable)
         ? { min, max }
         : {
             min,
@@ -189,7 +197,7 @@ export function HistogramFilter(props: Props) {
         distribution.background.statistics.numDistinctEntityRecords;
 
       return {
-        valueType: variable.type,
+        valueType: NumberVariable.is(variable) ? 'number' : 'date',
         series,
         binWidth,
         binWidthRange,
@@ -200,8 +208,9 @@ export function HistogramFilter(props: Props) {
       };
     },
     [
-      analysisState.analysis?.filters,
+      filters,
       entity.displayName,
+      entity.displayNamePlural,
       entity.id,
       studyMetadata.id,
       subsettingClient,
@@ -327,7 +336,7 @@ export function HistogramFilter(props: Props) {
                 summary: { internalsCount: data.value?.hasDataEntitiesCount },
               }}
               dataCount={totalEntityCount}
-              displayName={entity.displayName}
+              displayName={entity.displayNamePlural ?? entity.displayName}
             />
           </div>
         )}
@@ -355,9 +364,8 @@ export function HistogramFilter(props: Props) {
           uiState={uiState}
           defaultUIState={defaultUIState}
           updateUIState={updateUIState}
-          variableName={variable.displayName}
-          entityName={entity.displayName}
           showSpinner={data.pending}
+          variable={variable}
         />
       </div>
     </div>
@@ -370,9 +378,7 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   defaultUIState: UIState;
   updateUIState: (uiState: Partial<UIState>) => void;
   filter?: DateRangeFilter | NumberRangeFilter;
-  // add variableName for independentAxisLabel
-  variableName: string;
-  entityName: string;
+  variable?: HistogramVariable;
 };
 
 function HistogramPlotWithControls({
@@ -382,11 +388,19 @@ function HistogramPlotWithControls({
   defaultUIState,
   updateUIState,
   filter,
-  // variableName for independentAxisLabel
-  variableName,
-  entityName,
+  variable,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
+  // set the state of truncation warning message
+  const [
+    truncatedIndependentAxisWarning,
+    setTruncatedIndependentAxisWarning,
+  ] = useState<string>('');
+  const [
+    truncatedDependentAxisWarning,
+    setTruncatedDependentAxisWarning,
+  ] = useState<string>('');
+
   const handleBinWidthChange = useCallback(
     (newBinWidth: NumberOrTimeDelta) => {
       updateUIState({
@@ -425,6 +439,8 @@ function HistogramPlotWithControls({
       binWidth: defaultUIState.binWidth,
       binWidthTimeUnit: defaultUIState.binWidthTimeUnit,
     });
+    // add reset for truncation message as well
+    setTruncatedIndependentAxisWarning('');
   }, [
     defaultUIState.binWidth,
     defaultUIState.binWidthTimeUnit,
@@ -449,6 +465,8 @@ function HistogramPlotWithControls({
       dependentAxisRange: undefined,
       dependentAxisLogScale: defaultUIState.dependentAxisLogScale,
     });
+    // add reset for truncation message as well
+    setTruncatedDependentAxisWarning('');
   }, [defaultUIState.dependentAxisLogScale, updateUIState]);
 
   const handleDependentAxisLogScale = useCallback(
@@ -513,10 +531,41 @@ function HistogramPlotWithControls({
 
   const widgetHeight = '4em';
 
+  // set truncation flags: will see if this is reusable with other application
+  const {
+    truncationConfigIndependentAxisMin,
+    truncationConfigIndependentAxisMax,
+    truncationConfigDependentAxisMin,
+    truncationConfigDependentAxisMax,
+  } = useMemo(() => truncationConfig(defaultUIState, uiState), [
+    defaultUIState,
+    uiState,
+  ]);
+
+  // set useEffect for changing truncation warning message
+  useEffect(() => {
+    if (
+      truncationConfigIndependentAxisMin ||
+      truncationConfigIndependentAxisMax
+    ) {
+      setTruncatedIndependentAxisWarning(
+        'Data may have been truncated by range selection, as indicated by the light gray shading'
+      );
+    }
+  }, [truncationConfigIndependentAxisMin, truncationConfigIndependentAxisMax]);
+
+  useEffect(() => {
+    if (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) {
+      setTruncatedDependentAxisWarning(
+        'Data may have been truncated by range selection, as indicated by the light gray shading'
+      );
+    }
+  }, [truncationConfigDependentAxisMin, truncationConfigDependentAxisMax]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <SelectedRangeControl
-        label={`Subset on ${variableName}`}
+        label={'Subset on ' + axisLabelWithUnit(variable)}
         valueType={data?.valueType}
         selectedRange={selectedRange}
         selectedRangeBounds={selectedRangeBounds}
@@ -532,9 +581,8 @@ function HistogramPlotWithControls({
         displayLibraryControls={displayLibraryControls}
         onSelectedRangeChange={handleSelectedRangeChange}
         barLayout={barLayout}
-        dependentAxisLabel={`Count of ${entityName}`}
-        // add independentAxisLabel
-        independentAxisLabel={variableName}
+        dependentAxisLabel="Count"
+        independentAxisLabel={axisLabelWithUnit(variable)}
         independentAxisRange={uiState.independentAxisRange}
         dependentAxisRange={uiState.dependentAxisRange}
         dependentAxisLogScale={uiState.dependentAxisLogScale}
@@ -543,6 +591,17 @@ function HistogramPlotWithControls({
           horizontalPosition: 'center',
           orientation: 'horizontal',
           verticalPaddingAdjustment: 20,
+        }}
+        // pass axisTruncationConfig
+        axisTruncationConfig={{
+          independentAxis: {
+            min: truncationConfigIndependentAxisMin,
+            max: truncationConfigIndependentAxisMax,
+          },
+          dependentAxis: {
+            min: truncationConfigDependentAxisMin,
+            max: truncationConfigDependentAxisMax,
+          },
         }}
       />
 
@@ -566,7 +625,20 @@ function HistogramPlotWithControls({
             }}
             allowPartialRange={false}
           />
-
+          {/* truncation notification */}
+          {truncatedDependentAxisWarning ? (
+            <Notification
+              title={''}
+              text={truncatedDependentAxisWarning}
+              // this was defined as LIGHT_BLUE
+              color={'#5586BE'}
+              onAcknowledgement={() => {
+                setTruncatedDependentAxisWarning('');
+              }}
+              showWarningIcon={true}
+              containerStyles={{ maxWidth: '38.5em' }}
+            />
+          ) : null}
           <Button
             type={'outlined'}
             text={'Reset Y-axis to defaults'}
@@ -601,7 +673,22 @@ function HistogramPlotWithControls({
             onRangeChange={handleIndependentAxisRangeChange}
             valueType={data?.valueType}
           />
-
+          {/* truncation notification */}
+          {truncatedIndependentAxisWarning ? (
+            <Notification
+              title={''}
+              text={truncatedIndependentAxisWarning}
+              // this was defined as LIGHT_BLUE
+              color={'#5586BE'}
+              onAcknowledgement={() => {
+                setTruncatedIndependentAxisWarning('');
+              }}
+              showWarningIcon={true}
+              containerStyles={{
+                maxWidth: data?.valueType === 'date' ? '34.5em' : '38.5em',
+              }}
+            />
+          ) : null}
           <Button
             type={'outlined'}
             text={'Reset X-axis to defaults'}
@@ -628,7 +715,7 @@ function distributionResponseToDataSeries(
     ({ value, binStart, binEnd, binLabel }) => ({
       binStart: type === 'date' ? binStart : Number(binStart),
       binEnd: type === 'date' ? binEnd : Number(binEnd),
-      binLabel,
+      binLabel: tidyBinLabel(binLabel),
       count: value,
     })
   );
@@ -645,6 +732,34 @@ function distributionResponseToDataSeries(
       median: undefined!,
     },
   };
+}
+
+/**
+ * If input matches the following style of non-exponent numbers (integer or floating point)
+ * "[71838.4,107757.59999999999)"
+ *
+ * then shorten the numbers whose string length is
+ * greater than 6, to a 3 significant figure version, and return the reconstructed label
+ * e.g. "[7.18e+5,10.8e+6)"
+ *
+ * Fails safe - returns the input if the various patterns don't match.
+ */
+function tidyBinLabel(
+  binLabel: string,
+  maxLength: number = 6,
+  precision: number = 3
+): string {
+  const matches = binLabel.match(/^\[(-?\d+(?:\.\d+)),(-?\d+(?:\.\d+))\)$/);
+  if (matches != null && matches.length == 3) {
+    // matches array starts with full match of pattern
+    const [binStart, binEnd] = matches
+      .slice(1)
+      .map((s) =>
+        s.length > maxLength ? Number(s).toPrecision(precision) : s
+      );
+    return `[${binStart},${binEnd})`;
+  }
+  return binLabel;
 }
 
 // TODO [2021-07-10] - Use variable.precision when avaiable
@@ -667,6 +782,7 @@ function computeBinSlider(
     case 'date': {
       return { min: 1, max: 60, step: 1 };
     }
+    case 'integer':
     case 'number': {
       const { min: rangeMin, max: rangeMax } = range as NumberRange;
       const rangeSize = Math.round((rangeMax - rangeMin) * 100) / 100;

@@ -60,6 +60,19 @@ export function EDAWorkspaceHeading() {
             </Button>
           </Tooltip>
         </div>
+        <div>
+          <Tooltip title="View all your analyses of this study">
+            <Button
+              variant="text"
+              color="primary"
+              startIcon={<Icon className="fa fa-table fa-fw" />}
+              component={Link}
+              to={'/eda?s=' + encodeURIComponent(studyRecord.displayName)}
+            >
+              My analyses
+            </Button>
+          </Tooltip>
+        </div>
       </div>
     </div>
   );

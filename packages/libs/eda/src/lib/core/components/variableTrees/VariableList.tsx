@@ -6,6 +6,7 @@ import React, {
   useMemo,
   useRef,
   useState,
+  useContext,
 } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -28,7 +29,7 @@ import {
   isRange,
   findAncestorFields,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
-//import types
+
 import {
   Field,
   FieldTreeNode,
@@ -36,6 +37,9 @@ import {
 import { Tooltip } from '@material-ui/core';
 import { HtmlTooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+// import ShowHideVariableContext
+import { VariableDescriptor } from '../../types/variable';
+import { ShowHideVariableContext } from '../../utils/show-hide-variable-context';
 
 import { cx } from '../../../workspace/Utils';
 
@@ -60,6 +64,7 @@ interface FieldNodeProps {
   searchTerm: string;
   isActive: boolean;
   isDisabled?: boolean;
+  customDisabledVariableMessage?: string;
   handleFieldSelect: (field: VariableField) => void;
   activeFieldEntity?: string;
   isStarred: boolean;
@@ -78,7 +83,6 @@ interface FieldNodeProps {
  *   "PCO_0000024/ENVO_00000004": "Bangladesh India Kenya Mali Mozambique Pakistan The Gambia"
  * }
  */
-type ValuesMap = Record<string, string>;
 
 interface getNodeSearchStringType {
   field: {
@@ -94,8 +98,10 @@ interface getNodeSearchStringType {
 const Options = {
   featuredVariablesOpen: true,
 };
-// TODO: Needs documentation.
-type VariableListProps = {
+
+type ValuesMap = Record<string, string>;
+
+interface VariableListProps {
   mode: 'singleSelection' | 'multiSelection';
   activeField?: VariableField;
   onActiveFieldChange: (term: string) => void;
@@ -104,13 +110,14 @@ type VariableListProps = {
   valuesMap: ValuesMap;
   fieldTree: VariableFieldTreeNode;
   autoFocus: boolean;
-  starredVariables?: string[];
-  toggleStarredVariable: (targetVariableId: string) => void;
+  starredVariables?: VariableDescriptor[];
+  toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
   disabledFieldIds?: string[];
+  customDisabledVariableMessage?: string;
+  featuredFields: VariableField[];
   hideDisabledFields: boolean;
   setHideDisabledFields: (hide: boolean) => void;
-  featuredFields?: VariableField[];
-};
+}
 
 // TODO: Needs documentation of general component purpose.
 /**
@@ -131,7 +138,14 @@ export default function VariableList({
   toggleStarredVariable,
   hideDisabledFields,
   setHideDisabledFields,
+  customDisabledVariableMessage,
 }: VariableListProps) {
+  // useContext is used here with ShowHideVariableContext
+  const {
+    showOnlyCompatibleVariables,
+    setShowOnlyCompatibleVariablesHandler,
+  } = useContext(ShowHideVariableContext);
+
   const [searchTerm, setSearchTerm] = useState<string>('');
   const getPathToField = useCallback(
     (field?: Field) => {
@@ -207,13 +221,13 @@ export default function VariableList({
     [getFieldSearchString]
   );
 
-  const availableVariables = useMemo(() => {
-    const availableVariablesArray = preorderSeq(fieldTree)
+  const availableVariableTerms = useMemo(() => {
+    const availableVariableTermsArray = preorderSeq(fieldTree)
       .filter((node) => isFilterField(node.field))
-      .map((node) => node.field.term.split('/')[1])
+      .map((node) => node.field.term)
       .toArray();
 
-    return new Set(availableVariablesArray);
+    return new Set(availableVariableTermsArray);
   }, [fieldTree]);
 
   const starredVariablesLoading = starredVariables == null;
@@ -223,27 +237,28 @@ export default function VariableList({
     false
   );
 
-  // make visibleStarredVariables state be used at MyVariable
-  const [visibleStarredVariables, setVisibleStarredVariables] = useState<
-    string[]
-  >([]);
+  // make visibleStarredVariableTerms state be used at MyVariable
+  const [
+    visibleStarredVariableTerms,
+    setVisibleStarredVariableTerms,
+  ] = useState<string[]>([]);
 
-  const starredVariablesSet = useMemo(() => {
-    const presentStarredVariables = starredVariables?.filter((variableId) =>
-      availableVariables.has(variableId)
-    );
+  const starredVariableTermsSet = useMemo(() => {
+    const presentStarredVariableTerms = starredVariables
+      ?.map(({ entityId, variableId }) => `${entityId}/${variableId}`)
+      .filter((variableTerm) => availableVariableTerms.has(variableTerm));
 
-    return new Set(presentStarredVariables);
-  }, [availableVariables, starredVariables]);
+    return new Set(presentStarredVariableTerms);
+  }, [availableVariableTerms, starredVariables]);
 
   // this will be used for MyVariable instead of starredVariableSet
-  const visibleStarredVariablesSet = useMemo(() => {
-    const presentStarredVariables = visibleStarredVariables?.filter(
-      (variableId) => availableVariables.has(variableId)
+  const visibleStarredVariableTermsSet = useMemo(() => {
+    const presentStarredVariableTerms = visibleStarredVariableTerms?.filter(
+      (variableTerm) => availableVariableTerms.has(variableTerm)
     );
 
-    return new Set(presentStarredVariables);
-  }, [availableVariables, visibleStarredVariables]);
+    return new Set(presentStarredVariableTerms);
+  }, [availableVariableTerms, visibleStarredVariableTerms]);
 
   const disabledFields = useMemo(() => new Set(disabledFieldIds), [
     disabledFieldIds,
@@ -251,7 +266,8 @@ export default function VariableList({
 
   const renderNode = useCallback(
     (node: FieldTreeNode) => {
-      const [, variableId] = node.field.term.split('/');
+      const fieldTerm = node.field.term;
+      const [entityId, variableId] = fieldTerm.split('/');
 
       return (
         <FieldNode
@@ -259,13 +275,14 @@ export default function VariableList({
           searchTerm={searchTerm}
           isActive={node.field.term === activeField?.term}
           isDisabled={disabledFields.has(node.field.term)}
+          customDisabledVariableMessage={customDisabledVariableMessage}
           handleFieldSelect={handleFieldSelect}
           //add activefieldEntity prop (parent entity obtained from activeField)
           //alternatively, send activeField and isActive is directly checked at FieldNode
           activeFieldEntity={activeFieldEntity}
-          isStarred={starredVariablesSet.has(variableId)}
+          isStarred={starredVariableTermsSet.has(fieldTerm)}
           starredVariablesLoading={starredVariablesLoading}
-          onClickStar={() => toggleStarredVariable(variableId)}
+          onClickStar={() => toggleStarredVariable({ entityId, variableId })}
           scrollIntoView
         />
       );
@@ -277,18 +294,22 @@ export default function VariableList({
       handleFieldSelect,
       searchTerm,
       starredVariablesLoading,
-      starredVariablesSet,
+      starredVariableTermsSet,
       toggleStarredVariable,
+      customDisabledVariableMessage,
     ]
   );
 
   const toggleShowOnlyStarredVariables = useCallback(() => {
     setShowOnlyStarredVariables((oldValue) => !oldValue);
-    setVisibleStarredVariables(starredVariables ?? []);
+    const newVisibleStarredVariableTerms = starredVariables?.map(
+      ({ entityId, variableId }) => `${entityId}/${variableId}`
+    );
+    setVisibleStarredVariableTerms(newVisibleStarredVariableTerms ?? []);
   }, [starredVariables]);
 
   const starredVariableToggleDisabled =
-    !showOnlyStarredVariables && starredVariablesSet.size === 0;
+    !showOnlyStarredVariables && starredVariableTermsSet.size === 0;
 
   const additionalFilters = useMemo(
     () => [
@@ -320,7 +341,7 @@ export default function VariableList({
 
   const isAdditionalFilterApplied = showOnlyStarredVariables;
 
-  const allowedFeaturedFields = hideDisabledFields
+  const allowedFeaturedFields = showOnlyCompatibleVariables
     ? featuredFields.filter((field) => !disabledFields.has(field.term))
     : featuredFields;
 
@@ -332,10 +353,10 @@ export default function VariableList({
             (node) =>
               node.children.length > 0 ||
               // visibleStarredVariablesSet is used for MyVariable instead of starredVariableSet
-              visibleStarredVariablesSet.has(node.field.term.split('/')[1]),
+              visibleStarredVariableTermsSet.has(node.field.term),
             fieldTree
           );
-    return hideDisabledFields
+    return showOnlyCompatibleVariables
       ? pruneDescendantNodes((node) => {
           if (disabledFields.size === 0) return true;
           if (node.field.type == null) return node.children.length > 0;
@@ -346,8 +367,8 @@ export default function VariableList({
     showOnlyStarredVariables,
     starredVariableToggleDisabled,
     fieldTree,
-    hideDisabledFields,
-    visibleStarredVariablesSet,
+    showOnlyCompatibleVariables,
+    visibleStarredVariableTermsSet,
     disabledFields,
   ]);
 
@@ -364,26 +385,7 @@ export default function VariableList({
                */
             }
           }
-          title={
-            <>
-              Some variables cannot be used here. Use this to toggle their
-              presence below.
-              <br />
-              <br />
-              <strong>
-                <Link
-                  to=""
-                  onClick={(e) => {
-                    e.preventDefault();
-                    alert('Comming soon');
-                  }}
-                >
-                  <Icon fa="info-circle" /> Learn more
-                </Link>
-              </strong>{' '}
-              about variable compatibility
-            </>
-          }
+          title={tooltipContent}
           interactive
           enterDelay={500}
           enterNextDelay={500}
@@ -393,10 +395,14 @@ export default function VariableList({
             className="link"
             type="button"
             onClick={() => {
-              setHideDisabledFields(!hideDisabledFields);
+              // useContext
+              setShowOnlyCompatibleVariablesHandler(
+                !showOnlyCompatibleVariables
+              );
             }}
           >
-            <Toggle on={hideDisabledFields} /> Only show compatible variables
+            <Toggle on={showOnlyCompatibleVariables} /> Only show compatible
+            variables
           </button>
         </HtmlTooltip>
       </div>
@@ -421,7 +427,7 @@ export default function VariableList({
             {allowedFeaturedFields.map((field) => {
               const isActive = field.term === activeField?.term;
               const isDisabled = disabledFields.has(field.term);
-              const variableId = field.term.split('/')[1];
+              const [entityId, variableId] = field.term.split('/');
               return (
                 <li
                   key={field.term}
@@ -432,11 +438,16 @@ export default function VariableList({
                       field={field}
                       isActive={isActive}
                       isDisabled={isDisabled}
+                      customDisabledVariableMessage={
+                        customDisabledVariableMessage
+                      }
                       searchTerm=""
                       handleFieldSelect={handleFieldSelect}
-                      isStarred={starredVariablesSet.has(variableId)}
+                      isStarred={starredVariableTermsSet.has(field.term)}
                       starredVariablesLoading={starredVariablesLoading}
-                      onClickStar={() => toggleStarredVariable(variableId)}
+                      onClickStar={() =>
+                        toggleStarredVariable({ entityId, variableId })
+                      }
                       scrollIntoView={false}
                     />
                   </div>
@@ -510,6 +521,7 @@ const FieldNode = ({
   searchTerm,
   isActive,
   isDisabled,
+  customDisabledVariableMessage,
   handleFieldSelect,
   activeFieldEntity,
   isStarred,
@@ -538,7 +550,8 @@ const FieldNode = ({
     <Tooltip
       title={
         isDisabled
-          ? 'This variable cannot be used with this plot and other variable selections.'
+          ? customDisabledVariableMessage ??
+            'This variable cannot be used with this plot and other variable selections.'
           : 'Select this variable.'
       }
     >

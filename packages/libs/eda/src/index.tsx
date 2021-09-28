@@ -25,6 +25,7 @@ import './index.css';
 
 const subsettingServiceUrl = '/eda-subsetting-service';
 const dataServiceUrl = '/eda-data-service';
+const userServiceUrl = '/eda-user-service';
 
 initialize({
   rootUrl,
@@ -53,6 +54,7 @@ initialize({
         <WorkspaceRouter
           subsettingServiceUrl={subsettingServiceUrl}
           dataServiceUrl={dataServiceUrl}
+          userServiceUrl={userServiceUrl}
         />
       ),
     },

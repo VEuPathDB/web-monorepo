@@ -21,6 +21,7 @@ export function filterVariablesByConstraint(
     constraint == null ||
     (constraint.allowedShapes == null &&
       constraint.allowedTypes == null &&
+      constraint.maxNumValues == null &&
       constraint.allowMultiValued)
   )
     return rootEntity;
@@ -71,11 +72,13 @@ function variableConstraintPredicate(
       constraint.allowedShapes.includes(variable.dataShape)) &&
       (constraint.allowedTypes == null ||
         constraint.allowedTypes.includes(variable.type)) &&
+      (constraint.maxNumValues == null ||
+        constraint.maxNumValues >= variable.distinctValuesCount) &&
       (constraint.allowMultiValued || !variable.isMultiValued))
   );
 }
 
-export type ValueByInputName = Partial<Record<string, VariableDescriptor>>;
+export type VariablesByInputName = Partial<Record<string, VariableDescriptor>>;
 export type DataElementConstraintRecord = Record<string, DataElementConstraint>;
 
 /**
@@ -101,20 +104,21 @@ export type DataElementConstraintRecord = Record<string, DataElementConstraint>;
  *
  */
 export function flattenConstraints(
-  values: ValueByInputName,
+  variables: VariablesByInputName,
   entities: StudyEntity[],
   constraints: DataElementConstraintRecord[]
 ): DataElementConstraintRecord {
   // Find all compatible constraints
   const compatibleConstraints = constraints.filter((constraintRecord) =>
     Object.entries(constraintRecord).every(([variableName, constraint]) => {
-      const value = values[variableName];
+      const value = variables[variableName];
       // If a value (variable) has not been user-selected for this constraint, then it is considered to be "in-play"
       if (value == null) return true;
       // If a constraint does not declare shapes or types and it allows multivalued variables, then any value is allowed, thus the constraint is "in-play"
       if (
         isEmpty(constraint.allowedShapes) &&
         isEmpty(constraint.allowedTypes) &&
+        constraint.maxNumValues === undefined &&
         constraint.allowMultiValued
       )
         return true;
@@ -125,15 +129,25 @@ export function flattenConstraints(
           `Could not find selected entity and variable: entityId = ${value.entityId}; variableId = ${value.variableId}.`
         );
       const { variable } = entityAndVariable;
+      if (variable.type === 'category')
+        throw new Error('Categories are not allowed for variable constraints.');
       const typeIsValid =
         isEmpty(constraint.allowedTypes) ||
         constraint.allowedTypes?.includes(variable.type);
       const shapeIsValid =
         isEmpty(constraint.allowedShapes) ||
         constraint.allowedShapes?.includes(variable.dataShape!);
+      const passesMaxValuesConstraint =
+        constraint.maxNumValues === undefined ||
+        constraint.maxNumValues >= variable.distinctValuesCount;
       const passesMultivalueConstraint =
         constraint.allowMultiValued || !variable.isMultiValued;
-      return typeIsValid && shapeIsValid && passesMultivalueConstraint;
+      return (
+        typeIsValid &&
+        shapeIsValid &&
+        passesMaxValuesConstraint &&
+        passesMultivalueConstraint
+      );
     })
   );
   if (compatibleConstraints.length === 0)
@@ -181,10 +195,27 @@ export function mergeConstraints(
                 constraintA.allowedTypes,
                 constraintB.allowedTypes
               ),
+              maxNumValues: mergeMaxNumValues(constraintA, constraintB),
               allowMultiValued:
                 constraintA.allowMultiValued && constraintB.allowMultiValued,
+              // Since constraintA and constraintB are for the same variable slot
+              // (value of `key` above) they should have the same description
+              description: constraintA.description,
             },
       ];
     })
   );
+}
+
+export function mergeMaxNumValues(
+  constraintA: DataElementConstraint,
+  constraintB: DataElementConstraint
+) {
+  const mergedMaxNumValues = Math.min(
+    constraintA.maxNumValues === undefined
+      ? Infinity
+      : constraintA.maxNumValues,
+    constraintB.maxNumValues === undefined ? Infinity : constraintB.maxNumValues
+  );
+  return mergedMaxNumValues === Infinity ? undefined : mergedMaxNumValues;
 }

@@ -1,5 +1,6 @@
+import { Lens } from 'monocle-ts';
 import Path from 'path';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useLocation, useRouteMatch, useHistory } from 'react-router-dom';
 import {
   AnalysisState,
@@ -13,8 +14,8 @@ import {
   useStudyRecord,
   VariableUISetting,
 } from '../core';
+import { Computation } from '../core/types/visualization';
 import { AnalysisPanel } from './AnalysisPanel';
-import { Visualization } from '../core/types/visualization';
 
 export function NewAnalysisPage() {
   const studyRecord = useStudyRecord();
@@ -26,19 +27,22 @@ export function NewAnalysisPage() {
   const history = useHistory();
   const location = useLocation();
   const { url } = useRouteMatch();
-
+  const creatingAnalysis = useRef(false);
   const createAnalysis = useCallback(
     async (
       newAnalysis: NewAnalysis,
       subPath: string = location.pathname.slice(url.length)
     ) => {
-      const { id } = await analysisClient.createAnalysis(newAnalysis);
-      await preloadAnalysis(id);
-      const newLocation = {
-        ...location,
-        pathname: Path.resolve(url, '..', id + subPath),
-      };
-      history.replace(newLocation);
+      if (!creatingAnalysis.current) {
+        creatingAnalysis.current = true;
+        const { analysisId } = await analysisClient.createAnalysis(newAnalysis);
+        await preloadAnalysis(analysisId);
+        const newLocation = {
+          ...location,
+          pathname: Path.resolve(url, '..', analysisId + subPath),
+        };
+        history.replace(newLocation);
+      }
     },
     [analysisClient, history, location, preloadAnalysis, url]
   );
@@ -54,44 +58,56 @@ export function NewAnalysisPage() {
   const deleteAnalysis = useCallback(() => {
     throw new Error('Cannot delete an unsaved analysis.');
   }, []);
-
-  const setName = useCallback(
-    (name: string) => {
-      createAnalysis({ ...analysis, name });
-    },
-    [analysis, createAnalysis]
-  );
-  const setFilters = useCallback(
-    (filters: Filter[]) => {
-      createAnalysis({ ...analysis, filters });
-    },
-    [analysis, createAnalysis]
-  );
-  const setStarredVariables = useCallback(
-    (starredVariables: string[]) => {
-      createAnalysis({ ...analysis, starredVariables });
-    },
-    [analysis, createAnalysis]
+  const setName = useSetter(analysisToNameLens, analysis, createAnalysis);
+  const setFilters = useSetter(analysisToFiltersLens, analysis, createAnalysis);
+  const setStarredVariables = useSetter(
+    analysisToStarredVariablesLens,
+    analysis,
+    createAnalysis
   );
   const setDerivedVariables = useCallback(() => {}, []);
   const setVariableUISettings = useCallback(
-    (variableUISettings: Record<string, VariableUISetting>) => {
-      setAnalysis((analysis) => ({ ...analysis, variableUISettings }));
+    (
+      nextVariableUISettings:
+        | Record<string, VariableUISetting>
+        | ((
+            value: Record<string, VariableUISetting>
+          ) => Record<string, VariableUISetting>)
+    ) => {
+      const variableUISettings =
+        typeof nextVariableUISettings === 'function'
+          ? nextVariableUISettings(analysis.descriptor.subset.uiSettings)
+          : nextVariableUISettings;
+
+      setAnalysis(analysisToVariableUISettingsLens.set(variableUISettings));
     },
-    []
+    [analysis.descriptor.subset.uiSettings]
   );
-  const setVisualizations = useCallback(
-    (visualizations: Visualization[]) => {
-      createAnalysis(
-        { ...analysis, visualizations },
-        Path.resolve(
+  const setComputations = useSetter(
+    analysisToComputationsLens,
+    analysis,
+    createAnalysis,
+    useCallback(
+      (computations: Computation[]) => {
+        const computationWithNewVisualization = computations.find(
+          ({ visualizations }) => visualizations.length > 0
+        );
+
+        const newVisualizationId =
+          computationWithNewVisualization?.visualizations[0].visualizationId;
+
+        if (newVisualizationId == null) {
+          return undefined;
+        }
+
+        return Path.join(
           location.pathname.slice(url.length),
           '..',
-          visualizations[0].id
-        )
-      );
-    },
-    [analysis, createAnalysis, location.pathname, url.length]
+          newVisualizationId
+        );
+      },
+      [location.pathname, url.length]
+    )
   );
 
   const setDataTableSettings = useCallback(
@@ -109,8 +125,8 @@ export function NewAnalysisPage() {
       setName,
       setStarredVariables,
       setVariableUISettings,
-      setVisualizations,
       setDataTableSettings,
+      setComputations,
       saveAnalysis,
       copyAnalysis,
       deleteAnalysis,
@@ -131,9 +147,50 @@ export function NewAnalysisPage() {
       setName,
       setStarredVariables,
       setVariableUISettings,
-      setVisualizations,
       setDataTableSettings,
+      setComputations,
     ]
   );
   return <AnalysisPanel analysisState={analysisState} hideCopyAndSave />;
 }
+
+function useSetter<T>(
+  nestedValueLens: Lens<NewAnalysis, T>,
+  analysis: NewAnalysis,
+  createAnalysis: (analysis: NewAnalysis, subPath?: string) => void,
+  getSubPath?: (value: T) => string | undefined
+) {
+  return useCallback(
+    (nestedValue: T | ((nestedValue: T) => T)) => {
+      const nextNestedValue =
+        typeof nestedValue === 'function'
+          ? (nestedValue as (nestedValue: T) => T)(
+              nestedValueLens.get(analysis)
+            )
+          : nestedValue;
+      const nextAnalysis = nestedValueLens.set(nextNestedValue)(analysis);
+      createAnalysis(nextAnalysis, getSubPath && getSubPath(nextNestedValue));
+    },
+    [analysis, createAnalysis, getSubPath, nestedValueLens]
+  );
+}
+
+const analysisToNameLens = Lens.fromProp<NewAnalysis>()('displayName');
+const analysisToFiltersLens = Lens.fromPath<NewAnalysis>()([
+  'descriptor',
+  'subset',
+  'descriptor',
+]);
+const analysisToComputationsLens = Lens.fromPath<NewAnalysis>()([
+  'descriptor',
+  'computations',
+]);
+const analysisToStarredVariablesLens = Lens.fromPath<NewAnalysis>()([
+  'descriptor',
+  'starredVariables',
+]);
+const analysisToVariableUISettingsLens = Lens.fromPath<NewAnalysis>()([
+  'descriptor',
+  'subset',
+  'uiSettings',
+]);

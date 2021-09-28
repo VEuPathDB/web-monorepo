@@ -1,9 +1,10 @@
 import React, { useCallback, useMemo } from 'react';
+
 import { AnalysisState } from '../../hooks/analysis';
 import { useToggleStarredVariable } from '../../hooks/starredVariables';
 import {
-  Visualization,
   ComputationAppOverview,
+  Visualization,
 } from '../../types/visualization';
 import { testVisualization } from '../visualizations/implementations/TestVisualization';
 import { histogramVisualization } from '../visualizations/implementations/HistogramVisualization';
@@ -40,57 +41,69 @@ const visualizationTypes: Record<string, VisualizationType> = {
 
 export function PassThroughComputation(props: Props) {
   const { analysisState, computationAppOverview } = props;
-  const { analysis, setVisualizations } = analysisState;
-  const addVisualization = useCallback(
-    (visualization: Visualization) => {
-      setVisualizations([...(analysis?.visualizations ?? []), visualization]);
-    },
-    [setVisualizations, analysis]
-  );
-  const updateVisualization = useCallback(
-    (visualization: Visualization) => {
-      setVisualizations([
-        ...(analysis?.visualizations.filter(
-          (viz) => viz.id !== visualization.id
-        ) ?? []),
-        visualization,
-      ]);
-    },
-    [setVisualizations, analysis]
-  );
-
-  const deleteVisualization = useCallback(
-    (id: String) => {
-      if (analysis == null) return;
-      setVisualizations(analysis.visualizations.filter((v) => v.id !== id));
-    },
-    [analysis, setVisualizations]
-  );
-
-  const filters = useMemo(() => analysis?.filters ?? [], [analysis?.filters]);
+  const { analysis, setComputations } = analysisState;
+  const filters = useMemo(() => analysis?.descriptor.subset.descriptor ?? [], [
+    analysis?.descriptor.subset.descriptor,
+  ]);
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
+  const computationLocation = useMemo(() => {
+    const computations = analysis?.descriptor.computations;
+
+    if (computations == null) {
+      return undefined;
+    }
+
+    const computationIndex = computations.findIndex(
+      ({ computationId }) => computationId === 'pass-through'
+    );
+
+    return computationIndex === -1
+      ? undefined
+      : {
+          computationIndex,
+          computation: computations[computationIndex],
+        };
+  }, [analysis?.descriptor.computations]);
+
+  const updateVisualizations = useCallback(
+    (
+      visualizations:
+        | Visualization[]
+        | ((visualizations: Visualization[]) => Visualization[])
+    ) => {
+      if (computationLocation == null) {
+        throw new Error('Computation not found');
+      }
+
+      const { computationIndex } = computationLocation;
+
+      setComputations((computations) => [
+        ...computations.slice(0, computationIndex),
+        {
+          ...computations[computationIndex],
+          visualizations:
+            typeof visualizations === 'function'
+              ? visualizations(computations[computationIndex].visualizations)
+              : visualizations,
+        },
+        ...computations.slice(computationIndex + 1),
+      ]);
+    },
+    [setComputations, computationLocation]
+  );
+
   if (analysis == null) return <div>Analysis not found</div>;
+  if (computationLocation == null) return <div>Computation not found</div>;
   return (
     <VisualizationsContainer
-      computationId="pass-through"
-      computations={[
-        {
-          id: 'pass-through',
-          type: 'pass',
-          displayName: 'Passthrough',
-          configuration: undefined,
-        },
-      ]}
-      visualizations={analysis.visualizations}
+      computation={computationLocation.computation}
       visualizationsOverview={computationAppOverview.visualizations!}
-      addVisualization={addVisualization}
-      updateVisualization={updateVisualization}
-      deleteVisualization={deleteVisualization}
+      updateVisualizations={updateVisualizations}
       visualizationTypes={visualizationTypes}
       filters={filters}
-      starredVariables={analysis.starredVariables}
+      starredVariables={analysis.descriptor.starredVariables}
       toggleStarredVariable={toggleStarredVariable}
     />
   );

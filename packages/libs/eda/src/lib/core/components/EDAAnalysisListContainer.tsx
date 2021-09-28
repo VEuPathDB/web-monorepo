@@ -7,6 +7,7 @@ import { WorkspaceContext } from '../context/WorkspaceContext';
 import ErrorStatus from '@veupathdb/wdk-client/lib/Components/PageStatus/Error';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core';
 import { workspaceTheme } from './workspaceTheme';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
 const theme = createMuiTheme(workspaceTheme);
 interface Props {
@@ -36,7 +37,8 @@ export function EDAAnalysisListContainer(props: Props) {
         <pre>{String(studyMetadata.error)}</pre>
       </ErrorStatus>
     );
-  if (studyRecordState == null || studyMetadata.value == null) return null;
+  if (studyRecordState == null || studyMetadata.value == null)
+    return <Loading />;
   return (
     <div className={className}>
       <WorkspaceContext.Provider

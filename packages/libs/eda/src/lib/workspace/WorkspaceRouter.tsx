@@ -6,17 +6,18 @@ import {
   Redirect,
 } from 'react-router';
 
-import { EDAAnalysisList } from './EDAAnalysisList';
-import { WorkspaceContainer } from './WorkspaceContainer';
-import { mockAnalysisStore } from './Mocks';
 import { SubsettingClient } from '../core/api/subsetting-api';
+import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
 import { AllAnalyses } from './AllAnalyses';
+import { EDAAnalysisList } from './EDAAnalysisList';
 import { LatestAnalysis } from './LatestAnalysis';
 import { StudyList } from './StudyList';
+import { WorkspaceContainer } from './WorkspaceContainer';
 
 type Props = {
   subsettingServiceUrl: string;
   dataServiceUrl: string;
+  userServiceUrl: string;
 };
 
 /**
@@ -25,9 +26,11 @@ type Props = {
 export function WorkspaceRouter({
   subsettingServiceUrl,
   dataServiceUrl,
+  userServiceUrl,
 }: Props) {
   const { path, url } = useRouteMatch();
   const subsettingClient = SubsettingClient.getClient(subsettingServiceUrl);
+  const analysisClient = useConfiguredAnalysisClient(userServiceUrl);
 
   return (
     <Switch>
@@ -36,7 +39,7 @@ export function WorkspaceRouter({
         exact
         render={() => (
           <AllAnalyses
-            analysisClient={mockAnalysisStore}
+            analysisClient={analysisClient}
             subsettingClient={subsettingClient}
           />
         )}
@@ -68,6 +71,7 @@ export function WorkspaceRouter({
             {...props.match.params}
             subsettingServiceUrl={subsettingServiceUrl}
             dataServiceUrl={dataServiceUrl}
+            userServiceUrl={userServiceUrl}
           />
         )}
       />
@@ -78,6 +82,7 @@ export function WorkspaceRouter({
             {...props.match.params}
             subsettingServiceUrl={subsettingServiceUrl}
             dataServiceUrl={dataServiceUrl}
+            userServiceUrl={userServiceUrl}
           />
         )}
       />
@@ -87,7 +92,7 @@ export function WorkspaceRouter({
           <LatestAnalysis
             {...props.match.params}
             replaceRegexp={/~latest/}
-            analysisClient={mockAnalysisStore}
+            analysisClient={analysisClient}
           />
         )}
       />
@@ -100,6 +105,7 @@ export function WorkspaceRouter({
             {...props.match.params}
             subsettingServiceUrl={subsettingServiceUrl}
             dataServiceUrl={dataServiceUrl}
+            userServiceUrl={userServiceUrl}
           />
         )}
       />

@@ -14,6 +14,7 @@ import { fromEdaFilter } from '../../utils/wdk-filter-param-adapter';
 import { TableVariable } from './types';
 import { getDistribution } from './util';
 import { DistributionResponse } from '../../api/subsetting-api';
+import { gray, red } from './colors';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -70,13 +71,14 @@ export function TableFilter({
   filteredEntityCount,
 }: Props) {
   const subsettingClient = useSubsettingClient();
+  const filters = analysisState.analysis?.descriptor.subset.descriptor;
   const tableSummary = usePromise(
     useCallback(async () => {
       const distribution = await getDistribution<DistributionResponse>(
         {
           entityId: entity.id,
           variableId: variable.id,
-          filters: analysisState.analysis?.filters,
+          filters,
         },
         (filters) => {
           return subsettingClient.getDistribution(
@@ -116,13 +118,7 @@ export function TableFilter({
         filteredEntitiesCount:
           distribution.foreground.statistics.numDistinctEntityRecords,
       };
-    }, [
-      entity.id,
-      variable.id,
-      analysisState.analysis?.filters,
-      subsettingClient,
-      studyMetadata.id,
-    ])
+    }, [entity.id, variable.id, filters, subsettingClient, studyMetadata.id])
   );
   const activeField = useMemo(
     () => ({
@@ -137,22 +133,25 @@ export function TableFilter({
     [variable]
   );
 
-  const filter = analysisState.analysis?.filters.find(
+  const filter = filters?.find(
     (f) => f.entityId === entity.id && f.variableId === variable.id
   );
 
   const uiStateKey = `${entity.id}/${variable.id}`;
 
+  const variableUISettings =
+    analysisState.analysis?.descriptor.subset.uiSettings;
+
   const uiState: Required<UIState> = useMemo(() => {
     return pipe(
-      analysisState.analysis?.variableUISettings[uiStateKey],
+      variableUISettings?.[uiStateKey],
       UIState.decode,
       // This will overwrite default props with store props.
       // The result is a `Required<UIState>` object.
       map((stored) => ({ ...defaultUIState, ...stored })),
       getOrElse(() => defaultUIState)
     );
-  }, [analysisState.analysis?.variableUISettings, uiStateKey]);
+  }, [variableUISettings, uiStateKey]);
 
   const sortedDistribution = useMemo(() => {
     const values: any[] =
@@ -273,7 +272,8 @@ export function TableFilter({
 
   const handleChange = useCallback(
     (_: unknown, values: string[] = allValues) => {
-      const otherFilters = (analysisState.analysis?.filters ?? []).filter(
+      const filters = analysisState.analysis?.descriptor.subset.descriptor;
+      const otherFilters = (filters ?? []).filter(
         (f) => f.entityId !== entity.id || f.variableId !== variable.id
       );
 
@@ -309,7 +309,7 @@ export function TableFilter({
         tableSummary.value.entityId === entity.id &&
         tableSummary.value.variableId === variable.id && (
           <MembershipField
-            displayName={entity.displayName}
+            displayName={entity.displayNamePlural ?? entity.displayName}
             dataCount={totalEntityCount}
             filteredDataCount={filteredEntityCount}
             filter={tableFilter}
@@ -321,6 +321,8 @@ export function TableFilter({
             onMemberChangeCurrentPage={handlePagination}
             onMemberChangeRowsPerPage={handleRowsPerPage}
             selectByDefault={false}
+            fillBarColor={gray}
+            fillFilteredBarColor={red}
             // set Heading1 prefix
             filteredCountHeadingPrefix={'Subset of'}
           />

@@ -5,7 +5,6 @@ import { RestrictedPage } from '@veupathdb/web-common/lib/App/DataRestriction/Re
 import { useApprovalStatus } from '@veupathdb/web-common/lib/hooks/dataRestriction';
 import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 import { AnalysisClient } from '../core';
-import { useRouteMatch } from 'react-router';
 
 interface Props {
   analysisClient: AnalysisClient;
@@ -27,11 +26,12 @@ export function LatestAnalysis(props: Props) {
         (analyses) =>
           orderBy(
             analyses.filter((analysis) => analysis.studyId === studyId),
-            (analysis) => analysis.modified
+            (analysis) => analysis.modificationTime,
+            ['desc']
           )[0]
       )
       .run((analysis) => {
-        const id = analysis?.id ?? 'new';
+        const id = analysis?.analysisId ?? 'new';
         const newLocation = {
           ...history.location,
           pathname: history.location.pathname.replace(replaceRegexp, id),

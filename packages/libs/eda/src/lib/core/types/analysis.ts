@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/no-redeclare */
 import * as t from 'io-ts';
 import { Filter } from './filter';
-import { Computation, Visualization } from './visualization';
+import { VariableDescriptor } from './variable';
+import { Computation } from './visualization';
 
 export type AnalysisPreferences = t.TypeOf<typeof AnalysisPreferences>;
 export const AnalysisPreferences = t.partial({
   pinnedAnalyses: t.array(t.string),
 });
 
-export type DerviedVariable = t.TypeOf<typeof DerviedVariable>;
-export const DerviedVariable = t.unknown;
+export type DerivedVariable = t.TypeOf<typeof DerivedVariable>;
+export const DerivedVariable = t.unknown;
 
 export type VariableUISetting = t.TypeOf<typeof VariableUISetting>;
 export const VariableUISetting = t.UnknownRecord;
@@ -31,51 +32,104 @@ export const DataTableSettings = t.type({
   ),
 });
 
-export type NewAnalysis = t.TypeOf<typeof NewAnalysis>;
-export const NewAnalysis = t.type({
-  /** User supplied same for the analysis. */
-  name: t.string,
-  /**
-   * Not sure yet, but this probably refers to the study for
-   * which the analysis is taking place. COULD also be a unique ID
-   * for the analysis.
-   */
-  studyId: t.string,
-  /** Array of filters applied to the underlying data. */
-  filters: t.array(Filter),
-  derivedVariables: t.array(DerviedVariable),
-  /** IDs of variables 'starred' by the user. */
-  starredVariables: t.array(t.string),
-  variableUISettings: t.record(t.string, VariableUISetting),
-  /** Array of visualizations created with the analysis. */
-  visualizations: t.array(Visualization),
+export type AnalysisBase = t.TypeOf<typeof AnalysisBase>;
+export const AnalysisBase = t.intersection([
+  t.type({
+    /**
+     * Not sure yet, but this probably refers to the study for
+     * which the analysis is taking place. COULD also be a unique ID
+     * for the analysis.
+     */
+    studyId: t.string,
+    studyVersion: t.string,
+    apiVersion: t.string,
+    isPublic: t.boolean,
+    /** User supplied same for the analysis. */
+    displayName: t.string,
+  }),
+  t.partial({
+    description: t.string,
+  }),
+]);
+
+export type AnalysisSummary = t.TypeOf<typeof AnalysisSummary>;
+export const AnalysisSummary = t.intersection([
+  AnalysisBase,
+  t.type({
+    analysisId: t.string,
+    creationTime: t.string,
+    modificationTime: t.string,
+    numFilters: t.number,
+    numComputations: t.number,
+    numVisualizations: t.number,
+  }),
+]);
+
+export type AnalysisDescriptor = t.TypeOf<typeof AnalysisDescriptor>;
+export const AnalysisDescriptor = t.type({
+  subset: t.type({
+    descriptor: t.array(Filter),
+    uiSettings: t.record(t.string, VariableUISetting),
+  }),
   computations: t.array(Computation),
+  /** IDs of variables 'starred' by the user. */
+  starredVariables: t.array(VariableDescriptor),
+  dataTableColumns: t.array(VariableDescriptor),
+  derivedVariables: t.array(DerivedVariable),
   dataTableSettings: DataTableSettings,
 });
+
+export type NewAnalysis = t.TypeOf<typeof NewAnalysis>;
+export const NewAnalysis = t.intersection([
+  AnalysisBase,
+  t.type({
+    descriptor: AnalysisDescriptor,
+  }),
+]);
 
 export type Analysis = t.TypeOf<typeof Analysis>;
 export const Analysis = t.intersection([
   NewAnalysis,
   t.type({
-    id: t.string,
-    created: t.string,
-    modified: t.string,
+    analysisId: t.string,
+    creationTime: t.string,
+    modificationTime: t.string,
+    numFilters: t.number,
+    numComputations: t.number,
+    numVisualizations: t.number,
   }),
 ]);
 
 export function makeNewAnalysis(studyId: string): NewAnalysis {
   return {
-    name: 'Unnamed Analysis',
+    displayName: 'Unnamed Analysis',
     studyId,
-    filters: [],
-    starredVariables: [],
-    derivedVariables: [],
-    visualizations: [],
-    computations: [],
-    variableUISettings: {},
-    dataTableSettings: {
-      selectedVariables: {},
-      sorting: [],
+    isPublic: false,
+    studyVersion: '',
+    apiVersion: '',
+    descriptor: {
+      subset: {
+        descriptor: [],
+        uiSettings: {},
+      },
+      starredVariables: [],
+      dataTableColumns: [],
+      dataTableSettings: {
+        selectedVariables: {},
+        sorting: [],
+      },
+      derivedVariables: [],
+      computations: [
+        {
+          computationId: 'pass-through',
+          displayName: 'Passthrough',
+          descriptor: {
+            type: 'pass',
+            configuration: undefined,
+          },
+          visualizations: [],
+        },
+      ],
     },
   };
 }

@@ -1,15 +1,17 @@
-import { EDAAnalysisListContainer, EDAWorkspaceContainer } from '../core';
-import { SubsettingClient } from '../core/api/subsetting-api';
-import React from 'react';
 import {
   Route,
   RouteComponentProps,
   Switch,
   useRouteMatch,
 } from 'react-router';
+
+import { EDAAnalysisListContainer, EDAWorkspaceContainer } from '../core';
+import { SubsettingClient } from '../core/api/subsetting-api';
+import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
+
 import { AnalysisList } from './MapVeuAnalysisList';
 import { MapVeuAnalysis } from './MapVeuAnalysis';
-import { mockAnalysisStore } from './Mocks';
+
 import DataClient from '../core/api/dataClient';
 import { StudyList } from './StudyList';
 
@@ -28,6 +30,7 @@ export function MapVeuContainer() {
   // This will get the matched path of the active parent route.
   // This is useful so we don't have to hardcode the path root.
   const { path } = useRouteMatch();
+  const analysisClient = useConfiguredAnalysisClient('/eda-user-service');
   return (
     <>
       <h1>MapVEu</h1>
@@ -40,7 +43,7 @@ export function MapVeuContainer() {
             <EDAWorkspaceContainer
               studyId={props.match.params.studyId}
               subsettingClient={edaClient}
-              analysisClient={mockAnalysisStore}
+              analysisClient={analysisClient}
               dataClient={dataClient}
             >
               <MapVeuAnalysis analysisId={props.match.params.analysisId} />
@@ -52,13 +55,13 @@ export function MapVeuContainer() {
           render={(props: RouteComponentProps<{ studyId: string }>) => (
             <EDAAnalysisListContainer
               studyId={props.match.params.studyId}
-              analysisClient={mockAnalysisStore}
+              analysisClient={analysisClient}
               subsettingClient={edaClient}
               dataClient={dataClient}
             >
               <AnalysisList
                 studyId={props.match.params.studyId}
-                analysisStore={mockAnalysisStore}
+                analysisStore={analysisClient}
               />
             </EDAAnalysisListContainer>
           )}

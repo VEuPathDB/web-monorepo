@@ -11,9 +11,9 @@ import {
   SubsettingClient,
 } from '../core';
 import DataClient from '../core/api/dataClient';
+import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
 import { VariableDescriptor } from '../core/types/variable';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
-import { mockAnalysisStore } from './Mocks';
 import { cx, findFirstVariable } from './Utils';
 import { SavedAnalysis } from './SavedAnalysis';
 import { NewAnalysisPage } from './NewAnalysis';
@@ -23,6 +23,7 @@ interface Props {
   analysisId?: string;
   subsettingServiceUrl: string;
   dataServiceUrl: string;
+  userServiceUrl: string;
 }
 
 /** Allows a user to create a new analysis or edit an existing one. */
@@ -31,6 +32,7 @@ export function WorkspaceContainer({
   analysisId,
   subsettingServiceUrl,
   dataServiceUrl,
+  userServiceUrl,
 }: Props) {
   const { url } = useRouteMatch();
   const subsettingClient = useMemo(
@@ -41,6 +43,7 @@ export function WorkspaceContainer({
     () => new DataClient({ baseUrl: dataServiceUrl }),
     [dataServiceUrl]
   );
+  const analysisClient = useConfiguredAnalysisClient(userServiceUrl);
   const makeVariableLink = useCallback(
     (
       {
@@ -71,7 +74,7 @@ export function WorkspaceContainer({
       <EDAWorkspaceContainer
         studyId={studyId}
         className={cx()}
-        analysisClient={mockAnalysisStore}
+        analysisClient={analysisClient}
         dataClient={dataClient}
         subsettingClient={subsettingClient}
         makeVariableLink={makeVariableLink}

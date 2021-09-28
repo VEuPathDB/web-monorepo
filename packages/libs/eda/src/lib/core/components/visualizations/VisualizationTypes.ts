@@ -1,4 +1,5 @@
 import { Filter } from '../../types/filter';
+import { VariableDescriptor } from '../../types/variable';
 import {
   Computation,
   DataElementConstraint,
@@ -13,17 +14,17 @@ export interface VisualizationProps {
   visualization: Visualization;
   dataElementConstraints?: Record<string, DataElementConstraint>[];
   dataElementDependencyOrder?: string[];
-  updateVisualization?: (newViz: Visualization) => void;
+  updateConfiguration: (configuration: unknown) => void;
+  updateThumbnail: (source: string) => void;
   computation: Computation;
-  filters: Filter[];
-  starredVariables: string[];
-  toggleStarredVariable: (targetVariableId: string) => void;
+  filters?: Filter[];
+  starredVariables: VariableDescriptor[];
+  toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
 }
 
 export type SelectorProps = VisualizationOverview;
 
 export interface VisualizationType {
-  gridComponent: React.ComponentType<VisualizationProps>;
   fullscreenComponent: React.ComponentType<VisualizationProps>;
   selectorComponent: React.ComponentType<SelectorProps>;
   createDefaultConfig: () => unknown;

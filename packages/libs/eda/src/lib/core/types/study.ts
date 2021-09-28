@@ -20,6 +20,7 @@ export type StudyRecord = RecordInstance;
 export const VariableType = t.keyof({
   string: null,
   number: null,
+  integer: null,
   date: null,
   longitude: null,
 });
@@ -85,11 +86,17 @@ export const StringVariable = t.intersection([
 export type NumberVariable = t.TypeOf<typeof NumberVariable>;
 export const NumberVariable = t.intersection([
   Variable_Base,
-  t.type({
-    type: t.literal('number'),
-    units: t.string,
-    precision: t.number,
-  }),
+  t.union([
+    t.type({
+      type: t.literal('number'),
+      units: t.string,
+      precision: t.number,
+    }),
+    t.type({
+      type: t.literal('integer'),
+      units: t.string,
+    }),
+  ]),
   t.union([
     t.type({
       dataShape: CategoryVariableDataShape,
@@ -142,6 +149,15 @@ export const LongitudeVariable = t.intersection([
   }),
 ]);
 
+export type MultiFilterVariable = t.TypeOf<typeof MultiFilterVariable>;
+export const MultiFilterVariable = t.intersection([
+  VariableTreeNode_Base,
+  t.type({
+    type: t.literal('category'),
+    displayType: t.literal('multifilter'),
+  }),
+]);
+
 export type VariableCategory = t.TypeOf<typeof VariableCategory>;
 export const VariableCategory = t.intersection([
   VariableTreeNode_Base,
@@ -150,20 +166,17 @@ export const VariableCategory = t.intersection([
   }),
 ]);
 
-export type Variable =
-  | StringVariable
-  | NumberVariable
-  | DateVariable
-  | LongitudeVariable;
-
-export type VariableTreeNode = t.TypeOf<typeof VariableTreeNode>;
-export const VariableTreeNode = t.union([
+export type Variable = t.TypeOf<typeof Variable>;
+export const Variable = t.union([
   StringVariable,
   NumberVariable,
   DateVariable,
   LongitudeVariable,
-  VariableCategory,
+  // MultiFilterVariable,
 ]);
+
+export type VariableTreeNode = t.TypeOf<typeof VariableTreeNode>;
+export const VariableTreeNode = t.union([Variable, VariableCategory]);
 
 // StudyEntity
 // -----------

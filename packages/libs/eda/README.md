@@ -2,6 +2,15 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Webpack dependencies
+
+When consuming this library with webpack, the following development dependencies
+are required, due to [upstream
+dependencies](https://github.com/plotly/plotly.js/blob/master/BUILDING.md#webpack) of `Plotly.js`.
+
+- [ify-loader](https://www.npmjs.com/package/ify-loader)
+- [bubleify transform](https://www.npmjs.com/package/bubleify)
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -47,10 +56,14 @@ The following environment variables are used by the `yarn start` script:
 
 | Variable name                         | Description                                       |
 | ------------------------------------- | ------------------------------------------------- |
+| `VEUPATHDB_LOGIN_USER`                | VEuPathDB BRC prerelease user name                |
+| `VEUPATHDB_LOGIN_PASS`                | VEuPathDB BRC prerelease user password            |
 | `WDK_SERVICE_URL`                     | Full url to a running WDK REST Service            |
 | `EDA_SUBSETTING_SERVICE_URL`          | Full url to a running EDA Subsetting Service      |
 | `EDA_DATA_SERVICE_URL`                | Full url to a running EDA Data Service            |
+| `EDA_USER_SERVICE_URL`                | Full url to a running EDA User Service            |
 | `DATASET_ACCESS_SERVICE_URL`          | Full url to a running Dataset Access Service      |
+| `WDK_CHECK_AUTH`                      | An optional auth key for a registered WDK user    |
 | `REACT_APP_DISABLE_DATA_RESTRICTIONS` | If present and `true`, disables data restrictions |
 
 ## Learn More

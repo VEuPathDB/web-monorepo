@@ -1,15 +1,16 @@
 import { useCallback, useEffect, useState } from 'react';
+import { Lens } from 'monocle-ts';
 import { differenceWith } from 'lodash';
 
 import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 import { useStateWithHistory } from '@veupathdb/wdk-client/lib/Hooks/StateWithHistory';
 
 import { useAnalysisClient } from './workspace';
-import { Analysis, NewAnalysis } from '../types/analysis';
+import { Analysis, AnalysisSummary, NewAnalysis } from '../types/analysis';
 import { AnalysisClient } from '../api/analysis-api';
 
 /** Type definition for function that will set an attribute of an Analysis. */
-type Setter<T extends keyof Analysis> = (value: Analysis[T]) => void;
+type Setter<T> = (value: T | ((value: T) => T)) => void;
 
 /** Status options for an analysis. */
 export enum Status {
@@ -30,15 +31,16 @@ export type AnalysisState = {
   canRedo: boolean;
   undo: () => void;
   redo: () => void;
-  setName: Setter<'name'>;
-  setFilters: Setter<'filters'>;
-  setVisualizations: Setter<'visualizations'>;
-  setDerivedVariables: Setter<'derivedVariables'>;
-  setStarredVariables: Setter<'starredVariables'>;
-  setVariableUISettings: Setter<'variableUISettings'>;
-  setDataTableSettings: Setter<'dataTableSettings'>;
+  setName: Setter<Analysis['displayName']>;
+  setFilters: Setter<Analysis['descriptor']['subset']['descriptor']>;
+  setComputations: Setter<Analysis['descriptor']['computations']>;
+  setDerivedVariables: Setter<Analysis['descriptor']['derivedVariables']>;
+  setStarredVariables: Setter<Analysis['descriptor']['starredVariables']>;
+  setVariableUISettings: Setter<Analysis['descriptor']['subset']['uiSettings']>;
+  setDataTableSettings: Setter<Analysis['descriptor']['dataTableSettings']>;
+
   saveAnalysis: () => Promise<void>;
-  copyAnalysis: () => Promise<{ id: string }>;
+  copyAnalysis: () => Promise<{ analysisId: string }>;
   deleteAnalysis: () => Promise<void>;
 };
 
@@ -96,7 +98,7 @@ export function useAnalysis(analysisId: string): AnalysisState {
       (analysis) => {
         setSavedAnalysis(analysis);
         setStatus(Status.Loaded);
-        analysisCache[analysis.id] = analysis;
+        analysisCache[analysis.analysisId] = analysis;
       },
       (error) => {
         setError(error);
@@ -116,27 +118,35 @@ export function useAnalysis(analysisId: string): AnalysisState {
    * Factory function for creating useCallback hooks.
    * Ultimately used to update a property on an Analysis.
    */
-  const useSetter = <T extends keyof Analysis>(propertyName: T) =>
+  const useSetter = <T>(nestedValueLens: Lens<Analysis, T>) =>
     useCallback(
-      (value: Analysis[T]) => {
-        setCurrent((_a) => _a && { ..._a, [propertyName]: value });
+      (nestedValue: T | ((nestedValue: T) => T)) => {
+        setCurrent((_a) => {
+          const newNestedValue =
+            typeof nestedValue === 'function'
+              ? (nestedValue as (nestedValue: T) => T)(nestedValueLens.get(_a))
+              : nestedValue;
+
+          return nestedValueLens.set(newNestedValue)(_a);
+        });
         setHasUnsavedChanges(true);
       },
-      [propertyName]
+      [nestedValueLens]
     );
 
-  const setName = useSetter('name');
-  const setFilters = useSetter('filters');
-  const setVisualizations = useSetter('visualizations');
-  const setDerivedVariables = useSetter('derivedVariables');
-  const setStarredVariables = useSetter('starredVariables');
-  const setVariableUISettings = useSetter('variableUISettings');
-  const setDataTableSettings = useSetter('dataTableSettings');
+  const setName = useSetter(analysisToNameLens);
+  const setFilters = useSetter(analysisToFiltersLens);
+  const setComputations = useSetter(analysisToComputationsLens);
+  const setDerivedVariables = useSetter(analysisToDerivedVariablesLens);
+  const setStarredVariables = useSetter(analysisToStarredVariablesLens);
+  const setVariableUISettings = useSetter(analysisToVariableUISettingsLens);
+  const setDataTableSettings = useSetter(analysisToDataTableSettings);
 
   const saveAnalysis = useCallback(async () => {
     if (analysis == null)
       throw new Error("Attempt to save an analysis that hasn't been loaded.");
-    await analysisClient.updateAnalysis(analysis);
+    await analysisClient.updateAnalysis(analysis.analysisId, analysis);
+    analysisCache[analysis.analysisId] = analysis;
     setHasUnsavedChanges(false);
   }, [analysisClient, analysis]);
 
@@ -146,7 +156,7 @@ export function useAnalysis(analysisId: string): AnalysisState {
     if (hasUnsavedChanges) await saveAnalysis();
     return await analysisClient.createAnalysis({
       ...analysis,
-      name: `Copy of ${analysis.name}`,
+      displayName: `Copy of ${analysis.displayName}`,
     });
   }, [analysisClient, analysis, saveAnalysis, hasUnsavedChanges]);
 
@@ -169,7 +179,7 @@ export function useAnalysis(analysisId: string): AnalysisState {
     undo,
     setName,
     setFilters,
-    setVisualizations,
+    setComputations,
     setDerivedVariables,
     setStarredVariables,
     setVariableUISettings,
@@ -182,7 +192,7 @@ export function useAnalysis(analysisId: string): AnalysisState {
 
 export function useAnalysisList(analysisClient: AnalysisClient) {
   // const analysisClient = useAnalysisClient();
-  const [analyses, setAnalyses] = useState<Analysis[]>();
+  const [analyses, setAnalyses] = useState<AnalysisSummary[]>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
   useEffect(() => {
@@ -205,7 +215,7 @@ export function useAnalysisList(analysisClient: AnalysisClient) {
       try {
         await analysisClient.deleteAnalysis(id);
         setAnalyses((analyses) =>
-          analyses?.filter((analysis) => analysis.id !== id)
+          analyses?.filter((analysis) => analysis.analysisId !== id)
         );
       } catch (error) {
         setError(error.message ?? String(error));
@@ -227,7 +237,7 @@ export function useAnalysisList(analysisClient: AnalysisClient) {
             differenceWith(
               analyses,
               Array.from(ids),
-              (analysis, id) => analysis.id === id
+              (analysis, id) => analysis.analysisId === id
             )
         );
       } catch (error) {
@@ -300,3 +310,31 @@ export function usePinnedAnalyses(analysisClient: AnalysisClient) {
     removePinnedAnalysis,
   };
 }
+
+const analysisToNameLens = Lens.fromProp<Analysis>()('displayName');
+const analysisToFiltersLens = Lens.fromPath<Analysis>()([
+  'descriptor',
+  'subset',
+  'descriptor',
+]);
+const analysisToComputationsLens = Lens.fromPath<Analysis>()([
+  'descriptor',
+  'computations',
+]);
+const analysisToDerivedVariablesLens = Lens.fromPath<Analysis>()([
+  'descriptor',
+  'derivedVariables',
+]);
+const analysisToStarredVariablesLens = Lens.fromPath<Analysis>()([
+  'descriptor',
+  'starredVariables',
+]);
+const analysisToVariableUISettingsLens = Lens.fromPath<Analysis>()([
+  'descriptor',
+  'subset',
+  'uiSettings',
+]);
+const analysisToDataTableSettings = Lens.fromPath<Analysis>()([
+  'descriptor',
+  'dataTableSettings',
+]);

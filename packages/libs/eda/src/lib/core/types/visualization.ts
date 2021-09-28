@@ -15,15 +15,27 @@ import { VariableDataShape, VariableType } from './study';
 import { CompleteCasesTable } from '../api/dataClient/types';
 
 /**
+ * Metadata for the visualization object stored in user's analysis
+ */
+export type VisualizationDescriptor = TypeOf<typeof VisualizationDescriptor>;
+export const VisualizationDescriptor = intersection([
+  type({
+    type: string,
+    configuration: unknown,
+  }),
+  partial({
+    thumbnail: string,
+  }),
+]);
+
+/**
  * Visualization object stored in user's analysis
  */
 export type Visualization = TypeOf<typeof Visualization>;
 export const Visualization = intersection([
   type({
-    id: string,
-    computationId: string,
-    type: string,
-    configuration: unknown,
+    visualizationId: string,
+    descriptor: VisualizationDescriptor,
   }),
   partial({
     displayName: string,
@@ -31,14 +43,23 @@ export const Visualization = intersection([
 ]);
 
 /**
+ * Type and configuration of the app object stored in user's analysis
+ */
+export type ComputationDescriptor = TypeOf<typeof ComputationDescriptor>;
+export const ComputationDescriptor = type({
+  type: string,
+  configuration: unknown,
+});
+
+/**
  * App object stored in user's analysis
  */
 export type Computation = TypeOf<typeof Computation>;
 export const Computation = intersection([
   type({
-    id: string,
-    type: string,
-    configuration: unknown,
+    computationId: string,
+    descriptor: ComputationDescriptor,
+    visualizations: array(Visualization),
   }),
   partial({
     displayName: string,
@@ -61,7 +82,10 @@ export const DataElementConstraint = intersection([
   partial({
     allowedTypes: array(VariableType),
     allowedShapes: array(VariableDataShape),
+    maxNumValues: number,
     allowMultiValued: boolean,
+    // description isn't yet present for the records visualization
+    description: string,
   }),
 ]);
 
@@ -84,5 +108,6 @@ export const ComputationAppOverview = intersection([
 
 export type CoverageStatistics = {
   completeCases: CompleteCasesTable;
-  outputSize: number;
+  completeCasesAllVars: number;
+  completeCasesAxesVars: number;
 };
