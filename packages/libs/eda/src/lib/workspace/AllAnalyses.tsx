@@ -35,6 +35,7 @@ import {
   usePinnedAnalyses,
 } from '../core';
 import { workspaceTheme } from '../core/components/workspaceTheme';
+import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 interface AnalysisAndDataset {
@@ -399,14 +400,14 @@ export function AllAnalyses(props: Props) {
           name: 'Created',
           sortable: true,
           renderCell: (data: { row: AnalysisAndDataset }) =>
-            new Date(data.row.analysis.creationTime).toUTCString().slice(5),
+            convertISOToDisplayFormat(data.row.analysis.creationTime),
         },
         {
           key: 'modificationTime',
           name: 'Modified',
           sortable: true,
           renderCell: (data: { row: AnalysisAndDataset }) =>
-            new Date(data.row.analysis.modificationTime).toUTCString().slice(5),
+            convertISOToDisplayFormat(data.row.analysis.modificationTime),
         },
       ],
     }),

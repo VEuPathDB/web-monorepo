@@ -9,6 +9,7 @@ import {
   PromiseResult,
   PublicAnalysisSummary,
 } from '../core';
+import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
 
 interface Props {
   state: PromiseHookState<PublicAnalysisSummary[]>;
@@ -86,10 +87,14 @@ function PublicAnalysesTable({
           {
             key: 'creationTime',
             name: 'Created',
+            renderCell: (data: { row: PublicAnalysisSummary }) =>
+              convertISOToDisplayFormat(data.row.creationTime),
           },
           {
             key: 'modificationTime',
             name: 'Modified',
+            renderCell: (data: { row: PublicAnalysisSummary }) =>
+              convertISOToDisplayFormat(data.row.modificationTime),
           },
         ] as MesaColumn<keyof PublicAnalysisSummary>[],
       }),
