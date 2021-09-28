@@ -101,7 +101,7 @@ export function makeMockAnalysisStore(
     },
     async copyAnalysis(analysisId: string, sourceUserId?: string) {
       const analysis = await this.getAnalysis(analysisId);
-      return await this.createAnalysis(analysis);
+      return await this.createAnalysis({ ...analysis, isPublic: false });
     },
     async getPublicAnalyses() {
       const analysisList = await this.getAnalyses();
