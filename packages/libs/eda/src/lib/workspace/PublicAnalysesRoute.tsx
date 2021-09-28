@@ -23,7 +23,7 @@ export function PublicAnalysesRoute({ analysisClient }: Props) {
   );
   const makeAnalysisLink = useCallback(
     (studyId: string, analysisId: string) =>
-      Path.join(location.pathname, '..', 'import', studyId, analysisId),
+      Path.join(location.pathname, '..', studyId, analysisId, 'import'),
     [location.pathname]
   );
 

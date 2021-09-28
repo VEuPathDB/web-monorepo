@@ -10,6 +10,7 @@ import { SubsettingClient } from '../core/api/subsetting-api';
 import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
 import { AllAnalyses } from './AllAnalyses';
 import { EDAAnalysisList } from './EDAAnalysisList';
+import { ImportAnalysis } from './ImportAnalysis';
 import { LatestAnalysis } from './LatestAnalysis';
 import { PublicAnalysesRoute } from './PublicAnalysesRoute';
 import { StudyList } from './StudyList';
@@ -66,10 +67,6 @@ export function WorkspaceRouter({
         render={() => <PublicAnalysesRoute analysisClient={analysisClient} />}
       />
       <Route
-        path={`${path}/import/:studyId/:analysisId`}
-        render={() => <>Coming soon</>}
-      />
-      <Route
         path={`${path}/:studyId`}
         exact
         render={(props: RouteComponentProps<{ studyId: string }>) => (
@@ -98,6 +95,18 @@ export function WorkspaceRouter({
           <LatestAnalysis
             {...props.match.params}
             replaceRegexp={/~latest/}
+            analysisClient={analysisClient}
+          />
+        )}
+      />
+      <Route
+        exact
+        path={`${path}/:studyId/:analysisId/import`}
+        render={(
+          props: RouteComponentProps<{ studyId: string; analysisId: string }>
+        ) => (
+          <ImportAnalysis
+            {...props.match.params}
             analysisClient={analysisClient}
           />
         )}
