@@ -6,6 +6,7 @@ import Path from 'path';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { AnalysisClient, usePublicAnalysisList } from '../core';
+import { useWdkStudyRecords } from '../core/hooks/study';
 
 import { PublicAnalyses } from './PublicAnalyses';
 
@@ -15,6 +16,7 @@ export interface Props {
 
 export function PublicAnalysesRoute({ analysisClient }: Props) {
   const publicAnalysisListState = usePublicAnalysisList(analysisClient);
+  const studyRecords = useWdkStudyRecords();
 
   const location = useLocation();
   const makeStudyLink = useCallback(
@@ -31,7 +33,8 @@ export function PublicAnalysesRoute({ analysisClient }: Props) {
 
   return (
     <PublicAnalyses
-      state={publicAnalysisListState}
+      publicAnalysisListState={publicAnalysisListState}
+      studyRecords={studyRecords}
       makeStudyLink={makeStudyLink}
       makeAnalysisLink={makeAnalysisLink}
     />

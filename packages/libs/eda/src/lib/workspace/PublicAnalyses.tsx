@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 
-import { Link, Mesa } from '@veupathdb/wdk-client/lib/Components';
+import { keyBy } from 'lodash';
+
+import { Link, Loading, Mesa } from '@veupathdb/wdk-client/lib/Components';
 import { create as createTableState } from '@veupathdb/wdk-client/lib/Components/Mesa/Utils/MesaState';
 import { MesaColumn } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
 import { OverflowingTextCell } from '@veupathdb/wdk-client/lib/Views/Strategy/OverflowingTextCell';
@@ -9,63 +11,93 @@ import {
   PromiseHookState,
   PromiseResult,
   PublicAnalysisSummary,
+  StudyRecord,
 } from '../core';
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
 
 interface Props {
-  state: PromiseHookState<PublicAnalysisSummary[]>;
+  publicAnalysisListState: PromiseHookState<PublicAnalysisSummary[]>;
+  studyRecords: StudyRecord[] | undefined;
   makeStudyLink: (studyId: string) => string;
   makeAnalysisLink: (studyId: string, analysisId: string) => string;
 }
 
 export function PublicAnalyses({
-  state,
+  publicAnalysisListState,
+  studyRecords,
   makeStudyLink,
   makeAnalysisLink,
 }: Props) {
   return (
     <div>
       <h1>Public Analyses</h1>
-      <PromiseResult state={state}>
-        {(publicAnalysisList) => (
-          <PublicAnalysesTable
-            rows={publicAnalysisList}
-            makeStudyLink={makeStudyLink}
-            makeAnalysisLink={makeAnalysisLink}
-          />
-        )}
+      <PromiseResult state={publicAnalysisListState}>
+        {(publicAnalysisList) =>
+          studyRecords == null ? (
+            <Loading />
+          ) : (
+            <PublicAnalysesTable
+              publicAnalysisList={publicAnalysisList}
+              studyRecords={studyRecords}
+              makeStudyLink={makeStudyLink}
+              makeAnalysisLink={makeAnalysisLink}
+            />
+          )
+        }
       </PromiseResult>
     </div>
   );
 }
 
-interface TableProps extends Omit<Props, 'state'> {
-  rows: PublicAnalysisSummary[];
+interface TableProps extends Omit<Props, 'publicAnalysisListState'> {
+  publicAnalysisList: PublicAnalysisSummary[];
+  studyRecords: StudyRecord[];
+}
+
+interface PublicAnalysisRow extends PublicAnalysisSummary {
+  studyAvailable: boolean;
+  studyDisplayName: string;
 }
 
 function PublicAnalysesTable({
-  rows,
+  publicAnalysisList,
+  studyRecords,
   makeAnalysisLink,
   makeStudyLink,
 }: TableProps) {
+  const unfilteredRows: PublicAnalysisRow[] = useMemo(() => {
+    const studiesById = keyBy(studyRecords, (study) => study.id[0].value);
+
+    return publicAnalysisList.map((publicAnalysis) => ({
+      ...publicAnalysis,
+      studyAvailable: Boolean(studiesById[publicAnalysis.studyId]),
+      studyDisplayName:
+        studiesById[publicAnalysis.studyId]?.displayName ?? 'Unknown study',
+    }));
+  }, [publicAnalysisList, studyRecords]);
+
   const tableState = useMemo(
     () =>
       createTableState({
-        rows,
+        rows: unfilteredRows,
         columns: [
           {
             key: 'studyId',
             name: 'Study',
-            renderCell: (data: { row: PublicAnalysisSummary }) => (
-              <Link to={makeStudyLink(data.row.studyId)}>
-                {data.row.displayName}
-              </Link>
-            ),
+            renderCell: (data: { row: PublicAnalysisRow }) => {
+              return !data.row.studyAvailable ? (
+                data.row.studyDisplayName
+              ) : (
+                <Link to={makeStudyLink(data.row.studyId)}>
+                  {data.row.studyDisplayName}
+                </Link>
+              );
+            },
           },
           {
             key: 'analysisId',
             name: 'Analysis',
-            renderCell: (data: { row: PublicAnalysisSummary }) => (
+            renderCell: (data: { row: PublicAnalysisRow }) => (
               <Link
                 to={makeAnalysisLink(data.row.studyId, data.row.analysisId)}
               >
@@ -76,7 +108,7 @@ function PublicAnalysesTable({
           {
             key: 'description',
             name: 'Description',
-            renderCell: (data: { row: PublicAnalysisSummary }) => (
+            renderCell: (data: { row: PublicAnalysisRow }) => (
               <OverflowingTextCell
                 key={data.row.analysisId}
                 value={data.row.description}
@@ -95,18 +127,18 @@ function PublicAnalysesTable({
           {
             key: 'creationTime',
             name: 'Created',
-            renderCell: (data: { row: PublicAnalysisSummary }) =>
+            renderCell: (data: { row: PublicAnalysisRow }) =>
               convertISOToDisplayFormat(data.row.creationTime),
           },
           {
             key: 'modificationTime',
             name: 'Modified',
-            renderCell: (data: { row: PublicAnalysisSummary }) =>
+            renderCell: (data: { row: PublicAnalysisRow }) =>
               convertISOToDisplayFormat(data.row.modificationTime),
           },
-        ] as MesaColumn<keyof PublicAnalysisSummary>[],
+        ] as MesaColumn<keyof PublicAnalysisRow>[],
       }),
-    [rows, makeStudyLink, makeAnalysisLink]
+    [unfilteredRows, makeStudyLink, makeAnalysisLink]
   );
 
   return <Mesa.Mesa state={tableState} />;
