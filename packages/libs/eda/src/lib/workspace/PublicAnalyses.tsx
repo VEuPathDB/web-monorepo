@@ -76,69 +76,72 @@ function PublicAnalysesTable({
     }));
   }, [publicAnalysisList, studyRecords]);
 
+  const columns: MesaColumn<keyof PublicAnalysisRow>[] = useMemo(
+    () => [
+      {
+        key: 'studyId',
+        name: 'Study',
+        renderCell: (data: { row: PublicAnalysisRow }) => {
+          return !data.row.studyAvailable ? (
+            data.row.studyDisplayName
+          ) : (
+            <Link to={makeStudyLink(data.row.studyId)}>
+              {data.row.studyDisplayName}
+            </Link>
+          );
+        },
+      },
+      {
+        key: 'analysisId',
+        name: 'Analysis',
+        renderCell: (data: { row: PublicAnalysisRow }) => (
+          <Link to={makeAnalysisLink(data.row.studyId, data.row.analysisId)}>
+            {data.row.displayName}
+          </Link>
+        ),
+      },
+      {
+        key: 'description',
+        name: 'Description',
+        renderCell: (data: { row: PublicAnalysisRow }) => (
+          <OverflowingTextCell
+            key={data.row.analysisId}
+            value={data.row.description}
+          />
+        ),
+        width: '25em',
+      },
+      {
+        key: 'userName',
+        name: 'Author',
+      },
+      {
+        key: 'userOrganization',
+        name: 'Organization',
+      },
+      {
+        key: 'creationTime',
+        name: 'Created',
+        renderCell: (data: { row: PublicAnalysisRow }) =>
+          convertISOToDisplayFormat(data.row.creationTime),
+      },
+      {
+        key: 'modificationTime',
+        name: 'Modified',
+        renderCell: (data: { row: PublicAnalysisRow }) =>
+          convertISOToDisplayFormat(data.row.modificationTime),
+      },
+    ],
+    [makeAnalysisLink, makeStudyLink]
+  );
+
   const tableState = useMemo(
     () =>
       createTableState({
         rows: unfilteredRows,
-        columns: [
-          {
-            key: 'studyId',
-            name: 'Study',
-            renderCell: (data: { row: PublicAnalysisRow }) => {
-              return !data.row.studyAvailable ? (
-                data.row.studyDisplayName
-              ) : (
-                <Link to={makeStudyLink(data.row.studyId)}>
-                  {data.row.studyDisplayName}
-                </Link>
-              );
-            },
-          },
-          {
-            key: 'analysisId',
-            name: 'Analysis',
-            renderCell: (data: { row: PublicAnalysisRow }) => (
-              <Link
-                to={makeAnalysisLink(data.row.studyId, data.row.analysisId)}
-              >
-                {data.row.displayName}
-              </Link>
-            ),
-          },
-          {
-            key: 'description',
-            name: 'Description',
-            renderCell: (data: { row: PublicAnalysisRow }) => (
-              <OverflowingTextCell
-                key={data.row.analysisId}
-                value={data.row.description}
-              />
-            ),
-            width: '25em',
-          },
-          {
-            key: 'userName',
-            name: 'Author',
-          },
-          {
-            key: 'userOrganization',
-            name: 'Organization',
-          },
-          {
-            key: 'creationTime',
-            name: 'Created',
-            renderCell: (data: { row: PublicAnalysisRow }) =>
-              convertISOToDisplayFormat(data.row.creationTime),
-          },
-          {
-            key: 'modificationTime',
-            name: 'Modified',
-            renderCell: (data: { row: PublicAnalysisRow }) =>
-              convertISOToDisplayFormat(data.row.modificationTime),
-          },
-        ] as MesaColumn<keyof PublicAnalysisRow>[],
+        columns,
       }),
-    [unfilteredRows, makeStudyLink, makeAnalysisLink]
+    [unfilteredRows, columns]
   );
 
   return <Mesa.Mesa state={tableState} />;
