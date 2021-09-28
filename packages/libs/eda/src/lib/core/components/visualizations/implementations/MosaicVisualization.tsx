@@ -109,6 +109,8 @@ const MosaicConfig = t.partial({
   xAxisVariable: VariableDescriptor,
   yAxisVariable: VariableDescriptor,
   facetVariable: VariableDescriptor,
+  // new config props to store filters at fullscreen mode
+  currentPlotFilters: t.unknown,
 });
 
 type Props = VisualizationProps & {
@@ -150,6 +152,13 @@ function MosaicViz(props: Props) {
     },
     [updateConfiguration, vizConfig]
   );
+
+  // update currentPlotfilters with the latest filters at fullscreen mode
+  useEffect(() => {
+    updateVizConfig({
+      currentPlotFilters: filters,
+    });
+  }, [filters]);
 
   // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(

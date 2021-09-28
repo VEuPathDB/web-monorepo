@@ -130,21 +130,34 @@ function ConfiguredVisualizations(props: Props) {
                       </button>
                     </Tooltip>
                   </div>
-                  <div>
-                    <Tooltip title="View fullscreen">
-                      <Link replace to={`${url}/${viz.visualizationId}`}>
-                        <i className="fa fa-arrows-alt"></i>
-                      </Link>
-                    </Tooltip>
-                  </div>
                 </div>
-                {viz.descriptor.thumbnail ? (
-                  <img alt={viz.displayName} src={viz.descriptor.thumbnail} />
-                ) : (
-                  <div className={cx('-ConfiguredVisualizationNoPreview')}>
-                    Preview unavaiable
-                  </div>
-                )}
+                {/* add the Link of thumbnail box here to avoid click conflict with icons */}
+                <>
+                  <Link replace to={`${url}/${viz.visualizationId}`}>
+                    {viz.descriptor.thumbnail ? (
+                      <img
+                        alt={viz.displayName}
+                        src={viz.descriptor.thumbnail}
+                      />
+                    ) : (
+                      <div className={cx('-ConfiguredVisualizationNoPreview')}>
+                        Preview unavaiable
+                      </div>
+                    )}
+                    {/* make gray-out box on top of thumbnail */}
+                    {!arraysEqual(
+                      props.filters,
+                      (viz.descriptor.configuration as any).currentPlotFilters
+                    ) ? (
+                      <div className={cx('-ConfiguredVisualizationGrayOut')}>
+                        Open to sync with
+                        <br /> current subset
+                      </div>
+                    ) : (
+                      ''
+                    )}
+                  </Link>
+                </>
               </div>
               <div className={cx('-ConfiguredVisualizationTitle')}>
                 {viz.displayName ?? 'Unnamed visualization'}
@@ -326,7 +339,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
         </div>
         <Tooltip title="Minimize visualization">
           <Link replace to={`../${computationId}`}>
-            <i className="fa fa-window-restore"></i>
+            <i className="fa fa-window-minimize"></i>
           </Link>
         </Tooltip>
       </div>
@@ -369,3 +382,27 @@ function FullScreenVisualization(props: Props & { id: string }) {
     </div>
   );
 }
+
+/**
+ * functions to perform deep comparison between two array of objects (filters here)
+ * @param o1: object
+ * @param o2: object
+ * @param a1: array of objects
+ * @param a2: array of objects
+ * @returns boolean
+ * usage: arraysEqual(props.filters, viz.configuration.currentPlotFilters)
+ */
+
+const arraysEqual: any = (
+  a1: Record<string, string | string[]>[],
+  a2: Record<string, string | string[]>[]
+) => a1.length === a2.length && a1.every((o, idx) => objectsEqual(o, a2[idx]));
+
+const objectsEqual: any = (
+  o1: Record<string, string | string[]>,
+  o2: Record<string, string | string[]>
+) =>
+  typeof o1 === 'object' && Object.keys(o1).length > 0
+    ? Object.keys(o1).length === Object.keys(o2).length &&
+      Object.keys(o1).every((p) => objectsEqual(o1[p], o2[p]))
+    : o1 === o2;
