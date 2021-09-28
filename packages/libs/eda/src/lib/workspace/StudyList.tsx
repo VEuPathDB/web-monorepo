@@ -1,5 +1,4 @@
 import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
-import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import {
   safeHtml,
   useSetDocumentTitle,
@@ -7,6 +6,7 @@ import {
 import React, { useCallback } from 'react';
 import { SubsettingClient } from '../core';
 import { usePromise } from '../core/hooks/promise';
+import { useWdkStudyRecords } from '../core/hooks/study';
 
 interface Props {
   subsettingServiceUrl: string;
@@ -17,21 +17,7 @@ export function StudyList(props: Props) {
   const subsettingClient = SubsettingClient.getClient(
     props.subsettingServiceUrl
   );
-  const datasets = useWdkService(
-    (wdkService) =>
-      wdkService.getAnswerJson(
-        {
-          searchName: 'Studies',
-          searchConfig: {
-            parameters: {},
-          },
-        },
-        {
-          attributes: ['dataset_id'],
-        }
-      ),
-    []
-  );
+  const datasets = useWdkStudyRecords();
   const studies = usePromise(
     useCallback(() => subsettingClient.getStudies(), [subsettingClient])
   );
@@ -46,7 +32,7 @@ export function StudyList(props: Props) {
       <h2>Choose a study</h2>
       <ul>
         {studies.value.map((study) => {
-          const dataset = datasets.records.find(
+          const dataset = datasets.find(
             (r) => r.attributes.dataset_id === study.datasetId
           );
           return (

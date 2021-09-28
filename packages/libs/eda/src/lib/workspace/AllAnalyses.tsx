@@ -23,7 +23,6 @@ import {
 } from '@veupathdb/wdk-client/lib/Components';
 import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
-import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { confirm } from '@veupathdb/wdk-client/lib/Utils/Platform';
 import { RecordInstance } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
@@ -35,6 +34,7 @@ import {
   usePinnedAnalyses,
 } from '../core';
 import { workspaceTheme } from '../core/components/workspaceTheme';
+import { useWdkStudyRecords } from '../core/hooks/study';
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
@@ -91,7 +91,7 @@ export function AllAnalyses(props: Props) {
     removePinnedAnalysis,
   } = usePinnedAnalyses(analysisClient);
 
-  const datasets = useDatasets();
+  const datasets = useWdkStudyRecords();
 
   const {
     analyses,
@@ -104,7 +104,7 @@ export function AllAnalyses(props: Props) {
   const analysesAndDatasets = useMemo(
     () =>
       analyses?.map((analysis) => {
-        const dataset = datasets?.records.find(
+        const dataset = datasets?.find(
           (d) => d.id[0].value === analysis.studyId
         );
         return {
@@ -146,9 +146,8 @@ export function AllAnalyses(props: Props) {
                 switch (columnKey) {
                   case 'study':
                     return (
-                      datasets?.records.find(
-                        (d) => d.id[0].value === analysis.studyId
-                      )?.displayName ?? 'Unknown study'
+                      datasets?.find((d) => d.id[0].value === analysis.studyId)
+                        ?.displayName ?? 'Unknown study'
                     );
                   case 'displayName':
                     return analysis.displayName;
@@ -418,7 +417,7 @@ export function AllAnalyses(props: Props) {
       selectedAnalyses,
       pinnedAnalyses.length,
       isPinnedAnalysis,
-      datasets?.records,
+      datasets,
       analyses,
       deleteAnalyses,
       updateAnalysis,
@@ -488,23 +487,5 @@ export function AllAnalyses(props: Props) {
         )}
       </div>
     </ThemeProvider>
-  );
-}
-
-function useDatasets() {
-  return useWdkService(
-    (wdkService) =>
-      wdkService.getAnswerJson(
-        {
-          searchName: 'Studies',
-          searchConfig: {
-            parameters: {},
-          },
-        },
-        {
-          attributes: ['dataset_id'],
-        }
-      ),
-    []
   );
 }
