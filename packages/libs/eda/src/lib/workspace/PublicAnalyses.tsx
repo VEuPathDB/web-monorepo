@@ -1,5 +1,7 @@
-import { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
+import { useHistory, useLocation } from 'react-router';
 
+import { TextField } from '@material-ui/core';
 import { keyBy, orderBy } from 'lodash';
 
 import { Link, Loading, Mesa } from '@veupathdb/wdk-client/lib/Components';
@@ -18,6 +20,7 @@ import {
   StudyRecord,
 } from '../core';
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
+import { useDebounce } from '../core/hooks/debouncing';
 
 interface Props {
   publicAnalysisListState: PromiseHookState<PublicAnalysisSummary[]>;
@@ -69,6 +72,22 @@ function PublicAnalysesTable({
   makeAnalysisLink,
   makeStudyLink,
 }: TableProps) {
+  const history = useHistory();
+  const location = useLocation();
+
+  const queryParams = new URLSearchParams(location.search);
+  const searchText = queryParams.get('s') ?? '';
+  const debouncedSearchText = useDebounce(searchText, 250);
+
+  const onFilterFieldChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      const queryParams = value ? '?s=' + encodeURIComponent(value) : '';
+      history.replace(location.pathname + queryParams);
+    },
+    [history, location.pathname]
+  );
+
   const [tableSort, setTableSort] = useSessionBackedState<MesaSortObject>(
     { columnKey: 'modificationTime', direction: 'desc' },
     'eda::publicAnalysesSort',
@@ -87,7 +106,19 @@ function PublicAnalysesTable({
     }));
   }, [publicAnalysisList, studyRecords]);
 
-  const filteredRows = unfilteredRows;
+  const filteredRows = useMemo(() => {
+    if (!debouncedSearchText) {
+      return unfilteredRows;
+    }
+
+    const normalizedSearchText = debouncedSearchText.toLowerCase();
+
+    return unfilteredRows.filter(
+      (row) =>
+        row.displayName.toLowerCase().includes(normalizedSearchText) ||
+        row.studyDisplayName.toLowerCase().includes(normalizedSearchText)
+    );
+  }, [unfilteredRows, debouncedSearchText]);
 
   const sortedRows = useMemo(
     () =>
@@ -197,6 +228,30 @@ function PublicAnalysesTable({
     [setTableSort]
   );
 
+  const tableOptions = useMemo(
+    () => ({
+      toolbar: true,
+      renderEmptyState: () => (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '50vh',
+            fontSize: '2em',
+          }}
+        >
+          <div>
+            {unfilteredRows.length === 0
+              ? 'There are no public analyses available'
+              : 'There are no public analyses that match your search'}
+          </div>
+        </div>
+      ),
+    }),
+    [unfilteredRows]
+  );
+
   const tableState = useMemo(
     () =>
       createTableState({
@@ -204,9 +259,32 @@ function PublicAnalysesTable({
         columns,
         uiState: tableUiState,
         eventHandlers: tableEventHandlers,
+        options: tableOptions,
       }),
-    [sortedRows, columns, tableUiState, tableEventHandlers]
+    [sortedRows, columns, tableUiState, tableEventHandlers, tableOptions]
   );
 
-  return <Mesa.Mesa state={tableState} />;
+  return (
+    <Mesa.Mesa state={tableState}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1ex',
+        }}
+      >
+        <TextField
+          variant="outlined"
+          size="small"
+          label="Search public analyses"
+          inputProps={{ size: 50 }}
+          value={searchText}
+          onChange={onFilterFieldChange}
+        />
+        <span>
+          Showing {filteredRows.length} of {unfilteredRows.length} analyses
+        </span>
+      </div>
+    </Mesa.Mesa>
+  );
 }
