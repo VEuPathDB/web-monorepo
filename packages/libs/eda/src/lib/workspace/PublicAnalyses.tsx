@@ -1,10 +1,14 @@
 import { useMemo } from 'react';
 
-import { keyBy } from 'lodash';
+import { keyBy, orderBy } from 'lodash';
 
 import { Link, Loading, Mesa } from '@veupathdb/wdk-client/lib/Components';
 import { create as createTableState } from '@veupathdb/wdk-client/lib/Components/Mesa/Utils/MesaState';
-import { MesaColumn } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+import {
+  MesaColumn,
+  MesaSortObject,
+} from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import { OverflowingTextCell } from '@veupathdb/wdk-client/lib/Views/Strategy/OverflowingTextCell';
 
 import {
@@ -65,6 +69,13 @@ function PublicAnalysesTable({
   makeAnalysisLink,
   makeStudyLink,
 }: TableProps) {
+  const [tableSort, setTableSort] = useSessionBackedState<MesaSortObject>(
+    { columnKey: 'modificationTime', direction: 'desc' },
+    'eda::publicAnalysesSort',
+    JSON.stringify,
+    JSON.parse
+  );
+
   const unfilteredRows: PublicAnalysisRow[] = useMemo(() => {
     const studiesById = keyBy(studyRecords, (study) => study.id[0].value);
 
@@ -76,11 +87,45 @@ function PublicAnalysesTable({
     }));
   }, [publicAnalysisList, studyRecords]);
 
+  const filteredRows = unfilteredRows;
+
+  const sortedRows = useMemo(
+    () =>
+      orderBy(
+        filteredRows,
+        (row) => {
+          switch (tableSort?.columnKey) {
+            case 'studyId':
+              return row.studyDisplayName;
+            case 'analysisId':
+              return row.displayName;
+            case 'description':
+              return row.description;
+            case 'userName':
+              return row.userName;
+            case 'userOrganization':
+              return row.userOrganization;
+            case 'creationTime':
+              return row.creationTime;
+            case 'modificationTime':
+              return row.modificationTime;
+            default:
+              console.warn(
+                `Tried to sort by an unrecognized column key '${tableSort?.columnKey}'.`
+              );
+          }
+        },
+        tableSort?.direction
+      ),
+    [filteredRows, tableSort]
+  );
+
   const columns: MesaColumn<keyof PublicAnalysisRow>[] = useMemo(
     () => [
       {
         key: 'studyId',
         name: 'Study',
+        sortable: true,
         renderCell: (data: { row: PublicAnalysisRow }) => {
           return !data.row.studyAvailable ? (
             data.row.studyDisplayName
@@ -94,6 +139,7 @@ function PublicAnalysesTable({
       {
         key: 'analysisId',
         name: 'Analysis',
+        sortable: true,
         renderCell: (data: { row: PublicAnalysisRow }) => (
           <Link to={makeAnalysisLink(data.row.studyId, data.row.analysisId)}>
             {data.row.displayName}
@@ -103,6 +149,7 @@ function PublicAnalysesTable({
       {
         key: 'description',
         name: 'Description',
+        sortable: true,
         renderCell: (data: { row: PublicAnalysisRow }) => (
           <OverflowingTextCell
             key={data.row.analysisId}
@@ -114,20 +161,24 @@ function PublicAnalysesTable({
       {
         key: 'userName',
         name: 'Author',
+        sortable: true,
       },
       {
         key: 'userOrganization',
         name: 'Organization',
+        sortable: true,
       },
       {
         key: 'creationTime',
         name: 'Created',
+        sortable: true,
         renderCell: (data: { row: PublicAnalysisRow }) =>
           convertISOToDisplayFormat(data.row.creationTime),
       },
       {
         key: 'modificationTime',
         name: 'Modified',
+        sortable: true,
         renderCell: (data: { row: PublicAnalysisRow }) =>
           convertISOToDisplayFormat(data.row.modificationTime),
       },
@@ -135,13 +186,26 @@ function PublicAnalysesTable({
     [makeAnalysisLink, makeStudyLink]
   );
 
+  const tableUiState = useMemo(() => ({ sort: tableSort }), [tableSort]);
+
+  const tableEventHandlers = useMemo(
+    () => ({
+      onSort: (column: any, direction: any) => {
+        setTableSort({ columnKey: column?.key, direction });
+      },
+    }),
+    [setTableSort]
+  );
+
   const tableState = useMemo(
     () =>
       createTableState({
-        rows: unfilteredRows,
+        rows: sortedRows,
         columns,
+        uiState: tableUiState,
+        eventHandlers: tableEventHandlers,
       }),
-    [unfilteredRows, columns]
+    [sortedRows, columns, tableUiState, tableEventHandlers]
   );
 
   return <Mesa.Mesa state={tableState} />;
