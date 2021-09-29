@@ -39,10 +39,6 @@ export default function Subsetting({
   variableId,
   analysisState,
 }: SubsettingProps) {
-  // console.log('entityId', entityId);
-  // console.log('variableId', variableId);
-  // console.log('analysisState', analysisState);
-
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
 
   const studyMetadata = useStudyMetadata();
@@ -71,6 +67,8 @@ export default function Subsetting({
     return <div>Could not find specified variable.</div>;
 
   const totalEntityCount = totalCounts.value && totalCounts.value[entity.id];
+
+  // This will give you the count of rows for the current entity.
   const filteredEntityCount =
     filteredCounts.value && filteredCounts.value[entity.id];
 
@@ -81,6 +79,7 @@ export default function Subsetting({
         toggleDisplay={() => setIsDownloadModalOpen(false)}
         analysisState={analysisState}
         currentEntityID={entityId}
+        currentEntityRecordCount={filteredEntityCount!}
         entities={entities}
       />
       <div className="Variables">

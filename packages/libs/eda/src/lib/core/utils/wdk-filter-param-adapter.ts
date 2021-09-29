@@ -119,6 +119,7 @@ export function fromEdaFilter(filter: EdaFilter): WdkFilter {
 export interface EdaVariableToWdkFieldOptions {
   includeMultiFilters?: boolean;
 }
+
 export function edaVariableToWdkField(
   variable: VariableTreeNode,
   options: EdaVariableToWdkFieldOptions = {}

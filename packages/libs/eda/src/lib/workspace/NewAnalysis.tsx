@@ -1,11 +1,10 @@
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { Lens } from 'monocle-ts';
 import Path from 'path';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useLocation, useRouteMatch, useHistory } from 'react-router-dom';
 import {
   AnalysisState,
   DataTableSettings,
-  Filter,
   makeNewAnalysis,
   NewAnalysis,
   Status,
@@ -28,6 +27,7 @@ export function NewAnalysisPage() {
   const location = useLocation();
   const { url } = useRouteMatch();
   const creatingAnalysis = useRef(false);
+
   const createAnalysis = useCallback(
     async (
       newAnalysis: NewAnalysis,
@@ -58,6 +58,9 @@ export function NewAnalysisPage() {
   const deleteAnalysis = useCallback(() => {
     throw new Error('Cannot delete an unsaved analysis.');
   }, []);
+
+  // START HERE
+
   const setName = useSetter(analysisToNameLens, analysis, createAnalysis);
   const setFilters = useSetter(analysisToFiltersLens, analysis, createAnalysis);
   const setStarredVariables = useSetter(

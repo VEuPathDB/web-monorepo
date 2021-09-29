@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useEffect } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { Field } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 
@@ -42,11 +42,11 @@ export default function MultiSelectVariableTree({
    * Translate selectedVariableTerms to corresponding Field objects.
    */
   const selectedVariableFields = useMemo(() => {
-    console.log(
-      'MultiSelect -> selectedVariableFields',
-      selectedVariableDescriptors,
-      fieldsByTerm
-    );
+    // console.log(
+    //   'MultiSelect -> selectedVariableFields',
+    //   selectedVariableDescriptors,
+    //   fieldsByTerm
+    // );
 
     const selectedVariableTerms = selectedVariableDescriptors.map(
       (descriptor) => `${descriptor.entityId}/${descriptor.variableId}`
@@ -57,7 +57,7 @@ export default function MultiSelectVariableTree({
       fieldsByTerm[term] && selectedVariableFields.push(fieldsByTerm[term]);
     });
 
-    console.log('WILL RETURN', selectedVariableFields);
+    // console.log('WILL RETURN', selectedVariableFields);
     return selectedVariableFields;
   }, [selectedVariableDescriptors, fieldsByTerm]);
 
@@ -65,8 +65,6 @@ export default function MultiSelectVariableTree({
     console.log('Hello from Multi-Select onActiveFieldChange', term);
   }, []);
 
-  // Seems weird to translate one way just to go back the other way.
-  // TODO: Should we just make VariableList accept variableDescriptors instead of doing this translation back and forth?
   const onSelectedVariableTermsChange = useCallback(
     (terms: Array<string>) => {
       onSelectedVariablesChange(
@@ -86,6 +84,7 @@ export default function MultiSelectVariableTree({
       selectedFields={selectedVariableFields}
       onSelectedFieldsChange={onSelectedVariableTermsChange}
       onActiveFieldChange={onActiveFieldChange}
+      featuredFields={[]}
       valuesMap={valuesMap}
       fieldTree={fieldTree}
       autoFocus={false}

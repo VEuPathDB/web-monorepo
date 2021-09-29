@@ -101,6 +101,7 @@ export const useFlattenedFields = (entities: StudyEntity[]) =>
                 ? `entity:${entity.id}`
                 : `${entity.id}/${variable.parentId}`,
           }))
+
           .map(edaVariableToWdkField),
       ];
     });
