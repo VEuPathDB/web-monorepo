@@ -135,11 +135,16 @@ export function useAnalysis(analysisId: string): AnalysisState {
   const copyAnalysis = useCallback(async () => {
     if (analysis == null)
       throw new Error("Attempt to copy an analysis that hasn't been loaded.");
+
     if (hasUnsavedChanges) await saveAnalysis();
-    return await analysisClient.createAnalysis({
-      ...analysis,
+
+    const copyResponse = await analysisClient.copyAnalysis(analysis.analysisId);
+
+    await analysisClient.updateAnalysis(copyResponse.analysisId, {
       displayName: `Copy of ${analysis.displayName}`,
     });
+
+    return copyResponse;
   }, [analysisClient, analysis, saveAnalysis, hasUnsavedChanges]);
 
   const deleteAnalysis = useCallback(async () => {
