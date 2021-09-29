@@ -2,6 +2,7 @@ export * from './types/analysis';
 export * from './types/study';
 export * from './types/filter';
 export * from './hooks/analysis';
+export * from './hooks/analysisClient';
 export * from './hooks/promise';
 export * from './hooks/publicAnalyses';
 export * from './hooks/workspace';
