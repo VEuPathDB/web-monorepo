@@ -97,8 +97,6 @@ const HistogramConfig = t.intersection([
     binWidth: t.number,
     binWidthTimeUnit: t.string, // TO DO: constrain to weeks, months etc like Unit from date-arithmetic and/or R
     showMissingness: t.boolean,
-    // new config props to store filters at fullscreen mode
-    currentPlotFilters: t.unknown,
   }),
 ]);
 
@@ -136,13 +134,6 @@ function HistogramViz(props: VisualizationProps) {
     },
     [updateConfiguration, vizConfig]
   );
-
-  // update currentPlotfilters with the latest filters at fullscreen mode
-  useEffect(() => {
-    updateVizConfig({
-      currentPlotFilters: filters,
-    });
-  }, [filters]);
 
   // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(

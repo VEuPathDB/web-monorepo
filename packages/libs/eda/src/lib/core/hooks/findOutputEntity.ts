@@ -8,7 +8,7 @@ export function useFindOutputEntity(
   // need to add string at Record's Type due to valueSpecConfig
   dataElementVariables: Record<
     string,
-    VariableDescriptor | string | boolean | unknown | undefined
+    VariableDescriptor | string | boolean | undefined
   >,
   defaultVariableName: string,
   entities: StudyEntity[]

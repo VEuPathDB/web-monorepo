@@ -76,8 +76,6 @@ const BoxplotConfig = t.partial({
   overlayVariable: VariableDescriptor,
   facetVariable: VariableDescriptor,
   showMissingness: t.boolean,
-  // new config props to store filters at fullscreen mode
-  currentPlotFilters: t.unknown,
 });
 
 function BoxplotViz(props: VisualizationProps) {
@@ -114,13 +112,6 @@ function BoxplotViz(props: VisualizationProps) {
     },
     [updateConfiguration, vizConfig]
   );
-
-  // update currentPlotfilters with the latest filters at fullscreen mode
-  useEffect(() => {
-    updateVizConfig({
-      currentPlotFilters: filters,
-    });
-  }, [filters]);
 
   // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(

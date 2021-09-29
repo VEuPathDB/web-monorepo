@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo, useEffect } from 'react';
 import {
   Route,
   Switch,
@@ -16,6 +16,7 @@ import {
   Computation,
   Visualization,
   VisualizationOverview,
+  VisualizationDescriptor,
 } from '../../types/visualization';
 import { Grid } from '../Grid';
 import { VisualizationType } from './VisualizationTypes';
@@ -24,6 +25,7 @@ import './Visualizations.scss';
 import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
 import PlaceholderIcon from './PlaceholderIcon';
 import { Tooltip } from '@material-ui/core';
+import { isEqual } from 'lodash';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -141,21 +143,17 @@ function ConfiguredVisualizations(props: Props) {
                       />
                     ) : (
                       <div className={cx('-ConfiguredVisualizationNoPreview')}>
-                        Preview unavaiable
+                        Preview unavailable
                       </div>
                     )}
                     {/* make gray-out box on top of thumbnail */}
-                    {!arraysEqual(
-                      props.filters,
-                      (viz.descriptor.configuration as any).currentPlotFilters
-                    ) ? (
-                      <div className={cx('-ConfiguredVisualizationGrayOut')}>
-                        Open to sync with
-                        <br /> current subset
-                      </div>
-                    ) : (
-                      ''
-                    )}
+                    <ConfiguredVisualizationGrayOut
+                      filters={props.filters}
+                      currentPlotFilters={
+                        (viz.descriptor as VisualizationDescriptor)
+                          .currentPlotFilters as Filter[]
+                      }
+                    />
                   </Link>
                 </>
               </div>
@@ -275,6 +273,20 @@ function FullScreenVisualization(props: Props & { id: string }) {
     [updateVisualizations, id]
   );
 
+  // update currentPlotfilters with the latest filters at fullscreen mode
+  useEffect(() => {
+    updateVisualizations((visualizations) =>
+      visualizations.map((v) =>
+        v.visualizationId !== id
+          ? v
+          : {
+              ...v,
+              descriptor: { ...v.descriptor, currentPlotFilters: filters },
+            }
+      )
+    );
+  }, [filters]);
+
   const updateThumbnail = useCallback(
     (thumbnail: string) => {
       updateVisualizations((visualizations) =>
@@ -383,26 +395,28 @@ function FullScreenVisualization(props: Props & { id: string }) {
   );
 }
 
-/**
- * functions to perform deep comparison between two array of objects (filters here)
- * @param o1: object
- * @param o2: object
- * @param a1: array of objects
- * @param a2: array of objects
- * @returns boolean
- * usage: arraysEqual(props.filters, viz.configuration.currentPlotFilters)
- */
+// define type and ConfiguredVisualizationGrayOut component for gray-out thumbnail
+type ConfiguredVisualizationGrayOutProps = {
+  filters: Filter[];
+  currentPlotFilters: Filter[];
+};
 
-const arraysEqual: any = (
-  a1: Record<string, string | string[]>[],
-  a2: Record<string, string | string[]>[]
-) => a1.length === a2.length && a1.every((o, idx) => objectsEqual(o, a2[idx]));
+function ConfiguredVisualizationGrayOut({
+  filters,
+  currentPlotFilters,
+}: ConfiguredVisualizationGrayOutProps) {
+  // using lodash isEqual to compare two objects
+  const thumbnailGrayOut = useMemo(() => isEqual(filters, currentPlotFilters), [
+    filters,
+    currentPlotFilters,
+  ]);
 
-const objectsEqual: any = (
-  o1: Record<string, string | string[]>,
-  o2: Record<string, string | string[]>
-) =>
-  typeof o1 === 'object' && Object.keys(o1).length > 0
-    ? Object.keys(o1).length === Object.keys(o2).length &&
-      Object.keys(o1).every((p) => objectsEqual(o1[p], o2[p]))
-    : o1 === o2;
+  return !thumbnailGrayOut ? (
+    <div className={cx('-ConfiguredVisualizationGrayOut')}>
+      Open to sync with
+      <br /> current subset
+    </div>
+  ) : (
+    <></>
+  );
+}

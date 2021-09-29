@@ -115,8 +115,6 @@ export const ScatterplotConfig = t.partial({
   facetVariable: VariableDescriptor,
   valueSpecConfig: t.string,
   showMissingness: t.boolean,
-  // new config props to store filters at fullscreen mode
-  currentPlotFilters: t.unknown,
 });
 
 function ScatterplotViz(props: VisualizationProps) {
@@ -153,13 +151,6 @@ function ScatterplotViz(props: VisualizationProps) {
     },
     [updateConfiguration, vizConfig]
   );
-
-  // update currentPlotfilters with the latest filters at fullscreen mode
-  useEffect(() => {
-    updateVizConfig({
-      currentPlotFilters: filters,
-    });
-  }, [filters]);
 
   // moved the location of this findEntityAndVariable
   const findEntityAndVariable = useFindEntityAndVariable(entities);
