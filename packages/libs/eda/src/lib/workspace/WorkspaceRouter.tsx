@@ -42,6 +42,7 @@ export function WorkspaceRouter({
           <AllAnalyses
             analysisClient={analysisClient}
             subsettingClient={subsettingClient}
+            exampleAnalysesAuthor={exampleAnalysesAuthor}
           />
         )}
       />

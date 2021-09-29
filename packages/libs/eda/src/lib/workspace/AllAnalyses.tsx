@@ -23,6 +23,8 @@ import {
 } from '@veupathdb/wdk-client/lib/Components';
 import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { confirm } from '@veupathdb/wdk-client/lib/Utils/Platform';
 import { RecordInstance } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
@@ -36,7 +38,6 @@ import {
 import { workspaceTheme } from '../core/components/workspaceTheme';
 import { useWdkStudyRecords } from '../core/hooks/study';
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
-import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 interface AnalysisAndDataset {
   analysis: AnalysisSummary;
@@ -46,6 +47,7 @@ interface AnalysisAndDataset {
 interface Props {
   analysisClient: AnalysisClient;
   subsettingClient: SubsettingClient;
+  exampleAnalysesAuthor: string;
 }
 
 const useStyles = makeStyles({
@@ -61,7 +63,8 @@ const useStyles = makeStyles({
 });
 
 export function AllAnalyses(props: Props) {
-  const { analysisClient } = props;
+  const { analysisClient, exampleAnalysesAuthor } = props;
+  const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
   const { url } = useRouteMatch();
   const history = useHistory();
   const location = useLocation();
@@ -408,7 +411,14 @@ export function AllAnalyses(props: Props) {
           renderCell: (data: { row: AnalysisAndDataset }) =>
             convertISOToDisplayFormat(data.row.analysis.modificationTime),
         },
-      ],
+      ].filter(
+        // Only offer description and isPublic columns
+        // if the user is the "example analyses" author
+        (column) =>
+          (column.key !== 'description' && column.key !== 'isPublic') ||
+          `${user?.properties.firstName} ${user?.properties.lastName}` ===
+            exampleAnalysesAuthor
+      ),
     }),
     [
       sortPinned,
@@ -428,6 +438,8 @@ export function AllAnalyses(props: Props) {
       addPinnedAnalysis,
       removePinnedAnalysis,
       url,
+      exampleAnalysesAuthor,
+      user,
     ]
   );
   const theme = createMuiTheme(workspaceTheme);
@@ -458,7 +470,7 @@ export function AllAnalyses(props: Props) {
       <div className={classes.root}>
         <h1>My Analyses</h1>
         {error && <ContentError>{error}</ContentError>}
-        {analyses && datasets ? (
+        {analyses && datasets && user ? (
           <Mesa.Mesa state={tableState}>
             <div
               style={{
