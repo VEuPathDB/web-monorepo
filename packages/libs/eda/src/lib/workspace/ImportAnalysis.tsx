@@ -12,9 +12,15 @@ interface Props {
   analysisClient: AnalysisClient;
   studyId: string;
   analysisId: string;
+  ownerUserId: string;
 }
 
-export function ImportAnalysis({ analysisClient, analysisId, studyId }: Props) {
+export function ImportAnalysis({
+  analysisClient,
+  analysisId,
+  ownerUserId,
+  studyId,
+}: Props) {
   const approvalStatus = useApprovalStatus(studyId, 'analysis');
   const history = useHistory();
   useEffect(() => {
@@ -22,20 +28,20 @@ export function ImportAnalysis({ analysisClient, analysisId, studyId }: Props) {
       return;
     }
 
-    return Task.fromPromise(() => analysisClient.copyAnalysis(analysisId)).run(
-      ({ analysisId: analysisCopyId }) => {
-        const newLocation = {
-          ...history.location,
-          pathname: Path.join(
-            history.location.pathname,
-            '../../..',
-            studyId,
-            analysisCopyId
-          ),
-        };
-        history.replace(newLocation);
-      }
-    );
+    return Task.fromPromise(() =>
+      analysisClient.copyAnalysis(analysisId, Number(ownerUserId))
+    ).run(({ analysisId: analysisCopyId }) => {
+      const newLocation = {
+        ...history.location,
+        pathname: Path.join(
+          history.location.pathname,
+          '../../../..',
+          studyId,
+          analysisCopyId
+        ),
+      };
+      history.replace(newLocation);
+    });
   }, [analysisClient, history, studyId, analysisId, approvalStatus]);
 
   return (

@@ -26,7 +26,11 @@ interface Props {
   publicAnalysisListState: PromiseHookState<PublicAnalysisSummary[]>;
   studyRecords: StudyRecord[] | undefined;
   makeStudyLink: (studyId: string) => string;
-  makeAnalysisLink: (studyId: string, analysisId: string) => string;
+  makeAnalysisLink: (
+    studyId: string,
+    analysisId: string,
+    ownerUserId: number
+  ) => string;
 }
 
 export function PublicAnalyses({
@@ -157,25 +161,33 @@ function PublicAnalysesTable({
         key: 'studyId',
         name: 'Study',
         sortable: true,
-        renderCell: (data: { row: PublicAnalysisRow }) => {
-          return !data.row.studyAvailable ? (
+        renderCell: (data: { row: PublicAnalysisRow }) =>
+          !data.row.studyAvailable ? (
             data.row.studyDisplayName
           ) : (
             <Link to={makeStudyLink(data.row.studyId)}>
               {data.row.studyDisplayName}
             </Link>
-          );
-        },
+          ),
       },
       {
         key: 'analysisId',
         name: 'Analysis',
         sortable: true,
-        renderCell: (data: { row: PublicAnalysisRow }) => (
-          <Link to={makeAnalysisLink(data.row.studyId, data.row.analysisId)}>
-            {data.row.displayName}
-          </Link>
-        ),
+        renderCell: (data: { row: PublicAnalysisRow }) =>
+          !data.row.studyAvailable ? (
+            data.row.displayName
+          ) : (
+            <Link
+              to={makeAnalysisLink(
+                data.row.studyId,
+                data.row.analysisId,
+                data.row.userId
+              )}
+            >
+              {data.row.displayName}
+            </Link>
+          ),
       },
       {
         key: 'description',

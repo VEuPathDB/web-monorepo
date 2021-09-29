@@ -194,7 +194,7 @@ export class AnalysisClient extends FetchClient {
   }
   async copyAnalysis(
     analysisId: string,
-    sourceUserId?: string
+    sourceUserId?: number
   ): Promise<{ analysisId: string }> {
     // Copy from self if no sourceUserId is provided
     const sourceUserPath =

@@ -101,9 +101,13 @@ export function WorkspaceRouter({
       />
       <Route
         exact
-        path={`${path}/:studyId/:analysisId/import`}
+        path={`${path}/:studyId/:analysisId/import/:ownerUserId`}
         render={(
-          props: RouteComponentProps<{ studyId: string; analysisId: string }>
+          props: RouteComponentProps<{
+            studyId: string;
+            analysisId: string;
+            ownerUserId: string;
+          }>
         ) => (
           <ImportAnalysis
             {...props.match.params}
