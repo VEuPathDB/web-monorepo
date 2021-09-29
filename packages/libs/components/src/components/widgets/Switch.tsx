@@ -66,7 +66,6 @@ export default function Switch({
             ...(labelPosition === 'after'
               ? { paddingLeft: 5 }
               : { paddingRight: 5 }),
-            textTransform: 'none',
           }}
         >
           {label}
