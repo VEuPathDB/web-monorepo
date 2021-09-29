@@ -101,10 +101,10 @@ function BoxplotViz(props: VisualizationProps) {
 
   const vizConfig = useMemo(() => {
     return pipe(
-      BoxplotConfig.decode(visualization.configuration),
+      BoxplotConfig.decode(visualization.descriptor.configuration),
       getOrElse((): t.TypeOf<typeof BoxplotConfig> => createDefaultConfig())
     );
-  }, [visualization.configuration]);
+  }, [visualization.descriptor.configuration]);
 
   const updateVizConfig = useCallback(
     (newConfig: Partial<BoxplotConfig>) => {
@@ -198,7 +198,7 @@ function BoxplotViz(props: VisualizationProps) {
 
       // boxplot
       const response = dataClient.getBoxplot(
-        computation.type,
+        computation.descriptor.type,
         params as BoxplotRequestParams
       );
 
@@ -222,8 +222,8 @@ function BoxplotViz(props: VisualizationProps) {
       xAxisVariable,
       yAxisVariable,
       overlayVariable,
-      computation.type,
-      visualization.type,
+      computation.descriptor.type,
+      visualization.descriptor.type,
     ])
   );
 
@@ -376,17 +376,24 @@ function BoxplotWithControls({
   updateThumbnail,
   ...boxplotComponentProps
 }: BoxplotWithControlsProps) {
-  const ref = useRef<PlotRef>(null);
+  const plotRef = useRef<PlotRef>(null);
+
+  const updateThumbnailRef = useRef(updateThumbnail);
   useEffect(() => {
-    ref.current
+    updateThumbnailRef.current = updateThumbnail;
+  });
+
+  useEffect(() => {
+    plotRef.current
       ?.toImage({ format: 'svg', ...plotDimensions })
-      .then(updateThumbnail);
-  }, [data, updateThumbnail]);
+      .then(updateThumbnailRef.current);
+  }, [data]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Boxplot
         {...boxplotComponentProps}
-        ref={ref}
+        ref={plotRef}
         data={data}
         // add controls
         displayLibraryControls={false}

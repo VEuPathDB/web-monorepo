@@ -10,7 +10,7 @@ import { cx } from './Utils';
 interface Props {
   analysis: Analysis | NewAnalysis;
   setAnalysisName: (name: string) => void;
-  copyAnalysis?: () => Promise<{ id: string }>;
+  copyAnalysis?: () => Promise<{ analysisId: string }>;
   saveAnalysis: () => Promise<void>;
   deleteAnalysis?: () => Promise<void>;
   onFilterIconClick: () => void;
@@ -32,7 +32,7 @@ export function AnalysisSummary(props: Props) {
     copyAnalysis &&
     (async () => {
       const res = await copyAnalysis();
-      history.replace(Path.resolve(url, `../${res.id}`));
+      history.replace(Path.resolve(url, `../${res.analysisId}`));
     });
   const handleDelete =
     deleteAnalysis &&
@@ -45,10 +45,10 @@ export function AnalysisSummary(props: Props) {
       <div className={cx('-AnalysisSummaryLeft')}>
         <SaveableTextEditor
           className={cx('-AnalysisNameEditBox')}
-          value={analysis.name}
+          value={analysis.displayName}
           onSave={setAnalysisName}
         />
-        {analysis.filters.length > 0 && (
+        {analysis.descriptor.subset.descriptor.length > 0 && (
           <Button
             className={cx('-SeeAllFiltersButton')}
             onClick={onFilterIconClick}

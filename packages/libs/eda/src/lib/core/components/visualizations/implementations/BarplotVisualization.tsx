@@ -112,10 +112,10 @@ function BarplotViz(props: VisualizationProps) {
 
   const vizConfig = useMemo(() => {
     return pipe(
-      BarplotConfig.decode(visualization.configuration),
+      BarplotConfig.decode(visualization.descriptor.configuration),
       getOrElse((): t.TypeOf<typeof BarplotConfig> => createDefaultConfig())
     );
-  }, [visualization.configuration]);
+  }, [visualization.descriptor.configuration]);
 
   const updateVizConfig = useCallback(
     (newConfig: Partial<BarplotConfig>) => {
@@ -182,7 +182,7 @@ function BarplotViz(props: VisualizationProps) {
       const params = getRequestParams(studyId, filters ?? [], vizConfig);
 
       const response = dataClient.getBarplot(
-        computation.type,
+        computation.descriptor.type,
         params as BarplotRequestParams
       );
 
@@ -209,7 +209,7 @@ function BarplotViz(props: VisualizationProps) {
       vizConfig.showMissingness,
       variable,
       overlayVariable,
-      computation.type,
+      computation.descriptor.type,
     ])
   );
 
@@ -359,17 +359,24 @@ function BarplotWithControls({
   updateThumbnail,
   ...barPlotProps
 }: BarplotWithControlsProps) {
-  const ref = useRef<PlotRef>(null);
+  const plotRef = useRef<PlotRef>(null);
+
+  const updateThumbnailRef = useRef(updateThumbnail);
   useEffect(() => {
-    ref.current
+    updateThumbnailRef.current = updateThumbnail;
+  });
+
+  useEffect(() => {
+    plotRef.current
       ?.toImage({ format: 'svg', ...plotDimensions })
-      .then((src) => updateThumbnail(src));
-  }, [data, updateThumbnail, dependentAxisLogScale]);
+      .then(updateThumbnailRef.current);
+  }, [data, dependentAxisLogScale]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Barplot
         {...barPlotProps}
-        ref={ref}
+        ref={plotRef}
         dependentAxisLogScale={dependentAxisLogScale}
         data={data}
         // add controls

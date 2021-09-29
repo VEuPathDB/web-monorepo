@@ -3126,10 +3126,10 @@
     md5 "^2.3.0"
     whatwg-fetch "^3.5.0"
 
-"@veupathdb/web-common@^0.1.6":
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.1.6.tgz#ac82e8ccf4376ff298dc8b594b3543f0004fc86d"
-  integrity sha512-herx52rSrkrsDZt4cStx2tRWFr/NRc675ExCpepGVnzlKndDOaui5/VmHcf02rtRZiIGYm/gn2V3w9GtIg8XlQ==
+"@veupathdb/web-common@^0.1.7":
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.1.7.tgz#cf3f63d1d51b96f873051d2df42b2735e08aa782"
+  integrity sha512-fIUiob8kKlFp+VfvKX54DBTyP0zwV96JGSbAFba8EuzoXUk7ICJeb9BlYcxQcIZ9j8H9MDqaY7aYovuM2vy2BQ==
   dependencies:
     "@veupathdb/eda" "^0.11.9"
     custom-event-polyfill "^1.0.7"
@@ -11237,6 +11237,11 @@ moment@^2.21.0:
   version "2.29.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
   integrity sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==
+
+monocle-ts@^2.3.11:
+  version "2.3.11"
+  resolved "https://registry.yarnpkg.com/monocle-ts/-/monocle-ts-2.3.11.tgz#562cd960bc24eaa84d9b6118d46a5441f3c0aac0"
+  integrity sha512-YJQdpDeKU0NNAecDjFgDDnDoivmf2nXsJZTRQdKh5jsPKG2lT/15dFnSuUcQoKB/VZN1z7jQ0B0bffbRFUtLmg==
 
 monotone-convex-hull-2d@^1.0.1:
   version "1.0.1"

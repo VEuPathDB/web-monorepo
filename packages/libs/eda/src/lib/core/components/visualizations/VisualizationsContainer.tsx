@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import {
   Route,
   Switch,
@@ -11,6 +11,7 @@ import { v4 as uuid } from 'uuid';
 import { Link, SaveableTextEditor } from '@veupathdb/wdk-client/lib/Components';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Filter } from '../../types/filter';
+import { VariableDescriptor } from '../../types/variable';
 import {
   Computation,
   Visualization,
@@ -27,9 +28,7 @@ import { Tooltip } from '@material-ui/core';
 const cx = makeClassNameHelper('VisualizationsContainer');
 
 interface Props {
-  computationId: string;
-  visualizations: Visualization[];
-  computations: Computation[];
+  computation: Computation;
   updateVisualizations: (
     visualizations:
       | Visualization[]
@@ -38,8 +37,8 @@ interface Props {
   visualizationTypes: Partial<Record<string, VisualizationType>>;
   visualizationsOverview: VisualizationOverview[];
   filters: Filter[];
-  starredVariables: string[];
-  toggleStarredVariable: (targetVariableId: string) => void;
+  starredVariables: VariableDescriptor[];
+  toggleStarredVariable: (targetVariable: VariableDescriptor) => void;
 }
 
 /**
@@ -75,23 +74,8 @@ export function VisualizationsContainer(props: Props) {
 }
 
 function ConfiguredVisualizations(props: Props) {
-  const {
-    computationId,
-    computations,
-    updateVisualizations,
-    visualizations,
-    visualizationsOverview,
-  } = props;
+  const { computation, updateVisualizations, visualizationsOverview } = props;
   const { url } = useRouteMatch();
-  const computation = useMemo(
-    () => computations.find((computation) => computation.id === computationId),
-    [computationId, computations]
-  );
-  const scopedVisualizations = useMemo(
-    () => visualizations.filter((viz) => viz.computationId === computationId),
-    [computationId, visualizations]
-  );
-  if (computation == null) return <div>Computation not found</div>;
 
   return (
     <Grid>
@@ -99,11 +83,13 @@ function ConfiguredVisualizations(props: Props) {
         <i className="fa fa-plus"></i>
         Select a visualization
       </Link>
-      {scopedVisualizations
+      {computation.visualizations
         .map((viz) => {
-          const meta = visualizationsOverview.find((v) => v.name === viz.type);
+          const meta = visualizationsOverview.find(
+            (v) => v.name === viz.descriptor.type
+          );
           return (
-            <div key={viz.id}>
+            <div key={viz.visualizationId}>
               <div className={cx('-ConfiguredVisualization')}>
                 <div className={cx('-ConfiguredVisualizationActions')}>
                   <div>
@@ -113,7 +99,9 @@ function ConfiguredVisualizations(props: Props) {
                         className="link"
                         onClick={() =>
                           updateVisualizations((visualizations) =>
-                            visualizations.filter((v) => v.id !== viz.id)
+                            visualizations.filter(
+                              (v) => v.visualizationId !== viz.visualizationId
+                            )
                           )
                         }
                       >
@@ -133,7 +121,7 @@ function ConfiguredVisualizations(props: Props) {
                               displayName: `Copy of ${
                                 viz.displayName ?? 'visualization'
                               }`,
-                              id: uuid(),
+                              visualizationId: uuid(),
                             })
                           )
                         }
@@ -144,14 +132,14 @@ function ConfiguredVisualizations(props: Props) {
                   </div>
                   <div>
                     <Tooltip title="View fullscreen">
-                      <Link replace to={`${url}/${viz.id}`}>
+                      <Link replace to={`${url}/${viz.visualizationId}`}>
                         <i className="fa fa-arrows-alt"></i>
                       </Link>
                     </Tooltip>
                   </div>
                 </div>
-                {viz.thumbnail ? (
-                  <img alt={viz.displayName} src={viz.thumbnail} />
+                {viz.descriptor.thumbnail ? (
+                  <img alt={viz.displayName} src={viz.descriptor.thumbnail} />
                 ) : (
                   <div className={cx('-ConfiguredVisualizationNoPreview')}>
                     Preview unavaiable
@@ -177,15 +165,10 @@ function NewVisualizationPicker(props: Props) {
     visualizationTypes,
     visualizationsOverview,
     updateVisualizations,
-    computationId,
-    computations,
+    computation,
   } = props;
-  const computation = useMemo(
-    () => computations.find((computation) => computationId === computation.id),
-    [computations, computationId]
-  );
   const history = useHistory();
-  if (computation == null) return <div>Computation not found</div>;
+  const { computationId } = computation;
   return (
     <div className={cx('-PickerContainer')}>
       <div className={cx('-PickerActions')}>
@@ -208,17 +191,18 @@ function NewVisualizationPicker(props: Props) {
                   type="button"
                   disabled={vizType == null}
                   onClick={async () => {
-                    const id = uuid();
+                    const visualizationId = uuid();
                     updateVisualizations((visualizations) =>
                       visualizations.concat({
-                        id,
-                        computationId: computationId,
-                        type: vizOverview.name!,
+                        visualizationId,
                         displayName: 'Unnamed visualization',
-                        configuration: vizType?.createDefaultConfig(),
+                        descriptor: {
+                          type: vizOverview.name!,
+                          configuration: vizType?.createDefaultConfig(),
+                        },
                       })
                     );
-                    history.replace(`../${computationId}/${id}`);
+                    history.replace(`../${computationId}/${visualizationId}`);
                   }}
                 >
                   {vizType ? (
@@ -251,27 +235,28 @@ function FullScreenVisualization(props: Props & { id: string }) {
     visualizationTypes,
     visualizationsOverview,
     id,
-    computationId,
-    visualizations,
     updateVisualizations,
-    computations,
+    computation,
     filters,
     starredVariables,
     toggleStarredVariable,
   } = props;
   const history = useHistory();
-  const viz = visualizations.find(
-    (v) => v.id === id && v.computationId === computationId
+  const viz = computation.visualizations.find((v) => v.visualizationId === id);
+  const vizType = viz && visualizationTypes[viz.descriptor.type];
+  const overview = visualizationsOverview.find(
+    (v) => v.name === viz?.descriptor.type
   );
-  const computation = computations.find((a) => a.id === computationId);
-  const vizType = viz && visualizationTypes[viz.type];
-  const overview = visualizationsOverview.find((v) => v.name === viz?.type);
   const constraints = overview?.dataElementConstraints;
   const dataElementDependencyOrder = overview?.dataElementDependencyOrder;
   const updateConfiguration = useCallback(
     (configuration: unknown) => {
       updateVisualizations((visualizations) =>
-        visualizations.map((v) => (v.id !== id ? v : { ...v, configuration }))
+        visualizations.map((v) =>
+          v.visualizationId !== id
+            ? v
+            : { ...v, descriptor: { ...v.descriptor, configuration } }
+        )
       );
     },
     [updateVisualizations, id]
@@ -280,14 +265,19 @@ function FullScreenVisualization(props: Props & { id: string }) {
   const updateThumbnail = useCallback(
     (thumbnail: string) => {
       updateVisualizations((visualizations) =>
-        visualizations.map((v) => (v.id !== id ? v : { ...v, thumbnail }))
+        visualizations.map((v) =>
+          v.visualizationId !== id
+            ? v
+            : { ...v, descriptor: { ...v.descriptor, thumbnail } }
+        )
       );
     },
     [updateVisualizations, id]
   );
   if (viz == null) return <div>Visualization not found.</div>;
-  if (computation == null) return <div>Computation not found.</div>;
   if (vizType == null) return <div>Visualization type not implemented.</div>;
+
+  const { computationId } = computation;
 
   return (
     <div className={cx('-FullScreenContainer')}>
@@ -300,7 +290,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
               onClick={() => {
                 if (viz == null) return;
                 updateVisualizations((visualizations) =>
-                  visualizations.filter((v) => v.id !== id)
+                  visualizations.filter((v) => v.visualizationId !== id)
                 );
                 history.replace(Path.resolve(history.location.pathname, '..'));
               }}
@@ -316,11 +306,11 @@ function FullScreenVisualization(props: Props & { id: string }) {
               className="link"
               onClick={() => {
                 if (viz == null) return;
-                const id = uuid();
+                const visualizationId = uuid();
                 updateVisualizations((visualizations) =>
                   visualizations.concat({
                     ...viz,
-                    id,
+                    visualizationId,
                     displayName:
                       'Copy of ' + (viz.displayName || 'unnamed visualization'),
                   })
@@ -346,7 +336,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
         <ContentError>Computation not found.</ContentError>
       ) : vizType == null ? (
         <ContentError>
-          <>Visualization type not implemented: {viz.type}</>
+          <>Visualization type not implemented: {viz.descriptor.type}</>
         </ContentError>
       ) : (
         <div>
@@ -356,7 +346,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
               onSave={(value) =>
                 updateVisualizations((visualizations) =>
                   visualizations.map((v) =>
-                    v.id !== id ? v : { ...v, displayName: value }
+                    v.visualizationId !== id ? v : { ...v, displayName: value }
                   )
                 )
               }

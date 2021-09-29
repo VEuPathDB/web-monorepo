@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useWdkStudyRecord, useStudyMetadata } from '../hooks/study';
 import { AnalysisClient } from '../api/analysis-api';
 import { SubsettingClient } from '../api/subsetting-api';

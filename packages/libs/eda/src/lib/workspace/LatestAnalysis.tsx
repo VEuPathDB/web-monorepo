@@ -26,12 +26,12 @@ export function LatestAnalysis(props: Props) {
         (analyses) =>
           orderBy(
             analyses.filter((analysis) => analysis.studyId === studyId),
-            (analysis) => analysis.modified,
+            (analysis) => analysis.modificationTime,
             ['desc']
           )[0]
       )
       .run((analysis) => {
-        const id = analysis?.id ?? 'new';
+        const id = analysis?.analysisId ?? 'new';
         const newLocation = {
           ...history.location,
           pathname: history.location.pathname.replace(replaceRegexp, id),

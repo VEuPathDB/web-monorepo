@@ -140,10 +140,10 @@ function ScatterplotViz(props: VisualizationProps) {
 
   const vizConfig = useMemo(() => {
     return pipe(
-      ScatterplotConfig.decode(visualization.configuration),
+      ScatterplotConfig.decode(visualization.descriptor.configuration),
       getOrElse((): t.TypeOf<typeof ScatterplotConfig> => createDefaultConfig())
     );
-  }, [visualization.configuration]);
+  }, [visualization.descriptor.configuration]);
 
   const updateVizConfig = useCallback(
     (newConfig: Partial<ScatterplotConfig>) => {
@@ -243,19 +243,19 @@ function ScatterplotViz(props: VisualizationProps) {
         filters ?? [],
         vizConfig,
         outputEntity,
-        visualization.type
+        visualization.descriptor.type
       );
 
       // scatterplot, lineplot
       const response =
-        visualization.type === 'lineplot'
+        visualization.descriptor.type === 'lineplot'
           ? dataClient.getLineplot(
-              computation.type,
+              computation.descriptor.type,
               params as LineplotRequestParams
             )
           : // set default as scatterplot/getScatterplot
             dataClient.getScatterplot(
-              computation.type,
+              computation.descriptor.type,
               params as ScatterplotRequestParams
             );
 
@@ -265,7 +265,7 @@ function ScatterplotViz(props: VisualizationProps) {
           await response,
           vocabularyWithMissingData(overlayVariable?.vocabulary, showMissing)
         ),
-        visualization.type,
+        visualization.descriptor.type,
         independentValueType,
         dependentValueType,
         showMissing
@@ -278,8 +278,8 @@ function ScatterplotViz(props: VisualizationProps) {
       xAxisVariable,
       yAxisVariable,
       overlayVariable,
-      computation.type,
-      visualization.type,
+      computation.descriptor.type,
+      visualization.descriptor.type,
     ])
   );
 
@@ -413,7 +413,7 @@ function ScatterplotViz(props: VisualizationProps) {
           }
           onValueSpecChange={onValueSpecChange}
           // send visualization.type here
-          vizType={visualization.type}
+          vizType={visualization.descriptor.type}
           interactive={true}
           showSpinner={data.pending}
           // add plotOptions to control the list of plot options
@@ -516,19 +516,24 @@ function ScatterplotWithControls({
   //   };
   // }, []);
 
-  const ref = useRef<PlotRef>(null);
+  const plotRef = useRef<PlotRef>(null);
+
+  const updateThumbnailRef = useRef(updateThumbnail);
+  useEffect(() => {
+    updateThumbnailRef.current = updateThumbnail;
+  });
 
   useEffect(() => {
-    ref.current
+    plotRef.current
       ?.toImage({ format: 'svg', ...plotDimensions })
-      .then(updateThumbnail);
-  }, [data, updateThumbnail]);
+      .then(updateThumbnailRef.current);
+  }, [data]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <XYPlot
         {...scatterplotProps}
-        ref={ref}
+        ref={plotRef}
         data={data}
         // add controls
         displayLibraryControls={false}

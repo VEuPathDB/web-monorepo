@@ -18,7 +18,6 @@ import {
   StudyMetadata,
 } from '../../types/study';
 import {
-  edaVariableToWdkField,
   entitiesToFields,
   fromEdaFilter,
   makeFieldTree,
@@ -31,6 +30,7 @@ import {
   isMulti,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
 import { gray, red } from './colors';
+import { debounce } from 'lodash';
 
 export interface Props {
   analysisState: AnalysisState;
@@ -144,20 +144,37 @@ export function MultiFilter(props: Props) {
     _thisFilter
   );
 
+  // debounce time needs to be linear with the number of sub-filters, see notes at the end of this file
+  // but a minimum of 2 seconds seems reasonable too
+  const debounceTime = Math.max(2000, (1000 * leaves.length) / 10);
+  const debouncedSetThisFilter = useMemo(
+    () => debounce(setThisFilter, debounceTime),
+    [debounceTime]
+  );
+  // Cancel any pending requests when this component is unmounted.
+  useEffect(() => debouncedSetThisFilter.cancel, []);
+  // watch for changes in _thisFilter, then setThisFilter in a regulated manner
+  useEffect(() => debouncedSetThisFilter(_thisFilter), [
+    debouncedSetThisFilter,
+    _thisFilter,
+  ]);
+
+  const filters = analysisState.analysis?.descriptor.subset.descriptor;
+
   // Use a JSON string here so that we don't udpate counts for every render.
   // array.filter will always return a _new_ array, but strings are immutable,
   // so this trick will cause same-valued arrays to be referentially equal.
   const otherFiltersJson = useMemo(
     () =>
       JSON.stringify(
-        analysisState.analysis?.filters.filter(
+        filters?.filter(
           (filter) =>
             !(
               filter.entityId === entity.id && filter.variableId === variable.id
             )
         )
       ),
-    [analysisState.analysis?.filters, entity.id, variable.id]
+    [filters, entity.id, variable.id]
   );
 
   // State used to control if the "Update counts" button is disabled.
@@ -265,7 +282,6 @@ export function MultiFilter(props: Props) {
   // Update analysis filter - need to convert from WDK to EDA filter.
   const handleFilterChange = useCallback(
     (nextFilters: WdkFilter[]) => {
-      console.log(nextFilters);
       const edaFilters = nextFilters
         // the next two operations are needed because MultiFieldFilter will create subFilters with an
         // empty set of values, which does not work w/ eda
@@ -314,10 +330,7 @@ export function MultiFilter(props: Props) {
   );
 
   // Convert EDA filters to WDK filters.
-  const wdkFilters = useMemo(
-    () => analysisState.analysis?.filters.map(fromEdaFilter),
-    [analysisState.analysis?.filters]
-  );
+  const wdkFilters = useMemo(() => filters?.map(fromEdaFilter), [filters]);
 
   // Prevent table from displaying "no data" message
   if (leafSummariesPromise.pending && leafSummariesPromise.value == null)
@@ -330,18 +343,22 @@ export function MultiFilter(props: Props) {
   return (
     <div className="filter-param" style={{ position: 'relative' }}>
       {leafSummariesPromise.pending && (
-        <Loading style={{ position: 'absolute', right: 0, left: 0, top: 0 }} />
+        <Loading
+          style={{ position: 'absolute', right: 0, left: 0, top: -20 }}
+        />
       )}
-      <button
-        className="btn"
-        type="button"
-        disabled={countsAreCurrent}
-        onClick={() => {
-          setThisFilter(_thisFilter);
-        }}
-      >
-        Update counts
-      </button>
+      {leaves.length > 15 && (
+        <button
+          className="btn"
+          type="button"
+          disabled={countsAreCurrent}
+          onClick={() => {
+            setThisFilter(_thisFilter);
+          }}
+        >
+          Update distributions now
+        </button>
+      )}
       <MultiFieldFilter
         displayName={entity.displayNamePlural}
         dataCount={totalEntityCount}
@@ -371,10 +388,20 @@ function findThisFilter(
   entity: StudyEntity,
   variable: MultiFilterVariable
 ): MultiFilterType | undefined {
-  return analysisState.analysis?.filters.find(
+  return analysisState.analysis?.descriptor.subset.descriptor.find(
     (filter): filter is MultiFilterType =>
       filter.entityId === entity.id &&
       filter.variableId === variable.id &&
       filter.type === 'multiFilter'
   );
 }
+
+/**
+ * timings for various multi-filter updates
+ *
+ * multi-variable		#vars	qa	bob's dev using qa
+ * animals on property		9	0.9	3.2
+ * cooking fuel			12	1.2	3.8
+ * drinking water source	18	1.9	5.7
+ * bacteria in stool		59	6.1	15.0
+ */
