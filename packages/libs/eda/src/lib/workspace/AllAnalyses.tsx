@@ -1,4 +1,4 @@
-import { debounce, orderBy } from 'lodash';
+import { orderBy } from 'lodash';
 import Path from 'path';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useRouteMatch } from 'react-router';
@@ -36,6 +36,7 @@ import {
   usePinnedAnalyses,
 } from '../core';
 import { workspaceTheme } from '../core/components/workspaceTheme';
+import { useDebounce } from '../core/hooks/debouncing';
 import { useWdkStudyRecords } from '../core/hooks/study';
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
 
@@ -72,6 +73,16 @@ export function AllAnalyses(props: Props) {
 
   const queryParams = new URLSearchParams(location.search);
   const searchText = queryParams.get('s') ?? '';
+  const debouncedSearchText = useDebounce(searchText, 250);
+
+  const onFilterFieldChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      const queryParams = value ? '?s=' + encodeURIComponent(value) : '';
+      history.replace(location.pathname + queryParams);
+    },
+    [history, location.pathname]
+  );
 
   const [selectedAnalyses, setSelectedAnalyses] = useState<Set<string>>(
     new Set()
@@ -119,15 +130,15 @@ export function AllAnalyses(props: Props) {
   );
 
   const filteredAnalysesAndDatasets = useMemo(() => {
-    if (!searchText) return analysesAndDatasets;
-    const lowerSearchText = searchText.toLowerCase();
+    if (!debouncedSearchText) return analysesAndDatasets;
+    const lowerSearchText = debouncedSearchText.toLowerCase();
 
     return analysesAndDatasets?.filter(
       ({ analysis, dataset }) =>
         analysis.displayName.toLowerCase().includes(lowerSearchText) ||
         dataset?.displayName.toLowerCase().includes(lowerSearchText)
     );
-  }, [searchText, analysesAndDatasets]);
+  }, [debouncedSearchText, analysesAndDatasets]);
 
   const removeUnpinned = useCallback(() => {
     if (filteredAnalysesAndDatasets == null) return;
@@ -443,25 +454,6 @@ export function AllAnalyses(props: Props) {
   );
   const theme = createMuiTheme(workspaceTheme);
 
-  // Create a debounced function, which will update the query param
-  // at most once every 250ms. This prevents issues with UI lag
-  // caused by rerendering the table on every character input.
-  //
-  // NB: We want to minimize the number of dependencies so that this
-  // function is as stable as possible.
-  //
-  // NB2: TextField below is no longer a controlled input component.
-  // This makes it possible to have the input state and queryparam
-  // state be out of sync, which is necessary for debouncing.
-  const updateQueryParam = useMemo(
-    () =>
-      debounce((value: string) => {
-        const queryParams = value ? '?s=' + encodeURIComponent(value) : '';
-        history.replace(location.pathname + queryParams);
-      }, 250),
-    [history, location.pathname]
-  );
-
   useSetDocumentTitle('My Analyses');
 
   return (
@@ -483,8 +475,8 @@ export function AllAnalyses(props: Props) {
                 size="small"
                 label="Search analyses"
                 inputProps={{ size: 50 }}
-                defaultValue={searchText}
-                onChange={(e) => updateQueryParam(e.target.value)}
+                value={searchText}
+                onChange={onFilterFieldChange}
               />
               <span>
                 Showing {filteredAnalysesAndDatasets?.length} of{' '}
