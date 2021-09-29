@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import DataClient from '../../api/dataClient';
+import DataClient from '../../api/DataClient';
 import { usePromise } from '../../hooks/promise';
 import { useDataClient } from '../../hooks/workspace';
 import { Filter } from '../../types/filter';

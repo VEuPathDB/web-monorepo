@@ -10,7 +10,7 @@ import {
   StudyMetadata,
   SubsettingClient,
 } from '../core';
-import DataClient from '../core/api/dataClient';
+import DataClient from '../core/api/DataClient';
 import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
 import { VariableDescriptor } from '../core/types/variable';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';

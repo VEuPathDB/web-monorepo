@@ -12,7 +12,7 @@ import {
   record,
 } from 'io-ts';
 import { VariableDataShape, VariableType } from './study';
-import { CompleteCasesTable } from '../api/dataClient/types';
+import { CompleteCasesTable } from '../api/DataClient/types';
 
 /**
  * Metadata for the visualization object stored in user's analysis

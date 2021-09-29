@@ -1,4 +1,4 @@
-import { CompleteCasesTable } from '../api/dataClient/types';
+import { CompleteCasesTable } from '../api/DataClient/types';
 import { useVariableCoverageTableRows } from '../hooks/variableCoverage';
 import { Filter } from '../types/filter';
 import { VariableDescriptor } from '../types/variable';

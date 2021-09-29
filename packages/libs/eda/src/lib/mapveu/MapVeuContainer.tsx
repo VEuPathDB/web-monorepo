@@ -12,7 +12,7 @@ import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
 import { AnalysisList } from './MapVeuAnalysisList';
 import { MapVeuAnalysis } from './MapVeuAnalysis';
 
-import DataClient from '../core/api/dataClient';
+import DataClient from '../core/api/DataClient';
 import { StudyList } from './StudyList';
 
 const edaClient = new (class extends SubsettingClient {

@@ -14,8 +14,8 @@ import {
   LineplotRequestParams,
   ScatterplotResponse,
   LineplotResponse,
-} from '../../../api/dataClient/types';
-import DataClient from '../../../api/dataClient';
+} from '../../../api/DataClient/types';
+import DataClient from '../../../api/DataClient';
 
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';

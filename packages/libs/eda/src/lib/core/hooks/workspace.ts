@@ -1,6 +1,6 @@
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { SubsettingClient } from '../api/subsetting-api';
-import DataClient from '../api/dataClient';
+import DataClient from '../api/DataClient';
 import { AnalysisClient } from '../api/analysis-api';
 import {
   MakeVariableLink,

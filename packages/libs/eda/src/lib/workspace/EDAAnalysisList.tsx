@@ -9,7 +9,7 @@ import { AnalysisList } from './AnalysisList';
 // Data and Utilities
 import { useApprovalStatus } from '@veupathdb/web-common/lib/hooks/dataRestriction';
 import { SubsettingClient } from '../core/api/subsetting-api';
-import DataClient from '../core/api/dataClient';
+import DataClient from '../core/api/DataClient';
 import { cx } from './Utils';
 
 export interface Props {
