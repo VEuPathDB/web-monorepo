@@ -45,6 +45,9 @@ initialize({
           <ul>
             <li>
               <Link to="/eda">EDA Workspace</Link>
+              <li>
+                <Link to="/eda/public">Public analyses</Link>
+              </li>
             </li>
             <li>
               <Link to="/eda/studies">All studies</Link>
