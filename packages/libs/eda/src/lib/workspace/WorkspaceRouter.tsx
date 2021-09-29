@@ -20,7 +20,7 @@ type Props = {
   subsettingServiceUrl: string;
   dataServiceUrl: string;
   userServiceUrl: string;
-  exampleAnalysesAuthor: string;
+  exampleAnalysesAuthor?: number;
 };
 
 export function WorkspaceRouter({

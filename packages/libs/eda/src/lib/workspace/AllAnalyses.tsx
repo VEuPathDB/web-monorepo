@@ -47,7 +47,7 @@ interface AnalysisAndDataset {
 interface Props {
   analysisClient: AnalysisClient;
   subsettingClient: SubsettingClient;
-  exampleAnalysesAuthor: string;
+  exampleAnalysesAuthor?: number;
 }
 
 const useStyles = makeStyles({
@@ -416,8 +416,7 @@ export function AllAnalyses(props: Props) {
         // if the user is the "example analyses" author
         (column) =>
           (column.key !== 'description' && column.key !== 'isPublic') ||
-          `${user?.properties.firstName} ${user?.properties.lastName}` ===
-            exampleAnalysesAuthor
+          user?.id === exampleAnalysesAuthor
       ),
     }),
     [

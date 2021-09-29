@@ -12,7 +12,7 @@ import { PublicAnalyses } from './PublicAnalyses';
 
 export interface Props {
   analysisClient: AnalysisClient;
-  exampleAnalysesAuthor: string;
+  exampleAnalysesAuthor?: number;
 }
 
 export function PublicAnalysesRoute({

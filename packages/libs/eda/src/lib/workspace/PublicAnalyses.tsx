@@ -56,7 +56,7 @@ interface Props {
     analysisId: string,
     ownerUserId: number
   ) => string;
-  exampleAnalysesAuthor: string;
+  exampleAnalysesAuthor?: number;
 }
 
 export function PublicAnalyses({
@@ -145,7 +145,7 @@ function PublicAnalysesTable({
       studyAvailable: Boolean(studiesById[publicAnalysis.studyId]),
       studyDisplayName:
         studiesById[publicAnalysis.studyId]?.displayName ?? 'Unknown study',
-      isExample: publicAnalysis.userName === exampleAnalysesAuthor,
+      isExample: publicAnalysis.userId === exampleAnalysesAuthor,
     }));
   }, [publicAnalysisList, studyRecords, exampleAnalysesAuthor]);
 
