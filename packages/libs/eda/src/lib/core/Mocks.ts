@@ -109,6 +109,7 @@ export function makeMockAnalysisStore(
         .filter(({ isPublic }) => isPublic === true)
         .map((analysisSummary) => ({
           ...analysisSummary,
+          userId: 1234,
           userName: 'You',
           userOrganization: 'Your Organization',
         }));
