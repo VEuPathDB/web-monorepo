@@ -62,7 +62,7 @@ export function EDAWorkspaceHeading() {
             <Button
               variant="text"
               color="primary"
-              startIcon={<Icon className="fa fa-table fa-fw" />}
+              startIcon={<Icon className="ebrc-icon-table" />}
               component={Link}
               to={'/eda?s=' + encodeURIComponent(studyRecord.displayName)}
             >
