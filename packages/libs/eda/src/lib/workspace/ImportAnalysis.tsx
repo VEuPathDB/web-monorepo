@@ -42,7 +42,14 @@ export function ImportAnalysis({
       };
       history.replace(newLocation);
     });
-  }, [analysisClient, history, studyId, analysisId, approvalStatus]);
+  }, [
+    analysisClient,
+    history,
+    studyId,
+    analysisId,
+    ownerUserId,
+    approvalStatus,
+  ]);
 
   return (
     <RestrictedPage approvalStatus={approvalStatus}>
