@@ -1,13 +1,18 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { useAnalysisList } from '@veupathdb/eda/lib/core/hooks/analysis';
-import { mockAnalysisStore } from '@veupathdb/eda/lib/workspace/Mocks';
+import { AnalysisClient } from '@veupathdb/eda/lib/core/api/analysis-api';
 import { Showcase } from 'ebrc-client/App/Showcase';
 import { News } from 'ebrc-client/App/NewsSidebar';
+import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 
 import './HomePage.scss';
 
 export default function  HomePage({ newsSidebar, twitterUrl, webAppUrl, projectId, siteData, attemptAction, homeContent }) {
-  const { analyses } = useAnalysisList(mockAnalysisStore);
+  const { wdkService } = useContext(WdkDepdendenciesContext);
+  const analysisClient = useMemo(() => new AnalysisClient({
+    baseUrl: '/eda-data'
+  }, wdkService), [wdkService]);
+  const { analyses } = useAnalysisList(analysisClient);
   return (
     <div className="HomePage">
       <div className="Showcase-Section">

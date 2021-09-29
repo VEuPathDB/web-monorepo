@@ -44,6 +44,7 @@ export const wrapRoutes = wdkRoutes => [
         <WorkspaceRouter
           dataServiceUrl={edaServiceUrl}
           subsettingServiceUrl={edaServiceUrl}
+          userServiceUrl={edaServiceUrl}
         />
       </Suspense>
     )
@@ -57,6 +58,7 @@ export const wrapRoutes = wdkRoutes => [
         <WorkspaceRouter
           dataServiceUrl={edaServiceUrl}
           subsettingServiceUrl={edaServiceUrl}
+          userServiceUrl={edaServiceUrl}
         />
       </Suspense>
     )
