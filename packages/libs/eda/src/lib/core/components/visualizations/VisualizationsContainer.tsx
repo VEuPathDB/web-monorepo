@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useEffect } from 'react';
+import React, { useCallback, useMemo, useEffect, useRef } from 'react';
 import {
   Route,
   Switch,
@@ -273,9 +273,17 @@ function FullScreenVisualization(props: Props & { id: string }) {
     [updateVisualizations, id]
   );
 
-  // update currentPlotfilters with the latest filters at fullscreen mode
+  // store a ref to the latest version of updateVisualizations
+  const updateVisualizationsRef = useRef(updateVisualizations);
+
+  // whenever updateVisualizations changes, update the updateVisualizationsRef
   useEffect(() => {
-    updateVisualizations((visualizations) =>
+    updateVisualizationsRef.current = updateVisualizations;
+  }, [updateVisualizations]);
+
+  // update currentPlotFilters with the latest filters at fullscreen mode
+  useEffect(() => {
+    updateVisualizationsRef.current((visualizations) =>
       visualizations.map((v) =>
         v.visualizationId !== id
           ? v
