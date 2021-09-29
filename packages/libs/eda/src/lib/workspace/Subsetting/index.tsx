@@ -10,7 +10,6 @@ import {
   Variable,
 } from '../../core';
 
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { cx } from '../Utils';
 import { VariableDetails } from '../Variable';
 import { AnalysisState } from '../../core/hooks/analysis';
