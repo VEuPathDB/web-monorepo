@@ -83,7 +83,5 @@ export function isMosaicVariable(
 export function isTwoByTwoVariable(
   variable: VariableTreeNode
 ): variable is TwoByTwoVariable {
-  return variable.type === 'category'
-    ? false
-    : isMosaicVariable(variable) && variable.dataShape === 'binary';
+  return isMosaicVariable(variable) && variable.dataShape === 'binary';
 }
