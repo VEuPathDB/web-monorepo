@@ -28,3 +28,9 @@ export const {
   retainContainerContent = false,
   useEda = false,
 } = window.__SITE_CONFIG__;
+
+const edaExampleAnalysesAuthorNum = parseInt(window.__SITE_CONFIG__.edaExampleAnalysesAuthor ?? '', 10);
+
+export const edaExampleAnalysesAuthor = Number.isNaN(edaExampleAnalysesAuthorNum)
+  ? undefined
+  : edaExampleAnalysesAuthorNum;
