@@ -20,12 +20,14 @@ type Props = {
   subsettingServiceUrl: string;
   dataServiceUrl: string;
   userServiceUrl: string;
+  exampleAnalysesAuthor: string;
 };
 
 export function WorkspaceRouter({
   subsettingServiceUrl,
   dataServiceUrl,
   userServiceUrl,
+  exampleAnalysesAuthor,
 }: Props) {
   const { path, url } = useRouteMatch();
   const subsettingClient = SubsettingClient.getClient(subsettingServiceUrl);
@@ -64,7 +66,12 @@ export function WorkspaceRouter({
       />
       <Route
         path={`${path}/public`}
-        render={() => <PublicAnalysesRoute analysisClient={analysisClient} />}
+        render={() => (
+          <PublicAnalysesRoute
+            analysisClient={analysisClient}
+            exampleAnalysesAuthor={exampleAnalysesAuthor}
+          />
+        )}
       />
       <Route
         path={`${path}/:studyId`}

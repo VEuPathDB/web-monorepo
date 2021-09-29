@@ -1,7 +1,14 @@
 import React, { useCallback, useMemo } from 'react';
 import { useHistory, useLocation } from 'react-router';
 
-import { TextField } from '@material-ui/core';
+import {
+  FormControlLabel,
+  Switch,
+  TextField,
+  ThemeProvider,
+  createMuiTheme,
+  makeStyles,
+} from '@material-ui/core';
 import { keyBy, orderBy } from 'lodash';
 
 import { Link, Loading, Mesa } from '@veupathdb/wdk-client/lib/Components';
@@ -13,6 +20,8 @@ import {
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import { OverflowingTextCell } from '@veupathdb/wdk-client/lib/Views/Strategy/OverflowingTextCell';
 
+import { workspaceTheme } from '../core/components/workspaceTheme';
+import { useDebounce } from '../core/hooks/debouncing';
 import {
   PromiseHookState,
   PromiseResult,
@@ -20,7 +29,23 @@ import {
   StudyRecord,
 } from '../core';
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
-import { useDebounce } from '../core/hooks/debouncing';
+
+const useStyles = makeStyles({
+  root: {
+    '& .TableToolbar-Children': {
+      width: '100%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    '& .MesaComponent td': {
+      verticalAlign: 'middle',
+    },
+    '& .ExampleRow': {
+      fontWeight: 'bold',
+    },
+  },
+});
 
 interface Props {
   publicAnalysisListState: PromiseHookState<PublicAnalysisSummary[]>;
@@ -31,32 +56,36 @@ interface Props {
     analysisId: string,
     ownerUserId: number
   ) => string;
+  exampleAnalysesAuthor: string;
 }
 
 export function PublicAnalyses({
   publicAnalysisListState,
   studyRecords,
-  makeStudyLink,
-  makeAnalysisLink,
+  ...tableProps
 }: Props) {
+  const styles = useStyles();
+  const theme = createMuiTheme(workspaceTheme);
+
   return (
-    <div>
-      <h1>Public Analyses</h1>
-      <PromiseResult state={publicAnalysisListState}>
-        {(publicAnalysisList) =>
-          studyRecords == null ? (
-            <Loading />
-          ) : (
-            <PublicAnalysesTable
-              publicAnalysisList={publicAnalysisList}
-              studyRecords={studyRecords}
-              makeStudyLink={makeStudyLink}
-              makeAnalysisLink={makeAnalysisLink}
-            />
-          )
-        }
-      </PromiseResult>
-    </div>
+    <ThemeProvider theme={theme}>
+      <div className={styles.root}>
+        <h1>Public Analyses</h1>
+        <PromiseResult state={publicAnalysisListState}>
+          {(publicAnalysisList) =>
+            studyRecords == null ? (
+              <Loading />
+            ) : (
+              <PublicAnalysesTable
+                {...tableProps}
+                studyRecords={studyRecords}
+                publicAnalysisList={publicAnalysisList}
+              />
+            )
+          }
+        </PromiseResult>
+      </div>
+    </ThemeProvider>
   );
 }
 
@@ -68,6 +97,7 @@ interface TableProps extends Omit<Props, 'publicAnalysisListState'> {
 interface PublicAnalysisRow extends PublicAnalysisSummary {
   studyAvailable: boolean;
   studyDisplayName: string;
+  isExample: boolean;
 }
 
 function PublicAnalysesTable({
@@ -75,6 +105,7 @@ function PublicAnalysesTable({
   studyRecords,
   makeAnalysisLink,
   makeStudyLink,
+  exampleAnalysesAuthor,
 }: TableProps) {
   const history = useHistory();
   const location = useLocation();
@@ -99,6 +130,13 @@ function PublicAnalysesTable({
     JSON.parse
   );
 
+  const [exampleSort, setExampleSort] = useSessionBackedState<boolean>(
+    true,
+    'eda::publicAnalysesExampleSort',
+    JSON.stringify,
+    JSON.parse
+  );
+
   const unfilteredRows: PublicAnalysisRow[] = useMemo(() => {
     const studiesById = keyBy(studyRecords, (study) => study.id[0].value);
 
@@ -107,8 +145,16 @@ function PublicAnalysesTable({
       studyAvailable: Boolean(studiesById[publicAnalysis.studyId]),
       studyDisplayName:
         studiesById[publicAnalysis.studyId]?.displayName ?? 'Unknown study',
+      isExample: publicAnalysis.userName === exampleAnalysesAuthor,
     }));
-  }, [publicAnalysisList, studyRecords]);
+  }, [publicAnalysisList, studyRecords, exampleAnalysesAuthor]);
+
+  const offerExampleSortControl = useMemo(
+    () =>
+      unfilteredRows.some((row) => row.isExample) &&
+      unfilteredRows.some((row) => !row.isExample),
+    [unfilteredRows]
+  );
 
   const filteredRows = useMemo(() => {
     if (!debouncedSearchText) {
@@ -128,31 +174,36 @@ function PublicAnalysesTable({
     () =>
       orderBy(
         filteredRows,
-        (row) => {
-          switch (tableSort?.columnKey) {
-            case 'studyId':
-              return row.studyDisplayName;
-            case 'analysisId':
-              return row.displayName;
-            case 'description':
-              return row.description;
-            case 'userName':
-              return row.userName;
-            case 'userOrganization':
-              return row.userOrganization;
-            case 'creationTime':
-              return row.creationTime;
-            case 'modificationTime':
-              return row.modificationTime;
-            default:
-              console.warn(
-                `Tried to sort by an unrecognized column key '${tableSort?.columnKey}'.`
-              );
-          }
-        },
-        tableSort?.direction
+        [
+          exampleSort && offerExampleSortControl
+            ? (row) => row.isExample
+            : () => 0,
+          (row) => {
+            switch (tableSort?.columnKey) {
+              case 'studyId':
+                return row.studyDisplayName;
+              case 'analysisId':
+                return row.displayName;
+              case 'description':
+                return row.description;
+              case 'userName':
+                return row.userName;
+              case 'userOrganization':
+                return row.userOrganization;
+              case 'creationTime':
+                return row.creationTime;
+              case 'modificationTime':
+                return row.modificationTime;
+              default:
+                console.warn(
+                  `Tried to sort by an unrecognized column key '${tableSort?.columnKey}'.`
+                );
+            }
+          },
+        ],
+        ['desc', tableSort?.direction]
       ),
-    [filteredRows, tableSort]
+    [filteredRows, tableSort, exampleSort, offerExampleSortControl]
   );
 
   const columns: MesaColumn<keyof PublicAnalysisRow>[] = useMemo(
@@ -260,6 +311,8 @@ function PublicAnalysesTable({
           </div>
         </div>
       ),
+      deriveRowClassName: (row: PublicAnalysisRow) =>
+        row.isExample ? 'ExampleRow' : undefined,
     }),
     [unfilteredRows]
   );
@@ -297,6 +350,22 @@ function PublicAnalysesTable({
           Showing {filteredRows.length} of {unfilteredRows.length} analyses
         </span>
       </div>
+      {offerExampleSortControl && (
+        <FormControlLabel
+          control={
+            <Switch
+              color="primary"
+              size="small"
+              checked={exampleSort}
+              onChange={(e) => setExampleSort(e.target.checked)}
+            />
+          }
+          label="Sort examples to top"
+          style={{
+            padding: '1em',
+          }}
+        />
+      )}
     </Mesa.Mesa>
   );
 }

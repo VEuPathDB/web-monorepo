@@ -12,9 +12,13 @@ import { PublicAnalyses } from './PublicAnalyses';
 
 export interface Props {
   analysisClient: AnalysisClient;
+  exampleAnalysesAuthor: string;
 }
 
-export function PublicAnalysesRoute({ analysisClient }: Props) {
+export function PublicAnalysesRoute({
+  analysisClient,
+  exampleAnalysesAuthor,
+}: Props) {
   const publicAnalysisListState = usePublicAnalysisList(analysisClient);
   const studyRecords = useWdkStudyRecords();
 
@@ -43,6 +47,7 @@ export function PublicAnalysesRoute({ analysisClient }: Props) {
       studyRecords={studyRecords}
       makeStudyLink={makeStudyLink}
       makeAnalysisLink={makeAnalysisLink}
+      exampleAnalysesAuthor={exampleAnalysesAuthor}
     />
   );
 }
