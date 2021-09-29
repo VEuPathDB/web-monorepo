@@ -57,7 +57,7 @@ export default function SubsettingDataGridModal({
   //   Various Custom Hooks
   const studyMetadata = useStudyMetadata();
   const dataClient = useDataClient();
-  const flattenedFields = useFlattenedFields(entities);
+  const flattenedFields = useFlattenedFields(entities, false);
 
   const [currentEntity, setCurrentEntity] = useState<StudyEntity | undefined>(
     undefined
@@ -101,7 +101,7 @@ export default function SubsettingDataGridModal({
     // Determine if we need to load previously selected variables for the current
     // entity by seeing if any variable selections are stored in the analysis.
     const previouslyStoredEntityData =
-      analysisState.analysis?.dataTableSettings.selectedVariables[
+      analysisState.analysis?.descriptor.dataTableSettings.selectedVariables[
         currentEntityID
       ];
 
@@ -166,7 +166,8 @@ export default function SubsettingDataGridModal({
     analysisState.setDataTableSettings({
       selectedVariables: {
         // Reiterate any current data for other entities.
-        ...analysisState.analysis?.dataTableSettings.selectedVariables,
+        ...analysisState.analysis?.descriptor.dataTableSettings
+          .selectedVariables,
         // Update the data for the current entity.
         [currentEntityID]: variableDescriptors.map(
           (descriptor) => descriptor.variableId
@@ -312,7 +313,7 @@ export default function SubsettingDataGridModal({
         }}
       >
         <H3
-          text={analysisState.analysis?.name ?? ''}
+          text={analysisState.analysis?.displayName ?? ''}
           additionalStyles={{ flex: 2 }}
           underline
         />

@@ -372,6 +372,27 @@ export default function VariableList({
     disabledFields,
   ]);
 
+  const tooltipContent = (
+    <>
+      Some variables cannot be used here. Use this to toggle their presence
+      below.
+      <br />
+      <br />
+      <strong>
+        <Link
+          to=""
+          onClick={(e) => {
+            e.preventDefault();
+            alert('Comming soon');
+          }}
+        >
+          <Icon fa="info-circle" /> Learn more
+        </Link>
+      </strong>{' '}
+      about variable compatibility
+    </>
+  );
+
   /** Render info on disabled fields, if appropriate. */
   const renderDisabledFields = () =>
     disabledFields.size > 0 && (

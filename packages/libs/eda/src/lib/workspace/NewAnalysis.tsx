@@ -114,8 +114,21 @@ export function NewAnalysisPage() {
   );
 
   const setDataTableSettings = useCallback(
-    (dataTableSettings: DataTableSettings) => {
-      createAnalysis({ ...analysis, dataTableSettings });
+    (
+      dataTableSettings:
+        | DataTableSettings
+        | ((dataTableSettings: DataTableSettings) => DataTableSettings)
+    ) => {
+      createAnalysis({
+        ...analysis,
+        descriptor: {
+          ...analysis.descriptor,
+          dataTableSettings:
+            typeof dataTableSettings === 'function'
+              ? dataTableSettings(analysis.descriptor.dataTableSettings)
+              : dataTableSettings,
+        },
+      });
     },
     [analysis, createAnalysis]
   );

@@ -117,14 +117,19 @@ export function fromEdaFilter(filter: EdaFilter): WdkFilter {
 }
 
 export interface EdaVariableToWdkFieldOptions {
-  includeMultiFilters?: boolean;
+  // TODO documentation: explain multi filters in README section
+  /**
+   * If true, then set the multiFilter type when appropriate. This will cause
+   * such nodes to be rendered as multiFilter variables.
+   */
+  useMultiFilters?: boolean;
 }
 
 export function edaVariableToWdkField(
   variable: VariableTreeNode,
   options: EdaVariableToWdkFieldOptions = {}
 ): Field {
-  const { includeMultiFilters = false } = options;
+  const { useMultiFilters: includeMultiFilters = false } = options;
   return {
     display: variable.displayName,
     isRange: variable.dataShape === 'continuous',

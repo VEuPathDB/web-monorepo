@@ -20,11 +20,13 @@ export interface VariableTreeProps {
   entityId?: string;
   variableId?: string;
   disabledVariables?: VariableDescriptor[];
+  customDisabledVariableMessage?: string;
   /** term string is of format "entityId/variableId"  e.g. "PCO_0000024/EUPATH_0000714" */
   onChange: (variable?: VariableDescriptor) => void;
   hideDisabledFields?: boolean;
   setHideDisabledFields?: (hide: boolean) => void;
-  customDisabledVariableMessage?: string;
+  /** Indicate whether or not variables with children   */
+  useMultiFilters?: boolean;
 }
 
 export default function VariableTree({
@@ -37,12 +39,13 @@ export default function VariableTree({
   onChange,
   hideDisabledFields = false,
   setHideDisabledFields = () => {},
+  useMultiFilters = false,
 }: VariableTreeProps) {
   const entities = useStudyEntities(rootEntity);
   const valuesMap = useValuesMap(entities);
-  const flattenedFields = useFlattenedFields(entities);
+  const flattenedFields = useFlattenedFields(entities, useMultiFilters);
   const fieldsByTerm = useFlattenFieldsByTerm(flattenedFields);
-  const featuredFields = useFeaturedFields(entities);
+  const featuredFields = useFeaturedFields(entities, useMultiFilters);
   const fieldTree = useFieldTree(flattenedFields);
 
   const disabledFields = useMemo(

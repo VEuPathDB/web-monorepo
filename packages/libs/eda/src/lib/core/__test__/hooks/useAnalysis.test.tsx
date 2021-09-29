@@ -7,7 +7,7 @@ import {
   AnalysisClient,
   SingleAnalysisPatchRequest,
 } from '../../api/analysis-api';
-import { DataClient } from '../../api/data-api';
+import DataClient from '../../api/dataClient';
 import {
   StudyMetadata,
   StudyRecord,

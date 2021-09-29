@@ -84,7 +84,7 @@ export default function Subsetting({
       />
       <div className="Variables">
         <VariableTree
-          includeMultiFilters
+          useMultiFilters
           rootEntity={entities[0]}
           entityId={entity.id}
           starredVariables={analysisState.analysis?.descriptor.starredVariables}

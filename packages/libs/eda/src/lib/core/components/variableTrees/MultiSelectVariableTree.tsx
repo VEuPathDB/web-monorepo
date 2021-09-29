@@ -34,7 +34,7 @@ export default function MultiSelectVariableTree({
 }: MultiSelectVariableTreeProps) {
   const entities = useStudyEntities(rootEntity);
   const valuesMap = useValuesMap(entities);
-  const flattenedFields = useFlattenedFields(entities);
+  const flattenedFields = useFlattenedFields(entities, false);
   const fieldsByTerm = useFlattenFieldsByTerm(flattenedFields);
   const fieldTree = useFieldTree(flattenedFields);
 
