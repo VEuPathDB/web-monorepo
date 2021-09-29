@@ -4,6 +4,10 @@ import { Variable, VariableTreeNode } from '../core/types/study';
 import './EDAWorkspace.scss';
 export const cx = makeClassNameHelper('EDAWorkspace');
 
+/**
+ * Returns the first featured var; if none exist, then returns the
+ * first non-category var in the tree using depth first search.
+ */
 export function findFirstVariable(
   variables: VariableTreeNode[],
   parentId: string
