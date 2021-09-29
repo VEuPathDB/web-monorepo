@@ -10,14 +10,16 @@ import {
 export function isHistogramVariable(
   variable: VariableTreeNode
 ): variable is HistogramVariable {
-  switch (variable.dataShape) {
-    case 'continuous':
-      switch (variable.type) {
-        case 'date':
-        case 'number':
-        case 'integer':
-          return true;
-      }
+  if (variable.type != 'category') {
+    switch (variable.dataShape) {
+      case 'continuous':
+        switch (variable.type) {
+          case 'date':
+          case 'number':
+          case 'integer':
+            return true;
+        }
+    }
   }
   return false;
 }
@@ -25,17 +27,19 @@ export function isHistogramVariable(
 export function isTableVariable(
   variable: VariableTreeNode
 ): variable is TableVariable {
-  switch (variable.dataShape) {
-    case 'binary':
-    case 'categorical':
-    case 'ordinal':
-      switch (variable.type) {
-        case 'date':
-        case 'number':
-        case 'integer':
-        case 'string':
-          return true;
-      }
+  if (variable.type != 'category') {
+    switch (variable.dataShape) {
+      case 'binary':
+      case 'categorical':
+      case 'ordinal':
+        switch (variable.type) {
+          case 'date':
+          case 'number':
+          case 'integer':
+          case 'string':
+            return true;
+        }
+    }
   }
   return false;
 }
@@ -43,14 +47,16 @@ export function isTableVariable(
 export function isScatterplotVariable(
   variable: VariableTreeNode
 ): variable is ScatterplotVariable {
-  switch (variable.dataShape) {
-    case 'continuous':
-      switch (variable.type) {
-        case 'date':
-        case 'number':
-        case 'integer':
-          return true;
-      }
+  if (variable.type != 'category') {
+    switch (variable.dataShape) {
+      case 'continuous':
+        switch (variable.type) {
+          case 'date':
+          case 'number':
+          case 'integer':
+            return true;
+        }
+    }
   }
   return false;
 }
@@ -58,16 +64,18 @@ export function isScatterplotVariable(
 export function isMosaicVariable(
   variable: VariableTreeNode
 ): variable is MosaicVariable {
-  switch (variable.dataShape) {
-    case 'categorical':
-    case 'binary':
-    case 'ordinal':
-      switch (variable.type) {
-        case 'number':
-        case 'integer':
-        case 'string':
-          return true;
-      }
+  if (variable.type != 'category') {
+    switch (variable.dataShape) {
+      case 'categorical':
+      case 'binary':
+      case 'ordinal':
+        switch (variable.type) {
+          case 'number':
+          case 'integer':
+          case 'string':
+            return true;
+        }
+    }
   }
   return false;
 }
@@ -75,5 +83,7 @@ export function isMosaicVariable(
 export function isTwoByTwoVariable(
   variable: VariableTreeNode
 ): variable is TwoByTwoVariable {
-  return isMosaicVariable(variable) && variable.dataShape === 'binary';
+  return variable.type === 'category'
+    ? false
+    : isMosaicVariable(variable) && variable.dataShape === 'binary';
 }
