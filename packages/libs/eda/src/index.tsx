@@ -30,7 +30,7 @@ const dataServiceUrl = '/eda-data-service';
 const userServiceUrl = '/eda-user-service';
 
 const exampleAnalysesAuthor = process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR
-  ? Number(process.env.REACT_APP_ANALYSES_AUTHOR)
+  ? Number(process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR)
   : undefined;
 
 initialize({
