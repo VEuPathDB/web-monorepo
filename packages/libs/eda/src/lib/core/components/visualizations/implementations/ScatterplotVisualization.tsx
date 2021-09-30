@@ -372,7 +372,9 @@ function ScatterplotViz(props: VisualizationProps) {
         >
           <i className="fa fa-warning" style={{ marginRight: '1ex' }}></i>{' '}
           {data.error instanceof Error
-            ? data.error.message
+            ? data.error.message.match(/400.+too large/is)
+              ? 'Your plot currently has too many points to display in a reasonable time. Please either add filters in the Browse and subset tab to reduce the number, or consider using a summary plot such as histogram or boxplot.'
+              : data.error.message
             : String(data.error)}
         </div>
       )}
@@ -447,7 +449,9 @@ function ScatterplotViz(props: VisualizationProps) {
             filters={filters}
             outputEntity={outputEntity}
             stratificationIsActive={overlayVariable != null}
-            enableSpinner={xAxisVariable != null && yAxisVariable != null}
+            enableSpinner={
+              xAxisVariable != null && yAxisVariable != null && !data.error
+            }
           />
           <VariableCoverageTable
             completeCases={
@@ -655,6 +659,7 @@ function getRequestParams(
         yAxisVariable: yAxisVariable,
         overlayVariable: overlayVariable,
         showMissingness: showMissingness ? 'TRUE' : 'FALSE',
+        maxAllowedDataPoints: 5000,
       },
     } as ScatterplotRequestParams;
   }
