@@ -465,7 +465,7 @@ function HistogramPlotWithControls({
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <LabelledGroup label="Y-axis">
           <Switch
-            label="Log Scale:"
+            label="Log scale:"
             state={histogramProps.dependentAxisLogScale}
             onStateChange={onDependentAxisLogScaleChange}
           />
