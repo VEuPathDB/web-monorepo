@@ -43,6 +43,10 @@ export default function headerMenuItems (state, props) {
             text: 'My Analyses',
             route: makeEdaRoute()
           },
+          {
+            text: 'Public Analyses',
+            route: `${makeEdaRoute()}/public`
+          },
         ]
       },
       {
