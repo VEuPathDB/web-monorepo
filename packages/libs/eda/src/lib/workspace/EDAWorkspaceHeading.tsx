@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import Path from 'path';
 import { cx } from './Utils';
-import { useAnalysis, useStudyRecord } from '../core';
+import { useAnalysis, useStudyRecord, AnalysisState } from '../core';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Button, Tooltip, Icon } from '@material-ui/core';
 import { LinkAttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
@@ -20,6 +20,7 @@ interface ChangeAnalysisNameDialogProps {
   setIsOpen: (isOpen: boolean) => void;
   analysisName: string;
   setAnalysisName: (name: string) => void;
+  redirectToNewAnalysis: () => void;
 }
 
 interface AnalysisHeadingProps {
@@ -27,31 +28,42 @@ interface AnalysisHeadingProps {
 }
 
 interface BaseHeadingProps {
-  onNewAnalysisClickOverride?: () => void;
+  analysisState?: AnalysisState;
 }
 
-const useRedirectToNewAnalysis = () => {
-  const studyRecord = useStudyRecord();
-  const { url } = useRouteMatch();
-  const redirectURL = url.endsWith(studyRecord.id[0].value)
-    ? `${url}/new`
-    : Path.resolve(url, '../new');
-  const history = useHistory();
+// function useRedirectToNewAnalysis() {
+//   const studyRecord = useStudyRecord();
+//   const { url } = useRouteMatch();
+//   const redirectURL = url.endsWith(studyRecord.id[0].value)
+//     ? `${url}/new`
+//     : Path.resolve(url, '../new');
+//   const history = useHistory();
 
-  history.push(redirectURL);
-};
+//   history.push(redirectURL);
+// };
 
-const ChangeAnalysisNameDialog = ({
+export function ChangeAnalysisNameDialog({
   isOpen,
   setIsOpen,
   analysisName,
   setAnalysisName,
-}: ChangeAnalysisNameDialogProps) => {
+  redirectToNewAnalysis,
+}: ChangeAnalysisNameDialogProps) {
   const [name, setName] = useState(analysisName);
 
-  const useHandleContinue = () => {
+  console.log({ setAnalysisName: setAnalysisName });
+
+  const handleContinue = () => {
     setAnalysisName(name);
-    useRedirectToNewAnalysis();
+    redirectToNewAnalysis();
+    // const studyRecord = useStudyRecord();
+    // const { url } = useRouteMatch();
+    // const redirectURL = url.endsWith(studyRecord.id[0].value)
+    //   ? `${url}/new`
+    //   : Path.resolve(url, '../new');
+    // const history = useHistory();
+
+    // history.push(redirectURL);
   };
 
   return (
@@ -78,99 +90,116 @@ const ChangeAnalysisNameDialog = ({
         <Button onClick={() => setIsOpen(false)} color="primary">
           Cancel
         </Button>
-        <Button onClick={useHandleContinue} color="primary" autoFocus>
+        <Button onClick={handleContinue} color="primary" autoFocus>
           Save and continue
         </Button>
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 export function AnalysisEDAWorkspaceHeading({
   analysisId,
 }: AnalysisHeadingProps) {
   const analysisState = useAnalysis(analysisId);
-  const analysis = analysisState.analysis;
+  return <EDAWorkspaceHeading analysisState={analysisState} />;
+}
+
+export function EDAWorkspaceHeading({ analysisState }: BaseHeadingProps) {
+  const studyRecord = useStudyRecord();
+  const attemptAction = useAttemptActionCallback();
+  const analysis = analysisState?.analysis;
   const [dialogIsOpen, setDialogIsOpen] = useState(false);
+  const { url } = useRouteMatch();
+  const redirectURL = url.endsWith(studyRecord.id[0].value)
+    ? `${url}/new`
+    : Path.resolve(url, '../new');
+  const history = useHistory();
+
+  // const useHandleClick = () => {
+  //   const studyRecord = useStudyRecord();
+  //   const { url } = useRouteMatch();
+  //   const redirectURL = url.endsWith(studyRecord.id[0].value)
+  //     ? `${url}/new`
+  //     : Path.resolve(url, '../new');
+  //   const history = useHistory();
+
+  //   history.push(redirectURL);
+  // }
+
+  const redirectToNewAnalysis = () => history.push(redirectURL);
+
+  console.log(analysis);
 
   return (
     <>
-      <EDAWorkspaceHeading
-        onNewAnalysisClickOverride={
-          analysis ? () => setDialogIsOpen(true) : undefined
-        }
-      />
-      {analysis && (
-        <ChangeAnalysisNameDialog
-          isOpen={dialogIsOpen}
-          setIsOpen={setDialogIsOpen}
-          analysisName={analysis.name}
-          setAnalysisName={analysisState.setName}
-        />
-      )}
-    </>
-  );
-}
-
-export function EDAWorkspaceHeading({
-  onNewAnalysisClickOverride,
-}: BaseHeadingProps) {
-  const studyRecord = useStudyRecord();
-  const attemptAction = useAttemptActionCallback();
-
-  return (
-    <div className={cx('-Heading')}>
-      <h1>{safeHtml(studyRecord.displayName)}</h1>
-      <div className={cx('-Linkouts')}>
-        {studyRecord.attributes.bulk_download_url && (
+      <div className={cx('-Heading')}>
+        <h1>{safeHtml(studyRecord.displayName)}</h1>
+        <div className={cx('-Linkouts')}>
+          {studyRecord.attributes.bulk_download_url && (
+            <div>
+              <Tooltip title="Download study files">
+                <Button
+                  variant="text"
+                  color="primary"
+                  startIcon={<Icon className="fa fa-download fa-fw" />}
+                  type="button"
+                  onClick={() => {
+                    attemptAction(Action.download, {
+                      studyId: studyRecord.id[0].value,
+                      onAllow: () => {
+                        window.location.href = (studyRecord.attributes
+                          .bulk_download_url as LinkAttributeValue).url;
+                      },
+                    });
+                  }}
+                >
+                  &nbsp;Download
+                </Button>
+              </Tooltip>
+            </div>
+          )}
           <div>
-            <Tooltip title="Download study files">
+            <Tooltip title="Create a new analysis">
               <Button
                 variant="text"
                 color="primary"
-                startIcon={<Icon className="fa fa-download fa-fw" />}
-                type="button"
-                onClick={() => {
-                  attemptAction(Action.download, {
-                    studyId: studyRecord.id[0].value,
-                    onAllow: () => {
-                      window.location.href = (studyRecord.attributes
-                        .bulk_download_url as LinkAttributeValue).url;
-                    },
-                  });
-                }}
+                startIcon={<Icon className="fa fa-plus fa-fw" />}
+                onClick={
+                  analysis && analysis.displayName === 'Unnamed Analysis'
+                    ? () => setDialogIsOpen(true)
+                    : redirectToNewAnalysis
+                }
+                // onClick={onNewAnalysisClickOverride ?? useHandleClick}
               >
-                &nbsp;Download
+                New analysis
               </Button>
             </Tooltip>
           </div>
-        )}
-        <div>
-          <Tooltip title="Create a new analysis">
-            <Button
-              variant="text"
-              color="primary"
-              startIcon={<Icon className="fa fa-plus fa-fw" />}
-              onClick={onNewAnalysisClickOverride ?? useRedirectToNewAnalysis}
-            >
-              New analysis
-            </Button>
-          </Tooltip>
-        </div>
-        <div>
-          <Tooltip title="View all your analyses of this study">
-            <Button
-              variant="text"
-              color="primary"
-              startIcon={<Icon className="fa fa-table fa-fw" />}
-              component={Link}
-              to={'/eda?s=' + encodeURIComponent(studyRecord.displayName)}
-            >
-              My analyses
-            </Button>
-          </Tooltip>
+          <div>
+            <Tooltip title="View all your analyses of this study">
+              <Button
+                variant="text"
+                color="primary"
+                startIcon={<Icon className="fa fa-table fa-fw" />}
+                component={Link}
+                to={'/eda?s=' + encodeURIComponent(studyRecord.displayName)}
+              >
+                My analyses
+              </Button>
+            </Tooltip>
+          </div>
         </div>
       </div>
-    </div>
+      {analysisState && analysis && (
+        <ChangeAnalysisNameDialog
+          isOpen={dialogIsOpen}
+          setIsOpen={setDialogIsOpen}
+          analysisName={analysis.displayName}
+          setAnalysisName={analysisState.setName}
+          redirectToNewAnalysis={redirectToNewAnalysis}
+        />
+      )}
+    </>
   );
 }
