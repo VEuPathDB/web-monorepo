@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo, useEffect, useRef } from 'react';
 import {
   Route,
   Switch,
@@ -16,6 +16,7 @@ import {
   Computation,
   Visualization,
   VisualizationOverview,
+  VisualizationDescriptor,
 } from '../../types/visualization';
 import { Grid } from '../Grid';
 import { VisualizationType } from './VisualizationTypes';
@@ -24,6 +25,7 @@ import './Visualizations.scss';
 import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
 import PlaceholderIcon from './PlaceholderIcon';
 import { Tooltip } from '@material-ui/core';
+import { isEqual } from 'lodash';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -130,21 +132,30 @@ function ConfiguredVisualizations(props: Props) {
                       </button>
                     </Tooltip>
                   </div>
-                  <div>
-                    <Tooltip title="View fullscreen">
-                      <Link replace to={`${url}/${viz.visualizationId}`}>
-                        <i className="fa fa-arrows-alt"></i>
-                      </Link>
-                    </Tooltip>
-                  </div>
                 </div>
-                {viz.descriptor.thumbnail ? (
-                  <img alt={viz.displayName} src={viz.descriptor.thumbnail} />
-                ) : (
-                  <div className={cx('-ConfiguredVisualizationNoPreview')}>
-                    Preview unavaiable
-                  </div>
-                )}
+                {/* add the Link of thumbnail box here to avoid click conflict with icons */}
+                <>
+                  <Link replace to={`${url}/${viz.visualizationId}`}>
+                    {viz.descriptor.thumbnail ? (
+                      <img
+                        alt={viz.displayName}
+                        src={viz.descriptor.thumbnail}
+                      />
+                    ) : (
+                      <div className={cx('-ConfiguredVisualizationNoPreview')}>
+                        Preview unavailable
+                      </div>
+                    )}
+                    {/* make gray-out box on top of thumbnail */}
+                    <ConfiguredVisualizationGrayOut
+                      filters={props.filters}
+                      currentPlotFilters={
+                        (viz.descriptor as VisualizationDescriptor)
+                          .currentPlotFilters as Filter[]
+                      }
+                    />
+                  </Link>
+                </>
               </div>
               <div className={cx('-ConfiguredVisualizationTitle')}>
                 {viz.displayName ?? 'Unnamed visualization'}
@@ -262,6 +273,28 @@ function FullScreenVisualization(props: Props & { id: string }) {
     [updateVisualizations, id]
   );
 
+  // store a ref to the latest version of updateVisualizations
+  const updateVisualizationsRef = useRef(updateVisualizations);
+
+  // whenever updateVisualizations changes, update the updateVisualizationsRef
+  useEffect(() => {
+    updateVisualizationsRef.current = updateVisualizations;
+  }, [updateVisualizations]);
+
+  // update currentPlotFilters with the latest filters at fullscreen mode
+  useEffect(() => {
+    updateVisualizationsRef.current((visualizations) =>
+      visualizations.map((v) =>
+        v.visualizationId !== id
+          ? v
+          : {
+              ...v,
+              descriptor: { ...v.descriptor, currentPlotFilters: filters },
+            }
+      )
+    );
+  }, [filters]);
+
   const updateThumbnail = useCallback(
     (thumbnail: string) => {
       updateVisualizations((visualizations) =>
@@ -326,7 +359,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
         </div>
         <Tooltip title="Minimize visualization">
           <Link replace to={`../${computationId}`}>
-            <i className="fa fa-window-restore"></i>
+            <i className="fa fa-window-minimize"></i>
           </Link>
         </Tooltip>
       </div>
@@ -367,5 +400,31 @@ function FullScreenVisualization(props: Props & { id: string }) {
         </div>
       )}
     </div>
+  );
+}
+
+// define type and ConfiguredVisualizationGrayOut component for gray-out thumbnail
+type ConfiguredVisualizationGrayOutProps = {
+  filters: Filter[];
+  currentPlotFilters: Filter[];
+};
+
+function ConfiguredVisualizationGrayOut({
+  filters,
+  currentPlotFilters,
+}: ConfiguredVisualizationGrayOutProps) {
+  // using lodash isEqual to compare two objects
+  const thumbnailGrayOut = useMemo(() => isEqual(filters, currentPlotFilters), [
+    filters,
+    currentPlotFilters,
+  ]);
+
+  return !thumbnailGrayOut ? (
+    <div className={cx('-ConfiguredVisualizationGrayOut')}>
+      Open to sync with
+      <br /> current subset
+    </div>
+  ) : (
+    <></>
   );
 }
