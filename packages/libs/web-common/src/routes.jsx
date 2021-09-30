@@ -10,6 +10,7 @@ import { ResetSessionController } from 'ebrc-client/controllers/ResetSessionCont
 import StudyAccessController from './controllers/StudyAccessController';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
+import { edaExampleAnalysesAuthor } from './config';
 
 export const STATIC_ROUTE_PATH = '/static-content';
 
@@ -45,6 +46,7 @@ export const wrapRoutes = wdkRoutes => [
           dataServiceUrl={edaServiceUrl}
           subsettingServiceUrl={edaServiceUrl}
           userServiceUrl={edaServiceUrl}
+          exampleAnalysesAuthor={edaExampleAnalysesAuthor}
         />
       </Suspense>
     )
@@ -59,6 +61,7 @@ export const wrapRoutes = wdkRoutes => [
           dataServiceUrl={edaServiceUrl}
           subsettingServiceUrl={edaServiceUrl}
           userServiceUrl={edaServiceUrl}
+          exampleAnalysesAuthor={edaExampleAnalysesAuthor}
         />
       </Suspense>
     )
