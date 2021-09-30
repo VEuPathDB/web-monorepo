@@ -199,7 +199,10 @@ function PlotlyPlot<T>(
   }, [data]);
 
   // keep dependent axis title for tooltip text
-  const originalDependentAxisTitle = plotlyProps?.layout?.yaxis?.title;
+  const originalDependentAxisTitle = useMemo(
+    () => plotlyProps?.layout?.yaxis?.title,
+    [plotlyProps?.layout?.yaxis?.title]
+  );
 
   // ellipsis with tooltip for legend, legend title, and independent axis tick labels
   const onUpdate = useCallback(
@@ -295,6 +298,7 @@ function PlotlyPlot<T>(
       legendTitle,
       maxLegendTitleTextLength,
       storedIndependentAxisTickLabel,
+      originalDependentAxisTitle,
     ]
   );
 
