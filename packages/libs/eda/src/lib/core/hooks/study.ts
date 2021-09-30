@@ -1,5 +1,8 @@
 import { createContext, useCallback, useMemo } from 'react';
-import { useWdkServiceWithRefresh } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import {
+  useWdkService,
+  useWdkServiceWithRefresh,
+} from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import {
   preorder,
   preorderSeq,
@@ -9,6 +12,7 @@ import {
   getScopes,
   getNodeId,
 } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
+import { AnswerJsonFormatConfig } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import {
   StudyEntity,
   StudyMetadata,
@@ -87,6 +91,31 @@ export function useWdkStudyRecord(datasetId: string): HookValue | undefined {
     },
     [datasetId]
   );
+}
+
+const DEFAULT_STUDY_ATTRIBUTES = ['dataset_id'];
+const DEFAULT_STUDY_TABLES: string[] = [];
+
+export function useWdkStudyRecords(
+  attributes: AnswerJsonFormatConfig['attributes'] = DEFAULT_STUDY_ATTRIBUTES,
+  tables: AnswerJsonFormatConfig['tables'] = DEFAULT_STUDY_TABLES
+): StudyRecord[] | undefined {
+  return useWdkService(
+    (wdkService) =>
+      wdkService.getAnswerJson(
+        {
+          searchName: 'Studies',
+          searchConfig: {
+            parameters: {},
+          },
+        },
+        {
+          attributes,
+          tables,
+        }
+      ),
+    [attributes, tables]
+  )?.records;
 }
 
 export function useStudyMetadata(datasetId: string, store: SubsettingClient) {
