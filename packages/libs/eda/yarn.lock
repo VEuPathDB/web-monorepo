@@ -1150,14 +1150,7 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.12.1", "@babel/runtime@^7.13.8", "@babel/runtime@^7.14.0", "@babel/runtime@^7.3.1", "@babel/runtime@^7.4.4", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.3", "@babel/runtime@^7.8.3", "@babel/runtime@^7.8.7":
-  version "7.15.3"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.15.3.tgz#2e1c2880ca118e5b2f9988322bd8a7656a32502b"
-  integrity sha512-OvwMLqNXkCXSz1kSm58sEsNuhqOx/fKpnUnKnFB5v8uDda5bLNEHNgKPvhDN6IU0LDcnHQ90LlJ0Q6jnyBSIBA==
-  dependencies:
-    regenerator-runtime "^0.13.4"
-
-"@babel/runtime@^7.13.10":
+"@babel/runtime@^7.12.1", "@babel/runtime@^7.13.10", "@babel/runtime@^7.13.8", "@babel/runtime@^7.14.0", "@babel/runtime@^7.3.1", "@babel/runtime@^7.4.4", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.3", "@babel/runtime@^7.8.3", "@babel/runtime@^7.8.7":
   version "7.15.3"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.15.3.tgz#2e1c2880ca118e5b2f9988322bd8a7656a32502b"
   integrity sha512-OvwMLqNXkCXSz1kSm58sEsNuhqOx/fKpnUnKnFB5v8uDda5bLNEHNgKPvhDN6IU0LDcnHQ90LlJ0Q6jnyBSIBA==
@@ -1718,7 +1711,7 @@
   resolved "https://registry.yarnpkg.com/@mapbox/whoots-js/-/whoots-js-3.1.0.tgz#497c67a1cef50d1a2459ba60f315e448d2ad87fe"
   integrity sha512-Es6WcD0nO5l+2BOQS4uLfNPYQaNDfbot3X1XUoloz+x0mPDS3eeORZJl06HXjwBG1fOGwCRnzK88LMdxKRrd6Q==
 
-"@material-ui/core@^4.11.2":
+"@material-ui/core@^4.11.2", "@material-ui/core@^4.12.3":
   version "4.12.3"
   resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-4.12.3.tgz#80d665caf0f1f034e52355c5450c0e38b099d3ca"
   integrity sha512-sdpgI/PL56QVsEJldwEe4FFaFTLUqN+rd7sSZiRCdx2E/C7z5yK0y/khAWVBH24tXwto7I1hCzNWfJGZIYJKnw==
@@ -1744,24 +1737,6 @@
     "@babel/runtime" "^7.4.4"
     "@material-ui/styles" "^4.11.4"
     "@material-ui/system" "^4.11.3"
-    "@material-ui/types" "5.1.0"
-    "@material-ui/utils" "^4.11.2"
-    "@types/react-transition-group" "^4.2.0"
-    clsx "^1.0.4"
-    hoist-non-react-statics "^3.3.2"
-    popper.js "1.16.1-lts"
-    prop-types "^15.7.2"
-    react-is "^16.8.0 || ^17.0.0"
-    react-transition-group "^4.4.0"
-
-"@material-ui/core@^4.12.3":
-  version "4.12.3"
-  resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-4.12.3.tgz#80d665caf0f1f034e52355c5450c0e38b099d3ca"
-  integrity sha512-sdpgI/PL56QVsEJldwEe4FFaFTLUqN+rd7sSZiRCdx2E/C7z5yK0y/khAWVBH24tXwto7I1hCzNWfJGZIYJKnw==
-  dependencies:
-    "@babel/runtime" "^7.4.4"
-    "@material-ui/styles" "^4.11.4"
-    "@material-ui/system" "^4.12.1"
     "@material-ui/types" "5.1.0"
     "@material-ui/utils" "^4.11.2"
     "@types/react-transition-group" "^4.2.0"
@@ -1824,16 +1799,6 @@
     prop-types "^15.7.2"
 
 "@material-ui/system@^4.11.3", "@material-ui/system@^4.12.1":
-  version "4.12.1"
-  resolved "https://registry.yarnpkg.com/@material-ui/system/-/system-4.12.1.tgz#2dd96c243f8c0a331b2bb6d46efd7771a399707c"
-  integrity sha512-lUdzs4q9kEXZGhbN7BptyiS1rLNHe6kG9o8Y307HCvF4sQxbCgpL2qi+gUk+yI8a2DNk48gISEQxoxpgph0xIw==
-  dependencies:
-    "@babel/runtime" "^7.4.4"
-    "@material-ui/utils" "^4.11.2"
-    csstype "^2.5.2"
-    prop-types "^15.7.2"
-
-"@material-ui/system@^4.12.1":
   version "4.12.1"
   resolved "https://registry.yarnpkg.com/@material-ui/system/-/system-4.12.1.tgz#2dd96c243f8c0a331b2bb6d46efd7771a399707c"
   integrity sha512-lUdzs4q9kEXZGhbN7BptyiS1rLNHe6kG9o8Y307HCvF4sQxbCgpL2qi+gUk+yI8a2DNk48gISEQxoxpgph0xIw==
@@ -3129,17 +3094,6 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/core-components@^0.2.21":
-  version "0.2.21"
-  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.2.21.tgz#166e33dd89d104952248fe630d69a9cd10db64be"
-  integrity sha512-oRgK0DWkfAh10u7pZpskIAQbzk17injRcnulmBmrSTvMJESB5FYfSUBecW3uCStegGT4bYuxYOCdrgu/b8vm6A==
-  dependencies:
-    "@material-ui/core" "^4.12.3"
-    "@material-ui/icons" "^4.11.2"
-    "@types/react-table" "^7.7.2"
-    lodash "^4.17.21"
-    react-modal "^3.14.3"
-    react-table "^7.7.0"
 "@veupathdb/components@^0.7.18":
   version "0.7.18"
   resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.7.18.tgz#0c19ee4bc1245ea4e22871b700f5e784c07bd698"
@@ -3209,6 +3163,18 @@
     react-plotly.js "^2.4.0"
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
+
+"@veupathdb/core-components@^0.2.21":
+  version "0.2.21"
+  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.2.21.tgz#166e33dd89d104952248fe630d69a9cd10db64be"
+  integrity sha512-oRgK0DWkfAh10u7pZpskIAQbzk17injRcnulmBmrSTvMJESB5FYfSUBecW3uCStegGT4bYuxYOCdrgu/b8vm6A==
+  dependencies:
+    "@material-ui/core" "^4.12.3"
+    "@material-ui/icons" "^4.11.2"
+    "@types/react-table" "^7.7.2"
+    lodash "^4.17.21"
+    react-modal "^3.14.3"
+    react-table "^7.7.0"
 
 "@veupathdb/eda@^0.11.9":
   version "0.11.20"
@@ -5095,9 +5061,9 @@ caniuse-api@^3.0.0:
     lodash.uniq "^4.5.0"
 
 caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000981, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001125, caniuse-lite@^1.0.30001165:
-  version "1.0.30001165"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001165.tgz#32955490d2f60290bb186bb754f2981917fa744f"
-  integrity sha512-8cEsSMwXfx7lWSUMA2s08z9dIgsnR5NAqjXP23stdsU3AUWkCr/rr4s4OFtHXn5XXr6+7kam3QFVoYyXNPdJPA==
+  version "1.0.30001261"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001261.tgz"
+  integrity sha512-vM8D9Uvp7bHIN0fZ2KQ4wnmYFpJo/Etb4Vwsuc+ka0tfGDHvOPrFm6S/7CCNLSOkAUjenT2HnUPESdOIL91FaA==
 
 canvas-fit@^1.5.0:
   version "1.5.0"
