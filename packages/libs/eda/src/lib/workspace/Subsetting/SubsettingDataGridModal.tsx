@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import { ceil } from 'lodash';
 import {
   DataGrid,
   SwissArmyButton,
@@ -15,13 +16,13 @@ import {
   useStudyMetadata,
 } from '../../core';
 import MultiSelectVariableTree from '../../core/components/variableTrees/MultiSelectVariableTree';
+import VariableTreeDropdown from '../../core/components/variableTrees/VariableTreeDropdown';
 import { VariableDescriptor } from '../../core/types/variable';
 import { useFlattenedFields } from '../../core/components/variableTrees/hooks';
 import { useProcessedGridData } from './hooks';
 import { APIError } from '../../core/api/types';
-import { ceil } from 'lodash';
 
-// TODO: Paging Support
+// TODO: Overlay the variabletree rather than scrunching the table.
 
 type SubsettingDataGridProps = {
   /** Should the modal currently be visible? */
@@ -30,7 +31,7 @@ type SubsettingDataGridProps = {
   toggleDisplay: () => void;
   /**
    * Analysis state. We will read/write to this object as
-   * people change the variable selected for display.
+   * people change the variables selected for display.
    * */
   analysisState: AnalysisState;
   /** The entities for the Study/Analysis being interacted with. */
@@ -77,7 +78,7 @@ export default function SubsettingDataGridModal({
     entities
   );
 
-  // The current
+  // The current record pagecount.
   const [pageCount, setPageCount] = useState(0);
 
   // An array of variable descriptors representing the currently
@@ -120,12 +121,14 @@ export default function SubsettingDataGridModal({
   };
 
   /** Actions to take when modal is closed. */
-  const onModalClose = () => setGridData(null);
+  const onModalClose = () => {
+    setGridData(null);
+    setSelectedVariableDescriptors([]);
+  };
 
   const fetchPaginatedData = useCallback(
     ({ pageSize, pageIndex }) => {
       setDataLoading(true);
-      // console.log('dataLoading === true');
 
       dataClient
         .getTableData('pass', {
@@ -146,7 +149,6 @@ export default function SubsettingDataGridModal({
         })
         .finally(() => {
           setDataLoading(false);
-          // console.log('dataLoading === false');
         });
     },
     [
@@ -178,7 +180,7 @@ export default function SubsettingDataGridModal({
     setSelectedVariableDescriptors(variableDescriptors);
   };
 
-  /** Side effect for when selectedVariableDescriptors changes. */
+  /** Whenever the selected variables change, load a new data set. */
   useEffect(() => {
     setApiError(null);
     selectedVariableDescriptors.length
@@ -282,13 +284,11 @@ export default function SubsettingDataGridModal({
           )}
           <div>
             <MultiSelectVariableTree
-              /** NOTE: We are purposely removing all child entities here because
-               * we only want a user to be able to select variables from a single
-               * entity at a time.
-               */
+              // NOTE: We are purposely removing all child entities here because
+              // we only want a user to be able to select variables from a single
+              // entity at a time.
               rootEntity={{ ...currentEntity, children: [] }}
               selectedVariableDescriptors={selectedVariableDescriptors}
-              // onSelectedVariablesChange={setSelectedVariableDescriptors}
               onSelectedVariablesChange={handleSelectedVariablesChange}
             />
           </div>
@@ -338,6 +338,13 @@ export default function SubsettingDataGridModal({
             onPress={() => setDisplayVariableTree(!displayVariableTree)}
             styleOverrides={{ marginRight: 25 }}
           />
+          {/* {currentEntity && (
+            <VariableTreeDropdown
+              rootEntity={{ ...currentEntity, children: [] }}
+              toggleStarredVariable={() => null}
+              onChange={(descriptor) => console.log(descriptor)}
+            />
+          )} */}
           <SwissArmyButton text="Close" onPress={() => toggleDisplay()} />
         </div>
       </div>
