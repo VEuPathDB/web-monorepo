@@ -36,7 +36,7 @@ class StudyCard extends React.Component {
           {analyses?.some(analysis => analysis.studyId === card.id) &&
             <div className="box StudyCard-MyAnalyses">
               <Link to={{ pathname: makeEdaRoute(), search: `?s=${encodeURIComponent(card.name)}` }}>
-                <i className="fa fa-table"/> My analyses
+                <i className="ebrc-icon-table"/> My analyses
               </Link>
             </div>
           }
