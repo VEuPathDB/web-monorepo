@@ -112,10 +112,25 @@ const Histogram = makePlotlyPlotComponent(
       return barLayout === 'overlay' && data.series.length > 1 ? opacity : 1;
     }, [barLayout, data.series.length, opacity]);
 
+    // Pixel width of main part of plot is needed for adjusting the borders of white bars
+    // if we can get this from a numeric containerStyles.width that's great - if not
+    // we'll just use a fallback of 500.
+    const plotDivPixelWidth =
+      restProps.containerStyles?.width &&
+      typeof restProps.containerStyles?.width === 'number'
+        ? restProps.containerStyles?.width
+        : 750;
+    // The factors 0.65 and 0.75 are for when there is a legend taking up horizontal space or not
+    // (of course there is most likely to be one)
+    const plotPixelWidth =
+      (data.series.length > 1 ? 0.65 : 0.75) * plotDivPixelWidth;
+
     // Transform `data` into a Plot.ly friendly format.
     const plotlyFriendlyData: PlotParams['data'] = useMemo(
       () =>
         data.series.map((series) => {
+          const isWhiteBar =
+            series.color === 'white' || series.color === '#ffffff';
           const binStarts = series.bins.map((bin) => bin.binStart);
           const binLabels = series.bins.map((bin) => bin.binLabel); // see TO DO: below
           const binCounts = series.bins.map((bin) => bin.count);
@@ -168,8 +183,19 @@ const Histogram = makePlotlyPlotComponent(
                 color: series.borderColor,
               },
             },
-            offset: 0,
-            width: binWidths,
+            // white filled bars need to be offset and narrower so that the outline
+            // doesn't look funny
+            offset: isWhiteBar
+              ? binWidths.map(
+                  (width) => width * (2 / (plotPixelWidth / binWidths.length))
+                )
+              : 0,
+            width: isWhiteBar
+              ? binWidths.map(
+                  (width) =>
+                    width * (1 - 4 / (plotPixelWidth / binWidths.length))
+                )
+              : binWidths,
             selected: {
               marker: {
                 opacity: 1,
