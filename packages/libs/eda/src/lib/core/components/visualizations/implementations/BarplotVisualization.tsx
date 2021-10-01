@@ -316,7 +316,7 @@ function BarplotViz(props: VisualizationProps) {
             filters={filters}
             outputEntity={entity}
             stratificationIsActive={overlayVariable != null}
-            enableSpinner={vizConfig.xAxisVariable != null}
+            enableSpinner={vizConfig.xAxisVariable != null && !data.error}
           />
           <VariableCoverageTable
             completeCases={data.pending ? undefined : data.value?.completeCases}

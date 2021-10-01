@@ -43,6 +43,24 @@
       align-items: center;
     }
 
+    // gray out box for thumbnail view
+    &GrayOut {
+      background: rgba(217, 217, 217, 0.5);
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.7em;
+      text-align: center;
+      color: #333;
+      // outer glow effect
+      text-shadow: 0em 0em 0.25em #fff;
+    }
+
+    // adjusting icons for thumbnail
     &Actions {
       display: flex;
       position: absolute;
@@ -54,6 +72,8 @@
         margin: 0 0.25em;
       }
       z-index: 1;
+      // add hover effect for thumbnail icons
+      opacity: 0;
     }
 
     &Title,
@@ -73,6 +93,12 @@
       font-weight: 300;
     }
   }
+
+  // add hover effect for thumbnail icons
+  &-ConfiguredVisualization:hover &-ConfiguredVisualizationActions {
+    opacity: 1;
+  }
+
   &-PickerContainer {
     position: relative;
     padding: 1em 0;

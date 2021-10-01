@@ -60,3 +60,10 @@ export function parseTimeDelta(input: string): TimeDelta {
     : 'month';
   return { value, unit };
 }
+
+/**
+ * Converts an ISO datetime string to a display format
+ */
+export function convertISOToDisplayFormat(datetime: string) {
+  return new Date(datetime).toUTCString().slice(5);
+}

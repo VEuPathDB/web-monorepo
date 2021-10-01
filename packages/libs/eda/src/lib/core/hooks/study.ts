@@ -1,5 +1,8 @@
 import { createContext, useCallback, useMemo } from 'react';
-import { useWdkServiceWithRefresh } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import {
+  useWdkService,
+  useWdkServiceWithRefresh,
+} from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import {
   preorder,
   preorderSeq,
@@ -9,6 +12,7 @@ import {
   getScopes,
   getNodeId,
 } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
+import { AnswerJsonFormatConfig } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import {
   StudyEntity,
   StudyMetadata,
@@ -89,17 +93,50 @@ export function useWdkStudyRecord(datasetId: string): HookValue | undefined {
   );
 }
 
+const DEFAULT_STUDY_ATTRIBUTES = ['dataset_id', 'eda_study_id'];
+const DEFAULT_STUDY_TABLES: string[] = [];
+
+export function useWdkStudyRecords(
+  attributes: AnswerJsonFormatConfig['attributes'] = DEFAULT_STUDY_ATTRIBUTES,
+  tables: AnswerJsonFormatConfig['tables'] = DEFAULT_STUDY_TABLES
+): StudyRecord[] | undefined {
+  return useWdkService(
+    (wdkService) =>
+      wdkService.getAnswerJson(
+        {
+          searchName: 'Studies',
+          searchConfig: {
+            parameters: {},
+          },
+        },
+        {
+          attributes,
+          tables,
+        }
+      ),
+    [attributes, tables]
+  )?.records;
+}
+
 export function useStudyMetadata(datasetId: string, store: SubsettingClient) {
-  return usePromise(
-    useCallback(async () => {
+  return useWdkServiceWithRefresh(
+    async (wdkService) => {
+      const studyRecord = await wdkService.getRecord(
+        STUDY_RECORD_CLASS_NAME,
+        [{ name: 'dataset_id', value: datasetId }],
+        { attributes: ['dataset_id', 'eda_study_id'] }
+      );
       const studies = await store.getStudies();
-      const study = studies.find((s) => s.datasetId === datasetId);
+      const study = studies.find(
+        (s) => s.id === studyRecord.attributes.eda_study_id
+      );
       if (study == null)
         throw new Error(
           'Could not find study with associated dataset id `' + datasetId + '`.'
         );
       return store.getStudyMetadata(study.id);
-    }, [datasetId, store])
+    },
+    [datasetId, store]
   );
 }
 

@@ -54,17 +54,18 @@ _The `yarn start` script makes use of environment variables when running in deve
 
 The following environment variables are used by the `yarn start` script:
 
-| Variable name                         | Description                                       |
-| ------------------------------------- | ------------------------------------------------- |
-| `VEUPATHDB_LOGIN_USER`                | VEuPathDB BRC prerelease user name                |
-| `VEUPATHDB_LOGIN_PASS`                | VEuPathDB BRC prerelease user password            |
-| `WDK_SERVICE_URL`                     | Full url to a running WDK REST Service            |
-| `EDA_SUBSETTING_SERVICE_URL`          | Full url to a running EDA Subsetting Service      |
-| `EDA_DATA_SERVICE_URL`                | Full url to a running EDA Data Service            |
-| `EDA_USER_SERVICE_URL`                | Full url to a running EDA User Service            |
-| `DATASET_ACCESS_SERVICE_URL`          | Full url to a running Dataset Access Service      |
-| `WDK_CHECK_AUTH`                      | An optional auth key for a registered WDK user    |
-| `REACT_APP_DISABLE_DATA_RESTRICTIONS` | If present and `true`, disables data restrictions |
+| Variable name                         | Description                                                          |
+| ------------------------------------- | -------------------------------------------------------------------- |
+| `VEUPATHDB_LOGIN_USER`                | VEuPathDB BRC prerelease user name                                   |
+| `VEUPATHDB_LOGIN_PASS`                | VEuPathDB BRC prerelease user password                               |
+| `WDK_SERVICE_URL`                     | Full url to a running WDK REST Service                               |
+| `EDA_SUBSETTING_SERVICE_URL`          | Full url to a running EDA Subsetting Service                         |
+| `EDA_DATA_SERVICE_URL`                | Full url to a running EDA Data Service                               |
+| `EDA_USER_SERVICE_URL`                | Full url to a running EDA User Service                               |
+| `DATASET_ACCESS_SERVICE_URL`          | Full url to a running Dataset Access Service                         |
+| `WDK_CHECK_AUTH`                      | An optional auth key for a registered WDK user                       |
+| `REACT_APP_DISABLE_DATA_RESTRICTIONS` | If present and `true`, disables data restrictions                    |
+| `REACT_APP_EXAMPLE_ANALYSES_AUTHOR`   | The ID of the WDK user who maintains "example strategies" (optional) |
 
 ## Learn More
 

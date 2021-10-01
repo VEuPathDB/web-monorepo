@@ -317,6 +317,7 @@ function HistogramViz(props: VisualizationProps) {
       )}
       <HistogramPlotWithControls
         data={data.value && !data.pending ? data.value : undefined}
+        error={data.error}
         onBinWidthChange={onBinWidthChange}
         dependentAxisLogScale={vizConfig.dependentAxisLogScale}
         onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
@@ -372,10 +373,12 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   onValueSpecChange: (newValueSpec: ValueSpec) => void;
   showMissingness: boolean;
   updateThumbnail: (src: string) => void;
+  error: unknown;
 } & Partial<CoverageStatistics>;
 
 function HistogramPlotWithControls({
   data,
+  error,
   onBinWidthChange,
   onDependentAxisLogScaleChange,
   filters,
@@ -440,7 +443,7 @@ function HistogramPlotWithControls({
             filters={filters}
             outputEntity={outputEntity}
             stratificationIsActive={overlayVariable != null}
-            enableSpinner={independentAxisVariable != null}
+            enableSpinner={independentAxisVariable != null && !error}
           />
           <VariableCoverageTable
             completeCases={completeCases}
