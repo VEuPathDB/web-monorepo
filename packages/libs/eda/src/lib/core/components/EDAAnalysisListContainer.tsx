@@ -30,21 +30,13 @@ export function EDAAnalysisListContainer(props: Props) {
   } = props;
   const studyRecordState = useWdkStudyRecord(studyId);
   const studyMetadata = useStudyMetadata(studyId, subsettingClient);
-  if (studyMetadata.error)
-    return (
-      <ErrorStatus>
-        <h2>Unable to load study metadata</h2>
-        <pre>{String(studyMetadata.error)}</pre>
-      </ErrorStatus>
-    );
-  if (studyRecordState == null || studyMetadata.value == null)
-    return <Loading />;
+  if (studyRecordState == null || studyMetadata == null) return <Loading />;
   return (
     <div className={className}>
       <WorkspaceContext.Provider
         value={{
           ...studyRecordState,
-          studyMetadata: studyMetadata.value,
+          studyMetadata,
           analysisClient,
           subsettingClient,
           dataClient,
