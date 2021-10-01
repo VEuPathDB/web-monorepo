@@ -31,30 +31,37 @@ WithIcon.args = {
   type: 'outlined',
 };
 
-export const CustomColors: Story<Omit<SwissArmyButtonProps, 'type'>> = (
-  args
-) => (
-  <div
-    css={{
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'space-between',
-      maxWidth: 200,
-    }}
-  >
-    <SwissArmyButton {...args} styleOverrides={{ marginBottom: 10 }} />
-    <SwissArmyButton {...args} type='outlined' />
-  </div>
-);
-CustomColors.args = {
-  text: 'Customized Colors',
-  color: LIGHT_GREEN,
-  pressedColor: DARK_ORANGE,
+export const StylePreset = Template.bind({});
+StylePreset.args = {
+  text: 'Mesa Style Preset',
+  icon: 'download',
+  stylePreset: 'mesa',
 };
-CustomColors.argTypes = {
-  type: {
-    control: {
-      type: null,
-    },
-  },
-};
+
+// export const CustomColors: Story<Omit<SwissArmyButtonProps, 'type'>> = (
+//   args
+// ) => (
+//   <div
+//     css={{
+//       display: 'flex',
+//       flexDirection: 'column',
+//       justifyContent: 'space-between',
+//       maxWidth: 200,
+//     }}
+//   >
+//     <SwissArmyButton {...args} styleOverrides={{ marginBottom: 10 }} />
+//     <SwissArmyButton {...args} type='outlined' />
+//   </div>
+// );
+// CustomColors.args = {
+//   text: 'Customized Colors',
+//   color: LIGHT_GREEN,
+//   pressedColor: DARK_ORANGE,
+// };
+// CustomColors.argTypes = {
+//   type: {
+//     control: {
+//       type: null,
+//     },
+//   },
+// };

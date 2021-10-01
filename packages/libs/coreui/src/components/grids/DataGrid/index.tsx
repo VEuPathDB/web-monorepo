@@ -10,17 +10,18 @@ import {
 import { pickBy, ceil } from 'lodash';
 
 // Definitions
-import { DARK_GRAY, LIGHT_GRAY, MEDIUM_GRAY } from '../../constants/colors';
-import typography from '../../styleDefinitions/typography';
+import { DARK_GRAY, LIGHT_GRAY, MEDIUM_GRAY } from '../../../constants/colors';
+import typography from '../../../styleDefinitions/typography';
 
 // Components
-import { H3 } from '../headers';
+import { H3 } from '../../headers';
 
 // Images
-import CaretUpIcon from '../../assets/icons/CaretUp';
-import CaretDownIcon from '../../assets/icons/CaretDown';
-import DoubleArrow from '../../assets/icons/DoubleArrow';
-import Arrow from '../../assets/icons/Arrow';
+import CaretUpIcon from '../../../assets/icons/CaretUp';
+import CaretDownIcon from '../../../assets/icons/CaretDown';
+import DoubleArrow from '../../../assets/icons/DoubleArrow';
+import Arrow from '../../../assets/icons/Arrow';
+import stylePresets, { DataGridStyleSpec } from './stylePresets';
 
 export type DataGridProps = {
   /**
@@ -69,8 +70,12 @@ export type DataGridProps = {
       pageCount: number;
     };
   };
+
+  /** Presets for commonly used styles */
+  stylePreset?: keyof typeof stylePresets;
+
   /** Optional. Override default visual styles. */
-  styleOverrides?: StyleOverridesSpec;
+  styleOverrides?: Partial<DataGridStyleSpec>;
   /**
    * Optional (ADVANCED). An array of functions that take a
    * react-table HeaderGroup and return a component. This essentially
@@ -82,18 +87,6 @@ export type DataGridProps = {
   extraHeaderControls?: Array<(headerGroup: HeaderGroup) => ReactNode>;
 };
 
-type StyleOverridesSpec = {
-  /** Styles for header cells. */
-  headerCells?: React.CSSProperties;
-  /** Styles for data cells. */
-  dataCells?: React.CSSProperties;
-  /** Color directives for icons. */
-  icons?: {
-    inactiveColor: NonNullable<React.CSSProperties['color']>;
-    activeColor: NonNullable<React.CSSProperties['color']>;
-  };
-};
-
 export default function DataGrid({
   columns,
   data,
@@ -101,41 +94,12 @@ export default function DataGrid({
   title,
   sortable = false,
   pagination,
-  styleOverrides,
+  stylePreset = 'default',
+  styleOverrides = {},
   extraHeaderControls = [],
 }: DataGridProps) {
-  // Merge default styles with any style overrides provided by user.
-  const mergedStylesDefinitions: Required<StyleOverridesSpec> = {
-    headerCells: Object.assign(
-      {
-        border: 'none',
-        paddingLeft: 10,
-        paddingRight: 30,
-        paddingBottom: 5,
-        paddingTop: 5,
-        color: DARK_GRAY,
-        display: 'flex',
-        alignContent: 'center',
-      },
-      styleOverrides?.headerCells ?? {}
-    ),
-    dataCells: Object.assign(
-      {
-        padding: '10px',
-        border: 'solid 2px',
-        borderColor: MEDIUM_GRAY,
-        color: DARK_GRAY,
-      },
-      styleOverrides?.dataCells ?? {}
-    ),
-    icons: Object.assign(
-      {
-        inactiveColor: MEDIUM_GRAY,
-        activeColor: DARK_GRAY,
-      },
-      styleOverrides?.icons ?? {}
-    ),
-  };
+  const baseStyle = stylePresets[stylePreset];
+  const finalStyle = Object.assign({}, baseStyle, styleOverrides);
 
   // Obtain data and data controls from react-table.
   const {
@@ -331,8 +295,8 @@ export default function DataGrid({
           color={
             // @ts-ignore
             column.isSorted && !column.isSortedDesc
-              ? mergedStylesDefinitions.icons.activeColor
-              : mergedStylesDefinitions.icons.inactiveColor
+              ? finalStyle.icons.activeColor
+              : finalStyle.icons.inactiveColor
           }
         />
         <CaretDownIcon
@@ -340,8 +304,8 @@ export default function DataGrid({
           color={
             // @ts-ignore
             column.isSorted && column.isSortedDesc
-              ? mergedStylesDefinitions.icons.activeColor
-              : mergedStylesDefinitions.icons.inactiveColor
+              ? finalStyle.icons.activeColor
+              : finalStyle.icons.inactiveColor
           }
         />
       </div>
@@ -350,12 +314,12 @@ export default function DataGrid({
   /** Render an individual header cell. */
   const renderHeaderGroup = (headerGroup: HeaderGroup) => {
     const borderCSSOverrides = pickBy(
-      mergedStylesDefinitions?.headerCells,
+      finalStyle.headerCells,
       (value, key) => key.includes('border') || key.includes('background')
     );
 
     const otherCSSOverrides = pickBy(
-      mergedStylesDefinitions?.headerCells,
+      finalStyle.headerCells,
       (value, key) => !key.includes('border') && !key.includes('background')
     );
 
@@ -395,7 +359,7 @@ export default function DataGrid({
         css={[
           typography.td,
           {
-            ...mergedStylesDefinitions.dataCells,
+            ...finalStyle.dataCells,
           },
         ]}
       >
@@ -411,7 +375,11 @@ export default function DataGrid({
         renderPaginationControls()}
       <table
         {...getTableProps()}
-        css={{ borderCollapse: 'collapse', marginBottom: 10 }}
+        css={{
+          borderCollapse: 'collapse',
+          marginBottom: 10,
+          ...pickBy(finalStyle.table, (value, key) => key.includes('border')),
+        }}
       >
         <thead>
           {headerGroups.map((headerGroup) => (
@@ -429,7 +397,10 @@ export default function DataGrid({
               <tr
                 {...row.getRowProps()}
                 css={{
-                  backgroundColor: index % 2 === 0 ? 'white' : LIGHT_GRAY,
+                  backgroundColor:
+                    index % 2 === 0
+                      ? finalStyle.table.primaryRowColor
+                      : finalStyle.table.secondaryRowColor,
                 }}
               >
                 {row.cells.map((cell: Cell) => renderDataCell(cell))}
@@ -443,3 +414,5 @@ export default function DataGrid({
     </div>
   );
 }
+
+export * from './stylePresets';

@@ -79,6 +79,17 @@ WithServerControlledPagination.args = {
   columns: COLUMNS,
 };
 
+export const StylePreset = Template.bind({});
+StylePreset.args = {
+  ...Basic.args,
+  title: 'Data Grid w/ Style Preset',
+  stylePreset: 'mesa',
+  pagination: {
+    recordsPerPage: 2,
+    controlsLocation: 'bottom',
+  },
+};
+
 export const CustomStyling = Template.bind({});
 CustomStyling.args = {
   ...Basic.args,
