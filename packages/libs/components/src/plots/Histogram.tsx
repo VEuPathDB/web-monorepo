@@ -114,7 +114,7 @@ const Histogram = makePlotlyPlotComponent(
 
     // Pixel width of main part of plot is needed for adjusting the borders of white bars
     // if we can get this from a numeric containerStyles.width that's great - if not
-    // we'll just use a fallback of 500.
+    // we'll just use a fallback of 750.
     const plotDivPixelWidth =
       restProps.containerStyles?.width &&
       typeof restProps.containerStyles?.width === 'number'
@@ -129,7 +129,7 @@ const Histogram = makePlotlyPlotComponent(
     const plotlyFriendlyData: PlotParams['data'] = useMemo(
       () =>
         data.series.map((series) => {
-          const isWhiteBar =
+          const seriesHasWhiteBars =
             series.color === 'white' || series.color === '#ffffff';
           const binStarts = series.bins.map((bin) => bin.binStart);
           const binLabels = series.bins.map((bin) => bin.binLabel); // see TO DO: below
@@ -185,12 +185,12 @@ const Histogram = makePlotlyPlotComponent(
             },
             // white filled bars need to be offset and narrower so that the outline
             // doesn't look funny
-            offset: isWhiteBar
+            offset: seriesHasWhiteBars
               ? binWidths.map(
                   (width) => width * (2 / (plotPixelWidth / binWidths.length))
                 )
               : 0,
-            width: isWhiteBar
+            width: seriesHasWhiteBars
               ? binWidths.map(
                   (width) =>
                     width * (1 - 4 / (plotPixelWidth / binWidths.length))
