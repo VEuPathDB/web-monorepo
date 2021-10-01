@@ -6,7 +6,7 @@ export function defaultIndependentAxisRange(
   plotName: string
 ): NumberOrDateRange | undefined {
   // make universal range variable
-  if (variable != null && variable.dataShape === 'continuous') {
+  if (variable != null) {
     if (NumberVariable.is(variable)) {
       return variable.displayRangeMin != null &&
         variable.displayRangeMax != null
