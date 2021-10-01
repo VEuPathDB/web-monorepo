@@ -4,15 +4,23 @@ import Path from 'path';
 import { cx } from './Utils';
 import { useStudyRecord } from '../core';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { Button, Tooltip, Icon } from '@material-ui/core';
+import { Button, Tooltip, Icon, makeStyles } from '@material-ui/core';
 import { LinkAttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { useAttemptActionCallback } from '@veupathdb/web-common/lib/hooks/dataRestriction';
 import { Action } from '@veupathdb/web-common/lib/App/DataRestriction/DataRestrictionUtils';
+
+// Add custom styling for ebrc icons for better alignment in buttons
+const useStyles = makeStyles((theme) => ({
+  ebrcStartIcon: {
+    marginTop: -5,
+  },
+}));
 
 export function EDAWorkspaceHeading() {
   const studyRecord = useStudyRecord();
   const { url } = useRouteMatch();
   const attemptAction = useAttemptActionCallback();
+  const iconClasses = useStyles();
   return (
     <div className={cx('-Heading')}>
       <h1>{safeHtml(studyRecord.displayName)}</h1>
@@ -62,6 +70,7 @@ export function EDAWorkspaceHeading() {
             <Button
               variant="text"
               color="primary"
+              classes={{ startIcon: iconClasses.ebrcStartIcon }}
               startIcon={<Icon className="ebrc-icon-table" />}
               component={Link}
               to={'/eda?s=' + encodeURIComponent(studyRecord.displayName)}
