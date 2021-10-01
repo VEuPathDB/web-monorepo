@@ -66,7 +66,7 @@ import { defaultDependentAxisRange } from '../../../utils/default-dependent-axis
 import { useRouteMatch } from 'react-router';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 
-const MAXALLOWEDDATAPOINTS = 5000;
+const MAXALLOWEDDATAPOINTS = 100000;
 
 const plotDimensions = {
   width: 750,
