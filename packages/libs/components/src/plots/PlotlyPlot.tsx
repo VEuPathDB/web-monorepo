@@ -102,6 +102,8 @@ function PlotlyPlot<T>(
 
   // set max legend title length for ellipsis
   const maxLegendTitleTextLength = maxLegendTextLength + 5;
+  // set max dependent axis title length for ellipsis
+  const maxDependentAxisTitleTextLength = 50;
 
   /** This is used to ensure toImage is called after the plot has been created */
   const sharedPlotCreation = useMemo(
@@ -134,6 +136,15 @@ function PlotlyPlot<T>(
         fixedrange: true,
         linewidth: 1,
         linecolor: 'black',
+        // change long delendent axis title with ellipsis
+        title:
+          ((plotlyProps?.layout?.yaxis?.title as string) || '').length >
+          maxDependentAxisTitleTextLength
+            ? ((plotlyProps?.layout?.yaxis?.title as string) || '').substring(
+                0,
+                maxDependentAxisTitleTextLength
+              ) + '...'
+            : plotlyProps?.layout?.yaxis?.title,
       },
       title: {
         text: title,
@@ -186,6 +197,12 @@ function PlotlyPlot<T>(
       return [];
     }
   }, [data]);
+
+  // keep dependent axis title for tooltip text
+  const originalDependentAxisTitle = useMemo(
+    () => plotlyProps?.layout?.yaxis?.title,
+    [plotlyProps?.layout?.yaxis?.title]
+  );
 
   // ellipsis with tooltip for legend, legend title, and independent axis tick labels
   const onUpdate = useCallback(
@@ -252,12 +269,36 @@ function PlotlyPlot<T>(
               : '';
           });
       }
+
+      // handling dependent axis title with ellipsis & tooltip
+      if (
+        originalDependentAxisTitle != null &&
+        (originalDependentAxisTitle as string).length >
+          maxDependentAxisTitleTextLength
+      ) {
+        // remove duplicate svg:title
+        select(graphDiv)
+          .select('.plot-container svg.main-svg g.infolayer g.g-ytitle')
+          .selectAll('title')
+          .remove();
+
+        // add tooltip
+        select(graphDiv)
+          .select(
+            '.plot-container svg.main-svg g.infolayer g.g-ytitle text.ytitle'
+          )
+          // need this attribute for tooltip of dependent axis title!
+          .attr('pointer-events', 'all')
+          .append('svg:title')
+          .text(originalDependentAxisTitle as string);
+      }
     },
     [
       storedLegendList,
       legendTitle,
       maxLegendTitleTextLength,
       storedIndependentAxisTickLabel,
+      originalDependentAxisTitle,
     ]
   );
 
