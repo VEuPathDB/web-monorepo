@@ -60,7 +60,15 @@ export const AnalysisDescriptor = t.type({
   }),
   computations: t.array(Computation),
   starredVariables: t.array(VariableDescriptor),
-  dataTableColumns: t.array(VariableDescriptor),
+  dataTableConfig: t.type({
+    variables: t.array(VariableDescriptor),
+    sorting: t.array(
+      t.type({
+        key: t.string,
+        direction: t.keyof({ asc: null, desc: null }),
+      })
+    ),
+  }),
   derivedVariables: t.array(DerivedVariable),
 });
 
@@ -98,7 +106,10 @@ export function makeNewAnalysis(studyId: string): NewAnalysis {
         uiSettings: {},
       },
       starredVariables: [],
-      dataTableColumns: [],
+      dataTableConfig: {
+        variables: [],
+        sorting: [],
+      },
       derivedVariables: [],
       computations: [
         {
