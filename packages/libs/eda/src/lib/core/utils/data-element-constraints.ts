@@ -66,7 +66,6 @@ function variableConstraintPredicate(
   variable: VariableTreeNode
 ) {
   return (
-    variable.dataShape == null ||
     variable.type === 'category' ||
     ((constraint.allowedShapes == null ||
       constraint.allowedShapes.includes(variable.dataShape)) &&

@@ -6,10 +6,10 @@ import {
   NumberSetFilter,
   StringSetFilter,
 } from './filter';
-import { VariableTreeNode } from './study';
+import { Variable } from './study';
 
 // prettier-ignore
-export type TypedFilter<T extends VariableTreeNode> =
+export type TypedFilter<T extends Variable> =
 
   // Continuous
   T['dataShape'] extends 'continuous' ? (
