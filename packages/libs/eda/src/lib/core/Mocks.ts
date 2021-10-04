@@ -114,6 +114,7 @@ export function makeMockAnalysisStore(
           userOrganization: 'Your Organization',
         }));
     },
+    async transferGuestAnalyses(guestUserId: number) {},
   } as AnalysisClient;
 }
 
