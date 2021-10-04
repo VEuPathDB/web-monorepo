@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { HelpIcon } from '@veupathdb/wdk-client/lib/Components';
 import { ErrorBoundary } from '@veupathdb/wdk-client/lib/Controllers';
 import {
@@ -31,32 +32,88 @@ export function VariableDetails(props: Props) {
     analysisState,
   } = props;
   const studyMetadata = useStudyMetadata();
+
+  // set showMore state
+  const [showMore, setShowMore] = useState(false);
+
+  // show the first three if multifilter variable
+  const threeProviderLabel = MultiFilterVariable.is(variable)
+    ? findMultifilterVariableLeaves(
+        variable,
+        groupBy(entity.variables, (variable) => variable.parentId)
+      ).map((variable, i) => {
+        if (i < 3) {
+          return (
+            <div key={variable.id}>
+              {variable.displayName}:{' '}
+              {variable.providerLabel
+                .replace(/[\[\]"]/g, '')
+                .replace(/[,]/g, ', ')}
+              ;&nbsp;
+            </div>
+          );
+        }
+      })
+    : variable.providerLabel.replace(/[\[\]"]/g, '').replace(/[,]/g, ', ');
+
+  // make variables for after the first three
+  const providerLabelLeftover = MultiFilterVariable.is(variable)
+    ? findMultifilterVariableLeaves(
+        variable,
+        groupBy(entity.variables, (variable) => variable.parentId)
+      ).map((variable, i) => {
+        if (i > 2) {
+          return (
+            <div key={variable.id}>
+              {variable.displayName}:{' '}
+              {variable.providerLabel
+                .replace(/[\[\]"]/g, '')
+                .replace(/[,]/g, ', ')}
+              ;&nbsp;
+            </div>
+          );
+        }
+      })
+    : '';
+
+  // define show more link
+  const showMoreLink = showMore ? 'Show Less << ' : 'Show More >> ';
+
   return (
     <ErrorBoundary>
       <div>
         <h3>{axisLabelWithUnit(variable)}</h3>
         <div className={cx('-ProviderLabel')}>
           <div className={cx('-ProviderLabelPrefix')}>
-            Original variable{' '}
-            {MultiFilterVariable.is(variable) ? 'names' : 'name'}:
+            <i>
+              Original variable{' '}
+              {MultiFilterVariable.is(variable) ? 'names' : 'name'}:
+            </i>
           </div>
-          &nbsp;
-          {MultiFilterVariable.is(variable)
-            ? findMultifilterVariableLeaves(
-                variable,
-                groupBy(entity.variables, (variable) => variable.parentId)
-              ).map((variable) => (
-                <div key={variable.id}>
-                  {variable.displayName}: {variable.providerLabel};&nbsp;
-                </div>
-              ))
-            : variable.providerLabel}
-          &nbsp;
+          {/* showing three variables for multifilter or single variable */}
+          &nbsp; {threeProviderLabel} &nbsp;
           <HelpIcon>
-            The name for this variable as provided with the original study's
-            data set. The VEuPathDB team curates variable names and places
-            variables into an ontology framework.
+            The name of this variable in the data files that were integrated
+            into ClinEpiDB
           </HelpIcon>
+          &nbsp;&nbsp;
+          {MultiFilterVariable.is(variable) ? (
+            <>
+              <a
+                className="variable-show-more-link"
+                style={{ cursor: 'pointer' }}
+                onClick={() => {
+                  setShowMore(!showMore);
+                }}
+              >
+                {showMoreLink}
+              </a>
+              <br />
+              {showMore && providerLabelLeftover}
+            </>
+          ) : (
+            ''
+          )}
         </div>
         {/* add variable.definition */}
         <div className={cx('-SubsettingVariableDefinition')}>
