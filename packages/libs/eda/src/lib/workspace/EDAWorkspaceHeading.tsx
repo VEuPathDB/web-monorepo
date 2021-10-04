@@ -31,17 +31,6 @@ interface BaseHeadingProps {
   analysisState?: AnalysisState;
 }
 
-// function useRedirectToNewAnalysis() {
-//   const studyRecord = useStudyRecord();
-//   const { url } = useRouteMatch();
-//   const redirectURL = url.endsWith(studyRecord.id[0].value)
-//     ? `${url}/new`
-//     : Path.resolve(url, '../new');
-//   const history = useHistory();
-
-//   history.push(redirectURL);
-// };
-
 export function ChangeAnalysisNameDialog({
   isOpen,
   setIsOpen,
@@ -51,19 +40,9 @@ export function ChangeAnalysisNameDialog({
 }: ChangeAnalysisNameDialogProps) {
   const [name, setName] = useState(analysisName);
 
-  console.log({ setAnalysisName: setAnalysisName });
-
-  const handleContinue = () => {
-    setAnalysisName(name);
+  const handleContinue = async () => {
+    await setAnalysisName(name);
     redirectToNewAnalysis();
-    // const studyRecord = useStudyRecord();
-    // const { url } = useRouteMatch();
-    // const redirectURL = url.endsWith(studyRecord.id[0].value)
-    //   ? `${url}/new`
-    //   : Path.resolve(url, '../new');
-    // const history = useHistory();
-
-    // history.push(redirectURL);
   };
 
   return (
@@ -115,21 +94,7 @@ export function EDAWorkspaceHeading({ analysisState }: BaseHeadingProps) {
     ? `${url}/new`
     : Path.resolve(url, '../new');
   const history = useHistory();
-
-  // const useHandleClick = () => {
-  //   const studyRecord = useStudyRecord();
-  //   const { url } = useRouteMatch();
-  //   const redirectURL = url.endsWith(studyRecord.id[0].value)
-  //     ? `${url}/new`
-  //     : Path.resolve(url, '../new');
-  //   const history = useHistory();
-
-  //   history.push(redirectURL);
-  // }
-
   const redirectToNewAnalysis = () => history.push(redirectURL);
-
-  console.log(analysis);
 
   return (
     <>
@@ -170,7 +135,6 @@ export function EDAWorkspaceHeading({ analysisState }: BaseHeadingProps) {
                     ? () => setDialogIsOpen(true)
                     : redirectToNewAnalysis
                 }
-                // onClick={onNewAnalysisClickOverride ?? useHandleClick}
               >
                 New analysis
               </Button>
