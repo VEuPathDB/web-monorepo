@@ -335,7 +335,9 @@ function BoxplotViz(props: VisualizationProps) {
             filters={filters}
             outputEntity={outputEntity}
             stratificationIsActive={overlayVariable != null}
-            enableSpinner={xAxisVariable != null && yAxisVariable != null}
+            enableSpinner={
+              xAxisVariable != null && yAxisVariable != null && !data.error
+            }
           />
           <VariableCoverageTable
             completeCases={data.pending ? undefined : data.value?.completeCases}

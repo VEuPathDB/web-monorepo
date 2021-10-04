@@ -52,7 +52,9 @@ export function WorkspaceContainer(props: Props) {
         preorder(studyMetadata.rootEntity, (e) => e.children ?? [])
       );
       const variableId =
-        maybeVariableId ?? findFirstVariable(entity.variables, entityId)?.id;
+        maybeVariableId ??
+        (entity.variables.length !== 0 &&
+          findFirstVariable(entity.variables)?.id);
       return entityId && variableId
         ? `${url}/variables/${entityId}/${variableId}`
         : entityId

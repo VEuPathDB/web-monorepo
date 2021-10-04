@@ -63,6 +63,10 @@ import { axisRangeMargin } from '../../../utils/axis-range-margin';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 // util to find dependent axis range
 import { defaultDependentAxisRange } from '../../../utils/default-dependent-axis-range';
+import { useRouteMatch } from 'react-router';
+import { Link } from '@veupathdb/wdk-client/lib/Components';
+
+const MAXALLOWEDDATAPOINTS = 100000;
 
 const plotDimensions = {
   width: 750,
@@ -314,6 +318,8 @@ function ScatterplotViz(props: VisualizationProps) {
     return axisRangeMargin(defaultDependentRange, yAxisVariable?.type);
   }, [data, data.value, yAxisVariable]);
 
+  const { url } = useRouteMatch();
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -371,9 +377,24 @@ function ScatterplotViz(props: VisualizationProps) {
           }}
         >
           <i className="fa fa-warning" style={{ marginRight: '1ex' }}></i>{' '}
-          {data.error instanceof Error
-            ? data.error.message
-            : String(data.error)}
+          {data.error instanceof Error ? (
+            data.error.message.match(/400.+too large/is) ? (
+              <span>
+                Your plot currently has too many points (&gt;
+                {MAXALLOWEDDATAPOINTS.toLocaleString()}) to display in a
+                reasonable time. Please either add filters in the{' '}
+                <Link replace to={url.replace(/visualizations.+/, 'variables')}>
+                  Browse and subset
+                </Link>{' '}
+                tab to reduce the number, or consider using a summary plot such
+                as histogram or boxplot.
+              </span>
+            ) : (
+              data.error.message
+            )
+          ) : (
+            String(data.error)
+          )}
         </div>
       )}
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
@@ -447,7 +468,9 @@ function ScatterplotViz(props: VisualizationProps) {
             filters={filters}
             outputEntity={outputEntity}
             stratificationIsActive={overlayVariable != null}
-            enableSpinner={xAxisVariable != null && yAxisVariable != null}
+            enableSpinner={
+              xAxisVariable != null && yAxisVariable != null && !data.error
+            }
           />
           <VariableCoverageTable
             completeCases={
@@ -655,6 +678,7 @@ function getRequestParams(
         yAxisVariable: yAxisVariable,
         overlayVariable: overlayVariable,
         showMissingness: showMissingness ? 'TRUE' : 'FALSE',
+        maxAllowedDataPoints: MAXALLOWEDDATAPOINTS,
       },
     } as ScatterplotRequestParams;
   }
