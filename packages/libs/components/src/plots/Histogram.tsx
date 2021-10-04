@@ -181,6 +181,10 @@ const Histogram = makePlotlyPlotComponent(
                 opacity: 1,
               },
             },
+            hovertemplate: binCounts.map(
+              (count, index) =>
+                `${count}<br />${binLabels[index]}<br />${series.name}<extra></extra>`
+            ),
           };
         }),
       [data, orientation, calculatedBarOpacity, selectedRange, showValues]
@@ -470,6 +474,7 @@ const Histogram = makePlotlyPlotComponent(
             ? dependentAxisLayout
             : independentAxisLayout,
         barmode: barLayout,
+        hovermode: 'closest',
       },
       data: plotlyFriendlyData,
       onSelected: handleSelectedRange,

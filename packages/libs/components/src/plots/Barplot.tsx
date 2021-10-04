@@ -113,6 +113,10 @@ const Barplot = makePlotlyPlotComponent(
                   color: el.borderColor,
                 },
               },
+              hovertemplate: el.value.map(
+                (value: number, index: number) =>
+                  `${value}<br />${el.label[index]}<br />${el.name}<extra></extra>`
+              ),
             };
           } else {
             return {};
@@ -171,6 +175,7 @@ const Barplot = makePlotlyPlotComponent(
           ? dependentAxisLayout
           : independentAxisLayout,
       barmode: barLayout,
+      hovermode: 'closest',
     };
 
     return {
