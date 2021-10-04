@@ -157,7 +157,11 @@
 
   .Entities {
     display: flex;
-    justify-content: center;
+    overflow-x: auto;
+  }
+
+  .expanded-diagram {
+    margin: auto;
   }
 
   &-Variables {
