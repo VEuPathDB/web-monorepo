@@ -1,12 +1,9 @@
 import { useState, useCallback, useEffect } from 'react';
 import { ceil } from 'lodash';
-import {
-  DataGrid,
-  SwissArmyButton,
-  FullScreenModal,
-  H3,
-  H5,
-} from '@veupathdb/core-components';
+import { H3, H5 } from '@veupathdb/core-components/dist/components/headers';
+import DataGrid from '@veupathdb/core-components/dist/components/grids/DataGrid';
+import FullScreenModal from '@veupathdb/core-components/dist/components/modals/FullScreenModal';
+import SwissArmyButton from '@veupathdb/core-components/dist/components/buttons/SwissArmyButton';
 
 import { AnalysisState } from '../../core/hooks/analysis';
 import {
@@ -16,13 +13,10 @@ import {
   useStudyMetadata,
 } from '../../core';
 import MultiSelectVariableTree from '../../core/components/variableTrees/MultiSelectVariableTree';
-import VariableTreeDropdown from '../../core/components/variableTrees/VariableTreeDropdown';
 import { VariableDescriptor } from '../../core/types/variable';
 import { useFlattenedFields } from '../../core/components/variableTrees/hooks';
 import { useProcessedGridData } from './hooks';
 import { APIError } from '../../core/api/types';
-
-// TODO: Overlay the variabletree rather than scrunching the table.
 
 type SubsettingDataGridProps = {
   /** Should the modal currently be visible? */
@@ -106,7 +100,7 @@ export default function SubsettingDataGridModal({
         currentEntityID
       ];
 
-    if (previouslyStoredEntityData) {
+    if (previouslyStoredEntityData?.length) {
       const variableDescriptors = previouslyStoredEntityData.map(
         (variable): VariableDescriptor => ({
           entityId: currentEntityID,
@@ -124,6 +118,7 @@ export default function SubsettingDataGridModal({
   const onModalClose = () => {
     setGridData(null);
     setSelectedVariableDescriptors([]);
+    setDisplayVariableTree(false);
   };
 
   const fetchPaginatedData = useCallback(
@@ -197,6 +192,7 @@ export default function SubsettingDataGridModal({
             columns={gridColumns}
             data={gridRows}
             loading={dataLoading}
+            stylePreset="mesa"
             pagination={{
               recordsPerPage: 10,
               controlsLocation: 'bottom',
@@ -212,15 +208,15 @@ export default function SubsettingDataGridModal({
               border: '2px solid lightgray',
               padding: 10,
               borderRadius: 5,
-              height: '50vh',
+              height: '25vh',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
             }}
           >
             <H5
-              text="To get started, select the variables that you are interested in."
-              additionalStyles={{ fontSize: 16 }}
+              text='To get started, click on the "Select Variables" button.'
+              additionalStyles={{ fontSize: 18 }}
             />
           </div>
         ) : null}
@@ -240,8 +236,13 @@ export default function SubsettingDataGridModal({
       return (
         <div
           style={{
-            flexBasis: 410,
-            marginLeft: 40,
+            position: 'absolute',
+            width: 410,
+            right: 50,
+            top: 100,
+            backgroundColor: 'rgba(255, 255, 255, 1)',
+            filter: 'drop-shadow(1px 1px 3px gray)',
+            borderRadius: 5,
           }}
         >
           {errorMessage && (
@@ -308,13 +309,14 @@ export default function SubsettingDataGridModal({
         style={{
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center',
+          flexWrap: 'wrap',
+          alignItems: 'flex-end',
           marginBottom: 15,
         }}
       >
         <H3
           text={analysisState.analysis?.displayName ?? ''}
-          additionalStyles={{ flex: 2 }}
+          additionalStyles={{ flex: 1 }}
           underline
         />
         <div
@@ -322,30 +324,37 @@ export default function SubsettingDataGridModal({
             display: 'flex',
             flexBasis: 410,
             justifyContent: 'flex-end',
+            alignItems: 'flex-end',
+            marginBottom: 14,
           }}
         >
-          <SwissArmyButton
-            type="outlined"
-            text="Download"
-            icon="download"
-            size="medium"
-            onPress={() => console.log('Download Stuff')}
-            styleOverrides={{ marginRight: 10 }}
-          />
-          <SwissArmyButton
-            type="outlined"
-            text="Select Variables"
-            onPress={() => setDisplayVariableTree(!displayVariableTree)}
-            styleOverrides={{ marginRight: 25 }}
-          />
-          {/* {currentEntity && (
-            <VariableTreeDropdown
-              rootEntity={{ ...currentEntity, children: [] }}
-              toggleStarredVariable={() => null}
-              onChange={(descriptor) => console.log(descriptor)}
+          <div
+            style={{
+              display: 'flex',
+              marginRight: 50,
+              justifyContent: 'flex-start',
+              flex: 1,
+            }}
+          >
+            <SwissArmyButton
+              text="Download"
+              icon="download"
+              stylePreset="mesa"
+              styleOverrides={{ container: { marginRight: 10 } }}
+              onPress={() => console.log('Download Stuff')}
             />
-          )} */}
-          <SwissArmyButton text="Close" onPress={() => toggleDisplay()} />
+            <SwissArmyButton
+              text="Select Variables"
+              stylePreset="mesa"
+              icon="settings"
+              onPress={() => setDisplayVariableTree(!displayVariableTree)}
+            />
+          </div>
+          <SwissArmyButton
+            text="Close"
+            stylePreset="mesa"
+            onPress={() => toggleDisplay()}
+          />
         </div>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
