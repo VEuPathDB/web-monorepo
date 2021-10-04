@@ -15,6 +15,7 @@ import {
   AnalysisPreferences,
   AnalysisSummary,
   NewAnalysis,
+  PublicAnalysisSummary,
 } from '../types/analysis';
 
 import { ioTransformer } from './ioTransformer';
@@ -188,6 +189,31 @@ export class AnalysisClient extends FetchClient {
           analysisIdsToDelete: [...analysisIds],
         },
         transformResponse: ioTransformer(voidType),
+      })
+    );
+  }
+  async copyAnalysis(
+    analysisId: string,
+    sourceUserId?: number
+  ): Promise<{ analysisId: string }> {
+    // Copy from self if no sourceUserId is provided
+    const sourceUserPath =
+      sourceUserId == null
+        ? (await this.userRequestMetadata$).userPath
+        : `/users/${sourceUserId}`;
+
+    return this.fetch({
+      path: `${sourceUserPath}/analyses/${analysisId}/copy`,
+      method: 'POST',
+      transformResponse: ioTransformer(type({ analysisId: string })),
+    });
+  }
+  async getPublicAnalyses(): Promise<PublicAnalysisSummary[]> {
+    return this.fetch(
+      createJsonRequest({
+        path: '/public/analyses',
+        method: 'GET',
+        transformResponse: ioTransformer(array(PublicAnalysisSummary)),
       })
     );
   }

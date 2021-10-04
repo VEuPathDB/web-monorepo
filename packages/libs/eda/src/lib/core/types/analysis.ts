@@ -42,6 +42,16 @@ export const AnalysisSummary = t.intersection([
   }),
 ]);
 
+export type PublicAnalysisSummary = t.TypeOf<typeof PublicAnalysisSummary>;
+export const PublicAnalysisSummary = t.intersection([
+  AnalysisSummary,
+  t.type({
+    userId: t.number,
+    userName: t.string,
+    userOrganization: t.string,
+  }),
+]);
+
 export type AnalysisDescriptor = t.TypeOf<typeof AnalysisDescriptor>;
 export const AnalysisDescriptor = t.type({
   subset: t.type({
@@ -50,7 +60,15 @@ export const AnalysisDescriptor = t.type({
   }),
   computations: t.array(Computation),
   starredVariables: t.array(VariableDescriptor),
-  dataTableColumns: t.array(VariableDescriptor),
+  dataTableConfig: t.type({
+    variables: t.array(VariableDescriptor),
+    sorting: t.array(
+      t.type({
+        key: t.string,
+        direction: t.keyof({ asc: null, desc: null }),
+      })
+    ),
+  }),
   derivedVariables: t.array(DerivedVariable),
 });
 
@@ -88,7 +106,10 @@ export function makeNewAnalysis(studyId: string): NewAnalysis {
         uiSettings: {},
       },
       starredVariables: [],
-      dataTableColumns: [],
+      dataTableConfig: {
+        variables: [],
+        sorting: [],
+      },
       derivedVariables: [],
       computations: [
         {
