@@ -2,6 +2,10 @@
   position: absolute;
 }
 
+.expanded-diagram {
+  margin: auto;
+}
+
 .expanded-diagram-enter {
   opacity: 0;
   transform: scale(-0.5);
