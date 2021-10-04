@@ -7,7 +7,7 @@ import {
 import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
-import { SubsettingClient } from '../core';
+import SubsettingClient from '../core/api/SubsettingClient';
 import { usePromise } from '../core/hooks/promise';
 interface StudyListProps {
   subsettingServiceUrl: string;

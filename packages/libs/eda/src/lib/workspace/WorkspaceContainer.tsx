@@ -5,11 +5,8 @@ import { find } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { RestrictedPage } from '@veupathdb/web-common/lib/App/DataRestriction/RestrictedPage';
 import { useApprovalStatus } from '@veupathdb/web-common/lib/hooks/dataRestriction';
-import {
-  EDAWorkspaceContainer,
-  StudyMetadata,
-  SubsettingClient,
-} from '../core';
+import { EDAWorkspaceContainer, StudyMetadata } from '../core';
+import SubsettingClient from '../core/api/SubsettingClient';
 import DataClient from '../core/api/DataClient';
 import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
 import { VariableDescriptor } from '../core/types/variable';

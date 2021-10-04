@@ -6,7 +6,7 @@ import {
 } from 'react-router';
 
 import { EDAAnalysisListContainer, EDAWorkspaceContainer } from '../core';
-import { SubsettingClient } from '../core/api/subsetting-api';
+import SubsettingClient from '../core/api/SubsettingClient';
 import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
 
 import { AnalysisList } from './MapVeuAnalysisList';

@@ -1,5 +1,5 @@
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
-import { SubsettingClient } from '../api/subsetting-api';
+import SubsettingClient from '../api/SubsettingClient';
 import DataClient from '../api/DataClient';
 import { AnalysisClient } from '../api/analysis-api';
 import {

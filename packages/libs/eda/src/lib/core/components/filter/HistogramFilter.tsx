@@ -35,7 +35,7 @@ import { gray, red } from './colors';
 import { HistogramVariable } from './types';
 import { fullISODateRange, padISODateTime } from '../../utils/date-conversion';
 import { getDistribution } from './util';
-import { DistributionResponse } from '../../api/subsetting-api';
+import { DistributionResponse } from '../../api/SubsettingClient';
 // reusable util for computing truncationConfig
 import { truncationConfig } from '../../utils/truncation-config-utils';
 // use Notification for truncation warning message

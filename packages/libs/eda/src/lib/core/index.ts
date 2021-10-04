@@ -3,7 +3,7 @@ export * from './types/study';
 export * from './types/filter';
 export * from './hooks/analysis';
 export * from './hooks/workspace';
-export * from './api/subsetting-api';
+export * from './api/SubsettingClient';
 export * from './api/DataClient/types';
 export * from './api/analysis-api';
 export * from './context/WorkspaceContext';

@@ -8,7 +8,7 @@ import { AnalysisList } from './AnalysisList';
 
 // Data and Utilities
 import { useApprovalStatus } from '@veupathdb/web-common/lib/hooks/dataRestriction';
-import { SubsettingClient } from '../core/api/subsetting-api';
+import SubsettingClient from '../core/api/SubsettingClient';
 import DataClient from '../core/api/DataClient';
 import { cx } from './Utils';
 

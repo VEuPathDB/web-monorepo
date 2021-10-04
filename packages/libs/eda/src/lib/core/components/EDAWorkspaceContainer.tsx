@@ -1,7 +1,7 @@
 import React from 'react';
 import ErrorStatus from '@veupathdb/wdk-client/lib/Components/PageStatus/Error';
 
-import { SubsettingClient } from '../api/subsetting-api';
+import SubsettingClient from '../api/SubsettingClient';
 import DataClient from '../api/DataClient';
 import { AnalysisClient } from '../api/analysis-api';
 import {

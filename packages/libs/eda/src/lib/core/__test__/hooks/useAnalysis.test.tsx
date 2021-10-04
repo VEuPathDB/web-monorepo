@@ -14,7 +14,7 @@ import {
   StudyRecordClass,
   WorkspaceContext,
 } from '../..';
-import { SubsettingClient } from '../../api/subsetting-api';
+import SubsettingClient from '../../api/SubsettingClient';
 
 const key = '123';
 

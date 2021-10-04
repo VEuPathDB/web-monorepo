@@ -26,10 +26,10 @@ import { RecordInstance } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import {
   AnalysisClient,
   AnalysisSummary,
-  SubsettingClient,
   useAnalysisList,
   usePinnedAnalyses,
 } from '../core';
+import SubsettingClient from '../core/api/SubsettingClient';
 import { workspaceTheme } from '../core/components/workspaceTheme';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 

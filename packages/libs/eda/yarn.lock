@@ -3164,10 +3164,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/core-components@^0.2.21":
-  version "0.2.21"
-  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.2.21.tgz#166e33dd89d104952248fe630d69a9cd10db64be"
-  integrity sha512-oRgK0DWkfAh10u7pZpskIAQbzk17injRcnulmBmrSTvMJESB5FYfSUBecW3uCStegGT4bYuxYOCdrgu/b8vm6A==
+"@veupathdb/core-components@^0.2.24":
+  version "0.2.24"
+  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.2.24.tgz#2e4469ce60da6d9115d8f10ebb84ebdd4c6cb6cb"
+  integrity sha512-nK0QLniyLkflskZxq/HnOsOP1KhrWDiYbfHpp6eHZnNd3eMh33HVonG4rt/AInUP41llBoZWClv2P1VOvD2oxQ==
   dependencies:
     "@material-ui/core" "^4.12.3"
     "@material-ui/icons" "^4.11.2"

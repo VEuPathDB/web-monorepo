@@ -6,7 +6,7 @@ import {
   Redirect,
 } from 'react-router';
 
-import { SubsettingClient } from '../core/api/subsetting-api';
+import SubsettingClient from '../core/api/SubsettingClient';
 import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
 import { AllAnalyses } from './AllAnalyses';
 import { EDAAnalysisList } from './EDAAnalysisList';

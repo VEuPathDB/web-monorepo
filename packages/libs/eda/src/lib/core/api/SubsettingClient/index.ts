@@ -1,69 +1,20 @@
-/* eslint-disable @typescript-eslint/no-redeclare */
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import {
   createJsonRequest,
   FetchClient,
 } from '@veupathdb/web-common/lib/util/api';
-import {
-  array,
-  number,
-  partial,
-  intersection,
-  union,
-  string,
-  type,
-  TypeOf,
-} from 'io-ts';
+import { array, number, type } from 'io-ts';
 import { memoize } from 'lodash';
-import { Filter } from '../types/filter';
-import { StudyMetadata, StudyOverview } from '../types/study';
-import { ioTransformer } from './ioTransformer';
+import { Filter } from '../../types/filter';
+import { StudyMetadata, StudyOverview } from '../../types/study';
+import { ioTransformer } from '../ioTransformer';
+import {
+  DistributionRequestParams,
+  DistributionResponse,
+  StudyResponse,
+} from './types';
 
-export type StudyResponse = TypeOf<typeof StudyResponse>;
-
-export const StudyResponse = type({
-  study: StudyMetadata,
-});
-
-export interface DistributionRequestParams {
-  filters: Filter[];
-  binSpec?: {
-    displayRangeMin: number | string;
-    displayRangeMax: number | string;
-    binWidth: number;
-    binUnits?: string;
-  };
-  valueSpec: 'count';
-  /* | 'proportion' FIXME only count works right now */
-}
-
-export type DistributionResponse = TypeOf<typeof DistributionResponse>;
-
-export const DistributionResponse = type({
-  histogram: array(
-    type({
-      value: number,
-      binStart: string,
-      binEnd: string,
-      binLabel: string,
-    })
-  ),
-  statistics: intersection([
-    partial({
-      subsetMin: union([number, string]),
-      subsetMax: union([number, string]),
-      subsetMean: union([number, string]),
-    }),
-    type({
-      numVarValues: number,
-      numDistinctValues: number,
-      numDistinctEntityRecords: number,
-      numMissingCases: number,
-    }),
-  ]),
-});
-
-export class SubsettingClient extends FetchClient {
+export default class SubsettingClient extends FetchClient {
   static getClient = memoize(
     (baseUrl: string): SubsettingClient => new SubsettingClient({ baseUrl })
   );
@@ -80,6 +31,7 @@ export class SubsettingClient extends FetchClient {
       })
     );
   }
+
   getStudyMetadata(studyId: string): Promise<StudyMetadata> {
     return this.fetch(
       createJsonRequest({
@@ -142,3 +94,5 @@ function orderVariables(study: StudyMetadata) {
     });
   return study;
 }
+
+export * from './types';

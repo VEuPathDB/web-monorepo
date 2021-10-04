@@ -17,7 +17,7 @@ import {
   Variable,
 } from '../types/study';
 import { usePromise } from './promise';
-import { SubsettingClient } from '../api/subsetting-api';
+import SubsettingClient from '../api/SubsettingClient';
 import { VariableDescriptor } from '../types/variable';
 import { findEntityAndVariable } from '../utils/study-metadata';
 
