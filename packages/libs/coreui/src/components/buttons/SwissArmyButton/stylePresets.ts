@@ -8,6 +8,7 @@ import {
 } from '../../../constants/colors';
 
 export type SwissArmyButtonStyleSpec = {
+  container?: React.CSSProperties;
   default: ButtonStyleSpec;
   hover: ButtonStyleSpec;
   pressed: ButtonStyleSpec;

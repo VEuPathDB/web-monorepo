@@ -1,10 +1,10 @@
 {
   "name": "@veupathdb/core-components",
-  "version": "0.2.23",
+  "version": "0.2.24",
   "description": "Core components and style definitions for VEuPath applications.",
   "private": false,
-  "main": "dist/components/index.js",
-  "types": "dist/components/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "README.md",
     "dist"

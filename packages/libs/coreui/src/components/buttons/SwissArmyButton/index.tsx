@@ -41,7 +41,11 @@ function SwissArmyButton({
 
   const baseStyle = stylePresets[stylePreset];
   // TODO: Explore deep merging here and on DataGrid.
-  const finalStyle = Object.assign({}, baseStyle, styleOverrides);
+  const finalStyle: SwissArmyButtonStyleSpec = Object.assign(
+    {},
+    baseStyle,
+    styleOverrides
+  );
   // TODO: useTheme
 
   /**
@@ -102,6 +106,7 @@ function SwissArmyButton({
             textTransform: finalStyle[buttonState].textTransform ?? 'uppercase',
             fontWeight: finalStyle[buttonState].fontWeight ?? 600,
             fontSize: calculatedFontSize,
+            ...finalStyle.container,
           },
           type === 'solid'
             ? {
