@@ -36,6 +36,14 @@ export function VariableDetails(props: Props) {
   // set showMore state
   const [showMore, setShowMore] = useState(false);
 
+  // find the number of variables for multifilter case
+  const numberOfProviderLabel = MultiFilterVariable.is(variable)
+    ? findMultifilterVariableLeaves(
+        variable,
+        groupBy(entity.variables, (variable) => variable.parentId)
+      ).length
+    : 1;
+
   // show the first three if multifilter variable
   const threeProviderLabel = MultiFilterVariable.is(variable)
     ? findMultifilterVariableLeaves(
@@ -97,17 +105,16 @@ export function VariableDetails(props: Props) {
             into ClinEpiDB
           </HelpIcon>
           &nbsp;&nbsp;
-          {MultiFilterVariable.is(variable) ? (
+          {MultiFilterVariable.is(variable) && numberOfProviderLabel > 3 ? (
             <>
-              <a
-                className="variable-show-more-link"
-                style={{ cursor: 'pointer' }}
+              <button
+                className="variable-show-more-link link"
                 onClick={() => {
                   setShowMore(!showMore);
                 }}
               >
                 {showMoreLink}
-              </a>
+              </button>
               <br />
               {showMore && providerLabelLeftover}
             </>
