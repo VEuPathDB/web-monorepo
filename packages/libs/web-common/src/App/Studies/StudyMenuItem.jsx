@@ -38,7 +38,7 @@ class StudyMenuItem extends React.Component {
     );
   }
 
-  render () {
+  renderWdkMenuItem() {
     const { study, user, permissions } = this.props;
     const { name, id, disabled, route, searches } = study;
     const SearchLink = this.renderSearchLink;
@@ -47,18 +47,14 @@ class StudyMenuItem extends React.Component {
     return (
       <div className={'row StudyMenuItem' + (disabled ? ' StudyMenuItem--disabled' : '')}>
         <div className="box StudyMenuItem-Name">
-          <Link to={useEda ? edaRoute + '/details' : route} className={'StudyMenuItem-RecordLink ' + id}>
+          <Link to={route} className={'StudyMenuItem-RecordLink ' + id}>
             {safeHtml(name)}
             <Icon fa="angle-double-right" />
           </Link>
         </div>
         <div className="row StudyMenuItem-Links">
         { (!isPrereleaseStudy(study.access, study.id, user, permissions))
-          ? useEda ? (
-            <Link name="Explore the data" to={edaRoute}>
-                  <i className="ebrc-icon-edaIcon"/>
-            </Link>
-          ) : searches.map(({ path, displayName, icon }) => <SearchLink key={path} path={path} displayName={displayName} icon={icon} />)
+          ? searches.map(({ path, displayName, icon }) => <SearchLink key={path} path={path} displayName={displayName} icon={icon} />)
           : (
             <div className="prerelease">
               <small>(coming soon)</small>
@@ -68,6 +64,41 @@ class StudyMenuItem extends React.Component {
         </div>
       </div>
     )
+  }
+
+  renderEdaMenuItem() {
+    const { study, user, permissions } = this.props;
+    const { name, id, disabled, route, searches } = study;
+    const SearchLink = this.renderSearchLink;
+    const edaRoute = makeEdaRoute(study.id) + '/~latest';
+
+    return (
+      <div className={'row StudyMenuItem' + (disabled ? ' StudyMenuItem--disabled' : '')}>
+        <div className="box StudyMenuItem-Name">
+          <Link to={edaRoute} className={'StudyMenuItem-RecordLink ' + id}>
+            <i className="ebrc-icon-edaIcon"></i> {safeHtml(name)}
+          </Link>
+        </div>
+        <div className="row StudyMenuItem-Links">
+        {/* (!isPrereleaseStudy(study.access, study.id, user, permissions))
+          ? (
+            <Link name="Explore the data" to={edaRoute}>
+                  <i className="ebrc-icon-edaIcon"/>
+            </Link>
+            )
+          : (
+            <div className="prerelease">
+              <small>(coming soon)</small>
+            </div>
+            )
+            */}
+        </div>
+      </div>
+    )
+  }
+
+  render () {
+    return useEda ? this.renderEdaMenuItem() : this.renderWdkMenuItem();
   }
 }
 
