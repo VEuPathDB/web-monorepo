@@ -110,7 +110,7 @@ export function HistogramFilter(props: Props) {
       independentAxisRange: defaultIndependentRange as DateRange,
       ...otherDefaults,
     };
-  }, [variable]);
+  }, [variable, defaultIndependentRange]);
 
   const variableUISettings =
     analysisState.analysis?.descriptor.subset.uiSettings;
@@ -214,6 +214,7 @@ export function HistogramFilter(props: Props) {
       entity.id,
       studyMetadata.id,
       subsettingClient,
+      variable,
       variable.id,
       variable.type,
     ]
@@ -750,7 +751,7 @@ function tidyBinLabel(
   precision: number = 3
 ): string {
   const matches = binLabel.match(/^\[(-?\d+(?:\.\d+)),(-?\d+(?:\.\d+))\)$/);
-  if (matches != null && matches.length == 3) {
+  if (matches != null && matches.length === 3) {
     // matches array starts with full match of pattern
     const [binStart, binEnd] = matches
       .slice(1)
@@ -769,9 +770,15 @@ function formatStatValue(
 ) {
   return type === 'date'
     ? String(value).replace(/T.*$/, '')
-    : Number(value).toLocaleString(undefined, {
-        maximumFractionDigits: 4,
-      });
+    : // need to check integer not to add additional decimal points
+    Number(value) % 1 === 0
+    ? changeNumberWithCommas(Number(value))
+    : changeNumberWithCommas(Number(value).toFixed(4));
+}
+
+// a function to add comma for a number > 9999
+function changeNumberWithCommas(x: number | string) {
+  return x.toString().replace(/\B(?<!\.\d*)(?=(\d{4})+(?!\d))/g, ',');
 }
 
 function computeBinSlider(
