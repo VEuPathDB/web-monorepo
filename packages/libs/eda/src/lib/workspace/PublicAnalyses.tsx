@@ -97,6 +97,8 @@ interface TableProps extends Omit<Props, 'publicAnalysisListState'> {
 interface PublicAnalysisRow extends PublicAnalysisSummary {
   studyAvailable: boolean;
   studyDisplayName: string;
+  creationTimeDisplay: string;
+  modificationTimeDisplay: string;
   isExample: boolean;
 }
 
@@ -144,8 +146,10 @@ function PublicAnalysesTable({
       studyAvailable: Boolean(studiesById[publicAnalysis.studyId]),
       studyDisplayName:
         studiesById[publicAnalysis.studyId]?.displayName ?? 'Unknown study',
-      creationTime: convertISOToDisplayFormat(publicAnalysis.creationTime),
-      modificationTime: convertISOToDisplayFormat(
+      creationTimeDisplay: convertISOToDisplayFormat(
+        publicAnalysis.creationTime
+      ),
+      modificationTimeDisplay: convertISOToDisplayFormat(
         publicAnalysis.modificationTime
       ),
       isExample: publicAnalysis.userId === exampleAnalysesAuthor,
@@ -167,8 +171,8 @@ function PublicAnalysesTable({
         'description',
         'userName',
         'userOrganization',
-        'creationTime',
-        'modificationTime',
+        'creationTimeDisplay',
+        'modificationTimeDisplay',
       ] as const,
     []
   );
@@ -277,11 +281,15 @@ function PublicAnalysesTable({
         key: 'creationTime',
         name: 'Created',
         sortable: true,
+        renderCell: (data: { row: PublicAnalysisRow }) =>
+          data.row.creationTimeDisplay,
       },
       {
         key: 'modificationTime',
         name: 'Modified',
         sortable: true,
+        renderCell: (data: { row: PublicAnalysisRow }) =>
+          data.row.modificationTimeDisplay,
       },
     ],
     [makeAnalysisLink]
