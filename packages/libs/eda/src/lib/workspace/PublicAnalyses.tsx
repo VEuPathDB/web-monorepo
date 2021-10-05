@@ -19,6 +19,7 @@ import {
 } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 import { OverflowingTextCell } from '@veupathdb/wdk-client/lib/Views/Strategy/OverflowingTextCell';
 
 import { workspaceTheme } from '../core/components/workspaceTheme';
@@ -97,6 +98,7 @@ interface TableProps extends Omit<Props, 'publicAnalysisListState'> {
 interface PublicAnalysisRow extends PublicAnalysisSummary {
   studyAvailable: boolean;
   studyDisplayName: string;
+  studyDisplayNameHTML: string;
   creationTimeDisplay: string;
   modificationTimeDisplay: string;
   isExample: boolean;
@@ -144,7 +146,10 @@ function PublicAnalysesTable({
     return publicAnalysisList.map((publicAnalysis) => ({
       ...publicAnalysis,
       studyAvailable: Boolean(studiesById[publicAnalysis.studyId]),
-      studyDisplayName:
+      studyDisplayName: stripHTML(
+        studiesById[publicAnalysis.studyId]?.displayName ?? 'Unknown study'
+      ),
+      studyDisplayNameHTML:
         studiesById[publicAnalysis.studyId]?.displayName ?? 'Unknown study',
       creationTimeDisplay: convertISOToDisplayFormat(
         publicAnalysis.creationTime
@@ -234,7 +239,7 @@ function PublicAnalysesTable({
         name: 'Study',
         sortable: true,
         renderCell: (data: { row: PublicAnalysisRow }) =>
-          safeHtml(data.row.studyDisplayName),
+          safeHtml(data.row.studyDisplayNameHTML),
       },
       {
         key: 'analysisId',
