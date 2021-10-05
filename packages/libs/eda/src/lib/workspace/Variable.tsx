@@ -49,8 +49,9 @@ export function VariableDetails(props: Props) {
     ? findMultifilterVariableLeaves(
         variable,
         groupBy(entity.variables, (variable) => variable.parentId)
-      ).map((variable, i) => {
-        if (i < 3) {
+      )
+        .slice(0, 3)
+        .map((variable, i) => {
           return (
             <div key={variable.id}>
               {variable.displayName}:{' '}
@@ -60,19 +61,17 @@ export function VariableDetails(props: Props) {
               ;&nbsp;
             </div>
           );
-        }
-        return null;
-      })
-    : // : variable.providerLabel.replace(/[\[\]"]/g, '').replace(/[,]/g, ', ');
-      variable.providerLabel.replace(/[[\]"]/g, '').replace(/[,]/g, ', ');
+        })
+    : variable.providerLabel.replace(/[[\]"]/g, '').replace(/[,]/g, ', ');
 
   // make variables for after the first three
   const providerLabelLeftover = MultiFilterVariable.is(variable)
     ? findMultifilterVariableLeaves(
         variable,
         groupBy(entity.variables, (variable) => variable.parentId)
-      ).map((variable, i) => {
-        if (i > 2) {
+      )
+        .slice(3)
+        .map((variable) => {
           return (
             <div key={variable.id}>
               {variable.displayName}:{' '}
@@ -82,9 +81,7 @@ export function VariableDetails(props: Props) {
               ;&nbsp;
             </div>
           );
-        }
-        return null;
-      })
+        })
     : '';
 
   // define show more link
