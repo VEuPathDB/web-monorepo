@@ -95,7 +95,7 @@ export function Subsetting(props: Props) {
             className="link"
             onClick={() => alert('Coming soon')}
           >
-            <i className="fa fa-table" />
+            <i className="ebrc-icon-table-download" />
           </button>
         </Tooltip>
       </div>
