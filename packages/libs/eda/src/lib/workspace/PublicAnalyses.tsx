@@ -143,6 +143,10 @@ function PublicAnalysesTable({
       studyAvailable: Boolean(studiesById[publicAnalysis.studyId]),
       studyDisplayName:
         studiesById[publicAnalysis.studyId]?.displayName ?? 'Unknown study',
+      creationTime: convertISOToDisplayFormat(publicAnalysis.creationTime),
+      modificationTime: convertISOToDisplayFormat(
+        publicAnalysis.modificationTime
+      ),
       isExample: publicAnalysis.userId === exampleAnalysesAuthor,
     }));
   }, [publicAnalysisList, studyRecords, exampleAnalysesAuthor]);
@@ -154,6 +158,20 @@ function PublicAnalysesTable({
     [unfilteredRows]
   );
 
+  const searchableColumns = useMemo(
+    () =>
+      [
+        'studyDisplayName',
+        'displayName',
+        'description',
+        'userName',
+        'userOrganization',
+        'creationTime',
+        'modificationTime',
+      ] as const,
+    []
+  );
+
   const filteredRows = useMemo(() => {
     if (!debouncedSearchText) {
       return unfilteredRows;
@@ -161,12 +179,12 @@ function PublicAnalysesTable({
 
     const normalizedSearchText = debouncedSearchText.toLowerCase();
 
-    return unfilteredRows.filter(
-      (row) =>
-        row.displayName.toLowerCase().includes(normalizedSearchText) ||
-        row.studyDisplayName.toLowerCase().includes(normalizedSearchText)
+    return unfilteredRows.filter((row) =>
+      searchableColumns.some((columnKey) =>
+        row[columnKey]?.toLowerCase().includes(normalizedSearchText)
+      )
     );
-  }, [unfilteredRows, debouncedSearchText]);
+  }, [searchableColumns, unfilteredRows, debouncedSearchText]);
 
   const sortedRows = useMemo(
     () =>
@@ -258,15 +276,11 @@ function PublicAnalysesTable({
         key: 'creationTime',
         name: 'Created',
         sortable: true,
-        renderCell: (data: { row: PublicAnalysisRow }) =>
-          convertISOToDisplayFormat(data.row.creationTime),
       },
       {
         key: 'modificationTime',
         name: 'Modified',
         sortable: true,
-        renderCell: (data: { row: PublicAnalysisRow }) =>
-          convertISOToDisplayFormat(data.row.modificationTime),
       },
     ],
     [makeAnalysisLink]
