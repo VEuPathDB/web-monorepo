@@ -55,14 +55,16 @@ export function VariableDetails(props: Props) {
             <div key={variable.id}>
               {variable.displayName}:{' '}
               {variable.providerLabel
-                .replace(/[\[\]"]/g, '')
+                .replace(/[[\]"]/g, '')
                 .replace(/[,]/g, ', ')}
               ;&nbsp;
             </div>
           );
         }
+        return null;
       })
-    : variable.providerLabel.replace(/[\[\]"]/g, '').replace(/[,]/g, ', ');
+    : // : variable.providerLabel.replace(/[\[\]"]/g, '').replace(/[,]/g, ', ');
+      variable.providerLabel.replace(/[[\]"]/g, '').replace(/[,]/g, ', ');
 
   // make variables for after the first three
   const providerLabelLeftover = MultiFilterVariable.is(variable)
@@ -75,12 +77,13 @@ export function VariableDetails(props: Props) {
             <div key={variable.id}>
               {variable.displayName}:{' '}
               {variable.providerLabel
-                .replace(/[\[\]"]/g, '')
+                .replace(/[[\]"]/g, '')
                 .replace(/[,]/g, ', ')}
               ;&nbsp;
             </div>
           );
         }
+        return null;
       })
     : '';
 
