@@ -18,6 +18,7 @@ import {
   MesaSortObject,
 } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { OverflowingTextCell } from '@veupathdb/wdk-client/lib/Views/Strategy/OverflowingTextCell';
 
 import { workspaceTheme } from '../core/components/workspaceTheme';
@@ -229,7 +230,7 @@ function PublicAnalysesTable({
         name: 'Study',
         sortable: true,
         renderCell: (data: { row: PublicAnalysisRow }) =>
-          data.row.studyDisplayName,
+          safeHtml(data.row.studyDisplayName),
       },
       {
         key: 'analysisId',
