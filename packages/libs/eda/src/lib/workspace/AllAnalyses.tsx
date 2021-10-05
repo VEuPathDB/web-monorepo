@@ -407,17 +407,34 @@ export function AllAnalyses(props: Props) {
           key: 'name',
           name: 'Analysis',
           sortable: true,
-          renderCell: (data: { row: AnalysisAndDataset }) => (
-            <Link
-              to={Path.join(
-                history.location.pathname,
-                data.row.analysis.studyId,
-                data.row.analysis.analysisId
-              )}
-            >
-              {data.row.analysis.displayName}
-            </Link>
-          ),
+          style: { maxWidth: '200px' },
+          renderCell: (data: { row: AnalysisAndDataset }) => {
+            const analysisId = data.row.analysis.analysisId;
+            const displayName = data.row.analysis.displayName;
+
+            return (
+              <div style={{ display: 'block', maxWidth: '100%' }}>
+                <SaveableTextEditor
+                  key={analysisId}
+                  value={displayName}
+                  displayValue={(value) => (
+                    <Link
+                      to={Path.join(
+                        history.location.pathname,
+                        data.row.analysis.studyId,
+                        data.row.analysis.analysisId
+                      )}
+                    >
+                      {value}
+                    </Link>
+                  )}
+                  onSave={(newName) => {
+                    updateAnalysis(analysisId, { displayName: newName });
+                  }}
+                />
+              </div>
+            );
+          },
         },
         {
           key: 'description',
