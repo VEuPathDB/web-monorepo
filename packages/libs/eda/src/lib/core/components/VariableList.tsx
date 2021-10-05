@@ -605,8 +605,8 @@ function makeStarredVariablesFilterTooltipContent(
   return starredVariablesToggleDisabled ? (
     <>To use this filter, star at least one variable below</>
   ) : showOnlyStarredVariables ? (
-    <>Click to show all variables.</>
+    <>Click to show all variables</>
   ) : (
-    <>Click to show only starred variables.</>
+    <>Click to show only starred variables</>
   );
 }
