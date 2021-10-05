@@ -24,7 +24,11 @@ import {
 import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import {
+  safeHtml,
+  useSetDocumentTitle,
+} from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 import { confirm } from '@veupathdb/wdk-client/lib/Utils/Platform';
 import { RecordInstance } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
@@ -41,8 +45,13 @@ import { useWdkStudyRecords } from '../core/hooks/study';
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
 
 interface AnalysisAndDataset {
-  analysis: AnalysisSummary;
-  dataset?: RecordInstance;
+  analysis: AnalysisSummary & {
+    creationTimeDisplay: string;
+    modificationTimeDisplay: string;
+  };
+  dataset?: RecordInstance & {
+    displayNameHTML: string;
+  };
 }
 
 interface Props {
@@ -115,19 +124,47 @@ export function AllAnalyses(props: Props) {
     error,
   } = useAnalysisList(analysisClient);
 
-  const analysesAndDatasets = useMemo(
+  const analysesAndDatasets: AnalysisAndDataset[] | undefined = useMemo(
     () =>
       analyses?.map((analysis) => {
         const dataset = datasets?.find(
           (d) => d.id[0].value === analysis.studyId
         );
         return {
-          analysis,
-          dataset,
+          analysis: {
+            ...analysis,
+            creationTimeDisplay: convertISOToDisplayFormat(
+              analysis.creationTime
+            ),
+            modificationTimeDisplay: convertISOToDisplayFormat(
+              analysis.modificationTime
+            ),
+          },
+          dataset: dataset && {
+            ...dataset,
+            displayName: stripHTML(dataset.displayName),
+            displayNameHTML: dataset.displayName,
+          },
         };
       }),
     [analyses, datasets]
   );
+
+  const searchableAnalysisColumns = useMemo(
+    () =>
+      ([
+        'displayName',
+        'description',
+        'creationTimeDisplay',
+        'modificationTimeDisplay',
+      ] as const).filter(
+        (columnKey) =>
+          columnKey !== 'description' || user?.id === exampleAnalysesAuthor
+      ),
+    [user?.id, exampleAnalysesAuthor]
+  );
+
+  const searchableDatasetColumns = useMemo(() => ['displayName'] as const, []);
 
   const filteredAnalysesAndDatasets = useMemo(() => {
     if (!debouncedSearchText) return analysesAndDatasets;
@@ -135,10 +172,20 @@ export function AllAnalyses(props: Props) {
 
     return analysesAndDatasets?.filter(
       ({ analysis, dataset }) =>
-        analysis.displayName.toLowerCase().includes(lowerSearchText) ||
-        dataset?.displayName.toLowerCase().includes(lowerSearchText)
+        searchableAnalysisColumns.some((columnKey) =>
+          analysis[columnKey]?.toLowerCase().includes(lowerSearchText)
+        ) ||
+        searchableDatasetColumns.some((columnKey) =>
+          dataset?.[columnKey].toLowerCase().includes(lowerSearchText)
+        ) ||
+        (dataset == null && 'unknown study'.includes(lowerSearchText))
     );
-  }, [debouncedSearchText, analysesAndDatasets]);
+  }, [
+    searchableAnalysisColumns,
+    searchableDatasetColumns,
+    debouncedSearchText,
+    analysesAndDatasets,
+  ]);
 
   const removeUnpinned = useCallback(() => {
     if (filteredAnalysesAndDatasets == null) return;
@@ -362,7 +409,7 @@ export function AllAnalyses(props: Props) {
             if (dataset == null) return 'Unknown study';
             return (
               <Link to={`${url}/${dataset.id[0].value}`}>
-                {dataset.displayName}
+                {safeHtml(dataset.displayNameHTML)}
               </Link>
             );
           },
@@ -413,14 +460,14 @@ export function AllAnalyses(props: Props) {
           name: 'Created',
           sortable: true,
           renderCell: (data: { row: AnalysisAndDataset }) =>
-            convertISOToDisplayFormat(data.row.analysis.creationTime),
+            data.row.analysis.creationTimeDisplay,
         },
         {
           key: 'modificationTime',
           name: 'Modified',
           sortable: true,
           renderCell: (data: { row: AnalysisAndDataset }) =>
-            convertISOToDisplayFormat(data.row.analysis.modificationTime),
+            data.row.analysis.modificationTimeDisplay,
         },
       ].filter(
         // Only offer description and isPublic columns
