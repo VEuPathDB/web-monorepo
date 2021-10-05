@@ -17,14 +17,25 @@ export default function headerMenuItems (state, props) {
   const searchTerm = props.searchTerm;
   const setSearchTerm = props.setSearchTerm;
 
+  const studyTableIconStyle = {
+    fontSize: '1.4em',
+    marginRight: '.25em',
+    position: 'relative',
+    bottom: '-.25em'
+  }
+
   return {
     mainMenu: [
       {
-        id: 'search',
-        text: 'Search a Study',
+        id: 'studies',
+        text: 'Studies',
         children:[
           {
-            text: <div style={{ padding: '0.5em 0' }}>All Studies</div>,
+            text: (
+              <div style={{ padding: '0.5em 0' }}>
+                <i className="ebrc-icon-table" style={studyTableIconStyle}></i> Study summaries table
+              </div>
+            ),
             route: '/search/dataset/Studies/result'
           },
           {
