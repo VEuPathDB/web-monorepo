@@ -857,18 +857,18 @@
     "@types/react" "*"
 
 "@types/react@*", "@types/react@>=16.14.8", "@types/react@>=16.9.11":
-  version "17.0.26"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.26.tgz#960ea4b3518cc154ed7df3b35656c508df653331"
-  integrity sha512-MXxuXrH2xOcv5cp/su4oz69dNQnSA90JjFw5HBd5wifw6Ihi94j7dRJm7qNsB30tnruXSCPc9qmlhGop4nh9Hw==
+  version "17.0.27"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.27.tgz#6498ed9b3ad117e818deb5525fa1946c09f2e0e6"
+  integrity sha512-zgiJwtsggVGtr53MndV7jfiUESTqrbxOcBvwfe6KS/9bzaVPCTDieTWnFNecVNx6EAaapg5xsLLWFfHHR437AA==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
     csstype "^3.0.2"
 
 "@types/react@^16", "@types/react@^16.9.18":
-  version "16.14.15"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.14.15.tgz#95d8fa3148050e94bcdc5751447921adbe19f9e6"
-  integrity sha512-jOxlBV9RGZhphdeqJTCv35VZOkjY+XIEY2owwSk84BNDdDv2xS6Csj6fhi+B/q30SR9Tz8lDNt/F2Z5RF3TrRg==
+  version "16.14.16"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.14.16.tgz#0ad1adaefbba4ccc307ddf364d071b3c81e0ce30"
+  integrity sha512-7waDQ0h1TkAk99S04wV0LUiiSXpT02lzrdDF4WZFqn2W0XE5ICXLBMtqXWZ688aX2dJislQ3knmZX/jH53RluQ==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -902,10 +902,10 @@
   resolved "https://registry.yarnpkg.com/@types/warning/-/warning-3.0.0.tgz#0d2501268ad8f9962b740d387c4654f5f8e23e52"
   integrity sha1-DSUBJorY+ZYrdA04fEZU9fjiPlI=
 
-"@veupathdb/components@^0.7.18", "@veupathdb/components@^0.7.9":
-  version "0.7.18"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.7.18.tgz#0c19ee4bc1245ea4e22871b700f5e784c07bd698"
-  integrity sha512-SphT00KQqgDVSDhzsj6YE5c5P/Aa3f/1ovgJ0iEcoohS4zGKSoSbbKlor93hmydi7FeawfJfkbZhchvusFeghA==
+"@veupathdb/components@^0.7.19", "@veupathdb/components@^0.7.9":
+  version "0.7.19"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.7.19.tgz#36d8cba0c3536fb5ee7a708c736bc352f619919e"
+  integrity sha512-fFfet+rn/FP4ZFXLrlO9x0X5g2biKVp+CI1Mp2oRanJHsL67j8ORTxqspFN/bVImFeS1RhjTax+4rgEJkr+WIA==
   dependencies:
     "@material-ui/core" "^4.11.2"
     "@material-ui/icons" "^4.11.2"
@@ -973,14 +973,14 @@
     shape2geohash "^1.2.5"
 
 "@veupathdb/eda@^0.11.9":
-  version "0.11.51"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.11.51.tgz#ca5d20be6df492e6c1bb92190c4aa71d03d57b1a"
-  integrity sha512-yHRceoOpVibw6ei8Y1jWKD5lMggJTecdcmpNSFutZ84RVwloCtuSVGWI+FDMlWBWur8Gzpd3sfRAULLjXjMhAQ==
+  version "0.11.57"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.11.57.tgz#ebac3a5e7a5b12b32ab9e0b7faa8937a6ca2e7b2"
+  integrity sha512-4sqIq9ceNSGu1GZWsDgF7zNxR/tyU1fgwjDT9ZeLFPz7Z8BsfIWdGa174F3gpYsAIj90CA1FcWN0PyTacAzWLA==
   dependencies:
     "@material-ui/core" "^4.11.3"
     "@material-ui/lab" "^4.0.0-alpha.58"
     "@types/debounce-promise" "^3.1.3"
-    "@veupathdb/components" "^0.7.18"
+    "@veupathdb/components" "^0.7.19"
     "@veupathdb/wdk-client" "^0.4.4"
     "@veupathdb/web-common" "^0.1.7"
     debounce-promise "^3.1.2"
@@ -3222,9 +3222,9 @@ gl-mat4@^1.0.1, gl-mat4@^1.0.2, gl-mat4@^1.0.3, gl-mat4@^1.1.2, gl-mat4@^1.2.0:
   integrity sha512-sT5C0pwB1/e9G9AvAoLsoaJtbMGjfd/jfxo8jMCKqYYEnjZuFvqV5rehqar0538EmssjdDeiEWnKyBSTw7quoA==
 
 gl-matrix@^3.2.1:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/gl-matrix/-/gl-matrix-3.3.0.tgz#232eef60b1c8b30a28cbbe75b2caf6c48fd6358b"
-  integrity sha512-COb7LDz+SXaHtl/h4LeaFcNdJdAQSDeVqjiIihSXNrkWObZLhDI4hIkZC11Aeqp7bcE72clzB0BnDXr2SmslRA==
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/gl-matrix/-/gl-matrix-3.4.0.tgz#fb9d24f796400f5ced099c2f51b90dfef4c7bf02"
+  integrity sha512-n7fF4meQ6jbBSw91jGmP83I/wkQud5kIRSW/dr5z+9YJdQz61GWpgmRK9k7c4O/1QsXaIXu9o2vf/q2Gu3Ybow==
 
 gl-mesh3d@^2.3.1:
   version "2.3.1"
