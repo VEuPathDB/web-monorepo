@@ -355,7 +355,7 @@ function PublicAnalysesTable({
           data.row.modificationTimeDisplay,
       },
     ],
-    [makeAnalysisLink, updateAnalysis, userId]
+    [makeAnalysisLink, updateAnalysis, exampleAnalysesAuthor, userId]
   );
 
   const tableUiState = useMemo(() => ({ sort: tableSort }), [tableSort]);
