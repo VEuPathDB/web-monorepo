@@ -161,7 +161,8 @@ const siteAnnouncements = [
     }
   },
 
-// VectorBase
+// VectorBasei
+/*
   {
     id: 'vbIndianStrain',
     renderDisplay: props => {
@@ -180,6 +181,7 @@ const siteAnnouncements = [
       return null;
     }
   },
+*/
 
   // TriTryp gene page for Bodo saltans strain Lake Konstanz
   {
