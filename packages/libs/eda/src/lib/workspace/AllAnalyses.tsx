@@ -390,6 +390,20 @@ export function AllAnalyses(props: Props) {
           ),
         },
         {
+          key: 'study',
+          name: 'Study',
+          sortable: true,
+          renderCell: (data: { row: AnalysisAndDataset }) => {
+            const { dataset } = data.row;
+            if (dataset == null) return 'Unknown study';
+            return (
+              <Link to={`${url}/${dataset.id[0].value}`}>
+                {safeHtml(dataset.displayNameHTML)}
+              </Link>
+            );
+          },
+        },
+        {
           key: 'name',
           name: 'Analysis',
           sortable: true,
@@ -404,20 +418,6 @@ export function AllAnalyses(props: Props) {
               {data.row.analysis.displayName}
             </Link>
           ),
-        },
-        {
-          key: 'study',
-          name: 'Study',
-          sortable: true,
-          renderCell: (data: { row: AnalysisAndDataset }) => {
-            const { dataset } = data.row;
-            if (dataset == null) return 'Unknown study';
-            return (
-              <Link to={`${url}/${dataset.id[0].value}`}>
-                {safeHtml(dataset.displayNameHTML)}
-              </Link>
-            );
-          },
         },
         {
           key: 'description',
