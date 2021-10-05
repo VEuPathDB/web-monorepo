@@ -282,18 +282,14 @@ function PublicAnalysesTable({
                       data.row.analysisId,
                       data.row.userId,
                       !data.row.description
-                        ? `Imported from ${data.row.userName} (${
+                        ? makeImportMetadata(
+                            data.row.userName,
                             data.row.userOrganization
-                          }) on ${convertISOToDisplayFormat(
-                            new Date().toISOString()
-                          )}.`
-                        : `${data.row.description}\n\n(Imported from ${
-                            data.row.userName
-                          } (${
+                          )
+                        : `${data.row.description}\n\n(${makeImportMetadata(
+                            data.row.userName,
                             data.row.userOrganization
-                          }) on ${convertISOToDisplayFormat(
-                            new Date().toISOString()
-                          )}.)`
+                          )})`
                     )}
                   >
                     {value}
@@ -311,12 +307,27 @@ function PublicAnalysesTable({
         key: 'description',
         name: 'Description',
         sortable: true,
-        renderCell: (data: { row: PublicAnalysisRow }) => (
-          <OverflowingTextCell
-            key={data.row.analysisId}
-            value={data.row.description}
-          />
-        ),
+        renderCell: (data: { row: PublicAnalysisRow }) => {
+          const analysisId = data.row.analysisId;
+          const descriptionStr = data.row.description ?? '';
+
+          return userId === exampleAnalysesAuthor &&
+            data.row.userId === userId ? (
+            <div style={{ display: 'block', maxWidth: '100%' }}>
+              <SaveableTextEditor
+                key={analysisId}
+                multiLine
+                rows={Math.max(2, descriptionStr.length / 30)}
+                value={descriptionStr}
+                onSave={(newDescription) => {
+                  updateAnalysis(analysisId, { description: newDescription });
+                }}
+              />
+            </div>
+          ) : (
+            <OverflowingTextCell key={analysisId} value={descriptionStr} />
+          );
+        },
         width: '25em',
       },
       {
@@ -435,4 +446,10 @@ function PublicAnalysesTable({
       )}
     </Mesa.Mesa>
   );
+}
+
+function makeImportMetadata(userName: string, userOrganization: string) {
+  return `Imported from ${userName} [${userOrganization}] on ${convertISOToDisplayFormat(
+    new Date().toISOString()
+  )}.`;
 }

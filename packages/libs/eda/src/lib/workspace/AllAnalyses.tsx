@@ -31,6 +31,7 @@ import {
 import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 import { confirm } from '@veupathdb/wdk-client/lib/Utils/Platform';
 import { RecordInstance } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { OverflowingTextCell } from '@veupathdb/wdk-client/lib/Views/Strategy/OverflowingTextCell';
 
 import {
   AnalysisClient,
@@ -445,7 +446,7 @@ export function AllAnalyses(props: Props) {
             const analysisId = data.row.analysis.analysisId;
             const descriptionStr = data.row.analysis.description || '';
 
-            return (
+            return user?.id === exampleAnalysesAuthor ? (
               <div style={{ display: 'block', maxWidth: '100%' }}>
                 <SaveableTextEditor
                   key={analysisId}
@@ -457,6 +458,8 @@ export function AllAnalyses(props: Props) {
                   }}
                 />
               </div>
+            ) : (
+              <OverflowingTextCell key={analysisId} value={descriptionStr} />
             );
           },
         },
@@ -492,11 +495,9 @@ export function AllAnalyses(props: Props) {
             data.row.analysis.modificationTimeDisplay,
         },
       ].filter(
-        // Only offer description and isPublic columns
-        // if the user is the "example analyses" author
+        // Only offer isPublic column if the user is the "example analyses" author
         (column) =>
-          (column.key !== 'description' && column.key !== 'isPublic') ||
-          user?.id === exampleAnalysesAuthor
+          column.key !== 'isPublic' || user?.id === exampleAnalysesAuthor
       ),
     }),
     [
