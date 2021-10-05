@@ -215,6 +215,11 @@ function HistogramViz(props: VisualizationProps) {
       if (xAxisVariable && !isHistogramVariable(xAxisVariable))
         return undefined;
 
+      if (xAxisVariable === overlayVariable)
+        throw new Error(
+          'The X and Overlay variables must not be the same. Please choose different variables for X and Overlay.'
+        );
+
       const params = getRequestParams(
         studyId,
         filters ?? [],

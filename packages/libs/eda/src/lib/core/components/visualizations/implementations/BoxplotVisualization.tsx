@@ -179,9 +179,11 @@ function BoxplotViz(props: VisualizationProps) {
       else if (vizConfig.yAxisVariable == null || yAxisVariable == null)
         return undefined;
 
-      if (xAxisVariable === yAxisVariable)
+      const vars = [xAxisVariable, yAxisVariable, overlayVariable];
+      const unique = vars.filter((item, i, ar) => ar.indexOf(item) === i);
+      if (vars.length != unique.length)
         throw new Error(
-          'The X and Y variables should not be the same. Please choose different variables for X and Y.'
+          'Variables must be unique. Please choose different variables.'
         );
 
       // add visualization.type here. valueSpec too?
