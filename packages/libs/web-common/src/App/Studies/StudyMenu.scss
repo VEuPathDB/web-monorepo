@@ -6,6 +6,10 @@ $red: #DD314E;
   align-items: center;
   flex-wrap: nowrap;
   font-weight: 400;
+  [class*=ebrc-icon] {
+    font-size: 1.4em;
+    margin-right: .5ex;
+  }
   .StudyMenuItem-Name {
     flex: 0 0 auto;
     white-space: nowrap;
