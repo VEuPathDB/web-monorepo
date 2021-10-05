@@ -64,7 +64,7 @@ export function VariableDetails(props: Props) {
         })
     : variable.providerLabel.replace(/[[\]"]/g, '').replace(/[,]/g, ', ');
 
-  // make variables for after the first three
+  // make variable list after the first three variables
   const providerLabelLeftover = MultiFilterVariable.is(variable)
     ? findMultifilterVariableLeaves(
         variable,
