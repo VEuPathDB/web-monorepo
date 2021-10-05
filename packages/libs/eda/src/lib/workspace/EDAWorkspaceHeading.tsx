@@ -18,7 +18,7 @@ import { TextField } from '@material-ui/core';
 interface ChangeAnalysisNameDialogProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  analysisName: string;
+  initialAnalysisName: string;
   setAnalysisName: (name: string) => void;
   redirectToNewAnalysis: () => void;
 }
@@ -34,14 +34,26 @@ interface BaseHeadingProps {
 export function ChangeAnalysisNameDialog({
   isOpen,
   setIsOpen,
-  analysisName,
+  initialAnalysisName,
   setAnalysisName,
   redirectToNewAnalysis,
 }: ChangeAnalysisNameDialogProps) {
-  const [name, setName] = useState(analysisName);
+  const [text, setText] = useState(initialAnalysisName);
+  const [isValid, setIsValid] = useState(true);
+
+  const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newText = event.target.value;
+    setText(newText);
+    newText.length > 0 ? setIsValid(true) : setIsValid(false);
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+    setText(initialAnalysisName);
+  };
 
   const handleContinue = async () => {
-    await setAnalysisName(name);
+    await setAnalysisName(text);
     redirectToNewAnalysis();
   };
 
@@ -51,26 +63,27 @@ export function ChangeAnalysisNameDialog({
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">Rename Analysis?</DialogTitle>
+      <DialogTitle>Rename Analysis?</DialogTitle>
       <DialogContent>
-        <DialogContentText id="alert-dialog-description">
-          Your current analysis hasn't been renamed. Rename the analyis here or
-          click 'Continue' to keep the current name.
+        <DialogContentText>
+          Your current analysis hasn't been renamed. Rename the analysis here or
+          click 'Continue' to save the analysis with the default name.
         </DialogContentText>
         <TextField
-          id="filled-basic"
           label="Analysis name"
           variant="filled"
-          value={name}
-          onChange={(event) => setName(event.target.value)}
+          value={text}
+          onChange={handleTextChange}
+          error={!isValid}
+          helperText={isValid ? ' ' : 'Name must not be blank'}
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => setIsOpen(false)} color="primary">
+        <Button onClick={handleClose} color="secondary">
           Cancel
         </Button>
-        <Button onClick={handleContinue} color="primary" autoFocus>
-          Save and continue
+        <Button onClick={handleContinue} color="primary" disabled={!isValid}>
+          {text === initialAnalysisName ? 'Continue' : 'Rename and continue'}
         </Button>
       </DialogActions>
     </Dialog>
@@ -159,7 +172,7 @@ export function EDAWorkspaceHeading({ analysisState }: BaseHeadingProps) {
         <ChangeAnalysisNameDialog
           isOpen={dialogIsOpen}
           setIsOpen={setDialogIsOpen}
-          analysisName={analysis.displayName}
+          initialAnalysisName={analysis.displayName}
           setAnalysisName={analysisState.setName}
           redirectToNewAnalysis={redirectToNewAnalysis}
         />
