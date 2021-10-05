@@ -50,7 +50,6 @@ const useStyles = makeStyles({
 interface Props {
   publicAnalysisListState: PromiseHookState<PublicAnalysisSummary[]>;
   studyRecords: StudyRecord[] | undefined;
-  makeStudyLink: (studyId: string) => string;
   makeAnalysisLink: (
     studyId: string,
     analysisId: string,
@@ -104,7 +103,6 @@ function PublicAnalysesTable({
   publicAnalysisList,
   studyRecords,
   makeAnalysisLink,
-  makeStudyLink,
   exampleAnalysesAuthor,
 }: TableProps) {
   const history = useHistory();
@@ -213,13 +211,7 @@ function PublicAnalysesTable({
         name: 'Study',
         sortable: true,
         renderCell: (data: { row: PublicAnalysisRow }) =>
-          !data.row.studyAvailable ? (
-            data.row.studyDisplayName
-          ) : (
-            <Link to={makeStudyLink(data.row.studyId)}>
-              {data.row.studyDisplayName}
-            </Link>
-          ),
+          data.row.studyDisplayName,
       },
       {
         key: 'analysisId',
@@ -277,7 +269,7 @@ function PublicAnalysesTable({
           convertISOToDisplayFormat(data.row.modificationTime),
       },
     ],
-    [makeAnalysisLink, makeStudyLink]
+    [makeAnalysisLink]
   );
 
   const tableUiState = useMemo(() => ({ sort: tableSort }), [tableSort]);
