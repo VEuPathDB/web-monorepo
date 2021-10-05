@@ -26,12 +26,15 @@ import {
 import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
-import { StudyEntity } from '../../../types/study';
+import {
+  DateVariable,
+  NumberVariable,
+  StudyEntity,
+} from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
 import { CoverageStatistics } from '../../../types/visualization';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { BirdsEyeView } from '../../BirdsEyeView';
-import { isHistogramVariable } from '../../filter/guards';
 import { HistogramVariable } from '../../filter/types';
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
@@ -212,7 +215,11 @@ function HistogramViz(props: VisualizationProps) {
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
         return undefined;
 
-      if (xAxisVariable && !isHistogramVariable(xAxisVariable))
+      if (
+        xAxisVariable &&
+        !NumberVariable.is(xAxisVariable) &&
+        !DateVariable.is(xAxisVariable)
+      )
         return undefined;
 
       if (xAxisVariable === overlayVariable)
