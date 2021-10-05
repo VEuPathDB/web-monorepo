@@ -603,7 +603,7 @@ function makeStarredVariablesFilterTooltipContent(
   starredVariablesToggleDisabled: boolean
 ) {
   return starredVariablesToggleDisabled ? (
-    <>To use this filter, star at least one variable below.</>
+    <>To use this filter, star at least one variable below</>
   ) : showOnlyStarredVariables ? (
     <>Click to show all variables.</>
   ) : (
