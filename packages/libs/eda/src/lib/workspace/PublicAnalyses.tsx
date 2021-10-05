@@ -64,7 +64,8 @@ interface Props {
   makeAnalysisLink: (
     studyId: string,
     analysisId: string,
-    ownerUserId: number
+    ownerUserId: number,
+    description: string
   ) => string;
   exampleAnalysesAuthor?: number;
 }
@@ -279,7 +280,20 @@ function PublicAnalysesTable({
                     to={makeAnalysisLink(
                       data.row.studyId,
                       data.row.analysisId,
-                      data.row.userId
+                      data.row.userId,
+                      !data.row.description
+                        ? `Imported from ${data.row.userName} (${
+                            data.row.userOrganization
+                          }) on ${convertISOToDisplayFormat(
+                            new Date().toISOString()
+                          )}.`
+                        : `${data.row.description}\n\n(Imported from ${
+                            data.row.userName
+                          } (${
+                            data.row.userOrganization
+                          }) on ${convertISOToDisplayFormat(
+                            new Date().toISOString()
+                          )}.)`
                     )}
                   >
                     {value}

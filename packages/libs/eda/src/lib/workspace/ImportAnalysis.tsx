@@ -13,6 +13,7 @@ interface Props {
   studyId: string;
   analysisId: string;
   ownerUserId: string;
+  description?: string;
 }
 
 export function ImportAnalysis({
@@ -20,6 +21,7 @@ export function ImportAnalysis({
   analysisId,
   ownerUserId,
   studyId,
+  description,
 }: Props) {
   const approvalStatus = useApprovalStatus(studyId, 'analysis');
   const history = useHistory();
@@ -30,24 +32,33 @@ export function ImportAnalysis({
 
     return Task.fromPromise(() =>
       analysisClient.copyAnalysis(analysisId, Number(ownerUserId))
-    ).run(({ analysisId: analysisCopyId }) => {
-      const newLocation = {
-        ...history.location,
-        pathname: Path.join(
-          history.location.pathname,
-          '../../../..',
-          studyId,
-          analysisCopyId
-        ),
-      };
-      history.replace(newLocation);
-    });
+    )
+      .chain(({ analysisId: analysisCopyId }) =>
+        description == null
+          ? Task.of(analysisCopyId)
+          : Task.fromPromise(() =>
+              analysisClient.updateAnalysis(analysisCopyId, { description })
+            ).map((_) => analysisCopyId)
+      )
+      .run((analysisCopyId) => {
+        const newLocation = {
+          ...history.location,
+          pathname: Path.join(
+            history.location.pathname,
+            '../../../..',
+            studyId,
+            analysisCopyId
+          ),
+        };
+        history.replace(newLocation);
+      });
   }, [
     analysisClient,
     history,
     studyId,
     analysisId,
     ownerUserId,
+    description,
     approvalStatus,
   ]);
 

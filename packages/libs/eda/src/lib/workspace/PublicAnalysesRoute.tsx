@@ -24,13 +24,18 @@ export function PublicAnalysesRoute({
 
   const location = useLocation();
   const makeAnalysisLink = useCallback(
-    (studyId: string, analysisId: string, ownerUserId: number) =>
+    (
+      studyId: string,
+      analysisId: string,
+      ownerUserId: number,
+      description: string
+    ) =>
       Path.join(
         location.pathname,
         '..',
         studyId,
         analysisId,
-        `import/${ownerUserId}`
+        `import/${ownerUserId}?description=${encodeURIComponent(description)}`
       ),
     [location.pathname]
   );
