@@ -23,6 +23,7 @@ import {
   MesaSortObject,
 } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 import { OverflowingTextCell } from '@veupathdb/wdk-client/lib/Views/Strategy/OverflowingTextCell';
@@ -38,7 +39,6 @@ import {
   useEditablePublicAnalysisList,
 } from '../core';
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
-import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 const useStyles = makeStyles({
   root: {
