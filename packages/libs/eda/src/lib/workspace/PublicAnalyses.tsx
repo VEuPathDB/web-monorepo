@@ -11,7 +11,12 @@ import {
 } from '@material-ui/core';
 import { keyBy, orderBy } from 'lodash';
 
-import { Link, Loading, Mesa } from '@veupathdb/wdk-client/lib/Components';
+import {
+  Link,
+  Loading,
+  Mesa,
+  SaveableTextEditor,
+} from '@veupathdb/wdk-client/lib/Components';
 import { create as createTableState } from '@veupathdb/wdk-client/lib/Components/Mesa/Utils/MesaState';
 import {
   MesaColumn,
@@ -25,12 +30,15 @@ import { OverflowingTextCell } from '@veupathdb/wdk-client/lib/Views/Strategy/Ov
 import { workspaceTheme } from '../core/components/workspaceTheme';
 import { useDebounce } from '../core/hooks/debouncing';
 import {
+  AnalysisClient,
   PromiseHookState,
   PromiseResult,
   PublicAnalysisSummary,
   StudyRecord,
+  useEditablePublicAnalysisList,
 } from '../core';
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 const useStyles = makeStyles({
   root: {
@@ -50,6 +58,7 @@ const useStyles = makeStyles({
 });
 
 interface Props {
+  analysisClient: AnalysisClient;
   publicAnalysisListState: PromiseHookState<PublicAnalysisSummary[]>;
   studyRecords: StudyRecord[] | undefined;
   makeAnalysisLink: (
@@ -67,6 +76,7 @@ export function PublicAnalyses({
 }: Props) {
   const styles = useStyles();
   const theme = createMuiTheme(workspaceTheme);
+  const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
 
   return (
     <ThemeProvider theme={theme}>
@@ -74,11 +84,12 @@ export function PublicAnalyses({
         <h1>Public Analyses</h1>
         <PromiseResult state={publicAnalysisListState}>
           {(publicAnalysisList) =>
-            studyRecords == null ? (
+            studyRecords == null || user == null ? (
               <Loading />
             ) : (
               <PublicAnalysesTable
                 {...tableProps}
+                userId={user.id}
                 studyRecords={studyRecords}
                 publicAnalysisList={publicAnalysisList}
               />
@@ -91,6 +102,7 @@ export function PublicAnalyses({
 }
 
 interface TableProps extends Omit<Props, 'publicAnalysisListState'> {
+  userId: number;
   publicAnalysisList: PublicAnalysisSummary[];
   studyRecords: StudyRecord[];
 }
@@ -105,11 +117,18 @@ interface PublicAnalysisRow extends PublicAnalysisSummary {
 }
 
 function PublicAnalysesTable({
+  analysisClient,
   publicAnalysisList,
   studyRecords,
   makeAnalysisLink,
   exampleAnalysesAuthor,
+  userId,
 }: TableProps) {
+  const { publicAnalysesState, updateAnalysis } = useEditablePublicAnalysisList(
+    publicAnalysisList,
+    analysisClient
+  );
+
   const history = useHistory();
   const location = useLocation();
 
@@ -143,7 +162,7 @@ function PublicAnalysesTable({
   const unfilteredRows: PublicAnalysisRow[] = useMemo(() => {
     const studiesById = keyBy(studyRecords, (study) => study.id[0].value);
 
-    return publicAnalysisList.map((publicAnalysis) => ({
+    return publicAnalysesState.map((publicAnalysis) => ({
       ...publicAnalysis,
       studyAvailable: Boolean(studiesById[publicAnalysis.studyId]),
       studyDisplayName: stripHTML(
@@ -159,7 +178,7 @@ function PublicAnalysesTable({
       ),
       isExample: publicAnalysis.userId === exampleAnalysesAuthor,
     }));
-  }, [publicAnalysisList, studyRecords, exampleAnalysesAuthor]);
+  }, [publicAnalysesState, studyRecords, exampleAnalysesAuthor]);
 
   const offerExampleSortControl = useMemo(
     () =>
@@ -245,20 +264,34 @@ function PublicAnalysesTable({
         key: 'analysisId',
         name: 'Analysis',
         sortable: true,
-        renderCell: (data: { row: PublicAnalysisRow }) =>
-          !data.row.studyAvailable ? (
-            data.row.displayName
-          ) : (
-            <Link
-              to={makeAnalysisLink(
-                data.row.studyId,
-                data.row.analysisId,
-                data.row.userId
-              )}
-            >
-              {data.row.displayName}
-            </Link>
-          ),
+        style: { maxWidth: '200px' },
+        renderCell: (data: { row: PublicAnalysisRow }) => (
+          <div style={{ display: 'block', maxWidth: '100%' }}>
+            <SaveableTextEditor
+              key={data.row.analysisId}
+              value={data.row.displayName}
+              readOnly={!data.row.studyAvailable || data.row.userId !== userId}
+              displayValue={(value) =>
+                !data.row.studyAvailable ? (
+                  value
+                ) : (
+                  <Link
+                    to={makeAnalysisLink(
+                      data.row.studyId,
+                      data.row.analysisId,
+                      data.row.userId
+                    )}
+                  >
+                    {value}
+                  </Link>
+                )
+              }
+              onSave={(newName) => {
+                updateAnalysis(data.row.analysisId, { displayName: newName });
+              }}
+            />
+          </div>
+        ),
       },
       {
         key: 'description',
@@ -297,7 +330,7 @@ function PublicAnalysesTable({
           data.row.modificationTimeDisplay,
       },
     ],
-    [makeAnalysisLink]
+    [makeAnalysisLink, updateAnalysis, userId]
   );
 
   const tableUiState = useMemo(() => ({ sort: tableSort }), [tableSort]);

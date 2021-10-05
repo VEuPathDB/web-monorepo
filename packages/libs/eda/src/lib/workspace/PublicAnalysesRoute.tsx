@@ -39,6 +39,7 @@ export function PublicAnalysesRoute({
 
   return (
     <PublicAnalyses
+      analysisClient={analysisClient}
       publicAnalysisListState={publicAnalysisListState}
       studyRecords={studyRecords}
       makeAnalysisLink={makeAnalysisLink}
