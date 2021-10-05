@@ -352,52 +352,57 @@ export function AllAnalyses(props: Props) {
       },
       columns: [
         {
+          key: 'id',
+          name: ' ',
+          width: '2.75em',
+          renderCell: (data: { row: AnalysisAndDataset }) => (
+            <Tooltip
+              title={
+                isPinnedAnalysis(data.row.analysis.analysisId)
+                  ? 'Remove from pinned analyses'
+                  : 'Add to pinned analyses'
+              }
+            >
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    size="small"
+                    icon={
+                      <Icon
+                        style={{ color: '#aaa' }}
+                        className="fa fa-thumb-tack"
+                      />
+                    }
+                    checkedIcon={
+                      <Icon color="primary" className="fa fa-thumb-tack" />
+                    }
+                    checked={isPinnedAnalysis(data.row.analysis.analysisId)}
+                    onChange={(e) => {
+                      if (e.target.checked)
+                        addPinnedAnalysis(data.row.analysis.analysisId);
+                      else removePinnedAnalysis(data.row.analysis.analysisId);
+                    }}
+                  />
+                }
+                label=""
+              />
+            </Tooltip>
+          ),
+        },
+        {
           key: 'name',
           name: 'Analysis',
           sortable: true,
           renderCell: (data: { row: AnalysisAndDataset }) => (
-            <>
-              <Tooltip
-                title={
-                  isPinnedAnalysis(data.row.analysis.analysisId)
-                    ? 'Remove from pinned analyses'
-                    : 'Add to pinned analyses'
-                }
-              >
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      size="small"
-                      icon={
-                        <Icon
-                          style={{ color: '#aaa' }}
-                          className="fa fa-thumb-tack"
-                        />
-                      }
-                      checkedIcon={
-                        <Icon color="primary" className="fa fa-thumb-tack" />
-                      }
-                      checked={isPinnedAnalysis(data.row.analysis.analysisId)}
-                      onChange={(e) => {
-                        if (e.target.checked)
-                          addPinnedAnalysis(data.row.analysis.analysisId);
-                        else removePinnedAnalysis(data.row.analysis.analysisId);
-                      }}
-                    />
-                  }
-                  label=""
-                />
-              </Tooltip>
-              <Link
-                to={Path.join(
-                  history.location.pathname,
-                  data.row.analysis.studyId,
-                  data.row.analysis.analysisId
-                )}
-              >
-                {data.row.analysis.displayName}
-              </Link>
-            </>
+            <Link
+              to={Path.join(
+                history.location.pathname,
+                data.row.analysis.studyId,
+                data.row.analysis.analysisId
+              )}
+            >
+              {data.row.analysis.displayName}
+            </Link>
           ),
         },
         {
