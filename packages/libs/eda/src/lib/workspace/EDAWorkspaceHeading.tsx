@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import Path from 'path';
 import { cx } from './Utils';
-import { useStudyRecord, AnalysisState } from '../core';
+import { useStudyRecord, AnalysisState, DEFAULT_ANALYSIS_NAME } from '../core';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Button, Tooltip, Icon, makeStyles } from '@material-ui/core';
 import { LinkAttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
@@ -71,7 +71,7 @@ export function EDAWorkspaceHeading({
                 color="primary"
                 startIcon={<Icon className="fa fa-plus fa-fw" />}
                 onClick={
-                  analysis && analysis.displayName === 'Unnamed Analysis'
+                  analysis && analysis.displayName === DEFAULT_ANALYSIS_NAME
                     ? () => setDialogIsOpen(true)
                     : redirectToNewAnalysis
                 }
