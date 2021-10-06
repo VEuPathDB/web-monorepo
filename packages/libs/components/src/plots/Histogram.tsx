@@ -120,10 +120,10 @@ const Histogram = makePlotlyPlotComponent(
       typeof restProps.containerStyles?.width === 'number'
         ? restProps.containerStyles?.width
         : 750;
-    // The factors 0.65 and 0.75 are for when there is a legend taking up horizontal space or not
+    // The factors 0.55 and 0.75 are for when there is a legend taking up horizontal space or not
     // (of course there is most likely to be one)
     const plotPixelWidth =
-      (data.series.length > 1 ? 0.65 : 0.75) * plotDivPixelWidth;
+      (data.series.length > 1 ? 0.55 : 0.75) * plotDivPixelWidth;
 
     // Transform `data` into a Plot.ly friendly format.
     const plotlyFriendlyData: PlotParams['data'] = useMemo(
