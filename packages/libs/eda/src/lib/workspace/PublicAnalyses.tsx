@@ -390,9 +390,9 @@ function PublicAnalysesTable({
         </div>
       ),
       deriveRowClassName: (row: PublicAnalysisRow) =>
-        row.isExample ? 'ExampleRow' : undefined,
+        offerExampleSortControl && row.isExample ? 'ExampleRow' : undefined,
     }),
-    [unfilteredRows]
+    [unfilteredRows, offerExampleSortControl]
   );
 
   const tableState = useMemo(
