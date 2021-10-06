@@ -8,96 +8,26 @@ import { Button, Tooltip, Icon } from '@material-ui/core';
 import { LinkAttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { useAttemptActionCallback } from '@veupathdb/web-common/lib/hooks/dataRestriction';
 import { Action } from '@veupathdb/web-common/lib/App/DataRestriction/DataRestrictionUtils';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import { TextField } from '@material-ui/core';
+import { AnalysisNameDialog } from './AnalysisNameDialog';
 
-interface ChangeAnalysisNameDialogProps {
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
-  initialAnalysisName: string;
-  setAnalysisName: (name: string) => void;
-  redirectToNewAnalysis: () => void;
-}
-
-interface AnalysisHeadingProps {
+interface AnalysisEDAWorkspaceHeadingProps {
   analysisId: string;
 }
 
-interface BaseHeadingProps {
+interface EDAWorkspaceHeadingProps {
   analysisState?: AnalysisState;
-}
-
-export function ChangeAnalysisNameDialog({
-  isOpen,
-  setIsOpen,
-  initialAnalysisName,
-  setAnalysisName,
-  redirectToNewAnalysis,
-}: ChangeAnalysisNameDialogProps) {
-  const [text, setText] = useState(initialAnalysisName);
-  const [isValid, setIsValid] = useState(true);
-
-  const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newText = event.target.value;
-    setText(newText);
-    newText.length > 0 ? setIsValid(true) : setIsValid(false);
-  };
-
-  const handleClose = () => {
-    setIsOpen(false);
-    setText(initialAnalysisName);
-  };
-
-  const handleContinue = async () => {
-    await setAnalysisName(text);
-    redirectToNewAnalysis();
-  };
-
-  return (
-    <Dialog
-      open={isOpen}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
-      <DialogTitle>Rename Analysis?</DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          Your current analysis hasn't been renamed. Rename the analysis here or
-          click 'Continue' to save the analysis with the default name.
-        </DialogContentText>
-        <TextField
-          label="Analysis name"
-          variant="filled"
-          value={text}
-          onChange={handleTextChange}
-          error={!isValid}
-          helperText={isValid ? ' ' : 'Name must not be blank'}
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose} color="secondary">
-          Cancel
-        </Button>
-        <Button onClick={handleContinue} color="primary" disabled={!isValid}>
-          {text === initialAnalysisName ? 'Continue' : 'Rename and continue'}
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
 }
 
 export function AnalysisEDAWorkspaceHeading({
   analysisId,
-}: AnalysisHeadingProps) {
+}: AnalysisEDAWorkspaceHeadingProps) {
   const analysisState = useAnalysis(analysisId);
   return <EDAWorkspaceHeading analysisState={analysisState} />;
 }
 
-export function EDAWorkspaceHeading({ analysisState }: BaseHeadingProps) {
+export function EDAWorkspaceHeading({
+  analysisState,
+}: EDAWorkspaceHeadingProps) {
   const studyRecord = useStudyRecord();
   const attemptAction = useAttemptActionCallback();
   const analysis = analysisState?.analysis;
@@ -169,7 +99,7 @@ export function EDAWorkspaceHeading({ analysisState }: BaseHeadingProps) {
         </div>
       </div>
       {analysisState && analysis && (
-        <ChangeAnalysisNameDialog
+        <AnalysisNameDialog
           isOpen={dialogIsOpen}
           setIsOpen={setDialogIsOpen}
           initialAnalysisName={analysis.displayName}
