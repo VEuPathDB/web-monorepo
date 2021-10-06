@@ -33,7 +33,7 @@ export function AnalysisNameDialog({
     newText.length > 0 ? setIsValid(true) : setIsValid(false);
   };
 
-  const handleClose = () => {
+  const handleCancel = () => {
     setIsOpen(false);
     setText(initialAnalysisName);
   };
@@ -46,6 +46,7 @@ export function AnalysisNameDialog({
   return (
     <Dialog
       open={isOpen}
+      onBackdropClick={handleCancel}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
@@ -65,7 +66,7 @@ export function AnalysisNameDialog({
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} color="secondary">
+        <Button onClick={handleCancel} color="secondary">
           Cancel
         </Button>
         <Button onClick={handleContinue} color="primary" disabled={!isValid}>
