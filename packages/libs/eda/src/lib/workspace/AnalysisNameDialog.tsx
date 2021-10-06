@@ -56,9 +56,12 @@ export function AnalysisNameDialog({
           Your current analysis hasn't been renamed. Rename the analysis here or
           click 'Continue' to save the analysis with the default name.
         </DialogContentText>
+        <br />
         <TextField
           label="Analysis name"
-          variant="filled"
+          variant="outlined"
+          size="small"
+          style={{ margin: 'auto' }}
           value={text}
           onChange={handleTextChange}
           error={!isValid}
