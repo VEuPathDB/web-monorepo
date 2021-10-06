@@ -270,7 +270,7 @@ export function MultiFilter(props: Props) {
               case 'count':
                 return summary.internalsCount;
               default:
-                return summary.display;
+                return leafSummariesPromise.value?.indexOf(summary);
             }
           },
         ],
