@@ -4,11 +4,18 @@ import Path from 'path';
 import { cx } from './Utils';
 import { useStudyRecord, AnalysisState } from '../core';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { Button, Tooltip, Icon } from '@material-ui/core';
+import { Button, Tooltip, Icon, makeStyles } from '@material-ui/core';
 import { LinkAttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { useAttemptActionCallback } from '@veupathdb/web-common/lib/hooks/dataRestriction';
 import { Action } from '@veupathdb/web-common/lib/App/DataRestriction/DataRestrictionUtils';
 import { AnalysisNameDialog } from './AnalysisNameDialog';
+
+// Add custom styling for ebrc icons for better alignment in buttons
+const useStyles = makeStyles((theme) => ({
+  ebrcStartIcon: {
+    marginTop: -5,
+  },
+}));
 
 interface EDAWorkspaceHeadingProps {
   analysisState?: AnalysisState;
@@ -27,6 +34,7 @@ export function EDAWorkspaceHeading({
     : Path.resolve(url, '../new');
   const history = useHistory();
   const redirectToNewAnalysis = () => history.push(redirectURL);
+  const iconClasses = useStyles();
 
   return (
     <>
@@ -77,6 +85,7 @@ export function EDAWorkspaceHeading({
               <Button
                 variant="text"
                 color="primary"
+                classes={{ startIcon: iconClasses.ebrcStartIcon }}
                 startIcon={<Icon className="fa fa-table fa-fw" />}
                 component={Link}
                 to={'/eda?s=' + encodeURIComponent(studyRecord.displayName)}

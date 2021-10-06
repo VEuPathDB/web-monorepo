@@ -293,7 +293,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
             }
       )
     );
-  }, [filters]);
+  }, [filters, id]);
 
   const updateThumbnail = useCallback(
     (thumbnail: string) => {
