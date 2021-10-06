@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import Path from 'path';
 import { cx } from './Utils';
-import { useAnalysis, useStudyRecord, AnalysisState } from '../core';
+import { useStudyRecord, AnalysisState } from '../core';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Button, Tooltip, Icon } from '@material-ui/core';
 import { LinkAttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
@@ -10,19 +10,8 @@ import { useAttemptActionCallback } from '@veupathdb/web-common/lib/hooks/dataRe
 import { Action } from '@veupathdb/web-common/lib/App/DataRestriction/DataRestrictionUtils';
 import { AnalysisNameDialog } from './AnalysisNameDialog';
 
-interface AnalysisEDAWorkspaceHeadingProps {
-  analysisId: string;
-}
-
 interface EDAWorkspaceHeadingProps {
   analysisState?: AnalysisState;
-}
-
-export function AnalysisEDAWorkspaceHeading({
-  analysisId,
-}: AnalysisEDAWorkspaceHeadingProps) {
-  const analysisState = useAnalysis(analysisId);
-  return <EDAWorkspaceHeading analysisState={analysisState} />;
 }
 
 export function EDAWorkspaceHeading({

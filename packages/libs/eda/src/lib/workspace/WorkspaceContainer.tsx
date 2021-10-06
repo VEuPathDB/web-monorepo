@@ -12,13 +12,11 @@ import {
 } from '../core';
 import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
 import { VariableDescriptor } from '../core/types/variable';
-import {
-  AnalysisEDAWorkspaceHeading,
-  EDAWorkspaceHeading,
-} from './EDAWorkspaceHeading';
 import { cx, findFirstVariable } from './Utils';
-import { SavedAnalysis } from './SavedAnalysis';
-import { NewAnalysisPage } from './NewAnalysis';
+import {
+  EDAWorkspaceNewAnalysis,
+  EDAWorkspaceSavedAnalysis,
+} from './EDAWorkspace';
 
 interface Props {
   studyId: string;
@@ -76,14 +74,9 @@ export function WorkspaceContainer(props: Props) {
         makeVariableLink={makeVariableLink}
       >
         {props.analysisId == null ? (
-          <EDAWorkspaceHeading />
+          <EDAWorkspaceNewAnalysis />
         ) : (
-          <AnalysisEDAWorkspaceHeading analysisId={props.analysisId} />
-        )}
-        {props.analysisId == null ? (
-          <NewAnalysisPage />
-        ) : (
-          <SavedAnalysis analysisId={props.analysisId} />
+          <EDAWorkspaceSavedAnalysis analysisId={props.analysisId} />
         )}
       </EDAWorkspaceContainer>
     </RestrictedPage>
