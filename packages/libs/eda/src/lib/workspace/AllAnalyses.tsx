@@ -153,15 +153,12 @@ export function AllAnalyses(props: Props) {
 
   const searchableAnalysisColumns = useMemo(
     () =>
-      ([
+      [
         'displayName',
         'description',
         'creationTimeDisplay',
         'modificationTimeDisplay',
-      ] as const).filter(
-        (columnKey) =>
-          columnKey !== 'description' || user?.id === exampleAnalysesAuthor
-      ),
+      ] as const,
     [user?.id, exampleAnalysesAuthor]
   );
 
