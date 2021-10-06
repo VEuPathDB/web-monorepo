@@ -159,7 +159,7 @@ export function AllAnalyses(props: Props) {
         'creationTimeDisplay',
         'modificationTimeDisplay',
       ] as const,
-    [user?.id, exampleAnalysesAuthor]
+    []
   );
 
   const searchableDatasetColumns = useMemo(() => ['displayName'] as const, []);
