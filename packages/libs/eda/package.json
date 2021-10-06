@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/eda",
-  "version": "0.12.3",
+  "version": "0.12.4",
   "dependencies": {
     "@material-ui/core": "^4.11.3",
     "@material-ui/lab": "^4.0.0-alpha.58",
