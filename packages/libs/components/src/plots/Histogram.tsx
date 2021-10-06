@@ -74,6 +74,15 @@ export interface HistogramProps
   isZoomed?: boolean;
   /** independent axis range min and max */
   independentAxisRange?: NumberOrDateRange;
+  /** Assuming independentAxisRange is inclusive at both ends,
+   * is binStart inclusive or exclusive? Setting this appropriately will
+   * ensure that the bins containing data equal to independentAxisRange min and max are shown
+   * Default 'inclusive'
+   **/
+  binStartType?: 'inclusive' | 'exclusive';
+  /** See binStartType for full explanation
+   * is binEnd inclusive or exclusive? default 'inclusive' */
+  binEndType?: 'inclusive' | 'exclusive';
 }
 
 /** A Plot.ly based histogram component. */
@@ -95,6 +104,8 @@ const Histogram = makePlotlyPlotComponent(
     isZoomed = false,
     independentAxisRange,
     axisTruncationConfig,
+    binStartType = 'inclusive',
+    binEndType = 'inclusive',
     ...restProps
   }: HistogramProps) => {
     if (selectedRangeBounds || isZoomed)
@@ -333,24 +344,32 @@ const Histogram = makePlotlyPlotComponent(
         min:
           independentAxisRange?.min != null
             ? (
-                findLast(
-                  binSummaries,
-                  (bs) => independentAxisRange?.min >= bs.binStart
+                findLast(binSummaries, (bs) =>
+                  binStartType === 'inclusive'
+                    ? independentAxisRange?.min >= bs.binStart
+                    : independentAxisRange?.min > bs.binStart
                 ) ?? { binStart: independentAxisRange?.min }
               )?.binStart
             : first(binSummaries)?.binStart,
         max:
           independentAxisRange?.max != null
             ? (
-                find(
-                  binSummaries,
-                  (bs) => independentAxisRange?.max <= bs.binEnd
+                find(binSummaries, (bs) =>
+                  binEndType === 'inclusive'
+                    ? independentAxisRange?.max <= bs.binEnd
+                    : independentAxisRange?.max < bs.binEnd
                 ) ?? { binEnd: independentAxisRange?.max }
               )?.binEnd
             : last(binSummaries)?.binEnd,
       } as NumberOrDateRange;
-    }, [data?.valueType, independentAxisRange, binSummaries]);
-
+    }, [
+      data?.valueType,
+      independentAxisRange,
+      binSummaries,
+      binStartType,
+      binEndType,
+    ]);
+    console.log(binSummaries);
     // truncation axis range
     const extendedIndependentAxisRange = extendAxisRangeForTruncations(
       standardIndependentAxisRange,
@@ -414,8 +433,10 @@ const Histogram = makePlotlyPlotComponent(
         return [];
       }
     }, [
-      independentAxisRange,
-      dependentAxisRange,
+      standardIndependentAxisRange,
+      standardDependentAxisRange,
+      extendedIndependentAxisRange,
+      extendedDependentAxisRange,
       orientation,
       data.series,
       axisTruncationConfig,
