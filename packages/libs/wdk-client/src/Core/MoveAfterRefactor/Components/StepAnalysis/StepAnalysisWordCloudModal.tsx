@@ -6,19 +6,21 @@ interface WordCloudModalProps {
   imgUrl: string;
   open: boolean;
   onClose: () => void;
+  toolName: string;
 }
 
 export const WordCloudModal: React.SFC<WordCloudModalProps> = ({
   imgUrl,
   open,
-  onClose
+  onClose,
+  toolName,
 }) => (
   <Dialog 
     open={open} 
     resizable 
     draggable 
     onClose={onClose} 
-    title="Word Cloud of Go Enrichment Analysis Results"
+    title={`Word Cloud of ${toolName} Results`}
     className="word-cloud-modal"
   >
     <img src={imgUrl} />
