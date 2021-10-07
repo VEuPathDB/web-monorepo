@@ -48,13 +48,13 @@ export function BirdsEyeView(props: Props) {
           brackets: [
             {
               value: completeCasesAxesVars,
-              label: 'Has data for axis variables',
+              label: 'Data for axes',
             },
             ...(stratificationIsActive
               ? [
                   {
                     value: completeCasesAllVars,
-                    label: 'Has data for axis & stratification variables',
+                    label: 'Data for axes & strata',
                   },
                 ]
               : []),
@@ -62,15 +62,13 @@ export function BirdsEyeView(props: Props) {
           bars: [
             // total comes first, or the subset is hidden
             {
-              name: 'Total',
-              value: [totalSize],
-              label: [''],
+              label: 'Total',
+              value: totalSize,
               color: gray,
             },
             {
-              name: 'Subset',
-              value: [subsetSize],
-              label: [''],
+              label: 'Subset',
+              value: subsetSize,
               color: red,
             },
           ],
@@ -82,7 +80,9 @@ export function BirdsEyeView(props: Props) {
       data={birdsEyeData}
       containerClass="birds-eye-plot"
       containerStyles={{
-        width: '500px',
+        width: '400px',
+        height: '110px',
+        marginBottom: '1.5em',
       }}
       spacingOptions={{
         marginTop: 5,
@@ -90,6 +90,7 @@ export function BirdsEyeView(props: Props) {
         marginLeft: 5,
         marginRight: 5,
       }}
+      interactive={true}
       dependentAxisLabel={
         outputEntity?.displayNamePlural ?? outputEntity?.displayName
       }
