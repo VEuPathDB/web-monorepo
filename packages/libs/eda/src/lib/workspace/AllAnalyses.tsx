@@ -24,9 +24,14 @@ import {
 import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import {
+  safeHtml,
+  useSetDocumentTitle,
+} from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 import { confirm } from '@veupathdb/wdk-client/lib/Utils/Platform';
 import { RecordInstance } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { OverflowingTextCell } from '@veupathdb/wdk-client/lib/Views/Strategy/OverflowingTextCell';
 
 import {
   AnalysisClient,
@@ -41,8 +46,13 @@ import { useWdkStudyRecords } from '../core/hooks/study';
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
 
 interface AnalysisAndDataset {
-  analysis: AnalysisSummary;
-  dataset?: RecordInstance;
+  analysis: AnalysisSummary & {
+    creationTimeDisplay: string;
+    modificationTimeDisplay: string;
+  };
+  dataset?: RecordInstance & {
+    displayNameHTML: string;
+  };
 }
 
 interface Props {
@@ -62,6 +72,8 @@ const useStyles = makeStyles({
     },
   },
 });
+
+const UNKNOWN_DATASET_NAME = 'Unknown study';
 
 export function AllAnalyses(props: Props) {
   const { analysisClient, exampleAnalysesAuthor } = props;
@@ -115,19 +127,44 @@ export function AllAnalyses(props: Props) {
     error,
   } = useAnalysisList(analysisClient);
 
-  const analysesAndDatasets = useMemo(
+  const analysesAndDatasets: AnalysisAndDataset[] | undefined = useMemo(
     () =>
       analyses?.map((analysis) => {
         const dataset = datasets?.find(
           (d) => d.id[0].value === analysis.studyId
         );
         return {
-          analysis,
-          dataset,
+          analysis: {
+            ...analysis,
+            creationTimeDisplay: convertISOToDisplayFormat(
+              analysis.creationTime
+            ),
+            modificationTimeDisplay: convertISOToDisplayFormat(
+              analysis.modificationTime
+            ),
+          },
+          dataset: dataset && {
+            ...dataset,
+            displayName: stripHTML(dataset.displayName),
+            displayNameHTML: dataset.displayName,
+          },
         };
       }),
     [analyses, datasets]
   );
+
+  const searchableAnalysisColumns = useMemo(
+    () =>
+      [
+        'displayName',
+        'description',
+        'creationTimeDisplay',
+        'modificationTimeDisplay',
+      ] as const,
+    []
+  );
+
+  const searchableDatasetColumns = useMemo(() => ['displayName'] as const, []);
 
   const filteredAnalysesAndDatasets = useMemo(() => {
     if (!debouncedSearchText) return analysesAndDatasets;
@@ -135,10 +172,21 @@ export function AllAnalyses(props: Props) {
 
     return analysesAndDatasets?.filter(
       ({ analysis, dataset }) =>
-        analysis.displayName.toLowerCase().includes(lowerSearchText) ||
-        dataset?.displayName.toLowerCase().includes(lowerSearchText)
+        searchableAnalysisColumns.some((columnKey) =>
+          analysis[columnKey]?.toLowerCase().includes(lowerSearchText)
+        ) ||
+        searchableDatasetColumns.some((columnKey) =>
+          dataset?.[columnKey].toLowerCase().includes(lowerSearchText)
+        ) ||
+        (dataset == null &&
+          UNKNOWN_DATASET_NAME.toLowerCase().includes(lowerSearchText))
     );
-  }, [debouncedSearchText, analysesAndDatasets]);
+  }, [
+    searchableAnalysisColumns,
+    searchableDatasetColumns,
+    debouncedSearchText,
+    analysesAndDatasets,
+  ]);
 
   const removeUnpinned = useCallback(() => {
     if (filteredAnalysesAndDatasets == null) return;
@@ -161,7 +209,7 @@ export function AllAnalyses(props: Props) {
                   case 'study':
                     return (
                       datasets?.find((d) => d.id[0].value === analysis.studyId)
-                        ?.displayName ?? 'Unknown study'
+                        ?.displayName ?? UNKNOWN_DATASET_NAME
                     );
                   case 'displayName':
                     return analysis.displayName;
@@ -305,52 +353,41 @@ export function AllAnalyses(props: Props) {
       },
       columns: [
         {
-          key: 'name',
-          name: 'Analysis',
-          sortable: true,
+          key: 'id',
+          name: ' ',
+          width: '2.75em',
           renderCell: (data: { row: AnalysisAndDataset }) => (
-            <>
-              <Tooltip
-                title={
-                  isPinnedAnalysis(data.row.analysis.analysisId)
-                    ? 'Remove from pinned analyses'
-                    : 'Add to pinned analyses'
+            <Tooltip
+              title={
+                isPinnedAnalysis(data.row.analysis.analysisId)
+                  ? 'Remove from pinned analyses'
+                  : 'Add to pinned analyses'
+              }
+            >
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    size="small"
+                    icon={
+                      <Icon
+                        style={{ color: '#aaa' }}
+                        className="fa fa-thumb-tack"
+                      />
+                    }
+                    checkedIcon={
+                      <Icon color="primary" className="fa fa-thumb-tack" />
+                    }
+                    checked={isPinnedAnalysis(data.row.analysis.analysisId)}
+                    onChange={(e) => {
+                      if (e.target.checked)
+                        addPinnedAnalysis(data.row.analysis.analysisId);
+                      else removePinnedAnalysis(data.row.analysis.analysisId);
+                    }}
+                  />
                 }
-              >
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      size="small"
-                      icon={
-                        <Icon
-                          style={{ color: '#aaa' }}
-                          className="fa fa-thumb-tack"
-                        />
-                      }
-                      checkedIcon={
-                        <Icon color="primary" className="fa fa-thumb-tack" />
-                      }
-                      checked={isPinnedAnalysis(data.row.analysis.analysisId)}
-                      onChange={(e) => {
-                        if (e.target.checked)
-                          addPinnedAnalysis(data.row.analysis.analysisId);
-                        else removePinnedAnalysis(data.row.analysis.analysisId);
-                      }}
-                    />
-                  }
-                  label=""
-                />
-              </Tooltip>
-              <Link
-                to={Path.join(
-                  history.location.pathname,
-                  data.row.analysis.studyId,
-                  data.row.analysis.analysisId
-                )}
-              >
-                {data.row.analysis.displayName}
-              </Link>
-            </>
+                label=""
+              />
+            </Tooltip>
           ),
         },
         {
@@ -359,11 +396,40 @@ export function AllAnalyses(props: Props) {
           sortable: true,
           renderCell: (data: { row: AnalysisAndDataset }) => {
             const { dataset } = data.row;
-            if (dataset == null) return 'Unknown study';
+            if (dataset == null) return UNKNOWN_DATASET_NAME;
+            return safeHtml(dataset.displayNameHTML);
+          },
+        },
+        {
+          key: 'name',
+          name: 'Analysis',
+          sortable: true,
+          style: { maxWidth: '200px' },
+          renderCell: (data: { row: AnalysisAndDataset }) => {
+            const analysisId = data.row.analysis.analysisId;
+            const displayName = data.row.analysis.displayName;
+
             return (
-              <Link to={`${url}/${dataset.id[0].value}`}>
-                {dataset.displayName}
-              </Link>
+              <div style={{ display: 'block', maxWidth: '100%' }}>
+                <SaveableTextEditor
+                  key={analysisId}
+                  value={displayName}
+                  displayValue={(value) => (
+                    <Link
+                      to={Path.join(
+                        history.location.pathname,
+                        data.row.analysis.studyId,
+                        data.row.analysis.analysisId
+                      )}
+                    >
+                      {value}
+                    </Link>
+                  )}
+                  onSave={(newName) => {
+                    updateAnalysis(analysisId, { displayName: newName });
+                  }}
+                />
+              </div>
             );
           },
         },
@@ -376,7 +442,7 @@ export function AllAnalyses(props: Props) {
             const analysisId = data.row.analysis.analysisId;
             const descriptionStr = data.row.analysis.description || '';
 
-            return (
+            return user?.id === exampleAnalysesAuthor ? (
               <div style={{ display: 'block', maxWidth: '100%' }}>
                 <SaveableTextEditor
                   key={analysisId}
@@ -388,6 +454,8 @@ export function AllAnalyses(props: Props) {
                   }}
                 />
               </div>
+            ) : (
+              <OverflowingTextCell key={analysisId} value={descriptionStr} />
             );
           },
         },
@@ -413,21 +481,19 @@ export function AllAnalyses(props: Props) {
           name: 'Created',
           sortable: true,
           renderCell: (data: { row: AnalysisAndDataset }) =>
-            convertISOToDisplayFormat(data.row.analysis.creationTime),
+            data.row.analysis.creationTimeDisplay,
         },
         {
           key: 'modificationTime',
           name: 'Modified',
           sortable: true,
           renderCell: (data: { row: AnalysisAndDataset }) =>
-            convertISOToDisplayFormat(data.row.analysis.modificationTime),
+            data.row.analysis.modificationTimeDisplay,
         },
       ].filter(
-        // Only offer description and isPublic columns
-        // if the user is the "example analyses" author
+        // Only offer isPublic column if the user is the "example analyses" author
         (column) =>
-          (column.key !== 'description' && column.key !== 'isPublic') ||
-          user?.id === exampleAnalysesAuthor
+          column.key !== 'isPublic' || user?.id === exampleAnalysesAuthor
       ),
     }),
     [
