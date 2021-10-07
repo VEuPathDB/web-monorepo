@@ -36,13 +36,7 @@ export class AnalysisClient extends FetchClient {
   );
 
   constructor(options: FetchApiOptions, private wdkService: WdkService) {
-    super({
-      ...options,
-      init: {
-        ...options.init,
-        credentials: 'omit',
-      },
-    });
+    super(options);
   }
 
   protected async fetch<T>(apiRequest: ApiRequest<T>): Promise<T> {
