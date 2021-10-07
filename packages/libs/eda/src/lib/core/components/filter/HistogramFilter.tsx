@@ -578,6 +578,8 @@ function HistogramPlotWithControls({
       <Histogram
         {...histogramProps}
         data={data}
+        binStartType="inclusive"
+        binEndType="exclusive"
         interactive={true}
         selectedRange={selectedRange}
         opacity={opacity}
