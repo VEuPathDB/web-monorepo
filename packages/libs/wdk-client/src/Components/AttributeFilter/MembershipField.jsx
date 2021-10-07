@@ -592,8 +592,8 @@ class MembershipTable extends React.PureComponent {
             width: '12em',
             helpText: (
               <div>
-                The number of <em>{this.props.displayName}</em> that match the criteria chosen for other qualities, <br />
-                and that have the given <em>{this.props.activeField.display}</em> value.
+                The number of <em>{this.props.displayName}</em> that match the filters applied for other variables<br />
+                and have the given <em>{this.props.activeField.display}</em> value.
                 </div>
             ),
             wrapCustomHeadings: ({ headingRowIndex }) => headingRowIndex === 0,
@@ -608,8 +608,7 @@ class MembershipTable extends React.PureComponent {
             width: '12em',
             helpText: (
               <div>
-                The number of <em>{this.props.displayName}</em> with the
-                  given <em>{this.props.activeField.display}</em> value.
+                The number of <em>{this.props.displayName}</em> in the dataset that have the given <em>{this.props.activeField.display}</em> value.
                 </div>
             ),
             wrapCustomHeadings: ({ headingRowIndex }) => headingRowIndex === 0,
