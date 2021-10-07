@@ -73,6 +73,8 @@ const useStyles = makeStyles({
   },
 });
 
+const UNKNOWN_DATASET_NAME = 'Unknown study';
+
 export function AllAnalyses(props: Props) {
   const { analysisClient, exampleAnalysesAuthor } = props;
   const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
@@ -176,7 +178,8 @@ export function AllAnalyses(props: Props) {
         searchableDatasetColumns.some((columnKey) =>
           dataset?.[columnKey].toLowerCase().includes(lowerSearchText)
         ) ||
-        (dataset == null && 'unknown study'.includes(lowerSearchText))
+        (dataset == null &&
+          UNKNOWN_DATASET_NAME.toLowerCase().includes(lowerSearchText))
     );
   }, [
     searchableAnalysisColumns,
@@ -206,7 +209,7 @@ export function AllAnalyses(props: Props) {
                   case 'study':
                     return (
                       datasets?.find((d) => d.id[0].value === analysis.studyId)
-                        ?.displayName ?? 'Unknown study'
+                        ?.displayName ?? UNKNOWN_DATASET_NAME
                     );
                   case 'displayName':
                     return analysis.displayName;
@@ -393,12 +396,8 @@ export function AllAnalyses(props: Props) {
           sortable: true,
           renderCell: (data: { row: AnalysisAndDataset }) => {
             const { dataset } = data.row;
-            if (dataset == null) return 'Unknown study';
-            return (
-              <Link to={`${url}/${dataset.id[0].value}`}>
-                {safeHtml(dataset.displayNameHTML)}
-              </Link>
-            );
+            if (dataset == null) return UNKNOWN_DATASET_NAME;
+            return safeHtml(dataset.displayNameHTML);
           },
         },
         {
