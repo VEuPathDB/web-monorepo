@@ -2,7 +2,6 @@
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import {
   createJsonRequest,
-  FetchApiOptions,
   FetchClient,
 } from '@veupathdb/web-common/lib/util/api';
 import {
@@ -68,16 +67,6 @@ export class SubsettingClient extends FetchClient {
   static getClient = memoize(
     (baseUrl: string): SubsettingClient => new SubsettingClient({ baseUrl })
   );
-
-  constructor(options: FetchApiOptions) {
-    super({
-      ...options,
-      init: {
-        ...options.init,
-        credentials: 'omit',
-      },
-    });
-  }
 
   getStudies(): Promise<StudyOverview[]> {
     return this.fetch(

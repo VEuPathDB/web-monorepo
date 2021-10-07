@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-redeclare */
 import {
   createJsonRequest,
-  FetchApiOptions,
   FetchClient,
 } from '@veupathdb/web-common/lib/util/api';
 import {
@@ -466,16 +465,6 @@ export const BoxplotResponse = type({
 });
 
 export class DataClient extends FetchClient {
-  constructor(options: FetchApiOptions) {
-    super({
-      ...options,
-      init: {
-        ...options.init,
-        credentials: 'omit',
-      },
-    });
-  }
-
   getApps(): Promise<TypeOf<typeof AppsResponse>> {
     return this.fetch(
       createJsonRequest({
