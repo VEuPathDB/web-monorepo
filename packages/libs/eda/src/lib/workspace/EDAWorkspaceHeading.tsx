@@ -48,6 +48,7 @@ export function EDAWorkspaceHeading({
                 <Button
                   variant="text"
                   color="primary"
+                  className="Linkouts-buttons"
                   startIcon={<Icon className="fa fa-download fa-fw" />}
                   type="button"
                   onClick={() => {
@@ -70,6 +71,7 @@ export function EDAWorkspaceHeading({
               <Button
                 variant="text"
                 color="primary"
+                className="Linkouts-buttons"
                 startIcon={<Icon className="fa fa-plus fa-fw" />}
                 onClick={
                   /** If (1) there is no analysis, (2) we're in an unsaved new
@@ -90,8 +92,9 @@ export function EDAWorkspaceHeading({
               <Button
                 variant="text"
                 color="primary"
+                className="Linkouts-buttons"
                 classes={{ startIcon: iconClasses.ebrcStartIcon }}
-                startIcon={<Icon className="fa fa-table fa-fw" />}
+                startIcon={<Icon className="ebrc-icon-table" />}
                 component={Link}
                 to={'/eda?s=' + encodeURIComponent(studyRecord.displayName)}
               >

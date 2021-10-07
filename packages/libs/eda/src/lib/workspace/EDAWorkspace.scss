@@ -88,9 +88,11 @@
     gap: 1em;
     margin-right: auto;
     margin-left: 2em;
-    a {
-      font-size: 0.75em;
-    }
+    align-items: center;
+  }
+
+  .Linkouts-buttons {
+    font-size: 0.75em;
   }
 
   &-Analysis {
