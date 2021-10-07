@@ -142,6 +142,7 @@ export default function BirdsEyePlot({
         indexToY(index, bracketHeadSize)
       ),
       ticktext: data.brackets.map((bracket) => bracket.label),
+      showspikes: false, // this stops the dotted line showing with the unified hover label
     },
     legend: {
       orientation: 'v',
@@ -159,6 +160,12 @@ export default function BirdsEyePlot({
     shapes: plotlyShapes,
     hovermode: 'y unified',
     hoverdistance: 1000,
+    hoverlabel: {
+      namelength: -1, // this should disable ellipsis truncation, but it still does... :(
+      font: {
+        size: 14,
+      },
+    },
   };
 
   return (
