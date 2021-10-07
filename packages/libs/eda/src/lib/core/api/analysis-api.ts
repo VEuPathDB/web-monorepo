@@ -38,6 +38,9 @@ export class AnalysisClient extends FetchClient {
   private readonly user$: () => Promise<User>;
   private readonly authKey$: () => Promise<string>;
   private readonly userPath$: () => Promise<string>;
+  private readonly guestAnalysesTransfer$: (
+    guestUserId: number
+  ) => Promise<void>;
 
   constructor(options: FetchApiOptions, private wdkService: WdkService) {
     super(options);
@@ -46,6 +49,9 @@ export class AnalysisClient extends FetchClient {
     this.authKey$ = once(() => this.user$().then(this.findUserRequestAuthKey));
     this.userPath$ = once(() =>
       this.user$().then((user) => this.findUserPath(user.id))
+    );
+    this.guestAnalysesTransfer$ = once((guestUserId) =>
+      this.transferGuestAnalyses(guestUserId)
     );
   }
 
@@ -64,7 +70,7 @@ export class AnalysisClient extends FetchClient {
         const guestUserId = parseInt(guestUserIdStr, 10);
 
         if (!Number.isNaN(guestUserId)) {
-          await this.transferGuestAnalyses(guestUserId);
+          await this.guestAnalysesTransfer$(guestUserId);
         }
       }
     }
