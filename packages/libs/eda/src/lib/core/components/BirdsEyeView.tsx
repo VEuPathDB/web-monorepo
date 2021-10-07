@@ -4,6 +4,7 @@ import { CoverageStatistics } from '../types/visualization';
 import BirdsEyePlot from '@veupathdb/components/lib/plots/BirdsEyePlot';
 import { red, gray } from './filter/colors';
 import { StudyEntity } from '../types/study';
+import { HelpIcon } from '@veupathdb/wdk-client/lib/Components';
 
 interface Props extends Partial<CoverageStatistics> {
   /** Current active filters */
@@ -75,26 +76,52 @@ export function BirdsEyeView(props: Props) {
         }
       : undefined;
 
+  const entityPluralString =
+    outputEntity?.displayNamePlural ?? outputEntity?.displayName;
+
   return (
-    <BirdsEyePlot
-      data={birdsEyeData}
-      containerClass="birds-eye-plot"
-      containerStyles={{
-        width: '400px',
-        height: '110px',
-        marginBottom: '1.5em',
-      }}
-      spacingOptions={{
-        marginTop: 5,
-        marginBottom: 5,
-        marginLeft: 5,
-        marginRight: 5,
-      }}
-      interactive={true}
-      dependentAxisLabel={
-        outputEntity?.displayNamePlural ?? outputEntity?.displayName
-      }
-      showSpinner={enableSpinner && !birdsEyeData}
-    />
+    <div>
+      <div style={{ marginLeft: '100px' }}>
+        <HelpIcon
+          tooltipPosition={{
+            my: 'bottom left',
+            at: 'top right',
+          }}
+        >
+          <div>
+            <b>Data for axes & strata:</b> The number of{' '}
+            <i>{entityPluralString}</i> in the subset that have data for all
+            axis and stratification variables.
+            <br />
+            <b>Data for axes:</b> The number of <i>{entityPluralString}</i> in
+            the subset that have data for all axis variables.
+            <br />
+            <b>Subset:</b> The number of <i>{entityPluralString}</i> that match
+            the filters applied in this analysis.
+            <br />
+            <b>All:</b> The total number of <i>{entityPluralString}</i> in the
+            dataset.
+          </div>
+        </HelpIcon>
+      </div>
+      <BirdsEyePlot
+        data={birdsEyeData}
+        containerClass="birds-eye-plot"
+        containerStyles={{
+          width: '400px',
+          height: '110px',
+          marginBottom: '1.5em',
+        }}
+        spacingOptions={{
+          marginTop: 5,
+          marginBottom: 5,
+          marginLeft: 5,
+          marginRight: 5,
+        }}
+        interactive={true}
+        dependentAxisLabel={entityPluralString}
+        showSpinner={enableSpinner && !birdsEyeData}
+      />
+    </div>
   );
 }
