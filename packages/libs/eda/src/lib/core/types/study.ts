@@ -97,21 +97,16 @@ export const NumberVariable = t.intersection([
       units: t.string,
     }),
   ]),
-  t.union([
-    t.type({
-      dataShape: CategoryVariableDataShape,
-    }),
-    t.type({
-      dataShape: ContinuousVariableDataShape,
-      rangeMin: t.number,
-      rangeMax: t.number,
-      binWidth: t.number,
-    }),
-  ]),
+  t.type({
+    dataShape: VariableDataShape,
+    rangeMin: t.number,
+    rangeMax: t.number,
+  }),
   t.partial({
     // TODO This is supposed to be required, but the backend isn't populating it.
     displayRangeMin: t.number,
     displayRangeMax: t.number,
+    binWidth: t.number,
     binWidthOverride: t.number,
   }),
 ]);
@@ -122,21 +117,16 @@ export const DateVariable = t.intersection([
   t.type({
     type: t.literal('date'),
   }),
-  t.union([
-    t.type({
-      dataShape: CategoryVariableDataShape,
-    }),
-    t.type({
-      dataShape: ContinuousVariableDataShape,
-      rangeMin: t.string,
-      rangeMax: t.string,
-      binWidth: t.number,
-      binUnits: TimeUnit,
-    }),
-  ]),
+  t.type({
+    dataShape: VariableDataShape,
+    rangeMin: t.string,
+    rangeMax: t.string,
+  }),
   t.partial({
     displayRangeMin: t.string,
     displayRangeMax: t.string,
+    binWidth: t.number,
+    binUnits: TimeUnit,
     binWidthOverride: t.number,
   }),
 ]);

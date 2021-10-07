@@ -217,4 +217,18 @@ export class AnalysisClient extends FetchClient {
       })
     );
   }
+  async transferGuestAnalyses(guestUserId: number): Promise<void> {
+    const { userPath } = await this.userRequestMetadata$;
+
+    return this.fetch(
+      createJsonRequest({
+        path: `${userPath}/analyses`,
+        method: 'PATCH',
+        body: {
+          inheritOwnershipFrom: guestUserId,
+        },
+        transformResponse: ioTransformer(voidType),
+      })
+    );
+  }
 }

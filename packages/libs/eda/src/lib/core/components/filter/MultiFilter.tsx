@@ -270,7 +270,7 @@ export function MultiFilter(props: Props) {
               case 'count':
                 return summary.internalsCount;
               default:
-                return summary.display;
+                return leafSummariesPromise.value?.indexOf(summary);
             }
           },
         ],
@@ -342,23 +342,21 @@ export function MultiFilter(props: Props) {
 
   return (
     <div className="filter-param" style={{ position: 'relative' }}>
-      {leafSummariesPromise.pending && (
+      {(leafSummariesPromise.pending || !countsAreCurrent) && (
         <Loading
           style={{ position: 'absolute', right: 0, left: 0, top: -20 }}
         />
       )}
-      {leaves.length > 15 && (
-        <button
-          className="btn"
-          type="button"
-          disabled={countsAreCurrent}
-          onClick={() => {
-            setThisFilter(_thisFilter);
-          }}
-        >
-          Update distributions now
-        </button>
-      )}
+      <button
+        className="btn"
+        type="button"
+        disabled={countsAreCurrent}
+        onClick={() => {
+          setThisFilter(_thisFilter);
+        }}
+      >
+        Update distributions now
+      </button>
       <MultiFieldFilter
         displayName={entity.displayNamePlural}
         dataCount={totalEntityCount}
