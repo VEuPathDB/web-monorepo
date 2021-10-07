@@ -15,6 +15,8 @@ export const EDAWorkspaceNewAnalysis = () => (
   </>
 );
 
+/** A wrapper purely to inject analysisState using `useAnalysis` in accordance
+ * with the rules of hooks */
 export const EDAWorkspaceSavedAnalysis = ({
   analysisId,
 }: EDAWorkSpaceSavedAnalysisProps) => {

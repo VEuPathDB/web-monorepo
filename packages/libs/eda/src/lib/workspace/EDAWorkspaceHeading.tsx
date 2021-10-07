@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface EDAWorkspaceHeadingProps {
+  /** Optional AnalysisState for "New analysis" button functionality */
   analysisState?: AnalysisState;
 }
 
@@ -71,6 +72,10 @@ export function EDAWorkspaceHeading({
                 color="primary"
                 startIcon={<Icon className="fa fa-plus fa-fw" />}
                 onClick={
+                  /** If (1) there is no analysis, (2) we're in an unsaved new
+                   * analysis (here `analysis` is still undefined in this case),
+                   * or (3) we're in a renamed analysis, just go straight to the
+                   * new analysis. Otherwise, show the renaming dialog. */
                   analysis && analysis.displayName === DEFAULT_ANALYSIS_NAME
                     ? () => setDialogIsOpen(true)
                     : redirectToNewAnalysis

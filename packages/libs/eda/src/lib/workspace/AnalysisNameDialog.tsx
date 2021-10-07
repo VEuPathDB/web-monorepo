@@ -10,10 +10,15 @@ import {
 } from '@material-ui/core';
 
 interface AnalysisNameDialogProps {
+  /** Whether the dialog is open */
   isOpen: boolean;
+  /** A function that sets whether the dialog is open */
   setIsOpen: (isOpen: boolean) => void;
+  /** The initial analysis name */
   initialAnalysisName: string;
+  /** A function that renames the analysis */
   setAnalysisName: (name: string) => void;
+  /** A function that redirects to the new analysis page */
   redirectToNewAnalysis: () => void;
 }
 
@@ -24,22 +29,25 @@ export function AnalysisNameDialog({
   setAnalysisName,
   redirectToNewAnalysis,
 }: AnalysisNameDialogProps) {
-  const [text, setText] = useState(initialAnalysisName);
-  const [isValid, setIsValid] = useState(true);
+  const [inputText, setInputText] = useState(initialAnalysisName);
+  const [nameIsValid, setNameIsValid] = useState(true);
 
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newText = event.target.value;
-    setText(newText);
-    newText.length > 0 ? setIsValid(true) : setIsValid(false);
+    setInputText(newText);
+    // Currently the only requirement is no empty name
+    newText.length > 0 ? setNameIsValid(true) : setNameIsValid(false);
   };
 
   const handleCancel = () => {
     setIsOpen(false);
-    setText(initialAnalysisName);
+    setInputText(initialAnalysisName);
   };
 
   const handleContinue = async () => {
-    await setAnalysisName(text);
+    // TypeScript says this `await` has no effect, but it seems to be required
+    // for this function to finish before the page redirect
+    await setAnalysisName(inputText);
     redirectToNewAnalysis();
   };
 
@@ -61,19 +69,25 @@ export function AnalysisNameDialog({
           label="Analysis name"
           variant="outlined"
           size="small"
-          style={{ margin: 'auto' }}
-          value={text}
+          value={inputText}
           onChange={handleTextChange}
-          error={!isValid}
-          helperText={isValid ? ' ' : 'Name must not be blank'}
+          error={!nameIsValid}
+          // Currently the only requirement is no empty name
+          helperText={nameIsValid ? ' ' : 'Name must not be blank'}
         />
       </DialogContent>
       <DialogActions>
         <Button onClick={handleCancel} color="secondary">
           Cancel
         </Button>
-        <Button onClick={handleContinue} color="primary" disabled={!isValid}>
-          {text === initialAnalysisName ? 'Continue' : 'Rename and continue'}
+        <Button
+          onClick={handleContinue}
+          color="primary"
+          disabled={!nameIsValid}
+        >
+          {inputText === initialAnalysisName
+            ? 'Continue'
+            : 'Rename and continue'}
         </Button>
       </DialogActions>
     </Dialog>
