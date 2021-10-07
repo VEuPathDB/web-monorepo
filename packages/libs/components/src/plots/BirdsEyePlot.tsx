@@ -163,7 +163,7 @@ export default function BirdsEyePlot({
     hoverlabel: {
       namelength: -1, // this should disable ellipsis truncation, but it still does... :(
       font: {
-        size: 14,
+        size: 13, // for some reason, size: 14 causes some intermittent placement problems...
       },
     },
   };
