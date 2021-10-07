@@ -1,4 +1,4 @@
-import { CSSProperties, ReactNode, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { BirdsEyePlotData } from '../types/plots';
 import { PlotParams } from 'react-plotly.js';
@@ -33,9 +33,9 @@ export default function BirdsEyePlot({
             // check data exist
             if (bar.label && bar.value != null) {
               return {
-                x: bar.value,
-                y: bar.label,
-                name: bar.name, // legend name
+                x: [bar.value],
+                y: [''],
+                name: bar.label, // legend name
                 orientation: 'h',
                 type: 'bar',
                 marker: {
@@ -64,7 +64,6 @@ export default function BirdsEyePlot({
                   orientation: 'h',
                   showlegend: false,
                   marker: {
-                    opacity: 0,
                     color: 'black',
                   },
                 };
@@ -129,6 +128,7 @@ export default function BirdsEyePlot({
       tickfont: weHaveData ? {} : { color: 'transparent' },
       ticks: weHaveData ? 'inside' : undefined,
       showline: false, // data.bars.length > 0 || data.brackets.length > 0,
+      tickformat: ',',
     },
     yaxis: {
       automargin: weHaveData,
@@ -145,14 +145,20 @@ export default function BirdsEyePlot({
     },
     legend: {
       orientation: 'v',
-      x: -0.35,
-      y: -0.15,
+
+      // these x,y adjustments are likely dependent on the lengths of the bracket labels
+      // and so in future the positioning may have to be delegated to the calling component
+      // (so the { x, y } legend location would need to be added as a prop)
+      x: -0.33 - 0.01 * data.brackets.length,
+      y: 0.05 - 0.1 * data.brackets.length,
+
       bgcolor: 'transparent',
-      traceorder: 'normal',
+      traceorder: 'reversed',
     },
     barmode: 'overlay',
     shapes: plotlyShapes,
     hovermode: 'y unified',
+    hoverdistance: 1000,
   };
 
   return (
