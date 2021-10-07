@@ -2,7 +2,7 @@ import { CSSProperties, ReactNode, useMemo, useState } from 'react';
 import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { BirdsEyePlotData } from '../types/plots';
 import { PlotParams } from 'react-plotly.js';
-import { Layout, Shape } from 'plotly.js';
+import { Layout, Shape, PlotData } from 'plotly.js';
 
 // in this example, the main variable is 'country'
 export interface BirdsEyePlotProps extends PlotProps<BirdsEyePlotData> {
@@ -16,48 +16,65 @@ export interface BirdsEyePlotProps extends PlotProps<BirdsEyePlotData> {
 
 const EmptyBirdsEyePlotData: BirdsEyePlotData = { brackets: [], bars: [] };
 
-const defaultCountBoxStyle = {
-  background: 'transparent',
-  border: '1px solid #bfbfbf',
-  padding: '5px',
-  fontSize: '90%',
-  maxWidth: '25%',
-};
-
 /** A Plotly-based Barplot component. */
 export default function BirdsEyePlot({
   data = EmptyBirdsEyePlotData,
   dependentAxisLabel = '',
   bracketLineWidth = 2,
   bracketHeadSize = 0.15,
-  containerStyles,
   ...restProps
 }: BirdsEyePlotProps) {
-  const [focused, setFocused] = useState(false);
-
   // Transform `data.bars` into a Plot.ly friendly format.
   const plotlyFriendlyData: PlotParams['data'] = useMemo(
     () =>
-      data.bars.map((bar) => {
-        // check data exist
-        if (bar.label && bar.value) {
-          return {
-            x: bar.value,
-            y: bar.label,
-            name: bar.name, // legend name
-            orientation: 'h',
-            type: 'bar',
-            marker: {
-              opacity: 1,
-              ...(bar.color ? { color: bar.color } : {}),
-            },
-            showlegend: false,
-          };
-        } else {
-          return {};
-        }
-      }),
-    [data.bars]
+      data.bars
+        .map(
+          (bar): Partial<PlotData> => {
+            // check data exist
+            if (bar.label && bar.value != null) {
+              return {
+                x: bar.value,
+                y: bar.label,
+                name: bar.name, // legend name
+                orientation: 'h',
+                type: 'bar',
+                marker: {
+                  opacity: 1,
+                  ...(bar.color ? { color: bar.color } : {}),
+                },
+                showlegend: true,
+              };
+            } else {
+              return {};
+            }
+          }
+        )
+        .concat(
+          // make some invisible bars for the brackets
+          // so that we get mouseover functionality
+          data.brackets.map(
+            (bracket): Partial<PlotData> => {
+              if (bracket.value != null) {
+                return {
+                  x: [bracket.value],
+                  y: [''],
+                  type: 'scatter',
+                  mode: 'lines',
+                  name: bracket.label,
+                  orientation: 'h',
+                  showlegend: false,
+                  marker: {
+                    opacity: 0,
+                    color: 'black',
+                  },
+                };
+              } else {
+                return {};
+              }
+            }
+          )
+        ),
+    [data]
   );
 
   // now transform `data.brackets` into line drawings
@@ -100,23 +117,7 @@ export default function BirdsEyePlot({
     [data.brackets, bracketLineWidth, bracketHeadSize]
   );
 
-  const numCountBoxes = data.bars.length + data.brackets.length;
-  const fullCounts: ReactNode[] = useMemo(() => {
-    const bracketCounts = data.brackets.map(({ label, value }) =>
-      CountBox({ label, value, focused })
-    );
-    const barCounts = data.bars.map((bar) =>
-      CountBox({
-        label: bar.name,
-        value: bar.value[0] ?? 0,
-        color: bar.color,
-        focused,
-      })
-    );
-    return [...[...bracketCounts].reverse(), ...[...barCounts].reverse()];
-  }, [data, focused]);
-
-  const weHaveData = numCountBoxes > 0;
+  const weHaveData = data.brackets.length > 0 || data.bars.length > 0;
   const layout: Partial<Layout> = {
     xaxis: {
       automargin: weHaveData, // this avoids a console warning about too many auto-margin redraws that occur with empty data
@@ -142,58 +143,23 @@ export default function BirdsEyePlot({
       ),
       ticktext: data.brackets.map((bracket) => bracket.label),
     },
+    legend: {
+      orientation: 'v',
+      x: -0.35,
+      y: -0.15,
+      bgcolor: 'transparent',
+      traceorder: 'normal',
+    },
     barmode: 'overlay',
     shapes: plotlyShapes,
-    hovermode: 'closest',
+    hovermode: 'y unified',
   };
 
   return (
-    <div style={{ ...containerStyles }} onMouseLeave={() => setFocused(false)}>
-      <div style={{ cursor: 'pointer' }} onMouseEnter={() => setFocused(true)}>
-        <PlotlyPlot
-          data={plotlyFriendlyData}
-          layout={layout}
-          containerStyles={{ height: '100px' }}
-          {...restProps}
-        />
-      </div>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-around',
-          minHeight: '5em',
-        }}
-      >
-        {fullCounts.length
-          ? fullCounts
-          : [CountBox({ label: 'placeholder', value: 0, focused: false })]}
-      </div>
-    </div>
+    <PlotlyPlot data={plotlyFriendlyData} layout={layout} {...restProps} />
   );
 }
 
 function indexToY(index: number, bracketHeadSize: number) {
   return 0.5 + bracketHeadSize + (index + bracketHeadSize) / 2;
-}
-
-type CountBoxProps = {
-  label: string;
-  value: number;
-  focused: boolean;
-  color?: string;
-};
-
-function CountBox({ label, value, color, focused }: CountBoxProps) {
-  const countBoxStyle: CSSProperties = {
-    ...defaultCountBoxStyle,
-    ...(color ? { background: color } : {}),
-    visibility: focused ? 'visible' : 'hidden',
-  };
-
-  return (
-    <div style={countBoxStyle} key={label}>
-      <b>{label}:</b> {Number(value).toLocaleString()}
-    </div>
-  );
 }

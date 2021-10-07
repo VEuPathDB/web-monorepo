@@ -161,6 +161,7 @@ function PlotlyPlot<T>(
         pad: spacingOptions?.padding || 0, // axes don't join up if >0
       },
       legend: {
+        ...plotlyProps.layout.legend,
         title: {
           // add ellipsis for legendTitle
           text:

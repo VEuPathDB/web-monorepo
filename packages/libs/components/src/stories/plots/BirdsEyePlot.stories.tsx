@@ -14,25 +14,25 @@ const gray = '#aaaaaa';
 const dataSet: BirdsEyePlotData = {
   brackets: [
     {
-      value: 77,
-      label: 'Has data for axis variables',
+      value: 120379,
+      label: 'Data for axes',
     },
     {
-      value: 55,
-      label: 'Has data for axis & stratification variables',
+      value: 90239,
+      label: 'Data for axes & strata',
     },
   ],
   bars: [
     // total comes first, or the subset is hidden
     {
       name: 'Total',
-      value: [200],
+      value: [258737],
       label: [''],
       color: gray,
     },
     {
       name: 'Subset',
-      value: [123],
+      value: [208476],
       label: [''],
       color: red,
     },
@@ -42,7 +42,8 @@ const dataSet: BirdsEyePlotData = {
 // We don't need to set the height here
 // (the BirdsEyePlot component hardcodes it for you)
 const containerStyles: CSSProperties = {
-  width: '500px',
+  width: '400px',
+  height: '100px',
   border: '2px solid yellow', // obviously just for demo purposes
 };
 
@@ -62,6 +63,7 @@ Basic.args = {
   dependentAxisLabel: 'Mermaids',
   containerStyles,
   spacingOptions,
+  interactive: true,
 };
 
 export const EmptyLoading = Template.bind({});
