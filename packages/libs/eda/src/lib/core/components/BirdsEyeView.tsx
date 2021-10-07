@@ -81,7 +81,12 @@ export function BirdsEyeView(props: Props) {
 
   return (
     <div>
-      <div style={{ marginLeft: '100px' }}>
+      <div
+        style={{
+          marginLeft: '100px',
+          visibility: birdsEyeData ? 'visible' : 'hidden',
+        }}
+      >
         <HelpIcon
           tooltipPosition={{
             my: 'bottom left',
