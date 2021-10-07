@@ -64,7 +64,7 @@ export function VariableCoverageTable({
         <tbody>
           <tr>
             <th></th>
-            <th>Label</th>
+            <th>Variable</th>
             <th className="numeric">Data</th>
             <th className="numeric">No data</th>
           </tr>
