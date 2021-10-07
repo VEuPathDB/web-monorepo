@@ -1,10 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import Path from 'path';
 
 import { RestrictedPage } from '@veupathdb/web-common/lib/App/DataRestriction/RestrictedPage';
 import { useApprovalStatus } from '@veupathdb/web-common/lib/hooks/dataRestriction';
+import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 import { AnalysisClient } from '../core';
 
@@ -25,6 +26,12 @@ export function ImportAnalysis({
 }: Props) {
   const approvalStatus = useApprovalStatus(studyId, 'analysis');
   const history = useHistory();
+  const [error, setError] = useState<string | undefined>();
+
+  useSetDocumentTitle(
+    error == null ? 'Importing Analysis' : 'Import Unsuccessful'
+  );
+
   useEffect(() => {
     if (approvalStatus !== 'approved') {
       return;
@@ -40,18 +47,22 @@ export function ImportAnalysis({
               analysisClient.updateAnalysis(analysisCopyId, { description })
             ).map((_) => analysisCopyId)
       )
-      .run((analysisCopyId) => {
-        const newLocation = {
-          ...history.location,
-          pathname: Path.join(
-            history.location.pathname,
-            '../../../..',
-            studyId,
-            analysisCopyId
-          ),
-        };
-        history.replace(newLocation);
-      });
+      .run(
+        (analysisCopyId) => {
+          const newLocation = {
+            ...history.location,
+            pathname: Path.join(
+              history.location.pathname,
+              '../../../..',
+              studyId,
+              analysisCopyId
+            ),
+          };
+          history.replace(newLocation);
+        },
+        (error) =>
+          setError(error instanceof Error ? error.message : String(error))
+      );
   }, [
     analysisClient,
     history,
@@ -64,7 +75,8 @@ export function ImportAnalysis({
 
   return (
     <RestrictedPage approvalStatus={approvalStatus}>
-      <div style={{ fontSize: '3em' }}>Copying analysis...</div>
+      <h1>{error == null ? 'Importing Analysis...' : 'Import Unsuccessful'}</h1>
+      {error && <pre>{error}</pre>}
     </RestrictedPage>
   );
 }
