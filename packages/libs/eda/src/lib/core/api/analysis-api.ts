@@ -56,16 +56,22 @@ export class AnalysisClient extends FetchClient {
       const user = await this.user$;
 
       if (user.isGuest) {
+        // If the user is a guest, persist their id
         sessionStorage.setItem('eda::guestUserId', String(user.id));
       } else {
+        // If the user is registered, try to read and delete
+        // a previously-persisted guest user's id
         const guestUserIdStr = sessionStorage.getItem('eda::guestUserId') ?? '';
         sessionStorage.removeItem('eda::guestUserId');
         const guestUserId = parseInt(guestUserIdStr, 10);
 
+        // If said guest user id is valid, initialize and retain a promise
+        // which performs a transfer of that guest user's analyses to the logged-in user
         if (!Number.isNaN(guestUserId)) {
           this.guestAnalysesTransfer$ = this.transferGuestAnalyses(guestUserId);
         }
 
+        // If a "guest analyses transfer" has been initiated, await its completion
         if (this.guestAnalysesTransfer$ != null) {
           try {
             await this.guestAnalysesTransfer$;
