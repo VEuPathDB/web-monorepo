@@ -65,8 +65,10 @@ import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { defaultDependentAxisRange } from '../../../utils/default-dependent-axis-range';
 import { useRouteMatch } from 'react-router';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
+import PluginError from '../PluginError';
 
-const MAXALLOWEDDATAPOINTS = 100000;
+const MAXALLOWEDDATAPOINTS = 100;
+//100000;
 
 const plotDimensions = {
   width: 750,
@@ -286,6 +288,7 @@ function ScatterplotViz(props: VisualizationProps) {
       overlayVariable,
       computation.descriptor.type,
       visualization.descriptor.type,
+      MAXALLOWEDDATAPOINTS,
     ])
   );
 
@@ -365,22 +368,12 @@ function ScatterplotViz(props: VisualizationProps) {
         />
       </div>
 
-      {data.error && (
-        <div
-          style={{
-            fontSize: '1.2em',
-            padding: '1em',
-            background: 'rgb(255, 233, 233) none repeat scroll 0% 0%',
-            borderRadius: '.5em',
-            margin: '.5em 0',
-            color: '#333',
-            border: '1px solid #d9cdcd',
-            display: 'flex',
-          }}
-        >
-          <i className="fa fa-warning" style={{ marginRight: '1ex' }}></i>{' '}
-          {data.error instanceof Error ? (
-            data.error.message.match(/400.+too large/is) ? (
+      <PluginError
+        error={data.error}
+        customCases={[
+          {
+            pattern: /too large/i,
+            message: (
               <span>
                 Your plot currently has too many points (&gt;
                 {MAXALLOWEDDATAPOINTS.toLocaleString()}) to display in a
@@ -391,14 +384,10 @@ function ScatterplotViz(props: VisualizationProps) {
                 tab to reduce the number, or consider using a summary plot such
                 as histogram or boxplot.
               </span>
-            ) : (
-              data.error.message
-            )
-          ) : (
-            String(data.error)
-          )}
-        </div>
-      )}
+            ),
+          },
+        ]}
+      />
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
       <div
         style={{
