@@ -67,7 +67,11 @@ export class AnalysisClient extends FetchClient {
         }
 
         if (this.guestAnalysesTransfer$ != null) {
-          await this.guestAnalysesTransfer$;
+          try {
+            await this.guestAnalysesTransfer$;
+          } catch (e) {
+            this.wdkService.submitErrorIfNot500(e);
+          }
         }
       }
     }
