@@ -994,10 +994,10 @@
     react-resizable "^3.0.4"
     uuid "^8.3.2"
 
-"@veupathdb/eda@^0.12.8":
-  version "0.12.8"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.12.8.tgz#0b708eb28182ef12773f32282c5f02f34a13fe06"
-  integrity sha512-m2FkpatP/z0pEg7QP552aGlwjw1iCApku0rpfFUoqHxTX375AVoGKdnibddvGsOZln7X8e8c5kcJl3viDN8CUA==
+"@veupathdb/eda@^0.12.13":
+  version "0.12.13"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.12.13.tgz#d1068848dbd9023c6b04c54160fd4131bfb0ab2b"
+  integrity sha512-L0ZRM8lgPO2jwSNndXPRScgiG2r+sJYbvpvCDGAHpKj0HPISuVlHzuVA4p9zi346/R3Z7xCBmXo94Fgtrgv1ow==
   dependencies:
     "@material-ui/core" "^4.11.3"
     "@material-ui/lab" "^4.0.0-alpha.58"
