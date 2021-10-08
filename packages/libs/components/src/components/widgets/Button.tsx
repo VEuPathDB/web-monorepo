@@ -53,6 +53,7 @@ export default function Button({
           style={{
             width: '100%',
             color: textColor ? textColor : undefined,
+            textTransform: 'none',
           }}
           color="primary"
           onClick={onClick}

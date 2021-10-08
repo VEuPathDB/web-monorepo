@@ -86,7 +86,6 @@ function BaseInput({
       'WARNING: NumberRangeInput or DateRangeInput will ignore `required` prop because validator was provided.'
     );
 
-  const [focused, setFocused] = useState(false);
   const [localRange, setLocalRange] = useState<
     NumberRange | DateRange | undefined
   >(range);
@@ -160,16 +159,9 @@ function BaseInput({
   const { min, max } = localRange ?? {};
 
   return (
-    <div
-      style={{ ...containerStyles }}
-      onMouseOver={() => setFocused(true)}
-      onMouseOut={() => setFocused(false)}
-    >
+    <div style={{ ...containerStyles }}>
       {label && (
-        <Typography
-          variant="button"
-          style={{ color: focused ? DARK_GRAY : MEDIUM_GRAY }}
-        >
+        <Typography variant="button" style={{ color: MEDIUM_GRAY }}>
           {label}
         </Typography>
       )}
@@ -206,10 +198,7 @@ function BaseInput({
         <div style={{ display: 'flex', flexDirection: 'row' }}>
           {/* change margin */}
           <div style={{ margin: '3px 15px 15px 15px' }}>
-            <Typography
-              variant="button"
-              style={{ color: focused ? DARK_GRAY : MEDIUM_GRAY }}
-            >
+            <Typography variant="button" style={{ color: MEDIUM_GRAY }}>
               to
             </Typography>
           </div>
