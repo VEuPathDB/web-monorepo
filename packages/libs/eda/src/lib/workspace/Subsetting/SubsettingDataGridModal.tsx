@@ -157,6 +157,21 @@ export default function SubsettingDataGridModal({
     ]
   );
 
+  // Function to download selected data.
+  const downloadData = useCallback(() => {
+    subsettingClient.tabularDataDownload(studyMetadata.id, currentEntityID, {
+      filters: [],
+      outputVariableIds: selectedVariableDescriptors.map(
+        (descriptor) => descriptor.variableId
+      ),
+    });
+  }, [
+    subsettingClient,
+    selectedVariableDescriptors,
+    currentEntityID,
+    studyMetadata.id,
+  ]);
+
   /** Handler for when a user selects/de-selectors variables. */
   const handleSelectedVariablesChange = (
     variableDescriptors: Array<VariableDescriptor>
@@ -343,7 +358,7 @@ export default function SubsettingDataGridModal({
               icon="download"
               stylePreset="mesa"
               styleOverrides={{ container: { marginRight: 10 } }}
-              onPress={() => console.log('Download Stuff')}
+              onPress={downloadData}
             />
             <SwissArmyButton
               text="Select Variables"

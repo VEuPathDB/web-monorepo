@@ -1,10 +1,13 @@
+import { array, number, type } from 'io-ts';
+import { memoize } from 'lodash';
+import { saveAs } from 'file-saver';
+
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import {
   createJsonRequest,
   FetchClient,
 } from '@veupathdb/web-common/lib/util/api';
-import { array, number, type } from 'io-ts';
-import { memoize } from 'lodash';
+
 import { Filter } from '../../types/filter';
 import { StudyMetadata, StudyOverview } from '../../types/study';
 import { ioTransformer } from '../ioTransformer';
@@ -76,29 +79,6 @@ export default class SubsettingClient extends FetchClient {
     );
   }
 
-  /**
-   * 
-   * @param studyId fetch("https://localhost:3000/eda-subsetting-service/studies/PRISM0002-1/entities/EUPATH_0000096/tabular", {
-  "headers": {
-    "accept": "application/json",
-    "accept-language": "en-US,en;q=0.9",
-    "cache-control": "no-cache",
-    "content-type": "application/json",
-    "pragma": "no-cache",
-    "sec-fetch-dest": "empty",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-site": "same-origin",
-    "sec-gpc": "1"
-  },
-  "referrer": "https://localhost:3000/eda/DS_51b40fe2e2/2/variables/EUPATH_0000096/EUPATH_0000151",
-  "referrerPolicy": "strict-origin-when-cross-origin",
-  "body": "{\"filters\":[],\"outputVariableIds\":[\"EUPATH_0000151\"]}",
-  "method": "POST",
-  "mode": "cors",
-  "credentials": "include"
-});
-   */
-
   getTabularData(
     studyId: string,
     entityId: string,
@@ -117,22 +97,32 @@ export default class SubsettingClient extends FetchClient {
     );
   }
 
-  // getTabularDataDownload(
-  //   studyId: string,
-  //   entityId: string,
-  //   params: TabularDataRequestParams
-  // ) {
-  //   return this.fetch(
-  //     createJsonRequest({
-  //       method: 'POST',
-  //       path: `/studies/${studyId}/entities/${entityId}/tabular`,
-  //       body: params,
-  //       headers: {'text/tab-separated-values'}
-  //       },
-  //       transformResponse: ioTransformer(TabularDataResponse),
-  //     })
-  //   );
-  // }
+  /**
+   * Method to download tabular data. Note that this using native `fetch` instead
+   * of the customized fetch call in `DataClient` because there would need to
+   * be some underlying changes that would need to be made to it.
+   */
+  tabularDataDownload(
+    studyId: string,
+    entityId: string,
+    params: TabularDataRequestParams
+  ): void {
+    fetch(
+      `/eda-subsetting-service/studies/${studyId}/entities/${entityId}/tabular`,
+      {
+        ...this.init,
+        method: 'POST',
+        body: JSON.stringify(params),
+        headers: {
+          accept: 'text/tab-separated-values',
+          'content-type': 'application/json',
+          ...this.init.headers,
+        },
+      }
+    )
+      .then((response) => response.blob())
+      .then((blob) => saveAs(blob, 'dataset.tsv'));
+  }
 }
 
 // !!MUTATION!! order variables in-place
