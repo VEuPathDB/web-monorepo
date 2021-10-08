@@ -8,10 +8,11 @@ import SwissArmyButton from '@veupathdb/core-components/dist/components/buttons/
 import { AnalysisState } from '../../core/hooks/analysis';
 import {
   StudyEntity,
-  TableDataResponse,
-  useDataClient,
+  TabularDataResponse,
   useStudyMetadata,
+  useSubsettingClient,
 } from '../../core';
+
 import MultiSelectVariableTree from '../../core/components/variableTrees/MultiSelectVariableTree';
 import { VariableDescriptor } from '../../core/types/variable';
 import { useFlattenedFields } from '../../core/components/variableTrees/hooks';
@@ -51,7 +52,7 @@ export default function SubsettingDataGridModal({
 }: SubsettingDataGridProps) {
   //   Various Custom Hooks
   const studyMetadata = useStudyMetadata();
-  const dataClient = useDataClient();
+  const subsettingClient = useSubsettingClient();
   const flattenedFields = useFlattenedFields(entities, false);
 
   const [currentEntity, setCurrentEntity] = useState<StudyEntity | undefined>(
@@ -65,11 +66,12 @@ export default function SubsettingDataGridModal({
   const [apiError, setApiError] = useState<APIError | null>(null);
 
   // Internal storage of currently loaded data from API.
-  const [gridData, setGridData] = useState<TableDataResponse | null>(null);
+  const [gridData, setGridData] = useState<TabularDataResponse | null>(null);
   const [gridColumns, gridRows] = useProcessedGridData(
     gridData,
     flattenedFields,
-    entities
+    entities,
+    currentEntityID
   );
 
   // The current record pagecount.
@@ -125,14 +127,14 @@ export default function SubsettingDataGridModal({
     ({ pageSize, pageIndex }) => {
       setDataLoading(true);
 
-      dataClient
-        .getTableData('pass', {
-          studyId: studyMetadata.id,
-          config: {
-            outputEntityId: currentEntityID,
-            outputVariable: selectedVariableDescriptors,
-            // @ts-ignore
-            pagingConfig: { numRows: pageSize, offset: pageSize * pageIndex },
+      subsettingClient
+        .getTabularData(studyMetadata.id, currentEntityID, {
+          filters: [],
+          outputVariableIds: selectedVariableDescriptors.map(
+            (descriptor) => descriptor.variableId
+          ),
+          reportConfig: {
+            paging: { numRows: pageSize, offset: pageSize * pageIndex },
           },
         })
         .then((data) => {
@@ -149,9 +151,9 @@ export default function SubsettingDataGridModal({
     [
       currentEntityID,
       currentEntityRecordCount,
-      dataClient,
       selectedVariableDescriptors,
       studyMetadata.id,
+      subsettingClient,
     ]
   );
 

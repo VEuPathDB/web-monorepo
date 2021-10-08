@@ -1,16 +1,17 @@
 import { useMemo } from 'react';
 import { Field } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 
-import { StudyEntity, TableDataResponse } from '../../core';
+import { StudyEntity, TabularDataResponse } from '../../core';
 
 /**
  * Process and transform a `TableDataResponse` into the format
  * needed for the DataGrid component.
  */
 export function useProcessedGridData(
-  gridData: TableDataResponse | null,
+  gridData: TabularDataResponse | null,
   flattenedFields: Array<Field>,
-  entities: Array<StudyEntity>
+  entities: Array<StudyEntity>,
+  currentEntityID: string
 ): [
   Array<{
     Header: string;
@@ -23,7 +24,7 @@ export function useProcessedGridData(
     if (!gridData) return [[], []];
 
     // Step 1: Construct the transformed gridColumns.
-    const gridColumns = gridData.columns.map((column) => {
+    const gridColumns = gridData[0].map((columnID) => {
       /**
        * While we have the raw data for the columns, we need to determine
        * the appropriate display name for each column. This is more complicated
@@ -33,14 +34,12 @@ export function useProcessedGridData(
 
       // Search for it as a variable.
       const variable = flattenedFields.find(
-        (field) => field.term === `${column.entityId}/${column.variableId}`
+        (field) => field.term === `${currentEntityID}/${columnID}`
       );
 
-      // Search for it as a variable.
+      // Search for it as an entity.
       const entity = entities.find(
-        (entity) =>
-          entity.id === column.entityId &&
-          entity.idColumnName === column.variableId
+        (entity) => entity.idColumnName === columnID
       );
 
       if (variable) {
@@ -51,17 +50,17 @@ export function useProcessedGridData(
       } else if (entity) {
         return {
           Header: entity.displayName,
-          accessor: `${column.entityId}/${column.variableId}`,
+          accessor: `${entity.id}/${columnID}`,
         };
       } else {
         throw Error(
-          `A valid entity or variable definition could not be found for this column: ${column.entityId}/${column.variableId}`
+          `A valid entity or variable definition could not be found for this column: ${columnID}`
         );
       }
     });
 
     // Step 2: Construct the transformed gridRows.
-    const gridRows = gridData.rows.map((row) => {
+    const gridRows = gridData.slice(1).map((row) => {
       return row.reduce((previousValue, currentValue, index) => {
         return {
           ...previousValue,
@@ -70,5 +69,5 @@ export function useProcessedGridData(
       }, {});
     });
     return [gridColumns, gridRows];
-  }, [gridData, flattenedFields, entities]);
+  }, [gridData, flattenedFields, entities, currentEntityID]);
 }

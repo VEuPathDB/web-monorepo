@@ -57,3 +57,20 @@ export const DistributionResponse = type({
     }),
   ]),
 });
+
+////////////////
+// Table Data //
+////////////////
+export interface TabularDataRequestParams {
+  filters: Array<Filter>;
+  outputVariableIds: Array<string>;
+  reportConfig?: {
+    paging: {
+      numRows: number;
+      offset: number;
+    };
+  };
+}
+
+export type TabularDataResponse = TypeOf<typeof TabularDataResponse>;
+export const TabularDataResponse = array(array(string));
