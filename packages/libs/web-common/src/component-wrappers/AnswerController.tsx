@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { memoize } from 'lodash';
 
 import { IconAlt } from '@veupathdb/wdk-client/lib/Components';
+import { Icon } from '@material-ui/core';
 import {
   DEFAULT_PAGINATION,
   DEFAULT_SORTING,
@@ -24,6 +25,7 @@ import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { preorderSeq } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { isQualifying, getId } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
+import { useEda } from 'ebrc-client/config';
 
 const DOWNLOAD_REPORTER_NAME = 'attributesTabular';
 const DOWNLOAD_FORMAT = 'csv';
@@ -135,8 +137,8 @@ function useAdditionalActions(props: AnswerControllerProps) {
             key: 'download',
             display: (
               <button className="btn" onClick={onDownloadButtonClick}>
-                <IconAlt fa="download" />
-                Download
+                {useEda ? <i className="ebrc-icon-download" /> : <IconAlt fa="download" />}
+               Download
               </button>
             )
           }
