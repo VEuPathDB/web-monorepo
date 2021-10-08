@@ -14,26 +14,24 @@ const gray = '#aaaaaa';
 const dataSet: BirdsEyePlotData = {
   brackets: [
     {
-      value: 77,
-      label: 'Has data for axis variables',
+      label: 'Data for axes',
+      value: 12031,
     },
     {
-      value: 55,
-      label: 'Has data for axis & stratification variables',
+      label: 'Data for axes & strata',
+      value: 9023,
     },
   ],
   bars: [
     // total comes first, or the subset is hidden
     {
-      name: 'Total',
-      value: [200],
-      label: [''],
+      label: 'Total',
+      value: 25873,
       color: gray,
     },
     {
-      name: 'Subset',
-      value: [123],
-      label: [''],
+      label: 'Subset',
+      value: 20847,
       color: red,
     },
   ],
@@ -42,7 +40,8 @@ const dataSet: BirdsEyePlotData = {
 // We don't need to set the height here
 // (the BirdsEyePlot component hardcodes it for you)
 const containerStyles: CSSProperties = {
-  width: '500px',
+  width: '400px',
+  height: '110px',
   border: '2px solid yellow', // obviously just for demo purposes
 };
 
@@ -62,6 +61,73 @@ Basic.args = {
   dependentAxisLabel: 'Mermaids',
   containerStyles,
   spacingOptions,
+  interactive: true,
+};
+
+const dataSetBig: BirdsEyePlotData = {
+  brackets: [
+    {
+      label: 'Data for axes',
+      value: 1203792,
+    },
+    {
+      label: 'Data for axes & strata',
+      value: 902393,
+    },
+  ],
+  bars: [
+    // total comes first, or the subset is hidden
+    {
+      label: 'Total',
+      value: 2587374,
+      color: gray,
+    },
+    {
+      label: 'Subset',
+      value: 2084765,
+      color: red,
+    },
+  ],
+};
+
+export const BigNumbers = Template.bind({});
+BigNumbers.args = {
+  data: dataSetBig,
+  dependentAxisLabel: 'Ants',
+  containerStyles,
+  spacingOptions,
+  interactive: true,
+};
+
+const dataSetOneBracket: BirdsEyePlotData = {
+  brackets: [
+    {
+      label: 'Data for axes',
+      value: 12031,
+    },
+  ],
+  bars: [
+    // total comes first, or the subset is hidden
+    {
+      label: 'Total',
+      value: 25873,
+      color: gray,
+    },
+    {
+      label: 'Subset',
+      value: 20847,
+      color: red,
+    },
+  ],
+};
+
+export const OneBracket = Template.bind({});
+OneBracket.args = {
+  data: dataSetOneBracket,
+  dependentAxisLabel: 'Earlobes',
+  containerStyles,
+  spacingOptions,
+  interactive: true,
 };
 
 export const EmptyLoading = Template.bind({});

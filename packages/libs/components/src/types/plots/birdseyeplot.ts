@@ -5,5 +5,9 @@ export type BirdsEyePlotData = {
     value: number;
     label: string;
   }[];
-  bars: BarplotData['series'];
+  bars: {
+    value: number;
+    label: string;
+    color: string;
+  }[];
 };
