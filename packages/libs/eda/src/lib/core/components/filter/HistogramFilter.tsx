@@ -614,7 +614,7 @@ function HistogramPlotWithControls({
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <LabelledGroup label="Y-axis" containerStyles={{ flexBasis: '50%' }}>
           <Switch
-            label="Log Scale:"
+            label="Log scale"
             state={uiState.dependentAxisLogScale}
             onStateChange={handleDependentAxisLogScale}
             containerStyles={{
@@ -624,7 +624,7 @@ function HistogramPlotWithControls({
           />
 
           <NumberRangeInput
-            label="Range:"
+            label="Range"
             range={uiState.dependentAxisRange}
             onRangeChange={(newRange?: NumberOrDateRange) => {
               handleDependentAxisRangeChange(newRange as NumberRange);
@@ -651,7 +651,7 @@ function HistogramPlotWithControls({
             onClick={handleDependentAxisSettingsReset}
             containerStyles={{
               paddingTop: '1.0em',
-              width: '60%',
+              width: '40%',
               float: 'right',
             }}
           />
@@ -674,7 +674,7 @@ function HistogramPlotWithControls({
           />
 
           <AxisRangeControl
-            label="Range:"
+            label="Range"
             range={uiState.independentAxisRange}
             onRangeChange={handleIndependentAxisRangeChange}
             valueType={data?.valueType}
@@ -701,7 +701,7 @@ function HistogramPlotWithControls({
             onClick={handleIndependentAxisSettingsReset}
             containerStyles={{
               paddingTop: '1.0em',
-              width: '60%',
+              width: '40%',
               float: 'right',
             }}
           />

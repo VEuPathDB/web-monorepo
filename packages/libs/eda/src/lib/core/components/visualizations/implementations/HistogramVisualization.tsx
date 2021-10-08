@@ -429,6 +429,8 @@ function HistogramPlotWithControls({
       .then(updateThumbnailRef.current);
   }, [data, histogramProps.dependentAxisLogScale]);
 
+  const widgetHeight = '4em';
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
@@ -480,9 +482,12 @@ function HistogramPlotWithControls({
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <LabelledGroup label="Y-axis">
           <Switch
-            label="Log Scale:"
+            label="Log scale"
             state={histogramProps.dependentAxisLogScale}
             onStateChange={onDependentAxisLogScaleChange}
+            containerStyles={{
+              minHeight: widgetHeight,
+            }}
           />
           <RadioButtonGroup
             selectedOption={valueSpec}
@@ -513,6 +518,9 @@ function HistogramPlotWithControls({
                 ? ['day', 'week', 'month', 'year']
                 : undefined
             }
+            containerStyles={{
+              minHeight: widgetHeight,
+            }}
           />
         </LabelledGroup>
       </div>
