@@ -50,8 +50,11 @@ export default function BirdsEyePlot({
           }
         )
         .concat(
-          // make some invisible bars for the brackets
+          // make some invisible traces for the brackets
           // so that we get mouseover functionality
+          // (using scatter/lines to get the popup legend to show them as
+          // lines - I'm not sure how they ended up being invisible -
+          // maybe because a line needs more than one point?)
           data.brackets.map(
             (bracket): Partial<PlotData> => {
               if (bracket.value != null) {
