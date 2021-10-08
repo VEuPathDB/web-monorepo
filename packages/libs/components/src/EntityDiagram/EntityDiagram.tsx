@@ -331,7 +331,7 @@ export default function EntityDiagram({
   }
 
   return (
-    <div className={isExpanded ? '' : 'mini-diagram'}>
+    <div className={isExpanded ? 'expanded-diagram' : 'mini-diagram'}>
       <svg width={size.width} height={size.height}>
         <defs>
           <marker
