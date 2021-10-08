@@ -294,7 +294,11 @@ export function HistogramFilter(props: Props) {
   // Note use of `key` used with HistogramPlotWithControls. This is a little hack to force
   // the range to be reset if the filter is removed.
   return (
-    <div className="filter-param" style={{ position: 'relative' }}>
+    // set marginTop
+    <div
+      className="filter-param"
+      style={{ position: 'relative', marginTop: '2em' }}
+    >
       {data.error && <pre>{String(data.error)}</pre>}
       <div>
         {fgSummaryStats && (
@@ -574,6 +578,8 @@ function HistogramPlotWithControls({
       <Histogram
         {...histogramProps}
         data={data}
+        binStartType="inclusive"
+        binEndType="exclusive"
         interactive={true}
         selectedRange={selectedRange}
         opacity={opacity}

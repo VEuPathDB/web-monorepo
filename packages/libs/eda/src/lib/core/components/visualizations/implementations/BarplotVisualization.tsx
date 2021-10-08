@@ -179,6 +179,10 @@ function BarplotViz(props: VisualizationProps) {
     > => {
       if (variable == null) return undefined;
 
+      if (variable === overlayVariable)
+        throw new Error(
+          'The X and Overlay variables must not be the same. Please choose different variables for X and Overlay.'
+        );
       const params = getRequestParams(studyId, filters ?? [], vizConfig);
 
       const response = dataClient.getBarplot(

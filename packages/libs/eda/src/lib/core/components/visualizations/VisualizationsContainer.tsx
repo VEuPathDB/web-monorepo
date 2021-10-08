@@ -83,7 +83,7 @@ function ConfiguredVisualizations(props: Props) {
     <Grid>
       <Link replace to={`${url}/new`} className={cx('-NewVisualization')}>
         <i className="fa fa-plus"></i>
-        Select a visualization
+        New visualization
       </Link>
       {computation.visualizations
         .map((viz) => {
@@ -293,7 +293,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
             }
       )
     );
-  }, [filters]);
+  }, [filters, id]);
 
   const updateThumbnail = useCallback(
     (thumbnail: string) => {

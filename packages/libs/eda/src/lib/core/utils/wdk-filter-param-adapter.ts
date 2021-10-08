@@ -111,7 +111,8 @@ export function fromEdaFilter(filter: EdaFilter): WdkFilter {
             ),
             operation: filter.operation,
           }
-        : filter[filter.type],
+        : // numberSet
+          filter[filter.type],
     __entityId: filter.entityId,
   } as WdkFilter;
 }

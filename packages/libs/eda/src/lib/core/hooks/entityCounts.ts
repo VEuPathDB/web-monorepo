@@ -14,7 +14,10 @@ export function useEntityCounts(filters?: Filter[]) {
 
   // debounce the dependencies of the useCallback below
   const [counter, setCounter] = useState(0);
-  const debouncedSetCounter = useMemo(() => debounce(setCounter, 2000), []);
+  const debouncedSetCounter = useMemo(
+    () => debounce(setCounter, 2000, { leading: true, trailing: true }),
+    []
+  );
   useEffect(() => debouncedSetCounter.cancel, []);
   useEffect(() => {
     debouncedSetCounter((count) => count + 1);

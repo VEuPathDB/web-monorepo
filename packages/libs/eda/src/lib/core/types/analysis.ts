@@ -93,9 +93,11 @@ export const Analysis = t.intersection([
   }),
 ]);
 
+export const DEFAULT_ANALYSIS_NAME = 'Unnamed Analysis';
+
 export function makeNewAnalysis(studyId: string): NewAnalysis {
   return {
-    displayName: 'Unnamed Analysis',
+    displayName: DEFAULT_ANALYSIS_NAME,
     studyId,
     isPublic: false,
     studyVersion: '',
