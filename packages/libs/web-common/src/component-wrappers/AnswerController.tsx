@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import { memoize } from 'lodash';
 
 import { IconAlt } from '@veupathdb/wdk-client/lib/Components';
-import { Icon } from '@material-ui/core';
 import {
   DEFAULT_PAGINATION,
   DEFAULT_SORTING,
