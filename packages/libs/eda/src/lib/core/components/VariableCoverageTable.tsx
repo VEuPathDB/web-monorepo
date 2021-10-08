@@ -76,6 +76,7 @@ export function VariableCoverageTable({
                 <td>{row.display}</td>
                 <td>
                   {row.completeCount?.toLocaleString()}
+                  <br />
                   {row.completePercent != null && (
                     <span className="percentage">
                       {/* check number or string like '< 1', '> 99' */}
@@ -87,6 +88,7 @@ export function VariableCoverageTable({
                 </td>
                 <td>
                   {row.incompleteCount?.toLocaleString()}
+                  <br />
                   {row.incompletePercent != null && (
                     <span className="percentage">
                       {/* check number or string like '< 1', '> 99' */}
