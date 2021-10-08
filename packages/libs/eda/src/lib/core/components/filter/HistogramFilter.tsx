@@ -612,7 +612,7 @@ function HistogramPlotWithControls({
       />
 
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <LabelledGroup label="Y-axis" containerStyles={{}}>
+        <LabelledGroup label="Y-axis" containerStyles={{ flexBasis: '50%' }}>
           <Switch
             label="Log Scale:"
             state={uiState.dependentAxisLogScale}
@@ -657,7 +657,7 @@ function HistogramPlotWithControls({
           />
         </LabelledGroup>
 
-        <LabelledGroup label="X-axis" containerStyles={{}}>
+        <LabelledGroup label="X-axis" containerStyles={{ flexBasis: '50%' }}>
           <BinWidthControl
             binWidth={data?.binWidth}
             binWidthStep={data?.binWidthStep}
