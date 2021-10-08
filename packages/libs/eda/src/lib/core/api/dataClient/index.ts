@@ -153,3 +153,5 @@ export default class DataClient extends FetchClient {
     );
   }
 }
+
+export * from './types';
