@@ -14,6 +14,10 @@ import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
 import { VariableDescriptor } from '../core/types/variable';
 import { cx, findFirstVariable } from './Utils';
 import { makeStyles } from '@mui/styles';
+import {
+  EDAWorkspaceNewAnalysis,
+  EDAWorkspaceSavedAnalysis,
+} from './EDAWorkspace';
 
 const useStyles = makeStyles({
   root: {
@@ -22,11 +26,6 @@ const useStyles = makeStyles({
     },
   },
 });
-
-import {
-  EDAWorkspaceNewAnalysis,
-  EDAWorkspaceSavedAnalysis,
-} from './EDAWorkspace';
 
 interface Props {
   studyId: string;
