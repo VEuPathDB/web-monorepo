@@ -67,8 +67,7 @@ import { useRouteMatch } from 'react-router';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import PluginError from '../PluginError';
 
-const MAXALLOWEDDATAPOINTS = 100;
-//100000;
+const MAXALLOWEDDATAPOINTS = 100000;
 
 const plotDimensions = {
   width: 750,
@@ -371,9 +370,8 @@ function ScatterplotViz(props: VisualizationProps) {
       <PluginError
         error={data.error}
         customCases={[
-          {
-            pattern: /too large/i,
-            message: (
+          (errorString) =>
+            errorString.match(/400.+too large/is) ? (
               <span>
                 Your plot currently has too many points (&gt;
                 {MAXALLOWEDDATAPOINTS.toLocaleString()}) to display in a
@@ -384,8 +382,7 @@ function ScatterplotViz(props: VisualizationProps) {
                 tab to reduce the number, or consider using a summary plot such
                 as histogram or boxplot.
               </span>
-            ),
-          },
+            ) : undefined,
         ]}
       />
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />

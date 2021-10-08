@@ -10,6 +10,7 @@ import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
+import PluginError from '../PluginError';
 
 // need to set for Barplot
 import {
@@ -260,25 +261,7 @@ function BarplotViz(props: VisualizationProps) {
         />
       </div>
 
-      {data.error && (
-        <div
-          style={{
-            fontSize: '1.2em',
-            padding: '1em',
-            background: 'rgb(255, 233, 233) none repeat scroll 0% 0%',
-            borderRadius: '.5em',
-            margin: '.5em 0',
-            color: '#333',
-            border: '1px solid #d9cdcd',
-            display: 'flex',
-          }}
-        >
-          <i className="fa fa-warning" style={{ marginRight: '1ex' }}></i>{' '}
-          {data.error instanceof Error
-            ? data.error.message
-            : String(data.error)}
-        </div>
-      )}
+      <PluginError error={data.error} outputSize={outputSize} />
       <OutputEntityTitle entity={entity} outputSize={outputSize} />
       <div
         style={{
