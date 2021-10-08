@@ -1,5 +1,5 @@
 import { type, voidType, string, array } from 'io-ts';
-import { memoize, once, pick } from 'lodash';
+import { memoize, pick } from 'lodash';
 
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
@@ -35,24 +35,17 @@ export class AnalysisClient extends FetchClient {
       )
   );
 
-  private readonly user$: () => Promise<User>;
-  private readonly authKey$: () => Promise<string>;
-  private readonly userPath$: () => Promise<string>;
-  private readonly guestAnalysesTransfer$: (
-    guestUserId: number
-  ) => Promise<void>;
+  private readonly user$: Promise<User>;
+  private readonly authKey$: Promise<string>;
+  private readonly userPath$: Promise<string>;
+  private guestAnalysesTransfer$?: Promise<void>;
 
   constructor(options: FetchApiOptions, private wdkService: WdkService) {
     super(options);
 
-    this.user$ = once(() => this.wdkService.getCurrentUser());
-    this.authKey$ = once(() => this.user$().then(this.findUserRequestAuthKey));
-    this.userPath$ = once(() =>
-      this.user$().then((user) => this.findUserPath(user.id))
-    );
-    this.guestAnalysesTransfer$ = once((guestUserId) =>
-      this.transferGuestAnalyses(guestUserId)
-    );
+    this.user$ = this.wdkService.getCurrentUser();
+    this.authKey$ = this.user$.then(this.findUserRequestAuthKey);
+    this.userPath$ = this.user$.then((user) => this.findUserPath(user.id));
   }
 
   protected async fetch<T>(
@@ -60,7 +53,7 @@ export class AnalysisClient extends FetchClient {
     transferGuestAnalysesFirst = true
   ): Promise<T> {
     if (transferGuestAnalysesFirst) {
-      const user = await this.user$();
+      const user = await this.user$;
 
       if (user.isGuest) {
         sessionStorage.setItem('eda::guestUserId', String(user.id));
@@ -70,7 +63,11 @@ export class AnalysisClient extends FetchClient {
         const guestUserId = parseInt(guestUserIdStr, 10);
 
         if (!Number.isNaN(guestUserId)) {
-          await this.guestAnalysesTransfer$(guestUserId);
+          this.guestAnalysesTransfer$ = this.transferGuestAnalyses(guestUserId);
+        }
+
+        if (this.guestAnalysesTransfer$ != null) {
+          await this.guestAnalysesTransfer$;
         }
       }
     }
@@ -79,7 +76,7 @@ export class AnalysisClient extends FetchClient {
       ...apiRequest,
       headers: {
         ...(apiRequest.headers ?? {}),
-        'Auth-Key': await this.authKey$(),
+        'Auth-Key': await this.authKey$,
       },
     };
 
@@ -111,7 +108,7 @@ export class AnalysisClient extends FetchClient {
   async getPreferences(): Promise<AnalysisPreferences> {
     return this.fetch(
       createJsonRequest({
-        path: `${await this.userPath$()}/preferences`,
+        path: `${await this.userPath$}/preferences`,
         method: 'GET',
         transformResponse: ioTransformer(AnalysisPreferences),
       })
@@ -120,7 +117,7 @@ export class AnalysisClient extends FetchClient {
   async setPreferences(preferences: AnalysisPreferences): Promise<void> {
     return this.fetch(
       createJsonRequest({
-        path: `${await this.userPath$()}/preferences`,
+        path: `${await this.userPath$}/preferences`,
         method: 'PUT',
         body: preferences,
         transformResponse: ioTransformer(voidType),
@@ -130,7 +127,7 @@ export class AnalysisClient extends FetchClient {
   async getAnalyses(): Promise<AnalysisSummary[]> {
     return this.fetch(
       createJsonRequest({
-        path: `${await this.userPath$()}/analyses`,
+        path: `${await this.userPath$}/analyses`,
         method: 'GET',
         transformResponse: ioTransformer(array(AnalysisSummary)),
       })
@@ -139,7 +136,7 @@ export class AnalysisClient extends FetchClient {
   async getAnalysis(analysisId: string): Promise<Analysis> {
     return this.fetch(
       createJsonRequest({
-        path: `${await this.userPath$()}/analyses/${analysisId}`,
+        path: `${await this.userPath$}/analyses/${analysisId}`,
         method: 'GET',
         transformResponse: ioTransformer(Analysis),
       })
@@ -158,7 +155,7 @@ export class AnalysisClient extends FetchClient {
 
     return this.fetch(
       createJsonRequest({
-        path: `${await this.userPath$()}/analyses`,
+        path: `${await this.userPath$}/analyses`,
         method: 'POST',
         body,
         transformResponse: ioTransformer(type({ analysisId: string })),
@@ -178,7 +175,7 @@ export class AnalysisClient extends FetchClient {
 
     return this.fetch(
       createJsonRequest({
-        path: `${await this.userPath$()}/analyses/${analysisId}`,
+        path: `${await this.userPath$}/analyses/${analysisId}`,
         method: 'PATCH',
         body,
         transformResponse: ioTransformer(voidType),
@@ -187,7 +184,7 @@ export class AnalysisClient extends FetchClient {
   }
   async deleteAnalysis(analysisId: string): Promise<void> {
     return this.fetch({
-      path: `${await this.userPath$()}/analyses/${analysisId}`,
+      path: `${await this.userPath$}/analyses/${analysisId}`,
       method: 'DELETE',
       transformResponse: ioTransformer(voidType),
     });
@@ -195,7 +192,7 @@ export class AnalysisClient extends FetchClient {
   async deleteAnalyses(analysisIds: Iterable<string>): Promise<void> {
     return this.fetch(
       createJsonRequest({
-        path: `${await this.userPath$()}/analyses`,
+        path: `${await this.userPath$}/analyses`,
         method: 'PATCH',
         body: {
           analysisIdsToDelete: [...analysisIds],
@@ -211,7 +208,7 @@ export class AnalysisClient extends FetchClient {
     // Copy from self if no sourceUserId is provided
     const sourceUserPath =
       sourceUserId == null
-        ? await this.userPath$()
+        ? await this.userPath$
         : this.findUserPath(sourceUserId);
 
     return this.fetch({
@@ -233,7 +230,7 @@ export class AnalysisClient extends FetchClient {
   private async transferGuestAnalyses(guestUserId: number): Promise<void> {
     return this.fetch(
       createJsonRequest({
-        path: `${await this.userPath$()}/analyses`,
+        path: `${await this.userPath$}/analyses`,
         method: 'PATCH',
         body: {
           inheritOwnershipFrom: guestUserId,
