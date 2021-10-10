@@ -90,6 +90,10 @@ export default function headerMenuItems (state, props) {
             text: 'About ClinEpiDB',
             route: `${STATIC_ROUTE_PATH}/ClinEpiDB/about.html`
           },
+          { 
+            text: 'Features coming soon',
+            route: `${STATIC_ROUTE_PATH}/ClinEpiDB/newfeatures.html`
+          },
           {
             text: 'News',
             route: `${STATIC_ROUTE_PATH}/ClinEpiDB/news.html`

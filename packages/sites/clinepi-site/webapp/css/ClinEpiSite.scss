@@ -747,7 +747,8 @@ div#ce-static-content li .fa {
   margin-right: .5em;
 }
 
-div#ce-static-content h1#resources ~ div summary.h2 {
+div#ce-static-content h1#resources ~ div summary.h2,
+div#ce-static-content h1#external-resources ~ div summary.h2 {
   // size and weight like h2 in ebrc/client.scss 
   font-size: 1.8em;
   font-weight: 500;
