@@ -250,6 +250,7 @@ function MosaicViz(props: Props) {
   if (isTwoByTwo) {
     // const twoByTwoData = data.value as TwoByTwoData | undefined;
 
+    // Temporarily disabled---See https://github.com/VEuPathDB/web-eda/issues/463
     statsTable = (
       <div className="MosaicVisualization-StatsTable">
         {/* <table>
