@@ -275,6 +275,7 @@ export default function VariableList(props: VariableListProps) {
       starredVariablesLoading,
       starredVariableTermsSet,
       toggleStarredVariable,
+      customDisabledVariableMessage,
     ]
   );
 
