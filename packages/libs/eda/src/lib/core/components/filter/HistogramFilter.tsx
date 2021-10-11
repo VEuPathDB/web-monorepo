@@ -770,15 +770,15 @@ function formatStatValue(
 ) {
   return type === 'date'
     ? String(value).replace(/T.*$/, '')
-    : // need to check integer not to add additional decimal points
-    Number(value) % 1 === 0
-    ? changeNumberWithCommas(Number(value))
-    : changeNumberWithCommas(Number(value).toFixed(4));
-}
-
-// a function to add comma for a number > 9999
-function changeNumberWithCommas(x: number | string) {
-  return x.toString().replace(/\B(?<!\.\d*)(?=(\d{4})+(?!\d))/g, ',');
+    : Number(value) >= 1900 && Number(value) <= 2100
+    ? Number(value).toLocaleString(undefined, {
+        maximumFractionDigits: 4,
+        useGrouping: false,
+      })
+    : Number(value).toLocaleString(undefined, {
+        maximumFractionDigits: 4,
+        useGrouping: true,
+      });
 }
 
 function computeBinSlider(
