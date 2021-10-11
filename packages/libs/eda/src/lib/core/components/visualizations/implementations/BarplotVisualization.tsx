@@ -179,6 +179,10 @@ function BarplotViz(props: VisualizationProps) {
     > => {
       if (variable == null) return undefined;
 
+      if (variable === overlayVariable)
+        throw new Error(
+          'The X and Overlay variables must not be the same. Please choose different variables for X and Overlay.'
+        );
       const params = getRequestParams(studyId, filters ?? [], vizConfig);
 
       const response = dataClient.getBarplot(
@@ -316,7 +320,7 @@ function BarplotViz(props: VisualizationProps) {
             filters={filters}
             outputEntity={entity}
             stratificationIsActive={overlayVariable != null}
-            enableSpinner={vizConfig.xAxisVariable != null}
+            enableSpinner={vizConfig.xAxisVariable != null && !data.error}
           />
           <VariableCoverageTable
             completeCases={data.pending ? undefined : data.value?.completeCases}

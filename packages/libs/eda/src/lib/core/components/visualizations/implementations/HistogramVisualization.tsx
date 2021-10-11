@@ -26,12 +26,15 @@ import DataClient from '../../../api/DataClient';
 import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
-import { StudyEntity } from '../../../types/study';
+import {
+  DateVariable,
+  NumberVariable,
+  StudyEntity,
+} from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
 import { CoverageStatistics } from '../../../types/visualization';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { BirdsEyeView } from '../../BirdsEyeView';
-import { isHistogramVariable } from '../../filter/guards';
 import { HistogramVariable } from '../../filter/types';
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
@@ -212,8 +215,17 @@ function HistogramViz(props: VisualizationProps) {
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
         return undefined;
 
-      if (xAxisVariable && !isHistogramVariable(xAxisVariable))
+      if (
+        xAxisVariable &&
+        !NumberVariable.is(xAxisVariable) &&
+        !DateVariable.is(xAxisVariable)
+      )
         return undefined;
+
+      if (xAxisVariable === overlayVariable)
+        throw new Error(
+          'The X and Overlay variables must not be the same. Please choose different variables for X and Overlay.'
+        );
 
       const params = getRequestParams(
         studyId,
@@ -317,6 +329,7 @@ function HistogramViz(props: VisualizationProps) {
       )}
       <HistogramPlotWithControls
         data={data.value && !data.pending ? data.value : undefined}
+        error={data.error}
         onBinWidthChange={onBinWidthChange}
         dependentAxisLogScale={vizConfig.dependentAxisLogScale}
         onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
@@ -372,10 +385,12 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   onValueSpecChange: (newValueSpec: ValueSpec) => void;
   showMissingness: boolean;
   updateThumbnail: (src: string) => void;
+  error: unknown;
 } & Partial<CoverageStatistics>;
 
 function HistogramPlotWithControls({
   data,
+  error,
   onBinWidthChange,
   onDependentAxisLogScaleChange,
   filters,
@@ -440,7 +455,7 @@ function HistogramPlotWithControls({
             filters={filters}
             outputEntity={outputEntity}
             stratificationIsActive={overlayVariable != null}
-            enableSpinner={independentAxisVariable != null}
+            enableSpinner={independentAxisVariable != null && !error}
           />
           <VariableCoverageTable
             completeCases={completeCases}

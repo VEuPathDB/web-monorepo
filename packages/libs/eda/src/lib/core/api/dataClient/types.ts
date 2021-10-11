@@ -202,6 +202,7 @@ export interface ScatterplotRequestParams {
     yAxisVariable: VariableDescriptor;
     overlayVariable?: VariableDescriptor;
     showMissingness?: 'TRUE' | 'FALSE';
+    maxAllowedDataPoints?: number;
   };
 }
 

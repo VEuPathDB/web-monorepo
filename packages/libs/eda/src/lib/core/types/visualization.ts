@@ -12,7 +12,9 @@ import {
   record,
 } from 'io-ts';
 import { VariableDataShape, VariableType } from './study';
-import { CompleteCasesTable } from '../api/DataClient/types';
+
+import { CompleteCasesTable } from '../api/dataClient';
+import { Filter } from './filter';
 
 /**
  * Metadata for the visualization object stored in user's analysis
@@ -25,6 +27,8 @@ export const VisualizationDescriptor = intersection([
   }),
   partial({
     thumbnail: string,
+    // new props to store filters at fullscreen mode
+    currentPlotFilters: array(Filter),
   }),
 ]);
 

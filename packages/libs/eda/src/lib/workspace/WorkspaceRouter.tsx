@@ -10,7 +10,9 @@ import SubsettingClient from '../core/api/SubsettingClient';
 import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
 import { AllAnalyses } from './AllAnalyses';
 import { EDAAnalysisList } from './EDAAnalysisList';
+import { ImportAnalysis } from './ImportAnalysis';
 import { LatestAnalysis } from './LatestAnalysis';
+import { PublicAnalysesRoute } from './PublicAnalysesRoute';
 import { StudyList } from './StudyList';
 import { WorkspaceContainer } from './WorkspaceContainer';
 
@@ -18,6 +20,7 @@ type Props = {
   subsettingServiceUrl: string;
   dataServiceUrl: string;
   userServiceUrl: string;
+  exampleAnalysesAuthor?: number;
 };
 
 /**
@@ -27,6 +30,7 @@ export function WorkspaceRouter({
   subsettingServiceUrl,
   dataServiceUrl,
   userServiceUrl,
+  exampleAnalysesAuthor,
 }: Props) {
   const { path, url } = useRouteMatch();
   const subsettingClient = SubsettingClient.getClient(subsettingServiceUrl);
@@ -41,6 +45,7 @@ export function WorkspaceRouter({
           <AllAnalyses
             analysisClient={analysisClient}
             subsettingClient={subsettingClient}
+            exampleAnalysesAuthor={exampleAnalysesAuthor}
           />
         )}
       />
@@ -60,6 +65,15 @@ export function WorkspaceRouter({
           <StudyList
             baseUrl={url}
             subsettingServiceUrl={subsettingServiceUrl}
+          />
+        )}
+      />
+      <Route
+        path={`${path}/public`}
+        render={() => (
+          <PublicAnalysesRoute
+            analysisClient={analysisClient}
+            exampleAnalysesAuthor={exampleAnalysesAuthor}
           />
         )}
       />
@@ -95,6 +109,29 @@ export function WorkspaceRouter({
             analysisClient={analysisClient}
           />
         )}
+      />
+      <Route
+        exact
+        path={`${path}/:studyId/:analysisId/import/:ownerUserId`}
+        render={(
+          props: RouteComponentProps<{
+            studyId: string;
+            analysisId: string;
+            ownerUserId: string;
+          }>
+        ) => {
+          const descriptionQuery = new URLSearchParams(
+            props.location.search
+          ).get('description');
+
+          return (
+            <ImportAnalysis
+              {...props.match.params}
+              analysisClient={analysisClient}
+              description={descriptionQuery ?? undefined}
+            />
+          );
+        }}
       />
       <Route
         path={`${path}/:studyId/:analysisId`}

@@ -62,6 +62,16 @@ export function NewAnalysisPage() {
   // START HERE
 
   const setName = useSetter(analysisToNameLens, analysis, createAnalysis);
+  const setDescription = useSetter(
+    analysisToDescriptionLens,
+    analysis,
+    createAnalysis
+  );
+  const setIsPublic = useSetter(
+    analysisToIsPublicLens,
+    analysis,
+    createAnalysis
+  );
   const setFilters = useSetter(analysisToFiltersLens, analysis, createAnalysis);
   const setStarredVariables = useSetter(
     analysisToStarredVariablesLens,
@@ -139,6 +149,8 @@ export function NewAnalysisPage() {
       setDerivedVariables,
       setFilters,
       setName,
+      setDescription,
+      setIsPublic,
       setStarredVariables,
       setVariableUISettings,
       setDataTableSettings,
@@ -161,6 +173,8 @@ export function NewAnalysisPage() {
       setDerivedVariables,
       setFilters,
       setName,
+      setDescription,
+      setIsPublic,
       setStarredVariables,
       setVariableUISettings,
       setDataTableSettings,
@@ -192,6 +206,8 @@ function useSetter<T>(
 }
 
 const analysisToNameLens = Lens.fromProp<NewAnalysis>()('displayName');
+const analysisToDescriptionLens = Lens.fromProp<NewAnalysis>()('description');
+const analysisToIsPublicLens = Lens.fromProp<NewAnalysis>()('isPublic');
 const analysisToFiltersLens = Lens.fromPath<NewAnalysis>()([
   'descriptor',
   'subset',

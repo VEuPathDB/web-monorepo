@@ -129,7 +129,7 @@ export default function Subsetting({
             className="link"
             onClick={() => setIsDownloadModalOpen(true)}
           >
-            <i className="fa fa-table" />
+            <i className="ebrc-icon-table-download" />
           </button>
         </Tooltip>
       </div>

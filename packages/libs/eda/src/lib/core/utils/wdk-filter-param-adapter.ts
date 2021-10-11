@@ -111,7 +111,8 @@ export function fromEdaFilter(filter: EdaFilter): WdkFilter {
             ),
             operation: filter.operation,
           }
-        : filter[filter.type],
+        : // numberSet
+          filter[filter.type],
     __entityId: filter.entityId,
   } as WdkFilter;
 }
@@ -132,7 +133,8 @@ export function edaVariableToWdkField(
   const { useMultiFilters: includeMultiFilters = false } = options;
   return {
     display: variable.displayName,
-    isRange: variable.dataShape === 'continuous',
+    isRange:
+      variable.type !== 'category' && variable.dataShape === 'continuous',
     parent: variable.parentId,
     precision: 1,
     term: variable.id,

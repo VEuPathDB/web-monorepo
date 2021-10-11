@@ -27,6 +27,10 @@ const subsettingServiceUrl = '/eda-subsetting-service';
 const dataServiceUrl = '/eda-data-service';
 const userServiceUrl = '/eda-user-service';
 
+const exampleAnalysesAuthor = process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR
+  ? Number(process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR)
+  : undefined;
+
 initialize({
   rootUrl,
   rootElement,
@@ -39,6 +43,9 @@ initialize({
           <ul>
             <li>
               <Link to="/eda">EDA Workspace</Link>
+              <li>
+                <Link to="/eda/public">Public analyses</Link>
+              </li>
             </li>
             <li>
               <Link to="/eda/studies">All studies</Link>
@@ -55,6 +62,7 @@ initialize({
           subsettingServiceUrl={subsettingServiceUrl}
           dataServiceUrl={dataServiceUrl}
           userServiceUrl={userServiceUrl}
+          exampleAnalysesAuthor={exampleAnalysesAuthor}
         />
       ),
     },

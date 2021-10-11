@@ -65,6 +65,16 @@ export const AnalysisSummary = t.intersection([
   }),
 ]);
 
+export type PublicAnalysisSummary = t.TypeOf<typeof PublicAnalysisSummary>;
+export const PublicAnalysisSummary = t.intersection([
+  AnalysisSummary,
+  t.type({
+    userId: t.number,
+    userName: t.string,
+    userOrganization: t.string,
+  }),
+]);
+
 export type AnalysisDescriptor = t.TypeOf<typeof AnalysisDescriptor>;
 export const AnalysisDescriptor = t.type({
   subset: t.type({
@@ -74,9 +84,16 @@ export const AnalysisDescriptor = t.type({
   computations: t.array(Computation),
   /** IDs of variables 'starred' by the user. */
   starredVariables: t.array(VariableDescriptor),
-  dataTableColumns: t.array(VariableDescriptor),
+  dataTableConfig: t.type({
+    variables: t.array(VariableDescriptor),
+    sorting: t.array(
+      t.type({
+        key: t.string,
+        direction: t.keyof({ asc: null, desc: null }),
+      })
+    ),
+  }),
   derivedVariables: t.array(DerivedVariable),
-  dataTableSettings: DataTableSettings,
 });
 
 export type NewAnalysis = t.TypeOf<typeof NewAnalysis>;
@@ -100,9 +117,11 @@ export const Analysis = t.intersection([
   }),
 ]);
 
+export const DEFAULT_ANALYSIS_NAME = 'Unnamed Analysis';
+
 export function makeNewAnalysis(studyId: string): NewAnalysis {
   return {
-    displayName: 'Unnamed Analysis',
+    displayName: DEFAULT_ANALYSIS_NAME,
     studyId,
     isPublic: false,
     studyVersion: '',
@@ -113,9 +132,8 @@ export function makeNewAnalysis(studyId: string): NewAnalysis {
         uiSettings: {},
       },
       starredVariables: [],
-      dataTableColumns: [],
-      dataTableSettings: {
-        selectedVariables: {},
+      dataTableConfig: {
+        variables: [],
         sorting: [],
       },
       derivedVariables: [],

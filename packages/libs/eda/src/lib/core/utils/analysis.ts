@@ -24,7 +24,7 @@ export function grayOutLastSeries<
         ? {
             ...series,
             color: 'white',
-            borderColor: '#d0d0d0',
+            borderColor: '#a0a0a0',
             outlierSymbol: 'x',
           }
         : series

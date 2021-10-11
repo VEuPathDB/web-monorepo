@@ -10,10 +10,11 @@ import SubsettingClient from '../core/api/SubsettingClient';
 import DataClient from '../core/api/DataClient';
 import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
 import { VariableDescriptor } from '../core/types/variable';
-import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { cx, findFirstVariable } from './Utils';
-import { SavedAnalysis } from './SavedAnalysis';
-import { NewAnalysisPage } from './NewAnalysis';
+import {
+  EDAWorkspaceNewAnalysis,
+  EDAWorkspaceSavedAnalysis,
+} from './EDAWorkspace';
 
 interface Props {
   studyId: string;
@@ -55,7 +56,9 @@ export function WorkspaceContainer({
         preorder(studyMetadata.rootEntity, (e) => e.children ?? [])
       );
       const variableId =
-        maybeVariableId ?? findFirstVariable(entity.variables, entityId)?.id;
+        maybeVariableId ??
+        (entity.variables.length !== 0 &&
+          findFirstVariable(entity.variables)?.id);
       return entityId && variableId
         ? `${url}/variables/${entityId}/${variableId}`
         : entityId
@@ -76,11 +79,10 @@ export function WorkspaceContainer({
         subsettingClient={subsettingClient}
         makeVariableLink={makeVariableLink}
       >
-        <EDAWorkspaceHeading />
         {analysisId == null ? (
-          <NewAnalysisPage />
+          <EDAWorkspaceNewAnalysis />
         ) : (
-          <SavedAnalysis analysisId={analysisId} />
+          <EDAWorkspaceSavedAnalysis analysisId={analysisId} />
         )}
       </EDAWorkspaceContainer>
     </RestrictedPage>

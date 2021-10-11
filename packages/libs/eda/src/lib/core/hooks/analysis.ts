@@ -5,9 +5,13 @@ import { differenceWith } from 'lodash';
 import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 import { useStateWithHistory } from '@veupathdb/wdk-client/lib/Hooks/StateWithHistory';
 
-import { useAnalysisClient } from './workspace';
+import {
+  AnalysisClient,
+  SingleAnalysisPatchRequest,
+} from '../api/analysis-api';
 import { Analysis, AnalysisSummary, NewAnalysis } from '../types/analysis';
-import { AnalysisClient } from '../api/analysis-api';
+
+import { useAnalysisClient } from './workspace';
 
 /** Type definition for function that will set an attribute of an Analysis. */
 type Setter<T> = (value: T | ((value: T) => T)) => void;
@@ -32,6 +36,8 @@ export type AnalysisState = {
   undo: () => void;
   redo: () => void;
   setName: Setter<Analysis['displayName']>;
+  setDescription: Setter<Analysis['description']>;
+  setIsPublic: Setter<Analysis['isPublic']>;
   setFilters: Setter<Analysis['descriptor']['subset']['descriptor']>;
   setComputations: Setter<Analysis['descriptor']['computations']>;
   setDerivedVariables: Setter<Analysis['descriptor']['derivedVariables']>;
@@ -135,6 +141,8 @@ export function useAnalysis(analysisId: string): AnalysisState {
     );
 
   const setName = useSetter(analysisToNameLens);
+  const setDescription = useSetter(analysisToDescriptionLens);
+  const setIsPublic = useSetter(analysisToIsPublicLens);
   const setFilters = useSetter(analysisToFiltersLens);
   const setComputations = useSetter(analysisToComputationsLens);
   const setDerivedVariables = useSetter(analysisToDerivedVariablesLens);
@@ -153,11 +161,16 @@ export function useAnalysis(analysisId: string): AnalysisState {
   const copyAnalysis = useCallback(async () => {
     if (analysis == null)
       throw new Error("Attempt to copy an analysis that hasn't been loaded.");
+
     if (hasUnsavedChanges) await saveAnalysis();
-    return await analysisClient.createAnalysis({
-      ...analysis,
+
+    const copyResponse = await analysisClient.copyAnalysis(analysis.analysisId);
+
+    await analysisClient.updateAnalysis(copyResponse.analysisId, {
       displayName: `Copy of ${analysis.displayName}`,
     });
+
+    return copyResponse;
   }, [analysisClient, analysis, saveAnalysis, hasUnsavedChanges]);
 
   const deleteAnalysis = useCallback(async () => {
@@ -178,6 +191,8 @@ export function useAnalysis(analysisId: string): AnalysisState {
     redo,
     undo,
     setName,
+    setDescription,
+    setIsPublic,
     setFilters,
     setComputations,
     setDerivedVariables,
@@ -249,12 +264,34 @@ export function useAnalysisList(analysisClient: AnalysisClient) {
     [analysisClient]
   );
 
+  const updateAnalysis = useCallback(
+    async (id: string, patch: SingleAnalysisPatchRequest) => {
+      setLoading(true);
+      try {
+        await analysisClient.updateAnalysis(id, patch);
+        setAnalyses(
+          (analyses) =>
+            analyses &&
+            analyses.map((analysis) =>
+              analysis.analysisId !== id ? analysis : { ...analysis, ...patch }
+            )
+        );
+      } catch (error) {
+        setError(error.message ?? String(error));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [analysisClient]
+  );
+
   return {
     analyses,
     loading,
     error,
     deleteAnalyses,
     deleteAnalysis,
+    updateAnalysis,
   };
 }
 
@@ -312,6 +349,8 @@ export function usePinnedAnalyses(analysisClient: AnalysisClient) {
 }
 
 const analysisToNameLens = Lens.fromProp<Analysis>()('displayName');
+const analysisToDescriptionLens = Lens.fromProp<Analysis>()('description');
+const analysisToIsPublicLens = Lens.fromProp<Analysis>()('isPublic');
 const analysisToFiltersLens = Lens.fromPath<Analysis>()([
   'descriptor',
   'subset',

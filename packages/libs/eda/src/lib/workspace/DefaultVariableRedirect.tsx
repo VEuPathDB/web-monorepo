@@ -17,7 +17,7 @@ export function DefaultVariableRedirect(props: Props) {
   const entity = entityId
     ? entities.find((e) => e.id === entityId)
     : entities[0];
-  const variable = entity && findFirstVariable(entity.variables, entity.id);
+  const variable = entity && findFirstVariable(entity.variables);
   if (entity == null || variable == null)
     return <div>Could not find specified variable.</div>;
   // Prevent <Variables> from rendering multiple times

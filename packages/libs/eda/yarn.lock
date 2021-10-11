@@ -3099,10 +3099,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/components@^0.7.18":
-  version "0.7.18"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.7.18.tgz#0c19ee4bc1245ea4e22871b700f5e784c07bd698"
-  integrity sha512-SphT00KQqgDVSDhzsj6YE5c5P/Aa3f/1ovgJ0iEcoohS4zGKSoSbbKlor93hmydi7FeawfJfkbZhchvusFeghA==
+"@veupathdb/components@^0.7.24":
+  version "0.7.24"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.7.24.tgz#0492802704dc172336a6e9f1bd622ff0c9ff3313"
+  integrity sha512-tksS21RfarALJSXldbGRSTil8CMfe8Pr9eWJwnd6WBOTdkfvF9Fi1D/4jSWNMVHZTJDPKOSmaJuqXJNNT7+S2A==
   dependencies:
     "@material-ui/core" "^4.11.2"
     "@material-ui/icons" "^4.11.2"
@@ -3285,10 +3285,10 @@
     md5 "^2.3.0"
     whatwg-fetch "^3.5.0"
 
-"@veupathdb/web-common@^0.1.7":
-  version "0.1.7"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.1.7.tgz#cf3f63d1d51b96f873051d2df42b2735e08aa782"
-  integrity sha512-fIUiob8kKlFp+VfvKX54DBTyP0zwV96JGSbAFba8EuzoXUk7ICJeb9BlYcxQcIZ9j8H9MDqaY7aYovuM2vy2BQ==
+"@veupathdb/web-common@^0.1.9":
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.1.9.tgz#8c8c9b531199b98cbddb03e4f7906dfb5704e1d3"
+  integrity sha512-Ot10rsWiDQmiDS+yk07w1scOsOF/d25ZT9tfrZTRk8Ukalh9Zb1fj/nCwAbgtOxUeSRL7ZGh1CnPTuIg09Q4Ng==
   dependencies:
     "@veupathdb/eda" "^0.11.9"
     custom-event-polyfill "^1.0.7"

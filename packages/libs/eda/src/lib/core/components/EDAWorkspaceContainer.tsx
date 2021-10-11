@@ -36,17 +36,7 @@ export function EDAWorkspaceContainer({
   makeVariableLink,
 }: Props) {
   const wdkStudyRecordState = useWdkStudyRecord(studyId);
-  const { value: studyMetadata, error: studyMetadataError } = useStudyMetadata(
-    studyId,
-    subsettingClient
-  );
-  if (studyMetadataError)
-    return (
-      <ErrorStatus>
-        <h2>Unable to load study metadata</h2>
-        <pre>{String(studyMetadataError)}</pre>
-      </ErrorStatus>
-    );
+  const studyMetadata = useStudyMetadata(studyId, subsettingClient);
   if (wdkStudyRecordState == null || studyMetadata == null) return <Loading />;
   return (
     <WorkspaceContext.Provider

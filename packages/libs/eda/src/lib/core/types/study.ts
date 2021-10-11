@@ -57,13 +57,13 @@ export const VariableTreeNode_Base = t.intersection([
     definition: t.string,
     displayOrder: t.number,
     displayType: VariableDisplayType,
-    dataShape: VariableDataShape,
   }),
 ]);
 
 const Variable_Base = t.intersection([
   VariableTreeNode_Base,
   t.type({
+    dataShape: VariableDataShape,
     distinctValuesCount: t.number,
     isTemporal: t.boolean,
     isFeatured: t.boolean,
@@ -97,21 +97,16 @@ export const NumberVariable = t.intersection([
       units: t.string,
     }),
   ]),
-  t.union([
-    t.type({
-      dataShape: CategoryVariableDataShape,
-    }),
-    t.type({
-      dataShape: ContinuousVariableDataShape,
-      rangeMin: t.number,
-      rangeMax: t.number,
-      binWidth: t.number,
-    }),
-  ]),
+  t.type({
+    dataShape: VariableDataShape,
+    rangeMin: t.number,
+    rangeMax: t.number,
+  }),
   t.partial({
     // TODO This is supposed to be required, but the backend isn't populating it.
     displayRangeMin: t.number,
     displayRangeMax: t.number,
+    binWidth: t.number,
     binWidthOverride: t.number,
   }),
 ]);
@@ -122,21 +117,16 @@ export const DateVariable = t.intersection([
   t.type({
     type: t.literal('date'),
   }),
-  t.union([
-    t.type({
-      dataShape: CategoryVariableDataShape,
-    }),
-    t.type({
-      dataShape: ContinuousVariableDataShape,
-      rangeMin: t.string,
-      rangeMax: t.string,
-      binWidth: t.number,
-      binUnits: TimeUnit,
-    }),
-  ]),
+  t.type({
+    dataShape: VariableDataShape,
+    rangeMin: t.string,
+    rangeMax: t.string,
+  }),
   t.partial({
     displayRangeMin: t.string,
     displayRangeMax: t.string,
+    binWidth: t.number,
+    binUnits: TimeUnit,
     binWidthOverride: t.number,
   }),
 ]);
@@ -146,6 +136,7 @@ export const LongitudeVariable = t.intersection([
   Variable_Base,
   t.type({
     type: t.literal('longitude'),
+    precision: t.number,
   }),
 ]);
 
@@ -224,7 +215,6 @@ export const StudyEntity: t.Type<StudyEntity> = t.recursion('StudyEntity', () =>
 export type StudyOverview = t.TypeOf<typeof StudyOverview>;
 export const StudyOverview = t.type({
   id: t.string,
-  datasetId: t.string,
 });
 
 export type StudyMetadata = t.TypeOf<typeof StudyMetadata>;
