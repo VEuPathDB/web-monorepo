@@ -13,6 +13,7 @@ import {
   getNodeId,
 } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import { AnswerJsonFormatConfig } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+
 import {
   StudyEntity,
   StudyMetadata,
@@ -20,7 +21,6 @@ import {
   StudyRecord,
   Variable,
 } from '../types/study';
-import { usePromise } from './promise';
 import SubsettingClient from '../api/SubsettingClient';
 import { VariableDescriptor } from '../types/variable';
 import { findEntityAndVariable } from '../utils/study-metadata';
