@@ -65,7 +65,8 @@ interface Props {
     studyId: string,
     analysisId: string,
     ownerUserId: number,
-    description: string
+    ownerName: string,
+    description?: string
   ) => string;
   exampleAnalysesAuthor?: number;
 }
@@ -276,22 +277,7 @@ function PublicAnalysesTable({
                 !data.row.studyAvailable ? (
                   value
                 ) : (
-                  <Link
-                    to={makeAnalysisLink(
-                      data.row.studyId,
-                      data.row.analysisId,
-                      data.row.userId,
-                      !data.row.description
-                        ? makeImportMetadata(
-                            data.row.userName,
-                            data.row.userOrganization
-                          )
-                        : `${data.row.description}\n\n(${makeImportMetadata(
-                            data.row.userName,
-                            data.row.userOrganization
-                          )})`
-                    )}
-                  >
+                  <Link to={makeAnalysisImportLink(makeAnalysisLink, data.row)}>
                     {value}
                   </Link>
                 )
@@ -448,8 +434,15 @@ function PublicAnalysesTable({
   );
 }
 
-function makeImportMetadata(userName: string, userOrganization: string) {
-  return `Imported from ${userName} [${userOrganization}] on ${convertISOToDisplayFormat(
-    new Date().toISOString()
-  )}.`;
+function makeAnalysisImportLink(
+  makeAnalysisLink: Props['makeAnalysisLink'],
+  row: PublicAnalysisRow
+) {
+  return makeAnalysisLink(
+    row.studyId,
+    row.analysisId,
+    row.userId,
+    `${row.userName} [${row.userOrganization}]`,
+    row.description
+  );
 }

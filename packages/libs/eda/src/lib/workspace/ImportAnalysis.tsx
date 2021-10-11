@@ -7,13 +7,16 @@ import { RestrictedPage } from '@veupathdb/web-common/lib/App/DataRestriction/Re
 import { useApprovalStatus } from '@veupathdb/web-common/lib/hooks/dataRestriction';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
+
 import { AnalysisClient } from '../core';
+import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
 
 interface Props {
   analysisClient: AnalysisClient;
   studyId: string;
   analysisId: string;
   ownerUserId: string;
+  ownerName?: string;
   description?: string;
 }
 
@@ -21,8 +24,9 @@ export function ImportAnalysis({
   analysisClient,
   analysisId,
   ownerUserId,
-  studyId,
+  ownerName,
   description,
+  studyId,
 }: Props) {
   const approvalStatus = useApprovalStatus(studyId, 'analysis');
   const history = useHistory();
@@ -37,15 +41,17 @@ export function ImportAnalysis({
       return;
     }
 
+    const importDescription = makeImportDescription(ownerName, description);
+
     return Task.fromPromise(() =>
       analysisClient.copyAnalysis(analysisId, Number(ownerUserId))
     )
       .chain(({ analysisId: analysisCopyId }) =>
-        description == null
-          ? Task.of(analysisCopyId)
-          : Task.fromPromise(() =>
-              analysisClient.updateAnalysis(analysisCopyId, { description })
-            ).map((_) => analysisCopyId)
+        Task.fromPromise(() =>
+          analysisClient.updateAnalysis(analysisCopyId, {
+            description: importDescription,
+          })
+        ).map((_) => analysisCopyId)
       )
       .run(
         (analysisCopyId) => {
@@ -69,6 +75,7 @@ export function ImportAnalysis({
     studyId,
     analysisId,
     ownerUserId,
+    ownerName,
     description,
     approvalStatus,
   ]);
@@ -79,4 +86,18 @@ export function ImportAnalysis({
       {error && <pre>{error}</pre>}
     </RestrictedPage>
   );
+}
+
+function makeImportDescription(ownerName?: string, description?: string) {
+  return !description?.trim()
+    ? makeImportMetadata(ownerName)
+    : `${description}\n\n(${makeImportMetadata(ownerName)})`;
+}
+
+function makeImportMetadata(ownerName?: string) {
+  const timestamp = convertISOToDisplayFormat(new Date().toISOString());
+
+  return ownerName == null
+    ? `Imported on ${timestamp}.`
+    : `Imported from ${ownerName} on ${timestamp}.`;
 }
