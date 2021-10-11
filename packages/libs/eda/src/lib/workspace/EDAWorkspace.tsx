@@ -1,11 +1,15 @@
-import React from 'react';
-import { useAnalysis } from '../core';
+import { useMemo } from 'react';
+
+import { noop } from 'lodash';
+
+import { makeNewAnalysis, useAnalysis } from '../core';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { AnalysisPanel } from './AnalysisPanel';
 import { NewAnalysisPage } from './NewAnalysis';
 
 interface EDAWorkSpaceSavedAnalysisProps {
   analysisId: string;
+  studyId: string;
 }
 
 export const EDAWorkspaceNewAnalysis = () => (
@@ -19,8 +23,11 @@ export const EDAWorkspaceNewAnalysis = () => (
  * with the rules of hooks */
 export const EDAWorkspaceSavedAnalysis = ({
   analysisId,
+  studyId,
 }: EDAWorkSpaceSavedAnalysisProps) => {
-  const analysisState = useAnalysis(analysisId);
+  const defaultAnalysis = useMemo(() => makeNewAnalysis(studyId), [studyId]);
+
+  const analysisState = useAnalysis(defaultAnalysis, noop, analysisId);
 
   return (
     <>

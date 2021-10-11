@@ -46,7 +46,10 @@ export function MapVeuContainer() {
               analysisClient={analysisClient}
               dataClient={dataClient}
             >
-              <MapVeuAnalysis analysisId={props.match.params.analysisId} />
+              <MapVeuAnalysis
+                analysisId={props.match.params.analysisId}
+                studyId={props.match.params.studyId}
+              />
             </EDAWorkspaceContainer>
           )}
         />

@@ -67,13 +67,13 @@ export function quantizePvalue(pvalue: number | string): string {
 }
 
 export function isNewAnalysis(
-  analysis: NewAnalysis | Analysis
+  analysis?: NewAnalysis | Analysis
 ): analysis is NewAnalysis {
-  return !('analysisId' in analysis);
+  return analysis != null && !('analysisId' in analysis);
 }
 
 export function isSavedAnalysis(
-  analysis: NewAnalysis | Analysis
+  analysis?: NewAnalysis | Analysis
 ): analysis is Analysis {
-  return 'analysisId' in analysis;
+  return analysis != null && 'analysisId' in analysis;
 }

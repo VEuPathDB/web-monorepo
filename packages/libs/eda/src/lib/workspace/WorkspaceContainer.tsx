@@ -86,7 +86,10 @@ export function WorkspaceContainer(props: Props) {
         {props.analysisId == null ? (
           <EDAWorkspaceNewAnalysis />
         ) : (
-          <EDAWorkspaceSavedAnalysis analysisId={props.analysisId} />
+          <EDAWorkspaceSavedAnalysis
+            analysisId={props.analysisId}
+            studyId={props.studyId}
+          />
         )}
       </EDAWorkspaceContainer>
     </RestrictedPage>
