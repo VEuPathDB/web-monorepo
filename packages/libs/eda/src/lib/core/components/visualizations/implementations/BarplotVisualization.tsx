@@ -42,6 +42,8 @@ import {
 } from '../../../utils/analysis';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
+// use lodash instead of Math.min/max
+import { max, flatMap } from 'lodash';
 
 const plotDimensions = {
   height: 450,
@@ -225,16 +227,9 @@ function BarplotViz(props: VisualizationProps) {
   // find dependent axis max value
   const defaultDependentMaxValue = useMemo(() => {
     return data?.value?.series != null
-      ? Math.max.apply(
-          Math,
-          data?.value?.series.map((o) => {
-            let localMax = Math.max(...o.value);
-            console.log('local max =', localMax);
-            return localMax;
-          })
-        )
+      ? max(data?.value?.series.flatMap((o) => o.value))
       : undefined;
-  }, [data, data.value, variable, overlayVariable]);
+  }, [data, variable, overlayVariable]);
 
   // set min/max
   const dependentAxisRange =
