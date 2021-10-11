@@ -72,77 +72,83 @@ const Boxplot = makePlotlyPlotComponent('Boxplot', (props: BoxplotProps) => {
   const [independentAxisName, dependentAxisName] =
     orientation === 'vertical' ? ['x', 'y'] : ['y', 'x'];
 
-  const data: PlotParams['data'] = plotData
-    .map((d) => {
-      // part 1 of the hack to avoid showing empty boxes as lines on the zero line
-      // using the d.median array, find the indices of non-null values
-      // we will use this to filter out only the "good" values of q1, q3, lowerfence etc
-      const definedDataIndices = d.median
-        .map((median, index) => (median != null ? index : undefined))
-        .filter((x) => x != null) as number[];
+  // zero length test looks redundant, but it is to prevent the
+  // .concat(...) applied after the .map(...)
+  const data: PlotParams['data'] =
+    plotData.length === 0
+      ? []
+      : plotData
+          .map((d) => {
+            // part 1 of the hack to avoid showing empty boxes as lines on the zero line
+            // using the d.median array, find the indices of non-null values
+            // we will use this to filter out only the "good" values of q1, q3, lowerfence etc
+            const definedDataIndices = d.median
+              .map((median, index) => (median != null ? index : undefined))
+              .filter((x) => x != null) as number[];
 
-      const orientationDependentProps: any = {
-        // mapping data based on categoryOrder and categoryOrderEllipsis
-        [independentAxisName]: at(d.label, definedDataIndices).map(
-          (d: string) => {
-            const foundIndexValue = categoryOrder.findIndex(
-              (element: string) => element === d
-            );
-            return categoryOrderEllipsis[foundIndexValue];
-          }
-        ),
-        [dependentAxisName]:
-          d.rawData && showRawData
-            ? at(d.rawData, definedDataIndices)
-            : d.outliers?.length
-            ? at(d.outliers, definedDataIndices)
-            : [[null]],
-      };
+            const orientationDependentProps: any = {
+              // mapping data based on categoryOrder and categoryOrderEllipsis
+              [independentAxisName]: at(d.label, definedDataIndices).map(
+                (d: string) => {
+                  const foundIndexValue = categoryOrder.findIndex(
+                    (element: string) => element === d
+                  );
+                  return categoryOrderEllipsis[foundIndexValue];
+                }
+              ),
+              [dependentAxisName]:
+                d.rawData && showRawData
+                  ? at(d.rawData, definedDataIndices)
+                  : d.outliers?.length
+                  ? at(d.outliers, definedDataIndices)
+                  : [[null]],
+            };
 
-      // seems like plotly bug: y[0] or x[0] should not be empty array (e.g., with overlay variable)
-      // see multipleData at story file (Kenya case)
-      if (orientationDependentProps[dependentAxisName]?.[0].length === 0)
-        orientationDependentProps[dependentAxisName][0] = [null];
+            // seems like plotly bug: y[0] or x[0] should not be empty array (e.g., with overlay variable)
+            // see multipleData at story file (Kenya case)
+            if (orientationDependentProps[dependentAxisName]?.[0].length === 0)
+              orientationDependentProps[dependentAxisName][0] = [null];
 
-      return {
-        lowerfence: at(d.lowerfence, definedDataIndices),
-        upperfence: at(d.upperfence, definedDataIndices),
-        median: at(d.median, definedDataIndices),
-        mean: d.mean !== null ? at(d.mean, definedDataIndices) : undefined,
-        boxmean: d.mean !== null && showMean,
-        q1: at(d.q1, definedDataIndices),
-        q3: at(d.q3, definedDataIndices),
-        // name is used as legend
-        name: d.name,
-        boxpoints: d.rawData && showRawData ? 'all' : 'outliers',
-        jitter: 0.1, // should be dependent on the number of datapoints...?
-        marker: {
-          opacity: opacity,
-          color: d.borderColor,
-          symbol: d.outlierSymbol ?? 'circle-open',
-        },
-        line: {
-          width: 1,
-          color: d.borderColor,
-        },
-        fillcolor: d.color,
-        ...orientationDependentProps,
-        type: 'box',
-        // `offsetgroup` somehow ensures that an overlay value with no data at all will
-        // still be shown as a gap in the boxplots shown above a single x tick.
-        offsetgroup: d.name,
-      };
-    }) // part 2 of the hack:
-    // the following is required because Plotly's 'categoryorder/categoryarray' props do not
-    // introduce "empty" bars/boxes at the beginning or end of the x-axis
-    .concat({
-      // use categoriOrderEllipsis instead of categoryOrder to have ellipsis
-      [independentAxisName]: categoryOrderEllipsis,
-      [dependentAxisName]: categoryOrderEllipsis.map(() => 0),
-      type: 'bar',
-      hoverinfo: 'none',
-      showlegend: false,
-    });
+            return {
+              lowerfence: at(d.lowerfence, definedDataIndices),
+              upperfence: at(d.upperfence, definedDataIndices),
+              median: at(d.median, definedDataIndices),
+              mean:
+                d.mean !== null ? at(d.mean, definedDataIndices) : undefined,
+              boxmean: d.mean !== null && showMean,
+              q1: at(d.q1, definedDataIndices),
+              q3: at(d.q3, definedDataIndices),
+              // name is used as legend
+              name: d.name,
+              boxpoints: d.rawData && showRawData ? 'all' : 'outliers',
+              jitter: 0.1, // should be dependent on the number of datapoints...?
+              marker: {
+                opacity: opacity,
+                color: d.borderColor,
+                symbol: d.outlierSymbol ?? 'circle-open',
+              },
+              line: {
+                width: 1,
+                color: d.borderColor,
+              },
+              fillcolor: d.color,
+              ...orientationDependentProps,
+              type: 'box',
+              // `offsetgroup` somehow ensures that an overlay value with no data at all will
+              // still be shown as a gap in the boxplots shown above a single x tick.
+              offsetgroup: d.name,
+            };
+          }) // part 2 of the hack:
+          // the following is required because Plotly's 'categoryorder/categoryarray' props do not
+          // introduce "empty" bars/boxes at the beginning or end of the x-axis
+          .concat({
+            // use categoriOrderEllipsis instead of categoryOrder to have ellipsis
+            [independentAxisName]: categoryOrderEllipsis,
+            [dependentAxisName]: categoryOrderEllipsis.map(() => 0),
+            type: 'bar',
+            hoverinfo: 'none',
+            showlegend: false,
+          });
 
   const dependentAxis = orientation === 'vertical' ? 'yaxis' : 'xaxis';
   const independentAxis = orientation === 'vertical' ? 'xaxis' : 'yaxis';
