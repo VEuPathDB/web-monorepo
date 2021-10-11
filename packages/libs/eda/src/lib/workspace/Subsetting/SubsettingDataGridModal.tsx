@@ -17,7 +17,10 @@ import {
 
 import MultiSelectVariableTree from '../../core/components/variableTrees/MultiSelectVariableTree';
 import { VariableDescriptor } from '../../core/types/variable';
-import { useFlattenedFields } from '../../core/components/variableTrees/hooks';
+import {
+  useFeaturedFields,
+  useFlattenedFields,
+} from '../../core/components/variableTrees/hooks';
 import { useProcessedGridData } from './hooks';
 import { APIError } from '../../core/api/types';
 import { AnalysisSummary } from '../AnalysisSummary';
@@ -61,6 +64,7 @@ export default function SubsettingDataGridModal({
   const studyRecord = useStudyRecord();
   const studyMetadata = useStudyMetadata();
   const subsettingClient = useSubsettingClient();
+  const featuredFields = useFeaturedFields(entities, false);
   const flattenedFields = useFlattenedFields(entities, false);
 
   const [currentEntity, setCurrentEntity] = useState<StudyEntity | undefined>(
@@ -68,9 +72,6 @@ export default function SubsettingDataGridModal({
   );
 
   // TEMP
-  useEffect(() => {
-    console.log(analysisState.analysis);
-  }, [analysisState.analysis]);
 
   // Used to track if there is an inflight API call.
   const [dataLoading, setDataLoading] = useState(false);
@@ -96,6 +97,34 @@ export default function SubsettingDataGridModal({
     selectedVariableDescriptors,
     setSelectedVariableDescriptors,
   ] = useState<Array<VariableDescriptor>>([]);
+
+  const [
+    featuredAndStarredVariableDescriptors,
+    setFeaturedAndStarredVariableDescriptors,
+  ] = useState<Array<VariableDescriptor>>([]);
+
+  useEffect(() => {
+    console.log(analysisState.analysis?.descriptor.starredVariables);
+
+    const starredVariables = analysisState.analysis?.descriptor.starredVariables.filter(
+      (variable) => (variable.entityId = currentEntityID)
+    );
+
+    if (starredVariables?.length) {
+      setFeaturedAndStarredVariableDescriptors(starredVariables);
+    } else {
+      setFeaturedAndStarredVariableDescriptors([]);
+    }
+  }, [
+    analysisState.analysis,
+    currentEntityID,
+    featuredFields,
+    setFeaturedAndStarredVariableDescriptors,
+  ]);
+
+  useEffect(() => {
+    console.log('STARRED', featuredAndStarredVariableDescriptors);
+  }, [featuredAndStarredVariableDescriptors]);
 
   // Whether or not to display the variable tree.
   const [displayVariableTree, setDisplayVariableTree] = useState(false);
@@ -181,20 +210,6 @@ export default function SubsettingDataGridModal({
   const handleSelectedVariablesChange = (
     variableDescriptors: Array<VariableDescriptor>
   ) => {
-    // Update analysisState
-    // analysisState.setDataTableConfig({
-    //   selectedVariables: {
-    //     // Reiterate any current data for other entities.
-    //     ...analysisState.analysis?.descriptor.dataTableConfig
-    //       .selectedVariables,
-    //     // Update the data for the current entity.
-    //     [currentEntityID]: variableDescriptors.map(
-    //       (descriptor) => descriptor.variableId
-    //     ),
-    //   },
-    //   sorting: [],
-    // });
-
     analysisState.setDataTableConfig({
       ...analysisState.analysis?.descriptor.dataTableConfig,
       [currentEntityID]: { variables: variableDescriptors, sorting: null },

@@ -122,7 +122,7 @@ export const useFlattenedFields = (
 export const useFeaturedFields = (
   entities: StudyEntity[],
   useMultiFilters: boolean
-) =>
+): Field[] =>
   useMemo(() => {
     return entities.flatMap((entity) =>
       entity.variables
