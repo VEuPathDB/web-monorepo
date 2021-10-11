@@ -1,7 +1,6 @@
 import { orderBy } from 'lodash';
 import Path from 'path';
 import React, { useCallback, useMemo, useState } from 'react';
-import { useRouteMatch } from 'react-router';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 
 import {
@@ -78,7 +77,6 @@ const UNKNOWN_DATASET_NAME = 'Unknown study';
 export function AllAnalyses(props: Props) {
   const { analysisClient, exampleAnalysesAuthor } = props;
   const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
-  const { url } = useRouteMatch();
   const history = useHistory();
   const location = useLocation();
   const classes = useStyles();
@@ -513,7 +511,6 @@ export function AllAnalyses(props: Props) {
       history.location.pathname,
       addPinnedAnalysis,
       removePinnedAnalysis,
-      url,
       exampleAnalysesAuthor,
       user,
     ]
