@@ -31,7 +31,7 @@ function DownloadLink(props) {
             });
           }}>
           {iconFirst
-            ? <><Icon fa="download" /> {linkText}</>
+            ? <><i className="ebrc-icon-download" /> {linkText}</>
             : <>{linkText} <Icon fa="download" /></>
           }
         </button>
