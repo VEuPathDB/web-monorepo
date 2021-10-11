@@ -191,7 +191,6 @@ export default function VariableList({
 
   const handleFieldSelect = useCallback(
     (field: Field) => {
-      console.log('Hello from VariableList', field);
       onActiveFieldChange(field.term);
     },
     [onActiveFieldChange]

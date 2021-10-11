@@ -4,7 +4,6 @@ import Path from 'path';
 import { useLocation, useRouteMatch, useHistory } from 'react-router-dom';
 import {
   AnalysisState,
-  DataTableSettings,
   makeNewAnalysis,
   NewAnalysis,
   Status,
@@ -123,24 +122,10 @@ export function NewAnalysisPage() {
     )
   );
 
-  const setDataTableSettings = useCallback(
-    (
-      dataTableSettings:
-        | DataTableSettings
-        | ((dataTableSettings: DataTableSettings) => DataTableSettings)
-    ) => {
-      createAnalysis({
-        ...analysis,
-        descriptor: {
-          ...analysis.descriptor,
-          dataTableSettings:
-            typeof dataTableSettings === 'function'
-              ? dataTableSettings(analysis.descriptor.dataTableSettings)
-              : dataTableSettings,
-        },
-      });
-    },
-    [analysis, createAnalysis]
+  const setDataTableConfig = useSetter(
+    analysisToDataTableConfig,
+    analysis,
+    createAnalysis
   );
 
   const analysisState = useMemo(
@@ -153,7 +138,7 @@ export function NewAnalysisPage() {
       setIsPublic,
       setStarredVariables,
       setVariableUISettings,
-      setDataTableSettings,
+      setDataTableConfig,
       setComputations,
       saveAnalysis,
       copyAnalysis,
@@ -177,7 +162,7 @@ export function NewAnalysisPage() {
       setIsPublic,
       setStarredVariables,
       setVariableUISettings,
-      setDataTableSettings,
+      setDataTableConfig,
       setComputations,
     ]
   );
@@ -225,4 +210,8 @@ const analysisToVariableUISettingsLens = Lens.fromPath<NewAnalysis>()([
   'descriptor',
   'subset',
   'uiSettings',
+]);
+const analysisToDataTableConfig = Lens.fromPath<NewAnalysis>()([
+  'descriptor',
+  'dataTableConfig',
 ]);

@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { ceil } from 'lodash';
-import { H3, H5 } from '@veupathdb/core-components/dist/components/headers';
+
+import { H5 } from '@veupathdb/core-components/dist/components/headers';
 import DataGrid from '@veupathdb/core-components/dist/components/grids/DataGrid';
 import FullScreenModal from '@veupathdb/core-components/dist/components/modals/FullScreenModal';
 import SwissArmyButton from '@veupathdb/core-components/dist/components/buttons/SwissArmyButton';
@@ -38,8 +39,8 @@ type SubsettingDataGridProps = {
   currentEntityID: string;
   /** The total number of records in the datastore for the currently selected entity. */
   currentEntityRecordCounts: {
-    total: number;
-    filtered: number;
+    total: number | undefined;
+    filtered: number | undefined;
   };
 };
 
@@ -66,7 +67,10 @@ export default function SubsettingDataGridModal({
     undefined
   );
 
-  console.log(analysisState.analysis);
+  // TEMP
+  useEffect(() => {
+    console.log(analysisState.analysis);
+  }, [analysisState.analysis]);
 
   // Used to track if there is an inflight API call.
   const [dataLoading, setDataLoading] = useState(false);
@@ -107,20 +111,10 @@ export default function SubsettingDataGridModal({
     // Determine if we need to load previously selected variables for the current
     // entity by seeing if any variable selections are stored in the analysis.
     const previouslyStoredEntityData =
-      analysisState.analysis?.descriptor.dataTableSettings.selectedVariables[
-        currentEntityID
-      ];
+      analysisState.analysis?.descriptor.dataTableConfig[currentEntityID];
 
-    if (previouslyStoredEntityData?.length) {
-      const variableDescriptors = previouslyStoredEntityData.map(
-        (variable): VariableDescriptor => ({
-          entityId: currentEntityID,
-          variableId: variable,
-        })
-      );
-
-      setSelectedVariableDescriptors(variableDescriptors);
-
+    if (previouslyStoredEntityData) {
+      setSelectedVariableDescriptors(previouslyStoredEntityData.variables);
       console.log('Loaded Variable Selections from Analysis');
     }
   };
@@ -138,7 +132,7 @@ export default function SubsettingDataGridModal({
 
       subsettingClient
         .getTabularData(studyMetadata.id, currentEntityID, {
-          filters: [],
+          filters: analysisState.analysis?.descriptor.subset.descriptor ?? [],
           outputVariableIds: selectedVariableDescriptors.map(
             (descriptor) => descriptor.variableId
           ),
@@ -148,7 +142,7 @@ export default function SubsettingDataGridModal({
         })
         .then((data) => {
           setGridData(data);
-          setPageCount(ceil(currentEntityRecordCounts.filtered / pageSize));
+          setPageCount(ceil(currentEntityRecordCounts.filtered! / pageSize));
         })
         .catch((error: Error) => {
           setApiError(JSON.parse(error.message.split('\n')[1]));
@@ -163,13 +157,14 @@ export default function SubsettingDataGridModal({
       selectedVariableDescriptors,
       studyMetadata.id,
       subsettingClient,
+      analysisState.analysis?.descriptor.subset.descriptor,
     ]
   );
 
   // Function to download selected data.
   const downloadData = useCallback(() => {
     subsettingClient.tabularDataDownload(studyMetadata.id, currentEntityID, {
-      filters: [],
+      filters: analysisState.analysis?.descriptor.subset.descriptor ?? [],
       outputVariableIds: selectedVariableDescriptors.map(
         (descriptor) => descriptor.variableId
       ),
@@ -179,6 +174,7 @@ export default function SubsettingDataGridModal({
     selectedVariableDescriptors,
     currentEntityID,
     studyMetadata.id,
+    analysisState.analysis?.descriptor.subset.descriptor,
   ]);
 
   /** Handler for when a user selects/de-selectors variables. */
@@ -186,18 +182,24 @@ export default function SubsettingDataGridModal({
     variableDescriptors: Array<VariableDescriptor>
   ) => {
     // Update analysisState
-    analysisState.setDataTableSettings({
-      selectedVariables: {
-        // Reiterate any current data for other entities.
-        ...analysisState.analysis?.descriptor.dataTableSettings
-          .selectedVariables,
-        // Update the data for the current entity.
-        [currentEntityID]: variableDescriptors.map(
-          (descriptor) => descriptor.variableId
-        ),
-      },
-      sorting: [],
+    // analysisState.setDataTableConfig({
+    //   selectedVariables: {
+    //     // Reiterate any current data for other entities.
+    //     ...analysisState.analysis?.descriptor.dataTableConfig
+    //       .selectedVariables,
+    //     // Update the data for the current entity.
+    //     [currentEntityID]: variableDescriptors.map(
+    //       (descriptor) => descriptor.variableId
+    //     ),
+    //   },
+    //   sorting: [],
+    // });
+
+    analysisState.setDataTableConfig({
+      ...analysisState.analysis?.descriptor.dataTableConfig,
+      [currentEntityID]: { variables: variableDescriptors, sorting: null },
     });
+
     setSelectedVariableDescriptors(variableDescriptors);
   };
 
@@ -362,13 +364,18 @@ export default function SubsettingDataGridModal({
           >
             {currentEntity?.displayNamePlural}
           </span>
-          <p
-            style={{
-              marginTop: 0,
-              marginBottom: 0,
-              color: 'gray',
-            }}
-          >{`${currentEntityRecordCounts.filtered.toLocaleString()} of ${currentEntityRecordCounts.total.toLocaleString()} records selected`}</p>
+          {currentEntityRecordCounts.filtered &&
+            currentEntityRecordCounts.total && (
+              <p
+                style={{
+                  marginTop: 0,
+                  marginBottom: 0,
+                  color: 'gray',
+                }}
+              >
+                {`${currentEntityRecordCounts.filtered.toLocaleString()} of ${currentEntityRecordCounts.total.toLocaleString()} records selected`}
+              </p>
+            )}
         </div>
         <div
           style={{

@@ -43,7 +43,7 @@ export type AnalysisState = {
   setDerivedVariables: Setter<Analysis['descriptor']['derivedVariables']>;
   setStarredVariables: Setter<Analysis['descriptor']['starredVariables']>;
   setVariableUISettings: Setter<Analysis['descriptor']['subset']['uiSettings']>;
-  setDataTableSettings: Setter<Analysis['descriptor']['dataTableSettings']>;
+  setDataTableConfig: Setter<Analysis['descriptor']['dataTableConfig']>;
 
   saveAnalysis: () => Promise<void>;
   copyAnalysis: () => Promise<{ analysisId: string }>;
@@ -148,7 +148,7 @@ export function useAnalysis(analysisId: string): AnalysisState {
   const setDerivedVariables = useSetter(analysisToDerivedVariablesLens);
   const setStarredVariables = useSetter(analysisToStarredVariablesLens);
   const setVariableUISettings = useSetter(analysisToVariableUISettingsLens);
-  const setDataTableSettings = useSetter(analysisToDataTableSettings);
+  const setDataTableConfig = useSetter(analysisToDataTableConfig);
 
   const saveAnalysis = useCallback(async () => {
     if (analysis == null)
@@ -198,7 +198,7 @@ export function useAnalysis(analysisId: string): AnalysisState {
     setDerivedVariables,
     setStarredVariables,
     setVariableUISettings,
-    setDataTableSettings,
+    setDataTableConfig,
     copyAnalysis,
     deleteAnalysis,
     saveAnalysis,
@@ -232,7 +232,7 @@ export function useAnalysisList(analysisClient: AnalysisClient) {
         setAnalyses((analyses) =>
           analyses?.filter((analysis) => analysis.analysisId !== id)
         );
-      } catch (error) {
+      } catch (error: any) {
         setError(error.message ?? String(error));
       } finally {
         setLoading(false);
@@ -255,7 +255,7 @@ export function useAnalysisList(analysisClient: AnalysisClient) {
               (analysis, id) => analysis.analysisId === id
             )
         );
-      } catch (error) {
+      } catch (error: any) {
         setError(error.message ?? String(error));
       } finally {
         setLoading(false);
@@ -276,7 +276,7 @@ export function useAnalysisList(analysisClient: AnalysisClient) {
               analysis.analysisId !== id ? analysis : { ...analysis, ...patch }
             )
         );
-      } catch (error) {
+      } catch (error: any) {
         setError(error.message ?? String(error));
       } finally {
         setLoading(false);
@@ -373,7 +373,7 @@ const analysisToVariableUISettingsLens = Lens.fromPath<Analysis>()([
   'subset',
   'uiSettings',
 ]);
-const analysisToDataTableSettings = Lens.fromPath<Analysis>()([
+const analysisToDataTableConfig = Lens.fromPath<Analysis>()([
   'descriptor',
-  'dataTableSettings',
+  'dataTableConfig',
 ]);
