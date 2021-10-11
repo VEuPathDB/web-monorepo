@@ -612,7 +612,7 @@ function HistogramPlotWithControls({
       />
 
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <LabelledGroup label="Y-axis" containerStyles={{ flexBasis: '50%' }}>
+        <LabelledGroup label="Y-axis">
           <Switch
             label="Log scale"
             state={uiState.dependentAxisLogScale}
@@ -630,6 +630,7 @@ function HistogramPlotWithControls({
               handleDependentAxisRangeChange(newRange as NumberRange);
             }}
             allowPartialRange={false}
+            containerStyles={{ minWidth: '400px' }}
           />
           {/* truncation notification */}
           {truncatedDependentAxisWarning ? (
@@ -651,13 +652,13 @@ function HistogramPlotWithControls({
             onClick={handleDependentAxisSettingsReset}
             containerStyles={{
               paddingTop: '1.0em',
-              width: '40%',
+              width: '50%',
               float: 'right',
             }}
           />
         </LabelledGroup>
 
-        <LabelledGroup label="X-axis" containerStyles={{ flexBasis: '50%' }}>
+        <LabelledGroup label="X-axis">
           <BinWidthControl
             binWidth={data?.binWidth}
             binWidthStep={data?.binWidthStep}
@@ -678,6 +679,7 @@ function HistogramPlotWithControls({
             range={uiState.independentAxisRange}
             onRangeChange={handleIndependentAxisRangeChange}
             valueType={data?.valueType}
+            containerStyles={{ minWidth: '400px' }}
           />
           {/* truncation notification */}
           {truncatedIndependentAxisWarning ? (
@@ -701,7 +703,7 @@ function HistogramPlotWithControls({
             onClick={handleIndependentAxisSettingsReset}
             containerStyles={{
               paddingTop: '1.0em',
-              width: '40%',
+              width: '50%',
               float: 'right',
             }}
           />
