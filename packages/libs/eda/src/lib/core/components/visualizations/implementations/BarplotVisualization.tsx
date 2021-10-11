@@ -222,6 +222,31 @@ function BarplotViz(props: VisualizationProps) {
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
 
+  // find dependent axis max value
+  const defaultDependentMaxValue = useMemo(() => {
+    return data?.value?.series != null
+      ? Math.max.apply(
+          Math,
+          data?.value?.series.map((o) => {
+            let localMax = Math.max(...o.value);
+            console.log('local max =', localMax);
+            return localMax;
+          })
+        )
+      : undefined;
+  }, [data, data.value, variable, overlayVariable]);
+
+  // set min/max
+  const dependentAxisRange =
+    defaultDependentMaxValue != null
+      ? {
+          // set min as 0 (count) or 0.001 (proportion)
+          min: vizConfig.valueSpec === 'count' ? 0 : 0.001,
+          // add 5 % margin
+          max: defaultDependentMaxValue * 1.05,
+        }
+      : undefined;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -308,6 +333,8 @@ function BarplotViz(props: VisualizationProps) {
           updateThumbnail={updateThumbnail}
           dependentAxisLogScale={vizConfig.dependentAxisLogScale}
           onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
+          // set dependent axis range for log scale
+          dependentAxisRange={dependentAxisRange}
         />
         <div className="viz-plot-info">
           <BirdsEyeView
