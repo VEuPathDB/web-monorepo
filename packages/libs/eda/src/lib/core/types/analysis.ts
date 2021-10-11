@@ -16,21 +16,11 @@ export type VariableUISetting = t.TypeOf<typeof VariableUISetting>;
 export const VariableUISetting = t.UnknownRecord;
 
 /** Define types for Subsetting Data Table */
-export type DataTableSettings = t.TypeOf<typeof DataTableSettings>;
-export const DataTableSettings = t.type({
-  /** Information on the selected entity and child variables. */
-  selectedVariables: t.record(t.string, t.array(t.string)),
-  /**
-   * An array of sorting definitions. Used to specify variables to
-   * sort the table display with. For example, sort by column a, then column b.
-   */
-  sorting: t.array(
-    t.type({
-      variable: t.string,
-      direction: t.union([t.literal('asc'), t.literal('desc')]),
-    })
-  ),
-});
+export type DataTableConfig = t.TypeOf<typeof DataTableConfig>;
+export const DataTableConfig = t.record(
+  t.string,
+  t.type({ variables: t.array(VariableDescriptor), sorting: t.unknown })
+);
 
 export type AnalysisBase = t.TypeOf<typeof AnalysisBase>;
 export const AnalysisBase = t.intersection([
@@ -84,15 +74,7 @@ export const AnalysisDescriptor = t.type({
   computations: t.array(Computation),
   /** IDs of variables 'starred' by the user. */
   starredVariables: t.array(VariableDescriptor),
-  dataTableConfig: t.type({
-    variables: t.array(VariableDescriptor),
-    sorting: t.array(
-      t.type({
-        key: t.string,
-        direction: t.keyof({ asc: null, desc: null }),
-      })
-    ),
-  }),
+  dataTableConfig: DataTableConfig,
   derivedVariables: t.array(DerivedVariable),
 });
 
@@ -132,10 +114,7 @@ export function makeNewAnalysis(studyId: string): NewAnalysis {
         uiSettings: {},
       },
       starredVariables: [],
-      dataTableConfig: {
-        variables: [],
-        sorting: [],
-      },
+      dataTableConfig: {},
       derivedVariables: [],
       computations: [
         {
