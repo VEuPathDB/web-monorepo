@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Tabs as MUITabs, Tab, AppBar } from '@material-ui/core';
+import { Tabs as MUITabs, Tab, Box } from '@material-ui/core';
 import { TabPanel, TabContext } from '@material-ui/lab';
 
 interface Props {
@@ -19,13 +19,17 @@ export default function Tabs(props: Props) {
   return (
     <div>
       <TabContext value={activeTab}>
-        <AppBar position="static">
+        <Box sx={{ borderBottom: '1px solid #ccc' }}>
           <MUITabs value={Number(activeTab)} onChange={handleChange}>
             {props.tabs.map((tab, index) => (
-              <Tab key={index} label={tab.name} />
+              <Tab
+                key={index}
+                label={tab.name}
+                style={{ textTransform: 'none' }}
+              />
             ))}
           </MUITabs>
-        </AppBar>
+        </Box>
         {props.tabs.map((tab, index) => (
           <TabPanel key={index} value={String(index)}>
             {tab.content}
