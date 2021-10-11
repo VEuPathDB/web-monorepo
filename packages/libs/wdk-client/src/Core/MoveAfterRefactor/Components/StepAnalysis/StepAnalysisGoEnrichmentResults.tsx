@@ -170,6 +170,7 @@ export const StepAnalysisGoEnrichmentResults: React.FunctionComponent<StepAnalys
         onClose={() => {
           setWordCloudOpen(false);
         }}
+        toolName={'GO Enrichment Analysis'}
       />
     </Fragment>
   );

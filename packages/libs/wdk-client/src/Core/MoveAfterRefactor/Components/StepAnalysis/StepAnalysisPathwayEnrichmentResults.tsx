@@ -162,6 +162,7 @@ export const StepAnalysisPathwayEnrichmentResults: React.SFC<StepAnalysisResultP
         onClose={() => {
           setWordCloudOpen(false);
         }}
+        toolName={'Metabolic Pathway Enrichment Analysis'}
       />
     </Fragment>
   );
