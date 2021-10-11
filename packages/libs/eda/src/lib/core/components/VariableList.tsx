@@ -593,7 +593,8 @@ function makeStarButtonTooltipContent(
 ) {
   return (
     <>
-      Click to {isStarred ? 'unstar' : 'star'} <strong>{field.display}</strong>.
+      Click to {isStarred ? 'unstar' : 'star'}{' '}
+      <strong>{safeHtml(field.display)}</strong>.
     </>
   );
 }
