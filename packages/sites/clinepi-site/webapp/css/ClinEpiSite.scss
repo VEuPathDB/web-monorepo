@@ -696,7 +696,12 @@ button.study-action[data-study-id][data-args] * {
 
 
 /* ========================================================================= */
-/* Static Content  page                                                      */
+/* Static Content  pages                                                      */
+/* ========================================================================= */
+
+
+
+/* Data access and Use Policy  page */
 /* ========================================================================= */
 
 #ce-data-access {
@@ -709,14 +714,17 @@ button.study-action[data-study-id][data-args] * {
 
 }
 
+/* Static Content  pages with div#ce-static-content wrapper */                                            
+/* ========================================================================= */
+
 #ce-static-content {
     padding: 0 3em;
 
     h2 + div {
       font-size: 130%;
       margin-bottom: 1em;
-      padding-bottom: 2em;
-      border-bottom: 1px solid #eee;
+/*      padding-bottom: 2em;
+      border-bottom: 1px solid #eee;*/
     }
     h2 + div li {
       font-size: 95%;
@@ -734,18 +742,23 @@ button.study-action[data-study-id][data-args] * {
     }
 }
 
-/* ========================================================================= */
-/* Tutorials page, faq page                                                  */
-/* ========================================================================= */
-
 div#ce-static-content summary {
   color: #069;
+}
+
+div#ce-static-content li {
+  font-size: 130%; //1.4em;
+  margin: 1em 0;
+  list-style: none;
 }
 
 div#ce-static-content li .fa {
   color: #333;
   margin-right: .5em;
 }
+
+/* Tutorials (#resources) and Resources (#external-resources) pages          */
+/* ========================================================================= */
 
 div#ce-static-content h1#resources ~ div summary.h2,
 div#ce-static-content h1#external-resources ~ div summary.h2 {
@@ -758,7 +771,8 @@ div#ce-static-content h1#external-resources ~ div summary.h2 {
   color: #222; 
 }
 
-div#ce-static-content h1#resources ~ div summary.h3 {
+div#ce-static-content h1#resources ~ div summary.h3,
+div#ce-static-content h1#external-resources ~ div summary.h3 {
   // size and weight like h3 in ebrc/client.scss 
   font-size: 1.5em;
   font-weight: 500;
@@ -768,14 +782,9 @@ div#ce-static-content h1#resources ~ div summary.h3 {
   color: #222;
 }
 
-div#ce-static-content h1#resources ~ div details.h3 {
+div#ce-static-content h1#resources ~ div details.h3,
+div#ce-static-content h1#external-resources ~ div details.h3 {
   margin-left: 2.5em;
-}
-
-div#ce-static-content li {
-  font-size: 130%; //1.4em;
-  margin: 1em 0;
-  list-style: none;
 }
 
 div#ce-static-content h1#resources ~ div#clinepi-resources li,
@@ -789,6 +798,9 @@ div#ce-static-content h1#news ~ h2 {
 }
 
 
+/* FAQ page */
+/* ========================================================================= */
+
 #FAQ ~ div li p, #FAQ ~ div li ol li {
   font-size: 90%;
   padding-left: 1em;
@@ -797,14 +809,7 @@ div#ce-static-content h1#news ~ h2 {
 #FAQ ~ div li p span.indent {
   padding-left: 2em;
 }
-/*
-#clinepi-tutorials li .fa, #clinepi-resources li .fa {
-  color: #333;
-  margin-right: .5em;
-}
-*/
 
-/* ========================================================================= */
 /* News page                                                                */
 /* ========================================================================= */
 div.static-content section ul {
@@ -824,7 +829,7 @@ div.static-content section ul li ul{
 
 
 /* ========================================================================= */
-/* Studies page                                                                */
+/* All Studies page                                                        */
 /* ========================================================================= */
 
 div.wdk-Answer tr.greyed-out {
