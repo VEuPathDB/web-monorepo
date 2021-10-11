@@ -29,7 +29,7 @@ export function StudyList(props: StudyListProps) {
           .filter((dataset) => dataset.attributes.eda_study_id != null)
           .map((dataset) => {
             return (
-              <li key={dataset.attributes.datasetId?.toString()}>
+              <li key={dataset.attributes.dataset_id as string}>
                 <Link to={`${baseUrl}/${dataset.attributes.dataset_id}`}>
                   {safeHtml(dataset.displayName)}
                 </Link>
