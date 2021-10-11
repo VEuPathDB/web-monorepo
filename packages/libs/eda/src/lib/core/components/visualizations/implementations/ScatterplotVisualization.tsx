@@ -369,6 +369,7 @@ function ScatterplotViz(props: VisualizationProps) {
 
       <PluginError
         error={data.error}
+        outputSize={outputSize}
         customCases={[
           (errorString) =>
             errorString.match(/400.+too large/is) ? (
