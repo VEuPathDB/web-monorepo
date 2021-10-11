@@ -402,14 +402,19 @@ function BarplotWithControls({
 export function barplotResponseToData(
   response: BarplotResponse
 ): BarplotData & CoverageStatistics {
+  const responseIsEmpty = response.barplot.data.every(
+    (data) => data.label.length === 0 && data.value.length === 0
+  );
   return {
-    series: response.barplot.data.map((data, index) => ({
-      // name has value if using overlay variable
-      name: data.overlayVariableDetails?.value ?? `series ${index}`,
-      // color: TO DO
-      label: data.label,
-      value: data.value,
-    })),
+    series: responseIsEmpty
+      ? []
+      : response.barplot.data.map((data, index) => ({
+          // name has value if using overlay variable
+          name: data.overlayVariableDetails?.value ?? `series ${index}`,
+          // color: TO DO
+          label: data.label,
+          value: data.value,
+        })),
     completeCases: response.completeCasesTable,
     completeCasesAllVars: response.barplot.config.completeCasesAllVars,
     completeCasesAxesVars: response.barplot.config.completeCasesAxesVars,
