@@ -126,6 +126,7 @@ class MembershipField extends React.PureComponent {
 
 MembershipField.defaultProps = {
   filteredCountHeadingPrefix: 'Remaining',
+  unfilteredCountHeadingPrefix: '',
 }
 
 function filterBySearchTerm(rows, searchTerm){
@@ -223,7 +224,7 @@ class MembershipTable extends React.PureComponent {
     return get(this.props, 'filter.value');
   }
 
-   
+
 
   deriveRowClassName(item) {
     const selectedClassName = (
@@ -371,7 +372,7 @@ class MembershipTable extends React.PureComponent {
       .every(member => this.isItemSelected(member));
     const someAvailableChecked = availableItems
       .some(member => this.isItemSelected(member));
-    
+
     const showChecked = availableItems.length > 0 && allAvailableChecked;
     const showIndeterminate = availableItems.length > 0 && someAvailableChecked && ! allAvailableChecked;
 
@@ -430,7 +431,7 @@ class MembershipTable extends React.PureComponent {
 
   renderCountHeading1(qualifier) {
     return (
-      <div style={{display: 'flex', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+      <div style={{display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
         <div>{qualifier}</div>
         <div style={{marginLeft: '.6ex', maxWidth: '6em', overflow: 'hidden', textOverflow: 'ellipsis'}}>{this.props.displayName}</div>
       </div>
@@ -473,7 +474,7 @@ class MembershipTable extends React.PureComponent {
   }
 
   renderUnfilteredCountHeading1() {
-    return this.renderCountHeading1('');
+    return this.renderCountHeading1(this.props.unfilteredCountHeadingPrefix);
   }
 
   renderUnfilteredCountHeading2() {
@@ -528,8 +529,8 @@ class MembershipTable extends React.PureComponent {
       useSearch && searchTerm
       ? {searchTerm}
       : {},
-      usePagination 
-      ? { 
+      usePagination
+      ? {
         pagination:  {
           currentPage,
           rowsPerPage,
@@ -540,7 +541,7 @@ class MembershipTable extends React.PureComponent {
       }
       : {}
     );
-      
+
     const eventHandlers = Object.assign(
       {
         // onRowSelect: this.handleRowSelect,
