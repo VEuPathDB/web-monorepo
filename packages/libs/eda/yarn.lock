@@ -3014,10 +3014,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/components@^0.7.23":
-  version "0.7.23"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.7.23.tgz#6fcd235ee3759a011467b761fae31238e3a5ced7"
-  integrity sha512-CVojWoHdXpFVYBUXCGM4Jq6HOdunu1ITFtnjgAkSr74SMUcC3gTl2+wX7l0doWCaMXcXnfyElgsABhE0a8pRJA==
+"@veupathdb/components@^0.7.9":
+  version "0.7.9"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.7.9.tgz#579a16fc7586857a369c46c06c0c9e164ca2e2d1"
+  integrity sha512-6o5YFG/9zvO/ci+9Lhh0MWSocl1BF9gulcggaKfrRkYRcIfbz+6ClWLtthFAeHdSw8QtEXY/R9jT+r9IAED62w==
   dependencies:
     "@material-ui/core" "^4.11.2"
     "@material-ui/icons" "^4.11.2"
@@ -3049,10 +3049,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/components@^0.7.9":
-  version "0.7.9"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.7.9.tgz#579a16fc7586857a369c46c06c0c9e164ca2e2d1"
-  integrity sha512-6o5YFG/9zvO/ci+9Lhh0MWSocl1BF9gulcggaKfrRkYRcIfbz+6ClWLtthFAeHdSw8QtEXY/R9jT+r9IAED62w==
+"@veupathdb/components@^0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.8.0.tgz#b7c1ac398bbab47b13a357bcab85b9efb59eea78"
+  integrity sha512-UkktbHlen3DaIlUg8rPvNm9c45MLa5jwL8Cmz6sVmKlbItjixIS1Zbx1VbwyeDQrzihCYpmdokMKH9dtS1+scw==
   dependencies:
     "@material-ui/core" "^4.11.2"
     "@material-ui/icons" "^4.11.2"
