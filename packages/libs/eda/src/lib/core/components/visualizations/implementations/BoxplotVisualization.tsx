@@ -27,6 +27,7 @@ import box from './selectorIcons/box.svg';
 import { BoxplotData } from '@veupathdb/components/lib/types/plots';
 import { CoverageStatistics } from '../../../types/visualization';
 import { BirdsEyeView } from '../../BirdsEyeView';
+import PluginError from '../PluginError';
 
 import { at } from 'lodash';
 // import axis label unit util
@@ -277,25 +278,7 @@ function BoxplotViz(props: VisualizationProps) {
         />
       </div>
 
-      {data.error && (
-        <div
-          style={{
-            fontSize: '1.2em',
-            padding: '1em',
-            background: 'rgb(255, 233, 233) none repeat scroll 0% 0%',
-            borderRadius: '.5em',
-            margin: '.5em 0',
-            color: '#333',
-            border: '1px solid #d9cdcd',
-            display: 'flex',
-          }}
-        >
-          <i className="fa fa-warning" style={{ marginRight: '1ex' }}></i>{' '}
-          {data.error instanceof Error
-            ? data.error.message
-            : String(data.error)}
-        </div>
-      )}
+      <PluginError error={data.error} outputSize={outputSize} />
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
       <div
         style={{
@@ -315,8 +298,8 @@ function BoxplotViz(props: VisualizationProps) {
             data.value &&
             (data.value.series.length > 1 || vizConfig.overlayVariable != null)
           }
-          independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-Axis'}
-          dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-Axis'}
+          independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-axis'}
+          dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-axis'}
           // show/hide independent/dependent axis tick label
           showIndependentAxisTickLabel={true}
           showDependentAxisTickLabel={true}
@@ -415,28 +398,35 @@ function BoxplotWithControls({
 export function boxplotResponseToData(
   response: PromiseType<ReturnType<DataClient['getBoxplot']>>
 ): PromiseBoxplotData {
+  const responseIsEmpty = response.boxplot.data.every(
+    (data) => data.label.length === 0 && data.median.length === 0
+  );
   return {
-    series: response.boxplot.data.map((data) => ({
-      lowerfence: data.lowerfence,
-      upperfence: data.upperfence,
-      q1: data.q1,
-      q3: data.q3,
-      median: data.median,
-      mean: data.mean,
-      // correct the {} from back end into []
-      outliers: data.outliers
-        ? data.outliers.map((x: number[] | {}) => (Array.isArray(x) ? x : []))
-        : undefined,
-      // currently returns seriesX and seriesY for points: 'all' option
-      // it is necessary to rely on rawData (or seriesX/Y) for boxplot if points: 'all'
-      rawData: data.rawData ? data.rawData : undefined,
-      // this will be used as legend
-      name: data.overlayVariableDetails
-        ? data.overlayVariableDetails.value
-        : 'Data',
-      // this will be used as x-axis tick labels
-      label: data.label, // [response.boxplot.config.xVariableDetails.variableId],
-    })),
+    series: responseIsEmpty
+      ? []
+      : response.boxplot.data.map((data) => ({
+          lowerfence: data.lowerfence,
+          upperfence: data.upperfence,
+          q1: data.q1,
+          q3: data.q3,
+          median: data.median,
+          mean: data.mean,
+          // correct the {} from back end into []
+          outliers: data.outliers
+            ? data.outliers.map((x: number[] | {}) =>
+                Array.isArray(x) ? x : []
+              )
+            : undefined,
+          // currently returns seriesX and seriesY for points: 'all' option
+          // it is necessary to rely on rawData (or seriesX/Y) for boxplot if points: 'all'
+          rawData: data.rawData ? data.rawData : undefined,
+          // this will be used as legend
+          name: data.overlayVariableDetails
+            ? data.overlayVariableDetails.value
+            : 'Data',
+          // this will be used as x-axis tick labels
+          label: data.label, // [response.boxplot.config.xVariableDetails.variableId],
+        })),
     completeCases: response.completeCasesTable,
     completeCasesAllVars: response.boxplot.config.completeCasesAllVars,
     completeCasesAxesVars: response.boxplot.config.completeCasesAxesVars,

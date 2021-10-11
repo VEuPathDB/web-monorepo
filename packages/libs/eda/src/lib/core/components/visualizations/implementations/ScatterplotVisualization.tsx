@@ -407,8 +407,8 @@ function ScatterplotViz(props: VisualizationProps) {
             (data.value.dataSetProcess.series.length > 1 ||
               vizConfig.overlayVariable != null)
           }
-          independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-Axis'}
-          dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-Axis'}
+          independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-axis'}
+          dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-axis'}
           // variable's metadata-based independent axis range with margin
           independentAxisRange={defaultIndependentRangeMargin}
           // new dependent axis range
@@ -699,6 +699,16 @@ function processInputData<T extends number | string>(
   // set variables for x- and yaxis ranges: no default values are set
   let yMin: number | string | undefined;
   let yMax: number | string | undefined;
+
+  // BM: would like to catch the empty data response but there is a Typescript problem
+  // I can't solve now ** TO DO **
+  // if (plotDataSet?.data.every((data) => data.seriesX?.length === 0 && data.seriesY?.length === 0)) {
+  //   return {
+  //     dataSetProcess: { series: [] },
+  //     yMin,
+  //     yMax,
+  //   };
+  // }
 
   // function to return color or gray where needed if showMissingness == true
   const markerColor = (index: number) => {

@@ -11,12 +11,12 @@ type Case = (errorString: string) => string | ReactFragment | undefined;
 const defaultCases: Case[] = [
   (errorString) =>
     errorString.match(/did not contain any data/i)
-      ? 'The visualization cannot be made because your subset is empty.'
+      ? 'The visualization cannot be made because the current subset is empty.'
       : undefined,
 ];
 
 const emptyCaseMessage =
-  'The visualization cannot be made because there is no data for the variable(s) you have selected.';
+  'The visualization cannot be made because there is no plottable data for currently selected variable(s) in the current subset.';
 
 export default function PluginError({ error, customCases, outputSize }: Props) {
   // TO DO: errors from back end should arrive with a separate response code property
