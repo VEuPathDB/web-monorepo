@@ -13,10 +13,19 @@ import {
 import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
 import { VariableDescriptor } from '../core/types/variable';
 import { cx, findFirstVariable } from './Utils';
+import { makeStyles } from '@mui/styles';
 import {
   EDAWorkspaceNewAnalysis,
   EDAWorkspaceSavedAnalysis,
 } from './EDAWorkspace';
+
+const useStyles = makeStyles({
+  root: {
+    '& .MuiTypography-root': {
+      textTransform: 'none',
+    },
+  },
+});
 
 interface Props {
   studyId: string;
@@ -62,12 +71,13 @@ export function WorkspaceContainer(props: Props) {
     [url]
   );
   const approvalStatus = useApprovalStatus(props.studyId, 'analysis');
+  const classes = useStyles();
 
   return (
     <RestrictedPage approvalStatus={approvalStatus}>
       <EDAWorkspaceContainer
         studyId={props.studyId}
-        className={cx()}
+        className={`${cx()} ${classes.root}`}
         analysisClient={analysisClient}
         dataClient={dataClient}
         subsettingClient={subsettingClient}
