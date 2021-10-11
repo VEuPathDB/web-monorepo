@@ -77,9 +77,12 @@ export default function Subsetting({
         displayModal={isDownloadModalOpen}
         toggleDisplay={() => setIsDownloadModalOpen(false)}
         analysisState={analysisState}
-        currentEntityID={entityId}
-        currentEntityRecordCount={filteredEntityCount!}
         entities={entities}
+        currentEntityID={entityId}
+        currentEntityRecordCounts={{
+          total: totalEntityCount!,
+          filtered: filteredEntityCount!,
+        }}
       />
       <div className="Variables">
         <VariableTree

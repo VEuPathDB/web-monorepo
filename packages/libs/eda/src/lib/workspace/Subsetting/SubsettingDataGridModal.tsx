@@ -10,6 +10,7 @@ import {
   StudyEntity,
   TabularDataResponse,
   useStudyMetadata,
+  useStudyRecord,
   useSubsettingClient,
 } from '../../core';
 
@@ -18,6 +19,8 @@ import { VariableDescriptor } from '../../core/types/variable';
 import { useFlattenedFields } from '../../core/components/variableTrees/hooks';
 import { useProcessedGridData } from './hooks';
 import { APIError } from '../../core/api/types';
+import { AnalysisSummary } from '../AnalysisSummary';
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 type SubsettingDataGridProps = {
   /** Should the modal currently be visible? */
@@ -34,7 +37,10 @@ type SubsettingDataGridProps = {
   /** The ID of the currently selected entity OUTSIDE of the modal.  */
   currentEntityID: string;
   /** The total number of records in the datastore for the currently selected entity. */
-  currentEntityRecordCount: number;
+  currentEntityRecordCounts: {
+    total: number;
+    filtered: number;
+  };
 };
 
 /**
@@ -48,9 +54,10 @@ export default function SubsettingDataGridModal({
   analysisState,
   entities,
   currentEntityID,
-  currentEntityRecordCount,
+  currentEntityRecordCounts,
 }: SubsettingDataGridProps) {
   //   Various Custom Hooks
+  const studyRecord = useStudyRecord();
   const studyMetadata = useStudyMetadata();
   const subsettingClient = useSubsettingClient();
   const flattenedFields = useFlattenedFields(entities, false);
@@ -58,6 +65,8 @@ export default function SubsettingDataGridModal({
   const [currentEntity, setCurrentEntity] = useState<StudyEntity | undefined>(
     undefined
   );
+
+  console.log(analysisState.analysis);
 
   // Used to track if there is an inflight API call.
   const [dataLoading, setDataLoading] = useState(false);
@@ -139,7 +148,7 @@ export default function SubsettingDataGridModal({
         })
         .then((data) => {
           setGridData(data);
-          setPageCount(ceil(currentEntityRecordCount / pageSize));
+          setPageCount(ceil(currentEntityRecordCounts.filtered / pageSize));
         })
         .catch((error: Error) => {
           setApiError(JSON.parse(error.message.split('\n')[1]));
@@ -150,7 +159,7 @@ export default function SubsettingDataGridModal({
     },
     [
       currentEntityID,
-      currentEntityRecordCount,
+      currentEntityRecordCounts.filtered,
       selectedVariableDescriptors,
       studyMetadata.id,
       subsettingClient,
@@ -203,7 +212,7 @@ export default function SubsettingDataGridModal({
   // Render the table data or instructions on how to get started.
   const renderDataGridArea = () => {
     return (
-      <div style={{ flex: 2, overflowX: 'auto' }}>
+      <div style={{ overflowX: 'auto' }}>
         {gridData ? (
           <DataGrid
             columns={gridColumns}
@@ -232,7 +241,7 @@ export default function SubsettingDataGridModal({
             }}
           >
             <H5
-              text='To get started, click on the "Select Variables" button.'
+              text='To get started, click on the "Select Variables" button above.'
               additionalStyles={{ fontSize: 18 }}
             />
           </div>
@@ -255,10 +264,12 @@ export default function SubsettingDataGridModal({
           style={{
             position: 'absolute',
             width: 410,
-            right: 50,
-            top: 100,
+            right: 0,
+            top: 0,
+
             backgroundColor: 'rgba(255, 255, 255, 1)',
-            filter: 'drop-shadow(1px 1px 3px gray)',
+            // filter: 'drop-shadow(1px 1px 3px gray)',
+            border: '2px solid rgb(200, 200, 200)',
             borderRadius: 5,
           }}
         >
@@ -321,35 +332,56 @@ export default function SubsettingDataGridModal({
       onOpen={onModalOpen}
       onClose={onModalClose}
     >
+      <div key="Title" style={{ marginBottom: 35 }}>
+        <h1 style={{ paddingBottom: 0 }}>
+          {safeHtml(studyRecord.displayName)}
+        </h1>
+        <AnalysisSummary
+          analysis={analysisState.analysis!}
+          setAnalysisName={analysisState.setName}
+          saveAnalysis={analysisState.saveAnalysis}
+        />
+      </div>
       <div
-        key="Title and Controls"
+        key="Controls"
         style={{
           display: 'flex',
           justifyContent: 'space-between',
           flexWrap: 'wrap',
-          alignItems: 'flex-end',
-          marginBottom: 15,
+          alignItems: 'center',
         }}
       >
-        <H3
-          text={analysisState.analysis?.displayName ?? ''}
-          additionalStyles={{ flex: 1 }}
-          underline
-        />
+        <div style={{ marginBottom: 15 }}>
+          <span
+            style={{
+              fontSize: 18,
+              fontWeight: 500,
+              color: '#646464',
+              textTransform: 'capitalize',
+            }}
+          >
+            {currentEntity?.displayNamePlural}
+          </span>
+          <p
+            style={{
+              marginTop: 0,
+              marginBottom: 0,
+              color: 'gray',
+            }}
+          >{`${currentEntityRecordCounts.filtered.toLocaleString()} of ${currentEntityRecordCounts.total.toLocaleString()} records selected`}</p>
+        </div>
         <div
           style={{
             display: 'flex',
             flexBasis: 410,
             justifyContent: 'flex-end',
-            alignItems: 'flex-end',
-            marginBottom: 14,
+            marginBottom: 15,
           }}
         >
           <div
             style={{
               display: 'flex',
-              marginRight: 50,
-              justifyContent: 'flex-start',
+              paddingRight: 50,
               flex: 1,
             }}
           >
@@ -374,7 +406,7 @@ export default function SubsettingDataGridModal({
           />
         </div>
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <div style={{ position: 'relative' }}>
         {renderDataGridArea()}
         {renderVariableSelectionArea()}
       </div>

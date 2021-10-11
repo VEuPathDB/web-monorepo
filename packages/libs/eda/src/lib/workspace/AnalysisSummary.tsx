@@ -13,8 +13,8 @@ interface Props {
   copyAnalysis?: () => Promise<{ analysisId: string }>;
   saveAnalysis: () => Promise<void>;
   deleteAnalysis?: () => Promise<void>;
-  onFilterIconClick: () => void;
-  globalFiltersDialogOpen: boolean;
+  onFilterIconClick?: () => void;
+  globalFiltersDialogOpen?: boolean;
 }
 
 export function AnalysisSummary(props: Props) {
@@ -48,7 +48,7 @@ export function AnalysisSummary(props: Props) {
           value={analysis.displayName}
           onSave={setAnalysisName}
         />
-        {analysis.descriptor.subset.descriptor.length > 0 && (
+        {analysis.descriptor.subset.descriptor.length > 0 && onFilterIconClick && (
           <Button
             className={cx('-SeeAllFiltersButton')}
             onClick={onFilterIconClick}
