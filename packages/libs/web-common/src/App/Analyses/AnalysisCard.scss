@@ -1,0 +1,62 @@
+.wdk-Showcase {
+  .AnalysisCard {
+    color: #384c4b;
+    text-align: center;
+    justify-content: center;
+    min-height: 400px;
+
+    h2, h3 {
+      padding: 0;
+      width: 100%;
+      display: block;
+      margin: 5px auto;
+      text-align: center;
+    }
+    h2 {
+      font-weight: 700;
+      margin-bottom: 0;
+    }
+    h3 {
+      font-weight: 300;
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+    p {
+      margin: 5px 0 10px;
+    }
+    .AnalysisCard-Icon {
+      flex: 0 0 auto;
+      margin: 10px 0 0;
+      font-size: 80px;
+      text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+    }
+    .AnalysisCard-Body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 5px 8px;
+      word-break: break-word;
+    }
+    a.AnalysisCard-Footer {
+      padding: 7px 5px;
+      font-size: 0.9em;
+      color: white;
+      font-weight: 500;
+      display: block;
+      background: rgb(15, 89, 112);
+      flex: 0 0 auto;
+      text-transform: uppercase;
+      transition: all 0.4s;
+      text-decoration: none !important;
+    }
+    a.AnalysisCard-Footer:hover {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    a.AnalysisCard-Footer .fa {
+      padding-left: 10px;
+    }
+  }
+}
