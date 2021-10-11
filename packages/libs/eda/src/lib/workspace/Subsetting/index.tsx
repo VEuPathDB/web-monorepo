@@ -80,8 +80,8 @@ export default function Subsetting({
         entities={entities}
         currentEntityID={entityId}
         currentEntityRecordCounts={{
-          total: totalEntityCount!,
-          filtered: filteredEntityCount!,
+          total: totalEntityCount,
+          filtered: filteredEntityCount,
         }}
       />
       <div className="Variables">
