@@ -28,14 +28,17 @@ export function PublicAnalysesRoute({
       studyId: string,
       analysisId: string,
       ownerUserId: number,
-      description: string
+      ownerName: string,
+      description?: string
     ) =>
       Path.join(
         location.pathname,
         '..',
         studyId,
         analysisId,
-        `import/${ownerUserId}?description=${encodeURIComponent(description)}`
+        `import/${ownerUserId}?ownerName=${encodeURIComponent(ownerName)}${
+          description == null ? '' : `&description=${description}`
+        }`
       ),
     [location.pathname]
   );
