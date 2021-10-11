@@ -9,20 +9,20 @@ import * as t from 'io-ts';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 // need to set for Scatterplot
-import {
+
+import DataClient, {
   ScatterplotRequestParams,
   LineplotRequestParams,
   ScatterplotResponse,
   LineplotResponse,
-} from '../../../api/DataClient/types';
-import DataClient from '../../../api/DataClient';
+} from '../../../api/DataClient';
 
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { Filter } from '../../../types/filter';
-// import { StudyEntity } from '../../../types/study';
+
 import { PromiseType } from '../../../types/utility';
 import { VariableDescriptor } from '../../../types/variable';
 

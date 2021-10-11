@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import Path from 'path';
 

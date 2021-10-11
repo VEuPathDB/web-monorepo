@@ -1,10 +1,9 @@
 import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
-
 import {
   safeHtml,
   useSetDocumentTitle,
 } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import React from 'react';
+
 import { useWdkStudyRecords } from '../core/hooks/study';
 
 interface StudyListProps {

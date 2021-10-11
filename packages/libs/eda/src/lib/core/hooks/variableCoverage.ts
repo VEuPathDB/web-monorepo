@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { CompleteCasesTable } from '../api/DataClient/types';
+import { CompleteCasesTable } from '../api/DataClient';
 import {
   VariableCoverageTableRow,
   VariableSpec,

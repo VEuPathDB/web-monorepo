@@ -13,7 +13,7 @@ import {
 } from 'io-ts';
 import { VariableDataShape, VariableType } from './study';
 
-import { CompleteCasesTable } from '../api/dataClient';
+import { CompleteCasesTable } from '../api/DataClient';
 import { Filter } from './filter';
 
 /**
