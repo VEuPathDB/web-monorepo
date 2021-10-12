@@ -37,7 +37,7 @@ class GalaxyTermsController extends PageController {
     } = this.props;
 
     updateUserPreference("global", SHOW_GALAXY_PAGE_PREFERENCE, 'false');
-    window.open('https://eupathdb.globusgenomics.org', '_blank');
+    window.open('https://veupathdb.globusgenomics.org', '_blank');
   }
 
   renderView() {
