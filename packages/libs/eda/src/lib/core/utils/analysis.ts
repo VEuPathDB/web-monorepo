@@ -77,3 +77,7 @@ export function isSavedAnalysis(
 ): analysis is Analysis {
   return analysis != null && 'analysisId' in analysis;
 }
+
+export function getAnalysisId(analysis?: NewAnalysis | Analysis) {
+  return !isSavedAnalysis(analysis) ? undefined : analysis.analysisId;
+}
