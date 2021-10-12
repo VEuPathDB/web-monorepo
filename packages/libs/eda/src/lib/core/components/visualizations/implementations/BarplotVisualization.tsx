@@ -37,6 +37,7 @@ import bar from './selectorIcons/bar.svg';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 import {
+  fixLabelForNumberVariables,
   fixLabelsForNumberVariables,
   grayOutLastSeries,
   omitEmptyNoDataSeries,
@@ -196,7 +197,7 @@ function BarplotViz(props: VisualizationProps) {
       return omitEmptyNoDataSeries(
         grayOutLastSeries(
           reorderData(
-            barplotResponseToData(await response, variable),
+            barplotResponseToData(await response, variable, overlayVariable),
             variable?.vocabulary,
             vocabularyWithMissingData(overlayVariable?.vocabulary, showMissing)
           ),
@@ -420,12 +421,19 @@ function BarplotWithControls({
  */
 export function barplotResponseToData(
   response: BarplotResponse,
-  variable: Variable
+  variable: Variable,
+  overlayVariable?: Variable
 ): BarplotData & CoverageStatistics {
   return {
     series: response.barplot.data.map((data, index) => ({
       // name has value if using overlay variable
-      name: data.overlayVariableDetails?.value ?? `series ${index}`,
+      name:
+        data.overlayVariableDetails?.value != null
+          ? fixLabelForNumberVariables(
+              data.overlayVariableDetails?.value,
+              overlayVariable
+            )
+          : `series ${index}`,
       label: fixLabelsForNumberVariables(data.label, variable),
       value: data.value,
     })),
