@@ -24,6 +24,7 @@ import { uniq } from 'lodash';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import GlobalFiltersDialog from '../core/components/GlobalFiltersDialog';
 import { useStudyEntities } from '../core/hooks/study';
+import { getAnalysisId } from '../core/utils/analysis';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 // import ShowHideVariableContextProvider
 import ShowHideVariableContextProvider from '../core/utils/show-hide-variable-context';
@@ -57,6 +58,13 @@ export function AnalysisPanel(props: Props) {
   const [lastVarPath, setLastVarPath] = useState('');
   const [lastVizPath, setLastVizPath] = useState('');
   const [globalFiltersDialogOpen, setGlobalFiltersDialogOpen] = useState(false);
+
+  const analysisId = getAnalysisId(analysis);
+
+  useEffect(() => {
+    setLastVarPath('');
+    setLastVizPath('');
+  }, [analysisId]);
 
   useEffect(() => {
     const relativePath = location.pathname.replace(routeBase, '');
