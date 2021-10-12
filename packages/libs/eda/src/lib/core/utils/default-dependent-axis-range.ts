@@ -4,14 +4,14 @@ import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
 export function defaultDependentAxisRange(
   variable: Variable | undefined,
   plotName: string,
-  // yMinMaxRange: NumberOrDateRange | undefined,
   yMinMaxRange:
     | { min: number | string | undefined; max: number | string | undefined }
     | undefined
 ): NumberOrDateRange | undefined {
   // make universal range variable
-  if (variable != null && variable.dataShape === 'continuous') {
-    if (variable.type === 'number') {
+  if (variable != null && plotName === 'scatterplot') {
+    // this should check integer as well
+    if (variable.type === 'number' || variable.type === 'integer') {
       return variable.displayRangeMin != null &&
         variable.displayRangeMax != null
         ? {

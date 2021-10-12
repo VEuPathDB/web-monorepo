@@ -3049,10 +3049,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/components@^0.8.1":
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.8.1.tgz#bd4b87072453ee8ecd922b7426b7b46eb9dcf898"
-  integrity sha512-8+Y7grI0hmTk8ejxRCXA6p0ZmSHeq5JYi1noIUEyVgq2CdkrhRaEKemoa4UFd3wIgPENzSoOUtDK6wsmbm8rZw==
+"@veupathdb/components@^0.8.2":
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.8.2.tgz#4df63c02938aecae0baa1450cbf944669f5ad597"
+  integrity sha512-9BEY9GMDitW0FmYpZV4d+zVV1QnprRj4fpqjXu7QUviabNrbTPWEI22mh4dd+VfjHiOcdJqQ7H/dz0FSxfF9Lg==
   dependencies:
     "@material-ui/core" "^4.11.2"
     "@material-ui/icons" "^4.11.2"
