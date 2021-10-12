@@ -85,9 +85,11 @@ export function useAnalysis(
   const [error, setError] = useState<unknown>();
 
   useEffect(() => {
-    // FIXME: Should not just set the "current" state,
-    // but also clear the state's history
     if (analysisId == null) {
+      setSavedAnalysis(undefined);
+
+      // FIXME: Should not just set the "current" state,
+      // but also clear the state's history
       setCurrent(defaultAnalysis);
     } else {
       setSavedAnalysis(analysisCache[analysisId]);
