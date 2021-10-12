@@ -430,7 +430,7 @@ export function barplotResponseToData(
       name:
         data.overlayVariableDetails?.value != null
           ? fixLabelForNumberVariables(
-              data.overlayVariableDetails?.value,
+              data.overlayVariableDetails.value,
               overlayVariable
             )
           : `series ${index}`,

@@ -568,7 +568,7 @@ export function histogramResponseToData(
       name:
         data.overlayVariableDetails?.value != null
           ? fixLabelForNumberVariables(
-              data.overlayVariableDetails?.value,
+              data.overlayVariableDetails.value,
               overlayVariable
             )
           : `series ${index}`,

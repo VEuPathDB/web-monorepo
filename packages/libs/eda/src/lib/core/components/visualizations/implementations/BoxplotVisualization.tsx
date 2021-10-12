@@ -32,6 +32,7 @@ import { at } from 'lodash';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 import {
+  fixLabelForNumberVariables,
   fixLabelsForNumberVariables,
   grayOutLastSeries,
   omitEmptyNoDataSeries,
@@ -210,7 +211,11 @@ function BoxplotViz(props: VisualizationProps) {
       return omitEmptyNoDataSeries(
         grayOutLastSeries(
           reorderData(
-            boxplotResponseToData(await response, xAxisVariable),
+            boxplotResponseToData(
+              await response,
+              xAxisVariable,
+              overlayVariable
+            ),
             xAxisVariable.vocabulary,
             vocabularyWithMissingData(overlayVariable?.vocabulary, showMissing)
           ),
@@ -416,7 +421,8 @@ function BoxplotWithControls({
  */
 export function boxplotResponseToData(
   response: PromiseType<ReturnType<DataClient['getBoxplot']>>,
-  variable: Variable
+  variable: Variable,
+  overlayVariable?: Variable
 ): PromiseBoxplotData {
   return {
     series: response.boxplot.data.map((data) => ({
@@ -434,9 +440,13 @@ export function boxplotResponseToData(
       // it is necessary to rely on rawData (or seriesX/Y) for boxplot if points: 'all'
       rawData: data.rawData ? data.rawData : undefined,
       // this will be used as legend
-      name: data.overlayVariableDetails
-        ? data.overlayVariableDetails.value
-        : 'Data',
+      name:
+        data.overlayVariableDetails?.value != null
+          ? fixLabelForNumberVariables(
+              data.overlayVariableDetails.value,
+              overlayVariable
+            )
+          : 'Data',
       label: fixLabelsForNumberVariables(data.label, variable),
     })),
     completeCases: response.completeCasesTable,
