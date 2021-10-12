@@ -22,6 +22,7 @@ import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
+import { Variable } from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
@@ -194,7 +195,7 @@ function BarplotViz(props: VisualizationProps) {
       return omitEmptyNoDataSeries(
         grayOutLastSeries(
           reorderData(
-            barplotResponseToData(await response),
+            barplotResponseToData(await response, variable),
             variable?.vocabulary,
             vocabularyWithMissingData(overlayVariable?.vocabulary, showMissing)
           ),
@@ -417,14 +418,19 @@ function BarplotWithControls({
  * @returns BarplotData & completeCases & completeCasesAllVars & completeCasesAxesVars
  */
 export function barplotResponseToData(
-  response: BarplotResponse
+  response: BarplotResponse,
+  variable: Variable
 ): BarplotData & CoverageStatistics {
   return {
     series: response.barplot.data.map((data, index) => ({
       // name has value if using overlay variable
       name: data.overlayVariableDetails?.value ?? `series ${index}`,
-      // color: TO DO
-      label: data.label,
+      // numbers come from back end as strings; converting through number solves the problem in
+      // issue 508 where "40.0" from back end doesn't match variable vocabulary's "40"
+      label:
+        variable.type === 'number'
+          ? data.label.map((n) => String(Number(n)))
+          : data.label,
       value: data.value,
     })),
     completeCases: response.completeCasesTable,
