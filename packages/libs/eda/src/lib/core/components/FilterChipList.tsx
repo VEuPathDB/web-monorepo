@@ -83,9 +83,24 @@ export default function FilterChipList(props: Props) {
                 filterValueDisplay = '';
             }
 
+            const tooltipText = (
+              <>
+                <div
+                  style={{
+                    fontSize: '1.05em',
+                    fontWeight: 700,
+                    marginBottom: '.75em',
+                  }}
+                >
+                  {entity.displayName}: {variable.displayName}
+                </div>
+                <div>{filterValueDisplay}</div>
+              </>
+            );
+
             return (
               <FilterChip
-                tooltipText={filterValueDisplay}
+                tooltipText={tooltipText}
                 isActive={
                   entity.id === selectedEntityId &&
                   variable.id === selectedVariableId
