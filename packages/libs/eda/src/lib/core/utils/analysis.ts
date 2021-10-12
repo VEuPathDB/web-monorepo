@@ -3,6 +3,7 @@ import {
   BarplotData,
   BoxplotData,
 } from '@veupathdb/components/lib/types/plots';
+import { Variable } from '../types/study';
 import { CoverageStatistics } from '../types/visualization';
 
 export function vocabularyWithMissingData(
@@ -63,4 +64,21 @@ export function quantizePvalue(pvalue: number | string): string {
   } else {
     return pvalue.toPrecision(1);
   }
+}
+
+/**
+ * See web-eda issue 508
+ *
+ * Number variable values come from back end as strings when used as labels;
+ * converting through number solves the problem in
+ * issue 508 where "40.0" from back end doesn't match variable vocabulary's "40"
+ *
+ */
+export function fixLabelsForNumberVariables(
+  labels: string[],
+  variable: Variable
+): string[] {
+  return variable.type === 'number'
+    ? labels.map((n) => String(Number(n)))
+    : labels;
 }

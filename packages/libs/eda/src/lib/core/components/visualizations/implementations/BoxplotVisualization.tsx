@@ -32,6 +32,7 @@ import { at } from 'lodash';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 import {
+  fixLabelsForNumberVariables,
   grayOutLastSeries,
   omitEmptyNoDataSeries,
   vocabularyWithMissingData,
@@ -436,11 +437,7 @@ export function boxplotResponseToData(
       name: data.overlayVariableDetails
         ? data.overlayVariableDetails.value
         : 'Data',
-      // see barplot for explanation
-      label:
-        variable.type === 'number'
-          ? data.label.map((n) => String(Number(n)))
-          : data.label,
+      label: fixLabelsForNumberVariables(data.label, variable),
     })),
     completeCases: response.completeCasesTable,
     completeCasesAllVars: response.boxplot.config.completeCasesAllVars,

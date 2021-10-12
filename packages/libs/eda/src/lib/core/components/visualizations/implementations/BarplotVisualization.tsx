@@ -37,6 +37,7 @@ import bar from './selectorIcons/bar.svg';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 import {
+  fixLabelsForNumberVariables,
   grayOutLastSeries,
   omitEmptyNoDataSeries,
   vocabularyWithMissingData,
@@ -425,12 +426,7 @@ export function barplotResponseToData(
     series: response.barplot.data.map((data, index) => ({
       // name has value if using overlay variable
       name: data.overlayVariableDetails?.value ?? `series ${index}`,
-      // numbers come from back end as strings; converting through number solves the problem in
-      // issue 508 where "40.0" from back end doesn't match variable vocabulary's "40"
-      label:
-        variable.type === 'number'
-          ? data.label.map((n) => String(Number(n)))
-          : data.label,
+      label: fixLabelsForNumberVariables(data.label, variable),
       value: data.value,
     })),
     completeCases: response.completeCasesTable,
