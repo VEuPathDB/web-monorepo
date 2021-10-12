@@ -222,7 +222,9 @@ export function useAnalysis(
     if (!isSavedAnalysis(analysis))
       throw new Error('Cannot delete an unsaved analysis.');
 
-    return analysisClient.deleteAnalysis(analysis.analysisId);
+    return analysisClient.deleteAnalysis(analysis.analysisId).then(() => {
+      delete analysisCache[analysis.analysisId];
+    });
   }, [analysisClient, analysis]);
 
   useEffect(() => {
@@ -276,6 +278,7 @@ export function useAnalysisList(analysisClient: AnalysisClient) {
       setLoading(true);
       try {
         await analysisClient.deleteAnalysis(id);
+        delete analysisCache[id];
         setAnalyses((analyses) =>
           analyses?.filter((analysis) => analysis.analysisId !== id)
         );
@@ -293,6 +296,9 @@ export function useAnalysisList(analysisClient: AnalysisClient) {
       setLoading(true);
       try {
         await analysisClient.deleteAnalyses(ids);
+        for (const id of ids) {
+          delete analysisCache[id];
+        }
         setAnalyses(
           (analyses) =>
             analyses &&
