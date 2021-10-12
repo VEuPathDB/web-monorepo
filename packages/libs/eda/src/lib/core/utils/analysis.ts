@@ -82,3 +82,16 @@ export function fixLabelsForNumberVariables(
     ? labels.map((n) => String(Number(n)))
     : labels;
 }
+
+/**
+ * non-array version of fixLabelsForNumberVariables
+ *
+ */
+export function fixLabelForNumberVariables(
+  label: string,
+  variable?: Variable
+): string {
+  return variable != null && variable.type === 'number'
+    ? String(Number(label))
+    : label;
+}
