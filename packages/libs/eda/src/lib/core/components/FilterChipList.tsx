@@ -48,13 +48,13 @@ export default function FilterChipList(props: Props) {
             // Set filterValueDisplay based on the filter's type
             switch (filter.type) {
               case 'stringSet':
-                filterValueDisplay = filter.stringSet.join(', ');
+                filterValueDisplay = filter.stringSet.join(' | ');
                 break;
               case 'numberSet':
-                filterValueDisplay = filter.numberSet.join(', ');
+                filterValueDisplay = filter.numberSet.join(' | ');
                 break;
               case 'dateSet':
-                filterValueDisplay = filter.dateSet.join(', ');
+                filterValueDisplay = filter.dateSet.join(' | ');
                 break;
               case 'numberRange':
               case 'dateRange':
@@ -70,7 +70,7 @@ export default function FilterChipList(props: Props) {
                     if (entAndVar == null) return '';
                     return `${
                       entAndVar.variable.displayName
-                    } = ${subFilter.stringSet.join(', ')}`;
+                    } = ${subFilter.stringSet.join(' | ')}`;
                   })
                   .flatMap((text, index) => (
                     <>
