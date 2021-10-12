@@ -157,6 +157,7 @@ const Boxplot = makePlotlyPlotComponent('Boxplot', (props: BoxplotProps) => {
       range: data.length ? undefined : [1, 5], // avoids x==0 line
       tickfont: data.length ? {} : { color: 'transparent' },
       showticklabels: showIndependentAxisTickLabel,
+      type: 'category',
       // part 3 of the hack:
       categoryorder: 'array',
       // for boxplot, this should also be changed to have ellipsis!
