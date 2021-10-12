@@ -24,6 +24,8 @@ export type PlotLegendAddon = {
     size: number;
     color: string;
   };
+  /** legend traceorder (for histogram filter) */
+  traceorder?: 'reversed' | 'grouped' | 'normal' | undefined;
 };
 
 /** Specification to control plot margins and padding. */
