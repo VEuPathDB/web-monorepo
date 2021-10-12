@@ -1084,10 +1084,10 @@
     react-resizable "^3.0.4"
     uuid "^8.3.2"
 
-"@veupathdb/eda@^0.13.2":
-  version "0.13.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.13.2.tgz#66aaf9a5f4ace1e24fa120ba8718731754f13828"
-  integrity sha512-x4ewT+oLwaKXJF9UdcO5r6w0oeEz1o628JNZuND5Q7nmzE7tlO5WLsIIlZo+LC1I8QrDiHrH6s2p0QtZhOy5yQ==
+"@veupathdb/eda@^0.13.3":
+  version "0.13.3"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.13.3.tgz#ca9186399e77a787a705565fae34604c15ef75e7"
+  integrity sha512-NgdZjHxPtcLM34bDYMZSimn+SOYHhXpJY245IqYdZNpvZd92zcgyecNkoboQWcCBylEcGnrrTIpch9dOSdHXRw==
   dependencies:
     "@material-ui/core" "^4.11.3"
     "@material-ui/lab" "^4.0.0-alpha.58"
