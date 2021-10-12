@@ -70,7 +70,7 @@ export function Subsetting(props: Props) {
       </div>
       <div className="FilterChips">
         <FilterChipList
-          filters={filters?.filter((f) => f.entityId === entity.id)}
+          filters={filters}
           removeFilter={(filter) =>
             analysisState.analysis &&
             analysisState.setFilters(
