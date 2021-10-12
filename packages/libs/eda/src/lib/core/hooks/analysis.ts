@@ -87,12 +87,16 @@ export function useAnalysis(
   useEffect(() => {
     if (analysisId == null) {
       setSavedAnalysis(undefined);
+      setStatus(Status.Loaded);
+      setError(undefined);
 
       // FIXME: Should not just set the "current" state,
       // but also clear the state's history
       setCurrent(defaultAnalysis);
     } else {
       setSavedAnalysis(analysisCache[analysisId]);
+      setStatus(Status.InProgress);
+      setError(undefined);
     }
   }, [defaultAnalysis, analysisId, setCurrent]);
 
