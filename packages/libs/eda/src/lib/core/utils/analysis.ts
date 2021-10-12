@@ -86,12 +86,14 @@ export function fixLabelsForNumberVariables(
 /**
  * non-array version of fixLabelsForNumberVariables
  *
+ * However, unlike fixLabelsForNumberVariables it will pass through any non-number strings.
+ * This is because this is used to clean up overlayVariable values, which can be 'No data'
  */
 export function fixLabelForNumberVariables(
   label: string,
   variable?: Variable
 ): string {
   return variable != null && variable.type === 'number'
-    ? String(Number(label))
+    ? String(isNaN(Number(label)) ? label : Number(label))
     : label;
 }
