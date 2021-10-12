@@ -1,38 +1,27 @@
-import { useMemo } from 'react';
-
-import { noop } from 'lodash';
-
-import { makeNewAnalysis, useAnalysis } from '../core';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { AnalysisPanel } from './AnalysisPanel';
-import { NewAnalysisPage } from './NewAnalysis';
+import { useWorkspaceAnalysis } from './hooks/analyses';
+import { isNewAnalysis, isSavedAnalysis } from '../core/utils/analysis';
 
-interface EDAWorkSpaceSavedAnalysisProps {
-  analysisId: string;
+interface Props {
   studyId: string;
+  analysisId?: string;
 }
 
-export const EDAWorkspaceNewAnalysis = () => (
-  <>
-    <EDAWorkspaceHeading />
-    <NewAnalysisPage />
-  </>
-);
-
-/** A wrapper purely to inject analysisState using `useAnalysis` in accordance
- * with the rules of hooks */
-export const EDAWorkspaceSavedAnalysis = ({
-  analysisId,
-  studyId,
-}: EDAWorkSpaceSavedAnalysisProps) => {
-  const defaultAnalysis = useMemo(() => makeNewAnalysis(studyId), [studyId]);
-
-  const analysisState = useAnalysis(defaultAnalysis, noop, analysisId);
+export const EDAWorkspace = ({ studyId, analysisId }: Props) => {
+  const analysisState = useWorkspaceAnalysis(studyId, analysisId);
 
   return (
     <>
-      <EDAWorkspaceHeading analysisState={analysisState} />
-      <AnalysisPanel analysisState={analysisState} />
+      <EDAWorkspaceHeading
+        analysisState={
+          isSavedAnalysis(analysisState.analysis) ? analysisState : undefined
+        }
+      />
+      <AnalysisPanel
+        analysisState={analysisState}
+        hideCopyAndSave={isNewAnalysis(analysisState.analysis)}
+      />
     </>
   );
 };
