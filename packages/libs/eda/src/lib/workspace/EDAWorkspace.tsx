@@ -25,7 +25,7 @@ export const EDAWorkspaceSavedAnalysis = ({
   return (
     <>
       <EDAWorkspaceHeading analysisState={analysisState} />
-      <AnalysisPanel analysisState={analysisState} />;
+      <AnalysisPanel analysisState={analysisState} />
     </>
   );
 };

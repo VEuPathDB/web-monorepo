@@ -65,6 +65,7 @@ import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { defaultDependentAxisRange } from '../../../utils/default-dependent-axis-range';
 import { useRouteMatch } from 'react-router';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
+import PluginError from '../PluginError';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 
@@ -286,6 +287,7 @@ function ScatterplotViz(props: VisualizationProps) {
       overlayVariable,
       computation.descriptor.type,
       visualization.descriptor.type,
+      MAXALLOWEDDATAPOINTS,
     ])
   );
 
@@ -365,22 +367,12 @@ function ScatterplotViz(props: VisualizationProps) {
         />
       </div>
 
-      {data.error && (
-        <div
-          style={{
-            fontSize: '1.2em',
-            padding: '1em',
-            background: 'rgb(255, 233, 233) none repeat scroll 0% 0%',
-            borderRadius: '.5em',
-            margin: '.5em 0',
-            color: '#333',
-            border: '1px solid #d9cdcd',
-            display: 'flex',
-          }}
-        >
-          <i className="fa fa-warning" style={{ marginRight: '1ex' }}></i>{' '}
-          {data.error instanceof Error ? (
-            data.error.message.match(/400.+too large/is) ? (
+      <PluginError
+        error={data.error}
+        outputSize={outputSize}
+        customCases={[
+          (errorString) =>
+            errorString.match(/400.+too large/is) ? (
               <span>
                 Your plot currently has too many points (&gt;
                 {MAXALLOWEDDATAPOINTS.toLocaleString()}) to display in a
@@ -391,14 +383,9 @@ function ScatterplotViz(props: VisualizationProps) {
                 tab to reduce the number, or consider using a summary plot such
                 as histogram or boxplot.
               </span>
-            ) : (
-              data.error.message
-            )
-          ) : (
-            String(data.error)
-          )}
-        </div>
-      )}
+            ) : undefined,
+        ]}
+      />
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
       <div
         style={{
@@ -420,8 +407,8 @@ function ScatterplotViz(props: VisualizationProps) {
             (data.value.dataSetProcess.series.length > 1 ||
               vizConfig.overlayVariable != null)
           }
-          independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-Axis'}
-          dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-Axis'}
+          independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-axis'}
+          dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-axis'}
           // variable's metadata-based independent axis range with margin
           independentAxisRange={defaultIndependentRangeMargin}
           // new dependent axis range
@@ -702,7 +689,7 @@ function processInputData<T extends number | string>(
 
   // distinguish data per Viztype
   // currently, lineplot returning scatterplot, not lineplot
-  const plotDataSet =
+  const plotDataSet: ScatterplotResponse['scatterplot'] =
     vizType === 'lineplot'
       ? dataSet.scatterplot
       : vizType === 'densityplot'
@@ -712,6 +699,19 @@ function processInputData<T extends number | string>(
   // set variables for x- and yaxis ranges: no default values are set
   let yMin: number | string | undefined;
   let yMax: number | string | undefined;
+
+  // catch the case when the back end has returned valid but completely empty data
+  if (
+    plotDataSet?.data.every(
+      (data) => data.seriesX?.length === 0 && data.seriesY?.length === 0
+    )
+  ) {
+    return {
+      dataSetProcess: { series: [] },
+      yMin,
+      yMax,
+    };
+  }
 
   // function to return color or gray where needed if showMissingness == true
   const markerColor = (index: number) => {
