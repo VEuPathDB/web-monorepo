@@ -94,8 +94,10 @@ export function useAnalysis(
       // but also clear the state's history
       setCurrent(defaultAnalysis);
     } else {
-      setSavedAnalysis(analysisCache[analysisId]);
-      setStatus(Status.InProgress);
+      const analysisCacheEntry = analysisCache[analysisId];
+
+      setSavedAnalysis(analysisCacheEntry);
+      setStatus(analysisCacheEntry == null ? Status.InProgress : Status.Loaded);
       setError(undefined);
     }
   }, [defaultAnalysis, analysisId, setCurrent]);
