@@ -62,8 +62,10 @@ export function parseTimeDelta(input: string): TimeDelta {
 }
 
 /**
- * Converts an ISO datetime string to a display format
+ * Converts an ISO datetime string to a display format.
+ *
+ * If the timezone is missing, it is presumed to be GMT.
  */
 export function convertISOToDisplayFormat(datetime: string) {
-  return new Date(datetime).toUTCString().slice(5);
+  return new Date(padISODateTime(datetime)).toUTCString().slice(5);
 }

@@ -48,7 +48,7 @@ export function EDAWorkspaceHeading({
                 <Button
                   variant="text"
                   color="primary"
-                  startIcon={<Icon className="fa fa-download fa-fw" />}
+                  startIcon={<Icon className="ebrc-icon-download" />}
                   type="button"
                   onClick={() => {
                     attemptAction(Action.download, {
