@@ -38,6 +38,7 @@ import {
 } from '../../../utils/analysis';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
+import { Variable } from '../../../types/study';
 
 interface PromiseBoxplotData extends CoverageStatistics {
   series: BoxplotData;
@@ -208,7 +209,7 @@ function BoxplotViz(props: VisualizationProps) {
       return omitEmptyNoDataSeries(
         grayOutLastSeries(
           reorderData(
-            boxplotResponseToData(await response),
+            boxplotResponseToData(await response, xAxisVariable),
             xAxisVariable.vocabulary,
             vocabularyWithMissingData(overlayVariable?.vocabulary, showMissing)
           ),
@@ -413,7 +414,8 @@ function BoxplotWithControls({
  * @returns PromiseBoxplotData
  */
 export function boxplotResponseToData(
-  response: PromiseType<ReturnType<DataClient['getBoxplot']>>
+  response: PromiseType<ReturnType<DataClient['getBoxplot']>>,
+  variable: Variable
 ): PromiseBoxplotData {
   return {
     series: response.boxplot.data.map((data) => ({
@@ -434,8 +436,11 @@ export function boxplotResponseToData(
       name: data.overlayVariableDetails
         ? data.overlayVariableDetails.value
         : 'Data',
-      // this will be used as x-axis tick labels
-      label: data.label, // [response.boxplot.config.xVariableDetails.variableId],
+      // see barplot for explanation
+      label:
+        variable.type === 'number'
+          ? data.label.map((n) => String(Number(n)))
+          : data.label,
     })),
     completeCases: response.completeCasesTable,
     completeCasesAllVars: response.boxplot.config.completeCasesAllVars,
