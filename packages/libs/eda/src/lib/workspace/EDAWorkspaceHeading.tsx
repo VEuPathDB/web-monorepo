@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import Path from 'path';
 import { cx } from './Utils';
 import { useStudyRecord, AnalysisState, DEFAULT_ANALYSIS_NAME } from '../core';
+import { getAnalysisId } from '../core/utils/analysis';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Button, Tooltip, Icon, makeStyles } from '@material-ui/core';
 import { LinkAttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
@@ -36,6 +37,12 @@ export function EDAWorkspaceHeading({
   const history = useHistory();
   const redirectToNewAnalysis = () => history.push(redirectURL);
   const iconClasses = useStyles();
+
+  const analysisId = getAnalysisId(analysis);
+
+  useEffect(() => {
+    setDialogIsOpen(false);
+  }, [analysisId]);
 
   return (
     <>
