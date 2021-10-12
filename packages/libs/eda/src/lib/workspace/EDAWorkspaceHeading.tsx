@@ -79,11 +79,11 @@ export function EDAWorkspaceHeading({
                 color="primary"
                 startIcon={<Icon className="fa fa-plus fa-fw" />}
                 onClick={
-                  /** If (1) there is no analysis, (2) we're in an unsaved new
-                   * analysis (here `analysis` is still undefined in this case),
-                   * or (3) we're in a renamed analysis, just go straight to the
-                   * new analysis. Otherwise, show the renaming dialog. */
-                  analysis && analysis.displayName === DEFAULT_ANALYSIS_NAME
+                  /** If we're in an unnamed saved analysis, show the renaming dialog.
+                   *  Otherwise, just go straight to the new analysis.
+                   */
+                  isSavedAnalysis(analysis) &&
+                  analysis.displayName === DEFAULT_ANALYSIS_NAME
                     ? () => setDialogIsOpen(true)
                     : redirectToNewAnalysis
                 }
