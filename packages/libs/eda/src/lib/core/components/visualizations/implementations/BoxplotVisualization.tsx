@@ -5,17 +5,20 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 // need to set for Boxplot
-import { DataClient, BoxplotRequestParams } from '../../../api/data-api';
+import {
+  DataClient,
+  BoxplotRequestParams,
+  BoxplotResponse,
+} from '../../../api/data-api';
 
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { Filter } from '../../../types/filter';
-import { PromiseType } from '../../../types/utility';
 import { VariableDescriptor } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
@@ -403,7 +406,7 @@ function BoxplotWithControls({
  * @returns PromiseBoxplotData
  */
 export function boxplotResponseToData(
-  response: PromiseType<ReturnType<DataClient['getBoxplot']>>,
+  response: BoxplotResponse,
   variable: Variable,
   overlayVariable?: Variable
 ): PromiseBoxplotData {
