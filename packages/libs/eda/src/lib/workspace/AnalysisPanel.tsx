@@ -29,6 +29,7 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 // import ShowHideVariableContextProvider
 import ShowHideVariableContextProvider from '../core/utils/show-hide-variable-context';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { usePrevious } from '../core/hooks/previousValue';
 
 interface Props {
   analysisState: AnalysisState;
@@ -60,11 +61,22 @@ export function AnalysisPanel(props: Props) {
   const [globalFiltersDialogOpen, setGlobalFiltersDialogOpen] = useState(false);
 
   const analysisId = getAnalysisId(analysis);
+  const previousAnalysisId = usePrevious(analysisId);
 
   useEffect(() => {
+    if (
+      previousAnalysisId === analysisId ||
+      (previousAnalysisId == null && analysisId != null)
+    ) {
+      // Preserve the last variable and visualization visited if
+      // the analysis id hasn't changed, or if transitioning from a
+      // new to a saved analysis
+      return;
+    }
+
     setLastVarPath('');
     setLastVizPath('');
-  }, [analysisId]);
+  }, [previousAnalysisId, analysisId]);
 
   useEffect(() => {
     const relativePath = location.pathname.replace(routeBase, '');
