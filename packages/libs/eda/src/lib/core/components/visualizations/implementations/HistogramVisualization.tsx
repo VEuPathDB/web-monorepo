@@ -30,6 +30,7 @@ import {
   DateVariable,
   NumberVariable,
   StudyEntity,
+  Variable,
 } from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
 import { CoverageStatistics } from '../../../types/visualization';
@@ -231,7 +232,8 @@ function HistogramViz(props: VisualizationProps) {
         studyId,
         filters ?? [],
         valueType,
-        vizConfig
+        vizConfig,
+        xAxisVariable
       );
       const response = dataClient.getHistogram(
         computation.descriptor.type,
@@ -587,11 +589,16 @@ function getRequestParams(
   studyId: string,
   filters: Filter[],
   valueType: 'number' | 'date',
-  vizConfig: HistogramConfig
+  vizConfig: HistogramConfig,
+  variable?: Variable
 ): HistogramRequestParams {
   const {
-    binWidth,
-    binWidthTimeUnit,
+    binWidth = NumberVariable.is(variable) || DateVariable.is(variable)
+      ? variable.binWidthOverride ?? variable.binWidth
+      : undefined,
+    binWidthTimeUnit = variable?.type === 'date'
+      ? variable.binUnits
+      : undefined,
     valueSpec,
     overlayVariable,
     xAxisVariable,
