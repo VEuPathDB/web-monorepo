@@ -85,6 +85,7 @@ function createDefaultConfig(): HistogramConfig {
 }
 
 type ValueSpec = t.TypeOf<typeof ValueSpec>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const ValueSpec = t.keyof({ count: null, proportion: null });
 
 type HistogramConfig = t.TypeOf<typeof HistogramConfig>;
@@ -301,7 +302,7 @@ function HistogramViz(props: VisualizationProps) {
           toggleStarredVariable={toggleStarredVariable}
           enableShowMissingnessToggle={
             overlayVariable != null &&
-            data.value?.completeCasesAllVars !=
+            data.value?.completeCasesAllVars !==
               data.value?.completeCasesAxesVars
           }
           showMissingness={vizConfig.showMissingness}
