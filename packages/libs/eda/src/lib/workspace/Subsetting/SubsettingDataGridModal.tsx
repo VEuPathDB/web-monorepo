@@ -1,10 +1,11 @@
 import { useState, useCallback, useEffect } from 'react';
-import { ceil } from 'lodash';
+import { ceil, uniqBy } from 'lodash';
 
 import { H5 } from '@veupathdb/core-components/dist/components/headers';
 import DataGrid from '@veupathdb/core-components/dist/components/grids/DataGrid';
 import FullScreenModal from '@veupathdb/core-components/dist/components/modals/FullScreenModal';
 import SwissArmyButton from '@veupathdb/core-components/dist/components/buttons/SwissArmyButton';
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { AnalysisState } from '../../core/hooks/analysis';
 import {
@@ -24,23 +25,19 @@ import {
 import { useProcessedGridData } from './hooks';
 import { APIError } from '../../core/api/types';
 import { AnalysisSummary } from '../AnalysisSummary';
-import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 type SubsettingDataGridProps = {
   /** Should the modal currently be visible? */
   displayModal: boolean;
   /** Toggle the display of the modal. */
   toggleDisplay: () => void;
-  /**
-   * Analysis state. We will read/write to this object as
-   * people change the variables selected for display.
-   * */
+  /** Analysis state. We will read/write to this object. */
   analysisState: AnalysisState;
   /** The entities for the Study/Analysis being interacted with. */
   entities: Array<StudyEntity>;
-  /** The ID of the currently selected entity OUTSIDE of the modal.  */
+  /** The ID of the currently selected entity. */
   currentEntityID: string;
-  /** The total number of records in the datastore for the currently selected entity. */
+  /** Record counts for the currently selected entity. With an without any applied filters. */
   currentEntityRecordCounts: {
     total: number | undefined;
     filtered: number | undefined;
@@ -71,13 +68,14 @@ export default function SubsettingDataGridModal({
     undefined
   );
 
-  // TEMP
-
   // Used to track if there is an inflight API call.
   const [dataLoading, setDataLoading] = useState(false);
 
   // API error storage.
   const [apiError, setApiError] = useState<APIError | null>(null);
+
+  // Whether or not to display the variable tree.
+  const [displayVariableTree, setDisplayVariableTree] = useState(false);
 
   // Internal storage of currently loaded data from API.
   const [gridData, setGridData] = useState<TabularDataResponse | null>(null);
@@ -98,36 +96,47 @@ export default function SubsettingDataGridModal({
     setSelectedVariableDescriptors,
   ] = useState<Array<VariableDescriptor>>([]);
 
+  /**
+   * An array of variable descriptors for the current entity's
+   * featured and stared variables.
+   */
   const [
     featuredAndStarredVariableDescriptors,
     setFeaturedAndStarredVariableDescriptors,
   ] = useState<Array<VariableDescriptor>>([]);
 
+  /**
+   * If the user has not manually selected any variables for display,
+   * we will attempt to use any starred/featured variables for the current
+   * entity as default data grid columns.
+   */
   useEffect(() => {
-    console.log(analysisState.analysis?.descriptor.starredVariables);
+    const starredVariables: Array<VariableDescriptor> =
+      analysisState.analysis?.descriptor.starredVariables.filter(
+        (variable) => variable.entityId === currentEntityID
+      ) ?? [];
 
-    const starredVariables = analysisState.analysis?.descriptor.starredVariables.filter(
-      (variable) => (variable.entityId = currentEntityID)
+    const featuredVariables: Array<VariableDescriptor> = featuredFields
+      .filter((field) => field.term.startsWith(currentEntityID))
+      .map((field) => {
+        return {
+          entityId: currentEntityID,
+          variableId: field.term.split('/')[1],
+        };
+      });
+
+    setFeaturedAndStarredVariableDescriptors(
+      uniqBy(
+        [...starredVariables, ...featuredVariables],
+        (value) => `${value.entityId}/${value.variableId}`
+      )
     );
-
-    if (starredVariables?.length) {
-      setFeaturedAndStarredVariableDescriptors(starredVariables);
-    } else {
-      setFeaturedAndStarredVariableDescriptors([]);
-    }
   }, [
     analysisState.analysis,
     currentEntityID,
     featuredFields,
     setFeaturedAndStarredVariableDescriptors,
   ]);
-
-  useEffect(() => {
-    console.log('STARRED', featuredAndStarredVariableDescriptors);
-  }, [featuredAndStarredVariableDescriptors]);
-
-  // Whether or not to display the variable tree.
-  const [displayVariableTree, setDisplayVariableTree] = useState(false);
 
   /**
    * Actions to take when the modal is opened.
@@ -143,8 +152,11 @@ export default function SubsettingDataGridModal({
       analysisState.analysis?.descriptor.dataTableConfig[currentEntityID];
 
     if (previouslyStoredEntityData) {
+      // Load variables selections from analysis.
       setSelectedVariableDescriptors(previouslyStoredEntityData.variables);
-      console.log('Loaded Variable Selections from Analysis');
+    } else {
+      // Use featured and starred variables as defaults if nothing is present on the analysis.
+      setSelectedVariableDescriptors(featuredAndStarredVariableDescriptors);
     }
   };
 
@@ -210,6 +222,7 @@ export default function SubsettingDataGridModal({
   const handleSelectedVariablesChange = (
     variableDescriptors: Array<VariableDescriptor>
   ) => {
+    // Update the analysis to save the user's selections.
     analysisState.setDataTableConfig({
       ...analysisState.analysis?.descriptor.dataTableConfig,
       [currentEntityID]: { variables: variableDescriptors, sorting: null },
@@ -218,7 +231,7 @@ export default function SubsettingDataGridModal({
     setSelectedVariableDescriptors(variableDescriptors);
   };
 
-  /** Whenever the selected variables change, load a new data set. */
+  /** Whenever `selectedVariableDescriptors` changes, load a new data set. */
   useEffect(() => {
     setApiError(null);
     selectedVariableDescriptors.length
@@ -283,9 +296,7 @@ export default function SubsettingDataGridModal({
             width: 410,
             right: 0,
             top: 0,
-
             backgroundColor: 'rgba(255, 255, 255, 1)',
-            // filter: 'drop-shadow(1px 1px 3px gray)',
             border: '2px solid rgb(200, 200, 200)',
             borderRadius: 5,
           }}
@@ -296,7 +307,6 @@ export default function SubsettingDataGridModal({
                 borderColor: '#d32323',
                 backgroundColor: '#d32323',
                 borderRadius: 5,
-                // padding: 10,
                 borderWidth: 2,
                 borderStyle: 'solid',
                 display: 'flex',
