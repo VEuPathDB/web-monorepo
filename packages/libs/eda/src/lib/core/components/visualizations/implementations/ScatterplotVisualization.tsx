@@ -689,7 +689,7 @@ function processInputData<T extends number | string>(
 
   // distinguish data per Viztype
   // currently, lineplot returning scatterplot, not lineplot
-  const plotDataSet =
+  const plotDataSet: ScatterplotResponse['scatterplot'] =
     vizType === 'lineplot'
       ? dataSet.scatterplot
       : vizType === 'densityplot'
@@ -700,15 +700,18 @@ function processInputData<T extends number | string>(
   let yMin: number | string | undefined;
   let yMax: number | string | undefined;
 
-  // BM: would like to catch the empty data response but there is a Typescript problem
-  // I can't solve now ** TO DO **
-  // if (plotDataSet?.data.every((data) => data.seriesX?.length === 0 && data.seriesY?.length === 0)) {
-  //   return {
-  //     dataSetProcess: { series: [] },
-  //     yMin,
-  //     yMax,
-  //   };
-  // }
+  // catch the case when the back end has returned valid but completely empty data
+  if (
+    plotDataSet?.data.every(
+      (data) => data.seriesX?.length === 0 && data.seriesY?.length === 0
+    )
+  ) {
+    return {
+      dataSetProcess: { series: [] },
+      yMin,
+      yMax,
+    };
+  }
 
   // function to return color or gray where needed if showMissingness == true
   const markerColor = (index: number) => {
