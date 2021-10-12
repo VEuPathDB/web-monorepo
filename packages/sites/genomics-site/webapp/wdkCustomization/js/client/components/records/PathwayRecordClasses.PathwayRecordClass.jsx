@@ -1,4 +1,3 @@
-/* global ChemDoodle */
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -1372,6 +1371,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
               onClose={this.clearActiveNodeData}
               wdkConfig={this.props.siteConfig}
               nodeData={this.props.pathwayRecord.activeNodeData}
+              config={this.props.config}
               pathwaySource={source}
             />
           )}
@@ -1567,14 +1567,14 @@ NodeDetails.propTypes = {
 
 function EnzymeNodeDetails(props) {
   let { display_label, name, gene_count, image, cellular_location, url } = props.nodeData;
+  let { projectId } = props.config;
 
   var regex = /^[0-9]+\.[0-9]*-*\.[0-9]*-*\.[0-9]*-*$/;
   var orthomcl_url = (<p></p>);
   if (regex.test(display_label)) {
     var orthomcl_url = (
-      <p><a href={ORTHOMCL_LINK + display_label}>Search on OrthoMCL for groups with this EC Number</a></p>
+      <p><a href={ORTHOMCL_LINK + display_label} target="_blank">Explore this EC number in other taxa on OrthoMCL</a></p>
     );
-
   } 
 
   return (
@@ -1591,9 +1591,16 @@ function EnzymeNodeDetails(props) {
 
       {gene_count > 0 && (
         <div>
-            <a href={props.wdkConfig.webAppUrl + EC_NUMBER_SEARCH_PREFIX + display_label}>Show {gene_count} gene(s) which match this EC Number</a>
+            <a href={props.wdkConfig.webAppUrl + EC_NUMBER_SEARCH_PREFIX + display_label}>Show {gene_count} gene(s) which match this EC number in {projectId}</a>
         </div>
       )}
+
+      { (gene_count == 0 && regex.test(display_label)) && (
+        <div>
+            <p>There are <b>0</b> genes which match this EC number in {projectId}</p>
+        </div>
+      )}
+
 
       {orthomcl_url}
 
