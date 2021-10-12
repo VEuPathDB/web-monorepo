@@ -1,7 +1,8 @@
+import { isNewAnalysis } from '../core/utils/analysis';
+
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { AnalysisPanel } from './AnalysisPanel';
 import { useWorkspaceAnalysis } from './hooks/analyses';
-import { isNewAnalysis } from '../core/utils/analysis';
 
 interface Props {
   studyId: string;

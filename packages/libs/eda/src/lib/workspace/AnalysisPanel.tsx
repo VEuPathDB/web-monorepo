@@ -23,13 +23,13 @@ import { useEntityCounts } from '../core/hooks/entityCounts';
 import { uniq } from 'lodash';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import GlobalFiltersDialog from '../core/components/GlobalFiltersDialog';
+import { usePrevious } from '../core/hooks/previousValue';
 import { useStudyEntities } from '../core/hooks/study';
 import { getAnalysisId } from '../core/utils/analysis';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 // import ShowHideVariableContextProvider
 import ShowHideVariableContextProvider from '../core/utils/show-hide-variable-context';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { usePrevious } from '../core/hooks/previousValue';
 
 interface Props {
   analysisState: AnalysisState;
