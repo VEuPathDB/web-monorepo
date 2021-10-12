@@ -37,6 +37,7 @@ import {
 } from '../../../utils/analysis';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { Variable } from '../../../types/study';
+import PluginError from '../PluginError';
 
 const plotDimensions = {
   width: 750,
@@ -427,26 +428,7 @@ function MosaicViz(props: Props) {
         />
       </div>
 
-      {data.error && (
-        <div
-          style={{
-            fontSize: '1.2em',
-            padding: '1em',
-            background: 'rgb(255, 233, 233) none repeat scroll 0% 0%',
-            borderRadius: '.5em',
-            margin: '.5em 0',
-            color: '#333',
-            border: '1px solid #d9cdcd',
-            display: 'flex',
-          }}
-        >
-          <i className="fa fa-warning" style={{ marginRight: '1ex' }}></i>{' '}
-          {data.error instanceof Error
-            ? data.error.message
-            : String(data.error)}
-        </div>
-      )}
-
+      <PluginError error={data.error} outputSize={outputSize} />
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
       {plotComponent}
     </div>
