@@ -3,7 +3,7 @@ import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import Path from 'path';
 import { cx } from './Utils';
 import { useStudyRecord, AnalysisState, DEFAULT_ANALYSIS_NAME } from '../core';
-import { getAnalysisId } from '../core/utils/analysis';
+import { getAnalysisId, isSavedAnalysis } from '../core/utils/analysis';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Button, Tooltip, Icon, makeStyles } from '@material-ui/core';
 import { LinkAttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
@@ -108,7 +108,7 @@ export function EDAWorkspaceHeading({
           </div>
         </div>
       </div>
-      {analysisState && analysis && (
+      {analysisState && isSavedAnalysis(analysis) && (
         <AnalysisNameDialog
           isOpen={dialogIsOpen}
           setIsOpen={setDialogIsOpen}
