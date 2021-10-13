@@ -99,6 +99,63 @@ BigNumbers.args = {
   interactive: true,
 };
 
+const dataSetProblem: BirdsEyePlotData = {
+  brackets: [
+    {
+      label: 'Data for axes',
+      value: 4372,
+    },
+    {
+      label: 'Data for axes & strata',
+      value: 3393,
+    },
+  ],
+  bars: [
+    // total comes first, or the subset is hidden
+    {
+      label: 'Total',
+      value: 40374,
+      color: gray,
+    },
+    {
+      label: 'Subset',
+      value: 10765,
+      color: red,
+    },
+  ],
+};
+
+const wideContainerStyles: CSSProperties = {
+  width: '450px',
+  height: '110px',
+  border: '2px solid yellow', // obviously just for demo purposes
+};
+
+const wideSpacingOptions = {
+  marginTop: 5,
+  marginBottom: 5,
+  marginLeft: 5,
+  marginRight: 50,
+};
+
+export const ProblemPopup = Template.bind({});
+ProblemPopup.args = {
+  data: dataSetProblem,
+  dependentAxisLabel: 'Foxes',
+  containerStyles,
+  spacingOptions,
+  interactive: true,
+};
+
+export const ProblemPopupSolvedWithMargin = Template.bind({});
+ProblemPopupSolvedWithMargin.args = {
+  data: dataSetProblem,
+  dependentAxisLabel: 'Foxes',
+  containerStyles: wideContainerStyles,
+  spacingOptions: wideSpacingOptions,
+  interactive: true,
+};
+
 const dataSetOneBracket: BirdsEyePlotData = {
   brackets: [
     {
