@@ -1,31 +1,24 @@
-import React from 'react';
-import { useAnalysis } from '../core';
+import { isNewAnalysis } from '../core/utils/analysis';
+
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { AnalysisPanel } from './AnalysisPanel';
-import { NewAnalysisPage } from './NewAnalysis';
+import { useWorkspaceAnalysis } from './hooks/analyses';
 
-interface EDAWorkSpaceSavedAnalysisProps {
-  analysisId: string;
+interface Props {
+  studyId: string;
+  analysisId?: string;
 }
 
-export const EDAWorkspaceNewAnalysis = () => (
-  <>
-    <EDAWorkspaceHeading />
-    <NewAnalysisPage />
-  </>
-);
-
-/** A wrapper purely to inject analysisState using `useAnalysis` in accordance
- * with the rules of hooks */
-export const EDAWorkspaceSavedAnalysis = ({
-  analysisId,
-}: EDAWorkSpaceSavedAnalysisProps) => {
-  const analysisState = useAnalysis(analysisId);
+export const EDAWorkspace = ({ studyId, analysisId }: Props) => {
+  const analysisState = useWorkspaceAnalysis(studyId, analysisId);
 
   return (
     <>
       <EDAWorkspaceHeading analysisState={analysisState} />
-      <AnalysisPanel analysisState={analysisState} />
+      <AnalysisPanel
+        analysisState={analysisState}
+        hideCopyAndSave={isNewAnalysis(analysisState.analysis)}
+      />
     </>
   );
 };

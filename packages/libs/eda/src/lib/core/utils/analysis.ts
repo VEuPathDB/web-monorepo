@@ -4,6 +4,7 @@ import {
   BoxplotData,
 } from '@veupathdb/components/lib/types/plots';
 import { Variable } from '../types/study';
+import { Analysis, NewAnalysis } from '../types/analysis';
 import { CoverageStatistics } from '../types/visualization';
 
 export function vocabularyWithMissingData(
@@ -24,8 +25,7 @@ export function grayOutLastSeries<
       showMissingness && index === data.series.length - 1
         ? {
             ...series,
-            color: 'white',
-            borderColor: '#a0a0a0',
+            color: '#e8e8e8',
             outlierSymbol: 'x',
           }
         : series
@@ -96,4 +96,20 @@ export function fixLabelForNumberVariables(
   return variable != null && variable.type === 'number'
     ? String(isNaN(Number(label)) ? label : Number(label))
     : label;
+}
+
+export function isNewAnalysis(
+  analysis?: NewAnalysis | Analysis
+): analysis is NewAnalysis {
+  return analysis != null && !('analysisId' in analysis);
+}
+
+export function isSavedAnalysis(
+  analysis?: NewAnalysis | Analysis
+): analysis is Analysis {
+  return analysis != null && 'analysisId' in analysis;
+}
+
+export function getAnalysisId(analysis?: NewAnalysis | Analysis) {
+  return !isSavedAnalysis(analysis) ? undefined : analysis.analysisId;
 }
