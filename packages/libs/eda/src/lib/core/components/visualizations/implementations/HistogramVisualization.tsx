@@ -36,7 +36,6 @@ import { VariableDescriptor } from '../../../types/variable';
 import { CoverageStatistics } from '../../../types/visualization';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { BirdsEyeView } from '../../BirdsEyeView';
-import { HistogramVariable } from '../../filter/types';
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
@@ -47,6 +46,8 @@ import {
   vocabularyWithMissingData,
   grayOutLastSeries,
   omitEmptyNoDataSeries,
+  fixLabelForNumberVariables,
+  fixLabelsForNumberVariables,
 } from '../../../utils/analysis';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import { useFindEntityAndVariable } from '../../../hooks/study';
@@ -242,11 +243,19 @@ function HistogramViz(props: VisualizationProps) {
         params
       );
       const showMissing = vizConfig.showMissingness && overlayVariable != null;
+      const vocabulary = fixLabelsForNumberVariables(
+        overlayVariable?.vocabulary,
+        overlayVariable
+      );
       return omitEmptyNoDataSeries(
         grayOutLastSeries(
           reorderData(
-            histogramResponseToData(await response, xAxisVariable.type),
-            vocabularyWithMissingData(overlayVariable?.vocabulary, showMissing)
+            histogramResponseToData(
+              await response,
+              xAxisVariable,
+              overlayVariable
+            ),
+            vocabularyWithMissingData(vocabulary, showMissing)
           ),
           showMissing
         ),
@@ -517,11 +526,13 @@ function HistogramPlotWithControls({
 /**
  * Reformat response from histogram endpoints into complete HistogramData
  * @param response
+ * @param main variable
  * @returns HistogramDataWithCoverageStatistics
  */
 export function histogramResponseToData(
   response: HistogramResponse,
-  type: HistogramVariable['type']
+  { type }: Variable,
+  overlayVariable?: Variable
 ): HistogramDataWithCoverageStatistics {
   if (response.histogram.data.length === 0)
     throw Error(`Expected one or more data series, but got zero`);
@@ -544,7 +555,13 @@ export function histogramResponseToData(
   const binWidthStep = step || 0.1;
   return {
     series: response.histogram.data.map((data, index) => ({
-      name: data.overlayVariableDetails?.value ?? `series ${index}`,
+      name:
+        data.overlayVariableDetails?.value != null
+          ? fixLabelForNumberVariables(
+              data.overlayVariableDetails.value,
+              overlayVariable
+            )
+          : `series ${index}`,
       bins: data.value.map((_, index) => ({
         binStart:
           type === 'number' || type === 'integer'
@@ -558,7 +575,7 @@ export function histogramResponseToData(
         count: data.value[index],
       })),
     })),
-    valueType: type === 'integer' ? 'number' : type,
+    valueType: type === 'integer' || type === 'number' ? 'number' : 'date',
     binWidth,
     binWidthRange,
     binWidthStep,

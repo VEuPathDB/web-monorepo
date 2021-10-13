@@ -23,6 +23,7 @@ import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
+import { Variable } from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
@@ -37,6 +38,8 @@ import bar from './selectorIcons/bar.svg';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 import {
+  fixLabelForNumberVariables,
+  fixLabelsForNumberVariables,
   grayOutLastSeries,
   omitEmptyNoDataSeries,
   vocabularyWithMissingData,
@@ -194,12 +197,20 @@ function BarplotViz(props: VisualizationProps) {
       );
 
       const showMissing = vizConfig.showMissingness && overlayVariable != null;
+      const vocabulary = fixLabelsForNumberVariables(
+        variable?.vocabulary,
+        variable
+      );
+      const overlayVocabulary = fixLabelsForNumberVariables(
+        overlayVariable?.vocabulary,
+        overlayVariable
+      );
       return omitEmptyNoDataSeries(
         grayOutLastSeries(
           reorderData(
-            barplotResponseToData(await response),
-            variable?.vocabulary,
-            vocabularyWithMissingData(overlayVariable?.vocabulary, showMissing)
+            barplotResponseToData(await response, variable, overlayVariable),
+            vocabulary,
+            vocabularyWithMissingData(overlayVocabulary, showMissing)
           ),
           showMissing
         ),
@@ -422,7 +433,9 @@ function BarplotWithControls({
  * @returns BarplotData & completeCases & completeCasesAllVars & completeCasesAxesVars
  */
 export function barplotResponseToData(
-  response: BarplotResponse
+  response: BarplotResponse,
+  variable: Variable,
+  overlayVariable?: Variable
 ): BarplotData & CoverageStatistics {
   const responseIsEmpty = response.barplot.data.every(
     (data) => data.label.length === 0 && data.value.length === 0
@@ -432,9 +445,14 @@ export function barplotResponseToData(
       ? []
       : response.barplot.data.map((data, index) => ({
           // name has value if using overlay variable
-          name: data.overlayVariableDetails?.value ?? `series ${index}`,
-          // color: TO DO
-          label: data.label,
+          name:
+            data.overlayVariableDetails?.value != null
+              ? fixLabelForNumberVariables(
+                  data.overlayVariableDetails.value,
+                  overlayVariable
+                )
+              : `series ${index}`,
+          label: fixLabelsForNumberVariables(data.label, variable),
           value: data.value,
         })),
     completeCases: response.completeCasesTable,

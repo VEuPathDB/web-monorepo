@@ -31,8 +31,12 @@ import Tabs from '@veupathdb/components/lib/components/Tabs';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
-import { quantizePvalue } from '../../../utils/analysis';
+import {
+  fixLabelsForNumberVariables,
+  quantizePvalue,
+} from '../../../utils/analysis';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
+import { Variable } from '../../../types/study';
 import PluginError from '../PluginError';
 
 const plotDimensions = {
@@ -210,6 +214,15 @@ function MosaicViz(props: Props) {
         outputEntity?.id ?? ''
       );
 
+      const xAxisVocabulary = fixLabelsForNumberVariables(
+        xAxisVariable.vocabulary,
+        xAxisVariable
+      );
+      const yAxisVocabulary = fixLabelsForNumberVariables(
+        yAxisVariable.vocabulary,
+        yAxisVariable
+      );
+
       if (isTwoByTwo) {
         const response = dataClient.getTwoByTwo(
           computation.descriptor.type,
@@ -217,9 +230,9 @@ function MosaicViz(props: Props) {
         );
 
         return reorderData(
-          twoByTwoResponseToData(await response),
-          xAxisVariable.vocabulary,
-          yAxisVariable.vocabulary
+          twoByTwoResponseToData(await response, xAxisVariable, yAxisVariable),
+          xAxisVocabulary,
+          yAxisVocabulary
         );
       } else {
         const response = dataClient.getContTable(
@@ -228,9 +241,9 @@ function MosaicViz(props: Props) {
         );
 
         return reorderData(
-          contTableResponseToData(await response),
-          xAxisVariable.vocabulary,
-          yAxisVariable.vocabulary
+          contTableResponseToData(await response, xAxisVariable, yAxisVariable),
+          xAxisVocabulary,
+          yAxisVocabulary
         );
       }
     }, [
@@ -476,7 +489,9 @@ function MosaicPlotWithControls({
  * @returns MosaicData
  */
 export function contTableResponseToData(
-  response: PromiseType<ReturnType<DataClient['getContTable']>>
+  response: PromiseType<ReturnType<DataClient['getContTable']>>,
+  xVariable: Variable,
+  yVariable: Variable
 ): ContTableData {
   if (response.mosaic.data.length === 0)
     throw Error(`Expected one or more data series, but got zero`);
@@ -486,8 +501,14 @@ export function contTableResponseToData(
 
   return {
     values: data,
-    independentLabels: response.mosaic.data[0].xLabel,
-    dependentLabels: response.mosaic.data[0].yLabel[0],
+    independentLabels: fixLabelsForNumberVariables(
+      response.mosaic.data[0].xLabel,
+      xVariable
+    ),
+    dependentLabels: fixLabelsForNumberVariables(
+      response.mosaic.data[0].yLabel[0],
+      yVariable
+    ),
     pValue: response.statsTable[0].pvalue,
     degreesFreedom: response.statsTable[0].degreesFreedom,
     chisq: response.statsTable[0].chisq,
@@ -503,7 +524,9 @@ export function contTableResponseToData(
  * @returns MosaicData
  */
 export function twoByTwoResponseToData(
-  response: PromiseType<ReturnType<DataClient['getTwoByTwo']>>
+  response: PromiseType<ReturnType<DataClient['getTwoByTwo']>>,
+  xVariable: Variable,
+  yVariable: Variable
 ): TwoByTwoData {
   if (response.mosaic.data.length === 0)
     throw Error(`Expected one or more data series, but got zero`);
@@ -513,8 +536,14 @@ export function twoByTwoResponseToData(
 
   return {
     values: data,
-    independentLabels: response.mosaic.data[0].xLabel,
-    dependentLabels: response.mosaic.data[0].yLabel[0],
+    independentLabels: fixLabelsForNumberVariables(
+      response.mosaic.data[0].xLabel,
+      xVariable
+    ),
+    dependentLabels: fixLabelsForNumberVariables(
+      response.mosaic.data[0].yLabel[0],
+      yVariable
+    ),
     pValue: response.statsTable[0].pvalue,
     relativeRisk: response.statsTable[0].relativerisk,
     rrInterval: response.statsTable[0].rrInterval,

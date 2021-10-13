@@ -3,6 +3,7 @@ import {
   BarplotData,
   BoxplotData,
 } from '@veupathdb/components/lib/types/plots';
+import { Variable } from '../types/study';
 import { Analysis, NewAnalysis } from '../types/analysis';
 import { CoverageStatistics } from '../types/visualization';
 
@@ -52,7 +53,6 @@ export function omitEmptyNoDataSeries<
  * If provided a string, just return the string, no questions asked.
  *
  */
-
 export function quantizePvalue(pvalue: number | string): string {
   if (typeof pvalue === 'string') {
     return pvalue;
@@ -63,6 +63,38 @@ export function quantizePvalue(pvalue: number | string): string {
   } else {
     return pvalue.toPrecision(1);
   }
+}
+
+/**
+ * See web-eda issue 508
+ *
+ * Number variable values come from back end as strings when used as labels;
+ * converting through number solves the problem in
+ * issue 508 where "40.0" from back end doesn't match variable vocabulary's "40"
+ *
+ */
+export function fixLabelsForNumberVariables(
+  labels: string[] = [],
+  variable?: Variable
+): string[] {
+  return variable != null && variable.type === 'number'
+    ? labels.map((n) => String(Number(n)))
+    : labels;
+}
+
+/**
+ * non-array version of fixLabelsForNumberVariables
+ *
+ * However, unlike fixLabelsForNumberVariables it will pass through any non-number strings.
+ * This is because this is used to clean up overlayVariable values, which can be 'No data'
+ */
+export function fixLabelForNumberVariables(
+  label: string,
+  variable?: Variable
+): string {
+  return variable != null && variable.type === 'number'
+    ? String(isNaN(Number(label)) ? label : Number(label))
+    : label;
 }
 
 export function isNewAnalysis(
