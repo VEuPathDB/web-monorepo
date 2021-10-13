@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { PlotParams } from 'react-plotly.js';
 
 // Definitions
@@ -123,19 +123,6 @@ const Histogram = makePlotlyPlotComponent(
       return barLayout === 'overlay' && data.series.length > 1 ? opacity : 1;
     }, [barLayout, data.series.length, opacity]);
 
-    // Pixel width of main part of plot is needed for adjusting the borders of white bars
-    // if we can get this from a numeric containerStyles.width that's great - if not
-    // we'll just use a fallback of 750.
-    const plotDivPixelWidth =
-      restProps.containerStyles?.width &&
-      typeof restProps.containerStyles?.width === 'number'
-        ? restProps.containerStyles?.width
-        : 750;
-    // The factors 0.55 and 0.75 are for when there is a legend taking up horizontal space or not
-    // (of course there is most likely to be one)
-    const plotPixelWidth =
-      (data.series.length > 1 ? 0.55 : 0.75) * plotDivPixelWidth;
-
     // Transform `data` into a Plot.ly friendly format.
     const plotlyFriendlyData: PlotParams['data'] = useMemo(
       () =>
@@ -151,8 +138,6 @@ const Histogram = makePlotlyPlotComponent(
             // so that the right hand border is visible.
             // Might be worth checking in future versions of Plotly if this
             // was a bug or not.
-            const barWidthAdjust =
-              index === series.bins.length - 1 ? 0.999 : 1.0;
             if (data.valueType != null && data.valueType === 'date') {
               // date, needs to be in milliseconds
               // TO DO: bars seem very slightly too narrow at monthly resolution (multiplying by 1009 fixes it)
@@ -162,15 +147,10 @@ const Histogram = makePlotlyPlotComponent(
                   new Date(bin.binEnd as string),
                   'seconds',
                   false
-                ) *
-                1000 *
-                barWidthAdjust
+                ) * 1000
               );
             } else {
-              return (
-                ((bin.binEnd as number) - (bin.binStart as number)) *
-                barWidthAdjust
-              );
+              return (bin.binEnd as number) - (bin.binStart as number);
             }
           });
 
@@ -194,19 +174,8 @@ const Histogram = makePlotlyPlotComponent(
                 color: series.borderColor,
               },
             },
-            // white filled bars need to be offset and narrower so that the outline
-            // doesn't look funny
-            offset: seriesHasWhiteBars
-              ? binWidths.map(
-                  (width) => width * (2 / (plotPixelWidth / binWidths.length))
-                )
-              : 0,
-            width: seriesHasWhiteBars
-              ? binWidths.map(
-                  (width) =>
-                    width * (1 - 4 / (plotPixelWidth / binWidths.length))
-                )
-              : binWidths,
+            offset: 0,
+            width: binWidths,
             selected: {
               marker: {
                 opacity: 1,
