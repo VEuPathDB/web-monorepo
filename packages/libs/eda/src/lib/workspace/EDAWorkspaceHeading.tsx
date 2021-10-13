@@ -49,7 +49,7 @@ export function EDAWorkspaceHeading({
       <div className={cx('-Heading')}>
         <h1>{safeHtml(studyRecord.displayName)}</h1>
         <div className={cx('-Linkouts')}>
-          {studyRecord.attributes.bulk_download_url && (
+          {/* {studyRecord.attributes.bulk_download_url && (
             <div>
               <Tooltip title="Download study files">
                 <Button
@@ -73,7 +73,7 @@ export function EDAWorkspaceHeading({
                 </Button>
               </Tooltip>
             </div>
-          )}
+          )} */}
           <div>
             <Tooltip title="Create a new analysis">
               <Button
