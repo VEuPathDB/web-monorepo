@@ -13,7 +13,7 @@ import { AnalysisNameDialog } from './AnalysisNameDialog';
 // Add custom styling for ebrc icons for better alignment in buttons
 const useStyles = makeStyles((theme) => ({
   ebrcStartIcon: {
-    marginTop: -5,
+    marginTop: -3,
   },
 }));
 
@@ -49,7 +49,8 @@ export function EDAWorkspaceHeading({
                   variant="text"
                   color="primary"
                   className="Linkouts-buttons"
-                  startIcon={<Icon className="fa fa-download fa-fw" />}
+                  classes={{ startIcon: iconClasses.ebrcStartIcon }}
+                  startIcon={<Icon className="ebrc-icon-download" />}
                   type="button"
                   onClick={() => {
                     attemptAction(Action.download, {
