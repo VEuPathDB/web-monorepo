@@ -214,6 +214,15 @@ function MosaicViz(props: Props) {
         outputEntity?.id ?? ''
       );
 
+      const xAxisVocabulary = fixLabelsForNumberVariables(
+        xAxisVariable.vocabulary,
+        xAxisVariable
+      );
+      const yAxisVocabulary = fixLabelsForNumberVariables(
+        yAxisVariable.vocabulary,
+        yAxisVariable
+      );
+
       if (isTwoByTwo) {
         const response = dataClient.getTwoByTwo(
           computation.descriptor.type,
@@ -222,8 +231,8 @@ function MosaicViz(props: Props) {
 
         return reorderData(
           twoByTwoResponseToData(await response, xAxisVariable, yAxisVariable),
-          xAxisVariable.vocabulary,
-          yAxisVariable.vocabulary
+          xAxisVocabulary,
+          yAxisVocabulary
         );
       } else {
         const response = dataClient.getContTable(
@@ -233,8 +242,8 @@ function MosaicViz(props: Props) {
 
         return reorderData(
           contTableResponseToData(await response, xAxisVariable, yAxisVariable),
-          xAxisVariable.vocabulary,
-          yAxisVariable.vocabulary
+          xAxisVocabulary,
+          yAxisVocabulary
         );
       }
     }, [
