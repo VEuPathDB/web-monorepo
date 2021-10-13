@@ -3154,7 +3154,7 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/tsconfig/-/tsconfig-1.0.1.tgz#a2b748b46838af1337ca9f23d969993fb952def4"
   integrity sha512-i6gq7mgnyEN8/xW5EaI9RiWCwS1oB8cgWqx9h5w4vZtnb10oiyyepD640l9x/gZf6IWecjynRs7weDgSRs7l0Q==
 
-"@veupathdb/wdk-client@^0.4.3", "@veupathdb/wdk-client@^0.4.4":
+"@veupathdb/wdk-client@^0.4.3":
   version "0.4.4"
   resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.4.4.tgz#357e9bad6c82250acf251bdc873c39379905e482"
   integrity sha512-PvF2YsRVTyI+D+8EsHGyILpM5tCJMcPeOvqIraVKl1WzaPD6cC+pxT+zgQqkyUC1xoyYpAD+st4BVfS/M/uE9Q==
@@ -3202,7 +3202,7 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/wdk-client@^0.4.6":
+"@veupathdb/wdk-client@^0.4.4", "@veupathdb/wdk-client@^0.4.6":
   version "0.4.6"
   resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.4.6.tgz#7dd8489dad185a6a3264761179235e091c983323"
   integrity sha512-Ufxaq+N/Xo4PN9kzOvNzKmE6tbkxU/Q4VVGCP1nsCoFSxTN/G8dPWVRoDB3+mrBrjuzH5cqw4VIO1+viCVXCng==
