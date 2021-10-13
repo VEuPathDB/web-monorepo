@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 
 // Various Icon Imports
-import CloudDownload from '@material-ui/icons/CloudDownload';
-import AddCircle from '@material-ui/icons/AddCircle';
-import SettingsIcon from '@material-ui/icons/Settings';
+// import CloudDownload from '@material-ui/icons/CloudDownload';
+// import AddCircle from '@material-ui/icons/AddCircle';
+// import SettingsIcon from '@material-ui/icons/Settings';
+// import TableDownload from '../../icons/TableDownload';
 
 import { stylePresets, SwissArmyButtonStyleSpec } from './stylePresets';
 
@@ -17,8 +18,8 @@ type SwissArmyButtonProps = {
   type?: 'outlined' | 'solid';
   /** The size of the button. */
   size?: 'small' | 'medium' | 'large';
-  /** Optional. Icon selector. */
-  icon?: 'new' | 'download' | 'settings';
+  /** Optional. SVG component to use as an icon. */
+  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   /** Presets for commonly used button styles */
   stylePreset?: keyof typeof stylePresets;
   /** Additional styles to apply to the button container. */
@@ -31,7 +32,7 @@ function SwissArmyButton({
   onPress,
   type = 'solid',
   size = 'medium',
-  icon,
+  icon = () => null,
   stylePreset = 'default',
   styleOverrides = {},
 }: SwissArmyButtonProps) {
@@ -59,37 +60,11 @@ function SwissArmyButton({
       : finalStyle[buttonState].textColor ?? finalStyle[buttonState].color;
 
   const calculatedFontSize = size === 'large' ? '1rem' : '.80rem';
+  const calculatedIconSize =
+    size === 'large' ? '1.5rem' : size === 'medium' ? '1.25rem' : '1rem';
   const horizontalPadding = size === 'large' ? 15 : 15;
 
-  const renderIcon = (icon: SwissArmyButtonProps['icon']) => {
-    // TODO: Make this more efficient.
-    switch (icon) {
-      case 'download':
-        return (
-          <CloudDownload
-            css={{ paddingRight: 10, boxSizing: 'initial' }}
-            fontSize={size}
-          />
-        );
-      case 'new':
-        return (
-          <AddCircle
-            css={{ paddingRight: 10, boxSizing: 'initial' }}
-            fontSize={size}
-          />
-        );
-      case 'settings':
-        return (
-          <SettingsIcon
-            css={{ paddingRight: 10, boxSizing: 'initial' }}
-            fontSize={size}
-          />
-        );
-
-      default:
-        break;
-    }
-  };
+  const Icon = icon;
 
   return (
     <>
@@ -119,7 +94,6 @@ function SwissArmyButton({
                 borderStyle: 'solid',
               },
           finalStyle[buttonState].dropShadow && {
-            // filter: `drop-shadow(${finalStyle[buttonState].dropShadow?.offsetX} ${finalStyle[buttonState].dropShadow?.offsetY} ${finalStyle[buttonState].dropShadow?.blurRadius} ${finalStyle[buttonState].dropShadow?.color})`,
             boxShadow: `${finalStyle[buttonState].dropShadow?.offsetX} ${finalStyle[buttonState].dropShadow?.offsetY} ${finalStyle[buttonState].dropShadow?.blurRadius} ${finalStyle[buttonState].dropShadow?.color}`,
           },
         ]}
@@ -133,7 +107,11 @@ function SwissArmyButton({
         }}
         onClick={onPress}
       >
-        {icon && renderIcon(icon)}
+        <Icon
+          fontSize={calculatedIconSize}
+          fill={calculatedTextColor}
+          css={{ paddingRight: 10 }}
+        />
         {text}
       </button>
     </>

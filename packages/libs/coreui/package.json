@@ -1,6 +1,7 @@
 {
   "name": "@veupathdb/core-components",
-  "version": "0.2.24",
+  "version": "0.2.25",
+  "author": "Michael Dunn <mdunn4@nd.edu>",
   "description": "Core components and style definitions for VEuPath applications.",
   "private": false,
   "main": "dist/index.js",
@@ -13,8 +14,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "build": "rm -rf dist && NODE_ENV=production babel src --out-dir dist --copy-files --extensions \".ts,.tsx\" --ignore __tests__,spec.js,test.js,__snapshots__,src/stories/*",
-    "tsc": "tsc"
+    "build": "rm -rf dist && NODE_ENV=production babel src --ignore \"src/stories/**/*\" --out-dir dist --extensions \".ts,.tsx\" ",
+    "tsc": "tsc",
+    "create-svg-icons": "npx @svgr/cli --out-dir src/components/icons/ src/assets/svg/"
   },
   "repository": {
     "type": "git",
@@ -47,6 +49,7 @@
     "@storybook/addon-essentials": "^6.3.7",
     "@storybook/addon-links": "^6.3.7",
     "@storybook/react": "^6.3.7",
+    "@svgr/cli": "^5.5.0",
     "@types/lodash": "^4.14.172",
     "@types/react-modal": "^3.12.1",
     "@veupathdb/tsconfig": "^1.0.1",

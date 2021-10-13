@@ -8,7 +8,8 @@
     "outDir": "dist",
     "esModuleInterop": true,
     "strict": true,
-    "target": "ES5"
+    "target": "ES5",
   },
   "include": ["src/**/*"],
+  "exclude": ["src/stories"],
 }

@@ -3,6 +3,7 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 import SwissArmyButton, {
   SwissArmyButtonProps,
 } from '../components/buttons/SwissArmyButton';
+import { TableDownload, Download } from '../components/icons';
 import { DARK_ORANGE, LIGHT_GREEN } from '../constants/colors';
 
 export default {
@@ -27,14 +28,14 @@ Outlined.args = {
 export const WithIcon = Template.bind({});
 WithIcon.args = {
   text: 'Button With Icon',
-  icon: 'download',
+  icon: TableDownload,
   type: 'outlined',
 };
 
 export const StylePreset = Template.bind({});
 StylePreset.args = {
   text: 'Mesa Style Preset',
-  icon: 'download',
+  icon: Download,
   stylePreset: 'mesa',
 };
 
