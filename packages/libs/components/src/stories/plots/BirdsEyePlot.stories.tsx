@@ -125,12 +125,34 @@ const dataSetProblem: BirdsEyePlotData = {
   ],
 };
 
+const wideContainerStyles: CSSProperties = {
+  width: '450px',
+  height: '110px',
+  border: '2px solid yellow', // obviously just for demo purposes
+};
+
+const wideSpacingOptions = {
+  marginTop: 5,
+  marginBottom: 5,
+  marginLeft: 5,
+  marginRight: 50,
+};
+
 export const ProblemPopup = Template.bind({});
 ProblemPopup.args = {
   data: dataSetProblem,
   dependentAxisLabel: 'Foxes',
   containerStyles,
   spacingOptions,
+  interactive: true,
+};
+
+export const ProblemPopupSolvedWithMargin = Template.bind({});
+ProblemPopupSolvedWithMargin.args = {
+  data: dataSetProblem,
+  dependentAxisLabel: 'Foxes',
+  containerStyles: wideContainerStyles,
+  spacingOptions: wideSpacingOptions,
   interactive: true,
 };
 
