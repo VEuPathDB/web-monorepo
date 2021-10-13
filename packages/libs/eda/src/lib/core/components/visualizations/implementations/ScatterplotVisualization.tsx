@@ -53,6 +53,7 @@ import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 import { NumberVariable, StudyEntity, Variable } from '../../../types/study';
 import {
   fixLabelForNumberVariables,
+  fixLabelsForNumberVariables,
   vocabularyWithMissingData,
 } from '../../../utils/analysis';
 import { gray } from '../colors';
@@ -270,10 +271,14 @@ function ScatterplotViz(props: VisualizationProps) {
             );
 
       const showMissing = vizConfig.showMissingness && overlayVariable != null;
+      const overlayVocabulary = fixLabelsForNumberVariables(
+        overlayVariable?.vocabulary,
+        overlayVariable
+      );
       return scatterplotResponseToData(
         reorderResponse(
           await response,
-          vocabularyWithMissingData(overlayVariable?.vocabulary, showMissing),
+          vocabularyWithMissingData(overlayVocabulary, showMissing),
           overlayVariable
         ),
         visualization.descriptor.type,
