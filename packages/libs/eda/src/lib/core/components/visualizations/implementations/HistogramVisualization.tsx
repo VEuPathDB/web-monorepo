@@ -11,12 +11,15 @@ import {
   TimeDelta,
 } from '@veupathdb/components/lib/types/general';
 import { isTimeDelta } from '@veupathdb/components/lib/types/guards';
-import { HistogramData } from '@veupathdb/components/lib/types/plots';
+import {
+  HistogramData,
+  HistogramDataSeries,
+} from '@veupathdb/components/lib/types/plots';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import { isEqual } from 'lodash';
+import { isEqual, sortBy, uniq, flatMap, max } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   DataClient,
@@ -275,6 +278,24 @@ function HistogramViz(props: VisualizationProps) {
     [xAxisVariable]
   );
 
+  // find max of stacked array, especially with overlayVariable
+  const defaultDependentAxisMaxValue = useMemo(
+    () =>
+      data.value && data.value.series.length > 0
+        ? findMaxOfStackedArray(data.value.series)
+        : undefined,
+    [data, xAxisVariable, overlayVariable]
+  );
+
+  // set default dependent axis range for better displaying tick labels in log-scale
+  const defaultDependentAxisRange =
+    defaultDependentAxisMaxValue != null
+      ? {
+          min: vizConfig.valueSpec === 'count' ? 0 : 0.001,
+          max: defaultDependentAxisMaxValue * 1.05,
+        }
+      : undefined;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -337,6 +358,8 @@ function HistogramViz(props: VisualizationProps) {
         independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'Main'}
         // variable's metadata-based independent axis range
         independentAxisRange={defaultIndependentRange}
+        // add dependent axis range for better displaying tick labels in log-scale
+        dependentAxisRange={defaultDependentAxisRange}
         interactive
         showSpinner={data.pending}
         filters={filters}
@@ -639,4 +662,63 @@ function reorderData(
   } else {
     return data;
   }
+}
+
+/**
+ * find max of the sum of multiple arrays
+ * it is because histogram viz uses "stack" option for display
+ * Also, each data with overlayVariable has different bins
+ * For this purpose, binStart is used as array index to map corresponding count
+ * Need to make stacked count array and then max
+ */
+
+function findMaxOfStackedArray(
+  // data: HistogramDataWithCoverageStatistics | undefined,
+  data: HistogramDataSeries[]
+) {
+  // construct array of objects comprised of binStart and count arrays
+  const dataArray = data.map((series) => {
+    return {
+      binStart: series.bins.map((bin) => bin.binStart),
+      count: series.bins.map((bin) => bin.count),
+    };
+  });
+
+  // find unique index and sort alphanumeric from dataArray.binStart
+  const uniqueBinStart = sortBy(
+    uniq(dataArray.flatMap((data) => data.binStart))
+  );
+
+  // make array of count array (2D)
+  let totalCountArray = [];
+
+  // construct 2D totalCountArray
+  // [# of stratification] rows and [# of unique binStart] at each low
+  if (uniqueBinStart != null) {
+    for (let i = 0; i < dataArray.length; i++) {
+      // temporary array to store each row
+      let tempArray = [];
+      // looping through each data array
+      for (let j = 0; j < uniqueBinStart.length; j++) {
+        // check if binStart exists compared to unique binStart array
+        if (dataArray[i].binStart.includes(uniqueBinStart[j])) {
+          let indexCount = dataArray[i].binStart.indexOf(uniqueBinStart[j]);
+          // make tempArray for data.count
+          tempArray.push(dataArray[i].count[indexCount]);
+        } else {
+          // add filler count, 0 for non-existence case
+          tempArray.push(0);
+        }
+      }
+      // store tempArray to totalCountArray
+      totalCountArray.push(tempArray);
+    }
+  }
+
+  // find max of stacked array: max of sum of multiple arrays
+  const result = max(
+    totalCountArray.reduce((a, b) => a.map((c, i) => c + b[i]))
+  );
+
+  return result;
 }
