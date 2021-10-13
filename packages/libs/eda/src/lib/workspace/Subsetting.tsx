@@ -1,5 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router';
+import { Link } from 'react-router-dom';
 import {
   MultiFilterVariable,
   useMakeVariableLink,
@@ -14,7 +15,7 @@ import { useEntityCounts } from '../core/hooks/entityCounts';
 import { useToggleStarredVariable } from '../core/hooks/starredVariables';
 import { VariableTree } from '../core/components/VariableTree';
 import FilterChipList from '../core/components/FilterChipList';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip, Button, Icon } from '@material-ui/core';
 
 interface Props {
   analysisState: AnalysisState;
@@ -84,21 +85,23 @@ export function Subsetting(props: Props) {
           selectedVariableId={variable.id}
         />
       </div>
-      <div className="TabularDownload">
+      {/* <div className="TabularDownload">
         <Tooltip
-          title={`Download current subset of ${
+          title={`View and download current subset of ${
             entity.displayNamePlural ?? entity.displayName
           }`}
         >
-          <button
-            type="button"
-            className="link"
+          <Button
+            variant="text"
+            color="primary"
+            size="large"
+            startIcon={<Icon className="ebrc-icon-table-download" />}
             onClick={() => alert('Coming soon')}
           >
-            <i className="ebrc-icon-table-download" />
-          </button>
+            View and download
+          </Button>
         </Tooltip>
-      </div>
+      </div> */}
       <div className="Filter">
         <VariableDetails
           entity={entity}
