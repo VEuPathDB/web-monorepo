@@ -197,12 +197,20 @@ function BarplotViz(props: VisualizationProps) {
       );
 
       const showMissing = vizConfig.showMissingness && overlayVariable != null;
+      const vocabulary = fixLabelsForNumberVariables(
+        variable?.vocabulary,
+        variable
+      );
+      const overlayVocabulary = fixLabelsForNumberVariables(
+        overlayVariable?.vocabulary,
+        overlayVariable
+      );
       return omitEmptyNoDataSeries(
         grayOutLastSeries(
           reorderData(
             barplotResponseToData(await response, variable, overlayVariable),
-            variable?.vocabulary,
-            vocabularyWithMissingData(overlayVariable?.vocabulary, showMissing)
+            vocabulary,
+            vocabularyWithMissingData(overlayVocabulary, showMissing)
           ),
           showMissing
         ),
