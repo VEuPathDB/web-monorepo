@@ -39,6 +39,6 @@ jobs:
           name: distFolder
           path: dist
       - run: ls -lart dist
-      - run: npm publish dist --access public
+      - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
