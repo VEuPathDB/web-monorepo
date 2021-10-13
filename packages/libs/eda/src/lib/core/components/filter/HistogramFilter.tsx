@@ -598,6 +598,8 @@ function HistogramPlotWithControls({
           horizontalPosition: 'center',
           orientation: 'horizontal',
           verticalPaddingAdjustment: 20,
+          // use traceorder: reversed to show subset legend at first
+          traceorder: 'reversed',
         }}
         // pass axisTruncationConfig
         axisTruncationConfig={{

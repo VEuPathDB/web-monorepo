@@ -24,8 +24,7 @@ export function grayOutLastSeries<
       showMissingness && index === data.series.length - 1
         ? {
             ...series,
-            color: 'white',
-            borderColor: '#a0a0a0',
+            color: '#e8e8e8',
             outlierSymbol: 'x',
           }
         : series
