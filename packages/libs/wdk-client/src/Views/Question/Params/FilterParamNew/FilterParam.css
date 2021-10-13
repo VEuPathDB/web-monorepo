@@ -324,7 +324,7 @@
 .filter-param .membership-filter .MesaComponent th:nth-child(3) .HeadingCell-Content-Label,
 .filter-param .membership-filter .MesaComponent th:nth-child(4) .HeadingCell-Content-Label {
   margin-left: auto;
-  text-align: right;
+  text-align: center;
 }
 /* Numeric columns (All and Matching) */
 .filter-param .membership-filter .MesaComponent .HeadingRow:last-child th:nth-child(3),
