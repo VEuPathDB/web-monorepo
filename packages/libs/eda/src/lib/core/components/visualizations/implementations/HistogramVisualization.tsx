@@ -47,6 +47,7 @@ import {
   grayOutLastSeries,
   omitEmptyNoDataSeries,
   fixLabelForNumberVariables,
+  fixLabelsForNumberVariables,
 } from '../../../utils/analysis';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import { useFindEntityAndVariable } from '../../../hooks/study';
@@ -242,6 +243,10 @@ function HistogramViz(props: VisualizationProps) {
         params
       );
       const showMissing = vizConfig.showMissingness && overlayVariable != null;
+      const vocabulary = fixLabelsForNumberVariables(
+        overlayVariable?.vocabulary,
+        overlayVariable
+      );
       return omitEmptyNoDataSeries(
         grayOutLastSeries(
           reorderData(
@@ -250,7 +255,7 @@ function HistogramViz(props: VisualizationProps) {
               xAxisVariable,
               overlayVariable
             ),
-            vocabularyWithMissingData(overlayVariable?.vocabulary, showMissing)
+            vocabularyWithMissingData(vocabulary, showMissing)
           ),
           showMissing
         ),

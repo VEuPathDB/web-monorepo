@@ -53,7 +53,6 @@ export function omitEmptyNoDataSeries<
  * If provided a string, just return the string, no questions asked.
  *
  */
-
 export function quantizePvalue(pvalue: number | string): string {
   if (typeof pvalue === 'string') {
     return pvalue;
@@ -75,10 +74,10 @@ export function quantizePvalue(pvalue: number | string): string {
  *
  */
 export function fixLabelsForNumberVariables(
-  labels: string[],
-  variable: Variable
+  labels: string[] = [],
+  variable?: Variable
 ): string[] {
-  return variable.type === 'number'
+  return variable != null && variable.type === 'number'
     ? labels.map((n) => String(Number(n)))
     : labels;
 }
