@@ -14,7 +14,7 @@ import { AnalysisNameDialog } from './AnalysisNameDialog';
 // Add custom styling for ebrc icons for better alignment in buttons
 const useStyles = makeStyles((theme) => ({
   ebrcStartIcon: {
-    marginTop: -5,
+    marginTop: -4,
   },
 }));
 
@@ -55,6 +55,8 @@ export function EDAWorkspaceHeading({
                 <Button
                   variant="text"
                   color="primary"
+                  className="Linkouts-buttons"
+                  classes={{ startIcon: iconClasses.ebrcStartIcon }}
                   startIcon={<Icon className="ebrc-icon-download" />}
                   type="button"
                   onClick={() => {
@@ -77,6 +79,7 @@ export function EDAWorkspaceHeading({
               <Button
                 variant="text"
                 color="primary"
+                className="Linkouts-buttons"
                 startIcon={<Icon className="fa fa-plus fa-fw" />}
                 onClick={
                   /** If we're in an unnamed saved analysis, show the renaming dialog.
@@ -97,8 +100,9 @@ export function EDAWorkspaceHeading({
               <Button
                 variant="text"
                 color="primary"
+                className="Linkouts-buttons"
                 classes={{ startIcon: iconClasses.ebrcStartIcon }}
-                startIcon={<Icon className="fa fa-table fa-fw" />}
+                startIcon={<Icon className="ebrc-icon-table" />}
                 component={Link}
                 to={'/eda?s=' + encodeURIComponent(studyRecord.displayName)}
               >
