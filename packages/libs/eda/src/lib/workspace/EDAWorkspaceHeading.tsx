@@ -14,7 +14,7 @@ import { AnalysisNameDialog } from './AnalysisNameDialog';
 // Add custom styling for ebrc icons for better alignment in buttons
 const useStyles = makeStyles((theme) => ({
   ebrcStartIcon: {
-    marginTop: -3,
+    marginTop: -4,
   },
 }));
 
