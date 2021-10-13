@@ -302,8 +302,6 @@ function HistogramViz(props: VisualizationProps) {
         }
       : undefined;
 
-  console.log('defaultDependentAxisMaxValue =', defaultDependentAxisMaxValue);
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
