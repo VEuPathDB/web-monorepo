@@ -212,6 +212,14 @@ function BoxplotViz(props: VisualizationProps) {
       );
 
       const showMissing = vizConfig.showMissingness && overlayVariable != null;
+      const vocabulary = fixLabelsForNumberVariables(
+        xAxisVariable.vocabulary,
+        xAxisVariable
+      );
+      const overlayVocabulary = fixLabelsForNumberVariables(
+        overlayVariable?.vocabulary,
+        overlayVariable
+      );
       return omitEmptyNoDataSeries(
         grayOutLastSeries(
           reorderData(
@@ -220,8 +228,8 @@ function BoxplotViz(props: VisualizationProps) {
               xAxisVariable,
               overlayVariable
             ),
-            xAxisVariable.vocabulary,
-            vocabularyWithMissingData(overlayVariable?.vocabulary, showMissing)
+            vocabulary,
+            vocabularyWithMissingData(overlayVocabulary, showMissing)
           ),
           showMissing
         ),
