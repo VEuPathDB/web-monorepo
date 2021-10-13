@@ -11,12 +11,15 @@ import {
   TimeDelta,
 } from '@veupathdb/components/lib/types/general';
 import { isTimeDelta } from '@veupathdb/components/lib/types/guards';
-import { HistogramData } from '@veupathdb/components/lib/types/plots';
+import {
+  HistogramData,
+  HistogramDataSeries,
+} from '@veupathdb/components/lib/types/plots';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import { isEqual } from 'lodash';
+import { isEqual, max } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   DataClient,
@@ -284,6 +287,30 @@ function HistogramViz(props: VisualizationProps) {
     [xAxisVariable]
   );
 
+  // find max of stacked array, especially with overlayVariable
+  const defaultDependentAxisMaxValue = useMemo(
+    () =>
+      data.value && data.value.series.length > 0
+        ? findMaxOfStackedArray(data.value.series)
+        : undefined,
+    [data]
+  );
+
+  // set default dependent axis range for better displaying tick labels in log-scale
+  const defaultDependentAxisRange =
+    defaultDependentAxisMaxValue != null
+      ? {
+          // set min as 0 (count, proportion) or 0.001 (proportion log scale)
+          min:
+            vizConfig.valueSpec === 'count'
+              ? 0
+              : vizConfig.dependentAxisLogScale
+              ? 0.001
+              : 0,
+          max: defaultDependentAxisMaxValue * 1.05,
+        }
+      : undefined;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -346,6 +373,8 @@ function HistogramViz(props: VisualizationProps) {
         independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'Main'}
         // variable's metadata-based independent axis range
         independentAxisRange={defaultIndependentRange}
+        // add dependent axis range for better displaying tick labels in log-scale
+        dependentAxisRange={defaultDependentAxisRange}
         interactive
         showSpinner={data.pending}
         filters={filters}
@@ -655,4 +684,33 @@ function reorderData(
   } else {
     return data;
   }
+}
+
+/**
+ * find max of the sum of multiple arrays
+ * it is because histogram viz uses "stack" option for display
+ * Also, each data with overlayVariable has different bins
+ * For this purpose, binStart is used as array index to map corresponding count
+ * Need to make stacked count array and then max
+ */
+
+function findMaxOfStackedArray(data: HistogramDataSeries[]) {
+  // calculate the sum of all the counts from bins with the same label
+  const sumsByLabel = data
+    .flatMap(
+      // make an array of [ [ label, count ], [ label, count ], ... ] from all series
+      (series) => series.bins.map((bin) => [bin.binLabel, bin.count])
+    )
+    // then do a sum of counts per label
+    .reduce<Record<string, number>>(
+      (map, [label, count]) => {
+        if (map[label] == null) map[label] = 0;
+        map[label] = map[label] + (count as number);
+        return map;
+      },
+      // empty map for reduce to start with
+      {}
+    );
+
+  return max(Object.values(sumsByLabel));
 }
