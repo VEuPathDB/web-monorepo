@@ -284,14 +284,20 @@ function HistogramViz(props: VisualizationProps) {
       data.value && data.value.series.length > 0
         ? findMaxOfStackedArray(data.value.series)
         : undefined,
-    [data, xAxisVariable, overlayVariable]
+    [data]
   );
 
   // set default dependent axis range for better displaying tick labels in log-scale
   const defaultDependentAxisRange =
     defaultDependentAxisMaxValue != null
       ? {
-          min: vizConfig.valueSpec === 'count' ? 0 : 0.001,
+          // set min as 0 (count, proportion) or 0.001 (proportion log scale)
+          min:
+            vizConfig.valueSpec === 'count'
+              ? 0
+              : vizConfig.dependentAxisLogScale
+              ? 0.001
+              : 0,
           max: defaultDependentAxisMaxValue * 1.05,
         }
       : undefined;

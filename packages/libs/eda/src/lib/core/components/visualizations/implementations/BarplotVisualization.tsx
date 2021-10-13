@@ -230,14 +230,19 @@ function BarplotViz(props: VisualizationProps) {
     return data?.value?.series != null
       ? max(data?.value?.series.flatMap((o) => o.value))
       : undefined;
-  }, [data, variable, overlayVariable]);
+  }, [data]);
 
   // set min/max
   const dependentAxisRange =
     defaultDependentMaxValue != null
       ? {
-          // set min as 0 (count) or 0.001 (proportion)
-          min: vizConfig.valueSpec === 'count' ? 0 : 0.001,
+          // set min as 0 (count, proportion) or 0.001 (proportion log scale)
+          min:
+            vizConfig.valueSpec === 'count'
+              ? 0
+              : vizConfig.dependentAxisLogScale
+              ? 0.001
+              : 0,
           // add 5 % margin
           max: defaultDependentMaxValue * 1.05,
         }
