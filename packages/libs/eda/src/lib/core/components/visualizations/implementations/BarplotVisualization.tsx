@@ -42,6 +42,8 @@ import {
 } from '../../../utils/analysis';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
+// use lodash instead of Math.min/max
+import { max, flatMap } from 'lodash';
 
 const plotDimensions = {
   height: 450,
@@ -179,6 +181,10 @@ function BarplotViz(props: VisualizationProps) {
     > => {
       if (variable == null) return undefined;
 
+      if (variable === overlayVariable)
+        throw new Error(
+          'The X and Overlay variables must not be the same. Please choose different variables for X and Overlay.'
+        );
       const params = getRequestParams(studyId, filters ?? [], vizConfig);
 
       const response = dataClient.getBarplot(
@@ -217,6 +223,24 @@ function BarplotViz(props: VisualizationProps) {
     overlayVariable != null && !vizConfig.showMissingness
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
+
+  // find dependent axis max value
+  const defaultDependentMaxValue = useMemo(() => {
+    return data?.value?.series != null
+      ? max(data?.value?.series.flatMap((o) => o.value))
+      : undefined;
+  }, [data, variable, overlayVariable]);
+
+  // set min/max
+  const dependentAxisRange =
+    defaultDependentMaxValue != null
+      ? {
+          // set min as 0 (count) or 0.001 (proportion)
+          min: vizConfig.valueSpec === 'count' ? 0 : 0.001,
+          // add 5 % margin
+          max: defaultDependentMaxValue * 1.05,
+        }
+      : undefined;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -304,6 +328,8 @@ function BarplotViz(props: VisualizationProps) {
           updateThumbnail={updateThumbnail}
           dependentAxisLogScale={vizConfig.dependentAxisLogScale}
           onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
+          // set dependent axis range for log scale
+          dependentAxisRange={dependentAxisRange}
         />
         <div className="viz-plot-info">
           <BirdsEyeView

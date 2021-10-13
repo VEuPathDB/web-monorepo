@@ -275,6 +275,7 @@ export default function VariableList(props: VariableListProps) {
       starredVariablesLoading,
       starredVariableTermsSet,
       toggleStarredVariable,
+      customDisabledVariableMessage,
     ]
   );
 
@@ -593,7 +594,8 @@ function makeStarButtonTooltipContent(
 ) {
   return (
     <>
-      Click to {isStarred ? 'unstar' : 'star'} <strong>{field.display}</strong>.
+      Click to {isStarred ? 'unstar' : 'star'}{' '}
+      <strong>{safeHtml(field.display)}</strong>.
     </>
   );
 }
@@ -603,10 +605,10 @@ function makeStarredVariablesFilterTooltipContent(
   starredVariablesToggleDisabled: boolean
 ) {
   return starredVariablesToggleDisabled ? (
-    <>To use this filter, star at least one variable below.</>
+    <>To use this filter, star at least one variable below</>
   ) : showOnlyStarredVariables ? (
-    <>Click to show all variables.</>
+    <>Click to show all variables</>
   ) : (
-    <>Click to show only starred variables.</>
+    <>Click to show only starred variables</>
   );
 }

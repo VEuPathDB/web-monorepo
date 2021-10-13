@@ -9,7 +9,7 @@ import { usePromise } from '../../hooks/promise';
 import { AnalysisState } from '../../hooks/analysis';
 import { useSubsettingClient } from '../../hooks/workspace';
 import { Filter } from '../../types/filter';
-import { StudyEntity, StudyMetadata } from '../../types/study';
+import { NumberVariable, StudyEntity, StudyMetadata } from '../../types/study';
 import { fromEdaFilter } from '../../utils/wdk-filter-param-adapter';
 import { TableVariable } from './types';
 import { getDistribution } from './util';
@@ -109,7 +109,8 @@ export function TableFilter({
         entityId: entity.id,
         variableId: variable.id,
         distribution: Object.keys(bgValueByLabel).map((label) => ({
-          value: label,
+          // Parse label into the appropriate data type
+          value: NumberVariable.is(variable) ? Number(label) : label,
           count: bgValueByLabel[label],
           filteredCount: fgValueByLabel[label] ?? 0,
         })),
@@ -118,7 +119,14 @@ export function TableFilter({
         filteredEntitiesCount:
           distribution.foreground.statistics.numDistinctEntityRecords,
       };
-    }, [entity.id, variable.id, filters, subsettingClient, studyMetadata.id])
+    }, [
+      entity.id,
+      variable.id,
+      variable.type,
+      filters,
+      subsettingClient,
+      studyMetadata.id,
+    ])
   );
   const activeField = useMemo(
     () => ({
@@ -167,14 +175,15 @@ export function TableFilter({
     const newDist = tableSummary.value?.distribution
       .slice()
       // first sort by value
+      // note that we are parsing values into strings for sort comparison
       .sort((a, b) =>
         uiState.sort.columnKey === 'value'
           ? variable.vocabulary != null && variable.vocabulary.length
             ? // if available, sort by the variable's 'vocabulary' metadata
-              variable.vocabulary.indexOf(a.value) -
-              variable.vocabulary.indexOf(b.value)
+              variable.vocabulary.indexOf(String(a.value)) -
+              variable.vocabulary.indexOf(String(b.value))
             : // Handle strings w/ numbers, case insensitive
-              a.value.localeCompare(b.value, 'en', {
+              String(a.value).localeCompare(String(b.value), 'en', {
                 numeric: true,
                 sensitivity: 'base',
               })
@@ -271,7 +280,7 @@ export function TableFilter({
   }, [tableSummary.value]);
 
   const handleChange = useCallback(
-    (_: unknown, values: string[] = allValues) => {
+    (_: unknown, values: (string | number)[] = allValues) => {
       const filters = analysisState.analysis?.descriptor.subset.descriptor;
       const otherFilters = (filters ?? []).filter(
         (f) => f.entityId !== entity.id || f.variableId !== variable.id

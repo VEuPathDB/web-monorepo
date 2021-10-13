@@ -23,18 +23,22 @@ export function PublicAnalysesRoute({
   const studyRecords = useWdkStudyRecords();
 
   const location = useLocation();
-  const makeStudyLink = useCallback(
-    (studyId: string) => Path.join(location.pathname, '..', studyId, '~latest'),
-    [location.pathname]
-  );
   const makeAnalysisLink = useCallback(
-    (studyId: string, analysisId: string, ownerUserId: number) =>
+    (
+      studyId: string,
+      analysisId: string,
+      ownerUserId: number,
+      ownerName: string,
+      description?: string
+    ) =>
       Path.join(
         location.pathname,
         '..',
         studyId,
         analysisId,
-        `import/${ownerUserId}`
+        `import/${ownerUserId}?ownerName=${encodeURIComponent(ownerName)}${
+          description == null ? '' : `&description=${description}`
+        }`
       ),
     [location.pathname]
   );
@@ -43,9 +47,9 @@ export function PublicAnalysesRoute({
 
   return (
     <PublicAnalyses
+      analysisClient={analysisClient}
       publicAnalysisListState={publicAnalysisListState}
       studyRecords={studyRecords}
-      makeStudyLink={makeStudyLink}
       makeAnalysisLink={makeAnalysisLink}
       exampleAnalysesAuthor={exampleAnalysesAuthor}
     />

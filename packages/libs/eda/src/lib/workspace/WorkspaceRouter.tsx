@@ -116,12 +116,24 @@ export function WorkspaceRouter({
             analysisId: string;
             ownerUserId: string;
           }>
-        ) => (
-          <ImportAnalysis
-            {...props.match.params}
-            analysisClient={analysisClient}
-          />
-        )}
+        ) => {
+          const ownerNameQuery = new URLSearchParams(props.location.search).get(
+            'ownerName'
+          );
+
+          const descriptionQuery = new URLSearchParams(
+            props.location.search
+          ).get('description');
+
+          return (
+            <ImportAnalysis
+              {...props.match.params}
+              analysisClient={analysisClient}
+              ownerName={ownerNameQuery ?? undefined}
+              description={descriptionQuery ?? undefined}
+            />
+          );
+        }}
       />
       <Route
         path={`${path}/:studyId/:analysisId`}

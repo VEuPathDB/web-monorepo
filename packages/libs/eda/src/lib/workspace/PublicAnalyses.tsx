@@ -11,22 +11,32 @@ import {
 } from '@material-ui/core';
 import { keyBy, orderBy } from 'lodash';
 
-import { Link, Loading, Mesa } from '@veupathdb/wdk-client/lib/Components';
+import {
+  Link,
+  Loading,
+  Mesa,
+  SaveableTextEditor,
+} from '@veupathdb/wdk-client/lib/Components';
 import { create as createTableState } from '@veupathdb/wdk-client/lib/Components/Mesa/Utils/MesaState';
 import {
   MesaColumn,
   MesaSortObject,
 } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 import { OverflowingTextCell } from '@veupathdb/wdk-client/lib/Views/Strategy/OverflowingTextCell';
 
 import { workspaceTheme } from '../core/components/workspaceTheme';
 import { useDebounce } from '../core/hooks/debouncing';
 import {
+  AnalysisClient,
   PromiseHookState,
   PromiseResult,
   PublicAnalysisSummary,
   StudyRecord,
+  useEditablePublicAnalysisList,
 } from '../core';
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
 
@@ -48,13 +58,15 @@ const useStyles = makeStyles({
 });
 
 interface Props {
+  analysisClient: AnalysisClient;
   publicAnalysisListState: PromiseHookState<PublicAnalysisSummary[]>;
   studyRecords: StudyRecord[] | undefined;
-  makeStudyLink: (studyId: string) => string;
   makeAnalysisLink: (
     studyId: string,
     analysisId: string,
-    ownerUserId: number
+    ownerUserId: number,
+    ownerName: string,
+    description?: string
   ) => string;
   exampleAnalysesAuthor?: number;
 }
@@ -66,6 +78,7 @@ export function PublicAnalyses({
 }: Props) {
   const styles = useStyles();
   const theme = createMuiTheme(workspaceTheme);
+  const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
 
   return (
     <ThemeProvider theme={theme}>
@@ -73,11 +86,12 @@ export function PublicAnalyses({
         <h1>Public Analyses</h1>
         <PromiseResult state={publicAnalysisListState}>
           {(publicAnalysisList) =>
-            studyRecords == null ? (
+            studyRecords == null || user == null ? (
               <Loading />
             ) : (
               <PublicAnalysesTable
                 {...tableProps}
+                userId={user.id}
                 studyRecords={studyRecords}
                 publicAnalysisList={publicAnalysisList}
               />
@@ -90,6 +104,7 @@ export function PublicAnalyses({
 }
 
 interface TableProps extends Omit<Props, 'publicAnalysisListState'> {
+  userId: number;
   publicAnalysisList: PublicAnalysisSummary[];
   studyRecords: StudyRecord[];
 }
@@ -97,16 +112,25 @@ interface TableProps extends Omit<Props, 'publicAnalysisListState'> {
 interface PublicAnalysisRow extends PublicAnalysisSummary {
   studyAvailable: boolean;
   studyDisplayName: string;
+  studyDisplayNameHTML: string;
+  creationTimeDisplay: string;
+  modificationTimeDisplay: string;
   isExample: boolean;
 }
 
 function PublicAnalysesTable({
+  analysisClient,
   publicAnalysisList,
   studyRecords,
   makeAnalysisLink,
-  makeStudyLink,
   exampleAnalysesAuthor,
+  userId,
 }: TableProps) {
+  const { publicAnalysesState, updateAnalysis } = useEditablePublicAnalysisList(
+    publicAnalysisList,
+    analysisClient
+  );
+
   const history = useHistory();
   const location = useLocation();
 
@@ -140,20 +164,43 @@ function PublicAnalysesTable({
   const unfilteredRows: PublicAnalysisRow[] = useMemo(() => {
     const studiesById = keyBy(studyRecords, (study) => study.id[0].value);
 
-    return publicAnalysisList.map((publicAnalysis) => ({
+    return publicAnalysesState.map((publicAnalysis) => ({
       ...publicAnalysis,
       studyAvailable: Boolean(studiesById[publicAnalysis.studyId]),
-      studyDisplayName:
+      studyDisplayName: stripHTML(
+        studiesById[publicAnalysis.studyId]?.displayName ?? 'Unknown study'
+      ),
+      studyDisplayNameHTML:
         studiesById[publicAnalysis.studyId]?.displayName ?? 'Unknown study',
+      creationTimeDisplay: convertISOToDisplayFormat(
+        publicAnalysis.creationTime
+      ),
+      modificationTimeDisplay: convertISOToDisplayFormat(
+        publicAnalysis.modificationTime
+      ),
       isExample: publicAnalysis.userId === exampleAnalysesAuthor,
     }));
-  }, [publicAnalysisList, studyRecords, exampleAnalysesAuthor]);
+  }, [publicAnalysesState, studyRecords, exampleAnalysesAuthor]);
 
   const offerExampleSortControl = useMemo(
     () =>
       unfilteredRows.some((row) => row.isExample) &&
       unfilteredRows.some((row) => !row.isExample),
     [unfilteredRows]
+  );
+
+  const searchableColumns = useMemo(
+    () =>
+      [
+        'studyDisplayName',
+        'displayName',
+        'description',
+        'userName',
+        'userOrganization',
+        'creationTimeDisplay',
+        'modificationTimeDisplay',
+      ] as const,
+    []
   );
 
   const filteredRows = useMemo(() => {
@@ -163,12 +210,12 @@ function PublicAnalysesTable({
 
     const normalizedSearchText = debouncedSearchText.toLowerCase();
 
-    return unfilteredRows.filter(
-      (row) =>
-        row.displayName.toLowerCase().includes(normalizedSearchText) ||
-        row.studyDisplayName.toLowerCase().includes(normalizedSearchText)
+    return unfilteredRows.filter((row) =>
+      searchableColumns.some((columnKey) =>
+        row[columnKey]?.toLowerCase().includes(normalizedSearchText)
+      )
     );
-  }, [unfilteredRows, debouncedSearchText]);
+  }, [searchableColumns, unfilteredRows, debouncedSearchText]);
 
   const sortedRows = useMemo(
     () =>
@@ -213,43 +260,60 @@ function PublicAnalysesTable({
         name: 'Study',
         sortable: true,
         renderCell: (data: { row: PublicAnalysisRow }) =>
-          !data.row.studyAvailable ? (
-            data.row.studyDisplayName
-          ) : (
-            <Link to={makeStudyLink(data.row.studyId)}>
-              {data.row.studyDisplayName}
-            </Link>
-          ),
+          safeHtml(data.row.studyDisplayNameHTML),
       },
       {
         key: 'analysisId',
         name: 'Analysis',
         sortable: true,
-        renderCell: (data: { row: PublicAnalysisRow }) =>
-          !data.row.studyAvailable ? (
-            data.row.displayName
-          ) : (
-            <Link
-              to={makeAnalysisLink(
-                data.row.studyId,
-                data.row.analysisId,
-                data.row.userId
-              )}
-            >
-              {data.row.displayName}
-            </Link>
-          ),
+        style: { maxWidth: '200px' },
+        renderCell: (data: { row: PublicAnalysisRow }) => (
+          <div style={{ display: 'block', maxWidth: '100%' }}>
+            <SaveableTextEditor
+              key={data.row.analysisId}
+              value={data.row.displayName}
+              readOnly={!data.row.studyAvailable || data.row.userId !== userId}
+              displayValue={(value) =>
+                !data.row.studyAvailable ? (
+                  value
+                ) : (
+                  <Link to={makeAnalysisImportLink(makeAnalysisLink, data.row)}>
+                    {value}
+                  </Link>
+                )
+              }
+              onSave={(newName) => {
+                updateAnalysis(data.row.analysisId, { displayName: newName });
+              }}
+            />
+          </div>
+        ),
       },
       {
         key: 'description',
         name: 'Description',
         sortable: true,
-        renderCell: (data: { row: PublicAnalysisRow }) => (
-          <OverflowingTextCell
-            key={data.row.analysisId}
-            value={data.row.description}
-          />
-        ),
+        renderCell: (data: { row: PublicAnalysisRow }) => {
+          const analysisId = data.row.analysisId;
+          const descriptionStr = data.row.description ?? '';
+
+          return userId === exampleAnalysesAuthor &&
+            data.row.userId === userId ? (
+            <div style={{ display: 'block', maxWidth: '100%' }}>
+              <SaveableTextEditor
+                key={analysisId}
+                multiLine
+                rows={Math.max(2, descriptionStr.length / 30)}
+                value={descriptionStr}
+                onSave={(newDescription) => {
+                  updateAnalysis(analysisId, { description: newDescription });
+                }}
+              />
+            </div>
+          ) : (
+            <OverflowingTextCell key={analysisId} value={descriptionStr} />
+          );
+        },
         width: '25em',
       },
       {
@@ -267,17 +331,17 @@ function PublicAnalysesTable({
         name: 'Created',
         sortable: true,
         renderCell: (data: { row: PublicAnalysisRow }) =>
-          convertISOToDisplayFormat(data.row.creationTime),
+          data.row.creationTimeDisplay,
       },
       {
         key: 'modificationTime',
         name: 'Modified',
         sortable: true,
         renderCell: (data: { row: PublicAnalysisRow }) =>
-          convertISOToDisplayFormat(data.row.modificationTime),
+          data.row.modificationTimeDisplay,
       },
     ],
-    [makeAnalysisLink, makeStudyLink]
+    [makeAnalysisLink, updateAnalysis, exampleAnalysesAuthor, userId]
   );
 
   const tableUiState = useMemo(() => ({ sort: tableSort }), [tableSort]);
@@ -312,9 +376,9 @@ function PublicAnalysesTable({
         </div>
       ),
       deriveRowClassName: (row: PublicAnalysisRow) =>
-        row.isExample ? 'ExampleRow' : undefined,
+        offerExampleSortControl && row.isExample ? 'ExampleRow' : undefined,
     }),
-    [unfilteredRows]
+    [unfilteredRows, offerExampleSortControl]
   );
 
   const tableState = useMemo(
@@ -367,5 +431,18 @@ function PublicAnalysesTable({
         />
       )}
     </Mesa.Mesa>
+  );
+}
+
+function makeAnalysisImportLink(
+  makeAnalysisLink: Props['makeAnalysisLink'],
+  row: PublicAnalysisRow
+) {
+  return makeAnalysisLink(
+    row.studyId,
+    row.analysisId,
+    row.userId,
+    `${row.userName} [${row.userOrganization}]`,
+    row.description
   );
 }

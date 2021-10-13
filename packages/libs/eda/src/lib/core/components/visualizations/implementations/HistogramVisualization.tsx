@@ -26,12 +26,15 @@ import {
 import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
-import { StudyEntity } from '../../../types/study';
+import {
+  DateVariable,
+  NumberVariable,
+  StudyEntity,
+} from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
 import { CoverageStatistics } from '../../../types/visualization';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { BirdsEyeView } from '../../BirdsEyeView';
-import { isHistogramVariable } from '../../filter/guards';
 import { HistogramVariable } from '../../filter/types';
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
@@ -212,8 +215,17 @@ function HistogramViz(props: VisualizationProps) {
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
         return undefined;
 
-      if (xAxisVariable && !isHistogramVariable(xAxisVariable))
+      if (
+        xAxisVariable &&
+        !NumberVariable.is(xAxisVariable) &&
+        !DateVariable.is(xAxisVariable)
+      )
         return undefined;
+
+      if (xAxisVariable === overlayVariable)
+        throw new Error(
+          'The X and Overlay variables must not be the same. Please choose different variables for X and Overlay.'
+        );
 
       const params = getRequestParams(
         studyId,
@@ -417,6 +429,8 @@ function HistogramPlotWithControls({
       .then(updateThumbnailRef.current);
   }, [data, histogramProps.dependentAxisLogScale]);
 
+  const widgetHeight = '4em';
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
@@ -468,9 +482,12 @@ function HistogramPlotWithControls({
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <LabelledGroup label="Y-axis">
           <Switch
-            label="Log Scale:"
+            label="Log scale"
             state={histogramProps.dependentAxisLogScale}
             onStateChange={onDependentAxisLogScaleChange}
+            containerStyles={{
+              minHeight: widgetHeight,
+            }}
           />
           <RadioButtonGroup
             selectedOption={valueSpec}
@@ -501,6 +518,9 @@ function HistogramPlotWithControls({
                 ? ['day', 'week', 'month', 'year']
                 : undefined
             }
+            containerStyles={{
+              minHeight: widgetHeight,
+            }}
           />
         </LabelledGroup>
       </div>

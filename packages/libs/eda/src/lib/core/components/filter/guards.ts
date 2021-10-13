@@ -10,7 +10,7 @@ import {
 export function isHistogramVariable(
   variable: VariableTreeNode
 ): variable is HistogramVariable {
-  if (variable.type != 'category') {
+  if (variable.type !== 'category') {
     switch (variable.dataShape) {
       case 'continuous':
         switch (variable.type) {
@@ -27,7 +27,7 @@ export function isHistogramVariable(
 export function isTableVariable(
   variable: VariableTreeNode
 ): variable is TableVariable {
-  if (variable.type != 'category') {
+  if (variable.type !== 'category') {
     switch (variable.dataShape) {
       case 'binary':
       case 'categorical':
@@ -47,7 +47,7 @@ export function isTableVariable(
 export function isScatterplotVariable(
   variable: VariableTreeNode
 ): variable is ScatterplotVariable {
-  if (variable.type != 'category') {
+  if (variable.type !== 'category') {
     switch (variable.dataShape) {
       case 'continuous':
         switch (variable.type) {
@@ -64,7 +64,7 @@ export function isScatterplotVariable(
 export function isMosaicVariable(
   variable: VariableTreeNode
 ): variable is MosaicVariable {
-  if (variable.type != 'category') {
+  if (variable.type !== 'category') {
     switch (variable.dataShape) {
       case 'categorical':
       case 'binary':
