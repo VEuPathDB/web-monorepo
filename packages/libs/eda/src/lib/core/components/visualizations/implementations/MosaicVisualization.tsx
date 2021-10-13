@@ -249,11 +249,12 @@ function MosaicViz(props: Props) {
   let statsTable = undefined;
 
   if (isTwoByTwo) {
-    const twoByTwoData = data.value as TwoByTwoData | undefined;
+    // const twoByTwoData = data.value as TwoByTwoData | undefined;
 
+    // Temporarily disabled---See https://github.com/VEuPathDB/web-eda/issues/463
     statsTable = (
       <div className="MosaicVisualization-StatsTable">
-        <table>
+        {/* <table>
           <tbody>
             <tr>
               <th></th>
@@ -280,7 +281,8 @@ function MosaicViz(props: Props) {
               <td>{twoByTwoData?.rrInterval ?? 'N/A'}</td>
             </tr>
           </tbody>
-        </table>
+        </table> */}
+        <i>Stats table coming soon!</i>
       </div>
     );
   } else {
