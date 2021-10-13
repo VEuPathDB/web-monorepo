@@ -30,6 +30,7 @@ import {
   DateVariable,
   NumberVariable,
   StudyEntity,
+  Variable,
 } from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
 import { CoverageStatistics } from '../../../types/visualization';
@@ -85,6 +86,7 @@ function createDefaultConfig(): HistogramConfig {
 }
 
 type ValueSpec = t.TypeOf<typeof ValueSpec>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const ValueSpec = t.keyof({ count: null, proportion: null });
 
 type HistogramConfig = t.TypeOf<typeof HistogramConfig>;
@@ -232,7 +234,8 @@ function HistogramViz(props: VisualizationProps) {
         studyId,
         filters ?? [],
         valueType,
-        vizConfig
+        vizConfig,
+        xAxisVariable
       );
       const response = dataClient.getHistogram(
         computation.descriptor.type,
@@ -300,7 +303,7 @@ function HistogramViz(props: VisualizationProps) {
           toggleStarredVariable={toggleStarredVariable}
           enableShowMissingnessToggle={
             overlayVariable != null &&
-            data.value?.completeCasesAllVars !=
+            data.value?.completeCasesAllVars !==
               data.value?.completeCasesAxesVars
           }
           showMissingness={vizConfig.showMissingness}
@@ -570,11 +573,16 @@ function getRequestParams(
   studyId: string,
   filters: Filter[],
   valueType: 'number' | 'date',
-  vizConfig: HistogramConfig
+  vizConfig: HistogramConfig,
+  variable?: Variable
 ): HistogramRequestParams {
   const {
-    binWidth,
-    binWidthTimeUnit,
+    binWidth = NumberVariable.is(variable) || DateVariable.is(variable)
+      ? variable.binWidthOverride ?? variable.binWidth
+      : undefined,
+    binWidthTimeUnit = variable?.type === 'date'
+      ? variable.binUnits
+      : undefined,
     valueSpec,
     overlayVariable,
     xAxisVariable,
