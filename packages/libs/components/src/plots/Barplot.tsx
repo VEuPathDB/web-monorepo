@@ -15,6 +15,7 @@ import { Layout } from 'plotly.js';
 import { some, uniq, flatMap } from 'lodash';
 // util functions for handling long tick labels with ellipsis
 import { axisTickLableEllipsis } from '../utils/axis-tick-label-ellipsis';
+import { NumberRange } from '../types/general';
 
 // in this example, the main variable is 'country'
 export interface BarplotProps
@@ -33,6 +34,8 @@ export interface BarplotProps
   showIndependentAxisTickLabel?: boolean;
   /** show/hide dependent axis tick label, default is true */
   showDependentAxisTickLabel?: boolean;
+  /** dependent axis range: required for showing ticks and their labels properly for log scale */
+  dependentAxisRange?: NumberRange;
 }
 
 const EmptyBarplotData: BarplotData = { series: [] };
@@ -51,6 +54,7 @@ const Barplot = makePlotlyPlotComponent(
     showIndependentAxisTickLabel = true,
     showDependentAxisTickLabel = true,
     dependentAxisLogScale = DependentAxisLogScaleDefault,
+    dependentAxisRange,
     ...restProps
   }: BarplotProps) => {
     // set tick label Length for ellipsis
@@ -125,19 +129,6 @@ const Barplot = makePlotlyPlotComponent(
       [data, barLayout, orientation, showValues, opacity]
     );
 
-    const independentAxisLayout: Layout['xaxis'] | Layout['yaxis'] = {
-      automargin: true,
-      showgrid: false,
-      zeroline: false,
-      showline: false,
-      title: {
-        text: independentAxisLabel ? independentAxisLabel : '',
-      },
-      range: data.series.length ? undefined : [0, 10],
-      tickfont: data.series.length ? {} : { color: 'transparent' },
-      showticklabels: showIndependentAxisTickLabel,
-    };
-
     // if at least one value is 0 < x < 1 then these are probably fractions/proportions
     // affects mouseover formatting only in logScale mode
     // worst case is that mouseovers contain integers followed by .0000
@@ -147,6 +138,19 @@ const Barplot = makePlotlyPlotComponent(
         (val) => val > 0 && val < 1
       );
     }, [data.series]);
+
+    const independentAxisLayout: Layout['xaxis'] | Layout['yaxis'] = {
+      automargin: true,
+      showgrid: false,
+      zeroline: false,
+      showline: dependentAxisLogScale || dataLooksFractional,
+      title: {
+        text: independentAxisLabel ? independentAxisLabel : '',
+      },
+      range: data.series.length ? undefined : [0, 10],
+      tickfont: data.series.length ? {} : { color: 'transparent' },
+      showticklabels: showIndependentAxisTickLabel,
+    };
 
     const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
       automargin: true,
@@ -161,7 +165,17 @@ const Barplot = makePlotlyPlotComponent(
         text: dependentAxisLabel ? dependentAxisLabel : '',
       },
       tickfont: data.series.length ? {} : { color: 'transparent' },
-      range: data.series.length ? undefined : [0, 10],
+      // set range and dtick for logscale
+      range: data.series.length
+        ? [dependentAxisRange?.min, dependentAxisRange?.max].map((val) =>
+            dependentAxisLogScale && val != null
+              ? val <= 0
+                ? 0
+                : Math.log10(val as number)
+              : val
+          )
+        : [0, 10],
+      dtick: dependentAxisLogScale ? 1 : undefined,
       showticklabels: showDependentAxisTickLabel,
     };
 
