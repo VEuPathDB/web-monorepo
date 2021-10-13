@@ -85,7 +85,7 @@ export function Subsetting(props: Props) {
           selectedVariableId={variable.id}
         />
       </div>
-      <div className="TabularDownload">
+      {/* <div className="TabularDownload">
         <Tooltip
           title={`View and download current subset of ${
             entity.displayNamePlural ?? entity.displayName
@@ -101,7 +101,7 @@ export function Subsetting(props: Props) {
             View and download
           </Button>
         </Tooltip>
-      </div>
+      </div> */}
       <div className="Filter">
         <VariableDetails
           entity={entity}
