@@ -545,7 +545,6 @@ export function histogramResponseToData(
   return {
     series: response.histogram.data.map((data, index) => ({
       name: data.overlayVariableDetails?.value ?? `series ${index}`,
-      borderColor: 'white',
       bins: data.value.map((_, index) => ({
         binStart:
           type === 'number' || type === 'integer'
