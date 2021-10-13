@@ -99,6 +99,41 @@ BigNumbers.args = {
   interactive: true,
 };
 
+const dataSetProblem: BirdsEyePlotData = {
+  brackets: [
+    {
+      label: 'Data for axes',
+      value: 4372,
+    },
+    {
+      label: 'Data for axes & strata',
+      value: 3393,
+    },
+  ],
+  bars: [
+    // total comes first, or the subset is hidden
+    {
+      label: 'Total',
+      value: 40374,
+      color: gray,
+    },
+    {
+      label: 'Subset',
+      value: 10765,
+      color: red,
+    },
+  ],
+};
+
+export const ProblemPopup = Template.bind({});
+ProblemPopup.args = {
+  data: dataSetProblem,
+  dependentAxisLabel: 'Foxes',
+  containerStyles,
+  spacingOptions,
+  interactive: true,
+};
+
 const dataSetOneBracket: BirdsEyePlotData = {
   brackets: [
     {
