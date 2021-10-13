@@ -1062,6 +1062,41 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
+"@veupathdb/components@^0.8.3":
+  version "0.8.3"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.8.3.tgz#69e3eb9be9d42d5c38ecff1e3d21275cb0d72303"
+  integrity sha512-E2NZCOw+64YtuX9/nWgvym7WPR3BlHrHB2+8vUDh+Cc2SAhQ1aC3xI08/WqJpY6IPtZunv3gYU18kZCxhhEm3w==
+  dependencies:
+    "@material-ui/core" "^4.11.2"
+    "@material-ui/icons" "^4.11.2"
+    "@material-ui/lab" "^4.0.0-alpha.57"
+    "@types/date-arithmetic" "^4.1.1"
+    "@visx/gradient" "^1.0.0"
+    "@visx/group" "^1.0.0"
+    "@visx/hierarchy" "^1.0.0"
+    "@visx/shape" "^1.4.0"
+    "@visx/text" "^1.3.0"
+    "@visx/tooltip" "^1.3.0"
+    "@visx/visx" "^1.1.0"
+    bootstrap "^4.5.2"
+    date-arithmetic "^4.1.0"
+    debounce-promise "^3.1.2"
+    latlon-geohash "^2.0.0"
+    leaflet "^1.6.0"
+    leaflet-drift-marker "^1.0.3"
+    luxon "^1.25.0"
+    plotly.js "^1.54.1"
+    re-resizable "^6.9.0"
+    react "^16.13.1"
+    react-bootstrap "^1.3.0"
+    react-cool-dimensions "^1.1.11"
+    react-dom "^16.13.1"
+    react-html-parser "^2.0.2"
+    react-leaflet "^2.7.0"
+    react-plotly.js "^2.4.0"
+    react-transition-group "^4.4.1"
+    shape2geohash "^1.2.5"
+
 "@veupathdb/eda@^0.11.9":
   version "0.11.61"
   resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.11.61.tgz#a031df95b415243a7341bbe04f3758a62cb6c665"
@@ -1084,16 +1119,16 @@
     react-resizable "^3.0.4"
     uuid "^8.3.2"
 
-"@veupathdb/eda@^0.13.3":
-  version "0.13.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.13.3.tgz#ca9186399e77a787a705565fae34604c15ef75e7"
-  integrity sha512-NgdZjHxPtcLM34bDYMZSimn+SOYHhXpJY245IqYdZNpvZd92zcgyecNkoboQWcCBylEcGnrrTIpch9dOSdHXRw==
+"@veupathdb/eda@^0.13.9":
+  version "0.13.9"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.13.9.tgz#e25615c079e069671c2676254dff0a9dd16bd676"
+  integrity sha512-KRefbdDBVyuGSRX7I3Xe2ilhf36aFbHPcPELCyPHob77ZvtbCMMYLkmCzBYXIeSrZDSW/4UABez+Drd0Z3f8Dw==
   dependencies:
     "@material-ui/core" "^4.11.3"
     "@material-ui/lab" "^4.0.0-alpha.58"
     "@mui/styles" "^5.0.1"
     "@types/debounce-promise" "^3.1.3"
-    "@veupathdb/components" "^0.8.0"
+    "@veupathdb/components" "^0.8.3"
     "@veupathdb/wdk-client" "^0.4.4"
     "@veupathdb/web-common" "^0.1.9"
     debounce-promise "^3.1.2"
