@@ -110,7 +110,7 @@ export function HistogramFilter(props: Props) {
       independentAxisRange: defaultIndependentRange as DateRange,
       ...otherDefaults,
     };
-  }, [variable]);
+  }, [variable, defaultIndependentRange]);
 
   const variableUISettings =
     analysisState.analysis?.descriptor.subset.uiSettings;
@@ -214,6 +214,7 @@ export function HistogramFilter(props: Props) {
       entity.id,
       studyMetadata.id,
       subsettingClient,
+      variable,
       variable.id,
       variable.type,
     ]
@@ -760,7 +761,7 @@ function tidyBinLabel(
   precision: number = 3
 ): string {
   const matches = binLabel.match(/^\[(-?\d+(?:\.\d+)),(-?\d+(?:\.\d+))\)$/);
-  if (matches != null && matches.length == 3) {
+  if (matches != null && matches.length === 3) {
     // matches array starts with full match of pattern
     const [binStart, binEnd] = matches
       .slice(1)
@@ -781,6 +782,7 @@ function formatStatValue(
     ? String(value).replace(/T.*$/, '')
     : Number(value).toLocaleString(undefined, {
         maximumFractionDigits: 4,
+        useGrouping: !(Number(value) >= 1900 && Number(value) <= 2100),
       });
 }
 

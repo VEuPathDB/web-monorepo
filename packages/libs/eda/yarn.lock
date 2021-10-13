@@ -3049,10 +3049,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/components@^0.8.2":
-  version "0.8.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.8.2.tgz#4df63c02938aecae0baa1450cbf944669f5ad597"
-  integrity sha512-9BEY9GMDitW0FmYpZV4d+zVV1QnprRj4fpqjXu7QUviabNrbTPWEI22mh4dd+VfjHiOcdJqQ7H/dz0FSxfF9Lg==
+"@veupathdb/components@^0.8.0", "@veupathdb/components@^0.8.5":
+  version "0.8.5"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.8.5.tgz#503060304726c19094708c04765d7d06e14876e6"
+  integrity sha512-KByoTQsZZvs+TKmfvmb+Wh3/SvizfcCf6UgpVd6W1jGUlsEkearf7siGuu7LLdkK4zsRU8Ji4wefiUpGVdeZHg==
   dependencies:
     "@material-ui/core" "^4.11.2"
     "@material-ui/icons" "^4.11.2"
@@ -3099,6 +3099,29 @@
     fp-ts "^2.9.3"
     io-ts "^2.2.13"
     lodash "^4.17.20"
+    react "^17.0.1"
+    react-dom "^17.0.1"
+    react-draggable "^4.4.3"
+    react-resizable "^3.0.4"
+    uuid "^8.3.2"
+
+"@veupathdb/eda@^0.13.9":
+  version "0.13.14"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.13.14.tgz#66a0576960074a8697e2fdf688b6d3440cb15d47"
+  integrity sha512-vlhA+zbPZQqYNdRQJV4I+9hlnGvqrg50iQRmieknVKJwB8ApZ2sWk0iaSCq7TNvY3J8bZ2CucNnu6cHOh2OhMg==
+  dependencies:
+    "@material-ui/core" "^4.11.3"
+    "@material-ui/lab" "^4.0.0-alpha.58"
+    "@mui/styles" "^5.0.1"
+    "@types/debounce-promise" "^3.1.3"
+    "@veupathdb/components" "^0.8.5"
+    "@veupathdb/wdk-client" "^0.4.4"
+    "@veupathdb/web-common" "^0.1.9"
+    debounce-promise "^3.1.2"
+    fp-ts "^2.9.3"
+    io-ts "^2.2.13"
+    lodash "^4.17.20"
+    monocle-ts "^2.3.11"
     react "^17.0.1"
     react-dom "^17.0.1"
     react-draggable "^4.4.3"
@@ -3179,10 +3202,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/wdk-client@^0.4.5":
-  version "0.4.5"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.4.5.tgz#47cedeadda3f7e424859e7a0822c4b62340b4992"
-  integrity sha512-37KbSDSTrmWvP1+WQzCniBGgbBxafYZw+RbjyEL5z/WWSDAAtumAxhkVOmqg5aB7wKp4yF8SAC5Y4opeR11LuA==
+"@veupathdb/wdk-client@^0.4.4", "@veupathdb/wdk-client@^0.4.6":
+  version "0.4.6"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.4.6.tgz#7dd8489dad185a6a3264761179235e091c983323"
+  integrity sha512-Ufxaq+N/Xo4PN9kzOvNzKmE6tbkxU/Q4VVGCP1nsCoFSxTN/G8dPWVRoDB3+mrBrjuzH5cqw4VIO1+viCVXCng==
   dependencies:
     "@types/datatables.net" "^1.10.5"
     "@types/flot" "^0.0.31"
@@ -3226,6 +3249,17 @@
     rxjs "^6.2.2"
     spin.js "^4.0.0"
     uuid "^8.1.0"
+
+"@veupathdb/web-common@^0.1.10":
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.1.10.tgz#5649cd0dc7cb241c4071122a3c9068cc9d01d7e1"
+  integrity sha512-TpIuGZEoNW4oCYFPdNbshKVTPnRudsyeQYR6taMPBLf4Kml/o+JNBcogjnfCkEBpyjNEdUKAWeBL7lOHUcZ/Jw==
+  dependencies:
+    "@veupathdb/components" "^0.8.0"
+    "@veupathdb/eda" "^0.13.9"
+    custom-event-polyfill "^1.0.7"
+    md5 "^2.3.0"
+    whatwg-fetch "^3.5.0"
 
 "@veupathdb/web-common@^0.1.5":
   version "0.1.5"

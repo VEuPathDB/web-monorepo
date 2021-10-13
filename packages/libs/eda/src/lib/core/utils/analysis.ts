@@ -3,6 +3,7 @@ import {
   BarplotData,
   BoxplotData,
 } from '@veupathdb/components/lib/types/plots';
+import { Analysis, NewAnalysis } from '../types/analysis';
 import { CoverageStatistics } from '../types/visualization';
 
 export function vocabularyWithMissingData(
@@ -23,8 +24,7 @@ export function grayOutLastSeries<
       showMissingness && index === data.series.length - 1
         ? {
             ...series,
-            color: 'white',
-            borderColor: '#a0a0a0',
+            color: '#e8e8e8',
             outlierSymbol: 'x',
           }
         : series
@@ -63,4 +63,20 @@ export function quantizePvalue(pvalue: number | string): string {
   } else {
     return pvalue.toPrecision(1);
   }
+}
+
+export function isNewAnalysis(
+  analysis?: NewAnalysis | Analysis
+): analysis is NewAnalysis {
+  return analysis != null && !('analysisId' in analysis);
+}
+
+export function isSavedAnalysis(
+  analysis?: NewAnalysis | Analysis
+): analysis is Analysis {
+  return analysis != null && 'analysisId' in analysis;
+}
+
+export function getAnalysisId(analysis?: NewAnalysis | Analysis) {
+  return !isSavedAnalysis(analysis) ? undefined : analysis.analysisId;
 }
