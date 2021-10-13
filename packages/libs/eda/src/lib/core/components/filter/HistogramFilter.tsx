@@ -778,14 +778,9 @@ function formatStatValue(
 ) {
   return type === 'date'
     ? String(value).replace(/T.*$/, '')
-    : Number(value) >= 1900 && Number(value) <= 2100
-    ? Number(value).toLocaleString(undefined, {
-        maximumFractionDigits: 4,
-        useGrouping: false,
-      })
     : Number(value).toLocaleString(undefined, {
         maximumFractionDigits: 4,
-        useGrouping: true,
+        useGrouping: !(Number(value) >= 1900 && Number(value) <= 2100),
       });
 }
 
