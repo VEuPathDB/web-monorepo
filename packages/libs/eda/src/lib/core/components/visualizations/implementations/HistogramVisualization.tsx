@@ -19,7 +19,7 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import { isEqual, sortBy, uniq, flatMap, max } from 'lodash';
+import { isEqual, max } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   DataClient,
@@ -301,6 +301,8 @@ function HistogramViz(props: VisualizationProps) {
           max: defaultDependentAxisMaxValue * 1.05,
         }
       : undefined;
+
+  console.log('defaultDependentAxisMaxValue =', defaultDependentAxisMaxValue);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -677,53 +679,23 @@ function reorderData(
  * Need to make stacked count array and then max
  */
 
-function findMaxOfStackedArray(
-  // data: HistogramDataWithCoverageStatistics | undefined,
-  data: HistogramDataSeries[]
-) {
-  // construct array of objects comprised of binStart and count arrays
-  const dataArray = data.map((series) => {
-    return {
-      binStart: series.bins.map((bin) => bin.binStart),
-      count: series.bins.map((bin) => bin.count),
-    };
-  });
+function findMaxOfStackedArray(data: HistogramDataSeries[]) {
+  // calculate the sum of all the counts from bins with the same label
+  const sumsByLabel = data
+    .flatMap(
+      // make an array of [ [ label, count ], [ label, count ], ... ] from all series
+      (series) => series.bins.map((bin) => [bin.binLabel, bin.count])
+    )
+    // then do a sum of counts per label
+    .reduce<Record<string, number>>(
+      (map, [label, count]) => {
+        if (map[label] == null) map[label] = 0;
+        map[label] = map[label] + (count as number);
+        return map;
+      },
+      // empty map for reduce to start with
+      {}
+    );
 
-  // find unique index and sort alphanumeric from dataArray.binStart
-  const uniqueBinStart = sortBy(
-    uniq(dataArray.flatMap((data) => data.binStart))
-  );
-
-  // make array of count array (2D)
-  let totalCountArray = [];
-
-  // construct 2D totalCountArray
-  // [# of stratification] rows and [# of unique binStart] at each low
-  if (uniqueBinStart != null) {
-    for (let i = 0; i < dataArray.length; i++) {
-      // temporary array to store each row
-      let tempArray = [];
-      // looping through each data array
-      for (let j = 0; j < uniqueBinStart.length; j++) {
-        // check if binStart exists compared to unique binStart array
-        if (dataArray[i].binStart.includes(uniqueBinStart[j])) {
-          let indexCount = dataArray[i].binStart.indexOf(uniqueBinStart[j]);
-          // make tempArray for data.count
-          tempArray.push(dataArray[i].count[indexCount]);
-        } else {
-          // add filler count, 0 for non-existence case
-          tempArray.push(0);
-        }
-      }
-      // store tempArray to totalCountArray
-      totalCountArray.push(tempArray);
-    }
-  }
-
-  // find max of stacked array: max of sum of multiple arrays
-  const result = max(
-    totalCountArray.reduce((a, b) => a.map((c, i) => c + b[i]))
-  );
-
-  return result;
+  return max(Object.values(sumsByLabel));
 }
