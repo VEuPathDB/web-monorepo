@@ -275,6 +275,7 @@ export default function VariableList(props: VariableListProps) {
       starredVariablesLoading,
       starredVariableTermsSet,
       toggleStarredVariable,
+      customDisabledVariableMessage,
     ]
   );
 
@@ -593,7 +594,8 @@ function makeStarButtonTooltipContent(
 ) {
   return (
     <>
-      Click to {isStarred ? 'unstar' : 'star'} <strong>{field.display}</strong>.
+      Click to {isStarred ? 'unstar' : 'star'}{' '}
+      <strong>{safeHtml(field.display)}</strong>.
     </>
   );
 }

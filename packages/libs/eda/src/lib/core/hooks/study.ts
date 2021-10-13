@@ -20,7 +20,6 @@ import {
   StudyRecord,
   Variable,
 } from '../types/study';
-import { usePromise } from './promise';
 import { SubsettingClient } from '../api/subsetting-api';
 import { VariableDescriptor } from '../types/variable';
 import { findEntityAndVariable } from '../utils/study-metadata';

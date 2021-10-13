@@ -30,6 +30,7 @@ import {
   DateVariable,
   NumberVariable,
   StudyEntity,
+  Variable,
 } from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
 import { CoverageStatistics } from '../../../types/visualization';
@@ -52,6 +53,7 @@ import { useFindEntityAndVariable } from '../../../hooks/study';
 // import variable's metadata-based independent axis range utils
 import { defaultIndependentAxisRange } from '../../../utils/default-independent-axis-range';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
+import PluginError from '../PluginError';
 
 type HistogramDataWithCoverageStatistics = HistogramData & CoverageStatistics;
 
@@ -84,6 +86,7 @@ function createDefaultConfig(): HistogramConfig {
 }
 
 type ValueSpec = t.TypeOf<typeof ValueSpec>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const ValueSpec = t.keyof({ count: null, proportion: null });
 
 type HistogramConfig = t.TypeOf<typeof HistogramConfig>;
@@ -231,7 +234,8 @@ function HistogramViz(props: VisualizationProps) {
         studyId,
         filters ?? [],
         valueType,
-        vizConfig
+        vizConfig,
+        xAxisVariable
       );
       const response = dataClient.getHistogram(
         computation.descriptor.type,
@@ -299,7 +303,7 @@ function HistogramViz(props: VisualizationProps) {
           toggleStarredVariable={toggleStarredVariable}
           enableShowMissingnessToggle={
             overlayVariable != null &&
-            data.value?.completeCasesAllVars !=
+            data.value?.completeCasesAllVars !==
               data.value?.completeCasesAxesVars
           }
           showMissingness={vizConfig.showMissingness}
@@ -308,25 +312,7 @@ function HistogramViz(props: VisualizationProps) {
         />
       </div>
 
-      {data.error && (
-        <div
-          style={{
-            fontSize: '1.2em',
-            padding: '1em',
-            background: 'rgb(255, 233, 233) none repeat scroll 0% 0%',
-            borderRadius: '.5em',
-            margin: '.5em 0',
-            color: '#333',
-            border: '1px solid #d9cdcd',
-            display: 'flex',
-          }}
-        >
-          <i className="fa fa-warning" style={{ marginRight: '1ex' }}></i>{' '}
-          {data.error instanceof Error
-            ? data.error.message
-            : String(data.error)}
-        </div>
-      )}
+      <PluginError error={data.error} />
       <HistogramPlotWithControls
         data={data.value && !data.pending ? data.value : undefined}
         error={data.error}
@@ -429,6 +415,8 @@ function HistogramPlotWithControls({
       .then(updateThumbnailRef.current);
   }, [data, histogramProps.dependentAxisLogScale]);
 
+  const widgetHeight = '4em';
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
@@ -480,9 +468,12 @@ function HistogramPlotWithControls({
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <LabelledGroup label="Y-axis">
           <Switch
-            label="Log Scale:"
+            label="Log scale"
             state={histogramProps.dependentAxisLogScale}
             onStateChange={onDependentAxisLogScaleChange}
+            containerStyles={{
+              minHeight: widgetHeight,
+            }}
           />
           <RadioButtonGroup
             selectedOption={valueSpec}
@@ -513,6 +504,9 @@ function HistogramPlotWithControls({
                 ? ['day', 'week', 'month', 'year']
                 : undefined
             }
+            containerStyles={{
+              minHeight: widgetHeight,
+            }}
           />
         </LabelledGroup>
       </div>
@@ -579,11 +573,16 @@ function getRequestParams(
   studyId: string,
   filters: Filter[],
   valueType: 'number' | 'date',
-  vizConfig: HistogramConfig
+  vizConfig: HistogramConfig,
+  variable?: Variable
 ): HistogramRequestParams {
   const {
-    binWidth,
-    binWidthTimeUnit,
+    binWidth = NumberVariable.is(variable) || DateVariable.is(variable)
+      ? variable.binWidthOverride ?? variable.binWidth
+      : undefined,
+    binWidthTimeUnit = variable?.type === 'date'
+      ? variable.binUnits
+      : undefined,
     valueSpec,
     overlayVariable,
     xAxisVariable,

@@ -211,12 +211,14 @@ $data-table-inner-border: 1px solid #888;
 
 .VariableCoverageTable {
   @include data-table;
-  width: 500px;
+  width: 400px;
 
   .percentage {
     color: #333;
     font-size: 0.85em;
-    margin-left: 0.5em;
+  }
+  th {
+    vertical-align: baseline;
   }
 }
 
@@ -234,7 +236,7 @@ $data-table-inner-border: 1px solid #888;
 
   &-StatsTable {
     @include data-table;
-    max-width: 370px;
+    width: 400px;
   }
 
   .VariableCoverageTable {

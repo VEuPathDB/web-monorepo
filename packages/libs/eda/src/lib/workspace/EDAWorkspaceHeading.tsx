@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import Path from 'path';
 import { cx } from './Utils';
 import { useStudyRecord, AnalysisState, DEFAULT_ANALYSIS_NAME } from '../core';
+import { getAnalysisId, isSavedAnalysis } from '../core/utils/analysis';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Button, Tooltip, Icon, makeStyles } from '@material-ui/core';
 import { LinkAttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
@@ -36,6 +37,12 @@ export function EDAWorkspaceHeading({
   const history = useHistory();
   const redirectToNewAnalysis = () => history.push(redirectURL);
   const iconClasses = useStyles();
+
+  const analysisId = getAnalysisId(analysis);
+
+  useEffect(() => {
+    setDialogIsOpen(false);
+  }, [analysisId]);
 
   return (
     <>
@@ -75,11 +82,11 @@ export function EDAWorkspaceHeading({
                 className="Linkouts-buttons"
                 startIcon={<Icon className="fa fa-plus fa-fw" />}
                 onClick={
-                  /** If (1) there is no analysis, (2) we're in an unsaved new
-                   * analysis (here `analysis` is still undefined in this case),
-                   * or (3) we're in a renamed analysis, just go straight to the
-                   * new analysis. Otherwise, show the renaming dialog. */
-                  analysis && analysis.displayName === DEFAULT_ANALYSIS_NAME
+                  /** If we're in an unnamed saved analysis, show the renaming dialog.
+                   *  Otherwise, just go straight to the new analysis.
+                   */
+                  isSavedAnalysis(analysis) &&
+                  analysis.displayName === DEFAULT_ANALYSIS_NAME
                     ? () => setDialogIsOpen(true)
                     : redirectToNewAnalysis
                 }
@@ -105,7 +112,7 @@ export function EDAWorkspaceHeading({
           </div>
         </div>
       </div>
-      {analysisState && analysis && (
+      {analysisState && isSavedAnalysis(analysis) && (
         <AnalysisNameDialog
           isOpen={dialogIsOpen}
           setIsOpen={setDialogIsOpen}

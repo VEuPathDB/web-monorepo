@@ -2,7 +2,7 @@ import { find } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { RestrictedPage } from '@veupathdb/web-common/lib/App/DataRestriction/RestrictedPage';
 import { useApprovalStatus } from '@veupathdb/web-common/lib/hooks/dataRestriction';
-import React, { useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useRouteMatch } from 'react-router';
 import {
   DataClient,
@@ -12,11 +12,17 @@ import {
 } from '../core';
 import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
 import { VariableDescriptor } from '../core/types/variable';
+import { EDAWorkspace } from './EDAWorkspace';
 import { cx, findFirstVariable } from './Utils';
-import {
-  EDAWorkspaceNewAnalysis,
-  EDAWorkspaceSavedAnalysis,
-} from './EDAWorkspace';
+import { makeStyles } from '@mui/styles';
+
+const useStyles = makeStyles({
+  root: {
+    '& .MuiTypography-root': {
+      textTransform: 'none',
+    },
+  },
+});
 
 interface Props {
   studyId: string;
@@ -62,22 +68,19 @@ export function WorkspaceContainer(props: Props) {
     [url]
   );
   const approvalStatus = useApprovalStatus(props.studyId, 'analysis');
+  const classes = useStyles();
 
   return (
     <RestrictedPage approvalStatus={approvalStatus}>
       <EDAWorkspaceContainer
         studyId={props.studyId}
-        className={cx()}
+        className={`${cx()} ${classes.root}`}
         analysisClient={analysisClient}
         dataClient={dataClient}
         subsettingClient={subsettingClient}
         makeVariableLink={makeVariableLink}
       >
-        {props.analysisId == null ? (
-          <EDAWorkspaceNewAnalysis />
-        ) : (
-          <EDAWorkspaceSavedAnalysis analysisId={props.analysisId} />
-        )}
+        <EDAWorkspace studyId={props.studyId} analysisId={props.analysisId} />
       </EDAWorkspaceContainer>
     </RestrictedPage>
   );
