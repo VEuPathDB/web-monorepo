@@ -110,7 +110,7 @@ function SwissArmyButton({
         <Icon
           fontSize={calculatedIconSize}
           fill={calculatedTextColor}
-          css={{ paddingRight: 10 }}
+          css={{ marginRight: 10 }}
         />
         {text}
       </button>
