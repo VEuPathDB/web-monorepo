@@ -85,11 +85,11 @@ function SwissArmyButton({
           },
           type === 'solid'
             ? {
-                backgroundColor: finalStyle[buttonState].color,
+                backgroundColor: `${finalStyle[buttonState].color} !important`,
                 border: 'none',
               }
             : {
-                borderColor: finalStyle[buttonState].color,
+                borderColor: `${finalStyle[buttonState].color} !important`,
                 backgroundColor: 'transparent',
                 borderStyle: 'solid',
               },
