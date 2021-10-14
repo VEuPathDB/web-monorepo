@@ -376,13 +376,17 @@ function FullScreenVisualization(props: Props & { id: string }) {
           <h3>
             <SaveableTextEditor
               value={viz.displayName ?? 'unnamed visualization'}
-              onSave={(value) =>
-                updateVisualizations((visualizations) =>
-                  visualizations.map((v) =>
-                    v.visualizationId !== id ? v : { ...v, displayName: value }
-                  )
-                )
-              }
+              onSave={(value) => {
+                if (value) {
+                  updateVisualizations((visualizations) =>
+                    visualizations.map((v) =>
+                      v.visualizationId !== id
+                        ? v
+                        : { ...v, displayName: value }
+                    )
+                  );
+                }
+              }}
             />
           </h3>
           <div className="Subtitle">{overview?.displayName}</div>
