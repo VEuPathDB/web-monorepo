@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 
-// Various Icon Imports
-// import CloudDownload from '@material-ui/icons/CloudDownload';
-// import AddCircle from '@material-ui/icons/AddCircle';
-// import SettingsIcon from '@material-ui/icons/Settings';
-// import TableDownload from '../../icons/TableDownload';
-
+import typography from '../../../styleDefinitions/typography';
 import { stylePresets, SwissArmyButtonStyleSpec } from './stylePresets';
 
 type SwissArmyButtonProps = {
@@ -13,6 +8,8 @@ type SwissArmyButtonProps = {
   text: string;
   /** Action to take when the button is clicked. */
   onPress: () => void;
+  /** Optional. Text to display as a tooltip when button is hovered over. */
+  tooltip?: string;
   /** Indicates if the button should be have a colored outline and
    * transparent center or have a solid fill color. */
   type?: 'outlined' | 'solid';
@@ -30,6 +27,7 @@ type SwissArmyButtonProps = {
 function SwissArmyButton({
   text,
   onPress,
+  tooltip,
   type = 'solid',
   size = 'medium',
   icon = () => null,
@@ -63,15 +61,16 @@ function SwissArmyButton({
   const calculatedIconSize =
     size === 'large' ? '1.5rem' : size === 'medium' ? '1.25rem' : '1rem';
   const horizontalPadding = size === 'large' ? 15 : 15;
+  const buttonHeight = size === 'large' ? 50 : size === 'medium' ? 35 : 25;
 
   const Icon = icon;
 
   return (
-    <>
+    <div css={{ position: 'relative' }}>
       <button
         css={[
           {
-            height: size === 'large' ? 50 : size === 'medium' ? 35 : 25,
+            height: buttonHeight,
             display: 'flex',
             alignItems: 'center',
             paddingLeft: horizontalPadding,
@@ -114,7 +113,26 @@ function SwissArmyButton({
         />
         {text}
       </button>
-    </>
+      {tooltip && (
+        <span
+          css={[
+            typography.pre,
+            {
+              position: 'absolute',
+              top: buttonHeight + 5,
+              backgroundColor: 'rgb(100, 100, 100)',
+              padding: '4px 8px',
+              borderRadius: 5,
+              color: 'white',
+              opacity: buttonState === 'hover' ? 1 : 0,
+              transition: 'opacity .25s',
+            },
+          ]}
+        >
+          {tooltip}
+        </span>
+      )}
+    </div>
   );
 }
 

@@ -32,6 +32,14 @@ WithIcon.args = {
   type: 'outlined',
 };
 
+export const Tooltip = Template.bind({});
+Tooltip.args = {
+  text: 'Button With Tooltip',
+  icon: TableDownload,
+  type: 'outlined',
+  tooltip: 'Hello there friend.',
+};
+
 export const MesaStylePreset = Template.bind({});
 MesaStylePreset.args = {
   text: 'Mesa Style Preset',
