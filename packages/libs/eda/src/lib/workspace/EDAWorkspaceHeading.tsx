@@ -1,22 +1,21 @@
 import { useState } from 'react';
-import { Link, useHistory, useRouteMatch } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import Path from 'path';
-
-import { cx } from './Utils';
-import { useStudyRecord, AnalysisState, DEFAULT_ANALYSIS_NAME } from '../core';
+import SwissArmyButton from '@veupathdb/core-components/dist/components/buttons/SwissArmyButton';
+import {
+  Download,
+  Table,
+} from '@veupathdb/core-components/dist/components/icons';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { Button, Tooltip, Icon, makeStyles } from '@material-ui/core';
 import { LinkAttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { useAttemptActionCallback } from '@veupathdb/web-common/lib/hooks/dataRestriction';
 import { Action } from '@veupathdb/web-common/lib/App/DataRestriction/DataRestrictionUtils';
-import { AnalysisNameDialog } from './AnalysisNameDialog';
+import AddIcon from '@material-ui/icons/Add';
+import { Tooltip } from '@material-ui/core';
 
-// Add custom styling for ebrc icons for better alignment in buttons
-const useStyles = makeStyles((theme) => ({
-  ebrcStartIcon: {
-    marginTop: -5,
-  },
-}));
+import { cx } from './Utils';
+import { useStudyRecord, AnalysisState, DEFAULT_ANALYSIS_NAME } from '../core';
+import { AnalysisNameDialog } from './AnalysisNameDialog';
 
 interface EDAWorkspaceHeadingProps {
   /** Optional AnalysisState for "New analysis" button functionality */
@@ -37,7 +36,6 @@ export function EDAWorkspaceHeading({
     : Path.resolve(url, '../new');
   const history = useHistory();
   const redirectToNewAnalysis = () => history.push(redirectURL);
-  const iconClasses = useStyles();
 
   return (
     <>
@@ -46,60 +44,54 @@ export function EDAWorkspaceHeading({
         <div className={cx('-Linkouts')}>
           {studyRecord.attributes.bulk_download_url && (
             <div>
-              <Tooltip title="Download study files">
-                <Button
-                  variant="text"
-                  color="primary"
-                  startIcon={<Icon className="fa fa-download fa-fw" />}
-                  type="button"
-                  onClick={() => {
-                    attemptAction(Action.download, {
-                      studyId: studyRecord.id[0].value,
-                      onAllow: () => {
-                        window.location.href = (studyRecord.attributes
-                          .bulk_download_url as LinkAttributeValue).url;
-                      },
-                    });
-                  }}
-                >
-                  &nbsp;Download
-                </Button>
-              </Tooltip>
+              <SwissArmyButton
+                text="Download"
+                tooltip="Download study files"
+                icon={Download}
+                stylePreset="borderless"
+                onPress={() => {
+                  attemptAction(Action.download, {
+                    studyId: studyRecord.id[0].value,
+                    onAllow: () => {
+                      window.location.href = (studyRecord.attributes
+                        .bulk_download_url as LinkAttributeValue).url;
+                    },
+                  });
+                }}
+              />
             </div>
           )}
           <div>
-            <Tooltip title="Create a new analysis">
-              <Button
-                variant="text"
-                color="primary"
-                startIcon={<Icon className="fa fa-plus fa-fw" />}
-                onClick={
-                  /** If (1) there is no analysis, (2) we're in an unsaved new
-                   * analysis (here `analysis` is still undefined in this case),
-                   * or (3) we're in a renamed analysis, just go straight to the
-                   * new analysis. Otherwise, show the renaming dialog. */
-                  analysis && analysis.displayName === DEFAULT_ANALYSIS_NAME
-                    ? () => setDialogIsOpen(true)
-                    : redirectToNewAnalysis
-                }
-              >
-                New analysis
-              </Button>
-            </Tooltip>
+            <SwissArmyButton
+              text="New Analysis"
+              tooltip="Create a new analysis"
+              stylePreset="borderless"
+              size="medium"
+              // @ts-ignore
+              icon={AddIcon}
+              onPress={
+                /** If (1) there is no analysis, (2) we're in an unsaved new
+                 * analysis (here `analysis` is still undefined in this case),
+                 * or (3) we're in a renamed analysis, just go straight to the
+                 * new analysis. Otherwise, show the renaming dialog. */
+                analysis && analysis.displayName === DEFAULT_ANALYSIS_NAME
+                  ? () => setDialogIsOpen(true)
+                  : redirectToNewAnalysis
+              }
+            />
           </div>
           <div>
-            <Tooltip title="View all your analyses of this study">
-              <Button
-                variant="text"
-                color="primary"
-                classes={{ startIcon: iconClasses.ebrcStartIcon }}
-                startIcon={<Icon className="fa fa-table fa-fw" />}
-                component={Link}
-                to={'/eda?s=' + encodeURIComponent(studyRecord.displayName)}
-              >
-                My analyses
-              </Button>
-            </Tooltip>
+            <SwissArmyButton
+              text="My analyses"
+              tooltip="View all your analyses of this study"
+              stylePreset="borderless"
+              icon={Table}
+              onPress={() =>
+                history.push(
+                  '/eda?s=' + encodeURIComponent(studyRecord.displayName)
+                )
+              }
+            />
           </div>
         </div>
       </div>

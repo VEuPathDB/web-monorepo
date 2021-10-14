@@ -85,8 +85,8 @@
     font-size: 1.5em;
     display: grid;
     grid-auto-flow: column;
-    gap: 1em;
-    margin-right: auto;
+    gap: 0.5em;
+    justify-self: end;
     margin-left: 2em;
     a {
       font-size: 0.75em;
@@ -215,7 +215,7 @@
     .TabularDownload {
       grid-area: tabular-download;
       font-size: 3em;
-      margin-right: 1em;
+      // margin-right: 1em;
     }
     .Filter {
       grid-area: filter;
