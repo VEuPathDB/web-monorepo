@@ -24,8 +24,8 @@ import {
   IOTBlastNScoringMatrix,
   IOTBlastXScoringMatrix,
   LongJobResponse,
+  Target,
 } from './ServiceTypes';
-import { dbToOrganismFactory } from './combinedResults';
 
 export const BLAST_DATABASE_ORGANISM_PARAM_NAME = 'BlastDatabaseOrganism';
 export const BLAST_DATABASE_TYPE_PARAM_NAME = 'MultiBlastDatabaseType';
@@ -287,14 +287,12 @@ export function blastConfigToParamValues(
   return parameterValues;
 }
 
-export function databaseStringsToOrganismParamValue(
-  dbs: string[],
+export function targetsToOrganismParamValue(
+  targets: Target[],
   dirsToOrganisms: Record<string, string>
 ) {
-  const dbToOrganism = dbToOrganismFactory(dirsToOrganisms);
-
-  const selectedOrganisms = dbs
-    .map(dbToOrganism)
+  const selectedOrganisms = targets
+    .map((target) => dirsToOrganisms[target.organism])
     .filter((organism): organism is string => organism != null);
 
   return toMultiValueString(selectedOrganisms);
@@ -304,13 +302,13 @@ export function reportToParamValues(
   jobDetails: LongJobResponse,
   query: string,
   targetTypeTerm: string,
-  dbs: string[],
+  targets: Target[],
   dirsToOrganisms: Record<string, string>
 ): ParameterValues {
   const configParamValues = blastConfigToParamValues(jobDetails.config);
 
-  const organismParamValue = databaseStringsToOrganismParamValue(
-    dbs,
+  const organismParamValue = targetsToOrganismParamValue(
+    targets,
     dirsToOrganisms
   );
 

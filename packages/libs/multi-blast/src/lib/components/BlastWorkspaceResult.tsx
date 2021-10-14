@@ -1,8 +1,6 @@
 import { Fragment, useContext, useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router';
 
-import { uniq } from 'lodash';
-
 import {
   Error as ErrorPage,
   Link,
@@ -27,9 +25,9 @@ import {
   LongJobResponse,
   LongReportResponse,
   MultiQueryReportJson,
+  Target,
 } from '../utils/ServiceTypes';
 import { BlastApi } from '../utils/api';
-import { dbToTargetName } from '../utils/combinedResults';
 import { fetchOrganismToFilenameMaps } from '../utils/organisms';
 import { reportToParamValues } from '../utils/params';
 import { TargetMetadataByDataType } from '../utils/targetTypes';
@@ -208,8 +206,10 @@ function BlastResultWithLoadedReport(props: BlastResultWithLoadedReportProps) {
 
   const queryCount = props.individualQueries.length;
 
+  const targets = props.jobDetails.targets;
+
   const { targetTypeTerm, wdkRecordType } = useTargetTypeTermAndWdkRecordType(
-    props.multiQueryReport
+    targets
   );
 
   const organismToFilenameMapsResult = useBlastCompatibleWdkService(
@@ -245,6 +245,7 @@ function BlastResultWithLoadedReport(props: BlastResultWithLoadedReportProps) {
     <BlastSummary
       filesToOrganisms={organismToFilenameMapsResult.filesToOrganisms}
       jobDetails={props.jobDetails}
+      targets={targets}
       multiQueryReport={props.multiQueryReport}
       query={props.query}
       individualQueries={props.individualQueries}
@@ -258,6 +259,7 @@ function BlastResultWithLoadedReport(props: BlastResultWithLoadedReportProps) {
 interface BlastSummaryProps {
   filesToOrganisms: Record<string, string>;
   jobDetails: LongJobResponse;
+  targets: Target[];
   multiQueryReport: MultiQueryReportJson;
   query: string;
   individualQueries: IndividualQuery[];
@@ -269,6 +271,7 @@ interface BlastSummaryProps {
 function BlastSummary({
   filesToOrganisms,
   jobDetails,
+  targets,
   multiQueryReport,
   query,
   individualQueries,
@@ -278,13 +281,9 @@ function BlastSummary({
 }: BlastSummaryProps) {
   const queryCount = individualQueries.length;
 
-  const databases = useMemo(() => {
-    const databasesEntries = multiQueryReport.BlastOutput2.flatMap(
-      ({ report }) => report.search_target.db.split(' ').map(dbToTargetName)
-    );
-
-    return uniq(databasesEntries);
-  }, [multiQueryReport]);
+  const databases = useMemo(() => targets.map(({ target }) => target), [
+    targets,
+  ]);
 
   const databasesStr = useMemo(() => databases.join(', '), [databases]);
 
@@ -299,10 +298,10 @@ function BlastSummary({
         jobDetails,
         query,
         targetTypeTerm,
-        databases,
+        targets,
         filesToOrganisms
       ),
-    [databases, filesToOrganisms, jobDetails, targetTypeTerm, query]
+    [targets, filesToOrganisms, jobDetails, targetTypeTerm, query]
   );
 
   const [

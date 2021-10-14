@@ -558,6 +558,13 @@ export const ioBlastConfig = oneOf(
 
 export type IoBlastConfig = Unpack<typeof ioBlastConfig>;
 
+export type Target = Unpack<typeof target>;
+
+export const target = record({
+  organism: string,
+  target: string,
+});
+
 export const shortJobResponse = record({
   id: string,
   description: optional(string),
@@ -570,7 +577,7 @@ export const shortJobResponse = record({
   childJobs: optional(arrayOf(record({ id: string, index: number }))),
   parentJobs: optional(arrayOf(record({ id: string, index: number }))),
   site: string,
-  targets: arrayOf(record({ organism: string, target: string })),
+  targets: arrayOf(target),
 });
 
 export type ShortJobResponse = Unpack<typeof shortJobResponse>;

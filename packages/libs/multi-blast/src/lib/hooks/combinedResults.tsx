@@ -20,7 +20,7 @@ import { groupBy, orderBy } from 'lodash';
 
 import { Props as CombinedResultProps } from '../components/CombinedResult';
 import { Props as ResultContainerProps } from '../components/ResultContainer';
-import { MultiQueryReportJson } from '../utils/ServiceTypes';
+import { MultiQueryReportJson, Target } from '../utils/ServiceTypes';
 import {
   TargetMetadataByDataType,
   dbNameToTargetTypeTerm,
@@ -39,7 +39,6 @@ import {
   RANK_PER_SUBJECT_HELP_TEXT,
   SCORE_HELP_TEXT,
   CombinedResultRow,
-  dbToOrgDirAndTargetDbName,
   dbToOrganismFactory,
   defaultDeflineToDescription,
   defaultDeflineToSourceId,
@@ -497,16 +496,13 @@ function useMesaOptions(rowsDisplayable: boolean) {
   );
 }
 
-export function useTargetTypeTermAndWdkRecordType(
-  combinedResult: MultiQueryReportJson
-) {
+export function useTargetTypeTermAndWdkRecordType(targets: Target[]) {
   const targetMetadataByDataType = useContext(TargetMetadataByDataType);
 
   return useMemo(() => {
-    const sampleDbName = combinedResult.BlastOutput2[0].report.search_target.db;
-    const { targetDbName } = dbToOrgDirAndTargetDbName(sampleDbName);
-
-    const targetTypeTerm = targetDbName && dbNameToTargetTypeTerm(targetDbName);
+    const { organism: sampleOrganism, target: sampleDbName } = targets[0];
+    const targetDbName = sampleDbName.replace(sampleOrganism, '');
+    const targetTypeTerm = dbNameToTargetTypeTerm(targetDbName);
 
     const wdkRecordType =
       targetTypeTerm == null || targetMetadataByDataType[targetTypeTerm] == null
@@ -523,7 +519,7 @@ export function useTargetTypeTermAndWdkRecordType(
       targetTypeTerm,
       wdkRecordType,
     };
-  }, [combinedResult, targetMetadataByDataType]);
+  }, [targets, targetMetadataByDataType]);
 }
 
 export function useHitTypeDisplayNames(wdkRecordType: string) {
