@@ -567,6 +567,7 @@ export const shortJobResponse = record({
   // expires: string,
   // FIXME: This field is missing from "secondary" jobs. Service bug?
   isPrimary: optional(boolean),
+  childJobs: optional(arrayOf(record({ id: string, index: number }))),
   parentJobs: optional(arrayOf(record({ id: string, index: number }))),
   site: string,
   targets: arrayOf(record({ organism: string, target: string })),
