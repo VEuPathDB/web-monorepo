@@ -94,36 +94,13 @@ function BlastWorkspaceResultWithLoadedApi(
   );
 
   const individualQueriesResult = usePromise(async () => {
-    const jobEntitiesResult = await props.blastApi.fetchJobEntities();
-
-    if (jobEntitiesResult.status === 'error') {
-      return jobEntitiesResult;
+    if (jobResult.value?.status !== 'job-completed') {
+      return undefined;
     }
 
-    const jobEntities = jobEntitiesResult.value;
-
-    const unorderedSubJobIds = jobEntities.reduce(
-      (memo, { id: subJobId, parentJobs }) => {
-        const parentJobEntry = parentJobs?.find(
-          ({ id: parentId }) => parentId === props.jobId
-        );
-
-        if (parentJobEntry != null) {
-          memo.push({ id: subJobId, index: parentJobEntry.index });
-        }
-
-        return memo;
-      },
-      [] as { id: string; index: number }[]
-    );
-
-    if (unorderedSubJobIds.length === 0) {
-      unorderedSubJobIds.push({ id: props.jobId, index: 1 });
-    }
-
-    const subJobIds = unorderedSubJobIds
-      .sort((a, b) => a.index - b.index)
-      .map(({ id }) => id);
+    const subJobIds = jobResult.value.job?.childJobs?.map(({ id }) => id) ?? [
+      jobResult.value.job.id,
+    ];
 
     const queryResults = await Promise.all(
       subJobIds.map((id) =>
@@ -154,7 +131,7 @@ function BlastWorkspaceResultWithLoadedApi(
             value: IndividualQuery;
           }[]).map((queryResult) => queryResult.value),
         } as ApiResultSuccess<IndividualQuery[]>);
-  }, [props.blastApi, props.jobId]);
+  }, [jobResult.value]);
 
   return jobResult.value != null &&
     jobResult.value.status === 'request-error' ? (
