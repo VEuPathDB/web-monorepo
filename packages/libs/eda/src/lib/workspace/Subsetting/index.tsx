@@ -20,6 +20,8 @@ import FilterChipList from '../../core/components/FilterChipList';
 
 import SubsettingDataGridModal from './SubsettingDataGridModal';
 import { useStudyEntities } from '../../core/hooks/study';
+import { SwissArmyButton } from '@veupathdb/core-components';
+import { TableDownload } from '@veupathdb/core-components/dist/components/icons';
 
 interface SubsettingProps {
   analysisState: AnalysisState;
@@ -124,13 +126,12 @@ export default function Subsetting({
             entity.displayNamePlural ?? entity.displayName
           }`}
         >
-          <button
-            type="button"
-            className="link"
-            onClick={() => setIsDownloadModalOpen(true)}
-          >
-            <i className="ebrc-icon-table-download" />
-          </button>
+          <SwissArmyButton
+            text="View and download"
+            stylePreset="mesa"
+            icon={TableDownload}
+            onPress={() => setIsDownloadModalOpen(true)}
+          />
         </Tooltip>
       </div>
       <div className="Filter">

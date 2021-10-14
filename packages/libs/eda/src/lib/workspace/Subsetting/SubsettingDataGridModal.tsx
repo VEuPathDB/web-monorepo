@@ -1,10 +1,12 @@
 import { useState, useCallback, useEffect } from 'react';
 import { ceil, uniqBy } from 'lodash';
+import SettingsIcon from '@material-ui/icons/Settings';
 
 import { H5 } from '@veupathdb/core-components/dist/components/headers';
 import DataGrid from '@veupathdb/core-components/dist/components/grids/DataGrid';
 import FullScreenModal from '@veupathdb/core-components/dist/components/modals/FullScreenModal';
 import SwissArmyButton from '@veupathdb/core-components/dist/components/buttons/SwissArmyButton';
+import { Download } from '@veupathdb/core-components/dist/components/icons';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { AnalysisState } from '../../core/hooks/analysis';
@@ -419,7 +421,7 @@ export default function SubsettingDataGridModal({
           >
             <SwissArmyButton
               text="Download"
-              icon="download"
+              icon={Download}
               stylePreset="mesa"
               styleOverrides={{ container: { marginRight: 10 } }}
               onPress={downloadData}
@@ -427,7 +429,9 @@ export default function SubsettingDataGridModal({
             <SwissArmyButton
               text="Select Variables"
               stylePreset="mesa"
-              icon="settings"
+              // @ts-ignore
+              icon={SettingsIcon}
+              size="medium"
               onPress={() => setDisplayVariableTree(!displayVariableTree)}
             />
           </div>
