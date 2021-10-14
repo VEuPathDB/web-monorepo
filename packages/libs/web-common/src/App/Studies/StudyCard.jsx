@@ -32,7 +32,8 @@ class StudyCard extends React.Component {
     if (useEda) {
       return (
         <div className="StudyCard-LinkOuts">
-          <DownloadLink className="box StudyCard-Download" linkText="Download" iconFirst studyAccess={card.access} studyId={card.id} studyUrl={card.downloadUrl.url} attemptAction={attemptAction}/>
+         {// <DownloadLink className="box StudyCard-Download" linkText="Download" iconFirst studyAccess={card.access} studyId={card.id} studyUrl={card.downloadUrl.url} attemptAction={attemptAction}/>
+          }
           {analyses?.some(analysis => analysis.studyId === card.id) &&
             <div className="box StudyCard-MyAnalyses">
               <Link to={{ pathname: makeEdaRoute(), search: `?s=${encodeURIComponent(card.name)}` }}>
