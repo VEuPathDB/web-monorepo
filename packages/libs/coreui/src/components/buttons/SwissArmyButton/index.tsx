@@ -126,6 +126,7 @@ function SwissArmyButton({
               color: 'white',
               opacity: buttonState === 'hover' ? 1 : 0,
               transition: 'opacity .25s',
+              transitionDelay: buttonState === 'hover' ? '.25s' : 'initial',
             },
           ]}
         >
