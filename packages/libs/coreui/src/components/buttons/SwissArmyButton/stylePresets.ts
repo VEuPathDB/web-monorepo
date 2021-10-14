@@ -40,7 +40,7 @@ type ButtonStyleSpec = {
 };
 
 export const stylePresets: {
-  [Property in 'default' | 'mesa']: SwissArmyButtonStyleSpec;
+  [Property in 'default' | 'mesa' | 'borderless']: SwissArmyButtonStyleSpec;
 } = {
   default: {
     default: {
@@ -53,9 +53,29 @@ export const stylePresets: {
       borderRadius: 5,
     },
   },
+  borderless: {
+    default: {
+      color: 'transparent',
+      textColor: DARK_GRAY,
+      textTransform: 'none',
+      fontWeight: 400,
+    },
+    hover: {
+      color: '#79dcf2',
+      textColor: DARK_GRAY,
+      fontWeight: 400,
+      textTransform: 'none',
+    },
+    pressed: {
+      color: '#3cd0f2',
+      textColor: DARK_GRAY,
+      fontWeight: 400,
+      textTransform: 'none',
+    },
+  },
   mesa: {
     default: {
-      color: LIGHT_GRAY, // 'rgba(0, 0, 0, .5)',
+      color: LIGHT_GRAY,
       textColor: DARK_GRAY,
       textTransform: 'none',
       fontWeight: 400,

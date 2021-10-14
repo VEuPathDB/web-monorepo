@@ -32,11 +32,18 @@ WithIcon.args = {
   type: 'outlined',
 };
 
-export const StylePreset = Template.bind({});
-StylePreset.args = {
+export const MesaStylePreset = Template.bind({});
+MesaStylePreset.args = {
   text: 'Mesa Style Preset',
   icon: Download,
   stylePreset: 'mesa',
+};
+
+export const BorderlessStylePreset = Template.bind({});
+BorderlessStylePreset.args = {
+  text: 'Borderless',
+  icon: Download,
+  stylePreset: 'borderless',
 };
 
 // export const CustomColors: Story<Omit<SwissArmyButtonProps, 'type'>> = (
