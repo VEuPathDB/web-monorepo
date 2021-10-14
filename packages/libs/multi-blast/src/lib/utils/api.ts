@@ -1,3 +1,4 @@
+import { saveAs } from 'file-saver';
 import { array, string, voidType } from 'io-ts';
 import { memoize, omit } from 'lodash';
 
@@ -292,15 +293,7 @@ export function createJobContentDownloader(
     }
 
     const blob = await downloadResponse.blob();
-
-    // Adapted from https://stackoverflow.com/a/42274086
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
-    a.click();
-    a.remove(); //afterwards we remove the element again
+    saveAs(blob, filename);
   };
 }
 
