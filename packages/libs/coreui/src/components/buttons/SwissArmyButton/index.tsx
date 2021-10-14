@@ -120,7 +120,7 @@ function SwissArmyButton({
             {
               position: 'absolute',
               top: buttonHeight + 5,
-              backgroundColor: 'rgb(100, 100, 100)',
+              backgroundColor: 'rgb(115, 115, 115)',
               padding: '4px 8px',
               borderRadius: 5,
               color: 'white',
