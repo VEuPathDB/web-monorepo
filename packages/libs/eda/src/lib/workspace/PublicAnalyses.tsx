@@ -283,7 +283,9 @@ function PublicAnalysesTable({
                 )
               }
               onSave={(newName) => {
-                updateAnalysis(data.row.analysisId, { displayName: newName });
+                if (newName) {
+                  updateAnalysis(data.row.analysisId, { displayName: newName });
+                }
               }}
             />
           </div>
