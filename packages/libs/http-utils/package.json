@@ -1,0 +1,42 @@
+{
+  "name": "@veupathdb/http-utils",
+  "version": "0.0.1",
+  "description": "A collection of utilities for making http requests in a browser",
+  "main": "lib/index.ts",
+  "repository": "git@github.com:VEuPathDB/web-http-utils.git",
+  "author": "Dave Falke <dmfalke@gmail.com>",
+  "license": "Apache-2",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "eslintConfig": {
+    "extends": [ "@veupathdb" ]
+  },
+  "prettier": "@veupathdb/prettier-config",
+  "browserslist": [ "extends @veupathdb/browserslist-config" ],
+  "devDependencies": {
+    "@types/jest": "^26.0.15",
+    "@types/node": "^12.0.0",
+    "@veupathdb/browserslist-config": "^1.0.0",
+    "@veupathdb/eslint-config": "^1.0.0",
+    "@veupathdb/prettier-config": "^1.0.0",
+    "@veupathdb/tsconfig": "^1.0.1",
+    "husky": ">=4",
+    "lint-staged": ">=10",
+    "prettier": "2.2.1",
+    "react-scripts": "4.0.1",
+    "typescript": "^4.4.4"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,css,scss,md}": "prettier --write"
+  },
+  "volta": {
+    "node": "14.15.5",
+    "yarn": "1.22.10"
+  }
+}
