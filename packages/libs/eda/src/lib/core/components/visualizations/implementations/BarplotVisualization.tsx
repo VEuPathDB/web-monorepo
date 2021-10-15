@@ -10,6 +10,7 @@ import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
+import PluginError from '../PluginError';
 
 // need to set for Barplot
 import DataClient, {
@@ -21,6 +22,7 @@ import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
+import { Variable } from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
@@ -35,12 +37,16 @@ import bar from './selectorIcons/bar.svg';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 import {
+  fixLabelForNumberVariables,
+  fixLabelsForNumberVariables,
   grayOutLastSeries,
   omitEmptyNoDataSeries,
   vocabularyWithMissingData,
 } from '../../../utils/analysis';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
+// use lodash instead of Math.min/max
+import { max, flatMap } from 'lodash';
 
 const plotDimensions = {
   height: 450,
@@ -190,12 +196,20 @@ function BarplotViz(props: VisualizationProps) {
       );
 
       const showMissing = vizConfig.showMissingness && overlayVariable != null;
+      const vocabulary = fixLabelsForNumberVariables(
+        variable?.vocabulary,
+        variable
+      );
+      const overlayVocabulary = fixLabelsForNumberVariables(
+        overlayVariable?.vocabulary,
+        overlayVariable
+      );
       return omitEmptyNoDataSeries(
         grayOutLastSeries(
           reorderData(
-            barplotResponseToData(await response),
-            variable?.vocabulary,
-            vocabularyWithMissingData(overlayVariable?.vocabulary, showMissing)
+            barplotResponseToData(await response, variable, overlayVariable),
+            vocabulary,
+            vocabularyWithMissingData(overlayVocabulary, showMissing)
           ),
           showMissing
         ),
@@ -220,6 +234,29 @@ function BarplotViz(props: VisualizationProps) {
     overlayVariable != null && !vizConfig.showMissingness
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
+
+  // find dependent axis max value
+  const defaultDependentMaxValue = useMemo(() => {
+    return data?.value?.series != null
+      ? max(data?.value?.series.flatMap((o) => o.value))
+      : undefined;
+  }, [data]);
+
+  // set min/max
+  const dependentAxisRange =
+    defaultDependentMaxValue != null
+      ? {
+          // set min as 0 (count, proportion) or 0.001 (proportion log scale)
+          min:
+            vizConfig.valueSpec === 'count'
+              ? 0
+              : vizConfig.dependentAxisLogScale
+              ? 0.001
+              : 0,
+          // add 5 % margin
+          max: defaultDependentMaxValue * 1.05,
+        }
+      : undefined;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -259,25 +296,7 @@ function BarplotViz(props: VisualizationProps) {
         />
       </div>
 
-      {data.error && (
-        <div
-          style={{
-            fontSize: '1.2em',
-            padding: '1em',
-            background: 'rgb(255, 233, 233) none repeat scroll 0% 0%',
-            borderRadius: '.5em',
-            margin: '.5em 0',
-            color: '#333',
-            border: '1px solid #d9cdcd',
-            display: 'flex',
-          }}
-        >
-          <i className="fa fa-warning" style={{ marginRight: '1ex' }}></i>{' '}
-          {data.error instanceof Error
-            ? data.error.message
-            : String(data.error)}
-        </div>
-      )}
+      <PluginError error={data.error} outputSize={outputSize} />
       <OutputEntityTitle entity={entity} outputSize={outputSize} />
       <div
         style={{
@@ -307,6 +326,8 @@ function BarplotViz(props: VisualizationProps) {
           updateThumbnail={updateThumbnail}
           dependentAxisLogScale={vizConfig.dependentAxisLogScale}
           onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
+          // set dependent axis range for log scale
+          dependentAxisRange={dependentAxisRange}
         />
         <div className="viz-plot-info">
           <BirdsEyeView
@@ -416,16 +437,28 @@ function BarplotWithControls({
  * @returns BarplotData & completeCases & completeCasesAllVars & completeCasesAxesVars
  */
 export function barplotResponseToData(
-  response: BarplotResponse
+  response: BarplotResponse,
+  variable: Variable,
+  overlayVariable?: Variable
 ): BarplotData & CoverageStatistics {
+  const responseIsEmpty = response.barplot.data.every(
+    (data) => data.label.length === 0 && data.value.length === 0
+  );
   return {
-    series: response.barplot.data.map((data, index) => ({
-      // name has value if using overlay variable
-      name: data.overlayVariableDetails?.value ?? `series ${index}`,
-      // color: TO DO
-      label: data.label,
-      value: data.value,
-    })),
+    series: responseIsEmpty
+      ? []
+      : response.barplot.data.map((data, index) => ({
+          // name has value if using overlay variable
+          name:
+            data.overlayVariableDetails?.value != null
+              ? fixLabelForNumberVariables(
+                  data.overlayVariableDetails.value,
+                  overlayVariable
+                )
+              : `series ${index}`,
+          label: fixLabelsForNumberVariables(data.label, variable),
+          value: data.value,
+        })),
     completeCases: response.completeCasesTable,
     completeCasesAllVars: response.barplot.config.completeCasesAllVars,
     completeCasesAxesVars: response.barplot.config.completeCasesAxesVars,

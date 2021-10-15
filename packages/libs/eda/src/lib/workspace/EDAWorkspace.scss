@@ -88,9 +88,11 @@
     gap: 0.5em;
     justify-self: end;
     margin-left: 2em;
-    a {
-      font-size: 0.75em;
-    }
+    align-items: center;
+  }
+
+  .Linkouts-buttons {
+    font-size: 0.75em;
   }
 
   &-Analysis {
@@ -123,7 +125,6 @@
     box-shadow: none !important;
 
     .MuiButton-label {
-      align-items: end;
       text-transform: none;
       font-weight: bold;
     }

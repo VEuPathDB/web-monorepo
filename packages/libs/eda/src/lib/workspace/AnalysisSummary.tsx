@@ -46,7 +46,7 @@ export function AnalysisSummary(props: Props) {
         <SaveableTextEditor
           className={cx('-AnalysisNameEditBox')}
           value={analysis.displayName}
-          onSave={setAnalysisName}
+          onSave={(newName) => newName && setAnalysisName(newName)}
         />
         {analysis.descriptor.subset.descriptor.length > 0 && onFilterIconClick && (
           <Button

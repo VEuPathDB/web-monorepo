@@ -23,7 +23,9 @@ import { useEntityCounts } from '../core/hooks/entityCounts';
 import { uniq } from 'lodash';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import GlobalFiltersDialog from '../core/components/GlobalFiltersDialog';
+import { usePrevious } from '../core/hooks/previousValue';
 import { useStudyEntities } from '../core/hooks/study';
+import { getAnalysisId } from '../core/utils/analysis';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 // import ShowHideVariableContextProvider
 import ShowHideVariableContextProvider from '../core/utils/show-hide-variable-context';
@@ -69,6 +71,24 @@ export function AnalysisPanel({
   const [lastVarPath, setLastVarPath] = useState('');
   const [lastVizPath, setLastVizPath] = useState('');
   const [globalFiltersDialogOpen, setGlobalFiltersDialogOpen] = useState(false);
+
+  const analysisId = getAnalysisId(analysis);
+  const previousAnalysisId = usePrevious(analysisId);
+
+  useEffect(() => {
+    if (
+      previousAnalysisId === analysisId ||
+      (previousAnalysisId == null && analysisId != null)
+    ) {
+      // Preserve the last variable and visualization visited if
+      // the analysis id hasn't changed, or if transitioning from a
+      // new to a saved analysis
+      return;
+    }
+
+    setLastVarPath('');
+    setLastVizPath('');
+  }, [previousAnalysisId, analysisId]);
 
   useEffect(() => {
     const relativePath = location.pathname.replace(routeBase, '');

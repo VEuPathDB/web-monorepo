@@ -5,17 +5,19 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 // need to set for Boxplot
-import DataClient, { BoxplotRequestParams } from '../../../api/DataClient';
+import DataClient, {
+  BoxplotRequestParams,
+  BoxplotResponse,
+} from '../../../api/DataClient';
 
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { Filter } from '../../../types/filter';
-import { PromiseType } from '../../../types/utility';
 import { VariableDescriptor } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
@@ -27,17 +29,21 @@ import box from './selectorIcons/box.svg';
 import { BoxplotData } from '@veupathdb/components/lib/types/plots';
 import { CoverageStatistics } from '../../../types/visualization';
 import { BirdsEyeView } from '../../BirdsEyeView';
+import PluginError from '../PluginError';
 
 import { at } from 'lodash';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 import {
+  fixLabelForNumberVariables,
+  fixLabelsForNumberVariables,
   grayOutLastSeries,
   omitEmptyNoDataSeries,
   vocabularyWithMissingData,
 } from '../../../utils/analysis';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
+import { Variable } from '../../../types/study';
 
 interface PromiseBoxplotData extends CoverageStatistics {
   series: BoxplotData;
@@ -181,7 +187,7 @@ function BoxplotViz(props: VisualizationProps) {
 
       const vars = [xAxisVariable, yAxisVariable, overlayVariable];
       const unique = vars.filter((item, i, ar) => ar.indexOf(item) === i);
-      if (vars.length != unique.length)
+      if (vars.length !== unique.length)
         throw new Error(
           'Variables must be unique. Please choose different variables.'
         );
@@ -205,12 +211,24 @@ function BoxplotViz(props: VisualizationProps) {
       );
 
       const showMissing = vizConfig.showMissingness && overlayVariable != null;
+      const vocabulary = fixLabelsForNumberVariables(
+        xAxisVariable.vocabulary,
+        xAxisVariable
+      );
+      const overlayVocabulary = fixLabelsForNumberVariables(
+        overlayVariable?.vocabulary,
+        overlayVariable
+      );
       return omitEmptyNoDataSeries(
         grayOutLastSeries(
           reorderData(
-            boxplotResponseToData(await response),
-            xAxisVariable.vocabulary,
-            vocabularyWithMissingData(overlayVariable?.vocabulary, showMissing)
+            boxplotResponseToData(
+              await response,
+              xAxisVariable,
+              overlayVariable
+            ),
+            vocabulary,
+            vocabularyWithMissingData(overlayVocabulary, showMissing)
           ),
           showMissing
         ),
@@ -225,7 +243,7 @@ function BoxplotViz(props: VisualizationProps) {
       yAxisVariable,
       overlayVariable,
       computation.descriptor.type,
-      visualization.descriptor.type,
+      outputEntity?.id,
     ])
   );
 
@@ -268,7 +286,7 @@ function BoxplotViz(props: VisualizationProps) {
           toggleStarredVariable={toggleStarredVariable}
           enableShowMissingnessToggle={
             overlayVariable != null &&
-            data.value?.completeCasesAllVars !=
+            data.value?.completeCasesAllVars !==
               data.value?.completeCasesAxesVars
           }
           showMissingness={vizConfig.showMissingness}
@@ -277,25 +295,7 @@ function BoxplotViz(props: VisualizationProps) {
         />
       </div>
 
-      {data.error && (
-        <div
-          style={{
-            fontSize: '1.2em',
-            padding: '1em',
-            background: 'rgb(255, 233, 233) none repeat scroll 0% 0%',
-            borderRadius: '.5em',
-            margin: '.5em 0',
-            color: '#333',
-            border: '1px solid #d9cdcd',
-            display: 'flex',
-          }}
-        >
-          <i className="fa fa-warning" style={{ marginRight: '1ex' }}></i>{' '}
-          {data.error instanceof Error
-            ? data.error.message
-            : String(data.error)}
-        </div>
-      )}
+      <PluginError error={data.error} outputSize={outputSize} />
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
       <div
         style={{
@@ -315,8 +315,8 @@ function BoxplotViz(props: VisualizationProps) {
             data.value &&
             (data.value.series.length > 1 || vizConfig.overlayVariable != null)
           }
-          independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-Axis'}
-          dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-Axis'}
+          independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-axis'}
+          dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-axis'}
           // show/hide independent/dependent axis tick label
           showIndependentAxisTickLabel={true}
           showDependentAxisTickLabel={true}
@@ -413,30 +413,42 @@ function BoxplotWithControls({
  * @returns PromiseBoxplotData
  */
 export function boxplotResponseToData(
-  response: PromiseType<ReturnType<DataClient['getBoxplot']>>
+  response: BoxplotResponse,
+  variable: Variable,
+  overlayVariable?: Variable
 ): PromiseBoxplotData {
+  const responseIsEmpty = response.boxplot.data.every(
+    (data) => data.label.length === 0 && data.median.length === 0
+  );
   return {
-    series: response.boxplot.data.map((data) => ({
-      lowerfence: data.lowerfence,
-      upperfence: data.upperfence,
-      q1: data.q1,
-      q3: data.q3,
-      median: data.median,
-      mean: data.mean,
-      // correct the {} from back end into []
-      outliers: data.outliers
-        ? data.outliers.map((x: number[] | {}) => (Array.isArray(x) ? x : []))
-        : undefined,
-      // currently returns seriesX and seriesY for points: 'all' option
-      // it is necessary to rely on rawData (or seriesX/Y) for boxplot if points: 'all'
-      rawData: data.rawData ? data.rawData : undefined,
-      // this will be used as legend
-      name: data.overlayVariableDetails
-        ? data.overlayVariableDetails.value
-        : 'Data',
-      // this will be used as x-axis tick labels
-      label: data.label, // [response.boxplot.config.xVariableDetails.variableId],
-    })),
+    series: responseIsEmpty
+      ? []
+      : response.boxplot.data.map((data) => ({
+          lowerfence: data.lowerfence,
+          upperfence: data.upperfence,
+          q1: data.q1,
+          q3: data.q3,
+          median: data.median,
+          mean: data.mean,
+          // correct the {} from back end into []
+          outliers: data.outliers
+            ? data.outliers.map((x: number[] | {}) =>
+                Array.isArray(x) ? x : []
+              )
+            : undefined,
+          // currently returns seriesX and seriesY for points: 'all' option
+          // it is necessary to rely on rawData (or seriesX/Y) for boxplot if points: 'all'
+          rawData: data.rawData ? data.rawData : undefined,
+          // this will be used as legend
+          name:
+            data.overlayVariableDetails?.value != null
+              ? fixLabelForNumberVariables(
+                  data.overlayVariableDetails.value,
+                  overlayVariable
+                )
+              : 'Data',
+          label: fixLabelsForNumberVariables(data.label, variable),
+        })),
     completeCases: response.completeCasesTable,
     completeCasesAllVars: response.boxplot.config.completeCasesAllVars,
     completeCasesAxesVars: response.boxplot.config.completeCasesAxesVars,

@@ -1,4 +1,4 @@
-import { omit } from 'lodash';
+import { noop, omit } from 'lodash';
 import { act, renderHook } from '@testing-library/react-hooks';
 import { computeSummaryCounts } from '../../Mocks';
 import { useAnalysis, Status } from '../../hooks/analysis';
@@ -97,7 +97,8 @@ beforeEach(() => {
   nextId = 1;
 });
 
-const render = () => renderHook(() => useAnalysis(key), { wrapper });
+const render = () =>
+  renderHook(() => useAnalysis(stubAnalysis, noop, key), { wrapper });
 
 describe('useAnalysis', () => {
   it('should have the correct status on success path', async () => {

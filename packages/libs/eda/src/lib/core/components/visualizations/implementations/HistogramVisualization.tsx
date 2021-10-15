@@ -11,12 +11,15 @@ import {
   TimeDelta,
 } from '@veupathdb/components/lib/types/general';
 import { isTimeDelta } from '@veupathdb/components/lib/types/guards';
-import { HistogramData } from '@veupathdb/components/lib/types/plots';
+import {
+  HistogramData,
+  HistogramDataSeries,
+} from '@veupathdb/components/lib/types/plots';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import { isEqual } from 'lodash';
+import { isEqual, max } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   HistogramRequestParams,
@@ -30,12 +33,12 @@ import {
   DateVariable,
   NumberVariable,
   StudyEntity,
+  Variable,
 } from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
 import { CoverageStatistics } from '../../../types/visualization';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { BirdsEyeView } from '../../BirdsEyeView';
-import { HistogramVariable } from '../../filter/types';
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
@@ -46,12 +49,15 @@ import {
   vocabularyWithMissingData,
   grayOutLastSeries,
   omitEmptyNoDataSeries,
+  fixLabelForNumberVariables,
+  fixLabelsForNumberVariables,
 } from '../../../utils/analysis';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import { useFindEntityAndVariable } from '../../../hooks/study';
 // import variable's metadata-based independent axis range utils
 import { defaultIndependentAxisRange } from '../../../utils/default-independent-axis-range';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
+import PluginError from '../PluginError';
 
 type HistogramDataWithCoverageStatistics = HistogramData & CoverageStatistics;
 
@@ -84,6 +90,7 @@ function createDefaultConfig(): HistogramConfig {
 }
 
 type ValueSpec = t.TypeOf<typeof ValueSpec>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const ValueSpec = t.keyof({ count: null, proportion: null });
 
 type HistogramConfig = t.TypeOf<typeof HistogramConfig>;
@@ -231,18 +238,27 @@ function HistogramViz(props: VisualizationProps) {
         studyId,
         filters ?? [],
         valueType,
-        vizConfig
+        vizConfig,
+        xAxisVariable
       );
       const response = dataClient.getHistogram(
         computation.descriptor.type,
         params
       );
       const showMissing = vizConfig.showMissingness && overlayVariable != null;
+      const vocabulary = fixLabelsForNumberVariables(
+        overlayVariable?.vocabulary,
+        overlayVariable
+      );
       return omitEmptyNoDataSeries(
         grayOutLastSeries(
           reorderData(
-            histogramResponseToData(await response, xAxisVariable.type),
-            vocabularyWithMissingData(overlayVariable?.vocabulary, showMissing)
+            histogramResponseToData(
+              await response,
+              xAxisVariable,
+              overlayVariable
+            ),
+            vocabularyWithMissingData(vocabulary, showMissing)
           ),
           showMissing
         ),
@@ -270,6 +286,30 @@ function HistogramViz(props: VisualizationProps) {
     () => defaultIndependentAxisRange(xAxisVariable, 'histogram'),
     [xAxisVariable]
   );
+
+  // find max of stacked array, especially with overlayVariable
+  const defaultDependentAxisMaxValue = useMemo(
+    () =>
+      data.value && data.value.series.length > 0
+        ? findMaxOfStackedArray(data.value.series)
+        : undefined,
+    [data]
+  );
+
+  // set default dependent axis range for better displaying tick labels in log-scale
+  const defaultDependentAxisRange =
+    defaultDependentAxisMaxValue != null
+      ? {
+          // set min as 0 (count, proportion) or 0.001 (proportion log scale)
+          min:
+            vizConfig.valueSpec === 'count'
+              ? 0
+              : vizConfig.dependentAxisLogScale
+              ? 0.001
+              : 0,
+          max: defaultDependentAxisMaxValue * 1.05,
+        }
+      : undefined;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -299,7 +339,7 @@ function HistogramViz(props: VisualizationProps) {
           toggleStarredVariable={toggleStarredVariable}
           enableShowMissingnessToggle={
             overlayVariable != null &&
-            data.value?.completeCasesAllVars !=
+            data.value?.completeCasesAllVars !==
               data.value?.completeCasesAxesVars
           }
           showMissingness={vizConfig.showMissingness}
@@ -308,25 +348,7 @@ function HistogramViz(props: VisualizationProps) {
         />
       </div>
 
-      {data.error && (
-        <div
-          style={{
-            fontSize: '1.2em',
-            padding: '1em',
-            background: 'rgb(255, 233, 233) none repeat scroll 0% 0%',
-            borderRadius: '.5em',
-            margin: '.5em 0',
-            color: '#333',
-            border: '1px solid #d9cdcd',
-            display: 'flex',
-          }}
-        >
-          <i className="fa fa-warning" style={{ marginRight: '1ex' }}></i>{' '}
-          {data.error instanceof Error
-            ? data.error.message
-            : String(data.error)}
-        </div>
-      )}
+      <PluginError error={data.error} />
       <HistogramPlotWithControls
         data={data.value && !data.pending ? data.value : undefined}
         error={data.error}
@@ -351,6 +373,8 @@ function HistogramViz(props: VisualizationProps) {
         independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'Main'}
         // variable's metadata-based independent axis range
         independentAxisRange={defaultIndependentRange}
+        // add dependent axis range for better displaying tick labels in log-scale
+        dependentAxisRange={defaultDependentAxisRange}
         interactive
         showSpinner={data.pending}
         filters={filters}
@@ -429,6 +453,8 @@ function HistogramPlotWithControls({
       .then(updateThumbnailRef.current);
   }, [data, histogramProps.dependentAxisLogScale]);
 
+  const widgetHeight = '4em';
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
@@ -480,9 +506,12 @@ function HistogramPlotWithControls({
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <LabelledGroup label="Y-axis">
           <Switch
-            label="Log Scale:"
+            label="Log scale"
             state={histogramProps.dependentAxisLogScale}
             onStateChange={onDependentAxisLogScaleChange}
+            containerStyles={{
+              minHeight: widgetHeight,
+            }}
           />
           <RadioButtonGroup
             selectedOption={valueSpec}
@@ -513,6 +542,9 @@ function HistogramPlotWithControls({
                 ? ['day', 'week', 'month', 'year']
                 : undefined
             }
+            containerStyles={{
+              minHeight: widgetHeight,
+            }}
           />
         </LabelledGroup>
       </div>
@@ -523,11 +555,13 @@ function HistogramPlotWithControls({
 /**
  * Reformat response from histogram endpoints into complete HistogramData
  * @param response
+ * @param main variable
  * @returns HistogramDataWithCoverageStatistics
  */
 export function histogramResponseToData(
   response: HistogramResponse,
-  type: HistogramVariable['type']
+  { type }: Variable,
+  overlayVariable?: Variable
 ): HistogramDataWithCoverageStatistics {
   if (response.histogram.data.length === 0)
     throw Error(`Expected one or more data series, but got zero`);
@@ -550,8 +584,13 @@ export function histogramResponseToData(
   const binWidthStep = step || 0.1;
   return {
     series: response.histogram.data.map((data, index) => ({
-      name: data.overlayVariableDetails?.value ?? `series ${index}`,
-      borderColor: 'white',
+      name:
+        data.overlayVariableDetails?.value != null
+          ? fixLabelForNumberVariables(
+              data.overlayVariableDetails.value,
+              overlayVariable
+            )
+          : `series ${index}`,
       bins: data.value.map((_, index) => ({
         binStart:
           type === 'number' || type === 'integer'
@@ -565,7 +604,7 @@ export function histogramResponseToData(
         count: data.value[index],
       })),
     })),
-    valueType: type === 'integer' ? 'number' : type,
+    valueType: type === 'integer' || type === 'number' ? 'number' : 'date',
     binWidth,
     binWidthRange,
     binWidthStep,
@@ -579,11 +618,16 @@ function getRequestParams(
   studyId: string,
   filters: Filter[],
   valueType: 'number' | 'date',
-  vizConfig: HistogramConfig
+  vizConfig: HistogramConfig,
+  variable?: Variable
 ): HistogramRequestParams {
   const {
-    binWidth,
-    binWidthTimeUnit,
+    binWidth = NumberVariable.is(variable) || DateVariable.is(variable)
+      ? variable.binWidthOverride ?? variable.binWidth
+      : undefined,
+    binWidthTimeUnit = variable?.type === 'date'
+      ? variable.binUnits
+      : undefined,
     valueSpec,
     overlayVariable,
     xAxisVariable,
@@ -640,4 +684,33 @@ function reorderData(
   } else {
     return data;
   }
+}
+
+/**
+ * find max of the sum of multiple arrays
+ * it is because histogram viz uses "stack" option for display
+ * Also, each data with overlayVariable has different bins
+ * For this purpose, binStart is used as array index to map corresponding count
+ * Need to make stacked count array and then max
+ */
+
+function findMaxOfStackedArray(data: HistogramDataSeries[]) {
+  // calculate the sum of all the counts from bins with the same label
+  const sumsByLabel = data
+    .flatMap(
+      // make an array of [ [ label, count ], [ label, count ], ... ] from all series
+      (series) => series.bins.map((bin) => [bin.binLabel, bin.count])
+    )
+    // then do a sum of counts per label
+    .reduce<Record<string, number>>(
+      (map, [label, count]) => {
+        if (map[label] == null) map[label] = 0;
+        map[label] = map[label] + (count as number);
+        return map;
+      },
+      // empty map for reduce to start with
+      {}
+    );
+
+  return max(Object.values(sumsByLabel));
 }

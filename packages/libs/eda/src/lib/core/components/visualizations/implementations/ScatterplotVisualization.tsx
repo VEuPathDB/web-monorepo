@@ -50,8 +50,12 @@ import { XYPlotData } from '@veupathdb/components/lib/types/plots';
 import { CoverageStatistics } from '../../../types/visualization';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
-import { NumberVariable, StudyEntity } from '../../../types/study';
-import { vocabularyWithMissingData } from '../../../utils/analysis';
+import { NumberVariable, StudyEntity, Variable } from '../../../types/study';
+import {
+  fixLabelForNumberVariables,
+  fixLabelsForNumberVariables,
+  vocabularyWithMissingData,
+} from '../../../utils/analysis';
 import { gray } from '../colors';
 import {
   ColorPaletteDefault,
@@ -65,6 +69,7 @@ import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { defaultDependentAxisRange } from '../../../utils/default-dependent-axis-range';
 import { useRouteMatch } from 'react-router';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
+import PluginError from '../PluginError';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 
@@ -266,15 +271,21 @@ function ScatterplotViz(props: VisualizationProps) {
             );
 
       const showMissing = vizConfig.showMissingness && overlayVariable != null;
+      const overlayVocabulary = fixLabelsForNumberVariables(
+        overlayVariable?.vocabulary,
+        overlayVariable
+      );
       return scatterplotResponseToData(
         reorderResponse(
           await response,
-          vocabularyWithMissingData(overlayVariable?.vocabulary, showMissing)
+          vocabularyWithMissingData(overlayVocabulary, showMissing),
+          overlayVariable
         ),
         visualization.descriptor.type,
         independentValueType,
         dependentValueType,
-        showMissing
+        showMissing,
+        overlayVariable
       );
     }, [
       studyId,
@@ -286,6 +297,7 @@ function ScatterplotViz(props: VisualizationProps) {
       overlayVariable,
       computation.descriptor.type,
       visualization.descriptor.type,
+      MAXALLOWEDDATAPOINTS,
     ])
   );
 
@@ -365,22 +377,12 @@ function ScatterplotViz(props: VisualizationProps) {
         />
       </div>
 
-      {data.error && (
-        <div
-          style={{
-            fontSize: '1.2em',
-            padding: '1em',
-            background: 'rgb(255, 233, 233) none repeat scroll 0% 0%',
-            borderRadius: '.5em',
-            margin: '.5em 0',
-            color: '#333',
-            border: '1px solid #d9cdcd',
-            display: 'flex',
-          }}
-        >
-          <i className="fa fa-warning" style={{ marginRight: '1ex' }}></i>{' '}
-          {data.error instanceof Error ? (
-            data.error.message.match(/400.+too large/is) ? (
+      <PluginError
+        error={data.error}
+        outputSize={outputSize}
+        customCases={[
+          (errorString) =>
+            errorString.match(/400.+too large/is) ? (
               <span>
                 Your plot currently has too many points (&gt;
                 {MAXALLOWEDDATAPOINTS.toLocaleString()}) to display in a
@@ -391,14 +393,9 @@ function ScatterplotViz(props: VisualizationProps) {
                 tab to reduce the number, or consider using a summary plot such
                 as histogram or boxplot.
               </span>
-            ) : (
-              data.error.message
-            )
-          ) : (
-            String(data.error)
-          )}
-        </div>
-      )}
+            ) : undefined,
+        ]}
+      />
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
       <div
         style={{
@@ -420,8 +417,8 @@ function ScatterplotViz(props: VisualizationProps) {
             (data.value.dataSetProcess.series.length > 1 ||
               vizConfig.overlayVariable != null)
           }
-          independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-Axis'}
-          dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-Axis'}
+          independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-axis'}
+          dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-axis'}
           // variable's metadata-based independent axis range with margin
           independentAxisRange={defaultIndependentRangeMargin}
           // new dependent axis range
@@ -597,7 +594,8 @@ export function scatterplotResponseToData(
   vizType: string,
   independentValueType: string,
   dependentValueType: string,
-  showMissingness: boolean = false
+  showMissingness: boolean = false,
+  overlayVariable?: Variable
 ): PromiseXYPlotData {
   const modeValue = vizType === 'lineplot' ? 'lines' : 'markers'; // for scatterplot
 
@@ -607,7 +605,8 @@ export function scatterplotResponseToData(
     modeValue,
     independentValueType,
     dependentValueType,
-    showMissingness
+    showMissingness,
+    overlayVariable
   );
 
   return {
@@ -695,14 +694,15 @@ function processInputData<T extends number | string>(
   // use independentValueType & dependentValueType to distinguish btw number and date string
   independentValueType: string,
   dependentValueType: string,
-  showMissingness: boolean
+  showMissingness: boolean,
+  overlayVariable?: Variable
 ) {
   // set fillAreaValue for densityplot
   const fillAreaValue = vizType === 'densityplot' ? 'toself' : '';
 
   // distinguish data per Viztype
   // currently, lineplot returning scatterplot, not lineplot
-  const plotDataSet =
+  const plotDataSet: ScatterplotResponse['scatterplot'] =
     vizType === 'lineplot'
       ? dataSet.scatterplot
       : vizType === 'densityplot'
@@ -712,6 +712,19 @@ function processInputData<T extends number | string>(
   // set variables for x- and yaxis ranges: no default values are set
   let yMin: number | string | undefined;
   let yMax: number | string | undefined;
+
+  // catch the case when the back end has returned valid but completely empty data
+  if (
+    plotDataSet?.data.every(
+      (data) => data.seriesX?.length === 0 && data.seriesY?.length === 0
+    )
+  ) {
+    return {
+      dataSetProcess: { series: [] },
+      yMin,
+      yMax,
+    };
+  }
 
   // function to return color or gray where needed if showMissingness == true
   const markerColor = (index: number) => {
@@ -805,9 +818,13 @@ function processInputData<T extends number | string>(
         x: seriesX.length ? seriesX : [null], // [null] hack required to make sure
         y: seriesY.length ? seriesY : [null], // Plotly has a legend entry for empty traces
         // distinguish X/Y Data from Overlay
-        name: el.overlayVariableDetails
-          ? el.overlayVariableDetails.value
-          : 'Data',
+        name:
+          el.overlayVariableDetails?.value != null
+            ? fixLabelForNumberVariables(
+                el.overlayVariableDetails.value,
+                overlayVariable
+              )
+            : 'Data',
         mode: modeValue,
         type:
           vizType === 'lineplot'
@@ -903,7 +920,10 @@ function processInputData<T extends number | string>(
         y: yIntervalLineValue,
         // name: 'Smoothed mean',
         name: el.overlayVariableDetails
-          ? el.overlayVariableDetails.value + ', Smoothed mean'
+          ? fixLabelForNumberVariables(
+              el.overlayVariableDetails.value,
+              overlayVariable
+            ) + ', Smoothed mean'
           : 'Smoothed mean',
         mode: 'lines', // no data point is displayed: only line
         line: {
@@ -946,7 +966,10 @@ function processInputData<T extends number | string>(
         y: yIntervalBounds,
         // name: '95% Confidence interval',
         name: el.overlayVariableDetails
-          ? el.overlayVariableDetails.value + ', 95% Confidence interval'
+          ? fixLabelForNumberVariables(
+              el.overlayVariableDetails.value,
+              overlayVariable
+            ) + ', 95% Confidence interval'
           : '95% Confidence interval',
         // this is better to be tozeroy, not tozerox
         fill: 'tozeroy',
@@ -998,7 +1021,12 @@ function processInputData<T extends number | string>(
         // display R-square value at legend text(s)
         // name: 'Best fit<br>R<sup>2</sup> = ' + el.r2,
         name: el.overlayVariableDetails
-          ? el.overlayVariableDetails.value + ', R² = ' + el.r2
+          ? fixLabelForNumberVariables(
+              el.overlayVariableDetails.value,
+              overlayVariable
+            ) +
+            ', R² = ' +
+            el.r2
           : 'Best fit, R² = ' + el.r2,
         mode: 'lines', // no data point is displayed: only line
         line: {
@@ -1041,14 +1069,16 @@ function getBounds<T extends number | string>(
 
 function reorderResponse(
   response: XYPlotDataResponse,
-  overlayVocabulary: string[] = []
+  overlayVocabulary: string[] = [],
+  overlayVariable?: Variable
 ) {
   if (overlayVocabulary.length > 0) {
     // for each value in the overlay vocabulary's correct order
     // find the index in the series where series.name equals that value
-    const overlayValues = response.scatterplot.data.map(
-      (series) => series.overlayVariableDetails?.value
-    );
+    const overlayValues = response.scatterplot.data
+      .map((series) => series.overlayVariableDetails?.value)
+      .filter((value) => value != null)
+      .map((value) => fixLabelForNumberVariables(value!, overlayVariable));
     const overlayIndices = overlayVocabulary.map((name) =>
       overlayValues.indexOf(name)
     );

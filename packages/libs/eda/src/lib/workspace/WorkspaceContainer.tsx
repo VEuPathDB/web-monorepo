@@ -10,11 +10,18 @@ import SubsettingClient from '../core/api/SubsettingClient';
 import DataClient from '../core/api/DataClient';
 import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
 import { VariableDescriptor } from '../core/types/variable';
+import { EDAWorkspace } from './EDAWorkspace';
 import { cx, findFirstVariable } from './Utils';
-import {
-  EDAWorkspaceNewAnalysis,
-  EDAWorkspaceSavedAnalysis,
-} from './EDAWorkspace';
+
+import { makeStyles } from '@mui/styles';
+
+const useStyles = makeStyles({
+  root: {
+    '& .MuiTypography-root': {
+      textTransform: 'none',
+    },
+  },
+});
 
 interface Props {
   studyId: string;
@@ -68,22 +75,19 @@ export function WorkspaceContainer({
     [url]
   );
   const approvalStatus = useApprovalStatus(studyId, 'analysis');
+  const classes = useStyles();
 
   return (
     <RestrictedPage approvalStatus={approvalStatus}>
       <EDAWorkspaceContainer
         studyId={studyId}
-        className={cx()}
+        className={`${cx()} ${classes.root}`}
         analysisClient={analysisClient}
         dataClient={dataClient}
         subsettingClient={subsettingClient}
         makeVariableLink={makeVariableLink}
       >
-        {analysisId == null ? (
-          <EDAWorkspaceNewAnalysis />
-        ) : (
-          <EDAWorkspaceSavedAnalysis analysisId={analysisId} />
-        )}
+        <EDAWorkspace studyId={studyId} analysisId={analysisId} />
       </EDAWorkspaceContainer>
     </RestrictedPage>
   );

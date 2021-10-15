@@ -120,6 +120,10 @@ export function WorkspaceRouter({
             ownerUserId: string;
           }>
         ) => {
+          const ownerNameQuery = new URLSearchParams(props.location.search).get(
+            'ownerName'
+          );
+
           const descriptionQuery = new URLSearchParams(
             props.location.search
           ).get('description');
@@ -128,6 +132,7 @@ export function WorkspaceRouter({
             <ImportAnalysis
               {...props.match.params}
               analysisClient={analysisClient}
+              ownerName={ownerNameQuery ?? undefined}
               description={descriptionQuery ?? undefined}
             />
           );

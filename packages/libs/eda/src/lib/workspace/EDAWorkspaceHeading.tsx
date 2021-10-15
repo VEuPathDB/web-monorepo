@@ -1,20 +1,21 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import Path from 'path';
-import SwissArmyButton from '@veupathdb/core-components/dist/components/buttons/SwissArmyButton';
+
 import {
   Download,
   Table,
 } from '@veupathdb/core-components/dist/components/icons';
+import SwissArmyButton from '@veupathdb/core-components/dist/components/buttons/SwissArmyButton';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { LinkAttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { useAttemptActionCallback } from '@veupathdb/web-common/lib/hooks/dataRestriction';
 import { Action } from '@veupathdb/web-common/lib/App/DataRestriction/DataRestrictionUtils';
 import AddIcon from '@material-ui/icons/Add';
-import { Tooltip } from '@material-ui/core';
 
 import { cx } from './Utils';
 import { useStudyRecord, AnalysisState, DEFAULT_ANALYSIS_NAME } from '../core';
+import { getAnalysisId, isSavedAnalysis } from '../core/utils/analysis';
 import { AnalysisNameDialog } from './AnalysisNameDialog';
 
 interface EDAWorkspaceHeadingProps {
@@ -36,6 +37,12 @@ export function EDAWorkspaceHeading({
     : Path.resolve(url, '../new');
   const history = useHistory();
   const redirectToNewAnalysis = () => history.push(redirectURL);
+
+  const analysisId = getAnalysisId(analysis);
+
+  useEffect(() => {
+    setDialogIsOpen(false);
+  }, [analysisId]);
 
   return (
     <>
@@ -95,12 +102,14 @@ export function EDAWorkspaceHeading({
           </div>
         </div>
       </div>
-      {analysisState && analysis && (
+      {analysisState && isSavedAnalysis(analysis) && (
         <AnalysisNameDialog
           isOpen={dialogIsOpen}
           setIsOpen={setDialogIsOpen}
           initialAnalysisName={analysis.displayName}
-          setAnalysisName={analysisState.setName}
+          setAnalysisName={(newName) =>
+            newName && analysisState.setName(newName)
+          }
           redirectToNewAnalysis={redirectToNewAnalysis}
         />
       )}

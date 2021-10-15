@@ -110,7 +110,7 @@ export function HistogramFilter(props: Props) {
       independentAxisRange: defaultIndependentRange as DateRange,
       ...otherDefaults,
     };
-  }, [variable]);
+  }, [variable, defaultIndependentRange]);
 
   const variableUISettings =
     analysisState.analysis?.descriptor.subset.uiSettings;
@@ -214,6 +214,7 @@ export function HistogramFilter(props: Props) {
       entity.id,
       studyMetadata.id,
       subsettingClient,
+      variable,
       variable.id,
       variable.type,
     ]
@@ -597,6 +598,8 @@ function HistogramPlotWithControls({
           horizontalPosition: 'center',
           orientation: 'horizontal',
           verticalPaddingAdjustment: 20,
+          // use traceorder: reversed to show subset legend at first
+          traceorder: 'reversed',
         }}
         // pass axisTruncationConfig
         axisTruncationConfig={{
@@ -612,9 +615,9 @@ function HistogramPlotWithControls({
       />
 
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <LabelledGroup label="Y-axis" containerStyles={{}}>
+        <LabelledGroup label="Y-axis">
           <Switch
-            label="Log Scale:"
+            label="Log scale"
             state={uiState.dependentAxisLogScale}
             onStateChange={handleDependentAxisLogScale}
             containerStyles={{
@@ -624,12 +627,13 @@ function HistogramPlotWithControls({
           />
 
           <NumberRangeInput
-            label="Range:"
+            label="Range"
             range={uiState.dependentAxisRange}
             onRangeChange={(newRange?: NumberOrDateRange) => {
               handleDependentAxisRangeChange(newRange as NumberRange);
             }}
             allowPartialRange={false}
+            containerStyles={{ minWidth: '400px' }}
           />
           {/* truncation notification */}
           {truncatedDependentAxisWarning ? (
@@ -651,13 +655,13 @@ function HistogramPlotWithControls({
             onClick={handleDependentAxisSettingsReset}
             containerStyles={{
               paddingTop: '1.0em',
-              width: '60%',
+              width: '50%',
               float: 'right',
             }}
           />
         </LabelledGroup>
 
-        <LabelledGroup label="X-axis" containerStyles={{}}>
+        <LabelledGroup label="X-axis">
           <BinWidthControl
             binWidth={data?.binWidth}
             binWidthStep={data?.binWidthStep}
@@ -674,10 +678,11 @@ function HistogramPlotWithControls({
           />
 
           <AxisRangeControl
-            label="Range:"
+            label="Range"
             range={uiState.independentAxisRange}
             onRangeChange={handleIndependentAxisRangeChange}
             valueType={data?.valueType}
+            containerStyles={{ minWidth: '400px' }}
           />
           {/* truncation notification */}
           {truncatedIndependentAxisWarning ? (
@@ -701,7 +706,7 @@ function HistogramPlotWithControls({
             onClick={handleIndependentAxisSettingsReset}
             containerStyles={{
               paddingTop: '1.0em',
-              width: '60%',
+              width: '50%',
               float: 'right',
             }}
           />
@@ -756,7 +761,7 @@ function tidyBinLabel(
   precision: number = 3
 ): string {
   const matches = binLabel.match(/^\[(-?\d+(?:\.\d+)),(-?\d+(?:\.\d+))\)$/);
-  if (matches != null && matches.length == 3) {
+  if (matches != null && matches.length === 3) {
     // matches array starts with full match of pattern
     const [binStart, binEnd] = matches
       .slice(1)
@@ -777,6 +782,7 @@ function formatStatValue(
     ? String(value).replace(/T.*$/, '')
     : Number(value).toLocaleString(undefined, {
         maximumFractionDigits: 4,
+        useGrouping: !(Number(value) >= 1900 && Number(value) <= 2100),
       });
 }
 

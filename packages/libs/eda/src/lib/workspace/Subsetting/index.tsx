@@ -1,7 +1,5 @@
-import { Tooltip } from '@material-ui/core';
-import { useHistory } from 'react-router';
-
 import { useState } from 'react';
+import { useHistory } from 'react-router';
 
 import {
   MultiFilterVariable,
@@ -106,7 +104,7 @@ export default function Subsetting({
       </div>
       <div className="FilterChips">
         <FilterChipList
-          filters={filters?.filter((f) => f.entityId === entity.id)}
+          filters={filters}
           removeFilter={(filter) =>
             analysisState.analysis &&
             analysisState.setFilters(
@@ -121,18 +119,15 @@ export default function Subsetting({
         />
       </div>
       <div className="TabularDownload">
-        <Tooltip
-          title={`Download current subset of ${
+        <SwissArmyButton
+          text="View and download"
+          tooltip={`View and download current subset of ${
             entity.displayNamePlural ?? entity.displayName
           }`}
-        >
-          <SwissArmyButton
-            text="View and download"
-            stylePreset="mesa"
-            icon={TableDownload}
-            onPress={() => setIsDownloadModalOpen(true)}
-          />
-        </Tooltip>
+          stylePreset="mesa"
+          icon={TableDownload}
+          onPress={() => setIsDownloadModalOpen(true)}
+        />
       </div>
       <div className="Filter">
         <VariableDetails

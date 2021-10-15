@@ -424,7 +424,9 @@ export function AllAnalyses(props: Props) {
                     </Link>
                   )}
                   onSave={(newName) => {
-                    updateAnalysis(analysisId, { displayName: newName });
+                    if (newName) {
+                      updateAnalysis(analysisId, { displayName: newName });
+                    }
                   }}
                 />
               </div>

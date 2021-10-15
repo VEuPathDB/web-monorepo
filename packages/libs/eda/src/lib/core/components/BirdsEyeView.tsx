@@ -80,7 +80,9 @@ export function BirdsEyeView(props: Props) {
     outputEntity?.displayNamePlural ?? outputEntity?.displayName;
 
   return (
-    <div>
+    // wrap 500px birds eye plot in an overflowing 400px div so that the mouseover-popup isn't clipped,
+    // but at the same time don't cause wrapping of the side plots/tables on 1280px screens.
+    <div style={{ width: '400px', overflow: 'visible' }}>
       <div
         style={{
           marginLeft: '100px',
@@ -113,7 +115,7 @@ export function BirdsEyeView(props: Props) {
         data={birdsEyeData}
         containerClass="birds-eye-plot"
         containerStyles={{
-          width: '400px',
+          width: '500px',
           height: '110px',
           marginBottom: '1.5em',
         }}
@@ -121,7 +123,7 @@ export function BirdsEyeView(props: Props) {
           marginTop: 5,
           marginBottom: 5,
           marginLeft: 5,
-          marginRight: 5,
+          marginRight: 100,
         }}
         interactive={true}
         dependentAxisLabel={entityPluralString}
