@@ -2,13 +2,14 @@
   "name": "@veupathdb/http-utils",
   "version": "0.0.1",
   "description": "A collection of utilities for making http requests in a browser",
-  "main": "lib/index.ts",
+  "main": "lib/index.js",
   "repository": "git@github.com:VEuPathDB/web-http-utils.git",
   "author": "Dave Falke <dmfalke@gmail.com>",
   "license": "Apache-2",
   "scripts": {
     "build": "tsc -p tsconfig.build.json"
   },
+  "typings": "./lib/index.d.ts",
   "eslintConfig": {
     "extends": [ "@veupathdb" ]
   },
