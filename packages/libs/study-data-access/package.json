@@ -5,5 +5,48 @@
   "main": "lib/index.js",
   "repository": "git@github.com:VEuPathDB/web-study-data-access.git",
   "author": "Dave Falke <dmfalke@gmail.com>",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "scripts": {
+    "build-npm-modules": "tsc -p tsconfig.build.json"
+  },
+  "typings": "./lib/index.d.ts",
+  "eslintConfig": {
+    "extends": [
+      "@veupathdb"
+    ]
+  },
+  "prettier": "@veupathdb/prettier-config",
+  "browserslist": [
+    "extends @veupathdb/browserslist-config"
+  ],
+  "devDependencies": {
+    "@types/jest": "^26.0.15",
+    "@types/node": "^12.0.0",
+    "@veupathdb/browserslist-config": "^1.0.0",
+    "@veupathdb/eslint-config": "^1.0.0",
+    "@veupathdb/prettier-config": "^1.0.0",
+    "@veupathdb/tsconfig": "^1.0.1",
+    "husky": ">=4",
+    "lint-staged": ">=10",
+    "prettier": "2.2.1",
+    "react-scripts": "4.0.1",
+    "typescript": "^4.4.4"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,css,scss,md}": "prettier --write"
+  },
+  "volta": {
+    "node": "14.15.5",
+    "yarn": "1.22.10"
+  },
+  "dependencies": {
+    "@veupathdb/http-utils": "^0.0.2",
+    "fp-ts": "^2.11.5",
+    "io-ts": "^2.2.16"
+  }
 }

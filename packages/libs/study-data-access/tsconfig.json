@@ -1,0 +1,6 @@
+{
+  "extends": "@veupathdb/tsconfig",
+  "include": [
+    "src"
+  ]
+}
