@@ -7,7 +7,7 @@
   "author": "Dave Falke <dmfalke@gmail.com>",
   "license": "Apache-2",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json"
+    "build-npm-modules": "tsc -p tsconfig.build.json"
   },
   "typings": "./lib/index.d.ts",
   "eslintConfig": {
