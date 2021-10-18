@@ -31,7 +31,7 @@ export function AnalysisCard(props: Props) {
           <i className="ebrc-icon-edaIcon" />
         </div>
         <h2>{displayName}</h2>
-        <h3>{studyDisplayName}</h3>
+        <h3>{safeHtml(studyDisplayName)}</h3>
       </div>
       <div className="box AnalysisCard-Body">
         {safeHtml(description, null, 'div')}
