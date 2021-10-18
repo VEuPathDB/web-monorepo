@@ -54,11 +54,11 @@ export function VariableDetails(props: Props) {
         .map((variable, i) => {
           return (
             <div key={variable.id}>
-              {variable.displayName}:{' '}
+              [{variable.displayName}]:{' '}
               {variable.providerLabel
                 .replace(/[[\]"]/g, '')
                 .replace(/[,]/g, ', ')}
-              ;&nbsp;
+              &nbsp;
             </div>
           );
         })
@@ -78,7 +78,7 @@ export function VariableDetails(props: Props) {
               {variable.providerLabel
                 .replace(/[[\]"]/g, '')
                 .replace(/[,]/g, ', ')}
-              ;&nbsp;
+              &nbsp;
             </div>
           );
         })
@@ -99,14 +99,16 @@ export function VariableDetails(props: Props) {
             </i>
           </div>
           {/* showing three variables for multifilter or single variable */}
-          &nbsp; {threeProviderLabel} &nbsp;
-          <HelpIcon>
-            The name of this variable in the data files that were integrated
-            into ClinEpiDB
-          </HelpIcon>
-          &nbsp;&nbsp;
+          &nbsp;{threeProviderLabel}
           {MultiFilterVariable.is(variable) && numberOfProviderLabel > 3 ? (
             <>
+              {showMore && providerLabelLeftover}
+              &nbsp;
+              <HelpIcon>
+                The name of this variable in the data files that were integrated
+                into ClinEpiDB
+              </HelpIcon>
+              &nbsp;&nbsp;
               <button
                 className="variable-show-more-link link"
                 onClick={() => {
@@ -115,11 +117,15 @@ export function VariableDetails(props: Props) {
               >
                 {showMoreLink}
               </button>
-              <br />
-              {showMore && providerLabelLeftover}
             </>
           ) : (
-            ''
+            <>
+              &nbsp;
+              <HelpIcon>
+                The name of this variable in the data files that were integrated
+                into ClinEpiDB
+              </HelpIcon>
+            </>
           )}
         </div>
         {/* add variable.definition */}
