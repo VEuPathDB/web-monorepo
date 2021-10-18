@@ -54,7 +54,7 @@ export function VariableDetails(props: Props) {
         .map((variable, i) => {
           return (
             <div key={variable.id}>
-              [{variable.displayName}]:{' '}
+              {variable.displayName}:{' '}
               {variable.providerLabel
                 .replace(/[[\]"]/g, '')
                 .replace(/[,]/g, ', ')}
