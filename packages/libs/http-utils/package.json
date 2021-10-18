@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/http-utils",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A collection of utilities for making http requests in a browser",
   "main": "lib/index.js",
   "repository": "git@github.com:VEuPathDB/web-http-utils.git",
@@ -11,10 +11,14 @@
   },
   "typings": "./lib/index.d.ts",
   "eslintConfig": {
-    "extends": [ "@veupathdb" ]
+    "extends": [
+      "@veupathdb"
+    ]
   },
   "prettier": "@veupathdb/prettier-config",
-  "browserslist": [ "extends @veupathdb/browserslist-config" ],
+  "browserslist": [
+    "extends @veupathdb/browserslist-config"
+  ],
   "devDependencies": {
     "@types/jest": "^26.0.15",
     "@types/node": "^12.0.0",
