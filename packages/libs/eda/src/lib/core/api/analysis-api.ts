@@ -8,7 +8,7 @@ import {
   FetchApiOptions,
   FetchClient,
   createJsonRequest,
-} from '@veupathdb/web-common/lib/util/api';
+} from '@veupathdb/http-utils';
 
 import {
   Analysis,

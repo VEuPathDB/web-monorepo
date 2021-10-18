@@ -1,8 +1,5 @@
 /* eslint-disable @typescript-eslint/no-redeclare */
-import {
-  createJsonRequest,
-  FetchClient,
-} from '@veupathdb/web-common/lib/util/api';
+import { createJsonRequest, FetchClient } from '@veupathdb/http-utils';
 import {
   TypeOf,
   string,

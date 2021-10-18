@@ -3133,6 +3133,11 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/eslint-config/-/eslint-config-1.0.0.tgz#40dc855b263bd3fd68f8f61508ef55b1dc163caf"
   integrity sha512-UDgRQYsIdfB9KCkBmeqMjVQOQAAGB8RLFUj4KlLAxRcT5TlRI47ZmofB3/NMbpIHP27/pk1bryPo7z4DMwWyeQ==
 
+"@veupathdb/http-utils@^0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/http-utils/-/http-utils-0.0.2.tgz#6da939fad84f82548731e4ed808779406afc7a31"
+  integrity sha512-NvLegfBWQVxfK4Z67vXZdI5WslCZd1pQPMgb2BJbSyHEr3Jq91dC3XfbXQozWaYz35LL6d121xBdd4j/LNx1dQ==
+
 "@veupathdb/prettier-config@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@veupathdb/prettier-config/-/prettier-config-1.0.0.tgz#6c138be7ce1c4418c7cac5609acdbc5e98bad94c"
