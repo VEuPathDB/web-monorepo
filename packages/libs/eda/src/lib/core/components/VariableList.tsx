@@ -466,7 +466,7 @@ export default function VariableList(props: VariableListProps) {
         isSearchable={true}
         searchBoxPlaceholder="Find a variable"
         searchBoxHelp={makeSearchHelpText(
-          'the variables by name or description'
+          'variables by name, description, or values'
         )}
         searchTerm={searchTerm}
         onSearchTermChange={setSearchTerm}
