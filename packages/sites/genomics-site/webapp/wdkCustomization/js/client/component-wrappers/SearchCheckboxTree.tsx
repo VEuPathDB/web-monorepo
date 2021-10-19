@@ -6,7 +6,7 @@ import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils'
 
 import { usePreferredQuestions, usePreferredOrganismsEnabledState } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
 
-export function SearchCheckboxTree<P extends { searchTree: CategoryTreeNode }>(DefaultComponent: ComponentType<P>): ComponentType<P> {
+export function SearchCheckboxTree<P extends { searchTree?: CategoryTreeNode }>(DefaultComponent: ComponentType<P>): ComponentType<P> {
   const Content = SearchCheckboxTreeContent(DefaultComponent);
 
   return function VEuPathDBSearchCheckboxTree(props) {
@@ -18,14 +18,14 @@ export function SearchCheckboxTree<P extends { searchTree: CategoryTreeNode }>(D
   };
 }
 
-function SearchCheckboxTreeContent<P extends { searchTree: CategoryTreeNode }>(DefaultComponent: ComponentType<P>): ComponentType<P> {
+function SearchCheckboxTreeContent<P extends { searchTree?: CategoryTreeNode }>(DefaultComponent: ComponentType<P>): ComponentType<P> {
   return function VEuPathDBSearchCheckboxTree(props) {
     const [ preferredOrganismsEnabled ] = usePreferredOrganismsEnabledState();
 
     const preferredQuestions = usePreferredQuestions();
 
     const prunedSearchTree = useMemo(
-      () => !preferredOrganismsEnabled
+      () => !preferredOrganismsEnabled || props.searchTree == null
         ? props.searchTree
         : pruneDescendantNodes(
             node => {
