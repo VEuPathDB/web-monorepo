@@ -12,7 +12,7 @@
 /**
  * Represents an HTTP-like request for a resource.
  */
- export interface ApiRequest<T> {
+export interface ApiRequest<T> {
   /** Path to resource, relative to a fixed base url. */
   path: string;
   /** Request method for resource. */
@@ -28,7 +28,7 @@
 /**
  * Options for a `fetch`-based request handler.
  */
- export interface FetchApiOptions {
+export interface FetchApiOptions {
   /** Base url for service endpoint. */
   baseUrl: string;
   /** Global optoins for all requests. */
@@ -57,8 +57,8 @@ export abstract class FetchClient {
       body: body,
       headers: {
         ...restReq.headers,
-        ...init.headers
-      }
+        ...init.headers,
+      },
     });
     const response = await fetchApi(request);
     // TODO Make this behavior configurable
@@ -67,7 +67,9 @@ export abstract class FetchClient {
 
       return await transformResponse(responseBody);
     }
-    throw new Error(`${response.status} ${response.statusText}${'\n'}${await response.text()}`);
+    throw new Error(
+      `${response.status} ${response.statusText}${'\n'}${await response.text()}`
+    );
   }
 }
 

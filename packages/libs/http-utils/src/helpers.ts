@@ -1,4 +1,4 @@
-import { ApiRequest } from './FetchClient'
+import { ApiRequest } from './FetchClient';
 
 /** Helper to create a request with a JSON body. */
 export function createJsonRequest<T>(init: ApiRequest<T>): ApiRequest<T> {
@@ -7,9 +7,9 @@ export function createJsonRequest<T>(init: ApiRequest<T>): ApiRequest<T> {
     body: JSON.stringify(init.body),
     headers: {
       ...init.headers,
-      'Content-Type': 'application/json'
-    }
-  }
+      'Content-Type': 'application/json',
+    },
+  };
 }
 
 /** Helper to create a request with a plain text body. */
@@ -18,7 +18,7 @@ export function createPlainTextRequest<T>(init: ApiRequest<T>): ApiRequest<T> {
     ...init,
     headers: {
       ...init.headers,
-      'Content-Type': 'text/plain'
-    }
-  }
+      'Content-Type': 'text/plain',
+    },
+  };
 }
