@@ -27,10 +27,14 @@ export const CLIENT_WDK_VERSION_HEADER = 'x-client-wdk-timestamp';
 export const CLIENT_OUT_OF_SYNC_TEXT = 'WDK-TIMESTAMP-MISMATCH';
 
 /**
- * Response text returned by service that indicates that the requested
+ * Response returned by service that indicates that the requested
  * resource is not yet available.
  */
-export const DELAYED_RESULT_TEXT = 'WDK-DELAYED-RESULT';
+export type DelayedResult = Decode.Unpack<typeof delayedResult>;
+const delayedResult = Decode.record({
+  status: Decode.constant('accepted'),
+  message: Decode.constant('WDK-DELAYED-RESULT')
+});
 
 export interface StandardWdkPostResponse  {id: number};
 
@@ -226,7 +230,30 @@ export const ServiceBase = (serviceUrl: string) => {
       }
 
       if (response.ok) {
-        return response.status === 204 ? undefined : response.json();
+        if (response.status === 204) {
+          return undefined;
+        }
+
+        const json$ = response.json();
+
+        if (response.status === 202) {
+          return json$.then(json => {
+            const delayedResultValidation = delayedResult(json);
+
+            // If the response is that of a delayed result, throw a DelayedResultError
+            if (delayedResultValidation.status === 'ok') {
+              throw new DelayedResultError(
+                'We are still processing your result. Please return to this page later.',
+                response.headers.get('x-log-marker') ?? uuid()
+              );
+            }
+
+            // Otherwise, return the parsed JSON as-is for further processing
+            return json;
+          });
+        }
+
+        return json$;
       }
 
       return response.text().then(text => {
@@ -238,13 +265,6 @@ export const ServiceBase = (serviceUrl: string) => {
           ])
           .then(() => location.reload(true));
           return pendingPromise as Promise<T>;
-        }
-
-        if (response.status === 409 && text === DELAYED_RESULT_TEXT) {
-          throw new DelayedResultError(
-            'We are still processing your result. Please return to this page later.',
-            response.headers.get('x-log-marker') ?? uuid()
-          );
         }
 
         // FIXME Get uuid from response header when available
