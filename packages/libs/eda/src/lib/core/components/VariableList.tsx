@@ -455,6 +455,8 @@ export default function VariableList(props: VariableListProps) {
         </div>
       )}
 
+      {/* <>Filter ${itemDescription}.  Use * as a wildcard for the start of words. For example, <i>typ</i> will match type and typically, while *typ will also match atypical</> */}
+
       <CheckboxTree
         autoFocusSearchBox={autoFocus}
         tree={tree}
@@ -466,7 +468,7 @@ export default function VariableList(props: VariableListProps) {
         isSearchable={true}
         searchBoxPlaceholder="Find a variable"
         searchBoxHelp={makeSearchHelpText(
-          'the variables by name or description'
+          'variables by name, description, or values'
         )}
         searchTerm={searchTerm}
         onSearchTermChange={setSearchTerm}
