@@ -433,7 +433,7 @@ class MembershipTable extends React.PureComponent {
     return (
       <div style={{display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
         <div>{qualifier}</div>
-        <div style={{marginLeft: '.6ex', maxWidth: '6em', overflow: 'hidden', textOverflow: 'ellipsis'}}>{this.props.displayName}</div>
+        <div style={{marginLeft: '.6ex', maxWidth: '6em', overflow: 'hidden', textOverflow: 'ellipsis', fontStyle: 'italic'}}>{this.props.displayName}</div>
       </div>
     );
   }
@@ -594,8 +594,8 @@ class MembershipTable extends React.PureComponent {
             helpText: (
               <div>
                 The number of <em>{this.props.displayName}</em> that match the filters applied for other variables<br />
-                and have the given <em>{this.props.activeField.display}</em> value.
-                </div>
+                and have the given <em>{this.props.activeField.display}</em> value
+              </div>
             ),
             wrapCustomHeadings: ({ headingRowIndex }) => headingRowIndex === 0,
             renderHeading: this.props.activeFieldState.summary.internalsFilteredCount != null
@@ -609,8 +609,8 @@ class MembershipTable extends React.PureComponent {
             width: '12em',
             helpText: (
               <div>
-                The number of <em>{this.props.displayName}</em> in the dataset that have the given <em>{this.props.activeField.display}</em> value.
-                </div>
+                The number of <em>{this.props.displayName}</em> in the dataset that have the given <em>{this.props.activeField.display}</em> value
+              </div>
             ),
             wrapCustomHeadings: ({ headingRowIndex }) => headingRowIndex === 0,
             renderHeading: this.props.activeFieldState.summary.internalsCount != null
@@ -622,7 +622,11 @@ class MembershipTable extends React.PureComponent {
             key: 'distribution',
             name: 'Distribution',
             width: '30%',
-            helpText: <FilterLegend {...this.props} />,
+            helpText: (
+              <div>
+                The subset of <em>{this.props.displayName}</em> that have the given <em>{this.props.activeField.display}</em> value when other filters have been applied
+              </div>
+            ),
             renderCell: this.renderDistributionCell
           },
           {
@@ -631,9 +635,8 @@ class MembershipTable extends React.PureComponent {
             width: '4em',
             helpText: (
               <div>
-                <em>Remaining {this.props.displayName}</em> out of <em>Total {this.props.displayName}</em><br />
-                with the given <em>{this.props.activeField.display}</em> value.
-                </div>
+                The subset of <em>{this.props.displayName}</em> out of all <em>{this.props.displayName}</em> that have the given <em>{this.props.activeField.display}</em> value
+              </div>
             ),
             renderCell: this.renderPrecentageCell
           }
