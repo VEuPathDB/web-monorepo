@@ -151,6 +151,47 @@ export const makePreferredOrganismsRecoilState = memoize(
     const preferredOrganismsEnabled = atom({
       key: 'only-show-preferred-organisms',
       default: true,
+      effects_UNSTABLE: [
+        ({ onSet, setSelf, trigger }) => {
+          if (trigger === 'get') {
+            const initialValueStr = localStorage.getItem(
+              'preferredOrganisms::enabled'
+            );
+
+            const initialValue =
+              initialValueStr == null || initialValueStr === 'true';
+
+            setSelf(initialValue);
+
+            localStorage.setItem(
+              'preferredOrganisms::enabled',
+              String(initialValue)
+            );
+          }
+
+          onSet((newValue) => {
+            const newValueBoolean =
+              newValue instanceof DefaultValue ? true : newValue;
+
+            localStorage.setItem(
+              'preferredOrganisms::enabled',
+              String(newValueBoolean)
+            );
+          });
+
+          function handleLocalStorageChange(e: StorageEvent) {
+            if (e.key === 'preferredOrganisms::enabled') {
+              setSelf(e.newValue == null || e.newValue === 'true');
+            }
+          }
+
+          window.addEventListener('storage', handleLocalStorageChange);
+
+          return () => {
+            window.removeEventListener('storage', handleLocalStorageChange);
+          };
+        },
+      ],
     });
 
     const preferredSpecies = selector({
