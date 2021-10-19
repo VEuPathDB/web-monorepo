@@ -455,8 +455,6 @@ export default function VariableList(props: VariableListProps) {
         </div>
       )}
 
-      {/* <>Filter ${itemDescription}.  Use * as a wildcard for the start of words. For example, <i>typ</i> will match type and typically, while *typ will also match atypical</> */}
-
       <CheckboxTree
         autoFocusSearchBox={autoFocus}
         tree={tree}
