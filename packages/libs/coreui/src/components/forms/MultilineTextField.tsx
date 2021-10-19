@@ -5,7 +5,7 @@ import { H6 } from '../headers';
 import { DARK_GRAY, MEDIUM_GRAY } from '../../constants/colors';
 import typography from '../../styleDefinitions/typography';
 import useDimensions from 'react-cool-dimensions';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export type MultilineTextFieldProps = {
   heading: string;
@@ -24,12 +24,14 @@ export default function MultilineTextField({
   width,
   height,
   characterLimit,
+  onValueChange,
 }: MultilineTextFieldProps) {
   const [value, setValue] = useState('');
 
-  const handleChange = (event: any) => {
-    setValue(event.target.value);
-  };
+  // Invoke passed in change handler when value changes.
+  useEffect(() => {
+    onValueChange(value);
+  }, [value]);
 
   const {
     observe,
@@ -38,7 +40,7 @@ export default function MultilineTextField({
   } = useDimensions();
 
   return (
-    <div>
+    <div css={{ width, height }}>
       <div css={{ marginBottom: 5 }}>
         <H6 text={heading} additionalStyles={{ marginBottom: 0 }} />
         {instructions && (
@@ -47,7 +49,7 @@ export default function MultilineTextField({
           </label>
         )}
       </div>
-      <div css={{ position: 'relative' }}>
+      <div css={{ position: 'relative', height: '100%' }}>
         <textarea
           ref={observe}
           maxLength={characterLimit}
@@ -63,7 +65,7 @@ export default function MultilineTextField({
               paddingBottom: 35,
               resize: 'none',
               width,
-              height,
+              height: '100%',
               color: MEDIUM_GRAY,
               ':focus': {
                 outlineColor: 'rgb(170, 170, 170)',
@@ -75,7 +77,9 @@ export default function MultilineTextField({
           ]}
           placeholder={placeholder}
           value={value}
-          onChange={handleChange}
+          onChange={(event: any) => {
+            setValue(event.target.value);
+          }}
         />
         {characterLimit && currentHeight && (
           <p

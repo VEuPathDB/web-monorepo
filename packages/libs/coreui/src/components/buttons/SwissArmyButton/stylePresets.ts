@@ -4,7 +4,6 @@ import {
   DARK_GRAY,
   LIGHT_BLUE,
   LIGHT_GRAY,
-  MEDIUM_GRAY,
 } from '../../../constants/colors';
 
 export type SwissArmyButtonStyleSpec = {

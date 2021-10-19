@@ -18,7 +18,7 @@ export const pre = css([
 ]);
 export const label = css([
   secondaryFont,
-  { fontSize: '.75rem', fontWeight: 300 },
+  { fontSize: '.75rem', fontWeight: 400 },
 ]);
 
 export const metaData = css([

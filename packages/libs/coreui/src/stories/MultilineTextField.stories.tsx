@@ -15,9 +15,10 @@ const Template: Story<MultilineTextFieldProps> = (args) => (
 export const Default = Template.bind({});
 Default.args = {
   heading: 'Example Heading',
-  instructions: 'These are example instructions.',
+  instructions: 'These are example instructions. ',
   width: '50vw',
-  height: '25vh',
+  height: '50vh',
   placeholder: 'Example Placeholder',
   characterLimit: 500,
+  onValueChange: (value) => console.log(value),
 };
