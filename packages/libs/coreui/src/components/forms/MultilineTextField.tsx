@@ -39,9 +39,15 @@ export default function MultilineTextField({
     height: currentHeight,
   } = useDimensions();
 
+  const {
+    observe: nonInputRef,
+    width: nonInputWidth,
+    height: nonInputHeight,
+  } = useDimensions();
+
   return (
-    <div css={{ width, height }}>
-      <div css={{ marginBottom: 5 }}>
+    <div ref={observe} css={{ width, height, boxSizing: 'border-box' }}>
+      <div ref={nonInputRef} css={{ marginBottom: 5 }}>
         <H6 text={heading} additionalStyles={{ marginBottom: 0 }} />
         {instructions && (
           <label css={[typography.label, { color: DARK_GRAY }]}>
@@ -49,14 +55,12 @@ export default function MultilineTextField({
           </label>
         )}
       </div>
-      <div css={{ position: 'relative', height: '100%' }}>
+      <div css={{ position: 'relative' }}>
         <textarea
-          ref={observe}
           maxLength={characterLimit}
           css={[
             typography.p,
             {
-              boxSizing: 'border-box',
               borderWidth: 1,
               borderStyle: 'solid',
               borderColor: 'rgb(170, 170, 170)',
@@ -65,7 +69,7 @@ export default function MultilineTextField({
               paddingBottom: 35,
               resize: 'none',
               width,
-              height: '100%',
+              height: currentHeight - nonInputHeight,
               color: MEDIUM_GRAY,
               ':focus': {
                 outlineColor: 'rgb(170, 170, 170)',
@@ -85,7 +89,11 @@ export default function MultilineTextField({
           <p
             css={[
               typography.metaData,
-              { position: 'absolute', top: currentHeight + 20, left: 15 },
+              {
+                position: 'absolute',
+                top: currentHeight - nonInputHeight - 35,
+                left: 15,
+              },
             ]}
           >
             {`${value.length} / ${characterLimit}`}
