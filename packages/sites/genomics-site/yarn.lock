@@ -288,13 +288,13 @@
   resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-8.3.0.tgz#215c231dff736d5ba92410e6d602050cce7e273f"
   integrity sha512-eQ9qFW/fhfGJF8WKHGEHZEyVWfZxrT+6CLIJGBcZPfxUh/+BnEj+UCGYMlr9qZuX/2AltsvwrGqp0LhEW8D0zQ==
 
-"@veupathdb/multi-blast@^0.2.0-alpha.3":
-  version "0.2.0-alpha.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/multi-blast/-/multi-blast-0.2.0-alpha.3.tgz#78e9df91ae4d9a6f1b48f84bcb3d775347b490e3"
-  integrity sha512-mJ1mUbVHevjyRDuPflUQ8ouJGzNIttYfQuj4swIo+6vgwdr8T35iAp0d2vOSb9skWaGvmz2h1Uqpv84vi8Q8uQ==
+"@veupathdb/multi-blast@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/multi-blast/-/multi-blast-0.3.0.tgz#f34c00d83f4792de7c0150b425cd2fb719353ae5"
+  integrity sha512-axD/iy8t8cbE/vlwtkN0a+oQkBGxiBdWDoE68uk+lPs5bXIhJ3oHna3MYvhMyojx3lDvobB7DQl8wirw7iiDjg==
   dependencies:
     "@types/react-redux" "^7.1.5"
-    "@veupathdb/preferred-organisms" "^0.1.1-beta.8"
+    "@veupathdb/preferred-organisms" "^1.0.0"
     "@veupathdb/wdk-client" "^0.3.0"
     "@veupathdb/web-common" "^0.1.1-alpha.11"
     lodash "^4.17.20"
@@ -303,22 +303,10 @@
     react-redux "^7.1.5"
     react-select "^3.0.4"
 
-"@veupathdb/preferred-organisms@^0.1.1-beta.8":
-  version "0.1.1-beta.8"
-  resolved "https://registry.yarnpkg.com/@veupathdb/preferred-organisms/-/preferred-organisms-0.1.1-beta.8.tgz#e094e922ab0f7ccc15af6fe4707c68cb7a001c59"
-  integrity sha512-yXQovnF+dd4IL96q2j04zKDVLXnF4sa748oZxSIfrs+M/pPxGOsVWCpZW+FNhnElkJjBmr6Upcx/RvxNJjfV3g==
-  dependencies:
-    "@veupathdb/wdk-client" "^0.3.0"
-    "@veupathdb/web-common" "^0.1.5"
-    lodash "^4.17.21"
-    react "^17.0.1"
-    react-dom "^17.0.1"
-    recoil "^0.2.0"
-
-"@veupathdb/preferred-organisms@^0.1.1-beta.9":
-  version "0.1.1-beta.9"
-  resolved "https://registry.yarnpkg.com/@veupathdb/preferred-organisms/-/preferred-organisms-0.1.1-beta.9.tgz#5e4cb21146e754a18d486757196aef2eb787c094"
-  integrity sha512-m2AUnpUD/8TQ4maCi37V0/kZ4V3sw4RRZb3m/FNOEElxjbsBx4r5NbyTkWLxPqGDruMcAoUKgzkX1F6AbwdsWA==
+"@veupathdb/preferred-organisms@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/preferred-organisms/-/preferred-organisms-1.0.0.tgz#28b0180d56043c2bf8876f4b81ada0f964bd10d7"
+  integrity sha512-YQzh6zjqdNMaAugzSaLGr09kw8TGTdt6Tck6qjYQDAhfr2ojE7nbD/gTtX3HTVYA5agRrMmFoqr2nIHrNT34Ow==
   dependencies:
     "@veupathdb/wdk-client" "^0.3.0"
     "@veupathdb/web-common" "^0.1.5"
