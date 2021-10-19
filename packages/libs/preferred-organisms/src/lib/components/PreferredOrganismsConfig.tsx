@@ -121,7 +121,6 @@ export function PreferredOrganismsConfig({
               />
             </span>
             <div style={{ marginLeft: '1rem' }}>
-              In this release of {displayName},{' '}
               {makeNewOrganismDescription(newOrganisms.size)}{' '}
             </div>
             <button
@@ -249,18 +248,23 @@ export function PreferredOrganismsConfig({
 
 function makeNewOrganismDescription(newOrganismCount: number) {
   const NEW = <span style={{ color: '#3fa415' }}>NEW</span>;
+  const MY_ORGANISM_PREFERENCES = (
+    <span className={cx('--InlineTitle')}>My Organism Preferences</span>
+  );
 
   return (
     <>
       {newOrganismCount === 1 ? (
         <>
-          there is 1 {NEW} organism. View it by typing "new" into the search
+          There is 1 {NEW} organism since the last time you set your{' '}
+          {MY_ORGANISM_PREFERENCES}. View it by typing "new" into the search
           box.
         </>
       ) : (
         <>
-          there are {newOrganismCount} {NEW} organisms. View them by typing
-          "new" into the search box.
+          There are {newOrganismCount} {NEW} organisms since the last time you
+          set your {MY_ORGANISM_PREFERENCES}. View them by typing "new" into the
+          search box.
         </>
       )}
     </>
