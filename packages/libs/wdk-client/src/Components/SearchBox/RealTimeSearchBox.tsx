@@ -2,6 +2,9 @@ import HelpIcon from 'wdk-client/Components/Icon/HelpIcon';
 import { debounce } from 'lodash';
 import React, { Component } from 'react';
 import 'wdk-client/Components/SearchBox/RealTimeSearchBox.css';
+// use safeHtml for enabling html (e.g., italic) at helpText
+import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
+
 
 /** classNames used by component */
 const baseClassName = 'wdk-RealTimeSearchBox';
@@ -148,7 +151,8 @@ export default class RealTimeSearchBox extends Component<Props, State> {
             <i className={"fa fa-close " + cancelIconClassName}/>
           </button>
         </label>
-        {!helpText ? null : <HelpIcon>{helpText}</HelpIcon>}
+        {/* use safeHtml for helpText to allow italic */}
+        {!helpText ? null : <HelpIcon>{safeHtml(helpText)}</HelpIcon>}
       </div>
     );
   }

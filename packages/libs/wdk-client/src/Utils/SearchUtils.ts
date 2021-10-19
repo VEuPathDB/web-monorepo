@@ -76,9 +76,10 @@ function combineQueryTermRegexStrs(queryTermRegexStrs: Array<string>) {
 /**
  * Returns help text which describes the search provided by areTermsInString
  * @param itemDescription A description of the items that are being filtered
+ * Note that html is allowed in this help text as safeHtml is introduced
  */
 export function makeSearchHelpText(itemDescription: string) {
-  return `Type one or more terms to filter ${itemDescription}.  Your terms will match words and leading characters of words, and may also include '*' wildcards.  For example, the term 'typ' will match 'typically' and 'type', and '*typ' will additionally match 'atypical'.`;
+  return `Filter ${itemDescription}. Use * as a wildcard for the start of words. For example, <i>typ</i> will match <i>type</i> and <i>typically</i>, while <i>*typ</i> will also match <i>atypical</i>`;
 }
 
 /**
