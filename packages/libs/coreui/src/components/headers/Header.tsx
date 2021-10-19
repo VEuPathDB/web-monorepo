@@ -3,7 +3,7 @@ import styles from '../../styleDefinitions';
 
 export type HeaderProps = {
   /** Underlying HTML element tag to use. */
-  size: 'h1' | 'h2' | 'h3' | 'h4' | 'h5';
+  size: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
   text: string;
   /** Color of the header text. */
   color?: React.CSSProperties['color'];
