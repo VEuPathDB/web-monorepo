@@ -164,9 +164,9 @@ export default class MultiFieldFilter extends React.Component {
     const notAll = (row.value == null);
     let percent = 0;
 
-    if( notAll ) // NOT all (displayName) have data for this row/variable 
+    if( notAll ) // NOT all (displayName) have data for this row/variable
       {  percent = Math.round(row.summary.internalsCount*100/this.props.dataCount); }
-  
+
     return !notAll // all (displayName) have data for this variable
       ? (
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
@@ -181,7 +181,7 @@ export default class MultiFieldFilter extends React.Component {
       )
       : unknownCount > 0 && (
         <div style={{ fontWeight: 300 }}>
-          <b>{toPercentage(row.summary.internalsCount,this.props.dataCount).toLocaleString()}% of {this.props.dataCount.toLocaleString()}</b> {this.props.displayName} have data  
+          <b>{toPercentage(row.summary.internalsCount,this.props.dataCount).toLocaleString()}% of {this.props.dataCount.toLocaleString()}</b> {this.props.displayName} have data
         </div>
       )
   }
@@ -299,7 +299,7 @@ export default class MultiFieldFilter extends React.Component {
             {
               key: 'display',
               sortable: true,
-              width: '22em',
+              // width: '40%',
               wrapCustomHeadings: ({ headingRowIndex }) => headingRowIndex === 0,
               renderHeading: [ this.renderDisplayHeadingName, this.renderDisplayHeadingSearch ],
               renderCell: this.renderDisplayCell
@@ -308,27 +308,51 @@ export default class MultiFieldFilter extends React.Component {
               key: 'filteredCount',
               className: cx('CountCell'),
               sortable: true,
-              width: '11em',
-              name: <div>Remaining {this.props.displayName}</div>,
+              width: '13em',
+              helpText: (
+                <div>
+                  The number of <em>{this.props.displayName}</em> that match the filters applied for other variables<br />
+                  and that have the given value
+                </div>
+              ),
+              wrapCustomHeadings: ({ headingRowIndex }) => headingRowIndex === 0,
+              name: <div style={{textAlign: 'center'}}>Subset of <i>{this.props.displayName}</i></div>,
               renderCell: this.renderCountCell
             },
             {
               key: 'count',
               className: cx('CountCell'),
               sortable: true,
-              width: '11em',
-              name: <div>All {this.props.displayName}</div>,
+              width: '13em',
+              helpText: (
+                <div>
+                  The number of <em>{this.props.displayName}</em> in the dataset that have the given value
+                </div>
+              ),
+              wrapCustomHeadings: ({ headingRowIndex }) => headingRowIndex === 0,
+              name: <div style={{textAlign: 'center'}}>All <i>{this.props.displayName}</i></div>,
               renderCell: this.renderCountCell
             },
             {
               key: 'distribution',
               name: 'Distribution',
+              width: '30%',
+              helpText: (
+                <div>
+                  The subset of <em>{this.props.displayName}</em> that have the given value when other filters have been applied
+                </div>
+              ),
               renderCell: this.renderDistributionCell
             },
             {
               key: '%',
               width: '4em',
               name: '%',
+              helpText: (
+                <div>
+                  The subset of <em>{this.props.displayName}</em> out of all <em>{this.props.displayName}</em> that have the given value
+                </div>
+              ),
               renderCell: this.renderPercentCell
             }
           ]}
