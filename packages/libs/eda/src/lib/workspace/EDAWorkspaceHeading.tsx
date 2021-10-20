@@ -6,9 +6,7 @@ import { useStudyRecord, AnalysisState, DEFAULT_ANALYSIS_NAME } from '../core';
 import { getAnalysisId, isSavedAnalysis } from '../core/utils/analysis';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Button, Tooltip, Icon, makeStyles } from '@material-ui/core';
-import { LinkAttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { useAttemptActionCallback } from '@veupathdb/web-common/lib/hooks/dataRestriction';
-import { Action } from '@veupathdb/web-common/lib/App/DataRestriction/DataRestrictionUtils';
+import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 import { AnalysisNameDialog } from './AnalysisNameDialog';
 
 // Add custom styling for ebrc icons for better alignment in buttons

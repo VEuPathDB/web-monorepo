@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 
-import { RestrictedPage } from '@veupathdb/web-common/lib/App/DataRestriction/RestrictedPage';
-import { useApprovalStatus } from '@veupathdb/web-common/lib/hooks/dataRestriction';
+import { RestrictedPage } from '@veupathdb/study-data-access/lib/data-restriction/RestrictedPage';
+import { useApprovalStatus } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 
 import { AnalysisClient, EDAAnalysisListContainer } from '../core';
 import { SubsettingClient } from '../core/api/subsetting-api';
