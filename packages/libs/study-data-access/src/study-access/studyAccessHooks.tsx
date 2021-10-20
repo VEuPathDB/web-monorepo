@@ -13,13 +13,10 @@ import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { OverflowingTextCell } from '@veupathdb/wdk-client/lib/Views/Strategy/OverflowingTextCell';
 
-import { fetchStudies } from 'ebrc-client/App/Studies/StudyActionCreators';
-import { ApprovalStatus, HistoryResult } from 'ebrc-client/StudyAccess/EntityTypes';
+import { ApprovalStatus, HistoryResult } from './EntityTypes';
 import {
   StudyAccessApi,
-  apiRequests,
-  createStudyAccessRequestHandler
-} from 'ebrc-client/StudyAccess/api';
+} from './api';
 import {
   UserPermissions,
   canAddEndUsers,
@@ -35,19 +32,20 @@ import {
   shouldDisplayProvidersTable,
   shouldDisplayStaffTable,
   shouldDisplayHistoryTable,
-} from 'ebrc-client/StudyAccess/permission';
-import { cx } from 'ebrc-client/components/StudyAccess/StudyAccess';
+} from './permission';
+import { cx } from './components/StudyAccess';
 import {
   Props as UserTableDialogProps,
   AccessDenialContent,
   AddUsersContent,
   ContentProps,
   UsersAddedContent
-} from 'ebrc-client/components/StudyAccess/UserTableDialog';
+} from './components/UserTableDialog';
 import {
   Props as UserTableSectionConfig
-} from 'ebrc-client/components/StudyAccess/UserTableSection';
-import { bindApiRequestCreators } from 'ebrc-client/util/api';
+} from './components/UserTableSection';
+import { fetchStudies, getStudyId } from '../shared/studies';
+import { RecordInstance } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 interface BaseTableRow {
   userId: number;
@@ -129,7 +127,7 @@ interface EndUserTableUiState {
 type StudyStatus =
   | { status: 'loading' }
   | { status: 'not-found' }
-  | { status: 'success', record: any };
+  | { status: 'success', record: RecordInstance };
 
 export function useStudy(datasetId: string): StudyStatus {
   const studies = useWdkService(fetchStudies, []);
@@ -140,8 +138,8 @@ export function useStudy(datasetId: string): StudyStatus {
         return { status: 'loading' };
       }
 
-      const study = studies[0].find(
-        (study: any) => study.id === datasetId && !study.disabled
+      const study = studies.records.find(
+        (study) => getStudyId(study) === datasetId
       );
 
       return study == null
@@ -158,8 +156,7 @@ export function useStudyAccessApi(
 ) {
   return useMemo(
     () => {
-      const handler = createStudyAccessRequestHandler(baseStudyAccessUrl, fetchApi);
-      return bindApiRequestCreators(apiRequests, handler);
+      return new StudyAccessApi({ baseUrl: baseStudyAccessUrl, fetchApi });
     },
     [ baseStudyAccessUrl, fetchApi ]
   );
@@ -344,7 +341,6 @@ export function useStaffTableSectionConfig(
     [
       userId,
       value,
-      loading,
       staffUpdateable,
       staffTableUiState,
       onIsOwnerChange

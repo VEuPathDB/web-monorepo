@@ -30,7 +30,7 @@ import {
   label,
   restricted,
   unrestricted,
-} from '../App/DataRestriction/DataRestrictionActionCreators';
+} from './DataRestrictionActionCreators';
 
 const STUDY_ACTION_CLASS_NAME = 'study-action';
 
@@ -132,8 +132,7 @@ export function useAttemptActionTask<E>(
       }).map((attemptedAction) => {
         if (
           (!unrestricted.isOfType(attemptedAction) &&
-            !restricted.isOfType(attemptedAction)) ||
-          attemptedAction.payload.study.disabled
+            !restricted.isOfType(attemptedAction))
         ) {
           // A study is considered "not found" if:
           // (1) the study DOES NOT exist on the backend

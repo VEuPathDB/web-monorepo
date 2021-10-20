@@ -1,7 +1,7 @@
+import { Study } from '../shared/studies';
 import {
   Action,
   DataRestrictionActionType,
-  Study,
   clearRestrictions,
   restricted,
   unrestricted,

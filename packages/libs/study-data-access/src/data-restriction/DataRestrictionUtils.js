@@ -3,7 +3,8 @@ import React from 'react';
 import { BasketActions, ResultPanelActions, ResultTableSummaryViewActions } from '@veupathdb/wdk-client/lib/Actions';
 import { attemptAction } from './DataRestrictionActionCreators';
 import {getResultTypeDetails} from '@veupathdb/wdk-client/lib/Utils/WdkResult';
-import { isUserApprovedForStudy } from 'ebrc-client/StudyAccess/permission';
+import { isUserApprovedForStudy } from '../study-access/permission';
+import { getStudyAccess, getStudyId, getStudyPolicyUrl, getStudyRequestNeedsApproval } from '../shared/studies';
 
 // Data stuff =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // per https://docs.google.com/presentation/d/1Cmf2GcmGuKbSTcH4wdeTEvRHTi9DDoh5-MnPm1MkcEA/edit?pli=1#slide=id.g3d955ef9d5_3_2
@@ -129,13 +130,13 @@ export const accessLevels = {
 export function getPolicyUrl (study = {}, webAppUrl = '') {
   return !study
     ? null
-    : study.policyUrl
-      ? webAppUrl + '/' + study.policyUrl
+    : getStudyPolicyUrl(study)
+      ? webAppUrl + '/' + getStudyPolicyUrl(study)
       : null;
 }
 
 export function getRequestNeedsApproval (study = {}) {
-  return study.requestNeedsApproval;
+  return getStudyRequestNeedsApproval(study);
 }
 
 export function getActionVerb (action) {
@@ -179,10 +180,12 @@ export function getRestrictionMessage ({ action, study }) {
 // CHECKERS! =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 export function isAllowedAccess ({ permissions, approvedStudies, action, study }) {
+  const access = getStudyAccess(study);
+  const id = getStudyId(study);
   if (sessionStorage.getItem('restriction_override') === 'true') return true;
-  if (!(study.access in accessLevels)) throw new Error(`Unknown access level "${study.access}".`);
-  if (isUserApprovedForStudy(permissions, approvedStudies, study.id)) return true;
-  if (accessLevels[study.access][action] === Require.allow) return true;
+  if (!(access in accessLevels)) throw new Error(`Unknown access level "${access}".`);
+  if (isUserApprovedForStudy(permissions, approvedStudies, id)) return true;
+  if (accessLevels[access][action] === Require.allow) return true;
   //if (accessLevels[study.access][action] === Require.login) if (!user.isGuest) return true;
   // access not allowed, we need to build the modal popup
   return false;
@@ -231,7 +234,7 @@ export function actionRequiresLogin ({ study, action }) {
 
 // we will request the user to request approval if explicit approval needed (guest or not)
 export function actionRequiresApproval ({ study, action }) {
-  if (accessLevels[study.access][action] === Require.approval) return true;
+  if (accessLevels[getStudyAccess(study)][action] === Require.approval) return true;
   else return false;
 }
 

@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { getRequestNeedsApproval, getPolicyUrl, isPrereleaseStudy, isActionStrict, getRestrictionMessage, actionRequiresApproval } from 'ebrc-client/App/DataRestriction/DataRestrictionUtils';
-import Modal from 'ebrc-client/App/Modal';
+import { getRequestNeedsApproval, getPolicyUrl, isPrereleaseStudy, isActionStrict, getRestrictionMessage, actionRequiresApproval } from './DataRestrictionUtils';
+import Modal from '@veupathdb/wdk-client/lib/Components/Overlays/Modal';
 import { IconAlt as Icon, Link } from '@veupathdb/wdk-client/lib/Components';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import './DataRestrictionModal.scss';
+import { getStudyAccess, getStudyId, getStudyName } from '../shared/studies';
 
 class DataRestrictionModal extends React.Component {
   constructor (props) {
@@ -17,19 +18,20 @@ class DataRestrictionModal extends React.Component {
   }
 
   renderRestrictionMessage () {
-    const { study, user, permissions, webAppUrl } = this.props;
-    const studyPageUrl = webAppUrl + '/app' + study.route;
-    return (isPrereleaseStudy(study.access, study.id, user, permissions))
+    const { study, user, permissions, makeStudyPageRoute } = this.props;
+    const studyPageUrl = makeStudyPageRoute(getStudyId(study));
+    const studyName = getStudyName(study);
+    return (isPrereleaseStudy(getStudyAccess(study), getStudyId(study), user, permissions))
       ? (
         <div>
-          <h2>The {safeHtml(study.name)} study is not yet publicly available.</h2>
+          <h2>The {safeHtml(studyName)} study is not yet publicly available.</h2>
           <hr />
-          <p>Please see the <a href={studyPageUrl}>{safeHtml(study.name)} study page</a> to learn more about the study and how to request access to the data.</p>
+          <p>Please see the <a href={studyPageUrl}>{safeHtml(studyName)} study page</a> to learn more about the study and how to request access to the data.</p>
         </div>
         ) 
       : (
         <div>
-          <h2>The {safeHtml(study.name)} study has data access restrictions.</h2>
+          <h2>The {safeHtml(studyName)} study has data access restrictions.</h2>
           <hr />
         </div>
         );
@@ -39,7 +41,7 @@ class DataRestrictionModal extends React.Component {
     const { study, user, permissions, action, webAppUrl } = this.props;
     const message = getRestrictionMessage({ study, action });
     const policyUrl = getPolicyUrl(study, webAppUrl);
-    return (isPrereleaseStudy(study.access, study.id, user, permissions))
+    return (isPrereleaseStudy(getStudyAccess(study), getStudyId(study), user, permissions))
       ? null
       : !policyUrl
         ? null
@@ -63,7 +65,7 @@ class DataRestrictionModal extends React.Component {
     const { action, study, user, permissions, showLoginForm, onClose, webAppUrl } = this.props;
     const strict = isActionStrict(action);
     const approvalRequired = actionRequiresApproval({ action, study });
-    return (isPrereleaseStudy(study.access, study.id, user, permissions))
+    return (isPrereleaseStudy(getStudyAccess(study), getStudyId(study), user, permissions))
       ? (
         <div className="DataRestrictionModal-Buttons">
           {!strict
@@ -99,7 +101,7 @@ class DataRestrictionModal extends React.Component {
           )}
         {!approvalRequired ? null : (
           <button onClick={() => {
-            const loggedInUrl = `${webAppUrl}/app/request-access/${study.id}?redirectUrl=${encodeURIComponent(window.location.href)}`;
+            const loggedInUrl = `${webAppUrl}/app/request-access/${getStudyId(study)}?redirectUrl=${encodeURIComponent(window.location.href)}`;
 
             if (user.isGuest) {
               showLoginForm(loggedInUrl);
@@ -167,7 +169,7 @@ DataRestrictionModal.propTypes = {
   when: PropTypes.bool,
   onClose: PropTypes.func.isRequired,
   showLoginForm: PropTypes.func.isRequired,
-  webAppUrl: PropTypes.string.isRequired
+  makeStudyPageRoute: PropTypes.func.isRequired
 };
 
 export default DataRestrictionModal;

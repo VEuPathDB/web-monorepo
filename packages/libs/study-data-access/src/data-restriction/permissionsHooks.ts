@@ -5,7 +5,7 @@ import { defaultMemoize } from 'reselect';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
-import { UserPermissions, checkPermissions } from 'ebrc-client/StudyAccess/permission';
+import { UserPermissions, checkPermissions } from '../study-access/permission';
 
 export type AsyncUserPermissions =
   | { loading: true }

@@ -1,22 +1,23 @@
 import {
-  Unpack,
-  arrayOf,
+  TypeOf,
+  array,
   boolean,
-  combine,
-  constant,
+  intersection,
+  literal,
   number,
-  objectOf,
-  oneOf,
-  optional,
+  type,
+  union,
+  partial,
   record,
-  string
-} from '@veupathdb/wdk-client/lib/Utils/Json';
+  string,
+  keyof
+} from 'io-ts';
 
 export const datastoreId = number;
 
-export type DatastoreId = Unpack<typeof datastoreId>;
+export type DatastoreId = TypeOf<typeof datastoreId>;
 
-export const userDetails = record({
+export const userDetails = type({
   userId: number,
   firstName: string,
   lastName: string,
@@ -24,249 +25,257 @@ export const userDetails = record({
   email: string
 });
 
-export type UserDetails = Unpack<typeof userDetails>;
+export type UserDetails = TypeOf<typeof userDetails>;
 
-export const staff = record({
+export const staff = type({
   staffId: datastoreId,
   user: userDetails,
   isOwner: boolean
 });
 
-export type Staff = Unpack<typeof staff>;
+export type Staff = TypeOf<typeof staff>;
 
-export const staffList = record({
-  data: arrayOf(staff),
+export const staffList = type({
+  data: array(staff),
   rows: number,
   offset: number,
   total: number
 });
 
-export type StaffList = Unpack<typeof staffList>;
+export type StaffList = TypeOf<typeof staffList>;
 
-export const newStaffRequest = record({
+export const newStaffRequest = type({
   userId: number,
   isOwner: boolean
 });
 
-export type NewStaffRequest = Unpack<typeof newStaffRequest>;
+export type NewStaffRequest = TypeOf<typeof newStaffRequest>;
 
-export const newStaffResponse = record({
+export const newStaffResponse = type({
   staffId: number
 });
 
-export type NewStaffResponse = Unpack<typeof newStaffResponse>;
+export type NewStaffResponse = TypeOf<typeof newStaffResponse>;
 
-export const staffPatch = arrayOf(
-  record({
-    op: constant('replace'),
-    path: constant('/isOwner'),
+export const staffPatch = array(
+  type({
+    op: literal('replace'),
+    path: literal('/isOwner'),
     value: boolean
   })
 );
 
-export type StaffPatch = Unpack<typeof staffPatch>;
+export type StaffPatch = TypeOf<typeof staffPatch>;
 
-export const restrictionLevel = oneOf(
-  constant('public'),
-  constant('prerelease'),
-  constant('protected'),
-  constant('controlled'),
-  constant('private')
-);
-
-export type RestrictionLevel = Unpack<typeof restrictionLevel>;
-
-export const approvalStatus = oneOf(
-  constant('approved'),
-  constant('requested'),
-  constant('denied')
-);
-
-export type ApprovalStatus = Unpack<typeof approvalStatus>;
-
-export const endUser = record({
-  user: userDetails,
-  datasetId: string,
-  startDate: optional(string),
-  duration: optional(number),
-  restrictionLevel,
-  // FIXME: The api docs say this is required. Who is right?
-  purpose: optional(string),
-  // FIXME: The api docs say this is required. Who is right?
-  researchQuestion: optional(string),
-  // FIXME: The api docs say this is required. Who is right?
-  analysisPlan: optional(string),
-  // FIXME: The api docs say this is required. Who is right?
-  disseminationPlan: optional(string),
-  approvalStatus,
-  denialReason: optional(string),
-  // FIXME: The api docs say this is required. Who is right?
-  priorAuth: optional(string)
+export const restrictionLevel = keyof({
+  public: null,
+  prerelease: null,
+  protected: null,
+  controlled: null,
+  private: null,
 });
 
-export type EndUser = Unpack<typeof endUser>;
+export type RestrictionLevel = TypeOf<typeof restrictionLevel>;
 
-export const endUserCreateRequest = combine(
-  oneOf(
-    record({ userId: number }),
-    record({ email: string })
-  ),
-  record({
-    purpose: string,
-    researchQuestion: string,
-    analysisPlan: string,
-    disseminationPlan: string,
-    priorAuth: string,
+export const approvalStatus = keyof({
+  approved: null,
+  requested: null,
+  denied: null,
+});
+
+export type ApprovalStatus = TypeOf<typeof approvalStatus>;
+
+export const endUser = intersection([
+  type({
+    user: userDetails,
     datasetId: string,
-    startDate: optional(string),
-    duration: optional(number),
-    restrictionLevel: optional(restrictionLevel),
-    approvalStatus: optional(approvalStatus),
-    denialReason: optional(string)
-  })
-);
-
-export type EndUserCreateRequest = Unpack<typeof endUserCreateRequest>;
-
-export const endUserCreateResponse = oneOf(
-  record({
-    created: constant(false)
+    restrictionLevel,
+    approvalStatus,
   }),
-  record({
-    created: constant(true),
+  partial({
+    startDate: string,
+    duration: number,
+    // FIXME: The api docs say this is required. Who is right?
+    purpose: string,
+    // FIXME: The api docs say this is required. Who is right?
+    researchQuestion: string,
+    // FIXME: The api docs say this is required. Who is right?
+    analysisPlan: string,
+    // FIXME: The api docs say this is required. Who is right?
+    disseminationPlan: string,
+    denialReason: string,
+    // FIXME: The api docs say this is required. Who is right?
+    priorAuth: string,
+  })
+])
+
+export type EndUser = TypeOf<typeof endUser>;
+
+export const endUserCreateRequest = intersection([
+  union([
+    type({ userId: number }),
+    type({ email: string })
+  ]),
+  intersection([
+    type({
+      purpose: string,
+      researchQuestion: string,
+      analysisPlan: string,
+      disseminationPlan: string,
+      priorAuth: string,
+      datasetId: string,
+    }),
+    partial({
+      startDate: string,
+      duration: number,
+      restrictionLevel: restrictionLevel,
+      approvalStatus: approvalStatus,
+      denialReason: string,
+    })
+  ])
+]);
+
+export type EndUserCreateRequest = TypeOf<typeof endUserCreateRequest>;
+
+export const endUserCreateResponse = union([
+  type({
+    created: literal(false)
+  }),
+  type({
+    created: literal(true),
     endUserId: string
   })
-);
+]);
 
-export type EndUserCreateResponse = Unpack<typeof endUserCreateResponse>;
+export type EndUserCreateResponse = TypeOf<typeof endUserCreateResponse>;
 
-export const endUserList = record({
-  data: arrayOf(endUser),
+export const endUserList = type({
+  data: array(endUser),
   rows: number,
   offset: number,
   total: number
 });
 
-export type EndUserList = Unpack<typeof endUserList>;
+export type EndUserList = TypeOf<typeof endUserList>;
 
-export const endUserPatchOp = oneOf(
-  constant('add'),
-  constant('remove'),
-  constant('replace')
-);
+export const endUserPatchOp = keyof({
+  add: null,
+  remove: null,
+  replace: null,
+});
 
-export type EndUserPatchOp = Unpack<typeof endUserPatchOp>;
+export type EndUserPatchOp = TypeOf<typeof endUserPatchOp>;
 
-export const endUserPatch = arrayOf(
-  oneOf(
-    record({
-      op: constant('add'),
+export const endUserPatch = array(
+  union([
+    type({
+      op: literal('add'),
       path: string,
       value: string
     }),
-    record({
-      op: constant('remove'),
+    type({
+      op: literal('remove'),
       path: string
     }),
-    record({
-      op: constant('replace'),
+    type({
+      op: literal('replace'),
       path: string,
       value: string
     })
-  )
+  ])
 );
 
-export type EndUserPatch = Unpack<typeof endUserPatch>;
+export type EndUserPatch = TypeOf<typeof endUserPatch>;
 
-export const datasetProvider = record({
+export const datasetProvider = type({
   providerId: number,
   datasetId: string,
   user: userDetails,
   isManager: boolean
 });
 
-export type DatasetProvider = Unpack<typeof datasetProvider>;
+export type DatasetProvider = TypeOf<typeof datasetProvider>;
 
-export const datasetProviderList = record({
-  data: arrayOf(datasetProvider),
+export const datasetProviderList = type({
+  data: array(datasetProvider),
   rows: number,
   offset: number,
   total: number
 });
 
-export type DatasetProviderList = Unpack<typeof datasetProviderList>;
+export type DatasetProviderList = TypeOf<typeof datasetProviderList>;
 
-export const datasetProviderCreateRequest = combine(
-  oneOf(
-    record({ userId: number }),
-    record({ email: string })
-  ),
-  record({
+export const datasetProviderCreateRequest = intersection([
+  union([
+    type({ userId: number }),
+    type({ email: string })
+  ]),
+  type({
     datasetId: string,
     isManager: boolean
   })
-);
+]);
 
-export type DatasetProviderCreateRequest = Unpack<typeof datasetProviderCreateRequest>;
+export type DatasetProviderCreateRequest = TypeOf<typeof datasetProviderCreateRequest>;
 
-export const datasetProviderCreateResponse = oneOf(
-  record({
-    created: constant(false)
+export const datasetProviderCreateResponse = union([
+  type({
+    created: literal(false)
   }),
-  record({
-    created: constant(true),
+  type({
+    created: literal(true),
     providerId: number
   })
-);
+]);
 
-export type DatasetProviderCreateResponse = Unpack<typeof datasetProviderCreateResponse>;
+export type DatasetProviderCreateResponse = TypeOf<typeof datasetProviderCreateResponse>;
 
-export const datasetProviderPatch = arrayOf(
-  record({
-    op: constant('replace'),
-    path: constant('/isManager'),
+export const datasetProviderPatch = array(
+  type({
+    op: literal('replace'),
+    path: literal('/isManager'),
     value: boolean
   })
 );
 
-export type DatasetProviderPatch = Unpack<typeof datasetProviderPatch>;
+export type DatasetProviderPatch = TypeOf<typeof datasetProviderPatch>;
 
-export const providerPermissionEntry = record({
-  type: constant('provider'),
+export const providerPermissionEntry = type({
+  type: literal('provider'),
   isManager: boolean
 });
 
-export type ProviderPermissionEntry = Unpack<typeof providerPermissionEntry>;
+export type ProviderPermissionEntry = TypeOf<typeof providerPermissionEntry>;
 
-export const endUserPermissionEntry = record({
-  type: constant('end-user')
+export const endUserPermissionEntry = type({
+  type: literal('end-user')
 });
 
-export type EndUserPermissionEntry = Unpack<typeof endUserPermissionEntry>;
+export type EndUserPermissionEntry = TypeOf<typeof endUserPermissionEntry>;
 
-export const datasetPermissionEntry = oneOf(
+export const datasetPermissionEntry = union([
   providerPermissionEntry,
   endUserPermissionEntry
-);
+]);
 
-export type DatasetPermissionEntry = Unpack<typeof datasetPermissionEntry>;
+export type DatasetPermissionEntry = TypeOf<typeof datasetPermissionEntry>;
 
-export const permissionsResponse = record({
-  isOwner: optional(boolean),
-  isStaff: optional(boolean),
-  perDataset: optional(objectOf(datasetPermissionEntry))
+export const permissionsResponse = partial({
+  isOwner: boolean,
+  isStaff: boolean,
+  perDataset: record(string, datasetPermissionEntry)
 });
 
-export type PermissionsResponse = Unpack<typeof permissionsResponse>;
+export type PermissionsResponse = TypeOf<typeof permissionsResponse>;
 
-export const historyMeta = record({
+export const historyMeta = type({
   rows: number,
   offset: number
 });
 
-export type HistoryMeta = Unpack<typeof historyMeta>;
+export type HistoryMeta = TypeOf<typeof historyMeta>;
 
-export const historyUser = record({
+export const historyUser = type({
   userID: number,
   firstName: string,
   lastName: string,
@@ -274,119 +283,124 @@ export const historyUser = record({
   email: string
 });
 
-export type HistoryUser = Unpack<typeof historyUser>;
+export type HistoryUser = TypeOf<typeof historyUser>;
 
-export const historyCause = record({
+export const historyCause = type({
   user: historyUser,
-  action: oneOf(
-    constant('CREATE'),
-    constant('UPDATE'),
-    constant('DELETE')
-  ),
+  action: keyof({
+    CREATE: null,
+    UPDATE: null,
+    DELETE: null,
+  }),
   timestamp: string
 });
 
-export type HistoryCause = Unpack<typeof historyCause>;
+export type HistoryCause = TypeOf<typeof historyCause>;
 
-export const historyRow = record({
-  endUserID: number,
-  user: historyUser,
-  datasetPresenterID: string,
-  restrictionLevel: oneOf(
-    constant('PUBLIC'),
-    constant('PRERELEASE'),
-    constant('PROTECTED'),
-    constant('CONTROLLED'),
-    constant('PRIVATE')
-  ),
-  approvalStatus: oneOf(
-    constant('APPROVED'),
-    constant('REQUESTED'),
-    constant('DENIED')
-  ),
-  startDate: string,
-  duration: number,
-  // FIXME: The api docs say this is required. Who is right?
-  purpose: optional(string),
-  // FIXME: The api docs say this is required. Who is right?
-  researchQuestion: optional(string),
-  // FIXME: The api docs say this is required. Who is right?
-  analysisPlan: optional(string),
-  // FIXME: The api docs say this is required. Who is right?
-  disseminationPlan: optional(string),
-  // FIXME: The api docs say this is required. Who is right?
-  denialReason: optional(string),
-  // FIXME: The api docs say this is required. Who is right?
-  dateDenied: optional(string),
-  allowSelfEdits: boolean
-});
+export const historyRow = intersection([
+  type({
+   endUserID: number,
+   user: historyUser,
+   datasetPresenterID: string,
+   restrictionLevel: keyof({
+     PUBLIC: null,
+     PRERELEASE: null,
+     PROTECTED: null,
+     CONTROLLED: null,
+     PRIVATE: null,
+   }),
+   approvalStatus: keyof({
+     APPROVED: null,
+     REQUESTED: null,
+     DENIED: null
+   }),
+   startDate: string,
+   duration: number,
+   allowSelfEdits: boolean
+  }),
+  partial({
+   // FIXME: The api docs say this is required. Who is right?
+   purpose: string,
+   // FIXME: The api docs say this is required. Who is right?
+   researchQuestion: string,
+   // FIXME: The api docs say this is required. Who is right?
+   analysisPlan: string,
+   // FIXME: The api docs say this is required. Who is right?
+   disseminationPlan: string,
+   // FIXME: The api docs say this is required. Who is right?
+   denialReason: string,
+   // FIXME: The api docs say this is required. Who is right?
+   dateDenied: string,
+ })
 
-export type HistoryRow = Unpack<typeof historyRow>;
+])
 
-export const historyResult = record({
+export type HistoryRow = TypeOf<typeof historyRow>;
+
+export const historyResult = type({
   cause: historyCause,
   row: historyRow
 });
 
-export type HistoryResult = Unpack<typeof historyResult>;
+export type HistoryResult = TypeOf<typeof historyResult>;
 
-export const historyResponse = record({
+export const historyResponse = type({
   meta: historyMeta,
-  results: arrayOf(historyResult)
+  results: array(historyResult)
 });
 
-export type HistoryResponse = Unpack<typeof historyResponse>;
+export type HistoryResponse = TypeOf<typeof historyResponse>;
 
-export const badRequest = record({
-  status: constant('bad-request'),
+export const badRequest = type({
+  status: literal('bad-request'),
   message: string
 });
 
-export type BadRequest = Unpack<typeof badRequest>;
+export type BadRequest = TypeOf<typeof badRequest>;
 
-export const unauthorized = record({
-  status: constant('unauthorized'),
+export const unauthorized = type({
+  status: literal('unauthorized'),
   message: string
 });
 
-export type Unauthorized = Unpack<typeof unauthorized>;
+export type Unauthorized = TypeOf<typeof unauthorized>;
 
-export const forbidden = record({
-  status: constant('forbidden'),
+export const forbidden = type({
+  status: literal('forbidden'),
   message: string
 });
 
-export type Forbidden = Unpack<typeof forbidden>;
+export type Forbidden = TypeOf<typeof forbidden>;
 
-export const notFound = record({
-  status: constant('not-found'),
+export const notFound = type({
+  status: literal('not-found'),
   message: string
 });
 
-export type NotFound = Unpack<typeof notFound>;
+export type NotFound = TypeOf<typeof notFound>;
 
-export const methodNotAllowed = record({
-  status: constant('bad-method'),
+export const methodNotAllowed = type({
+  status: literal('bad-method'),
   message: string
 });
 
-export type MethodNotAllowed = Unpack<typeof methodNotAllowed>;
+export type MethodNotAllowed = TypeOf<typeof methodNotAllowed>;
 
-export const unprocessableEntity = record({
-  status: constant('invalid-input'),
+export const unprocessableEntity = type({
+  status: literal('invalid-input'),
   message: string,
-  errors: record({
-    general: arrayOf(string),
-    byKey: objectOf(arrayOf(string))
+  errors: type({
+    general: array(string),
+    byKey: record(string, array(string))
   })
 });
 
-export type UnprocessableEntity = Unpack<typeof unprocessableEntity>;
+export type UnprocessableEntity = TypeOf<typeof unprocessableEntity>;
 
-export const serverError = record({
-  status: constant('server-error'),
+export const serverError = type({
+  status: literal('server-error'),
   message: string,
   requestId: string
 });
 
-export type ServerError = Unpack<typeof serverError>;
+export type ServerError = TypeOf<typeof serverError>;

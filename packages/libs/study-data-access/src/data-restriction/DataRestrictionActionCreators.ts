@@ -1,8 +1,8 @@
 import { ActionCreatorServices } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
 import { makeActionCreator, InferAction } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
+import { fetchStudies, getStudyId, Study } from '../shared/studies';
 
-import { fetchStudies } from 'ebrc-client/App/Studies/StudyActionCreators';
-import { checkPermissions, UserPermissions } from 'ebrc-client/StudyAccess/permission';
+import { checkPermissions, UserPermissions } from '../study-access/permission';
 
 import { isAllowedAccess } from './DataRestrictionUtils';
 
@@ -10,10 +10,6 @@ export type Action =
   | InferAction<typeof restricted>
   | InferAction<typeof unrestricted>
   | InferAction<typeof clearRestrictions>;
-
-// FIXME: Retire this type once the study entities derived by fetchStudies
-// have been properly typed
-export type Study = any;
 
 // FIXME: Retire this type once DataRestrictionUtils has been properly typed
 export type DataRestrictionActionType = string;
@@ -35,7 +31,7 @@ export function attemptAction(action: DataRestrictionActionType, details: Action
           permissions,
           // FIXME: Either properly type the approvedStudies property, or retire it
           user.properties.approvedStudies as unknown as string[] | undefined,
-          studies[0],
+          studies.records,
           action,
           details
         );
@@ -71,7 +67,7 @@ function handleAction(
   { studyId, onAllow, onDeny }: Partial<ActionAttemptDetails> = {}
 ): Action {
   console.info(label('Restriction Encountered:'), { action, studyId });
-  const study = studies.find(study => studyId === study.id);
+  const study = studies.find(study => studyId === getStudyId(study));
 
   if (study == null) {
     const error = new Error(label(`Invalid reference: couldn't find study with id "${studyId}"`));

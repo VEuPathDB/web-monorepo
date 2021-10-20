@@ -1,11 +1,11 @@
 import { zipWith } from 'lodash';
 
 import {
-  BoundApiRequestsObject,
-  createFetchApiRequestHandler,
   createJsonRequest,
-  standardTransformer
-} from 'ebrc-client/util/api';
+  ApiRequest,
+  FetchClient,
+  ioTransformer
+} from '@veupathdb/http-utils';
 import {
   ApprovalStatus,
   EndUserCreateRequest,
@@ -23,7 +23,7 @@ import {
   newStaffResponse,
   permissionsResponse,
   staffList
-} from 'ebrc-client/StudyAccess/EntityTypes';
+} from './EntityTypes';
 
 // FIXME: This should be configurable
 export const STUDY_ACCESS_SERVICE_URL = '/dataset-access';
@@ -35,168 +35,178 @@ const END_USERS_PATH = '/dataset-end-users';
 const PERMISSIONS_PATH = '/permissions';
 const HISTORY_PATH = '/history';
 
-export function createStudyAccessRequestHandler(
-  baseStudyAccessUrl: string,
-  fetchApi?: Window['fetch']
-) {
-  // FIXME: DRY this up
-  const wdkCheckAuth = document.cookie.split('; ').find(x => x.startsWith('wdk_check_auth=')) ?? '';
-  const authKey = wdkCheckAuth.replace('wdk_check_auth=', '');
+export class StudyAccessApi extends FetchClient {
 
-  return createFetchApiRequestHandler({
-    baseUrl: baseStudyAccessUrl,
-    init: {
+  fetch<T>(apiRequest: ApiRequest<T>) {
+    const wdkCheckAuth = document.cookie.split('; ').find(x => x.startsWith('wdk_check_auth=')) ?? '';
+    const authKey = wdkCheckAuth.replace('wdk_check_auth=', '');  
+    return super.fetch({
+      ...apiRequest,
       headers: {
-        'Auth-Key': authKey
+        ...apiRequest.headers,
+        'Auth-key': authKey
       }
-    },
-    fetchApi
-  });
-}
+    })
+  }
 
-export const apiRequests = {
-  fetchStaffList: function(limit?: number, offset?: number) {
+  fetchStaffList(limit?: number, offset?: number) {
     const queryString = makeQueryString(
       ['limit', 'offset'],
       [limit, offset]
     );
 
-    return {
+    return this.fetch(createJsonRequest({
       path: `${STAFF_PATH}${queryString}`,
       method: 'GET',
-      transformResponse: standardTransformer(staffList)
-    };
-  },
-  createStaffEntry: function(requestBody: NewStaffRequest) {
-    return createJsonRequest({
+      transformResponse: ioTransformer(staffList)
+    }));
+  }
+
+  createStaffEntry(requestBody: NewStaffRequest) {
+    return this.fetch(createJsonRequest({
       path: STAFF_PATH,
       method: 'POST',
       body: requestBody,
-      transformResponse: standardTransformer(newStaffResponse)
-    });
-  },
-  updateStaffEntry: function(staffId: number, requestBody: StaffPatch) {
-    return createJsonRequest({
+      transformResponse: ioTransformer(newStaffResponse)
+    }));
+  }
+
+  updateStaffEntry(staffId: number, requestBody: StaffPatch) {
+    return this.fetch(createJsonRequest({
       path: `${STAFF_PATH}/${staffId}`,
       method: 'PATCH',
       body: requestBody,
       transformResponse: noContent
-    });
-  },
-  deleteStaffEntry: function(staffId: number) {
-    return {
+    }));
+  }
+
+  deleteStaffEntry(staffId: number) {
+    return this.fetch({
       path: `${STAFF_PATH}/${staffId}`,
       method: 'DELETE',
       transformResponse: noContent
-    };
-  },
-  fetchProviderList: function(datasetId: string, limit?: number, offset?: number) {
+    });
+  }
+
+  fetchProviderList(datasetId: string, limit?: number, offset?: number) {
     const queryString = makeQueryString(
       ['datasetId', 'limit', 'offset'],
       [datasetId, limit, offset]
     );
 
-    return {
+    return this.fetch({
       path: `${PROVIDERS_PATH}${queryString}`,
       method: 'GET',
-      transformResponse: standardTransformer(datasetProviderList)
-    };
-  },
-  createProviderEntry: function(requestBody: DatasetProviderCreateRequest) {
-    return createJsonRequest({
+      transformResponse: ioTransformer(datasetProviderList)
+    });
+  }
+
+  createProviderEntry(requestBody: DatasetProviderCreateRequest) {
+    return this.fetch(createJsonRequest({
       path: PROVIDERS_PATH,
       method: 'POST',
       body: requestBody,
-      transformResponse: standardTransformer(datasetProviderCreateResponse)
-    })
-  },
-  updateProviderEntry: function(providerId: number, requestBody: DatasetProviderPatch) {
-    return createJsonRequest({
+      transformResponse: ioTransformer(datasetProviderCreateResponse)
+    }));
+  }
+
+  updateProviderEntry(providerId: number, requestBody: DatasetProviderPatch) {
+    return this.fetch(createJsonRequest({
       path: `${PROVIDERS_PATH}/${providerId}`,
       method: 'PATCH',
       body: requestBody,
       transformResponse: noContent
-    });
-  },
-  deleteProviderEntry: function(providerId: number) {
-    return {
+    }));
+  }
+
+  deleteProviderEntry(providerId: number) {
+    return this.fetch({
       path: `${PROVIDERS_PATH}/${providerId}`,
       method: 'DELETE',
       transformResponse: noContent
-    };
-  },
-  fetchEndUserList: function(datasetId: string, limit?: number, offset?: number, approval?: ApprovalStatus) {
+    });
+  }
+
+  fetchEndUserList(datasetId: string, limit?: number, offset?: number, approval?: ApprovalStatus) {
     const queryString = makeQueryString(
       ['datasetId', 'limit', 'offset', 'approval'],
       [datasetId, limit, offset, approval]
     );
 
-    return {
+    return this.fetch({
       path: `${END_USERS_PATH}${queryString}`,
       method: 'GET',
-      transformResponse: standardTransformer(endUserList)
-    };
-  },
-  createEndUserEntry: function(requestBody: EndUserCreateRequest) {
-    return createJsonRequest({
+      transformResponse: ioTransformer(endUserList)
+    });
+  }
+
+  createEndUserEntry(requestBody: EndUserCreateRequest) {
+    return this.fetch(createJsonRequest({
       path: END_USERS_PATH,
       method: 'POST',
       body: requestBody,
-      transformResponse: standardTransformer(endUserCreateResponse)
-    });
-  },
-  fetchEndUserEntry: function(wdkUserId: number, datasetId: string) {
+      transformResponse: ioTransformer(endUserCreateResponse)
+    }));
+  }
+
+  fetchEndUserEntry(wdkUserId: number, datasetId: string) {
     const endUserId = makeEndUserId(
       wdkUserId,
       datasetId
     );
 
-    return {
+    return this.fetch({
       path: `${END_USERS_PATH}/${wdkUserId}-${endUserId}`,
       method: 'GET',
-      transformResponse: standardTransformer(endUser)
-    };
-  },
-  updateEndUserEntry: function(wdkUserId: number, datasetId: string, requestBody: EndUserPatch) {
+      transformResponse: ioTransformer(endUser)
+    });
+  }
+
+  updateEndUserEntry(wdkUserId: number, datasetId: string, requestBody: EndUserPatch) {
     const endUserId = makeEndUserId(
       wdkUserId,
       datasetId
     );
 
-    return createJsonRequest({
+    return this.fetch(createJsonRequest({
       path: `${END_USERS_PATH}/${endUserId}`,
       method: 'PATCH',
       body: requestBody,
       transformResponse: noContent
-    });
-  },
-  deleteEndUserEntry: function(wdkUserId: number, datasetId: string) {
+    }));
+  }
+
+  deleteEndUserEntry(wdkUserId: number, datasetId: string) {
     const endUserId = makeEndUserId(
       wdkUserId,
       datasetId
     );
 
-    return {
+    return this.fetch({
       path: `${END_USERS_PATH}/${endUserId}`,
       method: 'DELETE',
       transformResponse: noContent
-    };
-  },
-  fetchPermissions: function() {
-    return {
+    });
+  }
+
+  fetchPermissions() {
+    return this.fetch({
       path: PERMISSIONS_PATH,
       method: 'GET',
-      transformResponse: standardTransformer(permissionsResponse)
-    };
-  },
-  fetchHistory: function() {
-    return {
+      transformResponse: ioTransformer(permissionsResponse)
+    });
+  }
+
+  fetchHistory() {
+    return this.fetch({
       path: HISTORY_PATH,
       method: 'GET',
-      transformResponse: standardTransformer(historyResponse)
-    }
+      transformResponse: ioTransformer(historyResponse)
+    });
   }
+
 }
+
 
 async function noContent(body: unknown) {
   return null;
@@ -226,5 +236,3 @@ function makeQueryString(
     ? ''
     : `?${nonNullParams.join('&')}`;
 }
-
-export type StudyAccessApi = BoundApiRequestsObject<typeof apiRequests>;

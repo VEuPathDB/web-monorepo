@@ -2,7 +2,7 @@ import React, { ReactEventHandler, ReactNode } from 'react';
 
 import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
 
-import { ApprovalStatus } from 'ebrc-client/hooks/dataRestriction';
+import { ApprovalStatus } from './dataRestrictionHooks';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
 interface Props {

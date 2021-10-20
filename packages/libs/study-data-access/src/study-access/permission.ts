@@ -4,12 +4,11 @@ import {
   ApprovalStatus,
   DatasetPermissionEntry,
   PermissionsResponse
-} from 'ebrc-client/StudyAccess/EntityTypes';
+} from './EntityTypes';
 import {
   STUDY_ACCESS_SERVICE_URL,
-  apiRequests,
-  createStudyAccessRequestHandler
-} from 'ebrc-client/StudyAccess/api';
+  StudyAccessApi
+} from './api';
 
 export type UserPermissions =
   | StaffPermissions
@@ -176,9 +175,9 @@ export function isUserApprovedForStudy(
 }
 
 async function fetchPermissions(fetchApi?: Window['fetch']) {
-  const handler = createStudyAccessRequestHandler(STUDY_ACCESS_SERVICE_URL, fetchApi);
+  const api = new StudyAccessApi({ baseUrl: STUDY_ACCESS_SERVICE_URL, fetchApi });
 
-  const permissionsResponse = await handler(apiRequests.fetchPermissions());
+  const permissionsResponse = await api.fetchPermissions();
 
   return permissionsResponseToUserPermissions(permissionsResponse);
 }

@@ -7,7 +7,7 @@ import { useLocation } from 'react-router';
 import { UserSessionActions } from '@veupathdb/wdk-client/lib/Actions';
 import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
-import { usePermissions } from '../../hooks/permissions';
+import { usePermissions } from './permissionsHooks';
 
 import { clearRestrictions } from './DataRestrictionActionCreators';
 import DataRestrictionModal from './DataRestrictionModal';
@@ -18,7 +18,7 @@ function DataRestrictionDaemon(props) {
   const {
     dataRestriction,
     user,
-    webAppUrl,
+    makeStudyPageRoute,
     clearRestrictions,
     showLoginForm,
   } = props;
@@ -43,7 +43,7 @@ function DataRestrictionDaemon(props) {
       permissions={permissionsValue.permissions}
       study={dataRestriction.study}
       action={dataRestriction.action}
-      webAppUrl={webAppUrl}
+      makeStudyPageRoute={makeStudyPageRoute}
       onClose={clearRestrictions}
       showLoginForm={showLoginForm}
     />
@@ -53,7 +53,7 @@ function DataRestrictionDaemon(props) {
 DataRestrictionDaemon.propTypes = {
   dataRestriction: PropTypes.object,
   user: PropTypes.object,
-  webAppUrl: PropTypes.string.isRequired,
+  makeStudyPageRoute: PropTypes.func.isRequired,
   clearRestrictions: PropTypes.func.isRequired,
   showLoginForm: PropTypes.func.isRequired,
 };
@@ -62,7 +62,6 @@ const enhance = connect(
   state => ({
     dataRestriction: state.dataRestriction,
     user: state.globalData.user,
-    webAppUrl: state.globalData.siteConfig.webAppUrl
   }),
   {
     clearRestrictions,
