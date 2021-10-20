@@ -74,6 +74,23 @@ const siteAnnouncements = [
     }
   },
 */
+
+{
+    id: 'clinepi-beta',
+    renderDisplay: (props) => {
+    if ( (props.projectId == 'ClinEpiDB' || props.projectId == 'AllClinEpiDB') && (props.location.pathname === '/') ) {
+        return (
+          <div>
+           We are excited to announce the beta release of our new and improved <span style={{fontWeight: 'bold', fontStyle: 'italic'}}>data exploration platform</span> 
+             &nbsp;at <a target="_blank" href="https://beta.clinepidb.org">beta.clinepidb.org!</a>.
+           &nbsp;For hands-on training with the new platform, <a target="_blank" href="https://forms.gle/x7c11Xqrm8pgRWrC6">register for our upcoming workshop!</a>
+          </div>
+        );
+      }
+      return null;
+    }
+  },
+
  // clinepi workshop*
 /* 
  {
