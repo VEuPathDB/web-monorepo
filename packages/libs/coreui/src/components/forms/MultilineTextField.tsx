@@ -91,7 +91,7 @@ export default function MultilineTextField({
               typography.metaData,
               {
                 position: 'absolute',
-                top: currentHeight - nonInputHeight - 35,
+                top: currentHeight - nonInputHeight + 10,
                 left: 15,
               },
             ]}
