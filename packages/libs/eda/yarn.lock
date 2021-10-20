@@ -3133,10 +3133,13 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/eslint-config/-/eslint-config-1.0.0.tgz#40dc855b263bd3fd68f8f61508ef55b1dc163caf"
   integrity sha512-UDgRQYsIdfB9KCkBmeqMjVQOQAAGB8RLFUj4KlLAxRcT5TlRI47ZmofB3/NMbpIHP27/pk1bryPo7z4DMwWyeQ==
 
-"@veupathdb/http-utils@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/http-utils/-/http-utils-0.0.2.tgz#6da939fad84f82548731e4ed808779406afc7a31"
-  integrity sha512-NvLegfBWQVxfK4Z67vXZdI5WslCZd1pQPMgb2BJbSyHEr3Jq91dC3XfbXQozWaYz35LL6d121xBdd4j/LNx1dQ==
+"@veupathdb/http-utils@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/http-utils/-/http-utils-1.0.0.tgz#44443bc34ab13b33373e1c80ac719c914a41e33d"
+  integrity sha512-NnqgLabaLxo75tGVG0RkB2DjWIkgE+1k12yOMtw4cuwZEqD+i4/M0RQVNPSQWPQVHRCR/c0pPZhJc20r8sMRhA==
+  dependencies:
+    fp-ts "^2.11.5"
+    io-ts "^2.2.16"
 
 "@veupathdb/prettier-config@^1.0.0":
   version "1.0.0"
@@ -7870,6 +7873,11 @@ forwarded@~0.1.2:
   resolved "https://registry.yarnpkg.com/forwarded/-/forwarded-0.1.2.tgz#98c23dab1175657b8c0573e8ceccd91b0ff18c84"
   integrity sha1-mMI9qxF1ZXuMBXPozszZGw/xjIQ=
 
+fp-ts@^2.11.5:
+  version "2.11.5"
+  resolved "https://registry.yarnpkg.com/fp-ts/-/fp-ts-2.11.5.tgz#97cceb26655b1452d7088d6fb0864f84cceffbe4"
+  integrity sha512-OqlwJq1BdpB83BZXTqI+dNcA6uYk6qk4u9Cgnt64Y+XS7dwdbp/mobx8S2KXf2AXH+scNmA/UVK3SEFHR3vHZA==
+
 fp-ts@^2.9.3:
   version "2.9.5"
   resolved "https://registry.yarnpkg.com/fp-ts/-/fp-ts-2.9.5.tgz#6690cd8b76b84214a38fc77cbbbd04a38f86ea90"
@@ -9407,7 +9415,7 @@ invert-permutation@^1.0.0:
   resolved "https://registry.yarnpkg.com/invert-permutation/-/invert-permutation-1.0.0.tgz#a0a78042eadb36bc17551e787efd1439add54933"
   integrity sha1-oKeAQurbNrwXVR54fv0UOa3VSTM=
 
-io-ts@^2.2.13:
+io-ts@^2.2.13, io-ts@^2.2.16:
   version "2.2.16"
   resolved "https://registry.yarnpkg.com/io-ts/-/io-ts-2.2.16.tgz#597dffa03db1913fc318c9c6df6931cb4ed808b2"
   integrity sha512-y5TTSa6VP6le0hhmIyN0dqEXkrZeJLeC5KApJq6VLci3UEKF80lZ+KuoUs02RhBxNWlrqSNxzfI7otLX1Euv8Q==
