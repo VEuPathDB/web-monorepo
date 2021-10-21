@@ -369,6 +369,7 @@ const Histogram = makePlotlyPlotComponent(
       binEndType,
     ]);
     console.log(binSummaries);
+
     // truncation axis range
     const extendedIndependentAxisRange = extendAxisRangeForTruncations(
       standardIndependentAxisRange,
@@ -462,7 +463,7 @@ const Histogram = makePlotlyPlotComponent(
           ].map((val) =>
             dependentAxisLogScale && val != null
               ? val <= 0
-                ? 0
+                ? -0.1 // for count's logscale
                 : Math.log10(val as number)
               : val
           )
