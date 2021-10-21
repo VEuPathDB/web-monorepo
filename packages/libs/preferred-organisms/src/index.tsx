@@ -2,6 +2,7 @@ import './globals';
 import { Suspense } from 'react';
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
+import { ClientPluginRegistryEntry } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
 import Header from './Header';
 import Home from './Home';
 import { endpoint, rootElement, rootUrl } from './constants';
@@ -15,6 +16,8 @@ import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
 
 import '../src/lib/components/OrganismNode.scss';
+
+import { OrganismParam, isOrganismParam } from './lib/components/OrganismParam';
 
 initialize({
   rootUrl,
@@ -38,6 +41,13 @@ initialize({
     },
     ...routes,
   ],
+  pluginConfig: [
+    {
+      type: 'questionFormParameter',
+      test: ({ parameter }) => parameter != null && isOrganismParam(parameter),
+      component: OrganismParam,
+    },
+  ] as ClientPluginRegistryEntry<any>[],
   componentWrappers: {
     SiteHeader: () => Header,
     Page: (DefaultComponent: React.ComponentType) => (props: any) => (
