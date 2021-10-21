@@ -10,6 +10,10 @@ import { LinkAttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { useAttemptActionCallback } from '@veupathdb/web-common/lib/hooks/dataRestriction';
 import { Action } from '@veupathdb/web-common/lib/App/DataRestriction/DataRestrictionUtils';
 import { AnalysisNameDialog } from './AnalysisNameDialog';
+import {
+  Download,
+  Table,
+} from '@veupathdb/core-components/dist/components/icons';
 
 // Add custom styling for ebrc icons for better alignment in buttons
 const useStyles = makeStyles((theme) => ({
@@ -57,7 +61,7 @@ export function EDAWorkspaceHeading({
                   color="primary"
                   className="Linkouts-buttons"
                   classes={{ startIcon: iconClasses.ebrcStartIcon }}
-                  startIcon={<Icon className="ebrc-icon-download" />}
+                  startIcon={<Download/>}
                   type="button"
                   onClick={() => {
                     attemptAction(Action.download, {
@@ -102,7 +106,7 @@ export function EDAWorkspaceHeading({
                 color="primary"
                 className="Linkouts-buttons"
                 classes={{ startIcon: iconClasses.ebrcStartIcon }}
-                startIcon={<Icon className="ebrc-icon-table" />}
+                startIcon={<Table />}
                 component={Link}
                 to={'/eda?s=' + encodeURIComponent(studyRecord.displayName)}
               >

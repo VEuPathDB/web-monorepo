@@ -16,6 +16,7 @@ import { useToggleStarredVariable } from '../core/hooks/starredVariables';
 import { VariableTree } from '../core/components/VariableTree';
 import FilterChipList from '../core/components/FilterChipList';
 import { Tooltip, Button, Icon } from '@material-ui/core';
+import { TableDownload } from '@veupathdb/core-components/dist/components/icons';
 
 interface Props {
   analysisState: AnalysisState;
@@ -95,7 +96,7 @@ export function Subsetting(props: Props) {
             variant="text"
             color="primary"
             size="large"
-            startIcon={<Icon className="ebrc-icon-table-download" />}
+            startIcon={<TableDownload />}
             onClick={() => alert('Coming soon')}
           >
             View and download
