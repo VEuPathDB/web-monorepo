@@ -220,7 +220,7 @@ function PlotlyPlot<T>(
         .select('g.legend')
         .selectAll('g.traces')
         .append('svg:title')
-        .text((d) => {
+        .text((d: any) => {
           return storedLegendList[d[0].trace.index];
         });
 
