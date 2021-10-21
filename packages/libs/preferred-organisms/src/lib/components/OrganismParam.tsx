@@ -388,36 +388,36 @@ function findPreferredValues(
   preferenceType: 'organism' | 'species'
 ) {
   const basePreferredValues =
-    preferenceType === 'organism'
-      ? preferredOrganismValues
-      : Array.isArray(vocabulary)
-      ? preferredSpecies
-      : findPreferredSpeciesValues(vocabulary, preferredSpecies);
+    preferenceType === 'organism' ? preferredOrganismValues : preferredSpecies;
+
+  const basePreferredValuesWithDescendants = Array.isArray(vocabulary)
+    ? basePreferredValues
+    : findPreferredDescendants(vocabulary, basePreferredValues);
 
   return isSearchPage
-    ? basePreferredValues
-    : new Set([...basePreferredValues, ...selectedValues]);
+    ? basePreferredValuesWithDescendants
+    : new Set([...basePreferredValuesWithDescendants, ...selectedValues]);
 }
 
-function findPreferredSpeciesValues(
+function findPreferredDescendants(
   vocabRoot: TreeBoxVocabNode,
-  preferredSpecies: Set<string>
+  preferredValues: Set<string>
 ) {
-  const preferredSpeciesValues = new Set<string>();
+  const preferredDescendants = new Set<string>();
 
   _traverse(vocabRoot, false);
 
-  return preferredSpeciesValues;
+  return preferredDescendants;
 
-  function _traverse(node: TreeBoxVocabNode, speciesInAncestry: boolean) {
-    const nodeIsSpecies = preferredSpecies.has(node.data.term);
+  function _traverse(node: TreeBoxVocabNode, preferredNodeInAncestry: boolean) {
+    const nodeIsPreferred = preferredValues.has(node.data.term);
 
-    if (speciesInAncestry || nodeIsSpecies) {
-      preferredSpeciesValues.add(node.data.term);
+    if (preferredNodeInAncestry || nodeIsPreferred) {
+      preferredDescendants.add(node.data.term);
     }
 
     node.children.forEach((child) => {
-      _traverse(child, speciesInAncestry || nodeIsSpecies);
+      _traverse(child, preferredNodeInAncestry || nodeIsPreferred);
     });
   }
 }
