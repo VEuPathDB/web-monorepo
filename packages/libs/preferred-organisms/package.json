@@ -9,7 +9,11 @@
   },
   "files": [
     "lib",
-    "shims"
+    "shims",
+    "src/lib"
+  ],
+  "sideEffects": [
+    "*.scss"
   ],
   "dependencies": {
     "@veupathdb/wdk-client": "^0.3.0",
