@@ -21,6 +21,7 @@ import { Filter } from '../types/filter';
 import { TimeUnit } from '../types/general';
 import { VariableDescriptor, StringVariableValue } from '../types/variable';
 import { ComputationAppOverview } from '../types/visualization';
+import { FetchClientWithCredentials } from './api-with-credentials';
 
 const AppsResponse = type({
   apps: array(ComputationAppOverview),
@@ -464,7 +465,7 @@ export const BoxplotResponse = type({
   completeCasesTable: completeCasesTableArray,
 });
 
-export class DataClient extends FetchClient {
+export class DataClient extends FetchClientWithCredentials {
   getApps(): Promise<TypeOf<typeof AppsResponse>> {
     return this.fetch(
       createJsonRequest({

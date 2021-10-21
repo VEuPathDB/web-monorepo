@@ -7,7 +7,10 @@ import {
 } from 'react-router';
 
 import { SubsettingClient } from '../core/api/subsetting-api';
-import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
+import {
+  useConfiguredAnalysisClient,
+  useConfiguredSubsettingClient,
+} from '../core/hooks/client';
 import { AllAnalyses } from './AllAnalyses';
 import { EDAAnalysisList } from './EDAAnalysisList';
 import { ImportAnalysis } from './ImportAnalysis';
@@ -30,7 +33,7 @@ export function WorkspaceRouter({
   exampleAnalysesAuthor,
 }: Props) {
   const { path, url } = useRouteMatch();
-  const subsettingClient = SubsettingClient.getClient(subsettingServiceUrl);
+  const subsettingClient = useConfiguredSubsettingClient(subsettingServiceUrl);
   const analysisClient = useConfiguredAnalysisClient(userServiceUrl);
 
   return (

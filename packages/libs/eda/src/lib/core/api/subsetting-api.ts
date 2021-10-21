@@ -18,6 +18,8 @@ import {
 import { memoize } from 'lodash';
 import { Filter } from '../types/filter';
 import { StudyMetadata, StudyOverview } from '../types/study';
+import { FetchClientWithCredentials } from './api-with-credentials';
+import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 
 export type StudyResponse = TypeOf<typeof StudyResponse>;
 
@@ -63,9 +65,10 @@ export const DistributionResponse = type({
   ]),
 });
 
-export class SubsettingClient extends FetchClient {
+export class SubsettingClient extends FetchClientWithCredentials {
   static getClient = memoize(
-    (baseUrl: string): SubsettingClient => new SubsettingClient({ baseUrl })
+    (baseUrl: string, wdkService: WdkService): SubsettingClient =>
+      new SubsettingClient({ baseUrl }, wdkService)
   );
 
   getStudies(): Promise<StudyOverview[]> {

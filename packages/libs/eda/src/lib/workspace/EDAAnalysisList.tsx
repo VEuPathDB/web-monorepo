@@ -3,10 +3,16 @@ import React, { useMemo } from 'react';
 import { RestrictedPage } from '@veupathdb/web-common/lib/App/DataRestriction/RestrictedPage';
 import { useApprovalStatus } from '@veupathdb/web-common/lib/hooks/dataRestriction';
 
-import { AnalysisClient, EDAAnalysisListContainer } from '../core';
+import {
+  AnalysisClient,
+  EDAAnalysisListContainer,
+  useConfiguredDataClient,
+  useConfiguredSubsettingClient,
+  useSubsettingClient,
+} from '../core';
 import { SubsettingClient } from '../core/api/subsetting-api';
 import { DataClient } from '../core/api/data-api';
-import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
+import { useConfiguredAnalysisClient } from '../core/hooks/client';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { AnalysisList } from './AnalysisList';
 import { cx } from './Utils';
@@ -19,19 +25,13 @@ export interface Props {
 }
 
 export function EDAAnalysisList(props: Props) {
-  const subsettingClient: SubsettingClient = useMemo(
-    () => new SubsettingClient({ baseUrl: props.subsettingServiceUrl }),
-    [props.subsettingServiceUrl]
+  const subsettingClient = useConfiguredSubsettingClient(
+    props.subsettingServiceUrl
   );
 
-  const dataClient: DataClient = useMemo(
-    () => new DataClient({ baseUrl: props.dataServiceUrl }),
-    [props.dataServiceUrl]
-  );
+  const dataClient = useConfiguredDataClient(props.dataServiceUrl);
 
-  const analysisClient: AnalysisClient = useConfiguredAnalysisClient(
-    props.userServiceUrl
-  );
+  const analysisClient = useConfiguredAnalysisClient(props.userServiceUrl);
 
   const approvalStatus = useApprovalStatus(props.studyId, 'analysis');
 

@@ -18,96 +18,52 @@ import {
   NewAnalysis,
   PublicAnalysisSummary,
 } from '../types/analysis';
+import { FetchClientWithCredentials } from './api-with-credentials';
 
 export type SingleAnalysisPatchRequest = Partial<
   Pick<Analysis, 'displayName' | 'description' | 'descriptor' | 'isPublic'>
 >;
 
-export class AnalysisClient extends FetchClient {
-  static getClient = memoize(
-    (userServiceUrl: string, wdkService: WdkService): AnalysisClient =>
-      new AnalysisClient(
-        {
-          baseUrl: userServiceUrl,
-        },
-        wdkService
-      )
-  );
-
-  private readonly user$: Promise<User>;
-  private readonly authKey$: Promise<string>;
-  private readonly userPath$: Promise<string>;
+export class AnalysisClient extends FetchClientWithCredentials {
   private guestAnalysesTransfer$?: Promise<void>;
 
-  constructor(options: FetchApiOptions, private wdkService: WdkService) {
-    super(options);
+  private async transferGuestAnalyses() {
+    const user = await this.getUser();
 
-    this.user$ = this.wdkService.getCurrentUser();
-    this.authKey$ = this.user$.then(this.findUserRequestAuthKey);
-    this.userPath$ = this.user$.then((user) => this.findUserPath(user.id));
-  }
+    if (user.isGuest) {
+      // If the user is a guest, persist their id
+      sessionStorage.setItem('eda::guestUserId', String(user.id));
+    } else {
+      // If the user is registered, try to read and delete
+      // a previously-persisted guest user's id
+      const guestUserIdStr = sessionStorage.getItem('eda::guestUserId') ?? '';
+      sessionStorage.removeItem('eda::guestUserId');
+      const guestUserId = parseInt(guestUserIdStr, 10);
 
-  protected async fetch<T>(
-    apiRequest: ApiRequest<T>,
-    transferGuestAnalysesFirst = true
-  ): Promise<T> {
-    if (transferGuestAnalysesFirst) {
-      const user = await this.user$;
+      // If said guest user id is valid, initialize and retain a promise
+      // which performs a transfer of that guest user's analyses to the logged-in user
+      if (!Number.isNaN(guestUserId)) {
+        this.guestAnalysesTransfer$ = this.fetchWithUser((user) =>
+          createJsonRequest({
+            path: `${this.findUserPath(user.id)}/analyses`,
+            method: 'PATCH',
+            body: {
+              inheritOwnershipFrom: guestUserId,
+            },
+            transformResponse: ioTransformer(voidType),
+          })
+        );
+      }
 
-      if (user.isGuest) {
-        // If the user is a guest, persist their id
-        sessionStorage.setItem('eda::guestUserId', String(user.id));
-      } else {
-        // If the user is registered, try to read and delete
-        // a previously-persisted guest user's id
-        const guestUserIdStr = sessionStorage.getItem('eda::guestUserId') ?? '';
-        sessionStorage.removeItem('eda::guestUserId');
-        const guestUserId = parseInt(guestUserIdStr, 10);
-
-        // If said guest user id is valid, initialize and retain a promise
-        // which performs a transfer of that guest user's analyses to the logged-in user
-        if (!Number.isNaN(guestUserId)) {
-          this.guestAnalysesTransfer$ = this.transferGuestAnalyses(guestUserId);
-        }
-
-        // If a "guest analyses transfer" has been initiated, await its completion
-        if (this.guestAnalysesTransfer$ != null) {
-          try {
-            await this.guestAnalysesTransfer$;
-          } catch (e) {
-            this.wdkService.submitErrorIfNot500(e);
-          }
+      // If a "guest analyses transfer" has been initiated, await its completion
+      if (this.guestAnalysesTransfer$ != null) {
+        try {
+          await this.guestAnalysesTransfer$;
+        } catch (e) {
+          this.wdkService.submitErrorIfNot500(e);
         }
       }
     }
-
-    const apiRequestWithAuth: ApiRequest<T> = {
-      ...apiRequest,
-      headers: {
-        ...(apiRequest.headers ?? {}),
-        'Auth-Key': await this.authKey$,
-      },
-    };
-
-    return super.fetch(apiRequestWithAuth);
-  }
-
-  private findUserRequestAuthKey(wdkUser: User) {
-    if (wdkUser.isGuest) {
-      return String(wdkUser.id);
-    }
-
-    const wdkCheckAuthEntry = document.cookie
-      .split('; ')
-      .find((x) => x.startsWith('wdk_check_auth='));
-
-    if (wdkCheckAuthEntry == null) {
-      throw new Error(
-        `Tried to retrieve a non-existent WDK auth key for user ${wdkUser.id}`
-      );
-    }
-
-    return wdkCheckAuthEntry.replace(/^wdk_check_auth=/, '');
   }
 
   private findUserPath(userId: number) {
@@ -115,18 +71,21 @@ export class AnalysisClient extends FetchClient {
   }
 
   async getPreferences(): Promise<AnalysisPreferences> {
-    return this.fetch(
+    await this.transferGuestAnalyses();
+    return this.fetchWithUser((user) =>
       createJsonRequest({
-        path: `${await this.userPath$}/preferences`,
+        path: `${this.findUserPath(user.id)}/preferences`,
         method: 'GET',
         transformResponse: ioTransformer(AnalysisPreferences),
       })
     );
   }
+
   async setPreferences(preferences: AnalysisPreferences): Promise<void> {
-    return this.fetch(
+    await this.transferGuestAnalyses();
+    return this.fetchWithUser((user) =>
       createJsonRequest({
-        path: `${await this.userPath$}/preferences`,
+        path: `${this.findUserPath(user.id)}/preferences`,
         method: 'PUT',
         body: preferences,
         transformResponse: ioTransformer(voidType),
@@ -134,24 +93,27 @@ export class AnalysisClient extends FetchClient {
     );
   }
   async getAnalyses(): Promise<AnalysisSummary[]> {
-    return this.fetch(
+    await this.transferGuestAnalyses();
+    return this.fetchWithUser((user) =>
       createJsonRequest({
-        path: `${await this.userPath$}/analyses`,
+        path: `${this.findUserPath(user.id)}/analyses`,
         method: 'GET',
         transformResponse: ioTransformer(array(AnalysisSummary)),
       })
     );
   }
   async getAnalysis(analysisId: string): Promise<Analysis> {
-    return this.fetch(
+    await this.transferGuestAnalyses();
+    return this.fetchWithUser((user) =>
       createJsonRequest({
-        path: `${await this.userPath$}/analyses/${analysisId}`,
+        path: `${this.findUserPath(user.id)}/analyses/${analysisId}`,
         method: 'GET',
         transformResponse: ioTransformer(Analysis),
       })
     );
   }
   async createAnalysis(analysis: NewAnalysis): Promise<{ analysisId: string }> {
+    await this.transferGuestAnalyses();
     const body: NewAnalysis = pick(analysis, [
       'displayName',
       'description',
@@ -162,9 +124,9 @@ export class AnalysisClient extends FetchClient {
       'studyVersion',
     ]);
 
-    return this.fetch(
+    return this.fetchWithUser((user) =>
       createJsonRequest({
-        path: `${await this.userPath$}/analyses`,
+        path: `${this.findUserPath(user.id)}/analyses`,
         method: 'POST',
         body,
         transformResponse: ioTransformer(type({ analysisId: string })),
@@ -175,6 +137,7 @@ export class AnalysisClient extends FetchClient {
     analysisId: string,
     analysisPatch: SingleAnalysisPatchRequest
   ): Promise<void> {
+    await this.transferGuestAnalyses();
     const body: SingleAnalysisPatchRequest = pick(analysisPatch, [
       'displayName',
       'description',
@@ -182,9 +145,9 @@ export class AnalysisClient extends FetchClient {
       'isPublic',
     ]);
 
-    return this.fetch(
+    return this.fetchWithUser((user) =>
       createJsonRequest({
-        path: `${await this.userPath$}/analyses/${analysisId}`,
+        path: `${this.findUserPath(user.id)}/analyses/${analysisId}`,
         method: 'PATCH',
         body,
         transformResponse: ioTransformer(voidType),
@@ -192,16 +155,18 @@ export class AnalysisClient extends FetchClient {
     );
   }
   async deleteAnalysis(analysisId: string): Promise<void> {
-    return this.fetch({
-      path: `${await this.userPath$}/analyses/${analysisId}`,
+    await this.transferGuestAnalyses();
+    return this.fetchWithUser((user) => ({
+      path: `${this.findUserPath(user.id)}/analyses/${analysisId}`,
       method: 'DELETE',
       transformResponse: ioTransformer(voidType),
-    });
+    }));
   }
   async deleteAnalyses(analysisIds: Iterable<string>): Promise<void> {
-    return this.fetch(
+    await this.transferGuestAnalyses();
+    return this.fetchWithUser((user) =>
       createJsonRequest({
-        path: `${await this.userPath$}/analyses`,
+        path: `${this.findUserPath(user.id)}/analyses`,
         method: 'PATCH',
         body: {
           analysisIdsToDelete: [...analysisIds],
@@ -214,39 +179,27 @@ export class AnalysisClient extends FetchClient {
     analysisId: string,
     sourceUserId?: number
   ): Promise<{ analysisId: string }> {
-    // Copy from self if no sourceUserId is provided
-    const sourceUserPath =
-      sourceUserId == null
-        ? await this.userPath$
-        : this.findUserPath(sourceUserId);
+    return this.fetchWithUser((user) => {
+      // Copy from self if no sourceUserId is provided
+      const sourceUserPath = this.findUserPath(
+        sourceUserId == null ? user.id : sourceUserId
+      );
 
-    return this.fetch({
-      path: `${sourceUserPath}/analyses/${analysisId}/copy`,
-      method: 'POST',
-      transformResponse: ioTransformer(type({ analysisId: string })),
+      return {
+        path: `${sourceUserPath}/analyses/${analysisId}/copy`,
+        method: 'POST',
+        transformResponse: ioTransformer(type({ analysisId: string })),
+      };
     });
   }
+
   async getPublicAnalyses(): Promise<PublicAnalysisSummary[]> {
     return this.fetch(
       createJsonRequest({
         path: '/public/analyses',
         method: 'GET',
         transformResponse: ioTransformer(array(PublicAnalysisSummary)),
-      }),
-      false
-    );
-  }
-  private async transferGuestAnalyses(guestUserId: number): Promise<void> {
-    return this.fetch(
-      createJsonRequest({
-        path: `${await this.userPath$}/analyses`,
-        method: 'PATCH',
-        body: {
-          inheritOwnershipFrom: guestUserId,
-        },
-        transformResponse: ioTransformer(voidType),
-      }),
-      false
+      })
     );
   }
 }

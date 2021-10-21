@@ -10,7 +10,11 @@ import {
   StudyMetadata,
   SubsettingClient,
 } from '../core';
-import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
+import {
+  useConfiguredAnalysisClient,
+  useConfiguredDataClient,
+  useConfiguredSubsettingClient,
+} from '../core/hooks/client';
 import { VariableDescriptor } from '../core/types/variable';
 import { EDAWorkspace } from './EDAWorkspace';
 import { cx, findFirstVariable } from './Utils';
@@ -33,14 +37,10 @@ interface Props {
 }
 export function WorkspaceContainer(props: Props) {
   const { url } = useRouteMatch();
-  const subsettingClient = useMemo(
-    () => new SubsettingClient({ baseUrl: props.subsettingServiceUrl }),
-    [props.subsettingServiceUrl]
+  const subsettingClient = useConfiguredSubsettingClient(
+    props.subsettingServiceUrl
   );
-  const dataClient = useMemo(
-    () => new DataClient({ baseUrl: props.dataServiceUrl }),
-    [props.dataServiceUrl]
-  );
+  const dataClient = useConfiguredDataClient(props.dataServiceUrl);
   const analysisClient = useConfiguredAnalysisClient(props.userServiceUrl);
   const makeVariableLink = useCallback(
     (

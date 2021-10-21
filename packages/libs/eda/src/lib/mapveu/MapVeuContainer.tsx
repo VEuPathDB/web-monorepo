@@ -7,30 +7,23 @@ import {
 } from 'react-router';
 
 import { EDAAnalysisListContainer, EDAWorkspaceContainer } from '../core';
-import { DataClient } from '../core/api/data-api';
-import { SubsettingClient } from '../core/api/subsetting-api';
-import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
 
 import { AnalysisList } from './MapVeuAnalysisList';
 import { MapVeuAnalysis } from './MapVeuAnalysis';
 import { StudyList } from './StudyList';
-
-const edaClient = new (class extends SubsettingClient {
-  getStudyMetadata() {
-    // Temporarily hardcode a study id. We don't yet have a way to
-    // discover the id used by the subsetting service, from the WDK
-    // study record.
-    return super.getStudyMetadata('SCORECX01-1');
-  }
-})({ baseUrl: '/eda-subsetting-service' });
-
-const dataClient = new DataClient({ baseUrl: '/eda-data-service' });
+import {
+  useConfiguredSubsettingClient,
+  useConfiguredDataClient,
+  useConfiguredAnalysisClient,
+} from '../core/hooks/client';
 
 export function MapVeuContainer() {
+  const edaClient = useConfiguredSubsettingClient('/eda-subsetting-service');
+  const dataClient = useConfiguredDataClient('/eda-data-service');
+  const analysisClient = useConfiguredAnalysisClient('/eda-user-service');
   // This will get the matched path of the active parent route.
   // This is useful so we don't have to hardcode the path root.
   const { path } = useRouteMatch();
-  const analysisClient = useConfiguredAnalysisClient('/eda-user-service');
   return (
     <>
       <h1>MapVEu</h1>
