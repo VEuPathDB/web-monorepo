@@ -33,7 +33,7 @@ const cx = makeClassNameHelper('OrganismFilter')
 const ALLOWABLE_RECORD_CLASS_NAME = 'transcript';
 const TAXON_QUESTION_NAME = 'GenesByTaxon';
 const ORGANISM_PARAM_NAME = 'organism';
-const ORGANISM_COLUMN_NAME = 'organism';
+const ORGANISM_COLUMN_NAME = 'organism_full';
 const HISTOGRAM_REPORTER_NAME = 'byValue';
 const HISTOGRAM_FILTER_NAME = 'byValue';
 
