@@ -255,30 +255,34 @@ function useFlatParamWithPrunedVocab(
 function useEnumParamSelectedValues(
   props: OrganismParamProps<EnumParam, State>
 ) {
+  const paramIsMultiPick = isMultiPick(props.parameter);
+
   const selectedValues = useMemo(() => {
-    return isMultiPick(props.parameter)
+    return paramIsMultiPick
       ? toMultiValueArray(props.value)
       : props.value == null || props.value === ''
       ? []
       : [props.value];
-  }, [isMultiPick(props.parameter), props.value]);
+  }, [paramIsMultiPick, props.value]);
 
   const transformValue = useCallback(
     (newValue: string[]) => {
-      if (isMultiPick(props.parameter)) {
+      if (paramIsMultiPick) {
         return toMultiValueString(newValue);
       } else {
         return newValue.length === 0 ? '' : newValue[0];
       }
     },
-    [isMultiPick(props.parameter)]
+    [paramIsMultiPick]
   );
+
+  const onParamValueChange = props.onParamValueChange;
 
   const onChange = useCallback(
     (newValue: string[]) => {
-      props.onParamValueChange(transformValue(newValue));
+      onParamValueChange(transformValue(newValue));
     },
-    [props.onParamValueChange, transformValue]
+    [onParamValueChange, transformValue]
   );
 
   return {
@@ -290,21 +294,33 @@ function useEnumParamSelectedValues(
 function usePreferredValues(
   parameter: EnumParam,
   selectedValues: string[],
-  isSearchPage?: boolean
+  isSearchPageProp?: boolean
 ) {
   const [preferredOrganisms] = usePreferredOrganismsState();
   const preferredSpecies = usePreferredSpecies();
 
   const { pathname } = useLocation();
 
+  const isSearchPage = isSearchPageProp ?? pathname.startsWith('/search');
+
+  const selectedValuesRef = useRef(selectedValues);
+  useEffect(() => {
+    selectedValuesRef.current = selectedValues;
+  }, [selectedValues]);
+
+  const initialSelectedValuesRef = useRef(selectedValues);
+  useEffect(() => {
+    initialSelectedValuesRef.current = selectedValuesRef.current;
+  }, [isSearchPage, pathname]);
+
   const preferredValues = useMemo(
     () =>
       findPreferredValues(
         new Set(preferredOrganisms),
         preferredSpecies,
-        selectedValues,
+        initialSelectedValuesRef.current,
         parameter.vocabulary,
-        isSearchPage ?? pathname.startsWith('/search'),
+        isSearchPage,
         findPreferenceType(parameter)
       ),
     [parameter, isSearchPage, preferredOrganisms, preferredSpecies]
