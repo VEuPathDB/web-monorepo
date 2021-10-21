@@ -62,7 +62,9 @@ export function useCombinedResultProps({
   hitTypeDisplayNamePlural,
   targetTypeTerm,
   wdkRecordType,
-}: ResultContainerProps): CombinedResultProps {
+}: ResultContainerProps & {
+  combinedResult?: MultiQueryReportJson;
+}): CombinedResultProps {
   const { hitQueryCount, hitSubjectCount, totalQueryCount } = useHitCounts(
     combinedResult
   );
@@ -114,10 +116,18 @@ export function useCombinedResultProps({
   };
 }
 
-function useHitCounts(combinedResult: MultiQueryReportJson) {
-  const resultsByQuery = combinedResult.BlastOutput2;
+function useHitCounts(combinedResult?: MultiQueryReportJson) {
+  const resultsByQuery = combinedResult?.BlastOutput2;
 
   return useMemo(() => {
+    if (resultsByQuery == null) {
+      return {
+        hitQueryCount: undefined,
+        hitSubjectCount: undefined,
+        totalQueryCount: undefined,
+      };
+    }
+
     const hitQueries = new Set<string>();
     const hitIds = new Set<string>();
 
@@ -305,13 +315,17 @@ function DescriptionCell(props: { value: string }) {
 }
 
 function useRawCombinedResultRows(
-  combinedResult: MultiQueryReportJson,
+  combinedResult: MultiQueryReportJson | undefined,
   wdkRecordType: string,
   filesToOrganisms: Record<string, string>
 ): CombinedResultRows {
-  const resultsByQuery = combinedResult.BlastOutput2;
+  const resultsByQuery = combinedResult?.BlastOutput2;
 
   const rawRows = useMemo(() => {
+    if (resultsByQuery == null) {
+      return undefined;
+    }
+
     const dbToOrganism = dbToOrganismFactory(filesToOrganisms);
 
     const unrankedHits = resultsByQuery.flatMap((queryResult, queryZeroIndex) =>
@@ -422,7 +436,7 @@ function useRawCombinedResultRows(
 
   return useMemo(
     () =>
-      rawRows.length > MAX_ROWS
+      rawRows == null || rawRows.length > MAX_ROWS
         ? { displayable: false, rows: [] }
         : { displayable: true, rows: rawRows },
     [rawRows]

@@ -21,6 +21,7 @@ import {
 } from '../components/IndividualResult';
 import { Props as ResultContainerProps } from '../components/ResultContainer';
 import { IndividualQuery } from '../utils/CommonTypes';
+import { MultiQueryReportJson } from '../utils/ServiceTypes';
 import { BLAST_QUERY_SEQUENCE_PARAM_NAME } from '../utils/params';
 
 export type AnswerSpecResultTypeConfig =
@@ -38,7 +39,9 @@ export function useIndividualResultProps({
   combinedResult,
   hitTypeDisplayName,
   hitTypeDisplayNamePlural,
-}: ResultContainerProps): IndividualResultProps {
+}: ResultContainerProps & {
+  combinedResult?: MultiQueryReportJson;
+}): IndividualResultProps {
   const history = useHistory();
   const wdkDependencies = useContext(WdkDepdendenciesContext);
   const wdkService = wdkDependencies?.wdkService;
@@ -59,20 +62,21 @@ export function useIndividualResultProps({
   );
 
   const individualQueryOptions = useMemo(() => {
-    const resultsByQuery = combinedResult.BlastOutput2;
+    return individualQueries.map(({ query }, i) => {
+      console.log(query);
+      const trimmedQuery = query.trim();
+      const defline = !trimmedQuery.startsWith('>')
+        ? undefined
+        : query.split(/\n+/)[0];
 
-    return resultsByQuery.map((queryResult, i) => {
-      const queryTitle = queryResult.report.results.search.query_title;
-
-      const label =
-        queryTitle == null ? `${i + 1}: Untitled` : `${i + 1}: >${queryTitle}`;
+      const queryTitle = defline ?? 'Untitled';
 
       return {
         value: i + 1,
-        label,
+        label: `${i + 1}: ${queryTitle}`,
       };
     });
-  }, [combinedResult]);
+  }, [individualQueries]);
 
   const onSelectedOptionChange = useCallback(
     (
@@ -115,6 +119,10 @@ export function useIndividualResultProps({
   );
 
   const hitCountDescription = useMemo(() => {
+    if (combinedResult == null) {
+      return '';
+    }
+
     const resultsByQuery = combinedResult.BlastOutput2;
 
     const queryCount = resultsByQuery.length;

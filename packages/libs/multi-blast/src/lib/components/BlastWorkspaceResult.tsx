@@ -18,6 +18,7 @@ import {
 import { useBlastCompatibleWdkService } from '../hooks/wdkServiceIntegration';
 import { IndividualQuery, SelectedResult } from '../utils/CommonTypes';
 import {
+  ApiResult,
   ApiResultError,
   ApiResultSuccess,
   ErrorDetails,
@@ -144,25 +145,21 @@ function BlastWorkspaceResultWithLoadedApi(
   ) : reportResult.value != null &&
     reportResult.value.status === 'queueing-error' ? (
     <ErrorPage message="We were unable to queue your combined results report." />
-  ) : multiQueryReportResult.value != null &&
-    multiQueryReportResult.value.status === 'error' ? (
-    <BlastRequestError errorDetails={multiQueryReportResult.value.details} />
   ) : individualQueriesResult.value != null &&
     individualQueriesResult.value.status === 'error' ? (
     <BlastRequestError errorDetails={individualQueriesResult.value.details} />
   ) : queryResult.value == null ||
     jobResult.value == null ||
     reportResult.value == null ||
-    multiQueryReportResult.value == null ||
     individualQueriesResult.value == null ? (
     <LoadingBlastResult {...props} />
   ) : (
-    <BlastResultWithLoadedReport
+    <CompleteBlastResult
       {...props}
       individualQueries={individualQueriesResult.value.value}
       jobDetails={jobResult.value.job}
       query={queryResult.value.value}
-      multiQueryReport={multiQueryReportResult.value.value}
+      multiQueryReportResult={multiQueryReportResult}
     />
   );
 }
@@ -192,14 +189,19 @@ function LoadingBlastResult(props: Props) {
   );
 }
 
-interface BlastResultWithLoadedReportProps extends Props {
+export interface MultiQueryReportResult {
+  value?: ApiResult<MultiQueryReportJson, ErrorDetails>;
+  loading: boolean;
+}
+
+interface CompleteBlastResultProps extends Props {
   individualQueries: IndividualQuery[];
   jobDetails: LongJobResponse;
-  multiQueryReport: MultiQueryReportJson;
+  multiQueryReportResult?: MultiQueryReportResult;
   query: string;
 }
 
-function BlastResultWithLoadedReport(props: BlastResultWithLoadedReportProps) {
+function CompleteBlastResult(props: CompleteBlastResultProps) {
   const history = useHistory();
 
   const targetMetadataByDataType = useContext(TargetMetadataByDataType);
@@ -246,7 +248,7 @@ function BlastResultWithLoadedReport(props: BlastResultWithLoadedReportProps) {
       filesToOrganisms={organismToFilenameMapsResult.filesToOrganisms}
       jobDetails={props.jobDetails}
       targets={targets}
-      multiQueryReport={props.multiQueryReport}
+      multiQueryReportResult={props.multiQueryReportResult}
       query={props.query}
       individualQueries={props.individualQueries}
       selectedResult={props.selectedResult}
@@ -260,7 +262,7 @@ interface BlastSummaryProps {
   filesToOrganisms: Record<string, string>;
   jobDetails: LongJobResponse;
   targets: Target[];
-  multiQueryReport: MultiQueryReportJson;
+  multiQueryReportResult?: MultiQueryReportResult;
   query: string;
   individualQueries: IndividualQuery[];
   selectedResult: SelectedResult;
@@ -272,7 +274,7 @@ function BlastSummary({
   filesToOrganisms,
   jobDetails,
   targets,
-  multiQueryReport,
+  multiQueryReportResult,
   query,
   individualQueries,
   selectedResult,
@@ -384,7 +386,7 @@ function BlastSummary({
         />
       )}
       <ResultContainer
-        combinedResult={multiQueryReport}
+        multiQueryReportResult={multiQueryReportResult}
         filesToOrganisms={filesToOrganisms}
         hitTypeDisplayName={hitTypeDisplayName}
         hitTypeDisplayNamePlural={hitTypeDisplayNamePlural}
