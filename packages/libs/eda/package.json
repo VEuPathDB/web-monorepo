@@ -7,6 +7,7 @@
     "@mui/styles": "^5.0.1",
     "@types/debounce-promise": "^3.1.3",
     "@veupathdb/components": "^0.8.5",
+    "@veupathdb/http-utils": "^1.0.0",
     "@veupathdb/wdk-client": "^0.4.9",
     "@veupathdb/web-common": "^0.1.10",
     "debounce-promise": "^3.1.2",

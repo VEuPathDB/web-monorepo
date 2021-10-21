@@ -3,7 +3,8 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import {
   createJsonRequest,
   FetchClient,
-} from '@veupathdb/web-common/lib/util/api';
+  ioTransformer,
+} from '@veupathdb/http-utils';
 import {
   array,
   number,
@@ -17,7 +18,6 @@ import {
 import { memoize } from 'lodash';
 import { Filter } from '../types/filter';
 import { StudyMetadata, StudyOverview } from '../types/study';
-import { ioTransformer } from './ioTransformer';
 
 export type StudyResponse = TypeOf<typeof StudyResponse>;
 

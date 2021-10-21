@@ -8,7 +8,8 @@ import {
   FetchApiOptions,
   FetchClient,
   createJsonRequest,
-} from '@veupathdb/web-common/lib/util/api';
+  ioTransformer,
+} from '@veupathdb/http-utils';
 
 import {
   Analysis,
@@ -17,8 +18,6 @@ import {
   NewAnalysis,
   PublicAnalysisSummary,
 } from '../types/analysis';
-
-import { ioTransformer } from './ioTransformer';
 
 export type SingleAnalysisPatchRequest = Partial<
   Pick<Analysis, 'displayName' | 'description' | 'descriptor' | 'isPublic'>
