@@ -234,26 +234,20 @@ export const ServiceBase = (serviceUrl: string) => {
           return undefined;
         }
 
-        const json$ = response.json();
+        return response.json().then(json => {
+          const delayedResultValidation = delayedResult(json);
 
-        if (response.status === 202) {
-          return json$.then(json => {
-            const delayedResultValidation = delayedResult(json);
+          // If the response is that of a delayed result, throw a DelayedResultError
+          if (delayedResultValidation.status === 'ok') {
+            throw new DelayedResultError(
+              'We are still processing your result. Please return to this page later.',
+              response.headers.get('x-log-marker') ?? uuid()
+            );
+          }
 
-            // If the response is that of a delayed result, throw a DelayedResultError
-            if (delayedResultValidation.status === 'ok') {
-              throw new DelayedResultError(
-                'We are still processing your result. Please return to this page later.',
-                response.headers.get('x-log-marker') ?? uuid()
-              );
-            }
-
-            // Otherwise, return the parsed JSON as-is for further processing
-            return json;
-          });
-        }
-
-        return json$;
+          // Otherwise, return the parsed JSON as-is for further processing
+          return json;
+        });
       }
 
       return response.text().then(text => {
