@@ -298,10 +298,8 @@ function HistogramViz(props: VisualizationProps) {
 
   // set default dependent axis range for better displaying tick labels in log-scale
   const defaultDependentAxisRange =
-    // defaultDependentAxisMinMax.min != null && defaultDependentAxisMinMax.max != null
-    defaultDependentAxisMinMax != null &&
-    defaultDependentAxisMinMax.min != null &&
-    defaultDependentAxisMinMax.max != null
+    defaultDependentAxisMinMax?.min != null &&
+    defaultDependentAxisMinMax?.max != null
       ? {
           // set min as 0 (count, proportion) for non-logscale
           min:
