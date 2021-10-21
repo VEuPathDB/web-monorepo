@@ -4,7 +4,7 @@ import {
   createJsonRequest,
   ApiRequest,
   FetchClient,
-  ioTransformer
+  ioTransformer,
 } from '@veupathdb/http-utils';
 import {
   ApprovalStatus,
@@ -37,7 +37,7 @@ const HISTORY_PATH = '/history';
 
 export class StudyAccessApi extends FetchClient {
 
-  fetch<T>(apiRequest: ApiRequest<T>) {
+  fetch = <T>(apiRequest: ApiRequest<T>) => {
     const wdkCheckAuth = document.cookie.split('; ').find(x => x.startsWith('wdk_check_auth=')) ?? '';
     const authKey = wdkCheckAuth.replace('wdk_check_auth=', '');  
     return super.fetch({
@@ -49,7 +49,7 @@ export class StudyAccessApi extends FetchClient {
     })
   }
 
-  fetchStaffList(limit?: number, offset?: number) {
+  fetchStaffList = (limit?: number, offset?: number) => {
     const queryString = makeQueryString(
       ['limit', 'offset'],
       [limit, offset]
@@ -62,7 +62,7 @@ export class StudyAccessApi extends FetchClient {
     }));
   }
 
-  createStaffEntry(requestBody: NewStaffRequest) {
+  createStaffEntry = (requestBody: NewStaffRequest) => {
     return this.fetch(createJsonRequest({
       path: STAFF_PATH,
       method: 'POST',
@@ -71,7 +71,7 @@ export class StudyAccessApi extends FetchClient {
     }));
   }
 
-  updateStaffEntry(staffId: number, requestBody: StaffPatch) {
+  updateStaffEntry = (staffId: number, requestBody: StaffPatch) => {
     return this.fetch(createJsonRequest({
       path: `${STAFF_PATH}/${staffId}`,
       method: 'PATCH',
@@ -80,7 +80,7 @@ export class StudyAccessApi extends FetchClient {
     }));
   }
 
-  deleteStaffEntry(staffId: number) {
+  deleteStaffEntry = (staffId: number) => {
     return this.fetch({
       path: `${STAFF_PATH}/${staffId}`,
       method: 'DELETE',
@@ -88,7 +88,7 @@ export class StudyAccessApi extends FetchClient {
     });
   }
 
-  fetchProviderList(datasetId: string, limit?: number, offset?: number) {
+  fetchProviderList = (datasetId: string, limit?: number, offset?: number) => {
     const queryString = makeQueryString(
       ['datasetId', 'limit', 'offset'],
       [datasetId, limit, offset]
@@ -101,7 +101,7 @@ export class StudyAccessApi extends FetchClient {
     });
   }
 
-  createProviderEntry(requestBody: DatasetProviderCreateRequest) {
+  createProviderEntry = (requestBody: DatasetProviderCreateRequest) => {
     return this.fetch(createJsonRequest({
       path: PROVIDERS_PATH,
       method: 'POST',
@@ -110,7 +110,7 @@ export class StudyAccessApi extends FetchClient {
     }));
   }
 
-  updateProviderEntry(providerId: number, requestBody: DatasetProviderPatch) {
+  updateProviderEntry = (providerId: number, requestBody: DatasetProviderPatch) => {
     return this.fetch(createJsonRequest({
       path: `${PROVIDERS_PATH}/${providerId}`,
       method: 'PATCH',
@@ -119,7 +119,7 @@ export class StudyAccessApi extends FetchClient {
     }));
   }
 
-  deleteProviderEntry(providerId: number) {
+  deleteProviderEntry = (providerId: number) => {
     return this.fetch({
       path: `${PROVIDERS_PATH}/${providerId}`,
       method: 'DELETE',
@@ -127,7 +127,7 @@ export class StudyAccessApi extends FetchClient {
     });
   }
 
-  fetchEndUserList(datasetId: string, limit?: number, offset?: number, approval?: ApprovalStatus) {
+  fetchEndUserList = (datasetId: string, limit?: number, offset?: number, approval?: ApprovalStatus) => {
     const queryString = makeQueryString(
       ['datasetId', 'limit', 'offset', 'approval'],
       [datasetId, limit, offset, approval]
@@ -140,7 +140,7 @@ export class StudyAccessApi extends FetchClient {
     });
   }
 
-  createEndUserEntry(requestBody: EndUserCreateRequest) {
+  createEndUserEntry = (requestBody: EndUserCreateRequest) => {
     return this.fetch(createJsonRequest({
       path: END_USERS_PATH,
       method: 'POST',
@@ -149,7 +149,7 @@ export class StudyAccessApi extends FetchClient {
     }));
   }
 
-  fetchEndUserEntry(wdkUserId: number, datasetId: string) {
+  fetchEndUserEntry = (wdkUserId: number, datasetId: string) => {
     const endUserId = makeEndUserId(
       wdkUserId,
       datasetId
@@ -162,7 +162,7 @@ export class StudyAccessApi extends FetchClient {
     });
   }
 
-  updateEndUserEntry(wdkUserId: number, datasetId: string, requestBody: EndUserPatch) {
+  updateEndUserEntry = (wdkUserId: number, datasetId: string, requestBody: EndUserPatch) => {
     const endUserId = makeEndUserId(
       wdkUserId,
       datasetId
@@ -176,7 +176,7 @@ export class StudyAccessApi extends FetchClient {
     }));
   }
 
-  deleteEndUserEntry(wdkUserId: number, datasetId: string) {
+  deleteEndUserEntry = (wdkUserId: number, datasetId: string) => {
     const endUserId = makeEndUserId(
       wdkUserId,
       datasetId
@@ -189,7 +189,7 @@ export class StudyAccessApi extends FetchClient {
     });
   }
 
-  fetchPermissions() {
+  fetchPermissions = () => {
     return this.fetch({
       path: PERMISSIONS_PATH,
       method: 'GET',
@@ -197,7 +197,7 @@ export class StudyAccessApi extends FetchClient {
     });
   }
 
-  fetchHistory() {
+  fetchHistory = () => {
     return this.fetch({
       path: HISTORY_PATH,
       method: 'GET',
