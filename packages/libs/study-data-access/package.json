@@ -7,7 +7,7 @@
   "author": "Dave Falke <dmfalke@gmail.com>",
   "license": "Apache-2.0",
   "scripts": {
-    "build-npm-modules": "tsc -p tsconfig.build.json"
+    "build-npm-modules": "veupathdb-react-scripts prepare src lib"
   },
   "typings": "./lib/index.d.ts",
   "eslintConfig": {
@@ -26,6 +26,7 @@
     "@veupathdb/browserslist-config": "^1.0.0",
     "@veupathdb/eslint-config": "^1.0.0",
     "@veupathdb/prettier-config": "^1.0.0",
+    "@veupathdb/react-scripts": "^1.2.0",
     "@veupathdb/tsconfig": "^1.0.1",
     "husky": ">=4",
     "lint-staged": ">=10",
