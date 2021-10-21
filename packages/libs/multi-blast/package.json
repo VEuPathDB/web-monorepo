@@ -9,7 +9,11 @@
   },
   "files": [
     "lib",
-    "shims"
+    "shims",
+    "src/lib"
+  ],
+  "sideEffects": [
+    "*.scss"
   ],
   "dependencies": {
     "@types/react-redux": "^7.1.5",
