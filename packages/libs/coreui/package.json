@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/core-components",
-  "version": "0.2.37",
+  "version": "0.2.38",
   "author": "Michael Dunn <mdunn4@nd.edu>",
   "description": "Core components and style definitions for VEuPath applications.",
   "private": false,
@@ -16,7 +16,7 @@
     "build-storybook": "build-storybook",
     "build": "rm -rf dist && NODE_ENV=production babel src --ignore \"src/stories/**/*\" --out-dir dist --extensions \".ts,.tsx\" ",
     "tsc": "tsc",
-    "create-svg-icons": "npx @svgr/cli --out-dir src/components/icons/ src/assets/svg/"
+    "create-svg-icons": "npx @svgr/cli --icon --replace-attr-values \"#000000=currentColor\" --out-dir src/components/icons/ src/assets/svg/"
   },
   "repository": {
     "type": "git",

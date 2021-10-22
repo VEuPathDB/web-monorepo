@@ -1,3 +1,5 @@
+export { default as Close } from './Close'
+export { default as CloseFullscreen } from './CloseFullscreen'
 export { default as Download } from './Download'
 export { default as EdaIcon } from './EdaIcon'
 export { default as SampleDetailsDark } from './SampleDetailsDark'
