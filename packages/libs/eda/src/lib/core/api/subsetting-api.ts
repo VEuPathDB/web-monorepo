@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-redeclare */
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { createJsonRequest, ioTransformer } from '@veupathdb/http-utils';
+import {
+  createJsonRequest,
+  FetchClientWithCredentials,
+  ioTransformer,
+} from '@veupathdb/http-utils';
 import {
   array,
   number,
@@ -14,7 +18,6 @@ import {
 import { memoize } from 'lodash';
 import { Filter } from '../types/filter';
 import { StudyMetadata, StudyOverview } from '../types/study';
-import { FetchClientWithCredentials } from './api-with-credentials';
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 
 export type StudyResponse = TypeOf<typeof StudyResponse>;

@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-redeclare */
-import { createJsonRequest, ioTransformer } from '@veupathdb/http-utils';
+import {
+  createJsonRequest,
+  FetchClientWithCredentials,
+  ioTransformer,
+} from '@veupathdb/http-utils';
 import {
   TypeOf,
   string,
@@ -17,7 +21,6 @@ import { Filter } from '../types/filter';
 import { TimeUnit } from '../types/general';
 import { VariableDescriptor, StringVariableValue } from '../types/variable';
 import { ComputationAppOverview } from '../types/visualization';
-import { FetchClientWithCredentials } from './api-with-credentials';
 
 const AppsResponse = type({
   apps: array(ComputationAppOverview),

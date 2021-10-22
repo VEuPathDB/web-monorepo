@@ -1,7 +1,11 @@
 import { type, voidType, string, array } from 'io-ts';
 import { pick } from 'lodash';
 
-import { createJsonRequest, ioTransformer } from '@veupathdb/http-utils';
+import {
+  createJsonRequest,
+  FetchClientWithCredentials,
+  ioTransformer,
+} from '@veupathdb/http-utils';
 
 import {
   Analysis,
@@ -10,7 +14,6 @@ import {
   NewAnalysis,
   PublicAnalysisSummary,
 } from '../types/analysis';
-import { FetchClientWithCredentials } from './api-with-credentials';
 
 export type SingleAnalysisPatchRequest = Partial<
   Pick<Analysis, 'displayName' | 'description' | 'descriptor' | 'isPublic'>
