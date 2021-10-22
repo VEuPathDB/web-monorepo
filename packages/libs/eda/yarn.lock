@@ -3226,15 +3226,16 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/core-components@^0.2.28":
-  version "0.2.31"
-  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.2.31.tgz#10207753ba8e130a25df06bafb0876077feb8828"
-  integrity sha512-y33xGwf2MT83KzOYMG9Fhvrcj7F2lfR7VtIwRCQzwsA4f7yD5yRotOAlT2y3Pibv4HYtPuUHTFjMbcxW6dzYGA==
+"@veupathdb/core-components@^0.2.35":
+  version "0.2.35"
+  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.2.35.tgz#7d7f20eff865d94cef5797fb408d5ecb1b3a78b3"
+  integrity sha512-2h1yY54sB2//1mYQ12FZqBQSO8eBT4bcDXx0Z/1uPckeTPZtZ137wD4WQoRT1EOe8p7nB99PZrukVi5brUMsUA==
   dependencies:
     "@material-ui/core" "^4.12.3"
     "@material-ui/icons" "^4.11.2"
     "@types/react-table" "^7.7.2"
     lodash "^4.17.21"
+    react-cool-dimensions "^2.0.7"
     react-modal "^3.14.3"
     react-table "^7.7.0"
 
@@ -13996,6 +13997,11 @@ react-cool-dimensions@^1.1.11:
   version "1.3.4"
   resolved "https://registry.yarnpkg.com/react-cool-dimensions/-/react-cool-dimensions-1.3.4.tgz#f8c4b868c9e4e3f4f1f436de74ce01b82e3f0fa6"
   integrity sha512-dOHAPfLwaKuy7hcZ5dIv7sulrH4VfEP1B/m591gUCGenut3Iqf7Qi7xPT54EFJDaNRrBdqHLCttRgktvOyzoaQ==
+
+react-cool-dimensions@^2.0.7:
+  version "2.0.7"
+  resolved "https://registry.yarnpkg.com/react-cool-dimensions/-/react-cool-dimensions-2.0.7.tgz#2fe6657608f034cd7c89f149ed14e79cf1cb2d50"
+  integrity sha512-z1VwkAAJ5d8QybDRuYIXTE41RxGr5GYsv1bQhbOBE8cMfoZQZpcF0odL64vdgrQVzat2jayedj1GoYi80FWcbA==
 
 react-dev-utils@^11.0.1:
   version "11.0.4"
