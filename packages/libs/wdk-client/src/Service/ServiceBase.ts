@@ -3,6 +3,7 @@ import { keyBy, memoize } from 'lodash';
 import * as QueryString from 'querystring';
 import { v4 as uuid } from 'uuid';
 import { expandedRecordClassDecoder } from 'wdk-client/Service/Decoders/RecordClassDecoders';
+import { DelayedResultError, isDelayedResultError } from 'wdk-client/Service/DelayedResultError';
 import { ServiceError, isServerError } from 'wdk-client/Service/ServiceError';
 import { fetchWithRetry } from 'wdk-client/Utils/FetchWithRetry';
 import * as Decode from 'wdk-client/Utils/Json';
@@ -24,6 +25,16 @@ export const CLIENT_WDK_VERSION_HEADER = 'x-client-wdk-timestamp';
  * model is stale, based on CLIENT_WDK_VERSION_HEADER.
  */
 export const CLIENT_OUT_OF_SYNC_TEXT = 'WDK-TIMESTAMP-MISMATCH';
+
+/**
+ * Response returned by service that indicates that the requested
+ * resource is not yet available.
+ */
+export type DelayedResult = Decode.Unpack<typeof delayedResult>;
+const delayedResult = Decode.record({
+  status: Decode.constant('accepted'),
+  message: Decode.constant('WDK-DELAYED-RESULT')
+});
 
 export interface StandardWdkPostResponse  {id: number};
 
@@ -197,6 +208,11 @@ export const ServiceBase = (serviceUrl: string) => {
     return submitError(error, extra);
   }
 
+  async function submitErrorIfUndelayedAndNot500(error: Error, extra?: any): Promise<void> {
+    if (isDelayedResultError(error)) return;
+    return submitErrorIfNot500(error, extra);
+  }
+
   function _fetchJson<T>(method: string, url: string, body?: string, isBaseUrl?: boolean) {
     const headers = new Headers({ 'Content-Type': 'application/json'});
     if (_version) headers.append(CLIENT_WDK_VERSION_HEADER, String(_version));
@@ -214,7 +230,24 @@ export const ServiceBase = (serviceUrl: string) => {
       }
 
       if (response.ok) {
-        return response.status === 204 ? undefined : response.json();
+        if (response.status === 204) {
+          return undefined;
+        }
+
+        return response.json().then(json => {
+          const delayedResultValidation = delayedResult(json);
+
+          // If the response is that of a delayed result, throw a DelayedResultError
+          if (delayedResultValidation.status === 'ok') {
+            throw new DelayedResultError(
+              'We are still processing your result. Please return to this page later.',
+              response.headers.get('x-log-marker') ?? uuid()
+            );
+          }
+
+          // Otherwise, return the parsed JSON as-is for further processing
+          return json;
+        });
       }
 
       return response.text().then(text => {
@@ -383,6 +416,7 @@ export const ServiceBase = (serviceUrl: string) => {
     sendRequest,
     submitError,
     submitErrorIfNot500,
+    submitErrorIfUndelayedAndNot500,
     getConfig,
     getVersion,
     getRecordClasses,
