@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-redeclare */
 import {
   createJsonRequest,
-  FetchClient,
+  FetchClientWithCredentials,
   ioTransformer,
 } from '@veupathdb/http-utils';
 import {
@@ -464,7 +464,7 @@ export const BoxplotResponse = type({
   completeCasesTable: completeCasesTableArray,
 });
 
-export class DataClient extends FetchClient {
+export class DataClient extends FetchClientWithCredentials {
   getApps(): Promise<TypeOf<typeof AppsResponse>> {
     return this.fetch(
       createJsonRequest({

@@ -188,7 +188,7 @@ function BoxplotViz(props: VisualizationProps) {
 
       const vars = [xAxisVariable, yAxisVariable, overlayVariable];
       const unique = vars.filter((item, i, ar) => ar.indexOf(item) === i);
-      if (vars.length != unique.length)
+      if (vars.length !== unique.length)
         throw new Error(
           'Variables must be unique. Please choose different variables.'
         );
@@ -287,7 +287,7 @@ function BoxplotViz(props: VisualizationProps) {
           toggleStarredVariable={toggleStarredVariable}
           enableShowMissingnessToggle={
             overlayVariable != null &&
-            data.value?.completeCasesAllVars !=
+            data.value?.completeCasesAllVars !==
               data.value?.completeCasesAxesVars
           }
           showMissingness={vizConfig.showMissingness}
