@@ -27,6 +27,7 @@
     "@veupathdb/eslint-config": "^1.0.0",
     "@veupathdb/prettier-config": "^1.0.0",
     "@veupathdb/tsconfig": "^1.0.1",
+    "@veupathdb/wdk-client": "*",
     "husky": ">=4",
     "lint-staged": ">=10",
     "prettier": "2.2.1",
@@ -47,6 +48,10 @@
   },
   "dependencies": {
     "fp-ts": "^2.11.5",
-    "io-ts": "^2.2.16"
+    "io-ts": "^2.2.16",
+    "lodash": "^4.17.21"
+  },
+  "peerDependencies": {
+    "@veupathdb/wdk-client": "*"
   }
 }
