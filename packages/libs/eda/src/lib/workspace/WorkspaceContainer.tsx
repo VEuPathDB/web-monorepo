@@ -2,15 +2,14 @@ import { find } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { RestrictedPage } from '@veupathdb/study-data-access/lib/data-restriction/RestrictedPage';
 import { useApprovalStatus } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
-import { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { useRouteMatch } from 'react-router';
+import { EDAWorkspaceContainer, StudyMetadata } from '../core';
 import {
-  DataClient,
-  EDAWorkspaceContainer,
-  StudyMetadata,
-  SubsettingClient,
-} from '../core';
-import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
+  useConfiguredAnalysisClient,
+  useConfiguredDataClient,
+  useConfiguredSubsettingClient,
+} from '../core/hooks/client';
 import { VariableDescriptor } from '../core/types/variable';
 import { EDAWorkspace } from './EDAWorkspace';
 import { cx, findFirstVariable } from './Utils';
@@ -33,14 +32,10 @@ interface Props {
 }
 export function WorkspaceContainer(props: Props) {
   const { url } = useRouteMatch();
-  const subsettingClient = useMemo(
-    () => new SubsettingClient({ baseUrl: props.subsettingServiceUrl }),
-    [props.subsettingServiceUrl]
+  const subsettingClient = useConfiguredSubsettingClient(
+    props.subsettingServiceUrl
   );
-  const dataClient = useMemo(
-    () => new DataClient({ baseUrl: props.dataServiceUrl }),
-    [props.dataServiceUrl]
-  );
+  const dataClient = useConfiguredDataClient(props.dataServiceUrl);
   const analysisClient = useConfiguredAnalysisClient(props.userServiceUrl);
   const makeVariableLink = useCallback(
     (
