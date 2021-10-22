@@ -1,9 +1,5 @@
 /* eslint-disable @typescript-eslint/no-redeclare */
-import {
-  createJsonRequest,
-  FetchClient,
-  ioTransformer,
-} from '@veupathdb/http-utils';
+import { createJsonRequest, ioTransformer } from '@veupathdb/http-utils';
 import {
   TypeOf,
   string,

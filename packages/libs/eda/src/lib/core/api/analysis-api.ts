@@ -1,15 +1,7 @@
 import { type, voidType, string, array } from 'io-ts';
-import { memoize, pick } from 'lodash';
+import { pick } from 'lodash';
 
-import { WdkService } from '@veupathdb/wdk-client/lib/Core';
-import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
-import {
-  ApiRequest,
-  FetchApiOptions,
-  FetchClient,
-  createJsonRequest,
-  ioTransformer,
-} from '@veupathdb/http-utils';
+import { createJsonRequest, ioTransformer } from '@veupathdb/http-utils';
 
 import {
   Analysis,

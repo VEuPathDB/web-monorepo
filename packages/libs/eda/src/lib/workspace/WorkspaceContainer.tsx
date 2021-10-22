@@ -2,14 +2,9 @@ import { find } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { RestrictedPage } from '@veupathdb/web-common/lib/App/DataRestriction/RestrictedPage';
 import { useApprovalStatus } from '@veupathdb/web-common/lib/hooks/dataRestriction';
-import { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { useRouteMatch } from 'react-router';
-import {
-  DataClient,
-  EDAWorkspaceContainer,
-  StudyMetadata,
-  SubsettingClient,
-} from '../core';
+import { EDAWorkspaceContainer, StudyMetadata } from '../core';
 import {
   useConfiguredAnalysisClient,
   useConfiguredDataClient,

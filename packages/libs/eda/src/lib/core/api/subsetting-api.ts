@@ -1,10 +1,6 @@
 /* eslint-disable @typescript-eslint/no-redeclare */
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import {
-  createJsonRequest,
-  FetchClient,
-  ioTransformer,
-} from '@veupathdb/http-utils';
+import { createJsonRequest, ioTransformer } from '@veupathdb/http-utils';
 import {
   array,
   number,

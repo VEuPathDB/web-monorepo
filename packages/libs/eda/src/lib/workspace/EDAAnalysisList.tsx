@@ -1,17 +1,13 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { RestrictedPage } from '@veupathdb/web-common/lib/App/DataRestriction/RestrictedPage';
 import { useApprovalStatus } from '@veupathdb/web-common/lib/hooks/dataRestriction';
 
 import {
-  AnalysisClient,
   EDAAnalysisListContainer,
   useConfiguredDataClient,
   useConfiguredSubsettingClient,
-  useSubsettingClient,
 } from '../core';
-import { SubsettingClient } from '../core/api/subsetting-api';
-import { DataClient } from '../core/api/data-api';
 import { useConfiguredAnalysisClient } from '../core/hooks/client';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { AnalysisList } from './AnalysisList';
