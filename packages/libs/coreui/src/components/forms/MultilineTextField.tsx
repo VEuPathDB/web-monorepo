@@ -40,14 +40,14 @@ export default function MultilineTextField({
   } = useDimensions();
 
   const {
-    observe: nonInputRef,
+    observe: headingRef,
     width: nonInputWidth,
     height: nonInputHeight,
   } = useDimensions();
 
   return (
-    <div ref={observe} css={{ width, height, boxSizing: 'border-box' }}>
-      <div ref={nonInputRef} css={{ marginBottom: 5 }}>
+    <div ref={observe} css={{ width, height }}>
+      <div ref={headingRef} css={{ marginBottom: 5 }}>
         <H6 text={heading} additionalStyles={{ marginBottom: 0 }} />
         {instructions && (
           <label css={[typography.label, { color: DARK_GRAY }]}>
@@ -61,6 +61,7 @@ export default function MultilineTextField({
           css={[
             typography.p,
             {
+              boxSizing: 'border-box',
               borderWidth: 1,
               borderStyle: 'solid',
               borderColor: 'rgb(170, 170, 170)',
@@ -91,7 +92,7 @@ export default function MultilineTextField({
               typography.metaData,
               {
                 position: 'absolute',
-                top: currentHeight - nonInputHeight + 10,
+                top: currentHeight - nonInputHeight - 35,
                 left: 15,
               },
             ]}
