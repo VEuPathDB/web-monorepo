@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/http-utils",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A collection of utilities for making http requests in a browser",
   "main": "lib/index.js",
   "repository": "git@github.com:VEuPathDB/web-http-utils.git",
