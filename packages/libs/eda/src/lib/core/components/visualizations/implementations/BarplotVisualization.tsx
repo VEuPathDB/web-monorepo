@@ -47,7 +47,7 @@ import {
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 // use lodash instead of Math.min/max
-import { max, flatMap } from 'lodash';
+import { max } from 'lodash';
 
 const plotDimensions = {
   height: 450,
@@ -78,6 +78,7 @@ function createDefaultConfig(): BarplotConfig {
 }
 
 type ValueSpec = t.TypeOf<typeof ValueSpec>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const ValueSpec = t.keyof({ count: null, proportion: null });
 
 type BarplotConfig = t.TypeOf<typeof BarplotConfig>;
@@ -287,7 +288,7 @@ function BarplotViz(props: VisualizationProps) {
           starredVariables={starredVariables}
           enableShowMissingnessToggle={
             overlayVariable != null &&
-            data.value?.completeCasesAllVars !=
+            data.value?.completeCasesAllVars !==
               data.value?.completeCasesAxesVars
           }
           toggleStarredVariable={toggleStarredVariable}

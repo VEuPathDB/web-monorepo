@@ -3287,13 +3287,14 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/eslint-config/-/eslint-config-1.0.0.tgz#40dc855b263bd3fd68f8f61508ef55b1dc163caf"
   integrity sha512-UDgRQYsIdfB9KCkBmeqMjVQOQAAGB8RLFUj4KlLAxRcT5TlRI47ZmofB3/NMbpIHP27/pk1bryPo7z4DMwWyeQ==
 
-"@veupathdb/http-utils@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/http-utils/-/http-utils-1.0.0.tgz#44443bc34ab13b33373e1c80ac719c914a41e33d"
-  integrity sha512-NnqgLabaLxo75tGVG0RkB2DjWIkgE+1k12yOMtw4cuwZEqD+i4/M0RQVNPSQWPQVHRCR/c0pPZhJc20r8sMRhA==
+"@veupathdb/http-utils@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/http-utils/-/http-utils-1.0.1.tgz#e3e2b616a43d82170c73e5ce44e80c740a960ee6"
+  integrity sha512-MURe3oXkK1ABOkVH94dK2NDBeh7KBphQUgjWNKAcn0ckT1+v5AUC8R7xkRd7P84wJT3inQE0vhEiItnoj6lYCg==
   dependencies:
     fp-ts "^2.11.5"
     io-ts "^2.2.16"
+    lodash "^4.17.21"
 
 "@veupathdb/prettier-config@^1.0.0":
   version "1.0.0"
