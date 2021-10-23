@@ -1,7 +1,7 @@
 import { find } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { RestrictedPage } from '@veupathdb/web-common/lib/App/DataRestriction/RestrictedPage';
-import { useApprovalStatus } from '@veupathdb/web-common/lib/hooks/dataRestriction';
+import { RestrictedPage } from '@veupathdb/study-data-access/lib/data-restriction/RestrictedPage';
+import { useApprovalStatus } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 import React, { useCallback } from 'react';
 import { useRouteMatch } from 'react-router';
 import { EDAWorkspaceContainer, StudyMetadata } from '../core';

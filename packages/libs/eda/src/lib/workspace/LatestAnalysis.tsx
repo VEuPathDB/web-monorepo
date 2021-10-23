@@ -1,8 +1,8 @@
 import { orderBy } from 'lodash';
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { RestrictedPage } from '@veupathdb/web-common/lib/App/DataRestriction/RestrictedPage';
-import { useApprovalStatus } from '@veupathdb/web-common/lib/hooks/dataRestriction';
+import { RestrictedPage } from '@veupathdb/study-data-access/lib/data-restriction/RestrictedPage';
+import { useApprovalStatus } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 import { AnalysisClient } from '../core';
 
