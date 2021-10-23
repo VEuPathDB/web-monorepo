@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/eda",
-  "version": "0.14.6",
+  "version": "0.14.7",
   "dependencies": {
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.3.0",
