@@ -11,13 +11,13 @@ import '@veupathdb/web-common/lib/styles/client.scss';
 
 import { Props } from '@veupathdb/wdk-client/lib/Components/Layout/Page';
 
-import { DataRestrictionDaemon } from '@veupathdb/web-common/lib/App/DataRestriction';
+import { DataRestrictionDaemon } from '@veupathdb/study-data-access/lib/data-restriction';
 import {
   disableRestriction,
   enableRestriction,
   reduxMiddleware,
-} from '@veupathdb/web-common/lib/App/DataRestriction/DataRestrictionUtils';
-import { useAttemptActionClickHandler } from '@veupathdb/web-common/lib/hooks/dataRestriction';
+} from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
+import { useAttemptActionClickHandler } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 
 import Header from './Header';
 import { MapVeuContainer } from './lib/mapveu';
@@ -91,7 +91,9 @@ initialize({
 
         return (
           <>
-            <DataRestrictionDaemon />
+            <DataRestrictionDaemon
+              makeStudyPageRoute={(id: string) => `/eda/${id}/details`}
+            />
             <DefaultComponent {...props} />
           </>
         );
