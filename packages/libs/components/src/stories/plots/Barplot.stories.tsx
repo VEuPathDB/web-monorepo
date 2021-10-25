@@ -21,7 +21,7 @@ const dataSet = {
   ],
 };
 
-const Template: Story<BarplotProps> = (args: any) => <Barplot {...args} />;
+const Template: Story<BarplotProps> = (args) => <Barplot {...args} />;
 export const Basic = Template.bind({});
 Basic.args = {
   data: dataSet,
