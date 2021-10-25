@@ -1,11 +1,15 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { noop } from 'lodash';
 
 import { CheckboxTree, IconAlt } from '@veupathdb/wdk-client/lib/Components';
+import Toggle from '@veupathdb/wdk-client/lib/Components/Icon/Toggle';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
-import { Node } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import {
+  Node,
+  pruneDescendantNodes,
+} from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { TreeBoxVocabNode } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import {
@@ -52,6 +56,41 @@ export function PreferredOrganismsConfig({
   setConfigSelection,
   revertConfigSelection,
 }: Props) {
+  const [showOnlyReferenceNodes, setShowOnlyReferenceNodes] = useState(false);
+  const toggleShowOnlyReferenceNodes = useCallback(() => {
+    setShowOnlyReferenceNodes((value) => !value);
+  }, []);
+
+  const configTree = useMemo(
+    () =>
+      !showOnlyReferenceNodes
+        ? organismTree
+        : pruneDescendantNodes(
+            (node) =>
+              node.children.length > 0 || referenceStrains.has(node.data.term),
+            organismTree
+          ),
+    [organismTree, referenceStrains, showOnlyReferenceNodes]
+  );
+
+  const configTreeFilters = useMemo(
+    () => [
+      <button
+        style={{
+          background: 'none',
+          border: 'none',
+          padding: '0 0.25em',
+          whiteSpace: 'nowrap',
+        }}
+        type="button"
+        onClick={toggleShowOnlyReferenceNodes}
+      >
+        <Toggle on={showOnlyReferenceNodes} /> Show only reference organisms
+      </button>,
+    ],
+    [showOnlyReferenceNodes, toggleShowOnlyReferenceNodes]
+  );
+
   const renderConfigNode = useRenderOrganismNode(
     referenceStrains,
     newOrganisms
@@ -176,7 +215,7 @@ export function PreferredOrganismsConfig({
             }
           </h2>
           <CheckboxTree<TreeBoxVocabNode>
-            tree={organismTree}
+            tree={configTree}
             getNodeId={getNodeId}
             getNodeChildren={getNodeChildren}
             isSearchable
@@ -193,6 +232,8 @@ export function PreferredOrganismsConfig({
             selectedList={configSelection}
             onSelectionChange={setConfigSelection}
             linksPosition={CheckboxTree.LinkPlacement.Both}
+            additionalFilters={configTreeFilters}
+            isAdditionalFilterApplied={showOnlyReferenceNodes}
           />
         </div>
         <div className={cx('--Preview')}>
