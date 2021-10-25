@@ -315,6 +315,18 @@
     react-dom "^17.0.1"
     recoil "^0.2.0"
 
+"@veupathdb/preferred-organisms@^1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/preferred-organisms/-/preferred-organisms-1.1.2.tgz#92f06466dff3f19c34880e46cb03db996f58a9c2"
+  integrity sha512-jyhwJ0NHs6pCrzRk8kYxeDm63E8uGIrzL+S95bTiDeNVMvSmQTYMgasVKk8Hj1ln5VmjDfs3WRUmtrv4xubLlA==
+  dependencies:
+    "@veupathdb/wdk-client" "^0.3.0"
+    "@veupathdb/web-common" "^0.1.5"
+    lodash "^4.17.21"
+    react "^17.0.1"
+    react-dom "^17.0.1"
+    recoil "^0.2.0"
+
 "@veupathdb/wdk-client@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.3.0.tgz#50faecbfe8128b598aed6e5c8e44796bb661a17f"
