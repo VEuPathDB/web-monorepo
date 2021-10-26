@@ -140,13 +140,6 @@ export default function SliderWidget({
   );
 
   const valueLabelDisplay = showTextInput ? 'off' : 'auto';
-  const marks =
-    showLimits && minimum != null && maximum != null
-      ? [
-          { value: minimum, label: minimum },
-          { value: maximum, label: maximum },
-        ]
-      : [];
 
   return (
     <div
