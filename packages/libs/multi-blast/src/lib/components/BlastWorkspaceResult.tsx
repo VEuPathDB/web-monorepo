@@ -97,9 +97,12 @@ function BlastWorkspaceResultWithLoadedApi(
       return undefined;
     }
 
-    const subJobIds = jobResult.value.job?.childJobs?.map(({ id }) => id) ?? [
-      jobResult.value.job.id,
-    ];
+    const childJobIds = jobResult.value.job?.childJobs?.map(({ id }) => id);
+
+    const subJobIds =
+      childJobIds == null || childJobIds.length === 0
+        ? [jobResult.value.job.id]
+        : childJobIds;
 
     const queryResults = await Promise.all(
       subJobIds.map((id) =>
