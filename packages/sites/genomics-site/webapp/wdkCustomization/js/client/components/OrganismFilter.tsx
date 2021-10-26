@@ -12,6 +12,7 @@ import { ResultType } from '@veupathdb/wdk-client/lib/Utils/WdkResult';
 import {makeClassNameHelper} from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { areTermsInString, makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import { useWdkServiceWithRefresh } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { makeCommonErrorMessage } from '@veupathdb/wdk-client/lib/Utils/Errors';
 
 import { pruneNodesWithSingleExtendingChild } from '@veupathdb/web-common/lib/util/organisms';
 
@@ -210,8 +211,8 @@ function OrganismFilterForStep({ step, requestUpdateStepSearchConfig }: Organism
   }
 
   // assign record counts and short display names to tree nodes, and trim zeroes if necessary
-  let taxonomyTreeWithCounts: TaxonomyNodeWithCount | undefined = taxonomyTree && filterSummary && stepQuestion
-    ? createDisplayableTree(taxonomyTree, filterSummary, stepQuestion, hideZeroes, preferredOrganismsEnabled, preferredOrganisms)
+  let taxonomyTreeWithCounts: TaxonomyNodeWithCount | undefined = taxonomyTree && filterSummary?.available && stepQuestion
+    ? createDisplayableTree(taxonomyTree, filterSummary.value, stepQuestion, hideZeroes, preferredOrganismsEnabled, preferredOrganisms)
     : undefined;
 
   // org filter config currently applied on the step (if any) - used for cancel button
@@ -280,9 +281,11 @@ function OrganismFilterForStep({ step, requestUpdateStepSearchConfig }: Organism
               ]}
             />
             )
-        : (
-          <Loading/>
-        )}
+        : filterSummary?.available === false
+        ? <p className={cx('--ErrorMessage')}>
+            {filterSummary.reason}
+          </p>
+        : <Loading />}
       </div>
       <ExpansionBar onClick={() => setExpandedAndPref(false)} message={'Hide ' + TITLE} arrow="&uArr;"/>
     </Container>
@@ -428,7 +431,18 @@ function fetchTaxonomyTree(wdkService: WdkService) {
 function fetchFilterSummary(wdkService: WdkService, stepId: number) {
   return wdkService.getStepColumnReport(stepId, ORGANISM_COLUMN_NAME, HISTOGRAM_REPORTER_NAME, {})
     .then(filterSummary => {
-      return filterSummary as OrgFilterSummary;
+      return ({
+        available: true,
+        value: filterSummary as OrgFilterSummary
+      }) as const;
+    })
+    .catch(error => {
+      wdkService.submitErrorIfUndelayedAndNot500(error);
+
+      return {
+        available: false,
+        reason: makeCommonErrorMessage(error)
+      } as const;
     });
 }
 
