@@ -1,3 +1,4 @@
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { ParameterValues } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import { useCombinedResultProps } from '../hooks/combinedResults';
@@ -47,7 +48,9 @@ export function ResultContainer(props: Props) {
 function CombinedResultContainer(props: Props) {
   return props.multiQueryReportResult == null ||
     props.multiQueryReportResult.value == null ? (
-    <div className="wdk-LoadingData">Loading data...</div>
+    <Loading>
+      <div className="wdk-LoadingData">Loading data...</div>
+    </Loading>
   ) : props.multiQueryReportResult.value.status === 'error' ? (
     <BlastRequestError
       errorDetails={props.multiQueryReportResult.value.details}
