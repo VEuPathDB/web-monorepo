@@ -16,7 +16,6 @@
     "*.scss"
   ],
   "dependencies": {
-    "@types/react-redux": "^7.1.5",
     "@veupathdb/http-utils": "^1.0.1",
     "@veupathdb/preferred-organisms": "^1.1.1",
     "@veupathdb/wdk-client": "^0.3.0",
@@ -27,7 +26,8 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-redux": "^7.1.5",
-    "react-select": "^3.0.4"
+    "react-select": "^3.0.4",
+    "redux": "^4.0.0"
   },
   "scripts": {
     "start": "veupathdb-react-scripts start",
@@ -54,6 +54,8 @@
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
+    "@types/react-redux": "^7.1.20",
+    "@types/react-router": "^5.1.17",
     "@veupathdb/browserslist-config": "^1.0.0",
     "@veupathdb/eslint-config": "^1.0.0",
     "@veupathdb/prettier-config": "^1.0.0",
