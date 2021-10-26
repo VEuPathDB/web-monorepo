@@ -63,7 +63,6 @@ export function useIndividualResultProps({
 
   const individualQueryOptions = useMemo(() => {
     return individualQueries.map(({ query }, i) => {
-      console.log(query);
       const trimmedQuery = query.trim();
       const defline = !trimmedQuery.startsWith('>')
         ? undefined
