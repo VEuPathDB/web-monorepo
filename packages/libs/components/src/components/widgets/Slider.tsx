@@ -83,7 +83,7 @@ export default function SliderWidget({
       flex: 1,
       width: '11em',
       ...(showLimits && minimum != null && maximum != null
-        ? { marginLeft: '0.75em', marginRight: '0.75em' }
+        ? { marginLeft: '1.0em', marginRight: '1.0em' }
         : {}),
     },
     rail: {
