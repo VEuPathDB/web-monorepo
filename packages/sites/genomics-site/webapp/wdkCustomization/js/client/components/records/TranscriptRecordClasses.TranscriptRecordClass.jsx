@@ -103,16 +103,22 @@ function OrthologCount(props) {
   const { step, DefaultComponent } = props;
   const uniqueOrthologValues = useWdkServiceWithRefresh(
     async wdkService => {
-      const result = await wdkService.getStepColumnReport(
-        step.id,
-        ORTHOLOG_COLUMN_FILTER_NAME,
-        ORTHOLOG_COLUMN_FILTER_TOOL,
-        { maxValues: 0 }
-      );
+      try {
+        const result = await wdkService.getStepColumnReport(
+          step.id,
+          ORTHOLOG_COLUMN_FILTER_NAME,
+          ORTHOLOG_COLUMN_FILTER_TOOL,
+          { maxValues: 0 }
+        );
 
-      return result.uniqueValues == null
-        ? { available: false }
-        : { available: true, value: result.uniqueValues };
+        return result.uniqueValues == null
+          ? { available: false }
+          : { available: true, value: result.uniqueValues };
+      } catch (error) {
+        wdkService.submitErrorIfUndelayedAndNot500(error);
+
+        return { available: false };
+      }
     },
     [step]
   );
