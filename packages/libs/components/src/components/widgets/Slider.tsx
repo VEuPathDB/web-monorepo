@@ -193,7 +193,7 @@ export default function SliderWidget({
         />
       )}
       {showLimits && minimum != null && maximum != null && (
-        <Typography>{minimum}</Typography>
+        <Typography style={{ fontSize: '0.75em' }}>{minimum}</Typography>
       )}
       <Slider
         classes={{
@@ -213,7 +213,7 @@ export default function SliderWidget({
         onChange={handleChange}
       />
       {showLimits && minimum != null && maximum != null && (
-        <Typography>{maximum}</Typography>
+        <Typography style={{ fontSize: '0.75em' }}>{maximum}</Typography>
       )}
     </div>
   );
