@@ -1,5 +1,6 @@
 import { createContext, useContext, useMemo } from 'react';
 
+import { Dispatch } from 'redux';
 import { useDispatch } from 'react-redux';
 
 import { once } from 'lodash';
@@ -40,7 +41,7 @@ export function useBlastApi() {
 
 const makeErrorReporter = once(function (
   wdkService: BlastCompatibleWdkService,
-  dispatch: ReturnType<typeof useDispatch>
+  dispatch: Dispatch
 ) {
   return function (error: any) {
     wdkService.submitErrorIfNot500(
