@@ -3,7 +3,6 @@ import React, { Suspense } from 'react';
 import { RouteComponentProps } from 'react-router';
 import { RecoilRoot } from 'recoil';
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
-import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
 import {
   BlastSummaryViewPlugin,
   GenomeSummaryViewPlugin,
@@ -24,11 +23,9 @@ import { endpoint, rootElement, rootUrl } from './constants';
 import reportWebVitals from './reportWebVitals';
 
 import { BlastForm } from './lib/components/BlastForm';
-import { BlastWorkspace } from './lib/components/BlastWorkspace';
-import { BlastWorkspaceResult } from './lib/components/BlastWorkspaceResult';
-import { BlastController } from './lib/controllers/BlastController';
+import { BlastQuestionController } from './lib/controllers/BlastQuestionController';
+import { BlastWorkspaceRouter } from './lib/controllers/BlastWorkspaceRouter';
 import { isMultiBlastQuestion } from './lib/utils/pluginConfig';
-import { parseBlastResultSubpath } from './lib/utils/routes';
 import { wrapWdkService } from './lib/utils/wdkServiceIntegration';
 
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
@@ -45,31 +42,9 @@ initialize({
       component: (props: RouteComponentProps<void>) => <Home />,
     },
     {
-      path: '/workspace/blast/:tab(new|all|help)?',
-      component: BlastWorkspace,
-    },
-    {
-      path:
-        '/workspace/blast/result/:jobId/:subPath(combined|individual/\\d+)?',
-      component: (
-        props: RouteComponentProps<{
-          jobId: string;
-          subPath: string | undefined;
-        }>
-      ) => {
-        const selectedResult = parseBlastResultSubpath(
-          props.match.params.subPath
-        );
-
-        return selectedResult != null && selectedResult.type === 'unknown' ? (
-          <NotFoundController />
-        ) : (
-          <BlastWorkspaceResult
-            jobId={props.match.params.jobId}
-            selectedResult={selectedResult}
-          />
-        );
-      },
+      path: '/workspace/blast',
+      exact: false,
+      component: BlastWorkspaceRouter,
     },
     {
       path: '/preferred-organisms',
@@ -93,7 +68,7 @@ initialize({
     {
       type: 'questionController',
       test: isMultiBlastQuestion,
-      component: BlastController,
+      component: BlastQuestionController,
     },
     {
       type: 'questionForm',
