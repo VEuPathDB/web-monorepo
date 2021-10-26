@@ -17,6 +17,7 @@
   ],
   "dependencies": {
     "@types/react-redux": "^7.1.5",
+    "@veupathdb/http-utils": "^1.0.1",
     "@veupathdb/preferred-organisms": "^1.1.1",
     "@veupathdb/wdk-client": "^0.3.0",
     "@veupathdb/web-common": "^0.1.1-alpha.11",
