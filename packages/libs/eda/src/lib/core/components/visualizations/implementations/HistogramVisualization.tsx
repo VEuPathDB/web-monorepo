@@ -354,7 +354,7 @@ function HistogramViz(props: VisualizationProps) {
 
       <PluginError error={data.error} />
       <HistogramPlotWithControls
-        data={data.value && !data.pending ? data.value : undefined}
+        data={data.value}
         error={data.error}
         onBinWidthChange={onBinWidthChange}
         dependentAxisLogScale={vizConfig.dependentAxisLogScale}
@@ -582,19 +582,19 @@ export function histogramResponseToData(
     ? { min, max }
     : {
         min,
-        max,
+        max: max > 60 ? 60 : max, // back end seems to fall over with any values >99 but 60 is used in subsetting
         unit: (binWidth as TimeDelta).unit,
       }) as NumberOrTimeDeltaRange;
   const binWidthStep = step || 0.1;
   return {
-    series: response.histogram.data.map((data, index) => ({
+    series: response.histogram.data.map((data) => ({
       name:
         data.overlayVariableDetails?.value != null
           ? fixLabelForNumberVariables(
               data.overlayVariableDetails.value,
               overlayVariable
             )
-          : `series ${index}`,
+          : '',
       bins: data.value.map((_, index) => ({
         binStart:
           type === 'number' || type === 'integer'
