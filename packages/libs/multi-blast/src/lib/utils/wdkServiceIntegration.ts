@@ -37,6 +37,6 @@ export function isBlastCompatibleWdkService(
   wdkService: WdkService
 ): wdkService is BlastCompatibleWdkService {
   return Object.keys(blastCompatibleWdkServiceWrappers).every(
-    (orthoServiceKey) => orthoServiceKey in wdkService
+    (blastServiceKey) => blastServiceKey in wdkService
   );
 }
