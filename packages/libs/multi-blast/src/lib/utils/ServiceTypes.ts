@@ -1,300 +1,280 @@
-import { isPlainObject } from 'lodash';
-
 import {
-  Decoder,
-  Result,
-  Unpack,
-  arrayOf,
+  TypeOf,
+  array,
   boolean,
-  combine,
-  constant,
-  err,
+  intersection,
+  literal,
   number,
-  ok,
-  objectOf,
-  oneOf,
-  optional,
+  partial,
   record,
   string,
-} from '@veupathdb/wdk-client/lib/Utils/Json';
+  type,
+  union,
+} from 'io-ts';
 
-function partialRecord<T>(
-  decoderRecord: { [K in keyof T]: Decoder<T[K]> }
-): Decoder<Partial<T>> {
-  return function decodePartialRecord(t: any): Result<T> {
-    if (!isPlainObject(t)) return err(t, `object`);
-    for (const key in decoderRecord) {
-      const r = optional(decoderRecord[key])(t[key]);
-      if (r.status === 'err')
-        return err(r.value, r.expected, `.${key}${r.context}`);
-    }
-    return ok(t);
-  };
-}
+export const ioBlastCompBasedStats = union([
+  literal('none'),
+  literal('comp-based-stats'),
+  literal('conditional-comp-based-score-adjustment'),
+  literal('unconditional-comp-based-score-adjustment'),
+]);
 
-export const ioBlastCompBasedStats = oneOf(
-  constant('none'),
-  constant('comp-based-stats'),
-  constant('conditional-comp-based-score-adjustment'),
-  constant('unconditional-comp-based-score-adjustment')
-);
+export type IoBlastCompBasedStats = TypeOf<typeof ioBlastCompBasedStats>;
 
-export type IoBlastCompBasedStats = Unpack<typeof ioBlastCompBasedStats>;
-
-export const ioBlastSegMask = oneOf(
-  constant('yes'),
-  constant('no'),
-  record({
+export const ioBlastSegMask = union([
+  literal('yes'),
+  literal('no'),
+  type({
     window: number,
     locut: number,
     hicut: number,
-  })
-);
+  }),
+]);
 
-export type IoBlastSegMask = Unpack<typeof ioBlastSegMask>;
+export type IoBlastSegMask = TypeOf<typeof ioBlastSegMask>;
 
-export const ioBlastStrand = oneOf(
-  constant('plus'),
-  constant('minus'),
-  constant('both')
-);
+export const ioBlastStrand = union([
+  literal('plus'),
+  literal('minus'),
+  literal('both'),
+]);
 
-export type IoBlastStrand = Unpack<typeof ioBlastStrand>;
+export type IoBlastStrand = TypeOf<typeof ioBlastStrand>;
 
-export const ioHitSorting = oneOf(
-  constant('by-eval'),
-  constant('by-bit-score'),
-  constant('by-total-score'),
-  constant('by-percent-identity'),
-  constant('by-query-coverage')
-);
+export const ioHitSorting = union([
+  literal('by-eval'),
+  literal('by-bit-score'),
+  literal('by-total-score'),
+  literal('by-percent-identity'),
+  literal('by-query-coverage'),
+]);
 
-export type IoHitSorting = Unpack<typeof ioHitSorting>;
+export type IoHitSorting = TypeOf<typeof ioHitSorting>;
 
-export const ioHspSorting = oneOf(
-  constant('by-hsp-evalue'),
-  constant('by-hsp-score'),
-  constant('by-hsp-query-start'),
-  constant('by-hsp-percent-identity'),
-  constant('by-hsp-subject-start')
-);
+export const ioHspSorting = union([
+  literal('by-hsp-evalue'),
+  literal('by-hsp-score'),
+  literal('by-hsp-query-start'),
+  literal('by-hsp-percent-identity'),
+  literal('by-hsp-subject-start'),
+]);
 
-export type IoHspSorting = Unpack<typeof ioHspSorting>;
+export type IoHspSorting = TypeOf<typeof ioHspSorting>;
 
-export const ioBlastReportField = oneOf(
-  constant('bitscore'),
-  constant('btop'),
-  constant('evalue'),
-  constant('frames'),
-  constant('gapopen'),
-  constant('gaps'),
-  constant('length'),
-  constant('mismatch'),
-  constant('nident'),
-  constant('pident'),
-  constant('positive'),
-  constant('ppos'),
-  constant('qacc'),
-  constant('qaccver'),
-  constant('qcovhsp'),
-  constant('qcovs'),
-  constant('qcovus'),
-  constant('qend'),
-  constant('qframe'),
-  constant('qgi'),
-  constant('qlen'),
-  constant('qseq'),
-  constant('qseqid'),
-  constant('qstart'),
-  constant('sacc'),
-  constant('saccver'),
-  constant('sallacc'),
-  constant('sallgi'),
-  constant('sallseqid'),
-  constant('salltitles'),
-  constant('sblastname'),
-  constant('sblastnames'),
-  constant('scomname'),
-  constant('scomnames'),
-  constant('score'),
-  constant('send'),
-  constant('sframe'),
-  constant('sgi'),
-  constant('slen'),
-  constant('sq'),
-  constant('sr'),
-  constant('ssciname'),
-  constant('sscinames'),
-  constant('sseq'),
-  constant('sseqid'),
-  constant('sskingdom'),
-  constant('sskingdoms'),
-  constant('sstart'),
-  constant('sstrand'),
-  constant('staxid'),
-  constant('staxids'),
-  constant('std'),
-  constant('stitle')
-);
+export const ioBlastReportField = union([
+  literal('bitscore'),
+  literal('btop'),
+  literal('evalue'),
+  literal('frames'),
+  literal('gapopen'),
+  literal('gaps'),
+  literal('length'),
+  literal('mismatch'),
+  literal('nident'),
+  literal('pident'),
+  literal('positive'),
+  literal('ppos'),
+  literal('qacc'),
+  literal('qaccver'),
+  literal('qcovhsp'),
+  literal('qcovs'),
+  literal('qcovus'),
+  literal('qend'),
+  literal('qframe'),
+  literal('qgi'),
+  literal('qlen'),
+  literal('qseq'),
+  literal('qseqid'),
+  literal('qstart'),
+  literal('sacc'),
+  literal('saccver'),
+  literal('sallacc'),
+  literal('sallgi'),
+  literal('sallseqid'),
+  literal('salltitles'),
+  literal('sblastname'),
+  literal('sblastnames'),
+  literal('scomname'),
+  literal('scomnames'),
+  literal('score'),
+  literal('send'),
+  literal('sframe'),
+  literal('sgi'),
+  literal('slen'),
+  literal('sq'),
+  literal('sr'),
+  literal('ssciname'),
+  literal('sscinames'),
+  literal('sseq'),
+  literal('sseqid'),
+  literal('sskingdom'),
+  literal('sskingdoms'),
+  literal('sstart'),
+  literal('sstrand'),
+  literal('staxid'),
+  literal('staxids'),
+  literal('std'),
+  literal('stitle'),
+]);
 
-export type IoBlastReportField = Unpack<typeof ioBlastReportField>;
+export type IoBlastReportField = TypeOf<typeof ioBlastReportField>;
 
-export const ioBlastFormat = oneOf(
-  constant('pairwise'),
-  constant('query-anchored-with-identities'),
-  constant('query-anchored-without-identities'),
-  constant('flat-query-anchored-with-identities'),
-  constant('flat-query-anchored-without-identities'),
-  constant('xml'),
-  constant('tabular'),
-  constant('tabular-with-comments'),
-  constant('text-asn-1'),
-  constant('binary-asn-1'),
-  constant('csv'),
-  constant('archive-asn-1'),
-  constant('seqalign-json'),
-  constant('multi-file-json'),
-  constant('multi-file-xml2'),
-  constant('single-file-json'),
-  constant('single-file-xml2'),
-  constant('sam'),
-  constant('organism-report')
-);
+export const ioBlastFormat = union([
+  literal('pairwise'),
+  literal('query-anchored-with-identities'),
+  literal('query-anchored-without-identities'),
+  literal('flat-query-anchored-with-identities'),
+  literal('flat-query-anchored-without-identities'),
+  literal('xml'),
+  literal('tabular'),
+  literal('tabular-with-comments'),
+  literal('text-asn-1'),
+  literal('binary-asn-1'),
+  literal('csv'),
+  literal('archive-asn-1'),
+  literal('seqalign-json'),
+  literal('multi-file-json'),
+  literal('multi-file-xml2'),
+  literal('single-file-json'),
+  literal('single-file-xml2'),
+  literal('sam'),
+  literal('organism-report'),
+]);
 
-export type IoBlastFormat = Unpack<typeof ioBlastFormat>;
+export type IoBlastFormat = TypeOf<typeof ioBlastFormat>;
 
-export const ioBlastReportFormat = partialRecord({
+export const ioBlastReportFormat = partial({
   format: ioBlastFormat,
   delim: string,
-  fields: arrayOf(ioBlastReportField),
+  fields: array(ioBlastReportField),
 });
 
-export type IoBlastReportFormat = Unpack<typeof ioBlastReportFormat>;
+export type IoBlastReportFormat = TypeOf<typeof ioBlastReportFormat>;
 
-export const ioBlastLocation = record({
+export const ioBlastLocation = type({
   start: number,
   end: number,
 });
 
-export type IoBlastLocation = Unpack<typeof ioBlastLocation>;
+export type IoBlastLocation = TypeOf<typeof ioBlastLocation>;
 
-export const ioJobStatus = oneOf(
-  constant('queued'),
-  constant('in-progress'),
-  constant('completed'),
-  constant('errored'),
-  constant('expired')
-);
+export const ioJobStatus = union([
+  literal('queued'),
+  literal('in-progress'),
+  literal('completed'),
+  literal('errored'),
+  literal('expired'),
+]);
 
-export type IoJobStatus = Unpack<typeof ioJobStatus>;
+export type IoJobStatus = TypeOf<typeof ioJobStatus>;
 
-export const ioBlastPScoringMatrix = oneOf(
-  constant('BLOSUM45'),
-  constant('BLOSUM50'),
-  constant('BLOSUM62'),
-  constant('BLOSUM80'),
-  constant('BLOSUM90'),
-  constant('PAM30'),
-  constant('PAM70'),
-  constant('PAM250'),
-  constant('IDENTITY')
-);
+export const ioBlastPScoringMatrix = union([
+  literal('BLOSUM45'),
+  literal('BLOSUM50'),
+  literal('BLOSUM62'),
+  literal('BLOSUM80'),
+  literal('BLOSUM90'),
+  literal('PAM30'),
+  literal('PAM70'),
+  literal('PAM250'),
+  literal('IDENTITY'),
+]);
 
-export type IOBlastPScoringMatrix = Unpack<typeof ioBlastPScoringMatrix>;
+export type IOBlastPScoringMatrix = TypeOf<typeof ioBlastPScoringMatrix>;
 
-export const ioBlastXScoringMatrix = oneOf(
-  constant('BLOSUM45'),
-  constant('BLOSUM50'),
-  constant('BLOSUM62'),
-  constant('BLOSUM80'),
-  constant('BLOSUM90'),
-  constant('PAM30'),
-  constant('PAM70'),
-  constant('PAM250')
-);
+export const ioBlastXScoringMatrix = union([
+  literal('BLOSUM45'),
+  literal('BLOSUM50'),
+  literal('BLOSUM62'),
+  literal('BLOSUM80'),
+  literal('BLOSUM90'),
+  literal('PAM30'),
+  literal('PAM70'),
+  literal('PAM250'),
+]);
 
-export type IOBlastXScoringMatrix = Unpack<typeof ioBlastXScoringMatrix>;
+export type IOBlastXScoringMatrix = TypeOf<typeof ioBlastXScoringMatrix>;
 
-export const ioTBlastNScoringMatrix = oneOf(
-  constant('BLOSUM45'),
-  constant('BLOSUM50'),
-  constant('BLOSUM62'),
-  constant('BLOSUM80'),
-  constant('BLOSUM90'),
-  constant('PAM30'),
-  constant('PAM70'),
-  constant('PAM250'),
-  constant('IDENTITY')
-);
+export const ioTBlastNScoringMatrix = union([
+  literal('BLOSUM45'),
+  literal('BLOSUM50'),
+  literal('BLOSUM62'),
+  literal('BLOSUM80'),
+  literal('BLOSUM90'),
+  literal('PAM30'),
+  literal('PAM70'),
+  literal('PAM250'),
+  literal('IDENTITY'),
+]);
 
-export type IOTBlastNScoringMatrix = Unpack<typeof ioTBlastNScoringMatrix>;
+export type IOTBlastNScoringMatrix = TypeOf<typeof ioTBlastNScoringMatrix>;
 
-export const ioTBlastXScoringMatrix = oneOf(
-  constant('BLOSUM45'),
-  constant('BLOSUM50'),
-  constant('BLOSUM62'),
-  constant('BLOSUM80'),
-  constant('BLOSUM90'),
-  constant('PAM30'),
-  constant('PAM70'),
-  constant('PAM250')
-);
+export const ioTBlastXScoringMatrix = union([
+  literal('BLOSUM45'),
+  literal('BLOSUM50'),
+  literal('BLOSUM62'),
+  literal('BLOSUM80'),
+  literal('BLOSUM90'),
+  literal('PAM30'),
+  literal('PAM70'),
+  literal('PAM250'),
+]);
 
-export type IOTBlastXScoringMatrix = Unpack<typeof ioTBlastXScoringMatrix>;
+export type IOTBlastXScoringMatrix = TypeOf<typeof ioTBlastXScoringMatrix>;
 
-export const ioBlastNTask = oneOf(
-  constant('megablast'),
-  constant('dc-megablast'),
-  constant('blastn'),
-  constant('blastn-short')
-);
+export const ioBlastNTask = union([
+  literal('megablast'),
+  literal('dc-megablast'),
+  literal('blastn'),
+  literal('blastn-short'),
+]);
 
-export type IoBlastNTask = Unpack<typeof ioBlastNTask>;
+export type IoBlastNTask = TypeOf<typeof ioBlastNTask>;
 
-export const ioBlastPTask = oneOf(
-  constant('blastp'),
-  constant('blastp-short'),
-  constant('blastp-fast')
-);
+export const ioBlastPTask = union([
+  literal('blastp'),
+  literal('blastp-short'),
+  literal('blastp-fast'),
+]);
 
-export type IoBlastPTask = Unpack<typeof ioBlastPTask>;
+export type IoBlastPTask = TypeOf<typeof ioBlastPTask>;
 
-export const ioBlastXTask = oneOf(constant('blastx'), constant('blastx-fast'));
+export const ioBlastXTask = union([literal('blastx'), literal('blastx-fast')]);
 
-export type IoBlastXTask = Unpack<typeof ioBlastXTask>;
+export type IoBlastXTask = TypeOf<typeof ioBlastXTask>;
 
-export const ioTBlastNTask = oneOf(
-  constant('tblastn'),
-  constant('tblastn-fast')
-);
+export const ioTBlastNTask = union([
+  literal('tblastn'),
+  literal('tblastn-fast'),
+]);
 
-export type IoTBlastNTask = Unpack<typeof ioTBlastNTask>;
+export type IoTBlastNTask = TypeOf<typeof ioTBlastNTask>;
 
-export const ioBlastNDust = oneOf(
-  constant('yes'),
-  constant('no'),
-  record({
+export const ioBlastNDust = union([
+  literal('yes'),
+  literal('no'),
+  type({
     level: number,
     window: number,
     linker: number,
-  })
-);
-
-export type IoBlastNDust = Unpack<typeof ioBlastNDust>;
-
-export const ioBlastNDcTemplateType = oneOf(
-  constant('coding'),
-  constant('optimal'),
-  constant('both')
-);
-
-export type IoBlastNDcTemplateType = Unpack<typeof ioBlastNDcTemplateType>;
-
-export const ioBlastNConfig = combine(
-  record({
-    tool: constant('blastn'),
   }),
-  partialRecord({
+]);
+
+export type IoBlastNDust = TypeOf<typeof ioBlastNDust>;
+
+export const ioBlastNDcTemplateType = union([
+  literal('coding'),
+  literal('optimal'),
+  literal('both'),
+]);
+
+export type IoBlastNDcTemplateType = TypeOf<typeof ioBlastNDcTemplateType>;
+
+export const ioBlastNConfig = intersection([
+  type({
+    tool: literal('blastn'),
+  }),
+  partial({
     query: string,
     queryLoc: ioBlastLocation,
     eValue: string,
@@ -324,8 +304,8 @@ export const ioBlastNConfig = combine(
     dust: ioBlastNDust,
     windowMaskerTaxid: number,
     softMasking: boolean,
-    taxIds: arrayOf(number),
-    negativeTaxIds: arrayOf(number),
+    taxIds: array(number),
+    negativeTaxIds: array(number),
     dbSoftMask: string,
     dbHardMask: string,
     percIdentity: number,
@@ -343,16 +323,16 @@ export const ioBlastNConfig = combine(
     ungapped: boolean,
     windowSize: number,
     offDiagonalRange: number,
-  })
-);
-
-export type IoBlastNConfig = Unpack<typeof ioBlastNConfig>;
-
-export const ioBlastPConfig = combine(
-  record({
-    tool: constant('blastp'),
   }),
-  partialRecord({
+]);
+
+export type IoBlastNConfig = TypeOf<typeof ioBlastNConfig>;
+
+export const ioBlastPConfig = intersection([
+  type({
+    tool: literal('blastp'),
+  }),
+  partial({
     query: string,
     queryLoc: ioBlastLocation,
     eValue: string,
@@ -379,8 +359,8 @@ export const ioBlastPConfig = combine(
     compBasedStats: ioBlastCompBasedStats,
     seg: ioBlastSegMask,
     softMasking: boolean,
-    taxIds: arrayOf(number),
-    negativeTaxIds: arrayOf(number),
+    taxIds: array(number),
+    negativeTaxIds: array(number),
     dbSoftMask: string,
     dbHardMask: string,
     cullingLimit: number,
@@ -392,17 +372,17 @@ export const ioBlastPConfig = combine(
     windowSize: number,
     ungapped: boolean,
     useSWTraceback: boolean,
-  })
-);
+  }),
+]);
 
-export type IoBlastPConfig = Unpack<typeof ioBlastPConfig>;
+export type IoBlastPConfig = TypeOf<typeof ioBlastPConfig>;
 
-export const ioBlastXConfig = combine(
-  record({
-    tool: constant('blastx'),
+export const ioBlastXConfig = intersection([
+  type({
+    tool: literal('blastx'),
     queryGeneticCode: number,
   }),
-  partialRecord({
+  partial({
     query: string,
     queryLoc: ioBlastLocation,
     eValue: string,
@@ -431,8 +411,8 @@ export const ioBlastXConfig = combine(
     compBasedStats: ioBlastCompBasedStats,
     seg: ioBlastSegMask,
     softMasking: boolean,
-    taxIds: arrayOf(number),
-    negativeTaxIds: arrayOf(number),
+    taxIds: array(number),
+    negativeTaxIds: array(number),
     dbSoftMask: string,
     dbHardMask: string,
     cullingLimit: number,
@@ -445,16 +425,16 @@ export const ioBlastXConfig = combine(
     windowSize: number,
     ungapped: boolean,
     useSWTraceback: boolean,
-  })
-);
-
-export type IoBlastXConfig = Unpack<typeof ioBlastXConfig>;
-
-export const ioTBlastNConfig = combine(
-  record({
-    tool: constant('tblastn'),
   }),
-  partialRecord({
+]);
+
+export type IoBlastXConfig = TypeOf<typeof ioBlastXConfig>;
+
+export const ioTBlastNConfig = intersection([
+  type({
+    tool: literal('tblastn'),
+  }),
+  partial({
     query: string,
     queryLoc: ioBlastLocation,
     eValue: string,
@@ -483,8 +463,8 @@ export const ioTBlastNConfig = combine(
     compBasedStats: ioBlastCompBasedStats,
     seg: ioBlastSegMask,
     softMasking: boolean,
-    taxIds: arrayOf(number),
-    negativeTaxIds: arrayOf(number),
+    taxIds: array(number),
+    negativeTaxIds: array(number),
     dbSoftMask: string,
     dbHardMask: string,
     cullingLimit: number,
@@ -497,17 +477,17 @@ export const ioTBlastNConfig = combine(
     ungapped: boolean,
     windowSize: number,
     useSWTraceback: boolean,
-  })
-);
+  }),
+]);
 
-export type IoTBlastNConfig = Unpack<typeof ioTBlastNConfig>;
+export type IoTBlastNConfig = TypeOf<typeof ioTBlastNConfig>;
 
-export const ioTBlastXConfig = combine(
-  record({
-    tool: constant('tblastx'),
+export const ioTBlastXConfig = intersection([
+  type({
+    tool: literal('tblastx'),
     queryGeneticCode: number,
   }),
-  partialRecord({
+  partial({
     query: string,
     queryLoc: ioBlastLocation,
     eValue: string,
@@ -533,8 +513,8 @@ export const ioTBlastXConfig = combine(
     dbGencode: number,
     seg: ioBlastSegMask,
     softMasking: boolean,
-    taxIds: arrayOf(number),
-    negativeTaxIds: arrayOf(number),
+    taxIds: array(number),
+    negativeTaxIds: array(number),
     dbSoftMask: string,
     dbHardMask: string,
     cullingLimit: number,
@@ -543,64 +523,78 @@ export const ioTBlastXConfig = combine(
     subjectBestHit: boolean,
     sumStats: boolean,
     windowSize: number,
-  })
-);
+  }),
+]);
 
-export type IoTBlastXConfig = Unpack<typeof ioTBlastXConfig>;
+export type IoTBlastXConfig = TypeOf<typeof ioTBlastXConfig>;
 
-export const ioBlastConfig = oneOf(
+export const ioBlastConfig = union([
   ioBlastNConfig,
   ioBlastPConfig,
   ioBlastXConfig,
   ioTBlastNConfig,
-  ioTBlastXConfig
-);
+  ioTBlastXConfig,
+]);
 
-export type IoBlastConfig = Unpack<typeof ioBlastConfig>;
+export type IoBlastConfig = TypeOf<typeof ioBlastConfig>;
 
-export type Target = Unpack<typeof target>;
-
-export const target = record({
+export const target = type({
   organism: string,
   target: string,
 });
 
-export const shortJobResponse = record({
-  id: string,
-  description: optional(string),
-  status: ioJobStatus,
-  created: string,
-  // FIXME: This field no longer appears in the response. Service bug?
-  // expires: string,
-  // FIXME: This field is missing from "secondary" jobs. Service bug?
-  isPrimary: optional(boolean),
-  childJobs: optional(arrayOf(record({ id: string, index: number }))),
-  parentJobs: optional(arrayOf(record({ id: string, index: number }))),
-  site: string,
-  targets: arrayOf(target),
-});
+export type Target = TypeOf<typeof target>;
 
-export type ShortJobResponse = Unpack<typeof shortJobResponse>;
+export const shortJobResponse = intersection([
+  type({
+    id: string,
+    status: ioJobStatus,
+    created: string,
+    site: string,
+    targets: array(target),
+    // FIXME: This field no longer appears in the response. Service bug?
+    // expires: string,
+  }),
+  partial({
+    description: string,
+    // FIXME: This field is missing from "secondary" jobs. Service bug?
+    isPrimary: boolean,
+    childJobs: array(
+      type({
+        id: string,
+        index: number,
+      })
+    ),
+    parentJobs: array(
+      type({
+        id: string,
+        index: number,
+      })
+    ),
+  }),
+]);
 
-export const longJobResponse = combine(
+export type ShortJobResponse = TypeOf<typeof shortJobResponse>;
+
+export const longJobResponse = intersection([
   shortJobResponse,
-  record({
+  type({
     config: ioBlastConfig,
-  })
-);
+  }),
+]);
 
-export type LongJobResponse = Unpack<typeof longJobResponse>;
+export type LongJobResponse = TypeOf<typeof longJobResponse>;
 
-export const createJobResponse = record({
+export const createJobResponse = type({
   jobId: string,
 });
 
-export type CreateJobResponse = Unpack<typeof createJobResponse>;
+export type CreateJobResponse = TypeOf<typeof createJobResponse>;
 
-export const reportConfig = partialRecord({
+export const reportConfig = partial({
   format: ioBlastFormat,
   fieldDelim: string,
-  fields: arrayOf(ioBlastReportField),
+  fields: array(ioBlastReportField),
   numDescriptions: number,
   numAlignments: number,
   lineLength: number,
@@ -610,72 +604,80 @@ export const reportConfig = partialRecord({
   parseDefLines: boolean,
 });
 
-export type ReportConfig = Unpack<typeof reportConfig>;
+export type ReportConfig = TypeOf<typeof reportConfig>;
 
-export const shortReportResponse = record({
-  jobID: string,
-  reportID: string,
-  config: reportConfig,
-  status: ioJobStatus,
-  description: optional(string),
-});
+export const shortReportResponse = intersection([
+  type({
+    jobID: string,
+    reportID: string,
+    config: reportConfig,
+    status: ioJobStatus,
+  }),
+  partial({
+    description: string,
+  }),
+]);
 
-export type ShortReportResponse = Unpack<typeof shortReportResponse>;
+export type ShortReportResponse = TypeOf<typeof shortReportResponse>;
 
-export const longReportResponse = combine(
+export const longReportResponse = intersection([
   shortReportResponse,
-  partialRecord({
-    files: arrayOf(string),
-  })
-);
+  partial({
+    files: array(string),
+  }),
+]);
 
-export type LongReportResponse = Unpack<typeof longReportResponse>;
+export type LongReportResponse = TypeOf<typeof longReportResponse>;
 
 export const createReportResponse = shortReportResponse;
 
 export type CreateReportReponse = ShortJobResponse;
 
-export const reportStrand = oneOf(constant('Plus'), constant('Minus'));
+export const reportStrand = union([literal('Plus'), literal('Minus')]);
 
-export type ReportStrand = Unpack<typeof reportStrand>;
+export type ReportStrand = TypeOf<typeof reportStrand>;
 
-export const reportDescriptionJson = record({
+export const reportDescriptionJson = type({
   id: string,
   accession: string,
   title: string,
 });
 
-export const reportHspJson = record({
-  num: number,
-  bit_score: number,
-  score: number,
-  evalue: number,
-  identity: number,
-  query_from: number,
-  query_to: number,
-  query_strand: optional(reportStrand),
-  hit_from: number,
-  hit_to: number,
-  hit_strand: optional(reportStrand),
-  align_len: number,
-  gaps: number,
-  qseq: string,
-  hseq: string,
-  midline: string,
-});
+export const reportHspJson = intersection([
+  type({
+    num: number,
+    bit_score: number,
+    score: number,
+    evalue: number,
+    identity: number,
+    query_from: number,
+    query_to: number,
+    hit_from: number,
+    hit_to: number,
+    align_len: number,
+    gaps: number,
+    qseq: string,
+    hseq: string,
+    midline: string,
+  }),
+  partial({
+    query_strand: reportStrand,
+    hit_strand: reportStrand,
+  }),
+]);
 
-export type ReportHspJson = Unpack<typeof reportHspJson>;
+export type ReportHspJson = TypeOf<typeof reportHspJson>;
 
-export const reportHitJson = record({
+export const reportHitJson = type({
   num: number,
-  description: arrayOf(reportDescriptionJson),
+  description: array(reportDescriptionJson),
   len: number,
-  hsps: arrayOf(reportHspJson),
+  hsps: array(reportHspJson),
 });
 
-export type ReportHitJson = Unpack<typeof reportHitJson>;
+export type ReportHitJson = TypeOf<typeof reportHitJson>;
 
-export const reportStatJson = record({
+export const reportStatJson = type({
   db_num: number,
   db_len: number,
   hsp_len: number,
@@ -685,32 +687,36 @@ export const reportStatJson = record({
   entropy: number,
 });
 
-export type ReportStatJson = Unpack<typeof reportStatJson>;
+export type ReportStatJson = TypeOf<typeof reportStatJson>;
 
-export const reportSearchJson = record({
-  query_id: string,
-  query_title: optional(string),
-  query_len: number,
-  hits: arrayOf(reportHitJson),
-  stat: reportStatJson,
-  message: optional(string),
-});
+export const reportSearchJson = intersection([
+  type({
+    query_id: string,
+    query_len: number,
+    hits: array(reportHitJson),
+    stat: reportStatJson,
+  }),
+  partial({
+    query_title: string,
+    message: string,
+  }),
+]);
 
-export type ReportSearchJson = Unpack<typeof reportSearchJson>;
+export type ReportSearchJson = TypeOf<typeof reportSearchJson>;
 
-export const reportResultsJson = record({
+export const reportResultsJson = type({
   search: reportSearchJson,
 });
 
-export type ReportResultsJson = Unpack<typeof reportResultsJson>;
+export type ReportResultsJson = TypeOf<typeof reportResultsJson>;
 
-export const reportSearchTargetJson = record({
+export const reportSearchTargetJson = type({
   db: string,
 });
 
-export type ReportSearchTargetJson = Unpack<typeof reportSearchTargetJson>;
+export type ReportSearchTargetJson = TypeOf<typeof reportSearchTargetJson>;
 
-export const singleQueryReportJson = record({
+export const singleQueryReportJson = type({
   program: string,
   version: string,
   reference: string,
@@ -718,92 +724,83 @@ export const singleQueryReportJson = record({
   results: reportResultsJson,
 });
 
-export type SingleQueryReportJson = Unpack<typeof singleQueryReportJson>;
+export type SingleQueryReportJson = TypeOf<typeof singleQueryReportJson>;
 
-export const multiQueryReportJson = record({
-  BlastOutput2: arrayOf(
-    record({
+export const multiQueryReportJson = type({
+  BlastOutput2: array(
+    type({
       report: singleQueryReportJson,
     })
   ),
 });
 
-export type MultiQueryReportJson = Unpack<typeof multiQueryReportJson>;
+export type MultiQueryReportJson = TypeOf<typeof multiQueryReportJson>;
 
-export const blastParamInternalValues = objectOf(
-  record({
-    organismValues: objectOf(string),
-    dbTypeInternal: string,
-  })
-);
-
-export type BlastParamInternalValues = Unpack<typeof blastParamInternalValues>;
-
-export const badRequestError = record({
-  status: constant('bad-request'),
+export const badRequestError = type({
+  status: literal('bad-request'),
   message: string,
 });
 
-export type BadRequestError = Unpack<typeof badRequestError>;
+export type BadRequestError = TypeOf<typeof badRequestError>;
 
-export const unauthorizedError = record({
-  status: constant('unauthorized'),
+export const unauthorizedError = type({
+  status: literal('unauthorized'),
   message: string,
 });
 
-export type UnauthorizedError = Unpack<typeof unauthorizedError>;
+export type UnauthorizedError = TypeOf<typeof unauthorizedError>;
 
-export const forbiddenError = record({
-  status: constant('forbidden'),
+export const forbiddenError = type({
+  status: literal('forbidden'),
   message: string,
 });
 
-export type ForbiddenError = Unpack<typeof forbiddenError>;
+export type ForbiddenError = TypeOf<typeof forbiddenError>;
 
-export const notFoundError = record({
-  status: constant('not-found'),
+export const notFoundError = type({
+  status: literal('not-found'),
   message: string,
 });
 
-export type NotFoundError = Unpack<typeof notFoundError>;
+export type NotFoundError = TypeOf<typeof notFoundError>;
 
-export const methodNotAllowedError = record({
-  status: constant('bad-method'),
+export const methodNotAllowedError = type({
+  status: literal('bad-method'),
   message: string,
 });
 
-export type MethodNotAllowedError = Unpack<typeof methodNotAllowedError>;
+export type MethodNotAllowedError = TypeOf<typeof methodNotAllowedError>;
 
-export const inputErrors = record({
-  general: arrayOf(string),
-  byKey: objectOf(arrayOf(string)),
+export const inputErrors = type({
+  general: array(string),
+  byKey: record(string, array(string)),
 });
 
-export type InputErrors = Unpack<typeof inputErrors>;
+export type InputErrors = TypeOf<typeof inputErrors>;
 
-export const unprocessableEntityError = record({
-  status: constant('invalid-input'),
+export const unprocessableEntityError = type({
+  status: literal('invalid-input'),
   errors: inputErrors,
 });
 
-export type UnprocessableEntityError = Unpack<typeof unprocessableEntityError>;
+export type UnprocessableEntityError = TypeOf<typeof unprocessableEntityError>;
 
-export const serverError = record({
-  status: constant('server-error'),
+export const serverError = type({
+  status: literal('server-error'),
   message: string,
   requestId: string,
 });
 
-export type ServerError = Unpack<typeof serverError>;
+export type ServerError = TypeOf<typeof serverError>;
 
-export const unknownError = record({
-  status: constant('unknown'),
+export const unknownError = type({
+  status: literal('unknown'),
   message: string,
 });
 
-export type UnknownError = Unpack<typeof unknownError>;
+export type UnknownError = TypeOf<typeof unknownError>;
 
-export const errorDetails = oneOf(
+export const errorDetails = union([
   badRequestError,
   unauthorizedError,
   forbiddenError,
@@ -811,10 +808,10 @@ export const errorDetails = oneOf(
   methodNotAllowedError,
   unprocessableEntityError,
   serverError,
-  unknownError
-);
+  unknownError,
+]);
 
-export type ErrorDetails = Unpack<typeof errorDetails>;
+export type ErrorDetails = TypeOf<typeof errorDetails>;
 
 export type ApiResult<T, E> = ApiResultSuccess<T> | ApiResultError<E>;
 

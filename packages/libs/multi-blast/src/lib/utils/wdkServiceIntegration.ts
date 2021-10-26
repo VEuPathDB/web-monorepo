@@ -1,9 +1,19 @@
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
-
 import {
-  BlastParamInternalValues,
-  blastParamInternalValues,
-} from './ServiceTypes';
+  Unpack,
+  objectOf,
+  record,
+  string,
+} from '@veupathdb/wdk-client/lib/Utils/Json';
+
+const blastParamInternalValues = objectOf(
+  record({
+    organismValues: objectOf(string),
+    dbTypeInternal: string,
+  })
+);
+
+type BlastParamInternalValues = Unpack<typeof blastParamInternalValues>;
 
 export function wrapWdkService(
   wdkService: WdkService

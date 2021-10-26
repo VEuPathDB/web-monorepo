@@ -1,19 +1,15 @@
-import { flowRight, mapValues, omit, partial } from 'lodash';
+import { array, string, voidType } from 'io-ts';
+import { memoize, omit } from 'lodash';
 
 import {
-  arrayOf,
-  decodeOrElse,
-  string,
-} from '@veupathdb/wdk-client/lib/Utils/Json';
-import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
-import {
-  ApiRequestCreator,
-  ApiRequestHandler,
-  ApiRequestsObject,
-  createFetchApiRequestHandler,
+  ApiRequest,
+  FetchApiOptions,
+  FetchClientWithCredentials,
   createJsonRequest,
-  standardTransformer,
-} from '@veupathdb/web-common/lib/util/api';
+  ioTransformer,
+} from '@veupathdb/http-utils';
+
+import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 import { makeReportPollingPromise } from '../components/BlastWorkspaceResult';
 
@@ -32,35 +28,82 @@ import {
   shortJobResponse,
   shortReportResponse,
 } from './ServiceTypes';
-
-export function createBlastRequestHandler(
-  baseBlastUrl: string,
-  user: User,
-  fetchApi?: Window['fetch']
-) {
-  return createFetchApiRequestHandler({
-    baseUrl: baseBlastUrl,
-    init: {
-      headers: {
-        'Auth-Key': getAuthKey(user),
-      },
-    },
-    fetchApi,
-  });
-}
+import { BlastCompatibleWdkService } from './wdkServiceIntegration';
+import { isLeft } from 'fp-ts/lib/Either';
 
 const JOBS_PATH = '/jobs';
 const REPORTS_PATH = '/reports';
 
-export const apiRequests = {
-  fetchJobEntities: function () {
-    return {
+export class BlastApi extends FetchClientWithCredentials {
+  public static getBlastClient = memoize(
+    (
+      baseUrl: string,
+      wdkService: BlastCompatibleWdkService,
+      reportError: (error: any) => void
+    ) => {
+      return new BlastApi({ baseUrl }, wdkService, reportError);
+    }
+  );
+
+  constructor(
+    options: FetchApiOptions,
+    protected readonly wdkService: BlastCompatibleWdkService,
+    protected reportError: (error: any) => void
+  ) {
+    super(options, wdkService);
+  }
+
+  async taggedFetch<T>(
+    apiRequest: ApiRequest<T>
+  ): Promise<ApiResult<T, ErrorDetails>> {
+    try {
+      return {
+        status: 'ok',
+        value: await super.fetch(apiRequest),
+      };
+    } catch (error: any) {
+      if (
+        typeof error === 'object' &&
+        error != null &&
+        typeof error.message === 'string'
+      ) {
+        const decodedErrorDetails = errorDetails.decode(
+          error.message.replace(/^[^{]*(\{.*\})[^}]*$/, '$1')
+        );
+
+        if (isLeft(decodedErrorDetails)) {
+          return {
+            status: 'error',
+            details: {
+              status: 'unknown',
+              message: error.message,
+            },
+          };
+        }
+
+        if (decodedErrorDetails.right.status !== 'invalid-input') {
+          this.reportError(error);
+        }
+
+        return {
+          status: 'error',
+          details: decodedErrorDetails.right,
+        };
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  fetchJobEntities() {
+    return this.taggedFetch({
       path: JOBS_PATH,
       method: 'GET',
-      transformResponse: standardTransformer(arrayOf(shortJobResponse)),
-    };
-  },
-  createJob: function (
+      transformResponse: ioTransformer(array(shortJobResponse)),
+    });
+  }
+
+  createJob(
     site: string,
     targets: { organism: string; target: string }[],
     query: string | File,
@@ -89,85 +132,93 @@ export const apiRequests = {
 
       requestBody.append('query', query);
 
-      return {
+      return this.taggedFetch({
         path: JOBS_PATH,
         method: 'POST',
         body: requestBody,
-        transformResponse: standardTransformer(createJobResponse),
-      };
-    } else {
-      return createJsonRequest({
-        path: JOBS_PATH,
-        method: 'POST',
-        body: requestProperties,
-        transformResponse: standardTransformer(createJobResponse),
+        transformResponse: ioTransformer(createJobResponse),
       });
+    } else {
+      return this.taggedFetch(
+        createJsonRequest({
+          path: JOBS_PATH,
+          method: 'POST',
+          body: requestProperties,
+          transformResponse: ioTransformer(createJobResponse),
+        })
+      );
     }
-  },
-  fetchJob: function (jobId: string) {
-    return {
+  }
+
+  fetchJob(jobId: string) {
+    return this.taggedFetch({
       path: `${JOBS_PATH}/${jobId}`,
       method: 'GET',
-      transformResponse: standardTransformer(longJobResponse),
-    };
-  },
-  rerunJob: function (jobId: string) {
-    return {
-      path: `${JOBS_PATH}/${jobId}`,
-      method: 'POST',
-      transformResponse: noContent,
-    };
-  },
-  fetchReportEntities: function () {
-    return {
-      path: REPORTS_PATH,
-      method: 'GET',
-      transformResponse: standardTransformer(arrayOf(shortReportResponse)),
-    };
-  },
-  createReport: function (jobId: string, reportConfig: ReportConfig) {
-    return createJsonRequest({
-      path: REPORTS_PATH,
-      method: 'POST',
-      body: {
-        jobID: jobId,
-        ...reportConfig,
-      },
-      transformResponse: standardTransformer(createReportResponse),
+      transformResponse: ioTransformer(longJobResponse),
     });
-  },
-  fetchReport: function (reportId: string) {
-    return {
+  }
+
+  rerunJob(jobId: string) {
+    return this.taggedFetch({
+      path: `${JOBS_PATH}/${jobId}`,
+      method: 'POST',
+      transformResponse: ioTransformer(voidType),
+    });
+  }
+
+  fetchReportEntities() {
+    return this.taggedFetch({
+      path: REPORTS_PATH,
+      method: 'GET',
+      transformResponse: ioTransformer(array(shortReportResponse)),
+    });
+  }
+
+  createReport(jobId: string, reportConfig: ReportConfig) {
+    return this.taggedFetch(
+      createJsonRequest({
+        path: REPORTS_PATH,
+        method: 'POST',
+        body: {
+          jobID: jobId,
+          ...reportConfig,
+        },
+        transformResponse: ioTransformer(createReportResponse),
+      })
+    );
+  }
+
+  fetchReport(reportId: string) {
+    return this.taggedFetch({
       path: `${REPORTS_PATH}/${reportId}`,
       method: 'GET',
-      transformResponse: standardTransformer(longReportResponse),
-    };
-  },
-  rerunReport: function (reportId: string) {
-    return {
+      transformResponse: ioTransformer(longReportResponse),
+    });
+  }
+
+  rerunReport(reportId: string) {
+    return this.taggedFetch({
       path: `${REPORTS_PATH}/${reportId}`,
       method: 'POST',
-      transformResponse: noContent,
-    };
-  },
-  fetchSingleFileJsonReport: function (reportId: string) {
-    return {
+      transformResponse: ioTransformer(voidType),
+    });
+  }
+
+  fetchSingleFileJsonReport(reportId: string) {
+    return this.taggedFetch({
       path: `${REPORTS_PATH}/${reportId}/files/report.json?download=false`,
       method: 'GET',
-      transformResponse: standardTransformer(multiQueryReportJson),
-    };
-  },
-  fetchQuery: function (jobId: string) {
-    return {
+      transformResponse: ioTransformer(multiQueryReportJson),
+    });
+  }
+
+  fetchQuery(jobId: string) {
+    return this.taggedFetch({
       path: `${JOBS_PATH}/${jobId}/query?download=false`,
       method: 'GET',
-      transformResponse: standardTransformer(string),
-    };
-  },
-};
-
-async function noContent(body: unknown) {
-  return null;
+      transformResponse: ioTransformer(string),
+    });
+  }
 }
 
 // FIXME: Update createRequestHandler to accommodate responses
@@ -249,62 +300,4 @@ function getAuthKey(user: User) {
   const authKey = wdkCheckAuth.replace('wdk_check_auth=', '');
 
   return authKey;
-}
-
-export async function apiErrorHandler<T>(
-  reportError: (error: any) => void,
-  apiRequest: Promise<T>
-): Promise<ApiResult<T, ErrorDetails>> {
-  try {
-    return {
-      status: 'ok',
-      value: await apiRequest,
-    };
-  } catch (error) {
-    if (
-      typeof error === 'object' &&
-      error != null &&
-      typeof error.message === 'string'
-    ) {
-      const decodedErrorDetails = decodeOrElse(
-        errorDetails,
-        {
-          status: 'unknown',
-          message: error,
-        },
-        error.message.replace(/^[^{]*(\{.*\})[^}]*$/, '$1')
-      );
-
-      if (decodedErrorDetails.status !== 'invalid-input') {
-        reportError(error);
-      }
-
-      return {
-        status: 'error',
-        details: decodedErrorDetails,
-      };
-    } else {
-      throw error;
-    }
-  }
-}
-
-export type BlastApi = BoundBlastApiRequestsObject<typeof apiRequests>;
-
-export type BoundBlastApiRequestsObject<T extends ApiRequestsObject> = {
-  [P in keyof T]: T[P] extends ApiRequestCreator<infer A, infer B>
-    ? (...args: B) => Promise<ApiResult<A, ErrorDetails>>
-    : never;
-};
-
-export function bindBlastApiRequestCreators<T extends ApiRequestsObject>(
-  requestCreators: T,
-  successHandler: ApiRequestHandler,
-  reportError: (error: any) => void
-): BoundBlastApiRequestsObject<T> {
-  const errorHandler = partial(apiErrorHandler, reportError);
-
-  return mapValues(requestCreators, (requestCreator) =>
-    flowRight(errorHandler, successHandler, requestCreator)
-  ) as BoundBlastApiRequestsObject<T>;
 }
