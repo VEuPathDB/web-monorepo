@@ -7,7 +7,7 @@
     "@types/cytoscape": "3.2.9",
     "@veupathdb/multi-blast": "^0.3.1",
     "@veupathdb/preferred-organisms": "^1.1.2",
-    "@veupathdb/wdk-client": "^0.3.0",
+    "@veupathdb/wdk-client": "^0.4.10",
     "@veupathdb/web-common": "^0.1.1-alpha.11",
     "ciena-dagre": "^1.0.0",
     "cytoscape": "3.2.9",
@@ -21,5 +21,9 @@
     "react-dom": "16",
     "@types/react": "16",
     "@types/react-dom": "16"
+  },
+  "devDependencies": {
+    "bubleify": "^2.0.0",
+    "ify-loader": "^1.1.0"
   }
 }
