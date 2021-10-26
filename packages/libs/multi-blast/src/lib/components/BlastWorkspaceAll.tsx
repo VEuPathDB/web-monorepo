@@ -12,14 +12,11 @@ import {
   useRawJobRows,
   useSortedJobRows,
 } from '../hooks/allJobs';
-import { BlastApi } from '../utils/api';
+import { useBlastApi } from '../hooks/api';
 
 import { BlastRequestError } from './BlastRequestError';
-import { withBlastApi } from './withBlastApi';
 
 import './BlastWorkspaceAll.scss';
-
-export interface Props {}
 
 export interface JobRow {
   jobId: string;
@@ -28,16 +25,9 @@ export interface JobRow {
   status: 'queued' | 'running' | 'finished' | 'expired' | 'errored';
 }
 
-export const BlastWorkspaceAll = withBlastApi(BlastWorkspaceAllWithLoadedApi);
-
-interface BlastWorkspaceAllWithLoadedApiProps extends Props {
-  blastApi: BlastApi;
-}
-
-function BlastWorkspaceAllWithLoadedApi(
-  props: BlastWorkspaceAllWithLoadedApiProps
-) {
-  const jobRows = useRawJobRows(props.blastApi);
+export function BlastWorkspaceAll() {
+  const blastApi = useBlastApi();
+  const jobRows = useRawJobRows(blastApi);
 
   return (
     <div className="BlastWorkspaceAll">

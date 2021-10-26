@@ -11,6 +11,7 @@ import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
 import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
+import { useBlastApi } from '../hooks/api';
 import {
   useHitTypeDisplayNames,
   useTargetTypeTermAndWdkRecordType,
@@ -36,7 +37,6 @@ import { TargetMetadataByDataType } from '../utils/targetTypes';
 import { blastWorkspaceCx } from './BlastWorkspace';
 import { BlastRequestError } from './BlastRequestError';
 import { ResultContainer } from './ResultContainer';
-import { withBlastApi } from './withBlastApi';
 
 import './BlastWorkspaceResult.scss';
 
@@ -47,49 +47,37 @@ interface Props {
 
 const POLLING_INTERVAL = 3000;
 
-export const BlastWorkspaceResult = withBlastApi(
-  BlastWorkspaceResultWithLoadedApi
-);
-
-interface BlastResultWithLoadedApiProps extends Props {
-  blastApi: BlastApi;
-}
-
-function BlastWorkspaceResultWithLoadedApi(
-  props: BlastResultWithLoadedApiProps
-) {
+export function BlastWorkspaceResult(props: Props) {
   useSetDocumentTitle(`BLAST Job ${props.jobId}`);
 
-  const queryResult = usePromise(() => props.blastApi.fetchQuery(props.jobId), [
-    props.blastApi,
+  const blastApi = useBlastApi();
+
+  const queryResult = usePromise(() => blastApi.fetchQuery(props.jobId), [
+    blastApi,
     props.jobId,
   ]);
 
   const jobResult = usePromise(
-    () => makeJobPollingPromise(props.blastApi, props.jobId),
-    [props.blastApi, props.jobId]
+    () => makeJobPollingPromise(blastApi, props.jobId),
+    [blastApi, props.jobId]
   );
 
   const reportResult = usePromise(
     async () =>
       jobResult.value?.status !== 'job-completed'
         ? undefined
-        : makeReportPollingPromise(
-            props.blastApi,
-            props.jobId,
-            'single-file-json'
-          ),
-    [props.blastApi, jobResult.value?.status]
+        : makeReportPollingPromise(blastApi, props.jobId, 'single-file-json'),
+    [blastApi, jobResult.value?.status]
   );
 
   const multiQueryReportResult = usePromise(
     async () =>
       reportResult.value?.status !== 'report-completed'
         ? undefined
-        : props.blastApi.fetchSingleFileJsonReport(
+        : blastApi.fetchSingleFileJsonReport(
             reportResult.value.report.reportID
           ),
-    [props.blastApi, reportResult.value]
+    [blastApi, reportResult.value]
   );
 
   const individualQueriesResult = usePromise(async () => {
@@ -106,7 +94,7 @@ function BlastWorkspaceResultWithLoadedApi(
 
     const queryResults = await Promise.all(
       subJobIds.map((id) =>
-        props.blastApi.fetchQuery(id).then((queryResult) =>
+        blastApi.fetchQuery(id).then((queryResult) =>
           queryResult.status === 'error'
             ? queryResult
             : {
