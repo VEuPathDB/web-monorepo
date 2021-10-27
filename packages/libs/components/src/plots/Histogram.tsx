@@ -164,6 +164,7 @@ const Histogram = makePlotlyPlotComponent(
             opacity: calculatedBarOpacity,
             orientation: orientation === 'vertical' ? 'v' : 'h',
             name: series.name,
+            showlegend: series.name ? true : false, // empty name will disable legend
             // text: binLabels, // TO DO: find a way to show concise bin labels
             text: showValues ? binCounts.map(String) : binLabels,
             textposition: showValues ? 'auto' : undefined,
@@ -368,7 +369,6 @@ const Histogram = makePlotlyPlotComponent(
       binStartType,
       binEndType,
     ]);
-    console.log(binSummaries);
 
     // truncation axis range
     const extendedIndependentAxisRange = extendAxisRangeForTruncations(
