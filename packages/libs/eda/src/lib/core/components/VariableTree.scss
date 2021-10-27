@@ -82,17 +82,12 @@
     margin-left: 1ex;
   }
 
-  .wdk-CheckboxTreeItem__leaf {
-    .wdk-CheckboxTreeNodeContent {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      flex-direction: row-reverse;
-
-      margin-left: -1ex;
-      margin-right: 0.4em;
-    }
+  .EDAWorkspace-StarContainer {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-direction: row-reverse;
 
     i {
       font-size: 1.1em;

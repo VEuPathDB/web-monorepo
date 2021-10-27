@@ -24,7 +24,7 @@ export interface Props {
   customDisabledVariableMessage?: string;
   /** term string is of format "entityId/variableId"  e.g. "PCO_0000024/EUPATH_0000714" */
   onChange: (variable?: VariableDescriptor) => void;
-  includeMultiFilters?: boolean;
+  showMultiFilterDescendants?: boolean;
 }
 export function VariableTree(props: Props) {
   const {
@@ -36,7 +36,7 @@ export function VariableTree(props: Props) {
     entityId,
     variableId,
     onChange,
-    includeMultiFilters = false,
+    showMultiFilterDescendants = false,
   } = props;
   const entities = useStudyEntities(rootEntity);
 
@@ -58,10 +58,7 @@ export function VariableTree(props: Props) {
     return valuesMap;
   }, [entities]);
 
-  const fields = useMemo(
-    () => entitiesToFields(entities, { includeMultiFilters }),
-    [entities, includeMultiFilters]
-  );
+  const fields = useMemo(() => entitiesToFields(entities), [entities]);
 
   const featuredFields = useMemo(() => {
     return entities.flatMap((entity) =>
@@ -74,11 +71,9 @@ export function VariableTree(props: Props) {
           id: `${entity.id}/${variable.id}`,
           displayName: `<span class="Entity">${entity.displayName}</span>: ${variable.displayName}`,
         }))
-        .map((variable) =>
-          edaVariableToWdkField(variable, { includeMultiFilters })
-        )
+        .map((variable) => edaVariableToWdkField(variable))
     );
-  }, [includeMultiFilters, entities]);
+  }, [entities]);
 
   // Construct the fieldTree using the fields defined above.
   const fieldTree = useMemo(() => makeFieldTree(fields), [fields]);
@@ -121,6 +116,7 @@ export function VariableTree(props: Props) {
       autoFocus={false}
       starredVariables={starredVariables}
       toggleStarredVariable={toggleStarredVariable}
+      showMultiFilterDescendants={showMultiFilterDescendants}
     />
   );
 }
