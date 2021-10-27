@@ -62,6 +62,8 @@ export interface PlotProps<T> extends ColorPaletteAddon {
   maxLegendTextLength?: number;
   /** original independent axis tick labels as data is changed at each component (barplot and boxplot)*/
   storedIndependentAxisTickLabel?: string[];
+  /** checked checkbox array for legend items */
+  checkedLegendItems?: string[];
 }
 
 const Plot = lazy(() => import('react-plotly.js'));
@@ -96,6 +98,8 @@ function PlotlyPlot<T>(
     data,
     // original independent axis tick labels for tooltip text
     storedIndependentAxisTickLabel,
+    //DKDK checkbox
+    checkedLegendItems,
     colorPalette = ColorPaletteDefault,
     ...plotlyProps
   } = props;
@@ -306,13 +310,15 @@ function PlotlyPlot<T>(
   const finalData = useMemo(() => {
     return data.map((d) => ({
       ...d,
+      // legend checkbox
+      visible: checkedLegendItems?.includes(d.name || ''),
       // ellipsis for legend item
       name:
         (d.name || '').length > maxLegendTextLength
           ? (d.name || '').substring(0, maxLegendTextLength) + '...'
           : d.name,
     }));
-  }, [data]);
+  }, [data, checkedLegendItems]); // add checkedLegendItems
 
   const plotId = useMemo(() => uniqueId('plotly_plot_div_'), []);
 
