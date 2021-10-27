@@ -27,7 +27,7 @@ import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import rxc from './selectorIcons/RxC.svg';
 import twoxtwo from './selectorIcons/2x2.svg';
-import Tabs from '@veupathdb/components/lib/components/Tabs';
+import TabbedDisplay from '@veupathdb/core-components/dist/components/grids/TabbedDisplay';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
@@ -333,10 +333,10 @@ function MosaicViz(props: Props) {
   const plotComponent = (
     <div className="MosaicVisualization">
       <div className="MosaicVisualization-Plot">
-        <Tabs
+        <TabbedDisplay
           tabs={[
             {
-              name: 'Mosaic',
+              displayName: 'Mosaic',
               content: (
                 <MosaicPlotWithControls
                   updateThumbnail={updateThumbnail}
@@ -351,7 +351,7 @@ function MosaicViz(props: Props) {
               ),
             },
             {
-              name: 'Table',
+              displayName: 'Table',
               content: (
                 <ContingencyTable
                   data={data.value}
