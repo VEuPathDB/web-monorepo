@@ -340,7 +340,7 @@ function MosaicViz(props: Props) {
               content: (
                 <MosaicPlotWithControls
                   updateThumbnail={updateThumbnail}
-                  data={data.value && !data.pending ? data.value : undefined}
+                  data={data.value}
                   containerStyles={plotDimensions}
                   independentAxisLabel={xAxisLabel ?? 'X-axis'}
                   dependentAxisLabel={yAxisLabel ?? 'Y-axis'}
