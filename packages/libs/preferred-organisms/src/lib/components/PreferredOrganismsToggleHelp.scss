@@ -12,6 +12,9 @@
   box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3),
     0 0.0625rem 0.125rem rgba(0, 0, 0, 0.2);
 
+  transition: all 250ms ease-in-out;
+  opacity: 1;
+
   &::after {
     font-family: 'FontAwesome';
     content: '\f176';
@@ -37,5 +40,9 @@
     margin: 0 auto;
     display: block;
     width: 1em;
+  }
+
+  &__hidden {
+    opacity: 0;
   }
 }

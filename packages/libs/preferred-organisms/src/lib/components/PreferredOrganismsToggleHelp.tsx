@@ -4,9 +4,13 @@ import { cx } from './PreferredOrganismsConfig';
 
 import './PreferredOrganismsToggleHelp.scss';
 
-export function PreferredOrganismsToggleHelp() {
+interface Props {
+  visible: boolean;
+}
+
+export function PreferredOrganismsToggleHelp({ visible }: Props) {
   return (
-    <div className={cx('--ToggleHelp')}>
+    <div className={cx('--ToggleHelp', !visible && 'hidden')}>
       <span>
         <IconAlt fa="lightbulb-o" />
       </span>

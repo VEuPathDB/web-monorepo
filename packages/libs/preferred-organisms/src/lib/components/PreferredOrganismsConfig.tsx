@@ -41,6 +41,7 @@ interface Props {
   savingPreferredOrganismsEnabled: boolean;
   setConfigSelection: (newConfigSelection: string[]) => void;
   revertConfigSelection: () => void;
+  toggleHelpVisible: boolean;
 }
 
 export function PreferredOrganismsConfig({
@@ -55,6 +56,7 @@ export function PreferredOrganismsConfig({
   savingPreferredOrganismsEnabled,
   setConfigSelection,
   revertConfigSelection,
+  toggleHelpVisible,
 }: Props) {
   const [showOnlyReferenceNodes, setShowOnlyReferenceNodes] = useState(false);
   const toggleShowOnlyReferenceNodes = useCallback(() => {
@@ -119,7 +121,7 @@ export function PreferredOrganismsConfig({
     <div className={cx()}>
       <h1>
         My Organism Preferences
-        <PreferredOrganismsToggleHelp />
+        <PreferredOrganismsToggleHelp visible={toggleHelpVisible} />
       </h1>
       <p className={cx('--Instructions')}>
         <span>

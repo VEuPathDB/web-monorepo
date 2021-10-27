@@ -56,6 +56,11 @@ export function PreferredOrganismsConfigController() {
 
   const newOrganisms = useNewOrganisms();
 
+  const toggleHelpVisible = useMemo(
+    () => preferredOrganisms.length < availableOrganisms.size,
+    [preferredOrganisms.length, availableOrganisms.size]
+  );
+
   useEffect(() => {
     function onBeforeUnload(e: BeforeUnloadEvent) {
       if (!configIsUnchanged) {
@@ -85,6 +90,7 @@ export function PreferredOrganismsConfigController() {
         savingPreferredOrganismsEnabled={savingPreferredOrganismsEnabled}
         setConfigSelection={setConfigSelection}
         revertConfigSelection={revertConfigSelection}
+        toggleHelpVisible={toggleHelpVisible}
       />
       <Prompt
         when={!configIsUnchanged}
