@@ -17,7 +17,7 @@ import {
   usePreferredOrganismsEnabledState
 } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
 
-import { PreferredOrganismsPageLoading } from './components/common/PreferredOrganismsPageLoading';
+import { PageLoading } from './components/common/PageLoading';
 import SampleForm from './components/samples/SampleForm';
 
 import { projectId } from './config';
@@ -142,7 +142,7 @@ export const wrapRoutes = ebrcRoutes => [
   {
     path: '/search',
     component: () =>
-      <Suspense fallback={<PreferredOrganismsPageLoading />}>
+      <Suspense fallback={<PageLoading />}>
         <SiteSearchRouteComponent />
       </Suspense>
   },

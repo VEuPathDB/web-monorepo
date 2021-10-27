@@ -6,7 +6,7 @@ import { RecordInstance } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import { usePreferredOrganismsState, usePreferredOrganismsEnabledState } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
 
-import { PreferredOrganismsPageLoading } from '../components/common/PreferredOrganismsPageLoading';
+import { PageLoading } from '../components/common/PageLoading';
 import { isPreferredDataset, isPreferredOrganism } from '../util/preferredOrganisms';
 
 interface RecordFilterPredicate {
@@ -16,7 +16,7 @@ interface RecordFilterPredicate {
 export function AnswerController(DefaultComponent: ComponentType<Props>): ComponentType<Props> {
   return function(props) {
     return (
-      <Suspense fallback={<PreferredOrganismsPageLoading />}>
+      <Suspense fallback={<PageLoading />}>
         {
           props.ownProps.recordClass === 'organism'
             ? <OrganismAnswerController {...props} DefaultComponent={DefaultComponent} />

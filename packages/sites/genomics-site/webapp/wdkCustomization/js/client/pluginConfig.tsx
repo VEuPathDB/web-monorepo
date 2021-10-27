@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { Suspense } from 'react';
+
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { 
   GenomeSummaryViewPlugin,
   BlastSummaryViewPlugin,
@@ -25,11 +27,12 @@ import { InternalGeneDataset } from './components/questions/InternalGeneDataset'
 import { hasChromosomeAndSequenceIDXorGroup } from './components/questions/MutuallyExclusiveParams/utils';
 import { CompoundsByFoldChangeForm, GenericFoldChangeForm } from './components/questions/foldChange';
 
-import { BlastForm } from '@veupathdb/multi-blast/lib/components/BlastForm';
-import { BlastController } from '@veupathdb/multi-blast/lib/controllers/BlastController';
 import { isMultiBlastQuestion } from '@veupathdb/multi-blast/lib/utils/pluginConfig';
 
 import { OrganismParam, isOrganismParam } from '@veupathdb/preferred-organisms/lib/components/OrganismParam';
+
+const BlastQuestionController = React.lazy(() => import('./plugins/BlastQuestionController'));
+const BlastForm = React.lazy(() => import('./plugins/BlastForm'));
 
 const isInternalGeneDatasetQuestion: ClientPluginRegistryEntry<any>['test'] =
   ({ question }) => (
@@ -98,7 +101,10 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
     type: 'questionController',
     test: isMultiBlastQuestion,
-    component: BlastController,
+    component: (props) => 
+      <Suspense fallback={<Loading />}>
+        <BlastQuestionController {...props} />
+      </Suspense>
   },
   {
     type: 'questionForm',
@@ -137,7 +143,10 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
       question != null &&
       question.urlSegment.endsWith('MultiBlast')
     ),
-    component: BlastForm,
+    component: (props) =>
+      <Suspense fallback={<Loading />}>
+        <BlastForm {...props} />
+      </Suspense>,
   },
   {
     type: 'questionFormParameter',
