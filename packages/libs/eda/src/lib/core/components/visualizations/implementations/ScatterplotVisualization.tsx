@@ -561,6 +561,16 @@ function ScatterplotWithControls({
   updateThumbnail,
   ...scatterplotProps
 }: ScatterplotWithControlsProps) {
+  // TODO Use UIState
+  // const errorManagement = useMemo((): ErrorManagement => {
+  //   return {
+  //     errors: [],
+  //     addError: (_: Error) => {},
+  //     removeError: (_: Error) => {},
+  //     clearAllErrors: () => {},
+  //   };
+  // }, []);
+
   const plotRef = useRef<PlotRef>(null);
 
   const updateThumbnailRef = useRef(updateThumbnail);
