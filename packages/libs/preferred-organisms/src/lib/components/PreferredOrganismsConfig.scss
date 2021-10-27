@@ -52,12 +52,12 @@ $gray: #f5f5f5;
     }
 
     .wdk-CheckboxTreeFilters {
-      grid-template-columns: 35em auto;
+      grid-template-columns: 33em auto;
       gap: 0.5em;
     }
 
     .wdk-CheckboxTree .wdk-RealTimeSearchBox__withHelp {
-      width: calc(35em - 2rem);
+      width: calc(33em - 2rem);
     }
   }
 
