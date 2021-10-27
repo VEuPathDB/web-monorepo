@@ -1,4 +1,5 @@
 // load scatter plot component
+import React, { useState } from 'react';
 import XYPlot, { XYPlotProps } from '@veupathdb/components/lib/plots/XYPlot';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 
@@ -70,6 +71,8 @@ import { defaultDependentAxisRange } from '../../../utils/default-dependent-axis
 import { useRouteMatch } from 'react-router';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import PluginError from '../PluginError';
+//DKDK
+import CustomLegend from '../CustomLegend';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 
@@ -334,6 +337,22 @@ function ScatterplotViz(props: VisualizationProps) {
 
   const { url } = useRouteMatch();
 
+  //DKDK checkbox of custom legend
+  const legendItemArray = useMemo(() => {
+    return data.value != null
+      ? data.value?.dataSetProcess.series.map((data: any) => data.name)
+      : [''];
+  }, [data]);
+  //DKDK set useState to track checkbox status
+  const [checkedLegendItems, setCheckedLegendItems] = useState(['']);
+
+  //DKDK set all checkbox checked initially
+  useEffect(() => {
+    if (data.value != null && data.value.dataSetProcess.series.length > 0) {
+      setCheckedLegendItems(legendItemArray);
+    }
+  }, [data]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -455,7 +474,23 @@ function ScatterplotViz(props: VisualizationProps) {
             NumberVariable.is(yAxisVariable) ? 'number' : 'date'
           }
           legendTitle={axisLabelWithUnit(overlayVariable)}
+          //DKDK pass checked state of legend checkbox to PlotlyPlot
+          checkedLegendItems={checkedLegendItems}
         />
+
+        {/* DKDK custom legend */}
+        {legendItemArray != null && !data.pending && data.value != null && (
+          <div style={{ marginLeft: '2em' }}>
+            <CustomLegend
+              legendItemArray={legendItemArray}
+              checkedLegendItems={checkedLegendItems}
+              setCheckedLegendItems={setCheckedLegendItems}
+              //DKDK pass legend title
+              legendTitle={axisLabelWithUnit(overlayVariable)}
+            />
+          </div>
+        )}
+
         <div className="viz-plot-info">
           <BirdsEyeView
             completeCasesAllVars={
@@ -528,16 +563,6 @@ function ScatterplotWithControls({
   updateThumbnail,
   ...scatterplotProps
 }: ScatterplotWithControlsProps) {
-  // TODO Use UIState
-  // const errorManagement = useMemo((): ErrorManagement => {
-  //   return {
-  //     errors: [],
-  //     addError: (_: Error) => {},
-  //     removeError: (_: Error) => {},
-  //     clearAllErrors: () => {},
-  //   };
-  // }, []);
-
   const plotRef = useRef<PlotRef>(null);
 
   const updateThumbnailRef = useRef(updateThumbnail);
