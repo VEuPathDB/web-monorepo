@@ -58,21 +58,23 @@ export function PreferredOrganismsConfig({
   revertConfigSelection,
   toggleHelpVisible,
 }: Props) {
-  const [showOnlyReferenceNodes, setShowOnlyReferenceNodes] = useState(false);
-  const toggleShowOnlyReferenceNodes = useCallback(() => {
-    setShowOnlyReferenceNodes((value) => !value);
+  const [showOnlyReferenceOrganisms, setShowOnlyReferenceOrganisms] = useState(
+    false
+  );
+  const toggleShowOnlyReferenceOrganisms = useCallback(() => {
+    setShowOnlyReferenceOrganisms((value) => !value);
   }, []);
 
   const configTree = useMemo(
     () =>
-      !showOnlyReferenceNodes
+      !showOnlyReferenceOrganisms
         ? organismTree
         : pruneDescendantNodes(
             (node) =>
               node.children.length > 0 || referenceStrains.has(node.data.term),
             organismTree
           ),
-    [organismTree, referenceStrains, showOnlyReferenceNodes]
+    [organismTree, referenceStrains, showOnlyReferenceOrganisms]
   );
 
   const configTreeFilters = useMemo(
@@ -85,12 +87,12 @@ export function PreferredOrganismsConfig({
           whiteSpace: 'nowrap',
         }}
         type="button"
-        onClick={toggleShowOnlyReferenceNodes}
+        onClick={toggleShowOnlyReferenceOrganisms}
       >
-        <Toggle on={showOnlyReferenceNodes} /> Show only reference organisms
+        <Toggle on={showOnlyReferenceOrganisms} /> Show only reference organisms
       </button>,
     ],
-    [showOnlyReferenceNodes, toggleShowOnlyReferenceNodes]
+    [showOnlyReferenceOrganisms, toggleShowOnlyReferenceOrganisms]
   );
 
   const renderConfigNode = useRenderOrganismNode(
@@ -235,7 +237,7 @@ export function PreferredOrganismsConfig({
             onSelectionChange={setConfigSelection}
             linksPosition={CheckboxTree.LinkPlacement.Both}
             additionalFilters={configTreeFilters}
-            isAdditionalFilterApplied={showOnlyReferenceNodes}
+            isAdditionalFilterApplied={showOnlyReferenceOrganisms}
           />
         </div>
         <div className={cx('--Preview')}>
