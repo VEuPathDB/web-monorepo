@@ -12,7 +12,7 @@ export default {
 } as Meta;
 
 const ControlledTemplate: Story<DateInputProps> = (args) => {
-  const [value, setValue] = useState<string>('2005-01-01');
+  const [value, setValue] = useState<string>('2005-01-03');
   const onValueChange = useCallback(
     (newValue) => {
       console.log(`new value = ${newValue}`);
@@ -110,4 +110,26 @@ export const ControlledBounds: Story = () => {
       />
     </>
   );
+};
+
+export const CustomValidator = ControlledTemplate.bind({});
+CustomValidator.args = {
+  label: 'Weekdays only',
+  validator: (newValue) => {
+    // allow empty values in this case (emulates `required: false`)
+    if (newValue == null) return { validity: true, message: '' };
+    // uncomment to emulate `required: true` functionality
+    // if (newValue == null) return { validity: false, message: 'please pick a day' };
+
+    const date = new Date(newValue);
+    if (date) {
+      if (date.getDay() > 0 && date.getDay() < 6) {
+        return { validity: true, message: '' };
+      } else {
+        return { validity: false, message: 'Please pick a weekday' };
+      }
+    } else {
+      return { validity: false, message: 'badly formatted date' };
+    }
+  },
 };

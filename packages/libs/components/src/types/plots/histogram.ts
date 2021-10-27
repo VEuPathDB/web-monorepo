@@ -25,6 +25,8 @@ export type HistogramDataSeries = {
   name: string;
   /** The color of the series. Optional. */
   color?: string;
+  /** The color for the outline of the bars. Optional. */
+  borderColor?: string;
   /** Bins of data in the series. */
   bins: HistogramBin[];
   /** Summary stats for the series */

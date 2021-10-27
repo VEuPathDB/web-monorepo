@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { createMuiTheme } from '@material-ui/core/styles';
-import { ThemeProvider } from '@material-ui/styles';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import MaterialSwitch from '@material-ui/core/Switch';
 
@@ -18,6 +17,10 @@ export type SwitchProps = {
   color?: string;
   /** Additional styles to apply to the widget container. */
   containerStyles?: React.CSSProperties;
+  /** If true, disable interaction with the switch */
+  disabled?: boolean;
+  /** label position; default is 'before' */
+  labelPosition?: 'before' | 'after';
 };
 
 /**
@@ -31,6 +34,8 @@ export default function Switch({
   onStateChange,
   color = LIGHT_BLUE,
   containerStyles = {},
+  disabled = false,
+  labelPosition = 'before',
 }: SwitchProps) {
   const [focused, setFocused] = useState(false);
 
@@ -46,17 +51,22 @@ export default function Switch({
     <div
       style={{
         display: 'flex',
-        flexDirection: 'row',
+        flexDirection: labelPosition === 'after' ? 'row-reverse' : 'row',
         alignItems: 'center',
         ...containerStyles,
       }}
-      onMouseOver={() => setFocused(true)}
+      onMouseOver={() => setFocused(true && !disabled)}
       onMouseOut={() => setFocused(false)}
     >
       {label && (
         <Typography
           variant="button"
-          style={{ color: focused ? DARK_GRAY : MEDIUM_GRAY, paddingRight: 5 }}
+          style={{
+            color: DARK_GRAY,
+            ...(labelPosition === 'after'
+              ? { paddingLeft: 5 }
+              : { paddingRight: 5 }),
+          }}
         >
           {label}
         </Typography>
@@ -70,6 +80,7 @@ export default function Switch({
           onChange={(event: any) => onStateChange(event.target.checked)}
           size="small"
           color="primary"
+          disabled={disabled}
         />
       </ThemeProvider>
     </div>

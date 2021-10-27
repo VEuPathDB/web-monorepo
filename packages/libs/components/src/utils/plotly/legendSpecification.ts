@@ -55,5 +55,7 @@ export default (args: PlotLegendAddon): Partial<Legend> => {
     y: yPosition,
     yanchor: 'auto',
     font: args.font,
+    // define traceorder
+    traceorder: args.traceorder,
   };
 };

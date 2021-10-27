@@ -5,6 +5,9 @@ import { defaults } from 'plotly.js/src/components/color/attributes';
  *  Usage:
  *    const defaultColorIter = DefaultColorGen();  // Do once
  *    nextColor = defaultColorIter.next().value;   // Repeat
+ *
+ * DEPRECATED - but might be useful if we need an iterator for the colorPalette
+ * (see ColorPaletteDefault in addOns.ts)
  */
 export default function* defaultColorGen() {
   let myDefaults = Array.from(defaults);

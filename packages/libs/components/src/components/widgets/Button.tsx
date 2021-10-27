@@ -1,7 +1,6 @@
 import React from 'react';
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import MaterialButton from '@material-ui/core/Button';
-import { ThemeProvider } from '@material-ui/styles';
 
 import { LIGHT_BLUE } from '../../constants/colors';
 
@@ -53,7 +52,8 @@ export default function Button({
           disableElevation={true}
           style={{
             width: '100%',
-            color: textColor ? textColor : 'white',
+            color: textColor ? textColor : undefined,
+            textTransform: 'none',
           }}
           color="primary"
           onClick={onClick}

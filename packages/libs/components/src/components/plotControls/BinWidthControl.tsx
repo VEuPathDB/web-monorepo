@@ -5,6 +5,9 @@ import {
   NumberOrTimeDeltaRange,
   TimeDelta,
 } from '../../types/general';
+import { Select, Typography } from '@material-ui/core';
+import { MEDIUM_GRAY } from '../../constants/colors';
+import { MenuItem } from '@material-ui/core';
 
 export interface BinWidthControlProps
   extends ValueTypeAddon,
@@ -13,6 +16,10 @@ export interface BinWidthControlProps
   label?: string;
   /** The current binWidth */
   binWidth?: NumberOrTimeDelta;
+  /** The current binUnit */
+  binUnit?: string;
+  /** The available binUnits */
+  binUnitOptions?: string[];
   /** Function to invoke when bin width changes. */
   onBinWidthChange?: (newBinWidth: NumberOrTimeDelta) => void;
   /** the allowed range of binWidths. Optional */
@@ -25,6 +32,8 @@ export default function BinWidthControl({
   label = 'Bin width',
   valueType,
   binWidth,
+  binUnit,
+  binUnitOptions,
   onBinWidthChange,
   binWidthRange,
   binWidthStep,
@@ -36,28 +45,63 @@ export default function BinWidthControl({
       : undefined;
 
   return onBinWidthChange ? (
-    <SliderWidget
-      label={`${label}${unit ? ` (${unit})` : ''}`}
-      minimum={binWidthRange?.min}
-      maximum={binWidthRange?.max}
-      showTextInput={true}
-      step={binWidthStep}
-      value={
-        binWidth
-          ? typeof binWidth === 'number'
-            ? binWidth
-            : binWidth.value
-          : undefined
-      }
-      debounceRateMs={250}
-      onChange={(newValue: number) => {
-        onBinWidthChange(
-          valueType != null && valueType === 'date'
-            ? ({ value: newValue, unit } as TimeDelta)
-            : newValue
-        );
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        ...containerStyles,
       }}
-      containerStyles={containerStyles}
-    />
+    >
+      <Typography
+        variant="button"
+        style={{ color: MEDIUM_GRAY, paddingRight: 15 }}
+      >
+        {label}
+      </Typography>
+      {binUnitOptions && (
+        <Select
+          style={{ marginRight: '1em' }}
+          value={binUnit}
+          onChange={(event) => {
+            const value =
+              valueType != null && valueType === 'date'
+                ? (binWidth as TimeDelta).value
+                : binWidth;
+            const unit = String(event.target.value);
+
+            onBinWidthChange({ value, unit } as TimeDelta);
+          }}
+        >
+          {binUnitOptions.map((option) => (
+            <MenuItem value={option}>{option}</MenuItem>
+          ))}
+        </Select>
+      )}
+      <SliderWidget
+        minimum={binWidthRange?.min}
+        maximum={binWidthRange?.max}
+        showTextInput={true}
+        step={binWidthStep}
+        value={
+          binWidth
+            ? typeof binWidth === 'number'
+              ? binWidth
+              : binWidth.value
+            : undefined
+        }
+        debounceRateMs={250}
+        onChange={(newValue: number) => {
+          onBinWidthChange(
+            valueType != null && valueType === 'date'
+              ? ({ value: newValue, unit } as TimeDelta)
+              : newValue
+          );
+        }}
+        containerStyles={containerStyles}
+        showLimits={true}
+      />
+    </div>
   ) : null;
 }

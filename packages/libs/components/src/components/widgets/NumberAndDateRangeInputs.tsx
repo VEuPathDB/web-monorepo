@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 
 import { Typography } from '@material-ui/core';
 import { DARK_GRAY, MEDIUM_GRAY } from '../../constants/colors';
 import { NumberInput, DateInput } from './NumberAndDateInputs';
 import Button from './Button';
+import Notification from './Notification';
 import { NumberRange, DateRange, NumberOrDateRange } from '../../types/general';
 
 export type BaseProps<M extends NumberOrDateRange> = {
@@ -13,10 +14,19 @@ export type BaseProps<M extends NumberOrDateRange> = {
   required?: boolean;
   /** Function to invoke when range changes. */
   onRangeChange: (newRange?: NumberOrDateRange) => void;
-  /** When true, allow undefined min or max. Default is true */
+  /** When true, allow undefined min or max. Default is true
+   * When false, and rangeBounds is given, use the min or max of rangeBounds to fill in the missing value.
+   * */
   allowPartialRange?: boolean;
   /** Minimum and maximum allowed values for the user-inputted range. Optional. */
   rangeBounds?: M;
+  /** Optional validator function. Should return {validity: true, message: ''} if value is allowed.
+   * If a validator is provided, `required` is no longer useful, and
+   * rangeBounds will only be used for auto-filling empty inputs.
+   */
+  validator?: (
+    newRange?: NumberOrDateRange
+  ) => { validity: boolean; message: string };
   /** UI Label for the widget. Optional */
   label?: string;
   /** Label for lower bound widget. Optional. Default is Min */
@@ -60,6 +70,7 @@ function BaseInput({
   range,
   required = false,
   rangeBounds,
+  validator,
   onRangeChange,
   allowPartialRange = true,
   label,
@@ -70,11 +81,16 @@ function BaseInput({
   showClearButton = false,
   clearButtonLabel = 'Clear',
 }: BaseInputProps) {
-  const [focused, setFocused] = useState(false);
+  if (validator && required)
+    console.log(
+      'WARNING: NumberRangeInput or DateRangeInput will ignore `required` prop because validator was provided.'
+    );
+
   const [localRange, setLocalRange] = useState<
     NumberRange | DateRange | undefined
   >(range);
   const [isReceiving, setIsReceiving] = useState<boolean>(false);
+  const [validationWarning, setValidationWarning] = useState<string>('');
 
   // handle incoming value changes
   useEffect(() => {
@@ -89,11 +105,21 @@ function BaseInput({
     if (!isReceiving) {
       if (
         localRange &&
-        (localRange.min !== range?.min || localRange.max !== range?.max) &&
         (allowPartialRange ||
           (localRange.min != null && localRange.max != null))
       ) {
-        onRangeChange(localRange);
+        const { validity, message } = validator
+          ? validator(localRange)
+          : { validity: true, message: '' };
+        if (validity) {
+          // communicate the change if there is a change
+          if (localRange.min !== range?.min || localRange.max !== range?.max) {
+            onRangeChange(localRange);
+          }
+          setValidationWarning('');
+        } else {
+          setValidationWarning(message);
+        }
       } else if (
         localRange?.min == null &&
         localRange?.max == null &&
@@ -127,20 +153,15 @@ function BaseInput({
     onRangeChange,
     allowPartialRange,
     rangeBounds,
+    validator,
   ]);
 
   const { min, max } = localRange ?? {};
+
   return (
-    <div
-      style={{ ...containerStyles }}
-      onMouseOver={() => setFocused(true)}
-      onMouseOut={() => setFocused(false)}
-    >
+    <div style={{ ...containerStyles }}>
       {label && (
-        <Typography
-          variant="button"
-          style={{ color: focused ? DARK_GRAY : MEDIUM_GRAY }}
-        >
+        <Typography variant="button" style={{ color: MEDIUM_GRAY }}>
           {label}
         </Typography>
       )}
@@ -148,10 +169,12 @@ function BaseInput({
         {valueType === 'number' ? (
           <NumberInput
             value={min as number}
-            minValue={rangeBounds?.min as number}
-            maxValue={(max ?? rangeBounds?.max) as number}
+            minValue={validator ? undefined : (rangeBounds?.min as number)}
+            maxValue={
+              validator ? undefined : ((max ?? rangeBounds?.max) as number)
+            }
             label={lowerLabel}
-            required={required}
+            required={validator ? undefined : required}
             onValueChange={(newValue) => {
               setIsReceiving(false);
               setLocalRange({ min: newValue, max } as NumberRange);
@@ -160,10 +183,12 @@ function BaseInput({
         ) : (
           <DateInput
             value={min as string}
-            minValue={rangeBounds?.min as string}
-            maxValue={(max ?? rangeBounds?.max) as string}
+            minValue={validator ? undefined : (rangeBounds?.min as string)}
+            maxValue={
+              validator ? undefined : ((max ?? rangeBounds?.max) as string)
+            }
             label={lowerLabel}
-            required={required}
+            required={validator ? undefined : required}
             onValueChange={(newValue) => {
               setIsReceiving(false);
               setLocalRange({ min: newValue, max } as DateRange);
@@ -173,10 +198,7 @@ function BaseInput({
         <div style={{ display: 'flex', flexDirection: 'row' }}>
           {/* change margin */}
           <div style={{ margin: '3px 15px 15px 15px' }}>
-            <Typography
-              variant="button"
-              style={{ color: focused ? DARK_GRAY : MEDIUM_GRAY }}
-            >
+            <Typography variant="button" style={{ color: MEDIUM_GRAY }}>
               to
             </Typography>
           </div>
@@ -184,10 +206,12 @@ function BaseInput({
         {valueType === 'number' ? (
           <NumberInput
             value={max as number}
-            minValue={(min ?? rangeBounds?.min) as number}
-            maxValue={rangeBounds?.max as number}
+            minValue={
+              validator ? undefined : ((min ?? rangeBounds?.min) as number)
+            }
+            maxValue={validator ? undefined : (rangeBounds?.max as number)}
             label={upperLabel}
-            required={required}
+            required={validator ? undefined : required}
             onValueChange={(newValue) => {
               setIsReceiving(false);
               setLocalRange({ min, max: newValue } as NumberRange);
@@ -196,10 +220,12 @@ function BaseInput({
         ) : (
           <DateInput
             value={max as string}
-            minValue={(min ?? rangeBounds?.min) as string}
-            maxValue={rangeBounds?.max as string}
+            minValue={
+              validator ? undefined : ((min ?? rangeBounds?.min) as string)
+            }
+            maxValue={validator ? undefined : (rangeBounds?.max as string)}
             label={upperLabel}
-            required={required}
+            required={validator ? undefined : required}
             onValueChange={(newValue) => {
               setIsReceiving(false);
               setLocalRange({ min, max: newValue } as DateRange);
@@ -208,19 +234,27 @@ function BaseInput({
         )}
         {showClearButton && (
           <Button
-            type={'solid'}
+            type={'outlined'}
             text={clearButtonLabel}
             onClick={() => {
               setIsReceiving(false);
               setLocalRange(undefined);
             }}
             containerStyles={{
-              paddingLeft: '10px',
-              height: '20px',
+              paddingLeft: '20px',
             }}
           />
         )}
       </div>
+      {validationWarning ? (
+        <Notification
+          title="Warning"
+          text={validationWarning}
+          onAcknowledgement={() => {
+            setValidationWarning('');
+          }}
+        />
+      ) : null}
     </div>
   );
 }

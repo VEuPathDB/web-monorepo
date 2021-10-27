@@ -1,21 +1,26 @@
-/**
- * This component handles several plots such as marker, line, confidence interval,
- * density, and combinations of plots like marker + line + confidence interval
- */
-import PlotlyPlot, { PlotProps } from './PlotlyPlot';
+import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
 import { XYPlotData } from '../types/plots';
 import { Layout } from 'plotly.js';
 import { NumberOrDateRange } from '../types/general';
 
 export interface XYPlotProps extends PlotProps<XYPlotData> {
+  /** x-axis range: required for confidence interval - not really */
+  independentAxisRange?: NumberOrDateRange;
+  /** y-axis range: required for confidence interval */
+  dependentAxisRange?: NumberOrDateRange;
   /** x-axis label */
   independentAxisLabel?: string;
   /** y-axis label */
   dependentAxisLabel?: string;
-  /** x-axis range: required for confidence interval */
-  independentAxisRange?: NumberOrDateRange;
-  /** y-axis range: required for confidence interval */
-  dependentAxisRange?: NumberOrDateRange;
+  /** independentValueType */
+  independentValueType?:
+    | 'string'
+    | 'number'
+    | 'date'
+    | 'longitude'
+    | 'category';
+  /** dependentValueType */
+  dependentValueType?: 'string' | 'number' | 'date' | 'longitude' | 'category';
   // TO DO
   // opacity?
 }
@@ -24,24 +29,32 @@ const EmptyXYPlotData: XYPlotData = {
   series: [],
 };
 
-export default function XYPlot(props: XYPlotProps) {
+/**
+ * This component handles several plots such as marker, line, confidence interval,
+ * density, and combinations of plots like marker + line + confidence interval
+ */
+const XYPlot = makePlotlyPlotComponent('XYPlot', (props: XYPlotProps) => {
   const {
     data = EmptyXYPlotData,
-    independentAxisLabel,
-    dependentAxisLabel,
     independentAxisRange,
     dependentAxisRange,
+    independentAxisLabel,
+    dependentAxisLabel,
+    independentValueType,
+    dependentValueType,
     ...restProps
   } = props;
 
   const layout: Partial<Layout> = {
+    hovermode: 'closest',
     xaxis: {
       title: independentAxisLabel,
       range: [independentAxisRange?.min, independentAxisRange?.max], // set this for better display: esp. for CI plot
       zeroline: false, // disable yaxis line
       // make plot border
       mirror: true,
-      type: data?.independentValueType === 'date' ? 'date' : 'linear',
+      // date or number type (from variable.type)
+      type: independentValueType === 'date' ? 'date' : undefined,
       tickfont: data.series.length ? {} : { color: 'transparent' },
     },
     yaxis: {
@@ -50,10 +63,17 @@ export default function XYPlot(props: XYPlotProps) {
       zeroline: false, // disable xaxis line
       // make plot border
       mirror: true,
-      type: data?.dependentValueType === 'date' ? 'date' : 'linear',
+      // date or number type (from variable.type)
+      type: dependentValueType === 'date' ? 'date' : undefined,
       tickfont: data.series.length ? {} : { color: 'transparent' },
     },
   };
 
-  return <PlotlyPlot data={data.series} layout={layout} {...restProps} />;
-}
+  return {
+    data: data.series,
+    layout,
+    ...restProps,
+  };
+});
+
+export default XYPlot;

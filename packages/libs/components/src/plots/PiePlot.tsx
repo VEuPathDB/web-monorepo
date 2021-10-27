@@ -1,14 +1,11 @@
 import React from 'react';
 import { PlotData as PlotlyPlotData } from 'plotly.js';
 import { PlotParams } from 'react-plotly.js';
-import PlotlyPlot, { PlotProps } from './PlotlyPlot';
+import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
 // FIXME - confusing mix of imports from plotly and react-plotly
 //         isn't PlotlyPlotData the same as PlotParams['data'] ?
 
-import FacetedPlot from './FacetedPlot';
-import defaultColorGen from '../utils/defaultColorGen';
 import { PiePlotData, PiePlotDatum } from '../types/plots';
-import { isFaceted } from '../types/guards';
 
 // Plotly PlotData['hoverinfo'] definition lacks options that work
 // for pie traces. These can be found in PlotData['textinfo']
@@ -55,120 +52,117 @@ export interface PiePlotProps extends PlotProps<PiePlotData> {
 const EmptyPieData: PiePlotData = { slices: [] };
 
 /** A Plot.ly based Pie plot. */
-export default function PiePlot({
-  data = EmptyPieData,
-  ...props
-}: PiePlotProps) {
-  // return a faceted plot if necessary
-  if (isFaceted<PiePlotData>(data))
-    return (
-      <FacetedPlot<PiePlotData, PiePlotProps>
-        component={PiePlot}
-        data={data}
-        props={props}
-      />
-    );
+const PiePlot = makePlotlyPlotComponent(
+  'PiePlot',
+  ({
+    data = EmptyPieData,
+    donutOptions,
+    textOptions,
+    ...restProps
+  }: PiePlotProps) => {
+    let newData: Partial<PlotData>[] = [];
 
-  const { donutOptions, textOptions, ...restProps } = props;
+    // Set some initial PLot.ly "layout" properties.
+    let layout: PlotParams['layout'] = {};
 
-  const defaultColorIter = defaultColorGen();
-  let newData: Partial<PlotData>[] = [];
-
-  // Set some initial PLot.ly "layout" properties.
-  let layout: PlotParams['layout'] = {};
-
-  /**
-   * Adding a donut to a plot.ly pie chart is
-   * unexpectedly complicated. There are a number
-   * of steps involved.
-   */
-  if (donutOptions) {
-    if (donutOptions.text) {
-      Object.assign(layout, {
-        annotations: [
-          {
-            font: {
-              size: donutOptions.fontSize,
-              color: donutOptions.textColor,
+    /**
+     * Adding a donut to a plot.ly pie chart is
+     * unexpectedly complicated. There are a number
+     * of steps involved.
+     */
+    if (donutOptions) {
+      if (donutOptions.text) {
+        Object.assign(layout, {
+          annotations: [
+            {
+              font: {
+                size: donutOptions.fontSize,
+                color: donutOptions.textColor,
+              },
+              showarrow: false,
+              text: donutOptions.text,
+              x: 0.5,
+              y: 0.5,
             },
-            showarrow: false,
-            text: donutOptions.text,
-            x: 0.5,
-            y: 0.5,
-          },
-        ],
-      });
+          ],
+        });
+      }
+
+      // To implement the donut hole background color, we add a faux data trace
+      // inside the hole with no markings
+      const fauxDataTrace: Partial<PlotData> = {
+        type: 'pie',
+        values: [1],
+        marker: {
+          colors: [donutOptions.backgroundColor ?? 'transparent'],
+        },
+        opacity: 1,
+        hoverinfo: 'none',
+        textinfo: 'none',
+        showlegend: false,
+      };
+
+      newData.push(fauxDataTrace);
     }
 
-    // To implement the donut hole background color, we add a faux data trace
-    // inside the hole with no markings
-    const fauxDataTrace: Partial<PlotData> = {
-      type: 'pie',
-      values: [1],
-      marker: {
-        colors: [donutOptions.backgroundColor ?? 'transparent'],
+    // Preprocess data for PlotlyPlot
+    const reducer = (
+      reducedData: {
+        values: number[];
+        labels: string[];
+        marker: { colors: string[] };
       },
-      opacity: 1,
-      hoverinfo: 'none',
-      textinfo: 'none',
-      showlegend: false,
+      currentData: PiePlotDatum
+    ) => {
+      reducedData.values.push(currentData.value);
+      reducedData.labels.push(currentData.label);
+
+      // Use the provided color or the next default plotly color if none is provided
+      let color = currentData.color;
+      reducedData.marker.colors.push(color ?? '');
+      // typescript definitions may be wrong.  We're not allowed to pass
+      // an Array<string | undefined> to marker.colors
+      // but the empty string works.
+      // Using marker.color instead works type-wise, but it doesn't actually work
+      // color-wise!
+
+      return reducedData;
     };
 
-    newData.push(fauxDataTrace);
-  }
-
-  // Preprocess data for PlotlyPlot
-  const reducer = (
-    reducedData: {
-      values: number[];
-      labels: string[];
-      marker: { colors: string[] };
-    },
-    currentData: PiePlotDatum
-  ) => {
-    reducedData.values.push(currentData.value);
-    reducedData.labels.push(currentData.label);
-
-    // Use the provided color or the next default plotly color if none is provided
-    let color = currentData.color || (defaultColorIter.next().value as string);
-    reducedData.marker.colors.push(color);
-
-    return reducedData;
-  };
-
-  const primaryDataTrace: Partial<PlotData> = {
-    type: 'pie',
-    ...data.slices.reduce(reducer, {
-      values: [],
-      labels: [],
-      marker: { colors: [] },
-    }),
-    hole: donutOptions?.size,
-    direction: 'clockwise',
-    sort: false,
-    text: textOptions?.sliceTextOverrides,
-    textinfo: textOptions?.sliceTextOverrides?.length
-      ? 'text'
-      : textOptions?.displayOption,
-    textposition: textOptions?.displayPosition,
-    texttemplate: textOptions?.displayTemplate,
-    hoverinfo: restProps.interactive
-      ? textOptions?.sliceTextOverrides?.length
+    const primaryDataTrace: Partial<PlotData> = {
+      type: 'pie',
+      ...data.slices.reduce(reducer, {
+        values: [],
+        labels: [],
+        marker: { colors: [] },
+      }),
+      hole: donutOptions?.size,
+      direction: 'clockwise',
+      sort: false,
+      text: textOptions?.sliceTextOverrides,
+      textinfo: textOptions?.sliceTextOverrides?.length
         ? 'text'
-        : 'label+value+percent'
-      : 'none',
-  };
+        : textOptions?.displayOption,
+      textposition: textOptions?.displayPosition,
+      texttemplate: textOptions?.displayTemplate,
+      hoverinfo: restProps.interactive
+        ? textOptions?.sliceTextOverrides?.length
+          ? 'text'
+          : 'label+value+percent'
+        : 'none',
+    };
 
-  newData.push(primaryDataTrace);
+    newData.push(primaryDataTrace);
 
-  return (
-    <PlotlyPlot
+    return {
       // Type definitions from Plot.ly library are out of date. See redefinition of PlotData above.
       // In order to avoid Typescript barfing, we have to perform this
       // casting.
-      data={newData as PlotlyPlotData[]}
-      layout={layout}
-      {...restProps}
-    />
-  );
-}
+      data: newData as PlotlyPlotData[],
+      layout,
+      ...restProps,
+    };
+  }
+);
+
+export default PiePlot;

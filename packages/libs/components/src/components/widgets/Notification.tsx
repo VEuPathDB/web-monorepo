@@ -3,6 +3,7 @@ import { Typography } from '@material-ui/core';
 
 import { LIGHT_GREEN } from '../../constants/colors';
 import Button from './Button';
+import WarningIcon from '@material-ui/icons/Warning';
 
 export type NotificationProps = {
   /** The title of the notificatin. */
@@ -11,7 +12,9 @@ export type NotificationProps = {
   text: string;
   /** Function to invoke when notification is acknowledged. */
   onAcknowledgement: () => void;
-  /** Number of times this notification has been received. */
+  /** Number of times this notification has been received.
+   * If not provided, no occurrence count is shown.
+   * */
   occurences?: number;
   /** Background color for notification. Any acceptable CSS color definition.
    * Defaults to LIGHT_GREEN. */
@@ -19,6 +22,8 @@ export type NotificationProps = {
   /** Additional styles to apply to the component's outer div.
    * Can also be used to override existing styles on the div. */
   containerStyles?: React.CSSProperties;
+  /** add showWarningIcon to show warning icon */
+  showWarningIcon?: boolean;
 };
 
 /** A notification widget to alert the user to some event. */
@@ -26,9 +31,10 @@ export default function Notification({
   title,
   text,
   onAcknowledgement,
-  occurences = 1,
+  occurences,
   color = LIGHT_GREEN,
   containerStyles = {},
+  showWarningIcon = false,
 }: NotificationProps) {
   return (
     <div
@@ -50,38 +56,49 @@ export default function Notification({
         <Typography variant="button" style={{ color: 'white' }}>
           {title}
         </Typography>
-        <div
-          style={{
-            backgroundColor: 'white',
-            borderRadius: 5,
-            height: 20,
-            width: 20,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <span
+        {occurences != null ? (
+          <div
             style={{
-              color: color,
-              fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
-              fontSize: 11,
+              backgroundColor: 'white',
+              borderRadius: 5,
+              height: 20,
+              width: 20,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
             }}
           >
-            {occurences}
-          </span>
-        </div>
+            <span
+              style={{
+                color: color,
+                fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
+                fontSize: 11,
+              }}
+            >
+              {occurences}
+            </span>
+          </div>
+        ) : null}
       </div>
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <span
           style={{
-            paddingRight: 50,
+            paddingRight: 20,
             color: 'white',
             fontSize: 13,
             flexGrow: 2,
             lineHeight: '1.1em',
           }}
         >
+          {showWarningIcon && (
+            <>
+              <WarningIcon
+                style={{ color: 'yellow', verticalAlign: 'middle' }}
+                fontSize="small"
+              />
+              <span>&nbsp;</span>
+            </>
+          )}
           {text}
         </span>
         <Button

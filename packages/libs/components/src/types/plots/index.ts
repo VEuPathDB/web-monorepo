@@ -9,6 +9,7 @@ import { XYPlotData } from './xyplot';
 import { BarplotData } from './barplot';
 import { HeatmapData } from './heatmap';
 import { MosaicData } from './mosaic';
+import { BirdsEyePlotData } from './birdseyeplot';
 
 export type FacetedData<D> = {
   facetLabel: string;
@@ -28,7 +29,8 @@ export type UnionOfPlotDataTypes =
   | XYPlotData
   | BarplotData
   | HeatmapData
-  | MosaicData;
+  | MosaicData
+  | BirdsEyePlotData;
 
 export * from './addOns';
 
@@ -40,3 +42,4 @@ export * from './xyplot';
 export * from './barplot';
 export * from './heatmap';
 export * from './mosaic';
+export * from './birdseyeplot';

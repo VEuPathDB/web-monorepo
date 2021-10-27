@@ -43,8 +43,8 @@ TwoByThree.args = {
     independentLabels: ['Rabbit', 'Cat', 'Dog'],
     dependentLabels: ['Positive', 'Negative'],
   },
-  independentAxisLabel: 'Animal',
-  dependentAxisLabel: 'Rabies',
+  showColumnLabels: false,
+  displayLegend: false,
 };
 
 export const FourByThree = Template.bind({});
@@ -62,7 +62,7 @@ FourByThree.args = {
   },
   independentAxisLabel: 'Planet',
   dependentAxisLabel: 'Atmospheric makeup',
-  title: 'Sex & Status Mosaic',
+  interactive: true,
 };
 
 export const EmptyData = Template.bind({});

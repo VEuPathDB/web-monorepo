@@ -24,6 +24,8 @@ export type PlotLegendAddon = {
     size: number;
     color: string;
   };
+  /** legend traceorder (for histogram filter) */
+  traceorder?: 'reversed' | 'grouped' | 'normal' | undefined;
 };
 
 /** Specification to control plot margins and padding. */
@@ -52,6 +54,12 @@ export type OpacityAddon = {
   opacity?: number;
 };
 export const OpacityDefault: number = 0.5;
+
+export type DependentAxisLogScaleAddon = {
+  /** Use a log scale for dependent axis. Default is false */
+  dependentAxisLogScale?: boolean;
+};
+export const DependentAxisLogScaleDefault: boolean = false;
 
 /** BarLayout - options and default differ depending on usage */
 export type BarLayoutAddon<O extends BarLayoutOptions> = {
@@ -91,3 +99,48 @@ export type AvailableUnitsAddon =
       /** Currently selected unit. */
       selectedUnit?: never;
     };
+
+/** Color palette addon */
+export type ColorPaletteAddon = {
+  colorPalette?: string[];
+};
+/** Based on [Tol's muted colormap](https://personal.sron.nl/~pault/) */
+export const ColorPaletteDefault: string[] = [
+  'rgb(136,34,85)',
+  'rgb(136,204,238)',
+  'rgb(153,153,51)',
+  'rgb(51,34,136)',
+  'rgb(68,170,153)',
+  'rgb(221,204,119)',
+  'rgb(204,102,119)',
+  'rgb(17,119,51)',
+];
+
+/** Darker color palette, useful for overlay traces, such as smoothed mean in scatter plots */
+export const ColorPaletteDark: string[] = [
+  'rgb(115, 28, 72)',
+  'rgb(113, 194, 234)',
+  'rgb(133, 133, 44)',
+  'rgb(43, 28, 115)',
+  'rgb(60, 151, 136)',
+  'rgb(215, 196, 98)',
+  'rgb(197, 82, 102)',
+  'rgb(13, 96, 41)',
+];
+
+/** truncated axis flags */
+export type AxisTruncationAddon = {
+  /** truncation config (flags) to show truncated axis (true) or not (false) */
+  axisTruncationConfig?: AxisTruncationConfig;
+};
+
+export type AxisTruncationConfig = {
+  independentAxis?: {
+    min?: boolean;
+    max?: boolean;
+  };
+  dependentAxis?: {
+    min?: boolean;
+    max?: boolean;
+  };
+};
