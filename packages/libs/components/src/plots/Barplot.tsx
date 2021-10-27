@@ -105,6 +105,7 @@ const Barplot = makePlotlyPlotComponent(
                       return categoryOrderEllipsis[findIndexValue];
                     }),
               name: el.name, // legend name
+              showlegend: el.name ? true : false,
               orientation: orientation === 'vertical' ? 'v' : 'h',
               opacity: calculatedOpacity,
               type: 'bar',

@@ -120,6 +120,7 @@ const Boxplot = makePlotlyPlotComponent('Boxplot', (props: BoxplotProps) => {
               q3: at(d.q3, definedDataIndices),
               // name is used as legend
               name: d.name,
+              showlegend: d.name ? true : false,
               boxpoints: d.rawData && showRawData ? 'all' : 'outliers',
               jitter: 0.1, // should be dependent on the number of datapoints...?
               marker: {
