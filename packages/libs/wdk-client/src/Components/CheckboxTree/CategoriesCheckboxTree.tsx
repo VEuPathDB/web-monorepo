@@ -1,16 +1,16 @@
-import { negate } from 'lodash';
+import { partial } from 'lodash';
 import React, { FunctionComponent } from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import {
   getNodeId,
   getChildren as getNodeChildren,
-  isIndividual,
   nodeSearchPredicate,
   BasicNodeComponent,
   CategoryTreeNode
 } from 'wdk-client/Utils/CategoryUtils';
 import { makeSearchHelpText } from 'wdk-client/Utils/SearchUtils';
 import CheckboxTree, { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
+import { getFilteredNodeChildren, nodeSearchPredicateWithHiddenNodes } from 'wdk-client/Utils/CheckboxTreeUtils';
 
 type ChangeHandler = (ids: string[]) => void;
 
@@ -94,8 +94,8 @@ let {
           linksPosition={linksPosition}
           showSearchBox={showSearchBox}
           getNodeId={getNodeId}
-          getNodeChildren={visibilityFilter ? getFilteredNodeChildren(visibilityFilter) : getNodeChildren}
-          searchPredicate={visibilityFilter ? nodeSearchPredicateWithHiddenNodes(visibilityFilter) : nodeSearchPredicate}
+          getNodeChildren={visibilityFilter ? getFilteredCategoryNodeChildren(visibilityFilter) : getNodeChildren}
+          searchPredicate={visibilityFilter ? categoryNodeSearchPredicateWithHiddenNodes(visibilityFilter) : nodeSearchPredicate}
           renderNode={renderNode}
           tree={tree}
           isMultiPick={isMultiPick}
@@ -124,32 +124,10 @@ CategoriesCheckboxTree.defaultProps = {
 
 export default wrappable(CategoriesCheckboxTree);
 
-function getNodeChildrenWithHiddenIndividuals(node: CategoryTreeNode) {
-  return getNodeChildren(node).filter(negate(isIndividual));
-}
+const getFilteredCategoryNodeChildren = partial(getFilteredNodeChildren, getNodeChildren);
 
-function nodeSearchPredicateWithHiddenIndividuals(node: CategoryTreeNode, searchQueryTerms: string[]) {
-  return (
-    nodeSearchPredicate(node, searchQueryTerms) ||
-    getNodeChildren(node)
-      .filter(isIndividual)
-      .some(node => nodeSearchPredicate(node, searchQueryTerms))
-  );
-}
-
-function getFilteredNodeChildren(visibilityFilter: NodePredicate) {
-  return function (node: CategoryTreeNode) {
-    return getNodeChildren(node).filter(visibilityFilter);
-  }
-}
-
-function nodeSearchPredicateWithHiddenNodes(visibilityFilter: NodePredicate) {
-  return function (node: CategoryTreeNode, searchQueryTerms: string[]) {
-    return (
-      nodeSearchPredicate(node, searchQueryTerms) ||
-      getNodeChildren(node)
-        .filter(negate(visibilityFilter))
-        .some(node => nodeSearchPredicate(node, searchQueryTerms))
-    );
-  }
-}
+const categoryNodeSearchPredicateWithHiddenNodes = partial(
+  nodeSearchPredicateWithHiddenNodes,
+  getNodeChildren,
+  nodeSearchPredicate
+);
