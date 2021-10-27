@@ -174,16 +174,16 @@ let TreeLinks: StatelessComponent<TreeLinksProps> = props => {
 
       { isFiltered && showSelectionLinks &&
         <div>
+          <button type="button" className="link" onClick={selectOnlyVisible}>select only these</button>
+          <Bar/>
           <button type="button" className="link" onClick={addVisible}>add these</button>
           <Bar/>
           <button type="button" className="link" onClick={removeVisible}>clear these</button>
-          <Bar/>
-          <button type="button" className="link" onClick={selectOnlyVisible}>select only these</button>
         </div>
       }
 
       <div>
-        { showSelectionLinks &&
+        { !isFiltered && showSelectionLinks &&
           <span>
             <button type="button" className="link" onClick={selectAll}>select all</button>
             <Bar/>
