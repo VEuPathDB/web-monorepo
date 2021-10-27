@@ -30,6 +30,7 @@ const MosaicPlot = makePlotlyPlotComponent(
     dependentAxisLabel,
     colors,
     showColumnLabels,
+    spacingOptions,
     ...restProps
   }: MosaicPlotProps) => {
     // Column widths
@@ -58,6 +59,37 @@ const MosaicPlot = makePlotlyPlotComponent(
       return column_start + width / 2;
     });
 
+    const heightProp = restProps.containerStyles?.height;
+    const height = heightProp
+      ? typeof heightProp === 'string'
+        ? heightProp.endsWith('px')
+          ? parseInt(heightProp)
+          : 100
+        : heightProp
+      : 100;
+    const marginTop = spacingOptions?.marginTop ?? 100;
+    const marginBottom = spacingOptions?.marginTop ?? 80;
+    const plotHeight = height - marginTop - marginBottom;
+
+    const maxLegendTextLength = restProps.maxLegendTextLength ?? 20;
+    const longestDependentLabelLength = Math.max(
+      ...data.dependentLabels.map((label) => label.length)
+    );
+    const longestLegendLabelLength =
+      longestDependentLabelLength > maxLegendTextLength
+        ? maxLegendTextLength + 2
+        : longestDependentLabelLength;
+    const marginLeftExtra = 5.357 * longestLegendLabelLength + 37.5;
+    const yAxisTitleStandoff = marginLeftExtra + 25;
+
+    const marginleft = spacingOptions?.marginLeft ?? 80;
+    // const marginLeftExtra = 75;
+    // const yAxisTitleStandoff = 100;
+    const newSpacingOptions = {
+      ...spacingOptions,
+      marginLeft: marginleft + marginLeftExtra,
+    };
+
     const layout = {
       xaxis: {
         title: independentAxisLabel,
@@ -72,12 +104,27 @@ const MosaicPlot = makePlotlyPlotComponent(
         automargin: true,
       },
       yaxis: {
-        title: dependentAxisLabel && dependentAxisLabel + ' (Proportion)',
+        title: {
+          text: dependentAxisLabel && dependentAxisLabel + ' (Proportion)',
+          // standoff: yAxisTitleStandoff * 1.33,
+          standoff: yAxisTitleStandoff,
+        },
         range: [0, 100] as number[],
-        tickvals: [0, 20, 40, 60, 80, 100] as number[],
+        // tickvals: [0, 20, 40, 60, 80, 100] as number[],
+        tickvals: [] as number[],
+        automargin: true,
       },
       barmode: 'stack',
       barnorm: 'percent',
+      legend: {
+        xanchor: 'right',
+        x: -0.01,
+        y: 0.5,
+        tracegroupgap: plotHeight / data.dependentLabels.length,
+        // traceorder: 'reversed+grouped',
+        itemclick: false,
+        itemdoubleclick: false,
+      },
     } as const;
 
     const plotlyReadyData: PlotParams['data'] = data.values
@@ -104,6 +151,9 @@ const MosaicPlot = makePlotlyPlotComponent(
               },
               color: colors ? colors[i] : undefined,
             },
+            legendgroup: data.dependentLabels[i],
+            // legendrank: data.dependentLabels.length - i,
+            legendrank: i + 1,
           } as const)
       )
       .reverse(); // Reverse so first trace is on top, matching data array
@@ -111,9 +161,9 @@ const MosaicPlot = makePlotlyPlotComponent(
     return {
       data: plotlyReadyData,
       layout,
-      legendTitle: dependentAxisLabel,
       // original independent axis tick labels for tooltip
       storedIndependentAxisTickLabel: data.independentLabels,
+      spacingOptions: newSpacingOptions,
       ...restProps,
     };
   }
