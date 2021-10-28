@@ -338,18 +338,19 @@ function ScatterplotViz(props: VisualizationProps) {
   const { url } = useRouteMatch();
 
   //DKDK checkbox of custom legend
-  const legendItemArray = useMemo(() => {
+  const legendItems = useMemo(() => {
     return data.value != null
       ? data.value?.dataSetProcess.series.map((data: any) => data.name)
       : [''];
   }, [data]);
+
   //DKDK set useState to track checkbox status
   const [checkedLegendItems, setCheckedLegendItems] = useState(['']);
 
   //DKDK set all checkbox checked initially
   useEffect(() => {
     if (data.value != null && data.value.dataSetProcess.series.length > 0) {
-      setCheckedLegendItems(legendItemArray);
+      setCheckedLegendItems(legendItems);
     }
   }, [data]);
 
@@ -477,10 +478,10 @@ function ScatterplotViz(props: VisualizationProps) {
         />
 
         {/* DKDK custom legend */}
-        {legendItemArray != null && !data.pending && data.value != null && (
+        {legendItems != null && !data.pending && data.value != null && (
           <div style={{ marginLeft: '2em' }}>
             <CustomLegend
-              legendItemArray={legendItemArray}
+              legendItems={legendItems}
               checkedLegendItems={checkedLegendItems}
               setCheckedLegendItems={setCheckedLegendItems}
               //DKDK pass legend title

@@ -1,25 +1,19 @@
 import React from 'react';
-import {
-  FormGroup,
-  FormControlLabel,
-  Checkbox,
-  Tooltip,
-  withStyles,
-} from '@material-ui/core';
+import { Checkbox } from '@material-ui/core';
 
-// set props for CustomLegend function
-interface customLegendProps {
-  legendItemArray: string[];
+// set props for custom legend function
+interface CustomLegendProps {
+  legendItems: string[];
   checkedLegendItems: string[];
-  setCheckedLegendItems: React.Dispatch<React.SetStateAction<string[]>>;
+  setCheckedLegendItems: (checkedItems: string[]) => void;
   legendTitle?: string;
 }
 export default function CustomLegend({
-  legendItemArray,
+  legendItems,
   checkedLegendItems,
   setCheckedLegendItems,
   legendTitle,
-}: customLegendProps) {
+}: CustomLegendProps) {
   // change checkbox state by click
   const handleLegendCheckboxClick = (checked: boolean, id: string) => {
     if (checked) {
@@ -32,50 +26,51 @@ export default function CustomLegend({
     }
   };
 
-  // white background tooltip
-  const LightTooltip = withStyles({
-    tooltip: {
-      color: 'black',
-      backgroundColor: 'white',
-      fontSize: '1em',
-      border: '2px solid #E6E8ED',
-    },
-  })(Tooltip);
-
   return (
-    <>
-      <div style={{ fontSize: '1.2em' }}>{legendTitle}</div>
-      {/* for accepting markers, this needs to be changed to use <Checkbox> & HTML <label> tag
-          In that case, Tooltip may be replaced with title attribute
-      */}
-      <div className="customLegendCheckbox">
-        <FormGroup>
-          {legendItemArray.map((id: string, index: number) => (
-            <LightTooltip key={id + index} title={id} placement="right">
-              <FormControlLabel
-                label={id}
-                style={{
-                  marginTop: '-0.5em',
-                  marginBottom: '-0.5em',
-                }}
-                control={
-                  <Checkbox
-                    key={id}
-                    id={id}
-                    value={id}
-                    // color="default"
-                    color="primary"
-                    onChange={(e) => {
-                      handleLegendCheckboxClick(e.target.checked, id);
-                    }}
-                    checked={checkedLegendItems.includes(id) ? true : false}
-                  />
-                }
-              />
-            </LightTooltip>
-          ))}
-        </FormGroup>
+    <div
+      style={{
+        border: '1px solid #dedede',
+        boxShadow: '1px 1px 4px #00000066',
+        padding: '1em',
+      }}
+    >
+      <div title={legendTitle} style={{ cursor: 'pointer', fontSize: '1.2em' }}>
+        {legendTitle}
       </div>
-    </>
+      {legendItems.length !== 1 && (
+        <div className="customLegendCheckbox">
+          {legendItems.map((id: string, index: number) => (
+            <div style={{ display: 'flex' }}>
+              <>
+                <Checkbox
+                  key={id}
+                  id={id}
+                  value={id}
+                  // color="default"
+                  color="primary"
+                  onChange={(e) => {
+                    handleLegendCheckboxClick(e.target.checked, id);
+                  }}
+                  checked={checkedLegendItems.includes(id) ? true : false}
+                  style={{ padding: 0 }}
+                  defaultChecked
+                />
+                &nbsp;&nbsp;
+                <label
+                  title={id}
+                  style={{
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  {id}
+                </label>
+              </>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
