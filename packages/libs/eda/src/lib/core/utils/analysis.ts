@@ -124,7 +124,7 @@ export function makeProvenanceString(
   provenance: AnalysisProvenance
 ) {
   const onImportString = `Imported from ${provenance.onImport.ownerName} [${
-    provenance.onImport.ownerName
+    provenance.onImport.ownerOrganization
   }] on ${convertISOToDisplayFormat(importCreationTime)}.`;
   const currentString = provenance.current.isDeleted
     ? `The original analysis has since been deleted.`
