@@ -72,8 +72,9 @@ import { useRouteMatch } from 'react-router';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import PluginError from '../PluginError';
 //DKDK
-// import CustomLegend from '../CustomLegend';
-import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import PlotLegend, {
+  LegendItemsProps,
+} from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 
@@ -339,19 +340,40 @@ function ScatterplotViz(props: VisualizationProps) {
   const { url } = useRouteMatch();
 
   //DKDK checkbox of custom legend
-  const legendItems = useMemo(() => {
+  const legendItems: LegendItemsProps[] = useMemo(() => {
     return data.value != null
-      ? data.value?.dataSetProcess.series.map((data: any) => data.name)
-      : [''];
+      ? data.value?.dataSetProcess.series.map((data: any) => {
+          return {
+            label: data.name,
+            // need a way to appropriately make marker info
+            // scatter plot has defined mode - still need to find the way to distinguish CI, No data, etc.
+            marker: data.mode,
+            // set temporary values for now (for proof-of-concept)
+            hasData: true,
+            group: 1,
+            rank: 1,
+          };
+        })
+      : [];
   }, [data]);
 
+  //DKDK
+  console.log(
+    'data.value?.dataSetProcess.series =',
+    data.value?.dataSetProcess.series
+  );
+  console.log('legendItems =', legendItems);
+
   //DKDK set useState to track checkbox status
-  const [checkedLegendItems, setCheckedLegendItems] = useState(['']);
+  const [checkedLegendItems, setCheckedLegendItems] = useState<string[]>([]);
+
+  console.log('checkedLegendItems =', checkedLegendItems);
 
   //DKDK set all checkbox checked initially
   useEffect(() => {
     if (data.value != null && data.value.dataSetProcess.series.length > 0) {
-      setCheckedLegendItems(legendItems);
+      // extract legendItems.label for passing to both PlotlyPlot and PlotLegend
+      setCheckedLegendItems(legendItems.map((item) => item.label));
     }
   }, [data]);
 
