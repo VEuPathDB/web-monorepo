@@ -72,7 +72,8 @@ import { useRouteMatch } from 'react-router';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import PluginError from '../PluginError';
 //DKDK
-import CustomLegend from '../CustomLegend';
+// import CustomLegend from '../CustomLegend';
+import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 
@@ -480,7 +481,7 @@ function ScatterplotViz(props: VisualizationProps) {
         {/* DKDK custom legend */}
         {legendItems != null && !data.pending && data.value != null && (
           <div style={{ marginLeft: '2em' }}>
-            <CustomLegend
+            <PlotLegend
               legendItems={legendItems}
               checkedLegendItems={checkedLegendItems}
               setCheckedLegendItems={setCheckedLegendItems}
