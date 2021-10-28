@@ -188,6 +188,14 @@ export class AnalysisClient extends FetchClientWithCredentials {
     });
   }
 
+  async importAnalysis(analysisId: string): Promise<{ analysisId: string }> {
+    return this.fetch({
+      path: `/import-analysis/${analysisId}`,
+      method: 'GET',
+      transformResponse: ioTransformer(type({ analysisId: string })),
+    });
+  }
+
   async getPublicAnalyses(): Promise<PublicAnalysisSummary[]> {
     return this.fetch(
       createJsonRequest({
