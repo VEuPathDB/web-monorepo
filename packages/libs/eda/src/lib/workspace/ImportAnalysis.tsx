@@ -9,7 +9,6 @@ import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 
 import { AnalysisClient } from '../core';
-import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
 
 interface Props {
   analysisClient: AnalysisClient;
@@ -57,18 +56,4 @@ export function ImportAnalysis({ analysisClient, analysisId, studyId }: Props) {
       {error && <pre>{error}</pre>}
     </RestrictedPage>
   );
-}
-
-function makeImportDescription(ownerName?: string, description?: string) {
-  return !description?.trim()
-    ? makeImportMetadata(ownerName)
-    : `${description}\n\n(${makeImportMetadata(ownerName)})`;
-}
-
-function makeImportMetadata(ownerName?: string) {
-  const timestamp = convertISOToDisplayFormat(new Date().toISOString());
-
-  return ownerName == null
-    ? `Imported on ${timestamp}.`
-    : `Imported from ${ownerName} on ${timestamp}.`;
 }
