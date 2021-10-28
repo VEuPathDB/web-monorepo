@@ -23,7 +23,7 @@ import {
   BoxplotResponse,
 } from './types';
 
-export class DataClient extends FetchClientWithCredentials {
+export default class DataClient extends FetchClientWithCredentials {
   getApps(): Promise<TypeOf<typeof AppsResponse>> {
     return this.fetch(
       createJsonRequest({

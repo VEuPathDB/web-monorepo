@@ -43,15 +43,9 @@ export default function VariableTree({
 }: VariableTreeProps) {
   const entities = useStudyEntities(rootEntity);
   const valuesMap = useValuesMap(entities);
-  const flattenedFields = useFlattenedFields(
-    entities,
-    showMultiFilterDescendants
-  );
+  const flattenedFields = useFlattenedFields(entities);
   const fieldsByTerm = useFlattenFieldsByTerm(flattenedFields);
-  const featuredFields = useFeaturedFields(
-    entities,
-    showMultiFilterDescendants
-  );
+  const featuredFields = useFeaturedFields(entities);
   const fieldTree = useFieldTree(flattenedFields);
 
   const disabledFields = useMemo(
@@ -80,6 +74,7 @@ export default function VariableTree({
   return (
     <VariableList
       mode="singleSelection"
+      showMultiFilterDescendants={showMultiFilterDescendants}
       activeField={activeField}
       disabledFieldIds={disabledFields}
       onActiveFieldChange={onActiveFieldChange}

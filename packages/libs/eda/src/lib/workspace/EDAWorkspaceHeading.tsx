@@ -10,6 +10,7 @@ import {
 import SwissArmyButton from '@veupathdb/core-components/dist/components/buttons/SwissArmyButton';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { AnalysisNameDialog } from './AnalysisNameDialog';
+import AddIcon from '@material-ui/icons/Add';
 
 // Hooks
 import { useStudyRecord } from '../core/hooks/workspace';
