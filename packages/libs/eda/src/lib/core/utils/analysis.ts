@@ -2,10 +2,12 @@ import {
   HistogramData,
   BarplotData,
   BoxplotData,
+  FacetedData,
 } from '@veupathdb/components/lib/types/plots';
 import { Variable } from '../types/study';
 import { Analysis, NewAnalysis } from '../types/analysis';
 import { CoverageStatistics } from '../types/visualization';
+import { isFaceted } from '@veupathdb/components/lib/types/guards';
 
 export function vocabularyWithMissingData(
   vocabulary: string[] = [],
@@ -16,13 +18,29 @@ export function vocabularyWithMissingData(
     : vocabulary;
 }
 
+// was: BarplotData | HistogramData | { series: BoxplotData };
+type SeriesWithStatistics<T> = T & CoverageStatistics;
+type MaybeFacetedSeries<T> = T | FacetedData<T>;
+type MaybeFacetedSeriesWithStatistics<T> = MaybeFacetedSeries<T> &
+  CoverageStatistics;
+
 export function grayOutLastSeries<
-  T extends BarplotData | HistogramData | { series: BoxplotData }
+  T extends { series: BoxplotData } | BarplotData | HistogramData
 >(
-  data: T,
+  data: T | MaybeFacetedSeriesWithStatistics<T>,
   showMissingness: boolean = false,
   borderColor: string | undefined = undefined
-) {
+): MaybeFacetedSeriesWithStatistics<T> {
+  if (isFaceted(data)) {
+    return {
+      ...data,
+      facets: data.facets.map(({ label, data }) => ({
+        label,
+        data: grayOutLastSeries(data, showMissingness, borderColor) as T,
+      })),
+    };
+  }
+
   return {
     ...data,
     series: data.series.map((series, index) =>
@@ -35,21 +53,38 @@ export function grayOutLastSeries<
           }
         : series
     ),
-  };
+  } as SeriesWithStatistics<T>;
 }
 
 export function omitEmptyNoDataSeries<
-  T extends { series: any } & CoverageStatistics
->(data: T, showMissingness: boolean = false) {
-  const noMissingData =
-    data.completeCasesAllVars === data.completeCasesAxesVars;
-  if (!showMissingness || !noMissingData) return data;
-  return {
+  T extends { series: BoxplotData } | BarplotData | HistogramData
+>(
+  data: MaybeFacetedSeriesWithStatistics<T>,
+  showMissingness: boolean = false
+): MaybeFacetedSeriesWithStatistics<T> {
+  const omitLastSeries =
+    showMissingness && data.completeCasesAllVars === data.completeCasesAxesVars;
+
+  if (isFaceted(data)) {
+    return {
+      ...data,
+      facets: data.facets.map((facet) => ({
+        label: facet.label,
+        data: {
+          ...facet.data,
+          series: omitLastSeries
+            ? facet.data.series.slice(0, -1)
+            : facet.data.series,
+        },
+      })),
+    };
+  }
+
+  const unfaceted = {
     ...data,
-    series: data.series.filter(
-      (_: any, index: number) => index !== data.series.length - 1
-    ),
+    series: omitLastSeries ? data.series.slice(0, -1) : data.series,
   };
+  return unfaceted;
 }
 
 /**
