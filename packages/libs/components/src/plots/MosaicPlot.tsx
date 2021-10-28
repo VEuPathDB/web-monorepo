@@ -1,5 +1,10 @@
 import React, { useMemo } from 'react';
-import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
+import {
+  DEFAULT_CONTAINER_HEIGHT,
+  DEFAULT_MAX_LEGEND_TEXT_LENGTH,
+  makePlotlyPlotComponent,
+  PlotProps,
+} from './PlotlyPlot';
 import { MosaicData } from '../types/plots';
 import { PlotParams } from 'react-plotly.js';
 import _ from 'lodash';
@@ -59,32 +64,62 @@ const MosaicPlot = makePlotlyPlotComponent(
       return column_start + width / 2;
     });
 
-    const heightProp = restProps.containerStyles?.height;
-    const height = heightProp
-      ? typeof heightProp === 'string'
-        ? heightProp.endsWith('px')
-          ? parseInt(heightProp)
-          : 100
-        : heightProp
-      : 100;
-    const marginTop = spacingOptions?.marginTop ?? 100;
-    const marginBottom = spacingOptions?.marginTop ?? 80;
-    const plotHeight = height - marginTop - marginBottom;
+    // Not currently calculating this---just using the default
+    // Might need to be calculated or adjusted if more flexibility is needed
+    const defaultLegendItemHeight = 20;
+    // ploltly.js default for left, bottom, and right margins is the same
+    const defaultMargin = 80;
+    const defaultMarginTop = 100;
 
-    const maxLegendTextLength = restProps.maxLegendTextLength ?? 20;
+    // Try to get the container height in pixels
+    const containerHeightProp = restProps.containerStyles
+      ? restProps.containerStyles.height
+      : DEFAULT_CONTAINER_HEIGHT;
+    const containerHeight = containerHeightProp
+      ? typeof containerHeightProp === 'number'
+        ? containerHeightProp
+        : containerHeightProp.endsWith('px')
+        ? parseInt(containerHeightProp)
+        : undefined
+      : undefined;
+    let legendTraceGroupGap: number;
+
+    if (containerHeight) {
+      // Estimate the plot proper height
+      const marginTop = spacingOptions?.marginTop ?? defaultMarginTop;
+      const marginBottom = spacingOptions?.marginBottom ?? defaultMargin;
+      // Subtraction at end is due to x-axis automargin shrinking the plot
+      const plotHeight =
+        containerHeight -
+        marginTop -
+        marginBottom -
+        2.05 * (maxIndependentTickLabelLength + 2);
+      // Calculate the legend trace group gap accordingly
+      legendTraceGroupGap =
+        ((plotHeight - defaultLegendItemHeight * data.dependentLabels.length) *
+          0.95) /
+        (data.dependentLabels.length - 1);
+    } else {
+      // If we can't determine the container height, don't add any gaps to be safe
+      legendTraceGroupGap = 0;
+    }
+
+    const maxLegendTextLength =
+      restProps.maxLegendTextLength ?? DEFAULT_MAX_LEGEND_TEXT_LENGTH;
     const longestDependentLabelLength = Math.max(
       ...data.dependentLabels.map((label) => label.length)
     );
+    // If the length overflows, add two characters to account for ellipsis length
     const longestLegendLabelLength =
       longestDependentLabelLength > maxLegendTextLength
         ? maxLegendTextLength + 2
         : longestDependentLabelLength;
+    // Have to calculate some extra left margin and y axis title standoff due
+    // to y-axis automargin
     const marginLeftExtra = 5.357 * longestLegendLabelLength + 37.5;
     const yAxisTitleStandoff = marginLeftExtra + 25;
 
     const marginleft = spacingOptions?.marginLeft ?? 80;
-    // const marginLeftExtra = 75;
-    // const yAxisTitleStandoff = 100;
     const newSpacingOptions = {
       ...spacingOptions,
       marginLeft: marginleft + marginLeftExtra,
@@ -106,11 +141,9 @@ const MosaicPlot = makePlotlyPlotComponent(
       yaxis: {
         title: {
           text: dependentAxisLabel && dependentAxisLabel + ' (Proportion)',
-          // standoff: yAxisTitleStandoff * 1.33,
           standoff: yAxisTitleStandoff,
         },
         range: [0, 100] as number[],
-        // tickvals: [0, 20, 40, 60, 80, 100] as number[],
         tickvals: [] as number[],
         automargin: true,
       },
@@ -120,11 +153,11 @@ const MosaicPlot = makePlotlyPlotComponent(
         xanchor: 'right',
         x: -0.01,
         y: 0.5,
-        tracegroupgap: plotHeight / data.dependentLabels.length,
-        // traceorder: 'reversed+grouped',
+        tracegroupgap: legendTraceGroupGap,
         itemclick: false,
         itemdoubleclick: false,
       },
+      hovermode: 'x',
     } as const;
 
     const plotlyReadyData: PlotParams['data'] = data.values
@@ -152,8 +185,7 @@ const MosaicPlot = makePlotlyPlotComponent(
               color: colors ? colors[i] : undefined,
             },
             legendgroup: data.dependentLabels[i],
-            // legendrank: data.dependentLabels.length - i,
-            legendrank: i + 1,
+            legendrank: i,
           } as const)
       )
       .reverse(); // Reverse so first trace is on top, matching data array
