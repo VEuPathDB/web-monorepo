@@ -49,6 +49,8 @@ export type SliderWidgetProps = {
   containerStyles?: React.CSSProperties;
   /** Show an auxillary text input box */
   showTextInput?: boolean;
+  /** Show min and max limits */
+  showLimits?: boolean;
 };
 
 /** A customizable slider widget.
@@ -69,6 +71,7 @@ export default function SliderWidget({
   colorSpec,
   containerStyles = {},
   showTextInput,
+  showLimits = false,
 }: SliderWidgetProps) {
   // Used to track whether or not has mouse hovering over widget.
   const [focused, setFocused] = useState(false);
@@ -79,6 +82,9 @@ export default function SliderWidget({
       paddingTop: 5,
       flex: 1,
       width: '11em',
+      ...(showLimits && minimum != null && maximum != null
+        ? { marginLeft: '1.0em', marginRight: '1.0em' }
+        : {}),
     },
     rail: {
       background: colorSpec
@@ -179,6 +185,9 @@ export default function SliderWidget({
           }}
         />
       )}
+      {showLimits && minimum != null && maximum != null && (
+        <Typography style={{ fontSize: '0.75em' }}>{minimum}</Typography>
+      )}
       <Slider
         classes={{
           root: classes.root,
@@ -196,6 +205,9 @@ export default function SliderWidget({
         valueLabelFormat={valueFormatter}
         onChange={handleChange}
       />
+      {showLimits && minimum != null && maximum != null && (
+        <Typography style={{ fontSize: '0.75em' }}>{maximum}</Typography>
+      )}
     </div>
   );
 }
