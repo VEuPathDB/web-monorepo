@@ -406,9 +406,7 @@ function ScatterplotViz(props: VisualizationProps) {
       >
         <ScatterplotWithControls
           // data.value
-          data={
-            data.value && !data.pending ? data.value.dataSetProcess : undefined
-          }
+          data={data.value?.dataSetProcess}
           updateThumbnail={updateThumbnail}
           containerStyles={plotDimensions}
           // title={'Scatter plot'}

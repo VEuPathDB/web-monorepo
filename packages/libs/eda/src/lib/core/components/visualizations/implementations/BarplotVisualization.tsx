@@ -308,7 +308,7 @@ function BarplotViz(props: VisualizationProps) {
         }}
       >
         <BarplotWithControls
-          data={data.value && !data.pending ? data.value : undefined}
+          data={data.value}
           containerStyles={plotDimensions}
           orientation={'vertical'}
           barLayout={'group'}
@@ -449,7 +449,7 @@ export function barplotResponseToData(
   return {
     series: responseIsEmpty
       ? []
-      : response.barplot.data.map((data, index) => ({
+      : response.barplot.data.map((data) => ({
           // name has value if using overlay variable
           name:
             data.overlayVariableDetails?.value != null
@@ -457,7 +457,7 @@ export function barplotResponseToData(
                   data.overlayVariableDetails.value,
                   overlayVariable
                 )
-              : `series ${index}`,
+              : '',
           label: fixLabelsForNumberVariables(data.label, variable),
           value: data.value,
         })),
