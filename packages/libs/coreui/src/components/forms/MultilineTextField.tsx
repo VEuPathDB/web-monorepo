@@ -1,6 +1,3 @@
-import { useCallback, useEffect, useState } from 'react';
-import { debounce } from 'lodash';
-
 // Components
 import { H6 } from '../headers';
 
@@ -16,20 +13,20 @@ export type MultilineTextFieldProps = {
   heading: string;
   /** Optional. Additional instructions to be displayed below the heading. */
   instructions?: string;
-  /** Optional. Placeholder text to display in the field. */
+  /** Optional. Placeholder text to display in the field if there is no value.*/
   placeholder?: string;
+  /** The current value of the text field. */
+  value: string;
+  /** A callback to invoke when the value of the input field changes. */
+  onValueChange: (value: string) => void;
   /** The desired width of the component. */
   width: string | number;
   /** The desired height of the component. */
   height: string | number;
   /** Optional. A character limit. */
   characterLimit?: number;
-  /**
-   * A callback to invoke when the value of the input field changes.
-   * Note that internally, calls to this function are debounced to
-   * avoid spamming upstream components and potentially APIs.
-   */
-  onValueChange: (value: string) => void;
+  /** Optional. Indicates the status of data syncing. */
+  status?: 'syncing' | 'synced';
 };
 
 export default function MultilineTextField({
@@ -39,35 +36,12 @@ export default function MultilineTextField({
   width,
   height,
   characterLimit,
+  value,
   onValueChange,
+  status,
 }: MultilineTextFieldProps) {
-  const [value, setValue] = useState('');
-  const [syncPending, setSyncPending] = useState(false);
-
-  const debouncedOnValueChange = useCallback(
-    debounce((value: string) => {
-      onValueChange(value);
-      setSyncPending(false);
-    }, 500),
-    []
-  );
-
-  useEffect(() => {
-    setSyncPending(true);
-    debouncedOnValueChange(value);
-  }, [value]);
-
-  const {
-    observe,
-    width: currentWidth,
-    height: currentHeight,
-  } = useDimensions();
-
-  const {
-    observe: headingRef,
-    width: nonInputWidth,
-    height: nonInputHeight,
-  } = useDimensions();
+  const { observe, height: currentHeight } = useDimensions();
+  const { observe: headingRef, height: nonInputHeight } = useDimensions();
 
   return (
     <div ref={observe} css={{ width, height }}>
@@ -107,7 +81,7 @@ export default function MultilineTextField({
           placeholder={placeholder}
           value={value}
           onChange={(event: any) => {
-            setValue(event.target.value);
+            onValueChange(event.target.value);
           }}
         />
         {characterLimit && currentHeight && (
@@ -131,7 +105,7 @@ export default function MultilineTextField({
             right: 10,
           }}
         >
-          {syncPending ? (
+          {status === 'syncing' && (
             <Loading
               fontSize={20}
               fill={MEDIUM_GRAY}
@@ -139,7 +113,8 @@ export default function MultilineTextField({
                 animation: `${spin} 2s ease infinite, ${fadeIn} 1s linear`,
               }}
             />
-          ) : (
+          )}
+          {status === 'synced' && (
             <CheckCircle
               fontSize={20}
               fill={LIGHT_GREEN}

@@ -1,4 +1,6 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
+import { debounce } from 'lodash';
+import { useCallback, useState } from 'react';
 
 import MultilineTextField, {
   MultilineTextFieldProps,
@@ -9,9 +11,33 @@ export default {
   component: MultilineTextField,
 } as Meta;
 
-const Template: Story<MultilineTextFieldProps> = (args) => (
-  <MultilineTextField {...args} />
-);
+const Template: Story<MultilineTextFieldProps> = (args) => {
+  const [value, setValue] = useState('');
+  const [status, setStatus] = useState<MultilineTextFieldProps['status']>(
+    undefined
+  );
+
+  const debouncedOnValueChange = useCallback(
+    debounce((value: string) => {
+      setValue(value);
+      setStatus('synced');
+    }, 500),
+    []
+  );
+
+  return (
+    <MultilineTextField
+      {...args}
+      value={value}
+      onValueChange={(value) => {
+        setValue(value);
+        setStatus('syncing');
+        debouncedOnValueChange(value);
+      }}
+      status={status}
+    />
+  );
+};
 export const Default = Template.bind({});
 Default.args = {
   heading: 'Example Heading',
@@ -20,5 +46,4 @@ Default.args = {
   height: '50vh',
   placeholder: 'Example Placeholder',
   characterLimit: 500,
-  onValueChange: (value) => console.log(value),
 };
