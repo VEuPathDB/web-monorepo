@@ -15,19 +15,9 @@ interface Props {
   analysisClient: AnalysisClient;
   studyId: string;
   analysisId: string;
-  ownerUserId: string;
-  ownerName?: string;
-  description?: string;
 }
 
-export function ImportAnalysis({
-  analysisClient,
-  analysisId,
-  ownerUserId,
-  ownerName,
-  description,
-  studyId,
-}: Props) {
+export function ImportAnalysis({ analysisClient, analysisId, studyId }: Props) {
   const approvalStatus = useApprovalStatus(studyId, 'analysis');
   const history = useHistory();
   const [error, setError] = useState<string | undefined>();
@@ -41,44 +31,25 @@ export function ImportAnalysis({
       return;
     }
 
-    const importDescription = makeImportDescription(ownerName, description);
-
     return Task.fromPromise(() =>
-      analysisClient.copyAnalysis(analysisId, Number(ownerUserId))
-    )
-      .chain(({ analysisId: analysisCopyId }) =>
-        Task.fromPromise(() =>
-          analysisClient.updateAnalysis(analysisCopyId, {
-            description: importDescription,
-          })
-        ).map((_) => analysisCopyId)
-      )
-      .run(
-        (analysisCopyId) => {
-          const newLocation = {
-            ...history.location,
-            pathname: Path.join(
-              history.location.pathname,
-              '../../../..',
-              studyId,
-              analysisCopyId
-            ),
-          };
-          history.replace(newLocation);
-        },
-        (error) =>
-          setError(error instanceof Error ? error.message : String(error))
-      );
-  }, [
-    analysisClient,
-    history,
-    studyId,
-    analysisId,
-    ownerUserId,
-    ownerName,
-    description,
-    approvalStatus,
-  ]);
+      analysisClient.importAnalysis(analysisId)
+    ).run(
+      ({ analysisId: analysisCopyId }) => {
+        const newLocation = {
+          ...history.location,
+          pathname: Path.join(
+            history.location.pathname,
+            '../../..',
+            studyId,
+            analysisCopyId
+          ),
+        };
+        history.replace(newLocation);
+      },
+      (error) =>
+        setError(error instanceof Error ? error.message : String(error))
+    );
+  }, [analysisClient, history, studyId, analysisId, approvalStatus]);
 
   return (
     <RestrictedPage approvalStatus={approvalStatus}>
