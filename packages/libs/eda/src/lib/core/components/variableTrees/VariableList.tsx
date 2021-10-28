@@ -64,6 +64,8 @@ interface FieldNodeProps {
   searchTerm: string;
   isActive: boolean;
   isDisabled?: boolean;
+  isMultiFilterDescendant: boolean;
+  showMultiFilterDescendants: boolean;
   customDisabledVariableMessage?: string;
   handleFieldSelect: (field: VariableField) => void;
   activeFieldEntity?: string;
@@ -72,17 +74,6 @@ interface FieldNodeProps {
   onClickStar: () => void;
   scrollIntoView: boolean;
 }
-
-/**
- * Object whose keys are in the format of `entityID/variableID`
- * and whose values are the various data options for that entity/variable
- * combination.
- *
- * For example:
- * {
- *   "PCO_0000024/ENVO_00000004": "Bangladesh India Kenya Mali Mozambique Pakistan The Gambia"
- * }
- */
 
 interface getNodeSearchStringType {
   field: {
@@ -99,6 +90,16 @@ const Options = {
   featuredVariablesOpen: true,
 };
 
+/**
+ * Object whose keys are in the format of `entityID/variableID`
+ * and whose values are the various data options for that entity/variable
+ * combination.
+ *
+ * For example:
+ * {
+ *   "PCO_0000024/ENVO_00000004": "Bangladesh India Kenya Mali Mozambique Pakistan The Gambia"
+ * }
+ */
 type ValuesMap = Record<string, string>;
 
 interface VariableListProps {
@@ -117,6 +118,7 @@ interface VariableListProps {
   featuredFields: VariableField[];
   hideDisabledFields: boolean;
   setHideDisabledFields: (hide: boolean) => void;
+  showMultiFilterDescendants: boolean;
 }
 
 // TODO: Needs documentation of general component purpose.
@@ -139,6 +141,7 @@ export default function VariableList({
   hideDisabledFields,
   setHideDisabledFields,
   customDisabledVariableMessage,
+  showMultiFilterDescendants,
 }: VariableListProps) {
   // useContext is used here with ShowHideVariableContext
   const {
@@ -200,9 +203,14 @@ export default function VariableList({
     return node.field.term;
   }, []);
 
-  const getNodeChildren = useCallback((node: FieldTreeNode) => {
-    return isMulti(node.field) ? [] : node.children;
-  }, []);
+  const getNodeChildren = useCallback(
+    (node: FieldTreeNode) => {
+      return isMulti(node.field) && showMultiFilterDescendants === false
+        ? []
+        : node.children;
+    },
+    [showMultiFilterDescendants]
+  );
 
   const getFieldSearchString = useCallback(
     (node: FieldTreeNode) => {
@@ -263,14 +271,35 @@ export default function VariableList({
     disabledFieldIds,
   ]);
 
+  const multiFilterDescendants = useMemo(() => {
+    const children = new Map<string, string>();
+    if (!showMultiFilterDescendants) return children;
+    preorderSeq(fieldTree).forEach((node) => {
+      if (isMulti(node.field)) {
+        preorderSeq(node)
+          .drop(1)
+          .filter((descendant) => isFilterField(descendant.field))
+          .forEach((descendent) =>
+            children.set(descendent.field.term, node.field.term)
+          );
+      }
+    });
+    return children;
+  }, [fieldTree, showMultiFilterDescendants]);
+
   const renderNode = useCallback(
     (node: FieldTreeNode) => {
       const fieldTerm = node.field.term;
       const [entityId, variableId] = fieldTerm.split('/');
+      const isMultiFilterDescendant = multiFilterDescendants.has(
+        node.field.term
+      );
 
       return (
         <FieldNode
           field={node.field}
+          isMultiFilterDescendant={isMultiFilterDescendant}
+          showMultiFilterDescendants={showMultiFilterDescendants}
           searchTerm={searchTerm}
           isActive={node.field.term === activeField?.term}
           isDisabled={disabledFields.has(node.field.term)}
@@ -287,15 +316,17 @@ export default function VariableList({
       );
     },
     [
-      activeField?.term,
-      activeFieldEntity,
-      disabledFields,
-      handleFieldSelect,
+      multiFilterDescendants,
+      showMultiFilterDescendants,
       searchTerm,
-      starredVariablesLoading,
-      starredVariableTermsSet,
-      toggleStarredVariable,
+      activeField?.term,
+      disabledFields,
       customDisabledVariableMessage,
+      handleFieldSelect,
+      activeFieldEntity,
+      starredVariableTermsSet,
+      starredVariablesLoading,
+      toggleStarredVariable,
     ]
   );
 
@@ -351,6 +382,10 @@ export default function VariableList({
         : pruneDescendantNodes(
             (node) =>
               node.children.length > 0 ||
+              (multiFilterDescendants.has(node.field.term) &&
+                visibleStarredVariableTermsSet.has(
+                  multiFilterDescendants.get(node.field.term)!
+                )) ||
               // visibleStarredVariablesSet is used for MyVariable instead of starredVariableSet
               visibleStarredVariableTermsSet.has(node.field.term),
             fieldTree
@@ -368,6 +403,7 @@ export default function VariableList({
     fieldTree,
     showOnlyCompatibleVariables,
     visibleStarredVariableTermsSet,
+    multiFilterDescendants,
     disabledFields,
   ]);
 
@@ -421,8 +457,8 @@ export default function VariableList({
               );
             }}
           >
-            <Toggle on={showOnlyCompatibleVariables} /> Only show compatible
-            variables
+            <Toggle on={showOnlyCompatibleVariables} />
+            Only show compatible variables
           </button>
         </HtmlTooltip>
       </div>
@@ -455,6 +491,8 @@ export default function VariableList({
                 >
                   <div className="wdk-CheckboxTreeNodeContent">
                     <FieldNode
+                      isMultiFilterDescendant={false}
+                      showMultiFilterDescendants={showMultiFilterDescendants}
                       field={field}
                       isActive={isActive}
                       isDisabled={isDisabled}
@@ -510,7 +548,7 @@ export default function VariableList({
         isSearchable={true}
         searchBoxPlaceholder="Find a variable"
         searchBoxHelp={makeSearchHelpText(
-          'the variables by name or description'
+          'variables by name, description, or values'
         )}
         searchTerm={searchTerm}
         onSearchTermChange={setSearchTerm}
@@ -548,6 +586,8 @@ const FieldNode = ({
   starredVariablesLoading,
   onClickStar,
   scrollIntoView,
+  isMultiFilterDescendant,
+  showMultiFilterDescendants,
 }: FieldNodeProps) => {
   const nodeRef = useRef<HTMLAnchorElement>(null);
 
@@ -566,7 +606,9 @@ const FieldNode = ({
     return () => clearTimeout(timerId);
   }, [isActive, searchTerm, scrollIntoView]);
 
-  const fieldContents = isFilterField(field) ? (
+  const fieldContents = (
+    isMulti(field) ? !showMultiFilterDescendants : isFilterField(field)
+  ) ? (
     <Tooltip
       title={
         isDisabled
@@ -610,13 +652,19 @@ const FieldNode = ({
     </div>
   );
 
+  const canBeStarred = isFilterField(field) && !isMultiFilterDescendant;
+
   return (
-    <>
-      {isFilterField(field) && (
+    <div className={canBeStarred ? cx('-StarContainer') : ''}>
+      {isFilterField(field) && !isMultiFilterDescendant && (
         <Tooltip title={makeStarButtonTooltipContent(field, isStarred)}>
           <button
             className={`${cx('-StarButton')} link`}
-            onClick={onClickStar}
+            onClick={(e) => {
+              // prevent click from toggling expansion state
+              e.stopPropagation();
+              onClickStar();
+            }}
             disabled={starredVariablesLoading}
           >
             <Icon fa={isStarred ? 'star' : 'star-o'} />
@@ -624,7 +672,7 @@ const FieldNode = ({
         </Tooltip>
       )}
       {fieldContents}
-    </>
+    </div>
   );
 };
 

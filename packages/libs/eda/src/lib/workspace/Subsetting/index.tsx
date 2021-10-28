@@ -8,18 +8,24 @@ import {
   Variable,
 } from '../../core';
 
-import { cx } from '../Utils';
+// Components
+import { SwissArmyButton } from '@veupathdb/core-components';
 import { VariableDetails } from '../Variable';
-import { AnalysisState } from '../../core/hooks/analysis';
-import { useEntityCounts } from '../../core/hooks/entityCounts';
-import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import VariableTree from '../../core/components/variableTrees/VariableTree';
 import FilterChipList from '../../core/components/FilterChipList';
-
 import SubsettingDataGridModal from './SubsettingDataGridModal';
-import { useStudyEntities } from '../../core/hooks/study';
-import { SwissArmyButton } from '@veupathdb/core-components';
 import { TableDownload } from '@veupathdb/core-components/dist/components/icons';
+
+// Hooks
+import { useEntityCounts } from '../../core/hooks/entityCounts';
+import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
+import { useStudyEntities } from '../../core/hooks/study';
+
+// Definitions
+import { AnalysisState } from '../../core/hooks/analysis';
+
+// Functions
+import { cx } from '../Utils';
 
 interface SubsettingProps {
   analysisState: AnalysisState;
@@ -86,7 +92,7 @@ export default function Subsetting({
       />
       <div className="Variables">
         <VariableTree
-          useMultiFilters
+          showMultiFilterDescendants
           rootEntity={entities[0]}
           entityId={entity.id}
           starredVariables={analysisState.analysis?.descriptor.starredVariables}

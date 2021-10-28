@@ -3,8 +3,8 @@ import { useHistory } from 'react-router-dom';
 
 import Path from 'path';
 
-import { RestrictedPage } from '@veupathdb/web-common/lib/App/DataRestriction/RestrictedPage';
-import { useApprovalStatus } from '@veupathdb/web-common/lib/hooks/dataRestriction';
+import { RestrictedPage } from '@veupathdb/study-data-access/lib/data-restriction/RestrictedPage';
+import { useApprovalStatus } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 

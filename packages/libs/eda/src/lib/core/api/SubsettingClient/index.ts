@@ -3,14 +3,16 @@ import { memoize } from 'lodash';
 import { saveAs } from 'file-saver';
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import {
   createJsonRequest,
-  FetchClient,
-} from '@veupathdb/web-common/lib/util/api';
+  FetchClientWithCredentials,
+  ioTransformer,
+} from '@veupathdb/http-utils';
 
 import { Filter } from '../../types/filter';
 import { StudyMetadata, StudyOverview } from '../../types/study';
-import { ioTransformer } from '../ioTransformer';
+
 import {
   DistributionRequestParams,
   DistributionResponse,
@@ -19,9 +21,10 @@ import {
   TabularDataResponse,
 } from './types';
 
-export default class SubsettingClient extends FetchClient {
+export default class SubsettingClient extends FetchClientWithCredentials {
   static getClient = memoize(
-    (baseUrl: string): SubsettingClient => new SubsettingClient({ baseUrl })
+    (baseUrl: string, wdkService: WdkService): SubsettingClient =>
+      new SubsettingClient({ baseUrl }, wdkService)
   );
 
   getStudies(): Promise<StudyOverview[]> {

@@ -243,7 +243,7 @@ function ScatterplotViz(props: VisualizationProps) {
 
       const vars = [xAxisVariable, yAxisVariable, overlayVariable];
       const unique = vars.filter((item, i, ar) => ar.indexOf(item) === i);
-      if (vars.length != unique.length)
+      if (vars.length !== unique.length)
         throw new Error(
           'Variables must be unique. Please choose different variables.'
         );
@@ -330,7 +330,7 @@ function ScatterplotViz(props: VisualizationProps) {
     );
 
     return axisRangeMargin(defaultDependentRange, yAxisVariable?.type);
-  }, [data, data.value, yAxisVariable]);
+  }, [data, yAxisVariable]);
 
   const { url } = useRouteMatch();
 
@@ -368,7 +368,7 @@ function ScatterplotViz(props: VisualizationProps) {
           toggleStarredVariable={toggleStarredVariable}
           enableShowMissingnessToggle={
             overlayVariable != null &&
-            data.value?.completeCasesAllVars !=
+            data.value?.completeCasesAllVars !==
               data.value?.completeCasesAxesVars
           }
           showMissingness={vizConfig.showMissingness}
@@ -406,9 +406,7 @@ function ScatterplotViz(props: VisualizationProps) {
       >
         <ScatterplotWithControls
           // data.value
-          data={
-            data.value && !data.pending ? data.value.dataSetProcess : undefined
-          }
+          data={data.value?.dataSetProcess}
           updateThumbnail={updateThumbnail}
           containerStyles={plotDimensions}
           // title={'Scatter plot'}
@@ -844,6 +842,7 @@ function processInputData<T extends number | string>(
       });
       return breakAfterThisSeries(index);
     }
+    return false;
   });
 
   // after drawing raw data, smoothedMean and bestfitline plots are displayed

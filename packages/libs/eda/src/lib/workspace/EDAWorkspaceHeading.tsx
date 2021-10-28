@@ -2,21 +2,25 @@ import { useEffect, useState } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import Path from 'path';
 
+// Components
 import {
   Download,
   Table,
 } from '@veupathdb/core-components/dist/components/icons';
 import SwissArmyButton from '@veupathdb/core-components/dist/components/buttons/SwissArmyButton';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { LinkAttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { useAttemptActionCallback } from '@veupathdb/web-common/lib/hooks/dataRestriction';
-import { Action } from '@veupathdb/web-common/lib/App/DataRestriction/DataRestrictionUtils';
-import AddIcon from '@material-ui/icons/Add';
-
-import { cx } from './Utils';
-import { useStudyRecord, AnalysisState, DEFAULT_ANALYSIS_NAME } from '../core';
-import { getAnalysisId, isSavedAnalysis } from '../core/utils/analysis';
 import { AnalysisNameDialog } from './AnalysisNameDialog';
+
+// Hooks
+import { useStudyRecord } from '../core/hooks/workspace';
+import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
+
+// Definitions & Utilities
+import { cx } from './Utils';
+import { AnalysisState, DEFAULT_ANALYSIS_NAME } from '../core';
+import { LinkAttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { Action } from '@veupathdb/web-common/lib/App/DataRestriction/DataRestrictionUtils';
+import { getAnalysisId, isSavedAnalysis } from '../core/utils/analysis';
 
 interface EDAWorkspaceHeadingProps {
   /** Optional AnalysisState for "New analysis" button functionality */

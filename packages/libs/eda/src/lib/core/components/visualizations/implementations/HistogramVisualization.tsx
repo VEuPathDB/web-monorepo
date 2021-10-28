@@ -19,7 +19,7 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import { isEqual, max } from 'lodash';
+import { isEqual, min, max } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   HistogramRequestParams,
@@ -288,26 +288,30 @@ function HistogramViz(props: VisualizationProps) {
   );
 
   // find max of stacked array, especially with overlayVariable
-  const defaultDependentAxisMaxValue = useMemo(
+  const defaultDependentAxisMinMax = useMemo(
     () =>
       data.value && data.value.series.length > 0
-        ? findMaxOfStackedArray(data.value.series)
+        ? findMinMaxOfStackedArray(data.value.series)
         : undefined,
     [data]
   );
 
   // set default dependent axis range for better displaying tick labels in log-scale
   const defaultDependentAxisRange =
-    defaultDependentAxisMaxValue != null
+    defaultDependentAxisMinMax?.min != null &&
+    defaultDependentAxisMinMax?.max != null
       ? {
-          // set min as 0 (count, proportion) or 0.001 (proportion log scale)
+          // set min as 0 (count, proportion) for non-logscale
           min:
             vizConfig.valueSpec === 'count'
               ? 0
               : vizConfig.dependentAxisLogScale
-              ? 0.001
+              ? // determine min based on data for log-scale at proportion
+                defaultDependentAxisMinMax.min < 0.001
+                ? defaultDependentAxisMinMax.min * 0.8
+                : 0.001
               : 0,
-          max: defaultDependentAxisMaxValue * 1.05,
+          max: defaultDependentAxisMinMax.max * 1.05,
         }
       : undefined;
 
@@ -350,7 +354,7 @@ function HistogramViz(props: VisualizationProps) {
 
       <PluginError error={data.error} />
       <HistogramPlotWithControls
-        data={data.value && !data.pending ? data.value : undefined}
+        data={data.value}
         error={data.error}
         onBinWidthChange={onBinWidthChange}
         dependentAxisLogScale={vizConfig.dependentAxisLogScale}
@@ -578,19 +582,19 @@ export function histogramResponseToData(
     ? { min, max }
     : {
         min,
-        max,
+        max: max > 60 ? 60 : max, // back end seems to fall over with any values >99 but 60 is used in subsetting
         unit: (binWidth as TimeDelta).unit,
       }) as NumberOrTimeDeltaRange;
   const binWidthStep = step || 0.1;
   return {
-    series: response.histogram.data.map((data, index) => ({
+    series: response.histogram.data.map((data) => ({
       name:
         data.overlayVariableDetails?.value != null
           ? fixLabelForNumberVariables(
               data.overlayVariableDetails.value,
               overlayVariable
             )
-          : `series ${index}`,
+          : '',
       bins: data.value.map((_, index) => ({
         binStart:
           type === 'number' || type === 'integer'
@@ -687,14 +691,14 @@ function reorderData(
 }
 
 /**
- * find max of the sum of multiple arrays
+ * find min and max of the sum of multiple arrays
  * it is because histogram viz uses "stack" option for display
  * Also, each data with overlayVariable has different bins
  * For this purpose, binStart is used as array index to map corresponding count
  * Need to make stacked count array and then max
  */
 
-function findMaxOfStackedArray(data: HistogramDataSeries[]) {
+function findMinMaxOfStackedArray(data: HistogramDataSeries[]) {
   // calculate the sum of all the counts from bins with the same label
   const sumsByLabel = data
     .flatMap(
@@ -712,5 +716,8 @@ function findMaxOfStackedArray(data: HistogramDataSeries[]) {
       {}
     );
 
-  return max(Object.values(sumsByLabel));
+  return {
+    min: min(Object.values(sumsByLabel)),
+    max: max(Object.values(sumsByLabel)),
+  };
 }

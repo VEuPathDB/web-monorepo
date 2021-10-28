@@ -18,7 +18,11 @@ export function vocabularyWithMissingData(
 
 export function grayOutLastSeries<
   T extends BarplotData | HistogramData | { series: BoxplotData }
->(data: T, showMissingness: boolean = false) {
+>(
+  data: T,
+  showMissingness: boolean = false,
+  borderColor: string | undefined = undefined
+) {
   return {
     ...data,
     series: data.series.map((series, index) =>
@@ -27,6 +31,7 @@ export function grayOutLastSeries<
             ...series,
             color: '#e8e8e8',
             outlierSymbol: 'x',
+            borderColor,
           }
         : series
     ),

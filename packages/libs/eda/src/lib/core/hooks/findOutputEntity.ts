@@ -27,6 +27,6 @@ export function useFindOutputEntity(
     dataElementDependencyOrder,
     dataElementVariables,
     defaultVariableName,
-    entities,
+    findEntityAndVariable,
   ]);
 }

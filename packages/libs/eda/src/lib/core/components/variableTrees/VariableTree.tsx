@@ -26,7 +26,7 @@ export interface VariableTreeProps {
   hideDisabledFields?: boolean;
   setHideDisabledFields?: (hide: boolean) => void;
   /** Indicate whether or not variables with children   */
-  useMultiFilters?: boolean;
+  showMultiFilterDescendants?: boolean;
 }
 
 export default function VariableTree({
@@ -39,13 +39,19 @@ export default function VariableTree({
   onChange,
   hideDisabledFields = false,
   setHideDisabledFields = () => {},
-  useMultiFilters = false,
+  showMultiFilterDescendants = false,
 }: VariableTreeProps) {
   const entities = useStudyEntities(rootEntity);
   const valuesMap = useValuesMap(entities);
-  const flattenedFields = useFlattenedFields(entities, useMultiFilters);
+  const flattenedFields = useFlattenedFields(
+    entities,
+    showMultiFilterDescendants
+  );
   const fieldsByTerm = useFlattenFieldsByTerm(flattenedFields);
-  const featuredFields = useFeaturedFields(entities, useMultiFilters);
+  const featuredFields = useFeaturedFields(
+    entities,
+    showMultiFilterDescendants
+  );
   const fieldTree = useFieldTree(flattenedFields);
 
   const disabledFields = useMemo(

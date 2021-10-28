@@ -230,7 +230,8 @@ function BoxplotViz(props: VisualizationProps) {
             vocabulary,
             vocabularyWithMissingData(overlayVocabulary, showMissing)
           ),
-          showMissing
+          showMissing,
+          '#a0a0a0'
         ),
         showMissing
       );
@@ -306,7 +307,7 @@ function BoxplotViz(props: VisualizationProps) {
       >
         <BoxplotWithControls
           // data.value
-          data={data.value && !data.pending ? data.value.series : undefined}
+          data={data.value?.series}
           updateThumbnail={updateThumbnail}
           containerStyles={plotDimensions}
           orientation={'vertical'}
@@ -446,7 +447,7 @@ export function boxplotResponseToData(
                   data.overlayVariableDetails.value,
                   overlayVariable
                 )
-              : 'Data',
+              : '',
           label: fixLabelsForNumberVariables(data.label, variable),
         })),
     completeCases: response.completeCasesTable,

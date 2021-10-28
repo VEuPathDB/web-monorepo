@@ -1,8 +1,10 @@
+import { TypeOf, Decoder } from 'io-ts';
+
 import {
   createJsonRequest,
-  FetchClient,
-} from '@veupathdb/web-common/lib/util/api';
-import { TypeOf, Decoder } from 'io-ts';
+  FetchClientWithCredentials,
+  ioTransformer,
+} from '@veupathdb/http-utils';
 
 import {
   AppsResponse,
@@ -19,13 +21,9 @@ import {
   TwoByTwoResponse,
   BoxplotRequestParams,
   BoxplotResponse,
-  TableDataRequestParams,
-  TableDataResponse,
 } from './types';
 
-import { ioTransformer } from '../ioTransformer';
-
-export default class DataClient extends FetchClient {
+export class DataClient extends FetchClientWithCredentials {
   getApps(): Promise<TypeOf<typeof AppsResponse>> {
     return this.fetch(
       createJsonRequest({
@@ -52,19 +50,6 @@ export default class DataClient extends FetchClient {
     );
   }
 
-  // Table
-  getTableData(
-    computationName: string,
-    params: TableDataRequestParams
-  ): Promise<TableDataResponse> {
-    return this.getVisualizationData(
-      computationName,
-      'table',
-      params, // POST Body
-      TableDataResponse // IO-TS Decoder / Validator
-    );
-  }
-
   // Histogram
   getHistogram(
     computationName: string,
@@ -73,8 +58,8 @@ export default class DataClient extends FetchClient {
     return this.getVisualizationData(
       computationName,
       'histogram',
-      params, // POST Body
-      HistogramResponse // IO-TS Decoder / Validator
+      params,
+      HistogramResponse
     );
   }
 
