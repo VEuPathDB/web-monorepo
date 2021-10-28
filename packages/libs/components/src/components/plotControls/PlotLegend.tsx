@@ -1,9 +1,19 @@
 import React from 'react';
 import { Checkbox } from '@material-ui/core';
 
+//DKDK define legendItems props
+export interface LegendItemsProps {
+  label: string;
+  marker: string;
+  hasData: boolean;
+  group?: number;
+  rank?: number;
+}
+
 // set props for custom legend function
 interface PlotLegendProps {
-  legendItems: string[];
+  // legendItems: string[];
+  legendItems: LegendItemsProps[];
   checkedLegendItems: string[];
   setCheckedLegendItems: (checkedItems: string[]) => void;
   legendTitle?: string;
@@ -39,32 +49,33 @@ export default function PlotLegend({
       </div>
       {legendItems.length !== 1 && (
         <div className="plotLegendCheckbox">
-          {legendItems.map((id: string, index: number) => (
+          {legendItems.map((item: LegendItemsProps, index: number) => (
             <div style={{ display: 'flex' }}>
               <>
                 <Checkbox
-                  key={id}
-                  id={id}
-                  value={id}
+                  key={item.label}
+                  id={item.label}
+                  value={item.label}
                   // color="default"
                   color="primary"
                   onChange={(e) => {
-                    handleLegendCheckboxClick(e.target.checked, id);
+                    handleLegendCheckboxClick(e.target.checked, item.label);
                   }}
-                  checked={checkedLegendItems.includes(id) ? true : false}
+                  checked={
+                    checkedLegendItems.includes(item.label) ? true : false
+                  }
                   style={{ padding: 0 }}
-                  defaultChecked
                 />
                 &nbsp;&nbsp;
                 <label
-                  title={id}
+                  title={item.label}
                   style={{
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                   }}
                 >
-                  {id}
+                  {item.label}
                 </label>
               </>
             </div>
