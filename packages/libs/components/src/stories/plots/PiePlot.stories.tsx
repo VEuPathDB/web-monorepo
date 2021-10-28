@@ -1,4 +1,3 @@
-import React from 'react';
 import { Story } from '@storybook/react/types-6-0';
 
 import PiePlot, { PiePlotProps } from '../../plots/PiePlot';
@@ -9,7 +8,6 @@ import {
   DARK_GREEN,
   LIGHT_BLUE,
   LIGHT_GREEN,
-  LIGHT_PURPLE,
 } from '../../constants/colors';
 
 export default {
@@ -158,48 +156,50 @@ EmptyLoading.args = {
  * FACETING
  */
 
-const facetedData: FacetedData<PiePlotData> = [
-  {
-    facetLabel: 'indoors',
-    facetData: {
-      slices: [
-        {
-          value: 25,
-          label: 'dogs',
-        },
-        {
-          value: 10,
-          label: 'cats',
-        },
-      ],
+const facetedData: FacetedData<PiePlotData> = {
+  facets: [
+    {
+      label: 'indoors',
+      data: {
+        slices: [
+          {
+            value: 25,
+            label: 'dogs',
+          },
+          {
+            value: 10,
+            label: 'cats',
+          },
+        ],
+      },
     },
-  },
-  {
-    facetLabel: 'outdoors',
-    facetData: {
-      slices: [
-        {
-          value: 5,
-          label: 'dogs',
-        },
-        {
-          value: 33,
-          label: 'cats',
-        },
-      ],
+    {
+      label: 'outdoors',
+      data: {
+        slices: [
+          {
+            value: 5,
+            label: 'dogs',
+          },
+          {
+            value: 33,
+            label: 'cats',
+          },
+        ],
+      },
     },
-  },
-];
+  ],
+};
 
 interface FacetedStoryProps {
-  data: FacetedData<PiePlotData>;
+  data: PiePlotData | FacetedData<PiePlotData>;
   props: PiePlotProps;
 }
 
 const FacetedTemplate: Story<FacetedStoryProps> = ({ data, props }) => (
   <FacetedPlot<PiePlotData, PiePlotProps>
-    component={PiePlot}
     data={data}
+    component={PiePlot}
     props={props}
   />
 );
@@ -209,5 +209,13 @@ Faceted.args = {
   data: facetedData,
   props: {
     title: 'indoor and outdoor pets',
+  },
+};
+
+export const FacetedPassThru = FacetedTemplate.bind({});
+FacetedPassThru.args = {
+  data: data,
+  props: {
+    title: 'non-faceted data',
   },
 };

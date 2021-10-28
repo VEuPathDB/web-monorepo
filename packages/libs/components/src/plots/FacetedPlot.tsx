@@ -1,10 +1,11 @@
 import React from 'react';
+import { isFaceted } from '../../lib/types/guards';
 import { FacetedData } from '../types/plots';
 import { PlotProps } from './PlotlyPlot';
 
 export interface FacetedPlotProps<D, P extends PlotProps<D>> {
-  data: FacetedData<D>;
-  component: React.ElementType<P>; // ensures that the component type and props are compatible
+  data?: FacetedData<D> | D;
+  component: React.ElementType<P>;
   props: P;
 }
 
@@ -14,26 +15,32 @@ export default function FacetedPlot<D, P extends PlotProps<D>>(
   const { data, component, props: componentProps } = props;
 
   const Component = component as React.ElementType; // casting seems to be needed if using component: React.ElementType<P>; above
-  return (
-    <div>
-      <h2>{componentProps.title}</h2>
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
-        {data.map(({ facetData, facetLabel }, index) => (
-          <Component
-            {...componentProps}
-            key={index}
-            data={facetData}
-            title={facetLabel}
-            containerStyles={{
-              width: '300px',
-              height: '300px',
-              border: '3px dashed gray',
-            }}
-            displayLegend={false}
-            interactive={true}
-          />
-        ))}
+
+  // return a regular plot component if the data isn't faceted.
+  if (!isFaceted(data)) {
+    return <Component data={data} {...componentProps} />;
+  } else {
+    return (
+      <div>
+        <h2>{componentProps.title}</h2>
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
+          {data?.facets.map(({ data, label }, index) => (
+            <Component
+              {...componentProps}
+              key={index}
+              data={data}
+              title={label}
+              containerStyles={{
+                width: '300px',
+                height: '300px',
+                border: '3px dashed gray',
+              }}
+              displayLegend={false}
+              interactive={true}
+            />
+          ))}
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 }

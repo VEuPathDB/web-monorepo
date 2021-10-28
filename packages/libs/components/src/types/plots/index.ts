@@ -12,9 +12,11 @@ import { MosaicData } from './mosaic';
 import { BirdsEyePlotData } from './birdseyeplot';
 
 export type FacetedData<D> = {
-  facetLabel: string;
-  facetData: D;
-}[];
+  facets: {
+    label: string;
+    data: D;
+  }[];
+};
 
 // Commonly used type definitions for plots.
 

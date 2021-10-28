@@ -1,4 +1,3 @@
-import React from 'react';
 import { PlotData as PlotlyPlotData } from 'plotly.js';
 import { PlotParams } from 'react-plotly.js';
 import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
