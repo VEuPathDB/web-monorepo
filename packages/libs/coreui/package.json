@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/core-components",
-  "version": "0.2.38",
+  "version": "0.2.39",
   "author": "Michael Dunn <mdunn4@nd.edu>",
   "description": "Core components and style definitions for VEuPath applications.",
   "private": false,
@@ -46,6 +46,7 @@
     "@emotion/babel-preset-css-prop": "^11.2.0",
     "@emotion/react": "^11.4.0",
     "@emotion/styled": "^11.3.0",
+    "@emotion/serialize": "^1.0.2",
     "@storybook/addon-actions": "^6.3.7",
     "@storybook/addon-essentials": "^6.3.7",
     "@storybook/addon-links": "^6.3.7",

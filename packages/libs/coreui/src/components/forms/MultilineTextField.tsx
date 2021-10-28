@@ -1,19 +1,34 @@
+import { useCallback, useEffect, useState } from 'react';
+import { debounce } from 'lodash';
+
 // Components
 import { H6 } from '../headers';
 
 // Definitions
-import { DARK_GRAY, MEDIUM_GRAY } from '../../constants/colors';
+import { DARK_GRAY, LIGHT_GREEN, MEDIUM_GRAY } from '../../constants/colors';
 import typography from '../../styleDefinitions/typography';
 import useDimensions from 'react-cool-dimensions';
-import { useEffect, useState } from 'react';
+import { CheckCircle, Loading } from '../icons';
+import { fadeIn, spin } from '../../definitions/animations';
 
 export type MultilineTextFieldProps = {
+  /** A heading for the component. */
   heading: string;
+  /** Optional. Additional instructions to be displayed below the heading. */
   instructions?: string;
+  /** Optional. Placeholder text to display in the field. */
   placeholder?: string;
+  /** The desired width of the component. */
   width: string | number;
+  /** The desired height of the component. */
   height: string | number;
+  /** Optional. A character limit. */
   characterLimit?: number;
+  /**
+   * A callback to invoke when the value of the input field changes.
+   * Note that internally, calls to this function are debounced to
+   * avoid spamming upstream components and potentially APIs.
+   */
   onValueChange: (value: string) => void;
 };
 
@@ -27,10 +42,19 @@ export default function MultilineTextField({
   onValueChange,
 }: MultilineTextFieldProps) {
   const [value, setValue] = useState('');
+  const [syncPending, setSyncPending] = useState(false);
 
-  // Invoke passed in change handler when value changes.
+  const debouncedOnValueChange = useCallback(
+    debounce((value: string) => {
+      onValueChange(value);
+      setSyncPending(false);
+    }, 500),
+    []
+  );
+
   useEffect(() => {
-    onValueChange(value);
+    setSyncPending(true);
+    debouncedOnValueChange(value);
   }, [value]);
 
   const {
@@ -100,6 +124,29 @@ export default function MultilineTextField({
             {`${value.length} / ${characterLimit}`}
           </p>
         )}
+        <div
+          css={{
+            position: 'absolute',
+            top: currentHeight - nonInputHeight - 30,
+            right: 10,
+          }}
+        >
+          {syncPending ? (
+            <Loading
+              fontSize={20}
+              fill={MEDIUM_GRAY}
+              css={{
+                animation: `${spin} 2s ease infinite, ${fadeIn} 1s linear`,
+              }}
+            />
+          ) : (
+            <CheckCircle
+              fontSize={20}
+              fill={LIGHT_GREEN}
+              css={{ animation: `${fadeIn} 1s linear` }}
+            />
+          )}
+        </div>
       </div>
     </div>
   );
