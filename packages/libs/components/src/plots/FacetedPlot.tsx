@@ -1,5 +1,5 @@
 import React from 'react';
-import { isFaceted } from '../../lib/types/guards';
+import { isFaceted } from '../types/guards';
 import { FacetedData } from '../types/plots';
 import { PlotProps } from './PlotlyPlot';
 
