@@ -86,9 +86,10 @@ export function isTimeDelta(
 
 /** Is data faceted or not? */
 export function isFaceted<T>(
-  maybeFacetedData: T | FacetedData<T>
+  maybeFacetedData?: T | FacetedData<T>
 ): maybeFacetedData is FacetedData<T> {
   return (
+    maybeFacetedData != null &&
     'facets' in maybeFacetedData &&
     'every' in maybeFacetedData.facets &&
     maybeFacetedData.facets.every((d) => 'label' in d && 'data' in d)
