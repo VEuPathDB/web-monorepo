@@ -23,9 +23,6 @@ import { select } from 'd3';
 import { ToImgopts, toImage } from 'plotly.js';
 import { uniqueId } from 'lodash';
 import { makeSharedPromise } from '../utils/promise-utils';
-import { FacetedData } from '../../lib/types/plots';
-import FacetedPlot from './FacetedPlot';
-import { isFaceted } from '../../lib/types/guards';
 
 /**
  * A generic imperative interface to plota. This allows us to create a facade
