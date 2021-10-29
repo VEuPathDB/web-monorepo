@@ -20,7 +20,13 @@ import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import { isEqual, min, max } from 'lodash';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   DataClient,
   HistogramRequestParams,
@@ -58,6 +64,11 @@ import { useFindEntityAndVariable } from '../../../hooks/study';
 import { defaultIndependentAxisRange } from '../../../utils/default-independent-axis-range';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import PluginError from '../PluginError';
+//DKDK
+import PlotLegend, {
+  LegendItemsProps,
+} from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import { boolean } from 'fp-ts';
 
 type HistogramDataWithCoverageStatistics = HistogramData & CoverageStatistics;
 
@@ -315,6 +326,43 @@ function HistogramViz(props: VisualizationProps) {
         }
       : undefined;
 
+  console.log('data =', data);
+
+  //DKDK checkbox of custom legend
+  const legendItems: LegendItemsProps[] = useMemo(() => {
+    return data.value != null
+      ? data.value?.series.map((data: any) => {
+          return {
+            label: data.name,
+            // need a way to appropriately make marker info
+            // scatter plot has defined mode - still need to find the way to distinguish CI, No data, etc.
+            marker: data.mode,
+            // set temporary values for now (for proof-of-concept)
+            hasData: true,
+            group: 1,
+            rank: 1,
+          };
+        })
+      : [];
+  }, [data]);
+
+  //DKDK
+  console.log('data.value?.dataSetProcess.series =', data.value?.series);
+  console.log('legendItems =', legendItems);
+
+  //DKDK set useState to track checkbox status
+  const [checkedLegendItems, setCheckedLegendItems] = useState<string[]>([]);
+
+  console.log('checkedLegendItems =', checkedLegendItems);
+
+  //DKDK set all checkbox checked initially
+  useEffect(() => {
+    if (data.value != null && data.value.series.length > 0) {
+      // extract legendItems.label for passing to both PlotlyPlot and PlotLegend
+      setCheckedLegendItems(legendItems.map((item) => item.label));
+    }
+  }, [data]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -396,6 +444,11 @@ function HistogramViz(props: VisualizationProps) {
         dependentAxisLabel={
           vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion'
         }
+        //DKDK pass checked state of legend checkbox to PlotlyPlot
+        dataPending={data.pending}
+        legendItems={legendItems}
+        checkedLegendItems={checkedLegendItems}
+        setCheckedLegendItems={setCheckedLegendItems}
       />
     </div>
   );
@@ -414,6 +467,11 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   showMissingness: boolean;
   updateThumbnail: (src: string) => void;
   error: unknown;
+  //DKDK add props for PlotLegend
+  dataPending: boolean;
+  legendItems: LegendItemsProps[];
+  checkedLegendItems: string[];
+  setCheckedLegendItems: (checkedItems: string[]) => void;
 } & Partial<CoverageStatistics>;
 
 function HistogramPlotWithControls({
@@ -433,6 +491,11 @@ function HistogramPlotWithControls({
   onValueSpecChange,
   showMissingness,
   updateThumbnail,
+  //DKDK add props for PlotLegend
+  dataPending,
+  legendItems,
+  checkedLegendItems,
+  setCheckedLegendItems,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   const barLayout = 'stack';
@@ -477,7 +540,23 @@ function HistogramPlotWithControls({
           displayLibraryControls={displayLibraryControls}
           showValues={false}
           barLayout={barLayout}
+          //DKDK pass checkedLegendItems to PlotlyPlot
+          checkedLegendItems={checkedLegendItems}
         />
+
+        {/* DKDK custom legend */}
+        {legendItems != null && !histogramProps.showSpinner && data != null && (
+          <div style={{ marginLeft: '2em' }}>
+            <PlotLegend
+              legendItems={legendItems}
+              checkedLegendItems={checkedLegendItems}
+              setCheckedLegendItems={setCheckedLegendItems}
+              //DKDK pass legend title
+              legendTitle={histogramProps.legendTitle}
+            />
+          </div>
+        )}
+
         <div className="viz-plot-info">
           <BirdsEyeView
             completeCasesAllVars={completeCasesAllVars}
