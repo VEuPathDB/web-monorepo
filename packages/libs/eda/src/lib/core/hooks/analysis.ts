@@ -38,7 +38,7 @@ export type AnalysisState = {
   redo: () => void;
   setName: Setter<Analysis['displayName']>;
   setDescription: Setter<Analysis['description']>;
-  setDetails: Setter<Analysis['details']>;
+  setNotes: Setter<Analysis['notes']>;
   setIsPublic: Setter<Analysis['isPublic']>;
   setFilters: Setter<Analysis['descriptor']['subset']['descriptor']>;
   setComputations: Setter<Analysis['descriptor']['computations']>;
@@ -186,7 +186,7 @@ export function useAnalysis(
     analysis,
     createAnalysis
   );
-  const setDetails = useSetter(analysisToDetailsLens, analysis, createAnalysis);
+  const setNotes = useSetter(analysisToNotesLens, analysis, createAnalysis);
   const setIsPublic = useSetter(
     analysisToIsPublicLens,
     analysis,
@@ -276,7 +276,7 @@ export function useAnalysis(
     undo,
     setName,
     setDescription,
-    setDetails,
+    setNotes,
     setIsPublic,
     setFilters,
     setComputations,
@@ -443,9 +443,7 @@ const analysisToNameLens = Lens.fromProp<NewAnalysis | Analysis>()(
 const analysisToDescriptionLens = Lens.fromProp<NewAnalysis | Analysis>()(
   'description'
 );
-const analysisToDetailsLens = Lens.fromProp<NewAnalysis | Analysis>()(
-  'details'
-);
+const analysisToNotesLens = Lens.fromProp<NewAnalysis | Analysis>()('notes');
 const analysisToIsPublicLens = Lens.fromProp<NewAnalysis | Analysis>()(
   'isPublic'
 );

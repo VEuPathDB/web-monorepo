@@ -16,13 +16,13 @@ type props = {
 export default function NotesTab({ analysisState }: props) {
   const {
     setDescription: setAnalysisDescription,
-    setDetails: setAnalysisDetails,
+    setNotes: setAnalysisNotes,
   } = analysisState;
 
   const [description, setDescription] = useState(
     analysisState.analysis?.description ?? ''
   );
-  const [details, setDetails] = useState(analysisState.analysis?.details ?? '');
+  const [details, setDetails] = useState(analysisState.analysis?.notes ?? '');
 
   const [descriptionStatus, setDescriptionStatus] = useState<
     MultilineTextFieldProps['status']
@@ -43,10 +43,10 @@ export default function NotesTab({ analysisState }: props) {
   const syncDetailsToAnalysis = useMemo(
     () =>
       debounce((value: string) => {
-        setAnalysisDetails(value);
+        setAnalysisNotes(value);
         setDetailsStatus('synced');
       }, 1000),
-    [setAnalysisDetails]
+    [setAnalysisNotes]
   );
 
   useEffect(() => {
@@ -54,8 +54,8 @@ export default function NotesTab({ analysisState }: props) {
   }, [analysisState.analysis?.description]);
 
   useEffect(() => {
-    console.log('STORED DETAILS', analysisState.analysis?.details);
-  }, [analysisState.analysis?.details]);
+    console.log('STORED DETAILS', analysisState.analysis?.notes);
+  }, [analysisState.analysis?.notes]);
 
   return (
     <div

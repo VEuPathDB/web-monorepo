@@ -39,7 +39,7 @@ export const AnalysisBase = t.intersection([
   }),
   t.partial({
     description: t.string,
-    details: t.string,
+    notes: t.string,
   }),
 ]);
 
