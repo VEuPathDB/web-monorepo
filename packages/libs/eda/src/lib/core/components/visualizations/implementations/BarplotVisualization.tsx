@@ -1,5 +1,6 @@
 // load Barplot component
-import Barplot, { BarplotProps } from '@veupathdb/components/lib/plots/Barplot';
+import Barplot from '@veupathdb/components/lib/plots/Barplot';
+import FacetedPlot from '@veupathdb/components/lib/plots/FacetedPlot';
 import {
   BarplotData,
   FacetedData,
@@ -51,7 +52,7 @@ import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 // use lodash instead of Math.min/max
 import { max, groupBy, mapValues, size, map, head, values } from 'lodash';
-import { isFaceted } from '../../../../../../../web-components/lib/types/guards';
+import { isFaceted } from '@veupathdb/components/lib/types/guards';
 
 type BarplotDataWithStatistics = (BarplotData | FacetedData<BarplotData>) &
   CoverageStatistics;
@@ -283,6 +284,18 @@ function BarplotViz(props: VisualizationProps) {
         }
       : undefined;
 
+  // Thumbnail capture and update
+  const plotRef = useRef<PlotRef>(null);
+  const updateThumbnailRef = useRef(updateThumbnail);
+  useEffect(() => {
+    updateThumbnailRef.current = updateThumbnail;
+  });
+  useEffect(() => {
+    plotRef.current
+      ?.toImage({ format: 'svg', ...plotDimensions })
+      .then(updateThumbnailRef.current);
+  }, [data, vizConfig.dependentAxisLogScale]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -335,30 +348,53 @@ function BarplotViz(props: VisualizationProps) {
           alignItems: 'flex-start',
         }}
       >
-        <BarplotWithControls
-          data={data.value}
-          containerStyles={plotDimensions}
-          orientation={'vertical'}
-          barLayout={'group'}
-          displayLegend={
-            data.value &&
-            (data.value.series.length > 1 || vizConfig.overlayVariable != null)
-          }
-          independentAxisLabel={axisLabelWithUnit(variable) ?? 'Main'}
-          dependentAxisLabel={
-            vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion'
-          }
-          legendTitle={overlayVariable?.displayName}
-          interactive
-          showSpinner={data.pending}
-          valueSpec={vizConfig.valueSpec}
-          onValueSpecChange={onValueSpecChange}
-          updateThumbnail={updateThumbnail}
-          dependentAxisLogScale={vizConfig.dependentAxisLogScale}
-          onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
-          // set dependent axis range for log scale
-          dependentAxisRange={dependentAxisRange}
-        />
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <FacetedPlot
+            component={Barplot}
+            data={data.value}
+            props={{
+              containerStyles: plotDimensions,
+              orientation: 'vertical',
+              barLayout: 'group',
+              displayLegend:
+                data.value &&
+                !isFaceted(data.value) &&
+                (data.value.series.length > 1 ||
+                  vizConfig.overlayVariable != null),
+              independentAxisLabel: axisLabelWithUnit(variable) ?? 'Main',
+              dependentAxisLabel:
+                vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion',
+              legendTitle: overlayVariable?.displayName,
+              interactive: true,
+              showSpinner: data.pending,
+              dependentAxisLogScale: vizConfig.dependentAxisLogScale,
+              // set dependent axis range for log scale
+              dependentAxisRange: dependentAxisRange,
+              displayLibraryControls: false,
+              ref: plotRef,
+            }}
+          />
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <LabelledGroup label="Y-axis">
+              <Switch
+                label="Log Scale:"
+                state={vizConfig.dependentAxisLogScale}
+                onStateChange={onDependentAxisLogScaleChange}
+              />
+              <RadioButtonGroup
+                selectedOption={vizConfig.valueSpec}
+                options={['count', 'proportion']}
+                onOptionSelected={(newOption) => {
+                  if (newOption === 'proportion') {
+                    onValueSpecChange('proportion');
+                  } else {
+                    onValueSpecChange('count');
+                  }
+                }}
+              />
+            </LabelledGroup>
+          </div>
+        </div>
         <div className="viz-plot-info">
           <BirdsEyeView
             completeCasesAllVars={
@@ -388,74 +424,14 @@ function BarplotViz(props: VisualizationProps) {
                 display: axisLabelWithUnit(overlayVariable),
                 variable: vizConfig.overlayVariable,
               },
+              {
+                role: 'Facet',
+                display: axisLabelWithUnit(facetVariable),
+                variable: vizConfig.facetVariable,
+              },
             ]}
           />
         </div>
-      </div>
-    </div>
-  );
-}
-
-type BarplotWithControlsProps = BarplotProps & {
-  dependentAxisLogScale: boolean;
-  onDependentAxisLogScaleChange: (newState: boolean) => void;
-  valueSpec: ValueSpec;
-  onValueSpecChange: (newValueSpec: ValueSpec) => void;
-  updateThumbnail: (src: string) => void;
-};
-
-function BarplotWithControls({
-  data,
-  dependentAxisLogScale,
-  onDependentAxisLogScaleChange,
-  valueSpec,
-  onValueSpecChange,
-  updateThumbnail,
-  ...barPlotProps
-}: BarplotWithControlsProps) {
-  const plotRef = useRef<PlotRef>(null);
-
-  const updateThumbnailRef = useRef(updateThumbnail);
-  useEffect(() => {
-    updateThumbnailRef.current = updateThumbnail;
-  });
-
-  useEffect(() => {
-    plotRef.current
-      ?.toImage({ format: 'svg', ...plotDimensions })
-      .then(updateThumbnailRef.current);
-  }, [data, dependentAxisLogScale]);
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <Barplot
-        {...barPlotProps}
-        ref={plotRef}
-        dependentAxisLogScale={dependentAxisLogScale}
-        data={data}
-        // add controls
-        // displayLegend={true}
-        displayLibraryControls={false}
-      />
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <LabelledGroup label="Y-axis">
-          <Switch
-            label="Log Scale:"
-            state={dependentAxisLogScale}
-            onStateChange={onDependentAxisLogScaleChange}
-          />
-          <RadioButtonGroup
-            selectedOption={valueSpec}
-            options={['count', 'proportion']}
-            onOptionSelected={(newOption) => {
-              if (newOption === 'proportion') {
-                onValueSpecChange('proportion');
-              } else {
-                onValueSpecChange('count');
-              }
-            }}
-          />
-        </LabelledGroup>
       </div>
     </div>
   );

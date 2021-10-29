@@ -7,7 +7,7 @@ import {
   Visualization,
 } from '../../types/visualization';
 import { testVisualization } from '../visualizations/implementations/TestVisualization';
-import { histogramVisualization } from '../visualizations/implementations/HistogramVisualization';
+// import { histogramVisualization } from '../visualizations/implementations/HistogramVisualization';
 import {
   contTableVisualization,
   twoByTwoVisualization,
@@ -16,7 +16,7 @@ import { VisualizationsContainer } from '../visualizations/VisualizationsContain
 import { VisualizationType } from '../visualizations/VisualizationTypes';
 import { scatterplotVisualization } from '../visualizations/implementations/ScatterplotVisualization';
 import { barplotVisualization } from '../visualizations/implementations/BarplotVisualization';
-import { boxplotVisualization } from '../visualizations/implementations/BoxplotVisualization';
+// import { boxplotVisualization } from '../visualizations/implementations/BoxplotVisualization';
 
 interface Props {
   analysisState: AnalysisState;
@@ -28,7 +28,7 @@ interface Props {
  */
 const visualizationTypes: Record<string, VisualizationType> = {
   testVisualization,
-  histogram: histogramVisualization,
+  //  histogram: histogramVisualization,
   twobytwo: twoByTwoVisualization,
   conttable: contTableVisualization,
   scatterplot: scatterplotVisualization,
@@ -36,7 +36,7 @@ const visualizationTypes: Record<string, VisualizationType> = {
   // placeholder for densityplot
   // densityplot: scatterplotVisualization,
   barplot: barplotVisualization,
-  boxplot: boxplotVisualization,
+  //  boxplot: boxplotVisualization,
 };
 
 export function PassThroughComputation(props: Props) {
