@@ -18,8 +18,7 @@ import { cx, findFirstVariable } from './Utils';
 import { makeStyles } from '@mui/styles';
 
 const useStyles = makeStyles({
-  root: {
-    display: 'initial',
+  workspace: {
     '& .MuiTypography-root': {
       textTransform: 'none',
     },
@@ -78,7 +77,7 @@ export function WorkspaceContainer({
     <RestrictedPage approvalStatus={approvalStatus}>
       <EDAWorkspaceContainer
         studyId={studyId}
-        className={`${cx()} ${classes.root}`}
+        className={`${cx()} ${classes.workspace}`}
         analysisClient={analysisClient}
         dataClient={dataClient}
         subsettingClient={subsettingClient}
