@@ -215,6 +215,11 @@ function BarplotViz(props: VisualizationProps) {
         overlayVariable?.vocabulary,
         overlayVariable
       );
+      const facetVocabulary = fixLabelsForNumberVariables(
+        facetVariable?.vocabulary,
+        facetVariable
+      );
+
       return omitEmptyNoDataSeries(
         grayOutLastSeries(
           reorderData(
@@ -225,7 +230,8 @@ function BarplotViz(props: VisualizationProps) {
               facetVariable
             ),
             vocabulary,
-            vocabularyWithMissingData(overlayVocabulary, showMissing)
+            vocabularyWithMissingData(overlayVocabulary, showMissing),
+            vocabularyWithMissingData(facetVocabulary, showMissing)
           ),
           showMissing
         ),
@@ -534,21 +540,23 @@ function getRequestParams(
 function reorderData(
   data: BarplotDataWithStatistics | BarplotData,
   labelVocabulary: string[] = [],
-  overlayVocabulary: string[] = []
+  overlayVocabulary: string[] = [],
+  facetVocabulary: string[] = []
 ): BarplotDataWithStatistics | BarplotData {
-  // If faceted, reorder within the facets
-  // TO DO: reorder the facets!
+  // If faceted, reorder the facets and within the facets
   if (isFaceted(data)) {
     return {
       ...data,
-      facets: data.facets.map(({ label, data }) => ({
-        label,
-        data: reorderData(
-          data,
-          labelVocabulary,
-          overlayVocabulary
-        ) as BarplotData,
-      })),
+      facets: data.facets
+        .sort(({ label }) => facetVocabulary.indexOf(label))
+        .map(({ label, data }) => ({
+          label,
+          data: reorderData(
+            data,
+            labelVocabulary,
+            overlayVocabulary
+          ) as BarplotData,
+        })),
     };
   }
 
