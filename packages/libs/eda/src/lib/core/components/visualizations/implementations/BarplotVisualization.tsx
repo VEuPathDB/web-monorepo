@@ -371,7 +371,7 @@ function BarplotViz(props: VisualizationProps) {
               // set dependent axis range for log scale
               dependentAxisRange: dependentAxisRange,
               displayLibraryControls: false,
-              ref: plotRef,
+              ref: plotRef, // TO DO: handle thumbnails properly!!
             }}
           />
           <div style={{ display: 'flex', flexDirection: 'row' }}>
