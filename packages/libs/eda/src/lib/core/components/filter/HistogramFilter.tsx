@@ -311,30 +311,24 @@ export function HistogramFilter(props: Props) {
             }}
           >
             <div className="histogram-summary-stats">
-              {fgSummaryStats.min != null && (
-                <>
-                  <b>Min:</b>{' '}
-                  {formatStatValue(fgSummaryStats.min, variable.type)} &emsp;
-                </>
-              )}
-              {fgSummaryStats.mean != null && (
-                <>
-                  <b>Mean:</b>{' '}
-                  {formatStatValue(fgSummaryStats.mean, variable.type)} &emsp;
-                </>
-              )}
-              {fgSummaryStats.median != null && (
+              <>
+                <b>Min:</b> {formatStatValue(fgSummaryStats.min, variable.type)}{' '}
+                &emsp;
+              </>
+              <>
+                <b>Mean:</b>{' '}
+                {formatStatValue(fgSummaryStats.mean, variable.type)} &emsp;
+              </>
+              {/*
                 <>
                   <b>Median:</b>{' '}
                   {formatStatValue(fgSummaryStats.median, variable.type)} &emsp;
                 </>
-              )}
-              {fgSummaryStats.max != null && (
-                <>
-                  <b>Max:</b>{' '}
-                  {formatStatValue(fgSummaryStats.max, variable.type)} &emsp;
-                </>
-              )}
+              */}
+              <>
+                <b>Max:</b> {formatStatValue(fgSummaryStats.max, variable.type)}{' '}
+                &emsp;
+              </>
             </div>
             <UnknownCount
               activeFieldState={{
@@ -735,12 +729,12 @@ function distributionResponseToDataSeries(
     color,
     bins,
     summary: {
-      min: response.statistics.subsetMin!,
-      mean: response.statistics.subsetMean!,
-      max: response.statistics.subsetMax!,
+      min: response.statistics.subsetMin,
+      mean: response.statistics.subsetMean,
+      max: response.statistics.subsetMax,
+      median: undefined!,
       q1: undefined!,
       q3: undefined!,
-      median: undefined!,
     },
   };
 }
@@ -775,9 +769,10 @@ function tidyBinLabel(
 
 // TODO [2021-07-10] - Use variable.precision when avaiable
 function formatStatValue(
-  value: string | number,
+  value: string | number | undefined,
   type: HistogramVariable['type']
 ) {
+  if (value == null) return 'N/A';
   return type === 'date'
     ? String(value).replace(/T.*$/, '')
     : Number(value).toLocaleString(undefined, {
