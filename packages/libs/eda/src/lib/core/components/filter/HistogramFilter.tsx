@@ -302,14 +302,15 @@ export function HistogramFilter(props: Props) {
     >
       {data.error && <pre>{String(data.error)}</pre>}
       <div>
-        {fgSummaryStats && (
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}
-          >
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            minHeight: '1.5em',
+          }}
+        >
+          {fgSummaryStats && (
             <div className="histogram-summary-stats">
               <>
                 <b>Min:</b> {formatStatValue(fgSummaryStats.min, variable.type)}{' '}
@@ -330,15 +331,17 @@ export function HistogramFilter(props: Props) {
                 &emsp;
               </>
             </div>
+          )}
+          {data.value?.hasDataEntitiesCount != null && (
             <UnknownCount
               activeFieldState={{
-                summary: { internalsCount: data.value?.hasDataEntitiesCount },
+                summary: { internalsCount: data.value.hasDataEntitiesCount },
               }}
               dataCount={totalEntityCount}
               displayName={entity.displayNamePlural ?? entity.displayName}
             />
-          </div>
-        )}
+          )}
+        </div>
         <HistogramPlotWithControls
           key={filters?.length ?? 0}
           filter={filter}
