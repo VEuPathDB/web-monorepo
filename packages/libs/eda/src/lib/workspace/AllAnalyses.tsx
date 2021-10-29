@@ -42,10 +42,12 @@ import SubsettingClient from '../core/api/SubsettingClient';
 import { workspaceTheme } from '../core/components/workspaceTheme';
 import { useDebounce } from '../core/hooks/debouncing';
 import { useWdkStudyRecords } from '../core/hooks/study';
+import { makeProvenanceString } from '../core/utils/analysis';
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
 
 interface AnalysisAndDataset {
   analysis: AnalysisSummary & {
+    displayNameAndProvenance: string;
     creationTimeDisplay: string;
     modificationTimeDisplay: string;
   };
@@ -134,6 +136,13 @@ export function AllAnalyses(props: Props) {
         return {
           analysis: {
             ...analysis,
+            displayNameAndProvenance:
+              analysis.provenance == null
+                ? analysis.displayName
+                : `${analysis.displayName} ${makeProvenanceString(
+                    analysis.creationTime,
+                    analysis.provenance
+                  )}`,
             creationTimeDisplay: convertISOToDisplayFormat(
               analysis.creationTime
             ),
@@ -154,7 +163,7 @@ export function AllAnalyses(props: Props) {
   const searchableAnalysisColumns = useMemo(
     () =>
       [
-        'displayName',
+        'displayNameAndProvenance',
         'description',
         'creationTimeDisplay',
         'modificationTimeDisplay',
@@ -210,7 +219,7 @@ export function AllAnalyses(props: Props) {
                         ?.displayName ?? UNKNOWN_DATASET_NAME
                     );
                   case 'displayName':
-                    return analysis.displayName;
+                    return analysis.displayNameAndProvenance;
                   case 'description':
                     return analysis.description;
                   case 'isPublic':
@@ -429,6 +438,16 @@ export function AllAnalyses(props: Props) {
                     }
                   }}
                 />
+                {data.row.analysis.provenance != null && (
+                  <>
+                    <br />
+                    <br />
+                    {makeProvenanceString(
+                      data.row.analysis.creationTime,
+                      data.row.analysis.provenance
+                    )}
+                  </>
+                )}
               </div>
             );
           },
