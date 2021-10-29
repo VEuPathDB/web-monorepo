@@ -1,17 +1,19 @@
-import React, { useMemo } from 'react';
-
-import { RestrictedPage } from '@veupathdb/web-common/lib/App/DataRestriction/RestrictedPage';
-import { AnalysisClient, EDAAnalysisListContainer } from '../core';
-import { useConfiguredAnalysisClient } from '../core/hooks/analysisClient';
+// Components
+import { RestrictedPage } from '@veupathdb/study-data-access/lib/data-restriction/RestrictedPage';
+import { EDAAnalysisListContainer } from '../core';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { AnalysisList } from './AnalysisList';
 
-// Data and Utilities
-import { useApprovalStatus } from '@veupathdb/web-common/lib/hooks/dataRestriction';
-import SubsettingClient from '../core/api/SubsettingClient';
-import DataClient from '../core/api/DataClient';
-import { cx } from './Utils';
+// Hooks
+import { useApprovalStatus } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
+import {
+  useConfiguredAnalysisClient,
+  useConfiguredDataClient,
+  useConfiguredSubsettingClient,
+} from '../core/hooks/client';
 
+// Data and Utilities
+import { cx } from './Utils';
 export interface Props {
   studyId: string;
   subsettingServiceUrl: string;
@@ -23,19 +25,13 @@ export interface Props {
  * Component displayed when a study is chosen from StudyList.
  */
 export function EDAAnalysisList(props: Props) {
-  const subsettingClient: SubsettingClient = useMemo(
-    () => new SubsettingClient({ baseUrl: props.subsettingServiceUrl }),
-    [props.subsettingServiceUrl]
+  const subsettingClient = useConfiguredSubsettingClient(
+    props.subsettingServiceUrl
   );
 
-  const dataClient: DataClient = useMemo(
-    () => new DataClient({ baseUrl: props.dataServiceUrl }),
-    [props.dataServiceUrl]
-  );
+  const dataClient = useConfiguredDataClient(props.dataServiceUrl);
 
-  const analysisClient: AnalysisClient = useConfiguredAnalysisClient(
-    props.userServiceUrl
-  );
+  const analysisClient = useConfiguredAnalysisClient(props.userServiceUrl);
 
   const approvalStatus = useApprovalStatus(props.studyId, 'analysis');
 

@@ -74,7 +74,7 @@ export function MultiFilter(props: Props) {
       // This function uses {entity.id}/{variable.id} to generate a field's term
       // and parent property value. That is not desired here, so we have to do
       // some post-processing to use {variable.id} for those properties.
-      entitiesToFields([entity], { useMultiFilters: true })
+      entitiesToFields([entity])
         .filter((field) => !field.term.startsWith('entity:'))
         .map((field) => ({
           ...field,

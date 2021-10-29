@@ -34,7 +34,7 @@ export default function MultiSelectVariableTree({
 }: MultiSelectVariableTreeProps) {
   const entities = useStudyEntities(rootEntity);
   const valuesMap = useValuesMap(entities);
-  const flattenedFields = useFlattenedFields(entities, false);
+  const flattenedFields = useFlattenedFields(entities);
   const fieldsByTerm = useFlattenFieldsByTerm(flattenedFields);
   const fieldTree = useFieldTree(flattenedFields);
 
@@ -81,6 +81,7 @@ export default function MultiSelectVariableTree({
     // TODO: @dmfalke This is striped down to the minimum temporarily for MVP.
     <VariableList
       mode="multiSelection"
+      showMultiFilterDescendants={false}
       selectedFields={selectedVariableFields}
       onSelectedFieldsChange={onSelectedVariableTermsChange}
       onActiveFieldChange={onActiveFieldChange}

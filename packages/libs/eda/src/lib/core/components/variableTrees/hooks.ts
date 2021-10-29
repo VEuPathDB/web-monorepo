@@ -62,10 +62,7 @@ export const useValuesMap = (entities: StudyEntity[]) =>
  * `Term` is a reference to the item itself and can be either an 
  * entity, variable category, or variable itself.
  */
-export const useFlattenedFields = (
-  entities: StudyEntity[],
-  useMultiFilters: boolean
-) =>
+export const useFlattenedFields = (entities: StudyEntity[]) =>
   useMemo(() => {
     return entities.flatMap((entity) => {
       // Create a Set of variableId so we can lookup parentIds
@@ -105,12 +102,10 @@ export const useFlattenedFields = (
                 : `${entity.id}/${variable.parentId}`,
           }))
 
-          .map((variable) =>
-            edaVariableToWdkField(variable, { useMultiFilters })
-          ),
+          .map((variable) => edaVariableToWdkField(variable)),
       ];
     });
-  }, [entities, useMultiFilters]);
+  }, [entities]);
 
 /**
  * Identity "fields" from the entity hierarchy which have been marked
@@ -119,10 +114,7 @@ export const useFlattenedFields = (
  * Similiarly to the `useFlattenedFields` hook, this hook will return
  * a flat list of Field objects.
  */
-export const useFeaturedFields = (
-  entities: StudyEntity[],
-  useMultiFilters: boolean
-): Field[] =>
+export const useFeaturedFields = (entities: StudyEntity[]): Field[] =>
   useMemo(() => {
     return entities.flatMap((entity) =>
       entity.variables
@@ -134,9 +126,9 @@ export const useFeaturedFields = (
           id: `${entity.id}/${variable.id}`,
           displayName: `<span class="Entity">${entity.displayName}</span>: ${variable.displayName}`,
         }))
-        .map((variable) => edaVariableToWdkField(variable, { useMultiFilters }))
+        .map((variable) => edaVariableToWdkField(variable))
     );
-  }, [entities, useMultiFilters]);
+  }, [entities]);
 
 /**
  * Construct a hierarchical representation of variable fields from
