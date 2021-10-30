@@ -1102,10 +1102,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/components@^0.8.0":
-  version "0.8.5"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.8.5.tgz#503060304726c19094708c04765d7d06e14876e6"
-  integrity sha512-KByoTQsZZvs+TKmfvmb+Wh3/SvizfcCf6UgpVd6W1jGUlsEkearf7siGuu7LLdkK4zsRU8Ji4wefiUpGVdeZHg==
+"@veupathdb/components@^0.8.8":
+  version "0.8.8"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.8.8.tgz#8a8ebef5889d447a6a5386e93565c50697d79a44"
+  integrity sha512-o48q+sc94G5GZse2lwkGG9gJb8XL0alideHzBRDthw+9W9R4BP725hxMf1YYW1IG6SIc1uKnCWQMUMMZ8pEY/w==
   dependencies:
     "@material-ui/core" "^4.11.2"
     "@material-ui/icons" "^4.11.2"
@@ -1137,45 +1137,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/components@^0.8.6":
-  version "0.8.6"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.8.6.tgz#8ec8c06eaacec9caa0e60b0d834b69be23a31f2d"
-  integrity sha512-Q/hflaLE6v+y77bbsFkxCf9rdOeNtBS3SqcB7C+jVOZJMuJnVGLBKiI7ttkcyTHSTon6i0mQL9kqmpg7flTdrw==
-  dependencies:
-    "@material-ui/core" "^4.11.2"
-    "@material-ui/icons" "^4.11.2"
-    "@material-ui/lab" "^4.0.0-alpha.57"
-    "@types/date-arithmetic" "^4.1.1"
-    "@visx/gradient" "^1.0.0"
-    "@visx/group" "^1.0.0"
-    "@visx/hierarchy" "^1.0.0"
-    "@visx/shape" "^1.4.0"
-    "@visx/text" "^1.3.0"
-    "@visx/tooltip" "^1.3.0"
-    "@visx/visx" "^1.1.0"
-    bootstrap "^4.5.2"
-    date-arithmetic "^4.1.0"
-    debounce-promise "^3.1.2"
-    latlon-geohash "^2.0.0"
-    leaflet "^1.6.0"
-    leaflet-drift-marker "^1.0.3"
-    luxon "^1.25.0"
-    plotly.js "^1.54.1"
-    re-resizable "^6.9.0"
-    react "^16.13.1"
-    react-bootstrap "^1.3.0"
-    react-cool-dimensions "^1.1.11"
-    react-dom "^16.13.1"
-    react-html-parser "^2.0.2"
-    react-leaflet "^2.7.0"
-    react-plotly.js "^2.4.0"
-    react-transition-group "^4.4.1"
-    shape2geohash "^1.2.5"
-
-"@veupathdb/core-components@^0.2.28":
-  version "0.2.38"
-  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.2.38.tgz#005c68f9e445cf32018b974169e5d22572acd1eb"
-  integrity sha512-2nHiVqI/OykxNQaJ3REVpEgdET7u32jU8RxkTH/Zn1mqemr4bMvMaqyUsQnDyDszoNjcH4hU3QTyBc75+wOt4Q==
+"@veupathdb/core-components@^0.2.35":
+  version "0.2.40"
+  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.2.40.tgz#f34d4e3c526da4ad6dab3a77bf338b6e1082b5d2"
+  integrity sha512-mjQB3qNTX2f6z3GB2b78tjcf6UMgKBWh9g3gIZxItN7qYrb5HFfKCHDRAyiuumxJ+LUC+JaAoYu5jPgqV2KjkA==
   dependencies:
     "@material-ui/core" "^4.12.3"
     "@material-ui/icons" "^4.11.2"
@@ -1185,10 +1150,10 @@
     react-modal "^3.14.3"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^0.14.7":
-  version "0.14.7"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.14.7.tgz#baf9fed83cbd967bdd48d42d6f9d2b6df85adf24"
-  integrity sha512-Vg9mUVPEEqkAB2NIIGP0TgoHScg1GgbM9fLOtU4CBtR5szsqvviV2CyDLJkvXIZ9OzUt+Io1Y/qHu2ZRa9moJQ==
+"@veupathdb/eda@^0.14.11":
+  version "0.14.11"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.14.11.tgz#7501acd8bbad3b79b6fd572c92d96f9b3e4a10c7"
+  integrity sha512-7tJDMn61sTln/KdME7Re/BCF7lJRbooJgWfHUxBLHLshChMbzQX41rBeXknTxrv2VznB7Gb9nfRcG6OFS9R+9w==
   dependencies:
     "@emotion/react" "^11.4.1"
     "@emotion/styled" "^11.3.0"
@@ -1196,8 +1161,8 @@
     "@material-ui/lab" "^4.0.0-alpha.58"
     "@mui/styles" "^5.0.1"
     "@types/debounce-promise" "^3.1.3"
-    "@veupathdb/components" "^0.8.6"
-    "@veupathdb/core-components" "^0.2.28"
+    "@veupathdb/components" "^0.8.8"
+    "@veupathdb/core-components" "^0.2.35"
     "@veupathdb/http-utils" "^1.0.1"
     "@veupathdb/study-data-access" "^0.0.3"
     "@veupathdb/wdk-client" "^0.4.9"
