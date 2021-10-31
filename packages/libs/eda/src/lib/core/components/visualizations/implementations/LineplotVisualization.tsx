@@ -1,4 +1,4 @@
-// load scatter plot component
+// load plot component
 import XYPlot, { XYPlotProps } from '@veupathdb/components/lib/plots/XYPlot';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 
@@ -8,11 +8,11 @@ import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 
-// need to set for Scatterplot
+// need to set for lineplot
 import {
   DataClient,
-  ScatterplotRequestParams,
-  ScatterplotResponse,
+  LineplotRequestParams,
+  LineplotResponse,
 } from '../../../api/data-api';
 
 import { usePromise } from '../../../hooks/promise';
@@ -37,7 +37,6 @@ import {
 
 import density from './selectorIcons/density.svg';
 import line from './selectorIcons/line.svg';
-import scatter from './selectorIcons/scatter.svg';
 
 // use lodash instead of Math.min/max
 import { min, max, lte, gte } from 'lodash';
@@ -69,8 +68,6 @@ import { useRouteMatch } from 'react-router';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import PluginError from '../PluginError';
 
-const MAXALLOWEDDATAPOINTS = 100000;
-
 const plotDimensions = {
   width: 750,
   height: 450,
@@ -85,36 +82,32 @@ interface PromiseXYPlotData extends CoverageStatistics {
 }
 
 // define XYPlotDataResponse
-type XYPlotDataResponse = ScatterplotResponse;
+type XYPlotDataResponse = LineplotResponse;
 
-export const scatterplotVisualization: VisualizationType = {
+export const lineplotVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
-  fullscreenComponent: ScatterplotViz,
+  fullscreenComponent: LineplotViz,
   createDefaultConfig: createDefaultConfig,
 };
 
-// this needs a handling of text/image for scatter, line, and density plots
+// this needs a handling of text/image for line, and density plots
 function SelectorComponent({ name }: SelectorProps) {
-  const src = scatter;
+  const src = name === 'lineplot' || name === 'timeseries' ? line : density;
 
   return (
-    <img
-      alt="Scatter plot"
-      style={{ height: '100%', width: '100%' }}
-      src={src}
-    />
+    <img alt="Line plot" style={{ height: '100%', width: '100%' }} src={src} />
   );
 }
 
-function createDefaultConfig(): ScatterplotConfig {
+function createDefaultConfig(): LineplotConfig {
   return {
-    valueSpecConfig: 'Raw',
+    valueSpecConfig: 'Median',
   };
 }
 
-export type ScatterplotConfig = t.TypeOf<typeof ScatterplotConfig>;
+export type LineplotConfig = t.TypeOf<typeof LineplotConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ScatterplotConfig = t.partial({
+export const LineplotConfig = t.partial({
   xAxisVariable: VariableDescriptor,
   yAxisVariable: VariableDescriptor,
   overlayVariable: VariableDescriptor,
@@ -123,7 +116,7 @@ export const ScatterplotConfig = t.partial({
   showMissingness: t.boolean,
 });
 
-function ScatterplotViz(props: VisualizationProps) {
+function LineplotViz(props: VisualizationProps) {
   const {
     computation,
     visualization,
@@ -146,13 +139,13 @@ function ScatterplotViz(props: VisualizationProps) {
 
   const vizConfig = useMemo(() => {
     return pipe(
-      ScatterplotConfig.decode(visualization.descriptor.configuration),
-      getOrElse((): t.TypeOf<typeof ScatterplotConfig> => createDefaultConfig())
+      LineplotConfig.decode(visualization.descriptor.configuration),
+      getOrElse((): t.TypeOf<typeof LineplotConfig> => createDefaultConfig())
     );
   }, [visualization.descriptor.configuration]);
 
   const updateVizConfig = useCallback(
-    (newConfig: Partial<ScatterplotConfig>) => {
+    (newConfig: Partial<LineplotConfig>) => {
       updateConfiguration({ ...vizConfig, ...newConfig });
     },
     [updateConfiguration, vizConfig]
@@ -192,11 +185,7 @@ function ScatterplotViz(props: VisualizationProps) {
         yAxisVariable,
         overlayVariable,
         facetVariable,
-        // set valueSpec as Raw when yAxisVariable = date
-        valueSpecConfig:
-          findEntityAndVariable(yAxisVariable)?.variable.type === 'date'
-            ? 'Raw'
-            : vizConfig.valueSpecConfig,
+        valueSpecConfig: vizConfig.valueSpecConfig,
       });
     },
     [updateVizConfig, findEntityAndVariable, vizConfig.valueSpecConfig]
@@ -204,7 +193,7 @@ function ScatterplotViz(props: VisualizationProps) {
 
   // prettier-ignore
   const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof ScatterplotConfig) => (newValue?: ValueType) => {
+    < ValueType,>(key: keyof LineplotConfig) => (newValue?: ValueType) => {
       updateVizConfig({
         [key]: newValue,
       });
@@ -254,11 +243,17 @@ function ScatterplotViz(props: VisualizationProps) {
         visualization.descriptor.type
       );
 
-      // scatterplot, lineplot
-      const response = dataClient.getScatterplot(
-        computation.descriptor.type,
-        params as ScatterplotRequestParams
-      );
+      // lineplot
+      const response =
+        visualization.descriptor.type === 'lineplot'
+          ? dataClient.getLineplot(
+              computation.descriptor.type,
+              params as LineplotRequestParams
+            )
+          : dataClient.getTimeseries(
+              computation.descriptor.type,
+              params as LineplotRequestParams
+            );
 
       const showMissing = vizConfig.showMissingness && overlayVariable != null;
       const overlayVocabulary = fixLabelsForNumberVariables(
@@ -266,7 +261,7 @@ function ScatterplotViz(props: VisualizationProps) {
         overlayVariable
       );
 
-      const plotResponseData = scatterplotResponseToData(
+      const plotResponseData = lineplotResponseToData(
         reorderResponse(
           await response,
           vocabularyWithMissingData(overlayVocabulary, showMissing),
@@ -289,7 +284,6 @@ function ScatterplotViz(props: VisualizationProps) {
       overlayVariable,
       computation.descriptor.type,
       visualization.descriptor.type,
-      MAXALLOWEDDATAPOINTS,
     ])
   );
 
@@ -302,7 +296,7 @@ function ScatterplotViz(props: VisualizationProps) {
   const defaultIndependentRangeMargin = useMemo(() => {
     const defaultIndependentRange = defaultIndependentAxisRange(
       xAxisVariable,
-      'scatterplot'
+      'lineplot'
     );
     return axisRangeMargin(defaultIndependentRange, xAxisVariable?.type);
   }, [xAxisVariable]);
@@ -317,7 +311,7 @@ function ScatterplotViz(props: VisualizationProps) {
 
     const defaultDependentRange = defaultDependentAxisRange(
       yAxisVariable,
-      'scatterplot',
+      'lineplot',
       yMinMaxRange
     );
 
@@ -369,25 +363,6 @@ function ScatterplotViz(props: VisualizationProps) {
         />
       </div>
 
-      <PluginError
-        error={data.error}
-        outputSize={outputSize}
-        customCases={[
-          (errorString) =>
-            errorString.match(/400.+too large/is) ? (
-              <span>
-                Your plot currently has too many points (&gt;
-                {MAXALLOWEDDATAPOINTS.toLocaleString()}) to display in a
-                reasonable time. Please either add filters in the{' '}
-                <Link replace to={url.replace(/visualizations.+/, 'variables')}>
-                  Browse and subset
-                </Link>{' '}
-                tab to reduce the number, or consider using a summary plot such
-                as histogram or boxplot.
-              </span>
-            ) : undefined,
-        ]}
-      />
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
       <div
         style={{
@@ -396,12 +371,11 @@ function ScatterplotViz(props: VisualizationProps) {
           alignItems: 'flex-start',
         }}
       >
-        <ScatterplotWithControls
+        <LineplotWithControls
           // data.value
           data={data.value?.dataSetProcess}
           updateThumbnail={updateThumbnail}
           containerStyles={plotDimensions}
-          // title={'Scatter plot'}
           displayLegend={
             data.value &&
             (data.value.dataSetProcess.series.length > 1 ||
@@ -417,27 +391,14 @@ function ScatterplotViz(props: VisualizationProps) {
               ? defaultDependentRangeMargin
               : undefined
           }
-          // set valueSpec as Raw when yAxisVariable = date
-          valueSpec={
-            yAxisVariable?.type === 'date' ? 'Raw' : vizConfig.valueSpecConfig
-          }
+          valueSpec={vizConfig.valueSpecConfig}
           onValueSpecChange={onValueSpecChange}
           // send visualization.type here
           vizType={visualization.descriptor.type}
           interactive={true}
           showSpinner={data.pending}
           // add plotOptions to control the list of plot options
-          plotOptions={[
-            'Raw',
-            'Smoothed mean with raw',
-            'Best fit line with raw',
-          ]}
-          // disabledList prop is used to disable radio options (grayed out)
-          disabledList={
-            yAxisVariable?.type === 'date'
-              ? ['Smoothed mean with raw', 'Best fit line with raw']
-              : []
-          }
+          plotOptions={['Median', 'Mean']}
           independentValueType={
             NumberVariable.is(xAxisVariable) ? 'number' : 'date'
           }
@@ -495,29 +456,25 @@ function ScatterplotViz(props: VisualizationProps) {
   );
 }
 
-type ScatterplotWithControlsProps = XYPlotProps & {
+type LineplotWithControlsProps = XYPlotProps & {
   valueSpec: string | undefined;
   onValueSpecChange: (value: string) => void;
   updateThumbnail: (src: string) => void;
   vizType: string;
   plotOptions: string[];
-  // add disabledList
-  disabledList: string[];
 };
 
-function ScatterplotWithControls({
+function LineplotWithControls({
   data,
-  // XYPlotControls: set initial value as 'raw' ('Raw')
-  valueSpec = 'Raw',
+  // set initial value as 'median' ('Median')
+  valueSpec = 'Median',
   onValueSpecChange,
   vizType,
   // add plotOptions
   plotOptions,
-  // add disabledList
-  disabledList,
   updateThumbnail,
-  ...scatterplotProps
-}: ScatterplotWithControlsProps) {
+  ...lineplotProps
+}: LineplotWithControlsProps) {
   // TODO Use UIState
   // const errorManagement = useMemo((): ErrorManagement => {
   //   return {
@@ -544,40 +501,39 @@ function ScatterplotWithControls({
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <XYPlot
-        {...scatterplotProps}
+        {...lineplotProps}
         ref={plotRef}
         data={data}
         // add controls
         displayLibraryControls={false}
       />
-      {/*  XYPlotControls: check vizType (only for scatterplot for now) */}
-      {vizType === 'scatterplot' && (
+      {
         // use RadioButtonGroup directly instead of XYPlotControls
         <RadioButtonGroup
           label="Plot Modes"
           options={plotOptions}
           selectedOption={valueSpec}
           onOptionSelected={onValueSpecChange}
-          // disabledList prop is used to disable radio options (grayed out)
-          disabledList={disabledList}
           orientation={'horizontal'}
           labelPlacement={'end'}
           buttonColor={'primary'}
           margins={['1em', '0', '0', '6em']}
           itemMarginRight={50}
         />
-      )}
+      }
     </div>
   );
 }
 
 /**
- * Reformat response from Scatter Plot endpoints into complete XYplotData
+ * Reformat response from Line Plot endpoints into complete XYplotData
  * @param response
  * @returns XYplotData
  */
-export function scatterplotResponseToData(
-  response: PromiseType<ReturnType<DataClient['getScatterplot']>>,
+export function lineplotResponseToData(
+  response: PromiseType<
+    ReturnType<DataClient['getLineplot'] | DataClient['getTimeseries']>
+  >,
   // vizType may be used for handling other plots in this component like line and density
   vizType: string,
   independentValueType: string,
@@ -585,7 +541,7 @@ export function scatterplotResponseToData(
   showMissingness: boolean = false,
   overlayVariable?: Variable
 ): PromiseXYPlotData {
-  const modeValue = 'markers';
+  const modeValue = 'lines';
 
   const { dataSetProcess, yMin, yMax } = processInputData(
     response,
@@ -602,19 +558,18 @@ export function scatterplotResponseToData(
     yMin: yMin,
     yMax: yMax,
     completeCases: response.completeCasesTable,
-    completeCasesAllVars: response.scatterplot.config.completeCasesAllVars,
-    completeCasesAxesVars: response.scatterplot.config.completeCasesAxesVars,
-    // TO DO: won't work with densityplot response, when that's implemented
+    completeCasesAllVars: response.lineplot.config.completeCasesAllVars,
+    completeCasesAxesVars: response.lineplot.config.completeCasesAxesVars,
   };
 }
 
 // add an extended type including dataElementDependencyOrder
-type getRequestParamsProps = ScatterplotRequestParams & { vizType?: string };
+type getRequestParamsProps = LineplotRequestParams & { vizType?: string };
 
 function getRequestParams(
   studyId: string,
   filters: Filter[],
-  vizConfig: ScatterplotConfig,
+  vizConfig: LineplotConfig,
   outputEntity?: StudyEntity,
   vizType?: string
 ): getRequestParamsProps {
@@ -627,29 +582,24 @@ function getRequestParams(
   } = vizConfig;
 
   // valueSpec
-  let valueSpecValue = 'raw';
-  if (valueSpecConfig === 'Smoothed mean with raw') {
-    valueSpecValue = 'smoothedMeanWithRaw';
-  } else if (valueSpecConfig === 'Best fit line with raw') {
-    valueSpecValue = 'bestFitLineWithRaw';
+  let valueSpecValue = 'median';
+  if (valueSpecConfig === 'Mean') {
+    valueSpecValue = 'mean';
   }
 
-  // scatterplot
   return {
     studyId,
     filters,
     config: {
       // add outputEntityId
       outputEntityId: outputEntity?.id,
-      // XYPlotControls
       valueSpec: valueSpecValue,
       xAxisVariable: xAxisVariable,
       yAxisVariable: yAxisVariable,
       overlayVariable: overlayVariable,
       showMissingness: showMissingness ? 'TRUE' : 'FALSE',
-      maxAllowedDataPoints: MAXALLOWEDDATAPOINTS,
     },
-  } as ScatterplotRequestParams;
+  } as LineplotRequestParams;
 }
 
 // making plotly input data
@@ -668,7 +618,7 @@ function processInputData<T extends number | string>(
   const fillAreaValue = vizType === 'densityplot' ? 'toself' : '';
 
   // distinguish data per Viztype
-  const plotDataSet = dataSet.scatterplot;
+  const plotDataSet = dataSet.lineplot;
 
   // set variables for x- and yaxis ranges: no default values are set
   let yMin: number | string | undefined;
@@ -708,19 +658,14 @@ function processInputData<T extends number | string>(
   // determine conditions for not adding empty "No data" traces
   // we want to stop at the penultimate series if showMissing is active and there is actually no missing data
   const noMissingData =
-    dataSet.scatterplot.config.completeCasesAllVars ===
-    dataSet.scatterplot.config.completeCasesAxesVars;
+    dataSet.lineplot.config.completeCasesAllVars ===
+    dataSet.lineplot.config.completeCasesAxesVars;
   // 'break' from the for loops (array.some(...)) if this is true
   const breakAfterThisSeries = (index: number) => {
     return (
       showMissingness && noMissingData && index === plotDataSet.data.length - 2
     );
   };
-
-  const markerSymbol = (index: number) =>
-    showMissingness && index === plotDataSet.data.length - 1
-      ? 'x'
-      : 'circle-open';
 
   // set dataSetProcess as any for now
   let dataSetProcess: any = [];
@@ -731,7 +676,7 @@ function processInputData<T extends number | string>(
     let seriesX = [];
     let seriesY = [];
 
-    // series is for scatter plot
+    // series is for points
     if (el.seriesX && el.seriesY) {
       // check the number of x = number of y
       if (el.seriesX.length !== el.seriesY.length) {
@@ -774,7 +719,7 @@ function processInputData<T extends number | string>(
             : max(seriesY);
       }
 
-      // add scatter data considering input options
+      // add data considering input options
       dataSetProcess.push({
         x: seriesX.length ? seriesX : [null], // [null] hack required to make sure
         y: seriesY.length ? seriesY : [null], // Plotly has a legend entry for empty traces
@@ -787,214 +732,14 @@ function processInputData<T extends number | string>(
               )
             : 'Data',
         mode: modeValue,
-        type: 'scattergl', // for the raw data of the scatterplot
+        type: 'scatter',
         fill: fillAreaValue,
         opacity: 0.7,
-        marker: {
-          color: markerColor(index),
-          symbol: markerSymbol(index),
-        },
-        // this needs to be here for the case of markers with line or lineplot.
         line: { color: markerColor(index), shape: 'linear' },
       });
       return breakAfterThisSeries(index);
     }
     return false;
-  });
-
-  // after drawing raw data, smoothedMean and bestfitline plots are displayed
-  plotDataSet?.data.some(function (el: any, index: number) {
-    // initialize variables: setting with union type for future, but this causes typescript issue in the current version
-    let xIntervalLineValue: T[] = [];
-    let yIntervalLineValue: number[] = [];
-    let standardErrorValue: number[] = []; // this is for standardError
-
-    let xIntervalBounds: T[] = [];
-    let yIntervalBounds: number[] = [];
-
-    // initialize smoothedMeanX, bestFitLineX
-    let smoothedMeanX = [];
-    let bestFitLineX = [];
-
-    // check if smoothedMean prop exists
-    if (el.smoothedMeanX && el.smoothedMeanY && el.smoothedMeanSE) {
-      // check the number of x = number of y or standardError
-      if (el.smoothedMeanX.length !== el.smoothedMeanY.length) {
-        throw new Error(
-          'The number of X data is not equal to the number of Y data or standardError data'
-        );
-      }
-
-      // change string array to number array for numeric data
-      if (independentValueType === 'date') {
-        smoothedMeanX = el.smoothedMeanX;
-      } else {
-        smoothedMeanX = el.smoothedMeanX.map(Number);
-      }
-      // smoothedMeanY/SE are number[]
-
-      // the date format, yyyy-mm-dd works with sort, so no change in the following is required
-      // sorting function
-      //1) combine the arrays: including standardError
-      let combinedArrayInterval = [];
-      for (let j = 0; j < smoothedMeanX.length; j++) {
-        combinedArrayInterval.push({
-          xValue: smoothedMeanX[j],
-          yValue: el.smoothedMeanY[j],
-          zValue: el.smoothedMeanSE[j],
-        });
-      }
-      //2) sort:
-      combinedArrayInterval.sort(function (a, b) {
-        return a.xValue < b.xValue ? -1 : a.xValue === b.xValue ? 0 : 1;
-      });
-      //3) separate them back out:
-      for (let k = 0; k < combinedArrayInterval.length; k++) {
-        xIntervalLineValue[k] = combinedArrayInterval[k].xValue;
-        yIntervalLineValue[k] = combinedArrayInterval[k].yValue;
-        standardErrorValue[k] = combinedArrayInterval[k].zValue;
-      }
-
-      // add additional condition for the case of smoothedMean (without series data)
-      // need to check whether data is empty
-      if (yIntervalLineValue.length) {
-        yMin = el.seriesY.length
-          ? lte(yMin, min(yIntervalLineValue))
-            ? yMin
-            : min(yIntervalLineValue)
-          : min(yIntervalLineValue);
-        yMax = el.seriesY.length
-          ? gte(yMax, max(yIntervalLineValue))
-            ? yMax
-            : max(yIntervalLineValue)
-          : max(yIntervalLineValue);
-      }
-
-      // store data for smoothed mean: this is not affected by plot options (e.g., showLine etc.)
-      dataSetProcess.push({
-        x: xIntervalLineValue,
-        y: yIntervalLineValue,
-        // name: 'Smoothed mean',
-        name: el.overlayVariableDetails
-          ? fixLabelForNumberVariables(
-              el.overlayVariableDetails.value,
-              overlayVariable
-            ) + ', Smoothed mean'
-          : 'Smoothed mean',
-        mode: 'lines', // no data point is displayed: only line
-        line: {
-          // use darker color for smoothed mean line
-          color: markerColorDark(index),
-          shape: 'spline',
-          width: 2,
-        },
-        // use scattergl
-        type: 'scattergl',
-      });
-
-      // make Confidence Interval (CI) or Bounds (filled area)
-      xIntervalBounds = xIntervalLineValue;
-      xIntervalBounds = xIntervalBounds.concat(
-        xIntervalLineValue.map((element) => element).reverse()
-      );
-
-      // finding upper and lower bound values.
-      const { yUpperValues, yLowerValues } = getBounds(
-        yIntervalLineValue,
-        standardErrorValue
-      );
-
-      // make upper and lower bounds plotly format
-      yIntervalBounds = yUpperValues;
-      yIntervalBounds = yIntervalBounds.concat(
-        yLowerValues.map((element) => element).reverse()
-      );
-
-      // set variables for y-axes ranges including CI/bounds
-      if (yLowerValues.length) {
-        yMin = lte(yMin, min(yLowerValues)) ? yMin : min(yLowerValues);
-        yMax = gte(yMax, max(yUpperValues)) ? yMax : max(yUpperValues);
-      }
-
-      // store data for CI/bounds
-      dataSetProcess.push({
-        x: xIntervalBounds,
-        y: yIntervalBounds,
-        // name: '95% Confidence interval',
-        name: el.overlayVariableDetails
-          ? fixLabelForNumberVariables(
-              el.overlayVariableDetails.value,
-              overlayVariable
-            ) + ', 95% Confidence interval'
-          : '95% Confidence interval',
-        // this is better to be tozeroy, not tozerox
-        fill: 'tozeroy',
-        opacity: 0.2,
-        // use darker color for smoothed mean's confidence interval
-        fillcolor: markerColorDark(index),
-        // type: 'line',
-        type: 'scattergl',
-        // here, line means upper and lower bounds
-        line: { color: 'transparent', shape: 'spline' },
-      });
-    }
-
-    // accomodating bestFitLineWithRaw
-    // check if bestFitLineX/Y props exist
-    if (el.bestFitLineX && el.bestFitLineY) {
-      // check the number of x = number of y
-      if (el.bestFitLineX.length !== el.bestFitLineY.length) {
-        throw new Error(
-          'The number of X data is not equal to the number of Y data or standardError data'
-        );
-      }
-
-      // change string array to number array for numeric data
-      if (independentValueType === 'date') {
-        bestFitLineX = el.bestFitLineX;
-      } else {
-        bestFitLineX = el.bestFitLineX.map(Number);
-      }
-
-      // add additional condition for the case of smoothedMean (without series data)
-      if (el.bestFitLineY.length) {
-        yMin = el.seriesY
-          ? lte(yMin, min(el.bestFitLineY))
-            ? yMin
-            : min(el.bestFitLineY)
-          : min(el.bestFitLineY);
-        yMax = el.seriesY
-          ? gte(yMax, max(el.bestFitLineY))
-            ? yMax
-            : max(el.bestFitLineY)
-          : max(el.bestFitLineY);
-      }
-
-      // store data for fitting line: this is not affected by plot options (e.g., showLine etc.)
-      dataSetProcess.push({
-        x: bestFitLineX,
-        y: el.bestFitLineY,
-        // display R-square value at legend text(s)
-        // name: 'Best fit<br>R<sup>2</sup> = ' + el.r2,
-        name: el.overlayVariableDetails
-          ? fixLabelForNumberVariables(
-              el.overlayVariableDetails.value,
-              overlayVariable
-            ) +
-            ', R² = ' +
-            el.r2
-          : 'Best fit, R² = ' + el.r2,
-        mode: 'lines', // no data point is displayed: only line
-        line: {
-          // use darker color for best fit line
-          color: markerColorDark(index),
-          shape: 'spline',
-        },
-        // use scattergl
-        type: 'scattergl',
-      });
-    }
-    return breakAfterThisSeries(index);
   });
 
   return { dataSetProcess: { series: dataSetProcess }, yMin, yMax };
@@ -1012,11 +757,11 @@ function getBounds<T extends number | string>(
   yLowerValues: T[];
 } {
   const yUpperValues = values.map((value, idx) => {
-    const tmp = Number(value) + 2 * Number(standardErrors[idx]);
+    const tmp = Number(value) + 2;
     return tmp as T;
   });
   const yLowerValues = values.map((value, idx) => {
-    const tmp = Number(value) - 2 * Number(standardErrors[idx]);
+    const tmp = Number(value) - 2;
     return tmp as T;
   });
 
@@ -1031,7 +776,7 @@ function reorderResponse(
   if (overlayVocabulary.length > 0) {
     // for each value in the overlay vocabulary's correct order
     // find the index in the series where series.name equals that value
-    const overlayValues = response.scatterplot.data
+    const overlayValues = response.lineplot.data
       .map((series) => series.overlayVariableDetails?.value)
       .filter((value) => value != null)
       .map((value) => fixLabelForNumberVariables(value!, overlayVariable));
@@ -1040,11 +785,11 @@ function reorderResponse(
     );
     return {
       ...response,
-      scatterplot: {
-        ...response.scatterplot,
+      lineplot: {
+        ...response.lineplot,
         data: overlayIndices.map(
           (i, j) =>
-            response.scatterplot.data[i] ?? {
+            response.lineplot.data[i] ?? {
               // if there is no series, insert a dummy series
               overlayVariableDetails: {
                 value: overlayVocabulary[j],

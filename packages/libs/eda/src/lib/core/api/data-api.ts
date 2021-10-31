@@ -265,13 +265,13 @@ export interface LineplotRequestParams {
   filters: Filter[];
   config: {
     outputEntityId: string;
-    // not quite sure of overlayVariable and facetVariable yet
-    // overlayVariable?: Variable;
+    // not quite sure of facetVariable yet
     // facetVariable?: ZeroToTwoVariables;
     xAxisVariable: VariableDescriptor;
     yAxisVariable: VariableDescriptor;
     overlayVariable?: VariableDescriptor;
     showMissingness?: 'TRUE' | 'FALSE';
+    valueSpec: 'mean' | 'median';
   };
 }
 
@@ -295,9 +295,7 @@ const LineplotResponseData = array(
 
 export type LineplotResponse = TypeOf<typeof LineplotResponse>;
 export const LineplotResponse = type({
-  // backend issue for lineplot returning scatterplot currently
-  // lineplot: type({
-  scatterplot: type({
+  lineplot: type({
     data: LineplotResponseData,
     config: type({
       completeCasesAllVars: number,
@@ -538,6 +536,19 @@ export class DataClient extends FetchClientWithCredentials {
     return this.getVisualizationData(
       computationName,
       'lineplot',
+      params,
+      LineplotResponse
+    );
+  }
+
+  // Timeseries
+  getTimeseries(
+    computationName: string,
+    params: LineplotRequestParams
+  ): Promise<LineplotResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'timeseries',
       params,
       LineplotResponse
     );
