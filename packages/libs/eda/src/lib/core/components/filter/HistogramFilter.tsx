@@ -732,9 +732,9 @@ function distributionResponseToDataSeries(
     color,
     bins,
     summary: {
-      min: response.statistics.subsetMin,
-      mean: response.statistics.subsetMean,
-      max: response.statistics.subsetMax,
+      min: response.statistics.subsetMin!,
+      mean: response.statistics.subsetMean!,
+      max: response.statistics.subsetMax!,
       median: undefined!,
       q1: undefined!,
       q3: undefined!,
