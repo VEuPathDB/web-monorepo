@@ -59,9 +59,9 @@ function renderSourceVersion(version, newcategory) {
 function getSourceVersion(attributes, tables) {
   let version;
   if (attributes.newcategory === 'Genomes') {
-    g_version = attributes.genome_version ? attributes.genome_version : "n/a";
-    a_version = attributes.annotation_version ? attributes.annotation_version : "n/a";
-    fa_version = attributes.functional_annotation_version ? attributes.functional_annotation_version : "n/a";
+    let g_version = attributes.genome_version ? attributes.genome_version : "n/a";
+    let a_version = attributes.annotation_version ? attributes.annotation_version : "n/a";
+    let fa_version = attributes.functional_annotation_version ? attributes.functional_annotation_version : "n/a";
     
     version = g_version + ", " + a_version + ", " + fa_version;
   } else {
