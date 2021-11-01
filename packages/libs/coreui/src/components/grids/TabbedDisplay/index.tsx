@@ -1,3 +1,4 @@
+import { css } from '@emotion/react';
 import { useState } from 'react';
 
 import stylePresets, { TabbedDisplayStyleSpec } from './stylePresets';
@@ -23,9 +24,6 @@ export default function TabbedDisplay({
   stylePreset = 'default',
   styleOverrides = {},
 }: TabbedDisplayProps) {
-  const baseStyle = stylePresets[stylePreset];
-  const finalStyle = Object.assign({}, baseStyle, styleOverrides);
-
   const [selectedTab, setSelectedTab] = useState(tabs[0].displayName);
   const [hoveredTab, setHoveredTab] = useState<null | string>(null);
 
@@ -49,12 +47,17 @@ export default function TabbedDisplay({
               ? 'hover'
               : 'inactive';
 
+          const mergeCSSStyle = css([
+            stylePresets[stylePreset][tabState],
+            styleOverrides[tabState],
+          ]);
+
           return (
             <div
               tabIndex={0}
               key={tab.displayName}
               css={[
-                finalStyle[tabState],
+                mergeCSSStyle,
                 {
                   cursor: 'grab',
                   transition:

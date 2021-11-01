@@ -1,4 +1,5 @@
 import { css, SerializedStyles } from '@emotion/react';
+import { CSSInterpolation } from '@emotion/serialize';
 
 import {
   DARK_BLUE,
@@ -9,9 +10,9 @@ import {
 import typography from '../../../styleDefinitions/typography';
 
 export type TabbedDisplayStyleSpec = {
-  inactive: SerializedStyles;
-  active: SerializedStyles;
-  hover: SerializedStyles;
+  inactive: SerializedStyles | CSSInterpolation;
+  active: SerializedStyles | CSSInterpolation;
+  hover: SerializedStyles | CSSInterpolation;
 };
 
 const stylePresets: {
