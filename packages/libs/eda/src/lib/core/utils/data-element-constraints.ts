@@ -210,6 +210,7 @@ export function mergeConstraints(
                 constraintB.allowedTypes
               ),
               maxNumValues: mergeMaxNumValues(constraintA, constraintB),
+              isTemporal: mergedIsTemporal,
               allowMultiValued:
                 constraintA.allowMultiValued && constraintB.allowMultiValued,
               // Since constraintA and constraintB are for the same variable slot
