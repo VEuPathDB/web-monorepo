@@ -119,18 +119,19 @@ export function getAnalysisId(analysis?: NewAnalysis | Analysis) {
   return !isSavedAnalysis(analysis) ? undefined : analysis.analysisId;
 }
 
-export function makeProvenanceString(
+export function makeOnImportProvenanceString(
   importCreationTime: string,
   provenance: AnalysisProvenance
 ) {
-  const onImportString = `Imported from ${provenance.onImport.ownerName} [${
+  return `Imported from ${provenance.onImport.ownerName} [${
     provenance.onImport.ownerOrganization
   }] on ${convertISOToDisplayFormat(importCreationTime)}.`;
-  const currentString = provenance.current.isDeleted
-    ? `The original analysis has since been deleted.`
-    : `The original analysis was last modified on ${convertISOToDisplayFormat(
-        provenance.current.modificationTime
-      )}.`;
+}
 
-  return `(${onImportString} ${currentString})`;
+export function makeCurrentProvenanceString(provenance: AnalysisProvenance) {
+  return provenance.current.isDeleted
+    ? `(Source analysis since deleted.)`
+    : `(Source analysis last modified on ${convertISOToDisplayFormat(
+        provenance.current.modificationTime
+      )}.)`;
 }

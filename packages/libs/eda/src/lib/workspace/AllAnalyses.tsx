@@ -42,7 +42,10 @@ import SubsettingClient from '../core/api/SubsettingClient';
 import { workspaceTheme } from '../core/components/workspaceTheme';
 import { useDebounce } from '../core/hooks/debouncing';
 import { useWdkStudyRecords } from '../core/hooks/study';
-import { makeProvenanceString } from '../core/utils/analysis';
+import {
+  makeCurrentProvenanceString,
+  makeOnImportProvenanceString,
+} from '../core/utils/analysis';
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
 
 interface AnalysisAndDataset {
@@ -133,16 +136,17 @@ export function AllAnalyses(props: Props) {
         const dataset = datasets?.find(
           (d) => d.id[0].value === analysis.studyId
         );
+
         return {
           analysis: {
             ...analysis,
             displayNameAndProvenance:
               analysis.provenance == null
                 ? analysis.displayName
-                : `${analysis.displayName} ${makeProvenanceString(
+                : `${analysis.displayName}\0${makeOnImportProvenanceString(
                     analysis.creationTime,
                     analysis.provenance
-                  )}`,
+                  )}\0${makeCurrentProvenanceString(analysis.provenance)}`,
             creationTimeDisplay: convertISOToDisplayFormat(
               analysis.creationTime
             ),
@@ -442,10 +446,13 @@ export function AllAnalyses(props: Props) {
                   <>
                     <br />
                     <br />
-                    {makeProvenanceString(
+                    {makeOnImportProvenanceString(
                       data.row.analysis.creationTime,
                       data.row.analysis.provenance
                     )}
+                    <br />
+                    <br />
+                    {makeCurrentProvenanceString(data.row.analysis.provenance)}
                   </>
                 )}
               </div>
