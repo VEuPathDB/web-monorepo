@@ -55,19 +55,19 @@ export const stylePresets: {
   borderless: {
     default: {
       color: 'transparent',
-      textColor: DARK_GRAY,
+      textColor: '#006699',
       textTransform: 'none',
       fontWeight: 500,
     },
     hover: {
-      color: '#95EBF9',
-      textColor: DARK_GRAY,
+      color: '#E6F7FF',
+      textColor: '#006699',
       fontWeight: 500,
       textTransform: 'none',
     },
     pressed: {
-      color: '#4AE0F7',
-      textColor: DARK_GRAY,
+      color: '#B3E5FF',
+      textColor: '#006699',
       fontWeight: 500,
       textTransform: 'none',
     },
