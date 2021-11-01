@@ -64,65 +64,80 @@ const MosaicPlot = makePlotlyPlotComponent(
       return column_start + width / 2;
     });
 
-    // Not currently calculating this---just using the default
-    // Might need to be calculated or adjusted if more flexibility is needed
-    const defaultLegendItemHeight = 20;
+    // These variables are needed to correctly implement the legend to the left
+    // between the plot and the y-axis title
+    // How much extra left margin to add
+    let marginLeftExtra: number;
+    // How far to shift the y-axis title to the left
+    let yAxisTitleStandoff: number | undefined;
+    // The gap between each legend item
+    let legendTraceGroupGap: number | undefined;
+
     // ploltly.js default for left, bottom, and right margins is the same
     const defaultMargin = 80;
     const defaultMarginTop = 100;
 
-    // Try to get the container height in pixels
-    const containerHeightProp = restProps.containerStyles
-      ? restProps.containerStyles.height
-      : DEFAULT_CONTAINER_HEIGHT;
-    const containerHeight = containerHeightProp
-      ? typeof containerHeightProp === 'number'
-        ? containerHeightProp
-        : containerHeightProp.endsWith('px')
-        ? parseInt(containerHeightProp)
-        : undefined
-      : undefined;
-    let legendTraceGroupGap: number;
+    if (restProps.displayLegend) {
+      // Not currently calculating this---just using the default
+      // Might need to be calculated or adjusted if more flexibility is needed
+      const defaultLegendItemHeight = 20;
 
-    if (containerHeight) {
-      // Estimate the plot proper height
-      const marginTop = spacingOptions?.marginTop ?? defaultMarginTop;
-      const marginBottom = spacingOptions?.marginBottom ?? defaultMargin;
-      // Subtraction at end is due to x-axis automargin shrinking the plot
-      const plotHeight =
-        containerHeight -
-        marginTop -
-        marginBottom -
-        2.05 * (maxIndependentTickLabelLength + 2);
-      // Calculate the legend trace group gap accordingly
-      legendTraceGroupGap =
-        ((plotHeight - defaultLegendItemHeight * data.dependentLabels.length) *
-          0.95) /
-        (data.dependentLabels.length - 1);
+      // Try to get the container height in pixels
+      const containerHeightProp = restProps.containerStyles
+        ? restProps.containerStyles.height
+        : DEFAULT_CONTAINER_HEIGHT;
+      const containerHeight = containerHeightProp
+        ? typeof containerHeightProp === 'number'
+          ? containerHeightProp
+          : containerHeightProp.endsWith('px')
+          ? parseInt(containerHeightProp)
+          : undefined
+        : undefined;
+
+      if (containerHeight) {
+        // Estimate the plot proper height
+        const marginTop = spacingOptions?.marginTop ?? defaultMarginTop;
+        const marginBottom = spacingOptions?.marginBottom ?? defaultMargin;
+        // Subtraction at end is due to x-axis automargin shrinking the plot
+        const plotHeight =
+          containerHeight -
+          marginTop -
+          marginBottom -
+          2.05 * (maxIndependentTickLabelLength + 2);
+        // Calculate the legend trace group gap accordingly
+        legendTraceGroupGap =
+          ((plotHeight -
+            defaultLegendItemHeight * data.dependentLabels.length) *
+            0.95) /
+          (data.dependentLabels.length - 1);
+      } else {
+        // If we can't determine the container height, don't add any gaps to be safe
+        legendTraceGroupGap = 0;
+      }
+
+      const maxLegendTextLength =
+        restProps.maxLegendTextLength ?? DEFAULT_MAX_LEGEND_TEXT_LENGTH;
+      const longestDependentLabelLength = Math.max(
+        ...data.dependentLabels.map((label) => label.length)
+      );
+      // If the length overflows, add two characters to account for ellipsis length
+      const longestLegendLabelLength =
+        longestDependentLabelLength > maxLegendTextLength
+          ? maxLegendTextLength + 2
+          : longestDependentLabelLength;
+      // Extra left margin and y-axis title standoff calculations are weird due
+      // to y-axis automargin
+      marginLeftExtra = 5.357 * longestLegendLabelLength + 37.5;
+      yAxisTitleStandoff = marginLeftExtra + 25;
     } else {
-      // If we can't determine the container height, don't add any gaps to be safe
-      legendTraceGroupGap = 0;
+      marginLeftExtra = 0;
+      // Leave yAxisTitleStandoff and legendTraceGroupGap undefined
     }
 
-    const maxLegendTextLength =
-      restProps.maxLegendTextLength ?? DEFAULT_MAX_LEGEND_TEXT_LENGTH;
-    const longestDependentLabelLength = Math.max(
-      ...data.dependentLabels.map((label) => label.length)
-    );
-    // If the length overflows, add two characters to account for ellipsis length
-    const longestLegendLabelLength =
-      longestDependentLabelLength > maxLegendTextLength
-        ? maxLegendTextLength + 2
-        : longestDependentLabelLength;
-    // Have to calculate some extra left margin and y axis title standoff due
-    // to y-axis automargin
-    const marginLeftExtra = 5.357 * longestLegendLabelLength + 37.5;
-    const yAxisTitleStandoff = marginLeftExtra + 25;
-
-    const marginleft = spacingOptions?.marginLeft ?? 80;
+    const marginLeft = spacingOptions?.marginLeft ?? defaultMargin;
     const newSpacingOptions = {
       ...spacingOptions,
-      marginLeft: marginleft + marginLeftExtra,
+      marginLeft: marginLeft + marginLeftExtra,
     };
 
     const layout = {
