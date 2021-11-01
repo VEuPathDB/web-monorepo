@@ -330,21 +330,44 @@ function HistogramViz(props: VisualizationProps) {
 
   //DKDK checkbox of custom legend
   const legendItems: LegendItemsProps[] = useMemo(() => {
+    //DKDK check filters has overlayVariable: if not, hasData: true
+    const overlayVariableFilter = filters
+      ?.map((filter) => {
+        return filter.variableId === vizConfig.overlayVariable?.variableId
+          ? true
+          : false;
+      })
+      .includes(true);
+
     return data.value != null
-      ? data.value?.series.map((data: any) => {
-          return {
-            label: data.name,
-            // need a way to appropriately make marker info
-            // scatter plot has defined mode - still need to find the way to distinguish CI, No data, etc.
-            marker: data.mode,
-            // set temporary values for now (for proof-of-concept)
-            hasData: true,
-            group: 1,
-            rank: 1,
-          };
-        })
+      ? data.value?.series
+          .map((data: HistogramDataSeries) => {
+            return {
+              label: data.name,
+              // need a way to appropriately make marker info
+              // histogram plot does not have mode, so set to square for now
+              marker: 'square',
+              //DKDK think markerColor needs to be added here
+              markerColor: 'markerColor',
+              // set hasData based on filters: do we need to check other type like dateSet, numberSet etc?
+              hasData:
+                filters != null && overlayVariableFilter
+                  ? filters
+                      .map((filter) => {
+                        if (filter.type == 'stringSet' && data.name != null)
+                          return filter.stringSet.includes(data.name);
+                      })
+                      .includes(true)
+                  : true,
+              // hasData: true,
+              group: 1,
+              rank: 1,
+            };
+            // histogram viz uses stack option so reverse this!
+          })
+          .reverse()
       : [];
-  }, [data]);
+  }, [data, filters]);
 
   //DKDK
   console.log('data.value?.dataSetProcess.series =', data.value?.series);

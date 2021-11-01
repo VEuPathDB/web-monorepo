@@ -47,7 +47,10 @@ import { min, max, lte, gte } from 'lodash';
 // directly use RadioButtonGroup instead of XYPlotControls
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 // import XYPlotData
-import { XYPlotData } from '@veupathdb/components/lib/types/plots';
+import {
+  XYPlotDataSeries,
+  XYPlotData,
+} from '@veupathdb/components/lib/types/plots';
 import { CoverageStatistics } from '../../../types/visualization';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
@@ -339,23 +342,61 @@ function ScatterplotViz(props: VisualizationProps) {
 
   const { url } = useRouteMatch();
 
+  // check filters - it has several variants stringSet, numberSet, dateSet etc.
+  // see web-eda/src/lib/core/types/filter.ts
+  // console.log('filters =', filters?.map((filter) => filter.stringSet))
+
+  console.log('vizConfig.overlayVariable =', vizConfig.overlayVariable);
+  console.log('filters =', filters);
+
+  //DKDK check filters have overlayVariable
+  const overlayVariableFilter = filters
+    ?.map((filter) => {
+      return filter.variableId === vizConfig.overlayVariable?.variableId
+        ? true
+        : false;
+    })
+    .includes(true);
+
+  console.log('overlayVariableFilter =', overlayVariableFilter);
+
   //DKDK checkbox of custom legend
   const legendItems: LegendItemsProps[] = useMemo(() => {
+    //DKDK check filters has overlayVariable: if not, hasData: true
+    const overlayVariableFilter = filters
+      ?.map((filter) => {
+        return filter.variableId === vizConfig.overlayVariable?.variableId
+          ? true
+          : false;
+      })
+      .includes(true);
+
     return data.value != null
-      ? data.value?.dataSetProcess.series.map((data: any) => {
+      ? data.value?.dataSetProcess.series.map((data: XYPlotDataSeries) => {
           return {
-            label: data.name,
+            label: data.name != null ? data.name : '',
             // need a way to appropriately make marker info
             // scatter plot has defined mode - still need to find the way to distinguish CI, No data, etc.
-            marker: data.mode,
-            // set temporary values for now (for proof-of-concept)
-            hasData: true,
+            marker: data.mode != null ? data.mode : '',
+            //DKDK think markerColor needs to be added here
+            markerColor: 'markerColor',
+            // set hasData based on filters: do we need to check other type like dateSet, numberSet etc?
+            hasData:
+              filters != null && overlayVariableFilter
+                ? filters
+                    .map((filter) => {
+                      if (filter.type == 'stringSet' && data.name != null)
+                        return filter.stringSet.includes(data.name);
+                    })
+                    .includes(true)
+                : true,
+            // hasData: true,
             group: 1,
             rank: 1,
           };
         })
       : [];
-  }, [data]);
+  }, [data, filters]);
 
   //DKDK
   console.log(
