@@ -3231,7 +3231,7 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/components@^0.8.7":
+"@veupathdb/components@^0.8.8":
   version "0.8.8"
   resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.8.8.tgz#8a8ebef5889d447a6a5386e93565c50697d79a44"
   integrity sha512-o48q+sc94G5GZse2lwkGG9gJb8XL0alideHzBRDthw+9W9R4BP725hxMf1YYW1IG6SIc1uKnCWQMUMMZ8pEY/w==
