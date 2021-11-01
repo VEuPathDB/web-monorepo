@@ -5,6 +5,7 @@ import { Checkbox } from '@material-ui/core';
 export interface LegendItemsProps {
   label: string;
   marker: string;
+  markerColor?: string;
   hasData: boolean;
   group?: number;
   rank?: number;
@@ -37,51 +38,63 @@ export default function PlotLegend({
   };
 
   return (
-    <div
-      style={{
-        border: '1px solid #dedede',
-        boxShadow: '1px 1px 4px #00000066',
-        padding: '1em',
-      }}
-    >
-      <div title={legendTitle} style={{ cursor: 'pointer', fontSize: '1.2em' }}>
-        {legendTitle}
-      </div>
+    <>
       {legendItems.length !== 1 && (
-        <div className="plotLegendCheckbox">
-          {legendItems.map((item: LegendItemsProps, index: number) => (
-            <div style={{ display: 'flex' }}>
-              <>
-                <Checkbox
-                  key={item.label}
-                  id={item.label}
-                  value={item.label}
-                  // color="default"
-                  color="primary"
-                  onChange={(e) => {
-                    handleLegendCheckboxClick(e.target.checked, item.label);
-                  }}
-                  checked={
-                    checkedLegendItems.includes(item.label) ? true : false
-                  }
-                  style={{ padding: 0 }}
-                />
-                &nbsp;&nbsp;
-                <label
-                  title={item.label}
-                  style={{
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
-                >
-                  {item.label}
-                </label>
-              </>
-            </div>
-          ))}
+        <div
+          style={{
+            border: '1px solid #dedede',
+            boxShadow: '1px 1px 4px #00000066',
+            padding: '1em',
+          }}
+        >
+          <div
+            title={legendTitle}
+            style={{ cursor: 'pointer', fontSize: '1.2em' }}
+          >
+            {legendTitle}
+          </div>
+          <div className="plotLegendCheckbox">
+            {legendItems.map((item: LegendItemsProps, index: number) => (
+              <div style={{ display: 'flex' }}>
+                <>
+                  <Checkbox
+                    key={item.label}
+                    id={item.label}
+                    value={item.label}
+                    // color="default"
+                    color="primary"
+                    onChange={(e) => {
+                      handleLegendCheckboxClick(e.target.checked, item.label);
+                    }}
+                    checked={
+                      checkedLegendItems.includes(item.label) ? true : false
+                    }
+                    style={{ padding: 0 }}
+                    // disable when hasData is false
+                    // but scatter plot needs further change due to smoothed mean and best fit
+                    disabled={!item.hasData}
+                  />
+                  &nbsp;&nbsp;
+                  <label
+                    title={item.label}
+                    style={{
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      color:
+                        checkedLegendItems.includes(item.label) && item.hasData
+                          ? ''
+                          : '#999',
+                    }}
+                  >
+                    {item.label}
+                  </label>
+                </>
+              </div>
+            ))}
+          </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
