@@ -61,6 +61,15 @@ Labelled.args = {
 };
 Labelled.argTypes = { ...Basic.argTypes };
 
+export const FullyLabelled = Template.bind({});
+FullyLabelled.args = {
+  ...Basic.args,
+  containerStyles: { height: 100, width: 300 },
+  label: 'Widget Label',
+  showLimits: true,
+};
+FullyLabelled.argTypes = { ...Basic.argTypes };
+
 export const FormattedTooltip = Template.bind({});
 FormattedTooltip.args = {
   ...Labelled.args,

@@ -100,6 +100,7 @@ export default function BinWidthControl({
           );
         }}
         containerStyles={containerStyles}
+        showLimits={true}
       />
     </div>
   ) : null;
