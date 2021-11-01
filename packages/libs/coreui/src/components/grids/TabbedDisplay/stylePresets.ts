@@ -31,7 +31,14 @@ const stylePresets: {
     ]),
     inactive: css([
       typography.secondaryFont,
-      { backgroundColor: 'white', color: MEDIUM_GRAY, padding: 15 },
+      {
+        backgroundColor: 'white',
+        color: MEDIUM_GRAY,
+        padding: 15,
+        borderBottomColor: 'transparent',
+        borderBottomWidth: 2,
+        borderBottomStyle: 'solid',
+      },
     ]),
     hover: css([
       typography.secondaryFont,
@@ -39,6 +46,9 @@ const stylePresets: {
         backgroundColor: 'rgb(245, 245, 245)',
         color: MEDIUM_GRAY,
         padding: 15,
+        borderBottomColor: 'transparent',
+        borderBottomWidth: 2,
+        borderBottomStyle: 'solid',
       },
     ]),
   },
