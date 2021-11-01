@@ -10,6 +10,7 @@ import { PlotParams } from 'react-plotly.js';
 import _ from 'lodash';
 // util functions for handling long tick labels with ellipsis
 import { axisTickLableEllipsis } from '../utils/axis-tick-label-ellipsis';
+import { makeStyles } from '@material-ui/core/styles';
 
 export interface MosaicPlotProps extends PlotProps<MosaicData> {
   /** label for independent axis */
@@ -27,6 +28,15 @@ export const EmptyMosaicData: MosaicData = {
   dependentLabels: [],
 };
 
+const useStyles = makeStyles({
+  root: {
+    '& .legend .traces .legendtoggle': {
+      // Remove the click/pointer cursor from legend items
+      cursor: 'default !important',
+    },
+  },
+});
+
 const MosaicPlot = makePlotlyPlotComponent(
   'MosaicPlot',
   ({
@@ -36,6 +46,7 @@ const MosaicPlot = makePlotlyPlotComponent(
     colors,
     showColumnLabels,
     spacingOptions,
+    containerClass,
     ...restProps
   }: MosaicPlotProps) => {
     // Column widths
@@ -205,12 +216,15 @@ const MosaicPlot = makePlotlyPlotComponent(
       )
       .reverse(); // Reverse so first trace is on top, matching data array
 
+    const classes = useStyles();
+
     return {
       data: plotlyReadyData,
       layout,
       // original independent axis tick labels for tooltip
       storedIndependentAxisTickLabel: data.independentLabels,
       spacingOptions: newSpacingOptions,
+      containerClass: classes.root,
       ...restProps,
     };
   }
