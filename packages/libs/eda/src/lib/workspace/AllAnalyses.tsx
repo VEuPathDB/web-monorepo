@@ -222,7 +222,7 @@ export function AllAnalyses(props: Props) {
                       datasets?.find((d) => d.id[0].value === analysis.studyId)
                         ?.displayName ?? UNKNOWN_DATASET_NAME
                     );
-                  case 'displayName':
+                  case 'name':
                     return analysis.displayNameAndProvenance;
                   case 'description':
                     return analysis.description;
