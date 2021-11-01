@@ -25,6 +25,9 @@ type Props = {
   exampleAnalysesAuthor?: number;
 };
 
+/**
+ * Router component for application.
+ */
 export function WorkspaceRouter({
   subsettingServiceUrl,
   dataServiceUrl,

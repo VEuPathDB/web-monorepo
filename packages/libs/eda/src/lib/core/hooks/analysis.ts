@@ -1,9 +1,9 @@
-import { differenceWith } from 'lodash';
+import { useCallback, useEffect, useState } from 'react';
 import { Lens } from 'monocle-ts';
+import { differenceWith } from 'lodash';
 
 import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 import { useStateWithHistory } from '@veupathdb/wdk-client/lib/Hooks/StateWithHistory';
-import { useCallback, useEffect, useState } from 'react';
 
 import {
   AnalysisClient,
@@ -14,8 +14,10 @@ import { isNewAnalysis, isSavedAnalysis } from '../utils/analysis';
 
 import { useAnalysisClient } from './workspace';
 
+/** Type definition for function that will set an attribute of an Analysis. */
 type Setter<T> = (value: T | ((value: T) => T)) => void;
 
+/** Status options for an analysis. */
 export enum Status {
   InProgress = 'in-progress',
   Loaded = 'loaded',
@@ -24,8 +26,10 @@ export enum Status {
 }
 
 export type AnalysisState = {
+  /** Current status of the analysis. */
   status: Status;
   hasUnsavedChanges: boolean;
+  /** Optional. Previously saved analysis or analysis in construction. */
   analysis?: Analysis | NewAnalysis;
   error?: unknown;
   canUndo: boolean;
@@ -40,11 +44,14 @@ export type AnalysisState = {
   setDerivedVariables: Setter<Analysis['descriptor']['derivedVariables']>;
   setStarredVariables: Setter<Analysis['descriptor']['starredVariables']>;
   setVariableUISettings: Setter<Analysis['descriptor']['subset']['uiSettings']>;
+  setDataTableConfig: Setter<Analysis['descriptor']['dataTableConfig']>;
+
   saveAnalysis: () => Promise<void>;
   copyAnalysis: () => Promise<{ analysisId: string }>;
   deleteAnalysis: () => Promise<void>;
 };
 
+// Used to store loaded analyses. Looks to be a performance enhancement.
 const analysisCache: Record<string, Analysis | undefined> = {};
 
 export function usePreloadAnalysis() {
@@ -54,13 +61,24 @@ export function usePreloadAnalysis() {
   };
 }
 
+/**
+ * Provide access to a user created analysis and associated functionality.
+ *
+ * Essentially, an "analysis" is a record of how a given user has
+ * interacted with a segment of a given study's data.
+ * */
 export function useAnalysis(
   defaultAnalysis: NewAnalysis,
   createAnalysis: (analysis: NewAnalysis) => void,
   analysisId?: string
 ): AnalysisState {
   const analysisClient = useAnalysisClient();
+
+  // Does the analysis have changes that have not
+  // been permanently stored?
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+  // TOOD: Not sure yet how this is being used.
   const {
     current: analysis,
     setCurrent,
@@ -84,6 +102,7 @@ export function useAnalysis(
   const [status, setStatus] = useState<Status>(Status.InProgress);
   const [error, setError] = useState<unknown>();
 
+  // Retrieve an Analysis from the data store whenever `analysisID` updates.
   useEffect(() => {
     if (analysisId == null) {
       setSavedAnalysis(undefined);
@@ -118,6 +137,7 @@ export function useAnalysis(
     );
   }, [analysisClient, analysisId, savedAnalysis]);
 
+  // Whenever `savedAnalysis` updates, set `current` to be the same object.
   useEffect(() => {
     // FIXME: Should not just set the "current" state,
     // but also clear the state's history
@@ -192,6 +212,12 @@ export function useAnalysis(
     createAnalysis
   );
 
+  const setDataTableConfig = useSetter(
+    analysisToDataTableConfig,
+    analysis,
+    createAnalysis
+  );
+
   const saveAnalysis = useCallback(async () => {
     if (analysis == null)
       throw new Error("Attempt to save an analysis that hasn't been loaded.");
@@ -254,6 +280,7 @@ export function useAnalysis(
     setDerivedVariables,
     setStarredVariables,
     setVariableUISettings,
+    setDataTableConfig,
     copyAnalysis,
     deleteAnalysis,
     saveAnalysis,
@@ -288,7 +315,7 @@ export function useAnalysisList(analysisClient: AnalysisClient) {
         setAnalyses((analyses) =>
           analyses?.filter((analysis) => analysis.analysisId !== id)
         );
-      } catch (error) {
+      } catch (error: any) {
         setError(error.message ?? String(error));
       } finally {
         setLoading(false);
@@ -314,7 +341,7 @@ export function useAnalysisList(analysisClient: AnalysisClient) {
               (analysis, id) => analysis.analysisId === id
             )
         );
-      } catch (error) {
+      } catch (error: any) {
         setError(error.message ?? String(error));
       } finally {
         setLoading(false);
@@ -335,7 +362,7 @@ export function useAnalysisList(analysisClient: AnalysisClient) {
               analysis.analysisId !== id ? analysis : { ...analysis, ...patch }
             )
         );
-      } catch (error) {
+      } catch (error: any) {
         setError(error.message ?? String(error));
       } finally {
         setLoading(false);
@@ -436,6 +463,11 @@ const analysisToStarredVariablesLens = Lens.fromPath<NewAnalysis | Analysis>()([
 const analysisToVariableUISettingsLens = Lens.fromPath<
   NewAnalysis | Analysis
 >()(['descriptor', 'subset', 'uiSettings']);
+
+const analysisToDataTableConfig = Lens.fromPath<NewAnalysis | Analysis>()([
+  'descriptor',
+  'dataTableConfig',
+]);
 
 function updateAnalysis<T>(
   analysis: NewAnalysis | Analysis,

@@ -4,7 +4,7 @@ import {
   FieldTreeNode,
   Filter as WdkFilter,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
-import { DistributionResponse } from '../api/subsetting-api';
+import { DistributionResponse } from '../api/SubsettingClient';
 import { StudyEntity, VariableTreeNode } from '../types/study';
 import { getTree } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
 import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';

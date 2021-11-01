@@ -1,7 +1,3 @@
-/*
- * This is based on FieldList.jsx for typing
- */
-
 import { uniq } from 'lodash';
 import React, {
   useCallback,
@@ -13,6 +9,7 @@ import React, {
   useContext,
 } from 'react';
 import { Link } from 'react-router-dom';
+
 //correct paths as this is a copy of FieldList component at @veupathdb/
 import { scrollIntoViewIfNeeded } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 import {
@@ -32,20 +29,20 @@ import {
   isRange,
   findAncestorFields,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
-//import types
+
 import {
   Field,
   FieldTreeNode,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
-import { cx } from '../../workspace/Utils';
 import { Tooltip } from '@material-ui/core';
 import { HtmlTooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 // import ShowHideVariableContext
-import { VariableDescriptor } from '../types/variable';
-import { ShowHideVariableContext } from '../utils/show-hide-variable-context';
+import { VariableDescriptor } from '../../types/variable';
+import { ShowHideVariableContext } from '../../utils/show-hide-variable-context';
 
-//defining types - some are not used (need cleanup later)
+import { cx } from '../../../workspace/Utils';
+
 interface VariableField {
   type?: string;
   term: string;
@@ -78,22 +75,6 @@ interface FieldNodeProps {
   scrollIntoView: boolean;
 }
 
-type valuesMapType = Record<string, string>;
-
-interface VariableListProps {
-  activeField?: VariableField;
-  onActiveFieldChange: (term: string) => void;
-  valuesMap: valuesMapType;
-  fieldTree: VariableFieldTreeNode;
-  autoFocus: boolean;
-  starredVariables?: VariableDescriptor[];
-  toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
-  disabledFieldIds?: string[];
-  customDisabledVariableMessage?: string;
-  featuredFields: VariableField[];
-  showMultiFilterDescendants: boolean;
-}
-
 interface getNodeSearchStringType {
   field: {
     term: string;
@@ -109,21 +90,59 @@ const Options = {
   featuredVariablesOpen: true,
 };
 
-export default function VariableList(props: VariableListProps) {
-  const {
-    activeField,
-    disabledFieldIds,
-    customDisabledVariableMessage,
-    onActiveFieldChange,
-    valuesMap,
-    fieldTree,
-    featuredFields,
-    autoFocus,
-    starredVariables,
-    toggleStarredVariable,
-    showMultiFilterDescendants,
-  } = props;
+/**
+ * Object whose keys are in the format of `entityID/variableID`
+ * and whose values are the various data options for that entity/variable
+ * combination.
+ *
+ * For example:
+ * {
+ *   "PCO_0000024/ENVO_00000004": "Bangladesh India Kenya Mali Mozambique Pakistan The Gambia"
+ * }
+ */
+type ValuesMap = Record<string, string>;
 
+interface VariableListProps {
+  mode: 'singleSelection' | 'multiSelection';
+  activeField?: VariableField;
+  onActiveFieldChange: (term: string) => void;
+  selectedFields?: Array<VariableField>;
+  onSelectedFieldsChange?: (terms: Array<string>) => void;
+  valuesMap: ValuesMap;
+  fieldTree: VariableFieldTreeNode;
+  autoFocus: boolean;
+  starredVariables?: VariableDescriptor[];
+  toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
+  disabledFieldIds?: string[];
+  customDisabledVariableMessage?: string;
+  featuredFields: VariableField[];
+  hideDisabledFields: boolean;
+  setHideDisabledFields: (hide: boolean) => void;
+  showMultiFilterDescendants: boolean;
+}
+
+// TODO: Needs documentation of general component purpose.
+/**
+ * Provide user
+ */
+export default function VariableList({
+  mode,
+  activeField,
+  onActiveFieldChange,
+  selectedFields = [],
+  onSelectedFieldsChange,
+  disabledFieldIds,
+  valuesMap,
+  fieldTree,
+  featuredFields = [],
+  autoFocus,
+  starredVariables,
+  toggleStarredVariable,
+  hideDisabledFields,
+  setHideDisabledFields,
+  customDisabledVariableMessage,
+  showMultiFilterDescendants,
+}: VariableListProps) {
   // useContext is used here with ShowHideVariableContext
   const {
     showOnlyCompatibleVariables,
@@ -409,99 +428,123 @@ export default function VariableList(props: VariableListProps) {
     </>
   );
 
-  return (
-    <div className={cx('-VariableList')}>
-      {disabledFields.size > 0 && (
-        <div className={cx('-DisabledVariablesToggle')}>
-          <HtmlTooltip
-            css={
-              {
-                /*
-                 * This is needed to address a compiler error.
-                 * Not sure why it's complaining, but here we are...
-                 */
-              }
+  /** Render info on disabled fields, if appropriate. */
+  const renderDisabledFields = () =>
+    disabledFields.size > 0 && (
+      <div className={cx('-DisabledVariablesToggle')}>
+        <HtmlTooltip
+          css={
+            {
+              /*
+               * This is needed to address a compiler error.
+               * Not sure why it's complaining, but here we are...
+               */
             }
-            title={tooltipContent}
-            interactive
-            enterDelay={500}
-            enterNextDelay={500}
-            leaveDelay={0}
-          >
-            <button
-              className="link"
-              type="button"
-              onClick={() => {
-                // useContext
-                setShowOnlyCompatibleVariablesHandler(
-                  !showOnlyCompatibleVariables
-                );
-              }}
-            >
-              <Toggle on={showOnlyCompatibleVariables} /> Only show compatible
-              variables
-            </button>
-          </HtmlTooltip>
-        </div>
-      )}
-      {/* minor bug fix, not to show 0 character for empty allowedFeaturedFields */}
-      {allowedFeaturedFields.length > 0 && (
-        <div className="FeaturedVariables">
-          <details
-            open={Options.featuredVariablesOpen}
-            onToggle={(event: React.SyntheticEvent<HTMLDetailsElement>) => {
-              Options.featuredVariablesOpen = event.currentTarget.open;
+          }
+          title={tooltipContent}
+          interactive
+          enterDelay={500}
+          enterNextDelay={500}
+          leaveDelay={0}
+        >
+          <button
+            className="link"
+            type="button"
+            onClick={() => {
+              // useContext
+              setShowOnlyCompatibleVariablesHandler(
+                !showOnlyCompatibleVariables
+              );
             }}
           >
-            <summary>
-              <h3>Featured variables</h3>
-            </summary>
-            <ul>
-              {allowedFeaturedFields.map((field) => {
-                const isActive = field.term === activeField?.term;
-                const isDisabled = disabledFields.has(field.term);
-                const [entityId, variableId] = field.term.split('/');
-                return (
-                  <li
-                    key={field.term}
-                    className="wdk-CheckboxTreeItem wdk-CheckboxTreeItem__leaf"
-                  >
-                    <div className="wdk-CheckboxTreeNodeContent">
-                      <FieldNode
-                        isMultiFilterDescendant={false}
-                        showMultiFilterDescendants={showMultiFilterDescendants}
-                        field={field}
-                        isActive={isActive}
-                        isDisabled={isDisabled}
-                        customDisabledVariableMessage={
-                          customDisabledVariableMessage
-                        }
-                        searchTerm=""
-                        handleFieldSelect={handleFieldSelect}
-                        isStarred={starredVariableTermsSet.has(field.term)}
-                        starredVariablesLoading={starredVariablesLoading}
-                        onClickStar={() =>
-                          toggleStarredVariable({ entityId, variableId })
-                        }
-                        scrollIntoView={false}
-                      />
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          </details>
-        </div>
-      )}
+            <Toggle on={showOnlyCompatibleVariables} />
+            Only show compatible variables
+          </button>
+        </HtmlTooltip>
+      </div>
+    );
+
+  /**
+   * Render featured fields panel, if data supports it.
+   */
+  const renderFeaturedFields = () => {
+    return featuredFields.length && allowedFeaturedFields.length ? (
+      <div className="FeaturedVariables">
+        <details
+          open={Options.featuredVariablesOpen}
+          onToggle={(event: React.SyntheticEvent<HTMLDetailsElement>) => {
+            Options.featuredVariablesOpen = event.currentTarget.open;
+          }}
+        >
+          <summary>
+            <h3>Featured variables</h3>
+          </summary>
+          <ul>
+            {allowedFeaturedFields.map((field) => {
+              const isActive = field.term === activeField?.term;
+              const isDisabled = disabledFields.has(field.term);
+              const [entityId, variableId] = field.term.split('/');
+              return (
+                <li
+                  key={field.term}
+                  className="wdk-CheckboxTreeItem wdk-CheckboxTreeItem__leaf"
+                >
+                  <div className="wdk-CheckboxTreeNodeContent">
+                    <FieldNode
+                      isMultiFilterDescendant={false}
+                      showMultiFilterDescendants={showMultiFilterDescendants}
+                      field={field}
+                      isActive={isActive}
+                      isDisabled={isDisabled}
+                      customDisabledVariableMessage={
+                        customDisabledVariableMessage
+                      }
+                      searchTerm=""
+                      handleFieldSelect={handleFieldSelect}
+                      isStarred={starredVariableTermsSet.has(field.term)}
+                      starredVariablesLoading={starredVariablesLoading}
+                      onClickStar={() =>
+                        toggleStarredVariable({ entityId, variableId })
+                      }
+                      scrollIntoView={false}
+                    />
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </details>
+      </div>
+    ) : null;
+  };
+
+  return (
+    <div className={cx('-VariableList')}>
+      {renderDisabledFields()}
+      {renderFeaturedFields()}
 
       <CheckboxTree
+        {...(mode === 'multiSelection' && {
+          selectedList: selectedFields.map((field) => field.term),
+          isSelectable: true,
+          isMultiPick: true,
+          onSelectionChange: onSelectedFieldsChange,
+        })}
+        // isMultiPick={true}
+        // selectedList={[
+        //   'PCO_0000024/EUPATH_0000006',
+        //   'PCO_0000024/EUPATH_0000025',
+        //   'EUPATH_0000776/EUPATH_0000335',
+        //   'EUPATH_0000776/EUPATH_0000722',
+        // ]}
+        // isSelectable={true}
+        // onSelectionChange={(ids) => console.log('MEMES', ids)}
         autoFocusSearchBox={autoFocus}
         tree={tree}
         expandedList={expandedNodes}
         getNodeId={getNodeId}
         getNodeChildren={getNodeChildren}
         onExpansionChange={setExpandedNodes}
-        isSelectable={false}
         isSearchable={true}
         searchBoxPlaceholder="Find a variable"
         searchBoxHelp={makeSearchHelpText(
@@ -521,7 +564,7 @@ export default function VariableList(props: VariableListProps) {
 /**
  * Tree of Fields, used to set the active field.
  */
-const getNodeSearchString = (valuesMap: valuesMapType) => {
+const getNodeSearchString = (valuesMap: ValuesMap) => {
   return ({
     field: { term, display = '', description = '', variableName = '' },
   }: getNodeSearchStringType) => {

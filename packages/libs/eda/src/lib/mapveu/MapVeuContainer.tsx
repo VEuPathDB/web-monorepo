@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Route,
   RouteComponentProps,
@@ -10,6 +9,7 @@ import { EDAAnalysisListContainer, EDAWorkspaceContainer } from '../core';
 
 import { AnalysisList } from './MapVeuAnalysisList';
 import { MapVeuAnalysis } from './MapVeuAnalysis';
+
 import { StudyList } from './StudyList';
 import {
   useConfiguredSubsettingClient,

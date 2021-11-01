@@ -13,11 +13,10 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import PluginError from '../PluginError';
 
 // need to set for Barplot
-import {
-  DataClient,
+import DataClient, {
   BarplotResponse,
   BarplotRequestParams,
-} from '../../../api/data-api';
+} from '../../../api/DataClient';
 
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';

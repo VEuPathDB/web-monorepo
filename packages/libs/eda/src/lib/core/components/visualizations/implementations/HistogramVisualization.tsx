@@ -22,10 +22,10 @@ import * as t from 'io-ts';
 import { isEqual, min, max } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
-  DataClient,
   HistogramRequestParams,
   HistogramResponse,
-} from '../../../api/data-api';
+} from '../../../api/DataClient';
+import DataClient from '../../../api/DataClient';
 import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';

@@ -1,9 +1,10 @@
+import { useCallback } from 'react';
+import { useRouteMatch } from 'react-router';
+
 import { find } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { RestrictedPage } from '@veupathdb/study-data-access/lib/data-restriction/RestrictedPage';
 import { useApprovalStatus } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
-import React, { useCallback } from 'react';
-import { useRouteMatch } from 'react-router';
 import { EDAWorkspaceContainer, StudyMetadata } from '../core';
 import {
   useConfiguredAnalysisClient,
@@ -13,10 +14,11 @@ import {
 import { VariableDescriptor } from '../core/types/variable';
 import { EDAWorkspace } from './EDAWorkspace';
 import { cx, findFirstVariable } from './Utils';
+
 import { makeStyles } from '@mui/styles';
 
 const useStyles = makeStyles({
-  root: {
+  workspace: {
     '& .MuiTypography-root': {
       textTransform: 'none',
     },
@@ -30,13 +32,19 @@ interface Props {
   dataServiceUrl: string;
   userServiceUrl: string;
 }
-export function WorkspaceContainer(props: Props) {
+
+/** Allows a user to create a new analysis or edit an existing one. */
+export function WorkspaceContainer({
+  studyId,
+  analysisId,
+  subsettingServiceUrl,
+  dataServiceUrl,
+  userServiceUrl,
+}: Props) {
   const { url } = useRouteMatch();
-  const subsettingClient = useConfiguredSubsettingClient(
-    props.subsettingServiceUrl
-  );
-  const dataClient = useConfiguredDataClient(props.dataServiceUrl);
-  const analysisClient = useConfiguredAnalysisClient(props.userServiceUrl);
+  const subsettingClient = useConfiguredSubsettingClient(subsettingServiceUrl);
+  const dataClient = useConfiguredDataClient(dataServiceUrl);
+  const analysisClient = useConfiguredAnalysisClient(userServiceUrl);
   const makeVariableLink = useCallback(
     (
       {
@@ -62,20 +70,20 @@ export function WorkspaceContainer(props: Props) {
     },
     [url]
   );
-  const approvalStatus = useApprovalStatus(props.studyId, 'analysis');
+  const approvalStatus = useApprovalStatus(studyId, 'analysis');
   const classes = useStyles();
 
   return (
     <RestrictedPage approvalStatus={approvalStatus}>
       <EDAWorkspaceContainer
-        studyId={props.studyId}
-        className={`${cx()} ${classes.root}`}
+        studyId={studyId}
+        className={`${cx()} ${classes.workspace}`}
         analysisClient={analysisClient}
         dataClient={dataClient}
         subsettingClient={subsettingClient}
         makeVariableLink={makeVariableLink}
       >
-        <EDAWorkspace studyId={props.studyId} analysisId={props.analysisId} />
+        <EDAWorkspace studyId={studyId} analysisId={analysisId} />
       </EDAWorkspaceContainer>
     </RestrictedPage>
   );
