@@ -74,6 +74,7 @@ NoTitleFullWidth.args = {
     marginTop: 20,
     marginBottom: 20,
   },
+  interactive: false,
 };
 
 const TemplateWithSelectedRangeControls: Story<Omit<HistogramProps, 'data'>> = (
@@ -469,4 +470,24 @@ StaticDataWithRangeControls.args = {
     ],
   },
   interactive: true,
+};
+
+export const ShowValues = TemplateStaticWithRangeControls.bind({});
+ShowValues.args = {
+  data: {
+    series: [
+      {
+        name: 'penguins',
+        // added 0 for testing purpose
+        bins: [0, 42, 11, 99, 23, 7, 9].map((num, index) => ({
+          binStart: index + 1,
+          binEnd: index + 2,
+          binLabel: `${index + 1} to ${index + 2}`,
+          count: num / 10,
+        })),
+      },
+    ],
+  },
+  interactive: true,
+  showValues: true,
 };
