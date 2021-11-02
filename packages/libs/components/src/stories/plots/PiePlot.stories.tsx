@@ -192,7 +192,7 @@ const facetedData: FacetedData<PiePlotData> = {
 };
 
 interface FacetedStoryProps {
-  data: PiePlotData | FacetedData<PiePlotData>;
+  data: FacetedData<PiePlotData>;
   props: PiePlotProps;
 }
 
@@ -209,13 +209,5 @@ Faceted.args = {
   data: facetedData,
   props: {
     title: 'indoor and outdoor pets',
-  },
-};
-
-export const FacetedPassThru = FacetedTemplate.bind({});
-FacetedPassThru.args = {
-  data: data,
-  props: {
-    title: 'non-faceted data',
   },
 };
