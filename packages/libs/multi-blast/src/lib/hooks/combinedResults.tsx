@@ -8,6 +8,8 @@ import {
 } from 'react';
 import { useSelector } from 'react-redux';
 
+import { saveAs } from 'file-saver';
+
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { MesaState } from '@veupathdb/wdk-client/lib/Components/Mesa';
 import {
@@ -106,10 +108,55 @@ export function useCombinedResultProps({
   );
 
   const downloadTableOptions: CombinedResultProps['downloadTableOptions'] = useMemo(() => {
+    if (!sortedRows.displayable) {
+      return {
+        offer: false,
+      };
+    }
+
     return {
-      offer: false,
+      offer: true,
+      onClickDownloadTable: () => {
+        const combinedReportBlob = new Blob(
+          [
+            [
+              'Accession',
+              'Organism',
+              'Query',
+              'Rank Per Query',
+              'Rank Per Subject',
+              'Align Length',
+              'E-Value',
+              'Score',
+              'Identity',
+              'Query Coverage',
+            ].join(','),
+            '\n',
+            sortedRows.rows
+              .map((row) =>
+                [
+                  row.accession,
+                  row.organism,
+                  row.queryTitle,
+                  row.queryRank,
+                  row.subjectRank,
+                  row.alignmentLength,
+                  row.eValue,
+                  row.score,
+                  row.identity,
+                  row.queryCoverage,
+                ].join(',')
+              )
+              .join('\n'),
+            '\n',
+          ],
+          { type: 'text/csv' }
+        );
+
+        saveAs(combinedReportBlob, `${jobId}-combined-report`);
+      },
     };
-  }, []);
+  }, [jobId, sortedRows]);
 
   return {
     jobId,
