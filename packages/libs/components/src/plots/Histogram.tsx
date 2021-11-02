@@ -166,7 +166,7 @@ const Histogram = makePlotlyPlotComponent(
             name: series.name,
             showlegend: series.name ? true : false, // empty name will disable legend
             // text: binLabels, // TO DO: find a way to show concise bin labels
-            text: showValues ? binCounts.map(String) : binLabels,
+            text: showValues ? binCounts.map(String) : undefined,
             textposition: showValues ? 'auto' : undefined,
             marker: {
               color: series.color,
