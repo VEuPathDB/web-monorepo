@@ -1,5 +1,5 @@
 // load Barplot component
-import Barplot from '@veupathdb/components/lib/plots/Barplot';
+import Barplot, { BarplotProps } from '@veupathdb/components/lib/plots/Barplot';
 import FacetedPlot from '@veupathdb/components/lib/plots/FacetedPlot';
 import {
   BarplotData,
@@ -302,6 +302,28 @@ function BarplotViz(props: VisualizationProps) {
       .then(updateThumbnailRef.current);
   }, [data, vizConfig.dependentAxisLogScale]);
 
+  // these props are passed to either a single plot
+  // or by FacetedPlot to each individual facet plot (where some will be overridden)
+  const plotProps: BarplotProps = {
+    containerStyles: plotDimensions,
+    orientation: 'vertical',
+    barLayout: 'group',
+    displayLegend:
+      data.value &&
+      !isFaceted(data.value) &&
+      (data.value.series.length > 1 || vizConfig.overlayVariable != null),
+    independentAxisLabel: axisLabelWithUnit(variable) ?? 'Main',
+    dependentAxisLabel:
+      vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion',
+    legendTitle: overlayVariable?.displayName,
+    interactive: true,
+    showSpinner: data.pending,
+    dependentAxisLogScale: vizConfig.dependentAxisLogScale,
+    // set dependent axis range for log scale
+    dependentAxisRange: dependentAxisRange,
+    displayLibraryControls: false,
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -355,31 +377,28 @@ function BarplotViz(props: VisualizationProps) {
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <FacetedPlot
-            component={Barplot}
-            data={data.value}
-            props={{
-              containerStyles: plotDimensions,
-              orientation: 'vertical',
-              barLayout: 'group',
-              displayLegend:
-                data.value &&
-                !isFaceted(data.value) &&
-                (data.value.series.length > 1 ||
-                  vizConfig.overlayVariable != null),
-              independentAxisLabel: axisLabelWithUnit(variable) ?? 'Main',
-              dependentAxisLabel:
-                vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion',
-              legendTitle: overlayVariable?.displayName,
-              interactive: true,
-              showSpinner: data.pending,
-              dependentAxisLogScale: vizConfig.dependentAxisLogScale,
-              // set dependent axis range for log scale
-              dependentAxisRange: dependentAxisRange,
-              displayLibraryControls: false,
-              ref: plotRef, // TO DO: handle thumbnails properly!!
-            }}
-          />
+          {isFaceted(data.value) ? (
+            <>
+              <div
+                style={{
+                  background: 'yellow',
+                  border: '3px dashed green',
+                  padding: '10px',
+                }}
+              >
+                Custom legend, birds eye and supplementary tables go here...
+              </div>
+
+              <FacetedPlot
+                component={Barplot}
+                data={data.value}
+                props={plotProps}
+              />
+            </>
+          ) : (
+            <Barplot data={data.value} ref={plotRef} {...plotProps} />
+          )}
+
           <div style={{ display: 'flex', flexDirection: 'row' }}>
             <LabelledGroup label="Y-axis">
               <Switch
