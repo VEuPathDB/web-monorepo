@@ -12,6 +12,7 @@ import {
 } from '@veupathdb/components/lib/types/general';
 import { isTimeDelta } from '@veupathdb/components/lib/types/guards';
 import {
+  FacetedData,
   HistogramData,
   HistogramDataSeries,
 } from '@veupathdb/components/lib/types/plots';
@@ -51,7 +52,7 @@ import {
   omitEmptyNoDataSeries,
   fixLabelForNumberVariables,
   fixLabelsForNumberVariables,
-} from '../../../utils/analysis';
+} from '../../../utils/visualization';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import { useFindEntityAndVariable } from '../../../hooks/study';
 // import variable's metadata-based independent axis range utils
@@ -59,7 +60,11 @@ import { defaultIndependentAxisRange } from '../../../utils/default-independent-
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import PluginError from '../PluginError';
 
-type HistogramDataWithCoverageStatistics = HistogramData & CoverageStatistics;
+type HistogramDataWithCoverageStatistics = (
+  | HistogramData
+  | FacetedData<HistogramData>
+) &
+  CoverageStatistics;
 
 const plotDimensions = {
   width: 750,
@@ -210,9 +215,15 @@ function HistogramViz(props: VisualizationProps) {
     };
   }, [findEntityAndVariable, vizConfig.xAxisVariable]);
 
-  const overlayVariable = useMemo(() => {
-    const { variable } = findEntityAndVariable(vizConfig.overlayVariable) ?? {};
-    return variable;
+  const { overlayVariable, facetVariable } = useMemo(() => {
+    const { variable: overlayVariable } =
+      findEntityAndVariable(vizConfig.overlayVariable) ?? {};
+    const { variable: facetVariable } =
+      findEntityAndVariable(vizConfig.facetVariable) ?? {};
+    return {
+      overlayVariable,
+      facetVariable,
+    };
   }, [findEntityAndVariable, vizConfig.overlayVariable]);
 
   const data = usePromise(
@@ -256,7 +267,8 @@ function HistogramViz(props: VisualizationProps) {
             histogramResponseToData(
               await response,
               xAxisVariable,
-              overlayVariable
+              overlayVariable,
+              facetVariable
             ),
             vocabularyWithMissingData(vocabulary, showMissing)
           ),
@@ -565,7 +577,8 @@ function HistogramPlotWithControls({
 export function histogramResponseToData(
   response: HistogramResponse,
   { type }: Variable,
-  overlayVariable?: Variable
+  overlayVariable?: Variable,
+  facetVariable?: Variable
 ): HistogramDataWithCoverageStatistics {
   if (response.histogram.data.length === 0)
     throw Error(`Expected one or more data series, but got zero`);

@@ -7,7 +7,7 @@ import {
   Visualization,
 } from '../../types/visualization';
 import { testVisualization } from '../visualizations/implementations/TestVisualization';
-// import { histogramVisualization } from '../visualizations/implementations/HistogramVisualization';
+import { histogramVisualization } from '../visualizations/implementations/HistogramVisualization';
 import {
   contTableVisualization,
   twoByTwoVisualization,
@@ -28,7 +28,7 @@ interface Props {
  */
 const visualizationTypes: Record<string, VisualizationType> = {
   testVisualization,
-  //  histogram: histogramVisualization,
+  histogram: histogramVisualization,
   twobytwo: twoByTwoVisualization,
   conttable: contTableVisualization,
   scatterplot: scatterplotVisualization,

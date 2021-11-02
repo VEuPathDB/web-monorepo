@@ -47,7 +47,7 @@ import {
   grayOutLastSeries,
   omitEmptyNoDataSeries,
   vocabularyWithMissingData,
-} from '../../../utils/analysis';
+} from '../../../utils/visualization';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 // use lodash instead of Math.min/max
