@@ -1,6 +1,7 @@
 import Histogram, {
   HistogramProps,
 } from '@veupathdb/components/lib/plots/Histogram';
+import FacetedPlot from '@veupathdb/components/lib/plots/FacetedPlot';
 import BinWidthControl from '@veupathdb/components/lib/components/plotControls/BinWidthControl';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
@@ -10,7 +11,7 @@ import {
   NumberOrTimeDeltaRange,
   TimeDelta,
 } from '@veupathdb/components/lib/types/general';
-import { isTimeDelta } from '@veupathdb/components/lib/types/guards';
+import { isFaceted, isTimeDelta } from '@veupathdb/components/lib/types/guards';
 import {
   FacetedData,
   HistogramData,
@@ -31,7 +32,7 @@ import {
   values,
   map,
 } from 'lodash';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   DataClient,
   HistogramRequestParams,
@@ -234,7 +235,11 @@ function HistogramViz(props: VisualizationProps) {
       overlayVariable,
       facetVariable,
     };
-  }, [findEntityAndVariable, vizConfig.overlayVariable]);
+  }, [
+    findEntityAndVariable,
+    vizConfig.overlayVariable,
+    vizConfig.facetVariable,
+  ]);
 
   const data = usePromise(
     useCallback(async (): Promise<
@@ -267,9 +272,13 @@ function HistogramViz(props: VisualizationProps) {
         params
       );
       const showMissing = vizConfig.showMissingness && overlayVariable != null;
-      const vocabulary = fixLabelsForNumberVariables(
+      const overlayVocabulary = fixLabelsForNumberVariables(
         overlayVariable?.vocabulary,
         overlayVariable
+      );
+      const facetVocabulary = fixLabelsForNumberVariables(
+        facetVariable?.vocabulary,
+        facetVariable
       );
       return omitEmptyNoDataSeries(
         grayOutLastSeries(
@@ -280,7 +289,8 @@ function HistogramViz(props: VisualizationProps) {
               overlayVariable,
               facetVariable
             ),
-            vocabularyWithMissingData(vocabulary, showMissing)
+            vocabularyWithMissingData(overlayVocabulary, showMissing),
+            vocabularyWithMissingData(facetVocabulary, showMissing)
           ),
           showMissing
         ),
@@ -300,6 +310,7 @@ function HistogramViz(props: VisualizationProps) {
       computation.descriptor.type,
       xAxisVariable,
       overlayVariable,
+      facetVariable,
     ])
   );
 
@@ -310,13 +321,26 @@ function HistogramViz(props: VisualizationProps) {
   );
 
   // find max of stacked array, especially with overlayVariable
-  const defaultDependentAxisMinMax = useMemo(
-    () =>
-      data.value && data.value.series.length > 0
+  const defaultDependentAxisMinMax = useMemo(() => {
+    if (isFaceted(data.value)) {
+      const facetMinMaxes =
+        data?.value?.facets != null
+          ? data.value.facets.map((facet) =>
+              findMinMaxOfStackedArray(facet.data.series)
+            )
+          : undefined;
+      return (
+        facetMinMaxes && {
+          min: min(map(facetMinMaxes, 'min')),
+          max: max(map(facetMinMaxes, 'max')),
+        }
+      );
+    } else {
+      return data.value && data.value.series.length > 0
         ? findMinMaxOfStackedArray(data.value.series)
-        : undefined,
-    [data]
-  );
+        : undefined;
+    }
+  }, [data]);
 
   // set default dependent axis range for better displaying tick labels in log-scale
   const defaultDependentAxisRange =
@@ -352,11 +376,17 @@ function HistogramViz(props: VisualizationProps) {
               label: 'Overlay',
               role: 'stratification',
             },
+            {
+              name: 'facetVariable',
+              label: 'Facet',
+              role: 'stratification',
+            },
           ]}
           entities={entities}
           selectedVariables={{
             xAxisVariable: vizConfig.xAxisVariable,
             overlayVariable: vizConfig.overlayVariable,
+            facetVariable: vizConfig.facetVariable,
           }}
           onChange={handleInputVariableChange}
           constraints={dataElementConstraints}
@@ -392,6 +422,7 @@ function HistogramViz(props: VisualizationProps) {
         barLayout={'stack'}
         displayLegend={
           data.value &&
+          !isFaceted(data.value) &&
           (data.value.series.length > 1 || vizConfig.overlayVariable != null)
         }
         outputEntity={outputEntity}
@@ -414,6 +445,8 @@ function HistogramViz(props: VisualizationProps) {
         showMissingness={vizConfig.showMissingness ?? false}
         overlayVariable={vizConfig.overlayVariable}
         overlayLabel={axisLabelWithUnit(overlayVariable)}
+        facetVariable={vizConfig.facetVariable}
+        facetLabel={axisLabelWithUnit(facetVariable)}
         legendTitle={axisLabelWithUnit(overlayVariable)}
         dependentAxisLabel={
           vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion'
@@ -423,7 +456,8 @@ function HistogramViz(props: VisualizationProps) {
   );
 }
 
-type HistogramPlotWithControlsProps = HistogramProps & {
+type HistogramPlotWithControlsProps = Omit<HistogramProps, 'data'> & {
+  data?: HistogramData | FacetedData<HistogramData>;
   onBinWidthChange: (newBinWidth: NumberOrTimeDelta) => void;
   onDependentAxisLogScaleChange: (newState?: boolean) => void;
   filters?: Filter[];
@@ -431,6 +465,8 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   independentAxisVariable?: VariableDescriptor;
   overlayVariable?: VariableDescriptor;
   overlayLabel?: string;
+  facetVariable?: VariableDescriptor;
+  facetLabel?: string;
   valueSpec: ValueSpec;
   onValueSpecChange: (newValueSpec: ValueSpec) => void;
   showMissingness: boolean;
@@ -451,6 +487,8 @@ function HistogramPlotWithControls({
   independentAxisVariable,
   overlayVariable,
   overlayLabel,
+  facetVariable,
+  facetLabel,
   valueSpec,
   onValueSpecChange,
   showMissingness,
@@ -481,6 +519,9 @@ function HistogramPlotWithControls({
 
   const widgetHeight = '4em';
 
+  // controls need the bin info from just one facet
+  const data0 = isFaceted(data) ? data.facets[0].data : data;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
@@ -491,15 +532,36 @@ function HistogramPlotWithControls({
           alignItems: 'flex-start',
         }}
       >
-        <Histogram
-          {...histogramProps}
-          ref={plotRef}
-          data={data}
-          opacity={opacity}
-          displayLibraryControls={displayLibraryControls}
-          showValues={false}
-          barLayout={barLayout}
-        />
+        {isFaceted(data) ? (
+          <>
+            <div
+              style={{
+                background: 'yellow',
+                border: '3px dashed green',
+                padding: '10px',
+              }}
+            >
+              Custom legend, birds eye and supplementary tables go here...
+            </div>
+
+            <FacetedPlot
+              component={Histogram}
+              data={data}
+              props={histogramProps}
+            />
+          </>
+        ) : (
+          <Histogram
+            {...histogramProps}
+            ref={plotRef}
+            data={data}
+            opacity={opacity}
+            displayLibraryControls={displayLibraryControls}
+            showValues={false}
+            barLayout={barLayout}
+          />
+        )}
+
         <div className="viz-plot-info">
           <BirdsEyeView
             completeCasesAllVars={completeCasesAllVars}
@@ -524,6 +586,11 @@ function HistogramPlotWithControls({
                 role: 'Overlay',
                 display: overlayLabel,
                 variable: overlayVariable,
+              },
+              {
+                role: 'Facet',
+                display: facetLabel,
+                variable: facetVariable,
               },
             ]}
           />
@@ -553,18 +620,18 @@ function HistogramPlotWithControls({
         </LabelledGroup>
         <LabelledGroup label="X-axis">
           <BinWidthControl
-            binWidth={data?.binWidth}
+            binWidth={data0?.binWidth}
             onBinWidthChange={onBinWidthChange}
-            binWidthRange={data?.binWidthRange}
-            binWidthStep={data?.binWidthStep}
-            valueType={data?.valueType}
+            binWidthRange={data0?.binWidthRange}
+            binWidthStep={data0?.binWidthStep}
+            valueType={data0?.valueType}
             binUnit={
-              data?.valueType === 'date'
-                ? (data?.binWidth as TimeDelta).unit
+              data0?.valueType === 'date'
+                ? (data0?.binWidth as TimeDelta).unit
                 : undefined
             }
             binUnitOptions={
-              data?.valueType === 'date'
+              data0?.valueType === 'date'
                 ? ['day', 'week', 'month', 'year']
                 : undefined
             }
@@ -692,6 +759,7 @@ function getRequestParams(
       : undefined,
     valueSpec,
     overlayVariable,
+    facetVariable,
     xAxisVariable,
   } = vizConfig;
 
@@ -713,6 +781,7 @@ function getRequestParams(
       xAxisVariable,
       barMode: 'stack',
       overlayVariable,
+      facetVariable: [facetVariable],
       valueSpec,
       ...binSpec,
       showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
@@ -721,10 +790,27 @@ function getRequestParams(
 }
 
 function reorderData(
-  data: HistogramDataWithCoverageStatistics,
-  overlayVocabulary: string[] = []
-) {
+  data: HistogramDataWithCoverageStatistics | HistogramData,
+  overlayVocabulary: string[] = [],
+  facetVocabulary: string[] = []
+): HistogramDataWithCoverageStatistics | HistogramData {
   if (overlayVocabulary.length > 0) {
+    if (isFaceted(data)) {
+      return {
+        ...data,
+        facets: data.facets
+          .sort(({ label }) => facetVocabulary.indexOf(label))
+          .map(({ label, data }) => ({
+            label,
+            data: reorderData(
+              data,
+              overlayVocabulary,
+              facetVocabulary
+            ) as HistogramData,
+          })),
+      };
+    }
+
     // for each value in the overlay vocabulary's correct order
     // find the index in the series where series.name equals that value
     const overlayValues = data.series.map((series) => series.name);

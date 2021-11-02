@@ -55,7 +55,7 @@ import {
   fixLabelForNumberVariables,
   fixLabelsForNumberVariables,
   vocabularyWithMissingData,
-} from '../../../utils/analysis';
+} from '../../../utils/visualization';
 import { gray } from '../colors';
 import {
   ColorPaletteDefault,
