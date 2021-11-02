@@ -4,7 +4,6 @@
     "src"
   ],
   "exclude": [
-    "./src/lib/core/components/visualizations/implementations/BoxplotVisualization.tsx",
-    "./src/lib/core/components/visualizations/implementations/HistogramVisualization.tsx"
+    "./src/lib/core/components/visualizations/implementations/BoxplotVisualization.tsx"
   ],
 }

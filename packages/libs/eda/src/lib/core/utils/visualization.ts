@@ -7,6 +7,8 @@ import {
 import { Variable } from '../types/study';
 import { CoverageStatistics } from '../types/visualization';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
+import { BarplotResponse, HistogramResponse } from '../api/data-api';
+import { groupBy } from 'lodash';
 
 // was: BarplotData | HistogramData | { series: BoxplotData };
 type SeriesWithStatistics<T> = T & CoverageStatistics;
@@ -134,4 +136,20 @@ export function vocabularyWithMissingData(
   return includeMissingData && vocabulary.length
     ? [...vocabulary, 'No data']
     : vocabulary;
+}
+
+export function groupResponseDataByFacet(
+  responseData:
+    | BarplotResponse['barplot']['data']
+    | HistogramResponse['histogram']['data'],
+  facetVariable: Variable
+) {
+  return groupBy(responseData, (data) =>
+    data.facetVariableDetails && data.facetVariableDetails.length === 1
+      ? fixLabelForNumberVariables(
+          data.facetVariableDetails[0].value,
+          facetVariable
+        )
+      : undefined
+  );
 }
