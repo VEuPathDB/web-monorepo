@@ -1,30 +1,34 @@
 import { useEffect, useState } from 'react';
-import { Link, useHistory, useRouteMatch } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import Path from 'path';
-import { cx } from './Utils';
-import { useStudyRecord, AnalysisState, DEFAULT_ANALYSIS_NAME } from '../core';
-import { getAnalysisId, isSavedAnalysis } from '../core/utils/analysis';
-import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { Button, Tooltip, Icon, makeStyles } from '@material-ui/core';
-import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
-import { AnalysisNameDialog } from './AnalysisNameDialog';
+
+// Components
 import {
   Download,
   Table,
 } from '@veupathdb/core-components/dist/components/icons';
+import SwissArmyButton from '@veupathdb/core-components/dist/components/buttons/SwissArmyButton';
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { AnalysisNameDialog } from './AnalysisNameDialog';
+import AddIcon from '@material-ui/icons/Add';
 
-// Add custom styling for ebrc icons for better alignment in buttons
-const useStyles = makeStyles((theme) => ({
-  ebrcStartIcon: {
-    marginTop: -4,
-  },
-}));
+// Hooks
+import { useStudyRecord } from '../core/hooks/workspace';
+import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
+
+// Definitions & Utilities
+import { cx } from './Utils';
+import { AnalysisState, DEFAULT_ANALYSIS_NAME } from '../core';
+import { LinkAttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { Action } from '@veupathdb/web-common/lib/App/DataRestriction/DataRestrictionUtils';
+import { getAnalysisId, isSavedAnalysis } from '../core/utils/analysis';
 
 interface EDAWorkspaceHeadingProps {
   /** Optional AnalysisState for "New analysis" button functionality */
   analysisState?: AnalysisState;
 }
 
+/** Study Header Component */
 export function EDAWorkspaceHeading({
   analysisState,
 }: EDAWorkspaceHeadingProps) {
@@ -38,7 +42,6 @@ export function EDAWorkspaceHeading({
     : Path.resolve(url, '../new');
   const history = useHistory();
   const redirectToNewAnalysis = () => history.push(redirectURL);
-  const iconClasses = useStyles();
 
   const analysisId = getAnalysisId(analysis);
 
@@ -53,64 +56,54 @@ export function EDAWorkspaceHeading({
         <div className={cx('-Linkouts')}>
           {/* {studyRecord.attributes.bulk_download_url && (
             <div>
-              <Tooltip title="Download study files">
-                <Button
-                  variant="text"
-                  color="primary"
-                  className="Linkouts-buttons"
-                  classes={{ startIcon: iconClasses.ebrcStartIcon }}
-                  startIcon={<Download/>}
-                  type="button"
-                  onClick={() => {
-                    attemptAction(Action.download, {
-                      studyId: studyRecord.id[0].value,
-                      onAllow: () => {
-                        window.location.href = (studyRecord.attributes
-                          .bulk_download_url as LinkAttributeValue).url;
-                      },
-                    });
-                  }}
-                >
-                  &nbsp;Download
-                </Button>
-              </Tooltip>
+              <SwissArmyButton
+                text="Download"
+                tooltip="Download study files"
+                icon={Download}
+                stylePreset="borderless"
+                onPress={() => {
+                  attemptAction(Action.download, {
+                    studyId: studyRecord.id[0].value,
+                    onAllow: () => {
+                      window.location.href = (studyRecord.attributes
+                        .bulk_download_url as LinkAttributeValue).url;
+                    },
+                  });
+                }}
+              />
             </div>
           )} */}
           <div>
-            <Tooltip title="Create a new analysis">
-              <Button
-                variant="text"
-                color="primary"
-                className="Linkouts-buttons"
-                startIcon={<Icon className="fa fa-plus fa-fw" />}
-                onClick={
-                  /** If we're in an unnamed saved analysis, show the renaming dialog.
-                   *  Otherwise, just go straight to the new analysis.
-                   */
-                  isSavedAnalysis(analysis) &&
-                  analysis.displayName === DEFAULT_ANALYSIS_NAME
-                    ? () => setDialogIsOpen(true)
-                    : redirectToNewAnalysis
-                }
-              >
-                New analysis
-              </Button>
-            </Tooltip>
+            <SwissArmyButton
+              text="New Analysis"
+              tooltip="Create a new analysis"
+              stylePreset="borderless"
+              size="medium"
+              // @ts-ignore
+              icon={AddIcon}
+              onPress={
+                /** If (1) there is no analysis, (2) we're in an unsaved new
+                 * analysis (here `analysis` is still undefined in this case),
+                 * or (3) we're in a renamed analysis, just go straight to the
+                 * new analysis. Otherwise, show the renaming dialog. */
+                analysis && analysis.displayName === DEFAULT_ANALYSIS_NAME
+                  ? () => setDialogIsOpen(true)
+                  : redirectToNewAnalysis
+              }
+            />
           </div>
           <div>
-            <Tooltip title="View all your analyses of this study">
-              <Button
-                variant="text"
-                color="primary"
-                className="Linkouts-buttons"
-                classes={{ startIcon: iconClasses.ebrcStartIcon }}
-                startIcon={<Table />}
-                component={Link}
-                to={'/eda?s=' + encodeURIComponent(studyRecord.displayName)}
-              >
-                My analyses
-              </Button>
-            </Tooltip>
+            <SwissArmyButton
+              text="My analyses"
+              tooltip="View all your analyses of this study"
+              stylePreset="borderless"
+              icon={Table}
+              onPress={() =>
+                history.push(
+                  '/eda?s=' + encodeURIComponent(studyRecord.displayName)
+                )
+              }
+            />
           </div>
         </div>
       </div>

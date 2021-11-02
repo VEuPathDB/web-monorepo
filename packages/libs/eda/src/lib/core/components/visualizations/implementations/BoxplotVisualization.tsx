@@ -8,11 +8,10 @@ import * as t from 'io-ts';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 // need to set for Boxplot
-import {
-  DataClient,
+import DataClient, {
   BoxplotRequestParams,
   BoxplotResponse,
-} from '../../../api/data-api';
+} from '../../../api/DataClient';
 
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
@@ -250,7 +249,7 @@ function BoxplotViz(props: VisualizationProps) {
       yAxisVariable,
       overlayVariable,
       computation.descriptor.type,
-      visualization.descriptor.type,
+      outputEntity?.id,
     ])
   );
 

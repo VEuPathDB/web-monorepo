@@ -1,70 +1,27 @@
-/* eslint-disable @typescript-eslint/no-redeclare */
+import { array, number, type } from 'io-ts';
+import { memoize } from 'lodash';
+import { saveAs } from 'file-saver';
+
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import {
   createJsonRequest,
   FetchClientWithCredentials,
   ioTransformer,
 } from '@veupathdb/http-utils';
+
+import { Filter } from '../../types/filter';
+import { StudyMetadata, StudyOverview } from '../../types/study';
+
 import {
-  array,
-  number,
-  partial,
-  intersection,
-  union,
-  string,
-  type,
-  TypeOf,
-} from 'io-ts';
-import { memoize } from 'lodash';
-import { Filter } from '../types/filter';
-import { StudyMetadata, StudyOverview } from '../types/study';
-import { WdkService } from '@veupathdb/wdk-client/lib/Core';
+  DistributionRequestParams,
+  DistributionResponse,
+  StudyResponse,
+  TabularDataRequestParams,
+  TabularDataResponse,
+} from './types';
 
-export type StudyResponse = TypeOf<typeof StudyResponse>;
-
-export const StudyResponse = type({
-  study: StudyMetadata,
-});
-
-export interface DistributionRequestParams {
-  filters: Filter[];
-  binSpec?: {
-    displayRangeMin: number | string;
-    displayRangeMax: number | string;
-    binWidth: number;
-    binUnits?: string;
-  };
-  valueSpec: 'count';
-  /* | 'proportion' FIXME only count works right now */
-}
-
-export type DistributionResponse = TypeOf<typeof DistributionResponse>;
-
-export const DistributionResponse = type({
-  histogram: array(
-    type({
-      value: number,
-      binStart: string,
-      binEnd: string,
-      binLabel: string,
-    })
-  ),
-  statistics: intersection([
-    partial({
-      subsetMin: union([number, string]),
-      subsetMax: union([number, string]),
-      subsetMean: union([number, string]),
-    }),
-    type({
-      numVarValues: number,
-      numDistinctValues: number,
-      numDistinctEntityRecords: number,
-      numMissingCases: number,
-    }),
-  ]),
-});
-
-export class SubsettingClient extends FetchClientWithCredentials {
+export default class SubsettingClient extends FetchClientWithCredentials {
   static getClient = memoize(
     (baseUrl: string, wdkService: WdkService): SubsettingClient =>
       new SubsettingClient({ baseUrl }, wdkService)
@@ -82,6 +39,7 @@ export class SubsettingClient extends FetchClientWithCredentials {
       })
     );
   }
+
   getStudyMetadata(studyId: string): Promise<StudyMetadata> {
     return this.fetch(
       createJsonRequest({
@@ -123,6 +81,51 @@ export class SubsettingClient extends FetchClientWithCredentials {
       })
     );
   }
+
+  getTabularData(
+    studyId: string,
+    entityId: string,
+    params: TabularDataRequestParams
+  ): Promise<TabularDataResponse> {
+    return this.fetch(
+      createJsonRequest({
+        method: 'POST',
+        path: `/studies/${studyId}/entities/${entityId}/tabular`,
+        body: params,
+        headers: {
+          accept: 'application/json',
+        },
+        transformResponse: ioTransformer(TabularDataResponse),
+      })
+    );
+  }
+
+  /**
+   * Method to download tabular data. Note that this using native `fetch` instead
+   * of the customized fetch call in `DataClient` because there would need to
+   * be some underlying changes that would need to be made to it.
+   */
+  tabularDataDownload(
+    studyId: string,
+    entityId: string,
+    params: TabularDataRequestParams
+  ): void {
+    fetch(
+      `/eda-subsetting-service/studies/${studyId}/entities/${entityId}/tabular`,
+      {
+        ...this.init,
+        method: 'POST',
+        body: JSON.stringify(params),
+        headers: {
+          accept: 'text/tab-separated-values',
+          'content-type': 'application/json',
+          ...this.init.headers,
+        },
+      }
+    )
+      .then((response) => response.blob())
+      .then((blob) => saveAs(blob, 'dataset.tsv'));
+  }
 }
 
 // !!MUTATION!! order variables in-place
@@ -144,3 +147,5 @@ function orderVariables(study: StudyMetadata) {
     });
   return study;
 }
+
+export * from './types';

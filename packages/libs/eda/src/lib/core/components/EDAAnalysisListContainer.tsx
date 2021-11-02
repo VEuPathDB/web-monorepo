@@ -1,12 +1,14 @@
 import React from 'react';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core';
+
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
+
 import { useWdkStudyRecord, useStudyMetadata } from '../hooks/study';
 import { AnalysisClient } from '../api/analysis-api';
-import { SubsettingClient } from '../api/subsetting-api';
-import { DataClient } from '../api/data-api';
+import SubsettingClient from '../api/SubsettingClient';
+import DataClient from '../api/DataClient';
 import { WorkspaceContext } from '../context/WorkspaceContext';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core';
 import { workspaceTheme } from './workspaceTheme';
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
 const theme = createMuiTheme(workspaceTheme);
 interface Props {

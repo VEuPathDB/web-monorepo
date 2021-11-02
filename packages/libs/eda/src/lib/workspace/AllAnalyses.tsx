@@ -35,10 +35,10 @@ import { OverflowingTextCell } from '@veupathdb/wdk-client/lib/Views/Strategy/Ov
 import {
   AnalysisClient,
   AnalysisSummary,
-  SubsettingClient,
   useAnalysisList,
   usePinnedAnalyses,
 } from '../core';
+import SubsettingClient from '../core/api/SubsettingClient';
 import { workspaceTheme } from '../core/components/workspaceTheme';
 import { useDebounce } from '../core/hooks/debouncing';
 import { useWdkStudyRecords } from '../core/hooks/study';

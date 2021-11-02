@@ -15,13 +15,26 @@ export const DerivedVariable = t.unknown;
 export type VariableUISetting = t.TypeOf<typeof VariableUISetting>;
 export const VariableUISetting = t.UnknownRecord;
 
+/** Define types for Subsetting Data Table */
+export type DataTableConfig = t.TypeOf<typeof DataTableConfig>;
+export const DataTableConfig = t.record(
+  t.string,
+  t.type({ variables: t.array(VariableDescriptor), sorting: t.unknown })
+);
+
 export type AnalysisBase = t.TypeOf<typeof AnalysisBase>;
 export const AnalysisBase = t.intersection([
   t.type({
+    /**
+     * Not sure yet, but this probably refers to the study for
+     * which the analysis is taking place. COULD also be a unique ID
+     * for the analysis.
+     */
     studyId: t.string,
     studyVersion: t.string,
     apiVersion: t.string,
     isPublic: t.boolean,
+    /** User supplied same for the analysis. */
     displayName: t.string,
   }),
   t.partial({
@@ -59,16 +72,9 @@ export const AnalysisDescriptor = t.type({
     uiSettings: t.record(t.string, VariableUISetting),
   }),
   computations: t.array(Computation),
+  /** IDs of variables 'starred' by the user. */
   starredVariables: t.array(VariableDescriptor),
-  dataTableConfig: t.type({
-    variables: t.array(VariableDescriptor),
-    sorting: t.array(
-      t.type({
-        key: t.string,
-        direction: t.keyof({ asc: null, desc: null }),
-      })
-    ),
-  }),
+  dataTableConfig: DataTableConfig,
   derivedVariables: t.array(DerivedVariable),
 });
 
@@ -108,10 +114,7 @@ export function makeNewAnalysis(studyId: string): NewAnalysis {
         uiSettings: {},
       },
       starredVariables: [],
-      dataTableConfig: {
-        variables: [],
-        sorting: [],
-      },
+      dataTableConfig: {},
       derivedVariables: [],
       computations: [
         {

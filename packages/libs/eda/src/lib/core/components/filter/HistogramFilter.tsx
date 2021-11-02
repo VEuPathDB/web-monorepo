@@ -35,7 +35,7 @@ import { gray, red } from './colors';
 import { HistogramVariable } from './types';
 import { fullISODateRange, padISODateTime } from '../../utils/date-conversion';
 import { getDistribution } from './util';
-import { DistributionResponse } from '../../api/subsetting-api';
+import { DistributionResponse } from '../../api/SubsettingClient';
 // reusable util for computing truncationConfig
 import { truncationConfig } from '../../utils/truncation-config-utils';
 // use Notification for truncation warning message
@@ -302,49 +302,46 @@ export function HistogramFilter(props: Props) {
     >
       {data.error && <pre>{String(data.error)}</pre>}
       <div>
-        {fgSummaryStats && (
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}
-          >
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            minHeight: '1.5em',
+          }}
+        >
+          {fgSummaryStats && (
             <div className="histogram-summary-stats">
-              {fgSummaryStats.min != null && (
-                <>
-                  <b>Min:</b>{' '}
-                  {formatStatValue(fgSummaryStats.min, variable.type)} &emsp;
-                </>
-              )}
-              {fgSummaryStats.mean != null && (
-                <>
-                  <b>Mean:</b>{' '}
-                  {formatStatValue(fgSummaryStats.mean, variable.type)} &emsp;
-                </>
-              )}
-              {fgSummaryStats.median != null && (
+              <>
+                <b>Min:</b> {formatStatValue(fgSummaryStats.min, variable.type)}{' '}
+                &emsp;
+              </>
+              <>
+                <b>Mean:</b>{' '}
+                {formatStatValue(fgSummaryStats.mean, variable.type)} &emsp;
+              </>
+              {/*
                 <>
                   <b>Median:</b>{' '}
                   {formatStatValue(fgSummaryStats.median, variable.type)} &emsp;
                 </>
-              )}
-              {fgSummaryStats.max != null && (
-                <>
-                  <b>Max:</b>{' '}
-                  {formatStatValue(fgSummaryStats.max, variable.type)} &emsp;
-                </>
-              )}
+              */}
+              <>
+                <b>Max:</b> {formatStatValue(fgSummaryStats.max, variable.type)}{' '}
+                &emsp;
+              </>
             </div>
+          )}
+          {data.value?.hasDataEntitiesCount != null && (
             <UnknownCount
               activeFieldState={{
-                summary: { internalsCount: data.value?.hasDataEntitiesCount },
+                summary: { internalsCount: data.value.hasDataEntitiesCount },
               }}
               dataCount={totalEntityCount}
               displayName={entity.displayNamePlural ?? entity.displayName}
             />
-          </div>
-        )}
+          )}
+        </div>
         <HistogramPlotWithControls
           key={filters?.length ?? 0}
           filter={filter}
@@ -735,12 +732,12 @@ function distributionResponseToDataSeries(
     color,
     bins,
     summary: {
-      min: response.statistics.subsetMin!,
-      mean: response.statistics.subsetMean!,
-      max: response.statistics.subsetMax!,
+      min: response.statistics.subsetMin,
+      mean: response.statistics.subsetMean,
+      max: response.statistics.subsetMax,
+      median: undefined!,
       q1: undefined!,
       q3: undefined!,
-      median: undefined!,
     },
   };
 }
@@ -775,9 +772,10 @@ function tidyBinLabel(
 
 // TODO [2021-07-10] - Use variable.precision when avaiable
 function formatStatValue(
-  value: string | number,
+  value: string | number | undefined,
   type: HistogramVariable['type']
 ) {
+  if (value == null) return 'N/A';
   return type === 'date'
     ? String(value).replace(/T.*$/, '')
     : Number(value).toLocaleString(undefined, {

@@ -13,7 +13,7 @@ import { NumberVariable, StudyEntity, StudyMetadata } from '../../types/study';
 import { fromEdaFilter } from '../../utils/wdk-filter-param-adapter';
 import { TableVariable } from './types';
 import { getDistribution } from './util';
-import { DistributionResponse } from '../../api/subsetting-api';
+import { DistributionResponse } from '../../api/SubsettingClient';
 import { gray, red } from './colors';
 
 type Props = {

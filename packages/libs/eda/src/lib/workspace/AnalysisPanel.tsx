@@ -18,7 +18,7 @@ import {
 } from 'react-router';
 import { ComputationRoute } from './ComputationRoute';
 import { DefaultVariableRedirect } from './DefaultVariableRedirect';
-import { Subsetting } from './Subsetting';
+import Subsetting from './Subsetting';
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { uniq } from 'lodash';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
@@ -36,9 +36,20 @@ interface Props {
   hideCopyAndSave?: boolean;
 }
 
-export function AnalysisPanel(props: Props) {
-  const { analysisState, hideCopyAndSave = false } = props;
+/**
+ * Welcome citizen! You have finally transvered the many layered labyrinth
+ * of components to the place where an analysis is actually rendered.
+ *
+ * However, you aren't really done yet... there is some interesting
+ * stuff going on here... it is a component that is displaying UI but
+ * also acting as a router that toggles some of the displayed content.
+ */
+export function AnalysisPanel({
+  analysisState,
+  hideCopyAndSave = false,
+}: Props) {
   const studyRecord = useStudyRecord();
+
   const {
     status,
     analysis,
@@ -48,6 +59,7 @@ export function AnalysisPanel(props: Props) {
     deleteAnalysis,
     setFilters,
   } = analysisState;
+
   const { url: routeBase } = useRouteMatch();
   const totalCounts = useEntityCounts();
   const filters = analysis?.descriptor.subset.descriptor;
