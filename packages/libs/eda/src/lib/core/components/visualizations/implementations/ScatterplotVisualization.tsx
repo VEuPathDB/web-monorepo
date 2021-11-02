@@ -539,6 +539,8 @@ function ScatterplotViz(props: VisualizationProps) {
           legendTitle={axisLabelWithUnit(overlayVariable)}
           //DKDK pass checked state of legend checkbox to PlotlyPlot
           checkedLegendItems={checkedLegendItems}
+          setCheckedLegendItems={setCheckedLegendItems}
+          legendItems={legendItems}
         />
 
         {/* DKDK custom legend */}
@@ -611,6 +613,9 @@ type ScatterplotWithControlsProps = XYPlotProps & {
   plotOptions: string[];
   // add disabledList
   disabledList: string[];
+  //DKDK legend checkbox
+  setCheckedLegendItems: (checkedItems: string[]) => void;
+  legendItems: LegendItemsProps[];
 };
 
 function ScatterplotWithControls({
@@ -624,6 +629,9 @@ function ScatterplotWithControls({
   // add disabledList
   disabledList,
   updateThumbnail,
+  //DKDK legend checkbox
+  setCheckedLegendItems,
+  legendItems,
   ...scatterplotProps
 }: ScatterplotWithControlsProps) {
   // TODO Use UIState
@@ -643,10 +651,18 @@ function ScatterplotWithControls({
     updateThumbnailRef.current = updateThumbnail;
   });
 
+  //DKDK add async/await for correct thumbnail capture
   useEffect(() => {
-    plotRef.current
-      ?.toImage({ format: 'svg', ...plotDimensions })
-      .then(updateThumbnailRef.current);
+    (async () => {
+      if (data != null && data.series.length > 1) {
+        // const nameArray = data.value?.dataSetProcess.series.map((data: any) => data.name);
+        // use this to set all checked
+        await setCheckedLegendItems(legendItems.map((item) => item.label));
+      }
+      await plotRef.current
+        ?.toImage({ format: 'svg', ...plotDimensions })
+        .then(updateThumbnailRef.current);
+    })();
   }, [data]);
 
   return (

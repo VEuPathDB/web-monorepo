@@ -345,7 +345,7 @@ function HistogramViz(props: VisualizationProps) {
             return {
               label: data.name,
               // need a way to appropriately make marker info
-              // histogram plot does not have mode, so set to square for now
+              // histogram plot does not have mode, so set to square for now but TO-DO
               marker: 'square',
               //DKDK think markerColor needs to be added here
               markerColor: 'markerColor',
@@ -537,11 +537,19 @@ function HistogramPlotWithControls({
     updateThumbnailRef.current = updateThumbnail;
   });
 
+  //DKDK add async/await for correct thumbnail capture
   useEffect(() => {
-    plotRef.current
-      ?.toImage({ format: 'svg', ...plotDimensions })
-      .then(updateThumbnailRef.current);
-  }, [data, histogramProps.dependentAxisLogScale]);
+    (async () => {
+      if (data != null && data.series.length > 1) {
+        // const nameArray = data.value?.dataSetProcess.series.map((data: any) => data.name);
+        // use this to set all checked
+        await setCheckedLegendItems(legendItems.map((item) => item.label));
+      }
+      await plotRef.current
+        ?.toImage({ format: 'svg', ...plotDimensions })
+        .then(updateThumbnailRef.current);
+    })();
+  }, [data]);
 
   const widgetHeight = '4em';
 
