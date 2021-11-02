@@ -20,7 +20,17 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import { isEqual, min, max } from 'lodash';
+import {
+  isEqual,
+  min,
+  max,
+  groupBy,
+  mapValues,
+  size,
+  head,
+  values,
+  map,
+} from 'lodash';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   DataClient,
@@ -583,6 +593,15 @@ export function histogramResponseToData(
   if (response.histogram.data.length === 0)
     throw Error(`Expected one or more data series, but got zero`);
 
+  const facetGroupedResponseData = groupBy(response.histogram.data, (data) =>
+    data.facetVariableDetails && data.facetVariableDetails.length === 1
+      ? fixLabelForNumberVariables(
+          data.facetVariableDetails[0].value,
+          facetVariable
+        )
+      : undefined
+  );
+
   const binWidth =
     type === 'number' || type === 'integer'
       ? response.histogram.config.binSpec.value || 1
@@ -599,36 +618,62 @@ export function histogramResponseToData(
         unit: (binWidth as TimeDelta).unit,
       }) as NumberOrTimeDeltaRange;
   const binWidthStep = step || 0.1;
+
+  // process data and overlay value within each facet grouping
+  const processedData = mapValues(facetGroupedResponseData, (group) => {
+    const facetIsEmpty = group.every(
+      (data) => data.binStart.length === 0 && data.value.length === 0
+    );
+    return {
+      series: facetIsEmpty
+        ? []
+        : group.map((data) => ({
+            name:
+              data.overlayVariableDetails?.value != null
+                ? fixLabelForNumberVariables(
+                    data.overlayVariableDetails.value,
+                    overlayVariable
+                  )
+                : '',
+            bins: data.value.map((_, index) => ({
+              binStart:
+                type === 'number' || type === 'integer'
+                  ? Number(data.binStart[index])
+                  : String(data.binStart[index]),
+              binEnd:
+                type === 'number' || type === 'integer'
+                  ? Number(data.binEnd[index])
+                  : String(data.binEnd[index]),
+              binLabel: data.binLabel[index],
+              count: data.value[index],
+            })),
+          })),
+
+      valueType: type === 'integer' || type === 'number' ? 'number' : 'date',
+      binWidth,
+      binWidthRange,
+      binWidthStep,
+    };
+  });
+
   return {
-    series: response.histogram.data.map((data) => ({
-      name:
-        data.overlayVariableDetails?.value != null
-          ? fixLabelForNumberVariables(
-              data.overlayVariableDetails.value,
-              overlayVariable
-            )
-          : '',
-      bins: data.value.map((_, index) => ({
-        binStart:
-          type === 'number' || type === 'integer'
-            ? Number(data.binStart[index])
-            : String(data.binStart[index]),
-        binEnd:
-          type === 'number' || type === 'integer'
-            ? Number(data.binEnd[index])
-            : String(data.binEnd[index]),
-        binLabel: data.binLabel[index],
-        count: data.value[index],
-      })),
-    })),
-    valueType: type === 'integer' || type === 'number' ? 'number' : 'date',
-    binWidth,
-    binWidthRange,
-    binWidthStep,
+    // data
+    ...(size(processedData) === 1
+      ? // unfaceted
+        head(values(processedData))
+      : // faceted
+        {
+          facets: map(processedData, (value, key) => ({
+            label: key,
+            data: value,
+          })),
+        }),
+
+    // CoverageStatistics
     completeCases: response.completeCasesTable,
     completeCasesAllVars: response.histogram.config.completeCasesAllVars,
     completeCasesAxesVars: response.histogram.config.completeCasesAxesVars,
-  };
+  } as HistogramDataWithCoverageStatistics;
 }
 
 function getRequestParams(

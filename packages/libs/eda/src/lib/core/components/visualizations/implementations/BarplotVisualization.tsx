@@ -474,6 +474,7 @@ export function barplotResponseToData(
   facetVariable?: Variable
 ): BarplotDataWithStatistics {
   // group by facet variable value (if only one facet variable in response - there may be up to two in future)
+  // BM tried to factor this out into a function in utils/visualization.ts but got bogged down in TS issues
   const facetGroupedResponseData = groupBy(response.barplot.data, (data) =>
     data.facetVariableDetails && data.facetVariableDetails.length === 1
       ? fixLabelForNumberVariables(
