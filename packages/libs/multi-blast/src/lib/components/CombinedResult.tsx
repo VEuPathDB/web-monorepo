@@ -1,10 +1,16 @@
 import Mesa from '@veupathdb/wdk-client/lib/Components/Mesa';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { ReportSelect } from './ReportSelect';
 
 import './CombinedResult.scss';
 
+const cx = makeClassNameHelper('CombinedResult');
+
 export interface Props {
+  downloadTableOptions:
+    | { offer: false }
+    | { offer: true; onClickDownloadTable: () => void };
   hitQueryCount?: number;
   hitSubjectCount?: number;
   hitTypeDisplayName: string;
@@ -15,6 +21,7 @@ export interface Props {
 }
 
 export function CombinedResult({
+  downloadTableOptions,
   hitQueryCount,
   hitSubjectCount,
   hitTypeDisplayName,
@@ -24,7 +31,7 @@ export function CombinedResult({
   totalQueryCount,
 }: Props) {
   return (
-    <div className="CombinedResult">
+    <div className={cx()}>
       <Mesa state={mesaState}>
         {hitQueryCount != null &&
           hitSubjectCount != null &&
@@ -37,7 +44,17 @@ export function CombinedResult({
                 : hitTypeDisplayNamePlural}
             </div>
           )}
-        <ReportSelect jobId={jobId} placeholder="Download all results" />
+        <div className={cx('--DownloadOptions')}>
+          <ReportSelect jobId={jobId} placeholder="Download all results" />
+          {downloadTableOptions.offer && (
+            <button
+              type="button"
+              onClick={downloadTableOptions.onClickDownloadTable}
+            >
+              Download this table
+            </button>
+          )}
+        </div>
       </Mesa>
     </div>
   );

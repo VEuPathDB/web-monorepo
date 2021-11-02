@@ -105,6 +105,12 @@ export function useCombinedResultProps({
     [columns, eventHandlers, options, sortedRows.rows, uiState]
   );
 
+  const downloadTableOptions: CombinedResultProps['downloadTableOptions'] = useMemo(() => {
+    return {
+      offer: false,
+    };
+  }, []);
+
   return {
     jobId,
     hitQueryCount,
@@ -113,6 +119,7 @@ export function useCombinedResultProps({
     hitTypeDisplayNamePlural,
     mesaState,
     totalQueryCount,
+    downloadTableOptions,
   };
 }
 
