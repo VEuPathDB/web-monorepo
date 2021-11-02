@@ -27,7 +27,10 @@ import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import box from './selectorIcons/box.svg';
-import { BoxplotData } from '@veupathdb/components/lib/types/plots';
+import {
+  BoxplotData as BoxplotSeries,
+  FacetedData,
+} from '@veupathdb/components/lib/types/plots';
 import { CoverageStatistics } from '../../../types/visualization';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import PluginError from '../PluginError';
@@ -41,14 +44,16 @@ import {
   grayOutLastSeries,
   omitEmptyNoDataSeries,
   vocabularyWithMissingData,
-} from '../../../utils/analysis';
+} from '../../../utils/visualization';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { Variable } from '../../../types/study';
+import { isFaceted } from '../../../../../../../web-components/lib/types/guards';
 
-interface PromiseBoxplotData extends CoverageStatistics {
-  series: BoxplotData;
-}
+type BoxplotData = { series: BoxplotSeries };
+
+type BoxplotDataWithCoverage = (BoxplotData | FacetedData<BoxplotData>) &
+  CoverageStatistics;
 
 const plotDimensions = {
   height: 450,
@@ -180,7 +185,7 @@ function BoxplotViz(props: VisualizationProps) {
   );
 
   const data = usePromise(
-    useCallback(async (): Promise<PromiseBoxplotData | undefined> => {
+    useCallback(async (): Promise<BoxplotDataWithCoverage | undefined> => {
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
         return undefined;
       else if (vizConfig.yAxisVariable == null || yAxisVariable == null)
@@ -253,6 +258,10 @@ function BoxplotViz(props: VisualizationProps) {
     overlayVariable != null && !vizConfig.showMissingness
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
+
+  if (isFaceted(data.value)) {
+    return <span>not yet implemented</span>;
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -418,7 +427,7 @@ export function boxplotResponseToData(
   response: BoxplotResponse,
   variable: Variable,
   overlayVariable?: Variable
-): PromiseBoxplotData {
+): BoxplotDataWithCoverage {
   const responseIsEmpty = response.boxplot.data.every(
     (data) => data.label.length === 0 && data.median.length === 0
   );
@@ -496,10 +505,16 @@ function getRequestParams(
  *
  */
 function reorderData(
-  data: PromiseBoxplotData,
+  data: BoxplotDataWithCoverage,
   labelVocabulary: string[] = [],
   overlayVocabulary: string[] = []
 ) {
+  if (isFaceted(data)) {
+    // reorder within each facet with call to this function
+    // see Barplot and Histogram
+    throw new Error('not yet implemented');
+  }
+
   const labelOrderedSeries = data.series.map((series) => {
     if (labelVocabulary.length > 0) {
       // for each label in the vocabulary's correct order,

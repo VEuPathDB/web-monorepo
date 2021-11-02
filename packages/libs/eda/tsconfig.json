@@ -2,8 +2,5 @@
   "extends": "@veupathdb/tsconfig",
   "include": [
     "src"
-  ],
-  "exclude": [
-    "./src/lib/core/components/visualizations/implementations/BoxplotVisualization.tsx"
-  ],
+  ]
 }
