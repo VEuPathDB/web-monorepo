@@ -36,7 +36,7 @@ export default function FacetedPlot<D, P extends PlotProps<D>>(
                 border: '3px dashed gray',
               }}
               displayLegend={false}
-              interactive={true}
+              interactive={false}
             />
           ))}
         </div>
