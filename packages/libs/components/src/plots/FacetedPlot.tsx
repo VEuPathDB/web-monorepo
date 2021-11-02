@@ -4,7 +4,7 @@ import { FacetedData } from '../types/plots';
 import { PlotProps } from './PlotlyPlot';
 
 export interface FacetedPlotProps<D, P extends PlotProps<D>> {
-  data?: FacetedData<D> | D;
+  data?: FacetedData<D>;
   component: React.ElementType<P>;
   props: P;
 }
@@ -18,7 +18,7 @@ export default function FacetedPlot<D, P extends PlotProps<D>>(
 
   // return a regular plot component if the data isn't faceted.
   if (!isFaceted(data)) {
-    return <Component data={data} {...componentProps} />;
+    throw new Error('Unfaceted data provided to FacetedPlot');
   } else {
     return (
       <div>
