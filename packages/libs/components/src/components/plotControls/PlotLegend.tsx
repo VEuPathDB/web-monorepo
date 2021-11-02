@@ -51,7 +51,9 @@ export default function PlotLegend({
             title={legendTitle}
             style={{ cursor: 'pointer', fontSize: '1.2em' }}
           >
-            {legendTitle}
+            {legendTitle != null
+              ? legendEllipsis(legendTitle, 23)
+              : legendTitle}
           </div>
           <div className="plotLegendCheckbox">
             {legendItems.map((item: LegendItemsProps, index: number) => (
@@ -87,7 +89,7 @@ export default function PlotLegend({
                           : '#999',
                     }}
                   >
-                    {item.label}
+                    {legendEllipsis(item.label, 20)}
                   </label>
                 </>
               </div>
@@ -98,3 +100,11 @@ export default function PlotLegend({
     </>
   );
 }
+
+//DKDK ellipsis functions for legend title (23) and legend items (20)
+// this may be used as a util but keep here for now
+const legendEllipsis = (label: string, ellipsisLength: number) => {
+  return (label || '').length > ellipsisLength
+    ? (label || '').substring(0, ellipsisLength) + '...'
+    : label;
+};
