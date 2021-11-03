@@ -377,14 +377,6 @@ function ScatterplotViz(props: VisualizationProps) {
 
   console.log('checkedLegendItems =', checkedLegendItems);
 
-  //DKDK set all checkbox checked initially
-  useEffect(() => {
-    if (data.value != null && data.value.dataSetProcess.series.length > 0) {
-      // extract legendItems.label for passing to both PlotlyPlot and PlotLegend
-      setCheckedLegendItems(legendItems.map((item) => item.label));
-    }
-  }, [data, legendItems]);
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -629,7 +621,7 @@ function ScatterplotWithControls({
         ?.toImage({ format: 'svg', ...plotDimensions })
         .then(updateThumbnailRef.current);
     })();
-  }, [data]);
+  }, [data, legendItems]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
