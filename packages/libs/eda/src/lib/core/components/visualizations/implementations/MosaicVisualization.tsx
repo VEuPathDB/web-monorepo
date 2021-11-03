@@ -34,7 +34,7 @@ import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import {
   fixLabelsForNumberVariables,
   quantizePvalue,
-} from '../../../utils/analysis';
+} from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { Variable } from '../../../types/study';
 import PluginError from '../PluginError';
