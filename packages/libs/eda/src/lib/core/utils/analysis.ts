@@ -1,4 +1,5 @@
-import { Analysis, NewAnalysis } from '../types/analysis';
+import { Analysis, AnalysisProvenance, NewAnalysis } from '../types/analysis';
+import { convertISOToDisplayFormat } from './date-conversion';
 
 export function isNewAnalysis(
   analysis?: NewAnalysis | Analysis
@@ -14,4 +15,21 @@ export function isSavedAnalysis(
 
 export function getAnalysisId(analysis?: NewAnalysis | Analysis) {
   return !isSavedAnalysis(analysis) ? undefined : analysis.analysisId;
+}
+
+export function makeOnImportProvenanceString(
+  importCreationTime: string,
+  provenance: AnalysisProvenance
+) {
+  return `Imported from ${provenance.onImport.ownerName} [${
+    provenance.onImport.ownerOrganization
+  }] on ${convertISOToDisplayFormat(importCreationTime)}.`;
+}
+
+export function makeCurrentProvenanceString(provenance: AnalysisProvenance) {
+  return provenance.current.isDeleted
+    ? `(Source analysis since deleted.)`
+    : `(Source analysis last modified on ${convertISOToDisplayFormat(
+        provenance.current.modificationTime
+      )}.)`;
 }
