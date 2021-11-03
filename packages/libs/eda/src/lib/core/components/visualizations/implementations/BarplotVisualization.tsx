@@ -294,7 +294,9 @@ function BarplotViz(props: VisualizationProps) {
           // set min as 0 (count, proportion) or 0.001 (proportion log scale)
           min:
             vizConfig.valueSpec === 'count'
-              ? 0
+              ? vizConfig.dependentAxisLogScale
+                ? 0.1
+                : 0
               : vizConfig.dependentAxisLogScale
               ? 0.001
               : 0,
