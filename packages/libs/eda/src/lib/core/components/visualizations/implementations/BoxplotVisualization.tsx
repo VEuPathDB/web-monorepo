@@ -47,7 +47,7 @@ import {
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { Variable } from '../../../types/study';
-import { isFaceted } from '../../../../../../../web-components/lib/types/guards';
+import { isFaceted } from '@veupathdb/components/lib/types/guards';
 
 type BoxplotData = { series: BoxplotSeries };
 

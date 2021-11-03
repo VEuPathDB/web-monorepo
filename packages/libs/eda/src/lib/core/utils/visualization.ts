@@ -7,9 +7,6 @@ import {
 import { Variable } from '../types/study';
 import { CoverageStatistics } from '../types/visualization';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
-import { BarplotResponse, HistogramResponse } from '../api/data-api';
-import { Dictionary, groupBy } from 'lodash';
-import { StringVariableValue } from '../types/variable';
 
 // was: BarplotData | HistogramData | { series: BoxplotData };
 type SeriesWithStatistics<T> = T & CoverageStatistics;
