@@ -42,6 +42,7 @@ import {
   fixLabelsForNumberVariables,
   grayOutLastSeries,
   omitEmptyNoDataSeries,
+  variablesAreUnique,
   vocabularyWithMissingData,
 } from '../../../utils/visualization';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
@@ -145,21 +146,32 @@ function BoxplotViz(props: VisualizationProps) {
 
   const findEntityAndVariable = useFindEntityAndVariable(entities);
 
-  const { xAxisVariable, yAxisVariable, overlayVariable } = useMemo(() => {
-    const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
-    const yAxisVariable = findEntityAndVariable(vizConfig.yAxisVariable);
-    const overlayVariable = findEntityAndVariable(vizConfig.overlayVariable);
-
+  const {
+    xAxisVariable,
+    yAxisVariable,
+    overlayVariable,
+    facetVariable,
+  } = useMemo(() => {
+    const { variable: xAxisVariable } =
+      findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
+    const { variable: yAxisVariable } =
+      findEntityAndVariable(vizConfig.yAxisVariable) ?? {};
+    const { variable: overlayVariable } =
+      findEntityAndVariable(vizConfig.overlayVariable) ?? {};
+    const { variable: facetVariable } =
+      findEntityAndVariable(vizConfig.facetVariable) ?? {};
     return {
-      xAxisVariable: xAxisVariable ? xAxisVariable.variable : undefined,
-      yAxisVariable: yAxisVariable ? yAxisVariable.variable : undefined,
-      overlayVariable: overlayVariable ? overlayVariable.variable : undefined,
+      xAxisVariable,
+      yAxisVariable,
+      overlayVariable,
+      facetVariable,
     };
   }, [
     findEntityAndVariable,
     vizConfig.xAxisVariable,
     vizConfig.yAxisVariable,
     vizConfig.overlayVariable,
+    vizConfig.facetVariable,
   ]);
 
   // prettier-ignore
@@ -190,9 +202,14 @@ function BoxplotViz(props: VisualizationProps) {
       else if (vizConfig.yAxisVariable == null || yAxisVariable == null)
         return undefined;
 
-      const vars = [xAxisVariable, yAxisVariable, overlayVariable];
-      const unique = vars.filter((item, i, ar) => ar.indexOf(item) === i);
-      if (vars.length !== unique.length)
+      if (
+        !variablesAreUnique([
+          xAxisVariable,
+          yAxisVariable,
+          overlayVariable,
+          facetVariable,
+        ])
+      )
         throw new Error(
           'Variables must be unique. Please choose different variables.'
         );
@@ -204,6 +221,7 @@ function BoxplotViz(props: VisualizationProps) {
         vizConfig.xAxisVariable,
         vizConfig.yAxisVariable,
         vizConfig.overlayVariable,
+        vizConfig.facetVariable,
         // pass outputEntity.id
         outputEntity?.id,
         vizConfig.showMissingness
@@ -282,12 +300,18 @@ function BoxplotViz(props: VisualizationProps) {
               label: 'Overlay',
               role: 'stratification',
             },
+            {
+              name: 'facetVariable',
+              label: 'Facet',
+              role: 'stratification',
+            },
           ]}
           entities={entities}
           selectedVariables={{
             xAxisVariable: vizConfig.xAxisVariable,
             yAxisVariable: vizConfig.yAxisVariable,
             overlayVariable: vizConfig.overlayVariable,
+            facetVariable: vizConfig.facetVariable,
           }}
           onChange={handleInputVariableChange}
           constraints={dataElementConstraints}
@@ -295,7 +319,7 @@ function BoxplotViz(props: VisualizationProps) {
           starredVariables={starredVariables}
           toggleStarredVariable={toggleStarredVariable}
           enableShowMissingnessToggle={
-            overlayVariable != null &&
+            (overlayVariable != null || facetVariable != null) &&
             data.value?.completeCasesAllVars !==
               data.value?.completeCasesAxesVars
           }
@@ -323,6 +347,7 @@ function BoxplotViz(props: VisualizationProps) {
           // add condition to show legend when overlayVariable is used
           displayLegend={
             data.value &&
+            !isFaceted(data) &&
             (data.value.series.length > 1 || vizConfig.overlayVariable != null)
           }
           independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-axis'}
@@ -474,6 +499,7 @@ function getRequestParams(
   xAxisVariable: VariableDescriptor,
   yAxisVariable: VariableDescriptor,
   overlayVariable?: VariableDescriptor,
+  facetVariable?: VariableDescriptor,
   // pass outputEntityId
   outputEntityId?: string,
   showMissingness?: boolean
@@ -490,6 +516,7 @@ function getRequestParams(
       xAxisVariable: xAxisVariable,
       yAxisVariable: yAxisVariable,
       overlayVariable: overlayVariable,
+      facetVariable: facetVariable ? [facetVariable] : [],
       showMissingness: showMissingness ? 'TRUE' : 'FALSE',
     },
   } as BoxplotRequestParams;
