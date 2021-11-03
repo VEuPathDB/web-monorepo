@@ -1,5 +1,6 @@
 // load Boxplot component
 import Boxplot, { BoxplotProps } from '@veupathdb/components/lib/plots/Boxplot';
+import FacetedPlot from '@veupathdb/components/lib/plots/FacetedPlot';
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
@@ -34,7 +35,16 @@ import { CoverageStatistics } from '../../../types/visualization';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import PluginError from '../PluginError';
 
-import { at } from 'lodash';
+import {
+  at,
+  sortBy,
+  groupBy,
+  mapValues,
+  size,
+  head,
+  map,
+  values,
+} from 'lodash';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 import {
@@ -233,7 +243,11 @@ function BoxplotViz(props: VisualizationProps) {
         params as BoxplotRequestParams
       );
 
-      const showMissing = vizConfig.showMissingness && overlayVariable != null;
+      const showMissing =
+        vizConfig.showMissingness &&
+        (overlayVariable != null || facetVariable != null);
+      const showMissingOverlay =
+        vizConfig.showMissingness && overlayVariable != null;
       const vocabulary = fixLabelsForNumberVariables(
         xAxisVariable.vocabulary,
         xAxisVariable
@@ -242,18 +256,24 @@ function BoxplotViz(props: VisualizationProps) {
         overlayVariable?.vocabulary,
         overlayVariable
       );
+      const facetVocabulary = fixLabelsForNumberVariables(
+        facetVariable?.vocabulary,
+        facetVariable
+      );
       return omitEmptyNoDataSeries(
         grayOutLastSeries(
           reorderData(
             boxplotResponseToData(
               await response,
               xAxisVariable,
-              overlayVariable
+              overlayVariable,
+              facetVariable
             ),
             vocabulary,
-            vocabularyWithMissingData(overlayVocabulary, showMissing)
+            vocabularyWithMissingData(overlayVocabulary, showMissing),
+            vocabularyWithMissingData(facetVocabulary, showMissing)
           ),
-          showMissing,
+          showMissingOverlay,
           '#a0a0a0'
         ),
         showMissing
@@ -266,19 +286,17 @@ function BoxplotViz(props: VisualizationProps) {
       xAxisVariable,
       yAxisVariable,
       overlayVariable,
+      facetVariable,
       computation.descriptor.type,
       outputEntity?.id,
     ])
   );
 
   const outputSize =
-    overlayVariable != null && !vizConfig.showMissingness
+    (overlayVariable != null || facetVariable != null) &&
+    !vizConfig.showMissingness
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
-
-  if (isFaceted(data.value)) {
-    return <span>not yet implemented</span>;
-  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -340,14 +358,14 @@ function BoxplotViz(props: VisualizationProps) {
       >
         <BoxplotWithControls
           // data.value
-          data={data.value?.series}
+          data={data.value}
           updateThumbnail={updateThumbnail}
           containerStyles={plotDimensions}
           orientation={'vertical'}
           // add condition to show legend when overlayVariable is used
           displayLegend={
             data.value &&
-            !isFaceted(data) &&
+            !isFaceted(data.value) &&
             (data.value.series.length > 1 || vizConfig.overlayVariable != null)
           }
           independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-axis'}
@@ -371,7 +389,9 @@ function BoxplotViz(props: VisualizationProps) {
             }
             filters={filters}
             outputEntity={outputEntity}
-            stratificationIsActive={overlayVariable != null}
+            stratificationIsActive={
+              overlayVariable != null || facetVariable != null
+            }
             enableSpinner={
               xAxisVariable != null && yAxisVariable != null && !data.error
             }
@@ -398,6 +418,11 @@ function BoxplotViz(props: VisualizationProps) {
                 display: axisLabelWithUnit(overlayVariable),
                 variable: vizConfig.overlayVariable,
               },
+              {
+                role: 'Facet',
+                display: axisLabelWithUnit(facetVariable),
+                variable: vizConfig.facetVariable,
+              },
             ]}
           />
         </div>
@@ -406,9 +431,10 @@ function BoxplotViz(props: VisualizationProps) {
   );
 }
 
-interface BoxplotWithControlsProps extends BoxplotProps {
+type BoxplotWithControlsProps = Omit<BoxplotProps, 'data'> & {
+  data?: BoxplotDataWithCoverage;
   updateThumbnail: (src: string) => void;
-}
+};
 
 function BoxplotWithControls({
   data,
@@ -428,15 +454,36 @@ function BoxplotWithControls({
       .then(updateThumbnailRef.current);
   }, [data]);
 
+  // TO DO: standardise web-components/BoxplotData to have `series` key
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <Boxplot
-        {...boxplotComponentProps}
-        ref={plotRef}
-        data={data}
-        // add controls
-        displayLibraryControls={false}
-      />
+      {isFaceted(data) ? (
+        <>
+          <div
+            style={{
+              background: 'yellow',
+              border: '3px dashed green',
+              padding: '10px',
+            }}
+          >
+            Custom legend, birds eye and supplementary tables go here...
+          </div>
+
+          <FacetedPlot
+            component={Boxplot}
+            data={{
+              ...data,
+              facets: data.facets.map(({ label, data }) => ({
+                label,
+                data: data.series,
+              })),
+            }}
+            props={boxplotComponentProps}
+          />
+        </>
+      ) : (
+        <Boxplot data={data?.series} ref={plotRef} {...boxplotComponentProps} />
+      )}
       {/* potential controls go here  */}
     </div>
   );
@@ -450,44 +497,74 @@ function BoxplotWithControls({
 export function boxplotResponseToData(
   response: BoxplotResponse,
   variable: Variable,
-  overlayVariable?: Variable
+  overlayVariable?: Variable,
+  facetVariable?: Variable
 ): BoxplotDataWithCoverage {
-  const responseIsEmpty = response.boxplot.data.every(
-    (data) => data.label.length === 0 && data.median.length === 0
+  // group by facet variable value (if only one facet variable in response - there may be up to two in future)
+  const facetGroupedResponseData = groupBy(response.boxplot.data, (data) =>
+    data.facetVariableDetails && data.facetVariableDetails.length === 1
+      ? fixLabelForNumberVariables(
+          data.facetVariableDetails[0].value,
+          facetVariable
+        )
+      : undefined
   );
-  return {
-    series: responseIsEmpty
-      ? []
-      : response.boxplot.data.map((data) => ({
-          lowerfence: data.lowerfence,
-          upperfence: data.upperfence,
-          q1: data.q1,
-          q3: data.q3,
-          median: data.median,
-          mean: data.mean,
-          // correct the {} from back end into []
-          outliers: data.outliers
-            ? data.outliers.map((x: number[] | {}) =>
-                Array.isArray(x) ? x : []
-              )
-            : undefined,
-          // currently returns seriesX and seriesY for points: 'all' option
-          // it is necessary to rely on rawData (or seriesX/Y) for boxplot if points: 'all'
-          rawData: data.rawData ? data.rawData : undefined,
-          // this will be used as legend
-          name:
-            data.overlayVariableDetails?.value != null
-              ? fixLabelForNumberVariables(
-                  data.overlayVariableDetails.value,
-                  overlayVariable
+
+  // process data and overlay value within each facet grouping
+  const processedData = mapValues(facetGroupedResponseData, (group) => {
+    const facetIsEmpty = group.every(
+      (data) => data.label.length === 0 && data.median.length === 0
+    );
+    return {
+      series: facetIsEmpty
+        ? []
+        : group.map((data) => ({
+            lowerfence: data.lowerfence,
+            upperfence: data.upperfence,
+            q1: data.q1,
+            q3: data.q3,
+            median: data.median,
+            mean: data.mean,
+            // correct the {} from back end into []
+            outliers: data.outliers
+              ? data.outliers.map((x: number[] | {}) =>
+                  Array.isArray(x) ? x : []
                 )
-              : '',
-          label: fixLabelsForNumberVariables(data.label, variable),
-        })),
+              : undefined,
+            // currently returns seriesX and seriesY for points: 'all' option
+            // it is necessary to rely on rawData (or seriesX/Y) for boxplot if points: 'all'
+            rawData: data.rawData ? data.rawData : undefined,
+            // this will be used as legend
+            name:
+              data.overlayVariableDetails?.value != null
+                ? fixLabelForNumberVariables(
+                    data.overlayVariableDetails.value,
+                    overlayVariable
+                  )
+                : '',
+            label: fixLabelsForNumberVariables(data.label, variable),
+          })),
+    };
+  });
+
+  return {
+    // data
+    ...(size(processedData) === 1
+      ? // unfaceted
+        head(values(processedData))
+      : // faceted
+        {
+          facets: map(processedData, (value, key) => ({
+            label: key,
+            data: value,
+          })),
+        }),
+
+    // CoverageStatistics
     completeCases: response.completeCasesTable,
     completeCasesAllVars: response.boxplot.config.completeCasesAllVars,
     completeCasesAxesVars: response.boxplot.config.completeCasesAxesVars,
-  };
+  } as BoxplotDataWithCoverage;
 }
 
 // add an extended type
@@ -531,14 +608,26 @@ function getRequestParams(
  *
  */
 function reorderData(
-  data: BoxplotDataWithCoverage,
+  data: BoxplotDataWithCoverage | BoxplotData,
   labelVocabulary: string[] = [],
-  overlayVocabulary: string[] = []
-) {
+  overlayVocabulary: string[] = [],
+  facetVocabulary: string[] = []
+): BoxplotDataWithCoverage | BoxplotData {
   if (isFaceted(data)) {
     // reorder within each facet with call to this function
-    // see Barplot and Histogram
-    throw new Error('not yet implemented');
+    return {
+      ...data,
+      facets: sortBy(data.facets, ({ label }) =>
+        facetVocabulary.indexOf(label)
+      ).map(({ label, data }) => ({
+        label,
+        data: reorderData(
+          data,
+          labelVocabulary,
+          overlayVocabulary
+        ) as BoxplotData,
+      })),
+    };
   }
 
   const labelOrderedSeries = data.series.map((series) => {
