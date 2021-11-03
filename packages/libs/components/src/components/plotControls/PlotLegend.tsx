@@ -13,7 +13,6 @@ export interface LegendItemsProps {
 
 // set props for custom legend function
 interface PlotLegendProps {
-  // legendItems: string[];
   legendItems: LegendItemsProps[];
   checkedLegendItems: string[];
   setCheckedLegendItems: (checkedItems: string[]) => void;
@@ -77,19 +76,46 @@ export default function PlotLegend({
                     disabled={!item.hasData}
                   />
                   &nbsp;&nbsp;
+                  <div style={{ position: 'relative', margin: 'auto 0' }}>
+                    {/* <div style={{position: 'relative', margin: 'auto 0', height: '1.2em', width: '1.2em', borderWidth: '0'}}> */}
+                    {/* for now, only support square (e.g., histogram, barplot, 2X2, RXC) */}
+                    {item.marker === 'square' && (
+                      <div
+                        style={{
+                          height: '1.2em',
+                          width: '1.2em',
+                          borderWidth: '0',
+                          // width: '100%',
+                          // height: '100%',
+                          //DKDK gray out for filtered item
+                          backgroundColor:
+                            checkedLegendItems.includes(item.label) &&
+                            item.hasData
+                              ? item.markerColor
+                              : '#999',
+                        }}
+                      />
+                    )}
+                  </div>
+                  &nbsp;&nbsp;
                   <label
                     title={item.label}
                     style={{
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
+                      //DKDK gray out for filtered item
                       color:
                         checkedLegendItems.includes(item.label) && item.hasData
                           ? ''
                           : '#999',
                     }}
                   >
-                    {legendEllipsis(item.label, 20)}
+                    {item.label === 'No data' ? (
+                      <i>{item.label}</i>
+                    ) : (
+                      legendEllipsis(item.label, 20)
+                    )}
                   </label>
                 </>
               </div>
@@ -101,8 +127,7 @@ export default function PlotLegend({
   );
 }
 
-//DKDK ellipsis functions for legend title (23) and legend items (20)
-// this may be used as a util but keep here for now
+//DKDK legend ellipsis function for legend title (23) and legend items (20)
 const legendEllipsis = (label: string, ellipsisLength: number) => {
   return (label || '').length > ellipsisLength
     ? (label || '').substring(0, ellipsisLength) + '...'
