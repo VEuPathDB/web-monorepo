@@ -4,7 +4,7 @@ import {
   FieldTreeNode,
   Filter as WdkFilter,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
-import { DistributionResponse } from '../api/subsetting-api';
+import { DistributionResponse } from '../api/SubsettingClient';
 import { StudyEntity, VariableTreeNode } from '../types/study';
 import { getTree } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
 import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
@@ -117,14 +117,7 @@ export function fromEdaFilter(filter: EdaFilter): WdkFilter {
   } as WdkFilter;
 }
 
-export interface EdaVariableToWdkFieldOptions {
-  includeMultiFilters?: boolean;
-}
-export function edaVariableToWdkField(
-  variable: VariableTreeNode,
-  options: EdaVariableToWdkFieldOptions = {}
-): Field {
-  const { includeMultiFilters = false } = options;
+export function edaVariableToWdkField(variable: VariableTreeNode): Field {
   return {
     display: variable.displayName,
     isRange:
@@ -133,7 +126,7 @@ export function edaVariableToWdkField(
     precision: 1,
     term: variable.id,
     type:
-      variable.displayType === 'multifilter' && includeMultiFilters
+      variable.displayType === 'multifilter'
         ? 'multiFilter'
         : variable.type !== 'category'
         ? variable.type
@@ -161,10 +154,7 @@ export function toWdkVariableSummary(
   };
 }
 
-export function entitiesToFields(
-  entities: StudyEntity[],
-  options?: EdaVariableToWdkFieldOptions
-) {
+export function entitiesToFields(entities: StudyEntity[]) {
   return entities.flatMap((entity) => {
     // Create a Set of variableId so we can lookup parentIds
     const variableIds = new Set(entity.variables.map((v) => v.id));
@@ -204,7 +194,7 @@ export function entitiesToFields(
               ? `entity:${entity.id}`
               : `${entity.id}/${variable.parentId}`,
         }))
-        .map((variable) => edaVariableToWdkField(variable, options)),
+        .map((variable) => edaVariableToWdkField(variable)),
     ];
   });
 }

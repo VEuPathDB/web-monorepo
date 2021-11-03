@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { makeStyles } from '@material-ui/core';
 import { StudyEntity } from '../../types/study';
 import { VariableDescriptor } from '../../types/variable';
@@ -8,7 +8,8 @@ import {
   flattenConstraints,
   VariablesByInputName,
 } from '../../utils/data-element-constraints';
-import { VariableTreeDropdown } from '../VariableTree';
+
+import VariableTreeDropdown from '../variableTrees/VariableTreeDropdown';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import Switch from '@veupathdb/components/lib/components/widgets/Switch';
 import { makeEntityDisplayName } from '../../utils/study-metadata';
@@ -239,6 +240,7 @@ export function InputVariables(props: Props) {
               >
                 <div className={classes.label}>{input.label}</div>
                 <VariableTreeDropdown
+                  showMultiFilterDescendants
                   rootEntity={entities[0]}
                   disabledVariables={disabledVariablesByInputName[input.name]}
                   customDisabledVariableMessage={
@@ -270,6 +272,7 @@ export function InputVariables(props: Props) {
                 >
                   <div className={classes.label}>{input.label}</div>
                   <VariableTreeDropdown
+                    showMultiFilterDescendants
                     rootEntity={entities[0]}
                     disabledVariables={disabledVariablesByInputName[input.name]}
                     customDisabledVariableMessage={

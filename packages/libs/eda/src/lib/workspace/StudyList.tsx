@@ -3,14 +3,17 @@ import {
   safeHtml,
   useSetDocumentTitle,
 } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import React from 'react';
+
 import { useWdkStudyRecords } from '../core/hooks/study';
 
-interface Props {
+interface StudyListProps {
   subsettingServiceUrl: string;
   baseUrl: string;
 }
-export function StudyList(props: Props) {
+/**
+ * Displays a list of links to various available studies.
+ */
+export function StudyList(props: StudyListProps) {
   const { baseUrl } = props;
   const datasets = useWdkStudyRecords();
 
@@ -26,7 +29,7 @@ export function StudyList(props: Props) {
           .filter((dataset) => dataset.attributes.eda_study_id != null)
           .map((dataset) => {
             return (
-              <li key={dataset.attributes.datasetId?.toString()}>
+              <li key={dataset.attributes.dataset_id as string}>
                 <Link to={`${baseUrl}/${dataset.attributes.dataset_id}`}>
                   {safeHtml(dataset.displayName)}
                 </Link>

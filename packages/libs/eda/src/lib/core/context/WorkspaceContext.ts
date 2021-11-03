@@ -1,6 +1,6 @@
 import { createContext } from 'react';
-import { SubsettingClient } from '../api/subsetting-api';
-import { DataClient } from '../api/data-api';
+import SubsettingClient from '../api/SubsettingClient';
+import DataClient from '../api/DataClient';
 import { AnalysisClient } from '../api/analysis-api';
 import { StudyMetadata, StudyRecord, StudyRecordClass } from '../types/study';
 import { VariableDescriptor } from '../types/variable';

@@ -25,6 +25,9 @@ type Props = {
   exampleAnalysesAuthor?: number;
 };
 
+/**
+ * Router component for application.
+ */
 export function WorkspaceRouter({
   subsettingServiceUrl,
   dataServiceUrl,
@@ -111,28 +114,17 @@ export function WorkspaceRouter({
       />
       <Route
         exact
-        path={`${path}/:studyId/:analysisId/import/:ownerUserId`}
+        path={`${path}/:studyId/:analysisId/import`}
         render={(
           props: RouteComponentProps<{
             studyId: string;
             analysisId: string;
-            ownerUserId: string;
           }>
         ) => {
-          const ownerNameQuery = new URLSearchParams(props.location.search).get(
-            'ownerName'
-          );
-
-          const descriptionQuery = new URLSearchParams(
-            props.location.search
-          ).get('description');
-
           return (
             <ImportAnalysis
               {...props.match.params}
               analysisClient={analysisClient}
-              ownerName={ownerNameQuery ?? undefined}
-              description={descriptionQuery ?? undefined}
             />
           );
         }}
