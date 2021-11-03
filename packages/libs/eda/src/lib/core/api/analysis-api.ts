@@ -54,7 +54,7 @@ export class AnalysisClient extends FetchClientWithCredentials {
       if (this.guestAnalysesTransfer$ != null) {
         try {
           await this.guestAnalysesTransfer$;
-        } catch (e) {
+        } catch (e: any) {
           this.wdkService.submitErrorIfNot500(e);
         }
       }
