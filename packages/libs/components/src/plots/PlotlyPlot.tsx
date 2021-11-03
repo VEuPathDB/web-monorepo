@@ -310,8 +310,8 @@ function PlotlyPlot<T>(
   const finalData = useMemo(() => {
     return data.map((d) => ({
       ...d,
-      // legend checkbox
-      visible: checkedLegendItems?.includes(d.name || ''),
+      // legend checkbox: change 'true' case to 'legendonly' as 'true' changes plot colors
+      visible: checkedLegendItems?.includes(d.name || '') ? true : 'legendonly',
       // ellipsis for legend item
       name:
         (d.name || '').length > maxLegendTextLength
