@@ -47,6 +47,9 @@ const MosaicPlot = makePlotlyPlotComponent(
     showColumnLabels,
     spacingOptions,
     containerClass,
+    // Pull legendOptions out to ignore it. Mosaic's left legend doesn't really
+    // function as a legend and is less flexible by necessity
+    legendOptions,
     ...restProps
   }: MosaicPlotProps) => {
     // Column widths
