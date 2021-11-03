@@ -1,14 +1,13 @@
-import React from 'react';
 import { Story } from '@storybook/react/types-6-0';
 
 import PiePlot, { PiePlotProps } from '../../plots/PiePlot';
-import { PiePlotData } from '../../types/plots';
+import { FacetedData, PiePlotData } from '../../types/plots';
+import FacetedPlot from '../../plots/FacetedPlot';
 import {
   DARK_GRAY,
   DARK_GREEN,
   LIGHT_BLUE,
   LIGHT_GREEN,
-  LIGHT_PURPLE,
 } from '../../constants/colors';
 
 export default {
@@ -151,4 +150,64 @@ Empty.args = {};
 export const EmptyLoading = Template.bind({});
 EmptyLoading.args = {
   showSpinner: true,
+};
+
+/**
+ * FACETING
+ */
+
+const facetedData: FacetedData<PiePlotData> = {
+  facets: [
+    {
+      label: 'indoors',
+      data: {
+        slices: [
+          {
+            value: 25,
+            label: 'dogs',
+          },
+          {
+            value: 10,
+            label: 'cats',
+          },
+        ],
+      },
+    },
+    {
+      label: 'outdoors',
+      data: {
+        slices: [
+          {
+            value: 5,
+            label: 'dogs',
+          },
+          {
+            value: 33,
+            label: 'cats',
+          },
+        ],
+      },
+    },
+  ],
+};
+
+interface FacetedStoryProps {
+  data: FacetedData<PiePlotData>;
+  props: PiePlotProps;
+}
+
+const FacetedTemplate: Story<FacetedStoryProps> = ({ data, props }) => (
+  <FacetedPlot<PiePlotData, PiePlotProps>
+    data={data}
+    component={PiePlot}
+    props={props}
+  />
+);
+
+export const Faceted = FacetedTemplate.bind({});
+Faceted.args = {
+  data: facetedData,
+  props: {
+    title: 'indoor and outdoor pets',
+  },
 };
