@@ -64,6 +64,7 @@ import {
   omitEmptyNoDataSeries,
   fixLabelForNumberVariables,
   fixLabelsForNumberVariables,
+  variablesAreUnique,
 } from '../../../utils/visualization';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import { useFindEntityAndVariable } from '../../../hooks/study';
@@ -256,9 +257,9 @@ function HistogramViz(props: VisualizationProps) {
       )
         return undefined;
 
-      if (xAxisVariable === overlayVariable)
+      if (!variablesAreUnique([xAxisVariable, overlayVariable, facetVariable]))
         throw new Error(
-          'The X and Overlay variables must not be the same. Please choose different variables for X and Overlay.'
+          'Variables must be unique. Please choose different variables.'
         );
 
       const params = getRequestParams(
