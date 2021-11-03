@@ -342,35 +342,8 @@ function ScatterplotViz(props: VisualizationProps) {
 
   const { url } = useRouteMatch();
 
-  // check filters - it has several variants stringSet, numberSet, dateSet etc.
-  // see web-eda/src/lib/core/types/filter.ts
-  // console.log('filters =', filters?.map((filter) => filter.stringSet))
-
-  console.log('vizConfig.overlayVariable =', vizConfig.overlayVariable);
-  console.log('filters =', filters);
-
-  //DKDK check filters have overlayVariable
-  const overlayVariableFilter = filters
-    ?.map((filter) => {
-      return filter.variableId === vizConfig.overlayVariable?.variableId
-        ? true
-        : false;
-    })
-    .includes(true);
-
-  console.log('overlayVariableFilter =', overlayVariableFilter);
-
   //DKDK checkbox of custom legend
   const legendItems: LegendItemsProps[] = useMemo(() => {
-    //DKDK check filters has overlayVariable: if not, hasData: true
-    const overlayVariableFilter = filters
-      ?.map((filter) => {
-        return filter.variableId === vizConfig.overlayVariable?.variableId
-          ? true
-          : false;
-      })
-      .includes(true);
-
     return data.value != null
       ? data.value?.dataSetProcess.series.map((data: XYPlotDataSeries) => {
           return {
@@ -380,17 +353,11 @@ function ScatterplotViz(props: VisualizationProps) {
             marker: data.mode != null ? data.mode : '',
             //DKDK think markerColor needs to be added here
             markerColor: 'markerColor',
-            // set hasData based on filters: do we need to check other type like dateSet, numberSet etc?
+            // simplifying the check with the presence of data: be carefule of y:[null] case in Scatter plot
             hasData:
-              filters != null && overlayVariableFilter
-                ? filters
-                    .map((filter) => {
-                      if (filter.type == 'stringSet' && data.name != null)
-                        return filter.stringSet.includes(data.name);
-                    })
-                    .includes(true)
-                : true,
-            // hasData: true,
+              data.y != null && data.y.length > 0 && data.y[0] !== null
+                ? true
+                : false,
             group: 1,
             rank: 1,
           };
@@ -416,7 +383,7 @@ function ScatterplotViz(props: VisualizationProps) {
       // extract legendItems.label for passing to both PlotlyPlot and PlotLegend
       setCheckedLegendItems(legendItems.map((item) => item.label));
     }
-  }, [data]);
+  }, [data, legendItems]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -654,8 +621,7 @@ function ScatterplotWithControls({
   //DKDK add async/await for correct thumbnail capture
   useEffect(() => {
     (async () => {
-      if (data != null && data.series.length > 1) {
-        // const nameArray = data.value?.dataSetProcess.series.map((data: any) => data.name);
+      if (data != null) {
         // use this to set all checked
         await setCheckedLegendItems(legendItems.map((item) => item.label));
       }
