@@ -183,6 +183,8 @@ export function mergeConstraints(
           ? undefined
           : constraintA.isTemporal && constraintB.isTemporal
           ? true
+          : !constraintA.isTemporal && !constraintB.isTemporal
+          ? false
           : undefined;
       return [
         key,
