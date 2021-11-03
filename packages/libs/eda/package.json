@@ -77,7 +77,7 @@
     "@veupathdb/web-common": "^0.1.10",
     "bubleify": "^2.0.0",
     "http-proxy-middleware": "^1.0.6",
-    "husky": ">=4",
+    "husky": "^4.3.8",
     "ify-loader": "^1.1.0",
     "lint-staged": ">=10",
     "node-sass": "4",
