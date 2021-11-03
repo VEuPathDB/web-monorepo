@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/eda",
-  "version": "0.14.12",
+  "version": "1.0.0",
   "dependencies": {
     "@emotion/babel-preset-css-prop": "^11.2.0",
     "@emotion/react": "^11.4.1",
