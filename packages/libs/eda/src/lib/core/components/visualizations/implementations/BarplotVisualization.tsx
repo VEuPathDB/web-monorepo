@@ -50,7 +50,16 @@ import {
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 // use lodash instead of Math.min/max
-import { max, groupBy, mapValues, size, map, head, values } from 'lodash';
+import {
+  max,
+  sortBy,
+  groupBy,
+  mapValues,
+  size,
+  map,
+  head,
+  values,
+} from 'lodash';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 
 type BarplotDataWithStatistics = (BarplotData | FacetedData<BarplotData>) &
@@ -205,7 +214,11 @@ function BarplotViz(props: VisualizationProps) {
         params as BarplotRequestParams
       );
 
-      const showMissing = vizConfig.showMissingness && overlayVariable != null;
+      const showMissing =
+        vizConfig.showMissingness &&
+        (overlayVariable != null || facetVariable != null);
+      const showMissingOverlay =
+        vizConfig.showMissingness && overlayVariable != null;
       const vocabulary = fixLabelsForNumberVariables(
         variable?.vocabulary,
         variable
@@ -232,7 +245,7 @@ function BarplotViz(props: VisualizationProps) {
             vocabularyWithMissingData(overlayVocabulary, showMissing),
             vocabularyWithMissingData(facetVocabulary, showMissing)
           ),
-          showMissing
+          showMissingOverlay
         ),
         showMissing
       );
@@ -252,7 +265,8 @@ function BarplotViz(props: VisualizationProps) {
   );
 
   const outputSize =
-    overlayVariable != null && !vizConfig.showMissingness
+    (overlayVariable != null || facetVariable != null) &&
+    !vizConfig.showMissingness
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
 
@@ -355,7 +369,7 @@ function BarplotViz(props: VisualizationProps) {
           dataElementDependencyOrder={dataElementDependencyOrder}
           starredVariables={starredVariables}
           enableShowMissingnessToggle={
-            overlayVariable != null &&
+            (overlayVariable != null || facetVariable != null) &&
             data.value?.completeCasesAllVars !==
               data.value?.completeCasesAxesVars
           }
@@ -566,16 +580,16 @@ function reorderData(
   if (isFaceted(data)) {
     return {
       ...data,
-      facets: data.facets
-        .sort(({ label }) => facetVocabulary.indexOf(label))
-        .map(({ label, data }) => ({
-          label,
-          data: reorderData(
-            data,
-            labelVocabulary,
-            overlayVocabulary
-          ) as BarplotData,
-        })),
+      facets: sortBy(data.facets, ({ label }) =>
+        facetVocabulary.indexOf(label)
+      ).map(({ label, data }) => ({
+        label,
+        data: reorderData(
+          data,
+          labelVocabulary,
+          overlayVocabulary
+        ) as BarplotData,
+      })),
     };
   }
 

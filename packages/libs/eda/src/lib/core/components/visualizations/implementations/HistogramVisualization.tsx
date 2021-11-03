@@ -25,6 +25,7 @@ import {
   isEqual,
   min,
   max,
+  sortBy,
   groupBy,
   mapValues,
   size,
@@ -271,7 +272,11 @@ function HistogramViz(props: VisualizationProps) {
         computation.descriptor.type,
         params
       );
-      const showMissing = vizConfig.showMissingness && overlayVariable != null;
+      const showMissing =
+        vizConfig.showMissingness &&
+        (overlayVariable != null || facetVariable != null);
+      const showMissingOverlay =
+        vizConfig.showMissingness && overlayVariable != null;
       const overlayVocabulary = fixLabelsForNumberVariables(
         overlayVariable?.vocabulary,
         overlayVariable
@@ -292,7 +297,7 @@ function HistogramViz(props: VisualizationProps) {
             vocabularyWithMissingData(overlayVocabulary, showMissing),
             vocabularyWithMissingData(facetVocabulary, showMissing)
           ),
-          showMissing
+          showMissingOverlay
         ),
         showMissing
       );
@@ -394,7 +399,7 @@ function HistogramViz(props: VisualizationProps) {
           starredVariables={starredVariables}
           toggleStarredVariable={toggleStarredVariable}
           enableShowMissingnessToggle={
-            overlayVariable != null &&
+            (overlayVariable != null || facetVariable != null) &&
             data.value?.completeCasesAllVars !==
               data.value?.completeCasesAxesVars
           }
@@ -500,7 +505,7 @@ function HistogramPlotWithControls({
   const opacity = 100;
 
   const outputSize =
-    overlayVariable != null && !showMissingness
+    (overlayVariable != null || facetVariable != null) && !showMissingness
       ? completeCasesAllVars
       : completeCasesAxesVars;
 
@@ -568,7 +573,9 @@ function HistogramPlotWithControls({
             completeCasesAxesVars={completeCasesAxesVars}
             filters={filters}
             outputEntity={outputEntity}
-            stratificationIsActive={overlayVariable != null}
+            stratificationIsActive={
+              overlayVariable != null || facetVariable != null
+            }
             enableSpinner={independentAxisVariable != null && !error}
           />
           <VariableCoverageTable
@@ -781,7 +788,7 @@ function getRequestParams(
       xAxisVariable,
       barMode: 'stack',
       overlayVariable,
-      facetVariable: [facetVariable],
+      facetVariable: facetVariable ? [facetVariable] : [],
       valueSpec,
       ...binSpec,
       showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
@@ -794,23 +801,23 @@ function reorderData(
   overlayVocabulary: string[] = [],
   facetVocabulary: string[] = []
 ): HistogramDataWithCoverageStatistics | HistogramData {
-  if (overlayVocabulary.length > 0) {
-    if (isFaceted(data)) {
-      return {
-        ...data,
-        facets: data.facets
-          .sort(({ label }) => facetVocabulary.indexOf(label))
-          .map(({ label, data }) => ({
-            label,
-            data: reorderData(
-              data,
-              overlayVocabulary,
-              facetVocabulary
-            ) as HistogramData,
-          })),
-      };
-    }
+  if (isFaceted(data)) {
+    return {
+      ...data,
+      facets: sortBy(data.facets, ({ label }) =>
+        facetVocabulary.indexOf(label)
+      ).map(({ label, data }) => ({
+        label,
+        data: reorderData(
+          data,
+          overlayVocabulary,
+          facetVocabulary
+        ) as HistogramData,
+      })),
+    };
+  }
 
+  if (overlayVocabulary.length > 0) {
     // for each value in the overlay vocabulary's correct order
     // find the index in the series where series.name equals that value
     const overlayValues = data.series.map((series) => series.name);
