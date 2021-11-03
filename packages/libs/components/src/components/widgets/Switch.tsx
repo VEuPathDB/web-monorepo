@@ -3,7 +3,7 @@ import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import MaterialSwitch from '@material-ui/core/Switch';
 
-import { DARK_GRAY, LIGHT_BLUE, MEDIUM_GRAY } from '../../constants/colors';
+import { LIGHT_BLUE, MEDIUM_GRAY } from '../../constants/colors';
 
 export type SwitchProps = {
   /** Optional label for widget. */
@@ -62,7 +62,7 @@ export default function Switch({
         <Typography
           variant="button"
           style={{
-            color: DARK_GRAY,
+            color: disabled ? MEDIUM_GRAY : 'rgb(0, 0, 0)',
             ...(labelPosition === 'after'
               ? { paddingLeft: 5 }
               : { paddingRight: 5 }),
