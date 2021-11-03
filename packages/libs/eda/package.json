@@ -21,7 +21,6 @@
     "io-ts": "^2.2.13",
     "lodash": "^4.17.20",
     "monocle-ts": "^2.3.11",
-    "plotly.js": "^2.5.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-draggable": "^4.4.3",
