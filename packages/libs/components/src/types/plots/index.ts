@@ -11,6 +11,13 @@ import { HeatmapData } from './heatmap';
 import { MosaicData } from './mosaic';
 import { BirdsEyePlotData } from './birdseyeplot';
 
+export type FacetedData<D> = {
+  facets: {
+    label: string;
+    data: D;
+  }[];
+};
+
 // Commonly used type definitions for plots.
 
 export type BarLayoutOptions = 'overlay' | 'stack' | 'group';

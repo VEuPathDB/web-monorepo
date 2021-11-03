@@ -365,7 +365,7 @@ const PlotlyPlotWithRef = forwardRef(PlotlyPlot);
  * Factory function to create a component that delegates to `PlotlyPlotWithRef`.
  * This encapsulates ref forwarding. See {@link PlotRef}.
  */
-export function makePlotlyPlotComponent<S, T>(
+export function makePlotlyPlotComponent<S extends { data?: T }, T>(
   displayName: string,
   transformProps: (props: S) => Omit<PlotProps<T>, 'data'> & PlotParams
 ) {
