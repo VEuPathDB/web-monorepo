@@ -68,7 +68,8 @@ import PluginError from '../PluginError';
 import PlotLegend, {
   LegendItemsProps,
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
-import { boolean } from 'fp-ts';
+// import { gray } from '../colors';
+import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 
 type HistogramDataWithCoverageStatistics = HistogramData & CoverageStatistics;
 
@@ -326,8 +327,6 @@ function HistogramViz(props: VisualizationProps) {
         }
       : undefined;
 
-  console.log('data =', data);
-
   //DKDK checkbox of custom legend
   const legendItems: LegendItemsProps[] = useMemo(() => {
     //DKDK check filters has overlayVariable: if not, hasData: true
@@ -341,14 +340,17 @@ function HistogramViz(props: VisualizationProps) {
 
     return data.value != null
       ? data.value?.series
-          .map((data: HistogramDataSeries) => {
+          .map((data: HistogramDataSeries, index: number) => {
             return {
               label: data.name,
               // need a way to appropriately make marker info
-              // histogram plot does not have mode, so set to square for now but TO-DO
+              // histogram plot does not have mode, so set to square for now
               marker: 'square',
               //DKDK think markerColor needs to be added here
-              markerColor: 'markerColor',
+              markerColor:
+                data.name === 'No data'
+                  ? '#E8E8E8'
+                  : ColorPaletteDefault[index],
               // set hasData based on filters: do we need to check other type like dateSet, numberSet etc?
               hasData:
                 filters != null && overlayVariableFilter
@@ -363,20 +365,14 @@ function HistogramViz(props: VisualizationProps) {
               group: 1,
               rank: 1,
             };
-            // histogram viz uses stack option so reverse this!
+            // histogram viz uses stack option so reverse the legend order!
           })
           .reverse()
       : [];
   }, [data, filters]);
 
-  //DKDK
-  console.log('data.value?.dataSetProcess.series =', data.value?.series);
-  console.log('legendItems =', legendItems);
-
   //DKDK set useState to track checkbox status
   const [checkedLegendItems, setCheckedLegendItems] = useState<string[]>([]);
-
-  console.log('checkedLegendItems =', checkedLegendItems);
 
   //DKDK set all checkbox checked initially
   useEffect(() => {
@@ -536,6 +532,12 @@ function HistogramPlotWithControls({
   useEffect(() => {
     updateThumbnailRef.current = updateThumbnail;
   });
+
+  // useEffect(() => {
+  //   plotRef.current
+  //     ?.toImage({ format: 'svg', ...plotDimensions })
+  //     .then(updateThumbnailRef.current);
+  // }, [data, histogramProps.dependentAxisLogScale]);
 
   //DKDK add async/await for correct thumbnail capture
   useEffect(() => {
