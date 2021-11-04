@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import React from 'react';
 import { PageController } from '@veupathdb/wdk-client/lib/Controllers';
-import { attemptAction } from 'ebrc-client/App/DataRestriction/DataRestrictionActionCreators';
+import { attemptAction } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionActionCreators';
 import { requestNews } from 'ebrc-client/App/NewsSidebar/NewsModule';
 import { loadSearches } from 'ebrc-client/App/Searches/SearchCardActionCreators';
 import { requestStudies } from 'ebrc-client/App/Studies/StudyActionCreators';

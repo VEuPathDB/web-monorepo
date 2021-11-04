@@ -27,6 +27,7 @@ export const {
   studyAccessServiceUrl = '',
   retainContainerContent = false,
   useEda = false,
+  edaServiceUrl = '',
 } = window.__SITE_CONFIG__;
 
 const edaExampleAnalysesAuthorNum = parseInt(window.__SITE_CONFIG__.edaExampleAnalysesAuthor ?? '', 10);

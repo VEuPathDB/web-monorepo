@@ -6,6 +6,7 @@ import './Showcase.scss';
 import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { AnalysisClient } from '@veupathdb/eda/lib/core/api/analysis-api';
+import { edaServiceUrl } from 'ebrc-client/config';
 
 export default function Showcase(props) {
   const { analyses, content, prefix, attemptAction } = props;
@@ -33,7 +34,7 @@ export default function Showcase(props) {
   const [list, setList] = React.useState(loadItems == null ? items : null);
   const [error, setError] = React.useState();
   const { wdkService } = React.useContext(WdkDepdendenciesContext);
-  const analysisClient = AnalysisClient.getClient(`/eda-data`, wdkService);
+  const analysisClient = AnalysisClient.getClient(edaServiceUrl, wdkService);
 
   React.useEffect(() => {
     if (loadItems) {

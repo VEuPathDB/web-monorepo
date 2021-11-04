@@ -5,7 +5,7 @@ import { CategoryIcon } from 'ebrc-client/App/Categories';
 import { IconAlt as Icon, Link } from '@veupathdb/wdk-client/lib/Components';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import DownloadLink from './DownloadLink';
-import { isPrereleaseStudy } from 'ebrc-client/App/DataRestriction/DataRestrictionUtils';
+import { isPrereleaseStudy } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
 import './StudyCard.scss';
 import { makeEdaRoute } from 'ebrc-client/routes';
 
