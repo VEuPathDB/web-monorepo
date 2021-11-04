@@ -1,12 +1,15 @@
 import React, {
-  lazy,
-  Suspense,
-  useMemo,
-  useCallback,
+  ComponentType,
   CSSProperties,
+  PropsWithoutRef,
   Ref,
-  useImperativeHandle,
+  RefAttributes,
+  Suspense,
   forwardRef,
+  lazy,
+  useCallback,
+  useImperativeHandle,
+  useMemo,
 } from 'react';
 import { PlotParams } from 'react-plotly.js';
 import { legendSpecification } from '../utils/plotly';
@@ -358,6 +361,10 @@ function PlotlyPlot<T>(
     </Suspense>
   );
 }
+
+export type ComponentWithPlotRef<P> = ComponentType<
+  PropsWithoutRef<P> & RefAttributes<PlotRef>
+>;
 
 const PlotlyPlotWithRef = forwardRef(PlotlyPlot);
 
