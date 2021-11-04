@@ -56,7 +56,7 @@ export default function PlotLegend({
           </div>
           <div className="plotLegendCheckbox">
             {legendItems.map((item: LegendItemsProps, index: number) => (
-              <div style={{ display: 'flex' }}>
+              <div key={item.label} style={{ display: 'flex' }}>
                 <>
                   <Checkbox
                     key={item.label}
