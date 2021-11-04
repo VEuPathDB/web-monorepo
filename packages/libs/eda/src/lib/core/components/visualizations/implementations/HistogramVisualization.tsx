@@ -374,20 +374,27 @@ function HistogramViz(props: VisualizationProps) {
 
   //DKDK checkbox of custom legend
   const legendItems: LegendItemsProps[] = useMemo(() => {
-    return data.value != null && !isFaceted(data.value)
+    const legendData = !isFaceted(data.value)
       ? data.value?.series
-          .map((data: HistogramDataSeries, index: number) => {
+      : data.value?.facets[0].data.series;
+
+    return legendData != null
+      ? legendData
+          .map((dataItem: HistogramDataSeries, index: number) => {
             return {
-              label: data.name,
+              label: dataItem.name,
               // histogram plot does not have mode, so set to square for now
               marker: 'square',
               //DKDK think markerColor needs to be added here
               markerColor:
-                data.name === 'No data'
+                dataItem.name === 'No data'
                   ? '#E8E8E8'
                   : ColorPaletteDefault[index],
               // simplifying check with the presence of data
-              hasData: data.bins != null && data.bins.length > 0 ? true : false,
+              hasData:
+                dataItem.bins != null && dataItem.bins.length > 0
+                  ? true
+                  : false,
               group: 1,
               rank: 1,
             };
@@ -395,10 +402,11 @@ function HistogramViz(props: VisualizationProps) {
           })
           .reverse()
       : [];
-  }, [data, filters]);
+  }, [data]);
 
   //DKDK
   console.log('data.value? =', data.value);
+  console.log('legendItems =', legendItems);
 
   //DKDK set useState to track checkbox status
   const [checkedLegendItems, setCheckedLegendItems] = useState<string[]>([]);
@@ -612,6 +620,8 @@ function HistogramPlotWithControls({
               component={Histogram}
               data={data}
               props={histogramProps}
+              //DKDK pass checkedLegendItems to PlotlyPlot
+              checkedLegendItems={checkedLegendItems}
             />
           </>
         ) : (
