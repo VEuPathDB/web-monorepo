@@ -390,11 +390,22 @@ function HistogramViz(props: VisualizationProps) {
                 dataItem.name === 'No data'
                   ? '#E8E8E8'
                   : ColorPaletteDefault[index],
-              // simplifying check with the presence of data
-              hasData:
-                dataItem.bins != null && dataItem.bins.length > 0
+              //DKDK deep comparison is required for faceted plot
+              hasData: !isFaceted(data.value) // no faceted plot
+                ? dataItem.bins != null && dataItem.bins.length > 0
                   ? true
-                  : false,
+                  : false
+                : data.value?.facets
+                    .map(
+                      (
+                        el: { label: string; data: HistogramData } // faceted plot: here data.value is full data
+                      ) =>
+                        el.data.series[index].bins != null &&
+                        el.data.series[index].bins.length > 0
+                    )
+                    .includes(true)
+                ? true
+                : false,
               group: 1,
               rank: 1,
             };
