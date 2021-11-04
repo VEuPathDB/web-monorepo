@@ -10,15 +10,13 @@ import { ResetSessionController } from 'ebrc-client/controllers/ResetSessionCont
 import StudyAccessController from './controllers/StudyAccessController';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
-import { edaExampleAnalysesAuthor } from './config';
+import { edaExampleAnalysesAuthor, edaServiceUrl } from './config';
 
 export const STATIC_ROUTE_PATH = '/static-content';
 
 export function makeEdaRoute(studyId) {
   return '/workspace/analyses' + (studyId ? `/${studyId}` : '');
 }
-
-const edaServiceUrl = '/eda-data';
 
 const WorkspaceRouter = React.lazy(() => import('./WorkspaceRouter'));
 
