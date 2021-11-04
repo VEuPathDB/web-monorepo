@@ -10,8 +10,8 @@ import {
   getIdFromRecordClassName,
   isStudyRecordClass,
   Action
-} from '@veupathdb/web-common/lib/App/DataRestriction/DataRestrictionUtils';
-import { attemptAction } from '@veupathdb/web-common/lib/App/DataRestriction/DataRestrictionActionCreators';
+} from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
+import { attemptAction } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionActionCreators';
 import { fetchStudies } from '@veupathdb/web-common/lib/App/Studies/StudyActionCreators';
 
 import RelativeVisitsGroup from '../components/RelativeVisitsGroup';

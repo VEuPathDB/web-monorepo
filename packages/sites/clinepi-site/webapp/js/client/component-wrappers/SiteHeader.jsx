@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import Header from '@veupathdb/web-common/lib/App/Header';
-import { DataRestrictionDaemon } from '@veupathdb/web-common/lib/App/DataRestriction';
+import { makeEdaRoute } from '@veupathdb/web-common/lib/routes';
+import { DataRestrictionDaemon } from '@veupathdb/study-data-access/lib/data-restriction';
 import DisclaimerModal from '../components/DisclaimerModal';
 
 import makeHeaderMenuItems from '../data/headerMenuItems';
@@ -28,7 +29,7 @@ export default function SiteHeaderWrapper() {
           setSearchTerm={setSearchTerm}
         />
         <DisclaimerModal />
-        <DataRestrictionDaemon />
+        <DataRestrictionDaemon makeStudyPageRoute={id => makeEdaRoute(id) + '/details'} />
       </React.Fragment>
     )
   }
