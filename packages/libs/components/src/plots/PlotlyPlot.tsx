@@ -66,6 +66,9 @@ export interface PlotProps<T> extends ColorPaletteAddon {
 
 const Plot = lazy(() => import('react-plotly.js'));
 
+export const DEFAULT_CONTAINER_HEIGHT = '400px';
+export const DEFAULT_MAX_LEGEND_TEXT_LENGTH = 20;
+
 /**
  * Wrapper over the `react-plotly.js` `Plot` component
  *
@@ -82,7 +85,7 @@ function PlotlyPlot<T>(
   const {
     title,
     displayLegend = true,
-    containerStyles = { width: '100%', height: '400px' },
+    containerStyles = { width: '100%', height: DEFAULT_CONTAINER_HEIGHT },
     containerClass = 'web-components-plot',
     interactive = false,
     displayLibraryControls,
@@ -91,7 +94,7 @@ function PlotlyPlot<T>(
     spacingOptions,
     showSpinner,
     // set default max number of characters (20) for legend ellipsis
-    maxLegendTextLength = 20,
+    maxLegendTextLength = DEFAULT_MAX_LEGEND_TEXT_LENGTH,
     // expose data for applying legend ellipsis
     data,
     // original independent axis tick labels for tooltip text
