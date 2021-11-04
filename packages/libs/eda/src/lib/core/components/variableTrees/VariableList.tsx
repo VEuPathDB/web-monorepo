@@ -28,6 +28,7 @@ import {
   isMulti,
   isRange,
   findAncestorFields,
+  removeIntermediateNodesWithSingleChild,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
 
 import {
@@ -42,6 +43,7 @@ import { VariableDescriptor } from '../../types/variable';
 import { ShowHideVariableContext } from '../../utils/show-hide-variable-context';
 
 import { cx } from '../../../workspace/Utils';
+import { pruneEmptyFields } from '../../utils/wdk-filter-param-adapter';
 
 interface VariableField {
   type?: string;
@@ -376,7 +378,8 @@ export default function VariableList({
     : featuredFields;
 
   const tree = useMemo(() => {
-    const tree =
+    // Filter by starred variables if enabled
+    let tree =
       !showOnlyStarredVariables || starredVariableToggleDisabled
         ? fieldTree
         : pruneDescendantNodes(
@@ -390,13 +393,22 @@ export default function VariableList({
               visibleStarredVariableTermsSet.has(node.field.term),
             fieldTree
           );
-    return showOnlyCompatibleVariables
+    // Filter by compatible variables if enabled
+    tree = showOnlyCompatibleVariables
       ? pruneDescendantNodes((node) => {
           if (disabledFields.size === 0) return true;
           if (node.field.type == null) return node.children.length > 0;
           return !disabledFields.has(node.field.term);
         }, tree)
       : tree;
+    // Collapse nodes with a single child
+    tree.children = tree.children.map((entity) => ({
+      ...entity,
+      children: entity.children.map((child) =>
+        removeIntermediateNodesWithSingleChild(pruneEmptyFields(child))
+      ),
+    }));
+    return tree;
   }, [
     showOnlyStarredVariables,
     starredVariableToggleDisabled,
