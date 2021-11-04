@@ -5,8 +5,8 @@ import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { makeEdaRoute } from 'ebrc-client/routes';
 import StudySearches from 'ebrc-client/App/Studies/StudySearches';
 import DownloadLink from 'ebrc-client/App/Studies/DownloadLink';
-import { attemptAction } from 'ebrc-client/App/DataRestriction/DataRestrictionActionCreators';
-import { isPrereleaseStudy } from 'ebrc-client/App/DataRestriction/DataRestrictionUtils';
+import { attemptAction } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionActionCreators';
+import { isPrereleaseStudy } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
 import './StudyRecordHeading.scss';
 import { shouldOfferLinkToDashboard } from 'ebrc-client/StudyAccess/permission' 
 import { Link } from '@veupathdb/wdk-client/lib/Components';

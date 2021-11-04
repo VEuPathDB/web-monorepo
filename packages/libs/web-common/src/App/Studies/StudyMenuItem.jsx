@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { useEda } from 'ebrc-client/config';
 import { IconAlt as Icon, Link, Mesa } from '@veupathdb/wdk-client/lib/Components';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { isPrereleaseStudy } from 'ebrc-client/App/DataRestriction/DataRestrictionUtils';
+import { isPrereleaseStudy } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
 import { makeEdaRoute } from 'ebrc-client/routes';
 import './StudyMenu.scss';
 

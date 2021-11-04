@@ -4,9 +4,9 @@ import { compose } from 'lodash/fp';
 
 import { IconAlt as Icon, Mesa } from '@veupathdb/wdk-client/lib/Components';
 import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { attemptAction } from 'ebrc-client/App/DataRestriction/DataRestrictionActionCreators'
+import { attemptAction } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionActionCreators'
 import { connect } from 'react-redux'
-import { isPrereleaseStudy } from 'ebrc-client/App/DataRestriction/DataRestrictionUtils';
+import { isPrereleaseStudy } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
 
 function DownloadLink(props) {
   const { attemptAction, studyAccess, studyId, studyUrl, user, permissions, className, linkText = '', iconFirst = false } = props;

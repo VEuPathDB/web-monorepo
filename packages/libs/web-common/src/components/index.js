@@ -10,5 +10,4 @@ export { default as QuickSearch } from './QuickSearch';
 export { default as TabularReporterFormSubmitButtons } from './reporters/TabularReporterFormSubmitButtons';
 export { SiteSearchInput } from 'ebrc-client/components/SiteSearch/SiteSearchInput';
 export { default as DownloadLink } from 'ebrc-client/App/Studies/DownloadLink';
-export { default as DataRestrictionDaemon } from 'ebrc-client/App/DataRestriction/DataRestrictionDaemon';
 export { SearchCheckboxTree } from 'ebrc-client/components/homepage/SearchPane';

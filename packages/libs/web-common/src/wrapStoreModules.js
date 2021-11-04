@@ -7,7 +7,7 @@ import { selectReporterComponent } from './util/reporter';
 import * as galaxyTerms from './store-modules/GalaxyTerms';
 
 import reduceStudies from 'ebrc-client/App/Studies/StudyReducer';
-import reduceDataRestriction from 'ebrc-client/App/DataRestriction/DataRestrictionReducer';
+import reduceDataRestriction from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionReducer';
 import reduceSearchCards from 'ebrc-client/App/Searches/SearchCardReducer';
 import { newsReducer } from 'ebrc-client/App/NewsSidebar/NewsModule';
 

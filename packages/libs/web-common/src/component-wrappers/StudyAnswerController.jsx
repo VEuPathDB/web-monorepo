@@ -6,7 +6,7 @@ import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import DownloadLink from 'ebrc-client/App/Studies/DownloadLink';
 import CategoryIcon from 'ebrc-client/App/Categories/CategoryIcon';
 import StudySearchIconLinks from 'ebrc-client/App/Studies/StudySearches';
-import { isPrereleaseStudy } from 'ebrc-client/App/DataRestriction/DataRestrictionUtils';
+import { isPrereleaseStudy } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
 import { makeEdaRoute } from 'ebrc-client/routes';
 import { useEda } from 'ebrc-client/config';
 
