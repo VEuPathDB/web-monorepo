@@ -232,6 +232,7 @@ function NewVisualizationPicker(props: Props) {
                 ) : (
                   <div>{vizOverview.displayName}</div>
                 )}
+                {vizType == null && <i>(Coming soon!)</i>}
               </div>
             </div>
           );
