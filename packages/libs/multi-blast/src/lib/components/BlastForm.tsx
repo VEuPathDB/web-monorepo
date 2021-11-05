@@ -72,6 +72,7 @@ export const blastFormCx = makeClassNameHelper('wdk-QuestionForm');
 const BLAST_FORM_CONTAINER_NAME = 'MultiBlast';
 
 export interface Props extends DefaultQuestionFormProps {
+  canChangeRecordType?: boolean;
   isMultiBlast?: boolean;
 }
 
@@ -91,7 +92,7 @@ export function BlastForm(props: Props) {
 }
 
 function BlastFormWithTransformedQuestion(props: Props) {
-  const canChangeRecordType = props.isMultiBlast ?? false;
+  const canChangeRecordType = props.canChangeRecordType ?? false;
 
   const targetType = props.state.paramValues[BLAST_DATABASE_TYPE_PARAM_NAME];
 

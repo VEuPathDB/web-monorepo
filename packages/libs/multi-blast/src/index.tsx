@@ -1,6 +1,6 @@
 import './globals';
 import React, { Suspense } from 'react';
-import { RouteComponentProps } from 'react-router';
+import { Redirect, RouteComponentProps } from 'react-router';
 import { RecoilRoot } from 'recoil';
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
 import {
@@ -52,6 +52,18 @@ initialize({
         <Suspense fallback={null}>
           <PreferredOrganismsConfigController />
         </Suspense>
+      ),
+    },
+    {
+      path: '/search/:recordClass/:searchName(.*MultiBlast)',
+      component: (
+        props: RouteComponentProps<{
+          recordClass: string;
+        }>
+      ) => (
+        <Redirect
+          to={`/workspace/blast/new?recordType=${props.match.params.recordClass}`}
+        />
       ),
     },
     ...routes,
