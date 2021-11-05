@@ -372,7 +372,7 @@ function HistogramViz(props: VisualizationProps) {
         }
       : undefined;
 
-  //DKDK checkbox of custom legend
+  //DKDK custom legend items for checkbox
   const legendItems: LegendItemsProps[] = useMemo(() => {
     const legendData = !isFaceted(data.value)
       ? data.value?.series
@@ -395,11 +395,9 @@ function HistogramViz(props: VisualizationProps) {
                 ? dataItem.bins != null && dataItem.bins.length > 0
                   ? true
                   : false
-                : data.value?.facets
+                : data.value?.facets // faceted plot: here data.value is full data
                     .map(
-                      (
-                        el: { label: string; data: HistogramData } // faceted plot: here data.value is full data
-                      ) =>
+                      (el: { label: string; data: HistogramData }) =>
                         el.data.series[index].bins != null &&
                         el.data.series[index].bins.length > 0
                     )
