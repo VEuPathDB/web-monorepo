@@ -903,13 +903,13 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/multi-blast@^0.4.2":
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/multi-blast/-/multi-blast-0.4.2.tgz#67e2943ac08c28dbcc6e16d15a087041a077785d"
-  integrity sha512-7grA37+jR5H3HAttpsiCOijU1Z+MYJAl+zCqwIFqgqQkgmvfFlU3kYbW7Zyg5kO3S3TLrh0SajsC+aNINz0REQ==
+"@veupathdb/multi-blast@^0.4.3":
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/@veupathdb/multi-blast/-/multi-blast-0.4.3.tgz#0d454464c40ba5018c577ba9a34cebfa4f999b1a"
+  integrity sha512-ak7DKkLZyu6vGVVx1rOgzRounbyCmJeyPzKUqrXPEqJ7Cx1u7UHNk66unn0btUO7ctMEYIKdq/0RAFUAG7dNjA==
   dependencies:
     "@veupathdb/http-utils" "^1.0.1"
-    "@veupathdb/preferred-organisms" "^1.1.3"
+    "@veupathdb/preferred-organisms" "^1.1.4"
     "@veupathdb/wdk-client" "^0.4.11"
     "@veupathdb/web-common" "^0.1.1-alpha.11"
     fp-ts "^2.11.5"
@@ -921,10 +921,10 @@
     react-select "^3.0.4"
     redux "^4.0.0"
 
-"@veupathdb/preferred-organisms@^1.1.3":
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/preferred-organisms/-/preferred-organisms-1.1.3.tgz#ece3edc6557e940697e8ff394ab3d9ce4949ca43"
-  integrity sha512-spUe3zwcuXCcG8u3cRFZwoRKivcs0N3AdBOP9ztsBgEK0sD184uq/604irXBd5qy7xXbLX/H6+Q7g/L1BmX1Fw==
+"@veupathdb/preferred-organisms@^1.1.4":
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/@veupathdb/preferred-organisms/-/preferred-organisms-1.1.4.tgz#c3f27dd88fdfa3206c69ef37a5a22bbfba3ba795"
+  integrity sha512-hyTpLTcTI2TFywsOfYKizve8mlRdsel3sehD/eazK+LzjFermhd1u8w5HEcV4Z5wSsridWHq0htnka1qe/XKFg==
   dependencies:
     "@veupathdb/wdk-client" "^0.4.11"
     "@veupathdb/web-common" "^0.1.5"
