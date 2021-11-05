@@ -314,7 +314,12 @@ function PlotlyPlot<T>(
     return data.map((d) => ({
       ...d,
       //DKDK legend checkbox: change 'true' case to 'legendonly' as 'true' changes plot colors
-      visible: checkedLegendItems?.includes(d.name || '') ? true : 'legendonly',
+      visible:
+        checkedLegendItems != null
+          ? checkedLegendItems?.includes(d.name || '')
+            ? true
+            : 'legendonly'
+          : undefined,
       // ellipsis for legend item
       name:
         (d.name || '').length > maxLegendTextLength
