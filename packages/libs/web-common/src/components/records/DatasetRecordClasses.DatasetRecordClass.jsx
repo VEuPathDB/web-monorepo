@@ -191,13 +191,11 @@ function References(props) {
         </li>
       );
     } else {
-      // Use text and url (after cleaning) to create link
-      let cleanUrl = row.url.replace('/a/app','');
       return (
         <li key={index}>
-          <Link to={`${cleanUrl}`}>
+          <a href={row.url}>
             {row.text}
-          </Link>
+          </a>
         </li>
       );
     }
