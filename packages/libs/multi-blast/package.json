@@ -17,7 +17,7 @@
   ],
   "dependencies": {
     "@veupathdb/http-utils": "^1.0.1",
-    "@veupathdb/preferred-organisms": "^1.1.3",
+    "@veupathdb/preferred-organisms": "^1.1.4",
     "@veupathdb/wdk-client": "^0.4.11",
     "@veupathdb/web-common": "^0.1.1-alpha.11",
     "fp-ts": "^2.11.5",
