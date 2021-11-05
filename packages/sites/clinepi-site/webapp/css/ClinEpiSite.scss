@@ -1,12 +1,14 @@
 @import url('https://fonts.googleapis.com/css?family=Exo+2:500');
-@import url('https://fonts.googleapis.com/css?family=Rubik:300,300i,400,400i,500,500i,700');
+@import url('https://fonts.googleapis.com/css?family=Rubik:300');
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700&display=swap');
+
 
 @value hlColor: #9c242d;
 @value bgColor: #85b3c3;
 
 body, h1, h2, h3, h4, h5, h6 {
   /* Some rules below are tailored to the current font. See FONT_RELATED section below */
-  font-family: 'Rubik', 'San Francisco', 'Frutiger', 'Univers', 'Helvetica Neue', 'Helvetica';
+  font-family: 'Roboto', 'San Francisco', 'Frutiger', 'Univers', 'Helvetica Neue', 'Helvetica';
   /* font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif; */
   text-rendering: optimizeLegibility;
 }
@@ -20,14 +22,20 @@ body {
   font-weight: 300;
 }
 
-.HeaderNav-Title > a > mark {
-  font-family: 'Exo 2';
-  font-weight: 400;
+.HeaderNav-Title > a {
+  font-family: Rubik;
+  > mark {
+    font-family: 'Exo 2';
+    font-weight: 400;
+  }
 }
 
 .Hero-Title {
   font-weight: 400;
   font-family: 'Exo 2';
+  + span {
+    font-family: Rubik;
+  }
 }
 
 #header {
