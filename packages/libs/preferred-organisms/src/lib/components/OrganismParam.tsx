@@ -182,9 +182,9 @@ function useTreeBoxParamWithPrunedVocab(
       ? pruneNodesWithSingleExtendingChild(parameter.vocabulary)
       : parameter.vocabulary;
 
-    const shouldOnlyShowPreferredOrganisms = parameter.properties?.[
-      ORGANISM_PROPERTIES_KEY
-    ].includes(SHOW_ONLY_PREFERRED_ORGANISMS_PROPERTY);
+    const shouldOnlyShowPreferredOrganisms = findShouldOnlyShowPreferredOrganisms(
+      parameter
+    );
 
     const preferredVocabulary =
       shouldOnlyShowPreferredOrganisms && preferredOrganismsEnabled
@@ -228,9 +228,9 @@ function useFlatParamWithPrunedVocab(
   const [preferredOrganismsEnabled] = usePreferredOrganismsEnabledState();
 
   const paramWithPrunedVocab = useMemo(() => {
-    const shouldOnlyShowPreferredOrganisms = parameter.properties?.[
-      ORGANISM_PROPERTIES_KEY
-    ].includes(SHOW_ONLY_PREFERRED_ORGANISMS_PROPERTY);
+    const shouldOnlyShowPreferredOrganisms = findShouldOnlyShowPreferredOrganisms(
+      parameter
+    );
 
     return shouldOnlyShowPreferredOrganisms && preferredOrganismsEnabled
       ? {
@@ -349,7 +349,15 @@ function useRestrictSelectedValues(
   useEffect(() => {
     const { selectedValues, onChange } = selectedValuesRef.current;
 
-    if (preferredOrganismsEnabled && !hasEmptyVocabularly(parameter)) {
+    const shouldOnlyShowPreferredOrganisms = findShouldOnlyShowPreferredOrganisms(
+      parameter
+    );
+
+    if (
+      shouldOnlyShowPreferredOrganisms &&
+      preferredOrganismsEnabled &&
+      !hasEmptyVocabularly(parameter)
+    ) {
       const preferredSelectedValues = selectedValues.filter((selectedValue) =>
         preferredValues.has(selectedValue)
       );
@@ -378,6 +386,12 @@ export function isOrganismParam(parameter: Parameter): parameter is EnumParam {
   return (
     parameter?.properties?.[ORGANISM_PROPERTIES_KEY] != null &&
     EnumParamModule.isType(parameter)
+  );
+}
+
+function findShouldOnlyShowPreferredOrganisms(parameter: Parameter) {
+  return parameter.properties?.[ORGANISM_PROPERTIES_KEY].includes(
+    SHOW_ONLY_PREFERRED_ORGANISMS_PROPERTY
   );
 }
 
