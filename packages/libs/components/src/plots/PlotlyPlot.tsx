@@ -315,8 +315,8 @@ function PlotlyPlot<T>(
       ...d,
       //DKDK legend checkbox: change 'true' case to 'legendonly' as 'true' changes plot colors
       visible:
-        checkedLegendItems != null
-          ? checkedLegendItems?.includes(d.name || '')
+        checkedLegendItems != null && d.name != null
+          ? checkedLegendItems?.includes(d.name)
             ? true
             : 'legendonly'
           : undefined,
