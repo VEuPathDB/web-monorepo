@@ -309,7 +309,8 @@ function PlotlyPlot<T>(
   const finalData = useMemo(() => {
     return data.map((d) => ({
       ...d,
-      // set to be 'legendonly' as 'true' changes plot colors & condition for no custom legend case
+      // change 'true' case to 'legendonly' as 'true' changes plot colors
+      // also add condition for no custom legend case
       visible:
         checkedLegendItems != null && d.name != null
           ? checkedLegendItems?.includes(d.name)
