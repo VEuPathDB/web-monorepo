@@ -98,7 +98,6 @@ function PlotlyPlot<T>(
     data,
     // original independent axis tick labels for tooltip text
     storedIndependentAxisTickLabel,
-    //DKDK checkbox
     checkedLegendItems,
     colorPalette = ColorPaletteDefault,
     ...plotlyProps
@@ -307,21 +306,24 @@ function PlotlyPlot<T>(
     ]
   );
 
-  //DKDK
-  console.log('checkedLegendItems at PlotlyPlot=', checkedLegendItems);
-
   const finalData = useMemo(() => {
     return data.map((d) => ({
       ...d,
-      //DKDK legend checkbox: change 'true' case to 'legendonly' as 'true' changes plot colors
-      visible: checkedLegendItems?.includes(d.name || '') ? true : 'legendonly',
+      // change 'true' case to 'legendonly' as 'true' changes plot colors
+      // also add condition for no custom legend case
+      visible:
+        checkedLegendItems != null && d.name != null
+          ? checkedLegendItems?.includes(d.name)
+            ? true
+            : 'legendonly'
+          : undefined,
       // ellipsis for legend item
       name:
         (d.name || '').length > maxLegendTextLength
           ? (d.name || '').substring(0, maxLegendTextLength) + '...'
           : d.name,
     }));
-  }, [data, checkedLegendItems]); // add checkedLegendItems
+  }, [data, checkedLegendItems]);
 
   const plotId = useMemo(() => uniqueId('plotly_plot_div_'), []);
 
