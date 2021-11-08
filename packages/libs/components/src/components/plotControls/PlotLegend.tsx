@@ -1,7 +1,7 @@
 import React from 'react';
 import { Checkbox } from '@material-ui/core';
 
-//DKDK define legendItems props
+// define legendItems props
 export interface LegendItemsProps {
   label: string;
   marker: string;
@@ -14,31 +14,38 @@ export interface LegendItemsProps {
 // set props for custom legend function
 interface PlotLegendProps {
   legendItems: LegendItemsProps[];
-  checkedLegendItems: string[];
-  setCheckedLegendItems: (checkedItems: string[]) => void;
+  checkedLegendItems: string[] | undefined;
   legendTitle?: string;
+  // use onCheckedLegendItemsChange
+  onCheckedLegendItemsChange?: (checkedLegendItems: string[]) => void;
 }
 export default function PlotLegend({
   legendItems,
   checkedLegendItems,
-  setCheckedLegendItems,
   legendTitle,
+  // use onCheckedLegendItemsChange
+  onCheckedLegendItemsChange,
 }: PlotLegendProps) {
   // change checkbox state by click
   const handleLegendCheckboxClick = (checked: boolean, id: string) => {
-    if (checked) {
-      setCheckedLegendItems([...checkedLegendItems, id]);
-    } else {
-      // uncheck
-      setCheckedLegendItems(
-        checkedLegendItems.filter((el: string) => el !== id)
-      );
+    if (checkedLegendItems != null) {
+      if (checked) {
+        // for vizconfig.checkedLegendItems
+        if (onCheckedLegendItemsChange != null)
+          onCheckedLegendItemsChange([...checkedLegendItems, id]);
+      } else {
+        // for vizconfig.checkedLegendItems
+        if (onCheckedLegendItemsChange != null)
+          onCheckedLegendItemsChange(
+            checkedLegendItems.filter((el: string) => el !== id)
+          );
+      }
     }
   };
 
   return (
     <>
-      {legendItems.length !== 1 && (
+      {legendItems.length > 1 && (
         <div
           style={{
             border: '1px solid #dedede',
@@ -68,7 +75,7 @@ export default function PlotLegend({
                       handleLegendCheckboxClick(e.target.checked, item.label);
                     }}
                     checked={
-                      checkedLegendItems.includes(item.label) ? true : false
+                      checkedLegendItems?.includes(item.label) ? true : false
                     }
                     style={{ padding: 0 }}
                     // disable when hasData is false
@@ -87,9 +94,9 @@ export default function PlotLegend({
                           borderWidth: '0',
                           // width: '100%',
                           // height: '100%',
-                          //DKDK gray out for filtered item
+                          // gray out for filtered item
                           backgroundColor:
-                            checkedLegendItems.includes(item.label) &&
+                            checkedLegendItems?.includes(item.label) &&
                             item.hasData
                               ? item.markerColor
                               : '#999',
@@ -104,9 +111,9 @@ export default function PlotLegend({
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
-                      //DKDK gray out for filtered item
+                      // gray out for filtered item
                       color:
-                        checkedLegendItems.includes(item.label) && item.hasData
+                        checkedLegendItems?.includes(item.label) && item.hasData
                           ? ''
                           : '#999',
                     }}
@@ -127,7 +134,7 @@ export default function PlotLegend({
   );
 }
 
-//DKDK legend ellipsis function for legend title (23) and legend items (20)
+// legend ellipsis function for legend title (23) and legend items (20)
 const legendEllipsis = (label: string, ellipsisLength: number) => {
   return (label || '').length > ellipsisLength
     ? (label || '').substring(0, ellipsisLength) + '...'

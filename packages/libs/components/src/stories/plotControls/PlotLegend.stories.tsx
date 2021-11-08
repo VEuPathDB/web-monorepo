@@ -254,7 +254,7 @@ export const HistogramPlotLegend = () => {
       <PlotLegend
         legendItems={legendItems}
         checkedLegendItems={checkedLegendItems}
-        setCheckedLegendItems={setCheckedLegendItems}
+        onCheckedLegendItemsChange={setCheckedLegendItems}
         // pass legend title
         legendTitle={'Age group'}
       />
