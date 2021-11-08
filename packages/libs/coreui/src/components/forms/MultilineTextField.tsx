@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from 'react';
+
 // Components
 import { H6 } from '../headers';
 
@@ -29,6 +31,10 @@ export type MultilineTextFieldProps = {
   status?: 'syncing' | 'synced';
 };
 
+/**
+ * A multiline text field component with optional dynamic resizing,
+ * optional character limit, and status indicator.
+ * */
 export default function MultilineTextField({
   heading,
   instructions,
@@ -40,7 +46,21 @@ export default function MultilineTextField({
   onValueChange,
   status,
 }: MultilineTextFieldProps) {
-  const { observe, height: currentHeight } = useDimensions();
+  const [hasFocus, setHasFocus] = useState(false);
+  const [scrollBarVisible, setScrollBarVisible] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    const virtualHeight = textareaRef.current?.scrollHeight ?? 0;
+    const actualHeight = textareaRef.current?.clientHeight ?? 0;
+    setScrollBarVisible(virtualHeight > actualHeight);
+  }, [textareaRef.current?.scrollHeight, textareaRef.current?.clientHeight]);
+
+  const {
+    observe,
+    height: currentHeight,
+    width: currentWidth,
+  } = useDimensions();
   const { observe: headingRef, height: nonInputHeight } = useDimensions();
 
   return (
@@ -53,27 +73,32 @@ export default function MultilineTextField({
           </label>
         )}
       </div>
-      <div css={{ position: 'relative' }}>
+      <div
+        css={{
+          position: 'relative',
+          outlineColor: 'rgb(170, 170, 170)',
+          outlineWidth: hasFocus ? 2 : 1,
+          outlineStyle: 'solid',
+          color: GRAY['500'],
+          borderRadius: 5,
+        }}
+      >
         <textarea
+          ref={textareaRef}
           maxLength={characterLimit}
           css={[
             typography.p,
             {
               boxSizing: 'border-box',
-              borderWidth: 1,
-              borderStyle: 'solid',
-              borderColor: 'rgb(170, 170, 170)',
-              borderRadius: 5,
+              borderStyle: 'none',
+              outlineStyle: 'none',
               padding: 15,
-              paddingBottom: 35,
+              paddingBottom: 40,
               resize: 'none',
               width,
               height: currentHeight - nonInputHeight,
               color: GRAY['400'],
               ':focus': {
-                outlineColor: 'rgb(170, 170, 170)',
-                outlineWidth: 1,
-                outlineStyle: 'solid',
                 color: GRAY['500'],
               },
             },
@@ -83,44 +108,48 @@ export default function MultilineTextField({
           onChange={(event: any) => {
             onValueChange(event.target.value);
           }}
+          onFocus={() => setHasFocus(true)}
+          onBlur={() => setHasFocus(false)}
         />
-        {characterLimit && currentHeight && (
-          <p
-            css={[
-              typography.metaData,
-              {
-                position: 'absolute',
-                top: currentHeight - nonInputHeight - 35,
-                left: 15,
-              },
-            ]}
-          >
-            {`${value.length} / ${characterLimit}`}
-          </p>
-        )}
         <div
           css={{
+            boxSizing: 'border-box',
             position: 'absolute',
-            top: currentHeight - nonInputHeight - 30,
-            right: 10,
+            bottom: 0,
+            width: scrollBarVisible ? currentWidth - 15 : currentWidth,
+            height: 30,
+            borderRadius: 5,
+            backgroundColor: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingLeft: 15,
+            paddingRight: 10,
           }}
         >
-          {status === 'syncing' && (
-            <Loading
-              fontSize={20}
-              fill={GRAY[400]}
-              css={{
-                animation: `${spin} 2s ease infinite, ${fadeIn} 1s linear`,
-              }}
-            />
+          {characterLimit && currentHeight && (
+            <p css={[typography.metaData]}>
+              {`${value.length} / ${characterLimit}`}
+            </p>
           )}
-          {status === 'synced' && (
-            <CheckCircle
-              fontSize={20}
-              fill={LIGHT_GREEN}
-              css={{ animation: `${fadeIn} 1s linear` }}
-            />
-          )}
+          <div css={{ paddingTop: 3 }}>
+            {status === 'syncing' && (
+              <Loading
+                fontSize={20}
+                fill={GRAY[400]}
+                css={{
+                  animation: `${spin} 2s ease infinite, ${fadeIn} 1s linear`,
+                }}
+              />
+            )}
+            {status === 'synced' && (
+              <CheckCircle
+                fontSize={20}
+                fill={LIGHT_GREEN}
+                css={{ animation: `${fadeIn} 1s linear` }}
+              />
+            )}
+          </div>
         </div>
       </div>
     </div>
