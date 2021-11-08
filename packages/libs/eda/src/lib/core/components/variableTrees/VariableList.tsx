@@ -121,6 +121,9 @@ interface VariableListProps {
   hideDisabledFields: boolean;
   setHideDisabledFields: (hide: boolean) => void;
   showMultiFilterDescendants: boolean;
+  // Entities in which single child nodes should be promoted
+  // (replacing their parent in the tree)
+  singleChildPromotionEntityIds?: string[];
 }
 
 // TODO: Needs documentation of general component purpose.
@@ -144,6 +147,7 @@ export default function VariableList({
   setHideDisabledFields,
   customDisabledVariableMessage,
   showMultiFilterDescendants,
+  singleChildPromotionEntityIds,
 }: VariableListProps) {
   // useContext is used here with ShowHideVariableContext
   const {
@@ -401,13 +405,22 @@ export default function VariableList({
           return !disabledFields.has(node.field.term);
         }, tree)
       : tree;
-    // Collapse nodes with a single child
-    tree.children = tree.children.map((entity) => ({
-      ...entity,
-      children: entity.children.map((child) =>
-        removeIntermediateNodesWithSingleChild(pruneEmptyFields(child))
-      ),
-    }));
+    // Promote single children in entities where it's enabled
+    if (
+      singleChildPromotionEntityIds &&
+      singleChildPromotionEntityIds.length > 0
+    ) {
+      tree.children = tree.children.map((entity) =>
+        singleChildPromotionEntityIds.includes(entity.field.term)
+          ? {
+              ...entity,
+              children: entity.children.map((child) =>
+                removeIntermediateNodesWithSingleChild(pruneEmptyFields(child))
+              ),
+            }
+          : entity
+      );
+    }
     return tree;
   }, [
     showOnlyStarredVariables,
@@ -417,6 +430,7 @@ export default function VariableList({
     visibleStarredVariableTermsSet,
     multiFilterDescendants,
     disabledFields,
+    singleChildPromotionEntityIds,
   ]);
 
   const tooltipContent = (
