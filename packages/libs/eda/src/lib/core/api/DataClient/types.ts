@@ -339,6 +339,7 @@ export interface MosaicRequestParams {
     outputEntityId: string;
     xAxisVariable: VariableDescriptor;
     yAxisVariable: VariableDescriptor;
+    facetVariable: ZeroToTwoVariables;
   };
 }
 
@@ -346,11 +347,19 @@ export type MosaicResponse = TypeOf<typeof MosaicResponse>;
 export const MosaicResponse = type({
   mosaic: type({
     data: array(
-      type({
-        xLabel: array(string),
-        yLabel: array(array(string)),
-        value: array(array(number)),
-      })
+      intersection([
+        type({
+          xLabel: array(string),
+          yLabel: array(array(string)),
+          value: array(array(number)),
+        }),
+        partial({
+          facetVariableDetails: union([
+            tuple([StringVariableValue]),
+            tuple([StringVariableValue, StringVariableValue]),
+          ]),
+        }),
+      ])
     ),
     config: type({
       completeCasesAllVars: number,
@@ -379,9 +388,13 @@ export const ContTableResponse = intersection([
   type({
     statsTable: array(
       partial({
-        pvalue: union([number, string]),
+        pvalue: union([number, string]), // TO DO: should these three stats values all be optional?
         degreesFreedom: number,
         chisq: number,
+        facetVariableDetails: union([
+          tuple([StringVariableValue]),
+          tuple([StringVariableValue, StringVariableValue]),
+        ]),
       })
     ),
   }),
@@ -393,11 +406,15 @@ export const TwoByTwoResponse = intersection([
   type({
     statsTable: array(
       partial({
-        oddsratio: number,
+        oddsratio: number, // TO DO: should these stats values really all be optional?
         pvalue: union([number, string]),
         orInterval: string,
         rrInterval: string,
         relativerisk: number,
+        facetVariableDetails: union([
+          tuple([StringVariableValue]),
+          tuple([StringVariableValue, StringVariableValue]),
+        ]),
       })
     ),
     completeCasesTable: completeCasesTableArray,
