@@ -15,8 +15,6 @@ module.exports = {
     "@storybook/addon-essentials"
   ],
   babel: async (options) => {
-    // console.log('BABEL OPTIONS', options)
-
     return ({
       ...options,
       presets: [...options.presets, '@emotion/babel-preset-css-prop'],
