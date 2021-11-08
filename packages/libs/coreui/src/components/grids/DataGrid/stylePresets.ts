@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  DARK_GRAY,
-  DARK_ORANGE,
-  LIGHT_GRAY,
-  LIGHT_ORANGE,
-  MEDIUM_GRAY,
-} from '../../../constants/colors';
+import { GRAY } from '../../../definitions/colors';
 
 export type DataGridStyleSpec = {
   /** Styles for the table element. */
@@ -44,7 +38,7 @@ const mesa: DataGridStyleSpec = {
     paddingRight: 30,
     paddingBottom: 10,
     paddingTop: 10,
-    color: DARK_GRAY,
+    color: GRAY[500],
     display: 'flex',
     alignContent: 'center',
     backgroundColor: 'rgb(235, 235, 235)',
@@ -55,12 +49,12 @@ const mesa: DataGridStyleSpec = {
     borderLeft: 'solid 1px',
     borderRight: 'solid 1px',
     borderColor: 'rgb(225, 225, 225)',
-    color: DARK_GRAY,
+    color: GRAY[500],
     fontSize: 12,
   },
   icons: {
-    inactiveColor: MEDIUM_GRAY,
-    activeColor: DARK_GRAY,
+    inactiveColor: GRAY[300],
+    activeColor: GRAY[400],
   },
 };
 
@@ -71,7 +65,7 @@ const stylePresets: {
     table: {
       borderStyle: 'none',
       primaryRowColor: 'white',
-      secondaryRowColor: LIGHT_GRAY,
+      secondaryRowColor: GRAY[100],
     },
     headerCells: {
       border: 'none',
@@ -79,19 +73,19 @@ const stylePresets: {
       paddingRight: 30,
       paddingBottom: 5,
       paddingTop: 5,
-      color: DARK_GRAY,
+      color: GRAY[500],
       display: 'flex',
       alignContent: 'center',
     },
     dataCells: {
       padding: '10px',
       border: 'solid 2px',
-      borderColor: MEDIUM_GRAY,
-      color: DARK_GRAY,
+      borderColor: GRAY[300],
+      color: GRAY[400],
     },
     icons: {
-      inactiveColor: MEDIUM_GRAY,
-      activeColor: DARK_GRAY,
+      inactiveColor: GRAY[200],
+      activeColor: GRAY[400],
     },
   },
   mesa,

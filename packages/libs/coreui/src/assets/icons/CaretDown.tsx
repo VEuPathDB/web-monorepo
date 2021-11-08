@@ -1,4 +1,4 @@
-import { MEDIUM_GRAY } from '../../constants/colors';
+import { GRAY } from '../../definitions/colors';
 
 // TODO: Make this more generic.
 type CaretDownIconProps = {
@@ -11,7 +11,7 @@ type CaretDownIconProps = {
 export default function CaretDownIcon({
   width = 12,
   height = 8,
-  color = MEDIUM_GRAY,
+  color = GRAY['400'],
   extraCSS = {},
 }: CaretDownIconProps) {
   return (

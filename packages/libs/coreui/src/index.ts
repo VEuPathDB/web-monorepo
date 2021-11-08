@@ -10,3 +10,5 @@ export { default as DataGrid } from './components/grids/DataGrid';
 export { default as FullScreenModal } from './components/modals/FullScreenModal';
 
 export { default as styles } from './styleDefinitions';
+
+export { default as colors } from './definitions/colors';

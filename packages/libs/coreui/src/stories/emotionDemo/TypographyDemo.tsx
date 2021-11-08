@@ -4,7 +4,7 @@ import {
   DARK_RED,
   LIGHT_COLORS,
   LIGHT_ORANGE,
-} from '../../constants/colors';
+} from '../../definitions/colors';
 import typographyStyles from '../../styleDefinitions/typography';
 import H1 from '../../components/headers/H1';
 import H2 from '../../components/headers/H2';

@@ -49,6 +49,47 @@ export const PAIRED_COLORS = [
   DARK_PURPLE,
 ];
 
-export const DARK_GRAY = 'rgb(100, 100, 100)';
-export const MEDIUM_GRAY = 'rgb(150, 150, 150)';
-export const LIGHT_GRAY = 'rgb(240, 240, 240)';
+// export const MEDIUM_GRAY = 'rgb(150, 150, 150)';
+// export const LIGHT_GRAY = 'rgb(240, 240, 240)';
+
+type ColorHue = {
+  100: string;
+  200: string;
+  300: string;
+  400: string;
+  500: string;
+  600: string;
+};
+
+export const GRAY: ColorHue = {
+  100: '#E6E6E6',
+  200: '#CCCCCC',
+  300: '#A6A6A6',
+  400: '#808080',
+  500: '#595959',
+  600: '#333333',
+};
+
+export const FADED_BLUE: ColorHue = {
+  100: '#D9E8F2',
+  200: '#B3D0E6',
+  300: '#79ADD2',
+  400: '#4689B9',
+  500: '#2D6186',
+  600: '#1A374D',
+};
+
+export const BLUE: ColorHue = {
+  100: '#CFE2FC',
+  200: '#9EC4FA',
+  300: '#5598F6',
+  400: '#0D6CF2',
+  500: '#004AB3',
+  600: '#082C5E',
+};
+
+export default {
+  GRAY,
+  BLUE,
+  FADED_BLUE,
+};

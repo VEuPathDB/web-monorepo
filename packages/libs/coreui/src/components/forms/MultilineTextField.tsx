@@ -2,7 +2,7 @@
 import { H6 } from '../headers';
 
 // Definitions
-import { DARK_GRAY, LIGHT_GREEN, MEDIUM_GRAY } from '../../constants/colors';
+import { GRAY, LIGHT_GREEN } from '../../definitions/colors';
 import typography from '../../styleDefinitions/typography';
 import useDimensions from 'react-cool-dimensions';
 import { CheckCircle, Loading } from '../icons';
@@ -48,7 +48,7 @@ export default function MultilineTextField({
       <div ref={headingRef} css={{ marginBottom: 5 }}>
         <H6 text={heading} additionalStyles={{ marginBottom: 0 }} />
         {instructions && (
-          <label css={[typography.label, { color: DARK_GRAY }]}>
+          <label css={[typography.label, { color: GRAY[500] }]}>
             {instructions}
           </label>
         )}
@@ -69,12 +69,12 @@ export default function MultilineTextField({
               resize: 'none',
               width,
               height: currentHeight - nonInputHeight,
-              color: MEDIUM_GRAY,
+              color: GRAY['400'],
               ':focus': {
                 outlineColor: 'rgb(170, 170, 170)',
                 outlineWidth: 1,
                 outlineStyle: 'solid',
-                color: DARK_GRAY,
+                color: GRAY['500'],
               },
             },
           ]}
@@ -108,7 +108,7 @@ export default function MultilineTextField({
           {status === 'syncing' && (
             <Loading
               fontSize={20}
-              fill={MEDIUM_GRAY}
+              fill={GRAY[400]}
               css={{
                 animation: `${spin} 2s ease infinite, ${fadeIn} 1s linear`,
               }}

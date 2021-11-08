@@ -4,7 +4,6 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 import TabbedDisplay, {
   TabbedDisplayProps,
 } from '../../components/grids/TabbedDisplay';
-import { DARK_GRAY } from '../../constants/colors';
 
 import typography from '../../styleDefinitions/typography';
 
@@ -45,7 +44,7 @@ CustomStyling.args = {
       borderBottomColor: 'red',
     }),
     hover: {
-      color: DARK_GRAY,
+      color: 'red',
       backgroundColor: 'transparent',
     },
   },

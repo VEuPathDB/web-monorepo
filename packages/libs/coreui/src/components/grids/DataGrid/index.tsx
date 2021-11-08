@@ -10,7 +10,7 @@ import {
 import { pickBy, ceil } from 'lodash';
 
 // Definitions
-import { DARK_GRAY, LIGHT_GRAY, MEDIUM_GRAY } from '../../../constants/colors';
+import { GRAY } from '../../../definitions/colors';
 import typography from '../../../styleDefinitions/typography';
 
 // Components
@@ -174,7 +174,7 @@ export default function DataGrid({
       backgroundColor: 'transparent',
       borderStyle: 'solid',
       borderRadius: 5,
-      borderColor: MEDIUM_GRAY,
+      borderColor: GRAY[400],
       borderWidth: 1,
     };
 
@@ -206,7 +206,7 @@ export default function DataGrid({
           </button>
           <span
             css={[
-              { marginRight: 10, textTransform: 'uppercase', color: DARK_GRAY },
+              { marginRight: 10, textTransform: 'uppercase', color: GRAY[500] },
               typography.pre,
             ]}
           >
@@ -241,10 +241,10 @@ export default function DataGrid({
               backgroundColor: 'transparent',
               borderStyle: 'solid',
               borderRadius: 5,
-              borderColor: MEDIUM_GRAY,
+              borderColor: GRAY[400],
               borderWidth: 1,
               paddingLeft: 5,
-              color: DARK_GRAY,
+              color: GRAY[500],
             }}
           >
             {[1, 2, 3, 4, 5].map((pageSizeMultiplier) => (

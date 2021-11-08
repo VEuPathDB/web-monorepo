@@ -1,9 +1,9 @@
-import { DARK_GRAY } from '../../constants/colors';
+import { GRAY } from '../../definitions/colors';
 import Header, { HeaderProps } from './Header';
 
 export default function H6({
   text,
-  color = DARK_GRAY,
+  color = GRAY[600],
   underline = false,
   textTransform = 'none',
   additionalStyles = {},

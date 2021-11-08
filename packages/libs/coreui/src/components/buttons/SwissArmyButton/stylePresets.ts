@@ -1,10 +1,5 @@
 import { CSSProperties } from 'react';
-import {
-  DARK_BLUE,
-  DARK_GRAY,
-  LIGHT_BLUE,
-  LIGHT_GRAY,
-} from '../../../constants/colors';
+import { DARK_BLUE, GRAY, LIGHT_BLUE } from '../../../definitions/colors';
 
 export type SwissArmyButtonStyleSpec = {
   container?: React.CSSProperties;
@@ -74,26 +69,26 @@ export const stylePresets: {
   },
   mesa: {
     default: {
-      color: LIGHT_GRAY,
-      textColor: DARK_GRAY,
+      color: 'rgba(0, 0, 0, .05)',
+      textColor: GRAY[500],
       textTransform: 'none',
       fontWeight: 400,
       borderRadius: 5,
       dropShadow: {
-        color: '#999',
+        color: GRAY[300],
         blurRadius: '0px',
         offsetX: '0px',
         offsetY: '3px',
       },
     },
     hover: {
-      color: 'rgba(0, 0, 0, .1)',
-      textColor: DARK_GRAY,
+      color: GRAY[100],
+      textColor: GRAY[500],
       fontWeight: 400,
       textTransform: 'none',
       borderRadius: 5,
       dropShadow: {
-        color: '#999',
+        color: GRAY[300],
         blurRadius: '0px',
         offsetX: '0px',
         offsetY: '3px',
@@ -101,12 +96,12 @@ export const stylePresets: {
     },
     pressed: {
       color: 'rgba(0, 0, 0, .15)',
-      textColor: DARK_GRAY,
+      textColor: GRAY[500],
       fontWeight: 400,
       textTransform: 'none',
       borderRadius: 5,
       dropShadow: {
-        color: '#999',
+        color: GRAY[300],
         blurRadius: '0px',
         offsetX: '0px',
         offsetY: '3px',

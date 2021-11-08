@@ -3,7 +3,7 @@ import { ThemeProvider } from '@emotion/react';
 
 import TypographyDemo from './TypographyDemo';
 import ThemingDemo from './ThemingDemo';
-import { DARK_BLUE, DARK_RED } from '../../constants/colors';
+import { DARK_BLUE, DARK_RED } from '../../definitions/colors';
 import React from 'react';
 
 export default {

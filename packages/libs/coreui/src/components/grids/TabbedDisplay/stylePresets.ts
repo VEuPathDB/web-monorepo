@@ -1,12 +1,7 @@
 import { css, SerializedStyles } from '@emotion/react';
 import { CSSInterpolation } from '@emotion/serialize';
 
-import {
-  DARK_BLUE,
-  DARK_GRAY,
-  LIGHT_GRAY,
-  MEDIUM_GRAY,
-} from '../../../constants/colors';
+import { DARK_BLUE, GRAY } from '../../../definitions/colors';
 import typography from '../../../styleDefinitions/typography';
 
 export type TabbedDisplayStyleSpec = {
@@ -22,8 +17,8 @@ const stylePresets: {
     active: css([
       typography.secondaryFont,
       {
-        backgroundColor: LIGHT_GRAY,
-        color: DARK_GRAY,
+        backgroundColor: GRAY[100],
+        color: GRAY[500],
         padding: 15,
         borderBottomColor: DARK_BLUE,
         borderBottomWidth: 2,
@@ -34,7 +29,7 @@ const stylePresets: {
       typography.secondaryFont,
       {
         backgroundColor: 'white',
-        color: MEDIUM_GRAY,
+        color: GRAY[400],
         padding: 15,
         borderBottomColor: 'transparent',
         borderBottomWidth: 2,
@@ -45,7 +40,7 @@ const stylePresets: {
       typography.secondaryFont,
       {
         backgroundColor: 'rgb(245, 245, 245)',
-        color: MEDIUM_GRAY,
+        color: GRAY[400],
         padding: 15,
         borderBottomColor: 'transparent',
         borderBottomWidth: 2,

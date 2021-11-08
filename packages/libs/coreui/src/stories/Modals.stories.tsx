@@ -4,7 +4,7 @@ import { HeaderProps } from '../components/headers/Header';
 import SwissArmyButton, {
   SwissArmyButtonProps,
 } from '../components/buttons/SwissArmyButton';
-import { DARK_GRAY, DARK_ORANGE, LIGHT_GREEN } from '../constants/colors';
+import { GRAY, DARK_ORANGE, LIGHT_GREEN } from '../definitions/colors';
 import FullScreenModal, {
   FullScreenModalProps,
 } from '../components/modals/FullScreenModal';
@@ -26,11 +26,10 @@ Default.args = {
   onOpen: () => console.log('Modal Opened'),
   children: (
     <div>
-      {/* <H1 text='Hello,' additionalStyles={{ margin: 0 }} /> */}
-      <p css={[{ color: DARK_GRAY }, secondaryFont]}>
+      <p css={[{ color: GRAY[400] }, secondaryFont]}>
         This is an example full-screen modal.
       </p>
-      <p css={[{ color: DARK_GRAY }, secondaryFont]}>
+      <p css={[{ color: GRAY[400] }, secondaryFont]}>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
         tempor incididunt ut labore et dolore magna aliqua. Mi quis hendrerit
         dolor magna eget est. Donec enim diam vulputate ut pharetra sit amet.
@@ -59,7 +58,7 @@ Default.args = {
         id consectetur purus ut faucibus pulvinar elementum integer. Ut
         porttitor leo a diam.
       </p>
-      <p css={[{ color: DARK_GRAY }, secondaryFont]}>
+      <p css={[{ color: GRAY[400] }, secondaryFont]}>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
         tempor incididunt ut labore et dolore magna aliqua. Mi quis hendrerit
         dolor magna eget est. Donec enim diam vulputate ut pharetra sit amet.

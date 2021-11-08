@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { MEDIUM_GRAY } from '../constants/colors';
+import { GRAY } from '../definitions/colors';
 
 export const primaryFont = css({ fontFamily: "'Inter', sans-serif" });
 export const secondaryFont = css({ fontFamily: '"Roboto", sans-serif' });
@@ -93,7 +93,7 @@ export const metaData = css([
     fontSize: '.70rem',
     fontWeight: 400,
     textTransform: 'uppercase',
-    color: MEDIUM_GRAY,
+    color: GRAY[300],
     MozOsxFontSmoothing: 'auto',
     WebkitFontSmoothing: 'auto',
   },
