@@ -33,7 +33,7 @@ import {
   values,
   map,
 } from 'lodash';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   HistogramRequestParams,
   HistogramResponse,
@@ -71,11 +71,10 @@ import { useFindEntityAndVariable } from '../../../hooks/study';
 import { defaultIndependentAxisRange } from '../../../utils/default-independent-axis-range';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import PluginError from '../PluginError';
-//DKDK
+// for custom legend
 import PlotLegend, {
   LegendItemsProps,
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
-// import { gray } from '../colors';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 
 type HistogramDataWithCoverageStatistics = (
@@ -130,6 +129,8 @@ const HistogramConfig = t.intersection([
     binWidth: t.number,
     binWidthTimeUnit: t.string, // TO DO: constrain to weeks, months etc like Unit from date-arithmetic and/or R
     showMissingness: t.boolean,
+    // for custom legend: vizconfig.checkedLegendItems
+    checkedLegendItems: t.array(t.string),
   }),
 ]);
 
@@ -217,6 +218,11 @@ function HistogramViz(props: VisualizationProps) {
   const onValueSpecChange = onChangeHandlerFactory<ValueSpec>('valueSpec');
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
     'showMissingness'
+  );
+
+  // for custom legend: vizconfig.checkedLegendItems
+  const onCheckedLegendItemsChange = onChangeHandlerFactory<string[]>(
+    'checkedLegendItems'
   );
 
   const findEntityAndVariable = useFindEntityAndVariable(entities);
@@ -308,6 +314,7 @@ function HistogramViz(props: VisualizationProps) {
         showMissing
       );
     }, [
+      // using vizConfig only causes issue with onCheckedLegendItemsChange
       vizConfig.xAxisVariable,
       vizConfig.binWidth,
       vizConfig.binWidthTimeUnit,
@@ -372,7 +379,7 @@ function HistogramViz(props: VisualizationProps) {
         }
       : undefined;
 
-  //DKDK custom legend items for checkbox
+  // custom legend items for checkbox
   const legendItems: LegendItemsProps[] = useMemo(() => {
     const legendData = !isFaceted(data.value)
       ? data.value?.series
@@ -385,12 +392,11 @@ function HistogramViz(props: VisualizationProps) {
               label: dataItem.name,
               // histogram plot does not have mode, so set to square for now
               marker: 'square',
-              //DKDK think markerColor needs to be added here
               markerColor:
                 dataItem.name === 'No data'
                   ? '#E8E8E8'
                   : ColorPaletteDefault[index],
-              //DKDK deep comparison is required for faceted plot
+              // deep comparison is required for faceted plot
               hasData: !isFaceted(data.value) // no faceted plot
                 ? dataItem.bins != null && dataItem.bins.length > 0
                   ? true
@@ -413,12 +419,13 @@ function HistogramViz(props: VisualizationProps) {
       : [];
   }, [data]);
 
-  //DKDK
-  console.log('data.value? =', data.value);
-  console.log('legendItems =', legendItems);
-
-  //DKDK set useState to track checkbox status
-  const [checkedLegendItems, setCheckedLegendItems] = useState<string[]>([]);
+  // use this to set all checked
+  useEffect(() => {
+    if (data != null) {
+      // use this to set all checked
+      onCheckedLegendItemsChange(legendItems.map((item) => item.label));
+    }
+  }, [data, legendItems]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -510,11 +517,11 @@ function HistogramViz(props: VisualizationProps) {
         dependentAxisLabel={
           vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion'
         }
-        //DKDK pass checked state of legend checkbox to PlotlyPlot
+        // for custom legend passing checked state in the  checkbox to PlotlyPlot
         dataPending={data.pending}
         legendItems={legendItems}
-        checkedLegendItems={checkedLegendItems}
-        setCheckedLegendItems={setCheckedLegendItems}
+        checkedLegendItems={vizConfig.checkedLegendItems}
+        onCheckedLegendItemsChange={onCheckedLegendItemsChange}
       />
     </div>
   );
@@ -536,11 +543,11 @@ type HistogramPlotWithControlsProps = Omit<HistogramProps, 'data'> & {
   showMissingness: boolean;
   updateThumbnail: (src: string) => void;
   error: unknown;
-  //DKDK add props for PlotLegend
+  // add props for custom legend
   dataPending: boolean;
   legendItems: LegendItemsProps[];
-  checkedLegendItems: string[];
-  setCheckedLegendItems: (checkedItems: string[]) => void;
+  checkedLegendItems: string[] | undefined;
+  onCheckedLegendItemsChange: (checkedLegendItems: string[]) => void;
 } & Partial<CoverageStatistics>;
 
 function HistogramPlotWithControls({
@@ -562,11 +569,11 @@ function HistogramPlotWithControls({
   onValueSpecChange,
   showMissingness,
   updateThumbnail,
-  //DKDK add props for PlotLegend
+  // add props for custom legend
   dataPending,
   legendItems,
   checkedLegendItems,
-  setCheckedLegendItems,
+  onCheckedLegendItemsChange,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   const barLayout = 'stack';
@@ -585,18 +592,12 @@ function HistogramPlotWithControls({
     updateThumbnailRef.current = updateThumbnail;
   });
 
-  //DKDK add async/await for correct thumbnail capture
+  // add dependency of checkedLegendItems
   useEffect(() => {
-    (async () => {
-      if (data != null) {
-        // use this to set all checked
-        await setCheckedLegendItems(legendItems.map((item) => item.label));
-      }
-      await plotRef.current
-        ?.toImage({ format: 'svg', ...plotDimensions })
-        .then(updateThumbnailRef.current);
-    })();
-  }, [data, histogramProps.dependentAxisLogScale, legendItems]);
+    plotRef.current
+      ?.toImage({ format: 'svg', ...plotDimensions })
+      .then(updateThumbnailRef.current);
+  }, [data, checkedLegendItems]);
 
   const widgetHeight = '4em';
 
@@ -629,7 +630,7 @@ function HistogramPlotWithControls({
               component={Histogram}
               data={data}
               props={histogramProps}
-              //DKDK pass checkedLegendItems to PlotlyPlot
+              // for custom legend: pass checkedLegendItems to PlotlyPlot
               checkedLegendItems={checkedLegendItems}
             />
           </>
@@ -642,20 +643,19 @@ function HistogramPlotWithControls({
             displayLibraryControls={displayLibraryControls}
             showValues={false}
             barLayout={barLayout}
-            //DKDK pass checkedLegendItems to PlotlyPlot
+            // for custom legend: pass checkedLegendItems to PlotlyPlot
             checkedLegendItems={checkedLegendItems}
           />
         )}
 
-        {/* DKDK custom legend */}
+        {/* custom legend */}
         {legendItems != null && !histogramProps.showSpinner && data != null && (
           <div style={{ marginLeft: '2em' }}>
             <PlotLegend
               legendItems={legendItems}
               checkedLegendItems={checkedLegendItems}
-              setCheckedLegendItems={setCheckedLegendItems}
-              //DKDK pass legend title
               legendTitle={histogramProps.legendTitle}
+              onCheckedLegendItemsChange={onCheckedLegendItemsChange}
             />
           </div>
         )}

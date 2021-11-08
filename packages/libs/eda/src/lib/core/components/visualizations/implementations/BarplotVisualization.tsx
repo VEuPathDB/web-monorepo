@@ -14,7 +14,7 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import PluginError from '../PluginError';
 
 // need to set for Barplot
@@ -62,7 +62,7 @@ import {
   values,
 } from 'lodash';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
-//DKDK
+// for custom legend
 import PlotLegend, {
   LegendItemsProps,
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
@@ -116,6 +116,8 @@ const BarplotConfig = t.intersection([
     overlayVariable: VariableDescriptor,
     facetVariable: VariableDescriptor,
     showMissingness: t.boolean,
+    // for custom legend: vizconfig.checkedLegendItems
+    checkedLegendItems: t.array(t.string),
   }),
 ]);
 
@@ -188,6 +190,11 @@ function BarplotViz(props: VisualizationProps) {
     'showMissingness'
   );
 
+  // for custom legend: vizconfig.checkedLegendItems
+  const onCheckedLegendItemsChange = onChangeHandlerFactory<string[]>(
+    'checkedLegendItems'
+  );
+
   const findEntityAndVariable = useFindEntityAndVariable(entities);
   const { variable, entity, overlayVariable, facetVariable } = useMemo(() => {
     const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
@@ -257,6 +264,7 @@ function BarplotViz(props: VisualizationProps) {
         showMissing
       );
     }, [
+      // using vizConfig only causes issue with onCheckedLegendItemsChange
       studyId,
       filters,
       dataClient,
@@ -312,7 +320,7 @@ function BarplotViz(props: VisualizationProps) {
         }
       : undefined;
 
-  //DKDK custom legend items for checkbox
+  // custom legend items for checkbox
   const legendItems: LegendItemsProps[] = useMemo(() => {
     const legendData = !isFaceted(data.value)
       ? data.value?.series
@@ -322,9 +330,8 @@ function BarplotViz(props: VisualizationProps) {
       ? legendData.map((dataItem: BarplotDataSeries, index: number) => {
           return {
             label: dataItem.name,
-            // histogram plot does not have mode, so set to square for now
+            // barplot does not have mode, so set to square
             marker: 'square',
-            //DKDK think markerColor needs to be added here
             markerColor:
               dataItem.name === 'No data'
                 ? '#E8E8E8'
@@ -351,12 +358,12 @@ function BarplotViz(props: VisualizationProps) {
       : [];
   }, [data]);
 
-  //DKDK
-  console.log('data.value? =', data.value);
-  console.log('legendItems =', legendItems);
-
-  //DKDK set useState to track checkbox status
-  const [checkedLegendItems, setCheckedLegendItems] = useState<string[]>([]);
+  // use this to set all checked
+  useEffect(() => {
+    if (data != null) {
+      onCheckedLegendItemsChange(legendItems.map((item) => item.label));
+    }
+  }, [data, legendItems]);
 
   // Thumbnail capture and update
   const plotRef = useRef<PlotRef>(null);
@@ -365,18 +372,12 @@ function BarplotViz(props: VisualizationProps) {
     updateThumbnailRef.current = updateThumbnail;
   });
 
-  //DKDK add async/await for correct thumbnail capture
+  // add dependency of checkedLegendItems
   useEffect(() => {
-    (async () => {
-      if (data != null) {
-        // use this to set all checked
-        await setCheckedLegendItems(legendItems.map((item) => item.label));
-      }
-      await plotRef.current
-        ?.toImage({ format: 'svg', ...plotDimensions })
-        .then(updateThumbnailRef.current);
-    })();
-  }, [data, legendItems]);
+    plotRef.current
+      ?.toImage({ format: 'svg', ...plotDimensions })
+      .then(updateThumbnailRef.current);
+  }, [data, vizConfig.checkedLegendItems]);
 
   // these props are passed to either a single plot
   // or by FacetedPlot to each individual facet plot (where some will be overridden)
@@ -469,16 +470,16 @@ function BarplotViz(props: VisualizationProps) {
                 component={Barplot}
                 data={data.value}
                 props={plotProps}
-                //DKDK pass checkedLegendItems to PlotlyPlot
-                checkedLegendItems={checkedLegendItems}
+                // for custom legend
+                checkedLegendItems={vizConfig.checkedLegendItems}
               />
             </>
           ) : (
             <Barplot
               data={data.value}
               ref={plotRef}
-              //DKDK pass checkedLegendItems to PlotlyPlot
-              checkedLegendItems={checkedLegendItems}
+              // for custom legend: pass checkedLegendItems to PlotlyPlot
+              checkedLegendItems={vizConfig.checkedLegendItems}
               {...plotProps}
             />
           )}
@@ -505,15 +506,14 @@ function BarplotViz(props: VisualizationProps) {
           </div>
         </div>
 
-        {/* DKDK custom legend */}
+        {/* custom legend */}
         {legendItems != null && !data.pending && data != null && (
           <div style={{ marginLeft: '2em' }}>
             <PlotLegend
               legendItems={legendItems}
-              checkedLegendItems={checkedLegendItems}
-              setCheckedLegendItems={setCheckedLegendItems}
-              //DKDK pass legend title
+              checkedLegendItems={vizConfig.checkedLegendItems}
               legendTitle={axisLabelWithUnit(overlayVariable)}
+              onCheckedLegendItemsChange={onCheckedLegendItemsChange}
             />
           </div>
         )}
