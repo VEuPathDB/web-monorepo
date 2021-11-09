@@ -30,7 +30,7 @@ import twoxtwo from './selectorIcons/2x2.svg';
 import TabbedDisplay from '@veupathdb/core-components/dist/components/grids/TabbedDisplay';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
-import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
+import { PlotRef } from '@veupathdb/components/lib/types/plots';
 import {
   fixLabelsForNumberVariables,
   quantizePvalue,

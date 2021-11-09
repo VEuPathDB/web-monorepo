@@ -44,7 +44,7 @@ import {
   omitEmptyNoDataSeries,
   vocabularyWithMissingData,
 } from '../../../utils/visualization';
-import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
+import { PlotRef } from '@veupathdb/components/lib/types/plots';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { Variable } from '../../../types/study';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';

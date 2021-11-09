@@ -1,6 +1,6 @@
 // load scatter plot component
 import XYPlot, { XYPlotProps } from '@veupathdb/components/lib/plots/XYPlot';
-import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
+import { PlotRef } from '@veupathdb/components/lib/types/plots';
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
