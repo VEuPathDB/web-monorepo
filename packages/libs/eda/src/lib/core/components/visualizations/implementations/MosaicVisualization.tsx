@@ -1,6 +1,7 @@
 // import MosaicControls from '@veupathdb/components/lib/components/plotControls/MosaicControls';
 import Mosaic, {
   MosaicPlotProps as MosaicProps,
+  EmptyMosaicData,
 } from '@veupathdb/components/lib/plots/MosaicPlot';
 import { FacetedData, MosaicData } from '@veupathdb/components/lib/types/plots';
 import { ContingencyTable } from '@veupathdb/components/lib/components/ContingencyTable';
@@ -21,7 +22,6 @@ import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { Filter } from '../../../types/filter';
-import { PromiseType } from '../../../types/utility';
 import { VariableDescriptor } from '../../../types/variable';
 import { CoverageStatistics } from '../../../types/visualization';
 import { BirdsEyeView } from '../../BirdsEyeView';
@@ -44,6 +44,7 @@ import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { Variable } from '../../../types/study';
 import PluginError from '../PluginError';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
+import FacetedPlot from '@veupathdb/components/lib/plots/FacetedPlot';
 
 const plotDimensions = {
   width: 750,
@@ -121,6 +122,7 @@ const MosaicConfig = t.partial({
   xAxisVariable: VariableDescriptor,
   yAxisVariable: VariableDescriptor,
   facetVariable: VariableDescriptor,
+  showMissingness: t.boolean,
 });
 
 type Props = VisualizationProps & {
@@ -163,7 +165,6 @@ function MosaicViz(props: Props) {
     [updateConfiguration, vizConfig]
   );
 
-  // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
       const { xAxisVariable, yAxisVariable, facetVariable } = selectedVariables;
@@ -175,6 +176,20 @@ function MosaicViz(props: Props) {
       });
     },
     [updateVizConfig]
+  );
+
+  // prettier-ignore
+  const onChangeHandlerFactory = useCallback(
+    < ValueType,>(key: keyof MosaicConfig) => (newValue?: ValueType) => {
+      updateVizConfig({
+        [key]: newValue,
+      });
+    },
+    [updateVizConfig]
+  );
+
+  const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
+    'showMissingness'
   );
 
   const findEntityAndVariable = useFindEntityAndVariable(entities);
@@ -206,11 +221,7 @@ function MosaicViz(props: Props) {
 
   const data = usePromise(
     useCallback(async (): Promise<
-      | ContTableData
-      | TwoByTwoData
-      | ContTableDataWithCoverage
-      | TwoByTwoDataWithCoverage
-      | undefined
+      ContTableDataWithCoverage | TwoByTwoDataWithCoverage | undefined
     > => {
       if (
         vizConfig.xAxisVariable == null ||
@@ -231,7 +242,8 @@ function MosaicViz(props: Props) {
         vizConfig.xAxisVariable,
         vizConfig.yAxisVariable,
         outputEntity?.id ?? '',
-        vizConfig.facetVariable
+        vizConfig.facetVariable,
+        vizConfig.showMissingness
       );
 
       const xAxisVocabulary = fixLabelsForNumberVariables(
@@ -263,7 +275,7 @@ function MosaicViz(props: Props) {
           xAxisVocabulary,
           yAxisVocabulary,
           facetVocabulary
-        );
+        ) as TwoByTwoDataWithCoverage;
       } else {
         const response = dataClient.getContTable(
           computation.descriptor.type,
@@ -280,7 +292,7 @@ function MosaicViz(props: Props) {
           xAxisVocabulary,
           yAxisVocabulary,
           facetVocabulary
-        );
+        ) as ContTableDataWithCoverage;
       }
     }, [
       studyId,
@@ -388,14 +400,14 @@ function MosaicViz(props: Props) {
             },
             {
               displayName: 'Table',
-              content: (
+              content: null /*(
                 <ContingencyTable
                   data={data.value}
                   containerStyles={{ width: plotDimensions.width }}
                   independentVariable={xAxisLabel ?? 'X-axis'}
                   dependentVariable={yAxisLabel ?? 'Y-axis'}
                 />
-              ),
+              )*/,
             },
           ]}
         />
@@ -410,7 +422,7 @@ function MosaicViz(props: Props) {
           }
           filters={filters}
           outputEntity={outputEntity}
-          stratificationIsActive={false}
+          stratificationIsActive={facetVariable != null}
           enableSpinner={
             xAxisVariable != null && yAxisVariable != null && !data.error
           }
@@ -478,6 +490,10 @@ function MosaicViz(props: Props) {
           dataElementDependencyOrder={dataElementDependencyOrder}
           starredVariables={starredVariables}
           toggleStarredVariable={toggleStarredVariable}
+          enableShowMissingnessToggle={facetVariable != null}
+          showMissingness={vizConfig.showMissingness}
+          onShowMissingnessChange={onShowMissingnessChange}
+          outputEntity={outputEntity}
         />
       </div>
 
@@ -519,12 +535,28 @@ function MosaicPlotWithControls({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <Mosaic
-        {...mosaicProps}
-        ref={plotRef}
-        data={data}
-        displayLibraryControls={displayLibraryControls}
-      />
+      {isFaceted(data) ? (
+        <>
+          <div
+            style={{
+              background: 'yellow',
+              border: '3px dashed green',
+              padding: '10px',
+            }}
+          >
+            Custom legend, birds eye and supplementary tables go here...
+          </div>
+
+          <FacetedPlot component={Mosaic} data={data} props={mosaicProps} />
+        </>
+      ) : (
+        <Mosaic
+          {...mosaicProps}
+          ref={plotRef}
+          data={data}
+          displayLibraryControls={displayLibraryControls}
+        />
+      )}
       {/* controls go here as needed */}
     </div>
   );
@@ -541,45 +573,48 @@ export function contTableResponseToData(
   yVariable: Variable,
   facetVariable?: Variable
 ): ContTableDataWithCoverage {
-  const facetGroupedResponseData = _.groupBy(response.mosaic.data, (data) => {
+  const facetGroupedResponseData = _.groupBy(response.mosaic.data, (data) =>
     data.facetVariableDetails && data.facetVariableDetails.length === 1
       ? fixLabelForNumberVariables(
           data.facetVariableDetails[0].value,
           facetVariable
         )
-      : undefined;
-  });
-  const facetGroupedResponseStats = _.groupBy(response.statsTable, (stats) => {
+      : undefined
+  );
+  const facetGroupedResponseStats = _.groupBy(response.statsTable, (stats) =>
     stats.facetVariableDetails && stats.facetVariableDetails.length === 1
       ? fixLabelForNumberVariables(
           stats.facetVariableDetails[0].value,
           facetVariable
         )
-      : undefined;
-  });
+      : undefined
+  );
 
-  const processedData = _.map(facetGroupedResponseData, (group, facetKey) => {
-    const stats = facetGroupedResponseStats[facetKey];
-    if (group.length !== 1 && stats.length !== 1)
-      throw Error(
-        `Expected exactly one set of data and stats per (optional) facet variable value, but didn't.`
-      );
+  const processedData = _.mapValues(
+    facetGroupedResponseData,
+    (group, facetKey) => {
+      const stats = facetGroupedResponseStats[facetKey];
+      if (group.length !== 1 && stats.length !== 1)
+        throw Error(
+          `Expected exactly one set of data and stats per (optional) facet variable value, but didn't.`
+        );
 
-    return {
-      values: _.unzip(group[0].value), // Transpose data table to match mosaic component expectations
-      independentLabels: fixLabelsForNumberVariables(
-        group[0].xLabel,
-        xVariable
-      ),
-      dependentLabels: fixLabelsForNumberVariables(
-        group[0].yLabel[0],
-        yVariable
-      ),
-      pValue: stats[0].pvalue,
-      degreesFreedom: stats[0].degreesFreedom,
-      chisq: stats[0].chisq,
-    };
-  });
+      return {
+        values: _.unzip(group[0].value), // Transpose data table to match mosaic component expectations
+        independentLabels: fixLabelsForNumberVariables(
+          group[0].xLabel,
+          xVariable
+        ),
+        dependentLabels: fixLabelsForNumberVariables(
+          group[0].yLabel[0],
+          yVariable
+        ),
+        pValue: stats[0].pvalue,
+        degreesFreedom: stats[0].degreesFreedom,
+        chisq: stats[0].chisq,
+      };
+    }
+  );
 
   return {
     // data
@@ -612,22 +647,22 @@ export function twoByTwoResponseToData(
   yVariable: Variable,
   facetVariable?: Variable
 ): TwoByTwoDataWithCoverage {
-  const facetGroupedResponseData = _.groupBy(response.mosaic.data, (data) => {
+  const facetGroupedResponseData = _.groupBy(response.mosaic.data, (data) =>
     data.facetVariableDetails && data.facetVariableDetails.length === 1
       ? fixLabelForNumberVariables(
           data.facetVariableDetails[0].value,
           facetVariable
         )
-      : undefined;
-  });
-  const facetGroupedResponseStats = _.groupBy(response.statsTable, (stats) => {
+      : undefined
+  );
+  const facetGroupedResponseStats = _.groupBy(response.statsTable, (stats) =>
     stats.facetVariableDetails && stats.facetVariableDetails.length === 1
       ? fixLabelForNumberVariables(
           stats.facetVariableDetails[0].value,
           facetVariable
         )
-      : undefined;
-  });
+      : undefined
+  );
 
   const processedData = _.map(facetGroupedResponseData, (group, facetKey) => {
     const stats = facetGroupedResponseStats[facetKey];
@@ -671,7 +706,7 @@ export function twoByTwoResponseToData(
     completeCases: response.completeCasesTable,
     completeCasesAllVars: response.mosaic.config.completeCasesAllVars,
     completeCasesAxesVars: response.mosaic.config.completeCasesAxesVars,
-  } as ContTableDataWithCoverage;
+  } as TwoByTwoDataWithCoverage;
 }
 
 function getRequestParams(
@@ -680,7 +715,8 @@ function getRequestParams(
   xAxisVariable: VariableDescriptor,
   yAxisVariable: VariableDescriptor,
   outputEntityId: string,
-  facetVariable?: VariableDescriptor
+  facetVariable?: VariableDescriptor,
+  showMissingness?: boolean
 ): MosaicRequestParams {
   return {
     studyId,
@@ -691,6 +727,7 @@ function getRequestParams(
       xAxisVariable: xAxisVariable,
       yAxisVariable: yAxisVariable,
       facetVariable: facetVariable ? [facetVariable] : [],
+      showMissingness: showMissingness ? 'TRUE' : 'FALSE',
     },
   };
 }
@@ -710,7 +747,30 @@ function reorderData(
   | ContTableDataWithCoverage
   | ContTableData {
   if (isFaceted(data)) {
-    return data;
+    // for each value in the facet vocabulary's correct order
+    // find the index in the series where series.name equals that value
+    const facetValues = data.facets.map((facet) => facet.label);
+    const facetIndices = facetVocabulary.map((name) =>
+      facetValues.indexOf(name)
+    );
+
+    return {
+      ...data,
+      facets: facetIndices.map((i, j) => ({
+        label:
+          facetVocabulary[j] +
+          (data.facets[i] ? '' : ' (no plottable data for this facet)'),
+        data: data.facets[i]
+          ? (reorderData(
+              data.facets[i].data,
+              xVocabulary,
+              yVocabulary,
+              facetVocabulary
+            ) as TwoByTwoData | ContTableData)
+          : // dummy data for empty facet
+            EmptyMosaicData,
+      })),
+    };
   }
 
   const xIndices =

@@ -340,6 +340,7 @@ export interface MosaicRequestParams {
     xAxisVariable: VariableDescriptor;
     yAxisVariable: VariableDescriptor;
     facetVariable: ZeroToTwoVariables;
+    showMissingness?: 'TRUE' | 'FALSE';
   };
 }
 
