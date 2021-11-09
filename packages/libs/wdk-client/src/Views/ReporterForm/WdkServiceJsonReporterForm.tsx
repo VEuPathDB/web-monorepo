@@ -103,7 +103,8 @@ namespace WdkServiceJsonReporterForm {
     return {
       formState: {
         attributes: attribs,
-        tables:tables
+        tables: tables,
+        attributeFormat: 'text'
       },
       formUiState: {
         expandedAttributeNodes: null,
