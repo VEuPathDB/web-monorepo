@@ -1,9 +1,6 @@
 import React, {
-  ComponentType,
   CSSProperties,
-  PropsWithoutRef,
   Ref,
-  RefAttributes,
   Suspense,
   forwardRef,
   lazy,
