@@ -518,7 +518,6 @@ function HistogramViz(props: VisualizationProps) {
           vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion'
         }
         // for custom legend passing checked state in the  checkbox to PlotlyPlot
-        dataPending={data.pending}
         legendItems={legendItems}
         checkedLegendItems={vizConfig.checkedLegendItems}
         onCheckedLegendItemsChange={onCheckedLegendItemsChange}
@@ -544,7 +543,6 @@ type HistogramPlotWithControlsProps = Omit<HistogramProps, 'data'> & {
   updateThumbnail: (src: string) => void;
   error: unknown;
   // add props for custom legend
-  dataPending: boolean;
   legendItems: LegendItemsProps[];
   checkedLegendItems: string[] | undefined;
   onCheckedLegendItemsChange: (checkedLegendItems: string[]) => void;
@@ -570,7 +568,6 @@ function HistogramPlotWithControls({
   showMissingness,
   updateThumbnail,
   // add props for custom legend
-  dataPending,
   legendItems,
   checkedLegendItems,
   onCheckedLegendItemsChange,

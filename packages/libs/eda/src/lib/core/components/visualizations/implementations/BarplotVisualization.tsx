@@ -338,7 +338,7 @@ function BarplotViz(props: VisualizationProps) {
                 : ColorPaletteDefault[index],
             // [undefined, undefined, ...] for filtered out case and no data so need to do a deep comparison
             hasData: !isFaceted(data.value) // no faceted plot
-              ? dataItem.value.every((el) => el != null)
+              ? dataItem.value.some((el) => el != null)
                 ? true
                 : false
               : data.value?.facets
