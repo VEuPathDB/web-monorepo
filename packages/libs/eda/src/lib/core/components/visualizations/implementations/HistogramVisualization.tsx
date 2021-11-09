@@ -802,21 +802,32 @@ function reorderData(
   facetVocabulary: string[] = []
 ): HistogramDataWithCoverageStatistics | HistogramData {
   if (isFaceted(data)) {
+    // for each value in the facet vocabulary's correct order
+    // find the index in the series where series.name equals that value
+    const facetValues = data.facets.map((facet) => facet.label);
+    const facetIndices = facetVocabulary.map((name) =>
+      facetValues.indexOf(name)
+    );
+
     return {
       ...data,
-      facets: sortBy(data.facets, ({ label }) =>
-        facetVocabulary.indexOf(label)
-      ).map(({ label, data }) => ({
-        label,
-        data: reorderData(
-          data,
-          overlayVocabulary,
-          facetVocabulary
-        ) as HistogramData,
+      facets: facetIndices.map((i, j) => ({
+        label:
+          facetVocabulary[j] +
+          (data.facets[i] ? '' : ' (no plottable data for this facet)'),
+        data: data.facets[i]
+          ? (reorderData(
+              data.facets[i].data,
+              overlayVocabulary,
+              facetVocabulary
+            ) as HistogramData)
+          : // dummy data for empty facet
+            { series: [] },
       })),
     };
   }
 
+  // otherwise handle non-faceted data
   if (overlayVocabulary.length > 0) {
     // for each value in the overlay vocabulary's correct order
     // find the index in the series where series.name equals that value
