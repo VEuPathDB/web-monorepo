@@ -54,11 +54,11 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
           {data?.facets.map(({ data, label }, index) => (
             <Component
               {...componentProps}
-              ref={(plotRef) => {
-                if (plotRef == null) {
+              ref={(plotInstance) => {
+                if (plotInstance == null) {
                   delete plotRefs.current[index];
                 } else {
-                  plotRefs.current[index] = plotRef;
+                  plotRefs.current[index] = plotInstance;
                 }
               }}
               key={index}
