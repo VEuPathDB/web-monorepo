@@ -49,14 +49,6 @@ export default function NotesTab({ analysisState }: props) {
     [setAnalysisNotes]
   );
 
-  useEffect(() => {
-    console.log('STORED DESCRIPTION', analysisState.analysis?.description);
-  }, [analysisState.analysis?.description]);
-
-  useEffect(() => {
-    console.log('STORED DETAILS', analysisState.analysis?.notes);
-  }, [analysisState.analysis?.notes]);
-
   return (
     <div
       style={{
