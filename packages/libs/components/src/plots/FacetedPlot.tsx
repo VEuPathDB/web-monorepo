@@ -6,12 +6,19 @@ export interface FacetedPlotProps<D, P extends PlotProps<D>> {
   data?: FacetedData<D>;
   component: React.ComponentType<P>;
   props: P;
+  // custom legend prop
+  checkedLegendItems?: string[];
 }
 
 export default function FacetedPlot<D, P extends PlotProps<D>>(
   props: FacetedPlotProps<D, P>
 ) {
-  const { data, component: Component, props: componentProps } = props;
+  const {
+    data,
+    component: Component,
+    props: componentProps,
+    checkedLegendItems: checkedLegendItems,
+  } = props;
   return (
     <div>
       <h2>{componentProps.title}</h2>
@@ -31,6 +38,8 @@ export default function FacetedPlot<D, P extends PlotProps<D>>(
             title={label}
             displayLegend={false}
             interactive={false}
+            // pass checkedLegendItems to PlotlyPlot
+            checkedLegendItems={checkedLegendItems}
           />
         ))}
       </div>

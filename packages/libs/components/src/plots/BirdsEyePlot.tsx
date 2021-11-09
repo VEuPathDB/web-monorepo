@@ -171,8 +171,15 @@ export default function BirdsEyePlot({
     },
   };
 
+  const barLabels = data.bars.map((bar) => bar.label);
+
   return (
-    <PlotlyPlot data={plotlyFriendlyData} layout={layout} {...restProps} />
+    <PlotlyPlot
+      data={plotlyFriendlyData}
+      layout={layout}
+      {...restProps}
+      checkedLegendItems={barLabels}
+    />
   );
 }
 
