@@ -201,9 +201,11 @@ export function entitiesToFields(entities: StudyEntity[]) {
 
 export function makeFieldTree(fields: Field[]): FieldTreeNode {
   const initialTree = getTree(fields, { hideSingleRoot: false });
-  const tree = pruneDescendantNodes(
+  return pruneEmptyFields(initialTree);
+}
+
+export const pruneEmptyFields = (initialTree: FieldTreeNode) =>
+  pruneDescendantNodes(
     (node) => node.field.type != null || node.children.length > 0,
     initialTree
   );
-  return tree;
-}
