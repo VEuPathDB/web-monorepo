@@ -33,7 +33,7 @@ import {
   values,
   map,
 } from 'lodash';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   HistogramRequestParams,
   HistogramResponse,
@@ -65,8 +65,8 @@ import {
   fixLabelForNumberVariables,
   fixLabelsForNumberVariables,
 } from '../../../utils/visualization';
-import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import { useFindEntityAndVariable } from '../../../hooks/study';
+import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 // import variable's metadata-based independent axis range utils
 import { defaultIndependentAxisRange } from '../../../utils/default-independent-axis-range';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
@@ -509,18 +509,10 @@ function HistogramPlotWithControls({
       ? completeCasesAllVars
       : completeCasesAxesVars;
 
-  const plotRef = useRef<PlotRef>(null);
-
-  const updateThumbnailRef = useRef(updateThumbnail);
-  useEffect(() => {
-    updateThumbnailRef.current = updateThumbnail;
-  });
-
-  useEffect(() => {
-    plotRef.current
-      ?.toImage({ format: 'svg', ...plotDimensions })
-      .then(updateThumbnailRef.current);
-  }, [data, histogramProps.dependentAxisLogScale]);
+  const plotRef = useUpdateThumbnailEffect(updateThumbnail, plotDimensions, [
+    data,
+    histogramProps.dependentAxisLogScale,
+  ]);
 
   const widgetHeight = '4em';
 
@@ -553,6 +545,7 @@ function HistogramPlotWithControls({
               component={Histogram}
               data={data}
               props={histogramProps}
+              facetedPlotRef={plotRef}
             />
           </>
         ) : (
