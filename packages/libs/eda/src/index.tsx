@@ -14,13 +14,16 @@ import {
   enableRestriction,
   reduxMiddleware,
 } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
-import { useAttemptActionClickHandler } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 
 import { endpoint, rootElement, rootUrl } from './constants';
 import reportWebVitals from './reportWebVitals';
 import Header from './Header';
 import { MapVeuContainer } from './lib/mapveu';
 import { WorkspaceRouter } from './lib/workspace/WorkspaceRouter';
+
+// Hooks
+import { useAttemptActionClickHandler } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
+import { useCoreUIFonts } from '@veupathdb/core-components/dist/hooks';
 
 import './index.css';
 
@@ -87,6 +90,8 @@ initialize({
         }, []);
 
         useAttemptActionClickHandler();
+        console.log('TEST 2');
+        useCoreUIFonts();
 
         return (
           <>

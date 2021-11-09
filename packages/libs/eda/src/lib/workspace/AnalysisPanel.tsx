@@ -1,14 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { cx } from './Utils';
-import { AnalysisSummary } from './AnalysisSummary';
-import {
-  AnalysisState,
-  EntityDiagram,
-  Status,
-  useStudyMetadata,
-  useStudyRecord,
-} from '../core';
-import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
+import { uniq } from 'lodash';
 import {
   Redirect,
   Route,
@@ -16,20 +7,34 @@ import {
   useLocation,
   useRouteMatch,
 } from 'react-router';
+
+// Functions
+import { getAnalysisId } from '../core/utils/analysis';
+import { cx } from './Utils';
+
+// Definitions
+import { AnalysisState } from '../core';
+import { Status } from '../core';
+
+// Hooks
+import { useEntityCounts } from '../core/hooks/entityCounts';
+import { usePrevious } from '../core/hooks/previousValue';
+import { useStudyEntities } from '../core/hooks/study';
+import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { useStudyMetadata, useStudyRecord } from '../core';
+
+// Components
+import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
+import { AnalysisSummary } from './AnalysisSummary';
+import { EntityDiagram } from '../core';
 import { ComputationRoute } from './ComputationRoute';
 import { DefaultVariableRedirect } from './DefaultVariableRedirect';
 import Subsetting from './Subsetting';
-import { useEntityCounts } from '../core/hooks/entityCounts';
-import { uniq } from 'lodash';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import GlobalFiltersDialog from '../core/components/GlobalFiltersDialog';
-import { usePrevious } from '../core/hooks/previousValue';
-import { useStudyEntities } from '../core/hooks/study';
-import { getAnalysisId } from '../core/utils/analysis';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
-// import ShowHideVariableContextProvider
 import ShowHideVariableContextProvider from '../core/utils/show-hide-variable-context';
-import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import NotesTab from './NotesTab';
 
 interface Props {
   analysisState: AnalysisState;
@@ -190,6 +195,10 @@ export function AnalysisPanel({
               exact: false,
               replace: true,
             },
+            {
+              display: 'Notes',
+              route: '/notes',
+            },
           ]}
         />
         <Route
@@ -225,6 +234,10 @@ export function AnalysisPanel({
         <Route
           path={`${routeBase}/visualizations`}
           render={() => <ComputationRoute analysisState={analysisState} />}
+        />
+        <Route
+          path={`${routeBase}/notes`}
+          render={() => <NotesTab analysisState={analysisState} />}
         />
       </div>
     </ShowHideVariableContextProvider>
