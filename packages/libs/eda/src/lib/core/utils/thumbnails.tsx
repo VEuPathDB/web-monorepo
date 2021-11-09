@@ -82,7 +82,6 @@ async function makeFacetedPlotThumbnailUrl(
       width={thumbnailDimensions.width}
       height={thumbnailDimensions.height}
       viewBox={`0 0 ${thumbnailDimensions.width} ${thumbnailDimensions.height}`}
-      fontFamily="Roboto"
     >
       {plotImageNodes}
       <text
