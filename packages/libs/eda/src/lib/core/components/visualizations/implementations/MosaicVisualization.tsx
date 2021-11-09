@@ -301,6 +301,7 @@ function MosaicViz(props: Props) {
       vizConfig,
       xAxisVariable,
       yAxisVariable,
+      facetVariable,
       computation.descriptor.type,
       isTwoByTwo,
       outputEntity?.id,
@@ -400,14 +401,18 @@ function MosaicViz(props: Props) {
             },
             {
               displayName: 'Table',
-              content: null /*(
+              content: (
                 <ContingencyTable
-                  data={data.value}
+                  data={data.pending ? undefined : data.value}
                   containerStyles={{ width: plotDimensions.width }}
                   independentVariable={xAxisLabel ?? 'X-axis'}
                   dependentVariable={yAxisLabel ?? 'Y-axis'}
+                  facetVariable={
+                    facetVariable ? facetVariable.displayName : 'Facet'
+                  }
+                  enableSpinner={data.pending}
                 />
-              )*/,
+              ),
             },
           ]}
         />
@@ -664,30 +669,33 @@ export function twoByTwoResponseToData(
       : undefined
   );
 
-  const processedData = _.map(facetGroupedResponseData, (group, facetKey) => {
-    const stats = facetGroupedResponseStats[facetKey];
-    if (group.length !== 1 && stats.length !== 1)
-      throw Error(
-        `Expected exactly one set of data and stats per (optional) facet variable value, but didn't.`
-      );
+  const processedData = _.mapValues(
+    facetGroupedResponseData,
+    (group, facetKey) => {
+      const stats = facetGroupedResponseStats[facetKey];
+      if (group.length !== 1 && stats.length !== 1)
+        throw Error(
+          `Expected exactly one set of data and stats per (optional) facet variable value, but didn't.`
+        );
 
-    return {
-      values: _.unzip(group[0].value), // Transpose data table to match mosaic component expectations
-      independentLabels: fixLabelsForNumberVariables(
-        group[0].xLabel,
-        xVariable
-      ),
-      dependentLabels: fixLabelsForNumberVariables(
-        group[0].yLabel[0],
-        yVariable
-      ),
-      pValue: stats[0].pvalue,
-      relativeRisk: stats[0].relativerisk,
-      rrInterval: stats[0].rrInterval,
-      oddsRatio: stats[0].oddsratio,
-      orInterval: stats[0].orInterval,
-    };
-  });
+      return {
+        values: _.unzip(group[0].value), // Transpose data table to match mosaic component expectations
+        independentLabels: fixLabelsForNumberVariables(
+          group[0].xLabel,
+          xVariable
+        ),
+        dependentLabels: fixLabelsForNumberVariables(
+          group[0].yLabel[0],
+          yVariable
+        ),
+        pValue: stats[0].pvalue,
+        relativeRisk: stats[0].relativerisk,
+        rrInterval: stats[0].rrInterval,
+        oddsRatio: stats[0].oddsratio,
+        orInterval: stats[0].orInterval,
+      };
+    }
+  );
 
   return {
     // data
