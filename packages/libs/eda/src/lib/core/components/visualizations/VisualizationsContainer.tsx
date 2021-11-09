@@ -232,6 +232,7 @@ function NewVisualizationPicker(props: Props) {
                 ) : (
                   <div>{vizOverview.displayName}</div>
                 )}
+                {vizType == null && <i>(Coming soon!)</i>}
               </div>
             </div>
           );
@@ -339,17 +340,17 @@ function FullScreenVisualization(props: Props & { id: string }) {
               className="link"
               onClick={() => {
                 if (viz == null) return;
-                const visualizationId = uuid();
+                const vizCopyId = uuid();
                 updateVisualizations((visualizations) =>
                   visualizations.concat({
                     ...viz,
-                    visualizationId,
+                    visualizationId: vizCopyId,
                     displayName:
                       'Copy of ' + (viz.displayName || 'unnamed visualization'),
                   })
                 );
                 history.replace(
-                  Path.resolve(history.location.pathname, '..', id)
+                  Path.resolve(history.location.pathname, '..', vizCopyId)
                 );
               }}
             >

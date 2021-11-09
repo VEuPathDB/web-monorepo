@@ -1,6 +1,10 @@
 // load Barplot component
 import Barplot, { BarplotProps } from '@veupathdb/components/lib/plots/Barplot';
-import { BarplotData } from '@veupathdb/components/lib/types/plots';
+import FacetedPlot from '@veupathdb/components/lib/plots/FacetedPlot';
+import {
+  BarplotData,
+  FacetedData,
+} from '@veupathdb/components/lib/types/plots';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import Switch from '@veupathdb/components/lib/components/widgets/Switch';
@@ -42,11 +46,24 @@ import {
   grayOutLastSeries,
   omitEmptyNoDataSeries,
   vocabularyWithMissingData,
-} from '../../../utils/analysis';
+} from '../../../utils/visualization';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 // use lodash instead of Math.min/max
-import { max } from 'lodash';
+import {
+  max,
+  sortBy,
+  groupBy,
+  mapValues,
+  size,
+  map,
+  head,
+  values,
+} from 'lodash';
+import { isFaceted } from '@veupathdb/components/lib/types/guards';
+
+type BarplotDataWithStatistics = (BarplotData | FacetedData<BarplotData>) &
+  CoverageStatistics;
 
 const plotDimensions = {
   height: 450,
@@ -165,24 +182,25 @@ function BarplotViz(props: VisualizationProps) {
   );
 
   const findEntityAndVariable = useFindEntityAndVariable(entities);
-  const { variable, entity, overlayVariable } = useMemo(() => {
+  const { variable, entity, overlayVariable, facetVariable } = useMemo(() => {
     const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
     const overlayVariable = findEntityAndVariable(vizConfig.overlayVariable);
+    const facetVariable = findEntityAndVariable(vizConfig.facetVariable);
     return {
-      variable: xAxisVariable ? xAxisVariable.variable : undefined,
-      entity: xAxisVariable ? xAxisVariable.entity : undefined,
-      overlayVariable: overlayVariable ? overlayVariable.variable : undefined,
+      variable: xAxisVariable?.variable,
+      entity: xAxisVariable?.entity,
+      overlayVariable: overlayVariable?.variable,
+      facetVariable: facetVariable?.variable,
     };
   }, [
     findEntityAndVariable,
     vizConfig.xAxisVariable,
     vizConfig.overlayVariable,
+    vizConfig.facetVariable,
   ]);
 
   const data = usePromise(
-    useCallback(async (): Promise<
-      (BarplotData & CoverageStatistics) | undefined
-    > => {
+    useCallback(async (): Promise<BarplotDataWithStatistics | undefined> => {
       if (variable == null) return undefined;
 
       if (variable === overlayVariable)
@@ -196,7 +214,11 @@ function BarplotViz(props: VisualizationProps) {
         params as BarplotRequestParams
       );
 
-      const showMissing = vizConfig.showMissingness && overlayVariable != null;
+      const showMissing =
+        vizConfig.showMissingness &&
+        (overlayVariable != null || facetVariable != null);
+      const showMissingOverlay =
+        vizConfig.showMissingness && overlayVariable != null;
       const vocabulary = fixLabelsForNumberVariables(
         variable?.vocabulary,
         variable
@@ -205,14 +227,25 @@ function BarplotViz(props: VisualizationProps) {
         overlayVariable?.vocabulary,
         overlayVariable
       );
+      const facetVocabulary = fixLabelsForNumberVariables(
+        facetVariable?.vocabulary,
+        facetVariable
+      );
+
       return omitEmptyNoDataSeries(
         grayOutLastSeries(
           reorderData(
-            barplotResponseToData(await response, variable, overlayVariable),
+            barplotResponseToData(
+              await response,
+              variable,
+              overlayVariable,
+              facetVariable
+            ),
             vocabulary,
-            vocabularyWithMissingData(overlayVocabulary, showMissing)
+            vocabularyWithMissingData(overlayVocabulary, showMissing),
+            vocabularyWithMissingData(facetVocabulary, showMissing)
           ),
-          showMissing
+          showMissingOverlay
         ),
         showMissing
       );
@@ -232,15 +265,26 @@ function BarplotViz(props: VisualizationProps) {
   );
 
   const outputSize =
-    overlayVariable != null && !vizConfig.showMissingness
+    (overlayVariable != null || facetVariable != null) &&
+    !vizConfig.showMissingness
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
 
   // find dependent axis max value
   const defaultDependentMaxValue = useMemo(() => {
-    return data?.value?.series != null
-      ? max(data?.value?.series.flatMap((o) => o.value))
-      : undefined;
+    if (isFaceted(data?.value)) {
+      return data?.value?.facets != null
+        ? max(
+            data.value.facets.flatMap((facet) =>
+              facet.data.series.flatMap((o) => o.value)
+            )
+          )
+        : undefined;
+    } else {
+      return data?.value?.series != null
+        ? max(data.value.series.flatMap((o) => o.value))
+        : undefined;
+    }
   }, [data]);
 
   // set min/max
@@ -250,7 +294,9 @@ function BarplotViz(props: VisualizationProps) {
           // set min as 0 (count, proportion) or 0.001 (proportion log scale)
           min:
             vizConfig.valueSpec === 'count'
-              ? 0
+              ? vizConfig.dependentAxisLogScale
+                ? 0.1
+                : 0
               : vizConfig.dependentAxisLogScale
               ? 0.001
               : 0,
@@ -258,6 +304,40 @@ function BarplotViz(props: VisualizationProps) {
           max: defaultDependentMaxValue * 1.05,
         }
       : undefined;
+
+  // Thumbnail capture and update
+  const plotRef = useRef<PlotRef>(null);
+  const updateThumbnailRef = useRef(updateThumbnail);
+  useEffect(() => {
+    updateThumbnailRef.current = updateThumbnail;
+  });
+  useEffect(() => {
+    plotRef.current
+      ?.toImage({ format: 'svg', ...plotDimensions })
+      .then(updateThumbnailRef.current);
+  }, [data, vizConfig.dependentAxisLogScale]);
+
+  // these props are passed to either a single plot
+  // or by FacetedPlot to each individual facet plot (where some will be overridden)
+  const plotProps: BarplotProps = {
+    containerStyles: plotDimensions,
+    orientation: 'vertical',
+    barLayout: 'group',
+    displayLegend:
+      data.value &&
+      !isFaceted(data.value) &&
+      (data.value.series.length > 1 || vizConfig.overlayVariable != null),
+    independentAxisLabel: axisLabelWithUnit(variable) ?? 'Main',
+    dependentAxisLabel:
+      vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion',
+    legendTitle: overlayVariable?.displayName,
+    interactive: true,
+    showSpinner: data.pending,
+    dependentAxisLogScale: vizConfig.dependentAxisLogScale,
+    // set dependent axis range for log scale
+    dependentAxisRange: dependentAxisRange,
+    displayLibraryControls: false,
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -274,6 +354,11 @@ function BarplotViz(props: VisualizationProps) {
               label: 'Overlay',
               role: 'stratification',
             },
+            {
+              name: 'facetVariable',
+              label: 'Facet',
+              role: 'stratification',
+            },
           ]}
           entities={entities}
           selectedVariables={{
@@ -286,7 +371,7 @@ function BarplotViz(props: VisualizationProps) {
           dataElementDependencyOrder={dataElementDependencyOrder}
           starredVariables={starredVariables}
           enableShowMissingnessToggle={
-            overlayVariable != null &&
+            (overlayVariable != null || facetVariable != null) &&
             data.value?.completeCasesAllVars !==
               data.value?.completeCasesAxesVars
           }
@@ -306,30 +391,50 @@ function BarplotViz(props: VisualizationProps) {
           alignItems: 'flex-start',
         }}
       >
-        <BarplotWithControls
-          data={data.value}
-          containerStyles={plotDimensions}
-          orientation={'vertical'}
-          barLayout={'group'}
-          displayLegend={
-            data.value &&
-            (data.value.series.length > 1 || vizConfig.overlayVariable != null)
-          }
-          independentAxisLabel={axisLabelWithUnit(variable) ?? 'Main'}
-          dependentAxisLabel={
-            vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion'
-          }
-          legendTitle={overlayVariable?.displayName}
-          interactive
-          showSpinner={data.pending}
-          valueSpec={vizConfig.valueSpec}
-          onValueSpecChange={onValueSpecChange}
-          updateThumbnail={updateThumbnail}
-          dependentAxisLogScale={vizConfig.dependentAxisLogScale}
-          onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
-          // set dependent axis range for log scale
-          dependentAxisRange={dependentAxisRange}
-        />
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {isFaceted(data.value) ? (
+            <>
+              <div
+                style={{
+                  background: 'yellow',
+                  border: '3px dashed green',
+                  padding: '10px',
+                }}
+              >
+                Custom legend, birds eye and supplementary tables go here...
+              </div>
+
+              <FacetedPlot
+                component={Barplot}
+                data={data.value}
+                props={plotProps}
+              />
+            </>
+          ) : (
+            <Barplot data={data.value} ref={plotRef} {...plotProps} />
+          )}
+
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <LabelledGroup label="Y-axis">
+              <Switch
+                label="Log Scale:"
+                state={vizConfig.dependentAxisLogScale}
+                onStateChange={onDependentAxisLogScaleChange}
+              />
+              <RadioButtonGroup
+                selectedOption={vizConfig.valueSpec}
+                options={['count', 'proportion']}
+                onOptionSelected={(newOption) => {
+                  if (newOption === 'proportion') {
+                    onValueSpecChange('proportion');
+                  } else {
+                    onValueSpecChange('count');
+                  }
+                }}
+              />
+            </LabelledGroup>
+          </div>
+        </div>
         <div className="viz-plot-info">
           <BirdsEyeView
             completeCasesAllVars={
@@ -359,74 +464,14 @@ function BarplotViz(props: VisualizationProps) {
                 display: axisLabelWithUnit(overlayVariable),
                 variable: vizConfig.overlayVariable,
               },
+              {
+                role: 'Facet',
+                display: axisLabelWithUnit(facetVariable),
+                variable: vizConfig.facetVariable,
+              },
             ]}
           />
         </div>
-      </div>
-    </div>
-  );
-}
-
-type BarplotWithControlsProps = BarplotProps & {
-  dependentAxisLogScale: boolean;
-  onDependentAxisLogScaleChange: (newState: boolean) => void;
-  valueSpec: ValueSpec;
-  onValueSpecChange: (newValueSpec: ValueSpec) => void;
-  updateThumbnail: (src: string) => void;
-};
-
-function BarplotWithControls({
-  data,
-  dependentAxisLogScale,
-  onDependentAxisLogScaleChange,
-  valueSpec,
-  onValueSpecChange,
-  updateThumbnail,
-  ...barPlotProps
-}: BarplotWithControlsProps) {
-  const plotRef = useRef<PlotRef>(null);
-
-  const updateThumbnailRef = useRef(updateThumbnail);
-  useEffect(() => {
-    updateThumbnailRef.current = updateThumbnail;
-  });
-
-  useEffect(() => {
-    plotRef.current
-      ?.toImage({ format: 'svg', ...plotDimensions })
-      .then(updateThumbnailRef.current);
-  }, [data, dependentAxisLogScale]);
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <Barplot
-        {...barPlotProps}
-        ref={plotRef}
-        dependentAxisLogScale={dependentAxisLogScale}
-        data={data}
-        // add controls
-        // displayLegend={true}
-        displayLibraryControls={false}
-      />
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <LabelledGroup label="Y-axis">
-          <Switch
-            label="Log Scale:"
-            state={dependentAxisLogScale}
-            onStateChange={onDependentAxisLogScaleChange}
-          />
-          <RadioButtonGroup
-            selectedOption={valueSpec}
-            options={['count', 'proportion']}
-            onOptionSelected={(newOption) => {
-              if (newOption === 'proportion') {
-                onValueSpecChange('proportion');
-              } else {
-                onValueSpecChange('count');
-              }
-            }}
-          />
-        </LabelledGroup>
       </div>
     </div>
   );
@@ -440,30 +485,61 @@ function BarplotWithControls({
 export function barplotResponseToData(
   response: BarplotResponse,
   variable: Variable,
-  overlayVariable?: Variable
-): BarplotData & CoverageStatistics {
-  const responseIsEmpty = response.barplot.data.every(
-    (data) => data.label.length === 0 && data.value.length === 0
+  overlayVariable?: Variable,
+  facetVariable?: Variable
+): BarplotDataWithStatistics {
+  // group by facet variable value (if only one facet variable in response - there may be up to two in future)
+  // BM tried to factor this out into a function in utils/visualization.ts but got bogged down in TS issues
+  const facetGroupedResponseData = groupBy(response.barplot.data, (data) =>
+    data.facetVariableDetails && data.facetVariableDetails.length === 1
+      ? fixLabelForNumberVariables(
+          data.facetVariableDetails[0].value,
+          facetVariable
+        )
+      : undefined
   );
+
+  // process data and overlay value within each facet grouping
+  const processedData = mapValues(facetGroupedResponseData, (group) => {
+    const facetIsEmpty = group.every(
+      (data) => data.label.length === 0 && data.value.length === 0
+    );
+    return {
+      series: facetIsEmpty
+        ? []
+        : group.map((data) => ({
+            // name has value if using overlay variable
+            name:
+              data.overlayVariableDetails?.value != null
+                ? fixLabelForNumberVariables(
+                    data.overlayVariableDetails.value,
+                    overlayVariable
+                  )
+                : '',
+            label: fixLabelsForNumberVariables(data.label, variable),
+            value: data.value,
+          })),
+    };
+  });
+
   return {
-    series: responseIsEmpty
-      ? []
-      : response.barplot.data.map((data) => ({
-          // name has value if using overlay variable
-          name:
-            data.overlayVariableDetails?.value != null
-              ? fixLabelForNumberVariables(
-                  data.overlayVariableDetails.value,
-                  overlayVariable
-                )
-              : '',
-          label: fixLabelsForNumberVariables(data.label, variable),
-          value: data.value,
-        })),
+    // data
+    ...(size(processedData) === 1
+      ? // unfaceted
+        head(values(processedData))
+      : // faceted
+        {
+          facets: map(processedData, (value, key) => ({
+            label: key,
+            data: value,
+          })),
+        }),
+
+    // CoverageStatistics
     completeCases: response.completeCasesTable,
     completeCasesAllVars: response.barplot.config.completeCasesAllVars,
     completeCasesAxesVars: response.barplot.config.completeCasesAxesVars,
-  };
+  } as BarplotDataWithStatistics; // sorry, but seemed necessary!
 }
 
 function getRequestParams(
@@ -479,6 +555,7 @@ function getRequestParams(
       outputEntityId: vizConfig.xAxisVariable!.entityId,
       xAxisVariable: vizConfig.xAxisVariable!,
       overlayVariable: vizConfig.overlayVariable,
+      facetVariable: vizConfig.facetVariable ? [vizConfig.facetVariable] : [],
       // valueSpec: manually inputted for now
       valueSpec: vizConfig.valueSpec,
       barMode: 'group', // or 'stack'
@@ -496,10 +573,28 @@ function getRequestParams(
  *
  */
 function reorderData(
-  data: BarplotData & CoverageStatistics,
+  data: BarplotDataWithStatistics | BarplotData,
   labelVocabulary: string[] = [],
-  overlayVocabulary: string[] = []
-) {
+  overlayVocabulary: string[] = [],
+  facetVocabulary: string[] = []
+): BarplotDataWithStatistics | BarplotData {
+  // If faceted, reorder the facets and within the facets
+  if (isFaceted(data)) {
+    return {
+      ...data,
+      facets: sortBy(data.facets, ({ label }) =>
+        facetVocabulary.indexOf(label)
+      ).map(({ label, data }) => ({
+        label,
+        data: reorderData(
+          data,
+          labelVocabulary,
+          overlayVocabulary
+        ) as BarplotData,
+      })),
+    };
+  }
+
   const labelOrderedSeries = data.series.map((series) => {
     if (labelVocabulary.length > 0) {
       // for each label in the vocabulary's correct order,

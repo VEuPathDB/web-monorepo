@@ -42,10 +42,15 @@ import SubsettingClient from '../core/api/SubsettingClient';
 import { workspaceTheme } from '../core/components/workspaceTheme';
 import { useDebounce } from '../core/hooks/debouncing';
 import { useWdkStudyRecords } from '../core/hooks/study';
+import {
+  makeCurrentProvenanceString,
+  makeOnImportProvenanceString,
+} from '../core/utils/analysis';
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
 
 interface AnalysisAndDataset {
   analysis: AnalysisSummary & {
+    displayNameAndProvenance: string;
     creationTimeDisplay: string;
     modificationTimeDisplay: string;
   };
@@ -131,9 +136,17 @@ export function AllAnalyses(props: Props) {
         const dataset = datasets?.find(
           (d) => d.id[0].value === analysis.studyId
         );
+
         return {
           analysis: {
             ...analysis,
+            displayNameAndProvenance:
+              analysis.provenance == null
+                ? analysis.displayName
+                : `${analysis.displayName}\0${makeOnImportProvenanceString(
+                    analysis.creationTime,
+                    analysis.provenance
+                  )}\0${makeCurrentProvenanceString(analysis.provenance)}`,
             creationTimeDisplay: convertISOToDisplayFormat(
               analysis.creationTime
             ),
@@ -154,7 +167,7 @@ export function AllAnalyses(props: Props) {
   const searchableAnalysisColumns = useMemo(
     () =>
       [
-        'displayName',
+        'displayNameAndProvenance',
         'description',
         'creationTimeDisplay',
         'modificationTimeDisplay',
@@ -209,8 +222,8 @@ export function AllAnalyses(props: Props) {
                       datasets?.find((d) => d.id[0].value === analysis.studyId)
                         ?.displayName ?? UNKNOWN_DATASET_NAME
                     );
-                  case 'displayName':
-                    return analysis.displayName;
+                  case 'name':
+                    return analysis.displayNameAndProvenance;
                   case 'description':
                     return analysis.description;
                   case 'isPublic':
@@ -429,6 +442,19 @@ export function AllAnalyses(props: Props) {
                     }
                   }}
                 />
+                {data.row.analysis.provenance != null && (
+                  <>
+                    <br />
+                    <br />
+                    {makeOnImportProvenanceString(
+                      data.row.analysis.creationTime,
+                      data.row.analysis.provenance
+                    )}
+                    <br />
+                    <br />
+                    {makeCurrentProvenanceString(data.row.analysis.provenance)}
+                  </>
+                )}
               </div>
             );
           },

@@ -9,6 +9,29 @@ export const AnalysisPreferences = t.partial({
   pinnedAnalyses: t.array(t.string),
 });
 
+export type AnalysisProvenance = t.TypeOf<typeof AnalysisProvenance>;
+export const AnalysisProvenance = t.type({
+  onImport: t.type({
+    ownerId: t.number,
+    ownerName: t.string,
+    ownerOrganization: t.string,
+    analysisId: t.string,
+    analysisName: t.string,
+    creationTime: t.string,
+    modificationTime: t.string,
+    isPublic: t.boolean,
+  }),
+  current: t.union([
+    t.type({
+      isDeleted: t.literal(true),
+    }),
+    t.type({
+      isDeleted: t.literal(false),
+      modificationTime: t.string,
+    }),
+  ]),
+});
+
 export type DerivedVariable = t.TypeOf<typeof DerivedVariable>;
 export const DerivedVariable = t.unknown;
 
@@ -54,6 +77,9 @@ export const AnalysisSummary = t.intersection([
     numComputations: t.number,
     numVisualizations: t.number,
   }),
+  t.partial({
+    provenance: AnalysisProvenance,
+  }),
 ]);
 
 export type PublicAnalysisSummary = t.TypeOf<typeof PublicAnalysisSummary>;
@@ -97,6 +123,9 @@ export const Analysis = t.intersection([
     numFilters: t.number,
     numComputations: t.number,
     numVisualizations: t.number,
+  }),
+  t.partial({
+    provenance: AnalysisProvenance,
   }),
 ]);
 

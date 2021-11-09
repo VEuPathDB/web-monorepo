@@ -54,7 +54,7 @@ export class AnalysisClient extends FetchClientWithCredentials {
       if (this.guestAnalysesTransfer$ != null) {
         try {
           await this.guestAnalysesTransfer$;
-        } catch (e) {
+        } catch (e: any) {
           this.wdkService.submitErrorIfNot500(e);
         }
       }
@@ -186,6 +186,14 @@ export class AnalysisClient extends FetchClientWithCredentials {
         method: 'POST',
         transformResponse: ioTransformer(type({ analysisId: string })),
       };
+    });
+  }
+
+  async importAnalysis(analysisId: string): Promise<{ analysisId: string }> {
+    return this.fetch({
+      path: `/import-analysis/${analysisId}`,
+      method: 'GET',
+      transformResponse: ioTransformer(type({ analysisId: string })),
     });
   }
 
