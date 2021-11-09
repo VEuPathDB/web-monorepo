@@ -118,7 +118,7 @@ export function useWdkStudyRecords(
   )?.records;
 }
 
-export function useStudyMetadata(datasetId: string, store: SubsettingClient) {
+export function useStudyMetadata(datasetId: string, client: SubsettingClient) {
   return useWdkServiceWithRefresh(
     async (wdkService) => {
       const studyRecord = await wdkService.getRecord(
@@ -126,17 +126,13 @@ export function useStudyMetadata(datasetId: string, store: SubsettingClient) {
         [{ name: 'dataset_id', value: datasetId }],
         { attributes: ['dataset_id', 'eda_study_id'] }
       );
-      const studies = await store.getStudies();
-      const study = studies.find(
-        (s) => s.id === studyRecord.attributes.eda_study_id
-      );
-      if (study == null)
+      if (typeof studyRecord.attributes.eda_study_id !== 'string')
         throw new Error(
           'Could not find study with associated dataset id `' + datasetId + '`.'
         );
-      return store.getStudyMetadata(study.id);
+      return client.getStudyMetadata(studyRecord.attributes.eda_study_id);
     },
-    [datasetId, store]
+    [datasetId, client]
   );
 }
 
