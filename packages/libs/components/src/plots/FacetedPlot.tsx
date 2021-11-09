@@ -1,18 +1,28 @@
-import React, { Ref, forwardRef, useImperativeHandle, useRef } from 'react';
+import React, {
+  ComponentType,
+  PropsWithoutRef,
+  Ref,
+  RefAttributes,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+} from 'react';
 
 import { memoize } from 'lodash';
 
 import { isFaceted } from '../types/guards';
-import { FacetedData } from '../types/plots';
-import { ComponentWithPlotRef, PlotProps, PlotRef } from './PlotlyPlot';
+import { FacetedData, FacetedPlotRef, PlotRef } from '../types/plots';
+import { PlotProps } from './PlotlyPlot';
+
+type ComponentWithPlotRef<P> = ComponentType<
+  PropsWithoutRef<P> & RefAttributes<PlotRef>
+>;
 
 export interface FacetedPlotProps<D, P extends PlotProps<D>> {
   data?: FacetedData<D>;
   component: ComponentWithPlotRef<P>;
   props: P;
 }
-
-export type FacetedPlotRef = PlotRef[];
 
 function renderFacetedPlot<D, P extends PlotProps<D>>(
   props: FacetedPlotProps<D, P>,

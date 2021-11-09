@@ -11,8 +11,10 @@ import {
 } from './general';
 import {
   FacetedData,
+  FacetedPlotRef,
   HistogramData,
   PiePlotData,
+  PlotRef,
   UnionOfPlotDataTypes,
 } from './plots';
 import { LinePlotData } from './plots/linePlot';
@@ -94,4 +96,11 @@ export function isFaceted<T>(
     'every' in maybeFacetedData.facets &&
     maybeFacetedData.facets.every((d) => 'label' in d && 'data' in d)
   );
+}
+
+/** Is this plot ref a FacetedPlotRef? */
+export function isFacetedPlotRef(
+  maybeFacetedPlotRef?: FacetedPlotRef | PlotRef
+): maybeFacetedPlotRef is FacetedPlotRef {
+  return Array.isArray(maybeFacetedPlotRef);
 }

@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { useRef } from 'react';
-import PlotlyPlot, { PlotRef } from '../../plots/PlotlyPlot';
+import PlotlyPlot from '../../plots/PlotlyPlot';
+import { PlotRef } from '../../types/plots';
 
 export default {
   title: 'Plots/PlotlyPlot',
