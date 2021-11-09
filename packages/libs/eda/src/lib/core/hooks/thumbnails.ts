@@ -12,11 +12,18 @@ export function useUpdateThumbnailEffect(
 ) {
   const plotRef = useRef<FacetedPlotRef | PlotRef>();
 
-  // Maintain a reference to the latest value of "updateThumbnail"
-  const updateThumbnailRef = useRef(updateThumbnail);
+  // Maintain a reference to the latest values of "updateThumbnail"
+  // and "thumbnailDimensions"
+  const thumbnailArgsRef = useRef({
+    updateThumbnail,
+    thumbnailDimensions,
+  });
   useEffect(() => {
-    updateThumbnailRef.current = updateThumbnail;
-  }, [updateThumbnail]);
+    thumbnailArgsRef.current = {
+      updateThumbnail,
+      thumbnailDimensions,
+    };
+  }, [updateThumbnail, thumbnailDimensions]);
 
   // Whenever one of the "deps" change, capture a thumbnail image
   // and save it to the analysis config
@@ -27,9 +34,15 @@ export function useUpdateThumbnailEffect(
       return;
     }
 
+    const { updateThumbnail, thumbnailDimensions } = thumbnailArgsRef.current;
+
     return Task.fromPromise(() =>
       makePlotThumbnailUrl(plotInstance, thumbnailDimensions)
-    ).run(updateThumbnailRef.current);
+    ).run(updateThumbnail);
+
+    // Disabling react-hooks/exhaustive-deps because it objects to the use
+    // of "deps" which are not array literals
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
   // Return a ref callback which can be passed to plot components
