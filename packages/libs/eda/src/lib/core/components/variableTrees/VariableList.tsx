@@ -28,6 +28,7 @@ import {
   isMulti,
   isRange,
   findAncestorFields,
+  removeIntermediateNodesWithSingleChild,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
 
 import {
@@ -42,6 +43,7 @@ import { VariableDescriptor } from '../../types/variable';
 import { ShowHideVariableContext } from '../../utils/show-hide-variable-context';
 
 import { cx } from '../../../workspace/Utils';
+import { pruneEmptyFields } from '../../utils/wdk-filter-param-adapter';
 
 interface VariableField {
   type?: string;
@@ -119,6 +121,9 @@ interface VariableListProps {
   hideDisabledFields: boolean;
   setHideDisabledFields: (hide: boolean) => void;
   showMultiFilterDescendants: boolean;
+  // Entities in which single child nodes should be promoted
+  // (replacing their parent in the tree)
+  singleChildPromotionEntityIds?: string[];
 }
 
 // TODO: Needs documentation of general component purpose.
@@ -142,6 +147,7 @@ export default function VariableList({
   setHideDisabledFields,
   customDisabledVariableMessage,
   showMultiFilterDescendants,
+  singleChildPromotionEntityIds,
 }: VariableListProps) {
   // useContext is used here with ShowHideVariableContext
   const {
@@ -376,7 +382,8 @@ export default function VariableList({
     : featuredFields;
 
   const tree = useMemo(() => {
-    const tree =
+    // Filter by starred variables if enabled
+    let tree =
       !showOnlyStarredVariables || starredVariableToggleDisabled
         ? fieldTree
         : pruneDescendantNodes(
@@ -390,13 +397,31 @@ export default function VariableList({
               visibleStarredVariableTermsSet.has(node.field.term),
             fieldTree
           );
-    return showOnlyCompatibleVariables
+    // Filter by compatible variables if enabled
+    tree = showOnlyCompatibleVariables
       ? pruneDescendantNodes((node) => {
           if (disabledFields.size === 0) return true;
           if (node.field.type == null) return node.children.length > 0;
           return !disabledFields.has(node.field.term);
         }, tree)
       : tree;
+    // Promote single children in entities where it's enabled
+    if (
+      singleChildPromotionEntityIds &&
+      singleChildPromotionEntityIds.length > 0
+    ) {
+      tree.children = tree.children.map((entity) =>
+        singleChildPromotionEntityIds.includes(entity.field.term)
+          ? {
+              ...entity,
+              children: entity.children.map((child) =>
+                removeIntermediateNodesWithSingleChild(pruneEmptyFields(child))
+              ),
+            }
+          : entity
+      );
+    }
+    return tree;
   }, [
     showOnlyStarredVariables,
     starredVariableToggleDisabled,
@@ -405,6 +430,7 @@ export default function VariableList({
     visibleStarredVariableTermsSet,
     multiFilterDescendants,
     disabledFields,
+    singleChildPromotionEntityIds,
   ]);
 
   const tooltipContent = (
