@@ -1,5 +1,4 @@
 // load scatter plot component
-import React, { useState } from 'react';
 import XYPlot, { XYPlotProps } from '@veupathdb/components/lib/plots/XYPlot';
 import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 
@@ -74,7 +73,7 @@ import { defaultDependentAxisRange } from '../../../utils/default-dependent-axis
 import { useRouteMatch } from 'react-router';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import PluginError from '../PluginError';
-//DKDK
+// for custom legend
 import PlotLegend, {
   LegendItemsProps,
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
@@ -132,6 +131,8 @@ export const ScatterplotConfig = t.partial({
   facetVariable: VariableDescriptor,
   valueSpecConfig: t.string,
   showMissingness: t.boolean,
+  // for vizconfig.checkedLegendItems
+  checkedLegendItems: t.array(t.string),
 });
 
 function ScatterplotViz(props: VisualizationProps) {
@@ -227,6 +228,11 @@ function ScatterplotViz(props: VisualizationProps) {
     'showMissingness'
   );
 
+  // for vizconfig.checkedLegendItems
+  const onCheckedLegendItemsChange = onChangeHandlerFactory<string[]>(
+    'checkedLegendItems'
+  );
+
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
   const outputEntity = useFindOutputEntity(
     dataElementDependencyOrder,
@@ -299,13 +305,17 @@ function ScatterplotViz(props: VisualizationProps) {
       studyId,
       filters,
       dataClient,
-      vizConfig,
-      xAxisVariable,
-      yAxisVariable,
-      overlayVariable,
+      // simply using vizConfig causes issue with onCheckedLegendItemsChange
+      // it is because vizConfig also contains vizConfig.checkedLegendItems
+      vizConfig.xAxisVariable,
+      vizConfig.yAxisVariable,
+      vizConfig.overlayVariable,
+      vizConfig.facetVariable,
+      vizConfig.valueSpecConfig,
+      vizConfig.showMissingness,
       computation.descriptor.type,
       visualization.descriptor.type,
-      MAXALLOWEDDATAPOINTS,
+      outputEntity,
     ])
   );
 
@@ -342,16 +352,16 @@ function ScatterplotViz(props: VisualizationProps) {
 
   const { url } = useRouteMatch();
 
-  //DKDK checkbox of custom legend
+  // custom legend list
   const legendItems: LegendItemsProps[] = useMemo(() => {
     return data.value != null
       ? data.value?.dataSetProcess.series.map((data: XYPlotDataSeries) => {
           return {
             label: data.name != null ? data.name : '',
-            // need a way to appropriately make marker info
-            // scatter plot has defined mode - still need to find the way to distinguish CI, No data, etc.
+            // TO-do: need a way to appropriately make marker info
+            // scatter plot has defined mode - still need to distinguish CI, No data, etc.
             marker: data.mode != null ? data.mode : '',
-            //DKDK think markerColor needs to be added here
+            // set marker colors
             markerColor: 'markerColor',
             // simplifying the check with the presence of data: be carefule of y:[null] case in Scatter plot
             hasData:
@@ -363,19 +373,14 @@ function ScatterplotViz(props: VisualizationProps) {
           };
         })
       : [];
-  }, [data, filters]);
+  }, [data]);
 
-  //DKDK
-  console.log(
-    'data.value?.dataSetProcess.series =',
-    data.value?.dataSetProcess.series
-  );
-  console.log('legendItems =', legendItems);
-
-  //DKDK set useState to track checkbox status
-  const [checkedLegendItems, setCheckedLegendItems] = useState<string[]>([]);
-
-  console.log('checkedLegendItems =', checkedLegendItems);
+  useEffect(() => {
+    if (data != null) {
+      // use this to set all legend checked at first
+      onCheckedLegendItemsChange(legendItems.map((item) => item.label));
+    }
+  }, [data, legendItems]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -496,21 +501,20 @@ function ScatterplotViz(props: VisualizationProps) {
             NumberVariable.is(yAxisVariable) ? 'number' : 'date'
           }
           legendTitle={axisLabelWithUnit(overlayVariable)}
-          //DKDK pass checked state of legend checkbox to PlotlyPlot
-          checkedLegendItems={checkedLegendItems}
-          setCheckedLegendItems={setCheckedLegendItems}
-          legendItems={legendItems}
+          // pass checked state of legend checkbox to PlotlyPlot
+          checkedLegendItems={vizConfig.checkedLegendItems}
+          // for vizconfig.checkedLegendItems
+          onCheckedLegendItemsChange={onCheckedLegendItemsChange}
         />
 
-        {/* DKDK custom legend */}
+        {/* custom legend */}
         {legendItems != null && !data.pending && data.value != null && (
           <div style={{ marginLeft: '2em' }}>
             <PlotLegend
               legendItems={legendItems}
-              checkedLegendItems={checkedLegendItems}
-              setCheckedLegendItems={setCheckedLegendItems}
-              //DKDK pass legend title
+              checkedLegendItems={vizConfig.checkedLegendItems}
               legendTitle={axisLabelWithUnit(overlayVariable)}
+              onCheckedLegendItemsChange={onCheckedLegendItemsChange}
             />
           </div>
         )}
@@ -572,9 +576,9 @@ type ScatterplotWithControlsProps = XYPlotProps & {
   plotOptions: string[];
   // add disabledList
   disabledList: string[];
-  //DKDK legend checkbox
-  setCheckedLegendItems: (checkedItems: string[]) => void;
-  legendItems: LegendItemsProps[];
+  // custom legend
+  checkedLegendItems: string[] | undefined;
+  onCheckedLegendItemsChange: (checkedLegendItems: string[]) => void;
 };
 
 function ScatterplotWithControls({
@@ -588,9 +592,9 @@ function ScatterplotWithControls({
   // add disabledList
   disabledList,
   updateThumbnail,
-  //DKDK legend checkbox
-  setCheckedLegendItems,
-  legendItems,
+  // custom legend
+  checkedLegendItems,
+  onCheckedLegendItemsChange,
   ...scatterplotProps
 }: ScatterplotWithControlsProps) {
   // TODO Use UIState
@@ -610,18 +614,12 @@ function ScatterplotWithControls({
     updateThumbnailRef.current = updateThumbnail;
   });
 
-  //DKDK add async/await for correct thumbnail capture
+  // add dependency of checkedLegendItems
   useEffect(() => {
-    (async () => {
-      if (data != null) {
-        // use this to set all checked
-        await setCheckedLegendItems(legendItems.map((item) => item.label));
-      }
-      await plotRef.current
-        ?.toImage({ format: 'svg', ...plotDimensions })
-        .then(updateThumbnailRef.current);
-    })();
-  }, [data, legendItems]);
+    plotRef.current
+      ?.toImage({ format: 'svg', ...plotDimensions })
+      .then(updateThumbnailRef.current);
+  }, [data, checkedLegendItems]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -631,6 +629,8 @@ function ScatterplotWithControls({
         data={data}
         // add controls
         displayLibraryControls={false}
+        // custom legend: pass checkedLegendItems to PlotlyPlot
+        checkedLegendItems={checkedLegendItems}
       />
       {/*  XYPlotControls: check vizType (only for scatterplot for now) */}
       {vizType === 'scatterplot' && (
