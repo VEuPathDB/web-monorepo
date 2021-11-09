@@ -188,6 +188,186 @@ const facetedData: FacetedData<PiePlotData> = {
         ],
       },
     },
+    {
+      label: 'indoors',
+      data: {
+        slices: [
+          {
+            value: 25,
+            label: 'dogs',
+          },
+          {
+            value: 10,
+            label: 'cats',
+          },
+        ],
+      },
+    },
+    {
+      label: 'outdoors',
+      data: {
+        slices: [
+          {
+            value: 5,
+            label: 'dogs',
+          },
+          {
+            value: 33,
+            label: 'cats',
+          },
+        ],
+      },
+    },
+    {
+      label: 'indoors',
+      data: {
+        slices: [
+          {
+            value: 25,
+            label: 'dogs',
+          },
+          {
+            value: 10,
+            label: 'cats',
+          },
+        ],
+      },
+    },
+    {
+      label: 'outdoors',
+      data: {
+        slices: [
+          {
+            value: 5,
+            label: 'dogs',
+          },
+          {
+            value: 33,
+            label: 'cats',
+          },
+        ],
+      },
+    },
+    {
+      label: 'indoors',
+      data: {
+        slices: [
+          {
+            value: 25,
+            label: 'dogs',
+          },
+          {
+            value: 10,
+            label: 'cats',
+          },
+        ],
+      },
+    },
+    {
+      label: 'outdoors',
+      data: {
+        slices: [
+          {
+            value: 5,
+            label: 'dogs',
+          },
+          {
+            value: 33,
+            label: 'cats',
+          },
+        ],
+      },
+    },
+    {
+      label: 'indoors',
+      data: {
+        slices: [
+          {
+            value: 25,
+            label: 'dogs',
+          },
+          {
+            value: 10,
+            label: 'cats',
+          },
+        ],
+      },
+    },
+    {
+      label: 'outdoors',
+      data: {
+        slices: [
+          {
+            value: 5,
+            label: 'dogs',
+          },
+          {
+            value: 33,
+            label: 'cats',
+          },
+        ],
+      },
+    },
+    {
+      label: 'indoors',
+      data: {
+        slices: [
+          {
+            value: 25,
+            label: 'dogs',
+          },
+          {
+            value: 10,
+            label: 'cats',
+          },
+        ],
+      },
+    },
+    {
+      label: 'outdoors',
+      data: {
+        slices: [
+          {
+            value: 5,
+            label: 'dogs',
+          },
+          {
+            value: 33,
+            label: 'cats',
+          },
+        ],
+      },
+    },
+    {
+      label: 'indoors',
+      data: {
+        slices: [
+          {
+            value: 25,
+            label: 'dogs',
+          },
+          {
+            value: 10,
+            label: 'cats',
+          },
+        ],
+      },
+    },
+    {
+      label: 'outdoors',
+      data: {
+        slices: [
+          {
+            value: 5,
+            label: 'dogs',
+          },
+          {
+            value: 33,
+            label: 'cats',
+          },
+        ],
+      },
+    },
   ],
 };
 
@@ -209,5 +389,10 @@ Faceted.args = {
   data: facetedData,
   props: {
     title: 'indoor and outdoor pets',
+    containerStyles: {
+      width: 300,
+      height: 300,
+      border: '1px solid #dadada',
+    },
   },
 };

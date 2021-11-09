@@ -10,7 +10,6 @@ import React, {
 
 import { memoize } from 'lodash';
 
-import { isFaceted } from '../types/guards';
 import { FacetedData, FacetedPlotRef, PlotRef } from '../types/plots';
 import { PlotProps } from './PlotlyPlot';
 
@@ -43,40 +42,37 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
     [data?.facets]
   );
 
-  // return a regular plot component if the data isn't faceted.
-  if (!isFaceted(data)) {
-    throw new Error('Unfaceted data provided to FacetedPlot');
-  } else {
-    return (
-      <div>
-        <h2>{componentProps.title}</h2>
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
-          {data?.facets.map(({ data, label }, index) => (
-            <Component
-              {...componentProps}
-              ref={(plotInstance) => {
-                if (plotInstance == null) {
-                  delete plotRefs.current[index];
-                } else {
-                  plotRefs.current[index] = plotInstance;
-                }
-              }}
-              key={index}
-              data={data}
-              title={label}
-              containerStyles={{
-                width: '300px',
-                height: '300px',
-                border: '3px dashed gray',
-              }}
-              displayLegend={false}
-              interactive={false}
-            />
-          ))}
-        </div>
+  return (
+    <div>
+      <h2>{componentProps.title}</h2>
+      <div
+        style={{
+          display: 'grid',
+          gridAutoFlow: 'column',
+          width: '100%',
+          overflow: 'auto',
+        }}
+      >
+        {data?.facets.map(({ data, label }, index) => (
+          <Component
+            {...componentProps}
+            ref={(plotInstance) => {
+              if (plotInstance == null) {
+                delete plotRefs.current[index];
+              } else {
+                plotRefs.current[index] = plotInstance;
+              }
+            }}
+            key={index}
+            data={data}
+            title={label}
+            displayLegend={false}
+            interactive={false}
+          />
+        ))}
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 const makeFacetedPlotComponent = memoize(function <D, P extends PlotProps<D>>(
