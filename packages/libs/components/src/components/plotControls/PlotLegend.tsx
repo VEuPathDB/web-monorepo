@@ -1,5 +1,6 @@
 import React from 'react';
 import { Checkbox } from '@material-ui/core';
+import * as ColorMath from 'color-math';
 
 // define legendItems props
 export interface LegendItemsProps {
@@ -43,6 +44,11 @@ export default function PlotLegend({
     }
   };
 
+  // set some default sizes
+  const defaultMarkerSize = '1.0em';
+  const circleMarkerSize = '1.0em';
+  const markerBorderWidth = '0.125em';
+
   return (
     <>
       {legendItems.length > 1 && (
@@ -55,7 +61,7 @@ export default function PlotLegend({
         >
           <div
             title={legendTitle}
-            style={{ cursor: 'pointer', fontSize: '1.2em' }}
+            style={{ cursor: 'pointer', fontSize: defaultMarkerSize }}
           >
             {legendTitle != null
               ? legendEllipsis(legendTitle, 23)
@@ -69,7 +75,6 @@ export default function PlotLegend({
                     key={item.label}
                     id={item.label}
                     value={item.label}
-                    // color="default"
                     color="primary"
                     onChange={(e) => {
                       handleLegendCheckboxClick(e.target.checked, item.label);
@@ -83,22 +88,46 @@ export default function PlotLegend({
                     disabled={!item.hasData}
                   />
                   &nbsp;&nbsp;
-                  <div style={{ position: 'relative', margin: 'auto 0' }}>
-                    {/* <div style={{position: 'relative', margin: 'auto 0', height: '1.2em', width: '1.2em', borderWidth: '0'}}> */}
+                  <div
+                    style={{
+                      position: 'relative',
+                      margin: 'auto 0',
+                      width: defaultMarkerSize,
+                    }}
+                  >
                     {/* for now, only support square (e.g., histogram, barplot, 2X2, RXC) */}
                     {item.marker === 'square' && (
                       <div
                         style={{
-                          height: '1.2em',
-                          width: '1.2em',
+                          height: defaultMarkerSize,
+                          width: defaultMarkerSize,
                           borderWidth: '0',
-                          // width: '100%',
-                          // height: '100%',
-                          // gray out for filtered item
                           backgroundColor:
                             checkedLegendItems?.includes(item.label) &&
                             item.hasData
                               ? item.markerColor
+                              : '#999',
+                        }}
+                      />
+                    )}
+                    {item.marker === 'lightSquareBorder' && (
+                      <div
+                        style={{
+                          height: defaultMarkerSize,
+                          width: defaultMarkerSize,
+                          borderWidth: markerBorderWidth,
+                          borderStyle: 'solid',
+                          borderColor:
+                            checkedLegendItems?.includes(item.label) &&
+                            item.hasData
+                              ? item.markerColor
+                              : '#999',
+                          backgroundColor:
+                            checkedLegendItems?.includes(item.label) &&
+                            item.hasData
+                              ? ColorMath.evaluate(
+                                  item.markerColor + ' @a 50%'
+                                ).result.css()
                               : '#999',
                         }}
                       />
@@ -118,8 +147,9 @@ export default function PlotLegend({
                           : '#999',
                     }}
                   >
-                    {item.label === 'No data' ? (
-                      <i>{item.label}</i>
+                    {item.label === 'No data' ||
+                    item.label.includes('No data,') ? (
+                      <i>{legendEllipsis(item.label, 20)}</i>
                     ) : (
                       legendEllipsis(item.label, 20)
                     )}

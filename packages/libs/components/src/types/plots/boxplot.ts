@@ -1,4 +1,4 @@
-export type BoxplotData = {
+export type BoxplotDataObject = {
   // number | string means number or date
   // this is based on current data API doc
   /** lower whisker/fence optional */
@@ -27,4 +27,6 @@ export type BoxplotData = {
   rawData?: number[][] | string[][];
   /** outliers: data points outside upper and lower whiskers/fences (optional) */
   outliers?: number[][] | string[][];
-}[];
+};
+
+export type BoxplotData = BoxplotDataObject[];
