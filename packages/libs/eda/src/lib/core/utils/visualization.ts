@@ -135,3 +135,9 @@ export function vocabularyWithMissingData(
     ? [...vocabulary, 'No data']
     : vocabulary;
 }
+
+export function variablesAreUnique(vars: (Variable | undefined)[]): boolean {
+  const defined = vars.filter((item) => item != null);
+  const unique = defined.filter((item, i, ar) => ar.indexOf(item) === i);
+  return defined.length === unique.length;
+}
