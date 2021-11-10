@@ -136,6 +136,7 @@ export class AnalysisClient extends FetchClientWithCredentials {
     const body: SingleAnalysisPatchRequest = pick(analysisPatch, [
       'displayName',
       'description',
+      'notes',
       'descriptor',
       'isPublic',
     ]);
