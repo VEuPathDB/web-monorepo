@@ -45,9 +45,9 @@ export default function PlotLegend({
   };
 
   //DKDK set marker sizes
-  const defaultMarkerSize = '1.2em';
+  const defaultMarkerSize = '1.0em';
   const circleMarkerSize = '1.0em';
-  const markerBorderWidth = '0.2em';
+  const markerBorderWidth = '0.125em';
 
   return (
     <>
