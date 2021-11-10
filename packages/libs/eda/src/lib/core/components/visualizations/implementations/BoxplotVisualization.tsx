@@ -30,6 +30,7 @@ import box from './selectorIcons/box.svg';
 import {
   BoxplotData as BoxplotSeries,
   FacetedData,
+  BoxplotDataObject,
 } from '@veupathdb/components/lib/types/plots';
 import { CoverageStatistics } from '../../../types/visualization';
 import { BirdsEyeView } from '../../BirdsEyeView';
@@ -59,6 +60,11 @@ import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { Variable } from '../../../types/study';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
+// custom legend
+import PlotLegend, {
+  LegendItemsProps,
+} from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 
 type BoxplotData = { series: BoxplotSeries };
 
@@ -98,6 +104,8 @@ const BoxplotConfig = t.partial({
   overlayVariable: VariableDescriptor,
   facetVariable: VariableDescriptor,
   showMissingness: t.boolean,
+  // for custom legend: vizconfig.checkedLegendItems
+  checkedLegendItems: t.array(t.string),
 });
 
 function BoxplotViz(props: VisualizationProps) {
@@ -197,6 +205,11 @@ function BoxplotViz(props: VisualizationProps) {
     'showMissingness'
   );
 
+  // for custom legend: vizconfig.checkedLegendItems
+  const onCheckedLegendItemsChange = onChangeHandlerFactory<string[]>(
+    'checkedLegendItems'
+  );
+
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
   const outputEntity = useFindOutputEntity(
     dataElementDependencyOrder,
@@ -282,11 +295,12 @@ function BoxplotViz(props: VisualizationProps) {
       studyId,
       filters,
       dataClient,
-      vizConfig,
-      xAxisVariable,
-      yAxisVariable,
-      overlayVariable,
-      facetVariable,
+      // using vizConfig only causes issue with onCheckedLegendItemsChange
+      vizConfig.xAxisVariable,
+      vizConfig.yAxisVariable,
+      vizConfig.overlayVariable,
+      vizConfig.facetVariable,
+      vizConfig.showMissingness,
       computation.descriptor.type,
       outputEntity?.id,
     ])
@@ -297,6 +311,56 @@ function BoxplotViz(props: VisualizationProps) {
     !vizConfig.showMissingness
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
+
+  // custom legend items for checkbox
+  const legendItems: LegendItemsProps[] = useMemo(() => {
+    const legendData = !isFaceted(data.value)
+      ? data.value?.series
+      : data.value?.facets[0].data.series;
+
+    return legendData != null
+      ? legendData.map((dataItem: BoxplotDataObject, index: number) => {
+          return {
+            label: dataItem.name ?? '',
+            // histogram plot does not have mode, so set to square for now
+            marker: 'lightSquareBorder',
+            markerColor:
+              dataItem.name === 'No data'
+                ? // boxplot uses slightly fainted color
+                  'rgb(191, 191, 191)' // #bfbfbf
+                : ColorPaletteDefault[index],
+            // deep comparison is required for faceted plot
+            hasData: !isFaceted(data.value) // no faceted plot
+              ? dataItem.q1.some((el: number | string) => el != null)
+                ? true
+                : false
+              : data.value?.facets
+                  .map((el: { label: string; data: BoxplotData }) => {
+                    // faceted plot: here data.value is full data
+                    return el.data.series[index].q1.some(
+                      (el: number | string) => el != null
+                    );
+                  })
+                  .includes(true)
+              ? true
+              : false,
+            group: 1,
+            rank: 1,
+          };
+        })
+      : [];
+  }, [data]);
+
+  // use this to set all checked
+  useEffect(() => {
+    if (data != null) {
+      // use this to set all checked
+      onCheckedLegendItemsChange(legendItems.map((item) => item.label));
+    }
+  }, [data, legendItems]);
+
+  console.log('data at boxplot viz =', data);
+  console.log('legendItems = ', legendItems);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -378,7 +442,24 @@ function BoxplotViz(props: VisualizationProps) {
           showSpinner={data.pending}
           showRawData={true}
           legendTitle={axisLabelWithUnit(overlayVariable)}
+          // for custom legend passing checked state in the  checkbox to PlotlyPlot
+          legendItems={legendItems}
+          checkedLegendItems={vizConfig.checkedLegendItems}
+          onCheckedLegendItemsChange={onCheckedLegendItemsChange}
         />
+
+        {/* custom legend */}
+        {legendItems != null && !data.pending && data != null && (
+          <div style={{ marginLeft: '2em' }}>
+            <PlotLegend
+              legendItems={legendItems}
+              checkedLegendItems={vizConfig.checkedLegendItems}
+              legendTitle={axisLabelWithUnit(overlayVariable)}
+              onCheckedLegendItemsChange={onCheckedLegendItemsChange}
+            />
+          </div>
+        )}
+
         <div className="viz-plot-info">
           <BirdsEyeView
             completeCasesAllVars={
@@ -434,11 +515,19 @@ function BoxplotViz(props: VisualizationProps) {
 type BoxplotWithControlsProps = Omit<BoxplotProps, 'data'> & {
   data?: BoxplotDataWithCoverage;
   updateThumbnail: (src: string) => void;
+  // add props for custom legend
+  legendItems: LegendItemsProps[];
+  checkedLegendItems: string[] | undefined;
+  onCheckedLegendItemsChange: (checkedLegendItems: string[]) => void;
 };
 
 function BoxplotWithControls({
   data,
   updateThumbnail,
+  // add props for custom legend
+  legendItems,
+  checkedLegendItems,
+  onCheckedLegendItemsChange,
   ...boxplotComponentProps
 }: BoxplotWithControlsProps) {
   const plotRef = useRef<PlotRef>(null);
@@ -448,11 +537,12 @@ function BoxplotWithControls({
     updateThumbnailRef.current = updateThumbnail;
   });
 
+  // add dependency of checkedLegendItems
   useEffect(() => {
     plotRef.current
       ?.toImage({ format: 'svg', ...plotDimensions })
       .then(updateThumbnailRef.current);
-  }, [data]);
+  }, [data, checkedLegendItems]);
 
   // TO DO: standardise web-components/BoxplotData to have `series` key
   return (
@@ -479,10 +569,18 @@ function BoxplotWithControls({
               })),
             }}
             props={boxplotComponentProps}
+            // for custom legend: pass checkedLegendItems to PlotlyPlot
+            checkedLegendItems={checkedLegendItems}
           />
         </>
       ) : (
-        <Boxplot data={data?.series} ref={plotRef} {...boxplotComponentProps} />
+        <Boxplot
+          data={data?.series}
+          ref={plotRef}
+          // for custom legend: pass checkedLegendItems to PlotlyPlot
+          checkedLegendItems={checkedLegendItems}
+          {...boxplotComponentProps}
+        />
       )}
       {/* potential controls go here  */}
     </div>
