@@ -1,5 +1,6 @@
 import React from 'react';
 import { Checkbox } from '@material-ui/core';
+import * as ColorMath from 'color-math';
 
 // define legendItems props
 export interface LegendItemsProps {
@@ -43,7 +44,7 @@ export default function PlotLegend({
     }
   };
 
-  //DKDK set marker sizes
+  // set some default sizes
   const defaultMarkerSize = '1.0em';
   const circleMarkerSize = '1.0em';
   const markerBorderWidth = '0.125em';
@@ -74,7 +75,6 @@ export default function PlotLegend({
                     key={item.label}
                     id={item.label}
                     value={item.label}
-                    // color="default"
                     color="primary"
                     onChange={(e) => {
                       handleLegendCheckboxClick(e.target.checked, item.label);
@@ -125,10 +125,9 @@ export default function PlotLegend({
                           backgroundColor:
                             checkedLegendItems?.includes(item.label) &&
                             item.hasData
-                              ? item.markerColor
-                                  ?.substring(0, item.markerColor?.length - 1)
-                                  .concat(', 0.5')
-                                  .replace('rgb', 'rgba')
+                              ? ColorMath.evaluate(
+                                  item.markerColor + ' @a 50%'
+                                ).result.css()
                               : '#999',
                         }}
                       />
