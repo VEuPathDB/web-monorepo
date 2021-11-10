@@ -1,6 +1,5 @@
 import React from 'react';
 import { Checkbox } from '@material-ui/core';
-import { autoType } from 'd3-dsv';
 
 // define legendItems props
 export interface LegendItemsProps {
@@ -96,7 +95,6 @@ export default function PlotLegend({
                       width: defaultMarkerSize,
                     }}
                   >
-                    {/* <div style={{position: 'relative', margin: 'auto 0', height: '1.2em', width: '1.2em', borderWidth: '0'}}> */}
                     {/* for now, only support square (e.g., histogram, barplot, 2X2, RXC) */}
                     {item.marker === 'square' && (
                       <div
