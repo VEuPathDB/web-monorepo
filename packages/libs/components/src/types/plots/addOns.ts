@@ -128,6 +128,22 @@ export const ColorPaletteDark: string[] = [
   'rgb(13, 96, 41)',
 ];
 
+/** Sequential gradient colormap. Useful for coloring based on a continuous variable that is always positive, for example. */
+/** Using oslo from  */
+export const SequentialGradientColormap: string[] = [
+  'rgb(0, 1, 0)',
+  'rgb(11, 25, 39)',
+  'rgb(17, 48, 77)',
+  'rgb(27, 73, 117)',
+  'rgb(46, 98, 160)',
+  'rgb(78, 125, 199)',
+  'rgb(111, 146, 202)',
+  'rgb(144, 166, 201)',
+  'rgb(176, 185, 200)',
+  'rgb(215, 215, 216)',
+  'rgb(255, 255, 255)',
+];
+
 /** truncated axis flags */
 export type AxisTruncationAddon = {
   /** truncation config (flags) to show truncated axis (true) or not (false) */

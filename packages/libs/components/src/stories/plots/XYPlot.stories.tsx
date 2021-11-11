@@ -5,6 +5,9 @@ import { min, max, lte, gte } from 'lodash';
 import { Story, Meta } from '@storybook/react/types-6-0';
 // test to use RadioButtonGroup directly instead of XYPlotControls
 import RadioButtonGroup from '../../components/widgets/RadioButtonGroup';
+import SequentialGradientColormap from '../../types/plots/addOns';
+import { scaleLinear } from 'd3-scale';
+import { interpolateLab, extent } from 'd3';
 
 export default {
   title: 'Plots/XYPlot',
@@ -24,9 +27,202 @@ interface VEuPathDBScatterPlotData {
       smoothedMeanSE?: number[];
       bestFitLineX?: number[] | string[];
       bestFitLineY?: number[];
+      seriesGradientColorscale?: number[] | string[];
     }>;
   };
 }
+
+// data with 'seriesGradientColorscale' column (for Gradient Colormap)
+const dataSetGradientColorscale: VEuPathDBScatterPlotData = {
+  scatterplot: {
+    data: [
+      {
+        // scatter plot with CI
+        seriesX: [
+          '0',
+          '1',
+          '2',
+          '3',
+          '4',
+          '5',
+          '6',
+          '7',
+          '8',
+          '9',
+          '10',
+          '11',
+          '12',
+          '13',
+          '14',
+          '15',
+          '16',
+          '17',
+          '18',
+          '19',
+          '20',
+          '21',
+          '22',
+          '23',
+          '24',
+          '25',
+          '26',
+          '27',
+          '28',
+          '29',
+          '30',
+          '31',
+          '32',
+          '33',
+          '34',
+          '35',
+          '36',
+          '37',
+          '38',
+          '39',
+          '40',
+          '41',
+          '42',
+          '43',
+          '44',
+          '46',
+          '47',
+        ],
+        seriesY: [
+          '0.58',
+          '0.54',
+          '0.43',
+          '0.86',
+          '1.19',
+          '1.47',
+          '0.98',
+          '1.36',
+          '0.58',
+          '0.82',
+          '0.77',
+          '1.22',
+          '2.21',
+          '0.46',
+          '1.55',
+          '1.38',
+          '0.98',
+          '1.4',
+          '1.29',
+          '1.3',
+          '1.56',
+          '1.73',
+          '1.48',
+          '1.38',
+          '1.1',
+          '1.14',
+          '0.84',
+          '1.12',
+          '1.07',
+          '1.1',
+          '0.73',
+          '0.86',
+          '1.16',
+          '1.02',
+          '0.77',
+          '1.04',
+          '0.57',
+          '0.08',
+          '0.2',
+          '0.4',
+          '0.23',
+          '0.13',
+          '-0.51',
+          '0',
+          '-0.35',
+          '0.21',
+          '-0.08',
+        ],
+        // variable mapped to color
+        seriesGradientColorscale: [
+          '0',
+          '0.5949367',
+          '1.1898734',
+          '1.7848101',
+          '2.3797468',
+          '2.9746835',
+          '3.5696203',
+          '4.164557',
+          '4.7594937',
+          '5.3544304',
+          '5.9493671',
+          '6.5443038',
+          '7.1392405',
+          '7.7341772',
+          '8.3291139',
+          '8.9240506',
+          '9.5189873',
+          '10.1139241',
+          '10.7088608',
+          '11.3037975',
+          '11.8987342',
+          '12.4936709',
+          '13.0886076',
+          '13.6835443',
+          '14.278481',
+          '14.8734177',
+          '15.4683544',
+          '16.0632911',
+          '16.6582278',
+          '17.2531646',
+          '17.8481013',
+          '18.443038',
+          '19.0379747',
+          '19.6329114',
+          '20.2278481',
+          '20.8227848',
+          '21.4177215',
+          '22.0126582',
+          '22.6075949',
+          '23.2025316',
+          '23.7974684',
+          '24.3924051',
+          '24.9873418',
+          '25.5822785',
+          '26.1772152',
+          '26.7721519',
+          '27.3670886',
+          '27.9620253',
+          '28.556962',
+          '29.1518987',
+          '29.7468354',
+          '30.3417722',
+          '30.9367089',
+          '31.5316456',
+          '32.1265823',
+          '32.721519',
+          '33.3164557',
+          '33.9113924',
+          '34.5063291',
+          '35.1012658',
+          '35.6962025',
+          '36.2911392',
+          '36.8860759',
+          '37.4810127',
+          '38.0759494',
+          '38.6708861',
+          '39.2658228',
+          '39.8607595',
+          '40.4556962',
+          '41.0506329',
+          '41.6455696',
+          '42.2405063',
+          '42.835443',
+          '43.4303797',
+          '44.0253165',
+          '44.6202532',
+          '45.2151899',
+          '45.8101266',
+          '46.4050633',
+          '47',
+        ],
+      },
+    ],
+  },
+};
 
 // use actual data response format (number/string) following scatter plot data API
 const dataSet: VEuPathDBScatterPlotData = {
@@ -605,6 +801,15 @@ const { dataSetProcess: dataSetProcessDefaultColors } = processInputData(
   dependentValueType,
   false
 );
+
+const { dataSetProcess: dataSetProcessGradientColorscale } = processInputData(
+  dataSetGradientColorscale,
+  'scatterplot',
+  'markers',
+  independentValueType,
+  dependentValueType,
+  false
+);
 // Case 1-2) checking line plot: raw data with line
 // const { dataSetProcess, yMin, yMax } = processInputData(
 //   dataSet,
@@ -671,6 +876,35 @@ export const MultipleDataDefaultColors = () => {
   return (
     <XYPlot
       data={dataSetProcessDefaultColors}
+      independentAxisLabel={independentAxisLabel}
+      dependentAxisLabel={dependentAxisLabel}
+      // not to use independentAxisRange
+      // independentAxisRange={[xMin, xMax]}
+      dependentAxisRange={{ min: yMin, max: yMax }}
+      title={plotTitle}
+      // width height is replaced with containerStyles
+      containerStyles={{
+        width: plotWidth,
+        height: plotHeight,
+      }}
+      // staticPlot is changed to interactive
+      interactive={true}
+      // check enable/disable legend and built-in controls
+      displayLegend={true}
+      displayLibraryControls={true}
+      // margin={{l: 50, r: 10, b: 20, t: 10}}
+      // add legend title
+      legendTitle={'legend title example'}
+      independentValueType={independentValueType}
+      dependentValueType={dependentValueType}
+    />
+  );
+};
+
+export const GradientColormap = () => {
+  return (
+    <XYPlot
+      data={dataSetProcessGradientColorscale}
       independentAxisLabel={independentAxisLabel}
       dependentAxisLabel={dependentAxisLabel}
       // not to use independentAxisRange
@@ -845,6 +1079,26 @@ function processInputData<T extends number | string>(
     '23, 190, 207', //'#17becf'   // blue-teal
   ];
 
+  // gradient colormap
+  const gradientColormapStopPoints = [
+    'rgb(26, 12, 101)',
+    'rgb(33, 46, 124)',
+    'rgb(39, 77, 145)',
+    'rgb(68, 131, 167)',
+    'rgb(49, 105, 159)',
+    'rgb(102, 153, 164)',
+    'rgb(141, 163, 152)',
+    'rgb(179, 167, 139)',
+    'rgb(223, 183, 148)',
+    'rgb(253, 217, 197)',
+    'rgb(255, 243, 243)',
+  ];
+
+  // Craete colormap for series. Maps [0, 1] to gradient colormap using Lab interpolation
+  const gradientColorscaleMap = scaleLinear<string>()
+    .range(gradientColormapStopPoints)
+    .interpolate(interpolateLab);
+
   // set dataSetProcess as any
   let dataSetProcess: any = [];
 
@@ -853,6 +1107,8 @@ function processInputData<T extends number | string>(
     // initialize seriesX/Y
     let seriesX = [];
     let seriesY = [];
+    let seriesGradientColorscale = [];
+    let normalizeSeriesGradientColorscale;
 
     // series is for scatter plot
     if (el.seriesX && el.seriesY) {
@@ -880,6 +1136,17 @@ function processInputData<T extends number | string>(
       } else {
         seriesY = el.seriesY.map(Number);
       }
+      if (el.seriesGradientColorscale) {
+        seriesGradientColorscale = el.seriesGradientColorscale.map(Number);
+        // let myrange : number[] | string[] = extent(seriesGradientColorscale);
+        console.log(seriesGradientColorscale);
+        normalizeSeriesGradientColorscale = scaleLinear()
+          .domain([0, 1])
+          .range([0, 1]);
+      }
+
+      console.log(gradientColorscaleMap(seriesGradientColorscale));
+      console.log(seriesGradientColorscale.map(gradientColorscaleMap));
 
       // check if this Y array consists of numbers & add type assertion
       if (index === 0) {
@@ -893,6 +1160,8 @@ function processInputData<T extends number | string>(
           lte(yMin, min(seriesY)) ? yMin : min(seriesY);
         yMax = gte(yMax, max(seriesY)) ? yMax : max(seriesY);
       }
+
+      // console.log(gradientColorscaleMap(0.5));
 
       // add scatter data considering input options
       dataSetProcess.push({
@@ -913,6 +1182,8 @@ function processInputData<T extends number | string>(
         marker: {
           color: defineColors
             ? 'rgba(' + markerColors[index] + ',0.7)'
+            : seriesGradientColorscale?.length > 0
+            ? seriesGradientColorscale.map(gradientColorscaleMap)
             : undefined,
           // size: 6,
           // line: { color: 'rgba(' + markerColors[index] + ',0.7)', width: 2 },
