@@ -52,7 +52,7 @@ export default function NotesTab({ analysisState }: props) {
   return (
     <div
       style={{
-        marginTop: 25,
+        marginTop: 35,
         display: 'flex',
         flexDirection: 'column',
       }}
@@ -71,7 +71,7 @@ export default function NotesTab({ analysisState }: props) {
         }}
         status={descriptionStatus}
       />
-      <div style={{ height: 25 }} />
+
       <MultilineTextField
         heading="Analysis Details"
         instructions="Record details of your analysis for yourself and those you share it with."
@@ -84,6 +84,7 @@ export default function NotesTab({ analysisState }: props) {
           syncDetailsToAnalysis(value);
         }}
         status={detailsStatus}
+        containerStyles={{ paddingTop: 25 }}
       />
     </div>
   );
