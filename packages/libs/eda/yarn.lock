@@ -3414,10 +3414,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/components@^0.8.13":
-  version "0.8.13"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.8.13.tgz#c15612324b78e5a92866519d7ed8ca2417b157da"
-  integrity sha512-sQbRm9ZIvGOnWShdwPUZUFcOsAotkPQ6WoGyT1i+JZcwdD555qFG143tmL3OIIet3sPn7YCbY0u6wTyIyOTI3g==
+"@veupathdb/components@^0.9.3":
+  version "0.9.3"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.9.3.tgz#067ada755e8f176b0dbee9d86c748cb3fd8377a7"
+  integrity sha512-4VBB8T9P69oejvdkfwG29SJ50grBVa5ureCCYe2wcLO+t2z+kTZy0UMYHTdp0Igf+25Yf//uZxmn20XwV3BHtQ==
   dependencies:
     "@material-ui/core" "^4.11.2"
     "@material-ui/icons" "^4.11.2"
@@ -3432,6 +3432,7 @@
     "@visx/tooltip" "^1.3.0"
     "@visx/visx" "^1.1.0"
     bootstrap "^4.5.2"
+    color-math "^1.1.3"
     d3 "^7.1.1"
     date-arithmetic "^4.1.0"
     debounce-promise "^3.1.2"
@@ -5515,6 +5516,13 @@ chownr@^2.0.0:
   resolved "https://registry.yarnpkg.com/chownr/-/chownr-2.0.0.tgz#15bfbe53d2eab4cf70f18a8cd68ebe5b3cb1dece"
   integrity sha512-bIomtDF5KGpdogkLd9VspvFzk9KfpyyGlS8YFVZl7TGPBHL5snIOnxeshwVgPteQ9b4Eydl+pVbIyE1DcvCWgQ==
 
+chroma-js@^2.0.4:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/chroma-js/-/chroma-js-2.1.2.tgz#1075cb9ae25bcb2017c109394168b5cf3aa500ec"
+  integrity sha512-ri/ouYDWuxfus3UcaMxC1Tfp3IE9K5iQzxc2hSxbBRVNQFut1UuGAsZmiAf2mOUubzGJwgMSv9lHg+XqLaz1QQ==
+  dependencies:
+    cross-env "^6.0.3"
+
 chrome-trace-event@^1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/chrome-trace-event/-/chrome-trace-event-1.0.3.tgz#1015eced4741e15d06664a957dbbf50d041e26ac"
@@ -5716,6 +5724,14 @@ color-id@^1.1.0:
   integrity sha512-2iRtAn6dC/6/G7bBIo0uupVrIne1NsQJvJxZOBCzQOfk7jRq97feaDZ3RdzuHakRXXnHGNwglto3pqtRx1sX0g==
   dependencies:
     clamp "^1.0.1"
+
+color-math@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/color-math/-/color-math-1.1.3.tgz#28e053edeb750a5edaa6675927dec71e7b34d74c"
+  integrity sha512-KYFYX9Od1/uEBNSkMQOHJ4vbnQ1qzN66VwV7+Gp5YIfWHJhTe5sXMfIATdPk7hm4YpHt764TZxQitEZDxg42PA==
+  dependencies:
+    chroma-js "^2.0.4"
+    lodash.clonedeepwith "^4.5.0"
 
 color-name@1.1.3:
   version "1.1.3"
@@ -6154,6 +6170,13 @@ create-hmac@^1.1.0, create-hmac@^1.1.4, create-hmac@^1.1.7:
     ripemd160 "^2.0.0"
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
+
+cross-env@^6.0.3:
+  version "6.0.3"
+  resolved "https://registry.yarnpkg.com/cross-env/-/cross-env-6.0.3.tgz#4256b71e49b3a40637a0ce70768a6ef5c72ae941"
+  integrity sha512-+KqxF6LCvfhWvADcDPqo64yVIB31gv/jQulX2NGzKS/g3GEVz6/pt4wjHFtFWsHMddebWD/sDthJemzM4MaAag==
+  dependencies:
+    cross-spawn "^7.0.0"
 
 cross-spawn@7.0.3, cross-spawn@^7.0.0, cross-spawn@^7.0.2, cross-spawn@^7.0.3:
   version "7.0.3"
@@ -11554,6 +11577,11 @@ lodash.clonedeep@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz#e23f3f9c4f8fbdde872529c1071857a086e5ccef"
   integrity sha1-4j8/nE+Pvd6HJSnBBxhXoIblzO8=
+
+lodash.clonedeepwith@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.clonedeepwith/-/lodash.clonedeepwith-4.5.0.tgz#6ee30573a03a1a60d670a62ef33c10cf1afdbdd4"
+  integrity sha1-buMFc6A6GmDWcKYu8zwQzxr9vdQ=
 
 lodash.debounce@^4.0.8:
   version "4.0.8"
