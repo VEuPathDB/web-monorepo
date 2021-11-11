@@ -308,7 +308,9 @@ function ScatterplotViz(props: VisualizationProps) {
               params as ScatterplotRequestParams
             );
 
-      const showMissing = vizConfig.showMissingness && overlayVariable != null;
+      const showMissing =
+        vizConfig.showMissingness &&
+        (overlayVariable != null || facetVariable != null);
       const overlayVocabulary = fixLabelsForNumberVariables(
         overlayVariable?.vocabulary,
         overlayVariable
@@ -325,6 +327,7 @@ function ScatterplotViz(props: VisualizationProps) {
         showMissing,
         overlayVocabulary,
         overlayVariable,
+        facetVocabulary,
         facetVariable
       );
     }, [
@@ -380,12 +383,13 @@ function ScatterplotViz(props: VisualizationProps) {
 
   // custom legend list
   const legendItems: LegendItemsProps[] = useMemo(() => {
-    const legendData = !isFaceted(data.value?.dataSetProcess)
-      ? data.value?.dataSetProcess.series
-      : data.value?.dataSetProcess.facets[0].data.series;
+    const allData = data.value?.dataSetProcess;
+    const legendData = !isFaceted(allData)
+      ? allData?.series
+      : allData.facets.find(({ data }) => data.series.length > 0)?.data.series;
 
     return legendData != null
-      ? legendData.map((data: XYPlotDataSeries) => {
+      ? legendData.map((data: XYPlotDataSeries, index: number) => {
           return {
             label: data.name != null ? data.name : '',
             // TO-do: need a way to appropriately make marker info
@@ -394,10 +398,18 @@ function ScatterplotViz(props: VisualizationProps) {
             // set marker colors
             markerColor: 'markerColor',
             // simplifying the check with the presence of data: be carefule of y:[null] case in Scatter plot
-            hasData:
-              data.y != null && data.y.length > 0 && data.y[0] !== null
+            hasData: !isFaceted(allData)
+              ? data.y != null && data.y.length > 0 && data.y[0] !== null
                 ? true
-                : false,
+                : false
+              : allData.facets
+                  .map(
+                    ({ data }) =>
+                      data.series[index]?.y != null &&
+                      data.series[index].y.length > 0 &&
+                      data.series[index].y[0] !== null
+                  )
+                  .includes(true),
             group: 1,
             rank: 1,
           };
@@ -597,6 +609,11 @@ function ScatterplotViz(props: VisualizationProps) {
                 display: axisLabelWithUnit(overlayVariable),
                 variable: vizConfig.overlayVariable,
               },
+              {
+                role: 'Facet',
+                display: axisLabelWithUnit(facetVariable),
+                variable: vizConfig.facetVariable,
+              },
             ]}
           />
         </div>
@@ -714,6 +731,7 @@ export function scatterplotResponseToData(
   showMissingness: boolean = false,
   overlayVocabulary: string[] = [],
   overlayVariable?: Variable,
+  facetVocabulary: string[] = [],
   facetVariable?: Variable
 ): XYPlotDataWithCoverage {
   const modeValue = vizType === 'lineplot' ? 'lines' : 'markers'; // for scatterplot
@@ -734,7 +752,7 @@ export function scatterplotResponseToData(
   const processedData = mapValues(facetGroupedResponseData, (group) => {
     const { dataSetProcess, yMin, yMax } = processInputData(
       reorderResponseScatterplotData(
-        // reorder within each facet
+        // reorder by overlay var within each facet
         group,
         vocabularyWithMissingData(overlayVocabulary, showMissingness),
         overlayVariable
@@ -764,9 +782,12 @@ export function scatterplotResponseToData(
         head(values(processedData))?.dataSetProcess
       : // faceted
         {
-          facets: map(processedData, (value, key) => ({
-            label: key,
-            data: value.dataSetProcess,
+          facets: vocabularyWithMissingData(
+            facetVocabulary,
+            showMissingness
+          ).map((facetValue) => ({
+            label: facetValue,
+            data: processedData[facetValue]?.dataSetProcess ?? { series: [] },
           })),
         };
 
