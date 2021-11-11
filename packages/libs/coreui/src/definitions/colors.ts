@@ -88,8 +88,28 @@ export const BLUE: ColorHue = {
   600: '#082C5E',
 };
 
+export const RED: ColorHue = {
+  100: '#FFCCCC',
+  200: '#F5A3A3',
+  300: '#F65555',
+  400: '#E51919',
+  500: '#A11212',
+  600: '#610505',
+};
+
+export const ORANGE: ColorHue = {
+  100: '#FFE6CC',
+  200: '#FFCC99',
+  300: '#FFA64D',
+  400: '#E58019',
+  500: '#B25900',
+  600: '#613305',
+};
+
 export default {
   GRAY,
   BLUE,
   FADED_BLUE,
+  RED,
+  ORANGE,
 };

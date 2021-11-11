@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/core-components",
-  "version": "0.2.44",
+  "version": "0.2.45",
   "author": "Michael Dunn <mdunn4@nd.edu>",
   "description": "Core components and style definitions for VEuPath applications.",
   "private": false,
@@ -30,7 +30,7 @@
   "dependencies": {
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
-    "@types/react-table": "^7.7.2",
+    "@types/react-table": "^7.7.7",
     "lodash": "^4.17.21",
     "react-cool-dimensions": "^2.0.7",
     "react-modal": "^3.14.3",

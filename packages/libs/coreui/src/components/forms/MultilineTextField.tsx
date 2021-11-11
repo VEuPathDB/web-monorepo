@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { CSSProperties, useEffect, useRef, useState } from 'react';
 
 // Components
 import { H6 } from '../headers';
@@ -29,6 +29,8 @@ export type MultilineTextFieldProps = {
   characterLimit?: number;
   /** Optional. Indicates the status of data syncing. */
   status?: 'syncing' | 'synced';
+  /** Optional. Additional CSS styles to apply to the outermost div. */
+  containerStyles?: CSSProperties;
 };
 
 /**
@@ -45,6 +47,7 @@ export default function MultilineTextField({
   value,
   onValueChange,
   status,
+  containerStyles = {},
 }: MultilineTextFieldProps) {
   const [hasFocus, setHasFocus] = useState(false);
   const [scrollBarVisible, setScrollBarVisible] = useState(false);
@@ -61,12 +64,14 @@ export default function MultilineTextField({
     height: currentHeight,
     width: currentWidth,
   } = useDimensions();
-  const { observe: headingRef, height: nonInputHeight } = useDimensions();
+  const { observe: headingRef, height: nonInputHeight } = useDimensions({
+    useBorderBoxSize: true,
+  });
 
   return (
-    <div ref={observe} css={{ width, height }}>
+    <div ref={observe} css={{ width, height, ...containerStyles }}>
       <div ref={headingRef} css={{ marginBottom: 5 }}>
-        <H6 text={heading} additionalStyles={{ marginBottom: 0 }} />
+        <H6 text={heading} additionalStyles={{ margin: 0 }} />
         {instructions && (
           <label css={[typography.label, { color: GRAY[500] }]}>
             {instructions}

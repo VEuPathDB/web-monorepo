@@ -26,16 +26,18 @@ const Template: Story<MultilineTextFieldProps> = (args) => {
   );
 
   return (
-    <MultilineTextField
-      {...args}
-      value={value}
-      onValueChange={(value) => {
-        setValue(value);
-        setStatus('syncing');
-        debouncedOnValueChange(value);
-      }}
-      status={status}
-    />
+    <div css={{ display: 'flex', flexDirection: 'column' }}>
+      <MultilineTextField
+        {...args}
+        value={value}
+        onValueChange={(value) => {
+          setValue(value);
+          setStatus('syncing');
+          debouncedOnValueChange(value);
+        }}
+        status={status}
+      />
+    </div>
   );
 };
 export const Default = Template.bind({});
