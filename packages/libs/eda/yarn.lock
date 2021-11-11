@@ -3088,10 +3088,10 @@
     "@types/react-dom" "*"
     "@types/react-transition-group" "*"
 
-"@types/react-table@^7.7.2":
-  version "7.7.7"
-  resolved "https://registry.yarnpkg.com/@types/react-table/-/react-table-7.7.7.tgz#503be1ce2e06857c11b281629f539358d32671f9"
-  integrity sha512-3l2TP4detx9n5Jt44XhdH7Ku6PYwz6kB83P8W+YcBMUkIHtiw2gsCCcq9c4wyCIcdSwcTlWZ9WqH4PF7Yfbprg==
+"@types/react-table@^7.7.7":
+  version "7.7.8"
+  resolved "https://registry.yarnpkg.com/@types/react-table/-/react-table-7.7.8.tgz#b1aa5fb7a54432969262d2306b87fdbb9a5ee647"
+  integrity sha512-OMhbPlf+uUGte3M1WdArEKeBkyQ1XJxKvFYs+o1dGGGyaSVIqxPPQmBZ6Skkw0V9y0F/kOY7rnTD8r9GbfpBOg==
   dependencies:
     "@types/react" "*"
 
@@ -3445,14 +3445,14 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/core-components@^0.2.44":
-  version "0.2.44"
-  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.2.44.tgz#d2d4754603b4f29d860d46431ec48fad92868aa6"
-  integrity sha512-AYGZ8HoY4ZF6XvYP0HfukYRgEMKMLmLUbQpjga4IQiQ3xdYGIrPhxH5BpkUECz+u8Jl13zk6Zgt3N0/tr4t2KQ==
+"@veupathdb/core-components@^0.2.45":
+  version "0.2.45"
+  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.2.45.tgz#e7f917abdeea68b3ef42763311dbf3576086e4ed"
+  integrity sha512-15/EIbPVgwpLkT1Z3/v0LIl5P+WEV2DJrRKQBbxgn5gzsKtIH0tc+Txm83sXBaQ97OXpYskerZXzkFC24Vx6rw==
   dependencies:
     "@material-ui/core" "^4.12.3"
     "@material-ui/icons" "^4.11.2"
-    "@types/react-table" "^7.7.2"
+    "@types/react-table" "^7.7.7"
     lodash "^4.17.21"
     react-cool-dimensions "^2.0.7"
     react-modal "^3.14.3"
@@ -11565,11 +11565,6 @@ lodash._reinterpolate@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/lodash._reinterpolate/-/lodash._reinterpolate-3.0.0.tgz#0ccf2d89166af03b3663c796538b75ac6e114d9d"
   integrity sha1-DM8tiRZq8Ds2Y8eWU4t1rG4RTZ0=
-
-lodash.clonedeepwith@^4.5.0:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/lodash.clonedeepwith/-/lodash.clonedeepwith-4.5.0.tgz#6ee30573a03a1a60d670a62ef33c10cf1afdbdd4"
-  integrity sha1-buMFc6A6GmDWcKYu8zwQzxr9vdQ=
 
 lodash.clonedeepwith@^4.5.0:
   version "4.5.0"
