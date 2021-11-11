@@ -20,7 +20,7 @@ export default function FacetedPlot<D, P extends PlotProps<D>>(
     checkedLegendItems: checkedLegendItems,
   } = props;
   return (
-    <div>
+    <>
       <h2>{componentProps.title}</h2>
       <div
         style={{
@@ -43,6 +43,6 @@ export default function FacetedPlot<D, P extends PlotProps<D>>(
           />
         ))}
       </div>
-    </div>
+    </>
   );
 }
