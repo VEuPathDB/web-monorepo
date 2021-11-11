@@ -55,8 +55,8 @@ const plotContainerStyles = {
 };
 
 const facetedPlotContainerStyles = {
-  width: plotContainerStyles.width / 2,
-  height: plotContainerStyles.height / 2,
+  width: plotContainerStyles.width / 1.45,
+  height: plotContainerStyles.height / 1.25,
 };
 
 type ContTableData = MosaicData &

@@ -80,7 +80,7 @@ const plotContainerStyles = {
 };
 
 const facetedPlotContainerStyles = {
-  height: plotContainerStyles.height / 2,
+  height: plotContainerStyles.height / 1.5,
   width: plotContainerStyles.width / 2,
 };
 
