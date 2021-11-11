@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import ReactModal from 'react-modal';
 
-import { GRAY } from '../../definitions/colors';
+import { gray } from '../../definitions/colors';
 import { H2 } from '../headers';
 
 export type FullScreenModalProps = {
@@ -18,7 +18,7 @@ export type FullScreenModalProps = {
 
 export default function FullScreenModal({
   title,
-  accentColor = GRAY[600],
+  accentColor = gray[600],
   backgroundColor = 'white',
   visible,
   children,

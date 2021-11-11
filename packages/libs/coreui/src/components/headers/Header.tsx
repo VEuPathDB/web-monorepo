@@ -1,4 +1,4 @@
-import { GRAY } from '../../definitions/colors';
+import { gray } from '../../definitions/colors';
 import styles from '../../styleDefinitions';
 
 export type HeaderProps = {
@@ -21,7 +21,7 @@ export type HeaderProps = {
 export default function Header({
   size,
   text,
-  color = GRAY[600],
+  color = gray[600],
   underline = false,
   textTransform = 'none',
   additionalStyles = {},

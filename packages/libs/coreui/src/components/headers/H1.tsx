@@ -1,9 +1,9 @@
-import { GRAY } from '../../definitions/colors';
+import { gray } from '../../definitions/colors';
 import Header, { HeaderProps } from './Header';
 
 export default function H1({
   text,
-  color = GRAY[600],
+  color = gray[600],
   underline = false,
   textTransform = 'none',
   additionalStyles = {},

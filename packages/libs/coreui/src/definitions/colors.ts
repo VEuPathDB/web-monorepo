@@ -61,7 +61,7 @@ type ColorHue = {
   600: string;
 };
 
-export const GRAY: ColorHue = {
+export const gray: ColorHue = {
   100: '#E6E6E6',
   200: '#CCCCCC',
   300: '#A6A6A6',
@@ -70,7 +70,7 @@ export const GRAY: ColorHue = {
   600: '#333333',
 };
 
-export const FADED_BLUE: ColorHue = {
+export const faded_blue: ColorHue = {
   100: '#D9E8F2',
   200: '#B3D0E6',
   300: '#79ADD2',
@@ -79,7 +79,7 @@ export const FADED_BLUE: ColorHue = {
   600: '#1A374D',
 };
 
-export const BLUE: ColorHue = {
+export const blue: ColorHue = {
   100: '#CFE2FC',
   200: '#9EC4FA',
   300: '#5598F6',
@@ -88,7 +88,43 @@ export const BLUE: ColorHue = {
   600: '#082C5E',
 };
 
-export const RED: ColorHue = {
+export const teal: ColorHue = {
+  100: '#CFFCF6',
+  200: '#9EFAF2',
+  300: '#00E6D2',
+  400: '#00CCBB',
+  500: '#00998C',
+  600: '#085E57',
+};
+
+export const green: ColorHue = {
+  100: '#CFFCCF',
+  200: '#9EFA9E',
+  300: '#00E600',
+  400: '#00CC00',
+  500: '#009900',
+  600: '#085E08',
+};
+
+export const purple: ColorHue = {
+  100: '#EECCFF',
+  200: '#DAA3F5',
+  300: '#C155F6',
+  400: '#9216D0',
+  500: '#7112A1',
+  600: '#420561',
+};
+
+export const magenta: ColorHue = {
+  100: '#FFCCEE',
+  200: '#F5A3DA',
+  300: '#F655C1',
+  400: '#D01692',
+  500: '#A11271',
+  600: '#610542',
+};
+
+export const red: ColorHue = {
   100: '#FFCCCC',
   200: '#F5A3A3',
   300: '#F65555',
@@ -97,7 +133,7 @@ export const RED: ColorHue = {
   600: '#610505',
 };
 
-export const ORANGE: ColorHue = {
+export const orange: ColorHue = {
   100: '#FFE6CC',
   200: '#FFCC99',
   300: '#FFA64D',
@@ -106,10 +142,23 @@ export const ORANGE: ColorHue = {
   600: '#613305',
 };
 
+export const yellow: ColorHue = {
+  100: '#FFF9B3',
+  200: '#FFF480',
+  300: '#F0DB00',
+  400: '#CCBB00',
+  500: '#998C00',
+  600: '#665E00',
+};
+
 export default {
-  GRAY,
-  BLUE,
-  FADED_BLUE,
-  RED,
-  ORANGE,
+  gray,
+  faded_blue,
+  blue,
+  teal,
+  green,
+  purple,
+  magenta,
+  red,
+  orange,
 };

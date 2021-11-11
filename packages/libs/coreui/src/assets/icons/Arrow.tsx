@@ -1,4 +1,4 @@
-import { GRAY } from '../../definitions/colors';
+import { gray } from '../../definitions/colors';
 
 // TODO: Make this more generic.
 type IconProps = {
@@ -11,7 +11,7 @@ type IconProps = {
 export default function Arrow({
   width = 12,
   height = 7.4,
-  color = GRAY[400],
+  color = gray[400],
   extraCSS = {},
 }: IconProps) {
   return (
