@@ -72,9 +72,17 @@ import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOn
 type BarplotDataWithStatistics = (BarplotData | FacetedData<BarplotData>) &
   CoverageStatistics;
 
-const plotDimensions = {
+const plotContainerStyles = {
   height: 450,
   width: 750,
+  marginLeft: '0.75rem',
+  border: '1px solid #dedede',
+  boxShadow: '1px 1px 4px #00000066',
+};
+
+const facetedPlotContainerStyles = {
+  height: plotContainerStyles.height / 2,
+  width: plotContainerStyles.width / 2,
 };
 
 export const barplotVisualization: VisualizationType = {
@@ -375,14 +383,16 @@ function BarplotViz(props: VisualizationProps) {
   // add dependency of checkedLegendItems
   useEffect(() => {
     plotRef.current
-      ?.toImage({ format: 'svg', ...plotDimensions })
+      ?.toImage({ format: 'svg', ...plotContainerStyles })
       .then(updateThumbnailRef.current);
   }, [data, vizConfig.checkedLegendItems]);
 
   // these props are passed to either a single plot
   // or by FacetedPlot to each individual facet plot (where some will be overridden)
   const plotProps: BarplotProps = {
-    containerStyles: plotDimensions,
+    containerStyles: isFaceted(data.value)
+      ? facetedPlotContainerStyles
+      : plotContainerStyles,
     orientation: 'vertical',
     barLayout: 'group',
     displayLegend:
@@ -453,7 +463,9 @@ function BarplotViz(props: VisualizationProps) {
           alignItems: 'flex-start',
         }}
       >
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div
+          style={{ display: 'flex', flexDirection: 'column', width: '100%' }}
+        >
           {isFaceted(data.value) ? (
             <>
               <div

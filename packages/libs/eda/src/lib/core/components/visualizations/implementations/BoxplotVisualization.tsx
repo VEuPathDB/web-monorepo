@@ -71,9 +71,17 @@ type BoxplotData = { series: BoxplotSeries };
 type BoxplotDataWithCoverage = (BoxplotData | FacetedData<BoxplotData>) &
   CoverageStatistics;
 
-const plotDimensions = {
+const plotContainerStyles = {
   height: 450,
   width: 750,
+  marginLeft: '0.75rem',
+  border: '1px solid #dedede',
+  boxShadow: '1px 1px 4px #00000066',
+};
+
+const facetedPlotContainerStyles = {
+  height: plotContainerStyles.height / 2,
+  width: plotContainerStyles.width / 2,
 };
 
 export const boxplotVisualization: VisualizationType = {
@@ -424,7 +432,11 @@ function BoxplotViz(props: VisualizationProps) {
           // data.value
           data={data.value}
           updateThumbnail={updateThumbnail}
-          containerStyles={plotDimensions}
+          containerStyles={
+            isFaceted(data.value)
+              ? facetedPlotContainerStyles
+              : plotContainerStyles
+          }
           orientation={'vertical'}
           // add condition to show legend when overlayVariable is used
           displayLegend={
@@ -540,13 +552,13 @@ function BoxplotWithControls({
   // add dependency of checkedLegendItems
   useEffect(() => {
     plotRef.current
-      ?.toImage({ format: 'svg', ...plotDimensions })
+      ?.toImage({ format: 'svg', ...plotContainerStyles })
       .then(updateThumbnailRef.current);
   }, [data, checkedLegendItems]);
 
   // TO DO: standardise web-components/BoxplotData to have `series` key
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
       {isFaceted(data) ? (
         <>
           <div

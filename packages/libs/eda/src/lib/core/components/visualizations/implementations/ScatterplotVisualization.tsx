@@ -80,9 +80,12 @@ import PlotLegend, {
 
 const MAXALLOWEDDATAPOINTS = 100000;
 
-const plotDimensions = {
+const plotContainerStyles = {
   width: 750,
   height: 450,
+  marginLeft: '0.75rem',
+  border: '1px solid #dedede',
+  boxShadow: '1px 1px 4px #00000066',
 };
 
 // define PromiseXYPlotData
@@ -456,7 +459,7 @@ function ScatterplotViz(props: VisualizationProps) {
           // data.value
           data={data.value?.dataSetProcess}
           updateThumbnail={updateThumbnail}
-          containerStyles={plotDimensions}
+          containerStyles={plotContainerStyles}
           // title={'Scatter plot'}
           displayLegend={
             data.value &&
@@ -617,7 +620,7 @@ function ScatterplotWithControls({
   // add dependency of checkedLegendItems
   useEffect(() => {
     plotRef.current
-      ?.toImage({ format: 'svg', ...plotDimensions })
+      ?.toImage({ format: 'svg', ...plotContainerStyles })
       .then(updateThumbnailRef.current);
   }, [data, checkedLegendItems]);
 
