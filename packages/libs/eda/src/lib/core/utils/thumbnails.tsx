@@ -88,10 +88,10 @@ async function makeFacetedPlotThumbnailUrl(
         style={{
           fontFamily: 'sans-serif',
         }}
-        x={thumbnailDimensions.width * 0.95}
-        y={thumbnailDimensions.height * 0.1}
-        fontSize={thumbnailDimensions.height * 0.1}
-        textAnchor="end"
+        x={thumbnailDimensions.width * 0.5}
+        y={thumbnailDimensions.height * 0.55}
+        fontSize={thumbnailDimensions.height * 0.15}
+        textAnchor="middle"
       >
         {facetedPlotRef.length}
       </text>
