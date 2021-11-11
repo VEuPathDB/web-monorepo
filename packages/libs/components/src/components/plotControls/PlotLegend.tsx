@@ -95,7 +95,7 @@ export default function PlotLegend({
                       width: defaultMarkerSize,
                     }}
                   >
-                    {/* for now, only support square (e.g., histogram, barplot, 2X2, RXC) */}
+                    {/* for histogram, barplot, Mosaic (2X2, RXC) - Mosaic does not use custom legend though */}
                     {item.marker === 'square' && (
                       <div
                         style={{
@@ -110,6 +110,7 @@ export default function PlotLegend({
                         }}
                       />
                     )}
+                    {/* for boxplot */}
                     {item.marker === 'lightSquareBorder' && (
                       <div
                         style={{
@@ -131,6 +132,76 @@ export default function PlotLegend({
                               : '#999',
                         }}
                       />
+                    )}
+                    {/* for scatter plot: marker */}
+                    {item.marker === 'circle' && (
+                      <div
+                        style={{
+                          height: circleMarkerSize,
+                          width: circleMarkerSize,
+                          margin: 'auto',
+                          borderWidth: markerBorderWidth,
+                          borderStyle: 'solid',
+                          borderRadius: '0.6em',
+                          borderColor:
+                            checkedLegendItems?.includes(item.label) &&
+                            item.hasData
+                              ? item.markerColor
+                              : '#999',
+                        }}
+                      />
+                    )}
+                    {/* for scatter plot: smoothed mean or best fit line */}
+                    {item.marker === 'line' && (
+                      <div
+                        style={{
+                          height: '0.25em',
+                          width: defaultMarkerSize,
+                          borderWidth: '0',
+                          // borderStyle: 'solid',
+                          // borderRadius: '0.6em',
+                          backgroundColor:
+                            checkedLegendItems?.includes(item.label) &&
+                            item.hasData
+                              ? item.markerColor
+                              : '#999',
+                        }}
+                      />
+                    )}
+                    {/* for scatter plot: confidence interval */}
+                    {item.marker === 'fainted' && (
+                      <div
+                        style={{
+                          height: '0.75em',
+                          width: defaultMarkerSize,
+                          borderWidth: '0',
+                          backgroundColor:
+                            checkedLegendItems?.includes(item.label) &&
+                            item.hasData
+                              ? ColorMath.evaluate(
+                                  item.markerColor + ' @a 30%'
+                                ).result.css()
+                              : '#999',
+                        }}
+                      />
+                    )}
+                    {/* for scatter plot: No data marker */}
+                    {item.marker === 'x' && (
+                      <div
+                        style={{
+                          height: defaultMarkerSize,
+                          width: defaultMarkerSize,
+                          textAlign: 'center',
+                          fontWeight: 'bold',
+                          color:
+                            checkedLegendItems?.includes(item.label) &&
+                            item.hasData
+                              ? '#E8E8E8'
+                              : '#999',
+                        }}
+                      >
+                        X
+                      </div>
                     )}
                   </div>
                   &nbsp;&nbsp;
