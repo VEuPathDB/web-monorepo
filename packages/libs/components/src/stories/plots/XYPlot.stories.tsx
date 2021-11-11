@@ -5,9 +5,9 @@ import { min, max, lte, gte } from 'lodash';
 import { Story, Meta } from '@storybook/react/types-6-0';
 // test to use RadioButtonGroup directly instead of XYPlotControls
 import RadioButtonGroup from '../../components/widgets/RadioButtonGroup';
-import SequentialGradientColormap from '../../types/plots/addOns';
+// import SequentialGradientColormap from '../../types/plots/addOns';
 import { scaleLinear } from 'd3-scale';
-import { interpolateLab, extent } from 'd3';
+import { interpolateLab, extent, range } from 'd3';
 
 export default {
   title: 'Plots/XYPlot',
@@ -1096,8 +1096,13 @@ function processInputData<T extends number | string>(
 
   // Craete colormap for series. Maps [0, 1] to gradient colormap using Lab interpolation
   const gradientColorscaleMap = scaleLinear<string>()
+    .domain(range(0, 1, 1.0 / 10))
     .range(gradientColormapStopPoints)
     .interpolate(interpolateLab);
+
+  console.log(gradientColorscaleMap(0));
+  console.log(gradientColorscaleMap(1));
+  console.log(gradientColorscaleMap(47));
 
   // set dataSetProcess as any
   let dataSetProcess: any = [];
@@ -1108,7 +1113,8 @@ function processInputData<T extends number | string>(
     let seriesX = [];
     let seriesY = [];
     let seriesGradientColorscale = [];
-    let normalizeSeriesGradientColorscale;
+    let normalize;
+    let normalizedSeriesGradientColorscale = [];
 
     // series is for scatter plot
     if (el.seriesX && el.seriesY) {
@@ -1140,9 +1146,10 @@ function processInputData<T extends number | string>(
         seriesGradientColorscale = el.seriesGradientColorscale.map(Number);
         // let myrange : number[] | string[] = extent(seriesGradientColorscale);
         console.log(seriesGradientColorscale);
-        normalizeSeriesGradientColorscale = scaleLinear()
-          .domain([0, 1])
-          .range([0, 1]);
+        normalize = scaleLinear().domain([0, 47]).range([0, 1]);
+        normalizedSeriesGradientColorscale = seriesGradientColorscale.map(
+          normalize
+        );
       }
 
       console.log(gradientColorscaleMap(seriesGradientColorscale));
@@ -1183,7 +1190,7 @@ function processInputData<T extends number | string>(
           color: defineColors
             ? 'rgba(' + markerColors[index] + ',0.7)'
             : seriesGradientColorscale?.length > 0
-            ? seriesGradientColorscale.map(gradientColorscaleMap)
+            ? normalizedSeriesGradientColorscale.map(gradientColorscaleMap)
             : undefined,
           // size: 6,
           // line: { color: 'rgba(' + markerColors[index] + ',0.7)', width: 2 },
