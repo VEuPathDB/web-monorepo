@@ -16,9 +16,10 @@ import DataClient, {
   MosaicRequestParams,
   TwoByTwoResponse,
 } from '../../../api/DataClient';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useMemo } from 'react';
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
+import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { Filter } from '../../../types/filter';
@@ -34,7 +35,6 @@ import twoxtwo from './selectorIcons/2x2.svg';
 import TabbedDisplay from '@veupathdb/core-components/dist/components/grids/TabbedDisplay';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
-import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import {
   fixLabelForNumberVariables,
   fixLabelsForNumberVariables,
@@ -551,18 +551,11 @@ function MosaicPlotWithControls({
 }: MosaicPlotWithControlsProps) {
   const displayLibraryControls = false;
 
-  const plotRef = useRef<PlotRef>(null);
-
-  const updateThumbnailRef = useRef(updateThumbnail);
-  useEffect(() => {
-    updateThumbnailRef.current = updateThumbnail;
-  });
-
-  useEffect(() => {
-    plotRef.current
-      ?.toImage({ format: 'svg', ...plotContainerStyles })
-      .then(updateThumbnailRef.current);
-  }, [data]);
+  const plotRef = useUpdateThumbnailEffect(
+    updateThumbnail,
+    plotContainerStyles,
+    [data]
+  );
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
@@ -578,7 +571,12 @@ function MosaicPlotWithControls({
             Custom legend, birds eye and supplementary tables go here...
           </div>
 
-          <FacetedPlot component={Mosaic} data={data} props={mosaicProps} />
+          <FacetedPlot
+            component={Mosaic}
+            facetedPlotRef={plotRef}
+            data={data}
+            props={mosaicProps}
+          />
         </>
       ) : (
         <Mosaic

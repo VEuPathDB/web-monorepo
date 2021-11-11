@@ -6,7 +6,7 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 // need to set for Boxplot
 import DataClient, {
@@ -16,6 +16,7 @@ import DataClient, {
 
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
+import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { Filter } from '../../../types/filter';
@@ -56,7 +57,6 @@ import {
   variablesAreUnique,
   vocabularyWithMissingData,
 } from '../../../utils/visualization';
-import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { Variable } from '../../../types/study';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
@@ -555,19 +555,11 @@ function BoxplotWithControls({
   onCheckedLegendItemsChange,
   ...boxplotComponentProps
 }: BoxplotWithControlsProps) {
-  const plotRef = useRef<PlotRef>(null);
-
-  const updateThumbnailRef = useRef(updateThumbnail);
-  useEffect(() => {
-    updateThumbnailRef.current = updateThumbnail;
-  });
-
-  // add dependency of checkedLegendItems
-  useEffect(() => {
-    plotRef.current
-      ?.toImage({ format: 'svg', ...plotContainerStyles })
-      .then(updateThumbnailRef.current);
-  }, [data, checkedLegendItems]);
+  const plotRef = useUpdateThumbnailEffect(
+    updateThumbnail,
+    plotContainerStyles,
+    [data, checkedLegendItems]
+  );
 
   // TO DO: standardise web-components/BoxplotData to have `series` key
   return (
@@ -594,6 +586,7 @@ function BoxplotWithControls({
               })),
             }}
             props={boxplotComponentProps}
+            facetedPlotRef={plotRef}
             // for custom legend: pass checkedLegendItems to PlotlyPlot
             checkedLegendItems={checkedLegendItems}
           />

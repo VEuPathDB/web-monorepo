@@ -25,7 +25,6 @@ import {
   isEqual,
   min,
   max,
-  sortBy,
   groupBy,
   mapValues,
   size,
@@ -33,7 +32,7 @@ import {
   values,
   map,
 } from 'lodash';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import {
   HistogramRequestParams,
   HistogramResponse,
@@ -66,8 +65,8 @@ import {
   fixLabelsForNumberVariables,
   variablesAreUnique,
 } from '../../../utils/visualization';
-import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import { useFindEntityAndVariable } from '../../../hooks/study';
+import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 // import variable's metadata-based independent axis range utils
 import { defaultIndependentAxisRange } from '../../../utils/default-independent-axis-range';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
@@ -607,19 +606,11 @@ function HistogramPlotWithControls({
       ? completeCasesAllVars
       : completeCasesAxesVars;
 
-  const plotRef = useRef<PlotRef>(null);
-
-  const updateThumbnailRef = useRef(updateThumbnail);
-  useEffect(() => {
-    updateThumbnailRef.current = updateThumbnail;
-  });
-
-  // add dependency of checkedLegendItems
-  useEffect(() => {
-    plotRef.current
-      ?.toImage({ format: 'svg', ...plotContainerStyles })
-      .then(updateThumbnailRef.current);
-  }, [data, checkedLegendItems]);
+  const plotRef = useUpdateThumbnailEffect(
+    updateThumbnail,
+    plotContainerStyles,
+    [data, checkedLegendItems]
+  );
 
   const widgetHeight = '4em';
 
@@ -653,6 +644,7 @@ function HistogramPlotWithControls({
               component={Histogram}
               data={data}
               props={histogramProps}
+              facetedPlotRef={plotRef}
               // for custom legend: pass checkedLegendItems to PlotlyPlot
               checkedLegendItems={checkedLegendItems}
             />

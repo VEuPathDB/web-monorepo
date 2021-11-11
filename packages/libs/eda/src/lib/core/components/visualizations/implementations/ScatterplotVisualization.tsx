@@ -1,6 +1,5 @@
 // load scatter plot component
 import XYPlot, { XYPlotProps } from '@veupathdb/components/lib/plots/XYPlot';
-import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
@@ -19,6 +18,7 @@ import DataClient, {
 
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
+import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { Filter } from '../../../types/filter';
@@ -610,19 +610,11 @@ function ScatterplotWithControls({
   //   };
   // }, []);
 
-  const plotRef = useRef<PlotRef>(null);
-
-  const updateThumbnailRef = useRef(updateThumbnail);
-  useEffect(() => {
-    updateThumbnailRef.current = updateThumbnail;
-  });
-
-  // add dependency of checkedLegendItems
-  useEffect(() => {
-    plotRef.current
-      ?.toImage({ format: 'svg', ...plotContainerStyles })
-      .then(updateThumbnailRef.current);
-  }, [data, checkedLegendItems]);
+  const plotRef = useUpdateThumbnailEffect(
+    updateThumbnail,
+    plotContainerStyles,
+    [data, checkedLegendItems]
+  );
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
