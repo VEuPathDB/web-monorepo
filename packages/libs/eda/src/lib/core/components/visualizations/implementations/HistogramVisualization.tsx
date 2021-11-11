@@ -25,7 +25,6 @@ import {
   isEqual,
   min,
   max,
-  sortBy,
   groupBy,
   mapValues,
   size,
