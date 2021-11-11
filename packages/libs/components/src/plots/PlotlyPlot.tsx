@@ -1,16 +1,17 @@
 import React, {
-  lazy,
-  Suspense,
-  useMemo,
-  useCallback,
   CSSProperties,
   Ref,
-  useImperativeHandle,
+  Suspense,
   forwardRef,
+  lazy,
+  useCallback,
+  useImperativeHandle,
+  useMemo,
 } from 'react';
 import { PlotParams } from 'react-plotly.js';
 import { legendSpecification } from '../utils/plotly';
 import Spinner from '../components/Spinner';
+import { PlotRef } from '../types/plots';
 import {
   PlotLegendAddon,
   PlotSpacingAddon,
@@ -23,15 +24,6 @@ import { select } from 'd3';
 import { ToImgopts, toImage } from 'plotly.js';
 import { uniqueId } from 'lodash';
 import { makeSharedPromise } from '../utils/promise-utils';
-
-/**
- * A generic imperative interface to plota. This allows us to create a facade
- * to interact with plot internals, such as exporting an image.
- */
-
-export interface PlotRef {
-  toImage: (imageOpts: ToImgopts) => Promise<string>;
-}
 
 export interface PlotProps<T> extends ColorPaletteAddon {
   /** plot data - following web-components' API, not Plotly's */
