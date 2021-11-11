@@ -59,7 +59,7 @@ export default function NotesTab({ analysisState }: props) {
     >
       <MultilineTextField
         heading="Analysis Description"
-        instructions='Provide a brief summary of the analysis. This will show in the "Description" column in the My analyses and Public analyses tables.'
+        instructions='Provide a brief summary of the analysis. This will appear in the "Description" column in the My analyses and Public analyses tables.'
         width="60vw"
         height="17.5vh"
         characterLimit={255}
