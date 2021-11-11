@@ -1,17 +1,68 @@
 import { CSSProperties } from 'react';
 import { MosaicData } from '../types/plots/mosaic';
-import { EmptyMosaicData } from '../plots/MosaicPlot';
 import _ from 'lodash';
+import { FacetedData } from '../types/plots';
+import { isFaceted } from '../types/guards';
+import Spinner from '../components/Spinner';
 
 interface ContingencyTableProps {
-  data?: MosaicData;
+  data?: MosaicData | FacetedData<MosaicData>;
   independentVariable: string;
   dependentVariable: string;
+  facetVariable?: string;
   containerStyles?: CSSProperties;
+  enableSpinner?: boolean;
+}
+
+function FacetedContingencyTable(props: ContingencyTableProps) {
+  if (isFaceted(props.data) && props.facetVariable != null) {
+    return (
+      <div className="faceted-contingency-table" style={props.containerStyles}>
+        <table>
+          <tbody>
+            {props.data.facets.map(({ label, data }) => (
+              <>
+                <tr>
+                  <th style={{ border: 'none' /* cancel WDK style! */ }}>
+                    {props.facetVariable}: {label}
+                  </th>
+                </tr>
+                <tr>
+                  <td>
+                    <ContingencyTable {...props} data={data} />
+                  </td>
+                </tr>
+              </>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  } else {
+    return null;
+  }
 }
 
 export function ContingencyTable(props: ContingencyTableProps) {
-  const data = props.data ?? EmptyMosaicData;
+  const { data } = props;
+
+  if (data == null) {
+    return (
+      <div
+        style={{
+          position: 'relative',
+          height: '200px',
+        }}
+      >
+        {props.enableSpinner && <Spinner />}
+      </div>
+    );
+  }
+
+  if (isFaceted(data)) {
+    return FacetedContingencyTable(props);
+  }
+
   const rowSums = data.values.map((row) => _.sum(row));
 
   return (

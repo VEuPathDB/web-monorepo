@@ -5576,6 +5576,13 @@ chownr@^2.0.0:
   resolved "https://registry.yarnpkg.com/chownr/-/chownr-2.0.0.tgz#15bfbe53d2eab4cf70f18a8cd68ebe5b3cb1dece"
   integrity sha512-bIomtDF5KGpdogkLd9VspvFzk9KfpyyGlS8YFVZl7TGPBHL5snIOnxeshwVgPteQ9b4Eydl+pVbIyE1DcvCWgQ==
 
+chroma-js@^2.0.4:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/chroma-js/-/chroma-js-2.1.2.tgz#1075cb9ae25bcb2017c109394168b5cf3aa500ec"
+  integrity sha512-ri/ouYDWuxfus3UcaMxC1Tfp3IE9K5iQzxc2hSxbBRVNQFut1UuGAsZmiAf2mOUubzGJwgMSv9lHg+XqLaz1QQ==
+  dependencies:
+    cross-env "^6.0.3"
+
 chrome-trace-event@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/chrome-trace-event/-/chrome-trace-event-1.0.2.tgz#234090ee97c7d4ad1a2c4beae27505deffc608a4"
@@ -5740,6 +5747,14 @@ color-id@^1.1.0:
   integrity sha512-2iRtAn6dC/6/G7bBIo0uupVrIne1NsQJvJxZOBCzQOfk7jRq97feaDZ3RdzuHakRXXnHGNwglto3pqtRx1sX0g==
   dependencies:
     clamp "^1.0.1"
+
+color-math@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/color-math/-/color-math-1.1.3.tgz#28e053edeb750a5edaa6675927dec71e7b34d74c"
+  integrity sha512-KYFYX9Od1/uEBNSkMQOHJ4vbnQ1qzN66VwV7+Gp5YIfWHJhTe5sXMfIATdPk7hm4YpHt764TZxQitEZDxg42PA==
+  dependencies:
+    chroma-js "^2.0.4"
+    lodash.clonedeepwith "^4.5.0"
 
 color-name@1.1.3:
   version "1.1.3"
@@ -6140,6 +6155,13 @@ create-react-context@0.3.0:
   dependencies:
     gud "^1.0.0"
     warning "^4.0.3"
+
+cross-env@^6.0.3:
+  version "6.0.3"
+  resolved "https://registry.yarnpkg.com/cross-env/-/cross-env-6.0.3.tgz#4256b71e49b3a40637a0ce70768a6ef5c72ae941"
+  integrity sha512-+KqxF6LCvfhWvADcDPqo64yVIB31gv/jQulX2NGzKS/g3GEVz6/pt4wjHFtFWsHMddebWD/sDthJemzM4MaAag==
+  dependencies:
+    cross-spawn "^7.0.0"
 
 cross-spawn@7.0.3, cross-spawn@^7.0.0, cross-spawn@^7.0.3:
   version "7.0.3"
@@ -10003,6 +10025,11 @@ lodash-es@^4.17.20:
   version "4.17.20"
   resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.20.tgz#29f6332eefc60e849f869c264bc71126ad61e8f7"
   integrity sha512-JD1COMZsq8maT6mnuz1UMV0jvYD0E0aUsSOdrr1/nAG3dhqQXwRRgeW0cSqH1U43INKcqxaiVIQNOUDld7gRDA==
+
+lodash.clonedeepwith@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.clonedeepwith/-/lodash.clonedeepwith-4.5.0.tgz#6ee30573a03a1a60d670a62ef33c10cf1afdbdd4"
+  integrity sha1-buMFc6A6GmDWcKYu8zwQzxr9vdQ=
 
 lodash.debounce@^4.0.8:
   version "4.0.8"

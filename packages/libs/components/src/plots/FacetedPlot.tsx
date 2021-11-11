@@ -21,13 +21,20 @@ export interface FacetedPlotProps<D, P extends PlotProps<D>> {
   data?: FacetedData<D>;
   component: ComponentWithPlotRef<P>;
   props: P;
+  // custom legend prop
+  checkedLegendItems?: string[];
 }
 
 function renderFacetedPlot<D, P extends PlotProps<D>>(
   props: FacetedPlotProps<D, P>,
   ref: Ref<FacetedPlotRef>
 ) {
-  const { data, component: Component, props: componentProps } = props;
+  const {
+    data,
+    component: Component,
+    props: componentProps,
+    checkedLegendItems: checkedLegendItems,
+  } = props;
   const plotRefs = useRef<FacetedPlotRef>([]);
 
   useImperativeHandle<FacetedPlotRef, FacetedPlotRef>(
@@ -68,6 +75,8 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
             title={label}
             displayLegend={false}
             interactive={false}
+            // pass checkedLegendItems to PlotlyPlot
+            checkedLegendItems={checkedLegendItems}
           />
         ))}
       </div>
