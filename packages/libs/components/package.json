@@ -46,6 +46,7 @@
     "src"
   ],
   "scripts": {
+    "start": "yarn storybook",
     "storybook": "start-storybook -s public",
     "build-storybook": "build-storybook -s public",
     "build-npm-modules": "tsc -p tsconfig.build.json"
