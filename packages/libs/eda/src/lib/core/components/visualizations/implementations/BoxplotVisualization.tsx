@@ -328,7 +328,7 @@ function BoxplotViz(props: VisualizationProps) {
                   data.value.facets.flatMap((facet) =>
                     facet.data.series
                       .flatMap((o) => o.outliers as number[][])
-                      .flatMap((o) => o)
+                      .flat()
                   )
                 ),
                 min(
@@ -343,7 +343,7 @@ function BoxplotViz(props: VisualizationProps) {
                   data.value.facets.flatMap((facet) =>
                     facet.data.series
                       .flatMap((o) => o.outliers as number[][])
-                      .flatMap((o) => o)
+                      .flat()
                   )
                 ),
                 max(
@@ -364,7 +364,7 @@ function BoxplotViz(props: VisualizationProps) {
                 min(
                   data.value.series
                     .flatMap((o) => o.outliers as number[][])
-                    .flatMap((o) => o)
+                    .flat()
                 ),
                 min(data.value.series.flatMap((o) => o.lowerfence as number[])),
               ]) as number) * 1.05,
@@ -373,7 +373,7 @@ function BoxplotViz(props: VisualizationProps) {
                 max(
                   data.value.series
                     .flatMap((o) => o.outliers as number[][])
-                    .flatMap((o) => o)
+                    .flat()
                 ),
                 max(data.value.series.flatMap((o) => o.upperfence as number[])),
               ]) as number) * 1.05,
