@@ -9,12 +9,15 @@ import {
   createMuiTheme,
   FormControlLabel,
   Icon,
+  IconButton,
+  InputAdornment,
   makeStyles,
   Switch,
   TextField,
   ThemeProvider,
   Tooltip,
 } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
 import {
   Loading,
   Mesa,
@@ -90,13 +93,21 @@ export function AllAnalyses(props: Props) {
   const searchText = queryParams.get('s') ?? '';
   const debouncedSearchText = useDebounce(searchText, 250);
 
-  const onFilterFieldChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
-      const queryParams = value ? '?s=' + encodeURIComponent(value) : '';
+  const setSearchText = useCallback(
+    (newSearchText: string) => {
+      const queryParams = newSearchText
+        ? '?s=' + encodeURIComponent(newSearchText)
+        : '';
       history.replace(location.pathname + queryParams);
     },
     [history, location.pathname]
+  );
+
+  const onFilterFieldChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchText(e.target.value);
+    },
+    [setSearchText]
   );
 
   const [selectedAnalyses, setSelectedAnalyses] = useState<Set<string>>(
@@ -566,6 +577,26 @@ export function AllAnalyses(props: Props) {
                 size="small"
                 label="Search analyses"
                 inputProps={{ size: 50 }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="Clear search text"
+                        onClick={() => setSearchText('')}
+                        style={{
+                          visibility:
+                            debouncedSearchText.length > 0
+                              ? 'visible'
+                              : 'hidden',
+                        }}
+                        edge="end"
+                        size="small"
+                      >
+                        <CloseIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
                 value={searchText}
                 onChange={onFilterFieldChange}
               />
