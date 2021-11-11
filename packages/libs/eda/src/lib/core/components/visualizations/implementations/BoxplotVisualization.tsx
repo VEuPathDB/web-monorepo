@@ -45,6 +45,8 @@ import {
   head,
   map,
   values,
+  max,
+  min,
 } from 'lodash';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
@@ -65,6 +67,7 @@ import PlotLegend, {
   LegendItemsProps,
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
+import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
 
 type BoxplotData = { series: BoxplotSeries };
 
@@ -312,6 +315,73 @@ function BoxplotViz(props: VisualizationProps) {
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
 
+  const dependentAxisRange: NumberOrDateRange | undefined = useMemo(() => {
+    if (isFaceted(data?.value)) {
+      // may not need to check yAxisVariable?.type but just in case
+      return data?.value?.facets != null &&
+        (yAxisVariable?.type === 'number' || yAxisVariable?.type === 'integer')
+        ? {
+            min:
+              (min([
+                0,
+                min(
+                  data.value.facets.flatMap((facet) =>
+                    facet.data.series
+                      .flatMap((o) => o.outliers as number[][])
+                      .flatMap((o) => o)
+                  )
+                ),
+                min(
+                  data.value.facets.flatMap((facet) =>
+                    facet.data.series.flatMap((o) => o.lowerfence as number[])
+                  )
+                ),
+              ]) as number) * 1.05,
+            max:
+              (max([
+                max(
+                  data.value.facets.flatMap((facet) =>
+                    facet.data.series
+                      .flatMap((o) => o.outliers as number[][])
+                      .flatMap((o) => o)
+                  )
+                ),
+                max(
+                  data.value.facets.flatMap((facet) =>
+                    facet.data.series.flatMap((o) => o.upperfence as number[])
+                  )
+                ),
+              ]) as number) * 1.05,
+          }
+        : undefined;
+    } else {
+      return data?.value?.series != null &&
+        (yAxisVariable?.type === 'number' || yAxisVariable?.type === 'integer')
+        ? {
+            min:
+              (min([
+                0,
+                min(
+                  data.value.series
+                    .flatMap((o) => o.outliers as number[][])
+                    .flatMap((o) => o)
+                ),
+                min(data.value.series.flatMap((o) => o.lowerfence as number[])),
+              ]) as number) * 1.05,
+            max:
+              (max([
+                max(
+                  data.value.series
+                    .flatMap((o) => o.outliers as number[][])
+                    .flatMap((o) => o)
+                ),
+                max(data.value.series.flatMap((o) => o.upperfence as number[])),
+              ]) as number) * 1.05,
+          }
+        : undefined;
+    }
+  }, [data]);
+
   // custom legend items for checkbox
   const legendItems: LegendItemsProps[] = useMemo(() => {
     const legendData = !isFaceted(data.value)
@@ -358,9 +428,6 @@ function BoxplotViz(props: VisualizationProps) {
       onCheckedLegendItemsChange(legendItems.map((item) => item.label));
     }
   }, [data, legendItems]);
-
-  console.log('data at boxplot viz =', data);
-  console.log('legendItems = ', legendItems);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -446,6 +513,8 @@ function BoxplotViz(props: VisualizationProps) {
           legendItems={legendItems}
           checkedLegendItems={vizConfig.checkedLegendItems}
           onCheckedLegendItemsChange={onCheckedLegendItemsChange}
+          // set dependentAxisRange
+          dependentAxisRange={dependentAxisRange}
         />
 
         {/* custom legend */}
