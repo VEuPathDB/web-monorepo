@@ -52,14 +52,15 @@ export default function NotesTab({ analysisState }: props) {
   return (
     <div
       style={{
-        marginTop: 25,
+        marginTop: 35,
+        marginBottom: 50,
         display: 'flex',
         flexDirection: 'column',
       }}
     >
       <MultilineTextField
         heading="Analysis Description"
-        instructions='Provide a brief summary of the analysis. This will show in the "Description" column in the My analyses and Public analyses tables.'
+        instructions='Provide a brief summary of the analysis. This will appear in the "Description" column in the My analyses and Public analyses tables.'
         width="60vw"
         height="17.5vh"
         characterLimit={255}
@@ -71,7 +72,7 @@ export default function NotesTab({ analysisState }: props) {
         }}
         status={descriptionStatus}
       />
-      <div style={{ height: 25 }} />
+
       <MultilineTextField
         heading="Analysis Details"
         instructions="Record details of your analysis for yourself and those you share it with."
@@ -84,6 +85,7 @@ export default function NotesTab({ analysisState }: props) {
           syncDetailsToAnalysis(value);
         }}
         status={detailsStatus}
+        containerStyles={{ paddingTop: 25 }}
       />
     </div>
   );

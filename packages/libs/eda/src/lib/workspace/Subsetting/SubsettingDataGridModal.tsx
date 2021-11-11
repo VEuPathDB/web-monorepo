@@ -1,32 +1,38 @@
 import { useState, useCallback, useEffect } from 'react';
 import { ceil, uniqBy } from 'lodash';
-import SettingsIcon from '@material-ui/icons/Settings';
 
-import { H5 } from '@veupathdb/core-components/dist/components/headers';
+// Components
+import SettingsIcon from '@material-ui/icons/Settings';
+import { H5, H3 } from '@veupathdb/core-components/dist/components/headers';
 import DataGrid from '@veupathdb/core-components/dist/components/grids/DataGrid';
 import FullScreenModal from '@veupathdb/core-components/dist/components/modals/FullScreenModal';
 import SwissArmyButton from '@veupathdb/core-components/dist/components/buttons/SwissArmyButton';
-import { Download } from '@veupathdb/core-components/dist/components/icons';
-import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-
-import { AnalysisState } from '../../core/hooks/analysis';
 import {
-  StudyEntity,
-  TabularDataResponse,
+  Download,
+  Close,
+  CloseFullscreen,
+} from '@veupathdb/core-components/dist/components/icons';
+import MultiSelectVariableTree from '../../core/components/variableTrees/MultiSelectVariableTree';
+import { AnalysisSummary } from '../AnalysisSummary';
+
+// Definitions
+import { AnalysisState } from '../../core/hooks/analysis';
+import { StudyEntity, TabularDataResponse } from '../../core';
+import { VariableDescriptor } from '../../core/types/variable';
+import { APIError } from '../../core/api/types';
+import { colors } from '@veupathdb/core-components';
+
+// Hooks
+import {
   useStudyMetadata,
   useStudyRecord,
   useSubsettingClient,
 } from '../../core';
-
-import MultiSelectVariableTree from '../../core/components/variableTrees/MultiSelectVariableTree';
-import { VariableDescriptor } from '../../core/types/variable';
 import {
   useFeaturedFields,
   useFlattenedFields,
 } from '../../core/components/variableTrees/hooks';
 import { useProcessedGridData } from './hooks';
-import { APIError } from '../../core/api/types';
-import { AnalysisSummary } from '../AnalysisSummary';
 
 type SubsettingDataGridProps = {
   /** Should the modal currently be visible? */
@@ -362,9 +368,23 @@ export default function SubsettingDataGridModal({
       onClose={onModalClose}
     >
       <div key="Title" style={{ marginBottom: 35 }}>
-        <h1 style={{ paddingBottom: 0 }}>
-          {safeHtml(studyRecord.displayName)}
-        </h1>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <H3
+            additionalStyles={{ margin: 0, padding: 0 }}
+            text={studyRecord.displayName}
+          />
+          <Close
+            fontSize={32}
+            fill={colors.GRAY[500]}
+            onClick={() => toggleDisplay()}
+          />
+        </div>
         <AnalysisSummary
           analysis={analysisState.analysis!}
           setAnalysisName={analysisState.setName}
@@ -412,33 +432,21 @@ export default function SubsettingDataGridModal({
             marginBottom: 15,
           }}
         >
-          <div
-            style={{
-              display: 'flex',
-              paddingRight: 50,
-              flex: 1,
-            }}
-          >
-            <SwissArmyButton
-              text="Download"
-              icon={Download}
-              stylePreset="mesa"
-              styleOverrides={{ container: { marginRight: 10 } }}
-              onPress={downloadData}
-            />
-            <SwissArmyButton
-              text="Select Variables"
-              stylePreset="mesa"
-              // @ts-ignore
-              icon={SettingsIcon}
-              size="medium"
-              onPress={() => setDisplayVariableTree(!displayVariableTree)}
-            />
-          </div>
           <SwissArmyButton
-            text="Close"
+            text="Download"
+            icon={Download}
             stylePreset="mesa"
-            onPress={() => toggleDisplay()}
+            styleOverrides={{ container: { marginRight: 10 } }}
+            onPress={downloadData}
+          />
+          <SwissArmyButton
+            text={displayVariableTree ? 'Close Selector' : 'Select Variables'}
+            stylePreset="mesa"
+            // @ts-ignore
+            icon={displayVariableTree ? CloseFullscreen : SettingsIcon}
+            size="medium"
+            onPress={() => setDisplayVariableTree(!displayVariableTree)}
+            styleOverrides={{ container: { width: 155 } }}
           />
         </div>
       </div>

@@ -33,7 +33,7 @@ import {
   values,
   map,
 } from 'lodash';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import {
   HistogramRequestParams,
   HistogramResponse,
@@ -64,6 +64,7 @@ import {
   omitEmptyNoDataSeries,
   fixLabelForNumberVariables,
   fixLabelsForNumberVariables,
+  variablesAreUnique,
 } from '../../../utils/visualization';
 import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
@@ -71,6 +72,11 @@ import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { defaultIndependentAxisRange } from '../../../utils/default-independent-axis-range';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import PluginError from '../PluginError';
+// for custom legend
+import PlotLegend, {
+  LegendItemsProps,
+} from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 
 type HistogramDataWithCoverageStatistics = (
   | HistogramData
@@ -124,6 +130,8 @@ const HistogramConfig = t.intersection([
     binWidth: t.number,
     binWidthTimeUnit: t.string, // TO DO: constrain to weeks, months etc like Unit from date-arithmetic and/or R
     showMissingness: t.boolean,
+    // for custom legend: vizconfig.checkedLegendItems
+    checkedLegendItems: t.array(t.string),
   }),
 ]);
 
@@ -213,6 +221,11 @@ function HistogramViz(props: VisualizationProps) {
     'showMissingness'
   );
 
+  // for custom legend: vizconfig.checkedLegendItems
+  const onCheckedLegendItemsChange = onChangeHandlerFactory<string[]>(
+    'checkedLegendItems'
+  );
+
   const findEntityAndVariable = useFindEntityAndVariable(entities);
 
   const { xAxisVariable, outputEntity, valueType } = useMemo(() => {
@@ -256,9 +269,9 @@ function HistogramViz(props: VisualizationProps) {
       )
         return undefined;
 
-      if (xAxisVariable === overlayVariable)
+      if (!variablesAreUnique([xAxisVariable, overlayVariable, facetVariable]))
         throw new Error(
-          'The X and Overlay variables must not be the same. Please choose different variables for X and Overlay.'
+          'Variables must be unique. Please choose different variables.'
         );
 
       const params = getRequestParams(
@@ -302,6 +315,7 @@ function HistogramViz(props: VisualizationProps) {
         showMissing
       );
     }, [
+      // using vizConfig only causes issue with onCheckedLegendItemsChange
       vizConfig.xAxisVariable,
       vizConfig.binWidth,
       vizConfig.binWidthTimeUnit,
@@ -365,6 +379,54 @@ function HistogramViz(props: VisualizationProps) {
           max: defaultDependentAxisMinMax.max * 1.05,
         }
       : undefined;
+
+  // custom legend items for checkbox
+  const legendItems: LegendItemsProps[] = useMemo(() => {
+    const legendData = !isFaceted(data.value)
+      ? data.value?.series
+      : data.value?.facets[0].data.series;
+
+    return legendData != null
+      ? legendData
+          .map((dataItem: HistogramDataSeries, index: number) => {
+            return {
+              label: dataItem.name,
+              // histogram plot does not have mode, so set to square for now
+              marker: 'square',
+              markerColor:
+                dataItem.name === 'No data'
+                  ? '#E8E8E8'
+                  : ColorPaletteDefault[index],
+              // deep comparison is required for faceted plot
+              hasData: !isFaceted(data.value) // no faceted plot
+                ? dataItem.bins != null && dataItem.bins.length > 0
+                  ? true
+                  : false
+                : data.value?.facets // faceted plot: here data.value is full data
+                    .map(
+                      (el: { label: string; data: HistogramData }) =>
+                        el.data.series[index].bins != null &&
+                        el.data.series[index].bins.length > 0
+                    )
+                    .includes(true)
+                ? true
+                : false,
+              group: 1,
+              rank: 1,
+            };
+            // histogram viz uses stack option so reverse the legend order!
+          })
+          .reverse()
+      : [];
+  }, [data]);
+
+  // use this to set all checked
+  useEffect(() => {
+    if (data != null) {
+      // use this to set all checked
+      onCheckedLegendItemsChange(legendItems.map((item) => item.label));
+    }
+  }, [data, legendItems]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -456,6 +518,10 @@ function HistogramViz(props: VisualizationProps) {
         dependentAxisLabel={
           vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion'
         }
+        // for custom legend passing checked state in the  checkbox to PlotlyPlot
+        legendItems={legendItems}
+        checkedLegendItems={vizConfig.checkedLegendItems}
+        onCheckedLegendItemsChange={onCheckedLegendItemsChange}
       />
     </div>
   );
@@ -477,6 +543,10 @@ type HistogramPlotWithControlsProps = Omit<HistogramProps, 'data'> & {
   showMissingness: boolean;
   updateThumbnail: (src: string) => void;
   error: unknown;
+  // add props for custom legend
+  legendItems: LegendItemsProps[];
+  checkedLegendItems: string[] | undefined;
+  onCheckedLegendItemsChange: (checkedLegendItems: string[]) => void;
 } & Partial<CoverageStatistics>;
 
 function HistogramPlotWithControls({
@@ -498,6 +568,10 @@ function HistogramPlotWithControls({
   onValueSpecChange,
   showMissingness,
   updateThumbnail,
+  // add props for custom legend
+  legendItems,
+  checkedLegendItems,
+  onCheckedLegendItemsChange,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   const barLayout = 'stack';
@@ -511,7 +585,7 @@ function HistogramPlotWithControls({
 
   const plotRef = useUpdateThumbnailEffect(updateThumbnail, plotDimensions, [
     data,
-    histogramProps.dependentAxisLogScale,
+    checkedLegendItems,
   ]);
 
   const widgetHeight = '4em';
@@ -546,6 +620,8 @@ function HistogramPlotWithControls({
               data={data}
               props={histogramProps}
               facetedPlotRef={plotRef}
+              // for custom legend: pass checkedLegendItems to PlotlyPlot
+              checkedLegendItems={checkedLegendItems}
             />
           </>
         ) : (
@@ -557,7 +633,21 @@ function HistogramPlotWithControls({
             displayLibraryControls={displayLibraryControls}
             showValues={false}
             barLayout={barLayout}
+            // for custom legend: pass checkedLegendItems to PlotlyPlot
+            checkedLegendItems={checkedLegendItems}
           />
+        )}
+
+        {/* custom legend */}
+        {legendItems != null && !histogramProps.showSpinner && data != null && (
+          <div style={{ marginLeft: '2em' }}>
+            <PlotLegend
+              legendItems={legendItems}
+              checkedLegendItems={checkedLegendItems}
+              legendTitle={histogramProps.legendTitle}
+              onCheckedLegendItemsChange={onCheckedLegendItemsChange}
+            />
+          </div>
         )}
 
         <div className="viz-plot-info">
@@ -795,21 +885,32 @@ function reorderData(
   facetVocabulary: string[] = []
 ): HistogramDataWithCoverageStatistics | HistogramData {
   if (isFaceted(data)) {
+    // for each value in the facet vocabulary's correct order
+    // find the index in the series where series.name equals that value
+    const facetValues = data.facets.map((facet) => facet.label);
+    const facetIndices = facetVocabulary.map((name) =>
+      facetValues.indexOf(name)
+    );
+
     return {
       ...data,
-      facets: sortBy(data.facets, ({ label }) =>
-        facetVocabulary.indexOf(label)
-      ).map(({ label, data }) => ({
-        label,
-        data: reorderData(
-          data,
-          overlayVocabulary,
-          facetVocabulary
-        ) as HistogramData,
+      facets: facetIndices.map((i, j) => ({
+        label:
+          facetVocabulary[j] +
+          (data.facets[i] ? '' : ' (no plottable data for this facet)'),
+        data: data.facets[i]
+          ? (reorderData(
+              data.facets[i].data,
+              overlayVocabulary,
+              facetVocabulary
+            ) as HistogramData)
+          : // dummy data for empty facet
+            { series: [] },
       })),
     };
   }
 
+  // otherwise handle non-faceted data
   if (overlayVocabulary.length > 0) {
     // for each value in the overlay vocabulary's correct order
     // find the index in the series where series.name equals that value

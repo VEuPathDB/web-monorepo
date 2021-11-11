@@ -46,7 +46,10 @@ import { min, max, lte, gte } from 'lodash';
 // directly use RadioButtonGroup instead of XYPlotControls
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 // import XYPlotData
-import { XYPlotData } from '@veupathdb/components/lib/types/plots';
+import {
+  XYPlotDataSeries,
+  XYPlotData,
+} from '@veupathdb/components/lib/types/plots';
 import { CoverageStatistics } from '../../../types/visualization';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
@@ -70,6 +73,10 @@ import { defaultDependentAxisRange } from '../../../utils/default-dependent-axis
 import { useRouteMatch } from 'react-router';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import PluginError from '../PluginError';
+// for custom legend
+import PlotLegend, {
+  LegendItemsProps,
+} from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 
@@ -124,6 +131,8 @@ export const ScatterplotConfig = t.partial({
   facetVariable: VariableDescriptor,
   valueSpecConfig: t.string,
   showMissingness: t.boolean,
+  // for vizconfig.checkedLegendItems
+  checkedLegendItems: t.array(t.string),
 });
 
 function ScatterplotViz(props: VisualizationProps) {
@@ -219,6 +228,11 @@ function ScatterplotViz(props: VisualizationProps) {
     'showMissingness'
   );
 
+  // for vizconfig.checkedLegendItems
+  const onCheckedLegendItemsChange = onChangeHandlerFactory<string[]>(
+    'checkedLegendItems'
+  );
+
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
   const outputEntity = useFindOutputEntity(
     dataElementDependencyOrder,
@@ -291,13 +305,17 @@ function ScatterplotViz(props: VisualizationProps) {
       studyId,
       filters,
       dataClient,
-      vizConfig,
-      xAxisVariable,
-      yAxisVariable,
-      overlayVariable,
+      // simply using vizConfig causes issue with onCheckedLegendItemsChange
+      // it is because vizConfig also contains vizConfig.checkedLegendItems
+      vizConfig.xAxisVariable,
+      vizConfig.yAxisVariable,
+      vizConfig.overlayVariable,
+      vizConfig.facetVariable,
+      vizConfig.valueSpecConfig,
+      vizConfig.showMissingness,
       computation.descriptor.type,
       visualization.descriptor.type,
-      MAXALLOWEDDATAPOINTS,
+      outputEntity,
     ])
   );
 
@@ -333,6 +351,36 @@ function ScatterplotViz(props: VisualizationProps) {
   }, [data, yAxisVariable]);
 
   const { url } = useRouteMatch();
+
+  // custom legend list
+  const legendItems: LegendItemsProps[] = useMemo(() => {
+    return data.value != null
+      ? data.value?.dataSetProcess.series.map((data: XYPlotDataSeries) => {
+          return {
+            label: data.name != null ? data.name : '',
+            // TO-do: need a way to appropriately make marker info
+            // scatter plot has defined mode - still need to distinguish CI, No data, etc.
+            marker: data.mode != null ? data.mode : '',
+            // set marker colors
+            markerColor: 'markerColor',
+            // simplifying the check with the presence of data: be carefule of y:[null] case in Scatter plot
+            hasData:
+              data.y != null && data.y.length > 0 && data.y[0] !== null
+                ? true
+                : false,
+            group: 1,
+            rank: 1,
+          };
+        })
+      : [];
+  }, [data]);
+
+  useEffect(() => {
+    if (data != null) {
+      // use this to set all legend checked at first
+      onCheckedLegendItemsChange(legendItems.map((item) => item.label));
+    }
+  }, [data, legendItems]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -453,7 +501,24 @@ function ScatterplotViz(props: VisualizationProps) {
             NumberVariable.is(yAxisVariable) ? 'number' : 'date'
           }
           legendTitle={axisLabelWithUnit(overlayVariable)}
+          // pass checked state of legend checkbox to PlotlyPlot
+          checkedLegendItems={vizConfig.checkedLegendItems}
+          // for vizconfig.checkedLegendItems
+          onCheckedLegendItemsChange={onCheckedLegendItemsChange}
         />
+
+        {/* custom legend */}
+        {legendItems != null && !data.pending && data.value != null && (
+          <div style={{ marginLeft: '2em' }}>
+            <PlotLegend
+              legendItems={legendItems}
+              checkedLegendItems={vizConfig.checkedLegendItems}
+              legendTitle={axisLabelWithUnit(overlayVariable)}
+              onCheckedLegendItemsChange={onCheckedLegendItemsChange}
+            />
+          </div>
+        )}
+
         <div className="viz-plot-info">
           <BirdsEyeView
             completeCasesAllVars={
@@ -511,6 +576,9 @@ type ScatterplotWithControlsProps = XYPlotProps & {
   plotOptions: string[];
   // add disabledList
   disabledList: string[];
+  // custom legend
+  checkedLegendItems: string[] | undefined;
+  onCheckedLegendItemsChange: (checkedLegendItems: string[]) => void;
 };
 
 function ScatterplotWithControls({
@@ -524,6 +592,9 @@ function ScatterplotWithControls({
   // add disabledList
   disabledList,
   updateThumbnail,
+  // custom legend
+  checkedLegendItems,
+  onCheckedLegendItemsChange,
   ...scatterplotProps
 }: ScatterplotWithControlsProps) {
   // TODO Use UIState
@@ -543,11 +614,12 @@ function ScatterplotWithControls({
     updateThumbnailRef.current = updateThumbnail;
   });
 
+  // add dependency of checkedLegendItems
   useEffect(() => {
     plotRef.current
       ?.toImage({ format: 'svg', ...plotDimensions })
       .then(updateThumbnailRef.current);
-  }, [data]);
+  }, [data, checkedLegendItems]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -557,6 +629,8 @@ function ScatterplotWithControls({
         data={data}
         // add controls
         displayLibraryControls={false}
+        // custom legend: pass checkedLegendItems to PlotlyPlot
+        checkedLegendItems={checkedLegendItems}
       />
       {/*  XYPlotControls: check vizType (only for scatterplot for now) */}
       {vizType === 'scatterplot' && (

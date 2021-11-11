@@ -3,6 +3,7 @@ import Barplot, { BarplotProps } from '@veupathdb/components/lib/plots/Barplot';
 import FacetedPlot from '@veupathdb/components/lib/plots/FacetedPlot';
 import {
   BarplotData,
+  BarplotDataSeries,
   FacetedData,
 } from '@veupathdb/components/lib/types/plots';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
@@ -61,6 +62,12 @@ import {
   values,
 } from 'lodash';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
+// for custom legend
+import PlotLegend, {
+  LegendItemsProps,
+} from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+// import { gray } from '../colors';
+import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 
 type BarplotDataWithStatistics = (BarplotData | FacetedData<BarplotData>) &
   CoverageStatistics;
@@ -109,6 +116,8 @@ const BarplotConfig = t.intersection([
     overlayVariable: VariableDescriptor,
     facetVariable: VariableDescriptor,
     showMissingness: t.boolean,
+    // for custom legend: vizconfig.checkedLegendItems
+    checkedLegendItems: t.array(t.string),
   }),
 ]);
 
@@ -181,6 +190,11 @@ function BarplotViz(props: VisualizationProps) {
     'showMissingness'
   );
 
+  // for custom legend: vizconfig.checkedLegendItems
+  const onCheckedLegendItemsChange = onChangeHandlerFactory<string[]>(
+    'checkedLegendItems'
+  );
+
   const findEntityAndVariable = useFindEntityAndVariable(entities);
   const { variable, entity, overlayVariable, facetVariable } = useMemo(() => {
     const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
@@ -250,6 +264,7 @@ function BarplotViz(props: VisualizationProps) {
         showMissing
       );
     }, [
+      // using vizConfig only causes issue with onCheckedLegendItemsChange
       studyId,
       filters,
       dataClient,
@@ -305,17 +320,64 @@ function BarplotViz(props: VisualizationProps) {
         }
       : undefined;
 
+  // custom legend items for checkbox
+  const legendItems: LegendItemsProps[] = useMemo(() => {
+    const legendData = !isFaceted(data.value)
+      ? data.value?.series
+      : data.value?.facets[0].data.series;
+
+    return legendData != null
+      ? legendData.map((dataItem: BarplotDataSeries, index: number) => {
+          return {
+            label: dataItem.name,
+            // barplot does not have mode, so set to square
+            marker: 'square',
+            markerColor:
+              dataItem.name === 'No data'
+                ? '#E8E8E8'
+                : ColorPaletteDefault[index],
+            // [undefined, undefined, ...] for filtered out case and no data so need to do a deep comparison
+            hasData: !isFaceted(data.value) // no faceted plot
+              ? dataItem.value.some((el) => el != null)
+                ? true
+                : false
+              : data.value?.facets
+                  .map((el: { label: string; data: BarplotData }) => {
+                    // faceted plot: here data.value is full data
+                    return el.data.series[index].value.some(
+                      (el: number) => el != null
+                    );
+                  })
+                  .includes(true)
+              ? true
+              : false,
+            group: 1,
+            rank: 1,
+          };
+        })
+      : [];
+  }, [data]);
+
+  // use this to set all checked
+  useEffect(() => {
+    if (data != null) {
+      onCheckedLegendItemsChange(legendItems.map((item) => item.label));
+    }
+  }, [data, legendItems]);
+
   // Thumbnail capture and update
   const plotRef = useRef<PlotRef>(null);
   const updateThumbnailRef = useRef(updateThumbnail);
   useEffect(() => {
     updateThumbnailRef.current = updateThumbnail;
   });
+
+  // add dependency of checkedLegendItems
   useEffect(() => {
     plotRef.current
       ?.toImage({ format: 'svg', ...plotDimensions })
       .then(updateThumbnailRef.current);
-  }, [data, vizConfig.dependentAxisLogScale]);
+  }, [data, vizConfig.checkedLegendItems]);
 
   // these props are passed to either a single plot
   // or by FacetedPlot to each individual facet plot (where some will be overridden)
@@ -408,10 +470,18 @@ function BarplotViz(props: VisualizationProps) {
                 component={Barplot}
                 data={data.value}
                 props={plotProps}
+                // for custom legend
+                checkedLegendItems={vizConfig.checkedLegendItems}
               />
             </>
           ) : (
-            <Barplot data={data.value} ref={plotRef} {...plotProps} />
+            <Barplot
+              data={data.value}
+              ref={plotRef}
+              // for custom legend: pass checkedLegendItems to PlotlyPlot
+              checkedLegendItems={vizConfig.checkedLegendItems}
+              {...plotProps}
+            />
           )}
 
           <div style={{ display: 'flex', flexDirection: 'row' }}>
@@ -435,6 +505,19 @@ function BarplotViz(props: VisualizationProps) {
             </LabelledGroup>
           </div>
         </div>
+
+        {/* custom legend */}
+        {legendItems != null && !data.pending && data != null && (
+          <div style={{ marginLeft: '2em' }}>
+            <PlotLegend
+              legendItems={legendItems}
+              checkedLegendItems={vizConfig.checkedLegendItems}
+              legendTitle={axisLabelWithUnit(overlayVariable)}
+              onCheckedLegendItemsChange={onCheckedLegendItemsChange}
+            />
+          </div>
+        )}
+
         <div className="viz-plot-info">
           <BirdsEyeView
             completeCasesAllVars={
