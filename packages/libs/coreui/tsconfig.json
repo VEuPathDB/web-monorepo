@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "jsxImportSource": "@emotion/react",
+    "jsx": "react-jsx",
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    // "isolatedModules": true,
+    "outDir": "dist",
+    "esModuleInterop": true,
+    "strict": true,
+    "target": "ES5",
+  },
+  "include": ["src/**/*"],
+  "exclude": ["src/stories"],
+}
