@@ -53,6 +53,7 @@ export default function NotesTab({ analysisState }: props) {
     <div
       style={{
         marginTop: 35,
+        marginBottom: 50,
         display: 'flex',
         flexDirection: 'column',
       }}
