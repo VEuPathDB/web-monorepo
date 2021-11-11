@@ -124,16 +124,16 @@ function PlotlyPlot<T>(
     (): PlotParams['layout'] & LayoutLegendTitle => ({
       ...plotlyProps.layout,
       xaxis: {
+        linecolor: 'black',
         ...plotlyProps.layout.xaxis,
         fixedrange: true,
         linewidth: 1,
-        linecolor: 'black',
       },
       yaxis: {
+        linecolor: 'black',
         ...plotlyProps.layout.yaxis,
         fixedrange: true,
         linewidth: 1,
-        linecolor: 'black',
         // change long delendent axis title with ellipsis
         title:
           ((plotlyProps?.layout?.yaxis?.title as string) || '').length >

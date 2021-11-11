@@ -393,6 +393,7 @@ const Histogram = makePlotlyPlotComponent(
       },
       range: plotlyIndependentAxisRange,
       tickfont: data.series.length ? {} : { color: 'transparent' },
+      linecolor: '#dddddd',
     };
 
     // if at least one bin.count is 0 < x < 1 then these are probably fractions/proportions
@@ -471,6 +472,8 @@ const Histogram = makePlotlyPlotComponent(
       dtick: dependentAxisLogScale ? 1 : undefined,
       tickfont: data.series.length ? {} : { color: 'transparent' },
       showline: !axisTruncationConfig?.independentAxis?.min,
+      linecolor: '#dddddd',
+      zeroline: false,
     };
 
     return {
