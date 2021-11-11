@@ -84,6 +84,14 @@ const facetedPlotContainerStyles = {
   width: plotContainerStyles.width / 2,
 };
 
+const plotSpacingOptions = {};
+const facetedPlotSpacingOptions = {
+  marginRight: 15,
+  marginLeft: 15,
+  marginBotton: 10,
+  marginTop: 50,
+};
+
 export const boxplotVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
   fullscreenComponent: FullscreenComponent,
@@ -436,6 +444,11 @@ function BoxplotViz(props: VisualizationProps) {
             isFaceted(data.value)
               ? facetedPlotContainerStyles
               : plotContainerStyles
+          }
+          spacingOptions={
+            isFaceted(data.value)
+              ? facetedPlotSpacingOptions
+              : plotSpacingOptions
           }
           orientation={'vertical'}
           // add condition to show legend when overlayVariable is used

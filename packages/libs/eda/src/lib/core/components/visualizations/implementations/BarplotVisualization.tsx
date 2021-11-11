@@ -85,6 +85,14 @@ const facetedPlotContainerStyles = {
   width: plotContainerStyles.width / 2,
 };
 
+const plotSpacingOptions = {};
+const facetedPlotSpacingOptions = {
+  marginRight: 10,
+  marginLeft: 10,
+  marginBotton: 10,
+  marginTop: 50,
+};
+
 export const barplotVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
   fullscreenComponent: FullscreenComponent,
@@ -393,6 +401,9 @@ function BarplotViz(props: VisualizationProps) {
     containerStyles: isFaceted(data.value)
       ? facetedPlotContainerStyles
       : plotContainerStyles,
+    spacingOptions: isFaceted(data.value)
+      ? facetedPlotSpacingOptions
+      : plotSpacingOptions,
     orientation: 'vertical',
     barLayout: 'group',
     displayLegend:

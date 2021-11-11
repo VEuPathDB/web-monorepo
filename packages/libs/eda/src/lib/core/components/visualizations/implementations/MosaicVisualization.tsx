@@ -59,6 +59,15 @@ const facetedPlotContainerStyles = {
   height: plotContainerStyles.height / 1.25,
 };
 
+const plotSpacingOptions = {};
+
+const facetedPlotSpacingOptions = {
+  marginRight: 15,
+  marginLeft: 15,
+  marginBotton: 10,
+  marginTop: 50,
+};
+
 type ContTableData = MosaicData &
   Partial<{
     pValue: number | string;
@@ -402,6 +411,11 @@ function MosaicViz(props: Props) {
                     isFaceted(data.value)
                       ? facetedPlotContainerStyles
                       : plotContainerStyles
+                  }
+                  spacingOptions={
+                    isFaceted(data.value)
+                      ? facetedPlotSpacingOptions
+                      : plotSpacingOptions
                   }
                   independentAxisLabel={xAxisLabel ?? 'X-axis'}
                   dependentAxisLabel={yAxisLabel ?? 'Y-axis'}
