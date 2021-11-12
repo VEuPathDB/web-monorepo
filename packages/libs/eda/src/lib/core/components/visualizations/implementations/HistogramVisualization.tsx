@@ -584,6 +584,7 @@ function HistogramPlotWithControls({
   const plotRef = useUpdateThumbnailEffect(updateThumbnail, plotDimensions, [
     data,
     checkedLegendItems,
+    histogramProps.dependentAxisLogScale,
   ]);
 
   const widgetHeight = '4em';
