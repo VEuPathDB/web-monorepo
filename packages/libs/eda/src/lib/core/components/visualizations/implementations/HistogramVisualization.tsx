@@ -626,43 +626,92 @@ function HistogramPlotWithControls({
           display: 'flex',
           flexWrap: 'wrap',
           alignItems: 'flex-start',
-          width: '100%',
         }}
       >
-        {isFaceted(data) ? (
-          <>
-            <div
-              style={{
-                background: 'yellow',
-                border: '3px dashed green',
-                padding: '10px',
-              }}
-            >
-              Custom legend, birds eye and supplementary tables go here...
-            </div>
+        <div
+          style={{ display: 'flex', flexDirection: 'column', width: '100%' }}
+        >
+          {isFaceted(data) ? (
+            <>
+              <div
+                style={{
+                  background: 'yellow',
+                  border: '3px dashed green',
+                  padding: '10px',
+                }}
+              >
+                Custom legend, birds eye and supplementary tables go here...
+              </div>
 
-            <FacetedPlot
-              component={Histogram}
+              <FacetedPlot
+                component={Histogram}
+                data={data}
+                props={histogramProps}
+                facetedPlotRef={plotRef}
+                // for custom legend: pass checkedLegendItems to PlotlyPlot
+                checkedLegendItems={checkedLegendItems}
+              />
+            </>
+          ) : (
+            <Histogram
+              {...histogramProps}
+              ref={plotRef}
               data={data}
-              props={histogramProps}
-              facetedPlotRef={plotRef}
+              opacity={opacity}
+              displayLibraryControls={displayLibraryControls}
+              showValues={false}
+              barLayout={barLayout}
               // for custom legend: pass checkedLegendItems to PlotlyPlot
               checkedLegendItems={checkedLegendItems}
             />
-          </>
-        ) : (
-          <Histogram
-            {...histogramProps}
-            ref={plotRef}
-            data={data}
-            opacity={opacity}
-            displayLibraryControls={displayLibraryControls}
-            showValues={false}
-            barLayout={barLayout}
-            // for custom legend: pass checkedLegendItems to PlotlyPlot
-            checkedLegendItems={checkedLegendItems}
-          />
-        )}
+          )}
+
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <LabelledGroup label="Y-axis">
+              <Switch
+                label="Log scale"
+                state={histogramProps.dependentAxisLogScale}
+                onStateChange={onDependentAxisLogScaleChange}
+                containerStyles={{
+                  minHeight: widgetHeight,
+                }}
+              />
+              <RadioButtonGroup
+                selectedOption={valueSpec}
+                options={['count', 'proportion']}
+                onOptionSelected={(newOption) => {
+                  if (newOption === 'proportion') {
+                    onValueSpecChange('proportion');
+                  } else {
+                    onValueSpecChange('count');
+                  }
+                }}
+              />
+            </LabelledGroup>
+            <LabelledGroup label="X-axis">
+              <BinWidthControl
+                binWidth={data0?.binWidth}
+                onBinWidthChange={onBinWidthChange}
+                binWidthRange={data0?.binWidthRange}
+                binWidthStep={data0?.binWidthStep}
+                valueType={data0?.valueType}
+                binUnit={
+                  data0?.valueType === 'date'
+                    ? (data0?.binWidth as TimeDelta).unit
+                    : undefined
+                }
+                binUnitOptions={
+                  data0?.valueType === 'date'
+                    ? ['day', 'week', 'month', 'year']
+                    : undefined
+                }
+                containerStyles={{
+                  minHeight: widgetHeight,
+                }}
+              />
+            </LabelledGroup>
+          </div>
+        </div>
 
         {/* custom legend */}
         {legendItems != null && !histogramProps.showSpinner && data != null && (
@@ -711,51 +760,6 @@ function HistogramPlotWithControls({
             ]}
           />
         </div>
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <LabelledGroup label="Y-axis">
-          <Switch
-            label="Log scale"
-            state={histogramProps.dependentAxisLogScale}
-            onStateChange={onDependentAxisLogScaleChange}
-            containerStyles={{
-              minHeight: widgetHeight,
-            }}
-          />
-          <RadioButtonGroup
-            selectedOption={valueSpec}
-            options={['count', 'proportion']}
-            onOptionSelected={(newOption) => {
-              if (newOption === 'proportion') {
-                onValueSpecChange('proportion');
-              } else {
-                onValueSpecChange('count');
-              }
-            }}
-          />
-        </LabelledGroup>
-        <LabelledGroup label="X-axis">
-          <BinWidthControl
-            binWidth={data0?.binWidth}
-            onBinWidthChange={onBinWidthChange}
-            binWidthRange={data0?.binWidthRange}
-            binWidthStep={data0?.binWidthStep}
-            valueType={data0?.valueType}
-            binUnit={
-              data0?.valueType === 'date'
-                ? (data0?.binWidth as TimeDelta).unit
-                : undefined
-            }
-            binUnitOptions={
-              data0?.valueType === 'date'
-                ? ['day', 'week', 'month', 'year']
-                : undefined
-            }
-            containerStyles={{
-              minHeight: widgetHeight,
-            }}
-          />
-        </LabelledGroup>
       </div>
     </div>
   );
