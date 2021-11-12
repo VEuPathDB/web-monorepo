@@ -56,7 +56,7 @@ export const OrthoMCLPage: FunctionComponent<Props> = props => {
         </div>
       </Link>
       <div className="vpdb-HeaderBrandingSuperscript">
-        {buildNumber && <span>Release {buildNumber} <em>beta</em></span>}
+        {buildNumber && <span>Release {buildNumber} </span>}
         <br />
         {releaseDate && formatReleaseDate(releaseDate)}
       </div>
