@@ -378,6 +378,100 @@ function BoxplotViz(props: VisualizationProps) {
   console.log('data at boxplot viz =', data);
   console.log('legendItems = ', legendItems);
 
+  const plotNode = (
+    <BoxplotWithControls
+      // data.value
+      data={data.value}
+      updateThumbnail={updateThumbnail}
+      containerStyles={
+        isFaceted(data.value) ? facetedPlotContainerStyles : plotContainerStyles
+      }
+      spacingOptions={
+        isFaceted(data.value) ? facetedPlotSpacingOptions : plotSpacingOptions
+      }
+      orientation={'vertical'}
+      // add condition to show legend when overlayVariable is used
+      displayLegend={
+        data.value &&
+        !isFaceted(data.value) &&
+        (data.value.series.length > 1 || vizConfig.overlayVariable != null)
+      }
+      independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-axis'}
+      dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-axis'}
+      // show/hide independent/dependent axis tick label
+      showIndependentAxisTickLabel={true}
+      showDependentAxisTickLabel={true}
+      showMean={true}
+      interactive={true}
+      showSpinner={data.pending}
+      showRawData={true}
+      legendTitle={axisLabelWithUnit(overlayVariable)}
+      // for custom legend passing checked state in the  checkbox to PlotlyPlot
+      legendItems={legendItems}
+      checkedLegendItems={vizConfig.checkedLegendItems}
+      onCheckedLegendItemsChange={onCheckedLegendItemsChange}
+    />
+  );
+
+  const legendNode = legendItems != null && !data.pending && data != null && (
+    <PlotLegend
+      legendItems={legendItems}
+      checkedLegendItems={vizConfig.checkedLegendItems}
+      legendTitle={axisLabelWithUnit(overlayVariable)}
+      onCheckedLegendItemsChange={onCheckedLegendItemsChange}
+    />
+  );
+
+  const tableGroupNode = (
+    <>
+      <BirdsEyeView
+        completeCasesAllVars={
+          data.pending ? undefined : data.value?.completeCasesAllVars
+        }
+        completeCasesAxesVars={
+          data.pending ? undefined : data.value?.completeCasesAxesVars
+        }
+        filters={filters}
+        outputEntity={outputEntity}
+        stratificationIsActive={
+          overlayVariable != null || facetVariable != null
+        }
+        enableSpinner={
+          xAxisVariable != null && yAxisVariable != null && !data.error
+        }
+      />
+      <VariableCoverageTable
+        completeCases={data.pending ? undefined : data.value?.completeCases}
+        filters={filters}
+        outputEntityId={outputEntity?.id}
+        variableSpecs={[
+          {
+            role: 'X-axis',
+            required: true,
+            display: axisLabelWithUnit(xAxisVariable),
+            variable: vizConfig.xAxisVariable,
+          },
+          {
+            role: 'Y-axis',
+            required: true,
+            display: axisLabelWithUnit(yAxisVariable),
+            variable: vizConfig.yAxisVariable,
+          },
+          {
+            role: 'Overlay',
+            display: axisLabelWithUnit(overlayVariable),
+            variable: vizConfig.overlayVariable,
+          },
+          {
+            role: 'Facet',
+            display: axisLabelWithUnit(facetVariable),
+            variable: vizConfig.facetVariable,
+          },
+        ]}
+      />
+    </>
+  );
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -563,7 +657,7 @@ function BoxplotWithControls({
 
   // TO DO: standardise web-components/BoxplotData to have `series` key
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+    <>
       {isFaceted(data) ? (
         <>
           <div
@@ -601,7 +695,7 @@ function BoxplotWithControls({
         />
       )}
       {/* potential controls go here  */}
-    </div>
+    </>
   );
 }
 
