@@ -30,7 +30,7 @@ export type XYPlotDataSeries = {
     width?: number;
   };
   /** filling plots: tozerox - scatter plot's confidence interval; toself - density plot */
-  fill?: 'tozerox' | 'toself';
+  fill?: 'tozerox' | 'tozeroy' | 'toself';
   /** filling plots: color */
   fillcolor?: string;
 };

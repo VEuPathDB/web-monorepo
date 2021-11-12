@@ -45,9 +45,10 @@ export default function PlotLegend({
   };
 
   // set some default sizes
-  const defaultMarkerSize = '1.0em';
-  const circleMarkerSize = '1.0em';
-  const markerBorderWidth = '0.125em';
+  const defaultMarkerSize = '0.8em';
+  const legendTextSize = '1.0em';
+  const circleMarkerSize = '0.7em';
+  const scatterMarkerSpace = '2em';
 
   return (
     <>
@@ -61,7 +62,7 @@ export default function PlotLegend({
         >
           <div
             title={legendTitle}
-            style={{ cursor: 'pointer', fontSize: defaultMarkerSize }}
+            style={{ cursor: 'pointer', fontSize: legendTextSize }}
           >
             {legendTitle != null
               ? legendEllipsis(legendTitle, 23)
@@ -92,7 +93,6 @@ export default function PlotLegend({
                     style={{
                       position: 'relative',
                       margin: 'auto 0',
-                      width: defaultMarkerSize,
                     }}
                   >
                     {/* for histogram, barplot, Mosaic (2X2, RXC) - Mosaic does not use custom legend though */}
@@ -116,7 +116,7 @@ export default function PlotLegend({
                         style={{
                           height: defaultMarkerSize,
                           width: defaultMarkerSize,
-                          borderWidth: markerBorderWidth,
+                          borderWidth: '0.125em',
                           borderStyle: 'solid',
                           borderColor:
                             checkedLegendItems?.includes(item.label) &&
@@ -135,72 +135,79 @@ export default function PlotLegend({
                     )}
                     {/* for scatter plot: marker */}
                     {item.marker === 'circle' && (
-                      <div
-                        style={{
-                          height: circleMarkerSize,
-                          width: circleMarkerSize,
-                          margin: 'auto',
-                          borderWidth: markerBorderWidth,
-                          borderStyle: 'solid',
-                          borderRadius: '0.6em',
-                          borderColor:
-                            checkedLegendItems?.includes(item.label) &&
-                            item.hasData
-                              ? item.markerColor
-                              : '#999',
-                        }}
-                      />
+                      <div style={{ width: scatterMarkerSpace }}>
+                        <div
+                          style={{
+                            height: circleMarkerSize,
+                            width: circleMarkerSize,
+                            margin: 'auto',
+                            borderWidth: '0.15em',
+                            borderStyle: 'solid',
+                            borderRadius: '0.6em',
+                            borderColor:
+                              checkedLegendItems?.includes(item.label) &&
+                              item.hasData
+                                ? item.markerColor
+                                : '#999',
+                          }}
+                        />
+                      </div>
                     )}
                     {/* for scatter plot: smoothed mean or best fit line */}
                     {item.marker === 'line' && (
-                      <div
-                        style={{
-                          height: '0.25em',
-                          width: defaultMarkerSize,
-                          borderWidth: '0',
-                          // borderStyle: 'solid',
-                          // borderRadius: '0.6em',
-                          backgroundColor:
-                            checkedLegendItems?.includes(item.label) &&
-                            item.hasData
-                              ? item.markerColor
-                              : '#999',
-                        }}
-                      />
+                      <div style={{ width: scatterMarkerSpace }}>
+                        <div
+                          style={{
+                            height: '0.25em',
+                            width: scatterMarkerSpace,
+                            borderWidth: '0',
+                            // borderStyle: 'solid',
+                            // borderRadius: '0.6em',
+                            backgroundColor:
+                              checkedLegendItems?.includes(item.label) &&
+                              item.hasData
+                                ? item.markerColor
+                                : '#999',
+                          }}
+                        />
+                      </div>
                     )}
                     {/* for scatter plot: confidence interval */}
                     {item.marker === 'fainted' && (
-                      <div
-                        style={{
-                          height: '0.75em',
-                          width: defaultMarkerSize,
-                          borderWidth: '0',
-                          backgroundColor:
-                            checkedLegendItems?.includes(item.label) &&
-                            item.hasData
-                              ? ColorMath.evaluate(
-                                  item.markerColor + ' @a 30%'
-                                ).result.css()
-                              : '#999',
-                        }}
-                      />
+                      <div style={{ width: scatterMarkerSpace }}>
+                        <div
+                          style={{
+                            height: '0.5em',
+                            width: scatterMarkerSpace,
+                            borderWidth: '0',
+                            backgroundColor:
+                              checkedLegendItems?.includes(item.label) &&
+                              item.hasData
+                                ? ColorMath.evaluate(
+                                    item.markerColor + ' @a 30%'
+                                  ).result.css()
+                                : '#999',
+                          }}
+                        />
+                      </div>
                     )}
-                    {/* for scatter plot: No data marker */}
+                    {/* for scatter plot: No data marker, x */}
                     {item.marker === 'x' && (
-                      <div
-                        style={{
-                          height: defaultMarkerSize,
-                          width: defaultMarkerSize,
-                          textAlign: 'center',
-                          fontWeight: 'bold',
-                          color:
-                            checkedLegendItems?.includes(item.label) &&
-                            item.hasData
-                              ? '#E8E8E8'
-                              : '#999',
-                        }}
-                      >
-                        X
+                      <div style={{ width: scatterMarkerSpace }}>
+                        <div
+                          style={{
+                            textAlign: 'center',
+                            fontWeight: 'bold',
+                            fontSize: legendTextSize,
+                            color:
+                              checkedLegendItems?.includes(item.label) &&
+                              item.hasData
+                                ? '#A6A6A6'
+                                : '#999',
+                          }}
+                        >
+                          x
+                        </div>
                       </div>
                     )}
                   </div>
@@ -211,6 +218,7 @@ export default function PlotLegend({
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
+                      fontSize: legendTextSize,
                       // gray out for filtered item
                       color:
                         checkedLegendItems?.includes(item.label) && item.hasData
