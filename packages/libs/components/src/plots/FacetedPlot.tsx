@@ -50,7 +50,7 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
   );
 
   return (
-    <div>
+    <>
       <h2>{componentProps.title}</h2>
       <div
         style={{
@@ -80,7 +80,7 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
           />
         ))}
       </div>
-    </div>
+    </>
   );
 }
 
