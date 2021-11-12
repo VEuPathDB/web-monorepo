@@ -405,7 +405,7 @@ function HistogramViz(props: VisualizationProps) {
                 : data.value?.facets // faceted plot: here data.value is full data
                     .map(
                       (el: { label: string; data: HistogramData }) =>
-                        el.data.series[index].bins != null &&
+                        el.data.series[index]?.bins != null &&
                         el.data.series[index].bins.length > 0
                     )
                     .includes(true),
