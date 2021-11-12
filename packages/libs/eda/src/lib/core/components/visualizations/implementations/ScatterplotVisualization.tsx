@@ -89,7 +89,6 @@ import PlotLegend, {
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import FacetedPlot from '@veupathdb/components/lib/plots/FacetedPlot';
-import { config } from 'process';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 
@@ -413,7 +412,7 @@ function ScatterplotViz(props: VisualizationProps) {
       ? // the name 'dataItem' is used inside the map() to distinguish from the global 'data' variable
         legendData.map((dataItem: XYPlotDataSeries, index: number) => {
           return {
-            label: dataItem.name != null ? dataItem.name : '',
+            label: dataItem.name ?? '',
             // maing marker info appropriately
             marker:
               dataItem.mode != null
@@ -424,7 +423,7 @@ function ScatterplotViz(props: VisualizationProps) {
                   : dataItem.mode === 'lines'
                   ? 'line'
                   : ''
-                : dataItem.fill != null && dataItem.fill === 'tozeroy'
+                : dataItem?.fill === 'tozeroy'
                 ? 'fainted'
                 : '',
             // set marker colors appropriately
