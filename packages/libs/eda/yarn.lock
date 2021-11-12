@@ -3407,10 +3407,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/components@^0.9.2":
-  version "0.9.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.9.2.tgz#f3540b932fbfe4a4396c332948413f94d96e5303"
-  integrity sha512-G4HbL9SIQVO+srbWijahFIu6xpxCGCQ2rNPTCYaQVmhY8Va4PMwfgtGYirnysXTSfxKob1Sam4kxJ3go9YEdNg==
+"@veupathdb/components@^0.9.4":
+  version "0.9.4"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.9.4.tgz#0c13b7c814af10d1d9ebb58ad6eb9f54398ed66b"
+  integrity sha512-HIiEEZDZ5xSxaJB65tu9sM7iuFdFaNgE1R8hqx3GijebMnm+GOgaGW3Rs877TrV9eB4dLFFsNhhs1bVGQ19YvQ==
   dependencies:
     "@material-ui/core" "^4.11.2"
     "@material-ui/icons" "^4.11.2"

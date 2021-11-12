@@ -25,7 +25,6 @@ import {
   isEqual,
   min,
   max,
-  sortBy,
   groupBy,
   mapValues,
   size,
@@ -33,7 +32,7 @@ import {
   values,
   map,
 } from 'lodash';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import {
   HistogramRequestParams,
   HistogramResponse,
@@ -66,8 +65,8 @@ import {
   fixLabelsForNumberVariables,
   variablesAreUnique,
 } from '../../../utils/visualization';
-import { PlotRef } from '@veupathdb/components/lib/plots/PlotlyPlot';
 import { useFindEntityAndVariable } from '../../../hooks/study';
+import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 // import variable's metadata-based independent axis range utils
 import { defaultIndependentAxisRange } from '../../../utils/default-independent-axis-range';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
@@ -384,7 +383,8 @@ function HistogramViz(props: VisualizationProps) {
   const legendItems: LegendItemsProps[] = useMemo(() => {
     const legendData = !isFaceted(data.value)
       ? data.value?.series
-      : data.value?.facets[0].data.series;
+      : data.value?.facets.find(({ data }) => data.series.length > 0)?.data
+          .series;
 
     return legendData != null
       ? legendData
@@ -408,9 +408,7 @@ function HistogramViz(props: VisualizationProps) {
                         el.data.series[index].bins != null &&
                         el.data.series[index].bins.length > 0
                     )
-                    .includes(true)
-                ? true
-                : false,
+                    .includes(true),
               group: 1,
               rank: 1,
             };
@@ -583,24 +581,17 @@ function HistogramPlotWithControls({
       ? completeCasesAllVars
       : completeCasesAxesVars;
 
-  const plotRef = useRef<PlotRef>(null);
-
-  const updateThumbnailRef = useRef(updateThumbnail);
-  useEffect(() => {
-    updateThumbnailRef.current = updateThumbnail;
-  });
-
-  // add dependency of checkedLegendItems
-  useEffect(() => {
-    plotRef.current
-      ?.toImage({ format: 'svg', ...plotDimensions })
-      .then(updateThumbnailRef.current);
-  }, [data, checkedLegendItems]);
+  const plotRef = useUpdateThumbnailEffect(updateThumbnail, plotDimensions, [
+    data,
+    checkedLegendItems,
+  ]);
 
   const widgetHeight = '4em';
 
-  // controls need the bin info from just one facet
-  const data0 = isFaceted(data) ? data.facets[0].data : data;
+  // controls need the bin info from just one facet (not an empty one)
+  const data0 = isFaceted(data)
+    ? data.facets.find(({ data }) => data.series.length > 0)?.data
+    : data;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -628,6 +619,7 @@ function HistogramPlotWithControls({
               component={Histogram}
               data={data}
               props={histogramProps}
+              facetedPlotRef={plotRef}
               // for custom legend: pass checkedLegendItems to PlotlyPlot
               checkedLegendItems={checkedLegendItems}
             />
