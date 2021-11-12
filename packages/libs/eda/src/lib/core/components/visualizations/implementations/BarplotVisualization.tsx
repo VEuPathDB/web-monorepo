@@ -414,6 +414,111 @@ function BarplotViz(props: VisualizationProps) {
     displayLibraryControls: false,
   };
 
+  const plotNode = (
+    <>
+      {isFaceted(data.value) ? (
+        <>
+          <div
+            style={{
+              background: 'yellow',
+              border: '3px dashed green',
+              padding: '10px',
+            }}
+          >
+            Custom legend, birds eye and supplementary tables go here...
+          </div>
+
+          <FacetedPlot
+            component={Barplot}
+            data={data.value}
+            props={plotProps}
+            facetedPlotRef={plotRef}
+            // for custom legend
+            checkedLegendItems={vizConfig.checkedLegendItems}
+          />
+        </>
+      ) : (
+        <Barplot
+          data={data.value}
+          ref={plotRef}
+          // for custom legend: pass checkedLegendItems to PlotlyPlot
+          checkedLegendItems={vizConfig.checkedLegendItems}
+          {...plotProps}
+        />
+      )}
+
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <LabelledGroup label="Y-axis">
+          <Switch
+            label="Log Scale:"
+            state={vizConfig.dependentAxisLogScale}
+            onStateChange={onDependentAxisLogScaleChange}
+          />
+          <RadioButtonGroup
+            selectedOption={vizConfig.valueSpec}
+            options={['count', 'proportion']}
+            onOptionSelected={(newOption) => {
+              if (newOption === 'proportion') {
+                onValueSpecChange('proportion');
+              } else {
+                onValueSpecChange('count');
+              }
+            }}
+          />
+        </LabelledGroup>
+      </div>
+    </>
+  );
+
+  const legendNode = legendItems != null && !data.pending && data != null && (
+    <PlotLegend
+      legendItems={legendItems}
+      checkedLegendItems={vizConfig.checkedLegendItems}
+      legendTitle={axisLabelWithUnit(overlayVariable)}
+      onCheckedLegendItemsChange={onCheckedLegendItemsChange}
+    />
+  );
+
+  const tableGroupNode = (
+    <>
+      <BirdsEyeView
+        completeCasesAllVars={
+          data.pending ? undefined : data.value?.completeCasesAllVars
+        }
+        completeCasesAxesVars={
+          data.pending ? undefined : data.value?.completeCasesAxesVars
+        }
+        filters={filters}
+        outputEntity={entity}
+        stratificationIsActive={overlayVariable != null}
+        enableSpinner={vizConfig.xAxisVariable != null && !data.error}
+      />
+      <VariableCoverageTable
+        completeCases={data.pending ? undefined : data.value?.completeCases}
+        filters={filters}
+        outputEntityId={vizConfig.xAxisVariable?.entityId}
+        variableSpecs={[
+          {
+            role: 'Main',
+            required: true,
+            display: axisLabelWithUnit(variable),
+            variable: vizConfig.xAxisVariable,
+          },
+          {
+            role: 'Overlay',
+            display: axisLabelWithUnit(overlayVariable),
+            variable: vizConfig.overlayVariable,
+          },
+          {
+            role: 'Facet',
+            display: axisLabelWithUnit(facetVariable),
+            variable: vizConfig.facetVariable,
+          },
+        ]}
+      />
+    </>
+  );
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
