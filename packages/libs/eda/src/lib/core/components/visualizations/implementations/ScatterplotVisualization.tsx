@@ -100,6 +100,20 @@ const plotContainerStyles = {
   boxShadow: '1px 1px 4px #00000066',
 };
 
+const facetedPlotContainerStyles = {
+  height: plotContainerStyles.height / 1.75,
+  width: plotContainerStyles.width / 2,
+};
+
+const plotSpacingOptions = {};
+
+const facetedPlotSpacingOptions = {
+  marginTop: 30,
+  marginBottom: 40,
+  marginLeft: 50,
+  marginRight: 20,
+};
+
 // define XYPlotDataWithCoverage
 interface XYPlotDataWithCoverage extends CoverageStatistics {
   dataSetProcess: XYPlotData | FacetedData<XYPlotData>;
@@ -507,7 +521,16 @@ function ScatterplotViz(props: VisualizationProps) {
           // data.value
           data={data.value?.dataSetProcess}
           updateThumbnail={updateThumbnail}
-          containerStyles={plotContainerStyles}
+          containerStyles={
+            isFaceted(data.value?.dataSetProcess)
+              ? facetedPlotContainerStyles
+              : plotContainerStyles
+          }
+          spacingOptions={
+            isFaceted(data.value?.dataSetProcess)
+              ? facetedPlotSpacingOptions
+              : plotSpacingOptions
+          }
           // title={'Scatter plot'}
           displayLegend={
             data.value &&
@@ -672,7 +695,7 @@ function ScatterplotWithControls({
   );
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
       {isFaceted(data) ? (
         <FacetedPlot
           data={data}
