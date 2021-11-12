@@ -1202,10 +1202,8 @@ function processInputData<T extends number | string>(
           ? fixLabelForNumberVariables(
               el.overlayVariableDetails.value,
               overlayVariable
-            ) +
-            ', R² = ' +
-            el.r2
-          : 'Best fit, R² = ' + el.r2,
+            ) + ', Best fit' // TO DO: put R^2 values in a table, esp for faceting
+          : 'Best fit', // ditto - see issue 694
         mode: 'lines', // no data point is displayed: only line
         line: {
           // use darker color for best fit line
