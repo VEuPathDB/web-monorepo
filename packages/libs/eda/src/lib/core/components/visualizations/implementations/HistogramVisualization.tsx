@@ -403,7 +403,8 @@ function HistogramViz(props: VisualizationProps) {
   const legendItems: LegendItemsProps[] = useMemo(() => {
     const legendData = !isFaceted(data.value)
       ? data.value?.series
-      : data.value?.facets[0].data.series;
+      : data.value?.facets.find(({ data }) => data.series.length > 0)?.data
+          .series;
 
     return legendData != null
       ? legendData
@@ -427,9 +428,7 @@ function HistogramViz(props: VisualizationProps) {
                         el.data.series[index].bins != null &&
                         el.data.series[index].bins.length > 0
                     )
-                    .includes(true)
-                ? true
-                : false,
+                    .includes(true),
               group: 1,
               rank: 1,
             };
@@ -614,8 +613,10 @@ function HistogramPlotWithControls({
 
   const widgetHeight = '4em';
 
-  // controls need the bin info from just one facet
-  const data0 = isFaceted(data) ? data.facets[0].data : data;
+  // controls need the bin info from just one facet (not an empty one)
+  const data0 = isFaceted(data)
+    ? data.facets.find(({ data }) => data.series.length > 0)?.data
+    : data;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
