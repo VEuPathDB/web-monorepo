@@ -13,7 +13,6 @@ import DataClient, {
   ScatterplotRequestParams,
   LineplotRequestParams,
   ScatterplotResponse,
-  LineplotResponse,
 } from '../../../api/DataClient';
 
 import { usePromise } from '../../../hooks/promise';
@@ -23,7 +22,6 @@ import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { Filter } from '../../../types/filter';
 
-import { PromiseType } from '../../../types/utility';
 import { VariableDescriptor } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
@@ -42,13 +40,25 @@ import line from './selectorIcons/line.svg';
 import scatter from './selectorIcons/scatter.svg';
 
 // use lodash instead of Math.min/max
-import { min, max, lte, gte } from 'lodash';
+import {
+  min,
+  max,
+  lte,
+  gte,
+  groupBy,
+  size,
+  head,
+  values,
+  mapValues,
+  map,
+} from 'lodash';
 // directly use RadioButtonGroup instead of XYPlotControls
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 // import XYPlotData
 import {
   XYPlotDataSeries,
   XYPlotData,
+  FacetedData,
 } from '@veupathdb/components/lib/types/plots';
 import { CoverageStatistics } from '../../../types/visualization';
 // import axis label unit util
@@ -77,6 +87,8 @@ import PluginError from '../PluginError';
 import PlotLegend, {
   LegendItemsProps,
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import { isFaceted } from '@veupathdb/components/lib/types/guards';
+import FacetedPlot from '@veupathdb/components/lib/plots/FacetedPlot';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 
@@ -85,16 +97,16 @@ const plotDimensions = {
   height: 450,
 };
 
-// define PromiseXYPlotData
-interface PromiseXYPlotData extends CoverageStatistics {
-  dataSetProcess: XYPlotData;
+// define XYPlotDataWithCoverage
+interface XYPlotDataWithCoverage extends CoverageStatistics {
+  dataSetProcess: XYPlotData | FacetedData<XYPlotData>;
   // change these types to be compatible with new axis range
   yMin: number | string | undefined;
   yMax: number | string | undefined;
 }
 
 // define XYPlotDataResponse
-type XYPlotDataResponse = ScatterplotResponse | LineplotResponse;
+type XYPlotDataResponse = ScatterplotResponse;
 
 export const scatterplotVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -173,21 +185,33 @@ function ScatterplotViz(props: VisualizationProps) {
   // moved the location of this findEntityAndVariable
   const findEntityAndVariable = useFindEntityAndVariable(entities);
 
-  const { xAxisVariable, yAxisVariable, overlayVariable } = useMemo(() => {
-    const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
-    const yAxisVariable = findEntityAndVariable(vizConfig.yAxisVariable);
-    const overlayVariable = findEntityAndVariable(vizConfig.overlayVariable);
+  const {
+    xAxisVariable,
+    yAxisVariable,
+    overlayVariable,
+    facetVariable,
+  } = useMemo(() => {
+    const { variable: xAxisVariable } =
+      findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
+    const { variable: yAxisVariable } =
+      findEntityAndVariable(vizConfig.yAxisVariable) ?? {};
+    const { variable: overlayVariable } =
+      findEntityAndVariable(vizConfig.overlayVariable) ?? {};
+    const { variable: facetVariable } =
+      findEntityAndVariable(vizConfig.facetVariable) ?? {};
 
     return {
-      xAxisVariable: xAxisVariable ? xAxisVariable.variable : undefined,
-      yAxisVariable: yAxisVariable ? yAxisVariable.variable : undefined,
-      overlayVariable: overlayVariable ? overlayVariable.variable : undefined,
+      xAxisVariable,
+      yAxisVariable,
+      overlayVariable,
+      facetVariable,
     };
   }, [
     findEntityAndVariable,
     vizConfig.xAxisVariable,
     vizConfig.yAxisVariable,
     vizConfig.overlayVariable,
+    vizConfig.facetVariable,
   ]);
 
   // TODO Handle facetVariable
@@ -242,7 +266,7 @@ function ScatterplotViz(props: VisualizationProps) {
   );
 
   const data = usePromise(
-    useCallback(async (): Promise<PromiseXYPlotData | undefined> => {
+    useCallback(async (): Promise<XYPlotDataWithCoverage | undefined> => {
       // check independentValueType/dependentValueType
       const independentValueType = xAxisVariable?.type
         ? xAxisVariable.type
@@ -284,22 +308,27 @@ function ScatterplotViz(props: VisualizationProps) {
               params as ScatterplotRequestParams
             );
 
-      const showMissing = vizConfig.showMissingness && overlayVariable != null;
+      const showMissing =
+        vizConfig.showMissingness &&
+        (overlayVariable != null || facetVariable != null);
       const overlayVocabulary = fixLabelsForNumberVariables(
         overlayVariable?.vocabulary,
         overlayVariable
       );
+      const facetVocabulary = fixLabelsForNumberVariables(
+        facetVariable?.vocabulary,
+        facetVariable
+      );
       return scatterplotResponseToData(
-        reorderResponse(
-          await response,
-          vocabularyWithMissingData(overlayVocabulary, showMissing),
-          overlayVariable
-        ),
+        await response,
         visualization.descriptor.type,
         independentValueType,
         dependentValueType,
         showMissing,
-        overlayVariable
+        overlayVocabulary,
+        overlayVariable,
+        facetVocabulary,
+        facetVariable
       );
     }, [
       studyId,
@@ -354,8 +383,13 @@ function ScatterplotViz(props: VisualizationProps) {
 
   // custom legend list
   const legendItems: LegendItemsProps[] = useMemo(() => {
-    return data.value != null
-      ? data.value?.dataSetProcess.series.map((data: XYPlotDataSeries) => {
+    const allData = data.value?.dataSetProcess;
+    const legendData = !isFaceted(allData)
+      ? allData?.series
+      : allData.facets.find(({ data }) => data.series.length > 0)?.data.series;
+
+    return legendData != null
+      ? legendData.map((data: XYPlotDataSeries, index: number) => {
           return {
             label: data.name != null ? data.name : '',
             // TO-do: need a way to appropriately make marker info
@@ -364,10 +398,18 @@ function ScatterplotViz(props: VisualizationProps) {
             // set marker colors
             markerColor: 'markerColor',
             // simplifying the check with the presence of data: be carefule of y:[null] case in Scatter plot
-            hasData:
-              data.y != null && data.y.length > 0 && data.y[0] !== null
+            hasData: !isFaceted(allData)
+              ? data.y != null && data.y.length > 0 && data.y[0] !== null
                 ? true
-                : false,
+                : false
+              : allData.facets
+                  .map(
+                    ({ data }) =>
+                      data.series[index]?.y != null &&
+                      data.series[index].y.length > 0 &&
+                      data.series[index].y[0] !== null
+                  )
+                  .includes(true),
             group: 1,
             rank: 1,
           };
@@ -402,12 +444,18 @@ function ScatterplotViz(props: VisualizationProps) {
               label: 'Overlay',
               role: 'stratification',
             },
+            {
+              name: 'facetVariable',
+              label: 'Facet',
+              role: 'stratification',
+            },
           ]}
           entities={entities}
           selectedVariables={{
             xAxisVariable: vizConfig.xAxisVariable,
             yAxisVariable: vizConfig.yAxisVariable,
             overlayVariable: vizConfig.overlayVariable,
+            facetVariable: vizConfig.facetVariable,
           }}
           onChange={handleInputVariableChange}
           constraints={dataElementConstraints}
@@ -415,7 +463,7 @@ function ScatterplotViz(props: VisualizationProps) {
           starredVariables={starredVariables}
           toggleStarredVariable={toggleStarredVariable}
           enableShowMissingnessToggle={
-            overlayVariable != null &&
+            (overlayVariable != null || facetVariable != null) &&
             data.value?.completeCasesAllVars !==
               data.value?.completeCasesAxesVars
           }
@@ -460,6 +508,7 @@ function ScatterplotViz(props: VisualizationProps) {
           // title={'Scatter plot'}
           displayLegend={
             data.value &&
+            !isFaceted(data.value.dataSetProcess) &&
             (data.value.dataSetProcess.series.length > 1 ||
               vizConfig.overlayVariable != null)
           }
@@ -560,6 +609,11 @@ function ScatterplotViz(props: VisualizationProps) {
                 display: axisLabelWithUnit(overlayVariable),
                 variable: vizConfig.overlayVariable,
               },
+              {
+                role: 'Facet',
+                display: axisLabelWithUnit(facetVariable),
+                variable: vizConfig.facetVariable,
+              },
             ]}
           />
         </div>
@@ -568,7 +622,8 @@ function ScatterplotViz(props: VisualizationProps) {
   );
 }
 
-type ScatterplotWithControlsProps = XYPlotProps & {
+type ScatterplotWithControlsProps = Omit<XYPlotProps, 'data'> & {
+  data?: XYPlotData | FacetedData<XYPlotData>;
   valueSpec: string | undefined;
   onValueSpecChange: (value: string) => void;
   updateThumbnail: (src: string) => void;
@@ -614,15 +669,24 @@ function ScatterplotWithControls({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <XYPlot
-        {...scatterplotProps}
-        ref={plotRef}
-        data={data}
-        // add controls
-        displayLibraryControls={false}
-        // custom legend: pass checkedLegendItems to PlotlyPlot
-        checkedLegendItems={checkedLegendItems}
-      />
+      {isFaceted(data) ? (
+        <FacetedPlot
+          data={data}
+          props={scatterplotProps}
+          component={XYPlot}
+          checkedLegendItems={checkedLegendItems}
+        />
+      ) : (
+        <XYPlot
+          {...scatterplotProps}
+          ref={plotRef}
+          data={data}
+          // add controls
+          displayLibraryControls={false}
+          // custom legend: pass checkedLegendItems to PlotlyPlot
+          checkedLegendItems={checkedLegendItems}
+        />
+      )}
       {/*  XYPlotControls: check vizType (only for scatterplot for now) */}
       {vizType === 'scatterplot' && (
         // use RadioButtonGroup directly instead of XYPlotControls
@@ -650,37 +714,84 @@ function ScatterplotWithControls({
  * @returns ScatterplotData
  */
 export function scatterplotResponseToData(
-  response: PromiseType<
-    ReturnType<DataClient['getScatterplot'] | DataClient['getLineplot']>
-  >,
+  response: XYPlotDataResponse,
   // vizType may be used for handling other plots in this component like line and density
   vizType: string,
   independentValueType: string,
   dependentValueType: string,
   showMissingness: boolean = false,
-  overlayVariable?: Variable
-): PromiseXYPlotData {
+  overlayVocabulary: string[] = [],
+  overlayVariable?: Variable,
+  facetVocabulary: string[] = [],
+  facetVariable?: Variable
+): XYPlotDataWithCoverage {
   const modeValue = vizType === 'lineplot' ? 'lines' : 'markers'; // for scatterplot
 
-  const { dataSetProcess, yMin, yMax } = processInputData(
-    response,
-    vizType,
-    modeValue,
-    independentValueType,
-    dependentValueType,
-    showMissingness,
-    overlayVariable
+  const hasMissingData =
+    response.scatterplot.config.completeCasesAllVars !==
+    response.scatterplot.config.completeCasesAxesVars;
+
+  const facetGroupedResponseData = groupBy(response.scatterplot.data, (data) =>
+    data.facetVariableDetails && data.facetVariableDetails.length === 1
+      ? fixLabelForNumberVariables(
+          data.facetVariableDetails[0].value,
+          facetVariable
+        )
+      : undefined
   );
 
+  const processedData = mapValues(facetGroupedResponseData, (group) => {
+    const { dataSetProcess, yMin, yMax } = processInputData(
+      reorderResponseScatterplotData(
+        // reorder by overlay var within each facet
+        group,
+        vocabularyWithMissingData(overlayVocabulary, showMissingness),
+        overlayVariable
+      ),
+      vizType,
+      modeValue,
+      independentValueType,
+      dependentValueType,
+      showMissingness,
+      hasMissingData,
+      overlayVariable
+    );
+
+    return {
+      dataSetProcess: dataSetProcess,
+      yMin: yMin,
+      yMax: yMax,
+    };
+  });
+
+  const yMin = min(map(processedData, ({ yMin }) => yMin));
+  const yMax = max(map(processedData, ({ yMax }) => yMax));
+
+  const dataSetProcess =
+    size(processedData) === 1
+      ? // unfaceted
+        head(values(processedData))?.dataSetProcess
+      : // faceted
+        {
+          facets: vocabularyWithMissingData(
+            facetVocabulary,
+            showMissingness
+          ).map((facetValue) => ({
+            label: facetValue,
+            data: processedData[facetValue]?.dataSetProcess ?? { series: [] },
+          })),
+        };
+
   return {
-    dataSetProcess: dataSetProcess,
-    yMin: yMin,
-    yMax: yMax,
+    dataSetProcess,
+    // calculated y axis limits
+    yMin,
+    yMax,
+    // CoverageStatistics
     completeCases: response.completeCasesTable,
     completeCasesAllVars: response.scatterplot.config.completeCasesAllVars,
     completeCasesAxesVars: response.scatterplot.config.completeCasesAxesVars,
-    // TO DO: won't work with densityplot response, when that's implemented
-  };
+  } as XYPlotDataWithCoverage;
 }
 
 // add an extended type including dataElementDependencyOrder
@@ -703,6 +814,7 @@ function getRequestParams(
     xAxisVariable,
     yAxisVariable,
     overlayVariable,
+    facetVariable,
     valueSpecConfig,
     showMissingness,
   } = vizConfig;
@@ -725,6 +837,7 @@ function getRequestParams(
         xAxisVariable: xAxisVariable,
         yAxisVariable: yAxisVariable,
         overlayVariable: overlayVariable,
+        facetVariable: facetVariable ? [facetVariable] : [],
         showMissingness: showMissingness ? 'TRUE' : 'FALSE',
       },
     } as LineplotRequestParams;
@@ -741,6 +854,7 @@ function getRequestParams(
         xAxisVariable: xAxisVariable,
         yAxisVariable: yAxisVariable,
         overlayVariable: overlayVariable,
+        facetVariable: facetVariable ? [facetVariable] : [],
         showMissingness: showMissingness ? 'TRUE' : 'FALSE',
         maxAllowedDataPoints: MAXALLOWEDDATAPOINTS,
       },
@@ -750,7 +864,7 @@ function getRequestParams(
 
 // making plotly input data
 function processInputData<T extends number | string>(
-  dataSet: XYPlotDataResponse,
+  responseScatterplotData: ScatterplotResponse['scatterplot']['data'],
   vizType: string,
   // line, marker,
   modeValue: string,
@@ -758,19 +872,11 @@ function processInputData<T extends number | string>(
   independentValueType: string,
   dependentValueType: string,
   showMissingness: boolean,
+  hasMissingData: boolean,
   overlayVariable?: Variable
 ) {
   // set fillAreaValue for densityplot
   const fillAreaValue = vizType === 'densityplot' ? 'toself' : '';
-
-  // distinguish data per Viztype
-  // currently, lineplot returning scatterplot, not lineplot
-  const plotDataSet: ScatterplotResponse['scatterplot'] =
-    vizType === 'lineplot'
-      ? dataSet.scatterplot
-      : vizType === 'densityplot'
-      ? dataSet.scatterplot // TO DO: it will have to be dataSet.densityplot
-      : dataSet.scatterplot;
 
   // set variables for x- and yaxis ranges: no default values are set
   let yMin: number | string | undefined;
@@ -778,7 +884,7 @@ function processInputData<T extends number | string>(
 
   // catch the case when the back end has returned valid but completely empty data
   if (
-    plotDataSet?.data.every(
+    responseScatterplotData.every(
       (data) => data.seriesX?.length === 0 && data.seriesY?.length === 0
     )
   ) {
@@ -791,7 +897,7 @@ function processInputData<T extends number | string>(
 
   // function to return color or gray where needed if showMissingness == true
   const markerColor = (index: number) => {
-    if (showMissingness && index === plotDataSet.data.length - 1) {
+    if (showMissingness && index === responseScatterplotData.length - 1) {
       return gray;
     } else {
       return ColorPaletteDefault[index] ?? 'black'; // TO DO: decide on overflow behaviour
@@ -800,7 +906,7 @@ function processInputData<T extends number | string>(
 
   // using dark color: function to return color or gray where needed if showMissingness == true
   const markerColorDark = (index: number) => {
-    if (showMissingness && index === plotDataSet.data.length - 1) {
+    if (showMissingness && index === responseScatterplotData.length - 1) {
       return gray;
     } else {
       return ColorPaletteDark[index] ?? 'black'; // TO DO: decide on overflow behaviour
@@ -809,18 +915,17 @@ function processInputData<T extends number | string>(
 
   // determine conditions for not adding empty "No data" traces
   // we want to stop at the penultimate series if showMissing is active and there is actually no missing data
-  const noMissingData =
-    dataSet.scatterplot.config.completeCasesAllVars ===
-    dataSet.scatterplot.config.completeCasesAxesVars;
   // 'break' from the for loops (array.some(...)) if this is true
   const breakAfterThisSeries = (index: number) => {
     return (
-      showMissingness && noMissingData && index === plotDataSet.data.length - 2
+      showMissingness &&
+      !hasMissingData &&
+      index === responseScatterplotData.length - 2
     );
   };
 
   const markerSymbol = (index: number) =>
-    showMissingness && index === plotDataSet.data.length - 1
+    showMissingness && index === responseScatterplotData.length - 1
       ? 'x'
       : 'circle-open';
 
@@ -828,7 +933,7 @@ function processInputData<T extends number | string>(
   let dataSetProcess: any = [];
 
   // drawing raw data (markers) at first
-  plotDataSet?.data.some(function (el: any, index: number) {
+  responseScatterplotData.some(function (el: any, index: number) {
     // initialize seriesX/Y
     let seriesX = [];
     let seriesY = [];
@@ -911,7 +1016,7 @@ function processInputData<T extends number | string>(
   });
 
   // after drawing raw data, smoothedMean and bestfitline plots are displayed
-  plotDataSet?.data.some(function (el: any, index: number) {
+  responseScatterplotData.some(function (el: any, index: number) {
     // initialize variables: setting with union type for future, but this causes typescript issue in the current version
     let xIntervalLineValue: T[] = [];
     let yIntervalLineValue: number[] = [];
@@ -1088,10 +1193,8 @@ function processInputData<T extends number | string>(
           ? fixLabelForNumberVariables(
               el.overlayVariableDetails.value,
               overlayVariable
-            ) +
-            ', R² = ' +
-            el.r2
-          : 'Best fit, R² = ' + el.r2,
+            ) + ', Best fit' // TO DO: put R^2 values in a table, esp for faceting
+          : 'Best fit', // ditto - see issue 694
         mode: 'lines', // no data point is displayed: only line
         line: {
           // use darker color for best fit line
@@ -1131,39 +1234,33 @@ function getBounds<T extends number | string>(
   return { yUpperValues, yLowerValues };
 }
 
-function reorderResponse(
-  response: XYPlotDataResponse,
+function reorderResponseScatterplotData(
+  data: XYPlotDataResponse['scatterplot']['data'],
   overlayVocabulary: string[] = [],
   overlayVariable?: Variable
 ) {
   if (overlayVocabulary.length > 0) {
     // for each value in the overlay vocabulary's correct order
     // find the index in the series where series.name equals that value
-    const overlayValues = response.scatterplot.data
+    const overlayValues = data
       .map((series) => series.overlayVariableDetails?.value)
       .filter((value) => value != null)
       .map((value) => fixLabelForNumberVariables(value!, overlayVariable));
     const overlayIndices = overlayVocabulary.map((name) =>
       overlayValues.indexOf(name)
     );
-    return {
-      ...response,
-      scatterplot: {
-        ...response.scatterplot,
-        data: overlayIndices.map(
-          (i, j) =>
-            response.scatterplot.data[i] ?? {
-              // if there is no series, insert a dummy series
-              overlayVariableDetails: {
-                value: overlayVocabulary[j],
-              },
-              seriesX: [],
-              seriesY: [],
-            }
-        ),
-      },
-    };
+    return overlayIndices.map(
+      (i, j) =>
+        data[i] ?? {
+          // if there is no series, insert a dummy series
+          overlayVariableDetails: {
+            value: overlayVocabulary[j],
+          },
+          seriesX: [],
+          seriesY: [],
+        }
+    );
   } else {
-    return response;
+    return data;
   }
 }
