@@ -701,6 +701,7 @@ function ScatterplotWithControls({
           data={data}
           props={scatterplotProps}
           component={XYPlot}
+          facetedPlotRef={plotRef}
           checkedLegendItems={checkedLegendItems}
         />
       ) : (
