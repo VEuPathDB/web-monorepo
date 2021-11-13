@@ -91,6 +91,12 @@ import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import FacetedPlot from '@veupathdb/components/lib/plots/FacetedPlot';
 
 const MAXALLOWEDDATAPOINTS = 100000;
+const SMOOTHEDMEANTEXT = 'Smoothed mean';
+const SMOOTHEDMEANSUFFIX = `, ${SMOOTHEDMEANTEXT}`;
+const CI95TEXT = '95% Confidence interval';
+const CI95SUFFIX = `, ${CI95TEXT}`;
+const BESTFITTEXT = 'Best fit';
+const BESTFITSUFFIX = `, ${BESTFITTEXT}`;
 
 const plotContainerStyles = {
   width: 750,
@@ -410,9 +416,9 @@ function ScatterplotViz(props: VisualizationProps) {
     const legendLabel = legendData
       ?.filter(
         (data) =>
-          !data.name?.includes(', Smoothed mean') &&
-          !data.name?.includes(', 95% Confidence interval') &&
-          !data.name?.includes(', Best fit') &&
+          !data.name?.includes(SMOOTHEDMEANSUFFIX) &&
+          !data.name?.includes(CI95SUFFIX) &&
+          !data.name?.includes(BESTFITSUFFIX) &&
           !data.name?.includes('No data')
       )
       .map((data) => data.name);
@@ -1170,8 +1176,8 @@ function processInputData<T extends number | string>(
           ? fixLabelForNumberVariables(
               el.overlayVariableDetails.value,
               overlayVariable
-            ) + ', Smoothed mean'
-          : 'Smoothed mean',
+            ) + SMOOTHEDMEANSUFFIX
+          : SMOOTHEDMEANTEXT,
         mode: 'lines', // no data point is displayed: only line
         line: {
           // use darker color for smoothed mean line
@@ -1216,8 +1222,8 @@ function processInputData<T extends number | string>(
           ? fixLabelForNumberVariables(
               el.overlayVariableDetails.value,
               overlayVariable
-            ) + ', 95% Confidence interval'
-          : '95% Confidence interval',
+            ) + CI95SUFFIX
+          : CI95TEXT,
         // this is better to be tozeroy, not tozerox
         fill: 'tozeroy',
         opacity: 0.2,
@@ -1271,8 +1277,8 @@ function processInputData<T extends number | string>(
           ? fixLabelForNumberVariables(
               el.overlayVariableDetails.value,
               overlayVariable
-            ) + ', Best fit' // TO DO: put R^2 values in a table, esp for faceting
-          : 'Best fit', // ditto - see issue 694
+            ) + BESTFITSUFFIX // TO DO: put R^2 values in a table, esp for faceting
+          : BESTFITTEXT, // ditto - see issue 694
         mode: 'lines', // no data point is displayed: only line
         line: {
           // use darker color for best fit line
