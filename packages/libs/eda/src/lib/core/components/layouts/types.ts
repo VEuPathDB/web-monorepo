@@ -9,3 +9,5 @@ export interface LayoutProps {
   tableGroupNode: ReactNode;
   tableGroupStyles?: CSSProperties;
 }
+
+export type StyleProps<P> = Pick<P, keyof P & `${string}Styles`>;

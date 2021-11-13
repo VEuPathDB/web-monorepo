@@ -1,6 +1,8 @@
 import { CSSProperties } from 'react';
 
-import { LayoutProps as Props } from './types';
+import { LayoutProps } from './types';
+
+export type Props = LayoutProps;
 
 const defaultContainerStyles: CSSProperties = {
   display: 'flex',

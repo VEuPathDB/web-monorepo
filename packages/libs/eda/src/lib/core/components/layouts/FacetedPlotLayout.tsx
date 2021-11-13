@@ -2,7 +2,7 @@ import { CSSProperties } from 'react';
 
 import { LayoutProps } from './types';
 
-interface Props extends LayoutProps {
+export interface Props extends LayoutProps {
   infoRowStyles?: CSSProperties;
 }
 
