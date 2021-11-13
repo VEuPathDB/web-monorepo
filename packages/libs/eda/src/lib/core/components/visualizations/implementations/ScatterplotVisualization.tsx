@@ -5,7 +5,7 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 // need to set for Scatterplot
 
@@ -91,6 +91,12 @@ import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import FacetedPlot from '@veupathdb/components/lib/plots/FacetedPlot';
 
 const MAXALLOWEDDATAPOINTS = 100000;
+const SMOOTHEDMEANTEXT = 'Smoothed mean';
+const SMOOTHEDMEANSUFFIX = `, ${SMOOTHEDMEANTEXT}`;
+const CI95TEXT = '95% Confidence interval';
+const CI95SUFFIX = `, ${CI95TEXT}`;
+const BESTFITTEXT = 'Best fit';
+const BESTFITSUFFIX = `, ${BESTFITTEXT}`;
 
 const plotContainerStyles = {
   width: 750,
@@ -405,18 +411,68 @@ function ScatterplotViz(props: VisualizationProps) {
       ? allData?.series
       : allData.facets.find(({ data }) => data.series.length > 0)?.data.series;
 
+    // logic for setting markerColor correctly
+    // find raw legend label (excluding No data as well)
+    const legendLabel = legendData
+      ?.filter(
+        (data) =>
+          !data.name?.includes(SMOOTHEDMEANSUFFIX) &&
+          !data.name?.includes(CI95SUFFIX) &&
+          !data.name?.includes(BESTFITSUFFIX) &&
+          !data.name?.includes('No data')
+      )
+      .map((data) => data.name);
+
+    // construct a kind of a lookup table
+    const legendLabelColor = legendLabel?.map((label, index) => {
+      return {
+        label: label,
+        color: ColorPaletteDefault[index],
+      };
+    });
+
     return legendData != null
-      ? legendData.map((data: XYPlotDataSeries, index: number) => {
+      ? // the name 'dataItem' is used inside the map() to distinguish from the global 'data' variable
+        legendData.map((dataItem: XYPlotDataSeries, index: number) => {
           return {
-            label: data.name != null ? data.name : '',
-            // TO-do: need a way to appropriately make marker info
-            // scatter plot has defined mode - still need to distinguish CI, No data, etc.
-            marker: data.mode != null ? data.mode : '',
-            // set marker colors
-            markerColor: 'markerColor',
+            label: dataItem.name ?? '',
+            // maing marker info appropriately
+            marker:
+              dataItem.mode != null
+                ? dataItem.name === 'No data'
+                  ? 'x'
+                  : dataItem.mode === 'markers'
+                  ? 'circle'
+                  : dataItem.mode === 'lines'
+                  ? 'line'
+                  : ''
+                : dataItem?.fill === 'tozeroy'
+                ? 'fainted'
+                : '',
+            // set marker colors appropriately
+            markerColor:
+              dataItem.name === 'No data' || dataItem.name?.includes('No data,')
+                ? '#A6A6A6'
+                : dataItem.name != null
+                ? legendLabelColor
+                    ?.map((legend) => {
+                      if (
+                        dataItem.name != null &&
+                        legend.label != null &&
+                        dataItem.name.includes(legend.label)
+                      )
+                        return legend.color;
+                      else return '';
+                    })
+                    .filter((n) => n !== '')
+                    .toString()
+                : '#ffffff', // just set not to be empty
+
             // simplifying the check with the presence of data: be carefule of y:[null] case in Scatter plot
             hasData: !isFaceted(allData)
-              ? data.y != null && data.y.length > 0 && data.y[0] !== null
+              ? dataItem.y != null &&
+                dataItem.y.length > 0 &&
+                dataItem.y[0] !== null
                 ? true
                 : false
               : allData.facets
@@ -1120,8 +1176,8 @@ function processInputData<T extends number | string>(
           ? fixLabelForNumberVariables(
               el.overlayVariableDetails.value,
               overlayVariable
-            ) + ', Smoothed mean'
-          : 'Smoothed mean',
+            ) + SMOOTHEDMEANSUFFIX
+          : SMOOTHEDMEANTEXT,
         mode: 'lines', // no data point is displayed: only line
         line: {
           // use darker color for smoothed mean line
@@ -1166,8 +1222,8 @@ function processInputData<T extends number | string>(
           ? fixLabelForNumberVariables(
               el.overlayVariableDetails.value,
               overlayVariable
-            ) + ', 95% Confidence interval'
-          : '95% Confidence interval',
+            ) + CI95SUFFIX
+          : CI95TEXT,
         // this is better to be tozeroy, not tozerox
         fill: 'tozeroy',
         opacity: 0.2,
@@ -1221,8 +1277,8 @@ function processInputData<T extends number | string>(
           ? fixLabelForNumberVariables(
               el.overlayVariableDetails.value,
               overlayVariable
-            ) + ', Best fit' // TO DO: put R^2 values in a table, esp for faceting
-          : 'Best fit', // ditto - see issue 694
+            ) + BESTFITSUFFIX // TO DO: put R^2 values in a table, esp for faceting
+          : BESTFITTEXT, // ditto - see issue 694
         mode: 'lines', // no data point is displayed: only line
         line: {
           // use darker color for best fit line
