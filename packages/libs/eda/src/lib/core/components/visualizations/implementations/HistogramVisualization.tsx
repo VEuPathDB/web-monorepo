@@ -83,9 +83,29 @@ type HistogramDataWithCoverageStatistics = (
 ) &
   CoverageStatistics;
 
-const plotDimensions = {
+const plotContainerStyles = {
   width: 750,
   height: 400,
+  marginLeft: '0.75rem',
+  border: '1px solid #dedede',
+  boxShadow: '1px 1px 4px #00000066',
+};
+
+const facetedPlotContainerStyles = {
+  height: plotContainerStyles.height / 1.5,
+  width: plotContainerStyles.width / 2,
+  marginBottom: '.5em',
+};
+
+const spacingOptions = {
+  marginTop: 50,
+};
+
+const facetedSpacingOption = {
+  marginTop: 50,
+  marginBottom: 10,
+  marginLeft: 10,
+  marginRight: 10,
 };
 
 export const histogramVisualization: VisualizationType = {
@@ -479,10 +499,14 @@ function HistogramViz(props: VisualizationProps) {
         valueSpec={vizConfig.valueSpec}
         onValueSpecChange={onValueSpecChange}
         updateThumbnail={updateThumbnail}
-        containerStyles={plotDimensions}
-        spacingOptions={{
-          marginTop: 50,
-        }}
+        containerStyles={
+          isFaceted(data.value)
+            ? facetedPlotContainerStyles
+            : plotContainerStyles
+        }
+        spacingOptions={
+          isFaceted(data.value) ? facetedSpacingOption : spacingOptions
+        }
         orientation={'vertical'}
         barLayout={'stack'}
         displayLegend={
@@ -581,10 +605,11 @@ function HistogramPlotWithControls({
       ? completeCasesAllVars
       : completeCasesAxesVars;
 
-  const plotRef = useUpdateThumbnailEffect(updateThumbnail, plotDimensions, [
-    data,
-    checkedLegendItems,
-  ]);
+  const plotRef = useUpdateThumbnailEffect(
+    updateThumbnail,
+    plotContainerStyles,
+    [data, checkedLegendItems]
+  );
 
   const widgetHeight = '4em';
 
@@ -601,6 +626,7 @@ function HistogramPlotWithControls({
           display: 'flex',
           flexWrap: 'wrap',
           alignItems: 'flex-start',
+          width: '100%',
         }}
       >
         {isFaceted(data) ? (

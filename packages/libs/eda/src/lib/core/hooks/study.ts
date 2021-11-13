@@ -112,6 +112,12 @@ export function useWdkStudyRecords(
         {
           attributes,
           tables,
+          sorting: [
+            {
+              attributeName: 'display_name',
+              direction: 'ASC',
+            },
+          ],
         }
       ),
     [attributes, tables]

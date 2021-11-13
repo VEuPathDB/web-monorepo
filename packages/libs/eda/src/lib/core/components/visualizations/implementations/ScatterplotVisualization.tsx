@@ -92,9 +92,26 @@ import FacetedPlot from '@veupathdb/components/lib/plots/FacetedPlot';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 
-const plotDimensions = {
+const plotContainerStyles = {
   width: 750,
   height: 450,
+  marginLeft: '0.75rem',
+  border: '1px solid #dedede',
+  boxShadow: '1px 1px 4px #00000066',
+};
+
+const facetedPlotContainerStyles = {
+  height: plotContainerStyles.height / 1.75,
+  width: plotContainerStyles.width / 2,
+};
+
+const plotSpacingOptions = {};
+
+const facetedPlotSpacingOptions = {
+  marginTop: 30,
+  marginBottom: 40,
+  marginLeft: 50,
+  marginRight: 20,
 };
 
 // define XYPlotDataWithCoverage
@@ -554,7 +571,16 @@ function ScatterplotViz(props: VisualizationProps) {
           // data.value
           data={data.value?.dataSetProcess}
           updateThumbnail={updateThumbnail}
-          containerStyles={plotDimensions}
+          containerStyles={
+            isFaceted(data.value?.dataSetProcess)
+              ? facetedPlotContainerStyles
+              : plotContainerStyles
+          }
+          spacingOptions={
+            isFaceted(data.value?.dataSetProcess)
+              ? facetedPlotSpacingOptions
+              : plotSpacingOptions
+          }
           // title={'Scatter plot'}
           displayLegend={
             data.value &&
@@ -712,18 +738,20 @@ function ScatterplotWithControls({
   //   };
   // }, []);
 
-  const plotRef = useUpdateThumbnailEffect(updateThumbnail, plotDimensions, [
-    data,
-    checkedLegendItems,
-  ]);
+  const plotRef = useUpdateThumbnailEffect(
+    updateThumbnail,
+    plotContainerStyles,
+    [data, checkedLegendItems]
+  );
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
       {isFaceted(data) ? (
         <FacetedPlot
           data={data}
           props={scatterplotProps}
           component={XYPlot}
+          facetedPlotRef={plotRef}
           checkedLegendItems={checkedLegendItems}
         />
       ) : (
