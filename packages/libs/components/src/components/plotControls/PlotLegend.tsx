@@ -158,7 +158,7 @@ export default function PlotLegend({
                       <div style={{ width: scatterMarkerSpace }}>
                         <div
                           style={{
-                            height: '0.25em',
+                            height: '0.15em',
                             width: scatterMarkerSpace,
                             borderWidth: '0',
                             // borderStyle: 'solid',
@@ -197,8 +197,8 @@ export default function PlotLegend({
                         <div
                           style={{
                             textAlign: 'center',
-                            fontWeight: 'bold',
-                            fontSize: legendTextSize,
+                            fontWeight: 'normal',
+                            fontSize: `calc(1.5 * ${legendTextSize})`,
                             color:
                               checkedLegendItems?.includes(item.label) &&
                               item.hasData
@@ -206,7 +206,7 @@ export default function PlotLegend({
                                 : '#999',
                           }}
                         >
-                          x
+                          &times;
                         </div>
                       </div>
                     )}
