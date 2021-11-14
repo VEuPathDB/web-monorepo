@@ -103,11 +103,11 @@ export function ContingencyTable(props: ContingencyTableProps) {
                   key={`${data.dependentLabels[i]}-${data.independentLabels[j]}`}
                   className="contingency-table_value"
                 >
-                  {value}
+                  {value.toLocaleString()}
                 </td>
               ))}
               <td className="contingency-table_totals-column-value">
-                {rowSums[i]}
+                {rowSums[i].toLocaleString()}
               </td>
             </tr>
           ))}
@@ -118,10 +118,12 @@ export function ContingencyTable(props: ContingencyTableProps) {
                 key={data.independentLabels[i]}
                 className="contingency-table_totals-row-value"
               >
-                {_.sum(col)}
+                {_.sum(col).toLocaleString()}
               </td>
             ))}
-            <td className="contingency-table_grand-total">{_.sum(rowSums)}</td>
+            <td className="contingency-table_grand-total">
+              {_.sum(rowSums).toLocaleString()}
+            </td>
           </tr>
         </tbody>
       </table>
