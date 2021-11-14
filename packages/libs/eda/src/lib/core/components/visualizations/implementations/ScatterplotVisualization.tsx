@@ -453,21 +453,23 @@ function ScatterplotViz(props: VisualizationProps) {
             markerColor:
               dataItem.name === 'No data' || dataItem.name?.includes('No data,')
                 ? '#A6A6A6'
-                : dataItem.name != null
-                ? legendLabelColor
-                    ?.map((legend) => {
-                      if (
-                        dataItem.name != null &&
-                        legend.label != null &&
-                        dataItem.name.includes(legend.label)
-                      )
-                        return legend.color;
-                      else return '';
-                    })
-                    .filter((n) => n !== '')
-                    .toString()
-                : '#ffffff', // just set not to be empty
-
+                : // if there is no overlay variable, then marker colors should be the same for Data, Smoothed mean, 95% CI, and Best fit
+                vizConfig.overlayVariable != null
+                ? dataItem.name != null
+                  ? legendLabelColor
+                      ?.map((legend) => {
+                        if (
+                          dataItem.name != null &&
+                          legend.label != null &&
+                          dataItem.name.includes(legend.label)
+                        )
+                          return legend.color;
+                        else return '';
+                      })
+                      .filter((n) => n !== '')
+                      .toString()
+                  : '#ffffff' // just set not to be empty
+                : ColorPaletteDefault[0], // set first color for no overlay variable selected
             // simplifying the check with the presence of data: be carefule of y:[null] case in Scatter plot
             hasData: !isFaceted(allData)
               ? dataItem.y != null &&
