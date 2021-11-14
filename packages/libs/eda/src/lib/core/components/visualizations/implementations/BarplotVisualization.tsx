@@ -340,7 +340,8 @@ function BarplotViz(props: VisualizationProps) {
   const legendItems: LegendItemsProps[] = useMemo(() => {
     const legendData = !isFaceted(data.value)
       ? data.value?.series
-      : data.value?.facets[0].data.series;
+      : data.value?.facets.find(({ data }) => data.series.length > 0)?.data
+          .series;
 
     return legendData != null
       ? legendData.map((dataItem: BarplotDataSeries, index: number) => {
