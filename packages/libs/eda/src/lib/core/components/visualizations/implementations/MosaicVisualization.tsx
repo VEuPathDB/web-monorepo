@@ -46,9 +46,26 @@ import PluginError from '../PluginError';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import FacetedPlot from '@veupathdb/components/lib/plots/FacetedPlot';
 
-const plotDimensions = {
+const plotContainerStyles = {
   width: 750,
   height: 450,
+  marginLeft: '0.75rem',
+  border: '1px solid #dedede',
+  boxShadow: '1px 1px 4px #00000066',
+};
+
+const facetedPlotContainerStyles = {
+  width: plotContainerStyles.width / 1.45,
+  height: plotContainerStyles.height / 1.25,
+};
+
+const plotSpacingOptions = {};
+
+const facetedPlotSpacingOptions = {
+  marginRight: 15,
+  marginLeft: 15,
+  marginBotton: 10,
+  marginTop: 50,
 };
 
 type ContTableData = MosaicData &
@@ -390,7 +407,16 @@ function MosaicViz(props: Props) {
                 <MosaicPlotWithControls
                   updateThumbnail={updateThumbnail}
                   data={data.value}
-                  containerStyles={plotDimensions}
+                  containerStyles={
+                    isFaceted(data.value)
+                      ? facetedPlotContainerStyles
+                      : plotContainerStyles
+                  }
+                  spacingOptions={
+                    isFaceted(data.value)
+                      ? facetedPlotSpacingOptions
+                      : plotSpacingOptions
+                  }
                   independentAxisLabel={xAxisLabel ?? 'X-axis'}
                   dependentAxisLabel={yAxisLabel ?? 'Y-axis'}
                   displayLegend={true}
@@ -404,7 +430,7 @@ function MosaicViz(props: Props) {
               content: (
                 <ContingencyTable
                   data={data.pending ? undefined : data.value}
-                  containerStyles={{ width: plotDimensions.width }}
+                  containerStyles={{ width: plotContainerStyles.width }}
                   independentVariable={xAxisLabel ?? 'X-axis'}
                   dependentVariable={yAxisLabel ?? 'Y-axis'}
                   facetVariable={
@@ -525,12 +551,14 @@ function MosaicPlotWithControls({
 }: MosaicPlotWithControlsProps) {
   const displayLibraryControls = false;
 
-  const plotRef = useUpdateThumbnailEffect(updateThumbnail, plotDimensions, [
-    data,
-  ]);
+  const plotRef = useUpdateThumbnailEffect(
+    updateThumbnail,
+    plotContainerStyles,
+    [data]
+  );
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
       {isFaceted(data) ? (
         <>
           <div

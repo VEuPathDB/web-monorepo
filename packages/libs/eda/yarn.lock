@@ -1174,10 +1174,17 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.1.2", "@babel/runtime@^7.10.2", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.13", "@babel/runtime@^7.12.5", "@babel/runtime@^7.13.10", "@babel/runtime@^7.13.8", "@babel/runtime@^7.14.0", "@babel/runtime@^7.15.4", "@babel/runtime@^7.16.0", "@babel/runtime@^7.3.1", "@babel/runtime@^7.4.4", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.3", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.3", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
+"@babel/runtime@^7.1.2", "@babel/runtime@^7.10.2", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.13", "@babel/runtime@^7.12.5", "@babel/runtime@^7.13.10", "@babel/runtime@^7.15.4", "@babel/runtime@^7.16.0", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.4", "@babel/runtime@^7.9.2":
   version "7.16.0"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.16.0.tgz#e27b977f2e2088ba24748bf99b5e1dece64e4f0b"
   integrity sha512-Nht8L0O8YCktmsDV6FqFue7vQLRx3Hb0B37lS5y0jDRqRxlBG4wIJHnf9/bgSE2UyipKFA01YtS+npRdTWBUyw==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
+"@babel/runtime@^7.12.1", "@babel/runtime@^7.13.8", "@babel/runtime@^7.14.0", "@babel/runtime@^7.3.1", "@babel/runtime@^7.4.4", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.3", "@babel/runtime@^7.8.3", "@babel/runtime@^7.8.7":
+  version "7.16.3"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.16.3.tgz#b86f0db02a04187a3c17caa77de69840165d42d5"
+  integrity sha512-WBwekcqacdY2e9AF/Q7WLFUWmdJGJTkbjqTjoMDgXkVZ3ZRUvOPsLb5KdwISoQVsbP+DQzVZW4Zhci0DvpbNTQ==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -3335,6 +3342,44 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.0.0.tgz#90ca79640ffbb195a87d4d65cd4b2f92342f8b76"
   integrity sha512-qfKu1z9gaaHdMgRGaZBiayuIh92ishsf14lR+Rj61CJF131XWq3+5e2VyLyOdKsYJ1EreAxgyC/0upIBEzwQJw==
 
+"@veupathdb/components@^0.10.0":
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.10.0.tgz#5d3cf77ab5466e22c5d0053904188b2466c3ebbb"
+  integrity sha512-cZjBWmZbiVhnO04WOKT2olYoHnruJYdSzcNGMEG4lPP93ygezfVjLH0UgVg+M+yhHIu/VANxPfrtd7NSVRbAEw==
+  dependencies:
+    "@material-ui/core" "^4.11.2"
+    "@material-ui/icons" "^4.11.2"
+    "@material-ui/lab" "^4.0.0-alpha.57"
+    "@types/d3" "^7.1.0"
+    "@types/date-arithmetic" "^4.1.1"
+    "@visx/gradient" "^1.0.0"
+    "@visx/group" "^1.0.0"
+    "@visx/hierarchy" "^1.0.0"
+    "@visx/shape" "^1.4.0"
+    "@visx/text" "^1.3.0"
+    "@visx/tooltip" "^1.3.0"
+    "@visx/visx" "^1.1.0"
+    bootstrap "^4.5.2"
+    color-math "^1.1.3"
+    d3 "^7.1.1"
+    date-arithmetic "^4.1.0"
+    debounce-promise "^3.1.2"
+    latlon-geohash "^2.0.0"
+    leaflet "^1.6.0"
+    leaflet-drift-marker "^1.0.3"
+    luxon "^1.25.0"
+    plotly.js "^2.6.0"
+    re-resizable "^6.9.0"
+    react "^16.13.1"
+    react-bootstrap "^1.3.0"
+    react-cool-dimensions "^1.1.11"
+    react-dom "^16.13.1"
+    react-html-parser "^2.0.2"
+    react-leaflet "^2.7.0"
+    react-plotly.js "^2.4.0"
+    react-transition-group "^4.4.1"
+    shape2geohash "^1.2.5"
+
 "@veupathdb/components@^0.7.9":
   version "0.7.24"
   resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.7.24.tgz#0492802704dc172336a6e9f1bd622ff0c9ff3313"
@@ -3388,44 +3433,6 @@
     "@visx/tooltip" "^1.3.0"
     "@visx/visx" "^1.1.0"
     bootstrap "^4.5.2"
-    d3 "^7.1.1"
-    date-arithmetic "^4.1.0"
-    debounce-promise "^3.1.2"
-    latlon-geohash "^2.0.0"
-    leaflet "^1.6.0"
-    leaflet-drift-marker "^1.0.3"
-    luxon "^1.25.0"
-    plotly.js "^2.6.0"
-    re-resizable "^6.9.0"
-    react "^16.13.1"
-    react-bootstrap "^1.3.0"
-    react-cool-dimensions "^1.1.11"
-    react-dom "^16.13.1"
-    react-html-parser "^2.0.2"
-    react-leaflet "^2.7.0"
-    react-plotly.js "^2.4.0"
-    react-transition-group "^4.4.1"
-    shape2geohash "^1.2.5"
-
-"@veupathdb/components@^0.9.4":
-  version "0.9.4"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.9.4.tgz#0c13b7c814af10d1d9ebb58ad6eb9f54398ed66b"
-  integrity sha512-HIiEEZDZ5xSxaJB65tu9sM7iuFdFaNgE1R8hqx3GijebMnm+GOgaGW3Rs877TrV9eB4dLFFsNhhs1bVGQ19YvQ==
-  dependencies:
-    "@material-ui/core" "^4.11.2"
-    "@material-ui/icons" "^4.11.2"
-    "@material-ui/lab" "^4.0.0-alpha.57"
-    "@types/d3" "^7.1.0"
-    "@types/date-arithmetic" "^4.1.1"
-    "@visx/gradient" "^1.0.0"
-    "@visx/group" "^1.0.0"
-    "@visx/hierarchy" "^1.0.0"
-    "@visx/shape" "^1.4.0"
-    "@visx/text" "^1.3.0"
-    "@visx/tooltip" "^1.3.0"
-    "@visx/visx" "^1.1.0"
-    bootstrap "^4.5.2"
-    color-math "^1.1.3"
     d3 "^7.1.1"
     date-arithmetic "^4.1.0"
     debounce-promise "^3.1.2"
@@ -14191,9 +14198,9 @@ pretty-format@^27.0.0, pretty-format@^27.3.1:
     react-is "^17.0.1"
 
 probe-image-size@^7.2.1:
-  version "7.2.1"
-  resolved "https://registry.yarnpkg.com/probe-image-size/-/probe-image-size-7.2.1.tgz#df0c924e67e247bc94f8fcb0fad7f0081061fc44"
-  integrity sha512-d+6L3NvQBCNt4peRDoEfA7r9bPm6/qy18FnLKwg4NWBC5JrJm0pMLRg1kF4XNsPe1bUdt3WIMonPJzQWN2HXjQ==
+  version "7.2.2"
+  resolved "https://registry.yarnpkg.com/probe-image-size/-/probe-image-size-7.2.2.tgz#e5851b9be7864f21e3bac5e6e4fac9da9055b412"
+  integrity sha512-QUm+w1S9WTsT5GZB830u0BHExrUmF0J4fyRm5kbLUMEP3fl9UVYXc3xOBVqZNnH9tnvVEJO8vDk3PMtsLqjxug==
   dependencies:
     lodash.merge "^4.6.2"
     needle "^2.5.2"
