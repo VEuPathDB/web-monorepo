@@ -1282,6 +1282,44 @@
   resolved "https://registry.yarnpkg.com/@types/warning/-/warning-3.0.0.tgz#0d2501268ad8f9962b740d387c4654f5f8e23e52"
   integrity sha1-DSUBJorY+ZYrdA04fEZU9fjiPlI=
 
+"@veupathdb/components@^0.10.0":
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.10.0.tgz#5d3cf77ab5466e22c5d0053904188b2466c3ebbb"
+  integrity sha512-cZjBWmZbiVhnO04WOKT2olYoHnruJYdSzcNGMEG4lPP93ygezfVjLH0UgVg+M+yhHIu/VANxPfrtd7NSVRbAEw==
+  dependencies:
+    "@material-ui/core" "^4.11.2"
+    "@material-ui/icons" "^4.11.2"
+    "@material-ui/lab" "^4.0.0-alpha.57"
+    "@types/d3" "^7.1.0"
+    "@types/date-arithmetic" "^4.1.1"
+    "@visx/gradient" "^1.0.0"
+    "@visx/group" "^1.0.0"
+    "@visx/hierarchy" "^1.0.0"
+    "@visx/shape" "^1.4.0"
+    "@visx/text" "^1.3.0"
+    "@visx/tooltip" "^1.3.0"
+    "@visx/visx" "^1.1.0"
+    bootstrap "^4.5.2"
+    color-math "^1.1.3"
+    d3 "^7.1.1"
+    date-arithmetic "^4.1.0"
+    debounce-promise "^3.1.2"
+    latlon-geohash "^2.0.0"
+    leaflet "^1.6.0"
+    leaflet-drift-marker "^1.0.3"
+    luxon "^1.25.0"
+    plotly.js "^2.6.0"
+    re-resizable "^6.9.0"
+    react "^16.13.1"
+    react-bootstrap "^1.3.0"
+    react-cool-dimensions "^1.1.11"
+    react-dom "^16.13.1"
+    react-html-parser "^2.0.2"
+    react-leaflet "^2.7.0"
+    react-plotly.js "^2.4.0"
+    react-transition-group "^4.4.1"
+    shape2geohash "^1.2.5"
+
 "@veupathdb/components@^0.7.9":
   version "0.7.24"
   resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.7.24.tgz#0492802704dc172336a6e9f1bd622ff0c9ff3313"
@@ -1317,10 +1355,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/components@^0.9.0", "@veupathdb/components@^0.9.4":
-  version "0.9.4"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.9.4.tgz#0c13b7c814af10d1d9ebb58ad6eb9f54398ed66b"
-  integrity sha512-HIiEEZDZ5xSxaJB65tu9sM7iuFdFaNgE1R8hqx3GijebMnm+GOgaGW3Rs877TrV9eB4dLFFsNhhs1bVGQ19YvQ==
+"@veupathdb/components@^0.9.0":
+  version "0.9.5"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.9.5.tgz#8529ae2113bd78831b3f69562360f4c02551a30c"
+  integrity sha512-0lk8KCOMfU47voV38X/gcvdWRWNMUc80h83mgB4HonGJfINPFDDYRKxb6kqUff+amf0JpZuHkSNsXoHrTm0/4Q==
   dependencies:
     "@material-ui/core" "^4.11.2"
     "@material-ui/icons" "^4.11.2"
@@ -1369,9 +1407,9 @@
     react-table "^7.7.0"
 
 "@veupathdb/eda@^1.0.10":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.1.0.tgz#3ebe1302c89310d594b7f57e564bd28b73d5e763"
-  integrity sha512-BRvOVWQCIg09GJKGgk02m2qrJdkI8wvHLMOwdRPWvZv7niQk3MWqJyCMo7HdbUmOScpZQ2w7uu80IGh79wRdbQ==
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.1.4.tgz#5c03f7c5f9996c9a5b5d34c67c2d05bcb11381f6"
+  integrity sha512-uoG4RcOfMfZ6on3UK5Wa4AGOUgZ5K2FgriS+VPi3ixyyD4gUap9M46LJ2D5ZFXmvFTt0GVzyqzfXCH83+MZf2Q==
   dependencies:
     "@emotion/react" "^11.4.1"
     "@emotion/styled" "^11.3.0"
@@ -1380,7 +1418,7 @@
     "@material-ui/lab" "^4.0.0-alpha.58"
     "@mui/styles" "^5.0.1"
     "@types/debounce-promise" "^3.1.3"
-    "@veupathdb/components" "^0.9.4"
+    "@veupathdb/components" "^0.10.0"
     "@veupathdb/core-components" "^0.2.45"
     "@veupathdb/http-utils" "^1.0.1"
     "@veupathdb/study-data-access" "^0.0.3"
@@ -5865,9 +5903,9 @@ plotly.js@^1.54.1:
     world-calendars "^1.0.3"
 
 plotly.js@^2.6.0:
-  version "2.6.2"
-  resolved "https://registry.yarnpkg.com/plotly.js/-/plotly.js-2.6.2.tgz#79827a4233d445475072e800938d094f226bacfc"
-  integrity sha512-KzOwyNNdRnJVvZPnBvA2VwgcO9202FexFpiivuWaAFvmQiX+oC3yKrQHyXaPeNqZn4lAq3GVgYYPQdx3o5uEuw==
+  version "2.6.3"
+  resolved "https://registry.yarnpkg.com/plotly.js/-/plotly.js-2.6.3.tgz#a86b797e4b1299d2c6935d29e562aa2b838d5ec9"
+  integrity sha512-MSdevryj5VvSZvr+slTnJcZgOmvMPZEUe8rFY+3ygxbVUFqmcOvT0TurUx4g07tfAVZ+UhXIaskHnAZNmUcNTg==
   dependencies:
     "@plotly/d3" "3.8.0"
     "@plotly/d3-sankey" "0.7.2"
