@@ -827,7 +827,7 @@ export function scatterplotResponseToData(
           data.facetVariableDetails[0].value,
           facetVariable
         )
-      : undefined
+      : '__NO_FACET__'
   );
 
   const processedData = mapValues(facetGroupedResponseData, (group) => {
@@ -858,7 +858,7 @@ export function scatterplotResponseToData(
   const yMax = max(map(processedData, ({ yMax }) => yMax));
 
   const dataSetProcess =
-    size(processedData) === 1 && head(keys(processedData)) == null
+    size(processedData) === 1 && head(keys(processedData)) === '__NO_FACET__'
       ? // unfaceted
         head(values(processedData))?.dataSetProcess
       : // faceted
