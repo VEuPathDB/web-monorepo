@@ -701,7 +701,7 @@ export function contTableResponseToData(
 
   return {
     // data
-    ...(_.size(processedData) === 1
+    ...(_.size(processedData) === 1 && _.head(_.keys(processedData)) == null
       ? // unfaceted
         _.head(_.values(processedData))
       : // faceted

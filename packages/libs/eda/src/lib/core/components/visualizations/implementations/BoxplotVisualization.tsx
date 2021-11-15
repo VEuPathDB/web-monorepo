@@ -48,6 +48,7 @@ import {
   values,
   max,
   min,
+  keys,
 } from 'lodash';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
@@ -735,7 +736,7 @@ export function boxplotResponseToData(
 
   return {
     // data
-    ...(size(processedData) === 1
+    ...(size(processedData) === 1 && head(keys(processedData)) == null
       ? // unfaceted
         head(values(processedData))
       : // faceted
