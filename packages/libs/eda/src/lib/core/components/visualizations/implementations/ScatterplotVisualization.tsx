@@ -529,12 +529,7 @@ function ScatterplotViz(props: VisualizationProps) {
           : plotSpacingOptions
       }
       // title={'Scatter plot'}
-      displayLegend={
-        data.value &&
-        !isFaceted(data.value.dataSetProcess) &&
-        (data.value.dataSetProcess.series.length > 1 ||
-          vizConfig.overlayVariable != null)
-      }
+      displayLegend={false}
       independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-axis'}
       dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-axis'}
       // variable's metadata-based independent axis range with margin

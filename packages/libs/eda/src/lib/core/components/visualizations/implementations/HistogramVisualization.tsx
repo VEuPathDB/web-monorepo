@@ -510,11 +510,7 @@ function HistogramViz(props: VisualizationProps) {
         }
         orientation={'vertical'}
         barLayout={'stack'}
-        displayLegend={
-          data.value &&
-          !isFaceted(data.value) &&
-          (data.value.series.length > 1 || vizConfig.overlayVariable != null)
-        }
+        displayLegend={false}
         outputEntity={outputEntity}
         independentAxisVariable={vizConfig.xAxisVariable}
         independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'Main'}

@@ -402,10 +402,7 @@ function BarplotViz(props: VisualizationProps) {
       : plotSpacingOptions,
     orientation: 'vertical',
     barLayout: 'group',
-    displayLegend:
-      data.value &&
-      !isFaceted(data.value) &&
-      (data.value.series.length > 1 || vizConfig.overlayVariable != null),
+    displayLegend: false,
     independentAxisLabel: axisLabelWithUnit(variable) ?? 'Main',
     dependentAxisLabel:
       vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion',

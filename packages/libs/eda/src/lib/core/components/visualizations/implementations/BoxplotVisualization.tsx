@@ -447,9 +447,6 @@ function BoxplotViz(props: VisualizationProps) {
     }
   }, [data, legendItems]);
 
-  console.log('data at boxplot viz =', data);
-  console.log('legendItems = ', legendItems);
-
   const plotNode = (
     <BoxplotWithControls
       // data.value
@@ -462,12 +459,7 @@ function BoxplotViz(props: VisualizationProps) {
         isFaceted(data.value) ? facetedPlotSpacingOptions : plotSpacingOptions
       }
       orientation={'vertical'}
-      // add condition to show legend when overlayVariable is used
-      displayLegend={
-        data.value &&
-        !isFaceted(data.value) &&
-        (data.value.series.length > 1 || vizConfig.overlayVariable != null)
-      }
+      displayLegend={false}
       independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-axis'}
       dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-axis'}
       // show/hide independent/dependent axis tick label
