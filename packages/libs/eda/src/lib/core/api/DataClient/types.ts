@@ -386,7 +386,7 @@ export const MosaicResponse = type({
 export type ContTableResponse = TypeOf<typeof ContTableResponse>;
 export const ContTableResponse = intersection([
   MosaicResponse,
-  type({
+  partial({
     statsTable: array(
       partial({
         pvalue: union([number, string]), // TO DO: should these three stats values all be optional?
@@ -404,7 +404,7 @@ export const ContTableResponse = intersection([
 export type TwoByTwoResponse = TypeOf<typeof TwoByTwoResponse>;
 export const TwoByTwoResponse = intersection([
   MosaicResponse,
-  type({
+  partial({
     statsTable: array(
       partial({
         oddsratio: number, // TO DO: should these stats values really all be optional?
