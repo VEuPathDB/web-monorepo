@@ -52,6 +52,7 @@ import { VariableDescriptor } from '../../../types/variable';
 import { CoverageStatistics } from '../../../types/visualization';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { BirdsEyeView } from '../../BirdsEyeView';
+import { PlotLayout } from '../../layouts/PlotLayout';
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
@@ -619,100 +620,31 @@ function HistogramPlotWithControls({
     ? data.facets.find(({ data }) => data.series.length > 0)?.data
     : data;
 
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
-      <div
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'flex-start',
-          width: '100%',
-        }}
-      >
-        {isFaceted(data) ? (
-          <>
-            <div
-              style={{
-                background: 'yellow',
-                border: '3px dashed green',
-                padding: '10px',
-              }}
-            >
-              Custom legend, birds eye and supplementary tables go here...
-            </div>
+  const plotNode = (
+    <>
+      {isFaceted(data) ? (
+        <FacetedPlot
+          component={Histogram}
+          data={data}
+          props={histogramProps}
+          facetedPlotRef={plotRef}
+          // for custom legend: pass checkedLegendItems to PlotlyPlot
+          checkedLegendItems={checkedLegendItems}
+        />
+      ) : (
+        <Histogram
+          {...histogramProps}
+          ref={plotRef}
+          data={data}
+          opacity={opacity}
+          displayLibraryControls={displayLibraryControls}
+          showValues={false}
+          barLayout={barLayout}
+          // for custom legend: pass checkedLegendItems to PlotlyPlot
+          checkedLegendItems={checkedLegendItems}
+        />
+      )}
 
-            <FacetedPlot
-              component={Histogram}
-              data={data}
-              props={histogramProps}
-              facetedPlotRef={plotRef}
-              // for custom legend: pass checkedLegendItems to PlotlyPlot
-              checkedLegendItems={checkedLegendItems}
-            />
-          </>
-        ) : (
-          <Histogram
-            {...histogramProps}
-            ref={plotRef}
-            data={data}
-            opacity={opacity}
-            displayLibraryControls={displayLibraryControls}
-            showValues={false}
-            barLayout={barLayout}
-            // for custom legend: pass checkedLegendItems to PlotlyPlot
-            checkedLegendItems={checkedLegendItems}
-          />
-        )}
-
-        {/* custom legend */}
-        {legendItems != null && !histogramProps.showSpinner && data != null && (
-          <div style={{ marginLeft: '2em' }}>
-            <PlotLegend
-              legendItems={legendItems}
-              checkedLegendItems={checkedLegendItems}
-              legendTitle={histogramProps.legendTitle}
-              onCheckedLegendItemsChange={onCheckedLegendItemsChange}
-            />
-          </div>
-        )}
-
-        <div className="viz-plot-info">
-          <BirdsEyeView
-            completeCasesAllVars={completeCasesAllVars}
-            completeCasesAxesVars={completeCasesAxesVars}
-            filters={filters}
-            outputEntity={outputEntity}
-            stratificationIsActive={
-              overlayVariable != null || facetVariable != null
-            }
-            enableSpinner={independentAxisVariable != null && !error}
-          />
-          <VariableCoverageTable
-            completeCases={completeCases}
-            filters={filters}
-            outputEntityId={independentAxisVariable?.entityId}
-            variableSpecs={[
-              {
-                role: 'Main',
-                required: true,
-                display: histogramProps.independentAxisLabel,
-                variable: independentAxisVariable,
-              },
-              {
-                role: 'Overlay',
-                display: overlayLabel,
-                variable: overlayVariable,
-              },
-              {
-                role: 'Facet',
-                display: facetLabel,
-                variable: facetVariable,
-              },
-            ]}
-          />
-        </div>
-      </div>
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <LabelledGroup label="Y-axis">
           <Switch
@@ -758,6 +690,67 @@ function HistogramPlotWithControls({
           />
         </LabelledGroup>
       </div>
+    </>
+  );
+
+  const legendNode = legendItems != null &&
+    !histogramProps.showSpinner &&
+    data != null && (
+      <PlotLegend
+        legendItems={legendItems}
+        checkedLegendItems={checkedLegendItems}
+        legendTitle={histogramProps.legendTitle}
+        onCheckedLegendItemsChange={onCheckedLegendItemsChange}
+      />
+    );
+
+  const tableGroupNode = (
+    <>
+      <BirdsEyeView
+        completeCasesAllVars={completeCasesAllVars}
+        completeCasesAxesVars={completeCasesAxesVars}
+        filters={filters}
+        outputEntity={outputEntity}
+        stratificationIsActive={
+          overlayVariable != null || facetVariable != null
+        }
+        enableSpinner={independentAxisVariable != null && !error}
+      />
+      <VariableCoverageTable
+        completeCases={completeCases}
+        filters={filters}
+        outputEntityId={independentAxisVariable?.entityId}
+        variableSpecs={[
+          {
+            role: 'Main',
+            required: true,
+            display: histogramProps.independentAxisLabel,
+            variable: independentAxisVariable,
+          },
+          {
+            role: 'Overlay',
+            display: overlayLabel,
+            variable: overlayVariable,
+          },
+          {
+            role: 'Facet',
+            display: facetLabel,
+            variable: facetVariable,
+          },
+        ]}
+      />
+    </>
+  );
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
+      <PlotLayout
+        isFaceted={isFaceted(data)}
+        plotNode={plotNode}
+        legendNode={legendNode}
+        tableGroupNode={tableGroupNode}
+      />
     </div>
   );
 }
