@@ -1,57 +1,6 @@
 /**
  * Some basic color definitions that can be used to bring consistency to UI components.
  */
-export const LIGHT_RED = '#CC3030';
-export const LIGHT_ORANGE = '#DD6E36';
-export const LIGHT_YELLOW = '#F8CC1B';
-export const LIGHT_GREEN = '#40A853';
-export const LIGHT_BLUE = '#5586BE';
-export const LIGHT_PURPLE = '#6B6AA9';
-
-export const DARK_RED = '#B12929';
-export const DARK_ORANGE = '#C8612E';
-export const DARK_YELLOW = '#E3B70A';
-export const DARK_GREEN = '#338541';
-export const DARK_BLUE = '#3C6A9E';
-export const DARK_PURPLE = '#5B5A9D';
-
-export const LIGHT_COLORS = [
-  LIGHT_RED,
-  LIGHT_ORANGE,
-  LIGHT_YELLOW,
-  LIGHT_GREEN,
-  LIGHT_BLUE,
-  LIGHT_PURPLE,
-];
-export const LIGHT_COLORS_REVERSED = [...LIGHT_COLORS].reverse();
-
-export const DARK_COLORS = [
-  DARK_RED,
-  DARK_ORANGE,
-  DARK_YELLOW,
-  DARK_GREEN,
-  DARK_BLUE,
-  DARK_PURPLE,
-];
-
-export const PAIRED_COLORS = [
-  LIGHT_RED,
-  DARK_RED,
-  LIGHT_ORANGE,
-  DARK_ORANGE,
-  LIGHT_YELLOW,
-  DARK_YELLOW,
-  LIGHT_GREEN,
-  DARK_GREEN,
-  LIGHT_BLUE,
-  DARK_BLUE,
-  LIGHT_PURPLE,
-  DARK_PURPLE,
-];
-
-// export const MEDIUM_GRAY = 'rgb(150, 150, 150)';
-// export const LIGHT_GRAY = 'rgb(240, 240, 240)';
-
 type ColorHue = {
   100: string;
   200: string;
@@ -59,106 +8,228 @@ type ColorHue = {
   400: string;
   500: string;
   600: string;
+  700: string;
 };
 
 export const gray: ColorHue = {
   100: '#E6E6E6',
   200: '#CCCCCC',
-  300: '#A6A6A6',
-  400: '#808080',
-  500: '#595959',
-  600: '#333333',
+  300: '#B3B3B3',
+  400: '#8C8C8C',
+  500: '#666666',
+  600: '#4D4D4D',
+  700: '#333333',
 };
 
-export const faded_blue: ColorHue = {
-  100: '#D9E8F2',
-  200: '#B3D0E6',
-  300: '#79ADD2',
-  400: '#4689B9',
-  500: '#2D6186',
-  600: '#1A374D',
+export const tan: ColorHue = {
+  100: '#E9E6E2',
+  200: '#D4CDC4',
+  300: '#BEB4A7',
+  400: '#9D8F7B',
+  500: '#756957',
+  600: '#584E41',
+  700: '#3B342B',
 };
 
 export const blue: ColorHue = {
-  100: '#CFE2FC',
-  200: '#9EC4FA',
-  300: '#5598F6',
-  400: '#0D6CF2',
-  500: '#004AB3',
-  600: '#082C5E',
+  100: '#CFE9FC',
+  200: '#9ED4FA',
+  300: '#6EBEF7',
+  400: '#259DF4',
+  500: '#0A75C2',
+  600: '#0B578E',
+  700: '#083A5E',
+};
+
+export const mutedBlue: ColorHue = {
+  100: '#D9E8F2',
+  200: '#B3D0E6',
+  300: '#8CB9D9',
+  400: '#5396C6',
+  500: '#336F99',
+  600: '#2A526F',
+  700: '#1C374A',
+};
+
+export const cyan: ColorHue = {
+  100: '#CFF5FC',
+  200: '#9EEBFA',
+  300: '#6EE0F7',
+  400: '#25D1F4',
+  500: '#0AA3C2',
+  600: '#0B788E',
+  700: '#08505E',
+};
+
+export const mutedCyan: ColorHue = {
+  100: '#D9EEF2',
+  200: '#B3DDE5',
+  300: '#8CCCD9',
+  400: '#53B2C6',
+  500: '#338899',
+  600: '#2A636F',
+  700: '#1C424A',
 };
 
 export const teal: ColorHue = {
   100: '#CFFCF6',
-  200: '#9EFAF2',
-  300: '#00E6D2',
-  400: '#00CCBB',
-  500: '#00998C',
-  600: '#085E57',
+  200: '#9EFAEE',
+  300: '#6EF7E5',
+  400: '#25F4D8',
+  500: '#0AC2A9',
+  600: '#0B8E7C',
+  700: '#085E53',
+};
+
+export const mutedTeal: ColorHue = {
+  100: '#D9F2EF',
+  200: '#B3E5DF',
+  300: '#8CD9CF',
+  400: '#53C6B6',
+  500: '#33998B',
+  600: '#2A6F66',
+  700: '#1C4A44',
 };
 
 export const green: ColorHue = {
   100: '#CFFCCF',
   200: '#9EFA9E',
-  300: '#00E600',
-  400: '#00CC00',
-  500: '#009900',
-  600: '#085E08',
+  300: '#6EF76E',
+  400: '#25F425',
+  500: '#0AC20A',
+  600: '#0B8E0B',
+  700: '#085E08',
 };
 
-export const purple: ColorHue = {
-  100: '#EECCFF',
-  200: '#DAA3F5',
-  300: '#C155F6',
-  400: '#9216D0',
-  500: '#7112A1',
-  600: '#420561',
-};
-
-export const magenta: ColorHue = {
-  100: '#FFCCEE',
-  200: '#F5A3DA',
-  300: '#F655C1',
-  400: '#D01692',
-  500: '#A11271',
-  600: '#610542',
-};
-
-export const red: ColorHue = {
-  100: '#FFCCCC',
-  200: '#F5A3A3',
-  300: '#F65555',
-  400: '#E51919',
-  500: '#A11212',
-  600: '#610505',
-};
-
-export const orange: ColorHue = {
-  100: '#FFE6CC',
-  200: '#FFCC99',
-  300: '#FFA64D',
-  400: '#E58019',
-  500: '#B25900',
-  600: '#613305',
+export const mutedGreen: ColorHue = {
+  100: '#D9F2D9',
+  200: '#B3E5B3',
+  300: '#8CD98C',
+  400: '#53C653',
+  500: '#339933',
+  600: '#2A6F2A',
+  700: '#1C4A1C',
 };
 
 export const yellow: ColorHue = {
-  100: '#FFF9B3',
-  200: '#FFF480',
-  300: '#F0DB00',
-  400: '#CCBB00',
-  500: '#998C00',
-  600: '#665E00',
+  100: '#FCF9CF',
+  200: '#FAF29E',
+  300: '#F7EC6E',
+  400: '#F4E225',
+  500: '#C2B30A',
+  600: '#8E830B',
+  700: '#5E5708',
+};
+
+export const mutedYellow: ColorHue = {
+  100: '#F2F0D9',
+  200: '#E5E1B3',
+  300: '#D9D28C',
+  400: '#C6BC53',
+  500: '#999133',
+  600: '#6F692A',
+  700: '#4A461C',
+};
+
+export const orange: ColorHue = {
+  100: '#FCE6CF',
+  200: '#FACC9E',
+  300: '#F7B36E',
+  400: '#F48C25',
+  500: '#C2660A',
+  600: '#8E4C0B',
+  700: '#5E3308',
+};
+
+export const mutedOrange: ColorHue = {
+  100: '#F2E6D9',
+  200: '#E5CCB3',
+  300: '#D9B38C',
+  400: '#C68C53',
+  500: '#996633',
+  600: '#6F4C2A',
+  700: '#4A331C',
+};
+
+export const red: ColorHue = {
+  100: '#FCCFCF',
+  200: '#FA9E9E',
+  300: '#F76E6E',
+  400: '#F42525',
+  500: '#C20A0A',
+  600: '#8E0B0B',
+  700: '#5E0808',
+};
+
+export const mutedRed: ColorHue = {
+  100: '#F2D9D9',
+  200: '#E5B3B3',
+  300: '#D98C8C',
+  400: '#C65353',
+  500: '#993333',
+  600: '#6F2A2A',
+  700: '#4A1C1C',
+};
+
+export const magenta: ColorHue = {
+  100: '#FCCFED',
+  200: '#FA9EDB',
+  300: '#F76EC9',
+  400: '#F425AF',
+  500: '#C20A85',
+  600: '#8E0B62',
+  700: '#5E0841',
+};
+
+export const mutedMagenta: ColorHue = {
+  100: '#F2D9EA',
+  200: '#E5B3D5',
+  300: '#D98CBF',
+  400: '#C6539F',
+  500: '#993377',
+  600: '#6F2A58',
+  700: '#4A1C3B',
+};
+
+export const purple: ColorHue = {
+  100: '#EDCFFC',
+  200: '#DB9EFA',
+  300: '#C96EF7',
+  400: '#AF25F4',
+  500: '#850AC2',
+  600: '#620B8E',
+  700: '#41085E',
+};
+
+export const mutedPurple: ColorHue = {
+  100: '#EAD9F2',
+  200: '#D5B3E5',
+  300: '#BF8CD9',
+  400: '#9F53C6',
+  500: '#773399',
+  600: '#582A6F',
+  700: '#3B1C4A',
 };
 
 export default {
   gray,
-  faded_blue,
+  tan,
   blue,
+  mutedBlue,
+  cyan,
+  mutedCyan,
   teal,
+  mutedTeal,
   green,
-  purple,
-  magenta,
-  red,
+  mutedGreen,
+  yellow,
+  mutedYellow,
   orange,
+  mutedOrange,
+  red,
+  mutedRed,
+  magenta,
+  mutedMagenta,
+  purple,
+  mutedPurple,
 };

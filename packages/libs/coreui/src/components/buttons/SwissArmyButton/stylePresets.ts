@@ -1,5 +1,5 @@
 import { CSSProperties } from 'react';
-import { DARK_BLUE, GRAY, LIGHT_BLUE } from '../../../definitions/colors';
+import { gray, blue, mutedBlue, cyan } from '../../../definitions/colors';
 
 export type SwissArmyButtonStyleSpec = {
   container?: React.CSSProperties;
@@ -38,31 +38,31 @@ export const stylePresets: {
 } = {
   default: {
     default: {
-      color: LIGHT_BLUE,
+      color: mutedBlue[400],
       borderRadius: 5,
     },
-    hover: { color: LIGHT_BLUE, borderRadius: 5 },
+    hover: { color: blue[400], borderRadius: 5 },
     pressed: {
-      color: DARK_BLUE,
+      color: blue[500],
       borderRadius: 5,
     },
   },
   borderless: {
     default: {
       color: 'transparent',
-      textColor: '#006699',
+      textColor: blue[500],
       textTransform: 'none',
       fontWeight: 500,
     },
     hover: {
-      color: '#E6F7FF',
-      textColor: '#006699',
+      color: cyan[100],
+      textColor: blue[500],
       fontWeight: 500,
       textTransform: 'none',
     },
     pressed: {
-      color: '#B3E5FF',
-      textColor: '#006699',
+      color: cyan[200],
+      textColor: blue[500],
       fontWeight: 500,
       textTransform: 'none',
     },
@@ -70,25 +70,25 @@ export const stylePresets: {
   mesa: {
     default: {
       color: 'rgba(0, 0, 0, .05)',
-      textColor: GRAY[500],
+      textColor: gray[500],
       textTransform: 'none',
       fontWeight: 400,
       borderRadius: 5,
       dropShadow: {
-        color: GRAY[300],
+        color: gray[300],
         blurRadius: '0px',
         offsetX: '0px',
         offsetY: '3px',
       },
     },
     hover: {
-      color: GRAY[100],
-      textColor: GRAY[500],
+      color: gray[100],
+      textColor: gray[500],
       fontWeight: 400,
       textTransform: 'none',
       borderRadius: 5,
       dropShadow: {
-        color: GRAY[300],
+        color: gray[300],
         blurRadius: '0px',
         offsetX: '0px',
         offsetY: '3px',
@@ -96,12 +96,12 @@ export const stylePresets: {
     },
     pressed: {
       color: 'rgba(0, 0, 0, .15)',
-      textColor: GRAY[500],
+      textColor: gray[500],
       fontWeight: 400,
       textTransform: 'none',
       borderRadius: 5,
       dropShadow: {
-        color: GRAY[300],
+        color: gray[300],
         blurRadius: '0px',
         offsetX: '0px',
         offsetY: '3px',

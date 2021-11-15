@@ -4,7 +4,7 @@ import { CSSProperties, useEffect, useRef, useState } from 'react';
 import { H6 } from '../headers';
 
 // Definitions
-import { GRAY, LIGHT_GREEN } from '../../definitions/colors';
+import { gray, green } from '../../definitions/colors';
 import typography from '../../styleDefinitions/typography';
 import useDimensions from 'react-cool-dimensions';
 import { CheckCircle, Loading } from '../icons';
@@ -73,7 +73,7 @@ export default function MultilineTextField({
       <div ref={headingRef} css={{ marginBottom: 5 }}>
         <H6 text={heading} additionalStyles={{ margin: 0 }} />
         {instructions && (
-          <label css={[typography.label, { color: GRAY[500] }]}>
+          <label css={[typography.label, { color: gray[500] }]}>
             {instructions}
           </label>
         )}
@@ -84,7 +84,7 @@ export default function MultilineTextField({
           outlineColor: 'rgb(170, 170, 170)',
           outlineWidth: hasFocus ? 2 : 1,
           outlineStyle: 'solid',
-          color: GRAY['500'],
+          color: gray['500'],
           borderRadius: 5,
         }}
       >
@@ -102,9 +102,9 @@ export default function MultilineTextField({
               resize: 'none',
               width,
               height: currentHeight - nonInputHeight,
-              color: GRAY['400'],
+              color: gray['400'],
               ':focus': {
-                color: GRAY['500'],
+                color: gray['500'],
               },
             },
           ]}
@@ -141,7 +141,7 @@ export default function MultilineTextField({
             {status === 'syncing' && (
               <Loading
                 fontSize={20}
-                fill={GRAY[400]}
+                fill={gray[400]}
                 css={{
                   animation: `${spin} 2s ease infinite, ${fadeIn} 1s linear`,
                 }}
@@ -150,7 +150,7 @@ export default function MultilineTextField({
             {status === 'synced' && (
               <CheckCircle
                 fontSize={20}
-                fill={LIGHT_GREEN}
+                fill={green[500]}
                 css={{ animation: `${fadeIn} 1s linear` }}
               />
             )}

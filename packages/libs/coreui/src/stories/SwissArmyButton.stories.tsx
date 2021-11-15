@@ -4,7 +4,6 @@ import SwissArmyButton, {
   SwissArmyButtonProps,
 } from '../components/buttons/SwissArmyButton';
 import { TableDownload, Download } from '../components/icons';
-import { DARK_ORANGE, LIGHT_GREEN } from '../definitions/colors';
 
 export default {
   title: 'Controls/SwissArmyButton',

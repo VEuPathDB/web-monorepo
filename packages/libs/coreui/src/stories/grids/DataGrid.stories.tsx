@@ -3,12 +3,7 @@ import CancelIcon from '@material-ui/icons/Cancel';
 
 import DataGrid, { DataGridProps } from '../../components/grids/DataGrid';
 
-import {
-  GRAY,
-  DARK_ORANGE,
-  DARK_RED,
-  LIGHT_ORANGE,
-} from '../../definitions/colors';
+import { gray, orange, red } from '../../definitions/colors';
 import { COLUMNS, fetchGridData, ROWS } from './data';
 import { useCallback, useState } from 'react';
 
@@ -94,21 +89,21 @@ CustomStyling.args = {
   title: 'Data Grid w/ Custom Styling',
   styleOverrides: {
     headerCells: {
-      borderColor: GRAY[400],
+      borderColor: gray[400],
       borderWidth: 2,
       borderStyle: 'solid',
-      color: GRAY[100],
+      color: gray[100],
       fontSize: 16,
-      backgroundColor: GRAY[400],
+      backgroundColor: gray[400],
     },
     dataCells: {
-      borderColor: DARK_ORANGE,
-      backgroundColor: LIGHT_ORANGE,
+      borderColor: orange[500],
+      backgroundColor: orange[300],
       color: 'whitesmoke',
     },
     icons: {
       activeColor: 'white',
-      inactiveColor: GRAY[300],
+      inactiveColor: gray[300],
     },
   },
 };
@@ -122,7 +117,7 @@ HeaderAddOns.args = {
       <div onClick={() => alert('Do something supa supa evil!!!! MWA HA HA')}>
         <CancelIcon
           css={{
-            color: DARK_RED,
+            color: red[500],
             position: 'relative',
             left: 20,
           }}

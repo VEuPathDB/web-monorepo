@@ -1,14 +1,9 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
-import { HeaderProps } from '../components/headers/Header';
 
-import SwissArmyButton, {
-  SwissArmyButtonProps,
-} from '../components/buttons/SwissArmyButton';
-import { GRAY, DARK_ORANGE, LIGHT_GREEN } from '../definitions/colors';
+import { gray } from '../definitions/colors';
 import FullScreenModal, {
   FullScreenModalProps,
 } from '../components/modals/FullScreenModal';
-import { H1 } from '../components/headers';
 import { secondaryFont } from '../styleDefinitions/typography';
 
 export default {
@@ -26,10 +21,10 @@ Default.args = {
   onOpen: () => console.log('Modal Opened'),
   children: (
     <div>
-      <p css={[{ color: GRAY[400] }, secondaryFont]}>
+      <p css={[{ color: gray[400] }, secondaryFont]}>
         This is an example full-screen modal.
       </p>
-      <p css={[{ color: GRAY[400] }, secondaryFont]}>
+      <p css={[{ color: gray[400] }, secondaryFont]}>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
         tempor incididunt ut labore et dolore magna aliqua. Mi quis hendrerit
         dolor magna eget est. Donec enim diam vulputate ut pharetra sit amet.
@@ -58,7 +53,7 @@ Default.args = {
         id consectetur purus ut faucibus pulvinar elementum integer. Ut
         porttitor leo a diam.
       </p>
-      <p css={[{ color: GRAY[400] }, secondaryFont]}>
+      <p css={[{ color: gray[400] }, secondaryFont]}>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
         tempor incididunt ut labore et dolore magna aliqua. Mi quis hendrerit
         dolor magna eget est. Donec enim diam vulputate ut pharetra sit amet.

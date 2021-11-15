@@ -1,10 +1,4 @@
-import {
-  DARK_BLUE,
-  DARK_PURPLE,
-  DARK_RED,
-  LIGHT_COLORS,
-  LIGHT_ORANGE,
-} from '../../definitions/colors';
+import colors from '../../definitions/colors';
 import typographyStyles from '../../styleDefinitions/typography';
 import H1 from '../../components/headers/H1';
 import H2 from '../../components/headers/H2';
@@ -90,26 +84,26 @@ export default function TypographyDemo() {
         <h5 css={[typographyStyles.h5, { color: LIGHT_COLORS[4] }]}>Header 5</h5>`}
           </pre>
         </div>
-        <h1 css={[typographyStyles.h1, { color: LIGHT_COLORS[0] }]}>
+        <h1 css={[typographyStyles.h1, { color: colors.blue[400] }]}>
           Header 1
         </h1>
-        <h2 css={[typographyStyles.h2, { color: LIGHT_COLORS[1] }]}>
+        <h2 css={[typographyStyles.h2, { color: colors.cyan[400] }]}>
           Header 2
         </h2>
-        <h3 css={[typographyStyles.h3, { color: LIGHT_COLORS[2] }]}>
+        <h3 css={[typographyStyles.h3, { color: colors.teal[400] }]}>
           Header 3
         </h3>
-        <h4 css={[typographyStyles.h4, { color: LIGHT_COLORS[3] }]}>
+        <h4 css={[typographyStyles.h4, { color: colors.yellow[400] }]}>
           Header 4
         </h4>
-        <h5 css={[typographyStyles.h5, { color: LIGHT_COLORS[4] }]}>
+        <h5 css={[typographyStyles.h5, { color: colors.orange[400] }]}>
           Header 5
         </h5>
       </div>
       <div css={{ flex: 1, marginRight: 50, marginBottom: 50, flexBasis: 500 }}>
         <div
           css={{
-            background: `linear-gradient(45deg, ${DARK_PURPLE} 33%, ${LIGHT_ORANGE} 100%)`,
+            background: `linear-gradient(45deg, ${colors.blue[400]} 33%, ${colors.orange[400]} 100%)`,
             color: 'white',
             padding: 10,
             paddingRight: 50,
@@ -139,8 +133,16 @@ export default function TypographyDemo() {
           </pre>
         </div>
         <H1 underline text='Prebuilt H1' />
-        <H2 color={DARK_BLUE} textTransform='uppercase' text='Prebuilt H2' />
-        <H3 color={DARK_RED} textTransform='lowercase' text='Prebuilt H3' />
+        <H2
+          color={colors.blue[500]}
+          textTransform='uppercase'
+          text='Prebuilt H2'
+        />
+        <H3
+          color={colors.red[500]}
+          textTransform='lowercase'
+          text='Prebuilt H3'
+        />
       </div>
     </div>
   );

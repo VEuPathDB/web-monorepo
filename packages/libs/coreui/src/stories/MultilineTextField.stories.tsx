@@ -19,7 +19,6 @@ const Template: Story<MultilineTextFieldProps> = (args) => {
 
   const debouncedOnValueChange = useCallback(
     debounce((value: string) => {
-      setValue(value);
       setStatus('synced');
     }, 500),
     []

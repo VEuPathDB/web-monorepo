@@ -3,7 +3,7 @@ import { ThemeProvider } from '@emotion/react';
 
 import TypographyDemo from './TypographyDemo';
 import ThemingDemo from './ThemingDemo';
-import { DARK_BLUE, DARK_RED } from '../../definitions/colors';
+import { blue, red, tan } from '../../definitions/colors';
 import React from 'react';
 
 export default {
@@ -36,8 +36,8 @@ export const Theming: Story<{
 };
 
 Theming.args = {
-  primaryColor: DARK_RED,
-  secondaryColor: DARK_BLUE,
+  primaryColor: blue[400],
+  secondaryColor: tan[400],
   borderRadius: 5,
   containerPadding: 20,
 };
