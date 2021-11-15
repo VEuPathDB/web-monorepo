@@ -39,6 +39,7 @@ import {
   fixLabelForNumberVariables,
   fixLabelsForNumberVariables,
   quantizePvalue,
+  vocabularyWithMissingData,
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { Variable } from '../../../types/study';
@@ -291,7 +292,7 @@ function MosaicViz(props: Props) {
           ),
           xAxisVocabulary,
           yAxisVocabulary,
-          facetVocabulary
+          vocabularyWithMissingData(facetVocabulary, vizConfig.showMissingness)
         ) as TwoByTwoDataWithCoverage;
       } else {
         const response = dataClient.getContTable(
@@ -308,7 +309,7 @@ function MosaicViz(props: Props) {
           ),
           xAxisVocabulary,
           yAxisVocabulary,
-          facetVocabulary
+          vocabularyWithMissingData(facetVocabulary, vizConfig.showMissingness)
         ) as ContTableDataWithCoverage;
       }
     }, [
@@ -324,74 +325,6 @@ function MosaicViz(props: Props) {
       outputEntity?.id,
     ])
   );
-
-  let statsTable = undefined;
-
-  if (isTwoByTwo) {
-    // const twoByTwoData = data.value as TwoByTwoData | undefined;
-
-    // Temporarily disabled---See https://github.com/VEuPathDB/web-eda/issues/463
-    statsTable = (
-      <div className="MosaicVisualization-StatsTable">
-        {/* <table>
-          <tbody>
-            <tr>
-              <th></th>
-              <th>Value</th>
-              <th>95% confidence interval</th>
-            </tr>
-            <tr>
-              <th>P-value</th>
-              <td>
-                {twoByTwoData?.pValue != null
-                  ? quantizePvalue(twoByTwoData.pValue)
-                  : 'N/A'}
-              </td>
-              <td>N/A</td>
-            </tr>
-            <tr>
-              <th>Odds ratio</th>
-              <td>{twoByTwoData?.oddsRatio ?? 'N/A'}</td>
-              <td>{twoByTwoData?.orInterval ?? 'N/A'}</td>
-            </tr>
-            <tr>
-              <th>Relative risk</th>
-              <td>{twoByTwoData?.relativeRisk ?? 'N/A'}</td>
-              <td>{twoByTwoData?.rrInterval ?? 'N/A'}</td>
-            </tr>
-          </tbody>
-        </table> */}
-        <i>Stats table coming soon!</i>
-      </div>
-    );
-  } else {
-    const contTableData = data.value as ContTableData | undefined;
-
-    statsTable = (
-      <div className="MosaicVisualization-StatsTable">
-        <table>
-          <tbody>
-            <tr>
-              <th>P-value</th>
-              <td>
-                {contTableData?.pValue != null
-                  ? quantizePvalue(contTableData.pValue)
-                  : 'N/A'}
-              </td>
-            </tr>
-            <tr>
-              <th>Degrees of freedom</th>
-              <td>{contTableData?.degreesFreedom ?? 'N/A'}</td>
-            </tr>
-            <tr>
-              <th>Chi-squared</th>
-              <td>{contTableData?.chisq ?? 'N/A'}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    );
-  }
 
   const xAxisLabel = axisLabelWithUnit(xAxisVariable);
   const yAxisLabel = axisLabelWithUnit(yAxisVariable);
@@ -440,6 +373,49 @@ function MosaicViz(props: Props) {
                 />
               ),
             },
+            {
+              displayName: 'Statistics',
+              content: isFaceted(data.value) ? (
+                vizConfig.showMissingness ? (
+                  'Statistics are not calculated when the "include no data" option is selected'
+                ) : (
+                  <table>
+                    <tbody>
+                      {facetVariable != null &&
+                        data.value.facets.map(({ label, data }) => (
+                          <>
+                            <tr>
+                              <th
+                                style={{
+                                  border: 'none' /* cancel WDK style! */,
+                                }}
+                              >
+                                {facetVariable.displayName}: {label}
+                              </th>
+                            </tr>
+                            <tr>
+                              <td>
+                                {' '}
+                                {isTwoByTwo
+                                  ? TwoByTwoStats(
+                                      data as TwoByTwoData | undefined
+                                    )
+                                  : ContTableStats(
+                                      data as ContTableData | undefined
+                                    )}
+                              </td>
+                            </tr>
+                          </>
+                        ))}
+                    </tbody>
+                  </table>
+                )
+              ) : isTwoByTwo ? (
+                TwoByTwoStats(data.value as TwoByTwoData | undefined)
+              ) : (
+                ContTableStats(data.value as ContTableData | undefined)
+              ),
+            },
           ]}
         />
       </div>
@@ -475,17 +451,19 @@ function MosaicViz(props: Props) {
               display: axisLabelWithUnit(yAxisVariable),
               variable: vizConfig.yAxisVariable,
             },
+            {
+              role: 'Facet',
+              display: axisLabelWithUnit(facetVariable),
+              variable: vizConfig.facetVariable,
+            },
           ]}
         />
-        {statsTable}
       </div>
     </div>
   );
 
-  const facetingIsActive = false; // placeholders
-  const showMissingness = false; // for the future with faceting
   const outputSize =
-    !facetingIsActive && !showMissingness
+    facetVariable != null && !vizConfig.showMissingness
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
 
@@ -533,6 +511,78 @@ function MosaicViz(props: Props) {
       {plotComponent}
     </div>
   );
+}
+
+function TwoByTwoStats(props?: {
+  pValue?: number | string;
+  oddsRatio?: number | string;
+  orInterval?: number | string;
+  relativeRisk?: number | string;
+  rrInterval?: number | string;
+}) {
+  // Temporarily disabled---See https://github.com/VEuPathDB/web-eda/issues/463
+  if (1) return <i>Stats table coming soon!</i>;
+
+  return props != null ? (
+    <div className="MosaicVisualization-StatsTable">
+      <table>
+        {' '}
+        <tbody>
+          <tr>
+            <th></th>
+            <th>Value</th>
+            <th>95% confidence interval</th>
+          </tr>
+          <tr>
+            <th>P-value</th>
+            <td>
+              {props.pValue != null ? quantizePvalue(props.pValue) : 'N/A'}
+            </td>
+            <td>N/A</td>
+          </tr>
+          <tr>
+            <th>Odds ratio</th>
+            <td>{props.oddsRatio ?? 'N/A'}</td>
+            <td>{props.orInterval ?? 'N/A'}</td>
+          </tr>
+          <tr>
+            <th>Relative risk</th>
+            <td>{props.relativeRisk ?? 'N/A'}</td>
+            <td>{props.rrInterval ?? 'N/A'}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  ) : null;
+}
+
+function ContTableStats(props?: {
+  pValue?: number | string;
+  degreesFreedom?: number | string;
+  chisq?: number | string;
+}) {
+  return props != null ? (
+    <div className="MosaicVisualization-StatsTable">
+      <table>
+        <tbody>
+          <tr>
+            <th>P-value</th>
+            <td>
+              {props.pValue != null ? quantizePvalue(props.pValue) : 'N/A'}
+            </td>
+          </tr>
+          <tr>
+            <th>Degrees of freedom</th>
+            <td>{props.degreesFreedom ?? 'N/A'}</td>
+          </tr>
+          <tr>
+            <th>Chi-squared</th>
+            <td>{props.chisq ?? 'N/A'}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  ) : null;
 }
 
 interface MosaicPlotWithControlsProps extends Omit<MosaicProps, 'data'> {
@@ -638,9 +688,13 @@ export function contTableResponseToData(
           group[0].yLabel[0],
           yVariable
         ),
-        pValue: stats[0].pvalue,
-        degreesFreedom: stats[0].degreesFreedom,
-        chisq: stats[0].chisq,
+        ...(stats != null
+          ? {
+              pValue: stats[0].pvalue,
+              degreesFreedom: stats[0].degreesFreedom,
+              chisq: stats[0].chisq,
+            }
+          : {}),
       };
     }
   );
@@ -759,7 +813,8 @@ function getRequestParams(
       xAxisVariable: xAxisVariable,
       yAxisVariable: yAxisVariable,
       facetVariable: facetVariable ? [facetVariable] : [],
-      showMissingness: showMissingness ? 'TRUE' : 'FALSE',
+      showMissingness:
+        facetVariable != null && showMissingness ? 'TRUE' : 'FALSE',
     },
   };
 }
