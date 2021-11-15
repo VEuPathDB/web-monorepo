@@ -2,9 +2,7 @@ import { CSSProperties } from 'react';
 
 import { LayoutProps } from './types';
 
-export interface Props extends LayoutProps {
-  infoRowStyles?: CSSProperties;
-}
+export type Props = LayoutProps;
 
 const defaultContainerStyles: CSSProperties = {
   display: 'flex',
@@ -12,16 +10,8 @@ const defaultContainerStyles: CSSProperties = {
   alignItems: 'flex-start',
 };
 
-const defaultInfoRowStyles: CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'flex-start',
-  width: '100%',
-  margin: '0 1em',
-};
-
 const defaultLegendStyles: CSSProperties = {
-  marginRight: '2em',
+  marginLeft: '5em',
 };
 
 const defaultPlotStyles: CSSProperties = {
@@ -32,15 +22,15 @@ const defaultPlotStyles: CSSProperties = {
 
 const defaultTableGroupStyles: CSSProperties = {
   display: 'flex',
-  gridAutoFlow: 'column',
   flexWrap: 'wrap',
   alignItems: 'flex-start',
+  maxWidth: '100%',
+  margin: '1em',
   gap: '2em',
 };
 
 export function FacetedPlotLayout({
   containerStyles,
-  infoRowStyles,
   legendNode,
   legendStyles,
   plotNode,
@@ -55,15 +45,13 @@ export function FacetedPlotLayout({
         ...containerStyles,
       }}
     >
-      <div style={{ ...defaultInfoRowStyles, ...infoRowStyles }}>
+      <div style={{ ...defaultTableGroupStyles, ...tableGroupStyles }}>
+        {tableGroupNode}
         {legendNode && (
           <div style={{ ...defaultLegendStyles, ...legendStyles }}>
             {legendNode}
           </div>
         )}
-        <div style={{ ...defaultTableGroupStyles, ...tableGroupStyles }}>
-          {tableGroupNode}
-        </div>
       </div>
       <div style={{ ...defaultPlotStyles, ...plotStyles }}>{plotNode}</div>
     </div>
