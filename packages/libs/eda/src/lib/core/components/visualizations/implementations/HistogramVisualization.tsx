@@ -51,6 +51,7 @@ import { VariableDescriptor } from '../../../types/variable';
 import { CoverageStatistics } from '../../../types/visualization';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { BirdsEyeView } from '../../BirdsEyeView';
+import { PlotLayout } from '../../layouts/PlotLayout';
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
@@ -621,26 +622,14 @@ function HistogramPlotWithControls({
   const plotNode = (
     <>
       {isFaceted(data) ? (
-        <>
-          <div
-            style={{
-              background: 'yellow',
-              border: '3px dashed green',
-              padding: '10px',
-            }}
-          >
-            Custom legend, birds eye and supplementary tables go here...
-          </div>
-
-          <FacetedPlot
-            component={Histogram}
-            data={data}
-            props={histogramProps}
-            facetedPlotRef={plotRef}
-            // for custom legend: pass checkedLegendItems to PlotlyPlot
-            checkedLegendItems={checkedLegendItems}
-          />
-        </>
+        <FacetedPlot
+          component={Histogram}
+          data={data}
+          props={histogramProps}
+          facetedPlotRef={plotRef}
+          // for custom legend: pass checkedLegendItems to PlotlyPlot
+          checkedLegendItems={checkedLegendItems}
+        />
       ) : (
         <Histogram
           {...histogramProps}
@@ -755,146 +744,12 @@ function HistogramPlotWithControls({
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
-      <div
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'flex-start',
-        }}
-      >
-        <div
-          style={{ display: 'flex', flexDirection: 'column', width: '100%' }}
-        >
-          {isFaceted(data) ? (
-            <>
-              <div
-                style={{
-                  background: 'yellow',
-                  border: '3px dashed green',
-                  padding: '10px',
-                }}
-              >
-                Custom legend, birds eye and supplementary tables go here...
-              </div>
-
-              <FacetedPlot
-                component={Histogram}
-                data={data}
-                props={histogramProps}
-                facetedPlotRef={plotRef}
-                // for custom legend: pass checkedLegendItems to PlotlyPlot
-                checkedLegendItems={checkedLegendItems}
-              />
-            </>
-          ) : (
-            <Histogram
-              {...histogramProps}
-              ref={plotRef}
-              data={data}
-              opacity={opacity}
-              displayLibraryControls={displayLibraryControls}
-              showValues={false}
-              barLayout={barLayout}
-              // for custom legend: pass checkedLegendItems to PlotlyPlot
-              checkedLegendItems={checkedLegendItems}
-            />
-          )}
-
-          <div style={{ display: 'flex', flexDirection: 'row' }}>
-            <LabelledGroup label="Y-axis">
-              <Switch
-                label="Log scale"
-                state={histogramProps.dependentAxisLogScale}
-                onStateChange={onDependentAxisLogScaleChange}
-                containerStyles={{
-                  minHeight: widgetHeight,
-                }}
-              />
-              <RadioButtonGroup
-                selectedOption={valueSpec}
-                options={['count', 'proportion']}
-                onOptionSelected={(newOption) => {
-                  if (newOption === 'proportion') {
-                    onValueSpecChange('proportion');
-                  } else {
-                    onValueSpecChange('count');
-                  }
-                }}
-              />
-            </LabelledGroup>
-            <LabelledGroup label="X-axis">
-              <BinWidthControl
-                binWidth={data0?.binWidth}
-                onBinWidthChange={onBinWidthChange}
-                binWidthRange={data0?.binWidthRange}
-                binWidthStep={data0?.binWidthStep}
-                valueType={data0?.valueType}
-                binUnit={
-                  data0?.valueType === 'date'
-                    ? (data0?.binWidth as TimeDelta).unit
-                    : undefined
-                }
-                binUnitOptions={
-                  data0?.valueType === 'date'
-                    ? ['day', 'week', 'month', 'year']
-                    : undefined
-                }
-                containerStyles={{
-                  minHeight: widgetHeight,
-                }}
-              />
-            </LabelledGroup>
-          </div>
-        </div>
-
-        {/* custom legend */}
-        {legendItems != null && !histogramProps.showSpinner && data != null && (
-          <div style={{ marginLeft: '2em' }}>
-            <PlotLegend
-              legendItems={legendItems}
-              checkedLegendItems={checkedLegendItems}
-              legendTitle={histogramProps.legendTitle}
-              onCheckedLegendItemsChange={onCheckedLegendItemsChange}
-            />
-          </div>
-        )}
-
-        <div className="viz-plot-info">
-          <BirdsEyeView
-            completeCasesAllVars={completeCasesAllVars}
-            completeCasesAxesVars={completeCasesAxesVars}
-            filters={filters}
-            outputEntity={outputEntity}
-            stratificationIsActive={
-              overlayVariable != null || facetVariable != null
-            }
-            enableSpinner={independentAxisVariable != null && !error}
-          />
-          <VariableCoverageTable
-            completeCases={completeCases}
-            filters={filters}
-            outputEntityId={independentAxisVariable?.entityId}
-            variableSpecs={[
-              {
-                role: 'Main',
-                required: true,
-                display: histogramProps.independentAxisLabel,
-                variable: independentAxisVariable,
-              },
-              {
-                role: 'Overlay',
-                display: overlayLabel,
-                variable: overlayVariable,
-              },
-              {
-                role: 'Facet',
-                display: facetLabel,
-                variable: facetVariable,
-              },
-            ]}
-          />
-        </div>
-      </div>
+      <PlotLayout
+        isFaceted={isFaceted(data)}
+        plotNode={plotNode}
+        legendNode={legendNode}
+        tableGroupNode={tableGroupNode}
+      />
     </div>
   );
 }

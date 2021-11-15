@@ -34,6 +34,7 @@ import { VariableDescriptor } from '../../../types/variable';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { CoverageStatistics } from '../../../types/visualization';
 import { BirdsEyeView } from '../../BirdsEyeView';
+import { PlotLayout } from '../../layouts/PlotLayout';
 
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
@@ -418,26 +419,14 @@ function BarplotViz(props: VisualizationProps) {
   const plotNode = (
     <>
       {isFaceted(data.value) ? (
-        <>
-          <div
-            style={{
-              background: 'yellow',
-              border: '3px dashed green',
-              padding: '10px',
-            }}
-          >
-            Custom legend, birds eye and supplementary tables go here...
-          </div>
-
-          <FacetedPlot
-            component={Barplot}
-            data={data.value}
-            props={plotProps}
-            facetedPlotRef={plotRef}
-            // for custom legend
-            checkedLegendItems={vizConfig.checkedLegendItems}
-          />
-        </>
+        <FacetedPlot
+          component={Barplot}
+          data={data.value}
+          props={plotProps}
+          facetedPlotRef={plotRef}
+          // for custom legend
+          checkedLegendItems={vizConfig.checkedLegendItems}
+        />
       ) : (
         <Barplot
           data={data.value}
@@ -565,119 +554,12 @@ function BarplotViz(props: VisualizationProps) {
 
       <PluginError error={data.error} outputSize={outputSize} />
       <OutputEntityTitle entity={entity} outputSize={outputSize} />
-      <div
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'flex-start',
-        }}
-      >
-        <div
-          style={{ display: 'flex', flexDirection: 'column', width: '100%' }}
-        >
-          {isFaceted(data.value) ? (
-            <>
-              <div
-                style={{
-                  background: 'yellow',
-                  border: '3px dashed green',
-                  padding: '10px',
-                }}
-              >
-                Custom legend, birds eye and supplementary tables go here...
-              </div>
-
-              <FacetedPlot
-                component={Barplot}
-                data={data.value}
-                props={plotProps}
-                facetedPlotRef={plotRef}
-                // for custom legend
-                checkedLegendItems={vizConfig.checkedLegendItems}
-              />
-            </>
-          ) : (
-            <Barplot
-              data={data.value}
-              ref={plotRef}
-              // for custom legend: pass checkedLegendItems to PlotlyPlot
-              checkedLegendItems={vizConfig.checkedLegendItems}
-              {...plotProps}
-            />
-          )}
-
-          <div style={{ display: 'flex', flexDirection: 'row' }}>
-            <LabelledGroup label="Y-axis">
-              <Switch
-                label="Log Scale:"
-                state={vizConfig.dependentAxisLogScale}
-                onStateChange={onDependentAxisLogScaleChange}
-              />
-              <RadioButtonGroup
-                selectedOption={vizConfig.valueSpec}
-                options={['count', 'proportion']}
-                onOptionSelected={(newOption) => {
-                  if (newOption === 'proportion') {
-                    onValueSpecChange('proportion');
-                  } else {
-                    onValueSpecChange('count');
-                  }
-                }}
-              />
-            </LabelledGroup>
-          </div>
-        </div>
-
-        {/* custom legend */}
-        {legendItems != null && !data.pending && data != null && (
-          <div style={{ marginLeft: '2em' }}>
-            <PlotLegend
-              legendItems={legendItems}
-              checkedLegendItems={vizConfig.checkedLegendItems}
-              legendTitle={axisLabelWithUnit(overlayVariable)}
-              onCheckedLegendItemsChange={onCheckedLegendItemsChange}
-            />
-          </div>
-        )}
-
-        <div className="viz-plot-info">
-          <BirdsEyeView
-            completeCasesAllVars={
-              data.pending ? undefined : data.value?.completeCasesAllVars
-            }
-            completeCasesAxesVars={
-              data.pending ? undefined : data.value?.completeCasesAxesVars
-            }
-            filters={filters}
-            outputEntity={entity}
-            stratificationIsActive={overlayVariable != null}
-            enableSpinner={vizConfig.xAxisVariable != null && !data.error}
-          />
-          <VariableCoverageTable
-            completeCases={data.pending ? undefined : data.value?.completeCases}
-            filters={filters}
-            outputEntityId={vizConfig.xAxisVariable?.entityId}
-            variableSpecs={[
-              {
-                role: 'Main',
-                required: true,
-                display: axisLabelWithUnit(variable),
-                variable: vizConfig.xAxisVariable,
-              },
-              {
-                role: 'Overlay',
-                display: axisLabelWithUnit(overlayVariable),
-                variable: vizConfig.overlayVariable,
-              },
-              {
-                role: 'Facet',
-                display: axisLabelWithUnit(facetVariable),
-                variable: vizConfig.facetVariable,
-              },
-            ]}
-          />
-        </div>
-      </div>
+      <PlotLayout
+        isFaceted={isFaceted(data.value)}
+        plotNode={plotNode}
+        legendNode={legendNode}
+        tableGroupNode={tableGroupNode}
+      />
     </div>
   );
 }

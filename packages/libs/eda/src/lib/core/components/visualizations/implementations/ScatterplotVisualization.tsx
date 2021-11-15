@@ -26,6 +26,7 @@ import { VariableDescriptor } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { BirdsEyeView } from '../../BirdsEyeView';
+import { PlotLayout } from '../../layouts/PlotLayout';
 
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
@@ -686,140 +687,12 @@ function ScatterplotViz(props: VisualizationProps) {
         ]}
       />
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
-      <div
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'flex-start',
-        }}
-      >
-        <ScatterplotWithControls
-          // data.value
-          data={data.value?.dataSetProcess}
-          updateThumbnail={updateThumbnail}
-          containerStyles={
-            isFaceted(data.value?.dataSetProcess)
-              ? facetedPlotContainerStyles
-              : plotContainerStyles
-          }
-          spacingOptions={
-            isFaceted(data.value?.dataSetProcess)
-              ? facetedPlotSpacingOptions
-              : plotSpacingOptions
-          }
-          // title={'Scatter plot'}
-          displayLegend={
-            data.value &&
-            !isFaceted(data.value.dataSetProcess) &&
-            (data.value.dataSetProcess.series.length > 1 ||
-              vizConfig.overlayVariable != null)
-          }
-          independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-axis'}
-          dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-axis'}
-          // variable's metadata-based independent axis range with margin
-          independentAxisRange={defaultIndependentRangeMargin}
-          // new dependent axis range
-          dependentAxisRange={
-            data.value && !data.pending
-              ? defaultDependentRangeMargin
-              : undefined
-          }
-          // set valueSpec as Raw when yAxisVariable = date
-          valueSpec={
-            yAxisVariable?.type === 'date' ? 'Raw' : vizConfig.valueSpecConfig
-          }
-          onValueSpecChange={onValueSpecChange}
-          // send visualization.type here
-          vizType={visualization.descriptor.type}
-          interactive={true}
-          showSpinner={data.pending}
-          // add plotOptions to control the list of plot options
-          plotOptions={[
-            'Raw',
-            'Smoothed mean with raw',
-            'Best fit line with raw',
-          ]}
-          // disabledList prop is used to disable radio options (grayed out)
-          disabledList={
-            yAxisVariable?.type === 'date'
-              ? ['Smoothed mean with raw', 'Best fit line with raw']
-              : []
-          }
-          independentValueType={
-            NumberVariable.is(xAxisVariable) ? 'number' : 'date'
-          }
-          dependentValueType={
-            NumberVariable.is(yAxisVariable) ? 'number' : 'date'
-          }
-          legendTitle={axisLabelWithUnit(overlayVariable)}
-          // pass checked state of legend checkbox to PlotlyPlot
-          checkedLegendItems={vizConfig.checkedLegendItems}
-          // for vizconfig.checkedLegendItems
-          onCheckedLegendItemsChange={onCheckedLegendItemsChange}
-        />
-
-        {/* custom legend */}
-        {legendItems != null && !data.pending && data.value != null && (
-          <div style={{ marginLeft: '2em' }}>
-            <PlotLegend
-              legendItems={legendItems}
-              checkedLegendItems={vizConfig.checkedLegendItems}
-              legendTitle={axisLabelWithUnit(overlayVariable)}
-              onCheckedLegendItemsChange={onCheckedLegendItemsChange}
-            />
-          </div>
-        )}
-
-        <div className="viz-plot-info">
-          <BirdsEyeView
-            completeCasesAllVars={
-              data.pending ? undefined : data.value?.completeCasesAllVars
-            }
-            completeCasesAxesVars={
-              data.pending ? undefined : data.value?.completeCasesAxesVars
-            }
-            filters={filters}
-            outputEntity={outputEntity}
-            stratificationIsActive={overlayVariable != null}
-            enableSpinner={
-              xAxisVariable != null && yAxisVariable != null && !data.error
-            }
-          />
-          <VariableCoverageTable
-            completeCases={
-              data.value && !data.pending
-                ? data.value?.completeCases
-                : undefined
-            }
-            filters={filters}
-            outputEntityId={outputEntity?.id}
-            variableSpecs={[
-              {
-                role: 'X-axis',
-                required: true,
-                display: axisLabelWithUnit(xAxisVariable),
-                variable: vizConfig.xAxisVariable,
-              },
-              {
-                role: 'Y-axis',
-                required: true,
-                display: axisLabelWithUnit(yAxisVariable),
-                variable: vizConfig.yAxisVariable,
-              },
-              {
-                role: 'Overlay',
-                display: axisLabelWithUnit(overlayVariable),
-                variable: vizConfig.overlayVariable,
-              },
-              {
-                role: 'Facet',
-                display: axisLabelWithUnit(facetVariable),
-                variable: vizConfig.facetVariable,
-              },
-            ]}
-          />
-        </div>
-      </div>
+      <PlotLayout
+        isFaceted={isFaceted(data.value?.dataSetProcess)}
+        legendNode={legendNode}
+        plotNode={plotNode}
+        tableGroupNode={tableGroupNode}
+      />
     </div>
   );
 }
