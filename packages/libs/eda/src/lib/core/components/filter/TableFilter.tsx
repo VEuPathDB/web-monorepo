@@ -15,6 +15,8 @@ import { TableVariable } from './types';
 import { getDistribution } from './util';
 import { DistributionResponse } from '../../api/SubsettingClient';
 import { gray, red } from './colors';
+// import axis label unit util
+import { axisLabelWithUnit } from '../../utils/axis-label-unit';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -130,7 +132,8 @@ export function TableFilter({
   );
   const activeField = useMemo(
     () => ({
-      display: variable.displayName,
+      // add units
+      display: axisLabelWithUnit(variable),
       isRange: false,
       parent: variable.parentId,
       precision: 1,
