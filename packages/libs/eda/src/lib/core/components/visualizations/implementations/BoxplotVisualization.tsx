@@ -463,11 +463,7 @@ function BoxplotViz(props: VisualizationProps) {
       }
       orientation={'vertical'}
       // add condition to show legend when overlayVariable is used
-      displayLegend={
-        data.value &&
-        !isFaceted(data.value) &&
-        (data.value.series.length > 1 || vizConfig.overlayVariable != null)
-      }
+      displayLegend={false}
       independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-axis'}
       dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-axis'}
       // show/hide independent/dependent axis tick label
