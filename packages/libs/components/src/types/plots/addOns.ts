@@ -141,7 +141,7 @@ export const SequentialGradientColormap: string[] = [
   'rgb(144, 166, 201)',
   'rgb(176, 185, 200)',
   'rgb(215, 215, 216)',
-  'rgb(255, 255, 255)',
+  // 'rgb(255, 255, 255)',
 ];
 
 /** truncated axis flags */

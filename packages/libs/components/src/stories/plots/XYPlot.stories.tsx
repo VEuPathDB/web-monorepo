@@ -5,7 +5,7 @@ import { min, max, lte, gte } from 'lodash';
 import { Story, Meta } from '@storybook/react/types-6-0';
 // test to use RadioButtonGroup directly instead of XYPlotControls
 import RadioButtonGroup from '../../components/widgets/RadioButtonGroup';
-// import SequentialGradientColormap from '../../types/plots/addOns';
+import { SequentialGradientColormap } from '../../types/plots/addOns';
 import { scaleLinear } from 'd3-scale';
 import { interpolateLab, extent, range } from 'd3';
 
@@ -37,7 +37,7 @@ const dataSetGradientColorscale: VEuPathDBScatterPlotData = {
   scatterplot: {
     data: [
       {
-        // scatter plot with CI
+        // scatter plot with gradient colorscale
         seriesX: [
           '0',
           '1',
@@ -136,88 +136,55 @@ const dataSetGradientColorscale: VEuPathDBScatterPlotData = {
           '0.21',
           '-0.08',
         ],
-        // variable mapped to color
+        // variable mapped to color (same as seriesX for easier checking the colormap)
         seriesGradientColorscale: [
+          '0.58',
+          '0.54',
+          '0.43',
+          '0.86',
+          '1.19',
+          '1.47',
+          '0.98',
+          '1.36',
+          '0.58',
+          '0.82',
+          '0.77',
+          '1.22',
+          '2.21',
+          '0.46',
+          '1.55',
+          '1.38',
+          '0.98',
+          '1.4',
+          '1.29',
+          '1.3',
+          '1.56',
+          '1.73',
+          '1.48',
+          '1.38',
+          '1.1',
+          '1.14',
+          '0.84',
+          '1.12',
+          '1.07',
+          '1.1',
+          '0.73',
+          '0.86',
+          '1.16',
+          '1.02',
+          '0.77',
+          '1.04',
+          '0.57',
+          '0.08',
+          '0.2',
+          '0.4',
+          '0.23',
+          '0.13',
+          '-0.51',
           '0',
-          '0.5949367',
-          '1.1898734',
-          '1.7848101',
-          '2.3797468',
-          '2.9746835',
-          '3.5696203',
-          '4.164557',
-          '4.7594937',
-          '5.3544304',
-          '5.9493671',
-          '6.5443038',
-          '7.1392405',
-          '7.7341772',
-          '8.3291139',
-          '8.9240506',
-          '9.5189873',
-          '10.1139241',
-          '10.7088608',
-          '11.3037975',
-          '11.8987342',
-          '12.4936709',
-          '13.0886076',
-          '13.6835443',
-          '14.278481',
-          '14.8734177',
-          '15.4683544',
-          '16.0632911',
-          '16.6582278',
-          '17.2531646',
-          '17.8481013',
-          '18.443038',
-          '19.0379747',
-          '19.6329114',
-          '20.2278481',
-          '20.8227848',
-          '21.4177215',
-          '22.0126582',
-          '22.6075949',
-          '23.2025316',
-          '23.7974684',
-          '24.3924051',
-          '24.9873418',
-          '25.5822785',
-          '26.1772152',
-          '26.7721519',
-          '27.3670886',
-          '27.9620253',
-          '28.556962',
-          '29.1518987',
-          '29.7468354',
-          '30.3417722',
-          '30.9367089',
-          '31.5316456',
-          '32.1265823',
-          '32.721519',
-          '33.3164557',
-          '33.9113924',
-          '34.5063291',
-          '35.1012658',
-          '35.6962025',
-          '36.2911392',
-          '36.8860759',
-          '37.4810127',
-          '38.0759494',
-          '38.6708861',
-          '39.2658228',
-          '39.8607595',
-          '40.4556962',
-          '41.0506329',
-          '41.6455696',
-          '42.2405063',
-          '42.835443',
-          '43.4303797',
-          '44.0253165',
-          '44.6202532',
-          '45.2151899',
-          '45.8101266',
-          '46.4050633',
-          '47',
+          '-0.35',
+          '0.21',
+          '-0.08',
         ],
       },
     ],
@@ -826,9 +793,9 @@ const { dataSetProcess: dataSetProcessGradientColorscale } = processInputData(
 // const independentValueType = 'date';
 // const dependentValueType = 'number';
 // // Case 2-2
-// // const independentValueType = 'number';
-// // const dependentValueType = 'date';
-// const { dataSetProcess, yMin, yMax } = processInputData(dateStringDataSet, 'scatterplot', 'markers', independentValueType, dependentValueType);
+// const independentValueType = 'number';
+// const dependentValueType = 'date';
+// const { dataSetProcess, yMin, yMax } = processInputData(dateStringDataSet, 'scatterplot', 'markers', independentValueType, dependentValueType, false);
 
 // set some default props
 const plotWidth = 1000;
@@ -1096,13 +1063,11 @@ function processInputData<T extends number | string>(
 
   // Craete colormap for series. Maps [0, 1] to gradient colormap using Lab interpolation
   const gradientColorscaleMap = scaleLinear<string>()
-    .domain(range(0, 1, 1.0 / 10))
-    .range(gradientColormapStopPoints)
+    .domain(range(0, 1, 1.0 / 9))
+    .range(SequentialGradientColormap)
     .interpolate(interpolateLab);
 
   console.log(gradientColorscaleMap(0));
-  console.log(gradientColorscaleMap(1));
-  console.log(gradientColorscaleMap(47));
 
   // set dataSetProcess as any
   let dataSetProcess: any = [];
@@ -1143,17 +1108,34 @@ function processInputData<T extends number | string>(
         seriesY = el.seriesY.map(Number);
       }
       if (el.seriesGradientColorscale) {
+        // Assuming only allowing continuous numbers for now
+
+        // set variables for overlay ranges
+        let overlayMin: number | undefined = 0;
+        let overlayMax: number | string | undefined = 0;
+
         seriesGradientColorscale = el.seriesGradientColorscale.map(Number);
         // let myrange : number[] | string[] = extent(seriesGradientColorscale);
         console.log(seriesGradientColorscale);
-        normalize = scaleLinear().domain([0, 47]).range([0, 1]);
+        overlayMin = lte(overlayMin, min(seriesGradientColorscale))
+          ? overlayMin
+          : (min(seriesGradientColorscale) as number);
+        overlayMax = gte(overlayMax, max(seriesGradientColorscale))
+          ? overlayMax
+          : (max(seriesGradientColorscale) as number);
+
+        const normalize = scaleLinear()
+          .domain([overlayMin, overlayMax])
+          .range([0, 1]);
+
         normalizedSeriesGradientColorscale = seriesGradientColorscale.map(
           normalize
         );
       }
 
-      console.log(gradientColorscaleMap(seriesGradientColorscale));
-      console.log(seriesGradientColorscale.map(gradientColorscaleMap));
+      console.log(
+        normalizedSeriesGradientColorscale.map(gradientColorscaleMap)
+      );
 
       // check if this Y array consists of numbers & add type assertion
       if (index === 0) {
