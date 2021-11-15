@@ -65,6 +65,7 @@ import {
   fixLabelForNumberVariables,
   fixLabelsForNumberVariables,
   variablesAreUnique,
+  nonUniqueWarning,
 } from '../../../utils/visualization';
 import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
@@ -290,9 +291,7 @@ function HistogramViz(props: VisualizationProps) {
         return undefined;
 
       if (!variablesAreUnique([xAxisVariable, overlayVariable, facetVariable]))
-        throw new Error(
-          'Variables must be unique. Please choose different variables.'
-        );
+        throw new Error(nonUniqueWarning);
 
       const params = getRequestParams(
         studyId,

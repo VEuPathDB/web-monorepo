@@ -68,6 +68,8 @@ import { NumberVariable, StudyEntity, Variable } from '../../../types/study';
 import {
   fixLabelForNumberVariables,
   fixLabelsForNumberVariables,
+  variablesAreUnique,
+  nonUniqueWarning,
   vocabularyWithMissingData,
 } from '../../../utils/visualization';
 import { gray } from '../colors';
@@ -291,6 +293,16 @@ function ScatterplotViz(props: VisualizationProps) {
 
   const data = usePromise(
     useCallback(async (): Promise<XYPlotDataWithCoverage | undefined> => {
+      if (
+        !variablesAreUnique([
+          xAxisVariable,
+          yAxisVariable,
+          overlayVariable,
+          facetVariable,
+        ])
+      )
+        throw new Error(nonUniqueWarning);
+
       // check independentValueType/dependentValueType
       const independentValueType = xAxisVariable?.type
         ? xAxisVariable.type

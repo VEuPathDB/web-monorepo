@@ -56,6 +56,7 @@ import {
   fixLabelForNumberVariables,
   fixLabelsForNumberVariables,
   grayOutLastSeries,
+  nonUniqueWarning,
   omitEmptyNoDataSeries,
   variablesAreUnique,
   vocabularyWithMissingData,
@@ -253,9 +254,7 @@ function BoxplotViz(props: VisualizationProps) {
           facetVariable,
         ])
       )
-        throw new Error(
-          'Variables must be unique. Please choose different variables.'
-        );
+        throw new Error(nonUniqueWarning);
 
       // add visualization.type here. valueSpec too?
       const params = getRequestParams(

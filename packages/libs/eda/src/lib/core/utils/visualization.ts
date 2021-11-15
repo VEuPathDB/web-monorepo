@@ -127,6 +127,9 @@ export function fixLabelForNumberVariables(
     : label;
 }
 
+export const nonUniqueWarning =
+  'Variables must be unique. Please choose different variables.';
+
 export function vocabularyWithMissingData(
   vocabulary: string[] = [],
   includeMissingData: boolean = false

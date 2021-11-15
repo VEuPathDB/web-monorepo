@@ -48,6 +48,8 @@ import {
   grayOutLastSeries,
   omitEmptyNoDataSeries,
   vocabularyWithMissingData,
+  variablesAreUnique,
+  nonUniqueWarning,
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 // use lodash instead of Math.min/max
@@ -234,10 +236,9 @@ function BarplotViz(props: VisualizationProps) {
     useCallback(async (): Promise<BarplotDataWithStatistics | undefined> => {
       if (variable == null) return undefined;
 
-      if (variable === overlayVariable)
-        throw new Error(
-          'The X and Overlay variables must not be the same. Please choose different variables for X and Overlay.'
-        );
+      if (!variablesAreUnique([variable, overlayVariable, facetVariable]))
+        throw new Error(nonUniqueWarning);
+
       const params = getRequestParams(studyId, filters ?? [], vizConfig);
 
       const response = dataClient.getBarplot(

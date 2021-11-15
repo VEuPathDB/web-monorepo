@@ -40,6 +40,8 @@ import {
   fixLabelsForNumberVariables,
   quantizePvalue,
   vocabularyWithMissingData,
+  variablesAreUnique,
+  nonUniqueWarning,
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { Variable } from '../../../types/study';
@@ -249,10 +251,8 @@ function MosaicViz(props: Props) {
       )
         return undefined;
 
-      if (xAxisVariable === yAxisVariable)
-        throw new Error(
-          'The X and Y variables must not be the same. Please choose different variables for X and Y.'
-        );
+      if (!variablesAreUnique([xAxisVariable, yAxisVariable, facetVariable]))
+        throw new Error(nonUniqueWarning);
 
       const params = getRequestParams(
         studyId,
@@ -499,7 +499,11 @@ function MosaicViz(props: Props) {
           dataElementDependencyOrder={dataElementDependencyOrder}
           starredVariables={starredVariables}
           toggleStarredVariable={toggleStarredVariable}
-          enableShowMissingnessToggle={facetVariable != null}
+          enableShowMissingnessToggle={
+            facetVariable != null &&
+            data.value?.completeCasesAllVars !==
+              data.value?.completeCasesAxesVars
+          }
           showMissingness={vizConfig.showMissingness}
           onShowMissingnessChange={onShowMissingnessChange}
           outputEntity={outputEntity}
