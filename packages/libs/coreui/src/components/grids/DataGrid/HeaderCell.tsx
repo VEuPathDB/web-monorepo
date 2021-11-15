@@ -45,7 +45,6 @@ export default function HeaderCell({
       >
         <CaretUpIcon
           color={
-            // @ts-ignore
             column.isSorted && !column.isSortedDesc
               ? styleSpec.icons.activeColor
               : styleSpec.icons.inactiveColor
@@ -54,7 +53,6 @@ export default function HeaderCell({
         <CaretDownIcon
           extraCSS={{ marginTop: 2 }}
           color={
-            // @ts-ignore
             column.isSorted && column.isSortedDesc
               ? styleSpec.icons.activeColor
               : styleSpec.icons.inactiveColor
@@ -66,9 +64,7 @@ export default function HeaderCell({
   return (
     <th
       {...headerGroup.getHeaderProps()}
-      {...(sortable &&
-        // @ts-ignore
-        headerGroup.getSortByToggleProps())}
+      {...(sortable && headerGroup.getSortByToggleProps())}
       css={{
         padding: 0,
         textAlign: 'left',
