@@ -775,7 +775,7 @@ export function histogramResponseToData(
           data.facetVariableDetails[0].value,
           facetVariable
         )
-      : undefined
+      : '__NO_FACET__'
   );
 
   const binWidth =
@@ -834,7 +834,8 @@ export function histogramResponseToData(
 
   return {
     // data
-    ...(size(processedData) === 1 && head(keys(processedData)) === 'undefined'
+    ...(size(processedData) === 1 &&
+    head(keys(processedData)) === '__NO_FACET__'
       ? // unfaceted
         head(values(processedData))
       : // faceted

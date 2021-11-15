@@ -662,7 +662,7 @@ export function contTableResponseToData(
           data.facetVariableDetails[0].value,
           facetVariable
         )
-      : undefined
+      : '__NO_FACET__'
   );
   const facetGroupedResponseStats = _.groupBy(response.statsTable, (stats) =>
     stats.facetVariableDetails && stats.facetVariableDetails.length === 1
@@ -670,7 +670,7 @@ export function contTableResponseToData(
           stats.facetVariableDetails[0].value,
           facetVariable
         )
-      : undefined
+      : '__NO_FACET__'
   );
 
   const processedData = _.mapValues(
@@ -706,7 +706,7 @@ export function contTableResponseToData(
   return {
     // data
     ...(_.size(processedData) === 1 &&
-    _.head(_.keys(processedData)) === 'undefined'
+    _.head(_.keys(processedData)) === '__NO_FACET__'
       ? // unfaceted
         _.head(_.values(processedData))
       : // faceted

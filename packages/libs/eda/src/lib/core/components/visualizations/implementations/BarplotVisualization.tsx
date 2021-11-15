@@ -585,7 +585,7 @@ export function barplotResponseToData(
           data.facetVariableDetails[0].value,
           facetVariable
         )
-      : undefined
+      : '__NO_FACET__'
   );
 
   // process data and overlay value within each facet grouping
@@ -613,7 +613,8 @@ export function barplotResponseToData(
 
   return {
     // data
-    ...(size(processedData) === 1 && head(keys(processedData)) === 'undefined'
+    ...(size(processedData) === 1 &&
+    head(keys(processedData)) === '__NO_FACET__'
       ? // unfaceted
         head(values(processedData))
       : // faceted
