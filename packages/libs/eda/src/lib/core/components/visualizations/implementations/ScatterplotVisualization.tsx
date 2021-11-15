@@ -858,7 +858,7 @@ export function scatterplotResponseToData(
   const yMax = max(map(processedData, ({ yMax }) => yMax));
 
   const dataSetProcess =
-    size(processedData) === 1 && head(keys(processedData)) == null
+    size(processedData) === 1 && head(keys(processedData)) === 'undefined'
       ? // unfaceted
         head(values(processedData))?.dataSetProcess
       : // faceted

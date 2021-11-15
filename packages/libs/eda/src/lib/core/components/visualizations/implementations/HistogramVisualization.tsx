@@ -834,7 +834,7 @@ export function histogramResponseToData(
 
   return {
     // data
-    ...(size(processedData) === 1 && head(keys(processedData)) == null
+    ...(size(processedData) === 1 && head(keys(processedData)) === 'undefined'
       ? // unfaceted
         head(values(processedData))
       : // faceted
