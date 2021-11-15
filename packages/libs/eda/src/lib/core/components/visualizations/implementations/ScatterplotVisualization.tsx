@@ -52,6 +52,7 @@ import {
   values,
   mapValues,
   map,
+  keys,
 } from 'lodash';
 // directly use RadioButtonGroup instead of XYPlotControls
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
@@ -845,7 +846,7 @@ export function scatterplotResponseToData(
   const yMax = max(map(processedData, ({ yMax }) => yMax));
 
   const dataSetProcess =
-    size(processedData) === 1
+    size(processedData) === 1 && head(keys(processedData)) == null
       ? // unfaceted
         head(values(processedData))?.dataSetProcess
       : // faceted

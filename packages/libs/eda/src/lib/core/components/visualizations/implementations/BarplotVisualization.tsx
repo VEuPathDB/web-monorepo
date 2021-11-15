@@ -61,6 +61,7 @@ import {
   map,
   head,
   values,
+  keys,
 } from 'lodash';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 // for custom legend
@@ -611,7 +612,7 @@ export function barplotResponseToData(
 
   return {
     // data
-    ...(size(processedData) === 1
+    ...(size(processedData) === 1 && head(keys(processedData)) == null
       ? // unfaceted
         head(values(processedData))
       : // faceted

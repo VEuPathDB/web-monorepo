@@ -31,6 +31,7 @@ import {
   head,
   values,
   map,
+  keys,
 } from 'lodash';
 import { useCallback, useEffect, useMemo } from 'react';
 import {
@@ -834,7 +835,7 @@ export function histogramResponseToData(
 
   return {
     // data
-    ...(size(processedData) === 1
+    ...(size(processedData) === 1 && head(keys(processedData)) == null
       ? // unfaceted
         head(values(processedData))
       : // faceted
