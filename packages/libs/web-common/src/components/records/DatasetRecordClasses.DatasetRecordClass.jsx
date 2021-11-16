@@ -38,8 +38,9 @@ function renderSourceVersion(version, newcategory) {
       <span>
         {version}&nbsp;
         <i className="fa fa-question-circle" style={{ color: 'blue' }}
-        title={'The source versions from' +
-        ' the site the data was acquired.'}/>
+        title={'The source versions for the assembly, ' +
+               'structural annotation and functional annotation.  ' + 
+               'See the Data Set Release History table for more details.'}/>
       </span>
     );
   } else {
