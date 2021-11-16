@@ -144,12 +144,6 @@ function PlotlyPlot<T>(
               ) + '...'
             : plotlyProps?.layout?.yaxis?.title,
       },
-      title: {
-        text: title,
-        xref: 'paper',
-        x: 0,
-        xanchor: 'left', // left aligned to left edge (y-axis) of plot
-      },
       showlegend: displayLegend ?? true,
       margin: {
         t: spacingOptions?.marginTop,
@@ -355,6 +349,18 @@ function PlotlyPlot<T>(
           onUpdate={onUpdate}
           onInitialized={sharedPlotCreation.run}
         />
+        {title && (
+          <div
+            style={{
+              position: 'absolute',
+              top: 31,
+              left: 80,
+              fontSize: 17,
+            }}
+          >
+            {title}
+          </div>
+        )}
         {showSpinner && <Spinner />}
       </div>
     </Suspense>

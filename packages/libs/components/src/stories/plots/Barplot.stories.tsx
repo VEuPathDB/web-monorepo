@@ -29,6 +29,7 @@ Basic.args = {
   independentAxisLabel: 'Animal',
   legendTitle: 'Domesticated',
   opacity: 0.75,
+  title: 'Awesomeness of animals stratified by domestication',
 };
 
 export const EmptyData = Template.bind({});
