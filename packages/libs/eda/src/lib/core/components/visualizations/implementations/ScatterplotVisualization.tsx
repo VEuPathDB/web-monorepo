@@ -494,12 +494,13 @@ function ScatterplotViz(props: VisualizationProps) {
                 ? true
                 : false
               : allData.facets
-                  .filter((facet) => facet.data != null)
+                  .map((facet) => facet.data)
+                  .filter((data): data is XYPlotData => data != null)
                   .map(
-                    ({ data }) =>
-                      data?.series[index]?.y != null &&
-                      data?.series[index].y.length > 0 &&
-                      data?.series[index].y[0] !== null
+                    (data) =>
+                      data.series[index]?.y != null &&
+                      data.series[index].y.length > 0 &&
+                      data.series[index].y[0] !== null
                   )
                   .includes(true),
             group: 1,
