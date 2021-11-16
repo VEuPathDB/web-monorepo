@@ -141,6 +141,8 @@ function BoxplotViz(props: VisualizationProps) {
     dataElementDependencyOrder,
     starredVariables,
     toggleStarredVariable,
+    totalCounts,
+    filteredCounts,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -503,6 +505,8 @@ function BoxplotViz(props: VisualizationProps) {
         enableSpinner={
           xAxisVariable != null && yAxisVariable != null && !data.error
         }
+        totalCounts={totalCounts}
+        filteredCounts={filteredCounts}
       />
       <VariableCoverageTable
         completeCases={data.pending ? undefined : data.value?.completeCases}

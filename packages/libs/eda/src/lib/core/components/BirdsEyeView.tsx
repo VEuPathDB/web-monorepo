@@ -1,5 +1,5 @@
 import { Filter } from '../types/filter';
-import { useEntityCounts } from '../hooks/entityCounts';
+import { EntityCounts } from '../hooks/entityCounts';
 import { CoverageStatistics } from '../types/visualization';
 import BirdsEyePlot from '@veupathdb/components/lib/plots/BirdsEyePlot';
 import { red, gray } from './filter/colors';
@@ -15,6 +15,8 @@ interface Props extends Partial<CoverageStatistics> {
   stratificationIsActive: boolean;
   /** Should the spinner be enabled? This doesn't mean that it is shown. Just that it might be. */
   enableSpinner?: boolean;
+  totalCounts: EntityCounts | undefined;
+  filteredCounts: EntityCounts | undefined;
 }
 
 export function BirdsEyeView(props: Props) {
@@ -25,19 +27,17 @@ export function BirdsEyeView(props: Props) {
     completeCasesAxesVars,
     stratificationIsActive,
     enableSpinner = false,
+    totalCounts,
+    filteredCounts,
   } = props;
 
-  const unfilteredEntityCounts = useEntityCounts();
-  const filteredEntityCounts = useEntityCounts(filters);
   const outputEntityId = outputEntity?.id;
 
   const totalSize =
-    unfilteredEntityCounts.value && outputEntityId
-      ? unfilteredEntityCounts.value[outputEntityId]
-      : undefined;
+    totalCounts && outputEntityId ? totalCounts[outputEntityId] : undefined;
   const subsetSize =
-    filteredEntityCounts.value && outputEntityId
-      ? filteredEntityCounts.value[outputEntityId]
+    filteredCounts && outputEntityId
+      ? filteredCounts[outputEntityId]
       : undefined;
 
   const birdsEyeData =
