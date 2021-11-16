@@ -26,7 +26,7 @@ export type FacetedPlotRef = PlotRef[];
 export type FacetedData<D> = {
   facets: {
     label: string;
-    data: D;
+    data?: D;
   }[];
 };
 
