@@ -44,3 +44,10 @@ EmptyDataLoading.args = {
   independentAxisLabel: 'Independent axis label',
   showSpinner: true,
 };
+
+export const NoDataOverlay = Template.bind({});
+NoDataOverlay.args = {
+  dependentAxisLabel: 'Dependent axis label',
+  independentAxisLabel: 'Independent axis label',
+  showNoDataOverlay: true,
+};

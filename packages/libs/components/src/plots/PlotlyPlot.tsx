@@ -56,6 +56,7 @@ export interface PlotProps<T> extends ColorPaletteAddon {
   storedIndependentAxisTickLabel?: string[];
   /** list of checked legend items via checkbox input */
   checkedLegendItems?: string[];
+  showNoDataOverlay?: boolean;
 }
 
 const Plot = lazy(() => import('react-plotly.js'));
@@ -95,6 +96,7 @@ function PlotlyPlot<T>(
     storedIndependentAxisTickLabel,
     checkedLegendItems,
     colorPalette = ColorPaletteDefault,
+    showNoDataOverlay,
     ...plotlyProps
   } = props;
 
@@ -359,6 +361,27 @@ function PlotlyPlot<T>(
             }}
           >
             {title}
+          </div>
+        )}
+        {showNoDataOverlay && (
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              backgroundColor: 'black',
+              opacity: '50%',
+              color: 'white',
+              fontSize: 32,
+              userSelect: 'none',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            No Data
           </div>
         )}
         {showSpinner && <Spinner />}
