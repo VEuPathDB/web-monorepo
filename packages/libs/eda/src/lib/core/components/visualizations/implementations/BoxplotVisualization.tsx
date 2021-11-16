@@ -478,6 +478,7 @@ function BoxplotViz(props: VisualizationProps) {
       // show/hide independent/dependent axis tick label
       showIndependentAxisTickLabel={true}
       showDependentAxisTickLabel={true}
+      dependentAxisRange={dependentAxisRange}
       showMean={true}
       interactive={true}
       showSpinner={data.pending}
@@ -692,10 +693,10 @@ export function boxplotResponseToData(
     const facetIsEmpty = group.every(
       (data) => data.label.length === 0 && data.median.length === 0
     );
-    return {
-      series: facetIsEmpty
-        ? []
-        : group.map((data) => ({
+    return facetIsEmpty
+      ? undefined
+      : {
+          series: group.map((data) => ({
             lowerfence: data.lowerfence,
             upperfence: data.upperfence,
             q1: data.q1,
@@ -721,7 +722,7 @@ export function boxplotResponseToData(
                 : '',
             label: fixLabelsForNumberVariables(data.label, variable),
           })),
-    };
+        };
   });
 
   return {
@@ -792,19 +793,25 @@ function reorderData(
   facetVocabulary: string[] = []
 ): BoxplotDataWithCoverage | BoxplotData {
   if (isFaceted(data)) {
+    // for each value in the facet vocabulary's correct order
+    // find the index in the series where series.name equals that value
+    const facetValues = data.facets.map((facet) => facet.label);
+    const facetIndices = facetVocabulary.map((name) =>
+      facetValues.indexOf(name)
+    );
+
     // reorder within each facet with call to this function
     return {
       ...data,
-      facets: sortBy(data.facets, ({ label }) =>
-        facetVocabulary.indexOf(label)
-      ).map(({ label, data }) => ({
-        label,
+      facets: facetIndices.map((i, j) => ({
+        label: facetVocabulary[j],
         data:
-          data != null
+          data.facets[i]?.data != null
             ? (reorderData(
-                data,
+                data.facets[i].data!, // not sure why ! is needed
                 labelVocabulary,
-                overlayVocabulary
+                overlayVocabulary,
+                facetVocabulary
               ) as BoxplotData)
             : undefined,
       })),
