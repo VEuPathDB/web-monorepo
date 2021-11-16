@@ -800,10 +800,10 @@ export function histogramResponseToData(
     const facetIsEmpty = group.every(
       (data) => data.binStart.length === 0 && data.value.length === 0
     );
-    return {
-      series: facetIsEmpty
-        ? []
-        : group.map((data) => ({
+    return facetIsEmpty
+      ? undefined
+      : {
+          series: group.map((data) => ({
             name:
               data.overlayVariableDetails?.value != null
                 ? fixLabelForNumberVariables(
@@ -825,11 +825,12 @@ export function histogramResponseToData(
             })),
           })),
 
-      valueType: type === 'integer' || type === 'number' ? 'number' : 'date',
-      binWidth,
-      binWidthRange,
-      binWidthStep,
-    };
+          valueType:
+            type === 'integer' || type === 'number' ? 'number' : 'date',
+          binWidth,
+          binWidthRange,
+          binWidthStep,
+        };
   });
 
   return {
@@ -915,9 +916,7 @@ function reorderData(
     return {
       ...data,
       facets: facetIndices.map((i, j) => ({
-        label:
-          facetVocabulary[j] +
-          (data.facets[i] ? '' : ' (no plottable data for this facet)'),
+        label: facetVocabulary[j],
         data:
           data.facets[i]?.data != null
             ? (reorderData(
