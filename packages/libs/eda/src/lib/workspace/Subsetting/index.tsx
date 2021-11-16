@@ -18,7 +18,7 @@ import SubsettingDataGridModal from './SubsettingDataGridModal';
 import { TableDownload } from '@veupathdb/core-components/dist/components/icons';
 
 // Hooks
-import { useEntityCounts } from '../../core/hooks/entityCounts';
+import { EntityCounts } from '../../core/hooks/entityCounts';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { useStudyEntities } from '../../core/hooks/study';
 
@@ -39,6 +39,8 @@ interface SubsettingProps {
    * a variable is a child of an entity.
    */
   variableId: string;
+  totalCounts: EntityCounts | undefined;
+  filteredCounts: EntityCounts | undefined;
 }
 
 /** Allow user to filter study data based on the value(s) of any available variable. */
@@ -46,6 +48,8 @@ export default function Subsetting({
   entityId,
   variableId,
   analysisState,
+  totalCounts,
+  filteredCounts,
 }: SubsettingProps) {
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
 
@@ -64,9 +68,7 @@ export default function Subsetting({
   const variable = entity?.variables.find((v) => v.id === variableId);
 
   const history = useHistory();
-  const totalCounts = useEntityCounts();
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
-  const filteredCounts = useEntityCounts(filters);
   const makeVariableLink = useMakeVariableLink();
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
@@ -77,11 +79,10 @@ export default function Subsetting({
   )
     return <div>Could not find specified variable.</div>;
 
-  const totalEntityCount = totalCounts.value && totalCounts.value[entity.id];
+  const totalEntityCount = totalCounts && totalCounts[entity.id];
 
   // This will give you the count of rows for the current entity.
-  const filteredEntityCount =
-    filteredCounts.value && filteredCounts.value[entity.id];
+  const filteredEntityCount = filteredCounts && filteredCounts[entity.id];
 
   return (
     <div className={cx('-Subsetting')}>

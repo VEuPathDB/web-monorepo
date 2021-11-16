@@ -161,6 +161,8 @@ function MosaicViz(props: Props) {
     dataElementDependencyOrder,
     starredVariables,
     toggleStarredVariable,
+    totalCounts,
+    filteredCounts,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -427,12 +429,13 @@ function MosaicViz(props: Props) {
           completeCasesAxesVars={
             data.pending ? undefined : data.value?.completeCasesAxesVars
           }
-          filters={filters}
           outputEntity={outputEntity}
           stratificationIsActive={facetVariable != null}
           enableSpinner={
             xAxisVariable != null && yAxisVariable != null && !data.error
           }
+          totalCounts={totalCounts}
+          filteredCounts={filteredCounts}
         />
         <VariableCoverageTable
           completeCases={data.pending ? undefined : data.value?.completeCases}
