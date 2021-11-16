@@ -866,7 +866,7 @@ export function scatterplotResponseToData(
             showMissingness
           ).map((facetValue) => ({
             label: facetValue,
-            data: processedData[facetValue]?.dataSetProcess ?? { series: [] },
+            data: processedData[facetValue]?.dataSetProcess ?? undefined,
           })),
         };
 
@@ -977,7 +977,7 @@ function processInputData<T extends number | string>(
     )
   ) {
     return {
-      dataSetProcess: { series: [] },
+      dataSetProcess: { series: [] }, // BM doesn't think this should be `undefined` for empty facets - the back end doesn't return *any* data for empty facets.
       yMin,
       yMax,
     };
