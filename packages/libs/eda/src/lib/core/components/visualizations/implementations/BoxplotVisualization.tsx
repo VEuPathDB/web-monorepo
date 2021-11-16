@@ -802,18 +802,20 @@ function reorderData(
     // reorder within each facet with call to this function
     return {
       ...data,
-      facets: facetIndices.map((i, j) => ({
-        label: facetVocabulary[j],
-        data:
-          data.facets[i]?.data != null
-            ? (reorderData(
-                data.facets[i].data!, // not sure why ! is needed
-                labelVocabulary,
-                overlayVocabulary,
-                facetVocabulary
-              ) as BoxplotData)
-            : undefined,
-      })),
+      facets: facetIndices.map((i, j) => {
+        const facetData = data.facets[i]?.data;
+        return {
+          label: facetVocabulary[j],
+          data:
+            facetData != null
+              ? (reorderData(
+                  facetData,
+                  labelVocabulary,
+                  overlayVocabulary
+                ) as BoxplotData)
+              : undefined,
+        };
+      }),
     };
   }
 
