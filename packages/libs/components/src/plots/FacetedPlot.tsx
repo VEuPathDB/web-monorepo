@@ -72,7 +72,7 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
             }}
             key={index}
             data={data}
-            title={label}
+            title={data == null ? `NO DATA: ${label}` : label}
             displayLegend={false}
             interactive={false}
             // pass checkedLegendItems to PlotlyPlot
