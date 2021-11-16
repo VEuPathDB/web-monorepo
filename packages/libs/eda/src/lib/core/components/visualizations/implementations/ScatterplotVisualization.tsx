@@ -423,7 +423,9 @@ function ScatterplotViz(props: VisualizationProps) {
     const allData = data.value?.dataSetProcess;
     const legendData = !isFaceted(allData)
       ? allData?.series
-      : allData.facets.find(({ data }) => data.series.length > 0)?.data.series;
+      : allData.facets.find(
+          ({ data }) => data != null && data.series.length > 0
+        )?.data?.series;
 
     // logic for setting markerColor correctly
     // find raw legend label (excluding No data as well)
@@ -492,11 +494,12 @@ function ScatterplotViz(props: VisualizationProps) {
                 ? true
                 : false
               : allData.facets
+                  .filter((facet) => facet.data != null)
                   .map(
                     ({ data }) =>
-                      data.series[index]?.y != null &&
-                      data.series[index].y.length > 0 &&
-                      data.series[index].y[0] !== null
+                      data?.series[index]?.y != null &&
+                      data?.series[index].y.length > 0 &&
+                      data?.series[index].y[0] !== null
                   )
                   .includes(true),
             group: 1,

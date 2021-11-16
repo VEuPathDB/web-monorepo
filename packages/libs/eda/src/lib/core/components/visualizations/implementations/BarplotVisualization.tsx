@@ -309,9 +309,9 @@ function BarplotViz(props: VisualizationProps) {
     if (isFaceted(data?.value)) {
       return data?.value?.facets != null
         ? max(
-            data.value.facets.flatMap((facet) =>
-              facet.data.series.flatMap((o) => o.value)
-            )
+            data.value.facets
+              .filter((facet) => facet.data != null)
+              .flatMap((facet) => facet.data?.series.flatMap((o) => o.value))
           )
         : undefined;
     } else {
@@ -343,8 +343,9 @@ function BarplotViz(props: VisualizationProps) {
   const legendItems: LegendItemsProps[] = useMemo(() => {
     const legendData = !isFaceted(data.value)
       ? data.value?.series
-      : data.value?.facets.find(({ data }) => data.series.length > 0)?.data
-          .series;
+      : data.value?.facets.find(
+          ({ data }) => data != null && data.series.length > 0
+        )?.data?.series;
 
     return legendData != null
       ? legendData.map((dataItem: BarplotDataSeries, index: number) => {
@@ -362,9 +363,9 @@ function BarplotViz(props: VisualizationProps) {
                 ? true
                 : false
               : data.value?.facets
-                  .map((el: { label: string; data: BarplotData }) => {
+                  .map((el: { label: string; data?: BarplotData }) => {
                     // faceted plot: here data.value is full data
-                    return el.data.series[index].value.some(
+                    return el.data?.series[index].value.some(
                       (el: number) => el != null
                     );
                   })
@@ -673,11 +674,14 @@ function reorderData(
         facetVocabulary.indexOf(label)
       ).map(({ label, data }) => ({
         label,
-        data: reorderData(
-          data,
-          labelVocabulary,
-          overlayVocabulary
-        ) as BarplotData,
+        data:
+          data != null
+            ? (reorderData(
+                data,
+                labelVocabulary,
+                overlayVocabulary
+              ) as BarplotData)
+            : undefined,
       })),
     };
   }

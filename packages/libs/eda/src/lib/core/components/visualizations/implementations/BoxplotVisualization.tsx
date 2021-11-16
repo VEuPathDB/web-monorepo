@@ -342,31 +342,43 @@ function BoxplotViz(props: VisualizationProps) {
               (min([
                 0,
                 min(
-                  data.value.facets.flatMap((facet) =>
-                    facet.data.series
-                      .flatMap((o) => o.outliers as number[][])
-                      .flat()
-                  )
+                  data.value.facets
+                    .filter((facet) => facet.data != null)
+                    .flatMap((facet) =>
+                      facet.data?.series
+                        .flatMap((o) => o.outliers as number[][])
+                        .flat()
+                    )
                 ),
                 min(
-                  data.value.facets.flatMap((facet) =>
-                    facet.data.series.flatMap((o) => o.lowerfence as number[])
-                  )
+                  data.value.facets
+                    .filter((facet) => facet.data != null)
+                    .flatMap((facet) =>
+                      facet.data?.series.flatMap(
+                        (o) => o.lowerfence as number[]
+                      )
+                    )
                 ),
               ]) as number) * 1.05,
             max:
               (max([
                 max(
-                  data.value.facets.flatMap((facet) =>
-                    facet.data.series
-                      .flatMap((o) => o.outliers as number[][])
-                      .flat()
-                  )
+                  data.value.facets
+                    .filter((facet) => facet.data != null)
+                    .flatMap((facet) =>
+                      facet.data?.series
+                        .flatMap((o) => o.outliers as number[][])
+                        .flat()
+                    )
                 ),
                 max(
-                  data.value.facets.flatMap((facet) =>
-                    facet.data.series.flatMap((o) => o.upperfence as number[])
-                  )
+                  data.value.facets
+                    .filter((facet) => facet.data != null)
+                    .flatMap((facet) =>
+                      facet.data?.series.flatMap(
+                        (o) => o.upperfence as number[]
+                      )
+                    )
                 ),
               ]) as number) * 1.05,
           }
@@ -403,8 +415,9 @@ function BoxplotViz(props: VisualizationProps) {
   const legendItems: LegendItemsProps[] = useMemo(() => {
     const legendData = !isFaceted(data.value)
       ? data.value?.series
-      : data.value?.facets.find(({ data }) => data.series.length > 0)?.data
-          .series;
+      : data.value?.facets.find(
+          ({ data }) => data != null && data.series.length > 0
+        )?.data?.series;
 
     return legendData != null
       ? legendData.map((dataItem: BoxplotDataObject, index: number) => {
@@ -423,9 +436,9 @@ function BoxplotViz(props: VisualizationProps) {
                 ? true
                 : false
               : data.value?.facets
-                  .map((el: { label: string; data: BoxplotData }) => {
+                  .map((el: { label: string; data?: BoxplotData }) => {
                     // faceted plot: here data.value is full data
-                    return el.data.series[index].q1.some(
+                    return el.data?.series[index]?.q1.some(
                       (el: number | string) => el != null
                     );
                   })
@@ -631,7 +644,7 @@ function BoxplotWithControls({
             ...data,
             facets: data.facets.map(({ label, data }) => ({
               label,
-              data: data.series,
+              data: data?.series,
             })),
           }}
           props={boxplotComponentProps}
@@ -786,11 +799,14 @@ function reorderData(
         facetVocabulary.indexOf(label)
       ).map(({ label, data }) => ({
         label,
-        data: reorderData(
-          data,
-          labelVocabulary,
-          overlayVocabulary
-        ) as BoxplotData,
+        data:
+          data != null
+            ? (reorderData(
+                data,
+                labelVocabulary,
+                overlayVocabulary
+              ) as BoxplotData)
+            : undefined,
       })),
     };
   }

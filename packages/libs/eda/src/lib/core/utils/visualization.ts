@@ -26,7 +26,10 @@ export function grayOutLastSeries<
       ...data,
       facets: data.facets.map(({ label, data }) => ({
         label,
-        data: grayOutLastSeries(data, showMissingness, borderColor) as T,
+        data:
+          data != null
+            ? (grayOutLastSeries(data, showMissingness, borderColor) as T)
+            : undefined,
       })),
     };
   }
@@ -60,12 +63,15 @@ export function omitEmptyNoDataSeries<
       ...data,
       facets: data.facets.map((facet) => ({
         label: facet.label,
-        data: {
-          ...facet.data,
-          series: omitLastSeries
-            ? facet.data.series.slice(0, -1)
-            : facet.data.series,
-        },
+        data:
+          facet.data != null
+            ? {
+                ...facet.data,
+                series: omitLastSeries
+                  ? facet.data.series.slice(0, -1)
+                  : facet.data.series,
+              }
+            : undefined,
       })),
     };
   }
