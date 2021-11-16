@@ -365,10 +365,12 @@ function HistogramViz(props: VisualizationProps) {
       const facetMinMaxes =
         data?.value?.facets != null
           ? data.value.facets
-              .filter((facet) => facet.data?.series != null)
-              .map(
-                (facet) => findMinMaxOfStackedArray(facet.data?.series!) // not sure why ! is needed - already filtered for this
+              .map((facet) => facet.data)
+              .filter(
+                (data): data is HistogramData =>
+                  data != null && data.series != null
               )
+              .map((data) => findMinMaxOfStackedArray(data.series))
           : undefined;
       return (
         facetMinMaxes && {
@@ -915,17 +917,20 @@ function reorderData(
 
     return {
       ...data,
-      facets: facetIndices.map((i, j) => ({
-        label: facetVocabulary[j],
-        data:
-          data.facets[i]?.data != null
-            ? (reorderData(
-                data.facets[i].data!, // not sure why ! is needed
-                overlayVocabulary,
-                facetVocabulary
-              ) as HistogramData)
-            : undefined,
-      })),
+      facets: facetIndices.map((i, j) => {
+        const facetData = data.facets[i]?.data;
+        return {
+          label: facetVocabulary[j],
+          data:
+            facetData != null
+              ? (reorderData(
+                  facetData,
+                  overlayVocabulary,
+                  facetVocabulary
+                ) as HistogramData)
+              : undefined,
+        };
+      }),
     };
   }
 
