@@ -11,6 +11,7 @@ import _ from 'lodash';
 // util functions for handling long tick labels with ellipsis
 import { axisTickLableEllipsis } from '../utils/axis-tick-label-ellipsis';
 import { makeStyles } from '@material-ui/core/styles';
+import { Layout } from 'plotly.js';
 
 export interface MosaicPlotProps extends PlotProps<MosaicData> {
   /** label for independent axis */
@@ -154,10 +155,11 @@ const MosaicPlot = makePlotlyPlotComponent(
       marginLeft: marginLeft + marginLeftExtra,
     };
 
-    const layout = {
+    const layout: Partial<Layout> = {
       xaxis: {
         title: independentAxisLabel,
         tickvals: column_centers,
+        tickangle: 90,
         ticktext:
           showColumnLabels !== false
             ? // use ellipsis texts here
@@ -187,7 +189,7 @@ const MosaicPlot = makePlotlyPlotComponent(
         itemdoubleclick: false,
       },
       hovermode: 'x',
-    } as const;
+    } as Partial<Layout>;
 
     const plotlyReadyData: PlotParams['data'] = data.values
       .map(
