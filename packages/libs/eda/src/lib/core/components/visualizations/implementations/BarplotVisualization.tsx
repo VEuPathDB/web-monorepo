@@ -54,17 +54,7 @@ import {
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 // use lodash instead of Math.min/max
-import {
-  max,
-  sortBy,
-  groupBy,
-  mapValues,
-  size,
-  map,
-  head,
-  values,
-  keys,
-} from 'lodash';
+import { max, groupBy, mapValues, size, map, head, values, keys } from 'lodash';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 // for custom legend
 import PlotLegend, {
@@ -668,18 +658,24 @@ function reorderData(
 ): BarplotDataWithStatistics | BarplotData {
   // If faceted, reorder the facets and within the facets
   if (isFaceted(data)) {
+    // for each value in the facet vocabulary's correct order
+    // find the index in the series where series.name equals that value
+    const facetValues = data.facets.map((facet) => facet.label);
+    const facetIndices = facetVocabulary.map((name) =>
+      facetValues.indexOf(name)
+    );
+
     return {
       ...data,
-      facets: sortBy(data.facets, ({ label }) =>
-        facetVocabulary.indexOf(label)
-      ).map(({ label, data }) => ({
-        label,
+      facets: facetIndices.map((i, j) => ({
+        label: facetVocabulary[j],
         data:
-          data != null
+          data.facets[i]?.data != null
             ? (reorderData(
-                data,
+                data.facets[i].data!, // not sure why ! is needed
                 labelVocabulary,
-                overlayVocabulary
+                overlayVocabulary,
+                facetVocabulary
               ) as BarplotData)
             : undefined,
       })),
