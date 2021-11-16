@@ -40,7 +40,6 @@ import PluginError from '../PluginError';
 
 import {
   at,
-  sortBy,
   groupBy,
   mapValues,
   size,
