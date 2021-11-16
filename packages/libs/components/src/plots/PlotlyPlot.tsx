@@ -44,6 +44,8 @@ export interface PlotProps<T> extends ColorPaletteAddon {
   displayLibraryControls?: boolean;
   /** show a loading... spinner in the middle of the container div */
   showSpinner?: boolean;
+  /** Show an overlay with the words 'No Data' */
+  showNoDataOverlay?: boolean;
   /** Options for customizing plot legend layout and appearance. */
   legendOptions?: PlotLegendAddon;
   /** legend title */
@@ -56,7 +58,6 @@ export interface PlotProps<T> extends ColorPaletteAddon {
   storedIndependentAxisTickLabel?: string[];
   /** list of checked legend items via checkbox input */
   checkedLegendItems?: string[];
-  showNoDataOverlay?: boolean;
 }
 
 const Plot = lazy(() => import('react-plotly.js'));
@@ -88,6 +89,7 @@ function PlotlyPlot<T>(
     legendTitle,
     spacingOptions,
     showSpinner,
+    showNoDataOverlay,
     // set default max number of characters (20) for legend ellipsis
     maxLegendTextLength = DEFAULT_MAX_LEGEND_TEXT_LENGTH,
     // expose data for applying legend ellipsis
@@ -96,7 +98,6 @@ function PlotlyPlot<T>(
     storedIndependentAxisTickLabel,
     checkedLegendItems,
     colorPalette = ColorPaletteDefault,
-    showNoDataOverlay,
     ...plotlyProps
   } = props;
 
