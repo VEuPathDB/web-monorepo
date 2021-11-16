@@ -425,7 +425,9 @@ function ScatterplotViz(props: VisualizationProps) {
     const allData = data.value?.dataSetProcess;
     const legendData = !isFaceted(allData)
       ? allData?.series
-      : allData.facets.find(({ data }) => data.series.length > 0)?.data.series;
+      : allData.facets.find(
+          ({ data }) => data != null && data.series.length > 0
+        )?.data?.series;
 
     // logic for setting markerColor correctly
     // find raw legend label (excluding No data as well)
@@ -494,8 +496,10 @@ function ScatterplotViz(props: VisualizationProps) {
                 ? true
                 : false
               : allData.facets
+                  .map((facet) => facet.data)
+                  .filter((data): data is XYPlotData => data != null)
                   .map(
-                    ({ data }) =>
+                    (data) =>
                       data.series[index]?.y != null &&
                       data.series[index].y.length > 0 &&
                       data.series[index].y[0] !== null
@@ -866,7 +870,7 @@ export function scatterplotResponseToData(
             showMissingness
           ).map((facetValue) => ({
             label: facetValue,
-            data: processedData[facetValue]?.dataSetProcess ?? { series: [] },
+            data: processedData[facetValue]?.dataSetProcess ?? undefined,
           })),
         };
 
@@ -977,7 +981,7 @@ function processInputData<T extends number | string>(
     )
   ) {
     return {
-      dataSetProcess: { series: [] },
+      dataSetProcess: { series: [] }, // BM doesn't think this should be `undefined` for empty facets - the back end doesn't return *any* data for empty facets.
       yMin,
       yMax,
     };

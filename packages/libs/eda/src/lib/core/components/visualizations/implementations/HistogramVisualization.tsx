@@ -367,9 +367,13 @@ function HistogramViz(props: VisualizationProps) {
     if (isFaceted(data.value)) {
       const facetMinMaxes =
         data?.value?.facets != null
-          ? data.value.facets.map((facet) =>
-              findMinMaxOfStackedArray(facet.data.series)
-            )
+          ? data.value.facets
+              .map((facet) => facet.data)
+              .filter(
+                (data): data is HistogramData =>
+                  data != null && data.series != null
+              )
+              .map((data) => findMinMaxOfStackedArray(data.series))
           : undefined;
       return (
         facetMinMaxes && {
@@ -407,8 +411,9 @@ function HistogramViz(props: VisualizationProps) {
   const legendItems: LegendItemsProps[] = useMemo(() => {
     const legendData = !isFaceted(data.value)
       ? data.value?.series
-      : data.value?.facets.find(({ data }) => data.series.length > 0)?.data
-          .series;
+      : data.value?.facets.find(
+          ({ data }) => data != null && data.series.length > 0
+        )?.data?.series;
 
     return legendData != null
       ? legendData
@@ -428,9 +433,9 @@ function HistogramViz(props: VisualizationProps) {
                   : false
                 : data.value?.facets // faceted plot: here data.value is full data
                     .map(
-                      (el: { label: string; data: HistogramData }) =>
-                        el.data.series[index]?.bins != null &&
-                        el.data.series[index].bins.length > 0
+                      (el: { label: string; data?: HistogramData }) =>
+                        el.data?.series[index]?.bins != null &&
+                        el.data?.series[index].bins.length > 0
                     )
                     .includes(true),
               group: 1,
@@ -621,7 +626,8 @@ function HistogramPlotWithControls({
 
   // controls need the bin info from just one facet (not an empty one)
   const data0 = isFaceted(data)
-    ? data.facets.find(({ data }) => data.series.length > 0)?.data
+    ? data.facets.find(({ data }) => data != null && data.series.length > 0)
+        ?.data
     : data;
 
   const plotNode = (
@@ -806,10 +812,10 @@ export function histogramResponseToData(
     const facetIsEmpty = group.every(
       (data) => data.binStart.length === 0 && data.value.length === 0
     );
-    return {
-      series: facetIsEmpty
-        ? []
-        : group.map((data) => ({
+    return facetIsEmpty
+      ? undefined
+      : {
+          series: group.map((data) => ({
             name:
               data.overlayVariableDetails?.value != null
                 ? fixLabelForNumberVariables(
@@ -831,11 +837,12 @@ export function histogramResponseToData(
             })),
           })),
 
-      valueType: type === 'integer' || type === 'number' ? 'number' : 'date',
-      binWidth,
-      binWidthRange,
-      binWidthStep,
-    };
+          valueType:
+            type === 'integer' || type === 'number' ? 'number' : 'date',
+          binWidth,
+          binWidthRange,
+          binWidthStep,
+        };
   });
 
   return {
@@ -920,19 +927,16 @@ function reorderData(
 
     return {
       ...data,
-      facets: facetIndices.map((i, j) => ({
-        label:
-          facetVocabulary[j] +
-          (data.facets[i] ? '' : ' (no plottable data for this facet)'),
-        data: data.facets[i]
-          ? (reorderData(
-              data.facets[i].data,
-              overlayVocabulary,
-              facetVocabulary
-            ) as HistogramData)
-          : // dummy data for empty facet
-            { series: [] },
-      })),
+      facets: facetIndices.map((i, j) => {
+        const facetData = data.facets[i]?.data;
+        return {
+          label: facetVocabulary[j],
+          data:
+            facetData != null
+              ? (reorderData(facetData, overlayVocabulary) as HistogramData)
+              : undefined,
+        };
+      }),
     };
   }
 

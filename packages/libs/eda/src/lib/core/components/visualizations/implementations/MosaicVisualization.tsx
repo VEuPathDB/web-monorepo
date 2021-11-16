@@ -1,7 +1,6 @@
 // import MosaicControls from '@veupathdb/components/lib/components/plotControls/MosaicControls';
 import Mosaic, {
   MosaicPlotProps as MosaicProps,
-  EmptyMosaicData,
 } from '@veupathdb/components/lib/plots/MosaicPlot';
 import { FacetedData, MosaicData } from '@veupathdb/components/lib/types/plots';
 import { ContingencyTable } from '@veupathdb/components/lib/components/ContingencyTable';
@@ -851,20 +850,18 @@ function reorderData(
 
     return {
       ...data,
-      facets: facetIndices.map((i, j) => ({
-        label:
-          facetVocabulary[j] +
-          (data.facets[i] ? '' : ' (no plottable data for this facet)'),
-        data: data.facets[i]
-          ? (reorderData(
-              data.facets[i].data,
-              xVocabulary,
-              yVocabulary,
-              facetVocabulary
-            ) as TwoByTwoData | ContTableData)
-          : // dummy data for empty facet
-            EmptyMosaicData,
-      })),
+      facets: facetIndices.map((i, j) => {
+        const facetData = data.facets[i]?.data;
+        return {
+          label: facetVocabulary[j],
+          data:
+            facetData != null
+              ? (reorderData(facetData, xVocabulary, yVocabulary) as
+                  | TwoByTwoData
+                  | ContTableData)
+              : undefined,
+        };
+      }),
     };
   }
 

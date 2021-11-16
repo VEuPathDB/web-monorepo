@@ -54,17 +54,7 @@ import {
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 // use lodash instead of Math.min/max
-import {
-  max,
-  sortBy,
-  groupBy,
-  mapValues,
-  size,
-  map,
-  head,
-  values,
-  keys,
-} from 'lodash';
+import { max, groupBy, mapValues, size, map, head, values, keys } from 'lodash';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 // for custom legend
 import PlotLegend, {
@@ -311,9 +301,9 @@ function BarplotViz(props: VisualizationProps) {
     if (isFaceted(data?.value)) {
       return data?.value?.facets != null
         ? max(
-            data.value.facets.flatMap((facet) =>
-              facet.data.series.flatMap((o) => o.value)
-            )
+            data.value.facets
+              .filter((facet) => facet.data != null)
+              .flatMap((facet) => facet.data?.series.flatMap((o) => o.value))
           )
         : undefined;
     } else {
@@ -345,8 +335,9 @@ function BarplotViz(props: VisualizationProps) {
   const legendItems: LegendItemsProps[] = useMemo(() => {
     const legendData = !isFaceted(data.value)
       ? data.value?.series
-      : data.value?.facets.find(({ data }) => data.series.length > 0)?.data
-          .series;
+      : data.value?.facets.find(
+          ({ data }) => data != null && data.series.length > 0
+        )?.data?.series;
 
     return legendData != null
       ? legendData.map((dataItem: BarplotDataSeries, index: number) => {
@@ -364,9 +355,9 @@ function BarplotViz(props: VisualizationProps) {
                 ? true
                 : false
               : data.value?.facets
-                  .map((el: { label: string; data: BarplotData }) => {
+                  .map((el: { label: string; data?: BarplotData }) => {
                     // faceted plot: here data.value is full data
-                    return el.data.series[index].value.some(
+                    return el.data?.series[index].value.some(
                       (el: number) => el != null
                     );
                   })
@@ -670,18 +661,29 @@ function reorderData(
 ): BarplotDataWithStatistics | BarplotData {
   // If faceted, reorder the facets and within the facets
   if (isFaceted(data)) {
+    // for each value in the facet vocabulary's correct order
+    // find the index in the series where series.name equals that value
+    const facetValues = data.facets.map((facet) => facet.label);
+    const facetIndices = facetVocabulary.map((name) =>
+      facetValues.indexOf(name)
+    );
+
     return {
       ...data,
-      facets: sortBy(data.facets, ({ label }) =>
-        facetVocabulary.indexOf(label)
-      ).map(({ label, data }) => ({
-        label,
-        data: reorderData(
-          data,
-          labelVocabulary,
-          overlayVocabulary
-        ) as BarplotData,
-      })),
+      facets: facetIndices.map((i, j) => {
+        const facetData = data.facets[i]?.data;
+        return {
+          label: facetVocabulary[j],
+          data:
+            facetData != null
+              ? (reorderData(
+                  facetData,
+                  labelVocabulary,
+                  overlayVocabulary
+                ) as BarplotData)
+              : undefined,
+        };
+      }),
     };
   }
 

@@ -40,7 +40,6 @@ import PluginError from '../PluginError';
 
 import {
   at,
-  sortBy,
   groupBy,
   mapValues,
   size,
@@ -344,31 +343,43 @@ function BoxplotViz(props: VisualizationProps) {
               (min([
                 0,
                 min(
-                  data.value.facets.flatMap((facet) =>
-                    facet.data.series
-                      .flatMap((o) => o.outliers as number[][])
-                      .flat()
-                  )
+                  data.value.facets
+                    .filter((facet) => facet.data != null)
+                    .flatMap((facet) =>
+                      facet.data?.series
+                        .flatMap((o) => o.outliers as number[][])
+                        .flat()
+                    )
                 ),
                 min(
-                  data.value.facets.flatMap((facet) =>
-                    facet.data.series.flatMap((o) => o.lowerfence as number[])
-                  )
+                  data.value.facets
+                    .filter((facet) => facet.data != null)
+                    .flatMap((facet) =>
+                      facet.data?.series.flatMap(
+                        (o) => o.lowerfence as number[]
+                      )
+                    )
                 ),
               ]) as number) * 1.05,
             max:
               (max([
                 max(
-                  data.value.facets.flatMap((facet) =>
-                    facet.data.series
-                      .flatMap((o) => o.outliers as number[][])
-                      .flat()
-                  )
+                  data.value.facets
+                    .filter((facet) => facet.data != null)
+                    .flatMap((facet) =>
+                      facet.data?.series
+                        .flatMap((o) => o.outliers as number[][])
+                        .flat()
+                    )
                 ),
                 max(
-                  data.value.facets.flatMap((facet) =>
-                    facet.data.series.flatMap((o) => o.upperfence as number[])
-                  )
+                  data.value.facets
+                    .filter((facet) => facet.data != null)
+                    .flatMap((facet) =>
+                      facet.data?.series.flatMap(
+                        (o) => o.upperfence as number[]
+                      )
+                    )
                 ),
               ]) as number) * 1.05,
           }
@@ -405,8 +416,9 @@ function BoxplotViz(props: VisualizationProps) {
   const legendItems: LegendItemsProps[] = useMemo(() => {
     const legendData = !isFaceted(data.value)
       ? data.value?.series
-      : data.value?.facets.find(({ data }) => data.series.length > 0)?.data
-          .series;
+      : data.value?.facets.find(
+          ({ data }) => data != null && data.series.length > 0
+        )?.data?.series;
 
     return legendData != null
       ? legendData.map((dataItem: BoxplotDataObject, index: number) => {
@@ -425,9 +437,9 @@ function BoxplotViz(props: VisualizationProps) {
                 ? true
                 : false
               : data.value?.facets
-                  .map((el: { label: string; data: BoxplotData }) => {
+                  .map((el: { label: string; data?: BoxplotData }) => {
                     // faceted plot: here data.value is full data
-                    return el.data.series[index].q1.some(
+                    return el.data?.series[index]?.q1.some(
                       (el: number | string) => el != null
                     );
                   })
@@ -467,6 +479,7 @@ function BoxplotViz(props: VisualizationProps) {
       // show/hide independent/dependent axis tick label
       showIndependentAxisTickLabel={true}
       showDependentAxisTickLabel={true}
+      dependentAxisRange={dependentAxisRange}
       showMean={true}
       interactive={true}
       showSpinner={data.pending}
@@ -634,7 +647,7 @@ function BoxplotWithControls({
             ...data,
             facets: data.facets.map(({ label, data }) => ({
               label,
-              data: data.series,
+              data: data?.series,
             })),
           }}
           props={boxplotComponentProps}
@@ -682,10 +695,10 @@ export function boxplotResponseToData(
     const facetIsEmpty = group.every(
       (data) => data.label.length === 0 && data.median.length === 0
     );
-    return {
-      series: facetIsEmpty
-        ? []
-        : group.map((data) => ({
+    return facetIsEmpty
+      ? undefined
+      : {
+          series: group.map((data) => ({
             lowerfence: data.lowerfence,
             upperfence: data.upperfence,
             q1: data.q1,
@@ -711,7 +724,7 @@ export function boxplotResponseToData(
                 : '',
             label: fixLabelsForNumberVariables(data.label, variable),
           })),
-    };
+        };
   });
 
   return {
@@ -782,19 +795,30 @@ function reorderData(
   facetVocabulary: string[] = []
 ): BoxplotDataWithCoverage | BoxplotData {
   if (isFaceted(data)) {
+    // for each value in the facet vocabulary's correct order
+    // find the index in the series where series.name equals that value
+    const facetValues = data.facets.map((facet) => facet.label);
+    const facetIndices = facetVocabulary.map((name) =>
+      facetValues.indexOf(name)
+    );
+
     // reorder within each facet with call to this function
     return {
       ...data,
-      facets: sortBy(data.facets, ({ label }) =>
-        facetVocabulary.indexOf(label)
-      ).map(({ label, data }) => ({
-        label,
-        data: reorderData(
-          data,
-          labelVocabulary,
-          overlayVocabulary
-        ) as BoxplotData,
-      })),
+      facets: facetIndices.map((i, j) => {
+        const facetData = data.facets[i]?.data;
+        return {
+          label: facetVocabulary[j],
+          data:
+            facetData != null
+              ? (reorderData(
+                  facetData,
+                  labelVocabulary,
+                  overlayVocabulary
+                ) as BoxplotData)
+              : undefined,
+        };
+      }),
     };
   }
 
