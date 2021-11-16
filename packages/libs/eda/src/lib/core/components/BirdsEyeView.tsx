@@ -1,4 +1,3 @@
-import { Filter } from '../types/filter';
 import { EntityCounts } from '../hooks/entityCounts';
 import { CoverageStatistics } from '../types/visualization';
 import BirdsEyePlot from '@veupathdb/components/lib/plots/BirdsEyePlot';
@@ -7,8 +6,6 @@ import { StudyEntity } from '../types/study';
 import { HelpIcon } from '@veupathdb/wdk-client/lib/Components';
 
 interface Props extends Partial<CoverageStatistics> {
-  /** Current active filters */
-  filters?: Filter[];
   /** The output entity */
   outputEntity?: StudyEntity;
   /** Are any stratification variables active? */
@@ -21,7 +18,6 @@ interface Props extends Partial<CoverageStatistics> {
 
 export function BirdsEyeView(props: Props) {
   const {
-    filters = [],
     outputEntity,
     completeCasesAllVars,
     completeCasesAxesVars,

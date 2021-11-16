@@ -429,7 +429,6 @@ function MosaicViz(props: Props) {
           completeCasesAxesVars={
             data.pending ? undefined : data.value?.completeCasesAxesVars
           }
-          filters={filters}
           outputEntity={outputEntity}
           stratificationIsActive={facetVariable != null}
           enableSpinner={

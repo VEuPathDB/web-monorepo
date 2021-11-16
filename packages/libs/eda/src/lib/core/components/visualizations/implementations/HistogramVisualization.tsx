@@ -713,7 +713,6 @@ function HistogramPlotWithControls({
       <BirdsEyeView
         completeCasesAllVars={completeCasesAllVars}
         completeCasesAxesVars={completeCasesAxesVars}
-        filters={filters}
         outputEntity={outputEntity}
         stratificationIsActive={
           overlayVariable != null || facetVariable != null

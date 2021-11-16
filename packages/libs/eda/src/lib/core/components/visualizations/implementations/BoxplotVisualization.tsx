@@ -497,7 +497,6 @@ function BoxplotViz(props: VisualizationProps) {
         completeCasesAxesVars={
           data.pending ? undefined : data.value?.completeCasesAxesVars
         }
-        filters={filters}
         outputEntity={outputEntity}
         stratificationIsActive={
           overlayVariable != null || facetVariable != null

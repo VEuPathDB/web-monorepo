@@ -479,7 +479,6 @@ function BarplotViz(props: VisualizationProps) {
         completeCasesAxesVars={
           data.pending ? undefined : data.value?.completeCasesAxesVars
         }
-        filters={filters}
         outputEntity={entity}
         stratificationIsActive={overlayVariable != null}
         enableSpinner={vizConfig.xAxisVariable != null && !data.error}

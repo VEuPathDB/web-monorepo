@@ -587,7 +587,6 @@ function ScatterplotViz(props: VisualizationProps) {
         completeCasesAxesVars={
           data.pending ? undefined : data.value?.completeCasesAxesVars
         }
-        filters={filters}
         outputEntity={outputEntity}
         stratificationIsActive={overlayVariable != null}
         enableSpinner={
