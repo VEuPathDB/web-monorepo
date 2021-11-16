@@ -77,6 +77,7 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
             interactive={false}
             // pass checkedLegendItems to PlotlyPlot
             checkedLegendItems={checkedLegendItems}
+            showNoDataOverlay={data == null}
           />
         ))}
       </div>
