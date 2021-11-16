@@ -923,11 +923,7 @@ function reorderData(
           label: facetVocabulary[j],
           data:
             facetData != null
-              ? (reorderData(
-                  facetData,
-                  overlayVocabulary,
-                  facetVocabulary
-                ) as HistogramData)
+              ? (reorderData(facetData, overlayVocabulary) as HistogramData)
               : undefined,
         };
       }),

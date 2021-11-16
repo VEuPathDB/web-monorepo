@@ -847,18 +847,18 @@ function reorderData(
 
     return {
       ...data,
-      facets: facetIndices.map((i, j) => ({
-        label: facetVocabulary[j],
-        data:
-          data.facets[i]?.data != null
-            ? (reorderData(
-                data.facets[i].data!, // see HistogramVisualization
-                xVocabulary,
-                yVocabulary,
-                facetVocabulary
-              ) as TwoByTwoData | ContTableData)
-            : undefined,
-      })),
+      facets: facetIndices.map((i, j) => {
+        const facetData = data.facets[i]?.data;
+        return {
+          label: facetVocabulary[j],
+          data:
+            facetData != null
+              ? (reorderData(facetData, xVocabulary, yVocabulary) as
+                  | TwoByTwoData
+                  | ContTableData)
+              : undefined,
+        };
+      }),
     };
   }
 
