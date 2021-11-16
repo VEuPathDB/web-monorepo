@@ -667,18 +667,20 @@ function reorderData(
 
     return {
       ...data,
-      facets: facetIndices.map((i, j) => ({
-        label: facetVocabulary[j],
-        data:
-          data.facets[i]?.data != null
-            ? (reorderData(
-                data.facets[i].data!, // not sure why ! is needed
-                labelVocabulary,
-                overlayVocabulary,
-                facetVocabulary
-              ) as BarplotData)
-            : undefined,
-      })),
+      facets: facetIndices.map((i, j) => {
+        const facetData = data.facets[i]?.data;
+        return {
+          label: facetVocabulary[j],
+          data:
+            facetData != null
+              ? (reorderData(
+                  facetData,
+                  labelVocabulary,
+                  overlayVocabulary
+                ) as BarplotData)
+              : undefined,
+        };
+      }),
     };
   }
 
