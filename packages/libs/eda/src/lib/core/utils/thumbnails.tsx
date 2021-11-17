@@ -102,7 +102,7 @@ async function makeFacetedPlotThumbnailUrl(
         fontSize={thumbnailDimensions.height * 0.075}
         textAnchor="middle"
       >
-        {facetedPlotRef.length} facets
+        Faceted
       </text>
     </svg>
   );
