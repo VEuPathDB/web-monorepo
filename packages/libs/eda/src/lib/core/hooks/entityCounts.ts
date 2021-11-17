@@ -5,6 +5,8 @@ import { usePromise } from './promise';
 import { useStudyMetadata, useSubsettingClient } from './workspace';
 import { debounce } from 'lodash';
 
+export type EntityCounts = Record<string, number>;
+
 export function useEntityCounts(filters?: Filter[]) {
   const { id, rootEntity } = useStudyMetadata();
   const subsettingClient = useSubsettingClient();

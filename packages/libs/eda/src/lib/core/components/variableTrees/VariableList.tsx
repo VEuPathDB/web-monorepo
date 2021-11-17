@@ -401,7 +401,8 @@ export default function VariableList({
     tree = showOnlyCompatibleVariables
       ? pruneDescendantNodes((node) => {
           if (disabledFields.size === 0) return true;
-          if (node.field.type == null) return node.children.length > 0;
+          if (node.field.type == null || node.field.type === 'multiFilter')
+            return node.children.length > 0;
           return !disabledFields.has(node.field.term);
         }, tree)
       : tree;

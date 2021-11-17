@@ -228,12 +228,23 @@ export function AnalysisPanel({
           render={(
             props: RouteComponentProps<{ entityId: string; variableId: string }>
           ) => (
-            <Subsetting {...props.match.params} analysisState={analysisState} />
+            <Subsetting
+              {...props.match.params}
+              analysisState={analysisState}
+              totalCounts={totalCounts.value}
+              filteredCounts={filteredCounts.value}
+            />
           )}
         />
         <Route
           path={`${routeBase}/visualizations`}
-          render={() => <ComputationRoute analysisState={analysisState} />}
+          render={() => (
+            <ComputationRoute
+              analysisState={analysisState}
+              totalCounts={totalCounts.value}
+              filteredCounts={filteredCounts.value}
+            />
+          )}
         />
         <Route
           path={`${routeBase}/notes`}

@@ -185,6 +185,8 @@ function ScatterplotViz(props: VisualizationProps) {
     dataElementDependencyOrder,
     starredVariables,
     toggleStarredVariable,
+    totalCounts,
+    filteredCounts,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -589,12 +591,13 @@ function ScatterplotViz(props: VisualizationProps) {
         completeCasesAxesVars={
           data.pending ? undefined : data.value?.completeCasesAxesVars
         }
-        filters={filters}
         outputEntity={outputEntity}
         stratificationIsActive={overlayVariable != null}
         enableSpinner={
           xAxisVariable != null && yAxisVariable != null && !data.error
         }
+        totalCounts={totalCounts}
+        filteredCounts={filteredCounts}
       />
       <VariableCoverageTable
         completeCases={

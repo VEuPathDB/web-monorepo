@@ -79,6 +79,7 @@ import PlotLegend, {
   LegendItemsProps,
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
+import { EntityCounts } from '../../../hooks/entityCounts';
 
 type HistogramDataWithCoverageStatistics = (
   | HistogramData
@@ -168,6 +169,8 @@ function HistogramViz(props: VisualizationProps) {
     dataElementDependencyOrder,
     starredVariables,
     toggleStarredVariable,
+    totalCounts,
+    filteredCounts,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -546,6 +549,8 @@ function HistogramViz(props: VisualizationProps) {
         legendItems={legendItems}
         checkedLegendItems={vizConfig.checkedLegendItems}
         onCheckedLegendItemsChange={onCheckedLegendItemsChange}
+        totalCounts={totalCounts}
+        filteredCounts={filteredCounts}
       />
     </div>
   );
@@ -571,6 +576,8 @@ type HistogramPlotWithControlsProps = Omit<HistogramProps, 'data'> & {
   legendItems: LegendItemsProps[];
   checkedLegendItems: string[] | undefined;
   onCheckedLegendItemsChange: (checkedLegendItems: string[]) => void;
+  totalCounts: EntityCounts | undefined;
+  filteredCounts: EntityCounts | undefined;
 } & Partial<CoverageStatistics>;
 
 function HistogramPlotWithControls({
@@ -596,6 +603,8 @@ function HistogramPlotWithControls({
   legendItems,
   checkedLegendItems,
   onCheckedLegendItemsChange,
+  totalCounts,
+  filteredCounts,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   const barLayout = 'stack';
@@ -710,12 +719,13 @@ function HistogramPlotWithControls({
       <BirdsEyeView
         completeCasesAllVars={completeCasesAllVars}
         completeCasesAxesVars={completeCasesAxesVars}
-        filters={filters}
         outputEntity={outputEntity}
         stratificationIsActive={
           overlayVariable != null || facetVariable != null
         }
         enableSpinner={independentAxisVariable != null && !error}
+        totalCounts={totalCounts}
+        filteredCounts={filteredCounts}
       />
       <VariableCoverageTable
         completeCases={completeCases}

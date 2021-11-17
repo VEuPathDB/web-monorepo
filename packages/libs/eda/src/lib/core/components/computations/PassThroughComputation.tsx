@@ -17,10 +17,13 @@ import { VisualizationType } from '../visualizations/VisualizationTypes';
 import { scatterplotVisualization } from '../visualizations/implementations/ScatterplotVisualization';
 import { barplotVisualization } from '../visualizations/implementations/BarplotVisualization';
 import { boxplotVisualization } from '../visualizations/implementations/BoxplotVisualization';
+import { EntityCounts } from '../../hooks/entityCounts';
 
 interface Props {
   analysisState: AnalysisState;
   computationAppOverview: ComputationAppOverview;
+  totalCounts: EntityCounts | undefined;
+  filteredCounts: EntityCounts | undefined;
 }
 
 /**
@@ -40,7 +43,12 @@ const visualizationTypes: Record<string, VisualizationType> = {
 };
 
 export function PassThroughComputation(props: Props) {
-  const { analysisState, computationAppOverview } = props;
+  const {
+    analysisState,
+    computationAppOverview,
+    totalCounts,
+    filteredCounts,
+  } = props;
   const { analysis, setComputations } = analysisState;
   const filters = useMemo(() => analysis?.descriptor.subset.descriptor ?? [], [
     analysis?.descriptor.subset.descriptor,
@@ -105,6 +113,8 @@ export function PassThroughComputation(props: Props) {
       filters={filters}
       starredVariables={analysis.descriptor.starredVariables}
       toggleStarredVariable={toggleStarredVariable}
+      totalCounts={totalCounts}
+      filteredCounts={filteredCounts}
     />
   );
 }

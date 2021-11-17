@@ -142,6 +142,8 @@ function BarplotViz(props: VisualizationProps) {
     dataElementDependencyOrder,
     starredVariables,
     toggleStarredVariable,
+    totalCounts,
+    filteredCounts,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -468,10 +470,11 @@ function BarplotViz(props: VisualizationProps) {
         completeCasesAxesVars={
           data.pending ? undefined : data.value?.completeCasesAxesVars
         }
-        filters={filters}
         outputEntity={entity}
         stratificationIsActive={overlayVariable != null}
         enableSpinner={vizConfig.xAxisVariable != null && !data.error}
+        totalCounts={totalCounts}
+        filteredCounts={filteredCounts}
       />
       <VariableCoverageTable
         completeCases={data.pending ? undefined : data.value?.completeCases}

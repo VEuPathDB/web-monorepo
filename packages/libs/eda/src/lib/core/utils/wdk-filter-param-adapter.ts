@@ -154,6 +154,29 @@ export function toWdkVariableSummary(
   };
 }
 
+/**
+ * Generate a flat array of objects where each object represents
+ * a given entity/variable category/variable in the entity hierarchy.
+ * 
+ * An example entry will generally look like this:
+ * {
+    "display": "Country",
+    "isRange": false,
+    "parent": "PCO_0000024/GAZ_00000448",
+    "precision": 1,
+    "term": "PCO_0000024/ENVO_00000004",
+    "type": "string",
+    "variableName": "[\"SITE\"]"
+  }
+ *
+ * Of note, `parent` will be a reference to one of the following:
+ * 1. An entity.
+ * 2. A "variable category" - which isn't really a variable, but a organizational
+ *    grouping of related variables. 
+ * 
+ * `Term` is a reference to the item itself and can be either an 
+ * entity, variable category, or variable itself.
+ */
 export function entitiesToFields(entities: StudyEntity[]) {
   return entities.flatMap((entity) => {
     // Create a Set of variableId so we can lookup parentIds
