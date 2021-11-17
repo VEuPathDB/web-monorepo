@@ -12,6 +12,7 @@ import _ from 'lodash';
 import { axisTickLableEllipsis } from '../utils/axis-tick-label-ellipsis';
 import { makeStyles } from '@material-ui/core/styles';
 import { PlotSpacingDefault } from '../types/plots/addOns';
+import { Layout } from 'plotly.js';
 
 export interface MosaicPlotProps extends PlotProps<MosaicData> {
   /** label for independent axis */
@@ -69,7 +70,12 @@ const MosaicPlot = makePlotlyPlotComponent(
         axisTickLableEllipsis(
           data.independentLabels,
           maxIndependentTickLabelLength
-        ),
+        )
+          // now replace labels for any all-zero 'series' with a white space
+          // (tried an empty string but it causes major weirdness)
+          .map((label, index) =>
+            _.unzip(data.values)[index].every((v) => v === 0) ? ' ' : label
+          ),
       [data]
     );
 
@@ -154,10 +160,11 @@ const MosaicPlot = makePlotlyPlotComponent(
       marginLeft: marginLeft + marginLeftExtra,
     };
 
-    const layout = {
+    const layout: Partial<Layout> = {
       xaxis: {
         title: independentAxisLabel,
         tickvals: column_centers,
+        tickangle: 90,
         ticktext:
           showColumnLabels !== false
             ? // use ellipsis texts here
@@ -187,7 +194,7 @@ const MosaicPlot = makePlotlyPlotComponent(
         itemdoubleclick: false,
       },
       hovermode: 'x',
-    } as const;
+    } as Partial<Layout>;
 
     const plotlyReadyData: PlotParams['data'] = data.values
       .map(
