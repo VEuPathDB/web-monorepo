@@ -15,6 +15,7 @@ import { PlotRef } from '../types/plots';
 import {
   PlotLegendAddon,
   PlotSpacingAddon,
+  PlotSpacingDefault,
   ColorPaletteAddon,
   ColorPaletteDefault,
 } from '../types/plots/addOns';
@@ -356,8 +357,9 @@ function PlotlyPlot<T>(
           <div
             style={{
               position: 'absolute',
-              top: 31,
-              left: 80,
+              top:
+                (spacingOptions?.marginTop ?? PlotSpacingDefault.marginTop) / 3,
+              left: spacingOptions?.marginLeft ?? PlotSpacingDefault.marginLeft,
               fontSize: 17,
             }}
           >
@@ -368,13 +370,13 @@ function PlotlyPlot<T>(
           <div
             style={{
               position: 'absolute',
-              top: 0,
+              top:
+                (spacingOptions?.marginTop ?? PlotSpacingDefault.marginTop) -
+                20,
+              bottom: 0,
               left: 0,
-              width: '100%',
-              height: '100%',
-              backgroundColor: 'black',
-              opacity: '50%',
-              color: 'white',
+              right: 0,
+              backgroundColor: '#cccccccc',
               fontSize: 32,
               userSelect: 'none',
               display: 'flex',
@@ -382,7 +384,7 @@ function PlotlyPlot<T>(
               alignItems: 'center',
             }}
           >
-            No Data
+            No data
           </div>
         )}
         {showSpinner && <Spinner />}

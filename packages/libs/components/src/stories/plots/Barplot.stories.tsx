@@ -50,4 +50,5 @@ NoDataOverlay.args = {
   dependentAxisLabel: 'Dependent axis label',
   independentAxisLabel: 'Independent axis label',
   showNoDataOverlay: true,
+  title: 'Awesomeness of animals stratified by domestication',
 };

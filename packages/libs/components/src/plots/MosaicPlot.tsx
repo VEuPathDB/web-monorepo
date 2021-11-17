@@ -11,6 +11,7 @@ import _ from 'lodash';
 // util functions for handling long tick labels with ellipsis
 import { axisTickLableEllipsis } from '../utils/axis-tick-label-ellipsis';
 import { makeStyles } from '@material-ui/core/styles';
+import { PlotSpacingDefault } from '../types/plots/addOns';
 
 export interface MosaicPlotProps extends PlotProps<MosaicData> {
   /** label for independent axis */
@@ -87,10 +88,6 @@ const MosaicPlot = makePlotlyPlotComponent(
     // The gap between each legend item
     let legendTraceGroupGap: number | undefined;
 
-    // ploltly.js default for left, bottom, and right margins is the same
-    const defaultMargin = 80;
-    const defaultMarginTop = 100;
-
     if (restProps.displayLegend) {
       // Not currently calculating this---just using the default
       // Might need to be calculated or adjusted if more flexibility is needed
@@ -110,8 +107,10 @@ const MosaicPlot = makePlotlyPlotComponent(
 
       if (containerHeight) {
         // Estimate the plot proper height
-        const marginTop = spacingOptions?.marginTop ?? defaultMarginTop;
-        const marginBottom = spacingOptions?.marginBottom ?? defaultMargin;
+        const marginTop =
+          spacingOptions?.marginTop ?? PlotSpacingDefault.marginTop;
+        const marginBottom =
+          spacingOptions?.marginBottom ?? PlotSpacingDefault.marginBottom;
         // Subtraction at end is due to x-axis automargin shrinking the plot
         const plotHeight =
           containerHeight -
@@ -148,7 +147,8 @@ const MosaicPlot = makePlotlyPlotComponent(
       // Leave yAxisTitleStandoff and legendTraceGroupGap undefined
     }
 
-    const marginLeft = spacingOptions?.marginLeft ?? defaultMargin;
+    const marginLeft =
+      spacingOptions?.marginLeft ?? PlotSpacingDefault.marginLeft;
     const newSpacingOptions = {
       ...spacingOptions,
       marginLeft: marginLeft + marginLeftExtra,
