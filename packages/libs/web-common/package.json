@@ -26,8 +26,8 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@veupathdb/components": "^0.10.1",
-    "@veupathdb/eda": "^1.0.10",
+    "@veupathdb/components": "^0.10.3",
+    "@veupathdb/eda": "^1.1.18",
     "custom-event-polyfill": "^1.0.7",
     "md5": "^2.3.0",
     "whatwg-fetch": "^3.5.0"
