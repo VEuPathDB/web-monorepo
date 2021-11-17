@@ -38,8 +38,9 @@ function renderSourceVersion(version, newcategory) {
       <span>
         {version}&nbsp;
         <i className="fa fa-question-circle" style={{ color: 'blue' }}
-        title={'The source versions from' +
-        ' the site the data was acquired.'}/>
+        title={'The source versions for the assembly, ' +
+               'structural annotation and functional annotation.  ' + 
+               'See the Data Set Release History table for more details.'}/>
       </span>
     );
   } else {
@@ -59,7 +60,11 @@ function renderSourceVersion(version, newcategory) {
 function getSourceVersion(attributes, tables) {
   let version;
   if (attributes.newcategory === 'Genomes') {
-    version = attributes.functional_annotation_version ? attributes.genome_version + ", " + attributes.annotation_version + ", " + attributes.functional_annotation_version : attributes.genome_version + ", " + attributes.annotation_version;
+    let g_version = attributes.genome_version ? attributes.genome_version : "n/a";
+    let a_version = attributes.annotation_version ? attributes.annotation_version : "n/a";
+    let fa_version = attributes.functional_annotation_version ? attributes.functional_annotation_version : "n/a";
+    
+    version = g_version + ", " + a_version + ", " + fa_version;
   } else {
     version = tables.Version && tables.Version[0];
   }
