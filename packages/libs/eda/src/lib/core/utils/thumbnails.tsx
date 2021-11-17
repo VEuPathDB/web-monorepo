@@ -84,16 +84,25 @@ async function makeFacetedPlotThumbnailUrl(
       viewBox={`0 0 ${thumbnailDimensions.width} ${thumbnailDimensions.height}`}
     >
       {plotImageNodes}
+      <rect
+        x={thumbnailDimensions.width * 0.75}
+        y={thumbnailDimensions.height * 0.875}
+        width={thumbnailDimensions.width * 0.225}
+        height={thumbnailDimensions.height * 0.1}
+        fill="#F5F5F5"
+        stroke="#777"
+        opacity={0.75}
+      />
       <text
         style={{
           fontFamily: 'sans-serif',
         }}
-        x={thumbnailDimensions.width * 0.5}
-        y={thumbnailDimensions.height * 0.55}
-        fontSize={thumbnailDimensions.height * 0.15}
+        x={thumbnailDimensions.width * 0.8625}
+        y={thumbnailDimensions.height * 0.95}
+        fontSize={thumbnailDimensions.height * 0.075}
         textAnchor="middle"
       >
-        {facetedPlotRef.length}
+        {facetedPlotRef.length} facets
       </text>
     </svg>
   );
