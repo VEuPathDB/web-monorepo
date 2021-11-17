@@ -373,7 +373,7 @@ function PlotlyPlot<T>(
           <div
             style={{
               position: 'absolute',
-              top: marginTop - 20,
+              top: marginTop - marginTop / 6,
               bottom: 0,
               left: 0,
               right: 0,
