@@ -69,7 +69,12 @@ const MosaicPlot = makePlotlyPlotComponent(
         axisTickLableEllipsis(
           data.independentLabels,
           maxIndependentTickLabelLength
-        ),
+        )
+          // now replace labels for any all-zero 'series' with a white space
+          // (tried an empty string but it causes major weirdness)
+          .map((label, index) =>
+            _.unzip(data.values)[index].every((v) => v === 0) ? ' ' : label
+          ),
       [data]
     );
 
