@@ -88,7 +88,6 @@ initialize({
         }, []);
 
         useAttemptActionClickHandler();
-        console.log('TEST 2');
         useCoreUIFonts();
 
         return (
