@@ -85,22 +85,24 @@ async function makeFacetedPlotThumbnailUrl(
     >
       {plotImageNodes}
       <rect
-        x={thumbnailDimensions.width * 0.75}
-        y={thumbnailDimensions.height * 0.875}
-        width={thumbnailDimensions.width * 0.225}
-        height={thumbnailDimensions.height * 0.1}
-        fill="#F5F5F5"
+        x={0}
+        y={thumbnailDimensions.height * 0.9}
+        width={thumbnailDimensions.width}
+        height={thumbnailDimensions.height * 0.11}
+        fill="#555"
         stroke="#777"
         opacity={0.75}
       />
       <text
         style={{
           fontFamily: 'sans-serif',
+          fontStyle: 'italic',
         }}
-        x={thumbnailDimensions.width * 0.8625}
-        y={thumbnailDimensions.height * 0.95}
+        x={thumbnailDimensions.width * 0.5}
+        y={thumbnailDimensions.height * 0.975}
         fontSize={thumbnailDimensions.height * 0.075}
         textAnchor="middle"
+        fill="white"
       >
         Faceted
       </text>
