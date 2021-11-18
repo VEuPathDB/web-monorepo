@@ -24,7 +24,6 @@ const defaultTableGroupStyles: CSSProperties = {
   gridAutoFlow: 'row',
   gap: '0.75em',
   marginLeft: '3em',
-  marginTop: '1.5em',
 };
 
 export function SinglePlotLayout({
