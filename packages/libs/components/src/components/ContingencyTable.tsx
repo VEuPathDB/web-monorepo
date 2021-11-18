@@ -10,9 +10,12 @@ interface ContingencyTableProps {
   independentVariable: string;
   dependentVariable: string;
   facetVariable?: string;
-  containerStyles?: CSSProperties;
-  facetedContainerStyles?: CSSProperties;
+  /** Styling for the component's data table(s) */
+  tableContainerStyles?: CSSProperties;
+  /** Styling for the title + data table for a single facet */
   singleFacetContainerStyles?: CSSProperties;
+  /** Styling for the container of all facets */
+  facetedContainerStyles?: CSSProperties;
   enableSpinner?: boolean;
 }
 
@@ -69,7 +72,7 @@ export function ContingencyTable(props: ContingencyTableProps) {
   const rowSums = data.values.map((row) => _.sum(row));
 
   return (
-    <div className="contingency-table" style={props.containerStyles}>
+    <div className="contingency-table" style={props.tableContainerStyles}>
       <table>
         <tbody>
           <tr>
