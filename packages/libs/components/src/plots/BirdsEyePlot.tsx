@@ -161,7 +161,7 @@ export default function BirdsEyePlot({
     },
     barmode: 'overlay',
     shapes: plotlyShapes,
-    hovermode: 'y unified',
+    hovermode: false,
     hoverdistance: 1000,
     hoverlabel: {
       namelength: -1, // this should disable ellipsis truncation, but it still does... :(
