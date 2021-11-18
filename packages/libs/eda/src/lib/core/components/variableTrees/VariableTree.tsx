@@ -23,8 +23,6 @@ export interface VariableTreeProps {
   customDisabledVariableMessage?: string;
   /** term string is of format "entityId/variableId"  e.g. "PCO_0000024/EUPATH_0000714" */
   onChange: (variable?: VariableDescriptor) => void;
-  hideDisabledFields?: boolean;
-  setHideDisabledFields?: (hide: boolean) => void;
   /** Indicate whether or not variables with children   */
   showMultiFilterDescendants?: boolean;
 }
@@ -38,8 +36,6 @@ export default function VariableTree({
   entityId,
   variableId,
   onChange,
-  hideDisabledFields = false,
-  setHideDisabledFields = () => {},
   showMultiFilterDescendants = false,
 }: VariableTreeProps) {
   const entities = useStudyEntities(rootEntity);
@@ -86,8 +82,6 @@ export default function VariableTree({
       autoFocus={false}
       starredVariables={starredVariables}
       toggleStarredVariable={toggleStarredVariable}
-      hideDisabledFields={hideDisabledFields}
-      setHideDisabledFields={setHideDisabledFields}
     />
   );
 }
