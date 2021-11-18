@@ -11,31 +11,34 @@ interface ContingencyTableProps {
   dependentVariable: string;
   facetVariable?: string;
   containerStyles?: CSSProperties;
+  facetedContainerStyles?: CSSProperties;
+  singleFacetContainerStyles?: CSSProperties;
   enableSpinner?: boolean;
 }
 
 function FacetedContingencyTable(props: ContingencyTableProps) {
   if (isFaceted(props.data) && props.facetVariable != null) {
     return (
-      <div className="faceted-contingency-table" style={props.containerStyles}>
-        <table>
-          <tbody>
-            {props.data.facets.map(({ label, data }) => (
-              <>
-                <tr>
-                  <th style={{ border: 'none' /* cancel WDK style! */ }}>
-                    {props.facetVariable}: {label}
-                  </th>
-                </tr>
-                <tr>
-                  <td>
-                    <ContingencyTable {...props} data={data} />
-                  </td>
-                </tr>
-              </>
-            ))}
-          </tbody>
-        </table>
+      <div
+        className="faceted-contingency-table"
+        style={props.facetedContainerStyles}
+      >
+        {props.data.facets.map(({ label, data }, index) => (
+          <table key={index} style={props.singleFacetContainerStyles}>
+            <tbody>
+              <tr>
+                <th style={{ border: 'none' /* cancel WDK style! */ }}>
+                  {props.facetVariable}: {label}
+                </th>
+              </tr>
+              <tr>
+                <td>
+                  <ContingencyTable {...props} data={data} />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        ))}
       </div>
     );
   } else {
