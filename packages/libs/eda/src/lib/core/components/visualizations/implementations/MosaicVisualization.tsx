@@ -26,6 +26,7 @@ import { VariableDescriptor } from '../../../types/variable';
 import { CoverageStatistics } from '../../../types/visualization';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
+import { PlotLayout } from '../../layouts/PlotLayout';
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
@@ -347,138 +348,140 @@ function MosaicViz(props: Props) {
   const xAxisLabel = axisLabelWithUnit(xAxisVariable);
   const yAxisLabel = axisLabelWithUnit(yAxisVariable);
 
-  const plotComponent = (
-    <div className="MosaicVisualization">
-      <div className="MosaicVisualization-Plot">
-        <TabbedDisplay
-          tabs={[
-            {
-              displayName: 'Mosaic',
-              content: (
-                <MosaicPlotWithControls
-                  updateThumbnail={updateThumbnail}
-                  data={data.value}
-                  containerStyles={
-                    isFaceted(data.value)
-                      ? facetedPlotContainerStyles
-                      : plotContainerStyles
-                  }
-                  spacingOptions={
-                    isFaceted(data.value)
-                      ? facetedPlotSpacingOptions
-                      : plotSpacingOptions
-                  }
-                  independentAxisLabel={xAxisLabel ?? 'X-axis'}
-                  dependentAxisLabel={yAxisLabel ?? 'Y-axis'}
-                  displayLegend={true}
-                  interactive
-                  showSpinner={data.pending}
-                />
-              ),
-            },
-            {
-              displayName: 'Table',
-              content: (
-                <ContingencyTable
-                  data={data.pending ? undefined : data.value}
-                  containerStyles={{ width: plotContainerStyles.width }}
-                  independentVariable={xAxisLabel ?? 'X-axis'}
-                  dependentVariable={yAxisLabel ?? 'Y-axis'}
-                  facetVariable={
-                    facetVariable ? facetVariable.displayName : 'Facet'
-                  }
-                  enableSpinner={data.pending}
-                />
-              ),
-            },
-            {
-              displayName: 'Statistics',
-              content: isFaceted(data.value) ? (
-                vizConfig.showMissingness ? (
-                  'Statistics are not calculated when the "include no data" option is selected'
-                ) : (
-                  <table>
-                    <tbody>
-                      {facetVariable != null &&
-                        data.value.facets.map(({ label, data }) => (
-                          <>
-                            <tr>
-                              <th
-                                style={{
-                                  border: 'none' /* cancel WDK style! */,
-                                }}
-                              >
-                                {facetVariable.displayName}: {label}
-                              </th>
-                            </tr>
-                            <tr>
-                              <td>
-                                {' '}
-                                {isTwoByTwo
-                                  ? TwoByTwoStats(
-                                      data as TwoByTwoData | undefined
-                                    )
-                                  : ContTableStats(
-                                      data as ContTableData | undefined
-                                    )}
-                              </td>
-                            </tr>
-                          </>
-                        ))}
-                    </tbody>
-                  </table>
+  const tableGroupNode = (
+    <>
+      <BirdsEyeView
+        completeCasesAllVars={
+          data.pending ? undefined : data.value?.completeCasesAllVars
+        }
+        completeCasesAxesVars={
+          data.pending ? undefined : data.value?.completeCasesAxesVars
+        }
+        outputEntity={outputEntity}
+        stratificationIsActive={facetVariable != null}
+        enableSpinner={
+          xAxisVariable != null && yAxisVariable != null && !data.error
+        }
+        totalCounts={totalCounts}
+        filteredCounts={filteredCounts}
+      />
+      <VariableCoverageTable
+        completeCases={data.pending ? undefined : data.value?.completeCases}
+        filters={filters}
+        outputEntityId={outputEntity?.id}
+        variableSpecs={[
+          {
+            role: 'X-axis',
+            required: true,
+            display: axisLabelWithUnit(xAxisVariable),
+            variable: vizConfig.xAxisVariable,
+          },
+          {
+            role: 'Y-axis',
+            required: true,
+            display: axisLabelWithUnit(yAxisVariable),
+            variable: vizConfig.yAxisVariable,
+          },
+          {
+            role: 'Facet',
+            display: axisLabelWithUnit(facetVariable),
+            variable: vizConfig.facetVariable,
+          },
+        ]}
+      />
+    </>
+  );
+
+  const plotNode = (
+    <TabbedDisplay
+      tabs={[
+        {
+          displayName: 'Mosaic',
+          content: (
+            <MosaicPlotWithControls
+              updateThumbnail={updateThumbnail}
+              data={data.value}
+              containerStyles={
+                isFaceted(data.value)
+                  ? facetedPlotContainerStyles
+                  : plotContainerStyles
+              }
+              spacingOptions={
+                isFaceted(data.value)
+                  ? facetedPlotSpacingOptions
+                  : plotSpacingOptions
+              }
+              independentAxisLabel={xAxisLabel ?? 'X-axis'}
+              dependentAxisLabel={yAxisLabel ?? 'Y-axis'}
+              displayLegend={true}
+              interactive
+              showSpinner={data.pending}
+            />
+          ),
+        },
+        {
+          displayName: 'Table',
+          content: (
+            <ContingencyTable
+              data={data.pending ? undefined : data.value}
+              containerStyles={
+                isFaceted(data.value)
+                  ? facetedStatsTableStyles
+                  : statsTableStyles
+              }
+              facetedContainerStyles={facetedStatsTableContainerStyles}
+              singleFacetContainerStyles={facetedStatsTableStyles}
+              independentVariable={xAxisLabel ?? 'X-axis'}
+              dependentVariable={yAxisLabel ?? 'Y-axis'}
+              facetVariable={
+                facetVariable ? facetVariable.displayName : 'Facet'
+              }
+              enableSpinner={data.pending}
+            />
+          ),
+        },
+        {
+          displayName: 'Statistics',
+          content: isFaceted(data.value)
+            ? vizConfig.showMissingness
+              ? 'Statistics are not calculated when the "include no data" option is selected'
+              : facetVariable != null && (
+                  <div style={facetedStatsTableContainerStyles}>
+                    {data.value.facets.map(({ label, data }, index) => (
+                      <table key={index} style={facetedStatsTableStyles}>
+                        <tbody>
+                          <tr>
+                            <th
+                              style={{
+                                border: 'none' /* cancel WDK style! */,
+                              }}
+                            >
+                              {facetVariable.displayName}: {label}
+                            </th>
+                          </tr>
+                          <tr>
+                            <td>
+                              {' '}
+                              {isTwoByTwo
+                                ? TwoByTwoStats(
+                                    data as TwoByTwoData | undefined
+                                  )
+                                : ContTableStats(
+                                    data as ContTableData | undefined
+                                  )}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    ))}
+                  </div>
                 )
-              ) : isTwoByTwo ? (
-                TwoByTwoStats(data.value as TwoByTwoData | undefined)
-              ) : (
-                ContTableStats(data.value as ContTableData | undefined)
-              ),
-            },
-          ]}
-        />
-      </div>
-      <div className="viz-plot-info">
-        <BirdsEyeView
-          completeCasesAllVars={
-            data.pending ? undefined : data.value?.completeCasesAllVars
-          }
-          completeCasesAxesVars={
-            data.pending ? undefined : data.value?.completeCasesAxesVars
-          }
-          outputEntity={outputEntity}
-          stratificationIsActive={facetVariable != null}
-          enableSpinner={
-            xAxisVariable != null && yAxisVariable != null && !data.error
-          }
-          totalCounts={totalCounts}
-          filteredCounts={filteredCounts}
-        />
-        <VariableCoverageTable
-          completeCases={data.pending ? undefined : data.value?.completeCases}
-          filters={filters}
-          outputEntityId={outputEntity?.id}
-          variableSpecs={[
-            {
-              role: 'X-axis',
-              required: true,
-              display: axisLabelWithUnit(xAxisVariable),
-              variable: vizConfig.xAxisVariable,
-            },
-            {
-              role: 'Y-axis',
-              required: true,
-              display: axisLabelWithUnit(yAxisVariable),
-              variable: vizConfig.yAxisVariable,
-            },
-            {
-              role: 'Facet',
-              display: axisLabelWithUnit(facetVariable),
-              variable: vizConfig.facetVariable,
-            },
-          ]}
-        />
-      </div>
-    </div>
+            : isTwoByTwo
+            ? TwoByTwoStats(data.value as TwoByTwoData | undefined)
+            : ContTableStats(data.value as ContTableData | undefined),
+        },
+      ]}
+    />
   );
 
   const outputSize =
@@ -531,7 +534,11 @@ function MosaicViz(props: Props) {
 
       <PluginError error={data.error} outputSize={outputSize} />
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
-      {plotComponent}
+      <PlotLayout
+        isFaceted={isFaceted(data.value)}
+        plotNode={plotNode}
+        tableGroupNode={tableGroupNode}
+      />
     </div>
   );
 }
@@ -631,26 +638,14 @@ function MosaicPlotWithControls({
   );
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+    <>
       {isFaceted(data) ? (
-        <>
-          <div
-            style={{
-              background: 'yellow',
-              border: '3px dashed green',
-              padding: '10px',
-            }}
-          >
-            Custom legend, birds eye and supplementary tables go here...
-          </div>
-
-          <FacetedPlot
-            component={Mosaic}
-            facetedPlotRef={plotRef}
-            data={data}
-            props={mosaicProps}
-          />
-        </>
+        <FacetedPlot
+          component={Mosaic}
+          facetedPlotRef={plotRef}
+          data={data}
+          props={mosaicProps}
+        />
       ) : (
         <Mosaic
           {...mosaicProps}
@@ -660,7 +655,7 @@ function MosaicPlotWithControls({
         />
       )}
       {/* controls go here as needed */}
-    </div>
+    </>
   );
 }
 
