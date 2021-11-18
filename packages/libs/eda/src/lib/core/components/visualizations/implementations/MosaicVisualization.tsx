@@ -70,6 +70,23 @@ const facetedPlotSpacingOptions = {
   marginTop: 50,
 };
 
+const statsTableStyles = {
+  width: plotContainerStyles.width,
+};
+
+const facetedStatsTableStyles = {
+  width: 'auto',
+};
+
+const facetedStatsTableContainerStyles = {
+  display: 'grid',
+  gridAutoFlow: 'column',
+  alignItems: 'flex-start',
+  width: '100%',
+  overflow: 'auto',
+  gap: '0.5em',
+};
+
 type ContTableData = MosaicData &
   Partial<{
     pValue: number | string;
