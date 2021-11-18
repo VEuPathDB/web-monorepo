@@ -75,14 +75,12 @@ const statsTableStyles = {
   width: plotContainerStyles.width,
 };
 
-const facetedStatsTableStyles = {
-  width: 'auto',
-  whiteSpace: 'nowrap',
-} as const;
+const facetedStatsTableStyles = {};
 
 const facetedStatsTableContainerStyles = {
   display: 'grid',
   gridAutoFlow: 'column',
+  gridAutoColumns: 'max-content',
   alignItems: 'flex-start',
   width: '100%',
   overflow: 'auto',
@@ -431,7 +429,6 @@ function MosaicViz(props: Props) {
                   : statsTableStyles
               }
               facetedContainerStyles={facetedStatsTableContainerStyles}
-              singleFacetContainerStyles={facetedStatsTableStyles}
               independentVariable={xAxisLabel ?? 'X-axis'}
               dependentVariable={yAxisLabel ?? 'Y-axis'}
               facetVariable={
@@ -449,7 +446,7 @@ function MosaicViz(props: Props) {
               : facetVariable != null && (
                   <div style={facetedStatsTableContainerStyles}>
                     {data.value.facets.map(({ label, data }, index) => (
-                      <table key={index} style={facetedStatsTableStyles}>
+                      <table key={index}>
                         <tbody>
                           <tr>
                             <th
