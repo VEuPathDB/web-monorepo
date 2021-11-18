@@ -423,7 +423,7 @@ function MosaicViz(props: Props) {
           content: (
             <ContingencyTable
               data={data.pending ? undefined : data.value}
-              containerStyles={
+              tableContainerStyles={
                 isFaceted(data.value)
                   ? facetedStatsTableStyles
                   : statsTableStyles
