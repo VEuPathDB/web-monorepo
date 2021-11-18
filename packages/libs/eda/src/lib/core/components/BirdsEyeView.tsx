@@ -82,15 +82,15 @@ export function BirdsEyeView(props: Props) {
       {stratificationIsActive && completeCasesAllVars != null && (
         <>
           <b>Data for axes & strata:</b> {completeCasesAllVars.toLocaleString()}{' '}
-          <i>{entityPluralString}</i> in the subset that have data for all axis
-          and stratification variables.
+          <i>{entityPluralString}</i> in the subset have data for all axis and
+          stratification variables.
           <br />
         </>
       )}
       {completeCasesAxesVars != null && (
         <>
           <b>Data for axes:</b> {completeCasesAxesVars.toLocaleString()}{' '}
-          <i>{entityPluralString}</i> in the subset that have data for all axis
+          <i>{entityPluralString}</i> in the subset have data for all axis
           variables.
           <br />
         </>
@@ -98,7 +98,7 @@ export function BirdsEyeView(props: Props) {
       {subsetSize != null && (
         <>
           <b>Subset:</b> {subsetSize.toLocaleString()}{' '}
-          <i>{entityPluralString}</i> that match the filters applied in this
+          <i>{entityPluralString}</i> match the filters applied in this
           analysis.
           <br />
         </>
