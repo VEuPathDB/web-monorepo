@@ -10,9 +10,13 @@ interface ContingencyTableProps {
   independentVariable: string;
   dependentVariable: string;
   facetVariable?: string;
-  /** Styling for the component's data table(s) */
+  /**
+   *  Styling for the component's data table(s).
+   *  Also doubles as the container styling when
+   *  the component is rendering unfaceted data.
+   */
   tableContainerStyles?: CSSProperties;
-  /** Styling for the title + data table for a single facet */
+  /** Styling for a single facet (title + data table) */
   singleFacetContainerStyles?: CSSProperties;
   /** Styling for the container of all facets */
   facetedContainerStyles?: CSSProperties;
