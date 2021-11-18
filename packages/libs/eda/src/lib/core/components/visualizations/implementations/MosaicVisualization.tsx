@@ -77,7 +77,8 @@ const statsTableStyles = {
 
 const facetedStatsTableStyles = {
   width: 'auto',
-};
+  whiteSpace: 'nowrap',
+} as const;
 
 const facetedStatsTableContainerStyles = {
   display: 'grid',
