@@ -30,6 +30,7 @@ export interface VariableTreeProps {
 }
 
 export default function VariableTree({
+  customDisabledVariableMessage,
   rootEntity,
   disabledVariables,
   starredVariables,
@@ -74,6 +75,7 @@ export default function VariableTree({
   return (
     <VariableList
       mode="singleSelection"
+      customDisabledVariableMessage={customDisabledVariableMessage}
       showMultiFilterDescendants={showMultiFilterDescendants}
       activeField={activeField}
       disabledFieldIds={disabledFields}
