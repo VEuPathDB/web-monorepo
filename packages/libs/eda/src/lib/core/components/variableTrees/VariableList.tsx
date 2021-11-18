@@ -224,7 +224,7 @@ export default function VariableList({
         ? preorderSeq(node).map(getNodeSearchString(valuesMap)).join(' ')
         : getNodeSearchString(valuesMap)(node);
     },
-    [valuesMap]
+    [showMultiFilterDescendants, valuesMap]
   );
 
   const searchPredicate = useCallback(
