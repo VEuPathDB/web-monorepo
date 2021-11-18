@@ -743,7 +743,7 @@ export function twoByTwoResponseToData(
           data.facetVariableDetails[0].value,
           facetVariable
         )
-      : undefined
+      : '__NO_FACET__'
   );
   const facetGroupedResponseStats = _.groupBy(response.statsTable, (stats) =>
     stats.facetVariableDetails && stats.facetVariableDetails.length === 1
@@ -751,7 +751,7 @@ export function twoByTwoResponseToData(
           stats.facetVariableDetails[0].value,
           facetVariable
         )
-      : undefined
+      : '__NO_FACET__'
   );
 
   const processedData = _.mapValues(
@@ -773,18 +773,23 @@ export function twoByTwoResponseToData(
           group[0].yLabel[0],
           yVariable
         ),
-        pValue: stats[0].pvalue,
-        relativeRisk: stats[0].relativerisk,
-        rrInterval: stats[0].rrInterval,
-        oddsRatio: stats[0].oddsratio,
-        orInterval: stats[0].orInterval,
+        ...(stats != null
+          ? {
+              pValue: stats[0].pvalue,
+              relativeRisk: stats[0].relativerisk,
+              rrInterval: stats[0].rrInterval,
+              oddsRatio: stats[0].oddsratio,
+              orInterval: stats[0].orInterval,
+            }
+          : {}),
       };
     }
   );
 
   return {
     // data
-    ...(_.size(processedData) === 1
+    ...(_.size(processedData) === 1 &&
+    _.head(_.keys(processedData)) === '__NO_FACET__'
       ? // unfaceted
         _.head(_.values(processedData))
       : // faceted
