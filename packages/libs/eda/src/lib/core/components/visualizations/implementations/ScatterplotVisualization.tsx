@@ -541,9 +541,7 @@ function ScatterplotViz(props: VisualizationProps) {
       // variable's metadata-based independent axis range with margin
       independentAxisRange={defaultIndependentRangeMargin}
       // new dependent axis range
-      dependentAxisRange={
-        data.value && !data.pending ? defaultDependentRangeMargin : undefined
-      }
+      dependentAxisRange={data.value ? defaultDependentRangeMargin : undefined}
       // set valueSpec as Raw when yAxisVariable = date
       valueSpec={
         yAxisVariable?.type === 'date' ? 'Raw' : vizConfig.valueSpecConfig

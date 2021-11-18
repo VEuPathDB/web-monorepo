@@ -220,7 +220,7 @@ export default function VariableList({
 
   const getFieldSearchString = useCallback(
     (node: FieldTreeNode) => {
-      return isMulti(node.field)
+      return isMulti(node.field) && !showMultiFilterDescendants
         ? preorderSeq(node).map(getNodeSearchString(valuesMap)).join(' ')
         : getNodeSearchString(valuesMap)(node);
     },
