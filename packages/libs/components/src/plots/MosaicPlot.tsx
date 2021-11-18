@@ -38,6 +38,15 @@ const useStyles = makeStyles({
   },
 });
 
+const getLongestTruncatedStringLength = (
+  strings: string[],
+  maxLength: number
+) => {
+  const longestStringLength = Math.max(...strings.map((str) => str.length));
+  // If the length overflows, add two characters to account for ellipsis length
+  return longestStringLength > maxLength ? maxLength + 2 : longestStringLength;
+};
+
 const MosaicPlot = makePlotlyPlotComponent(
   'MosaicPlot',
   ({
@@ -112,12 +121,16 @@ const MosaicPlot = makePlotlyPlotComponent(
       // Estimate the plot proper height
       const marginTop = spacingOptions?.marginTop ?? defaultMarginTop;
       const marginBottom = spacingOptions?.marginBottom ?? defaultMargin;
+      const longestIndependentTickLabelLength = getLongestTruncatedStringLength(
+        data.independentLabels,
+        maxIndependentTickLabelLength
+      );
       // Subtraction at end is due to x-axis automargin shrinking the plot
       const plotHeight =
         containerHeight -
         marginTop -
         marginBottom -
-        2.05 * (maxIndependentTickLabelLength + 2);
+        5 * longestIndependentTickLabelLength;
       // Calculate the legend trace group gap accordingly
       legendTraceGroupGap =
         ((plotHeight - defaultLegendItemHeight * data.dependentLabels.length) *
@@ -130,14 +143,10 @@ const MosaicPlot = makePlotlyPlotComponent(
 
     const maxLegendTextLength =
       restProps.maxLegendTextLength ?? DEFAULT_MAX_LEGEND_TEXT_LENGTH;
-    const longestDependentLabelLength = Math.max(
-      ...data.dependentLabels.map((label) => label.length)
+    const longestLegendLabelLength = getLongestTruncatedStringLength(
+      data.dependentLabels,
+      maxLegendTextLength
     );
-    // If the length overflows, add two characters to account for ellipsis length
-    const longestLegendLabelLength =
-      longestDependentLabelLength > maxLegendTextLength
-        ? maxLegendTextLength + 2
-        : longestDependentLabelLength;
     // Extra left margin and y-axis title standoff calculations are weird due
     // to y-axis automargin
     const marginLeftExtra = 5.357 * longestLegendLabelLength + 37.5;
