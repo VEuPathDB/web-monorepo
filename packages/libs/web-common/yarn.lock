@@ -1368,10 +1368,10 @@
     react-modal "^3.14.3"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^1.1.18":
-  version "1.1.18"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.1.18.tgz#0a255efee651ca69f514b353d12b2dea0ddfdcce"
-  integrity sha512-7ql20OjalRaLRazUKKzk9HLHWVTyVYfj2Ms0nTgRtBVf6VVVB4GTmj4Am++5rM3Qfn0Fq0Fu21nPi5f1WS/9uA==
+"@veupathdb/eda@^1.1.20":
+  version "1.1.20"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.1.20.tgz#3f51ce4ed0de6deae263a608039df1e0091962a6"
+  integrity sha512-vFFA7u9/uvSewq1fGhu0Ifl7PcHayyY38T78hBlZZdxOY2SCDtkT0bZBHCS87R6SY6MUpjN7J7oeaGmIYLJuOw==
   dependencies:
     "@emotion/react" "^11.4.1"
     "@emotion/styled" "^11.3.0"
