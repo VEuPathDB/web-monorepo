@@ -1,4 +1,10 @@
-import { DependencyList, useCallback, useEffect, useRef } from 'react';
+import {
+  DependencyList,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+} from 'react';
 
 import { FacetedPlotRef, PlotRef } from '@veupathdb/components/lib/types/plots';
 import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
@@ -27,7 +33,7 @@ export function useUpdateThumbnailEffect(
 
   // Whenever one of the "deps" change, capture a thumbnail image
   // and save it to the analysis config
-  useEffect(() => {
+  useLayoutEffect(() => {
     const plotInstance = plotRef.current;
 
     if (plotInstance == null) {
@@ -36,9 +42,18 @@ export function useUpdateThumbnailEffect(
 
     const { updateThumbnail, thumbnailDimensions } = thumbnailArgsRef.current;
 
-    return Task.fromPromise(() =>
-      makePlotThumbnailUrl(plotInstance, thumbnailDimensions)
-    ).run(updateThumbnail);
+    return Task.fromPromise(
+      () =>
+        new Promise((resolve) => {
+          setTimeout(resolve, 0);
+        })
+    )
+      .chain(() =>
+        Task.fromPromise(() =>
+          makePlotThumbnailUrl(plotInstance, thumbnailDimensions)
+        )
+      )
+      .run(updateThumbnail);
 
     // Disabling react-hooks/exhaustive-deps because it objects to the use
     // of "deps" which are not array literals
