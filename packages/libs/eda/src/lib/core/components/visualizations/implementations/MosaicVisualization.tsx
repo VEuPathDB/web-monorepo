@@ -743,7 +743,7 @@ export function twoByTwoResponseToData(
           data.facetVariableDetails[0].value,
           facetVariable
         )
-      : undefined
+      : '__NO_FACET__'
   );
   const facetGroupedResponseStats = _.groupBy(response.statsTable, (stats) =>
     stats.facetVariableDetails && stats.facetVariableDetails.length === 1
@@ -751,7 +751,7 @@ export function twoByTwoResponseToData(
           stats.facetVariableDetails[0].value,
           facetVariable
         )
-      : undefined
+      : '__NO_FACET__'
   );
 
   const processedData = _.mapValues(
@@ -773,18 +773,23 @@ export function twoByTwoResponseToData(
           group[0].yLabel[0],
           yVariable
         ),
-        pValue: stats[0].pvalue,
-        relativeRisk: stats[0].relativerisk,
-        rrInterval: stats[0].rrInterval,
-        oddsRatio: stats[0].oddsratio,
-        orInterval: stats[0].orInterval,
+        ...(stats != null
+          ? {
+              pValue: stats[0].pvalue,
+              relativeRisk: stats[0].relativerisk,
+              rrInterval: stats[0].rrInterval,
+              oddsRatio: stats[0].oddsratio,
+              orInterval: stats[0].orInterval,
+            }
+          : {}),
       };
     }
   );
 
   return {
     // data
-    ...(_.size(processedData) === 1
+    ...(_.size(processedData) === 1 &&
+    _.head(_.keys(processedData)) === '__NO_FACET__'
       ? // unfaceted
         _.head(_.values(processedData))
       : // faceted
@@ -878,11 +883,13 @@ function reorderData(
   return {
     ...data,
     values: _.at(
-      data.values.map((innerDim) => _.at(innerDim, xIndices)),
+      data.values.map((innerDim) =>
+        _.at(innerDim, xIndices).map((i) => i ?? 0)
+      ),
       yIndices
-    ),
-    independentLabels: _.at(data.independentLabels, xIndices),
-    dependentLabels: _.at(data.dependentLabels, yIndices),
+    ).map((j) => j ?? xIndices.map((_) => 0)), // fill in with an entire row/column of zeroes
+    independentLabels: xVocabulary,
+    dependentLabels: yVocabulary,
   };
 }
 
@@ -890,14 +897,12 @@ function reorderData(
  * given an array of `labels` [ 'cat', 'dog', 'mouse' ]
  * and an array of the desired `order` [ 'mouse', 'rat', 'cat', 'dog' ]
  * return the `indices` of the labels that would put them in the right order,
- * e.g. [ 2, 0, 1 ]
- * you can use `_.at(someOtherArray, indices)` to reorder other arrays with this
+ * with -1 for labels that are missing from `labels`
+ * e.g. [ 2, -1, 0, 1 ]
+ * you can use `_.at(someOtherArray, indices).map((x) => x ?? 0)` to reorder other arrays with
+ * this and put zeros for missing values.
  *
- * it fails nicely if the strings in `order` aren't in `labels`
  */
 function indicesForCorrectOrder(labels: string[], order: string[]): number[] {
-  const sortedLabels = _.sortBy(labels, (label) => order.indexOf(label));
-  // [ 'mouse', 'cat', 'dog' ]
-  return sortedLabels.map((label) => labels.indexOf(label));
-  // [ 2, 0, 1 ]
+  return order.map((label) => labels.indexOf(label));
 }
