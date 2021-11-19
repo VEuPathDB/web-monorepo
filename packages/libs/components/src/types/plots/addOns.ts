@@ -41,6 +41,13 @@ export type PlotSpacingAddon = {
   /** Padding, applied equally on all sides. */
   padding?: number;
 };
+export const PlotSpacingDefault: Required<PlotSpacingAddon> = {
+  marginTop: 100,
+  marginRight: 80,
+  marginBottom: 80,
+  marginLeft: 80,
+  padding: 0,
+};
 
 export type OrientationAddon = {
   /** Orientation of plot - default is vertical (e.g. independent axis at bottom) */

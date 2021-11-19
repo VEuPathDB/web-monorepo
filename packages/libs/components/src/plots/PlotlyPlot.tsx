@@ -15,6 +15,7 @@ import { PlotRef } from '../types/plots';
 import {
   PlotLegendAddon,
   PlotSpacingAddon,
+  PlotSpacingDefault,
   ColorPaletteAddon,
   ColorPaletteDefault,
 } from '../types/plots/addOns';
@@ -44,6 +45,8 @@ export interface PlotProps<T> extends ColorPaletteAddon {
   displayLibraryControls?: boolean;
   /** show a loading... spinner in the middle of the container div */
   showSpinner?: boolean;
+  /** Show an overlay with the words 'No Data' */
+  showNoDataOverlay?: boolean;
   /** Options for customizing plot legend layout and appearance. */
   legendOptions?: PlotLegendAddon;
   /** legend title */
@@ -87,6 +90,7 @@ function PlotlyPlot<T>(
     legendTitle,
     spacingOptions,
     showSpinner,
+    showNoDataOverlay,
     // set default max number of characters (20) for legend ellipsis
     maxLegendTextLength = DEFAULT_MAX_LEGEND_TEXT_LENGTH,
     // expose data for applying legend ellipsis
@@ -143,12 +147,6 @@ function PlotlyPlot<T>(
                 maxDependentAxisTitleTextLength
               ) + '...'
             : plotlyProps?.layout?.yaxis?.title,
-      },
-      title: {
-        text: title,
-        xref: 'paper',
-        x: 0,
-        xanchor: 'left', // left aligned to left edge (y-axis) of plot
       },
       showlegend: displayLegend ?? true,
       margin: {
@@ -337,6 +335,10 @@ function PlotlyPlot<T>(
     [plotId]
   );
 
+  const marginTop = spacingOptions?.marginTop ?? PlotSpacingDefault.marginTop;
+  const marginLeft =
+    spacingOptions?.marginLeft ?? PlotSpacingDefault.marginLeft;
+
   return (
     <Suspense fallback="Loading...">
       <div
@@ -355,6 +357,42 @@ function PlotlyPlot<T>(
           onUpdate={onUpdate}
           onInitialized={sharedPlotCreation.run}
         />
+        {showNoDataOverlay && (
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
+              background:
+                title === 'No data'
+                  ? 'repeating-linear-gradient(45deg, #f8f8f8f8, #f8f8f8f8 10px, #fafafaf8 10px, #fafafaf8 20px)'
+                  : '#f8f8f8f8',
+              fontSize: 24,
+              color: ' #e8e8e8',
+              userSelect: 'none',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            {title === 'No data' ? 'No missing data' : 'No data'}
+          </div>
+        )}
+        {title && (
+          <div
+            style={{
+              position: 'absolute',
+              top: marginTop / 3,
+              left: marginLeft,
+              fontSize: 17,
+              fontStyle: title === 'No data' ? 'italic' : 'normal',
+            }}
+          >
+            {title}
+          </div>
+        )}
         {showSpinner && <Spinner />}
       </div>
     </Suspense>
