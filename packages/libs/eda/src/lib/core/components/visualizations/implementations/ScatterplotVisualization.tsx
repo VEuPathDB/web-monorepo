@@ -438,26 +438,17 @@ function ScatterplotViz(props: VisualizationProps) {
       ? allData?.series
       : uniqBy(
           allData.facets
-            .map((facet) =>
-              facet?.data?.series.map((series) => {
-                return {
-                  name: series.name,
-                  mode: series.mode,
-                  fill: series.fill,
-                };
-              })
-            )
+            .map((facet) => facet?.data?.series)
             .flat()
-            .filter((element) => element != null),
+            .filter((element): element is XYPlotDataSeries => element != null),
           'name'
         );
 
     // logic for setting markerColor correctly
     // find raw legend label (excluding No data as well)
-    // due to a union type of legendData, set any[] is a trick to avoid 'not callable' error
     const legendLabel =
       legendData != null
-        ? (legendData as any[])
+        ? legendData
             .filter(
               (data) =>
                 !data?.name?.includes(SMOOTHEDMEANSUFFIX) &&
@@ -499,20 +490,20 @@ function ScatterplotViz(props: VisualizationProps) {
                 vizConfig.valueSpecConfig === 'Best fit line with raw'
               ) {
                 // Best fit
-                return (legendData as any[])?.filter((element) => {
+                return legendData.filter((element) => {
                   // checking No data case
                   if (vizConfig.showMissingness) {
                     if (index < legendData.length - 1) {
-                      return element.name.includes(
+                      return element.name?.includes(
                         legendLabel[index - numberLegendRawItems] +
                           BESTFITSUFFIX
                       );
                     } else {
                       // No data case
-                      return element.name.includes('No data' + BESTFITSUFFIX);
+                      return element.name?.includes('No data' + BESTFITSUFFIX);
                     }
                   } else {
-                    return element.name.includes(
+                    return element.name?.includes(
                       legendLabel[index - numberLegendRawItems] + BESTFITSUFFIX
                     );
                   }
@@ -535,8 +526,8 @@ function ScatterplotViz(props: VisualizationProps) {
                   } else if (dataItem?.name?.includes(CI95SUFFIX)) {
                     // increase count here
                     ++count;
-                    return (legendData as any[])?.filter((element) => {
-                      return element.name.includes(
+                    return legendData.filter((element) => {
+                      return element.name?.includes(
                         legendLabel[index - (numberLegendRawItems + count)] +
                           CI95SUFFIX
                       );
@@ -546,16 +537,16 @@ function ScatterplotViz(props: VisualizationProps) {
                 } else {
                   if (dataItem?.name?.includes(SMOOTHEDMEANSUFFIX)) {
                     if (index < legendData.length - 2) {
-                      return (legendData as any[])?.filter((element) => {
-                        return element.name.includes(
+                      return legendData.filter((element) => {
+                        return element.name?.includes(
                           legendLabel[index - (numberLegendRawItems + count)] +
                             SMOOTHEDMEANSUFFIX
                         );
                       });
                     } else {
                       // No data case
-                      return (legendData as any[])?.filter((element) => {
-                        return element.name.includes(
+                      return legendData.filter((element) => {
+                        return element.name?.includes(
                           'No data' + SMOOTHEDMEANSUFFIX
                         );
                       });
@@ -564,15 +555,15 @@ function ScatterplotViz(props: VisualizationProps) {
                     // increase count here
                     ++count;
                     if (index < legendData.length - 2) {
-                      return (legendData as any[])?.filter((element) => {
-                        return element.name.includes(
+                      return legendData.filter((element) => {
+                        return element.name?.includes(
                           legendLabel[index - (numberLegendRawItems + count)] +
                             CI95SUFFIX
                         );
                       });
                     } else {
-                      return (legendData as any[])?.filter((element) => {
-                        return element.name.includes('No data' + CI95SUFFIX);
+                      return legendData.filter((element) => {
+                        return element.name?.includes('No data' + CI95SUFFIX);
                       });
                     }
                   }
