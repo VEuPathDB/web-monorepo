@@ -10,32 +10,42 @@ interface ContingencyTableProps {
   independentVariable: string;
   dependentVariable: string;
   facetVariable?: string;
-  containerStyles?: CSSProperties;
+  /**
+   *  Styling for the component's data table(s).
+   *  Also doubles as the container styling when
+   *  the component is rendering unfaceted data.
+   */
+  tableContainerStyles?: CSSProperties;
+  /** Styling for a single facet (title + data table) */
+  singleFacetContainerStyles?: CSSProperties;
+  /** Styling for the container of all facets */
+  facetedContainerStyles?: CSSProperties;
   enableSpinner?: boolean;
 }
 
 function FacetedContingencyTable(props: ContingencyTableProps) {
   if (isFaceted(props.data) && props.facetVariable != null) {
     return (
-      <div className="faceted-contingency-table" style={props.containerStyles}>
-        <table>
-          <tbody>
-            {props.data.facets.map(({ label, data }) => (
-              <>
-                <tr>
-                  <th style={{ border: 'none' /* cancel WDK style! */ }}>
-                    {props.facetVariable}: {label}
-                  </th>
-                </tr>
-                <tr>
-                  <td>
-                    <ContingencyTable {...props} data={data} />
-                  </td>
-                </tr>
-              </>
-            ))}
-          </tbody>
-        </table>
+      <div
+        className="faceted-contingency-table"
+        style={props.facetedContainerStyles}
+      >
+        {props.data.facets.map(({ label, data }, index) => (
+          <table key={index} style={props.singleFacetContainerStyles}>
+            <tbody>
+              <tr>
+                <th style={{ border: 'none' /* cancel WDK style! */ }}>
+                  {props.facetVariable}: {label}
+                </th>
+              </tr>
+              <tr>
+                <td>
+                  <ContingencyTable {...props} data={data} />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        ))}
       </div>
     );
   } else {
@@ -66,7 +76,7 @@ export function ContingencyTable(props: ContingencyTableProps) {
   const rowSums = data.values.map((row) => _.sum(row));
 
   return (
-    <div className="contingency-table" style={props.containerStyles}>
+    <div className="contingency-table" style={props.tableContainerStyles}>
       <table>
         <tbody>
           <tr>
