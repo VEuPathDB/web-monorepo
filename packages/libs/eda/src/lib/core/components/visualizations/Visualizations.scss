@@ -153,9 +153,6 @@
       font-style: italic;
       margin-bottom: 1em;
     }
-    .MosaicVisualization-Plot .web-components-plot {
-      margin-left: 0;
-    }
   }
   &-FullScreenActions {
     display: flex;
@@ -199,15 +196,6 @@ $data-table-inner-border: 1px solid #888;
   }
 }
 
-.viz-plot-info {
-  display: grid;
-  grid-auto-flow: row;
-  gap: 0.75em;
-  margin-left: 3em;
-  margin-top: 1.5em;
-  margin-left: 3em;
-}
-
 .VariableCoverageTable {
   @include data-table;
   width: 400px;
@@ -221,71 +209,59 @@ $data-table-inner-border: 1px solid #888;
   }
 }
 
-.MosaicVisualization {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  min-height: 500px;
-  width: 90vw;
+.MosaicVisualization-StatsTable {
+  @include data-table;
+  width: 400px;
+}
 
-  &-Plot {
-    min-width: 500px;
-    max-width: 1000px;
+.contingency-table {
+  @include data-table;
+  overflow: auto;
+
+  th {
+    max-width: 150px;
+    white-space: normal;
   }
 
-  &-StatsTable {
-    @include data-table;
-    width: 400px;
+  .contingency-table_column-label {
+    border-bottom: $data-table-inner-border !important;
   }
 
-  .VariableCoverageTable {
-    margin: 0;
+  .contingency-table_column-label:first-of-type {
+    border-left: $data-table-inner-border;
   }
 
-  .contingency-table {
-    @include data-table;
-    overflow: auto;
+  .contingency-table_row-label {
+    border-bottom: 0;
+    border-right: $data-table-inner-border;
+  }
 
-    .contingency-table_column-label {
-      border-bottom: $data-table-inner-border !important;
-    }
+  .contingency-table_row-header {
+    border-bottom: $data-table-inner-border !important;
+    border-right: $data-table-inner-border;
+  }
 
-    .contingency-table_column-label:first-of-type {
-      border-left: $data-table-inner-border;
-    }
+  .contingency-table_totals-row-header {
+    text-align: end;
+    border-top: $data-table-inner-border;
+    border-right: $data-table-inner-border;
+  }
 
-    .contingency-table_row-label {
-      border-bottom: 0;
-      border-right: $data-table-inner-border;
-    }
+  .contingency-table_totals-column-header {
+    border-left: $data-table-inner-border;
+  }
 
-    .contingency-table_row-header {
-      border-bottom: $data-table-inner-border !important;
-      border-right: $data-table-inner-border;
-    }
+  .contingency-table_totals-row-value {
+    border-top: $data-table-inner-border;
+  }
 
-    .contingency-table_totals-row-header {
-      text-align: end;
-      border-top: $data-table-inner-border;
-      border-right: $data-table-inner-border;
-    }
+  .contingency-table_totals-column-value {
+    border-left: $data-table-inner-border;
+  }
 
-    .contingency-table_totals-column-header {
-      border-left: $data-table-inner-border;
-    }
-
-    .contingency-table_totals-row-value {
-      border-top: $data-table-inner-border;
-    }
-
-    .contingency-table_totals-column-value {
-      border-left: $data-table-inner-border;
-    }
-
-    .contingency-table_grand-total {
-      border-top: $data-table-inner-border;
-      border-left: $data-table-inner-border;
-    }
+  .contingency-table_grand-total {
+    border-top: $data-table-inner-border;
+    border-left: $data-table-inner-border;
   }
 }
 
