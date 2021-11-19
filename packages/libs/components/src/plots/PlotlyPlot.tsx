@@ -387,6 +387,7 @@ function PlotlyPlot<T>(
               top: marginTop / 3,
               left: marginLeft,
               fontSize: 17,
+              fontStyle: title === 'No data' ? 'italic' : 'normal',
             }}
           >
             {title}
