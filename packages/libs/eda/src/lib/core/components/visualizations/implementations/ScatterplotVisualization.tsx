@@ -53,6 +53,7 @@ import {
   mapValues,
   map,
   keys,
+  uniqBy,
 } from 'lodash';
 // directly use RadioButtonGroup instead of XYPlotControls
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
@@ -423,23 +424,49 @@ function ScatterplotViz(props: VisualizationProps) {
   // custom legend list
   const legendItems: LegendItemsProps[] = useMemo(() => {
     const allData = data.value?.dataSetProcess;
+
+    /**
+     * It was found for some faceted data involving Smoothed mean and or Best fit option,
+     * each facet does not always have full Smoothed mean and/or Best fit info
+     * thus, uniqBy is introduced to find a full list of legend items
+     * However, using uniqBy for faceted data does not always guarantee that the Smoothed mean, CI, or Best fit items are correctly ordered
+     * for this reason, a new array of objects that is partially sorted is made in the following
+     * this may need a revisit in the future for overall improvement/rescheme
+     */
+
     const legendData = !isFaceted(allData)
       ? allData?.series
-      : allData.facets.find(
-          ({ data }) => data != null && data.series.length > 0
-        )?.data?.series;
+      : uniqBy(
+          allData.facets
+            .map((facet) =>
+              facet?.data?.series.map((series) => {
+                return {
+                  name: series.name,
+                  mode: series.mode,
+                  fill: series.fill,
+                };
+              })
+            )
+            .flat()
+            .filter((element) => element != null),
+          'name'
+        );
 
     // logic for setting markerColor correctly
     // find raw legend label (excluding No data as well)
-    const legendLabel = legendData
-      ?.filter(
-        (data) =>
-          !data.name?.includes(SMOOTHEDMEANSUFFIX) &&
-          !data.name?.includes(CI95SUFFIX) &&
-          !data.name?.includes(BESTFITSUFFIX) &&
-          !data.name?.includes('No data')
-      )
-      .map((data) => data.name);
+    // due to a union type of legendData, set any[] is a trick to avoid 'not callable' error
+    const legendLabel =
+      legendData != null
+        ? (legendData as any[])
+            .filter(
+              (data) =>
+                !data?.name?.includes(SMOOTHEDMEANSUFFIX) &&
+                !data?.name?.includes(CI95SUFFIX) &&
+                !data?.name?.includes(BESTFITSUFFIX) &&
+                !data?.name?.includes('No data')
+            )
+            .map((data) => data.name)
+        : [];
 
     // construct a kind of a lookup table
     const legendLabelColor = legendLabel?.map((label, index) => {
@@ -449,9 +476,118 @@ function ScatterplotViz(props: VisualizationProps) {
       };
     });
 
-    return legendData != null
+    // find the number Raw legend items considering No data case
+    const numberLegendRawItems = vizConfig.showMissingness
+      ? legendLabel.length + 1
+      : legendLabel.length;
+
+    // count will be used for Smoothed mean option as it consists of a pair of smoothed mean and CI per vocabulary
+    let count = 0;
+
+    // new array of objects based on legendData array (a kind of partial sort)
+    // raw data is in the correct order, but not always for smoothed mean, CI, and Best fit
+    // e.g., showing 'data1' (raw), 'data2' (raw), 'data2, Best fit', 'data1, Best fit' in order
+    // needed to have complex conditions for treating Smoothed mean, CI, Best fit, No data, etc.
+    const sortedLegendData =
+      isFaceted(allData) && vizConfig.valueSpecConfig !== 'Raw'
+        ? legendData
+            ?.map((dataItem, index) => {
+              if (index < numberLegendRawItems) {
+                // Raw data is ordered correctly
+                return dataItem;
+              } else if (
+                vizConfig.valueSpecConfig === 'Best fit line with raw'
+              ) {
+                // Best fit
+                return (legendData as any[])?.filter((element) => {
+                  // checking No data case
+                  if (vizConfig.showMissingness) {
+                    if (index < legendData.length - 1) {
+                      return element.name.includes(
+                        legendLabel[index - numberLegendRawItems] +
+                          BESTFITSUFFIX
+                      );
+                    } else {
+                      // No data case
+                      return element.name.includes('No data' + BESTFITSUFFIX);
+                    }
+                  } else {
+                    return element.name.includes(
+                      legendLabel[index - numberLegendRawItems] + BESTFITSUFFIX
+                    );
+                  }
+                });
+                // Smoothed mean and CI
+              } else if (
+                vizConfig.valueSpecConfig === 'Smoothed mean with raw'
+              ) {
+                if (
+                  vizConfig.showMissingness == null ||
+                  !vizConfig.showMissingness
+                ) {
+                  if (dataItem?.name?.includes(SMOOTHEDMEANSUFFIX)) {
+                    return (legendData as any[])?.filter((element) => {
+                      return element.name.includes(
+                        legendLabel[index - (numberLegendRawItems + count)] +
+                          SMOOTHEDMEANSUFFIX
+                      );
+                    });
+                  } else if (dataItem?.name?.includes(CI95SUFFIX)) {
+                    // increase count here
+                    ++count;
+                    return (legendData as any[])?.filter((element) => {
+                      return element.name.includes(
+                        legendLabel[index - (numberLegendRawItems + count)] +
+                          CI95SUFFIX
+                      );
+                    });
+                  }
+                  // the case No data exists
+                } else {
+                  if (dataItem?.name?.includes(SMOOTHEDMEANSUFFIX)) {
+                    if (index < legendData.length - 2) {
+                      return (legendData as any[])?.filter((element) => {
+                        return element.name.includes(
+                          legendLabel[index - (numberLegendRawItems + count)] +
+                            SMOOTHEDMEANSUFFIX
+                        );
+                      });
+                    } else {
+                      // No data case
+                      return (legendData as any[])?.filter((element) => {
+                        return element.name.includes(
+                          'No data' + SMOOTHEDMEANSUFFIX
+                        );
+                      });
+                    }
+                  } else if (dataItem?.name?.includes(CI95SUFFIX)) {
+                    // increase count here
+                    ++count;
+                    if (index < legendData.length - 2) {
+                      return (legendData as any[])?.filter((element) => {
+                        return element.name.includes(
+                          legendLabel[index - (numberLegendRawItems + count)] +
+                            CI95SUFFIX
+                        );
+                      });
+                    } else {
+                      return (legendData as any[])?.filter((element) => {
+                        return element.name.includes('No data' + CI95SUFFIX);
+                      });
+                    }
+                  }
+                }
+              }
+              return [];
+              // observed No data is often undefined during data loading by toggling showMissingness for large scatter data/graphics
+            })
+            .flat()
+            .filter((element) => element != null)
+        : legendData;
+
+    return sortedLegendData != null
       ? // the name 'dataItem' is used inside the map() to distinguish from the global 'data' variable
-        legendData.map((dataItem: XYPlotDataSeries, index: number) => {
+        sortedLegendData.map((dataItem: XYPlotDataSeries, index: number) => {
           return {
             label: dataItem.name ?? '',
             // maing marker info appropriately
@@ -469,7 +605,9 @@ function ScatterplotViz(props: VisualizationProps) {
                 : '',
             // set marker colors appropriately
             markerColor:
-              dataItem.name === 'No data' || dataItem.name?.includes('No data,')
+              dataItem.name != null &&
+              (dataItem?.name === 'No data' ||
+                dataItem.name?.includes('No data,'))
                 ? '#A6A6A6'
                 : // if there is no overlay variable, then marker colors should be the same for Data, Smoothed mean, 95% CI, and Best fit
                 vizConfig.overlayVariable != null
@@ -484,7 +622,7 @@ function ScatterplotViz(props: VisualizationProps) {
                           return legend.color;
                         else return '';
                       })
-                      .filter((n) => n !== '')
+                      .filter((n: string) => n !== '')
                       .toString()
                   : '#ffffff' // just set not to be empty
                 : ColorPaletteDefault[0], // set first color for no overlay variable selected
