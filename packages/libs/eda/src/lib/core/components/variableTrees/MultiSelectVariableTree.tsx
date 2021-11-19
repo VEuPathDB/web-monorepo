@@ -90,10 +90,6 @@ export default function MultiSelectVariableTree({
       fieldTree={fieldTree}
       autoFocus={false}
       toggleStarredVariable={(variable) => console.log(`Toggle ${variable}`)}
-      hideDisabledFields={true}
-      setHideDisabledFields={(hide) =>
-        console.log('Toggle display of hidden fields.')
-      }
     />
   );
 }
