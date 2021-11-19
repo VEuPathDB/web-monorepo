@@ -118,8 +118,6 @@ interface VariableListProps {
   disabledFieldIds?: string[];
   customDisabledVariableMessage?: string;
   featuredFields: VariableField[];
-  hideDisabledFields: boolean;
-  setHideDisabledFields: (hide: boolean) => void;
   showMultiFilterDescendants: boolean;
   // Entities in which single child nodes should be promoted
   // (replacing their parent in the tree)
@@ -143,8 +141,6 @@ export default function VariableList({
   autoFocus,
   starredVariables,
   toggleStarredVariable,
-  hideDisabledFields,
-  setHideDisabledFields,
   customDisabledVariableMessage,
   showMultiFilterDescendants,
   singleChildPromotionEntityIds,
@@ -224,7 +220,7 @@ export default function VariableList({
         ? preorderSeq(node).map(getNodeSearchString(valuesMap)).join(' ')
         : getNodeSearchString(valuesMap)(node);
     },
-    [valuesMap]
+    [showMultiFilterDescendants, valuesMap]
   );
 
   const searchPredicate = useCallback(
