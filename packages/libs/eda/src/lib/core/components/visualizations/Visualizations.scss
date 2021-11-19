@@ -217,6 +217,11 @@ $data-table-inner-border: 1px solid #888;
   @include data-table;
   overflow: auto;
 
+  th {
+    max-width: 150px;
+    white-space: normal;
+  }
+
   .contingency-table_column-label {
     border-bottom: $data-table-inner-border !important;
   }
