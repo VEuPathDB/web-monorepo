@@ -1,6 +1,9 @@
 /**
  * Some basic color definitions that can be used to bring consistency to UI components.
  */
+const white = '#FFFFFF';
+const black = '#000000';
+
 type ColorHue = {
   100: string;
   200: string;
@@ -212,6 +215,8 @@ export const mutedPurple: ColorHue = {
 };
 
 export default {
+  white,
+  black,
   gray,
   tan,
   blue,
