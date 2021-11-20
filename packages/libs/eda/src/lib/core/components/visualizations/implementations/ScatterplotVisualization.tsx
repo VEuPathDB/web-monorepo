@@ -438,8 +438,7 @@ function ScatterplotViz(props: VisualizationProps) {
       ? allData?.series
       : uniqBy(
           allData.facets
-            .map((facet) => facet?.data?.series)
-            .flat()
+            .flatMap((facet) => facet?.data?.series)
             .filter((element): element is XYPlotDataSeries => element != null),
           'name'
         );
@@ -482,7 +481,7 @@ function ScatterplotViz(props: VisualizationProps) {
     const sortedLegendData =
       isFaceted(allData) && vizConfig.valueSpecConfig !== 'Raw'
         ? legendData
-            ?.map((dataItem, index) => {
+            ?.flatMap((dataItem, index) => {
               if (index < numberLegendRawItems) {
                 // Raw data is ordered correctly
                 return dataItem;
@@ -572,7 +571,6 @@ function ScatterplotViz(props: VisualizationProps) {
               return [];
               // observed No data is often undefined during data loading by toggling showMissingness for large scatter data/graphics
             })
-            .flat()
             .filter((element) => element != null)
         : legendData;
 
