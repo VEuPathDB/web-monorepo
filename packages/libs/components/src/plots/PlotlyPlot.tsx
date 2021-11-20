@@ -336,8 +336,6 @@ function PlotlyPlot<T>(
   );
 
   const marginTop = spacingOptions?.marginTop ?? PlotSpacingDefault.marginTop;
-  const marginLeft =
-    spacingOptions?.marginLeft ?? PlotSpacingDefault.marginLeft;
 
   return (
     <Suspense fallback="Loading...">
@@ -385,7 +383,7 @@ function PlotlyPlot<T>(
             style={{
               position: 'absolute',
               top: marginTop / 3,
-              left: marginLeft,
+              left: '10%',
               fontSize: 17,
               fontStyle: title === 'No data' ? 'italic' : 'normal',
             }}
