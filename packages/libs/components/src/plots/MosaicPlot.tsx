@@ -11,6 +11,7 @@ import _ from 'lodash';
 // util functions for handling long tick labels with ellipsis
 import { axisTickLableEllipsis } from '../utils/axis-tick-label-ellipsis';
 import { makeStyles } from '@material-ui/core/styles';
+import { PlotSpacingDefault } from '../types/plots/addOns';
 import { Layout } from 'plotly.js';
 
 export interface MosaicPlotProps extends PlotProps<MosaicData> {
@@ -152,7 +153,8 @@ const MosaicPlot = makePlotlyPlotComponent(
     const marginLeftExtra = 5.357 * longestLegendLabelLength + 37.5;
     const yAxisTitleStandoff = marginLeftExtra + 25;
 
-    const marginLeft = spacingOptions?.marginLeft ?? defaultMargin;
+    const marginLeft =
+      spacingOptions?.marginLeft ?? PlotSpacingDefault.marginLeft;
     const newSpacingOptions = {
       ...spacingOptions,
       marginLeft: marginLeft + marginLeftExtra,

@@ -29,6 +29,7 @@ Basic.args = {
   independentAxisLabel: 'Animal',
   legendTitle: 'Domesticated',
   opacity: 0.75,
+  title: 'Awesomeness of animals stratified by domestication',
 };
 
 export const EmptyData = Template.bind({});
@@ -42,4 +43,12 @@ EmptyDataLoading.args = {
   dependentAxisLabel: 'Dependent axis label',
   independentAxisLabel: 'Independent axis label',
   showSpinner: true,
+};
+
+export const NoDataOverlay = Template.bind({});
+NoDataOverlay.args = {
+  dependentAxisLabel: 'Dependent axis label',
+  independentAxisLabel: 'Independent axis label',
+  showNoDataOverlay: true,
+  title: 'Awesomeness of animals stratified by domestication',
 };
