@@ -89,7 +89,7 @@ type HistogramDataWithCoverageStatistics = (
 
 const plotContainerStyles = {
   width: 750,
-  height: 400,
+  height: 450,
   marginLeft: '0.75rem',
   border: '1px solid #dedede',
   boxShadow: '1px 1px 4px #00000066',
