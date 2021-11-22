@@ -49,6 +49,7 @@ export type IndividualNode = OntologyNode<{
     displayName: string;
     help?: string;
     summary?: string;
+    description?: string;
   };
 }>
 
@@ -103,6 +104,7 @@ export function getDescription(node: CategoryTreeNode) {
 
 export function getTooltipContent(node: CategoryTreeNode) {
   return isIndividual(node) && nodeHasProperty('targetType', 'search', node) ? node.wdkReference.summary
+       : isIndividual(node) && nodeHasProperty('targetType', 'table', node) ? node.wdkReference.description
        : getDescription(node);
 }
 
