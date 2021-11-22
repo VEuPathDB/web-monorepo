@@ -156,217 +156,57 @@ EmptyLoading.args = {
  * FACETING
  */
 
+const facetSeries1 = {
+  label: 'indoors',
+  data: {
+    slices: [
+      {
+        value: 25,
+        label: 'dogs',
+      },
+      {
+        value: 10,
+        label: 'cats',
+      },
+    ],
+  },
+};
+
+const facetSeries2 = {
+  label: 'outdoors',
+  data: {
+    slices: [
+      {
+        value: 5,
+        label: 'dogs',
+      },
+      {
+        value: 33,
+        label: 'cats',
+      },
+    ],
+  },
+};
+
 const facetedData: FacetedData<PiePlotData> = {
   facets: [
+    facetSeries1,
+    facetSeries2,
+    facetSeries1,
+    facetSeries2,
+    facetSeries1,
+    facetSeries2,
+    facetSeries1,
+    facetSeries2,
+    facetSeries1,
+    facetSeries2,
+    facetSeries1,
+    facetSeries2,
     {
       label: 'indoors',
-      data: {
-        slices: [
-          {
-            value: 25,
-            label: 'dogs',
-          },
-          {
-            value: 10,
-            label: 'cats',
-          },
-        ],
-      },
     },
     {
-      label: 'outdoors',
-      data: {
-        slices: [
-          {
-            value: 5,
-            label: 'dogs',
-          },
-          {
-            value: 33,
-            label: 'cats',
-          },
-        ],
-      },
-    },
-    {
-      label: 'indoors',
-      data: {
-        slices: [
-          {
-            value: 25,
-            label: 'dogs',
-          },
-          {
-            value: 10,
-            label: 'cats',
-          },
-        ],
-      },
-    },
-    {
-      label: 'outdoors',
-      data: {
-        slices: [
-          {
-            value: 5,
-            label: 'dogs',
-          },
-          {
-            value: 33,
-            label: 'cats',
-          },
-        ],
-      },
-    },
-    {
-      label: 'indoors',
-      data: {
-        slices: [
-          {
-            value: 25,
-            label: 'dogs',
-          },
-          {
-            value: 10,
-            label: 'cats',
-          },
-        ],
-      },
-    },
-    {
-      label: 'outdoors',
-      data: {
-        slices: [
-          {
-            value: 5,
-            label: 'dogs',
-          },
-          {
-            value: 33,
-            label: 'cats',
-          },
-        ],
-      },
-    },
-    {
-      label: 'indoors',
-      data: {
-        slices: [
-          {
-            value: 25,
-            label: 'dogs',
-          },
-          {
-            value: 10,
-            label: 'cats',
-          },
-        ],
-      },
-    },
-    {
-      label: 'outdoors',
-      data: {
-        slices: [
-          {
-            value: 5,
-            label: 'dogs',
-          },
-          {
-            value: 33,
-            label: 'cats',
-          },
-        ],
-      },
-    },
-    {
-      label: 'indoors',
-      data: {
-        slices: [
-          {
-            value: 25,
-            label: 'dogs',
-          },
-          {
-            value: 10,
-            label: 'cats',
-          },
-        ],
-      },
-    },
-    {
-      label: 'outdoors',
-      data: {
-        slices: [
-          {
-            value: 5,
-            label: 'dogs',
-          },
-          {
-            value: 33,
-            label: 'cats',
-          },
-        ],
-      },
-    },
-    {
-      label: 'indoors',
-      data: {
-        slices: [
-          {
-            value: 25,
-            label: 'dogs',
-          },
-          {
-            value: 10,
-            label: 'cats',
-          },
-        ],
-      },
-    },
-    {
-      label: 'outdoors',
-      data: {
-        slices: [
-          {
-            value: 5,
-            label: 'dogs',
-          },
-          {
-            value: 33,
-            label: 'cats',
-          },
-        ],
-      },
-    },
-    {
-      label: 'indoors',
-      data: {
-        slices: [
-          {
-            value: 25,
-            label: 'dogs',
-          },
-          {
-            value: 10,
-            label: 'cats',
-          },
-        ],
-      },
-    },
-    {
-      label: 'outdoors',
-      data: {
-        slices: [
-          {
-            value: 5,
-            label: 'dogs',
-          },
-          {
-            value: 33,
-            label: 'cats',
-          },
-        ],
-      },
+      label: 'No data',
     },
   ],
 };

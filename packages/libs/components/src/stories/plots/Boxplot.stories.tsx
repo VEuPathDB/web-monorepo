@@ -1,6 +1,8 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import Boxplot, { BoxplotProps } from '../../plots/Boxplot';
+import { FacetedData, BoxplotData } from '../../types/plots';
+import FacetedPlot from '../../plots/FacetedPlot';
 
 export default {
   title: 'Plots/Boxplot',
@@ -390,3 +392,56 @@ function storyArgTypes(args: any): any {
     };
   }
 }
+
+/**
+ * FACETING
+ */
+
+const facetedData: FacetedData<BoxplotData> = {
+  facets: [
+    {
+      label: 'Low income',
+      data: multipleData.series,
+    },
+    {
+      label: 'Medium income',
+      data: multipleData.series,
+    },
+    {
+      label: 'High income',
+      data: multipleData.series,
+    },
+    {
+      label: 'Even higher income',
+    },
+    {
+      label: 'No data',
+    },
+  ],
+};
+
+interface FacetedStoryProps {
+  data: FacetedData<BoxplotData>;
+  props: BoxplotProps;
+}
+
+const FacetedTemplate: Story<FacetedStoryProps> = ({ data, props }) => (
+  <FacetedPlot<BoxplotData, BoxplotProps>
+    data={data}
+    component={Boxplot}
+    props={props}
+  />
+);
+
+export const Faceted = FacetedTemplate.bind({});
+Faceted.args = {
+  data: facetedData,
+  props: {
+    title: 'Number of rooms (faceted)',
+    containerStyles: {
+      width: 300,
+      height: 300,
+      border: '1px solid #dadada',
+    },
+  },
+};
