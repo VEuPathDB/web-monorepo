@@ -1,62 +1,52 @@
 import React, { useState } from 'react';
 
+import { ButtonStyleSpec } from '..';
 import typography from '../../../styleDefinitions/typography';
-import { stylePresets, SwissArmyButtonStyleSpec } from './stylePresets';
+import { UITheme } from '../../theming/types';
 
-type SwissArmyButtonProps = {
+export type SwissArmyButtonProps = {
   /** Text of the button */
   text: string;
   /** Action to take when the button is clicked. */
   onPress: () => void;
   /** Optional. Text to display as a tooltip when button is hovered over. */
   tooltip?: string;
-  /** Indicates if the button should be have a colored outline and
-   * transparent center or have a solid fill color. */
-  type?: 'outlined' | 'solid';
+  /**
+   * Optional. Used to indicate which color properties to calculate based on
+   * a UI theme. Not indicating a value here will mean that button should not
+   * pick up styling options from the theme. */
+  role?: keyof UITheme['palette'];
   /** The size of the button. */
   size?: 'small' | 'medium' | 'large';
   /** Optional. SVG component to use as an icon. */
   icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  /** Presets for commonly used button styles */
-  stylePreset?: keyof typeof stylePresets;
   /** Additional styles to apply to the button container. */
-  styleOverrides?: Partial<SwissArmyButtonStyleSpec>;
+  style: ButtonStyleSpec;
 };
 
 /** Basic button with a variety of customization options. */
-function SwissArmyButton({
+export default function SwissArmyButton({
   text,
   onPress,
   tooltip,
-  type = 'solid',
   size = 'medium',
   icon = () => null,
-  stylePreset = 'default',
-  styleOverrides = {},
+  style,
 }: SwissArmyButtonProps) {
   const [buttonState, setButtonState] = useState<
     'default' | 'hover' | 'pressed'
   >('default');
 
-  const baseStyle = stylePresets[stylePreset];
-  // TODO: Explore deep merging here and on DataGrid.
-  const finalStyle: SwissArmyButtonStyleSpec = Object.assign(
-    {},
-    baseStyle,
-    styleOverrides
-  );
-  // TODO: useTheme
+  // const style = useMemo(() => merge({}, presetStyle, style), [
+  //   stylePreset,
+  // ]);
 
   /**
    * If textColor is specified, use it. Otherwise if `type` is solid, use
    * white. If `type` is outline, use `color` unless button is pressed, then
    * use `onPressColor` if specified.
    */
-  const calculatedTextColor =
-    type === 'solid'
-      ? finalStyle[buttonState].textColor ?? 'white'
-      : finalStyle[buttonState].textColor ?? finalStyle[buttonState].color;
-
+  const calculatedTextColor = style[buttonState].textColor ?? 'white';
   const calculatedFontSize = size === 'large' ? '1rem' : '.80rem';
   const calculatedIconSize =
     size === 'large' ? '1.5rem' : size === 'medium' ? '1.25rem' : '1rem';
@@ -76,24 +66,24 @@ function SwissArmyButton({
             paddingLeft: horizontalPadding,
             paddingRight: horizontalPadding,
             color: calculatedTextColor,
-            borderRadius: finalStyle[buttonState].borderRadius ?? 5,
-            textTransform: finalStyle[buttonState].textTransform ?? 'uppercase',
-            fontWeight: finalStyle[buttonState].fontWeight ?? 600,
+            textTransform: style[buttonState].textTransform ?? 'uppercase',
+            fontWeight: style[buttonState].fontWeight ?? 600,
             fontSize: calculatedFontSize,
-            ...finalStyle.container,
+            ...style.container,
+            backgroundColor: `${
+              style[buttonState].color ?? 'transparent'
+            } !important`,
+            borderRadius: style[buttonState].border?.radius ?? 5,
+            outlineStyle: style[buttonState].border?.style ?? 'none',
+            outlineColor: style[buttonState].border?.color,
+            outlineWidth: style[buttonState].border?.width,
+            outlineOffset: style[buttonState].border?.width
+              ? -1 * style[buttonState].border?.width!
+              : undefined,
+            border: 'none',
           },
-          type === 'solid'
-            ? {
-                backgroundColor: `${finalStyle[buttonState].color} !important`,
-                border: 'none',
-              }
-            : {
-                borderColor: `${finalStyle[buttonState].color} !important`,
-                backgroundColor: 'transparent',
-                borderStyle: 'solid',
-              },
-          finalStyle[buttonState].dropShadow && {
-            boxShadow: `${finalStyle[buttonState].dropShadow?.offsetX} ${finalStyle[buttonState].dropShadow?.offsetY} ${finalStyle[buttonState].dropShadow?.blurRadius} ${finalStyle[buttonState].dropShadow?.color}`,
+          style[buttonState].dropShadow && {
+            boxShadow: `${style[buttonState].dropShadow?.offsetX} ${style[buttonState].dropShadow?.offsetY} ${style[buttonState].dropShadow?.blurRadius} ${style[buttonState].dropShadow?.color}`,
           },
         ]}
         onMouseDown={() => {
@@ -136,5 +126,3 @@ function SwissArmyButton({
     </div>
   );
 }
-
-export { SwissArmyButton as default, SwissArmyButtonProps, stylePresets };
