@@ -94,6 +94,8 @@ import PlotLegend, {
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import FacetedPlot from '@veupathdb/components/lib/plots/FacetedPlot';
+// for converting rgb() to rgba()
+import * as ColorMath from 'color-math';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -516,8 +518,8 @@ function ScatterplotViz(props: VisualizationProps) {
                   !vizConfig.showMissingness
                 ) {
                   if (dataItem?.name?.includes(SMOOTHEDMEANSUFFIX)) {
-                    return (legendData as any[])?.filter((element) => {
-                      return element.name.includes(
+                    return legendData.filter((element) => {
+                      return element.name?.includes(
                         legendLabel[index - (numberLegendRawItems + count)] +
                           SMOOTHEDMEANSUFFIX
                       );
@@ -971,7 +973,9 @@ export function scatterplotResponseToData(
       dependentValueType,
       showMissingness,
       hasMissingData,
-      overlayVariable
+      overlayVariable,
+      // pass facetVariable to determine either scatter or scattergl
+      facetVariable
     );
 
     return {
@@ -1090,7 +1094,9 @@ function processInputData<T extends number | string>(
   dependentValueType: string,
   showMissingness: boolean,
   hasMissingData: boolean,
-  overlayVariable?: Variable
+  overlayVariable?: Variable,
+  // pass facetVariable to determine either scatter or scattergl
+  facetVariable?: Variable
 ) {
   // set fillAreaValue for densityplot
   const fillAreaValue = vizType === 'densityplot' ? 'toself' : '';
@@ -1145,6 +1151,9 @@ function processInputData<T extends number | string>(
     showMissingness && index === responseScatterplotData.length - 1
       ? 'x'
       : 'circle-open';
+
+  // use type: scatter for faceted plot, otherwise scattergl
+  const scatterPlotType = facetVariable != null ? 'scatter' : 'scattergl';
 
   // set dataSetProcess as any for now
   let dataSetProcess: any = [];
@@ -1216,7 +1225,7 @@ function processInputData<T extends number | string>(
             ? 'scatter'
             : vizType === 'densityplot'
             ? 'scatter'
-            : 'scattergl', // for the raw data of the scatterplot
+            : scatterPlotType,
         fill: fillAreaValue,
         opacity: 0.7,
         marker: {
@@ -1318,8 +1327,7 @@ function processInputData<T extends number | string>(
           shape: 'spline',
           width: 2,
         },
-        // use scattergl
-        type: 'scattergl',
+        type: scatterPlotType,
       });
 
       // make Confidence Interval (CI) or Bounds (filled area)
@@ -1359,11 +1367,17 @@ function processInputData<T extends number | string>(
           : CI95TEXT,
         // this is better to be tozeroy, not tozerox
         fill: 'tozeroy',
+        // opacity only works for type: scattergl
         opacity: 0.2,
         // use darker color for smoothed mean's confidence interval
-        fillcolor: markerColorDark(index),
-        // type: 'line',
-        type: 'scattergl',
+        // when using scatter, fillColor should be rgba() format
+        fillcolor:
+          facetVariable != null
+            ? ColorMath.evaluate(
+                markerColorDark(index) + ' @a 20%'
+              ).result.css()
+            : markerColorDark(index),
+        type: scatterPlotType,
         // here, line means upper and lower bounds
         line: { color: 'transparent', shape: 'spline' },
       });
@@ -1418,8 +1432,7 @@ function processInputData<T extends number | string>(
           color: markerColorDark(index),
           shape: 'spline',
         },
-        // use scattergl
-        type: 'scattergl',
+        type: scatterPlotType,
       });
     }
     return breakAfterThisSeries(index);
