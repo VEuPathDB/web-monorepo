@@ -96,6 +96,8 @@ import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import FacetedPlot from '@veupathdb/components/lib/plots/FacetedPlot';
 // for converting rgb() to rgba()
 import * as ColorMath from 'color-math';
+// R-square table component
+import { ScatterplotRsquareTable } from '../../ScatterplotRsquareTable';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -757,8 +759,28 @@ function ScatterplotViz(props: VisualizationProps) {
           },
         ]}
       />
+      {/* R-square table component */}
+      {vizConfig.valueSpecConfig === 'Best fit line with raw' &&
+        data.value != null &&
+        !data.pending && (
+          <ScatterplotRsquareTable
+            data={
+              data.value && !data.pending
+                ? !isFaceted(data.value?.dataSetProcess)
+                  ? data.value?.dataSetProcess.series
+                  : data.value?.dataSetProcess.facets
+                : undefined
+            }
+            isFaceted={isFaceted(data.value?.dataSetProcess)}
+            overlayVariable={overlayVariable}
+            facetVariable={facetVariable}
+          />
+        )}
     </>
   );
+
+  //DKDK
+  console.log('data.value =', data.value);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -1420,12 +1442,14 @@ function processInputData<T extends number | string>(
         y: el.bestFitLineY,
         // display R-square value at legend text(s)
         // name: 'Best fit<br>R<sup>2</sup> = ' + el.r2,
+        // include R-square value at dataSetProcess
+        r2: el.r2,
         name: el.overlayVariableDetails
           ? fixLabelForNumberVariables(
               el.overlayVariableDetails.value,
               overlayVariable
-            ) + BESTFITSUFFIX // TO DO: put R^2 values in a table, esp for faceting
-          : BESTFITTEXT, // ditto - see issue 694
+            ) + BESTFITSUFFIX
+          : BESTFITTEXT,
         mode: 'lines', // no data point is displayed: only line
         line: {
           // use darker color for best fit line
