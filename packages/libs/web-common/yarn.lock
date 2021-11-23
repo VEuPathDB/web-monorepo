@@ -1313,10 +1313,10 @@
     react-modal "^3.14.3"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^1.1.31":
-  version "1.1.31"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.1.31.tgz#06d4003d4c2e475a875c565cf867f6a075a25511"
-  integrity sha512-GNAR6tyrvVPMjSvVi99nNFa9zaR3dhBqYgd10KV8ehvAc8gPnyAEgtfA/PB1FK/6hvAyVjMHNmxU9HHKdJwLaA==
+"@veupathdb/eda@^1.1.32":
+  version "1.1.32"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.1.32.tgz#996ddf36c1f535fa1873f78a9698c8ae37be2773"
+  integrity sha512-KdWs0NJl9E6/0VH9cKUyS/e79+5EZ5pwdKftEMAOc9XZABRPnyNHLwBPc09S+VoYvUaCOUSG8+0Zal/zhhchVQ==
   dependencies:
     "@emotion/react" "^11.4.1"
     "@emotion/styled" "^11.3.0"
