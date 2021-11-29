@@ -1,3 +1,4 @@
+export { default as CheckIcon } from './CheckIcon'
 export { default as CheckCircle } from './CheckCircle'
 export { default as Close } from './Close'
 export { default as CloseFullscreen } from './CloseFullscreen'

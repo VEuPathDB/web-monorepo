@@ -37,10 +37,6 @@ export default function SwissArmyButton({
     'default' | 'hover' | 'pressed'
   >('default');
 
-  // const style = useMemo(() => merge({}, presetStyle, style), [
-  //   stylePreset,
-  // ]);
-
   /**
    * If textColor is specified, use it. Otherwise if `type` is solid, use
    * white. If `type` is outline, use `color` unless button is pressed, then

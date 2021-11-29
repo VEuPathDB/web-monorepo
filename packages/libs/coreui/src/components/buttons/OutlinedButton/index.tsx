@@ -88,8 +88,6 @@ export default function OutlinedButton({
     [themeStyle]
   );
 
-  console.log(finalStyle);
-
   return (
     <SwissArmyButton
       style={finalStyle}

@@ -1,6 +1,4 @@
-import { CSSProperties, WebViewHTMLAttributes } from 'react';
-import colors, { ColorHue } from '../../definitions/colors';
-import { SwissArmyButtonStyleSpec } from '../buttons/SwissArmyButton/stylePresets';
+import { ColorHue } from '../../definitions/colors';
 
 type ColorDescriptor = {
   hue: ColorHue;
@@ -11,10 +9,5 @@ export type UITheme = {
   palette: {
     primary: ColorDescriptor;
     secondary: ColorDescriptor;
-  };
-  buttons?: {
-    primary: SwissArmyButtonStyleSpec;
-    secondary: SwissArmyButtonStyleSpec;
-    tertiary: SwissArmyButtonStyleSpec;
   };
 };
