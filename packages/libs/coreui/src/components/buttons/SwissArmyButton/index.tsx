@@ -15,7 +15,7 @@ export type SwissArmyButtonProps = {
    * Optional. Used to indicate which color properties to calculate based on
    * a UI theme. Not indicating a value here will mean that button should not
    * pick up styling options from the theme. */
-  role?: keyof UITheme['palette'];
+  themeRole?: keyof UITheme['palette'];
   /** The size of the button. */
   size?: 'small' | 'medium' | 'large';
   /** Optional. SVG component to use as an icon. */

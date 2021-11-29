@@ -18,7 +18,7 @@ export default function MesaButton({
   tooltip,
   size = 'medium',
   icon = () => null,
-  role,
+  themeRole,
   styleOverrides = {},
 }: MesaButtonProps) {
   const defaultStyle: ButtonStyleSpec = {
@@ -72,48 +72,65 @@ export default function MesaButton({
   const theme = useUITheme();
   const themeStyle = useMemo<Partial<ButtonStyleSpec>>(
     () =>
-      theme && role
+      theme && themeRole
         ? {
             default: {
-              textColor: theme.palette[role].level > 200 ? 'white' : gray[700],
-              color: theme.palette[role].hue[theme.palette[role].level],
+              textColor:
+                theme.palette[themeRole].level > 200 ? 'white' : gray[700],
+              color:
+                theme.palette[themeRole].hue[theme.palette[themeRole].level],
               textTransform: 'none',
               fontWeight: 400,
               border: {
                 radius: 5,
               },
               dropShadow: {
-                color: theme.palette[role].hue[theme.palette[role].level + 100],
+                color:
+                  theme.palette[themeRole].hue[
+                    theme.palette[themeRole].level + 100
+                  ],
                 blurRadius: '0px',
                 offsetX: '0px',
                 offsetY: '3px',
               },
             },
             hover: {
-              textColor: theme.palette[role].level > 200 ? 'white' : gray[700],
-              color: theme.palette[role].hue[theme.palette[role].level],
+              textColor:
+                theme.palette[themeRole].level > 200 ? 'white' : gray[700],
+              color:
+                theme.palette[themeRole].hue[theme.palette[themeRole].level],
               textTransform: 'none',
               fontWeight: 400,
               border: {
                 radius: 5,
               },
               dropShadow: {
-                color: theme.palette[role].hue[theme.palette[role].level + 200],
+                color:
+                  theme.palette[themeRole].hue[
+                    theme.palette[themeRole].level + 200
+                  ],
                 blurRadius: '0px',
                 offsetX: '0px',
                 offsetY: '4px',
               },
             },
             pressed: {
-              textColor: theme.palette[role].level > 200 ? 'white' : gray[700],
-              color: theme.palette[role].hue[theme.palette[role].level + 100],
+              textColor:
+                theme.palette[themeRole].level > 200 ? 'white' : gray[700],
+              color:
+                theme.palette[themeRole].hue[
+                  theme.palette[themeRole].level + 100
+                ],
               textTransform: 'none',
               fontWeight: 400,
               border: {
                 radius: 5,
               },
               dropShadow: {
-                color: theme.palette[role].hue[theme.palette[role].level + 300],
+                color:
+                  theme.palette[themeRole].hue[
+                    theme.palette[themeRole].level + 300
+                  ],
                 blurRadius: '0px',
                 offsetX: '0px',
                 offsetY: '4px',
@@ -121,7 +138,7 @@ export default function MesaButton({
             },
           }
         : {},
-    [theme, role]
+    [theme, themeRole]
   );
 
   const finalStyle = useMemo(
@@ -137,7 +154,7 @@ export default function MesaButton({
       tooltip={tooltip}
       size={size}
       icon={icon}
-      role={role}
+      themeRole={themeRole}
     />
   );
 }

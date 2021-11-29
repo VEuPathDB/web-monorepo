@@ -40,11 +40,11 @@ export const Default = Template.bind({});
 Default.args = {
   selected: false,
   onToggle: () => console.log('Clicked'),
-  role: undefined,
+  themeRole: undefined,
 } as CheckboxProps;
 
 export const UseTheme = Template.bind({});
 UseTheme.args = {
   ...Default.args,
-  role: 'primary',
+  themeRole: 'primary',
 } as CheckboxProps;

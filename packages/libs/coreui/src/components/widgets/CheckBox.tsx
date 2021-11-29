@@ -24,14 +24,14 @@ export type CheckboxProps = {
    * Optional. Used to indicate which color properties to calculate based on
    * a UI theme. Not indicating a value here will mean that button should not
    * pick up styling options from the theme. */
-  role?: keyof UITheme['palette'];
+  themeRole?: keyof UITheme['palette'];
   style?: Partial<CheckBoxStyleSpec>;
 };
 
 export default function CheckBox({
   selected,
   onToggle,
-  role,
+  themeRole,
   style = {
     size: 12,
     color: gray[300],
@@ -42,10 +42,13 @@ export default function CheckBox({
   const theme = useUITheme();
   const themeStyle = useMemo<Partial<CheckBoxStyleSpec>>(
     () =>
-      theme && role
-        ? { selectedColor: theme.palette[role].hue[theme.palette[role].level] }
+      theme && themeRole
+        ? {
+            selectedColor:
+              theme.palette[themeRole].hue[theme.palette[themeRole].level],
+          }
         : {},
-    [theme, role]
+    [theme, themeRole]
   );
 
   const finalStyle = useMemo(() => merge({}, style, themeStyle), [themeStyle]);

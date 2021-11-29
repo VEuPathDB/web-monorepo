@@ -17,7 +17,7 @@ export default function FilledButton({
   tooltip,
   size = 'medium',
   icon = () => null,
-  role,
+  themeRole,
   styleOverrides = {},
 }: FilledButtonProps) {
   const defaultStyle: ButtonStyleSpec = {
@@ -46,28 +46,39 @@ export default function FilledButton({
   const theme = useUITheme();
   const themeStyle = useMemo<Partial<ButtonStyleSpec>>(
     () =>
-      theme && role
+      theme && themeRole
         ? {
             default: {
-              textColor: theme.palette[role].level > 200 ? 'white' : gray[800],
-              color: theme.palette[role].hue[theme.palette[role].level],
+              textColor:
+                theme.palette[themeRole].level > 200 ? 'white' : gray[800],
+              color:
+                theme.palette[themeRole].hue[theme.palette[themeRole].level],
             },
             hover: {
-              textColor: theme.palette[role].level > 200 ? 'white' : gray[800],
+              textColor:
+                theme.palette[themeRole].level > 200 ? 'white' : gray[800],
               border: {
-                color: theme.palette[role].hue[theme.palette[role].level + 100],
+                color:
+                  theme.palette[themeRole].hue[
+                    theme.palette[themeRole].level + 100
+                  ],
                 width: 2,
                 style: 'solid',
               },
-              color: theme.palette[role].hue[theme.palette[role].level],
+              color:
+                theme.palette[themeRole].hue[theme.palette[themeRole].level],
             },
             pressed: {
-              textColor: theme.palette[role].level > 200 ? 'white' : gray[800],
-              color: theme.palette[role].hue[theme.palette[role].level + 100],
+              textColor:
+                theme.palette[themeRole].level > 200 ? 'white' : gray[800],
+              color:
+                theme.palette[themeRole].hue[
+                  theme.palette[themeRole].level + 100
+                ],
             },
           }
         : {},
-    [theme, role]
+    [theme, themeRole]
   );
 
   const finalStyle = useMemo(
@@ -83,7 +94,7 @@ export default function FilledButton({
       tooltip={tooltip}
       size={size}
       icon={icon}
-      role={role}
+      themeRole={themeRole}
     />
   );
 }

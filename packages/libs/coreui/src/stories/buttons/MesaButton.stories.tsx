@@ -51,6 +51,6 @@ export const UseTheme = Template.bind({});
 UseTheme.args = {
   text: 'Using Theme Styles',
   icon: Download,
-  role: 'primary',
+  themeRole: 'primary',
   size: 'medium',
 };

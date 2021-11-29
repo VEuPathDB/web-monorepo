@@ -17,7 +17,7 @@ export default function FloatingButton({
   tooltip,
   size = 'medium',
   icon = () => null,
-  role,
+  themeRole,
   styleOverrides = {},
 }: FloatingButtonProps) {
   const defaultStyle: ButtonStyleSpec = {
@@ -43,8 +43,8 @@ export default function FloatingButton({
 
   const theme = useUITheme();
   const themeStyle = useMemo<Partial<ButtonStyleSpec>>(() => {
-    if (theme && role) {
-      if (theme.palette[role].level < 500) {
+    if (theme && themeRole) {
+      if (theme.palette[themeRole].level < 500) {
         console.warn(
           'The theme color selected may not provide enough contrast to use the FloatingButton component.'
         );
@@ -52,22 +52,25 @@ export default function FloatingButton({
 
       return {
         default: {
-          textColor: theme.palette[role].hue[theme.palette[role].level],
+          textColor:
+            theme.palette[themeRole].hue[theme.palette[themeRole].level],
           color: 'transparent',
         },
         hover: {
-          textColor: theme.palette[role].hue[theme.palette[role].level],
-          color: theme.palette[role].hue[100],
+          textColor:
+            theme.palette[themeRole].hue[theme.palette[themeRole].level],
+          color: theme.palette[themeRole].hue[100],
         },
         pressed: {
-          textColor: theme.palette[role].hue[theme.palette[role].level],
-          color: theme.palette[role].hue[200],
+          textColor:
+            theme.palette[themeRole].hue[theme.palette[themeRole].level],
+          color: theme.palette[themeRole].hue[200],
         },
       };
     } else {
       return {};
     }
-  }, [theme, role]);
+  }, [theme, themeRole]);
 
   const finalStyle = useMemo(
     () => merge({}, defaultStyle, themeStyle, styleOverrides),
@@ -82,7 +85,7 @@ export default function FloatingButton({
       tooltip={tooltip}
       size={size}
       icon={icon}
-      role={role}
+      themeRole={themeRole}
     />
   );
 }

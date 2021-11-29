@@ -17,7 +17,7 @@ export default function OutlinedButton({
   tooltip,
   size = 'medium',
   icon = () => null,
-  role,
+  themeRole,
   styleOverrides = {},
 }: OutlinedButtonProps) {
   const defaultStyle: ButtonStyleSpec = {
@@ -56,31 +56,43 @@ export default function OutlinedButton({
   const theme = useUITheme();
   const themeStyle = useMemo<Partial<ButtonStyleSpec>>(
     () =>
-      theme && role
+      theme && themeRole
         ? {
             default: {
-              textColor: theme.palette[role].hue[theme.palette[role].level],
+              textColor:
+                theme.palette[themeRole].hue[theme.palette[themeRole].level],
               border: {
-                color: theme.palette[role].hue[theme.palette[role].level],
+                color:
+                  theme.palette[themeRole].hue[theme.palette[themeRole].level],
               },
             },
             hover: {
               textColor:
-                theme.palette[role].hue[theme.palette[role].level + 100],
+                theme.palette[themeRole].hue[
+                  theme.palette[themeRole].level + 100
+                ],
               border: {
-                color: theme.palette[role].hue[theme.palette[role].level + 100],
+                color:
+                  theme.palette[themeRole].hue[
+                    theme.palette[themeRole].level + 100
+                  ],
               },
             },
             pressed: {
               textColor:
-                theme.palette[role].hue[theme.palette[role].level + 200],
+                theme.palette[themeRole].hue[
+                  theme.palette[themeRole].level + 200
+                ],
               border: {
-                color: theme.palette[role].hue[theme.palette[role].level + 200],
+                color:
+                  theme.palette[themeRole].hue[
+                    theme.palette[themeRole].level + 200
+                  ],
               },
             },
           }
         : {},
-    [theme, role]
+    [theme, themeRole]
   );
 
   const finalStyle = useMemo(
@@ -96,7 +108,7 @@ export default function OutlinedButton({
       tooltip={tooltip}
       size={size}
       icon={icon}
-      role={role}
+      themeRole={themeRole}
     />
   );
 }
