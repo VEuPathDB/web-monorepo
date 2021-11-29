@@ -1,7 +1,33 @@
-import { css } from '@emotion/react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { merge } from 'lodash';
 
-import stylePresets, { TabbedDisplayStyleSpec } from './stylePresets';
+// Definitions
+import { blue, gray, tan } from '../../../definitions/colors';
+import typography from '../../../styleDefinitions/typography';
+import { UITheme } from '../../theming/types';
+
+// Hooks
+import useUITheme from '../../theming/useUITheme';
+
+import { TabbedDisplayStyleSpec } from './stylePresets';
+
+const DEFAULT_STYLE: TabbedDisplayStyleSpec = {
+  active: {
+    backgroundColor: blue[100],
+    textColor: gray[600],
+    indicatorColor: blue[500],
+  },
+  inactive: {
+    backgroundColor: 'transparent',
+    textColor: gray[400],
+    indicatorColor: 'transparent',
+  },
+  hover: {
+    backgroundColor: 'transparent',
+    textColor: gray[400],
+    indicatorColor: tan[300],
+  },
+};
 
 export type TabbedDisplayProps = {
   /**
@@ -12,20 +38,46 @@ export type TabbedDisplayProps = {
     displayName: string;
     content: React.ReactNode;
   }>;
-  /** Optional. Which style present to use. */
-  stylePreset?: keyof typeof stylePresets;
   /** Optional. Any desired style overrides. */
   styleOverrides?: Partial<TabbedDisplayStyleSpec>;
+  /**
+   * Optional. Used to indicate which UITheme role this component should
+   * augment it's style with. */
+  themeRole?: keyof UITheme['palette'];
 };
 
 /** Allows the developer to create a tabbed display of content. */
 export default function TabbedDisplay({
   tabs,
-  stylePreset = 'default',
   styleOverrides = {},
+  themeRole,
 }: TabbedDisplayProps) {
   const [selectedTab, setSelectedTab] = useState(tabs[0].displayName);
   const [hoveredTab, setHoveredTab] = useState<null | string>(null);
+
+  const theme = useUITheme();
+  const themeStyle = useMemo<Partial<TabbedDisplayStyleSpec>>(
+    () =>
+      theme && themeRole
+        ? {
+            active: {
+              backgroundColor: theme.palette[themeRole].hue[100],
+              indicatorColor:
+                theme.palette[themeRole].hue[theme.palette[themeRole].level],
+              textColor:
+                theme.palette[themeRole].hue[
+                  theme.palette[themeRole].level + 300
+                ],
+            },
+          }
+        : {},
+    [theme, themeRole]
+  );
+
+  const finalStyle = useMemo(
+    () => merge({}, DEFAULT_STYLE, styleOverrides, themeStyle),
+    [themeStyle]
+  );
 
   return (
     <div
@@ -47,18 +99,20 @@ export default function TabbedDisplay({
               ? 'hover'
               : 'inactive';
 
-          const mergeCSSStyle = css([
-            stylePresets[stylePreset][tabState],
-            styleOverrides[tabState],
-          ]);
-
           return (
             <div
               tabIndex={0}
               key={tab.displayName}
               css={[
-                mergeCSSStyle,
+                finalStyle[tabState],
+                typography.secondaryFont,
                 {
+                  backgroundColor: finalStyle[tabState].backgroundColor,
+                  color: finalStyle[tabState].textColor,
+                  borderBottomColor: finalStyle[tabState].indicatorColor,
+                  padding: 15,
+                  borderBottomWidth: 3,
+                  borderBottomStyle: 'solid',
                   cursor: 'grab',
                   transition:
                     'background-color .5s, border-color .5s, color .5s',
@@ -82,5 +136,3 @@ export default function TabbedDisplay({
     </div>
   );
 }
-
-export * from './stylePresets';
