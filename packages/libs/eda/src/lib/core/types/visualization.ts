@@ -70,11 +70,15 @@ export const Computation = intersection([
   }),
 ]);
 
-const Thing = partial({
-  name: string,
-  displayName: string,
-  description: string,
-});
+const Thing = intersection([
+  type({
+    name: string,
+    displayName: string,
+  }),
+  partial({
+    description: string,
+  }),
+]);
 
 export type DataElementConstraint = TypeOf<typeof DataElementConstraint>;
 export const DataElementConstraint = intersection([

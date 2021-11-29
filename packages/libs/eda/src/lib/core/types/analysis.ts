@@ -145,17 +145,7 @@ export function makeNewAnalysis(studyId: string): NewAnalysis {
       starredVariables: [],
       dataTableConfig: {},
       derivedVariables: [],
-      computations: [
-        {
-          computationId: 'pass-through',
-          displayName: 'Passthrough',
-          descriptor: {
-            type: 'pass',
-            configuration: undefined,
-          },
-          visualizations: [],
-        },
-      ],
+      computations: [],
     },
   };
 }

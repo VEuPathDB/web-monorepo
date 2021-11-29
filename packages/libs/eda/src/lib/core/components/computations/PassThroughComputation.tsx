@@ -58,15 +58,17 @@ export function PassThroughComputation(props: Props) {
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
   const computationLocation = useMemo(() => {
+    if (analysis == null) return undefined;
+
     const computations = analysis?.descriptor.computations;
 
-    if (computations == null) {
-      return undefined;
-    }
-
+    // find first "pass" computation
     const computationIndex = computations.findIndex(
-      ({ computationId }) => computationId === 'pass-through'
+      (computation) =>
+        computation.descriptor.type === computationAppOverview.name
     );
+
+    // TODO If no computation, create one
 
     return computationIndex === -1
       ? undefined
@@ -74,7 +76,7 @@ export function PassThroughComputation(props: Props) {
           computationIndex,
           computation: computations[computationIndex],
         };
-  }, [analysis?.descriptor.computations]);
+  }, [analysis, computationAppOverview.name]);
 
   const updateVisualizations = useCallback(
     (

@@ -1,11 +1,14 @@
+import { Tooltip } from '@material-ui/core';
 import React, { useCallback } from 'react';
-import { Redirect, Route, Switch } from 'react-router';
-import { useRouteMatch } from 'react-router-dom';
+import { ComponentType } from 'react-redux/node_modules/@types/react';
+import { Route, Switch } from 'react-router';
+import { Link, useRouteMatch } from 'react-router-dom';
 import { AnalysisState, useDataClient } from '../core';
 import { PassThroughComputation } from '../core/components/computations/PassThroughComputation';
 import { PromiseResult } from '../core/components/Promise';
 import { EntityCounts } from '../core/hooks/entityCounts';
 import { PromiseHookState, usePromise } from '../core/hooks/promise';
+import { ComputationAppOverview } from '../core/types/visualization';
 
 export interface Props {
   analysisState: AnalysisState;
@@ -13,36 +16,53 @@ export interface Props {
   filteredCounts: PromiseHookState<EntityCounts>;
 }
 
+interface ComputationProps extends Props {
+  computationAppOverview: ComputationAppOverview;
+}
+
+const components: Record<string, ComponentType<ComputationProps>> = {
+  pass: PassThroughComputation,
+};
+
+/**
+ * Handles delegating to a UI component based on the route.
+ */
 export function ComputationRoute(props: Props) {
-  const { analysisState, totalCounts, filteredCounts } = props;
   const { url } = useRouteMatch();
   const dataClient = useDataClient();
   const promiseState = usePromise(
-    useCallback(async () => {
-      const { apps } = await dataClient.getApps();
-      const app = apps.find((app) => app.name === 'pass');
-      if (app == null)
-        throw new Error('Could not find default computation app.');
-      return app;
-    }, [dataClient])
+    useCallback(() => dataClient.getApps(), [dataClient])
   );
 
-  // TODO Get configured apps from context.
-  // For now, just use passthrough app.
   return (
     <PromiseResult state={promiseState}>
-      {(computationAppOverview) => (
+      {({ apps }) => (
         <Switch>
           <Route exact path={url}>
-            <Redirect to={`${url}/pass-through`} />
+            <div>
+              <h4>Please choose a computation app</h4>
+              <ul>
+                {apps.map((app) => (
+                  <li key={app.name}>
+                    <Tooltip title={app.description ?? ''}>
+                      <Link to={`${url}/${app.name}`}>{app.displayName}</Link>
+                    </Tooltip>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </Route>
-          <Route path={`${url}/pass-through`}>
-            <PassThroughComputation
-              analysisState={analysisState}
-              computationAppOverview={computationAppOverview}
-              totalCounts={totalCounts}
-              filteredCounts={filteredCounts}
-            />
+          {apps.map((app) => {
+            const ComputationComponent = components[app.name];
+            if (ComputationComponent == null) return null;
+            return (
+              <Route path={`${url}/${app.name}`}>
+                <ComputationComponent {...props} computationAppOverview={app} />
+              </Route>
+            );
+          })}
+          <Route>
+            <div>App not yet implemented</div>
           </Route>
         </Switch>
       )}
