@@ -1,37 +1,43 @@
 import { Column } from 'react-table';
 import CheckBox from '../../components/widgets/CheckBox';
 
-export const COLUMNS: Array<Column> = [
-  {
-    Header: 'Participant Stable super long Identifier',
-    accessor: 'Participant_stable_id',
-  },
-  {
-    Header: 'Household_stable_id',
-    accessor: 'Household_stable_id',
-  },
-  {
-    Header: 'Public',
-    accessor: 'isPublic',
-    Cell: ({ value }) => (
-      <div css={{ display: 'flex', justifyContent: 'center' }}>
-        <CheckBox
-          selected={value}
-          onToggle={(newValue) => console.log(newValue)}
-          role='primary'
-        />
-      </div>
-    ),
-  },
-  {
-    Header: 'EUPATH_0000120',
-    accessor: 'EUPATH_0000120',
-  },
-  {
-    Header: 'EUPATH_0000151',
-    accessor: 'EUPATH_0000151',
-  },
-];
+export const columns = ({
+  role,
+}: {
+  role?: 'primary' | 'secondary';
+}): Array<Column> => {
+  return [
+    {
+      Header: 'Participant Stable super long Identifier',
+      accessor: 'Participant_stable_id',
+    },
+    {
+      Header: 'Household_stable_id',
+      accessor: 'Household_stable_id',
+    },
+    {
+      Header: 'Public',
+      accessor: 'isPublic',
+      Cell: ({ value }) => (
+        <div css={{ display: 'flex', justifyContent: 'center' }}>
+          <CheckBox
+            selected={value}
+            onToggle={(newValue) => console.log(newValue)}
+            themeRole={role}
+          />
+        </div>
+      ),
+    },
+    {
+      Header: 'EUPATH_0000120',
+      accessor: 'EUPATH_0000120',
+    },
+    {
+      Header: 'EUPATH_0000151',
+      accessor: 'EUPATH_0000151',
+    },
+  ];
+};
 
 export const ROWS = [
   {

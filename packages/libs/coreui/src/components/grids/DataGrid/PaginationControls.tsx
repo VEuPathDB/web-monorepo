@@ -1,8 +1,11 @@
-import { DataGridProps } from '.';
+// Components
 import Arrow from '../../../assets/icons/Arrow';
 import DoubleArrow from '../../../assets/icons/DoubleArrow';
-import { gray } from '../../../definitions/colors';
+
+// Definitions
+import { DataGridProps } from '.';
 import typography from '../../../styleDefinitions/typography';
+import { gray } from '../../../definitions/colors';
 
 type PaginationControlsType = {
   loading: boolean;

@@ -1,23 +1,35 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
 import CancelIcon from '@material-ui/icons/Cancel';
 
-import DataGrid, { DataGridProps } from '../../components/grids/DataGrid';
-
-import { gray, orange, red } from '../../definitions/colors';
-import { COLUMNS, fetchGridData, ROWS } from './data';
 import { useCallback, useState } from 'react';
+
+import { gray, green, orange, purple, red } from '../../definitions/colors';
+import { columns, fetchGridData, ROWS } from './data';
+import DataGrid, { DataGridProps } from '../../components/grids/DataGrid';
+import UIThemeProvider from '../../components/theming/UIThemeProvider';
 
 export default {
   title: 'Grids/DataGrid',
   component: DataGrid,
 } as Meta;
 
-const Template: Story<DataGridProps> = (args) => <DataGrid {...args} />;
+const Template: Story<DataGridProps> = (args) => (
+  <UIThemeProvider
+    theme={{
+      palette: {
+        primary: { hue: green, level: 600 },
+        secondary: { hue: purple, level: 500 },
+      },
+    }}
+  >
+    <DataGrid {...args} columns={columns({ role: args.themeRole })} />
+  </UIThemeProvider>
+);
 export const Basic = Template.bind({});
 Basic.args = {
   title: 'Basic Data Grid',
-  columns: COLUMNS,
   data: ROWS,
+  onRowSelection: null,
 };
 
 export const WithSorting = Template.bind({});
@@ -37,6 +49,17 @@ WithPagination.args = {
   },
 };
 
+export const WithRowSelection = Template.bind({});
+WithRowSelection.args = {
+  ...Basic.args,
+  onRowSelection: (rows) => console.log('Rows selected', rows),
+  title: 'Data Grid w/ Row Selection',
+  pagination: {
+    recordsPerPage: 2,
+    controlsLocation: 'bottom',
+  },
+};
+
 export const WithServerControlledPagination: Story<DataGridProps> = (args) => {
   const [gridData, setGridData] = useState<Array<object>>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -52,24 +75,33 @@ export const WithServerControlledPagination: Story<DataGridProps> = (args) => {
   }, []);
 
   return (
-    <DataGrid
-      {...args}
-      data={gridData}
-      loading={isLoading}
-      pagination={{
-        recordsPerPage: 5,
-        controlsLocation: 'bottom',
-        serverSidePagination: {
-          pageCount,
-          fetchPaginatedData,
+    <UIThemeProvider
+      theme={{
+        palette: {
+          primary: { hue: green, level: 600 },
+          secondary: { hue: purple, level: 500 },
         },
       }}
-    />
+    >
+      <DataGrid
+        {...args}
+        columns={columns({ role: args.themeRole })}
+        data={gridData}
+        loading={isLoading}
+        pagination={{
+          recordsPerPage: 5,
+          controlsLocation: 'bottom',
+          serverSidePagination: {
+            pageCount,
+            fetchPaginatedData,
+          },
+        }}
+      />
+    </UIThemeProvider>
   );
 };
 WithServerControlledPagination.args = {
   title: 'Data Grid w/ Server Pagination',
-  columns: COLUMNS,
 };
 
 export const StylePreset = Template.bind({});
@@ -114,15 +146,13 @@ HeaderAddOns.args = {
   title: 'Data Grid w/ Custom Header Functionality',
   extraHeaderControls: [
     (column) => (
-      <div onClick={() => alert('Do something supa supa evil!!!! MWA HA HA')}>
-        <CancelIcon
-          css={{
-            color: red[500],
-            position: 'relative',
-            left: 20,
-          }}
-        />
-      </div>
+      <CancelIcon
+        css={{
+          color: red[500],
+          marginLeft: 20,
+        }}
+        onClick={() => alert('Do something supa supa evil!!!! MWA HA HA')}
+      />
     ),
   ],
 };

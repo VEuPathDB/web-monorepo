@@ -1,5 +1,5 @@
-// https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/react-table#readme
 // @ts-nocheck
+// https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/react-table#readme
 
 import {
   UseColumnOrderInstanceProps,

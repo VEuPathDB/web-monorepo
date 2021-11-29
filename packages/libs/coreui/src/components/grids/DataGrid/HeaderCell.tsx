@@ -65,19 +65,24 @@ export default function HeaderCell({
     <th
       {...headerGroup.getHeaderProps()}
       {...(sortable && headerGroup.getSortByToggleProps())}
-      css={{
-        padding: 0,
-        textAlign: 'left',
-        textTransform: 'capitalize',
-        verticalAlign: 'bottom',
-        ...borderCSSOverrides,
-      }}
+      css={{ padding: 0, verticalAlign: 'bottom', ...borderCSSOverrides }}
     >
       <div
         css={[
           typography.th,
           otherCSSOverrides,
-          { display: 'flex', alignItems: 'center' },
+          {
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'flex-end',
+            textAlign: 'left',
+            textTransform: 'capitalize',
+          },
+          (headerGroup.id === 'selection' || extraHeaderControls.length) && {
+            paddingLeft: 10,
+            paddingRight: 10,
+            margin: 0,
+          },
         ]}
       >
         {headerGroup.render('Header')}

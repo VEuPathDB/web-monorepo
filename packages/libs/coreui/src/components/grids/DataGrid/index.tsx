@@ -8,6 +8,7 @@ import {
   Cell,
   Row,
   Hooks,
+  Column,
 } from 'react-table';
 import { pickBy, ceil } from 'lodash';
 
@@ -20,21 +21,29 @@ import IndeterminateCheckbox from './IndeterminateCheckbox';
 import DataCell from './DataCell';
 import HeaderCell from './HeaderCell';
 import PaginationControls from './PaginationControls';
+import { UITheme } from '../../theming/types';
 
 export type DataGridProps = {
   /**
    * Column definitions. The header attribute is displayed to the user.
    * The accessor attribute is used as a key to the column.
    */
-  columns: Array<{ Header: string; accessor: string }>;
+  columns: Array<Column>;
   /** Data for rows. */
   data: Array<object>;
+  /** Optional. Which theme role should be used to augment the style of the component. */
+  themeRole?: keyof UITheme['palette'];
   /** Optional. Indicates whether or not data is currently being loaded. */
   loading?: boolean;
   /** Optional. Title for DataGrid */
   title?: string;
   /** Optional. Designates that the grid should be sortable. */
   sortable?: boolean;
+  /**
+   * Optional. What to do if row(s) are selected. If this prop is defined,
+   * it will be taken as an indication that allowing row selection is desired.
+   * */
+  onRowSelection?: (rows: Row<object>[]) => void;
   /** Optional. Controls pagination of grid. */
   pagination?: {
     /** Number of records to display per page. */
@@ -88,9 +97,11 @@ export type DataGridProps = {
 export default function DataGrid({
   columns,
   data,
+  themeRole,
   loading = false,
   title,
   sortable = false,
+  onRowSelection = undefined,
   pagination,
   stylePreset = 'default',
   styleOverrides = {},
@@ -124,45 +135,59 @@ export default function DataGrid({
         pageIndex: 0,
         pageSize: pagination?.recordsPerPage ?? -1,
       },
+      // If pagination is desired, add necessary parameters.
       ...(pagination && pagination.serverSidePagination
         ? {
             manualPagination: true,
             pageCount: ceil(pagination.serverSidePagination.pageCount),
-            // manualSortBy: true,
             autoResetSortBy: false,
           }
         : {}),
     },
     useSortBy,
     usePagination,
+
+    // Row Selection Add-Ons
     useRowSelect,
     (hooks) => {
-      hooks.visibleColumns.push((columns) => [
-        // Let's make a column for selection
-        {
-          id: 'selection',
-          // The header can use the table's getToggleAllRowsSelectedProps method
-          // to render a checkbox
-          Header: ({ getToggleAllRowsSelectedProps }) => (
-            <div>
-              <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
-            </div>
-          ),
-          // The cell can use the individual row's getToggleRowSelectedProps method
-          // to the render a checkbox
-          Cell: ({ row }) => (
-            <div>
-              <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
-            </div>
-          ),
-        },
-        ...columns,
-      ]);
+      /**
+       * Add an additional pseudo cell for each row that will allow the
+       * user to select the row in the UI.
+       */
+      if (onRowSelection) {
+        hooks.visibleColumns.push((columns) => [
+          // Let's make a column for selection
+          {
+            id: 'selection',
+            // The header can use the table's getToggleAllRowsSelectedProps method
+            // to render a checkbox
+            Header: ({ getToggleAllPageRowsSelectedProps }) => (
+              <div>
+                <IndeterminateCheckbox
+                  {...getToggleAllPageRowsSelectedProps()}
+                  themeRole={themeRole}
+                />
+              </div>
+            ),
+            // The cell can use the individual row's getToggleRowSelectedProps method
+            // to the render a checkbox
+            Cell: ({ row }) => (
+              <div>
+                <IndeterminateCheckbox
+                  {...row.getToggleRowSelectedProps()}
+                  themeRole={themeRole}
+                />
+              </div>
+            ),
+          },
+          ...columns,
+        ]);
+      }
     }
   );
 
   /**
-   * Listen for changes in pagination and use the state to fetch
+   * Listen for changes in pagination and fetch
    * new data as long as another request isn't pending.
    *  */
   useEffect(() => {
@@ -173,6 +198,11 @@ export default function DataGrid({
       });
     }
   }, [pageIndex, pageSize]);
+
+  // Listen for changes to row selection, if applicable.
+  useEffect(() => {
+    onRowSelection && onRowSelection(selectedFlatRows);
+  }, [selectedFlatRows]);
 
   return (
     <div>
@@ -201,11 +231,13 @@ export default function DataGrid({
           ...pickBy(finalStyle.table, (value, key) => key.includes('border')),
         }}
       >
+        {/* Render Table Header */}
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((header) => (
+              {headerGroup.headers.map((header, index) => (
                 <HeaderCell
+                  key={index}
                   headerGroup={header}
                   styleSpec={finalStyle}
                   sortable={sortable}
@@ -216,6 +248,7 @@ export default function DataGrid({
           ))}
         </thead>
 
+        {/* Render Table Body */}
         <tbody {...getTableBodyProps()}>
           {page.map((row: Row, index: number) => {
             prepareRow(row);
@@ -230,8 +263,8 @@ export default function DataGrid({
                       : finalStyle.table.secondaryRowColor,
                 }}
               >
-                {row.cells.map((cell: Cell) => (
-                  <DataCell cell={cell} styleSpec={finalStyle} />
+                {row.cells.map((cell: Cell, index) => (
+                  <DataCell key={index} cell={cell} styleSpec={finalStyle} />
                 ))}
               </tr>
             );
