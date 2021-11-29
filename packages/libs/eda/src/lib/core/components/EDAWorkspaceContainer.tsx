@@ -8,12 +8,8 @@ import {
   WorkspaceContext,
 } from '../context/WorkspaceContext';
 import { useStudyMetadata, useWdkStudyRecord } from '../hooks/study';
-import { ThemeProvider } from '@material-ui/core/styles';
-import { createMuiTheme } from '@material-ui/core';
-import { workspaceTheme } from './workspaceTheme';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
-const theme = createMuiTheme(workspaceTheme);
 export interface Props {
   studyId: string;
   children: React.ReactChild | React.ReactChild[];
@@ -48,9 +44,7 @@ export function EDAWorkspaceContainer({
         makeVariableLink,
       }}
     >
-      <ThemeProvider theme={theme}>
-        <div className={className}>{children}</div>
-      </ThemeProvider>
+      <div className={className}>{children}</div>
     </WorkspaceContext.Provider>
   );
 }
