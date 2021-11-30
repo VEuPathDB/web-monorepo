@@ -3,10 +3,11 @@ import Header, { HeaderProps } from './Header';
 
 export default function H6({
   text,
-  color = gray[600],
+  color,
   underline = false,
   textTransform = 'none',
   additionalStyles = {},
+  useTheme = true,
 }: Omit<HeaderProps, 'size'>) {
   return (
     <Header
@@ -16,6 +17,7 @@ export default function H6({
       underline={underline}
       textTransform={textTransform}
       additionalStyles={additionalStyles}
+      useTheme={useTheme}
     />
   );
 }

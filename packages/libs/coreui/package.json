@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/core-components",
-  "version": "0.2.45",
+  "version": "0.2.46",
   "author": "Michael Dunn <mdunn4@nd.edu>",
   "description": "Core components and style definitions for VEuPath applications.",
   "private": false,
@@ -30,7 +30,6 @@
   "dependencies": {
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
-    "@types/react-table": "^7.7.7",
     "lodash": "^4.17.21",
     "react-cool-dimensions": "^2.0.7",
     "react-modal": "^3.14.3",
@@ -47,22 +46,20 @@
     "@emotion/react": "^11.4.0",
     "@emotion/serialize": "^1.0.2",
     "@emotion/styled": "^11.3.0",
-    "@storybook/addon-actions": "^6.3.7",
-    "@storybook/addon-essentials": "^6.3.7",
-    "@storybook/addon-links": "^6.3.7",
-    "@storybook/react": "^6.3.7",
+    "@storybook/addon-actions": "^6.3.12",
+    "@storybook/addon-essentials": "^6.3.12",
+    "@storybook/addon-links": "^6.3.12",
+    "@storybook/react": "^6.3.12",
     "@svgr/cli": "^5.5.0",
     "@types/lodash": "^4.14.172",
+    "@types/mdx": "^2.0.1",
     "@types/react-modal": "^3.12.1",
+    "@types/react-table": "^7.7.8",
     "@veupathdb/tsconfig": "^1.0.1",
     "babel-loader": "^8.2.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "typescript": "^4.3.5"
   },
-  "peerDependencies": {
-    "@emotion/babel-preset-css-prop": "^11.2.0",
-    "@emotion/react": "^11.4.0",
-    "@emotion/styled": "^11.3.0"
-  }
+  "peerDependencies": {}
 }

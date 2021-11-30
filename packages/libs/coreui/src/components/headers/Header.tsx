@@ -1,5 +1,7 @@
+import { useMemo } from 'react';
 import { gray } from '../../definitions/colors';
 import styles from '../../styleDefinitions';
+import useUITheme from '../theming/useUITheme';
 
 export type HeaderProps = {
   /** Underlying HTML element tag to use. */
@@ -11,6 +13,8 @@ export type HeaderProps = {
   underline?: boolean;
   /** CSS text transformation to apply.  */
   textTransform?: React.CSSProperties['textTransform'];
+  /** Indicates whethter or not theming properties should be used. */
+  useTheme: boolean;
   additionalStyles?: React.CSSProperties;
 };
 
@@ -21,19 +25,35 @@ export type HeaderProps = {
 export default function Header({
   size,
   text,
-  color = gray[600],
+  color,
   underline = false,
   textTransform = 'none',
   additionalStyles = {},
+  useTheme,
 }: HeaderProps) {
   const Header = size;
+
+  const theme = useUITheme();
+  const themeStyles = useMemo(() => {
+    let styles: { [key: string]: any } = {};
+
+    if (!theme?.typography?.headers || !useTheme) return styles;
+    styles = { ...theme.typography.headers[size] };
+
+    styles['color'] = theme.typography.headers.color;
+    styles['fontFamily'] = theme.typography.headers.fontFamily;
+
+    return styles;
+  }, [useTheme, theme, size]);
 
   return (
     <Header
       css={[
         styles.typography[size],
+        color === undefined && { color: gray[700] },
+        themeStyles,
         underline && { textDecoration: 'underline' },
-        { color, textTransform, ...additionalStyles },
+        { textTransform, ...additionalStyles },
       ]}
     >
       {text}
