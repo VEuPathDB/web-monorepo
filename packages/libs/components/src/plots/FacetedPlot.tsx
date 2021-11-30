@@ -11,7 +11,17 @@ import React, {
 import { memoize } from 'lodash';
 
 import { FacetedData, FacetedPlotRef, PlotRef } from '../types/plots';
+import FacetedBarplot from './facetedPlots/FacetedBarplot';
+import Barplot from './Barplot';
 import { PlotProps } from './PlotlyPlot';
+
+const mapStringToPlotComponent = (str: string) =>
+  ({
+    Barplot: {
+      faceted: FacetedBarplot,
+      unfaceted: Barplot,
+    },
+  }[str]);
 
 type ComponentWithPlotRef<P> = ComponentType<
   PropsWithoutRef<P> & RefAttributes<PlotRef>
