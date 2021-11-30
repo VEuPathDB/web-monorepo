@@ -265,7 +265,7 @@ export type ProviderPermissionEntry = TypeOf<typeof providerPermissionEntry>;
 
 export const endUserPermissionEntry = intersection([
   permissionEntryBase,
-  type({ 
+  type({
     type: literal('end-user')
   })
 ]);

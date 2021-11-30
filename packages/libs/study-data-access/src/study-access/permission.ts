@@ -13,19 +13,16 @@ import {
 
 export type UserPermissions =
   | StaffPermissions
-  | ExternalUserPermissions
-  | NoPermissions;
+  | ExternalUserPermissions;
 
 export interface StaffPermissions {
   type: 'staff';
   isOwner: boolean;
+  perDataset: Record<string, DatasetPermissionEntry | undefined>;
 }
 export interface ExternalUserPermissions {
   type: 'external';
   perDataset: Record<string, DatasetPermissionEntry | undefined>;
-}
-export interface NoPermissions {
-  type: 'none';
 }
 
 export function permissionsResponseToUserPermissions(permissionsResponse: PermissionsResponse): UserPermissions {
@@ -35,16 +32,13 @@ export function permissionsResponseToUserPermissions(permissionsResponse: Permis
   ) {
     return {
       type: 'staff',
-      isOwner: !!permissionsResponse.isOwner
-    };
-  } else if (permissionsResponse.perDataset != null) {
-    return {
-      type: 'external',
+      isOwner: !!permissionsResponse.isOwner,
       perDataset: permissionsResponse.perDataset
     };
   } else {
     return {
-      type: 'none'
+      type: 'external',
+      perDataset: permissionsResponse.perDataset
     };
   }
 }
@@ -74,13 +68,6 @@ export function isProvider(userPermissions: UserPermissions, datasetId: string) 
   return (
     userPermissions.type === 'external' &&
     userPermissions.perDataset[datasetId]?.type === 'provider'
-  );
-}
-
-export function isEndUser(userPermissions: UserPermissions, datasetId: string) {
-  return (
-    userPermissions.type === 'external' &&
-    userPermissions.perDataset[datasetId]?.type === 'end-user'
   );
 }
 
@@ -160,18 +147,24 @@ export function shouldDisplayHistoryTable(userPermissions: UserPermissions) {
   return isOwner(userPermissions);
 }
 
-export function isUserApprovedForStudy(
+export function isUserFullyApprovedForStudy(
   userPermissions: UserPermissions,
   approvedStudies: string[] | undefined,
   datasetId: string
 ) {
-  // assuming approvedStudies only contain public studies for this user (in CineEpiWebsite CustomProfileService.java)
-  return (
-    isStaff(userPermissions) ||
-    isProvider(userPermissions, datasetId) ||
-    isEndUser(userPermissions, datasetId) ||
-    approvedStudies == null ||
-    approvedStudies.includes(datasetId)
+  if (approvedStudies == null) {
+    return true;
+  }
+
+  const actionAuthorization =
+    userPermissions.perDataset[datasetId]?.actionAuthorization;
+
+  if (actionAuthorization == null) {
+    return false;
+  }
+
+  return Object.values(actionAuthorization).every(
+    (isApprovedForAction) => isApprovedForAction === true
   );
 }
 

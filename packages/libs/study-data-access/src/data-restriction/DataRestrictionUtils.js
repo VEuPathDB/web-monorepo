@@ -3,7 +3,7 @@ import React from 'react';
 import { BasketActions, ResultPanelActions, ResultTableSummaryViewActions } from '@veupathdb/wdk-client/lib/Actions';
 import { attemptAction } from './DataRestrictionActionCreators';
 import {getResultTypeDetails} from '@veupathdb/wdk-client/lib/Utils/WdkResult';
-import { isUserApprovedForStudy } from '../study-access/permission';
+import { isUserFullyApprovedForStudy } from '../study-access/permission';
 import { getStudyAccess, getStudyId, getStudyPolicyUrl, getStudyRequestNeedsApproval } from '../shared/studies';
 
 // Data stuff =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -184,7 +184,7 @@ export function isAllowedAccess ({ permissions, approvedStudies, action, study }
   const id = getStudyId(study);
   if (sessionStorage.getItem('restriction_override') === 'true') return true;
   if (!(access in accessLevels)) throw new Error(`Unknown access level "${access}".`);
-  if (isUserApprovedForStudy(permissions, approvedStudies, id)) return true;
+  if (isUserFullyApprovedForStudy(permissions, approvedStudies, id)) return true;
   if (accessLevels[access][action] === Require.allow) return true;
   //if (accessLevels[study.access][action] === Require.login) if (!user.isGuest) return true;
   // access not allowed, we need to build the modal popup
@@ -206,7 +206,7 @@ export function isPrereleaseStudy (access, studyId, user, permissions) {
     if (permissions != null) {
       if (
         access === 'prerelease' &&
-        !isUserApprovedForStudy(permissions, user.properties.approvedStudies, studyId)
+        !isUserFullyApprovedForStudy(permissions, user.properties.approvedStudies, studyId)
       ) {
         return true;
       } else {
