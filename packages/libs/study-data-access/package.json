@@ -47,7 +47,7 @@
     "yarn": "1.22.10"
   },
   "dependencies": {
-    "@veupathdb/http-utils": "^1.0.0",
+    "@veupathdb/http-utils": "^1.0.1",
     "@veupathdb/wdk-client": "^0.4.6",
     "fp-ts": "^2.11.5",
     "io-ts": "^2.2.16",
