@@ -6,7 +6,6 @@ import { Link, useHistory, useLocation } from 'react-router-dom';
 import {
   Button,
   Checkbox,
-  createMuiTheme,
   FormControlLabel,
   Icon,
   IconButton,
@@ -14,7 +13,6 @@ import {
   makeStyles,
   Switch,
   TextField,
-  ThemeProvider,
   Tooltip,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
@@ -42,7 +40,6 @@ import {
   usePinnedAnalyses,
 } from '../core';
 import SubsettingClient from '../core/api/SubsettingClient';
-import { workspaceTheme } from '../core/components/workspaceTheme';
 import { useDebounce } from '../core/hooks/debouncing';
 import { useWdkStudyRecords } from '../core/hooks/study';
 import {
@@ -554,63 +551,58 @@ export function AllAnalyses(props: Props) {
       user,
     ]
   );
-  const theme = createMuiTheme(workspaceTheme);
 
   useSetDocumentTitle('My Analyses');
 
   return (
-    <ThemeProvider theme={theme}>
-      <div className={classes.root}>
-        <h1>My Analyses</h1>
-        {error && <ContentError>{error}</ContentError>}
-        {analyses && datasets && user ? (
-          <Mesa.Mesa state={tableState}>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1ex',
+    <div className={classes.root}>
+      <h1>My Analyses</h1>
+      {error && <ContentError>{error}</ContentError>}
+      {analyses && datasets && user ? (
+        <Mesa.Mesa state={tableState}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '1ex',
+            }}
+          >
+            <TextField
+              variant="outlined"
+              size="small"
+              label="Search analyses"
+              inputProps={{ size: 50 }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="Clear search text"
+                      onClick={() => setSearchText('')}
+                      style={{
+                        visibility:
+                          debouncedSearchText.length > 0 ? 'visible' : 'hidden',
+                      }}
+                      edge="end"
+                      size="small"
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
               }}
-            >
-              <TextField
-                variant="outlined"
-                size="small"
-                label="Search analyses"
-                inputProps={{ size: 50 }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="Clear search text"
-                        onClick={() => setSearchText('')}
-                        style={{
-                          visibility:
-                            debouncedSearchText.length > 0
-                              ? 'visible'
-                              : 'hidden',
-                        }}
-                        edge="end"
-                        size="small"
-                      >
-                        <CloseIcon />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                value={searchText}
-                onChange={onFilterFieldChange}
-              />
-              <span>
-                Showing {filteredAnalysesAndDatasets?.length} of{' '}
-                {analyses.length} analyses
-              </span>
-            </div>
-            {(loading || datasets == null) && <Loading />}
-          </Mesa.Mesa>
-        ) : (
-          <Loading />
-        )}
-      </div>
-    </ThemeProvider>
+              value={searchText}
+              onChange={onFilterFieldChange}
+            />
+            <span>
+              Showing {filteredAnalysesAndDatasets?.length} of {analyses.length}{' '}
+              analyses
+            </span>
+          </div>
+          {(loading || datasets == null) && <Loading />}
+        </Mesa.Mesa>
+      ) : (
+        <Loading />
+      )}
+    </div>
   );
 }
