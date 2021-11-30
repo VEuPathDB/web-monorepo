@@ -7,9 +7,6 @@ const SvgTaxaQueryDark = (props: SVGProps<SVGSVGElement>) => (
     width="1em"
     height="1em"
     viewBox="0 0 377.711 377.711"
-    style={{
-      enableBackground: "new 0 0 377.711 377.711",
-    }}
     xmlSpace="preserve"
     {...props}
   >

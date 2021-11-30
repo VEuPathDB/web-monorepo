@@ -5,9 +5,6 @@ const SvgSampleDetailsLight = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 505.101 505.101"
-    style={{
-      enableBackground: "new 0 0 505.101 505.101",
-    }}
     xmlSpace="preserve"
     width="1em"
     height="1em"

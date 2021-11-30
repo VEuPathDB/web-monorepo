@@ -16,7 +16,7 @@
     "build-storybook": "build-storybook",
     "build": "rm -rf dist && NODE_ENV=production babel src --ignore \"src/stories/**/*\" --out-dir dist --extensions \".ts,.tsx\" ",
     "tsc": "tsc",
-    "create-svg-icons": "npx @svgr/cli --icon --replace-attr-values \"#000000=currentColor\" --out-dir src/components/icons/ src/assets/svg/"
+    "create-svg-icons": "npx @svgr/cli --icon --replace-attr-values \"#000000=currentColor\" --out-dir src/components/icons/ src/assets/svg/ --typescript"
   },
   "repository": {
     "type": "git",
@@ -50,7 +50,7 @@
     "@storybook/addon-essentials": "^6.3.12",
     "@storybook/addon-links": "^6.3.12",
     "@storybook/react": "^6.3.12",
-    "@svgr/cli": "^5.5.0",
+    "@svgr/cli": "^6.0.0",
     "@types/lodash": "^4.14.172",
     "@types/mdx": "^2.0.1",
     "@types/react-modal": "^3.12.1",

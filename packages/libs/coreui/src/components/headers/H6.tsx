@@ -1,4 +1,3 @@
-import { gray } from '../../definitions/colors';
 import Header, { HeaderProps } from './Header';
 
 export default function H6({
@@ -7,7 +6,7 @@ export default function H6({
   underline = false,
   textTransform = 'none',
   additionalStyles = {},
-  useTheme = true,
+  useTheme,
 }: Omit<HeaderProps, 'size'>) {
   return (
     <Header

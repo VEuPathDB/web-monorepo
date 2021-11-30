@@ -5,12 +5,17 @@ import React, {
   useMemo,
   useRef,
 } from 'react';
+
+// Definitions
 import { blue, gray } from '../../../definitions/colors';
 import { CheckIcon } from '../../icons';
 import { UITheme } from '../../theming/types';
+
+// Hooks
 import useUITheme from '../../theming/useUITheme';
 
 type IndeterminateCheckboxProps = {
+  /** If true, indicates that the value of the checkbox is not reducible to true/false. */
   indeterminate?: boolean;
   checked?: boolean;
   /**
@@ -26,7 +31,7 @@ const IndeterminateCheckbox = forwardRef<
   HTMLInputElement,
   IndeterminateCheckboxProps
 >((props: IndeterminateCheckboxProps, ref) => {
-  const { indeterminate, checked, themeRole, ...rest } = props;
+  const { indeterminate, checked, themeRole, onChange, ...rest } = props;
   const defaultRef = useRef<HTMLInputElement>(null);
   const resolvedRef = ref || defaultRef;
 
@@ -52,7 +57,8 @@ const IndeterminateCheckbox = forwardRef<
     return (
       <div
         ref={resolvedRef}
-        onClick={(event) => props.onChange(event)}
+        // @ts-ignore
+        onClick={(event) => onChange && onChange(event)}
         css={{
           width: 12,
           height: 12,
@@ -75,7 +81,8 @@ const IndeterminateCheckbox = forwardRef<
     return (
       <div
         ref={resolvedRef}
-        onClick={(event) => props.onChange(event)}
+        // @ts-ignore
+        onClick={(event) => onChange && onChange(event)}
         css={{
           width: 12,
           height: 12,
@@ -95,7 +102,6 @@ const IndeterminateCheckbox = forwardRef<
   } else {
     return (
       <div
-        // type='checkbox'
         ref={resolvedRef}
         css={{
           width: 12,
@@ -106,7 +112,8 @@ const IndeterminateCheckbox = forwardRef<
           borderStyle: 'solid',
           borderRadius: 2,
         }}
-        onClick={(event) => props.onChange(event)}
+        // @ts-ignore
+        onClick={(event) => onChange && onChange(event)}
       />
     );
   }

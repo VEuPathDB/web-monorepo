@@ -6,6 +6,7 @@ import useUITheme from '../theming/useUITheme';
 export type HeaderProps = {
   /** Underlying HTML element tag to use. */
   size: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  /** The text of the header. */
   text: string;
   /** Color of the header text. */
   color?: React.CSSProperties['color'];
@@ -13,8 +14,9 @@ export type HeaderProps = {
   underline?: boolean;
   /** CSS text transformation to apply.  */
   textTransform?: React.CSSProperties['textTransform'];
-  /** Indicates whethter or not theming properties should be used. */
-  useTheme: boolean;
+  /** Indicates whether or not theming properties should be used. */
+  useTheme?: boolean;
+  /** Additional styles to apply to the header component. */
   additionalStyles?: React.CSSProperties;
 };
 
@@ -29,7 +31,7 @@ export default function Header({
   underline = false,
   textTransform = 'none',
   additionalStyles = {},
-  useTheme,
+  useTheme = true,
 }: HeaderProps) {
   const Header = size;
 
