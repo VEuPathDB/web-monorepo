@@ -1,5 +1,4 @@
 import React from 'react';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
@@ -8,9 +7,7 @@ import { AnalysisClient } from '../api/analysis-api';
 import SubsettingClient from '../api/SubsettingClient';
 import DataClient from '../api/DataClient';
 import { WorkspaceContext } from '../context/WorkspaceContext';
-import { workspaceTheme } from './workspaceTheme';
 
-const theme = createMuiTheme(workspaceTheme);
 interface Props {
   studyId: string;
   children: React.ReactChild | React.ReactChild[];
@@ -43,7 +40,7 @@ export function EDAAnalysisListContainer(props: Props) {
           dataClient,
         }}
       >
-        <ThemeProvider theme={theme}>{children}</ThemeProvider>
+        {children}
       </WorkspaceContext.Provider>
     </div>
   );

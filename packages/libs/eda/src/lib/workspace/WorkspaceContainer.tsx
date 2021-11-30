@@ -15,7 +15,7 @@ import { VariableDescriptor } from '../core/types/variable';
 import { EDAWorkspace } from './EDAWorkspace';
 import { cx, findFirstVariable } from './Utils';
 
-import { makeStyles } from '@mui/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles({
   workspace: {

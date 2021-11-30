@@ -25,6 +25,8 @@ import { WorkspaceRouter } from './lib/workspace/WorkspaceRouter';
 import { useAttemptActionClickHandler } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 import { useCoreUIFonts } from '@veupathdb/core-components/dist/hooks';
 
+import './index.css';
+
 const subsettingServiceUrl = '/eda-subsetting-service';
 const dataServiceUrl = '/eda-data-service';
 const userServiceUrl = '/eda-user-service';

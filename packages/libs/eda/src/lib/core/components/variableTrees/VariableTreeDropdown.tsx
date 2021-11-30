@@ -10,7 +10,6 @@ import VariableTree, { VariableTreeProps } from './VariableTree';
 
 export default function VariableTreeDropdown(props: VariableTreeProps) {
   const { rootEntity, entityId, variableId, onChange } = props;
-  const [hideDisabledFields, setHideDisabledFields] = useState(false);
   const entities = useStudyEntities(rootEntity);
   const variable = entities
     .find((e) => e.id === entityId)
@@ -34,11 +33,7 @@ export default function VariableTreeDropdown(props: VariableTreeProps) {
           </div>
         )}
         <div className={cx('-VariableTreeDropdownTreeContainer')}>
-          <VariableTree
-            {...props}
-            hideDisabledFields={hideDisabledFields}
-            setHideDisabledFields={setHideDisabledFields}
-          />
+          <VariableTree {...props} />
         </div>
       </PopoverButton>
     </div>

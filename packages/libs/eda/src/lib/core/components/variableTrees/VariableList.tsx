@@ -45,6 +45,9 @@ import { ShowHideVariableContext } from '../../utils/show-hide-variable-context'
 import { cx } from '../../../workspace/Utils';
 import { pruneEmptyFields } from '../../utils/wdk-filter-param-adapter';
 
+import { Tooltip as VarTooltip } from '../docs/variable-constraints';
+import { useActiveDocument } from '../docs/DocumentationContainer';
+
 interface VariableField {
   type?: string;
   term: string;
@@ -118,8 +121,6 @@ interface VariableListProps {
   disabledFieldIds?: string[];
   customDisabledVariableMessage?: string;
   featuredFields: VariableField[];
-  hideDisabledFields: boolean;
-  setHideDisabledFields: (hide: boolean) => void;
   showMultiFilterDescendants: boolean;
   // Entities in which single child nodes should be promoted
   // (replacing their parent in the tree)
@@ -143,8 +144,6 @@ export default function VariableList({
   autoFocus,
   starredVariables,
   toggleStarredVariable,
-  hideDisabledFields,
-  setHideDisabledFields,
   customDisabledVariableMessage,
   showMultiFilterDescendants,
   singleChildPromotionEntityIds,
@@ -156,6 +155,7 @@ export default function VariableList({
   } = useContext(ShowHideVariableContext);
 
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const { setActiveDocument } = useActiveDocument();
   const getPathToField = useCallback(
     (field?: Field) => {
       if (field == null) return [];
@@ -220,11 +220,11 @@ export default function VariableList({
 
   const getFieldSearchString = useCallback(
     (node: FieldTreeNode) => {
-      return isMulti(node.field)
+      return isMulti(node.field) && !showMultiFilterDescendants
         ? preorderSeq(node).map(getNodeSearchString(valuesMap)).join(' ')
         : getNodeSearchString(valuesMap)(node);
     },
-    [valuesMap]
+    [showMultiFilterDescendants, valuesMap]
   );
 
   const searchPredicate = useCallback(
@@ -436,19 +436,18 @@ export default function VariableList({
 
   const tooltipContent = (
     <>
-      Some variables cannot be used here. Use this to toggle their presence
-      below.
+      <VarTooltip />
       <br />
       <br />
       <strong>
         <Link
-          to=""
-          onClick={(e) => {
-            e.preventDefault();
-            alert('Comming soon');
+          to="../../../../documentation/variable-constraints"
+          onClick={(event) => {
+            event.preventDefault();
+            setActiveDocument('variable-constraints');
           }}
         >
-          <Icon fa="info-circle" /> Learn more
+          Learn more
         </Link>
       </strong>{' '}
       about variable compatibility
@@ -484,8 +483,8 @@ export default function VariableList({
               );
             }}
           >
-            <Toggle on={showOnlyCompatibleVariables} />
-            Only show compatible variables
+            <Toggle on={showOnlyCompatibleVariables} /> Only show compatible
+            variables
           </button>
         </HtmlTooltip>
       </div>
