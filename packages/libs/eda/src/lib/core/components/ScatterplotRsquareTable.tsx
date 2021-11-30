@@ -88,7 +88,7 @@ export function ScatterplotRsquareTable({
               </th>
             </tr>
             {typedFilteredData.data?.map((data) => (
-              <>
+              <React.Fragment key={data.label}>
                 {data?.data?.series != null
                   ? data.data.series
                       .filter((series) =>
@@ -130,7 +130,7 @@ export function ScatterplotRsquareTable({
                         }
                       })
                   : ''}
-              </>
+              </React.Fragment>
             ))}
           </tbody>
         </table>
