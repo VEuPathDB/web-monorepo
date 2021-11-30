@@ -1,4 +1,3 @@
-import { gray } from '../../definitions/colors';
 import Header, { HeaderProps } from './Header';
 
 export default function H3({

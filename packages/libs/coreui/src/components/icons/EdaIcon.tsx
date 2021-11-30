@@ -5,9 +5,6 @@ const SvgEdaIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 25 23.003"
-    style={{
-      enableBackground: "new 0 0 25 23.003",
-    }}
     xmlSpace="preserve"
     width="1em"
     height="1em"
