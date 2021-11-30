@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   XYPlotDataSeries,
   XYPlotData,
@@ -60,7 +61,7 @@ export function ScatterplotRsquareTable({
               </th>
             </tr>
             {typedFilteredData.data?.map((data) => (
-              <tr>
+              <tr key={data.name}>
                 <td>{data?.name?.split(', Best fit')[0]}</td>
                 <td>{data.r2 ?? 'N/A'}</td>
               </tr>
@@ -98,7 +99,7 @@ export function ScatterplotRsquareTable({
                       .map((series, index, array) => {
                         if (index === 0) {
                           return (
-                            <tr>
+                            <tr key={data.label + series.name}>
                               {/* each vocabulary/name have different number of available data ,so need to check rowSpan per data */}
                               <td
                                 rowSpan={
@@ -119,7 +120,7 @@ export function ScatterplotRsquareTable({
                           );
                         } else {
                           return (
-                            <tr>
+                            <tr key={data.label + series.name}>
                               {overlayVariable != null && (
                                 <td>{series?.name?.split(', Best fit')[0]}</td>
                               )}
