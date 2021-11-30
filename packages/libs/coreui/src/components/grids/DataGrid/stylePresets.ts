@@ -1,5 +1,5 @@
 import React from 'react';
-import { GRAY } from '../../../definitions/colors';
+import { gray } from '../../../definitions/colors';
 
 export type DataGridStyleSpec = {
   /** Styles for the table element. */
@@ -25,7 +25,7 @@ const mesa: DataGridStyleSpec = {
   table: {
     borderWidth: '1px',
     borderStyle: 'solid',
-    borderColor: 'rgb(225, 225, 225)',
+    borderColor: gray[200],
     primaryRowColor: 'white',
     secondaryRowColor: 'rgb(245, 245, 245)',
   },
@@ -33,28 +33,28 @@ const mesa: DataGridStyleSpec = {
     borderLeft: 'solid 1px',
     borderTop: 'solid 1px',
     borderRight: 'solid 1px',
-    borderColor: 'rgb(225, 225, 225)',
+    borderColor: gray[200],
     paddingLeft: 10,
     paddingRight: 30,
     paddingBottom: 10,
     paddingTop: 10,
-    color: GRAY[500],
+    color: gray[500],
     display: 'flex',
     alignContent: 'center',
-    backgroundColor: 'rgb(235, 235, 235)',
+    backgroundColor: gray[100],
     fontSize: 13,
   },
   dataCells: {
     padding: '10px',
     borderLeft: 'solid 1px',
     borderRight: 'solid 1px',
-    borderColor: 'rgb(225, 225, 225)',
-    color: GRAY[500],
+    borderColor: gray[200],
+    color: gray[500],
     fontSize: 12,
   },
   icons: {
-    inactiveColor: GRAY[300],
-    activeColor: GRAY[400],
+    inactiveColor: gray[300],
+    activeColor: gray[400],
   },
 };
 
@@ -65,7 +65,7 @@ const stylePresets: {
     table: {
       borderStyle: 'none',
       primaryRowColor: 'white',
-      secondaryRowColor: GRAY[100],
+      secondaryRowColor: gray[100],
     },
     headerCells: {
       border: 'none',
@@ -73,19 +73,19 @@ const stylePresets: {
       paddingRight: 30,
       paddingBottom: 5,
       paddingTop: 5,
-      color: GRAY[500],
+      color: gray[500],
       display: 'flex',
       alignContent: 'center',
     },
     dataCells: {
       padding: '10px',
       border: 'solid 2px',
-      borderColor: GRAY[300],
-      color: GRAY[400],
+      borderColor: gray[300],
+      color: gray[400],
     },
     icons: {
-      inactiveColor: GRAY[200],
-      activeColor: GRAY[400],
+      inactiveColor: gray[200],
+      activeColor: gray[400],
     },
   },
   mesa,

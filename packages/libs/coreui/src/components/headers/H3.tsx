@@ -1,12 +1,13 @@
-import { GRAY } from '../../definitions/colors';
+import { gray } from '../../definitions/colors';
 import Header, { HeaderProps } from './Header';
 
 export default function H3({
   text,
-  color = GRAY[600],
+  color,
   underline = false,
   textTransform = 'none',
   additionalStyles = {},
+  useTheme = true,
 }: Omit<HeaderProps, 'size'>) {
   return (
     <Header
@@ -16,6 +17,7 @@ export default function H3({
       underline={underline}
       textTransform={textTransform}
       additionalStyles={additionalStyles}
+      useTheme={useTheme}
     />
   );
 }

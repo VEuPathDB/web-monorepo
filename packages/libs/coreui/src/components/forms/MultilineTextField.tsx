@@ -1,14 +1,18 @@
-import { CSSProperties, useEffect, useRef, useState } from 'react';
+import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
+import useDimensions from 'react-cool-dimensions';
 
 // Components
 import { H6 } from '../headers';
+import { CheckCircle, Loading } from '../icons';
 
 // Definitions
-import { GRAY, LIGHT_GREEN } from '../../definitions/colors';
+import { gray, green } from '../../definitions/colors';
 import typography from '../../styleDefinitions/typography';
-import useDimensions from 'react-cool-dimensions';
-import { CheckCircle, Loading } from '../icons';
 import { fadeIn, spin } from '../../definitions/animations';
+import { UITheme } from '../theming/types';
+
+// Hooks
+import useUITheme from '../theming/useUITheme';
 
 export type MultilineTextFieldProps = {
   /** A heading for the component. */
@@ -31,6 +35,8 @@ export type MultilineTextFieldProps = {
   status?: 'syncing' | 'synced';
   /** Optional. Additional CSS styles to apply to the outermost div. */
   containerStyles?: CSSProperties;
+  /** Optional. Indicates which theme role should be used to augment component styling. */
+  themeRole?: keyof UITheme['palette'];
 };
 
 /**
@@ -48,10 +54,20 @@ export default function MultilineTextField({
   onValueChange,
   status,
   containerStyles = {},
+  themeRole,
 }: MultilineTextFieldProps) {
   const [hasFocus, setHasFocus] = useState(false);
   const [scrollBarVisible, setScrollBarVisible] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const theme = useUITheme();
+  const themeColor = useMemo(
+    () =>
+      theme && themeRole
+        ? theme.palette[themeRole].hue[theme.palette[themeRole].level]
+        : undefined,
+    [theme, themeRole]
+  );
 
   useEffect(() => {
     const virtualHeight = textareaRef.current?.scrollHeight ?? 0;
@@ -73,7 +89,7 @@ export default function MultilineTextField({
       <div ref={headingRef} css={{ marginBottom: 5 }}>
         <H6 text={heading} additionalStyles={{ margin: 0 }} />
         {instructions && (
-          <label css={[typography.label, { color: GRAY[500] }]}>
+          <label css={[typography.label, { color: gray[500] }]}>
             {instructions}
           </label>
         )}
@@ -81,10 +97,10 @@ export default function MultilineTextField({
       <div
         css={{
           position: 'relative',
-          outlineColor: 'rgb(170, 170, 170)',
+          outlineColor: gray[400],
           outlineWidth: hasFocus ? 2 : 1,
           outlineStyle: 'solid',
-          color: GRAY['500'],
+          color: gray['500'],
           borderRadius: 5,
         }}
       >
@@ -102,9 +118,9 @@ export default function MultilineTextField({
               resize: 'none',
               width,
               height: currentHeight - nonInputHeight,
-              color: GRAY['400'],
+              color: gray['400'],
               ':focus': {
-                color: GRAY['500'],
+                color: gray['500'],
               },
             },
           ]}
@@ -141,7 +157,7 @@ export default function MultilineTextField({
             {status === 'syncing' && (
               <Loading
                 fontSize={20}
-                fill={GRAY[400]}
+                fill={gray[400]}
                 css={{
                   animation: `${spin} 2s ease infinite, ${fadeIn} 1s linear`,
                 }}
@@ -150,7 +166,7 @@ export default function MultilineTextField({
             {status === 'synced' && (
               <CheckCircle
                 fontSize={20}
-                fill={LIGHT_GREEN}
+                fill={themeColor ?? green[600]}
                 css={{ animation: `${fadeIn} 1s linear` }}
               />
             )}

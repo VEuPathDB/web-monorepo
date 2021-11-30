@@ -1,4 +1,4 @@
-import { GRAY } from '../../definitions/colors';
+import { gray } from '../../definitions/colors';
 
 type IconProps = {
   width?: number;
@@ -10,7 +10,7 @@ type IconProps = {
 export default function DoubleArrow({
   width = 13,
   height = 12,
-  color = GRAY[400],
+  color = gray[400],
   extraCSS = {},
 }: IconProps) {
   return (

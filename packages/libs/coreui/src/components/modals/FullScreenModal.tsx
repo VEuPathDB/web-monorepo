@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import ReactModal from 'react-modal';
 
-import { GRAY } from '../../definitions/colors';
+import { gray } from '../../definitions/colors';
 import { H2 } from '../headers';
 
 export type FullScreenModalProps = {
@@ -18,7 +18,7 @@ export type FullScreenModalProps = {
 
 export default function FullScreenModal({
   title,
-  accentColor = GRAY[600],
+  accentColor = gray[500],
   backgroundColor = 'white',
   visible,
   children,
@@ -38,7 +38,7 @@ export default function FullScreenModal({
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.55)',
+          backgroundColor: gray[400],
           zIndex,
         },
         content: {
@@ -49,7 +49,7 @@ export default function FullScreenModal({
           bottom: '50px',
           border: '4px solid',
           borderColor: accentColor,
-          background: 'rgba(255, 255, 255, 1)',
+          background: backgroundColor,
           overflow: 'auto',
           borderRadius: '10px',
           outline: 'none',

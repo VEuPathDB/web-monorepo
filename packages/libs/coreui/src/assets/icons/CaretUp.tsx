@@ -1,4 +1,4 @@
-import { GRAY } from '../../definitions/colors';
+import { gray } from '../../definitions/colors';
 
 // TODO: Make this more generic.
 type CaretUpIconProps = {
@@ -11,7 +11,7 @@ type CaretUpIconProps = {
 export default function CaretUpIcon({
   width = 12,
   height = 8,
-  color = GRAY[400],
+  color = gray[400],
   extraCSS = {},
 }: CaretUpIconProps) {
   return (

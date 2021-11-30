@@ -4,39 +4,46 @@ import {
   useSortBy,
   HeaderGroup,
   usePagination,
+  useRowSelect,
   Cell,
   Row,
+  Hooks,
+  Column,
 } from 'react-table';
 import { pickBy, ceil } from 'lodash';
 
 // Definitions
-import { GRAY } from '../../../definitions/colors';
-import typography from '../../../styleDefinitions/typography';
+import stylePresets, { DataGridStyleSpec } from './stylePresets';
 
 // Components
 import { H3 } from '../../headers';
-
-// Images
-import CaretUpIcon from '../../../assets/icons/CaretUp';
-import CaretDownIcon from '../../../assets/icons/CaretDown';
-import DoubleArrow from '../../../assets/icons/DoubleArrow';
-import Arrow from '../../../assets/icons/Arrow';
-import stylePresets, { DataGridStyleSpec } from './stylePresets';
+import IndeterminateCheckbox from './IndeterminateCheckbox';
+import DataCell from './DataCell';
+import HeaderCell from './HeaderCell';
+import PaginationControls from './PaginationControls';
+import { UITheme } from '../../theming/types';
 
 export type DataGridProps = {
   /**
    * Column definitions. The header attribute is displayed to the user.
    * The accessor attribute is used as a key to the column.
    */
-  columns: Array<{ Header: string; accessor: string }>;
+  columns: Array<Column>;
   /** Data for rows. */
   data: Array<object>;
+  /** Optional. Which theme role should be used to augment the style of the component. */
+  themeRole?: keyof UITheme['palette'];
   /** Optional. Indicates whether or not data is currently being loaded. */
   loading?: boolean;
   /** Optional. Title for DataGrid */
   title?: string;
   /** Optional. Designates that the grid should be sortable. */
   sortable?: boolean;
+  /**
+   * Optional. What to do if row(s) are selected. If this prop is defined,
+   * it will be taken as an indication that allowing row selection is desired.
+   * */
+  onRowSelection?: (rows: Row<object>[]) => void;
   /** Optional. Controls pagination of grid. */
   pagination?: {
     /** Number of records to display per page. */
@@ -90,9 +97,11 @@ export type DataGridProps = {
 export default function DataGrid({
   columns,
   data,
+  themeRole,
   loading = false,
   title,
   sortable = false,
+  onRowSelection = undefined,
   pagination,
   stylePreset = 'default',
   styleOverrides = {},
@@ -107,51 +116,78 @@ export default function DataGrid({
     getTableBodyProps,
     headerGroups,
     prepareRow,
-    // @ts-ignore
     page,
-    // @ts-ignore
+    selectedFlatRows,
     canPreviousPage,
-    // @ts-ignore
     canNextPage,
-    // @ts-ignore
     pageOptions,
-    // @ts-ignore
     pageCount,
-    // @ts-ignore
     gotoPage,
-    // @ts-ignore
     nextPage,
-    // @ts-ignore
     previousPage,
-    // @ts-ignore
     setPageSize,
-    // @ts-ignore
-    state: { pageIndex, pageSize },
+    state: { pageIndex, pageSize, selectedRowIds },
   } = useTable(
     {
       columns,
       data,
       initialState: {
-        // @ts-ignore
         pageIndex: 0,
-        // @ts-ignore
         pageSize: pagination?.recordsPerPage ?? -1,
       },
+      // If pagination is desired, add necessary parameters.
       ...(pagination && pagination.serverSidePagination
         ? {
             manualPagination: true,
             pageCount: ceil(pagination.serverSidePagination.pageCount),
-            // manualSortBy: true,
             autoResetSortBy: false,
           }
         : {}),
     },
     useSortBy,
-    usePagination
+    usePagination,
+
+    // Row Selection Add-Ons
+    useRowSelect,
+    (hooks) => {
+      /**
+       * Add an additional pseudo cell for each row that will allow the
+       * user to select the row in the UI.
+       */
+      if (onRowSelection) {
+        hooks.visibleColumns.push((columns) => [
+          // Let's make a column for selection
+          {
+            id: 'selection',
+            // The header can use the table's getToggleAllRowsSelectedProps method
+            // to render a checkbox
+            Header: ({ getToggleAllPageRowsSelectedProps }) => (
+              <div>
+                <IndeterminateCheckbox
+                  {...getToggleAllPageRowsSelectedProps()}
+                  themeRole={themeRole}
+                />
+              </div>
+            ),
+            // The cell can use the individual row's getToggleRowSelectedProps method
+            // to the render a checkbox
+            Cell: ({ row }) => (
+              <div>
+                <IndeterminateCheckbox
+                  {...row.getToggleRowSelectedProps()}
+                  themeRole={themeRole}
+                />
+              </div>
+            ),
+          },
+          ...columns,
+        ]);
+      }
+    }
   );
 
   /**
-   * Listen for changes in pagination and use the state to fetch
+   * Listen for changes in pagination and fetch
    * new data as long as another request isn't pending.
    *  */
   useEffect(() => {
@@ -163,216 +199,30 @@ export default function DataGrid({
     }
   }, [pageIndex, pageSize]);
 
-  /** Pagination controls are rendered when requested by the user. */
-  const renderPaginationControls = () => {
-    const commonButtonCSS = {
-      height: 25,
-      width: 25,
-      display: 'inline-flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: 'transparent',
-      borderStyle: 'solid',
-      borderRadius: 5,
-      borderColor: GRAY[400],
-      borderWidth: 1,
-    };
-
-    return (
-      <div
-        css={[
-          { marginTop: 10 },
-          loading && { opacity: 0.5, pointerEvents: 'none' },
-        ]}
-      >
-        <div css={{ marginBottom: 10, display: 'flex', alignItems: 'center' }}>
-          <button
-            css={{ marginRight: 5, ...commonButtonCSS }}
-            onClick={() => gotoPage(0)}
-            disabled={!canPreviousPage}
-          >
-            <DoubleArrow />
-          </button>
-          <button
-            css={{ marginRight: 10, ...commonButtonCSS }}
-            onClick={() => previousPage()}
-            disabled={!canPreviousPage}
-          >
-            <Arrow
-              extraCSS={{
-                transform: 'rotate(-90deg)',
-              }}
-            />
-          </button>
-          <span
-            css={[
-              { marginRight: 10, textTransform: 'uppercase', color: GRAY[500] },
-              typography.pre,
-            ]}
-          >
-            Page {pageIndex + 1} of {pageOptions.length}
-          </span>
-          <button
-            css={{ marginRight: 5, ...commonButtonCSS }}
-            onClick={() => nextPage()}
-            disabled={!canNextPage}
-          >
-            <Arrow
-              extraCSS={{
-                transform: 'rotate(90deg)',
-              }}
-            />
-          </button>
-          <button
-            css={{ marginRight: 25, ...commonButtonCSS }}
-            onClick={() => gotoPage(pageCount - 1)}
-            disabled={!canNextPage}
-          >
-            <DoubleArrow extraCSS={{ transform: 'rotate(180deg)' }} />
-          </button>
-          <select
-            value={pageSize}
-            onChange={(e) => {
-              setPageSize(Number(e.target.value));
-            }}
-            css={{
-              height: 25,
-              minHeight: 25,
-              backgroundColor: 'transparent',
-              borderStyle: 'solid',
-              borderRadius: 5,
-              borderColor: GRAY[400],
-              borderWidth: 1,
-              paddingLeft: 5,
-              color: GRAY[500],
-            }}
-          >
-            {[1, 2, 3, 4, 5].map((pageSizeMultiplier) => (
-              <option
-                key={pagination!.recordsPerPage * pageSizeMultiplier}
-                value={pagination!.recordsPerPage * pageSizeMultiplier}
-              >
-                Show {pagination!.recordsPerPage * pageSizeMultiplier}
-              </option>
-            ))}
-          </select>
-        </div>
-        {/* <div>
-          <span
-            css={[
-              { marginRight: 5, textTransform: 'uppercase' },
-              typography.pre,
-            ]}
-          >
-            Go to page:
-          </span>
-          <input
-            type='number'
-            defaultValue={pageIndex + 1}
-            onChange={(e) => {
-              const page = e.target.value ? Number(e.target.value) - 1 : 0;
-              gotoPage(page);
-            }}
-            style={{ width: '100px' }}
-          />
-        </div> */}
-      </div>
-    );
-  };
-
-  /** Sorting controls are added to each column when requested by the user.*/
-  const renderSortingControls = (column: HeaderGroup<object>) =>
-    sortable && (
-      <div
-        css={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          marginLeft: 15,
-        }}
-      >
-        <CaretUpIcon
-          color={
-            // @ts-ignore
-            column.isSorted && !column.isSortedDesc
-              ? finalStyle.icons.activeColor
-              : finalStyle.icons.inactiveColor
-          }
-        />
-        <CaretDownIcon
-          extraCSS={{ marginTop: 2 }}
-          color={
-            // @ts-ignore
-            column.isSorted && column.isSortedDesc
-              ? finalStyle.icons.activeColor
-              : finalStyle.icons.inactiveColor
-          }
-        />
-      </div>
-    );
-
-  /** Render an individual header cell. */
-  const renderHeaderGroup = (headerGroup: HeaderGroup) => {
-    const borderCSSOverrides = pickBy(
-      finalStyle.headerCells,
-      (value, key) => key.includes('border') || key.includes('background')
-    );
-
-    const otherCSSOverrides = pickBy(
-      finalStyle.headerCells,
-      (value, key) => !key.includes('border') && !key.includes('background')
-    );
-
-    return (
-      <th
-        {...headerGroup.getHeaderProps()}
-        // @ts-ignore
-        {...(sortable && headerGroup.getSortByToggleProps())}
-        css={{
-          padding: 0,
-          textAlign: 'left',
-          textTransform: 'capitalize',
-          verticalAlign: 'bottom',
-          ...borderCSSOverrides,
-        }}
-      >
-        <div
-          css={[
-            typography.th,
-            otherCSSOverrides,
-            { display: 'flex', alignItems: 'center' },
-          ]}
-        >
-          {headerGroup.render('Header')}
-          {renderSortingControls(headerGroup)}
-          {extraHeaderControls.map((component) => component(headerGroup))}
-        </div>
-      </th>
-    );
-  };
-
-  /** Render an individual data cell. */
-  const renderDataCell = (cell: Cell) => {
-    return (
-      <td
-        {...cell.getCellProps()}
-        css={[
-          typography.td,
-          {
-            ...finalStyle.dataCells,
-          },
-        ]}
-      >
-        {cell.render('Cell')}
-      </td>
-    );
-  };
+  // Listen for changes to row selection, if applicable.
+  useEffect(() => {
+    onRowSelection && onRowSelection(selectedFlatRows);
+  }, [selectedFlatRows]);
 
   return (
     <div>
       {title && <H3 text={title} additionalStyles={{ marginBottom: 20 }} />}
-      {['top', 'both'].includes(pagination?.controlsLocation ?? '') &&
-        renderPaginationControls()}
+      {['top', 'both'].includes(pagination?.controlsLocation ?? '') && (
+        <PaginationControls
+          loading={loading}
+          canPreviousPage={canPreviousPage}
+          canNextPage={canNextPage}
+          gotoPage={gotoPage}
+          previousPage={previousPage}
+          nextPage={nextPage}
+          pageIndex={pageIndex}
+          pageCount={pageCount}
+          pageSize={pageSize}
+          setPageSize={setPageSize}
+          pageOptions={pageOptions}
+          pagination={pagination}
+        />
+      )}
       <table
         {...getTableProps()}
         css={{
@@ -381,14 +231,24 @@ export default function DataGrid({
           ...pickBy(finalStyle.table, (value, key) => key.includes('border')),
         }}
       >
+        {/* Render Table Header */}
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((header) => renderHeaderGroup(header))}
+              {headerGroup.headers.map((header, index) => (
+                <HeaderCell
+                  key={index}
+                  headerGroup={header}
+                  styleSpec={finalStyle}
+                  sortable={sortable}
+                  extraHeaderControls={extraHeaderControls}
+                />
+              ))}
             </tr>
           ))}
         </thead>
 
+        {/* Render Table Body */}
         <tbody {...getTableBodyProps()}>
           {page.map((row: Row, index: number) => {
             prepareRow(row);
@@ -403,14 +263,30 @@ export default function DataGrid({
                       : finalStyle.table.secondaryRowColor,
                 }}
               >
-                {row.cells.map((cell: Cell) => renderDataCell(cell))}
+                {row.cells.map((cell: Cell, index) => (
+                  <DataCell key={index} cell={cell} styleSpec={finalStyle} />
+                ))}
               </tr>
             );
           })}
         </tbody>
       </table>
-      {['bottom', 'both'].includes(pagination?.controlsLocation ?? '') &&
-        renderPaginationControls()}
+      {['bottom', 'both'].includes(pagination?.controlsLocation ?? '') && (
+        <PaginationControls
+          loading={loading}
+          canPreviousPage={canPreviousPage}
+          canNextPage={canNextPage}
+          gotoPage={gotoPage}
+          previousPage={previousPage}
+          nextPage={nextPage}
+          pageIndex={pageIndex}
+          pageCount={pageCount}
+          pageSize={pageSize}
+          setPageSize={setPageSize}
+          pageOptions={pageOptions}
+          pagination={pagination}
+        />
+      )}
     </div>
   );
 }

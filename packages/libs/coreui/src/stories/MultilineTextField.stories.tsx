@@ -1,3 +1,4 @@
+import { green, purple } from '@material-ui/core/colors';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import { debounce } from 'lodash';
 import { useCallback, useState } from 'react';
@@ -5,6 +6,8 @@ import { useCallback, useState } from 'react';
 import MultilineTextField, {
   MultilineTextFieldProps,
 } from '../components/forms/MultilineTextField';
+import UIThemeProvider from '../components/theming/UIThemeProvider';
+import { mutedCyan } from '../definitions/colors';
 
 export default {
   title: 'Forms/MultilineTextField',
@@ -19,14 +22,20 @@ const Template: Story<MultilineTextFieldProps> = (args) => {
 
   const debouncedOnValueChange = useCallback(
     debounce((value: string) => {
-      setValue(value);
       setStatus('synced');
     }, 500),
     []
   );
 
   return (
-    <div css={{ display: 'flex', flexDirection: 'column' }}>
+    <UIThemeProvider
+      theme={{
+        palette: {
+          primary: { hue: mutedCyan, level: 600 },
+          secondary: { hue: purple, level: 500 },
+        },
+      }}
+    >
       <MultilineTextField
         {...args}
         value={value}
@@ -37,7 +46,7 @@ const Template: Story<MultilineTextFieldProps> = (args) => {
         }}
         status={status}
       />
-    </div>
+    </UIThemeProvider>
   );
 };
 export const Default = Template.bind({});
