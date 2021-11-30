@@ -764,23 +764,17 @@ function ScatterplotViz(props: VisualizationProps) {
         data.value != null &&
         !data.pending && (
           <ScatterplotRsquareTable
-            data={
-              data.value && !data.pending
-                ? !isFaceted(data.value?.dataSetProcess)
-                  ? data.value?.dataSetProcess.series
-                  : data.value?.dataSetProcess.facets
-                : undefined
+            typedData={
+              !isFaceted(data.value.dataSetProcess)
+                ? { isFaceted: false, data: data.value.dataSetProcess.series }
+                : { isFaceted: true, data: data.value.dataSetProcess.facets }
             }
-            isFaceted={isFaceted(data.value?.dataSetProcess)}
             overlayVariable={overlayVariable}
             facetVariable={facetVariable}
           />
         )}
     </>
   );
-
-  //DKDK
-  console.log('data.value =', data.value);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>

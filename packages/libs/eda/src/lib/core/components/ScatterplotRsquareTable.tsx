@@ -1,39 +1,52 @@
 import {
   XYPlotDataSeries,
   XYPlotData,
+  FacetedData,
 } from '@veupathdb/components/lib/types/plots';
 import { VariableTreeNode } from '../types/study';
 
-interface facetDataProps {
-  label: string;
-  data?: XYPlotData | undefined;
-}
+type FacetDataProps = FacetedData<XYPlotData>['facets'];
+
+// introduce discriminated union
+type TypedScatterplotRsquareData =
+  | {
+      isFaceted: false;
+      data?: XYPlotDataSeries[];
+    }
+  | {
+      isFaceted: true;
+      // FacetDataProps is already array, so not FacetDataProps[]
+      data?: FacetDataProps;
+    };
 
 export interface Props {
-  data: XYPlotDataSeries[] | facetDataProps[] | undefined;
-  isFaceted: boolean;
+  typedData: TypedScatterplotRsquareData;
   overlayVariable?: VariableTreeNode;
   facetVariable?: VariableTreeNode;
 }
 
 export function ScatterplotRsquareTable({
-  data,
-  isFaceted,
+  typedData,
   overlayVariable,
   facetVariable,
 }: Props) {
   // non-facet or facet data
-  const filteredData = !isFaceted
-    ? overlayVariable != null
-      ? (data as XYPlotDataSeries[])?.filter((data) =>
-          data?.name?.includes(', Best fit')
-        )
-      : (data as XYPlotDataSeries[])?.filter((data) =>
-          data?.name?.includes('Best fit')
-        )
-    : (data as facetDataProps[]).filter((element) => element.data != null);
+  const typedFilteredData: TypedScatterplotRsquareData = !typedData.isFaceted
+    ? {
+        isFaceted: false,
+        data:
+          overlayVariable != null
+            ? typedData.data?.filter((data) =>
+                data.name?.includes(', Best fit')
+              )
+            : typedData.data?.filter((data) => data.name?.includes('Best fit')),
+      }
+    : {
+        isFaceted: true,
+        data: typedData.data?.filter((element) => element.data != null),
+      };
 
-  if (!isFaceted) {
+  if (!typedFilteredData.isFaceted) {
     return (
       <div className={'ScatterRsquareTable'}>
         <table>
@@ -46,14 +59,12 @@ export function ScatterplotRsquareTable({
                 R<sup>2</sup> (Best fit)
               </th>
             </tr>
-            {filteredData != null
-              ? (filteredData as XYPlotDataSeries[]).map((data) => (
-                  <tr>
-                    <td>{data?.name?.split(', Best fit')[0]}</td>
-                    <td>{data.r2 ?? 'N/A'}</td>
-                  </tr>
-                ))
-              : ''}
+            {typedFilteredData.data?.map((data) => (
+              <tr>
+                <td>{data?.name?.split(', Best fit')[0]}</td>
+                <td>{data.r2 ?? 'N/A'}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -75,57 +86,51 @@ export function ScatterplotRsquareTable({
                 R<sup>2</sup> (Best fit)
               </th>
             </tr>
-            {filteredData != null
-              ? (filteredData as facetDataProps[]).map((data) => (
-                  <>
-                    {data?.data?.series != null
-                      ? data.data.series
-                          .filter((series) =>
-                            overlayVariable != null
-                              ? series?.name?.includes(', Best fit')
-                              : series?.name?.includes('Best fit')
-                          )
-                          .map((series, index, array) => {
-                            if (index === 0) {
-                              return (
-                                <tr>
-                                  {/* each vocabulary/name have different number of available data ,so need to check rowSpan per data */}
-                                  <td
-                                    rowSpan={
-                                      overlayVariable != null
-                                        ? array.filter((arr) =>
-                                            arr?.name?.includes(', Best fit')
-                                          ).length
-                                        : 1
-                                    }
-                                  >
-                                    {data.label}
-                                  </td>
-                                  {overlayVariable != null && (
-                                    <td>
-                                      {series?.name?.split(', Best fit')[0]}
-                                    </td>
-                                  )}
-                                  <td>{series.r2 ?? 'N/A'}</td>
-                                </tr>
-                              );
-                            } else {
-                              return (
-                                <tr>
-                                  {overlayVariable != null && (
-                                    <td>
-                                      {series?.name?.split(', Best fit')[0]}
-                                    </td>
-                                  )}
-                                  <td>{series.r2 ?? 'N/A'}</td>
-                                </tr>
-                              );
-                            }
-                          })
-                      : ''}
-                  </>
-                ))
-              : ''}
+            {typedFilteredData.data?.map((data) => (
+              <>
+                {data?.data?.series != null
+                  ? data.data.series
+                      .filter((series) =>
+                        overlayVariable != null
+                          ? series?.name?.includes(', Best fit')
+                          : series?.name?.includes('Best fit')
+                      )
+                      .map((series, index, array) => {
+                        if (index === 0) {
+                          return (
+                            <tr>
+                              {/* each vocabulary/name have different number of available data ,so need to check rowSpan per data */}
+                              <td
+                                rowSpan={
+                                  overlayVariable != null
+                                    ? array.filter((arr) =>
+                                        arr?.name?.includes(', Best fit')
+                                      ).length
+                                    : 1
+                                }
+                              >
+                                {data.label}
+                              </td>
+                              {overlayVariable != null && (
+                                <td>{series?.name?.split(', Best fit')[0]}</td>
+                              )}
+                              <td>{series.r2 ?? 'N/A'}</td>
+                            </tr>
+                          );
+                        } else {
+                          return (
+                            <tr>
+                              {overlayVariable != null && (
+                                <td>{series?.name?.split(', Best fit')[0]}</td>
+                              )}
+                              <td>{series.r2 ?? 'N/A'}</td>
+                            </tr>
+                          );
+                        }
+                      })
+                  : ''}
+              </>
+            ))}
           </tbody>
         </table>
       </div>
