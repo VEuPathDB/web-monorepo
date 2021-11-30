@@ -1,3 +1,4 @@
+import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 import {
@@ -174,18 +175,28 @@ export function isUserApprovedForStudy(
   );
 }
 
-async function fetchPermissions(fetchApi?: Window['fetch']) {
-  const api = new StudyAccessApi({ baseUrl: STUDY_ACCESS_SERVICE_URL, fetchApi });
+async function fetchPermissions(
+  wdkService: WdkService,
+  fetchApi?: Window['fetch'],
+) {
+  const api = new StudyAccessApi(
+    { baseUrl: STUDY_ACCESS_SERVICE_URL, fetchApi },
+    wdkService
+  );
 
   const permissionsResponse = await api.fetchPermissions();
 
   return permissionsResponseToUserPermissions(permissionsResponse);
 }
 
-export async function checkPermissions(user: User, fetchApi?: Window['fetch']): Promise<UserPermissions> {
-  return user.isGuest || user.properties?.approvedStudies == null
-    ? { type: 'none' }
-    : await fetchPermissions(fetchApi);
+export async function checkPermissions(
+  user: User,
+  wdkService: WdkService,
+  fetchApi?: Window['fetch'],
+): Promise<UserPermissions> {
+  return user.properties?.approvedStudies == null
+    ? { type: 'external', perDataset: {} }
+    : await fetchPermissions(wdkService, fetchApi);
 }
 
 export function permittedApprovalStatusChanges(oldApprovalStatus: ApprovalStatus): ApprovalStatus[] {

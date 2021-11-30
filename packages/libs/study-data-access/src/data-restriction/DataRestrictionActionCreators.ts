@@ -26,7 +26,7 @@ export function attemptAction(action: DataRestrictionActionType, details: Action
     const studies$ = fetchStudies(wdkService);
 
     return Promise.all([ user$, studies$ ]).then(([ user, studies ]) => {
-      return checkPermissions(user).then(permissions => {
+      return checkPermissions(user, wdkService).then(permissions => {
         return handleAction(
           permissions,
           // FIXME: Either properly type the approvedStudies property, or retire it

@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import { defaultMemoize } from 'reselect';
 
+import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
@@ -11,13 +12,19 @@ export type AsyncUserPermissions =
   | { loading: true }
   | { loading: false, permissions: UserPermissions };
 
-const memoizedPermissionsCheck = defaultMemoize(function (user: User) {
-  return checkPermissions(user);
+const memoizedPermissionsCheck = defaultMemoize(function (
+  user: User,
+  wdkService: WdkService
+) {
+  return checkPermissions(user, wdkService);
 });
 
 export function usePermissions(): AsyncUserPermissions {
   const permissions = useWdkService(
-    async wdkService => memoizedPermissionsCheck(await wdkService.getCurrentUser()),
+    async wdkService => memoizedPermissionsCheck(
+      await wdkService.getCurrentUser(),
+      wdkService
+    ),
     []
   );
 
