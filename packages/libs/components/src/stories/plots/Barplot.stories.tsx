@@ -2,6 +2,7 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 import Barplot, { BarplotProps } from '../../plots/Barplot';
 import { FacetedData, BarplotData } from '../../types/plots';
 import FacetedPlot from '../../plots/FacetedPlot';
+import FacetedBarplot from '../../plots/facetedPlots/FacetedBarplot';
 
 export default {
   title: 'Plots/Barplot',
@@ -92,27 +93,26 @@ const facetedData: FacetedData<BarplotData> = {
 
 interface FacetedStoryProps {
   data: FacetedData<BarplotData>;
-  props: BarplotProps;
-  modalProps: BarplotProps;
+  componentProps: BarplotProps;
+  modalComponentProps: BarplotProps;
 }
 
 const FacetedTemplate: Story<FacetedStoryProps> = ({
   data,
-  props,
-  modalProps,
+  componentProps,
+  modalComponentProps,
 }) => (
-  <FacetedPlot<BarplotData, BarplotProps>
+  <FacetedBarplot
     data={data}
-    component={Barplot}
-    componentProps={props}
-    modalComponentProps={modalProps}
+    componentProps={componentProps}
+    modalComponentProps={modalComponentProps}
   />
 );
 
 export const Faceted = FacetedTemplate.bind({});
 Faceted.args = {
   data: facetedData,
-  props: {
+  componentProps: {
     title: 'indoor and outdoor pets',
     containerStyles: {
       width: 300,
@@ -120,7 +120,7 @@ Faceted.args = {
       border: '1px solid #dadada',
     },
   },
-  modalProps: {
+  modalComponentProps: {
     containerStyles: {
       width: 600,
       height: 400,

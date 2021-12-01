@@ -22,20 +22,18 @@ type FacetedBarplotProps = Omit<
   'component'
 >;
 
-// Commented out broken code (TS error)
+const FacetedBarplot = (facetedBarplotProps: FacetedBarplotProps) => {
+  return (
+    <FacetedPlot
+      component={Barplot}
+      {...facetedBarplotProps}
+      componentProps={{
+        containerStyles: defaultContainerStyles,
+        spacingOptions: defaultSpacingOptions,
+        ...facetedBarplotProps.componentProps,
+      }}
+    />
+  );
+};
 
-// const FacetedBarplot = (facetedBarplotProps: FacetedBarplotProps) => {
-//   return (
-//     <FacetedPlot
-//       component={Barplot}
-//       {...facetedBarplotProps}
-//       props={{
-//         containerStyles: defaultContainerStyles,
-//         spacingOptions: defaultSpacingOptions,
-//         ...facetedBarplotProps.props,
-//       }}
-//     />
-//   );
-// };
-
-// export default FacetedBarplot;
+export default FacetedBarplot;
