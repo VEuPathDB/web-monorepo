@@ -4,6 +4,7 @@ export { default as Close } from "./Close";
 export { default as CloseFullscreen } from "./CloseFullscreen";
 export { default as Download } from "./Download";
 export { default as EdaIcon } from "./EdaIcon";
+export { default as Filter } from "./Filter";
 export { default as Loading } from "./Loading";
 export { default as SampleDetailsDark } from "./SampleDetailsDark";
 export { default as SampleDetailsLight } from "./SampleDetailsLight";
