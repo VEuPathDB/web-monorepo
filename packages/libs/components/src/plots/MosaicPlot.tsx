@@ -11,6 +11,8 @@ import _ from 'lodash';
 // util functions for handling long tick labels with ellipsis
 import { axisTickLableEllipsis } from '../utils/axis-tick-label-ellipsis';
 import { makeStyles } from '@material-ui/core/styles';
+import { PlotSpacingDefault } from '../types/plots/addOns';
+import { Layout } from 'plotly.js';
 
 export interface MosaicPlotProps extends PlotProps<MosaicData> {
   /** label for independent axis */
@@ -37,6 +39,15 @@ const useStyles = makeStyles({
   },
 });
 
+const getLongestTruncatedStringLength = (
+  strings: string[],
+  maxLength: number
+) => {
+  const longestStringLength = Math.max(...strings.map((str) => str.length));
+  // If the length overflows, add two characters to account for ellipsis length
+  return longestStringLength > maxLength ? maxLength + 2 : longestStringLength;
+};
+
 const MosaicPlot = makePlotlyPlotComponent(
   'MosaicPlot',
   ({
@@ -47,8 +58,9 @@ const MosaicPlot = makePlotlyPlotComponent(
     showColumnLabels,
     spacingOptions,
     containerClass,
-    // Pull legendOptions out to ignore it. Mosaic's left legend doesn't really
+    // Pull legend props out to ignore them. Mosaic's left legend doesn't really
     // function as a legend and is less flexible by necessity
+    displayLegend,
     legendOptions,
     ...restProps
   }: MosaicPlotProps) => {
@@ -68,7 +80,12 @@ const MosaicPlot = makePlotlyPlotComponent(
         axisTickLableEllipsis(
           data.independentLabels,
           maxIndependentTickLabelLength
-        ),
+        )
+          // now replace labels for any all-zero 'series' with a white space
+          // (tried an empty string but it causes major weirdness)
+          .map((label, index) =>
+            _.unzip(data.values)[index].every((v) => v === 0) ? ' ' : label
+          ),
       [data]
     );
 
@@ -78,86 +95,76 @@ const MosaicPlot = makePlotlyPlotComponent(
       return column_start + width / 2;
     });
 
-    // These variables are needed to correctly implement the legend to the left
-    // between the plot and the y-axis title
-    // How much extra left margin to add
-    let marginLeftExtra: number;
-    // How far to shift the y-axis title to the left
-    let yAxisTitleStandoff: number | undefined;
-    // The gap between each legend item
-    let legendTraceGroupGap: number | undefined;
-
     // ploltly.js default for left, bottom, and right margins is the same
     const defaultMargin = 80;
     const defaultMarginTop = 100;
 
-    if (restProps.displayLegend) {
-      // Not currently calculating this---just using the default
-      // Might need to be calculated or adjusted if more flexibility is needed
-      const defaultLegendItemHeight = 20;
+    // Not currently calculating this---just using the default
+    // Might need to be calculated or adjusted if more flexibility is needed
+    const defaultLegendItemHeight = 20;
 
-      // Try to get the container height in pixels
-      const containerHeightProp = restProps.containerStyles
-        ? restProps.containerStyles.height
-        : DEFAULT_CONTAINER_HEIGHT;
-      const containerHeight = containerHeightProp
-        ? typeof containerHeightProp === 'number'
-          ? containerHeightProp
-          : containerHeightProp.endsWith('px')
-          ? parseInt(containerHeightProp)
-          : undefined
-        : undefined;
+    // Try to get the container height in pixels
+    const containerHeightProp = restProps.containerStyles
+      ? restProps.containerStyles.height
+      : DEFAULT_CONTAINER_HEIGHT;
+    const containerHeight = containerHeightProp
+      ? typeof containerHeightProp === 'number'
+        ? containerHeightProp
+        : containerHeightProp.endsWith('px')
+        ? parseInt(containerHeightProp)
+        : undefined
+      : undefined;
 
-      if (containerHeight) {
-        // Estimate the plot proper height
-        const marginTop = spacingOptions?.marginTop ?? defaultMarginTop;
-        const marginBottom = spacingOptions?.marginBottom ?? defaultMargin;
-        // Subtraction at end is due to x-axis automargin shrinking the plot
-        const plotHeight =
-          containerHeight -
-          marginTop -
-          marginBottom -
-          2.05 * (maxIndependentTickLabelLength + 2);
-        // Calculate the legend trace group gap accordingly
-        legendTraceGroupGap =
-          ((plotHeight -
-            defaultLegendItemHeight * data.dependentLabels.length) *
-            0.95) /
-          (data.dependentLabels.length - 1);
-      } else {
-        // If we can't determine the container height, don't add any gaps to be safe
-        legendTraceGroupGap = 0;
-      }
+    // The gap between each legend item
+    let legendTraceGroupGap: number | undefined;
 
-      const maxLegendTextLength =
-        restProps.maxLegendTextLength ?? DEFAULT_MAX_LEGEND_TEXT_LENGTH;
-      const longestDependentLabelLength = Math.max(
-        ...data.dependentLabels.map((label) => label.length)
+    if (containerHeight) {
+      // Estimate the plot proper height
+      const marginTop = spacingOptions?.marginTop ?? defaultMarginTop;
+      const marginBottom = spacingOptions?.marginBottom ?? defaultMargin;
+      const longestIndependentTickLabelLength = getLongestTruncatedStringLength(
+        data.independentLabels,
+        maxIndependentTickLabelLength
       );
-      // If the length overflows, add two characters to account for ellipsis length
-      const longestLegendLabelLength =
-        longestDependentLabelLength > maxLegendTextLength
-          ? maxLegendTextLength + 2
-          : longestDependentLabelLength;
-      // Extra left margin and y-axis title standoff calculations are weird due
-      // to y-axis automargin
-      marginLeftExtra = 5.357 * longestLegendLabelLength + 37.5;
-      yAxisTitleStandoff = marginLeftExtra + 25;
+      // Subtraction at end is due to x-axis automargin shrinking the plot
+      const plotHeight =
+        containerHeight -
+        marginTop -
+        marginBottom -
+        5 * longestIndependentTickLabelLength;
+      // Calculate the legend trace group gap accordingly
+      legendTraceGroupGap =
+        ((plotHeight - defaultLegendItemHeight * data.dependentLabels.length) *
+          0.95) /
+        (data.dependentLabels.length - 1);
     } else {
-      marginLeftExtra = 0;
-      // Leave yAxisTitleStandoff and legendTraceGroupGap undefined
+      // If we can't determine the container height, don't add any gaps to be safe
+      legendTraceGroupGap = 0;
     }
 
-    const marginLeft = spacingOptions?.marginLeft ?? defaultMargin;
+    const maxLegendTextLength =
+      restProps.maxLegendTextLength ?? DEFAULT_MAX_LEGEND_TEXT_LENGTH;
+    const longestLegendLabelLength = getLongestTruncatedStringLength(
+      data.dependentLabels,
+      maxLegendTextLength
+    );
+    // Extra left margin and y-axis title standoff calculations are weird due
+    // to y-axis automargin
+    const marginLeftExtra = 5.357 * longestLegendLabelLength + 37.5;
+    const yAxisTitleStandoff = marginLeftExtra + 25;
+
+    const marginLeft =
+      spacingOptions?.marginLeft ?? PlotSpacingDefault.marginLeft;
     const newSpacingOptions = {
       ...spacingOptions,
       marginLeft: marginLeft + marginLeftExtra,
     };
 
-    const layout = {
+    const layout: Partial<Layout> = {
       xaxis: {
         title: independentAxisLabel,
         tickvals: column_centers,
+        tickangle: 90,
         ticktext:
           showColumnLabels !== false
             ? // use ellipsis texts here
@@ -187,7 +194,7 @@ const MosaicPlot = makePlotlyPlotComponent(
         itemdoubleclick: false,
       },
       hovermode: 'x',
-    } as const;
+    } as Partial<Layout>;
 
     const plotlyReadyData: PlotParams['data'] = data.values
       .map(
@@ -228,6 +235,7 @@ const MosaicPlot = makePlotlyPlotComponent(
       storedIndependentAxisTickLabel: data.independentLabels,
       spacingOptions: newSpacingOptions,
       containerClass: classes.root,
+      displayLegend: true,
       ...restProps,
     };
   }

@@ -1,19 +1,21 @@
 import React, {
-  lazy,
-  Suspense,
-  useMemo,
-  useCallback,
   CSSProperties,
   Ref,
-  useImperativeHandle,
+  Suspense,
   forwardRef,
+  lazy,
+  useCallback,
+  useImperativeHandle,
+  useMemo,
 } from 'react';
 import { PlotParams } from 'react-plotly.js';
 import { legendSpecification } from '../utils/plotly';
 import Spinner from '../components/Spinner';
+import { PlotRef } from '../types/plots';
 import {
   PlotLegendAddon,
   PlotSpacingAddon,
+  PlotSpacingDefault,
   ColorPaletteAddon,
   ColorPaletteDefault,
 } from '../types/plots/addOns';
@@ -23,15 +25,6 @@ import { select } from 'd3';
 import { ToImgopts, toImage } from 'plotly.js';
 import { uniqueId } from 'lodash';
 import { makeSharedPromise } from '../utils/promise-utils';
-
-/**
- * A generic imperative interface to plota. This allows us to create a facade
- * to interact with plot internals, such as exporting an image.
- */
-
-export interface PlotRef {
-  toImage: (imageOpts: ToImgopts) => Promise<string>;
-}
 
 export interface PlotProps<T> extends ColorPaletteAddon {
   /** plot data - following web-components' API, not Plotly's */
@@ -52,6 +45,8 @@ export interface PlotProps<T> extends ColorPaletteAddon {
   displayLibraryControls?: boolean;
   /** show a loading... spinner in the middle of the container div */
   showSpinner?: boolean;
+  /** Show an overlay with the words 'No Data' */
+  showNoDataOverlay?: boolean;
   /** Options for customizing plot legend layout and appearance. */
   legendOptions?: PlotLegendAddon;
   /** legend title */
@@ -95,6 +90,7 @@ function PlotlyPlot<T>(
     legendTitle,
     spacingOptions,
     showSpinner,
+    showNoDataOverlay,
     // set default max number of characters (20) for legend ellipsis
     maxLegendTextLength = DEFAULT_MAX_LEGEND_TEXT_LENGTH,
     // expose data for applying legend ellipsis
@@ -132,16 +128,16 @@ function PlotlyPlot<T>(
     (): PlotParams['layout'] & LayoutLegendTitle => ({
       ...plotlyProps.layout,
       xaxis: {
+        linecolor: 'black',
         ...plotlyProps.layout.xaxis,
         fixedrange: true,
         linewidth: 1,
-        linecolor: 'black',
       },
       yaxis: {
+        linecolor: 'black',
         ...plotlyProps.layout.yaxis,
         fixedrange: true,
         linewidth: 1,
-        linecolor: 'black',
         // change long delendent axis title with ellipsis
         title:
           ((plotlyProps?.layout?.yaxis?.title as string) || '').length >
@@ -151,12 +147,6 @@ function PlotlyPlot<T>(
                 maxDependentAxisTitleTextLength
               ) + '...'
             : plotlyProps?.layout?.yaxis?.title,
-      },
-      title: {
-        text: title,
-        xref: 'paper',
-        x: 0,
-        xanchor: 'left', // left aligned to left edge (y-axis) of plot
       },
       showlegend: displayLegend ?? true,
       margin: {
@@ -345,6 +335,8 @@ function PlotlyPlot<T>(
     [plotId]
   );
 
+  const marginTop = spacingOptions?.marginTop ?? PlotSpacingDefault.marginTop;
+
   return (
     <Suspense fallback="Loading...">
       <div
@@ -363,6 +355,42 @@ function PlotlyPlot<T>(
           onUpdate={onUpdate}
           onInitialized={sharedPlotCreation.run}
         />
+        {showNoDataOverlay && (
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
+              background:
+                title === 'No data'
+                  ? 'repeating-linear-gradient(45deg, #f8f8f8f8, #f8f8f8f8 10px, #fafafaf8 10px, #fafafaf8 20px)'
+                  : '#f8f8f8f8',
+              fontSize: 24,
+              color: ' #e8e8e8',
+              userSelect: 'none',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            {title === 'No data' ? 'No missing data' : 'No data'}
+          </div>
+        )}
+        {title && (
+          <div
+            style={{
+              position: 'absolute',
+              top: marginTop / 3,
+              left: '10%',
+              fontSize: 17,
+              fontStyle: title === 'No data' ? 'italic' : 'normal',
+            }}
+          >
+            {title}
+          </div>
+        )}
         {showSpinner && <Spinner />}
       </div>
     </Suspense>

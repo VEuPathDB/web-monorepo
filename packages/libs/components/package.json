@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/components",
-  "version": "0.9.2",
+  "version": "0.11.2",
   "license": "Apache-2.0",
   "description": "React Components for VEuPathDB Websites",
   "repository": {
@@ -46,6 +46,7 @@
     "src"
   ],
   "scripts": {
+    "start": "yarn storybook",
     "storybook": "start-storybook -s public",
     "build-storybook": "build-storybook -s public",
     "build-npm-modules": "tsc -p tsconfig.build.json"

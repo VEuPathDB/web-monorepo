@@ -1,6 +1,8 @@
 /**
  * Module used as a convenience wrapper for related type definitions.
  */
+import { ToImgopts } from 'plotly.js';
+
 import { HistogramData } from './histogram';
 import { LinePlotData } from './linePlot';
 import { PiePlotData } from './piePlot';
@@ -11,10 +13,20 @@ import { HeatmapData } from './heatmap';
 import { MosaicData } from './mosaic';
 import { BirdsEyePlotData } from './birdseyeplot';
 
+/**
+ * A generic imperative interface to plota. This allows us to create a facade
+ * to interact with plot internals, such as exporting an image.
+ */
+export interface PlotRef {
+  toImage: (imageOpts: ToImgopts) => Promise<string>;
+}
+
+export type FacetedPlotRef = PlotRef[];
+
 export type FacetedData<D> = {
   facets: {
     label: string;
-    data: D;
+    data?: D;
   }[];
 };
 
