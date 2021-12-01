@@ -93,13 +93,19 @@ const facetedData: FacetedData<BarplotData> = {
 interface FacetedStoryProps {
   data: FacetedData<BarplotData>;
   props: BarplotProps;
+  modalProps: BarplotProps;
 }
 
-const FacetedTemplate: Story<FacetedStoryProps> = ({ data, props }) => (
+const FacetedTemplate: Story<FacetedStoryProps> = ({
+  data,
+  props,
+  modalProps,
+}) => (
   <FacetedPlot<BarplotData, BarplotProps>
     data={data}
     component={Barplot}
     props={props}
+    modalProps={modalProps}
   />
 );
 
@@ -112,6 +118,12 @@ Faceted.args = {
       width: 300,
       height: 300,
       border: '1px solid #dadada',
+    },
+  },
+  modalProps: {
+    containerStyles: {
+      width: 600,
+      height: 400,
     },
   },
 };
