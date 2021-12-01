@@ -47,7 +47,7 @@ export default function FullScreenModal({
           left: '50px',
           right: '50px',
           bottom: '50px',
-          border: '4px solid',
+          border: '2px solid',
           borderColor: accentColor,
           background: backgroundColor,
           overflow: 'auto',

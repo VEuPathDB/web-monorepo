@@ -3,12 +3,8 @@ import { useMemo } from 'react';
 
 import useUITheme from '../../theming/useUITheme';
 import { blue } from '../../../definitions/colors';
-import SwissArmyButton, { SwissArmyButtonProps } from '../SwissArmyButton';
-import { ButtonStyleSpec } from '..';
-
-export type OutlinedButtonProps = Omit<SwissArmyButtonProps, 'stylePreset'> & {
-  styleOverrides: Partial<ButtonStyleSpec>;
-};
+import SwissArmyButton from '../SwissArmyButton';
+import { ButtonStyleSpec, SwissArmyButtonVariantProps } from '..';
 
 /** Basic button with a variety of customization options. */
 export default function OutlinedButton({
@@ -19,7 +15,7 @@ export default function OutlinedButton({
   icon = () => null,
   themeRole,
   styleOverrides = {},
-}: OutlinedButtonProps) {
+}: SwissArmyButtonVariantProps) {
   const defaultStyle: ButtonStyleSpec = {
     default: {
       textColor: blue[500],
@@ -102,7 +98,7 @@ export default function OutlinedButton({
 
   return (
     <SwissArmyButton
-      style={finalStyle}
+      styleSpec={finalStyle}
       text={text}
       onPress={onPress}
       tooltip={tooltip}

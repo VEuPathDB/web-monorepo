@@ -21,7 +21,7 @@ export type SwissArmyButtonProps = {
   /** Optional. SVG component to use as an icon. */
   icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   /** Additional styles to apply to the button container. */
-  style: ButtonStyleSpec;
+  styleSpec: ButtonStyleSpec;
 };
 
 /** Basic button with a variety of customization options. */
@@ -31,7 +31,7 @@ export default function SwissArmyButton({
   tooltip,
   size = 'medium',
   icon = () => null,
-  style,
+  styleSpec,
 }: SwissArmyButtonProps) {
   const [buttonState, setButtonState] = useState<
     'default' | 'hover' | 'pressed'
@@ -42,7 +42,7 @@ export default function SwissArmyButton({
    * white. If `type` is outline, use `color` unless button is pressed, then
    * use `onPressColor` if specified.
    */
-  const calculatedTextColor = style[buttonState].textColor ?? 'white';
+  const calculatedTextColor = styleSpec[buttonState].textColor ?? 'white';
   const calculatedFontSize = size === 'large' ? '1rem' : '.80rem';
   const calculatedIconSize =
     size === 'large' ? '1.5rem' : size === 'medium' ? '1.25rem' : '1rem';
@@ -62,24 +62,24 @@ export default function SwissArmyButton({
             paddingLeft: horizontalPadding,
             paddingRight: horizontalPadding,
             color: calculatedTextColor,
-            textTransform: style[buttonState].textTransform ?? 'uppercase',
-            fontWeight: style[buttonState].fontWeight ?? 600,
+            textTransform: styleSpec[buttonState].textTransform ?? 'uppercase',
+            fontWeight: styleSpec[buttonState].fontWeight ?? 600,
             fontSize: calculatedFontSize,
-            ...style.container,
+            ...styleSpec.container,
             backgroundColor: `${
-              style[buttonState].color ?? 'transparent'
+              styleSpec[buttonState].color ?? 'transparent'
             } !important`,
-            borderRadius: style[buttonState].border?.radius ?? 5,
-            outlineStyle: style[buttonState].border?.style ?? 'none',
-            outlineColor: style[buttonState].border?.color,
-            outlineWidth: style[buttonState].border?.width,
-            outlineOffset: style[buttonState].border?.width
-              ? -1 * style[buttonState].border?.width!
+            borderRadius: styleSpec[buttonState].border?.radius ?? 5,
+            outlineStyle: styleSpec[buttonState].border?.style ?? 'none',
+            outlineColor: styleSpec[buttonState].border?.color,
+            outlineWidth: styleSpec[buttonState].border?.width,
+            outlineOffset: styleSpec[buttonState].border?.width
+              ? -1 * styleSpec[buttonState].border?.width!
               : undefined,
             border: 'none',
           },
-          style[buttonState].dropShadow && {
-            boxShadow: `${style[buttonState].dropShadow?.offsetX} ${style[buttonState].dropShadow?.offsetY} ${style[buttonState].dropShadow?.blurRadius} ${style[buttonState].dropShadow?.color}`,
+          styleSpec[buttonState].dropShadow && {
+            boxShadow: `${styleSpec[buttonState].dropShadow?.offsetX} ${styleSpec[buttonState].dropShadow?.offsetY} ${styleSpec[buttonState].dropShadow?.blurRadius} ${styleSpec[buttonState].dropShadow?.color}`,
           },
         ]}
         onMouseDown={() => {

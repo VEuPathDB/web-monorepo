@@ -5,11 +5,7 @@ import useUITheme from '../../theming/useUITheme';
 import { gray } from '../../../definitions/colors';
 import SwissArmyButton, { SwissArmyButtonProps } from '../SwissArmyButton';
 
-import { ButtonStyleSpec } from '..';
-
-export type MesaButtonProps = Omit<SwissArmyButtonProps, 'stylePreset'> & {
-  styleOverrides: Partial<ButtonStyleSpec>;
-};
+import { ButtonStyleSpec, SwissArmyButtonVariantProps } from '..';
 
 /** Basic button with a variety of customization options. */
 export default function MesaButton({
@@ -20,7 +16,7 @@ export default function MesaButton({
   icon = () => null,
   themeRole,
   styleOverrides = {},
-}: MesaButtonProps) {
+}: SwissArmyButtonVariantProps) {
   const defaultStyle: ButtonStyleSpec = {
     default: {
       color: gray[100],
@@ -148,7 +144,7 @@ export default function MesaButton({
 
   return (
     <SwissArmyButton
-      style={finalStyle}
+      styleSpec={finalStyle}
       text={text}
       onPress={onPress}
       tooltip={tooltip}

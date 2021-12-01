@@ -3,12 +3,8 @@ import { useMemo } from 'react';
 
 import useUITheme from '../../theming/useUITheme';
 import { blue, gray } from '../../../definitions/colors';
-import SwissArmyButton, { SwissArmyButtonProps } from '../SwissArmyButton';
-import { ButtonStyleSpec } from '../';
-
-export type FilledButtonProps = Omit<SwissArmyButtonProps, 'stylePreset'> & {
-  styleOverrides: Partial<ButtonStyleSpec>;
-};
+import SwissArmyButton from '../SwissArmyButton';
+import { ButtonStyleSpec, SwissArmyButtonVariantProps } from '../';
 
 /** Basic button with a variety of customization options. */
 export default function FilledButton({
@@ -19,7 +15,7 @@ export default function FilledButton({
   icon = () => null,
   themeRole,
   styleOverrides = {},
-}: FilledButtonProps) {
+}: SwissArmyButtonVariantProps) {
   const defaultStyle: ButtonStyleSpec = {
     default: {
       color: blue[500],
@@ -88,7 +84,7 @@ export default function FilledButton({
 
   return (
     <SwissArmyButton
-      style={finalStyle}
+      styleSpec={finalStyle}
       text={text}
       onPress={onPress}
       tooltip={tooltip}
