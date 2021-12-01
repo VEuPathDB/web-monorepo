@@ -1185,7 +1185,7 @@ const FacetedTemplate: Story<FacetedStoryProps> = ({ data, props }) => (
   <FacetedPlot<XYPlotData, XYPlotProps>
     data={data}
     component={XYPlot}
-    props={props}
+    componentProps={props}
   />
 );
 

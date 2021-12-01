@@ -23,8 +23,8 @@ type ComponentWithPlotRef<P> = ComponentType<
 export interface FacetedPlotProps<D, P extends PlotProps<D>> {
   data?: FacetedData<D>;
   component: ComponentWithPlotRef<P>;
-  props: P;
-  modalProps?: P;
+  componentProps: P;
+  modalComponentProps?: P;
   // custom legend prop
   checkedLegendItems?: string[];
 }
@@ -36,9 +36,9 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
   const {
     data,
     component: Component,
-    props: componentProps,
-    modalProps: modalComponentProps,
-    checkedLegendItems: checkedLegendItems,
+    componentProps,
+    modalComponentProps,
+    checkedLegendItems,
   } = props;
   const plotRefs = useRef<FacetedPlotRef>([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -68,59 +68,46 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
         }}
       >
         {data?.facets.map(({ data, label }, index) => {
-          const component = (
-            <Component
-              {...componentProps}
-              ref={(plotInstance) => {
-                if (plotInstance == null) {
-                  delete plotRefs.current[index];
-                } else {
-                  plotRefs.current[index] = plotInstance;
-                }
-              }}
-              key={index}
-              data={data}
-              title={label}
-              displayLegend={false}
-              interactive={false}
-              // pass checkedLegendItems to PlotlyPlot
-              checkedLegendItems={checkedLegendItems}
-              showNoDataOverlay={data == null}
-            />
-          );
+          const sharedProps = {
+            data: data,
+            title: label,
+            // pass checkedLegendItems to PlotlyPlot
+            checkedLegendItems: checkedLegendItems,
+            showNoDataOverlay: data == null,
+          };
 
-          const modalComponent = modalComponentProps && (
-            <Component
-              {...modalComponentProps}
-              // ref={(plotInstance) => {
-              //   if (plotInstance == null) {
-              //     delete plotRefs.current[index];
-              //   } else {
-              //     plotRefs.current[index] = plotInstance;
-              //   }
-              // }}
-              // key={index}
-              data={data}
-              title={label}
-              displayLegend={true}
-              interactive={true}
-              // pass checkedLegendItems to PlotlyPlot
-              checkedLegendItems={checkedLegendItems}
-              showNoDataOverlay={data == null}
-            />
-          );
+          const divProps = modalComponentProps && {
+            onClick: () => {
+              setModalPlot(
+                <Component
+                  {...modalComponentProps}
+                  {...sharedProps}
+                  displayLegend={true}
+                  interactive={true}
+                />
+              );
+              setModalIsOpen(true);
+            },
+            style: { cursor: 'pointer' },
+            title: 'Click to expand',
+          };
 
-          return modalComponentProps ? (
-            <button
-              onClick={() => {
-                setModalPlot(modalComponent);
-                setModalIsOpen(true);
-              }}
-            >
-              {component}
-            </button>
-          ) : (
-            <>{component}</>
+          return (
+            <div {...divProps} key={index}>
+              <Component
+                {...componentProps}
+                {...sharedProps}
+                ref={(plotInstance) => {
+                  if (plotInstance == null) {
+                    delete plotRefs.current[index];
+                  } else {
+                    plotRefs.current[index] = plotInstance;
+                  }
+                }}
+                displayLegend={false}
+                interactive={false}
+              />
+            </div>
           );
         })}
       </div>

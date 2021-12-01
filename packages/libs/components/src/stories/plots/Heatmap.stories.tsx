@@ -96,7 +96,7 @@ const FacetedTemplate: Story<FacetedStoryProps> = ({ data, props }) => (
   <FacetedPlot<HeatmapData, HeatmapProps>
     data={data}
     component={Heatmap}
-    props={props}
+    componentProps={props}
   />
 );
 

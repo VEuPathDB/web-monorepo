@@ -540,7 +540,7 @@ const FacetedTemplate: Story<FacetedStoryProps> = ({ data, props }) => (
   <FacetedPlot<HistogramData, HistogramProps>
     data={data}
     component={Histogram}
-    props={props}
+    componentProps={props}
   />
 );
 

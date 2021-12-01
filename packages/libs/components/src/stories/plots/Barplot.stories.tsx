@@ -104,8 +104,8 @@ const FacetedTemplate: Story<FacetedStoryProps> = ({
   <FacetedPlot<BarplotData, BarplotProps>
     data={data}
     component={Barplot}
-    props={props}
-    modalProps={modalProps}
+    componentProps={props}
+    modalComponentProps={modalProps}
   />
 );
 

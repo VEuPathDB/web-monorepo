@@ -113,7 +113,7 @@ const FacetedTemplate: Story<FacetedStoryProps> = ({ data, props }) => (
   <FacetedPlot<MosaicData, MosaicPlotProps>
     data={data}
     component={MosaicPlot}
-    props={props}
+    componentProps={props}
   />
 );
 

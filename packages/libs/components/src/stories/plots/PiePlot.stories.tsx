@@ -220,7 +220,7 @@ const FacetedTemplate: Story<FacetedStoryProps> = ({ data, props }) => (
   <FacetedPlot<PiePlotData, PiePlotProps>
     data={data}
     component={PiePlot}
-    props={props}
+    componentProps={props}
   />
 );
 

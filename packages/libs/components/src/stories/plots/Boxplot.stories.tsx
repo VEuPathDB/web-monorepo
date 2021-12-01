@@ -429,7 +429,7 @@ const FacetedTemplate: Story<FacetedStoryProps> = ({ data, props }) => (
   <FacetedPlot<BoxplotData, BoxplotProps>
     data={data}
     component={Boxplot}
-    props={props}
+    componentProps={props}
   />
 );
 
