@@ -1,4 +1,5 @@
 import { CSSProperties } from 'react';
+import { SwissArmyButtonProps } from './SwissArmyButton';
 
 export type ButtonStyleSpec = {
   container?: React.CSSProperties;
@@ -34,3 +35,16 @@ type ButtonStateStyleSpec = {
     color: string;
   };
 };
+
+// Type definition for buttons that derive from SwissArmyButton
+export type SwissArmyButtonVariantProps = Omit<
+  SwissArmyButtonProps,
+  'styleSpec'
+> & {
+  styleOverrides?: Partial<ButtonStyleSpec>;
+};
+
+export { default as FilledButton } from './FilledButton';
+export { default as FloatingButton } from './FloatingButton';
+export { default as MesaButton } from './MesaButton';
+export { default as OutlinedButton } from './OutlinedButton';

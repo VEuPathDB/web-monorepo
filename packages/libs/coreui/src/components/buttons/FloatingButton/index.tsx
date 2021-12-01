@@ -2,13 +2,9 @@ import { merge } from 'lodash';
 import { useMemo } from 'react';
 
 import useUITheme from '../../theming/useUITheme';
-import { blue, cyan, gray } from '../../../definitions/colors';
-import SwissArmyButton, { SwissArmyButtonProps } from '../SwissArmyButton';
-import { ButtonStyleSpec } from '../';
-
-export type FloatingButtonProps = Omit<SwissArmyButtonProps, 'stylePreset'> & {
-  styleOverrides: Partial<ButtonStyleSpec>;
-};
+import { cyan } from '../../../definitions/colors';
+import SwissArmyButton from '../SwissArmyButton';
+import { ButtonStyleSpec, SwissArmyButtonVariantProps } from '../';
 
 /** Basic button with a variety of customization options. */
 export default function FloatingButton({
@@ -19,7 +15,7 @@ export default function FloatingButton({
   icon = () => null,
   themeRole,
   styleOverrides = {},
-}: FloatingButtonProps) {
+}: SwissArmyButtonVariantProps) {
   const defaultStyle: ButtonStyleSpec = {
     default: {
       color: 'transparent',
@@ -79,7 +75,7 @@ export default function FloatingButton({
 
   return (
     <SwissArmyButton
-      style={finalStyle}
+      styleSpec={finalStyle}
       text={text}
       onPress={onPress}
       tooltip={tooltip}
