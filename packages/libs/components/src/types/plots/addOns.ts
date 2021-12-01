@@ -129,7 +129,7 @@ export const ColorPaletteDark: string[] = [
 ];
 
 /** Sequential gradient colormap. Useful for coloring based on a continuous variable that is always positive, for example. */
-/** Using oslo from  */
+/** Using oslo from https://www.fabiocrameri.ch/colourmaps/ */
 export const SequentialGradientColormap: string[] = [
   'rgb(0, 1, 0)',
   'rgb(11, 25, 39)',
@@ -141,7 +141,7 @@ export const SequentialGradientColormap: string[] = [
   'rgb(144, 166, 201)',
   'rgb(176, 185, 200)',
   'rgb(215, 215, 216)',
-  // 'rgb(255, 255, 255)',
+  // 'rgb(255, 255, 255)',  Removing final, lightest, color for best visibility
 ];
 
 /** truncated axis flags */

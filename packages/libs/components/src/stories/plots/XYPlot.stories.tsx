@@ -138,53 +138,53 @@ const dataSetGradientColorscale: VEuPathDBScatterPlotData = {
         ],
         // variable mapped to color (same as seriesX for easier checking the colormap)
         seriesGradientColorscale: [
-          '0.58',
-          '0.54',
-          '0.43',
-          '0.86',
-          '1.19',
-          '1.47',
-          '0.98',
-          '1.36',
-          '0.58',
-          '0.82',
-          '0.77',
-          '1.22',
-          '2.21',
-          '0.46',
-          '1.55',
-          '1.38',
-          '0.98',
-          '1.4',
-          '1.29',
-          '1.3',
-          '1.56',
-          '1.73',
-          '1.48',
-          '1.38',
-          '1.1',
-          '1.14',
-          '0.84',
-          '1.12',
-          '1.07',
-          '1.1',
-          '0.73',
-          '0.86',
-          '1.16',
-          '1.02',
-          '0.77',
-          '1.04',
-          '0.57',
-          '0.08',
-          '0.2',
-          '0.4',
-          '0.23',
-          '0.13',
-          '-0.51',
           '0',
-          '-0.35',
-          '0.21',
-          '-0.08',
+          '1',
+          '2',
+          '3',
+          '4',
+          '5',
+          '6',
+          '7',
+          '8',
+          '9',
+          '10',
+          '11',
+          '12',
+          '13',
+          '14',
+          '15',
+          '16',
+          '17',
+          '18',
+          '19',
+          '20',
+          '21',
+          '22',
+          '23',
+          '24',
+          '25',
+          '26',
+          '27',
+          '28',
+          '29',
+          '30',
+          '31',
+          '32',
+          '33',
+          '34',
+          '35',
+          '36',
+          '37',
+          '38',
+          '39',
+          '40',
+          '41',
+          '42',
+          '43',
+          '44',
+          '46',
+          '47',
         ],
       },
     ],
@@ -1046,28 +1046,11 @@ function processInputData<T extends number | string>(
     '23, 190, 207', //'#17becf'   // blue-teal
   ];
 
-  // gradient colormap
-  const gradientColormapStopPoints = [
-    'rgb(26, 12, 101)',
-    'rgb(33, 46, 124)',
-    'rgb(39, 77, 145)',
-    'rgb(68, 131, 167)',
-    'rgb(49, 105, 159)',
-    'rgb(102, 153, 164)',
-    'rgb(141, 163, 152)',
-    'rgb(179, 167, 139)',
-    'rgb(223, 183, 148)',
-    'rgb(253, 217, 197)',
-    'rgb(255, 243, 243)',
-  ];
-
   // Craete colormap for series. Maps [0, 1] to gradient colormap using Lab interpolation
   const gradientColorscaleMap = scaleLinear<string>()
-    .domain(range(0, 1, 1.0 / 9))
+    .domain(range(0, 1, 1.0 / (SequentialGradientColormap.length - 1)))
     .range(SequentialGradientColormap)
     .interpolate(interpolateLab);
-
-  console.log(gradientColorscaleMap(0));
 
   // set dataSetProcess as any
   let dataSetProcess: any = [];
@@ -1077,9 +1060,9 @@ function processInputData<T extends number | string>(
     // initialize seriesX/Y
     let seriesX = [];
     let seriesY = [];
+
     let seriesGradientColorscale = [];
-    let normalize;
-    let normalizedSeriesGradientColorscale = [];
+    let gradientMarkerColors = [];
 
     // series is for scatter plot
     if (el.seriesX && el.seriesY) {
@@ -1116,7 +1099,7 @@ function processInputData<T extends number | string>(
 
         seriesGradientColorscale = el.seriesGradientColorscale.map(Number);
         // let myrange : number[] | string[] = extent(seriesGradientColorscale);
-        console.log(seriesGradientColorscale);
+
         overlayMin = lte(overlayMin, min(seriesGradientColorscale))
           ? overlayMin
           : (min(seriesGradientColorscale) as number);
@@ -1124,18 +1107,20 @@ function processInputData<T extends number | string>(
           ? overlayMax
           : (max(seriesGradientColorscale) as number);
 
+        // Logic for choosing diverging vs sequential etc should go here. Current logic is incorrect btw
+        let normalizedRange: number[] = seriesGradientColorscale.some(
+          (a: number) => a < 0
+        )
+          ? [-1, 1]
+          : [0, 1];
         const normalize = scaleLinear()
           .domain([overlayMin, overlayMax])
-          .range([0, 1]);
+          .range(normalizedRange);
 
-        normalizedSeriesGradientColorscale = seriesGradientColorscale.map(
-          normalize
+        gradientMarkerColors = seriesGradientColorscale.map((a: number) =>
+          gradientColorscaleMap(normalize(a))
         );
       }
-
-      console.log(
-        normalizedSeriesGradientColorscale.map(gradientColorscaleMap)
-      );
 
       // check if this Y array consists of numbers & add type assertion
       if (index === 0) {
@@ -1172,7 +1157,7 @@ function processInputData<T extends number | string>(
           color: defineColors
             ? 'rgba(' + markerColors[index] + ',0.7)'
             : seriesGradientColorscale?.length > 0
-            ? normalizedSeriesGradientColorscale.map(gradientColorscaleMap)
+            ? gradientMarkerColors
             : undefined,
           // size: 6,
           // line: { color: 'rgba(' + markerColors[index] + ',0.7)', width: 2 },
