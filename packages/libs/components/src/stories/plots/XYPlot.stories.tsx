@@ -5,7 +5,10 @@ import { min, max, lte, gte } from 'lodash';
 import { Story, Meta } from '@storybook/react/types-6-0';
 // test to use RadioButtonGroup directly instead of XYPlotControls
 import RadioButtonGroup from '../../components/widgets/RadioButtonGroup';
-import { SequentialGradientColormap } from '../../types/plots/addOns';
+import {
+  SequentialGradientColormap,
+  DivergingGradientColormap,
+} from '../../types/plots/addOns';
 import { scaleLinear } from 'd3-scale';
 import { interpolateLab, extent, range } from 'd3';
 
@@ -33,7 +36,7 @@ interface VEuPathDBScatterPlotData {
 }
 
 // data with 'seriesGradientColorscale' column (for Gradient Colormap)
-const dataSetGradientColorscale: VEuPathDBScatterPlotData = {
+const dataSetSequentialGradient: VEuPathDBScatterPlotData = {
   scatterplot: {
     data: [
       {
@@ -185,6 +188,165 @@ const dataSetGradientColorscale: VEuPathDBScatterPlotData = {
           '44',
           '46',
           '47',
+        ],
+      },
+    ],
+  },
+};
+
+// data with 'seriesGradientColorscale' column (for Gradient Colormap)
+const dataSetDivergingGradient: VEuPathDBScatterPlotData = {
+  scatterplot: {
+    data: [
+      {
+        // scatter plot with gradient colorscale
+        seriesX: [
+          '0',
+          '1',
+          '2',
+          '3',
+          '4',
+          '5',
+          '6',
+          '7',
+          '8',
+          '9',
+          '10',
+          '11',
+          '12',
+          '13',
+          '14',
+          '15',
+          '16',
+          '17',
+          '18',
+          '19',
+          '20',
+          '21',
+          '22',
+          '23',
+          '24',
+          '25',
+          '26',
+          '27',
+          '28',
+          '29',
+          '30',
+          '31',
+          '32',
+          '33',
+          '34',
+          '35',
+          '36',
+          '37',
+          '38',
+          '39',
+          '40',
+          '41',
+          '42',
+          '43',
+          '44',
+          '46',
+          '47',
+        ],
+        seriesY: [
+          '0.58',
+          '0.54',
+          '0.43',
+          '0.86',
+          '1.19',
+          '1.47',
+          '0.98',
+          '1.36',
+          '0.58',
+          '0.82',
+          '0.77',
+          '1.22',
+          '2.21',
+          '0.46',
+          '1.55',
+          '1.38',
+          '0.98',
+          '1.4',
+          '1.29',
+          '1.3',
+          '1.56',
+          '1.73',
+          '1.48',
+          '1.38',
+          '1.1',
+          '1.14',
+          '0.84',
+          '1.12',
+          '1.07',
+          '1.1',
+          '0.73',
+          '0.86',
+          '1.16',
+          '1.02',
+          '0.77',
+          '1.04',
+          '0.57',
+          '0.08',
+          '0.2',
+          '0.4',
+          '0.23',
+          '0.13',
+          '-0.51',
+          '0',
+          '-0.35',
+          '0.21',
+          '-0.08',
+        ],
+        // variable mapped to color (same as seriesX for easier checking the colormap)
+        seriesGradientColorscale: [
+          '0.58',
+          '0.54',
+          '0.43',
+          '0.86',
+          '1.19',
+          '1.47',
+          '0.98',
+          '1.36',
+          '0.58',
+          '0.82',
+          '0.77',
+          '1.22',
+          '2.21',
+          '0.46',
+          '1.55',
+          '1.38',
+          '0.98',
+          '1.4',
+          '1.29',
+          '1.3',
+          '1.56',
+          '1.73',
+          '1.48',
+          '1.38',
+          '1.1',
+          '1.14',
+          '0.84',
+          '1.12',
+          '1.07',
+          '1.1',
+          '0.73',
+          '0.86',
+          '1.16',
+          '1.02',
+          '0.77',
+          '1.04',
+          '0.57',
+          '0.08',
+          '0.2',
+          '0.4',
+          '0.23',
+          '0.13',
+          '-0.51',
+          '0',
+          '-0.35',
+          '0.21',
+          '-0.08',
         ],
       },
     ],
@@ -769,8 +931,17 @@ const { dataSetProcess: dataSetProcessDefaultColors } = processInputData(
   false
 );
 
-const { dataSetProcess: dataSetProcessGradientColorscale } = processInputData(
-  dataSetGradientColorscale,
+const { dataSetProcess: dataSetProcessSequentialGradient } = processInputData(
+  dataSetSequentialGradient,
+  'scatterplot',
+  'markers',
+  independentValueType,
+  dependentValueType,
+  false
+);
+
+const { dataSetProcess: dataSetProcessDivergingGradient } = processInputData(
+  dataSetDivergingGradient,
   'scatterplot',
   'markers',
   independentValueType,
@@ -868,10 +1039,39 @@ export const MultipleDataDefaultColors = () => {
   );
 };
 
-export const GradientColormap = () => {
+export const GradientColormapSequential = () => {
   return (
     <XYPlot
-      data={dataSetProcessGradientColorscale}
+      data={dataSetProcessSequentialGradient}
+      independentAxisLabel={independentAxisLabel}
+      dependentAxisLabel={dependentAxisLabel}
+      // not to use independentAxisRange
+      // independentAxisRange={[xMin, xMax]}
+      dependentAxisRange={{ min: yMin, max: yMax }}
+      title={plotTitle}
+      // width height is replaced with containerStyles
+      containerStyles={{
+        width: plotWidth,
+        height: plotHeight,
+      }}
+      // staticPlot is changed to interactive
+      interactive={true}
+      // check enable/disable legend and built-in controls
+      displayLegend={true}
+      displayLibraryControls={true}
+      // margin={{l: 50, r: 10, b: 20, t: 10}}
+      // add legend title
+      legendTitle={'legend title example'}
+      independentValueType={independentValueType}
+      dependentValueType={dependentValueType}
+    />
+  );
+};
+
+export const GradientColormapDiverging = () => {
+  return (
+    <XYPlot
+      data={dataSetProcessDivergingGradient}
       independentAxisLabel={independentAxisLabel}
       dependentAxisLabel={dependentAxisLabel}
       // not to use independentAxisRange
@@ -1047,9 +1247,26 @@ function processInputData<T extends number | string>(
   ];
 
   // Craete colormap for series. Maps [0, 1] to gradient colormap using Lab interpolation
-  const gradientColorscaleMap = scaleLinear<string>()
-    .domain(range(0, 1, 1.0 / (SequentialGradientColormap.length - 1)))
+  const gradientSequentialColorscaleMap = scaleLinear<string>()
+    .domain(
+      range(SequentialGradientColormap.length).map(
+        (a: number) => a / (SequentialGradientColormap.length - 1)
+      )
+    )
     .range(SequentialGradientColormap)
+    .interpolate(interpolateLab);
+
+  // Create diverging colormap. Maps [-1, 1] to gradient colormap using Lab interpolation
+  const divergingColormapSteps = Math.floor(
+    DivergingGradientColormap.length / 2
+  );
+  const gradientDivergingColorscaleMap = scaleLinear<string>()
+    .domain(
+      range(-divergingColormapSteps, divergingColormapSteps + 1).map(
+        (a: number) => a / divergingColormapSteps
+      )
+    )
+    .range(DivergingGradientColormap)
     .interpolate(interpolateLab);
 
   // set dataSetProcess as any
@@ -1107,19 +1324,34 @@ function processInputData<T extends number | string>(
           ? overlayMax
           : (max(seriesGradientColorscale) as number);
 
-        // Logic for choosing diverging vs sequential etc should go here. Current logic is incorrect btw
-        let normalizedRange: number[] = seriesGradientColorscale.some(
-          (a: number) => a < 0
-        )
-          ? [-1, 1]
-          : [0, 1];
-        const normalize = scaleLinear()
-          .domain([overlayMin, overlayMax])
-          .range(normalizedRange);
+        // Choose gradient colorscale type
+        const normalize = scaleLinear();
 
-        gradientMarkerColors = seriesGradientColorscale.map((a: number) =>
-          gradientColorscaleMap(normalize(a))
-        );
+        if (
+          seriesGradientColorscale.some((a: number) => a < 0) &&
+          seriesGradientColorscale.some((a: number) => a < 0)
+        ) {
+          // Diverging colorscale, assuming 0 is midpoint
+          const maxAbsOverlay =
+            overlayMin > overlayMax ? overlayMin : overlayMax;
+          normalize.domain([-maxAbsOverlay, maxAbsOverlay]).range([-1, 1]);
+          gradientMarkerColors = seriesGradientColorscale.map((a: number) =>
+            gradientDivergingColorscaleMap(normalize(a))
+          );
+        } else if (seriesGradientColorscale.some((a: number) => a < 0)) {
+          // Sequential backwards
+          normalize.domain([overlayMax, overlayMin]).range([0, 1]);
+          gradientMarkerColors = seriesGradientColorscale.map((a: number) =>
+            gradientSequentialColorscaleMap(normalize(a))
+          );
+        } else {
+          // Sequential
+          normalize.domain([overlayMin, overlayMax]).range([0, 1]);
+
+          gradientMarkerColors = seriesGradientColorscale.map((a: number) =>
+            gradientSequentialColorscaleMap(normalize(a))
+          );
+        }
       }
 
       // check if this Y array consists of numbers & add type assertion
@@ -1134,8 +1366,6 @@ function processInputData<T extends number | string>(
           lte(yMin, min(seriesY)) ? yMin : min(seriesY);
         yMax = gte(yMax, max(seriesY)) ? yMax : max(seriesY);
       }
-
-      // console.log(gradientColorscaleMap(0.5));
 
       // add scatter data considering input options
       dataSetProcess.push({
