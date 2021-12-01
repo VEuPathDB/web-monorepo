@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/core-components",
-  "version": "0.2.46",
+  "version": "0.2.47",
   "author": "Michael Dunn <mdunn4@nd.edu>",
   "description": "Core components and style definitions for VEuPath applications.",
   "private": false,
