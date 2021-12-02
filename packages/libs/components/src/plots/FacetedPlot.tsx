@@ -80,10 +80,10 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
             onClick: () => {
               setModalPlot(
                 <Component
-                  {...modalComponentProps}
                   {...sharedProps}
                   displayLegend={true}
                   interactive={true}
+                  {...modalComponentProps}
                 />
               );
               setModalIsOpen(true);
@@ -95,7 +95,6 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
           return (
             <div {...divProps} key={index}>
               <Component
-                {...componentProps}
                 {...sharedProps}
                 ref={(plotInstance) => {
                   if (plotInstance == null) {
@@ -106,6 +105,7 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
                 }}
                 displayLegend={false}
                 interactive={false}
+                {...componentProps}
               />
             </div>
           );
