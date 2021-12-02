@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { IconAlt as Icon } from '@veupathdb/wdk-client/lib/Components';
 import CardList from './CardList';
 
@@ -34,7 +34,7 @@ export default function Showcase(props) {
   const [list, setList] = React.useState(loadItems == null ? items : null);
   const [error, setError] = React.useState();
   const { wdkService } = React.useContext(WdkDepdendenciesContext);
-  const analysisClient = AnalysisClient.getClient(edaServiceUrl, wdkService);
+  const analysisClient = useMemo(() => new AnalysisClient({ baseUrl: edaServiceUrl }, wdkService), [edaServiceUrl, wdkService]);
 
   React.useEffect(() => {
     if (loadItems) {
