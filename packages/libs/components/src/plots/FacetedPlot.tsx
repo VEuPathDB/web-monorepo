@@ -112,11 +112,20 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
         })}
       </div>
       {modalComponentProps && (
-        <FullScreenModal
-          visible={modalIsOpen}
-          // onClose={() => setModalIsOpen(false)}
-        >
-          <button onClick={() => setModalIsOpen(false)}>Close</button>
+        <FullScreenModal visible={modalIsOpen}>
+          <button
+            onClick={() => setModalIsOpen(false)}
+            style={{
+              position: 'absolute',
+              top: 30,
+              right: 30,
+              backgroundColor: 'white',
+              cursor: 'pointer',
+              border: 'none',
+            }}
+          >
+            <i className="fas fa-times fa-lg"></i>
+          </button>
           {modalPlot}
         </FullScreenModal>
       )}
