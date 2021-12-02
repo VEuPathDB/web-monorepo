@@ -2,18 +2,13 @@ import React from 'react';
 import { Checkbox } from '@material-ui/core';
 import * as ColorMath from 'color-math';
 import { scaleLinear } from 'd3-scale';
-import {
-  SequentialGradientColormap,
-  DivergingGradientColormap,
-} from '../../types/plots/addOns';
-import { interpolateLab, create, axisRight } from 'd3';
-// import {Legend, Swatches} from 'https://observablehq.com/@d3/color-legend';
+import { interpolateLab, create, range } from 'd3';
 
 // set props for custom legend function
 interface PlotLegendGradientProps {
   legendMax: number;
   legendMin: number;
-  gradientColorMap: any;
+  gradientColorMap: string[];
   legendTitle?: string;
   markMidpoint?: boolean;
 }
@@ -28,69 +23,46 @@ export default function PlotLegendGradient({
 
   // set some default sizes
   const legendTextSize = '1.0em';
+  const legendTickSize = '0.8em';
   const gradientBoxHeight = 150;
   const gradientBoxWidth = 20;
+  const gradientBoxMargin = 10;
+  const nTicks = 5;
 
   // Set up gradient (from visual cinnamon)
   // const colorScale = scaleLinear<string>()
   //   .range(gradientColorMap);
 
-  const gradientDivergingColorscaleMap = scaleLinear<string>()
-    .domain([0, 1])
-    .range(SequentialGradientColormap)
-    .interpolate(interpolateLab);
-
-  let svg = create('svg');
-  //Append a defs (for definition) element to your SVG
-  let defs = svg.append('defs');
-
-  //Append a linearGradient element to the defs and give it a unique id
-  let linearGradient = defs.append('linearGradient').attr('id', 'grad1');
-
-  //Vertical gradient
-  linearGradient
-    .attr('x1', '0%')
-    .attr('y1', '0%')
-    .attr('x2', '0%')
-    .attr('y2', '100%');
-
-  //Set the color for the start (0%)
-  linearGradient
-    .append('stop')
-    .attr('offset', '0%')
-    .attr('stop-color', '#ffa474'); //light blue
-
-  //Set the color for the end (100%)
-  linearGradient
-    .append('stop')
-    .attr('offset', '100%')
-    .attr('stop-color', '#8b0000'); //dark blue
-
-  svg
-    .append('rect')
-    .attr('width', 300)
-    .attr('height', 20)
-    .style('fill', 'url(#linear-gradient)');
-  //Append multiple color stops by using D3's data/enter step
-  // linearGradient.selectAll("stop")
-  // .data( colorScale.range() )
-  // .enter().append("stop")
-  // .attr("offset", function(d,i) { return i/(colorScale.range().length-1); })
-  // .attr("stop-color", function(d) { return d; });
-
   // Create gradient stop points
-  const stopPoints = SequentialGradientColormap.map(
-    (color: string, index: number) => {
-      let stopPercentage =
-        (100 * index) / (SequentialGradientColormap.length - 1) + '%';
-      console.log(stopPercentage);
-      return <stop offset={stopPercentage} stopColor={color} />;
-    }
-  );
+  const stopPoints = gradientColorMap.map((color: string, index: number) => {
+    let stopPercentage = (100 * index) / (gradientColorMap.length - 1) + '%';
+    console.log(stopPercentage);
+    return <stop offset={stopPercentage} stopColor={color} />;
+  });
 
   // Create ticks
-  let colorAxisScale = scaleLinear().domain([0, 100]).range([0, 1]);
-  let colorAxis = axisRight(colorAxisScale);
+  const ticks = range(nTicks).map((a: number) => {
+    const location: number = gradientBoxHeight * (a / (nTicks - 1));
+    return (
+      <g className="axisTick">
+        <line
+          x1={gradientBoxWidth + 5}
+          x2={gradientBoxWidth + 8}
+          y1={location + 10}
+          y2={location + 10}
+          stroke="black"
+          stroke-width="1px"
+        ></line>
+        <text
+          x={gradientBoxWidth + 10}
+          y={location + 13}
+          fontSize={legendTickSize}
+        >
+          {(a / (nTicks - 1)) * (legendMax - legendMin) + legendMin}
+        </text>
+      </g>
+    );
+  });
 
   return (
     <>
@@ -110,28 +82,25 @@ export default function PlotLegendGradient({
               ? legendEllipsis(legendTitle, 23)
               : legendTitle}
           </div>
-          <div>
-            {/* Gradient box */}
-            <svg id="gradientLegend">
+          <div style={{ padding: '10px', height: gradientBoxHeight + 20 }}>
+            <svg
+              id="gradientLegend"
+              width="100%"
+              height={gradientBoxHeight + 20}
+              overflow-y="visible"
+            >
               <defs>
                 <linearGradient id="linearGradient" x1="0" x2="0" y1="0" y2="1">
                   {stopPoints}
                 </linearGradient>
               </defs>
               <rect
+                y="10"
                 width={gradientBoxWidth}
                 height={gradientBoxHeight}
                 fill="url(#linearGradient)"
               ></rect>
-              <line
-                x1={gradientBoxWidth + 5}
-                y1="0"
-                x2={gradientBoxWidth + 5}
-                y2={gradientBoxHeight}
-                stroke="black"
-                stroke-width="1px"
-              ></line>
-              {colorAxis}
+              {ticks}
             </svg>
           </div>
         </div>

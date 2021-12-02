@@ -297,11 +297,11 @@ export const ScatterGradientPlotLegend = () => {
         checkedLegendItems={checkedLegendItems}
       /> */}
       <PlotLegendGradient
-        legendMax={0}
-        legendMin={-1}
-        colorScale={SequentialGradientColormap}
+        legendMax={5}
+        legendMin={100}
+        gradientColorMap={SequentialGradientColormap}
         // pass legend title
-        legendTitle={'Age group'}
+        legendTitle={'My super long colormap axis title'}
       />
     </div>
   );
