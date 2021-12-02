@@ -122,8 +122,9 @@ Faceted.args = {
   },
   modalComponentProps: {
     containerStyles: {
-      width: 600,
-      height: 400,
+      width: '100%',
+      height: '100%',
+      margin: 'auto',
     },
   },
 };
