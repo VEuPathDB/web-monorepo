@@ -2,6 +2,10 @@ import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
 import { XYPlotData } from '../types/plots';
 import { Layout } from 'plotly.js';
 import { NumberOrDateRange } from '../types/general';
+import {
+  SequentialGradientColormap,
+  DivergingGradientColormap,
+} from '../types/plots/addOns';
 
 export interface XYPlotProps extends PlotProps<XYPlotData> {
   /** x-axis range: required for confidence interval - not really */

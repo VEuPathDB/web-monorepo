@@ -1334,6 +1334,7 @@ function processInputData<T extends number | string>(
           // Diverging colorscale, assuming 0 is midpoint
           const maxAbsOverlay =
             overlayMin > overlayMax ? overlayMin : overlayMax;
+
           normalize.domain([-maxAbsOverlay, maxAbsOverlay]).range([-1, 1]);
           gradientMarkerColors = seriesGradientColorscale.map((a: number) =>
             gradientDivergingColorscaleMap(normalize(a))
@@ -1347,7 +1348,6 @@ function processInputData<T extends number | string>(
         } else {
           // Sequential
           normalize.domain([overlayMin, overlayMax]).range([0, 1]);
-
           gradientMarkerColors = seriesGradientColorscale.map((a: number) =>
             gradientSequentialColorscaleMap(normalize(a))
           );
