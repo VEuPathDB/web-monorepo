@@ -11,6 +11,7 @@ import {
 } from '../../types/plots/addOns';
 import { scaleLinear } from 'd3-scale';
 import { interpolateLab, extent, range } from 'd3';
+import PlotLegendGradient from '../../components/plotControls/PlotLegendGradient';
 
 export default {
   title: 'Plots/XYPlot',
@@ -1070,30 +1071,39 @@ export const GradientColormapSequential = () => {
 
 export const GradientColormapDiverging = () => {
   return (
-    <XYPlot
-      data={dataSetProcessDivergingGradient}
-      independentAxisLabel={independentAxisLabel}
-      dependentAxisLabel={dependentAxisLabel}
-      // not to use independentAxisRange
-      // independentAxisRange={[xMin, xMax]}
-      dependentAxisRange={{ min: yMin, max: yMax }}
-      title={plotTitle}
-      // width height is replaced with containerStyles
-      containerStyles={{
-        width: plotWidth,
-        height: plotHeight,
-      }}
-      // staticPlot is changed to interactive
-      interactive={true}
-      // check enable/disable legend and built-in controls
-      displayLegend={true}
-      displayLibraryControls={true}
-      // margin={{l: 50, r: 10, b: 20, t: 10}}
-      // add legend title
-      legendTitle={'legend title example'}
-      independentValueType={independentValueType}
-      dependentValueType={dependentValueType}
-    />
+    <div>
+      <XYPlot
+        data={dataSetProcessDivergingGradient}
+        independentAxisLabel={independentAxisLabel}
+        dependentAxisLabel={dependentAxisLabel}
+        // not to use independentAxisRange
+        // independentAxisRange={[xMin, xMax]}
+        dependentAxisRange={{ min: yMin, max: yMax }}
+        title={plotTitle}
+        // width height is replaced with containerStyles
+        containerStyles={{
+          width: plotWidth,
+          height: plotHeight,
+        }}
+        // staticPlot is changed to interactive
+        interactive={true}
+        // check enable/disable legend and built-in controls
+        displayLegend={true}
+        displayLibraryControls={true}
+        // margin={{l: 50, r: 10, b: 20, t: 10}}
+        // add legend title
+        legendTitle={'legend title example'}
+        independentValueType={independentValueType}
+        dependentValueType={dependentValueType}
+      />
+      <PlotLegendGradient
+        legendMin={-5}
+        legendMax={5}
+        gradientColormap={DivergingGradientColormap}
+        nTicks={7}
+        legendTitle="Diverging colormap"
+      />
+    </div>
   );
 };
 

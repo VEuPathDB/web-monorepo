@@ -299,9 +299,10 @@ export const ScatterGradientPlotLegend = () => {
       <PlotLegendGradient
         legendMax={5}
         legendMin={100}
-        gradientColorMap={SequentialGradientColormap}
+        gradientColormap={DivergingGradientColormap}
         // pass legend title
-        legendTitle={'My super long colormap axis title'}
+        legendTitle={'Supercalifragilisticexpialidocious'}
+        nTicks={5}
       />
     </div>
   );
