@@ -1,8 +1,8 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import MosaicPlot, { MosaicPlotProps } from '../../plots/MosaicPlot';
-import { FacetedData, MosaicData } from '../../types/plots';
-import FacetedPlot from '../../plots/FacetedPlot';
+import { FacetedData, MosaicPlotData } from '../../types/plots';
+import FacetedMosaicPlot from '../../plots/facetedPlots/FacetedMosaicPlot';
 
 export default {
   title: 'Plots/Mosaic',
@@ -81,7 +81,7 @@ EmptyDataLoading.args = {
  * FACETING
  */
 
-const facetedData: FacetedData<MosaicData> = {
+const facetedData: FacetedData<MosaicPlotData> = {
   facets: [
     {
       label: '10 bya',
@@ -105,27 +105,39 @@ const facetedData: FacetedData<MosaicData> = {
 };
 
 interface FacetedStoryProps {
-  data: FacetedData<MosaicData>;
-  props: MosaicPlotProps;
+  data: FacetedData<MosaicPlotData>;
+  componentProps: MosaicPlotProps;
+  modalComponentProps: MosaicPlotProps;
 }
 
-const FacetedTemplate: Story<FacetedStoryProps> = ({ data, props }) => (
-  <FacetedPlot<MosaicData, MosaicPlotProps>
+const FacetedTemplate: Story<FacetedStoryProps> = ({
+  data,
+  componentProps,
+  modalComponentProps,
+}) => (
+  <FacetedMosaicPlot
     data={data}
-    component={MosaicPlot}
-    componentProps={props}
+    componentProps={componentProps}
+    modalComponentProps={modalComponentProps}
   />
 );
 
 export const Faceted = FacetedTemplate.bind({});
 Faceted.args = {
   data: facetedData,
-  props: {
+  componentProps: {
     title: 'Atmospheric makeup of planets over time',
     containerStyles: {
       width: 300,
       height: 300,
       border: '1px solid #dadada',
+    },
+  },
+  modalComponentProps: {
+    containerStyles: {
+      width: '100%',
+      height: '100%',
+      margin: 'auto',
     },
   },
 };

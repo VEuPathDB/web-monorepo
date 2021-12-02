@@ -122,6 +122,7 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
               backgroundColor: 'white',
               cursor: 'pointer',
               border: 'none',
+              zIndex: 2000,
             }}
           >
             <i className="fas fa-times fa-lg"></i>

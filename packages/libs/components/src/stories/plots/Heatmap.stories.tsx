@@ -2,7 +2,7 @@ import React from 'react';
 import Heatmap, { HeatmapProps } from '../../plots/Heatmap';
 import { Meta, Story } from '@storybook/react';
 import { FacetedData, HeatmapData } from '../../types/plots';
-import FacetedPlot from '../../plots/FacetedPlot';
+import FacetedHeatmap from '../../plots/facetedPlots/FacetedHeatmap';
 
 export default {
   title: 'Plots/Heatmap',
@@ -89,26 +89,33 @@ const facetedData: FacetedData<HeatmapData> = {
 
 interface FacetedStoryProps {
   data: FacetedData<HeatmapData>;
-  props: HeatmapProps;
+  componentProps: HeatmapProps;
+  modalComponentProps: HeatmapProps;
 }
 
-const FacetedTemplate: Story<FacetedStoryProps> = ({ data, props }) => (
-  <FacetedPlot<HeatmapData, HeatmapProps>
+const FacetedTemplate: Story<FacetedStoryProps> = ({
+  data,
+  componentProps,
+  modalComponentProps,
+}) => (
+  <FacetedHeatmap
     data={data}
-    component={Heatmap}
-    componentProps={props}
+    componentProps={componentProps}
+    modalComponentProps={modalComponentProps}
   />
 );
 
 export const Faceted = FacetedTemplate.bind({});
 Faceted.args = {
   data: facetedData,
-  props: {
+  componentProps: {
     title: 'Number of children vs Number of pets (faceted)',
+  },
+  modalComponentProps: {
     containerStyles: {
-      width: 300,
-      height: 300,
-      border: '1px solid #dadada',
+      width: '100%',
+      height: '100%',
+      margin: 'auto',
     },
   },
 };

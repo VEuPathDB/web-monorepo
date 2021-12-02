@@ -2,7 +2,7 @@ import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import Boxplot, { BoxplotProps } from '../../plots/Boxplot';
 import { FacetedData, BoxplotData } from '../../types/plots';
-import FacetedPlot from '../../plots/FacetedPlot';
+import FacetedBoxplot from '../../plots/facetedPlots/FacetedBoxplot';
 
 export default {
   title: 'Plots/Boxplot',
@@ -422,26 +422,38 @@ const facetedData: FacetedData<BoxplotData> = {
 
 interface FacetedStoryProps {
   data: FacetedData<BoxplotData>;
-  props: BoxplotProps;
+  componentProps: BoxplotProps;
+  modalComponentProps: BoxplotProps;
 }
 
-const FacetedTemplate: Story<FacetedStoryProps> = ({ data, props }) => (
-  <FacetedPlot<BoxplotData, BoxplotProps>
+const FacetedTemplate: Story<FacetedStoryProps> = ({
+  data,
+  componentProps,
+  modalComponentProps,
+}) => (
+  <FacetedBoxplot
     data={data}
-    component={Boxplot}
-    componentProps={props}
+    componentProps={componentProps}
+    modalComponentProps={modalComponentProps}
   />
 );
 
 export const Faceted = FacetedTemplate.bind({});
 Faceted.args = {
   data: facetedData,
-  props: {
+  componentProps: {
     title: 'Number of rooms (faceted)',
     containerStyles: {
       width: 300,
       height: 300,
       border: '1px solid #dadada',
+    },
+  },
+  modalComponentProps: {
+    containerStyles: {
+      width: '100%',
+      height: '100%',
+      margin: 'auto',
     },
   },
 };

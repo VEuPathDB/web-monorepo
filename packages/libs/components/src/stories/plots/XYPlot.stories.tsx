@@ -6,7 +6,7 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 // test to use RadioButtonGroup directly instead of XYPlotControls
 import RadioButtonGroup from '../../components/widgets/RadioButtonGroup';
 import { FacetedData, XYPlotData } from '../../types/plots';
-import FacetedPlot from '../../plots/FacetedPlot';
+import FacetedXYPlot from '../../plots/facetedPlots/FacetedXYPlot';
 
 export default {
   title: 'Plots/XYPlot',
@@ -1178,26 +1178,38 @@ const facetedData: FacetedData<XYPlotData> = {
 
 interface FacetedStoryProps {
   data: FacetedData<XYPlotData>;
-  props: XYPlotProps;
+  componentProps: XYPlotProps;
+  modalComponentProps: XYPlotProps;
 }
 
-const FacetedTemplate: Story<FacetedStoryProps> = ({ data, props }) => (
-  <FacetedPlot<XYPlotData, XYPlotProps>
+const FacetedTemplate: Story<FacetedStoryProps> = ({
+  data,
+  componentProps,
+  modalComponentProps,
+}) => (
+  <FacetedXYPlot
     data={data}
-    component={XYPlot}
-    componentProps={props}
+    componentProps={componentProps}
+    modalComponentProps={modalComponentProps}
   />
 );
 
 export const Faceted = FacetedTemplate.bind({});
 Faceted.args = {
   data: facetedData,
-  props: {
+  componentProps: {
     title: 'Faceted XYPlot',
     containerStyles: {
       width: 300,
       height: 300,
       border: '1px solid #dadada',
+    },
+  },
+  modalComponentProps: {
+    containerStyles: {
+      width: '100%',
+      height: '100%',
+      margin: 'auto',
     },
   },
 };

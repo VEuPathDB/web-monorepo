@@ -17,7 +17,7 @@ import {
   AxisTruncationConfig,
   FacetedData,
 } from '../../types/plots';
-import FacetedPlot from '../../plots/FacetedPlot';
+import FacetedHistogram from '../../plots/facetedPlots/FacetedHistogram';
 
 export default {
   title: 'Plots/Histogram',
@@ -533,26 +533,38 @@ const facetedData: FacetedData<HistogramData> = {
 
 interface FacetedStoryProps {
   data: FacetedData<HistogramData>;
-  props: HistogramProps;
+  componentProps: HistogramProps;
+  modalComponentProps: HistogramProps;
 }
 
-const FacetedTemplate: Story<FacetedStoryProps> = ({ data, props }) => (
-  <FacetedPlot<HistogramData, HistogramProps>
+const FacetedTemplate: Story<FacetedStoryProps> = ({
+  data,
+  componentProps,
+  modalComponentProps,
+}) => (
+  <FacetedHistogram
     data={data}
-    component={Histogram}
-    componentProps={props}
+    componentProps={componentProps}
+    modalComponentProps={modalComponentProps}
   />
 );
 
 export const Faceted = FacetedTemplate.bind({});
 Faceted.args = {
   data: facetedData,
-  props: {
+  componentProps: {
     title: 'Penguins',
     containerStyles: {
       width: 300,
       height: 300,
       border: '1px solid #dadada',
+    },
+  },
+  modalComponentProps: {
+    containerStyles: {
+      width: '100%',
+      height: '100%',
+      margin: 'auto',
     },
   },
 };

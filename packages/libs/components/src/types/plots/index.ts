@@ -10,7 +10,7 @@ import { BoxplotData } from './boxplot';
 import { XYPlotData } from './xyplot';
 import { BarplotData } from './barplot';
 import { HeatmapData } from './heatmap';
-import { MosaicData } from './mosaic';
+import { MosaicPlotData } from './mosaicPlot';
 import { BirdsEyePlotData } from './birdseyeplot';
 
 /**
@@ -43,7 +43,7 @@ export type UnionOfPlotDataTypes =
   | XYPlotData
   | BarplotData
   | HeatmapData
-  | MosaicData
+  | MosaicPlotData
   | BirdsEyePlotData;
 
 export * from './addOns';
@@ -55,5 +55,5 @@ export * from './boxplot';
 export * from './xyplot';
 export * from './barplot';
 export * from './heatmap';
-export * from './mosaic';
+export * from './mosaicPlot';
 export * from './birdseyeplot';

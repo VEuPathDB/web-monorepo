@@ -2,7 +2,7 @@ import { Story } from '@storybook/react/types-6-0';
 
 import PiePlot, { PiePlotProps } from '../../plots/PiePlot';
 import { FacetedData, PiePlotData } from '../../types/plots';
-import FacetedPlot from '../../plots/FacetedPlot';
+import FacetedPiePlot from '../../plots/facetedPlots/FacetedPiePlot';
 import {
   DARK_GRAY,
   DARK_GREEN,
@@ -213,26 +213,38 @@ const facetedData: FacetedData<PiePlotData> = {
 
 interface FacetedStoryProps {
   data: FacetedData<PiePlotData>;
-  props: PiePlotProps;
+  componentProps: PiePlotProps;
+  modalComponentProps: PiePlotProps;
 }
 
-const FacetedTemplate: Story<FacetedStoryProps> = ({ data, props }) => (
-  <FacetedPlot<PiePlotData, PiePlotProps>
+const FacetedTemplate: Story<FacetedStoryProps> = ({
+  data,
+  componentProps,
+  modalComponentProps,
+}) => (
+  <FacetedPiePlot
     data={data}
-    component={PiePlot}
-    componentProps={props}
+    componentProps={componentProps}
+    modalComponentProps={modalComponentProps}
   />
 );
 
 export const Faceted = FacetedTemplate.bind({});
 Faceted.args = {
   data: facetedData,
-  props: {
+  componentProps: {
     title: 'indoor and outdoor pets',
     containerStyles: {
       width: 300,
       height: 300,
       border: '1px solid #dadada',
+    },
+  },
+  modalComponentProps: {
+    containerStyles: {
+      width: '100%',
+      height: '100%',
+      margin: 'auto',
     },
   },
 };

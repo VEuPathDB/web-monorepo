@@ -5,7 +5,7 @@ import {
   makePlotlyPlotComponent,
   PlotProps,
 } from './PlotlyPlot';
-import { MosaicData } from '../types/plots';
+import { MosaicPlotData } from '../types/plots';
 import { PlotParams } from 'react-plotly.js';
 import _ from 'lodash';
 // util functions for handling long tick labels with ellipsis
@@ -14,7 +14,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { PlotSpacingDefault } from '../types/plots/addOns';
 import { Layout } from 'plotly.js';
 
-export interface MosaicPlotProps extends PlotProps<MosaicData> {
+export interface MosaicPlotProps extends PlotProps<MosaicPlotData> {
   /** label for independent axis */
   independentAxisLabel?: string;
   /** label for dependent axis */
@@ -24,7 +24,7 @@ export interface MosaicPlotProps extends PlotProps<MosaicData> {
   showColumnLabels?: boolean;
 }
 
-export const EmptyMosaicData: MosaicData = {
+export const EmptyMosaicData: MosaicPlotData = {
   values: [[]],
   independentLabels: [],
   dependentLabels: [],
@@ -127,11 +127,12 @@ const MosaicPlot = makePlotlyPlotComponent(
         maxIndependentTickLabelLength
       );
       // Subtraction at end is due to x-axis automargin shrinking the plot
-      const plotHeight =
+      let plotHeight =
         containerHeight -
         marginTop -
         marginBottom -
         5 * longestIndependentTickLabelLength;
+      if (!independentAxisLabel) plotHeight -= 20;
       // Calculate the legend trace group gap accordingly
       legendTraceGroupGap =
         ((plotHeight - defaultLegendItemHeight * data.dependentLabels.length) *

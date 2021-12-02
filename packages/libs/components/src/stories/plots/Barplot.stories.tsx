@@ -1,7 +1,6 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
 import Barplot, { BarplotProps } from '../../plots/Barplot';
 import { FacetedData, BarplotData } from '../../types/plots';
-import FacetedPlot from '../../plots/FacetedPlot';
 import FacetedBarplot from '../../plots/facetedPlots/FacetedBarplot';
 
 export default {
