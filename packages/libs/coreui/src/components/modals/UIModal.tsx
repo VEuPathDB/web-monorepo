@@ -76,8 +76,6 @@ export default function UIModal({
   styleOverrides = {},
   children,
 }: UIModalProps) {
-  const [test, setTest] = useState(false);
-
   const theme = useUITheme();
   const componentStyle: UIModalStyleSpec = useMemo(() => {
     const defaultStyle: UIModalStyleSpec = {
@@ -132,7 +130,8 @@ export default function UIModal({
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: gray[400],
+          backgroundColor: gray[500] + '80',
+
           zIndex,
         },
         content: {
@@ -171,7 +170,12 @@ export default function UIModal({
             }}
           />
           <div css={{ position: 'absolute', left: 25, top: 38 }}>
-            <H3 text={title} color='white' additionalStyles={{ margin: 0 }} />
+            <H3
+              text={title}
+              color='white'
+              additionalStyles={{ margin: 0, padding: 0 }}
+              useTheme={false}
+            />
           </div>
         </div>
       )}
