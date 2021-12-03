@@ -31,6 +31,8 @@ export default function FullScreenModal({
       isOpen={visible}
       onAfterOpen={onOpen}
       onAfterClose={onClose}
+      // NOTE: A future improvement would be to properly account for the warning that is displayed when this value is true.
+      ariaHideApp={false}
       style={{
         overlay: {
           position: 'fixed',

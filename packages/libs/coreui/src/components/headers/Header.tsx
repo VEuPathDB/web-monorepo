@@ -52,7 +52,7 @@ export default function Header({
     <Header
       css={[
         styles.typography[size],
-        color === undefined && { color: gray[700] },
+        color === undefined ? { color: gray[700] } : { color },
         themeStyles,
         underline && { textDecoration: 'underline' },
         { textTransform, ...additionalStyles },

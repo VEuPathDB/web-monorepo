@@ -1,10 +1,10 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
 
-import { gray } from '../definitions/colors';
+import { gray } from '../../definitions/colors';
 import FullScreenModal, {
   FullScreenModalProps,
-} from '../components/modals/FullScreenModal';
-import { secondaryFont } from '../styleDefinitions/typography';
+} from '../../components/modals/FullScreenModal';
+import { secondaryFont } from '../../styleDefinitions/typography';
 
 export default {
   title: 'Overlays/Modals',
