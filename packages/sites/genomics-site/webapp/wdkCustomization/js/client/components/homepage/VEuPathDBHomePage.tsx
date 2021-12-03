@@ -913,10 +913,7 @@ const useHeaderMenuItems = (
           key: 'user-doc',
           display: 'Downloadable User documentation',
           type: 'externalLink',
-          url: makeExternalStaticPageUrl(
-                 communitySite,
-                 '/documents/VEuPathDB_User_Documentation.pdf'
-               )
+          url: '/reports/VEuPathDB_User_Documentation.pdf'
         }
       ]
     },
