@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import Histogram from '../../plots/Histogram';
 import PlotLegend from '../../components/plotControls/PlotLegend';
-import PlotLegendGradient from '../../components/plotControls/PlotLegendGradient';
+import PlotGradientLegend from '../../components/plotControls/PlotGradientLegend';
 import { HistogramData } from '../../types/plots';
 import {
-  SequentialGradientColormap,
-  DivergingGradientColormap,
+  SequentialGradientColorscale,
+  DivergingGradientColorscale,
 } from '../../types/plots/addOns';
 
 export default {
@@ -267,39 +267,14 @@ export const HistogramPlotLegend = () => {
   );
 };
 
-// custom legend with scatterplot gradient colormap
-export const ScatterGradientPlotLegend = () => {
-  // set useState to track checkbox status
-  const [checkedLegendItems, setCheckedLegendItems] = useState<string[]>(
-    legendItems.map((item) => item.label)
-  );
-
+// custom legend with scatterplot gradient colorscale
+export const GradientPlotLegend = () => {
   return (
     <div>
-      {/* <Histogram
-        data={data}
-        independentAxisLabel={independentAxisLabel}
-        dependentAxisLabel={dependentAxisLabel}
-        title={plotTitle}
-        // width height is replaced with containerStyles
-        containerStyles={{
-          width: plotWidth,
-          height: plotHeight,
-        }}
-        interactive={true}
-        displayLegend={true}
-        displayLibraryControls={true}
-        showValues={false}
-        // margin={{l: 50, r: 10, b: 20, t: 10}}
-        // add legend title
-        legendTitle={'Age group'}
-        // pass checkedLegendItems to PlotlyPlot
-        checkedLegendItems={checkedLegendItems}
-      /> */}
-      <PlotLegendGradient
-        legendMax={5}
-        legendMin={100}
-        gradientColormap={DivergingGradientColormap}
+      <PlotGradientLegend
+        legendMax={100}
+        legendMin={5}
+        gradientColorscale={DivergingGradientColorscale}
         // pass legend title
         legendTitle={'Supercalifragilisticexpialidocious'}
         nTicks={5}

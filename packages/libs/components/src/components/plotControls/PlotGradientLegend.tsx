@@ -5,20 +5,22 @@ import { range } from 'd3';
 interface PlotLegendGradientProps {
   legendMax: number;
   legendMin: number;
-  gradientColormap: string[];
+  gradientColorscale: string[];
   nTicks: number; // MUST be odd!
   legendTitle?: string;
 }
-export default function PlotLegendGradient({
+export default function PlotGradientLegend({
   legendMax,
   legendMin,
-  gradientColormap,
+  gradientColorscale,
   legendTitle,
   nTicks,
 }: PlotLegendGradientProps) {
-  // Calculate ticks here
+  // Decalre constants
   const legendTextSize = '1.0em';
 
+  /** Most of below identical to the current custom legend. Hoping that eventually the GradientColorscaleLegend can work within
+   * the nice custom legend that DK created.  */
   return (
     <>
       {
@@ -38,10 +40,10 @@ export default function PlotLegendGradient({
               : legendTitle}
           </div>
 
-          <GradientColormapLegend
+          <GradientColorscaleLegend
             legendMax={legendMax}
             legendMin={legendMin}
-            gradientColormap={gradientColormap}
+            gradientColorscale={gradientColorscale}
             nTicks={nTicks}
           />
         </div>
@@ -50,49 +52,56 @@ export default function PlotLegendGradient({
   );
 }
 
-// legend ellipsis function for legend title (23) and legend items (20)
+// legend ellipsis function for legend title (23) and legend items (20) (from custom legend work)
 const legendEllipsis = (label: string, ellipsisLength: number) => {
   return (label || '').length > ellipsisLength
     ? (label || '').substring(0, ellipsisLength) + '...'
     : label;
 };
 
-// Make gradient colormap legend into a component so it can be more easily incorporated into DK's custom legend
-function GradientColormapLegend({
+// make gradient colorscale legend into a component so it can be more easily incorporated into DK's custom legend
+function GradientColorscaleLegend({
   legendMax,
   legendMin,
-  gradientColormap,
+  gradientColorscale,
   nTicks,
 }: PlotLegendGradientProps) {
-  // set default values
+  // set constants
   const tickFontSize = '0.8em';
   const gradientBoxHeight = 150;
   const gradientBoxWidth = 20;
   const tickLength = 4;
 
-  // Create gradient stop points
-  const stopPoints = gradientColormap.map((color: string, index: number) => {
-    let stopPercentage = (100 * index) / (gradientColormap.length - 1) + '%';
-    return <stop offset={stopPercentage} stopColor={color} />;
+  // Create gradient stop points from the colorscale
+  const stopPoints = gradientColorscale.map((color: string, index: number) => {
+    let stopPercentage = (100 * index) / (gradientColorscale.length - 1) + '%';
+    return (
+      <stop
+        offset={stopPercentage}
+        stopColor={color}
+        key={'gradientStop' + index}
+      />
+    );
   });
 
   // Create ticks
   const ticks = range(nTicks).map((a: number) => {
-    const location: number = gradientBoxHeight * (a / (nTicks - 1));
+    const location: number =
+      gradientBoxHeight - gradientBoxHeight * (a / (nTicks - 1)); // draw bottom to top
     return (
-      <g className="axisTick" overflow="visible">
+      <g className="axisTick" overflow="visible" key={'gradientTick' + a}>
         <line
           x1={gradientBoxWidth + 3}
           x2={gradientBoxWidth + 3 + tickLength}
           y1={location}
           y2={location}
           stroke="black"
-          stroke-width="1px"
+          strokeWidth="1px"
         ></line>
         <text
           x={gradientBoxWidth + 6 + tickLength}
           y={location}
-          alignment-baseline="middle"
+          alignmentBaseline="middle"
           fontSize={tickFontSize}
         >
           {(a / (nTicks - 1)) * (legendMax - legendMin) + legendMin}
@@ -105,7 +114,7 @@ function GradientColormapLegend({
     <div>
       <svg id="gradientLegend" height={gradientBoxHeight + 20}>
         <defs>
-          <linearGradient id="linearGradient" x1="0" x2="0" y1="0" y2="1">
+          <linearGradient id="linearGradient" x1="0" x2="0" y1="1" y2="0">
             {stopPoints}
           </linearGradient>
         </defs>

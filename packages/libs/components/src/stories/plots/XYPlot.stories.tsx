@@ -6,12 +6,12 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 // test to use RadioButtonGroup directly instead of XYPlotControls
 import RadioButtonGroup from '../../components/widgets/RadioButtonGroup';
 import {
-  SequentialGradientColormap,
-  DivergingGradientColormap,
+  SequentialGradientColorscale,
+  DivergingGradientColorscale,
 } from '../../types/plots/addOns';
 import { scaleLinear } from 'd3-scale';
 import { interpolateLab, extent, range } from 'd3';
-import PlotLegendGradient from '../../components/plotControls/PlotLegendGradient';
+import PlotGradientLegend from '../../components/plotControls/PlotGradientLegend';
 
 export default {
   title: 'Plots/XYPlot',
@@ -36,7 +36,7 @@ interface VEuPathDBScatterPlotData {
   };
 }
 
-// data with 'seriesGradientColorscale' column (for Gradient Colormap)
+// data with 'seriesGradientColorscale' column (for Gradient Colorscale). Sequential (all positive)
 const dataSetSequentialGradient: VEuPathDBScatterPlotData = {
   scatterplot: {
     data: [
@@ -140,7 +140,7 @@ const dataSetSequentialGradient: VEuPathDBScatterPlotData = {
           '0.21',
           '-0.08',
         ],
-        // variable mapped to color (same as seriesX for easier checking the colormap)
+        // variable mapped to color (same as seriesX for easier checking the colorscale)
         seriesGradientColorscale: [
           '0',
           '1',
@@ -195,7 +195,7 @@ const dataSetSequentialGradient: VEuPathDBScatterPlotData = {
   },
 };
 
-// data with 'seriesGradientColorscale' column (for Gradient Colormap)
+// data with 'seriesGradientColorscale' column (for Gradient Colorscale). Diverging (some negative and some positive)
 const dataSetDivergingGradient: VEuPathDBScatterPlotData = {
   scatterplot: {
     data: [
@@ -299,7 +299,7 @@ const dataSetDivergingGradient: VEuPathDBScatterPlotData = {
           '0.21',
           '-0.08',
         ],
-        // variable mapped to color (same as seriesX for easier checking the colormap)
+        // variable mapped to color (same as seriesX for easier checking the colorscale)
         seriesGradientColorscale: [
           '0.58',
           '0.54',
@@ -1040,7 +1040,7 @@ export const MultipleDataDefaultColors = () => {
   );
 };
 
-export const GradientColormapSequential = () => {
+export const GradientColorscaleSequential = () => {
   return (
     <XYPlot
       data={dataSetProcessSequentialGradient}
@@ -1069,7 +1069,7 @@ export const GradientColormapSequential = () => {
   );
 };
 
-export const GradientColormapDiverging = () => {
+export const GradientColorscaleDiverging = () => {
   return (
     <div>
       <XYPlot
@@ -1096,13 +1096,13 @@ export const GradientColormapDiverging = () => {
         independentValueType={independentValueType}
         dependentValueType={dependentValueType}
       />
-      <PlotLegendGradient
-        legendMin={-5}
-        legendMax={5}
-        gradientColormap={DivergingGradientColormap}
+      {/* <PlotGradientLegend
+        legendMin={-3.5}
+        legendMax={3.5}
+        gradientColorscale={DivergingGradientColorscale}
         nTicks={7}
-        legendTitle="Diverging colormap"
-      />
+        legendTitle="Diverging colorscale"
+      /> */}
     </div>
   );
 };
@@ -1256,27 +1256,27 @@ function processInputData<T extends number | string>(
     '23, 190, 207', //'#17becf'   // blue-teal
   ];
 
-  // Craete colormap for series. Maps [0, 1] to gradient colormap using Lab interpolation
+  // Craete colorscale for series. Maps [0, 1] to gradient colorscale using Lab interpolation
   const gradientSequentialColorscaleMap = scaleLinear<string>()
     .domain(
-      range(SequentialGradientColormap.length).map(
-        (a: number) => a / (SequentialGradientColormap.length - 1)
+      range(SequentialGradientColorscale.length).map(
+        (a: number) => a / (SequentialGradientColorscale.length - 1)
       )
     )
-    .range(SequentialGradientColormap)
+    .range(SequentialGradientColorscale)
     .interpolate(interpolateLab);
 
-  // Create diverging colormap. Maps [-1, 1] to gradient colormap using Lab interpolation
-  const divergingColormapSteps = Math.floor(
-    DivergingGradientColormap.length / 2
+  // Create diverging colorscale. Maps [-1, 1] to gradient colorscale using Lab interpolation
+  const divergingColorscaleSteps = Math.floor(
+    DivergingGradientColorscale.length / 2
   );
   const gradientDivergingColorscaleMap = scaleLinear<string>()
     .domain(
-      range(-divergingColormapSteps, divergingColormapSteps + 1).map(
-        (a: number) => a / divergingColormapSteps
+      range(-divergingColorscaleSteps, divergingColorscaleSteps + 1).map(
+        (a: number) => a / divergingColorscaleSteps
       )
     )
-    .range(DivergingGradientColormap)
+    .range(DivergingGradientColorscale)
     .interpolate(interpolateLab);
 
   // set dataSetProcess as any
@@ -1288,8 +1288,9 @@ function processInputData<T extends number | string>(
     let seriesX = [];
     let seriesY = [];
 
+    // initialize gradient colorscale arrays
     let seriesGradientColorscale = [];
-    let gradientMarkerColors = [];
+    let markerColorsGradient = [];
 
     // series is for scatter plot
     if (el.seriesX && el.seriesY) {
@@ -1317,52 +1318,6 @@ function processInputData<T extends number | string>(
       } else {
         seriesY = el.seriesY.map(Number);
       }
-      if (el.seriesGradientColorscale) {
-        // Assuming only allowing continuous numbers for now
-
-        // set variables for overlay ranges
-        let overlayMin: number | undefined = 0;
-        let overlayMax: number | string | undefined = 0;
-
-        seriesGradientColorscale = el.seriesGradientColorscale.map(Number);
-        // let myrange : number[] | string[] = extent(seriesGradientColorscale);
-
-        overlayMin = lte(overlayMin, min(seriesGradientColorscale))
-          ? overlayMin
-          : (min(seriesGradientColorscale) as number);
-        overlayMax = gte(overlayMax, max(seriesGradientColorscale))
-          ? overlayMax
-          : (max(seriesGradientColorscale) as number);
-
-        // Choose gradient colorscale type
-        const normalize = scaleLinear();
-
-        if (
-          seriesGradientColorscale.some((a: number) => a < 0) &&
-          seriesGradientColorscale.some((a: number) => a < 0)
-        ) {
-          // Diverging colorscale, assuming 0 is midpoint
-          const maxAbsOverlay =
-            overlayMin > overlayMax ? overlayMin : overlayMax;
-
-          normalize.domain([-maxAbsOverlay, maxAbsOverlay]).range([-1, 1]);
-          gradientMarkerColors = seriesGradientColorscale.map((a: number) =>
-            gradientDivergingColorscaleMap(normalize(a))
-          );
-        } else if (seriesGradientColorscale.some((a: number) => a < 0)) {
-          // Sequential backwards
-          normalize.domain([overlayMax, overlayMin]).range([0, 1]);
-          gradientMarkerColors = seriesGradientColorscale.map((a: number) =>
-            gradientSequentialColorscaleMap(normalize(a))
-          );
-        } else {
-          // Sequential
-          normalize.domain([overlayMin, overlayMax]).range([0, 1]);
-          gradientMarkerColors = seriesGradientColorscale.map((a: number) =>
-            gradientSequentialColorscaleMap(normalize(a))
-          );
-        }
-      }
 
       // check if this Y array consists of numbers & add type assertion
       if (index === 0) {
@@ -1375,6 +1330,53 @@ function processInputData<T extends number | string>(
           // (yMin !== undefined && seriesY.length !== 0 && yMin < min(seriesY)) ? yMin : min(seriesY);
           lte(yMin, min(seriesY)) ? yMin : min(seriesY);
         yMax = gte(yMax, max(seriesY)) ? yMax : max(seriesY);
+      }
+
+      // assign colors from the gradient colorscale to each point if seriesGradientColorscale exists
+      if (el.seriesGradientColorscale) {
+        // Assuming only allowing numbers for now
+        seriesGradientColorscale = el.seriesGradientColorscale.map(Number);
+
+        // set variables for overlay ranges
+        let overlayMin: number | undefined = 0;
+        let overlayMax: number | string | undefined = 0;
+
+        overlayMin = lte(overlayMin, min(seriesGradientColorscale))
+          ? overlayMin
+          : (min(seriesGradientColorscale) as number);
+        overlayMax = gte(overlayMax, max(seriesGradientColorscale))
+          ? overlayMax
+          : (max(seriesGradientColorscale) as number);
+
+        // Choose gradient colorscale type and determine marker colors
+        const normalize = scaleLinear();
+        if (
+          seriesGradientColorscale.some((a: number) => a < 0) &&
+          seriesGradientColorscale.some((a: number) => a < 0)
+        ) {
+          // Diverging colorscale, assume 0 is midpoint. Colorscale must be symmetric around the midpoint
+          const maxAbsOverlay =
+            overlayMin > overlayMax ? overlayMin : overlayMax;
+          // For each point, normalize the data to [-1, 1], then retrieve the corresponding color
+          normalize.domain([-maxAbsOverlay, maxAbsOverlay]).range([-1, 1]);
+          markerColorsGradient = seriesGradientColorscale.map((a: number) =>
+            gradientDivergingColorscaleMap(normalize(a))
+          );
+        } else if (seriesGradientColorscale.some((a: number) => a < 0)) {
+          // Sequential backwards (from -inf to 0)
+          // For each point, normalize the data to [1, 0], then retrieve the corresponding color
+          normalize.domain([overlayMin, overlayMax]).range([1, 0]);
+          markerColorsGradient = seriesGradientColorscale.map((a: number) =>
+            gradientSequentialColorscaleMap(normalize(a))
+          );
+        } else {
+          // Sequential (from 0 to inf)
+          // For each point, normalize the data to [0, 1], then retrieve the corresponding color
+          normalize.domain([overlayMin, overlayMax]).range([0, 1]);
+          markerColorsGradient = seriesGradientColorscale.map((a: number) =>
+            gradientSequentialColorscaleMap(normalize(a))
+          );
+        }
       }
 
       // add scatter data considering input options
@@ -1397,7 +1399,7 @@ function processInputData<T extends number | string>(
           color: defineColors
             ? 'rgba(' + markerColors[index] + ',0.7)'
             : seriesGradientColorscale?.length > 0
-            ? gradientMarkerColors
+            ? markerColorsGradient
             : undefined,
           // size: 6,
           // line: { color: 'rgba(' + markerColors[index] + ',0.7)', width: 2 },

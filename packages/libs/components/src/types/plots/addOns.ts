@@ -135,9 +135,9 @@ export const ColorPaletteDark: string[] = [
   'rgb(13, 96, 41)',
 ];
 
-/** Sequential gradient colormap. Useful for coloring based on a continuous variable that is always positive, for example. */
+/** Sequential gradient colorscale. Useful for coloring based on a continuous variable that is always positive, for example. */
 /** Using oslo from https://www.fabiocrameri.ch/colourmaps/, copied from https://github.com/empet/scientific-colorscales/blob/master/scicolorscales.py */
-export const SequentialGradientColormap: string[] = [
+export const SequentialGradientColorscale: string[] = [
   'rgb(0, 1, 0)',
   'rgb(11, 25, 39)',
   'rgb(17, 48, 77)',
@@ -151,10 +151,10 @@ export const SequentialGradientColormap: string[] = [
   // 'rgb(255, 255, 255)',  Removing final, lightest, color for best visibility
 ];
 
-/** Diverging gradient colormap. Useful for coloring a continuous variable that has values above and below a midpoint (usually 0) */
+/** Diverging gradient colorscale. Useful for coloring a continuous variable that has values above and below a midpoint (usually 0) */
 /** Using cork from https://www.fabiocrameri.ch/colourmaps/, copied from https://github.com/empet/scientific-colorscales/blob/master/scicolorscales.py */
 /** MUST have ODD number of colors! Assume the middle color maps to the midpoint */
-export const DivergingGradientColormap: string[] = [
+export const DivergingGradientColorscale: string[] = [
   'rgb(44, 26, 76)',
   'rgb(43, 44, 94)',
   'rgb(41, 64, 115)',
