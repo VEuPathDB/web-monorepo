@@ -423,7 +423,7 @@ const facetedData: FacetedData<BoxplotData> = {
 interface FacetedStoryProps {
   data: FacetedData<BoxplotData>;
   componentProps: BoxplotProps;
-  modalComponentProps: BoxplotProps;
+  modalComponentProps?: BoxplotProps;
 }
 
 const FacetedTemplate: Story<FacetedStoryProps> = ({
@@ -447,13 +447,6 @@ Faceted.args = {
       width: 300,
       height: 300,
       border: '1px solid #dadada',
-    },
-  },
-  modalComponentProps: {
-    containerStyles: {
-      width: '100%',
-      height: '100%',
-      margin: 'auto',
     },
   },
 };

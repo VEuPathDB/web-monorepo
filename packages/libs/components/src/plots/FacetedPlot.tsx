@@ -88,12 +88,18 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
               );
               setModalIsOpen(true);
             },
-            style: { cursor: 'pointer' },
             title: 'Click to expand',
           };
 
           return (
-            <div {...divModalProps} key={index} style={{ marginRight: 15 }}>
+            <div
+              {...divModalProps}
+              key={index}
+              style={{
+                marginRight: 15,
+                cursor: modalComponentProps && 'pointer',
+              }}
+            >
               <Component
                 {...sharedProps}
                 ref={(plotInstance) => {
