@@ -93,7 +93,7 @@ function unaliasWebappUrl() {
     let pathname = window.location.pathname;
     let aliasUrl = rootUrl.replace(/^\/[^/]+\/(.*)$/, '/a/$1');
     if (pathname.startsWith(aliasUrl)) {
-      window.history.replaceState(null, '', pathname.replace(aliasUrl, rootUrl) + location.search);
+      window.history.replaceState(null, '', pathname.replace(aliasUrl, rootUrl) + location.search + location.hash);
     }
   }
 }
