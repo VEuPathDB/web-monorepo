@@ -70,13 +70,12 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
         {data?.facets.map(({ data, label }, index) => {
           const sharedProps = {
             data: data,
-            title: label,
             // pass checkedLegendItems to PlotlyPlot
             checkedLegendItems: checkedLegendItems,
             showNoDataOverlay: data == null,
           };
 
-          const divProps = modalComponentProps && {
+          const divModalProps = modalComponentProps && {
             onClick: () => {
               setModalPlot(
                 <Component
@@ -84,6 +83,7 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
                   displayLegend={true}
                   interactive={true}
                   {...modalComponentProps}
+                  title={label}
                 />
               );
               setModalIsOpen(true);
@@ -93,7 +93,7 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
           };
 
           return (
-            <div {...divProps} key={index}>
+            <div {...divModalProps} key={index} style={{ marginRight: 15 }}>
               <Component
                 {...sharedProps}
                 ref={(plotInstance) => {
@@ -106,6 +106,7 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
                 displayLegend={false}
                 interactive={false}
                 {...componentProps}
+                title={label}
               />
             </div>
           );
