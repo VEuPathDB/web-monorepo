@@ -12,17 +12,13 @@ interface Props {
     description: string;
     analysisId: string;
     studyId: string;
-    ownerUserId: string;
-    ownerName: string;
   }
 }
 
 export function AnalysisCard(props: Props) {
-  const { displayName, studyDisplayName, description, studyId, analysisId, ownerUserId, ownerName } = props.card;
+  const { displayName, studyDisplayName, description, studyId, analysisId } = props.card;
 
-  const link = `/${analysisId}/import/${ownerUserId}?ownerName=${encodeURIComponent(ownerName)}${
-    description == null ? '' : `&description=${description}`
-  }`;
+  const link = `/${analysisId}/import`;
 
   return (
     <div className="Card LinkCard AnalysisCard">
