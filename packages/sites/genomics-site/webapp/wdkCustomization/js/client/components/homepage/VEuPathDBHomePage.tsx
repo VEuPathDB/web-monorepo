@@ -860,19 +860,13 @@ const useHeaderMenuItems = (
               key: 'usage-metrics',
               display: 'Monthly Usage Metrics',
               type: 'externalLink',
-              url: makeExternalStaticPageUrl(
-                     communitySite,
-                     '/documents/VEuPathDB_BRC4_usage_metrics_report.pdf'
-                   )
+              url: '/reports/VEuPathDB_BRC4_usage_metrics_report.pdf'
             },
             {
               key: 'perf-metrics',
               display: 'Monthly Performance Metrics',
               type: 'externalLink',
-              url: makeExternalStaticPageUrl(
-                     communitySite,
-                     '/documents/VEuPathDB_BRC4_performance_metrics_report.pdf'
-                   )
+              url: '/reports/VEuPathDB_BRC4_performance_metrics_report.pdf'
             },
             {
               key: 'usage-statistics',
