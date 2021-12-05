@@ -240,15 +240,19 @@ export const datasetProviderPatch = array(
 
 export type DatasetProviderPatch = TypeOf<typeof datasetProviderPatch>;
 
+export const actionAuthorization = type({
+  studyMetadata: boolean,
+  subsetting: boolean,
+  visualizations: boolean,
+  resultsFirstPage: boolean,
+  resultsAll: boolean,
+});
+
+export type ActionAuthorization = TypeOf<typeof actionAuthorization>;
+
 export const permissionEntryBase = type({
   studyId: string,
-  actionAuthorization: type({
-    studyMetadata: boolean,
-    subsetting: boolean,
-    visualizations: boolean,
-    resultsFirstPage: boolean,
-    resultsAll: boolean,
-  })
+  actionAuthorization
 });
 
 export type PermissionEntryBase = TypeOf<typeof permissionEntryBase>;
