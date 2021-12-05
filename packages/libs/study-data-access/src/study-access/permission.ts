@@ -2,6 +2,11 @@ import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 import {
+  Action,
+  actionCategories
+} from '../data-restriction/DataRestrictionUiActions';
+
+import {
   ApprovalStatus,
   DatasetPermissionEntry,
   PermissionsResponse
@@ -145,6 +150,26 @@ export function canUpdateApprovalStatus(userPermissions: UserPermissions, datase
 
 export function shouldDisplayHistoryTable(userPermissions: UserPermissions) {
   return isOwner(userPermissions);
+}
+
+export function isUserApprovedForAction(
+  userPermissions: UserPermissions,
+  approvedStudies: string[] | undefined,
+  datasetId: string,
+  action: Action,
+) {
+  if (approvedStudies == null) {
+    return true;
+  }
+
+  const actionAuthorization =
+    userPermissions.perDataset[datasetId]?.actionAuthorization;
+
+  if (actionAuthorization == null) {
+    return false;
+  }
+
+  return actionAuthorization[actionCategories[action]];
 }
 
 export function isUserFullyApprovedForStudy(
