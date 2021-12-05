@@ -1,129 +1,16 @@
 import { get, isPlainObject } from 'lodash';
 import React from 'react';
 import { BasketActions, ResultPanelActions, ResultTableSummaryViewActions } from '@veupathdb/wdk-client/lib/Actions';
-import { attemptAction } from './DataRestrictionActionCreators';
 import {getResultTypeDetails} from '@veupathdb/wdk-client/lib/Utils/WdkResult';
-import { isUserFullyApprovedForStudy } from '../study-access/permission';
-import { getStudyAccess, getStudyId, getStudyPolicyUrl, getStudyRequestNeedsApproval } from '../shared/studies';
 
-// Data stuff =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-// per https://docs.google.com/presentation/d/1Cmf2GcmGuKbSTcH4wdeTEvRHTi9DDoh5-MnPm1MkcEA/edit?pli=1#slide=id.g3d955ef9d5_3_2
+import { getStudyId, getStudyPolicyUrl, getStudyRequestNeedsApproval } from '../shared/studies';
+import { isUserApprovedForAction, isUserFullyApprovedForStudy } from '../study-access/permission';
 
-// Actions
-// -------
-export const Action = {
-  // Access Search page
-  search: 'search',
-  // Use a step or column analysis tool
-  analysis: 'analysis',
-  // Run a strategy
-  results: 'results',
-  // View beyond first 20 records
-  paginate: 'paginate',
-  // Click record page link in results page
-  record: 'record',
-  // Access a record page
-  recordPage: 'recordPage',
-  // Access download page
-  downloadPage: 'downloadPage',
-  // Click download link in results page or homepage
-  download: 'download',
-  // Use the basket
-  basket: 'basket',
-};
-
-
-// Restriction levels
-// ------------------
-export const Require = {
-  // nothing required
-  allow: 'allowed',
-  // login required
-  login: 'login',
-  // approval required
-  approval: 'approval',
-  // not ready for release, only study page
-  notready: 'notready',
-}
-
-// 
-
-// strictActions will popup: "go home" (this is a forbidden page) 
-// non strict actions (clicked on link to do something) will popup: "dismiss" (you may stay in this page)
-export const strictActions = [ Action.search, Action.analysis, Action.results, Action.recordPage, Action.downloadPage ];
-
-// the value  'login' or 'approval' will affect the message to the user: what is required. 
-// https://docs.google.com/presentation/d/1Cmf2GcmGuKbSTcH4wdeTEvRHTi9DDoh5-MnPm1MkcEA/edit?pli=1#slide=id.g3d955ef9d5_3_2
-export const accessLevels = {
-  "public": {
-    [Action.search]: Require.allow,
-    [Action.analysis]: Require.allow,
-    [Action.results]: Require.allow,
-    [Action.paginate]: Require.allow,
-    [Action.record]: Require.allow,
-    [Action.recordPage]: Require.allow,
-    [Action.download]: Require.allow,
-    [Action.basket]: Require.allow
-  },
-  "controlled": {
-    [Action.search]: Require.allow,
-    [Action.analysis]: Require.allow,
-    [Action.results]: Require.allow,
-    [Action.paginate]: Require.approval,
-    [Action.record]: Require.approval,
-    [Action.recordPage]: Require.approval,
-    [Action.download]: Require.approval,
-    [Action.downloadPage]: Require.approval,
-    [Action.basket]: Require.approval
-  },
-  /* not in use build 49
-  "limited": {
-    [Action.search]: Require.allow,
-    [Action.analysis]: Require.allow,
-    [Action.results]: Require.allow,
-    [Action.paginate]: Require.login,
-    [Action.record]: Require.login,
-    [Action.recordPage]: Require.login,
-    [Action.download]: Require.approval,
-    [Action.basket]: Require.approval
-  },*/
-  "protected": {
-    [Action.search]: Require.allow,
-    [Action.analysis]: Require.allow,
-    [Action.results]: Require.allow,
-    [Action.paginate]: Require.approval,
-    [Action.record]: Require.approval,
-    [Action.recordPage]: Require.approval,
-    [Action.download]: Require.approval,
-    [Action.downloadPage]: Require.approval,
-    [Action.basket]: Require.approval
-  },
-  "private": {
-    [Action.search]: Require.approval,
-    [Action.analysis]: Require.approval,
-    [Action.results]: Require.approval,
-    [Action.paginate]: Require.approval,
-    [Action.record]: Require.approval,
-    [Action.recordPage]: Require.approval,
-    [Action.download]: Require.approval,
-    [Action.downloadPage]: Require.approval,
-    [Action.basket]: Require.approval
-  },
-  "prerelease": {
-    [Action.search]: Require.notready,
-    [Action.analysis]: Require.notready,
-    [Action.results]: Require.notready,
-    [Action.paginate]: Require.notready,
-    [Action.record]: Require.notready,
-    [Action.recordPage]: Require.notready,
-    [Action.download]: Require.notready,
-    [Action.downloadPage]: Require.notready,
-    [Action.basket]: Require.notready
-  }
-
-};
-
-
+import { attemptAction } from './DataRestrictionActionCreators';
+import {
+  Action,
+  strictActions,
+} from './DataRestrictionUiActions';
 
 // Getters!   =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -164,29 +51,25 @@ export function getActionVerb (action) {
   }
 }
 
-export function getRequirement ({ action, study }) {
+export function getRequirement ({ action, permissions, study, user }) {
   //if (actionRequiresLogin({ action, study })) return 'login or create an account';
   if ( getRequestNeedsApproval(study)=="0" ) return 'submit an access request';
-  if (actionRequiresApproval({ action, study })) return 'acquire research approval';
+  if (actionRequiresApproval({ action, permissions, study, user })) return 'acquire research approval';
   return 'contact us';
 }
 
-export function getRestrictionMessage ({ action, study }) {
+export function getRestrictionMessage ({ action, permissions, study, user }) {
   const intention = getActionVerb(action);
-  const requirement = getRequirement({ action, study });
+  const requirement = getRequirement({ action, permissions, study, user });
   return <span>Please <b>{requirement}</b> in order to {intention}.</span>;
 }
 
 // CHECKERS! =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 export function isAllowedAccess ({ permissions, approvedStudies, action, study }) {
-  const access = getStudyAccess(study);
   const id = getStudyId(study);
   if (sessionStorage.getItem('restriction_override') === 'true') return true;
-  if (!(access in accessLevels)) throw new Error(`Unknown access level "${access}".`);
-  if (isUserFullyApprovedForStudy(permissions, approvedStudies, id)) return true;
-  if (accessLevels[access][action] === Require.allow) return true;
-  //if (accessLevels[study.access][action] === Require.login) if (!user.isGuest) return true;
+  if (isUserApprovedForAction(permissions, approvedStudies, id, action)) return true;
   // access not allowed, we need to build the modal popup
   return false;
 }
@@ -224,18 +107,16 @@ export function isPrereleaseStudy (access, studyId, user, permissions) {
   }
 }
 
-// we will request the user to login if (1) guest and (2) explicit approval not needed
-/* 
-export function actionRequiresLogin ({ study, action }) {
-  if (accessLevels[study.access][action] === Require.login) return true;
-  else return false;
-}
-*/
-
 // we will request the user to request approval if explicit approval needed (guest or not)
-export function actionRequiresApproval ({ study, action }) {
-  if (accessLevels[getStudyAccess(study)][action] === Require.approval) return true;
-  else return false;
+export function actionRequiresApproval ({ action, permissions, study, user }) {
+  const datasetId = getStudyId(study);
+
+  return isUserApprovedForAction(
+    permissions,
+    user.properties.approvedStudies,
+    datasetId,
+    action
+  ) === false;
 }
 
 export function disableRestriction () {
@@ -249,7 +130,7 @@ export function enableRestriction () {
 window._enableRestriction = enableRestriction;
 
 export function isActionStrict (action) {
-  return strictActions.includes(action);
+  return strictActions.has(action);
 }
 
 export function getIdFromRecordClassName (recordClassName) {

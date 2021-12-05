@@ -39,7 +39,7 @@ class DataRestrictionModal extends React.Component {
 
   renderPolicyNotice () {
     const { study, user, permissions, action, webAppUrl } = this.props;
-    const message = getRestrictionMessage({ study, action });
+    const message = getRestrictionMessage({ action, permissions, study, user });
     const policyUrl = getPolicyUrl(study, webAppUrl);
     return (isPrereleaseStudy(getStudyAccess(study), getStudyId(study), user, permissions))
       ? null
@@ -64,7 +64,7 @@ class DataRestrictionModal extends React.Component {
   renderButtons () {
     const { action, study, user, permissions, showLoginForm, onClose, webAppUrl } = this.props;
     const strict = isActionStrict(action);
-    const approvalRequired = actionRequiresApproval({ action, study });
+    const approvalRequired = actionRequiresApproval({ action, permissions, study, user });
     return (isPrereleaseStudy(getStudyAccess(study), getStudyId(study), user, permissions))
       ? (
         <div className="DataRestrictionModal-Buttons">
