@@ -9,12 +9,15 @@ export type DepEffectCallback<T> = ((dep: T) => void) | ((dep: T) => void | unde
 
 // FIXME Figure out a way to make the context type WdkDependencies (as opposed to WdkDependencies | undefined)
 // FIXME One approach would be to create the context in main.js
-export const WdkDepdendenciesContext = React.createContext<WdkDependencies | undefined>(undefined);
+export const WdkDependenciesContext = React.createContext<WdkDependencies | undefined>(undefined);
+
+// FIXME Remove once all existing "WdkDepdendenciesContext" typos have been fixed
+export const WdkDepdendenciesContext = WdkDependenciesContext;
 
 export type WdkDependenciesEffectCallback = DepEffectCallback<WdkDependencies>;
 
 export const useWdkDependenciesEffect = (effect: WdkDependenciesEffectCallback, deps?: DependencyList): void => {
-  const wdkDependencies = useContext(WdkDepdendenciesContext);
+  const wdkDependencies = useContext(WdkDependenciesContext);
 
   useEffect(() => {
     if (wdkDependencies == null) {
