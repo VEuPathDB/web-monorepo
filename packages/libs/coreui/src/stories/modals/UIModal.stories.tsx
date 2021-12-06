@@ -51,7 +51,7 @@ export default {
 const Template: Story<UIModalProps> = (args) => {
   const { visible, ...rest } = args;
 
-  const [modalVisible, setModalVisible] = useState(args.visible);
+  const [modalVisible, setModalVisible] = useState<boolean>(args.visible);
   useEffect(() => setModalVisible(args.visible), [args.visible]);
 
   return (

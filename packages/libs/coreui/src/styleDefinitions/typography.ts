@@ -84,6 +84,7 @@ export const label = css([
     fontWeight: 400,
     MozOsxFontSmoothing: 'auto',
     WebkitFontSmoothing: 'auto',
+    color: gray[400],
   },
 ]);
 

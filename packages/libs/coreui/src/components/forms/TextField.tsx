@@ -1,0 +1,137 @@
+import { CSSProperties, useMemo, useRef, useState } from 'react';
+
+// Components
+import { H6 } from '../headers';
+import { CheckCircle, Loading } from '../icons';
+
+// Definitions
+import { gray, green } from '../../definitions/colors';
+import typography from '../../styleDefinitions/typography';
+import { fadeIn, spin } from '../../definitions/animations';
+import { UITheme } from '../theming/types';
+
+// Hooks
+import useUITheme from '../theming/useUITheme';
+
+export type TextFieldProps = {
+  /** A heading for the component. */
+  heading: string;
+  /** Optional. Additional instructions to be displayed below the heading. */
+  instructions?: string;
+  /** Optional. Placeholder text to display in the field if there is no value.*/
+  placeholder?: string;
+  /** The current value of the text field. */
+  value: string;
+  /** A callback to invoke when the value of the input field changes. */
+  onValueChange: (value: string) => void;
+  /** The desired width of the component. */
+  width: string | number;
+  /** Optional. Indicates the status of data syncing. */
+  status?: 'syncing' | 'synced';
+  /** Optional. Additional CSS styles to apply to the outermost div. */
+  containerStyles?: CSSProperties;
+  /** Optional. Indicates which theme role should be used to augment component styling. */
+  themeRole?: keyof UITheme['palette'];
+};
+
+/**
+ * A multiline text field component with optional dynamic resizing,
+ * optional character limit, and status indicator.
+ * */
+export default function TextField({
+  heading,
+  instructions,
+  placeholder,
+  width,
+  value,
+  onValueChange,
+  status,
+  containerStyles = {},
+  themeRole,
+}: TextFieldProps) {
+  const [hasFocus, setHasFocus] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const theme = useUITheme();
+  const themeColor = useMemo(
+    () =>
+      theme && themeRole
+        ? theme.palette[themeRole].hue[theme.palette[themeRole].level]
+        : undefined,
+    [theme, themeRole]
+  );
+
+  return (
+    <div css={{ width, height: 85, ...containerStyles }}>
+      <H6
+        text={heading}
+        additionalStyles={{
+          margin: 0,
+          fontSize: 13,
+          marginBottom: 3,
+          color: hasFocus ? gray[700] : gray[500],
+        }}
+      />
+      <div
+        css={{
+          position: 'relative',
+          outlineColor: gray[400],
+          outlineWidth: hasFocus ? 2 : 1,
+          outlineStyle: 'solid',
+          color: gray['500'],
+          borderRadius: 5,
+        }}
+      >
+        <input
+          type='text'
+          css={[
+            typography.p,
+            {
+              boxSizing: 'border-box',
+              borderStyle: 'none',
+              outlineStyle: 'none',
+              padding: '10px 40px 10px 10px',
+              width,
+              color: gray['400'],
+              ':focus': {
+                color: gray['500'],
+              },
+            },
+          ]}
+          placeholder={placeholder}
+          value={value}
+          onChange={(event: any) => {
+            onValueChange(event.target.value);
+          }}
+          onFocus={() => setHasFocus(true)}
+          onBlur={() => setHasFocus(false)}
+        />
+        <div css={{ position: 'absolute', top: 7, right: 10 }}>
+          {status === 'syncing' && (
+            <Loading
+              fontSize={20}
+              fill={gray[400]}
+              css={{
+                animation: `${spin} 2s ease infinite, ${fadeIn} 1s linear`,
+              }}
+            />
+          )}
+          {status === 'synced' && (
+            <CheckCircle
+              fontSize={20}
+              fill={themeColor ?? green[600]}
+              css={{ animation: `${fadeIn} 1s linear` }}
+            />
+          )}
+        </div>
+      </div>
+      {instructions && hasFocus && (
+        <div css={{ marginTop: 2 }}>
+          <label css={[typography.label, { color: gray[300] }]}>
+            {instructions}
+          </label>
+        </div>
+      )}
+    </div>
+  );
+}

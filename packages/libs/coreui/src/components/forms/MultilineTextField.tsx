@@ -40,7 +40,7 @@ export type MultilineTextFieldProps = {
 };
 
 /**
- * A multiline text field component with optional dynamic resizing,
+ * A multiline text field component with dynamic resizing,
  * optional character limit, and status indicator.
  * */
 export default function MultilineTextField({
@@ -86,10 +86,23 @@ export default function MultilineTextField({
 
   return (
     <div ref={observe} css={{ width, height, ...containerStyles }}>
-      <div ref={headingRef} css={{ marginBottom: 5 }}>
-        <H6 text={heading} additionalStyles={{ margin: 0 }} />
+      <div ref={headingRef} css={{ marginBottom: 3 }}>
+        <H6
+          text={heading}
+          additionalStyles={{
+            margin: 0,
+            fontSize: 13,
+            color: hasFocus ? gray[700] : gray[500],
+            marginBottom: -2,
+          }}
+        />
         {instructions && (
-          <label css={[typography.label, { color: gray[500] }]}>
+          <label
+            css={[
+              typography.label,
+              { color: hasFocus ? gray[500] : gray[400] },
+            ]}
+          >
             {instructions}
           </label>
         )}

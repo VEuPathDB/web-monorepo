@@ -5,9 +5,9 @@ import { useCallback, useState } from 'react';
 
 import MultilineTextField, {
   MultilineTextFieldProps,
-} from '../components/forms/MultilineTextField';
-import UIThemeProvider from '../components/theming/UIThemeProvider';
-import { mutedCyan } from '../definitions/colors';
+} from '../../components/forms/MultilineTextField';
+import UIThemeProvider from '../../components/theming/UIThemeProvider';
+import { mutedCyan } from '../../definitions/colors';
 
 export default {
   title: 'Forms/MultilineTextField',
