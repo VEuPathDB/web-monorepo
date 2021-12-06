@@ -5,6 +5,8 @@ import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
 //         isn't PlotlyPlotData the same as PlotParams['data'] ?
 
 import { PiePlotData, PiePlotDatum } from '../types/plots';
+import { useCallback } from 'react';
+import { select } from 'd3';
 
 // Plotly PlotData['hoverinfo'] definition lacks options that work
 // for pie traces. These can be found in PlotData['textinfo']
@@ -153,12 +155,27 @@ const PiePlot = makePlotlyPlotComponent(
 
     newData.push(primaryDataTrace);
 
+    const onPlotlyRender = useCallback((_, graphDiv) => {
+      const parentNode = select(graphDiv).select('g.trace');
+      const sliceNodes = parentNode.selectAll('g.slice');
+      sliceNodes.each(function () {
+        const sliceNode = select(this);
+        const clone = sliceNode.clone(true);
+        parentNode.insert(
+          () => clone.node(),
+          () => this
+        );
+        sliceNode.remove();
+      });
+    }, []);
+
     return {
       // Type definitions from Plot.ly library are out of date. See redefinition of PlotData above.
       // In order to avoid Typescript barfing, we have to perform this
       // casting.
       data: newData as PlotlyPlotData[],
       layout,
+      onPlotlyRender: onPlotlyRender,
       ...restProps,
     };
   }
