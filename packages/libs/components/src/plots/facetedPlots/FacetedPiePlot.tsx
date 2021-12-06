@@ -1,6 +1,8 @@
 import PiePlot, { PiePlotProps } from '../PiePlot';
 import FacetedPlot, { FacetedPlotProps } from '../FacetedPlot';
 import { PiePlotData } from '../../types/plots';
+import { useCallback } from 'react';
+import { select } from 'd3';
 
 const defaultContainerStyles: PiePlotProps['containerStyles'] = {
   height: 300,
@@ -23,6 +25,23 @@ type FacetedPiePlotProps = Omit<
 >;
 
 const FacetedPiePlot = (facetedPiePlotProps: FacetedPiePlotProps) => {
+  const onPlotlyRender = useCallback((_, graphDiv) => {
+    // Replace each slice DOM node with a copy of itself.
+    // This removes the existing click event handler, which
+    // otherwise blocks the click handler that opens the modal
+    const parentNode = select(graphDiv).select('g.trace');
+    const sliceNodes = parentNode.selectAll('g.slice');
+    sliceNodes.each(function () {
+      const sliceNode = select(this);
+      const clone = sliceNode.clone(true);
+      parentNode.insert(
+        () => clone.node(),
+        () => this
+      );
+      sliceNode.remove();
+    });
+  }, []);
+
   return (
     <FacetedPlot
       component={PiePlot}
@@ -30,6 +49,7 @@ const FacetedPiePlot = (facetedPiePlotProps: FacetedPiePlotProps) => {
       componentProps={{
         containerStyles: defaultContainerStyles,
         spacingOptions: defaultSpacingOptions,
+        onPlotlyRender,
         ...facetedPiePlotProps.componentProps,
       }}
     />
