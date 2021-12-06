@@ -28,6 +28,7 @@ import * as EbrcComponents from './components';
 import * as EbrcControllers from './controllers';
 import * as EbrcRoutes from './routes';
 import ebrcWrapStoreModules from './wrapStoreModules';
+import ebrcWrapWdkDependencies from './wrapWdkDependencies';
 import ebrcWrapWdkService from './wrapWdkService';
 
 // include scroll to top button
@@ -41,6 +42,8 @@ import './scroll-to-top';
  *    Component names, and whose values are higer-order Component functions.
  * @param {Function} [options.wrapRoutes] A function that takes a Routes object
  *    and returns a new Routes object. Use this as an opportunity alter routes.
+ * @param {Function} [options.wrapWdkDependencies] A function that takes WdkDependencies
+ *   and returns a modified copy.
  * @param {Function} [options.wrapWdkService] A function that takes WdkService and returns
  *     a sub class.
  * @param {ClientPlugin[]} [options.pluginConfig] TODO - docs
@@ -53,6 +56,7 @@ export function initialize(options = {}) {
     pluginConfig: sitePluginConfig = [],
     wrapRoutes = identity,
     wrapStoreModules = identity,
+    wrapWdkDependencies = identity,
     wrapWdkService = identity,
     additionalMiddleware
   } = options;
@@ -67,6 +71,7 @@ export function initialize(options = {}) {
   const context = initializeWdk({
     wrapRoutes: flow(EbrcRoutes.wrapRoutes, wrapRoutes),
     wrapStoreModules: flow(ebrcWrapStoreModules, wrapStoreModules),
+    wrapWdkDependencies: flow(ebrcWrapWdkDependencies, wrapWdkDependencies),
     wrapWdkService: flow(ebrcWrapWdkService, wrapWdkService),
     rootUrl,
     rootElement,
