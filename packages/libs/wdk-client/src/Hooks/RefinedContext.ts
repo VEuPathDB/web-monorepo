@@ -12,7 +12,7 @@ export function makeUseRefinedContext<T, U extends T>(
   return function useRefinedContext(context: Context<T>): U {
     const v = useContext(context);
 
-    if (!(isRefinedValue(v))) {
+    if (!isRefinedValue(v)) {
       throw new Error(makeMissingContextError(context));
     }
 
