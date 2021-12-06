@@ -2,11 +2,12 @@ import { useMemo } from 'react';
 
 import { defaultMemoize } from 'reselect';
 
-import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
+import { StudyAccessApi } from '../study-access/api';
 import { UserPermissions, checkPermissions } from '../study-access/permission';
+import { useStudyAccessApi } from '../study-access/studyAccessHooks';
 
 export type AsyncUserPermissions =
   | { loading: true }
@@ -14,18 +15,20 @@ export type AsyncUserPermissions =
 
 const memoizedPermissionsCheck = defaultMemoize(function (
   user: User,
-  wdkService: WdkService
+  studyAccessApi: StudyAccessApi
 ) {
-  return checkPermissions(user, wdkService);
+  return checkPermissions(user, studyAccessApi);
 });
 
 export function usePermissions(): AsyncUserPermissions {
+  const studyAccessApi = useStudyAccessApi();
+
   const permissions = useWdkService(
     async wdkService => memoizedPermissionsCheck(
       await wdkService.getCurrentUser(),
-      wdkService
+      studyAccessApi
     ),
-    []
+    [studyAccessApi]
   );
 
   return useMemo(

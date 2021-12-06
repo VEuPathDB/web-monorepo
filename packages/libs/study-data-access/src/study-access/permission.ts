@@ -12,7 +12,6 @@ import {
   PermissionsResponse
 } from './EntityTypes';
 import {
-  STUDY_ACCESS_SERVICE_URL,
   StudyAccessApi
 } from './api';
 
@@ -193,28 +192,19 @@ export function isUserFullyApprovedForStudy(
   );
 }
 
-async function fetchPermissions(
-  wdkService: WdkService,
-  fetchApi?: Window['fetch'],
-) {
-  const api = new StudyAccessApi(
-    { baseUrl: STUDY_ACCESS_SERVICE_URL, fetchApi },
-    wdkService
-  );
-
-  const permissionsResponse = await api.fetchPermissions();
+async function fetchPermissions(studyAccessApi: StudyAccessApi) {
+  const permissionsResponse = await studyAccessApi.fetchPermissions();
 
   return permissionsResponseToUserPermissions(permissionsResponse);
 }
 
 export async function checkPermissions(
   user: User,
-  wdkService: WdkService,
-  fetchApi?: Window['fetch'],
+  studyAccessApi: StudyAccessApi
 ): Promise<UserPermissions> {
   return user.properties?.approvedStudies == null
     ? { type: 'external', perDataset: {} }
-    : await fetchPermissions(wdkService, fetchApi);
+    : await fetchPermissions(studyAccessApi);
 }
 
 export function permittedApprovalStatusChanges(oldApprovalStatus: ApprovalStatus): ApprovalStatus[] {

@@ -5,7 +5,6 @@ import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import NotFound from '@veupathdb/wdk-client/lib/Views/NotFound/NotFound';
 
-import { STUDY_ACCESS_SERVICE_URL } from '../api';
 import { canAccessDashboard } from '../permission';
 import { StudyAccess } from './StudyAccess';
 import {
@@ -33,7 +32,7 @@ export default function StudyAccessController({ datasetId }: Props) {
 
   const study = useStudy(datasetId);
 
-  const studyAccessApi = useStudyAccessApi(STUDY_ACCESS_SERVICE_URL);
+  const studyAccessApi = useStudyAccessApi();
 
   const { value: userPermissions } = useUserPermissions(studyAccessApi.fetchPermissions);
 

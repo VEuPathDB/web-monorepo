@@ -9,9 +9,7 @@ import {
  } from 'lodash';
 
 import { IconAlt, SingleSelect } from '@veupathdb/wdk-client/lib/Components';
-import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
-import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { RecordInstance } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { OverflowingTextCell } from '@veupathdb/wdk-client/lib/Views/Strategy/OverflowingTextCell';
@@ -48,6 +46,7 @@ import {
   Props as UserTableSectionConfig
 } from './components/UserTableSection';
 import { fetchStudies, getStudyId } from '../shared/studies';
+import { useWdkDependenciesWithStudyAccessApi } from '../shared/wdkDependencyHook';
 
 interface BaseTableRow {
   userId: number;
@@ -152,21 +151,8 @@ export function useStudy(datasetId: string): StudyStatus {
   );
 }
 
-export function useStudyAccessApi(
-  baseStudyAccessUrl: string,
-  fetchApi?: Window['fetch']
-) {
-  const { wdkService } = useNonNullableContext(WdkDepdendenciesContext);
-
-  return useMemo(
-    () => {
-      return new StudyAccessApi(
-        { baseUrl: baseStudyAccessUrl, fetchApi },
-        wdkService
-      );
-    },
-    [ baseStudyAccessUrl, fetchApi ]
-  );
+export function useStudyAccessApi() {
+  return useWdkDependenciesWithStudyAccessApi().studyAccessApi;
 }
 
 export function useUserPermissions(fetchPermissions: StudyAccessApi['fetchPermissions']) {

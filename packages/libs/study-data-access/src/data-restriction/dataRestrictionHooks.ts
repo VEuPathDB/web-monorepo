@@ -8,12 +8,6 @@ import {
 import { useDispatch } from 'react-redux';
 
 import {
-  useNonNullableContext
-} from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
-import {
-  WdkDepdendenciesContext
-} from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
-import {
   Unpack,
   constant,
   decode,
@@ -22,6 +16,8 @@ import {
   string
 } from '@veupathdb/wdk-client/lib/Utils/Json';
 import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
+
+import { useWdkDependenciesWithStudyAccessApi } from '../shared/wdkDependencyHook';
 
 import {
   Action as DataRestrictionAction,
@@ -121,7 +117,7 @@ export function useAttemptActionTask<E>(
   action: string
 ): Task<CompleteApprovalStatus, E> {
   const dispatch = useDispatch();
-  const wdkDependencies = useNonNullableContext(WdkDepdendenciesContext);
+  const wdkDependencies = useWdkDependenciesWithStudyAccessApi();
 
   return useMemo(
     () =>
@@ -160,7 +156,7 @@ export function useAttemptActionTask<E>(
 
 export function useAttemptActionCallback() {
   const dispatch = useDispatch();
-  const wdkDependencies = useNonNullableContext(WdkDepdendenciesContext);
+  const wdkDependencies = useWdkDependenciesWithStudyAccessApi();
 
   return useCallback(async (
     action: string,

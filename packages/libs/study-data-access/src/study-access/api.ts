@@ -26,11 +26,6 @@ import {
   staffList
 } from './EntityTypes';
 
-// FIXME: This should be configurable
-export const STUDY_ACCESS_SERVICE_URL = '/eda';
-
-export const StudyAccessServiceUrlContext = createContext(STUDY_ACCESS_SERVICE_URL);
-
 // API  defined in https://veupathdb.github.io/service-dataset-access/api.html
 const STAFF_PATH = '/staff';
 const PROVIDERS_PATH = '/dataset-providers';
