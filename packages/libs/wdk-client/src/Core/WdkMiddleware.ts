@@ -1,14 +1,10 @@
 import { Middleware } from 'redux';
 import { isPromise } from 'wdk-client/Utils/PromiseUtils';
 import { Action } from 'wdk-client/Actions';
-import { PageTransitioner } from 'wdk-client/Utils/PageTransitioner';
-import WdkService from 'wdk-client/Service/WdkService';
 import { notifyUnhandledError } from 'wdk-client/Actions/UnhandledErrorActions';
+import { EpicDependencies } from 'wdk-client/Core/Store';
 
-export interface ActionCreatorServices {
-  wdkService: WdkService;
-  transitioner: PageTransitioner;
-}
+export type ActionCreatorServices = EpicDependencies;
 
 export type ActionCreatorResult<T> =
   | T
@@ -70,7 +66,7 @@ type WdkMiddleWare = Middleware<DispatchAction<Action>>;
  * rejections to go unhandled, which made comprehensive error handling more
  * difficult.
  */
-export const wdkMiddleware = (services: ActionCreatorServices): WdkMiddleWare => ({ dispatch }) => next => action => {
+export const wdkMiddleware = <T extends ActionCreatorServices>(services: T): WdkMiddleWare => ({ dispatch }) => next => action => {
   try {
     if (typeof action === 'function') {
       return dispatch(action(services));

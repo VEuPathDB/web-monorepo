@@ -41,7 +41,9 @@ import { createWdkStore } from 'wdk-client/Core/Store';
  *   and returns a modified copy.
  * @param {Function} [options.wrapStoreModules] A function that takes WDK StoreModules
  *   and returns a modified copy.
- * @param {Function} [options.wrapWdkService] A functino that takes WdkService
+ * @param {Function} [options.wrapWdkDependencies] A function that takes WdkDependencies
+ *   and returns a modified copy.
+  * @param {Function} [options.wrapWdkService] A function that takes a WdkService
  *   class and returns a sub class.
  * @param {Function} [options.onLocationChange] Callback function called whenever
  *   the location of the page changes. The function is called with a Location
@@ -57,6 +59,7 @@ export function initialize(options) {
     retainContainerContent = false,
     wrapRoutes = identity,
     wrapStoreModules = identity,
+    wrapWdkDependencies = identity,
     wrapWdkService = identity,
     onLocationChange,
     pluginConfig = [],
@@ -75,11 +78,11 @@ export function initialize(options) {
   let paramValueStore = getParamValueStoreInstance(endpoint, wdkService);
   let transitioner = getTransitioner(history);
 
-  let wdkDependencies = {
+  let wdkDependencies = wrapWdkDependencies({
     paramValueStore,
     transitioner,
     wdkService
-  };
+  });
 
   let store = createWdkStore(
     wrapStoreModules(storeModules),
