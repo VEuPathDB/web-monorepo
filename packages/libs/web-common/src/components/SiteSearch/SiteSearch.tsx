@@ -3,7 +3,7 @@ import React, { useMemo, useState, useCallback, useContext, useEffect } from 're
 import { Link, useHistory } from 'react-router-dom';
 import { CheckboxTree, CheckboxList, CollapsibleSection, LoadingOverlay } from '@veupathdb/wdk-client/lib/Components';
 import { PaginationMenu, AnchoredTooltip } from '@veupathdb/wdk-client/lib/Components/Mesa';
-import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { makeClassNameHelper, safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { arrayOf, decodeOrElse, string } from '@veupathdb/wdk-client/lib/Utils/Json';
@@ -430,7 +430,7 @@ function StrategyLinkout(props: Props) {
     wdkService.getQuestionAndParameters(docType.wdkSearchName), [ docType ]);
 
   const history = useHistory();
-  const wdkDependencies = useContext(WdkDepdendenciesContext);
+  const wdkDependencies = useContext(WdkDependenciesContext);
   const onClick = useCallback(async () => {
     const wdkService = wdkDependencies?.wdkService;
 
