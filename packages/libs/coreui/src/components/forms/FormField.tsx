@@ -13,19 +13,21 @@ import { UITheme } from '../theming/types';
 // Hooks
 import useUITheme from '../theming/useUITheme';
 
-export type TextFieldProps = {
+export type FormFieldProps = {
+  /** Specifies the underlying input type. */
+  type: 'text' | 'password';
   /** A heading for the component. */
   heading: string;
   /** Optional. Additional instructions to be displayed below the heading. */
   instructions?: string;
   /** Optional. Placeholder text to display in the field if there is no value.*/
   placeholder?: string;
-  /** The current value of the text field. */
+  /** The current value of the form field. */
   value: string;
   /** A callback to invoke when the value of the input field changes. */
   onValueChange: (value: string) => void;
   /** The desired width of the component. */
-  width: string | number;
+  width?: string | number;
   /** Optional. Indicates the status of data syncing. */
   status?: 'syncing' | 'synced';
   /** Optional. Additional CSS styles to apply to the outermost div. */
@@ -35,10 +37,11 @@ export type TextFieldProps = {
 };
 
 /**
- * A multiline text field component with optional dynamic resizing,
- * optional character limit, and status indicator.
+ * A form field component with theming support
+ * placeholder, and status indicator.
  * */
-export default function TextField({
+export default function FormField({
+  type,
   heading,
   instructions,
   placeholder,
@@ -48,9 +51,8 @@ export default function TextField({
   status,
   containerStyles = {},
   themeRole,
-}: TextFieldProps) {
+}: FormFieldProps) {
   const [hasFocus, setHasFocus] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const theme = useUITheme();
   const themeColor = useMemo(
@@ -83,7 +85,7 @@ export default function TextField({
         }}
       >
         <input
-          type='text'
+          type={type}
           css={[
             typography.p,
             {

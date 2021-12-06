@@ -3,7 +3,7 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 import { debounce } from 'lodash';
 import { useCallback, useState } from 'react';
 
-import TextField, { TextFieldProps } from '../../components/forms/TextField';
+import FormField, { FormFieldProps } from '../../components/forms/FormField';
 import MultilineTextField, {
   MultilineTextFieldProps,
 } from '../../components/forms/MultilineTextField';
@@ -16,7 +16,7 @@ export default {
 
 export const Example: Story = (args) => {
   const [value, setValue] = useState('');
-  const [status, setStatus] = useState<TextFieldProps['status']>(undefined);
+  const [status, setStatus] = useState<FormFieldProps['status']>(undefined);
 
   const debouncedOnValueChange = useCallback(
     debounce((value: string) => {
@@ -35,7 +35,8 @@ export const Example: Story = (args) => {
       }}
     >
       <div css={{ display: 'flex' }}>
-        <TextField
+        <FormField
+          type='text'
           heading='Username'
           instructions='Should be an email address'
           placeholder='Username'
@@ -48,7 +49,8 @@ export const Example: Story = (args) => {
           }}
           status={status}
         />
-        <TextField
+        <FormField
+          type='password'
           heading='Password'
           width='200px'
           value={value}

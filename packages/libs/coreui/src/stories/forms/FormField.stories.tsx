@@ -1,20 +1,19 @@
-import { green, purple } from '@material-ui/core/colors';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import { debounce } from 'lodash';
 import { useCallback, useState } from 'react';
 
-import TextField, { TextFieldProps } from '../../components/forms/TextField';
+import FormField, { FormFieldProps } from '../../components/forms/FormField';
 import UIThemeProvider from '../../components/theming/UIThemeProvider';
-import { mutedCyan } from '../../definitions/colors';
+import { mutedCyan, purple } from '../../definitions/colors';
 
 export default {
-  title: 'Forms/TextField',
-  component: TextField,
+  title: 'Forms/FormField',
+  component: FormField,
 } as Meta;
 
-const Template: Story<TextFieldProps> = (args) => {
+const Template: Story<FormFieldProps> = (args) => {
   const [value, setValue] = useState('');
-  const [status, setStatus] = useState<TextFieldProps['status']>(undefined);
+  const [status, setStatus] = useState<FormFieldProps['status']>(args.status);
 
   const debouncedOnValueChange = useCallback(
     debounce((value: string) => {
@@ -32,7 +31,7 @@ const Template: Story<TextFieldProps> = (args) => {
         },
       }}
     >
-      <TextField
+      <FormField
         {...args}
         value={value}
         onValueChange={(value) => {
@@ -45,10 +44,19 @@ const Template: Story<TextFieldProps> = (args) => {
     </UIThemeProvider>
   );
 };
-export const Default = Template.bind({});
-Default.args = {
-  heading: 'Example Heading',
+export const TextField = Template.bind({});
+TextField.args = {
+  type: 'text',
+  heading: 'Example TextField',
   instructions: 'These are example instructions. ',
   width: '50vw',
   placeholder: 'Example Placeholder',
+};
+
+export const PasswordField = Template.bind({});
+PasswordField.args = {
+  ...TextField.args,
+  type: 'password',
+  heading: 'Example Password Field',
+  instructions: 'Passwords must contain one MILLION characters.',
 };
