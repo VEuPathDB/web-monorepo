@@ -90,9 +90,9 @@ export default function FormField({
             typography.p,
             {
               boxSizing: 'border-box',
-              borderStyle: 'none',
-              outlineStyle: 'none',
-              padding: '10px 40px 10px 10px',
+              borderStyle: 'none !important',
+              outlineStyle: 'none !important',
+              padding: '10px 40px 10px 10px !important',
               width,
               color: gray['400'],
               ':focus': {
