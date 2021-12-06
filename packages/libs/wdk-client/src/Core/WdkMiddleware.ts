@@ -6,18 +6,30 @@ import { EpicDependencies } from 'wdk-client/Core/Store';
 
 export type ActionCreatorServices = EpicDependencies;
 
-export type ActionCreatorResult<T> =
+export type ActionCreatorResult<
+  T,
+  S extends ActionCreatorServices = ActionCreatorServices
+> =
   | T
-  | ActionThunk<T>
-  | ActionCreatorResultArray<T>
-  | ActionCreatorResultPromise<T>;
+  | ActionThunk<T, S>
+  | ActionCreatorResultArray<T, S>
+  | ActionCreatorResultPromise<T, S>;
 
-interface ActionCreatorResultArray<T> extends Array<ActionCreatorResult<T>> {}
+interface ActionCreatorResultArray<
+  T,
+  S extends ActionCreatorServices = ActionCreatorServices
+> extends Array<ActionCreatorResult<T, S>> {}
 
-interface ActionCreatorResultPromise<T> extends Promise<ActionCreatorResult<T>> {}
+interface ActionCreatorResultPromise<
+  T,
+  S extends ActionCreatorServices = ActionCreatorServices
+> extends Promise<ActionCreatorResult<T, S>> {}
 
-export interface ActionThunk<T> {
-  (services: ActionCreatorServices): ActionCreatorResult<T>;
+export interface ActionThunk<
+  T,
+  S extends ActionCreatorServices = ActionCreatorServices
+> {
+  (services: S): ActionCreatorResult<T>;
 }
 
 // The following is used by thunks. When WdkMiddleware encounters this action,
@@ -38,9 +50,13 @@ export const emptyAction: EmptyAction = {
  * The DispatchAction type describes the type of function that is used to
  * dispatch actions.
  */
-export type DispatchAction<T extends Action> = (action: ActionCreatorResult<T>) => ActionCreatorResult<T>;
+export type DispatchAction<
+  T extends Action,
+  S extends ActionCreatorServices = ActionCreatorServices
+> = (action: ActionCreatorResult<T, S>) => ActionCreatorResult<T, S>;
 
-type WdkMiddleWare = Middleware<DispatchAction<Action>>;
+type WdkMiddleWare<S extends ActionCreatorServices = ActionCreatorServices> =
+  Middleware<DispatchAction<Action, S>>;
 
 
 /**
@@ -66,7 +82,7 @@ type WdkMiddleWare = Middleware<DispatchAction<Action>>;
  * rejections to go unhandled, which made comprehensive error handling more
  * difficult.
  */
-export const wdkMiddleware = <T extends ActionCreatorServices>(services: T): WdkMiddleWare => ({ dispatch }) => next => action => {
+export const wdkMiddleware = <S extends ActionCreatorServices>(services: S): WdkMiddleWare<S> => ({ dispatch }) => next => action => {
   try {
     if (typeof action === 'function') {
       return dispatch(action(services));
@@ -107,7 +123,10 @@ export const logger: WdkMiddleWare = store => next => action => {
 }
 
 declare module 'redux' {
-  export interface Dispatch<A extends Action = AnyAction> {
-    <T extends A>(action: ActionCreatorResult<T>): ActionCreatorResult<T>;
+  export interface Dispatch<
+    A extends Action = AnyAction,
+    B extends ActionCreatorServices = ActionCreatorServices
+  > {
+    <T extends A, S extends B>(action: ActionCreatorResult<T, S>): ActionCreatorResult<T, S>;
   }
 }

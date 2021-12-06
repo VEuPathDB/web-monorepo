@@ -35,7 +35,7 @@ type StoreModuleRecord<T extends Record<string, any>, A extends Action> = {
 
 type RootReducer<T, A extends Action> = Reducer<T, A>;
 
-export function createWdkStore<T, A extends Action, E extends EpicDependencies>(
+export function createWdkStore<T, A extends Action, E extends EpicDependencies = EpicDependencies>(
   storeModules: StoreModuleRecord<T, A>,
   dependencies: E,
   // FIXME Figure out how to allow the order of middleware to be configured
