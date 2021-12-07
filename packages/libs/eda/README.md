@@ -63,7 +63,6 @@ The following environment variables are used by the `yarn start` script:
 | `EDA_DATA_SERVICE_URL`                | Full url to a running EDA Data Service                               |
 | `EDA_USER_SERVICE_URL`                | Full url to a running EDA User Service                               |
 | `DATASET_ACCESS_SERVICE_URL`          | Full url to a running Dataset Access Service                         |
-| `WDK_CHECK_AUTH`                      | An optional auth key for a registered WDK user                       |
 | `REACT_APP_DISABLE_DATA_RESTRICTIONS` | If present and `true`, disables data restrictions                    |
 | `REACT_APP_EXAMPLE_ANALYSES_AUTHOR`   | The ID of the WDK user who maintains "example strategies" (optional) |
 
