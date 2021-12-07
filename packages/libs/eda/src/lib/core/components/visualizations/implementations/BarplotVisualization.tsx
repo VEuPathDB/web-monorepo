@@ -51,6 +51,7 @@ import {
   vocabularyWithMissingData,
   variablesAreUnique,
   nonUniqueWarning,
+  showMissingStratification,
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 // use lodash instead of Math.min/max
@@ -208,7 +209,14 @@ function BarplotViz(props: VisualizationProps) {
   );
 
   const findEntityAndVariable = useFindEntityAndVariable(entities);
-  const { variable, entity, overlayVariable, facetVariable } = useMemo(() => {
+  const {
+    variable,
+    entity,
+    overlayVariable,
+    overlayEntity,
+    facetVariable,
+    facetEntity,
+  } = useMemo(() => {
     const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
     const overlayVariable = findEntityAndVariable(vizConfig.overlayVariable);
     const facetVariable = findEntityAndVariable(vizConfig.facetVariable);
@@ -216,7 +224,9 @@ function BarplotViz(props: VisualizationProps) {
       variable: xAxisVariable?.variable,
       entity: xAxisVariable?.entity,
       overlayVariable: overlayVariable?.variable,
+      overlayEntity: overlayVariable?.entity,
       facetVariable: facetVariable?.variable,
+      facetEntity: facetVariable?.entity,
     };
   }, [
     findEntityAndVariable,
@@ -227,23 +237,38 @@ function BarplotViz(props: VisualizationProps) {
 
   const data = usePromise(
     useCallback(async (): Promise<BarplotDataWithStatistics | undefined> => {
-      if (variable == null) return undefined;
+      if (variable == null || entity == null || filteredCounts == null)
+        return undefined;
 
       if (!variablesAreUnique([variable, overlayVariable, facetVariable]))
         throw new Error(nonUniqueWarning);
 
       const params = getRequestParams(studyId, filters ?? [], vizConfig);
 
-      const response = dataClient.getBarplot(
+      const response = await dataClient.getBarplot(
         computation.descriptor.type,
         params as BarplotRequestParams
       );
 
-      const showMissing =
-        vizConfig.showMissingness &&
-        (overlayVariable != null || facetVariable != null);
+      // figure out if we need to show the missing data for the stratification variables
+      // if it has no incomplete cases we don't have to
       const showMissingOverlay =
-        vizConfig.showMissingness && overlayVariable != null;
+        vizConfig.showMissingness &&
+        showMissingStratification(
+          overlayEntity,
+          overlayVariable,
+          filteredCounts,
+          response.completeCasesTable
+        );
+      const showMissingFacet =
+        vizConfig.showMissingness &&
+        showMissingStratification(
+          facetEntity,
+          facetVariable,
+          filteredCounts,
+          response.completeCasesTable
+        );
+
       const vocabulary = fixLabelsForNumberVariables(
         variable?.vocabulary,
         variable
@@ -257,27 +282,25 @@ function BarplotViz(props: VisualizationProps) {
         facetVariable
       );
 
-      return omitEmptyNoDataSeries(
-        grayOutLastSeries(
-          reorderData(
-            barplotResponseToData(
-              await response,
-              variable,
-              overlayVariable,
-              facetVariable
-            ),
-            vocabulary,
-            vocabularyWithMissingData(overlayVocabulary, showMissing),
-            vocabularyWithMissingData(facetVocabulary, showMissing)
+      return grayOutLastSeries(
+        reorderData(
+          barplotResponseToData(
+            response,
+            variable,
+            overlayVariable,
+            facetVariable
           ),
-          showMissingOverlay
+          vocabulary,
+          vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
+          vocabularyWithMissingData(facetVocabulary, showMissingFacet)
         ),
-        showMissing
+        showMissingOverlay
       );
     }, [
       // using vizConfig only causes issue with onCheckedLegendItemsChange
       studyId,
       filters,
+      filteredCounts,
       dataClient,
       vizConfig.xAxisVariable,
       vizConfig.overlayVariable,
@@ -285,6 +308,7 @@ function BarplotViz(props: VisualizationProps) {
       vizConfig.valueSpec,
       vizConfig.showMissingness,
       variable,
+      entity,
       overlayVariable,
       computation.descriptor.type,
     ])

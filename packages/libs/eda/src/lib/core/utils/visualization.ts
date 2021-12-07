@@ -4,9 +4,11 @@ import {
   BoxplotData,
   FacetedData,
 } from '@veupathdb/components/lib/types/plots';
-import { Variable } from '../types/study';
+import { StudyEntity, Variable } from '../types/study';
 import { CoverageStatistics } from '../types/visualization';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
+import { EntityCounts } from '../hooks/entityCounts';
+import { CompleteCasesTable } from '../api/DataClient';
 
 // was: BarplotData | HistogramData | { series: BoxplotData };
 type SeriesWithStatistics<T> = T & CoverageStatistics;
@@ -49,6 +51,28 @@ export function grayOutLastSeries<
   } as SeriesWithStatistics<T>;
 }
 
+export function showMissingStratification(
+  entity: StudyEntity | undefined,
+  variable: Variable | undefined,
+  filteredCounts: EntityCounts,
+  completeCasesTable: CompleteCasesTable
+): boolean {
+  const completeCases =
+    entity != null && variable != null
+      ? completeCasesTable.find(
+          (row) =>
+            row.variableDetails?.entityId === entity.id &&
+            row.variableDetails?.variableId === variable.id
+        )?.completeCases
+      : undefined;
+  return (
+    entity != null &&
+    completeCases != null &&
+    completeCases < filteredCounts[entity.id]
+  );
+}
+
+// TO DO: REMOVE ME WHEN NO LONGER USED
 export function omitEmptyNoDataSeries<
   T extends { series: BoxplotData } | BarplotData | HistogramData
 >(
