@@ -1,4 +1,4 @@
-import { CSSProperties, useMemo, useRef, useState } from 'react';
+import { CSSProperties, useMemo, useState } from 'react';
 
 // Components
 import { H6 } from '../headers';
@@ -16,8 +16,8 @@ import useUITheme from '../theming/useUITheme';
 export type FormFieldProps = {
   /** Specifies the underlying input type. */
   type: 'text' | 'password';
-  /** A heading for the component. */
-  heading: string;
+  /** Optional. A heading for the component. */
+  label?: string;
   /** Optional. Additional instructions to be displayed below the heading. */
   instructions?: string;
   /** Optional. Placeholder text to display in the field if there is no value.*/
@@ -34,6 +34,8 @@ export type FormFieldProps = {
   containerStyles?: CSSProperties;
   /** Optional. Indicates which theme role should be used to augment component styling. */
   themeRole?: keyof UITheme['palette'];
+  /** Optional. Indicates that the user should not be allow to change the content of the field. */
+  disabled?: boolean;
 };
 
 /**
@@ -42,7 +44,7 @@ export type FormFieldProps = {
  * */
 export default function FormField({
   type,
-  heading,
+  label,
   instructions,
   placeholder,
   width,
@@ -51,6 +53,7 @@ export default function FormField({
   status,
   containerStyles = {},
   themeRole,
+  disabled = false,
 }: FormFieldProps) {
   const [hasFocus, setHasFocus] = useState(false);
 
@@ -64,16 +67,18 @@ export default function FormField({
   );
 
   return (
-    <div css={{ width, height: 85, ...containerStyles }}>
-      <H6
-        text={heading}
-        additionalStyles={{
-          margin: 0,
-          fontSize: 13,
-          marginBottom: 3,
-          color: hasFocus ? gray[700] : gray[500],
-        }}
-      />
+    <div css={{ width, height: label ? 80 : 63, ...containerStyles }}>
+      {label && (
+        <H6
+          text={label}
+          additionalStyles={{
+            margin: 0,
+            fontSize: 13,
+            marginBottom: 3,
+            color: hasFocus ? gray[700] : gray[500],
+          }}
+        />
+      )}
       <div
         css={{
           position: 'relative',
@@ -86,6 +91,7 @@ export default function FormField({
       >
         <input
           type={type}
+          disabled={disabled}
           css={[
             typography.p,
             {

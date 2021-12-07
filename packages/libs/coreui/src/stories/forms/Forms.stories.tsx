@@ -37,7 +37,7 @@ export const Example: Story = (args) => {
       <div css={{ display: 'flex' }}>
         <FormField
           type='text'
-          heading='Username'
+          label='Username'
           instructions='Should be an email address'
           placeholder='Username'
           width='200px'
@@ -51,7 +51,7 @@ export const Example: Story = (args) => {
         />
         <FormField
           type='password'
-          heading='Password'
+          label='Password'
           width='200px'
           value={value}
           onValueChange={(value) => {

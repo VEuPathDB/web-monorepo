@@ -12,7 +12,7 @@ export default {
 } as Meta;
 
 const Template: Story<FormFieldProps> = (args) => {
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState(args.value);
   const [status, setStatus] = useState<FormFieldProps['status']>(args.status);
 
   const debouncedOnValueChange = useCallback(
@@ -47,7 +47,7 @@ const Template: Story<FormFieldProps> = (args) => {
 export const TextField = Template.bind({});
 TextField.args = {
   type: 'text',
-  heading: 'Example TextField',
+  label: 'Example TextField',
   instructions: 'These are example instructions. ',
   width: '50vw',
   placeholder: 'Example Placeholder',
@@ -57,6 +57,15 @@ export const PasswordField = Template.bind({});
 PasswordField.args = {
   ...TextField.args,
   type: 'password',
-  heading: 'Example Password Field',
+  label: 'Example Password Field',
   instructions: 'Passwords must contain one MILLION characters.',
+};
+
+export const InputDisabled = Template.bind({});
+InputDisabled.args = {
+  type: 'text',
+  width: '50vw',
+  value: 'www.exampleurl.com',
+  disabled: true,
+  label: 'Public Analysis URL',
 };
