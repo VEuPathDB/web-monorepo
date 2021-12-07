@@ -759,10 +759,12 @@ function ScatterplotViz(props: VisualizationProps) {
           },
         ]}
       />
-      {/* R-square table component */}
+      {/* R-square table component: only display when overlay and/or facet variable exist */}
       {vizConfig.valueSpecConfig === 'Best fit line with raw' &&
         data.value != null &&
-        !data.pending && (
+        !data.pending &&
+        (vizConfig.overlayVariable != null ||
+          vizConfig.facetVariable != null) && (
           <ScatterplotRsquareTable
             typedData={
               !isFaceted(data.value.dataSetProcess)
@@ -1434,16 +1436,17 @@ function processInputData<T extends number | string>(
       dataSetProcess.push({
         x: bestFitLineX,
         y: el.bestFitLineY,
-        // display R-square value at legend text(s)
-        // name: 'Best fit<br>R<sup>2</sup> = ' + el.r2,
-        // include R-square value at dataSetProcess
         r2: el.r2,
-        name: el.overlayVariableDetails
-          ? fixLabelForNumberVariables(
-              el.overlayVariableDetails.value,
-              overlayVariable
-            ) + BESTFITSUFFIX
-          : BESTFITTEXT,
+        // display R-square value at legend for no overlay and facet variable
+        name:
+          overlayVariable == null && facetVariable == null
+            ? 'Best fit, R² = ' + el.r2
+            : el.overlayVariableDetails
+            ? fixLabelForNumberVariables(
+                el.overlayVariableDetails.value,
+                overlayVariable
+              ) + BESTFITSUFFIX
+            : BESTFITTEXT,
         mode: 'lines', // no data point is displayed: only line
         line: {
           // use darker color for best fit line
