@@ -1,6 +1,6 @@
-import { ActionCreatorServices } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
 import { makeActionCreator, InferAction } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
 import { fetchStudies, getStudyId, Study } from '../shared/studies';
+import { WdkDependenciesWithStudyAccessApi } from '../shared/wrapWdkDependencies';
 
 import { checkPermissions, UserPermissions } from '../study-access/permission';
 
@@ -21,12 +21,12 @@ export interface ActionAttemptDetails {
 }
 
 export function attemptAction(action: DataRestrictionActionType, details: ActionAttemptDetails) {
-  return function run({ wdkService }: ActionCreatorServices) {
+  return function run({ wdkService, studyAccessApi }: WdkDependenciesWithStudyAccessApi) {
     const user$ = wdkService.getCurrentUser();
     const studies$ = fetchStudies(wdkService);
 
     return Promise.all([ user$, studies$ ]).then(([ user, studies ]) => {
-      return checkPermissions(user).then(permissions => {
+      return checkPermissions(user, studyAccessApi).then(permissions => {
         return handleAction(
           permissions,
           // FIXME: Either properly type the approvedStudies property, or retire it

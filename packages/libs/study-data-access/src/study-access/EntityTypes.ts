@@ -240,16 +240,39 @@ export const datasetProviderPatch = array(
 
 export type DatasetProviderPatch = TypeOf<typeof datasetProviderPatch>;
 
-export const providerPermissionEntry = type({
-  type: literal('provider'),
-  isManager: boolean
+export const actionAuthorization = type({
+  studyMetadata: boolean,
+  subsetting: boolean,
+  visualizations: boolean,
+  resultsFirstPage: boolean,
+  resultsAll: boolean,
 });
+
+export type ActionAuthorization = TypeOf<typeof actionAuthorization>;
+
+export const permissionEntryBase = type({
+  studyId: string,
+  actionAuthorization
+});
+
+export type PermissionEntryBase = TypeOf<typeof permissionEntryBase>;
+
+export const providerPermissionEntry = intersection([
+  permissionEntryBase,
+  type({
+    type: literal('provider'),
+    isManager: boolean
+  })
+]);
 
 export type ProviderPermissionEntry = TypeOf<typeof providerPermissionEntry>;
 
-export const endUserPermissionEntry = type({
-  type: literal('end-user')
-});
+export const endUserPermissionEntry = intersection([
+  permissionEntryBase,
+  type({
+    type: literal('end-user')
+  })
+]);
 
 export type EndUserPermissionEntry = TypeOf<typeof endUserPermissionEntry>;
 
@@ -260,11 +283,15 @@ export const datasetPermissionEntry = union([
 
 export type DatasetPermissionEntry = TypeOf<typeof datasetPermissionEntry>;
 
-export const permissionsResponse = partial({
-  isOwner: boolean,
-  isStaff: boolean,
-  perDataset: record(string, datasetPermissionEntry)
-});
+export const permissionsResponse = intersection([
+  type({
+    perDataset: record(string, datasetPermissionEntry)
+  }),
+  partial({
+    isOwner: boolean,
+    isStaff: boolean,
+  })
+]);
 
 export type PermissionsResponse = TypeOf<typeof permissionsResponse>;
 

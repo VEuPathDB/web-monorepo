@@ -1,4 +1,10 @@
+import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+
+import {
+  Action,
+  actionCategories
+} from '../data-restriction/DataRestrictionUiActions';
 
 import {
   ApprovalStatus,
@@ -6,25 +12,21 @@ import {
   PermissionsResponse
 } from './EntityTypes';
 import {
-  STUDY_ACCESS_SERVICE_URL,
   StudyAccessApi
 } from './api';
 
 export type UserPermissions =
   | StaffPermissions
-  | ExternalUserPermissions
-  | NoPermissions;
+  | ExternalUserPermissions;
 
 export interface StaffPermissions {
   type: 'staff';
   isOwner: boolean;
+  perDataset: Record<string, DatasetPermissionEntry | undefined>;
 }
 export interface ExternalUserPermissions {
   type: 'external';
   perDataset: Record<string, DatasetPermissionEntry | undefined>;
-}
-export interface NoPermissions {
-  type: 'none';
 }
 
 export function permissionsResponseToUserPermissions(permissionsResponse: PermissionsResponse): UserPermissions {
@@ -34,16 +36,13 @@ export function permissionsResponseToUserPermissions(permissionsResponse: Permis
   ) {
     return {
       type: 'staff',
-      isOwner: !!permissionsResponse.isOwner
-    };
-  } else if (permissionsResponse.perDataset != null) {
-    return {
-      type: 'external',
+      isOwner: !!permissionsResponse.isOwner,
       perDataset: permissionsResponse.perDataset
     };
   } else {
     return {
-      type: 'none'
+      type: 'external',
+      perDataset: permissionsResponse.perDataset
     };
   }
 }
@@ -73,13 +72,6 @@ export function isProvider(userPermissions: UserPermissions, datasetId: string) 
   return (
     userPermissions.type === 'external' &&
     userPermissions.perDataset[datasetId]?.type === 'provider'
-  );
-}
-
-export function isEndUser(userPermissions: UserPermissions, datasetId: string) {
-  return (
-    userPermissions.type === 'external' &&
-    userPermissions.perDataset[datasetId]?.type === 'end-user'
   );
 }
 
@@ -159,33 +151,60 @@ export function shouldDisplayHistoryTable(userPermissions: UserPermissions) {
   return isOwner(userPermissions);
 }
 
-export function isUserApprovedForStudy(
+export function isUserApprovedForAction(
+  userPermissions: UserPermissions,
+  approvedStudies: string[] | undefined,
+  datasetId: string,
+  action: Action,
+) {
+  if (approvedStudies == null) {
+    return true;
+  }
+
+  const actionAuthorization =
+    userPermissions.perDataset[datasetId]?.actionAuthorization;
+
+  if (actionAuthorization == null) {
+    return false;
+  }
+
+  return actionAuthorization[actionCategories[action]];
+}
+
+export function isUserFullyApprovedForStudy(
   userPermissions: UserPermissions,
   approvedStudies: string[] | undefined,
   datasetId: string
 ) {
-  // assuming approvedStudies only contain public studies for this user (in CineEpiWebsite CustomProfileService.java)
-  return (
-    isStaff(userPermissions) ||
-    isProvider(userPermissions, datasetId) ||
-    isEndUser(userPermissions, datasetId) ||
-    approvedStudies == null ||
-    approvedStudies.includes(datasetId)
+  if (approvedStudies == null) {
+    return true;
+  }
+
+  const actionAuthorization =
+    userPermissions.perDataset[datasetId]?.actionAuthorization;
+
+  if (actionAuthorization == null) {
+    return false;
+  }
+
+  return Object.values(actionAuthorization).every(
+    (isApprovedForAction) => isApprovedForAction === true
   );
 }
 
-async function fetchPermissions(fetchApi?: Window['fetch']) {
-  const api = new StudyAccessApi({ baseUrl: STUDY_ACCESS_SERVICE_URL, fetchApi });
-
-  const permissionsResponse = await api.fetchPermissions();
+async function fetchPermissions(studyAccessApi: StudyAccessApi) {
+  const permissionsResponse = await studyAccessApi.fetchPermissions();
 
   return permissionsResponseToUserPermissions(permissionsResponse);
 }
 
-export async function checkPermissions(user: User, fetchApi?: Window['fetch']): Promise<UserPermissions> {
-  return user.isGuest || user.properties?.approvedStudies == null
-    ? { type: 'none' }
-    : await fetchPermissions(fetchApi);
+export async function checkPermissions(
+  user: User,
+  studyAccessApi: StudyAccessApi
+): Promise<UserPermissions> {
+  return user.properties?.approvedStudies == null
+    ? { type: 'external', perDataset: {} }
+    : await fetchPermissions(studyAccessApi);
 }
 
 export function permittedApprovalStatusChanges(oldApprovalStatus: ApprovalStatus): ApprovalStatus[] {

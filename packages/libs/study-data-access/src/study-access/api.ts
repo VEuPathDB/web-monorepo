@@ -2,8 +2,7 @@ import { zipWith } from 'lodash';
 
 import {
   createJsonRequest,
-  ApiRequest,
-  FetchClient,
+  FetchClientWithCredentials,
   ioTransformer,
 } from '@veupathdb/http-utils';
 import {
@@ -25,9 +24,6 @@ import {
   staffList
 } from './EntityTypes';
 
-// FIXME: This should be configurable
-export const STUDY_ACCESS_SERVICE_URL = '/dataset-access';
-
 // API  defined in https://veupathdb.github.io/service-dataset-access/api.html
 const STAFF_PATH = '/staff';
 const PROVIDERS_PATH = '/dataset-providers';
@@ -35,19 +31,7 @@ const END_USERS_PATH = '/dataset-end-users';
 const PERMISSIONS_PATH = '/permissions';
 const HISTORY_PATH = '/history';
 
-export class StudyAccessApi extends FetchClient {
-
-  fetch = <T>(apiRequest: ApiRequest<T>) => {
-    const wdkCheckAuth = document.cookie.split('; ').find(x => x.startsWith('wdk_check_auth=')) ?? '';
-    const authKey = wdkCheckAuth.replace('wdk_check_auth=', '');  
-    return super.fetch({
-      ...apiRequest,
-      headers: {
-        ...apiRequest.headers,
-        'Auth-key': authKey
-      }
-    })
-  }
+export class StudyAccessApi extends FetchClientWithCredentials {
 
   fetchStaffList = (limit?: number, offset?: number) => {
     const queryString = makeQueryString(

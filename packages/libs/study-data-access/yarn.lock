@@ -2862,13 +2862,14 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/eslint-config/-/eslint-config-1.0.0.tgz#40dc855b263bd3fd68f8f61508ef55b1dc163caf"
   integrity sha512-UDgRQYsIdfB9KCkBmeqMjVQOQAAGB8RLFUj4KlLAxRcT5TlRI47ZmofB3/NMbpIHP27/pk1bryPo7z4DMwWyeQ==
 
-"@veupathdb/http-utils@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/http-utils/-/http-utils-1.0.0.tgz#44443bc34ab13b33373e1c80ac719c914a41e33d"
-  integrity sha512-NnqgLabaLxo75tGVG0RkB2DjWIkgE+1k12yOMtw4cuwZEqD+i4/M0RQVNPSQWPQVHRCR/c0pPZhJc20r8sMRhA==
+"@veupathdb/http-utils@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/http-utils/-/http-utils-1.0.1.tgz#e3e2b616a43d82170c73e5ce44e80c740a960ee6"
+  integrity sha512-MURe3oXkK1ABOkVH94dK2NDBeh7KBphQUgjWNKAcn0ckT1+v5AUC8R7xkRd7P84wJT3inQE0vhEiItnoj6lYCg==
   dependencies:
     fp-ts "^2.11.5"
     io-ts "^2.2.16"
+    lodash "^4.17.21"
 
 "@veupathdb/prettier-config@^1.0.0":
   version "1.0.0"
@@ -2891,10 +2892,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/tsconfig/-/tsconfig-1.0.1.tgz#a2b748b46838af1337ca9f23d969993fb952def4"
   integrity sha512-i6gq7mgnyEN8/xW5EaI9RiWCwS1oB8cgWqx9h5w4vZtnb10oiyyepD640l9x/gZf6IWecjynRs7weDgSRs7l0Q==
 
-"@veupathdb/wdk-client@^0.4.6":
-  version "0.4.6"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.4.6.tgz#7dd8489dad185a6a3264761179235e091c983323"
-  integrity sha512-Ufxaq+N/Xo4PN9kzOvNzKmE6tbkxU/Q4VVGCP1nsCoFSxTN/G8dPWVRoDB3+mrBrjuzH5cqw4VIO1+viCVXCng==
+"@veupathdb/wdk-client@^0.4.12":
+  version "0.4.12"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.4.12.tgz#13f32e85ac2cd7cfab306e265d2de480ed8697d7"
+  integrity sha512-MtopiFoDaGX7sFeaDQNWxVK413ua7DokgQ76AI33BT1ttOTp5JcL3Qg8f0WoQ3b1Vui2it98sMrivTIv9ADEiQ==
   dependencies:
     "@types/datatables.net" "^1.10.5"
     "@types/flot" "^0.0.31"
