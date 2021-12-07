@@ -14,7 +14,7 @@ const defaultSpacingOptions: XYPlotProps['spacingOptions'] = {
   marginRight: 20,
   marginLeft: 50,
   marginBottom: 40,
-  marginTop: 30,
+  marginTop: 50,
 };
 
 type FacetedXYPlotProps = Omit<

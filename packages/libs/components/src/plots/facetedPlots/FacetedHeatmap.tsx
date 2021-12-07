@@ -14,7 +14,7 @@ const defaultSpacingOptions: HeatmapProps['spacingOptions'] = {
   marginRight: 10,
   marginLeft: 25,
   marginBottom: 40,
-  marginTop: 80,
+  marginTop: 60,
 };
 
 type FacetedHeatmapProps = Omit<
