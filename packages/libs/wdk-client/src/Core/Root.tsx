@@ -14,7 +14,7 @@ import { RouteEntry } from 'wdk-client/Core/RouteEntry';
 import WdkRoute from 'wdk-client/Core/WdkRoute';
 import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import UnhandledErrorsController from 'wdk-client/Controllers/UnhandledErrorsController';
-import { WdkDependencies, WdkDepdendenciesContext } from 'wdk-client/Hooks/WdkDependenciesEffect';
+import { WdkDependencies, WdkDependenciesContext } from 'wdk-client/Hooks/WdkDependenciesEffect';
 
 type Props = {
   rootUrl: string,
@@ -106,7 +106,7 @@ export default class Root extends React.Component<Props, State> {
       <Provider store={this.props.store}>
         <ErrorBoundary>
           <Router history={this.props.history}>
-            <WdkDepdendenciesContext.Provider value={this.props.wdkDependencies}>
+            <WdkDependenciesContext.Provider value={this.props.wdkDependencies}>
               <PluginContext.Provider value={makeCompositePluginComponent(this.props.pluginConfig)}>
                 <Page classNameModifier={rootClassNameModifier}>
                   {staticContent ? safeHtml(staticContent, null, 'div') : (
@@ -129,7 +129,7 @@ export default class Root extends React.Component<Props, State> {
                   )}
                 </Page>
               </PluginContext.Provider>
-            </WdkDepdendenciesContext.Provider>
+            </WdkDependenciesContext.Provider>
           </Router>
         </ErrorBoundary>
       </Provider>

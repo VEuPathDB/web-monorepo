@@ -1,6 +1,9 @@
 import { Action } from 'redux';
 
-import { ActionCreatorResult } from 'wdk-client/Core/WdkMiddleware';
+import {
+  ActionCreatorResult,
+  ActionCreatorServices
+} from 'wdk-client/Core/WdkMiddleware';
 import { UserDataset } from 'wdk-client/Utils/WdkModel';
 
 // https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html
@@ -10,8 +13,8 @@ export interface SimpleDispatch {
   (action: Action): void;
 }
 
-export interface DispatchAction {
-  (action: ActionCreatorResult<Action>): any;
+export interface DispatchAction<S extends ActionCreatorServices = ActionCreatorServices> {
+  (action: ActionCreatorResult<Action, S>): any;
 }
 
 export interface MesaColumn<K extends string = string> {
