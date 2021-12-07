@@ -2,7 +2,7 @@ import XYPlot, { XYPlotProps } from '../XYPlot';
 import FacetedPlot, { FacetedPlotProps } from '../FacetedPlot';
 import { XYPlotData } from '../../types/plots';
 
-const defaultContainerStyles: XYPlotProps['containerStyles'] = {
+export const defaultContainerStyles: XYPlotProps['containerStyles'] = {
   height: 300,
   width: 750 / 1.75,
   marginLeft: '0.75rem',
@@ -10,7 +10,7 @@ const defaultContainerStyles: XYPlotProps['containerStyles'] = {
   boxShadow: '1px 1px 4px #00000066',
 };
 
-const defaultSpacingOptions: XYPlotProps['spacingOptions'] = {
+export const defaultSpacingOptions: XYPlotProps['spacingOptions'] = {
   marginRight: 20,
   marginLeft: 50,
   marginBottom: 40,

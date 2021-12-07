@@ -2,7 +2,7 @@ import Boxplot, { BoxplotProps } from '../Boxplot';
 import FacetedPlot, { FacetedPlotProps } from '../FacetedPlot';
 import { BoxplotData } from '../../types/plots';
 
-const defaultContainerStyles: BoxplotProps['containerStyles'] = {
+export const defaultContainerStyles: BoxplotProps['containerStyles'] = {
   height: 300,
   width: 375,
   marginLeft: '0.75rem',
@@ -10,7 +10,7 @@ const defaultContainerStyles: BoxplotProps['containerStyles'] = {
   boxShadow: '1px 1px 4px #00000066',
 };
 
-const defaultSpacingOptions: BoxplotProps['spacingOptions'] = {
+export const defaultSpacingOptions: BoxplotProps['spacingOptions'] = {
   marginRight: 15,
   marginLeft: 15,
   marginBottom: 10,

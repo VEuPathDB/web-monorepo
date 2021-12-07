@@ -2,7 +2,7 @@ import Barplot, { BarplotProps } from '../Barplot';
 import FacetedPlot, { FacetedPlotProps } from '../FacetedPlot';
 import { BarplotData } from '../../types/plots';
 
-const defaultContainerStyles: BarplotProps['containerStyles'] = {
+export const defaultContainerStyles: BarplotProps['containerStyles'] = {
   height: 300,
   width: 375,
   marginLeft: '0.75rem',
@@ -10,7 +10,7 @@ const defaultContainerStyles: BarplotProps['containerStyles'] = {
   boxShadow: '1px 1px 4px #00000066',
 };
 
-const defaultSpacingOptions: BarplotProps['spacingOptions'] = {
+export const defaultSpacingOptions: BarplotProps['spacingOptions'] = {
   marginRight: 10,
   marginLeft: 10,
   marginBottom: 10,

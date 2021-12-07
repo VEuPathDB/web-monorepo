@@ -4,7 +4,7 @@ import { PiePlotData } from '../../types/plots';
 import { useCallback } from 'react';
 import { select } from 'd3';
 
-const defaultContainerStyles: PiePlotProps['containerStyles'] = {
+export const defaultContainerStyles: PiePlotProps['containerStyles'] = {
   height: 300,
   width: 375,
   marginLeft: '0.75rem',
@@ -12,7 +12,7 @@ const defaultContainerStyles: PiePlotProps['containerStyles'] = {
   boxShadow: '1px 1px 4px #00000066',
 };
 
-const defaultSpacingOptions: PiePlotProps['spacingOptions'] = {
+export const defaultSpacingOptions: PiePlotProps['spacingOptions'] = {
   marginRight: 10,
   marginLeft: 10,
   marginBottom: 10,
