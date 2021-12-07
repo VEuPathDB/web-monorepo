@@ -3,7 +3,6 @@ import { emptyAction } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
 
 import { getSearchableString } from '@veupathdb/wdk-client/lib/Views/Records/RecordUtils'
 import { isPrereleaseStudyTemp } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
-import { checkPermissions } from 'ebrc-client/StudyAccess/permission';
 
 export const STUDIES_REQUESTED = 'studies/studies-requested';
 export const STUDIES_RECEIVED = 'studies/studies-received';
