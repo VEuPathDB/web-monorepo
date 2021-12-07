@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 
 import useUITheme from '../../theming/useUITheme';
 import { gray } from '../../../definitions/colors';
-import SwissArmyButton, { SwissArmyButtonProps } from '../SwissArmyButton';
+import SwissArmyButton from '../SwissArmyButton';
 
 import { ButtonStyleSpec, SwissArmyButtonVariantProps } from '..';
 
@@ -16,6 +16,7 @@ export default function MesaButton({
   icon = () => null,
   themeRole,
   styleOverrides = {},
+  iconOnly,
 }: SwissArmyButtonVariantProps) {
   const defaultStyle: ButtonStyleSpec = {
     default: {
@@ -151,6 +152,7 @@ export default function MesaButton({
       size={size}
       icon={icon}
       themeRole={themeRole}
+      iconOnly={iconOnly}
     />
   );
 }

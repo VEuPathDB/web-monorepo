@@ -15,6 +15,7 @@ export default function OutlinedButton({
   icon = () => null,
   themeRole,
   styleOverrides = {},
+  iconOnly,
 }: SwissArmyButtonVariantProps) {
   const defaultStyle: ButtonStyleSpec = {
     default: {
@@ -105,6 +106,7 @@ export default function OutlinedButton({
       size={size}
       icon={icon}
       themeRole={themeRole}
+      iconOnly={iconOnly}
     />
   );
 }

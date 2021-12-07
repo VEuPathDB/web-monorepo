@@ -6,7 +6,7 @@ import { UITheme } from '../../theming/types';
 
 export type SwissArmyButtonProps = Omit<
   SwissArmyButtonVariantProps,
-  'styleOverrides' | 'iconOnly'
+  'styleOverrides'
 > & { styleSpec: ButtonStyleSpec };
 
 /** Basic button with a variety of customization options. */
@@ -17,6 +17,7 @@ export default function SwissArmyButton({
   size = 'medium',
   icon,
   styleSpec,
+  iconOnly = false,
 }: SwissArmyButtonProps) {
   const [buttonState, setButtonState] = useState<
     'default' | 'hover' | 'pressed'
@@ -82,7 +83,7 @@ export default function SwissArmyButton({
           <Icon
             fontSize={calculatedIconSize}
             fill={calculatedTextColor}
-            css={text && { marginRight: 10 }}
+            css={!iconOnly && { marginRight: 10 }}
           />
         )}
         {text}
