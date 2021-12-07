@@ -9,8 +9,10 @@ import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import {
   getIdFromRecordClassName,
   isStudyRecordClass,
-  Action
 } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
+import {
+  Action
+} from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUiActions';
 import { attemptAction } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionActionCreators';
 import { fetchStudies } from '@veupathdb/web-common/lib/App/Studies/StudyActionCreators';
 
