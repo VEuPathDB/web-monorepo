@@ -3,13 +3,13 @@ import { useAnalysisList } from '@veupathdb/eda/lib/core/hooks/analysis';
 import { AnalysisClient } from '@veupathdb/eda/lib/core/api/analysis-api';
 import { Showcase } from 'ebrc-client/App/Showcase';
 import { News } from 'ebrc-client/App/NewsSidebar';
-import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { edaServiceUrl } from 'ebrc-client/config';
 
 import './HomePage.scss';
 
 export default function  HomePage({ newsSidebar, twitterUrl, webAppUrl, projectId, siteData, attemptAction, homeContent }) {
-  const { wdkService } = useContext(WdkDepdendenciesContext);
+  const { wdkService } = useContext(WdkDependenciesContext);
   const analysisClient = useMemo(() => new AnalysisClient({
     baseUrl: edaServiceUrl,
   }, wdkService), [wdkService]);
