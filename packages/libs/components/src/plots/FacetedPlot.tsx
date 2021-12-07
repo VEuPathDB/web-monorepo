@@ -24,6 +24,9 @@ export interface FacetedPlotProps<D, P extends PlotProps<D>> {
   data?: FacetedData<D>;
   component: ComponentWithPlotRef<P>;
   componentProps: P;
+  /** Provide modalComponentProps to activate click-to-expand
+   * These are the props the expanded plot inside the modal will receive
+   */
   modalComponentProps?: P;
   // custom legend prop
   checkedLegendItems?: string[];
