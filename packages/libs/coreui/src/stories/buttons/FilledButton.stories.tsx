@@ -1,8 +1,7 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
+import { SwissArmyButtonVariantProps } from '../../components/buttons';
 
-import FilledButton, {
-  FilledButtonProps,
-} from '../../components/buttons/FilledButton';
+import FilledButton from '../../components/buttons/FilledButton';
 import { TableDownload, Download } from '../../components/icons';
 import UIThemeProvider from '../../components/theming/UIThemeProvider';
 import { blue, gray, green, orange, teal } from '../../definitions/colors';
@@ -12,7 +11,7 @@ export default {
   component: FilledButton,
 } as Meta;
 
-const Template: Story<FilledButtonProps> = (args) => {
+const Template: Story<SwissArmyButtonVariantProps> = (args) => {
   return (
     <UIThemeProvider
       theme={{
@@ -36,6 +35,12 @@ Default.args = {
 export const WithIcon = Template.bind({});
 WithIcon.args = {
   text: 'Button With Icon',
+  icon: TableDownload,
+};
+
+export const IconOnly = Template.bind({});
+IconOnly.args = {
+  iconOnly: true,
   icon: TableDownload,
 };
 

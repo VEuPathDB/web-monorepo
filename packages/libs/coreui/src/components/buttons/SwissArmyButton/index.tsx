@@ -1,28 +1,13 @@
 import React, { useState } from 'react';
 
-import { ButtonStyleSpec } from '..';
+import { ButtonStyleSpec, SwissArmyButtonVariantProps } from '..';
 import typography from '../../../styleDefinitions/typography';
 import { UITheme } from '../../theming/types';
 
-export type SwissArmyButtonProps = {
-  /** Text of the button */
-  text: string;
-  /** Action to take when the button is clicked. */
-  onPress: () => void;
-  /** Optional. Text to display as a tooltip when button is hovered over. */
-  tooltip?: string;
-  /**
-   * Optional. Used to indicate which color properties to calculate based on
-   * a UI theme. Not indicating a value here will mean that button should not
-   * pick up styling options from the theme. */
-  themeRole?: keyof UITheme['palette'];
-  /** The size of the button. */
-  size?: 'small' | 'medium' | 'large';
-  /** Optional. SVG component to use as an icon. */
-  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  /** Additional styles to apply to the button container. */
-  styleSpec: ButtonStyleSpec;
-};
+export type SwissArmyButtonProps = Omit<
+  SwissArmyButtonVariantProps,
+  'styleOverrides' | 'iconOnly'
+> & { styleSpec: ButtonStyleSpec };
 
 /** Basic button with a variety of customization options. */
 export default function SwissArmyButton({
@@ -30,7 +15,7 @@ export default function SwissArmyButton({
   onPress,
   tooltip,
   size = 'medium',
-  icon = () => null,
+  icon,
   styleSpec,
 }: SwissArmyButtonProps) {
   const [buttonState, setButtonState] = useState<
@@ -93,11 +78,13 @@ export default function SwissArmyButton({
         }}
         onClick={onPress}
       >
-        <Icon
-          fontSize={calculatedIconSize}
-          fill={calculatedTextColor}
-          css={{ marginRight: 10 }}
-        />
+        {Icon && (
+          <Icon
+            fontSize={calculatedIconSize}
+            fill={calculatedTextColor}
+            css={text && { marginRight: 10 }}
+          />
+        )}
         {text}
       </button>
       {tooltip && (

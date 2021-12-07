@@ -1,8 +1,7 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
+import { SwissArmyButtonVariantProps } from '../../components/buttons';
 
-import OutlinedButton, {
-  OutlinedButtonProps,
-} from '../../components/buttons/OutlinedButton';
+import OutlinedButton from '../../components/buttons/OutlinedButton';
 import { TableDownload, Download } from '../../components/icons';
 import UIThemeProvider from '../../components/theming/UIThemeProvider';
 import { blue, purple, red } from '../../definitions/colors';
@@ -12,7 +11,7 @@ export default {
   component: OutlinedButton,
 } as Meta;
 
-const Template: Story<OutlinedButtonProps> = (args) => {
+const Template: Story<SwissArmyButtonVariantProps> = (args) => {
   return (
     <UIThemeProvider
       theme={{
@@ -38,11 +37,16 @@ WithIcon.args = {
   icon: TableDownload,
 };
 
+export const IconOnly = Template.bind({});
+IconOnly.args = {
+  iconOnly: true,
+  icon: TableDownload,
+};
+
 export const Tooltip = Template.bind({});
 Tooltip.args = {
   text: 'Button With Tooltip',
   icon: TableDownload,
-
   tooltip: 'Hello there friend.',
 };
 

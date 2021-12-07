@@ -1,8 +1,7 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
+import { SwissArmyButtonVariantProps } from '../../components/buttons';
 
-import FloatingButton, {
-  FloatingButtonProps,
-} from '../../components/buttons/FloatingButton';
+import FloatingButton from '../../components/buttons/FloatingButton';
 import { TableDownload, Download } from '../../components/icons';
 import UIThemeProvider from '../../components/theming/UIThemeProvider';
 import { green, orange } from '../../definitions/colors';
@@ -12,7 +11,7 @@ export default {
   component: FloatingButton,
 } as Meta;
 
-const Template: Story<FloatingButtonProps> = (args) => {
+const Template: Story<SwissArmyButtonVariantProps> = (args) => {
   return (
     <UIThemeProvider
       theme={{
@@ -35,6 +34,12 @@ Default.args = {
 export const WithIcon = Template.bind({});
 WithIcon.args = {
   text: 'Button With Icon',
+  icon: TableDownload,
+};
+
+export const IconOnly = Template.bind({});
+IconOnly.args = {
+  iconOnly: true,
   icon: TableDownload,
 };
 

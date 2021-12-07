@@ -1,4 +1,5 @@
 import { CSSProperties } from 'react';
+import { UITheme } from '../theming';
 import { SwissArmyButtonProps } from './SwissArmyButton';
 
 export type ButtonStyleSpec = {
@@ -36,13 +37,39 @@ type ButtonStateStyleSpec = {
   };
 };
 
-// Type definition for buttons that derive from SwissArmyButton
-export type SwissArmyButtonVariantProps = Omit<
-  SwissArmyButtonProps,
-  'styleSpec'
-> & {
+type CoreProps = {
+  /** Action to take when the button is clicked. */
+  onPress: () => void;
+  /** Optional. Text to display as a tooltip when button is hovered over. */
+  tooltip?: string;
+  /**
+   * Optional. Used to indicate which color properties to calculate based on
+   * a UI theme. Not indicating a value here will mean that button should not
+   * pick up styling options from the theme. */
+  themeRole?: keyof UITheme['palette'];
+  /** The size of the button. */
+  size?: 'small' | 'medium' | 'large';
+  /** Additional styles to apply to the button container. */
   styleOverrides?: Partial<ButtonStyleSpec>;
 };
+
+type TextIconProps =
+  | {
+      iconOnly?: false;
+      /** Text of the button. */
+      text: string;
+      /** Optional. SVG component to use as an icon. */
+      icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+    }
+  | {
+      iconOnly: true;
+      text?: never;
+      /** SVG component to use as an icon. */
+      icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+    };
+
+// Type definition for buttons that derive from SwissArmyButton
+export type SwissArmyButtonVariantProps = CoreProps & TextIconProps;
 
 export { default as FilledButton } from './FilledButton';
 export { default as FloatingButton } from './FloatingButton';
