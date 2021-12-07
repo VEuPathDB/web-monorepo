@@ -378,9 +378,7 @@ function BarplotViz(props: VisualizationProps) {
   // run once when rendering and check if vizConfig.checkedLegendItmes is defined
   // this will handle the case of pre-existing plot
   useEffect(() => {
-    if (vizConfig.checkedLegendItems != null) {
-      onCheckedLegendItemsChange(vizConfig.checkedLegendItems);
-    } else {
+    if (vizConfig.checkedLegendItems == null) {
       // vizConfig.checkedLegendItems is undefined thus a new legend list needs to be made in the below useEffect()
       setNewLegendList(true);
     }
