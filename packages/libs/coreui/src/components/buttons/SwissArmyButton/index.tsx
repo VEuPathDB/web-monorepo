@@ -105,6 +105,7 @@ export default function SwissArmyButton({
             typography.pre,
             {
               position: 'absolute',
+              zIndex: 1000,
               top: buttonHeight + 5,
               backgroundColor: 'rgb(115, 115, 115)',
               padding: '4px 8px',
