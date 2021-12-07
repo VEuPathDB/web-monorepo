@@ -45,6 +45,9 @@ import { ShowHideVariableContext } from '../../utils/show-hide-variable-context'
 import { cx } from '../../../workspace/Utils';
 import { pruneEmptyFields } from '../../utils/wdk-filter-param-adapter';
 
+import { Tooltip as VarTooltip } from '../docs/variable-constraints';
+import { useActiveDocument } from '../docs/DocumentationContainer';
+
 interface VariableField {
   type?: string;
   term: string;
@@ -152,6 +155,7 @@ export default function VariableList({
   } = useContext(ShowHideVariableContext);
 
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const { setActiveDocument } = useActiveDocument();
   const getPathToField = useCallback(
     (field?: Field) => {
       if (field == null) return [];
@@ -432,19 +436,18 @@ export default function VariableList({
 
   const tooltipContent = (
     <>
-      Some variables cannot be used here. Use this to toggle their presence
-      below.
+      <VarTooltip />
       <br />
       <br />
       <strong>
         <Link
-          to=""
-          onClick={(e) => {
-            e.preventDefault();
-            alert('Comming soon');
+          to="../../../../documentation/variable-constraints"
+          onClick={(event) => {
+            event.preventDefault();
+            setActiveDocument('variable-constraints');
           }}
         >
-          <Icon fa="info-circle" /> Learn more
+          Learn more
         </Link>
       </strong>{' '}
       about variable compatibility
@@ -480,8 +483,8 @@ export default function VariableList({
               );
             }}
           >
-            <Toggle on={showOnlyCompatibleVariables} />
-            Only show compatible variables
+            <Toggle on={showOnlyCompatibleVariables} /> Only show compatible
+            variables
           </button>
         </HtmlTooltip>
       </div>

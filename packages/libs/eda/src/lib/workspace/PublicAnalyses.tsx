@@ -5,8 +5,6 @@ import {
   FormControlLabel,
   Switch,
   TextField,
-  ThemeProvider,
-  createMuiTheme,
   makeStyles,
 } from '@material-ui/core';
 import { keyBy, orderBy } from 'lodash';
@@ -28,7 +26,6 @@ import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 import { OverflowingTextCell } from '@veupathdb/wdk-client/lib/Views/Strategy/OverflowingTextCell';
 
-import { workspaceTheme } from '../core/components/workspaceTheme';
 import { useDebounce } from '../core/hooks/debouncing';
 import {
   AnalysisClient,
@@ -71,29 +68,26 @@ export function PublicAnalyses({
   ...tableProps
 }: Props) {
   const styles = useStyles();
-  const theme = createMuiTheme(workspaceTheme);
   const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
 
   return (
-    <ThemeProvider theme={theme}>
-      <div className={styles.root}>
-        <h1>Public Analyses</h1>
-        <PromiseResult state={publicAnalysisListState}>
-          {(publicAnalysisList) =>
-            studyRecords == null || user == null ? (
-              <Loading />
-            ) : (
-              <PublicAnalysesTable
-                {...tableProps}
-                userId={user.id}
-                studyRecords={studyRecords}
-                publicAnalysisList={publicAnalysisList}
-              />
-            )
-          }
-        </PromiseResult>
-      </div>
-    </ThemeProvider>
+    <div className={styles.root}>
+      <h1>Public Analyses</h1>
+      <PromiseResult state={publicAnalysisListState}>
+        {(publicAnalysisList) =>
+          studyRecords == null || user == null ? (
+            <Loading />
+          ) : (
+            <PublicAnalysesTable
+              {...tableProps}
+              userId={user.id}
+              studyRecords={studyRecords}
+              publicAnalysisList={publicAnalysisList}
+            />
+          )
+        }
+      </PromiseResult>
+    </div>
   );
 }
 
