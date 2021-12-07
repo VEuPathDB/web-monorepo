@@ -1,6 +1,5 @@
 import { CSSProperties } from 'react';
 import { UITheme } from '../theming';
-import { SwissArmyButtonProps } from './SwissArmyButton';
 
 export type ButtonStyleSpec = {
   container?: React.CSSProperties;
