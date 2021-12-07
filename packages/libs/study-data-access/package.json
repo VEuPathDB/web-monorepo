@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "@veupathdb/http-utils": "^1.0.1",
-    "@veupathdb/wdk-client": "^0.4.6",
+    "@veupathdb/wdk-client": "^0.4.12",
     "fp-ts": "^2.11.5",
     "io-ts": "^2.2.16",
     "lodash": "^4.17.21"
