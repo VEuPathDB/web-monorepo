@@ -55,6 +55,7 @@ export default function SwissArmyButton({
     <div css={{ position: 'relative' }}>
       <button
         css={[
+          typography.primaryFont,
           {
             height: buttonHeight,
             display: 'flex',
