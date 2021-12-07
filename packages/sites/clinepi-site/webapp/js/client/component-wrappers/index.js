@@ -32,7 +32,7 @@ import ReporterSortMessage from './ReporterSortMessage';
 import { SpecialContactUsInstructions } from './SpecialContactUsInstructions';
 import { Page } from './Page';
 
-import { withPermissions } from '@veupathdb/web-common/lib/components/Permissions';
+import { withPermissions } from '@veupathdb/study-data-access/lib/data-restriction/Permissions';
 import * as ServerSideAttributeFilter from '@veupathdb/wdk-client/lib/Components/AttributeFilter/ServerSideAttributeFilter';
 
 export default {
