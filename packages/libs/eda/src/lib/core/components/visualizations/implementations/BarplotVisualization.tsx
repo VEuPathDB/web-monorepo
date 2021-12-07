@@ -404,10 +404,6 @@ function BarplotViz(props: VisualizationProps) {
     [data, vizConfig.checkedLegendItems]
   );
 
-  console.log('checkedLegendItems =', vizConfig.checkedLegendItems);
-  // console.log('legendItems =', legendItems)
-  console.log('newLegendList =', newLegendList);
-
   // these props are passed to either a single plot
   // or by FacetedPlot to each individual facet plot (where some will be overridden)
   const plotProps: BarplotProps = {
