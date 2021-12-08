@@ -1,5 +1,5 @@
 import Barplot, { BarplotProps } from '../Barplot';
-import FacetedPlot, { FacetedPlotProps } from '../FacetedPlot';
+import FacetedPlot, { FacetedPlotPropsWithRef } from '../FacetedPlot';
 import { BarplotData } from '../../types/plots';
 
 export const defaultContainerStyles: BarplotProps['containerStyles'] = {
@@ -18,7 +18,7 @@ export const defaultSpacingOptions: BarplotProps['spacingOptions'] = {
 };
 
 type FacetedBarplotProps = Omit<
-  FacetedPlotProps<BarplotData, BarplotProps>,
+  FacetedPlotPropsWithRef<BarplotData, BarplotProps>,
   'component'
 >;
 

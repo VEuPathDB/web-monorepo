@@ -1,5 +1,5 @@
 import Heatmap, { HeatmapProps } from '../Heatmap';
-import FacetedPlot, { FacetedPlotProps } from '../FacetedPlot';
+import FacetedPlot, { FacetedPlotPropsWithRef } from '../FacetedPlot';
 import { HeatmapData } from '../../types/plots';
 
 export const defaultContainerStyles: HeatmapProps['containerStyles'] = {
@@ -18,7 +18,7 @@ export const defaultSpacingOptions: HeatmapProps['spacingOptions'] = {
 };
 
 type FacetedHeatmapProps = Omit<
-  FacetedPlotProps<HeatmapData, HeatmapProps>,
+  FacetedPlotPropsWithRef<HeatmapData, HeatmapProps>,
   'component'
 >;
 

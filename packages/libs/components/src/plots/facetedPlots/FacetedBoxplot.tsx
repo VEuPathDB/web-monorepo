@@ -1,5 +1,5 @@
 import Boxplot, { BoxplotProps } from '../Boxplot';
-import FacetedPlot, { FacetedPlotProps } from '../FacetedPlot';
+import FacetedPlot, { FacetedPlotPropsWithRef } from '../FacetedPlot';
 import { BoxplotData } from '../../types/plots';
 
 export const defaultContainerStyles: BoxplotProps['containerStyles'] = {
@@ -18,7 +18,7 @@ export const defaultSpacingOptions: BoxplotProps['spacingOptions'] = {
 };
 
 type FacetedBoxplotProps = Omit<
-  FacetedPlotProps<BoxplotData, BoxplotProps>,
+  FacetedPlotPropsWithRef<BoxplotData, BoxplotProps>,
   'component'
 >;
 

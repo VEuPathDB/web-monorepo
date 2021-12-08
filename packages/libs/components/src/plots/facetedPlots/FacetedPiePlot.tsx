@@ -1,5 +1,5 @@
 import PiePlot, { PiePlotProps } from '../PiePlot';
-import FacetedPlot, { FacetedPlotProps } from '../FacetedPlot';
+import FacetedPlot, { FacetedPlotPropsWithRef } from '../FacetedPlot';
 import { PiePlotData } from '../../types/plots';
 import { useCallback } from 'react';
 import { select } from 'd3';
@@ -20,7 +20,7 @@ export const defaultSpacingOptions: PiePlotProps['spacingOptions'] = {
 };
 
 type FacetedPiePlotProps = Omit<
-  FacetedPlotProps<PiePlotData, PiePlotProps>,
+  FacetedPlotPropsWithRef<PiePlotData, PiePlotProps>,
   'component'
 >;
 

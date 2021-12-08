@@ -1,5 +1,5 @@
 import Histogram, { HistogramProps } from '../Histogram';
-import FacetedPlot, { FacetedPlotProps } from '../FacetedPlot';
+import FacetedPlot, { FacetedPlotPropsWithRef } from '../FacetedPlot';
 import { HistogramData } from '../../types/plots';
 
 export const defaultContainerStyles: HistogramProps['containerStyles'] = {
@@ -19,7 +19,7 @@ export const defaultSpacingOptions: HistogramProps['spacingOptions'] = {
 };
 
 type FacetedHistogramProps = Omit<
-  FacetedPlotProps<HistogramData, HistogramProps>,
+  FacetedPlotPropsWithRef<HistogramData, HistogramProps>,
   'component'
 >;
 

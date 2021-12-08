@@ -1,5 +1,5 @@
 import XYPlot, { XYPlotProps } from '../XYPlot';
-import FacetedPlot, { FacetedPlotProps } from '../FacetedPlot';
+import FacetedPlot, { FacetedPlotPropsWithRef } from '../FacetedPlot';
 import { XYPlotData } from '../../types/plots';
 
 export const defaultContainerStyles: XYPlotProps['containerStyles'] = {
@@ -18,7 +18,7 @@ export const defaultSpacingOptions: XYPlotProps['spacingOptions'] = {
 };
 
 type FacetedXYPlotProps = Omit<
-  FacetedPlotProps<XYPlotData, XYPlotProps>,
+  FacetedPlotPropsWithRef<XYPlotData, XYPlotProps>,
   'component'
 >;
 

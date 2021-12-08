@@ -1,5 +1,5 @@
 import MosaicPlot, { MosaicPlotProps } from '../MosaicPlot';
-import FacetedPlot, { FacetedPlotProps } from '../FacetedPlot';
+import FacetedPlot, { FacetedPlotPropsWithRef } from '../FacetedPlot';
 import { MosaicPlotData } from '../../types/plots';
 
 export const defaultContainerStyles: MosaicPlotProps['containerStyles'] = {
@@ -18,7 +18,7 @@ export const defaultSpacingOptions: MosaicPlotProps['spacingOptions'] = {
 };
 
 type FacetedMosaicPlotProps = Omit<
-  FacetedPlotProps<MosaicPlotData, MosaicPlotProps>,
+  FacetedPlotPropsWithRef<MosaicPlotData, MosaicPlotProps>,
   'component'
 >;
 

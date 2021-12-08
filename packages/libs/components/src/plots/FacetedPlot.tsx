@@ -32,6 +32,11 @@ export interface FacetedPlotProps<D, P extends PlotProps<D>> {
   checkedLegendItems?: string[];
 }
 
+export interface FacetedPlotPropsWithRef<D, P extends PlotProps<D>>
+  extends FacetedPlotProps<D, P> {
+  facetedPlotRef?: Ref<FacetedPlotRef>;
+}
+
 function renderFacetedPlot<D, P extends PlotProps<D>>(
   props: FacetedPlotProps<D, P>,
   ref: Ref<FacetedPlotRef>
@@ -160,7 +165,7 @@ const makeFacetedPlotComponent = memoize(function <D, P extends PlotProps<D>>(
 });
 
 export default function FacetedPlot<D, P extends PlotProps<D>>(
-  props: FacetedPlotProps<D, P> & { facetedPlotRef?: Ref<FacetedPlotRef> }
+  props: FacetedPlotPropsWithRef<D, P>
 ) {
   const FacetedPlotComponent = makeFacetedPlotComponent<D, P>(props.component);
 
