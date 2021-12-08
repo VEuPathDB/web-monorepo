@@ -1,6 +1,6 @@
 // load Barplot component
 import Barplot, { BarplotProps } from '@veupathdb/components/lib/plots/Barplot';
-import FacetedPlot from '@veupathdb/components/lib/plots/FacetedPlot';
+import FacetedBarplot from '@veupathdb/components/lib/plots/facetedPlots/FacetedBarplot';
 import {
   BarplotData,
   BarplotDataSeries,
@@ -74,17 +74,14 @@ const plotContainerStyles = {
   boxShadow: '1px 1px 4px #00000066',
 };
 
-const facetedPlotContainerStyles = {
-  height: plotContainerStyles.height / 1.5,
-  width: plotContainerStyles.width / 2,
-};
-
 const plotSpacingOptions = {};
-const facetedPlotSpacingOptions = {
-  marginRight: 10,
-  marginLeft: 10,
-  marginBotton: 10,
-  marginTop: 50,
+
+const modalComponentProps = {
+  containerStyles: {
+    width: '100%',
+    height: '100%',
+    margin: 'auto',
+  },
 };
 
 export const barplotVisualization: VisualizationType = {
@@ -387,12 +384,8 @@ function BarplotViz(props: VisualizationProps) {
   // these props are passed to either a single plot
   // or by FacetedPlot to each individual facet plot (where some will be overridden)
   const plotProps: BarplotProps = {
-    containerStyles: isFaceted(data.value)
-      ? facetedPlotContainerStyles
-      : plotContainerStyles,
-    spacingOptions: isFaceted(data.value)
-      ? facetedPlotSpacingOptions
-      : plotSpacingOptions,
+    containerStyles: !isFaceted(data.value) ? plotContainerStyles : undefined,
+    spacingOptions: !isFaceted(data.value) ? plotSpacingOptions : undefined,
     orientation: 'vertical',
     barLayout: 'group',
     displayLegend: false,
@@ -411,10 +404,10 @@ function BarplotViz(props: VisualizationProps) {
   const plotNode = (
     <>
       {isFaceted(data.value) ? (
-        <FacetedPlot
-          component={Barplot}
+        <FacetedBarplot
           data={data.value}
-          props={plotProps}
+          componentProps={plotProps}
+          modalComponentProps={modalComponentProps}
           facetedPlotRef={plotRef}
           // for custom legend
           checkedLegendItems={vizConfig.checkedLegendItems}

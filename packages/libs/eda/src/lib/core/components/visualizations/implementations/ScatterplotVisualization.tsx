@@ -93,7 +93,7 @@ import PlotLegend, {
   LegendItemsProps,
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
-import FacetedPlot from '@veupathdb/components/lib/plots/FacetedPlot';
+import FacetedXYPlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedXYPlot';
 // for converting rgb() to rgba()
 import * as ColorMath from 'color-math';
 // R-square table component
@@ -115,18 +115,14 @@ const plotContainerStyles = {
   boxShadow: '1px 1px 4px #00000066',
 };
 
-const facetedPlotContainerStyles = {
-  height: plotContainerStyles.height / 1.75,
-  width: plotContainerStyles.width / 2,
-};
-
 const plotSpacingOptions = {};
 
-const facetedPlotSpacingOptions = {
-  marginTop: 30,
-  marginBottom: 40,
-  marginLeft: 50,
-  marginRight: 20,
+const modalComponentProps = {
+  containerStyles: {
+    width: '100%',
+    height: '100%',
+    margin: 'auto',
+  },
 };
 
 // define XYPlotDataWithCoverage
@@ -656,14 +652,10 @@ function ScatterplotViz(props: VisualizationProps) {
       data={data.value?.dataSetProcess}
       updateThumbnail={updateThumbnail}
       containerStyles={
-        isFaceted(data.value?.dataSetProcess)
-          ? facetedPlotContainerStyles
-          : plotContainerStyles
+        !isFaceted(data.value?.dataSetProcess) ? plotContainerStyles : undefined
       }
       spacingOptions={
-        isFaceted(data.value?.dataSetProcess)
-          ? facetedPlotSpacingOptions
-          : plotSpacingOptions
+        !isFaceted(data.value?.dataSetProcess) ? plotSpacingOptions : undefined
       }
       // title={'Scatter plot'}
       displayLegend={false}
@@ -906,10 +898,10 @@ function ScatterplotWithControls({
   return (
     <>
       {isFaceted(data) ? (
-        <FacetedPlot
+        <FacetedXYPlot
           data={data}
-          props={scatterplotProps}
-          component={XYPlot}
+          componentProps={scatterplotProps}
+          modalComponentProps={modalComponentProps}
           facetedPlotRef={plotRef}
           checkedLegendItems={checkedLegendItems}
         />

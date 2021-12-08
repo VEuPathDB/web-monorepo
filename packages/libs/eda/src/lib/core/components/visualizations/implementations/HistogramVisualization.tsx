@@ -1,7 +1,7 @@
 import Histogram, {
   HistogramProps,
 } from '@veupathdb/components/lib/plots/Histogram';
-import FacetedPlot from '@veupathdb/components/lib/plots/FacetedPlot';
+import FacetedHistogram from '@veupathdb/components/lib/plots/facetedPlots/FacetedHistogram';
 import BinWidthControl from '@veupathdb/components/lib/components/plotControls/BinWidthControl';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
@@ -95,21 +95,16 @@ const plotContainerStyles = {
   boxShadow: '1px 1px 4px #00000066',
 };
 
-const facetedPlotContainerStyles = {
-  height: plotContainerStyles.height / 1.5,
-  width: plotContainerStyles.width / 2,
-  marginBottom: '.5em',
-};
-
 const spacingOptions = {
   marginTop: 50,
 };
 
-const facetedSpacingOption = {
-  marginTop: 50,
-  marginBottom: 10,
-  marginLeft: 10,
-  marginRight: 10,
+const modalComponentProps = {
+  containerStyles: {
+    width: '100%',
+    height: '100%',
+    margin: 'auto',
+  },
 };
 
 export const histogramVisualization: VisualizationType = {
@@ -509,13 +504,9 @@ function HistogramViz(props: VisualizationProps) {
         onValueSpecChange={onValueSpecChange}
         updateThumbnail={updateThumbnail}
         containerStyles={
-          isFaceted(data.value)
-            ? facetedPlotContainerStyles
-            : plotContainerStyles
+          !isFaceted(data.value) ? plotContainerStyles : undefined
         }
-        spacingOptions={
-          isFaceted(data.value) ? facetedSpacingOption : spacingOptions
-        }
+        spacingOptions={!isFaceted(data.value) ? spacingOptions : undefined}
         orientation={'vertical'}
         barLayout={'stack'}
         displayLegend={false}
@@ -633,10 +624,10 @@ function HistogramPlotWithControls({
   const plotNode = (
     <>
       {isFaceted(data) ? (
-        <FacetedPlot
-          component={Histogram}
+        <FacetedHistogram
           data={data}
-          props={histogramProps}
+          componentProps={histogramProps}
+          modalComponentProps={modalComponentProps}
           facetedPlotRef={plotRef}
           // for custom legend: pass checkedLegendItems to PlotlyPlot
           checkedLegendItems={checkedLegendItems}

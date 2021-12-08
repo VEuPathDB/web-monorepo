@@ -2,7 +2,10 @@
 import Mosaic, {
   MosaicPlotProps as MosaicProps,
 } from '@veupathdb/components/lib/plots/MosaicPlot';
-import { FacetedData, MosaicData } from '@veupathdb/components/lib/types/plots';
+import {
+  FacetedData,
+  MosaicPlotData,
+} from '@veupathdb/components/lib/types/plots';
 import { ContingencyTable } from '@veupathdb/components/lib/components/ContingencyTable';
 // import { ErrorManagement } from '@veupathdb/components/lib/types/general';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
@@ -47,7 +50,7 @@ import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { Variable } from '../../../types/study';
 import PluginError from '../PluginError';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
-import FacetedPlot from '@veupathdb/components/lib/plots/FacetedPlot';
+import FacetedMosaicPlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedMosaicPlot';
 
 const plotContainerStyles = {
   width: 750,
@@ -57,19 +60,7 @@ const plotContainerStyles = {
   boxShadow: '1px 1px 4px #00000066',
 };
 
-const facetedPlotContainerStyles = {
-  width: plotContainerStyles.width / 1.45,
-  height: plotContainerStyles.height / 1.25,
-};
-
 const plotSpacingOptions = {};
-
-const facetedPlotSpacingOptions = {
-  marginRight: 15,
-  marginLeft: 15,
-  marginBotton: 10,
-  marginTop: 50,
-};
 
 const statsTableStyles = {
   width: plotContainerStyles.width,
@@ -87,14 +78,22 @@ const facetedStatsTableContainerStyles = {
   gap: '0.5em',
 };
 
-type ContTableData = MosaicData &
+const modalComponentProps = {
+  containerStyles: {
+    width: '100%',
+    height: '100%',
+    margin: 'auto',
+  },
+};
+
+type ContTableData = MosaicPlotData &
   Partial<{
     pValue: number | string;
     degreesFreedom: number;
     chisq: number;
   }>;
 
-type TwoByTwoData = MosaicData &
+type TwoByTwoData = MosaicPlotData &
   Partial<{
     pValue: number | string;
     relativeRisk: number;
@@ -401,14 +400,10 @@ function MosaicViz(props: Props) {
               updateThumbnail={updateThumbnail}
               data={data.value}
               containerStyles={
-                isFaceted(data.value)
-                  ? facetedPlotContainerStyles
-                  : plotContainerStyles
+                !isFaceted(data.value) ? plotContainerStyles : undefined
               }
               spacingOptions={
-                isFaceted(data.value)
-                  ? facetedPlotSpacingOptions
-                  : plotSpacingOptions
+                !isFaceted(data.value) ? plotSpacingOptions : undefined
               }
               independentAxisLabel={xAxisLabel ?? 'X-axis'}
               dependentAxisLabel={yAxisLabel ?? 'Y-axis'}
@@ -638,11 +633,11 @@ function MosaicPlotWithControls({
   return (
     <>
       {isFaceted(data) ? (
-        <FacetedPlot
-          component={Mosaic}
+        <FacetedMosaicPlot
           facetedPlotRef={plotRef}
           data={data}
-          props={mosaicProps}
+          componentProps={mosaicProps}
+          modalComponentProps={modalComponentProps}
         />
       ) : (
         <Mosaic
