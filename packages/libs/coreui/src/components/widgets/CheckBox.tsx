@@ -9,7 +9,7 @@ import useUITheme from '../theming/useUITheme';
 export type CheckBoxStyleSpec = {
   selectedColor: CSSProperties['color'];
   color: CSSProperties['color'];
-  size: CSSProperties['width'];
+  size: number;
   border: {
     width: CSSProperties['borderWidth'];
     color: CSSProperties['borderColor'];
@@ -25,20 +25,22 @@ export type CheckboxProps = {
    * a UI theme. Not indicating a value here will mean that button should not
    * pick up styling options from the theme. */
   themeRole?: keyof UITheme['palette'];
-  style?: Partial<CheckBoxStyleSpec>;
+  styleOverrides?: Partial<CheckBoxStyleSpec>;
 };
 
 export default function CheckBox({
   selected,
   onToggle,
   themeRole,
-  style = {
+  styleOverrides,
+}: CheckboxProps) {
+  const defaultStyle: CheckBoxStyleSpec = {
     size: 12,
     color: gray[300],
     selectedColor: blue[500],
     border: { width: 2, color: gray[300], radius: 2 },
-  },
-}: CheckboxProps) {
+  };
+
   const theme = useUITheme();
   const themeStyle = useMemo<Partial<CheckBoxStyleSpec>>(
     () =>
@@ -51,15 +53,18 @@ export default function CheckBox({
     [theme, themeRole]
   );
 
-  const finalStyle = useMemo(() => merge({}, style, themeStyle), [themeStyle]);
+  const finalStyle = useMemo(
+    () => merge({}, defaultStyle, themeStyle, styleOverrides),
+    [themeStyle]
+  );
 
   return (
     <div onClick={() => onToggle(selected ? false : true)}>
       {selected ? (
         <div
           css={{
-            width: 12,
-            height: 12,
+            width: finalStyle.size,
+            height: finalStyle.size,
             backgroundColor: finalStyle.selectedColor,
             borderColor: finalStyle.selectedColor,
             borderWidth: 2,
@@ -70,13 +75,13 @@ export default function CheckBox({
             alignItems: 'center',
           }}
         >
-          <CheckIcon fill='white' fontSize={20} />
+          <CheckIcon fill='white' fontSize={finalStyle.size} />
         </div>
       ) : (
         <div
           css={{
-            width: 12,
-            height: 12,
+            width: finalStyle.size,
+            height: finalStyle.size,
             borderColor: finalStyle.color,
             backgroundColor: 'white',
             borderWidth: 2,

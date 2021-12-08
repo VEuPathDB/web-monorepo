@@ -48,3 +48,10 @@ UseTheme.args = {
   ...Default.args,
   themeRole: 'primary',
 } as CheckboxProps;
+
+export const CustomSize = Template.bind({});
+CustomSize.args = {
+  ...Default.args,
+  themeRole: 'primary',
+  styleOverrides: { size: 48 },
+} as CheckboxProps;
