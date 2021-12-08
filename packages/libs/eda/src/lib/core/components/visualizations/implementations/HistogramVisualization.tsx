@@ -33,7 +33,7 @@ import {
   map,
   keys,
 } from 'lodash';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   HistogramRequestParams,
   HistogramResponse,
