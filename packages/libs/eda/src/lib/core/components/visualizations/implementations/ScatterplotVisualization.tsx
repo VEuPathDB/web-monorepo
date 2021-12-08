@@ -97,6 +97,8 @@ import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import FacetedPlot from '@veupathdb/components/lib/plots/FacetedPlot';
 // for converting rgb() to rgba()
 import * as ColorMath from 'color-math';
+// R-square table component
+import { ScatterplotRsquareTable } from '../../ScatterplotRsquareTable';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -786,6 +788,22 @@ function ScatterplotViz(props: VisualizationProps) {
           },
         ]}
       />
+      {/* R-square table component: only display when overlay and/or facet variable exist */}
+      {vizConfig.valueSpecConfig === 'Best fit line with raw' &&
+        data.value != null &&
+        !data.pending &&
+        (vizConfig.overlayVariable != null ||
+          vizConfig.facetVariable != null) && (
+          <ScatterplotRsquareTable
+            typedData={
+              !isFaceted(data.value.dataSetProcess)
+                ? { isFaceted: false, data: data.value.dataSetProcess.series }
+                : { isFaceted: true, data: data.value.dataSetProcess.facets }
+            }
+            overlayVariable={overlayVariable}
+            facetVariable={facetVariable}
+          />
+        )}
     </>
   );
 
@@ -1448,14 +1466,17 @@ function processInputData<T extends number | string>(
       dataSetProcess.push({
         x: bestFitLineX,
         y: el.bestFitLineY,
-        // display R-square value at legend text(s)
-        // name: 'Best fit<br>R<sup>2</sup> = ' + el.r2,
-        name: el.overlayVariableDetails
-          ? fixLabelForNumberVariables(
-              el.overlayVariableDetails.value,
-              overlayVariable
-            ) + BESTFITSUFFIX // TO DO: put R^2 values in a table, esp for faceting
-          : BESTFITTEXT, // ditto - see issue 694
+        r2: el.r2,
+        // display R-square value at legend for no overlay and facet variable
+        name:
+          overlayVariable == null && facetVariable == null
+            ? 'Best fit, R² = ' + el.r2
+            : el.overlayVariableDetails
+            ? fixLabelForNumberVariables(
+                el.overlayVariableDetails.value,
+                overlayVariable
+              ) + BESTFITSUFFIX
+            : BESTFITTEXT,
         mode: 'lines', // no data point is displayed: only line
         line: {
           // use darker color for best fit line
