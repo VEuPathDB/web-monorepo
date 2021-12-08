@@ -1265,6 +1265,44 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
+"@veupathdb/components@^0.11.2":
+  version "0.11.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.2.tgz#c300bd6b2e4a059f359a4fd21c8dee32740a6d10"
+  integrity sha512-QPyiBw6Mcg2XgIqAUjo70YgnSnRcPa85jeVIqiCCikqsODbd5EpCJ2/Y6eRGdnb74VmY45vaGsiuaDibuXzc4w==
+  dependencies:
+    "@material-ui/core" "^4.11.2"
+    "@material-ui/icons" "^4.11.2"
+    "@material-ui/lab" "^4.0.0-alpha.57"
+    "@types/d3" "^7.1.0"
+    "@types/date-arithmetic" "^4.1.1"
+    "@visx/gradient" "^1.0.0"
+    "@visx/group" "^1.0.0"
+    "@visx/hierarchy" "^1.0.0"
+    "@visx/shape" "^1.4.0"
+    "@visx/text" "^1.3.0"
+    "@visx/tooltip" "^1.3.0"
+    "@visx/visx" "^1.1.0"
+    bootstrap "^4.5.2"
+    color-math "^1.1.3"
+    d3 "^7.1.1"
+    date-arithmetic "^4.1.0"
+    debounce-promise "^3.1.2"
+    latlon-geohash "^2.0.0"
+    leaflet "^1.6.0"
+    leaflet-drift-marker "^1.0.3"
+    luxon "^1.25.0"
+    plotly.js "^2.6.0"
+    re-resizable "^6.9.0"
+    react "^16.13.1"
+    react-bootstrap "^1.3.0"
+    react-cool-dimensions "^1.1.11"
+    react-dom "^16.13.1"
+    react-html-parser "^2.0.2"
+    react-leaflet "^2.7.0"
+    react-plotly.js "^2.4.0"
+    react-transition-group "^4.4.1"
+    shape2geohash "^1.2.5"
+
 "@veupathdb/components@^0.7.9":
   version "0.7.24"
   resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.7.24.tgz#0492802704dc172336a6e9f1bd622ff0c9ff3313"
@@ -1313,10 +1351,10 @@
     react-modal "^3.14.3"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^1.1.33":
-  version "1.1.33"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.1.33.tgz#c32708280c1f685387fd2c2bcecdd50e7debce60"
-  integrity sha512-RDQhMorSTcGagCQ8bxUkSdwYISOCZsayehfmvl4/V8sCAfcSmRStClUj7rqW94mBFnTYAzrKkkE+KNdmQ8BTPg==
+"@veupathdb/eda@^1.1.37":
+  version "1.1.37"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.1.37.tgz#7a64b79528c354d40ca84ceaf745b3ad05c9def8"
+  integrity sha512-JqHLzoYYvbCJnXxGyQ9hXvhIolmJPWQDBOfMczAl66KPQpYr5E3qP9SziCUt4APJiBYiMyuTsXgO46PSWtp3EA==
   dependencies:
     "@emotion/react" "^11.4.1"
     "@emotion/styled" "^11.3.0"
@@ -1324,11 +1362,11 @@
     "@material-ui/icons" "^4.11.2"
     "@material-ui/lab" "^4.0.0-alpha.58"
     "@types/debounce-promise" "^3.1.3"
-    "@veupathdb/components" "^0.11.1"
+    "@veupathdb/components" "^0.11.2"
     "@veupathdb/core-components" "^0.2.45"
     "@veupathdb/http-utils" "^1.0.1"
-    "@veupathdb/study-data-access" "^0.0.3"
-    "@veupathdb/wdk-client" "^0.4.9"
+    "@veupathdb/study-data-access" "^0.1.2"
+    "@veupathdb/wdk-client" "^0.4.12"
     debounce-promise "^3.1.2"
     file-saver "^2.0.5"
     fp-ts "^2.9.3"
@@ -1344,7 +1382,7 @@
     react-table "^7.7.0"
     uuid "^8.3.2"
 
-"@veupathdb/http-utils@^1.0.0", "@veupathdb/http-utils@^1.0.1":
+"@veupathdb/http-utils@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@veupathdb/http-utils/-/http-utils-1.0.1.tgz#e3e2b616a43d82170c73e5ce44e80c740a960ee6"
   integrity sha512-MURe3oXkK1ABOkVH94dK2NDBeh7KBphQUgjWNKAcn0ckT1+v5AUC8R7xkRd7P84wJT3inQE0vhEiItnoj6lYCg==
@@ -1364,13 +1402,13 @@
     read "^1.0.7"
     set-cookie-parser "^2.4.6"
 
-"@veupathdb/study-data-access@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.0.3.tgz#f5e2b953720b91a17807d7c32508153b5e611faa"
-  integrity sha512-fsElWe2vWrhnNrkcxAMhMvLlkL7310rLHh89XHZry7Ns0QibCNBE7GQE3o5ZGMbTxDvvUfWlz639gUQnD70clQ==
+"@veupathdb/study-data-access@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.1.2.tgz#cede8b4827516e82950899c3b2c5986538ed0b4f"
+  integrity sha512-Fzgb4e2Qx0tFwHvyf22stBaAaq+xjqzfZ+Gy9HLew23F4QONNK8ErYE839QuqLzxLPIoU6aWPX6CSkJVcqJYWQ==
   dependencies:
-    "@veupathdb/http-utils" "^1.0.0"
-    "@veupathdb/wdk-client" "^0.4.6"
+    "@veupathdb/http-utils" "^1.0.1"
+    "@veupathdb/wdk-client" "^0.4.12"
     fp-ts "^2.11.5"
     io-ts "^2.2.16"
     lodash "^4.17.21"
@@ -1379,54 +1417,6 @@
   version "0.4.12"
   resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.4.12.tgz#13f32e85ac2cd7cfab306e265d2de480ed8697d7"
   integrity sha512-MtopiFoDaGX7sFeaDQNWxVK413ua7DokgQ76AI33BT1ttOTp5JcL3Qg8f0WoQ3b1Vui2it98sMrivTIv9ADEiQ==
-  dependencies:
-    "@types/datatables.net" "^1.10.5"
-    "@types/flot" "^0.0.31"
-    "@types/history" "^4.7.4"
-    "@types/jqueryui" "^1.11.35"
-    "@types/json-stable-stringify" "^1.0.31"
-    "@types/lodash" "^4.14.104"
-    "@types/natural-sort" "^0.0.20"
-    "@types/node" "^14.14.7"
-    "@types/prop-types" "^15.7.3"
-    "@types/qtip2" "^2.2.29"
-    "@types/react" "^16.9.18"
-    "@types/react-autocomplete" "^1.8.4"
-    "@types/react-dom" "^16.9.5"
-    "@types/react-redux" "^7.1.5"
-    "@types/react-router" "^5.1.4"
-    "@types/react-router-dom" "^5.1.3"
-    "@types/react-select" "^3.0.4"
-    "@types/uuid" "^8.0.0"
-    "@veupathdb/components" "^0.7.9"
-    classnames "^2.2.0"
-    history "^4.10.1"
-    json-stable-stringify "^1.0.0"
-    localforage "^1.5.0"
-    lodash "^4.17.5"
-    mansion-ui "2.5"
-    moment "^2.21.0"
-    natural-sort "^1.0.0"
-    prop-types "^15.7.2"
-    react "^16.12.0"
-    react-autocomplete "^1.8.1"
-    react-dom "^16.12.0"
-    react-redux "^7.1.3"
-    react-router "^5.1.2"
-    react-router-dom "^5.1.2"
-    react-select "^3.0.4"
-    react-transition-group "^2.2.1"
-    redux "^4.0.0"
-    redux-observable "^1.2.0"
-    reselect "^3.0.1"
-    rxjs "^6.2.2"
-    spin.js "^4.0.0"
-    uuid "^8.1.0"
-
-"@veupathdb/wdk-client@^0.4.6", "@veupathdb/wdk-client@^0.4.9":
-  version "0.4.11"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.4.11.tgz#108f3f7a8da3942fdd2833974a06fd95c0157d08"
-  integrity sha512-b7K2krOt5IIMIKve5XrDRpeOqSWXfXFKNXn1pfc8DKjYy70FScT0BAQnlNpzZtfqkzbsAdXpM3Ac+t5pQRfRcg==
   dependencies:
     "@types/datatables.net" "^1.10.5"
     "@types/flot" "^0.0.31"
