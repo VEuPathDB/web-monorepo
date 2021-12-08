@@ -24,7 +24,6 @@ export const {
   vimeoUrl = '',
   communitySite = '',
   siteSearchServiceUrl = '',
-  studyAccessServiceUrl = '',
   retainContainerContent = false,
   useEda = false,
   edaServiceUrl = '',
