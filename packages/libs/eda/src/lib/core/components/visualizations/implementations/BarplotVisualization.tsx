@@ -47,7 +47,6 @@ import {
   fixLabelForNumberVariables,
   fixLabelsForNumberVariables,
   grayOutLastSeries,
-  omitEmptyNoDataSeries,
   vocabularyWithMissingData,
   variablesAreUnique,
   nonUniqueWarning,
@@ -237,7 +236,12 @@ function BarplotViz(props: VisualizationProps) {
 
   const data = usePromise(
     useCallback(async (): Promise<BarplotDataWithStatistics | undefined> => {
-      if (variable == null || entity == null || filteredCounts == null)
+      if (
+        variable == null ||
+        entity == null ||
+        filteredCounts.pending ||
+        filteredCounts.value == null
+      )
         return undefined;
 
       if (!variablesAreUnique([variable, overlayVariable, facetVariable]))
@@ -257,7 +261,7 @@ function BarplotViz(props: VisualizationProps) {
         showMissingStratification(
           overlayEntity,
           overlayVariable,
-          filteredCounts,
+          filteredCounts.value,
           response.completeCasesTable
         );
       const showMissingFacet =
@@ -265,7 +269,7 @@ function BarplotViz(props: VisualizationProps) {
         showMissingStratification(
           facetEntity,
           facetVariable,
-          filteredCounts,
+          filteredCounts.value,
           response.completeCasesTable
         );
 
@@ -425,7 +429,7 @@ function BarplotViz(props: VisualizationProps) {
       vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion',
     legendTitle: overlayVariable?.displayName,
     interactive: true,
-    showSpinner: data.pending,
+    showSpinner: data.pending || filteredCounts.pending,
     dependentAxisLogScale: vizConfig.dependentAxisLogScale,
     // set dependent axis range for log scale
     dependentAxisRange: dependentAxisRange,
@@ -497,12 +501,12 @@ function BarplotViz(props: VisualizationProps) {
         outputEntity={entity}
         stratificationIsActive={overlayVariable != null}
         enableSpinner={vizConfig.xAxisVariable != null && !data.error}
-        totalCounts={totalCounts}
-        filteredCounts={filteredCounts}
+        totalCounts={totalCounts.value}
+        filteredCounts={filteredCounts.value}
       />
       <VariableCoverageTable
         completeCases={data.pending ? undefined : data.value?.completeCases}
-        filters={filters}
+        filteredCounts={filteredCounts}
         outputEntityId={vizConfig.xAxisVariable?.entityId}
         variableSpecs={[
           {

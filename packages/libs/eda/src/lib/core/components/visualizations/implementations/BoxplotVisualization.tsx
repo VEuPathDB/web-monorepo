@@ -517,12 +517,12 @@ function BoxplotViz(props: VisualizationProps) {
         enableSpinner={
           xAxisVariable != null && yAxisVariable != null && !data.error
         }
-        totalCounts={totalCounts}
-        filteredCounts={filteredCounts}
+        totalCounts={totalCounts.value}
+        filteredCounts={filteredCounts.value}
       />
       <VariableCoverageTable
         completeCases={data.pending ? undefined : data.value?.completeCases}
-        filters={filters}
+        filteredCounts={filteredCounts}
         outputEntityId={outputEntity?.id}
         variableSpecs={[
           {

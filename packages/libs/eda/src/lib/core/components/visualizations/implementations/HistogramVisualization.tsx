@@ -39,7 +39,7 @@ import {
   HistogramResponse,
 } from '../../../api/DataClient';
 import DataClient from '../../../api/DataClient';
-import { usePromise } from '../../../hooks/promise';
+import { PromiseHookState, usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import {
@@ -576,8 +576,8 @@ type HistogramPlotWithControlsProps = Omit<HistogramProps, 'data'> & {
   legendItems: LegendItemsProps[];
   checkedLegendItems: string[] | undefined;
   onCheckedLegendItemsChange: (checkedLegendItems: string[]) => void;
-  totalCounts: EntityCounts | undefined;
-  filteredCounts: EntityCounts | undefined;
+  totalCounts: PromiseHookState<EntityCounts>;
+  filteredCounts: PromiseHookState<EntityCounts>;
 } & Partial<CoverageStatistics>;
 
 function HistogramPlotWithControls({
@@ -724,12 +724,12 @@ function HistogramPlotWithControls({
           overlayVariable != null || facetVariable != null
         }
         enableSpinner={independentAxisVariable != null && !error}
-        totalCounts={totalCounts}
-        filteredCounts={filteredCounts}
+        totalCounts={totalCounts.value}
+        filteredCounts={filteredCounts.value}
       />
       <VariableCoverageTable
         completeCases={completeCases}
-        filters={filters}
+        filteredCounts={filteredCounts}
         outputEntityId={independentAxisVariable?.entityId}
         variableSpecs={[
           {

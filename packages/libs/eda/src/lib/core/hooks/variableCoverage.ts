@@ -5,11 +5,11 @@ import {
   VariableCoverageTableRow,
   VariableSpec,
 } from '../components/VariableCoverageTable';
-import { Filter } from '../types/filter';
 
-import { useEntityCounts } from './entityCounts';
+import { EntityCounts } from './entityCounts';
 // use toPercentage function for handling very high or small percentage
 import { toPercentage } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
+import { PromiseHookState } from './promise';
 
 /**
  * Returns an array of data to be rendered in a VariableCoverageTable
@@ -21,12 +21,11 @@ import { toPercentage } from '@veupathdb/wdk-client/lib/Components/AttributeFilt
  */
 export function useVariableCoverageTableRows(
   variableSpecs: VariableSpec[],
-  filters?: Filter[],
+  filteredCounts: PromiseHookState<EntityCounts>,
   completeCases?: CompleteCasesTable,
   outputEntityId?: string
 ): VariableCoverageTableRow[] {
   const completeCasesMap = useCompleteCasesMap(completeCases);
-  const filteredEntityCountsResult = useEntityCounts(filters);
 
   return useMemo(
     () =>
@@ -59,9 +58,9 @@ export function useVariableCoverageTableRows(
         };
 
         const variableFilteredEntityCount =
-          filteredEntityCountsResult.value == null || outputEntityId == null
+          filteredCounts.value == null || outputEntityId == null
             ? undefined
-            : filteredEntityCountsResult.value[outputEntityId];
+            : filteredCounts.value[outputEntityId];
 
         if (variableFilteredEntityCount == null) {
           return baseRowWithCounts;
@@ -84,12 +83,7 @@ export function useVariableCoverageTableRows(
           ),
         };
       }),
-    [
-      completeCasesMap,
-      filteredEntityCountsResult.value,
-      outputEntityId,
-      variableSpecs,
-    ]
+    [completeCasesMap, filteredCounts.value, outputEntityId, variableSpecs]
   );
 }
 

@@ -241,8 +241,8 @@ export function AnalysisPanel({
           render={() => (
             <ComputationRoute
               analysisState={analysisState}
-              totalCounts={totalCounts.value}
-              filteredCounts={filteredCounts.value}
+              totalCounts={totalCounts}
+              filteredCounts={filteredCounts}
             />
           )}
         />
