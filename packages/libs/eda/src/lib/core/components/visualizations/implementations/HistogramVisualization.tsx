@@ -83,7 +83,7 @@ import { EntityCounts } from '../../../hooks/entityCounts';
 // custom hook to preserve the status of checked legend items
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
 
-export type HistogramDataWithCoverageStatistics = (
+type HistogramDataWithCoverageStatistics = (
   | HistogramData
   | FacetedData<HistogramData>
 ) &

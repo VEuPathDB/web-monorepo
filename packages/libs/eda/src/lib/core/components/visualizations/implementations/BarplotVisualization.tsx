@@ -65,10 +65,7 @@ import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOn
 // custom hook to preserve the status of checked legend items
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
 
-export type BarplotDataWithStatistics = (
-  | BarplotData
-  | FacetedData<BarplotData>
-) &
+type BarplotDataWithStatistics = (BarplotData | FacetedData<BarplotData>) &
   CoverageStatistics;
 
 const plotContainerStyles = {
