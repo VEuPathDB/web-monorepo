@@ -131,7 +131,7 @@ const MosaicPlot = makePlotlyPlotComponent(
         containerHeight -
         marginTop -
         marginBottom -
-        5 * longestIndependentTickLabelLength;
+        8 * longestIndependentTickLabelLength;
       if (!independentAxisLabel) plotHeight -= 20;
       // Calculate the legend trace group gap accordingly
       legendTraceGroupGap =
