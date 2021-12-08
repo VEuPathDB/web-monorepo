@@ -50,7 +50,7 @@ import {
   vocabularyWithMissingData,
   variablesAreUnique,
   nonUniqueWarning,
-  showMissingStratification,
+  hasIncompleteCases,
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 // use lodash instead of Math.min/max
@@ -258,7 +258,7 @@ function BarplotViz(props: VisualizationProps) {
       // if it has no incomplete cases we don't have to
       const showMissingOverlay =
         vizConfig.showMissingness &&
-        showMissingStratification(
+        hasIncompleteCases(
           overlayEntity,
           overlayVariable,
           entity,
@@ -267,7 +267,7 @@ function BarplotViz(props: VisualizationProps) {
         );
       const showMissingFacet =
         vizConfig.showMissingness &&
-        showMissingStratification(
+        hasIncompleteCases(
           facetEntity,
           facetVariable,
           entity,

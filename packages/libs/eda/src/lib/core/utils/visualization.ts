@@ -51,7 +51,11 @@ export function grayOutLastSeries<
   } as SeriesWithStatistics<T>;
 }
 
-export function showMissingStratification(
+/**
+ * Calculates if there are any incomplete cases for the given variable
+ * (usually overlay or facet variable)
+ */
+export function hasIncompleteCases(
   entity: StudyEntity | undefined,
   variable: Variable | undefined,
   outputEntity: StudyEntity | undefined,

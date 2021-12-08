@@ -57,7 +57,7 @@ import {
   fixLabelsForNumberVariables,
   grayOutLastSeries,
   nonUniqueWarning,
-  showMissingStratification,
+  hasIncompleteCases,
   variablesAreUnique,
   vocabularyWithMissingData,
 } from '../../../utils/visualization';
@@ -289,7 +289,7 @@ function BoxplotViz(props: VisualizationProps) {
 
       const showMissingOverlay =
         vizConfig.showMissingness &&
-        showMissingStratification(
+        hasIncompleteCases(
           overlayEntity,
           overlayVariable,
           outputEntity,
@@ -298,7 +298,7 @@ function BoxplotViz(props: VisualizationProps) {
         );
       const showMissingFacet =
         vizConfig.showMissingness &&
-        showMissingStratification(
+        hasIncompleteCases(
           facetEntity,
           facetVariable,
           outputEntity,
