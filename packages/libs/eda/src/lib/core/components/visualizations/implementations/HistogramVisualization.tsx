@@ -80,8 +80,10 @@ import PlotLegend, {
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 import { EntityCounts } from '../../../hooks/entityCounts';
+// custom hook to preserve the status of checked legend items
+import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
 
-type HistogramDataWithCoverageStatistics = (
+export type HistogramDataWithCoverageStatistics = (
   | HistogramData
   | FacetedData<HistogramData>
 ) &
@@ -447,39 +449,13 @@ function HistogramViz(props: VisualizationProps) {
       : [];
   }, [data]);
 
-  // set this useState to determine whether a new checkedLegendItems should be made
-  const [newLegendList, setNewLegendList] = useState<boolean>(false);
-
-  // run once when rendering and check if vizConfig.checkedLegendItmes is defined
-  // this will handle the case of pre-existing plot
-  useEffect(() => {
-    if (vizConfig.checkedLegendItems != null) {
-      onCheckedLegendItemsChange(vizConfig.checkedLegendItems);
-    } else {
-      // vizConfig.checkedLegendItems is undefined thus a new legend list needs to be made in the below useEffect()
-      setNewLegendList(true);
-    }
-  }, []);
-
-  // check whether new legend list is required. this will handle the cases of new Viz and changing variables within the Viz
-  useEffect(() => {
-    // separate data.value and newLegendList conditions so that newLegendList is not updated before executing onCheckedLegendItemsChange
-    if (data.value != null) {
-      if (newLegendList)
-        // set checked legend items with new legend list
-        onCheckedLegendItemsChange(legendItems.map((item) => item.label));
-      // this handles the case after re-entering the plot from thumbnail, subsetting, etc.
-      else setNewLegendList(true);
-    }
-  }, [data, legendItems]);
-
-  // // use this to set all checked
-  // useEffect(() => {
-  //   if (data != null) {
-  //     // use this to set all checked
-  //     onCheckedLegendItemsChange(legendItems.map((item) => item.label));
-  //   }
-  // }, [data, legendItems]);
+  // calling a custom hook to preserve the status of checked legend items
+  const checkedLegendItemsStatus = useCheckedLegendItemsStatus(
+    data,
+    legendItems,
+    onCheckedLegendItemsChange,
+    vizConfig.checkedLegendItems
+  );
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
