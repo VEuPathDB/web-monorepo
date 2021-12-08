@@ -1,15 +1,19 @@
 import { get } from 'lodash';
 import React from 'react';
 import { connect, useSelector } from 'react-redux';
-import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+
 import { makeEdaRoute } from 'ebrc-client/routes';
 import StudySearches from 'ebrc-client/App/Studies/StudySearches';
 import DownloadLink from 'ebrc-client/App/Studies/DownloadLink';
+
 import { attemptAction } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionActionCreators';
 import { isPrereleaseStudy } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
-import './StudyRecordHeading.scss';
-import { shouldOfferLinkToDashboard } from 'ebrc-client/StudyAccess/permission' 
+import { shouldOfferLinkToDashboard } from '@veupathdb/study-data-access/lib/study-access/permission';
+
 import { Link } from '@veupathdb/wdk-client/lib/Components';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+
+import './StudyRecordHeading.scss';
 
 const cx = makeClassNameHelper('StudyRecordHeadingSearchLinks');
 
