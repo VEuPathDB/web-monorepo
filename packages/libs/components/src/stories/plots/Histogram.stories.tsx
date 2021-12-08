@@ -12,7 +12,12 @@ import HistogramControls from '../../components/plotControls/HistogramControls';
 import AxisRangeControl from '../../components/plotControls/AxisRangeControl';
 import { binDailyCovidStats } from '../api/covidData';
 import { binGithubEventDates } from '../api/githubDates';
-import { HistogramData, AxisTruncationConfig } from '../../types/plots';
+import {
+  HistogramData,
+  AxisTruncationConfig,
+  FacetedData,
+} from '../../types/plots';
+import FacetedHistogram from '../../plots/facetedPlots/FacetedHistogram';
 
 export default {
   title: 'Plots/Histogram',
@@ -451,24 +456,26 @@ const TemplateStaticWithRangeControls: Story<HistogramProps> = (args) => {
   );
 };
 
+const staticData = {
+  series: [
+    {
+      name: 'penguins',
+      // added 0 for testing purpose
+      bins: [0, 42, 11, 99, 23, 7, 9].map((num, index) => ({
+        binStart: index + 1,
+        binEnd: index + 2,
+        binLabel: `${index + 1} to ${index + 2}`,
+        count: num,
+      })),
+    },
+  ],
+};
+
 export const StaticDataWithRangeControls = TemplateStaticWithRangeControls.bind(
   {}
 );
 StaticDataWithRangeControls.args = {
-  data: {
-    series: [
-      {
-        name: 'penguins',
-        // added 0 for testing purpose
-        bins: [0, 42, 11, 99, 23, 7, 9].map((num, index) => ({
-          binStart: index + 1,
-          binEnd: index + 2,
-          binLabel: `${index + 1} to ${index + 2}`,
-          count: num,
-        })),
-      },
-    ],
-  },
+  data: staticData,
   interactive: true,
 };
 
@@ -490,4 +497,74 @@ ShowValues.args = {
   },
   interactive: true,
   showValues: true,
+};
+
+/**
+ * FACETING
+ */
+
+const facetedData: FacetedData<HistogramData> = {
+  facets: [
+    {
+      label: 'Emperor',
+      data: staticData,
+    },
+    {
+      label: 'Gentoo',
+      data: staticData,
+    },
+    {
+      label: 'Rockhopper',
+      data: staticData,
+    },
+    {
+      label: 'African',
+      data: staticData,
+    },
+    {
+      label: 'Madagascar',
+    },
+    {
+      label: 'No data',
+      data: staticData,
+    },
+  ],
+};
+
+interface FacetedStoryProps {
+  data: FacetedData<HistogramData>;
+  componentProps: HistogramProps;
+  modalComponentProps: HistogramProps;
+}
+
+const FacetedTemplate: Story<FacetedStoryProps> = ({
+  data,
+  componentProps,
+  modalComponentProps,
+}) => (
+  <FacetedHistogram
+    data={data}
+    componentProps={componentProps}
+    modalComponentProps={modalComponentProps}
+  />
+);
+
+export const Faceted = FacetedTemplate.bind({});
+Faceted.args = {
+  data: facetedData,
+  componentProps: {
+    title: 'Penguins',
+    containerStyles: {
+      width: 300,
+      height: 300,
+      border: '1px solid #dadada',
+    },
+  },
+  modalComponentProps: {
+    containerStyles: {
+      width: '100%',
+      height: '100%',
+      margin: 'auto',
+    },
+  },
 };

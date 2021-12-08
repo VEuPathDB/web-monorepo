@@ -1,5 +1,7 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
 import Barplot, { BarplotProps } from '../../plots/Barplot';
+import { FacetedData, BarplotData } from '../../types/plots';
+import FacetedBarplot from '../../plots/facetedPlots/FacetedBarplot';
 
 export default {
   title: 'Plots/Barplot',
@@ -51,4 +53,77 @@ NoDataOverlay.args = {
   independentAxisLabel: 'Independent axis label',
   showNoDataOverlay: true,
   title: 'Awesomeness of animals stratified by domestication',
+};
+
+/**
+ * FACETING
+ */
+
+const facetedData: FacetedData<BarplotData> = {
+  facets: [
+    {
+      label: 'indoors',
+      data: dataSet,
+    },
+    {
+      label: 'outdoors',
+      data: dataSet,
+    },
+    {
+      label: 'indoors',
+      data: dataSet,
+    },
+    {
+      label: 'outdoors',
+      data: dataSet,
+    },
+    {
+      label: 'indoors',
+      data: dataSet,
+    },
+    {
+      label: 'outdoors',
+    },
+    {
+      label: 'No data',
+    },
+  ],
+};
+
+interface FacetedStoryProps {
+  data: FacetedData<BarplotData>;
+  componentProps: BarplotProps;
+  modalComponentProps: BarplotProps;
+}
+
+const FacetedTemplate: Story<FacetedStoryProps> = ({
+  data,
+  componentProps,
+  modalComponentProps,
+}) => (
+  <FacetedBarplot
+    data={data}
+    componentProps={componentProps}
+    modalComponentProps={modalComponentProps}
+  />
+);
+
+export const Faceted = FacetedTemplate.bind({});
+Faceted.args = {
+  data: facetedData,
+  componentProps: {
+    title: 'indoor and outdoor pets',
+    containerStyles: {
+      width: 300,
+      height: 300,
+      border: '1px solid #dadada',
+    },
+  },
+  modalComponentProps: {
+    containerStyles: {
+      width: '100%',
+      height: '100%',
+      margin: 'auto',
+    },
+  },
 };

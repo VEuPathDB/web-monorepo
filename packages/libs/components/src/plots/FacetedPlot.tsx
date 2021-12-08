@@ -6,12 +6,15 @@ import React, {
   forwardRef,
   useImperativeHandle,
   useRef,
+  useState,
 } from 'react';
 
 import { memoize } from 'lodash';
 
 import { FacetedData, FacetedPlotRef, PlotRef } from '../types/plots';
 import { PlotProps } from './PlotlyPlot';
+
+import { FullScreenModal } from '@veupathdb/core-components';
 
 type ComponentWithPlotRef<P> = ComponentType<
   PropsWithoutRef<P> & RefAttributes<PlotRef>
@@ -20,9 +23,18 @@ type ComponentWithPlotRef<P> = ComponentType<
 export interface FacetedPlotProps<D, P extends PlotProps<D>> {
   data?: FacetedData<D>;
   component: ComponentWithPlotRef<P>;
-  props: P;
+  componentProps: P;
+  /** Provide modalComponentProps to activate click-to-expand
+   * These are the props the expanded plot inside the modal will receive
+   */
+  modalComponentProps?: P;
   // custom legend prop
   checkedLegendItems?: string[];
+}
+
+export interface FacetedPlotPropsWithRef<D, P extends PlotProps<D>>
+  extends FacetedPlotProps<D, P> {
+  facetedPlotRef?: Ref<FacetedPlotRef>;
 }
 
 function renderFacetedPlot<D, P extends PlotProps<D>>(
@@ -32,10 +44,13 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
   const {
     data,
     component: Component,
-    props: componentProps,
-    checkedLegendItems: checkedLegendItems,
+    componentProps,
+    modalComponentProps,
+    checkedLegendItems,
   } = props;
   const plotRefs = useRef<FacetedPlotRef>([]);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [modalPlot, setModalPlot] = useState<React.ReactNode | null>(null);
 
   useImperativeHandle<FacetedPlotRef, FacetedPlotRef>(
     ref,
@@ -60,27 +75,77 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
           overflow: 'auto',
         }}
       >
-        {data?.facets.map(({ data, label }, index) => (
-          <Component
-            {...componentProps}
-            ref={(plotInstance) => {
-              if (plotInstance == null) {
-                delete plotRefs.current[index];
-              } else {
-                plotRefs.current[index] = plotInstance;
-              }
-            }}
-            key={index}
-            data={data}
-            title={label}
-            displayLegend={false}
-            interactive={false}
+        {data?.facets.map(({ data, label }, index) => {
+          const sharedProps = {
+            data: data,
             // pass checkedLegendItems to PlotlyPlot
-            checkedLegendItems={checkedLegendItems}
-            showNoDataOverlay={data == null}
-          />
-        ))}
+            checkedLegendItems: checkedLegendItems,
+            showNoDataOverlay: data == null,
+          };
+
+          const divModalProps = modalComponentProps && {
+            onClick: () => {
+              setModalPlot(
+                <Component
+                  {...sharedProps}
+                  displayLegend={true}
+                  interactive={true}
+                  {...modalComponentProps}
+                  title={label}
+                />
+              );
+              setModalIsOpen(true);
+            },
+            title: 'Click to expand',
+          };
+
+          return (
+            <div
+              {...divModalProps}
+              key={index}
+              style={{
+                marginRight: 15,
+                cursor: modalComponentProps && 'pointer',
+              }}
+            >
+              <Component
+                {...sharedProps}
+                ref={(plotInstance) => {
+                  if (plotInstance == null) {
+                    delete plotRefs.current[index];
+                  } else {
+                    plotRefs.current[index] = plotInstance;
+                  }
+                }}
+                displayLegend={false}
+                interactive={false}
+                {...componentProps}
+                title={label}
+              />
+            </div>
+          );
+        })}
       </div>
+      {modalComponentProps && (
+        <FullScreenModal visible={modalIsOpen}>
+          <button
+            onClick={() => setModalIsOpen(false)}
+            style={{
+              position: 'absolute',
+              top: 30,
+              right: 30,
+              backgroundColor: 'white',
+              cursor: 'pointer',
+              border: 'none',
+              zIndex: 2000,
+            }}
+            title="Close expanded plot"
+          >
+            <i className="fas fa-times fa-lg"></i>
+          </button>
+          {modalPlot}
+        </FullScreenModal>
+      )}
     </>
   );
 }
@@ -101,7 +166,7 @@ const makeFacetedPlotComponent = memoize(function <D, P extends PlotProps<D>>(
 });
 
 export default function FacetedPlot<D, P extends PlotProps<D>>(
-  props: FacetedPlotProps<D, P> & { facetedPlotRef?: Ref<FacetedPlotRef> }
+  props: FacetedPlotPropsWithRef<D, P>
 ) {
   const FacetedPlotComponent = makeFacetedPlotComponent<D, P>(props.component);
 

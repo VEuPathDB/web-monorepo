@@ -8,11 +8,13 @@
     "url": "https://github.com/veupathdb/web-components.git"
   },
   "dependencies": {
+    "@emotion/react": "^11.7.0",
     "@material-ui/core": "^4.11.2",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@types/d3": "^7.1.0",
     "@types/date-arithmetic": "^4.1.1",
+    "@veupathdb/core-components": "^0.2.46",
     "@visx/gradient": "^1.0.0",
     "@visx/group": "^1.0.0",
     "@visx/hierarchy": "^1.0.0",

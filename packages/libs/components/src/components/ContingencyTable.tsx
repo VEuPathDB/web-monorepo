@@ -1,12 +1,12 @@
 import { CSSProperties } from 'react';
-import { MosaicData } from '../types/plots/mosaic';
+import { MosaicPlotData } from '../types/plots/mosaicPlot';
 import _ from 'lodash';
 import { FacetedData } from '../types/plots';
 import { isFaceted } from '../types/guards';
 import Spinner from '../components/Spinner';
 
 interface ContingencyTableProps {
-  data?: MosaicData | FacetedData<MosaicData>;
+  data?: MosaicPlotData | FacetedData<MosaicPlotData>;
   independentVariable: string;
   dependentVariable: string;
   facetVariable?: string;

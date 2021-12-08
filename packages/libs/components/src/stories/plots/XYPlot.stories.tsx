@@ -5,6 +5,8 @@ import { min, max, lte, gte } from 'lodash';
 import { Story, Meta } from '@storybook/react/types-6-0';
 // test to use RadioButtonGroup directly instead of XYPlotControls
 import RadioButtonGroup from '../../components/widgets/RadioButtonGroup';
+import { FacetedData, XYPlotData } from '../../types/plots';
+import FacetedXYPlot from '../../plots/facetedPlots/FacetedXYPlot';
 
 export default {
   title: 'Plots/XYPlot',
@@ -1146,3 +1148,68 @@ function getBounds<T extends number | Date>(
 
   return { yUpperValues, yLowerValues };
 }
+
+/**
+ * FACETING
+ */
+
+const facetedData: FacetedData<XYPlotData> = {
+  facets: [
+    {
+      label: 'Facet 1',
+      data: dataSetProcess,
+    },
+    {
+      label: 'Facet 2',
+      data: dataSetProcess,
+    },
+    {
+      label: 'Facet 3',
+      data: dataSetProcess,
+    },
+    {
+      label: 'Facet 400',
+    },
+    {
+      label: 'No data',
+    },
+  ],
+};
+
+interface FacetedStoryProps {
+  data: FacetedData<XYPlotData>;
+  componentProps: XYPlotProps;
+  modalComponentProps: XYPlotProps;
+}
+
+const FacetedTemplate: Story<FacetedStoryProps> = ({
+  data,
+  componentProps,
+  modalComponentProps,
+}) => (
+  <FacetedXYPlot
+    data={data}
+    componentProps={componentProps}
+    modalComponentProps={modalComponentProps}
+  />
+);
+
+export const Faceted = FacetedTemplate.bind({});
+Faceted.args = {
+  data: facetedData,
+  componentProps: {
+    title: 'Faceted XYPlot',
+    containerStyles: {
+      width: 300,
+      height: 300,
+      border: '1px solid #dadada',
+    },
+  },
+  modalComponentProps: {
+    containerStyles: {
+      width: '100%',
+      height: '100%',
+      margin: 'auto',
+    },
+  },
+};
