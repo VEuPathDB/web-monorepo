@@ -73,6 +73,7 @@ import {
   variablesAreUnique,
   nonUniqueWarning,
   vocabularyWithMissingData,
+  hasIncompleteCases,
 } from '../../../utils/visualization';
 import { gray } from '../colors';
 import {
@@ -221,22 +222,25 @@ function ScatterplotViz(props: VisualizationProps) {
     xAxisVariable,
     yAxisVariable,
     overlayVariable,
+    overlayEntity,
     facetVariable,
+    facetEntity,
   } = useMemo(() => {
     const { variable: xAxisVariable } =
       findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
     const { variable: yAxisVariable } =
       findEntityAndVariable(vizConfig.yAxisVariable) ?? {};
-    const { variable: overlayVariable } =
+    const { variable: overlayVariable, entity: overlayEntity } =
       findEntityAndVariable(vizConfig.overlayVariable) ?? {};
-    const { variable: facetVariable } =
+    const { variable: facetVariable, entity: facetEntity } =
       findEntityAndVariable(vizConfig.facetVariable) ?? {};
-
     return {
       xAxisVariable,
       yAxisVariable,
       overlayVariable,
+      overlayEntity,
       facetVariable,
+      facetEntity,
     };
   }, [
     findEntityAndVariable,
@@ -300,6 +304,13 @@ function ScatterplotViz(props: VisualizationProps) {
   const data = usePromise(
     useCallback(async (): Promise<XYPlotDataWithCoverage | undefined> => {
       if (
+        outputEntity == null ||
+        filteredCounts.pending ||
+        filteredCounts.value == null
+      )
+        return undefined;
+
+      if (
         !variablesAreUnique([
           xAxisVariable,
           yAxisVariable,
@@ -340,19 +351,35 @@ function ScatterplotViz(props: VisualizationProps) {
       // scatterplot, lineplot
       const response =
         visualization.descriptor.type === 'lineplot'
-          ? dataClient.getLineplot(
+          ? await dataClient.getLineplot(
               computation.descriptor.type,
               params as LineplotRequestParams
             )
           : // set default as scatterplot/getScatterplot
-            dataClient.getScatterplot(
+            await dataClient.getScatterplot(
               computation.descriptor.type,
               params as ScatterplotRequestParams
             );
 
-      const showMissing =
+      const showMissingOverlay =
         vizConfig.showMissingness &&
-        (overlayVariable != null || facetVariable != null);
+        hasIncompleteCases(
+          overlayEntity,
+          overlayVariable,
+          outputEntity,
+          filteredCounts.value,
+          response.completeCasesTable
+        );
+      const showMissingFacet =
+        vizConfig.showMissingness &&
+        hasIncompleteCases(
+          facetEntity,
+          facetVariable,
+          outputEntity,
+          filteredCounts.value,
+          response.completeCasesTable
+        );
+
       const overlayVocabulary = fixLabelsForNumberVariables(
         overlayVariable?.vocabulary,
         overlayVariable
@@ -362,13 +389,14 @@ function ScatterplotViz(props: VisualizationProps) {
         facetVariable
       );
       return scatterplotResponseToData(
-        await response,
+        response,
         visualization.descriptor.type,
         independentValueType,
         dependentValueType,
-        showMissing,
+        showMissingOverlay,
         overlayVocabulary,
         overlayVariable,
+        showMissingFacet,
         facetVocabulary,
         facetVariable
       );
@@ -387,6 +415,7 @@ function ScatterplotViz(props: VisualizationProps) {
       computation.descriptor.type,
       visualization.descriptor.type,
       outputEntity,
+      filteredCounts,
     ])
   );
 
@@ -938,9 +967,10 @@ export function scatterplotResponseToData(
   vizType: string,
   independentValueType: string,
   dependentValueType: string,
-  showMissingness: boolean = false,
+  showMissingOverlay: boolean = false,
   overlayVocabulary: string[] = [],
   overlayVariable?: Variable,
+  showMissingFacet: boolean = false,
   facetVocabulary: string[] = [],
   facetVariable?: Variable
 ): XYPlotDataWithCoverage {
@@ -964,14 +994,14 @@ export function scatterplotResponseToData(
       reorderResponseScatterplotData(
         // reorder by overlay var within each facet
         group,
-        vocabularyWithMissingData(overlayVocabulary, showMissingness),
+        vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
         overlayVariable
       ),
       vizType,
       modeValue,
       independentValueType,
       dependentValueType,
-      showMissingness,
+      showMissingOverlay,
       hasMissingData,
       overlayVariable,
       // pass facetVariable to determine either scatter or scattergl
@@ -996,7 +1026,7 @@ export function scatterplotResponseToData(
         {
           facets: vocabularyWithMissingData(
             facetVocabulary,
-            showMissingness
+            showMissingFacet
           ).map((facetValue) => ({
             label: facetValue,
             data: processedData[facetValue]?.dataSetProcess ?? undefined,
