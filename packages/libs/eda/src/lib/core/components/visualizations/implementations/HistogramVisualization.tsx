@@ -62,7 +62,7 @@ import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 import {
   vocabularyWithMissingData,
   grayOutLastSeries,
-  omitEmptyNoDataSeries,
+  hasIncompleteCases,
   fixLabelForNumberVariables,
   fixLabelsForNumberVariables,
   variablesAreUnique,
@@ -265,14 +265,21 @@ function HistogramViz(props: VisualizationProps) {
     };
   }, [findEntityAndVariable, vizConfig.xAxisVariable]);
 
-  const { overlayVariable, facetVariable } = useMemo(() => {
-    const { variable: overlayVariable } =
+  const {
+    overlayVariable,
+    overlayEntity,
+    facetVariable,
+    facetEntity,
+  } = useMemo(() => {
+    const { variable: overlayVariable, entity: overlayEntity } =
       findEntityAndVariable(vizConfig.overlayVariable) ?? {};
-    const { variable: facetVariable } =
+    const { variable: facetVariable, entity: facetEntity } =
       findEntityAndVariable(vizConfig.facetVariable) ?? {};
     return {
       overlayVariable,
+      overlayEntity,
       facetVariable,
+      facetEntity,
     };
   }, [
     findEntityAndVariable,
@@ -284,13 +291,12 @@ function HistogramViz(props: VisualizationProps) {
     useCallback(async (): Promise<
       HistogramDataWithCoverageStatistics | undefined
     > => {
-      if (vizConfig.xAxisVariable == null || xAxisVariable == null)
-        return undefined;
-
       if (
-        xAxisVariable &&
-        !NumberVariable.is(xAxisVariable) &&
-        !DateVariable.is(xAxisVariable)
+        vizConfig.xAxisVariable == null ||
+        xAxisVariable == null ||
+        outputEntity == null ||
+        filteredCounts.pending ||
+        filteredCounts.value == null
       )
         return undefined;
 
@@ -304,15 +310,30 @@ function HistogramViz(props: VisualizationProps) {
         vizConfig,
         xAxisVariable
       );
-      const response = dataClient.getHistogram(
+      const response = await dataClient.getHistogram(
         computation.descriptor.type,
         params
       );
-      const showMissing =
-        vizConfig.showMissingness &&
-        (overlayVariable != null || facetVariable != null);
+
       const showMissingOverlay =
-        vizConfig.showMissingness && overlayVariable != null;
+        vizConfig.showMissingness &&
+        hasIncompleteCases(
+          overlayEntity,
+          overlayVariable,
+          outputEntity,
+          filteredCounts.value,
+          response.completeCasesTable
+        );
+      const showMissingFacet =
+        vizConfig.showMissingness &&
+        hasIncompleteCases(
+          facetEntity,
+          facetVariable,
+          outputEntity,
+          filteredCounts.value,
+          response.completeCasesTable
+        );
+
       const overlayVocabulary = fixLabelsForNumberVariables(
         overlayVariable?.vocabulary,
         overlayVariable
@@ -321,21 +342,18 @@ function HistogramViz(props: VisualizationProps) {
         facetVariable?.vocabulary,
         facetVariable
       );
-      return omitEmptyNoDataSeries(
-        grayOutLastSeries(
-          reorderData(
-            histogramResponseToData(
-              await response,
-              xAxisVariable,
-              overlayVariable,
-              facetVariable
-            ),
-            vocabularyWithMissingData(overlayVocabulary, showMissing),
-            vocabularyWithMissingData(facetVocabulary, showMissing)
+      return grayOutLastSeries(
+        reorderData(
+          histogramResponseToData(
+            response,
+            xAxisVariable,
+            overlayVariable,
+            facetVariable
           ),
-          showMissingOverlay
+          vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
+          vocabularyWithMissingData(facetVocabulary, showMissingFacet)
         ),
-        showMissing
+        showMissingOverlay
       );
     }, [
       // using vizConfig only causes issue with onCheckedLegendItemsChange
@@ -348,6 +366,8 @@ function HistogramViz(props: VisualizationProps) {
       vizConfig.showMissingness,
       studyId,
       filters,
+      filteredCounts,
+      outputEntity,
       dataClient,
       computation.descriptor.type,
       xAxisVariable,
@@ -527,7 +547,7 @@ function HistogramViz(props: VisualizationProps) {
         // add dependent axis range for better displaying tick labels in log-scale
         dependentAxisRange={defaultDependentAxisRange}
         interactive
-        showSpinner={data.pending}
+        showSpinner={data.pending || filteredCounts.pending}
         filters={filters}
         completeCases={data.pending ? undefined : data.value?.completeCases}
         completeCasesAllVars={
