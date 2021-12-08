@@ -24,14 +24,17 @@ type FacetedHistogramProps = Omit<
 >;
 
 const FacetedHistogram = (facetedHistogramProps: FacetedHistogramProps) => {
+  const { componentProps } = facetedHistogramProps;
+
   return (
     <FacetedPlot
       component={Histogram}
       {...facetedHistogramProps}
       componentProps={{
-        containerStyles: defaultContainerStyles,
-        spacingOptions: defaultSpacingOptions,
-        ...facetedHistogramProps.componentProps,
+        ...componentProps,
+        containerStyles:
+          componentProps.containerStyles ?? defaultContainerStyles,
+        spacingOptions: componentProps.spacingOptions ?? defaultSpacingOptions,
       }}
     />
   );

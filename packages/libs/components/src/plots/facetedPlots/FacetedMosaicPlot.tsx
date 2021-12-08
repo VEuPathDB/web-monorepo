@@ -23,14 +23,17 @@ type FacetedMosaicPlotProps = Omit<
 >;
 
 const FacetedMosaicPlot = (facetedMosaicPlotProps: FacetedMosaicPlotProps) => {
+  const { componentProps } = facetedMosaicPlotProps;
+
   return (
     <FacetedPlot
       component={MosaicPlot}
       {...facetedMosaicPlotProps}
       componentProps={{
-        containerStyles: defaultContainerStyles,
-        spacingOptions: defaultSpacingOptions,
-        ...facetedMosaicPlotProps.componentProps,
+        ...componentProps,
+        containerStyles:
+          componentProps.containerStyles ?? defaultContainerStyles,
+        spacingOptions: componentProps.spacingOptions ?? defaultSpacingOptions,
       }}
     />
   );

@@ -23,14 +23,17 @@ type FacetedBoxplotProps = Omit<
 >;
 
 const FacetedBoxplot = (facetedBoxplotProps: FacetedBoxplotProps) => {
+  const { componentProps } = facetedBoxplotProps;
+
   return (
     <FacetedPlot
       component={Boxplot}
       {...facetedBoxplotProps}
       componentProps={{
-        containerStyles: defaultContainerStyles,
-        spacingOptions: defaultSpacingOptions,
-        ...facetedBoxplotProps.componentProps,
+        ...componentProps,
+        containerStyles:
+          componentProps.containerStyles ?? defaultContainerStyles,
+        spacingOptions: componentProps.spacingOptions ?? defaultSpacingOptions,
       }}
     />
   );

@@ -23,14 +23,17 @@ type FacetedHeatmapProps = Omit<
 >;
 
 const FacetedHeatmap = (facetedHeatmapProps: FacetedHeatmapProps) => {
+  const { componentProps } = facetedHeatmapProps;
+
   return (
     <FacetedPlot
       component={Heatmap}
       {...facetedHeatmapProps}
       componentProps={{
-        containerStyles: defaultContainerStyles,
-        spacingOptions: defaultSpacingOptions,
-        ...facetedHeatmapProps.componentProps,
+        ...componentProps,
+        containerStyles:
+          componentProps.containerStyles ?? defaultContainerStyles,
+        spacingOptions: componentProps.spacingOptions ?? defaultSpacingOptions,
       }}
     />
   );

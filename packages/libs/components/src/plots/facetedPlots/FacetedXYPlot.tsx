@@ -23,14 +23,17 @@ type FacetedXYPlotProps = Omit<
 >;
 
 const FacetedXYPlot = (facetedXYPlotProps: FacetedXYPlotProps) => {
+  const { componentProps } = facetedXYPlotProps;
+
   return (
     <FacetedPlot
       component={XYPlot}
       {...facetedXYPlotProps}
       componentProps={{
-        containerStyles: defaultContainerStyles,
-        spacingOptions: defaultSpacingOptions,
-        ...facetedXYPlotProps.componentProps,
+        ...componentProps,
+        containerStyles:
+          componentProps.containerStyles ?? defaultContainerStyles,
+        spacingOptions: componentProps.spacingOptions ?? defaultSpacingOptions,
       }}
     />
   );

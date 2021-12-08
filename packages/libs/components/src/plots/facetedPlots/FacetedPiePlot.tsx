@@ -25,6 +25,7 @@ type FacetedPiePlotProps = Omit<
 >;
 
 const FacetedPiePlot = (facetedPiePlotProps: FacetedPiePlotProps) => {
+  const { componentProps } = facetedPiePlotProps;
   const onPlotlyRender = useCallback((_, graphDiv) => {
     // Replace each slice DOM node with a copy of itself.
     // This removes the existing click event handler, which
@@ -47,10 +48,11 @@ const FacetedPiePlot = (facetedPiePlotProps: FacetedPiePlotProps) => {
       component={PiePlot}
       {...facetedPiePlotProps}
       componentProps={{
-        containerStyles: defaultContainerStyles,
-        spacingOptions: defaultSpacingOptions,
+        ...componentProps,
+        containerStyles:
+          componentProps.containerStyles ?? defaultContainerStyles,
+        spacingOptions: componentProps.spacingOptions ?? defaultSpacingOptions,
         onPlotlyRender,
-        ...facetedPiePlotProps.componentProps,
       }}
     />
   );
