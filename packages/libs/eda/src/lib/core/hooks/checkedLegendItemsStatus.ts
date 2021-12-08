@@ -1,17 +1,13 @@
 import { useState, useEffect } from 'react';
 import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { PromiseHookState } from './promise';
-import { BarplotDataWithStatistics } from '../components/visualizations/implementations/BarplotVisualization';
-import { HistogramDataWithCoverageStatistics } from '../components/visualizations/implementations/HistogramVisualization';
 
 /**
  * A custom hook to preserve the status of the checked legend items
  */
 
-export function useCheckedLegendItemsStatus(
-  data: PromiseHookState<
-    BarplotDataWithStatistics | HistogramDataWithCoverageStatistics | undefined
-  >,
+export function useCheckedLegendItemsStatus<T>(
+  data: PromiseHookState<T>,
   legendItems: LegendItemsProps[],
   onCheckedLegendItemsChange: (checkedLegendItems: string[]) => void,
   vizConfigCheckedLegendItems: string[] | undefined

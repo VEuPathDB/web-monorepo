@@ -377,7 +377,7 @@ function BarplotViz(props: VisualizationProps) {
   }, [data]);
 
   // calling a custom hook to preserve the status of checked legend items
-  const checkedLegendItemsStatus = useCheckedLegendItemsStatus(
+  useCheckedLegendItemsStatus(
     data,
     legendItems,
     onCheckedLegendItemsChange,
