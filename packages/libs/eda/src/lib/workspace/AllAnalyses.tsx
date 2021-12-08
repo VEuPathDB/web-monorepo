@@ -1,11 +1,11 @@
+import React, { useCallback, useMemo, useState } from 'react';
 import { orderBy } from 'lodash';
 import Path from 'path';
-import React, { useCallback, useMemo, useState } from 'react';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 
 import {
   Button,
-  Checkbox,
+  Checkbox as MaterialCheckbox,
   FormControlLabel,
   Icon,
   IconButton,
@@ -32,6 +32,7 @@ import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 import { confirm } from '@veupathdb/wdk-client/lib/Utils/Platform';
 import { RecordInstance } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { OverflowingTextCell } from '@veupathdb/wdk-client/lib/Views/Strategy/OverflowingTextCell';
+import Checkbox from '@veupathdb/core-components/dist/components/widgets/CheckBox';
 
 import {
   AnalysisClient,
@@ -47,6 +48,7 @@ import {
   makeOnImportProvenanceString,
 } from '../core/utils/analysis';
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
+import ShareFromAnalysesList from './sharing/ShareFromAnalysesList';
 
 interface AnalysisAndDataset {
   analysis: AnalysisSummary & {
@@ -110,6 +112,7 @@ export function AllAnalyses(props: Props) {
   const [selectedAnalyses, setSelectedAnalyses] = useState<Set<string>>(
     new Set()
   );
+
   const [sortPinned, setSortPinned] = useSessionBackedState<boolean>(
     true,
     'eda::allAnalysesPinned',
@@ -214,6 +217,11 @@ export function AllAnalyses(props: Props) {
       .filter((id) => !isPinnedAnalysis(id));
     deleteAnalyses(idsToRemove);
   }, [filteredAnalysesAndDatasets, deleteAnalyses, isPinnedAnalysis]);
+
+  const [sharingModalVisible, setSharingModalVisible] = useState(false);
+  const [selectedAnalysisId, setSelectedAnalysisId] = useState<
+    string | undefined
+  >(undefined);
 
   const tableState = useMemo(
     () => ({
@@ -385,7 +393,7 @@ export function AllAnalyses(props: Props) {
             >
               <FormControlLabel
                 control={
-                  <Checkbox
+                  <MaterialCheckbox
                     size="small"
                     icon={
                       <Icon
@@ -496,17 +504,23 @@ export function AllAnalyses(props: Props) {
         {
           key: 'isPublic',
           name: 'Public',
+          width: 100,
           sortable: true,
           renderCell: (data: { row: AnalysisAndDataset }) => {
             return (
-              <Checkbox
-                checked={data.row.analysis.isPublic}
-                onChange={(event) => {
-                  updateAnalysis(data.row.analysis.analysisId, {
-                    isPublic: event.target.checked,
-                  });
-                }}
-              />
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <Checkbox
+                  selected={data.row.analysis.isPublic}
+                  themeRole="primary"
+                  onToggle={(selected) => {
+                    if (selected) {
+                      setSelectedAnalysisId(data.row.analysis.analysisId);
+                      setSharingModalVisible(true);
+                    }
+                  }}
+                  styleOverrides={{ size: 16 }}
+                />
+              </div>
             );
           },
         },
@@ -524,11 +538,7 @@ export function AllAnalyses(props: Props) {
           renderCell: (data: { row: AnalysisAndDataset }) =>
             data.row.analysis.modificationTimeDisplay,
         },
-      ].filter(
-        // Only offer isPublic column if the user is the "example analyses" author
-        (column) =>
-          column.key !== 'isPublic' || user?.id === exampleAnalysesAuthor
-      ),
+      ],
     }),
     [
       sortPinned,
@@ -556,6 +566,18 @@ export function AllAnalyses(props: Props) {
 
   return (
     <div className={classes.root}>
+      <ShareFromAnalysesList
+        analysis={
+          analysesAndDatasets?.find(
+            (potentialMatch) =>
+              potentialMatch.analysis.analysisId === selectedAnalysisId
+          )?.analysis
+        }
+        updateAnalysis={updateAnalysis}
+        visible={sharingModalVisible}
+        toggleVisible={setSharingModalVisible}
+      />
+
       <h1>My Analyses</h1>
       {error && <ContentError>{error}</ContentError>}
       {analyses && datasets && user ? (

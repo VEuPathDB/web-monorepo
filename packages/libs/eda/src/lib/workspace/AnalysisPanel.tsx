@@ -35,6 +35,7 @@ import GlobalFiltersDialog from '../core/components/GlobalFiltersDialog';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import ShowHideVariableContextProvider from '../core/utils/show-hide-variable-context';
 import NotesTab from './NotesTab';
+import ShareFromAnalyisModal from './sharing/ShareFromAnalysisModal';
 
 interface Props {
   analysisState: AnalysisState;
@@ -73,9 +74,13 @@ export function AnalysisPanel({
   const entities = useStudyEntities(studyMetadata.rootEntity);
   const filteredEntities = uniq(filters?.map((f) => f.entityId));
   const location = useLocation();
+
   const [lastVarPath, setLastVarPath] = useState('');
   const [lastVizPath, setLastVizPath] = useState('');
   const [globalFiltersDialogOpen, setGlobalFiltersDialogOpen] = useState(false);
+  const [sharingModalVisible, setSharingModalVisible] = useState<boolean>(
+    false
+  );
 
   const analysisId = getAnalysisId(analysis);
   const previousAnalysisId = usePrevious(analysisId);
@@ -120,6 +125,11 @@ export function AnalysisPanel({
   if (analysis == null) return <Loading />;
   return (
     <ShowHideVariableContextProvider>
+      <ShareFromAnalyisModal
+        visible={sharingModalVisible}
+        toggleVisible={setSharingModalVisible}
+        analysisState={analysisState}
+      />
       <div className={cx('-Analysis')}>
         <AnalysisSummary
           analysis={analysis}
@@ -131,6 +141,7 @@ export function AnalysisPanel({
             setGlobalFiltersDialogOpen(!globalFiltersDialogOpen)
           }
           globalFiltersDialogOpen={globalFiltersDialogOpen}
+          displaySharingModal={() => setSharingModalVisible(true)}
         />
         <GlobalFiltersDialog
           open={globalFiltersDialogOpen}

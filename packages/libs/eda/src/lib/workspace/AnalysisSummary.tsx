@@ -1,11 +1,21 @@
 import { SaveableTextEditor } from '@veupathdb/wdk-client/lib/Components';
-import React from 'react';
 import { useHistory, useRouteMatch } from 'react-router';
 import Path from 'path';
 import { Analysis, NewAnalysis } from '../core';
-import { ActionIconButton } from './ActionIconButton';
-import { Button, Icon } from '@material-ui/core';
 import { cx } from './Utils';
+
+// Components
+import {
+  FilledButton,
+  FloatingButton,
+  OutlinedButton,
+} from '@veupathdb/core-components/dist/components/buttons';
+import {
+  Copy,
+  Filter,
+  Share,
+  Trash,
+} from '@veupathdb/core-components/dist/components/icons';
 
 interface Props {
   analysis: Analysis | NewAnalysis;
@@ -15,6 +25,7 @@ interface Props {
   deleteAnalysis?: () => Promise<void>;
   onFilterIconClick?: () => void;
   globalFiltersDialogOpen?: boolean;
+  displaySharingModal?: () => void;
 }
 
 export function AnalysisSummary(props: Props) {
@@ -25,6 +36,7 @@ export function AnalysisSummary(props: Props) {
     deleteAnalysis,
     onFilterIconClick,
     globalFiltersDialogOpen,
+    displaySharingModal,
   } = props;
   const history = useHistory();
   const { url } = useRouteMatch();
@@ -41,36 +53,83 @@ export function AnalysisSummary(props: Props) {
       history.replace(Path.resolve(url, '..'));
     });
   return (
-    <div className={cx('-AnalysisSummary')}>
-      <div className={cx('-AnalysisSummaryLeft')}>
+    <div
+      id="Analysis Control Bar"
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        fontSize: '1.65em',
+        justifyContent: 'flex-start',
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center' }}>
         <SaveableTextEditor
           className={cx('-AnalysisNameEditBox')}
           value={analysis.displayName}
           onSave={(newName) => newName && setAnalysisName(newName)}
         />
-        {analysis.descriptor.subset.descriptor.length > 0 && onFilterIconClick && (
-          <Button
-            className={cx('-SeeAllFiltersButton')}
-            onClick={onFilterIconClick}
-            startIcon={<Icon className="fa fa-filter" />}
-          >
-            {(globalFiltersDialogOpen ? 'Hide' : 'Show') + ' all filters'}
-          </Button>
-        )}
       </div>
-      <div className={cx('-AnalysisSummaryRight')}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          fontSize: '0.8em',
+        }}
+      >
         {handleCopy && (
-          <ActionIconButton
-            iconClassName="clone"
-            hoverText="Copy analysis"
-            action={handleCopy}
+          <FloatingButton
+            iconOnly={true}
+            icon={Copy}
+            onPress={handleCopy}
+            themeRole="primary"
+            styleOverrides={{
+              container: { paddingLeft: 10, paddingRight: 10 },
+            }}
           />
         )}
         {handleDelete && (
-          <ActionIconButton
-            iconClassName="trash"
-            hoverText="Delete analysis"
-            action={handleDelete}
+          <FloatingButton
+            iconOnly={true}
+            icon={Trash}
+            onPress={handleDelete}
+            themeRole="primary"
+            styleOverrides={{
+              container: { paddingLeft: 10, paddingRight: 10 },
+            }}
+          />
+        )}
+        {analysis.isPublic && (
+          <OutlinedButton
+            text="Public Analysis"
+            onPress={() => null}
+            themeRole="secondary"
+            styleOverrides={{
+              container: { textTransform: 'none', marginLeft: 10 },
+            }}
+          />
+        )}
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', flex: 1 }}>
+        {analysis.descriptor.subset.descriptor.length > 0 && onFilterIconClick && (
+          <FilledButton
+            text={(globalFiltersDialogOpen ? 'Hide' : 'Show') + ' all filters'}
+            onPress={onFilterIconClick}
+            icon={Filter}
+            themeRole="primary"
+            styleOverrides={{
+              container: { textTransform: 'none', width: 155 },
+            }}
+          />
+        )}
+        {displaySharingModal && !analysis.isPublic && (
+          <FilledButton
+            text="Make Analysis Public"
+            onPress={displaySharingModal}
+            icon={Share}
+            themeRole="primary"
+            styleOverrides={{
+              container: { textTransform: 'none', marginLeft: 10 },
+            }}
           />
         )}
       </div>
