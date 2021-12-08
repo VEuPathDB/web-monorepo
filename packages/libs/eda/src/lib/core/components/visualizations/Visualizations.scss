@@ -274,3 +274,20 @@ $data-table-inner-border: 1px solid #888;
     visibility: hidden;
   }
 }
+
+// R-square table for Scatter plot's Best fit option
+.ScatterRsquareTable {
+  @include data-table;
+  width: 400px;
+
+  .percentage {
+    color: #333;
+    font-size: 0.85em;
+  }
+  th {
+    vertical-align: baseline;
+  }
+  th:first-of-type {
+    border-bottom: $data-table-inner-border;
+  }
+}
