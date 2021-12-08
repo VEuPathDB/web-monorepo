@@ -1,12 +1,12 @@
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
-import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useMemo } from 'react';
 import { AnalysisClient } from '../api/analysis-api';
 import DataClient from '../api/DataClient';
 import SubsettingClient from '../api/SubsettingClient';
 
 function useWdkServiceContext() {
-  const { wdkService } = useNonNullableContext(WdkDepdendenciesContext);
+  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
   return wdkService;
 }
 

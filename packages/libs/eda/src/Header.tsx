@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
-import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { endpoint } from './constants';
 
@@ -11,7 +11,7 @@ export default function Header() {
   const [pwd, setPwd] = React.useState('');
   const [user, setUser] = React.useState<User>();
   const [errorMsg, setErrorMsg] = React.useState<string>('');
-  const { wdkService } = useNonNullableContext(WdkDepdendenciesContext);
+  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
 
   React.useEffect(() => {
     wdkService.getCurrentUser().then(setUser);

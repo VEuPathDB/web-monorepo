@@ -55,10 +55,10 @@ module.exports = function (app) {
     })
   );
   app.use(
-    '/dataset-access',
+    '/eda-dataset-access',
     createProxyMiddleware({
       target: process.env.DATASET_ACCESS_SERVICE_URL,
-      pathRewrite: { [`^/dataset-access`]: '' },
+      pathRewrite: { [`^/eda-dataset-access`]: '' },
       secure: false,
       changeOrigin: true,
       followRedirects: true,
