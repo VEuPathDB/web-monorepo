@@ -54,6 +54,7 @@ export function grayOutLastSeries<
 export function showMissingStratification(
   entity: StudyEntity | undefined,
   variable: Variable | undefined,
+  outputEntity: StudyEntity | undefined,
   filteredCounts: EntityCounts,
   completeCasesTable: CompleteCasesTable
 ): boolean {
@@ -66,9 +67,9 @@ export function showMissingStratification(
         )?.completeCases
       : undefined;
   return (
-    entity != null &&
+    outputEntity != null &&
     completeCases != null &&
-    completeCases < filteredCounts[entity.id]
+    completeCases < filteredCounts[outputEntity.id]
   );
 }
 

@@ -261,6 +261,7 @@ function BarplotViz(props: VisualizationProps) {
         showMissingStratification(
           overlayEntity,
           overlayVariable,
+          entity,
           filteredCounts.value,
           response.completeCasesTable
         );
@@ -269,6 +270,7 @@ function BarplotViz(props: VisualizationProps) {
         showMissingStratification(
           facetEntity,
           facetVariable,
+          entity,
           filteredCounts.value,
           response.completeCasesTable
         );
