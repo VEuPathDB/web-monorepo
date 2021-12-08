@@ -4,6 +4,7 @@ import { reduxMiddleware } from '@veupathdb/study-data-access/lib/data-restricti
 import { wrapWdkDependencies } from '@veupathdb/study-data-access/lib/shared/wrapWdkDependencies';
 
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
+import { edaServiceUrl } from '@veupathdb/web-common/lib/config';
 
 import '@veupathdb/web-common/lib/styles/client.scss';
 
@@ -15,7 +16,7 @@ import 'site/css/ClinEpiSite.scss';
 
 initialize({
   componentWrappers,
-  wrapWdkDependencies: partial(wrapWdkDependencies, '/eda'),
+  wrapWdkDependencies: partial(wrapWdkDependencies, edaServiceUrl),
   wrapStoreModules,
   wrapRoutes,
   additionalMiddleware: [ reduxMiddleware ]
