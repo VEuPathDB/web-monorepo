@@ -6,6 +6,7 @@ export const defaultContainerStyles: MosaicPlotProps['containerStyles'] = {
   height: 360,
   width: 750 / 1.45,
   marginLeft: '0.75rem',
+  marginBottom: '0.25rem',
   border: '1px solid #dedede',
   boxShadow: '1px 1px 4px #00000066',
 };
