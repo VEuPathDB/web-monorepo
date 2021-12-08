@@ -3100,13 +3100,6 @@
     "@types/react-dom" "*"
     "@types/react-transition-group" "*"
 
-"@types/react-table@^7.7.7":
-  version "7.7.8"
-  resolved "https://registry.yarnpkg.com/@types/react-table/-/react-table-7.7.8.tgz#b1aa5fb7a54432969262d2306b87fdbb9a5ee647"
-  integrity sha512-OMhbPlf+uUGte3M1WdArEKeBkyQ1XJxKvFYs+o1dGGGyaSVIqxPPQmBZ6Skkw0V9y0F/kOY7rnTD8r9GbfpBOg==
-  dependencies:
-    "@types/react" "*"
-
 "@types/react-test-renderer@>=16.9.0":
   version "17.0.1"
   resolved "https://registry.yarnpkg.com/@types/react-test-renderer/-/react-test-renderer-17.0.1.tgz#3120f7d1c157fba9df0118dae20cb0297ee0e06b"
@@ -3356,10 +3349,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.0.0.tgz#90ca79640ffbb195a87d4d65cd4b2f92342f8b76"
   integrity sha512-qfKu1z9gaaHdMgRGaZBiayuIh92ishsf14lR+Rj61CJF131XWq3+5e2VyLyOdKsYJ1EreAxgyC/0upIBEzwQJw==
 
-"@veupathdb/components@^0.11.1":
-  version "0.11.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.1.tgz#d8282ff78c8536df1a56f8d264c1684fce99b7cb"
-  integrity sha512-tRUq2948C+2svzB/Aypt8pdk65QAol527r7mPm1xjBWf1JmiYKzhx5EDFXrm12mihnGxJptXYdPwpCRYi1C7lA==
+"@veupathdb/components@^0.11.2":
+  version "0.11.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.2.tgz#c300bd6b2e4a059f359a4fd21c8dee32740a6d10"
+  integrity sha512-QPyiBw6Mcg2XgIqAUjo70YgnSnRcPa85jeVIqiCCikqsODbd5EpCJ2/Y6eRGdnb74VmY45vaGsiuaDibuXzc4w==
   dependencies:
     "@material-ui/core" "^4.11.2"
     "@material-ui/icons" "^4.11.2"
@@ -3466,14 +3459,13 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/core-components@^0.2.45":
-  version "0.2.45"
-  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.2.45.tgz#e7f917abdeea68b3ef42763311dbf3576086e4ed"
-  integrity sha512-15/EIbPVgwpLkT1Z3/v0LIl5P+WEV2DJrRKQBbxgn5gzsKtIH0tc+Txm83sXBaQ97OXpYskerZXzkFC24Vx6rw==
+"@veupathdb/core-components@^0.2.57":
+  version "0.2.57"
+  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.2.57.tgz#8639c5fb6546991ba3fec16f8a32e47e5d8e2317"
+  integrity sha512-CgC1D/3TYU+Lcyanpbybqg7WqxYRYOHJ4gMecOrVNZKt0uZWEwFqe2Phz9tmvXdXtNlm7x4PIWt0d2JARhvZmw==
   dependencies:
     "@material-ui/core" "^4.12.3"
     "@material-ui/icons" "^4.11.2"
-    "@types/react-table" "^7.7.7"
     lodash "^4.17.21"
     react-cool-dimensions "^2.0.7"
     react-modal "^3.14.3"

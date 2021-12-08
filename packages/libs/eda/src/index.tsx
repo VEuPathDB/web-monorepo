@@ -20,10 +20,14 @@ import reportWebVitals from './reportWebVitals';
 import Header from './Header';
 import { MapVeuContainer } from './lib/mapveu';
 import { WorkspaceRouter } from './lib/workspace/WorkspaceRouter';
+import UIThemeProvider from '@veupathdb/core-components/dist/components/theming/UIThemeProvider';
 
 // Hooks
 import { useAttemptActionClickHandler } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 import { useCoreUIFonts } from '@veupathdb/core-components/dist/hooks';
+
+// Definitions
+import { colors } from '@veupathdb/core-components';
 
 import './index.css';
 
@@ -97,7 +101,16 @@ initialize({
             <DataRestrictionDaemon
               makeStudyPageRoute={(id: string) => `/eda/${id}/details`}
             />
-            <DefaultComponent {...props} />
+            <UIThemeProvider
+              theme={{
+                palette: {
+                  primary: { hue: colors.mutedCyan, level: 600 },
+                  secondary: { hue: colors.mutedRed, level: 500 },
+                },
+              }}
+            >
+              <DefaultComponent {...props} />
+            </UIThemeProvider>
           </>
         );
       };
