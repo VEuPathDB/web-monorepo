@@ -7,7 +7,9 @@ import ContactUsController from './controllers/ContactUsController';
 import GalaxyTermsController from './controllers/GalaxyTermsController';
 import ExternalContentController from 'ebrc-client/controllers/ExternalContentController';
 import { ResetSessionController } from 'ebrc-client/controllers/ResetSessionController';
-import StudyAccessController from './controllers/StudyAccessController';
+
+import StudyAccessController from '@veupathdb/study-data-access/lib/study-access/components/StudyAccessController';
+
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
 import { edaExampleAnalysesAuthor, edaServiceUrl } from './config';
