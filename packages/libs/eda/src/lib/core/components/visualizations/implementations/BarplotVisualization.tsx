@@ -14,7 +14,7 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useEffect } from 'react';
 import PluginError from '../PluginError';
 
 // need to set for Barplot
@@ -62,6 +62,8 @@ import PlotLegend, {
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 // import { gray } from '../colors';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
+//DKDK a custom hook to preserve the status of checked legend items
+import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
 
 type BarplotDataWithStatistics = (BarplotData | FacetedData<BarplotData>) &
   CoverageStatistics;
@@ -374,11 +376,10 @@ function BarplotViz(props: VisualizationProps) {
   }, [data]);
 
   // set checkedLegendItems
-  const checkedLegendItems = useMemo(() => {
-    return (
-      vizConfig.checkedLegendItems ?? legendItems.map((item) => item.label)
-    );
-  }, [vizConfig.checkedLegendItems, legendItems]);
+  const checkedLegendItems = useCheckedLegendItemsStatus(
+    legendItems,
+    vizConfig.checkedLegendItems
+  );
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,

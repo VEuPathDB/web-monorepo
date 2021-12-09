@@ -98,6 +98,8 @@ import FacetedPlot from '@veupathdb/components/lib/plots/FacetedPlot';
 import * as ColorMath from 'color-math';
 // R-square table component
 import { ScatterplotRsquareTable } from '../../ScatterplotRsquareTable';
+//DKDK a custom hook to preserve the status of checked legend items
+import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -267,6 +269,8 @@ function ScatterplotViz(props: VisualizationProps) {
           findEntityAndVariable(yAxisVariable)?.variable.type === 'date'
             ? 'Raw'
             : vizConfig.valueSpecConfig,
+        // set undefined for variable change
+        checkedLegendItems: undefined,
       });
     },
     [updateVizConfig, findEntityAndVariable, vizConfig.valueSpecConfig]
@@ -643,12 +647,11 @@ function ScatterplotViz(props: VisualizationProps) {
       : [];
   }, [data]);
 
-  useEffect(() => {
-    if (data != null) {
-      // use this to set all legend checked at first
-      onCheckedLegendItemsChange(legendItems.map((item) => item.label));
-    }
-  }, [data, legendItems]);
+  // set checkedLegendItems: not working well with plot options
+  const checkedLegendItems = useCheckedLegendItemsStatus(
+    legendItems,
+    vizConfig.checkedLegendItems
+  );
 
   const plotNode = (
     <ScatterplotWithControls
@@ -696,7 +699,7 @@ function ScatterplotViz(props: VisualizationProps) {
       dependentValueType={NumberVariable.is(yAxisVariable) ? 'number' : 'date'}
       legendTitle={axisLabelWithUnit(overlayVariable)}
       // pass checked state of legend checkbox to PlotlyPlot
-      checkedLegendItems={vizConfig.checkedLegendItems}
+      checkedLegendItems={checkedLegendItems}
       // for vizconfig.checkedLegendItems
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
     />
@@ -705,7 +708,7 @@ function ScatterplotViz(props: VisualizationProps) {
   const legendNode = !data.pending && data.value != null && (
     <PlotLegend
       legendItems={legendItems}
-      checkedLegendItems={vizConfig.checkedLegendItems}
+      checkedLegendItems={checkedLegendItems}
       legendTitle={axisLabelWithUnit(overlayVariable)}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
     />

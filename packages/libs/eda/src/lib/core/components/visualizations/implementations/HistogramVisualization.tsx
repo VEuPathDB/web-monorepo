@@ -80,6 +80,8 @@ import PlotLegend, {
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 import { EntityCounts } from '../../../hooks/entityCounts';
+//DKDK a custom hook to preserve the status of checked legend items
+import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
 
 type HistogramDataWithCoverageStatistics = (
   | HistogramData
@@ -450,11 +452,10 @@ function HistogramViz(props: VisualizationProps) {
   }, [data]);
 
   // set checkedLegendItems
-  const checkedLegendItems = useMemo(() => {
-    return (
-      vizConfig.checkedLegendItems ?? legendItems.map((item) => item.label)
-    );
-  }, [vizConfig.checkedLegendItems, legendItems]);
+  const checkedLegendItems = useCheckedLegendItemsStatus(
+    legendItems,
+    vizConfig.checkedLegendItems
+  );
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
