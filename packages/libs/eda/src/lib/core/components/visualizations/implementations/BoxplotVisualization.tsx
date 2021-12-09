@@ -86,12 +86,9 @@ const plotContainerStyles = {
 
 const plotSpacingOptions = {};
 
-const modalComponentProps = {
-  containerStyles: {
-    width: '100%',
-    height: '100%',
-    margin: 'auto',
-  },
+const modalPlotContainerStyles = {
+  width: '75vw',
+  height: '65vh',
 };
 
 export const boxplotVisualization: VisualizationType = {
@@ -643,7 +640,12 @@ function BoxplotWithControls({
             })),
           }}
           componentProps={boxplotComponentProps}
-          modalComponentProps={modalComponentProps}
+          modalComponentProps={{
+            independentAxisLabel: boxplotComponentProps.independentAxisLabel,
+            dependentAxisLabel: boxplotComponentProps.dependentAxisLabel,
+            displayLegend: boxplotComponentProps.displayLegend,
+            containerStyles: modalPlotContainerStyles,
+          }}
           facetedPlotRef={plotRef}
           // for custom legend: pass checkedLegendItems to PlotlyPlot
           checkedLegendItems={checkedLegendItems}

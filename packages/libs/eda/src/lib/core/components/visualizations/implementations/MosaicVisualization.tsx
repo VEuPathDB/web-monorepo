@@ -78,12 +78,9 @@ const facetedStatsTableContainerStyles = {
   gap: '0.5em',
 };
 
-const modalComponentProps = {
-  containerStyles: {
-    width: '100%',
-    height: '100%',
-    margin: 'auto',
-  },
+const modalPlotContainerStyles = {
+  width: '75vw',
+  height: '65vh',
 };
 
 type ContTableData = MosaicPlotData &
@@ -637,7 +634,12 @@ function MosaicPlotWithControls({
           facetedPlotRef={plotRef}
           data={data}
           componentProps={mosaicProps}
-          modalComponentProps={modalComponentProps}
+          modalComponentProps={{
+            independentAxisLabel: mosaicProps.independentAxisLabel,
+            dependentAxisLabel: mosaicProps.dependentAxisLabel,
+            displayLegend: mosaicProps.displayLegend,
+            containerStyles: modalPlotContainerStyles,
+          }}
         />
       ) : (
         <Mosaic

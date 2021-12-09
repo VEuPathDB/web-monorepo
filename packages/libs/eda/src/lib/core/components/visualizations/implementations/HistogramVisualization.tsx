@@ -99,12 +99,9 @@ const spacingOptions = {
   marginTop: 50,
 };
 
-const modalComponentProps = {
-  containerStyles: {
-    width: '100%',
-    height: '100%',
-    margin: 'auto',
-  },
+const modalPlotContainerStyles = {
+  width: '75vw',
+  height: '65vh',
 };
 
 export const histogramVisualization: VisualizationType = {
@@ -627,7 +624,12 @@ function HistogramPlotWithControls({
         <FacetedHistogram
           data={data}
           componentProps={histogramProps}
-          modalComponentProps={modalComponentProps}
+          modalComponentProps={{
+            independentAxisLabel: histogramProps.independentAxisLabel,
+            dependentAxisLabel: histogramProps.dependentAxisLabel,
+            displayLegend: histogramProps.displayLegend,
+            containerStyles: modalPlotContainerStyles,
+          }}
           facetedPlotRef={plotRef}
           // for custom legend: pass checkedLegendItems to PlotlyPlot
           checkedLegendItems={checkedLegendItems}

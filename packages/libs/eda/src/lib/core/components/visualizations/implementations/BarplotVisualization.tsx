@@ -76,12 +76,9 @@ const plotContainerStyles = {
 
 const plotSpacingOptions = {};
 
-const modalComponentProps = {
-  containerStyles: {
-    width: '100%',
-    height: '100%',
-    margin: 'auto',
-  },
+const modalPlotContainerStyles = {
+  width: '75vw',
+  height: '65vh',
 };
 
 export const barplotVisualization: VisualizationType = {
@@ -407,7 +404,12 @@ function BarplotViz(props: VisualizationProps) {
         <FacetedBarplot
           data={data.value}
           componentProps={plotProps}
-          modalComponentProps={modalComponentProps}
+          modalComponentProps={{
+            independentAxisLabel: plotProps.independentAxisLabel,
+            dependentAxisLabel: plotProps.dependentAxisLabel,
+            displayLegend: plotProps.displayLegend,
+            containerStyles: modalPlotContainerStyles,
+          }}
           facetedPlotRef={plotRef}
           // for custom legend
           checkedLegendItems={vizConfig.checkedLegendItems}

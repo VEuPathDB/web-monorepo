@@ -117,12 +117,9 @@ const plotContainerStyles = {
 
 const plotSpacingOptions = {};
 
-const modalComponentProps = {
-  containerStyles: {
-    width: '100%',
-    height: '100%',
-    margin: 'auto',
-  },
+const modalPlotContainerStyles = {
+  width: '75vw',
+  height: '65vh',
 };
 
 // define XYPlotDataWithCoverage
@@ -901,7 +898,12 @@ function ScatterplotWithControls({
         <FacetedXYPlot
           data={data}
           componentProps={scatterplotProps}
-          modalComponentProps={modalComponentProps}
+          modalComponentProps={{
+            independentAxisLabel: scatterplotProps.independentAxisLabel,
+            dependentAxisLabel: scatterplotProps.dependentAxisLabel,
+            displayLegend: scatterplotProps.displayLegend,
+            containerStyles: modalPlotContainerStyles,
+          }}
           facetedPlotRef={plotRef}
           checkedLegendItems={checkedLegendItems}
         />
