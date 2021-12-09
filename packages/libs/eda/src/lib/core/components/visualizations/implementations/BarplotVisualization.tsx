@@ -280,6 +280,7 @@ function BarplotViz(props: VisualizationProps) {
       vizConfig.showMissingness,
       variable,
       overlayVariable,
+      facetVariable,
       computation.descriptor.type,
     ])
   );

@@ -345,6 +345,7 @@ function HistogramViz(props: VisualizationProps) {
       xAxisVariable,
       overlayVariable,
       facetVariable,
+      valueType,
     ])
   );
 

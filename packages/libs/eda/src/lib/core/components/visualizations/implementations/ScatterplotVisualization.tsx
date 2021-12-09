@@ -371,6 +371,10 @@ function ScatterplotViz(props: VisualizationProps) {
       studyId,
       filters,
       dataClient,
+      xAxisVariable,
+      yAxisVariable,
+      overlayVariable,
+      facetVariable,
       // simply using vizConfig causes issue with onCheckedLegendItemsChange
       // it is because vizConfig also contains vizConfig.checkedLegendItems
       vizConfig.xAxisVariable,
@@ -634,7 +638,12 @@ function ScatterplotViz(props: VisualizationProps) {
           };
         })
       : [];
-  }, [data]);
+  }, [
+    data,
+    vizConfig.overlayVariable,
+    vizConfig.showMissingness,
+    vizConfig.valueSpecConfig,
+  ]);
 
   useEffect(() => {
     if (data != null) {

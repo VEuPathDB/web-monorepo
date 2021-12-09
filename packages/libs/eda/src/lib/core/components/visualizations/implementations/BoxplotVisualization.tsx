@@ -310,6 +310,10 @@ function BoxplotViz(props: VisualizationProps) {
       studyId,
       filters,
       dataClient,
+      xAxisVariable,
+      yAxisVariable,
+      overlayVariable,
+      facetVariable,
       // using vizConfig only causes issue with onCheckedLegendItemsChange
       vizConfig.xAxisVariable,
       vizConfig.yAxisVariable,
@@ -404,7 +408,7 @@ function BoxplotViz(props: VisualizationProps) {
           }
         : undefined;
     }
-  }, [data]);
+  }, [data, yAxisVariable?.type]);
 
   // custom legend items for checkbox
   const legendItems: LegendItemsProps[] = useMemo(() => {
