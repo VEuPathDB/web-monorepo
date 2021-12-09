@@ -1,7 +1,7 @@
 import { useCallback, useContext } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 
 import { makePreferredOrganismsRecoilState } from '../utils/preferredOrganisms';
 
@@ -85,7 +85,7 @@ export function useTogglePreferredOrganisms() {
 }
 
 export function usePreferredOrganismsRecoilState() {
-  const wdkDependencies = useContext(WdkDepdendenciesContext);
+  const wdkDependencies = useContext(WdkDependenciesContext);
 
   return makePreferredOrganismsRecoilState(wdkDependencies);
 }

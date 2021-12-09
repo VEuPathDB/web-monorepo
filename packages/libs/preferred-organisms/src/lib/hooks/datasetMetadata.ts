@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { makeDatasetMetadataRecoilState } from '../utils/datasetMetadata';
 
 export function useDatasetMetadata() {
@@ -11,7 +11,7 @@ export function useDatasetMetadata() {
 }
 
 export function useDatasetMetadataRecoilState() {
-  const wdkDependencies = useContext(WdkDepdendenciesContext);
+  const wdkDependencies = useContext(WdkDependenciesContext);
 
   return makeDatasetMetadataRecoilState(wdkDependencies);
 }

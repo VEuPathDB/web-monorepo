@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 
 import { makeReferenceStrainsRecoilState } from '../utils/referenceStrains';
 
@@ -12,7 +12,7 @@ export function useReferenceStrains() {
 }
 
 export function useReferenceStrainsRecoilState() {
-  const wdkDependencies = useContext(WdkDepdendenciesContext);
+  const wdkDependencies = useContext(WdkDependenciesContext);
 
   return makeReferenceStrainsRecoilState(wdkDependencies);
 }

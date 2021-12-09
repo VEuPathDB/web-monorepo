@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { makeOrganismMetadataRecoilState } from '../utils/organismMetadata';
 
 export function useOrganismMetadata() {
@@ -11,7 +11,7 @@ export function useOrganismMetadata() {
 }
 
 export function useOrganismMetadataRecoilState() {
-  const wdkDependencies = useContext(WdkDepdendenciesContext);
+  const wdkDependencies = useContext(WdkDependenciesContext);
 
   return makeOrganismMetadataRecoilState(wdkDependencies);
 }
