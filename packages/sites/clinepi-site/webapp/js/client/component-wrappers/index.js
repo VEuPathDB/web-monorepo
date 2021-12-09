@@ -9,8 +9,10 @@ import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import {
   getIdFromRecordClassName,
   isStudyRecordClass,
-  Action
 } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
+import {
+  Action
+} from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUiActions';
 import { attemptAction } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionActionCreators';
 import { fetchStudies } from '@veupathdb/web-common/lib/App/Studies/StudyActionCreators';
 
@@ -30,7 +32,7 @@ import ReporterSortMessage from './ReporterSortMessage';
 import { SpecialContactUsInstructions } from './SpecialContactUsInstructions';
 import { Page } from './Page';
 
-import { withPermissions } from '@veupathdb/web-common/lib/components/Permissions';
+import { withPermissions } from '@veupathdb/study-data-access/lib/data-restriction/Permissions';
 import * as ServerSideAttributeFilter from '@veupathdb/wdk-client/lib/Components/AttributeFilter/ServerSideAttributeFilter';
 
 export default {

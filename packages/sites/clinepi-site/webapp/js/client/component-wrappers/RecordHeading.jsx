@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 
 import { useEda } from '@veupathdb/web-common/lib/config';
 
-import { withPermissions } from '@veupathdb/web-common/lib/components/Permissions';
+import { withPermissions } from '@veupathdb/study-data-access/lib/data-restriction/Permissions';
 import StudyRecordHeading from '@veupathdb/web-common/lib/component-wrappers/StudyRecordHeading';
 
 const ClinEpiStudyRecordHeading = withPermissions(StudyRecordHeading);
