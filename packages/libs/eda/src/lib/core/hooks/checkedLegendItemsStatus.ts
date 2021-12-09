@@ -8,7 +8,7 @@ import { LegendItemsProps } from '@veupathdb/components/lib/components/plotContr
 export function useCheckedLegendItemsStatus(
   legendItems: LegendItemsProps[],
   vizConfigCheckedLegendItems: string[] | undefined
-): string[] | undefined {
+): string[] {
   const checkedLegendItems = useMemo(() => {
     return vizConfigCheckedLegendItems ?? legendItems.map((item) => item.label);
   }, [vizConfigCheckedLegendItems, legendItems]);
