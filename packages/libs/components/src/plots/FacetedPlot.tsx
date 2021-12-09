@@ -143,7 +143,7 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
           >
             <i className="fa fa-times fa-lg"></i>
           </button>
-          {modalPlot}
+          <div>{modalPlot}</div>
         </FullScreenModal>
       )}
     </>
