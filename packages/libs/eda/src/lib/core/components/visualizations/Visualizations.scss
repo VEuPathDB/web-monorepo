@@ -291,3 +291,9 @@ $data-table-inner-border: 1px solid #888;
     border-bottom: $data-table-inner-border;
   }
 }
+
+.ReactModal__Content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
