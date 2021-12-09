@@ -80,8 +80,6 @@ import PlotLegend, {
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 import { EntityCounts } from '../../../hooks/entityCounts';
-// custom hook to preserve the status of checked legend items
-import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
 
 type HistogramDataWithCoverageStatistics = (
   | HistogramData
@@ -212,6 +210,8 @@ function HistogramViz(props: VisualizationProps) {
         facetVariable,
         binWidth: keepBin ? vizConfig.binWidth : undefined,
         binWidthTimeUnit: keepBin ? vizConfig.binWidthTimeUnit : undefined,
+        // set undefined for variable change
+        checkedLegendItems: undefined,
       });
     },
     [updateVizConfig, vizConfig]
@@ -449,13 +449,12 @@ function HistogramViz(props: VisualizationProps) {
       : [];
   }, [data]);
 
-  // calling a custom hook to preserve the status of checked legend items
-  useCheckedLegendItemsStatus(
-    data,
-    legendItems,
-    onCheckedLegendItemsChange,
-    vizConfig.checkedLegendItems
-  );
+  // set checkedLegendItems
+  const checkedLegendItems = useMemo(() => {
+    return (
+      vizConfig.checkedLegendItems ?? legendItems.map((item) => item.label)
+    );
+  }, [vizConfig.checkedLegendItems, legendItems]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -549,7 +548,7 @@ function HistogramViz(props: VisualizationProps) {
         }
         // for custom legend passing checked state in the  checkbox to PlotlyPlot
         legendItems={legendItems}
-        checkedLegendItems={vizConfig.checkedLegendItems}
+        checkedLegendItems={checkedLegendItems}
         onCheckedLegendItemsChange={onCheckedLegendItemsChange}
         totalCounts={totalCounts}
         filteredCounts={filteredCounts}

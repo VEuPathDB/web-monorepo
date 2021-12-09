@@ -62,8 +62,6 @@ import PlotLegend, {
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 // import { gray } from '../colors';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
-// custom hook to preserve the status of checked legend items
-import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
 
 type BarplotDataWithStatistics = (BarplotData | FacetedData<BarplotData>) &
   CoverageStatistics;
@@ -182,6 +180,8 @@ function BarplotViz(props: VisualizationProps) {
         xAxisVariable,
         overlayVariable,
         facetVariable,
+        // set undefined for variable change
+        checkedLegendItems: undefined,
       });
     },
     [updateVizConfig]
@@ -373,13 +373,12 @@ function BarplotViz(props: VisualizationProps) {
       : [];
   }, [data]);
 
-  // calling a custom hook to preserve the status of checked legend items
-  useCheckedLegendItemsStatus(
-    data,
-    legendItems,
-    onCheckedLegendItemsChange,
-    vizConfig.checkedLegendItems
-  );
+  // set checkedLegendItems
+  const checkedLegendItems = useMemo(() => {
+    return (
+      vizConfig.checkedLegendItems ?? legendItems.map((item) => item.label)
+    );
+  }, [vizConfig.checkedLegendItems, legendItems]);
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
@@ -420,14 +419,14 @@ function BarplotViz(props: VisualizationProps) {
           props={plotProps}
           facetedPlotRef={plotRef}
           // for custom legend
-          checkedLegendItems={vizConfig.checkedLegendItems}
+          checkedLegendItems={checkedLegendItems}
         />
       ) : (
         <Barplot
           data={data.value}
           ref={plotRef}
           // for custom legend: pass checkedLegendItems to PlotlyPlot
-          checkedLegendItems={vizConfig.checkedLegendItems}
+          checkedLegendItems={checkedLegendItems}
           {...plotProps}
         />
       )}
@@ -458,7 +457,7 @@ function BarplotViz(props: VisualizationProps) {
   const legendNode = legendItems != null && !data.pending && data != null && (
     <PlotLegend
       legendItems={legendItems}
-      checkedLegendItems={vizConfig.checkedLegendItems}
+      checkedLegendItems={checkedLegendItems}
       legendTitle={axisLabelWithUnit(overlayVariable)}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
     />
