@@ -141,9 +141,9 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
             }}
             title="Close expanded plot"
           >
-            <i className="fas fa-times fa-lg"></i>
+            <i className="fa fa-times fa-lg"></i>
           </button>
-          {modalPlot}
+          <div>{modalPlot}</div>
         </FullScreenModal>
       )}
     </>
