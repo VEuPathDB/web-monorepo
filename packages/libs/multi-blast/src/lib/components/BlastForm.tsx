@@ -18,7 +18,7 @@ import {
   RadioList,
   TextArea,
 } from '@veupathdb/wdk-client/lib/Components';
-import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { scrollIntoView } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 import {
@@ -354,7 +354,7 @@ function NewJobForm(props: NewJobFormProps) {
 
   const api = useBlastApi();
 
-  const wdkDependencies = useContext(WdkDepdendenciesContext);
+  const wdkDependencies = useContext(WdkDependenciesContext);
   const targetMetadataByDataType = useContext(TargetMetadataByDataType);
 
   const history = useHistory();

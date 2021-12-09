@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import { once } from 'lodash';
 
 import { notifyUnhandledError } from '@veupathdb/wdk-client/lib/Actions/UnhandledErrorActions';
-import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
@@ -21,7 +21,7 @@ const BlastServiceUrl = createContext('/multi-blast');
 
 export function useBlastApi() {
   const blastServiceUrl = useContext(BlastServiceUrl);
-  const wdkDependencies = useNonNullableContext(WdkDepdendenciesContext);
+  const wdkDependencies = useNonNullableContext(WdkDependenciesContext);
   const dispatch = useDispatch();
 
   if (!isBlastCompatibleWdkService(wdkDependencies.wdkService)) {

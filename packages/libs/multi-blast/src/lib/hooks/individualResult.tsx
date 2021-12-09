@@ -2,7 +2,7 @@ import { useCallback, useContext, useMemo } from 'react';
 import { useHistory } from 'react-router';
 import { ActionMeta, ValueType } from 'react-select';
 
-import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { DEFAULT_STRATEGY_NAME } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
 import {
@@ -43,7 +43,7 @@ export function useIndividualResultProps({
   combinedResult?: MultiQueryReportJson;
 }): IndividualResultProps {
   const history = useHistory();
-  const wdkDependencies = useContext(WdkDepdendenciesContext);
+  const wdkDependencies = useContext(WdkDependenciesContext);
   const wdkService = wdkDependencies?.wdkService;
 
   const resultIndex =
