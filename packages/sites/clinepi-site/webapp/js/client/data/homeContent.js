@@ -48,8 +48,6 @@ async function loadItems({ analysisClient, wdkService }) {
       description: overview.description,
       studyId: overview.studyId,
       analysisId: overview.analysisId,
-      ownerUserId: overview.userId,
-      ownerName: overview.userName,
     }];
   });
 }

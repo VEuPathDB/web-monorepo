@@ -17,5 +17,10 @@
     "react-dom": "16",
     "@types/react": "16",
     "@types/react-dom": "16"
+  },
+  "devDependencies": {
+    "@veupathdb/study-data-access": "^0.1.2",
+    "bubleify": "^2.0.0",
+    "ify-loader": "^1.1.0"
   }
 }
