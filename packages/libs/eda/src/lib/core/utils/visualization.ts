@@ -4,9 +4,11 @@ import {
   BoxplotData,
   FacetedData,
 } from '@veupathdb/components/lib/types/plots';
-import { Variable } from '../types/study';
+import { StudyEntity, Variable } from '../types/study';
 import { CoverageStatistics } from '../types/visualization';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
+import { EntityCounts } from '../hooks/entityCounts';
+import { CompleteCasesTable } from '../api/DataClient';
 
 // was: BarplotData | HistogramData | { series: BoxplotData };
 type SeriesWithStatistics<T> = T & CoverageStatistics;
@@ -49,6 +51,33 @@ export function grayOutLastSeries<
   } as SeriesWithStatistics<T>;
 }
 
+/**
+ * Calculates if there are any incomplete cases for the given variable
+ * (usually overlay or facet variable)
+ */
+export function hasIncompleteCases(
+  entity: StudyEntity | undefined,
+  variable: Variable | undefined,
+  outputEntity: StudyEntity | undefined,
+  filteredCounts: EntityCounts,
+  completeCasesTable: CompleteCasesTable
+): boolean {
+  const completeCases =
+    entity != null && variable != null
+      ? completeCasesTable.find(
+          (row) =>
+            row.variableDetails?.entityId === entity.id &&
+            row.variableDetails?.variableId === variable.id
+        )?.completeCases
+      : undefined;
+  return (
+    outputEntity != null &&
+    completeCases != null &&
+    completeCases < filteredCounts[outputEntity.id]
+  );
+}
+
+// TO DO: REMOVE ME WHEN NO LONGER USED
 export function omitEmptyNoDataSeries<
   T extends { series: BoxplotData } | BarplotData | HistogramData
 >(

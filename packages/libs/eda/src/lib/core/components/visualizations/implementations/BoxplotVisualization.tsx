@@ -57,7 +57,7 @@ import {
   fixLabelsForNumberVariables,
   grayOutLastSeries,
   nonUniqueWarning,
-  omitEmptyNoDataSeries,
+  hasIncompleteCases,
   variablesAreUnique,
   vocabularyWithMissingData,
 } from '../../../utils/visualization';
@@ -191,21 +191,25 @@ function BoxplotViz(props: VisualizationProps) {
     xAxisVariable,
     yAxisVariable,
     overlayVariable,
+    overlayEntity,
     facetVariable,
+    facetEntity,
   } = useMemo(() => {
     const { variable: xAxisVariable } =
       findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
     const { variable: yAxisVariable } =
       findEntityAndVariable(vizConfig.yAxisVariable) ?? {};
-    const { variable: overlayVariable } =
+    const { variable: overlayVariable, entity: overlayEntity } =
       findEntityAndVariable(vizConfig.overlayVariable) ?? {};
-    const { variable: facetVariable } =
+    const { variable: facetVariable, entity: facetEntity } =
       findEntityAndVariable(vizConfig.facetVariable) ?? {};
     return {
       xAxisVariable,
       yAxisVariable,
       overlayVariable,
+      overlayEntity,
       facetVariable,
+      facetEntity,
     };
   }, [
     findEntityAndVariable,
@@ -243,9 +247,15 @@ function BoxplotViz(props: VisualizationProps) {
 
   const data = usePromise(
     useCallback(async (): Promise<BoxplotDataWithCoverage | undefined> => {
-      if (vizConfig.xAxisVariable == null || xAxisVariable == null)
-        return undefined;
-      else if (vizConfig.yAxisVariable == null || yAxisVariable == null)
+      if (
+        vizConfig.xAxisVariable == null ||
+        xAxisVariable == null ||
+        vizConfig.yAxisVariable == null ||
+        yAxisVariable == null ||
+        outputEntity == null ||
+        filteredCounts.pending ||
+        filteredCounts.value == null
+      )
         return undefined;
 
       if (
@@ -272,16 +282,30 @@ function BoxplotViz(props: VisualizationProps) {
       );
 
       // boxplot
-      const response = dataClient.getBoxplot(
+      const response = await dataClient.getBoxplot(
         computation.descriptor.type,
         params as BoxplotRequestParams
       );
 
-      const showMissing =
-        vizConfig.showMissingness &&
-        (overlayVariable != null || facetVariable != null);
       const showMissingOverlay =
-        vizConfig.showMissingness && overlayVariable != null;
+        vizConfig.showMissingness &&
+        hasIncompleteCases(
+          overlayEntity,
+          overlayVariable,
+          outputEntity,
+          filteredCounts.value,
+          response.completeCasesTable
+        );
+      const showMissingFacet =
+        vizConfig.showMissingness &&
+        hasIncompleteCases(
+          facetEntity,
+          facetVariable,
+          outputEntity,
+          filteredCounts.value,
+          response.completeCasesTable
+        );
+
       const vocabulary = fixLabelsForNumberVariables(
         xAxisVariable.vocabulary,
         xAxisVariable
@@ -294,23 +318,20 @@ function BoxplotViz(props: VisualizationProps) {
         facetVariable?.vocabulary,
         facetVariable
       );
-      return omitEmptyNoDataSeries(
-        grayOutLastSeries(
-          reorderData(
-            boxplotResponseToData(
-              await response,
-              xAxisVariable,
-              overlayVariable,
-              facetVariable
-            ),
-            vocabulary,
-            vocabularyWithMissingData(overlayVocabulary, showMissing),
-            vocabularyWithMissingData(facetVocabulary, showMissing)
+      return grayOutLastSeries(
+        reorderData(
+          boxplotResponseToData(
+            response,
+            xAxisVariable,
+            overlayVariable,
+            facetVariable
           ),
-          showMissingOverlay,
-          '#a0a0a0'
+          vocabulary,
+          vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
+          vocabularyWithMissingData(facetVocabulary, showMissingFacet)
         ),
-        showMissing
+        showMissingOverlay,
+        '#a0a0a0'
       );
     }, [
       studyId,
@@ -322,6 +343,8 @@ function BoxplotViz(props: VisualizationProps) {
       vizConfig.overlayVariable,
       vizConfig.facetVariable,
       vizConfig.showMissingness,
+      outputEntity,
+      filteredCounts,
       computation.descriptor.type,
       outputEntity?.id,
     ])
@@ -482,7 +505,7 @@ function BoxplotViz(props: VisualizationProps) {
       dependentAxisRange={dependentAxisRange}
       showMean={true}
       interactive={true}
-      showSpinner={data.pending}
+      showSpinner={data.pending || filteredCounts.pending}
       showRawData={true}
       legendTitle={axisLabelWithUnit(overlayVariable)}
       // for custom legend passing checked state in the  checkbox to PlotlyPlot
@@ -517,12 +540,12 @@ function BoxplotViz(props: VisualizationProps) {
         enableSpinner={
           xAxisVariable != null && yAxisVariable != null && !data.error
         }
-        totalCounts={totalCounts}
-        filteredCounts={filteredCounts}
+        totalCounts={totalCounts.value}
+        filteredCounts={filteredCounts.value}
       />
       <VariableCoverageTable
         completeCases={data.pending ? undefined : data.value?.completeCases}
-        filters={filters}
+        filteredCounts={filteredCounts}
         outputEntityId={outputEntity?.id}
         variableSpecs={[
           {

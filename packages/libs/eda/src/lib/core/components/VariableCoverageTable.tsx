@@ -1,12 +1,13 @@
 import { CompleteCasesTable } from '../api/DataClient';
+import { EntityCounts } from '../hooks/entityCounts';
+import { PromiseHookState } from '../hooks/promise';
 import { useVariableCoverageTableRows } from '../hooks/variableCoverage';
-import { Filter } from '../types/filter';
 import { VariableDescriptor } from '../types/variable';
 
 export interface Props {
   containerClassName?: string;
   completeCases?: CompleteCasesTable;
-  filters?: Filter[];
+  filteredCounts: PromiseHookState<EntityCounts>;
   variableSpecs: VariableSpec[];
   outputEntityId?: string;
 }
@@ -42,13 +43,13 @@ export interface VariableCoverageTableRow {
 export function VariableCoverageTable({
   containerClassName,
   completeCases,
-  filters,
+  filteredCounts,
   outputEntityId,
   variableSpecs,
 }: Props) {
   const rows = useVariableCoverageTableRows(
     variableSpecs,
-    filters,
+    filteredCounts,
     completeCases,
     outputEntityId
   );

@@ -27,6 +27,7 @@ import PlaceholderIcon from './PlaceholderIcon';
 import { Tooltip } from '@material-ui/core';
 import { isEqual } from 'lodash';
 import { EntityCounts } from '../../hooks/entityCounts';
+import { PromiseHookState } from '../../hooks/promise';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -42,8 +43,8 @@ interface Props {
   filters: Filter[];
   starredVariables: VariableDescriptor[];
   toggleStarredVariable: (targetVariable: VariableDescriptor) => void;
-  totalCounts: EntityCounts | undefined;
-  filteredCounts: EntityCounts | undefined;
+  totalCounts: PromiseHookState<EntityCounts>;
+  filteredCounts: PromiseHookState<EntityCounts>;
 }
 
 /**
