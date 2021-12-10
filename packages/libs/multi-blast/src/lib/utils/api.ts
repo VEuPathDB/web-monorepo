@@ -67,11 +67,35 @@ export class BlastApi extends FetchClientWithCredentials {
         error != null &&
         typeof error.message === 'string'
       ) {
-        const decodedErrorDetails = errorDetails.decode(
-          error.message.replace(/^[^{]*(\{.*\})[^}]*$/, '$1')
-        );
+        try {
+          const errorDetailsJson = JSON.parse(
+            error.message.replace(/^[^{]*(\{.*\})[^}]*$/, '$1')
+          );
 
-        if (isLeft(decodedErrorDetails)) {
+          const decodedErrorDetails = errorDetails.decode(errorDetailsJson);
+
+          if (
+            isLeft(decodedErrorDetails) ||
+            decodedErrorDetails.right.status !== 'invalid-input'
+          ) {
+            this.reportError(error);
+          }
+
+          return isLeft(decodedErrorDetails)
+            ? {
+                status: 'error',
+                details: {
+                  status: 'unknown',
+                  message: error.message,
+                },
+              }
+            : {
+                status: 'error',
+                details: decodedErrorDetails.right,
+              };
+        } catch {
+          this.reportError(error);
+
           return {
             status: 'error',
             details: {
@@ -80,15 +104,6 @@ export class BlastApi extends FetchClientWithCredentials {
             },
           };
         }
-
-        if (decodedErrorDetails.right.status !== 'invalid-input') {
-          this.reportError(error);
-        }
-
-        return {
-          status: 'error',
-          details: decodedErrorDetails.right,
-        };
       } else {
         throw error;
       }
