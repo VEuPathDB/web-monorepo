@@ -903,14 +903,14 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/multi-blast@^0.4.3":
-  version "0.4.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/multi-blast/-/multi-blast-0.4.3.tgz#0d454464c40ba5018c577ba9a34cebfa4f999b1a"
-  integrity sha512-ak7DKkLZyu6vGVVx1rOgzRounbyCmJeyPzKUqrXPEqJ7Cx1u7UHNk66unn0btUO7ctMEYIKdq/0RAFUAG7dNjA==
+"@veupathdb/multi-blast@^0.4.5":
+  version "0.4.5"
+  resolved "https://registry.yarnpkg.com/@veupathdb/multi-blast/-/multi-blast-0.4.5.tgz#4dde0f0e36c69a957b1e48cd22131a4cccf36806"
+  integrity sha512-IYwr+voCLEGamA3HUewI6krFg1bh9uMe+UcH72UNGe/K5eM8cjAkLXATJq357Gp1WuFAyPYetFeCXN47C/UhHQ==
   dependencies:
     "@veupathdb/http-utils" "^1.0.1"
-    "@veupathdb/preferred-organisms" "^1.1.4"
-    "@veupathdb/wdk-client" "^0.4.11"
+    "@veupathdb/preferred-organisms" "^1.1.5"
+    "@veupathdb/wdk-client" "^0.4.12"
     "@veupathdb/web-common" "^0.1.1-alpha.11"
     fp-ts "^2.11.5"
     io-ts "^2.2.16"
@@ -921,12 +921,12 @@
     react-select "^3.0.4"
     redux "^4.0.0"
 
-"@veupathdb/preferred-organisms@^1.1.4":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@veupathdb/preferred-organisms/-/preferred-organisms-1.1.4.tgz#c3f27dd88fdfa3206c69ef37a5a22bbfba3ba795"
-  integrity sha512-hyTpLTcTI2TFywsOfYKizve8mlRdsel3sehD/eazK+LzjFermhd1u8w5HEcV4Z5wSsridWHq0htnka1qe/XKFg==
+"@veupathdb/preferred-organisms@^1.1.5":
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/@veupathdb/preferred-organisms/-/preferred-organisms-1.1.5.tgz#a15bc9945d55aba76127f35a615bcfc7cf9a3e6c"
+  integrity sha512-78UwJhmPHomEjCwXFJlneXL3zOsxx4pEfRqcZrO0XxfEt7Iu3Subon09pVvK3igx+eH46pRK1wJMO0TcB34+RQ==
   dependencies:
-    "@veupathdb/wdk-client" "^0.4.11"
+    "@veupathdb/wdk-client" "^0.4.12"
     "@veupathdb/web-common" "^0.1.5"
     lodash "^4.17.21"
     react "^17.0.1"
@@ -937,6 +937,54 @@
   version "0.4.11"
   resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.4.11.tgz#108f3f7a8da3942fdd2833974a06fd95c0157d08"
   integrity sha512-b7K2krOt5IIMIKve5XrDRpeOqSWXfXFKNXn1pfc8DKjYy70FScT0BAQnlNpzZtfqkzbsAdXpM3Ac+t5pQRfRcg==
+  dependencies:
+    "@types/datatables.net" "^1.10.5"
+    "@types/flot" "^0.0.31"
+    "@types/history" "^4.7.4"
+    "@types/jqueryui" "^1.11.35"
+    "@types/json-stable-stringify" "^1.0.31"
+    "@types/lodash" "^4.14.104"
+    "@types/natural-sort" "^0.0.20"
+    "@types/node" "^14.14.7"
+    "@types/prop-types" "^15.7.3"
+    "@types/qtip2" "^2.2.29"
+    "@types/react" "^16.9.18"
+    "@types/react-autocomplete" "^1.8.4"
+    "@types/react-dom" "^16.9.5"
+    "@types/react-redux" "^7.1.5"
+    "@types/react-router" "^5.1.4"
+    "@types/react-router-dom" "^5.1.3"
+    "@types/react-select" "^3.0.4"
+    "@types/uuid" "^8.0.0"
+    "@veupathdb/components" "^0.7.9"
+    classnames "^2.2.0"
+    history "^4.10.1"
+    json-stable-stringify "^1.0.0"
+    localforage "^1.5.0"
+    lodash "^4.17.5"
+    mansion-ui "2.5"
+    moment "^2.21.0"
+    natural-sort "^1.0.0"
+    prop-types "^15.7.2"
+    react "^16.12.0"
+    react-autocomplete "^1.8.1"
+    react-dom "^16.12.0"
+    react-redux "^7.1.3"
+    react-router "^5.1.2"
+    react-router-dom "^5.1.2"
+    react-select "^3.0.4"
+    react-transition-group "^2.2.1"
+    redux "^4.0.0"
+    redux-observable "^1.2.0"
+    reselect "^3.0.1"
+    rxjs "^6.2.2"
+    spin.js "^4.0.0"
+    uuid "^8.1.0"
+
+"@veupathdb/wdk-client@^0.4.12":
+  version "0.4.12"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.4.12.tgz#13f32e85ac2cd7cfab306e265d2de480ed8697d7"
+  integrity sha512-MtopiFoDaGX7sFeaDQNWxVK413ua7DokgQ76AI33BT1ttOTp5JcL3Qg8f0WoQ3b1Vui2it98sMrivTIv9ADEiQ==
   dependencies:
     "@types/datatables.net" "^1.10.5"
     "@types/flot" "^0.0.31"
