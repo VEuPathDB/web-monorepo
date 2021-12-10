@@ -1,8 +1,14 @@
 import { css } from '@emotion/react';
 import { gray } from '../definitions/colors';
 
-export const primaryFont = css({ fontFamily: "'Inter', sans-serif" });
-export const secondaryFont = css({ fontFamily: '"Roboto", sans-serif' });
+export const primaryFont = css({
+  fontFamily: "'Inter', sans-serif",
+  fontStyle: 'normal',
+});
+export const secondaryFont = css({
+  fontFamily: '"Roboto", sans-serif',
+  fontStyle: 'normal',
+});
 
 export const h1 = css([
   primaryFont,
