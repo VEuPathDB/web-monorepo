@@ -535,7 +535,7 @@ function HistogramViz(props: VisualizationProps) {
         independentAxisRange={defaultIndependentRange}
         // add dependent axis range for better displaying tick labels in log-scale
         dependentAxisRange={defaultDependentAxisRange}
-        interactive
+        interactive={!isFaceted(data.value) ? true : false}
         showSpinner={data.pending || filteredCounts.pending}
         filters={filters}
         completeCases={data.pending ? undefined : data.value?.completeCases}

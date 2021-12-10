@@ -404,8 +404,8 @@ function MosaicViz(props: Props) {
               }
               independentAxisLabel={xAxisLabel ?? 'X-axis'}
               dependentAxisLabel={yAxisLabel ?? 'Y-axis'}
-              displayLegend={true}
-              interactive
+              displayLegend={false}
+              interactive={!isFaceted(data.value) ? true : false}
               showSpinner={data.pending}
             />
           ),

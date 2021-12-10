@@ -421,7 +421,7 @@ function BarplotViz(props: VisualizationProps) {
     dependentAxisLabel:
       vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion',
     legendTitle: overlayVariable?.displayName,
-    interactive: true,
+    interactive: !isFaceted(data.value) ? true : false,
     showSpinner: data.pending || filteredCounts.pending,
     dependentAxisLogScale: vizConfig.dependentAxisLogScale,
     // set dependent axis range for log scale

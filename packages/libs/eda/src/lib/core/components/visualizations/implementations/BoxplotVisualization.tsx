@@ -498,7 +498,7 @@ function BoxplotViz(props: VisualizationProps) {
       showDependentAxisTickLabel={true}
       dependentAxisRange={dependentAxisRange}
       showMean={true}
-      interactive={true}
+      interactive={!isFaceted(data.value) ? true : false}
       showSpinner={data.pending || filteredCounts.pending}
       showRawData={true}
       legendTitle={axisLabelWithUnit(overlayVariable)}
