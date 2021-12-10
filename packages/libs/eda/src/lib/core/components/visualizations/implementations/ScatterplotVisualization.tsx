@@ -277,17 +277,30 @@ function ScatterplotViz(props: VisualizationProps) {
   );
 
   // prettier-ignore
+  // allow 2nd parameter of resetCheckedLegendItems for checking legend status
   const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof ScatterplotConfig) => (newValue?: ValueType) => {
-      updateVizConfig({
-        [key]: newValue,
-      });
+    < ValueType,>(key: keyof ScatterplotConfig, resetCheckedLegendItems?: boolean) => (newValue?: ValueType) => {
+      const newPartialConfig = resetCheckedLegendItems
+        ? {
+            [key]: newValue,
+            checkedLegendItems: undefined
+          }
+        : {
+          [key]: newValue
+        };
+       updateVizConfig(newPartialConfig);
     },
     [updateVizConfig]
   );
-  const onValueSpecChange = onChangeHandlerFactory<string>('valueSpecConfig');
+
+  // set checkedLegendItems: undefined for the change of both plot options and showMissingness
+  const onValueSpecChange = onChangeHandlerFactory<string>(
+    'valueSpecConfig',
+    true
+  );
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
-    'showMissingness'
+    'showMissingness',
+    true
   );
 
   // for vizconfig.checkedLegendItems

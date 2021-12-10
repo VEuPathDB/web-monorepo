@@ -217,11 +217,18 @@ function MosaicViz(props: Props) {
   );
 
   // prettier-ignore
+  // changed for consistency as now all other Vizs have this format
   const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof MosaicConfig) => (newValue?: ValueType) => {
-      updateVizConfig({
-        [key]: newValue,
-      });
+    < ValueType,>(key: keyof MosaicConfig, resetCheckedLegendItems?: boolean) => (newValue?: ValueType) => {
+      const newPartialConfig = resetCheckedLegendItems
+        ? {
+            [key]: newValue,
+            checkedLegendItems: undefined
+          }
+        : {
+          [key]: newValue
+        };
+       updateVizConfig(newPartialConfig);
     },
     [updateVizConfig]
   );
