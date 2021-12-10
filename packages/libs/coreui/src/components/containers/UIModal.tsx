@@ -1,4 +1,4 @@
-import { CSSProperties, ReactNode, useMemo, useState } from 'react';
+import { CSSProperties, ReactNode, useMemo, useState, useEffect } from 'react';
 import { merge } from 'lodash';
 import ReactModal from 'react-modal';
 
@@ -13,7 +13,7 @@ import { UITheme } from '../theming/types';
 // Hooks
 import useUITheme from '../theming/useUITheme';
 
-type UIModalStyleSpec = {
+type ModalStyleSpec = {
   border: {
     color: CSSProperties['borderColor'];
     width: CSSProperties['borderWidth'];
@@ -33,7 +33,7 @@ type UIModalStyleSpec = {
   };
 };
 
-export type UIModalProps = {
+export type ModalProps = {
   /** Adds a title to the modal. */
   title?: string;
   /** Indicates which theme role to use for style augmentation. */
@@ -59,12 +59,12 @@ export type UIModalProps = {
   /** Function to invoke after modal is closed. */
   onClose?: () => void;
   /** Allows you to adjust the style of the modal. Applied *after* theming augmentation. */
-  styleOverrides?: Partial<UIModalStyleSpec>;
+  styleOverrides?: Partial<ModalStyleSpec>;
   /** The contents of the modal.  */
   children: ReactNode;
 };
 
-export default function UIModal({
+export default function Modal({
   title,
   visible,
   toggleVisible,
@@ -75,10 +75,11 @@ export default function UIModal({
   themeRole,
   styleOverrides = {},
   children,
-}: UIModalProps) {
+}: ModalProps) {
   const theme = useUITheme();
-  const componentStyle: UIModalStyleSpec = useMemo(() => {
-    const defaultStyle: UIModalStyleSpec = {
+
+  const componentStyle: ModalStyleSpec = useMemo(() => {
+    const defaultStyle: ModalStyleSpec = {
       border: {
         width: 2,
         style: 'solid',
@@ -97,7 +98,7 @@ export default function UIModal({
     };
 
     // TODO: Handle color problems when level is too dark.
-    const themeStyle: Partial<UIModalStyleSpec> =
+    const themeStyle: Partial<ModalStyleSpec> =
       theme && themeRole
         ? {
             header: {
@@ -112,10 +113,15 @@ export default function UIModal({
     return merge({}, defaultStyle, themeStyle, styleOverrides);
   }, [themeRole, styleOverrides, theme]);
 
+  const [modalHeight, setModalHeight] = useState<number>(0);
+
   return (
     <ReactModal
       isOpen={visible}
-      onAfterOpen={onOpen}
+      onAfterOpen={(obj) => {
+        setModalHeight(obj?.contentEl.clientHeight ?? 0);
+        onOpen && onOpen();
+      }}
       onAfterClose={onClose}
       // TODO: Come back here and add ability to close on outside click or esc button.
       // onRequestClose={
@@ -131,7 +137,6 @@ export default function UIModal({
           right: 0,
           bottom: 0,
           backgroundColor: gray[500] + '80',
-
           zIndex,
         },
         content: {
@@ -187,7 +192,14 @@ export default function UIModal({
           onClick={() => toggleVisible(!visible)}
         />
       )}
-      <div css={{ padding: '0px 50px 0px 25px' }}>{children}</div>
+      <div
+        css={{
+          padding: '0px 50px 25px 25px',
+          height: modalHeight - 25 - (title ? 90 : 0),
+        }}
+      >
+        {children}
+      </div>
     </ReactModal>
   );
 }
