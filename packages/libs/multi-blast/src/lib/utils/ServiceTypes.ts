@@ -743,6 +743,13 @@ export const badRequestError = type({
 
 export type BadRequestError = TypeOf<typeof badRequestError>;
 
+export const tooLargeError = type({
+  status: literal('too-large'),
+  message: string,
+});
+
+export type TooLargeError = TypeOf<typeof tooLargeError>;
+
 export const unauthorizedError = type({
   status: literal('unauthorized'),
   message: string,
@@ -802,6 +809,7 @@ export type UnknownError = TypeOf<typeof unknownError>;
 
 export const errorDetails = union([
   badRequestError,
+  tooLargeError,
   unauthorizedError,
   forbiddenError,
   notFoundError,

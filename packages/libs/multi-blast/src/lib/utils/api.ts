@@ -1,4 +1,5 @@
 import { saveAs } from 'file-saver';
+import { map } from 'fp-ts/Either';
 import { array, string, voidType } from 'io-ts';
 import { memoize, omit } from 'lodash';
 
@@ -73,11 +74,14 @@ export class BlastApi extends FetchClientWithCredentials {
             error.message.replace(/^[^{]*(\{.*\})[^}]*$/, '$1')
           );
 
-          const decodedErrorDetails = errorDetails.decode(errorDetailsJson);
+          const decodedErrorDetails = map(transformTooLargeError)(
+            errorDetails.decode(errorDetailsJson)
+          );
 
           if (
             isLeft(decodedErrorDetails) ||
-            decodedErrorDetails.right.status !== 'invalid-input'
+            (decodedErrorDetails.right.status !== 'invalid-input' &&
+              decodedErrorDetails.right.status !== 'too-large')
           ) {
             this.reportError(error);
           }
@@ -220,9 +224,15 @@ export class BlastApi extends FetchClientWithCredentials {
     });
   }
 
-  fetchSingleFileJsonReport(reportId: string) {
+  fetchSingleFileJsonReport(
+    reportId: string,
+    maxSize: number = 10 * 10 ** 6 // 10 MB
+  ) {
     return this.taggedFetch({
       path: `${REPORTS_PATH}/${reportId}/files/report.json?download=false`,
+      headers: {
+        'Content-Max-Length': `${maxSize}`,
+      },
       method: 'GET',
       transformResponse: ioTransformer(multiQueryReportJson),
     });
@@ -235,6 +245,15 @@ export class BlastApi extends FetchClientWithCredentials {
       transformResponse: ioTransformer(string),
     });
   }
+}
+
+function transformTooLargeError(errorDetails: ErrorDetails): ErrorDetails {
+  return errorDetails.status === 'too-large' ||
+    (errorDetails.status === 'bad-request' &&
+      errorDetails.message ===
+        'Requested report is larger than the specified max content size.')
+    ? { ...errorDetails, status: 'too-large' }
+    : errorDetails;
 }
 
 // FIXME: Update createRequestHandler to accommodate responses
