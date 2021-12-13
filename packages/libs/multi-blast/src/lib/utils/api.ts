@@ -1,5 +1,5 @@
 import { saveAs } from 'file-saver';
-import { map } from 'fp-ts/Either';
+import { isLeft, map } from 'fp-ts/Either';
 import { array, string, voidType } from 'io-ts';
 import { memoize, omit } from 'lodash';
 
@@ -31,7 +31,6 @@ import {
   shortReportResponse,
 } from './ServiceTypes';
 import { BlastCompatibleWdkService } from './wdkServiceIntegration';
-import { isLeft } from 'fp-ts/lib/Either';
 
 const JOBS_PATH = '/jobs';
 const REPORTS_PATH = '/reports';
