@@ -6,17 +6,17 @@ import ConfirmPublicAnalysis from './ConfirmPublicAnalysis';
 import { AnalysisState } from '../../core';
 import { Modal } from '@veupathdb/core-components';
 
-type ShareFromAnalyisModalProps = {
+type ShareFromAnalyisProps = {
   visible: boolean;
   toggleVisible: (visible: boolean) => void;
   analysisState: AnalysisState;
 };
 
-export default function ShareFromAnalyisModal({
+export default function ShareFromAnalysis({
   visible,
   toggleVisible,
   analysisState,
-}: ShareFromAnalyisModalProps) {
+}: ShareFromAnalyisProps) {
   const userLoggedIn = useWdkService((wdkService) =>
     wdkService.getCurrentUser().then((user) => !user.isGuest)
   );
@@ -28,7 +28,7 @@ export default function ShareFromAnalyisModal({
       toggleVisible={toggleVisible}
       includeCloseButton={true}
       themeRole="primary"
-      styleOverrides={{ size: { width: 700, height: 500 } }}
+      styleOverrides={{ size: { width: 700, height: 400 } }}
     >
       {!userLoggedIn ? (
         <Login toggleVisible={toggleVisible} />

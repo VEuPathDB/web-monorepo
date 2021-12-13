@@ -22,34 +22,43 @@ export default function NameAnalysis({
   >(undefined);
 
   return (
-    <div>
-      <H5
-        text="Name Your Analysis"
-        additionalStyles={{ marginTop: 25, marginBottom: 0 }}
-      />
-      <p
-        style={{
-          fontSize: '.9rem',
-          color: gray[600],
-          marginTop: 0,
-          maxWidth: 500,
-        }}
-      >
-        In order to share an analyis, you'll need to give it a unique name so
-        that it will be distinguishable from other public analyses.
-      </p>
-      <div style={{ display: 'flex', marginTop: 25 }}>
-        <FormField
-          label="Analysis Name"
-          onValueChange={(value) => {
-            setLocalAnalysisName(value);
-          }}
-          type="text"
-          value={localAnalysisName ?? ''}
-          themeRole="primary"
-          width="200px"
-          placeholder={currentName}
+    <div
+      style={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+      }}
+    >
+      <div>
+        <H5
+          text="Name Your Analysis"
+          additionalStyles={{ marginTop: 25, marginBottom: 0 }}
         />
+        <p
+          style={{
+            fontSize: '.9rem',
+            color: gray[600],
+            marginTop: 0,
+            maxWidth: 500,
+          }}
+        >
+          In order to share an analyis, you'll need to give it a unique name so
+          that it will be distinguishable from other public analyses.
+        </p>
+        <div style={{ display: 'flex', marginTop: 25 }}>
+          <FormField
+            label="Analysis Name"
+            onValueChange={(value) => {
+              setLocalAnalysisName(value);
+            }}
+            type="text"
+            value={localAnalysisName ?? ''}
+            themeRole="primary"
+            width="200px"
+            placeholder={currentName}
+          />
+        </div>
       </div>
 
       <FilledButton

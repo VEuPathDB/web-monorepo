@@ -3273,7 +3273,45 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.0.0.tgz#90ca79640ffbb195a87d4d65cd4b2f92342f8b76"
   integrity sha512-qfKu1z9gaaHdMgRGaZBiayuIh92ishsf14lR+Rj61CJF131XWq3+5e2VyLyOdKsYJ1EreAxgyC/0upIBEzwQJw==
 
-"@veupathdb/components@^0.11.1", "@veupathdb/components@^0.11.2", "@veupathdb/components@^0.11.4":
+"@veupathdb/components@0.11.2":
+  version "0.11.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.2.tgz#c300bd6b2e4a059f359a4fd21c8dee32740a6d10"
+  integrity sha512-QPyiBw6Mcg2XgIqAUjo70YgnSnRcPa85jeVIqiCCikqsODbd5EpCJ2/Y6eRGdnb74VmY45vaGsiuaDibuXzc4w==
+  dependencies:
+    "@material-ui/core" "^4.11.2"
+    "@material-ui/icons" "^4.11.2"
+    "@material-ui/lab" "^4.0.0-alpha.57"
+    "@types/d3" "^7.1.0"
+    "@types/date-arithmetic" "^4.1.1"
+    "@visx/gradient" "^1.0.0"
+    "@visx/group" "^1.0.0"
+    "@visx/hierarchy" "^1.0.0"
+    "@visx/shape" "^1.4.0"
+    "@visx/text" "^1.3.0"
+    "@visx/tooltip" "^1.3.0"
+    "@visx/visx" "^1.1.0"
+    bootstrap "^4.5.2"
+    color-math "^1.1.3"
+    d3 "^7.1.1"
+    date-arithmetic "^4.1.0"
+    debounce-promise "^3.1.2"
+    latlon-geohash "^2.0.0"
+    leaflet "^1.6.0"
+    leaflet-drift-marker "^1.0.3"
+    luxon "^1.25.0"
+    plotly.js "^2.6.0"
+    re-resizable "^6.9.0"
+    react "^16.13.1"
+    react-bootstrap "^1.3.0"
+    react-cool-dimensions "^1.1.11"
+    react-dom "^16.13.1"
+    react-html-parser "^2.0.2"
+    react-leaflet "^2.7.0"
+    react-plotly.js "^2.4.0"
+    react-transition-group "^4.4.1"
+    shape2geohash "^1.2.5"
+
+"@veupathdb/components@^0.11.1", "@veupathdb/components@^0.11.2":
   version "0.11.4"
   resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.4.tgz#10b155df90d475c908c719244009c5349b535463"
   integrity sha512-p0EuzBCTcdqr4EnJ1DIlGpHKKKj/kwT+fE9sjASw721FmMfh9z1D+7MPFyrFyoJLioLJUYXewSgNppWwjEG9+g==

@@ -35,7 +35,7 @@ import GlobalFiltersDialog from '../core/components/GlobalFiltersDialog';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import ShowHideVariableContextProvider from '../core/utils/show-hide-variable-context';
 import NotesTab from './NotesTab';
-import ShareFromAnalyisModal from './sharing/ShareFromAnalysisModal';
+import ShareFromAnalysis from './sharing/ShareFromAnalysis';
 
 interface Props {
   analysisState: AnalysisState;
@@ -125,7 +125,7 @@ export function AnalysisPanel({
   if (analysis == null) return <Loading />;
   return (
     <ShowHideVariableContextProvider>
-      <ShareFromAnalyisModal
+      <ShareFromAnalysis
         visible={sharingModalVisible}
         toggleVisible={setSharingModalVisible}
         analysisState={analysisState}

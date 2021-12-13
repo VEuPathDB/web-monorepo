@@ -15,17 +15,10 @@ export default function ConfirmPublicAnalysis({
 }: ConfirmAnalysisSharingProps) {
   const theme = useUITheme();
 
-  // NOTE: This may be required in the future so I'll leave it here for now.
-  // const publicAnalysisURL = () => {
-  //   return new URL(
-  //     `/analysis/${getAnalysisId(analysisState.analysis)}`,
-  //     window.location.href
-  //   ).href;
-  // };
-
   return (
     <div
       style={{
+        height: '100%',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
