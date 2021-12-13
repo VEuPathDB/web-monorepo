@@ -6,6 +6,7 @@ import { Analysis, NewAnalysis } from '../core';
 import { ActionIconButton } from './ActionIconButton';
 import { Button, Icon } from '@material-ui/core';
 import { cx } from './Utils';
+import { ANALYSIS_NAME_MAX_LENGTH } from './AllAnalyses';
 
 interface Props {
   analysis: Analysis | NewAnalysis;
@@ -47,6 +48,7 @@ export function AnalysisSummary(props: Props) {
           className={cx('-AnalysisNameEditBox')}
           value={analysis.displayName}
           onSave={(newName) => newName && setAnalysisName(newName)}
+          maxLength={ANALYSIS_NAME_MAX_LENGTH}
         />
         {analysis.descriptor.subset.descriptor.length > 0 && onFilterIconClick && (
           <Button

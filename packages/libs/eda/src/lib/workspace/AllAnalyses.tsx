@@ -78,6 +78,7 @@ const useStyles = makeStyles({
 });
 
 const UNKNOWN_DATASET_NAME = 'Unknown study';
+export const ANALYSIS_NAME_MAX_LENGTH = 50;
 
 export function AllAnalyses(props: Props) {
   const { analysisClient, exampleAnalysesAuthor } = props;
@@ -449,6 +450,7 @@ export function AllAnalyses(props: Props) {
                       updateAnalysis(analysisId, { displayName: newName });
                     }
                   }}
+                  maxLength={ANALYSIS_NAME_MAX_LENGTH}
                 />
                 {data.row.analysis.provenance != null && (
                   <>
