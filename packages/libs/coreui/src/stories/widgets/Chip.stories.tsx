@@ -47,4 +47,5 @@ StaticState.args = {
   ...Default.args,
   icon: CloseCircle,
   staticState: 'hover',
+  onPress: null,
 } as ChipProps;

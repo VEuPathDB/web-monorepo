@@ -136,6 +136,7 @@ export default function Chip({
         { ...finalStyle.container },
         typography.secondaryFont,
         {
+          cursor: onPress ? 'grab' : 'default',
           fontSize: 12,
           height: 25,
           backgroundColor: finalStyle[staticState ?? 'default'].backgroundColor,
