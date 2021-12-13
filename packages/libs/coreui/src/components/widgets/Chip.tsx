@@ -172,7 +172,7 @@ export default function Chip({
         },
       ]}
     >
-      <span>{text}</span>
+      {text}
       <Icon fontSize={14} css={{ marginLeft: 10 }} />
     </button>
   );
