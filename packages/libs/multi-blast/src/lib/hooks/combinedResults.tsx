@@ -9,6 +9,8 @@ import {
 import { useSelector } from 'react-redux';
 
 import { saveAs } from 'file-saver';
+import { Either, left, isLeft, isRight, map, right } from 'fp-ts/Either';
+import { groupBy, orderBy } from 'lodash';
 
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { MesaState } from '@veupathdb/wdk-client/lib/Components/Mesa';
@@ -18,11 +20,17 @@ import {
 } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 
-import { groupBy, orderBy } from 'lodash';
-
-import { Props as CombinedResultProps } from '../components/CombinedResult';
+import {
+  Props as CombinedResultProps,
+  TableState,
+} from '../components/CombinedResult';
 import { Props as ResultContainerProps } from '../components/ResultContainer';
-import { MultiQueryReportJson, Target } from '../utils/ServiceTypes';
+import {
+  ApiResult,
+  ErrorDetails,
+  MultiQueryReportJson,
+  Target,
+} from '../utils/ServiceTypes';
 import {
   TargetMetadataByDataType,
   dbNameToTargetTypeTerm,
@@ -65,7 +73,7 @@ export function useCombinedResultProps({
   targetTypeTerm,
   wdkRecordType,
 }: ResultContainerProps & {
-  combinedResult?: MultiQueryReportJson;
+  combinedResult: ApiResult<MultiQueryReportJson, ErrorDetails>;
 }): CombinedResultProps {
   const { hitQueryCount, hitSubjectCount, totalQueryCount } = useHitCounts(
     combinedResult
@@ -93,22 +101,24 @@ export function useCombinedResultProps({
 
   const uiState = useMesaUiState(sort);
 
-  const options = useMesaOptions(sortedRows.displayable);
+  const options = useMesaOptions(sortedRows);
 
-  const mesaState = useMemo(
+  const tableState = useMemo(
     () =>
-      MesaState.create({
-        columns,
-        eventHandlers,
-        options,
-        rows: sortedRows.rows,
-        uiState,
-      }),
-    [columns, eventHandlers, options, sortedRows.rows, uiState]
+      map<CombinedResultRows, TableState>((sortedRows) =>
+        MesaState.create({
+          columns,
+          eventHandlers,
+          options,
+          rows: sortedRows.rows,
+          uiState,
+        })
+      )(sortedRows),
+    [columns, eventHandlers, options, sortedRows, uiState]
   );
 
   const downloadTableOptions: CombinedResultProps['downloadTableOptions'] = useMemo(() => {
-    if (!sortedRows.displayable) {
+    if (isLeft(sortedRows) || !sortedRows.right.displayable) {
       return {
         offer: false,
       };
@@ -132,7 +142,7 @@ export function useCombinedResultProps({
               'Query Coverage',
             ].join(','),
             '\n',
-            sortedRows.rows
+            sortedRows.right.rows
               .map((row) =>
                 [
                   row.accession,
@@ -164,14 +174,19 @@ export function useCombinedResultProps({
     hitSubjectCount,
     hitTypeDisplayName,
     hitTypeDisplayNamePlural,
-    mesaState,
+    tableState,
     totalQueryCount,
     downloadTableOptions,
   };
 }
 
-function useHitCounts(combinedResult?: MultiQueryReportJson) {
-  const resultsByQuery = combinedResult?.BlastOutput2;
+function useHitCounts(
+  combinedResult: ApiResult<MultiQueryReportJson, ErrorDetails>
+) {
+  const resultsByQuery =
+    combinedResult.status === 'ok'
+      ? combinedResult.value.BlastOutput2
+      : undefined;
 
   return useMemo(() => {
     if (resultsByQuery == null) {
@@ -369,16 +384,16 @@ function DescriptionCell(props: { value: string }) {
 }
 
 function useRawCombinedResultRows(
-  combinedResult: MultiQueryReportJson | undefined,
+  combinedResult: ApiResult<MultiQueryReportJson, ErrorDetails>,
   wdkRecordType: string,
   filesToOrganisms: Record<string, string>
-): CombinedResultRows {
-  const resultsByQuery = combinedResult?.BlastOutput2;
-
-  const rawRows = useMemo(() => {
-    if (resultsByQuery == null) {
-      return undefined;
+): Either<ErrorDetails, CombinedResultRows> {
+  const rawRows = useMemo((): Either<ErrorDetails, CombinedResultRow[]> => {
+    if (combinedResult.status === 'error') {
+      return left(combinedResult.details);
     }
+
+    const resultsByQuery = combinedResult.value.BlastOutput2;
 
     const dbToOrganism = dbToOrganismFactory(filesToOrganisms);
 
@@ -477,30 +492,34 @@ function useRawCombinedResultRows(
       {} as Record<string, number>
     );
 
-    return unrankedHits.map((unrankedHit) => {
-      const querySubjectPairKey = `${unrankedHit.queryId}/${unrankedHit.accession}`;
+    return right(
+      unrankedHits.map((unrankedHit) => {
+        const querySubjectPairKey = `${unrankedHit.queryId}/${unrankedHit.accession}`;
 
-      return {
-        ...unrankedHit,
-        queryRank: byQueryRanks[querySubjectPairKey],
-        subjectRank: bySubjectRanks[querySubjectPairKey],
-      };
-    });
-  }, [filesToOrganisms, resultsByQuery, wdkRecordType]);
+        return {
+          ...unrankedHit,
+          queryRank: byQueryRanks[querySubjectPairKey],
+          subjectRank: bySubjectRanks[querySubjectPairKey],
+        };
+      })
+    );
+  }, [combinedResult, filesToOrganisms, wdkRecordType]);
 
   return useMemo(
     () =>
-      rawRows == null || rawRows.length > MAX_ROWS
-        ? { displayable: false, rows: [] }
-        : { displayable: true, rows: rawRows },
+      map<CombinedResultRow[], CombinedResultRows>((rawRows) =>
+        rawRows.length > MAX_ROWS
+          ? { displayable: false, rows: [] }
+          : { displayable: true, rows: rawRows }
+      )(rawRows),
     [rawRows]
   );
 }
 
 function useSortedCombinedResultRows(
-  unsortedRows: CombinedResultRows,
+  unsortedRows: Either<ErrorDetails, CombinedResultRows>,
   sort: MesaSortObject
-): CombinedResultRows {
+): Either<ErrorDetails, CombinedResultRows> {
   const [sortedRows, setSortedRows] = useState(unsortedRows);
 
   useEffect(() => {
@@ -509,12 +528,18 @@ function useSortedCombinedResultRows(
 
   useEffect(() => {
     setSortedRows((sortedRows) =>
-      !sortedRows.displayable
-        ? sortedRows
-        : {
-            displayable: true,
-            rows: orderBy(sortedRows.rows, [sort.columnKey], [sort.direction]),
-          }
+      map<CombinedResultRows, CombinedResultRows>((sortedRows) =>
+        !sortedRows.displayable
+          ? sortedRows
+          : {
+              displayable: true,
+              rows: orderBy(
+                sortedRows.rows,
+                [sort.columnKey],
+                [sort.direction]
+              ),
+            }
+      )(sortedRows)
     );
   }, [sort]);
 
@@ -539,7 +564,12 @@ function useMesaUiState(sort: MesaSortObject) {
   return useMemo(() => ({ sort }), [sort]);
 }
 
-function useMesaOptions(rowsDisplayable: boolean) {
+function useMesaOptions(sortedRows: Either<ErrorDetails, CombinedResultRows>) {
+  const rowsDisplayable = useMemo(
+    () => isRight(sortedRows) && sortedRows.right.displayable,
+    [sortedRows]
+  );
+
   return useMemo(
     () => ({
       useStickyHeader: true,

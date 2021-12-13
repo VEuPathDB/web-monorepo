@@ -1,11 +1,19 @@
+import { Either, isLeft } from 'fp-ts/Either';
+
 import Mesa from '@veupathdb/wdk-client/lib/Components/Mesa';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
+import { ErrorDetails } from '../utils/ServiceTypes';
+
+import { BlastRequestError } from './BlastRequestError';
 import { ReportSelect } from './ReportSelect';
 
 import './CombinedResult.scss';
 
 const cx = makeClassNameHelper('CombinedResult');
+
+// FIXME: Get rid of this "any" once we have type declarations for Mesa
+export type TableState = any;
 
 export interface Props {
   downloadTableOptions:
@@ -16,7 +24,7 @@ export interface Props {
   hitTypeDisplayName: string;
   hitTypeDisplayNamePlural: string;
   jobId: string;
-  mesaState: any; // FIXME: Get rid of this "any" once we have type declarations for Mesa
+  tableState: Either<ErrorDetails, TableState>;
   totalQueryCount?: number;
 }
 
@@ -27,12 +35,14 @@ export function CombinedResult({
   hitTypeDisplayName,
   hitTypeDisplayNamePlural,
   jobId,
-  mesaState,
+  tableState,
   totalQueryCount,
 }: Props) {
-  return (
+  return isLeft(tableState) ? (
+    <BlastRequestError errorDetails={tableState.left} />
+  ) : (
     <div className={cx()}>
-      <Mesa state={mesaState}>
+      <Mesa state={tableState.right}>
         {hitQueryCount != null &&
           hitSubjectCount != null &&
           totalQueryCount != null && (

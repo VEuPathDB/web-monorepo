@@ -4,9 +4,12 @@ import { ParameterValues } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { useCombinedResultProps } from '../hooks/combinedResults';
 import { useIndividualResultProps } from '../hooks/individualResult';
 import { IndividualQuery, SelectedResult } from '../utils/CommonTypes';
-import { MultiQueryReportJson } from '../utils/ServiceTypes';
+import {
+  ApiResult,
+  ErrorDetails,
+  MultiQueryReportJson,
+} from '../utils/ServiceTypes';
 
-import { BlastRequestError } from './BlastRequestError';
 import { MultiQueryReportResult } from './BlastWorkspaceResult';
 import { CombinedResult } from './CombinedResult';
 import { IndividualResult } from './IndividualResult';
@@ -51,20 +54,18 @@ function CombinedResultContainer(props: Props) {
     <Loading>
       <div className="wdk-LoadingData">Loading data...</div>
     </Loading>
-  ) : props.multiQueryReportResult.value.status === 'error' ? (
-    <BlastRequestError
-      errorDetails={props.multiQueryReportResult.value.details}
-    />
   ) : (
     <LoadedCombinedResultContainer
       {...props}
-      combinedResult={props.multiQueryReportResult.value.value}
+      combinedResult={props.multiQueryReportResult.value}
     />
   );
 }
 
 function LoadedCombinedResultContainer(
-  props: Props & { combinedResult: MultiQueryReportJson }
+  props: Props & {
+    combinedResult: ApiResult<MultiQueryReportJson, ErrorDetails>;
+  }
 ) {
   return <CombinedResult {...useCombinedResultProps(props)} />;
 }
