@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 
 import { gray, mutedGreen, mutedMagenta } from '../../definitions/colors';
-import Modal, { ModalProps } from '../../components/containers/UIModal';
+import Modal, { ModalProps } from '../../components/containers/Modal';
 import { FilledButton } from '../../components/buttons';
 import { secondaryFont } from '../../styleDefinitions/typography';
 import { UIThemeProvider } from '../../components/theming';

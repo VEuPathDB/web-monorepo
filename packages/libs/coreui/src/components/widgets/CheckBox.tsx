@@ -28,7 +28,7 @@ export type CheckboxProps = {
   styleOverrides?: Partial<CheckBoxStyleSpec>;
 };
 
-export default function CheckBox({
+export default function Checkbox({
   selected,
   onToggle,
   themeRole,

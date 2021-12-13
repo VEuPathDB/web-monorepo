@@ -1,2 +1,2 @@
-export * from './MultilineTextField';
-export * from './FormField';
+export { default as MultilineTextField } from './MultilineTextField';
+export { default as FormField } from './FormField';
