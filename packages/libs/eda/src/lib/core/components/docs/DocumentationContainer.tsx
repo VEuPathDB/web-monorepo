@@ -1,4 +1,4 @@
-import { FullScreenModal } from '@veupathdb/core-components';
+import { Modal } from '@veupathdb/core-components';
 import { Close } from '@veupathdb/core-components/dist/components/icons';
 import { Launch } from '@material-ui/icons';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
@@ -23,7 +23,7 @@ export function DocumentationContainer(props: PropsWithChildren<{}>) {
   const value = useMemo(() => ({ setActiveDocument }), [setActiveDocument]);
   const { url } = useRouteMatch();
   const modal = activeDocument ? (
-    <FullScreenModal
+    <Modal
       zIndex={10000}
       visible={activeDocument != null}
       onClose={() => setActiveDocument(undefined)}
@@ -64,7 +64,7 @@ export function DocumentationContainer(props: PropsWithChildren<{}>) {
           <Launch fontSize="inherit" /> Open in new window
         </Link>
       </div>
-    </FullScreenModal>
+    </Modal>
   ) : (
     <></>
   );

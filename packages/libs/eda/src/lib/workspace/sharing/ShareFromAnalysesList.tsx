@@ -1,10 +1,10 @@
-import UIModal from '@veupathdb/core-components/dist/components/modals/UIModal';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 import NameAnalysis from './NameAnalysis';
 import Login from './Login';
 import ConfirmPublicAnalysis from './ConfirmPublicAnalysis';
 import { AnalysisSummary, SingleAnalysisPatchRequest } from '../../core';
+import { Modal } from '@veupathdb/core-components';
 
 type ShareFromAnalysesListProps = {
   visible: boolean;
@@ -24,7 +24,7 @@ export default function ShareFromAnalysesList({
   );
 
   return (
-    <UIModal
+    <Modal
       title="Make Analysis Public"
       visible={visible && analysis !== undefined}
       toggleVisible={toggleVisible}
@@ -49,6 +49,6 @@ export default function ShareFromAnalysesList({
           toggleVisible={toggleVisible}
         />
       )}
-    </UIModal>
+    </Modal>
   );
 }

@@ -10,7 +10,7 @@ import {
 } from '../../core';
 
 // Components
-import { SwissArmyButton } from '@veupathdb/core-components';
+import { MesaButton } from '@veupathdb/core-components';
 import { VariableDetails } from '../Variable';
 import VariableTree from '../../core/components/variableTrees/VariableTree';
 import FilterChipList from '../../core/components/FilterChipList';
@@ -131,12 +131,11 @@ export default function Subsetting({
         />
       </div>
       <div className="TabularDownload">
-        {/* <SwissArmyButton
+        {/* <MesaButton
           text="View and download"
           tooltip={`View and download current subset of ${
             entity.displayNamePlural ?? entity.displayName
           }`}
-          stylePreset="mesa"
           icon={TableDownload}
           onPress={() => {
             attemptAction(Action.download, {

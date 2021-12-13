@@ -5,7 +5,8 @@ import { ceil, uniqBy } from 'lodash';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { H5, H3 } from '@veupathdb/core-components/dist/components/headers';
 import DataGrid from '@veupathdb/core-components/dist/components/grids/DataGrid';
-import FullScreenModal from '@veupathdb/core-components/dist/components/modals/FullScreenModal';
+import { Modal } from '@veupathdb/core-components';
+
 import { MesaButton } from '@veupathdb/core-components/dist/components/buttons';
 import {
   Download,
@@ -362,11 +363,7 @@ export default function SubsettingDataGridModal({
   };
 
   return (
-    <FullScreenModal
-      visible={displayModal}
-      onOpen={onModalOpen}
-      onClose={onModalClose}
-    >
+    <Modal visible={displayModal} onOpen={onModalOpen} onClose={onModalClose}>
       <div key="Title" style={{ marginBottom: 35 }}>
         <div
           style={{
@@ -452,6 +449,6 @@ export default function SubsettingDataGridModal({
         {renderDataGridArea()}
         {renderVariableSelectionArea()}
       </div>
-    </FullScreenModal>
+    </Modal>
   );
 }

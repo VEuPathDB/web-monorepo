@@ -32,7 +32,6 @@ import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 import { confirm } from '@veupathdb/wdk-client/lib/Utils/Platform';
 import { RecordInstance } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { OverflowingTextCell } from '@veupathdb/wdk-client/lib/Views/Strategy/OverflowingTextCell';
-import Checkbox from '@veupathdb/core-components/dist/components/widgets/CheckBox';
 
 import {
   AnalysisClient,
@@ -49,6 +48,7 @@ import {
 } from '../core/utils/analysis';
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
 import ShareFromAnalysesList from './sharing/ShareFromAnalysesList';
+import { Checkbox } from '@veupathdb/core-components';
 
 interface AnalysisAndDataset {
   analysis: AnalysisSummary & {

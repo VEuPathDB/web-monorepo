@@ -6,16 +6,12 @@ import { cx } from './Utils';
 
 // Components
 import {
-  FilledButton,
-  FloatingButton,
-  OutlinedButton,
-} from '@veupathdb/core-components/dist/components/buttons';
-import {
   Copy,
   Filter,
   Share,
   Trash,
 } from '@veupathdb/core-components/dist/components/icons';
+import { Chip, FilledButton, FloatingButton } from '@veupathdb/core-components';
 
 interface Props {
   analysis: Analysis | NewAnalysis;
@@ -99,12 +95,12 @@ export function AnalysisSummary(props: Props) {
           />
         )}
         {analysis.isPublic && (
-          <OutlinedButton
+          <Chip
             text="Public Analysis"
-            onPress={() => null}
             themeRole="secondary"
+            staticState="pressed"
             styleOverrides={{
-              container: { textTransform: 'none', marginLeft: 10 },
+              container: { marginLeft: 15 },
             }}
           />
         )}
