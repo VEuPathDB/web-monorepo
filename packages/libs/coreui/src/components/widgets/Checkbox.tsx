@@ -6,7 +6,7 @@ import { CheckIcon } from '../icons';
 import { UITheme } from '../theming/types';
 import useUITheme from '../theming/useUITheme';
 
-export type CheckBoxStyleSpec = {
+export type CheckboxStyleSpec = {
   selectedColor: CSSProperties['color'];
   color: CSSProperties['color'];
   size: number;
@@ -25,7 +25,7 @@ export type CheckboxProps = {
    * a UI theme. Not indicating a value here will mean that button should not
    * pick up styling options from the theme. */
   themeRole?: keyof UITheme['palette'];
-  styleOverrides?: Partial<CheckBoxStyleSpec>;
+  styleOverrides?: Partial<CheckboxStyleSpec>;
 };
 
 export default function Checkbox({
@@ -34,7 +34,7 @@ export default function Checkbox({
   themeRole,
   styleOverrides,
 }: CheckboxProps) {
-  const defaultStyle: CheckBoxStyleSpec = {
+  const defaultStyle: CheckboxStyleSpec = {
     size: 12,
     color: gray[300],
     selectedColor: blue[500],
@@ -42,7 +42,7 @@ export default function Checkbox({
   };
 
   const theme = useUITheme();
-  const themeStyle = useMemo<Partial<CheckBoxStyleSpec>>(
+  const themeStyle = useMemo<Partial<CheckboxStyleSpec>>(
     () =>
       theme && themeRole
         ? {

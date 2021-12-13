@@ -1,6 +1,6 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
 
-import Checkbox, { CheckboxProps } from '../../components/widgets/CheckBox';
+import Checkbox, { CheckboxProps } from '../../components/widgets/Checkbox';
 import { TableDownload, Download } from '../../components/icons';
 import UIThemeProvider from '../../components/theming/UIThemeProvider';
 import { green, purple } from '../../definitions/colors';

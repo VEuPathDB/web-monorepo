@@ -1,5 +1,5 @@
 import { Column } from 'react-table';
-import CheckBox from '../../components/widgets/CheckBox';
+import Checkbox from '../../components/widgets/Checkbox';
 
 export const columns = ({
   role,
@@ -20,7 +20,7 @@ export const columns = ({
       accessor: 'isPublic',
       Cell: ({ value }) => (
         <div css={{ display: 'flex', justifyContent: 'center' }}>
-          <CheckBox
+          <Checkbox
             selected={value}
             onToggle={(newValue) => console.log(newValue)}
             themeRole={role}

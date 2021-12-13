@@ -41,3 +41,10 @@ WithIcon.args = {
   ...Default.args,
   icon: CloseCircle,
 } as ChipProps;
+
+export const StaticState = Template.bind({});
+StaticState.args = {
+  ...Default.args,
+  icon: CloseCircle,
+  staticState: 'hover',
+} as ChipProps;

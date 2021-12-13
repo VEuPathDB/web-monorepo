@@ -40,6 +40,10 @@ export type ChipProps = {
   /** Optional. SVG component to use as an icon. */
   icon?: ComponentType<SVGProps<SVGSVGElement>>;
   /**
+   * Optional. Used to indicate if you want the style of the chip
+   * to be locked at a certain button state. */
+  staticState?: 'default' | 'hover' | 'pressed';
+  /**
    * Optional. Used to indicate which color properties to calculate based on
    * a UI theme. Not indicating a value here will mean that button should not
    * pick up styling options from the theme. */
@@ -52,18 +56,10 @@ export default function Chip({
   text,
   icon = () => null,
   onPress,
+  staticState,
   themeRole,
   styleOverrides,
 }: ChipProps) {
-  const [currentlyHovered, setCurrentlyHovered] = useState(false);
-  const [currentlyPressed, setCurrentlyPressed] = useState(false);
-
-  const buttonState = useMemo<'default' | 'hover' | 'pressed'>(
-    () =>
-      currentlyPressed ? 'pressed' : currentlyHovered ? 'hover' : 'default',
-    [currentlyHovered, currentlyPressed]
-  );
-
   const defaultStyle: ChipStyleSpec = {
     default: {
       textColor: gray[400],
@@ -136,36 +132,47 @@ export default function Chip({
   return (
     <button
       onClick={onPress}
-      onMouseEnter={() => setCurrentlyHovered(true)}
-      onMouseLeave={() => setCurrentlyHovered(false)}
-      onMouseDown={() => setCurrentlyPressed(true)}
-      onMouseUp={() => setCurrentlyPressed(false)}
       css={[
+        { ...finalStyle.container },
         typography.secondaryFont,
         {
           fontSize: 12,
           height: 25,
-          backgroundColor: finalStyle[buttonState].backgroundColor,
-          outlineColor: finalStyle[buttonState].border.color,
-          outlineWidth: finalStyle[buttonState].border.width,
+          backgroundColor: finalStyle[staticState ?? 'default'].backgroundColor,
+          outlineColor: finalStyle[staticState ?? 'default'].border.color,
+          outlineWidth: finalStyle[staticState ?? 'default'].border.width,
           outlineStyle: 'solid',
-          borderRadius: finalStyle[buttonState].border.radius,
+          borderRadius: finalStyle[staticState ?? 'default'].border.radius,
           border: 'none',
-          color: finalStyle[buttonState].textColor,
+          color: finalStyle[staticState ?? 'default'].textColor,
+          fill: finalStyle[staticState ?? 'default'].border.color,
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           paddingLeft: 10,
           paddingRight: 10,
+          ':hover': {
+            backgroundColor: finalStyle[staticState ?? 'hover'].backgroundColor,
+            outlineColor: finalStyle[staticState ?? 'hover'].border.color,
+            outlineWidth: finalStyle[staticState ?? 'hover'].border.width,
+            borderRadius: finalStyle[staticState ?? 'hover'].border.radius,
+            color: finalStyle[staticState ?? 'hover'].textColor,
+            fill: finalStyle[staticState ?? 'hover'].border.color,
+          },
+          ':active': {
+            backgroundColor:
+              finalStyle[staticState ?? 'pressed'].backgroundColor,
+            outlineColor: finalStyle[staticState ?? 'pressed'].border.color,
+            outlineWidth: finalStyle[staticState ?? 'pressed'].border.width,
+            borderRadius: finalStyle[staticState ?? 'pressed'].border.radius,
+            color: finalStyle[staticState ?? 'pressed'].textColor,
+            fill: finalStyle[staticState ?? 'pressed'].border.color,
+          },
         },
       ]}
     >
       <span>{text}</span>
-      <Icon
-        fontSize={14}
-        fill={finalStyle[buttonState].border.color}
-        css={{ marginLeft: 10 }}
-      />
+      <Icon fontSize={14} css={{ marginLeft: 10 }} />
     </button>
   );
 }
