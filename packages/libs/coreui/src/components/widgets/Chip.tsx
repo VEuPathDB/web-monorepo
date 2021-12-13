@@ -67,7 +67,7 @@ export default function Chip({
       border: {
         width: 1,
         color: gray[400],
-        radius: 10,
+        radius: 8,
       },
     },
     hover: {
@@ -76,7 +76,7 @@ export default function Chip({
       border: {
         width: 1,
         color: blue[500],
-        radius: 10,
+        radius: 8,
       },
     },
     pressed: {
@@ -85,7 +85,7 @@ export default function Chip({
       border: {
         width: 2,
         color: blue[500],
-        radius: 10,
+        radius: 8,
       },
     },
   };
@@ -103,7 +103,7 @@ export default function Chip({
                 width: 1,
                 color:
                   theme.palette[themeRole].hue[theme.palette[themeRole].level],
-                radius: 10,
+                radius: 8,
               },
             },
             pressed: {
@@ -114,7 +114,7 @@ export default function Chip({
                 width: 2,
                 color:
                   theme.palette[themeRole].hue[theme.palette[themeRole].level],
-                radius: 10,
+                radius: 8,
               },
             },
           }
