@@ -21,7 +21,7 @@ import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-
 import { cx } from './Utils';
 import { AnalysisState, DEFAULT_ANALYSIS_NAME } from '../core';
 import { LinkAttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { Action } from '@veupathdb/web-common/lib/App/DataRestriction/DataRestrictionUtils';
+import { Action } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUiActions';
 import { getAnalysisId, isSavedAnalysis } from '../core/utils/analysis';
 
 interface EDAWorkspaceHeadingProps {

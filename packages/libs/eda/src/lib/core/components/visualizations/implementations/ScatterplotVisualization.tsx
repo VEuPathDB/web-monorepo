@@ -73,6 +73,7 @@ import {
   variablesAreUnique,
   nonUniqueWarning,
   vocabularyWithMissingData,
+  hasIncompleteCases,
 } from '../../../utils/visualization';
 import { gray } from '../colors';
 import {
@@ -96,6 +97,8 @@ import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import FacetedPlot from '@veupathdb/components/lib/plots/FacetedPlot';
 // for converting rgb() to rgba()
 import * as ColorMath from 'color-math';
+// R-square table component
+import { ScatterplotRsquareTable } from '../../ScatterplotRsquareTable';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -221,22 +224,25 @@ function ScatterplotViz(props: VisualizationProps) {
     xAxisVariable,
     yAxisVariable,
     overlayVariable,
+    overlayEntity,
     facetVariable,
+    facetEntity,
   } = useMemo(() => {
     const { variable: xAxisVariable } =
       findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
     const { variable: yAxisVariable } =
       findEntityAndVariable(vizConfig.yAxisVariable) ?? {};
-    const { variable: overlayVariable } =
+    const { variable: overlayVariable, entity: overlayEntity } =
       findEntityAndVariable(vizConfig.overlayVariable) ?? {};
-    const { variable: facetVariable } =
+    const { variable: facetVariable, entity: facetEntity } =
       findEntityAndVariable(vizConfig.facetVariable) ?? {};
-
     return {
       xAxisVariable,
       yAxisVariable,
       overlayVariable,
+      overlayEntity,
       facetVariable,
+      facetEntity,
     };
   }, [
     findEntityAndVariable,
@@ -300,6 +306,13 @@ function ScatterplotViz(props: VisualizationProps) {
   const data = usePromise(
     useCallback(async (): Promise<XYPlotDataWithCoverage | undefined> => {
       if (
+        outputEntity == null ||
+        filteredCounts.pending ||
+        filteredCounts.value == null
+      )
+        return undefined;
+
+      if (
         !variablesAreUnique([
           xAxisVariable,
           yAxisVariable,
@@ -340,19 +353,35 @@ function ScatterplotViz(props: VisualizationProps) {
       // scatterplot, lineplot
       const response =
         visualization.descriptor.type === 'lineplot'
-          ? dataClient.getLineplot(
+          ? await dataClient.getLineplot(
               computation.descriptor.type,
               params as LineplotRequestParams
             )
           : // set default as scatterplot/getScatterplot
-            dataClient.getScatterplot(
+            await dataClient.getScatterplot(
               computation.descriptor.type,
               params as ScatterplotRequestParams
             );
 
-      const showMissing =
+      const showMissingOverlay =
         vizConfig.showMissingness &&
-        (overlayVariable != null || facetVariable != null);
+        hasIncompleteCases(
+          overlayEntity,
+          overlayVariable,
+          outputEntity,
+          filteredCounts.value,
+          response.completeCasesTable
+        );
+      const showMissingFacet =
+        vizConfig.showMissingness &&
+        hasIncompleteCases(
+          facetEntity,
+          facetVariable,
+          outputEntity,
+          filteredCounts.value,
+          response.completeCasesTable
+        );
+
       const overlayVocabulary = fixLabelsForNumberVariables(
         overlayVariable?.vocabulary,
         overlayVariable
@@ -362,13 +391,14 @@ function ScatterplotViz(props: VisualizationProps) {
         facetVariable
       );
       return scatterplotResponseToData(
-        await response,
+        response,
         visualization.descriptor.type,
         independentValueType,
         dependentValueType,
-        showMissing,
+        showMissingOverlay,
         overlayVocabulary,
         overlayVariable,
+        showMissingFacet,
         facetVocabulary,
         facetVariable
       );
@@ -387,6 +417,7 @@ function ScatterplotViz(props: VisualizationProps) {
       computation.descriptor.type,
       visualization.descriptor.type,
       outputEntity,
+      filteredCounts,
     ])
   );
 
@@ -723,14 +754,14 @@ function ScatterplotViz(props: VisualizationProps) {
         enableSpinner={
           xAxisVariable != null && yAxisVariable != null && !data.error
         }
-        totalCounts={totalCounts}
-        filteredCounts={filteredCounts}
+        totalCounts={totalCounts.value}
+        filteredCounts={filteredCounts.value}
       />
       <VariableCoverageTable
         completeCases={
           data.value && !data.pending ? data.value?.completeCases : undefined
         }
-        filters={filters}
+        filteredCounts={filteredCounts}
         outputEntityId={outputEntity?.id}
         variableSpecs={[
           {
@@ -757,6 +788,22 @@ function ScatterplotViz(props: VisualizationProps) {
           },
         ]}
       />
+      {/* R-square table component: only display when overlay and/or facet variable exist */}
+      {vizConfig.valueSpecConfig === 'Best fit line with raw' &&
+        data.value != null &&
+        !data.pending &&
+        (vizConfig.overlayVariable != null ||
+          vizConfig.facetVariable != null) && (
+          <ScatterplotRsquareTable
+            typedData={
+              !isFaceted(data.value.dataSetProcess)
+                ? { isFaceted: false, data: data.value.dataSetProcess.series }
+                : { isFaceted: true, data: data.value.dataSetProcess.facets }
+            }
+            overlayVariable={overlayVariable}
+            facetVariable={facetVariable}
+          />
+        )}
     </>
   );
 
@@ -938,9 +985,10 @@ export function scatterplotResponseToData(
   vizType: string,
   independentValueType: string,
   dependentValueType: string,
-  showMissingness: boolean = false,
+  showMissingOverlay: boolean = false,
   overlayVocabulary: string[] = [],
   overlayVariable?: Variable,
+  showMissingFacet: boolean = false,
   facetVocabulary: string[] = [],
   facetVariable?: Variable
 ): XYPlotDataWithCoverage {
@@ -964,14 +1012,14 @@ export function scatterplotResponseToData(
       reorderResponseScatterplotData(
         // reorder by overlay var within each facet
         group,
-        vocabularyWithMissingData(overlayVocabulary, showMissingness),
+        vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
         overlayVariable
       ),
       vizType,
       modeValue,
       independentValueType,
       dependentValueType,
-      showMissingness,
+      showMissingOverlay,
       hasMissingData,
       overlayVariable,
       // pass facetVariable to determine either scatter or scattergl
@@ -996,7 +1044,7 @@ export function scatterplotResponseToData(
         {
           facets: vocabularyWithMissingData(
             facetVocabulary,
-            showMissingness
+            showMissingFacet
           ).map((facetValue) => ({
             label: facetValue,
             data: processedData[facetValue]?.dataSetProcess ?? undefined,
@@ -1418,14 +1466,17 @@ function processInputData<T extends number | string>(
       dataSetProcess.push({
         x: bestFitLineX,
         y: el.bestFitLineY,
-        // display R-square value at legend text(s)
-        // name: 'Best fit<br>R<sup>2</sup> = ' + el.r2,
-        name: el.overlayVariableDetails
-          ? fixLabelForNumberVariables(
-              el.overlayVariableDetails.value,
-              overlayVariable
-            ) + BESTFITSUFFIX // TO DO: put R^2 values in a table, esp for faceting
-          : BESTFITTEXT, // ditto - see issue 694
+        r2: el.r2,
+        // display R-square value at legend for no overlay and facet variable
+        name:
+          overlayVariable == null && facetVariable == null
+            ? 'Best fit, R² = ' + el.r2
+            : el.overlayVariableDetails
+            ? fixLabelForNumberVariables(
+                el.overlayVariableDetails.value,
+                overlayVariable
+              ) + BESTFITSUFFIX
+            : BESTFITTEXT,
         mode: 'lines', // no data point is displayed: only line
         line: {
           // use darker color for best fit line

@@ -27,7 +27,7 @@ import { AnalysisState } from '../../core/hooks/analysis';
 
 // Functions
 import { cx } from '../Utils';
-import { Action } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
+import { Action } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUiActions';
 import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 
 interface SubsettingProps {

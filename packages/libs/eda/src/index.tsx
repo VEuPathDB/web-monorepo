@@ -1,6 +1,8 @@
 import './globals'; // Don't move this. There is a brittle dependency that relies on this being first.
 import React, { useEffect } from 'react';
 
+import { partial } from 'lodash';
+
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
@@ -9,6 +11,7 @@ import '@veupathdb/web-common/lib/styles/client.scss';
 import { Props } from '@veupathdb/wdk-client/lib/Components/Layout/Page';
 
 import { DataRestrictionDaemon } from '@veupathdb/study-data-access/lib/data-restriction';
+import { wrapWdkDependencies } from '@veupathdb/study-data-access/lib/shared/wrapWdkDependencies';
 import {
   disableRestriction,
   enableRestriction,
@@ -116,6 +119,7 @@ initialize({
       };
     },
   },
+  wrapWdkDependencies: partial(wrapWdkDependencies, '/eda-dataset-access'),
   endpoint,
   additionalMiddleware: [reduxMiddleware],
 } as any);

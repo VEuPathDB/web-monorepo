@@ -1,4 +1,5 @@
 import { EntityCounts } from '../../hooks/entityCounts';
+import { PromiseHookState } from '../../hooks/promise';
 import { Filter } from '../../types/filter';
 import { VariableDescriptor } from '../../types/variable';
 import {
@@ -21,8 +22,8 @@ export interface VisualizationProps {
   filters?: Filter[];
   starredVariables: VariableDescriptor[];
   toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
-  totalCounts: EntityCounts | undefined;
-  filteredCounts: EntityCounts | undefined;
+  totalCounts: PromiseHookState<EntityCounts>;
+  filteredCounts: PromiseHookState<EntityCounts>;
 }
 
 export type SelectorProps = VisualizationOverview;

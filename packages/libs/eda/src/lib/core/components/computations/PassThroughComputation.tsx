@@ -18,12 +18,13 @@ import { scatterplotVisualization } from '../visualizations/implementations/Scat
 import { barplotVisualization } from '../visualizations/implementations/BarplotVisualization';
 import { boxplotVisualization } from '../visualizations/implementations/BoxplotVisualization';
 import { EntityCounts } from '../../hooks/entityCounts';
+import { PromiseHookState } from '../../hooks/promise';
 
 interface Props {
   analysisState: AnalysisState;
   computationAppOverview: ComputationAppOverview;
-  totalCounts: EntityCounts | undefined;
-  filteredCounts: EntityCounts | undefined;
+  totalCounts: PromiseHookState<EntityCounts>;
+  filteredCounts: PromiseHookState<EntityCounts>;
 }
 
 /**
