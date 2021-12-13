@@ -12,15 +12,16 @@ function sanitaryTextReformat (text: string) {
     .split('\n').join('<br/>');
 }
 
-interface Props {
+type InputProps = React.TextareaHTMLAttributes<HTMLTextAreaElement> & React.InputHTMLAttributes<HTMLInputElement>;
+type InputPropsWithoutOnChange = Omit<InputProps, 'onChange'>;
+
+interface Props extends InputPropsWithoutOnChange {
   value: string;
   onSave: (value: string) => void;
   multiLine?: boolean;
   className?: string;
-  readOnly?: boolean;
   displayValue?: (value: string, handleEdit: () => void) => React.ReactNode
   emptyText?: string;
-  rows?: number;
 }
 
 interface State {
