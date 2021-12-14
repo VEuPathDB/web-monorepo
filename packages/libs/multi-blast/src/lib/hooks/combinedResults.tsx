@@ -103,19 +103,28 @@ export function useCombinedResultProps({
 
   const options = useMesaOptions(sortedRows);
 
-  const tableState = useMemo(
-    () =>
-      map<CombinedResultRows, TableState>((sortedRows) =>
-        MesaState.create({
-          columns,
-          eventHandlers,
-          options,
-          rows: sortedRows.displayable ? sortedRows.rows : [],
-          uiState,
-        })
-      )(sortedRows),
-    [columns, eventHandlers, options, sortedRows, uiState]
-  );
+  const tableState = useMemo((): CombinedResultProps['tableState'] => {
+    const baseTableConfig = {
+      columns,
+      eventHandlers,
+      options,
+      uiState,
+    };
+
+    return isLeft(sortedRows) && sortedRows.left.status === 'too-large'
+      ? right(
+          MesaState.create({
+            ...baseTableConfig,
+            rows: [],
+          })
+        )
+      : map<CombinedResultRows, TableState>((sortedRows) =>
+          MesaState.create({
+            ...baseTableConfig,
+            rows: sortedRows.displayable ? sortedRows.rows : [],
+          })
+        )(sortedRows);
+  }, [columns, eventHandlers, options, sortedRows, uiState]);
 
   const downloadTableOptions: CombinedResultProps['downloadTableOptions'] = useMemo(() => {
     if (isLeft(sortedRows)) {
