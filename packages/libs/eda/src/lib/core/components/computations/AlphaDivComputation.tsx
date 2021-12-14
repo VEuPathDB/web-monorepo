@@ -1,5 +1,4 @@
-import React from 'react';
-import { useMemo } from 'react-redux/node_modules/@types/react';
+import React, { useMemo } from 'react';
 import { ComputationProps } from './Types';
 
 export function AlphaDivComputation(props: ComputationProps) {
