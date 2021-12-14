@@ -363,7 +363,19 @@ export default function SubsettingDataGridModal({
   };
 
   return (
-    <Modal visible={displayModal} onOpen={onModalOpen} onClose={onModalClose}>
+    <Modal
+      visible={displayModal}
+      onOpen={onModalOpen}
+      onClose={onModalClose}
+      styleOverrides={{
+        content: {
+          paddingTop: 0,
+          paddingRight: 50,
+          paddingBottom: 25,
+          paddingLeft: 25,
+        },
+      }}
+    >
       <div key="Title" style={{ marginBottom: 35 }}>
         <div
           style={{

@@ -30,7 +30,15 @@ export default function ShareFromAnalysesList({
       toggleVisible={toggleVisible}
       includeCloseButton={true}
       themeRole="primary"
-      styleOverrides={{ size: { width: 700, height: 400 } }}
+      styleOverrides={{
+        size: { width: 700, height: 400 },
+        content: {
+          paddingTop: 0,
+          paddingRight: 50,
+          paddingBottom: 25,
+          paddingLeft: 25,
+        },
+      }}
     >
       {!userLoggedIn ? (
         <Login toggleVisible={toggleVisible} />

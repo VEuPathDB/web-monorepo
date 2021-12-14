@@ -27,6 +27,14 @@ export function DocumentationContainer(props: PropsWithChildren<{}>) {
       zIndex={10000}
       visible={activeDocument != null}
       onClose={() => setActiveDocument(undefined)}
+      styleOverrides={{
+        content: {
+          paddingTop: 0,
+          paddingRight: 50,
+          paddingBottom: 25,
+          paddingLeft: 25,
+        },
+      }}
     >
       <div
         style={{

@@ -3422,10 +3422,10 @@
     react-modal "^3.14.3"
     react-table "^7.7.0"
 
-"@veupathdb/core-components@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.3.0.tgz#ff7dc9bba9b61aa3588e683b94410f1beb8ec9f1"
-  integrity sha512-blPwWhUmbXHH9bG8d2Ua0ZrnK3qAMilKyJQMUx9lBkgD7PpV+njMWiFTD9PKa5SyNFha+/XZh5kb17ZZJXvNDA==
+"@veupathdb/core-components@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.4.0.tgz#8402ae524839661801657a68be471b11b06bb255"
+  integrity sha512-S6aN81AP/dZoeDSCV8nabhTgXKBzqWuGPNUL1ZKHv+Oe79O7nIOTUwS1nN6uvVPkjY2vuYqqHniI+vIwv20ppg==
   dependencies:
     "@material-ui/core" "^4.12.3"
     "@material-ui/icons" "^4.11.2"
