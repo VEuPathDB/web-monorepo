@@ -33,3 +33,5 @@ export function makeCurrentProvenanceString(provenance: AnalysisProvenance) {
         provenance.current.modificationTime
       )}.)`;
 }
+
+export const ANALYSIS_NAME_MAX_LENGTH = 50;

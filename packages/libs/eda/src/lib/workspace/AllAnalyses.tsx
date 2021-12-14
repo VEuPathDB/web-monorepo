@@ -43,6 +43,7 @@ import SubsettingClient from '../core/api/SubsettingClient';
 import { useDebounce } from '../core/hooks/debouncing';
 import { useWdkStudyRecords } from '../core/hooks/study';
 import {
+  ANALYSIS_NAME_MAX_LENGTH,
   makeCurrentProvenanceString,
   makeOnImportProvenanceString,
 } from '../core/utils/analysis';
@@ -457,6 +458,7 @@ export function AllAnalyses(props: Props) {
                       updateAnalysis(analysisId, { displayName: newName });
                     }
                   }}
+                  maxLength={ANALYSIS_NAME_MAX_LENGTH}
                 />
                 {data.row.analysis.provenance != null && (
                   <>

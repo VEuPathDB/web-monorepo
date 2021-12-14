@@ -3,6 +3,7 @@ import { useHistory, useRouteMatch } from 'react-router';
 import Path from 'path';
 import { Analysis, NewAnalysis } from '../core';
 import { cx } from './Utils';
+import { ANALYSIS_NAME_MAX_LENGTH } from '../core/utils/analysis';
 
 // Components
 import {
@@ -63,6 +64,7 @@ export function AnalysisSummary(props: Props) {
           className={cx('-AnalysisNameEditBox')}
           value={analysis.displayName}
           onSave={(newName) => newName && setAnalysisName(newName)}
+          maxLength={ANALYSIS_NAME_MAX_LENGTH}
         />
       </div>
       <div
