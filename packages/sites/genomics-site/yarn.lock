@@ -903,15 +903,16 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/multi-blast@^0.4.5":
-  version "0.4.5"
-  resolved "https://registry.yarnpkg.com/@veupathdb/multi-blast/-/multi-blast-0.4.5.tgz#4dde0f0e36c69a957b1e48cd22131a4cccf36806"
-  integrity sha512-IYwr+voCLEGamA3HUewI6krFg1bh9uMe+UcH72UNGe/K5eM8cjAkLXATJq357Gp1WuFAyPYetFeCXN47C/UhHQ==
+"@veupathdb/multi-blast@^0.4.6":
+  version "0.4.6"
+  resolved "https://registry.yarnpkg.com/@veupathdb/multi-blast/-/multi-blast-0.4.6.tgz#75df3164f61d6e15a501c12ce7be1b5aae72619f"
+  integrity sha512-SpJ1Cpm6Hgk7YFEVdclAc3LI93SQuVSu8AIgDVSyXWjgh4WeRfHapPlrn0xkepgqLUX8y7UzJfb1hkhqPYFkpQ==
   dependencies:
     "@veupathdb/http-utils" "^1.0.1"
     "@veupathdb/preferred-organisms" "^1.1.5"
     "@veupathdb/wdk-client" "^0.4.12"
     "@veupathdb/web-common" "^0.1.1-alpha.11"
+    file-saver "^2.0.5"
     fp-ts "^2.11.5"
     io-ts "^2.2.16"
     lodash "^4.17.20"
@@ -2628,6 +2629,11 @@ fast-memoize@^2.5.1:
   version "2.5.2"
   resolved "https://registry.yarnpkg.com/fast-memoize/-/fast-memoize-2.5.2.tgz#79e3bb6a4ec867ea40ba0e7146816f6cdce9b57e"
   integrity sha512-Ue0LwpDYErFbmNnZSF0UH6eImUwDmogUO1jyE+JbN2gsQz/jICm1Ve7t9QT0rNSsfJt+Hs4/S3GnsDVjL4HVrw==
+
+file-saver@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/file-saver/-/file-saver-2.0.5.tgz#d61cfe2ce059f414d899e9dd6d4107ee25670c38"
+  integrity sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==
 
 filtered-vector@^1.2.1:
   version "1.2.5"
