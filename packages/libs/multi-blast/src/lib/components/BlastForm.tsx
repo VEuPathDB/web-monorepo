@@ -11,7 +11,11 @@ import { useHistory } from 'react-router';
 
 import { fromPairs, keyBy } from 'lodash';
 
-import { updateDependentParams } from '@veupathdb/wdk-client/lib/Actions/QuestionActions';
+import {
+  ENABLE_SUBMISSION,
+  EnableSubmissionAction,
+  updateDependentParams,
+} from '@veupathdb/wdk-client/lib/Actions/QuestionActions';
 import {
   IconAlt,
   Loading,
@@ -69,6 +73,8 @@ import './BlastForm.scss';
 
 export const blastFormCx = makeClassNameHelper('wdk-QuestionForm');
 
+const EMPTY_QUERY_REGEX = /^\s*$/;
+const SINGLE_QUERY_REGEX = /^(?!(.*>.*>.*)$).*$/s;
 const BLAST_FORM_CONTAINER_NAME = 'MultiBlast';
 
 export interface Props extends DefaultQuestionFormProps {
@@ -321,6 +327,42 @@ function BlastFormWithTransformedQuestion(props: Props) {
     BLAST_FORM_CONTAINER_NAME
   )}`;
 
+  const onSubmitSingleQueryQuestionForm = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+
+      const validationError = EMPTY_QUERY_REGEX.test(sequenceParamProps.value)
+        ? 'Please provide a query sequence.'
+        : !SINGLE_QUERY_REGEX.test(sequenceParamProps.value)
+        ? 'Please limit your query to one sequence.'
+        : null;
+
+      if (validationError != null) {
+        dispatchAction({
+          type: ENABLE_SUBMISSION,
+          payload: {
+            searchName,
+            stepValidation: {
+              isValid: false,
+              level: 'SYNTACTIC',
+              errors: {
+                general: [],
+                byKey: {
+                  [BLAST_QUERY_SEQUENCE_PARAM_NAME]: [validationError],
+                },
+              },
+            },
+          },
+        } as EnableSubmissionAction);
+
+        return false;
+      }
+
+      return true;
+    },
+    [searchName, sequenceParamProps.value, dispatchAction]
+  );
+
   return enabledAlgorithms == null || defaultAdvancedParamsMetadata == null ? (
     <Loading />
   ) : props.isMultiBlast ? (
@@ -336,6 +378,7 @@ function BlastFormWithTransformedQuestion(props: Props) {
       containerClassName={containerClassName}
       parameterElements={parameterElements}
       renderParamGroup={renderBlastParamGroup}
+      onSubmit={onSubmitSingleQueryQuestionForm}
     />
   );
 }
