@@ -199,6 +199,8 @@ export default function Modal({
           css={{ position: 'absolute', top: 15, right: 15 }}
           fontSize={24}
           onClick={() => toggleVisible(!visible)}
+          role='button'
+          aria-label='Close modal button.'
         />
       )}
       <div
