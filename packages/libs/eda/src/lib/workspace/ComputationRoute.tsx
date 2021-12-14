@@ -4,6 +4,7 @@ import { ComponentType } from 'react-redux/node_modules/@types/react';
 import { Route, Switch } from 'react-router';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { AnalysisState, useDataClient } from '../core';
+import { AlphaDivComputation } from '../core/components/computations/AlphaDivComputation';
 import { PassThroughComputation } from '../core/components/computations/PassThroughComputation';
 import { PromiseResult } from '../core/components/Promise';
 import { EntityCounts } from '../core/hooks/entityCounts';
@@ -22,6 +23,7 @@ interface ComputationProps extends Props {
 
 const components: Record<string, ComponentType<ComputationProps>> = {
   pass: PassThroughComputation,
+  alphadiv: AlphaDivComputation,
 };
 
 /**

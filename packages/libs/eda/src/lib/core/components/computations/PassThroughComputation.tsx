@@ -1,11 +1,7 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { AnalysisState } from '../../hooks/analysis';
 import { useToggleStarredVariable } from '../../hooks/starredVariables';
-import {
-  ComputationAppOverview,
-  Visualization,
-} from '../../types/visualization';
+import { Visualization } from '../../types/visualization';
 import { testVisualization } from '../visualizations/implementations/TestVisualization';
 import { histogramVisualization } from '../visualizations/implementations/HistogramVisualization';
 import {
@@ -17,15 +13,9 @@ import { VisualizationType } from '../visualizations/VisualizationTypes';
 import { scatterplotVisualization } from '../visualizations/implementations/ScatterplotVisualization';
 import { barplotVisualization } from '../visualizations/implementations/BarplotVisualization';
 import { boxplotVisualization } from '../visualizations/implementations/BoxplotVisualization';
-import { EntityCounts } from '../../hooks/entityCounts';
-import { PromiseHookState } from '../../hooks/promise';
+import { ComputationProps } from './Types';
 
-interface Props {
-  analysisState: AnalysisState;
-  computationAppOverview: ComputationAppOverview;
-  totalCounts: PromiseHookState<EntityCounts>;
-  filteredCounts: PromiseHookState<EntityCounts>;
-}
+const COMPUTATION_ID = 'pass';
 
 /**
  * Maps a visualization plugin name to a `VisualizationType`
@@ -43,7 +33,7 @@ const visualizationTypes: Record<string, VisualizationType> = {
   boxplot: boxplotVisualization,
 };
 
-export function PassThroughComputation(props: Props) {
+export function PassThroughComputation(props: ComputationProps) {
   const {
     analysisState,
     computationAppOverview,
@@ -64,11 +54,8 @@ export function PassThroughComputation(props: Props) {
 
     // find first "pass" computation
     const computationIndex = computations.findIndex(
-      (computation) =>
-        computation.descriptor.type === computationAppOverview.name
+      (computation) => computation.computationId === COMPUTATION_ID
     );
-
-    // TODO If no computation, create one
 
     return computationIndex === -1
       ? undefined
@@ -76,7 +63,23 @@ export function PassThroughComputation(props: Props) {
           computationIndex,
           computation: computations[computationIndex],
         };
-  }, [analysis, computationAppOverview.name]);
+  }, [analysis]);
+
+  // only run this effect once, since it performs an async operation
+  // which we only want to run once, under a certain condition on load
+  useEffect(() => {
+    if (computationLocation) return;
+    setComputations((computations) =>
+      computations.concat({
+        computationId: COMPUTATION_ID,
+        descriptor: {
+          type: computationAppOverview.name,
+          configuration: undefined,
+        },
+        visualizations: [],
+      })
+    );
+  }, []);
 
   const updateVisualizations = useCallback(
     (
