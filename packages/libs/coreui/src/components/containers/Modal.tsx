@@ -25,7 +25,11 @@ type ModalStyleSpec = {
     secondaryBackgroundColor: CSSProperties['backgroundColor'];
   };
   content: {
-    padding: CSSProperties['padding'];
+    // TODO: It would be better to fully support all valid values.
+    paddingTop: number;
+    paddingRight: number;
+    paddingBottom: number;
+    paddingLeft: number;
   };
   size: {
     width: CSSProperties['width'];
@@ -86,7 +90,12 @@ export default function Modal({
         color: gray[500],
         radius: 7,
       },
-      content: { padding: '0px 50px 0px 25px' },
+      content: {
+        paddingTop: 0,
+        paddingRight: 0,
+        paddingBottom: 0,
+        paddingLeft: 0,
+      },
       header: {
         primaryBackgroundColor: blue[500],
         secondaryBackgroundColor: blue[600],
@@ -194,8 +203,15 @@ export default function Modal({
       )}
       <div
         css={{
-          padding: '0px 50px 25px 25px',
-          height: modalHeight - 25 - (title ? 90 : 0),
+          paddingTop: componentStyle.content.paddingTop,
+          paddingRight: componentStyle.content.paddingRight,
+          paddingBottom: componentStyle.content.paddingBottom,
+          paddingLeft: componentStyle.content.paddingLeft,
+          height:
+            modalHeight -
+            componentStyle.content.paddingTop -
+            componentStyle.content.paddingBottom -
+            (title ? 90 : 0),
         }}
       >
         {children}

@@ -22,7 +22,7 @@ const ModalContent = ({
   >
     <div>
       <p css={[{ color: gray[500] }, secondaryFont]}>
-        This is an example full-screen modal.
+        This is an example of a modal.
       </p>
       <p css={[{ color: gray[500] }, secondaryFont]}>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
@@ -79,40 +79,65 @@ export const Basic = Template.bind({});
 Basic.args = {
   visible: true,
   onOpen: () => console.log('Modal Opened'),
-};
+  styleOverrides: {
+    content: {
+      paddingTop: 0,
+      paddingRight: 50,
+      paddingBottom: 25,
+      paddingLeft: 25,
+    },
+  },
+} as ModalProps;
 
 export const WithTitle = Template.bind({});
 WithTitle.args = {
-  visible: true,
+  ...Basic.args,
   title: 'Share Large Analysis',
-  onOpen: () => console.log('Modal Opened'),
-};
+} as ModalProps;
 
 export const IncludeCloseButton = Template.bind({});
 IncludeCloseButton.args = {
-  visible: true,
+  ...Basic.args,
   title: 'Modal With Close Button',
   includeCloseButton: true,
-  onOpen: () => console.log('Modal Opened'),
-};
+} as ModalProps;
 
 export const SpecificSize = Template.bind({});
 SpecificSize.args = {
-  visible: true,
+  ...IncludeCloseButton.args,
   title: 'Specifically Sized Modal',
   includeCloseButton: true,
-  onOpen: () => console.log('Modal Opened'),
-
   styleOverrides: {
     size: {
       width: 700,
       height: 500,
     },
+    content: {
+      paddingTop: 0,
+      paddingRight: 50,
+      paddingBottom: 25,
+      paddingLeft: 25,
+    },
   },
-};
+} as ModalProps;
 
 export const UsingTheme = Template.bind({});
 UsingTheme.args = {
   ...IncludeCloseButton.args,
+  title: 'Using Theme Styling',
   themeRole: 'primary',
-};
+} as ModalProps;
+
+export const CustomContentPadding = Template.bind({});
+CustomContentPadding.args = {
+  ...IncludeCloseButton.args,
+  title: 'Customized Content Padding',
+  styleOverrides: {
+    content: {
+      paddingBottom: 100,
+      paddingLeft: 50,
+      paddingRight: 50,
+      paddingTop: 100,
+    },
+  },
+} as ModalProps;
