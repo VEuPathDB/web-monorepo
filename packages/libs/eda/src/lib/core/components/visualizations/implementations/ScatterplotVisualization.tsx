@@ -119,8 +119,9 @@ const plotContainerStyles = {
 const plotSpacingOptions = {};
 
 const modalPlotContainerStyles = {
-  width: '75vw',
-  height: '65vh',
+  width: '100%',
+  height: '100%',
+  margin: 'auto',
 };
 
 // define XYPlotDataWithCoverage
