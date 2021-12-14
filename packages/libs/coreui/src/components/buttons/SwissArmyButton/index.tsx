@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { ButtonStyleSpec, SwissArmyButtonVariantProps } from '..';
 import typography from '../../../styleDefinitions/typography';
-import { UITheme } from '../../theming/types';
 
 export type SwissArmyButtonProps = Omit<
   SwissArmyButtonVariantProps,
@@ -93,6 +92,7 @@ export default function SwissArmyButton({
           css={[
             typography.pre,
             {
+              pointerEvents: 'none',
               position: 'absolute',
               zIndex: 1000,
               top: buttonHeight + 5,
