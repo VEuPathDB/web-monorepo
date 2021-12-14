@@ -1,6 +1,6 @@
 // load Boxplot component
 import Boxplot, { BoxplotProps } from '@veupathdb/components/lib/plots/Boxplot';
-import FacetedPlot from '@veupathdb/components/lib/plots/FacetedPlot';
+import FacetedBoxplot from '@veupathdb/components/lib/plots/facetedPlots/FacetedBoxplot';
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
@@ -84,17 +84,12 @@ const plotContainerStyles = {
   boxShadow: '1px 1px 4px #00000066',
 };
 
-const facetedPlotContainerStyles = {
-  height: plotContainerStyles.height / 1.5,
-  width: plotContainerStyles.width / 2,
-};
-
 const plotSpacingOptions = {};
-const facetedPlotSpacingOptions = {
-  marginRight: 15,
-  marginLeft: 15,
-  marginBotton: 10,
-  marginTop: 50,
+
+const modalPlotContainerStyles = {
+  width: '100%',
+  height: '100%',
+  margin: 'auto',
 };
 
 export const boxplotVisualization: VisualizationType = {
@@ -337,6 +332,10 @@ function BoxplotViz(props: VisualizationProps) {
       studyId,
       filters,
       dataClient,
+      xAxisVariable,
+      yAxisVariable,
+      overlayVariable,
+      facetVariable,
       // using vizConfig only causes issue with onCheckedLegendItemsChange
       vizConfig.xAxisVariable,
       vizConfig.yAxisVariable,
@@ -433,7 +432,7 @@ function BoxplotViz(props: VisualizationProps) {
           }
         : undefined;
     }
-  }, [data]);
+  }, [data, yAxisVariable?.type]);
 
   // custom legend items for checkbox
   const legendItems: LegendItemsProps[] = useMemo(() => {
@@ -489,12 +488,8 @@ function BoxplotViz(props: VisualizationProps) {
       // data.value
       data={data.value}
       updateThumbnail={updateThumbnail}
-      containerStyles={
-        isFaceted(data.value) ? facetedPlotContainerStyles : plotContainerStyles
-      }
-      spacingOptions={
-        isFaceted(data.value) ? facetedPlotSpacingOptions : plotSpacingOptions
-      }
+      containerStyles={!isFaceted(data.value) ? plotContainerStyles : undefined}
+      spacingOptions={!isFaceted(data.value) ? plotSpacingOptions : undefined}
       orientation={'vertical'}
       displayLegend={false}
       independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-axis'}
@@ -504,7 +499,7 @@ function BoxplotViz(props: VisualizationProps) {
       showDependentAxisTickLabel={true}
       dependentAxisRange={dependentAxisRange}
       showMean={true}
-      interactive={true}
+      interactive={!isFaceted(data.value) ? true : false}
       showSpinner={data.pending || filteredCounts.pending}
       showRawData={true}
       legendTitle={axisLabelWithUnit(overlayVariable)}
@@ -664,8 +659,7 @@ function BoxplotWithControls({
   return (
     <>
       {isFaceted(data) ? (
-        <FacetedPlot
-          component={Boxplot}
+        <FacetedBoxplot
           data={{
             ...data,
             facets: data.facets.map(({ label, data }) => ({
@@ -673,7 +667,13 @@ function BoxplotWithControls({
               data: data?.series,
             })),
           }}
-          props={boxplotComponentProps}
+          componentProps={boxplotComponentProps}
+          modalComponentProps={{
+            independentAxisLabel: boxplotComponentProps.independentAxisLabel,
+            dependentAxisLabel: boxplotComponentProps.dependentAxisLabel,
+            displayLegend: boxplotComponentProps.displayLegend,
+            containerStyles: modalPlotContainerStyles,
+          }}
           facetedPlotRef={plotRef}
           // for custom legend: pass checkedLegendItems to PlotlyPlot
           checkedLegendItems={checkedLegendItems}

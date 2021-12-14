@@ -94,7 +94,7 @@ import PlotLegend, {
   LegendItemsProps,
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
-import FacetedPlot from '@veupathdb/components/lib/plots/FacetedPlot';
+import FacetedXYPlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedXYPlot';
 // for converting rgb() to rgba()
 import * as ColorMath from 'color-math';
 // R-square table component
@@ -116,18 +116,12 @@ const plotContainerStyles = {
   boxShadow: '1px 1px 4px #00000066',
 };
 
-const facetedPlotContainerStyles = {
-  height: plotContainerStyles.height / 1.75,
-  width: plotContainerStyles.width / 2,
-};
-
 const plotSpacingOptions = {};
 
-const facetedPlotSpacingOptions = {
-  marginTop: 30,
-  marginBottom: 40,
-  marginLeft: 50,
-  marginRight: 20,
+const modalPlotContainerStyles = {
+  width: '100%',
+  height: '100%',
+  margin: 'auto',
 };
 
 // define XYPlotDataWithCoverage
@@ -406,6 +400,10 @@ function ScatterplotViz(props: VisualizationProps) {
       studyId,
       filters,
       dataClient,
+      xAxisVariable,
+      yAxisVariable,
+      overlayVariable,
+      facetVariable,
       // simply using vizConfig causes issue with onCheckedLegendItemsChange
       // it is because vizConfig also contains vizConfig.checkedLegendItems
       vizConfig.xAxisVariable,
@@ -670,7 +668,12 @@ function ScatterplotViz(props: VisualizationProps) {
           };
         })
       : [];
-  }, [data]);
+  }, [
+    data,
+    vizConfig.overlayVariable,
+    vizConfig.showMissingness,
+    vizConfig.valueSpecConfig,
+  ]);
 
   useEffect(() => {
     if (data != null) {
@@ -685,14 +688,10 @@ function ScatterplotViz(props: VisualizationProps) {
       data={data.value?.dataSetProcess}
       updateThumbnail={updateThumbnail}
       containerStyles={
-        isFaceted(data.value?.dataSetProcess)
-          ? facetedPlotContainerStyles
-          : plotContainerStyles
+        !isFaceted(data.value?.dataSetProcess) ? plotContainerStyles : undefined
       }
       spacingOptions={
-        isFaceted(data.value?.dataSetProcess)
-          ? facetedPlotSpacingOptions
-          : plotSpacingOptions
+        !isFaceted(data.value?.dataSetProcess) ? plotSpacingOptions : undefined
       }
       // title={'Scatter plot'}
       displayLegend={false}
@@ -709,7 +708,7 @@ function ScatterplotViz(props: VisualizationProps) {
       onValueSpecChange={onValueSpecChange}
       // send visualization.type here
       vizType={visualization.descriptor.type}
-      interactive={true}
+      interactive={!isFaceted(data.value) ? true : false}
       showSpinner={data.pending}
       // add plotOptions to control the list of plot options
       plotOptions={['Raw', 'Smoothed mean with raw', 'Best fit line with raw']}
@@ -935,10 +934,15 @@ function ScatterplotWithControls({
   return (
     <>
       {isFaceted(data) ? (
-        <FacetedPlot
+        <FacetedXYPlot
           data={data}
-          props={scatterplotProps}
-          component={XYPlot}
+          componentProps={scatterplotProps}
+          modalComponentProps={{
+            independentAxisLabel: scatterplotProps.independentAxisLabel,
+            dependentAxisLabel: scatterplotProps.dependentAxisLabel,
+            displayLegend: scatterplotProps.displayLegend,
+            containerStyles: modalPlotContainerStyles,
+          }}
           facetedPlotRef={plotRef}
           checkedLegendItems={checkedLegendItems}
         />
