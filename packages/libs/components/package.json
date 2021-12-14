@@ -14,7 +14,7 @@
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@types/d3": "^7.1.0",
     "@types/date-arithmetic": "^4.1.1",
-    "@veupathdb/core-components": "^0.2.46",
+    "@veupathdb/core-components": "^0.2.62",
     "@visx/gradient": "^1.0.0",
     "@visx/group": "^1.0.0",
     "@visx/hierarchy": "^1.0.0",
