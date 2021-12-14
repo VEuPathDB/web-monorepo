@@ -92,6 +92,7 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
                   interactive={true}
                   {...modalComponentProps}
                   title={label}
+                  useResizeHandler
                 />
               );
               setModalIsOpen(true);
@@ -132,7 +133,6 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
           includeCloseButton
           toggleVisible={setModalIsOpen}
         >
-          <div style={{ height: 50 }} />
           {modalPlot}
         </Modal>
       )}
