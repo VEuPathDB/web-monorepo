@@ -6,7 +6,7 @@ import { Analysis, NewAnalysis } from '../core';
 import { ActionIconButton } from './ActionIconButton';
 import { Button, Icon } from '@material-ui/core';
 import { cx } from './Utils';
-import { ANALYSIS_NAME_MAX_LENGTH } from './AllAnalyses';
+import { ANALYSIS_NAME_MAX_LENGTH } from '../core/utils/analysis';
 
 interface Props {
   analysis: Analysis | NewAnalysis;

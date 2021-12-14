@@ -43,6 +43,7 @@ import SubsettingClient from '../core/api/SubsettingClient';
 import { useDebounce } from '../core/hooks/debouncing';
 import { useWdkStudyRecords } from '../core/hooks/study';
 import {
+  ANALYSIS_NAME_MAX_LENGTH,
   makeCurrentProvenanceString,
   makeOnImportProvenanceString,
 } from '../core/utils/analysis';
@@ -78,7 +79,6 @@ const useStyles = makeStyles({
 });
 
 const UNKNOWN_DATASET_NAME = 'Unknown study';
-export const ANALYSIS_NAME_MAX_LENGTH = 50;
 
 export function AllAnalyses(props: Props) {
   const { analysisClient, exampleAnalysesAuthor } = props;
