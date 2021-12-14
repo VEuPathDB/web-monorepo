@@ -110,7 +110,7 @@ export function useCombinedResultProps({
           columns,
           eventHandlers,
           options,
-          rows: sortedRows.rows,
+          rows: sortedRows.displayable ? sortedRows.rows : [],
           uiState,
         })
       )(sortedRows),
@@ -118,7 +118,7 @@ export function useCombinedResultProps({
   );
 
   const downloadTableOptions: CombinedResultProps['downloadTableOptions'] = useMemo(() => {
-    if (isLeft(sortedRows) || !sortedRows.right.displayable) {
+    if (isLeft(sortedRows)) {
       return {
         offer: false,
       };
@@ -507,11 +507,10 @@ function useRawCombinedResultRows(
 
   return useMemo(
     () =>
-      map<CombinedResultRow[], CombinedResultRows>((rawRows) =>
-        rawRows.length > MAX_ROWS
-          ? { displayable: false, rows: [] }
-          : { displayable: true, rows: rawRows }
-      )(rawRows),
+      map<CombinedResultRow[], CombinedResultRows>((rawRows) => ({
+        displayable: rawRows.length <= MAX_ROWS,
+        rows: rawRows,
+      }))(rawRows),
     [rawRows]
   );
 }
@@ -582,9 +581,8 @@ function useMesaOptions(sortedRows: Either<ErrorDetails, CombinedResultRows>) {
               <div className="EmptyState-BodyWrapper">
                 <p>Your combined result is too large for us to display here.</p>
                 <p>
-                  If you would like to view your combined results, please use
-                  the <span className="InlineHeader">Download all results</span>{' '}
-                  dropdown to download them in a format of your choice.
+                  If you would like to view your combined result, please use the
+                  download options above.
                 </p>
               </div>
             </div>
