@@ -14,7 +14,7 @@ import { memoize } from 'lodash';
 import { FacetedData, FacetedPlotRef, PlotRef } from '../types/plots';
 import { PlotProps } from './PlotlyPlot';
 
-import { FullScreenModal } from '@veupathdb/core-components';
+import Modal from '@veupathdb/core-components/dist/components/containers/Modal';
 
 type ComponentWithPlotRef<P> = ComponentType<
   PropsWithoutRef<P> & RefAttributes<PlotRef>
@@ -127,24 +127,14 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
         })}
       </div>
       {modalComponentProps && (
-        <FullScreenModal visible={modalIsOpen}>
-          <button
-            onClick={() => setModalIsOpen(false)}
-            style={{
-              position: 'absolute',
-              top: 30,
-              right: 30,
-              backgroundColor: 'white',
-              cursor: 'pointer',
-              border: 'none',
-              zIndex: 2000,
-            }}
-            title="Close expanded plot"
-          >
-            <i className="fa fa-times fa-lg"></i>
-          </button>
-          <div>{modalPlot}</div>
-        </FullScreenModal>
+        <Modal
+          visible={modalIsOpen}
+          includeCloseButton
+          toggleVisible={setModalIsOpen}
+        >
+          <div style={{ height: 50 }} />
+          {modalPlot}
+        </Modal>
       )}
     </>
   );
