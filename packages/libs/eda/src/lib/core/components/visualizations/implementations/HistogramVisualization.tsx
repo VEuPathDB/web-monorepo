@@ -100,7 +100,7 @@ const spacingOptions = {
 };
 
 const modalPlotContainerStyles = {
-  width: '100%',
+  width: '85%',
   height: '100%',
   margin: 'auto',
 };
