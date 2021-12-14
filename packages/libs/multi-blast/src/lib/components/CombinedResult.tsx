@@ -43,17 +43,19 @@ export function CombinedResult({
   ) : (
     <div className={cx()}>
       <Mesa state={tableState.right}>
-        {hitQueryCount != null &&
-          hitSubjectCount != null &&
-          totalQueryCount != null && (
-            <div className="ResultSummary">
-              {hitQueryCount} of your {totalQueryCount} query sequences hit{' '}
-              {hitSubjectCount}{' '}
-              {hitSubjectCount === 1
-                ? hitTypeDisplayName
-                : hitTypeDisplayNamePlural}
-            </div>
-          )}
+        <div className="ResultSummary">
+          {hitQueryCount != null &&
+            hitSubjectCount != null &&
+            totalQueryCount != null && (
+              <>
+                {hitQueryCount} of your {totalQueryCount} query sequences hit{' '}
+                {hitSubjectCount}{' '}
+                {hitSubjectCount === 1
+                  ? hitTypeDisplayName
+                  : hitTypeDisplayNamePlural}
+              </>
+            )}
+        </div>
         <div className={cx('--DownloadOptions')}>
           <ReportSelect jobId={jobId} placeholder="Download all results" />
           {downloadTableOptions.offer && (
