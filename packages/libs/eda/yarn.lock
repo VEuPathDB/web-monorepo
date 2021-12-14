@@ -1288,6 +1288,17 @@
     "@emotion/utils" "0.11.3"
     "@emotion/weak-memoize" "0.2.5"
 
+"@emotion/cache@^11.6.0":
+  version "11.6.0"
+  resolved "https://registry.yarnpkg.com/@emotion/cache/-/cache-11.6.0.tgz#65fbdbbe4382f1991d8b20853c38e63ecccec9a1"
+  integrity sha512-ElbsWY1KMwEowkv42vGo0UPuLgtPYfIs9BxxVrmvsaJVvktknsHYYlx5NQ5g6zLDcOTyamlDc7FkRg2TAcQDKQ==
+  dependencies:
+    "@emotion/memoize" "^0.7.4"
+    "@emotion/sheet" "^1.1.0"
+    "@emotion/utils" "^1.0.0"
+    "@emotion/weak-memoize" "^0.2.5"
+    stylis "^4.0.10"
+
 "@emotion/cache@^11.7.1":
   version "11.7.1"
   resolved "https://registry.yarnpkg.com/@emotion/cache/-/cache-11.7.1.tgz#08d080e396a42e0037848214e8aa7bf879065539"
@@ -1342,13 +1353,26 @@
   resolved "https://registry.yarnpkg.com/@emotion/memoize/-/memoize-0.7.5.tgz#2c40f81449a4e554e9fc6396910ed4843ec2be50"
   integrity sha512-igX9a37DR2ZPGYtV6suZ6whr8pTFtyHL3K/oLUotxpSVO2ASaprmAe2Dkq7tBo7CRY7MMDrAa9nuQP9/YG8FxQ==
 
-"@emotion/react@^11.4.1", "@emotion/react@^11.7.0":
+"@emotion/react@^11.4.1":
   version "11.7.1"
   resolved "https://registry.yarnpkg.com/@emotion/react/-/react-11.7.1.tgz#3f800ce9b20317c13e77b8489ac4a0b922b2fe07"
   integrity sha512-DV2Xe3yhkF1yT4uAUoJcYL1AmrnO5SVsdfvu+fBuS7IbByDeTVx9+wFmvx9Idzv7/78+9Mgx2Hcmr7Fex3tIyw==
   dependencies:
     "@babel/runtime" "^7.13.10"
     "@emotion/cache" "^11.7.1"
+    "@emotion/serialize" "^1.0.2"
+    "@emotion/sheet" "^1.1.0"
+    "@emotion/utils" "^1.0.0"
+    "@emotion/weak-memoize" "^0.2.5"
+    hoist-non-react-statics "^3.3.1"
+
+"@emotion/react@^11.7.0":
+  version "11.7.0"
+  resolved "https://registry.yarnpkg.com/@emotion/react/-/react-11.7.0.tgz#b179da970ac0e8415de3ac165deadf8d9c4bf89f"
+  integrity sha512-WL93hf9+/2s3cA1JVJlz8+Uy6p6QWukqQFOm2OZO5ki51hfucHMOmbSjiyC3t2Y4RI8XUmBoepoc/24ny/VBbA==
+  dependencies:
+    "@babel/runtime" "^7.13.10"
+    "@emotion/cache" "^11.6.0"
     "@emotion/serialize" "^1.0.2"
     "@emotion/sheet" "^1.1.0"
     "@emotion/utils" "^1.0.0"
@@ -3273,7 +3297,7 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.0.0.tgz#90ca79640ffbb195a87d4d65cd4b2f92342f8b76"
   integrity sha512-qfKu1z9gaaHdMgRGaZBiayuIh92ishsf14lR+Rj61CJF131XWq3+5e2VyLyOdKsYJ1EreAxgyC/0upIBEzwQJw==
 
-"@veupathdb/components@0.11.2":
+"@veupathdb/components@^0.11.1":
   version "0.11.2"
   resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.2.tgz#c300bd6b2e4a059f359a4fd21c8dee32740a6d10"
   integrity sha512-QPyiBw6Mcg2XgIqAUjo70YgnSnRcPa85jeVIqiCCikqsODbd5EpCJ2/Y6eRGdnb74VmY45vaGsiuaDibuXzc4w==
@@ -3311,10 +3335,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/components@^0.11.1", "@veupathdb/components@^0.11.2":
-  version "0.11.4"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.4.tgz#10b155df90d475c908c719244009c5349b535463"
-  integrity sha512-p0EuzBCTcdqr4EnJ1DIlGpHKKKj/kwT+fE9sjASw721FmMfh9z1D+7MPFyrFyoJLioLJUYXewSgNppWwjEG9+g==
+"@veupathdb/components@^0.11.2", "@veupathdb/components@^0.11.5":
+  version "0.11.5"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.5.tgz#d2fac3860e5b928654b56078f0c896735d29de67"
+  integrity sha512-+Fmhdl2X7s+GG0rk5ks5eRTW/nKdU+58ZNjSZdAVmQotuqe8fKiwjgcKA2nJKKawX+i7QoOqqlXpN8CAQcnNBQ==
   dependencies:
     "@emotion/react" "^11.7.0"
     "@material-ui/core" "^4.11.2"
@@ -3322,7 +3346,7 @@
     "@material-ui/lab" "^4.0.0-alpha.57"
     "@types/d3" "^7.1.0"
     "@types/date-arithmetic" "^4.1.1"
-    "@veupathdb/core-components" "^0.2.46"
+    "@veupathdb/core-components" "^0.2.62"
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
     "@visx/hierarchy" "^1.0.0"
@@ -3386,7 +3410,7 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/core-components@^0.2.45", "@veupathdb/core-components@^0.2.46":
+"@veupathdb/core-components@^0.2.45", "@veupathdb/core-components@^0.2.62":
   version "0.2.63"
   resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.2.63.tgz#3aad35c9a4321048f4207edac7c5aaa8382d0da6"
   integrity sha512-JWRSGb9Wyh92LP94jBf44/7t9RP81Z0jxX9WXSatg9cmNl3JKeCABtKVdzkpD5wklCj774f59GCTWe4LvHO95w==
@@ -16647,7 +16671,7 @@ stylehacks@^4.0.0:
     postcss "^7.0.0"
     postcss-selector-parser "^3.0.0"
 
-stylis@4.0.13:
+stylis@4.0.13, stylis@^4.0.10:
   version "4.0.13"
   resolved "https://registry.yarnpkg.com/stylis/-/stylis-4.0.13.tgz#f5db332e376d13cc84ecfe5dace9a2a51d954c91"
   integrity sha512-xGPXiFVl4YED9Jh7Euv2V220mriG9u4B2TA6Ybjc1catrstKD2PpIdU3U0RKpkVBC2EhmL/F0sPCr9vrFTNRag==
