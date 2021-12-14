@@ -3368,10 +3368,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/components@^0.11.5":
-  version "0.11.5"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.5.tgz#d2fac3860e5b928654b56078f0c896735d29de67"
-  integrity sha512-+Fmhdl2X7s+GG0rk5ks5eRTW/nKdU+58ZNjSZdAVmQotuqe8fKiwjgcKA2nJKKawX+i7QoOqqlXpN8CAQcnNBQ==
+"@veupathdb/components@^0.11.6":
+  version "0.11.6"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.6.tgz#336335227fc1c61e3a5badcc1ff9fbe6c197f6a6"
+  integrity sha512-DQCgqMEKTWWm+m1pg8QdZG57L7/2a+eM0OqSfL4Sr6Gq7JHTaUIXOdPEZBwzvKjDDvWVUFOefGf0dQlxRm1pWA==
   dependencies:
     "@emotion/react" "^11.7.0"
     "@material-ui/core" "^4.11.2"
@@ -3379,7 +3379,7 @@
     "@material-ui/lab" "^4.0.0-alpha.57"
     "@types/d3" "^7.1.0"
     "@types/date-arithmetic" "^4.1.1"
-    "@veupathdb/core-components" "^0.2.62"
+    "@veupathdb/core-components" "^0.4.0"
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
     "@visx/hierarchy" "^1.0.0"
@@ -3456,10 +3456,10 @@
     react-modal "^3.14.3"
     react-table "^7.7.0"
 
-"@veupathdb/core-components@^0.2.62":
-  version "0.2.63"
-  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.2.63.tgz#3aad35c9a4321048f4207edac7c5aaa8382d0da6"
-  integrity sha512-JWRSGb9Wyh92LP94jBf44/7t9RP81Z0jxX9WXSatg9cmNl3JKeCABtKVdzkpD5wklCj774f59GCTWe4LvHO95w==
+"@veupathdb/core-components@^0.4.0":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.4.1.tgz#0f3f2f37865feeae96286018aea7517f33e96b84"
+  integrity sha512-Ahov9nr831juzz3LNg/IDL2MvkhnBh+Twicz1P/pwlyhLXvJqUnAsmnZzNaZgkXVUgh1c2meb++qXgxHJj+Zxg==
   dependencies:
     "@material-ui/core" "^4.12.3"
     "@material-ui/icons" "^4.11.2"
