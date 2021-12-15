@@ -630,7 +630,6 @@ function HistogramPlotWithControls({
   filteredCounts,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
-  const barLayout = 'stack';
   const displayLibraryControls = false;
   const opacity = 100;
 
@@ -677,7 +676,6 @@ function HistogramPlotWithControls({
           opacity={opacity}
           displayLibraryControls={displayLibraryControls}
           showValues={false}
-          barLayout={barLayout}
           // for custom legend: pass checkedLegendItems to PlotlyPlot
           checkedLegendItems={checkedLegendItems}
         />
