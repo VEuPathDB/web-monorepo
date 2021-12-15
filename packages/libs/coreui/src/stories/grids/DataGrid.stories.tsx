@@ -3,7 +3,14 @@ import CancelIcon from '@material-ui/icons/Cancel';
 
 import { useCallback, useState } from 'react';
 
-import { gray, green, orange, purple, red } from '../../definitions/colors';
+import {
+  gray,
+  green,
+  orange,
+  purple,
+  red,
+  cyan,
+} from '../../definitions/colors';
 import { columns, fetchGridData, ROWS } from './data';
 import DataGrid, { DataGridProps } from '../../components/grids/DataGrid';
 import UIThemeProvider from '../../components/theming/UIThemeProvider';
@@ -17,7 +24,7 @@ const Template: Story<DataGridProps> = (args) => (
   <UIThemeProvider
     theme={{
       palette: {
-        primary: { hue: green, level: 600 },
+        primary: { hue: cyan, level: 600 },
         secondary: { hue: purple, level: 500 },
       },
     }}

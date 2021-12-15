@@ -1,9 +1,8 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
 
 import Checkbox, { CheckboxProps } from '../../components/widgets/Checkbox';
-import { TableDownload, Download } from '../../components/icons';
 import UIThemeProvider from '../../components/theming/UIThemeProvider';
-import { green, purple } from '../../definitions/colors';
+import { green, purple, teal } from '../../definitions/colors';
 import { useEffect, useState } from 'react';
 
 export default {
@@ -22,7 +21,7 @@ const Template: Story<CheckboxProps> = (args) => {
     <UIThemeProvider
       theme={{
         palette: {
-          primary: { hue: green, level: 600 },
+          primary: { hue: teal, level: 600 },
           secondary: { hue: purple, level: 500 },
         },
       }}
