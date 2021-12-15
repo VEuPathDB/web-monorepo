@@ -35,7 +35,7 @@ export default function Checkbox({
   styleOverrides,
 }: CheckboxProps) {
   const defaultStyle: CheckboxStyleSpec = {
-    size: 12,
+    size: 18,
     color: gray[300],
     selectedColor: blue[500],
     border: { width: 2, color: gray[300], radius: 2 },
