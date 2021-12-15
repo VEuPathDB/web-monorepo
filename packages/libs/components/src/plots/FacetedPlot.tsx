@@ -78,6 +78,7 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
         {data?.facets.map(({ data, label }, index) => {
           const sharedProps = {
             data: data,
+            ...componentProps,
             // pass checkedLegendItems to PlotlyPlot
             checkedLegendItems: checkedLegendItems,
             showNoDataOverlay: data == null,
@@ -120,7 +121,6 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
                 }}
                 displayLegend={false}
                 interactive={false}
-                {...componentProps}
                 title={label}
               />
             </div>
