@@ -33,7 +33,7 @@ import {
   map,
   keys,
 } from 'lodash';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   HistogramRequestParams,
   HistogramResponse,
@@ -80,6 +80,8 @@ import PlotLegend, {
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 import { EntityCounts } from '../../../hooks/entityCounts';
+//DKDK a custom hook to preserve the status of checked legend items
+import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
 
 type HistogramDataWithCoverageStatistics = (
   | HistogramData
@@ -100,7 +102,7 @@ const spacingOptions = {
 };
 
 const modalPlotContainerStyles = {
-  width: '100%',
+  width: '85%',
   height: '100%',
   margin: 'auto',
 };
@@ -203,6 +205,8 @@ function HistogramViz(props: VisualizationProps) {
         facetVariable,
         binWidth: keepBin ? vizConfig.binWidth : undefined,
         binWidthTimeUnit: keepBin ? vizConfig.binWidthTimeUnit : undefined,
+        // set undefined for variable change
+        checkedLegendItems: undefined,
       });
     },
     [updateVizConfig, vizConfig]
@@ -223,20 +227,31 @@ function HistogramViz(props: VisualizationProps) {
   );
 
   // prettier-ignore
+  // allow 2nd parameter of resetCheckedLegendItems for checking legend status
   const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof HistogramConfig) => (newValue?: ValueType) => {
-      updateVizConfig({
-        [key]: newValue,
-      });
+    < ValueType,>(key: keyof HistogramConfig, resetCheckedLegendItems?: boolean) => (newValue?: ValueType) => {
+      const newPartialConfig = resetCheckedLegendItems
+        ? {
+            [key]: newValue,
+            checkedLegendItems: undefined
+          }
+        : {
+          [key]: newValue
+        };
+       updateVizConfig(newPartialConfig);
     },
     [updateVizConfig]
   );
+
   const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
     'dependentAxisLogScale'
   );
   const onValueSpecChange = onChangeHandlerFactory<ValueSpec>('valueSpec');
+
+  // set checkedLegendItems: undefined for the change of showMissingness
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
-    'showMissingness'
+    'showMissingness',
+    true
   );
 
   // for custom legend: vizconfig.checkedLegendItems
@@ -461,13 +476,11 @@ function HistogramViz(props: VisualizationProps) {
       : [];
   }, [data]);
 
-  // use this to set all checked
-  useEffect(() => {
-    if (data != null) {
-      // use this to set all checked
-      onCheckedLegendItemsChange(legendItems.map((item) => item.label));
-    }
-  }, [data, legendItems]);
+  // set checkedLegendItems
+  const checkedLegendItems = useCheckedLegendItemsStatus(
+    legendItems,
+    vizConfig.checkedLegendItems
+  );
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -557,7 +570,7 @@ function HistogramViz(props: VisualizationProps) {
         }
         // for custom legend passing checked state in the  checkbox to PlotlyPlot
         legendItems={legendItems}
-        checkedLegendItems={vizConfig.checkedLegendItems}
+        checkedLegendItems={checkedLegendItems}
         onCheckedLegendItemsChange={onCheckedLegendItemsChange}
         totalCounts={totalCounts}
         filteredCounts={filteredCounts}

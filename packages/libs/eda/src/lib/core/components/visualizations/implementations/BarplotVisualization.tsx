@@ -14,7 +14,7 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import PluginError from '../PluginError';
 
 // need to set for Barplot
@@ -62,6 +62,8 @@ import PlotLegend, {
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 // import { gray } from '../colors';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
+//DKDK a custom hook to preserve the status of checked legend items
+import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
 
 type BarplotDataWithStatistics = (BarplotData | FacetedData<BarplotData>) &
   CoverageStatistics;
@@ -77,7 +79,7 @@ const plotContainerStyles = {
 const plotSpacingOptions = {};
 
 const modalPlotContainerStyles = {
-  width: '100%',
+  width: '85%',
   height: '100%',
   margin: 'auto',
 };
@@ -175,26 +177,39 @@ function BarplotViz(props: VisualizationProps) {
         xAxisVariable,
         overlayVariable,
         facetVariable,
+        // set undefined for variable change
+        checkedLegendItems: undefined,
       });
     },
     [updateVizConfig]
   );
 
   // prettier-ignore
+  // allow 2nd parameter of resetCheckedLegendItems for checking legend status
   const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof BarplotConfig) => (newValue?: ValueType) => {
-      updateVizConfig({
-        [key]: newValue,
-      });
+    < ValueType,>(key: keyof BarplotConfig, resetCheckedLegendItems?: boolean) => (newValue?: ValueType) => {
+      const newPartialConfig = resetCheckedLegendItems
+        ? {
+            [key]: newValue,
+            checkedLegendItems: undefined
+          }
+        : {
+          [key]: newValue
+        };
+       updateVizConfig(newPartialConfig);
     },
     [updateVizConfig]
   );
+
   const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
     'dependentAxisLogScale'
   );
   const onValueSpecChange = onChangeHandlerFactory<ValueSpec>('valueSpec');
+
+  // set checkedLegendItems: undefined for the change of showMissingness
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
-    'showMissingness'
+    'showMissingness',
+    true
   );
 
   // for custom legend: vizconfig.checkedLegendItems
@@ -397,12 +412,11 @@ function BarplotViz(props: VisualizationProps) {
       : [];
   }, [data]);
 
-  // use this to set all checked
-  useEffect(() => {
-    if (data != null) {
-      onCheckedLegendItemsChange(legendItems.map((item) => item.label));
-    }
-  }, [data, legendItems]);
+  // set checkedLegendItems
+  const checkedLegendItems = useCheckedLegendItemsStatus(
+    legendItems,
+    vizConfig.checkedLegendItems
+  );
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
@@ -444,14 +458,14 @@ function BarplotViz(props: VisualizationProps) {
           }}
           facetedPlotRef={plotRef}
           // for custom legend
-          checkedLegendItems={vizConfig.checkedLegendItems}
+          checkedLegendItems={checkedLegendItems}
         />
       ) : (
         <Barplot
           data={data.value}
           ref={plotRef}
           // for custom legend: pass checkedLegendItems to PlotlyPlot
-          checkedLegendItems={vizConfig.checkedLegendItems}
+          checkedLegendItems={checkedLegendItems}
           {...plotProps}
         />
       )}
@@ -482,7 +496,7 @@ function BarplotViz(props: VisualizationProps) {
   const legendNode = legendItems != null && !data.pending && data != null && (
     <PlotLegend
       legendItems={legendItems}
-      checkedLegendItems={vizConfig.checkedLegendItems}
+      checkedLegendItems={checkedLegendItems}
       legendTitle={axisLabelWithUnit(overlayVariable)}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
     />
