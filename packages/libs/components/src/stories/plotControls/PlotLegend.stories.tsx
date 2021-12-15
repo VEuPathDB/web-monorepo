@@ -215,6 +215,178 @@ const legendItems = [
   },
 ];
 
+// test data for long legend items: taken from Scatterplot with Smoothed mean
+const longLegendItems = [
+  {
+    label: 'Bangladesh',
+    marker: 'circle',
+    markerColor: 'rgb(136,34,85)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'India',
+    marker: 'circle',
+    markerColor: 'rgb(136,204,238)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Kenya',
+    marker: 'circle',
+    markerColor: 'rgb(153,153,51)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Mali',
+    marker: 'circle',
+    markerColor: 'rgb(51,34,136)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Mozambique',
+    marker: 'circle',
+    markerColor: 'rgb(68,170,153)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Pakistan',
+    marker: 'circle',
+    markerColor: 'rgb(221,204,119)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'The Gambia',
+    marker: 'circle',
+    markerColor: 'rgb(204,102,119)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Bangladesh, Smoothed mean',
+    marker: 'line',
+    markerColor: 'rgb(136,34,85)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Bangladesh, 95% Confidence interval',
+    marker: 'fainted',
+    markerColor: 'rgb(136,34,85)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'India, Smoothed mean',
+    marker: 'line',
+    markerColor: 'rgb(136,204,238)',
+    hasData: false,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'India, 95% Confidence interval',
+    marker: 'fainted',
+    markerColor: 'rgb(136,204,238)',
+    hasData: false,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Kenya, Smoothed mean',
+    marker: 'line',
+    markerColor: 'rgb(153,153,51)',
+    hasData: false,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Kenya, 95% Confidence interval',
+    marker: 'fainted',
+    markerColor: 'rgb(153,153,51)',
+    hasData: false,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Mali, Smoothed mean',
+    marker: 'line',
+    markerColor: 'rgb(51,34,136)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Mali, 95% Confidence interval',
+    marker: 'fainted',
+    markerColor: 'rgb(51,34,136)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Mozambique, Smoothed mean',
+    marker: 'line',
+    markerColor: 'rgb(68,170,153)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Mozambique, 95% Confidence interval',
+    marker: 'fainted',
+    markerColor: 'rgb(68,170,153)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Pakistan, Smoothed mean',
+    marker: 'line',
+    markerColor: 'rgb(221,204,119)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Pakistan, 95% Confidence interval',
+    marker: 'fainted',
+    markerColor: 'rgb(221,204,119)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'The Gambia, Smoothed mean',
+    marker: 'line',
+    markerColor: 'rgb(204,102,119)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'The Gambia, 95% Confidence interval',
+    marker: 'fainted',
+    markerColor: 'rgb(204,102,119)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+];
+
 // set some default props
 const plotWidth = 1000;
 const plotHeight = 600;
@@ -257,6 +429,28 @@ export const HistogramPlotLegend = () => {
         onCheckedLegendItemsChange={setCheckedLegendItems}
         // pass legend title
         legendTitle={'Age group'}
+      />
+    </div>
+  );
+};
+
+// custom legend with histogram
+export const TestLongLegendItems = () => {
+  // long legend test
+  const [checkedLongLegendItems, setCheckedLongLegendItems] = useState<
+    string[]
+  >(longLegendItems.map((item) => item.label));
+
+  return (
+    <div>
+      {/* testing long legend items: taken from a Scatter plot with smoothed mean */}
+      <h5># Testing long legend items</h5>
+      <PlotLegend
+        legendItems={longLegendItems}
+        checkedLegendItems={checkedLongLegendItems}
+        onCheckedLegendItemsChange={setCheckedLongLegendItems}
+        // pass legend title
+        legendTitle={'Country'}
       />
     </div>
   );
