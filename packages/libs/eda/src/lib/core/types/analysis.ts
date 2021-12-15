@@ -49,15 +49,14 @@ export type AnalysisBase = t.TypeOf<typeof AnalysisBase>;
 export const AnalysisBase = t.intersection([
   t.type({
     /**
-     * Not sure yet, but this probably refers to the study for
-     * which the analysis is taking place. COULD also be a unique ID
-     * for the analysis.
+     * Unique identifier of the study for which the analysis is taking place.
      */
     studyId: t.string,
     studyVersion: t.string,
     apiVersion: t.string,
+    /** Indicates if the analysis should be publicly available. */
     isPublic: t.boolean,
-    /** User supplied same for the analysis. */
+    /** User supplied name for the analysis. */
     displayName: t.string,
   }),
   t.partial({
