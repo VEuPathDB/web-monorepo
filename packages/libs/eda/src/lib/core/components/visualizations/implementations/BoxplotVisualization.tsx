@@ -6,7 +6,7 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 // need to set for Boxplot
 import DataClient, {
@@ -70,6 +70,8 @@ import PlotLegend, {
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
+//DKDK a custom hook to preserve the status of checked legend items
+import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
 
 type BoxplotData = { series: BoxplotSeries };
 
@@ -175,6 +177,8 @@ function BoxplotViz(props: VisualizationProps) {
         yAxisVariable,
         overlayVariable,
         facetVariable,
+        // set undefined for variable change
+        checkedLegendItems: undefined,
       });
     },
     [updateVizConfig]
@@ -215,16 +219,26 @@ function BoxplotViz(props: VisualizationProps) {
   ]);
 
   // prettier-ignore
+  // allow 2nd parameter of resetCheckedLegendItems for checking legend status
   const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof BoxplotConfig) => (newValue?: ValueType) => {
-      updateVizConfig({
-        [key]: newValue,
-      });
+    < ValueType,>(key: keyof BoxplotConfig, resetCheckedLegendItems?: boolean) => (newValue?: ValueType) => {
+      const newPartialConfig = resetCheckedLegendItems
+        ? {
+            [key]: newValue,
+            checkedLegendItems: undefined
+          }
+        : {
+          [key]: newValue
+        };
+       updateVizConfig(newPartialConfig);
     },
     [updateVizConfig]
   );
+
+  // set checkedLegendItems: undefined for the change of showMissingness
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
-    'showMissingness'
+    'showMissingness',
+    true
   );
 
   // for custom legend: vizconfig.checkedLegendItems
@@ -475,13 +489,11 @@ function BoxplotViz(props: VisualizationProps) {
       : [];
   }, [data]);
 
-  // use this to set all checked
-  useEffect(() => {
-    if (data != null) {
-      // use this to set all checked
-      onCheckedLegendItemsChange(legendItems.map((item) => item.label));
-    }
-  }, [data, legendItems]);
+  // set checkedLegendItems
+  const checkedLegendItems = useCheckedLegendItemsStatus(
+    legendItems,
+    vizConfig.checkedLegendItems
+  );
 
   const plotNode = (
     <BoxplotWithControls
@@ -505,7 +517,7 @@ function BoxplotViz(props: VisualizationProps) {
       legendTitle={axisLabelWithUnit(overlayVariable)}
       // for custom legend passing checked state in the  checkbox to PlotlyPlot
       legendItems={legendItems}
-      checkedLegendItems={vizConfig.checkedLegendItems}
+      checkedLegendItems={checkedLegendItems}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
     />
   );
@@ -513,7 +525,7 @@ function BoxplotViz(props: VisualizationProps) {
   const legendNode = legendItems != null && !data.pending && data != null && (
     <PlotLegend
       legendItems={legendItems}
-      checkedLegendItems={vizConfig.checkedLegendItems}
+      checkedLegendItems={checkedLegendItems}
       legendTitle={axisLabelWithUnit(overlayVariable)}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
     />

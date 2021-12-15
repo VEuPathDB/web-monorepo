@@ -5,7 +5,7 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 // need to set for Scatterplot
 
@@ -99,6 +99,8 @@ import FacetedXYPlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedX
 import * as ColorMath from 'color-math';
 // R-square table component
 import { ScatterplotRsquareTable } from '../../ScatterplotRsquareTable';
+//DKDK a custom hook to preserve the status of checked legend items
+import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -265,23 +267,38 @@ function ScatterplotViz(props: VisualizationProps) {
           findEntityAndVariable(yAxisVariable)?.variable.type === 'date'
             ? 'Raw'
             : vizConfig.valueSpecConfig,
+        // set undefined for variable change
+        checkedLegendItems: undefined,
       });
     },
     [updateVizConfig, findEntityAndVariable, vizConfig.valueSpecConfig]
   );
 
   // prettier-ignore
+  // allow 2nd parameter of resetCheckedLegendItems for checking legend status
   const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof ScatterplotConfig) => (newValue?: ValueType) => {
-      updateVizConfig({
-        [key]: newValue,
-      });
+    < ValueType,>(key: keyof ScatterplotConfig, resetCheckedLegendItems?: boolean) => (newValue?: ValueType) => {
+      const newPartialConfig = resetCheckedLegendItems
+        ? {
+            [key]: newValue,
+            checkedLegendItems: undefined
+          }
+        : {
+          [key]: newValue
+        };
+       updateVizConfig(newPartialConfig);
     },
     [updateVizConfig]
   );
-  const onValueSpecChange = onChangeHandlerFactory<string>('valueSpecConfig');
+
+  // set checkedLegendItems: undefined for the change of both plot options and showMissingness
+  const onValueSpecChange = onChangeHandlerFactory<string>(
+    'valueSpecConfig',
+    true
+  );
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
-    'showMissingness'
+    'showMissingness',
+    true
   );
 
   // for vizconfig.checkedLegendItems
@@ -675,12 +692,11 @@ function ScatterplotViz(props: VisualizationProps) {
     vizConfig.valueSpecConfig,
   ]);
 
-  useEffect(() => {
-    if (data != null) {
-      // use this to set all legend checked at first
-      onCheckedLegendItemsChange(legendItems.map((item) => item.label));
-    }
-  }, [data, legendItems]);
+  // set checkedLegendItems: not working well with plot options
+  const checkedLegendItems = useCheckedLegendItemsStatus(
+    legendItems,
+    vizConfig.checkedLegendItems
+  );
 
   const plotNode = (
     <ScatterplotWithControls
@@ -724,7 +740,7 @@ function ScatterplotViz(props: VisualizationProps) {
       dependentValueType={NumberVariable.is(yAxisVariable) ? 'number' : 'date'}
       legendTitle={axisLabelWithUnit(overlayVariable)}
       // pass checked state of legend checkbox to PlotlyPlot
-      checkedLegendItems={vizConfig.checkedLegendItems}
+      checkedLegendItems={checkedLegendItems}
       // for vizconfig.checkedLegendItems
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
     />
@@ -733,7 +749,7 @@ function ScatterplotViz(props: VisualizationProps) {
   const legendNode = !data.pending && data.value != null && (
     <PlotLegend
       legendItems={legendItems}
-      checkedLegendItems={vizConfig.checkedLegendItems}
+      checkedLegendItems={checkedLegendItems}
       legendTitle={axisLabelWithUnit(overlayVariable)}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
     />
