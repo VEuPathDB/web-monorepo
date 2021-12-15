@@ -1410,7 +1410,7 @@
     "@typescript-eslint/types" "4.8.1"
     eslint-visitor-keys "^2.0.0"
 
-"@veupathdb/components@^0.11.6":
+"@veupathdb/components@^0.11.1":
   version "0.11.6"
   resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.6.tgz#336335227fc1c61e3a5badcc1ff9fbe6c197f6a6"
   integrity sha512-DQCgqMEKTWWm+m1pg8QdZG57L7/2a+eM0OqSfL4Sr6Gq7JHTaUIXOdPEZBwzvKjDDvWVUFOefGf0dQlxRm1pWA==
