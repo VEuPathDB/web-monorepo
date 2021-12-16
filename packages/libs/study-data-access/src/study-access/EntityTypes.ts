@@ -252,6 +252,7 @@ export type ActionAuthorization = TypeOf<typeof actionAuthorization>;
 
 export const permissionEntryBase = type({
   studyId: string,
+  sha1Hash: string,
   actionAuthorization
 });
 
