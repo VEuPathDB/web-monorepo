@@ -17,9 +17,6 @@
   ],
   "dependencies": {
     "@veupathdb/http-utils": "^1.0.1",
-    "@veupathdb/preferred-organisms": "^1.1.5",
-    "@veupathdb/wdk-client": "^0.4.12",
-    "@veupathdb/web-common": "^0.1.1-alpha.11",
     "file-saver": "^2.0.5",
     "fp-ts": "^2.11.5",
     "io-ts": "^2.2.16",
@@ -29,6 +26,11 @@
     "react-redux": "^7.1.5",
     "react-select": "^3.0.4",
     "redux": "^4.0.0"
+  },
+  "peerDependencies": {
+    "@veupathdb/preferred-organisms": ">=1.1.6",
+    "@veupathdb/wdk-client": ">=0.5.2",
+    "@veupathdb/web-common": ">=0.2.0"
   },
   "scripts": {
     "start": "veupathdb-react-scripts start",
@@ -60,9 +62,12 @@
     "@types/react-router": "^5.1.17",
     "@veupathdb/browserslist-config": "^1.0.0",
     "@veupathdb/eslint-config": "^1.0.0",
+    "@veupathdb/preferred-organisms": "^1.1.6",
     "@veupathdb/prettier-config": "^1.0.0",
     "@veupathdb/react-scripts": "^1.1.0",
     "@veupathdb/tsconfig": "^1.0.0",
+    "@veupathdb/wdk-client": "^0.5.2",
+    "@veupathdb/web-common": "^0.2.0",
     "http-proxy-middleware": "^1.0.6",
     "husky": "4",
     "jquery": "link:./shims/jquery",
