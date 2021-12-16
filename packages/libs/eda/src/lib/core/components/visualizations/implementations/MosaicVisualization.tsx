@@ -558,25 +558,25 @@ function TwoByTwoStats(props?: {
         <tbody>
           <tr>
             <th></th>
-            <th>Value</th>
-            <th>95% confidence interval</th>
+            <th className="numeric">Value</th>
+            <th className="numeric">95% confidence interval</th>
           </tr>
           <tr>
             <th>P-value</th>
-            <td>
+            <td className="numeric">
               {props.pValue != null ? quantizePvalue(props.pValue) : 'N/A'}
             </td>
-            <td>N/A</td>
+            <td className="numeric">N/A</td>
           </tr>
           <tr>
             <th>Odds ratio</th>
-            <td>{props.oddsRatio ?? 'N/A'}</td>
-            <td>{props.orInterval ?? 'N/A'}</td>
+            <td className="numeric">{props.oddsRatio ?? 'N/A'}</td>
+            <td className="numeric">{props.orInterval ?? 'N/A'}</td>
           </tr>
           <tr>
             <th>Relative risk</th>
-            <td>{props.relativeRisk ?? 'N/A'}</td>
-            <td>{props.rrInterval ?? 'N/A'}</td>
+            <td className="numeric">{props.relativeRisk ?? 'N/A'}</td>
+            <td className="numeric">{props.rrInterval ?? 'N/A'}</td>
           </tr>
         </tbody>
       </table>
@@ -595,17 +595,17 @@ function ContTableStats(props?: {
         <tbody>
           <tr>
             <th>P-value</th>
-            <td>
+            <td className="numeric">
               {props.pValue != null ? quantizePvalue(props.pValue) : 'N/A'}
             </td>
           </tr>
           <tr>
             <th>Degrees of freedom</th>
-            <td>{props.degreesFreedom ?? 'N/A'}</td>
+            <td className="numeric">{props.degreesFreedom ?? 'N/A'}</td>
           </tr>
           <tr>
             <th>Chi-squared</th>
-            <td>{props.chisq ?? 'N/A'}</td>
+            <td className="numeric">{props.chisq ?? 'N/A'}</td>
           </tr>
         </tbody>
       </table>
