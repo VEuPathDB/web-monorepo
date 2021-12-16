@@ -97,11 +97,20 @@ export function ContingencyTable(props: ContingencyTableProps) {
               {props.dependentVariable}
             </th>
             {data.independentLabels.map((label) => (
-              <th key={label} className="contingency-table_column-label">
+              <th
+                key={label}
+                className="contingency-table_column-label"
+                style={{ textAlign: 'right' }}
+              >
                 {label}
               </th>
             ))}
-            <th className="contingency-table_totals-column-header">Total</th>
+            <th
+              className="contingency-table_totals-column-header"
+              style={{ textAlign: 'right' }}
+            >
+              Total
+            </th>
           </tr>
           {data.values.map((row, i) => (
             <tr key={data.dependentLabels[i]}>
@@ -112,11 +121,15 @@ export function ContingencyTable(props: ContingencyTableProps) {
                 <td
                   key={`${data.dependentLabels[i]}-${data.independentLabels[j]}`}
                   className="contingency-table_value"
+                  style={{ textAlign: 'right' }}
                 >
                   {value.toLocaleString()}
                 </td>
               ))}
-              <td className="contingency-table_totals-column-value">
+              <td
+                className="contingency-table_totals-column-value"
+                style={{ textAlign: 'right' }}
+              >
                 {rowSums[i].toLocaleString()}
               </td>
             </tr>
@@ -127,11 +140,15 @@ export function ContingencyTable(props: ContingencyTableProps) {
               <td
                 key={data.independentLabels[i]}
                 className="contingency-table_totals-row-value"
+                style={{ textAlign: 'right' }}
               >
                 {_.sum(col).toLocaleString()}
               </td>
             ))}
-            <td className="contingency-table_grand-total">
+            <td
+              className="contingency-table_grand-total"
+              style={{ textAlign: 'right' }}
+            >
               {_.sum(rowSums).toLocaleString()}
             </td>
           </tr>
