@@ -5,8 +5,9 @@ import { ceil, uniqBy } from 'lodash';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { H5, H3 } from '@veupathdb/core-components/dist/components/headers';
 import DataGrid from '@veupathdb/core-components/dist/components/grids/DataGrid';
-import FullScreenModal from '@veupathdb/core-components/dist/components/modals/FullScreenModal';
-import SwissArmyButton from '@veupathdb/core-components/dist/components/buttons/SwissArmyButton';
+import { Modal } from '@veupathdb/core-components';
+
+import { MesaButton } from '@veupathdb/core-components/dist/components/buttons';
 import {
   Download,
   Close,
@@ -362,10 +363,18 @@ export default function SubsettingDataGridModal({
   };
 
   return (
-    <FullScreenModal
+    <Modal
       visible={displayModal}
       onOpen={onModalOpen}
       onClose={onModalClose}
+      styleOverrides={{
+        content: {
+          paddingTop: 0,
+          paddingRight: 50,
+          paddingBottom: 25,
+          paddingLeft: 25,
+        },
+      }}
     >
       <div key="Title" style={{ marginBottom: 35 }}>
         <div
@@ -381,7 +390,7 @@ export default function SubsettingDataGridModal({
           />
           <Close
             fontSize={32}
-            fill={colors.GRAY[500]}
+            fill={colors.gray[500]}
             onClick={() => toggleDisplay()}
           />
         </div>
@@ -432,16 +441,14 @@ export default function SubsettingDataGridModal({
             marginBottom: 15,
           }}
         >
-          <SwissArmyButton
+          <MesaButton
             text="Download"
             icon={Download}
-            stylePreset="mesa"
             styleOverrides={{ container: { marginRight: 10 } }}
             onPress={downloadData}
           />
-          <SwissArmyButton
+          <MesaButton
             text={displayVariableTree ? 'Close Selector' : 'Select Variables'}
-            stylePreset="mesa"
             // @ts-ignore
             icon={displayVariableTree ? CloseFullscreen : SettingsIcon}
             size="medium"
@@ -454,6 +461,6 @@ export default function SubsettingDataGridModal({
         {renderDataGridArea()}
         {renderVariableSelectionArea()}
       </div>
-    </FullScreenModal>
+    </Modal>
   );
 }

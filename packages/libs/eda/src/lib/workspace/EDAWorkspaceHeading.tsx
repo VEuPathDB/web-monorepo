@@ -7,7 +7,8 @@ import {
   Download,
   Table,
 } from '@veupathdb/core-components/dist/components/icons';
-import SwissArmyButton from '@veupathdb/core-components/dist/components/buttons/SwissArmyButton';
+
+import FloatingButton from '@veupathdb/core-components/dist/components/buttons/FloatingButton';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { AnalysisNameDialog } from './AnalysisNameDialog';
 import AddIcon from '@material-ui/icons/Add';
@@ -53,14 +54,13 @@ export function EDAWorkspaceHeading({
     <>
       <div className={cx('-Heading')}>
         <h1>{safeHtml(studyRecord.displayName)}</h1>
-        <div className={cx('-Linkouts')}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           {/* {studyRecord.attributes.bulk_download_url && (
             <div>
-              <SwissArmyButton
+              <FloatingButton
                 text="Download"
                 tooltip="Download study files"
                 icon={Download}
-                stylePreset="borderless"
                 onPress={() => {
                   attemptAction(Action.download, {
                     studyId: studyRecord.id[0].value,
@@ -74,10 +74,10 @@ export function EDAWorkspaceHeading({
             </div>
           )} */}
           <div>
-            <SwissArmyButton
+            <FloatingButton
+              themeRole="primary"
               text="New Analysis"
               tooltip="Create a new analysis"
-              stylePreset="borderless"
               size="medium"
               // @ts-ignore
               icon={AddIcon}
@@ -93,10 +93,10 @@ export function EDAWorkspaceHeading({
             />
           </div>
           <div>
-            <SwissArmyButton
+            <FloatingButton
+              themeRole="primary"
               text="My analyses"
               tooltip="View all your analyses of this study"
-              stylePreset="borderless"
               icon={Table}
               onPress={() =>
                 history.push(
