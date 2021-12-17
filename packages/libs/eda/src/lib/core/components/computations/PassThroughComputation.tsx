@@ -17,6 +17,7 @@ import { VisualizationType } from '../visualizations/VisualizationTypes';
 import { scatterplotVisualization } from '../visualizations/implementations/ScatterplotVisualization';
 import { barplotVisualization } from '../visualizations/implementations/BarplotVisualization';
 import { boxplotVisualization } from '../visualizations/implementations/BoxplotVisualization';
+import { mapVisualization } from '../visualizations/implementations/MapVisualization';
 import { EntityCounts } from '../../hooks/entityCounts';
 import { PromiseHookState } from '../../hooks/promise';
 
@@ -41,6 +42,7 @@ const visualizationTypes: Record<string, VisualizationType> = {
   // densityplot: scatterplotVisualization,
   barplot: barplotVisualization,
   boxplot: boxplotVisualization,
+  ['map-markers']: mapVisualization,
 };
 
 export function PassThroughComputation(props: Props) {
