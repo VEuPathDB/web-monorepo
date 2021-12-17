@@ -84,80 +84,78 @@ export default function Subsetting({
   // This will give you the count of rows for the current entity.
   const filteredEntityCount = filteredCounts && filteredCounts[entity.id];
 
-  throw new Error('Uh-oh! A fabricated error has appeared!');
-
-  // return (
-  //   <div className={cx('-Subsetting')}>
-  //     <SubsettingDataGridModal
-  //       displayModal={isDownloadModalOpen}
-  //       toggleDisplay={() => setIsDownloadModalOpen(false)}
-  //       analysisState={analysisState}
-  //       entities={entities}
-  //       currentEntityID={entityId}
-  //       currentEntityRecordCounts={{
-  //         total: totalEntityCount,
-  //         filtered: filteredEntityCount,
-  //       }}
-  //     />
-  //     <div className="Variables">
-  //       <VariableTree
-  //         rootEntity={entities[0]}
-  //         entityId={entity.id}
-  //         starredVariables={analysisState.analysis?.descriptor.starredVariables}
-  //         toggleStarredVariable={toggleStarredVariable}
-  //         variableId={variable.id}
-  //         onChange={(variable) => {
-  //           if (variable) {
-  //             const { entityId, variableId } = variable;
-  //             history.replace(
-  //               makeVariableLink({ entityId, variableId }, studyMetadata)
-  //             );
-  //           } else history.replace('..');
-  //         }}
-  //       />
-  //     </div>
-  //     <div className="FilterChips">
-  //       <FilterChipList
-  //         filters={filters}
-  //         removeFilter={(filter) =>
-  //           analysisState.analysis &&
-  //           analysisState.setFilters(
-  //             analysisState.analysis.descriptor.subset.descriptor.filter(
-  //               (f) => f !== filter
-  //             )
-  //           )
-  //         }
-  //         entities={entities}
-  //         selectedEntityId={entity.id}
-  //         selectedVariableId={variable.id}
-  //       />
-  //     </div>
-  //     <div className="TabularDownload">
-  //       {/* <MesaButton
-  //         text="View and download"
-  //         tooltip={`View and download current subset of ${
-  //           entity.displayNamePlural ?? entity.displayName
-  //         }`}
-  //         icon={TableDownload}
-  //         onPress={() => {
-  //           attemptAction(Action.download, {
-  //             studyId: studyRecord.id[0].value,
-  //             onAllow: () => {
-  //               setIsDownloadModalOpen(true);
-  //             },
-  //           });
-  //         }}
-  //       /> */}
-  //     </div>
-  //     <div className="Filter">
-  //       <VariableDetails
-  //         entity={entity}
-  //         variable={variable}
-  //         analysisState={analysisState}
-  //         totalEntityCount={totalEntityCount}
-  //         filteredEntityCount={filteredEntityCount}
-  //       />
-  //     </div>
-  //   </div>
-  // );
+  return (
+    <div className={cx('-Subsetting')}>
+      <SubsettingDataGridModal
+        displayModal={isDownloadModalOpen}
+        toggleDisplay={() => setIsDownloadModalOpen(false)}
+        analysisState={analysisState}
+        entities={entities}
+        currentEntityID={entityId}
+        currentEntityRecordCounts={{
+          total: totalEntityCount,
+          filtered: filteredEntityCount,
+        }}
+      />
+      <div className="Variables">
+        <VariableTree
+          rootEntity={entities[0]}
+          entityId={entity.id}
+          starredVariables={analysisState.analysis?.descriptor.starredVariables}
+          toggleStarredVariable={toggleStarredVariable}
+          variableId={variable.id}
+          onChange={(variable) => {
+            if (variable) {
+              const { entityId, variableId } = variable;
+              history.replace(
+                makeVariableLink({ entityId, variableId }, studyMetadata)
+              );
+            } else history.replace('..');
+          }}
+        />
+      </div>
+      <div className="FilterChips">
+        <FilterChipList
+          filters={filters}
+          removeFilter={(filter) =>
+            analysisState.analysis &&
+            analysisState.setFilters(
+              analysisState.analysis.descriptor.subset.descriptor.filter(
+                (f) => f !== filter
+              )
+            )
+          }
+          entities={entities}
+          selectedEntityId={entity.id}
+          selectedVariableId={variable.id}
+        />
+      </div>
+      <div className="TabularDownload">
+        {/* <MesaButton
+          text="View and download"
+          tooltip={`View and download current subset of ${
+            entity.displayNamePlural ?? entity.displayName
+          }`}
+          icon={TableDownload}
+          onPress={() => {
+            attemptAction(Action.download, {
+              studyId: studyRecord.id[0].value,
+              onAllow: () => {
+                setIsDownloadModalOpen(true);
+              },
+            });
+          }}
+        /> */}
+      </div>
+      <div className="Filter">
+        <VariableDetails
+          entity={entity}
+          variable={variable}
+          analysisState={analysisState}
+          totalEntityCount={totalEntityCount}
+          filteredEntityCount={filteredEntityCount}
+        />
+      </div>
+    </div>
+  );
 }
