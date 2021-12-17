@@ -72,6 +72,7 @@ import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOn
 import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
 //DKDK a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
+import { useVizConfig } from '../../../hooks/visualizations';
 
 type BoxplotData = { series: BoxplotSeries };
 
@@ -149,18 +150,11 @@ function BoxplotViz(props: VisualizationProps) {
   );
   const dataClient: DataClient = useDataClient();
 
-  const vizConfig = useMemo(() => {
-    return pipe(
-      BoxplotConfig.decode(visualization.descriptor.configuration),
-      getOrElse((): t.TypeOf<typeof BoxplotConfig> => createDefaultConfig())
-    );
-  }, [visualization.descriptor.configuration]);
-
-  const updateVizConfig = useCallback(
-    (newConfig: Partial<BoxplotConfig>) => {
-      updateConfiguration({ ...vizConfig, ...newConfig });
-    },
-    [updateConfiguration, vizConfig]
+  const [vizConfig, updateVizConfig] = useVizConfig(
+    visualization.descriptor.configuration,
+    BoxplotConfig,
+    createDefaultConfig,
+    updateConfiguration
   );
 
   // TODO Handle facetVariable

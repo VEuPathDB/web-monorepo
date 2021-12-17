@@ -12,6 +12,13 @@ import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/
 
 // viz-related imports
 import { PlotLayout } from '../../layouts/PlotLayout';
+import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
+import { useMemo } from 'react';
+import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import DataClient from '../../../api/DataClient';
+import { getOrElse } from 'fp-ts/lib/Either';
+import { pipe } from 'fp-ts/lib/function';
+import { useVizConfig } from '../../../hooks/visualizations';
 
 export const mapVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -50,6 +57,35 @@ const MapConfig = t.partial({
 });
 
 function MapViz(props: VisualizationProps) {
+  const {
+    computation,
+    visualization,
+    updateConfiguration,
+    updateThumbnail,
+    filters,
+    dataElementConstraints,
+    dataElementDependencyOrder,
+    starredVariables,
+    toggleStarredVariable,
+    totalCounts,
+    filteredCounts,
+  } = props;
+  const studyMetadata = useStudyMetadata();
+  const { id: studyId } = studyMetadata;
+  const entities = useMemo(
+    () =>
+      Array.from(preorder(studyMetadata.rootEntity, (e) => e.children || [])),
+    [studyMetadata]
+  );
+  const dataClient: DataClient = useDataClient();
+
+  const [vizConfig, updateVizConfig] = useVizConfig(
+    visualization.descriptor.configuration,
+    MapConfig,
+    createDefaultConfig,
+    updateConfiguration
+  );
+
   const plotNode = (
     <MapVEuMap
       viewport={{ center: [13, 16], zoom: 4 }}
