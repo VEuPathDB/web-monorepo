@@ -1,14 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { cx } from './Utils';
-import { AnalysisSummary } from './AnalysisSummary';
-import {
-  AnalysisState,
-  EntityDiagram,
-  Status,
-  useStudyMetadata,
-  useStudyRecord,
-} from '../core';
-import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
+import { uniq } from 'lodash';
 import {
   Redirect,
   Route,
@@ -16,29 +7,55 @@ import {
   useLocation,
   useRouteMatch,
 } from 'react-router';
-import { ComputationRoute } from './ComputationRoute';
-import { DefaultVariableRedirect } from './DefaultVariableRedirect';
-import { Subsetting } from './Subsetting';
+
+// Functions
+import { getAnalysisId } from '../core/utils/analysis';
+import { cx } from './Utils';
+
+// Definitions
+import { AnalysisState } from '../core';
+import { Status } from '../core';
+
+// Hooks
 import { useEntityCounts } from '../core/hooks/entityCounts';
-import { uniq } from 'lodash';
-import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
-import GlobalFiltersDialog from '../core/components/GlobalFiltersDialog';
 import { usePrevious } from '../core/hooks/previousValue';
 import { useStudyEntities } from '../core/hooks/study';
-import { getAnalysisId } from '../core/utils/analysis';
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
-// import ShowHideVariableContextProvider
-import ShowHideVariableContextProvider from '../core/utils/show-hide-variable-context';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { useStudyMetadata, useStudyRecord } from '../core';
+
+// Components
+import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
+import { AnalysisSummary } from './AnalysisSummary';
+import { EntityDiagram } from '../core';
+import { ComputationRoute } from './ComputationRoute';
+import { DefaultVariableRedirect } from './DefaultVariableRedirect';
+import Subsetting from './Subsetting';
+import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
+import GlobalFiltersDialog from '../core/components/GlobalFiltersDialog';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import ShowHideVariableContextProvider from '../core/utils/show-hide-variable-context';
+import NotesTab from './NotesTab';
+import ShareFromAnalysis from './sharing/ShareFromAnalysis';
 
 interface Props {
   analysisState: AnalysisState;
   hideCopyAndSave?: boolean;
 }
 
-export function AnalysisPanel(props: Props) {
-  const { analysisState, hideCopyAndSave = false } = props;
+/**
+ * Welcome citizen! You have finally transvered the many layered labyrinth
+ * of components to the place where an analysis is actually rendered.
+ *
+ * However, you aren't really done yet... there is some interesting
+ * stuff going on here... it is a component that is displaying UI but
+ * also acting as a router that toggles some of the displayed content.
+ */
+export function AnalysisPanel({
+  analysisState,
+  hideCopyAndSave = false,
+}: Props) {
   const studyRecord = useStudyRecord();
+
   const {
     status,
     analysis,
@@ -48,6 +65,7 @@ export function AnalysisPanel(props: Props) {
     deleteAnalysis,
     setFilters,
   } = analysisState;
+
   const { url: routeBase } = useRouteMatch();
   const totalCounts = useEntityCounts();
   const filters = analysis?.descriptor.subset.descriptor;
@@ -56,9 +74,13 @@ export function AnalysisPanel(props: Props) {
   const entities = useStudyEntities(studyMetadata.rootEntity);
   const filteredEntities = uniq(filters?.map((f) => f.entityId));
   const location = useLocation();
+
   const [lastVarPath, setLastVarPath] = useState('');
   const [lastVizPath, setLastVizPath] = useState('');
   const [globalFiltersDialogOpen, setGlobalFiltersDialogOpen] = useState(false);
+  const [sharingModalVisible, setSharingModalVisible] = useState<boolean>(
+    false
+  );
 
   const analysisId = getAnalysisId(analysis);
   const previousAnalysisId = usePrevious(analysisId);
@@ -103,6 +125,11 @@ export function AnalysisPanel(props: Props) {
   if (analysis == null) return <Loading />;
   return (
     <ShowHideVariableContextProvider>
+      <ShareFromAnalysis
+        visible={sharingModalVisible}
+        toggleVisible={setSharingModalVisible}
+        analysisState={analysisState}
+      />
       <div className={cx('-Analysis')}>
         <AnalysisSummary
           analysis={analysis}
@@ -114,6 +141,7 @@ export function AnalysisPanel(props: Props) {
             setGlobalFiltersDialogOpen(!globalFiltersDialogOpen)
           }
           globalFiltersDialogOpen={globalFiltersDialogOpen}
+          displaySharingModal={() => setSharingModalVisible(true)}
         />
         <GlobalFiltersDialog
           open={globalFiltersDialogOpen}
@@ -178,6 +206,10 @@ export function AnalysisPanel(props: Props) {
               exact: false,
               replace: true,
             },
+            {
+              display: 'Notes',
+              route: '/notes',
+            },
           ]}
         />
         <Route
@@ -207,12 +239,27 @@ export function AnalysisPanel(props: Props) {
           render={(
             props: RouteComponentProps<{ entityId: string; variableId: string }>
           ) => (
-            <Subsetting {...props.match.params} analysisState={analysisState} />
+            <Subsetting
+              {...props.match.params}
+              analysisState={analysisState}
+              totalCounts={totalCounts.value}
+              filteredCounts={filteredCounts.value}
+            />
           )}
         />
         <Route
           path={`${routeBase}/visualizations`}
-          render={() => <ComputationRoute analysisState={analysisState} />}
+          render={() => (
+            <ComputationRoute
+              analysisState={analysisState}
+              totalCounts={totalCounts}
+              filteredCounts={filteredCounts}
+            />
+          )}
+        />
+        <Route
+          path={`${routeBase}/notes`}
+          render={() => <NotesTab analysisState={analysisState} />}
         />
       </div>
     </ShowHideVariableContextProvider>

@@ -8,7 +8,7 @@ import { ReactNode } from 'react';
 
 // Material UI CSS declarations
 const useStyles = makeStyles((theme) => ({
-  root: {
+  chips: {
     display: 'flex',
     flexWrap: 'wrap',
     '& > *:not(:last-of-type)': {
@@ -36,7 +36,7 @@ export default function FilterChipList(props: Props) {
 
   if (filters) {
     return (
-      <div className={classes.root}>
+      <div className={classes.chips}>
         {filters.map((filter) => {
           const { entity, variable } =
             findEntityAndVariable(props.entities, filter) ?? {};

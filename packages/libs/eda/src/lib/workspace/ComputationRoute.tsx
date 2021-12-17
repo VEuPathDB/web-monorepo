@@ -4,14 +4,17 @@ import { useRouteMatch } from 'react-router-dom';
 import { AnalysisState, useDataClient } from '../core';
 import { PassThroughComputation } from '../core/components/computations/PassThroughComputation';
 import { PromiseResult } from '../core/components/Promise';
-import { usePromise } from '../core/hooks/promise';
+import { EntityCounts } from '../core/hooks/entityCounts';
+import { PromiseHookState, usePromise } from '../core/hooks/promise';
 
 export interface Props {
   analysisState: AnalysisState;
+  totalCounts: PromiseHookState<EntityCounts>;
+  filteredCounts: PromiseHookState<EntityCounts>;
 }
 
 export function ComputationRoute(props: Props) {
-  const { analysisState } = props;
+  const { analysisState, totalCounts, filteredCounts } = props;
   const { url } = useRouteMatch();
   const dataClient = useDataClient();
   const promiseState = usePromise(
@@ -37,6 +40,8 @@ export function ComputationRoute(props: Props) {
             <PassThroughComputation
               analysisState={analysisState}
               computationAppOverview={computationAppOverview}
+              totalCounts={totalCounts}
+              filteredCounts={filteredCounts}
             />
           </Route>
         </Switch>

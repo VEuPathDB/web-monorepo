@@ -1,20 +1,21 @@
+import React, { useCallback, useMemo, useState } from 'react';
 import { orderBy } from 'lodash';
 import Path from 'path';
-import React, { useCallback, useMemo, useState } from 'react';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 
 import {
   Button,
-  Checkbox,
-  createMuiTheme,
+  Checkbox as MaterialCheckbox,
   FormControlLabel,
   Icon,
+  IconButton,
+  InputAdornment,
   makeStyles,
   Switch,
   TextField,
-  ThemeProvider,
   Tooltip,
 } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
 import {
   Loading,
   Mesa,
@@ -35,17 +36,24 @@ import { OverflowingTextCell } from '@veupathdb/wdk-client/lib/Views/Strategy/Ov
 import {
   AnalysisClient,
   AnalysisSummary,
-  SubsettingClient,
   useAnalysisList,
   usePinnedAnalyses,
 } from '../core';
-import { workspaceTheme } from '../core/components/workspaceTheme';
+import SubsettingClient from '../core/api/SubsettingClient';
 import { useDebounce } from '../core/hooks/debouncing';
 import { useWdkStudyRecords } from '../core/hooks/study';
+import {
+  ANALYSIS_NAME_MAX_LENGTH,
+  makeCurrentProvenanceString,
+  makeOnImportProvenanceString,
+} from '../core/utils/analysis';
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
+import ShareFromAnalysesList from './sharing/ShareFromAnalysesList';
+import { Checkbox } from '@veupathdb/core-components';
 
 interface AnalysisAndDataset {
   analysis: AnalysisSummary & {
+    displayNameAndProvenance: string;
     creationTimeDisplay: string;
     modificationTimeDisplay: string;
   };
@@ -85,18 +93,27 @@ export function AllAnalyses(props: Props) {
   const searchText = queryParams.get('s') ?? '';
   const debouncedSearchText = useDebounce(searchText, 250);
 
-  const onFilterFieldChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
-      const queryParams = value ? '?s=' + encodeURIComponent(value) : '';
+  const setSearchText = useCallback(
+    (newSearchText: string) => {
+      const queryParams = newSearchText
+        ? '?s=' + encodeURIComponent(newSearchText)
+        : '';
       history.replace(location.pathname + queryParams);
     },
     [history, location.pathname]
   );
 
+  const onFilterFieldChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchText(e.target.value);
+    },
+    [setSearchText]
+  );
+
   const [selectedAnalyses, setSelectedAnalyses] = useState<Set<string>>(
     new Set()
   );
+
   const [sortPinned, setSortPinned] = useSessionBackedState<boolean>(
     true,
     'eda::allAnalysesPinned',
@@ -131,9 +148,17 @@ export function AllAnalyses(props: Props) {
         const dataset = datasets?.find(
           (d) => d.id[0].value === analysis.studyId
         );
+
         return {
           analysis: {
             ...analysis,
+            displayNameAndProvenance:
+              analysis.provenance == null
+                ? analysis.displayName
+                : `${analysis.displayName}\0${makeOnImportProvenanceString(
+                    analysis.creationTime,
+                    analysis.provenance
+                  )}\0${makeCurrentProvenanceString(analysis.provenance)}`,
             creationTimeDisplay: convertISOToDisplayFormat(
               analysis.creationTime
             ),
@@ -154,7 +179,7 @@ export function AllAnalyses(props: Props) {
   const searchableAnalysisColumns = useMemo(
     () =>
       [
-        'displayName',
+        'displayNameAndProvenance',
         'description',
         'creationTimeDisplay',
         'modificationTimeDisplay',
@@ -194,6 +219,11 @@ export function AllAnalyses(props: Props) {
     deleteAnalyses(idsToRemove);
   }, [filteredAnalysesAndDatasets, deleteAnalyses, isPinnedAnalysis]);
 
+  const [sharingModalVisible, setSharingModalVisible] = useState(false);
+  const [selectedAnalysisId, setSelectedAnalysisId] = useState<
+    string | undefined
+  >(undefined);
+
   const tableState = useMemo(
     () => ({
       rows: sortPinned
@@ -209,8 +239,8 @@ export function AllAnalyses(props: Props) {
                       datasets?.find((d) => d.id[0].value === analysis.studyId)
                         ?.displayName ?? UNKNOWN_DATASET_NAME
                     );
-                  case 'displayName':
-                    return analysis.displayName;
+                  case 'name':
+                    return analysis.displayNameAndProvenance;
                   case 'description':
                     return analysis.description;
                   case 'isPublic':
@@ -364,7 +394,7 @@ export function AllAnalyses(props: Props) {
             >
               <FormControlLabel
                 control={
-                  <Checkbox
+                  <MaterialCheckbox
                     size="small"
                     icon={
                       <Icon
@@ -428,7 +458,21 @@ export function AllAnalyses(props: Props) {
                       updateAnalysis(analysisId, { displayName: newName });
                     }
                   }}
+                  maxLength={ANALYSIS_NAME_MAX_LENGTH}
                 />
+                {data.row.analysis.provenance != null && (
+                  <>
+                    <br />
+                    <br />
+                    {makeOnImportProvenanceString(
+                      data.row.analysis.creationTime,
+                      data.row.analysis.provenance
+                    )}
+                    <br />
+                    <br />
+                    {makeCurrentProvenanceString(data.row.analysis.provenance)}
+                  </>
+                )}
               </div>
             );
           },
@@ -462,17 +506,23 @@ export function AllAnalyses(props: Props) {
         {
           key: 'isPublic',
           name: 'Public',
+          width: 100,
           sortable: true,
           renderCell: (data: { row: AnalysisAndDataset }) => {
             return (
-              <Checkbox
-                checked={data.row.analysis.isPublic}
-                onChange={(event) => {
-                  updateAnalysis(data.row.analysis.analysisId, {
-                    isPublic: event.target.checked,
-                  });
-                }}
-              />
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <Checkbox
+                  selected={data.row.analysis.isPublic}
+                  themeRole="primary"
+                  onToggle={(selected) => {
+                    if (selected) {
+                      setSelectedAnalysisId(data.row.analysis.analysisId);
+                      setSharingModalVisible(true);
+                    }
+                  }}
+                  styleOverrides={{ size: 16 }}
+                />
+              </div>
             );
           },
         },
@@ -490,11 +540,7 @@ export function AllAnalyses(props: Props) {
           renderCell: (data: { row: AnalysisAndDataset }) =>
             data.row.analysis.modificationTimeDisplay,
         },
-      ].filter(
-        // Only offer isPublic column if the user is the "example analyses" author
-        (column) =>
-          column.key !== 'isPublic' || user?.id === exampleAnalysesAuthor
-      ),
+      ],
     }),
     [
       sortPinned,
@@ -517,43 +563,70 @@ export function AllAnalyses(props: Props) {
       user,
     ]
   );
-  const theme = createMuiTheme(workspaceTheme);
 
   useSetDocumentTitle('My Analyses');
 
   return (
-    <ThemeProvider theme={theme}>
-      <div className={classes.root}>
-        <h1>My Analyses</h1>
-        {error && <ContentError>{error}</ContentError>}
-        {analyses && datasets && user ? (
-          <Mesa.Mesa state={tableState}>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1ex',
+    <div className={classes.root}>
+      <ShareFromAnalysesList
+        analysis={
+          analysesAndDatasets?.find(
+            (potentialMatch) =>
+              potentialMatch.analysis.analysisId === selectedAnalysisId
+          )?.analysis
+        }
+        updateAnalysis={updateAnalysis}
+        visible={sharingModalVisible}
+        toggleVisible={setSharingModalVisible}
+      />
+
+      <h1>My Analyses</h1>
+      {error && <ContentError>{error}</ContentError>}
+      {analyses && datasets && user ? (
+        <Mesa.Mesa state={tableState}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '1ex',
+            }}
+          >
+            <TextField
+              variant="outlined"
+              size="small"
+              label="Search analyses"
+              inputProps={{ size: 50 }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="Clear search text"
+                      onClick={() => setSearchText('')}
+                      style={{
+                        visibility:
+                          debouncedSearchText.length > 0 ? 'visible' : 'hidden',
+                      }}
+                      edge="end"
+                      size="small"
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
               }}
-            >
-              <TextField
-                variant="outlined"
-                size="small"
-                label="Search analyses"
-                inputProps={{ size: 50 }}
-                value={searchText}
-                onChange={onFilterFieldChange}
-              />
-              <span>
-                Showing {filteredAnalysesAndDatasets?.length} of{' '}
-                {analyses.length} analyses
-              </span>
-            </div>
-            {(loading || datasets == null) && <Loading />}
-          </Mesa.Mesa>
-        ) : (
-          <Loading />
-        )}
-      </div>
-    </ThemeProvider>
+              value={searchText}
+              onChange={onFilterFieldChange}
+            />
+            <span>
+              Showing {filteredAnalysesAndDatasets?.length} of {analyses.length}{' '}
+              analyses
+            </span>
+          </div>
+          {(loading || datasets == null) && <Loading />}
+        </Mesa.Mesa>
+      ) : (
+        <Loading />
+      )}
+    </div>
   );
 }

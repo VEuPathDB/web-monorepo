@@ -7,14 +7,14 @@ import {
   AnalysisClient,
   SingleAnalysisPatchRequest,
 } from '../../api/analysis-api';
-import { DataClient } from '../../api/data-api';
+import DataClient from '../../api/DataClient';
 import {
   StudyMetadata,
   StudyRecord,
   StudyRecordClass,
   WorkspaceContext,
 } from '../..';
-import { SubsettingClient } from '../../api/subsetting-api';
+import SubsettingClient from '../../api/SubsettingClient';
 
 const key = '123';
 

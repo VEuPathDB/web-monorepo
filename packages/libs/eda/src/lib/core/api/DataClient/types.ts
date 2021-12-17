@@ -1,9 +1,5 @@
 /* eslint-disable @typescript-eslint/no-redeclare */
-import {
-  createJsonRequest,
-  FetchClientWithCredentials,
-  ioTransformer,
-} from '@veupathdb/http-utils';
+
 import {
   TypeOf,
   string,
@@ -15,14 +11,13 @@ import {
   intersection,
   partial,
   keyof,
-  Decoder,
 } from 'io-ts';
-import { Filter } from '../types/filter';
-import { TimeUnit } from '../types/general';
-import { VariableDescriptor, StringVariableValue } from '../types/variable';
-import { ComputationAppOverview } from '../types/visualization';
+import { Filter } from '../../types/filter';
+import { TimeUnit } from '../../types/general';
+import { VariableDescriptor, StringVariableValue } from '../../types/variable';
+import { ComputationAppOverview } from '../../types/visualization';
 
-const AppsResponse = type({
+export const AppsResponse = type({
   apps: array(ComputationAppOverview),
 });
 
@@ -259,6 +254,27 @@ export const ScatterplotResponse = type({
   completeCasesTable: completeCasesTableArray,
 });
 
+////////////////
+// Table Data //
+////////////////
+export interface TableDataRequestParams {
+  studyId: string;
+  config: {
+    outputEntityId: string;
+    outputVariable: Array<VariableDescriptor>;
+    pagingConfig: {
+      numRows: number;
+      offset: number;
+    };
+  };
+}
+
+export type TableDataResponse = TypeOf<typeof TableDataResponse>;
+export const TableDataResponse = type({
+  columns: array(VariableDescriptor),
+  rows: array(array(string)),
+});
+
 // lineplot
 export interface LineplotRequestParams {
   studyId: string;
@@ -321,6 +337,8 @@ export interface MosaicRequestParams {
     outputEntityId: string;
     xAxisVariable: VariableDescriptor;
     yAxisVariable: VariableDescriptor;
+    facetVariable: ZeroToTwoVariables;
+    showMissingness?: 'TRUE' | 'FALSE';
   };
 }
 
@@ -328,11 +346,19 @@ export type MosaicResponse = TypeOf<typeof MosaicResponse>;
 export const MosaicResponse = type({
   mosaic: type({
     data: array(
-      type({
-        xLabel: array(string),
-        yLabel: array(array(string)),
-        value: array(array(number)),
-      })
+      intersection([
+        type({
+          xLabel: array(string),
+          yLabel: array(array(string)),
+          value: array(array(number)),
+        }),
+        partial({
+          facetVariableDetails: union([
+            tuple([StringVariableValue]),
+            tuple([StringVariableValue, StringVariableValue]),
+          ]),
+        }),
+      ])
     ),
     config: type({
       completeCasesAllVars: number,
@@ -358,12 +384,16 @@ export const MosaicResponse = type({
 export type ContTableResponse = TypeOf<typeof ContTableResponse>;
 export const ContTableResponse = intersection([
   MosaicResponse,
-  type({
+  partial({
     statsTable: array(
       partial({
-        pvalue: union([number, string]),
+        pvalue: union([number, string]), // TO DO: should these three stats values all be optional?
         degreesFreedom: number,
         chisq: number,
+        facetVariableDetails: union([
+          tuple([StringVariableValue]),
+          tuple([StringVariableValue, StringVariableValue]),
+        ]),
       })
     ),
   }),
@@ -372,14 +402,18 @@ export const ContTableResponse = intersection([
 export type TwoByTwoResponse = TypeOf<typeof TwoByTwoResponse>;
 export const TwoByTwoResponse = intersection([
   MosaicResponse,
-  type({
+  partial({
     statsTable: array(
       partial({
-        oddsratio: number,
+        oddsratio: number, // TO DO: should these stats values really all be optional?
         pvalue: union([number, string]),
         orInterval: string,
         rrInterval: string,
         relativerisk: number,
+        facetVariableDetails: union([
+          tuple([StringVariableValue]),
+          tuple([StringVariableValue, StringVariableValue]),
+        ]),
       })
     ),
     completeCasesTable: completeCasesTableArray,
@@ -461,133 +495,3 @@ export const BoxplotResponse = type({
   sampleSizeTable: sampleSizeTableArray,
   completeCasesTable: completeCasesTableArray,
 });
-
-export class DataClient extends FetchClientWithCredentials {
-  getApps(): Promise<TypeOf<typeof AppsResponse>> {
-    return this.fetch(
-      createJsonRequest({
-        method: 'GET',
-        path: '/apps',
-        transformResponse: ioTransformer(AppsResponse),
-      })
-    );
-  }
-
-  getVisualizationData<T>(
-    computationName: string,
-    visualizationName: string,
-    params: unknown,
-    decoder: Decoder<unknown, T>
-  ): Promise<T> {
-    return this.fetch(
-      createJsonRequest({
-        method: 'POST',
-        path: `/apps/${computationName}/visualizations/${visualizationName}`,
-        body: params,
-        transformResponse: ioTransformer(decoder),
-      })
-    );
-  }
-
-  // Histogram
-  getHistogram(
-    computationName: string,
-    params: HistogramRequestParams
-  ): Promise<HistogramResponse> {
-    return this.getVisualizationData(
-      computationName,
-      'histogram',
-      params,
-      HistogramResponse
-    );
-  }
-
-  // Barplot
-  getBarplot(
-    computationName: string,
-    params: BarplotRequestParams
-  ): Promise<BarplotResponse> {
-    return this.getVisualizationData(
-      computationName,
-      'barplot',
-      params,
-      BarplotResponse
-    );
-  }
-
-  // Scatterplot
-  getScatterplot(
-    computationName: string,
-    params: ScatterplotRequestParams
-  ): Promise<ScatterplotResponse> {
-    return this.getVisualizationData(
-      computationName,
-      'scatterplot',
-      params,
-      ScatterplotResponse
-    );
-  }
-
-  // Lineplot
-  getLineplot(
-    computationName: string,
-    params: LineplotRequestParams
-  ): Promise<LineplotResponse> {
-    return this.getVisualizationData(
-      computationName,
-      'lineplot',
-      params,
-      LineplotResponse
-    );
-  }
-
-  // Timeseries
-  getTimeseries(
-    computationName: string,
-    params: LineplotRequestParams
-  ): Promise<LineplotResponse> {
-    return this.getVisualizationData(
-      computationName,
-      'timeseries',
-      params,
-      LineplotResponse
-    );
-  }
-
-  getContTable(
-    computationName: string,
-    params: MosaicRequestParams
-  ): Promise<ContTableResponse> {
-    return this.getVisualizationData(
-      computationName,
-      'conttable',
-      params,
-      ContTableResponse
-    );
-  }
-
-  getTwoByTwo(
-    computationName: string,
-    params: MosaicRequestParams
-  ): Promise<TwoByTwoResponse> {
-    return this.getVisualizationData(
-      computationName,
-      'twobytwo',
-      params,
-      TwoByTwoResponse
-    );
-  }
-
-  // boxplot
-  getBoxplot(
-    computationName: string,
-    params: BoxplotRequestParams
-  ): Promise<BoxplotResponse> {
-    return this.getVisualizationData(
-      computationName,
-      'boxplot',
-      params,
-      BoxplotResponse
-    );
-  }
-}

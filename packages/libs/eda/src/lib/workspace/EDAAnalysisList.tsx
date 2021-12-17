@@ -1,18 +1,19 @@
-import React from 'react';
-
+// Components
 import { RestrictedPage } from '@veupathdb/study-data-access/lib/data-restriction/RestrictedPage';
-import { useApprovalStatus } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
-
-import {
-  EDAAnalysisListContainer,
-  useConfiguredDataClient,
-  useConfiguredSubsettingClient,
-} from '../core';
-import { useConfiguredAnalysisClient } from '../core/hooks/client';
+import { EDAAnalysisListContainer } from '../core';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { AnalysisList } from './AnalysisList';
-import { cx } from './Utils';
 
+// Hooks
+import { useApprovalStatus } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
+import {
+  useConfiguredAnalysisClient,
+  useConfiguredDataClient,
+  useConfiguredSubsettingClient,
+} from '../core/hooks/client';
+
+// Data and Utilities
+import { cx } from './Utils';
 export interface Props {
   studyId: string;
   subsettingServiceUrl: string;
@@ -20,6 +21,9 @@ export interface Props {
   userServiceUrl: string;
 }
 
+/**
+ * Component displayed when a study is chosen from StudyList.
+ */
 export function EDAAnalysisList(props: Props) {
   const subsettingClient = useConfiguredSubsettingClient(
     props.subsettingServiceUrl

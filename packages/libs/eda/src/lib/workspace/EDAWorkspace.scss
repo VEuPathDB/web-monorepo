@@ -33,6 +33,7 @@
     border-bottom: 1px solid lightgray;
     margin-bottom: 1em;
     padding-bottom: 0.75em;
+    width: 100%;
   }
 
   h1 {
@@ -90,7 +91,7 @@
     font-size: 1.5em;
     display: grid;
     grid-auto-flow: column;
-    gap: 1em;
+    gap: 0.5em;
     margin-right: auto;
     margin-left: 2em;
     align-items: center;
@@ -102,23 +103,6 @@
 
   &-Analysis {
     min-height: 100vh;
-  }
-
-  &-AnalysisSummary {
-    display: flex;
-    align-items: center;
-    font-size: 1.65em;
-  }
-
-  &-AnalysisSummaryLeft {
-    display: flex;
-    align-items: center;
-  }
-
-  &-AnalysisSummaryRight {
-    display: flex;
-    align-items: center;
-    font-size: 0.8em;
   }
 
   &-AnalysisNameEditBox {
@@ -221,7 +205,7 @@
     .TabularDownload {
       grid-area: tabular-download;
       font-size: 3em;
-      margin-right: 1em;
+      // margin-right: 1em;
     }
     .Filter {
       grid-area: filter;

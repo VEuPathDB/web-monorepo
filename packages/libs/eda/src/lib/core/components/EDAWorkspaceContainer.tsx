@@ -1,18 +1,15 @@
 import React from 'react';
-import { SubsettingClient } from '../api/subsetting-api';
-import { DataClient } from '../api/data-api';
+
+import SubsettingClient from '../api/SubsettingClient';
+import DataClient from '../api/DataClient';
 import { AnalysisClient } from '../api/analysis-api';
 import {
   MakeVariableLink,
   WorkspaceContext,
 } from '../context/WorkspaceContext';
 import { useStudyMetadata, useWdkStudyRecord } from '../hooks/study';
-import { ThemeProvider } from '@material-ui/core/styles';
-import { createMuiTheme } from '@material-ui/core';
-import { workspaceTheme } from './workspaceTheme';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
-const theme = createMuiTheme(workspaceTheme);
 export interface Props {
   studyId: string;
   children: React.ReactChild | React.ReactChild[];
@@ -23,16 +20,16 @@ export interface Props {
   makeVariableLink?: MakeVariableLink;
 }
 
-export function EDAWorkspaceContainer(props: Props) {
-  const {
-    studyId,
-    analysisClient,
-    subsettingClient,
-    dataClient,
-    children,
-    className = 'EDAWorkspace',
-    makeVariableLink,
-  } = props;
+/** Just a data container... but note that it also provides a material ui theme... */
+export function EDAWorkspaceContainer({
+  studyId,
+  children,
+  className = 'EDAWorkspace',
+  analysisClient,
+  subsettingClient,
+  dataClient,
+  makeVariableLink,
+}: Props) {
   const wdkStudyRecordState = useWdkStudyRecord(studyId);
   const studyMetadata = useStudyMetadata(studyId, subsettingClient);
   if (wdkStudyRecordState == null || studyMetadata == null) return <Loading />;
@@ -47,9 +44,7 @@ export function EDAWorkspaceContainer(props: Props) {
         makeVariableLink,
       }}
     >
-      <ThemeProvider theme={theme}>
-        <div className={className}>{children}</div>
-      </ThemeProvider>
+      <div className={className}>{children}</div>
     </WorkspaceContext.Provider>
   );
 }

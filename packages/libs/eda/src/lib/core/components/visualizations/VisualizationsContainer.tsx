@@ -26,6 +26,8 @@ import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/Co
 import PlaceholderIcon from './PlaceholderIcon';
 import { Tooltip } from '@material-ui/core';
 import { isEqual } from 'lodash';
+import { EntityCounts } from '../../hooks/entityCounts';
+import { PromiseHookState } from '../../hooks/promise';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -41,6 +43,8 @@ interface Props {
   filters: Filter[];
   starredVariables: VariableDescriptor[];
   toggleStarredVariable: (targetVariable: VariableDescriptor) => void;
+  totalCounts: PromiseHookState<EntityCounts>;
+  filteredCounts: PromiseHookState<EntityCounts>;
 }
 
 /**
@@ -232,6 +236,7 @@ function NewVisualizationPicker(props: Props) {
                 ) : (
                   <div>{vizOverview.displayName}</div>
                 )}
+                {vizType == null && <i>(Coming soon!)</i>}
               </div>
             </div>
           );
@@ -251,6 +256,8 @@ function FullScreenVisualization(props: Props & { id: string }) {
     filters,
     starredVariables,
     toggleStarredVariable,
+    totalCounts,
+    filteredCounts,
   } = props;
   const history = useHistory();
   const viz = computation.visualizations.find((v) => v.visualizationId === id);
@@ -339,17 +346,17 @@ function FullScreenVisualization(props: Props & { id: string }) {
               className="link"
               onClick={() => {
                 if (viz == null) return;
-                const visualizationId = uuid();
+                const vizCopyId = uuid();
                 updateVisualizations((visualizations) =>
                   visualizations.concat({
                     ...viz,
-                    visualizationId,
+                    visualizationId: vizCopyId,
                     displayName:
                       'Copy of ' + (viz.displayName || 'unnamed visualization'),
                   })
                 );
                 history.replace(
-                  Path.resolve(history.location.pathname, '..', id)
+                  Path.resolve(history.location.pathname, '..', vizCopyId)
                 );
               }}
             >
@@ -400,6 +407,8 @@ function FullScreenVisualization(props: Props & { id: string }) {
             toggleStarredVariable={toggleStarredVariable}
             updateConfiguration={updateConfiguration}
             updateThumbnail={updateThumbnail}
+            totalCounts={totalCounts}
+            filteredCounts={filteredCounts}
           />
         </div>
       )}

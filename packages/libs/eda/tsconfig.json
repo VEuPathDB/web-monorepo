@@ -1,5 +1,5 @@
 {
-  "extends": "@veupathdb/tsconfig",
+  "extends": "@veupathdb/tsconfig/tsconfig.json",
   "include": [
     "src"
   ]

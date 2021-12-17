@@ -1,27 +1,36 @@
-import './globals';
-import { endpoint, rootElement, rootUrl } from './constants';
+import './globals'; // Don't move this. There is a brittle dependency that relies on this being first.
 import React, { useEffect } from 'react';
-import reportWebVitals from './reportWebVitals';
+
+import { partial } from 'lodash';
 
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
-
 import { Props } from '@veupathdb/wdk-client/lib/Components/Layout/Page';
 
 import { DataRestrictionDaemon } from '@veupathdb/study-data-access/lib/data-restriction';
+import { wrapWdkDependencies } from '@veupathdb/study-data-access/lib/shared/wrapWdkDependencies';
 import {
   disableRestriction,
   enableRestriction,
   reduxMiddleware,
 } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
-import { useAttemptActionClickHandler } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 
+import { endpoint, rootElement, rootUrl } from './constants';
+import reportWebVitals from './reportWebVitals';
 import Header from './Header';
 import { MapVeuContainer } from './lib/mapveu';
 import { WorkspaceRouter } from './lib/workspace/WorkspaceRouter';
+import UIThemeProvider from '@veupathdb/core-components/dist/components/theming/UIThemeProvider';
+
+// Hooks
+import { useAttemptActionClickHandler } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
+import { useCoreUIFonts } from '@veupathdb/core-components/dist/hooks';
+
+// Definitions
+import { colors } from '@veupathdb/core-components';
 
 import './index.css';
 
@@ -88,18 +97,29 @@ initialize({
         }, []);
 
         useAttemptActionClickHandler();
+        useCoreUIFonts();
 
         return (
           <>
             <DataRestrictionDaemon
               makeStudyPageRoute={(id: string) => `/eda/${id}/details`}
             />
-            <DefaultComponent {...props} />
+            <UIThemeProvider
+              theme={{
+                palette: {
+                  primary: { hue: colors.mutedCyan, level: 600 },
+                  secondary: { hue: colors.mutedRed, level: 500 },
+                },
+              }}
+            >
+              <DefaultComponent {...props} />
+            </UIThemeProvider>
           </>
         );
       };
     },
   },
+  wrapWdkDependencies: partial(wrapWdkDependencies, '/eda-dataset-access'),
   endpoint,
   additionalMiddleware: [reduxMiddleware],
 } as any);

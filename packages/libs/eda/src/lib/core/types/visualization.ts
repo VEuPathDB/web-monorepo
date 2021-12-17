@@ -12,7 +12,8 @@ import {
   record,
 } from 'io-ts';
 import { VariableDataShape, VariableType } from './study';
-import { CompleteCasesTable } from '../api/data-api';
+
+import { CompleteCasesTable } from '../api/DataClient';
 import { Filter } from './filter';
 
 /**

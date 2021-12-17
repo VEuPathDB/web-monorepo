@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { makeStyles } from '@material-ui/core';
 import { StudyEntity } from '../../types/study';
 import { VariableDescriptor } from '../../types/variable';
@@ -8,7 +8,8 @@ import {
   flattenConstraints,
   VariablesByInputName,
 } from '../../utils/data-element-constraints';
-import { VariableTreeDropdown } from '../VariableTree';
+
+import VariableTreeDropdown from '../variableTrees/VariableTreeDropdown';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import Switch from '@veupathdb/components/lib/components/widgets/Switch';
 import { makeEntityDisplayName } from '../../utils/study-metadata';
@@ -67,46 +68,41 @@ export interface Props {
   outputEntity?: StudyEntity;
 }
 
-const useStyles = makeStyles(
-  {
-    inputs: {
-      display: 'flex',
-      flexWrap: 'nowrap', // if it didn't wrap so aggressively, it would be good to allow wrapping
-      // perhaps after the Material UI capitalization is removed.
-      marginLeft: '0.5em', // this indent is only needed because the wdk-SaveableTextEditor above it is indented
-      alignItems: 'flex-start',
-    },
-    inputGroup: {
-      display: 'flex',
-      flexWrap: 'wrap',
-    },
-    input: {
-      display: 'flex',
-      alignItems: 'center',
-      marginBottom: '0.5em', // in case they end up stacked vertically on a narrow screen
-      marginRight: '2em',
-    },
-    label: {
-      marginRight: '1ex',
-      fontWeight: 500,
-    },
-    dataLabel: {
-      textAlign: 'right',
-      marginTop: '2em',
-      fontSize: '1.35em',
-      fontWeight: 500,
-    },
-    fullRow: {
-      flexBasis: '100%',
-    },
-    primary: {},
-    stratification: {},
-    showMissingness: {},
+const useStyles = makeStyles({
+  inputs: {
+    display: 'flex',
+    flexWrap: 'nowrap', // if it didn't wrap so aggressively, it would be good to allow wrapping
+    // perhaps after the Material UI capitalization is removed.
+    marginLeft: '0.5em', // this indent is only needed because the wdk-SaveableTextEditor above it is indented
+    alignItems: 'flex-start',
   },
-  {
-    name: 'InputVariables',
-  }
-);
+  inputGroup: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+  input: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '0.5em', // in case they end up stacked vertically on a narrow screen
+    marginRight: '2em',
+  },
+  label: {
+    marginRight: '1ex',
+    fontWeight: 500,
+  },
+  dataLabel: {
+    textAlign: 'right',
+    marginTop: '2em',
+    fontSize: '1.35em',
+    fontWeight: 500,
+  },
+  fullRow: {
+    flexBasis: '100%',
+  },
+  primary: {},
+  stratification: {},
+  showMissingness: {},
+});
 
 export function InputVariables(props: Props) {
   const {

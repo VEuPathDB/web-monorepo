@@ -173,12 +173,20 @@ export const VariableTreeNode = t.union([Variable, VariableCategory]);
 // -----------
 
 type _StudyEntityBase = t.TypeOf<typeof _StudyEntityBase>;
+
+// TODO: Add documentation on WHAT an entity is conceptually.
+// And for each property... except which is obviously self-evident.
 const _StudyEntityBase = t.intersection([
   t.type({
     id: t.string,
     idColumnName: t.string,
     displayName: t.string,
     description: t.string,
+    /**
+     * The variables associated with an entity. Note that this is
+     * separate from "children" (see `StudyEntitly`) which refers
+     * to actual sub-entities.
+     * */
     variables: t.array(VariableTreeNode),
   }),
   t.partial({
@@ -186,8 +194,10 @@ const _StudyEntityBase = t.intersection([
   }),
 ]);
 
-// export type StudyEntity = t.Unpack<typeof StudyEntity>;
 export type StudyEntity = _StudyEntityBase & {
+  // Other entities which exist with a foreign key type parent-child relationship.
+  // TODO: @dmfalke Perhaps childEntities or subEntities would be more clear.
+  // As someone new to the code it was easy to think of variables as "children" as confuse the two.
   children?: StudyEntity[];
 };
 export const StudyEntity: t.Type<StudyEntity> = t.recursion('StudyEntity', () =>
