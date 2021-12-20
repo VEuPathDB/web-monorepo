@@ -1,4 +1,4 @@
-name: Compile check
+name: Compile Check
 
 on:
   pull_request:
