@@ -35,8 +35,6 @@ import {
   VisualizationType,
 } from '../VisualizationTypes';
 
-import density from './selectorIcons/density.svg';
-import line from './selectorIcons/line.svg';
 import scatter from './selectorIcons/scatter.svg';
 
 // use lodash instead of Math.min/max
@@ -142,7 +140,6 @@ export const scatterplotVisualization: VisualizationType = {
   createDefaultConfig: createDefaultConfig,
 };
 
-// this needs a handling of text/image for scatter, line, and density plots
 function SelectorComponent({ name }: SelectorProps) {
   const src = scatter;
 
@@ -403,7 +400,6 @@ function ScatterplotViz(props: VisualizationProps) {
         facetVocabulary,
         facetVariable
       );
-      return plotResponseData;
     }, [
       studyId,
       filters,
@@ -618,7 +614,7 @@ function ScatterplotViz(props: VisualizationProps) {
         sortedLegendData.map((dataItem: XYPlotDataSeries, index: number) => {
           return {
             label: dataItem.name ?? '',
-            // maing marker info appropriately
+            // making marker info appropriately
             marker:
               dataItem.mode != null
                 ? dataItem.name === 'No data'
@@ -992,7 +988,6 @@ function ScatterplotWithControls({
  */
 export function scatterplotResponseToData(
   response: XYPlotDataResponse,
-  // vizType may be used for handling other plots in this component like line and density
   vizType: string,
   independentValueType: string,
   dependentValueType: string,
@@ -1135,9 +1130,6 @@ function processInputData<T extends number | string>(
   // pass facetVariable to determine either scatter or scattergl
   facetVariable?: Variable
 ) {
-  // set fillAreaValue for densityplot
-  const fillAreaValue = vizType === 'densityplot' ? 'toself' : '';
-
   // set variables for x- and yaxis ranges: no default values are set
   let yMin: number | string | undefined;
   let yMax: number | string | undefined;
@@ -1258,7 +1250,6 @@ function processInputData<T extends number | string>(
             : 'Data',
         mode: modeValue,
         type: scatterPlotType, // for the raw data of the scatterplot
-        fill: fillAreaValue,
         opacity: 0.7,
         marker: {
           color: markerColor(index),
