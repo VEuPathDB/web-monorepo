@@ -6,6 +6,7 @@ import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import { useCallback, useMemo } from 'react';
+import { scaleLinear } from 'd3-scale';
 
 // need to set for Scatterplot
 
@@ -79,6 +80,8 @@ import { gray } from '../colors';
 import {
   ColorPaletteDefault,
   ColorPaletteDark,
+  gradientSequentialColorscaleMap,
+  gradientDivergingColorscaleMap,
 } from '@veupathdb/components/lib/types/plots/addOns';
 // import variable's metadata-based independent axis range utils
 import { defaultIndependentAxisRange } from '../../../utils/default-independent-axis-range';
@@ -1232,6 +1235,10 @@ function processInputData<T extends number | string>(
     let seriesX = [];
     let seriesY = [];
 
+    // initialize gradient colorscale arrays
+    let seriesGradientColorscale = [];
+    let markerColorsGradient = [];
+
     // series is for scatter plot
     if (el.seriesX && el.seriesY) {
       // check the number of x = number of y
@@ -1275,6 +1282,54 @@ function processInputData<T extends number | string>(
             : max(seriesY);
       }
 
+      // assign colors from the gradient colorscale to each point if seriesGradientColorscale exists
+      if (el.seriesGradientColorscale) {
+        // Assuming only allowing numbers for now
+        seriesGradientColorscale = el.seriesGradientColorscale.map(Number);
+
+        // set variables for overlay ranges
+        let overlayMin: number | undefined = 0;
+        let overlayMax: number | string | undefined = 0;
+
+        overlayMin = lte(overlayMin, min(seriesGradientColorscale))
+          ? overlayMin
+          : (min(seriesGradientColorscale) as number);
+        overlayMax = gte(overlayMax, max(seriesGradientColorscale))
+          ? overlayMax
+          : (max(seriesGradientColorscale) as number);
+
+        console.log(overlayMin);
+        console.log(min(seriesGradientColorscale));
+        console.log(overlayMax);
+
+        // Choose gradient colorscale type and determine marker colors
+        const normalize = scaleLinear();
+        if (overlayMin < 0 && overlayMax > 0) {
+          // Diverging colorscale, assume 0 is midpoint. Colorscale must be symmetric around the midpoint
+          const maxAbsOverlay =
+            overlayMin > overlayMax ? overlayMin : overlayMax;
+          // For each point, normalize the data to [-1, 1], then retrieve the corresponding color
+          normalize.domain([-maxAbsOverlay, maxAbsOverlay]).range([-1, 1]);
+          markerColorsGradient = seriesGradientColorscale.map((a: number) =>
+            gradientDivergingColorscaleMap(normalize(a))
+          );
+        } else if (seriesGradientColorscale.some((a: number) => a < 0)) {
+          // Sequential backwards (from -inf to 0)
+          // For each point, normalize the data to [1, 0], then retrieve the corresponding color
+          normalize.domain([overlayMin, overlayMax]).range([1, 0]);
+          markerColorsGradient = seriesGradientColorscale.map((a: number) =>
+            gradientSequentialColorscaleMap(normalize(a))
+          );
+        } else {
+          // Sequential (from 0 to inf)
+          // For each point, normalize the data to [0, 1], then retrieve the corresponding color
+          normalize.domain([overlayMin, overlayMax]).range([0, 1]);
+          markerColorsGradient = seriesGradientColorscale.map((a: number) =>
+            gradientSequentialColorscaleMap(normalize(a))
+          );
+        }
+      }
+
       // add scatter data considering input options
       dataSetProcess.push({
         x: seriesX.length ? seriesX : [null], // [null] hack required to make sure
@@ -1297,8 +1352,14 @@ function processInputData<T extends number | string>(
         fill: fillAreaValue,
         opacity: 0.7,
         marker: {
-          color: markerColor(index),
-          symbol: markerSymbol(index),
+          color:
+            seriesGradientColorscale?.length > 0
+              ? markerColorsGradient
+              : markerColor(index),
+          symbol:
+            seriesGradientColorscale?.length > 0
+              ? 'circle'
+              : markerSymbol(index),
         },
         // this needs to be here for the case of markers with line or lineplot.
         // always use spline?
