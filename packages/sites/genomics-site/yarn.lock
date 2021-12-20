@@ -1282,10 +1282,10 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/multi-blast@^0.4.8":
-  version "0.4.8"
-  resolved "https://registry.yarnpkg.com/@veupathdb/multi-blast/-/multi-blast-0.4.8.tgz#0eb594497a0ea19abb79389326267e476bb42b99"
-  integrity sha512-loutciBiRgbXih4oGjjVukDzIS3Snu/FyeRT6kXonq5Wdq0NWn03Rbpa+HdY8pblvsCpHZ3kL8CXtOquz73Sag==
+"@veupathdb/multi-blast@^0.4.9":
+  version "0.4.9"
+  resolved "https://registry.yarnpkg.com/@veupathdb/multi-blast/-/multi-blast-0.4.9.tgz#17d8a2390f0969242663a294ed9eef65f089e1aa"
+  integrity sha512-/G7I1whBBbctbWt92fUbMs9uYuWDJOM9BE4MlGBCtGnHxUIFSjaq9SXYWRdeXmM0CTuF6wEpECUmEPYYBgf1fw==
   dependencies:
     "@veupathdb/http-utils" "^1.0.1"
     file-saver "^2.0.5"
