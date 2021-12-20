@@ -16,7 +16,7 @@ import * as t from 'io-ts';
  */
 export function useVizConfig<ConfigType>(
   configData: unknown,
-  configDecoder: t.Type<ConfigType, any, any>,
+  configDecoder: t.Type<ConfigType, unknown, unknown>,
   createDefaultConfig: () => ConfigType,
   updateConfiguration: (newConfig: ConfigType) => void
 ): [
