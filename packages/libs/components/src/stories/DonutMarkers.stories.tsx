@@ -105,7 +105,7 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
       <MapVEuMap
         {...args}
         viewport={{ center: [13, 16], zoom: 4 }}
-        onViewportChanged={handleViewportChanged}
+        onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         animation={defaultAnimation}
       />
@@ -151,7 +151,7 @@ export const FirstRequest: Story<MapVEuMapProps> = (args) => {
       <MapVEuMap
         {...args}
         viewport={{ center: [13, 16], zoom: 4 }}
-        onViewportChanged={handleViewportChanged}
+        onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         animation={defaultAnimation}
       />
@@ -227,7 +227,7 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
       <MapVEuMap
         {...args}
         viewport={{ center: [13, 16], zoom: 4 }}
-        onViewportChanged={handleViewportChanged}
+        onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         animation={defaultAnimation}
       />

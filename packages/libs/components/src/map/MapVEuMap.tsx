@@ -24,11 +24,16 @@ import MouseTools, { MouseMode } from './MouseTools';
 export interface MapVEuMapProps {
   /** Center lat/long and zoom level */
   viewport: Viewport;
+  /** update handler */
+  onViewportChanged: (viewport: Viewport) => void;
 
   /** Height and width of plot element */
   height: CSSProperties['height'];
   width: CSSProperties['width'];
-  onViewportChanged: (bvp: BoundsViewport) => void;
+
+  /** callback for when viewport has changed, giving access to the bounding box */
+  onBoundsChanged: (bvp: BoundsViewport) => void;
+
   markers: ReactElement<BoundsDriftMarkerProps>[];
   recenterMarkers?: boolean;
   //DKDK add this for closing sidebar at MapVEuMap: passing setSidebarCollapsed()
@@ -47,6 +52,7 @@ export default function MapVEuMap({
   height,
   width,
   onViewportChanged,
+  onBoundsChanged,
   markers,
   animation,
   recenterMarkers = true,
@@ -60,13 +66,9 @@ export default function MapVEuMap({
   // which is useful for fetching data to show on the map.
   // The Viewport info (center and zoom) handled here would be useful for saving a
   // 'bookmarkable' state of the map.
-  const [state, updateState] = useState<Viewport>(viewport as Viewport);
   const [mouseMode, setMouseMode] = useState<MouseMode>('default');
   // Whether the user is currently dragging the map
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  const handleViewportChanged = (viewport: Viewport) => {
-    updateState(viewport);
-  };
 
   // BM: Why doesn't this work when wrapped in useEffect()?
   // useEffect(() => {
@@ -81,9 +83,9 @@ export default function MapVEuMap({
 
   return (
     <Map
-      viewport={state}
+      viewport={viewport}
       style={{ height, width }}
-      onViewportChanged={handleViewportChanged}
+      onViewportChanged={onViewportChanged}
       className={mouseMode === 'magnification' ? 'cursor-zoom-in' : ''}
       // DKDK testing worldmap issue: minZomm needs to be 2 (FHD) or 3 (4K): set to be 2
       minZoom={2}
@@ -97,7 +99,7 @@ export default function MapVEuMap({
       />
 
       <SemanticMarkers
-        onViewportChanged={onViewportChanged}
+        onViewportChanged={onBoundsChanged}
         markers={markers}
         animation={animation}
         recenterMarkers={recenterMarkers}

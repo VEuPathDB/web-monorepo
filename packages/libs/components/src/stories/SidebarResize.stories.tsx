@@ -228,7 +228,7 @@ export const SidebarResize: Story<MapVEuMapProps> = (args) => {
       <MapVEuMap
         {...args}
         viewport={{ center: [13, 16], zoom: 4 }}
-        onViewportChanged={handleViewportChanged}
+        onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         animation={defaultAnimation}
       />

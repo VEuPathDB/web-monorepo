@@ -164,7 +164,7 @@ export const Default: Story<MapVEuMapProps> = (args) => {
     <MapVEuMap
       {...args}
       viewport={{ center: [20, -3], zoom: 5 }}
-      onViewportChanged={handleViewportChanged}
+      onBoundsChanged={handleViewportChanged}
       markers={markerElements}
       animation={defaultAnimation}
     />
@@ -197,7 +197,7 @@ export const DifferentSpeeds: Story<MapVEuMapProps & DurationExtraProps> = (
     <MapVEuMap
       {...args}
       viewport={{ center: [20, -3], zoom: 5 }}
-      onViewportChanged={handleViewportChanged}
+      onBoundsChanged={handleViewportChanged}
       markers={markerElements}
       animation={{
         method: 'geohash',
@@ -229,7 +229,7 @@ export const NoAnimation: Story<MapVEuMapProps> = (args) => {
     <MapVEuMap
       {...args}
       viewport={{ center: [20, -3], zoom: 5 }}
-      onViewportChanged={handleViewportChanged}
+      onBoundsChanged={handleViewportChanged}
       markers={markerElements}
       animation={null}
     />
