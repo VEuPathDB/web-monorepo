@@ -493,6 +493,7 @@ function ScatterplotViz(props: VisualizationProps) {
         gradientColorscaleType: data.value?.gradientColorscaleType,
         nTicks: 3, // MUST be odd!
         legendTitle: axisLabelWithUnit(overlayVariable),
+        // hasMissingData: hasMissingData
       };
     } else {
       return {
@@ -1381,12 +1382,16 @@ function processInputData<T extends number | string>(
           console.log('diverging');
           // Diverging colorscale, assume 0 is midpoint. Colorscale must be symmetric around the midpoint
           const maxAbsOverlay =
-            overlayMin > overlayMax ? overlayMin : overlayMax;
+            Math.abs(overlayMin) > overlayMax
+              ? Math.abs(overlayMin)
+              : overlayMax;
           // For each point, normalize the data to [-1, 1], then retrieve the corresponding color
           normalize.domain([-maxAbsOverlay, maxAbsOverlay]).range([-1, 1]);
           markerColorsGradient = seriesGradientColorscale.map((a: number) =>
             gradientDivergingColorscaleMap(normalize(a))
           );
+          overlayMax = maxAbsOverlay;
+          overlayMin = -maxAbsOverlay;
           gradientColorscaleType = 'diverging';
         } else if (seriesGradientColorscale.some((a: number) => a < 0)) {
           console.log('sequential backwards');
