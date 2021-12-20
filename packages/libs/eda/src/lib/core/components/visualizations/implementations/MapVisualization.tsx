@@ -9,16 +9,18 @@ import MapVEuMap, {
 } from '@veupathdb/components/lib/map/MapVEuMap';
 import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map.json';
 import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/geohash';
+import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
+import DonutMarker from '@veupathdb/components/lib/map/DonutMarker';
 
 // viz-related imports
 import { PlotLayout } from '../../layouts/PlotLayout';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
-import { useMemo } from 'react';
+import { useMemo, useCallback, useState, ReactElement } from 'react';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import DataClient from '../../../api/DataClient';
-import { getOrElse } from 'fp-ts/lib/Either';
-import { pipe } from 'fp-ts/lib/function';
+import DataClient, { MapMarkersRequestParams } from '../../../api/DataClient';
 import { useVizConfig } from '../../../hooks/visualizations';
+import { usePromise } from '../../../hooks/promise';
+import { BoundsDriftMarkerProps } from '@veupathdb/components/lib/map/BoundsDriftMarker';
 
 export const mapVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -37,7 +39,13 @@ function SelectorComponent() {
 }
 
 function createDefaultConfig(): MapConfig {
-  return {};
+  return {
+    mapCenterAndZoom: {
+      latitude: 0,
+      longitude: 0,
+      zoomLevel: 1,
+    },
+  };
 }
 
 const defaultAnimation = {
@@ -48,7 +56,7 @@ const defaultAnimation = {
 
 type MapConfig = t.TypeOf<typeof MapConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-const MapConfig = t.partial({
+const MapConfig = t.type({
   mapCenterAndZoom: t.type({
     latitude: t.number,
     longitude: t.number,
@@ -86,11 +94,109 @@ function MapViz(props: VisualizationProps) {
     updateConfiguration
   );
 
+  const handleViewportChanged = useCallback(
+    ({ center, zoom }) => {
+      if (center != null && center.length === 2 && zoom != null) {
+        updateVizConfig({
+          mapCenterAndZoom: {
+            latitude: center[0],
+            longitude: center[1],
+            zoomLevel: zoom,
+          },
+        });
+      }
+    },
+    [updateVizConfig]
+  );
+
+  const [boundsZoomLevel, setBoundsZoomLevel] = useState<BoundsViewport>();
+
+  const { bounds: b, zoomLevel: zl } = boundsZoomLevel ?? {};
+  console.log(`MAIN bounds and zoomLevel ${zl}`);
+
+  const tempOutputEntityId = entities[0].id;
+  const markers = usePromise<
+    Array<ReactElement<BoundsDriftMarkerProps>> | undefined
+  >(
+    useCallback(async () => {
+      if (boundsZoomLevel == null) return [];
+
+      const { bounds, zoomLevel } = boundsZoomLevel;
+      // TO DO: add bounding box-based filters!
+      console.log(`bounds and zoomLevel ${zoomLevel}`);
+
+      const requestParams: MapMarkersRequestParams = {
+        studyId,
+        filters: filters ?? [],
+        config: {
+          outputEntityId: tempOutputEntityId,
+          geoAggregateVariable: {
+            entityId: tempOutputEntityId,
+            variableId: 'EUPATH_0043205',
+          },
+          latitudeVariable: {
+            entityId: tempOutputEntityId,
+            variableId: 'OBI_0001620',
+          },
+          longitudeVariable: {
+            entityId: tempOutputEntityId,
+            variableId: 'OBI_0001621',
+          },
+        },
+      };
+      const response = await dataClient.getMapMarkers(
+        computation.descriptor.type,
+        requestParams
+      );
+
+      // TO DO: find out if MarkerProps.id is obsolete
+      return response.mapElements.map(
+        (
+          { avgLat, avgLon, minLat, minLon, maxLat, maxLon, entityCount },
+          index
+        ) => {
+          const isAtomic = false; // TO DO: work with Danielle to get this info from back end
+          const data = [
+            {
+              label: 'unknown',
+              value: entityCount,
+              color: 'white',
+            },
+          ];
+          return (
+            <DonutMarker
+              id={`marker${index}`}
+              key={index}
+              position={{ lat: avgLat, lng: avgLon }}
+              bounds={{
+                southWest: { lat: minLat, lng: minLon },
+                northEast: { lat: maxLat, lng: maxLon },
+              }}
+              data={data}
+              isAtomic={isAtomic}
+              duration={defaultAnimationDuration}
+            />
+          );
+        }
+      );
+    }, [
+      studyId,
+      filters,
+      dataClient,
+      tempOutputEntityId,
+      boundsZoomLevel,
+      computation.descriptor.type,
+      defaultAnimationDuration,
+    ])
+  );
+
+  const { latitude, longitude, zoomLevel } = vizConfig.mapCenterAndZoom;
   const plotNode = (
     <MapVEuMap
-      viewport={{ center: [13, 16], zoom: 4 }}
-      onViewportChanged={() => null}
-      markers={[]}
+      viewport={{ center: [latitude, longitude], zoom: zoomLevel }}
+      onViewportChanged={handleViewportChanged}
+      onBoundsChanged={setBoundsZoomLevel}
+      markers={markers.value ?? []}
       animation={defaultAnimation}
       height={450}
       width={750}
