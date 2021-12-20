@@ -96,6 +96,9 @@ import PluginError from '../PluginError';
 import PlotLegend, {
   LegendItemsProps,
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import PlotGradientLegend, {
+  PlotLegendGradientProps,
+} from '@veupathdb/components/lib/components/plotControls/PlotGradientLegend';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import FacetedXYPlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedXYPlot';
 // for converting rgb() to rgba()
@@ -104,6 +107,7 @@ import * as ColorMath from 'color-math';
 import { ScatterplotRsquareTable } from '../../ScatterplotRsquareTable';
 //DKDK a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
+import { string } from 'fp-ts';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -135,6 +139,9 @@ interface XYPlotDataWithCoverage extends CoverageStatistics {
   // change these types to be compatible with new axis range
   yMin: number | string | undefined;
   yMax: number | string | undefined;
+  overlayMin: number | undefined;
+  overlayMax: number | undefined;
+  gradientColorscaleType: string | undefined;
 }
 
 // define XYPlotDataResponse
@@ -472,6 +479,35 @@ function ScatterplotViz(props: VisualizationProps) {
 
   const { url } = useRouteMatch();
 
+  // gradient colorscale legend
+  const gradientLegendItems: PlotLegendGradientProps = useMemo(() => {
+    console.log(data.value);
+    if (
+      data.value?.overlayMax &&
+      data.value?.overlayMin &&
+      data.value?.gradientColorscaleType
+    ) {
+      return {
+        legendMax: data.value?.overlayMax,
+        legendMin: data.value?.overlayMin,
+        gradientColorscaleType: data.value?.gradientColorscaleType,
+        nTicks: 3, // MUST be odd!
+        legendTitle: axisLabelWithUnit(overlayVariable),
+      };
+    } else {
+      return {
+        legendMax: 0,
+        legendMin: 0,
+        gradientColorscaleType: 'sequential',
+      };
+    }
+  }, [
+    data,
+    vizConfig.overlayVariable,
+    vizConfig.showMissingness,
+    vizConfig.valueSpecConfig,
+  ]);
+
   // custom legend list
   const legendItems: LegendItemsProps[] = useMemo(() => {
     const allData = data.value?.dataSetProcess;
@@ -749,14 +785,21 @@ function ScatterplotViz(props: VisualizationProps) {
     />
   );
 
-  const legendNode = !data.pending && data.value != null && (
-    <PlotLegend
-      legendItems={legendItems}
-      checkedLegendItems={checkedLegendItems}
-      legendTitle={axisLabelWithUnit(overlayVariable)}
-      onCheckedLegendItemsChange={onCheckedLegendItemsChange}
-    />
-  );
+  console.log(gradientLegendItems);
+
+  const legendNode =
+    !data.pending &&
+    data.value != null &&
+    (gradientLegendItems.gradientColorscaleType ? (
+      <PlotGradientLegend {...gradientLegendItems} />
+    ) : (
+      <PlotLegend
+        legendItems={legendItems}
+        checkedLegendItems={checkedLegendItems}
+        legendTitle={axisLabelWithUnit(overlayVariable)}
+        onCheckedLegendItemsChange={onCheckedLegendItemsChange}
+      />
+    ));
 
   const tableGroupNode = (
     <>
@@ -1031,7 +1074,14 @@ export function scatterplotResponseToData(
   );
 
   const processedData = mapValues(facetGroupedResponseData, (group) => {
-    const { dataSetProcess, yMin, yMax } = processInputData(
+    const {
+      dataSetProcess,
+      yMin,
+      yMax,
+      overlayMin,
+      overlayMax,
+      gradientColorscaleType,
+    } = processInputData(
       reorderResponseScatterplotData(
         // reorder by overlay var within each facet
         group,
@@ -1053,11 +1103,20 @@ export function scatterplotResponseToData(
       dataSetProcess: dataSetProcess,
       yMin: yMin,
       yMax: yMax,
+      overlayMin: overlayMin,
+      overlayMax: overlayMax,
+      gradientColorscaleType: gradientColorscaleType,
     };
   });
 
   const yMin = min(map(processedData, ({ yMin }) => yMin));
   const yMax = max(map(processedData, ({ yMax }) => yMax));
+
+  const overlayMin = min(map(processedData, ({ overlayMin }) => overlayMin));
+  const overlayMax = max(map(processedData, ({ overlayMax }) => overlayMax));
+  const gradientColorscaleType = max(
+    map(processedData, ({ gradientColorscaleType }) => gradientColorscaleType)
+  );
 
   const dataSetProcess =
     size(processedData) === 1 && head(keys(processedData)) === '__NO_FACET__'
@@ -1079,6 +1138,10 @@ export function scatterplotResponseToData(
     // calculated y axis limits
     yMin,
     yMax,
+    // calculated overlay axis limits
+    overlayMin,
+    overlayMax,
+    gradientColorscaleType,
     // CoverageStatistics
     completeCases: response.completeCasesTable,
     completeCasesAllVars: response.scatterplot.config.completeCasesAllVars,
@@ -1176,6 +1239,11 @@ function processInputData<T extends number | string>(
   let yMin: number | string | undefined;
   let yMax: number | string | undefined;
 
+  // set variables for overlay ranges
+  let overlayMin: number | undefined;
+  let overlayMax: number | undefined;
+  let gradientColorscaleType: string | undefined;
+
   // catch the case when the back end has returned valid but completely empty data
   if (
     responseScatterplotData.every(
@@ -1186,6 +1254,8 @@ function processInputData<T extends number | string>(
       dataSetProcess: { series: [] }, // BM doesn't think this should be `undefined` for empty facets - the back end doesn't return *any* data for empty facets.
       yMin,
       yMax,
+      // overlayMin,
+      // overlayMax,
     };
   }
 
@@ -1287,24 +1357,28 @@ function processInputData<T extends number | string>(
         // Assuming only allowing numbers for now
         seriesGradientColorscale = el.seriesGradientColorscale.map(Number);
 
-        // set variables for overlay ranges
-        let overlayMin: number | undefined = 0;
-        let overlayMax: number | string | undefined = 0;
-
-        overlayMin = lte(overlayMin, min(seriesGradientColorscale))
-          ? overlayMin
-          : (min(seriesGradientColorscale) as number);
-        overlayMax = gte(overlayMax, max(seriesGradientColorscale))
-          ? overlayMax
-          : (max(seriesGradientColorscale) as number);
+        overlayMin =
+          overlayMin != null
+            ? lte(overlayMin, min(seriesGradientColorscale))
+              ? overlayMin
+              : (min(seriesGradientColorscale) as number)
+            : (min(seriesGradientColorscale) as number);
+        overlayMax =
+          overlayMax != null
+            ? gte(overlayMax, max(seriesGradientColorscale))
+              ? overlayMax
+              : (max(seriesGradientColorscale) as number)
+            : (max(seriesGradientColorscale) as number);
 
         console.log(overlayMin);
         console.log(min(seriesGradientColorscale));
         console.log(overlayMax);
+        console.log(max(seriesGradientColorscale));
 
         // Choose gradient colorscale type and determine marker colors
         const normalize = scaleLinear();
         if (overlayMin < 0 && overlayMax > 0) {
+          console.log('diverging');
           // Diverging colorscale, assume 0 is midpoint. Colorscale must be symmetric around the midpoint
           const maxAbsOverlay =
             overlayMin > overlayMax ? overlayMin : overlayMax;
@@ -1313,20 +1387,27 @@ function processInputData<T extends number | string>(
           markerColorsGradient = seriesGradientColorscale.map((a: number) =>
             gradientDivergingColorscaleMap(normalize(a))
           );
+          gradientColorscaleType = 'diverging';
         } else if (seriesGradientColorscale.some((a: number) => a < 0)) {
+          console.log('sequential backwards');
           // Sequential backwards (from -inf to 0)
           // For each point, normalize the data to [1, 0], then retrieve the corresponding color
           normalize.domain([overlayMin, overlayMax]).range([1, 0]);
           markerColorsGradient = seriesGradientColorscale.map((a: number) =>
             gradientSequentialColorscaleMap(normalize(a))
           );
+          gradientColorscaleType = 'sequential';
         } else {
+          console.log('sequential');
           // Sequential (from 0 to inf)
           // For each point, normalize the data to [0, 1], then retrieve the corresponding color
           normalize.domain([overlayMin, overlayMax]).range([0, 1]);
           markerColorsGradient = seriesGradientColorscale.map((a: number) =>
             gradientSequentialColorscaleMap(normalize(a))
           );
+          gradientColorscaleType = 'sequential';
+          console.log(gradientSequentialColorscaleMap(normalize(29.6)));
+          console.log(gradientSequentialColorscaleMap(normalize(0)));
         }
       }
 
@@ -1361,6 +1442,7 @@ function processInputData<T extends number | string>(
               ? 'circle'
               : markerSymbol(index),
         },
+        gradientColorscaleType: { gradientColorscaleType },
         // this needs to be here for the case of markers with line or lineplot.
         // always use spline?
         line: { color: markerColor(index), shape: 'spline' },
@@ -1570,7 +1652,14 @@ function processInputData<T extends number | string>(
     return breakAfterThisSeries(index);
   });
 
-  return { dataSetProcess: { series: dataSetProcess }, yMin, yMax };
+  return {
+    dataSetProcess: { series: dataSetProcess },
+    yMin,
+    yMax,
+    overlayMin,
+    overlayMax,
+    gradientColorscaleType,
+  };
 }
 
 /*
