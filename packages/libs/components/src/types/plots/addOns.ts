@@ -4,6 +4,8 @@
 
 import { CSSProperties } from 'react';
 import { BarLayoutOptions, OrientationOptions } from '.';
+import { scaleLinear } from 'd3-scale';
+import { interpolateLab, extent, range } from 'd3';
 
 /** PlotProps addons */
 
@@ -177,6 +179,29 @@ export const DivergingGradientColorscale: string[] = [
   'rgb(65, 92, 18)',
   'rgb(67 77, 2)',
 ];
+
+// Create colorscale for series. Maps [0, 1] to gradient colorscale using Lab interpolation
+export const gradientSequentialColorscaleMap = scaleLinear<string>()
+  .domain(
+    range(SequentialGradientColorscale.length).map(
+      (a: number) => a / (SequentialGradientColorscale.length - 1)
+    )
+  )
+  .range(SequentialGradientColorscale)
+  .interpolate(interpolateLab);
+
+// Create diverging colorscale. Maps [-1, 1] to gradient colorscale using Lab interpolation
+const divergingColorscaleSteps = Math.floor(
+  DivergingGradientColorscale.length / 2
+);
+export const gradientDivergingColorscaleMap = scaleLinear<string>()
+  .domain(
+    range(-divergingColorscaleSteps, divergingColorscaleSteps + 1).map(
+      (a: number) => a / divergingColorscaleSteps
+    )
+  )
+  .range(DivergingGradientColorscale)
+  .interpolate(interpolateLab);
 
 /** truncated axis flags */
 export type AxisTruncationAddon = {

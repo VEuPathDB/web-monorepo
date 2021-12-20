@@ -274,7 +274,7 @@ export const GradientPlotLegend = () => {
       <PlotGradientLegend
         legendMax={100}
         legendMin={5}
-        gradientColorscale={DivergingGradientColorscale}
+        gradientColorscale={SequentialGradientColorscale}
         // pass legend title
         legendTitle={'Supercalifragilisticexpialidocious'}
         nTicks={5}

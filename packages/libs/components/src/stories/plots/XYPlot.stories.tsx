@@ -6,11 +6,10 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 // test to use RadioButtonGroup directly instead of XYPlotControls
 import RadioButtonGroup from '../../components/widgets/RadioButtonGroup';
 import {
-  SequentialGradientColorscale,
-  DivergingGradientColorscale,
+  gradientSequentialColorscaleMap,
+  gradientDivergingColorscaleMap,
 } from '../../types/plots/addOns';
 import { scaleLinear } from 'd3-scale';
-import { interpolateLab, extent, range } from 'd3';
 import PlotGradientLegend from '../../components/plotControls/PlotGradientLegend';
 
 export default {
@@ -1256,28 +1255,28 @@ function processInputData<T extends number | string>(
     '23, 190, 207', //'#17becf'   // blue-teal
   ];
 
-  // Craete colorscale for series. Maps [0, 1] to gradient colorscale using Lab interpolation
-  const gradientSequentialColorscaleMap = scaleLinear<string>()
-    .domain(
-      range(SequentialGradientColorscale.length).map(
-        (a: number) => a / (SequentialGradientColorscale.length - 1)
-      )
-    )
-    .range(SequentialGradientColorscale)
-    .interpolate(interpolateLab);
+  // // Create colorscale for series. Maps [0, 1] to gradient colorscale using Lab interpolation
+  // const gradientSequentialColorscaleMap = scaleLinear<string>()
+  //   .domain(
+  //     range(SequentialGradientColorscale.length).map(
+  //       (a: number) => a / (SequentialGradientColorscale.length - 1)
+  //     )
+  //   )
+  //   .range(SequentialGradientColorscale)
+  //   .interpolate(interpolateLab);
 
-  // Create diverging colorscale. Maps [-1, 1] to gradient colorscale using Lab interpolation
-  const divergingColorscaleSteps = Math.floor(
-    DivergingGradientColorscale.length / 2
-  );
-  const gradientDivergingColorscaleMap = scaleLinear<string>()
-    .domain(
-      range(-divergingColorscaleSteps, divergingColorscaleSteps + 1).map(
-        (a: number) => a / divergingColorscaleSteps
-      )
-    )
-    .range(DivergingGradientColorscale)
-    .interpolate(interpolateLab);
+  // // Create diverging colorscale. Maps [-1, 1] to gradient colorscale using Lab interpolation
+  // const divergingColorscaleSteps = Math.floor(
+  //   DivergingGradientColorscale.length / 2
+  // );
+  // const gradientDivergingColorscaleMap = scaleLinear<string>()
+  //   .domain(
+  //     range(-divergingColorscaleSteps, divergingColorscaleSteps + 1).map(
+  //       (a: number) => a / divergingColorscaleSteps
+  //     )
+  //   )
+  //   .range(DivergingGradientColorscale)
+  //   .interpolate(interpolateLab);
 
   // set dataSetProcess as any
   let dataSetProcess: any = [];
@@ -1350,10 +1349,7 @@ function processInputData<T extends number | string>(
 
         // Choose gradient colorscale type and determine marker colors
         const normalize = scaleLinear();
-        if (
-          seriesGradientColorscale.some((a: number) => a < 0) &&
-          seriesGradientColorscale.some((a: number) => a < 0)
-        ) {
+        if (overlayMin < 0 && overlayMax > 0) {
           // Diverging colorscale, assume 0 is midpoint. Colorscale must be symmetric around the midpoint
           const maxAbsOverlay =
             overlayMin > overlayMax ? overlayMin : overlayMax;
