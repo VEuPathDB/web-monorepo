@@ -274,7 +274,9 @@ function ScatterplotViz(props: VisualizationProps) {
         facetVariable,
         // set valueSpec as Raw when yAxisVariable = date
         valueSpecConfig:
-          findEntityAndVariable(yAxisVariable)?.variable.type === 'date'
+          findEntityAndVariable(yAxisVariable)?.variable.type === 'date' ||
+          findEntityAndVariable(overlayVariable)?.variable.type === 'number' ||
+          findEntityAndVariable(overlayVariable)?.variable.type === 'integer'
             ? 'Raw'
             : vizConfig.valueSpecConfig,
         // set undefined for variable change
@@ -491,7 +493,7 @@ function ScatterplotViz(props: VisualizationProps) {
         legendMax: data.value?.overlayMax,
         legendMin: data.value?.overlayMin,
         gradientColorscaleType: data.value?.gradientColorscaleType,
-        nTicks: 3, // MUST be odd!
+        nTicks: 5, // MUST be odd! Probably should be a clever function of the box size and font or something...
         legendTitle: axisLabelWithUnit(overlayVariable),
         // hasMissingData: hasMissingData
       };
@@ -499,7 +501,6 @@ function ScatterplotViz(props: VisualizationProps) {
       return {
         legendMax: 0,
         legendMin: 0,
-        gradientColorscaleType: 'sequential',
       };
     }
   }, [
@@ -759,7 +760,11 @@ function ScatterplotViz(props: VisualizationProps) {
       dependentAxisRange={data.value ? defaultDependentRangeMargin : undefined}
       // set valueSpec as Raw when yAxisVariable = date
       valueSpec={
-        yAxisVariable?.type === 'date' ? 'Raw' : vizConfig.valueSpecConfig
+        yAxisVariable?.type === 'date' ||
+        overlayVariable?.type === 'number' ||
+        overlayVariable?.type === 'integer'
+          ? 'Raw'
+          : vizConfig.valueSpecConfig
       }
       onValueSpecChange={onValueSpecChange}
       // send visualization.type here
@@ -770,7 +775,9 @@ function ScatterplotViz(props: VisualizationProps) {
       plotOptions={['Raw', 'Smoothed mean with raw', 'Best fit line with raw']}
       // disabledList prop is used to disable radio options (grayed out)
       disabledList={
-        yAxisVariable?.type === 'date'
+        yAxisVariable?.type === 'date' ||
+        overlayVariable?.type === 'number' ||
+        overlayVariable?.type === 'integer'
           ? ['Smoothed mean with raw', 'Best fit line with raw']
           : []
       }
@@ -787,6 +794,7 @@ function ScatterplotViz(props: VisualizationProps) {
   );
 
   console.log(gradientLegendItems);
+  console.log(overlayVariable);
 
   const legendNode =
     !data.pending &&
