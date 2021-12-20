@@ -59,6 +59,8 @@ export interface PlotProps<T> extends ColorPaletteAddon {
   storedIndependentAxisTickLabel?: string[];
   /** list of checked legend items via checkbox input */
   checkedLegendItems?: string[];
+  /** A function to call each time after plotly renders the plot */
+  onPlotlyRender?: PlotParams['onUpdate'];
 }
 
 const Plot = lazy(() => import('react-plotly.js'));
@@ -99,6 +101,7 @@ function PlotlyPlot<T>(
     storedIndependentAxisTickLabel,
     checkedLegendItems,
     colorPalette = ColorPaletteDefault,
+    onPlotlyRender,
     ...plotlyProps
   } = props;
 
@@ -202,8 +205,9 @@ function PlotlyPlot<T>(
   );
 
   // ellipsis with tooltip for legend, legend title, and independent axis tick labels
-  const onUpdate = useCallback(
-    (_, graphDiv: Readonly<HTMLElement>) => {
+  const onRender = useCallback(
+    (figure, graphDiv: Readonly<HTMLElement>) => {
+      onPlotlyRender && onPlotlyRender(figure, graphDiv);
       // legend tooltip
       // remove pre-existing title to avoid duplicates
       select(graphDiv)
@@ -291,12 +295,21 @@ function PlotlyPlot<T>(
       }
     },
     [
+      onPlotlyRender,
       storedLegendList,
       legendTitle,
       maxLegendTitleTextLength,
       storedIndependentAxisTickLabel,
       originalDependentAxisTitle,
     ]
+  );
+
+  const onInitialized = useCallback(
+    (figure, graphDiv: Readonly<HTMLElement>) => {
+      onRender(figure, graphDiv);
+      sharedPlotCreation.run();
+    },
+    [onRender, sharedPlotCreation.run]
   );
 
   const finalData = useMemo(() => {
@@ -352,8 +365,8 @@ function PlotlyPlot<T>(
           style={{ width: '100%', height: '100%' }}
           config={finalConfig}
           // use onUpdate event handler for legend tooltip
-          onUpdate={onUpdate}
-          onInitialized={sharedPlotCreation.run}
+          onUpdate={onRender}
+          onInitialized={onInitialized}
         />
         {showNoDataOverlay && (
           <div
