@@ -9,6 +9,9 @@ import { CoverageStatistics } from '../types/visualization';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import { EntityCounts } from '../hooks/entityCounts';
 import { CompleteCasesTable } from '../api/DataClient';
+import { Bounds } from '@veupathdb/components/lib/map/Types';
+import { Filter } from '../types/filter';
+import { VariableDescriptor } from '../types/variable';
 
 // was: BarplotData | HistogramData | { series: BoxplotData };
 type SeriesWithStatistics<T> = T & CoverageStatistics;
@@ -77,41 +80,6 @@ export function hasIncompleteCases(
   );
 }
 
-// TO DO: REMOVE ME WHEN NO LONGER USED
-export function omitEmptyNoDataSeries<
-  T extends { series: BoxplotData } | BarplotData | HistogramData
->(
-  data: MaybeFacetedSeriesWithStatistics<T>,
-  showMissingness: boolean = false
-): MaybeFacetedSeriesWithStatistics<T> {
-  const omitLastSeries =
-    showMissingness && data.completeCasesAllVars === data.completeCasesAxesVars;
-
-  if (isFaceted(data)) {
-    return {
-      ...data,
-      facets: data.facets.map((facet) => ({
-        label: facet.label,
-        data:
-          facet.data != null
-            ? {
-                ...facet.data,
-                series: omitLastSeries
-                  ? facet.data.series.slice(0, -1)
-                  : facet.data.series,
-              }
-            : undefined,
-      })),
-    };
-  }
-
-  const unfaceted = {
-    ...data,
-    series: omitLastSeries ? data.series.slice(0, -1) : data.series,
-  };
-  return unfaceted;
-}
-
 /**
  * Convert pvalue number into '< 0.001' or '< 0.01' or single digit precision string.
  *
@@ -178,4 +146,35 @@ export function variablesAreUnique(vars: (Variable | undefined)[]): boolean {
   const defined = vars.filter((item) => item != null);
   const unique = defined.filter((item, i, ar) => ar.indexOf(item) === i);
   return defined.length === unique.length;
+}
+
+/**
+ * convert viewport bounding box into two EDA filters
+ *
+ * @param bounds : Bounds
+ * @param latitudeVariableDetails : { entityId: string, variableId: string }
+ * @param longitudeVariableDetails : { entityId: string, variableId: string }
+ *
+ * @return filters : Array<Filter>
+ **/
+
+export function filtersFromBoundingBox(
+  bounds: Bounds,
+  latitudeVariableDetails: VariableDescriptor,
+  longitudeVariableDetails: VariableDescriptor
+): Filter[] {
+  return [
+    {
+      type: 'numberRange',
+      ...latitudeVariableDetails,
+      min: bounds.southWest.lat,
+      max: bounds.northEast.lat,
+    },
+    //    {
+    //      type: 'longitudeRange',
+    //      ...longitudeVariableDetails,
+    //      min: bounds.southWest.lng,
+    //      max: bounds.northEast.lng,
+    //    }
+  ];
 }

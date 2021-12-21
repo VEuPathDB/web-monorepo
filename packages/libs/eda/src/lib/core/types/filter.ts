@@ -43,6 +43,16 @@ export const NumberRangeFilter = t.intersection([
   }),
 ]);
 
+export type LongitudeRangeFilter = t.TypeOf<typeof LongitudeRangeFilter>;
+export const LongitudeRangeFilter = t.intersection([
+  _FilterBase,
+  t.type({
+    type: t.literal('longitudeRange'),
+    min: t.number,
+    max: t.number,
+  }),
+]);
+
 export type DateRangeFilter = t.TypeOf<typeof DateRangeFilter>;
 export const DateRangeFilter = t.intersection([
   _FilterBase,
@@ -77,6 +87,7 @@ export const Filter = t.union([
   NumberSetFilter,
   DateSetFilter,
   NumberRangeFilter,
+  LongitudeRangeFilter,
   DateRangeFilter,
   MultiFilter,
 ]);

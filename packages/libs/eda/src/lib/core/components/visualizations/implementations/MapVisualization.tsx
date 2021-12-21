@@ -21,6 +21,7 @@ import DataClient, { MapMarkersRequestParams } from '../../../api/DataClient';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { usePromise } from '../../../hooks/promise';
 import { BoundsDriftMarkerProps } from '@veupathdb/components/lib/map/BoundsDriftMarker';
+import { filtersFromBoundingBox } from '../../../utils/visualization';
 
 export const mapVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -43,7 +44,7 @@ function createDefaultConfig(): MapConfig {
     mapCenterAndZoom: {
       latitude: 0,
       longitude: 0,
-      zoomLevel: 1,
+      zoomLevel: 1, // TO DO: check MapVEuMap minZoom hardcoded to 2
     },
   };
 }
@@ -109,12 +110,25 @@ function MapViz(props: VisualizationProps) {
     [updateVizConfig]
   );
 
+  const tempOutputEntityId = entities[0].id;
+
   const [boundsZoomLevel, setBoundsZoomLevel] = useState<BoundsViewport>();
 
-  const { bounds: b, zoomLevel: zl } = boundsZoomLevel ?? {};
-  console.log(`MAIN bounds and zoomLevel ${zl}`);
+  const latitudeVariableDetails = useMemo(
+    () => ({
+      entityId: tempOutputEntityId,
+      variableId: 'OBI_0001620',
+    }),
+    [tempOutputEntityId]
+  );
+  const longitudeVariableDetails = useMemo(
+    () => ({
+      entityId: tempOutputEntityId,
+      variableId: 'OBI_0001621',
+    }),
+    [tempOutputEntityId]
+  );
 
-  const tempOutputEntityId = entities[0].id;
   const markers = usePromise<
     Array<ReactElement<BoundsDriftMarkerProps>> | undefined
   >(
@@ -122,26 +136,25 @@ function MapViz(props: VisualizationProps) {
       if (boundsZoomLevel == null) return [];
 
       const { bounds, zoomLevel } = boundsZoomLevel;
+
+      const boundsFilters = filtersFromBoundingBox(
+        bounds,
+        latitudeVariableDetails,
+        longitudeVariableDetails
+      );
       // TO DO: add bounding box-based filters!
-      console.log(`bounds and zoomLevel ${zoomLevel}`);
 
       const requestParams: MapMarkersRequestParams = {
         studyId,
-        filters: filters ?? [],
+        filters: filters ? [...filters, ...boundsFilters] : boundsFilters,
         config: {
           outputEntityId: tempOutputEntityId,
           geoAggregateVariable: {
             entityId: tempOutputEntityId,
             variableId: 'EUPATH_0043205',
           },
-          latitudeVariable: {
-            entityId: tempOutputEntityId,
-            variableId: 'OBI_0001620',
-          },
-          longitudeVariable: {
-            entityId: tempOutputEntityId,
-            variableId: 'OBI_0001621',
-          },
+          latitudeVariable: latitudeVariableDetails,
+          longitudeVariable: longitudeVariableDetails,
         },
       };
       const response = await dataClient.getMapMarkers(
@@ -151,10 +164,16 @@ function MapViz(props: VisualizationProps) {
 
       // TO DO: find out if MarkerProps.id is obsolete
       return response.mapElements.map(
-        (
-          { avgLat, avgLon, minLat, minLon, maxLat, maxLon, entityCount },
-          index
-        ) => {
+        ({
+          avgLat,
+          avgLon,
+          minLat,
+          minLon,
+          maxLat,
+          maxLon,
+          entityCount,
+          geoAggregateValue,
+        }) => {
           const isAtomic = false; // TO DO: work with Danielle to get this info from back end
           const data = [
             {
@@ -165,8 +184,8 @@ function MapViz(props: VisualizationProps) {
           ];
           return (
             <DonutMarker
-              id={`marker${index}`}
-              key={index}
+              id={geoAggregateValue}
+              key={geoAggregateValue}
               position={{ lat: avgLat, lng: avgLon }}
               bounds={{
                 southWest: { lat: minLat, lng: minLon },
@@ -184,6 +203,8 @@ function MapViz(props: VisualizationProps) {
       filters,
       dataClient,
       tempOutputEntityId,
+      latitudeVariableDetails,
+      longitudeVariableDetails,
       boundsZoomLevel,
       computation.descriptor.type,
       defaultAnimationDuration,

@@ -30,6 +30,14 @@ export function toEdaFilter(filter: WdkFilter, entityId: string): EdaFilter {
             min: filter.value.min!,
             max: filter.value.max!,
           };
+        case 'longitude':
+          return {
+            entityId,
+            variableId,
+            type: 'longitudeRange',
+            min: filter.value.min!,
+            max: filter.value.max!,
+          };
         case 'date':
           return {
             entityId,
@@ -95,7 +103,7 @@ export function fromEdaFilter(filter: EdaFilter): WdkFilter {
             min: filter.min.replace('T00:00:00', ''),
             max: filter.max.replace('T00:00:00', ''),
           }
-        : filter.type === 'numberRange'
+        : filter.type === 'numberRange' || filter.type === 'longitudeRange'
         ? {
             min: filter.min,
             max: filter.max,
