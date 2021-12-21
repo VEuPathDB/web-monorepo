@@ -99,7 +99,7 @@ export default function MapVEuMap({
       />
 
       <SemanticMarkers
-        onViewportChanged={onBoundsChanged}
+        onBoundsChanged={onBoundsChanged}
         markers={markers}
         animation={animation}
         recenterMarkers={recenterMarkers}
