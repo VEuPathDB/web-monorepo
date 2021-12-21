@@ -95,8 +95,6 @@ import * as ColorMath from 'color-math';
 //DKDK a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
 
-const MAXALLOWEDDATAPOINTS = 100000;
-
 const plotContainerStyles = {
   width: 750,
   height: 450,
@@ -141,7 +139,7 @@ function SelectorComponent({ name }: SelectorProps) {
 
 function createDefaultConfig(): LineplotConfig {
   return {
-    valueSpecConfig: 'Raw',
+    valueSpecConfig: 'Median',
   };
 }
 
@@ -245,10 +243,7 @@ function LineplotViz(props: VisualizationProps) {
         overlayVariable,
         facetVariable,
         // set valueSpec as Raw when yAxisVariable = date
-        valueSpecConfig:
-          findEntityAndVariable(yAxisVariable)?.variable.type === 'date'
-            ? 'Raw'
-            : vizConfig.valueSpecConfig,
+        valueSpecConfig: vizConfig.valueSpecConfig,
         // set undefined for variable change
         checkedLegendItems: undefined,
       });
@@ -520,9 +515,7 @@ function LineplotViz(props: VisualizationProps) {
       // new dependent axis range
       dependentAxisRange={data.value ? defaultDependentRangeMargin : undefined}
       // set valueSpec as Raw when yAxisVariable = date
-      valueSpec={
-        yAxisVariable?.type === 'date' ? 'Raw' : vizConfig.valueSpecConfig
-      }
+      valueSpec={vizConfig.valueSpecConfig}
       onValueSpecChange={onValueSpecChange}
       // send visualization.type here
       vizType={visualization.descriptor.type}
@@ -652,26 +645,6 @@ function LineplotViz(props: VisualizationProps) {
           outputEntity={outputEntity}
         />
       </div>
-
-      <PluginError
-        error={data.error}
-        outputSize={outputSize}
-        customCases={[
-          (errorString) =>
-            errorString.match(/400.+too large/is) ? (
-              <span>
-                Your plot currently has too many points (&gt;
-                {MAXALLOWEDDATAPOINTS.toLocaleString()}) to display in a
-                reasonable time. Please either add filters in the{' '}
-                <Link replace to={url.replace(/visualizations.+/, 'variables')}>
-                  Browse and subset
-                </Link>{' '}
-                tab to reduce the number, or consider using a summary plot such
-                as histogram or boxplot.
-              </span>
-            ) : undefined,
-        ]}
-      />
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
       <PlotLayout
         isFaceted={isFaceted(data.value?.dataSetProcess)}
@@ -700,7 +673,7 @@ type LineplotWithControlsProps = Omit<XYPlotProps, 'data'> & {
 function LineplotWithControls({
   data,
   // XYPlotControls: set initial value as 'raw' ('Raw')
-  valueSpec = 'Raw',
+  valueSpec = 'Median',
   onValueSpecChange,
   vizType,
   // add plotOptions
@@ -902,7 +875,6 @@ function getRequestParams(
       overlayVariable: overlayVariable,
       facetVariable: facetVariable ? [facetVariable] : [],
       showMissingness: showMissingness ? 'TRUE' : 'FALSE',
-      maxAllowedDataPoints: MAXALLOWEDDATAPOINTS,
     },
   } as LineplotRequestParams;
 }
