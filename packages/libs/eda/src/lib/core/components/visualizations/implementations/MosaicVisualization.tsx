@@ -559,8 +559,8 @@ function TwoByTwoStats(props?: {
         <tbody>
           <tr>
             <th></th>
-            <th className="numeric">Value</th>
-            <th className="numeric">95% confidence interval</th>
+            <th className="numeric-header">Value</th>
+            <th className="numeric-header">95% confidence interval</th>
           </tr>
           <tr>
             <th>P-value</th>

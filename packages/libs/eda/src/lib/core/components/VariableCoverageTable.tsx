@@ -66,8 +66,8 @@ export function VariableCoverageTable({
           <tr>
             <th></th>
             <th>Variable</th>
-            <th className="numeric">Data</th>
-            <th className="numeric">No data</th>
+            <th className="numeric-header">Data</th>
+            <th className="numeric-header">No data</th>
           </tr>
           {rows
             .filter((row) => row.required || row.display != null)
