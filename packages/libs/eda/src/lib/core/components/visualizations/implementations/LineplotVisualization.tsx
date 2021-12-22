@@ -766,7 +766,7 @@ export function lineplotResponseToData(
   facetVocabulary: string[] = [],
   facetVariable?: Variable
 ): XYPlotDataWithCoverage {
-  const modeValue = 'markers';
+  const modeValue = 'line';
 
   const hasMissingData =
     response.lineplot.config.completeCasesAllVars !==
@@ -946,7 +946,7 @@ function processInputData<T extends number | string>(
   const markerSymbol = (index: number) =>
     showMissingness && index === responseLineplotData.length - 1
       ? 'x'
-      : 'circle-open';
+      : 'circle';
 
   // use type: scatter for faceted plot, otherwise scattergl
   const linePlotType = facetVariable != null ? 'scatter' : 'scattergl';
