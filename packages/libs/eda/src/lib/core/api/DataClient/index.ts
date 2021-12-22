@@ -102,19 +102,6 @@ export default class DataClient extends FetchClientWithCredentials {
     );
   }
 
-  // Timeseries
-  getTimeseries(
-    computationName: string,
-    params: LineplotRequestParams
-  ): Promise<LineplotResponse> {
-    return this.getVisualizationData(
-      computationName,
-      'timeseries',
-      params,
-      LineplotResponse
-    );
-  }
-
   getContTable(
     computationName: string,
     params: MosaicRequestParams

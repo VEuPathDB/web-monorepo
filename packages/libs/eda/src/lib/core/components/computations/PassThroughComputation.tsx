@@ -37,7 +37,7 @@ const visualizationTypes: Record<string, VisualizationType> = {
   twobytwo: twoByTwoVisualization,
   conttable: contTableVisualization,
   scatterplot: scatterplotVisualization,
-  timeseries: lineplotVisualization,
+  lineplot: lineplotVisualization,
   // placeholder for densityplot
   // densityplot: scatterplotVisualization,
   barplot: barplotVisualization,
