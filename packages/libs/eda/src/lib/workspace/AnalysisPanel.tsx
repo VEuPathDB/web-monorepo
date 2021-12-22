@@ -51,7 +51,13 @@ const AnalysisTabErrorBoundary = ({
     renderError={() => (
       <Alert severity="error" style={{ marginTop: 10 }}>
         We're sorry, something went wrong with this tab. Please change to
-        another tab or refresh to try again.
+        another tab or{' '}
+        {
+          <a href="" title="Reload the page.">
+            reload the page
+          </a>
+        }{' '}
+        to try again.
       </Alert>
     )}
   />
