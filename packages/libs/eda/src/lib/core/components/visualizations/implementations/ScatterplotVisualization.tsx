@@ -426,7 +426,18 @@ function ScatterplotViz(props: VisualizationProps) {
             : overlayVariable?.rangeMax
           : undefined;
 
+      // If we made overlayMin and overlayMax, use these values to determine the gradientColorscaleType
+      const gradientColorscaleType =
+        overlayMin && overlayMax
+          ? overlayMin >= 0 && overlayMax >= 0
+            ? 'sequential'
+            : overlayMin <= 0 && overlayMax <= 0
+            ? 'sequential reversed'
+            : 'divergent'
+          : undefined;
+
       console.log([overlayMin, overlayMax]);
+      console.log(gradientColorscaleType);
 
       const facetVocabulary = fixLabelsForNumberVariables(
         facetVariable?.vocabulary,
@@ -442,6 +453,7 @@ function ScatterplotViz(props: VisualizationProps) {
         overlayVariable,
         overlayMin,
         overlayMax,
+        gradientColorscaleType,
         showMissingFacet,
         facetVocabulary,
         facetVariable
@@ -1087,6 +1099,7 @@ export function scatterplotResponseToData(
   overlayVariable?: Variable,
   overlayMin?: number,
   overlayMax?: number,
+  gradientColorscaleType?: string,
   showMissingFacet: boolean = false,
   facetVocabulary: string[] = [],
   facetVariable?: Variable
@@ -1107,12 +1120,7 @@ export function scatterplotResponseToData(
   );
 
   const processedData = mapValues(facetGroupedResponseData, (group) => {
-    const {
-      dataSetProcess,
-      yMin,
-      yMax,
-      gradientColorscaleType,
-    } = processInputData(
+    const { dataSetProcess, yMin, yMax } = processInputData(
       reorderResponseScatterplotData(
         // reorder by overlay var within each facet
         group,
@@ -1128,6 +1136,7 @@ export function scatterplotResponseToData(
       overlayVariable,
       overlayMin,
       overlayMax,
+      gradientColorscaleType,
       // pass facetVariable to determine either scatter or scattergl
       facetVariable
     );
@@ -1146,10 +1155,6 @@ export function scatterplotResponseToData(
 
   const yMin = min(map(processedData, ({ yMin }) => yMin));
   const yMax = max(map(processedData, ({ yMax }) => yMax));
-
-  const gradientColorscaleType = max(
-    map(processedData, ({ gradientColorscaleType }) => gradientColorscaleType)
-  );
 
   const dataSetProcess =
     size(processedData) === 1 && head(keys(processedData)) === '__NO_FACET__'
@@ -1262,8 +1267,9 @@ function processInputData<T extends number | string>(
   showMissingness: boolean,
   hasMissingData: boolean,
   overlayVariable?: Variable,
-  overlayMin?: number | undefined,
-  overlayMax?: number | undefined,
+  overlayMin?: number,
+  overlayMax?: number,
+  gradientColorscaleType?: string,
   // pass facetVariable to determine either scatter or scattergl
   facetVariable?: Variable
 ) {
@@ -1277,7 +1283,7 @@ function processInputData<T extends number | string>(
   // set variables for overlay ranges
   // let overlayMin: number | undefined;
   // let overlayMax: number | undefined;
-  let gradientColorscaleType: string | undefined;
+  // let gradientColorscaleType: string | undefined;
 
   // catch the case when the back end has returned valid but completely empty data
   if (
@@ -1392,18 +1398,18 @@ function processInputData<T extends number | string>(
         // Assuming only allowing numbers for now
         seriesGradientColorscale = el.seriesGradientColorscale.map(Number);
 
-        overlayMin =
-          overlayMin != null
-            ? lte(overlayMin, min(seriesGradientColorscale))
-              ? overlayMin
-              : (min(seriesGradientColorscale) as number)
-            : (min(seriesGradientColorscale) as number);
-        overlayMax =
-          overlayMax != null
-            ? gte(overlayMax, max(seriesGradientColorscale))
-              ? overlayMax
-              : (max(seriesGradientColorscale) as number)
-            : (max(seriesGradientColorscale) as number);
+        // overlayMin =
+        //   overlayMin != null
+        //     ? lte(overlayMin, min(seriesGradientColorscale))
+        //       ? overlayMin
+        //       : (min(seriesGradientColorscale) as number)
+        //     : (min(seriesGradientColorscale) as number);
+        // overlayMax =
+        //   overlayMax != null
+        //     ? gte(overlayMax, max(seriesGradientColorscale))
+        //       ? overlayMax
+        //       : (max(seriesGradientColorscale) as number)
+        //     : (max(seriesGradientColorscale) as number);
 
         console.log(overlayMin);
         console.log(min(seriesGradientColorscale));
@@ -1411,42 +1417,39 @@ function processInputData<T extends number | string>(
         console.log(max(seriesGradientColorscale));
 
         // Choose gradient colorscale type and determine marker colors
-        const normalize = scaleLinear();
-        if (overlayMin < 0 && overlayMax > 0) {
-          console.log('diverging');
-          // Diverging colorscale, assume 0 is midpoint. Colorscale must be symmetric around the midpoint
-          const maxAbsOverlay =
-            Math.abs(overlayMin) > overlayMax
-              ? Math.abs(overlayMin)
-              : overlayMax;
-          // For each point, normalize the data to [-1, 1], then retrieve the corresponding color
-          normalize.domain([-maxAbsOverlay, maxAbsOverlay]).range([-1, 1]);
-          markerColorsGradient = seriesGradientColorscale.map((a: number) =>
-            gradientDivergingColorscaleMap(normalize(a))
-          );
-          overlayMax = maxAbsOverlay;
-          overlayMin = -maxAbsOverlay;
-          gradientColorscaleType = 'diverging';
-        } else if (seriesGradientColorscale.some((a: number) => a < 0)) {
-          console.log('sequential backwards');
-          // Sequential backwards (from -inf to 0)
-          // For each point, normalize the data to [1, 0], then retrieve the corresponding color
-          normalize.domain([overlayMin, overlayMax]).range([1, 0]);
-          markerColorsGradient = seriesGradientColorscale.map((a: number) =>
-            gradientSequentialColorscaleMap(normalize(a))
-          );
-          gradientColorscaleType = 'sequential';
-        } else {
-          console.log('sequential');
-          // Sequential (from 0 to inf)
-          // For each point, normalize the data to [0, 1], then retrieve the corresponding color
-          normalize.domain([overlayMin, overlayMax]).range([0, 1]);
-          markerColorsGradient = seriesGradientColorscale.map((a: number) =>
-            gradientSequentialColorscaleMap(normalize(a))
-          );
-          gradientColorscaleType = 'sequential';
-          console.log(gradientSequentialColorscaleMap(normalize(29.6)));
-          console.log(gradientSequentialColorscaleMap(normalize(0)));
+        // // // WRONG logic here!
+        if (gradientColorscaleType && overlayMin && overlayMax) {
+          const normalize = scaleLinear();
+          if (gradientColorscaleType === 'divergent') {
+            console.log('diverging');
+            // Diverging colorscale, assume 0 is midpoint. Colorscale must be symmetric around the midpoint
+            const maxAbsOverlay =
+              Math.abs(overlayMin) > overlayMax
+                ? Math.abs(overlayMin)
+                : overlayMax;
+            // For each point, normalize the data to [-1, 1], then retrieve the corresponding color
+            normalize.domain([-maxAbsOverlay, maxAbsOverlay]).range([-1, 1]);
+            markerColorsGradient = seriesGradientColorscale.map((a: number) =>
+              gradientDivergingColorscaleMap(normalize(a))
+            );
+          } else if (gradientColorscaleType === 'sequntial reverse') {
+            normalize.domain([overlayMin, overlayMax]).range([1, 0]);
+            markerColorsGradient = seriesGradientColorscale.map((a: number) =>
+              gradientSequentialColorscaleMap(normalize(a))
+            );
+            gradientColorscaleType = 'sequential';
+          } else {
+            console.log('sequential');
+            // Sequential (from 0 to inf)
+            // For each point, normalize the data to [0, 1], then retrieve the corresponding color
+            normalize.domain([overlayMin, overlayMax]).range([0, 1]);
+            markerColorsGradient = seriesGradientColorscale.map((a: number) =>
+              gradientSequentialColorscaleMap(normalize(a))
+            );
+            gradientColorscaleType = 'sequential';
+            console.log(gradientSequentialColorscaleMap(normalize(29.6)));
+            console.log(gradientSequentialColorscaleMap(normalize(0)));
+          }
         }
       }
 
@@ -1481,7 +1484,6 @@ function processInputData<T extends number | string>(
               ? 'circle'
               : markerSymbol(index),
         },
-        gradientColorscaleType: { gradientColorscaleType },
         // this needs to be here for the case of markers with line or lineplot.
         // always use spline?
         line: { color: markerColor(index), shape: 'spline' },
