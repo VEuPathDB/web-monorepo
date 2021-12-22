@@ -409,6 +409,25 @@ function ScatterplotViz(props: VisualizationProps) {
         overlayVariable?.vocabulary,
         overlayVariable
       );
+
+      // If numeric overlay, record the min and max
+      const overlayMin =
+        overlayVariable?.type === 'integer' ||
+        overlayVariable?.type === 'number'
+          ? overlayVariable.displayRangeMin
+            ? overlayVariable.displayRangeMin
+            : overlayVariable?.rangeMin
+          : undefined;
+      const overlayMax =
+        overlayVariable?.type === 'integer' ||
+        overlayVariable?.type === 'number'
+          ? overlayVariable.displayRangeMax
+            ? overlayVariable.displayRangeMax
+            : overlayVariable?.rangeMax
+          : undefined;
+
+      console.log([overlayMin, overlayMax]);
+
       const facetVocabulary = fixLabelsForNumberVariables(
         facetVariable?.vocabulary,
         facetVariable
@@ -421,6 +440,8 @@ function ScatterplotViz(props: VisualizationProps) {
         showMissingOverlay,
         overlayVocabulary,
         overlayVariable,
+        overlayMin,
+        overlayMax,
         showMissingFacet,
         facetVocabulary,
         facetVariable
@@ -484,6 +505,7 @@ function ScatterplotViz(props: VisualizationProps) {
   // gradient colorscale legend
   const gradientLegendItems: PlotLegendGradientProps = useMemo(() => {
     console.log(data.value);
+    console.log(vizConfig.showMissingness);
     if (
       data.value?.overlayMax &&
       data.value?.overlayMin &&
@@ -495,7 +517,7 @@ function ScatterplotViz(props: VisualizationProps) {
         gradientColorscaleType: data.value?.gradientColorscaleType,
         nTicks: 5, // MUST be odd! Probably should be a clever function of the box size and font or something...
         legendTitle: axisLabelWithUnit(overlayVariable),
-        // hasMissingData: hasMissingData
+        showMissingness: vizConfig.showMissingness,
       };
     } else {
       return {
@@ -1063,6 +1085,8 @@ export function scatterplotResponseToData(
   showMissingOverlay: boolean = false,
   overlayVocabulary: string[] = [],
   overlayVariable?: Variable,
+  overlayMin?: number,
+  overlayMax?: number,
   showMissingFacet: boolean = false,
   facetVocabulary: string[] = [],
   facetVariable?: Variable
@@ -1087,8 +1111,6 @@ export function scatterplotResponseToData(
       dataSetProcess,
       yMin,
       yMax,
-      overlayMin,
-      overlayMax,
       gradientColorscaleType,
     } = processInputData(
       reorderResponseScatterplotData(
@@ -1104,6 +1126,8 @@ export function scatterplotResponseToData(
       showMissingOverlay,
       hasMissingData,
       overlayVariable,
+      overlayMin,
+      overlayMax,
       // pass facetVariable to determine either scatter or scattergl
       facetVariable
     );
@@ -1118,11 +1142,11 @@ export function scatterplotResponseToData(
     };
   });
 
+  console.log(processedData);
+
   const yMin = min(map(processedData, ({ yMin }) => yMin));
   const yMax = max(map(processedData, ({ yMax }) => yMax));
 
-  const overlayMin = min(map(processedData, ({ overlayMin }) => overlayMin));
-  const overlayMax = max(map(processedData, ({ overlayMax }) => overlayMax));
   const gradientColorscaleType = max(
     map(processedData, ({ gradientColorscaleType }) => gradientColorscaleType)
   );
@@ -1238,6 +1262,8 @@ function processInputData<T extends number | string>(
   showMissingness: boolean,
   hasMissingData: boolean,
   overlayVariable?: Variable,
+  overlayMin?: number | undefined,
+  overlayMax?: number | undefined,
   // pass facetVariable to determine either scatter or scattergl
   facetVariable?: Variable
 ) {
@@ -1249,8 +1275,8 @@ function processInputData<T extends number | string>(
   let yMax: number | string | undefined;
 
   // set variables for overlay ranges
-  let overlayMin: number | undefined;
-  let overlayMax: number | undefined;
+  // let overlayMin: number | undefined;
+  // let overlayMax: number | undefined;
   let gradientColorscaleType: string | undefined;
 
   // catch the case when the back end has returned valid but completely empty data
