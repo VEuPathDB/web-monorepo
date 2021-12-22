@@ -1,16 +1,14 @@
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import map from './selectorIcons/map.svg';
 import * as t from 'io-ts';
-import { VariableDescriptor } from '../../../types/variable';
 
 // map component related imports
-import MapVEuMap, {
-  MapVEuMapProps,
-} from '@veupathdb/components/lib/map/MapVEuMap';
+import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
 import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map.json';
 import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/geohash';
 import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import DonutMarker from '@veupathdb/components/lib/map/DonutMarker';
+import { BoundsDriftMarkerProps } from '@veupathdb/components/lib/map/BoundsDriftMarker';
 
 // viz-related imports
 import { PlotLayout } from '../../layouts/PlotLayout';
@@ -20,8 +18,10 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import DataClient, { MapMarkersRequestParams } from '../../../api/DataClient';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { usePromise } from '../../../hooks/promise';
-import { BoundsDriftMarkerProps } from '@veupathdb/components/lib/map/BoundsDriftMarker';
-import { filtersFromBoundingBox } from '../../../utils/visualization';
+import {
+  filtersFromBoundingBox,
+  leafletZoomLevelToGeohashVariableId,
+} from '../../../utils/visualization';
 
 export const mapVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -151,7 +151,7 @@ function MapViz(props: VisualizationProps) {
           outputEntityId: tempOutputEntityId,
           geoAggregateVariable: {
             entityId: tempOutputEntityId,
-            variableId: 'EUPATH_0043205',
+            variableId: leafletZoomLevelToGeohashVariableId(zoomLevel),
           },
           latitudeVariable: latitudeVariableDetails,
           longitudeVariable: longitudeVariableDetails,

@@ -170,11 +170,43 @@ export function filtersFromBoundingBox(
       min: bounds.southWest.lat,
       max: bounds.northEast.lat,
     },
-    //    {
-    //      type: 'longitudeRange',
-    //      ...longitudeVariableDetails,
-    //      min: bounds.southWest.lng,
-    //      max: bounds.northEast.lng,
-    //    }
+    {
+      type: 'longitudeRange',
+      ...longitudeVariableDetails,
+      left: bounds.southWest.lng,
+      right: bounds.northEast.lng,
+    },
   ];
+}
+
+export function leafletZoomLevelToGeohashVariableId(
+  leafletZoomLevel: number
+): string {
+  switch (leafletZoomLevel) {
+    case 1:
+    case 2:
+      return 'EUPATH_0043203'; // geohash_1
+    case 3:
+    case 4:
+    case 5:
+      return 'EUPATH_0043204'; // geohash_2
+    case 6:
+    case 7:
+    case 8:
+      return 'EUPATH_0043205'; // geohash_3
+    case 9:
+    case 10:
+    case 11:
+      return 'EUPATH_0043206'; // geohash_4
+    case 12:
+    case 13:
+    case 14:
+      return 'EUPATH_0043207'; // geohash_5
+    case 15:
+    case 16:
+    case 17:
+      return 'EUPATH_0043208'; // geohash_6
+    default:
+      return 'EUPATH_0043208';
+  }
 }

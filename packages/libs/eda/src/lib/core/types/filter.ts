@@ -48,8 +48,8 @@ export const LongitudeRangeFilter = t.intersection([
   _FilterBase,
   t.type({
     type: t.literal('longitudeRange'),
-    min: t.number,
-    max: t.number,
+    left: t.number,
+    right: t.number,
   }),
 ]);
 
