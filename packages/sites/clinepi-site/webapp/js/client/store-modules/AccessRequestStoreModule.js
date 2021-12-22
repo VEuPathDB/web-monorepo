@@ -20,7 +20,10 @@ import { datasetId, formValues, userId } from '../selectors/AccessRequestSelecto
 import { parse } from 'querystring';
 import { userUpdate } from '@veupathdb/wdk-client/lib/Actions/UserActions';
 
-import { checkPermissions, isUserApprovedForStudy } from '@veupathdb/web-common/lib/StudyAccess/permission';
+import {
+  checkPermissions,
+  isUserFullyApprovedForStudy
+} from '@veupathdb/study-data-access/lib/study-access/permission';
 
 export const key = 'accessRequest';
 
@@ -121,11 +124,15 @@ function observeStaticDataLoaded(action$, state$, dependencies) {
 
       const datasetId = window.location.pathname.replace(/.*\/request-access\//, '');
 
-      const permissions = await checkPermissions(payload.user);
+      const permissions = await checkPermissions(payload.user, dependencies.studyAccessApi);
 
       if (
         payload.user.isGuest ||
-        isUserApprovedForStudy(permissions, payload.user.properties.approvedStudies)
+        isUserFullyApprovedForStudy(
+          permissions,
+          payload.user.properties.approvedStudies,
+          datasetId
+        )
       ) {
         const { redirectUrl = '/' } = parse(window.location.search.slice(1));
 

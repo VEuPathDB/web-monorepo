@@ -3,7 +3,7 @@ import { StudyMenuItem, StudyMenuSearch } from '@veupathdb/web-common/lib/App/St
 import { menuItemsFromSocials, iconMenuItemsFromSocials } from '@veupathdb/web-common/lib/App/Utils/Utils';
 import { getStaticSiteData } from '../selectors/siteData';
 import { STATIC_ROUTE_PATH, makeEdaRoute } from '@veupathdb/web-common/lib/routes';
-import { withPermissions } from '@veupathdb/web-common/lib/components/Permissions';
+import { withPermissions } from '@veupathdb/study-data-access/lib/data-restriction/Permissions';
 
 const ClinEpiStudyMenuItem = withPermissions(StudyMenuItem);
 
