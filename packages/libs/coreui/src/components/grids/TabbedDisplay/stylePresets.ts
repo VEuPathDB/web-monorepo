@@ -7,6 +7,7 @@ type TabStyle = {
 };
 
 export type TabbedDisplayStyleSpec = {
+  container: CSSProperties;
   inactive: TabStyle;
   active: TabStyle;
   hover: TabStyle;

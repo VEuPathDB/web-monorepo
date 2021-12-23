@@ -10,8 +10,14 @@ import { UITheme } from '../../theming/types';
 import useUITheme from '../../theming/useUITheme';
 
 import { TabbedDisplayStyleSpec } from './stylePresets';
+import { H6 } from '../../headers';
 
 const DEFAULT_STYLE: TabbedDisplayStyleSpec = {
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    boxSizing: 'border-box',
+  },
   active: {
     backgroundColor: blue[100],
     textColor: gray[600],
@@ -35,8 +41,10 @@ export type TabbedDisplayProps = {
    * for the tab display name and the actual content to display to the user.
    * */
   tabs: Array<{
+    // The name to display in the tab. Also used as the key.
     displayName: string;
-    content: React.ReactNode;
+    onSelect?: () => void;
+    content?: React.ReactNode;
   }>;
   /** Optional. Any desired style overrides. */
   styleOverrides?: Partial<TabbedDisplayStyleSpec>;
@@ -79,14 +87,13 @@ export default function TabbedDisplay({
     [themeStyle]
   );
 
+  const tabContent = useMemo(
+    () => tabs.find((tab) => tab.displayName === selectedTab)!.content,
+    [tabs, selectedTab]
+  );
+
   return (
-    <div
-      css={{
-        display: 'flex',
-        flexDirection: 'column',
-        boxSizing: 'border-box',
-      }}
-    >
+    <div css={{ ...finalStyle.container }}>
       <div
         key='controls'
         css={{ display: 'flex', borderBottom: '1px solid lightgray' }}
@@ -105,10 +112,8 @@ export default function TabbedDisplay({
               key={tab.displayName}
               css={[
                 finalStyle[tabState],
-                typography.secondaryFont,
                 {
                   backgroundColor: finalStyle[tabState].backgroundColor,
-                  color: finalStyle[tabState].textColor,
                   borderBottomColor: finalStyle[tabState].indicatorColor,
                   padding: 15,
                   borderBottomWidth: 3,
@@ -118,21 +123,26 @@ export default function TabbedDisplay({
                     'background-color .5s, border-color .5s, color .5s',
                 },
               ]}
-              onClick={() => setSelectedTab(tab.displayName)}
+              onClick={() => {
+                tab.onSelect && tab.onSelect();
+                setSelectedTab(tab.displayName);
+              }}
               onMouseOver={() => setHoveredTab(tab.displayName)}
               onMouseOut={() => setHoveredTab(null)}
               onKeyDown={(event) =>
                 event.code === 'Space' && setSelectedTab(tab.displayName)
               }
             >
-              {tab.displayName}
+              <H6
+                text={tab.displayName}
+                additionalStyles={{ margin: 0 }}
+                color={finalStyle[tabState].textColor}
+              />
             </div>
           );
         })}
       </div>
-      <div css={{ padding: 15 }}>
-        {tabs.find((tab) => tab.displayName === selectedTab)?.content}
-      </div>
+      {tabContent}
     </div>
   );
 }

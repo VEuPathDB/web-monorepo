@@ -33,14 +33,19 @@ Basic.args = {
     {
       displayName: 'Mike',
       content: (
-        <div css={[typography.p]}>Some random content for the Mike tab.</div>
+        <div css={[typography.p, { padding: 15 }]}>
+          Some random content for the Mike tab.
+        </div>
       ),
+      onSelect: () => console.log('Mike has been selected.'),
     },
     {
       displayName: 'Connor',
       content: (
-        <div css={[typography.p]}>Some random content for the Connor tab.</div>
+        <div css={[typography.p, { padding: 15 }]}>
+          Some random content for the Connor tab.
+        </div>
       ),
     },
   ],
-};
+} as TabbedDisplayProps;
