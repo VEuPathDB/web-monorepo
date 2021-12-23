@@ -59,7 +59,7 @@ export const h6 = css([
   primaryFont,
   {
     fontSize: '1rem',
-    fontWeight: 500,
+    fontWeight: 400,
     MozOsxFontSmoothing: 'auto',
     WebkitFontSmoothing: 'auto',
   },

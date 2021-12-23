@@ -1,16 +1,28 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, CSSProperties } from 'react';
 import { merge } from 'lodash';
+
+// Components
+import { H6 } from '../../headers';
 
 // Definitions
 import { blue, gray, tan } from '../../../definitions/colors';
-import typography from '../../../styleDefinitions/typography';
 import { UITheme } from '../../theming/types';
 
 // Hooks
 import useUITheme from '../../theming/useUITheme';
 
-import { TabbedDisplayStyleSpec } from './stylePresets';
-import { H6 } from '../../headers';
+type TabStyle = {
+  backgroundColor?: CSSProperties['backgroundColor'];
+  textColor?: CSSProperties['color'];
+  indicatorColor?: CSSProperties['color'];
+};
+
+export type TabbedDisplayStyleSpec = {
+  container: CSSProperties;
+  inactive: TabStyle;
+  active: TabStyle;
+  hover: TabStyle;
+};
 
 const DEFAULT_STYLE: TabbedDisplayStyleSpec = {
   container: {
@@ -97,6 +109,7 @@ export default function TabbedDisplay({
       <div
         key='controls'
         css={{ display: 'flex', borderBottom: '1px solid lightgray' }}
+        role='tablist'
       >
         {tabs.map((tab) => {
           const tabState =
@@ -108,6 +121,7 @@ export default function TabbedDisplay({
 
           return (
             <div
+              role='tab'
               tabIndex={0}
               key={tab.displayName}
               css={[
@@ -129,9 +143,12 @@ export default function TabbedDisplay({
               }}
               onMouseOver={() => setHoveredTab(tab.displayName)}
               onMouseOut={() => setHoveredTab(null)}
-              onKeyDown={(event) =>
-                event.code === 'Space' && setSelectedTab(tab.displayName)
-              }
+              onKeyDown={(event) => {
+                if (event.code === 'Space') {
+                  tab.onSelect && tab.onSelect();
+                  setSelectedTab(tab.displayName);
+                }
+              }}
             >
               <H6
                 text={tab.displayName}

@@ -55,7 +55,11 @@ export default function Header({
         color === undefined ? { color: gray[700] } : { color },
         themeStyles,
         underline && { textDecoration: 'underline' },
-        { textTransform, ...additionalStyles },
+        {
+          textTransform,
+          transition: 'color .5s',
+          ...additionalStyles,
+        },
       ]}
     >
       {text}
