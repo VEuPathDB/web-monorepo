@@ -95,7 +95,7 @@ export default function TabbedDisplay({
   );
 
   const finalStyle = useMemo(
-    () => merge({}, DEFAULT_STYLE, styleOverrides, themeStyle),
+    () => merge({}, DEFAULT_STYLE, themeStyle, styleOverrides),
     [themeStyle]
   );
 
