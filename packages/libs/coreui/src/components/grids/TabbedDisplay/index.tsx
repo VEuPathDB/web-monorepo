@@ -94,7 +94,7 @@ export default function TabbedDisplay({
       matchingTabRecord && setActiveTabInternal(activeTab);
       matchingTabRecord?.onSelect && matchingTabRecord.onSelect();
     }
-  }, [tabs, activeTab]);
+  }, [activeTab]);
 
   const [hoveredTab, setHoveredTab] = useState<null | string>(null);
 

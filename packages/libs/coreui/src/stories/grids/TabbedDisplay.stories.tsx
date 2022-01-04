@@ -49,3 +49,27 @@ Basic.args = {
     },
   ],
 } as TabbedDisplayProps;
+
+export const ControlledTab = Template.bind({});
+ControlledTab.args = {
+  activeTab: 'Mike',
+  tabs: [
+    {
+      displayName: 'Mike',
+      content: (
+        <div css={[typography.p, { padding: 15 }]}>
+          Some random content for the Mike tab.
+        </div>
+      ),
+      onSelect: () => console.log('Mike has been selected.'),
+    },
+    {
+      displayName: 'Connor',
+      content: (
+        <div css={[typography.p, { padding: 15 }]}>
+          Some random content for the Connor tab.
+        </div>
+      ),
+    },
+  ],
+} as TabbedDisplayProps;
