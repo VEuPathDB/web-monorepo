@@ -411,30 +411,54 @@ function ScatterplotViz(props: VisualizationProps) {
       );
 
       // If numeric overlay, record the min and max
-      const overlayMin =
-        overlayVariable?.type === 'integer' ||
-        overlayVariable?.type === 'number'
-          ? overlayVariable.displayRangeMin
-            ? overlayVariable.displayRangeMin
-            : overlayVariable?.rangeMin
-          : undefined;
-      const overlayMax =
-        overlayVariable?.type === 'integer' ||
-        overlayVariable?.type === 'number'
-          ? overlayVariable.displayRangeMax
-            ? overlayVariable.displayRangeMax
-            : overlayVariable?.rangeMax
-          : undefined;
+      let overlayMin: number | undefined;
+      let overlayMax: number | undefined;
+      let gradientColorscaleType: string | undefined;
 
-      // If we made overlayMin and overlayMax, use these values to determine the gradientColorscaleType
-      const gradientColorscaleType =
-        overlayMin && overlayMax
-          ? overlayMin >= 0 && overlayMax >= 0
+      if (
+        overlayVariable?.type === 'integer' ||
+        overlayVariable?.type === 'number'
+      ) {
+        console.log(overlayVariable.displayRangeMin);
+
+        const defaultOverlayMin: number =
+          overlayVariable.displayRangeMin ||
+          overlayVariable.displayRangeMin === 0
+            ? overlayVariable.displayRangeMin
+            : overlayVariable.rangeMin;
+
+        console.log(defaultOverlayMin);
+
+        const defaultOverlayMax: number = overlayVariable.displayRangeMax
+          ? overlayVariable.displayRangeMax
+          : overlayVariable.rangeMax;
+
+        console.log(defaultOverlayMax);
+
+        // If we made overlayMin and overlayMax, use these values to determine the gradientColorscaleType
+        // Note overlayMin and overlayMax could be intentionally 0.
+        gradientColorscaleType =
+          defaultOverlayMin >= 0 && defaultOverlayMax >= 0
             ? 'sequential'
-            : overlayMin <= 0 && overlayMax <= 0
+            : defaultOverlayMin <= 0 && defaultOverlayMax <= 0
             ? 'sequential reversed'
-            : 'divergent'
-          : undefined;
+            : 'divergent';
+
+        // Update overlay min and max
+        if (gradientColorscaleType === 'divergent') {
+          overlayMin = -Math.max(
+            Math.abs(defaultOverlayMin),
+            Math.abs(defaultOverlayMax)
+          );
+          overlayMax = Math.max(
+            Math.abs(defaultOverlayMin),
+            Math.abs(defaultOverlayMax)
+          );
+        } else {
+          overlayMin = defaultOverlayMin;
+          overlayMax = defaultOverlayMax;
+        }
+      }
 
       console.log([overlayMin, overlayMax]);
       console.log(gradientColorscaleType);
@@ -518,9 +542,10 @@ function ScatterplotViz(props: VisualizationProps) {
   const gradientLegendItems: PlotLegendGradientProps = useMemo(() => {
     console.log(data.value);
     console.log(vizConfig.showMissingness);
+    console.log(data.value?.overlayMin);
     if (
       data.value?.overlayMax &&
-      data.value?.overlayMin &&
+      (data.value?.overlayMin || data.value?.overlayMin === 0) &&
       data.value?.gradientColorscaleType
     ) {
       return {
@@ -1418,7 +1443,11 @@ function processInputData<T extends number | string>(
 
         // Choose gradient colorscale type and determine marker colors
         // // // WRONG logic here!
-        if (gradientColorscaleType && overlayMin && overlayMax) {
+        if (
+          gradientColorscaleType &&
+          (overlayMin || overlayMin === 0) &&
+          overlayMax
+        ) {
           const normalize = scaleLinear();
           if (gradientColorscaleType === 'divergent') {
             console.log('diverging');
