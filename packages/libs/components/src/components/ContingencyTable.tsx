@@ -74,6 +74,8 @@ export function ContingencyTable(props: ContingencyTableProps) {
   }
 
   const rowSums = data.values.map((row) => _.sum(row));
+  const numericHeaderStyles = { textAlign: 'center' } as const;
+  const numericValueStyles = { textAlign: 'right' } as const;
 
   return (
     <div className="contingency-table" style={props.tableContainerStyles}>
@@ -97,11 +99,20 @@ export function ContingencyTable(props: ContingencyTableProps) {
               {props.dependentVariable}
             </th>
             {data.independentLabels.map((label) => (
-              <th key={label} className="contingency-table_column-label">
+              <th
+                key={label}
+                className="contingency-table_column-label"
+                style={numericHeaderStyles}
+              >
                 {label}
               </th>
             ))}
-            <th className="contingency-table_totals-column-header">Total</th>
+            <th
+              className="contingency-table_totals-column-header"
+              style={numericHeaderStyles}
+            >
+              Total
+            </th>
           </tr>
           {data.values.map((row, i) => (
             <tr key={data.dependentLabels[i]}>
@@ -112,11 +123,15 @@ export function ContingencyTable(props: ContingencyTableProps) {
                 <td
                   key={`${data.dependentLabels[i]}-${data.independentLabels[j]}`}
                   className="contingency-table_value"
+                  style={numericValueStyles}
                 >
                   {value.toLocaleString()}
                 </td>
               ))}
-              <td className="contingency-table_totals-column-value">
+              <td
+                className="contingency-table_totals-column-value"
+                style={numericValueStyles}
+              >
                 {rowSums[i].toLocaleString()}
               </td>
             </tr>
@@ -127,11 +142,15 @@ export function ContingencyTable(props: ContingencyTableProps) {
               <td
                 key={data.independentLabels[i]}
                 className="contingency-table_totals-row-value"
+                style={numericValueStyles}
               >
                 {_.sum(col).toLocaleString()}
               </td>
             ))}
-            <td className="contingency-table_grand-total">
+            <td
+              className="contingency-table_grand-total"
+              style={numericValueStyles}
+            >
               {_.sum(rowSums).toLocaleString()}
             </td>
           </tr>
