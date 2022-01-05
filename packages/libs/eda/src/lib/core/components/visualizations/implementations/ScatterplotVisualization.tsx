@@ -853,7 +853,6 @@ function ScatterplotViz(props: VisualizationProps) {
   );
 
   console.log(gradientLegendItems);
-  console.log(overlayVariable);
 
   const legendNode =
     !data.pending &&
@@ -1305,11 +1304,6 @@ function processInputData<T extends number | string>(
   let yMin: number | string | undefined;
   let yMax: number | string | undefined;
 
-  // set variables for overlay ranges
-  // let overlayMin: number | undefined;
-  // let overlayMax: number | undefined;
-  // let gradientColorscaleType: string | undefined;
-
   // catch the case when the back end has returned valid but completely empty data
   if (
     responseScatterplotData.every(
@@ -1320,8 +1314,6 @@ function processInputData<T extends number | string>(
       dataSetProcess: { series: [] }, // BM doesn't think this should be `undefined` for empty facets - the back end doesn't return *any* data for empty facets.
       yMin,
       yMax,
-      // overlayMin,
-      // overlayMax,
     };
   }
 
@@ -1374,6 +1366,7 @@ function processInputData<T extends number | string>(
     // initialize gradient colorscale arrays
     let seriesGradientColorscale = [];
     let markerColorsGradient = [];
+    let markerSymbolGradient: string = 'x';
 
     // series is for scatter plot
     if (el.seriesX && el.seriesY) {
@@ -1423,64 +1416,65 @@ function processInputData<T extends number | string>(
         // Assuming only allowing numbers for now
         seriesGradientColorscale = el.seriesGradientColorscale.map(Number);
 
-        // overlayMin =
-        //   overlayMin != null
-        //     ? lte(overlayMin, min(seriesGradientColorscale))
-        //       ? overlayMin
-        //       : (min(seriesGradientColorscale) as number)
-        //     : (min(seriesGradientColorscale) as number);
-        // overlayMax =
-        //   overlayMax != null
-        //     ? gte(overlayMax, max(seriesGradientColorscale))
-        //       ? overlayMax
-        //       : (max(seriesGradientColorscale) as number)
-        //     : (max(seriesGradientColorscale) as number);
-
         console.log(overlayMin);
         console.log(min(seriesGradientColorscale));
         console.log(overlayMax);
         console.log(max(seriesGradientColorscale));
 
         // Choose gradient colorscale type and determine marker colors
-        // // // WRONG logic here!
         if (
           gradientColorscaleType &&
           (overlayMin || overlayMin === 0) &&
           overlayMax
         ) {
-          const normalize = scaleLinear();
-          if (gradientColorscaleType === 'divergent') {
-            console.log('diverging');
-            // Diverging colorscale, assume 0 is midpoint. Colorscale must be symmetric around the midpoint
-            const maxAbsOverlay =
-              Math.abs(overlayMin) > overlayMax
-                ? Math.abs(overlayMin)
-                : overlayMax;
-            // For each point, normalize the data to [-1, 1], then retrieve the corresponding color
-            normalize.domain([-maxAbsOverlay, maxAbsOverlay]).range([-1, 1]);
-            markerColorsGradient = seriesGradientColorscale.map((a: number) =>
-              gradientDivergingColorscaleMap(normalize(a))
-            );
-          } else if (gradientColorscaleType === 'sequntial reverse') {
-            normalize.domain([overlayMin, overlayMax]).range([1, 0]);
-            markerColorsGradient = seriesGradientColorscale.map((a: number) =>
-              gradientSequentialColorscaleMap(normalize(a))
-            );
-            gradientColorscaleType = 'sequential';
+          // If we have data
+          console.log(seriesGradientColorscale);
+          if (
+            !seriesGradientColorscale.some((element: number) =>
+              Number.isNaN(element)
+            )
+          ) {
+            const normalize = scaleLinear();
+            if (gradientColorscaleType === 'divergent') {
+              console.log('diverging');
+              // Diverging colorscale, assume 0 is midpoint. Colorscale must be symmetric around the midpoint
+              const maxAbsOverlay =
+                Math.abs(overlayMin) > overlayMax
+                  ? Math.abs(overlayMin)
+                  : overlayMax;
+              // For each point, normalize the data to [-1, 1], then retrieve the corresponding color
+              normalize.domain([-maxAbsOverlay, maxAbsOverlay]).range([-1, 1]);
+              markerColorsGradient = seriesGradientColorscale.map((a: number) =>
+                gradientDivergingColorscaleMap(normalize(a))
+              );
+            } else if (gradientColorscaleType === 'sequntial reverse') {
+              normalize.domain([overlayMin, overlayMax]).range([1, 0]);
+              markerColorsGradient = seriesGradientColorscale.map((a: number) =>
+                gradientSequentialColorscaleMap(normalize(a))
+              );
+              gradientColorscaleType = 'sequential';
+            } else {
+              console.log('sequential');
+              // Sequential (from 0 to inf)
+              // For each point, normalize the data to [0, 1], then retrieve the corresponding color
+              normalize.domain([overlayMin, overlayMax]).range([0, 1]);
+              markerColorsGradient = seriesGradientColorscale.map((a: number) =>
+                gradientSequentialColorscaleMap(normalize(a))
+              );
+              gradientColorscaleType = 'sequential';
+              console.log(gradientSequentialColorscaleMap(normalize(29.6)));
+              console.log(gradientSequentialColorscaleMap(normalize(0)));
+            }
+            markerSymbolGradient = 'circle';
           } else {
-            console.log('sequential');
-            // Sequential (from 0 to inf)
-            // For each point, normalize the data to [0, 1], then retrieve the corresponding color
-            normalize.domain([overlayMin, overlayMax]).range([0, 1]);
-            markerColorsGradient = seriesGradientColorscale.map((a: number) =>
-              gradientSequentialColorscaleMap(normalize(a))
-            );
-            gradientColorscaleType = 'sequential';
-            console.log(gradientSequentialColorscaleMap(normalize(29.6)));
-            console.log(gradientSequentialColorscaleMap(normalize(0)));
+            // Then we have no data
+            markerColorsGradient = ['#aaaaaa'];
           }
         }
       }
+
+      console.log(markerColorsGradient);
+      console.log(index);
 
       // add scatter data considering input options
       dataSetProcess.push({
@@ -1505,12 +1499,13 @@ function processInputData<T extends number | string>(
         opacity: 0.7,
         marker: {
           color:
-            seriesGradientColorscale?.length > 0
+            seriesGradientColorscale?.length > 0 &&
+            markerSymbolGradient === 'circle'
               ? markerColorsGradient
               : markerColor(index),
           symbol:
             seriesGradientColorscale?.length > 0
-              ? 'circle'
+              ? markerSymbolGradient
               : markerSymbol(index),
         },
         // this needs to be here for the case of markers with line or lineplot.
