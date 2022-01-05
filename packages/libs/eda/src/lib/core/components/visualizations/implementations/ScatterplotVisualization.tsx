@@ -419,24 +419,17 @@ function ScatterplotViz(props: VisualizationProps) {
         overlayVariable?.type === 'integer' ||
         overlayVariable?.type === 'number'
       ) {
-        console.log(overlayVariable.displayRangeMin);
-
         const defaultOverlayMin: number =
           overlayVariable.displayRangeMin ||
           overlayVariable.displayRangeMin === 0
             ? overlayVariable.displayRangeMin
             : overlayVariable.rangeMin;
 
-        console.log(defaultOverlayMin);
-
         const defaultOverlayMax: number = overlayVariable.displayRangeMax
           ? overlayVariable.displayRangeMax
           : overlayVariable.rangeMax;
 
-        console.log(defaultOverlayMax);
-
-        // If we made overlayMin and overlayMax, use these values to determine the gradientColorscaleType
-        // Note overlayMin and overlayMax could be intentionally 0.
+        // Note overlayMin and/or overlayMax could be intentionally 0.
         gradientColorscaleType =
           defaultOverlayMin >= 0 && defaultOverlayMax >= 0
             ? 'sequential'
@@ -459,9 +452,6 @@ function ScatterplotViz(props: VisualizationProps) {
           overlayMax = defaultOverlayMax;
         }
       }
-
-      console.log([overlayMin, overlayMax]);
-      console.log(gradientColorscaleType);
 
       const facetVocabulary = fixLabelsForNumberVariables(
         facetVariable?.vocabulary,
@@ -540,9 +530,6 @@ function ScatterplotViz(props: VisualizationProps) {
 
   // gradient colorscale legend
   const gradientLegendItems: PlotLegendGradientProps = useMemo(() => {
-    console.log(data.value);
-    console.log(vizConfig.showMissingness);
-    console.log(data.value?.overlayMin);
     if (
       data.value?.overlayMax &&
       (data.value?.overlayMin || data.value?.overlayMin === 0) &&
@@ -851,8 +838,6 @@ function ScatterplotViz(props: VisualizationProps) {
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
     />
   );
-
-  console.log(gradientLegendItems);
 
   const legendNode =
     !data.pending &&
@@ -1175,8 +1160,6 @@ export function scatterplotResponseToData(
     };
   });
 
-  console.log(processedData);
-
   const yMin = min(map(processedData, ({ yMin }) => yMin));
   const yMax = max(map(processedData, ({ yMax }) => yMax));
 
@@ -1411,70 +1394,61 @@ function processInputData<T extends number | string>(
             : max(seriesY);
       }
 
-      // assign colors from the gradient colorscale to each point if seriesGradientColorscale exists
+      // If seriesGradientColorscale column exists, need to use gradient colorscales
       if (el.seriesGradientColorscale) {
-        // Assuming only allowing numbers for now
+        // Assuming only allowing numbers for now - later will add dates
         seriesGradientColorscale = el.seriesGradientColorscale.map(Number);
 
-        console.log(overlayMin);
-        console.log(min(seriesGradientColorscale));
-        console.log(overlayMax);
-        console.log(max(seriesGradientColorscale));
-
-        // Choose gradient colorscale type and determine marker colors
+        // Determin marker colors
         if (
           gradientColorscaleType &&
           (overlayMin || overlayMin === 0) &&
           overlayMax
         ) {
-          // If we have data
-          console.log(seriesGradientColorscale);
+          // If we have data, use a gradient colorscale. No data series will have all NaN values in seriesGradientColorscale
           if (
             !seriesGradientColorscale.some((element: number) =>
               Number.isNaN(element)
             )
           ) {
+            // Initialize normalization function.
             const normalize = scaleLinear();
+
             if (gradientColorscaleType === 'divergent') {
-              console.log('diverging');
               // Diverging colorscale, assume 0 is midpoint. Colorscale must be symmetric around the midpoint
               const maxAbsOverlay =
                 Math.abs(overlayMin) > overlayMax
                   ? Math.abs(overlayMin)
                   : overlayMax;
+
               // For each point, normalize the data to [-1, 1], then retrieve the corresponding color
               normalize.domain([-maxAbsOverlay, maxAbsOverlay]).range([-1, 1]);
               markerColorsGradient = seriesGradientColorscale.map((a: number) =>
                 gradientDivergingColorscaleMap(normalize(a))
               );
             } else if (gradientColorscaleType === 'sequntial reverse') {
+              // Normalize data to [1, 0], so that the colorscale goes in reverse. NOTE: can remove once we add the ability for users to set colorscale range.
               normalize.domain([overlayMin, overlayMax]).range([1, 0]);
               markerColorsGradient = seriesGradientColorscale.map((a: number) =>
                 gradientSequentialColorscaleMap(normalize(a))
               );
               gradientColorscaleType = 'sequential';
             } else {
-              console.log('sequential');
-              // Sequential (from 0 to inf)
+              // Then we use the sequential (from 0 to inf) colorscale.
               // For each point, normalize the data to [0, 1], then retrieve the corresponding color
               normalize.domain([overlayMin, overlayMax]).range([0, 1]);
               markerColorsGradient = seriesGradientColorscale.map((a: number) =>
                 gradientSequentialColorscaleMap(normalize(a))
               );
               gradientColorscaleType = 'sequential';
-              console.log(gradientSequentialColorscaleMap(normalize(29.6)));
-              console.log(gradientSequentialColorscaleMap(normalize(0)));
             }
             markerSymbolGradient = 'circle';
           } else {
-            // Then we have no data
-            markerColorsGradient = ['#aaaaaa'];
+            // Then this is the no data series. Set marker colors to gray
+            markerColorsGradient = [gray];
           }
         }
       }
-
-      console.log(markerColorsGradient);
-      console.log(index);
 
       // add scatter data considering input options
       dataSetProcess.push({
