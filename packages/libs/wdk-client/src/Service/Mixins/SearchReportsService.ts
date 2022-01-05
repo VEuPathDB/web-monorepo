@@ -89,7 +89,7 @@ export default (base: ServiceBase) => {
     });
   }
 
-  async function getTemporaryResultUrl(
+  async function getTemporaryResultPath(
     answerSpec: AnswerSpec,
     reportName: string,
     reportConfig: StandardReportConfig
@@ -107,14 +107,14 @@ export default (base: ServiceBase) => {
         })
       }
     );
-    return base.serviceUrl + '/temporary-results/' + id;
+    return '/temporary-results/' + id;
   }
 
   return {
     getCustomSearchReportRequestInfo,
     getAnswer,
     getAnswerJson,
-    getTemporaryResultUrl,
+    getTemporaryResultPath,
     downloadAnswer
   }
 }
