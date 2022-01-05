@@ -3,7 +3,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { useLocation } from 'react-router';
 import { RecoilRoot } from 'recoil';
-import Cookies from 'js-cookie';
 import QueryString from 'querystring';
 import { emptyAction } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
 import { projectId } from '@veupathdb/web-common/lib/config';
@@ -316,17 +315,14 @@ export function PrimaryKeySpan() {
  */
 function sendToGalaxy(props) {
   return ({ wdkService }) => {
-    let { galaxyUrl, step, selectedReporter, formState, webAppUrl } = props;
-    Cookies.remove('GALAXY_URL', { path: webAppUrl });
-    let formatting = {
-      format: selectedReporter,
-      formatConfig: formState
-    };
-    wdkService.getTemporaryResultUrl(step.answerSpec, formatting)
-      .then(url => {
+    let { galaxyUrl, resultType, selectedReporter, formState } = props;
+    wdkService.getTemporaryResultPath(resultType.step, selectedReporter, formState)
+      .then(path => {
+        const url = new URL(wdkService.serviceUrl + path, window.location);
         submitAsForm({
+          target: '_new',
           action: galaxyUrl,
-          inputs: { URL: url }
+          inputs: { URL: url.toString() }
         });
       });
     return emptyAction;
@@ -334,7 +330,10 @@ function sendToGalaxy(props) {
 }
 
 function SendToGalaxyButton(props) {
-  let galaxyUrl = Cookies.get('GALAXY_URL');
+  const [galaxyUrl, setGalaxyUrl] = React.useState(null);
+  React.useEffect(() => {
+    setGalaxyUrl(sessionStorage.getItem('galaxyUrl'));
+  })
   return (!galaxyUrl ? null :
     <button className="btn" type="button" onClick={() => { props.sendToGalaxy({...props, galaxyUrl}); }}>
       Send {props.recordClass.displayNamePlural} to Galaxy
@@ -382,6 +381,13 @@ export function Page() {
 
     const location = useLocation();
     const isHomePage = location.pathname === '/';
+    const params = new URLSearchParams(location.search);
+    const galaxyUrl = params.get('galaxy_url');
+
+    React.useEffect(() => {
+      sessionStorage.setItem('galaxyUrl', galaxyUrl);
+    }, [galaxyUrl])
+
 
     return (
       <RecoilRoot>
