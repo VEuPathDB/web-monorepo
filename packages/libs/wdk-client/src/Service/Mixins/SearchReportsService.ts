@@ -6,7 +6,6 @@ import {
   SearchConfig,
   Answer,
   FilterValueArray,
-  Identifier,
 } from 'wdk-client/Utils/WdkModel';
 import { submitAsForm } from 'wdk-client/Utils/FormSubmitter';
 import { number, record, string } from 'wdk-client/Utils/Json';
