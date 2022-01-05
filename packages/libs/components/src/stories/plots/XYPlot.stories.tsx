@@ -1257,29 +1257,6 @@ function processInputData<T extends number | string>(
     '23, 190, 207', //'#17becf'   // blue-teal
   ];
 
-  // // Create colorscale for series. Maps [0, 1] to gradient colorscale using Lab interpolation
-  // const gradientSequentialColorscaleMap = scaleLinear<string>()
-  //   .domain(
-  //     range(SequentialGradientColorscale.length).map(
-  //       (a: number) => a / (SequentialGradientColorscale.length - 1)
-  //     )
-  //   )
-  //   .range(SequentialGradientColorscale)
-  //   .interpolate(interpolateLab);
-
-  // // Create diverging colorscale. Maps [-1, 1] to gradient colorscale using Lab interpolation
-  // const divergingColorscaleSteps = Math.floor(
-  //   DivergingGradientColorscale.length / 2
-  // );
-  // const gradientDivergingColorscaleMap = scaleLinear<string>()
-  //   .domain(
-  //     range(-divergingColorscaleSteps, divergingColorscaleSteps + 1).map(
-  //       (a: number) => a / divergingColorscaleSteps
-  //     )
-  //   )
-  //   .range(DivergingGradientColorscale)
-  //   .interpolate(interpolateLab);
-
   // set dataSetProcess as any
   let dataSetProcess: any = [];
 
@@ -1333,47 +1310,87 @@ function processInputData<T extends number | string>(
         yMax = gte(yMax, max(seriesY)) ? yMax : max(seriesY);
       }
 
-      // assign colors from the gradient colorscale to each point if seriesGradientColorscale exists
+      // If seriesGradientColorscale column exists, need to use gradient colorscales
       if (el.seriesGradientColorscale) {
-        // Assuming only allowing numbers for now
+        // Assuming only allowing numbers for now - later will add dates
         seriesGradientColorscale = el.seriesGradientColorscale.map(Number);
 
-        // set variables for overlay ranges
-        let overlayMin: number | undefined = 0;
-        let overlayMax: number | string | undefined = 0;
+        // For storybook only - determine overlayMin, overlayMax, and gradientColorscaleType inside processInputData
+        // In web-eda, these need to be determined *outside* of this function so that we handle facets correctly.
+        let overlayMin: number | undefined;
+        let overlayMax: number | undefined;
+        let gradientColorscaleType: string | undefined;
 
-        overlayMin = lte(overlayMin, min(seriesGradientColorscale))
-          ? overlayMin
-          : (min(seriesGradientColorscale) as number);
-        overlayMax = gte(overlayMax, max(seriesGradientColorscale))
-          ? overlayMax
-          : (max(seriesGradientColorscale) as number);
+        const defaultOverlayMin: number = min(
+          seriesGradientColorscale
+        ) as number;
+        const defaultOverlayMax: number = max(
+          seriesGradientColorscale
+        ) as number;
+        // Note overlayMin and/or overlayMax could be intentionally 0.
+        gradientColorscaleType =
+          defaultOverlayMin >= 0 && defaultOverlayMax >= 0
+            ? 'sequential'
+            : defaultOverlayMin <= 0 && defaultOverlayMax <= 0
+            ? 'sequential reversed'
+            : 'divergent';
 
-        // Choose gradient colorscale type and determine marker colors
-        const normalize = scaleLinear();
-        if (overlayMin < 0 && overlayMax > 0) {
-          // Diverging colorscale, assume 0 is midpoint. Colorscale must be symmetric around the midpoint
-          const maxAbsOverlay =
-            overlayMin > overlayMax ? overlayMin : overlayMax;
-          // For each point, normalize the data to [-1, 1], then retrieve the corresponding color
-          normalize.domain([-maxAbsOverlay, maxAbsOverlay]).range([-1, 1]);
-          markerColorsGradient = seriesGradientColorscale.map((a: number) =>
-            gradientDivergingColorscaleMap(normalize(a))
+        // Update overlay min and max
+        if (gradientColorscaleType === 'divergent') {
+          overlayMin = -Math.max(
+            Math.abs(defaultOverlayMin),
+            Math.abs(defaultOverlayMax)
           );
-        } else if (seriesGradientColorscale.some((a: number) => a < 0)) {
-          // Sequential backwards (from -inf to 0)
-          // For each point, normalize the data to [1, 0], then retrieve the corresponding color
-          normalize.domain([overlayMin, overlayMax]).range([1, 0]);
-          markerColorsGradient = seriesGradientColorscale.map((a: number) =>
-            gradientSequentialColorscaleMap(normalize(a))
+          overlayMax = Math.max(
+            Math.abs(defaultOverlayMin),
+            Math.abs(defaultOverlayMax)
           );
         } else {
-          // Sequential (from 0 to inf)
-          // For each point, normalize the data to [0, 1], then retrieve the corresponding color
-          normalize.domain([overlayMin, overlayMax]).range([0, 1]);
-          markerColorsGradient = seriesGradientColorscale.map((a: number) =>
-            gradientSequentialColorscaleMap(normalize(a))
-          );
+          overlayMin = defaultOverlayMin;
+          overlayMax = defaultOverlayMax;
+        }
+        // -- end for storybook only code section
+        console.log([defaultOverlayMin, overlayMax]);
+
+        // Determine marker colors
+        if (
+          gradientColorscaleType &&
+          (overlayMin || overlayMin === 0) &&
+          overlayMax
+        ) {
+          // If we have data, use a gradient colorscale. No data series will have all NaN values in seriesGradientColorscale
+
+          // Initialize normalization function.
+          const normalize = scaleLinear();
+
+          if (gradientColorscaleType === 'divergent') {
+            // Diverging colorscale, assume 0 is midpoint. Colorscale must be symmetric around the midpoint
+            const maxAbsOverlay =
+              Math.abs(overlayMin) > overlayMax
+                ? Math.abs(overlayMin)
+                : overlayMax;
+
+            // For each point, normalize the data to [-1, 1], then retrieve the corresponding color
+            normalize.domain([-maxAbsOverlay, maxAbsOverlay]).range([-1, 1]);
+            markerColorsGradient = seriesGradientColorscale.map((a: number) =>
+              gradientDivergingColorscaleMap(normalize(a))
+            );
+          } else if (gradientColorscaleType === 'sequntial reverse') {
+            // Normalize data to [1, 0], so that the colorscale goes in reverse. NOTE: can remove once we add the ability for users to set colorscale range.
+            normalize.domain([overlayMin, overlayMax]).range([1, 0]);
+            markerColorsGradient = seriesGradientColorscale.map((a: number) =>
+              gradientSequentialColorscaleMap(normalize(a))
+            );
+            gradientColorscaleType = 'sequential';
+          } else {
+            // Then we use the sequential (from 0 to inf) colorscale.
+            // For each point, normalize the data to [0, 1], then retrieve the corresponding color
+            normalize.domain([overlayMin, overlayMax]).range([0, 1]);
+            markerColorsGradient = seriesGradientColorscale.map((a: number) =>
+              gradientSequentialColorscaleMap(normalize(a))
+            );
+            gradientColorscaleType = 'sequential';
+          }
         }
       }
 

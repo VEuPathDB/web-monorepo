@@ -4,10 +4,6 @@ import Histogram from '../../plots/Histogram';
 import PlotLegend from '../../components/plotControls/PlotLegend';
 import PlotGradientLegend from '../../components/plotControls/PlotGradientLegend';
 import { HistogramData } from '../../types/plots';
-import {
-  SequentialGradientColorscale,
-  DivergingGradientColorscale,
-} from '../../types/plots/addOns';
 
 export default {
   title: 'Plot Controls/PlotLegend',
@@ -274,16 +270,12 @@ export const GradientPlotLegend = () => {
       <PlotGradientLegend
         legendMax={100}
         legendMin={5}
-        gradientColorscaleType={'sequential'}
+        // Options are 'sequential' and 'divergent'
+        gradientColorscaleType={'divergent'}
         // pass legend title
-        legendTitle={'Supercalifragilisticexpialidocious'}
+        legendTitle={'Very very very long name'}
         nTicks={5}
       />
     </div>
   );
 };
-// legendMax,
-// legendMin,
-// colorScale,
-// legendTitle,
-// markMidpoint

@@ -154,30 +154,30 @@ export const SequentialGradientColorscale: string[] = [
 ];
 
 /** Diverging gradient colorscale. Useful for coloring a continuous variable that has values above and below a midpoint (usually 0) */
-/** Using cork from https://www.fabiocrameri.ch/colourmaps/, copied from https://github.com/empet/scientific-colorscales/blob/master/scicolorscales.py */
+/** Using vik from https://www.fabiocrameri.ch/colourmaps/, copied from https://github.com/empet/scientific-colorscales/blob/master/scicolorscales.py */
 /** MUST have ODD number of colors! Assume the middle color maps to the midpoint */
 export const DivergingGradientColorscale: string[] = [
-  'rgb(44, 26, 76)',
-  'rgb(43, 44, 94)',
-  'rgb(41, 64, 115)',
-  'rgb(44, 86, 135)',
-  'rgb(64, 108, 153)',
-  'rgb(92, 131, 169)',
-  'rgb(120, 152, 184)',
-  'rgb(150, 176, 200)',
-  'rgb(182, 199, 217)',
-  'rgb(213, 223, 233)',
-  'rgb(231, 239, 237)', // midpoint
-  'rgb(216, 232, 218)',
-  'rgb(188, 216, 191)',
-  'rgb(160, 200, 164)',
-  'rgb(133, 183, 137)',
-  'rgb(106, 167, 111)',
-  'rgb(82, 151, 85)',
-  'rgb(65, 130, 58)',
-  'rgb(64, 110, 36)',
-  'rgb(65, 92, 18)',
-  'rgb(67 77, 2)',
+  'rgb(1, 18, 97)',
+  'rgb(2, 37, 109)',
+  'rgb(2, 57, 122)',
+  'rgb(3, 78, 135)',
+  'rgb(16, 100, 150)',
+  'rgb(47, 125, 166)',
+  'rgb(83, 149, 183)',
+  'rgb(125, 176, 201)',
+  'rgb(166, 201, 218)',
+  'rgb(207, 225, 234)',
+  'rgb(235, 237, 233)', // midpoint
+  'rgb(234, 225, 206)',
+  'rgb(220, 203, 168)',
+  'rgb(205, 181, 131)',
+  'rgb(190, 159, 95)',
+  'rgb(174, 136, 60)',
+  'rgb(159, 113, 28)',
+  'rgb(141, 87, 4)',
+  'rgb(126, 63, 1)',
+  'rgb(111, 41, 1)',
+  'rgb(97, 18, 0)',
 ];
 
 // Create colorscale for series. Maps [0, 1] to gradient colorscale using Lab interpolation
