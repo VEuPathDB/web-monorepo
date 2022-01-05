@@ -8,6 +8,7 @@ import {
   FilterValueArray,
 } from 'wdk-client/Utils/WdkModel';
 import { submitAsForm } from 'wdk-client/Utils/FormSubmitter';
+import { number, record, string } from 'wdk-client/Utils/Json';
 
 
 // Legacy, for backward compatibility of client code with older service API
@@ -87,10 +88,32 @@ export default (base: ServiceBase) => {
     });
   }
 
+  async function getTemporaryResultPath(
+    answerSpec: AnswerSpec,
+    reportName: string,
+    reportConfig: StandardReportConfig
+  ) {
+    const { id } = await base.sendRequest<{ id: string }>(
+      record({ id: string }),
+      {
+        method: 'post',
+        path: '/temporary-results',
+        body: stringify({
+          searchName: answerSpec.searchName,
+          searchConfig: answerSpec.searchConfig,
+          reportName: reportName,
+          reportConfig: reportConfig
+        })
+      }
+    );
+    return '/temporary-results/' + id;
+  }
+
   return {
     getCustomSearchReportRequestInfo,
     getAnswer,
     getAnswerJson,
+    getTemporaryResultPath,
     downloadAnswer
   }
 }
