@@ -1,22 +1,29 @@
 import React from 'react';
 import { range } from 'd3';
 
+import {
+  SequentialGradientColorscale,
+  DivergingGradientColorscale,
+} from '../../types/plots/addOns';
+
 // set props for custom legend function
-interface PlotLegendGradientProps {
+export interface PlotLegendGradientProps {
   legendMax: number;
   legendMin: number;
-  gradientColorscale: string[];
-  nTicks: number; // MUST be odd!
+  gradientColorscaleType?: string;
+  nTicks?: number; // MUST be odd!
   legendTitle?: string;
+  showMissingness?: boolean;
 }
 export default function PlotGradientLegend({
   legendMax,
   legendMin,
-  gradientColorscale,
+  gradientColorscaleType,
   legendTitle,
   nTicks,
+  showMissingness,
 }: PlotLegendGradientProps) {
-  // Decalre constants
+  // Declare constants
   const legendTextSize = '1.0em';
 
   /** Most of below identical to the current custom legend. Hoping that eventually the GradientColorscaleLegend can work within
@@ -43,8 +50,9 @@ export default function PlotGradientLegend({
           <GradientColorscaleLegend
             legendMax={legendMax}
             legendMin={legendMin}
-            gradientColorscale={gradientColorscale}
+            gradientColorscaleType={gradientColorscaleType}
             nTicks={nTicks}
+            showMissingness={showMissingness}
           />
         </div>
       }
@@ -52,25 +60,35 @@ export default function PlotGradientLegend({
   );
 }
 
-// legend ellipsis function for legend title (23) and legend items (20) (from custom legend work)
+// legend ellipsis function for legend title and legend items (from custom legend work)
 const legendEllipsis = (label: string, ellipsisLength: number) => {
   return (label || '').length > ellipsisLength
     ? (label || '').substring(0, ellipsisLength) + '...'
     : label;
 };
 
-// make gradient colorscale legend into a component so it can be more easily incorporated into DK's custom legend
+// make gradient colorscale legend into a component so it can be more easily incorporated into DK's custom legend if we need
 function GradientColorscaleLegend({
   legendMax,
   legendMin,
-  gradientColorscale,
+  gradientColorscaleType,
   nTicks,
+  showMissingness,
 }: PlotLegendGradientProps) {
-  // set constants
+  // Declare constants
   const tickFontSize = '0.8em';
   const gradientBoxHeight = 150;
   const gradientBoxWidth = 20;
   const tickLength = 4;
+  const defaultNTicks = 5;
+  const legendTextSize = '1.0em';
+
+  nTicks = nTicks || defaultNTicks;
+
+  let gradientColorscale =
+    gradientColorscaleType == 'divergent'
+      ? DivergingGradientColorscale
+      : SequentialGradientColorscale;
 
   // Create gradient stop points from the colorscale
   const stopPoints = gradientColorscale.map((color: string, index: number) => {
@@ -87,24 +105,24 @@ function GradientColorscaleLegend({
   // Create ticks
   const ticks = range(nTicks).map((a: number) => {
     const location: number =
-      gradientBoxHeight - gradientBoxHeight * (a / (nTicks - 1)); // draw bottom to top
+      gradientBoxHeight - gradientBoxHeight * (a / (nTicks! - 1)); // draw bottom to top
     return (
       <g className="axisTick" overflow="visible" key={'gradientTick' + a}>
         <line
-          x1={gradientBoxWidth + 3}
-          x2={gradientBoxWidth + 3 + tickLength}
+          x1={gradientBoxWidth}
+          x2={gradientBoxWidth + tickLength}
           y1={location}
           y2={location}
           stroke="black"
           strokeWidth="1px"
         ></line>
         <text
-          x={gradientBoxWidth + 6 + tickLength}
+          x={gradientBoxWidth + 3 + tickLength}
           y={location}
           alignmentBaseline="middle"
           fontSize={tickFontSize}
         >
-          {(a / (nTicks - 1)) * (legendMax - legendMin) + legendMin}
+          {(a / (nTicks! - 1)) * (legendMax - legendMin) + legendMin}
         </text>
       </g>
     );
@@ -112,13 +130,13 @@ function GradientColorscaleLegend({
 
   return (
     <div>
-      <svg id="gradientLegend" height={gradientBoxHeight + 20}>
+      <svg id="gradientLegend" height={gradientBoxHeight + 40} width={150}>
         <defs>
           <linearGradient id="linearGradient" x1="0" x2="0" y1="1" y2="0">
             {stopPoints}
           </linearGradient>
         </defs>
-        <g overflow="visible" style={{ transform: 'translate(0, 10px)' }}>
+        <g style={{ transform: 'translate(0, 10px)' }}>
           <rect
             width={gradientBoxWidth}
             height={gradientBoxHeight}
@@ -127,6 +145,35 @@ function GradientColorscaleLegend({
           {ticks}
         </g>
       </svg>
+      {showMissingness && (
+        <div style={{ display: 'flex' }}>
+          <div style={{ width: '2em' }}>
+            <div
+              style={{
+                textAlign: 'center',
+                fontWeight: 'normal',
+                fontSize: `calc(1.5 * ${legendTextSize})`,
+                color: '#999',
+              }}
+            >
+              &times;
+            </div>
+          </div>
+          &nbsp;&nbsp;
+          <label
+            title={'No data'}
+            style={{
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              fontSize: legendTextSize,
+              color: '#999',
+            }}
+          >
+            <i>{legendEllipsis('No data', 20)}</i>
+          </label>
+        </div>
+      )}
     </div>
   );
 }
