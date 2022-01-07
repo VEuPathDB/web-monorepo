@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+import { ForwardedRef, forwardRef, useMemo } from 'react';
+
 import { gray } from '../../definitions/colors';
 import styles from '../../styleDefinitions';
 import useUITheme from '../theming/useUITheme';
@@ -24,15 +25,18 @@ export type HeaderProps = {
  * Generic component which allows quick access to various HTML header
  * elements with consistent styling.
  */
-export default function Header({
-  size,
-  text,
-  color,
-  underline = false,
-  textTransform = 'none',
-  additionalStyles = {},
-  useTheme = true,
-}: HeaderProps) {
+function Header(
+  {
+    size,
+    text,
+    color,
+    underline = false,
+    textTransform = 'none',
+    additionalStyles = {},
+    useTheme = true,
+  }: HeaderProps,
+  forwardedRef: ForwardedRef<HTMLHeadingElement>
+) {
   const Header = size;
 
   const theme = useUITheme();
@@ -50,6 +54,7 @@ export default function Header({
 
   return (
     <Header
+      ref={forwardedRef}
       css={[
         styles.typography[size],
         color === undefined ? { color: gray[700] } : { color },
@@ -66,3 +71,5 @@ export default function Header({
     </Header>
   );
 }
+
+export default forwardRef<HTMLHeadingElement, HeaderProps>(Header);

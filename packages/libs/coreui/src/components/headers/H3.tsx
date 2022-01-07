@@ -1,15 +1,21 @@
+import { ForwardedRef, forwardRef } from 'react';
+
 import Header, { HeaderProps } from './Header';
 
-export default function H3({
-  text,
-  color,
-  underline = false,
-  textTransform = 'none',
-  additionalStyles = {},
-  useTheme = true,
-}: Omit<HeaderProps, 'size'>) {
+function H3(
+  {
+    text,
+    color,
+    underline = false,
+    textTransform = 'none',
+    additionalStyles = {},
+    useTheme = true,
+  }: Omit<HeaderProps, 'size'>,
+  forwardedRef: ForwardedRef<HTMLHeadingElement>
+) {
   return (
     <Header
+      ref={forwardedRef}
       size='h3'
       text={text}
       color={color}
@@ -20,3 +26,5 @@ export default function H3({
     />
   );
 }
+
+export default forwardRef<HTMLHeadingElement, Omit<HeaderProps, 'size'>>(H3);
