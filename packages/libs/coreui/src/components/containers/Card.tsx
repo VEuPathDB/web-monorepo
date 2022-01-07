@@ -1,8 +1,9 @@
-import { CSSProperties, ReactNode, useMemo } from 'react';
+import { CSSProperties, ReactNode, useEffect, useMemo } from 'react';
 import { merge } from 'lodash';
+import useDimensions from 'react-cool-dimensions';
 
 // Components
-import { H3 } from '../headers';
+import { H3, H4 } from '../headers';
 
 // Definitions
 import { blue, gray } from '../../definitions/colors';
@@ -27,12 +28,15 @@ type CardStyleSpec = {
     paddingRight: CSSProperties['paddingRight'];
     paddingBottom: CSSProperties['paddingBottom'];
     paddingLeft: CSSProperties['paddingLeft'];
+    backgroundColor: CSSProperties['backgroundColor'];
   };
 };
 
 export type CardProps = {
   /** The title of the card. */
   title: string;
+  /** Optional. Size control for the title text. */
+  titleSize?: 'large' | 'small';
   /** The width of the card. */
   width: CSSProperties['width'];
   /** The height of the card. */
@@ -47,6 +51,7 @@ export type CardProps = {
 
 export default function Card({
   title,
+  titleSize = 'large',
   width,
   height,
   themeRole,
@@ -54,6 +59,9 @@ export default function Card({
   children,
 }: CardProps) {
   const theme = useUITheme();
+  const { observe, width: titleWidth, height: titleHeight } = useDimensions();
+
+  const TitleComponent = titleSize === 'large' ? H3 : H4;
 
   const componentStyle: CardStyleSpec = useMemo(() => {
     const defaultStyle: CardStyleSpec = {
@@ -68,6 +76,7 @@ export default function Card({
         paddingRight: 35,
         paddingBottom: 25,
         paddingLeft: 25,
+        backgroundColor: 'transparent',
       },
       header: {
         primaryBackgroundColor: blue[500],
@@ -75,7 +84,6 @@ export default function Card({
       },
     };
 
-    // TODO: Handle color problems when level is too dark.
     const themeStyle: Partial<CardStyleSpec> =
       theme && themeRole
         ? {
@@ -91,6 +99,12 @@ export default function Card({
     return merge({}, defaultStyle, themeStyle, styleOverrides);
   }, [themeRole, styleOverrides, theme]);
 
+  useEffect(() => {
+    console.log(titleHeight, titleWidth);
+  }, [titleHeight, titleWidth]);
+
+  const titleBarHeight = useMemo(() => titleHeight + 40, [titleHeight]);
+
   return (
     <div
       css={{
@@ -102,13 +116,19 @@ export default function Card({
         outlineStyle: componentStyle.border.style,
         display: 'flex',
         flexDirection: 'column',
-        position: 'relative',
       }}
     >
-      <div>
+      <div
+        css={{
+          display: 'flex',
+          flexDirection: 'column',
+          flexBasis: titleBarHeight,
+          position: 'relative',
+        }}
+      >
         <div
           css={{
-            height: 75,
+            flex: 1,
             backgroundColor: componentStyle.header.primaryBackgroundColor,
             borderTopLeftRadius: componentStyle.border.radius,
             borderTopRightRadius: componentStyle.border.radius,
@@ -116,19 +136,21 @@ export default function Card({
         />
         <div
           css={{
-            height: 15,
+            flexBasis: 15,
             backgroundColor: componentStyle.header.secondaryBackgroundColor,
           }}
         />
-        <H3
+        <TitleComponent
+          ref={observe}
           text={title}
           color='white'
           additionalStyles={{
             margin: 0,
+            marginRight: 15,
             padding: 0,
             position: 'absolute',
             left: componentStyle.content.paddingLeft,
-            top: 38,
+            top: titleBarHeight - titleHeight - (titleSize === 'large' ? 4 : 7),
           }}
           useTheme={false}
         />
@@ -136,10 +158,13 @@ export default function Card({
       <div
         css={{
           flex: 1,
+          flexShrink: 1,
           paddingTop: componentStyle.content.paddingTop,
           paddingRight: componentStyle.content.paddingRight,
           paddingBottom: componentStyle.content.paddingBottom,
           paddingLeft: componentStyle.content.paddingLeft,
+          backgroundColor: componentStyle.content.backgroundColor,
+          overflowY: 'auto',
         }}
       >
         {children}

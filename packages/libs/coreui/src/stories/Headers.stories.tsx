@@ -41,7 +41,7 @@ export const Default: Story<Omit<HeaderProps, 'size'>> = (args) => {
   );
 };
 Default.args = {
-  text: 'Hello Developer',
+  text: 'Header',
   additionalStyles: { marginBottom: 0, marginTop: 15 },
   useTheme: false,
 };

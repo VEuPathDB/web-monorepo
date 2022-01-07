@@ -1,6 +1,6 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
 
-import { gray, mutedGreen, mutedMagenta } from '../../definitions/colors';
+import { blue, gray, mutedGreen, mutedMagenta } from '../../definitions/colors';
 
 import Card, { CardProps } from '../../components/containers/Card';
 import { FilledButton } from '../../components/buttons';
@@ -62,6 +62,7 @@ const Template: Story<CardProps> = (args) => {
 export const Basic = Template.bind({});
 Basic.args = {
   title: 'Example Card',
+  titleSize: 'large',
   height: 450,
   width: 350,
 } as CardProps;
@@ -69,6 +70,16 @@ Basic.args = {
 export const UseTheme = Template.bind({});
 UseTheme.args = {
   title: 'Example Card',
+  titleSize: 'large',
+  height: 450,
+  width: 350,
+  themeRole: 'primary',
+} as CardProps;
+
+export const SmallTitle = Template.bind({});
+SmallTitle.args = {
+  title: 'Example Card',
+  titleSize: 'small',
   height: 450,
   width: 350,
   themeRole: 'primary',
@@ -77,8 +88,18 @@ UseTheme.args = {
 export const ThinMargins = Template.bind({});
 ThinMargins.args = {
   title: 'Example Card',
+  titleSize: 'large',
   height: 450,
   width: 350,
   themeRole: 'primary',
   styleOverrides: { content: { paddingLeft: 15 } },
+} as CardProps;
+
+export const CustomBackgroundColor = Template.bind({});
+CustomBackgroundColor.args = {
+  title: 'Example Card',
+  titleSize: 'large',
+  height: 450,
+  width: 350,
+  styleOverrides: { content: { paddingLeft: 15, backgroundColor: blue[100] } },
 } as CardProps;
