@@ -1,5 +1,6 @@
 export { default as CheckIcon } from "./CheckIcon";
 export { default as CheckCircle } from "./CheckCircle";
+export { default as ChevronRight } from "./ChevronRight";
 export { default as Close } from "./Close";
 export { default as CloseCircle } from "./CloseCircle";
 export { default as CloseFullscreen } from "./CloseFullscreen";
