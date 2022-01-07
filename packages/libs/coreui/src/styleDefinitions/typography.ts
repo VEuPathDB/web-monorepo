@@ -13,7 +13,7 @@ export const secondaryFont = css({
 export const h1 = css([
   primaryFont,
   {
-    fontSize: '4.209rem',
+    fontSize: 72,
     fontWeight: 700,
     MozOsxFontSmoothing: 'auto',
     WebkitFontSmoothing: 'auto',
@@ -22,8 +22,8 @@ export const h1 = css([
 export const h2 = css([
   primaryFont,
   {
-    fontSize: '3.157rem',
-    fontWeight: 600,
+    fontSize: 56,
+    fontWeight: 700,
     MozOsxFontSmoothing: 'auto',
     WebkitFontSmoothing: 'auto',
   },
@@ -31,8 +31,8 @@ export const h2 = css([
 export const h3 = css([
   primaryFont,
   {
-    fontSize: '2.369rem',
-    fontWeight: 600,
+    fontSize: 42,
+    fontWeight: 700,
     MozOsxFontSmoothing: 'auto',
     WebkitFontSmoothing: 'auto',
   },
@@ -40,8 +40,8 @@ export const h3 = css([
 export const h4 = css([
   primaryFont,
   {
-    fontSize: '1.777rem',
-    fontWeight: 500,
+    fontSize: 32,
+    fontWeight: 600,
     MozOsxFontSmoothing: 'auto',
     WebkitFontSmoothing: 'auto',
   },
@@ -49,8 +49,8 @@ export const h4 = css([
 export const h5 = css([
   primaryFont,
   {
-    fontSize: '1.333rem',
-    fontWeight: 500,
+    fontSize: 21,
+    fontWeight: 600,
     MozOsxFontSmoothing: 'auto',
     WebkitFontSmoothing: 'auto',
   },
@@ -58,8 +58,8 @@ export const h5 = css([
 export const h6 = css([
   primaryFont,
   {
-    fontSize: '1rem',
-    fontWeight: 400,
+    fontSize: 16,
+    fontWeight: 500,
     MozOsxFontSmoothing: 'auto',
     WebkitFontSmoothing: 'auto',
   },
