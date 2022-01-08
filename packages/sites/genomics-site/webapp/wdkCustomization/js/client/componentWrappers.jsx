@@ -385,7 +385,7 @@ export function Page() {
     const galaxyUrl = params.get('galaxy_url');
 
     React.useEffect(() => {
-      sessionStorage.setItem('galaxyUrl', galaxyUrl);
+      if (galaxyUrl != null) sessionStorage.setItem('galaxyUrl', galaxyUrl);
     }, [galaxyUrl])
 
 
