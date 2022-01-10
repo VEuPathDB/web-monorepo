@@ -105,6 +105,12 @@ export interface NumberRangeFilter extends BaseFilter {
   value: RangeValue<number>;
 }
 
+export interface LongitudeRangeFilter extends BaseFilter {
+  type: 'longitude';
+  isRange: true;
+  value: RangeValue<number>;
+}
+
 export interface DateRangeFilter extends BaseFilter {
   type: 'date';
   isRange: true;
@@ -118,7 +124,7 @@ export interface MultiFilter extends BaseFilter {
 }
 
 export type MemberFilter = StringMemberFilter | NumberMemberFilter | DateMemberFilter;
-export type RangeFilter = NumberRangeFilter | DateRangeFilter;
+export type RangeFilter = NumberRangeFilter | DateRangeFilter | LongitudeRangeFilter;
 
 export type Filter = MemberFilter | RangeFilter | MultiFilter;
 
