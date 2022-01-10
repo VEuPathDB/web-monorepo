@@ -63,9 +63,9 @@ function Header(
         {
           textTransform,
           transition: 'color .5s',
-          ...additionalStyles,
         },
       ]}
+      style={additionalStyles}
     >
       {text}
     </Header>
