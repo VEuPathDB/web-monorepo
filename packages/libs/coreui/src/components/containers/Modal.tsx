@@ -183,7 +183,7 @@ export default function Modal({
               backgroundColor: componentStyle.header.secondaryBackgroundColor,
             }}
           />
-          <div css={{ position: 'absolute', left: 25, top: 38 }}>
+          <div css={{ position: 'absolute', left: 25, top: 34 }}>
             <H3
               text={title}
               color='white'
