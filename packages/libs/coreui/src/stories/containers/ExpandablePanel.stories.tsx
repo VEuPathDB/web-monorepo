@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 
 import { gray, mutedGreen, mutedMagenta } from '../../definitions/colors';
@@ -48,6 +49,14 @@ export default {
 } as Meta;
 
 const Template: Story<ExpandablePanelProps> = (args) => {
+  const [panelState, setPanelState] = useState<ExpandablePanelProps['state']>(
+    args.state
+  );
+
+  useEffect(() => {
+    setPanelState(args.state);
+  }, [args.state]);
+
   return (
     <UIThemeProvider
       theme={{
@@ -57,7 +66,7 @@ const Template: Story<ExpandablePanelProps> = (args) => {
         },
       }}
     >
-      <ExpandablePanel {...args}>
+      <ExpandablePanel {...args} state={panelState}>
         <ModalContent themeRole={args.themeRole} />
       </ExpandablePanel>
     </UIThemeProvider>
@@ -67,7 +76,7 @@ export const Basic = Template.bind({});
 Basic.args = {
   title: 'Expandable Panel',
   state: 'closed',
-  content: <ModalContent />,
+  children: <ModalContent />,
   styleOverrides: { container: { maxWidth: '70%' } },
 } as ExpandablePanelProps;
 
@@ -76,5 +85,5 @@ UseTheme.args = {
   title: 'Themed Expandable Panel',
   state: 'closed',
   themeRole: 'primary',
-  content: <ModalContent themeRole='primary' />,
+  children: <ModalContent themeRole='primary' />,
 } as ExpandablePanelProps;

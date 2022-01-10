@@ -36,10 +36,21 @@ type ExpandablePanelStyleSpec = {
 };
 
 export type ExpandablePanelProps = {
+  /** Title of the panel. */
   title: string;
-  content: ReactNode;
-  state: 'closed' | 'open';
-
+  /** Content displayed when the panel is open. */
+  children: ReactNode;
+  /**
+   * Optional. Current state of the component. You only need
+   * to specify this if you want to control the component from
+   * the outside.
+   * */
+  state?: 'closed' | 'open';
+  /**
+   * Optional. Callback to invoke when the user attempts to open/close
+   * the panel. Callback must receive the new state of the component.
+   * */
+  onStateChange?: (newState: 'closed' | 'open') => void;
   /** Indicates which theme role to use for style augmentation. */
   themeRole?: keyof UITheme['palette'];
   /** Additional style specifications that will override defaults and theming. */
@@ -48,8 +59,9 @@ export type ExpandablePanelProps = {
 
 export default function ExpandablePanel({
   title,
-  content,
+  children,
   state,
+  onStateChange,
   themeRole,
   styleOverrides,
 }: ExpandablePanelProps) {
@@ -57,11 +69,18 @@ export default function ExpandablePanel({
 
   const [hasFocus, setHasFocus] = useState(false);
   const [internalComponentState, setInternalComponentState] =
-    useState<ExpandablePanelProps['state']>('closed');
+    useState<NonNullable<ExpandablePanelProps['state']>>('closed');
 
   useEffect(() => {
-    state !== internalComponentState && setInternalComponentState(state);
+    state &&
+      state !== internalComponentState &&
+      setInternalComponentState(state);
   }, [state]);
+
+  useEffect(
+    () => onStateChange && onStateChange(internalComponentState),
+    [internalComponentState]
+  );
 
   const styleState = useMemo<'open' | 'focused' | 'closed'>(
     () =>
@@ -161,7 +180,10 @@ export default function ExpandablePanel({
             marginRight: styleState === 'open' ? 5 : 0,
             fill: componentStyle[styleState].title.iconColor,
             transition: 'all .25s ease',
-            rotate: internalComponentState === 'open' ? '90deg' : 'none',
+            transform:
+              internalComponentState === 'open'
+                ? 'rotate(90deg)'
+                : 'rotate(0deg)',
           }}
         />
         <H6
@@ -188,7 +210,7 @@ export default function ExpandablePanel({
             transition: 'all .5s ease',
           }}
         >
-          {content}
+          {children}
         </div>
       </div>
     </div>
