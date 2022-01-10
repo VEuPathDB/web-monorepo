@@ -31,11 +31,11 @@ export default function ShareFromAnalysesList({
       includeCloseButton={true}
       themeRole="primary"
       styleOverrides={{
-        size: { width: 700, height: 400 },
+        size: { width: 700, height: 425 },
         content: {
           paddingTop: 0,
           paddingRight: 50,
-          paddingBottom: 25,
+          paddingBottom: 0,
           paddingLeft: 25,
         },
       }}

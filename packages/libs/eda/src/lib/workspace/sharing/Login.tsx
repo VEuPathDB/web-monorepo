@@ -17,6 +17,7 @@ export default function Login({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
+        paddingBottom: 25,
       }}
     >
       <div>
@@ -25,10 +26,11 @@ export default function Login({
           additionalStyles={{ marginTop: 25, marginBottom: 0 }}
         />
         <p style={{ fontSize: '.9rem', color: gray[600], marginTop: 0 }}>
-          In order to share an analyis, you'll need to login to your account.
+          In order to share an analysis, or make it public, you'll need to login
+          to your account.
         </p>
         <p style={{ fontSize: '.9rem', color: gray[600] }}>
-          Please login and then try again.
+          Please login and try again.
         </p>
       </div>
 

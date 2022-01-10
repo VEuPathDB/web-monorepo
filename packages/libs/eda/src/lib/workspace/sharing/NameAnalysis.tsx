@@ -28,6 +28,7 @@ export default function NameAnalysis({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
+        paddingBottom: 25,
       }}
     >
       <div>
@@ -43,8 +44,7 @@ export default function NameAnalysis({
             maxWidth: 500,
           }}
         >
-          In order to share an analyis, you'll need to give it a unique name so
-          that it will be distinguishable from other public analyses.
+          To make this analysis public, please first give it a name.
         </p>
         <div style={{ display: 'flex', marginTop: 25 }}>
           <FormField
