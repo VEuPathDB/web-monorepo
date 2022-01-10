@@ -40,7 +40,6 @@ WithIcon.args = {
 
 export const IconOnly = Template.bind({});
 IconOnly.args = {
-  iconOnly: true,
   icon: TableDownload,
 };
 

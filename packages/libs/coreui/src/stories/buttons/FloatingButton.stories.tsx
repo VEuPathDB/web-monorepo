@@ -39,7 +39,6 @@ WithIcon.args = {
 
 export const IconOnly = Template.bind({});
 IconOnly.args = {
-  iconOnly: true,
   icon: TableDownload,
 };
 
@@ -47,7 +46,6 @@ export const Tooltip = Template.bind({});
 Tooltip.args = {
   text: 'Button With Tooltip',
   icon: TableDownload,
-
   tooltip: 'Hello there friend.',
 };
 

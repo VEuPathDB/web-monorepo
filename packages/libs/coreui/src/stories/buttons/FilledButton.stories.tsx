@@ -4,7 +4,7 @@ import { SwissArmyButtonVariantProps } from '../../components/buttons';
 import FilledButton from '../../components/buttons/FilledButton';
 import { TableDownload, Download } from '../../components/icons';
 import UIThemeProvider from '../../components/theming/UIThemeProvider';
-import { blue, gray, green, orange, teal } from '../../definitions/colors';
+import { green, orange } from '../../definitions/colors';
 
 export default {
   title: 'Controls/Buttons/FilledButton',
@@ -30,26 +30,25 @@ export const Default = Template.bind({});
 Default.args = {
   text: 'Hello Developer',
   size: 'medium',
-};
+} as SwissArmyButtonVariantProps;
 
 export const WithIcon = Template.bind({});
 WithIcon.args = {
   text: 'Button With Icon',
   icon: TableDownload,
-};
+} as SwissArmyButtonVariantProps;
 
 export const IconOnly = Template.bind({});
 IconOnly.args = {
-  iconOnly: true,
   icon: TableDownload,
-};
+} as SwissArmyButtonVariantProps;
 
 export const Tooltip = Template.bind({});
 Tooltip.args = {
   text: 'Button With Tooltip',
   icon: TableDownload,
   tooltip: 'Hello there friend.',
-};
+} as SwissArmyButtonVariantProps;
 
 export const UseTheme = Template.bind({});
 UseTheme.args = {
@@ -57,4 +56,4 @@ UseTheme.args = {
   icon: Download,
   themeRole: 'primary',
   size: 'medium',
-};
+} as SwissArmyButtonVariantProps;

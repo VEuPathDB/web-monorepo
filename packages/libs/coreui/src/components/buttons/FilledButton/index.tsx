@@ -15,7 +15,6 @@ export default function FilledButton({
   icon = () => null,
   themeRole,
   styleOverrides = {},
-  iconOnly,
 }: SwissArmyButtonVariantProps) {
   const defaultStyle: ButtonStyleSpec = {
     default: {
@@ -92,7 +91,6 @@ export default function FilledButton({
       size={size}
       icon={icon}
       themeRole={themeRole}
-      iconOnly={iconOnly}
     />
   );
 }

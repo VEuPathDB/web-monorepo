@@ -15,7 +15,6 @@ export default function FloatingButton({
   icon = () => null,
   themeRole,
   styleOverrides = {},
-  iconOnly,
 }: SwissArmyButtonVariantProps) {
   const defaultStyle: ButtonStyleSpec = {
     default: {
@@ -83,7 +82,6 @@ export default function FloatingButton({
       size={size}
       icon={icon}
       themeRole={themeRole}
-      iconOnly={iconOnly}
     />
   );
 }

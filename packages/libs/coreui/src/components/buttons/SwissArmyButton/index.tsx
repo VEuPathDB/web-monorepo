@@ -16,7 +16,6 @@ export default function SwissArmyButton({
   size = 'medium',
   icon,
   styleSpec,
-  iconOnly = false,
 }: SwissArmyButtonProps) {
   const [buttonState, setButtonState] = useState<
     'default' | 'hover' | 'pressed'
@@ -82,7 +81,7 @@ export default function SwissArmyButton({
           <Icon
             fontSize={calculatedIconSize}
             fill={calculatedTextColor}
-            css={!iconOnly && { marginRight: 10 }}
+            css={text && { marginRight: 10 }}
           />
         )}
         {text}

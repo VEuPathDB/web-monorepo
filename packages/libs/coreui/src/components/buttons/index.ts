@@ -54,17 +54,15 @@ type CoreProps = {
 
 type TextIconProps =
   | {
-      iconOnly?: false;
+      text?: never;
+      /** SVG component to use as an icon. */
+      icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+    }
+  | {
       /** Text of the button. */
       text: string;
       /** Optional. SVG component to use as an icon. */
       icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-    }
-  | {
-      iconOnly: true;
-      text?: never;
-      /** SVG component to use as an icon. */
-      icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
     };
 
 // Type definition for buttons that derive from SwissArmyButton
