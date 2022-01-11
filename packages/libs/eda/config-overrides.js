@@ -37,7 +37,7 @@ module.exports = function override(config, env) {
         // This also needs the bubleify packages installed as
         // a dev dependency.
         {
-          test: /node_modules/,
+          test: /\.(js|jsx|ts|tsx)$/,
           loader: 'ify-loader',
         },
       ],
