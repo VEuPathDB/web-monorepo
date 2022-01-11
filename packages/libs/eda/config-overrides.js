@@ -38,6 +38,7 @@ module.exports = function override(config, env) {
         // a dev dependency.
         {
           test: /\.(js|jsx|ts|tsx)$/,
+          include: /node_modules/,
           loader: 'ify-loader',
         },
       ],
