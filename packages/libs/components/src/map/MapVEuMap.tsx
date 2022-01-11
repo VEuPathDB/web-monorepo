@@ -43,7 +43,18 @@ export interface MapVEuMapProps {
     duration: number;
     animationFunction: AnimationFunction;
   } | null;
-  showGrid: boolean;
+  /** Should a geohash-based grid be shown?
+   * Optional. See also zoomLevelToGeohashLevel
+   **/
+  showGrid?: boolean;
+  /** A function to map from Leaflet zoom level to Geohash level
+   *
+   * Optional, but required for grid functionality if showGrid is true
+   **/
+  zoomLevelToGeohashLevel?: (leafletZoomLevel: number) => number;
+  /**
+   * Should the mouse-mode (regular/magnifying glass) icons be shown and active?
+   **/
   showMouseToolbar?: boolean;
 }
 
@@ -57,6 +68,7 @@ export default function MapVEuMap({
   animation,
   recenterMarkers = true,
   showGrid,
+  zoomLevelToGeohashLevel,
   showMouseToolbar,
 }: MapVEuMapProps) {
   // this is the React Map component's onViewPortChanged handler
@@ -109,7 +121,9 @@ export default function MapVEuMap({
         <MouseTools mouseMode={mouseMode} setMouseMode={setMouseMode} />
       )}
 
-      {showGrid ? <CustomGridLayer /> : null}
+      {showGrid && zoomLevelToGeohashLevel ? (
+        <CustomGridLayer zoomLevelToGeohashLevel={zoomLevelToGeohashLevel} />
+      ) : null}
 
       <LayersControl position="topright">
         <BaseLayer checked name="street">

@@ -4,13 +4,16 @@ import Geohash from 'latlon-geohash';
 import L, { LatLngBounds } from 'leaflet';
 // import shape2geohash from "shape2geohash";  // need @types ideally...
 const shape2geohash = require('shape2geohash');
-import { zoomLevelToGeohashLevel } from './config/map.json';
+
+interface Props {
+  zoomLevelToGeohashLevel: (leafletZoomLevel: number) => number;
+}
 
 /**
  * Renders a custom grid layer made up of Polyline components that have boundaries associated
  * with the geohashes available in the current map boundaries.
  **/
-export default function CustomGridLayer() {
+export default function CustomGridLayer({ zoomLevelToGeohashLevel }: Props) {
   const { map } = useLeaflet();
 
   const [geohashes, setGeohashes] = useState<string[]>([]);
@@ -27,7 +30,7 @@ export default function CustomGridLayer() {
     function updateMap() {
       if (map != null) {
         const zoomLevel = map.getZoom();
-        const geohashLevel = zoomLevelToGeohashLevel[zoomLevel];
+        const geohashLevel = zoomLevelToGeohashLevel(zoomLevel);
         const currentMapBounds = map.getBounds();
         let west = currentMapBounds.getWest();
         let east = currentMapBounds.getEast();

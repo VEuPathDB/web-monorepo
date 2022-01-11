@@ -7,10 +7,8 @@ import MapVEuMap, { MapVEuMapProps } from '../map/MapVEuMap';
 import geohashAnimation from '../map/animation_functions/geohash';
 import testDataStraddling from './fixture-data/geoclust-date-dateline-straddling-all-levels.json';
 import BoundsDriftMarker from '../map/BoundsDriftMarker';
-import {
-  zoomLevelToGeohashLevel,
-  defaultAnimationDuration,
-} from '../map/config/map.json';
+import { defaultAnimationDuration } from '../map/config/map.json';
+import { leafletZoomLevelToGeohashLevel } from '../map/utils/leaflet-geohash';
 import '../map/TempIconHack';
 
 export default {
@@ -31,7 +29,7 @@ const getMarkerElements = (
     `I've been triggered with long bounds=[${west} TO ${east}] and zoom=${zoomLevel}`
   );
 
-  const geohashLevel = zoomLevelToGeohashLevel[zoomLevel];
+  const geohashLevel = leafletZoomLevelToGeohashLevel(zoomLevel);
   // filter data taking care of both east<west and east>west possibilities
   const buckets = (data as { [key: string]: any })[
     `geohash_${geohashLevel}`
@@ -92,6 +90,7 @@ const getDatelineArgs = () => {
       animationFunction: geohashAnimation,
     },
     showGrid: true,
+    leafletZoomLevelToGeohashLevel: leafletZoomLevelToGeohashLevel,
   };
 };
 
