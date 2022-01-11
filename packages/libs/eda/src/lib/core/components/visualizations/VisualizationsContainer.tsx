@@ -202,30 +202,32 @@ function NewVisualizationPicker(props: Props) {
             >
               {/* add viz description tooltip for viz picker */}
               <Tooltip title={<>{vizOverview.description}</>}>
-                <button
-                  type="button"
-                  disabled={vizType == null}
-                  onClick={async () => {
-                    const visualizationId = uuid();
-                    updateVisualizations((visualizations) =>
-                      visualizations.concat({
-                        visualizationId,
-                        displayName: 'Unnamed visualization',
-                        descriptor: {
-                          type: vizOverview.name!,
-                          configuration: vizType?.createDefaultConfig(),
-                        },
-                      })
-                    );
-                    history.replace(`../${computationId}/${visualizationId}`);
-                  }}
-                >
-                  {vizType ? (
-                    <vizType.selectorComponent {...vizOverview} />
-                  ) : (
-                    <PlaceholderIcon name={vizOverview.name} />
-                  )}
-                </button>
+                <span>
+                  <button
+                    type="button"
+                    disabled={vizType == null}
+                    onClick={async () => {
+                      const visualizationId = uuid();
+                      updateVisualizations((visualizations) =>
+                        visualizations.concat({
+                          visualizationId,
+                          displayName: 'Unnamed visualization',
+                          descriptor: {
+                            type: vizOverview.name!,
+                            configuration: vizType?.createDefaultConfig(),
+                          },
+                        })
+                      );
+                      history.replace(`../${computationId}/${visualizationId}`);
+                    }}
+                  >
+                    {vizType ? (
+                      <vizType.selectorComponent {...vizOverview} />
+                    ) : (
+                      <PlaceholderIcon name={vizOverview.name} />
+                    )}
+                  </button>
+                </span>
               </Tooltip>
               <div className={cx('-PickerEntryName')}>
                 {vizOverview.displayName?.includes(', ') ? (
