@@ -179,34 +179,53 @@ export function filtersFromBoundingBox(
   ];
 }
 
-export function leafletZoomLevelToGeohashVariableId(
+export function leafletZoomLevelToGeohashLevel(
   leafletZoomLevel: number
-): string {
+): number {
   switch (leafletZoomLevel) {
     case 1:
     case 2:
-      return 'EUPATH_0043203'; // geohash_1
+      return 1;
     case 3:
     case 4:
     case 5:
-      return 'EUPATH_0043204'; // geohash_2
+      return 2;
     case 6:
     case 7:
     case 8:
-      return 'EUPATH_0043205'; // geohash_3
+      return 3;
     case 9:
     case 10:
     case 11:
-      return 'EUPATH_0043206'; // geohash_4
+      return 4;
     case 12:
     case 13:
     case 14:
-      return 'EUPATH_0043207'; // geohash_5
+      return 5;
     case 15:
     case 16:
     case 17:
+      return 6;
+    default:
+      return 6;
+  }
+}
+
+export function geohashLevelToVariableId(geohashLevel: number): string {
+  switch (geohashLevel) {
+    case 1:
+      return 'EUPATH_0043203'; // geohash_1
+    case 2:
+      return 'EUPATH_0043204'; // geohash_2
+    case 3:
+      return 'EUPATH_0043205'; // geohash_3
+    case 4:
+      return 'EUPATH_0043206'; // geohash_4
+    case 5:
+      return 'EUPATH_0043207'; // geohash_5
+    case 6:
       return 'EUPATH_0043208'; // geohash_6
     default:
-      return 'EUPATH_0043208';
+      return 'EUPATH_0043208'; // geohash_6
   }
 }

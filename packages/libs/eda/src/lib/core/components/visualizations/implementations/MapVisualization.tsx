@@ -20,7 +20,8 @@ import { useVizConfig } from '../../../hooks/visualizations';
 import { usePromise } from '../../../hooks/promise';
 import {
   filtersFromBoundingBox,
-  leafletZoomLevelToGeohashVariableId,
+  geohashLevelToVariableId,
+  leafletZoomLevelToGeohashLevel,
 } from '../../../utils/visualization';
 
 export const mapVisualization: VisualizationType = {
@@ -151,7 +152,9 @@ function MapViz(props: VisualizationProps) {
           outputEntityId: tempOutputEntityId,
           geoAggregateVariable: {
             entityId: tempOutputEntityId,
-            variableId: leafletZoomLevelToGeohashVariableId(zoomLevel),
+            variableId: geohashLevelToVariableId(
+              leafletZoomLevelToGeohashLevel(zoomLevel)
+            ),
           },
           latitudeVariable: latitudeVariableDetails,
           longitudeVariable: longitudeVariableDetails,
@@ -222,6 +225,7 @@ function MapViz(props: VisualizationProps) {
       height={450}
       width={750}
       showGrid={true}
+      zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
     />
   );
 
