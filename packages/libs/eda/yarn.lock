@@ -3335,7 +3335,7 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/components@^0.11.10":
+"@veupathdb/components@^0.11.10", "@veupathdb/components@^0.11.8":
   version "0.11.10"
   resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.10.tgz#3f88b3dac73d0fa98dcf2de56f3f16c2a55c3bc5"
   integrity sha512-7jI10uRxWpezGVUwGuFiHBEYBOAunm8BGelpbn86kWr8JljZs9hC6LmNtbLrCkUGnj9wFjBVYa4wbsjKJi1RXA==
@@ -3379,46 +3379,6 @@
   version "0.11.7"
   resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.7.tgz#938f935ef0517076ed96f0d83f11103bc1dd913a"
   integrity sha512-mEaFvOSxZMRe+2+gdLlm04ylw3UsY1k+rEOUmkymisP6Hn7uxn78mEiy+EtAn3nVIfbZmkP7fXDF3MkVgSBV0Q==
-  dependencies:
-    "@emotion/react" "^11.7.0"
-    "@material-ui/core" "^4.11.2"
-    "@material-ui/icons" "^4.11.2"
-    "@material-ui/lab" "^4.0.0-alpha.57"
-    "@types/d3" "^7.1.0"
-    "@types/date-arithmetic" "^4.1.1"
-    "@veupathdb/core-components" "^0.4.0"
-    "@visx/gradient" "^1.0.0"
-    "@visx/group" "^1.0.0"
-    "@visx/hierarchy" "^1.0.0"
-    "@visx/shape" "^1.4.0"
-    "@visx/text" "^1.3.0"
-    "@visx/tooltip" "^1.3.0"
-    "@visx/visx" "^1.1.0"
-    bootstrap "^4.5.2"
-    color-math "^1.1.3"
-    d3 "^7.1.1"
-    date-arithmetic "^4.1.0"
-    debounce-promise "^3.1.2"
-    latlon-geohash "^2.0.0"
-    leaflet "^1.6.0"
-    leaflet-drift-marker "^1.0.3"
-    luxon "^1.25.0"
-    plotly.js "^2.6.0"
-    re-resizable "^6.9.0"
-    react "^16.13.1"
-    react-bootstrap "^1.3.0"
-    react-cool-dimensions "^1.1.11"
-    react-dom "^16.13.1"
-    react-html-parser "^2.0.2"
-    react-leaflet "^2.7.0"
-    react-plotly.js "^2.4.0"
-    react-transition-group "^4.4.1"
-    shape2geohash "^1.2.5"
-
-"@veupathdb/components@^0.11.8":
-  version "0.11.8"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.8.tgz#4c843309cfa835c41a8be3821801cf9a99ff78e6"
-  integrity sha512-JSOdvHp6RoWDAGZYndfhG2WLlvDxGamISwMrrwr98GtrrhxfGX01ASTmA92P4XiA/65vWdfhWcE745Bd8zO/6w==
   dependencies:
     "@emotion/react" "^11.7.0"
     "@material-ui/core" "^4.11.2"
@@ -3649,10 +3609,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/wdk-client@^0.5.2":
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.5.2.tgz#3569fc7d0c58a815f5f8fa594ab5e69a3f328549"
-  integrity sha512-BI0hWSnlPeN4NrKh9UGN7PKqBqf2Ghdad9uzUz+Ba2Po6QTRHDZj70u1VJS2NmjoQxCzyuOXOprRKQIXdBGkeg==
+"@veupathdb/wdk-client@^0.5.4":
+  version "0.5.4"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.5.4.tgz#a4e2ecfdaf66f8f6f02fab82c273b120a608fe86"
+  integrity sha512-pEIVIPDvNs8kBJhBen97lT9ixqgDzbjYeYjmvCkM5u5Q3SRLXl5DNs2o0yCkVJBynXSUHbOUg2me3VqsKAGXHw==
   dependencies:
     "@types/datatables.net" "^1.10.5"
     "@types/flot" "^0.0.31"
