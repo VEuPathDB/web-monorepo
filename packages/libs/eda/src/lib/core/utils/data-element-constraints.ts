@@ -102,17 +102,36 @@ export type DataElementConstraintRecord = Record<string, DataElementConstraint>;
  * { xAxisVariable: { allowedTypes: ['string','date'] }, yAxisVariable: { allowedTypes: ['number', 'string'] } }
  *
  */
-export function flattenConstraints(
+
+// dont compare when input var is same as constraint
+// filter based on all the other inputs, and do it one by one
+// unit tests would be helpful!
+// remove current variable selection and call for each input
+export function filterConstraints(
   variables: VariablesByInputName,
   entities: StudyEntity[],
-  constraints: DataElementConstraintRecord[]
+  constraints: DataElementConstraintRecord[],
+  selectedVar: string
 ): DataElementConstraintRecord[] {
   // Find all compatible constraints
+  console.log('filter constraints inputs:');
+  console.log(variables);
+  console.log(selectedVar);
+  console.log(constraints);
+
+  // Collect compatible Constraints based on all variables except the selected one.
   const compatibleConstraints = constraints.filter((constraintRecord) =>
     Object.entries(constraintRecord).every(([variableName, constraint]) => {
       const value = variables[variableName];
+      console.log('variable name in constraints.filter... Object.entries');
+      console.log(variableName);
       // If a value (variable) has not been user-selected for this constraint, then it is considered to be "in-play"
       if (value == null) return true;
+      // Ignore constraints that are on this selectedVar
+      if (selectedVar === variableName) {
+        console.log('is selected var');
+        return true;
+      }
       // If a constraint does not declare shapes or types and it allows multivalued variables, then any value is allowed, thus the constraint is "in-play"
       if (
         isEmpty(constraint.allowedShapes) &&
@@ -141,6 +160,12 @@ export function flattenConstraints(
         constraint.maxNumValues >= variable.distinctValuesCount;
       const passesMultivalueConstraint =
         constraint.allowMultiValued || !variable.isMultiValued;
+      console.log([
+        typeIsValid,
+        shapeIsValid,
+        passesMaxValuesConstraint,
+        passesMultivalueConstraint,
+      ]);
       return (
         typeIsValid &&
         shapeIsValid &&
@@ -149,18 +174,13 @@ export function flattenConstraints(
       );
     })
   );
+
   if (compatibleConstraints.length === 0)
     throw new Error(
-      'flattenConstraints: Something went wrong. No compatible constraints were found for the current set of values.'
+      'filterConstraints: Something went wrong. No compatible constraints were found for the current set of values.'
     );
-  // Combine compatible constraints into a single constraint, concatenating
-  // allowed shapes and types.
-  // But what if it just doesn't flatten the constraints? We still get all the benefits?
+
   return compatibleConstraints;
-  // .reduce(
-  //   mergeConstraints,
-  //   {} as DataElementConstraintRecord
-  // );
 }
 
 export function mergeConstraints(

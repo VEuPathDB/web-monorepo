@@ -5,7 +5,7 @@ import { VariableDescriptor } from '../../types/variable';
 import {
   DataElementConstraintRecord,
   excludedVariables,
-  flattenConstraints,
+  filterConstraints,
   VariablesByInputName,
 } from '../../utils/data-element-constraints';
 
@@ -127,9 +127,13 @@ export function InputVariables(props: Props) {
     onChange({ ...selectedVariables, [inputName]: selectedVariable });
   };
   console.log(constraints);
-  const flattenedConstraints =
-    constraints && flattenConstraints(selectedVariables, entities, constraints);
-  console.log(flattenedConstraints);
+  // Want to go one by one through the variables
+  // Need to know the name of the var and constraints
+  // Don't even want to do this here
+  // const filteredConstraints =
+  //   constraints && filterConstraints(selectedVariables, entities, constraints);
+  // console.log(filteredConstraints);
+  // console.log(inputs);
 
   // Find entities that are excluded for each variable, and union their variables
   // with the disabled variables.
@@ -139,10 +143,23 @@ export function InputVariables(props: Props) {
   > = useMemo(
     () =>
       inputs.reduce((map, input) => {
+        console.log('my input name');
         console.log(input.name);
 
-        const disabledVariables = flattenedConstraints
-          ? flattenedConstraints
+        // Going input by input, so only return the constraints that relate to *this* input
+        const filteredConstraints =
+          constraints &&
+          filterConstraints(
+            selectedVariables,
+            entities,
+            constraints,
+            input.name
+          );
+        console.log('filtered constraints');
+        console.log(filteredConstraints);
+
+        const disabledVariables = filteredConstraints
+          ? filteredConstraints
               .map((constraint) => {
                 return excludedVariables(
                   entities[0],
@@ -160,8 +177,6 @@ export function InputVariables(props: Props) {
                 )
               )
           : [{ entityId: 'a', variableId: 'b' }];
-
-        console.log(disabledVariables);
 
         if (dataElementDependencyOrder == null) {
           map[input.name] = disabledVariables;
@@ -235,7 +250,7 @@ export function InputVariables(props: Props) {
     [
       dataElementDependencyOrder,
       entities,
-      flattenedConstraints,
+      constraints,
       inputs,
       selectedVariables,
     ]
@@ -261,7 +276,7 @@ export function InputVariables(props: Props) {
                   rootEntity={entities[0]}
                   disabledVariables={disabledVariablesByInputName[input.name]}
                   customDisabledVariableMessage={
-                    flattenedConstraints?.[0][input.name].description
+                    constraints?.[0][input.name].description // just take first description for now
                   }
                   starredVariables={starredVariables}
                   toggleStarredVariable={toggleStarredVariable}
@@ -293,7 +308,7 @@ export function InputVariables(props: Props) {
                     rootEntity={entities[0]}
                     disabledVariables={disabledVariablesByInputName[input.name]}
                     customDisabledVariableMessage={
-                      flattenedConstraints?.[0][input.name].description
+                      constraints?.[0][input.name].description // just take first description for now
                     }
                     starredVariables={starredVariables}
                     toggleStarredVariable={toggleStarredVariable}
