@@ -4,7 +4,7 @@ import { VariableLink } from './VariableLink';
 import { makeStyles } from '@material-ui/core/styles';
 import { Filter } from '../types/filter';
 import { findEntityAndVariable } from '../utils/study-metadata';
-import { ReactNode } from 'react';
+import { ReactNode, Fragment } from 'react';
 
 // Material UI CSS declarations
 const useStyles = makeStyles((theme) => ({
@@ -73,10 +73,10 @@ export default function FilterChipList(props: Props) {
                     } = ${subFilter.stringSet.join(' | ')}`;
                   })
                   .flatMap((text, index) => (
-                    <>
+                    <Fragment key={`filter-chip-multivalue-${text}`}>
                       {text}
                       {index < filter.subFilters.length ? <br /> : null}
-                    </>
+                    </Fragment>
                   ));
                 break;
               default:
