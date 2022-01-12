@@ -135,9 +135,6 @@ const Boxplot = makePlotlyPlotComponent('Boxplot', (props: BoxplotProps) => {
               fillcolor: d.color,
               ...orientationDependentProps,
               type: 'box',
-              // `offsetgroup` somehow ensures that an overlay value with no data at all will
-              // still be shown as a gap in the boxplots shown above a single x tick.
-              offsetgroup: d.name,
             };
           }) // part 2 of the hack:
           // the following is required because Plotly's 'categoryorder/categoryarray' props do not
