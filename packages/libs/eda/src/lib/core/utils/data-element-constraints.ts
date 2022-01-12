@@ -81,106 +81,107 @@ export type VariablesByInputName = Partial<Record<string, VariableDescriptor>>;
 export type DataElementConstraintRecord = Record<string, DataElementConstraint>;
 
 /**
- * Given an array of DataElementConstraint objects and a set of values, return
- * a unioned DataElementConstraint object that includes all of the rules for
- * which the provided values satisfy.
+ * Given an array of DataElementConstraint objects, user-selected variables, and a variable reference of interest
+ * (ex. xAxisVariable), return an array of DataElementConstraint objects that contains all of the rules 
+ * that should constrain the variable reference of interest.
  *
- * example: one contraint allows string x number, the other date x string
+ * example: one contraint allows string x number, the other date x string, the other vars with < 5 values.
  *
  * constraints = [ { xAxisVariable: { allowedTypes: ['string'] }, yAxisVariable: { allowedTypes: ['number'] } },
-                   { xAxisVariable: { allowedTypes: ['date'] }, yAxisVariable: { allowedTypes: ['string'] } } ]
+                   { xAxisVariable: { allowedTypes: ['date'] }, yAxisVariable: { allowedTypes: ['string'] } },
+                   { xAxisVariable: { maxNumVars: 5 }, yAxisVariable: { allowedTypes: ['string'] } }]
  *
- * If the user has already chosen a string-type xAxisVariable, the
- * constraints.filter() below will allow constraints[0] to pass but
- * will exclude constraints[1] because the already chosen string
- * x-variable is not a date. It won't even check the yAxisVariable of
- * constraint[1] because of the all-or-nothing nature of constraints.
+ * If the user has already chosen a string-type xAxisVariable with 7 values, the
+ * constraints.filter() below will allow only constraints[0] to pass for the yAxisVariable. 
+ * The xAxisVariable is already chosen and so restricts the yAxisVariable to constraints that satisfy
+ * the xAxisVariable choice. It won't even check the yAxisVariable of
+ * constraint[1] because of the all-or-nothing nature of constraints. However, we should still be 
+ * able to switch the xAxisVariable to a date or var with < 5 values, so for the xAxisVariable we 
+ * will pass constraints[0:2]. 
+ * 
+ * Additionally, we do not want to merge constraints because, for example, that would
+ * squeeze the xAxisVariables, with no variables chosen, to only allow vars that are strings or dates *and* 
+ * have fewer than five values.
  *
- * The constraints passed by the filter are merged into one.
+ * More exampels:
+ * If no variable has been selected by the user, then all constraints will be used for
+ * both the x and y variables.
  *
- * If no variable has been selected by the user, then the final merged constraint would be
- * { xAxisVariable: { allowedTypes: ['string','date'] }, yAxisVariable: { allowedTypes: ['number', 'string'] } }
- *
+ * If the yAxisVariable has been set to a string, the xAxisVariable will be restricted to 
+ * constraints[1:2], while the yAxisVariable will use all three constraints, since it is
+ * the only variable chosen
+ * 
+ * If the xAxisVariable is a date with 4 unique values, the xAxisVariable will use all three constraint patterns
+ * while the yAxisVariable will only use constraints[1:2].
+ * 
  */
 
-// dont compare when input var is same as constraint
-// filter based on all the other inputs, and do it one by one
-// unit tests would be helpful!
-// remove current variable selection and call for each input
 export function filterConstraints(
-  variables: VariablesByInputName,
+  inputVariables: VariablesByInputName,
   entities: StudyEntity[],
   constraints: DataElementConstraintRecord[],
-  selectedVar: string
+  selectedVarReference: string // variable reference for which to determine constraints. Ex. xAxisVariable.
 ): DataElementConstraintRecord[] {
-  // Find all compatible constraints
-  console.log('filter constraints inputs:');
-  console.log(variables);
-  console.log(selectedVar);
-  console.log(constraints);
+  // Collect applicable constraints based on all variables except the selected one selectedVarReference).
+  const applicableConstraints = constraints.filter((constraintRecord) =>
+    Object.entries(constraintRecord).every(
+      ([variableReference, constraint]) => {
+        const inputVariable = inputVariables[variableReference];
+        // If the inputVariable has not been user-selected, then it is considered to be "in-play"
+        if (inputVariable == null) return true;
+        // Ignore constraints that are on this selectedVarReference
+        if (selectedVarReference === variableReference) return true;
+        // If a constraint does not declare shapes or types and it allows multivalued variables, then any value is allowed, thus the constraint is "in-play"
+        if (
+          isEmpty(constraint.allowedShapes) &&
+          isEmpty(constraint.allowedTypes) &&
+          constraint.maxNumValues === undefined &&
+          constraint.allowMultiValued
+        )
+          return true;
 
-  // Collect compatible Constraints based on all variables except the selected one.
-  const compatibleConstraints = constraints.filter((constraintRecord) =>
-    Object.entries(constraintRecord).every(([variableName, constraint]) => {
-      const value = variables[variableName];
-      console.log('variable name in constraints.filter... Object.entries');
-      console.log(variableName);
-      // If a value (variable) has not been user-selected for this constraint, then it is considered to be "in-play"
-      if (value == null) return true;
-      // Ignore constraints that are on this selectedVar
-      if (selectedVar === variableName) {
-        console.log('is selected var');
-        return true;
-      }
-      // If a constraint does not declare shapes or types and it allows multivalued variables, then any value is allowed, thus the constraint is "in-play"
-      if (
-        isEmpty(constraint.allowedShapes) &&
-        isEmpty(constraint.allowedTypes) &&
-        constraint.maxNumValues === undefined &&
-        constraint.allowMultiValued
-      )
-        return true;
-      // Check that the value's associated variable has compatible characteristics
-      const entityAndVariable = findEntityAndVariable(entities, value);
-      if (entityAndVariable == null)
-        throw new Error(
-          `Could not find selected entity and variable: entityId = ${value.entityId}; variableId = ${value.variableId}.`
+        // Check that the value's associated variable has compatible characteristics
+        const entityAndVariable = findEntityAndVariable(
+          entities,
+          inputVariable
         );
-      const { variable } = entityAndVariable;
-      if (variable.type === 'category')
-        throw new Error('Categories are not allowed for variable constraints.');
-      const typeIsValid =
-        isEmpty(constraint.allowedTypes) ||
-        constraint.allowedTypes?.includes(variable.type);
-      const shapeIsValid =
-        isEmpty(constraint.allowedShapes) ||
-        constraint.allowedShapes?.includes(variable.dataShape!);
-      const passesMaxValuesConstraint =
-        constraint.maxNumValues === undefined ||
-        constraint.maxNumValues >= variable.distinctValuesCount;
-      const passesMultivalueConstraint =
-        constraint.allowMultiValued || !variable.isMultiValued;
-      console.log([
-        typeIsValid,
-        shapeIsValid,
-        passesMaxValuesConstraint,
-        passesMultivalueConstraint,
-      ]);
-      return (
-        typeIsValid &&
-        shapeIsValid &&
-        passesMaxValuesConstraint &&
-        passesMultivalueConstraint
-      );
-    })
+        if (entityAndVariable == null)
+          throw new Error(
+            `Could not find selected entity and variable: entityId = ${inputVariable.entityId}; variableId = ${inputVariable.variableId}.`
+          );
+        const { variable } = entityAndVariable;
+        if (variable.type === 'category')
+          throw new Error(
+            'Categories are not allowed for variable constraints.'
+          );
+        const typeIsValid =
+          isEmpty(constraint.allowedTypes) ||
+          constraint.allowedTypes?.includes(variable.type);
+        const shapeIsValid =
+          isEmpty(constraint.allowedShapes) ||
+          constraint.allowedShapes?.includes(variable.dataShape!);
+        const passesMaxValuesConstraint =
+          constraint.maxNumValues === undefined ||
+          constraint.maxNumValues >= variable.distinctValuesCount;
+        const passesMultivalueConstraint =
+          constraint.allowMultiValued || !variable.isMultiValued;
+
+        return (
+          typeIsValid &&
+          shapeIsValid &&
+          passesMaxValuesConstraint &&
+          passesMultivalueConstraint
+        );
+      }
+    )
   );
 
-  if (compatibleConstraints.length === 0)
+  if (applicableConstraints.length === 0)
     throw new Error(
       'filterConstraints: Something went wrong. No compatible constraints were found for the current set of values.'
     );
 
-  return compatibleConstraints;
+  return applicableConstraints;
 }
 
 export function mergeConstraints(

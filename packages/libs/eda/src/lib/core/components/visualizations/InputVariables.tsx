@@ -126,7 +126,7 @@ export function InputVariables(props: Props) {
   ) => {
     onChange({ ...selectedVariables, [inputName]: selectedVariable });
   };
-  console.log(constraints);
+
   // Want to go one by one through the variables
   // Need to know the name of the var and constraints
   // Don't even want to do this here
@@ -143,10 +143,7 @@ export function InputVariables(props: Props) {
   > = useMemo(
     () =>
       inputs.reduce((map, input) => {
-        console.log('my input name');
-        console.log(input.name);
-
-        // Going input by input, so only return the constraints that relate to *this* input
+        // For each input (ex. xAxisVariable), determine its constraints based on which patterns any other selected variables match.
         const filteredConstraints =
           constraints &&
           filterConstraints(
@@ -155,9 +152,8 @@ export function InputVariables(props: Props) {
             constraints,
             input.name
           );
-        console.log('filtered constraints');
-        console.log(filteredConstraints);
 
+        // Use the input-specific filtered constraints to create an array of disabled variables.
         const disabledVariables = filteredConstraints
           ? filteredConstraints
               .map((constraint) => {
@@ -165,18 +161,18 @@ export function InputVariables(props: Props) {
                   entities[0],
                   constraint && constraint[input.name]
                 );
-                // Take the intersection of all variables (objects with varIds and entityIds)
               })
+              // Keep only those variables (objects with varIds and entityIds) that should be disabled based on *all* constraints
               .reduce((disabledVarArray1, disabledVarArray2) =>
-                disabledVarArray1.filter((value1) =>
+                disabledVarArray1.filter((disabledVar1) =>
                   disabledVarArray2.some(
-                    (value2) =>
-                      value1.variableId === value2.variableId &&
-                      value1.entityId === value2.entityId
+                    (disabledVar2) =>
+                      disabledVar1.variableId === disabledVar2.variableId &&
+                      disabledVar1.entityId === disabledVar2.entityId
                   )
                 )
               )
-          : [{ entityId: 'a', variableId: 'b' }];
+          : [{ entityId: 'a', variableId: 'b' }]; // Typescript help please!!! I tried [{}] as DataElementConstraintRecord but no luck :/
 
         if (dataElementDependencyOrder == null) {
           map[input.name] = disabledVariables;
