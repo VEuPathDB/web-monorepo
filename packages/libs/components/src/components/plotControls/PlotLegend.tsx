@@ -55,9 +55,15 @@ export default function PlotLegend({
       {legendItems.length > 1 && (
         <div
           style={{
+            display: 'inline-block', // for general usage (e.g., story)
             border: '1px solid #dedede',
             boxShadow: '1px 1px 4px #00000066',
             padding: '1em',
+            // implementing scrolling for vertical direction
+            maxHeight: 250, // same height with Scatterplot R-square table
+            minWidth: 250, // for firefox
+            overflowX: 'hidden',
+            overflowY: 'auto',
           }}
         >
           <div
@@ -70,20 +76,38 @@ export default function PlotLegend({
           </div>
           <div className="plotLegendCheckbox">
             {legendItems.map((item: LegendItemsProps, index: number) => (
-              <div key={item.label} style={{ display: 'flex' }}>
-                <>
+              <div key={item.label}>
+                {/* wrap checkbox with label so that label text is clickable */}
+                <label
+                  key={item.label}
+                  title={item.label}
+                  style={{
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    fontSize: legendTextSize,
+                    // gray out for filtered item
+                    color:
+                      checkedLegendItems?.includes(item.label) && item.hasData
+                        ? ''
+                        : '#999',
+                    // add this for general usage (e.g., story)
+                    margin: 0,
+                  }}
+                >
                   <Checkbox
                     key={item.label}
                     id={item.label}
                     value={item.label}
-                    color="primary"
+                    // gray checkbox: default
+                    color={'default'}
                     onChange={(e) => {
                       handleLegendCheckboxClick(e.target.checked, item.label);
                     }}
                     checked={
                       checkedLegendItems?.includes(item.label) ? true : false
                     }
-                    style={{ padding: 0 }}
+                    style={{ padding: 0, width: '1em', height: '1em' }}
                     // disable when hasData is false
                     // but scatter plot needs further change due to smoothed mean and best fit
                     disabled={!item.hasData}
@@ -91,8 +115,8 @@ export default function PlotLegend({
                   &nbsp;&nbsp;
                   <div
                     style={{
-                      position: 'relative',
-                      margin: 'auto 0',
+                      display: 'flex',
+                      alignItems: 'center',
                     }}
                   >
                     {/* for histogram, barplot, Mosaic (2X2, RXC) - Mosaic does not use custom legend though */}
@@ -161,8 +185,6 @@ export default function PlotLegend({
                             height: '0.15em',
                             width: scatterMarkerSpace,
                             borderWidth: '0',
-                            // borderStyle: 'solid',
-                            // borderRadius: '0.6em',
                             backgroundColor:
                               checkedLegendItems?.includes(item.label) &&
                               item.hasData
@@ -211,29 +233,18 @@ export default function PlotLegend({
                       </div>
                     )}
                   </div>
+                  {/* below is label text */}
                   &nbsp;&nbsp;
-                  <label
-                    title={item.label}
-                    style={{
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      fontSize: legendTextSize,
-                      // gray out for filtered item
-                      color:
-                        checkedLegendItems?.includes(item.label) && item.hasData
-                          ? ''
-                          : '#999',
-                    }}
-                  >
+                  <div>
                     {item.label === 'No data' ||
                     item.label.includes('No data,') ? (
                       <i>{legendEllipsis(item.label, 20)}</i>
                     ) : (
                       legendEllipsis(item.label, 20)
                     )}
-                  </label>
-                </>
+                  </div>
+                  {/* </div> */}
+                </label>
               </div>
             ))}
           </div>
