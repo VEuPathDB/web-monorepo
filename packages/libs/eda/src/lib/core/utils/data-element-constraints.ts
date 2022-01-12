@@ -106,7 +106,7 @@ export function flattenConstraints(
   variables: VariablesByInputName,
   entities: StudyEntity[],
   constraints: DataElementConstraintRecord[]
-): DataElementConstraintRecord {
+): DataElementConstraintRecord[] {
   // Find all compatible constraints
   const compatibleConstraints = constraints.filter((constraintRecord) =>
     Object.entries(constraintRecord).every(([variableName, constraint]) => {
@@ -155,10 +155,12 @@ export function flattenConstraints(
     );
   // Combine compatible constraints into a single constraint, concatenating
   // allowed shapes and types.
-  return compatibleConstraints.reduce(
-    mergeConstraints,
-    {} as DataElementConstraintRecord
-  );
+  // But what if it just doesn't flatten the constraints? We still get all the benefits?
+  return compatibleConstraints;
+  // .reduce(
+  //   mergeConstraints,
+  //   {} as DataElementConstraintRecord
+  // );
 }
 
 export function mergeConstraints(

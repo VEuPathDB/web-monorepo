@@ -126,8 +126,10 @@ export function InputVariables(props: Props) {
   ) => {
     onChange({ ...selectedVariables, [inputName]: selectedVariable });
   };
+  console.log(constraints);
   const flattenedConstraints =
     constraints && flattenConstraints(selectedVariables, entities, constraints);
+  console.log(flattenedConstraints);
 
   // Find entities that are excluded for each variable, and union their variables
   // with the disabled variables.
@@ -137,10 +139,30 @@ export function InputVariables(props: Props) {
   > = useMemo(
     () =>
       inputs.reduce((map, input) => {
-        const disabledVariables = excludedVariables(
-          entities[0],
-          flattenedConstraints && flattenedConstraints[input.name]
-        );
+        console.log(input.name);
+
+        const disabledVariables = flattenedConstraints
+          ? flattenedConstraints
+              .map((constraint) => {
+                return excludedVariables(
+                  entities[0],
+                  constraint && constraint[input.name]
+                );
+                // Take the intersection of all variables (objects with varIds and entityIds)
+              })
+              .reduce((disabledVarArray1, disabledVarArray2) =>
+                disabledVarArray1.filter((value1) =>
+                  disabledVarArray2.some(
+                    (value2) =>
+                      value1.variableId === value2.variableId &&
+                      value1.entityId === value2.entityId
+                  )
+                )
+              )
+          : [{ entityId: 'a', variableId: 'b' }];
+
+        console.log(disabledVariables);
+
         if (dataElementDependencyOrder == null) {
           map[input.name] = disabledVariables;
           return map;
@@ -239,7 +261,7 @@ export function InputVariables(props: Props) {
                   rootEntity={entities[0]}
                   disabledVariables={disabledVariablesByInputName[input.name]}
                   customDisabledVariableMessage={
-                    flattenedConstraints?.[input.name].description
+                    flattenedConstraints?.[0][input.name].description
                   }
                   starredVariables={starredVariables}
                   toggleStarredVariable={toggleStarredVariable}
@@ -271,7 +293,7 @@ export function InputVariables(props: Props) {
                     rootEntity={entities[0]}
                     disabledVariables={disabledVariablesByInputName[input.name]}
                     customDisabledVariableMessage={
-                      flattenedConstraints?.[input.name].description
+                      flattenedConstraints?.[0][input.name].description
                     }
                     starredVariables={starredVariables}
                     toggleStarredVariable={toggleStarredVariable}
