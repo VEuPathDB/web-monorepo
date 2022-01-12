@@ -3,9 +3,7 @@ import { CoverageStatistics } from '../types/visualization';
 import BirdsEyePlot from '@veupathdb/components/lib/plots/BirdsEyePlot';
 import { red, gray } from './filter/colors';
 import { StudyEntity } from '../types/study';
-import Tooltip, {
-  TooltipPosition,
-} from '@veupathdb/wdk-client/lib/Components/Overlays/Tooltip';
+import Tooltip from '@veupathdb/wdk-client/lib/Components/Overlays/Tooltip';
 
 interface Props extends Partial<CoverageStatistics> {
   /** The output entity */

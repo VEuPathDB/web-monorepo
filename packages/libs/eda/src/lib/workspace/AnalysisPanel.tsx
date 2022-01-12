@@ -30,12 +30,40 @@ import { EntityDiagram } from '../core';
 import { ComputationRoute } from './ComputationRoute';
 import { DefaultVariableRedirect } from './DefaultVariableRedirect';
 import Subsetting from './Subsetting';
-import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
+import {
+  ErrorBoundary,
+  RecordController,
+} from '@veupathdb/wdk-client/lib/Controllers';
 import GlobalFiltersDialog from '../core/components/GlobalFiltersDialog';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import ShowHideVariableContextProvider from '../core/utils/show-hide-variable-context';
 import NotesTab from './NotesTab';
 import ShareFromAnalysis from './sharing/ShareFromAnalysis';
+import { Alert } from '@material-ui/lab';
+
+const AnalysisTabErrorBoundary = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => (
+  <ErrorBoundary
+    children={children}
+    renderError={() => (
+      <Alert severity="error" style={{ marginTop: 10 }}>
+        We're sorry, something went wrong with this tab. Please change to
+        another tab or{' '}
+        {
+          // Disabling error about invalid a tag href
+          // eslint-disable-next-line jsx-a11y/anchor-is-valid
+          <a href="" title="Reload the page.">
+            reload the page
+          </a>
+        }{' '}
+        to try again.
+      </Alert>
+    )}
+  />
+);
 
 interface Props {
   analysisState: AnalysisState;
@@ -220,10 +248,12 @@ export function AnalysisPanel({
         <Route
           path={`${routeBase}/details`}
           render={() => (
-            <RecordController
-              recordClass="dataset"
-              primaryKey={studyRecord.id.map((p) => p.value).join('/')}
-            />
+            <AnalysisTabErrorBoundary>
+              <RecordController
+                recordClass="dataset"
+                primaryKey={studyRecord.id.map((p) => p.value).join('/')}
+              />
+            </AnalysisTabErrorBoundary>
           )}
         />
         <Route
@@ -239,27 +269,35 @@ export function AnalysisPanel({
           render={(
             props: RouteComponentProps<{ entityId: string; variableId: string }>
           ) => (
-            <Subsetting
-              {...props.match.params}
-              analysisState={analysisState}
-              totalCounts={totalCounts.value}
-              filteredCounts={filteredCounts.value}
-            />
+            <AnalysisTabErrorBoundary>
+              <Subsetting
+                {...props.match.params}
+                analysisState={analysisState}
+                totalCounts={totalCounts.value}
+                filteredCounts={filteredCounts.value}
+              />
+            </AnalysisTabErrorBoundary>
           )}
         />
         <Route
           path={`${routeBase}/visualizations`}
           render={() => (
-            <ComputationRoute
-              analysisState={analysisState}
-              totalCounts={totalCounts}
-              filteredCounts={filteredCounts}
-            />
+            <AnalysisTabErrorBoundary>
+              <ComputationRoute
+                analysisState={analysisState}
+                totalCounts={totalCounts}
+                filteredCounts={filteredCounts}
+              />
+            </AnalysisTabErrorBoundary>
           )}
         />
         <Route
           path={`${routeBase}/notes`}
-          render={() => <NotesTab analysisState={analysisState} />}
+          render={() => (
+            <AnalysisTabErrorBoundary>
+              <NotesTab analysisState={analysisState} />
+            </AnalysisTabErrorBoundary>
+          )}
         />
       </div>
     </ShowHideVariableContextProvider>

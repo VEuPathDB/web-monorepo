@@ -152,7 +152,9 @@ export function MultiFilter(props: Props) {
     [debounceTime]
   );
   // Cancel any pending requests when this component is unmounted.
-  useEffect(() => debouncedSetThisFilter.cancel, []);
+  useEffect(() => debouncedSetThisFilter.cancel, [
+    debouncedSetThisFilter.cancel,
+  ]);
   // watch for changes in _thisFilter, then setThisFilter in a regulated manner
   useEffect(() => debouncedSetThisFilter(_thisFilter), [
     debouncedSetThisFilter,
