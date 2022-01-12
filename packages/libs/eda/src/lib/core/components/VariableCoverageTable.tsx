@@ -66,8 +66,8 @@ export function VariableCoverageTable({
           <tr>
             <th></th>
             <th>Variable</th>
-            <th className="numeric">Data</th>
-            <th className="numeric">No data</th>
+            <th className="numeric-header">Data</th>
+            <th className="numeric-header">No data</th>
           </tr>
           {rows
             .filter((row) => row.required || row.display != null)
@@ -75,7 +75,7 @@ export function VariableCoverageTable({
               <tr key={row.role}>
                 <th>{row.role}</th>
                 <td>{row.display}</td>
-                <td>
+                <td className="numeric">
                   {row.completeCount?.toLocaleString()}
                   <br />
                   {row.completePercent != null && (
@@ -87,7 +87,7 @@ export function VariableCoverageTable({
                     </span>
                   )}
                 </td>
-                <td>
+                <td className="numeric">
                   {row.incompleteCount?.toLocaleString()}
                   <br />
                   {row.incompletePercent != null && (
