@@ -286,6 +286,15 @@ export interface LineplotRequestParams {
     xAxisVariable: VariableDescriptor;
     yAxisVariable: VariableDescriptor;
     overlayVariable?: VariableDescriptor;
+    binSpec: {
+      type: 'binWidth';
+      value?: number;
+      units?: TimeUnit;
+    };
+    viewport?: {
+      xMin: string;
+      xMax: string;
+    };
     showMissingness?: 'TRUE' | 'FALSE';
     valueSpec: 'mean' | 'median';
   };
@@ -297,6 +306,8 @@ const LineplotResponseData = array(
       // changed to string array
       seriesX: array(string),
       seriesY: array(string),
+      binStart: array(string),
+      binEnd: array(string),
     }),
     partial({
       // need to make sure if below is correct (untested)
@@ -316,6 +327,11 @@ export const LineplotResponse = type({
     config: type({
       completeCasesAllVars: number,
       completeCasesAxesVars: number,
+      binSlider: type({
+        min: number,
+        max: number,
+        step: number,
+      }),
       xVariableDetails: type({
         variableId: string,
         entityId: string,

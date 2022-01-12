@@ -1,5 +1,7 @@
 // load plot component
-import XYPlot, { XYPlotProps } from '@veupathdb/components/lib/plots/XYPlot';
+import LinePlot, {
+  LinePlotProps,
+} from '@veupathdb/components/lib/plots/LinePlot';
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
@@ -37,6 +39,7 @@ import line from './selectorIcons/line.svg';
 
 // use lodash instead of Math.min/max
 import {
+  isEqual,
   min,
   max,
   lte,
@@ -50,12 +53,18 @@ import {
   keys,
   uniqBy,
 } from 'lodash';
-// directly use RadioButtonGroup instead of XYPlotControls
+// directly use RadioButtonGroup instead of LinePlotControls
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-// import XYPlotData
+import BinWidthControl from '@veupathdb/components/lib/components/plotControls/BinWidthControl';
+import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import {
-  XYPlotDataSeries,
-  XYPlotData,
+  NumberOrTimeDelta,
+  NumberOrTimeDeltaRange,
+  TimeDelta,
+} from '@veupathdb/components/lib/types/general';
+import {
+  LinePlotDataSeries,
+  LinePlotData,
   FacetedData,
 } from '@veupathdb/components/lib/types/plots';
 import { CoverageStatistics } from '../../../types/visualization';
@@ -88,8 +97,8 @@ import PluginError from '../PluginError';
 import PlotLegend, {
   LegendItemsProps,
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
-import { isFaceted } from '@veupathdb/components/lib/types/guards';
-import FacetedXYPlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedXYPlot';
+import { isFaceted, isTimeDelta } from '@veupathdb/components/lib/types/guards';
+import FacetedLinePlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedLinePlot';
 // for converting rgb() to rgba()
 import * as ColorMath from 'color-math';
 //DKDK a custom hook to preserve the status of checked legend items
@@ -111,16 +120,16 @@ const modalPlotContainerStyles = {
   margin: 'auto',
 };
 
-// define XYPlotDataWithCoverage
-interface XYPlotDataWithCoverage extends CoverageStatistics {
-  dataSetProcess: XYPlotData | FacetedData<XYPlotData>;
+// define LinePlotDataWithCoverage
+interface LinePlotDataWithCoverage extends CoverageStatistics {
+  dataSetProcess: LinePlotData | FacetedData<LinePlotData>;
   // change these types to be compatible with new axis range
   yMin: number | string | undefined;
   yMax: number | string | undefined;
 }
 
-// define XYPlotDataResponse
-type XYPlotDataResponse = LineplotResponse;
+// define LinePlotDataResponse
+type LinePlotDataResponse = LineplotResponse;
 
 export const lineplotVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -151,6 +160,8 @@ export const LineplotConfig = t.partial({
   overlayVariable: VariableDescriptor,
   facetVariable: VariableDescriptor,
   valueSpecConfig: t.string,
+  binWidth: t.number,
+  binWidthTimeUnit: t.string,
   showMissingness: t.boolean,
   // for vizconfig.checkedLegendItems
   checkedLegendItems: t.array(t.string),
@@ -237,11 +248,14 @@ function LineplotViz(props: VisualizationProps) {
         overlayVariable,
         facetVariable,
       } = selectedVariables;
+      const keepBin = isEqual(xAxisVariable, vizConfig.xAxisVariable);
       updateVizConfig({
         xAxisVariable,
         yAxisVariable,
         overlayVariable,
         facetVariable,
+        binWidth: keepBin ? vizConfig.binWidth : undefined,
+        binWidthTimeUnit: keepBin ? vizConfig.binWidthTimeUnit : undefined,
         // set valueSpec as Raw when yAxisVariable = date
         valueSpecConfig: vizConfig.valueSpecConfig,
         // set undefined for variable change
@@ -249,6 +263,20 @@ function LineplotViz(props: VisualizationProps) {
       });
     },
     [updateVizConfig, findEntityAndVariable, vizConfig.valueSpecConfig]
+  );
+
+  const onBinWidthChange = useCallback(
+    (newBinWidth: NumberOrTimeDelta) => {
+      if (newBinWidth) {
+        updateVizConfig({
+          binWidth: isTimeDelta(newBinWidth) ? newBinWidth.value : newBinWidth,
+          binWidthTimeUnit: isTimeDelta(newBinWidth)
+            ? newBinWidth.unit
+            : undefined,
+        });
+      }
+    },
+    [updateVizConfig]
   );
 
   // prettier-ignore
@@ -292,7 +320,7 @@ function LineplotViz(props: VisualizationProps) {
   );
 
   const data = usePromise(
-    useCallback(async (): Promise<XYPlotDataWithCoverage | undefined> => {
+    useCallback(async (): Promise<LinePlotDataWithCoverage | undefined> => {
       if (
         outputEntity == null ||
         filteredCounts.pending ||
@@ -396,6 +424,8 @@ function LineplotViz(props: VisualizationProps) {
       vizConfig.yAxisVariable,
       vizConfig.overlayVariable,
       vizConfig.facetVariable,
+      vizConfig.binWidth,
+      vizConfig.binWidthTimeUnit,
       vizConfig.valueSpecConfig,
       vizConfig.showMissingness,
       computation.descriptor.type,
@@ -450,7 +480,7 @@ function LineplotViz(props: VisualizationProps) {
 
     return legendData != null
       ? // the name 'dataItem' is used inside the map() to distinguish from the global 'data' variable
-        legendData.map((dataItem: XYPlotDataSeries, index: number) => {
+        legendData.map((dataItem: LinePlotDataSeries, index: number) => {
           return {
             label: dataItem.name ?? '',
             // maing marker info appropriately
@@ -469,7 +499,7 @@ function LineplotViz(props: VisualizationProps) {
                 : false
               : allData.facets
                   .map((facet) => facet.data)
-                  .filter((data): data is XYPlotData => data != null)
+                  .filter((data): data is LinePlotData => data != null)
                   .map(
                     (data) =>
                       data.series[index]?.y != null &&
@@ -518,6 +548,7 @@ function LineplotViz(props: VisualizationProps) {
       valueSpec={vizConfig.valueSpecConfig}
       onValueSpecChange={onValueSpecChange}
       // send visualization.type here
+      onBinWidthChange={onBinWidthChange}
       vizType={visualization.descriptor.type}
       interactive={!isFaceted(data.value) ? true : false}
       showSpinner={data.pending}
@@ -656,10 +687,11 @@ function LineplotViz(props: VisualizationProps) {
   );
 }
 
-type LineplotWithControlsProps = Omit<XYPlotProps, 'data'> & {
-  data?: XYPlotData | FacetedData<XYPlotData>;
+type LineplotWithControlsProps = Omit<LinePlotProps, 'data'> & {
+  data?: LinePlotData | FacetedData<LinePlotData>;
   valueSpec: string | undefined;
   onValueSpecChange: (value: string) => void;
+  onBinWidthChange: (newBinWidth: NumberOrTimeDelta) => void;
   updateThumbnail: (src: string) => void;
   vizType: string;
   plotOptions: string[];
@@ -672,9 +704,10 @@ type LineplotWithControlsProps = Omit<XYPlotProps, 'data'> & {
 
 function LineplotWithControls({
   data,
-  // XYPlotControls: set initial value as 'raw' ('Raw')
+  // LinePlotControls: set initial value as 'raw' ('Raw')
   valueSpec = 'Median',
   onValueSpecChange,
+  onBinWidthChange,
   vizType,
   // add plotOptions
   plotOptions,
@@ -702,36 +735,20 @@ function LineplotWithControls({
     [data, checkedLegendItems]
   );
 
+  const widgetHeight = '4em';
+
+  // controls need the bin info from just one facet (not an empty one)
+  const data0 = isFaceted(data)
+    ? data.facets.find(({ data }) => data != null && data.series.length > 0)
+        ?.data
+    : data;
+
   return (
     <>
-      {isFaceted(data) ? (
-        <FacetedXYPlot
-          data={data}
-          componentProps={lineplotProps}
-          modalComponentProps={{
-            independentAxisLabel: lineplotProps.independentAxisLabel,
-            dependentAxisLabel: lineplotProps.dependentAxisLabel,
-            displayLegend: lineplotProps.displayLegend,
-            containerStyles: modalPlotContainerStyles,
-          }}
-          facetedPlotRef={plotRef}
-          checkedLegendItems={checkedLegendItems}
-        />
-      ) : (
-        <XYPlot
-          {...lineplotProps}
-          ref={plotRef}
-          data={data}
-          // add controls
-          displayLibraryControls={false}
-          // custom legend: pass checkedLegendItems to PlotlyPlot
-          checkedLegendItems={checkedLegendItems}
-        />
-      )}
       {vizType === 'lineplot' && (
-        // use RadioButtonGroup directly instead of XYPlotControls
+        // use RadioButtonGroup directly instead of LinePlotControls
         <RadioButtonGroup
-          label="Plot Modes"
+          label="Y-axis aggregation:"
           options={plotOptions}
           selectedOption={valueSpec}
           onOptionSelected={onValueSpecChange}
@@ -744,17 +761,67 @@ function LineplotWithControls({
           itemMarginRight={50}
         />
       )}
+
+      {isFaceted(data) ? (
+        <FacetedLinePlot
+          data={data}
+          componentProps={lineplotProps}
+          modalComponentProps={{
+            independentAxisLabel: lineplotProps.independentAxisLabel,
+            dependentAxisLabel: lineplotProps.dependentAxisLabel,
+            displayLegend: lineplotProps.displayLegend,
+            containerStyles: modalPlotContainerStyles,
+          }}
+          facetedPlotRef={plotRef}
+          checkedLegendItems={checkedLegendItems}
+        />
+      ) : (
+        <LinePlot
+          {...lineplotProps}
+          ref={plotRef}
+          data={data}
+          // add controls
+          displayLibraryControls={false}
+          // custom legend: pass checkedLegendItems to PlotlyPlot
+          checkedLegendItems={checkedLegendItems}
+        />
+      )}
+
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <LabelledGroup label="X-axis">
+          <BinWidthControl
+            binWidth={data0?.binWidth}
+            onBinWidthChange={onBinWidthChange}
+            binWidthRange={data0?.binWidthRange}
+            binWidthStep={data0?.binWidthStep}
+            valueType={data0?.valueType}
+            binUnit={
+              data0?.valueType === 'date'
+                ? (data0?.binWidth as TimeDelta).unit
+                : undefined
+            }
+            binUnitOptions={
+              data0?.valueType === 'date'
+                ? ['day', 'week', 'month', 'year']
+                : undefined
+            }
+            containerStyles={{
+              minHeight: widgetHeight,
+            }}
+          />
+        </LabelledGroup>
+      </div>
     </>
   );
 }
 
 /**
- * Reformat response from Line Plot endpoints into complete XYplotData
+ * Reformat response from Line Plot endpoints into complete LinePlotData
  * @param response
- * @returns XYplotData
+ * @returns LinePlotData
  */
 export function lineplotResponseToData(
-  response: XYPlotDataResponse,
+  response: LinePlotDataResponse,
   // vizType may be used for handling other plots in this component like line and density
   vizType: string,
   independentValueType: string,
@@ -765,7 +832,7 @@ export function lineplotResponseToData(
   showMissingFacet: boolean = false,
   facetVocabulary: string[] = [],
   facetVariable?: Variable
-): XYPlotDataWithCoverage {
+): LinePlotDataWithCoverage {
   const modeValue = 'line';
 
   const hasMissingData =
@@ -780,6 +847,24 @@ export function lineplotResponseToData(
         )
       : '__NO_FACET__'
   );
+
+  const binWidth =
+    independentValueType === 'number' || independentValueType === 'integer'
+      ? response.lineplot.config.binSpec.value || 1
+      : {
+          value: response.lineplot.config.binSpec.value || 1,
+          unit: response.lineplot.config.binSpec.units || 'month',
+        };
+  const { min, max, step } = response.lineplot.config.binSlider;
+  const binWidthRange = (independentValueType === 'number' ||
+  independentValueType === 'integer'
+    ? { min, max }
+    : {
+        min,
+        max: max > 60 ? 60 : max, // back end seems to fall over with any values >99 but 60 is used in subsetting
+        unit: (binWidth as TimeDelta).unit,
+      }) as NumberOrTimeDeltaRange;
+  const binWidthStep = step || 0.1;
 
   const processedData = mapValues(facetGroupedResponseData, (group) => {
     const { dataSetProcess, yMin, yMax } = processInputData(
@@ -834,7 +919,7 @@ export function lineplotResponseToData(
     completeCases: response.completeCasesTable,
     completeCasesAllVars: response.lineplot.config.completeCasesAllVars,
     completeCasesAxesVars: response.lineplot.config.completeCasesAxesVars,
-  } as XYPlotDataWithCoverage;
+  } as LinePlotDataWithCoverage;
 }
 
 // add an extended type including dataElementDependencyOrder
@@ -868,7 +953,7 @@ function getRequestParams(
     config: {
       // add outputEntityId
       outputEntityId: outputEntity?.id,
-      // XYPlotControls
+      // LinePlotControls
       valueSpec: valueSpecValue,
       xAxisVariable: xAxisVariable,
       yAxisVariable: yAxisVariable,
@@ -1057,7 +1142,7 @@ function getBounds<T extends number | string>(
 }
 
 function reorderResponseLineplotData(
-  data: XYPlotDataResponse['lineplot']['data'],
+  data: LinePlotDataResponse['lineplot']['data'],
   overlayVocabulary: string[] = [],
   overlayVariable?: Variable
 ) {
