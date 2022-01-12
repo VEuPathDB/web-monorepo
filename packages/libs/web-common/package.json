@@ -33,7 +33,7 @@
     "whatwg-fetch": "^3.5.0"
   },
   "peerDependencies": {
-    "@veupathdb/wdk-client": "alpha"
+    "@veupathdb/wdk-client": ">=0.5.4"
   },
   "devDependencies": {
     "@types/node": "^14.14.7",
