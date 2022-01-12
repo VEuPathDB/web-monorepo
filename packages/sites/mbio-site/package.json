@@ -17,5 +17,9 @@
     "react-dom": "16",
     "@types/react": "16",
     "@types/react-dom": "16"
+  },
+  "devDependencies": {
+    "bubleify": "^2.0.0",
+    "ify-loader": "^1.1.0"
   }
 }
