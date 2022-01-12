@@ -89,13 +89,5 @@ export function useDefaultDependentAxisRange(
     });
   }, [data, defaultDependentAxisRange]);
 
-  // //DKDKDK will this work ???
-  // const updateDependentAxisRange = useCallback(() => {
-  //   updateVizConfigRef.current({
-  //     dependentAxisRange: defaultDependentAxisRange,
-  //   });
-  // }, [data, defaultDependentAxisRange, vizConfig.valueSpec])
-  // updateDependentAxisRange();
-
   return defaultDependentAxisRange;
 }

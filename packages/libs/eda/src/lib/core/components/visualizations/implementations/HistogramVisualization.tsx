@@ -880,8 +880,14 @@ function HistogramPlotWithControls({
       )}
 
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        {/* DKDK make switch and radiobutton single line with space */}
-        <LabelledGroup label="Y-axis">
+        {/* DKDK make switch and radiobutton single line with space
+                 also marginRight at LabelledGroup is set to 0.5625em: default - 1.5625em*/}
+        <LabelledGroup
+          label="Y-axis"
+          containerStyles={{
+            marginRight: '0.5625em',
+          }}
+        >
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <Switch
               label="Log scale"
@@ -948,7 +954,12 @@ function HistogramPlotWithControls({
             }}
           />
         </LabelledGroup>
-        <LabelledGroup label="X-axis">
+        <LabelledGroup
+          label="X-axis"
+          containerStyles={{
+            marginRight: '0em',
+          }}
+        >
           <BinWidthControl
             binWidth={data0?.binWidth}
             onBinWidthChange={onBinWidthChange}
