@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { ComputationProps } from './Types';
+import { ComputationProps } from '../Types';
 
 export function AlphaDivComputation(props: ComputationProps) {
   const { analysisState, computationAppOverview } = props;

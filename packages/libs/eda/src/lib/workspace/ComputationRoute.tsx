@@ -1,15 +1,15 @@
-import { Tooltip } from '@material-ui/core';
 import React, { useCallback } from 'react';
-import { ComponentType } from 'react-redux/node_modules/@types/react';
 import { Route, Switch } from 'react-router';
-import { Link, useRouteMatch } from 'react-router-dom';
+import { useRouteMatch } from 'react-router-dom';
 import { AnalysisState, useDataClient } from '../core';
-import { AlphaDivComputation } from '../core/components/computations/AlphaDivComputation';
-import { PassThroughComputation } from '../core/components/computations/PassThroughComputation';
+import { AlphaDivComputation } from '../core/components/computations/implementations/alphaDiv';
+import { StartPage } from '../core/components/computations/StartPage';
 import { PromiseResult } from '../core/components/Promise';
 import { EntityCounts } from '../core/hooks/entityCounts';
 import { PromiseHookState, usePromise } from '../core/hooks/promise';
-import { ComputationAppOverview } from '../core/types/visualization';
+import { ComputationPlugin } from '../core/components/computations/Types';
+import { ZeroConfigWithButton } from '../core/components/computations/ZeroConfiguration';
+import { ComputationInstance } from '../core/components/computations/ComputationInstance';
 
 export interface Props {
   analysisState: AnalysisState;
@@ -17,13 +17,13 @@ export interface Props {
   filteredCounts: PromiseHookState<EntityCounts>;
 }
 
-interface ComputationProps extends Props {
-  computationAppOverview: ComputationAppOverview;
-}
-
-const components: Record<string, ComponentType<ComputationProps>> = {
-  pass: PassThroughComputation,
-  alphadiv: AlphaDivComputation,
+const components: Record<string, ComputationPlugin> = {
+  pass: {
+    configurationComponent: ZeroConfigWithButton,
+  },
+  alphadiv: {
+    configurationComponent: AlphaDivComputation,
+  },
 };
 
 /**
@@ -41,31 +41,44 @@ export function ComputationRoute(props: Props) {
       {({ apps }) => (
         <Switch>
           <Route exact path={url}>
-            <div>
-              <h4>Please choose a computation app</h4>
-              <ul>
-                {apps.map((app) => (
-                  <li key={app.name}>
-                    <Tooltip title={app.description ?? ''}>
-                      <Link to={`${url}/${app.name}`}>{app.displayName}</Link>
-                    </Tooltip>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <StartPage baseUrl={url} apps={apps} {...props} />
           </Route>
           {apps.map((app) => {
-            const ComputationComponent = components[app.name];
-            if (ComputationComponent == null) return null;
+            const plugin = components[app.name];
+            if (plugin == null)
+              return (
+                <Route exact path={`${url}/new/${app.name}`}>
+                  <div>App not yet implemented</div>
+                </Route>
+              );
             return (
-              <Route path={`${url}/${app.name}`}>
-                <ComputationComponent {...props} computationAppOverview={app} />
+              <Route exact path={`${url}/new/${app.name}`}>
+                <plugin.configurationComponent
+                  {...props}
+                  computationAppOverview={app}
+                />
               </Route>
             );
           })}
-          <Route>
-            <div>App not yet implemented</div>
-          </Route>
+          <Route
+            path={`${url}/:id`}
+            render={(routeProps) => {
+              const computation = props.analysisState.analysis?.descriptor.computations.find(
+                (c) => c.computationId === routeProps.match.params.id
+              );
+              const app = apps.find(
+                (app) => app.name === computation?.descriptor.type
+              );
+              if (app == null) return <div>Cannot find app!</div>;
+              return (
+                <ComputationInstance
+                  {...props}
+                  computationId={routeProps.match.params.id}
+                  computationAppOverview={app}
+                />
+              );
+            }}
+          />
         </Switch>
       )}
     </PromiseResult>

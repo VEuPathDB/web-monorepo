@@ -1,19 +1,19 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { useToggleStarredVariable } from '../../hooks/starredVariables';
-import { Visualization } from '../../types/visualization';
-import { testVisualization } from '../visualizations/implementations/TestVisualization';
-import { histogramVisualization } from '../visualizations/implementations/HistogramVisualization';
+import { useToggleStarredVariable } from '../../../hooks/starredVariables';
+import { Visualization } from '../../../types/visualization';
+import { testVisualization } from '../../visualizations/implementations/TestVisualization';
+import { histogramVisualization } from '../../visualizations/implementations/HistogramVisualization';
 import {
   contTableVisualization,
   twoByTwoVisualization,
-} from '../visualizations/implementations/MosaicVisualization';
-import { VisualizationsContainer } from '../visualizations/VisualizationsContainer';
-import { VisualizationType } from '../visualizations/VisualizationTypes';
-import { scatterplotVisualization } from '../visualizations/implementations/ScatterplotVisualization';
-import { barplotVisualization } from '../visualizations/implementations/BarplotVisualization';
-import { boxplotVisualization } from '../visualizations/implementations/BoxplotVisualization';
-import { ComputationProps } from './Types';
+} from '../../visualizations/implementations/MosaicVisualization';
+import { VisualizationsContainer } from '../../visualizations/VisualizationsContainer';
+import { VisualizationType } from '../../visualizations/VisualizationTypes';
+import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
+import { barplotVisualization } from '../../visualizations/implementations/BarplotVisualization';
+import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
+import { ComputationProps } from '../Types';
 
 const COMPUTATION_ID = 'pass';
 

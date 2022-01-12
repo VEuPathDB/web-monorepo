@@ -26,3 +26,7 @@ export interface ComputationComponents {
   /** Screen that allows user to add visuzliations to an app instance */
   instance: React.ComponentType<ComputationInstanceProps>;
 }
+
+export interface ComputationPlugin {
+  configurationComponent: React.ComponentType<ComputationOverviewProps>;
+}
