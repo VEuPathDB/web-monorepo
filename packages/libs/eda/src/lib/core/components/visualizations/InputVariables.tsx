@@ -127,14 +127,6 @@ export function InputVariables(props: Props) {
     onChange({ ...selectedVariables, [inputName]: selectedVariable });
   };
 
-  // Want to go one by one through the variables
-  // Need to know the name of the var and constraints
-  // Don't even want to do this here
-  // const filteredConstraints =
-  //   constraints && filterConstraints(selectedVariables, entities, constraints);
-  // console.log(filteredConstraints);
-  // console.log(inputs);
-
   // Find entities that are excluded for each variable, and union their variables
   // with the disabled variables.
   const disabledVariablesByInputName: Record<
@@ -172,7 +164,7 @@ export function InputVariables(props: Props) {
                   )
                 )
               )
-          : [{ entityId: 'a', variableId: 'b' }]; // Typescript help please!!! I tried [{}] as DataElementConstraintRecord but no luck :/
+          : [{ entityId: '', variableId: '' }]; // Typescript help please!!! I tried [{}] as DataElementConstraintRecord but no luck :/
 
         if (dataElementDependencyOrder == null) {
           map[input.name] = disabledVariables;
