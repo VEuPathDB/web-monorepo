@@ -10,7 +10,7 @@ const { BaseLayer } = LayersControl;
 import { Viewport, Map, TileLayer, LayersControl } from 'react-leaflet';
 import SemanticMarkers from './SemanticMarkers';
 import 'leaflet/dist/leaflet.css';
-// import '../styles/map_styles.css';
+import '../../dist/css/map_styles.css';
 import CustomGridLayer from './CustomGridLayer';
 import MouseTools, { MouseMode } from './MouseTools';
 
