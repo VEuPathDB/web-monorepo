@@ -74,6 +74,7 @@ initialize({
           dataServiceUrl={dataServiceUrl}
           userServiceUrl={userServiceUrl}
           exampleAnalysesAuthor={exampleAnalysesAuthor}
+          sharingUrlPrefix={window.location.href}
         />
       ),
     },

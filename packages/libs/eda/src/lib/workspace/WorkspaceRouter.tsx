@@ -30,6 +30,10 @@ type Props = {
   dataServiceUrl: string;
   userServiceUrl: string;
   exampleAnalysesAuthor?: number;
+  /**
+   * The base of the URL from which to being sharing links.
+   * This is passed down through several component layers. */
+  sharingUrlPrefix: string;
 };
 
 /**
@@ -40,6 +44,7 @@ export function WorkspaceRouter({
   dataServiceUrl,
   userServiceUrl,
   exampleAnalysesAuthor,
+  sharingUrlPrefix,
 }: Props) {
   const { path, url } = useRouteMatch();
   const subsettingClient = useConfiguredSubsettingClient(subsettingServiceUrl);
@@ -115,6 +120,7 @@ export function WorkspaceRouter({
                 subsettingServiceUrl={subsettingServiceUrl}
                 dataServiceUrl={dataServiceUrl}
                 userServiceUrl={userServiceUrl}
+                sharingUrlPrefix={sharingUrlPrefix}
               />
             )}
           />
@@ -158,6 +164,7 @@ export function WorkspaceRouter({
                 subsettingServiceUrl={subsettingServiceUrl}
                 dataServiceUrl={dataServiceUrl}
                 userServiceUrl={userServiceUrl}
+                sharingUrlPrefix={sharingUrlPrefix}
               />
             )}
           />

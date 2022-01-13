@@ -38,8 +38,8 @@ import GlobalFiltersDialog from '../core/components/GlobalFiltersDialog';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import ShowHideVariableContextProvider from '../core/utils/show-hide-variable-context';
 import NotesTab from './NotesTab';
-import ShareFromAnalysis from './sharing/ShareFromAnalysis';
 import { Alert } from '@material-ui/lab';
+import ShareFromAnalysis from './sharing/ShareFromAnalysis';
 
 const AnalysisTabErrorBoundary = ({
   children,
@@ -66,6 +66,10 @@ const AnalysisTabErrorBoundary = ({
 interface Props {
   analysisState: AnalysisState;
   hideCopyAndSave?: boolean;
+  /**
+   * The base of the URL from which to being sharing links.
+   * This is passed down through several component layers. */
+  sharingUrlPrefix: string;
 }
 
 /**
@@ -79,6 +83,7 @@ interface Props {
 export function AnalysisPanel({
   analysisState,
   hideCopyAndSave = false,
+  sharingUrlPrefix,
 }: Props) {
   const studyRecord = useStudyRecord();
 
@@ -155,6 +160,7 @@ export function AnalysisPanel({
         visible={sharingModalVisible}
         toggleVisible={setSharingModalVisible}
         analysisState={analysisState}
+        sharingUrlPrefix={sharingUrlPrefix}
       />
       <div className={cx('-Analysis')}>
         <AnalysisSummary
