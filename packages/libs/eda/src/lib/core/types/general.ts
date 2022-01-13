@@ -1,5 +1,15 @@
 /* eslint-disable @typescript-eslint/no-redeclare */
-import { Type, TypeOf, type, number, string, union, keyof } from 'io-ts';
+import {
+  Type,
+  TypeOf,
+  type,
+  number,
+  string,
+  union,
+  keyof,
+  intersection,
+  partial,
+} from 'io-ts';
 import {
   NumberRange as NumberRangeT,
   DateRange as DateRangeT,
@@ -27,4 +37,22 @@ export const TimeUnit = keyof({
   week: null,
   month: null,
   year: null,
+});
+
+export type BinSpec = TypeOf<typeof BinSpec>;
+export const BinSpec = intersection([
+  type({ type: keyof({ binWidth: null, numBins: null }) }),
+  partial({
+    value: number,
+    units: TimeUnit,
+  }),
+]);
+
+// this is distinct to the binWidthSlider in web-components, which is unfortunate
+// perhaps we can make these two consistent somehow?
+export type BinWidthSlider = TypeOf<typeof BinWidthSlider>;
+export const BinWidthSlider = type({
+  min: number,
+  max: number,
+  step: number,
 });

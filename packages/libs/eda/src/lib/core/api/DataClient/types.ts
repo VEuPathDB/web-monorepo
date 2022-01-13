@@ -13,7 +13,7 @@ import {
   keyof,
 } from 'io-ts';
 import { Filter } from '../../types/filter';
-import { TimeUnit } from '../../types/general';
+import { BinSpec, BinWidthSlider, TimeUnit } from '../../types/general';
 import { VariableDescriptor, StringVariableValue } from '../../types/variable';
 import { ComputationAppOverview } from '../../types/visualization';
 
@@ -102,19 +102,9 @@ export const HistogramResponse = type({
     config: type({
       completeCasesAllVars: number,
       completeCasesAxesVars: number,
-      binSlider: type({
-        min: number,
-        max: number,
-        step: number,
-      }),
+      binSlider: BinWidthSlider,
       xVariableDetails: VariableDescriptor,
-      binSpec: intersection([
-        type({ type: keyof({ binWidth: null, numBins: null }) }),
-        partial({
-          value: number,
-          units: TimeUnit,
-        }),
-      ]),
+      binSpec: BinSpec,
       summary: type({
         min: string,
         q1: string,
@@ -196,8 +186,7 @@ export interface ScatterplotRequestParams {
       | 'smoothedMean'
       | 'smoothedMeanWithRaw'
       | 'bestFitLineWithRaw';
-    // not quite sure of overlayVariable and facetVariable yet
-    // facetVariable?: ZeroToTwoVariables;
+    facetVariable?: ZeroToTwoVariables;
     xAxisVariable: VariableDescriptor;
     yAxisVariable: VariableDescriptor;
     overlayVariable?: VariableDescriptor;
@@ -281,16 +270,11 @@ export interface LineplotRequestParams {
   filters: Filter[];
   config: {
     outputEntityId: string;
-    // not quite sure of facetVariable yet
-    // facetVariable?: ZeroToTwoVariables;
+    facetVariable?: ZeroToTwoVariables;
     xAxisVariable: VariableDescriptor;
     yAxisVariable: VariableDescriptor;
     overlayVariable?: VariableDescriptor;
-    binSpec: {
-      type: 'binWidth';
-      value?: number;
-      units?: TimeUnit;
-    };
+    binSpec: BinSpec;
     viewport?: {
       xMin: string;
       xMax: string;
@@ -327,11 +311,8 @@ export const LineplotResponse = type({
     config: type({
       completeCasesAllVars: number,
       completeCasesAxesVars: number,
-      binSlider: type({
-        min: number,
-        max: number,
-        step: number,
-      }),
+      binSlider: BinWidthSlider,
+      binSpec: BinSpec,
       xVariableDetails: type({
         variableId: string,
         entityId: string,

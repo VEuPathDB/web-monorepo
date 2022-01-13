@@ -70,7 +70,12 @@ import {
 import { CoverageStatistics } from '../../../types/visualization';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
-import { NumberVariable, StudyEntity, Variable } from '../../../types/study';
+import {
+  NumberVariable,
+  DateVariable,
+  StudyEntity,
+  Variable,
+} from '../../../types/study';
 import {
   fixLabelForNumberVariables,
   fixLabelsForNumberVariables,
@@ -103,6 +108,7 @@ import FacetedLinePlot from '@veupathdb/components/lib/plots/facetedPlots/Facete
 import * as ColorMath from 'color-math';
 //DKDK a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
+import { BinSpec, BinWidthSlider } from '../../../types/general';
 
 const plotContainerStyles = {
   width: 750,
@@ -311,18 +317,20 @@ function LineplotViz(props: VisualizationProps) {
     'checkedLegendItems'
   );
 
-  // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
-  const outputEntity = useFindOutputEntity(
-    dataElementDependencyOrder,
-    vizConfig,
-    'xAxisVariable',
-    entities
-  );
+  const { xAxisVariableMetadata, outputEntity } = useMemo(() => {
+    const { entity, variable } =
+      findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
+    return {
+      outputEntity: entity,
+      xAxisVariableMetadata: variable,
+    };
+  }, [findEntityAndVariable, vizConfig.xAxisVariable]);
 
   const data = usePromise(
     useCallback(async (): Promise<LinePlotDataWithCoverage | undefined> => {
       if (
         outputEntity == null ||
+        xAxisVariableMetadata == null ||
         filteredCounts.pending ||
         filteredCounts.value == null
       )
@@ -362,6 +370,7 @@ function LineplotViz(props: VisualizationProps) {
         studyId,
         filters ?? [],
         vizConfig,
+        xAxisVariableMetadata,
         outputEntity,
         visualization.descriptor.type
       );
@@ -745,22 +754,19 @@ function LineplotWithControls({
 
   return (
     <>
-      {vizType === 'lineplot' && (
-        // use RadioButtonGroup directly instead of LinePlotControls
-        <RadioButtonGroup
-          label="Y-axis aggregation:"
-          options={plotOptions}
-          selectedOption={valueSpec}
-          onOptionSelected={onValueSpecChange}
-          // disabledList prop is used to disable radio options (grayed out)
-          disabledList={disabledList}
-          orientation={'horizontal'}
-          labelPlacement={'end'}
-          buttonColor={'primary'}
-          margins={['1em', '0', '0', '6em']}
-          itemMarginRight={50}
-        />
-      )}
+      <RadioButtonGroup
+        label="Y-axis aggregation:"
+        options={plotOptions}
+        selectedOption={valueSpec}
+        onOptionSelected={onValueSpecChange}
+        // disabledList prop is used to disable radio options (grayed out)
+        disabledList={disabledList}
+        orientation={'horizontal'}
+        labelPlacement={'end'}
+        buttonColor={'primary'}
+        margins={['1em', '0', '0', '6em']}
+        itemMarginRight={50}
+      />
 
       {isFaceted(data) ? (
         <FacetedLinePlot
@@ -790,18 +796,18 @@ function LineplotWithControls({
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <LabelledGroup label="X-axis">
           <BinWidthControl
-            binWidth={data0?.binWidth}
+            binWidth={data0?.binWidthSlider?.binWidth}
             onBinWidthChange={onBinWidthChange}
-            binWidthRange={data0?.binWidthRange}
-            binWidthStep={data0?.binWidthStep}
-            valueType={data0?.valueType}
+            binWidthRange={data0?.binWidthSlider?.binWidthRange}
+            binWidthStep={data0?.binWidthSlider?.binWidthStep}
+            valueType={data0?.binWidthSlider?.valueType}
             binUnit={
-              data0?.valueType === 'date'
-                ? (data0?.binWidth as TimeDelta).unit
+              data0?.binWidthSlider?.valueType === 'date'
+                ? (data0?.binWidthSlider?.binWidth as TimeDelta).unit
                 : undefined
             }
             binUnitOptions={
-              data0?.valueType === 'date'
+              data0?.binWidthSlider?.valueType === 'date'
                 ? ['day', 'week', 'month', 'year']
                 : undefined
             }
@@ -833,7 +839,7 @@ export function lineplotResponseToData(
   facetVocabulary: string[] = [],
   facetVariable?: Variable
 ): LinePlotDataWithCoverage {
-  const modeValue = 'line';
+  const modeValue = 'lines+markers';
 
   const hasMissingData =
     response.lineplot.config.completeCasesAllVars !==
@@ -847,24 +853,6 @@ export function lineplotResponseToData(
         )
       : '__NO_FACET__'
   );
-
-  const binWidth =
-    independentValueType === 'number' || independentValueType === 'integer'
-      ? response.lineplot.config.binSpec.value || 1
-      : {
-          value: response.lineplot.config.binSpec.value || 1,
-          unit: response.lineplot.config.binSpec.units || 'month',
-        };
-  const { min, max, step } = response.lineplot.config.binSlider;
-  const binWidthRange = (independentValueType === 'number' ||
-  independentValueType === 'integer'
-    ? { min, max }
-    : {
-        min,
-        max: max > 60 ? 60 : max, // back end seems to fall over with any values >99 but 60 is used in subsetting
-        unit: (binWidth as TimeDelta).unit,
-      }) as NumberOrTimeDeltaRange;
-  const binWidthStep = step || 0.1;
 
   const processedData = mapValues(facetGroupedResponseData, (group) => {
     const { dataSetProcess, yMin, yMax } = processInputData(
@@ -880,6 +868,8 @@ export function lineplotResponseToData(
       dependentValueType,
       showMissingOverlay,
       hasMissingData,
+      response.lineplot.config.binSpec,
+      response.lineplot.config.binSlider,
       overlayVariable,
       // pass facetVariable to determine either scatter or scattergl
       facetVariable
@@ -929,6 +919,7 @@ function getRequestParams(
   studyId: string,
   filters: Filter[],
   vizConfig: LineplotConfig,
+  xAxisVariableMetadata: Variable,
   outputEntity?: StudyEntity,
   vizType?: string
 ): getRequestParamsProps {
@@ -939,6 +930,13 @@ function getRequestParams(
     facetVariable,
     valueSpecConfig,
     showMissingness,
+    binWidth = NumberVariable.is(xAxisVariableMetadata) ||
+    DateVariable.is(xAxisVariableMetadata)
+      ? xAxisVariableMetadata.binWidthOverride ?? xAxisVariableMetadata.binWidth
+      : undefined,
+    //binWidthTimeUnit = variable?.type === 'date'
+    //  ? variable.binUnits
+    //  : undefined,
   } = vizConfig;
 
   // valueSpec
@@ -960,6 +958,10 @@ function getRequestParams(
       overlayVariable: overlayVariable,
       facetVariable: facetVariable ? [facetVariable] : [],
       showMissingness: showMissingness ? 'TRUE' : 'FALSE',
+      // TODO actually add this later, w user defined stuff etc
+      binSpec: {
+        type: 'binWidth',
+      },
     },
   } as LineplotRequestParams;
 }
@@ -975,6 +977,8 @@ function processInputData<T extends number | string>(
   dependentValueType: string,
   showMissingness: boolean,
   hasMissingData: boolean,
+  binSpec: BinSpec,
+  binWidthSlider: BinWidthSlider,
   overlayVariable?: Variable,
   // pass facetVariable to determine either scatter or scattergl
   facetVariable?: Variable
@@ -1008,15 +1012,6 @@ function processInputData<T extends number | string>(
     }
   };
 
-  // using dark color: function to return color or gray where needed if showMissingness == true
-  const markerColorDark = (index: number) => {
-    if (showMissingness && index === responseLineplotData.length - 1) {
-      return gray;
-    } else {
-      return ColorPaletteDark[index] ?? 'black'; // TO DO: decide on overflow behaviour
-    }
-  };
-
   // determine conditions for not adding empty "No data" traces
   // we want to stop at the penultimate series if showMissing is active and there is actually no missing data
   // 'break' from the for loops (array.some(...)) if this is true
@@ -1036,14 +1031,33 @@ function processInputData<T extends number | string>(
   // use type: scatter for faceted plot, otherwise scattergl
   const linePlotType = facetVariable != null ? 'scatter' : 'scattergl';
 
+  const binWidth =
+    independentValueType === 'number' || independentValueType === 'integer'
+      ? binSpec.value || 1
+      : {
+          value: binSpec.value || 1,
+          unit: binSpec.units || 'month',
+        };
+  const binWidthRange = (independentValueType === 'number' ||
+  independentValueType === 'integer'
+    ? { min, max }
+    : {
+        min: binWidthSlider.min,
+        max: binWidthSlider.max > 60 ? 60 : binWidthSlider.max, // back end seems to fall over with any values >99 but 60 is used in subsetting
+        unit: (binWidth as TimeDelta).unit,
+      }) as NumberOrTimeDeltaRange;
+  const binWidthStep = binWidthSlider.step || 0.1;
+
   // set dataSetProcess as any for now
   let dataSetProcess: any = [];
 
   // drawing raw data (markers) at first
   responseLineplotData.some(function (el: any, index: number) {
     // initialize seriesX/Y
-    let seriesX = [];
-    let seriesY = [];
+    let seriesX: string[] = [];
+    let seriesY: string[] = [];
+    let binStart: string[] = [];
+    let binEnd: string[] = [];
 
     // series is for scatter plot
     if (el.seriesX && el.seriesY) {
@@ -1062,8 +1076,12 @@ function processInputData<T extends number | string>(
       **/
       if (independentValueType === 'date') {
         seriesX = el.seriesX;
+        binStart = el.binStart;
+        binEnd = el.binEnd;
       } else {
         seriesX = el.seriesX.map(Number);
+        binStart = el.binStart.map(Number);
+        binEnd = el.binEnd.map(Number);
       }
       if (dependentValueType === 'date') {
         seriesY = el.seriesY;
@@ -1109,37 +1127,36 @@ function processInputData<T extends number | string>(
         },
         // this needs to be here for the case of markers with line or lineplot.
         line: { color: markerColor(index), shape: 'linear' },
+        bins: seriesY.map((_, index) => ({
+          binStart: binStart[index],
+          binEnd: binEnd[index],
+          binLabel: el.binLabel[index],
+          value: seriesY[index],
+        })),
       });
       return breakAfterThisSeries(index);
     }
     return false;
   });
 
-  return { dataSetProcess: { series: dataSetProcess }, yMin, yMax };
+  return {
+    dataSetProcess: {
+      series: dataSetProcess,
+      binWidthSlider: {
+        valueType: independentValueType,
+        binWidth,
+        binWidthRange,
+        binWidthStep,
+      },
+    },
+    yMin,
+    yMax,
+  };
 }
 
 /*
  * Utility functions for processInputData()
  */
-
-function getBounds<T extends number | string>(
-  values: T[],
-  standardErrors: T[]
-): {
-  yUpperValues: T[];
-  yLowerValues: T[];
-} {
-  const yUpperValues = values.map((value, idx) => {
-    const tmp = Number(value) + 2 * Number(standardErrors[idx]);
-    return tmp as T;
-  });
-  const yLowerValues = values.map((value, idx) => {
-    const tmp = Number(value) - 2 * Number(standardErrors[idx]);
-    return tmp as T;
-  });
-
-  return { yUpperValues, yLowerValues };
-}
 
 function reorderResponseLineplotData(
   data: LinePlotDataResponse['lineplot']['data'],
