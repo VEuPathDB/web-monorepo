@@ -37,15 +37,8 @@ module.exports = function override(config, env) {
         // This also needs the bubleify packages installed as
         // a dev dependency.
         {
-<<<<<<< HEAD
           test: /\.(js|jsx|ts|tsx)$/,
           include: /node_modules/,
-||||||| constructed merge base
-          test: /node_modules/,
-=======
-          test: /\.js$/,
-          include: /node_modules/,
->>>>>>> checkpoint commit
           loader: 'ify-loader',
         },
       ],
