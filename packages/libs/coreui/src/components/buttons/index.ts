@@ -1,25 +1,34 @@
 import { CSSProperties } from 'react';
 import { UITheme } from '../theming';
 
+export type PartialButtonStyleSpec = {
+  container?: React.CSSProperties;
+  default?: Partial<ButtonStateStyleSpec>;
+  hover?: Partial<ButtonStateStyleSpec>;
+  pressed?: Partial<ButtonStateStyleSpec>;
+  disabled?: Partial<ButtonStateStyleSpec>;
+};
+
 export type ButtonStyleSpec = {
   container?: React.CSSProperties;
   default: ButtonStateStyleSpec;
   hover: ButtonStateStyleSpec;
   pressed: ButtonStateStyleSpec;
+  disabled: ButtonStateStyleSpec;
 };
 
 type ButtonStateStyleSpec = {
   /** Color to use for outline/fill. Will accept any
    * valid CSS color definition. */
-  color?: CSSProperties['color'];
+  color: CSSProperties['color'];
   /**
    * Button text color. If not specified, will default to white.
    */
-  textColor?: CSSProperties['color'];
+  textColor: CSSProperties['color'];
   /** Desired font weight. */
-  fontWeight?: CSSProperties['fontWeight'];
+  fontWeight: CSSProperties['fontWeight'];
   /** Desired text transformation. */
-  textTransform?: CSSProperties['textTransform'];
+  textTransform: CSSProperties['textTransform'];
   /** Optional properties for button border. */
   border?: {
     radius?: number;
@@ -39,6 +48,8 @@ type ButtonStateStyleSpec = {
 type CoreProps = {
   /** Action to take when the button is clicked. */
   onPress: () => void;
+  /** Optional. Indicates if the button is disabled. */
+  disabled?: boolean;
   /** Optional. Text to display as a tooltip when button is hovered over. */
   tooltip?: string;
   /**
@@ -49,7 +60,7 @@ type CoreProps = {
   /** The size of the button. */
   size?: 'small' | 'medium' | 'large';
   /** Additional styles to apply to the button container. */
-  styleOverrides?: Partial<ButtonStyleSpec>;
+  styleOverrides?: PartialButtonStyleSpec;
 };
 
 type TextIconProps =
