@@ -17,7 +17,7 @@ import {
   PlotRef,
   UnionOfPlotDataTypes,
 } from './plots';
-import { LinePlotData } from './plots/linePlot';
+import { LinePlotData } from './plots/lineplot';
 
 /** Determine if data is for a histogram plot. */
 export function isHistogramData(
