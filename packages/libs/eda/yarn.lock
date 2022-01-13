@@ -3502,10 +3502,22 @@
     react-modal "^3.14.3"
     react-table "^7.7.0"
 
-"@veupathdb/core-components@^0.4.0", "@veupathdb/core-components@^0.4.1":
+"@veupathdb/core-components@^0.4.0":
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.4.1.tgz#0f3f2f37865feeae96286018aea7517f33e96b84"
   integrity sha512-Ahov9nr831juzz3LNg/IDL2MvkhnBh+Twicz1P/pwlyhLXvJqUnAsmnZzNaZgkXVUgh1c2meb++qXgxHJj+Zxg==
+  dependencies:
+    "@material-ui/core" "^4.12.3"
+    "@material-ui/icons" "^4.11.2"
+    lodash "^4.17.21"
+    react-cool-dimensions "^2.0.7"
+    react-modal "^3.14.3"
+    react-table "^7.7.0"
+
+"@veupathdb/core-components@^0.6.2":
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.6.2.tgz#dd0e5781465838ffd651dc9dd4bb8d8eaf8d2f1f"
+  integrity sha512-lRaZN4Djyu5QuS3dLHn5Y1czGsZokae+rHCWJw50TvdFCAOmZdWhch7fY6CSTClzeYFlGpBYvGuFpEMP3tduKA==
   dependencies:
     "@material-ui/core" "^4.12.3"
     "@material-ui/icons" "^4.11.2"

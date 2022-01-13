@@ -1,43 +1,29 @@
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { Modal } from '@veupathdb/core-components';
 
-// Definitions
-import { AnalysisState } from '../../core';
-
-// Components
 import NameAnalysis from './NameAnalysis';
 import Login from './Login';
-import ConfirmShareAnalysis from './ConfirmShareAnalysis';
-import { getAnalysisId } from '../../core/utils/analysis';
+import ConfirmPublicAnalysis from './ConfirmPublicAnalysis';
+import { AnalysisState } from '../../core';
+import { Modal } from '@veupathdb/core-components';
 
 type ShareFromAnalyisProps = {
   visible: boolean;
   toggleVisible: (visible: boolean) => void;
   analysisState: AnalysisState;
-  /**
-   * The base of the URL from which to being sharing links.
-   * This is passed down through several component layers. */
-  sharingUrlPrefix: string;
 };
 
-export default function ShareFromAnalysis({
+export default function PublishFromAnalysis({
   visible,
   toggleVisible,
   analysisState,
-  sharingUrlPrefix,
 }: ShareFromAnalyisProps) {
   const userLoggedIn = useWdkService((wdkService) =>
     wdkService.getCurrentUser().then((user) => !user.isGuest)
   );
 
-  const sharingUrl = new URL(
-    `/analysis/${getAnalysisId(analysisState.analysis)}`,
-    sharingUrlPrefix
-  ).href;
-
   return (
     <Modal
-      title="Share Analysis"
+      title="Make Analysis Public"
       visible={visible}
       toggleVisible={toggleVisible}
       includeCloseButton={true}
@@ -60,7 +46,10 @@ export default function ShareFromAnalysis({
           updateName={analysisState.setName}
         />
       ) : (
-        <ConfirmShareAnalysis sharingURL={sharingUrl} />
+        <ConfirmPublicAnalysis
+          makeAnalysisPublic={() => analysisState.setIsPublic(true)}
+          toggleVisible={toggleVisible}
+        />
       )}
     </Modal>
   );

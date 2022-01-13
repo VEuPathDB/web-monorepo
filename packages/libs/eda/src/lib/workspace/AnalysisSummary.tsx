@@ -119,9 +119,9 @@ export function AnalysisSummary(props: Props) {
             }}
           />
         )}
-        {displaySharingModal && !analysis.isPublic && (
+        {displaySharingModal && (
           <FilledButton
-            text="Make Analysis Public"
+            text="Share Analysis"
             onPress={displaySharingModal}
             icon={Share}
             themeRole="primary"
