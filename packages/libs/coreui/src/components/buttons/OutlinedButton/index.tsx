@@ -10,7 +10,7 @@ import {
   SwissArmyButtonVariantProps,
 } from '..';
 
-/** Basic button with a variety of customization options. */
+/** Basic that has a transparent background, but a visual outline/border. */
 export default function OutlinedButton({
   text,
   textTransform,

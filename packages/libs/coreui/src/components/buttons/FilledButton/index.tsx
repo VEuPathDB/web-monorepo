@@ -10,7 +10,7 @@ import {
   SwissArmyButtonVariantProps,
 } from '../';
 
-/** Basic button with a variety of customization options. */
+/** Button with a filled background. */
 export default function FilledButton({
   text,
   textTransform,
@@ -36,7 +36,6 @@ export default function FilledButton({
       color: blue[500],
       fontWeight: 600,
       textColor: 'white',
-
       border: {
         color: blue[600],
         radius: 5,
@@ -48,7 +47,6 @@ export default function FilledButton({
       color: blue[600],
       fontWeight: 600,
       textColor: 'white',
-
       border: {
         radius: 5,
       },

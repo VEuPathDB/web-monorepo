@@ -2,7 +2,7 @@ import { merge } from 'lodash';
 import { useMemo } from 'react';
 
 import useUITheme from '../../theming/useUITheme';
-import { blue, cyan, gray } from '../../../definitions/colors';
+import { blue, gray } from '../../../definitions/colors';
 import SwissArmyButton from '../SwissArmyButton';
 import {
   ButtonStyleSpec,
@@ -10,7 +10,7 @@ import {
   SwissArmyButtonVariantProps,
 } from '../';
 
-/** Basic button with a variety of customization options. */
+/** Button that has no background until hovered/pressed. */
 export default function FloatingButton({
   text,
   textTransform,

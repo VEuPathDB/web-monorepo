@@ -11,7 +11,7 @@ import {
   SwissArmyButtonVariantProps,
 } from '..';
 
-/** Basic button with a variety of customization options. */
+/** Button that has a two-tone appearance. */
 export default function MesaButton({
   text,
   textTransform,
