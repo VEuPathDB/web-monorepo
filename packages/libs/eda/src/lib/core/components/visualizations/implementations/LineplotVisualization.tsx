@@ -245,7 +245,6 @@ function LineplotViz(props: VisualizationProps) {
     vizConfig.facetVariable,
   ]);
 
-  // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
       const {
@@ -934,10 +933,22 @@ function getRequestParams(
     DateVariable.is(xAxisVariableMetadata)
       ? xAxisVariableMetadata.binWidthOverride ?? xAxisVariableMetadata.binWidth
       : undefined,
-    //binWidthTimeUnit = variable?.type === 'date'
-    //  ? variable.binUnits
-    //  : undefined,
+    binWidthTimeUnit = xAxisVariableMetadata?.type === 'date'
+      ? xAxisVariableMetadata.binUnits
+      : undefined,
   } = vizConfig;
+
+  const binSpec = binWidth
+    ? {
+        binSpec: {
+          type: 'binWidth',
+          value: binWidth,
+          ...(xAxisVariableMetadata?.type === 'date'
+            ? { units: binWidthTimeUnit }
+            : {}),
+        },
+      }
+    : { binSpec: { type: 'binWidth' } };
 
   // valueSpec
   let valueSpecValue = 'median';
@@ -955,13 +966,10 @@ function getRequestParams(
       valueSpec: valueSpecValue,
       xAxisVariable: xAxisVariable,
       yAxisVariable: yAxisVariable,
+      ...binSpec,
       overlayVariable: overlayVariable,
       facetVariable: facetVariable ? [facetVariable] : [],
       showMissingness: showMissingness ? 'TRUE' : 'FALSE',
-      // TODO actually add this later, w user defined stuff etc
-      binSpec: {
-        type: 'binWidth',
-      },
     },
   } as LineplotRequestParams;
 }
