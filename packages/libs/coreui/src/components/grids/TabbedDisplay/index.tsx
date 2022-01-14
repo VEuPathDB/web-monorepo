@@ -155,7 +155,7 @@ export default function TabbedDisplay({
                   padding: 15,
                   borderBottomWidth: 3,
                   borderBottomStyle: 'solid',
-                  cursor: 'grab',
+                  cursor: 'pointer',
                   transition:
                     'background-color .5s, border-color .5s, color .5s',
                 },

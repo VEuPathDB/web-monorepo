@@ -46,7 +46,7 @@ export default function SwissArmyButton({
         css={[
           typography.primaryFont,
           {
-            cursor: disabled ? 'not-allowed' : 'auto',
+            cursor: disabled ? 'not-allowed' : 'pointer',
             height: buttonHeight,
             display: 'flex',
             alignItems: 'center',

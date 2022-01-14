@@ -190,7 +190,7 @@ export default function ExpandablePanel({
         css={{
           display: 'flex',
           alignItems: 'center',
-          cursor: 'grab',
+          cursor: 'pointer',
         }}
         onClick={() =>
           internalComponentState !== 'closed'
