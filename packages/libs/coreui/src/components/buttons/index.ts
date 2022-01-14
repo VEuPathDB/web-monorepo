@@ -27,8 +27,6 @@ type ButtonStateStyleSpec = {
   textColor: CSSProperties['color'];
   /** Desired font weight. */
   fontWeight: CSSProperties['fontWeight'];
-  /** Desired text transformation. */
-  textTransform: CSSProperties['textTransform'];
   /** Optional properties for button border. */
   border?: {
     radius?: number;
@@ -46,6 +44,10 @@ type ButtonStateStyleSpec = {
 };
 
 type CoreProps = {
+  /**
+   * Optional. Desired text transformation. Was originally part of styleOverrides,
+   * but moved into a separate prop for client convenience purposes. */
+  textTransform?: CSSProperties['textTransform'];
   /** Action to take when the button is clicked. */
   onPress: () => void;
   /** Optional. Indicates if the button is disabled. */
@@ -65,15 +67,19 @@ type CoreProps = {
 
 type TextIconProps =
   | {
-      text?: never;
+      text?: string;
       /** SVG component to use as an icon. */
       icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+      /** ariaDescription. Required when a button only includes an icon. */
+      ariaLabel: string;
     }
   | {
       /** Text of the button. */
       text: string;
       /** Optional. SVG component to use as an icon. */
       icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+      /** ariaDescription. Optional when a button only includes text. */
+      ariaLabel?: string;
     };
 
 // Type definition for buttons that derive from SwissArmyButton

@@ -29,6 +29,7 @@ const Template: Story<SwissArmyButtonVariantProps> = (args) => {
 export const Default = Template.bind({});
 Default.args = {
   text: 'Hello Developer',
+  textTransform: 'uppercase',
   size: 'medium',
   disabled: false,
 } as SwissArmyButtonVariantProps;
@@ -45,6 +46,7 @@ IconOnly.args = {
   size: 'medium',
   disabled: false,
   icon: TableDownload,
+  ariaLabel: 'Table Download',
 } as SwissArmyButtonVariantProps;
 
 export const Tooltip = Template.bind({});
@@ -64,17 +66,12 @@ UseTheme.args = {
   size: 'medium',
 } as SwissArmyButtonVariantProps;
 
-export const StyleOverrides = Template.bind({});
-StyleOverrides.args = {
-  ...Default.arts,
-  text: 'Style Override Example',
-  icon: Download,
-  themeRole: 'primary',
+export const NoTextTransform = Template.bind({});
+NoTextTransform.args = {
+  text: 'Hello Developer',
+  textTransform: 'none',
   size: 'medium',
-  styleOverrides: {
-    default: { textTransform: 'none' },
-    hover: { textTransform: 'none' },
-    pressed: { textTransform: 'none' },
-    disabled: { textTransform: 'none' },
-  },
+  icon: TableDownload,
+  disabled: false,
+  themeRole: undefined,
 } as SwissArmyButtonVariantProps;

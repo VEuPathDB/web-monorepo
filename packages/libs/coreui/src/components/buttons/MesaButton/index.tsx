@@ -14,6 +14,7 @@ import {
 /** Basic button with a variety of customization options. */
 export default function MesaButton({
   text,
+  textTransform,
   onPress,
   disabled = false,
   tooltip,
@@ -21,12 +22,12 @@ export default function MesaButton({
   icon = () => null,
   themeRole,
   styleOverrides = {},
+  ariaLabel,
 }: SwissArmyButtonVariantProps) {
   const defaultStyle: ButtonStyleSpec = {
     default: {
       color: blue[500],
       textColor: 'white',
-      textTransform: 'uppercase',
       fontWeight: 600,
       border: {
         radius: 5,
@@ -42,7 +43,6 @@ export default function MesaButton({
       color: blue[500],
       textColor: 'white',
       fontWeight: 600,
-      textTransform: 'uppercase',
       border: {
         radius: 5,
       },
@@ -57,7 +57,6 @@ export default function MesaButton({
       color: blue[600],
       textColor: 'white',
       fontWeight: 600,
-      textTransform: 'uppercase',
       border: {
         radius: 5,
       },
@@ -72,7 +71,6 @@ export default function MesaButton({
       color: gray[500],
       textColor: 'white',
       fontWeight: 600,
-      textTransform: 'uppercase',
       border: {
         radius: 5,
       },
@@ -151,12 +149,13 @@ export default function MesaButton({
     <SwissArmyButton
       styleSpec={finalStyle}
       text={text}
+      textTransform={textTransform}
       onPress={onPress}
       disabled={disabled}
       tooltip={tooltip}
       size={size}
       icon={icon}
-      themeRole={themeRole}
+      ariaLabel={ariaLabel}
     />
   );
 }

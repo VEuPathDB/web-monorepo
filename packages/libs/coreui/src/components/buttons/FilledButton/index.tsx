@@ -4,15 +4,22 @@ import { useMemo } from 'react';
 import useUITheme from '../../theming/useUITheme';
 import { blue, gray } from '../../../definitions/colors';
 import SwissArmyButton from '../SwissArmyButton';
-import { ButtonStyleSpec, SwissArmyButtonVariantProps } from '../';
+import {
+  ButtonStyleSpec,
+  PartialButtonStyleSpec,
+  SwissArmyButtonVariantProps,
+} from '../';
 
 /** Basic button with a variety of customization options. */
 export default function FilledButton({
   text,
+  textTransform,
   onPress,
+  disabled = false,
   tooltip,
   size = 'medium',
   icon = () => null,
+  ariaLabel,
   themeRole,
   styleOverrides = {},
 }: SwissArmyButtonVariantProps) {
@@ -22,9 +29,14 @@ export default function FilledButton({
       border: {
         radius: 5,
       },
+      fontWeight: 600,
+      textColor: 'white',
     },
     hover: {
       color: blue[500],
+      fontWeight: 600,
+      textColor: 'white',
+
       border: {
         color: blue[600],
         radius: 5,
@@ -34,13 +46,21 @@ export default function FilledButton({
     },
     pressed: {
       color: blue[600],
+      fontWeight: 600,
+      textColor: 'white',
+
       border: {
         radius: 5,
       },
     },
+    disabled: {
+      color: gray[500],
+      textColor: 'white',
+      fontWeight: 600,
+    },
   };
   const theme = useUITheme();
-  const themeStyle = useMemo<Partial<ButtonStyleSpec>>(
+  const themeStyle = useMemo<PartialButtonStyleSpec>(
     () =>
       theme && themeRole
         ? {
@@ -86,11 +106,13 @@ export default function FilledButton({
     <SwissArmyButton
       styleSpec={finalStyle}
       text={text}
+      textTransform={textTransform}
       onPress={onPress}
+      disabled={disabled}
       tooltip={tooltip}
       size={size}
       icon={icon}
-      themeRole={themeRole}
+      ariaLabel={ariaLabel}
     />
   );
 }

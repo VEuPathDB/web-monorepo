@@ -5,18 +5,20 @@ import typography from '../../../styleDefinitions/typography';
 
 export type SwissArmyButtonProps = Omit<
   SwissArmyButtonVariantProps,
-  'styleOverrides'
+  'styleOverrides' | 'themeRole'
 > & { styleSpec: ButtonStyleSpec };
 
 /** Basic button with a variety of customization options. */
 export default function SwissArmyButton({
   text,
+  textTransform = 'uppercase',
   onPress,
   disabled = false,
   tooltip,
   size = 'medium',
   icon,
   styleSpec,
+  ariaLabel,
 }: SwissArmyButtonProps) {
   const [buttonState, setButtonState] = useState<
     'default' | 'hover' | 'pressed'
@@ -38,6 +40,8 @@ export default function SwissArmyButton({
   return (
     <div css={{ position: 'relative' }}>
       <button
+        aria-label={ariaLabel}
+        tabIndex={0}
         disabled={disabled}
         css={[
           typography.primaryFont,
@@ -48,7 +52,7 @@ export default function SwissArmyButton({
             paddingLeft: horizontalPadding,
             paddingRight: horizontalPadding,
             color: styleSpec[styleState].textColor,
-            textTransform: styleSpec[styleState].textTransform ?? 'uppercase',
+            textTransform: textTransform,
             fontWeight: styleSpec[styleState].fontWeight ?? 600,
             fontSize: calculatedFontSize,
             ...styleSpec.container,
