@@ -25,12 +25,13 @@ const tabs = [
         <ul css={[typography.p]}>
           <li>Theming Support</li>
           <li>Distinct Visual States for Selected/Unselected/Focus States</li>
-          <li>Subtle animation effects for user joy. :)</li>
+          <li>Subtle animation effects to highlight state changes.</li>
           <li>Tab can be controlled programmatically. </li>
           <li>Support for both mouse/touch and keyboard based navigation.</li>
           <li>
             Proper accessibility attributes to aid assistive technologies.
           </li>
+          <li>Can override many styling aspects for special cases.</li>
         </ul>
       </div>
     ),
