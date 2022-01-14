@@ -166,6 +166,8 @@ export default function TabbedDisplay({
               }}
               onFocus={() => setHoveredTab(tab.displayName)}
               onBlur={() => setHoveredTab(null)}
+              onMouseOver={() => setHoveredTab(tab.displayName)}
+              onMouseOut={() => setHoveredTab(null)}
               onKeyDown={(event) => {
                 if (['Space', 'Enter'].includes(event.code)) {
                   tab.onSelect && tab.onSelect();
