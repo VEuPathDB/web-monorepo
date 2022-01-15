@@ -1,15 +1,16 @@
 import React, { useCallback } from 'react';
-import { Route, Switch } from 'react-router';
-import { useRouteMatch } from 'react-router-dom';
+import { Route, Switch, useHistory } from 'react-router';
+import { Link, useRouteMatch } from 'react-router-dom';
 import { AnalysisState, useDataClient } from '../core';
-import { AlphaDivComputation } from '../core/components/computations/implementations/alphaDiv';
+import { ComputationInstance } from '../core/components/computations/ComputationInstance';
+import { plugin as alphadiv } from '../core/components/computations/plugins/alphaDiv';
+import { plugin as pass } from '../core/components/computations/plugins/pass';
 import { StartPage } from '../core/components/computations/StartPage';
+import { ComputationPlugin } from '../core/components/computations/Types';
+import { createComputation } from '../core/components/computations/Utils';
 import { PromiseResult } from '../core/components/Promise';
 import { EntityCounts } from '../core/hooks/entityCounts';
 import { PromiseHookState, usePromise } from '../core/hooks/promise';
-import { ComputationPlugin } from '../core/components/computations/Types';
-import { ZeroConfigWithButton } from '../core/components/computations/ZeroConfiguration';
-import { ComputationInstance } from '../core/components/computations/ComputationInstance';
 
 export interface Props {
   analysisState: AnalysisState;
@@ -17,20 +18,18 @@ export interface Props {
   filteredCounts: PromiseHookState<EntityCounts>;
 }
 
-const components: Record<string, ComputationPlugin> = {
-  pass: {
-    configurationComponent: ZeroConfigWithButton,
-  },
-  alphadiv: {
-    configurationComponent: AlphaDivComputation,
-  },
+const plugins: Record<string, ComputationPlugin> = {
+  pass,
+  alphadiv,
 };
 
 /**
  * Handles delegating to a UI component based on the route.
  */
 export function ComputationRoute(props: Props) {
+  const { analysisState } = props;
   const { url } = useRouteMatch();
+  const history = useHistory();
   const dataClient = useDataClient();
   const promiseState = usePromise(
     useCallback(() => dataClient.getApps(), [dataClient])
@@ -42,21 +41,44 @@ export function ComputationRoute(props: Props) {
         <Switch>
           <Route exact path={url}>
             <StartPage baseUrl={url} apps={apps} {...props} />
+            <div>
+              <h2>Saved apps</h2>
+              <ul>
+                {analysisState.analysis?.descriptor.computations.map((c) => (
+                  <Link to={`${url}/${c.computationId}`}>
+                    {c.displayName ?? 'No name'} &mdash; {c.descriptor.type}
+                  </Link>
+                ))}
+              </ul>
+            </div>
           </Route>
           {apps.map((app) => {
-            const plugin = components[app.name];
-            if (plugin == null)
-              return (
-                <Route exact path={`${url}/new/${app.name}`}>
-                  <div>App not yet implemented</div>
-                </Route>
+            const plugin = plugins[app.name];
+            const addComputation = (name: string, configuration: unknown) => {
+              if (analysisState.analysis == null) return;
+              const computations =
+                analysisState.analysis.descriptor.computations;
+              const computation = createComputation(
+                app,
+                name,
+                configuration,
+                computations
               );
+              analysisState.setComputations([computation, ...computations]);
+              history.push(`${url}/${computation.computationId}`);
+            };
+
             return (
               <Route exact path={`${url}/new/${app.name}`}>
-                <plugin.configurationComponent
-                  {...props}
-                  computationAppOverview={app}
-                />
+                {plugin ? (
+                  <plugin.configurationComponent
+                    {...props}
+                    computationAppOverview={app}
+                    addNewComputation={addComputation}
+                  />
+                ) : (
+                  <div>App not yet implemented</div>
+                )}
               </Route>
             );
           })}
@@ -69,12 +91,15 @@ export function ComputationRoute(props: Props) {
               const app = apps.find(
                 (app) => app.name === computation?.descriptor.type
               );
-              if (app == null) return <div>Cannot find app!</div>;
+              const plugin = app && plugins[app.name];
+              if (app == null || plugin == null)
+                return <div>Cannot find app!</div>;
               return (
                 <ComputationInstance
                   {...props}
                   computationId={routeProps.match.params.id}
                   computationAppOverview={app}
+                  visualizationTypes={plugin.visualizationTypes}
                 />
               );
             }}

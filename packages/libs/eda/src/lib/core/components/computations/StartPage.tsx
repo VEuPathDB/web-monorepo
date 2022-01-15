@@ -20,7 +20,7 @@ export function StartPage(props: Props) {
       <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
         {apps.map((app) => (
           <Link
-            to={`${baseUrl}/${app.name}`}
+            to={`${baseUrl}/new/${app.name}`}
             style={{
               padding: '1em',
               border: '1px solid',

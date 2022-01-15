@@ -1,13 +1,20 @@
+import { string } from 'fp-ts';
+import React from 'react';
 import { AnalysisState } from '../../hooks/analysis';
 import { EntityCounts } from '../../hooks/entityCounts';
 import { PromiseHookState } from '../../hooks/promise';
 import { Computation, ComputationAppOverview } from '../../types/visualization';
+import { VisualizationType } from '../visualizations/VisualizationTypes';
 
 export interface ComputationProps {
   analysisState: AnalysisState;
   computationAppOverview: ComputationAppOverview;
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
+}
+
+export interface ComputationConfigProps extends ComputationProps {
+  addNewComputation: (name: string, configuration: unknown) => void;
 }
 
 export interface ComputationOverviewProps extends ComputationProps {}
@@ -28,5 +35,6 @@ export interface ComputationComponents {
 }
 
 export interface ComputationPlugin {
-  configurationComponent: React.ComponentType<ComputationOverviewProps>;
+  configurationComponent: React.ComponentType<ComputationConfigProps>;
+  visualizationTypes: Record<string, VisualizationType>;
 }

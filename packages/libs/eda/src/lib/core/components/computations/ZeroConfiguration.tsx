@@ -1,10 +1,7 @@
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useHistory } from 'react-router';
-import { ComputationProps } from './Types';
-import { createComputation } from './Utils';
+import React, { useEffect } from 'react';
+import { ComputationConfigProps } from './Types';
 
-export interface Props extends ComputationProps {
+export interface Props extends ComputationConfigProps {
   autoCreate?: boolean;
 }
 
@@ -13,41 +10,25 @@ export interface Props extends ComputationProps {
  * This component will create a new instance of the app and immediately redirect to it.
  */
 function ZeroConfig(props: Props) {
-  const { analysisState, computationAppOverview, autoCreate = false } = props;
-  const history = useHistory();
-  const [loading, setLoading] = useState(false);
-  const addComputationAndRedirect = useCallback(() => {
-    if (analysisState.analysis == null) return;
-
-    setLoading(true);
-
-    const computations = analysisState.analysis.descriptor.computations;
-    const computation = createComputation(
-      computationAppOverview,
-      'Unnamed app',
-      null,
-      computations
-    );
-    analysisState.setComputations([computation, ...computations]);
-    history.push(`${history.location.pathname}/${computation.computationId}`);
-  }, [analysisState, computationAppOverview, history]);
-
+  const { autoCreate = false, addNewComputation } = props;
   useEffect(() => {
-    if (autoCreate) addComputationAndRedirect();
-  }, [addComputationAndRedirect, autoCreate]);
+    if (autoCreate) addNewComputation('Unnamed computation', null);
+  }, [addNewComputation, autoCreate]);
 
-  if (loading) return <Loading />;
   return (
-    <button type="button" onClick={addComputationAndRedirect}>
+    <button
+      type="button"
+      onClick={() => addNewComputation('Unnamed computation', null)}
+    >
       Add computation
     </button>
   );
 }
 
-export function ZeroConfigWithAutoCreate(props: ComputationProps) {
+export function ZeroConfigWithAutoCreate(props: ComputationConfigProps) {
   return <ZeroConfig {...props} autoCreate />;
 }
 
-export function ZeroConfigWithButton(props: ComputationProps) {
+export function ZeroConfigWithButton(props: ComputationConfigProps) {
   return <ZeroConfig {...props} />;
 }

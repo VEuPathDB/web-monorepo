@@ -2,10 +2,12 @@ import React, { useCallback, useMemo } from 'react';
 import { useToggleStarredVariable } from '../../hooks/starredVariables';
 import { Visualization } from '../../types/visualization';
 import { VisualizationsContainer } from '../visualizations/VisualizationsContainer';
+import { VisualizationType } from '../visualizations/VisualizationTypes';
 import { ComputationProps } from './Types';
 
 export interface Props extends ComputationProps {
   computationId: string;
+  visualizationTypes: Record<string, VisualizationType>;
 }
 
 export function ComputationInstance(props: Props) {
@@ -15,6 +17,7 @@ export function ComputationInstance(props: Props) {
     analysisState: { analysis, setComputations },
     totalCounts,
     filteredCounts,
+    visualizationTypes,
   } = props;
 
   const computation = useMemo(() => {
@@ -58,7 +61,7 @@ export function ComputationInstance(props: Props) {
     <VisualizationsContainer
       computation={computation}
       visualizationsOverview={computationAppOverview.visualizations}
-      visualizationTypes={{}}
+      visualizationTypes={visualizationTypes}
       updateVisualizations={updateVisualizations}
       filters={analysis.descriptor.subset.descriptor}
       starredVariables={analysis?.descriptor.starredVariables}
