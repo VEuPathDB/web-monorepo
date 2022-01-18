@@ -57,15 +57,11 @@ export function CombinedResult({
             )}
         </div>
         <div className={cx('--DownloadOptions')}>
-          <ReportSelect jobId={jobId} placeholder="Download all results" />
-          {downloadTableOptions.offer && (
-            <button
-              type="button"
-              onClick={downloadTableOptions.onClickDownloadTable}
-            >
-              Download this table
-            </button>
-          )}
+          <ReportSelect
+            combinedResultTableDownloadConfig={downloadTableOptions}
+            jobId={jobId}
+            placeholder="Download combined result"
+          />
         </div>
       </Mesa>
     </div>

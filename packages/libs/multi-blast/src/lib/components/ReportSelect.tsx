@@ -1,22 +1,27 @@
-import { useCallback, useEffect, useState } from 'react';
-import Select, { ActionMeta, ValueType } from 'react-select';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import Select, { ActionMeta, OptionsType, ValueType } from 'react-select';
+
+import { Props as CombinedResultProps } from '../components/CombinedResult';
 import { useDownloadReportCallback } from '../hooks/api';
 import { IoBlastFormat } from '../utils/ServiceTypes';
 
 import './ReportSelect.scss';
 
 interface Props {
+  combinedResultTableDownloadConfig?: CombinedResultProps['downloadTableOptions'];
   jobId: string;
   placeholder: string;
 }
 
 interface ReportOption {
-  value: { format: IoBlastFormat; shouldZip: boolean };
+  value:
+    | 'combined-result-table'
+    | { format: IoBlastFormat; shouldZip: boolean };
   label: string;
 }
 
-const reportOptions: ReportOption[] = [
+const baseReportOptions: ReportOption[] = [
   {
     value: { format: 'pairwise', shouldZip: false },
     label: 'Text (pairwise)',
@@ -59,7 +64,11 @@ const reportOptions: ReportOption[] = [
   },
 ];
 
-export function ReportSelect({ jobId, placeholder }: Props) {
+export function ReportSelect({
+  combinedResultTableDownloadConfig,
+  jobId,
+  placeholder,
+}: Props) {
   const [selectedReportOption, setSelectedReportOption] = useState<
     ReportOption | undefined
   >(undefined);
@@ -84,11 +93,17 @@ export function ReportSelect({ jobId, placeholder }: Props) {
     (async () => {
       if (downloadReportCallback != null && selectedReportOption != null) {
         try {
-          await downloadReportCallback(
-            jobId,
-            selectedReportOption.value.format,
-            selectedReportOption.value.shouldZip
-          );
+          if (selectedReportOption.value === 'combined-result-table') {
+            if (combinedResultTableDownloadConfig?.offer) {
+              await combinedResultTableDownloadConfig.onClickDownloadTable();
+            }
+          } else {
+            await downloadReportCallback(
+              jobId,
+              selectedReportOption.value.format,
+              selectedReportOption.value.shouldZip
+            );
+          }
         } finally {
           if (!canceled) {
             setSelectedReportOption(undefined);
@@ -100,7 +115,34 @@ export function ReportSelect({ jobId, placeholder }: Props) {
     return () => {
       canceled = true;
     };
-  }, [downloadReportCallback, jobId, selectedReportOption]);
+  }, [
+    combinedResultTableDownloadConfig,
+    downloadReportCallback,
+    jobId,
+    selectedReportOption,
+  ]);
+
+  const options = useMemo(
+    () =>
+      (!combinedResultTableDownloadConfig?.offer
+        ? [
+            {
+              label: 'NCBI Formats',
+              options: baseReportOptions,
+            },
+          ]
+        : [
+            {
+              value: 'combined-result-table',
+              label: 'This Table (csv)',
+            },
+            {
+              label: 'NCBI Formats',
+              options: baseReportOptions,
+            },
+          ]) as OptionsType<ReportOption>,
+    [combinedResultTableDownloadConfig]
+  );
 
   return (
     <Select
@@ -113,7 +155,7 @@ export function ReportSelect({ jobId, placeholder }: Props) {
       value={selectedReportOption}
       controlShouldRenderValue={false}
       onChange={onChangeReport}
-      options={reportOptions}
+      options={options}
     />
   );
 }
