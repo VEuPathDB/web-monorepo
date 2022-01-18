@@ -1,36 +1,52 @@
 {
   "package": {
     "dependencies": {
-      "react": "^17.0.1",
-      "react-dom": "^17.0.1",
-      "@veupathdb/wdk-client": "^0.1.1-alpha.6",
-      "@veupathdb/web-common": "^0.1.1-alpha.2"    
+      "react": "^17.0.2",
+      "react-dom": "^17.0.2"
+    },
+    "peerDependencies": {
+      "@veupathdb/wdk-client": ">=0.5.4",
+      "@veupathdb/web-common": "=>0.2.0"
     },
     "devDependencies": {
-      "@testing-library/jest-dom": "^5.11.4",
-      "@testing-library/react": "^11.1.0",
-      "@testing-library/user-event": "^12.1.10",
-      "@types/node": "^12.0.0",
-      "@types/react": "^16.9.53",
-      "@types/react-dom": "^16.9.8",
-      "@types/jest": "^26.0.15",
+      "@babel/core": "7.0.0",
+      "@babel/plugin-syntax-flow": "^7.14.5",
+      "@babel/plugin-transform-react-jsx": "^7.14.9",
+      "@testing-library/dom": "8.11.2",
+      "@testing-library/jest-dom": "5.16.1",
+      "@testing-library/react": "12.1.2",
+      "@testing-library/user-event": "13.5.0",
+      "@types/node": "^14.0.0",
+      "@types/react": "^17.0.38",
+      "@types/react-dom": "^17.0.11",
       "@veupathdb/browserslist-config": "^1.0.0",
       "@veupathdb/eslint-config": "^1.0.0",
       "@veupathdb/prettier-config": "^1.0.0",
       "@veupathdb/react-scripts": "^1.0.0",
       "@veupathdb/tsconfig": "^1.0.0",
+      "@veupathdb/wdk-client": "^0.5.4",
+      "@veupathdb/web-common": "^0.2.0",
+      "assert": "^2.0.0",
+      "autoprefixer": "^10.0.2",
+      "bubleify": "^2.0.0",
+      "buffer": "^6.0.3",
+      "eslint": "^8.7.0",
+      "eslint-config-react-app": "^7.0.0",
       "husky": ">=4",
-      "jquery": "link:./shims/jquery",
+      "ify-loader": "^1.1.0",
       "lint-staged": ">=10",
       "node-sass": "^4.12.0",
-      "typescript": "^4.0.3",
-      "web-vitals": "^0.2.4",
-      "http-proxy-middleware": "^1.0.6",
+      "path-browserify": "^1.0.1",
+      "postcss": "^8.1.0",
       "prettier": "2.2.1",
+      "querystring-es3": "^0.2.1",
       "react-router": "^5.2.0",
       "read": "^1.0.7",
       "script-loader": "^0.7.2",
-      "set-cookie-parser": "^2.4.6"  
+      "set-cookie-parser": "^2.4.6",
+      "stream-browserify": "^3.0.0",
+      "typescript": "^4.5.4",
+      "web-vitals": "^0.2.4"
     },
     "husky": {
       "hooks": {
@@ -42,8 +58,8 @@
     },
     "prettier": "@veupathdb/prettier-config",
     "resolutions": {
-      "@veupathdb/**/react": "^17.0.1",
-      "@veupathdb/**/react-dom": "^17.0.1"
+      "@veupathdb/**/react": "17",
+      "@veupathdb/**/react-dom": "17"
     },
     "scripts": {
       "start": "veupathdb-react-scripts start",
