@@ -2,43 +2,52 @@ import { merge } from 'lodash';
 import { useMemo } from 'react';
 
 import useUITheme from '../../theming/useUITheme';
-import { cyan } from '../../../definitions/colors';
+import { blue, gray } from '../../../definitions/colors';
 import SwissArmyButton from '../SwissArmyButton';
-import { ButtonStyleSpec, SwissArmyButtonVariantProps } from '../';
+import {
+  ButtonStyleSpec,
+  PartialButtonStyleSpec,
+  SwissArmyButtonVariantProps,
+} from '../';
 
-/** Basic button with a variety of customization options. */
+/** Button that has no background until hovered/pressed. */
 export default function FloatingButton({
   text,
+  textTransform,
   onPress,
+  disabled = false,
   tooltip,
   size = 'medium',
   icon = () => null,
+  ariaLabel,
   themeRole,
   styleOverrides = {},
 }: SwissArmyButtonVariantProps) {
   const defaultStyle: ButtonStyleSpec = {
     default: {
       color: 'transparent',
-      textColor: cyan[700],
-      textTransform: 'none',
-      fontWeight: 500,
+      textColor: blue[500],
+      fontWeight: 600,
     },
     hover: {
-      color: cyan[100],
-      textColor: cyan[700],
-      fontWeight: 500,
-      textTransform: 'none',
+      color: blue[100],
+      textColor: blue[500],
+      fontWeight: 600,
     },
     pressed: {
-      color: cyan[200],
-      textColor: cyan[700],
-      fontWeight: 500,
-      textTransform: 'none',
+      color: blue[200],
+      textColor: blue[600],
+      fontWeight: 600,
+    },
+    disabled: {
+      color: 'transparent',
+      textColor: gray[500],
+      fontWeight: 600,
     },
   };
 
   const theme = useUITheme();
-  const themeStyle = useMemo<Partial<ButtonStyleSpec>>(() => {
+  const themeStyle = useMemo<PartialButtonStyleSpec>(() => {
     if (theme && themeRole) {
       if (theme.palette[themeRole].level < 500) {
         console.warn(
@@ -59,7 +68,7 @@ export default function FloatingButton({
         },
         pressed: {
           textColor:
-            theme.palette[themeRole].hue[theme.palette[themeRole].level],
+            theme.palette[themeRole].hue[theme.palette[themeRole].level + 100],
           color: theme.palette[themeRole].hue[200],
         },
       };
@@ -75,13 +84,15 @@ export default function FloatingButton({
 
   return (
     <SwissArmyButton
+      disabled={disabled}
       styleSpec={finalStyle}
       text={text}
+      textTransform={textTransform}
       onPress={onPress}
       tooltip={tooltip}
       size={size}
       icon={icon}
-      themeRole={themeRole}
+      ariaLabel={ariaLabel}
     />
   );
 }

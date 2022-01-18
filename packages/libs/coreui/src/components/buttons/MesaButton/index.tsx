@@ -2,71 +2,89 @@ import { merge } from 'lodash';
 import { useMemo } from 'react';
 
 import useUITheme from '../../theming/useUITheme';
-import { gray } from '../../../definitions/colors';
+import { blue, gray } from '../../../definitions/colors';
 import SwissArmyButton from '../SwissArmyButton';
 
-import { ButtonStyleSpec, SwissArmyButtonVariantProps } from '..';
+import {
+  ButtonStyleSpec,
+  PartialButtonStyleSpec,
+  SwissArmyButtonVariantProps,
+} from '..';
 
-/** Basic button with a variety of customization options. */
+/** Button that has a two-tone appearance. */
 export default function MesaButton({
   text,
+  textTransform,
   onPress,
+  disabled = false,
   tooltip,
   size = 'medium',
   icon = () => null,
   themeRole,
   styleOverrides = {},
+  ariaLabel,
 }: SwissArmyButtonVariantProps) {
   const defaultStyle: ButtonStyleSpec = {
     default: {
-      color: gray[100],
-      textColor: gray[500],
-      textTransform: 'none',
-      fontWeight: 400,
+      color: blue[500],
+      textColor: 'white',
+      fontWeight: 600,
       border: {
         radius: 5,
       },
       dropShadow: {
-        color: gray[300],
+        color: blue[600],
         blurRadius: '0px',
         offsetX: '0px',
         offsetY: '3px',
       },
     },
     hover: {
-      color: gray[100],
-      textColor: gray[500],
-      fontWeight: 400,
-      textTransform: 'none',
+      color: blue[500],
+      textColor: 'white',
+      fontWeight: 600,
       border: {
         radius: 5,
       },
       dropShadow: {
-        color: gray[400],
+        color: blue[700],
         blurRadius: '0px',
         offsetX: '0px',
         offsetY: '4px',
       },
     },
     pressed: {
-      color: gray[200],
-      textColor: gray[500],
-      fontWeight: 400,
-      textTransform: 'none',
+      color: blue[600],
+      textColor: 'white',
+      fontWeight: 600,
       border: {
         radius: 5,
       },
       dropShadow: {
-        color: gray[400],
+        color: blue[700],
         blurRadius: '0px',
         offsetX: '0px',
         offsetY: '4px',
       },
     },
+    disabled: {
+      color: gray[500],
+      textColor: 'white',
+      fontWeight: 600,
+      border: {
+        radius: 5,
+      },
+      dropShadow: {
+        color: gray[600],
+        blurRadius: '0px',
+        offsetX: '0px',
+        offsetY: '3px',
+      },
+    },
   };
 
   const theme = useUITheme();
-  const themeStyle = useMemo<Partial<ButtonStyleSpec>>(
+  const themeStyle = useMemo<PartialButtonStyleSpec>(
     () =>
       theme && themeRole
         ? {
@@ -75,11 +93,6 @@ export default function MesaButton({
                 theme.palette[themeRole].level > 200 ? 'white' : gray[700],
               color:
                 theme.palette[themeRole].hue[theme.palette[themeRole].level],
-              textTransform: 'none',
-              fontWeight: 400,
-              border: {
-                radius: 5,
-              },
               dropShadow: {
                 color:
                   theme.palette[themeRole].hue[
@@ -95,11 +108,6 @@ export default function MesaButton({
                 theme.palette[themeRole].level > 200 ? 'white' : gray[700],
               color:
                 theme.palette[themeRole].hue[theme.palette[themeRole].level],
-              textTransform: 'none',
-              fontWeight: 400,
-              border: {
-                radius: 5,
-              },
               dropShadow: {
                 color:
                   theme.palette[themeRole].hue[
@@ -117,11 +125,6 @@ export default function MesaButton({
                 theme.palette[themeRole].hue[
                   theme.palette[themeRole].level + 100
                 ],
-              textTransform: 'none',
-              fontWeight: 400,
-              border: {
-                radius: 5,
-              },
               dropShadow: {
                 color:
                   theme.palette[themeRole].hue[
@@ -146,11 +149,13 @@ export default function MesaButton({
     <SwissArmyButton
       styleSpec={finalStyle}
       text={text}
+      textTransform={textTransform}
       onPress={onPress}
+      disabled={disabled}
       tooltip={tooltip}
       size={size}
       icon={icon}
-      themeRole={themeRole}
+      ariaLabel={ariaLabel}
     />
   );
 }

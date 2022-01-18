@@ -4,7 +4,7 @@ import { CSSProperties, ReactNode, useEffect, useMemo, useState } from 'react';
 import { UITheme, useUITheme } from '../theming';
 
 import { H6 } from '../headers';
-import { blue, gray } from '../../definitions/colors';
+import { blue, gray, green } from '../../definitions/colors';
 import { ChevronRight } from '../icons';
 
 type PanelStateStyleSpec = {
@@ -141,13 +141,39 @@ export default function ExpandablePanel({
     };
 
     const themeStyle: Partial<ExpandablePanelStyleSpec> =
-      theme && themeRole ? {} : {};
+      theme && themeRole
+        ? {
+            open: {
+              border: {
+                width: 2,
+                color: gray[400],
+                style: 'solid',
+                radius: 5,
+              },
+              title: {
+                textColor: gray[700],
+                iconColor: gray[700],
+              },
+              content: {
+                divider: {
+                  color:
+                    theme.palette[themeRole].hue[
+                      theme.palette[themeRole].level
+                    ],
+                  thickness: 5,
+                },
+              },
+            },
+          }
+        : {};
 
     return merge({}, defaultStyle, themeStyle, styleOverrides);
   }, [themeRole, styleOverrides, theme]);
 
   return (
     <div
+      role='region'
+      aria-label={title}
       css={{
         outlineWidth: componentStyle[styleState].border.width,
         outlineColor: componentStyle[styleState].border.color,
@@ -157,21 +183,32 @@ export default function ExpandablePanel({
         transition: 'all .25s ease',
         ...componentStyle.container,
       }}
-      onMouseOver={() => setHasFocus(true)}
-      onMouseOut={() => setHasFocus(false)}
     >
       <div
         role='button'
+        tabIndex={0}
         css={{
           display: 'flex',
           alignItems: 'center',
-          cursor: 'grab',
+          cursor: 'pointer',
         }}
         onClick={() =>
           internalComponentState !== 'closed'
             ? setInternalComponentState('closed')
             : setInternalComponentState('open')
         }
+        onKeyDown={(event) => {
+          if (['Space', 'Enter'].includes(event.code)) {
+            console.log(internalComponentState);
+            internalComponentState !== 'closed'
+              ? setInternalComponentState('closed')
+              : setInternalComponentState('open');
+          }
+        }}
+        onFocus={() => setHasFocus(true)}
+        onBlur={() => setHasFocus(false)}
+        onMouseOver={() => setHasFocus(true)}
+        onMouseOut={() => setHasFocus(false)}
       >
         <ChevronRight
           fontSize={24}

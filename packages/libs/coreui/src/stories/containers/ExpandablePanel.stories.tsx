@@ -26,14 +26,30 @@ const ModalContent = ({
     }}
   >
     <div>
-      <p css={[{ color: gray[500] }, secondaryFont]}>
-        This is an example an expandable panel.
+      <p css={[{ color: gray[600], fontWeight: 'bold' }, secondaryFont]}>
+        Component Features
       </p>
-      <p css={[{ color: gray[500] }, secondaryFont]}>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Mi quis hendrerit
-        dolor magna eget est.
-      </p>
+
+      <ul>
+        <li css={[{ color: gray[600] }, secondaryFont]}>
+          Distinct UI for closed, focused, and open.
+        </li>
+        <li css={[{ color: gray[600] }, secondaryFont]}>
+          Subtle animation effects to highlight state changes.
+        </li>
+        <li css={[{ color: gray[600] }, secondaryFont]}>
+          Keyboard (Tab, Space/Enter) and Mouse/Touch Navigation
+        </li>
+        <li css={[{ color: gray[600] }, secondaryFont]}>
+          Accessibility Support
+        </li>
+        <li css={[{ color: gray[600] }, secondaryFont]}>
+          Can control open/closed state programmatically.
+        </li>
+        <li css={[{ color: gray[600] }, secondaryFont]}>
+          Can override many styling aspects for special cases.
+        </li>
+      </ul>
     </div>
     <FilledButton
       text='Example Button'

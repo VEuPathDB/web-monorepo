@@ -2,14 +2,20 @@ import { merge } from 'lodash';
 import { useMemo } from 'react';
 
 import useUITheme from '../../theming/useUITheme';
-import { blue } from '../../../definitions/colors';
+import { blue, gray } from '../../../definitions/colors';
 import SwissArmyButton from '../SwissArmyButton';
-import { ButtonStyleSpec, SwissArmyButtonVariantProps } from '..';
+import {
+  ButtonStyleSpec,
+  PartialButtonStyleSpec,
+  SwissArmyButtonVariantProps,
+} from '..';
 
-/** Basic button with a variety of customization options. */
+/** Basic that has a transparent background, but a visual outline/border. */
 export default function OutlinedButton({
   text,
+  textTransform,
   onPress,
+  disabled = false,
   tooltip,
   size = 'medium',
   icon = () => null,
@@ -19,6 +25,7 @@ export default function OutlinedButton({
   const defaultStyle: ButtonStyleSpec = {
     default: {
       textColor: blue[500],
+      fontWeight: 600,
       color: 'transparent',
       border: {
         radius: 5,
@@ -29,6 +36,7 @@ export default function OutlinedButton({
     },
     hover: {
       textColor: blue[600],
+      fontWeight: 600,
       color: 'transparent',
       border: {
         radius: 5,
@@ -39,6 +47,7 @@ export default function OutlinedButton({
     },
     pressed: {
       textColor: blue[700],
+      fontWeight: 600,
       color: 'transparent',
       border: {
         radius: 5,
@@ -47,10 +56,21 @@ export default function OutlinedButton({
         width: 2,
       },
     },
+    disabled: {
+      textColor: gray[500],
+      fontWeight: 600,
+      color: 'transparent',
+      border: {
+        radius: 5,
+        color: gray[500],
+        style: 'solid',
+        width: 2,
+      },
+    },
   };
 
   const theme = useUITheme();
-  const themeStyle = useMemo<Partial<ButtonStyleSpec>>(
+  const themeStyle = useMemo<PartialButtonStyleSpec>(
     () =>
       theme && themeRole
         ? {
@@ -100,11 +120,12 @@ export default function OutlinedButton({
     <SwissArmyButton
       styleSpec={finalStyle}
       text={text}
+      textTransform={textTransform}
+      disabled={disabled}
       onPress={onPress}
       tooltip={tooltip}
       size={size}
       icon={icon}
-      themeRole={themeRole}
     />
   );
 }

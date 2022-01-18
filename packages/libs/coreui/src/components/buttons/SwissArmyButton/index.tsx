@@ -1,32 +1,34 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { ButtonStyleSpec, SwissArmyButtonVariantProps } from '..';
 import typography from '../../../styleDefinitions/typography';
 
 export type SwissArmyButtonProps = Omit<
   SwissArmyButtonVariantProps,
-  'styleOverrides'
+  'styleOverrides' | 'themeRole'
 > & { styleSpec: ButtonStyleSpec };
 
 /** Basic button with a variety of customization options. */
 export default function SwissArmyButton({
   text,
+  textTransform = 'uppercase',
   onPress,
+  disabled = false,
   tooltip,
   size = 'medium',
   icon,
   styleSpec,
+  ariaLabel,
 }: SwissArmyButtonProps) {
   const [buttonState, setButtonState] = useState<
     'default' | 'hover' | 'pressed'
   >('default');
 
-  /**
-   * If textColor is specified, use it. Otherwise if `type` is solid, use
-   * white. If `type` is outline, use `color` unless button is pressed, then
-   * use `onPressColor` if specified.
-   */
-  const calculatedTextColor = styleSpec[buttonState].textColor ?? 'white';
+  const styleState = useMemo<'default' | 'hover' | 'pressed' | 'disabled'>(
+    () => (disabled ? 'disabled' : buttonState),
+    [buttonState, disabled]
+  );
+
   const calculatedFontSize = size === 'large' ? '1rem' : '.80rem';
   const calculatedIconSize =
     size === 'large' ? '1.5rem' : size === 'medium' ? '1.25rem' : '1rem';
@@ -38,33 +40,37 @@ export default function SwissArmyButton({
   return (
     <div css={{ position: 'relative' }}>
       <button
+        aria-label={ariaLabel}
+        tabIndex={0}
+        disabled={disabled}
         css={[
           typography.primaryFont,
           {
+            cursor: disabled ? 'not-allowed' : 'pointer',
             height: buttonHeight,
             display: 'flex',
             alignItems: 'center',
             paddingLeft: horizontalPadding,
             paddingRight: horizontalPadding,
-            color: calculatedTextColor,
-            textTransform: styleSpec[buttonState].textTransform ?? 'uppercase',
-            fontWeight: styleSpec[buttonState].fontWeight ?? 600,
+            color: styleSpec[styleState].textColor,
+            textTransform: textTransform,
+            fontWeight: styleSpec[styleState].fontWeight ?? 600,
             fontSize: calculatedFontSize,
             ...styleSpec.container,
             backgroundColor: `${
-              styleSpec[buttonState].color ?? 'transparent'
+              styleSpec[styleState].color ?? 'transparent'
             } !important`,
-            borderRadius: styleSpec[buttonState].border?.radius ?? 5,
-            outlineStyle: styleSpec[buttonState].border?.style ?? 'none',
-            outlineColor: styleSpec[buttonState].border?.color,
-            outlineWidth: styleSpec[buttonState].border?.width,
-            outlineOffset: styleSpec[buttonState].border?.width
-              ? -1 * styleSpec[buttonState].border?.width!
+            borderRadius: styleSpec[styleState].border?.radius ?? 5,
+            outlineStyle: styleSpec[styleState].border?.style ?? 'none',
+            outlineColor: styleSpec[styleState].border?.color,
+            outlineWidth: styleSpec[styleState].border?.width,
+            outlineOffset: styleSpec[styleState].border?.width
+              ? -1 * styleSpec[styleState].border?.width!
               : undefined,
             border: 'none',
           },
-          styleSpec[buttonState].dropShadow && {
-            boxShadow: `${styleSpec[buttonState].dropShadow?.offsetX} ${styleSpec[buttonState].dropShadow?.offsetY} ${styleSpec[buttonState].dropShadow?.blurRadius} ${styleSpec[buttonState].dropShadow?.color}`,
+          styleSpec[styleState].dropShadow && {
+            boxShadow: `${styleSpec[styleState].dropShadow?.offsetX} ${styleSpec[styleState].dropShadow?.offsetY} ${styleSpec[styleState].dropShadow?.blurRadius} ${styleSpec[styleState].dropShadow?.color}`,
           },
         ]}
         onMouseDown={() => {
@@ -80,7 +86,7 @@ export default function SwissArmyButton({
         {Icon && (
           <Icon
             fontSize={calculatedIconSize}
-            fill={calculatedTextColor}
+            fill={styleSpec[styleState].textColor}
             css={text && { marginRight: 10 }}
           />
         )}

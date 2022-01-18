@@ -4,7 +4,7 @@ import { SwissArmyButtonVariantProps } from '../../components/buttons';
 import MesaButton from '../../components/buttons/MesaButton';
 import { TableDownload, Download } from '../../components/icons';
 import UIThemeProvider from '../../components/theming/UIThemeProvider';
-import { blue, orange } from '../../definitions/colors';
+import { blue, mutedCyan, orange } from '../../definitions/colors';
 
 export default {
   title: 'Controls/Buttons/MesaButton',
@@ -16,7 +16,7 @@ const Template: Story<SwissArmyButtonVariantProps> = (args) => {
     <UIThemeProvider
       theme={{
         palette: {
-          primary: { hue: blue, level: 500 },
+          primary: { hue: mutedCyan, level: 500 },
           secondary: { hue: orange, level: 500 },
         },
       }}
@@ -29,31 +29,49 @@ const Template: Story<SwissArmyButtonVariantProps> = (args) => {
 export const Default = Template.bind({});
 Default.args = {
   text: 'Hello Developer',
+  textTransform: 'uppercase',
   size: 'medium',
-};
+  disabled: false,
+} as SwissArmyButtonVariantProps;
 
 export const WithIcon = Template.bind({});
 WithIcon.args = {
+  ...Default.args,
   text: 'Button With Icon',
   icon: TableDownload,
-};
+} as SwissArmyButtonVariantProps;
 
 export const IconOnly = Template.bind({});
 IconOnly.args = {
+  size: 'medium',
+  disabled: false,
   icon: TableDownload,
-};
+  ariaLabel: 'Table Download',
+} as SwissArmyButtonVariantProps;
 
 export const Tooltip = Template.bind({});
 Tooltip.args = {
+  ...Default.args,
   text: 'Button With Tooltip',
   icon: TableDownload,
   tooltip: 'Hello there friend.',
-};
+} as SwissArmyButtonVariantProps;
 
 export const UseTheme = Template.bind({});
 UseTheme.args = {
+  ...Default.arts,
   text: 'Using Theme Styles',
   icon: Download,
   themeRole: 'primary',
   size: 'medium',
-};
+} as SwissArmyButtonVariantProps;
+
+export const NoTextTransform = Template.bind({});
+NoTextTransform.args = {
+  text: 'Hello Developer',
+  textTransform: 'none',
+  size: 'medium',
+  icon: TableDownload,
+  disabled: false,
+  themeRole: undefined,
+} as SwissArmyButtonVariantProps;

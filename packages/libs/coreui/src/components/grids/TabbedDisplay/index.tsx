@@ -155,7 +155,7 @@ export default function TabbedDisplay({
                   padding: 15,
                   borderBottomWidth: 3,
                   borderBottomStyle: 'solid',
-                  cursor: 'grab',
+                  cursor: 'pointer',
                   transition:
                     'background-color .5s, border-color .5s, color .5s',
                 },
@@ -164,10 +164,12 @@ export default function TabbedDisplay({
                 tab.onSelect && tab.onSelect();
                 setActiveTabInternal(tab.displayName);
               }}
+              onFocus={() => setHoveredTab(tab.displayName)}
+              onBlur={() => setHoveredTab(null)}
               onMouseOver={() => setHoveredTab(tab.displayName)}
               onMouseOut={() => setHoveredTab(null)}
               onKeyDown={(event) => {
-                if (event.code === 'Space') {
+                if (['Space', 'Enter'].includes(event.code)) {
                   tab.onSelect && tab.onSelect();
                   setActiveTabInternal(tab.displayName);
                 }
