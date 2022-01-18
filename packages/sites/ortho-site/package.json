@@ -8,7 +8,7 @@
     "@types/cytoscape": "^3.14.7",
     "@types/react-cytoscapejs": "^1.1.0",
     "@veupathdb/wdk-client": "^0.5.4",
-    "@veupathdb/web-common": "^0.1.1-alpha.11",
+    "@veupathdb/web-common": "^0.2.1",
     "cytoscape": "^3.15.2",
     "immer": "^7.0.5",
     "react-cytoscapejs": "^1.2.1"
