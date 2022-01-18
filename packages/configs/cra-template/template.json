@@ -35,7 +35,7 @@
       "husky": ">=4",
       "ify-loader": "^1.1.0",
       "lint-staged": ">=10",
-      "node-sass": "^4.12.0",
+      "sass": "^1.49.0",
       "path-browserify": "^1.0.1",
       "postcss": "^8.1.0",
       "prettier": "2.2.1",
