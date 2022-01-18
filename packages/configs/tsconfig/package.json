@@ -9,7 +9,7 @@
     "directory": "packages/tsconfig"
   },
   "engines": {
-    "node": ">=10"
+    "node": ">=14"
   },
   "bugs": {
     "url": "https://github.com/VEuPathDB/web-dev/issues"
