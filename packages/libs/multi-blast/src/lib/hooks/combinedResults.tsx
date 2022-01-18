@@ -134,7 +134,7 @@ export function useCombinedResultProps({
     }
 
     return {
-      offer: false,
+      offer: true,
       onClickDownloadTable: () => {
         const combinedReportBlob = new Blob(
           [
