@@ -79,7 +79,7 @@ export class AnalysisClient extends FetchClientWithCredentials {
   }
 
   private makeAnalysesPath(userId: number, projectId: string) {
-    return `${this.makeUserPath(userId)}/${projectId}/analyses`;
+    return `${this.makeUserPath(userId)}/analyses/${projectId}`;
   }
 
   async getPreferences(): Promise<AnalysisPreferences> {
