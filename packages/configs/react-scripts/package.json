@@ -27,6 +27,6 @@
     "set-cookie-parser": "^2.4.6"
   },
   "peerDependencies": {
-    "react-scripts": "^4.0.1"
+    "react-scripts": "^5.0.0"
   }
 }

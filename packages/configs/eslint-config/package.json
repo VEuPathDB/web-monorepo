@@ -18,6 +18,6 @@
     "url": "https://github.com/VEuPathDB/web-dev/issues"
   },
   "peerDependencies": {
-    "eslint-config-react-app": "^6.0.0"
+    "eslint-config-react-app": "^7.0.0"
   }
 }
