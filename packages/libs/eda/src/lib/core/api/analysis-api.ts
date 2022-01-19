@@ -2,6 +2,7 @@ import { type, voidType, string, array } from 'io-ts';
 import { pick } from 'lodash';
 
 import {
+  ApiRequest,
   createJsonRequest,
   FetchClientWithCredentials,
   ioTransformer,
@@ -14,6 +15,7 @@ import {
   NewAnalysis,
   PublicAnalysisSummary,
 } from '../types/analysis';
+import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 export type SingleAnalysisPatchRequest = Partial<
   Pick<Analysis, 'displayName' | 'description' | 'descriptor' | 'isPublic'>
@@ -38,9 +40,9 @@ export class AnalysisClient extends FetchClientWithCredentials {
       // If said guest user id is valid, initialize and retain a promise
       // which performs a transfer of that guest user's analyses to the logged-in user
       if (!Number.isNaN(guestUserId)) {
-        this.guestAnalysesTransfer$ = this.fetchWithUser((user) =>
+        this.guestAnalysesTransfer$ = this.fetchWithDetails((user, projectId) =>
           createJsonRequest({
-            path: `${this.findUserPath(user.id)}/analyses`,
+            path: this.makeAnalysesPath(user.id, projectId),
             method: 'PATCH',
             body: {
               inheritOwnershipFrom: guestUserId,
@@ -61,15 +63,30 @@ export class AnalysisClient extends FetchClientWithCredentials {
     }
   }
 
-  private findUserPath(userId: number) {
+  protected async fetchWithDetails<T>(
+    callback: (user: User, projectId: string) => ApiRequest<T>
+  ): Promise<T> {
+    const projectId = (await this.wdkService.getConfig()).projectId;
+    return this.fetchWithUser((user) => callback(user, projectId));
+  }
+
+  private makeUserPath(userId: number) {
     return `/users/${userId}`;
+  }
+
+  private makePreferencesPath(userId: number, projectId: string) {
+    return `${this.makeUserPath(userId)}/preferences/${projectId}`;
+  }
+
+  private makeAnalysesPath(userId: number, projectId: string) {
+    return `${this.makeUserPath(userId)}/analyses/${projectId}`;
   }
 
   async getPreferences(): Promise<AnalysisPreferences> {
     await this.transferGuestAnalyses();
-    return this.fetchWithUser((user) =>
+    return this.fetchWithDetails((user, projectId) =>
       createJsonRequest({
-        path: `${this.findUserPath(user.id)}/preferences`,
+        path: this.makePreferencesPath(user.id, projectId),
         method: 'GET',
         transformResponse: ioTransformer(AnalysisPreferences),
       })
@@ -78,9 +95,9 @@ export class AnalysisClient extends FetchClientWithCredentials {
 
   async setPreferences(preferences: AnalysisPreferences): Promise<void> {
     await this.transferGuestAnalyses();
-    return this.fetchWithUser((user) =>
+    return this.fetchWithDetails((user, projectId) =>
       createJsonRequest({
-        path: `${this.findUserPath(user.id)}/preferences`,
+        path: `${this.makePreferencesPath(user.id, projectId)}`,
         method: 'PUT',
         body: preferences,
         transformResponse: ioTransformer(voidType),
@@ -89,9 +106,9 @@ export class AnalysisClient extends FetchClientWithCredentials {
   }
   async getAnalyses(): Promise<AnalysisSummary[]> {
     await this.transferGuestAnalyses();
-    return this.fetchWithUser((user) =>
+    return this.fetchWithDetails((user, projectId) =>
       createJsonRequest({
-        path: `${this.findUserPath(user.id)}/analyses`,
+        path: this.makeAnalysesPath(user.id, projectId),
         method: 'GET',
         transformResponse: ioTransformer(array(AnalysisSummary)),
       })
@@ -99,9 +116,9 @@ export class AnalysisClient extends FetchClientWithCredentials {
   }
   async getAnalysis(analysisId: string): Promise<Analysis> {
     await this.transferGuestAnalyses();
-    return this.fetchWithUser((user) =>
+    return this.fetchWithDetails((user, projectId) =>
       createJsonRequest({
-        path: `${this.findUserPath(user.id)}/analyses/${analysisId}`,
+        path: `${this.makeAnalysesPath(user.id, projectId)}/${analysisId}`,
         method: 'GET',
         transformResponse: ioTransformer(Analysis),
       })
@@ -119,9 +136,9 @@ export class AnalysisClient extends FetchClientWithCredentials {
       'studyVersion',
     ]);
 
-    return this.fetchWithUser((user) =>
+    return this.fetchWithDetails((user, projectId) =>
       createJsonRequest({
-        path: `${this.findUserPath(user.id)}/analyses`,
+        path: this.makeAnalysesPath(user.id, projectId),
         method: 'POST',
         body,
         transformResponse: ioTransformer(type({ analysisId: string })),
@@ -141,9 +158,9 @@ export class AnalysisClient extends FetchClientWithCredentials {
       'isPublic',
     ]);
 
-    return this.fetchWithUser((user) =>
+    return this.fetchWithDetails((user, projectId) =>
       createJsonRequest({
-        path: `${this.findUserPath(user.id)}/analyses/${analysisId}`,
+        path: `${this.makeAnalysesPath(user.id, projectId)}/${analysisId}`,
         method: 'PATCH',
         body,
         transformResponse: ioTransformer(voidType),
@@ -152,17 +169,17 @@ export class AnalysisClient extends FetchClientWithCredentials {
   }
   async deleteAnalysis(analysisId: string): Promise<void> {
     await this.transferGuestAnalyses();
-    return this.fetchWithUser((user) => ({
-      path: `${this.findUserPath(user.id)}/analyses/${analysisId}`,
+    return this.fetchWithDetails((user, projectId) => ({
+      path: `${this.makeAnalysesPath(user.id, projectId)}/${analysisId}`,
       method: 'DELETE',
       transformResponse: ioTransformer(voidType),
     }));
   }
   async deleteAnalyses(analysisIds: Iterable<string>): Promise<void> {
     await this.transferGuestAnalyses();
-    return this.fetchWithUser((user) =>
+    return this.fetchWithDetails((user, projectId) =>
       createJsonRequest({
-        path: `${this.findUserPath(user.id)}/analyses`,
+        path: this.makeAnalysesPath(user.id, projectId),
         method: 'PATCH',
         body: {
           analysisIdsToDelete: [...analysisIds],
@@ -175,14 +192,12 @@ export class AnalysisClient extends FetchClientWithCredentials {
     analysisId: string,
     sourceUserId?: number
   ): Promise<{ analysisId: string }> {
-    return this.fetchWithUser((user) => {
-      // Copy from self if no sourceUserId is provided
-      const sourceUserPath = this.findUserPath(
-        sourceUserId == null ? user.id : sourceUserId
-      );
-
+    return this.fetchWithDetails((user, projectId) => {
       return {
-        path: `${sourceUserPath}/analyses/${analysisId}/copy`,
+        path: `${this.makeAnalysesPath(
+          sourceUserId ?? user.id,
+          projectId
+        )}/${analysisId}/copy`,
         method: 'POST',
         transformResponse: ioTransformer(type({ analysisId: string })),
       };
@@ -190,17 +205,17 @@ export class AnalysisClient extends FetchClientWithCredentials {
   }
 
   async importAnalysis(analysisId: string): Promise<{ analysisId: string }> {
-    return this.fetch({
-      path: `/import-analysis/${analysisId}`,
+    return this.fetchWithDetails((user, projectId) => ({
+      path: `/import-analysis/${projectId}/${analysisId}`,
       method: 'GET',
       transformResponse: ioTransformer(type({ analysisId: string })),
-    });
+    }));
   }
 
   async getPublicAnalyses(): Promise<PublicAnalysisSummary[]> {
-    return this.fetch(
+    return this.fetchWithDetails((user, projectId) =>
       createJsonRequest({
-        path: '/public/analyses',
+        path: `/public/analyses/${projectId}`,
         method: 'GET',
         transformResponse: ioTransformer(array(PublicAnalysisSummary)),
       })
