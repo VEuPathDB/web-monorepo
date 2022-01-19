@@ -12,6 +12,7 @@ import {
   useFieldTree,
   useFlattenFieldsByTerm,
 } from './hooks';
+import { FieldTreeNode } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 
 export interface VariableTreeProps {
   rootEntity: StudyEntity;
@@ -44,6 +45,50 @@ export default function VariableTree({
   const fieldsByTerm = useFlattenFieldsByTerm(flattenedFields);
   const featuredFields = useFeaturedFields(entities);
   const fieldTree = useFieldTree(flattenedFields);
+  // console.log({ fieldTree });
+  // console.log({ featuredFields });
+
+  const featuredFieldTerms = featuredFields.map((field) => field.term);
+
+  // console.log({ featuredFieldsTerms });
+
+  // const filterForFeaturedFieldsTerms = (node: FieldTreeNode) =>
+  //   featuredFieldTerms.includes(node.field.term);
+
+  const getFilteredFieldListFromTreeNode = (
+    treeNode: FieldTreeNode,
+    filterFunc: (field: FieldTreeNode) => boolean
+  ) => {
+    const filteredFieldList: FieldTreeNode[] = [];
+    if (treeNode.children.length > 0) {
+      treeNode.children.forEach((child) =>
+        filteredFieldList.push(
+          ...getFilteredFieldListFromTreeNode(child, filterFunc)
+        )
+      );
+    } else {
+      // console.log({ leafNode: treeNode });
+      if (filterFunc(treeNode)) {
+        // console.log('treeNode matched');
+        // console.log({ treeNode });
+        filteredFieldList.push(treeNode);
+      }
+    }
+    return filteredFieldList;
+  };
+
+  const featuredFieldTermsFromTree = getFilteredFieldListFromTreeNode(
+    fieldTree,
+    (node: FieldTreeNode) => featuredFieldTerms.includes(node.field.term)
+  ).map((node) => node.field.term);
+
+  // console.log({ featuredFieldTermsFromTree });
+
+  const sortedFeaturedFields = featuredFields.sort(
+    (fieldA, fieldB) =>
+      featuredFieldTermsFromTree.indexOf(fieldA.term) -
+      featuredFieldTermsFromTree.indexOf(fieldB.term)
+  );
 
   const disabledFields = useMemo(
     () => disabledVariables?.map((v) => `${v.entityId}/${v.variableId}`),
@@ -76,7 +121,7 @@ export default function VariableTree({
       activeField={activeField}
       disabledFieldIds={disabledFields}
       onActiveFieldChange={onActiveFieldChange}
-      featuredFields={featuredFields}
+      featuredFields={sortedFeaturedFields}
       valuesMap={valuesMap}
       fieldTree={fieldTree}
       autoFocus={false}
