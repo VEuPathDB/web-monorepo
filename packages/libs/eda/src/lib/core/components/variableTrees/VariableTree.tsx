@@ -11,6 +11,7 @@ import {
   useFeaturedFields,
   useFieldTree,
   useFlattenFieldsByTerm,
+  useFeaturedFieldsFromTree,
 } from './hooks';
 import { FieldTreeNode } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 
@@ -45,26 +46,25 @@ export default function VariableTree({
   const fieldsByTerm = useFlattenFieldsByTerm(flattenedFields);
   const featuredFields = useFeaturedFields(entities);
   const fieldTree = useFieldTree(flattenedFields);
+  const featuredFieldsFromTree = useFeaturedFieldsFromTree(fieldTree);
+
+  // console.log({ flattenedFields });
   // console.log({ fieldTree });
   // console.log({ featuredFields });
+  // console.log({ featuredFieldsFromTree });
 
   const featuredFieldTerms = featuredFields.map((field) => field.term);
 
   // console.log({ featuredFieldsTerms });
 
-  // const filterForFeaturedFieldsTerms = (node: FieldTreeNode) =>
-  //   featuredFieldTerms.includes(node.field.term);
-
-  const getFilteredFieldListFromTreeNode = (
+  const getFilteredLeaves = (
     treeNode: FieldTreeNode,
     filterFunc: (field: FieldTreeNode) => boolean
   ) => {
     const filteredFieldList: FieldTreeNode[] = [];
     if (treeNode.children.length > 0) {
       treeNode.children.forEach((child) =>
-        filteredFieldList.push(
-          ...getFilteredFieldListFromTreeNode(child, filterFunc)
-        )
+        filteredFieldList.push(...getFilteredLeaves(child, filterFunc))
       );
     } else {
       // console.log({ leafNode: treeNode });
@@ -77,7 +77,7 @@ export default function VariableTree({
     return filteredFieldList;
   };
 
-  const featuredFieldTermsFromTree = getFilteredFieldListFromTreeNode(
+  const featuredFieldTermsFromTree = getFilteredLeaves(
     fieldTree,
     (node: FieldTreeNode) => featuredFieldTerms.includes(node.field.term)
   ).map((node) => node.field.term);
@@ -121,7 +121,7 @@ export default function VariableTree({
       activeField={activeField}
       disabledFieldIds={disabledFields}
       onActiveFieldChange={onActiveFieldChange}
-      featuredFields={sortedFeaturedFields}
+      featuredFields={featuredFieldsFromTree}
       valuesMap={valuesMap}
       fieldTree={fieldTree}
       autoFocus={false}

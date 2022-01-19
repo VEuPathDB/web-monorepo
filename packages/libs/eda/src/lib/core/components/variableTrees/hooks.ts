@@ -1,6 +1,9 @@
 import { useMemo } from 'react';
 
-import { Field } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
+import {
+  Field,
+  FieldTreeNode,
+} from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 import { getTree } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
 import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
@@ -70,6 +73,52 @@ export const useFeaturedFields = (entities: StudyEntity[]): Field[] =>
         .map((variable) => edaVariableToWdkField(variable))
     );
   }, [entities]);
+
+type FieldWithIsFeatured = Field & { isFeatured: boolean };
+
+export const useFeaturedFieldsFromTree = (
+  fieldTree: FieldTreeNode
+): Field[] => {
+  return getFeaturedFieldsRecursive(fieldTree, 'Unknown Entity').map(
+    (node) => node.field
+  );
+};
+
+const getFeaturedFieldsRecursive = (
+  treeNode: FieldTreeNode,
+  entityName: string
+) => {
+  const filteredFieldList: FieldTreeNode[] = [];
+  if (treeNode.children.length > 0) {
+    const newEntityName = treeNode.field.term.startsWith('entity')
+      ? treeNode.field.display
+      : entityName;
+    treeNode.children.forEach((child) =>
+      filteredFieldList.push(
+        ...getFeaturedFieldsRecursive(child, newEntityName)
+      )
+    );
+  } else {
+    // console.log({ leafNode: treeNode });
+    if (
+      treeNode.field.type !== 'category' &&
+      (treeNode.field as FieldWithIsFeatured).isFeatured
+    ) {
+      // console.log('treeNode matched');
+      // console.log({ treeNode });
+      const newTreeNode = {
+        ...treeNode,
+        field: {
+          ...treeNode.field,
+          parent: treeNode.field.parent?.split('/')[1],
+          display: `<span class="Entity">${entityName}</span>: ${treeNode.field.display}`,
+        },
+      };
+      filteredFieldList.push(newTreeNode);
+    }
+  }
+  return filteredFieldList;
+};
 
 /**
  * Construct a hierarchical representation of variable fields from

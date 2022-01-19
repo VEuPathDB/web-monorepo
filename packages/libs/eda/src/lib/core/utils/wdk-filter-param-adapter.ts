@@ -118,6 +118,8 @@ export function fromEdaFilter(filter: EdaFilter): WdkFilter {
 }
 
 export function edaVariableToWdkField(variable: VariableTreeNode): Field {
+  // console.log({ variable });
+
   return {
     display: variable.displayName,
     isRange:
@@ -132,6 +134,7 @@ export function edaVariableToWdkField(variable: VariableTreeNode): Field {
         ? variable.type
         : undefined,
     variableName: variable.providerLabel,
+    isFeatured: variable.type !== 'category' ? variable.isFeatured : undefined,
     // cast to handle additional props `precision` and `variableName` that
     // do not exist on the `Field` type
   } as Field;
