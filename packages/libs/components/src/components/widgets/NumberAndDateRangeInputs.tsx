@@ -39,6 +39,8 @@ export type BaseProps<M extends NumberOrDateRange> = {
   showClearButton?: boolean;
   /** Text to adorn the clear button; Default is 'Clear' */
   clearButtonLabel?: string;
+  /** DKDK Parent component name, e.g., HistogramFilter: will be used for adjusting input form width */
+  parentComponentName?: string;
 };
 
 export type NumberRangeInputProps = BaseProps<NumberRange>;
@@ -80,6 +82,8 @@ function BaseInput({
   containerStyles,
   showClearButton = false,
   clearButtonLabel = 'Clear',
+  //DKDK parent component name
+  parentComponentName,
 }: BaseInputProps) {
   if (validator && required)
     console.log(
@@ -179,6 +183,9 @@ function BaseInput({
               setIsReceiving(false);
               setLocalRange({ min: newValue, max } as NumberRange);
             }}
+            //DKDK parentComponentName
+            parentComponentName={parentComponentName}
+            // containerStyles={containerStyles}
           />
         ) : (
           <DateInput
@@ -193,11 +200,23 @@ function BaseInput({
               setIsReceiving(false);
               setLocalRange({ min: newValue, max } as DateRange);
             }}
+            //DKDK parentComponentName
+            parentComponentName={parentComponentName}
+            // containerStyles={containerStyles}
           />
         )}
         <div style={{ display: 'flex', flexDirection: 'row' }}>
           {/* change margin */}
-          <div style={{ margin: '3px 15px 15px 15px' }}>
+          {/* DKDK make 'to'' vertically center */}
+          {/* <div style={{ margin: '3px 15px 15px 15px' }}> */}
+          <div
+            style={{
+              margin:
+                parentComponentName !== 'HistogramFilter'
+                  ? 'auto 10px'
+                  : 'auto 15px',
+            }}
+          >
             <Typography variant="button" style={{ color: MEDIUM_GRAY }}>
               to
             </Typography>
@@ -216,6 +235,9 @@ function BaseInput({
               setIsReceiving(false);
               setLocalRange({ min, max: newValue } as NumberRange);
             }}
+            //DKDK parentComponentName
+            parentComponentName={parentComponentName}
+            // containerStyles={containerStyles}
           />
         ) : (
           <DateInput
@@ -230,6 +252,9 @@ function BaseInput({
               setIsReceiving(false);
               setLocalRange({ min, max: newValue } as DateRange);
             }}
+            //DKDK parentComponentName
+            parentComponentName={parentComponentName}
+            // containerStyles={containerStyles}
           />
         )}
         {showClearButton && (

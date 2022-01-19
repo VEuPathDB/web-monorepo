@@ -18,6 +18,8 @@ export interface AxisRangeControlProps
   range?: NumberOrDateRange;
   /** function to call when widget updates the range */
   onRangeChange?: (newRange?: NumberOrDateRange) => void;
+  /** DKDK Parent component name, e.g., HistogramFilter: will be used for adjusting input form width */
+  parentComponentName?: string;
 }
 
 export default function AxisRangeControl({
@@ -26,6 +28,8 @@ export default function AxisRangeControl({
   range,
   onRangeChange,
   containerStyles,
+  //DKDK parent component name
+  parentComponentName,
 }: AxisRangeControlProps) {
   const validator = useCallback((range?: NumberOrDateRange): {
     validity: boolean;
@@ -56,6 +60,8 @@ export default function AxisRangeControl({
         allowPartialRange={false}
         containerStyles={containerStyles}
         validator={validator}
+        //DKDK parentComponentName
+        parentComponentName={parentComponentName}
       />
     ) : (
       <NumberRangeInput
@@ -65,6 +71,8 @@ export default function AxisRangeControl({
         allowPartialRange={false}
         containerStyles={containerStyles}
         validator={validator}
+        //DKDK parentComponentName
+        parentComponentName={parentComponentName}
       />
     )
   ) : null;

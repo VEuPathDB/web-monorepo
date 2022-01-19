@@ -22,6 +22,8 @@ export interface SelectedRangeControlProps
   enforceBounds?: boolean;
   /** show a clear button, optional, default is true */
   showClearButton?: boolean;
+  /** DKDK Parent component name, e.g., HistogramFilter: will be used for adjusting input form width */
+  parentComponentName?: string;
 }
 
 export default function SelectedRangeControl({
@@ -33,6 +35,8 @@ export default function SelectedRangeControl({
   enforceBounds = false,
   showClearButton = true,
   containerStyles,
+  //DKDK parent component name
+  parentComponentName,
 }: SelectedRangeControlProps) {
   const validator = enforceBounds
     ? undefined
@@ -68,6 +72,8 @@ export default function SelectedRangeControl({
           showClearButton={showClearButton}
           containerStyles={containerStyles}
           validator={validator}
+          //DKDK parentComponentName
+          parentComponentName={parentComponentName}
         />
       ) : (
         <NumberRangeInput
@@ -78,6 +84,8 @@ export default function SelectedRangeControl({
           showClearButton={showClearButton}
           containerStyles={containerStyles}
           validator={validator}
+          //DKDK parentComponentName
+          parentComponentName={parentComponentName}
         />
       )}
     </LabelledGroup>

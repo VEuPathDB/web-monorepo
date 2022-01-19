@@ -29,6 +29,8 @@ type BaseProps<M extends NumberOrDate> = {
   containerStyles?: React.CSSProperties;
   /** Do not flag up value range violations */
   displayRangeViolationWarnings?: boolean;
+  /** DKDK Parent component name, e.g., HistogramFilter: will be used for adjusting input form width */
+  parentComponentName?: string;
 };
 
 export type NumberInputProps = BaseProps<number>;
@@ -78,6 +80,8 @@ function BaseInput({
   valueType,
   containerStyles,
   displayRangeViolationWarnings = true,
+  //DKDK parentComponentName
+  parentComponentName,
 }: BaseInputProps) {
   if (validator && (required || minValue != null || maxValue != null))
     console.log(
@@ -91,10 +95,20 @@ function BaseInput({
     helperText: '',
   });
 
+  // //DKDK
+  // console.log('containerStyles?.maxWidth =', containerStyles?.maxWidth);
+  // console.log('valueType =', valueType);
+
   const classes = makeStyles({
     root: {
       height: 36.5, // default height is 56 and is waaaay too tall
       // 34.5 is the height of the reset button, but 36.5 lines up better
+      // DKDK set width for date
+      // width: containerStyles?.maxWidth != null && valueType === 'date' ? 160 : '',
+      width:
+        parentComponentName !== 'HistogramFilter' && valueType === 'date'
+          ? 160
+          : '',
     },
   })();
 
@@ -169,6 +183,7 @@ function BaseInput({
 
   return (
     <div
+      //DKDK containerStyles is not used here - but bin control uses this!
       style={{ ...containerStyles }}
       onMouseOver={() => setFocused(true)}
       onMouseOut={() => setFocused(false)}
