@@ -70,7 +70,7 @@ export default function SubsettingDataGridModal({
   const studyRecord = useStudyRecord();
   const studyMetadata = useStudyMetadata();
   const subsettingClient = useSubsettingClient();
-  const featuredFields = useFeaturedFields(entities);
+  const featuredFields = useFeaturedFields(entities, 'downloads');
   const flattenedFields = useFlattenedFields(entities, 'downloads');
 
   const [currentEntity, setCurrentEntity] = useState<StudyEntity | undefined>(
@@ -353,6 +353,7 @@ export default function SubsettingDataGridModal({
               // we only want a user to be able to select variables from a single
               // entity at a time.
               rootEntity={{ ...currentEntity, children: [] }}
+              scope="downloads"
               selectedVariableDescriptors={selectedVariableDescriptors}
               onSelectedVariablesChange={handleSelectedVariablesChange}
             />

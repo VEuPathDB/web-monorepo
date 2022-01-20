@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 
 import { Field } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 
-import { StudyEntity } from '../../types/study';
+import { StudyEntity, VariableScope } from '../../types/study';
 import { VariableDescriptor } from '../../types/variable';
 import VariableList from './VariableList';
 import './VariableTree.scss';
@@ -17,6 +17,8 @@ import {
 export interface MultiSelectVariableTreeProps {
   /** The entity from which to derive the tree structure. */
   rootEntity: StudyEntity;
+  /** The "scope" of variables which should be offered. */
+  scope: VariableScope;
   /** Which variables have been selected? */
   selectedVariableDescriptors: Array<VariableDescriptor>;
   /** Callback to invoke when selected variables change. */
@@ -29,12 +31,13 @@ export interface MultiSelectVariableTreeProps {
  */
 export default function MultiSelectVariableTree({
   rootEntity,
+  scope,
   selectedVariableDescriptors,
   onSelectedVariablesChange,
 }: MultiSelectVariableTreeProps) {
   const entities = useStudyEntities(rootEntity);
   const valuesMap = useValuesMap(entities);
-  const flattenedFields = useFlattenedFields(entities, 'variableTree');
+  const flattenedFields = useFlattenedFields(entities, scope);
   const fieldsByTerm = useFlattenFieldsByTerm(flattenedFields);
   const fieldTree = useFieldTree(flattenedFields);
 

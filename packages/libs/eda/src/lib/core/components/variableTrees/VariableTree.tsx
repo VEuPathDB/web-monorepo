@@ -42,7 +42,7 @@ export default function VariableTree({
   const valuesMap = useValuesMap(entities);
   const flattenedFields = useFlattenedFields(entities, 'variableTree');
   const fieldsByTerm = useFlattenFieldsByTerm(flattenedFields);
-  const featuredFields = useFeaturedFields(entities);
+  const featuredFields = useFeaturedFields(entities, 'variableTree');
   const fieldTree = useFieldTree(flattenedFields);
 
   const disabledFields = useMemo(

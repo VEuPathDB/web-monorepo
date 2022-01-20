@@ -1,13 +1,16 @@
-import { Filter as EdaFilter, StringSetFilter } from '../types/filter';
+import { negate, partial } from 'lodash';
+
 import {
   Field,
   FieldTreeNode,
   Filter as WdkFilter,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
-import { DistributionResponse } from '../api/SubsettingClient';
-import { StudyEntity, VariableScope, VariableTreeNode } from '../types/study';
 import { getTree } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
 import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+
+import { DistributionResponse } from '../api/SubsettingClient';
+import { Filter as EdaFilter, StringSetFilter } from '../types/filter';
+import { StudyEntity, VariableScope, VariableTreeNode } from '../types/study';
 
 /*
  * These adapters can be used to convert filter objects between EDA and WDK
@@ -215,7 +218,7 @@ export function entitiesToFields(
       ...entity.variables
         // don't include variables which should be
         // "hid[den]From" the specified "scope"
-        .filter(shouldHideFromScope(scope))
+        .filter(negate(partial(shouldHideVariableInScope, scope)))
         // Before handing off to edaVariableToWdkField, we will
         // change the id of the variable to include the entityId.
         // This will make the id unique across the tree and prevent
@@ -243,13 +246,13 @@ export function entitiesToFields(
   });
 }
 
-export function shouldHideFromScope(scope: VariableScope) {
-  return function (variable: VariableTreeNode) {
-    return variable.hideFrom.every(
-      (hideFromScope) =>
-        hideFromScope !== 'everywhere' && hideFromScope !== scope
-    );
-  };
+export function shouldHideVariableInScope(
+  scope: VariableScope,
+  variable: VariableTreeNode
+) {
+  return variable.hideFrom.some(
+    (hideFromScope) => hideFromScope === 'everywhere' || hideFromScope === scope
+  );
 }
 
 export function makeFieldTree(fields: Field[]): FieldTreeNode {

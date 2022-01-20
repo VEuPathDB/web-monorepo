@@ -8,6 +8,7 @@ import { StudyEntity, VariableScope } from '../../types/study';
 import {
   edaVariableToWdkField,
   entitiesToFields,
+  shouldHideVariableInScope,
 } from '../../utils/wdk-filter-param-adapter';
 import { keyBy } from 'lodash';
 
@@ -57,12 +58,18 @@ export const useFlattenedFields = (
  * Similiarly to the `useFlattenedFields` hook, this hook will return
  * a flat list of Field objects.
  */
-export const useFeaturedFields = (entities: StudyEntity[]): Field[] =>
+export const useFeaturedFields = (
+  entities: StudyEntity[],
+  scope: VariableScope
+): Field[] =>
   useMemo(() => {
     return entities.flatMap((entity) =>
       entity.variables
         .filter(
-          (variable) => variable.type !== 'category' && variable.isFeatured
+          (variable) =>
+            !shouldHideVariableInScope(scope, variable) &&
+            variable.type !== 'category' &&
+            variable.isFeatured
         )
         .map((variable) => ({
           ...variable,
@@ -71,7 +78,7 @@ export const useFeaturedFields = (entities: StudyEntity[]): Field[] =>
         }))
         .map((variable) => edaVariableToWdkField(variable))
     );
-  }, [entities]);
+  }, [entities, scope]);
 
 /**
  * Construct a hierarchical representation of variable fields from
