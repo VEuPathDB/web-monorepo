@@ -48,7 +48,7 @@ const VariableDisplayType = t.keyof({
 
 export type VariableScope = t.TypeOf<typeof VariableScope>;
 export const VariableScope = t.keyof({
-  downloads: null,
+  download: null,
   variableTree: null,
 });
 
