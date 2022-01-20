@@ -5,13 +5,14 @@ import { NumberRange } from '../types/general';
 // function to compute truncation flags for Histogram-like
 // visualizations (continuous x-axis with known bounds, y-axis showing non-negative counts)
 export function truncationConfig(
-  defaultUIState: UIState,
+  defaultUIState: UIState | undefined,
   vizConfig: HistogramConfig,
   defaultDependentAxisRange: NumberRange | undefined
 ) {
-  // check whether truncated axis is required
   const truncationConfigIndependentAxisMin =
-    vizConfig?.independentAxisRange?.min == null
+    defaultUIState == null
+      ? false
+      : vizConfig?.independentAxisRange?.min == null
       ? false
       : defaultUIState.independentAxisRange.min !==
           vizConfig.independentAxisRange.min &&
@@ -20,7 +21,9 @@ export function truncationConfig(
       ? true
       : false;
   const truncationConfigIndependentAxisMax =
-    vizConfig?.independentAxisRange?.max == null
+    defaultUIState == null
+      ? false
+      : vizConfig?.independentAxisRange?.max == null
       ? false
       : defaultUIState.independentAxisRange.max !==
           vizConfig.independentAxisRange.max &&
@@ -28,10 +31,15 @@ export function truncationConfig(
           vizConfig.independentAxisRange.max
       ? true
       : false;
+
+  //DKDK set a hard-corded condition for histogram and barplot for dependentAxisRange.min for now
   const truncationConfigDependentAxisMin =
     defaultDependentAxisRange?.min == null
       ? false
       : vizConfig?.dependentAxisRange?.min == null
+      ? false
+      : defaultDependentAxisRange.min === 0 &&
+        vizConfig.dependentAxisRange.min === 0.001
       ? false
       : defaultDependentAxisRange.min != vizConfig.dependentAxisRange.min &&
         defaultDependentAxisRange.min < vizConfig.dependentAxisRange.min

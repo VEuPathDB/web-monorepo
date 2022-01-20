@@ -14,7 +14,7 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import PluginError from '../PluginError';
 
 // need to set for Barplot
@@ -62,10 +62,28 @@ import PlotLegend, {
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 // import { gray } from '../colors';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
-//DKDK a custom hook to preserve the status of checked legend items
+// a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
 
-type BarplotDataWithStatistics = (BarplotData | FacetedData<BarplotData>) &
+//DKDK concerning axis range control
+import { NumberOrDateRange, NumberRange } from '../../../types/general';
+import { NumberRangeInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateRangeInputs';
+// reusable util for computing truncationConfig
+//DKDK temporarily use variant
+// import { truncationConfig } from '../../../utils/truncation-config-utils';
+import { truncationConfig } from '../../../utils/truncation-config-utils-viz';
+// use Notification for truncation warning message
+import Notification from '@veupathdb/components/lib/components/widgets//Notification';
+import Button from '@veupathdb/components/lib/components/widgets/Button';
+import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
+import { UIState } from '../../filter/HistogramFilter';
+import { useDefaultDependentAxisRange } from '../../../hooks/computeDefaultDependentAxisRange';
+
+//DKDK export
+export type BarplotDataWithStatistics = (
+  | BarplotData
+  | FacetedData<BarplotData>
+) &
   CoverageStatistics;
 
 const plotContainerStyles = {
@@ -111,9 +129,10 @@ type ValueSpec = t.TypeOf<typeof ValueSpec>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 const ValueSpec = t.keyof({ count: null, proportion: null });
 
-type BarplotConfig = t.TypeOf<typeof BarplotConfig>;
+//DKDK export
+export type BarplotConfig = t.TypeOf<typeof BarplotConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-const BarplotConfig = t.intersection([
+export const BarplotConfig = t.intersection([
   t.type({
     dependentAxisLogScale: t.boolean,
     valueSpec: ValueSpec,
@@ -125,6 +144,8 @@ const BarplotConfig = t.intersection([
     showMissingness: t.boolean,
     // for custom legend: vizconfig.checkedLegendItems
     checkedLegendItems: t.array(t.string),
+    //DKDK dependent axis range control
+    dependentAxisRange: NumberRange,
   }),
 ]);
 
@@ -165,6 +186,12 @@ function BarplotViz(props: VisualizationProps) {
     [updateConfiguration, vizConfig]
   );
 
+  //DKDK set the state of truncation warning message
+  const [
+    truncatedDependentAxisWarning,
+    setTruncatedDependentAxisWarning,
+  ] = useState<string>('');
+
   // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
@@ -180,6 +207,8 @@ function BarplotViz(props: VisualizationProps) {
         // set undefined for variable change
         checkedLegendItems: undefined,
       });
+      //DKDK close truncation warnings
+      setTruncatedDependentAxisWarning('');
     },
     [updateVizConfig]
   );
@@ -337,41 +366,6 @@ function BarplotViz(props: VisualizationProps) {
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
 
-  // find dependent axis max value
-  const defaultDependentMaxValue = useMemo(() => {
-    if (isFaceted(data?.value)) {
-      return data?.value?.facets != null
-        ? max(
-            data.value.facets
-              .filter((facet) => facet.data != null)
-              .flatMap((facet) => facet.data?.series.flatMap((o) => o.value))
-          )
-        : undefined;
-    } else {
-      return data?.value?.series != null
-        ? max(data.value.series.flatMap((o) => o.value))
-        : undefined;
-    }
-  }, [data]);
-
-  // set min/max
-  const dependentAxisRange =
-    defaultDependentMaxValue != null
-      ? {
-          // set min as 0 (count, proportion) or 0.001 (proportion log scale)
-          min:
-            vizConfig.valueSpec === 'count'
-              ? vizConfig.dependentAxisLogScale
-                ? 0.1
-                : 0
-              : vizConfig.dependentAxisLogScale
-              ? 0.001
-              : 0,
-          // add 5 % margin
-          max: defaultDependentMaxValue * 1.05,
-        }
-      : undefined;
-
   // custom legend items for checkbox
   const legendItems: LegendItemsProps[] = useMemo(() => {
     const legendData = !isFaceted(data.value)
@@ -418,6 +412,77 @@ function BarplotViz(props: VisualizationProps) {
     vizConfig.checkedLegendItems
   );
 
+  // DKDK using custom hook
+  const defaultDependentAxisRange = useDefaultDependentAxisRange(
+    data,
+    vizConfig,
+    updateVizConfig,
+    'Barplot'
+  );
+
+  console.log('defaultDependentAxisRange =', defaultDependentAxisRange);
+  console.log('vizConfig.dependentAxisRange =', vizConfig.dependentAxisRange);
+
+  //DKDK axis range control
+  const handleDependentAxisRangeChange = useCallback(
+    (newRange?: NumberRange) => {
+      updateVizConfig({
+        dependentAxisRange: newRange,
+      });
+    },
+    [updateVizConfig]
+  );
+
+  const handleDependentAxisSettingsReset = useCallback(() => {
+    updateVizConfig({
+      dependentAxisRange: defaultDependentAxisRange,
+      dependentAxisLogScale: false,
+      //DKDK valueSpec should not be changed when resetting ?
+      // valueSpec: 'count',
+    });
+    //DKDK add reset for truncation message as well
+    setTruncatedDependentAxisWarning('');
+  }, [
+    // defaultUIState.dependentAxisLogScale,
+    updateVizConfig,
+  ]);
+
+  // set truncation flags: will see if this is reusable with other application
+  const {
+    truncationConfigIndependentAxisMin,
+    truncationConfigIndependentAxisMax,
+    truncationConfigDependentAxisMin,
+    truncationConfigDependentAxisMax,
+  } = useMemo(
+    () =>
+      //DKDK barplot does not have independent axis range control so send undefined for defaultUIState
+      truncationConfig(undefined, vizConfig, defaultDependentAxisRange),
+    [
+      vizConfig.xAxisVariable,
+      vizConfig.dependentAxisRange,
+      defaultDependentAxisRange,
+    ]
+  );
+
+  useEffect(() => {
+    if (
+      (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) &&
+      !data.pending
+    ) {
+      setTruncatedDependentAxisWarning(
+        'Data may have been truncated by range selection, as indicated by the light gray shading'
+      );
+    }
+  }, [truncationConfigDependentAxisMin, truncationConfigDependentAxisMax]);
+
+  console.log(
+    'truncationConfig = ',
+    truncationConfigIndependentAxisMin,
+    truncationConfigIndependentAxisMax,
+    truncationConfigDependentAxisMin,
+    truncationConfigDependentAxisMax
+  );
+
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
     plotContainerStyles,
@@ -440,8 +505,20 @@ function BarplotViz(props: VisualizationProps) {
     showSpinner: data.pending || filteredCounts.pending,
     dependentAxisLogScale: vizConfig.dependentAxisLogScale,
     // set dependent axis range for log scale
-    dependentAxisRange: dependentAxisRange,
+    //DKDK truncation axis range control
+    dependentAxisRange: vizConfig.dependentAxisRange,
     displayLibraryControls: false,
+    //DKDK for faceted plot, add axisTruncationConfig props here
+    axisTruncationConfig: {
+      independentAxis: {
+        min: truncationConfigIndependentAxisMin,
+        max: truncationConfigIndependentAxisMax,
+      },
+      dependentAxis: {
+        min: truncationConfigDependentAxisMin,
+        max: truncationConfigDependentAxisMax,
+      },
+    },
   };
 
   const plotNode = (
@@ -466,26 +543,80 @@ function BarplotViz(props: VisualizationProps) {
           ref={plotRef}
           // for custom legend: pass checkedLegendItems to PlotlyPlot
           checkedLegendItems={checkedLegendItems}
+          //DKDK axis range control
+          dependentAxisRange={vizConfig.dependentAxisRange}
+          //DKDK pass axisTruncationConfig
+          axisTruncationConfig={{
+            independentAxis: {
+              min: truncationConfigIndependentAxisMin,
+              max: truncationConfigIndependentAxisMax,
+            },
+            dependentAxis: {
+              min: truncationConfigDependentAxisMin,
+              max: truncationConfigDependentAxisMax,
+            },
+          }}
           {...plotProps}
         />
       )}
 
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <LabelledGroup label="Y-axis">
-          <Switch
-            label="Log Scale:"
-            state={vizConfig.dependentAxisLogScale}
-            onStateChange={onDependentAxisLogScaleChange}
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <Switch
+              label="Log Scale:"
+              state={vizConfig.dependentAxisLogScale}
+              onStateChange={onDependentAxisLogScaleChange}
+            />
+            <div style={{ width: '4em' }}>{''}</div>
+            <RadioButtonGroup
+              selectedOption={vizConfig.valueSpec}
+              options={['count', 'proportion']}
+              onOptionSelected={(newOption) => {
+                if (newOption === 'proportion') {
+                  onValueSpecChange('proportion');
+                } else {
+                  onValueSpecChange('count');
+                }
+              }}
+            />
+          </div>
+          {/* DKDK Y-axis range control */}
+          <NumberRangeInput
+            label="Range"
+            //DKDK add range
+            range={vizConfig.dependentAxisRange ?? defaultDependentAxisRange}
+            onRangeChange={(newRange?: NumberOrDateRange) => {
+              handleDependentAxisRangeChange(newRange as NumberRange);
+            }}
+            allowPartialRange={false}
+            //DKDK set maxWidth
+            containerStyles={{ maxWidth: '350px' }}
           />
-          <RadioButtonGroup
-            selectedOption={vizConfig.valueSpec}
-            options={['count', 'proportion']}
-            onOptionSelected={(newOption) => {
-              if (newOption === 'proportion') {
-                onValueSpecChange('proportion');
-              } else {
-                onValueSpecChange('count');
-              }
+          {/* truncation notification */}
+          {truncatedDependentAxisWarning ? (
+            <Notification
+              title={''}
+              text={truncatedDependentAxisWarning}
+              // this was defined as LIGHT_BLUE
+              color={'#5586BE'}
+              onAcknowledgement={() => {
+                setTruncatedDependentAxisWarning('');
+              }}
+              showWarningIcon={true}
+              //DKDK change maxWidth
+              containerStyles={{ maxWidth: '350px' }}
+            />
+          ) : null}
+          <Button
+            type={'outlined'}
+            //DKDK change text
+            text={'Reset to defaults'}
+            onClick={handleDependentAxisSettingsReset}
+            containerStyles={{
+              paddingTop: '1.0em',
+              width: '50%',
+              float: 'right',
             }}
           />
         </LabelledGroup>
