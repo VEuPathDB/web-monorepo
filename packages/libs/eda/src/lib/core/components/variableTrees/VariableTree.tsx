@@ -40,7 +40,7 @@ export default function VariableTree({
 }: VariableTreeProps) {
   const entities = useStudyEntities(rootEntity);
   const valuesMap = useValuesMap(entities);
-  const flattenedFields = useFlattenedFields(entities);
+  const flattenedFields = useFlattenedFields(entities, 'variableTree');
   const fieldsByTerm = useFlattenFieldsByTerm(flattenedFields);
   const featuredFields = useFeaturedFields(entities);
   const fieldTree = useFieldTree(flattenedFields);

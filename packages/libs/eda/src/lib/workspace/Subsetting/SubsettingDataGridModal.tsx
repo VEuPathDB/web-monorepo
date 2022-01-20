@@ -71,7 +71,7 @@ export default function SubsettingDataGridModal({
   const studyMetadata = useStudyMetadata();
   const subsettingClient = useSubsettingClient();
   const featuredFields = useFeaturedFields(entities);
-  const flattenedFields = useFlattenedFields(entities);
+  const flattenedFields = useFlattenedFields(entities, 'downloads');
 
   const [currentEntity, setCurrentEntity] = useState<StudyEntity | undefined>(
     undefined

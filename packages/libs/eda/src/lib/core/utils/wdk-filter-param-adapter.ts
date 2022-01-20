@@ -5,7 +5,7 @@ import {
   Filter as WdkFilter,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 import { DistributionResponse } from '../api/SubsettingClient';
-import { StudyEntity, VariableTreeNode } from '../types/study';
+import { StudyEntity, VariableScope, VariableTreeNode } from '../types/study';
 import { getTree } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
 import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
@@ -179,7 +179,8 @@ export function toWdkVariableSummary(
     "precision": 1,
     "term": "PCO_0000024/ENVO_00000004",
     "type": "string",
-    "variableName": "[\"SITE\"]"
+    "variableName": "[\"SITE\"]",
+    "hideFrom": []
   }
  *
  * Of note, `parent` will be a reference to one of the following:
@@ -189,8 +190,14 @@ export function toWdkVariableSummary(
  * 
  * `Term` is a reference to the item itself and can be either an 
  * entity, variable category, or variable itself.
+ *
+ * Variables which should be "hid[den]From" the specified
+ * "scope" will not be included.
  */
-export function entitiesToFields(entities: StudyEntity[]) {
+export function entitiesToFields(
+  entities: StudyEntity[],
+  scope: VariableScope
+) {
   return entities.flatMap((entity) => {
     // Create a Set of variableId so we can lookup parentIds
     const variableIds = new Set(entity.variables.map((v) => v.id));
@@ -206,8 +213,9 @@ export function entitiesToFields(entities: StudyEntity[]) {
         display: entity.displayName,
       },
       ...entity.variables
-        // add condition not to include displayType === 'hidden'
-        .filter((variable) => variable.displayType !== 'hidden')
+        // don't include variables which should be
+        // "hid[den]From" the specified "scope"
+        .filter(shouldHideFromScope(scope))
         // Before handing off to edaVariableToWdkField, we will
         // change the id of the variable to include the entityId.
         // This will make the id unique across the tree and prevent
@@ -233,6 +241,15 @@ export function entitiesToFields(entities: StudyEntity[]) {
         .map((variable) => edaVariableToWdkField(variable)),
     ];
   });
+}
+
+export function shouldHideFromScope(scope: VariableScope) {
+  return function (variable: VariableTreeNode) {
+    return variable.hideFrom.every(
+      (hideFromScope) =>
+        hideFromScope !== 'everywhere' && hideFromScope !== scope
+    );
+  };
 }
 
 export function makeFieldTree(fields: Field[]): FieldTreeNode {

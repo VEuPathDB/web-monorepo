@@ -4,7 +4,7 @@ import { Field } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Type
 import { getTree } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
 import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
-import { StudyEntity } from '../../types/study';
+import { StudyEntity, VariableScope } from '../../types/study';
 import {
   edaVariableToWdkField,
   entitiesToFields,
@@ -45,8 +45,10 @@ export const useValuesMap = (entities: StudyEntity[]) =>
 /**
  * Memoized hook that delegates to {@link entitiesToFields}
  */
-export const useFlattenedFields = (entities: StudyEntity[]) =>
-  useMemo(() => entitiesToFields(entities), [entities]);
+export const useFlattenedFields = (
+  entities: StudyEntity[],
+  scope: VariableScope
+) => useMemo(() => entitiesToFields(entities, scope), [entities, scope]);
 
 /**
  * Identity "fields" from the entity hierarchy which have been marked
