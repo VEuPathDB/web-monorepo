@@ -88,18 +88,49 @@ const Template: Story<ExpandablePanelProps> = (args) => {
     </UIThemeProvider>
   );
 };
-export const Basic = Template.bind({});
-Basic.args = {
-  title: 'Expandable Panel',
+export const DefaultPreset = Template.bind({});
+DefaultPreset.args = {
+  title: 'Expandable Panel w/ Default Style Preset',
   state: 'closed',
+  stylePreset: 'default',
   children: <ModalContent />,
   styleOverrides: { container: { maxWidth: '70%' } },
 } as ExpandablePanelProps;
 
-export const UseTheme = Template.bind({});
-UseTheme.args = {
-  title: 'Themed Expandable Panel',
+export const SimpleSubtitle = Template.bind({});
+SimpleSubtitle.args = {
+  title: 'Expandable Panel w/ Simple Subtitle',
+  subTitle: 'Here is a simple subtitle',
   state: 'closed',
+  stylePreset: 'default',
+  children: <ModalContent />,
+  styleOverrides: { container: { maxWidth: '70%' } },
+} as ExpandablePanelProps;
+
+export const ComplexSubtitle = Template.bind({});
+ComplexSubtitle.args = {
+  title: 'Expandable Panel w/ Simple Subtitle',
+  subTitle: {
+    description: 'Updated file x to account for bug y.',
+    date: '2021-11-01',
+  },
+  state: 'closed',
+  stylePreset: 'default',
+  children: <ModalContent />,
+  styleOverrides: { container: { maxWidth: '70%' } },
+} as ExpandablePanelProps;
+
+export const ThemedDefaultPreset = Template.bind({});
+ThemedDefaultPreset.args = {
+  ...DefaultPreset.args,
+  title: 'Themed Expandable Panel',
   themeRole: 'primary',
   children: <ModalContent themeRole='primary' />,
+} as ExpandablePanelProps;
+
+export const FloatingStylePreset = Template.bind({});
+FloatingStylePreset.args = {
+  ...DefaultPreset.args,
+  title: 'Expandable Panel w/ Floating Style Preset',
+  stylePreset: 'floating',
 } as ExpandablePanelProps;
