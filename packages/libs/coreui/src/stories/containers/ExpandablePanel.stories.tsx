@@ -1,14 +1,21 @@
 import { useEffect, useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 
-import { gray, mutedGreen, mutedMagenta } from '../../definitions/colors';
+import {
+  gray,
+  mutedGreen,
+  mutedMagenta,
+  orange,
+} from '../../definitions/colors';
 
 import ExpandablePanel, {
   ExpandablePanelProps,
 } from '../../components/containers/ExpandablePanel';
 import { FilledButton } from '../../components/buttons';
-import { secondaryFont } from '../../styleDefinitions/typography';
+import typography, { secondaryFont } from '../../styleDefinitions/typography';
 import { UIThemeProvider } from '../../components/theming';
+import { purple } from '@material-ui/core/colors';
+import { H6 } from '../../components/headers';
 
 const ModalContent = ({
   themeRole,
@@ -126,6 +133,98 @@ ThemedDefaultPreset.args = {
   title: 'Themed Expandable Panel',
   themeRole: 'primary',
   children: <ModalContent themeRole='primary' />,
+} as ExpandablePanelProps;
+
+export const StyleOverrides: Story<ExpandablePanelProps> = (args) => {
+  const [panelState, setPanelState] = useState<ExpandablePanelProps['state']>(
+    args.state
+  );
+
+  useEffect(() => {
+    setPanelState(args.state);
+  }, [args.state]);
+
+  return (
+    <UIThemeProvider
+      theme={{
+        palette: {
+          primary: { hue: mutedGreen, level: 500 },
+          secondary: { hue: mutedMagenta, level: 500 },
+        },
+      }}
+    >
+      <ExpandablePanel {...args} state={panelState}></ExpandablePanel>
+    </UIThemeProvider>
+  );
+};
+
+StyleOverrides.args = {
+  ...DefaultPreset.args,
+  title: 'Supports Style Overrides',
+  children: (
+    <div css={{ padding: 15 }}>
+      <H6
+        text="You can change many aspects of the component's style:"
+        additionalStyles={{ margin: 0 }}
+        color={orange[100]}
+      />
+      <ul css={[typography.p, { color: orange[100], fontSize: 13 }]}>
+        <li>
+          General outer container attributes (generally used for positioning)
+        </li>
+        <li>Border attributes</li>
+        <li>Background color</li>
+        <li>Icon and text colors</li>
+        <li>
+          Most importantly, you can provide these overrides on a per state
+          (closed, focused, open) basis.
+        </li>
+      </ul>
+    </div>
+  ),
+  styleOverrides: {
+    container: { maxWidth: '70%' },
+    closed: {
+      header: {
+        backgroundColor: purple[100],
+        iconColor: orange[600],
+        textColor: orange[600],
+      },
+      border: {
+        color: purple[200],
+        radius: 5,
+        width: 2,
+      },
+    },
+    focused: {
+      header: {
+        backgroundColor: purple[600],
+        iconColor: orange[300],
+        textColor: orange[300],
+      },
+      border: {
+        color: orange[300],
+        radius: 5,
+        width: 5,
+      },
+    },
+    open: {
+      header: {
+        backgroundColor: purple[800],
+        iconColor: orange[300],
+        textColor: orange[300],
+      },
+      border: {
+        color: orange[300],
+        radius: 5,
+        width: 5,
+      },
+      content: {
+        backgroundColor: purple[600],
+        divider: { color: orange[300], thickness: 5 },
+      },
+    },
+  },
 } as ExpandablePanelProps;
 
 export const FloatingStylePreset = Template.bind({});
