@@ -9,6 +9,7 @@ import testDataStraddling from './fixture-data/geoclust-date-dateline-straddling
 import BoundsDriftMarker from '../map/BoundsDriftMarker';
 import { defaultAnimationDuration } from '../map/config/map.json';
 import { leafletZoomLevelToGeohashLevel } from '../map/utils/leaflet-geohash';
+import { Viewport } from 'react-leaflet';
 import '../map/TempIconHack';
 
 export default {
@@ -69,6 +70,7 @@ const getDatelineArgs = () => {
   const [markerElements, setMarkerElements] = useState<
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
+  const [viewport] = useState<Viewport>({ center: [0, 0], zoom: 2 });
   const duration = defaultAnimationDuration;
 
   const handleViewportChanged = useCallback(
@@ -79,10 +81,10 @@ const getDatelineArgs = () => {
   );
 
   return {
-    viewport: { center: [0, 0] as [number, number], zoom: 2 },
+    viewport: viewport,
     height: '100vh',
     width: '100vw',
-    onViewportChanged: handleViewportChanged,
+    onBoundsChanged: handleViewportChanged,
     markers: markerElements,
     animation: {
       method: 'geohash',
@@ -90,7 +92,7 @@ const getDatelineArgs = () => {
       animationFunction: geohashAnimation,
     },
     showGrid: true,
-    leafletZoomLevelToGeohashLevel: leafletZoomLevelToGeohashLevel,
+    zoomLevelToGeohashLevel: leafletZoomLevelToGeohashLevel,
   };
 };
 
