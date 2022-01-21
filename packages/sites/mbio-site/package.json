@@ -9,13 +9,17 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@veupathdb/wdk-client": "^0.1.1-alpha.12",
-    "@veupathdb/web-common": "^0.1.1-alpha.11"
+    "@veupathdb/wdk-client": "^0.5.4",
+    "@veupathdb/web-common": "^0.2.1"
   },
   "resolutions": {
     "react": "16",
     "react-dom": "16",
     "@types/react": "16",
     "@types/react-dom": "16"
+  },
+  "devDependencies": {
+    "bubleify": "^2.0.0",
+    "ify-loader": "^1.1.0"
   }
 }
