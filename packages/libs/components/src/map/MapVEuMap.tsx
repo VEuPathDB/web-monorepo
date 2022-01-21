@@ -10,7 +10,7 @@ const { BaseLayer } = LayersControl;
 import { Viewport, Map, TileLayer, LayersControl } from 'react-leaflet';
 import SemanticMarkers from './SemanticMarkers';
 import 'leaflet/dist/leaflet.css';
-import '../styles/map_styles.css';
+import '../../dist/css/map_styles.css';
 import CustomGridLayer from './CustomGridLayer';
 import MouseTools, { MouseMode } from './MouseTools';
 
@@ -24,11 +24,16 @@ import MouseTools, { MouseMode } from './MouseTools';
 export interface MapVEuMapProps {
   /** Center lat/long and zoom level */
   viewport: Viewport;
+  /** update handler */
+  onViewportChanged: (viewport: Viewport) => void;
 
   /** Height and width of plot element */
   height: CSSProperties['height'];
   width: CSSProperties['width'];
-  onViewportChanged: (bvp: BoundsViewport) => void;
+
+  /** callback for when viewport has changed, giving access to the bounding box */
+  onBoundsChanged: (bvp: BoundsViewport) => void;
+
   markers: ReactElement<BoundsDriftMarkerProps>[];
   recenterMarkers?: boolean;
   //DKDK add this for closing sidebar at MapVEuMap: passing setSidebarCollapsed()
@@ -38,7 +43,18 @@ export interface MapVEuMapProps {
     duration: number;
     animationFunction: AnimationFunction;
   } | null;
-  showGrid: boolean;
+  /** Should a geohash-based grid be shown?
+   * Optional. See also zoomLevelToGeohashLevel
+   **/
+  showGrid?: boolean;
+  /** A function to map from Leaflet zoom level to Geohash level
+   *
+   * Optional, but required for grid functionality if showGrid is true
+   **/
+  zoomLevelToGeohashLevel?: (leafletZoomLevel: number) => number;
+  /**
+   * Should the mouse-mode (regular/magnifying glass) icons be shown and active?
+   **/
   showMouseToolbar?: boolean;
 }
 
@@ -47,10 +63,12 @@ export default function MapVEuMap({
   height,
   width,
   onViewportChanged,
+  onBoundsChanged,
   markers,
   animation,
   recenterMarkers = true,
   showGrid,
+  zoomLevelToGeohashLevel,
   showMouseToolbar,
 }: MapVEuMapProps) {
   // this is the React Map component's onViewPortChanged handler
@@ -60,13 +78,9 @@ export default function MapVEuMap({
   // which is useful for fetching data to show on the map.
   // The Viewport info (center and zoom) handled here would be useful for saving a
   // 'bookmarkable' state of the map.
-  const [state, updateState] = useState<Viewport>(viewport as Viewport);
   const [mouseMode, setMouseMode] = useState<MouseMode>('default');
   // Whether the user is currently dragging the map
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  const handleViewportChanged = (viewport: Viewport) => {
-    updateState(viewport);
-  };
 
   // BM: Why doesn't this work when wrapped in useEffect()?
   // useEffect(() => {
@@ -81,9 +95,9 @@ export default function MapVEuMap({
 
   return (
     <Map
-      viewport={state}
+      viewport={viewport}
       style={{ height, width }}
-      onViewportChanged={handleViewportChanged}
+      onViewportChanged={onViewportChanged}
       className={mouseMode === 'magnification' ? 'cursor-zoom-in' : ''}
       // DKDK testing worldmap issue: minZomm needs to be 2 (FHD) or 3 (4K): set to be 2
       minZoom={2}
@@ -97,7 +111,7 @@ export default function MapVEuMap({
       />
 
       <SemanticMarkers
-        onViewportChanged={onViewportChanged}
+        onBoundsChanged={onBoundsChanged}
         markers={markers}
         animation={animation}
         recenterMarkers={recenterMarkers}
@@ -107,7 +121,9 @@ export default function MapVEuMap({
         <MouseTools mouseMode={mouseMode} setMouseMode={setMouseMode} />
       )}
 
-      {showGrid ? <CustomGridLayer /> : null}
+      {showGrid && zoomLevelToGeohashLevel ? (
+        <CustomGridLayer zoomLevelToGeohashLevel={zoomLevelToGeohashLevel} />
+      ) : null}
 
       <LayersControl position="topright">
         <BaseLayer checked name="street">

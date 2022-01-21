@@ -4,12 +4,14 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 import { BoundsViewport } from '../map/Types';
 import { BoundsDriftMarkerProps } from '../map/BoundsDriftMarker';
 import { defaultAnimationDuration } from '../map/config/map.json';
+import { leafletZoomLevelToGeohashLevel } from '../map/utils/leaflet-geohash';
 import {
   getSpeciesDonuts,
   getSpeciesBasicMarkers,
 } from './api/getMarkersFromFixtureData';
 
 import { LeafletMouseEvent } from 'leaflet';
+import { Viewport } from 'react-leaflet';
 
 //DKDK sidebar & legend
 import MapVEuMap, { MapVEuMapProps } from '../map/MapVEuMap';
@@ -86,7 +88,7 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
   const [legendData, setLegendData] = useState<LegendProps['data']>([]);
-
+  const [viewport] = useState<Viewport>({ center: [13, 16], zoom: 4 });
   const handleViewportChanged = useCallback(
     async (bvp: BoundsViewport) => {
       const markers = await getSpeciesDonuts(
@@ -104,10 +106,11 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
     <>
       <MapVEuMap
         {...args}
-        viewport={{ center: [13, 16], zoom: 4 }}
-        onViewportChanged={handleViewportChanged}
+        viewport={viewport}
+        onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         animation={defaultAnimation}
+        zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
@@ -151,9 +154,10 @@ export const FirstRequest: Story<MapVEuMapProps> = (args) => {
       <MapVEuMap
         {...args}
         viewport={{ center: [13, 16], zoom: 4 }}
-        onViewportChanged={handleViewportChanged}
+        onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         animation={defaultAnimation}
+        zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
@@ -227,9 +231,10 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
       <MapVEuMap
         {...args}
         viewport={{ center: [13, 16], zoom: 4 }}
-        onViewportChanged={handleViewportChanged}
+        onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         animation={defaultAnimation}
+        zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
       />
       <MapVEuLegendSampleList
         legendType={legendType}

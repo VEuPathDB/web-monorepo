@@ -5,6 +5,7 @@ import MapVEuMap, { MapVEuMapProps } from '../map/MapVEuMap';
 import { BoundsViewport } from '../map/Types';
 import { BoundsDriftMarkerProps } from '../map/BoundsDriftMarker';
 import { defaultAnimationDuration } from '../map/config/map.json';
+import { leafletZoomLevelToGeohashLevel } from '../map/utils/leaflet-geohash';
 import {
   getCollectionDateChartMarkers,
   getCollectionDateBasicMarkers,
@@ -87,11 +88,12 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
       <MapVEuMap
         {...args}
         viewport={{ center: [13, 0], zoom: 6 }}
-        onViewportChanged={handleViewportChanged}
+        onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         showGrid={true}
         showMouseToolbar={true}
         animation={defaultAnimation}
+        zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
@@ -177,11 +179,12 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
       <MapVEuMap
         {...args}
         viewport={{ center: [13, 0], zoom: 6 }}
-        onViewportChanged={handleViewportChanged}
+        onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         showGrid={true}
         showMouseToolbar={true}
         animation={defaultAnimation}
+        zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
