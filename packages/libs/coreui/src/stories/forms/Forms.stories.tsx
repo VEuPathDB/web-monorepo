@@ -9,6 +9,8 @@ import MultilineTextField, {
 } from '../../components/forms/MultilineTextField';
 import UIThemeProvider from '../../components/theming/UIThemeProvider';
 import { mutedCyan } from '../../definitions/colors';
+import { FloatingButton, FilledButton } from '../../components/buttons';
+import { Download } from '../../components/icons';
 
 export default {
   title: 'Forms/Example',
