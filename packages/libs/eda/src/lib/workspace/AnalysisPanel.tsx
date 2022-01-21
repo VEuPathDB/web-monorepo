@@ -53,6 +53,8 @@ const AnalysisTabErrorBoundary = ({
         We're sorry, something went wrong with this tab. Please change to
         another tab or{' '}
         {
+          // Disabling error about invalid a tag href
+          // eslint-disable-next-line jsx-a11y/anchor-is-valid
           <a href="" title="Reload the page.">
             reload the page
           </a>
