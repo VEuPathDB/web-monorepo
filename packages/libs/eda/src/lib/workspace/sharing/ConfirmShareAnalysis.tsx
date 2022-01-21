@@ -96,7 +96,7 @@ export default function ConfirmShareAnalysis({
         >
           <FloatingButton
             themeRole="secondary"
-            iconOnly
+            ariaLabel="Copy URL to Clipboard"
             icon={Copy}
             tooltip="Copy URL to Clipboard"
             onPress={() => navigator.clipboard.writeText(sharingURL)}
