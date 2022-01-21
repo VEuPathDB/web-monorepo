@@ -4,7 +4,7 @@ import Path from 'path';
 
 // Components
 import {
-  Download,
+  // Download,
   Table,
 } from '@veupathdb/core-components/dist/components/icons';
 
@@ -15,13 +15,13 @@ import AddIcon from '@material-ui/icons/Add';
 
 // Hooks
 import { useStudyRecord } from '../core/hooks/workspace';
-import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
+// import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 
 // Definitions & Utilities
 import { cx } from './Utils';
 import { AnalysisState, DEFAULT_ANALYSIS_NAME } from '../core';
-import { LinkAttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { Action } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUiActions';
+// import { LinkAttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+// import { Action } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUiActions';
 import { getAnalysisId, isSavedAnalysis } from '../core/utils/analysis';
 
 interface EDAWorkspaceHeadingProps {
@@ -34,7 +34,7 @@ export function EDAWorkspaceHeading({
   analysisState,
 }: EDAWorkspaceHeadingProps) {
   const studyRecord = useStudyRecord();
-  const attemptAction = useAttemptActionCallback();
+  // const attemptAction = useAttemptActionCallback();
   const analysis = analysisState?.analysis;
   const [dialogIsOpen, setDialogIsOpen] = useState(false);
   const { url } = useRouteMatch();

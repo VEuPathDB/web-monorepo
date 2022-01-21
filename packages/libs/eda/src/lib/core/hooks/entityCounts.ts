@@ -20,10 +20,10 @@ export function useEntityCounts(filters?: Filter[]) {
     () => debounce(setCounter, 2000, { leading: true, trailing: true }),
     []
   );
-  useEffect(() => debouncedSetCounter.cancel, []);
+  useEffect(() => debouncedSetCounter.cancel, [debouncedSetCounter.cancel]);
   useEffect(() => {
     debouncedSetCounter((count) => count + 1);
-  }, [rootEntity, subsettingClient, id, filtersJSON]);
+  }, [rootEntity, subsettingClient, id, filtersJSON, debouncedSetCounter]);
 
   return usePromise(
     useCallback(async () => {

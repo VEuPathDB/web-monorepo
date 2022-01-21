@@ -54,7 +54,7 @@ export function AnalysisNameDialog({
   return (
     <Dialog
       open={isOpen}
-      onBackdropClick={handleCancel}
+      onClose={handleCancel}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Button } from '@material-ui/core';
 
 import PopoverButton from '@veupathdb/components/lib/components/widgets/PopoverButton';
