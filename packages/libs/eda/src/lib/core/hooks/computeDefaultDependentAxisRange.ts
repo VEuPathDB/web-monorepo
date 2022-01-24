@@ -14,7 +14,12 @@ import {
   BarplotDataWithStatistics,
   BarplotConfig,
 } from '../components/visualizations/implementations/BarplotVisualization';
+import {
+  BoxplotDataWithCoverage,
+  BoxplotConfig,
+} from '../components/visualizations/implementations/BoxplotVisualization';
 import { min, max, map } from 'lodash';
+import { Variable } from '../types/study';
 
 /**
  * A custom hook to compute default dependent axis range
@@ -29,23 +34,26 @@ type defaultDependentAxisRangeProps =
 
 export function useDefaultDependentAxisRange(
   data: PromiseHookState<
-    HistogramDataWithCoverageStatistics | BarplotDataWithStatistics | undefined
+    | HistogramDataWithCoverageStatistics
+    | BarplotDataWithStatistics
+    | BoxplotDataWithCoverage
+    | undefined
   >,
-  vizConfig: HistogramConfig | BarplotConfig,
-  updateVizConfig: (
-    newConfig: Partial<HistogramConfig | BarplotConfig>
-  ) => void,
-  plotType?: 'Histogram' | 'Barplot' | undefined
+  vizConfig: HistogramConfig | BarplotConfig | BoxplotConfig,
+  //DKDK HistogramConfig contains most options
+  updateVizConfig: (newConfig: Partial<HistogramConfig>) => void,
+  plotType?: 'Histogram' | 'Barplot' | 'Boxplot' | undefined,
+  yAxisVariable?: Variable
 ): defaultDependentAxisRangeProps {
   // find max of stacked array, especially with overlayVariable
   const defaultDependentAxisMinMax = useMemo(() => {
-    if (plotType == null || plotType == 'Histogram') {
+    if (plotType == null || plotType == 'Histogram')
       return histogramDefaultDependentAxisMinMax(
         data as PromiseHookState<
           HistogramDataWithCoverageStatistics | undefined
         >
       );
-    } else if (plotType == 'Barplot') {
+    else if (plotType == 'Barplot')
       //DKDK barplot only computes max value
       return {
         min: 0,
@@ -53,7 +61,12 @@ export function useDefaultDependentAxisRange(
           data as PromiseHookState<BarplotDataWithStatistics | undefined>
         ),
       };
-    }
+    //DKDK to-do
+    else if (plotType === 'Boxplot')
+      return boxplotDefaultDependentAxisMinMax(
+        data as PromiseHookState<BoxplotDataWithCoverage | undefined>,
+        yAxisVariable
+      );
   }, [data]);
 
   // //DKDK
@@ -62,28 +75,40 @@ export function useDefaultDependentAxisRange(
   // DKDK set useMemo to avoid infinite loop
   // set default dependent axis range for better displaying tick labels in log-scale
   const defaultDependentAxisRange = useMemo(() => {
-    return defaultDependentAxisMinMax?.min != null &&
-      defaultDependentAxisMinMax?.max != null
-      ? {
-          // set min as 0 (count, proportion) for non-logscale
-          min:
-            vizConfig.valueSpec === 'count'
-              ? 0
-              : vizConfig.dependentAxisLogScale
-              ? // determine min based on data for log-scale at proportion
-                // need to check defaultDependentAxisMinMax.min !== 0
-                defaultDependentAxisMinMax.min !== 0 &&
-                defaultDependentAxisMinMax.min < 0.001
-                ? defaultDependentAxisMinMax.min * 0.8
-                : 0.001
-              : 0,
-          max: defaultDependentAxisMinMax.max * 1.05,
-        }
-      : undefined;
+    if (plotType === 'Histogram' || plotType === 'Barplot')
+      return defaultDependentAxisMinMax?.min != null &&
+        defaultDependentAxisMinMax?.max != null
+        ? {
+            // set min as 0 (count, proportion) for non-logscale
+            min:
+              (vizConfig as HistogramConfig | BarplotConfig).valueSpec ===
+              'count'
+                ? 0
+                : (vizConfig as HistogramConfig | BarplotConfig)
+                    .dependentAxisLogScale
+                ? // determine min based on data for log-scale at proportion
+                  // need to check defaultDependentAxisMinMax.min !== 0
+                  defaultDependentAxisMinMax.min !== 0 &&
+                  defaultDependentAxisMinMax.min < 0.001
+                  ? defaultDependentAxisMinMax.min * 0.8
+                  : 0.001
+                : 0,
+            max: defaultDependentAxisMinMax.max * 1.05,
+          }
+        : undefined;
+    //DKDK to-do
+    else if (plotType === 'Boxplot')
+      return defaultDependentAxisMinMax?.min != null &&
+        defaultDependentAxisMinMax?.max != null
+        ? {
+            min: defaultDependentAxisMinMax.min,
+            max: defaultDependentAxisMinMax.max * 1.05,
+          }
+        : undefined;
   }, [
     defaultDependentAxisMinMax,
-    vizConfig.valueSpec,
-    vizConfig.dependentAxisLogScale,
+    (vizConfig as HistogramConfig | BarplotConfig).valueSpec,
+    (vizConfig as HistogramConfig | BarplotConfig).dependentAxisLogScale,
   ]);
 
   // DKDK use this to avoid infinite loop: also use useLayoutEffect to avoid async/ghost issue
@@ -110,7 +135,7 @@ export function useDefaultDependentAxisRange(
 
 function histogramDefaultDependentAxisMinMax(
   data: PromiseHookState<HistogramDataWithCoverageStatistics | undefined>
-): any {
+) {
   if (isFaceted(data.value)) {
     const facetMinMaxes =
       data?.value?.facets != null
@@ -138,7 +163,7 @@ function histogramDefaultDependentAxisMinMax(
 //DKDK compute max only
 function barplotDefaultDependentAxisMax(
   data: PromiseHookState<BarplotDataWithStatistics | undefined>
-): any {
+) {
   if (isFaceted(data?.value)) {
     return data?.value?.facets != null
       ? max(
@@ -150,6 +175,84 @@ function barplotDefaultDependentAxisMax(
   } else {
     return data?.value?.series != null
       ? max(data.value.series.flatMap((o) => o.value))
+      : undefined;
+  }
+}
+
+function boxplotDefaultDependentAxisMinMax(
+  data: PromiseHookState<BoxplotDataWithCoverage | undefined>,
+  yAxisVariable: Variable | undefined
+) {
+  if (isFaceted(data?.value)) {
+    // may not need to check yAxisVariable?.type but just in case
+    return data?.value?.facets != null &&
+      (yAxisVariable?.type === 'number' || yAxisVariable?.type === 'integer')
+      ? {
+          min:
+            (min([
+              0,
+              min(
+                data.value.facets
+                  .filter((facet) => facet.data != null)
+                  .flatMap((facet) =>
+                    facet.data?.series
+                      .flatMap((o) => o.outliers as number[][])
+                      .flat()
+                  )
+              ),
+              min(
+                data.value.facets
+                  .filter((facet) => facet.data != null)
+                  .flatMap((facet) =>
+                    facet.data?.series.flatMap((o) => o.lowerfence as number[])
+                  )
+              ),
+            ]) as number) * 1.05,
+          max:
+            (max([
+              max(
+                data.value.facets
+                  .filter((facet) => facet.data != null)
+                  .flatMap((facet) =>
+                    facet.data?.series
+                      .flatMap((o) => o.outliers as number[][])
+                      .flat()
+                  )
+              ),
+              max(
+                data.value.facets
+                  .filter((facet) => facet.data != null)
+                  .flatMap((facet) =>
+                    facet.data?.series.flatMap((o) => o.upperfence as number[])
+                  )
+              ),
+            ]) as number) * 1.05,
+        }
+      : undefined;
+  } else {
+    return data?.value?.series != null &&
+      (yAxisVariable?.type === 'number' || yAxisVariable?.type === 'integer')
+      ? {
+          min:
+            (min([
+              0,
+              min(
+                data.value.series
+                  .flatMap((o) => o.outliers as number[][])
+                  .flat()
+              ),
+              min(data.value.series.flatMap((o) => o.lowerfence as number[])),
+            ]) as number) * 1.05,
+          max:
+            (max([
+              max(
+                data.value.series
+                  .flatMap((o) => o.outliers as number[][])
+                  .flat()
+              ),
+              max(data.value.series.flatMap((o) => o.upperfence as number[])),
+            ]) as number) * 1.05,
+        }
       : undefined;
   }
 }

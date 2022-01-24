@@ -2,13 +2,21 @@ import { useMemo } from 'react';
 import { VariableDescriptor } from '../types/variable';
 import { StudyEntity } from '../types/study';
 import { useFindEntityAndVariable } from './study';
+// add NumberRange
+import { NumberOrDateRange } from '../types/general';
 
 export function useFindOutputEntity(
   dataElementDependencyOrder: string[] | undefined,
   // need to add string at Record's Type due to valueSpecConfig
   dataElementVariables: Record<
     string,
-    VariableDescriptor | string | boolean | string[] | undefined
+    // add NumberRange
+    | VariableDescriptor
+    | string
+    | boolean
+    | string[]
+    | NumberOrDateRange
+    | undefined
   >,
   defaultVariableName: string,
   entities: StudyEntity[]

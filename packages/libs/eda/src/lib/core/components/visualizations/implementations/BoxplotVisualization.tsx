@@ -6,7 +6,7 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 
 // need to set for Boxplot
 import DataClient, {
@@ -69,13 +69,28 @@ import PlotLegend, {
   LegendItemsProps,
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
-import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
-//DKDK a custom hook to preserve the status of checked legend items
+// a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
+
+//DKDK concerning axis range control
+import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
+import { NumberOrDateRange, NumberRange } from '../../../types/general';
+import { NumberRangeInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateRangeInputs';
+// reusable util for computing truncationConfig
+//DKDK temporarily use variant
+// import { truncationConfig } from '../../../utils/truncation-config-utils';
+import { truncationConfig } from '../../../utils/truncation-config-utils-viz';
+// use Notification for truncation warning message
+import Notification from '@veupathdb/components/lib/components/widgets//Notification';
+import Button from '@veupathdb/components/lib/components/widgets/Button';
+import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
+import { UIState } from '../../filter/HistogramFilter';
+import { useDefaultDependentAxisRange } from '../../../hooks/computeDefaultDependentAxisRange';
 
 type BoxplotData = { series: BoxplotSeries };
 
-type BoxplotDataWithCoverage = (BoxplotData | FacetedData<BoxplotData>) &
+//DKDK export
+export type BoxplotDataWithCoverage = (BoxplotData | FacetedData<BoxplotData>) &
   CoverageStatistics;
 
 const plotContainerStyles = {
@@ -114,9 +129,10 @@ function createDefaultConfig(): BoxplotConfig {
   return {};
 }
 
-type BoxplotConfig = t.TypeOf<typeof BoxplotConfig>;
+//DKDK export
+export type BoxplotConfig = t.TypeOf<typeof BoxplotConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-const BoxplotConfig = t.partial({
+export const BoxplotConfig = t.partial({
   xAxisVariable: VariableDescriptor,
   yAxisVariable: VariableDescriptor,
   overlayVariable: VariableDescriptor,
@@ -124,6 +140,8 @@ const BoxplotConfig = t.partial({
   showMissingness: t.boolean,
   // for custom legend: vizconfig.checkedLegendItems
   checkedLegendItems: t.array(t.string),
+  //DKDK dependent axis range control: NumberRange or NumberOrDateRange
+  dependentAxisRange: NumberOrDateRange,
 });
 
 function BoxplotViz(props: VisualizationProps) {
@@ -163,6 +181,12 @@ function BoxplotViz(props: VisualizationProps) {
     [updateConfiguration, vizConfig]
   );
 
+  //DKDK set the state of truncation warning message
+  const [
+    truncatedDependentAxisWarning,
+    setTruncatedDependentAxisWarning,
+  ] = useState<string>('');
+
   // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
@@ -180,6 +204,8 @@ function BoxplotViz(props: VisualizationProps) {
         // set undefined for variable change
         checkedLegendItems: undefined,
       });
+      //DKDK close truncation warnings
+      setTruncatedDependentAxisWarning('');
     },
     [updateVizConfig]
   );
@@ -369,84 +395,14 @@ function BoxplotViz(props: VisualizationProps) {
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
 
-  const dependentAxisRange: NumberOrDateRange | undefined = useMemo(() => {
-    if (isFaceted(data?.value)) {
-      // may not need to check yAxisVariable?.type but just in case
-      return data?.value?.facets != null &&
-        (yAxisVariable?.type === 'number' || yAxisVariable?.type === 'integer')
-        ? {
-            min:
-              (min([
-                0,
-                min(
-                  data.value.facets
-                    .filter((facet) => facet.data != null)
-                    .flatMap((facet) =>
-                      facet.data?.series
-                        .flatMap((o) => o.outliers as number[][])
-                        .flat()
-                    )
-                ),
-                min(
-                  data.value.facets
-                    .filter((facet) => facet.data != null)
-                    .flatMap((facet) =>
-                      facet.data?.series.flatMap(
-                        (o) => o.lowerfence as number[]
-                      )
-                    )
-                ),
-              ]) as number) * 1.05,
-            max:
-              (max([
-                max(
-                  data.value.facets
-                    .filter((facet) => facet.data != null)
-                    .flatMap((facet) =>
-                      facet.data?.series
-                        .flatMap((o) => o.outliers as number[][])
-                        .flat()
-                    )
-                ),
-                max(
-                  data.value.facets
-                    .filter((facet) => facet.data != null)
-                    .flatMap((facet) =>
-                      facet.data?.series.flatMap(
-                        (o) => o.upperfence as number[]
-                      )
-                    )
-                ),
-              ]) as number) * 1.05,
-          }
-        : undefined;
-    } else {
-      return data?.value?.series != null &&
-        (yAxisVariable?.type === 'number' || yAxisVariable?.type === 'integer')
-        ? {
-            min:
-              (min([
-                0,
-                min(
-                  data.value.series
-                    .flatMap((o) => o.outliers as number[][])
-                    .flat()
-                ),
-                min(data.value.series.flatMap((o) => o.lowerfence as number[])),
-              ]) as number) * 1.05,
-            max:
-              (max([
-                max(
-                  data.value.series
-                    .flatMap((o) => o.outliers as number[][])
-                    .flat()
-                ),
-                max(data.value.series.flatMap((o) => o.upperfence as number[])),
-              ]) as number) * 1.05,
-          }
-        : undefined;
-    }
-  }, [data, yAxisVariable?.type]);
+  //DKDK use custom hook
+  const defaultDependentAxisRange = useDefaultDependentAxisRange(
+    data,
+    vizConfig,
+    updateVizConfig,
+    'Boxplot',
+    yAxisVariable
+  );
 
   // custom legend items for checkbox
   const legendItems: LegendItemsProps[] = useMemo(() => {
@@ -509,7 +465,6 @@ function BoxplotViz(props: VisualizationProps) {
       // show/hide independent/dependent axis tick label
       showIndependentAxisTickLabel={true}
       showDependentAxisTickLabel={true}
-      dependentAxisRange={dependentAxisRange}
       showMean={true}
       interactive={!isFaceted(data.value) ? true : false}
       showSpinner={data.pending || filteredCounts.pending}
@@ -519,6 +474,15 @@ function BoxplotViz(props: VisualizationProps) {
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
+      //DKDK axis range control
+      vizConfig={vizConfig}
+      updateVizConfig={updateVizConfig}
+      // add dependent axis range for better displaying tick labels in log-scale
+      defaultDependentAxisRange={defaultDependentAxisRange}
+      dependentAxisRange={vizConfig.dependentAxisRange}
+      //DKDK pass useState of truncation warnings
+      truncatedDependentAxisWarning={truncatedDependentAxisWarning}
+      setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
     />
   );
 
@@ -650,6 +614,15 @@ type BoxplotWithControlsProps = Omit<BoxplotProps, 'data'> & {
   legendItems: LegendItemsProps[];
   checkedLegendItems: string[] | undefined;
   onCheckedLegendItemsChange: (checkedLegendItems: string[]) => void;
+  //DKDK define types for axis range control
+  vizConfig: BoxplotConfig;
+  updateVizConfig: (newConfig: Partial<BoxplotConfig>) => void;
+  defaultDependentAxisRange: NumberRange | undefined;
+  //DKDK pass useState of truncation warnings
+  truncatedDependentAxisWarning: string;
+  setTruncatedDependentAxisWarning: (
+    truncatedDependentAxisWarning: string
+  ) => void;
 };
 
 function BoxplotWithControls({
@@ -659,6 +632,13 @@ function BoxplotWithControls({
   legendItems,
   checkedLegendItems,
   onCheckedLegendItemsChange,
+  //DKDK for axis range control
+  vizConfig,
+  updateVizConfig,
+  defaultDependentAxisRange,
+  //DKDK pass useState of truncation warnings
+  truncatedDependentAxisWarning,
+  setTruncatedDependentAxisWarning,
   ...boxplotComponentProps
 }: BoxplotWithControlsProps) {
   const plotRef = useUpdateThumbnailEffect(
@@ -666,6 +646,82 @@ function BoxplotWithControls({
     plotContainerStyles,
     [data, checkedLegendItems]
   );
+
+  console.log('defaultDependentAxisRange =', defaultDependentAxisRange);
+  console.log('vizConfig.dependentAxisRange =', vizConfig.dependentAxisRange);
+
+  //DKDK axis range control
+  const handleDependentAxisRangeChange = useCallback(
+    (newRange?: NumberRange) => {
+      updateVizConfig({
+        dependentAxisRange: newRange,
+      });
+    },
+    [updateVizConfig]
+  );
+
+  const handleDependentAxisSettingsReset = useCallback(() => {
+    updateVizConfig({
+      dependentAxisRange: defaultDependentAxisRange,
+    });
+    //DKDK add reset for truncation message as well
+    setTruncatedDependentAxisWarning('');
+  }, [
+    // defaultUIState.dependentAxisLogScale,
+    updateVizConfig,
+  ]);
+
+  // set truncation flags: will see if this is reusable with other application
+  const {
+    truncationConfigIndependentAxisMin,
+    truncationConfigIndependentAxisMax,
+    truncationConfigDependentAxisMin,
+    truncationConfigDependentAxisMax,
+  } = useMemo(
+    () =>
+      //DKDK barplot does not have independent axis range control so send undefined for defaultUIState
+      truncationConfig(undefined, vizConfig, defaultDependentAxisRange),
+    [
+      vizConfig.xAxisVariable,
+      vizConfig.dependentAxisRange,
+      defaultDependentAxisRange,
+    ]
+  );
+
+  useEffect(() => {
+    if (
+      (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) &&
+      !boxplotComponentProps.showSpinner
+    ) {
+      setTruncatedDependentAxisWarning(
+        'Data may have been truncated by range selection, as indicated by the light gray shading'
+      );
+    }
+  }, [truncationConfigDependentAxisMin, truncationConfigDependentAxisMax]);
+
+  console.log(
+    'truncationConfig = ',
+    truncationConfigIndependentAxisMin,
+    truncationConfigIndependentAxisMax,
+    truncationConfigDependentAxisMin,
+    truncationConfigDependentAxisMax
+  );
+
+  //DKDK send boxplotComponentProps with axisTruncationConfig
+  const boxplotFacetProps = {
+    ...boxplotComponentProps,
+    //DKDK pass axisTruncationConfig to faceted plot
+    axisTruncationConfig: {
+      independentAxis: {
+        min: truncationConfigIndependentAxisMin,
+        max: truncationConfigIndependentAxisMax,
+      },
+      dependentAxis: {
+        min: truncationConfigDependentAxisMin,
+        max: truncationConfigDependentAxisMax,
+      },
+    },
+  };
 
   // TO DO: standardise web-components/BoxplotData to have `series` key
   return (
@@ -679,7 +735,8 @@ function BoxplotWithControls({
               data: data?.series,
             })),
           }}
-          componentProps={boxplotComponentProps}
+          //DKDK pass boxplotFacetProps
+          componentProps={boxplotFacetProps}
           modalComponentProps={{
             independentAxisLabel: boxplotComponentProps.independentAxisLabel,
             dependentAxisLabel: boxplotComponentProps.dependentAxisLabel,
@@ -696,10 +753,69 @@ function BoxplotWithControls({
           ref={plotRef}
           // for custom legend: pass checkedLegendItems to PlotlyPlot
           checkedLegendItems={checkedLegendItems}
+          //DKDK axis range control
+          dependentAxisRange={vizConfig.dependentAxisRange}
+          //DKDK pass axisTruncationConfig
+          axisTruncationConfig={{
+            independentAxis: {
+              min: truncationConfigIndependentAxisMin,
+              max: truncationConfigIndependentAxisMax,
+            },
+            dependentAxis: {
+              min: truncationConfigDependentAxisMin,
+              max: truncationConfigDependentAxisMax,
+            },
+          }}
           {...boxplotComponentProps}
         />
       )}
       {/* potential controls go here  */}
+
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <LabelledGroup label="Y-axis">
+          {/* DKDK Y-axis range control */}
+          <NumberRangeInput
+            label="Range"
+            //DKDK add range: for now, handle number only
+            range={
+              (vizConfig.dependentAxisRange as NumberRange) ??
+              defaultDependentAxisRange
+            }
+            onRangeChange={(newRange?: NumberOrDateRange) => {
+              handleDependentAxisRangeChange(newRange as NumberRange);
+            }}
+            allowPartialRange={false}
+            //DKDK set maxWidth
+            containerStyles={{ maxWidth: '350px' }}
+          />
+          {/* truncation notification */}
+          {truncatedDependentAxisWarning ? (
+            <Notification
+              title={''}
+              text={truncatedDependentAxisWarning}
+              // this was defined as LIGHT_BLUE
+              color={'#5586BE'}
+              onAcknowledgement={() => {
+                setTruncatedDependentAxisWarning('');
+              }}
+              showWarningIcon={true}
+              //DKDK change maxWidth
+              containerStyles={{ maxWidth: '350px' }}
+            />
+          ) : null}
+          <Button
+            type={'outlined'}
+            //DKDK change text
+            text={'Reset to defaults'}
+            onClick={handleDependentAxisSettingsReset}
+            containerStyles={{
+              paddingTop: '1.0em',
+              width: '50%',
+              float: 'right',
+            }}
+          />
+        </LabelledGroup>
+      </div>
     </>
   );
 }
