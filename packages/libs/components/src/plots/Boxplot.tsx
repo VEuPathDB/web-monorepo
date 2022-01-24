@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import { Layout } from 'plotly.js';
+//DKDK add Shape for truncation
+import { Layout, Shape } from 'plotly.js';
 import { PlotParams } from 'react-plotly.js';
 import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
 import {
@@ -8,16 +9,25 @@ import {
   OpacityDefault,
   OrientationAddon,
   OrientationDefault,
+  //DKDK truncation
+  AxisTruncationAddon,
 } from '../types/plots';
 import { NumberOrDateRange } from '../types/general';
 import { uniq, flatMap, at } from 'lodash';
 // util functions for handling long tick labels with ellipsis
 import { axisTickLableEllipsis } from '../utils/axis-tick-label-ellipsis';
 
+//DKDK import truncation util functions
+import { NumberRange } from '../types/general';
+import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations';
+import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
+
 export interface BoxplotProps
   extends PlotProps<BoxplotData>,
     OrientationAddon,
-    OpacityAddon {
+    OpacityAddon,
+    //DKDK truncation
+    AxisTruncationAddon {
   /** label for independent axis */
   independentAxisLabel?: string;
   /** label for the (typically) y-axis, e.g. Wealth */
@@ -50,6 +60,8 @@ const Boxplot = makePlotlyPlotComponent('Boxplot', (props: BoxplotProps) => {
     showIndependentAxisTickLabel = true,
     showDependentAxisTickLabel = true,
     dependentValueType = 'number',
+    //DKDK truncation
+    axisTruncationConfig,
     ...restProps
   } = props;
 
@@ -154,6 +166,40 @@ const Boxplot = makePlotlyPlotComponent('Boxplot', (props: BoxplotProps) => {
   const dependentAxis = orientation === 'vertical' ? 'yaxis' : 'xaxis';
   const independentAxis = orientation === 'vertical' ? 'xaxis' : 'yaxis';
 
+  //DKDK truncation
+  const standardDependentAxisRange = dependentAxisRange;
+  const extendedDependentAxisRange = extendAxisRangeForTruncations(
+    standardDependentAxisRange,
+    axisTruncationConfig?.dependentAxis,
+    //DKDK for now, handle number only
+    'number'
+  ) as NumberRange | undefined;
+  // make rectangular layout shapes for truncated axis/missing data
+  const truncatedAxisHighlighting:
+    | Partial<Shape>[]
+    | undefined = useMemo(() => {
+    if (data.length > 0) {
+      const filteredTruncationLayoutShapes = truncationLayoutShapes(
+        orientation,
+        undefined, // send undefined for independentAxisRange
+        standardDependentAxisRange,
+        undefined, // send undefined for independentAxisRange
+        extendedDependentAxisRange,
+        axisTruncationConfig
+      );
+
+      return filteredTruncationLayoutShapes;
+    } else {
+      return [];
+    }
+  }, [
+    standardDependentAxisRange,
+    extendedDependentAxisRange,
+    orientation,
+    data,
+    axisTruncationConfig,
+  ]);
+
   const layout: Partial<Layout> = {
     [independentAxis]: {
       automargin: true,
@@ -176,8 +222,10 @@ const Boxplot = makePlotlyPlotComponent('Boxplot', (props: BoxplotProps) => {
       showline: true,
       rangemode: 'tozero' as const,
       title: dependentAxisLabel,
-      range: dependentAxisRange
-        ? [dependentAxisRange?.min, dependentAxisRange?.max]
+      //DKDK truncation
+      // with the truncated axis, negative values need to be checked for log scale
+      range: data.length
+        ? [extendedDependentAxisRange?.min, extendedDependentAxisRange?.max]
         : undefined,
       tickfont: data.length ? {} : { color: 'transparent' },
       showticklabels: showDependentAxisTickLabel,
@@ -187,7 +235,15 @@ const Boxplot = makePlotlyPlotComponent('Boxplot', (props: BoxplotProps) => {
     },
     // don't forget this for multiple datasets
     boxmode: 'group',
+    //DKDK truncation
+    // add truncatedAxisHighlighting for layout.shapes
+    shapes: truncatedAxisHighlighting,
   };
+
+  //DKDK truncation
+  console.log('standardDependentAxisRange =', standardDependentAxisRange);
+  console.log('extendedDependentAxisRange =', extendedDependentAxisRange);
+  console.log('truncatedAxisHighlighting =', truncatedAxisHighlighting);
 
   return {
     data,
