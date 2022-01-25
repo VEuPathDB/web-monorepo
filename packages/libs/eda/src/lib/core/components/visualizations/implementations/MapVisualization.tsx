@@ -76,12 +76,12 @@ function MapViz(props: VisualizationProps) {
     updateConfiguration,
     updateThumbnail,
     filters,
-    // dataElementConstraints,
-    // dataElementDependencyOrder,
-    // starredVariables,
-    // toggleStarredVariable,
-    // totalCounts,
-    // filteredCounts,
+    dataElementConstraints,
+    dataElementDependencyOrder,
+    starredVariables,
+    toggleStarredVariable,
+    totalCounts,
+    filteredCounts,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
