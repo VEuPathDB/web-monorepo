@@ -10,6 +10,7 @@ import BoundsDriftMarker, {
 import geohashAnimation from '../map/animation_functions/geohash';
 import { defaultAnimationDuration } from '../map/config/map.json';
 import { leafletZoomLevelToGeohashLevel } from '../map/utils/leaflet-geohash';
+import { Viewport } from 'react-leaflet';
 
 export default {
   title: 'Map/Zoom animation',
@@ -157,11 +158,12 @@ export const Default: Story<MapVEuMapProps> = (args) => {
     },
     [setMarkerElements]
   );
+  const [viewport] = useState<Viewport>({ center: [20, -3], zoom: 5 });
 
   return (
     <MapVEuMap
       {...args}
-      viewport={{ center: [20, -3], zoom: 5 }}
+      viewport={viewport}
       onBoundsChanged={handleViewportChanged}
       markers={markerElements}
       animation={defaultAnimation}
@@ -191,11 +193,12 @@ export const DifferentSpeeds: Story<MapVEuMapProps & DurationExtraProps> = (
     },
     [setMarkerElements, args.animationDuration]
   );
+  const [viewport] = useState<Viewport>({ center: [20, -3], zoom: 5 });
 
   return (
     <MapVEuMap
       {...args}
-      viewport={{ center: [20, -3], zoom: 5 }}
+      viewport={viewport}
       onBoundsChanged={handleViewportChanged}
       markers={markerElements}
       animation={{
@@ -224,11 +227,12 @@ export const NoAnimation: Story<MapVEuMapProps> = (args) => {
     },
     [setMarkerElements]
   );
+  const [viewport] = useState<Viewport>({ center: [20, -3], zoom: 5 });
 
   return (
     <MapVEuMap
       {...args}
-      viewport={{ center: [20, -3], zoom: 5 }}
+      viewport={viewport}
       onBoundsChanged={handleViewportChanged}
       markers={markerElements}
       animation={null}
