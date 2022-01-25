@@ -8,7 +8,8 @@ import { StudyEntity, VariableScope } from '../../types/study';
 import {
   edaVariableToWdkField,
   entitiesToFields,
-  shouldHideVariableInScope,
+  makeHiddenVariablesInScope,
+  shouldHideVariable,
 } from '../../utils/wdk-filter-param-adapter';
 import { keyBy } from 'lodash';
 
@@ -63,11 +64,13 @@ export const useFeaturedFields = (
   scope: VariableScope
 ): Field[] =>
   useMemo(() => {
-    return entities.flatMap((entity) =>
-      entity.variables
+    return entities.flatMap((entity) => {
+      const hiddenVariablesInScope = makeHiddenVariablesInScope(entity, scope);
+
+      return entity.variables
         .filter(
           (variable) =>
-            !shouldHideVariableInScope(scope, variable) &&
+            !shouldHideVariable(hiddenVariablesInScope, variable) &&
             variable.type !== 'category' &&
             variable.isFeatured
         )
@@ -76,8 +79,8 @@ export const useFeaturedFields = (
           id: `${entity.id}/${variable.id}`,
           displayName: `<span class="Entity">${entity.displayName}</span>: ${variable.displayName}`,
         }))
-        .map((variable) => edaVariableToWdkField(variable))
-    );
+        .map((variable) => edaVariableToWdkField(variable));
+    });
   }, [entities, scope]);
 
 /**

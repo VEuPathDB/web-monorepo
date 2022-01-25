@@ -1,4 +1,4 @@
-import { negate, partial } from 'lodash';
+import { groupBy, negate, partial } from 'lodash';
 
 import {
   Field,
@@ -204,6 +204,11 @@ export function entitiesToFields(
   return entities.flatMap((entity) => {
     // Create a Set of variableId so we can lookup parentIds
     const variableIds = new Set(entity.variables.map((v) => v.id));
+
+    // Create a Set of all variables which should be hidden
+    // from the specified "scope"
+    const hiddenVariablesInScope = makeHiddenVariablesInScope(entity, scope);
+
     return [
       // Create a non-filterable field for the entity.
       // Note that we're prefixing the term. This avoids
@@ -216,9 +221,7 @@ export function entitiesToFields(
         display: entity.displayName,
       },
       ...entity.variables
-        // don't include variables which should be
-        // "hid[den]From" the specified "scope"
-        .filter(negate(partial(shouldHideVariableInScope, scope)))
+        .filter(negate(partial(shouldHideVariable, hiddenVariablesInScope)))
         // Before handing off to edaVariableToWdkField, we will
         // change the id of the variable to include the entityId.
         // This will make the id unique across the tree and prevent
@@ -246,13 +249,47 @@ export function entitiesToFields(
   });
 }
 
-export function shouldHideVariableInScope(
-  scope: VariableScope,
+export function makeHiddenVariablesInScope(
+  entity: StudyEntity,
+  scope: VariableScope
+): Set<string> {
+  const hiddenVariablesInScope = new Set<string>();
+
+  const variablesByParentId = groupBy(
+    entity.variables,
+    (variable) => variable.parentId ?? entity.id
+  );
+
+  function _traverseDescendantVariables(
+    variable: VariableTreeNode,
+    parentIsHidden: boolean
+  ) {
+    const shouldHideVariable =
+      parentIsHidden ||
+      variable.hideFrom.includes('everywhere') ||
+      variable.hideFrom.includes(scope);
+
+    if (shouldHideVariable) {
+      hiddenVariablesInScope.add(variable.id);
+    }
+
+    variablesByParentId[variable.id]?.forEach((childVariable) => {
+      _traverseDescendantVariables(childVariable, shouldHideVariable);
+    });
+  }
+
+  variablesByParentId[entity.id]?.forEach((variable) => {
+    _traverseDescendantVariables(variable, false);
+  });
+
+  return hiddenVariablesInScope;
+}
+
+export function shouldHideVariable(
+  hiddenVariables: Set<string>,
   variable: VariableTreeNode
 ) {
-  return variable.hideFrom.some(
-    (hideFromScope) => hideFromScope === 'everywhere' || hideFromScope === scope
-  );
+  return hiddenVariables.has(variable.id);
 }
 
 export function makeFieldTree(fields: Field[]): FieldTreeNode {
