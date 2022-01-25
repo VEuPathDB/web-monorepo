@@ -121,14 +121,7 @@ export function TableFilter({
         filteredEntitiesCount:
           distribution.foreground.statistics.numDistinctEntityRecords,
       };
-    }, [
-      entity.id,
-      variable.id,
-      variable.type,
-      filters,
-      subsettingClient,
-      studyMetadata.id,
-    ])
+    }, [entity.id, variable, filters, subsettingClient, studyMetadata.id])
   );
   const activeField = useMemo(
     () => ({
@@ -203,7 +196,7 @@ export function TableFilter({
         return aSelected && bSelected ? 0 : aSelected ? -1 : bSelected ? 1 : 0;
       });
     return newDist;
-  }, [tableSummary.value, uiState.sort, filter]);
+  }, [tableSummary.value, uiState.sort, filter, variable.vocabulary]);
 
   const activeFieldState = useMemo(
     () => ({

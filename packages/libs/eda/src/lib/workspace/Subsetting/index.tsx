@@ -131,7 +131,7 @@ export default function Subsetting({
         />
       </div>
       <div className="TabularDownload">
-        {/* <MesaButton
+        <MesaButton
           text="View and download"
           tooltip={`View and download current subset of ${
             entity.displayNamePlural ?? entity.displayName
@@ -145,7 +145,7 @@ export default function Subsetting({
               },
             });
           }}
-        /> */}
+        />
       </div>
       <div className="Filter">
         <VariableDetails

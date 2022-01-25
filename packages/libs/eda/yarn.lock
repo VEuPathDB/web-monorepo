@@ -3335,10 +3335,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/components@^0.11.10":
-  version "0.11.10"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.10.tgz#3f88b3dac73d0fa98dcf2de56f3f16c2a55c3bc5"
-  integrity sha512-7jI10uRxWpezGVUwGuFiHBEYBOAunm8BGelpbn86kWr8JljZs9hC6LmNtbLrCkUGnj9wFjBVYa4wbsjKJi1RXA==
+"@veupathdb/components@^0.11.11":
+  version "0.11.11"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.11.tgz#fbe1e7306028c2a83a29734454cc8c94795692f2"
+  integrity sha512-MOnBRak1ENFHIfwKpM12DsKz/jNXzuIXLhOv8Qai+BgRUrTXwGjFVxHYrmY70vy2sFSjvu/cOYbihQov6G18PA==
   dependencies:
     "@emotion/react" "^11.7.0"
     "@material-ui/core" "^4.11.2"
@@ -3416,9 +3416,9 @@
     shape2geohash "^1.2.5"
 
 "@veupathdb/components@^0.11.8":
-  version "0.11.8"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.8.tgz#4c843309cfa835c41a8be3821801cf9a99ff78e6"
-  integrity sha512-JSOdvHp6RoWDAGZYndfhG2WLlvDxGamISwMrrwr98GtrrhxfGX01ASTmA92P4XiA/65vWdfhWcE745Bd8zO/6w==
+  version "0.11.10"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.10.tgz#3f88b3dac73d0fa98dcf2de56f3f16c2a55c3bc5"
+  integrity sha512-7jI10uRxWpezGVUwGuFiHBEYBOAunm8BGelpbn86kWr8JljZs9hC6LmNtbLrCkUGnj9wFjBVYa4wbsjKJi1RXA==
   dependencies:
     "@emotion/react" "^11.7.0"
     "@material-ui/core" "^4.11.2"
@@ -3598,13 +3598,12 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/study-data-access@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.1.3.tgz#e9f7d97cf96a35dc4930a482202eeec55ef0cbe5"
-  integrity sha512-NxQqA/xvqWSzvITDmxQ3JvtBk1l1xWVeFbC09yfBoGTYwHoP6wmDBs+huJhyPLxZkPymytYcpg5ZAJga35LiVg==
+"@veupathdb/study-data-access@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.1.5.tgz#8f0aae7c4c35f001b8f3bff77feeeba3c86df578"
+  integrity sha512-CPoQ03Hg8O35JaAbhx0g22eAHOaDQ14pvydjMEs1oYFQggw6+cckp6tEpOCHhbAlwIBn0rvSdntGeJho2iLY/w==
   dependencies:
     "@veupathdb/http-utils" "^1.0.1"
-    "@veupathdb/wdk-client" "^0.5.2"
     fp-ts "^2.11.5"
     io-ts "^2.2.16"
     lodash "^4.17.21"
@@ -3662,10 +3661,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/wdk-client@^0.5.2":
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.5.2.tgz#3569fc7d0c58a815f5f8fa594ab5e69a3f328549"
-  integrity sha512-BI0hWSnlPeN4NrKh9UGN7PKqBqf2Ghdad9uzUz+Ba2Po6QTRHDZj70u1VJS2NmjoQxCzyuOXOprRKQIXdBGkeg==
+"@veupathdb/wdk-client@^0.5.4":
+  version "0.5.4"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.5.4.tgz#a4e2ecfdaf66f8f6f02fab82c273b120a608fe86"
+  integrity sha512-pEIVIPDvNs8kBJhBen97lT9ixqgDzbjYeYjmvCkM5u5Q3SRLXl5DNs2o0yCkVJBynXSUHbOUg2me3VqsKAGXHw==
   dependencies:
     "@types/datatables.net" "^1.10.5"
     "@types/flot" "^0.0.31"

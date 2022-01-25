@@ -215,8 +215,6 @@ export function HistogramFilter(props: Props) {
       studyMetadata.id,
       subsettingClient,
       variable,
-      variable.id,
-      variable.type,
     ]
   );
   const data = usePromise(
