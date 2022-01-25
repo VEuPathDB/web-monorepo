@@ -3,7 +3,9 @@ import map from './selectorIcons/map.svg';
 import * as t from 'io-ts';
 
 // map component related imports
-import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
+import MapVEuMap, {
+  MapVEuMapProps,
+} from '@veupathdb/components/lib/map/MapVEuMap';
 import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map.json';
 import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/geohash';
 import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
@@ -96,7 +98,7 @@ function MapViz(props: VisualizationProps) {
     updateConfiguration
   );
 
-  const handleViewportChanged = useCallback(
+  const handleViewportChanged: MapVEuMapProps['onViewportChanged'] = useCallback(
     ({ center, zoom }) => {
       if (center != null && center.length === 2 && zoom != null) {
         updateVizConfig({
