@@ -1,13 +1,12 @@
 import { useMemo } from 'react';
 
 import { Field } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
-import { getTree } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
-import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 import { StudyEntity, VariableScope } from '../../types/study';
 import {
   edaVariableToWdkField,
   entitiesToFields,
+  makeFieldTree,
   makeHiddenVariablesInScope,
   shouldHideVariable,
 } from '../../utils/wdk-filter-param-adapter';
@@ -91,16 +90,7 @@ export const useFeaturedFields = (
  * or variable) in a visual hierachy to the user.
  */
 export const useFieldTree = (flattenedFields: Array<Field>) =>
-  useMemo(() => {
-    const initialTree = getTree(flattenedFields, {
-      hideSingleRoot: false,
-    });
-    const tree = pruneDescendantNodes(
-      (node) => node.field.type != null || node.children.length > 0,
-      initialTree
-    );
-    return tree;
-  }, [flattenedFields]);
+  useMemo(() => makeFieldTree(flattenedFields), [flattenedFields]);
 
 /**
  * Simple transformation of useFlattenFields output from an array
