@@ -15,7 +15,8 @@ import { useLoginCallbacks } from './hooks';
 type ShareFromAnalysesListProps = {
   visible: boolean;
   toggleVisible: (visible: boolean) => void;
-  showLoginForm?: () => void;
+  /** A callback to open a login form. */
+  showLoginForm: () => void;
   analysis?: AnalysisSummary;
   updateAnalysis: (id: string, patch: SingleAnalysisPatchRequest) => void;
 };
@@ -23,7 +24,7 @@ type ShareFromAnalysesListProps = {
 export default function ShareFromAnalysesList({
   visible,
   toggleVisible,
-  showLoginForm = () => {},
+  showLoginForm,
   analysis,
   updateAnalysis,
 }: ShareFromAnalysesListProps) {

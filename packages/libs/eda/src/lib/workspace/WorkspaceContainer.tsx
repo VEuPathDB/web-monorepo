@@ -35,6 +35,10 @@ interface Props {
    * The base of the URL from which to being sharing links.
    * This is passed down through several component layers. */
   sharingUrlPrefix: string;
+  /**
+   * A callback to open a login form.
+   * This is also passed down through several component layers. */
+  showLoginForm: () => void;
 }
 
 /** Allows a user to create a new analysis or edit an existing one. */
@@ -45,6 +49,7 @@ export function WorkspaceContainer({
   dataServiceUrl,
   userServiceUrl,
   sharingUrlPrefix,
+  showLoginForm,
 }: Props) {
   const { url } = useRouteMatch();
   const subsettingClient = useConfiguredSubsettingClient(subsettingServiceUrl);
@@ -92,6 +97,7 @@ export function WorkspaceContainer({
           studyId={studyId}
           analysisId={analysisId}
           sharingUrlPrefix={sharingUrlPrefix}
+          showLoginForm={showLoginForm}
         />
       </EDAWorkspaceContainer>
     </RestrictedPage>

@@ -72,6 +72,10 @@ interface Props {
    * The base of the URL from which to being sharing links.
    * This is passed down through several component layers. */
   sharingUrlPrefix: string;
+  /**
+   * A callback to open a login form.
+   * This is also passed down through several component layers. */
+  showLoginForm: () => void;
 }
 
 /**
@@ -86,6 +90,7 @@ export function AnalysisPanel({
   analysisState,
   hideCopyAndSave = false,
   sharingUrlPrefix,
+  showLoginForm,
 }: Props) {
   const studyRecord = useStudyRecord();
 
@@ -163,6 +168,7 @@ export function AnalysisPanel({
         toggleVisible={setSharingModalVisible}
         analysisState={analysisState}
         sharingUrlPrefix={sharingUrlPrefix}
+        showLoginForm={showLoginForm}
       />
       <div className={cx('-Analysis')}>
         <AnalysisSummary

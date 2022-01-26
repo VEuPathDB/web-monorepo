@@ -18,18 +18,19 @@ import { useLoginCallbacks } from './hooks';
 type ShareFromAnalyisProps = {
   visible: boolean;
   toggleVisible: (visible: boolean) => void;
-  showLoginForm?: () => void;
   analysisState: AnalysisState;
   /**
    * The base of the URL from which to being sharing links.
    * This is passed down through several component layers. */
   sharingUrlPrefix: string;
+  /** A callback to open a login form. */
+  showLoginForm: () => void;
 };
 
 export default function ShareFromAnalysis({
   visible,
   toggleVisible,
-  showLoginForm = () => {},
+  showLoginForm,
   analysisState,
   sharingUrlPrefix,
 }: ShareFromAnalyisProps) {

@@ -1,6 +1,7 @@
 import './globals'; // Don't move this. There is a brittle dependency that relies on this being first.
 import React, {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -84,15 +85,24 @@ initialize({
     {
       path: '/eda',
       exact: false,
-      component: () => (
-        <WorkspaceRouter
-          subsettingServiceUrl={subsettingServiceUrl}
-          dataServiceUrl={dataServiceUrl}
-          userServiceUrl={userServiceUrl}
-          exampleAnalysesAuthor={exampleAnalysesAuthor}
-          sharingUrlPrefix={window.location.href}
-        />
-      ),
+      component: function DevWorkspaceRouter() {
+        const { setLoginFormVisible } = useContext(DevLoginFormContext);
+
+        const showLoginForm = useCallback(() => {
+          setLoginFormVisible(true);
+        }, [setLoginFormVisible]);
+
+        return (
+          <WorkspaceRouter
+            subsettingServiceUrl={subsettingServiceUrl}
+            dataServiceUrl={dataServiceUrl}
+            userServiceUrl={userServiceUrl}
+            exampleAnalysesAuthor={exampleAnalysesAuthor}
+            sharingUrlPrefix={window.location.href}
+            showLoginForm={showLoginForm}
+          />
+        );
+      },
     },
     {
       path: '/mapveu',

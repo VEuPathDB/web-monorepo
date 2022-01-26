@@ -34,6 +34,10 @@ type Props = {
    * The base of the URL from which to being sharing links.
    * This is passed down through several component layers. */
   sharingUrlPrefix: string;
+  /**
+   * A callback to open a login form.
+   * This is also passed down through several component layers. */
+  showLoginForm: () => void;
 };
 
 /**
@@ -45,6 +49,7 @@ export function WorkspaceRouter({
   userServiceUrl,
   exampleAnalysesAuthor,
   sharingUrlPrefix,
+  showLoginForm,
 }: Props) {
   const { path, url } = useRouteMatch();
   const subsettingClient = useConfiguredSubsettingClient(subsettingServiceUrl);
@@ -62,6 +67,7 @@ export function WorkspaceRouter({
                 analysisClient={analysisClient}
                 subsettingClient={subsettingClient}
                 exampleAnalysesAuthor={exampleAnalysesAuthor}
+                showLoginForm={showLoginForm}
               />
             )}
           />
@@ -121,6 +127,7 @@ export function WorkspaceRouter({
                 dataServiceUrl={dataServiceUrl}
                 userServiceUrl={userServiceUrl}
                 sharingUrlPrefix={sharingUrlPrefix}
+                showLoginForm={showLoginForm}
               />
             )}
           />
@@ -178,6 +185,7 @@ export function WorkspaceRouter({
                 dataServiceUrl={dataServiceUrl}
                 userServiceUrl={userServiceUrl}
                 sharingUrlPrefix={sharingUrlPrefix}
+                showLoginForm={showLoginForm}
               />
             )}
           />

@@ -15,14 +15,15 @@ import { useLoginCallbacks } from './hooks';
 type ShareFromAnalyisProps = {
   visible: boolean;
   toggleVisible: (visible: boolean) => void;
-  showLoginForm?: () => void;
+  /** A callback to open a login form. */
+  showLoginForm: () => void;
   analysisState: AnalysisState;
 };
 
 export default function PublishFromAnalysis({
   visible,
   toggleVisible,
-  showLoginForm = () => {},
+  showLoginForm,
   analysisState,
 }: ShareFromAnalyisProps) {
   const userLoggedIn = useWdkService((wdkService) =>
