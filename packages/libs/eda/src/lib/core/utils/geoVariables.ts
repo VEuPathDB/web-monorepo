@@ -1,4 +1,4 @@
-import { StudyEntity, VariableTreeNode } from '../types/study';
+import { StudyEntity, Variable, VariableTreeNode } from '../types/study';
 
 /**
  * Given a study, search its variable tree to find a node that has the following direct children
@@ -30,8 +30,13 @@ export function findGeolocationNode(
     if (numberSiblings.length === 1) {
       const stringCategoricals = siblingVariables.filter(
         (variable) =>
-          variable.type === 'string' && variable.dataShape === 'categorical'
+          variable.type === 'string' &&
+          (variable.dataShape === 'categorical' ||
+            variable.dataShape === 'binary')
+        // two lines above, it wouldn't let me do ({ type, dataShape}) => ...
+        // without jumping through more typing hoops - any idea why please?
       );
+
       if (stringCategoricals.length === 6) {
         return entity.variables.find(
           (variable) => variable.id === longitudeVariable.parentId

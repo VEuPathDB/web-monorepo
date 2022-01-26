@@ -1,6 +1,8 @@
 import { EntityCounts } from '../../hooks/entityCounts';
 import { PromiseHookState } from '../../hooks/promise';
 import { Filter } from '../../types/filter';
+import { GeoConfig } from '../../types/geoConfig';
+import { StudyMetadata } from '../../types/study';
 import { VariableDescriptor } from '../../types/variable';
 import {
   Computation,
@@ -28,8 +30,16 @@ export interface VisualizationProps {
 
 export type SelectorProps = VisualizationOverview;
 
+export interface EnableInPickerProps {
+  // it's a function - do we still call its argument 'props'?
+  geoConfigs?: GeoConfig[];
+  studyMetadata?: StudyMetadata; // not used yet, but you could imagine it being used to determine
+  // if a viz tool should be enabled
+}
+
 export interface VisualizationType {
   fullscreenComponent: React.ComponentType<VisualizationProps>;
   selectorComponent: React.ComponentType<SelectorProps>;
   createDefaultConfig: () => unknown;
+  enabledInPicker?: (props: EnableInPickerProps) => boolean;
 }

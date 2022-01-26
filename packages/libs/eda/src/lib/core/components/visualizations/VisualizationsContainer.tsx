@@ -28,6 +28,7 @@ import { Tooltip } from '@material-ui/core';
 import { isEqual } from 'lodash';
 import { EntityCounts } from '../../hooks/entityCounts';
 import { PromiseHookState } from '../../hooks/promise';
+import { GeoConfig } from '../../types/geoConfig';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -45,6 +46,7 @@ interface Props {
   toggleStarredVariable: (targetVariable: VariableDescriptor) => void;
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
+  geoConfigs: GeoConfig[];
 }
 
 /**
@@ -181,6 +183,7 @@ function NewVisualizationPicker(props: Props) {
     visualizationsOverview,
     updateVisualizations,
     computation,
+    geoConfigs,
   } = props;
   const history = useHistory();
   const { computationId } = computation;
@@ -222,7 +225,12 @@ function NewVisualizationPicker(props: Props) {
                     }}
                   >
                     {vizType ? (
-                      <vizType.selectorComponent {...vizOverview} />
+                      vizType.enabledInPicker == null ||
+                      vizType.enabledInPicker({ geoConfigs }) ? (
+                        <vizType.selectorComponent {...vizOverview} />
+                      ) : (
+                        <div>I'm disabled!</div>
+                      )
                     ) : (
                       <PlaceholderIcon name={vizOverview.name} />
                     )}

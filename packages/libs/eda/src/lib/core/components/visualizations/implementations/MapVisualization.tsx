@@ -1,4 +1,8 @@
-import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
+import {
+  EnableInPickerProps,
+  VisualizationProps,
+  VisualizationType,
+} from '../VisualizationTypes';
 import map from './selectorIcons/map.svg';
 import * as t from 'io-ts';
 
@@ -30,6 +34,7 @@ export const mapVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
   fullscreenComponent: MapViz,
   createDefaultConfig: createDefaultConfig,
+  enabledInPicker: enabledInPicker,
 };
 
 function SelectorComponent() {
@@ -50,6 +55,11 @@ function createDefaultConfig(): MapConfig {
       zoomLevel: 1, // TO DO: check MapVEuMap minZoom hardcoded to 2
     },
   };
+}
+
+function enabledInPicker({ geoConfigs }: EnableInPickerProps): boolean {
+  console.log(geoConfigs);
+  return geoConfigs != null && geoConfigs.length > 0;
 }
 
 const defaultAnimation = {

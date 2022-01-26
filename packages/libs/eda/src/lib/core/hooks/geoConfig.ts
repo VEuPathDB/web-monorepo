@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { StudyEntity } from '../types/study';
 import { findGeolocationNode } from '../utils/geoVariables';
 import { leafletZoomLevelToGeohashLevel } from '../utils/visualization';
+import { GeoConfig } from '../types/geoConfig';
 import { sortBy } from 'lodash';
 
 /**
@@ -12,20 +13,14 @@ import { sortBy } from 'lodash';
  *
  */
 
-type GeoConfig = {
-  entity: StudyEntity;
-  zoomLevelToAggregationLevel: (zoomLevel: number) => number;
-  latitudeVariableId: string;
-  longitudeVariableId: string;
-  aggregationVariableIds: string[];
-};
-
 export function useGeoConfig(entities: StudyEntity[]): GeoConfig[] {
   return useMemo(
     () =>
       entities
         .map((entity) => {
+          console.log(`Checking ${entity.displayName}`);
           const geolocationNode = findGeolocationNode(entity);
+          console.log(geolocationNode != null);
           if (geolocationNode != null) {
             const directChildren = entity.variables.filter(
               (variable) => variable.parentId === geolocationNode.id

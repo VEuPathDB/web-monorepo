@@ -102,7 +102,7 @@ export function AnalysisPanel({
   const studyMetadata = useStudyMetadata();
   const entities = useStudyEntities(studyMetadata.rootEntity);
   const filteredEntities = uniq(filters?.map((f) => f.entityId));
-  const geoConfig = useGeoConfig(entities);
+  const geoConfigs = useGeoConfig(entities);
   const location = useLocation();
 
   const [lastVarPath, setLastVarPath] = useState('');
@@ -289,6 +289,7 @@ export function AnalysisPanel({
                 analysisState={analysisState}
                 totalCounts={totalCounts}
                 filteredCounts={filteredCounts}
+                geoConfigs={geoConfigs}
               />
             </AnalysisTabErrorBoundary>
           )}
