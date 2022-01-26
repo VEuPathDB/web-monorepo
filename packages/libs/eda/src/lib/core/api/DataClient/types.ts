@@ -492,3 +492,30 @@ export const BoxplotResponse = type({
   sampleSizeTable: sampleSizeTableArray,
   completeCasesTable: completeCasesTableArray,
 });
+
+export interface MapMarkersRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    outputEntityId: string;
+    geoAggregateVariable: VariableDescriptor;
+    latitudeVariable: VariableDescriptor;
+    longitudeVariable: VariableDescriptor;
+  };
+}
+
+export type MapMarkersResponse = TypeOf<typeof MapMarkersResponse>;
+export const MapMarkersResponse = type({
+  mapElements: array(
+    type({
+      geoAggregateValue: string,
+      entityCount: number,
+      avgLat: number,
+      avgLon: number,
+      minLat: number,
+      minLon: number,
+      maxLat: number,
+      maxLon: number,
+    })
+  ),
+});
