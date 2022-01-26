@@ -103,3 +103,15 @@
 .plot-marker-popup.popup-down .leaflet-popup-content {
   transform: rotate(180deg);
 }
+
+/* on mouse-over, marker to top */
+.top-marker {
+  z-index: 3100 !important;
+}
+
+/* Replace leaflet styles*/
+
+/* general typography */
+.leaflet-container {
+  font: 12px/1.5 'Open Sans', Arial, Helvetica, sans-serif;
+}

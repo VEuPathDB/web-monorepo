@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/map_styles.css';
+// import '../styles/map_styles.css';
 
 // Add new mouse modes here
 const mouseModeConfig = [
