@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
-import { LoginFormContext } from '.';
+import { DevLoginFormContext } from '.';
 import { endpoint } from './constants';
 
 export default function Header() {
   const { loginFormVisible, setLoginFormVisible } = React.useContext(
-    LoginFormContext
+    DevLoginFormContext
   );
   const [email, setEmail] = React.useState('');
   const [pwd, setPwd] = React.useState('');

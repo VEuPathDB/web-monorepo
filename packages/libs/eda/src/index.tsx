@@ -1,5 +1,11 @@
 import './globals'; // Don't move this. There is a brittle dependency that relies on this being first.
-import React, { createContext, useEffect, useMemo, useState } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 import { partial } from 'lodash';
 
@@ -42,12 +48,12 @@ const exampleAnalysesAuthor = process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR
   ? Number(process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR)
   : undefined;
 
-interface LoginFormState {
+interface DevLoginFormState {
   loginFormVisible: boolean;
   setLoginFormVisible: (visible: boolean) => void;
 }
 
-export const LoginFormContext = createContext<LoginFormState>({
+export const DevLoginFormContext = createContext<DevLoginFormState>({
   loginFormVisible: false,
   setLoginFormVisible: () => {},
 });
@@ -120,7 +126,7 @@ initialize({
         useCoreUIFonts();
 
         return (
-          <LoginFormContext.Provider value={loginFormContext}>
+          <DevLoginFormContext.Provider value={loginFormContext}>
             <DataRestrictionDaemon
               makeStudyPageRoute={(id: string) => `/eda/${id}/details`}
             />
@@ -134,7 +140,7 @@ initialize({
             >
               <DefaultComponent {...props} />
             </UIThemeProvider>
-          </LoginFormContext.Provider>
+          </DevLoginFormContext.Provider>
         );
       };
     },
