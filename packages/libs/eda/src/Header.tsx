@@ -5,8 +5,15 @@ import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDepen
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { endpoint } from './constants';
 
-export default function Header() {
-  const [showLoginForm, setShowLoginForm] = React.useState(false);
+export interface Props {
+  loginFormVisible: boolean;
+  setLoginFormVisible: (visible: boolean) => void;
+}
+
+export default function Header({
+  loginFormVisible,
+  setLoginFormVisible,
+}: Props) {
   const [email, setEmail] = React.useState('');
   const [pwd, setPwd] = React.useState('');
   const [user, setUser] = React.useState<User>();
@@ -53,7 +60,7 @@ export default function Header() {
               type="button"
               className="link"
               style={{ color: 'whitesmoke' }}
-              onClick={() => setShowLoginForm(true)}
+              onClick={() => setLoginFormVisible(true)}
             >
               Log In
             </button>
@@ -68,7 +75,7 @@ export default function Header() {
             Log Out ({user.email})
           </button>
         )}
-        {showLoginForm && (
+        {loginFormVisible && (
           <div
             style={{
               position: 'absolute',
@@ -124,7 +131,7 @@ export default function Header() {
                   <button
                     style={{ fontSize: '1em' }}
                     type="button"
-                    onClick={() => setShowLoginForm(false)}
+                    onClick={() => setLoginFormVisible(false)}
                   >
                     Cancel
                   </button>
@@ -132,7 +139,7 @@ export default function Header() {
                 <Link
                   to="/user/registration"
                   style={{ color: 'whitesmoke' }}
-                  onClick={() => setShowLoginForm(false)}
+                  onClick={() => setLoginFormVisible(false)}
                 >
                   Register
                 </Link>

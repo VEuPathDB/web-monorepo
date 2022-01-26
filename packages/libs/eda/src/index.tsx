@@ -1,5 +1,5 @@
 import './globals'; // Don't move this. There is a brittle dependency that relies on this being first.
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { partial } from 'lodash';
 
@@ -86,7 +86,18 @@ initialize({
     ...routes,
   ],
   componentWrappers: {
-    SiteHeader: () => Header,
+    SiteHeader: () => {
+      return function DevHeader() {
+        const [loginFormVisible, setLoginFormVisible] = useState(false);
+
+        return (
+          <Header
+            loginFormVisible={loginFormVisible}
+            setLoginFormVisible={setLoginFormVisible}
+          />
+        );
+      };
+    },
     Page: (DefaultComponent: React.ComponentType<Props>) => {
       return function ClinEpiPage(props: Props) {
         useEffect(() => {
