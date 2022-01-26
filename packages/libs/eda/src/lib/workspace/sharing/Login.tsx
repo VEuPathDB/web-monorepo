@@ -28,11 +28,11 @@ export default function Login({
           additionalStyles={{ marginTop: 25, marginBottom: 0 }}
         />
         <p style={{ fontSize: '.9rem', color: gray[600], marginTop: 0 }}>
-          In order to share an analysis, or make it public, you'll need to login
-          to your account.
+          In order to share an analysis, or make it public, you'll need to log
+          in to your account.
         </p>
         <p style={{ fontSize: '.9rem', color: gray[600] }}>
-          Please login and try again.
+          Please log in and try again.
         </p>
       </div>
 

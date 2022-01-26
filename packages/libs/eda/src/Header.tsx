@@ -55,7 +55,7 @@ export default function Header() {
               style={{ color: 'whitesmoke' }}
               onClick={() => setShowLoginForm(true)}
             >
-              Login
+              Log In
             </button>
           </>
         ) : (
@@ -65,7 +65,7 @@ export default function Header() {
             style={{ color: 'whitesmoke' }}
             onClick={() => logout()}
           >
-            Logout ({user.email})
+            Log Out ({user.email})
           </button>
         )}
         {showLoginForm && (
