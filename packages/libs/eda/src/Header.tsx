@@ -3,17 +3,13 @@ import { Link } from 'react-router-dom';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+import { LoginFormContext } from '.';
 import { endpoint } from './constants';
 
-export interface Props {
-  loginFormVisible: boolean;
-  setLoginFormVisible: (visible: boolean) => void;
-}
-
-export default function Header({
-  loginFormVisible,
-  setLoginFormVisible,
-}: Props) {
+export default function Header() {
+  const { loginFormVisible, setLoginFormVisible } = React.useContext(
+    LoginFormContext
+  );
   const [email, setEmail] = React.useState('');
   const [pwd, setPwd] = React.useState('');
   const [user, setUser] = React.useState<User>();

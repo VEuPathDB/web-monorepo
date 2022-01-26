@@ -1,5 +1,5 @@
 import './globals'; // Don't move this. There is a brittle dependency that relies on this being first.
-import React, { useEffect, useState } from 'react';
+import React, { createContext, useEffect, useMemo, useState } from 'react';
 
 import { partial } from 'lodash';
 
@@ -41,6 +41,16 @@ const userServiceUrl = '/eda-user-service';
 const exampleAnalysesAuthor = process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR
   ? Number(process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR)
   : undefined;
+
+interface LoginFormState {
+  loginFormVisible: boolean;
+  setLoginFormVisible: (visible: boolean) => void;
+}
+
+export const LoginFormContext = createContext<LoginFormState>({
+  loginFormVisible: false,
+  setLoginFormVisible: () => {},
+});
 
 initialize({
   rootUrl,
@@ -86,20 +96,18 @@ initialize({
     ...routes,
   ],
   componentWrappers: {
-    SiteHeader: () => {
-      return function DevHeader() {
-        const [loginFormVisible, setLoginFormVisible] = useState(false);
-
-        return (
-          <Header
-            loginFormVisible={loginFormVisible}
-            setLoginFormVisible={setLoginFormVisible}
-          />
-        );
-      };
-    },
+    SiteHeader: () => Header,
     Page: (DefaultComponent: React.ComponentType<Props>) => {
       return function ClinEpiPage(props: Props) {
+        const [loginFormVisible, setLoginFormVisible] = useState(false);
+        const loginFormContext = useMemo(
+          () => ({
+            loginFormVisible,
+            setLoginFormVisible,
+          }),
+          [loginFormVisible]
+        );
+
         useEffect(() => {
           if (process.env.REACT_APP_DISABLE_DATA_RESTRICTIONS === 'true') {
             disableRestriction();
@@ -112,7 +120,7 @@ initialize({
         useCoreUIFonts();
 
         return (
-          <>
+          <LoginFormContext.Provider value={loginFormContext}>
             <DataRestrictionDaemon
               makeStudyPageRoute={(id: string) => `/eda/${id}/details`}
             />
@@ -126,7 +134,7 @@ initialize({
             >
               <DefaultComponent {...props} />
             </UIThemeProvider>
-          </>
+          </LoginFormContext.Provider>
         );
       };
     },
