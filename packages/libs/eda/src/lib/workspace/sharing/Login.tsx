@@ -6,9 +6,11 @@ import { FilledButton } from '@veupathdb/core-components/dist/components/buttons
 import { gray } from '@veupathdb/core-components/dist/definitions/colors';
 
 export default function Login({
-  toggleVisible,
+  onPressClose,
+  onPressLogIn,
 }: {
-  toggleVisible: (visible: boolean) => void;
+  onPressClose: () => void;
+  onPressLogIn: () => void;
 }) {
   return (
     <div
@@ -34,11 +36,23 @@ export default function Login({
         </p>
       </div>
 
-      <FilledButton
-        text="Close"
-        themeRole="secondary"
-        onPress={() => toggleVisible(false)}
-      />
+      <div style={{ display: 'flex' }}>
+        <FilledButton
+          text="Log In"
+          themeRole="secondary"
+          onPress={onPressLogIn}
+        />
+        <FilledButton
+          text="Close"
+          themeRole="secondary"
+          onPress={onPressClose}
+          styleOverrides={{
+            container: {
+              marginLeft: 10,
+            },
+          }}
+        />
+      </div>
     </div>
   );
 }
