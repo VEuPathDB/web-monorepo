@@ -5,6 +5,7 @@ import { Seq } from 'wdk-client/Utils/IterableUtils';
 import {
   Field,
   FieldTreeNode,
+  TreeNode,
   Filter,
   FilterField,
   MultiField,
@@ -129,7 +130,7 @@ export function getFilterFieldsFromOntology(ontologyEntries: Iterable<Field>): F
 
 type ParentTerm = string | undefined;
 
-const makeOntologyNode = (ontologyEntriesByParent: Map<ParentTerm, Field[]>) =>(field: Field): FieldTreeNode =>  {
+const makeOntologyNode = <T extends Field>(ontologyEntriesByParent: Map<ParentTerm, T[]>) => (field: T): TreeNode<T> => {
   const childFields = ontologyEntriesByParent.get(field.term) || [];
   const children = childFields.map(makeOntologyNode(ontologyEntriesByParent));
   return { field, children };
@@ -148,7 +149,7 @@ export const defaultTreeOptions: TreeOptions = {
   hideSingleRoot: true
 }
 
-export function getTree(ontologyEntries: Iterable<Field>, options: TreeOptions = defaultTreeOptions): FieldTreeNode {
+export function getTree<T extends Field>(ontologyEntries: Iterable<T>, options: TreeOptions = defaultTreeOptions): TreeNode<T> {
   const entriesByParentTerm = mapBy(ontologyEntries, term => term.parent);
   const rootFields = entriesByParentTerm.get(undefined) || [];
   const rootChildren = rootFields.map(makeOntologyNode(entriesByParentTerm));

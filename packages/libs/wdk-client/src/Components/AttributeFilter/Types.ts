@@ -51,6 +51,10 @@ export type FieldTreeNode = {
   children: FieldTreeNode[];
 }
 
+export type TreeNode<T extends Field> = {
+  field: T;
+  children: TreeNode<T>[];
+};
 
 // Filter value types
 // ------------------
