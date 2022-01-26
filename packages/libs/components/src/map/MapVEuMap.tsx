@@ -106,7 +106,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
   useEffect(() => {
     if (mapRef.current?.leafletElement)
       screenshotter.addTo(mapRef.current.leafletElement);
-  }, [screenshotter, mapRef.current?.leafletElement]);
+  }, [screenshotter, mapRef]);
 
   useImperativeHandle<PlotRef, PlotRef>(
     ref,
