@@ -136,10 +136,9 @@ export function WorkspaceRouter({
           />
           <Route
             exact
-            path={`${path}/:studyId/:analysisId/import`}
+            path={`${path}/:analysisId/import`}
             render={(
               props: RouteComponentProps<{
-                studyId: string;
                 analysisId: string;
               }>
             ) => {
@@ -150,6 +149,20 @@ export function WorkspaceRouter({
                 />
               );
             }}
+          />
+          <Route
+            exact
+            path={`${path}/:studyId/:analysisId/import`}
+            render={(
+              props: RouteComponentProps<{
+                analysisId: string;
+                studyId: string;
+              }>
+            ) => (
+              <Redirect
+                to={`${path}/${props.match.params.analysisId}/import`}
+              />
+            )}
           />
           <Route
             path={`${path}/:studyId/:analysisId`}
