@@ -1,5 +1,5 @@
 import {
-  EnableInPickerProps,
+  IsEnabledInPickerProps,
   VisualizationProps,
   VisualizationType,
 } from '../VisualizationTypes';
@@ -34,7 +34,7 @@ export const mapVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
   fullscreenComponent: MapViz,
   createDefaultConfig: createDefaultConfig,
-  enabledInPicker: enabledInPicker,
+  isEnabledInPicker: isEnabledInPicker,
 };
 
 function SelectorComponent() {
@@ -57,8 +57,7 @@ function createDefaultConfig(): MapConfig {
   };
 }
 
-function enabledInPicker({ geoConfigs }: EnableInPickerProps): boolean {
-  console.log(geoConfigs);
+function isEnabledInPicker({ geoConfigs }: IsEnabledInPickerProps): boolean {
   return geoConfigs != null && geoConfigs.length > 0;
 }
 

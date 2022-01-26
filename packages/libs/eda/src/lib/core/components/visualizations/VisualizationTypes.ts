@@ -30,7 +30,7 @@ export interface VisualizationProps {
 
 export type SelectorProps = VisualizationOverview;
 
-export interface EnableInPickerProps {
+export interface IsEnabledInPickerProps {
   // it's a function - do we still call its argument 'props'?
   geoConfigs?: GeoConfig[];
   studyMetadata?: StudyMetadata; // not used yet, but you could imagine it being used to determine
@@ -41,5 +41,5 @@ export interface VisualizationType {
   fullscreenComponent: React.ComponentType<VisualizationProps>;
   selectorComponent: React.ComponentType<SelectorProps>;
   createDefaultConfig: () => unknown;
-  enabledInPicker?: (props: EnableInPickerProps) => boolean;
+  isEnabledInPicker?: (props: IsEnabledInPickerProps) => boolean;
 }

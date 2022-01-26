@@ -187,6 +187,7 @@ function NewVisualizationPicker(props: Props) {
   } = props;
   const history = useHistory();
   const { computationId } = computation;
+  const enablePickerArgs = { geoConfigs };
   return (
     <div className={cx('-PickerContainer')}>
       <div className={cx('-PickerActions')}>
@@ -208,7 +209,11 @@ function NewVisualizationPicker(props: Props) {
                 <span>
                   <button
                     type="button"
-                    disabled={vizType == null}
+                    disabled={
+                      vizType == null ||
+                      (vizType.isEnabledInPicker != null &&
+                        vizType.isEnabledInPicker(enablePickerArgs) == false)
+                    }
                     onClick={async () => {
                       const visualizationId = uuid();
                       updateVisualizations((visualizations) =>
@@ -225,12 +230,7 @@ function NewVisualizationPicker(props: Props) {
                     }}
                   >
                     {vizType ? (
-                      vizType.enabledInPicker == null ||
-                      vizType.enabledInPicker({ geoConfigs }) ? (
-                        <vizType.selectorComponent {...vizOverview} />
-                      ) : (
-                        <div>I'm disabled!</div>
-                      )
+                      <vizType.selectorComponent {...vizOverview} />
                     ) : (
                       <PlaceholderIcon name={vizOverview.name} />
                     )}
@@ -238,15 +238,23 @@ function NewVisualizationPicker(props: Props) {
                 </span>
               </Tooltip>
               <div className={cx('-PickerEntryName')}>
-                {vizOverview.displayName?.includes(', ') ? (
-                  <div>
-                    {vizOverview.displayName.split(', ')[0]} <br />
-                    {vizOverview.displayName.split(', ')[1]}
-                  </div>
-                ) : (
-                  <div>{vizOverview.displayName}</div>
-                )}
+                <div>
+                  {vizOverview.displayName
+                    ?.split(', ')
+                    .reduce<(string | JSX.Element)[]>(
+                      (all, cur) => [
+                        ...all,
+                        ...(all.length ? [<br />] : []),
+                        cur,
+                      ],
+                      []
+                    )}
+                </div>
                 {vizType == null && <i>(Coming soon!)</i>}
+                {vizType?.isEnabledInPicker != null &&
+                  !vizType?.isEnabledInPicker(enablePickerArgs) && (
+                    <i>(Unavailable in this study)</i>
+                  )}
               </div>
             </div>
           );

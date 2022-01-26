@@ -18,9 +18,7 @@ export function useGeoConfig(entities: StudyEntity[]): GeoConfig[] {
     () =>
       entities
         .map((entity) => {
-          console.log(`Checking ${entity.displayName}`);
           const geolocationNode = findGeolocationNode(entity);
-          console.log(geolocationNode != null);
           if (geolocationNode != null) {
             const directChildren = entity.variables.filter(
               (variable) => variable.parentId === geolocationNode.id
