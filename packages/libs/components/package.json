@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/components",
-  "version": "0.11.12",
+  "version": "0.11.13",
   "license": "Apache-2.0",
   "description": "React Components for VEuPathDB Websites",
   "repository": {
@@ -30,6 +30,7 @@
     "latlon-geohash": "^2.0.0",
     "leaflet": "^1.6.0",
     "leaflet-drift-marker": "^1.0.3",
+    "leaflet-simple-map-screenshoter": "^0.4.5",
     "luxon": "^1.25.0",
     "plotly.js": "^2.6.0",
     "re-resizable": "^6.9.0",

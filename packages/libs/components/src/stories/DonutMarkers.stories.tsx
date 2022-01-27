@@ -136,6 +136,7 @@ export const FirstRequest: Story<MapVEuMapProps> = (args) => {
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
   const [legendData] = useState<LegendProps['data']>([]);
+  const [viewport] = useState<Viewport>({ center: [13, 16], zoom: 4 });
 
   const handleViewportChanged = useCallback(
     async (bvp: BoundsViewport) => {
@@ -153,7 +154,7 @@ export const FirstRequest: Story<MapVEuMapProps> = (args) => {
     <>
       <MapVEuMap
         {...args}
-        viewport={{ center: [13, 16], zoom: 4 }}
+        viewport={viewport}
         onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         animation={defaultAnimation}
@@ -189,6 +190,7 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
   const [legendData, setLegendData] = useState<LegendProps['data']>([]);
+  const [viewport] = useState<Viewport>({ center: [13, 16], zoom: 4 });
 
   const handleViewportChanged = useCallback(
     async (bvp: BoundsViewport) => {
@@ -230,7 +232,7 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
     <>
       <MapVEuMap
         {...args}
-        viewport={{ center: [13, 16], zoom: 4 }}
+        viewport={viewport}
         onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         animation={defaultAnimation}

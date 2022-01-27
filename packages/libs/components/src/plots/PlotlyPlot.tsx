@@ -22,6 +22,7 @@ import {
 import { LayoutLegendTitle } from '../types/plotly-omissions';
 // add d3.select
 import { select } from 'd3';
+// 3rd party toImage function from plotly
 import { ToImgopts, toImage } from 'plotly.js';
 import { uniqueId } from 'lodash';
 import { makeSharedPromise } from '../utils/promise-utils';
@@ -335,9 +336,11 @@ function PlotlyPlot<T>(
   useImperativeHandle<PlotRef, PlotRef>(
     ref,
     () => ({
+      // Set the ref's toImage function that will be called in web-eda
       toImage: async (imageOpts: ToImgopts) => {
         try {
           await sharedPlotCreation.promise;
+          // Call the 3rd party function that actually creates the image
           return await toImage(plotId, imageOpts);
         } catch (error) {
           console.error('Could not create image for plot:', error);
