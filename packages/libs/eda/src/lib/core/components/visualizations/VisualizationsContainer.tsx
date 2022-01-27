@@ -187,7 +187,6 @@ function NewVisualizationPicker(props: Props) {
   } = props;
   const history = useHistory();
   const { computationId } = computation;
-  const enablePickerArgs = { geoConfigs };
   return (
     <div className={cx('-PickerContainer')}>
       <div className={cx('-PickerActions')}>
@@ -199,9 +198,14 @@ function NewVisualizationPicker(props: Props) {
       <Grid>
         {visualizationsOverview.map((vizOverview, index) => {
           const vizType = visualizationTypes[vizOverview.name!];
+          const disabled =
+            vizType == null ||
+            (vizType.isEnabledInPicker != null &&
+              vizType.isEnabledInPicker({ geoConfigs }) == false);
+          // we could in future pass other study metadata, variable constraints, etc to isEnabledInPicker()
           return (
             <div
-              className={cx('-PickerEntry', vizType == null && 'disabled')}
+              className={cx('-PickerEntry', disabled && 'disabled')}
               key={`vizType${index}`}
             >
               {/* add viz description tooltip for viz picker */}
@@ -209,11 +213,7 @@ function NewVisualizationPicker(props: Props) {
                 <span>
                   <button
                     type="button"
-                    disabled={
-                      vizType == null ||
-                      (vizType.isEnabledInPicker != null &&
-                        vizType.isEnabledInPicker(enablePickerArgs) == false)
-                    }
+                    disabled={disabled}
                     onClick={async () => {
                       const visualizationId = uuid();
                       updateVisualizations((visualizations) =>
@@ -240,21 +240,20 @@ function NewVisualizationPicker(props: Props) {
               <div className={cx('-PickerEntryName')}>
                 <div>
                   {vizOverview.displayName
-                    ?.split(', ')
+                    ?.split(', ') // this monstrosity avoids doing the split twice!
                     .reduce<(string | JSX.Element)[]>(
-                      (all, cur) => [
-                        ...all,
-                        ...(all.length ? [<br />] : []),
-                        cur,
+                      (accum, item) => [
+                        ...accum,
+                        ...(accum.length ? [<br />] : []),
+                        item,
                       ],
                       []
                     )}
                 </div>
                 {vizType == null && <i>(Coming soon!)</i>}
-                {vizType?.isEnabledInPicker != null &&
-                  !vizType?.isEnabledInPicker(enablePickerArgs) && (
-                    <i>(Unavailable in this study)</i>
-                  )}
+                {vizType != null && disabled && (
+                  <i>(Not applicable to this study)</i>
+                )}
               </div>
             </div>
           );
