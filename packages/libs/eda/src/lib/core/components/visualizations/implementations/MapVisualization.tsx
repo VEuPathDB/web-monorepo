@@ -25,6 +25,7 @@ import {
   geohashLevelToVariableId,
   leafletZoomLevelToGeohashLevel,
 } from '../../../utils/visualization';
+import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 
 export const mapVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -212,11 +213,20 @@ function MapViz(props: VisualizationProps) {
       longitudeVariableDetails,
       boundsZoomLevel,
       computation.descriptor.type,
-      defaultAnimationDuration,
     ])
   );
 
+  const [height, width] = [450, 750];
   const { latitude, longitude, zoomLevel } = vizConfig.mapCenterAndZoom;
+
+  // Create the ref that we send to the map in web-components
+  const plotRef = useUpdateThumbnailEffect(
+    updateThumbnail,
+    { height, width },
+    // The dependencies for needing to generate a new thumbnail
+    [markers.value, latitude, longitude, zoomLevel]
+  );
+
   const plotNode = (
     <MapVEuMap
       viewport={{ center: [latitude, longitude], zoom: zoomLevel }}
@@ -224,10 +234,11 @@ function MapViz(props: VisualizationProps) {
       onBoundsChanged={setBoundsZoomLevel}
       markers={markers.value ?? []}
       animation={defaultAnimation}
-      height={450}
-      width={750}
+      height={height}
+      width={width}
       showGrid={true}
       zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+      ref={plotRef}
     />
   );
 
