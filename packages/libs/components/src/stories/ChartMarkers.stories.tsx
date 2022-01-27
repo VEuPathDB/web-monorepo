@@ -53,6 +53,7 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
   const [legendRadioValue, setLegendRadioValue] = useState<string>(
     'Individual'
   );
+  const [viewport] = useState<Viewport>({ center: [13, 0], zoom: 6 });
 
   const legendRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLegendRadioValue(e.target.value);
@@ -87,7 +88,7 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
     <>
       <MapVEuMap
         {...args}
-        viewport={{ center: [13, 0], zoom: 6 }}
+        viewport={viewport}
         onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         showGrid={true}
@@ -123,6 +124,8 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
   const [legendRadioValue, setLegendRadioValue] = useState<string>(
     'Individual'
   );
+  const [viewport] = useState<Viewport>({ center: [13, 0], zoom: 6 });
+
   const legendRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLegendRadioValue(e.target.value);
   };
@@ -178,7 +181,7 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
     <>
       <MapVEuMap
         {...args}
-        viewport={{ center: [13, 0], zoom: 6 }}
+        viewport={viewport}
         onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         showGrid={true}

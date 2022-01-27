@@ -95,6 +95,7 @@ export const SidebarResize: Story<MapVEuMapProps> = (args) => {
   //Sidebar state managements (for categorical)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [tabSelected, setTabSelected] = useState(''); //could be used to set default active tab, e.g., 'Home', but leave blank
+  const [viewport] = useState<Viewport>({ center: [13, 16], zoom: 4 });
 
   //this is X button/icon behavior considering sidebar resize
   const sidebarOnClose = () => {
@@ -227,7 +228,7 @@ export const SidebarResize: Story<MapVEuMapProps> = (args) => {
       </Sidebar>
       <MapVEuMap
         {...args}
-        viewport={{ center: [13, 16], zoom: 4 }}
+        viewport={viewport}
         onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         animation={defaultAnimation}
