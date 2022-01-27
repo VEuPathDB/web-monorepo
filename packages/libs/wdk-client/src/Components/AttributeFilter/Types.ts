@@ -4,7 +4,7 @@
 // Field types
 // -----------
 
-interface BaseField {
+export interface BaseField {
   type?: string;
   term: string;
   display: string;

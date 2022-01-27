@@ -136,11 +136,6 @@ const makeOntologyNode = <T extends Field>(ontologyEntriesByParent: Map<ParentTe
   return { field, children };
 }
 
-const GENERATED_ROOT: Field = {
-  term: '@@root@@',
-  display: '@@root@@'
-}
-
 export interface TreeOptions {
   hideSingleRoot: boolean;
 }
@@ -149,7 +144,16 @@ export const defaultTreeOptions: TreeOptions = {
   hideSingleRoot: true
 }
 
-export function getTree<T extends Field>(ontologyEntries: Iterable<T>, options: TreeOptions = defaultTreeOptions): TreeNode<T> {
+export const GENERATED_ROOT_FIELD: Field = {
+  term: '@@root@@',
+  display: '@@root@@'
+}
+
+export function getTree(ontologyEntries: Iterable<Field>, options: TreeOptions = defaultTreeOptions): FieldTreeNode {
+  return getGenericTree<Field>(ontologyEntries, GENERATED_ROOT_FIELD, options);
+}
+
+export function getGenericTree<T extends Field>(ontologyEntries: Iterable<T>, generatedRootField: T, options: TreeOptions = defaultTreeOptions): TreeNode<T> {
   const entriesByParentTerm = mapBy(ontologyEntries, term => term.parent);
   const rootFields = entriesByParentTerm.get(undefined) || [];
   const rootChildren = rootFields.map(makeOntologyNode(entriesByParentTerm));
@@ -158,7 +162,7 @@ export function getTree<T extends Field>(ontologyEntries: Iterable<T>, options: 
   // to place the single root beneath a generated root (below).
   return options.hideSingleRoot && rootChildren.length == 1 && rootChildren[0].children.length > 0
     ? rootChildren[0]
-    : { field: GENERATED_ROOT, children: rootChildren };
+    : { field: generatedRootField, children: rootChildren };
 }
 
 export function getLeavesOfSubTree(ontologyEntries: Iterable<Field>, rootTerm: Field): FilterField[] {
