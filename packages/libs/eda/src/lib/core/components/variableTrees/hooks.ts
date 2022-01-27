@@ -1,23 +1,19 @@
 import { useMemo } from 'react';
 
 import {
-  BaseField,
   Field,
-  FieldTreeNode,
   TreeNode,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 import {
   GENERATED_ROOT_FIELD,
   getGenericTree,
-  getTree,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
 import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
-import { StudyEntity } from '../../types/study';
+import { StudyEntity, ExtendedField } from '../../types/study';
 import {
   edaVariableToWdkField,
   entitiesToFields,
-  ExtendedField,
 } from '../../utils/wdk-filter-param-adapter';
 import { keyBy } from 'lodash';
 
@@ -52,8 +48,6 @@ export const useValuesMap = (entities: StudyEntity[]) =>
     return valuesMap;
   }, [entities]);
 
-// type FieldWithIsFeatured = Field & { isFeatured: boolean };
-
 /**
  * Memoized hook that delegates to {@link entitiesToFields}
  */
@@ -83,44 +77,51 @@ export const useFeaturedFields = (entities: StudyEntity[]): Field[] =>
     );
   }, [entities]);
 
+/**
+ * Gets featured fields (similar to the previous hook) from a TreeNode such that
+ * the order of the featured fields matches their order in the TreeNode.
+ */
 export const useFeaturedFieldsFromTree = (
   fieldTree: TreeNode<Field | ExtendedField>
-) => {
-  return getFeaturedFieldsRecursive(fieldTree, 'Unknown Entity').map(
-    (node) => node.field
+) =>
+  useMemo(
+    () =>
+      getFeaturedFieldsFromTreeRecursive(fieldTree, 'Unknown Entity').map(
+        (node) => node.field
+      ),
+    [fieldTree]
   );
-};
 
-const getFeaturedFieldsRecursive = (
+const getFeaturedFieldsFromTreeRecursive = (
   treeNode: TreeNode<Field | ExtendedField>,
   entityName: string
 ) => {
   const filteredFieldList: TreeNode<Field | ExtendedField>[] = [];
+
   if (treeNode.children.length > 0) {
+    // If we find an entity, persist its name through its child nodes
     const newEntityName = treeNode.field.term.startsWith('entity')
       ? treeNode.field.display
       : entityName;
+
     treeNode.children.forEach((child) =>
       filteredFieldList.push(
-        ...getFeaturedFieldsRecursive(child, newEntityName)
+        ...getFeaturedFieldsFromTreeRecursive(child, newEntityName)
       )
     );
-  } else {
-    // console.log({ leafNode: treeNode });
-    if ('isFeatured' in treeNode.field && treeNode.field.isFeatured) {
-      // console.log('treeNode matched');
-      // console.log({ treeNode });
-      const newTreeNode = {
-        ...treeNode,
-        field: {
-          ...treeNode.field,
-          parent: treeNode.field.parent?.split('/')[1],
-          display: `<span class="Entity">${entityName}</span>: ${treeNode.field.display}`,
-        },
-      };
-      filteredFieldList.push(newTreeNode);
-    }
+  } else if ('isFeatured' in treeNode.field && treeNode.field.isFeatured) {
+    const newTreeNode = {
+      ...treeNode,
+      field: {
+        ...treeNode.field,
+        parent: treeNode.field.parent?.split('/')[1],
+        display: `<span class="Entity">${entityName}</span>: ${treeNode.field.display}`,
+      },
+    };
+
+    filteredFieldList.push(newTreeNode);
   }
+
   return filteredFieldList;
 };
 

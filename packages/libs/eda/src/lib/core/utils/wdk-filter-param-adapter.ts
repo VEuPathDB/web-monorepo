@@ -1,12 +1,11 @@
 import { Filter as EdaFilter, StringSetFilter } from '../types/filter';
 import {
-  BaseField,
   Field,
   FieldTreeNode,
   Filter as WdkFilter,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 import { DistributionResponse } from '../api/SubsettingClient';
-import { StudyEntity, VariableTreeNode } from '../types/study';
+import { ExtendedField, StudyEntity, VariableTreeNode } from '../types/study';
 import { getTree } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
 import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
@@ -118,17 +117,9 @@ export function fromEdaFilter(filter: EdaFilter): WdkFilter {
   } as WdkFilter;
 }
 
-export type ExtendedField = Field & {
-  precision: number;
-  variableName: string;
-  isFeatured?: boolean;
-};
-
 export function edaVariableToWdkField(
   variable: VariableTreeNode
 ): ExtendedField {
-  // console.log({ variable });
-
   return {
     display: variable.displayName,
     isRange:
@@ -144,8 +135,6 @@ export function edaVariableToWdkField(
         : undefined,
     variableName: variable.providerLabel,
     isFeatured: variable.type !== 'category' ? variable.isFeatured : undefined,
-    // cast to handle additional props `precision` and `variableName` that
-    // do not exist on the `Field` type
   };
 }
 

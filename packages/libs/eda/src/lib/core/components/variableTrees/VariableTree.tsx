@@ -8,12 +8,10 @@ import { useStudyEntities } from '../../hooks/study';
 import {
   useValuesMap,
   useFlattenedFields,
-  useFeaturedFields,
   useFieldTree,
   useFlattenFieldsByTerm,
   useFeaturedFieldsFromTree,
 } from './hooks';
-import { FieldTreeNode } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 
 export interface VariableTreeProps {
   rootEntity: StudyEntity;
@@ -44,51 +42,8 @@ export default function VariableTree({
   const valuesMap = useValuesMap(entities);
   const flattenedFields = useFlattenedFields(entities);
   const fieldsByTerm = useFlattenFieldsByTerm(flattenedFields);
-  const featuredFields = useFeaturedFields(entities);
   const fieldTree = useFieldTree(flattenedFields);
-  const featuredFieldsFromTree = useFeaturedFieldsFromTree(fieldTree);
-
-  // console.log({ flattenedFields });
-  // console.log({ fieldTree });
-  // console.log({ featuredFields });
-  // console.log({ featuredFieldsFromTree });
-
-  const featuredFieldTerms = featuredFields.map((field) => field.term);
-
-  // console.log({ featuredFieldsTerms });
-
-  const getFilteredLeaves = (
-    treeNode: FieldTreeNode,
-    filterFunc: (field: FieldTreeNode) => boolean
-  ) => {
-    const filteredFieldList: FieldTreeNode[] = [];
-    if (treeNode.children.length > 0) {
-      treeNode.children.forEach((child) =>
-        filteredFieldList.push(...getFilteredLeaves(child, filterFunc))
-      );
-    } else {
-      // console.log({ leafNode: treeNode });
-      if (filterFunc(treeNode)) {
-        // console.log('treeNode matched');
-        // console.log({ treeNode });
-        filteredFieldList.push(treeNode);
-      }
-    }
-    return filteredFieldList;
-  };
-
-  const featuredFieldTermsFromTree = getFilteredLeaves(
-    fieldTree,
-    (node: FieldTreeNode) => featuredFieldTerms.includes(node.field.term)
-  ).map((node) => node.field.term);
-
-  // console.log({ featuredFieldTermsFromTree });
-
-  const sortedFeaturedFields = featuredFields.sort(
-    (fieldA, fieldB) =>
-      featuredFieldTermsFromTree.indexOf(fieldA.term) -
-      featuredFieldTermsFromTree.indexOf(fieldB.term)
-  );
+  const featuredFields = useFeaturedFieldsFromTree(fieldTree);
 
   const disabledFields = useMemo(
     () => disabledVariables?.map((v) => `${v.entityId}/${v.variableId}`),
@@ -121,7 +76,7 @@ export default function VariableTree({
       activeField={activeField}
       disabledFieldIds={disabledFields}
       onActiveFieldChange={onActiveFieldChange}
-      featuredFields={featuredFieldsFromTree}
+      featuredFields={featuredFields}
       valuesMap={valuesMap}
       fieldTree={fieldTree}
       autoFocus={false}
