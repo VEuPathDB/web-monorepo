@@ -25,3 +25,6 @@ export { FormField, MultilineTextField } from './components/forms';
 
 export { default as styles } from './styleDefinitions';
 export { default as colors } from './definitions/colors';
+
+// Icons
+export * from './components/icons';
