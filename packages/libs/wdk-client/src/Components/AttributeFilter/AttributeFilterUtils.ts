@@ -136,17 +136,17 @@ const makeOntologyNode = <T extends Field>(ontologyEntriesByParent: Map<ParentTe
   return { field, children };
 }
 
+export const GENERATED_ROOT_FIELD: Field = {
+  term: '@@root@@',
+  display: '@@root@@'
+}
+
 export interface TreeOptions {
   hideSingleRoot: boolean;
 }
 
 export const defaultTreeOptions: TreeOptions = {
   hideSingleRoot: true
-}
-
-export const GENERATED_ROOT_FIELD: Field = {
-  term: '@@root@@',
-  display: '@@root@@'
 }
 
 export function getTree(ontologyEntries: Iterable<Field>, options: TreeOptions = defaultTreeOptions): FieldTreeNode {
