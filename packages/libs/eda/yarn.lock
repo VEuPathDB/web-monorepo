@@ -3514,10 +3514,10 @@
     react-modal "^3.14.3"
     react-table "^7.7.0"
 
-"@veupathdb/core-components@^0.7.0":
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.7.0.tgz#60899af1f5be38bf6f8e1beaaee78dc772824c85"
-  integrity sha512-lNaXP/+JJxVcJY5/w6fYqj7TxsL5mkZh8cuCDoAs6c4KlxDKVeT3GDtrwJAj5a0TvEwXpQluQJTj1BYYrwQeOA==
+"@veupathdb/core-components@^0.8.1":
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.8.1.tgz#5ac32c9ab097024ee4dc25a08e4dca8d5771d63d"
+  integrity sha512-1FRse8MDZkODFYqvY1HjWhF0NlNedHdgtVpl+MiAHKov6Dgm/UjWK4nMjWvfbo/fJQdINMXDmO9nlbSkpf7dIA==
   dependencies:
     "@material-ui/core" "^4.12.3"
     "@material-ui/icons" "^4.11.2"

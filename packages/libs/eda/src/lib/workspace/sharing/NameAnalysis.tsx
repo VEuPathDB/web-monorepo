@@ -1,18 +1,21 @@
 import { useState } from 'react';
 
 // Components
-import { H5 } from '@veupathdb/core-components';
-import { FilledButton } from '@veupathdb/core-components/dist/components/buttons';
-import FormField from '@veupathdb/core-components/dist/components/forms/FormField';
+import { H5, FilledButton, FormField, Edit } from '@veupathdb/core-components';
 
 // Definitions
 import { gray } from '@veupathdb/core-components/dist/definitions/colors';
+import { useUITheme } from '@veupathdb/core-components/dist/components/theming';
 
 type NameAnalysisProps = {
   currentName: string;
   updateName: (name: string) => void;
 };
 
+/**
+ * Displayed when the user has not yet provided a unique name for an analysis
+ * and is attempted to share/publish it.
+ * */
 export default function NameAnalysis({
   currentName,
   updateName,
@@ -20,6 +23,8 @@ export default function NameAnalysis({
   const [localAnalysisName, setLocalAnalysisName] = useState<
     string | undefined
   >(undefined);
+
+  const theme = useUITheme();
 
   return (
     <div
@@ -44,9 +49,10 @@ export default function NameAnalysis({
             maxWidth: 500,
           }}
         >
-          To make this analysis public, please first give it a name.
+          In order to share or make this analysis public, please first give it a
+          name.
         </p>
-        <div style={{ display: 'flex', marginTop: 25 }}>
+        <div style={{ display: 'flex', marginTop: 25, position: 'relative' }}>
           <FormField
             label="Analysis Name"
             onValueChange={(value) => {
@@ -58,12 +64,27 @@ export default function NameAnalysis({
             width="200px"
             placeholder={currentName}
           />
+          <div
+            style={{
+              position: 'relative',
+              left: -25,
+              top: 26,
+              pointerEvents: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            <Edit
+              fontSize={20}
+              fill={theme?.palette.primary.hue[theme.palette.primary.level]}
+            />
+          </div>
         </div>
       </div>
 
       <FilledButton
         text="Submit"
         themeRole="secondary"
+        disabled={localAnalysisName === undefined || !localAnalysisName.length}
         onPress={() =>
           localAnalysisName &&
           localAnalysisName.length &&
