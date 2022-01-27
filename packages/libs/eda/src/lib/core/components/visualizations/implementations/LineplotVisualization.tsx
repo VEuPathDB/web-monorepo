@@ -406,6 +406,7 @@ function LineplotViz(props: VisualizationProps) {
         facetVariable?.vocabulary,
         facetVariable
       );
+
       return lineplotResponseToData(
         response,
         visualization.descriptor.type,
@@ -898,7 +899,6 @@ export function lineplotResponseToData(
             data: processedData[facetValue]?.dataSetProcess ?? undefined,
           })),
         };
-
   return {
     dataSetProcess,
     // calculated y axis limits
@@ -1087,7 +1087,8 @@ function processInputData<T extends number | string>(
         binStart = el.binStart;
         binEnd = el.binEnd;
       } else {
-        seriesX = el.seriesX.map(Number);
+        // seriesX are bin labels right now. need to consider if bins are optional then what?
+        seriesX = el.seriesX;
         binStart = el.binStart.map(Number);
         binEnd = el.binEnd.map(Number);
       }
@@ -1113,6 +1114,8 @@ function processInputData<T extends number | string>(
             : max(seriesY);
       }
 
+      // hack for now
+      seriesX = binStart;
       // add scatter data considering input options
       dataSetProcess.push({
         x: seriesX.length ? seriesX : [null], // [null] hack required to make sure
@@ -1135,13 +1138,14 @@ function processInputData<T extends number | string>(
         },
         // this needs to be here for the case of markers with line or lineplot.
         line: { color: markerColor(index), shape: 'linear' },
-        bins: seriesY.map((_, index) => ({
-          binStart: binStart[index],
-          binEnd: binEnd[index],
-          binLabel: el.binLabel[index],
-          value: seriesY[index],
-        })),
+        //bins: seriesY.map((_, index) => ({
+        //  binStart: binStart[index],
+        //  binEnd: binEnd[index],
+        //  binLabel: el.binLabel[index],
+        //  value: seriesY[index],
+        //})),
       });
+
       return breakAfterThisSeries(index);
     }
     return false;
