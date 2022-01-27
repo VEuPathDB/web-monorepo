@@ -1,16 +1,23 @@
 import { useMemo } from 'react';
 
 import {
+  BaseField,
   Field,
   FieldTreeNode,
+  TreeNode,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
-import { getTree } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
+import {
+  GENERATED_ROOT_FIELD,
+  getGenericTree,
+  getTree,
+} from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
 import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 import { StudyEntity } from '../../types/study';
 import {
   edaVariableToWdkField,
   entitiesToFields,
+  ExtendedField,
 } from '../../utils/wdk-filter-param-adapter';
 import { keyBy } from 'lodash';
 
@@ -45,6 +52,8 @@ export const useValuesMap = (entities: StudyEntity[]) =>
     return valuesMap;
   }, [entities]);
 
+// type FieldWithIsFeatured = Field & { isFeatured: boolean };
+
 /**
  * Memoized hook that delegates to {@link entitiesToFields}
  */
@@ -74,21 +83,19 @@ export const useFeaturedFields = (entities: StudyEntity[]): Field[] =>
     );
   }, [entities]);
 
-type FieldWithIsFeatured = Field & { isFeatured: boolean };
-
 export const useFeaturedFieldsFromTree = (
-  fieldTree: FieldTreeNode
-): Field[] => {
+  fieldTree: TreeNode<Field | ExtendedField>
+) => {
   return getFeaturedFieldsRecursive(fieldTree, 'Unknown Entity').map(
     (node) => node.field
   );
 };
 
 const getFeaturedFieldsRecursive = (
-  treeNode: FieldTreeNode,
+  treeNode: TreeNode<Field | ExtendedField>,
   entityName: string
 ) => {
-  const filteredFieldList: FieldTreeNode[] = [];
+  const filteredFieldList: TreeNode<Field | ExtendedField>[] = [];
   if (treeNode.children.length > 0) {
     const newEntityName = treeNode.field.term.startsWith('entity')
       ? treeNode.field.display
@@ -100,10 +107,7 @@ const getFeaturedFieldsRecursive = (
     );
   } else {
     // console.log({ leafNode: treeNode });
-    if (
-      treeNode.field.type !== 'category' &&
-      (treeNode.field as FieldWithIsFeatured).isFeatured
-    ) {
+    if ('isFeatured' in treeNode.field && treeNode.field.isFeatured) {
       // console.log('treeNode matched');
       // console.log({ treeNode });
       const newTreeNode = {
@@ -127,11 +131,15 @@ const getFeaturedFieldsRecursive = (
  * This is used to actually display the fields (entity, variable category,
  * or variable) in a visual hierachy to the user.
  */
-export const useFieldTree = (flattenedFields: Array<Field>) =>
+export const useFieldTree = (flattenedFields: Array<Field | ExtendedField>) =>
   useMemo(() => {
-    const initialTree = getTree(flattenedFields, {
-      hideSingleRoot: false,
-    });
+    const initialTree = getGenericTree<Field | ExtendedField>(
+      flattenedFields,
+      GENERATED_ROOT_FIELD,
+      {
+        hideSingleRoot: false,
+      }
+    );
     const tree = pruneDescendantNodes(
       (node) => node.field.type != null || node.children.length > 0,
       initialTree

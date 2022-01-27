@@ -1,5 +1,6 @@
 import { Filter as EdaFilter, StringSetFilter } from '../types/filter';
 import {
+  BaseField,
   Field,
   FieldTreeNode,
   Filter as WdkFilter,
@@ -117,7 +118,15 @@ export function fromEdaFilter(filter: EdaFilter): WdkFilter {
   } as WdkFilter;
 }
 
-export function edaVariableToWdkField(variable: VariableTreeNode): Field {
+export type ExtendedField = Field & {
+  precision: number;
+  variableName: string;
+  isFeatured?: boolean;
+};
+
+export function edaVariableToWdkField(
+  variable: VariableTreeNode
+): ExtendedField {
   // console.log({ variable });
 
   return {
@@ -137,7 +146,7 @@ export function edaVariableToWdkField(variable: VariableTreeNode): Field {
     isFeatured: variable.type !== 'category' ? variable.isFeatured : undefined,
     // cast to handle additional props `precision` and `variableName` that
     // do not exist on the `Field` type
-  } as Field;
+  };
 }
 
 export function toWdkVariableSummary(
@@ -180,7 +189,9 @@ export function toWdkVariableSummary(
  * `Term` is a reference to the item itself and can be either an 
  * entity, variable category, or variable itself.
  */
-export function entitiesToFields(entities: StudyEntity[]) {
+export function entitiesToFields(
+  entities: StudyEntity[]
+): Array<Field | ExtendedField> {
   return entities.flatMap((entity) => {
     // Create a Set of variableId so we can lookup parentIds
     const variableIds = new Set(entity.variables.map((v) => v.id));
