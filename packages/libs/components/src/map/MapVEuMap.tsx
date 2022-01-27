@@ -138,20 +138,11 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     [screenshotter]
   );
 
-  let finalMarkers: typeof markers;
-
-  // BM: Why doesn't this work when wrapped in useEffect()?
-  // useEffect(() => {
-  // Show popups if we're in magnification mouse mode and we're not dragging.
-  // Dragging messes with our popup implementation.
-  if (mouseMode === 'magnification' && !isDragging) {
-    finalMarkers = markers.map((marker) =>
-      cloneElement(marker, { showPopup: true })
-    );
-  } else {
-    finalMarkers = markers;
-  }
-  //  }, [ markers, isDragging, mouseMode ]);
+  const finalMarkers = useMemo(() => {
+    if (mouseMode === 'magnification' && !isDragging)
+      return markers.map((marker) => cloneElement(marker, { showPopup: true }));
+    return markers;
+  }, [markers, isDragging, mouseMode]);
 
   return (
     <Map
