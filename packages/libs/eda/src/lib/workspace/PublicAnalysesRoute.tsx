@@ -24,8 +24,8 @@ export function PublicAnalysesRoute({
 
   const location = useLocation();
   const makeAnalysisLink = useCallback(
-    (studyId: string, analysisId: string) =>
-      Path.join(location.pathname, '..', studyId, analysisId, 'import'),
+    (analysisId: string) =>
+      Path.join(location.pathname, '..', analysisId, 'import'),
     [location.pathname]
   );
 

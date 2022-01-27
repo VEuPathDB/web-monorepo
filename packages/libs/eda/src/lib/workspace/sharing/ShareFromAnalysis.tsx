@@ -8,7 +8,12 @@ import { AnalysisState } from '../../core';
 import NameAnalysis from './NameAnalysis';
 import Login from './Login';
 import ConfirmShareAnalysis from './ConfirmShareAnalysis';
+
+// Utilities
 import { getAnalysisId } from '../../core/utils/analysis';
+
+// Hooks
+import { useLoginCallbacks } from './hooks';
 
 type ShareFromAnalyisProps = {
   visible: boolean;
@@ -18,17 +23,22 @@ type ShareFromAnalyisProps = {
    * The base of the URL from which to being sharing links.
    * This is passed down through several component layers. */
   sharingUrlPrefix: string;
+  /** A callback to open a login form. */
+  showLoginForm: () => void;
 };
 
 export default function ShareFromAnalysis({
   visible,
   toggleVisible,
+  showLoginForm,
   analysisState,
   sharingUrlPrefix,
 }: ShareFromAnalyisProps) {
   const userLoggedIn = useWdkService((wdkService) =>
     wdkService.getCurrentUser().then((user) => !user.isGuest)
   );
+
+  const loginCallbacks = useLoginCallbacks({ showLoginForm, toggleVisible });
 
   const sharingUrl = new URL(
     `/analysis/${getAnalysisId(analysisState.analysis)}`,
@@ -53,7 +63,7 @@ export default function ShareFromAnalysis({
       }}
     >
       {!userLoggedIn ? (
-        <Login toggleVisible={toggleVisible} />
+        <Login {...loginCallbacks} />
       ) : analysisState.analysis?.displayName === 'Unnamed Analysis' ? (
         <NameAnalysis
           currentName={analysisState.analysis.displayName}

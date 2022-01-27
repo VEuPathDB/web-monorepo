@@ -58,7 +58,7 @@ interface Props {
   analysisClient: AnalysisClient;
   publicAnalysisListState: PromiseHookState<PublicAnalysisSummary[]>;
   studyRecords: StudyRecord[] | undefined;
-  makeAnalysisLink: (studyId: string, analysisId: string) => string;
+  makeAnalysisLink: (analysisId: string) => string;
   exampleAnalysesAuthor?: number;
 }
 
@@ -428,5 +428,5 @@ function makeAnalysisImportLink(
   makeAnalysisLink: Props['makeAnalysisLink'],
   row: PublicAnalysisRow
 ) {
-  return makeAnalysisLink(row.studyId, row.analysisId);
+  return makeAnalysisLink(row.analysisId);
 }
