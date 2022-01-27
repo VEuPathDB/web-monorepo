@@ -6,6 +6,7 @@ import { BoundsViewport } from '../map/Types';
 import { BoundsDriftMarkerProps } from '../map/BoundsDriftMarker';
 import { defaultAnimationDuration } from '../map/config/map.json';
 import { leafletZoomLevelToGeohashLevel } from '../map/utils/leaflet-geohash';
+import { Viewport } from 'react-leaflet';
 import {
   getCollectionDateChartMarkers,
   getCollectionDateBasicMarkers,
