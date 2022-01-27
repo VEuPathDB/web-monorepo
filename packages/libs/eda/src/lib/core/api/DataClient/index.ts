@@ -21,6 +21,8 @@ import {
   TwoByTwoResponse,
   BoxplotRequestParams,
   BoxplotResponse,
+  MapMarkersResponse,
+  MapMarkersRequestParams,
 } from './types';
 
 export default class DataClient extends FetchClientWithCredentials {
@@ -136,6 +138,19 @@ export default class DataClient extends FetchClientWithCredentials {
       'boxplot',
       params,
       BoxplotResponse
+    );
+  }
+
+  // map-markers
+  getMapMarkers(
+    computationName: string,
+    params: MapMarkersRequestParams
+  ): Promise<MapMarkersResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'map-markers',
+      params,
+      MapMarkersResponse
     );
   }
 }
