@@ -275,6 +275,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
     toggleStarredVariable,
     totalCounts,
     filteredCounts,
+    geoConfigs,
   } = props;
   const history = useHistory();
   const viz = computation.visualizations.find((v) => v.visualizationId === id);
@@ -426,6 +427,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
             updateThumbnail={updateThumbnail}
             totalCounts={totalCounts}
             filteredCounts={filteredCounts}
+            geoConfigs={geoConfigs}
           />
         </div>
       )}

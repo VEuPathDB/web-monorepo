@@ -26,6 +26,7 @@ export interface VisualizationProps {
   toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
+  geoConfigs: GeoConfig[];
 }
 
 export type SelectorProps = VisualizationOverview;

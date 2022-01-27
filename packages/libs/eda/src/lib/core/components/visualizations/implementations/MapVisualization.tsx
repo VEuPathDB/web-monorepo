@@ -90,6 +90,7 @@ function MapViz(props: VisualizationProps) {
     toggleStarredVariable,
     totalCounts,
     filteredCounts,
+    geoConfigs,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -241,7 +242,7 @@ function MapViz(props: VisualizationProps) {
   );
 
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
       <PlotLayout
         isFaceted={false}
         legendNode={null}
