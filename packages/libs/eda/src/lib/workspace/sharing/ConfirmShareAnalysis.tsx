@@ -1,6 +1,11 @@
 // Components
-import { FloatingButton, H5 } from '@veupathdb/core-components';
-import { Copy } from '@veupathdb/core-components/dist/components/icons';
+import {
+  FloatingButton,
+  H5,
+  Warning,
+  Copy,
+  colors,
+} from '@veupathdb/core-components';
 
 // Hooks
 import { useUITheme } from '@veupathdb/core-components/dist/components/theming';
@@ -31,39 +36,56 @@ export default function ConfirmShareAnalysis({
           additionalStyles={{ marginTop: 25, marginBottom: 0 }}
         />
 
-        <p
+        <div
           style={{
-            fontSize: '.9rem',
-            color: gray[600],
-            maxWidth: 500,
+            display: 'flex',
+            alignItems: 'center',
+            borderStyle: 'solid',
+            borderWidth: 2,
+            borderRadius: 10,
+            padding: 10,
+            marginTop: 10,
+            marginBottom: 20,
+            borderColor: theme?.palette.primary.hue[500],
           }}
         >
-          Anyone with the link below will be able to get a copy of this
-          analysis.
-        </p>
+          <Warning fontSize={48} fill={colors.orange[500]} />
+          <div style={{ marginLeft: 15 }}>
+            <p
+              style={{
+                fontSize: '.9rem',
+                color: gray[600],
+                maxWidth: 500,
+              }}
+            >
+              Anyone with the link below will be able to get a copy of this
+              analysis.
+            </p>
 
-        <p
-          style={{
-            fontSize: '.9rem',
-            color: gray[600],
-            maxWidth: 500,
-          }}
-        >
-          When a recipient clicks the link, they receive a <em>copy</em> of the{' '}
-          <em>latest version</em>.
-        </p>
-        <p
-          style={{
-            fontSize: '.9rem',
-            color: theme?.palette.primary.hue[600] ?? gray[600],
-            maxWidth: 500,
-            fontWeight: 'bold',
-            marginTop: 0,
-          }}
-        >
-          If you update or delete your analysis, preexisting copies will not be
-          affected.
-        </p>
+            <p
+              style={{
+                fontSize: '.9rem',
+                color: gray[600],
+                maxWidth: 500,
+              }}
+            >
+              When a recipient clicks the link, they receive a <em>copy</em> of
+              the <em>latest version</em>.
+            </p>
+            <p
+              style={{
+                fontSize: '.9rem',
+                color: theme?.palette.primary.hue[600] ?? gray[600],
+                maxWidth: 500,
+                fontWeight: 'bold',
+                marginTop: 0,
+              }}
+            >
+              If you update or delete your analysis, preexisting copies will not
+              be affected.
+            </p>
+          </div>
+        </div>
       </div>
       <div style={{ flex: 1 }}>
         <p

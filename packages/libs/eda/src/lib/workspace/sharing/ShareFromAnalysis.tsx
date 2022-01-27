@@ -53,7 +53,7 @@ export default function ShareFromAnalysis({
       includeCloseButton={true}
       themeRole="primary"
       styleOverrides={{
-        size: { width: 700, height: 425 },
+        size: { width: 700, height: 450 },
         content: {
           paddingTop: 0,
           paddingRight: 50,
