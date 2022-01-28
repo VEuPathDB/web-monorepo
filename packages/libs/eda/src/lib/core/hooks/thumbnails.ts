@@ -42,6 +42,7 @@ export function useUpdateThumbnailEffect(
 
     const { updateThumbnail, thumbnailDimensions } = thumbnailArgsRef.current;
 
+    // Update the thumbnail
     return Task.fromPromise(
       () =>
         new Promise((resolve) => {
