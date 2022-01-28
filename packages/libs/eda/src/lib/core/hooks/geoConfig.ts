@@ -37,7 +37,8 @@ export function useGeoConfig(entities: StudyEntity[]): GeoConfig[] {
                   .filter(
                     (variable) =>
                       variable.type === 'string' &&
-                      variable.dataShape === 'continuous'
+                      (variable.dataShape === 'categorical' ||
+                        variable.dataShape === 'binary')
                   )
                   .map((variable) => variable.id)
               ),
