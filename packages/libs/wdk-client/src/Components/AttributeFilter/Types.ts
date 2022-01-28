@@ -46,11 +46,11 @@ export type RangeField = NumberRangeField | DateRangeField;
 export type FilterField = MemberField | RangeField | MultiField;
 export type Field = FilterField | BaseField;
 
-export type FieldTreeNode = {
-  field: Field;
-  children: FieldTreeNode[];
-}
-
+export type TreeNode<T extends Field> = {
+  field: T;
+  children: TreeNode<T>[];
+};
+export type FieldTreeNode = TreeNode<Field>;
 
 // Filter value types
 // ------------------

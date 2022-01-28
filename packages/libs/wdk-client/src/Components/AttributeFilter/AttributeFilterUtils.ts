@@ -5,6 +5,7 @@ import { Seq } from 'wdk-client/Utils/IterableUtils';
 import {
   Field,
   FieldTreeNode,
+  TreeNode,
   Filter,
   FilterField,
   MultiField,
@@ -129,13 +130,13 @@ export function getFilterFieldsFromOntology(ontologyEntries: Iterable<Field>): F
 
 type ParentTerm = string | undefined;
 
-const makeOntologyNode = (ontologyEntriesByParent: Map<ParentTerm, Field[]>) =>(field: Field): FieldTreeNode =>  {
+const makeOntologyNode = <T extends Field>(ontologyEntriesByParent: Map<ParentTerm, T[]>) => (field: T): TreeNode<T> => {
   const childFields = ontologyEntriesByParent.get(field.term) || [];
   const children = childFields.map(makeOntologyNode(ontologyEntriesByParent));
   return { field, children };
 }
 
-const GENERATED_ROOT: Field = {
+export const GENERATED_ROOT_FIELD: Field = {
   term: '@@root@@',
   display: '@@root@@'
 }
@@ -149,6 +150,10 @@ export const defaultTreeOptions: TreeOptions = {
 }
 
 export function getTree(ontologyEntries: Iterable<Field>, options: TreeOptions = defaultTreeOptions): FieldTreeNode {
+  return getGenericTree<Field>(ontologyEntries, GENERATED_ROOT_FIELD, options);
+}
+
+export function getGenericTree<T extends Field>(ontologyEntries: Iterable<T>, generatedRootField: T, options: TreeOptions = defaultTreeOptions): TreeNode<T> {
   const entriesByParentTerm = mapBy(ontologyEntries, term => term.parent);
   const rootFields = entriesByParentTerm.get(undefined) || [];
   const rootChildren = rootFields.map(makeOntologyNode(entriesByParentTerm));
@@ -157,7 +162,7 @@ export function getTree(ontologyEntries: Iterable<Field>, options: TreeOptions =
   // to place the single root beneath a generated root (below).
   return options.hideSingleRoot && rootChildren.length == 1 && rootChildren[0].children.length > 0
     ? rootChildren[0]
-    : { field: GENERATED_ROOT, children: rootChildren };
+    : { field: generatedRootField, children: rootChildren };
 }
 
 export function getLeavesOfSubTree(ontologyEntries: Iterable<Field>, rootTerm: Field): FilterField[] {
