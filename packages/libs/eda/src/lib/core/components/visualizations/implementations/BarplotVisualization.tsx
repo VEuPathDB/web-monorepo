@@ -418,9 +418,11 @@ function BarplotViz(props: VisualizationProps) {
     vizConfig.checkedLegendItems
   );
 
+  // Create the ref that we send to the map in web-components
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
     plotContainerStyles,
+    // The dependencies for needing to generate a new thumbnail
     [data, vizConfig.checkedLegendItems]
   );
 
