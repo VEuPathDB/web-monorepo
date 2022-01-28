@@ -320,6 +320,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
     );
   }, [filters, id]);
 
+  // Function to update the thumbnail on the configured viz selection page
   const updateThumbnail = useCallback(
     (thumbnail: string) => {
       updateVisualizations((visualizations) =>
