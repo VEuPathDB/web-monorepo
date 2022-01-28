@@ -1,5 +1,5 @@
 import { empty, of, merge } from 'rxjs';
-import { filter, map, mergeMap, switchMap } from 'rxjs/operators';
+import { filter, map, mergeMap, mergeMapTo, switchMap, tap } from 'rxjs/operators';
 import * as RecordStoreModule from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
 import { QuestionActions, RecordActions } from '@veupathdb/wdk-client/lib/Actions';
 import { difference, get } from 'lodash';
@@ -7,6 +7,7 @@ import * as tree from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import * as cat from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import * as persistence from '@veupathdb/web-common/lib/util/persistence';
 import { TABLE_STATE_UPDATED, PATHWAY_DYN_COLS_LOADED } from '../actioncreators/RecordViewActionCreators';
+import { isGenomicsService } from '../wrapWdkService';
 
 export const key = 'record';
 
@@ -57,6 +58,7 @@ export function observe(action$, state$, services) {
     // QuestionStoreModule.observe(action$, state$, services),
     observeSnpsAlignment(action$, state$, services),
     observeUserSettings(action$, state$, services),
+    observeRequestedOrganisms(action$, state$, services),
   )
 }
 
@@ -345,7 +347,28 @@ function observeSnpsAlignment(action$) {
   );
 }
 
+/**
+ * Whenever a gene or genomic sequence record is loaded, increment
+ * the count of the associated organism.
+ */
+function observeRequestedOrganisms(action$, state$, { wdkService }) {
+  return action$.pipe(
+    filter(action => action.type === RecordActions.RECORD_LOADING),
+    tap(({ payload }) => {
+      if (!isGenomicsService(wdkService)) {
+        throw new Error('Tried to report organism metrics via a misconfigured GenomicsService');
+      }
 
+      if (
+        payload.recordClassUrlSegment === 'gene' ||
+        payload.recordClassUrlSegment === 'genomic-sequence'
+      ) {
+        wdkService.incrementOrganismCount(payload);
+      }
+    }),
+    mergeMapTo(empty())
+  );
+}
 
 // TODO Declare type and clear value if it doesn't conform, e.g., validation
 
