@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 import { H5 } from '@veupathdb/core-components';
 import { FilledButton } from '@veupathdb/core-components/dist/components/buttons';
 
@@ -22,6 +24,7 @@ export default function ConfirmPublicAnalysis({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
+        paddingBottom: 25,
       }}
     >
       <div style={{ flex: 1 }}>
@@ -47,9 +50,24 @@ export default function ConfirmPublicAnalysis({
             maxWidth: 500,
           }}
         >
-          This analysis will appear on the ClinEpiDB Public analyses page. When
-          someone clicks on the public link, they will get a copy of the latest
-          version.
+          This analysis will appear on the{' '}
+          <Link
+            to="/eda/public"
+            target="_blank"
+            style={{ color: theme?.palette.primary.hue[600] }}
+          >
+            ClinEpiDB Public analyses page.
+          </Link>
+        </p>
+        <p
+          style={{
+            fontSize: '.9rem',
+            color: gray[600],
+            maxWidth: 500,
+          }}
+        >
+          When someone clicks on the public link, they will get a copy of the
+          latest version.
         </p>
         <p
           style={{
@@ -59,8 +77,17 @@ export default function ConfirmPublicAnalysis({
           }}
         >
           If you update or delete your analysis, preexisting copies will not be
-          affected. You can make this analysis private again later, but
-          preexisting copies will not be affected.
+          affected.
+        </p>
+        <p
+          style={{
+            fontSize: '.9rem',
+            color: gray[600],
+            maxWidth: 500,
+          }}
+        >
+          You can make this analysis private again later, but preexisting copies
+          will not be affected.
         </p>
       </div>
       <FilledButton

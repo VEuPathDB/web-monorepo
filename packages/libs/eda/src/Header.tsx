@@ -3,10 +3,13 @@ import { Link } from 'react-router-dom';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+import { DevLoginFormContext } from '.';
 import { endpoint } from './constants';
 
 export default function Header() {
-  const [showLoginForm, setShowLoginForm] = React.useState(false);
+  const { loginFormVisible, setLoginFormVisible } = React.useContext(
+    DevLoginFormContext
+  );
   const [email, setEmail] = React.useState('');
   const [pwd, setPwd] = React.useState('');
   const [user, setUser] = React.useState<User>();
@@ -53,9 +56,9 @@ export default function Header() {
               type="button"
               className="link"
               style={{ color: 'whitesmoke' }}
-              onClick={() => setShowLoginForm(true)}
+              onClick={() => setLoginFormVisible(true)}
             >
-              Login
+              Log In
             </button>
           </>
         ) : (
@@ -65,10 +68,10 @@ export default function Header() {
             style={{ color: 'whitesmoke' }}
             onClick={() => logout()}
           >
-            Logout ({user.email})
+            Log Out ({user.email})
           </button>
         )}
-        {showLoginForm && (
+        {loginFormVisible && (
           <div
             style={{
               position: 'absolute',
@@ -124,7 +127,7 @@ export default function Header() {
                   <button
                     style={{ fontSize: '1em' }}
                     type="button"
-                    onClick={() => setShowLoginForm(false)}
+                    onClick={() => setLoginFormVisible(false)}
                   >
                     Cancel
                   </button>
@@ -132,7 +135,7 @@ export default function Header() {
                 <Link
                   to="/user/registration"
                   style={{ color: 'whitesmoke' }}
-                  onClick={() => setShowLoginForm(false)}
+                  onClick={() => setLoginFormVisible(false)}
                 >
                   Register
                 </Link>
