@@ -1,7 +1,5 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
-import { HeaderProps } from '../components/headers/Header';
-
-import { useCoreUIFonts } from '../hooks';
+import { HeaderProps } from '../../components/typography/headers/Header';
 
 import {
   H1 as H1Component,
@@ -10,9 +8,9 @@ import {
   H4 as H4Component,
   H5 as H5Component,
   H6 as H6Component,
-} from '../components/headers';
-import UIThemeProvider from '../components/theming/UIThemeProvider';
-import { green, mutedBlue, purple } from '../definitions/colors';
+} from '../../components/typography';
+import UIThemeProvider from '../../components/theming/UIThemeProvider';
+import { green, mutedBlue, purple } from '../../definitions/colors';
 
 export default {
   title: 'Typography/Headers',
@@ -27,8 +25,6 @@ export default {
 } as Meta;
 
 export const Default: Story<Omit<HeaderProps, 'size'>> = (args) => {
-  useCoreUIFonts();
-
   return (
     <div>
       <H1Component {...args} text={`H1: ${args.text}`} />
@@ -47,8 +43,6 @@ Default.args = {
 };
 
 export const UseTheme: Story<Omit<HeaderProps, 'size'>> = (args) => {
-  useCoreUIFonts();
-
   return (
     <UIThemeProvider
       theme={{

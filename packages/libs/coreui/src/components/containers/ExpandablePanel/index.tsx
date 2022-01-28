@@ -2,7 +2,7 @@ import { ReactNode, useEffect, useMemo, useState } from 'react';
 
 import { UITheme } from '../../theming';
 
-import { H6 } from '../../headers';
+import { H6 } from '../../typography';
 import { ChevronRight } from '../../icons';
 
 // Definitions

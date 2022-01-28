@@ -1,8 +1,8 @@
 import { ForwardedRef, forwardRef, useMemo } from 'react';
 
-import { gray } from '../../definitions/colors';
-import styles from '../../styleDefinitions';
-import useUITheme from '../theming/useUITheme';
+import { gray } from '../../../definitions/colors';
+import styles from '../../../styleDefinitions';
+import useUITheme from '../../theming/useUITheme';
 
 export type HeaderProps = {
   /** Underlying HTML element tag to use. */

@@ -2,7 +2,7 @@ import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 import useDimensions from 'react-cool-dimensions';
 
 // Components
-import { H6 } from '../headers';
+import { H6 } from '../typography';
 import { CheckCircle, Loading } from '../icons';
 
 // Definitions

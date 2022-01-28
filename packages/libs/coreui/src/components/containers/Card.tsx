@@ -3,7 +3,7 @@ import { merge } from 'lodash';
 import useDimensions from 'react-cool-dimensions';
 
 // Components
-import { H3, H4 } from '../headers';
+import { H3, H4 } from '../typography/headers';
 
 // Definitions
 import { blue, gray } from '../../definitions/colors';

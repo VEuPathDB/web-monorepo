@@ -15,7 +15,7 @@ import { FilledButton } from '../../components/buttons';
 import typography, { secondaryFont } from '../../styleDefinitions/typography';
 import { UIThemeProvider } from '../../components/theming';
 import { purple } from '@material-ui/core/colors';
-import { H6 } from '../../components/headers';
+import { H6 } from '../../components/typography';
 
 const ModalContent = ({
   themeRole,
