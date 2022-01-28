@@ -6,9 +6,11 @@ import { FilledButton } from '@veupathdb/core-components/dist/components/buttons
 import { gray } from '@veupathdb/core-components/dist/definitions/colors';
 
 export default function Login({
-  toggleVisible,
+  onPressClose,
+  onPressLogIn,
 }: {
-  toggleVisible: (visible: boolean) => void;
+  onPressClose: () => void;
+  onPressLogIn: () => void;
 }) {
   return (
     <div
@@ -17,6 +19,7 @@ export default function Login({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
+        paddingBottom: 25,
       }}
     >
       <div>
@@ -25,18 +28,31 @@ export default function Login({
           additionalStyles={{ marginTop: 25, marginBottom: 0 }}
         />
         <p style={{ fontSize: '.9rem', color: gray[600], marginTop: 0 }}>
-          In order to share an analyis, you'll need to login to your account.
+          In order to share an analysis, or make it public, you'll need to log
+          in to your account.
         </p>
         <p style={{ fontSize: '.9rem', color: gray[600] }}>
-          Please login and then try again.
+          Please log in and try again.
         </p>
       </div>
 
-      <FilledButton
-        text="Close"
-        themeRole="secondary"
-        onPress={() => toggleVisible(false)}
-      />
+      <div style={{ display: 'flex' }}>
+        <FilledButton
+          text="Log In"
+          themeRole="secondary"
+          onPress={onPressLogIn}
+        />
+        <FilledButton
+          text="Close"
+          themeRole="secondary"
+          onPress={onPressClose}
+          styleOverrides={{
+            container: {
+              marginLeft: 10,
+            },
+          }}
+        />
+      </div>
     </div>
   );
 }

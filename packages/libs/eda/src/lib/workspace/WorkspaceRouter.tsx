@@ -30,6 +30,14 @@ type Props = {
   dataServiceUrl: string;
   userServiceUrl: string;
   exampleAnalysesAuthor?: number;
+  /**
+   * The base of the URL from which to being sharing links.
+   * This is passed down through several component layers. */
+  sharingUrlPrefix: string;
+  /**
+   * A callback to open a login form.
+   * This is also passed down through several component layers. */
+  showLoginForm: () => void;
 };
 
 /**
@@ -40,6 +48,8 @@ export function WorkspaceRouter({
   dataServiceUrl,
   userServiceUrl,
   exampleAnalysesAuthor,
+  sharingUrlPrefix,
+  showLoginForm,
 }: Props) {
   const { path, url } = useRouteMatch();
   const subsettingClient = useConfiguredSubsettingClient(subsettingServiceUrl);
@@ -57,6 +67,7 @@ export function WorkspaceRouter({
                 analysisClient={analysisClient}
                 subsettingClient={subsettingClient}
                 exampleAnalysesAuthor={exampleAnalysesAuthor}
+                showLoginForm={showLoginForm}
               />
             )}
           />
@@ -115,6 +126,8 @@ export function WorkspaceRouter({
                 subsettingServiceUrl={subsettingServiceUrl}
                 dataServiceUrl={dataServiceUrl}
                 userServiceUrl={userServiceUrl}
+                sharingUrlPrefix={sharingUrlPrefix}
+                showLoginForm={showLoginForm}
               />
             )}
           />
@@ -130,10 +143,9 @@ export function WorkspaceRouter({
           />
           <Route
             exact
-            path={`${path}/:studyId/:analysisId/import`}
+            path={`${path}/:analysisId/import`}
             render={(
               props: RouteComponentProps<{
-                studyId: string;
                 analysisId: string;
               }>
             ) => {
@@ -144,6 +156,20 @@ export function WorkspaceRouter({
                 />
               );
             }}
+          />
+          <Route
+            exact
+            path={`${path}/:studyId/:analysisId/import`}
+            render={(
+              props: RouteComponentProps<{
+                analysisId: string;
+                studyId: string;
+              }>
+            ) => (
+              <Redirect
+                to={`${path}/${props.match.params.analysisId}/import`}
+              />
+            )}
           />
           <Route
             path={`${path}/:studyId/:analysisId`}
@@ -158,6 +184,8 @@ export function WorkspaceRouter({
                 subsettingServiceUrl={subsettingServiceUrl}
                 dataServiceUrl={dataServiceUrl}
                 userServiceUrl={userServiceUrl}
+                sharingUrlPrefix={sharingUrlPrefix}
+                showLoginForm={showLoginForm}
               />
             )}
           />

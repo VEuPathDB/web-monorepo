@@ -66,6 +66,10 @@ interface Props {
   analysisClient: AnalysisClient;
   subsettingClient: SubsettingClient;
   exampleAnalysesAuthor?: number;
+  /**
+   * A callback to open a login form.
+   * This is passed down through several component layers. */
+  showLoginForm: () => void;
 }
 
 const useStyles = makeStyles({
@@ -83,7 +87,7 @@ const useStyles = makeStyles({
 const UNKNOWN_DATASET_NAME = 'Unknown study';
 
 export function AllAnalyses(props: Props) {
-  const { analysisClient, exampleAnalysesAuthor } = props;
+  const { analysisClient, exampleAnalysesAuthor, showLoginForm } = props;
   const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
   const history = useHistory();
   const location = useLocation();
@@ -578,6 +582,7 @@ export function AllAnalyses(props: Props) {
         updateAnalysis={updateAnalysis}
         visible={sharingModalVisible}
         toggleVisible={setSharingModalVisible}
+        showLoginForm={showLoginForm}
       />
 
       <h1>My Analyses</h1>
