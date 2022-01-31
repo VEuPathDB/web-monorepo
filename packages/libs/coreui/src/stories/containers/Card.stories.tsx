@@ -95,11 +95,14 @@ ThinMargins.args = {
   styleOverrides: { content: { paddingLeft: 15 } },
 } as CardProps;
 
-export const CustomBackgroundColor = Template.bind({});
-CustomBackgroundColor.args = {
+export const StyleOverrides = Template.bind({});
+StyleOverrides.args = {
   title: 'Example Card',
   titleSize: 'large',
   height: 450,
   width: 350,
-  styleOverrides: { content: { paddingLeft: 15, backgroundColor: blue[100] } },
+  styleOverrides: {
+    border: { style: 'solid', radius: 10, color: blue[600], width: 2 },
+    content: { paddingLeft: 15, backgroundColor: blue[100] },
+  },
 } as CardProps;
