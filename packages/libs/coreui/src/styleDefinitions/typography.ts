@@ -1,17 +1,11 @@
 import { css } from '@emotion/react';
 import { gray } from '../definitions/colors';
 
-export const primaryFont = css({
-  fontFamily: "'Inter', sans-serif",
-  fontStyle: 'normal',
-});
-export const secondaryFont = css({
-  fontFamily: '"Roboto", sans-serif',
-  fontStyle: 'normal',
-});
+export const primaryFont = "'Inter', sans-serif";
+export const secondaryFont = '"Roboto", sans-serif';
 
 export const h1 = css([
-  primaryFont,
+  { fontFamily: primaryFont },
   {
     fontSize: 72,
     fontWeight: 700,
@@ -20,7 +14,7 @@ export const h1 = css([
   },
 ]);
 export const h2 = css([
-  primaryFont,
+  { fontFamily: primaryFont },
   {
     fontSize: 56,
     fontWeight: 700,
@@ -29,7 +23,7 @@ export const h2 = css([
   },
 ]);
 export const h3 = css([
-  primaryFont,
+  { fontFamily: primaryFont },
   {
     fontSize: 42,
     fontWeight: 700,
@@ -38,7 +32,7 @@ export const h3 = css([
   },
 ]);
 export const h4 = css([
-  primaryFont,
+  { fontFamily: primaryFont },
   {
     fontSize: 32,
     fontWeight: 600,
@@ -47,7 +41,7 @@ export const h4 = css([
   },
 ]);
 export const h5 = css([
-  primaryFont,
+  { fontFamily: primaryFont },
   {
     fontSize: 21,
     fontWeight: 600,
@@ -56,7 +50,7 @@ export const h5 = css([
   },
 ]);
 export const h6 = css([
-  primaryFont,
+  { fontFamily: primaryFont },
   {
     fontSize: 16,
     fontWeight: 500,
@@ -66,7 +60,7 @@ export const h6 = css([
 ]);
 
 export const p = css([
-  secondaryFont,
+  { fontFamily: secondaryFont },
   {
     fontSize: '0.8rem',
     fontWeight: 400,
@@ -75,7 +69,7 @@ export const p = css([
   },
 ]);
 export const pre = css([
-  secondaryFont,
+  { fontFamily: secondaryFont },
   {
     fontSize: '.80rem',
     fontWeight: 400,
@@ -84,7 +78,7 @@ export const pre = css([
   },
 ]);
 export const label = css([
-  secondaryFont,
+  { fontFamily: secondaryFont },
   {
     fontSize: '.75rem',
     fontWeight: 400,
@@ -95,7 +89,7 @@ export const label = css([
 ]);
 
 export const metaData = css([
-  secondaryFont,
+  { fontFamily: secondaryFont },
   {
     fontSize: '.70rem',
     fontWeight: 400,
@@ -107,7 +101,7 @@ export const metaData = css([
 ]);
 
 export const th = css([
-  secondaryFont,
+  { fontFamily: secondaryFont },
   {
     fontSize: '.90rem',
     fontWeight: 500,
@@ -116,7 +110,7 @@ export const th = css([
   },
 ]);
 export const td = css([
-  secondaryFont,
+  { fontFamily: secondaryFont },
   {
     fontSize: '.90rem',
     fontWeight: 400,
