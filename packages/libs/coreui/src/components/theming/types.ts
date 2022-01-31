@@ -6,6 +6,11 @@ type ColorDescriptor = {
   level: 100 | 200 | 300 | 400 | 500 | 600 | 700;
 };
 
+type TextDescriptor = {
+  fontSize: CSSProperties['fontSize'];
+  fontWeight: CSSProperties['fontWeight'];
+};
+
 export type UITheme = {
   palette: {
     primary: ColorDescriptor;
@@ -15,29 +20,22 @@ export type UITheme = {
     headers?: {
       fontFamily?: CSSProperties['fontFamily'];
       color?: CSSProperties['color'];
-      h1: {
-        fontSize: CSSProperties['fontSize'];
-        fontWeight: CSSProperties['fontWeight'];
+      variants: {
+        h1: TextDescriptor;
+        h2: TextDescriptor;
+        h3: TextDescriptor;
+        h4: TextDescriptor;
+        h5: TextDescriptor;
+        h6: TextDescriptor;
       };
-      h2: {
-        fontSize: CSSProperties['fontSize'];
-        fontWeight: CSSProperties['fontWeight'];
-      };
-      h3: {
-        fontSize: CSSProperties['fontSize'];
-        fontWeight: CSSProperties['fontWeight'];
-      };
-      h4: {
-        fontSize: CSSProperties['fontSize'];
-        fontWeight: CSSProperties['fontWeight'];
-      };
-      h5: {
-        fontSize: CSSProperties['fontSize'];
-        fontWeight: CSSProperties['fontWeight'];
-      };
-      h6: {
-        fontSize: CSSProperties['fontSize'];
-        fontWeight: CSSProperties['fontWeight'];
+    };
+    paragraphs?: {
+      color?: CSSProperties['color'];
+      fontFamily?: CSSProperties['fontFamily'];
+      variants: {
+        small: TextDescriptor;
+        medium: TextDescriptor;
+        large: TextDescriptor;
       };
     };
   };
