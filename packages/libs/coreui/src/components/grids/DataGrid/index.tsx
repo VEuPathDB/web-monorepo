@@ -16,7 +16,7 @@ import { pickBy, ceil } from 'lodash';
 import stylePresets, { DataGridStyleSpec } from './stylePresets';
 
 // Components
-import { H3 } from '../../headers';
+import { H3 } from '../../typography';
 import IndeterminateCheckbox from './IndeterminateCheckbox';
 import DataCell from './DataCell';
 import HeaderCell from './HeaderCell';

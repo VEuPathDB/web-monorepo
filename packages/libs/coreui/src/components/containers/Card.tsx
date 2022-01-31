@@ -3,7 +3,7 @@ import { merge } from 'lodash';
 import useDimensions from 'react-cool-dimensions';
 
 // Components
-import { H3, H4 } from '../headers';
+import { H3, H4, H5 } from '../typography/headers';
 
 // Definitions
 import { blue, gray } from '../../definitions/colors';
@@ -36,7 +36,7 @@ export type CardProps = {
   /** The title of the card. */
   title: string;
   /** Optional. Size control for the title text. */
-  titleSize?: 'large' | 'small';
+  titleSize?: 'small' | 'medium' | 'large';
   /** The width of the card. */
   width: CSSProperties['width'];
   /** The height of the card. */
@@ -45,7 +45,10 @@ export type CardProps = {
   children: ReactNode;
   /** Indicates which theme role to use for style augmentation. */
   themeRole?: keyof UITheme['palette'];
-  /** Allows you to adjust the style of the modal. Applied *after* theming augmentation. */
+  /**
+   * Allows you to customize the style of the card.
+   * Applied *after* theming augmentation.
+   * */
   styleOverrides?: Partial<CardStyleSpec>;
 };
 
@@ -61,7 +64,8 @@ export default function Card({
   const theme = useUITheme();
   const { observe, width: titleWidth, height: titleHeight } = useDimensions();
 
-  const TitleComponent = titleSize === 'large' ? H3 : H4;
+  const TitleComponent =
+    titleSize === 'large' ? H3 : titleSize === 'medium' ? H4 : H5;
 
   const componentStyle: CardStyleSpec = useMemo(() => {
     const defaultStyle: CardStyleSpec = {
@@ -99,11 +103,11 @@ export default function Card({
     return merge({}, defaultStyle, themeStyle, styleOverrides);
   }, [themeRole, styleOverrides, theme]);
 
-  useEffect(() => {
-    console.log(titleHeight, titleWidth);
-  }, [titleHeight, titleWidth]);
-
   const titleBarHeight = useMemo(() => titleHeight + 40, [titleHeight]);
+  const titleTopOffset = useMemo(
+    () => (titleSize === 'large' ? 4 : titleSize === 'medium' ? 7 : 9),
+    [titleSize]
+  );
 
   return (
     <div
@@ -150,7 +154,7 @@ export default function Card({
             padding: 0,
             position: 'absolute',
             left: componentStyle.content.paddingLeft,
-            top: titleBarHeight - titleHeight - (titleSize === 'large' ? 4 : 7),
+            top: titleBarHeight - titleHeight - titleTopOffset,
           }}
           useTheme={false}
         />
@@ -158,7 +162,6 @@ export default function Card({
       <div
         css={{
           flex: 1,
-          flexShrink: 1,
           paddingTop: componentStyle.content.paddingTop,
           paddingRight: componentStyle.content.paddingRight,
           paddingBottom: componentStyle.content.paddingBottom,

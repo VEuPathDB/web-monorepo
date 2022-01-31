@@ -2,7 +2,7 @@ import { useMemo, useState, CSSProperties, useEffect } from 'react';
 import { merge } from 'lodash';
 
 // Components
-import { H6 } from '../../headers';
+import { H6 } from '../../typography';
 
 // Definitions
 import { blue, gray, tan } from '../../../definitions/colors';

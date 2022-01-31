@@ -1,8 +1,8 @@
 import { ForwardedRef, forwardRef, useMemo } from 'react';
 
-import { gray } from '../../definitions/colors';
-import styles from '../../styleDefinitions';
-import useUITheme from '../theming/useUITheme';
+import { gray } from '../../../definitions/colors';
+import styles from '../../../styleDefinitions';
+import useUITheme from '../../theming/useUITheme';
 
 export type HeaderProps = {
   /** Underlying HTML element tag to use. */
@@ -44,7 +44,7 @@ function Header(
     let styles: { [key: string]: any } = {};
 
     if (!theme?.typography?.headers || !useTheme) return styles;
-    styles = { ...theme.typography.headers[size] };
+    styles = { ...theme.typography.headers.variants[size] };
 
     styles['color'] = theme.typography.headers.color;
     styles['fontFamily'] = theme.typography.headers.fontFamily;

@@ -3,7 +3,7 @@ import { merge } from 'lodash';
 import ReactModal from 'react-modal';
 
 // Components
-import { H3 } from '../headers';
+import { H3 } from '../typography';
 import { CloseCircle } from '../icons';
 
 // Definitions

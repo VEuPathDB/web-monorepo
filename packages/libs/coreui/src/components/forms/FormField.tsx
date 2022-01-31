@@ -1,7 +1,7 @@
 import { CSSProperties, useMemo, useState } from 'react';
 
 // Components
-import { H6 } from '../headers';
+import { H6 } from '../typography';
 import { CheckCircle, Loading } from '../icons';
 
 // Definitions
