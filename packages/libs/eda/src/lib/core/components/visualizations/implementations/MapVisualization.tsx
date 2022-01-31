@@ -316,7 +316,10 @@ function MapViz(props: VisualizationProps) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div>
-        <FormControl style={{ minWidth: '450px' }}>
+        <FormControl
+          style={{ minWidth: '450px', paddingRight: '10px' }}
+          variant="filled"
+        >
           <InputLabel>Choose an entity to map the locations of</InputLabel>
           <Select
             value={vizConfig.geoEntityId}
@@ -330,7 +333,7 @@ function MapViz(props: VisualizationProps) {
             ))}
           </Select>
         </FormControl>
-        <FormControl style={{ minWidth: '450px' }}>
+        <FormControl style={{ minWidth: '450px' }} variant="filled">
           <InputLabel>
             Choose an entity to show the counts of
             {geoEntity &&
