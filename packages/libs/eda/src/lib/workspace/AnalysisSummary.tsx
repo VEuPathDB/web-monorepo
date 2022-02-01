@@ -76,7 +76,7 @@ export function AnalysisSummary(props: Props) {
       >
         {handleCopy && (
           <FloatingButton
-            iconOnly={true}
+            ariaLabel="Copy Analysis"
             icon={Copy}
             onPress={handleCopy}
             themeRole="primary"
@@ -87,7 +87,7 @@ export function AnalysisSummary(props: Props) {
         )}
         {handleDelete && (
           <FloatingButton
-            iconOnly={true}
+            ariaLabel="Delete Analysis"
             icon={Trash}
             onPress={handleDelete}
             themeRole="primary"
@@ -119,9 +119,9 @@ export function AnalysisSummary(props: Props) {
             }}
           />
         )}
-        {displaySharingModal && !analysis.isPublic && (
+        {displaySharingModal && (
           <FilledButton
-            text="Make Analysis Public"
+            text="Share Analysis"
             onPress={displaySharingModal}
             icon={Share}
             themeRole="primary"

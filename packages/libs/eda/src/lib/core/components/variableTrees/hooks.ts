@@ -1,19 +1,15 @@
 import { useMemo } from 'react';
-
 import {
   Field,
   TreeNode,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
-import {
-  GENERATED_ROOT_FIELD,
-  getGenericTree,
-} from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
-import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-
-import { StudyEntity, ExtendedField } from '../../types/study';
+import { StudyEntity, VariableScope, ExtendedField } from '../../types/study';
 import {
   edaVariableToWdkField,
   entitiesToFields,
+  makeFieldTree,
+  makeHiddenVariablesInScope,
+  shouldHideVariable,
 } from '../../utils/wdk-filter-param-adapter';
 import { keyBy } from 'lodash';
 
@@ -51,8 +47,10 @@ export const useValuesMap = (entities: StudyEntity[]) =>
 /**
  * Memoized hook that delegates to {@link entitiesToFields}
  */
-export const useFlattenedFields = (entities: StudyEntity[]) =>
-  useMemo(() => entitiesToFields(entities), [entities]);
+export const useFlattenedFields = (
+  entities: StudyEntity[],
+  scope: VariableScope
+) => useMemo(() => entitiesToFields(entities, scope), [entities, scope]);
 
 /**
  * Identity "fields" from the entity hierarchy which have been marked
@@ -61,21 +59,29 @@ export const useFlattenedFields = (entities: StudyEntity[]) =>
  * Similiarly to the `useFlattenedFields` hook, this hook will return
  * a flat list of Field objects.
  */
-export const useFeaturedFields = (entities: StudyEntity[]): Field[] =>
+export const useFeaturedFields = (
+  entities: StudyEntity[],
+  scope: VariableScope
+): Field[] =>
   useMemo(() => {
-    return entities.flatMap((entity) =>
-      entity.variables
+    return entities.flatMap((entity) => {
+      const hiddenVariablesInScope = makeHiddenVariablesInScope(entity, scope);
+
+      return entity.variables
         .filter(
-          (variable) => variable.type !== 'category' && variable.isFeatured
+          (variable) =>
+            !shouldHideVariable(hiddenVariablesInScope, variable) &&
+            variable.type !== 'category' &&
+            variable.isFeatured
         )
         .map((variable) => ({
           ...variable,
           id: `${entity.id}/${variable.id}`,
           displayName: `<span class="Entity">${entity.displayName}</span>: ${variable.displayName}`,
         }))
-        .map((variable) => edaVariableToWdkField(variable))
-    );
-  }, [entities]);
+        .map((variable) => edaVariableToWdkField(variable));
+    });
+  }, [entities, scope]);
 
 /**
  * Gets featured fields (similar to the previous hook) from a TreeNode such that
@@ -132,21 +138,23 @@ const getFeaturedFieldsFromTreeRecursive = (
  * This is used to actually display the fields (entity, variable category,
  * or variable) in a visual hierachy to the user.
  */
+// export const useFieldTree = (flattenedFields: Array<Field | ExtendedField>) =>
+//   useMemo(() => {
+//     const initialTree = getGenericTree<Field | ExtendedField>(
+//       flattenedFields,
+//       GENERATED_ROOT_FIELD,
+//       {
+//         hideSingleRoot: false,
+//       }
+//     );
+//     const tree = pruneDescendantNodes(
+//       (node) => node.field.type != null || node.children.length > 0,
+//       initialTree
+//     );
+//     return tree;
+//   }, [flattenedFields]);
 export const useFieldTree = (flattenedFields: Array<Field | ExtendedField>) =>
-  useMemo(() => {
-    const initialTree = getGenericTree<Field | ExtendedField>(
-      flattenedFields,
-      GENERATED_ROOT_FIELD,
-      {
-        hideSingleRoot: false,
-      }
-    );
-    const tree = pruneDescendantNodes(
-      (node) => node.field.type != null || node.children.length > 0,
-      initialTree
-    );
-    return tree;
-  }, [flattenedFields]);
+  useMemo(() => makeFieldTree(flattenedFields), [flattenedFields]);
 
 /**
  * Simple transformation of useFlattenFields output from an array

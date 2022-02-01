@@ -398,25 +398,28 @@ function MosaicViz(props: Props) {
 
   const plotNode = (
     <TabbedDisplay
+      themeRole="primary"
       tabs={[
         {
           displayName: 'Mosaic',
           content: (
-            <MosaicPlotWithControls
-              updateThumbnail={updateThumbnail}
-              data={data.value}
-              containerStyles={
-                !isFaceted(data.value) ? plotContainerStyles : undefined
-              }
-              spacingOptions={
-                !isFaceted(data.value) ? plotSpacingOptions : undefined
-              }
-              independentAxisLabel={xAxisLabel ?? 'X-axis'}
-              dependentAxisLabel={yAxisLabel ?? 'Y-axis'}
-              displayLegend={false}
-              interactive={!isFaceted(data.value) ? true : false}
-              showSpinner={data.pending}
-            />
+            <div style={{ marginTop: 15 }}>
+              <MosaicPlotWithControls
+                updateThumbnail={updateThumbnail}
+                data={data.value}
+                containerStyles={
+                  !isFaceted(data.value) ? plotContainerStyles : undefined
+                }
+                spacingOptions={
+                  !isFaceted(data.value) ? plotSpacingOptions : undefined
+                }
+                independentAxisLabel={xAxisLabel ?? 'X-axis'}
+                dependentAxisLabel={yAxisLabel ?? 'Y-axis'}
+                displayLegend={false}
+                interactive={!isFaceted(data.value) ? true : false}
+                showSpinner={data.pending}
+              />
+            </div>
           ),
         },
         {
@@ -445,7 +448,12 @@ function MosaicViz(props: Props) {
             ? vizConfig.showMissingness
               ? 'Statistics are not calculated when the "include no data" option is selected'
               : facetVariable != null && (
-                  <div style={facetedStatsTableContainerStyles}>
+                  <div
+                    style={{
+                      ...facetedStatsTableContainerStyles,
+                      marginTop: 15,
+                    }}
+                  >
                     {data.value.facets.map(({ label, data }, index) => (
                       <table key={index}>
                         <tbody>
