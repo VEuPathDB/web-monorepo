@@ -24,7 +24,7 @@ import { ToImgopts } from 'plotly.js';
 
 const { BaseLayer } = LayersControl;
 
-const baseLayers = {
+export const baseLayers = {
   Street: {
     url:
       'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
@@ -179,7 +179,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       toImage: async (imageOpts: ToImgopts) => {
         try {
           // Wait to allow map to finish rendering
-          await new Promise((resolve) => setTimeout(resolve, 500));
+          await new Promise((resolve) => setTimeout(resolve, 1000));
 
           // Check that map leaflet element still exists
           if (mapRef.current) {
