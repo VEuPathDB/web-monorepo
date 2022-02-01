@@ -77,7 +77,7 @@ const baseLayers = {
   },
 };
 
-type BaseLayerChoice = keyof typeof baseLayers;
+export type BaseLayerChoice = keyof typeof baseLayers;
 
 /**
  * Renders a Leaflet map with semantic zooming markers
@@ -178,21 +178,25 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       // Set the ref's toImage function that will be called in web-eda
       toImage: async (imageOpts: ToImgopts) => {
         try {
-          // console.log('Taking screenshot...');
+          // Wait to allow map to finish rendering
+          await new Promise((resolve) => setTimeout(resolve, 500));
 
-          // Call the 3rd party function that actually creates the image
-          const screenshot = await screenshotter.takeScreen('image', {
-            domtoimageOptions: {
-              width: imageOpts.width,
-              height: imageOpts.height,
-            },
-          });
-          // The screenshotter library's types are wrong. TS thinks this next line
-          // will never happen, but takeScreen('image') should in fact return a string
-          if (typeof screenshot === 'string') return screenshot;
-          console.error(
-            'Map screenshot not string type. Value:\n' + screenshot
-          );
+          // Check that map leaflet element still exists
+          if (mapRef.current) {
+            // Call the 3rd party function that actually creates the image
+            const screenshot = await screenshotter.takeScreen('image', {
+              domtoimageOptions: {
+                width: imageOpts.width,
+                height: imageOpts.height,
+              },
+            });
+            // The screenshotter library's types are wrong. TS thinks this next line
+            // will never happen, but takeScreen('image') should in fact return a string
+            if (typeof screenshot === 'string') return screenshot;
+            console.error(
+              'Map screenshot not string type. Value:\n' + screenshot
+            );
+          }
         } catch (error) {
           console.error('Could not create image for plot: ', error);
         }
