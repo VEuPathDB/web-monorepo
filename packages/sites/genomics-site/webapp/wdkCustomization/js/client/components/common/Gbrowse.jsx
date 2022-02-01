@@ -281,7 +281,7 @@ export function GbrowseContext(props) {
       return (
     	<div>
       	<JbrowseLink url={jbrowseUrlFull}/>
-      	<JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="180" />
+      	<JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="250" />
       	<JbrowseLink url={jbrowseUrlFull}/>
       	</div>
 	)
