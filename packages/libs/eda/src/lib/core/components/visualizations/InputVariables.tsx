@@ -147,24 +147,8 @@ export function InputVariables(props: Props) {
 
         // Use the input-specific filtered constraints to create an array of disabled variables.
         const disabledVariables = filteredConstraints
-          ? filteredConstraints
-              .map((constraint) => {
-                return excludedVariables(
-                  entities[0],
-                  constraint && constraint[input.name]
-                );
-              })
-              // Keep only those variables (objects with varIds and entityIds) that should be disabled based on *all* constraints
-              .reduce((disabledVarArray1, disabledVarArray2) =>
-                disabledVarArray1.filter((disabledVar1) =>
-                  disabledVarArray2.some(
-                    (disabledVar2) =>
-                      disabledVar1.variableId === disabledVar2.variableId &&
-                      disabledVar1.entityId === disabledVar2.entityId
-                  )
-                )
-              )
-          : [{ entityId: '', variableId: '' }]; // Typescript help please!!! I tried [{}] as DataElementConstraintRecord but no luck :/
+          ? excludedVariables(entities[0], input.name, filteredConstraints)
+          : [];
 
         if (dataElementDependencyOrder == null) {
           map[input.name] = disabledVariables;

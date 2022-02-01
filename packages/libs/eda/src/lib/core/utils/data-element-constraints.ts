@@ -44,14 +44,19 @@ export function filterVariablesByConstraint(
  */
 export function excludedVariables(
   rootEntity: StudyEntity,
-  constraint?: DataElementConstraint
+  inputName: string,
+  constraints?: DataElementConstraintRecord[]
 ): VariableDescriptor[] {
-  if (constraint == null) return [];
+  if (constraints == null) return [];
+
   return Seq.from(preorder(rootEntity, (e) => e.children ?? []))
     .flatMap((e) =>
       e.variables
-        .filter(
-          (variable) => !variableConstraintPredicate(constraint, variable)
+        .filter((variable) =>
+          constraints.every(
+            (constraint) =>
+              !variableConstraintPredicate(constraint[inputName], variable)
+          )
         )
         .map((v) => ({ entityId: e.id, variableId: v.id }))
     )
