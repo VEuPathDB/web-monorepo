@@ -1,4 +1,7 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useCallback } from 'react';
+
+import { useDispatch } from 'react-redux';
+import { Redirect } from 'react-router';
 
 import { communitySite } from 'ebrc-client/config';
 
@@ -11,6 +14,7 @@ import { ResetSessionController } from 'ebrc-client/controllers/ResetSessionCont
 import StudyAccessController from '@veupathdb/study-data-access/lib/study-access/components/StudyAccessController';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { showLoginForm as showLoginFormAction } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
 
 import { edaExampleAnalysesAuthor, edaServiceUrl } from './config';
 
@@ -40,31 +44,37 @@ export const wrapRoutes = wdkRoutes => [
   {
     path: makeEdaRoute(),
     exact: false,
-    component: () => (
-      <Suspense fallback={<Loading/>}>
-        <WorkspaceRouter
-          dataServiceUrl={edaServiceUrl}
-          subsettingServiceUrl={edaServiceUrl}
-          userServiceUrl={edaServiceUrl}
-          exampleAnalysesAuthor={edaExampleAnalysesAuthor}
-        />
-      </Suspense>
-    )
+    component: function EdaRoute() {
+      const dispatch = useDispatch();
+      const showLoginForm = useCallback(() => {
+        dispatch(showLoginFormAction());
+      }, [ dispatch ]);
+
+      return (
+        <Suspense fallback={<Loading/>}>
+          <WorkspaceRouter
+            dataServiceUrl={edaServiceUrl}
+            subsettingServiceUrl={edaServiceUrl}
+            userServiceUrl={edaServiceUrl}
+            exampleAnalysesAuthor={edaExampleAnalysesAuthor}
+            sharingUrlPrefix={window.location.origin}
+            showLoginForm={showLoginForm}
+          />
+        </Suspense>
+      );
+    }
   },
 
   {
     path: '/eda',
     exact: false,
-    component: () => (
-      <Suspense fallback={<Loading/>}>
-        <WorkspaceRouter
-          dataServiceUrl={edaServiceUrl}
-          subsettingServiceUrl={edaServiceUrl}
-          userServiceUrl={edaServiceUrl}
-          exampleAnalysesAuthor={edaExampleAnalysesAuthor}
-        />
-      </Suspense>
-    )
+    component: ({ location }) =>
+      <Redirect
+        to={{
+          ...location,
+          pathname: location.pathname.replace(/^\/eda/, makeEdaRoute())
+        }}
+      />
   },
 
 
