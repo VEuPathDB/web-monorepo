@@ -1197,10 +1197,10 @@
   resolved "https://registry.yarnpkg.com/@types/warning/-/warning-3.0.0.tgz#0d2501268ad8f9962b740d387c4654f5f8e23e52"
   integrity sha1-DSUBJorY+ZYrdA04fEZU9fjiPlI=
 
-"@veupathdb/components@^0.11.10", "@veupathdb/components@^0.11.11":
-  version "0.11.11"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.11.tgz#fbe1e7306028c2a83a29734454cc8c94795692f2"
-  integrity sha512-MOnBRak1ENFHIfwKpM12DsKz/jNXzuIXLhOv8Qai+BgRUrTXwGjFVxHYrmY70vy2sFSjvu/cOYbihQov6G18PA==
+"@veupathdb/components@^0.11.13":
+  version "0.11.13"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.13.tgz#16b36885c2e2386dd519ee57dc1151e7586cb780"
+  integrity sha512-XfcgxGfEwHBCYl29FLa+GC0QkxoozDeh3glMINuOfcqQeGcKE0dWEtud0xGKp6l/hn1iPSGPlBG5HG2EZPBbKw==
   dependencies:
     "@emotion/react" "^11.7.0"
     "@material-ui/core" "^4.11.2"
@@ -1224,6 +1224,7 @@
     latlon-geohash "^2.0.0"
     leaflet "^1.6.0"
     leaflet-drift-marker "^1.0.3"
+    leaflet-simple-map-screenshoter "^0.4.5"
     luxon "^1.25.0"
     plotly.js "^2.6.0"
     re-resizable "^6.9.0"
@@ -1277,10 +1278,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/core-components@^0.4.0", "@veupathdb/core-components@^0.4.1":
-  version "0.4.6"
-  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.4.6.tgz#3ca0c4b650b6549ba9bb6218d9d108000d92d80b"
-  integrity sha512-1m/hp6lX3cJ5KLVZ45xjAAwi4fFDRdylycWqMiDkQnuGClqoD3YoGP/IgZXuWUAN5kyt+oelu1bmgqIB0utQjg==
+"@veupathdb/core-components@^0.4.0", "@veupathdb/core-components@^0.8.1":
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.8.1.tgz#5ac32c9ab097024ee4dc25a08e4dca8d5771d63d"
+  integrity sha512-1FRse8MDZkODFYqvY1HjWhF0NlNedHdgtVpl+MiAHKov6Dgm/UjWK4nMjWvfbo/fJQdINMXDmO9nlbSkpf7dIA==
   dependencies:
     "@material-ui/core" "^4.12.3"
     "@material-ui/icons" "^4.11.2"
@@ -1289,10 +1290,10 @@
     react-modal "^3.14.3"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^1.1.50":
-  version "1.1.52"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.1.52.tgz#33dd634491169fe4340a72004a209536b672a3d0"
-  integrity sha512-NEseeIqwfsqe6FmFFKXSIgwiFGtbLk/vXz5oFAHtVpSiWt8gLFNM46AgVQOfSywh8sqms59eZGO7y6meD3BvPw==
+"@veupathdb/eda@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.3.0.tgz#53a75d5f4d9b0f7ff9c0fecd6846beecda7db494"
+  integrity sha512-qN9INT1G652XL5l3zodhuXzO608u2alhZ0ShFa0vY/+AibbfdNhnO/ox0f7VUYqASV/GCAU+oBxwGPRtmMVmaQ==
   dependencies:
     "@emotion/react" "^11.4.1"
     "@emotion/styled" "^11.3.0"
@@ -1300,38 +1301,8 @@
     "@material-ui/icons" "^4.11.2"
     "@material-ui/lab" "^4.0.0-alpha.58"
     "@types/debounce-promise" "^3.1.3"
-    "@veupathdb/components" "^0.11.10"
-    "@veupathdb/core-components" "^0.4.1"
-    "@veupathdb/http-utils" "^1.0.1"
-    "@veupathdb/study-data-access" "^0.1.5"
-    debounce-promise "^3.1.2"
-    file-saver "^2.0.5"
-    fp-ts "^2.9.3"
-    io-ts "^2.2.13"
-    lodash "^4.17.21"
-    monocle-ts "^2.3.11"
-    react "^17.0.1"
-    react-dom "^17.0.1"
-    react-draggable "^4.4.3"
-    react-resizable "^3.0.4"
-    react-router "^5.2.1"
-    react-router-dom "^5.3.0"
-    react-table "^7.7.0"
-    uuid "^8.3.2"
-
-"@veupathdb/eda@^1.1.51":
-  version "1.1.52"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.1.52.tgz#33dd634491169fe4340a72004a209536b672a3d0"
-  integrity sha512-NEseeIqwfsqe6FmFFKXSIgwiFGtbLk/vXz5oFAHtVpSiWt8gLFNM46AgVQOfSywh8sqms59eZGO7y6meD3BvPw==
-  dependencies:
-    "@emotion/react" "^11.4.1"
-    "@emotion/styled" "^11.3.0"
-    "@material-ui/core" "^4.11.3"
-    "@material-ui/icons" "^4.11.2"
-    "@material-ui/lab" "^4.0.0-alpha.58"
-    "@types/debounce-promise" "^3.1.3"
-    "@veupathdb/components" "^0.11.10"
-    "@veupathdb/core-components" "^0.4.1"
+    "@veupathdb/components" "^0.11.13"
+    "@veupathdb/core-components" "^0.8.1"
     "@veupathdb/http-utils" "^1.0.1"
     "@veupathdb/study-data-access" "^0.1.5"
     debounce-promise "^3.1.2"
@@ -1416,13 +1387,13 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.2.1.tgz#1fafb4339383b55d95bcbf3429993315a552335c"
-  integrity sha512-OigMBD2wCLQ7gx+mH77be5UMe9gvU/2g0qFCDGUhs6aUs1WSLfNwXpkIMEKMDFT3LIT3MKy2WS+zlKTJkkJIsA==
+"@veupathdb/web-common@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.2.2.tgz#d6d2916485d81fb53670017080de7ae5d0828cc2"
+  integrity sha512-c0o880hYayVTWm6ehYA3DtR3fBFyxdKNf+SzYnTv4SohxKTKSqqOUh2ufAns6pexgfmlmMmZUXUGZS5vOcpfqg==
   dependencies:
-    "@veupathdb/components" "^0.11.10"
-    "@veupathdb/eda" "^1.1.50"
+    "@veupathdb/components" "^0.11.13"
+    "@veupathdb/eda" "^1.3.0"
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
     whatwg-fetch "^3.5.0"
@@ -2858,6 +2829,11 @@ dom-serializer@0:
     domelementtype "^2.0.1"
     entities "^2.0.0"
 
+dom-to-image-more@^2.8.0:
+  version "2.9.5"
+  resolved "https://registry.yarnpkg.com/dom-to-image-more/-/dom-to-image-more-2.9.5.tgz#a5dd5a30480e01b795fde9e99278096143b3ece7"
+  integrity sha512-7pr43ZY/Nk0k2z3NXDKN4GvnZqP/3iZvddLeIuGfNTyFJuzzr0UeLl+poZ1ewYt3YIK+WHCEZUkz+RNuocN3/Q==
+
 domelementtype@1, domelementtype@^1.3.1:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/domelementtype/-/domelementtype-1.3.1.tgz#d048c44b37b0d10a7f2a3d5fee3f4333d790481f"
@@ -3081,7 +3057,7 @@ fast-memoize@^2.5.1:
   resolved "https://registry.yarnpkg.com/fast-memoize/-/fast-memoize-2.5.2.tgz#79e3bb6a4ec867ea40ba0e7146816f6cdce9b57e"
   integrity sha512-Ue0LwpDYErFbmNnZSF0UH6eImUwDmogUO1jyE+JbN2gsQz/jICm1Ve7t9QT0rNSsfJt+Hs4/S3GnsDVjL4HVrw==
 
-file-saver@^2.0.5:
+file-saver@^2.0.2, file-saver@^2.0.5:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/file-saver/-/file-saver-2.0.5.tgz#d61cfe2ce059f414d899e9dd6d4107ee25670c38"
   integrity sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==
@@ -3820,6 +3796,14 @@ leaflet-drift-marker@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/leaflet-drift-marker/-/leaflet-drift-marker-1.0.3.tgz#4b178dc22b918b4713570302461ca636241fac3f"
   integrity sha512-2b5EqL11+reMqS+RTZAwW9oglWk05V02LQzMSe3D8cPPSvz42RpoqjRI8aGvD8Yjsc31ZwLZMeJ0s3waaj3VEQ==
+
+leaflet-simple-map-screenshoter@^0.4.5:
+  version "0.4.5"
+  resolved "https://registry.yarnpkg.com/leaflet-simple-map-screenshoter/-/leaflet-simple-map-screenshoter-0.4.5.tgz#d4f093077663577e7879c0488ebc54292c34314d"
+  integrity sha512-bvd++mQstpgb7F7c2v5jCLlUitQ6CcYLZ56do7PVyyVpGvnlhIEk5S6dLXqpe3itSr2D/re5yUAOf8zBt95ViQ==
+  dependencies:
+    dom-to-image-more "^2.8.0"
+    file-saver "^2.0.2"
 
 leaflet@^1.6.0:
   version "1.7.1"
