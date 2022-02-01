@@ -3,10 +3,8 @@ import { Route, Switch, useHistory } from 'react-router';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { AnalysisState, useDataClient } from '../core';
 import { ComputationInstance } from '../core/components/computations/ComputationInstance';
-import { plugin as alphadiv } from '../core/components/computations/plugins/alphaDiv';
-import { plugin as pass } from '../core/components/computations/plugins/pass';
+import { plugins } from '../core/components/computations/plugins';
 import { StartPage } from '../core/components/computations/StartPage';
-import { ComputationPlugin } from '../core/components/computations/Types';
 import { createComputation } from '../core/components/computations/Utils';
 import { PromiseResult } from '../core/components/Promise';
 import { EntityCounts } from '../core/hooks/entityCounts';
@@ -17,11 +15,6 @@ export interface Props {
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
 }
-
-const plugins: Record<string, ComputationPlugin> = {
-  pass,
-  alphadiv,
-};
 
 /**
  * Handles delegating to a UI component based on the route.
@@ -45,9 +38,11 @@ export function ComputationRoute(props: Props) {
               <h2>Saved apps</h2>
               <ul>
                 {analysisState.analysis?.descriptor.computations.map((c) => (
-                  <Link to={`${url}/${c.computationId}`}>
-                    {c.displayName ?? 'No name'} &mdash; {c.descriptor.type}
-                  </Link>
+                  <li>
+                    <Link to={`${url}/${c.computationId}`}>
+                      {c.displayName ?? 'No name'} &mdash; {c.descriptor.type}
+                    </Link>
+                  </li>
                 ))}
               </ul>
             </div>

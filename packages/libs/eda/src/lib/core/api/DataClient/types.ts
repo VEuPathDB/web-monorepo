@@ -430,11 +430,8 @@ export interface BoxplotRequestParams {
     outputEntityId: string;
     // add bestFitLineWithRaw
     points: 'outliers' | 'all';
-    // boolean or string?
-    // mean: boolean;
     mean: 'TRUE' | 'FALSE';
-    // not quite sure of overlayVariable and facetVariable yet
-    // facetVariable?: ZeroToTwoVariables;
+    facetVariable?: ZeroToTwoVariables;
     xAxisVariable: VariableDescriptor;
     yAxisVariable: VariableDescriptor;
     overlayVariable?: VariableDescriptor;

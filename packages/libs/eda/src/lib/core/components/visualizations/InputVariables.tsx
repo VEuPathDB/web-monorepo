@@ -14,7 +14,7 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import Switch from '@veupathdb/components/lib/components/widgets/Switch';
 import { makeEntityDisplayName } from '../../utils/study-metadata';
 
-interface InputSpec {
+export interface InputSpec {
   name: string;
   label: string;
   role: 'primary' | 'stratification';

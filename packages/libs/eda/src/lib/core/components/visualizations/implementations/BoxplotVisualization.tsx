@@ -9,22 +9,18 @@ import * as t from 'io-ts';
 import { useCallback, useMemo } from 'react';
 
 // need to set for Boxplot
-import DataClient, {
-  BoxplotRequestParams,
-  BoxplotResponse,
-} from '../../../api/DataClient';
+import DataClient, { BoxplotResponse } from '../../../api/DataClient';
 
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
-import { Filter } from '../../../types/filter';
 import { VariableDescriptor } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 
-import { InputVariables } from '../InputVariables';
+import { InputSpec, InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import box from './selectorIcons/box.svg';
@@ -259,8 +255,8 @@ function BoxplotViz(props: VisualizationProps) {
       if (
         vizConfig.xAxisVariable == null ||
         xAxisVariable == null ||
-        vizConfig.yAxisVariable == null ||
-        yAxisVariable == null ||
+        (computation.descriptor.configuration == null &&
+          (vizConfig.yAxisVariable == null || yAxisVariable == null)) ||
         outputEntity == null ||
         filteredCounts.pending ||
         filteredCounts.value == null
@@ -278,22 +274,35 @@ function BoxplotViz(props: VisualizationProps) {
         throw new Error(nonUniqueWarning);
 
       // add visualization.type here. valueSpec too?
-      const params = getRequestParams(
+      const params = {
         studyId,
-        filters ?? [],
-        vizConfig.xAxisVariable,
-        vizConfig.yAxisVariable,
-        vizConfig.overlayVariable,
-        vizConfig.facetVariable,
-        // pass outputEntity.id
-        outputEntity?.id,
-        vizConfig.showMissingness
-      );
+        filters,
+        config: {
+          // add outputEntityId per dataElementDependencyOrder
+          outputEntityId: computation.descriptor.configuration
+            ? (computation.descriptor.configuration as any).collectionVariable
+                .entityId
+            : outputEntity.id,
+          // post options: 'all', 'outliers'
+          points: 'outliers',
+          mean: 'TRUE',
+          xAxisVariable: vizConfig.xAxisVariable,
+          yAxisVariable: vizConfig.yAxisVariable,
+          overlayVariable: vizConfig.overlayVariable,
+          facetVariable: vizConfig.facetVariable
+            ? [vizConfig.facetVariable]
+            : [],
+          showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
+        },
+        computeConfig: computation.descriptor.configuration ?? undefined,
+      };
 
       // boxplot
-      const response = await dataClient.getBoxplot(
+      const response = await dataClient.getVisualizationData(
         computation.descriptor.type,
-        params as BoxplotRequestParams
+        visualization.descriptor.type,
+        params,
+        BoxplotResponse
       );
 
       const showMissingOverlay =
@@ -343,23 +352,26 @@ function BoxplotViz(props: VisualizationProps) {
         '#a0a0a0'
       );
     }, [
-      studyId,
-      filters,
-      dataClient,
-      xAxisVariable,
-      yAxisVariable,
-      overlayVariable,
-      facetVariable,
-      // using vizConfig only causes issue with onCheckedLegendItemsChange
       vizConfig.xAxisVariable,
       vizConfig.yAxisVariable,
       vizConfig.overlayVariable,
       vizConfig.facetVariable,
       vizConfig.showMissingness,
-      outputEntity,
-      filteredCounts,
+      xAxisVariable,
+      computation.descriptor.configuration,
       computation.descriptor.type,
-      outputEntity?.id,
+      yAxisVariable,
+      outputEntity,
+      filteredCounts.pending,
+      filteredCounts.value,
+      overlayVariable,
+      facetVariable,
+      studyId,
+      filters,
+      dataClient,
+      visualization.descriptor.type,
+      overlayEntity,
+      facetEntity,
     ])
   );
 
@@ -505,7 +517,11 @@ function BoxplotViz(props: VisualizationProps) {
       orientation={'vertical'}
       displayLegend={false}
       independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-axis'}
-      dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-axis'}
+      dependentAxisLabel={
+        axisLabelWithUnit(yAxisVariable) ??
+        computation.descriptor.type ??
+        'Y-axis'
+      }
       // show/hide independent/dependent axis tick label
       showIndependentAxisTickLabel={true}
       showDependentAxisTickLabel={true}
@@ -592,7 +608,7 @@ function BoxplotViz(props: VisualizationProps) {
               label: 'X-axis',
               role: 'primary',
             },
-            {
+            computation.descriptor.configuration ?? {
               name: 'yAxisVariable',
               label: 'Y-axis',
               role: 'primary',
@@ -607,7 +623,7 @@ function BoxplotViz(props: VisualizationProps) {
               label: 'Facet',
               role: 'stratification',
             },
-          ]}
+          ].filter((input): input is InputSpec => input != null)}
           entities={entities}
           selectedVariables={{
             xAxisVariable: vizConfig.xAxisVariable,
@@ -781,38 +797,6 @@ export function boxplotResponseToData(
     completeCasesAllVars: response.boxplot.config.completeCasesAllVars,
     completeCasesAxesVars: response.boxplot.config.completeCasesAxesVars,
   } as BoxplotDataWithCoverage;
-}
-
-// add an extended type
-type getRequestParamsProps = BoxplotRequestParams;
-
-function getRequestParams(
-  studyId: string,
-  filters: Filter[],
-  xAxisVariable: VariableDescriptor,
-  yAxisVariable: VariableDescriptor,
-  overlayVariable?: VariableDescriptor,
-  facetVariable?: VariableDescriptor,
-  // pass outputEntityId
-  outputEntityId?: string,
-  showMissingness?: boolean
-): getRequestParamsProps {
-  return {
-    studyId,
-    filters,
-    config: {
-      // add outputEntityId per dataElementDependencyOrder
-      outputEntityId: outputEntityId,
-      // post options: 'all', 'outliers'
-      points: 'outliers',
-      mean: 'TRUE',
-      xAxisVariable: xAxisVariable,
-      yAxisVariable: yAxisVariable,
-      overlayVariable: overlayVariable,
-      facetVariable: facetVariable ? [facetVariable] : [],
-      showMissingness: showMissingness ? 'TRUE' : 'FALSE',
-    },
-  } as BoxplotRequestParams;
 }
 
 /**
