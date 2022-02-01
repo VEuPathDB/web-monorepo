@@ -9,16 +9,17 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@veupathdb/components": "^0.11.11",
-    "@veupathdb/eda": "^1.1.51",
+    "@veupathdb/components": "^0.11.13",
+    "@veupathdb/eda": "^1.3.0",
     "@veupathdb/wdk-client": "^0.5.4",
-    "@veupathdb/web-common": "^0.2.1"
+    "@veupathdb/web-common": "^0.2.2"
   },
   "resolutions": {
     "react": "16",
     "react-dom": "16",
     "@types/react": "16",
-    "@types/react-dom": "16"
+    "@types/react-dom": "16",
+    "@veupathdb/core-components": "^0.8.1"
   },
   "devDependencies": {
     "bubleify": "^2.0.0",
