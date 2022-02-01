@@ -45,7 +45,6 @@ export default function VariableTree({
   const valuesMap = useValuesMap(entities);
   const flattenedFields = useFlattenedFields(entities, scope);
   const fieldsByTerm = useFlattenFieldsByTerm(flattenedFields);
-  // const featuredFields = useFeaturedFields(entities, scope);
   const fieldTree = useFieldTree(flattenedFields);
   const featuredFields = useFeaturedFieldsFromTree(fieldTree);
 

@@ -302,7 +302,7 @@ export function shouldHideVariable(
 }
 
 export function makeFieldTree(
-  fields: Field[]
+  fields: Array<Field | ExtendedField>
 ): TreeNode<Field | ExtendedField> {
   const initialTree = getGenericTree<Field | ExtendedField>(
     fields,

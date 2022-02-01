@@ -1,8 +1,10 @@
 import { useMemo } from 'react';
+
 import {
   Field,
   TreeNode,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
+
 import { StudyEntity, VariableScope, ExtendedField } from '../../types/study';
 import {
   edaVariableToWdkField,
@@ -138,21 +140,6 @@ const getFeaturedFieldsFromTreeRecursive = (
  * This is used to actually display the fields (entity, variable category,
  * or variable) in a visual hierachy to the user.
  */
-// export const useFieldTree = (flattenedFields: Array<Field | ExtendedField>) =>
-//   useMemo(() => {
-//     const initialTree = getGenericTree<Field | ExtendedField>(
-//       flattenedFields,
-//       GENERATED_ROOT_FIELD,
-//       {
-//         hideSingleRoot: false,
-//       }
-//     );
-//     const tree = pruneDescendantNodes(
-//       (node) => node.field.type != null || node.children.length > 0,
-//       initialTree
-//     );
-//     return tree;
-//   }, [flattenedFields]);
 export const useFieldTree = (flattenedFields: Array<Field | ExtendedField>) =>
   useMemo(() => makeFieldTree(flattenedFields), [flattenedFields]);
 
