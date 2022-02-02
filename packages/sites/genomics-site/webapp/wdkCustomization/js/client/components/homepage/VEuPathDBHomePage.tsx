@@ -320,12 +320,6 @@ const useHeaderMenuItems = (
             include: [ AmoebaDB, CryptoDB, FungiDB, GiardiaDB, MicrosporidiaDB, PiroplasmaDB, PlasmoDB, ToxoDB, TrichDB, TriTrypDB, VectorBase, EuPathDB, VEuPathDB, UniDB ]
          }
         },
-        { 
-          key: 'blast',
-          display: 'BLAST',
-          type: 'reactRoute',
-          url: '/search/transcript/UnifiedBlast'
-        },
         {
           key: 'blast-beta',
           display: <>BLAST<sup>{' '}<em>beta</em></sup> (multi-BLAST capable)</>,
