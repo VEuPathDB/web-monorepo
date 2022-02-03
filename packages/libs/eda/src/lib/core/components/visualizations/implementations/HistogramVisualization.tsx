@@ -82,7 +82,7 @@ import { EntityCounts } from '../../../hooks/entityCounts';
 // a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
 
-//DKDK concerning axis range control
+// concerning axis range control
 import {
   NumberOrDateRange,
   NumberRange,
@@ -90,20 +90,17 @@ import {
 } from '../../../types/general';
 import { padISODateTime } from '../../../utils/date-conversion';
 import { NumberRangeInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateRangeInputs';
-// reusable util for computing truncationConfig
-//DKDK temporarily use variant
-// import { truncationConfig } from '../../../utils/truncation-config-utils';
+// use variant
 import { truncationConfig } from '../../../utils/truncation-config-utils-viz';
 // use Notification for truncation warning message
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 import Button from '@veupathdb/components/lib/components/widgets/Button';
 import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
 import { UIState } from '../../filter/HistogramFilter';
-//DKDKDK change defaultIndependentAxisRange to hook
+// change defaultIndependentAxisRange to hook
 import { useDefaultIndependentAxisRange } from '../../../hooks/computeDefaultIndependentAxisRange';
 import { useDefaultDependentAxisRange } from '../../../hooks/computeDefaultDependentAxisRange';
 
-//DKDK
 export type HistogramDataWithCoverageStatistics = (
   | HistogramData
   | FacetedData<HistogramData>
@@ -171,7 +168,7 @@ export const HistogramConfig = t.intersection([
     showMissingness: t.boolean,
     // for custom legend: vizconfig.checkedLegendItems
     checkedLegendItems: t.array(t.string),
-    //DKDK axis range control
+    // axis range control
     independentAxisRange: NumberOrDateRange,
     dependentAxisRange: NumberRange,
   }),
@@ -214,7 +211,7 @@ function HistogramViz(props: VisualizationProps) {
     [updateConfiguration, vizConfig]
   );
 
-  //DKDK set the state of truncation warning message
+  // set the state of truncation warning message here
   const [
     truncatedIndependentAxisWarning,
     setTruncatedIndependentAxisWarning,
@@ -241,10 +238,10 @@ function HistogramViz(props: VisualizationProps) {
         binWidthTimeUnit: keepBin ? vizConfig.binWidthTimeUnit : undefined,
         // set undefined for variable change
         checkedLegendItems: undefined,
-        //DKDKDK set independentAxisRange undefined
+        // set independentAxisRange undefined
         independentAxisRange: undefined,
       });
-      //DKDK close truncation warnings
+      // close truncation warnings if exists
       setTruncatedIndependentAxisWarning('');
       setTruncatedDependentAxisWarning('');
     },
@@ -422,23 +419,24 @@ function HistogramViz(props: VisualizationProps) {
       overlayVariable,
       facetVariable,
       valueType,
-      //DKDK get data when changing independentAxisRange
+      // get data when changing independentAxisRange
       vizConfig.independentAxisRange,
     ])
   );
 
-  //DKDK use hook
+  // use custom hook
   const defaultIndependentRange = useDefaultIndependentAxisRange(
     xAxisVariable,
     'histogram',
     updateVizConfig
   );
 
-  // DKDK using custom hook
+  // use custom hook
   const defaultDependentAxisRange = useDefaultDependentAxisRange(
     data,
     vizConfig,
-    updateVizConfig
+    updateVizConfig,
+    'Histogram'
   );
 
   // custom legend items for checkbox
@@ -487,7 +485,7 @@ function HistogramViz(props: VisualizationProps) {
     vizConfig.checkedLegendItems
   );
 
-  //DKDK axis range control
+  // axis range control
   // get as much default axis range from variable annotations as possible
   const defaultUIState: UIState = useMemo(() => {
     if (xAxisVariable != null) {
@@ -517,7 +515,6 @@ function HistogramViz(props: VisualizationProps) {
         ...otherDefaults,
       };
     } else {
-      //DKDK this may need a better refinement
       return {
         binWidth: 0,
         binWidthTimeUnit: undefined,
@@ -615,7 +612,7 @@ function HistogramViz(props: VisualizationProps) {
         onCheckedLegendItemsChange={onCheckedLegendItemsChange}
         totalCounts={totalCounts}
         filteredCounts={filteredCounts}
-        //DKDK axis range control
+        // axis range control
         vizConfig={vizConfig}
         updateVizConfig={updateVizConfig}
         valueType={valueType}
@@ -623,7 +620,7 @@ function HistogramViz(props: VisualizationProps) {
         defaultIndependentRange={defaultIndependentRange}
         // add dependent axis range for better displaying tick labels in log-scale
         defaultDependentAxisRange={defaultDependentAxisRange}
-        //DKDK pass useState of truncation warnings
+        // pass truncation warning props
         truncatedIndependentAxisWarning={truncatedIndependentAxisWarning}
         setTruncatedIndependentAxisWarning={setTruncatedIndependentAxisWarning}
         truncatedDependentAxisWarning={truncatedDependentAxisWarning}
@@ -655,14 +652,14 @@ type HistogramPlotWithControlsProps = Omit<HistogramProps, 'data'> & {
   onCheckedLegendItemsChange: (checkedLegendItems: string[]) => void;
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
-  //DKDK define types for axis range control
+  // define types for axis range control
   vizConfig: HistogramConfig;
   updateVizConfig: (newConfig: Partial<HistogramConfig>) => void;
   valueType: 'number' | 'date';
   defaultUIState: UIState;
   defaultIndependentRange: NumberOrDateRange | undefined;
   defaultDependentAxisRange: NumberRange | undefined;
-  //DKDK pass useState of truncation warnings
+  // pass truncation warning props
   truncatedIndependentAxisWarning: string;
   setTruncatedIndependentAxisWarning: (
     truncatedIndependentAxisWarning: string
@@ -698,14 +695,14 @@ function HistogramPlotWithControls({
   onCheckedLegendItemsChange,
   totalCounts,
   filteredCounts,
-  //DKDK for axis range control
+  // for axis range control
   vizConfig,
   updateVizConfig,
   valueType,
   defaultUIState,
   defaultIndependentRange,
   defaultDependentAxisRange,
-  //DKDK pass useState of truncation warnings
+  // pass truncation warning props
   truncatedIndependentAxisWarning,
   setTruncatedIndependentAxisWarning,
   truncatedDependentAxisWarning,
@@ -734,12 +731,7 @@ function HistogramPlotWithControls({
         ?.data
     : data;
 
-  // console.log('defaultIndependentRange =', defaultIndependentRange)
-  // console.log('vizConfig.independentAxisRange =', vizConfig.independentAxisRange)
-  console.log('defaultDependentAxisRange =', defaultDependentAxisRange);
-  console.log('vizConfig.dependentAxisRange =', vizConfig.dependentAxisRange);
-
-  //DKDK axis range control
+  // axis range control
   const handleIndependentAxisRangeChange = useCallback(
     (newRange?: NumberOrDateRange) => {
       updateVizConfig({
@@ -756,6 +748,8 @@ function HistogramPlotWithControls({
                 : newRange.max,
           } as NumberOrDateRange),
       });
+      // need to close TruncatedDependentAxisWarning
+      setTruncatedDependentAxisWarning('');
     },
     [updateVizConfig]
   );
@@ -763,11 +757,10 @@ function HistogramPlotWithControls({
   const handleIndependentAxisSettingsReset = useCallback(() => {
     updateVizConfig({
       independentAxisRange: defaultUIState.independentAxisRange,
-      //DKDK this needs to be considered... ?
       binWidth: defaultUIState.binWidth,
       binWidthTimeUnit: defaultUIState.binWidthTimeUnit,
     });
-    //DKDK add reset for truncation message: including dependent axis warning as well
+    // add reset for truncation message: including dependent axis warning as well
     setTruncatedIndependentAxisWarning('');
     setTruncatedDependentAxisWarning('');
   }, [
@@ -790,15 +783,10 @@ function HistogramPlotWithControls({
     updateVizConfig({
       dependentAxisRange: defaultDependentAxisRange,
       dependentAxisLogScale: false,
-      //DKDK valueSpec should not be changed when resetting ?
-      // valueSpec: 'count',
     });
-    //DKDK add reset for truncation message as well
+    // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
-  }, [
-    // defaultUIState.dependentAxisLogScale,
-    updateVizConfig,
-  ]);
+  }, [updateVizConfig]);
 
   // set truncation flags: will see if this is reusable with other application
   const {
@@ -841,22 +829,13 @@ function HistogramPlotWithControls({
     }
   }, [truncationConfigDependentAxisMin, truncationConfigDependentAxisMax]);
 
-  console.log(
-    'truncationConfig = ',
-    truncationConfigIndependentAxisMin,
-    truncationConfigIndependentAxisMax,
-    truncationConfigDependentAxisMin,
-    truncationConfigDependentAxisMax
-  );
-
-  //DKDK send histogramProps with additional props
-  console.log('histogramProps =', histogramProps);
+  // send histogramProps with additional props
   const histogramPlotProps = {
     ...histogramProps,
-    //DKDK axis range control
+    // axis range control
     independentAxisRange: vizConfig.independentAxisRange,
     dependentAxisRange: vizConfig.dependentAxisRange,
-    //DKDK pass axisTruncationConfig
+    // pass axisTruncationConfig props
     axisTruncationConfig: {
       independentAxis: {
         min: truncationConfigIndependentAxisMin,
@@ -874,7 +853,7 @@ function HistogramPlotWithControls({
       {isFaceted(data) ? (
         <FacetedHistogram
           data={data}
-          //DKDK send histogramProps with additional props
+          // send histogramProps with additional props
           componentProps={histogramPlotProps}
           modalComponentProps={{
             independentAxisLabel: histogramProps.independentAxisLabel,
@@ -896,10 +875,10 @@ function HistogramPlotWithControls({
           showValues={false}
           // for custom legend: pass checkedLegendItems to PlotlyPlot
           checkedLegendItems={checkedLegendItems}
-          //DKDK axis range control
+          // axis range control
           independentAxisRange={vizConfig.independentAxisRange}
           dependentAxisRange={vizConfig.dependentAxisRange}
-          //DKDK pass axisTruncationConfig
+          // pass axisTruncationConfig
           axisTruncationConfig={{
             independentAxis: {
               min: truncationConfigIndependentAxisMin,
@@ -914,7 +893,7 @@ function HistogramPlotWithControls({
       )}
 
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        {/* DKDK make switch and radiobutton single line with space
+        {/* make switch and radiobutton single line with space
                  also marginRight at LabelledGroup is set to 0.5625em: default - 1.5625em*/}
         <LabelledGroup
           label="Y-axis"
@@ -944,18 +923,15 @@ function HistogramPlotWithControls({
               }}
             />
           </div>
-          {/* DKDK Y-axis range control */}
+          {/* Y-axis range control */}
           <NumberRangeInput
             label="Range"
-            //DKDK ???
             range={vizConfig.dependentAxisRange ?? defaultDependentAxisRange}
-            // range={defaultDependentAxisRange}
-            // range={vizConfig.dependentAxisRange}
             onRangeChange={(newRange?: NumberOrDateRange) => {
               handleDependentAxisRangeChange(newRange as NumberRange);
             }}
             allowPartialRange={false}
-            //DKDK set maxWidth
+            // set maxWidth
             containerStyles={{ maxWidth: '350px' }}
           />
           {/* truncation notification */}
@@ -969,13 +945,12 @@ function HistogramPlotWithControls({
                 setTruncatedDependentAxisWarning('');
               }}
               showWarningIcon={true}
-              //DKDK change maxWidth
+              // change maxWidth
               containerStyles={{ maxWidth: '350px' }}
             />
           ) : null}
           <Button
             type={'outlined'}
-            //DKDK change text
             text={'Reset to defaults'}
             onClick={handleDependentAxisSettingsReset}
             containerStyles={{
@@ -1009,18 +984,18 @@ function HistogramPlotWithControls({
             }
             containerStyles={{
               minHeight: widgetHeight,
-              //DKDK set maxWidth
+              // set maxWidth
               maxWidth: valueType === 'date' ? '250px' : '350px',
             }}
           />
 
-          {/* DKDK X-Axis range control - temp block to check date  */}
+          {/* X-Axis range control - temp block to check date  */}
           <AxisRangeControl
             label="Range"
             range={vizConfig.independentAxisRange ?? defaultIndependentRange}
             onRangeChange={handleIndependentAxisRangeChange}
             valueType={valueType}
-            //DKDK set maxWidth
+            // set maxWidth
             containerStyles={{ maxWidth: '350px' }}
           />
           {/* truncation notification */}
@@ -1034,7 +1009,7 @@ function HistogramPlotWithControls({
                 setTruncatedIndependentAxisWarning('');
               }}
               showWarningIcon={true}
-              //DKDKDK need to check this...
+              // set maxWidth per type
               containerStyles={{
                 maxWidth: valueType === 'date' ? '350px' : '350px',
               }}
@@ -1042,7 +1017,6 @@ function HistogramPlotWithControls({
           ) : null}
           <Button
             type={'outlined'}
-            //DKDK change text
             text={'Reset to defaults'}
             onClick={handleIndependentAxisSettingsReset}
             containerStyles={{

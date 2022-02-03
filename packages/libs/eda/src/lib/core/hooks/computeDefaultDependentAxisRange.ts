@@ -1,4 +1,4 @@
-import { useMemo, useRef, useLayoutEffect, useCallback } from 'react';
+import { useMemo, useRef, useLayoutEffect } from 'react';
 import { PromiseHookState } from './promise';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import {
@@ -6,10 +6,7 @@ import {
   HistogramConfig,
   findMinMaxOfStackedArray,
 } from '../components/visualizations/implementations/HistogramVisualization';
-import {
-  HistogramData,
-  BarplotData,
-} from '@veupathdb/components/lib/types/plots';
+import { HistogramData } from '@veupathdb/components/lib/types/plots';
 import {
   BarplotDataWithStatistics,
   BarplotConfig,
@@ -40,7 +37,7 @@ export function useDefaultDependentAxisRange(
     | undefined
   >,
   vizConfig: HistogramConfig | BarplotConfig | BoxplotConfig,
-  //DKDK HistogramConfig contains most options
+  // HistogramConfig contains most options
   updateVizConfig: (newConfig: Partial<HistogramConfig>) => void,
   plotType?: 'Histogram' | 'Barplot' | 'Boxplot' | undefined,
   yAxisVariable?: Variable
@@ -54,14 +51,14 @@ export function useDefaultDependentAxisRange(
         >
       );
     else if (plotType == 'Barplot')
-      //DKDK barplot only computes max value
+      // barplot only computes max value
       return {
         min: 0,
         max: barplotDefaultDependentAxisMax(
           data as PromiseHookState<BarplotDataWithStatistics | undefined>
         ),
       };
-    //DKDK to-do
+    // boxplot
     else if (plotType === 'Boxplot')
       return boxplotDefaultDependentAxisMinMax(
         data as PromiseHookState<BoxplotDataWithCoverage | undefined>,
@@ -69,17 +66,14 @@ export function useDefaultDependentAxisRange(
       );
   }, [data]);
 
-  // //DKDK
-  // console.log('defaultDependentAxisMinMax =', defaultDependentAxisMinMax)
-
-  // DKDK set useMemo to avoid infinite loop
+  // set useMemo to avoid infinite loop
   // set default dependent axis range for better displaying tick labels in log-scale
   const defaultDependentAxisRange = useMemo(() => {
     if (plotType === 'Histogram' || plotType === 'Barplot')
       return defaultDependentAxisMinMax?.min != null &&
         defaultDependentAxisMinMax?.max != null
         ? {
-            // set min as 0 (count, proportion) for non-logscale
+            // set min as 0 (count, proportion) for non-logscale for histogram/barplot
             min:
               (vizConfig as HistogramConfig | BarplotConfig).valueSpec ===
               'count'
@@ -96,7 +90,7 @@ export function useDefaultDependentAxisRange(
             max: defaultDependentAxisMinMax.max * 1.05,
           }
         : undefined;
-    //DKDK to-do
+    // boxplot
     else if (plotType === 'Boxplot')
       return defaultDependentAxisMinMax?.min != null &&
         defaultDependentAxisMinMax?.max != null
@@ -111,7 +105,7 @@ export function useDefaultDependentAxisRange(
     (vizConfig as HistogramConfig | BarplotConfig).dependentAxisLogScale,
   ]);
 
-  // DKDK use this to avoid infinite loop: also use useLayoutEffect to avoid async/ghost issue
+  // use this to avoid infinite loop: also use useLayoutEffect to avoid async/ghost issue
   const updateVizConfigRef = useRef(updateVizConfig);
   useLayoutEffect(() => {
     updateVizConfigRef.current = updateVizConfig;
@@ -119,7 +113,6 @@ export function useDefaultDependentAxisRange(
 
   // update vizConfig.dependentAxisRange as it is necessary for set range correctly
   useLayoutEffect(() => {
-    //DKDKDK data.pending
     if (!data.pending)
       updateVizConfigRef.current({
         dependentAxisRange: defaultDependentAxisRange,
@@ -160,7 +153,7 @@ function histogramDefaultDependentAxisMinMax(
   }
 }
 
-//DKDK compute max only
+// compute max only
 function barplotDefaultDependentAxisMax(
   data: PromiseHookState<BarplotDataWithStatistics | undefined>
 ) {

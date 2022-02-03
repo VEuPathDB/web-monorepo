@@ -1,24 +1,24 @@
 import { UIState } from '../components/filter/HistogramFilter';
 import { HistogramConfig } from '../components/visualizations/implementations/HistogramVisualization';
-import { NumberRange } from '../types/general';
+import { NumberRange, NumberOrDateRange } from '../types/general';
 import { BarplotConfig } from '../components/visualizations/implementations/BarplotVisualization';
 import { BoxplotConfig } from '../components/visualizations/implementations/BoxplotVisualization';
 
 // function to compute truncation flags for Histogram-like
 // visualizations (continuous x-axis with known bounds, y-axis showing non-negative counts)
 export function truncationConfig(
-  defaultUIState: UIState | undefined,
+  defaultUIState: Partial<UIState> | undefined,
   vizConfig: HistogramConfig | BarplotConfig | BoxplotConfig,
-  defaultDependentAxisRange: NumberRange | undefined
+  defaultDependentAxisRange: NumberRange | NumberOrDateRange | undefined
 ) {
   const truncationConfigIndependentAxisMin =
     defaultUIState == null
       ? false
       : (vizConfig as HistogramConfig)?.independentAxisRange?.min == null
       ? false
-      : defaultUIState.independentAxisRange.min !==
+      : defaultUIState?.independentAxisRange?.min !==
           (vizConfig as HistogramConfig)?.independentAxisRange?.min &&
-        defaultUIState.independentAxisRange.min <
+        defaultUIState?.independentAxisRange?.min! <
           (vizConfig as HistogramConfig)?.independentAxisRange?.min!
       ? true
       : false;
@@ -27,14 +27,14 @@ export function truncationConfig(
       ? false
       : (vizConfig as HistogramConfig)?.independentAxisRange?.max == null
       ? false
-      : defaultUIState.independentAxisRange.max !==
+      : defaultUIState?.independentAxisRange?.max !==
           (vizConfig as HistogramConfig)?.independentAxisRange?.max &&
-        defaultUIState.independentAxisRange.max >
+        defaultUIState?.independentAxisRange?.max! >
           (vizConfig as HistogramConfig)?.independentAxisRange?.max!
       ? true
       : false;
 
-  //DKDK set a hard-corded condition for histogram and barplot for dependentAxisRange.min for now
+  // set a hard-corded condition for histogram and barplot for dependentAxisRange.min for now
   const truncationConfigDependentAxisMin =
     defaultDependentAxisRange?.min == null
       ? false

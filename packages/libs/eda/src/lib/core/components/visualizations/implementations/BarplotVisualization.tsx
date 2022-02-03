@@ -65,21 +65,17 @@ import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOn
 // a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
 
-//DKDK concerning axis range control
+// concerning axis range control
 import { NumberOrDateRange, NumberRange } from '../../../types/general';
 import { NumberRangeInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateRangeInputs';
 // reusable util for computing truncationConfig
-//DKDK temporarily use variant
-// import { truncationConfig } from '../../../utils/truncation-config-utils';
 import { truncationConfig } from '../../../utils/truncation-config-utils-viz';
 // use Notification for truncation warning message
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 import Button from '@veupathdb/components/lib/components/widgets/Button';
-import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
-import { UIState } from '../../filter/HistogramFilter';
 import { useDefaultDependentAxisRange } from '../../../hooks/computeDefaultDependentAxisRange';
 
-//DKDK export
+// export
 export type BarplotDataWithStatistics = (
   | BarplotData
   | FacetedData<BarplotData>
@@ -129,7 +125,7 @@ type ValueSpec = t.TypeOf<typeof ValueSpec>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 const ValueSpec = t.keyof({ count: null, proportion: null });
 
-//DKDK export
+// export
 export type BarplotConfig = t.TypeOf<typeof BarplotConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BarplotConfig = t.intersection([
@@ -144,7 +140,7 @@ export const BarplotConfig = t.intersection([
     showMissingness: t.boolean,
     // for custom legend: vizconfig.checkedLegendItems
     checkedLegendItems: t.array(t.string),
-    //DKDK dependent axis range control
+    // dependent axis range control
     dependentAxisRange: NumberRange,
   }),
 ]);
@@ -186,7 +182,7 @@ function BarplotViz(props: VisualizationProps) {
     [updateConfiguration, vizConfig]
   );
 
-  //DKDK set the state of truncation warning message
+  // set the state of truncation warning message here
   const [
     truncatedDependentAxisWarning,
     setTruncatedDependentAxisWarning,
@@ -207,7 +203,7 @@ function BarplotViz(props: VisualizationProps) {
         // set undefined for variable change
         checkedLegendItems: undefined,
       });
-      //DKDK close truncation warnings
+      // close truncation warnings
       setTruncatedDependentAxisWarning('');
     },
     [updateVizConfig]
@@ -412,7 +408,7 @@ function BarplotViz(props: VisualizationProps) {
     vizConfig.checkedLegendItems
   );
 
-  // DKDK using custom hook
+  //  using custom hook
   const defaultDependentAxisRange = useDefaultDependentAxisRange(
     data,
     vizConfig,
@@ -420,10 +416,7 @@ function BarplotViz(props: VisualizationProps) {
     'Barplot'
   );
 
-  console.log('defaultDependentAxisRange =', defaultDependentAxisRange);
-  console.log('vizConfig.dependentAxisRange =', vizConfig.dependentAxisRange);
-
-  //DKDK axis range control
+  // axis range control
   const handleDependentAxisRangeChange = useCallback(
     (newRange?: NumberRange) => {
       updateVizConfig({
@@ -437,10 +430,8 @@ function BarplotViz(props: VisualizationProps) {
     updateVizConfig({
       dependentAxisRange: defaultDependentAxisRange,
       dependentAxisLogScale: false,
-      //DKDK valueSpec should not be changed when resetting ?
-      // valueSpec: 'count',
     });
-    //DKDK add reset for truncation message as well
+    // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
   }, [
     // defaultUIState.dependentAxisLogScale,
@@ -455,7 +446,7 @@ function BarplotViz(props: VisualizationProps) {
     truncationConfigDependentAxisMax,
   } = useMemo(
     () =>
-      //DKDK barplot does not have independent axis range control so send undefined for defaultUIState
+      // barplot does not have independent axis range control so send undefined for defaultUIState
       truncationConfig(undefined, vizConfig, defaultDependentAxisRange),
     [
       vizConfig.xAxisVariable,
@@ -474,14 +465,6 @@ function BarplotViz(props: VisualizationProps) {
       );
     }
   }, [truncationConfigDependentAxisMin, truncationConfigDependentAxisMax]);
-
-  console.log(
-    'truncationConfig = ',
-    truncationConfigIndependentAxisMin,
-    truncationConfigIndependentAxisMax,
-    truncationConfigDependentAxisMin,
-    truncationConfigDependentAxisMax
-  );
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
@@ -505,10 +488,10 @@ function BarplotViz(props: VisualizationProps) {
     showSpinner: data.pending || filteredCounts.pending,
     dependentAxisLogScale: vizConfig.dependentAxisLogScale,
     // set dependent axis range for log scale
-    //DKDK truncation axis range control
+    // truncation axis range control
     dependentAxisRange: vizConfig.dependentAxisRange,
     displayLibraryControls: false,
-    //DKDK for faceted plot, add axisTruncationConfig props here
+    // for faceted plot, add axisTruncationConfig props here
     axisTruncationConfig: {
       independentAxis: {
         min: truncationConfigIndependentAxisMin,
@@ -543,9 +526,9 @@ function BarplotViz(props: VisualizationProps) {
           ref={plotRef}
           // for custom legend: pass checkedLegendItems to PlotlyPlot
           checkedLegendItems={checkedLegendItems}
-          //DKDK axis range control
+          // axis range control
           dependentAxisRange={vizConfig.dependentAxisRange}
-          //DKDK pass axisTruncationConfig
+          // pass axisTruncationConfig
           axisTruncationConfig={{
             independentAxis: {
               min: truncationConfigIndependentAxisMin,
@@ -581,16 +564,16 @@ function BarplotViz(props: VisualizationProps) {
               }}
             />
           </div>
-          {/* DKDK Y-axis range control */}
+          {/* Y-axis range control */}
           <NumberRangeInput
             label="Range"
-            //DKDK add range
+            // add range
             range={vizConfig.dependentAxisRange ?? defaultDependentAxisRange}
             onRangeChange={(newRange?: NumberOrDateRange) => {
               handleDependentAxisRangeChange(newRange as NumberRange);
             }}
             allowPartialRange={false}
-            //DKDK set maxWidth
+            // set maxWidth
             containerStyles={{ maxWidth: '350px' }}
           />
           {/* truncation notification */}
@@ -604,13 +587,12 @@ function BarplotViz(props: VisualizationProps) {
                 setTruncatedDependentAxisWarning('');
               }}
               showWarningIcon={true}
-              //DKDK change maxWidth
+              // change maxWidth
               containerStyles={{ maxWidth: '350px' }}
             />
           ) : null}
           <Button
             type={'outlined'}
-            //DKDK change text
             text={'Reset to defaults'}
             onClick={handleDependentAxisSettingsReset}
             containerStyles={{

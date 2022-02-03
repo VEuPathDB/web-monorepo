@@ -1,7 +1,7 @@
 import { Variable } from '../types/study';
 import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
 
-export function defaultDependentAxisRange(
+export function numberDateDefaultDependentAxisRange(
   variable: Variable | undefined,
   plotName: string,
   yMinMaxRange:

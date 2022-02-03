@@ -2,6 +2,8 @@ import { useMemo, useRef, useLayoutEffect } from 'react';
 import { DateVariable, NumberVariable, Variable } from '../types/study';
 import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
 import { HistogramConfig } from '../components/visualizations/implementations/HistogramVisualization';
+// adding margin for scatter plot range
+import { axisRangeMargin } from '../utils/axis-range-margin';
 
 export function defaultIndependentAxisRangeFunction(
   variable: Variable | undefined,
@@ -56,14 +58,20 @@ export function useDefaultIndependentAxisRange(
   plotName: string,
   updateVizConfig: (newConfig: Partial<HistogramConfig>) => void
 ): NumberOrDateRange | undefined {
+  // consider both histogram and scatterplot at once
   const defaultIndependentAxisRange:
     | NumberOrDateRange
-    | undefined = useMemo(
-    () => defaultIndependentAxisRangeFunction(variable, plotName),
-    [variable, plotName]
-  );
+    | undefined = useMemo(() => {
+    const defaultIndependentRange = defaultIndependentAxisRangeFunction(
+      variable,
+      plotName
+    );
+    return plotName === 'scatterplot'
+      ? axisRangeMargin(defaultIndependentRange, variable?.type)
+      : defaultIndependentRange;
+  }, [variable, plotName]);
 
-  //DKDK use this to avoid infinite loop: also use useLayoutEffect to avoid async/ghost issue
+  // use this to avoid infinite loop: also use useLayoutEffect to avoid async/ghost issue
   const updateVizConfigRefInd = useRef(updateVizConfig);
   useLayoutEffect(() => {
     updateVizConfigRefInd.current = updateVizConfig;
