@@ -3,9 +3,8 @@ import { ceil, uniqBy } from 'lodash';
 
 // Components
 import SettingsIcon from '@material-ui/icons/Settings';
-import { H5, H3 } from '@veupathdb/core-components/dist/components/headers';
 import DataGrid from '@veupathdb/core-components/dist/components/grids/DataGrid';
-import { Modal } from '@veupathdb/core-components';
+import { Modal, H3, H5 } from '@veupathdb/core-components';
 
 import { MesaButton } from '@veupathdb/core-components/dist/components/buttons';
 import {
