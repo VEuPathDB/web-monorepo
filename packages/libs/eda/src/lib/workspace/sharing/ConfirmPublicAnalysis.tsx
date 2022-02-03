@@ -1,10 +1,12 @@
 import { Link } from 'react-router-dom';
 
-import { H5 } from '@veupathdb/core-components';
+import { H5, Warning } from '@veupathdb/core-components';
 import { FilledButton } from '@veupathdb/core-components/dist/components/buttons';
 
 import { useUITheme } from '@veupathdb/core-components/dist/components/theming';
-import { gray } from '@veupathdb/core-components/dist/definitions/colors';
+import colors, {
+  gray,
+} from '@veupathdb/core-components/dist/definitions/colors';
 
 type ConfirmAnalysisSharingProps = {
   makeAnalysisPublic: () => void;
@@ -32,63 +34,81 @@ export default function ConfirmPublicAnalysis({
           text="Confirmation"
           additionalStyles={{ marginTop: 25, marginBottom: 0 }}
         />
-        <p
+
+        <div
           style={{
-            fontSize: '.9rem',
-            color: theme?.palette.primary.hue[600] ?? gray[600],
-            maxWidth: 500,
-            fontWeight: 'bold',
-            marginTop: 0,
+            display: 'flex',
+            alignItems: 'center',
+            borderStyle: 'solid',
+            borderWidth: 2,
+            borderRadius: 10,
+            padding: 10,
+            marginTop: 10,
+            marginBottom: 20,
+            borderColor: theme?.palette.primary.hue[500],
           }}
         >
-          You are about to make this analysis public.
-        </p>
-        <p
-          style={{
-            fontSize: '.9rem',
-            color: gray[600],
-            maxWidth: 500,
-          }}
-        >
-          This analysis will appear on the{' '}
-          <Link
-            to="/eda/public"
-            target="_blank"
-            style={{ color: theme?.palette.primary.hue[600] }}
-          >
-            ClinEpiDB Public analyses page.
-          </Link>
-        </p>
-        <p
-          style={{
-            fontSize: '.9rem',
-            color: gray[600],
-            maxWidth: 500,
-          }}
-        >
-          When someone clicks on the public link, they will get a copy of the
-          latest version.
-        </p>
-        <p
-          style={{
-            fontSize: '.9rem',
-            color: gray[600],
-            maxWidth: 500,
-          }}
-        >
-          If you update or delete your analysis, preexisting copies will not be
-          affected.
-        </p>
-        <p
-          style={{
-            fontSize: '.9rem',
-            color: gray[600],
-            maxWidth: 500,
-          }}
-        >
-          You can make this analysis private again later, but preexisting copies
-          will not be affected.
-        </p>
+          <Warning fontSize={48} fill={colors.orange[500]} />
+          <div style={{ marginLeft: 15 }}>
+            <p
+              style={{
+                fontSize: '.9rem',
+                color: theme?.palette.primary.hue[600] ?? gray[600],
+                maxWidth: 500,
+                fontWeight: 'bold',
+                marginTop: 0,
+              }}
+            >
+              You are about to make this analysis public.
+            </p>
+            <p
+              style={{
+                fontSize: '.9rem',
+                color: gray[600],
+                maxWidth: 500,
+              }}
+            >
+              This analysis will appear on the{' '}
+              <Link
+                to="/eda/public"
+                target="_blank"
+                style={{ color: theme?.palette.primary.hue[600] }}
+              >
+                ClinEpiDB Public analyses page.
+              </Link>
+            </p>
+            <p
+              style={{
+                fontSize: '.9rem',
+                color: gray[600],
+                maxWidth: 500,
+              }}
+            >
+              When someone clicks on the public link, they will get a copy of
+              the latest version.
+            </p>
+            <p
+              style={{
+                fontSize: '.9rem',
+                color: gray[600],
+                maxWidth: 500,
+              }}
+            >
+              If you update or delete your analysis, preexisting copies will not
+              be affected.
+            </p>
+            <p
+              style={{
+                fontSize: '.9rem',
+                color: gray[600],
+                maxWidth: 500,
+              }}
+            >
+              You can make this analysis private again later, but preexisting
+              copies will not be affected.
+            </p>
+          </div>
+        </div>
       </div>
       <FilledButton
         text="Make Analysis Public"
