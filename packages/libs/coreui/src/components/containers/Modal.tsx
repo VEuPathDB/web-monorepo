@@ -1,6 +1,7 @@
-import { CSSProperties, ReactNode, useMemo, useState, useEffect } from 'react';
+import { CSSProperties, ReactNode, useMemo, useState } from 'react';
 import { merge } from 'lodash';
 import ReactModal from 'react-modal';
+import useDimensions from 'react-cool-dimensions';
 
 // Components
 import { H3 } from '../typography';
@@ -82,6 +83,8 @@ export default function Modal({
 }: ModalProps) {
   const theme = useUITheme();
 
+  const { observe, height: titleHeight } = useDimensions();
+
   const componentStyle: ModalStyleSpec = useMemo(() => {
     const defaultStyle: ModalStyleSpec = {
       border: {
@@ -161,31 +164,33 @@ export default function Modal({
           outlineWidth: componentStyle.border.width,
           outlineStyle: componentStyle.border.style,
           outlineOffset: -1 * componentStyle.border.width,
+          overflow: 'clip',
         },
       }}
     >
       {title && (
         <div
           css={{
-            // overflow: 'auto',
-
-            margin: 0,
+            height: titleHeight + 39,
+            display: 'flex',
+            flexDirection: 'column',
           }}
         >
           <div
             css={{
-              height: 75,
+              flex: 1,
               backgroundColor: componentStyle.header.primaryBackgroundColor,
             }}
           />
           <div
             css={{
-              height: 15,
+              flexBasis: 15,
               backgroundColor: componentStyle.header.secondaryBackgroundColor,
             }}
           />
           <div css={{ position: 'absolute', left: 25, top: 34 }}>
             <H3
+              ref={observe}
               text={title}
               color='white'
               additionalStyles={{ margin: 0, padding: 0 }}
@@ -206,15 +211,16 @@ export default function Modal({
       )}
       <div
         css={{
-          paddingTop: componentStyle.content.paddingTop,
+          marginTop: componentStyle.content.paddingTop,
           paddingRight: componentStyle.content.paddingRight,
-          paddingBottom: componentStyle.content.paddingBottom,
+          marginBottom: componentStyle.content.paddingBottom,
           paddingLeft: componentStyle.content.paddingLeft,
           height:
             modalHeight -
             componentStyle.content.paddingTop -
             componentStyle.content.paddingBottom -
             (title ? 90 : 0),
+          overflowY: 'auto',
         }}
       >
         {children}
