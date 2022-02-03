@@ -3,8 +3,6 @@ import Boxplot, { BoxplotProps } from '@veupathdb/components/lib/plots/Boxplot';
 import FacetedBoxplot from '@veupathdb/components/lib/plots/facetedPlots/FacetedBoxplot';
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { getOrElse } from 'fp-ts/lib/Either';
-import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 
@@ -71,6 +69,7 @@ import PlotLegend, {
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 // a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
+import { useVizConfig } from '../../../hooks/visualizations';
 
 // concerning axis range control
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
@@ -163,18 +162,11 @@ function BoxplotViz(props: VisualizationProps) {
   );
   const dataClient: DataClient = useDataClient();
 
-  const vizConfig = useMemo(() => {
-    return pipe(
-      BoxplotConfig.decode(visualization.descriptor.configuration),
-      getOrElse((): t.TypeOf<typeof BoxplotConfig> => createDefaultConfig())
-    );
-  }, [visualization.descriptor.configuration]);
-
-  const updateVizConfig = useCallback(
-    (newConfig: Partial<BoxplotConfig>) => {
-      updateConfiguration({ ...vizConfig, ...newConfig });
-    },
-    [updateConfiguration, vizConfig]
+  const [vizConfig, updateVizConfig] = useVizConfig(
+    visualization.descriptor.configuration,
+    BoxplotConfig,
+    createDefaultConfig,
+    updateConfiguration
   );
 
   // set the state of truncation warning message

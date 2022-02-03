@@ -408,7 +408,7 @@ function BarplotViz(props: VisualizationProps) {
     vizConfig.checkedLegendItems
   );
 
-  //  using custom hook
+  // using custom hook
   const defaultDependentAxisRange = useDefaultDependentAxisRange(
     data,
     vizConfig,
@@ -469,6 +469,7 @@ function BarplotViz(props: VisualizationProps) {
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
     plotContainerStyles,
+    // The dependencies for needing to generate a new thumbnail
     [data, vizConfig.checkedLegendItems]
   );
 

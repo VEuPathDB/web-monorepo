@@ -1,14 +1,22 @@
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
-import NameAnalysis from './NameAnalysis';
-import Login from './Login';
+// Components
 import ConfirmPublicAnalysis from './ConfirmPublicAnalysis';
-import { AnalysisSummary, SingleAnalysisPatchRequest } from '../../core';
+import Login from './Login';
+import NameAnalysis from './NameAnalysis';
 import { Modal } from '@veupathdb/core-components';
+
+// Definitions
+import { AnalysisSummary, SingleAnalysisPatchRequest } from '../../core';
+
+// Hooks
+import { useLoginCallbacks } from './hooks';
 
 type ShareFromAnalysesListProps = {
   visible: boolean;
   toggleVisible: (visible: boolean) => void;
+  /** A callback to open a login form. */
+  showLoginForm: () => void;
   analysis?: AnalysisSummary;
   updateAnalysis: (id: string, patch: SingleAnalysisPatchRequest) => void;
 };
@@ -16,12 +24,15 @@ type ShareFromAnalysesListProps = {
 export default function ShareFromAnalysesList({
   visible,
   toggleVisible,
+  showLoginForm,
   analysis,
   updateAnalysis,
 }: ShareFromAnalysesListProps) {
   const userLoggedIn = useWdkService((wdkService) =>
     wdkService.getCurrentUser().then((user) => !user.isGuest)
   );
+
+  const loginCallbacks = useLoginCallbacks({ showLoginForm, toggleVisible });
 
   return (
     <Modal
@@ -31,17 +42,17 @@ export default function ShareFromAnalysesList({
       includeCloseButton={true}
       themeRole="primary"
       styleOverrides={{
-        size: { width: 700, height: 400 },
+        size: { width: 700, height: 425 },
         content: {
           paddingTop: 0,
           paddingRight: 50,
-          paddingBottom: 25,
+          paddingBottom: 0,
           paddingLeft: 25,
         },
       }}
     >
       {!userLoggedIn ? (
-        <Login toggleVisible={toggleVisible} />
+        <Login {...loginCallbacks} />
       ) : analysis?.displayName === 'Unnamed Analysis' ? (
         <NameAnalysis
           currentName={analysis.displayName}
