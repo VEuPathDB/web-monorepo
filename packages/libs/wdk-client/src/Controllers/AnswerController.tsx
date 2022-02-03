@@ -21,7 +21,7 @@ import { AttributeField, TableField, AttributeValue, RecordInstance, RecordClass
 import { History } from 'history';
 import { filterRecords } from 'wdk-client/Views/Records/RecordUtils';
 
-const MAXROWS = 2000;
+const MAXROWS = 4000;
 
 const ActionCreators = {
   loadAnswer,
