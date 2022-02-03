@@ -350,7 +350,7 @@ const useHeaderMenuItems = (
         },
         {
           key: 'EuPaGDT',
-          display: 'CRISPR Guide Design Tool',
+          display: 'CRISPR guide design tool',
           type: 'externalLink',
           tooltip: 'CRISPR GuideXpress at DRSC/TRiP Functional Genomics Resources',
           url: 'https://www.flyrnai.org/tools/fly2mosquito/web/',
@@ -361,7 +361,7 @@ const useHeaderMenuItems = (
         },
         {
           key: 'EuPaGDT',
-          display: 'CRISPR Guide Design Tool',
+          display: 'CRISPR guide design tool',
           type: 'externalLink',
           tooltip: 'Eukaryotic Pathogen CRISPR guide RNA/DNA Design Tool',
           url: 'http://grna.ctegd.uga.edu',
@@ -469,6 +469,12 @@ const useHeaderMenuItems = (
           type: 'reactRoute',
           url: '/fasta-tool'
         },
+        { 
+          key: 'upload-genes',
+          display: 'Upload your gene list',
+          type: 'reactRoute',
+          url: '/search/transcript/GeneByLocusTag'
+        },
         {
           key: 'webservices',
           display: 'Web services',
@@ -523,6 +529,12 @@ const useHeaderMenuItems = (
               display: 'Public search strategies',
               type: 'reactRoute',
               url: '/workspace/strategies/public'
+        },
+        { 
+          key: 'upload-genes',
+          display: 'Upload your gene list',
+          type: 'reactRoute',
+          url: '/search/transcript/GeneByLocusTag'
         }
       ]
     },
