@@ -5,6 +5,7 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 import { BoundsViewport, Bounds } from '../map/Types';
 import { BoundsDriftMarkerProps } from '../map/BoundsDriftMarker';
 import { defaultAnimationDuration } from '../map/config/map.json';
+import { Viewport } from 'react-leaflet';
 
 //let's use new approach for data retrieval
 import { getSpeciesDonuts } from './api/getMarkersFromFixtureData';
@@ -95,6 +96,7 @@ export const SidebarResize: Story<MapVEuMapProps> = (args) => {
   //Sidebar state managements (for categorical)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [tabSelected, setTabSelected] = useState(''); //could be used to set default active tab, e.g., 'Home', but leave blank
+  const [viewport] = useState<Viewport>({ center: [13, 16], zoom: 4 });
 
   //this is X button/icon behavior considering sidebar resize
   const sidebarOnClose = () => {
@@ -227,8 +229,8 @@ export const SidebarResize: Story<MapVEuMapProps> = (args) => {
       </Sidebar>
       <MapVEuMap
         {...args}
-        viewport={{ center: [13, 16], zoom: 4 }}
-        onViewportChanged={handleViewportChanged}
+        viewport={viewport}
+        onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         animation={defaultAnimation}
       />

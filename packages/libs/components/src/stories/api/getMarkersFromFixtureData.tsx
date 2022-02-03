@@ -1,10 +1,7 @@
 import React from 'react';
 import { BoundsViewport, Bounds } from '../../map/Types';
-import {
-  zoomLevelToGeohashLevel,
-  allColorsHex,
-  chartMarkerColorsHex,
-} from '../../map/config/map.json';
+import { allColorsHex, chartMarkerColorsHex } from '../../map/config/map.json';
+import { leafletZoomLevelToGeohashLevel } from '../../map/utils/leaflet-geohash';
 import DonutMarker, { DonutMarkerProps } from '../../map/DonutMarker';
 import ChartMarker from '../../map/ChartMarker';
 import { LeafletMouseEvent } from 'leaflet';
@@ -22,7 +19,7 @@ export const getSpeciesDonuts = async (
   handleMarkerClick: (e: LeafletMouseEvent) => void,
   delay: number = 0
 ) => {
-  const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
+  const geohash_level = leafletZoomLevelToGeohashLevel(zoomLevel);
   delay && (await sleep(delay));
   const response = await fetch('data/geoclust-species-testing-all-levels.json');
   const speciesData = await response.json();
@@ -133,7 +130,7 @@ export const getSpeciesBasicMarkers = async (
   duration: number,
   handleMarkerClick: (e: LeafletMouseEvent) => void
 ) => {
-  const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
+  const geohash_level = leafletZoomLevelToGeohashLevel(zoomLevel);
 
   const response = await fetch('data/geoclust-species-testing-all-levels.json');
   const speciesData = await response.json();
@@ -235,7 +232,7 @@ export const getCollectionDateChartMarkers = async (
   setDependentAxisRange: (dependentAxisRange: number[]) => void,
   delay: number = 0
 ) => {
-  const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
+  const geohash_level = leafletZoomLevelToGeohashLevel(zoomLevel);
   delay && (await sleep(delay));
   const response = await fetch(
     'data/geoclust-date-binning-testing-all-levels.json'
@@ -390,7 +387,7 @@ export const getCollectionDateBasicMarkers = async (
   duration: number,
   handleMarkerClick: (e: LeafletMouseEvent) => void
 ) => {
-  const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
+  const geohash_level = leafletZoomLevelToGeohashLevel(zoomLevel);
   const response = await fetch(
     'data/geoclust-date-binning-testing-all-levels.json'
   );

@@ -1,18 +1,27 @@
 import React, {
   useState,
+  useEffect,
   CSSProperties,
   ReactElement,
   cloneElement,
+  useRef,
+  Ref,
+  useMemo,
+  useImperativeHandle,
+  forwardRef,
 } from 'react';
 import { BoundsViewport, AnimationFunction } from './Types';
 import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 const { BaseLayer } = LayersControl;
 import { Viewport, Map, TileLayer, LayersControl } from 'react-leaflet';
+import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
 import SemanticMarkers from './SemanticMarkers';
 import 'leaflet/dist/leaflet.css';
-import '../styles/map_styles.css';
+import '../../dist/css/map_styles.css';
 import CustomGridLayer from './CustomGridLayer';
 import MouseTools, { MouseMode } from './MouseTools';
+import { PlotRef } from '../types/plots';
+import { ToImgopts } from 'plotly.js';
 
 /**
  * Renders a Leaflet map with semantic zooming markers
@@ -24,11 +33,16 @@ import MouseTools, { MouseMode } from './MouseTools';
 export interface MapVEuMapProps {
   /** Center lat/long and zoom level */
   viewport: Viewport;
+  /** update handler */
+  onViewportChanged: (viewport: Viewport) => void;
 
   /** Height and width of plot element */
   height: CSSProperties['height'];
   width: CSSProperties['width'];
-  onViewportChanged: (bvp: BoundsViewport) => void;
+
+  /** callback for when viewport has changed, giving access to the bounding box */
+  onBoundsChanged: (bvp: BoundsViewport) => void;
+
   markers: ReactElement<BoundsDriftMarkerProps>[];
   recenterMarkers?: boolean;
   //DKDK add this for closing sidebar at MapVEuMap: passing setSidebarCollapsed()
@@ -38,21 +52,36 @@ export interface MapVEuMapProps {
     duration: number;
     animationFunction: AnimationFunction;
   } | null;
-  showGrid: boolean;
+  /** Should a geohash-based grid be shown?
+   * Optional. See also zoomLevelToGeohashLevel
+   **/
+  showGrid?: boolean;
+  /** A function to map from Leaflet zoom level to Geohash level
+   *
+   * Optional, but required for grid functionality if showGrid is true
+   **/
+  zoomLevelToGeohashLevel?: (leafletZoomLevel: number) => number;
+  /**
+   * Should the mouse-mode (regular/magnifying glass) icons be shown and active?
+   **/
   showMouseToolbar?: boolean;
 }
 
-export default function MapVEuMap({
-  viewport,
-  height,
-  width,
-  onViewportChanged,
-  markers,
-  animation,
-  recenterMarkers = true,
-  showGrid,
-  showMouseToolbar,
-}: MapVEuMapProps) {
+function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
+  const {
+    viewport,
+    height,
+    width,
+    onViewportChanged,
+    onBoundsChanged,
+    markers,
+    animation,
+    recenterMarkers = true,
+    showGrid,
+    zoomLevelToGeohashLevel,
+    showMouseToolbar,
+  } = props;
+
   // this is the React Map component's onViewPortChanged handler
   // we may not need to use it.
   // onViewportchanged in SemanticMarkers is more relevant
@@ -60,36 +89,73 @@ export default function MapVEuMap({
   // which is useful for fetching data to show on the map.
   // The Viewport info (center and zoom) handled here would be useful for saving a
   // 'bookmarkable' state of the map.
-  const [state, updateState] = useState<Viewport>(viewport as Viewport);
   const [mouseMode, setMouseMode] = useState<MouseMode>('default');
   // Whether the user is currently dragging the map
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  const handleViewportChanged = (viewport: Viewport) => {
-    updateState(viewport);
-  };
 
-  // BM: Why doesn't this work when wrapped in useEffect()?
-  // useEffect(() => {
-  // Show popups if we're in magnification mouse mode and we're not dragging.
-  // Dragging messes with our popup implementation.
-  if (mouseMode === 'magnification' && !isDragging) {
-    markers = markers.map((marker) =>
-      cloneElement(marker, { showPopup: true })
-    );
-  }
-  //  }, [ markers, isDragging, mouseMode ]);
+  const mapRef = useRef<Map>(null);
+  const screenshotter = useMemo(
+    () =>
+      new SimpleMapScreenshoter({
+        hidden: true,
+        hideElementsWithSelectors: [],
+      }),
+    []
+  );
+
+  useEffect(() => {
+    if (mapRef.current?.leafletElement)
+      screenshotter.addTo(mapRef.current.leafletElement);
+  }, [screenshotter, mapRef]);
+
+  useImperativeHandle<PlotRef, PlotRef>(
+    ref,
+    () => ({
+      // Set the ref's toImage function that will be called in web-eda
+      toImage: async (imageOpts: ToImgopts) => {
+        try {
+          // console.log('Taking screenshot...');
+
+          // Call the 3rd party function that actually creates the image
+          const screenshot = await screenshotter.takeScreen('image', {
+            domtoimageOptions: {
+              width: imageOpts.width,
+              height: imageOpts.height,
+            },
+          });
+          // The screenshotter library's types are wrong. TS thinks this next line
+          // will never happen, but takeScreen('image') should in fact return a string
+          if (typeof screenshot === 'string') return screenshot;
+          console.error(
+            'Map screenshot not string type. Value:\n' + screenshot
+          );
+        } catch (error) {
+          console.error('Could not create image for plot: ', error);
+        }
+        return '';
+      },
+    }),
+    [screenshotter]
+  );
+
+  const finalMarkers = useMemo(() => {
+    if (mouseMode === 'magnification' && !isDragging)
+      return markers.map((marker) => cloneElement(marker, { showPopup: true }));
+    return markers;
+  }, [markers, isDragging, mouseMode]);
 
   return (
     <Map
-      viewport={state}
+      viewport={viewport}
       style={{ height, width }}
-      onViewportChanged={handleViewportChanged}
+      onViewportChanged={onViewportChanged}
       className={mouseMode === 'magnification' ? 'cursor-zoom-in' : ''}
       // DKDK testing worldmap issue: minZomm needs to be 2 (FHD) or 3 (4K): set to be 2
       minZoom={2}
       worldCopyJump={false}
       ondragstart={() => setIsDragging(true)}
       ondragend={() => setIsDragging(false)}
+      ref={mapRef}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -97,8 +163,8 @@ export default function MapVEuMap({
       />
 
       <SemanticMarkers
-        onViewportChanged={onViewportChanged}
-        markers={markers}
+        onBoundsChanged={onBoundsChanged}
+        markers={finalMarkers}
         animation={animation}
         recenterMarkers={recenterMarkers}
       />
@@ -107,7 +173,9 @@ export default function MapVEuMap({
         <MouseTools mouseMode={mouseMode} setMouseMode={setMouseMode} />
       )}
 
-      {showGrid ? <CustomGridLayer /> : null}
+      {showGrid && zoomLevelToGeohashLevel ? (
+        <CustomGridLayer zoomLevelToGeohashLevel={zoomLevelToGeohashLevel} />
+      ) : null}
 
       <LayersControl position="topright">
         <BaseLayer checked name="street">
@@ -166,3 +234,5 @@ export default function MapVEuMap({
     </Map>
   );
 }
+
+export default forwardRef(MapVEuMap);

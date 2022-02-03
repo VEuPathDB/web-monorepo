@@ -8,10 +8,9 @@ import BoundsDriftMarker, {
   BoundsDriftMarkerProps,
 } from '../map/BoundsDriftMarker';
 import geohashAnimation from '../map/animation_functions/geohash';
-import {
-  zoomLevelToGeohashLevel,
-  defaultAnimationDuration,
-} from '../map/config/map.json';
+import { defaultAnimationDuration } from '../map/config/map.json';
+import { leafletZoomLevelToGeohashLevel } from '../map/utils/leaflet-geohash';
+import { Viewport } from 'react-leaflet';
 
 export default {
   title: 'Map/Zoom animation',
@@ -66,7 +65,7 @@ const getMarkerElements = (
   let lats: number[] = [];
   let longs: number[] = [];
 
-  const geohashLevel = zoomLevelToGeohashLevel[zoomLevel];
+  const geohashLevel = leafletZoomLevelToGeohashLevel(zoomLevel);
   console.log(`geohashlevel ${geohashLevel}`);
   Array(numMarkers)
     .fill(undefined)
@@ -159,12 +158,13 @@ export const Default: Story<MapVEuMapProps> = (args) => {
     },
     [setMarkerElements]
   );
+  const [viewport] = useState<Viewport>({ center: [20, -3], zoom: 5 });
 
   return (
     <MapVEuMap
       {...args}
-      viewport={{ center: [20, -3], zoom: 5 }}
-      onViewportChanged={handleViewportChanged}
+      viewport={viewport}
+      onBoundsChanged={handleViewportChanged}
       markers={markerElements}
       animation={defaultAnimation}
     />
@@ -172,6 +172,7 @@ export const Default: Story<MapVEuMapProps> = (args) => {
 };
 Default.args = {
   showGrid: true,
+  zoomLevelToGeohashLevel: leafletZoomLevelToGeohashLevel,
   height: '100vh',
   width: '100vw',
 };
@@ -192,12 +193,13 @@ export const DifferentSpeeds: Story<MapVEuMapProps & DurationExtraProps> = (
     },
     [setMarkerElements, args.animationDuration]
   );
+  const [viewport] = useState<Viewport>({ center: [20, -3], zoom: 5 });
 
   return (
     <MapVEuMap
       {...args}
-      viewport={{ center: [20, -3], zoom: 5 }}
-      onViewportChanged={handleViewportChanged}
+      viewport={viewport}
+      onBoundsChanged={handleViewportChanged}
       markers={markerElements}
       animation={{
         method: 'geohash',
@@ -210,6 +212,7 @@ export const DifferentSpeeds: Story<MapVEuMapProps & DurationExtraProps> = (
 DifferentSpeeds.args = {
   animationDuration: 2000,
   showGrid: true,
+  zoomLevelToGeohashLevel: leafletZoomLevelToGeohashLevel,
   height: '100vh',
   width: '100vw',
 };
@@ -224,12 +227,13 @@ export const NoAnimation: Story<MapVEuMapProps> = (args) => {
     },
     [setMarkerElements]
   );
+  const [viewport] = useState<Viewport>({ center: [20, -3], zoom: 5 });
 
   return (
     <MapVEuMap
       {...args}
-      viewport={{ center: [20, -3], zoom: 5 }}
-      onViewportChanged={handleViewportChanged}
+      viewport={viewport}
+      onBoundsChanged={handleViewportChanged}
       markers={markerElements}
       animation={null}
     />
@@ -237,6 +241,7 @@ export const NoAnimation: Story<MapVEuMapProps> = (args) => {
 };
 NoAnimation.args = {
   showGrid: true,
+  zoomLevelToGeohashLevel: leafletZoomLevelToGeohashLevel,
   height: '100vh',
   width: '100vw',
 };

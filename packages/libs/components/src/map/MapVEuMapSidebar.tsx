@@ -167,7 +167,7 @@ export default function MapVEuMapSidebarSibling({
         </LayersControl>
 
         <SemanticMarkers
-          onViewportChanged={onViewportChanged}
+          onBoundsChanged={onViewportChanged}
           markers={markers}
           animation={animation}
           // nudge={nudge}

@@ -8,9 +8,10 @@ import {
 import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 import { useLeaflet } from 'react-leaflet';
 import { LatLngBounds } from 'leaflet';
+import { debounce } from 'lodash';
 
 interface SemanticMarkersProps {
-  onViewportChanged: (bvp: BoundsViewport) => void;
+  onBoundsChanged: (bvp: BoundsViewport) => void;
   markers: Array<ReactElement<BoundsDriftMarkerProps>>;
   recenterMarkers?: boolean;
   animation: {
@@ -27,7 +28,7 @@ interface SemanticMarkersProps {
  * @param props
  */
 export default function SemanticMarkers({
-  onViewportChanged,
+  onBoundsChanged,
   markers,
   animation,
   recenterMarkers = true,
@@ -37,6 +38,7 @@ export default function SemanticMarkers({
   const [prevMarkers, setPrevMarkers] = useState<
     ReactElement<BoundsDriftMarkerProps>[]
   >(markers);
+  // local bounds state needed for recentreing markers
   const [bounds, setBounds] = useState<Bounds>();
 
   const [consolidatedMarkers, setConsolidatedMarkers] = useState<
@@ -48,27 +50,28 @@ export default function SemanticMarkers({
   useEffect(() => {
     if (map == null) return;
 
-    function updateMap() {
+    function updateBounds() {
       if (map != null) {
         const bounds = boundsToGeoBBox(map.getBounds());
         setBounds(bounds);
         const zoomLevel = map.getZoom();
-        onViewportChanged({
+        onBoundsChanged({
           bounds: constrainLongitudeToMainWorld(bounds),
           zoomLevel,
         });
       }
     }
 
-    updateMap();
-    //DKDK remove moveend due to conflict with marker animation
-    map.on('resize dragend zoomend', updateMap); // resize is there hopefully when we have full screen mode
+    updateBounds();
+
+    // debounce needed to avoid cyclic in/out zooming behaviour
+    const debouncedUpdateBounds = debounce(updateBounds, 1000);
+    map.on('resize dragend zoomend', debouncedUpdateBounds); // resize is there hopefully when we have full screen mode
 
     return () => {
-      //DKDK remove moveend due to conflict with marker animation
-      map.off('resize dragend zoomend', updateMap);
+      map.off('resize dragend zoomend', debouncedUpdateBounds);
     };
-  }, [map, onViewportChanged]);
+  }, [map, onBoundsChanged]);
 
   // handle recentering of markers (around +180/-180 longitude) and animation
   useEffect(() => {
