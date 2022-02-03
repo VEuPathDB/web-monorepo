@@ -9,18 +9,18 @@ import {
   OrientationDefault,
   DependentAxisLogScaleAddon,
   DependentAxisLogScaleDefault,
-  //DKDK truncation
+  // truncation
   AxisTruncationAddon,
 } from '../types/plots';
 import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
-//DKDK add Shape for truncation
+// add Shape for truncation
 import { Layout, Shape } from 'plotly.js';
 import { some, uniq, flatMap } from 'lodash';
 // util functions for handling long tick labels with ellipsis
 import { axisTickLableEllipsis } from '../utils/axis-tick-label-ellipsis';
 import { NumberRange } from '../types/general';
 
-//DKDK import truncation util functions
+// import truncation util functions
 import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations';
 import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
 
@@ -31,7 +31,7 @@ export interface BarplotProps
     OrientationAddon,
     OpacityAddon,
     DependentAxisLogScaleAddon,
-    //DKDK truncation
+    // truncation
     AxisTruncationAddon {
   /** Label for independent axis. e.g. 'Country' */
   independentAxisLabel?: string;
@@ -64,7 +64,7 @@ const Barplot = makePlotlyPlotComponent(
     showDependentAxisTickLabel = true,
     dependentAxisLogScale = DependentAxisLogScaleDefault,
     dependentAxisRange,
-    //DKDK truncation
+    // truncation
     axisTruncationConfig,
     ...restProps
   }: BarplotProps) => {
@@ -164,7 +164,7 @@ const Barplot = makePlotlyPlotComponent(
       showticklabels: showIndependentAxisTickLabel,
     };
 
-    //DKDK truncation
+    // truncation
     const standardDependentAxisRange = dependentAxisRange;
     const extendedDependentAxisRange = extendAxisRangeForTruncations(
       standardDependentAxisRange,
@@ -210,7 +210,6 @@ const Barplot = makePlotlyPlotComponent(
         text: dependentAxisLabel ? dependentAxisLabel : '',
       },
       tickfont: data.series.length ? {} : { color: 'transparent' },
-      //DKDK truncation
       // with the truncated axis, negative values need to be checked for log scale
       range: data.series.length
         ? [
@@ -225,8 +224,6 @@ const Barplot = makePlotlyPlotComponent(
           )
         : [0, 10],
       dtick: dependentAxisLogScale ? 1 : undefined,
-      // //DKDK truncation
-      // showline: !axisTruncationConfig?.independentAxis?.min,
       showticklabels: showDependentAxisTickLabel,
     };
 
@@ -241,15 +238,9 @@ const Barplot = makePlotlyPlotComponent(
           : independentAxisLayout,
       barmode: barLayout,
       hovermode: 'closest',
-      //DKDK truncation
       // add truncatedAxisHighlighting for layout.shapes
       shapes: truncatedAxisHighlighting,
     };
-
-    //DKDK truncation
-    console.log('dependentAxisRange =', dependentAxisRange);
-    console.log('extendedDependentAxisRange =', extendedDependentAxisRange);
-    console.log('truncatedAxisHighlighting =', truncatedAxisHighlighting);
 
     return {
       data: plotlyFriendlyData,

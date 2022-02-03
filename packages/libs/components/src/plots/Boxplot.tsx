@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-//DKDK add Shape for truncation
+// add Shape for truncation
 import { Layout, Shape } from 'plotly.js';
 import { PlotParams } from 'react-plotly.js';
 import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
@@ -9,7 +9,7 @@ import {
   OpacityDefault,
   OrientationAddon,
   OrientationDefault,
-  //DKDK truncation
+  // truncation
   AxisTruncationAddon,
 } from '../types/plots';
 import { NumberOrDateRange } from '../types/general';
@@ -17,7 +17,7 @@ import { uniq, flatMap, at } from 'lodash';
 // util functions for handling long tick labels with ellipsis
 import { axisTickLableEllipsis } from '../utils/axis-tick-label-ellipsis';
 
-//DKDK import truncation util functions
+// import truncation util functions
 import { NumberRange } from '../types/general';
 import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations';
 import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
@@ -26,7 +26,7 @@ export interface BoxplotProps
   extends PlotProps<BoxplotData>,
     OrientationAddon,
     OpacityAddon,
-    //DKDK truncation
+    // truncation
     AxisTruncationAddon {
   /** label for independent axis */
   independentAxisLabel?: string;
@@ -60,7 +60,7 @@ const Boxplot = makePlotlyPlotComponent('Boxplot', (props: BoxplotProps) => {
     showIndependentAxisTickLabel = true,
     showDependentAxisTickLabel = true,
     dependentValueType = 'number',
-    //DKDK truncation
+    // truncation
     axisTruncationConfig,
     ...restProps
   } = props;
@@ -166,12 +166,12 @@ const Boxplot = makePlotlyPlotComponent('Boxplot', (props: BoxplotProps) => {
   const dependentAxis = orientation === 'vertical' ? 'yaxis' : 'xaxis';
   const independentAxis = orientation === 'vertical' ? 'xaxis' : 'yaxis';
 
-  //DKDK truncation
+  // truncation
   const standardDependentAxisRange = dependentAxisRange;
   const extendedDependentAxisRange = extendAxisRangeForTruncations(
     standardDependentAxisRange,
     axisTruncationConfig?.dependentAxis,
-    //DKDK for now, handle number only
+    // for now, handle number only
     'number'
   ) as NumberRange | undefined;
   // make rectangular layout shapes for truncated axis/missing data
@@ -222,7 +222,7 @@ const Boxplot = makePlotlyPlotComponent('Boxplot', (props: BoxplotProps) => {
       showline: true,
       rangemode: 'tozero' as const,
       title: dependentAxisLabel,
-      //DKDK truncation
+      // truncation
       // with the truncated axis, negative values need to be checked for log scale
       range: data.length
         ? [extendedDependentAxisRange?.min, extendedDependentAxisRange?.max]
@@ -235,15 +235,9 @@ const Boxplot = makePlotlyPlotComponent('Boxplot', (props: BoxplotProps) => {
     },
     // don't forget this for multiple datasets
     boxmode: 'group',
-    //DKDK truncation
     // add truncatedAxisHighlighting for layout.shapes
     shapes: truncatedAxisHighlighting,
   };
-
-  //DKDK truncation
-  console.log('standardDependentAxisRange =', standardDependentAxisRange);
-  console.log('extendedDependentAxisRange =', extendedDependentAxisRange);
-  console.log('truncatedAxisHighlighting =', truncatedAxisHighlighting);
 
   return {
     data,
