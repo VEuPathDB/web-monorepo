@@ -28,7 +28,7 @@
     "uuid": "^8.3.2"
   },
   "peerDependencies": {
-    "@veupathdb/wdk-client": ">=0.5.4"
+    "@veupathdb/wdk-client": ">=0.5.5"
   },
   "sideEffects": [
     "*.scss"
