@@ -67,6 +67,16 @@ export default function Card({
   const TitleComponent =
     titleSize === 'large' ? H3 : titleSize === 'medium' ? H4 : H5;
 
+  const titleBarHeight = useMemo(() => {
+    const titleBarPadding =
+      titleSize === 'large' ? 33 : titleSize === 'medium' ? 28 : 34;
+    return titleHeight + titleBarPadding;
+  }, [titleHeight, titleSize]);
+  const titleTopOffset = useMemo(
+    () => (titleSize === 'large' ? 14 : titleSize === 'medium' ? 6 : 10),
+    [titleSize]
+  );
+
   const componentStyle: CardStyleSpec = useMemo(() => {
     const defaultStyle: CardStyleSpec = {
       border: {
@@ -103,11 +113,9 @@ export default function Card({
     return merge({}, defaultStyle, themeStyle, styleOverrides);
   }, [themeRole, styleOverrides, theme]);
 
-  const titleBarHeight = useMemo(() => titleHeight + 40, [titleHeight]);
-  const titleTopOffset = useMemo(
-    () => (titleSize === 'large' ? 4 : titleSize === 'medium' ? 7 : 9),
-    [titleSize]
-  );
+  useEffect(() => {
+    console.log(titleBarHeight);
+  }, [titleBarHeight]);
 
   return (
     <div
@@ -123,6 +131,7 @@ export default function Card({
       }}
     >
       <div
+        key='titleBar'
         css={{
           display: 'flex',
           flexDirection: 'column',
@@ -144,20 +153,25 @@ export default function Card({
             backgroundColor: componentStyle.header.secondaryBackgroundColor,
           }}
         />
-        <TitleComponent
-          ref={observe}
-          text={title}
-          color='white'
-          additionalStyles={{
-            margin: 0,
-            marginRight: 15,
-            padding: 0,
+        <div
+          css={{
             position: 'absolute',
             left: componentStyle.content.paddingLeft,
-            top: titleBarHeight - titleHeight - titleTopOffset,
+            top: 15 + titleTopOffset,
           }}
-          useTheme={false}
-        />
+        >
+          <TitleComponent
+            ref={observe}
+            text={title}
+            color='white'
+            additionalStyles={{
+              margin: 0,
+              marginRight: 15,
+              padding: 0,
+            }}
+            useTheme={false}
+          />
+        </div>
       </div>
       <div
         css={{
