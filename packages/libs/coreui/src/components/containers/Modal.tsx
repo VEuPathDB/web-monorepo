@@ -16,7 +16,7 @@ import useUITheme from '../theming/useUITheme';
 type ModalStyleSpec = {
   border: {
     color: CSSProperties['borderColor'];
-    width: CSSProperties['borderWidth'];
+    width: number;
     radius: CSSProperties['borderRadius'];
     style: CSSProperties['borderStyle'];
   };
@@ -157,17 +157,18 @@ export default function Modal({
           margin: 'auto',
           background: colors.white,
           borderRadius: componentStyle.border.radius,
-          borderColor: componentStyle.border.color,
-          borderWidth: componentStyle.border.width,
-          borderStyle: componentStyle.border.style,
+          outlineColor: componentStyle.border.color,
+          outlineWidth: componentStyle.border.width,
+          outlineStyle: componentStyle.border.style,
+          outlineOffset: -1 * componentStyle.border.width,
         },
       }}
     >
       {title && (
         <div
           css={{
-            overflow: 'auto',
-            outline: 'none',
+            // overflow: 'auto',
+
             margin: 0,
           }}
         >

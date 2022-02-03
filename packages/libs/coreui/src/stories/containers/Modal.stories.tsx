@@ -51,7 +51,7 @@ const ModalContent = ({
 );
 
 export default {
-  title: 'Containers/UIModal',
+  title: 'Containers/Modal',
   component: Modal,
 } as Meta;
 
