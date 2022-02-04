@@ -12,7 +12,6 @@ import React, {
 } from 'react';
 import { BoundsViewport, AnimationFunction } from './Types';
 import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
-const { BaseLayer } = LayersControl;
 import { Viewport, Map, TileLayer, LayersControl } from 'react-leaflet';
 import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
 import SemanticMarkers from './SemanticMarkers';
@@ -22,6 +21,63 @@ import CustomGridLayer from './CustomGridLayer';
 import MouseTools, { MouseMode } from './MouseTools';
 import { PlotRef } from '../types/plots';
 import { ToImgopts } from 'plotly.js';
+
+const { BaseLayer } = LayersControl;
+
+export const baseLayers = {
+  Street: {
+    url:
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+    attribution:
+      'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012',
+  },
+  Terrain: {
+    url:
+      'https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.{ext}',
+    attribution:
+      'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    subdomains: 'abcd',
+    // minZoom='0'
+    // maxZoom='18'
+    // ext='png'
+  },
+  Satellite: {
+    url:
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    attribution:
+      'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+    // DKDK testing worldmap issue - with bounds props, message like 'map data not yet availalbe' is not shown
+    bounds: [
+      [-90, -180],
+      [90, 180],
+    ],
+    noWrap: true,
+  },
+  Light: {
+    url: 'http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png',
+    attribution:
+      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    // maxZoom='18'
+  },
+  Dark: {
+    url:
+      'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}{r}.png',
+    attribution:
+      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+    subdomains: 'abcd',
+    // maxZoom='19'
+  },
+  OSM: {
+    url: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution:
+      '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    // minZoom='2'
+    // maxZoom='18'
+    // noWrap='0'
+  },
+};
+
+export type BaseLayerChoice = keyof typeof baseLayers;
 
 /**
  * Renders a Leaflet map with semantic zooming markers
@@ -65,6 +121,12 @@ export interface MapVEuMapProps {
    * Should the mouse-mode (regular/magnifying glass) icons be shown and active?
    **/
   showMouseToolbar?: boolean;
+  /**
+   * The name of the tile layer to use. If omitted, defaults to Street.
+   */
+  baseLayer?: BaseLayerChoice;
+  /** Callback for when the base layer has changed */
+  onBaseLayerChanged?: (newBaseLayer: BaseLayerChoice) => void;
 }
 
 function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
@@ -80,6 +142,8 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     showGrid,
     zoomLevelToGeohashLevel,
     showMouseToolbar,
+    baseLayer,
+    onBaseLayerChanged,
   } = props;
 
   // this is the React Map component's onViewPortChanged handler
@@ -114,21 +178,25 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       // Set the ref's toImage function that will be called in web-eda
       toImage: async (imageOpts: ToImgopts) => {
         try {
-          // console.log('Taking screenshot...');
+          // Wait to allow map to finish rendering
+          await new Promise((resolve) => setTimeout(resolve, 1000));
 
-          // Call the 3rd party function that actually creates the image
-          const screenshot = await screenshotter.takeScreen('image', {
-            domtoimageOptions: {
-              width: imageOpts.width,
-              height: imageOpts.height,
-            },
-          });
-          // The screenshotter library's types are wrong. TS thinks this next line
-          // will never happen, but takeScreen('image') should in fact return a string
-          if (typeof screenshot === 'string') return screenshot;
-          console.error(
-            'Map screenshot not string type. Value:\n' + screenshot
-          );
+          // Check that map leaflet element still exists
+          if (mapRef.current) {
+            // Call the 3rd party function that actually creates the image
+            const screenshot = await screenshotter.takeScreen('image', {
+              domtoimageOptions: {
+                width: imageOpts.width,
+                height: imageOpts.height,
+              },
+            });
+            // The screenshotter library's types are wrong. TS thinks this next line
+            // will never happen, but takeScreen('image') should in fact return a string
+            if (typeof screenshot === 'string') return screenshot;
+            console.error(
+              'Map screenshot not string type. Value:\n' + screenshot
+            );
+          }
         } catch (error) {
           console.error('Could not create image for plot: ', error);
         }
@@ -155,6 +223,9 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       worldCopyJump={false}
       ondragstart={() => setIsDragging(true)}
       ondragend={() => setIsDragging(false)}
+      onbaselayerchange={(event) =>
+        onBaseLayerChanged && onBaseLayerChanged(event.name as BaseLayerChoice)
+      }
       ref={mapRef}
     >
       <TileLayer
@@ -178,58 +249,15 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       ) : null}
 
       <LayersControl position="topright">
-        <BaseLayer checked name="street">
-          <TileLayer
-            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"
-            attribution="Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012"
-          />
-        </BaseLayer>
-        <BaseLayer name="terrain">
-          <TileLayer
-            url="https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.{ext}"
-            attribution='Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            subdomains="abcd"
-            // minZoom='0'
-            // maxZoom='18'
-            // ext='png'
-          />
-        </BaseLayer>
-        <BaseLayer name="satellite">
-          <TileLayer
-            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-            attribution="Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
-            // DKDK testing worldmap issue - with bounds props, message like 'map data not yet availalbe' is not shown
-            bounds={[
-              [-90, -180],
-              [90, 180],
-            ]}
-            noWrap={true}
-          />
-        </BaseLayer>
-        <BaseLayer name="light">
-          <TileLayer
-            url="http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            // maxZoom='18'
-          />
-        </BaseLayer>
-        <BaseLayer name="dark">
-          <TileLayer
-            url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}{r}.png"
-            attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
-            subdomains="abcd"
-            // maxZoom='19'
-          />
-        </BaseLayer>
-        <BaseLayer name="OSM">
-          <TileLayer
-            url="http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>'
-            // minZoom='2'
-            // maxZoom='18'
-            // noWrap='0'
-          />
-        </BaseLayer>
+        {Object.entries(baseLayers).map(([name, layerProps], i) => (
+          <BaseLayer
+            name={name}
+            key={name}
+            checked={baseLayer ? name === baseLayer : i === 0}
+          >
+            <TileLayer {...layerProps} />
+          </BaseLayer>
+        ))}
       </LayersControl>
     </Map>
   );
