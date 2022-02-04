@@ -53,29 +53,31 @@ export const UseTheme: Story<Omit<HeaderProps, 'size'>> = (args) => {
         typography: {
           headers: {
             color: mutedBlue[500],
-            h1: {
-              fontSize: '3.25rem',
-              fontWeight: 700,
-            },
-            h2: {
-              fontSize: '2.75rem',
-              fontWeight: 600,
-            },
-            h3: {
-              fontSize: '2.25rem',
-              fontWeight: 500,
-            },
-            h4: {
-              fontSize: '1.75rem',
-              fontWeight: 500,
-            },
-            h5: {
-              fontSize: '1.25rem',
-              fontWeight: 500,
-            },
-            h6: {
-              fontSize: '1rem',
-              fontWeight: 400,
+            variants: {
+              h1: {
+                fontSize: '3.25rem',
+                fontWeight: 700,
+              },
+              h2: {
+                fontSize: '2.75rem',
+                fontWeight: 600,
+              },
+              h3: {
+                fontSize: '2.25rem',
+                fontWeight: 500,
+              },
+              h4: {
+                fontSize: '1.75rem',
+                fontWeight: 500,
+              },
+              h5: {
+                fontSize: '1.25rem',
+                fontWeight: 500,
+              },
+              h6: {
+                fontSize: '1rem',
+                fontWeight: 400,
+              },
             },
           },
         },
@@ -92,7 +94,7 @@ export const UseTheme: Story<Omit<HeaderProps, 'size'>> = (args) => {
     </UIThemeProvider>
   );
 };
-// Headers.storyName = '';
+
 UseTheme.args = {
   text: 'Hello Developer',
   additionalStyles: { marginBottom: 0, marginTop: 15 },
