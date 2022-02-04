@@ -124,7 +124,7 @@ export default class SubsettingClient extends FetchClientWithCredentials {
       }
     )
       .then((response) => response.blob())
-      .then((blob) => saveAs(blob, 'dataset.tsv'));
+      .then((blob) => saveAs(blob, 'dataset.txt'));
   }
 }
 
