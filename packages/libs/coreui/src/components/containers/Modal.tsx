@@ -193,7 +193,7 @@ export default function Modal({
               ref={observe}
               text={title}
               color='white'
-              additionalStyles={{ margin: 0, padding: 0 }}
+              additionalStyles={{ margin: 0, paddingRight: 25 }}
               useTheme={false}
             />
           </div>
