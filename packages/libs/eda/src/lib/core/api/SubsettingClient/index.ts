@@ -111,7 +111,7 @@ export default class SubsettingClient extends FetchClientWithCredentials {
     params: TabularDataRequestParams
   ): void {
     fetch(
-      `/eda-subsetting-service/studies/${studyId}/entities/${entityId}/tabular`,
+      `/eda/studies/${studyId}/entities/${entityId}/tabular`,
       {
         ...this.init,
         method: 'POST',
@@ -124,7 +124,7 @@ export default class SubsettingClient extends FetchClientWithCredentials {
       }
     )
       .then((response) => response.blob())
-      .then((blob) => saveAs(blob, 'dataset.tsv'));
+      .then((blob) => saveAs(blob, 'dataset.txt'));
   }
 }
 
