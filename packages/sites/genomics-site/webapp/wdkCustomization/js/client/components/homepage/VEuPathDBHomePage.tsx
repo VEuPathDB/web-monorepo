@@ -469,12 +469,6 @@ const useHeaderMenuItems = (
           type: 'reactRoute',
           url: '/fasta-tool'
         },
-        { 
-          key: 'upload-genes',
-          display: 'Upload your gene list',
-          type: 'reactRoute',
-          url: '/search/transcript/GeneByLocusTag'
-        },
         {
           key: 'webservices',
           display: 'Web services',
