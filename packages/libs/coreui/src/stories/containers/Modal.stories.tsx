@@ -7,6 +7,7 @@ import { FilledButton } from '../../components/buttons';
 import { secondaryFont } from '../../styleDefinitions/typography';
 import { UIThemeProvider } from '../../components/theming';
 import { Download } from '../../components/icons';
+import { Paragraph } from '../../components/typography';
 
 const ModalContent = ({
   themeRole,
@@ -22,10 +23,9 @@ const ModalContent = ({
     }}
   >
     <div>
-      <p css={[{ color: gray[600] }, secondaryFont]}>
-        This is an example of a modal.
-      </p>
-      <p css={[{ color: gray[600] }, secondaryFont]}>
+      <Paragraph textSize='medium'>This is an example of a modal.</Paragraph>
+
+      <Paragraph>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
         tempor incididunt ut labore et dolore magna aliqua. Mi quis hendrerit
         dolor magna eget est. Donec enim diam vulputate ut pharetra sit amet.
@@ -40,7 +40,7 @@ const ModalContent = ({
         ultrices sagittis. Purus faucibus ornare suspendisse sed nisi lacus sed.
         Sed libero enim sed faucibus turpis. Gravida in fermentum et
         sollicitudin. Urna et pharetra pharetra massa massa.
-      </p>
+      </Paragraph>
     </div>
     <FilledButton
       text='Example Button'

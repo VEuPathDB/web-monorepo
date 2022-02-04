@@ -164,7 +164,7 @@ export default function Modal({
           outlineWidth: componentStyle.border.width,
           outlineStyle: componentStyle.border.style,
           outlineOffset: -1 * componentStyle.border.width,
-          overflow: 'clip',
+          overflow: 'hidden',
         },
       }}
     >
@@ -211,19 +211,20 @@ export default function Modal({
       )}
       <div
         css={{
-          marginTop: componentStyle.content.paddingTop,
-          paddingRight: componentStyle.content.paddingRight,
-          marginBottom: componentStyle.content.paddingBottom,
-          paddingLeft: componentStyle.content.paddingLeft,
-          height:
-            modalHeight -
-            componentStyle.content.paddingTop -
-            componentStyle.content.paddingBottom -
-            (title ? 90 : 0),
+          height: modalHeight - (title ? titleHeight + 39 : 0),
           overflowY: 'auto',
         }}
       >
-        {children}
+        <div
+          css={{
+            paddingTop: componentStyle.content.paddingTop,
+            paddingRight: componentStyle.content.paddingRight,
+            paddingBottom: componentStyle.content.paddingBottom,
+            paddingLeft: componentStyle.content.paddingLeft,
+          }}
+        >
+          {children}
+        </div>
       </div>
     </ReactModal>
   );
