@@ -167,8 +167,10 @@ export default function VariableList({
     [fieldTree]
   );
 
-  const [expandedNodes, setExpandedNodes] = useState(
-    getPathToField(activeField)
+  const [expandedNodes, setExpandedNodes] = useState(() =>
+    mode === 'singleSelection'
+      ? getPathToField(activeField)
+      : uniq(selectedFields.flatMap(getPathToField))
   );
 
   const activeFieldEntity = activeField?.term.split('/')[0];
@@ -177,7 +179,7 @@ export default function VariableList({
   // of the active field. We also want to retain the expanded state of internal nodes, so
   // we will only remove entity nodes from the list of expanded nodes.
   useEffect(() => {
-    if (activeField == null) return;
+    if (activeField == null || mode === 'multiSelection') return;
     setExpandedNodes((expandedNodes) => {
       const activeNodeLineage = getPathToField(activeField);
       if (activeNodeLineage.every((node) => expandedNodes.includes(node))) {
@@ -196,7 +198,7 @@ export default function VariableList({
       );
       return newExpandedNodes;
     });
-  }, [activeField, activeFieldEntity, getPathToField]);
+  }, [activeField, activeFieldEntity, getPathToField, mode]);
 
   const handleFieldSelect = useCallback(
     (field: Field) => {
