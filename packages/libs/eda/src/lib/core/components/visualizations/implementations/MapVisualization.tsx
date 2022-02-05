@@ -5,6 +5,7 @@ import * as t from 'io-ts';
 // map component related imports
 import MapVEuMap, {
   MapVEuMapProps,
+  baseLayers,
 } from '@veupathdb/components/lib/map/MapVEuMap';
 import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map.json';
 import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/geohash';
@@ -50,6 +51,7 @@ function createDefaultConfig(): MapConfig {
       longitude: 0,
       zoomLevel: 1, // TO DO: check MapVEuMap minZoom hardcoded to 2
     },
+    baseLayer: 'Street',
   };
 }
 
@@ -67,6 +69,7 @@ const MapConfig = t.type({
     longitude: t.number,
     zoomLevel: t.number,
   }),
+  baseLayer: t.keyof(baseLayers),
 });
 
 function MapViz(props: VisualizationProps) {
@@ -224,7 +227,7 @@ function MapViz(props: VisualizationProps) {
     updateThumbnail,
     { height, width },
     // The dependencies for needing to generate a new thumbnail
-    [markers.value, latitude, longitude, zoomLevel]
+    [markers.value, latitude, longitude, zoomLevel, vizConfig.baseLayer]
   );
 
   const plotNode = (
@@ -239,6 +242,10 @@ function MapViz(props: VisualizationProps) {
       showGrid={true}
       zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
       ref={plotRef}
+      baseLayer={vizConfig.baseLayer}
+      onBaseLayerChanged={(newBaseLayer) =>
+        updateVizConfig({ baseLayer: newBaseLayer })
+      }
     />
   );
 
