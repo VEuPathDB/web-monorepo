@@ -10,7 +10,7 @@
     "@types/debounce-promise": "^3.1.3",
     "@veupathdb/components": "^0.11.14",
     "@veupathdb/core-components": "^0.8.1",
-    "@veupathdb/http-utils": "^1.0.1",
+    "@veupathdb/http-utils": "^1.1.0",
     "@veupathdb/study-data-access": "^0.1.5",
     "debounce-promise": "^3.1.2",
     "file-saver": "^2.0.5",
