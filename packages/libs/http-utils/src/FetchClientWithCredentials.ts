@@ -12,7 +12,7 @@ export class FetchClientWithCredentials extends FetchClient {
 
   protected readonly getUser = once(() => this.wdkService.getCurrentUser());
 
-  private readonly findUserRequestAuthKey = once(async () => {
+  protected readonly findUserRequestAuthKey = once(async () => {
     const user = await this.getUser();
     if (user.isGuest) {
       return String(user.id);
