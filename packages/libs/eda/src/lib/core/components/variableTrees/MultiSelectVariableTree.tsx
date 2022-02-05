@@ -87,10 +87,9 @@ export default function MultiSelectVariableTree({
   );
 
   return (
-    // TODO: @dmfalke This is striped down to the minimum temporarily for MVP.
     <VariableList
       mode="multiSelection"
-      showMultiFilterDescendants={false}
+      showMultiFilterDescendants={true}
       selectedFields={selectedVariableFields}
       onSelectedFieldsChange={onSelectedVariableTermsChange}
       onActiveFieldChange={onActiveFieldChange}
