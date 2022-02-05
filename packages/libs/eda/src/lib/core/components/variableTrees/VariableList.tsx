@@ -516,6 +516,24 @@ export default function VariableList({
                   className="wdk-CheckboxTreeItem wdk-CheckboxTreeItem__leaf"
                 >
                   <div className="wdk-CheckboxTreeNodeContent">
+                    {mode === 'multiSelection' && (
+                      <input
+                        type="checkbox"
+                        checked={selectedFields.some(
+                          (f) => f.term === field.term
+                        )}
+                        onChange={(e) => {
+                          if (onSelectedFieldsChange == null) return;
+                          const nextSelectedFields = (e.target.checked
+                            ? selectedFields.concat(field)
+                            : selectedFields.filter(
+                                (f) => f.term !== field.term
+                              )
+                          ).map((field) => field.term);
+                          onSelectedFieldsChange(nextSelectedFields);
+                        }}
+                      />
+                    )}
                     <FieldNode
                       isMultiFilterDescendant={false}
                       showMultiFilterDescendants={showMultiFilterDescendants}
@@ -556,15 +574,7 @@ export default function VariableList({
           isMultiPick: true,
           onSelectionChange: onSelectedFieldsChange,
         })}
-        // isMultiPick={true}
-        // selectedList={[
-        //   'PCO_0000024/EUPATH_0000006',
-        //   'PCO_0000024/EUPATH_0000025',
-        //   'EUPATH_0000776/EUPATH_0000335',
-        //   'EUPATH_0000776/EUPATH_0000722',
-        // ]}
-        // isSelectable={true}
-        // onSelectionChange={(ids) => console.log('MEMES', ids)}
+        linksPosition={CheckboxTree.LinkPlacement.Top}
         autoFocusSearchBox={autoFocus}
         tree={tree}
         expandedList={expandedNodes}

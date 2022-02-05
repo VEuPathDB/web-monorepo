@@ -21,6 +21,9 @@ export interface MultiSelectVariableTreeProps {
   scope: VariableScope;
   /** Which variables have been selected? */
   selectedVariableDescriptors: Array<VariableDescriptor>;
+  featuredFields: Array<Field>;
+  starredVariableDescriptors: Array<VariableDescriptor>;
+  toggleStarredVariable: (targetVariable: VariableDescriptor) => void;
   /** Callback to invoke when selected variables change. */
   onSelectedVariablesChange: (variables: Array<VariableDescriptor>) => void;
 }
@@ -33,6 +36,9 @@ export default function MultiSelectVariableTree({
   rootEntity,
   scope,
   selectedVariableDescriptors,
+  starredVariableDescriptors,
+  toggleStarredVariable,
+  featuredFields,
   onSelectedVariablesChange,
 }: MultiSelectVariableTreeProps) {
   const entities = useStudyEntities(rootEntity);
@@ -88,11 +94,12 @@ export default function MultiSelectVariableTree({
       selectedFields={selectedVariableFields}
       onSelectedFieldsChange={onSelectedVariableTermsChange}
       onActiveFieldChange={onActiveFieldChange}
-      featuredFields={[]}
+      featuredFields={featuredFields}
+      starredVariables={starredVariableDescriptors}
       valuesMap={valuesMap}
       fieldTree={fieldTree}
       autoFocus={false}
-      toggleStarredVariable={(variable) => console.log(`Toggle ${variable}`)}
+      toggleStarredVariable={toggleStarredVariable}
     />
   );
 }
