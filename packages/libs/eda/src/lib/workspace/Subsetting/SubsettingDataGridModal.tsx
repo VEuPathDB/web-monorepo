@@ -292,11 +292,12 @@ export default function SubsettingDataGridModal({
           style={{
             position: 'absolute',
             width: 410,
-            right: 0,
-            top: 0,
+            right: 6,
+            top: 6,
             backgroundColor: 'rgba(255, 255, 255, 1)',
-            border: '2px solid rgb(200, 200, 200)',
-            borderRadius: 5,
+            border: '1px solid rgb(200, 200, 200)',
+            borderRadius: '.5em',
+            boxShadow: '0px 0px 6px rgba(0, 0, 0, .25)',
           }}
         >
           {errorMessage && (
