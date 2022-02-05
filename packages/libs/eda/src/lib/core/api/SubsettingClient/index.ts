@@ -98,11 +98,11 @@ export default class SubsettingClient extends FetchClientWithCredentials {
    * of the customized fetch call in `DataClient` because there would need to
    * be some underlying changes that would need to be made to it.
    */
-  tabularDataDownload(
+  async tabularDataDownload(
     studyId: string,
     entityId: string,
     params: TabularDataRequestParams
-  ): void {
+  ): Promise<void> {
     fetch(`${this.baseUrl}/studies/${studyId}/entities/${entityId}/tabular`, {
       ...this.init,
       method: 'POST',
@@ -111,6 +111,7 @@ export default class SubsettingClient extends FetchClientWithCredentials {
         ...this.init.headers,
         accept: 'text/tab-separated-values',
         'content-type': 'application/json',
+        'Auth-Key': await this.findUserRequestAuthKey(),
       },
     })
       .then((response) => response.blob())
