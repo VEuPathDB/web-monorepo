@@ -22,5 +22,6 @@ module.exports = function override(config, env) {
         ...(config.resolveLoader.modules || ['node_modules']),
       ],
     },
+    externals: [{ jquery: 'jQuery' }],
   };
 };
