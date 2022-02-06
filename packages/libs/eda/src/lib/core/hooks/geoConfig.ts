@@ -1,9 +1,8 @@
 import { useMemo } from 'react';
 import { StudyEntity } from '../types/study';
-import { findGeolocationNode } from '../utils/geoVariables';
+import { entityToGeoConfig } from '../utils/geoVariables';
 import { leafletZoomLevelToGeohashLevel } from '../utils/visualization';
 import { GeoConfig } from '../types/geoConfig';
-import { sortBy } from 'lodash';
 
 /**
  * GeoConfig is a list that corresponds to (only) entities that have geo-variables
@@ -17,36 +16,9 @@ export function useGeoConfig(entities: StudyEntity[]): GeoConfig[] {
   return useMemo(
     () =>
       entities
-        .map((entity) => {
-          const geolocationNode = findGeolocationNode(entity);
-          if (geolocationNode != null) {
-            const directChildren = entity.variables.filter(
-              (variable) => variable.parentId === geolocationNode.id
-            );
-            return {
-              entity,
-              zoomLevelToAggregationLevel: leafletZoomLevelToGeohashLevel, // default leaflet to geohash mapping
-              latitudeVariableId: directChildren.find(
-                (variable) => variable.type === 'number'
-              )?.id,
-              longitudeVariableId: directChildren.find(
-                (variable) => variable.type === 'longitude'
-              )?.id,
-              aggregationVariableIds: sortBy(
-                directChildren
-                  .filter(
-                    (variable) =>
-                      variable.type === 'string' &&
-                      (variable.dataShape === 'categorical' ||
-                        variable.dataShape === 'binary')
-                  )
-                  .map((variable) => variable.id)
-              ),
-            };
-          } else {
-            return undefined;
-          }
-        })
+        .map((entity) =>
+          entityToGeoConfig(entity, leafletZoomLevelToGeohashLevel)
+        )
         .filter((item): item is GeoConfig => item != null),
     [entities]
   );
