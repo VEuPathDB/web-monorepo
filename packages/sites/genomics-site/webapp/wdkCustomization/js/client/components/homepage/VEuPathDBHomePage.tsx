@@ -321,8 +321,8 @@ const useHeaderMenuItems = (
          }
         },
         {
-          key: 'blast-beta',
-          display: <>BLAST<sup>{' '}<em>beta</em></sup> (multi-BLAST capable)</>,
+          key: 'blast',
+          display: 'BLAST (multi-query capable)',
           type: 'reactRoute',
           url: '/workspace/blast/new'
         },
@@ -496,7 +496,7 @@ const useHeaderMenuItems = (
         },
         {
           key: 'blasta',
-          display: <>My BLAST<sup>{' '}<em>beta</em></sup>{' '}jobs</>,
+          display: 'My BLAST jobs',
           type: 'reactRoute',
           url: '/workspace/blast/all'
         },
