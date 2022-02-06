@@ -9,6 +9,7 @@ import * as t from 'io-ts';
 // map component related imports
 import MapVEuMap, {
   MapVEuMapProps,
+  baseLayers,
 } from '@veupathdb/components/lib/map/MapVEuMap';
 import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map.json';
 import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/geohash';
@@ -57,6 +58,7 @@ function createDefaultConfig(): MapConfig {
       longitude: 0,
       zoomLevel: 1, // TO DO: check MapVEuMap minZoom hardcoded to 2
     },
+    baseLayer: 'Street',
   };
 }
 
@@ -79,6 +81,7 @@ const MapConfig = t.intersection([
       longitude: t.number,
       zoomLevel: t.number,
     }),
+    baseLayer: t.keyof(baseLayers),
   }),
   t.partial({
     geoEntityId: t.string,
@@ -269,7 +272,7 @@ function MapViz(props: VisualizationProps) {
     updateThumbnail,
     { height, width },
     // The dependencies for needing to generate a new thumbnail
-    [data.value, latitude, longitude, zoomLevel]
+    [data.value, latitude, longitude, zoomLevel, vizConfig.baseLayer]
   );
 
   const plotNode = (
@@ -284,6 +287,10 @@ function MapViz(props: VisualizationProps) {
       showGrid={geoConfig?.zoomLevelToAggregationLevel != null}
       zoomLevelToGeohashLevel={geoConfig?.zoomLevelToAggregationLevel}
       ref={plotRef}
+      baseLayer={vizConfig.baseLayer}
+      onBaseLayerChanged={(newBaseLayer) =>
+        updateVizConfig({ baseLayer: newBaseLayer })
+      }
     />
   );
 

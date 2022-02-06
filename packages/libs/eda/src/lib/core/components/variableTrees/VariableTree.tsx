@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 
-import { StudyEntity } from '../../types/study';
+import { StudyEntity, VariableScope } from '../../types/study';
 import { VariableDescriptor } from '../../types/variable';
 import VariableList from './VariableList';
 import './VariableTree.scss';
@@ -25,6 +25,8 @@ export interface VariableTreeProps {
   onChange: (variable?: VariableDescriptor) => void;
   /** Indicate whether or not variables with children   */
   showMultiFilterDescendants?: boolean;
+  /** The "scope" of variables which should be offered. */
+  scope: VariableScope;
 }
 
 export default function VariableTree({
@@ -37,12 +39,13 @@ export default function VariableTree({
   variableId,
   onChange,
   showMultiFilterDescendants = false,
+  scope,
 }: VariableTreeProps) {
   const entities = useStudyEntities(rootEntity);
   const valuesMap = useValuesMap(entities);
-  const flattenedFields = useFlattenedFields(entities);
+  const flattenedFields = useFlattenedFields(entities, scope);
   const fieldsByTerm = useFlattenFieldsByTerm(flattenedFields);
-  const featuredFields = useFeaturedFields(entities);
+  const featuredFields = useFeaturedFields(entities, scope);
   const fieldTree = useFieldTree(flattenedFields);
 
   const disabledFields = useMemo(

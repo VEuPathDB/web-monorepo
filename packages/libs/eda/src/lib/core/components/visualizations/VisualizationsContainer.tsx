@@ -240,15 +240,8 @@ function NewVisualizationPicker(props: Props) {
               <div className={cx('-PickerEntryName')}>
                 <div>
                   {vizOverview.displayName
-                    ?.split(', ') // this monstrosity avoids doing the split twice!
-                    .reduce<(string | JSX.Element)[]>(
-                      (accum, item) => [
-                        ...accum,
-                        ...(accum.length ? [<br />] : []),
-                        item,
-                      ],
-                      []
-                    )}
+                    ?.split(/(, )/g)
+                    .map((str) => (str === ', ' ? <br /> : str))}
                 </div>
                 {vizType == null && <i>(Coming soon!)</i>}
                 {vizType != null && disabled && (
