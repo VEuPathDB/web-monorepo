@@ -101,8 +101,8 @@ function MapViz(props: VisualizationProps) {
     updateConfiguration,
     updateThumbnail,
     filters,
-    totalCounts,
-    filteredCounts,
+    //    totalCounts,
+    //    filteredCounts,
     geoConfigs,
   } = props;
   const studyMetadata = useStudyMetadata();
