@@ -202,6 +202,7 @@ function BarplotViz(props: VisualizationProps) {
         facetVariable,
         // set undefined for variable change
         checkedLegendItems: undefined,
+        dependentAxisRange: undefined,
       });
       // close truncation warnings
       setTruncatedDependentAxisWarning('');
@@ -210,18 +211,16 @@ function BarplotViz(props: VisualizationProps) {
   );
 
   // prettier-ignore
-  // allow 2nd parameter of resetCheckedLegendItems for checking legend status
   const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof BarplotConfig, resetCheckedLegendItems?: boolean) => (newValue?: ValueType) => {
-      const newPartialConfig = resetCheckedLegendItems
-        ? {
-            [key]: newValue,
-            checkedLegendItems: undefined
-          }
-        : {
-          [key]: newValue
-        };
-       updateVizConfig(newPartialConfig);
+    < ValueType,>(key: keyof BarplotConfig, resetCheckedLegendItems?: boolean, resetAxisRanges?: boolean) => (newValue?: ValueType) => {
+      const newPartialConfig = {
+        [key]: newValue,
+        ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
+	...(resetAxisRanges ? { dependentAxisRange: undefined } : {}),
+      };
+      updateVizConfig(newPartialConfig);
+      if (resetAxisRanges)
+	setTruncatedDependentAxisWarning('');
     },
     [updateVizConfig]
   );
@@ -229,11 +228,16 @@ function BarplotViz(props: VisualizationProps) {
   const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
     'dependentAxisLogScale'
   );
-  const onValueSpecChange = onChangeHandlerFactory<ValueSpec>('valueSpec');
+  const onValueSpecChange = onChangeHandlerFactory<ValueSpec>(
+    'valueSpec',
+    false,
+    true
+  );
 
   // set checkedLegendItems: undefined for the change of showMissingness
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
     'showMissingness',
+    true,
     true
   );
 
@@ -417,26 +421,18 @@ function BarplotViz(props: VisualizationProps) {
   );
 
   // axis range control
-  const handleDependentAxisRangeChange = useCallback(
-    (newRange?: NumberRange) => {
-      updateVizConfig({
-        dependentAxisRange: newRange,
-      });
-    },
-    [updateVizConfig]
+  const handleDependentAxisRangeChange = onChangeHandlerFactory<NumberRange>(
+    'dependentAxisRange'
   );
 
   const handleDependentAxisSettingsReset = useCallback(() => {
     updateVizConfig({
-      dependentAxisRange: defaultDependentAxisRange,
+      dependentAxisRange: undefined,
       dependentAxisLogScale: false,
     });
     // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
-  }, [
-    // defaultUIState.dependentAxisLogScale,
-    updateVizConfig,
-  ]);
+  }, [updateVizConfig]);
 
   // set truncation flags: will see if this is reusable with other application
   const {
@@ -470,7 +466,12 @@ function BarplotViz(props: VisualizationProps) {
     updateThumbnail,
     plotContainerStyles,
     // The dependencies for needing to generate a new thumbnail
-    [data, vizConfig.checkedLegendItems]
+    [
+      data,
+      vizConfig.checkedLegendItems,
+      vizConfig.dependentAxisRange,
+      vizConfig.dependentAxisLogScale,
+    ]
   );
 
   // these props are passed to either a single plot
@@ -490,7 +491,8 @@ function BarplotViz(props: VisualizationProps) {
     dependentAxisLogScale: vizConfig.dependentAxisLogScale,
     // set dependent axis range for log scale
     // truncation axis range control
-    dependentAxisRange: vizConfig.dependentAxisRange,
+    dependentAxisRange:
+      vizConfig.dependentAxisRange ?? defaultDependentAxisRange,
     displayLibraryControls: false,
     // for faceted plot, add axisTruncationConfig props here
     axisTruncationConfig: {
