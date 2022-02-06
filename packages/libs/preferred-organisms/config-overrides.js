@@ -10,11 +10,18 @@ module.exports = function override(config, env) {
     ...config,
     resolve: {
       ...config.resolve,
-      modules: [ path.join(__dirname, 'node_modules'), ...(config.resolve.modules || ['node_modules']) ]
+      modules: [
+        path.join(__dirname, 'node_modules'),
+        ...(config.resolve.modules || ['node_modules']),
+      ],
     },
     resolveLoader: {
       ...config.resolveLoader,
-      modules: [ path.join(__dirname, 'node_modules'), ...(config.resolveLoader.modules || ['node_modules']) ]
-    }
-  }
-}
+      modules: [
+        path.join(__dirname, 'node_modules'),
+        ...(config.resolveLoader.modules || ['node_modules']),
+      ],
+    },
+    externals: [{ jquery: 'jQuery' }],
+  };
+};
