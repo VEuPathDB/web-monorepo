@@ -1,5 +1,5 @@
 import {
-  IsEnabledInPickerProps,
+  IsEnabledInPickerParams,
   VisualizationProps,
   VisualizationType,
 } from '../VisualizationTypes';
@@ -62,7 +62,7 @@ function createDefaultConfig(): MapConfig {
   };
 }
 
-function isEnabledInPicker({ geoConfigs }: IsEnabledInPickerProps): boolean {
+function isEnabledInPicker({ geoConfigs }: IsEnabledInPickerParams): boolean {
   return geoConfigs != null && geoConfigs.length > 0;
 }
 
