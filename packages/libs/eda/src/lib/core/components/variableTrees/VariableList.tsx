@@ -167,8 +167,10 @@ export default function VariableList({
     [fieldTree]
   );
 
-  const [expandedNodes, setExpandedNodes] = useState(
-    getPathToField(activeField)
+  const [expandedNodes, setExpandedNodes] = useState(() =>
+    mode === 'singleSelection'
+      ? getPathToField(activeField)
+      : uniq(selectedFields.flatMap(getPathToField))
   );
 
   const activeFieldEntity = activeField?.term.split('/')[0];
@@ -177,7 +179,7 @@ export default function VariableList({
   // of the active field. We also want to retain the expanded state of internal nodes, so
   // we will only remove entity nodes from the list of expanded nodes.
   useEffect(() => {
-    if (activeField == null) return;
+    if (activeField == null || mode === 'multiSelection') return;
     setExpandedNodes((expandedNodes) => {
       const activeNodeLineage = getPathToField(activeField);
       if (activeNodeLineage.every((node) => expandedNodes.includes(node))) {
@@ -196,7 +198,7 @@ export default function VariableList({
       );
       return newExpandedNodes;
     });
-  }, [activeField, activeFieldEntity, getPathToField]);
+  }, [activeField, activeFieldEntity, getPathToField, mode]);
 
   const handleFieldSelect = useCallback(
     (field: Field) => {
@@ -516,6 +518,24 @@ export default function VariableList({
                   className="wdk-CheckboxTreeItem wdk-CheckboxTreeItem__leaf"
                 >
                   <div className="wdk-CheckboxTreeNodeContent">
+                    {mode === 'multiSelection' && (
+                      <input
+                        type="checkbox"
+                        checked={selectedFields.some(
+                          (f) => f.term === field.term
+                        )}
+                        onChange={(e) => {
+                          if (onSelectedFieldsChange == null) return;
+                          const nextSelectedFields = (e.target.checked
+                            ? selectedFields.concat(field)
+                            : selectedFields.filter(
+                                (f) => f.term !== field.term
+                              )
+                          ).map((field) => field.term);
+                          onSelectedFieldsChange(nextSelectedFields);
+                        }}
+                      />
+                    )}
                     <FieldNode
                       isMultiFilterDescendant={false}
                       showMultiFilterDescendants={showMultiFilterDescendants}
@@ -556,15 +576,7 @@ export default function VariableList({
           isMultiPick: true,
           onSelectionChange: onSelectedFieldsChange,
         })}
-        // isMultiPick={true}
-        // selectedList={[
-        //   'PCO_0000024/EUPATH_0000006',
-        //   'PCO_0000024/EUPATH_0000025',
-        //   'EUPATH_0000776/EUPATH_0000335',
-        //   'EUPATH_0000776/EUPATH_0000722',
-        // ]}
-        // isSelectable={true}
-        // onSelectionChange={(ids) => console.log('MEMES', ids)}
+        linksPosition={CheckboxTree.LinkPlacement.Top}
         autoFocusSearchBox={autoFocus}
         tree={tree}
         expandedList={expandedNodes}

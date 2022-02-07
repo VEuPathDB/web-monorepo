@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { ceil, uniqBy } from 'lodash';
 
 // Components
@@ -51,6 +51,8 @@ type SubsettingDataGridProps = {
     total: number | undefined;
     filtered: number | undefined;
   };
+  starredVariables?: VariableDescriptor[];
+  toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
 };
 
 /**
@@ -65,13 +67,39 @@ export default function SubsettingDataGridModal({
   entities,
   currentEntityID,
   currentEntityRecordCounts,
+  starredVariables,
+  toggleStarredVariable,
 }: SubsettingDataGridProps) {
   //   Various Custom Hooks
   const studyRecord = useStudyRecord();
   const studyMetadata = useStudyMetadata();
   const subsettingClient = useSubsettingClient();
-  const featuredFields = useFeaturedFields(entities, 'download');
+  const featuredFields = useFeaturedFields(
+    entities,
+    'download'
+  ).filter((field) => field.term.startsWith(currentEntityID));
   const flattenedFields = useFlattenedFields(entities, 'download');
+
+  const scopedStarredVariables = useMemo(
+    () =>
+      starredVariables?.filter(
+        (variable) => variable.entityId === currentEntityID
+      ) ?? [],
+    [currentEntityID, starredVariables]
+  );
+
+  const featuredVariables = useMemo(
+    () =>
+      featuredFields.map(
+        (field): VariableDescriptor => {
+          return {
+            entityId: currentEntityID,
+            variableId: field.term.split('/')[1],
+          };
+        }
+      ),
+    [currentEntityID, featuredFields]
+  );
 
   const [currentEntity, setCurrentEntity] = useState<StudyEntity | undefined>(
     undefined
@@ -106,48 +134,6 @@ export default function SubsettingDataGridModal({
   ] = useState<Array<VariableDescriptor>>([]);
 
   /**
-   * An array of variable descriptors for the current entity's
-   * featured and stared variables.
-   */
-  const [
-    featuredAndStarredVariableDescriptors,
-    setFeaturedAndStarredVariableDescriptors,
-  ] = useState<Array<VariableDescriptor>>([]);
-
-  /**
-   * If the user has not manually selected any variables for display,
-   * we will attempt to use any starred/featured variables for the current
-   * entity as default data grid columns.
-   */
-  useEffect(() => {
-    const starredVariables: Array<VariableDescriptor> =
-      analysisState.analysis?.descriptor.starredVariables.filter(
-        (variable) => variable.entityId === currentEntityID
-      ) ?? [];
-
-    const featuredVariables: Array<VariableDescriptor> = featuredFields
-      .filter((field) => field.term.startsWith(currentEntityID))
-      .map((field) => {
-        return {
-          entityId: currentEntityID,
-          variableId: field.term.split('/')[1],
-        };
-      });
-
-    setFeaturedAndStarredVariableDescriptors(
-      uniqBy(
-        [...starredVariables, ...featuredVariables],
-        (value) => `${value.entityId}/${value.variableId}`
-      )
-    );
-  }, [
-    analysisState.analysis,
-    currentEntityID,
-    featuredFields,
-    setFeaturedAndStarredVariableDescriptors,
-  ]);
-
-  /**
    * Actions to take when the modal is opened.
    */
   const onModalOpen = () => {
@@ -165,7 +151,10 @@ export default function SubsettingDataGridModal({
       setSelectedVariableDescriptors(previouslyStoredEntityData.variables);
     } else {
       // Use featured and starred variables as defaults if nothing is present on the analysis.
-      setSelectedVariableDescriptors(featuredAndStarredVariableDescriptors);
+      setSelectedVariableDescriptors([
+        ...featuredVariables,
+        ...scopedStarredVariables,
+      ]);
     }
   };
 
@@ -303,11 +292,12 @@ export default function SubsettingDataGridModal({
           style={{
             position: 'absolute',
             width: 410,
-            right: 0,
-            top: 0,
+            right: 6,
+            top: 6,
             backgroundColor: 'rgba(255, 255, 255, 1)',
-            border: '2px solid rgb(200, 200, 200)',
-            borderRadius: 5,
+            border: '1px solid rgb(200, 200, 200)',
+            borderRadius: '.5em',
+            boxShadow: '0px 0px 6px rgba(0, 0, 0, .25)',
           }}
         >
           {errorMessage && (
@@ -355,7 +345,10 @@ export default function SubsettingDataGridModal({
               rootEntity={{ ...currentEntity, children: [] }}
               scope="download"
               selectedVariableDescriptors={selectedVariableDescriptors}
+              starredVariableDescriptors={scopedStarredVariables}
+              featuredFields={featuredFields}
               onSelectedVariablesChange={handleSelectedVariablesChange}
+              toggleStarredVariable={toggleStarredVariable}
             />
           </div>
         </div>
