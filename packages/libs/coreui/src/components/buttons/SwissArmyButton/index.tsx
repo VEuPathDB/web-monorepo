@@ -20,9 +20,8 @@ export default function SwissArmyButton({
   styleSpec,
   ariaLabel,
 }: SwissArmyButtonProps) {
-  const [buttonState, setButtonState] = useState<
-    'default' | 'hover' | 'pressed'
-  >('default');
+  const [buttonState, setButtonState] =
+    useState<'default' | 'hover' | 'pressed'>('default');
 
   const styleState = useMemo<'default' | 'hover' | 'pressed' | 'disabled'>(
     () => (disabled ? 'disabled' : buttonState),
@@ -44,8 +43,8 @@ export default function SwissArmyButton({
         tabIndex={0}
         disabled={disabled}
         css={[
-          typography.primaryFont,
           {
+            fontFamily: typography.primaryFont,
             cursor: disabled ? 'not-allowed' : 'pointer',
             height: buttonHeight,
             display: 'flex',
