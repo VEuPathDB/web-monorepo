@@ -42,7 +42,7 @@ export default function ShareFromAnalysesList({
       includeCloseButton={true}
       themeRole="primary"
       styleOverrides={{
-        size: { width: 700, height: 475 },
+        size: { width: 700, height: 480 },
         content: {
           paddingTop: 0,
           paddingRight: 50,
