@@ -110,21 +110,18 @@ export default class SubsettingClient extends FetchClientWithCredentials {
     entityId: string,
     params: TabularDataRequestParams
   ): void {
-    fetch(
-      `/eda-subsetting-service/studies/${studyId}/entities/${entityId}/tabular`,
-      {
-        ...this.init,
-        method: 'POST',
-        body: JSON.stringify(params),
-        headers: {
-          accept: 'text/tab-separated-values',
-          'content-type': 'application/json',
-          ...this.init.headers,
-        },
-      }
-    )
+    fetch(`/eda/studies/${studyId}/entities/${entityId}/tabular`, {
+      ...this.init,
+      method: 'POST',
+      body: JSON.stringify(params),
+      headers: {
+        accept: 'text/tab-separated-values',
+        'content-type': 'application/json',
+        ...this.init.headers,
+      },
+    })
       .then((response) => response.blob())
-      .then((blob) => saveAs(blob, 'dataset.tsv'));
+      .then((blob) => saveAs(blob, 'dataset.txt'));
   }
 }
 

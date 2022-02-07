@@ -20,12 +20,14 @@ import { boxplotVisualization } from '../visualizations/implementations/BoxplotV
 import { mapVisualization } from '../visualizations/implementations/MapVisualization';
 import { EntityCounts } from '../../hooks/entityCounts';
 import { PromiseHookState } from '../../hooks/promise';
+import { GeoConfig } from '../../types/geoConfig';
 
 interface Props {
   analysisState: AnalysisState;
   computationAppOverview: ComputationAppOverview;
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
+  geoConfigs: GeoConfig[];
 }
 
 /**
@@ -51,6 +53,7 @@ export function PassThroughComputation(props: Props) {
     computationAppOverview,
     totalCounts,
     filteredCounts,
+    geoConfigs,
   } = props;
   const { analysis, setComputations } = analysisState;
   const filters = useMemo(() => analysis?.descriptor.subset.descriptor ?? [], [
@@ -118,6 +121,7 @@ export function PassThroughComputation(props: Props) {
       toggleStarredVariable={toggleStarredVariable}
       totalCounts={totalCounts}
       filteredCounts={filteredCounts}
+      geoConfigs={geoConfigs}
     />
   );
 }
