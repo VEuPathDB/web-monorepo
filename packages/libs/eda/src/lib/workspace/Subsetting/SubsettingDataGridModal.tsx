@@ -3,16 +3,18 @@ import { ceil, uniqBy } from 'lodash';
 
 // Components
 import SettingsIcon from '@material-ui/icons/Settings';
-import { H5, H3 } from '@veupathdb/core-components/dist/components/headers';
-import DataGrid from '@veupathdb/core-components/dist/components/grids/DataGrid';
-import { Modal } from '@veupathdb/core-components';
 
-import { MesaButton } from '@veupathdb/core-components/dist/components/buttons';
 import {
+  Modal,
+  H3,
+  H5,
+  DataGrid,
+  MesaButton,
   Download,
   Close,
   CloseFullscreen,
-} from '@veupathdb/core-components/dist/components/icons';
+} from '@veupathdb/core-components';
+
 import MultiSelectVariableTree from '../../core/components/variableTrees/MultiSelectVariableTree';
 import { AnalysisSummary } from '../AnalysisSummary';
 
@@ -366,6 +368,7 @@ export default function SubsettingDataGridModal({
   return (
     <Modal
       visible={displayModal}
+      toggleVisible={toggleDisplay}
       onOpen={onModalOpen}
       onClose={onModalClose}
       styleOverrides={{
