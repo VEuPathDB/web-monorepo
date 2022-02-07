@@ -233,8 +233,8 @@ export const StudyMetadata = t.intersection([
   }),
 ]);
 
-export type ExtendedField = Field & {
-  precision: number;
-  variableName: string;
+export type FieldWithMetadata = Field & {
+  precision?: number;
+  variableName?: string;
   isFeatured?: boolean;
 };
