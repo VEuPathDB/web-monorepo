@@ -133,7 +133,12 @@ export default function DataGrid({
       data,
       initialState: {
         pageIndex: 0,
-        pageSize: pagination?.recordsPerPage ?? -1,
+        /**
+         * If pagination spec exists, use that to determine the number
+         * of records to be displayed at one time. Otherwise, display
+         * all records in data.
+         * */
+        pageSize: pagination?.recordsPerPage ?? data.length,
       },
       // If pagination is desired, add necessary parameters.
       ...(pagination && pagination.serverSidePagination
