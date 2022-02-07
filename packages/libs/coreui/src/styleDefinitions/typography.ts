@@ -26,7 +26,7 @@ export const h3 = css([
   { fontFamily: primaryFont },
   {
     fontSize: 42,
-    fontWeight: 700,
+    fontWeight: 600,
     MozOsxFontSmoothing: 'auto',
     WebkitFontSmoothing: 'auto',
   },
@@ -44,7 +44,7 @@ export const h5 = css([
   { fontFamily: primaryFont },
   {
     fontSize: 21,
-    fontWeight: 600,
+    fontWeight: 500,
     MozOsxFontSmoothing: 'auto',
     WebkitFontSmoothing: 'auto',
   },

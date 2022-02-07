@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 
-import { gray, mutedGreen, mutedMagenta } from '../../definitions/colors';
-import Modal, { ModalProps } from '../../components/containers/Modal';
+import { mutedGreen, mutedMagenta } from '../../definitions/colors';
+import CoreUIModal, { ModalProps } from '../../components/containers/Modal';
 import { FilledButton } from '../../components/buttons';
-import { secondaryFont } from '../../styleDefinitions/typography';
 import { UIThemeProvider } from '../../components/theming';
-import { Download } from '../../components/icons';
+import { H1, Paragraph } from '../../components/typography';
 
 const ModalContent = ({
   themeRole,
@@ -22,10 +21,9 @@ const ModalContent = ({
     }}
   >
     <div>
-      <p css={[{ color: gray[600] }, secondaryFont]}>
-        This is an example of a modal.
-      </p>
-      <p css={[{ color: gray[600] }, secondaryFont]}>
+      <Paragraph textSize='medium'>This is an example of a modal.</Paragraph>
+
+      <Paragraph>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
         tempor incididunt ut labore et dolore magna aliqua. Mi quis hendrerit
         dolor magna eget est. Donec enim diam vulputate ut pharetra sit amet.
@@ -40,7 +38,7 @@ const ModalContent = ({
         ultrices sagittis. Purus faucibus ornare suspendisse sed nisi lacus sed.
         Sed libero enim sed faucibus turpis. Gravida in fermentum et
         sollicitudin. Urna et pharetra pharetra massa massa.
-      </p>
+      </Paragraph>
     </div>
     <FilledButton
       text='Example Button'
@@ -51,8 +49,8 @@ const ModalContent = ({
 );
 
 export default {
-  title: 'Containers/UIModal',
-  component: Modal,
+  title: 'Containers/Modal',
+  component: CoreUIModal,
 } as Meta;
 
 const Template: Story<ModalProps> = (args) => {
@@ -70,16 +68,20 @@ const Template: Story<ModalProps> = (args) => {
         },
       }}
     >
-      <Modal {...rest} visible={modalVisible} toggleVisible={setModalVisible}>
+      <H1 text='Background Content' />
+      <CoreUIModal
+        {...rest}
+        visible={modalVisible}
+        toggleVisible={setModalVisible}
+      >
         <ModalContent themeRole={args.themeRole} />
-      </Modal>
+      </CoreUIModal>
     </UIThemeProvider>
   );
 };
 export const Basic = Template.bind({});
 Basic.args = {
   visible: true,
-  onOpen: () => console.log('Modal Opened'),
   styleOverrides: {
     content: {
       paddingTop: 0,

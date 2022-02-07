@@ -1,6 +1,7 @@
-import { CSSProperties, ReactNode, useMemo, useState, useEffect } from 'react';
+import { CSSProperties, ReactNode, useMemo } from 'react';
 import { merge } from 'lodash';
-import ReactModal from 'react-modal';
+import useDimensions from 'react-cool-dimensions';
+import { Modal as ResponsiveModal } from 'react-responsive-modal';
 
 // Components
 import { H3 } from '../typography';
@@ -16,7 +17,7 @@ import useUITheme from '../theming/useUITheme';
 type ModalStyleSpec = {
   border: {
     color: CSSProperties['borderColor'];
-    width: CSSProperties['borderWidth'];
+    width: number;
     radius: CSSProperties['borderRadius'];
     style: CSSProperties['borderStyle'];
   };
@@ -56,12 +57,6 @@ export type ModalProps = {
   toggleVisible?: (visible: boolean) => void;
   /** Controls the visibility of the modal. */
   visible: boolean;
-  /** The CSS zIndex level to place the modal on. Defaults to 1000. */
-  zIndex?: number;
-  /** Function to invoke after modal is opened. */
-  onOpen?: () => void;
-  /** Function to invoke after modal is closed. */
-  onClose?: () => void;
   /** Allows you to adjust the style of the modal. Applied *after* theming augmentation. */
   styleOverrides?: Partial<ModalStyleSpec>;
   /** The contents of the modal.  */
@@ -73,14 +68,18 @@ export default function Modal({
   visible,
   toggleVisible,
   includeCloseButton = false,
-  zIndex = 1000,
-  onOpen,
-  onClose,
   themeRole,
   styleOverrides = {},
   children,
 }: ModalProps) {
   const theme = useUITheme();
+
+  // Track the height of the title text.
+  const { observe, height: titleHeight } = useDimensions();
+
+  // Track the height of the modal content.
+  const { observe: observeModalContent, height: modalContentHeight } =
+    useDimensions();
 
   const componentStyle: ModalStyleSpec = useMemo(() => {
     const defaultStyle: ModalStyleSpec = {
@@ -122,102 +121,120 @@ export default function Modal({
     return merge({}, defaultStyle, themeStyle, styleOverrides);
   }, [themeRole, styleOverrides, theme]);
 
-  const [modalHeight, setModalHeight] = useState<number>(0);
-
   return (
-    <ReactModal
-      isOpen={visible}
-      onAfterOpen={(obj) => {
-        setModalHeight(obj?.contentEl.clientHeight ?? 0);
-        onOpen && onOpen();
-      }}
-      onAfterClose={onClose}
-      // TODO: Come back here and add ability to close on outside click or esc button.
-      // onRequestClose={
-      //   toggleVisible ? (event) => toggleVisible(!visible) : undefined
-      // }
-      // NOTE: A future improvement would be to properly account for the warning that is displayed when this value is true.
-      ariaHideApp={false}
-      style={{
-        overlay: {
+    <ResponsiveModal
+      ref={observeModalContent}
+      open={visible}
+      onClose={() => toggleVisible && toggleVisible(false)}
+      showCloseIcon={false}
+      closeOnEsc={true}
+      styles={{
+        root: {
           position: 'fixed',
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: gray[500] + '80',
-          zIndex,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          pointerEvents: visible ? 'all' : 'none',
         },
-        content: {
+        overlay: {
+          backgroundColor: gray[700] + '80',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display: visible ? 'initial' : 'none',
+        },
+        modalContainer: {
           position: 'absolute',
-          // TODO: Dynamically adjust header height if multiple lines are needed.
-          maxWidth: componentStyle.size.width,
-          maxHeight: componentStyle.size.height,
-          padding: 0,
-          margin: 'auto',
+          ...(componentStyle.size.width
+            ? {
+                width: componentStyle.size.width,
+                height: componentStyle.size.height,
+              }
+            : { top: 75, right: 75, bottom: 75, left: 75 }),
+
           background: colors.white,
           borderRadius: componentStyle.border.radius,
-          borderColor: componentStyle.border.color,
-          borderWidth: componentStyle.border.width,
-          borderStyle: componentStyle.border.style,
+          outlineColor: componentStyle.border.color,
+          outlineWidth: componentStyle.border.width,
+          outlineStyle: componentStyle.border.style,
+          outlineOffset: -1 * componentStyle.border.width + 1,
+          overflow: 'hidden',
+          display: visible ? 'initial' : 'none',
+        },
+        modal: {
+          width: '100%',
+          height: '100%',
         },
       }}
     >
-      {title && (
+      <div ref={observeModalContent}>
+        {title && (
+          <div
+            css={{
+              height: titleHeight + 39,
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <div
+              css={{
+                flex: 1,
+                backgroundColor: componentStyle.header.primaryBackgroundColor,
+                transition: 'all ease .25s',
+              }}
+            />
+            <div
+              css={{
+                flexBasis: 15,
+                backgroundColor: componentStyle.header.secondaryBackgroundColor,
+                transition: 'all ease .25s',
+              }}
+            />
+            <div css={{ position: 'absolute', left: 25, top: 34 }}>
+              <H3
+                ref={observe}
+                text={title}
+                color='white'
+                additionalStyles={{ margin: 0, paddingRight: 25 }}
+                useTheme={false}
+              />
+            </div>
+          </div>
+        )}
+        {includeCloseButton && toggleVisible && (
+          <CloseCircle
+            fill={title ? 'white' : gray[600]}
+            css={{ position: 'absolute', top: 15, right: 15 }}
+            fontSize={24}
+            onClick={() => toggleVisible(!visible)}
+            role='button'
+            aria-label='Close modal button.'
+          />
+        )}
         <div
           css={{
-            overflow: 'auto',
-            outline: 'none',
-            margin: 0,
+            height: modalContentHeight - (title ? titleHeight + 39 : 0),
+            overflowY: 'auto',
           }}
         >
           <div
             css={{
-              height: 75,
-              backgroundColor: componentStyle.header.primaryBackgroundColor,
+              paddingTop: componentStyle.content.paddingTop,
+              paddingRight: componentStyle.content.paddingRight,
+              paddingBottom: componentStyle.content.paddingBottom,
+              paddingLeft: componentStyle.content.paddingLeft,
             }}
-          />
-          <div
-            css={{
-              height: 15,
-              backgroundColor: componentStyle.header.secondaryBackgroundColor,
-            }}
-          />
-          <div css={{ position: 'absolute', left: 25, top: 34 }}>
-            <H3
-              text={title}
-              color='white'
-              additionalStyles={{ margin: 0, padding: 0 }}
-              useTheme={false}
-            />
+          >
+            {children}
           </div>
         </div>
-      )}
-      {includeCloseButton && toggleVisible && (
-        <CloseCircle
-          fill={title ? 'white' : gray[600]}
-          css={{ position: 'absolute', top: 15, right: 15 }}
-          fontSize={24}
-          onClick={() => toggleVisible(!visible)}
-          role='button'
-          aria-label='Close modal button.'
-        />
-      )}
-      <div
-        css={{
-          paddingTop: componentStyle.content.paddingTop,
-          paddingRight: componentStyle.content.paddingRight,
-          paddingBottom: componentStyle.content.paddingBottom,
-          paddingLeft: componentStyle.content.paddingLeft,
-          height:
-            modalHeight -
-            componentStyle.content.paddingTop -
-            componentStyle.content.paddingBottom -
-            (title ? 90 : 0),
-        }}
-      >
-        {children}
       </div>
-    </ReactModal>
+    </ResponsiveModal>
   );
 }
