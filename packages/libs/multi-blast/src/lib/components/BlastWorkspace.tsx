@@ -21,7 +21,7 @@ export function BlastWorkspace() {
   return (
     <div className={blastWorkspaceCx()}>
       <WorkspaceNavigation
-        heading={<>BLAST</>}
+        heading="BLAST"
         routeBase="/workspace/blast"
         items={[
           {
