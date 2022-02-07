@@ -83,8 +83,8 @@ export default function ExpandablePanel({
 
   const renderSubtitle = () => {
     const subtitleStyle = css([
-      typography.primaryFont,
       {
+        fontFamily: typography.primaryFont,
         fontSize: 12,
         margin: 0,
         marginLeft:
