@@ -22,6 +22,7 @@ import { usePrevious } from '../core/hooks/previousValue';
 import { useStudyEntities } from '../core/hooks/study';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { useStudyMetadata, useStudyRecord } from '../core';
+import { useGeoConfig } from '../core/hooks/geoConfig';
 
 // Components
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
@@ -111,6 +112,7 @@ export function AnalysisPanel({
   const studyMetadata = useStudyMetadata();
   const entities = useStudyEntities(studyMetadata.rootEntity);
   const filteredEntities = uniq(filters?.map((f) => f.entityId));
+  const geoConfigs = useGeoConfig(entities);
   const location = useLocation();
 
   const [lastVarPath, setLastVarPath] = useState('');
@@ -299,6 +301,7 @@ export function AnalysisPanel({
                 analysisState={analysisState}
                 totalCounts={totalCounts}
                 filteredCounts={filteredCounts}
+                geoConfigs={geoConfigs}
               />
             </AnalysisTabErrorBoundary>
           )}

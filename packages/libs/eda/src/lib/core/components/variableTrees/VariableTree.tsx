@@ -8,9 +8,9 @@ import { useStudyEntities } from '../../hooks/study';
 import {
   useValuesMap,
   useFlattenedFields,
-  useFeaturedFields,
   useFieldTree,
   useFlattenFieldsByTerm,
+  useFeaturedFieldsFromTree,
 } from './hooks';
 
 export interface VariableTreeProps {
@@ -45,8 +45,8 @@ export default function VariableTree({
   const valuesMap = useValuesMap(entities);
   const flattenedFields = useFlattenedFields(entities, scope);
   const fieldsByTerm = useFlattenFieldsByTerm(flattenedFields);
-  const featuredFields = useFeaturedFields(entities, scope);
   const fieldTree = useFieldTree(flattenedFields);
+  const featuredFields = useFeaturedFieldsFromTree(fieldTree);
 
   const disabledFields = useMemo(
     () => disabledVariables?.map((v) => `${v.entityId}/${v.variableId}`),
