@@ -137,8 +137,8 @@ export default function Chip({
           ...finalStyle.container,
           pointerEvents: staticState ? 'none' : 'initial',
         },
-        typography.secondaryFont,
         {
+          fontFamily: typography.secondaryFont,
           cursor: onPress ? 'grab' : 'default',
           fontSize: 12,
           height: 25,
