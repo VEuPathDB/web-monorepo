@@ -84,6 +84,8 @@ export default function Subsetting({
   // This will give you the count of rows for the current entity.
   const filteredEntityCount = filteredCounts && filteredCounts[entity.id];
 
+  const starredVariables = analysisState.analysis?.descriptor.starredVariables;
+
   return (
     <div className={cx('-Subsetting')}>
       <SubsettingDataGridModal
@@ -96,13 +98,15 @@ export default function Subsetting({
           total: totalEntityCount,
           filtered: filteredEntityCount,
         }}
+        starredVariables={starredVariables}
+        toggleStarredVariable={toggleStarredVariable}
       />
       <div className="Variables">
         <VariableTree
           scope="variableTree"
           rootEntity={entities[0]}
           entityId={entity.id}
-          starredVariables={analysisState.analysis?.descriptor.starredVariables}
+          starredVariables={starredVariables}
           toggleStarredVariable={toggleStarredVariable}
           variableId={variable.id}
           onChange={(variable) => {
