@@ -162,7 +162,7 @@ export default function Modal({
           position: 'absolute',
           ...(componentStyle.size.width
             ? {
-                width: componentStyle.size.width,
+                maxWidth: componentStyle.size.width,
                 height: componentStyle.size.height,
               }
             : { top: 75, right: 75, bottom: 75, left: 75 }),
@@ -204,15 +204,21 @@ export default function Modal({
               transition: 'all ease .25s',
             }}
           />
-          <div css={{ position: 'absolute', left: 25, top: 34 }}>
-            <H3
-              ref={observe}
-              text={title}
-              color='white'
-              additionalStyles={{ margin: 0, paddingRight: 25 }}
-              useTheme={false}
-            />
-          </div>
+
+          <H3
+            ref={observe}
+            text={title}
+            color='white'
+            additionalStyles={{
+              margin: 0,
+              padding: 0,
+              paddingRight: 25,
+              position: 'absolute',
+              left: 25,
+              top: 34,
+            }}
+            useTheme={false}
+          />
         </div>
       )}
       {includeCloseButton && toggleVisible && (
