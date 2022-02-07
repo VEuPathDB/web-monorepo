@@ -57,6 +57,8 @@ export type ModalProps = {
   toggleVisible?: (visible: boolean) => void;
   /** Controls the visibility of the modal. */
   visible: boolean;
+  /** Optional. Control the zIndex of the modal. Defaults to 1000. */
+  zIndex?: number;
   /** Allows you to adjust the style of the modal. Applied *after* theming augmentation. */
   styleOverrides?: Partial<ModalStyleSpec>;
   /** The contents of the modal.  */
@@ -66,6 +68,7 @@ export type ModalProps = {
 export default function Modal({
   title,
   visible,
+  zIndex = 1000,
   toggleVisible,
   includeCloseButton = false,
   themeRole,
@@ -139,6 +142,7 @@ export default function Modal({
           justifyContent: 'center',
           alignItems: 'center',
           pointerEvents: visible ? 'all' : 'none',
+          zIndex,
         },
         overlay: {
           backgroundColor: gray[700] + '80',
