@@ -1,7 +1,6 @@
 import { groupBy, negate, partial } from 'lodash';
 
 import {
-  Field,
   Filter as WdkFilter,
   TreeNode,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
@@ -17,7 +16,7 @@ import {
   StudyEntity,
   VariableScope,
   VariableTreeNode,
-  ExtendedField,
+  FieldWithMetadata,
 } from '../types/study';
 
 /*
@@ -143,7 +142,7 @@ export function fromEdaFilter(filter: EdaFilter): WdkFilter {
 
 export function edaVariableToWdkField(
   variable: VariableTreeNode
-): ExtendedField {
+): FieldWithMetadata {
   return {
     display: variable.displayName,
     isRange:
@@ -209,7 +208,7 @@ export function toWdkVariableSummary(
 export function entitiesToFields(
   entities: StudyEntity[],
   scope: VariableScope
-): Array<Field | ExtendedField> {
+): Array<FieldWithMetadata> {
   return entities.flatMap((entity) => {
     // Create a Set of variableId so we can lookup parentIds
     const variableIds = new Set(entity.variables.map((v) => v.id));
@@ -302,9 +301,9 @@ export function shouldHideVariable(
 }
 
 export function makeFieldTree(
-  fields: Array<Field | ExtendedField>
-): TreeNode<Field | ExtendedField> {
-  const initialTree = getGenericTree<Field | ExtendedField>(
+  fields: Array<FieldWithMetadata>
+): TreeNode<FieldWithMetadata> {
+  const initialTree = getGenericTree<FieldWithMetadata>(
     fields,
     GENERATED_ROOT_FIELD,
     { hideSingleRoot: false }
@@ -312,9 +311,7 @@ export function makeFieldTree(
   return pruneEmptyFields(initialTree);
 }
 
-export const pruneEmptyFields = (
-  initialTree: TreeNode<Field | ExtendedField>
-) =>
+export const pruneEmptyFields = (initialTree: TreeNode<FieldWithMetadata>) =>
   pruneDescendantNodes(
     (node) => node.field.type != null || node.children.length > 0,
     initialTree

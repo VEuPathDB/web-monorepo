@@ -211,6 +211,11 @@ export function leafletZoomLevelToGeohashLevel(
   }
 }
 
+/**
+ * DEPRECATED since using geoConfig
+ *
+ **/
+
 export function geohashLevelToVariableId(geohashLevel: number): string {
   switch (geohashLevel) {
     case 1:

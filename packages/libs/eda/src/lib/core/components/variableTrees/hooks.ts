@@ -5,7 +5,11 @@ import {
   TreeNode,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 
-import { StudyEntity, VariableScope, ExtendedField } from '../../types/study';
+import {
+  StudyEntity,
+  VariableScope,
+  FieldWithMetadata,
+} from '../../types/study';
 import {
   edaVariableToWdkField,
   entitiesToFields,
@@ -90,7 +94,7 @@ export const useFeaturedFields = (
  * the order of the featured fields matches their order in the TreeNode.
  */
 export const useFeaturedFieldsFromTree = (
-  fieldTree: TreeNode<Field | ExtendedField>
+  fieldTree: TreeNode<FieldWithMetadata>
 ) =>
   useMemo(
     () =>
@@ -101,10 +105,10 @@ export const useFeaturedFieldsFromTree = (
   );
 
 const getFeaturedFieldsFromTreeRecursive = (
-  treeNode: TreeNode<Field | ExtendedField>,
+  treeNode: TreeNode<FieldWithMetadata>,
   entityName: string
 ) => {
-  const filteredFieldList: TreeNode<Field | ExtendedField>[] = [];
+  const filteredFieldList: TreeNode<FieldWithMetadata>[] = [];
 
   if (treeNode.children.length > 0) {
     // If we find an entity, persist its name through its child nodes
@@ -140,7 +144,7 @@ const getFeaturedFieldsFromTreeRecursive = (
  * This is used to actually display the fields (entity, variable category,
  * or variable) in a visual hierachy to the user.
  */
-export const useFieldTree = (flattenedFields: Array<Field | ExtendedField>) =>
+export const useFieldTree = (flattenedFields: Array<FieldWithMetadata>) =>
   useMemo(() => makeFieldTree(flattenedFields), [flattenedFields]);
 
 /**

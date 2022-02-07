@@ -6,15 +6,17 @@ import { PassThroughComputation } from '../core/components/computations/PassThro
 import { PromiseResult } from '../core/components/Promise';
 import { EntityCounts } from '../core/hooks/entityCounts';
 import { PromiseHookState, usePromise } from '../core/hooks/promise';
+import { GeoConfig } from '../core/types/geoConfig';
 
 export interface Props {
   analysisState: AnalysisState;
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
+  geoConfigs: GeoConfig[];
 }
 
 export function ComputationRoute(props: Props) {
-  const { analysisState, totalCounts, filteredCounts } = props;
+  const { analysisState, totalCounts, filteredCounts, geoConfigs } = props;
   const { url } = useRouteMatch();
   const dataClient = useDataClient();
   const promiseState = usePromise(
@@ -42,6 +44,7 @@ export function ComputationRoute(props: Props) {
               computationAppOverview={computationAppOverview}
               totalCounts={totalCounts}
               filteredCounts={filteredCounts}
+              geoConfigs={geoConfigs}
             />
           </Route>
         </Switch>
