@@ -1,9 +1,7 @@
 import { array, number, type } from 'io-ts';
-import { memoize } from 'lodash';
 import { saveAs } from 'file-saver';
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import {
   createJsonRequest,
   FetchClientWithCredentials,
@@ -22,11 +20,6 @@ import {
 } from './types';
 
 export default class SubsettingClient extends FetchClientWithCredentials {
-  static getClient = memoize(
-    (baseUrl: string, wdkService: WdkService): SubsettingClient =>
-      new SubsettingClient({ baseUrl }, wdkService)
-  );
-
   getStudies(): Promise<StudyOverview[]> {
     return this.fetch(
       createJsonRequest({
@@ -105,26 +98,24 @@ export default class SubsettingClient extends FetchClientWithCredentials {
    * of the customized fetch call in `DataClient` because there would need to
    * be some underlying changes that would need to be made to it.
    */
-  tabularDataDownload(
+  async tabularDataDownload(
     studyId: string,
     entityId: string,
     params: TabularDataRequestParams
-  ): void {
-    fetch(
-      `/eda-subsetting-service/studies/${studyId}/entities/${entityId}/tabular`,
-      {
-        ...this.init,
-        method: 'POST',
-        body: JSON.stringify(params),
-        headers: {
-          accept: 'text/tab-separated-values',
-          'content-type': 'application/json',
-          ...this.init.headers,
-        },
-      }
-    )
+  ): Promise<void> {
+    fetch(`${this.baseUrl}/studies/${studyId}/entities/${entityId}/tabular`, {
+      ...this.init,
+      method: 'POST',
+      body: JSON.stringify(params),
+      headers: {
+        ...this.init.headers,
+        accept: 'text/tab-separated-values',
+        'content-type': 'application/json',
+        'Auth-Key': await this.findUserRequestAuthKey(),
+      },
+    })
       .then((response) => response.blob())
-      .then((blob) => saveAs(blob, 'dataset.tsv'));
+      .then((blob) => saveAs(blob, 'subset.txt'));
   }
 }
 
