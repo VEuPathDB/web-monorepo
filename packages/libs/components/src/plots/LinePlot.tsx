@@ -1,7 +1,9 @@
+import { useMemo } from 'react';
 import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
 import { LinePlotData } from '../types/plots';
 import { Layout } from 'plotly.js';
 import { NumberOrDateRange } from '../types/general';
+import { isArrayOfNumbers } from '../types/guards';
 
 // is it possible to have this interface extend ScatterPlotProps?
 // or would we need some abstract layer, w scatter and line both as equal children below it?
@@ -71,8 +73,59 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
     },
   };
 
+  // Convert upper and lower error bar data from absolute to relative
+  // requires BOTH yErrorBarUpper and yErrorBarLower to be non-empty
+  // and the same length as each other and the series.y array
+  // Only number data is handled presently.
+  // Default Plotly hover info is to show the relative +/- amounts.
+  // Can change this if QA/Outreach don't like it.
+  const plotlyData = useMemo(
+    () =>
+      data.series.map((series) => {
+        if (series.yErrorBarLower?.length && series.yErrorBarUpper?.length) {
+          if (
+            series.yErrorBarLower.length === series.y.length &&
+            series.yErrorBarLower.length === series.y.length
+          ) {
+            if (
+              isArrayOfNumbers(series.yErrorBarUpper) &&
+              isArrayOfNumbers(series.yErrorBarLower) &&
+              isArrayOfNumbers(series.y)
+            ) {
+              const yvals = series.y; // this is only to help TS
+              return {
+                ...series,
+                error_y: {
+                  type: 'data',
+                  visible: 'true',
+                  array: series.yErrorBarUpper.map(
+                    (upperValue, index) => upperValue - yvals[index]
+                  ),
+                  arrayminus: series.yErrorBarLower.map(
+                    (lowerValue, index) => yvals[index] - lowerValue
+                  ),
+                },
+              };
+            } else {
+              console.log(
+                'WARNING: date-based error bars not yet implemented for LinePlot'
+              );
+              return series;
+            }
+          } else {
+            throw new Error(
+              "yErrorBarUpper and/or yErrorBarLower don't have the same number of values as the main data"
+            );
+          }
+        } else {
+          return series;
+        }
+      }),
+    [data.series]
+  );
+
   return {
-    data: data.series,
+    data: plotlyData,
     layout,
     ...restProps,
   };

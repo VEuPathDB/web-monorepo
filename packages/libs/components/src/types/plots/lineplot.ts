@@ -11,6 +11,12 @@ export type LinePlotDataSeries = Override<
   }
 > & {
   bins?: Bin[];
+  /**
+   * y coordinates for regular error bars (vertical in regular orientation)
+   *
+   */
+  yErrorBarUpper?: number[] | string[];
+  yErrorBarLower?: number[] | string[];
 };
 
 export type LinePlotData = {

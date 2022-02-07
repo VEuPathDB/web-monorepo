@@ -104,3 +104,9 @@ export function isFacetedPlotRef(
 ): maybeFacetedPlotRef is FacetedPlotRef {
   return Array.isArray(maybeFacetedPlotRef);
 }
+
+export function isArrayOfNumbers(
+  array: string[] | number[]
+): array is number[] {
+  return array.length > 0 && typeof array[0] === 'number';
+}
