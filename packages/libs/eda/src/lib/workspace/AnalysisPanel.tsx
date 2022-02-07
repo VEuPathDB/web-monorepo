@@ -247,10 +247,10 @@ export function AnalysisPanel({
               exact: false,
               replace: true,
             },
-            {
-              display: 'Downloads',
-              route: '/downloads',
-            },
+            // {
+            //   display: 'Downloads',
+            //   route: '/downloads',
+            // },
             {
               display: 'Notes',
               route: '/notes',
@@ -308,14 +308,14 @@ export function AnalysisPanel({
             </AnalysisTabErrorBoundary>
           )}
         />
-        <Route
+        {/* <Route
           path={`${routeBase}/downloads`}
           render={() => (
             <AnalysisTabErrorBoundary>
               <DownloadsTab />
             </AnalysisTabErrorBoundary>
           )}
-        />
+        /> */}
         <Route
           path={`${routeBase}/notes`}
           render={() => (
