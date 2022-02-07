@@ -13,6 +13,7 @@ import { UITheme } from '../theming/types';
 
 // Hooks
 import useUITheme from '../theming/useUITheme';
+import { useEffect } from 'react';
 
 type ModalStyleSpec = {
   border: {
@@ -124,6 +125,10 @@ export default function Modal({
     return merge({}, defaultStyle, themeStyle, styleOverrides);
   }, [themeRole, styleOverrides, theme]);
 
+  useEffect(() => {
+    console.log(modalContentHeight, titleHeight);
+  }, [modalContentHeight, titleHeight]);
+
   return (
     <ResponsiveModal
       ref={observeModalContent}
@@ -177,66 +182,64 @@ export default function Modal({
         },
       }}
     >
-      <div ref={observeModalContent}>
-        {title && (
-          <div
-            css={{
-              height: titleHeight + 39,
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            <div
-              css={{
-                flex: 1,
-                backgroundColor: componentStyle.header.primaryBackgroundColor,
-                transition: 'all ease .25s',
-              }}
-            />
-            <div
-              css={{
-                flexBasis: 15,
-                backgroundColor: componentStyle.header.secondaryBackgroundColor,
-                transition: 'all ease .25s',
-              }}
-            />
-            <div css={{ position: 'absolute', left: 25, top: 34 }}>
-              <H3
-                ref={observe}
-                text={title}
-                color='white'
-                additionalStyles={{ margin: 0, paddingRight: 25 }}
-                useTheme={false}
-              />
-            </div>
-          </div>
-        )}
-        {includeCloseButton && toggleVisible && (
-          <CloseCircle
-            fill={title ? 'white' : gray[600]}
-            css={{ position: 'absolute', top: 15, right: 15 }}
-            fontSize={24}
-            onClick={() => toggleVisible(!visible)}
-            role='button'
-            aria-label='Close modal button.'
-          />
-        )}
+      {title && (
         <div
           css={{
-            height: modalContentHeight - (title ? titleHeight + 39 : 0),
-            overflowY: 'auto',
+            height: titleHeight + 39,
+            display: 'flex',
+            flexDirection: 'column',
           }}
         >
           <div
             css={{
-              paddingTop: componentStyle.content.paddingTop,
-              paddingRight: componentStyle.content.paddingRight,
-              paddingBottom: componentStyle.content.paddingBottom,
-              paddingLeft: componentStyle.content.paddingLeft,
+              flex: 1,
+              backgroundColor: componentStyle.header.primaryBackgroundColor,
+              transition: 'all ease .25s',
             }}
-          >
-            {children}
+          />
+          <div
+            css={{
+              flexBasis: 15,
+              backgroundColor: componentStyle.header.secondaryBackgroundColor,
+              transition: 'all ease .25s',
+            }}
+          />
+          <div css={{ position: 'absolute', left: 25, top: 34 }}>
+            <H3
+              ref={observe}
+              text={title}
+              color='white'
+              additionalStyles={{ margin: 0, paddingRight: 25 }}
+              useTheme={false}
+            />
           </div>
+        </div>
+      )}
+      {includeCloseButton && toggleVisible && (
+        <CloseCircle
+          fill={title ? 'white' : gray[600]}
+          css={{ position: 'absolute', top: 15, right: 15 }}
+          fontSize={24}
+          onClick={() => toggleVisible(!visible)}
+          role='button'
+          aria-label='Close modal button.'
+        />
+      )}
+      <div
+        css={{
+          height: modalContentHeight - (title ? titleHeight + 39 : 0),
+          overflowY: 'auto',
+        }}
+      >
+        <div
+          css={{
+            paddingTop: componentStyle.content.paddingTop,
+            paddingRight: componentStyle.content.paddingRight,
+            paddingBottom: componentStyle.content.paddingBottom,
+            paddingLeft: componentStyle.content.paddingLeft,
+          }}
+        >
+          {children}
         </div>
       </div>
     </ResponsiveModal>
