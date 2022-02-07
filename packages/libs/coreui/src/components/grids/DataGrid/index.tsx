@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useMemo } from 'react';
 import {
   useTable,
   useSortBy,
@@ -10,7 +10,7 @@ import {
   Hooks,
   Column,
 } from 'react-table';
-import { pickBy, ceil } from 'lodash';
+import { pickBy, ceil, merge } from 'lodash';
 
 // Definitions
 import stylePresets, { DataGridStyleSpec } from './stylePresets';
@@ -108,7 +108,10 @@ export default function DataGrid({
   extraHeaderControls = [],
 }: DataGridProps) {
   const baseStyle = stylePresets[stylePreset];
-  const finalStyle = Object.assign({}, baseStyle, styleOverrides);
+  const finalStyle = useMemo(
+    () => merge({}, baseStyle, styleOverrides),
+    [baseStyle, styleOverrides]
+  );
 
   // Obtain data and data controls from react-table.
   const {
