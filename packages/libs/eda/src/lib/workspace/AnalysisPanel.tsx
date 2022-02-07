@@ -39,6 +39,7 @@ import GlobalFiltersDialog from '../core/components/GlobalFiltersDialog';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import ShowHideVariableContextProvider from '../core/utils/show-hide-variable-context';
 import NotesTab from './NotesTab';
+import DownloadsTab from './DownloadsTab';
 import { Alert } from '@material-ui/lab';
 import ShareFromAnalysis from './sharing/ShareFromAnalysis';
 
@@ -248,6 +249,10 @@ export function AnalysisPanel({
               exact: false,
               replace: true,
             },
+            // {
+            //   display: 'Downloads',
+            //   route: '/downloads',
+            // },
             {
               display: 'Notes',
               route: '/notes',
@@ -306,6 +311,14 @@ export function AnalysisPanel({
             </AnalysisTabErrorBoundary>
           )}
         />
+        {/* <Route
+          path={`${routeBase}/downloads`}
+          render={() => (
+            <AnalysisTabErrorBoundary>
+              <DownloadsTab />
+            </AnalysisTabErrorBoundary>
+          )}
+        /> */}
         <Route
           path={`${routeBase}/notes`}
           render={() => (

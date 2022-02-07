@@ -1,5 +1,4 @@
-import { Modal } from '@veupathdb/core-components';
-import { Close } from '@veupathdb/core-components/dist/components/icons';
+import { Modal, Close } from '@veupathdb/core-components';
 import { Launch } from '@material-ui/icons';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import React, { useState, PropsWithChildren, useMemo } from 'react';
@@ -24,8 +23,10 @@ export function DocumentationContainer(props: PropsWithChildren<{}>) {
   const { url } = useRouteMatch();
   const modal = activeDocument ? (
     <Modal
-      zIndex={10000}
       visible={activeDocument != null}
+      toggleVisible={() =>
+        activeDocument ? setActiveDocument(undefined) : null
+      }
       onClose={() => setActiveDocument(undefined)}
       styleOverrides={{
         content: {
