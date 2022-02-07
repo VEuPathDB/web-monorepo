@@ -50,12 +50,15 @@ export type ModalProps = {
    * */
   includeCloseButton?: boolean;
   /**
-   * Optional. If you want the modal to be able to control it's own visibility,
-   * you need to pass this prop to it. The prop must be a function that accepts
-   * a boolean value and modifies the value being passed into the modal as
+   * The prop must be a function that accepts a boolean value and
+   * modifies the value being passed into the modal as
    * the `visible` prop.
    */
-  toggleVisible?: (visible: boolean) => void;
+  toggleVisible: (visible: boolean) => void;
+  /** Optional. Function to invoke when modal is opened. */
+  onOpen?: () => void;
+  /** Optional. Function to invoke when modal is closed. */
+  onClose?: () => void;
   /** Controls the visibility of the modal. */
   visible: boolean;
   /** Optional. Control the zIndex of the modal. Defaults to 1000. */
@@ -71,6 +74,8 @@ export default function Modal({
   visible,
   zIndex = 1000,
   toggleVisible,
+  onOpen,
+  onClose,
   includeCloseButton = false,
   themeRole,
   styleOverrides = {},
@@ -125,9 +130,10 @@ export default function Modal({
     return merge({}, defaultStyle, themeStyle, styleOverrides);
   }, [themeRole, styleOverrides, theme]);
 
-  // useEffect(() => {
-  //   console.log(modalContentHeight, titleHeight);
-  // }, [modalContentHeight, titleHeight]);
+  // Invoke onOpen and onClose callbacks if specified as appropriate.
+  useEffect(() => {
+    visible ? onOpen && onOpen() : onClose && onClose();
+  }, [visible, onOpen, onClose]);
 
   return (
     <ResponsiveModal
@@ -150,7 +156,7 @@ export default function Modal({
           zIndex,
         },
         overlay: {
-          backgroundColor: gray[700] + '80',
+          backgroundColor: gray[700] + '90',
           position: 'fixed',
           top: 0,
           left: 0,
@@ -162,7 +168,7 @@ export default function Modal({
           position: 'absolute',
           ...(componentStyle.size.width
             ? {
-                maxWidth: componentStyle.size.width,
+                width: componentStyle.size.width,
                 height: componentStyle.size.height,
               }
             : { top: 75, right: 75, bottom: 75, left: 75 }),

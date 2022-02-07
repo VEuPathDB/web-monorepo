@@ -22,7 +22,6 @@ const ModalContent = ({
   >
     <div>
       <Paragraph textSize='medium'>This is an example of a modal.</Paragraph>
-
       <Paragraph>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
         tempor incididunt ut labore et dolore magna aliqua. Mi quis hendrerit
@@ -103,6 +102,15 @@ IncludeCloseButton.args = {
   ...Basic.args,
   title: 'Modal With Close Button',
   includeCloseButton: true,
+} as ModalProps;
+
+export const OpenCloseCallbacks = Template.bind({});
+OpenCloseCallbacks.args = {
+  ...Basic.args,
+  title: 'Modal With Close Button',
+  includeCloseButton: true,
+  onOpen: () => console.log('Modal Open Callback'),
+  onClose: () => console.log('Modal Close Callback'),
 } as ModalProps;
 
 export const SpecificSize = Template.bind({});
