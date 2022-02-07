@@ -1,8 +1,7 @@
-import { CSSProperties, ReactNode, useEffect, useMemo } from 'react';
+import { CSSProperties, ReactNode, useMemo } from 'react';
 import { merge } from 'lodash';
 import useDimensions from 'react-cool-dimensions';
 import { Modal as ResponsiveModal } from 'react-responsive-modal';
-// import 'react-responsive-modal/styles.css';
 
 // Components
 import { H3 } from '../typography';
