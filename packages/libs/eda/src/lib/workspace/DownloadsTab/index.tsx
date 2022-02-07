@@ -40,7 +40,10 @@ export default function DownloadsTab() {
       Header: 'File Description',
       accessor: 'file_id',
       Cell: ({ value }) => (
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div
+          style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+          role="button"
+        >
           <Download fill={mutedCyan[500]} fontSize={20} />
           <span
             style={{
