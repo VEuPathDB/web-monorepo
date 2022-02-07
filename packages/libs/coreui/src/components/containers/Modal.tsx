@@ -125,9 +125,9 @@ export default function Modal({
     return merge({}, defaultStyle, themeStyle, styleOverrides);
   }, [themeRole, styleOverrides, theme]);
 
-  useEffect(() => {
-    console.log(modalContentHeight, titleHeight);
-  }, [modalContentHeight, titleHeight]);
+  // useEffect(() => {
+  //   console.log(modalContentHeight, titleHeight);
+  // }, [modalContentHeight, titleHeight]);
 
   return (
     <ResponsiveModal
