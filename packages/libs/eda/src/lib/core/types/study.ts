@@ -5,6 +5,7 @@ import {
   RecordInstance,
 } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { TimeUnit } from './general';
+import { Field } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 
 // Aliases
 // -------
@@ -231,3 +232,9 @@ export const StudyMetadata = t.intersection([
     rootEntity: StudyEntity,
   }),
 ]);
+
+export type FieldWithMetadata = Field & {
+  precision?: number;
+  variableName?: string;
+  isFeatured?: boolean;
+};

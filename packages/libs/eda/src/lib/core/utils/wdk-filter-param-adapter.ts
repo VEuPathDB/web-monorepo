@@ -1,16 +1,23 @@
 import { groupBy, negate, partial } from 'lodash';
 
 import {
-  Field,
-  FieldTreeNode,
   Filter as WdkFilter,
+  TreeNode,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
-import { getTree } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
+import {
+  GENERATED_ROOT_FIELD,
+  getGenericTree,
+} from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
 import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 import { DistributionResponse } from '../api/SubsettingClient';
 import { Filter as EdaFilter, StringSetFilter } from '../types/filter';
-import { StudyEntity, VariableScope, VariableTreeNode } from '../types/study';
+import {
+  StudyEntity,
+  VariableScope,
+  VariableTreeNode,
+  FieldWithMetadata,
+} from '../types/study';
 
 /*
  * These adapters can be used to convert filter objects between EDA and WDK
@@ -133,7 +140,9 @@ export function fromEdaFilter(filter: EdaFilter): WdkFilter {
   } as WdkFilter;
 }
 
-export function edaVariableToWdkField(variable: VariableTreeNode): Field {
+export function edaVariableToWdkField(
+  variable: VariableTreeNode
+): FieldWithMetadata {
   return {
     display: variable.displayName,
     isRange:
@@ -148,9 +157,8 @@ export function edaVariableToWdkField(variable: VariableTreeNode): Field {
         ? variable.type
         : undefined,
     variableName: variable.providerLabel,
-    // cast to handle additional props `precision` and `variableName` that
-    // do not exist on the `Field` type
-  } as Field;
+    isFeatured: variable.type !== 'category' ? variable.isFeatured : undefined,
+  };
 }
 
 export function toWdkVariableSummary(
@@ -200,7 +208,7 @@ export function toWdkVariableSummary(
 export function entitiesToFields(
   entities: StudyEntity[],
   scope: VariableScope
-) {
+): Array<FieldWithMetadata> {
   return entities.flatMap((entity) => {
     // Create a Set of variableId so we can lookup parentIds
     const variableIds = new Set(entity.variables.map((v) => v.id));
@@ -292,12 +300,18 @@ export function shouldHideVariable(
   return hiddenVariables.has(variable.id);
 }
 
-export function makeFieldTree(fields: Field[]): FieldTreeNode {
-  const initialTree = getTree(fields, { hideSingleRoot: false });
+export function makeFieldTree(
+  fields: Array<FieldWithMetadata>
+): TreeNode<FieldWithMetadata> {
+  const initialTree = getGenericTree<FieldWithMetadata>(
+    fields,
+    GENERATED_ROOT_FIELD,
+    { hideSingleRoot: false }
+  );
   return pruneEmptyFields(initialTree);
 }
 
-export const pruneEmptyFields = (initialTree: FieldTreeNode) =>
+export const pruneEmptyFields = (initialTree: TreeNode<FieldWithMetadata>) =>
   pruneDescendantNodes(
     (node) => node.field.type != null || node.children.length > 0,
     initialTree

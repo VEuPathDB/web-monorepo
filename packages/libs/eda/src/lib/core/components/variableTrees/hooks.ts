@@ -1,8 +1,15 @@
 import { useMemo } from 'react';
 
-import { Field } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
+import {
+  Field,
+  TreeNode,
+} from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 
-import { StudyEntity, VariableScope } from '../../types/study';
+import {
+  StudyEntity,
+  VariableScope,
+  FieldWithMetadata,
+} from '../../types/study';
 import {
   edaVariableToWdkField,
   entitiesToFields,
@@ -83,13 +90,61 @@ export const useFeaturedFields = (
   }, [entities, scope]);
 
 /**
+ * Gets featured fields (similar to the previous hook) from a TreeNode such that
+ * the order of the featured fields matches their order in the TreeNode.
+ */
+export const useFeaturedFieldsFromTree = (
+  fieldTree: TreeNode<FieldWithMetadata>
+) =>
+  useMemo(
+    () =>
+      getFeaturedFieldsFromTreeRecursive(fieldTree, 'Unknown Entity').map(
+        (node) => node.field
+      ),
+    [fieldTree]
+  );
+
+const getFeaturedFieldsFromTreeRecursive = (
+  treeNode: TreeNode<FieldWithMetadata>,
+  entityName: string
+) => {
+  const filteredFieldList: TreeNode<FieldWithMetadata>[] = [];
+
+  if (treeNode.children.length > 0) {
+    // If we find an entity, persist its name through its child nodes
+    const newEntityName = treeNode.field.term.startsWith('entity')
+      ? treeNode.field.display
+      : entityName;
+
+    treeNode.children.forEach((child) =>
+      filteredFieldList.push(
+        ...getFeaturedFieldsFromTreeRecursive(child, newEntityName)
+      )
+    );
+  } else if ('isFeatured' in treeNode.field && treeNode.field.isFeatured) {
+    const newTreeNode = {
+      ...treeNode,
+      field: {
+        ...treeNode.field,
+        parent: treeNode.field.parent?.split('/')[1],
+        display: `<span class="Entity">${entityName}</span>: ${treeNode.field.display}`,
+      },
+    };
+
+    filteredFieldList.push(newTreeNode);
+  }
+
+  return filteredFieldList;
+};
+
+/**
  * Construct a hierarchical representation of variable fields from
  * a flat array of fields.
  *
  * This is used to actually display the fields (entity, variable category,
  * or variable) in a visual hierachy to the user.
  */
-export const useFieldTree = (flattenedFields: Array<Field>) =>
+export const useFieldTree = (flattenedFields: Array<FieldWithMetadata>) =>
   useMemo(() => makeFieldTree(flattenedFields), [flattenedFields]);
 
 /**
