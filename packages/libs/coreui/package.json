@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/core-components",
-  "version": "0.9.1",
+  "version": "0.10.0",
   "author": "Michael Dunn <mdunn4@nd.edu>",
   "description": "Core components and style definitions for VEuPath applications.",
   "private": false,
@@ -29,11 +29,15 @@
   },
   "homepage": "https://github.com/VEuPathDB/core-components#readme",
   "dependencies": {
+    "@emotion/react": "^11.4.0",
+    "@emotion/serialize": "^1.0.2",
+    "@emotion/styled": "^11.3.0",
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
+    "@react-hook/size": "^2.1.2",
     "lodash": "^4.17.21",
     "react-cool-dimensions": "^2.0.7",
-    "react-modal": "^3.14.3",
+    "react-responsive-modal": "^6.2.0",
     "react-table": "^7.7.0"
   },
   "devDependencies": {
@@ -44,9 +48,6 @@
     "@babel/preset-typescript": "^7.15.0",
     "@emotion/babel-plugin": "^11.3.0",
     "@emotion/babel-preset-css-prop": "^11.2.0",
-    "@emotion/react": "^11.4.0",
-    "@emotion/serialize": "^1.0.2",
-    "@emotion/styled": "^11.3.0",
     "@storybook/addon-actions": "^6.4.9",
     "@storybook/addon-essentials": "^6.4.17",
     "@storybook/addon-links": "^6.4.9",
@@ -54,7 +55,6 @@
     "@svgr/cli": "^6.0.0",
     "@types/lodash": "^4.14.172",
     "@types/mdx": "^2.0.1",
-    "@types/react-modal": "^3.12.1",
     "@types/react-table": "^7.7.8",
     "@veupathdb/tsconfig": "^1.0.1",
     "babel-loader": "^8.2.2",

@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 
-import { gray, mutedGreen, mutedMagenta } from '../../definitions/colors';
-import Modal, { ModalProps } from '../../components/containers/Modal';
+import { mutedGreen, mutedMagenta } from '../../definitions/colors';
+import CoreUIModal, { ModalProps } from '../../components/containers/Modal';
 import { FilledButton } from '../../components/buttons';
-import { secondaryFont } from '../../styleDefinitions/typography';
 import { UIThemeProvider } from '../../components/theming';
-import { Download } from '../../components/icons';
-import { Paragraph } from '../../components/typography';
+import { H1, Paragraph } from '../../components/typography';
 
 const ModalContent = ({
   themeRole,
@@ -52,7 +50,7 @@ const ModalContent = ({
 
 export default {
   title: 'Containers/Modal',
-  component: Modal,
+  component: CoreUIModal,
 } as Meta;
 
 const Template: Story<ModalProps> = (args) => {
@@ -70,16 +68,20 @@ const Template: Story<ModalProps> = (args) => {
         },
       }}
     >
-      <Modal {...rest} visible={modalVisible} toggleVisible={setModalVisible}>
+      <H1 text='Background Content' />
+      <CoreUIModal
+        {...rest}
+        visible={modalVisible}
+        toggleVisible={setModalVisible}
+      >
         <ModalContent themeRole={args.themeRole} />
-      </Modal>
+      </CoreUIModal>
     </UIThemeProvider>
   );
 };
 export const Basic = Template.bind({});
 Basic.args = {
   visible: true,
-  onOpen: () => console.log('Modal Opened'),
   styleOverrides: {
     content: {
       paddingTop: 0,
