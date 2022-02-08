@@ -29,8 +29,6 @@ type BaseProps<M extends NumberOrDate> = {
   containerStyles?: React.CSSProperties;
   /** Do not flag up value range violations */
   displayRangeViolationWarnings?: boolean;
-  /** Parent component name, e.g., HistogramFilter: will be used for adjusting input form width */
-  parentComponentName?: string;
 };
 
 export type NumberInputProps = BaseProps<number>;
@@ -80,8 +78,6 @@ function BaseInput({
   valueType,
   containerStyles,
   displayRangeViolationWarnings = true,
-  // parentComponentName
-  parentComponentName,
 }: BaseInputProps) {
   if (validator && (required || minValue != null || maxValue != null))
     console.log(
@@ -100,10 +96,7 @@ function BaseInput({
       height: 36.5, // default height is 56 and is waaaay too tall
       // 34.5 is the height of the reset button, but 36.5 lines up better
       // set width for date
-      width:
-        parentComponentName !== 'HistogramFilter' && valueType === 'date'
-          ? 160
-          : '',
+      width: valueType === 'date' ? 165 : '',
     },
   })();
 
