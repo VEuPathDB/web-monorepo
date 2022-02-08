@@ -21,6 +21,7 @@ import CustomGridLayer from './CustomGridLayer';
 import MouseTools, { MouseMode } from './MouseTools';
 import { PlotRef } from '../types/plots';
 import { ToImgopts } from 'plotly.js';
+import { LatLngBounds } from 'leaflet';
 
 const { BaseLayer } = LayersControl;
 
@@ -127,6 +128,8 @@ export interface MapVEuMapProps {
   baseLayer?: BaseLayerChoice;
   /** Callback for when the base layer has changed */
   onBaseLayerChanged?: (newBaseLayer: BaseLayerChoice) => void;
+  flyToMarkers?: boolean;
+  onFlyToMarkers?: () => void;
 }
 
 function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
@@ -144,6 +147,8 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     showMouseToolbar,
     baseLayer,
     onBaseLayerChanged,
+    flyToMarkers,
+    onFlyToMarkers,
   } = props;
 
   // this is the React Map component's onViewPortChanged handler
@@ -202,9 +207,43 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
         }
         return '';
       },
+      // flyToMarkers: () => {},
     }),
     [screenshotter]
   );
+
+  useEffect(() => {
+    if (flyToMarkers) {
+      let [minLat, maxLat, minLng, maxLng] = [90, -90, 180, -180];
+
+      for (const marker of markers) {
+        const bounds = marker.props.bounds;
+
+        if (bounds.northEast.lat > maxLat) maxLat = bounds.northEast.lat;
+        if (bounds.northEast.lat < minLat) minLat = bounds.northEast.lat;
+
+        if (bounds.northEast.lng > maxLng) maxLng = bounds.northEast.lng;
+        if (bounds.northEast.lng < minLng) minLng = bounds.northEast.lng;
+
+        if (bounds.southWest.lat > maxLat) maxLat = bounds.southWest.lat;
+        if (bounds.southWest.lat < minLat) minLat = bounds.southWest.lat;
+
+        if (bounds.southWest.lng > maxLng) maxLng = bounds.southWest.lng;
+        if (bounds.southWest.lng < minLng) minLng = bounds.southWest.lng;
+      }
+
+      // const boundingBox = new LatLngBounds([
+      //   [bounds.southWest.lat, bounds.southWest.lng],
+      //   [bounds.northEast.lat, bounds.northEast.lng],
+      // ]);
+      const boundingBox = new LatLngBounds([
+        [minLat, minLng],
+        [maxLat, maxLng],
+      ]);
+      mapRef.current?.leafletElement.fitBounds(boundingBox);
+      onFlyToMarkers && onFlyToMarkers();
+    }
+  });
 
   const finalMarkers = useMemo(() => {
     if (mouseMode === 'magnification' && !isDragging)
