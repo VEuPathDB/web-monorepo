@@ -295,22 +295,24 @@ function MapViz(props: VisualizationProps) {
 
   // const flyToMarkers1 = useRef(false);
   // const flyToMarkers2 = useRef(false);
-  const flyToMarkersState = useRef<'state1' | 'state2' | 'state3'>('state1');
+  const flyToMarkersState = useRef<
+    'start' | 'newlyDefinedOutputEntity' | 'newlyDefinedMarkers'
+  >('start');
 
   if (
     usePrevious(outputEntity) === undefined &&
     outputEntity !== undefined &&
-    flyToMarkersState.current === 'state1'
+    flyToMarkersState.current === 'start'
   ) {
-    flyToMarkersState.current = 'state2';
+    flyToMarkersState.current = 'newlyDefinedOutputEntity';
   }
 
   if (
     usePrevious(data.value?.markers) === undefined &&
     data.value?.markers !== undefined &&
-    flyToMarkersState.current === 'state2'
+    flyToMarkersState.current === 'newlyDefinedOutputEntity'
   ) {
-    flyToMarkersState.current = 'state3';
+    flyToMarkersState.current = 'newlyDefinedMarkers';
   }
 
   // console.log({ flyToMarkers1, flyToMarkers2 });
@@ -333,8 +335,8 @@ function MapViz(props: VisualizationProps) {
       onBaseLayerChanged={(newBaseLayer) =>
         updateVizConfig({ baseLayer: newBaseLayer })
       }
-      flyToMarkers={flyToMarkersState.current === 'state3'}
-      onFlyToMarkers={() => (flyToMarkersState.current = 'state1')}
+      flyToMarkers={flyToMarkersState.current === 'newlyDefinedMarkers'}
+      onFlyToMarkers={() => (flyToMarkersState.current = 'start')}
     />
   );
 
