@@ -452,10 +452,7 @@ function BarplotViz(props: VisualizationProps) {
   );
 
   useEffect(() => {
-    if (
-      (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) &&
-      !data.pending
-    ) {
+    if (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) {
       setTruncatedDependentAxisWarning(
         'Data may have been truncated by range selection, as indicated by the light gray shading'
       );

@@ -1,4 +1,4 @@
-import { useMemo, useRef, useLayoutEffect } from 'react';
+import { useMemo } from 'react';
 import { PromiseHookState } from './promise';
 import {
   XYPlotDataWithCoverage,
@@ -36,24 +36,6 @@ export function useDefaultDependentAxisRange(
 
     return axisRangeMargin(defaultDependentRange, yAxisVariable?.type);
   }, [data, yAxisVariable, vizConfig.valueSpecConfig]);
-
-  // use this to avoid infinite loop: also use useLayoutEffect to avoid async/ghost issue
-  const updateVizConfigRef = useRef(updateVizConfig);
-  useLayoutEffect(() => {
-    updateVizConfigRef.current = updateVizConfig;
-  }, [updateVizConfig]);
-
-  // update vizConfig.dependentAxisRange as it is necessary for set range correctly
-  useLayoutEffect(() => {
-    if (!data.pending)
-      updateVizConfigRef.current({
-        dependentAxisRange: defaultDependentAxisRange,
-      });
-    else
-      updateVizConfigRef.current({
-        dependentAxisRange: undefined,
-      });
-  }, [data, defaultDependentAxisRange]);
 
   return defaultDependentAxisRange;
 }

@@ -307,24 +307,14 @@ function ScatterplotViz(props: VisualizationProps) {
   // prettier-ignore
   // allow 2nd parameter of resetCheckedLegendItems for checking legend status
   const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof ScatterplotConfig, resetCheckedLegendItems?: boolean, resetTruncationWarnings?: boolean) => (newValue?: ValueType) => {
-      const newPartialConfig = resetCheckedLegendItems
-        ? {
-            [key]: newValue,
-            checkedLegendItems: undefined,
-            // set independentAxisRange undefined
-            independentAxisRange: resetTruncationWarnings ? undefined : defaultIndependentRange,
-            dependentAxisRange: resetTruncationWarnings ? undefined : defaultDependentAxisRange,
-          }
-        : {
-            [key]: newValue,
-            // set independentAxisRange undefined
-            independentAxisRange: resetTruncationWarnings ? undefined : defaultIndependentRange,
-            dependentAxisRange: resetTruncationWarnings ? undefined : defaultDependentAxisRange,
-          };
-       updateVizConfig(newPartialConfig);
-      if (resetTruncationWarnings) {
-        // close truncation warnings
+    < ValueType,>(key: keyof ScatterplotConfig, resetCheckedLegendItems?: boolean, resetAxisRanges?: boolean) => (newValue?: ValueType) => {
+      const newPartialConfig = {
+        [key]: newValue,
+        ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
+      	...(resetAxisRanges ? { independentAxisRange: undefined, dependentAxisRange: undefined } : {}),
+      };
+      updateVizConfig(newPartialConfig);
+      if (resetAxisRanges) {
         setTruncatedIndependentAxisWarning('');
         setTruncatedDependentAxisWarning('');
       }
@@ -340,6 +330,7 @@ function ScatterplotViz(props: VisualizationProps) {
   );
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
     'showMissingness',
+    true,
     true
   );
 
@@ -1032,7 +1023,7 @@ function ScatterplotWithControls({
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
     plotContainerStyles,
-    [data, checkedLegendItems]
+    [data, checkedLegendItems, vizConfig.dependentAxisRange]
   );
 
   // axis range control
@@ -1052,19 +1043,16 @@ function ScatterplotWithControls({
                 : newRange.max,
           } as NumberOrDateRange),
       });
-      // need to close TruncatedDependentAxisWarning
-      setTruncatedDependentAxisWarning('');
     },
     [updateVizConfig]
   );
 
   const handleIndependentAxisSettingsReset = useCallback(() => {
     updateVizConfig({
-      independentAxisRange: defaultUIState.independentAxisRange,
+      independentAxisRange: undefined,
     });
     // add reset for truncation message: including dependent axis warning as well
     setTruncatedIndependentAxisWarning('');
-    setTruncatedDependentAxisWarning('');
   }, [defaultUIState.independentAxisRange, updateVizConfig]);
 
   const handleDependentAxisRangeChange = useCallback(
@@ -1089,7 +1077,7 @@ function ScatterplotWithControls({
 
   const handleDependentAxisSettingsReset = useCallback(() => {
     updateVizConfig({
-      dependentAxisRange: defaultDependentAxisRange,
+      dependentAxisRange: undefined,
     });
     // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
@@ -1127,8 +1115,10 @@ function ScatterplotWithControls({
 
   useEffect(() => {
     if (
-      (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) &&
-      !scatterplotProps.showSpinner
+      // (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) &&
+      // !scatterplotProps.showSpinner
+      truncationConfigDependentAxisMin ||
+      truncationConfigDependentAxisMax
     ) {
       setTruncatedDependentAxisWarning(
         'Data may have been truncated by range selection, as indicated by the light gray shading'
@@ -1140,8 +1130,10 @@ function ScatterplotWithControls({
   const scatterplotPlotProps = {
     ...scatterplotProps,
     // axis range control
-    independentAxisRange: vizConfig.independentAxisRange,
-    dependentAxisRange: vizConfig.dependentAxisRange,
+    independentAxisRange:
+      vizConfig.independentAxisRange ?? defaultIndependentRange,
+    dependentAxisRange:
+      vizConfig.dependentAxisRange ?? defaultDependentAxisRange,
     // pass valueTypes
     independentValueType: independentValueType,
     dependentValueType: dependentValueType,
@@ -1184,8 +1176,12 @@ function ScatterplotWithControls({
           // custom legend: pass checkedLegendItems to PlotlyPlot
           checkedLegendItems={checkedLegendItems}
           // axis range control
-          independentAxisRange={vizConfig.independentAxisRange}
-          dependentAxisRange={vizConfig.dependentAxisRange}
+          independentAxisRange={
+            vizConfig.independentAxisRange ?? defaultIndependentRange
+          }
+          dependentAxisRange={
+            vizConfig.dependentAxisRange ?? defaultDependentAxisRange
+          }
           // pass valueTypes
           independentValueType={independentValueType}
           dependentValueType={dependentValueType}
@@ -1265,6 +1261,8 @@ function ScatterplotWithControls({
               paddingTop: '1.0em',
               width: '50%',
               float: 'right',
+              // to match reset button with date range form
+              marginRight: dependentValueType === 'date' ? '-1em' : '',
             }}
           />
         </LabelledGroup>
@@ -1309,6 +1307,8 @@ function ScatterplotWithControls({
               paddingTop: '1.0em',
               width: '50%',
               float: 'right',
+              // to match reset button with date range form
+              marginRight: independentValueType === 'date' ? '-1em' : '',
             }}
           />
         </LabelledGroup>

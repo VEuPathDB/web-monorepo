@@ -1,4 +1,4 @@
-import { useMemo, useRef, useLayoutEffect } from 'react';
+import { useMemo } from 'react';
 import { PromiseHookState } from './promise';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import {
