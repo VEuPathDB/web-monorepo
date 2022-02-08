@@ -23,7 +23,14 @@ import { FormControl, Select, MenuItem, InputLabel } from '@material-ui/core';
 // viz-related imports
 import { PlotLayout } from '../../layouts/PlotLayout';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
-import { useMemo, useCallback, useState, ReactElement } from 'react';
+import {
+  useMemo,
+  useCallback,
+  useState,
+  ReactElement,
+  useEffect,
+  useRef,
+} from 'react';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import DataClient, { MapMarkersRequestParams } from '../../../api/DataClient';
 import { useVizConfig } from '../../../hooks/visualizations';
@@ -33,6 +40,7 @@ import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { sumBy } from 'lodash';
 import PluginError from '../PluginError';
+import { usePrevious } from '../../../hooks/previousValue';
 
 export const mapVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -275,6 +283,40 @@ function MapViz(props: VisualizationProps) {
     [data.value, latitude, longitude, zoomLevel, vizConfig.baseLayer]
   );
 
+  // const [flyToMarkers, setFlyToMarkers] = useState(true);
+
+  // useEffect(() => {
+  //   if (outputEntity !== usePrevious(outputEntity)) {
+  //     setFlyToMarkers(true);
+  //   } else {
+  //     setFlyToMarkers(false);
+  //   }
+  // }, [outputEntity]);
+
+  // const flyToMarkers1 = useRef(false);
+  // const flyToMarkers2 = useRef(false);
+  const flyToMarkersState = useRef<'state1' | 'state2' | 'state3'>('state1');
+
+  if (
+    usePrevious(outputEntity) === undefined &&
+    outputEntity !== undefined &&
+    flyToMarkersState.current === 'state1'
+  ) {
+    flyToMarkersState.current = 'state2';
+  }
+
+  if (
+    usePrevious(data.value?.markers) === undefined &&
+    data.value?.markers !== undefined &&
+    flyToMarkersState.current === 'state2'
+  ) {
+    flyToMarkersState.current = 'state3';
+  }
+
+  // console.log({ flyToMarkers1, flyToMarkers2 });
+  console.log({ flyToMarkersState: flyToMarkersState.current });
+  console.log({ markers: data.value?.markers });
+
   const plotNode = (
     <MapVEuMap
       viewport={{ center: [latitude, longitude], zoom: zoomLevel }}
@@ -291,6 +333,8 @@ function MapViz(props: VisualizationProps) {
       onBaseLayerChanged={(newBaseLayer) =>
         updateVizConfig({ baseLayer: newBaseLayer })
       }
+      flyToMarkers={flyToMarkersState.current === 'state3'}
+      onFlyToMarkers={() => (flyToMarkersState.current = 'state1')}
     />
   );
 
