@@ -1048,7 +1048,7 @@ function processInputData<T extends number | string>(
         };
   const binWidthRange = (independentValueType === 'number' ||
   independentValueType === 'integer'
-    ? { min, max }
+    ? { min: binWidthSlider.min, max: binWidthSlider.max }
     : {
         min: binWidthSlider.min,
         max: binWidthSlider.max > 60 ? 60 : binWidthSlider.max, // back end seems to fall over with any values >99 but 60 is used in subsetting
