@@ -1,6 +1,6 @@
 import { ScatterPlotDataSeries } from '.';
 import { AvailableUnitsAddon } from './addOns';
-import { Bin, BinWidthSlider } from '../general';
+import { BinWidthSlider } from '../general';
 
 type Override<T1, T2> = Omit<T1, keyof T2> & T2;
 
@@ -10,7 +10,6 @@ export type LinePlotDataSeries = Override<
     mode?: 'lines' | 'lines+markers';
   }
 > & {
-  bins?: Bin[];
   /**
    * y coordinates for regular error bars (vertical in regular orientation)
    *

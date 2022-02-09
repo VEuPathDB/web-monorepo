@@ -4,6 +4,7 @@ import { LinePlotData } from '../types/plots';
 import { Layout } from 'plotly.js';
 import { NumberOrDateRange } from '../types/general';
 import { isArrayOfNumbers } from '../types/guards';
+import { min, max } from 'lodash';
 
 // is it possible to have this interface extend ScatterPlotProps?
 // or would we need some abstract layer, w scatter and line both as equal children below it?

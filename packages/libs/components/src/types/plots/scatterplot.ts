@@ -19,6 +19,7 @@ export type ScatterPlotDataSeries = {
       /** marker's perimeter color: no unit */
       width?: number;
     };
+    symbol?: string;
   };
   /** plot with marker: scatter plot with smoothedMean and bestfitline; line and density plots */
   line?: {
@@ -35,6 +36,8 @@ export type ScatterPlotDataSeries = {
   fillcolor?: string;
   /** R-square value for Best fit option */
   r2?: number;
+  /** opacity of points? */
+  opacity?: number;
 };
 
 export type ScatterPlotData = {
