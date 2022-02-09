@@ -72,27 +72,17 @@ export function AnalysisSummary(props: Props) {
           display: 'flex',
           alignItems: 'center',
           fontSize: '0.8em',
+          marginLeft: 25,
         }}
       >
-        {handleCopy && (
-          <FloatingButton
-            ariaLabel="Copy Analysis"
-            icon={Copy}
-            onPress={handleCopy}
+        {analysis.descriptor.subset.descriptor.length > 0 && onFilterIconClick && (
+          <FilledButton
+            text={(globalFiltersDialogOpen ? 'Hide' : 'Show') + ' all filters'}
+            onPress={onFilterIconClick}
+            icon={Filter}
             themeRole="primary"
             styleOverrides={{
-              container: { paddingLeft: 10, paddingRight: 10 },
-            }}
-          />
-        )}
-        {handleDelete && (
-          <FloatingButton
-            ariaLabel="Delete Analysis"
-            icon={Trash}
-            onPress={handleDelete}
-            themeRole="primary"
-            styleOverrides={{
-              container: { paddingLeft: 10, paddingRight: 10 },
+              container: { textTransform: 'none', width: 155 },
             }}
           />
         )}
@@ -108,17 +98,6 @@ export function AnalysisSummary(props: Props) {
         )}
       </div>
       <div style={{ display: 'flex', justifyContent: 'flex-end', flex: 1 }}>
-        {analysis.descriptor.subset.descriptor.length > 0 && onFilterIconClick && (
-          <FilledButton
-            text={(globalFiltersDialogOpen ? 'Hide' : 'Show') + ' all filters'}
-            onPress={onFilterIconClick}
-            icon={Filter}
-            themeRole="primary"
-            styleOverrides={{
-              container: { textTransform: 'none', width: 155 },
-            }}
-          />
-        )}
         {displaySharingModal && (
           <FilledButton
             text="Share Analysis"
@@ -126,7 +105,31 @@ export function AnalysisSummary(props: Props) {
             icon={Share}
             themeRole="primary"
             styleOverrides={{
-              container: { textTransform: 'none', marginLeft: 10 },
+              container: { textTransform: 'none', marginRight: 10 },
+            }}
+          />
+        )}
+        {handleCopy && (
+          <FloatingButton
+            ariaLabel="Copy Analysis"
+            tooltip="Copy analysis"
+            icon={Copy}
+            onPress={handleCopy}
+            themeRole="primary"
+            styleOverrides={{
+              container: { paddingLeft: 10, paddingRight: 10 },
+            }}
+          />
+        )}
+        {handleDelete && (
+          <FloatingButton
+            ariaLabel="Delete Analysis"
+            tooltip="Delete analysis"
+            icon={Trash}
+            onPress={handleDelete}
+            themeRole="primary"
+            styleOverrides={{
+              container: { paddingLeft: 10, paddingRight: 10 },
             }}
           />
         )}
