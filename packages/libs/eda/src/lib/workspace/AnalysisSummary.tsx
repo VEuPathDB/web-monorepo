@@ -72,9 +72,18 @@ export function AnalysisSummary(props: Props) {
           display: 'flex',
           alignItems: 'center',
           fontSize: '0.8em',
-          marginLeft: 25,
         }}
       >
+        {analysis.isPublic && (
+          <Chip
+            text="Public Analysis"
+            themeRole="secondary"
+            staticState="pressed"
+            styleOverrides={{
+              container: { marginLeft: 20, marginRight: 5 },
+            }}
+          />
+        )}
         {analysis.descriptor.subset.descriptor.length > 0 && onFilterIconClick && (
           <FilledButton
             text={(globalFiltersDialogOpen ? 'Hide' : 'Show') + ' all filters'}
@@ -82,17 +91,7 @@ export function AnalysisSummary(props: Props) {
             icon={Filter}
             themeRole="primary"
             styleOverrides={{
-              container: { textTransform: 'none', width: 155 },
-            }}
-          />
-        )}
-        {analysis.isPublic && (
-          <Chip
-            text="Public Analysis"
-            themeRole="secondary"
-            staticState="pressed"
-            styleOverrides={{
-              container: { marginLeft: 15 },
+              container: { textTransform: 'none', width: 155, marginLeft: 25 },
             }}
           />
         )}
