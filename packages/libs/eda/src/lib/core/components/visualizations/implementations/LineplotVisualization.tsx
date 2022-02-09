@@ -58,6 +58,7 @@ import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/Radio
 import BinWidthControl from '@veupathdb/components/lib/components/plotControls/BinWidthControl';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import {
+  NumberOrDateRange,
   NumberOrTimeDelta,
   NumberOrTimeDeltaRange,
   TimeDelta,
@@ -95,8 +96,6 @@ import { axisRangeMargin } from '../../../utils/axis-range-margin';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 // util to find dependent axis range
 import { defaultDependentAxisRange } from '../../../utils/default-dependent-axis-range';
-import { useRouteMatch } from 'react-router';
-import { Link } from '@veupathdb/wdk-client/lib/Components';
 import PluginError from '../PluginError';
 // for custom legend
 import PlotLegend, {
@@ -130,6 +129,8 @@ const modalPlotContainerStyles = {
 interface LinePlotDataWithCoverage extends CoverageStatistics {
   dataSetProcess: LinePlotData | FacetedData<LinePlotData>;
   // change these types to be compatible with new axis range
+  xMin: number | string | undefined;
+  xMax: number | string | undefined;
   yMin: number | string | undefined;
   yMax: number | string | undefined;
 }
@@ -144,7 +145,7 @@ export const lineplotVisualization: VisualizationType = {
 };
 
 // this needs a handling of text/image for scatter, line, and density plots
-function SelectorComponent({ name }: SelectorProps) {
+function SelectorComponent() {
   const src = line;
 
   return (
@@ -370,8 +371,7 @@ function LineplotViz(props: VisualizationProps) {
         filters ?? [],
         vizConfig,
         xAxisVariableMetadata,
-        outputEntity,
-        visualization.descriptor.type
+        outputEntity
       );
 
       const response = await dataClient.getLineplot(
@@ -455,8 +455,24 @@ function LineplotViz(props: VisualizationProps) {
       xAxisVariable,
       'lineplot'
     );
-    return axisRangeMargin(defaultIndependentRange, xAxisVariable?.type);
-  }, [xAxisVariable]);
+    // extend range due to potential binStart/Ends being outside provided range
+    const extendedIndependentRange =
+      data.value?.xMin != null &&
+      data.value?.xMax != null &&
+      defaultIndependentRange != null
+        ? ({
+            min:
+              data.value.xMin < defaultIndependentRange.min
+                ? data.value.xMin
+                : defaultIndependentRange.min,
+            max:
+              data.value.xMax < defaultIndependentRange.max
+                ? data.value.xMax
+                : defaultIndependentRange.max,
+          } as NumberOrDateRange)
+        : defaultIndependentRange;
+    return axisRangeMargin(extendedIndependentRange, xAxisVariable?.type);
+  }, [xAxisVariable, data.value]);
 
   // find deependent axis range and its margin
   const defaultDependentRangeMargin = useMemo(() => {
@@ -474,8 +490,6 @@ function LineplotViz(props: VisualizationProps) {
 
     return axisRangeMargin(defaultDependentRange, yAxisVariable?.type);
   }, [data, yAxisVariable]);
-
-  const { url } = useRouteMatch();
 
   // custom legend list
   const legendItems: LegendItemsProps[] = useMemo(() => {
@@ -839,7 +853,7 @@ export function lineplotResponseToData(
   facetVocabulary: string[] = [],
   facetVariable?: Variable
 ): LinePlotDataWithCoverage {
-  const modeValue = 'lines+markers';
+  const modeValue: LinePlotDataSeries['mode'] = 'lines+markers';
 
   const hasMissingData =
     response.lineplot.config.completeCasesAllVars !==
@@ -855,7 +869,7 @@ export function lineplotResponseToData(
   );
 
   const processedData = mapValues(facetGroupedResponseData, (group) => {
-    const { dataSetProcess, yMin, yMax } = processInputData(
+    const { dataSetProcess, yMin, yMax, xMin, xMax } = processInputData(
       reorderResponseLineplotData(
         // reorder by overlay var within each facet
         group,
@@ -870,18 +884,20 @@ export function lineplotResponseToData(
       hasMissingData,
       response.lineplot.config.binSpec,
       response.lineplot.config.binSlider,
-      overlayVariable,
-      // pass facetVariable to determine either scatter or scattergl
-      facetVariable
+      overlayVariable
     );
 
     return {
       dataSetProcess: dataSetProcess,
-      yMin: yMin,
-      yMax: yMax,
+      yMin,
+      yMax,
+      xMin,
+      xMax,
     };
   });
 
+  const xMin = min(map(processedData, ({ xMin }) => xMin));
+  const xMax = max(map(processedData, ({ xMax }) => xMax));
   const yMin = min(map(processedData, ({ yMin }) => yMin));
   const yMax = max(map(processedData, ({ yMax }) => yMax));
 
@@ -902,6 +918,8 @@ export function lineplotResponseToData(
   return {
     dataSetProcess,
     // calculated y axis limits
+    xMin,
+    xMax,
     yMin,
     yMax,
     // CoverageStatistics
@@ -919,8 +937,7 @@ function getRequestParams(
   filters: Filter[],
   vizConfig: LineplotConfig,
   xAxisVariableMetadata: Variable,
-  outputEntity?: StudyEntity,
-  vizType?: string
+  outputEntity?: StudyEntity
 ): getRequestParamsProps {
   const {
     xAxisVariable,
@@ -975,11 +992,11 @@ function getRequestParams(
 }
 
 // making plotly input data
-function processInputData<T extends number | string>(
+function processInputData(
   responseLineplotData: LineplotResponse['lineplot']['data'],
   vizType: string,
   // line, marker,
-  modeValue: string,
+  modeValue: LinePlotDataSeries['mode'],
   // use independentValueType & dependentValueType to distinguish btw number and date string
   independentValueType: string,
   dependentValueType: string,
@@ -987,16 +1004,11 @@ function processInputData<T extends number | string>(
   hasMissingData: boolean,
   binSpec: BinSpec,
   binWidthSlider: BinWidthSlider,
-  overlayVariable?: Variable,
-  // pass facetVariable to determine either scatter or scattergl
-  facetVariable?: Variable
+  overlayVariable?: Variable
 ) {
   // set fillAreaValue for densityplot
-  const fillAreaValue = vizType === 'densityplot' ? 'toself' : '';
-
-  // set variables for x- and yaxis ranges: no default values are set
-  let yMin: number | string | undefined;
-  let yMax: number | string | undefined;
+  const fillAreaValue: LinePlotDataSeries['fill'] =
+    vizType === 'densityplot' ? 'toself' : undefined;
 
   // catch the case when the back end has returned valid but completely empty data
   if (
@@ -1005,9 +1017,7 @@ function processInputData<T extends number | string>(
     )
   ) {
     return {
-      dataSetProcess: { series: [] }, // BM doesn't think this should be `undefined` for empty facets - the back end doesn't return *any* data for empty facets.
-      yMin,
-      yMax,
+      dataSetProcess: { series: [] },
     };
   }
 
@@ -1031,13 +1041,10 @@ function processInputData<T extends number | string>(
     );
   };
 
-  const markerSymbol = (index: number) =>
+  const markerSymbol = (index: number): string =>
     showMissingness && index === responseLineplotData.length - 1
       ? 'x'
       : 'circle';
-
-  // use type: scatter for faceted plot, otherwise scattergl
-  const linePlotType = facetVariable != null ? 'scatter' : 'scattergl';
 
   const binWidth =
     independentValueType === 'number' || independentValueType === 'integer'
@@ -1056,71 +1063,30 @@ function processInputData<T extends number | string>(
       }) as NumberOrTimeDeltaRange;
   const binWidthStep = binWidthSlider.step || 0.1;
 
-  // set dataSetProcess as any for now
-  let dataSetProcess: any = [];
-
-  // drawing raw data (markers) at first
-  responseLineplotData.some(function (el: any, index: number) {
-    // initialize seriesX/Y
-    let seriesX: string[] = [];
-    let seriesY: string[] = [];
-    let binStart: string[] = [];
-    let binEnd: string[] = [];
-
-    // series is for scatter plot
+  let dataSetProcess: LinePlotDataSeries[] = [];
+  responseLineplotData.some(function (el, index) {
     if (el.seriesX && el.seriesY) {
-      // check the number of x = number of y
       if (el.seriesX.length !== el.seriesY.length) {
-        // alert('The number of X data is not equal to the number of Y data');
         throw new Error(
           'The number of X data is not equal to the number of Y data'
         );
       }
 
-      /*
-        For raw data, there are two cases:
-          a) X: number string; Y: date string
-          b) X: date string; Y: number string
-      **/
-      if (independentValueType === 'date') {
-        seriesX = el.seriesX;
-        binStart = el.binStart;
-        binEnd = el.binEnd;
-      } else {
-        // seriesX are bin labels right now. need to consider if bins are optional then what?
-        seriesX = el.seriesX;
-        binStart = el.binStart.map(Number);
-        binEnd = el.binEnd.map(Number);
-      }
-      if (dependentValueType === 'date') {
-        seriesY = el.seriesY;
-      } else {
-        seriesY = el.seriesY.map(Number);
-      }
+      // use seriesX or binStart (TO DO) for x, and decode numbers where necessary
 
-      // compute yMin/yMax
-      if (seriesY.length) {
-        yMin =
-          yMin != null
-            ? lte(yMin, min(seriesY))
-              ? yMin
-              : min(seriesY)
-            : min(seriesY);
-        yMax =
-          yMax != null
-            ? gte(yMax, max(seriesY))
-              ? yMax
-              : max(seriesY)
-            : max(seriesY);
-      }
+      const seriesX =
+        independentValueType === 'number'
+          ? el.binStart.map(Number)
+          : el.binStart;
 
-      // hack for now
-      seriesX = binStart;
-      // add scatter data considering input options
+      // decode numbers in y axis where necessary
+
+      const seriesY =
+        dependentValueType === 'number' ? el.seriesY.map(Number) : el.seriesY;
+
       dataSetProcess.push({
-        x: seriesX.length ? seriesX : [null], // [null] hack required to make sure
-        y: seriesY.length ? seriesY : [null], // Plotly has a legend entry for empty traces
-        // distinguish X/Y Data from Overlay
+        x: seriesX.length ? seriesX : (([null] as unknown) as number[]), // [null] hack required to make sure
+        y: seriesY.length ? seriesY : (([null] as unknown) as number[]), // Plotly has a legend entry for empty traces
         name:
           el.overlayVariableDetails?.value != null
             ? fixLabelForNumberVariables(
@@ -1129,7 +1095,6 @@ function processInputData<T extends number | string>(
               )
             : 'Data',
         mode: modeValue,
-        type: linePlotType, // for the raw data
         fill: fillAreaValue,
         opacity: 0.7,
         marker: {
@@ -1138,18 +1103,15 @@ function processInputData<T extends number | string>(
         },
         // this needs to be here for the case of markers with line or lineplot.
         line: { color: markerColor(index), shape: 'linear' },
-        //bins: seriesY.map((_, index) => ({
-        //  binStart: binStart[index],
-        //  binEnd: binEnd[index],
-        //  binLabel: el.binLabel[index],
-        //  value: seriesY[index],
-        //})),
       });
 
       return breakAfterThisSeries(index);
     }
     return false;
   });
+
+  const xValues = dataSetProcess.flatMap<string | number>((series) => series.x);
+  const yValues = dataSetProcess.flatMap<string | number>((series) => series.y);
 
   return {
     dataSetProcess: {
@@ -1161,8 +1123,10 @@ function processInputData<T extends number | string>(
         binWidthStep,
       },
     },
-    yMin,
-    yMax,
+    xMin: min(xValues),
+    xMax: max(xValues),
+    yMin: min(yValues),
+    yMax: max(yValues),
   };
 }
 
