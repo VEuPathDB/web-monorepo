@@ -3393,10 +3393,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/components@^0.11.14":
-  version "0.11.14"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.14.tgz#f8a3d4e2c20bdbaa75657763d4bf2ac5a56188f2"
-  integrity sha512-e6spY6d2xNMxlWzGf2c51/qleTfZXorpJRwkJrWEgBOW8SGV0tJQ0UEzFnoJGpoPbgduRQBvf2RwddcK4nMBXQ==
+"@veupathdb/components@^0.11.15":
+  version "0.11.15"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.15.tgz#ab4f5a1828eb8515f33d8552cde127f0806e3a5e"
+  integrity sha512-WAZs3fMWkL+SWpuDiOzUbJ7fAbpdeniE6Q6W4aru7lpDWccAOIN5uJo0a2n+opFXr7MzcP2JMrMN3heBFb9bAQ==
   dependencies:
     "@emotion/react" "^11.7.0"
     "@material-ui/core" "^4.11.2"
@@ -3626,7 +3626,7 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/eslint-config/-/eslint-config-1.0.0.tgz#40dc855b263bd3fd68f8f61508ef55b1dc163caf"
   integrity sha512-UDgRQYsIdfB9KCkBmeqMjVQOQAAGB8RLFUj4KlLAxRcT5TlRI47ZmofB3/NMbpIHP27/pk1bryPo7z4DMwWyeQ==
 
-"@veupathdb/http-utils@^1.0.1":
+"@veupathdb/http-utils@^1.0.1", "@veupathdb/http-utils@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@veupathdb/http-utils/-/http-utils-1.1.0.tgz#fb563593aae2dd7f32eb634ea9776793b35be65f"
   integrity sha512-pkDxTCCq2y7G7tjtFSKe3I7V/SP4jpMuvRQK1HW7c8j/uQDo4a0qLbfsdaZZ/QmVUjapPYh9JS08ehd/UnDljg==
