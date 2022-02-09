@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
-import { ceil, uniqBy } from 'lodash';
+import { ceil } from 'lodash';
 
 // Components
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -161,11 +161,12 @@ export default function SubsettingDataGridModal({
   };
 
   /** Actions to take when modal is closed. */
-  const onModalClose = () => {
+  const onModalClose = useCallback(() => {
     setGridData(null);
-    setSelectedVariableDescriptors([]);
+    // Conditionally set this state to avoid re-renders.
+    setSelectedVariableDescriptors((prev) => (prev.length === 0 ? prev : []));
     setDisplayVariableTree(false);
-  };
+  }, []);
 
   const fetchPaginatedData = useCallback(
     ({ pageSize, pageIndex }) => {
