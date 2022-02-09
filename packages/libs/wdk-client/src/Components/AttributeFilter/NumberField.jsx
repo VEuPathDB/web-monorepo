@@ -40,11 +40,15 @@ export default class NumberField extends React.Component {
   }
 
   toHistogramValue(value) {
-    const scaleFactor = 10**MAX_DECIMALS;
-    const numValue = Number(value);
-    const integerPart = Math.floor(numValue);
-    const decimalPart = Math.round((numValue - integerPart) * scaleFactor) / scaleFactor;
-    return integerPart + decimalPart;
+    return Number(value);
+    // The following code causes some data to be not included in a range.
+    // If this proves to have a negative impact on the UI, we will need
+    // to find a more sophisticated way to do this.
+    // const scaleFactor = 10**MAX_DECIMALS;
+    // const numValue = Number(value);
+    // const integerPart = Math.floor(numValue);
+    // const decimalPart = Math.ceil((numValue - integerPart) * scaleFactor) / scaleFactor;
+    // return integerPart + decimalPart;
   }
 
   toFilterValue(value) {
