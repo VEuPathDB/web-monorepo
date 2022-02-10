@@ -2,6 +2,31 @@
   text-shadow: 3px 3px 0px fade-out(#02171b, 0.5);
 }
 
+
+.Header--Home ~ .Footer {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  box-sizing: border-box;
+  z-index: 999;
+}
+
+.Footer {
+  border-top: 0.0625rem solid #C0C0C0;
+  font-size: 120%;
+
+  .copyright {
+    color: grey;
+    padding-top: 0.7em;
+    font-size: 80%;
+  }
+
+  .contact-us {
+    font-style: italic; 
+  }  
+
+}
+
 .Header {
   color: #fff;
   min-width: 1000px;
@@ -10,7 +35,7 @@
   border-bottom: 4px solid #DD314E;
 
   &.Header--Home {
-    border-bottom-width: 10px;
+/*    border-bottom-width: 10px;*/
   }
 
   * {
@@ -29,14 +54,15 @@
   }
 
   h3 {
-    @include shadowed;
+   /* @include shadowed;*/
     font-style: italic;
     font-weight: 200;
-    padding: 0 0 2.4em;
+  /*  padding: 0 0 2.4em; */
+    padding: 0;
     color: white;
     text-align: center;
     margin: 0;
-    font-size: 23px;
+    font-size: 22px;
   }
 }
 

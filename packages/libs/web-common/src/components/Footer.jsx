@@ -46,7 +46,7 @@ export default enhance(function Footer(props) {
           </span>
           <br/>
         </div>
-        <div>©{new Date().getFullYear()} The VEuPathDB Project Team</div>
+        <div className="copyright">©{new Date().getFullYear()} The VEuPathDB Project Team</div>
       </div>
 
       <div>
@@ -68,7 +68,7 @@ export default enhance(function Footer(props) {
       </div>
 
       <div>
-        <div>
+        <div className="contact-us">
           Please <NewWindowLink href={webAppUrl + '/app/contact-us'}>Contact Us</NewWindowLink> with any questions or comments
         </div>
       </div>
