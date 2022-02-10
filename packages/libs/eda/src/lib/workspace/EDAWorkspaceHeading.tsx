@@ -76,8 +76,9 @@ export function EDAWorkspaceHeading({
           <div>
             <FloatingButton
               themeRole="primary"
-              text="New Analysis"
+              text="New analysis"
               tooltip="Create a new analysis"
+              textTransform="capitalize"
               size="medium"
               // @ts-ignore
               icon={AddIcon}
@@ -96,6 +97,7 @@ export function EDAWorkspaceHeading({
             <FloatingButton
               themeRole="primary"
               text="My analyses"
+              textTransform="capitalize"
               tooltip="View all your analyses of this study"
               icon={Table}
               onPress={() =>

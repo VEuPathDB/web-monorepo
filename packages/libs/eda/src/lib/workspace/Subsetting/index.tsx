@@ -86,7 +86,7 @@ export default function Subsetting({
 
   return (
     <div className={cx('-Subsetting')}>
-      <SubsettingDataGridModal
+      {/* <SubsettingDataGridModal
         displayModal={isDownloadModalOpen}
         toggleDisplay={() => setIsDownloadModalOpen(false)}
         analysisState={analysisState}
@@ -96,7 +96,7 @@ export default function Subsetting({
           total: totalEntityCount,
           filtered: filteredEntityCount,
         }}
-      />
+      /> */}
       <div className="Variables">
         <VariableTree
           scope="variableTree"

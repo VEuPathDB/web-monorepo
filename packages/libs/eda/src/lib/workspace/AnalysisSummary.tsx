@@ -112,10 +112,11 @@ export function AnalysisSummary(props: Props) {
           <FilledButton
             text={(globalFiltersDialogOpen ? 'Hide' : 'Show') + ' all filters'}
             onPress={onFilterIconClick}
+            textTransform="capitalize"
             icon={Filter}
             themeRole="primary"
             styleOverrides={{
-              container: { textTransform: 'none', width: 155 },
+              container: { width: 160 },
             }}
           />
         )}
