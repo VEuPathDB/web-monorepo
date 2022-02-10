@@ -44,6 +44,7 @@ import './index.css';
 const subsettingServiceUrl = '/eda-subsetting-service';
 const dataServiceUrl = '/eda-data-service';
 const userServiceUrl = '/eda-user-service';
+const downloadServiceUrl = '/eda-user-service';
 
 const exampleAnalysesAuthor = process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR
   ? Number(process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR)
@@ -97,6 +98,7 @@ initialize({
             subsettingServiceUrl={subsettingServiceUrl}
             dataServiceUrl={dataServiceUrl}
             userServiceUrl={userServiceUrl}
+            downloadServiceUrl={downloadServiceUrl}
             exampleAnalysesAuthor={exampleAnalysesAuthor}
             sharingUrlPrefix={window.location.href}
             showLoginForm={showLoginForm}

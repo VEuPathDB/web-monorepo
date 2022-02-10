@@ -29,6 +29,7 @@ type Props = {
   subsettingServiceUrl: string;
   dataServiceUrl: string;
   userServiceUrl: string;
+  downloadServiceUrl: string;
   exampleAnalysesAuthor?: number;
   /**
    * The base of the URL from which to being sharing links.
@@ -47,6 +48,7 @@ export function WorkspaceRouter({
   subsettingServiceUrl,
   dataServiceUrl,
   userServiceUrl,
+  downloadServiceUrl,
   exampleAnalysesAuthor,
   sharingUrlPrefix,
   showLoginForm,

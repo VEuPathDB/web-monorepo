@@ -194,7 +194,7 @@ export function toWdkVariableSummary(
  * `Term` is a reference to the item itself and can be either an 
  * entity, variable category, or variable itself.
  *
- * Variables which should be "hid[den]From" the specified
+ * Variables which should be "hid[den] from" the specified
  * "scope" will not be included.
  */
 export function entitiesToFields(

@@ -1,39 +1,79 @@
+import { useEffect, useMemo, useState } from 'react';
+import { Column } from 'react-table';
+
 import {
   H5,
   Paragraph,
   colors,
-  FloatingButton,
-  TableDownload,
   DataGrid,
   Download,
 } from '@veupathdb/core-components';
-import { SwissArmyButtonVariantProps } from '@veupathdb/core-components/dist/components/buttons';
+
 import { useUITheme } from '@veupathdb/core-components/dist/components/theming';
 import {
   gray,
   mutedCyan,
 } from '@veupathdb/core-components/dist/definitions/colors';
-import { Column } from 'react-table';
+import {
+  AnalysisState,
+  useConfiguredDownloadClient,
+  useStudyMetadata,
+} from '../../core';
+import { EntityCounts } from '../../core/hooks/entityCounts';
+import { useStudyEntities } from '../../core/hooks/study';
 
-export default function DownloadsTab() {
+import MySubset from './MySubset';
+
+type DownloadsTabProps = {
+  analysisState: AnalysisState;
+  totalCounts: EntityCounts | undefined;
+  filteredCounts: EntityCounts | undefined;
+};
+
+export default function DownloadTab({
+  analysisState,
+  totalCounts,
+  filteredCounts,
+}: DownloadsTabProps) {
   const theme = useUITheme();
+  const [studyReleases, setStudyReleases] = useState<Array<string>>([]);
 
-  const floatingButtonProps: Pick<
-    SwissArmyButtonVariantProps,
-    'icon' | 'textTransform' | 'themeRole' | 'styleOverrides'
-  > = {
-    icon: TableDownload,
-    textTransform: 'none',
-    themeRole: 'primary',
-    styleOverrides: {
-      container: { marginBottom: 10 },
-      default: {
-        color: theme?.palette.primary.hue[100],
-        textColor: theme?.palette.primary.hue[500],
-      },
-      hover: { color: theme?.palette.primary.hue[200] },
-    },
-  };
+  const downloadClient = useConfiguredDownloadClient('/eda-user-service');
+
+  const studyMetadata = useStudyMetadata();
+  const entities = useStudyEntities(studyMetadata.rootEntity);
+
+  // Consolidate entity data into a user-friendly structure.
+  const consolidatedEntityData = useMemo(() => {
+    const filteredCountsAsArray = Object.entries(filteredCounts ?? {});
+    const totalCountsAsArray = Object.entries(totalCounts ?? {});
+
+    if (!filteredCounts || !totalCounts) return [];
+
+    return entities.map((entity) => ({
+      ...entity,
+      filteredCount: filteredCountsAsArray.find(
+        ([entityID]) => entityID === entity.id
+      )?.[1],
+      totalCount: totalCountsAsArray.find(
+        ([entityID]) => entityID === entity.id
+      )?.[1],
+    }));
+  }, [entities, filteredCounts, totalCounts]);
+
+  // Get a list of all available study releases.
+  useEffect(() => {
+    downloadClient
+      .getStudyReleases(studyMetadata.id)
+      .then((result) => setStudyReleases(result));
+  }, [downloadClient, studyMetadata]);
+
+  // useEffect(() => {
+  //   studyReleases.length &&
+  //     downloadClient
+  //       .getStudyReleaseFiles(studyMetadata.id, studyReleases[0])
+  //       .then((result) => console.log(result));
+  // }, [studyReleases]);
 
   const exampleGridColumns: Array<Column> = [
     {
@@ -101,41 +141,7 @@ export default function DownloadsTab() {
   return (
     <div style={{ display: 'flex', paddingTop: 20 }}>
       <div key="Column One" style={{ marginRight: 75 }}>
-        <div key="My Subset" style={{ marginBottom: 35 }}>
-          <H5 text="My Subset" additionalStyles={{ margin: 0 }} />
-          <Paragraph
-            color={colors.gray[600]}
-            styleOverrides={{ margin: '0px 0px 10px 0px' }}
-            textSize="small"
-          >
-            Configure and download one or more tabular views
-          </Paragraph>
-          <FloatingButton
-            text={'6,266 of 12,547 Communities'}
-            onPress={() => console.log('Open Modal')}
-            {...floatingButtonProps}
-          />
-          <FloatingButton
-            text={'6,266 of 12,547 Communities'}
-            onPress={() => console.log('Open Modal')}
-            {...floatingButtonProps}
-          />
-          <FloatingButton
-            text={'6,266 of 12,547 Communities'}
-            onPress={() => console.log('Open Modal')}
-            {...floatingButtonProps}
-          />
-          <FloatingButton
-            text={'6,266 of 12,547 Communities'}
-            onPress={() => console.log('Open Modal')}
-            {...floatingButtonProps}
-          />
-          <FloatingButton
-            text={'6,266 of 12,547 Communities'}
-            onPress={() => console.log('Open Modal')}
-            {...floatingButtonProps}
-          />
-        </div>
+        <MySubset entities={consolidatedEntityData} theme={theme} />
         <div key="Current Release Dataset">
           <div style={{ marginBottom: 15 }}>
             <H5
