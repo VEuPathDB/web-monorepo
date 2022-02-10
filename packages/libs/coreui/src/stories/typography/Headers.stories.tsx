@@ -42,6 +42,28 @@ Default.args = {
   useTheme: false,
 };
 
+export const FormattedText: Story<Omit<HeaderProps, 'size'>> = (args) => {
+  return (
+    <div>
+      <H1Component {...args} />
+      <H2Component {...args} />
+      <H3Component {...args} />
+      <H4Component {...args} />
+      <H5Component {...args} />
+      <H6Component {...args} />
+    </div>
+  );
+};
+FormattedText.args = {
+  text: (
+    <span>
+      <i>Formatted </i>Text
+    </span>
+  ),
+  additionalStyles: { marginBottom: 0, marginTop: 15 },
+  useTheme: false,
+} as HeaderProps;
+
 export const UseTheme: Story<Omit<HeaderProps, 'size'>> = (args) => {
   return (
     <UIThemeProvider
