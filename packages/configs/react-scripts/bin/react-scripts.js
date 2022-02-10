@@ -26,7 +26,9 @@ switch(script) {
     }).catch(handleError);
     break;
   case "start":
-    start().catch(handleError);
+    start({
+      siteConfigPath
+    }).catch(handleError);
     break;
   case "compile":
     compile().catch(handleError);
