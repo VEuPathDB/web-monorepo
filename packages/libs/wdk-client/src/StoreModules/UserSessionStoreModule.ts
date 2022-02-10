@@ -62,7 +62,10 @@ function observeShowLoginForm(
       const { destination = window.location.href } = action.payload;
       const config = await wdkService.getConfig();
       let { oauthClientId, oauthClientUrl, oauthUrl, method } = config.authentication;
-      if (method === 'OAUTH2') {
+      if (
+        method === 'OAUTH2' &&
+        !usingExternalWebClient(oauthClientUrl)
+      ) {
         return performOAuthLogin(destination, wdkService, oauthClientId, oauthClientUrl, oauthUrl);
       }
       else { // USER_DB
@@ -120,11 +123,16 @@ function observeShowLogoutWarning(
       const { oauthClientUrl, oauthUrl, method } = config.authentication;
       const logoutUrl = oauthClientUrl + '/logout';
       if (method === 'OAUTH2') {
-        const googleSpecific = (oauthUrl.indexOf("google") != -1);
-        // don't log user out of google, only the eupath oauth server
-        const nextPage = (googleSpecific ? logoutUrl :
-          oauthUrl + "/logout?redirect_uri=" + encodeURIComponent(logoutUrl));
-        window.location.assign(nextPage);
+        if (usingExternalWebClient(oauthClientUrl)) {
+          await wdkService.logout();
+          window.location.assign('/');
+        } else {
+          const googleSpecific = (oauthUrl.indexOf("google") != -1);
+          // don't log user out of google, only the eupath oauth server
+          const nextPage = (googleSpecific ? logoutUrl :
+            oauthUrl + "/logout?redirect_uri=" + encodeURIComponent(logoutUrl));
+          window.location.assign(nextPage);
+        }
       }
       else {
         window.location.assign(logoutUrl);
@@ -132,6 +140,10 @@ function observeShowLogoutWarning(
       return logoutConfirmed();
     })
   );
+}
+
+function usingExternalWebClient(oauthClientUrl: string) {
+  return new URL(oauthClientUrl).origin !== window.location.origin;
 }
 
 async function performOAuthLogin(
