@@ -1,3 +1,11 @@
+import { HeaderWithChildrenProps, HeaderWithTextProps } from './Header';
+
+type HeaderWithChildrenPropsOmitSize = Omit<HeaderWithChildrenProps, 'size'>;
+type HeaderWithTextPropsOmitSize = Omit<HeaderWithTextProps, 'size'>;
+export type HeaderVariantProps =
+  | HeaderWithTextPropsOmitSize
+  | HeaderWithChildrenPropsOmitSize;
+
 export { default as H1 } from './H1';
 export { default as H2 } from './H2';
 export { default as H3 } from './H3';

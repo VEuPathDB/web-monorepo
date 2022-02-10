@@ -1,30 +1,13 @@
 import { ForwardedRef, forwardRef } from 'react';
+import { HeaderVariantProps } from '.';
 
-import Header, { HeaderProps } from './Header';
+import Header from './Header';
 
 function H1(
-  {
-    text,
-    color,
-    underline = false,
-    textTransform = 'none',
-    additionalStyles = {},
-    useTheme = true,
-  }: Omit<HeaderProps, 'size'>,
+  props: HeaderVariantProps,
   forwardedRef: ForwardedRef<HTMLHeadingElement>
 ) {
-  return (
-    <Header
-      ref={forwardedRef}
-      size='h1'
-      text={text}
-      color={color}
-      underline={underline}
-      textTransform={textTransform}
-      additionalStyles={additionalStyles}
-      useTheme={useTheme}
-    />
-  );
+  return <Header ref={forwardedRef} {...props} size='h1' />;
 }
 
-export default forwardRef<HTMLHeadingElement, Omit<HeaderProps, 'size'>>(H1);
+export default forwardRef<HTMLHeadingElement, HeaderVariantProps>(H1);

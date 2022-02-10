@@ -1,5 +1,4 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
-import { HeaderProps } from '../../components/typography/headers/Header';
 
 import {
   H1 as H1Component,
@@ -8,6 +7,7 @@ import {
   H4 as H4Component,
   H5 as H5Component,
   H6 as H6Component,
+  HeaderVariantProps,
 } from '../../components/typography';
 import UIThemeProvider from '../../components/theming/UIThemeProvider';
 import { green, mutedBlue, purple } from '../../definitions/colors';
@@ -24,25 +24,67 @@ export default {
   },
 } as Meta;
 
-export const Default: Story<Omit<HeaderProps, 'size'>> = (args) => {
+export const Default: Story<HeaderVariantProps> = (args) => {
+  const validArgs = {
+    text: args.text,
+    additionalStyles: args.additionalStyles,
+    useTheme: args.useTheme,
+  };
+
   return (
     <div>
-      <H1Component {...args} text={`H1: ${args.text}`} />
-      <H2Component {...args} text={`H2: ${args.text}`} />
-      <H3Component {...args} text={`H3: ${args.text}`} />
-      <H4Component {...args} text={`H4: ${args.text}`} />
-      <H5Component {...args} text={`H5: ${args.text}`} />
-      <H6Component {...args} text={`H6: ${args.text}`} />
+      <H1Component {...validArgs} text={`H1: ${validArgs.text}`} />
+      <H2Component {...validArgs} text={`H2: ${validArgs.text}`} />
+      <H3Component {...validArgs} text={`H3: ${validArgs.text}`} />
+      <H4Component {...validArgs} text={`H4: ${validArgs.text}`} />
+      <H5Component {...validArgs} text={`H5: ${validArgs.text}`} />
+      <H6Component {...validArgs} text={`H6: ${validArgs.text}`} />
     </div>
   );
 };
 Default.args = {
   text: 'Header',
+
   additionalStyles: { marginBottom: 0, marginTop: 15 },
   useTheme: false,
-};
+} as HeaderVariantProps;
 
-export const UseTheme: Story<Omit<HeaderProps, 'size'>> = (args) => {
+export const FormattedText: Story<HeaderVariantProps> = (args) => {
+  const validArgs = {
+    children: args.children,
+    additionalStyles: args.additionalStyles,
+    useTheme: args.useTheme,
+  };
+
+  return (
+    <div>
+      <H1Component {...validArgs} />
+      <H2Component {...validArgs} />
+      <H3Component {...validArgs} />
+      <H4Component {...validArgs} />
+      <H5Component {...validArgs} />
+      <H6Component {...validArgs} />
+    </div>
+  );
+};
+FormattedText.args = {
+  children: (
+    <span>
+      <i>Formatted </i>Text
+    </span>
+  ),
+  text: undefined,
+  additionalStyles: { marginBottom: 0, marginTop: 15 },
+  useTheme: false,
+} as HeaderVariantProps;
+
+export const UseTheme: Story<HeaderVariantProps> = (args) => {
+  const validArgs = {
+    text: args.text,
+    additionalStyles: args.additionalStyles,
+    useTheme: args.useTheme,
+  };
+
   return (
     <UIThemeProvider
       theme={{
@@ -84,12 +126,12 @@ export const UseTheme: Story<Omit<HeaderProps, 'size'>> = (args) => {
       }}
     >
       <div>
-        <H1Component {...args} text={`H1: ${args.text}`} />
-        <H2Component {...args} text={`H2: ${args.text}`} />
-        <H3Component {...args} text={`H3: ${args.text}`} />
-        <H4Component {...args} text={`H4: ${args.text}`} />
-        <H5Component {...args} text={`H5: ${args.text}`} />
-        <H6Component {...args} text={`H6: ${args.text}`} />
+        <H1Component {...validArgs} text={`H1: ${validArgs.text}`} />
+        <H2Component {...validArgs} text={`H2: ${validArgs.text}`} />
+        <H3Component {...validArgs} text={`H3: ${validArgs.text}`} />
+        <H4Component {...validArgs} text={`H4: ${validArgs.text}`} />
+        <H5Component {...validArgs} text={`H5: ${validArgs.text}`} />
+        <H6Component {...validArgs} text={`H6: ${validArgs.text}`} />
       </div>
     </UIThemeProvider>
   );
