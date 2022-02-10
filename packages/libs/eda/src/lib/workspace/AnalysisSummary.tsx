@@ -74,9 +74,44 @@ export function AnalysisSummary(props: Props) {
           fontSize: '0.8em',
         }}
       >
+        {analysis.isPublic && (
+          <Chip
+            text="Public Analysis"
+            themeRole="secondary"
+            staticState="pressed"
+            styleOverrides={{
+              container: { marginLeft: 20, marginRight: 5 },
+            }}
+          />
+        )}
+        {analysis.descriptor.subset.descriptor.length > 0 && onFilterIconClick && (
+          <FilledButton
+            text={(globalFiltersDialogOpen ? 'Hide' : 'Show') + ' all filters'}
+            onPress={onFilterIconClick}
+            icon={Filter}
+            themeRole="primary"
+            styleOverrides={{
+              container: { textTransform: 'none', width: 155, marginLeft: 25 },
+            }}
+          />
+        )}
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', flex: 1 }}>
+        {displaySharingModal && (
+          <FilledButton
+            text="Share Analysis"
+            onPress={displaySharingModal}
+            icon={Share}
+            themeRole="primary"
+            styleOverrides={{
+              container: { textTransform: 'none', marginRight: 10 },
+            }}
+          />
+        )}
         {handleCopy && (
           <FloatingButton
             ariaLabel="Copy Analysis"
+            tooltip="Copy analysis"
             icon={Copy}
             onPress={handleCopy}
             themeRole="primary"
@@ -88,45 +123,12 @@ export function AnalysisSummary(props: Props) {
         {handleDelete && (
           <FloatingButton
             ariaLabel="Delete Analysis"
+            tooltip="Delete analysis"
             icon={Trash}
             onPress={handleDelete}
             themeRole="primary"
             styleOverrides={{
               container: { paddingLeft: 10, paddingRight: 10 },
-            }}
-          />
-        )}
-        {analysis.isPublic && (
-          <Chip
-            text="Public Analysis"
-            themeRole="secondary"
-            staticState="pressed"
-            styleOverrides={{
-              container: { marginLeft: 15 },
-            }}
-          />
-        )}
-      </div>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', flex: 1 }}>
-        {analysis.descriptor.subset.descriptor.length > 0 && onFilterIconClick && (
-          <FilledButton
-            text={(globalFiltersDialogOpen ? 'Hide' : 'Show') + ' all filters'}
-            onPress={onFilterIconClick}
-            icon={Filter}
-            themeRole="primary"
-            styleOverrides={{
-              container: { textTransform: 'none', width: 155 },
-            }}
-          />
-        )}
-        {displaySharingModal && (
-          <FilledButton
-            text="Share Analysis"
-            onPress={displaySharingModal}
-            icon={Share}
-            themeRole="primary"
-            styleOverrides={{
-              container: { textTransform: 'none', marginLeft: 10 },
             }}
           />
         )}
