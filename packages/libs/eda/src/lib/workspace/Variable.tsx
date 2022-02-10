@@ -42,6 +42,9 @@ export function VariableDetails(props: Props) {
         variable,
         groupBy(entity.variables, (variable) => variable.parentId)
       ).length
+    : // array string to array: for generalizing Show/Hide more
+    isJsonString(variable.providerLabel)
+    ? JSON.parse(variable.providerLabel).length
     : 1;
 
   // show the first three if multifilter variable
@@ -62,7 +65,26 @@ export function VariableDetails(props: Props) {
             </div>
           );
         })
-    : variable.providerLabel.replace(/[[\]"]/g, '').replace(/[,]/g, ', ');
+    : // check if valid JSON string
+    isJsonString(variable.providerLabel)
+    ? JSON.parse(variable.providerLabel)
+        .slice(0, 3)
+        .map((variable: string, i: number) => {
+          return (
+            <div key={variable + i}>
+              {variable}
+              {numberOfProviderLabel > 3
+                ? i === 2
+                  ? ''
+                  : ','
+                : i === numberOfProviderLabel - 1
+                ? ''
+                : ','}
+              &nbsp;
+            </div>
+          );
+        })
+    : variable.providerLabel;
 
   // make variable list after the first three variables
   const providerLabelLeftover = MultiFilterVariable.is(variable)
@@ -78,6 +100,18 @@ export function VariableDetails(props: Props) {
               {variable.providerLabel
                 .replace(/[[\]"]/g, '')
                 .replace(/[,]/g, ', ')}
+              &nbsp;
+            </div>
+          );
+        })
+    : isJsonString(variable.providerLabel)
+    ? JSON.parse(variable.providerLabel)
+        .slice(3)
+        .map((variable: string, i: number) => {
+          return (
+            <div key={variable + i}>
+              {variable}
+              {i === numberOfProviderLabel - 4 ? '' : ','}
               &nbsp;
             </div>
           );
@@ -100,7 +134,8 @@ export function VariableDetails(props: Props) {
           </div>
           {/* showing three variables for multifilter or single variable */}
           &nbsp;{threeProviderLabel}
-          {MultiFilterVariable.is(variable) && numberOfProviderLabel > 3 ? (
+          {/* generalize Show/Hide more */}
+          {numberOfProviderLabel > 3 ? (
             <>
               {showMore && providerLabelLeftover}
               &nbsp;
@@ -165,4 +200,14 @@ function findMultifilterVariableLeaves(
   return variables.filter(
     (variable): variable is Variable => variable.type !== 'category'
   );
+}
+
+// function to check if valid JSON string
+function isJsonString(str: string) {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
 }
