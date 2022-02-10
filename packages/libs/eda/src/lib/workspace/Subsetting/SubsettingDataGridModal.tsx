@@ -1,18 +1,20 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
-import { ceil, uniqBy } from 'lodash';
+import { ceil } from 'lodash';
 
 // Components
 import SettingsIcon from '@material-ui/icons/Settings';
-import { H5, H3 } from '@veupathdb/core-components/dist/components/headers';
-import DataGrid from '@veupathdb/core-components/dist/components/grids/DataGrid';
-import { Modal } from '@veupathdb/core-components';
 
-import { MesaButton } from '@veupathdb/core-components/dist/components/buttons';
 import {
+  Modal,
+  H3,
+  H5,
+  DataGrid,
+  MesaButton,
   Download,
   Close,
   CloseFullscreen,
-} from '@veupathdb/core-components/dist/components/icons';
+} from '@veupathdb/core-components';
+
 import MultiSelectVariableTree from '../../core/components/variableTrees/MultiSelectVariableTree';
 import { AnalysisSummary } from '../AnalysisSummary';
 
@@ -74,10 +76,7 @@ export default function SubsettingDataGridModal({
   const studyRecord = useStudyRecord();
   const studyMetadata = useStudyMetadata();
   const subsettingClient = useSubsettingClient();
-  const featuredFields = useFeaturedFields(
-    entities,
-    'download'
-  ).filter((field) => field.term.startsWith(currentEntityID));
+  const featuredFields = useFeaturedFields(entities, 'download');
   const flattenedFields = useFlattenedFields(entities, 'download');
 
   const scopedStarredVariables = useMemo(
@@ -88,16 +87,18 @@ export default function SubsettingDataGridModal({
     [currentEntityID, starredVariables]
   );
 
-  const featuredVariables = useMemo(
+  const scopedFeaturedVariables = useMemo(
     () =>
-      featuredFields.map(
-        (field): VariableDescriptor => {
-          return {
-            entityId: currentEntityID,
-            variableId: field.term.split('/')[1],
-          };
-        }
-      ),
+      featuredFields
+        .filter((field) => field.term.startsWith(currentEntityID))
+        .map(
+          (field): VariableDescriptor => {
+            return {
+              entityId: currentEntityID,
+              variableId: field.term.split('/')[1],
+            };
+          }
+        ),
     [currentEntityID, featuredFields]
   );
 
@@ -133,10 +134,15 @@ export default function SubsettingDataGridModal({
     setSelectedVariableDescriptors,
   ] = useState<Array<VariableDescriptor>>([]);
 
+  const defaultSelection = useMemo(
+    () => scopedFeaturedVariables.concat(scopedStarredVariables),
+    [scopedFeaturedVariables, scopedStarredVariables]
+  );
+
   /**
    * Actions to take when the modal is opened.
    */
-  const onModalOpen = () => {
+  const onModalOpen = useCallback(() => {
     // Sync the current entity inside the modal to whatever is
     // current selected by the user outside the modal.
     setCurrentEntity(entities.find((entity) => entity.id === currentEntityID));
@@ -151,19 +157,22 @@ export default function SubsettingDataGridModal({
       setSelectedVariableDescriptors(previouslyStoredEntityData.variables);
     } else {
       // Use featured and starred variables as defaults if nothing is present on the analysis.
-      setSelectedVariableDescriptors([
-        ...featuredVariables,
-        ...scopedStarredVariables,
-      ]);
+      setSelectedVariableDescriptors(defaultSelection);
     }
-  };
+  }, [
+    analysisState.analysis?.descriptor.dataTableConfig,
+    currentEntityID,
+    defaultSelection,
+    entities,
+  ]);
 
   /** Actions to take when modal is closed. */
-  const onModalClose = () => {
+  const onModalClose = useCallback(() => {
     setGridData(null);
-    setSelectedVariableDescriptors([]);
+    // Conditionally set this state to avoid re-renders.
+    setSelectedVariableDescriptors((prev) => (prev.length === 0 ? prev : []));
     setDisplayVariableTree(false);
-  };
+  }, []);
 
   const fetchPaginatedData = useCallback(
     ({ pageSize, pageIndex }) => {
@@ -359,6 +368,7 @@ export default function SubsettingDataGridModal({
   return (
     <Modal
       visible={displayModal}
+      toggleVisible={toggleDisplay}
       onOpen={onModalOpen}
       onClose={onModalClose}
       styleOverrides={{
