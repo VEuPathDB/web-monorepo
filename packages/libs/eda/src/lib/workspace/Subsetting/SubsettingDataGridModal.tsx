@@ -36,6 +36,7 @@ import {
   useFlattenedFields,
 } from '../../core/components/variableTrees/hooks';
 import { useProcessedGridData } from './hooks';
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 type SubsettingDataGridProps = {
   /** Should the modal currently be visible? */
@@ -390,7 +391,7 @@ export default function SubsettingDataGridModal({
         >
           <H3
             additionalStyles={{ margin: 0, padding: 0 }}
-            text={studyRecord.displayName}
+            text={safeHtml(studyRecord.displayName)}
           />
           <Close
             fontSize={32}
