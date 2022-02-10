@@ -389,10 +389,9 @@ export default function SubsettingDataGridModal({
             alignItems: 'center',
           }}
         >
-          <H3
-            additionalStyles={{ margin: 0, padding: 0 }}
-            text={safeHtml(studyRecord.displayName)}
-          />
+          <H3 additionalStyles={{ margin: 0, padding: 0 }}>
+            {safeHtml(studyRecord.displayName)}
+          </H3>
           <Close
             fontSize={32}
             fill={colors.gray[500]}
