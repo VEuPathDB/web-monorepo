@@ -76,10 +76,7 @@ export default function SubsettingDataGridModal({
   const studyRecord = useStudyRecord();
   const studyMetadata = useStudyMetadata();
   const subsettingClient = useSubsettingClient();
-  const featuredFields = useFeaturedFields(
-    entities,
-    'download'
-  ).filter((field) => field.term.startsWith(currentEntityID));
+  const featuredFields = useFeaturedFields(entities, 'download');
   const flattenedFields = useFlattenedFields(entities, 'download');
 
   const scopedStarredVariables = useMemo(
@@ -90,16 +87,18 @@ export default function SubsettingDataGridModal({
     [currentEntityID, starredVariables]
   );
 
-  const featuredVariables = useMemo(
+  const scopedFeaturedVariables = useMemo(
     () =>
-      featuredFields.map(
-        (field): VariableDescriptor => {
-          return {
-            entityId: currentEntityID,
-            variableId: field.term.split('/')[1],
-          };
-        }
-      ),
+      featuredFields
+        .filter((field) => field.term.startsWith(currentEntityID))
+        .map(
+          (field): VariableDescriptor => {
+            return {
+              entityId: currentEntityID,
+              variableId: field.term.split('/')[1],
+            };
+          }
+        ),
     [currentEntityID, featuredFields]
   );
 
@@ -135,10 +134,15 @@ export default function SubsettingDataGridModal({
     setSelectedVariableDescriptors,
   ] = useState<Array<VariableDescriptor>>([]);
 
+  const defaultSelection = useMemo(
+    () => scopedFeaturedVariables.concat(scopedStarredVariables),
+    [scopedFeaturedVariables, scopedStarredVariables]
+  );
+
   /**
    * Actions to take when the modal is opened.
    */
-  const onModalOpen = () => {
+  const onModalOpen = useCallback(() => {
     // Sync the current entity inside the modal to whatever is
     // current selected by the user outside the modal.
     setCurrentEntity(entities.find((entity) => entity.id === currentEntityID));
@@ -153,12 +157,14 @@ export default function SubsettingDataGridModal({
       setSelectedVariableDescriptors(previouslyStoredEntityData.variables);
     } else {
       // Use featured and starred variables as defaults if nothing is present on the analysis.
-      setSelectedVariableDescriptors([
-        ...featuredVariables,
-        ...scopedStarredVariables,
-      ]);
+      setSelectedVariableDescriptors(defaultSelection);
     }
-  };
+  }, [
+    analysisState.analysis?.descriptor.dataTableConfig,
+    currentEntityID,
+    defaultSelection,
+    entities,
+  ]);
 
   /** Actions to take when modal is closed. */
   const onModalClose = useCallback(() => {
