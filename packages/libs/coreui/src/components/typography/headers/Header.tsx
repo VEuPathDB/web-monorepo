@@ -1,14 +1,13 @@
-import { ForwardedRef, forwardRef, useMemo, ReactElement } from 'react';
+import { useEffect } from 'react';
+import { ForwardedRef, forwardRef, useMemo, ReactNode } from 'react';
 
 import { gray } from '../../../definitions/colors';
 import styles from '../../../styleDefinitions';
 import useUITheme from '../../theming/useUITheme';
 
-export type HeaderProps = {
+interface HeaderCoreProps {
   /** Underlying HTML element tag to use. */
   size: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
-  /** The text of the header. This must either be a string or a <span> element. */
-  text: string | ReactElement<HTMLSpanElement>;
   /** Color of the header text. */
   color?: React.CSSProperties['color'];
   /** Whether or not to underline the text. */
@@ -19,7 +18,16 @@ export type HeaderProps = {
   useTheme?: boolean;
   /** Additional styles to apply to the header component. */
   additionalStyles?: React.CSSProperties;
-};
+}
+
+export interface HeaderWithTextProps extends HeaderCoreProps {
+  text: string;
+  children?: never;
+}
+export interface HeaderWithChildrenProps extends HeaderCoreProps {
+  text?: never;
+  children: ReactNode;
+}
 
 /**
  * Generic component which allows quick access to various HTML header
@@ -29,35 +37,22 @@ function Header(
   {
     size,
     text,
+    children,
     color,
     underline = false,
     textTransform = 'none',
     additionalStyles = {},
     useTheme = true,
-  }: HeaderProps,
+  }: HeaderWithChildrenProps | HeaderWithTextProps,
   forwardedRef: ForwardedRef<HTMLHeadingElement>
 ) {
   const Header = size;
 
-  /**
-   * Unfortunately, Typescript doesn't currently give us the ability
-   * to limit the type of element that can be passed into "text".
-   *
-   * But we want to limit it to <span> elements, so this will help us with that.
-   */
-  const headerContent = useMemo(() => {
-    if (typeof text === 'string') {
-      return text;
-    } else if (text.hasOwnProperty('type')) {
-      if (text.type === 'span') {
-        return text;
-      } else {
-        console.error(
-          'You may only pass a string or a <span> element to the `text` prop.'
-        );
-        return 'Invalid Prop Value';
-      }
-    }
+  useEffect(() => {
+    text &&
+      console.warn(
+        'The `text` prop is deprecated. Please just pass header content as children.'
+      );
   }, [text]);
 
   const theme = useUITheme();
@@ -88,9 +83,12 @@ function Header(
       ]}
       style={additionalStyles}
     >
-      {headerContent}
+      {text ? text : children}
     </Header>
   );
 }
 
-export default forwardRef<HTMLHeadingElement, HeaderProps>(Header);
+export default forwardRef<
+  HTMLHeadingElement,
+  HeaderWithChildrenProps | HeaderWithTextProps
+>(Header);
