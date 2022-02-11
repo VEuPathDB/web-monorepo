@@ -9,8 +9,13 @@ import React, {
   useMemo,
   useImperativeHandle,
   forwardRef,
+  useCallback,
 } from 'react';
-import { BoundsViewport, AnimationFunction } from './Types';
+import {
+  BoundsViewport,
+  AnimationFunction,
+  Bounds as MapVEuBounds,
+} from './Types';
 import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 import { Viewport, Map, TileLayer, LayersControl } from 'react-leaflet';
 import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
@@ -128,8 +133,10 @@ export interface MapVEuMapProps {
   baseLayer?: BaseLayerChoice;
   /** Callback for when the base layer has changed */
   onBaseLayerChanged?: (newBaseLayer: BaseLayerChoice) => void;
+  /** Whether to zoom and pan map to center on markers */
   flyToMarkers?: boolean;
-  onFlyToMarkers?: () => void;
+  /** How long (in ms) after rendering to wait before flying to markers */
+  flyToMarkersDelay?: number;
 }
 
 function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
@@ -148,7 +155,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     baseLayer,
     onBaseLayerChanged,
     flyToMarkers,
-    onFlyToMarkers,
+    flyToMarkersDelay,
   } = props;
 
   // this is the React Map component's onViewPortChanged handler
@@ -207,43 +214,68 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
         }
         return '';
       },
-      // flyToMarkers: () => {},
     }),
     [screenshotter]
   );
 
-  useEffect(() => {
-    if (flyToMarkers) {
+  const markersBounds: MapVEuBounds | null = useMemo(() => {
+    if (markers) {
       let [minLat, maxLat, minLng, maxLng] = [90, -90, 180, -180];
 
       for (const marker of markers) {
         const bounds = marker.props.bounds;
+        const ne = bounds.northEast;
+        const sw = bounds.southWest;
 
-        if (bounds.northEast.lat > maxLat) maxLat = bounds.northEast.lat;
-        if (bounds.northEast.lat < minLat) minLat = bounds.northEast.lat;
+        if (ne.lat > maxLat) maxLat = ne.lat;
+        if (ne.lat < minLat) minLat = ne.lat;
 
-        if (bounds.northEast.lng > maxLng) maxLng = bounds.northEast.lng;
-        if (bounds.northEast.lng < minLng) minLng = bounds.northEast.lng;
+        if (ne.lng > maxLng) maxLng = ne.lng;
+        if (ne.lng < minLng) minLng = ne.lng;
 
-        if (bounds.southWest.lat > maxLat) maxLat = bounds.southWest.lat;
-        if (bounds.southWest.lat < minLat) minLat = bounds.southWest.lat;
+        if (sw.lat > maxLat) maxLat = sw.lat;
+        if (sw.lat < minLat) minLat = sw.lat;
 
-        if (bounds.southWest.lng > maxLng) maxLng = bounds.southWest.lng;
-        if (bounds.southWest.lng < minLng) minLng = bounds.southWest.lng;
+        if (sw.lng > maxLng) maxLng = sw.lng;
+        if (sw.lng < minLng) minLng = sw.lng;
       }
 
-      // const boundingBox = new LatLngBounds([
-      //   [bounds.southWest.lat, bounds.southWest.lng],
-      //   [bounds.northEast.lat, bounds.northEast.lng],
-      // ]);
-      const boundingBox = new LatLngBounds([
-        [minLat, minLng],
-        [maxLat, maxLng],
-      ]);
-      mapRef.current?.leafletElement.fitBounds(boundingBox);
-      onFlyToMarkers && onFlyToMarkers();
+      return {
+        southWest: { lat: minLat, lng: minLng },
+        northEast: { lat: maxLat, lng: maxLng },
+      };
+    } else {
+      return null;
     }
-  });
+  }, [markers]);
+
+  const performFlyToMarkers = useCallback(() => {
+    if (markersBounds) {
+      const ne = markersBounds.northEast;
+      const sw = markersBounds.southWest;
+
+      const bufferFactor = 0.1;
+      const latBuffer = (ne.lat - sw.lat) * bufferFactor;
+      const lngBuffer = (ne.lng - sw.lng) * bufferFactor;
+
+      const boundingBox = new LatLngBounds([
+        [sw.lat - latBuffer, sw.lng - lngBuffer],
+        [ne.lat + latBuffer, ne.lng + lngBuffer],
+      ]);
+
+      mapRef.current?.leafletElement?.fitBounds(boundingBox);
+    }
+  }, [markersBounds, mapRef]);
+
+  useEffect(() => {
+    const asyncEffect = async () => {
+      if (flyToMarkersDelay)
+        await new Promise((resolve) => setTimeout(resolve, flyToMarkersDelay));
+      performFlyToMarkers();
+    };
+
+    if (flyToMarkers && markers.length > 0) asyncEffect();
+  }, [markers, flyToMarkers, flyToMarkersDelay, performFlyToMarkers]);
 
   const finalMarkers = useMemo(() => {
     if (mouseMode === 'magnification' && !isDragging)
@@ -258,7 +290,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       onViewportChanged={onViewportChanged}
       className={mouseMode === 'magnification' ? 'cursor-zoom-in' : ''}
       // DKDK testing worldmap issue: minZomm needs to be 2 (FHD) or 3 (4K): set to be 2
-      minZoom={2}
+      minZoom={1}
       worldCopyJump={false}
       ondragstart={() => setIsDragging(true)}
       ondragend={() => setIsDragging(false)}
