@@ -1,4 +1,4 @@
-import { CSSProperties, ReactNode, useMemo } from 'react';
+import { CSSProperties, ReactNode, useMemo, useState } from 'react';
 import { merge } from 'lodash';
 import useDimensions from 'react-cool-dimensions';
 import { Modal as ResponsiveModal } from 'react-responsive-modal';
@@ -82,6 +82,7 @@ export default function Modal({
   children,
 }: ModalProps) {
   const theme = useUITheme();
+  const [hasModalBeenOpened, setHasModalBeenOpened] = useState(false);
 
   // Track the height of the title text.
   const { observe, height: titleHeight } = useDimensions();
@@ -132,7 +133,16 @@ export default function Modal({
 
   // Invoke onOpen and onClose callbacks if specified as appropriate.
   useEffect(() => {
-    visible ? onOpen && onOpen() : onClose && onClose();
+    if (visible) {
+      // If this is the first time the modal has been open, let's record that.
+      !hasModalBeenOpened && setHasModalBeenOpened(true);
+      // Invoke onOpenCallback if it is defined.
+      onOpen && onOpen();
+    } else {
+      // Invoke the onClose callback if that modal has been opened
+      // previously and it is defined.
+      hasModalBeenOpened && onClose && onClose();
+    }
   }, [visible, onOpen, onClose]);
 
   return (
