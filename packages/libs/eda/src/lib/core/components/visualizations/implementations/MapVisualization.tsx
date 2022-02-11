@@ -5,6 +5,7 @@ import {
 } from '../VisualizationTypes';
 import map from './selectorIcons/map.svg';
 import * as t from 'io-ts';
+import _ from 'lodash';
 
 // map component related imports
 import MapVEuMap, {
@@ -23,14 +24,7 @@ import { FormControl, Select, MenuItem, InputLabel } from '@material-ui/core';
 // viz-related imports
 import { PlotLayout } from '../../layouts/PlotLayout';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
-import {
-  useMemo,
-  useCallback,
-  useState,
-  ReactElement,
-  useEffect,
-  useRef,
-} from 'react';
+import { useMemo, useCallback, useState, ReactElement } from 'react';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import DataClient, { MapMarkersRequestParams } from '../../../api/DataClient';
 import { useVizConfig } from '../../../hooks/visualizations';
@@ -40,7 +34,6 @@ import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { sumBy } from 'lodash';
 import PluginError from '../PluginError';
-import { usePrevious } from '../../../hooks/previousValue';
 
 export const mapVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -64,7 +57,7 @@ function createDefaultConfig(): MapConfig {
     mapCenterAndZoom: {
       latitude: 0,
       longitude: 0,
-      zoomLevel: 1, // TO DO: check MapVEuMap minZoom hardcoded to 2
+      zoomLevel: 1,
     },
     baseLayer: 'Street',
   };
@@ -283,42 +276,6 @@ function MapViz(props: VisualizationProps) {
     [data.value, latitude, longitude, zoomLevel, vizConfig.baseLayer]
   );
 
-  // const [flyToMarkers, setFlyToMarkers] = useState(true);
-
-  // useEffect(() => {
-  //   if (outputEntity !== usePrevious(outputEntity)) {
-  //     setFlyToMarkers(true);
-  //   } else {
-  //     setFlyToMarkers(false);
-  //   }
-  // }, [outputEntity]);
-
-  // const flyToMarkers1 = useRef(false);
-  // const flyToMarkers2 = useRef(false);
-  const flyToMarkersState = useRef<
-    'start' | 'newlyDefinedOutputEntity' | 'newlyDefinedMarkers'
-  >('start');
-
-  if (
-    usePrevious(outputEntity) === undefined &&
-    outputEntity !== undefined &&
-    flyToMarkersState.current === 'start'
-  ) {
-    flyToMarkersState.current = 'newlyDefinedOutputEntity';
-  }
-
-  if (
-    usePrevious(data.value?.markers) === undefined &&
-    data.value?.markers !== undefined &&
-    flyToMarkersState.current === 'newlyDefinedOutputEntity'
-  ) {
-    flyToMarkersState.current = 'newlyDefinedMarkers';
-  }
-
-  // console.log({ flyToMarkers1, flyToMarkers2 });
-  console.log({ flyToMarkersState: flyToMarkersState.current });
-  console.log({ markers: data.value?.markers });
-
   const plotNode = (
     <MapVEuMap
       viewport={{ center: [latitude, longitude], zoom: zoomLevel }}
@@ -335,15 +292,25 @@ function MapViz(props: VisualizationProps) {
       onBaseLayerChanged={(newBaseLayer) =>
         updateVizConfig({ baseLayer: newBaseLayer })
       }
-      flyToMarkers={flyToMarkersState.current === 'newlyDefinedMarkers'}
-      onFlyToMarkers={() => (flyToMarkersState.current = 'start')}
+      flyToMarkers={
+        data.value?.markers &&
+        data.value?.markers.length > 0 &&
+        _.isEqual(
+          vizConfig.mapCenterAndZoom,
+          createDefaultConfig().mapCenterAndZoom
+        )
+      }
+      flyToMarkersDelay={500}
     />
   );
 
   const handleGeoEntityChange = useCallback(
     (event: React.ChangeEvent<{ value: unknown }>) => {
       if (event != null)
-        updateVizConfig({ geoEntityId: event.target.value as string });
+        updateVizConfig({
+          geoEntityId: event.target.value as string,
+          mapCenterAndZoom: createDefaultConfig().mapCenterAndZoom,
+        });
     },
     [updateVizConfig]
   );
