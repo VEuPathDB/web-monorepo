@@ -42,7 +42,6 @@ class StudyMenuItem extends React.Component {
     const { study, user, permissions } = this.props;
     const { name, id, disabled, route, searches } = study;
     const SearchLink = this.renderSearchLink;
-    const edaRoute = makeEdaRoute(study.id) + '/~latest';
 
     return (
       <div className={'row StudyMenuItem' + (disabled ? ' StudyMenuItem--disabled' : '')}>
@@ -67,10 +66,9 @@ class StudyMenuItem extends React.Component {
   }
 
   renderEdaMenuItem() {
-    const { study, user, permissions } = this.props;
-    const { name, id, disabled, route, searches } = study;
-    const SearchLink = this.renderSearchLink;
-    const edaRoute = makeEdaRoute(study.id) + '/~latest';
+    const { study } = this.props;
+    const { name, id, disabled  } = study;
+    const edaRoute = makeEdaRoute(study.id) + '/new';
 
     return (
       <div className={'row StudyMenuItem' + (disabled ? ' StudyMenuItem--disabled' : '')}>

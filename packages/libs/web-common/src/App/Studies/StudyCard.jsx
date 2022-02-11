@@ -55,7 +55,7 @@ class StudyCard extends React.Component {
     const { card, user, permissions } = this.props;
     if (useEda) {
       const { disabled } = card;
-      const edaRoute = makeEdaRoute(card.id) + '/~latest';
+      const edaRoute = makeEdaRoute(card.id) + '/new';
       return (
         <Link className="StudyCard-SearchLink" to={edaRoute}>
           <div className="box StudyCard-PreFooter">
@@ -124,7 +124,7 @@ class StudyCard extends React.Component {
     const { id, name, categories, route, headline, points, disabled } = card;
     const myStudyTitle = "Go to the Study Details page";
     const primaryCategory = categories[0];
-    const edaRoute = makeEdaRoute(card.id) + '/~latest';
+    const edaRoute = makeEdaRoute(card.id) + '/new';
 
     return (
       <div className={'Card StudyCard ' + (disabled ? 'disabled' : '') + ' StudyCard__' + id}>
