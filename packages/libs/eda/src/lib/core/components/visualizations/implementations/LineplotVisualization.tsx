@@ -108,6 +108,7 @@ import * as ColorMath from 'color-math';
 //DKDK a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
 import { BinSpec, BinWidthSlider } from '../../../types/general';
+import { useVizConfig } from '../../../hooks/visualizations';
 
 const plotContainerStyles = {
   width: 750,
@@ -197,18 +198,11 @@ function LineplotViz(props: VisualizationProps) {
   );
   const dataClient: DataClient = useDataClient();
 
-  const vizConfig = useMemo(() => {
-    return pipe(
-      LineplotConfig.decode(visualization.descriptor.configuration),
-      getOrElse((): t.TypeOf<typeof LineplotConfig> => createDefaultConfig())
-    );
-  }, [visualization.descriptor.configuration]);
-
-  const updateVizConfig = useCallback(
-    (newConfig: Partial<LineplotConfig>) => {
-      updateConfiguration({ ...vizConfig, ...newConfig });
-    },
-    [updateConfiguration, vizConfig]
+  const [vizConfig, updateVizConfig] = useVizConfig(
+    visualization.descriptor.configuration,
+    LineplotConfig,
+    createDefaultConfig,
+    updateConfiguration
   );
 
   // moved the location of this findEntityAndVariable
