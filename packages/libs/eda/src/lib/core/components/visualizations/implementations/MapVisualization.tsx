@@ -144,7 +144,7 @@ function MapViz(props: VisualizationProps) {
     return geoConfigs.find(
       (config) => config.entity.id === vizConfig.geoEntityId
     );
-  }, [vizConfig.geoEntityId]);
+  }, [vizConfig.geoEntityId, geoConfigs]);
 
   const [geoEntity, outputEntity] = useMemo(() => {
     const geoEntity =
@@ -262,6 +262,7 @@ function MapViz(props: VisualizationProps) {
       vizConfig,
       boundsZoomLevel,
       computation.descriptor.type,
+      geoConfig,
     ])
   );
 
