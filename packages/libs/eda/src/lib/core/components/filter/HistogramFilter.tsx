@@ -570,8 +570,6 @@ function HistogramPlotWithControls({
         selectedRange={selectedRange}
         selectedRangeBounds={selectedRangeBounds}
         onSelectedRangeChange={handleSelectedRangeChange}
-        //DKDK parentComponentName
-        parentComponentName={'HistogramFilter'}
       />
       <Histogram
         {...histogramProps}
@@ -631,8 +629,6 @@ function HistogramPlotWithControls({
             }}
             allowPartialRange={false}
             containerStyles={{ minWidth: '400px' }}
-            //DKDK parentComponentName
-            parentComponentName={'HistogramFilter'}
           />
           {/* truncation notification */}
           {truncatedDependentAxisWarning ? (
@@ -682,8 +678,6 @@ function HistogramPlotWithControls({
             onRangeChange={handleIndependentAxisRangeChange}
             valueType={data?.valueType}
             containerStyles={{ minWidth: '400px' }}
-            //DKDK parentComponentName
-            parentComponentName={'HistogramFilter'}
           />
           {/* truncation notification */}
           {truncatedIndependentAxisWarning ? (

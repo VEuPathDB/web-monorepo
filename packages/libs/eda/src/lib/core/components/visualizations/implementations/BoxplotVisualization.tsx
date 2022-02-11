@@ -191,6 +191,7 @@ function BoxplotViz(props: VisualizationProps) {
         facetVariable,
         // set undefined for variable change
         checkedLegendItems: undefined,
+        dependentAxisRange: undefined,
       });
       // close truncation warnings
       setTruncatedDependentAxisWarning('');
@@ -235,16 +236,15 @@ function BoxplotViz(props: VisualizationProps) {
   // prettier-ignore
   // allow 2nd parameter of resetCheckedLegendItems for checking legend status
   const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof BoxplotConfig, resetCheckedLegendItems?: boolean) => (newValue?: ValueType) => {
-      const newPartialConfig = resetCheckedLegendItems
-        ? {
-            [key]: newValue,
-            checkedLegendItems: undefined
-          }
-        : {
-          [key]: newValue
-        };
-       updateVizConfig(newPartialConfig);
+    < ValueType,>(key: keyof BoxplotConfig, resetCheckedLegendItems?: boolean, resetAxisRanges?: boolean) => (newValue?: ValueType) => {
+      const newPartialConfig = {
+        [key]: newValue,
+        ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
+      	...(resetAxisRanges ? { dependentAxisRange: undefined } : {}),
+      };
+      updateVizConfig(newPartialConfig);
+      if (resetAxisRanges)
+	      setTruncatedDependentAxisWarning('');
     },
     [updateVizConfig]
   );
@@ -252,6 +252,7 @@ function BoxplotViz(props: VisualizationProps) {
   // set checkedLegendItems: undefined for the change of showMissingness
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
     'showMissingness',
+    true,
     true
   );
 
@@ -632,7 +633,7 @@ function BoxplotWithControls({
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
     plotContainerStyles,
-    [data, checkedLegendItems]
+    [data, checkedLegendItems, vizConfig.dependentAxisRange]
   );
 
   // axis range control
@@ -647,14 +648,11 @@ function BoxplotWithControls({
 
   const handleDependentAxisSettingsReset = useCallback(() => {
     updateVizConfig({
-      dependentAxisRange: defaultDependentAxisRange,
+      dependentAxisRange: undefined,
     });
     // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
-  }, [
-    // defaultUIState.dependentAxisLogScale,
-    updateVizConfig,
-  ]);
+  }, [updateVizConfig]);
 
   // set truncation flags: will see if this is reusable with other application
   const {
@@ -674,10 +672,7 @@ function BoxplotWithControls({
   );
 
   useEffect(() => {
-    if (
-      (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) &&
-      !boxplotComponentProps.showSpinner
-    ) {
+    if (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) {
       setTruncatedDependentAxisWarning(
         'Data may have been truncated by range selection, as indicated by the light gray shading'
       );
@@ -687,6 +682,8 @@ function BoxplotWithControls({
   // send boxplotComponentProps with axisTruncationConfig
   const boxplotFacetProps = {
     ...boxplotComponentProps,
+    dependentAxisRange:
+      vizConfig.dependentAxisRange ?? defaultDependentAxisRange,
     // pass axisTruncationConfig to faceted plot
     axisTruncationConfig: {
       independentAxis: {
@@ -730,8 +727,9 @@ function BoxplotWithControls({
           ref={plotRef}
           // for custom legend: pass checkedLegendItems to PlotlyPlot
           checkedLegendItems={checkedLegendItems}
-          // axis range control
-          dependentAxisRange={vizConfig.dependentAxisRange}
+          dependentAxisRange={
+            vizConfig.dependentAxisRange ?? defaultDependentAxisRange
+          }
           // pass axisTruncationConfig
           axisTruncationConfig={{
             independentAxis: {

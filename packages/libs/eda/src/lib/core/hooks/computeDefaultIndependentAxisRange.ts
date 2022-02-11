@@ -1,4 +1,4 @@
-import { useMemo, useRef, useLayoutEffect } from 'react';
+import { useMemo } from 'react';
 import { DateVariable, NumberVariable, Variable } from '../types/study';
 import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
 import { HistogramConfig } from '../components/visualizations/implementations/HistogramVisualization';
@@ -70,19 +70,6 @@ export function useDefaultIndependentAxisRange(
       ? axisRangeMargin(defaultIndependentRange, variable?.type)
       : defaultIndependentRange;
   }, [variable, plotName]);
-
-  // use this to avoid infinite loop: also use useLayoutEffect to avoid async/ghost issue
-  const updateVizConfigRefInd = useRef(updateVizConfig);
-  useLayoutEffect(() => {
-    updateVizConfigRefInd.current = updateVizConfig;
-  }, [updateVizConfig]);
-
-  // update vizConfig.dependentAxisRange as it is necessary for set range correctly
-  useLayoutEffect(() => {
-    updateVizConfigRefInd.current({
-      independentAxisRange: defaultIndependentAxisRange,
-    });
-  }, [defaultIndependentAxisRange]);
 
   return defaultIndependentAxisRange;
 }

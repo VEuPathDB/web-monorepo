@@ -240,6 +240,7 @@ function HistogramViz(props: VisualizationProps) {
         checkedLegendItems: undefined,
         // set independentAxisRange undefined
         independentAxisRange: undefined,
+        dependentAxisRange: undefined,
       });
       // close truncation warnings if exists
       setTruncatedIndependentAxisWarning('');
@@ -265,16 +266,16 @@ function HistogramViz(props: VisualizationProps) {
   // prettier-ignore
   // allow 2nd parameter of resetCheckedLegendItems for checking legend status
   const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof HistogramConfig, resetCheckedLegendItems?: boolean) => (newValue?: ValueType) => {
-      const newPartialConfig = resetCheckedLegendItems
-        ? {
-            [key]: newValue,
-            checkedLegendItems: undefined,
-          }
-        : {
-            [key]: newValue
-          };
+    < ValueType,>(key: keyof HistogramConfig, resetCheckedLegendItems?: boolean, resetAxisRanges?: boolean) => (newValue?: ValueType) => {
+      const newPartialConfig = {
+        [key]: newValue,
+        ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
+      	...(resetAxisRanges ? { independentAxisRange: undefined, dependentAxisRange: undefined } : {}),
+      };
       updateVizConfig(newPartialConfig);
+      if (resetAxisRanges)
+        setTruncatedIndependentAxisWarning('');
+	      setTruncatedDependentAxisWarning('');
     },
     [updateVizConfig]
   );
@@ -283,11 +284,16 @@ function HistogramViz(props: VisualizationProps) {
     'dependentAxisLogScale'
   );
 
-  const onValueSpecChange = onChangeHandlerFactory<ValueSpec>('valueSpec');
+  const onValueSpecChange = onChangeHandlerFactory<ValueSpec>(
+    'valueSpec',
+    false,
+    true
+  );
 
   // set checkedLegendItems: undefined for the change of showMissingness
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
     'showMissingness',
+    true,
     true
   );
 
@@ -720,7 +726,12 @@ function HistogramPlotWithControls({
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
     plotContainerStyles,
-    [data, checkedLegendItems, histogramProps.dependentAxisLogScale]
+    [
+      data,
+      checkedLegendItems,
+      histogramProps.dependentAxisLogScale,
+      vizConfig.dependentAxisRange,
+    ]
   );
 
   const widgetHeight = '4em';
@@ -748,21 +759,18 @@ function HistogramPlotWithControls({
                 : newRange.max,
           } as NumberOrDateRange),
       });
-      // need to close TruncatedDependentAxisWarning
-      setTruncatedDependentAxisWarning('');
     },
     [updateVizConfig]
   );
 
   const handleIndependentAxisSettingsReset = useCallback(() => {
     updateVizConfig({
-      independentAxisRange: defaultUIState.independentAxisRange,
+      independentAxisRange: undefined,
       binWidth: defaultUIState.binWidth,
       binWidthTimeUnit: defaultUIState.binWidthTimeUnit,
     });
     // add reset for truncation message: including dependent axis warning as well
     setTruncatedIndependentAxisWarning('');
-    setTruncatedDependentAxisWarning('');
   }, [
     defaultUIState.binWidth,
     defaultUIState.binWidthTimeUnit,
@@ -781,7 +789,7 @@ function HistogramPlotWithControls({
 
   const handleDependentAxisSettingsReset = useCallback(() => {
     updateVizConfig({
-      dependentAxisRange: defaultDependentAxisRange,
+      dependentAxisRange: undefined,
       dependentAxisLogScale: false,
     });
     // add reset for truncation message as well
@@ -819,10 +827,7 @@ function HistogramPlotWithControls({
   }, [truncationConfigIndependentAxisMin, truncationConfigIndependentAxisMax]);
 
   useEffect(() => {
-    if (
-      (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) &&
-      !histogramProps.showSpinner
-    ) {
+    if (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) {
       setTruncatedDependentAxisWarning(
         'Data may have been truncated by range selection, as indicated by the light gray shading'
       );
@@ -833,8 +838,10 @@ function HistogramPlotWithControls({
   const histogramPlotProps = {
     ...histogramProps,
     // axis range control
-    independentAxisRange: vizConfig.independentAxisRange,
-    dependentAxisRange: vizConfig.dependentAxisRange,
+    independentAxisRange:
+      vizConfig.independentAxisRange ?? defaultIndependentRange,
+    dependentAxisRange:
+      vizConfig.dependentAxisRange ?? defaultDependentAxisRange,
     // pass axisTruncationConfig props
     axisTruncationConfig: {
       independentAxis: {
@@ -876,8 +883,12 @@ function HistogramPlotWithControls({
           // for custom legend: pass checkedLegendItems to PlotlyPlot
           checkedLegendItems={checkedLegendItems}
           // axis range control
-          independentAxisRange={vizConfig.independentAxisRange}
-          dependentAxisRange={vizConfig.dependentAxisRange}
+          independentAxisRange={
+            vizConfig.independentAxisRange ?? defaultIndependentRange
+          }
+          dependentAxisRange={
+            vizConfig.dependentAxisRange ?? defaultDependentAxisRange
+          }
           // pass axisTruncationConfig
           axisTruncationConfig={{
             independentAxis: {
@@ -1023,6 +1034,8 @@ function HistogramPlotWithControls({
               paddingTop: '1.0em',
               width: '50%',
               float: 'right',
+              // to match reset button with date range form
+              marginRight: valueType === 'date' ? '-1em' : '',
             }}
           />
         </LabelledGroup>

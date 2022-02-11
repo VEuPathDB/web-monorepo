@@ -1,4 +1,4 @@
-import { useMemo, useRef, useLayoutEffect } from 'react';
+import { useMemo } from 'react';
 import { PromiseHookState } from './promise';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import {
@@ -104,24 +104,6 @@ export function useDefaultDependentAxisRange(
     (vizConfig as HistogramConfig | BarplotConfig).valueSpec,
     (vizConfig as HistogramConfig | BarplotConfig).dependentAxisLogScale,
   ]);
-
-  // use this to avoid infinite loop: also use useLayoutEffect to avoid async/ghost issue
-  const updateVizConfigRef = useRef(updateVizConfig);
-  useLayoutEffect(() => {
-    updateVizConfigRef.current = updateVizConfig;
-  }, [updateVizConfig]);
-
-  // update vizConfig.dependentAxisRange as it is necessary for set range correctly
-  useLayoutEffect(() => {
-    if (!data.pending)
-      updateVizConfigRef.current({
-        dependentAxisRange: defaultDependentAxisRange,
-      });
-    else
-      updateVizConfigRef.current({
-        dependentAxisRange: undefined,
-      });
-  }, [data, defaultDependentAxisRange]);
 
   return defaultDependentAxisRange;
 }
