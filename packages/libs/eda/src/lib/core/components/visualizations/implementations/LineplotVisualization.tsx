@@ -4,8 +4,6 @@ import LinePlot, {
 } from '@veupathdb/components/lib/plots/LinePlot';
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { getOrElse } from 'fp-ts/lib/Either';
-import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import { useCallback, useMemo } from 'react';
 
@@ -35,6 +33,7 @@ import {
   VisualizationType,
 } from '../VisualizationTypes';
 
+import Switch from '@veupathdb/components/lib/components/widgets/Switch';
 import line from './selectorIcons/line.svg';
 
 // use lodash instead of Math.min/max
@@ -157,23 +156,28 @@ function SelectorComponent() {
 function createDefaultConfig(): LineplotConfig {
   return {
     valueSpecConfig: 'Median',
+    useBinning: false,
   };
 }
 
 export type LineplotConfig = t.TypeOf<typeof LineplotConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const LineplotConfig = t.partial({
-  xAxisVariable: VariableDescriptor,
-  yAxisVariable: VariableDescriptor,
-  overlayVariable: VariableDescriptor,
-  facetVariable: VariableDescriptor,
-  valueSpecConfig: t.string,
-  binWidth: t.number,
-  binWidthTimeUnit: t.string,
-  showMissingness: t.boolean,
-  // for vizconfig.checkedLegendItems
-  checkedLegendItems: t.array(t.string),
-});
+export const LineplotConfig = t.intersection([
+  t.type({
+    valueSpecConfig: t.string,
+    useBinning: t.boolean,
+  }),
+  t.partial({
+    xAxisVariable: VariableDescriptor,
+    yAxisVariable: VariableDescriptor,
+    overlayVariable: VariableDescriptor,
+    facetVariable: VariableDescriptor,
+    binWidth: t.number,
+    binWidthTimeUnit: t.string,
+    showMissingness: t.boolean,
+    checkedLegendItems: t.array(t.string),
+  }),
+]);
 
 function LineplotViz(props: VisualizationProps) {
   const {
@@ -311,6 +315,8 @@ function LineplotViz(props: VisualizationProps) {
     'checkedLegendItems'
   );
 
+  const onUseBinningChange = onChangeHandlerFactory<boolean>('useBinning');
+
   const { xAxisVariableMetadata, outputEntity } = useMemo(() => {
     const { entity, variable } =
       findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
@@ -431,6 +437,7 @@ function LineplotViz(props: VisualizationProps) {
       vizConfig.binWidthTimeUnit,
       vizConfig.valueSpecConfig,
       vizConfig.showMissingness,
+      vizConfig.useBinning,
       computation.descriptor.type,
       visualization.descriptor.type,
       outputEntity,
@@ -460,7 +467,7 @@ function LineplotViz(props: VisualizationProps) {
                 ? data.value.xMin
                 : defaultIndependentRange.min,
             max:
-              data.value.xMax < defaultIndependentRange.max
+              data.value.xMax > defaultIndependentRange.max
                 ? data.value.xMax
                 : defaultIndependentRange.max,
           } as NumberOrDateRange)
@@ -564,7 +571,6 @@ function LineplotViz(props: VisualizationProps) {
       // set valueSpec as Raw when yAxisVariable = date
       valueSpec={vizConfig.valueSpecConfig}
       onValueSpecChange={onValueSpecChange}
-      // send visualization.type here
       onBinWidthChange={onBinWidthChange}
       vizType={visualization.descriptor.type}
       interactive={!isFaceted(data.value) ? true : false}
@@ -578,10 +584,10 @@ function LineplotViz(props: VisualizationProps) {
       }
       dependentValueType={NumberVariable.is(yAxisVariable) ? 'number' : 'date'}
       legendTitle={axisLabelWithUnit(overlayVariable)}
-      // pass checked state of legend checkbox to PlotlyPlot
       checkedLegendItems={checkedLegendItems}
-      // for vizconfig.checkedLegendItems
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
+      useBinning={vizConfig.useBinning}
+      onUseBinningChange={onUseBinningChange}
     />
   );
 
@@ -717,6 +723,8 @@ type LineplotWithControlsProps = Omit<LinePlotProps, 'data'> & {
   // custom legend
   checkedLegendItems: string[] | undefined;
   onCheckedLegendItemsChange: (checkedLegendItems: string[]) => void;
+  useBinning: boolean;
+  onUseBinningChange: (newValue: boolean) => void;
 };
 
 function LineplotWithControls({
@@ -734,18 +742,10 @@ function LineplotWithControls({
   // custom legend
   checkedLegendItems,
   onCheckedLegendItemsChange,
+  useBinning,
+  onUseBinningChange,
   ...lineplotProps
 }: LineplotWithControlsProps) {
-  // TODO Use UIState
-  // const errorManagement = useMemo((): ErrorManagement => {
-  //   return {
-  //     errors: [],
-  //     addError: (_: Error) => {},
-  //     removeError: (_: Error) => {},
-  //     clearAllErrors: () => {},
-  //   };
-  // }, []);
-
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
     plotContainerStyles,
@@ -803,6 +803,11 @@ function LineplotWithControls({
 
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <LabelledGroup label="X-axis">
+          <Switch
+            label={`Binning ${useBinning ? 'on' : 'off'}`}
+            state={useBinning}
+            onStateChange={onUseBinningChange}
+          />
           <BinWidthControl
             binWidth={data0?.binWidthSlider?.binWidth}
             onBinWidthChange={onBinWidthChange}
@@ -822,6 +827,7 @@ function LineplotWithControls({
             containerStyles={{
               minHeight: widgetHeight,
             }}
+            disabled={!useBinning}
           />
         </LabelledGroup>
       </div>
@@ -947,13 +953,14 @@ function getRequestParams(
     binWidthTimeUnit = xAxisVariableMetadata?.type === 'date'
       ? xAxisVariableMetadata.binUnits
       : undefined,
+    useBinning,
   } = vizConfig;
 
   const binSpec = binWidth
     ? {
         binSpec: {
           type: 'binWidth',
-          value: binWidth,
+          value: useBinning ? binWidth : 0,
           ...(xAxisVariableMetadata?.type === 'date'
             ? { units: binWidthTimeUnit }
             : {}),
@@ -1066,15 +1073,14 @@ function processInputData(
         );
       }
 
-      // use seriesX or binStart (TO DO) for x, and decode numbers where necessary
-
+      // use seriesX when binning is off or binStart when binned, and decode numbers where necessary
+      const xData = binSpec.value === 0 ? el.seriesX : el.binStart;
+      if (xData == null)
+        throw new Error('response did not contain binStart data');
       const seriesX =
-        independentValueType === 'number'
-          ? el.binStart.map(Number)
-          : el.binStart;
+        independentValueType === 'number' ? xData.map(Number) : xData;
 
       // decode numbers in y axis where necessary
-
       const seriesY =
         dependentValueType === 'number' ? el.seriesY.map(Number) : el.seriesY;
 

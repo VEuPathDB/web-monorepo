@@ -287,14 +287,12 @@ export interface LineplotRequestParams {
 const LineplotResponseData = array(
   intersection([
     type({
-      // changed to string array
       seriesX: array(string),
       seriesY: array(string),
-      binStart: array(string),
-      binEnd: array(string),
     }),
     partial({
-      // need to make sure if below is correct (untested)
+      binStart: array(string),
+      binEnd: array(string),
       overlayVariableDetails: StringVariableValue,
       facetVariableDetails: union([
         tuple([StringVariableValue]),
