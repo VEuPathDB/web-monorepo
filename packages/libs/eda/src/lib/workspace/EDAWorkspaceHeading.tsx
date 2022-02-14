@@ -15,13 +15,10 @@ import AddIcon from '@material-ui/icons/Add';
 
 // Hooks
 import { useStudyRecord } from '../core/hooks/workspace';
-// import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 
 // Definitions & Utilities
 import { cx } from './Utils';
 import { AnalysisState, DEFAULT_ANALYSIS_NAME } from '../core';
-// import { LinkAttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-// import { Action } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUiActions';
 import { getAnalysisId, isSavedAnalysis } from '../core/utils/analysis';
 
 interface EDAWorkspaceHeadingProps {
@@ -55,24 +52,6 @@ export function EDAWorkspaceHeading({
       <div className={cx('-Heading')}>
         <h1>{safeHtml(studyRecord.displayName)}</h1>
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          {/* {studyRecord.attributes.bulk_download_url && (
-            <div>
-              <FloatingButton
-                text="Download"
-                tooltip="Download study files"
-                icon={Download}
-                onPress={() => {
-                  attemptAction(Action.download, {
-                    studyId: studyRecord.id[0].value,
-                    onAllow: () => {
-                      window.location.href = (studyRecord.attributes
-                        .bulk_download_url as LinkAttributeValue).url;
-                    },
-                  });
-                }}
-              />
-            </div>
-          )} */}
           <div>
             <FloatingButton
               themeRole="primary"
