@@ -34,7 +34,7 @@ export function EntityDiagram(props: Props) {
       (entity) => entity.children ?? [],
       studyMetadata.rootEntity
     );
-  }, []);
+  }, [studyMetadata.rootEntity]);
   const [lastVariableMap, setLastVariableMap] = useState<
     Record<string, string>
   >({});
