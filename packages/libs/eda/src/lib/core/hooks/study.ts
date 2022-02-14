@@ -158,10 +158,7 @@ export function useFindEntityAndVariable(entities: StudyEntity[]) {
 
 export function useStudyEntities(rootEntity: StudyEntity) {
   return useMemo(
-    () =>
-      Array.from(
-        preorder(rootEntity, (e) => e.children?.slice().reverse() ?? [])
-      ),
+    () => Array.from(preorder(rootEntity, (e) => e.children ?? [])),
     [rootEntity]
   );
 }
