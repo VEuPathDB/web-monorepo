@@ -1,8 +1,8 @@
 import React, { ReactNode, useMemo } from 'react';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { TreeNode } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 
-import { StudyMetadata } from '..';
 import SubsettingClient from '../api/SubsettingClient';
 import DataClient from '../api/DataClient';
 import { AnalysisClient } from '../api/analysis-api';
@@ -12,9 +12,14 @@ import {
 } from '../context/WorkspaceContext';
 import {
   HookValue as WdkStudyRecord,
+  useStudyEntities,
   useStudyMetadata,
   useWdkStudyRecord,
 } from '../hooks/study';
+
+import { FieldWithMetadata, StudyMetadata } from '..';
+
+import { useFieldTree, useFlattenedFields } from './variableTrees/hooks';
 
 export interface Props {
   studyId: string;
@@ -24,7 +29,7 @@ export interface Props {
   subsettingClient: SubsettingClient;
   dataClient: DataClient;
   initializeMakeVariableLink?: (
-    studyMetadata: StudyMetadata
+    fieldTree: TreeNode<FieldWithMetadata>
   ) => MakeVariableLink;
 }
 
@@ -59,10 +64,13 @@ function EDAWorkspaceContainerWithLoadedData({
   wdkStudyRecord,
   studyMetadata,
 }: LoadedDataProps) {
+  const entities = useStudyEntities(studyMetadata.rootEntity);
+  const variableTreeFields = useFlattenedFields(entities, 'variableTree');
+  const variableTree = useFieldTree(variableTreeFields);
+
   const makeVariableLink = useMemo(
-    () =>
-      initializeMakeVariableLink && initializeMakeVariableLink(studyMetadata),
-    [initializeMakeVariableLink, studyMetadata]
+    () => initializeMakeVariableLink?.(variableTree),
+    [initializeMakeVariableLink, variableTree]
   );
 
   return (

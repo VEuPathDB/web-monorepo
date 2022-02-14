@@ -1,16 +1,15 @@
 import { ReactNode, useCallback } from 'react';
 import { useRouteMatch } from 'react-router';
 
-import { find } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { EDAWorkspaceContainer, StudyMetadata } from '../core';
+import { TreeNode } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
+
+import { EDAWorkspaceContainer, FieldWithMetadata } from '../core';
 import {
   useConfiguredAnalysisClient,
   useConfiguredDataClient,
   useConfiguredSubsettingClient,
 } from '../core/hooks/client';
 import { VariableDescriptor } from '../core/types/variable';
-import { EDAWorkspace } from './EDAWorkspace';
 import { cx, findFirstVariable } from './Utils';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -35,7 +34,6 @@ interface Props {
 /** Allows a user to create a new analysis or edit an existing one. */
 export function WorkspaceContainer({
   studyId,
-  analysisId,
   subsettingServiceUrl,
   dataServiceUrl,
   userServiceUrl,
@@ -46,19 +44,17 @@ export function WorkspaceContainer({
   const dataClient = useConfiguredDataClient(dataServiceUrl);
   const analysisClient = useConfiguredAnalysisClient(userServiceUrl);
   const initializeMakeVariableLink = useCallback(
-    (studyMetadata: StudyMetadata) => ({
+    (fieldTree: TreeNode<FieldWithMetadata>) => ({
       entityId: maybeEntityId,
       variableId: maybeVariableId,
     }: Partial<VariableDescriptor>) => {
-      const entityId = maybeEntityId ?? studyMetadata.rootEntity.id;
-      const entity = find(
-        (entity) => entity.id === entityId,
-        preorder(studyMetadata.rootEntity, (e) => e.children ?? [])
-      );
+      const entityId = maybeEntityId ?? fieldTree.field.term.split(':')[1];
+
       const variableId =
         maybeVariableId ??
-        (entity.variables.length !== 0 &&
-          findFirstVariable(entity.variables)?.id);
+        (entityId &&
+          findFirstVariable(fieldTree, entityId)?.field.term.split('/')[1]);
+
       return entityId && variableId
         ? `${url}/variables/${entityId}/${variableId}`
         : entityId
