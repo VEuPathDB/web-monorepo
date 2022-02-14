@@ -289,7 +289,6 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       style={{ height, width }}
       onViewportChanged={onViewportChanged}
       className={mouseMode === 'magnification' ? 'cursor-zoom-in' : ''}
-      // DKDK testing worldmap issue: minZomm needs to be 2 (FHD) or 3 (4K): set to be 2
       minZoom={1}
       worldCopyJump={false}
       ondragstart={() => setIsDragging(true)}
