@@ -3554,10 +3554,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/core-components@^0.11.1":
-  version "0.11.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.11.1.tgz#6a3e78829f3587f54af45582a80a7639cbbdb01c"
-  integrity sha512-j0Y2qqa7yPBLyWoYXTJtGtVbOAdsD7sbZyM6oUhwTneM52yrn1RsQn8gyF6IWYNXhVhnJ/Tt1uCOohaDCQWDTA==
+"@veupathdb/core-components@^0.11.2":
+  version "0.11.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.11.2.tgz#bb53d4c85b2e093b301553904dbb3ff69c9fe211"
+  integrity sha512-Qo2lcz/iYeN8zagNqb5sJ+FtocUBbTiKk/wKu/DCcnDkQjz9vv6/lzMB3/dkTkhiW35yaoZBp4KfHYBvM1/7pA==
   dependencies:
     "@emotion/react" "^11.4.0"
     "@emotion/serialize" "^1.0.2"
