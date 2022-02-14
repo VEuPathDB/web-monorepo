@@ -45,14 +45,11 @@ export function WorkspaceContainer({
   const subsettingClient = useConfiguredSubsettingClient(subsettingServiceUrl);
   const dataClient = useConfiguredDataClient(dataServiceUrl);
   const analysisClient = useConfiguredAnalysisClient(userServiceUrl);
-  const makeVariableLink = useCallback(
-    (
-      {
-        entityId: maybeEntityId,
-        variableId: maybeVariableId,
-      }: Partial<VariableDescriptor>,
-      studyMetadata: StudyMetadata
-    ) => {
+  const initializeMakeVariableLink = useCallback(
+    (studyMetadata: StudyMetadata) => ({
+      entityId: maybeEntityId,
+      variableId: maybeVariableId,
+    }: Partial<VariableDescriptor>) => {
       const entityId = maybeEntityId ?? studyMetadata.rootEntity.id;
       const entity = find(
         (entity) => entity.id === entityId,
@@ -79,7 +76,7 @@ export function WorkspaceContainer({
       analysisClient={analysisClient}
       dataClient={dataClient}
       subsettingClient={subsettingClient}
-      makeVariableLink={makeVariableLink}
+      initializeMakeVariableLink={initializeMakeVariableLink}
     >
       {children}
     </EDAWorkspaceContainer>
