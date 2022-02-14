@@ -107,6 +107,10 @@
 
   &-AnalysisNameEditBox {
     font-style: italic;
+
+    i.wdk-Icon.edit {
+      color: #338899 !important;
+    }
   }
 
   &-SeeAllFiltersButton {

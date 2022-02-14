@@ -18,6 +18,7 @@ import {
   TabularDataRequestParams,
   TabularDataResponse,
 } from './types';
+import { submitAsForm } from '@veupathdb/wdk-client/lib/Utils/FormSubmitter';
 
 export default class SubsettingClient extends FetchClientWithCredentials {
   getStudies(): Promise<StudyOverview[]> {
@@ -103,19 +104,16 @@ export default class SubsettingClient extends FetchClientWithCredentials {
     entityId: string,
     params: TabularDataRequestParams
   ): Promise<void> {
-    fetch(`${this.baseUrl}/studies/${studyId}/entities/${entityId}/tabular`, {
-      ...this.init,
-      method: 'POST',
-      body: JSON.stringify(params),
-      headers: {
-        ...this.init.headers,
-        accept: 'text/tab-separated-values',
-        'content-type': 'application/json',
-        'Auth-Key': await this.findUserRequestAuthKey(),
+    submitAsForm({
+      action: `${
+        this.baseUrl
+      }/studies/${studyId}/entities/${entityId}/tabular?Auth-Key=${encodeURIComponent(
+        await this.findUserRequestAuthKey()
+      )}`,
+      inputs: {
+        data: JSON.stringify(params),
       },
-    })
-      .then((response) => response.blob())
-      .then((blob) => saveAs(blob, 'subset.txt'));
+    });
   }
 }
 
