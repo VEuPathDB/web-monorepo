@@ -94,7 +94,7 @@ const makeRenderCellContent = (user, permissions) => props => {
   );
 
   if (props.attribute.name === 'primary_key' && useEda) {
-    return <Link to={`${makeEdaRoute(props.record.id[0].value)}/~latest/details`}>{safeHtml(props.record.attributes.primary_key)}</Link>
+    return <Link to={`${makeEdaRoute(props.record.id[0].value)}/new/details`}>{safeHtml(props.record.attributes.primary_key)}</Link>
   }
 
   if (props.attribute.name === 'study_categories') {
