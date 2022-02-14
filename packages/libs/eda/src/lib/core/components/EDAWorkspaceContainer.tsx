@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 import SubsettingClient from '../api/SubsettingClient';
 import DataClient from '../api/DataClient';
@@ -12,7 +12,7 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
 export interface Props {
   studyId: string;
-  children: React.ReactChild | React.ReactChild[];
+  children: ReactNode;
   className?: string;
   analysisClient: AnalysisClient;
   subsettingClient: SubsettingClient;

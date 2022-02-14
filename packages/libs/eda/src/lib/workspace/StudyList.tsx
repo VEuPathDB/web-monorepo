@@ -4,7 +4,10 @@ import {
   useSetDocumentTitle,
 } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
+import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
+
 import { useWdkStudyRecords } from '../core/hooks/study';
+import { getStudyAccess } from '@veupathdb/study-data-access/lib/shared/studies';
 
 interface StudyListProps {
   subsettingServiceUrl: string;
@@ -15,11 +18,13 @@ interface StudyListProps {
  */
 export function StudyList(props: StudyListProps) {
   const { baseUrl } = props;
-  const datasets = useWdkStudyRecords();
+  const datasets = useWdkStudyRecords(['study_access']);
+
+  const permissions = usePermissions();
 
   useSetDocumentTitle('All studies');
 
-  if (datasets == null) return <Loading />;
+  if (datasets == null || permissions.loading) return <Loading />;
   return (
     <div>
       <h1>EDA Workspace</h1>
@@ -30,8 +35,9 @@ export function StudyList(props: StudyListProps) {
           .map((dataset) => {
             return (
               <li key={dataset.attributes.dataset_id as string}>
-                <Link to={`${baseUrl}/${dataset.attributes.dataset_id}`}>
-                  {safeHtml(dataset.displayName)}
+                <Link to={`${baseUrl}/${dataset.attributes.dataset_id}/new`}>
+                  {safeHtml(dataset.displayName)} [
+                  <b>{getStudyAccess(dataset)}</b>]
                 </Link>
               </li>
             );

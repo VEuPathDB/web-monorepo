@@ -1,10 +1,8 @@
-import { useCallback } from 'react';
+import { ReactNode, useCallback } from 'react';
 import { useRouteMatch } from 'react-router';
 
 import { find } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { RestrictedPage } from '@veupathdb/study-data-access/lib/data-restriction/RestrictedPage';
-import { useApprovalStatus } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 import { EDAWorkspaceContainer, StudyMetadata } from '../core';
 import {
   useConfiguredAnalysisClient,
@@ -31,14 +29,7 @@ interface Props {
   subsettingServiceUrl: string;
   dataServiceUrl: string;
   userServiceUrl: string;
-  /**
-   * The base of the URL from which to being sharing links.
-   * This is passed down through several component layers. */
-  sharingUrlPrefix: string;
-  /**
-   * A callback to open a login form.
-   * This is also passed down through several component layers. */
-  showLoginForm: () => void;
+  children: ReactNode;
 }
 
 /** Allows a user to create a new analysis or edit an existing one. */
@@ -48,8 +39,7 @@ export function WorkspaceContainer({
   subsettingServiceUrl,
   dataServiceUrl,
   userServiceUrl,
-  sharingUrlPrefix,
-  showLoginForm,
+  children,
 }: Props) {
   const { url } = useRouteMatch();
   const subsettingClient = useConfiguredSubsettingClient(subsettingServiceUrl);
@@ -80,26 +70,18 @@ export function WorkspaceContainer({
     },
     [url]
   );
-  const approvalStatus = useApprovalStatus(studyId, 'analysis');
   const classes = useStyles();
 
   return (
-    <RestrictedPage approvalStatus={approvalStatus}>
-      <EDAWorkspaceContainer
-        studyId={studyId}
-        className={`${cx()} ${classes.workspace}`}
-        analysisClient={analysisClient}
-        dataClient={dataClient}
-        subsettingClient={subsettingClient}
-        makeVariableLink={makeVariableLink}
-      >
-        <EDAWorkspace
-          studyId={studyId}
-          analysisId={analysisId}
-          sharingUrlPrefix={sharingUrlPrefix}
-          showLoginForm={showLoginForm}
-        />
-      </EDAWorkspaceContainer>
-    </RestrictedPage>
+    <EDAWorkspaceContainer
+      studyId={studyId}
+      className={`${cx()} ${classes.workspace}`}
+      analysisClient={analysisClient}
+      dataClient={dataClient}
+      subsettingClient={subsettingClient}
+      makeVariableLink={makeVariableLink}
+    >
+      {children}
+    </EDAWorkspaceContainer>
   );
 }

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { uniq } from 'lodash';
+import Path from 'path';
 import {
   Redirect,
   Route,
@@ -9,11 +10,9 @@ import {
 } from 'react-router';
 
 // Functions
-import { getAnalysisId } from '../core/utils/analysis';
 import { cx } from './Utils';
 
 // Definitions
-import { AnalysisState } from '../core';
 import { Status } from '../core';
 
 // Hooks
@@ -42,6 +41,15 @@ import NotesTab from './NotesTab';
 import DownloadsTab from './DownloadsTab';
 import { Alert } from '@material-ui/lab';
 import ShareFromAnalysis from './sharing/ShareFromAnalysis';
+import { string } from 'fp-ts';
+import { useWorkspaceAnalysis } from './hooks/analyses';
+import {
+  ApprovalStatus,
+  useApprovalStatus,
+} from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
+import { RestrictedPage } from '@veupathdb/study-data-access/lib/data-restriction/RestrictedPage';
+import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
+import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
 
 const AnalysisTabErrorBoundary = ({
   children,
@@ -68,7 +76,8 @@ const AnalysisTabErrorBoundary = ({
 );
 
 interface Props {
-  analysisState: AnalysisState;
+  analysisId?: string;
+  studyId: string;
   hideCopyAndSave?: boolean;
   /**
    * The base of the URL from which to being sharing links.
@@ -89,12 +98,14 @@ interface Props {
  * also acting as a router that toggles some of the displayed content.
  */
 export function AnalysisPanel({
-  analysisState,
+  analysisId,
+  studyId,
   hideCopyAndSave = false,
   sharingUrlPrefix,
   showLoginForm,
 }: Props) {
   const studyRecord = useStudyRecord();
+  const analysisState = useWorkspaceAnalysis(studyId, analysisId);
 
   const {
     status,
@@ -123,7 +134,16 @@ export function AnalysisPanel({
     false
   );
 
-  const analysisId = getAnalysisId(analysis);
+  const permissionsValue = usePermissions();
+  const approvalStatus: ApprovalStatus = permissionsValue.loading
+    ? 'loading'
+    : permissionsValue.permissions.perDataset[studyId] == null
+    ? 'study-not-found'
+    : permissionsValue.permissions.perDataset[studyId]?.actionAuthorization
+        .subsetting
+    ? 'approved'
+    : 'not-approved';
+
   const previousAnalysisId = usePrevious(analysisId);
 
   useEffect(() => {
@@ -164,154 +184,167 @@ export function AnalysisPanel({
       </div>
     );
   if (analysis == null) return <Loading />;
+  if (approvalStatus === 'not-approved')
+    return <Redirect to={Path.normalize(routeBase + '/..')} />;
   return (
-    <ShowHideVariableContextProvider>
-      <ShareFromAnalysis
-        visible={sharingModalVisible}
-        toggleVisible={setSharingModalVisible}
-        analysisState={analysisState}
-        sharingUrlPrefix={sharingUrlPrefix}
-        showLoginForm={showLoginForm}
-      />
-      <div className={cx('-Analysis')}>
-        <AnalysisSummary
-          analysis={analysis}
-          setAnalysisName={setName}
-          copyAnalysis={hideCopyAndSave ? undefined : copyAnalysis}
-          saveAnalysis={saveAnalysis}
-          deleteAnalysis={hideCopyAndSave ? undefined : deleteAnalysis}
-          onFilterIconClick={() =>
-            setGlobalFiltersDialogOpen(!globalFiltersDialogOpen)
-          }
-          globalFiltersDialogOpen={globalFiltersDialogOpen}
-          displaySharingModal={() => setSharingModalVisible(true)}
+    <RestrictedPage approvalStatus={approvalStatus}>
+      <ShowHideVariableContextProvider>
+        <EDAWorkspaceHeading analysisState={analysisState} />
+        <ShareFromAnalysis
+          visible={sharingModalVisible}
+          toggleVisible={setSharingModalVisible}
+          analysisState={analysisState}
+          sharingUrlPrefix={sharingUrlPrefix}
+          showLoginForm={showLoginForm}
         />
-        <GlobalFiltersDialog
-          open={globalFiltersDialogOpen}
-          setOpen={setGlobalFiltersDialogOpen}
-          entities={entities}
-          filters={analysis.descriptor.subset.descriptor}
-          setFilters={setFilters}
-          removeFilter={(filter) =>
-            setFilters(
-              analysis.descriptor.subset.descriptor.filter((f) => f !== filter)
-            )
-          }
-        />
-        <Route
-          path={[
-            `${routeBase}/variables/:entityId?/:variableId?`,
-            `${routeBase}`,
-          ]}
-          render={(
-            props: RouteComponentProps<{
-              entityId?: string;
-              variableId?: string;
-            }>
-          ) => (
-            <div className="Entities">
-              <EntityDiagram
-                expanded
-                orientation="horizontal"
-                selectedEntity={props.match.params.entityId}
-                selectedVariable={props.match.params.variableId}
-                entityCounts={totalCounts.value}
-                filteredEntityCounts={filteredCounts.value}
-                filteredEntities={filteredEntities}
-              />
-            </div>
-          )}
-        />
-        <WorkspaceNavigation
-          heading={<></>}
-          routeBase={routeBase}
-          items={[
-            {
-              display: 'View study details',
-              route: `/details`,
-              exact: false,
-              replace: true,
-            },
-            {
-              display: 'Browse and subset',
-              route: `/variables${lastVarPath}`,
-              exact: false,
-              replace: true,
-            },
-            {
-              display: 'Visualize',
-              // check whether user is at viz
-              route: location.pathname
-                .replace(routeBase, '')
-                .startsWith('/visualizations')
-                ? '/visualizations'
-                : `/visualizations${lastVizPath}`,
-              exact: false,
-              replace: true,
-            },
-            // {
-            //   display: 'Downloads',
-            //   route: '/downloads',
-            // },
-            {
-              display: 'Notes',
-              route: '/notes',
-            },
-          ]}
-        />
-        <Route
-          path={routeBase}
-          exact
-          render={() => <Redirect to={`${routeBase}/variables`} />}
-        />
-        <Route
-          path={`${routeBase}/details`}
-          render={() => (
-            <AnalysisTabErrorBoundary>
-              <RecordController
-                recordClass="dataset"
-                primaryKey={studyRecord.id.map((p) => p.value).join('/')}
-              />
-            </AnalysisTabErrorBoundary>
-          )}
-        />
-        <Route
-          path={`${routeBase}/variables/:entityId?`}
-          exact
-          render={(props) => (
-            <DefaultVariableRedirect {...props.match.params} />
-          )}
-        />
-        <Route
-          path={`${routeBase}/variables/:entityId/:variableId`}
-          exact
-          render={(
-            props: RouteComponentProps<{ entityId: string; variableId: string }>
-          ) => (
-            <AnalysisTabErrorBoundary>
-              <Subsetting
-                {...props.match.params}
-                analysisState={analysisState}
-                totalCounts={totalCounts.value}
-                filteredCounts={filteredCounts.value}
-              />
-            </AnalysisTabErrorBoundary>
-          )}
-        />
-        <Route
-          path={`${routeBase}/visualizations`}
-          render={() => (
-            <AnalysisTabErrorBoundary>
-              <ComputationRoute
-                analysisState={analysisState}
-                totalCounts={totalCounts}
-                filteredCounts={filteredCounts}
-                geoConfigs={geoConfigs}
-              />
-            </AnalysisTabErrorBoundary>
-          )}
-        />
-        {/* <Route
+        <div className={cx('-Analysis')}>
+          <AnalysisSummary
+            analysis={analysis}
+            setAnalysisName={setName}
+            copyAnalysis={hideCopyAndSave ? undefined : copyAnalysis}
+            saveAnalysis={saveAnalysis}
+            deleteAnalysis={hideCopyAndSave ? undefined : deleteAnalysis}
+            onFilterIconClick={() =>
+              setGlobalFiltersDialogOpen(!globalFiltersDialogOpen)
+            }
+            globalFiltersDialogOpen={globalFiltersDialogOpen}
+            displaySharingModal={() => setSharingModalVisible(true)}
+          />
+          <GlobalFiltersDialog
+            open={globalFiltersDialogOpen}
+            setOpen={setGlobalFiltersDialogOpen}
+            entities={entities}
+            filters={analysis.descriptor.subset.descriptor}
+            setFilters={setFilters}
+            removeFilter={(filter) =>
+              setFilters(
+                analysis.descriptor.subset.descriptor.filter(
+                  (f) => f !== filter
+                )
+              )
+            }
+          />
+          <Route
+            path={[
+              `${routeBase}/variables/:entityId?/:variableId?`,
+              `${routeBase}`,
+            ]}
+            render={(
+              props: RouteComponentProps<{
+                entityId?: string;
+                variableId?: string;
+              }>
+            ) => (
+              <div className="Entities">
+                <EntityDiagram
+                  expanded
+                  orientation="horizontal"
+                  selectedEntity={props.match.params.entityId}
+                  selectedVariable={props.match.params.variableId}
+                  entityCounts={totalCounts.value}
+                  filteredEntityCounts={filteredCounts.value}
+                  filteredEntities={filteredEntities}
+                />
+              </div>
+            )}
+          />
+          <WorkspaceNavigation
+            heading={<></>}
+            routeBase={routeBase}
+            items={[
+              {
+                display: 'View study details',
+                route: `/details`,
+                exact: false,
+                replace: true,
+              },
+              {
+                display: 'Browse and subset',
+                route: `/variables${lastVarPath}`,
+                exact: false,
+                replace: true,
+              },
+              {
+                display: 'Visualize',
+                // check whether user is at viz
+                route: location.pathname
+                  .replace(routeBase, '')
+                  .startsWith('/visualizations')
+                  ? '/visualizations'
+                  : `/visualizations${lastVizPath}`,
+                exact: false,
+                replace: true,
+              },
+              // {
+              //   display: 'Downloads',
+              //   route: '/downloads',
+              // },
+              {
+                display: 'Notes',
+                route: '/notes',
+              },
+            ]}
+          />
+          <Route
+            path={routeBase}
+            exact
+            render={() =>
+              approvalStatus === 'approved' && (
+                <Redirect to={`${routeBase}/variables`} />
+              )
+            }
+          />
+          <Route
+            path={`${routeBase}/details`}
+            render={() => (
+              <AnalysisTabErrorBoundary>
+                <RecordController
+                  recordClass="dataset"
+                  primaryKey={studyRecord.id.map((p) => p.value).join('/')}
+                />
+              </AnalysisTabErrorBoundary>
+            )}
+          />
+          <Route
+            path={`${routeBase}/variables/:entityId?`}
+            exact
+            render={(props) => (
+              <DefaultVariableRedirect {...props.match.params} />
+            )}
+          />
+          <Route
+            path={`${routeBase}/variables/:entityId/:variableId`}
+            exact
+            render={(
+              props: RouteComponentProps<{
+                entityId: string;
+                variableId: string;
+              }>
+            ) => (
+              <AnalysisTabErrorBoundary>
+                <Subsetting
+                  {...props.match.params}
+                  analysisState={analysisState}
+                  totalCounts={totalCounts.value}
+                  filteredCounts={filteredCounts.value}
+                />
+              </AnalysisTabErrorBoundary>
+            )}
+          />
+          <Route
+            path={`${routeBase}/visualizations`}
+            render={() => (
+              <AnalysisTabErrorBoundary>
+                <ComputationRoute
+                  analysisState={analysisState}
+                  totalCounts={totalCounts}
+                  filteredCounts={filteredCounts}
+                  geoConfigs={geoConfigs}
+                />
+              </AnalysisTabErrorBoundary>
+            )}
+          />
+          {/* <Route
           path={`${routeBase}/downloads`}
           render={() => (
             <AnalysisTabErrorBoundary>
@@ -319,15 +352,16 @@ export function AnalysisPanel({
             </AnalysisTabErrorBoundary>
           )}
         /> */}
-        <Route
-          path={`${routeBase}/notes`}
-          render={() => (
-            <AnalysisTabErrorBoundary>
-              <NotesTab analysisState={analysisState} />
-            </AnalysisTabErrorBoundary>
-          )}
-        />
-      </div>
-    </ShowHideVariableContextProvider>
+          <Route
+            path={`${routeBase}/notes`}
+            render={() => (
+              <AnalysisTabErrorBoundary>
+                <NotesTab analysisState={analysisState} />
+              </AnalysisTabErrorBoundary>
+            )}
+          />
+        </div>
+      </ShowHideVariableContextProvider>
+    </RestrictedPage>
   );
 }
