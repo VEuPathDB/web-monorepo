@@ -30,7 +30,7 @@ export const EDAWorkspace = ({
       <EDAWorkspaceHeading analysisState={analysisState} />
       <AnalysisPanel
         analysisState={analysisState}
-        hideCopyAndSave={isNewAnalysis(analysisState.analysis)}
+        hideSavedAnalysisButtons={isNewAnalysis(analysisState.analysis)}
         sharingUrlPrefix={sharingUrlPrefix}
         showLoginForm={showLoginForm}
       />
