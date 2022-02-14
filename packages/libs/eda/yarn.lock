@@ -3398,10 +3398,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/components@^0.11.13":
-  version "0.11.13"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.13.tgz#16b36885c2e2386dd519ee57dc1151e7586cb780"
-  integrity sha512-XfcgxGfEwHBCYl29FLa+GC0QkxoozDeh3glMINuOfcqQeGcKE0dWEtud0xGKp6l/hn1iPSGPlBG5HG2EZPBbKw==
+"@veupathdb/components@^0.11.15":
+  version "0.11.15"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.15.tgz#ab4f5a1828eb8515f33d8552cde127f0806e3a5e"
+  integrity sha512-WAZs3fMWkL+SWpuDiOzUbJ7fAbpdeniE6Q6W4aru7lpDWccAOIN5uJo0a2n+opFXr7MzcP2JMrMN3heBFb9bAQ==
   dependencies:
     "@emotion/react" "^11.7.0"
     "@material-ui/core" "^4.11.2"
@@ -3554,10 +3554,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/core-components@^0.11.0":
-  version "0.11.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.11.0.tgz#cdb637dceba112e00381f847fdbd225ad2a9228e"
-  integrity sha512-ryVJoefywW3+zQ1GhPaOQzVsgwQnmz7xGDX38W7syU0U0IufC35NdU8tK5PLOFU9rh62e4AePDuHFJORZzg93w==
+"@veupathdb/core-components@^0.11.1":
+  version "0.11.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.11.1.tgz#6a3e78829f3587f54af45582a80a7639cbbdb01c"
+  integrity sha512-j0Y2qqa7yPBLyWoYXTJtGtVbOAdsD7sbZyM6oUhwTneM52yrn1RsQn8gyF6IWYNXhVhnJ/Tt1uCOohaDCQWDTA==
   dependencies:
     "@emotion/react" "^11.4.0"
     "@emotion/serialize" "^1.0.2"
@@ -3631,10 +3631,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/eslint-config/-/eslint-config-1.0.0.tgz#40dc855b263bd3fd68f8f61508ef55b1dc163caf"
   integrity sha512-UDgRQYsIdfB9KCkBmeqMjVQOQAAGB8RLFUj4KlLAxRcT5TlRI47ZmofB3/NMbpIHP27/pk1bryPo7z4DMwWyeQ==
 
-"@veupathdb/http-utils@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/http-utils/-/http-utils-1.0.1.tgz#e3e2b616a43d82170c73e5ce44e80c740a960ee6"
-  integrity sha512-MURe3oXkK1ABOkVH94dK2NDBeh7KBphQUgjWNKAcn0ckT1+v5AUC8R7xkRd7P84wJT3inQE0vhEiItnoj6lYCg==
+"@veupathdb/http-utils@^1.0.1", "@veupathdb/http-utils@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/http-utils/-/http-utils-1.1.0.tgz#fb563593aae2dd7f32eb634ea9776793b35be65f"
+  integrity sha512-pkDxTCCq2y7G7tjtFSKe3I7V/SP4jpMuvRQK1HW7c8j/uQDo4a0qLbfsdaZZ/QmVUjapPYh9JS08ehd/UnDljg==
   dependencies:
     fp-ts "^2.11.5"
     io-ts "^2.2.16"
@@ -3730,10 +3730,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/wdk-client@^0.5.4":
-  version "0.5.4"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.5.4.tgz#a4e2ecfdaf66f8f6f02fab82c273b120a608fe86"
-  integrity sha512-pEIVIPDvNs8kBJhBen97lT9ixqgDzbjYeYjmvCkM5u5Q3SRLXl5DNs2o0yCkVJBynXSUHbOUg2me3VqsKAGXHw==
+"@veupathdb/wdk-client@^0.5.5":
+  version "0.5.5"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.5.5.tgz#2d6a6bb2e71787f0fdd5fc3638ecacd44dc1f784"
+  integrity sha512-Dvzk2ARUaPw2LxZxWwz86p2Ha5uYt3S1A8TT0Xm8xpa8iroWPlEc6tcaR9UTSLL7Qcp2ScITTBH8sdz6o6noRg==
   dependencies:
     "@types/datatables.net" "^1.10.5"
     "@types/flot" "^0.0.31"
@@ -8754,7 +8754,12 @@ forwarded@0.2.0:
   resolved "https://registry.yarnpkg.com/forwarded/-/forwarded-0.2.0.tgz#2269936428aad4c15c7ebe9779a84bf0b2a81811"
   integrity sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==
 
-fp-ts@^2.11.5, fp-ts@^2.9.3:
+fp-ts@^2.11.5:
+  version "2.11.8"
+  resolved "https://registry.yarnpkg.com/fp-ts/-/fp-ts-2.11.8.tgz#411cde116c446d568f5597b03352d8b3f98e8f82"
+  integrity sha512-WQT6rP6Jt3TxMdQB3IKzvfZKLuldumntgumLhIUhvPrukTHdWNI4JgEHY04Bd0LIOR9IQRpB+7RuxgUU0Vhmcg==
+
+fp-ts@^2.9.3:
   version "2.11.5"
   resolved "https://registry.yarnpkg.com/fp-ts/-/fp-ts-2.11.5.tgz#97cceb26655b1452d7088d6fb0864f84cceffbe4"
   integrity sha512-OqlwJq1BdpB83BZXTqI+dNcA6uYk6qk4u9Cgnt64Y+XS7dwdbp/mobx8S2KXf2AXH+scNmA/UVK3SEFHR3vHZA==

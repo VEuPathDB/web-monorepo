@@ -4,7 +4,7 @@
 
   .FeaturedVariables {
     padding: 0.5em 1em;
-    border: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
     summary {
       outline: none;
       cursor: pointer;
@@ -162,4 +162,9 @@
       border-bottom: 1px solid #ccc;
     }
   }
+}
+
+// variant
+.Variables .FeaturedVariables {
+  border: 1px solid #ccc;
 }
