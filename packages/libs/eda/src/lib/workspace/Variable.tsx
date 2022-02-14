@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { HelpIcon } from '@veupathdb/wdk-client/lib/Components';
 import { ErrorBoundary } from '@veupathdb/wdk-client/lib/Controllers';
 import {
@@ -36,53 +36,31 @@ export function VariableDetails(props: Props) {
   // set showMore state
   const [showMore, setShowMore] = useState(false);
 
-  // find the number of variables for multifilter case
-  const numberOfProviderLabel = MultiFilterVariable.is(variable)
-    ? findMultifilterVariableLeaves(
-        variable,
-        groupBy(entity.variables, (variable) => variable.parentId)
-      ).length
-    : 1;
+  // find all label
+  const providerLabel = useMemo(() => {
+    return MultiFilterVariable.is(variable)
+      ? findMultifilterVariableLeaves(
+          variable,
+          groupBy(entity.variables, (variable) => variable.parentId)
+        )
+      : isJsonString(variable.providerLabel)
+      ? JSON.parse(variable.providerLabel)
+      : variable.providerLabel;
+  }, [entity, variable]);
 
   // show the first three if multifilter variable
-  const threeProviderLabel = MultiFilterVariable.is(variable)
-    ? findMultifilterVariableLeaves(
-        variable,
-        groupBy(entity.variables, (variable) => variable.parentId)
-      )
-        .slice(0, 3)
-        .map((variable, i) => {
-          return (
-            <div key={variable.id}>
-              {variable.displayName}:{' '}
-              {variable.providerLabel
-                .replace(/[[\]"]/g, '')
-                .replace(/[,]/g, ', ')}
-              &nbsp;
-            </div>
-          );
-        })
-    : variable.providerLabel.replace(/[[\]"]/g, '').replace(/[,]/g, ', ');
+  const threeProviderLabel = truncateProviderLabel(
+    providerLabel,
+    MultiFilterVariable.is(variable),
+    true
+  );
 
   // make variable list after the first three variables
-  const providerLabelLeftover = MultiFilterVariable.is(variable)
-    ? findMultifilterVariableLeaves(
-        variable,
-        groupBy(entity.variables, (variable) => variable.parentId)
-      )
-        .slice(3)
-        .map((variable) => {
-          return (
-            <div key={variable.id}>
-              {variable.displayName}:{' '}
-              {variable.providerLabel
-                .replace(/[[\]"]/g, '')
-                .replace(/[,]/g, ', ')}
-              &nbsp;
-            </div>
-          );
-        })
-    : '';
+  const providerLabelLeftover = truncateProviderLabel(
+    providerLabel,
+    MultiFilterVariable.is(variable),
+    false
+  );
 
   // define show more link
   const showMoreLink = showMore ? 'Show Less << ' : 'Show More >> ';
@@ -100,7 +78,8 @@ export function VariableDetails(props: Props) {
           </div>
           {/* showing three variables for multifilter or single variable */}
           &nbsp;{threeProviderLabel}
-          {MultiFilterVariable.is(variable) && numberOfProviderLabel > 3 ? (
+          {/* generalize Show/Hide more: there is a case that providerLabel is string */}
+          {Array.isArray(providerLabel) && providerLabel.length > 3 ? (
             <>
               {showMore && providerLabelLeftover}
               &nbsp;
@@ -165,4 +144,70 @@ function findMultifilterVariableLeaves(
   return variables.filter(
     (variable): variable is Variable => variable.type !== 'category'
   );
+}
+
+// function to check if valid JSON string
+function isJsonString(str: string) {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+
+// function to return proper labels
+function truncateProviderLabel(
+  /* this contained all label, but it can be a string, e.g., No Provider Label available */
+  providerLabel: MultiFilterVariable | string[] | string,
+  /* whether variable is multifilter or not */
+  isMultiFilterVariable: boolean,
+  /* whether keeping the first three labels or the leftover except the first three */
+  isThreeLabel: boolean
+) {
+  // if string, then just show providerLabel
+  if (!isMultiFilterVariable && !Array.isArray(providerLabel) && isThreeLabel)
+    return providerLabel;
+  else if (
+    !isMultiFilterVariable &&
+    !Array.isArray(providerLabel) &&
+    !isThreeLabel
+  )
+    return '';
+  else
+    return (providerLabel as string[])
+      .slice(
+        isThreeLabel ? 0 : 3,
+        isThreeLabel ? 3 : (providerLabel as string[]).length + 1
+      )
+      .map((variable: Variable | string, i: number) => {
+        if (isMultiFilterVariable) {
+          return (
+            <div key={(variable as Variable).id}>
+              {(variable as Variable).displayName}:{' '}
+              {(variable as Variable).providerLabel
+                .replace(/[[\]"]/g, '')
+                .replace(/[,]/g, ', ')}
+              &nbsp;
+            </div>
+          );
+        } else {
+          return (
+            <div key={variable as string}>
+              {variable}
+              {isThreeLabel &&
+                ((providerLabel as string[]).length > 3
+                  ? i === 2
+                    ? ''
+                    : ','
+                  : i === (providerLabel as string[]).length - 1
+                  ? ''
+                  : ',')}
+              {!isThreeLabel &&
+                (i === (providerLabel as string[]).length - 4 ? '' : ',')}
+              &nbsp;
+            </div>
+          );
+        }
+      });
 }
