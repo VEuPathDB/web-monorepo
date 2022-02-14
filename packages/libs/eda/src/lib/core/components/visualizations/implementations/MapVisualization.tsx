@@ -57,7 +57,7 @@ function createDefaultConfig(): MapConfig {
     mapCenterAndZoom: {
       latitude: 0,
       longitude: 0,
-      zoomLevel: 1,
+      zoomLevel: 2,
     },
     baseLayer: 'Street',
   };
