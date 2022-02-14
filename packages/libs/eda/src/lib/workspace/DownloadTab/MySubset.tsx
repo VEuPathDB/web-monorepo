@@ -17,7 +17,7 @@ type MySubsetProps = {
 };
 
 export default function MySubset({ entities, theme }: MySubsetProps) {
-  console.log('Entities', entities);
+  // console.log('Entities', entities);
 
   return (
     <div key="My Subset" style={{ marginBottom: 35 }}>
@@ -32,7 +32,7 @@ export default function MySubset({ entities, theme }: MySubsetProps) {
       {Object.entries(entities).map(([entityID, data], index) => (
         <FloatingButton
           key={index}
-          text={`${data.filteredCount} of ${data.totalCount} ${startCase(
+          text={`${data.filteredCount?.toLocaleString()} of ${data.totalCount?.toLocaleString()} ${startCase(
             data.displayNamePlural
           )}`}
           onPress={() => console.log('Open Modal')}
