@@ -14,6 +14,7 @@ import {
 } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import { AnswerJsonFormatConfig } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
+// Definitions
 import {
   StudyEntity,
   StudyMetadata,
@@ -21,9 +22,14 @@ import {
   StudyRecord,
   Variable,
 } from '../types/study';
-import SubsettingClient from '../api/SubsettingClient';
 import { VariableDescriptor } from '../types/variable';
+
+// Helpers and Utilities
+import SubsettingClient from '../api/SubsettingClient';
 import { findEntityAndVariable } from '../utils/study-metadata';
+
+// Hooks
+import { useStudyRecord } from '..';
 
 const STUDY_RECORD_CLASS_NAME = 'dataset';
 
@@ -123,6 +129,41 @@ export function useWdkStudyRecords(
     [attributes, tables]
   )?.records;
 }
+
+/**
+ * Get a list of all the releases for the current study.
+ *
+ * The information obtained from the WDK service isn't all that
+ * user friendly so we massage the response a bit so that it is
+ * easier to interact with.
+ *
+ * To simplify the use of this data elsewhere, a type definition
+ * is included.
+ *
+ * */
+export function useWDKStudyReleases(): Array<WDKStudyRelease> {
+  const studyRecord = useStudyRecord();
+
+  return (
+    useWdkService((wdkService) => {
+      return wdkService.getRecord(STUDY_RECORD_CLASS_NAME, studyRecord.id, {
+        tables: ['DownloadVersion'],
+      });
+    })?.tables['DownloadVersion'].map((release) => ({
+      // DAVE/JAMIE: I was sure if I could tell TS that these values
+      // would always be present.
+      releaseNumber: release.build_number?.toString(),
+      description: release.note?.toString(),
+      date: release.release_date?.toString(),
+    })) ?? []
+  );
+}
+
+export type WDKStudyRelease = {
+  releaseNumber: string | undefined;
+  description: string | undefined;
+  date: string | undefined;
+};
 
 export function useStudyMetadata(datasetId: string, client: SubsettingClient) {
   return useWdkServiceWithRefresh(
