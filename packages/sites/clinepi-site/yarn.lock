@@ -1321,6 +1321,36 @@
     react-table "^7.7.0"
     uuid "^8.3.2"
 
+"@veupathdb/eda@^1.3.14":
+  version "1.3.14"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.3.14.tgz#f1bdd26e843259dae20b1c3ddabf31ccca3bb6fb"
+  integrity sha512-VuyohGZBWA34sD6mXwvZTNeDPQtw0nqOWpCc7bznxWxBHe5Za2IQh2u92Lu1NpyBziINsPo8v0V9ZFxtUnp4Cg==
+  dependencies:
+    "@emotion/react" "^11.4.1"
+    "@emotion/styled" "^11.3.0"
+    "@material-ui/core" "^4.11.3"
+    "@material-ui/icons" "^4.11.2"
+    "@material-ui/lab" "^4.0.0-alpha.58"
+    "@types/debounce-promise" "^3.1.3"
+    "@veupathdb/components" "^0.11.15"
+    "@veupathdb/core-components" "^0.11.1"
+    "@veupathdb/http-utils" "^1.1.0"
+    "@veupathdb/study-data-access" "^0.1.5"
+    debounce-promise "^3.1.2"
+    file-saver "^2.0.5"
+    fp-ts "^2.9.3"
+    io-ts "^2.2.13"
+    lodash "^4.17.21"
+    monocle-ts "^2.3.11"
+    react "^17.0.1"
+    react-dom "^17.0.1"
+    react-draggable "^4.4.3"
+    react-resizable "^3.0.4"
+    react-router "^5.2.1"
+    react-router-dom "^5.3.0"
+    react-table "^7.7.0"
+    uuid "^8.3.2"
+
 "@veupathdb/http-utils@^1.0.1", "@veupathdb/http-utils@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@veupathdb/http-utils/-/http-utils-1.1.0.tgz#fb563593aae2dd7f32eb634ea9776793b35be65f"
@@ -1388,10 +1418,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.2.2":
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.2.3.tgz#2d8d7a8d5fb37fdf57505f18c6e145269c8e2439"
-  integrity sha512-/pGtBTuv3jZsDY8yrrJtlqSQojr7Lgh5dFQo3WGsEYj/utWpAWtT7yRj4gid/vs7D4oGGsJD3ACylnkMQtPqaw==
+"@veupathdb/web-common@^0.2.4":
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.2.4.tgz#b5589444b03b26bd4e4b6bf546fe77bb77de0fa5"
+  integrity sha512-8ECPF+wdl8B2j1xfKNst8YdfQKwoDUMP92B461Pl6PQDUvqF/8Gn6MT7glyGoxkWsxn2Em2Gdg9kl86l55vF2Q==
   dependencies:
     "@veupathdb/components" "^0.11.13"
     "@veupathdb/eda" "^1.3.0"
