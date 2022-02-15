@@ -139,6 +139,7 @@ export function WorkspaceRouter({
                   {...props.match.params}
                   sharingUrlPrefix={sharingUrlPrefix}
                   showLoginForm={showLoginForm}
+                  hideSavedAnalysisButtons
                 />
               </WorkspaceContainer>
             )}
