@@ -9,6 +9,7 @@ import {
 import { StudyMetadata, StudyRecord, StudyRecordClass } from '../types/study';
 import { VariableDescriptor } from '../types/variable';
 
+/** Return the study identifier and a hierarchy of the study entities. */
 export function useStudyMetadata(): StudyMetadata {
   return useNonNullableContext(WorkspaceContext).studyMetadata;
 }
