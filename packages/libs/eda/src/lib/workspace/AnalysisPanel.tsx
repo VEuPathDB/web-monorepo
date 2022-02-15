@@ -69,7 +69,8 @@ const AnalysisTabErrorBoundary = ({
 
 interface Props {
   analysisState: AnalysisState;
-  hideCopyAndSave?: boolean;
+  /** Whether to hide buttons that are only relevant for a saved analysis. */
+  hideSavedAnalysisButtons?: boolean;
   /**
    * The base of the URL from which to being sharing links.
    * This is passed down through several component layers. */
@@ -90,7 +91,7 @@ interface Props {
  */
 export function AnalysisPanel({
   analysisState,
-  hideCopyAndSave = false,
+  hideSavedAnalysisButtons = false,
   sharingUrlPrefix,
   showLoginForm,
 }: Props) {
@@ -177,14 +178,18 @@ export function AnalysisPanel({
         <AnalysisSummary
           analysis={analysis}
           setAnalysisName={setName}
-          copyAnalysis={hideCopyAndSave ? undefined : copyAnalysis}
+          copyAnalysis={hideSavedAnalysisButtons ? undefined : copyAnalysis}
           saveAnalysis={saveAnalysis}
-          deleteAnalysis={hideCopyAndSave ? undefined : deleteAnalysis}
+          deleteAnalysis={hideSavedAnalysisButtons ? undefined : deleteAnalysis}
           onFilterIconClick={() =>
             setGlobalFiltersDialogOpen(!globalFiltersDialogOpen)
           }
           globalFiltersDialogOpen={globalFiltersDialogOpen}
-          displaySharingModal={() => setSharingModalVisible(true)}
+          displaySharingModal={
+            hideSavedAnalysisButtons
+              ? undefined
+              : () => setSharingModalVisible(true)
+          }
         />
         <GlobalFiltersDialog
           open={globalFiltersDialogOpen}
