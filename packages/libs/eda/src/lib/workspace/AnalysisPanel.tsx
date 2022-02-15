@@ -43,10 +43,7 @@ import { Alert } from '@material-ui/lab';
 import ShareFromAnalysis from './sharing/ShareFromAnalysis';
 import { string } from 'fp-ts';
 import { useWorkspaceAnalysis } from './hooks/analyses';
-import {
-  ApprovalStatus,
-  useApprovalStatus,
-} from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
+import { ApprovalStatus } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 import { RestrictedPage } from '@veupathdb/study-data-access/lib/data-restriction/RestrictedPage';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
@@ -78,7 +75,7 @@ const AnalysisTabErrorBoundary = ({
 interface Props {
   analysisId?: string;
   studyId: string;
-  hideCopyAndSave?: boolean;
+  hideSavedAnalysisButtons?: boolean;
   /**
    * The base of the URL from which to being sharing links.
    * This is passed down through several component layers. */
@@ -100,7 +97,7 @@ interface Props {
 export function AnalysisPanel({
   analysisId,
   studyId,
-  hideCopyAndSave = false,
+  hideSavedAnalysisButtons = false,
   sharingUrlPrefix,
   showLoginForm,
 }: Props) {
@@ -201,14 +198,20 @@ export function AnalysisPanel({
           <AnalysisSummary
             analysis={analysis}
             setAnalysisName={setName}
-            copyAnalysis={hideCopyAndSave ? undefined : copyAnalysis}
+            copyAnalysis={hideSavedAnalysisButtons ? undefined : copyAnalysis}
             saveAnalysis={saveAnalysis}
-            deleteAnalysis={hideCopyAndSave ? undefined : deleteAnalysis}
+            deleteAnalysis={
+              hideSavedAnalysisButtons ? undefined : deleteAnalysis
+            }
             onFilterIconClick={() =>
               setGlobalFiltersDialogOpen(!globalFiltersDialogOpen)
             }
             globalFiltersDialogOpen={globalFiltersDialogOpen}
-            displaySharingModal={() => setSharingModalVisible(true)}
+            displaySharingModal={
+              hideSavedAnalysisButtons
+                ? undefined
+                : () => setSharingModalVisible(true)
+            }
           />
           <GlobalFiltersDialog
             open={globalFiltersDialogOpen}
