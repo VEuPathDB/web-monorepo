@@ -26,6 +26,7 @@ import { select } from 'd3';
 import { ToImgopts, toImage } from 'plotly.js';
 import { uniqueId } from 'lodash';
 import { makeSharedPromise } from '../utils/promise-utils';
+import NoDataOverlay from '../components/NoDataOverlay';
 
 export interface PlotProps<T> extends ColorPaletteAddon {
   /** plot data - following web-components' API, not Plotly's */
@@ -371,29 +372,7 @@ function PlotlyPlot<T>(
           onUpdate={onRender}
           onInitialized={onInitialized}
         />
-        {showNoDataOverlay && (
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              bottom: 0,
-              left: 0,
-              right: 0,
-              background:
-                title === 'No data'
-                  ? 'repeating-linear-gradient(45deg, #f8f8f8f8, #f8f8f8f8 10px, #fafafaf8 10px, #fafafaf8 20px)'
-                  : '#f8f8f8f8',
-              fontSize: 24,
-              color: ' #e8e8e8',
-              userSelect: 'none',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            {title === 'No data' ? 'No missing data' : 'No data'}
-          </div>
-        )}
+        {showNoDataOverlay && <NoDataOverlay plotTitle={title} />}
         {title && (
           <div
             style={{

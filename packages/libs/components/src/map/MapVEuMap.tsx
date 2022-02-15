@@ -21,6 +21,8 @@ import CustomGridLayer from './CustomGridLayer';
 import MouseTools, { MouseMode } from './MouseTools';
 import { PlotRef } from '../types/plots';
 import { ToImgopts } from 'plotly.js';
+import Spinner from '../components/Spinner';
+import NoDataOverlay from '../components/NoDataOverlay';
 
 const { BaseLayer } = LayersControl;
 
@@ -127,6 +129,10 @@ export interface MapVEuMapProps {
   baseLayer?: BaseLayerChoice;
   /** Callback for when the base layer has changed */
   onBaseLayerChanged?: (newBaseLayer: BaseLayerChoice) => void;
+  /** Whether to show a loading spinner */
+  showSpinner?: boolean;
+  /** Whether to show the "No data" overlay */
+  showNoDataOverlay?: boolean;
 }
 
 function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
@@ -144,6 +150,8 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     showMouseToolbar,
     baseLayer,
     onBaseLayerChanged,
+    showSpinner,
+    showNoDataOverlay,
   } = props;
 
   // this is the React Map component's onViewPortChanged handler
@@ -259,6 +267,9 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
           </BaseLayer>
         ))}
       </LayersControl>
+
+      {showSpinner && <Spinner />}
+      {showNoDataOverlay && <NoDataOverlay />}
     </Map>
   );
 }
