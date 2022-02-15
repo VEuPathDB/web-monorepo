@@ -41,7 +41,6 @@ import NotesTab from './NotesTab';
 import DownloadsTab from './DownloadsTab';
 import { Alert } from '@material-ui/lab';
 import ShareFromAnalysis from './sharing/ShareFromAnalysis';
-import { string } from 'fp-ts';
 import { useWorkspaceAnalysis } from './hooks/analyses';
 import { ApprovalStatus } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 import { RestrictedPage } from '@veupathdb/study-data-access/lib/data-restriction/RestrictedPage';
