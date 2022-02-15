@@ -15,14 +15,12 @@ import AddIcon from '@material-ui/icons/Add';
 
 // Hooks
 import { useStudyRecord } from '../core/hooks/workspace';
-// import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 
 // Definitions & Utilities
 import { cx } from './Utils';
 import { AnalysisState, DEFAULT_ANALYSIS_NAME } from '../core';
-// import { LinkAttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-// import { Action } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUiActions';
 import { getAnalysisId, isSavedAnalysis } from '../core/utils/analysis';
+import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
 
 interface EDAWorkspaceHeadingProps {
   /** Optional AnalysisState for "New analysis" button functionality */
@@ -46,6 +44,15 @@ export function EDAWorkspaceHeading({
 
   const analysisId = getAnalysisId(analysis);
 
+  const permissionsValue = usePermissions();
+  const showButtons =
+    !permissionsValue.loading &&
+    Boolean(
+      permissionsValue.permissions.perDataset[
+        studyRecord.attributes.dataset_id as string
+      ]?.actionAuthorization.subsetting
+    );
+
   useEffect(() => {
     setDialogIsOpen(false);
   }, [analysisId]);
@@ -54,58 +61,42 @@ export function EDAWorkspaceHeading({
     <>
       <div className={cx('-Heading')}>
         <h1>{safeHtml(studyRecord.displayName)}</h1>
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          {/* {studyRecord.attributes.bulk_download_url && (
+        {showButtons && (
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <div>
               <FloatingButton
-                text="Download"
-                tooltip="Download study files"
-                icon={Download}
-                onPress={() => {
-                  attemptAction(Action.download, {
-                    studyId: studyRecord.id[0].value,
-                    onAllow: () => {
-                      window.location.href = (studyRecord.attributes
-                        .bulk_download_url as LinkAttributeValue).url;
-                    },
-                  });
-                }}
+                themeRole="primary"
+                text="New Analysis"
+                tooltip="Create a new analysis"
+                size="medium"
+                // @ts-ignore
+                icon={AddIcon}
+                onPress={
+                  /** If (1) there is no analysis, (2) we're in an unsaved new
+                   * analysis (here `analysis` is still undefined in this case),
+                   * or (3) we're in a renamed analysis, just go straight to the
+                   * new analysis. Otherwise, show the renaming dialog. */
+                  analysis && analysis.displayName === DEFAULT_ANALYSIS_NAME
+                    ? () => setDialogIsOpen(true)
+                    : redirectToNewAnalysis
+                }
               />
             </div>
-          )} */}
-          <div>
-            <FloatingButton
-              themeRole="primary"
-              text="New Analysis"
-              tooltip="Create a new analysis"
-              size="medium"
-              // @ts-ignore
-              icon={AddIcon}
-              onPress={
-                /** If (1) there is no analysis, (2) we're in an unsaved new
-                 * analysis (here `analysis` is still undefined in this case),
-                 * or (3) we're in a renamed analysis, just go straight to the
-                 * new analysis. Otherwise, show the renaming dialog. */
-                analysis && analysis.displayName === DEFAULT_ANALYSIS_NAME
-                  ? () => setDialogIsOpen(true)
-                  : redirectToNewAnalysis
-              }
-            />
+            <div>
+              <FloatingButton
+                themeRole="primary"
+                text="My analyses"
+                tooltip="View all your analyses of this study"
+                icon={Table}
+                onPress={() =>
+                  history.push(
+                    '/eda?s=' + encodeURIComponent(studyRecord.displayName)
+                  )
+                }
+              />
+            </div>
           </div>
-          <div>
-            <FloatingButton
-              themeRole="primary"
-              text="My analyses"
-              tooltip="View all your analyses of this study"
-              icon={Table}
-              onPress={() =>
-                history.push(
-                  '/eda?s=' + encodeURIComponent(studyRecord.displayName)
-                )
-              }
-            />
-          </div>
-        </div>
+        )}
       </div>
       {analysisState && isSavedAnalysis(analysis) && (
         <AnalysisNameDialog
