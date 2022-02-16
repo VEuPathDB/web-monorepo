@@ -186,6 +186,7 @@ export default function SubsettingDataGridModal({
             (descriptor) => descriptor.variableId
           ),
           reportConfig: {
+            headerFormat: 'standard',
             paging: { numRows: pageSize, offset: pageSize * pageIndex },
           },
         })
@@ -217,6 +218,9 @@ export default function SubsettingDataGridModal({
       outputVariableIds: selectedVariableDescriptors.map(
         (descriptor) => descriptor.variableId
       ),
+      reportConfig: {
+        headerFormat: 'display',
+      },
     });
   }, [
     subsettingClient,
