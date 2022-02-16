@@ -197,6 +197,16 @@ export function useFindEntityAndVariable(entities: StudyEntity[]) {
   );
 }
 
+/**
+ * Return an array of StudyEntities.
+ *
+ * @param rootEntity The entity in the entity hierarchy. All entities at this level and
+ * down will be returned in a flattened array.
+ *
+ * @returns Essentially, this will provide you will an array of entities in a flattened structure.
+ * Technically, the hierarchical structure is still embedded in each entity, but all of the
+ * entities are presented as siblings in the array.
+ */
 export function useStudyEntities(rootEntity: StudyEntity) {
   return useMemo(
     () => Array.from(preorder(rootEntity, (e) => e.children ?? [])),
