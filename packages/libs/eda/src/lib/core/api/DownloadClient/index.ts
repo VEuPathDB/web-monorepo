@@ -47,7 +47,9 @@ export class DownloadClient extends FetchClientWithCredentials {
       });
     });
 
-    return response.sort().reverse();
+    return response.sort(
+      (a, b) => parseInt(b.split('-')[1]) - parseInt(a.split('-')[1])
+    );
   }
 
   /**
