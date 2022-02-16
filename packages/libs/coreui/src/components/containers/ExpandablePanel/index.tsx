@@ -91,6 +91,7 @@ export default function ExpandablePanel({
           styleState === 'closed' ? 29 : styleState === 'focused' ? 34 : 39,
         color: componentStyle[styleState].header.textColor,
         transition: 'all .25s ease',
+        marginRight: 25,
       },
     ]);
 
