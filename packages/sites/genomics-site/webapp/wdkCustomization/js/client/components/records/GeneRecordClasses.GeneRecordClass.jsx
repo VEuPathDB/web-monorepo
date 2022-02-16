@@ -410,10 +410,10 @@ function makeGenomicRegions(
 }
 
 const renderUtr = str =>
-  <span style={{ backgroundColor: '#cae4ff' }}>{str.toLowerCase()}</span>
+  <span style={{ backgroundColor: '#ffc2d4' }}>{str.toLowerCase()}</span>
 
 const renderIntron = str =>
-  <span style={{ backgroundColor: '#dddddd', color: '#333' }}>{str.toLowerCase()}</span>
+  <span style={{ backgroundColor: '#ffe69b' }}>{str.toLowerCase()}</span>
 
 const SequencesTableChildRow = pure(function SequencesTableChildRow(props) {
   let {
