@@ -1,3 +1,6 @@
+import { startCase } from 'lodash';
+
+// Components
 import {
   FloatingButton,
   H5,
@@ -5,19 +8,19 @@ import {
   TableDownload,
   colors,
 } from '@veupathdb/core-components';
-import { UITheme } from '@veupathdb/core-components/dist/components/theming';
-import { startCase } from 'lodash';
-import { StudyEntity } from '../../core';
+
+// Hooks
+import { useUITheme } from '@veupathdb/core-components/dist/components/theming';
+
+// Definitions
+import { EnhancedEntityData } from './hooks/useEnhancedEntityData';
 
 type MySubsetProps = {
-  entities: Array<
-    StudyEntity & { filteredCount?: number; totalCount?: number }
-  >;
-  theme?: UITheme;
+  entities: EnhancedEntityData;
 };
 
-export default function MySubset({ entities, theme }: MySubsetProps) {
-  // console.log('Entities', entities);
+export default function MySubset({ entities }: MySubsetProps) {
+  const theme = useUITheme();
 
   return (
     <div key="My Subset" style={{ marginBottom: 35 }}>
