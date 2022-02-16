@@ -22,7 +22,6 @@ export function useGetReleaseFiles(
   studyId: string,
   release: DownloadTabStudyRelease,
   downloadClient: DownloadClient,
-
   setReleaseFiles: React.Dispatch<React.SetStateAction<Array<ReleaseFile>>>
 ) {
   useEffect(() => {
