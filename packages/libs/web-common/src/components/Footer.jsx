@@ -40,11 +40,9 @@ export default enhance(function Footer(props) {
     <div className="Footer">
       <div>
         <div>
-          <span>
             <a href={`//${location.hostname}`}>{displayName}</a>
-            <span> {buildNumber} &nbsp;&nbsp; {releaseDate && formatReleaseDate(releaseDate)}</span>
-          </span>
-          <br/>
+            <span>&nbsp;Release {buildNumber}</span>
+            <span style={{whiteSpace: 'nowrap'}}> &nbsp;&nbsp; {releaseDate && formatReleaseDate(releaseDate)}</span>
         </div>
         <div className="copyright">©{new Date().getFullYear()} The VEuPathDB Project Team</div>
       </div>
