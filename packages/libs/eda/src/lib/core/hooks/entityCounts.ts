@@ -4,12 +4,15 @@ import { Filter } from '../types/filter';
 import { usePromise } from './promise';
 import { useStudyMetadata, useSubsettingClient } from './workspace';
 import { debounce } from 'lodash';
+import { isStubEntity, STUB_ENTITY } from './study';
 
 export type EntityCounts = Record<string, number>;
 
 export function useEntityCounts(filters?: Filter[]) {
   const { id, rootEntity } = useStudyMetadata();
   const subsettingClient = useSubsettingClient();
+
+  const isStub = isStubEntity(rootEntity);
 
   // use JSON version in dependencies to prevent unnecessary recalculations
   const filtersJSON = JSON.stringify(filters);
@@ -27,6 +30,10 @@ export function useEntityCounts(filters?: Filter[]) {
 
   return usePromise(
     useCallback(async () => {
+      if (isStub)
+        return {
+          [STUB_ENTITY.id]: 0,
+        };
       const counts: Record<string, number> = {};
       for (const entity of preorder(rootEntity, (e) => e.children ?? [])) {
         const { count } = await subsettingClient
