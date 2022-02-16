@@ -53,15 +53,17 @@ export function useGetReleaseFiles(
         .filter((fileData) => fileData.fileDescription.length);
 
       // Augment the URL each valid file.
-      filesData.forEach(async (file, index) => {
+      for (const fileData of filesData) {
         const fileUrl = await downloadClient.downloadStudyFileURL(
           studyId,
           release.downloadServiceReleaseId,
-          file.fileName
+          fileData.fileName
         );
-        filesData[index]['fileUrl'] = fileUrl;
-      });
+        fileData.fileUrl = fileUrl;
+        console.log('Set File URL');
+      }
 
+      console.log('Set Release Files');
       setReleaseFiles(filesData);
     }
 
