@@ -11,8 +11,6 @@ import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/Radio
 import Switch from '@veupathdb/components/lib/components/widgets/Switch';
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { getOrElse } from 'fp-ts/lib/Either';
-import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import PluginError from '../PluginError';
@@ -54,7 +52,7 @@ import {
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 // use lodash instead of Math.min/max
-import { max, groupBy, mapValues, size, map, head, values, keys } from 'lodash';
+import { groupBy, mapValues, size, map, head, values, keys } from 'lodash';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 // for custom legend
 import PlotLegend, {
@@ -74,6 +72,7 @@ import { truncationConfig } from '../../../utils/truncation-config-utils-viz';
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 import Button from '@veupathdb/components/lib/components/widgets/Button';
 import { useDefaultDependentAxisRange } from '../../../hooks/computeDefaultDependentAxisRange';
+import { useVizConfig } from '../../../hooks/visualizations';
 
 // export
 export type BarplotDataWithStatistics = (
@@ -168,18 +167,12 @@ function BarplotViz(props: VisualizationProps) {
   );
   const dataClient: DataClient = useDataClient();
 
-  const vizConfig = useMemo(() => {
-    return pipe(
-      BarplotConfig.decode(visualization.descriptor.configuration),
-      getOrElse((): t.TypeOf<typeof BarplotConfig> => createDefaultConfig())
-    );
-  }, [visualization.descriptor.configuration]);
-
-  const updateVizConfig = useCallback(
-    (newConfig: Partial<BarplotConfig>) => {
-      updateConfiguration({ ...vizConfig, ...newConfig });
-    },
-    [updateConfiguration, vizConfig]
+  // use useVizConfig hook
+  const [vizConfig, updateVizConfig] = useVizConfig(
+    visualization.descriptor.configuration,
+    BarplotConfig,
+    createDefaultConfig,
+    updateConfiguration
   );
 
   // set the state of truncation warning message here

@@ -18,8 +18,6 @@ import {
   HistogramDataSeries,
 } from '@veupathdb/components/lib/types/plots';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { getOrElse } from 'fp-ts/lib/Either';
-import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import {
   isEqual,
@@ -100,6 +98,7 @@ import { UIState } from '../../filter/HistogramFilter';
 // change defaultIndependentAxisRange to hook
 import { useDefaultIndependentAxisRange } from '../../../hooks/computeDefaultIndependentAxisRange';
 import { useDefaultDependentAxisRange } from '../../../hooks/computeDefaultDependentAxisRange';
+import { useVizConfig } from '../../../hooks/visualizations';
 
 export type HistogramDataWithCoverageStatistics = (
   | HistogramData
@@ -197,18 +196,11 @@ function HistogramViz(props: VisualizationProps) {
   );
   const dataClient: DataClient = useDataClient();
 
-  const vizConfig = useMemo(() => {
-    return pipe(
-      HistogramConfig.decode(visualization.descriptor.configuration),
-      getOrElse((): t.TypeOf<typeof HistogramConfig> => createDefaultConfig())
-    );
-  }, [visualization.descriptor.configuration]);
-
-  const updateVizConfig = useCallback(
-    (newConfig: Partial<HistogramConfig>) => {
-      updateConfiguration({ ...vizConfig, ...newConfig });
-    },
-    [updateConfiguration, vizConfig]
+  const [vizConfig, updateVizConfig] = useVizConfig(
+    visualization.descriptor.configuration,
+    HistogramConfig,
+    createDefaultConfig,
+    updateConfiguration
   );
 
   // set the state of truncation warning message here

@@ -17,6 +17,8 @@ import {
 } from '../components/visualizations/implementations/BoxplotVisualization';
 import { min, max, map } from 'lodash';
 import { Variable } from '../types/study';
+// util to get specific decimal points as a number, not string
+import { numberDecimalPoint } from '../utils/number-decimal-point';
 
 /**
  * A custom hook to compute default dependent axis range
@@ -84,10 +86,10 @@ export function useDefaultDependentAxisRange(
                   // need to check defaultDependentAxisMinMax.min !== 0
                   defaultDependentAxisMinMax.min !== 0 &&
                   defaultDependentAxisMinMax.min < 0.001
-                  ? defaultDependentAxisMinMax.min * 0.8
+                  ? numberDecimalPoint(defaultDependentAxisMinMax.min * 0.8, 4)
                   : 0.001
                 : 0,
-            max: defaultDependentAxisMinMax.max * 1.05,
+            max: numberDecimalPoint(defaultDependentAxisMinMax.max * 1.05, 4),
           }
         : undefined;
     // boxplot
@@ -95,8 +97,8 @@ export function useDefaultDependentAxisRange(
       return defaultDependentAxisMinMax?.min != null &&
         defaultDependentAxisMinMax?.max != null
         ? {
-            min: defaultDependentAxisMinMax.min,
-            max: defaultDependentAxisMinMax.max * 1.05,
+            min: numberDecimalPoint(defaultDependentAxisMinMax.min, 4),
+            max: numberDecimalPoint(defaultDependentAxisMinMax.max * 1.05, 4),
           }
         : undefined;
   }, [

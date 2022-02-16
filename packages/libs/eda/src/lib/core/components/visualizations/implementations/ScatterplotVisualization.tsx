@@ -2,8 +2,6 @@
 import XYPlot, { XYPlotProps } from '@veupathdb/components/lib/plots/XYPlot';
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { getOrElse } from 'fp-ts/lib/Either';
-import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 
@@ -112,6 +110,7 @@ import { useDefaultIndependentAxisRange } from '../../../hooks/computeDefaultInd
 // for scatter plot, use another custom hook different from other Vizs
 import { useDefaultDependentAxisRange } from '../../../hooks/computeNumberDateDefaultDependentAxisRange';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
+import { useVizConfig } from '../../../hooks/visualizations';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -213,18 +212,11 @@ function ScatterplotViz(props: VisualizationProps) {
   );
   const dataClient: DataClient = useDataClient();
 
-  const vizConfig = useMemo(() => {
-    return pipe(
-      ScatterplotConfig.decode(visualization.descriptor.configuration),
-      getOrElse((): t.TypeOf<typeof ScatterplotConfig> => createDefaultConfig())
-    );
-  }, [visualization.descriptor.configuration]);
-
-  const updateVizConfig = useCallback(
-    (newConfig: Partial<ScatterplotConfig>) => {
-      updateConfiguration({ ...vizConfig, ...newConfig });
-    },
-    [updateConfiguration, vizConfig]
+  const [vizConfig, updateVizConfig] = useVizConfig(
+    visualization.descriptor.configuration,
+    ScatterplotConfig,
+    createDefaultConfig,
+    updateConfiguration
   );
 
   // moved the location of this findEntityAndVariable
@@ -466,8 +458,8 @@ function ScatterplotViz(props: VisualizationProps) {
       visualization.descriptor.type,
       outputEntity,
       filteredCounts,
-      // get data when changing independentAxisRange
-      vizConfig.independentAxisRange,
+      // // get data when changing independentAxisRange
+      // vizConfig.independentAxisRange,
     ])
   );
 
@@ -1023,7 +1015,12 @@ function ScatterplotWithControls({
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
     plotContainerStyles,
-    [data, checkedLegendItems, vizConfig.dependentAxisRange]
+    [
+      data,
+      checkedLegendItems,
+      vizConfig.independentAxisRange,
+      vizConfig.dependentAxisRange,
+    ]
   );
 
   // axis range control
