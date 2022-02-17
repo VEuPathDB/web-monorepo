@@ -36,7 +36,7 @@ interface StudyState {
 
 export const StudyContext = createContext<StudyState | undefined>(undefined);
 
-interface HookValue {
+export interface HookValue {
   studyRecordClass: StudyRecordClass;
   studyRecord: StudyRecord;
 }

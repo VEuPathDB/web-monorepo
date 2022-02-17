@@ -6,10 +6,7 @@ import { StudyMetadata, StudyRecord, StudyRecordClass } from '../types/study';
 import { VariableDescriptor } from '../types/variable';
 
 export interface MakeVariableLink {
-  (
-    variableDescriptor: Partial<VariableDescriptor>,
-    studyMetadata: StudyMetadata
-  ): string;
+  (variableDescriptor: Partial<VariableDescriptor>): string;
 }
 export interface WorkspaceContextValue {
   studyRecordClass: StudyRecordClass;
