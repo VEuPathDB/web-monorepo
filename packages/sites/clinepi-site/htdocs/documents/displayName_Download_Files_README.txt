@@ -80,15 +80,14 @@ Data Files:
 	◦ "Sample ID [OBI_0001616]" gives the sample IDs assigned to each sample by the study team 
 
 8. [INSERT file name]_RSRC.txt 
-   • Merges the files indicated below using [Community_Id, Community_repeated_measures_Id, Household_Id, Household_repeated_measures_Id, Participant_Id, Participant_repeated_measures_Id, and Sample_Id]: 
+   • Merges the files indicated below using key identifiers: [Community_Id, Community_repeated_measures_Id, Household_Id, Household_repeated_measures_Id, Participant_Id, Participant_repeated_measures_Id, and Sample_Id] 
 	◦ [INSERT file name]_[Communities].txt 
 	◦ [INSERT file name]_[Community]_repeated_measures.txt 
 	◦ [INSERT file name]_Households.txt 
 	◦ [INSERT file name]_Household_repeated_measures.txt 
 	◦ [INSERT file name]_Participant.txt 
 	◦ [INSERT file name]_Participant_repeated_measures.txt 
-	◦ [INSERT file name]_Samples.txt 
-   • Key identifiers: [Community_Id, Community_repeated_measures_Id, Household_Id, Household_repeated_measures_Id, Participant_Id, Participant_repeated_measures_Id, Sample_Id]
+	◦ [INSERT file name]_Samples.txt
 
 
 
@@ -99,7 +98,7 @@ Notes on opening download files:
       install.packages("data.table")
       library(data.table)
       setwd("~/Downloads")
-      d <- fread("WASHb_Bangladesh_rct.txt")
+      d <- fread("[INSERT file name].txt")
       names(d) <-  gsub(" ", "_", gsub("\\[|\\]", "", names(d)))
 
 
