@@ -15,11 +15,11 @@ export function Tooltip() {
 }
 
 export function Document() {
-  useSetDocumentTitle('Variable Constraints on ClinEpiDB Visualizations');
+  useSetDocumentTitle('Variable Constraints on Visualizations');
 
   return (
     <div style={{ maxWidth: '1000px', fontSize: '1.1em' }}>
-      <h1>Variable Constraints on ClinEpiDB Visualizations</h1>
+      <h1>Variable Constraints on Visualizations</h1>
 
       <div>
         <h2 style={{ fontSize: '1.4em' }}>TLDR (Too Long Didn’t Read)</h2>
