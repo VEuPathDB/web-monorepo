@@ -56,6 +56,11 @@ export function Document() {
           Overlay: Variables must have 8 or fewer unique values to associate
           each value with a color-blind friendly color.
         </li>
+
+        <li>
+          Facet: Variables must have 10 or fewer unique values to ensure
+          performance of the application
+        </li>
       </ul>
 
       <h2>Bar Plot</h2>
@@ -69,6 +74,11 @@ export function Document() {
         <li>
           Overlay: Variables must have 8 or fewer unique values to associate
           each value with a color-blind friendly color.
+        </li>
+
+        <li>
+          Facet: Variables must have 10 or fewer unique values to ensure
+          performance of the application
         </li>
       </ul>
 
@@ -89,6 +99,11 @@ export function Document() {
           Overlay: Variables must have 8 or fewer unique values to associate
           each value with a color-blind friendly color.
         </li>
+
+        <li>
+          Facet: Variables must have 10 or fewer unique values to ensure
+          performance of the application
+        </li>
       </ul>
 
       <h2>Box Plot</h2>
@@ -108,6 +123,11 @@ export function Document() {
           Overlay: Variables must have 8 or fewer unique values to associate
           each value with a color-blind friendly color.
         </li>
+
+        <li>
+          Facet: Variables must have 10 or fewer unique values to ensure
+          performance of the application
+        </li>
       </ul>
 
       <h2>Mosaic Plot: 2x2 Table</h2>
@@ -122,6 +142,11 @@ export function Document() {
           Y-axis: Variables must have exactly 2 unique values to calculate odds
           ratios and relative risk for the resulting contingency table.
         </li>
+
+        <li>
+          Facet: Variables must have 10 or fewer unique values to ensure
+          performance of the application
+        </li>
       </ul>
 
       <h2>Mosaic Plot: RxC Table</h2>
@@ -135,6 +160,11 @@ export function Document() {
         <li>
           Y-axis: Variables must have 8 or fewer unique values to associate each
           value with a color-blind friendly color.
+        </li>
+
+        <li>
+          Facet: Variables must have 10 or fewer unique values to ensure
+          performance of the application
         </li>
       </ul>
 
