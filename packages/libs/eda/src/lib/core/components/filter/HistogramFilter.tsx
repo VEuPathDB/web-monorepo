@@ -796,7 +796,7 @@ function computeBinSlider(
       const maxBins = 100;
       const stepSize = Math.floor(rangeSize / maxBins);
       const min = stepSize < 1 ? 1 : stepSize;
-      const max = Math.floor(rangeSize / 2);
+      const max = rangeSize;
       return { min, max, step: min };
     case 'number': {
       const { min: rangeMin, max: rangeMax } = range as NumberRange;
