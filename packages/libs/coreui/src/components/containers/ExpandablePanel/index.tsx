@@ -100,8 +100,8 @@ export default function ExpandablePanel({
         return <p css={subtitleStyle}>{subTitle}</p>;
 
       case 'object':
-        return Object.entries(subTitle).map((entry) => (
-          <p css={subtitleStyle}>
+        return Object.entries(subTitle).map((entry, index) => (
+          <p css={subtitleStyle} key={`SubtitleItem-${index}`}>
             <span css={{ fontWeight: 600, textTransform: 'capitalize' }}>
               {entry[0]}:{' '}
             </span>
