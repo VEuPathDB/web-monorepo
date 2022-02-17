@@ -1,8 +1,9 @@
 interface NoDataOverlayProps {
   plotTitle?: string;
+  opacity?: number;
 }
 
-export default ({ plotTitle }: NoDataOverlayProps) => (
+export default ({ plotTitle, opacity = 0.97 }: NoDataOverlayProps) => (
   <div
     style={{
       position: 'absolute',
@@ -12,8 +13,9 @@ export default ({ plotTitle }: NoDataOverlayProps) => (
       right: 0,
       background:
         plotTitle === 'No data'
-          ? 'repeating-linear-gradient(45deg, #f8f8f8f8, #f8f8f8f8 10px, #fafafaf8 10px, #fafafaf8 20px)'
-          : '#f8f8f8f8',
+          ? 'repeating-linear-gradient(45deg, #f8f8f8, #f8f8f8 10px, #fafafa 10px, #fafafa 20px)'
+          : '#f8f8f8',
+      opacity: opacity,
       fontSize: 24,
       color: ' #e8e8e8',
       userSelect: 'none',

@@ -269,7 +269,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       </LayersControl>
 
       {showSpinner && <Spinner />}
-      {showNoDataOverlay && <NoDataOverlay />}
+      {showNoDataOverlay && <NoDataOverlay opacity={0.9} />}
     </Map>
   );
 }
