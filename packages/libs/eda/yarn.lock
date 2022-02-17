@@ -2851,11 +2851,6 @@
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.39.tgz#e177e699ee1b8c22d23174caaa7422644389509f"
   integrity sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==
 
-"@types/file-saver@^2.0.3":
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/@types/file-saver/-/file-saver-2.0.4.tgz#aaf9b96296150d737b2fefa535ced05ed8013d84"
-  integrity sha512-sPZYQEIF/SOnLAvaz9lTuydniP+afBMtElRTdYkeV1QtEgvtJ7qolCPjly6O32QI8CbEmP5O/fztMXEDWfEcrg==
-
 "@types/flot@^0.0.31":
   version "0.0.31"
   resolved "https://registry.yarnpkg.com/@types/flot/-/flot-0.0.31.tgz#0daca37c6c855b69a0a7e2e37dd0f84b3db8c8c1"
@@ -3173,11 +3168,6 @@
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-2.0.1.tgz#20f18294f797f2209b5f65c8e3b5c8e8261d127c"
   integrity sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==
-
-"@types/streamsaver@^2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@types/streamsaver/-/streamsaver-2.0.1.tgz#fa5e5b891d1b282be3078c232a30ee004b8e0be0"
-  integrity sha512-I49NtT8w6syBI3Zg3ixCyygTHoTVMY0z2TMRcTgccdIsVd2MwlKk7ITLHLsJtgchUHcOd7QEARG9h0ifcA6l2Q==
 
 "@types/tapable@^1", "@types/tapable@^1.0.5":
   version "1.0.8"
@@ -3554,10 +3544,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/core-components@^0.11.2":
-  version "0.11.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.11.2.tgz#bb53d4c85b2e093b301553904dbb3ff69c9fe211"
-  integrity sha512-Qo2lcz/iYeN8zagNqb5sJ+FtocUBbTiKk/wKu/DCcnDkQjz9vv6/lzMB3/dkTkhiW35yaoZBp4KfHYBvM1/7pA==
+"@veupathdb/core-components@^0.11.4":
+  version "0.11.4"
+  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.11.4.tgz#18ba0954f31b77b8fdc596976ecd4ebd1e7bb345"
+  integrity sha512-fdGcU34UuDnbn3sysEwe2jgosYDYGbE1DONNBmqhlItI40FTUM2VmhAUUG5RXAscppzgaStDbUCUV5vDry0zfA==
   dependencies:
     "@emotion/react" "^11.4.0"
     "@emotion/serialize" "^1.0.2"

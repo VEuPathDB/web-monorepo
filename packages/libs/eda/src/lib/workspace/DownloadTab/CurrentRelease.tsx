@@ -94,17 +94,16 @@ export default function CurrentRelease({
           styleOverrides={{ margin: 0 }}
           textSize="small"
         >
-          <span style={{ fontWeight: 500 }}>Change Log: </span>
-          {release.description}
+          <span style={{ fontWeight: 500 }}>Date: </span>
+          {release.date}
         </Paragraph>
-
         <Paragraph
           color={colors.gray[600]}
           styleOverrides={{ margin: 0 }}
           textSize="small"
         >
-          <span style={{ fontWeight: 500 }}>Date: </span>
-          {release.date}
+          <span style={{ fontWeight: 500 }}>Change Log: </span>
+          {release.description}
         </Paragraph>
       </div>
       {releaseFiles.length ? (

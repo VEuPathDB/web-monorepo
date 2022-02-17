@@ -59,10 +59,8 @@ export function useGetReleaseFiles(
           fileData.fileName
         );
         fileData.fileUrl = fileUrl;
-        console.log('Set File URL');
       }
 
-      console.log('Set Release Files');
       setReleaseFiles(filesData);
     }
 

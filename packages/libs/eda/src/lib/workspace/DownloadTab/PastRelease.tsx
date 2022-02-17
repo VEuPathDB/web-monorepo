@@ -84,28 +84,29 @@ export default function PastRelease({
         themeRole="primary"
         title={`Full Dataset (Release ${release.releaseNumber})`}
         subTitle={{
-          Changelog: release.description ?? '',
           Date: release.date ?? '',
+          Changelog: release.description ?? '',
         }}
       >
-        <div style={{ padding: 15, paddingLeft: 40 }}>
+        <div style={{ padding: 15, paddingLeft: 35 }}>
           {releaseFiles.length ? (
             <DataGrid
               columns={exampleGridColumns}
               data={memoizedReleaseFiles}
               styleOverrides={{
                 table: {
-                  borderColor: colors.gray[200],
+                  borderColor: colors.mutedCyan[200],
                   borderStyle: 'solid',
-                  primaryRowColor: 'white',
-                  secondaryRowColor: 'white',
-                  borderWidth: 1,
+                  primaryRowColor: 'transparent',
+                  secondaryRowColor: 'transparent',
+                  borderWidth: 2,
                 },
                 headerCells: {
                   color: colors.gray[600],
+                  backgroundColor: colors.mutedCyan[200],
                   fontWeight: 700,
-                  borderColor: colors.gray[200],
-                  borderWidth: 1,
+                  borderColor: colors.mutedCyan[200],
+                  borderWidth: 2,
                   borderStyle: 'solid',
                   fontSize: 12,
                   fontFamily: 'Inter',
@@ -115,8 +116,8 @@ export default function PastRelease({
                   fontWeight: 400,
                   fontSize: 11,
                   fontFamily: 'Inter',
-                  borderColor: colors.gray[200],
-                  borderWidth: 1,
+                  borderColor: colors.mutedCyan[200],
+                  borderWidth: 2,
                   borderStyle: 'solid',
                   padding: 5,
                   verticalAlign: 'middle',
