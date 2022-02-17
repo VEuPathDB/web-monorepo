@@ -66,8 +66,8 @@ class StudyMenuItem extends React.Component {
   }
 
   renderEdaMenuItem() {
-    const { study } = this.props;
-    const { name, id, disabled  } = study;
+    const { study, user, permissions } = this.props;
+    const { name, id, disabled } = study;
     const edaRoute = makeEdaRoute(study.id) + '/new';
 
     return (
@@ -78,18 +78,12 @@ class StudyMenuItem extends React.Component {
           </Link>
         </div>
         <div className="row StudyMenuItem-Links">
-        {/* (!isPrereleaseStudy(study.access, study.id, user, permissions))
-          ? (
-            <Link name="Explore the data" to={edaRoute}>
-                  <i className="ebrc-icon-edaIcon"/>
-            </Link>
-            )
-          : (
-            <div className="prerelease">
-              <small>(coming soon)</small>
-            </div>
-            )
-            */}
+        {
+          isPrereleaseStudy(study.access, study.id, user, permissions) &&
+          <div className="prerelease">
+            <small>(coming soon)</small>
+          </div>
+        }
         </div>
       </div>
     )
