@@ -291,6 +291,7 @@ function MapViz(props: VisualizationProps) {
       onBaseLayerChanged={(newBaseLayer) =>
         updateVizConfig({ baseLayer: newBaseLayer })
       }
+      showSpinner={data.pending}
     />
   );
 
