@@ -172,7 +172,7 @@ export default function Modal({
           left: 0,
           right: 0,
           bottom: 0,
-          display: visible ? 'initial' : 'none',
+          opacity: visible ? 1 : 0,
         },
         modalContainer: {
           position: 'absolute',
@@ -190,7 +190,7 @@ export default function Modal({
           outlineStyle: componentStyle.border.style,
           outlineOffset: -1 * componentStyle.border.width + 1,
           overflow: 'hidden',
-          display: visible ? 'initial' : 'none',
+          opacity: visible ? 1 : 0,
         },
         modal: {
           width: '100%',
