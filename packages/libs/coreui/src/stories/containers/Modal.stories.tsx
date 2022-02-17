@@ -97,6 +97,16 @@ WithTitle.args = {
   title: 'Share Large Analysis',
 } as ModalProps;
 
+export const WithReactNodeTitle = Template.bind({});
+WithReactNodeTitle.args = {
+  ...Basic.args,
+  title: (
+    <span>
+      <i>Span</i> element used as a title
+    </span>
+  ),
+} as ModalProps;
+
 export const IncludeCloseButton = Template.bind({});
 IncludeCloseButton.args = {
   ...Basic.args,
