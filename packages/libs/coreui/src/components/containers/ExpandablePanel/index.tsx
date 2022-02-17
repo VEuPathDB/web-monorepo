@@ -136,6 +136,7 @@ export default function ExpandablePanel({
           transition: 'all .25s ease',
           paddingTop: 15,
           paddingBottom: 15,
+          outline: 'none',
         }}
         onClick={() =>
           internalComponentState !== 'closed'
