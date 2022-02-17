@@ -41,7 +41,7 @@ type ModalStyleSpec = {
 
 export type ModalProps = {
   /** Adds a title to the modal. */
-  title?: string;
+  title?: ReactNode;
   /** Indicates which theme role to use for style augmentation. */
   themeRole?: keyof UITheme['palette'];
   /**
@@ -201,7 +201,7 @@ export default function Modal({
       {title && (
         <div
           css={{
-            height: titleHeight + 39,
+            height: titleHeight + 40,
             display: 'flex',
             flexDirection: 'column',
           }}
@@ -212,28 +212,29 @@ export default function Modal({
               backgroundColor: componentStyle.header.primaryBackgroundColor,
               transition: 'all ease .25s',
             }}
-          />
+          >
+            <H3
+              ref={observe}
+              color='white'
+              additionalStyles={{
+                margin: 0,
+                padding: 0,
+                paddingRight: 25,
+                paddingLeft: 25,
+                top: 35,
+                position: 'relative',
+              }}
+              useTheme={false}
+            >
+              {title}
+            </H3>
+          </div>
           <div
             css={{
               flexBasis: 15,
               backgroundColor: componentStyle.header.secondaryBackgroundColor,
               transition: 'all ease .25s',
             }}
-          />
-
-          <H3
-            ref={observe}
-            text={title}
-            color='white'
-            additionalStyles={{
-              margin: 0,
-              padding: 0,
-              paddingRight: 25,
-              position: 'absolute',
-              left: 25,
-              top: 34,
-            }}
-            useTheme={false}
           />
         </div>
       )}
