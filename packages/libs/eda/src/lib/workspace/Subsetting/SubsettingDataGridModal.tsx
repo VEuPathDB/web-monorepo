@@ -120,9 +120,8 @@ export default function SubsettingDataGridModal({
   const [gridData, setGridData] = useState<TabularDataResponse | null>(null);
   const [gridColumns, gridRows] = useProcessedGridData(
     gridData,
-    flattenedFields,
     entities,
-    currentEntityID
+    currentEntity
   );
 
   // The current record pagecount.
@@ -423,7 +422,6 @@ export default function SubsettingDataGridModal({
               fontSize: 18,
               fontWeight: 500,
               color: '#646464',
-              textTransform: 'capitalize',
             }}
           >
             {currentEntity?.displayNamePlural}
