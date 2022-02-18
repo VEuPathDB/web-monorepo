@@ -1269,7 +1269,48 @@
   resolved "https://registry.yarnpkg.com/@types/warning/-/warning-3.0.0.tgz#0d2501268ad8f9962b740d387c4654f5f8e23e52"
   integrity sha1-DSUBJorY+ZYrdA04fEZU9fjiPlI=
 
-"@veupathdb/components@^0.11.13", "@veupathdb/components@^0.11.14", "@veupathdb/components@^0.11.8":
+"@veupathdb/components@^0.11.15":
+  version "0.11.15"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.15.tgz#ab4f5a1828eb8515f33d8552cde127f0806e3a5e"
+  integrity sha512-WAZs3fMWkL+SWpuDiOzUbJ7fAbpdeniE6Q6W4aru7lpDWccAOIN5uJo0a2n+opFXr7MzcP2JMrMN3heBFb9bAQ==
+  dependencies:
+    "@emotion/react" "^11.7.0"
+    "@material-ui/core" "^4.11.2"
+    "@material-ui/icons" "^4.11.2"
+    "@material-ui/lab" "^4.0.0-alpha.57"
+    "@types/d3" "^7.1.0"
+    "@types/date-arithmetic" "^4.1.1"
+    "@veupathdb/core-components" "^0.4.0"
+    "@visx/gradient" "^1.0.0"
+    "@visx/group" "^1.0.0"
+    "@visx/hierarchy" "^1.0.0"
+    "@visx/shape" "^1.4.0"
+    "@visx/text" "^1.3.0"
+    "@visx/tooltip" "^1.3.0"
+    "@visx/visx" "^1.1.0"
+    bootstrap "^4.5.2"
+    color-math "^1.1.3"
+    d3 "^7.1.1"
+    date-arithmetic "^4.1.0"
+    debounce-promise "^3.1.2"
+    latlon-geohash "^2.0.0"
+    leaflet "^1.6.0"
+    leaflet-drift-marker "^1.0.3"
+    leaflet-simple-map-screenshoter "^0.4.5"
+    luxon "^1.25.0"
+    plotly.js "^2.6.0"
+    re-resizable "^6.9.0"
+    react "^16.13.1"
+    react-bootstrap "^1.3.0"
+    react-cool-dimensions "^1.1.11"
+    react-dom "^16.13.1"
+    react-html-parser "^2.0.2"
+    react-leaflet "^2.7.0"
+    react-plotly.js "^2.4.0"
+    react-transition-group "^4.4.1"
+    shape2geohash "^1.2.5"
+
+"@veupathdb/components@^0.11.8":
   version "0.11.14"
   resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.14.tgz#f8a3d4e2c20bdbaa75657763d4bf2ac5a56188f2"
   integrity sha512-e6spY6d2xNMxlWzGf2c51/qleTfZXorpJRwkJrWEgBOW8SGV0tJQ0UEzFnoJGpoPbgduRQBvf2RwddcK4nMBXQ==
@@ -1310,10 +1351,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/core-components@^0.11.0":
-  version "0.11.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.11.0.tgz#cdb637dceba112e00381f847fdbd225ad2a9228e"
-  integrity sha512-ryVJoefywW3+zQ1GhPaOQzVsgwQnmz7xGDX38W7syU0U0IufC35NdU8tK5PLOFU9rh62e4AePDuHFJORZzg93w==
+"@veupathdb/core-components@^0.11.1":
+  version "0.11.6"
+  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.11.6.tgz#5b47c75ee5eaef05c7fae0d7aa2ba364907df9b4"
+  integrity sha512-Bixedas0KYL506Hi3XIX0heiegvVE3HRFpeqeTqdCwuxo4HQSJ2+5xNHkyX9eSwsoG3vi8jwYoad9Fh8OO8gyw==
   dependencies:
     "@emotion/react" "^11.4.0"
     "@emotion/serialize" "^1.0.2"
@@ -1339,10 +1380,10 @@
     react-modal "^3.14.3"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^1.3.0":
-  version "1.3.5"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.3.5.tgz#3cc3814f64c991cec6144de6f5533090b4a61484"
-  integrity sha512-9PdyBBVNBvixmHzJ0A0/8f8swpSI2iwOCTtoXso2h7AQiCTiNhbrY6eb8M8nTIiCXO/jOHVdEaYAqUe0il7bug==
+"@veupathdb/eda@^1.4.2":
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.4.2.tgz#bc8f7385d58f0370f4b420748f5ab734d09a78b5"
+  integrity sha512-PWV+1OvVMimX2FoGHQGznOyR3+BCw8oUmfn5T2E/wGvuKCGKPUdphdL+43MmsAU4ojPWfv/9tIF1hptVD6a4YA==
   dependencies:
     "@emotion/react" "^11.4.1"
     "@emotion/styled" "^11.3.0"
@@ -1350,8 +1391,8 @@
     "@material-ui/icons" "^4.11.2"
     "@material-ui/lab" "^4.0.0-alpha.58"
     "@types/debounce-promise" "^3.1.3"
-    "@veupathdb/components" "^0.11.14"
-    "@veupathdb/core-components" "^0.11.0"
+    "@veupathdb/components" "^0.11.15"
+    "@veupathdb/core-components" "^0.11.1"
     "@veupathdb/http-utils" "^1.1.0"
     "@veupathdb/study-data-access" "^0.1.5"
     debounce-promise "^3.1.2"
@@ -1399,10 +1440,10 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/wdk-client@^0.5.4":
-  version "0.5.6"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.5.6.tgz#f70a07241f9afa96cce0eeb23d78aa19b150d065"
-  integrity sha512-ewTQr9fnDOKyApl9hadlDJgo3M4B7YeTwZsmFZTw/GtvzY0ZbrecgoGksl2KeyEeh71E7ZklSHZ/JWsKnJEAFA==
+"@veupathdb/wdk-client@^0.5.7":
+  version "0.5.7"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.5.7.tgz#465546b14856697e9ef5606ac07b1ef3072b295f"
+  integrity sha512-1AQ2k4f0ghatZTnSVP1SnOOsbeml3zirrWrE2o/ksjM8XEmBp1rqY6dZaaPZL/2qrFSdoWSQxgqIuxrltNfGMw==
   dependencies:
     "@types/datatables.net" "^1.10.5"
     "@types/flot" "^0.0.31"
