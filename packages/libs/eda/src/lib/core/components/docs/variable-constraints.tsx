@@ -18,18 +18,16 @@ export function Document() {
   useSetDocumentTitle('Variable Constraints on Visualizations');
 
   return (
-    <div style={{ maxWidth: '1000px', fontSize: '1.1em' }}>
+    <div style={{ maxWidth: '1000px', fontSize: '1.4em', margin: '1.4em' }}>
       <h1>Variable Constraints on Visualizations</h1>
-
       <div>
-        <h2 style={{ fontSize: '1.4em' }}>TLDR (Too Long Didn’t Read)</h2>
         <strong>
+          <h2 style={{ fontSize: '1.2em' }}>TLDR (Too Long Didn’t Read)</h2>
           <Tooltip />
         </strong>
       </div>
-
-      <br />
-
+      <br /> <hr />
+      <h3 style={{ fontSize: '1.2em' }}>Visualization-specific Constraints</h3>
       <p>
         Variable constraints are a way to define which variables are compatible
         with different visual elements (axes, color, etc) of any given
@@ -43,9 +41,7 @@ export function Document() {
         the sub-heading below pertaining to a visualization of interest to learn
         more about the visual elements available to them and their constraints.
       </p>
-
-      <h2>Histogram</h2>
-
+      <h4 style={{ fontSize: '1.1em' }}>Histogram</h4>
       <ul>
         <li>
           X-axis/ Main: Variables must be either a number or date in order to
@@ -62,9 +58,7 @@ export function Document() {
           performance of the application
         </li>
       </ul>
-
-      <h2>Bar Plot</h2>
-
+      <h4 style={{ fontSize: '1.1em' }}>Bar Plot</h4>
       <ul>
         <li>
           X-axis/ Main: Variables must have 10 or fewer unique values to ensure
@@ -81,9 +75,7 @@ export function Document() {
           performance of the application
         </li>
       </ul>
-
-      <h2>Scatter Plot</h2>
-
+      <h4 style={{ fontSize: '1.1em' }}>Scatter Plot</h4>
       <ul>
         <li>
           X-axis: Variables must be numeric or date as this axis is represented
@@ -105,9 +97,7 @@ export function Document() {
           performance of the application
         </li>
       </ul>
-
-      <h2>Box Plot</h2>
-
+      <h4 style={{ fontSize: '1.1em' }}>Box Plot</h4>
       <ul>
         <li>
           X-axis: Variables must have 10 or fewer unique values to ensure
@@ -129,9 +119,7 @@ export function Document() {
           performance of the application
         </li>
       </ul>
-
-      <h2>Mosaic Plot: 2x2 Table</h2>
-
+      <h4 style={{ fontSize: '1.1em' }}>Mosaic Plot: 2x2 Table</h4>
       <ul>
         <li>
           X-axis: Variables must have exactly 2 unique values to calculate odds
@@ -148,9 +136,7 @@ export function Document() {
           performance of the application
         </li>
       </ul>
-
-      <h2>Mosaic Plot: RxC Table</h2>
-
+      <h4 style={{ fontSize: '1.1em' }}>Mosaic Plot: RxC Table</h4>
       <ul>
         <li>
           X-axis: Variables must have 10 or fewer unique values to ensure
@@ -167,9 +153,8 @@ export function Document() {
           performance of the application
         </li>
       </ul>
-
-      <br />
-
+      <br /> <hr />
+      <h3 style={{ fontSize: '1.2em' }}>Universal Constraints</h3>
       <p>
         Some variable constraints, like the dependency order of visual elements,
         are consistent across all visualizations. This constraint specifies the
@@ -185,12 +170,11 @@ export function Document() {
         be valid use cases for this type of duplication and mean to explore
         those further and support them explicitly if necessary in the future.
       </p>
-
       <p>
         The dependency order is specified so that each subsequent visual element
         is constrained to variables of the same or parent entity of the previous
         visual element:
-        <pre style={{ textAlign: 'center' }}>
+        <pre style={{ textAlign: 'center', fontSize: '1.1em' }}>
           Y-axis variable : X-axis variable : Overlay variable : Facet variables
         </pre>
       </p>
