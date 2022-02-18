@@ -76,6 +76,14 @@ export default function SubsettingDataGridModal({
   const subsettingClient = useSubsettingClient();
   const featuredFields = useFeaturedFields(entities, 'download');
 
+  const scopedFeaturedFields = useMemo(
+    () =>
+      featuredFields.filter((field) =>
+        field.term.startsWith(currentEntityID + '/')
+      ),
+    [currentEntityID, featuredFields]
+  );
+
   const scopedStarredVariables = useMemo(
     () =>
       starredVariables?.filter(
@@ -335,7 +343,7 @@ export default function SubsettingDataGridModal({
               scope="download"
               selectedVariableDescriptors={selectedVariableDescriptors}
               starredVariableDescriptors={scopedStarredVariables}
-              featuredFields={featuredFields}
+              featuredFields={scopedFeaturedFields}
               onSelectedVariablesChange={handleSelectedVariablesChange}
               toggleStarredVariable={toggleStarredVariable}
             />
