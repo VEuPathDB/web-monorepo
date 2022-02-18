@@ -134,6 +134,7 @@ CustomStyling.args = {
       color: gray[100],
       fontSize: 16,
       backgroundColor: gray[400],
+      textTransform: 'none',
     },
     dataCells: {
       borderColor: orange[500],
@@ -145,7 +146,7 @@ CustomStyling.args = {
       inactiveColor: gray[300],
     },
   },
-};
+} as DataGridProps;
 
 export const HeaderAddOns = Template.bind({});
 HeaderAddOns.args = {

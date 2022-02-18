@@ -39,10 +39,10 @@ const mesa: DataGridStyleSpec = {
     paddingBottom: 10,
     paddingTop: 10,
     color: gray[500],
-    display: 'flex',
     alignContent: 'center',
     backgroundColor: gray[100],
     fontSize: 13,
+    textTransform: 'capitalize',
   },
   dataCells: {
     padding: '10px',
@@ -74,8 +74,8 @@ const stylePresets: {
       paddingBottom: 5,
       paddingTop: 5,
       color: gray[500],
-      display: 'flex',
       alignContent: 'center',
+      textTransform: 'capitalize',
     },
     dataCells: {
       padding: '10px',
