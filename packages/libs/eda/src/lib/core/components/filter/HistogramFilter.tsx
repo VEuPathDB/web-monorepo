@@ -790,7 +790,7 @@ function computeBinSlider(
     case 'date': {
       return { min: 1, max: 60, step: 1 };
     }
-    case 'integer':
+    case 'integer': {
       const { min: rangeMin, max: rangeMax } = range as NumberRange;
       const rangeSize = rangeMax - rangeMin;
       const maxBins = 100;
@@ -798,6 +798,7 @@ function computeBinSlider(
       const min = stepSize < 1 ? 1 : stepSize;
       const max = rangeSize;
       return { min, max, step: min };
+    }
     case 'number': {
       const { min: rangeMin, max: rangeMax } = range as NumberRange;
       const rangeSize = Math.round((rangeMax - rangeMin) * 100) / 100;
