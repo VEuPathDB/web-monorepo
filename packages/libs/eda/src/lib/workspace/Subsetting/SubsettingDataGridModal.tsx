@@ -121,7 +121,10 @@ export default function SubsettingDataGridModal({
   const [
     selectedVariableDescriptors,
     setSelectedVariableDescriptors,
-  ] = useState<Array<VariableDescriptor>>([]);
+  ] = useState<Array<VariableDescriptor>>(
+    analysisState.analysis?.descriptor.dataTableConfig[currentEntityID]
+      .variables ?? []
+  );
 
   const defaultSelection = useMemo(() => [], []);
 
@@ -155,8 +158,6 @@ export default function SubsettingDataGridModal({
   /** Actions to take when modal is closed. */
   const onModalClose = useCallback(() => {
     setGridData(null);
-    // Conditionally set this state to avoid re-renders.
-    setSelectedVariableDescriptors((prev) => (prev.length === 0 ? prev : []));
     setDisplayVariableTree(false);
   }, []);
 
@@ -230,9 +231,10 @@ export default function SubsettingDataGridModal({
 
   /** Whenever `selectedVariableDescriptors` changes, load a new data set. */
   useEffect(() => {
+    if (!displayModal) return;
     setApiError(null);
     fetchPaginatedData({ pageSize: 10, pageIndex: 0 });
-  }, [selectedVariableDescriptors, fetchPaginatedData]);
+  }, [fetchPaginatedData, displayModal]);
 
   // Render the table data or instructions on how to get started.
   const renderDataGridArea = () => {
