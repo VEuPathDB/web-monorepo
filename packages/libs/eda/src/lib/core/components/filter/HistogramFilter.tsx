@@ -786,6 +786,7 @@ function computeBinSlider(
   type: HistogramVariable['type'],
   range: NumberOrDateRange
 ) {
+  const [minBins, maxBins] = [2, 1000];
   switch (type) {
     case 'date': {
       return { min: 1, max: 60, step: 1 };
@@ -793,17 +794,16 @@ function computeBinSlider(
     case 'integer': {
       const { min: rangeMin, max: rangeMax } = range as NumberRange;
       const rangeSize = rangeMax - rangeMin;
-      const maxBins = 100;
       const stepSize = Math.floor(rangeSize / maxBins);
       const min = stepSize < 1 ? 1 : stepSize;
-      const max = rangeSize;
+      const max = Math.floor(rangeSize / minBins);
       return { min, max, step: min };
     }
     case 'number': {
       const { min: rangeMin, max: rangeMax } = range as NumberRange;
-      const rangeSize = Math.round((rangeMax - rangeMin) * 100) / 100;
-      const max = rangeSize;
-      const min = rangeSize / 1000;
+      const rangeSize = rangeMax - rangeMin;
+      const max = Number((rangeSize / minBins).toPrecision(2));
+      const min = Number((rangeSize / maxBins).toPrecision(2));
       return { min, max, step: min };
     }
   }
