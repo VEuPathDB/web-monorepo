@@ -36,7 +36,7 @@ interface StudyState {
 
 export const StudyContext = createContext<StudyState | undefined>(undefined);
 
-interface HookValue {
+export interface HookValue {
   studyRecordClass: StudyRecordClass;
   studyRecord: StudyRecord;
 }
@@ -96,10 +96,11 @@ export function useWdkStudyRecord(datasetId: string): HookValue | undefined {
 
 const DEFAULT_STUDY_ATTRIBUTES = ['dataset_id', 'eda_study_id'];
 const DEFAULT_STUDY_TABLES: string[] = [];
+const EMPTY_ARRAY: string[] = [];
 
 export function useWdkStudyRecords(
-  attributes: AnswerJsonFormatConfig['attributes'] = [],
-  tables: AnswerJsonFormatConfig['tables'] = []
+  attributes: AnswerJsonFormatConfig['attributes'] = EMPTY_ARRAY,
+  tables: AnswerJsonFormatConfig['tables'] = EMPTY_ARRAY
 ): StudyRecord[] | undefined {
   return useWdkService(
     (wdkService) =>
