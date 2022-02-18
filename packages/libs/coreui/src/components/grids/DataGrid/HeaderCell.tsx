@@ -70,14 +70,13 @@ export default function HeaderCell({
       <div
         css={[
           typography.th,
-          otherCSSOverrides,
           {
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'flex-end',
             textAlign: 'left',
-            textTransform: 'capitalize',
           },
+          otherCSSOverrides,
           (headerGroup.id === 'selection' || extraHeaderControls.length) && {
             paddingLeft: 10,
             paddingRight: 10,
