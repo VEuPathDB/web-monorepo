@@ -1,4 +1,4 @@
-import { CSSProperties, ReactNode, useEffect, useMemo } from 'react';
+import { CSSProperties, ReactNode, useMemo } from 'react';
 import { merge } from 'lodash';
 import useDimensions from 'react-cool-dimensions';
 
@@ -22,6 +22,7 @@ type CardStyleSpec = {
   header: {
     primaryBackgroundColor: CSSProperties['backgroundColor'];
     secondaryBackgroundColor: CSSProperties['backgroundColor'];
+    minimumHeight?: CSSProperties['minHeight'];
   };
   content: {
     paddingTop: CSSProperties['paddingTop'];
@@ -62,18 +63,24 @@ export default function Card({
   children,
 }: CardProps) {
   const theme = useUITheme();
-  const { observe, width: titleWidth, height: titleHeight } = useDimensions();
+  const { observe, height: titleHeight } = useDimensions();
 
   const TitleComponent =
     titleSize === 'large' ? H3 : titleSize === 'medium' ? H4 : H5;
 
+  // Determine the height of the title bar.
   const titleBarHeight = useMemo(() => {
-    const titleBarPadding =
-      titleSize === 'large' ? 33 : titleSize === 'medium' ? 28 : 34;
-    return titleHeight + titleBarPadding;
-  }, [titleHeight, titleSize]);
+    if (
+      styleOverrides.header?.minimumHeight &&
+      styleOverrides.header.minimumHeight > titleHeight + 35
+    )
+      return styleOverrides.header.minimumHeight;
+
+    return titleHeight + 35;
+  }, [titleHeight, titleSize, styleOverrides]);
+
   const titleTopOffset = useMemo(
-    () => (titleSize === 'large' ? 14 : titleSize === 'medium' ? 6 : 10),
+    () => (titleSize === 'large' ? 10 : titleSize === 'medium' ? 7 : 5),
     [titleSize]
   );
 
@@ -113,10 +120,6 @@ export default function Card({
     return merge({}, defaultStyle, themeStyle, styleOverrides);
   }, [themeRole, styleOverrides, theme]);
 
-  useEffect(() => {
-    console.log(titleBarHeight);
-  }, [titleBarHeight]);
-
   return (
     <div
       css={{
@@ -128,6 +131,7 @@ export default function Card({
         outlineStyle: componentStyle.border.style,
         display: 'flex',
         flexDirection: 'column',
+        overflow: 'hidden',
       }}
     >
       <div
@@ -142,22 +146,10 @@ export default function Card({
         <div
           css={{
             flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-end',
             backgroundColor: componentStyle.header.primaryBackgroundColor,
-            borderTopLeftRadius: componentStyle.border.radius,
-            borderTopRightRadius: componentStyle.border.radius,
-          }}
-        />
-        <div
-          css={{
-            flexBasis: 15,
-            backgroundColor: componentStyle.header.secondaryBackgroundColor,
-          }}
-        />
-        <div
-          css={{
-            position: 'absolute',
-            left: componentStyle.content.paddingLeft,
-            top: 15 + titleTopOffset,
           }}
         >
           <TitleComponent
@@ -168,11 +160,21 @@ export default function Card({
               margin: 0,
               marginRight: 15,
               padding: 0,
+              position: 'relative',
+              backgroundColor: 'transparent',
+              marginLeft: componentStyle.content.paddingLeft,
+              top: titleTopOffset,
             }}
             useTheme={false}
           />
         </div>
       </div>
+      <div
+        css={{
+          height: 15,
+          backgroundColor: componentStyle.header.secondaryBackgroundColor,
+        }}
+      />
       <div
         css={{
           flex: 1,

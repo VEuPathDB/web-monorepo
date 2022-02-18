@@ -4,8 +4,8 @@ import { blue, gray, mutedGreen, mutedMagenta } from '../../definitions/colors';
 
 import Card, { CardProps } from '../../components/containers/Card';
 import { FilledButton } from '../../components/buttons';
-import { secondaryFont } from '../../styleDefinitions/typography';
 import { UIThemeProvider } from '../../components/theming';
+import Paragraph from '../../components/typography/Paragraph';
 
 const ModalContent = ({
   themeRole,
@@ -21,14 +21,14 @@ const ModalContent = ({
     }}
   >
     <div>
-      <p css={[{ color: gray[500] }, secondaryFont]}>
+      <Paragraph color={gray[600]}>
         This is an example full-screen modal.
-      </p>
-      <p css={[{ color: gray[500] }, secondaryFont]}>
+      </Paragraph>
+      <Paragraph color={gray[600]}>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
         tempor incididunt ut labore et dolore magna aliqua. Mi quis hendrerit
         dolor magna eget est.
-      </p>
+      </Paragraph>
     </div>
     <FilledButton
       text='Example Button'
@@ -93,6 +93,16 @@ ThinMargins.args = {
   width: 350,
   themeRole: 'primary',
   styleOverrides: { content: { paddingLeft: 15 } },
+} as CardProps;
+
+export const MinimumTitleBarHeight = Template.bind({});
+MinimumTitleBarHeight.args = {
+  title: 'Example Card',
+  titleSize: 'large',
+  height: 450,
+  width: 350,
+  themeRole: 'primary',
+  styleOverrides: { header: { minimumHeight: 150 } },
 } as CardProps;
 
 export const StyleOverrides = Template.bind({});
