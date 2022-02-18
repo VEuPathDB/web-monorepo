@@ -415,6 +415,17 @@ export default function SubsettingDataGridModal({
               </p>
             )}
         </div>
+        {selectedVariableDescriptors.length === 0 && (
+          <div
+            style={{
+              fontSize: 18,
+              fontWeight: 500,
+              color: '#646464',
+            }}
+          >
+            To configure this table, click on the "Add columns" button.
+          </div>
+        )}
         <div
           style={{
             display: 'flex',
