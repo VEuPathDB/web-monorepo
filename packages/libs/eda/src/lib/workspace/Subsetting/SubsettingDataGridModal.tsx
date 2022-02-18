@@ -31,10 +31,7 @@ import {
   useStudyRecord,
   useSubsettingClient,
 } from '../../core';
-import {
-  useFeaturedFields,
-  useFlattenedFields,
-} from '../../core/components/variableTrees/hooks';
+import { useFeaturedFields } from '../../core/components/variableTrees/hooks';
 import { useProcessedGridData } from './hooks';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
@@ -78,7 +75,6 @@ export default function SubsettingDataGridModal({
   const studyMetadata = useStudyMetadata();
   const subsettingClient = useSubsettingClient();
   const featuredFields = useFeaturedFields(entities, 'download');
-  const flattenedFields = useFlattenedFields(entities, 'download');
 
   const scopedStarredVariables = useMemo(
     () =>
