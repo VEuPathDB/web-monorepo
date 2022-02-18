@@ -3,7 +3,5 @@ export function numberDecimalPoint(
   value: number,
   decimalPoint: number
 ): number {
-  return Number(
-    Math.round(parseFloat(value + 'e' + decimalPoint)) + 'e-' + decimalPoint
-  );
+  return Number(value.toFixed(decimalPoint));
 }
