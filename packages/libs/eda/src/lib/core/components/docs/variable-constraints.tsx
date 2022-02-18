@@ -116,7 +116,7 @@ export function Document() {
 
         <li>
           Y-axis: Variables must be numeric to calculate meaningful summary
-          statistics for them.
+          statistics.
         </li>
 
         <li>
