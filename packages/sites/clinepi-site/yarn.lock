@@ -1262,10 +1262,27 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/core-components@^0.11.1", "@veupathdb/core-components@^0.11.2":
+"@veupathdb/core-components@^0.11.1":
   version "0.11.2"
   resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.11.2.tgz#bb53d4c85b2e093b301553904dbb3ff69c9fe211"
   integrity sha512-Qo2lcz/iYeN8zagNqb5sJ+FtocUBbTiKk/wKu/DCcnDkQjz9vv6/lzMB3/dkTkhiW35yaoZBp4KfHYBvM1/7pA==
+  dependencies:
+    "@emotion/react" "^11.4.0"
+    "@emotion/serialize" "^1.0.2"
+    "@emotion/styled" "^11.3.0"
+    "@material-ui/core" "^4.12.3"
+    "@material-ui/icons" "^4.11.2"
+    "@react-hook/size" "^2.1.2"
+    "@types/react-table" "^7.7.8"
+    lodash "^4.17.21"
+    react-cool-dimensions "^2.0.7"
+    react-responsive-modal "^6.2.0"
+    react-table "^7.7.0"
+
+"@veupathdb/core-components@^0.11.6":
+  version "0.11.6"
+  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.11.6.tgz#5b47c75ee5eaef05c7fae0d7aa2ba364907df9b4"
+  integrity sha512-Bixedas0KYL506Hi3XIX0heiegvVE3HRFpeqeTqdCwuxo4HQSJ2+5xNHkyX9eSwsoG3vi8jwYoad9Fh8OO8gyw==
   dependencies:
     "@emotion/react" "^11.4.0"
     "@emotion/serialize" "^1.0.2"
@@ -1321,10 +1338,10 @@
     react-table "^7.7.0"
     uuid "^8.3.2"
 
-"@veupathdb/eda@^1.4.1":
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.4.1.tgz#84061e77b2caa4da2f6ac00d5ad4357977fd2c4e"
-  integrity sha512-6UN08hU9bLynR7R/Ak/KnruNxPIT/DYJ4DkgBqiN2gH04hNwyztRdU6sCkopSkL3M3O5aBq6SKohWI+fJxZQkA==
+"@veupathdb/eda@^1.4.2":
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.4.2.tgz#bc8f7385d58f0370f4b420748f5ab734d09a78b5"
+  integrity sha512-PWV+1OvVMimX2FoGHQGznOyR3+BCw8oUmfn5T2E/wGvuKCGKPUdphdL+43MmsAU4ojPWfv/9tIF1hptVD6a4YA==
   dependencies:
     "@emotion/react" "^11.4.1"
     "@emotion/styled" "^11.3.0"
@@ -1418,10 +1435,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.2.4":
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.2.4.tgz#b5589444b03b26bd4e4b6bf546fe77bb77de0fa5"
-  integrity sha512-8ECPF+wdl8B2j1xfKNst8YdfQKwoDUMP92B461Pl6PQDUvqF/8Gn6MT7glyGoxkWsxn2Em2Gdg9kl86l55vF2Q==
+"@veupathdb/web-common@^0.2.5":
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.2.5.tgz#c4397ce93f9877cb75f5a5c53510dd657999e982"
+  integrity sha512-nKus4d7JQuK28QUFL0ClQ1nM/LBPrDf8OFnN22AdrFnoFe2ihdvDUCMHCpC8+N6hKYJ0LWpgueG83Zk5TKxK1g==
   dependencies:
     "@veupathdb/components" "^0.11.13"
     "@veupathdb/eda" "^1.3.0"
