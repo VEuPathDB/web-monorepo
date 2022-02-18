@@ -84,21 +84,6 @@ export default function SubsettingDataGridModal({
     [currentEntityID, starredVariables]
   );
 
-  const scopedFeaturedVariables = useMemo(
-    () =>
-      featuredFields
-        .filter((field) => field.term.startsWith(currentEntityID))
-        .map(
-          (field): VariableDescriptor => {
-            return {
-              entityId: currentEntityID,
-              variableId: field.term.split('/')[1],
-            };
-          }
-        ),
-    [currentEntityID, featuredFields]
-  );
-
   const [currentEntity, setCurrentEntity] = useState<StudyEntity | undefined>(
     undefined
   );
@@ -130,10 +115,7 @@ export default function SubsettingDataGridModal({
     setSelectedVariableDescriptors,
   ] = useState<Array<VariableDescriptor>>([]);
 
-  const defaultSelection = useMemo(
-    () => scopedFeaturedVariables.concat(scopedStarredVariables),
-    [scopedFeaturedVariables, scopedStarredVariables]
-  );
+  const defaultSelection = useMemo(() => [], []);
 
   /**
    * Actions to take when the modal is opened.
@@ -241,9 +223,7 @@ export default function SubsettingDataGridModal({
   /** Whenever `selectedVariableDescriptors` changes, load a new data set. */
   useEffect(() => {
     setApiError(null);
-    selectedVariableDescriptors.length
-      ? fetchPaginatedData({ pageSize: 10, pageIndex: 0 })
-      : setGridData(null);
+    fetchPaginatedData({ pageSize: 10, pageIndex: 0 });
   }, [selectedVariableDescriptors, fetchPaginatedData]);
 
   // Render the table data or instructions on how to get started.
