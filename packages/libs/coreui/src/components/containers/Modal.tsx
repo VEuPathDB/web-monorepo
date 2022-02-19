@@ -14,6 +14,7 @@ import { UITheme } from '../theming/types';
 // Hooks
 import useUITheme from '../theming/useUITheme';
 import { useEffect } from 'react';
+import { Subset } from '../../definitions/types';
 
 type ModalStyleSpec = {
   border: {
@@ -35,8 +36,8 @@ type ModalStyleSpec = {
       left: number;
     };
     overflow: {
-      x?: CSSProperties['overflowX'];
-      y?: CSSProperties['overflowY'];
+      x: CSSProperties['overflowX'];
+      y: CSSProperties['overflowY'];
     };
   };
   size: {
@@ -70,7 +71,7 @@ export type ModalProps = {
   /** Optional. Control the zIndex of the modal. Defaults to 1000. */
   zIndex?: number;
   /** Allows you to adjust the style of the modal. Applied *after* theming augmentation. */
-  styleOverrides?: Partial<ModalStyleSpec>;
+  styleOverrides?: Subset<ModalStyleSpec>;
   /** The contents of the modal.  */
   children: ReactNode;
 };
