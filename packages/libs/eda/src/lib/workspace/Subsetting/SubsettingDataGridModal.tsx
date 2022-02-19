@@ -6,13 +6,12 @@ import SettingsIcon from '@material-ui/icons/Settings';
 
 import {
   Modal,
-  H3,
   H5,
   DataGrid,
   MesaButton,
   Download,
-  Close,
   CloseFullscreen,
+  OutlinedButton,
 } from '@veupathdb/core-components';
 
 import MultiSelectVariableTree from '../../core/components/variableTrees/MultiSelectVariableTree';
@@ -23,7 +22,6 @@ import { AnalysisState } from '../../core/hooks/analysis';
 import { StudyEntity, TabularDataResponse } from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
 import { APIError } from '../../core/api/types';
-import { colors } from '@veupathdb/core-components';
 
 // Hooks
 import {
@@ -250,13 +248,14 @@ export default function SubsettingDataGridModal({
   // Render the table data or instructions on how to get started.
   const renderDataGridArea = () => {
     return (
-      <div style={{ overflowX: 'auto' }}>
+      <div>
         {gridData ? (
           <DataGrid
             columns={gridColumns}
             data={gridRows}
             loading={dataLoading}
             stylePreset="mesa"
+            styleOverrides={{ headerCells: { textTransform: 'none' } }}
             pagination={{
               recordsPerPage: 10,
               controlsLocation: 'bottom',
@@ -301,11 +300,11 @@ export default function SubsettingDataGridModal({
         <div
           style={{
             position: 'absolute',
-            width: 410,
-            right: 6,
-            top: 6,
+            width: 425,
+            left: 370,
+            top: -54,
             backgroundColor: 'rgba(255, 255, 255, 1)',
-            border: '1px solid rgb(200, 200, 200)',
+            border: '2px solid rgb(200, 200, 200)',
             borderRadius: '.5em',
             boxShadow: '0px 0px 6px rgba(0, 0, 0, .25)',
           }}
@@ -368,36 +367,25 @@ export default function SubsettingDataGridModal({
 
   return (
     <Modal
+      title={safeHtml(studyRecord.displayName)}
+      includeCloseButton={true}
       visible={displayModal}
       toggleVisible={toggleDisplay}
       onOpen={onModalOpen}
       onClose={onModalClose}
+      themeRole="primary"
       styleOverrides={{
         content: {
-          paddingTop: 0,
-          paddingRight: 50,
-          paddingBottom: 25,
-          paddingLeft: 25,
+          padding: {
+            top: 0,
+            right: 25,
+            bottom: 25,
+            left: 25,
+          },
         },
       }}
     >
-      <div key="Title" style={{ marginBottom: 35 }}>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <H3 additionalStyles={{ margin: 0, padding: 0 }}>
-            {safeHtml(studyRecord.displayName)}
-          </H3>
-          <Close
-            fontSize={32}
-            fill={colors.gray[500]}
-            onClick={() => toggleDisplay()}
-          />
-        </div>
+      <div style={{ marginTop: 10, marginBottom: 20 }}>
         <AnalysisSummary
           analysis={analysisState.analysis!}
           setAnalysisName={analysisState.setName}
@@ -413,34 +401,45 @@ export default function SubsettingDataGridModal({
           alignItems: 'center',
         }}
       >
-        <div style={{ marginBottom: 15 }}>
-          <span
-            style={{
-              fontSize: 18,
-              fontWeight: 500,
-              color: '#646464',
-              textTransform: 'capitalize',
-            }}
-          >
-            {currentEntity?.displayNamePlural}
-          </span>
-          {currentEntityRecordCounts.filtered &&
-            currentEntityRecordCounts.total && (
-              <p
-                style={{
-                  marginTop: 0,
-                  marginBottom: 0,
-                  color: 'gray',
-                }}
-              >
-                {`${currentEntityRecordCounts.filtered.toLocaleString()} of ${currentEntityRecordCounts.total.toLocaleString()} records selected`}
-              </p>
-            )}
+        <div style={{ marginBottom: 15, display: 'flex' }}>
+          <div style={{ marginRight: 25 }}>
+            <span
+              style={{
+                fontSize: 18,
+                fontWeight: 500,
+                color: '#646464',
+                textTransform: 'capitalize',
+              }}
+            >
+              {currentEntity?.displayNamePlural}
+            </span>
+            {currentEntityRecordCounts.filtered &&
+              currentEntityRecordCounts.total && (
+                <p
+                  style={{
+                    marginTop: 0,
+                    marginBottom: 0,
+                    color: 'gray',
+                  }}
+                >
+                  {`${currentEntityRecordCounts.filtered.toLocaleString()} of ${currentEntityRecordCounts.total.toLocaleString()} records selected`}
+                </p>
+              )}
+          </div>
+          <OutlinedButton
+            text={displayVariableTree ? 'Close Selector' : 'Add Columns'}
+            // @ts-ignore
+            icon={displayVariableTree ? CloseFullscreen : SettingsIcon}
+            size="medium"
+            onPress={() => setDisplayVariableTree(!displayVariableTree)}
+            styleOverrides={{ container: { width: 155 } }}
+            themeRole="primary"
+            textTransform="capitalize"
+          />
         </div>
         <div
           style={{
             display: 'flex',
-            flexBasis: 410,
             justifyContent: 'flex-end',
             marginBottom: 15,
           }}
@@ -448,16 +447,9 @@ export default function SubsettingDataGridModal({
           <MesaButton
             text="Download"
             icon={Download}
-            styleOverrides={{ container: { marginRight: 10 } }}
             onPress={downloadData}
-          />
-          <MesaButton
-            text={displayVariableTree ? 'Close Selector' : 'Select Variables'}
-            // @ts-ignore
-            icon={displayVariableTree ? CloseFullscreen : SettingsIcon}
-            size="medium"
-            onPress={() => setDisplayVariableTree(!displayVariableTree)}
-            styleOverrides={{ container: { width: 155 } }}
+            themeRole="primary"
+            textTransform="capitalize"
           />
         </div>
       </div>
