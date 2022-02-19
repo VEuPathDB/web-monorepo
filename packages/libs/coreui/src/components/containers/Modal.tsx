@@ -32,6 +32,10 @@ type ModalStyleSpec = {
     paddingRight: number;
     paddingBottom: number;
     paddingLeft: number;
+    overflow: {
+      x?: CSSProperties['overflowX'];
+      y?: CSSProperties['overflowY'];
+    };
   };
   size: {
     width: CSSProperties['width'];
@@ -104,6 +108,10 @@ export default function Modal({
         paddingRight: 0,
         paddingBottom: 0,
         paddingLeft: 0,
+        overflow: {
+          x: 'auto',
+          y: 'auto',
+        },
       },
       header: {
         primaryBackgroundColor: blue[500],
@@ -251,7 +259,8 @@ export default function Modal({
       <div
         css={{
           height: modalContentHeight - (title ? titleHeight + 39 : 0),
-          overflowY: 'auto',
+          overflowX: componentStyle.content.overflow.x,
+          overflowY: componentStyle.content.overflow.y,
         }}
       >
         <div
