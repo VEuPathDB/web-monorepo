@@ -46,9 +46,6 @@ export default function PastRelease({
               color: colors.mutedCyan[500],
             }}
             href={value.url}
-            download={value.name}
-            target="_blank"
-            rel="noreferrer"
           >
             <Download fill={colors.mutedCyan[500]} fontSize={20} />
             <span
