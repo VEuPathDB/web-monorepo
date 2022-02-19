@@ -109,16 +109,23 @@ export default function DownloadTab({
   return (
     <div style={{ display: 'flex', paddingTop: 20 }}>
       <div key="Column One" style={{ marginRight: 75 }}>
-        <MySubset entities={enhancedEntityData} />
+        <MySubset
+          entities={enhancedEntityData}
+          analysisState={analysisState}
+          totalEntityCounts={totalCounts}
+          filteredEntityCounts={filteredCounts}
+        />
         {mergedReleaseData.map((release, index) =>
           index === 0 ? (
             <CurrentRelease
+              key={release.releaseNumber}
               studyId={studyMetadata.id}
               release={release}
               downloadClient={downloadClient}
             />
           ) : (
             <PastRelease
+              key={release.releaseNumber}
               studyId={studyMetadata.id}
               release={release}
               downloadClient={downloadClient}

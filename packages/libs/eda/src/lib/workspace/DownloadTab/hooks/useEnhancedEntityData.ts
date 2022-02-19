@@ -6,9 +6,12 @@ import { EntityCounts } from '../../../core/hooks/entityCounts';
 // DAVE/JAMIE: We *might* want to move this type definition and hook to
 // a more common location if you think it could have relevance to
 // other use-cases.
-export type EnhancedEntityData = Array<
-  StudyEntity & { filteredCount: number; totalCount: number }
->;
+export type EnhancedEntityData = Array<EnhancedEntityDatum>;
+
+export type EnhancedEntityDatum = StudyEntity & {
+  filteredCount: number;
+  totalCount: number;
+};
 
 /**
  * Enhance entity data with total and filtered counts.
