@@ -3544,10 +3544,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/core-components@^0.11.4":
-  version "0.11.4"
-  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.11.4.tgz#18ba0954f31b77b8fdc596976ecd4ebd1e7bb345"
-  integrity sha512-fdGcU34UuDnbn3sysEwe2jgosYDYGbE1DONNBmqhlItI40FTUM2VmhAUUG5RXAscppzgaStDbUCUV5vDry0zfA==
+"@veupathdb/core-components@^0.12.1":
+  version "0.12.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.12.1.tgz#642ad76e5d543532ad7e124347cce3a2d234abc4"
+  integrity sha512-m2rImktyBW6BqU9NBWm4+MSCTu8osJs/yor8pY+TcnAYDNlq24YAazrRb4q/b+BxYggtZTGwQnVZn+I89ygU2A==
   dependencies:
     "@emotion/react" "^11.4.0"
     "@emotion/serialize" "^1.0.2"
@@ -14833,7 +14833,7 @@ react-draggable@^4.0.3, react-draggable@^4.4.3:
     clsx "^1.1.1"
     prop-types "^15.6.0"
 
-react-error-boundary@^3.1.0:
+react-error-boundary@^3.1.0, react-error-boundary@^3.1.4:
   version "3.1.4"
   resolved "https://registry.yarnpkg.com/react-error-boundary/-/react-error-boundary-3.1.4.tgz#255db92b23197108757a888b01e5b729919abde0"
   integrity sha512-uM9uPzZJTF6wRQORmSrvOIgt4lJ9MC1sNgEOj2XGsDTRE4kmpWxg7ENK9EWNKJRMAOY9z0MuF4yIfl6gp4sotA==

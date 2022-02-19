@@ -44,10 +44,12 @@ export default function ShareFromAnalysesList({
       styleOverrides={{
         size: { width: 700, height: 480 },
         content: {
-          paddingTop: 0,
-          paddingRight: 50,
-          paddingBottom: 0,
-          paddingLeft: 25,
+          padding: {
+            top: 0,
+            right: 50,
+            bottom: 0,
+            left: 25,
+          },
         },
       }}
     >
