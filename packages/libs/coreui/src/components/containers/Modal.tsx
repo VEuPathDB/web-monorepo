@@ -27,11 +27,17 @@ type ModalStyleSpec = {
     secondaryBackgroundColor: CSSProperties['backgroundColor'];
   };
   content: {
-    // TODO: It would be better to fully support all valid values.
-    paddingTop: number;
-    paddingRight: number;
-    paddingBottom: number;
-    paddingLeft: number;
+    padding: {
+      // TODO: It would be better to fully support all valid values.
+      top: number;
+      right: number;
+      bottom: number;
+      left: number;
+    };
+    overflow: {
+      x?: CSSProperties['overflowX'];
+      y?: CSSProperties['overflowY'];
+    };
   };
   size: {
     width: CSSProperties['width'];
@@ -100,10 +106,16 @@ export default function Modal({
         radius: 7,
       },
       content: {
-        paddingTop: 0,
-        paddingRight: 0,
-        paddingBottom: 0,
-        paddingLeft: 0,
+        padding: {
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 0,
+        },
+        overflow: {
+          x: 'auto',
+          y: 'auto',
+        },
       },
       header: {
         primaryBackgroundColor: blue[500],
@@ -251,15 +263,16 @@ export default function Modal({
       <div
         css={{
           height: modalContentHeight - (title ? titleHeight + 39 : 0),
-          overflowY: 'auto',
+          overflowX: componentStyle.content.overflow.x,
+          overflowY: componentStyle.content.overflow.y,
         }}
       >
         <div
           css={{
-            paddingTop: componentStyle.content.paddingTop,
-            paddingRight: componentStyle.content.paddingRight,
-            paddingBottom: componentStyle.content.paddingBottom,
-            paddingLeft: componentStyle.content.paddingLeft,
+            paddingTop: componentStyle.content.padding.top,
+            paddingRight: componentStyle.content.padding.right,
+            paddingBottom: componentStyle.content.padding.bottom,
+            paddingLeft: componentStyle.content.padding.left,
           }}
         >
           {children}
