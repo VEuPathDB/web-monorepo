@@ -353,17 +353,32 @@ function observeSnpsAlignment(action$) {
  */
 function observeRequestedOrganisms(action$, state$, { wdkService }) {
   return action$.pipe(
-    filter(action => action.type === RecordActions.RECORD_LOADING),
-    tap(({ payload }) => {
-      if (!isGenomicsService(wdkService)) {
-        throw new Error('Tried to report organism metrics via a misconfigured GenomicsService');
-      }
+    filter(action => action.type === RecordActions.RECORD_RECEIVED),
+    tap(({ payload: { recordClass, record } }) => {
+      if (shouldReportRecordOrganisms({ recordClass })) {
+        if (!isGenomicsService(wdkService)) {
+          throw new Error('Tried to report organism metrics via a misconfigured GenomicsService');
+        }
 
-      if (
-        payload.recordClassUrlSegment === 'gene' ||
-        payload.recordClassUrlSegment === 'genomic-sequence'
-      ) {
-        wdkService.incrementOrganismCount(payload);
+        const recordOrganisms = getRecordOrganisms({
+          recordClass,
+          record
+        });
+
+        if (
+          recordOrganisms == null ||
+          recordOrganisms.length === 0
+        ) {
+          console.warn(
+            'Tried to report organism metrics for a record which does not appear to have any associated organisms:',
+            JSON.stringify(record.id, null, 2)
+          );
+          return;
+        }
+
+        recordOrganisms.forEach(recordOrganism => {
+          wdkService.incrementOrganismCount(recordOrganism);
+        });
       }
     }),
     mergeMapTo(empty())
@@ -371,6 +386,32 @@ function observeRequestedOrganisms(action$, state$, { wdkService }) {
 }
 
 // TODO Declare type and clear value if it doesn't conform, e.g., validation
+
+function shouldReportRecordOrganisms({ recordClass }) {
+  return [
+    'gene',
+    'genomic-sequence'
+  ].includes(recordClass.urlSegment);
+}
+
+/** Returns an array of organism names associated to the record */
+function getRecordOrganisms({
+  recordClass: { urlSegment: recordClassUrlSegment },
+  record
+}) {
+  if (
+    recordClassUrlSegment === 'gene' ||
+    recordClassUrlSegment === 'genomic-sequence'
+  ) {
+    const organismAttributeName = 'organism_full';
+
+    const organismAttribute = record.attributes?.[organismAttributeName];
+
+    return typeof organismAttribute !== 'string'
+      ? []
+      : [organismAttribute];
+  }
+}
 
 /** Read state property value from storage */
 function getStateFromStorage(descriptor, state, defaultValue) {
