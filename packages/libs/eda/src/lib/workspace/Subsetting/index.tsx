@@ -112,9 +112,7 @@ export default function Subsetting({
           onChange={(variable) => {
             if (variable) {
               const { entityId, variableId } = variable;
-              history.replace(
-                makeVariableLink({ entityId, variableId }, studyMetadata)
-              );
+              history.replace(makeVariableLink({ entityId, variableId }));
             } else history.replace('..');
           }}
         />

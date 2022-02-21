@@ -1,18 +1,15 @@
-import { useCallback } from 'react';
+import { ReactNode, useCallback } from 'react';
 import { useRouteMatch } from 'react-router';
 
-import { find } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { RestrictedPage } from '@veupathdb/study-data-access/lib/data-restriction/RestrictedPage';
-import { useApprovalStatus } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
-import { EDAWorkspaceContainer, StudyMetadata } from '../core';
+import { TreeNode } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
+
+import { EDAWorkspaceContainer, FieldWithMetadata } from '../core';
 import {
   useConfiguredAnalysisClient,
   useConfiguredDataClient,
   useConfiguredSubsettingClient,
 } from '../core/hooks/client';
 import { VariableDescriptor } from '../core/types/variable';
-import { EDAWorkspace } from './EDAWorkspace';
 import { cx, findFirstVariable } from './Utils';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -31,47 +28,33 @@ interface Props {
   subsettingServiceUrl: string;
   dataServiceUrl: string;
   userServiceUrl: string;
-  /**
-   * The base of the URL from which to being sharing links.
-   * This is passed down through several component layers. */
-  sharingUrlPrefix: string;
-  /**
-   * A callback to open a login form.
-   * This is also passed down through several component layers. */
-  showLoginForm: () => void;
+  children: ReactNode;
 }
 
 /** Allows a user to create a new analysis or edit an existing one. */
 export function WorkspaceContainer({
   studyId,
-  analysisId,
   subsettingServiceUrl,
   dataServiceUrl,
   userServiceUrl,
-  sharingUrlPrefix,
-  showLoginForm,
+  children,
 }: Props) {
   const { url } = useRouteMatch();
   const subsettingClient = useConfiguredSubsettingClient(subsettingServiceUrl);
   const dataClient = useConfiguredDataClient(dataServiceUrl);
   const analysisClient = useConfiguredAnalysisClient(userServiceUrl);
-  const makeVariableLink = useCallback(
-    (
-      {
-        entityId: maybeEntityId,
-        variableId: maybeVariableId,
-      }: Partial<VariableDescriptor>,
-      studyMetadata: StudyMetadata
-    ) => {
-      const entityId = maybeEntityId ?? studyMetadata.rootEntity.id;
-      const entity = find(
-        (entity) => entity.id === entityId,
-        preorder(studyMetadata.rootEntity, (e) => e.children ?? [])
-      );
+  const initializeMakeVariableLink = useCallback(
+    (fieldTree: TreeNode<FieldWithMetadata>) => ({
+      entityId: maybeEntityId,
+      variableId: maybeVariableId,
+    }: Partial<VariableDescriptor>) => {
+      const entityId = maybeEntityId ?? fieldTree.field.term.split(':')[1];
+
       const variableId =
         maybeVariableId ??
-        (entity.variables.length !== 0 &&
-          findFirstVariable(entity.variables)?.id);
+        (entityId &&
+          findFirstVariable(fieldTree, entityId)?.field.term.split('/')[1]);
+
       return entityId && variableId
         ? `${url}/variables/${entityId}/${variableId}`
         : entityId
@@ -80,26 +63,18 @@ export function WorkspaceContainer({
     },
     [url]
   );
-  const approvalStatus = useApprovalStatus(studyId, 'analysis');
   const classes = useStyles();
 
   return (
-    <RestrictedPage approvalStatus={approvalStatus}>
-      <EDAWorkspaceContainer
-        studyId={studyId}
-        className={`${cx()} ${classes.workspace}`}
-        analysisClient={analysisClient}
-        dataClient={dataClient}
-        subsettingClient={subsettingClient}
-        makeVariableLink={makeVariableLink}
-      >
-        <EDAWorkspace
-          studyId={studyId}
-          analysisId={analysisId}
-          sharingUrlPrefix={sharingUrlPrefix}
-          showLoginForm={showLoginForm}
-        />
-      </EDAWorkspaceContainer>
-    </RestrictedPage>
+    <EDAWorkspaceContainer
+      studyId={studyId}
+      className={`${cx()} ${classes.workspace}`}
+      analysisClient={analysisClient}
+      dataClient={dataClient}
+      subsettingClient={subsettingClient}
+      initializeMakeVariableLink={initializeMakeVariableLink}
+    >
+      {children}
+    </EDAWorkspaceContainer>
   );
 }

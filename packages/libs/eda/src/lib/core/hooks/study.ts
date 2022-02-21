@@ -24,6 +24,7 @@ import {
 import SubsettingClient from '../api/SubsettingClient';
 import { VariableDescriptor } from '../types/variable';
 import { findEntityAndVariable } from '../utils/study-metadata';
+import { getStudyAccess } from '@veupathdb/study-data-access/lib/shared/studies';
 
 const STUDY_RECORD_CLASS_NAME = 'dataset';
 
@@ -35,7 +36,7 @@ interface StudyState {
 
 export const StudyContext = createContext<StudyState | undefined>(undefined);
 
-interface HookValue {
+export interface HookValue {
   studyRecordClass: StudyRecordClass;
   studyRecord: StudyRecord;
 }
@@ -95,10 +96,11 @@ export function useWdkStudyRecord(datasetId: string): HookValue | undefined {
 
 const DEFAULT_STUDY_ATTRIBUTES = ['dataset_id', 'eda_study_id'];
 const DEFAULT_STUDY_TABLES: string[] = [];
+const EMPTY_ARRAY: string[] = [];
 
 export function useWdkStudyRecords(
-  attributes: AnswerJsonFormatConfig['attributes'] = DEFAULT_STUDY_ATTRIBUTES,
-  tables: AnswerJsonFormatConfig['tables'] = DEFAULT_STUDY_TABLES
+  attributes: AnswerJsonFormatConfig['attributes'] = EMPTY_ARRAY,
+  tables: AnswerJsonFormatConfig['tables'] = EMPTY_ARRAY
 ): StudyRecord[] | undefined {
   return useWdkService(
     (wdkService) =>
@@ -110,8 +112,8 @@ export function useWdkStudyRecords(
           },
         },
         {
-          attributes,
-          tables,
+          attributes: DEFAULT_STUDY_ATTRIBUTES.concat(attributes),
+          tables: DEFAULT_STUDY_TABLES.concat(tables),
           sorting: [
             {
               attributeName: 'display_name',
@@ -124,18 +126,35 @@ export function useWdkStudyRecords(
   )?.records;
 }
 
+export const STUB_ENTITY: StudyEntity = {
+  id: '__STUB__',
+  idColumnName: 'stub',
+  displayName: 'stub',
+  description: 'This is a stub entity. It does not exist in the database.',
+  variables: [],
+};
+
+export function isStubEntity(entity: StudyEntity) {
+  return entity === STUB_ENTITY;
+}
+
 export function useStudyMetadata(datasetId: string, client: SubsettingClient) {
   return useWdkServiceWithRefresh(
     async (wdkService) => {
       const studyRecord = await wdkService.getRecord(
         STUDY_RECORD_CLASS_NAME,
         [{ name: 'dataset_id', value: datasetId }],
-        { attributes: ['dataset_id', 'eda_study_id'] }
+        { attributes: ['dataset_id', 'eda_study_id', 'study_access'] }
       );
       if (typeof studyRecord.attributes.eda_study_id !== 'string')
         throw new Error(
           'Could not find study with associated dataset id `' + datasetId + '`.'
         );
+      if (getStudyAccess(studyRecord) === 'prerelease')
+        return {
+          id: studyRecord.attributes.eda_study_id,
+          rootEntity: STUB_ENTITY,
+        };
       return client.getStudyMetadata(studyRecord.attributes.eda_study_id);
     },
     [datasetId, client]
