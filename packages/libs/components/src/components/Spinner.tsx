@@ -8,6 +8,7 @@ export default function Spinner() {
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
+        zIndex: 450,
       }}
     >
       <CircularProgress color={'secondary'} size={50} thickness={5} />

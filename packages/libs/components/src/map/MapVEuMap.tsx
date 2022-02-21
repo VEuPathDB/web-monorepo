@@ -26,6 +26,8 @@ import CustomGridLayer from './CustomGridLayer';
 import MouseTools, { MouseMode } from './MouseTools';
 import { PlotRef } from '../types/plots';
 import { ToImgopts } from 'plotly.js';
+import Spinner from '../components/Spinner';
+import NoDataOverlay from '../components/NoDataOverlay';
 import { LatLngBounds } from 'leaflet';
 
 const { BaseLayer } = LayersControl;
@@ -143,6 +145,10 @@ export interface MapVEuMapProps {
   flyToMarkers?: boolean;
   /** How long (in ms) after rendering to wait before flying to markers */
   flyToMarkersDelay?: number;
+  /** Whether to show a loading spinner */
+  showSpinner?: boolean;
+  /** Whether to show the "No data" overlay */
+  showNoDataOverlay?: boolean;
 }
 
 function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
@@ -162,6 +168,8 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     onBaseLayerChanged,
     flyToMarkers,
     flyToMarkersDelay,
+    showSpinner,
+    showNoDataOverlay,
   } = props;
 
   // this is the React Map component's onViewPortChanged handler
@@ -335,6 +343,9 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
           </BaseLayer>
         ))}
       </LayersControl>
+
+      {showSpinner && <Spinner />}
+      {showNoDataOverlay && <NoDataOverlay opacity={0.9} />}
     </Map>
   );
 }
