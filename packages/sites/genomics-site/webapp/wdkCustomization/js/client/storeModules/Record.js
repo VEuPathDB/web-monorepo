@@ -390,7 +390,8 @@ function observeRequestedOrganisms(action$, state$, { wdkService }) {
 function shouldReportRecordOrganisms({ recordClass }) {
   return [
     'gene',
-    'genomic-sequence'
+    'genomic-sequence',
+    'snp'
   ].includes(recordClass.urlSegment);
 }
 
@@ -401,9 +402,12 @@ function getRecordOrganisms({
 }) {
   if (
     recordClassUrlSegment === 'gene' ||
-    recordClassUrlSegment === 'genomic-sequence'
+    recordClassUrlSegment === 'genomic-sequence' ||
+    recordClassUrlSegment === 'snp'
   ) {
-    const organismAttributeName = 'organism_full';
+    const organismAttributeName = recordClassUrlSegment === 'snp'
+      ? 'organism_text'
+      : 'organism_full';
 
     const organismAttribute = record.attributes?.[organismAttributeName];
 
