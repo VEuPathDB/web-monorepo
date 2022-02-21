@@ -1,4 +1,11 @@
-import React, { useCallback, useMemo, useEffect, useRef } from 'react';
+import React, {
+  useCallback,
+  useMemo,
+  useEffect,
+  useRef,
+  ComponentProps,
+  useLayoutEffect,
+} from 'react';
 import {
   Route,
   Switch,
@@ -31,6 +38,18 @@ import { PromiseHookState } from '../../hooks/promise';
 import { GeoConfig } from '../../types/geoConfig';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
+
+// Doesn't seem to work
+const ScrolledLink = ({
+  scrollTo,
+  ...linkProps
+}: ComponentProps<typeof Link> & { scrollTo: [number, number] }) => {
+  useEffect(() => {
+    window.scrollTo(scrollTo);
+  }, [scrollTo]);
+
+  return <Link {...linkProps} />;
+};
 
 interface Props {
   computation: Computation;
@@ -141,7 +160,10 @@ function ConfiguredVisualizations(props: Props) {
                 </div>
                 {/* add the Link of thumbnail box here to avoid click conflict with icons */}
                 <>
-                  <Link replace to={`${url}/${viz.visualizationId}`}>
+                  <ScrolledLink
+                    to={`${url}/${viz.visualizationId}`}
+                    scrollTo={[window.scrollX, window.scrollY]}
+                  >
                     {viz.descriptor.thumbnail ? (
                       <img
                         alt={viz.displayName}
@@ -160,7 +182,7 @@ function ConfiguredVisualizations(props: Props) {
                           .currentPlotFilters as Filter[]
                       }
                     />
-                  </Link>
+                  </ScrolledLink>
                 </>
               </div>
               <div className={cx('-ConfiguredVisualizationTitle')}>

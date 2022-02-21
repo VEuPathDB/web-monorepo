@@ -166,6 +166,11 @@ export function AnalysisPanel({
     }
   }, [location, routeBase]);
 
+  // useEffect(() => {
+  //   window.history.scrollRestoration = 'auto';
+  //   console.log('scroll restoration value set');
+  // });
+
   useSetDocumentTitle(
     analysis
       ? `${analysis?.displayName} - ${studyRecord.displayName}`
