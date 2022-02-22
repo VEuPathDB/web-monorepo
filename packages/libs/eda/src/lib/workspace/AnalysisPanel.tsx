@@ -232,13 +232,13 @@ export function AnalysisPanel({
           routeBase={routeBase}
           items={[
             {
-              display: 'View study details',
+              display: 'View Study Details',
               route: `/details`,
               exact: false,
               replace: true,
             },
             {
-              display: 'Browse and subset',
+              display: 'Browse and Subset',
               route: `/variables${lastVarPath}`,
               exact: false,
               replace: true,
@@ -259,7 +259,7 @@ export function AnalysisPanel({
               route: '/download',
             },
             {
-              display: 'Record notes',
+              display: 'Record Notes',
               route: '/notes',
             },
           ]}
