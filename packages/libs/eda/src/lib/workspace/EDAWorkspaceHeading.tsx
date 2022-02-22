@@ -6,9 +6,9 @@ import Path from 'path';
 import {
   // Download,
   Table,
-} from '@veupathdb/core-components/dist/components/icons';
+} from '@veupathdb/coreui/dist/components/icons';
 
-import FloatingButton from '@veupathdb/core-components/dist/components/buttons/FloatingButton';
+import FloatingButton from '@veupathdb/coreui/dist/components/buttons/FloatingButton';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { AnalysisNameDialog } from './AnalysisNameDialog';
 import AddIcon from '@material-ui/icons/Add';

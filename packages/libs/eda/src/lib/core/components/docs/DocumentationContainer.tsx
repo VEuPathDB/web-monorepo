@@ -1,4 +1,4 @@
-import { Modal, Close } from '@veupathdb/core-components';
+import { Modal, Close } from '@veupathdb/coreui';
 import { Launch } from '@material-ui/icons';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import React, { useState, PropsWithChildren, useMemo } from 'react';

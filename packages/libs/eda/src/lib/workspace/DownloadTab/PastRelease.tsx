@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Column } from 'react-table';
 
 // Components
-import { colors, DataGrid, Download } from '@veupathdb/core-components';
+import { colors, DataGrid, Download } from '@veupathdb/coreui';
 
 // Definitions
 import { DownloadClient } from '../../core/api/DownloadClient';
@@ -10,7 +10,7 @@ import { DownloadTabStudyRelease } from './types';
 
 // Hooks
 import { ReleaseFile, useGetReleaseFiles } from './hooks/useGetReleaseFiles';
-import { ExpandablePanel } from '@veupathdb/core-components/dist/components/containers';
+import { ExpandablePanel } from '@veupathdb/coreui/dist/components/containers';
 
 export type PastReleaseProps = {
   studyId: string;

@@ -35,7 +35,7 @@ import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import rxc from './selectorIcons/RxC.svg';
 import twoxtwo from './selectorIcons/2x2.svg';
-import { TabbedDisplay } from '@veupathdb/core-components';
+import { TabbedDisplay } from '@veupathdb/coreui';
 
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';

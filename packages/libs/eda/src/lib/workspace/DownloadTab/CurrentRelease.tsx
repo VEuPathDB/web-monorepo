@@ -2,13 +2,7 @@ import { useMemo, useState } from 'react';
 import { Column } from 'react-table';
 
 // Components
-import {
-  colors,
-  DataGrid,
-  Download,
-  H5,
-  Paragraph,
-} from '@veupathdb/core-components';
+import { colors, DataGrid, Download, H5, Paragraph } from '@veupathdb/coreui';
 
 // Definitions
 import { DownloadClient } from '../../core/api/DownloadClient';

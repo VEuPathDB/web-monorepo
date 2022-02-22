@@ -7,10 +7,10 @@ import {
   Paragraph,
   TableDownload,
   colors,
-} from '@veupathdb/core-components';
+} from '@veupathdb/coreui';
 
 // Hooks
-import { useUITheme } from '@veupathdb/core-components/dist/components/theming';
+import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
 
 // Definitions
 import {

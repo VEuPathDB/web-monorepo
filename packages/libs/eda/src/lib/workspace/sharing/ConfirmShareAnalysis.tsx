@@ -1,17 +1,11 @@
 // Components
-import {
-  FloatingButton,
-  H5,
-  Warning,
-  Copy,
-  colors,
-} from '@veupathdb/core-components';
+import { FloatingButton, H5, Warning, Copy, colors } from '@veupathdb/coreui';
 
 // Hooks
-import { useUITheme } from '@veupathdb/core-components/dist/components/theming';
+import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
 
 // Definitions
-import { gray } from '@veupathdb/core-components/dist/definitions/colors';
+import { gray } from '@veupathdb/coreui/dist/definitions/colors';
 
 type ConfirmShareAnalysisProps = { sharingURL: string };
 

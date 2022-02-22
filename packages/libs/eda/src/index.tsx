@@ -30,14 +30,14 @@ import reportWebVitals from './reportWebVitals';
 import Header from './Header';
 import { MapVeuContainer } from './lib/mapveu';
 import { WorkspaceRouter } from './lib/workspace/WorkspaceRouter';
-import UIThemeProvider from '@veupathdb/core-components/dist/components/theming/UIThemeProvider';
+import UIThemeProvider from '@veupathdb/coreui/dist/components/theming/UIThemeProvider';
 
 // Hooks
 import { useAttemptActionClickHandler } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
-import { useCoreUIFonts } from '@veupathdb/core-components/dist/hooks';
+import { useCoreUIFonts } from '@veupathdb/coreui/dist/hooks';
 
 // Definitions
-import { colors } from '@veupathdb/core-components';
+import { colors } from '@veupathdb/coreui';
 
 import './index.css';
 

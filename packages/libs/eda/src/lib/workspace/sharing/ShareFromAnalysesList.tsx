@@ -4,7 +4,7 @@ import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import ConfirmPublicAnalysis from './ConfirmPublicAnalysis';
 import Login from './Login';
 import NameAnalysis from './NameAnalysis';
-import { Modal } from '@veupathdb/core-components';
+import { Modal } from '@veupathdb/coreui';
 
 // Definitions
 import { AnalysisSummary, SingleAnalysisPatchRequest } from '../../core';

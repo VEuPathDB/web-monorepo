@@ -1,5 +1,5 @@
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { Modal } from '@veupathdb/core-components';
+import { Modal } from '@veupathdb/coreui';
 
 // Definitions
 import { AnalysisState } from '../../core';

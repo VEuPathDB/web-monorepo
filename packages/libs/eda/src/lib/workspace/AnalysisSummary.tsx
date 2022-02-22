@@ -11,8 +11,8 @@ import {
   Filter,
   Share,
   Trash,
-} from '@veupathdb/core-components/dist/components/icons';
-import { Chip, FilledButton, FloatingButton } from '@veupathdb/core-components';
+} from '@veupathdb/coreui/dist/components/icons';
+import { Chip, FilledButton, FloatingButton } from '@veupathdb/coreui';
 
 interface Props {
   analysis: Analysis | NewAnalysis;

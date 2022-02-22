@@ -1,12 +1,10 @@
 import { Link } from 'react-router-dom';
 
-import { H5, Warning } from '@veupathdb/core-components';
-import { FilledButton } from '@veupathdb/core-components/dist/components/buttons';
+import { H5, Warning } from '@veupathdb/coreui';
+import { FilledButton } from '@veupathdb/coreui/dist/components/buttons';
 
-import { useUITheme } from '@veupathdb/core-components/dist/components/theming';
-import colors, {
-  gray,
-} from '@veupathdb/core-components/dist/definitions/colors';
+import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
+import colors, { gray } from '@veupathdb/coreui/dist/definitions/colors';
 
 type ConfirmAnalysisSharingProps = {
   makeAnalysisPublic: () => void;

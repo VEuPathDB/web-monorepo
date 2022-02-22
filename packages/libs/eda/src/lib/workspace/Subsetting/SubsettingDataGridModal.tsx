@@ -12,7 +12,7 @@ import {
   Download,
   CloseFullscreen,
   OutlinedButton,
-} from '@veupathdb/core-components';
+} from '@veupathdb/coreui';
 
 import MultiSelectVariableTree from '../../core/components/variableTrees/MultiSelectVariableTree';
 import { AnalysisSummary } from '../AnalysisSummary';
