@@ -8,7 +8,7 @@ import { isStubEntity, STUB_ENTITY } from './study';
 
 export type EntityCounts = Record<string, number>;
 
-export function useEntityCounts(filters?: Filter[]) {
+export function useEntityCounts(filters: Filter[] = []) {
   const { id, rootEntity } = useStudyMetadata();
   const subsettingClient = useSubsettingClient();
 
@@ -37,7 +37,7 @@ export function useEntityCounts(filters?: Filter[]) {
       const counts: Record<string, number> = {};
       for (const entity of preorder(rootEntity, (e) => e.children ?? [])) {
         const { count } = await subsettingClient
-          .getEntityCount(id, entity.id, filters ?? [])
+          .getEntityCount(id, entity.id, filters)
           .catch((error) => {
             console.warn(
               'Could not load count for entity',
