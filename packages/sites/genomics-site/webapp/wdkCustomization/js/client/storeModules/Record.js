@@ -2,7 +2,7 @@ import { empty, of, merge } from 'rxjs';
 import { filter, map, mergeMap, mergeMapTo, switchMap, tap } from 'rxjs/operators';
 import * as RecordStoreModule from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
 import { QuestionActions, RecordActions } from '@veupathdb/wdk-client/lib/Actions';
-import { difference, get } from 'lodash';
+import { difference, get, uniq } from 'lodash';
 import * as tree from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import * as cat from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import * as persistence from '@veupathdb/web-common/lib/util/persistence';
@@ -365,18 +365,7 @@ function observeRequestedOrganisms(action$, state$, { wdkService }) {
           record
         });
 
-        if (
-          recordOrganisms == null ||
-          recordOrganisms.length === 0
-        ) {
-          console.warn(
-            'Tried to report organism metrics for a record which does not appear to have any associated organisms:',
-            JSON.stringify(record.id, null, 2)
-          );
-          return;
-        }
-
-        recordOrganisms.forEach(recordOrganism => {
+        recordOrganisms?.forEach(recordOrganism => {
           wdkService.incrementOrganismCount(recordOrganism);
         });
       }
@@ -391,7 +380,8 @@ function shouldReportRecordOrganisms({ recordClass }) {
   return [
     'gene',
     'genomic-sequence',
-    'snp'
+    'snp',
+    'dataset'
   ].includes(recordClass.urlSegment);
 }
 
@@ -414,6 +404,21 @@ function getRecordOrganisms({
     return typeof organismAttribute !== 'string'
       ? []
       : [organismAttribute];
+  } else if (
+    recordClassUrlSegment === 'dataset'
+  ) {
+    const versionTable = record.tables?.Version ?? [];
+
+    const organisms = versionTable.flatMap(
+      ({ organism }) => (
+        typeof organism !== 'string' ||
+        organism === 'ALL'
+      )
+        ? []
+        : [organism]
+    );
+
+    return uniq(organisms);
   }
 }
 
