@@ -6,6 +6,8 @@ import { TableDownload, Download } from '../../components/icons';
 import UIThemeProvider from '../../components/theming/UIThemeProvider';
 import { green, orange } from '../../definitions/colors';
 
+import { AccessAlarm } from '@material-ui/icons';
+
 export default {
   title: 'Controls/Buttons/FloatingButton',
   component: FloatingButton,
@@ -39,6 +41,13 @@ WithIcon.args = {
   ...Default.args,
   text: 'Button With Icon',
   icon: TableDownload,
+} as SwissArmyButtonVariantProps;
+
+export const WithMaterialIcon = Template.bind({});
+WithMaterialIcon.args = {
+  ...Default.args,
+  text: 'Button With Icon',
+  icon: AccessAlarm,
 } as SwissArmyButtonVariantProps;
 
 export const IconOnly = Template.bind({});
