@@ -31,10 +31,7 @@ import {
   useStudyRecord,
   useSubsettingClient,
 } from '../../core';
-import {
-  useFeaturedFields,
-  useFlattenedFields,
-} from '../../core/components/variableTrees/hooks';
+import { useFeaturedFields } from '../../core/components/variableTrees/hooks';
 import { useProcessedGridData } from './hooks';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
@@ -78,7 +75,14 @@ export default function SubsettingDataGridModal({
   const studyMetadata = useStudyMetadata();
   const subsettingClient = useSubsettingClient();
   const featuredFields = useFeaturedFields(entities, 'download');
-  const flattenedFields = useFlattenedFields(entities, 'download');
+
+  const scopedFeaturedFields = useMemo(
+    () =>
+      featuredFields.filter((field) =>
+        field.term.startsWith(currentEntityID + '/')
+      ),
+    [currentEntityID, featuredFields]
+  );
 
   const scopedStarredVariables = useMemo(
     () =>
@@ -86,21 +90,6 @@ export default function SubsettingDataGridModal({
         (variable) => variable.entityId === currentEntityID
       ) ?? [],
     [currentEntityID, starredVariables]
-  );
-
-  const scopedFeaturedVariables = useMemo(
-    () =>
-      featuredFields
-        .filter((field) => field.term.startsWith(currentEntityID))
-        .map(
-          (field): VariableDescriptor => {
-            return {
-              entityId: currentEntityID,
-              variableId: field.term.split('/')[1],
-            };
-          }
-        ),
-    [currentEntityID, featuredFields]
   );
 
   const [currentEntity, setCurrentEntity] = useState<StudyEntity | undefined>(
@@ -120,9 +109,8 @@ export default function SubsettingDataGridModal({
   const [gridData, setGridData] = useState<TabularDataResponse | null>(null);
   const [gridColumns, gridRows] = useProcessedGridData(
     gridData,
-    flattenedFields,
     entities,
-    currentEntityID
+    currentEntity
   );
 
   // The current record pagecount.
@@ -133,12 +121,12 @@ export default function SubsettingDataGridModal({
   const [
     selectedVariableDescriptors,
     setSelectedVariableDescriptors,
-  ] = useState<Array<VariableDescriptor>>([]);
-
-  const defaultSelection = useMemo(
-    () => scopedFeaturedVariables.concat(scopedStarredVariables),
-    [scopedFeaturedVariables, scopedStarredVariables]
+  ] = useState<Array<VariableDescriptor>>(
+    analysisState.analysis?.descriptor.dataTableConfig[currentEntityID]
+      .variables ?? []
   );
+
+  const defaultSelection = useMemo(() => [], []);
 
   /**
    * Actions to take when the modal is opened.
@@ -170,8 +158,6 @@ export default function SubsettingDataGridModal({
   /** Actions to take when modal is closed. */
   const onModalClose = useCallback(() => {
     setGridData(null);
-    // Conditionally set this state to avoid re-renders.
-    setSelectedVariableDescriptors((prev) => (prev.length === 0 ? prev : []));
     setDisplayVariableTree(false);
   }, []);
 
@@ -245,11 +231,10 @@ export default function SubsettingDataGridModal({
 
   /** Whenever `selectedVariableDescriptors` changes, load a new data set. */
   useEffect(() => {
+    if (!displayModal) return;
     setApiError(null);
-    selectedVariableDescriptors.length
-      ? fetchPaginatedData({ pageSize: 10, pageIndex: 0 })
-      : setGridData(null);
-  }, [selectedVariableDescriptors, fetchPaginatedData]);
+    fetchPaginatedData({ pageSize: 10, pageIndex: 0 });
+  }, [fetchPaginatedData, displayModal]);
 
   // Render the table data or instructions on how to get started.
   const renderDataGridArea = () => {
@@ -360,7 +345,7 @@ export default function SubsettingDataGridModal({
               scope="download"
               selectedVariableDescriptors={selectedVariableDescriptors}
               starredVariableDescriptors={scopedStarredVariables}
-              featuredFields={featuredFields}
+              featuredFields={scopedFeaturedFields}
               onSelectedVariablesChange={handleSelectedVariablesChange}
               toggleStarredVariable={toggleStarredVariable}
             />
@@ -423,7 +408,6 @@ export default function SubsettingDataGridModal({
               fontSize: 18,
               fontWeight: 500,
               color: '#646464',
-              textTransform: 'capitalize',
             }}
           >
             {currentEntity?.displayNamePlural}
@@ -441,6 +425,17 @@ export default function SubsettingDataGridModal({
               </p>
             )}
         </div>
+        {selectedVariableDescriptors.length === 0 && (
+          <div
+            style={{
+              fontSize: 18,
+              fontWeight: 500,
+              color: '#646464',
+            }}
+          >
+            To configure this table, click on the "Add columns" button.
+          </div>
+        )}
         <div
           style={{
             display: 'flex',

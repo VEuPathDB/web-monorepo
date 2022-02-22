@@ -5,6 +5,7 @@ import {
 } from '../VisualizationTypes';
 import map from './selectorIcons/map.svg';
 import * as t from 'io-ts';
+import _ from 'lodash';
 
 // map component related imports
 import MapVEuMap, {
@@ -56,7 +57,7 @@ function createDefaultConfig(): MapConfig {
     mapCenterAndZoom: {
       latitude: 0,
       longitude: 0,
-      zoomLevel: 1, // TO DO: check MapVEuMap minZoom hardcoded to 2
+      zoomLevel: 2,
     },
     baseLayer: 'Street',
   };
@@ -143,7 +144,7 @@ function MapViz(props: VisualizationProps) {
     return geoConfigs.find(
       (config) => config.entity.id === vizConfig.geoEntityId
     );
-  }, [vizConfig.geoEntityId]);
+  }, [vizConfig.geoEntityId, geoConfigs]);
 
   const [geoEntity, outputEntity] = useMemo(() => {
     const geoEntity =
@@ -261,6 +262,7 @@ function MapViz(props: VisualizationProps) {
       vizConfig,
       boundsZoomLevel,
       computation.descriptor.type,
+      geoConfig,
     ])
   );
 
@@ -291,13 +293,26 @@ function MapViz(props: VisualizationProps) {
       onBaseLayerChanged={(newBaseLayer) =>
         updateVizConfig({ baseLayer: newBaseLayer })
       }
+      flyToMarkers={
+        data.value?.markers &&
+        data.value?.markers.length > 0 &&
+        _.isEqual(
+          vizConfig.mapCenterAndZoom,
+          createDefaultConfig().mapCenterAndZoom
+        )
+      }
+      flyToMarkersDelay={500}
+      showSpinner={data.pending}
     />
   );
 
   const handleGeoEntityChange = useCallback(
     (event: React.ChangeEvent<{ value: unknown }>) => {
       if (event != null)
-        updateVizConfig({ geoEntityId: event.target.value as string });
+        updateVizConfig({
+          geoEntityId: event.target.value as string,
+          mapCenterAndZoom: createDefaultConfig().mapCenterAndZoom,
+        });
     },
     [updateVizConfig]
   );
