@@ -1,10 +1,11 @@
+import { AccessAlarm } from '@material-ui/icons';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import { SwissArmyButtonVariantProps } from '../../components/buttons';
 
 import OutlinedButton from '../../components/buttons/OutlinedButton';
 import { TableDownload, Download } from '../../components/icons';
 import UIThemeProvider from '../../components/theming/UIThemeProvider';
-import { blue, purple, red } from '../../definitions/colors';
+import { purple, red } from '../../definitions/colors';
 
 export default {
   title: 'Controls/Buttons/OutlinedButton',
@@ -40,6 +41,13 @@ WithIcon.args = {
   ...Default.args,
   text: 'Button With Icon',
   icon: TableDownload,
+} as SwissArmyButtonVariantProps;
+
+export const WithMaterialIcon = Template.bind({});
+WithMaterialIcon.args = {
+  ...Default.args,
+  text: 'Button With Icon',
+  icon: AccessAlarm,
 } as SwissArmyButtonVariantProps;
 
 export const IconOnly = Template.bind({});

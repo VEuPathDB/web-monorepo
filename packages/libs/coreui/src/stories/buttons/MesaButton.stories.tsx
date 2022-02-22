@@ -1,10 +1,11 @@
+import { AccessAlarm } from '@material-ui/icons';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import { SwissArmyButtonVariantProps } from '../../components/buttons';
 
 import MesaButton from '../../components/buttons/MesaButton';
 import { TableDownload, Download } from '../../components/icons';
 import UIThemeProvider from '../../components/theming/UIThemeProvider';
-import { blue, mutedCyan, orange } from '../../definitions/colors';
+import { mutedCyan, orange } from '../../definitions/colors';
 
 export default {
   title: 'Controls/Buttons/MesaButton',
@@ -39,6 +40,13 @@ WithIcon.args = {
   ...Default.args,
   text: 'Button With Icon',
   icon: TableDownload,
+} as SwissArmyButtonVariantProps;
+
+export const WithMaterialIcon = Template.bind({});
+WithMaterialIcon.args = {
+  ...Default.args,
+  text: 'Button With Icon',
+  icon: AccessAlarm,
 } as SwissArmyButtonVariantProps;
 
 export const IconOnly = Template.bind({});

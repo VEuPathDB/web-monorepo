@@ -1,4 +1,6 @@
 import { CSSProperties } from 'react';
+import { SvgIconComponent } from '@material-ui/icons';
+
 import { UITheme } from '../theming';
 
 export type PartialButtonStyleSpec = {
@@ -65,11 +67,23 @@ type CoreProps = {
   styleOverrides?: PartialButtonStyleSpec;
 };
 
+/**
+ * Important Note
+ * There is built in support here for passing in icons from the material-ui/icons
+ * package on NPM. However - be aware this is only know to work with icons
+ * from version 4 of that library. Additional work may be needed to support
+ * icons from version 5 of that library.
+ *
+ * It is recommended that icons for use in VeuPathDB websites be built
+ * and incorporated inside this library to ensure compatibility.
+ */
 type TextIconProps =
   | {
       text?: string;
       /** SVG component to use as an icon. */
-      icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+      icon:
+        | React.ComponentType<React.SVGProps<SVGSVGElement>>
+        | SvgIconComponent;
       /** ariaDescription. Required when a button only includes an icon. */
       ariaLabel: string;
     }
@@ -77,7 +91,9 @@ type TextIconProps =
       /** Text of the button. */
       text: string;
       /** Optional. SVG component to use as an icon. */
-      icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+      icon?:
+        | React.ComponentType<React.SVGProps<SVGSVGElement>>
+        | SvgIconComponent;
       /** ariaDescription. Optional when a button only includes text. */
       ariaLabel?: string;
     };

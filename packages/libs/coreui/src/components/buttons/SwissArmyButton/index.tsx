@@ -1,7 +1,15 @@
+import { SvgIconComponent } from '@material-ui/icons';
 import { useMemo, useState } from 'react';
 
 import { ButtonStyleSpec, SwissArmyButtonVariantProps } from '..';
 import typography from '../../../styleDefinitions/typography';
+
+/** Type guard to identify if a material-ui icon has been passed to the component. */
+function isMaterialIcon(
+  icon: SvgIconComponent | React.ComponentType<React.SVGProps<SVGSVGElement>>
+): icon is SvgIconComponent {
+  return icon?.type?.render?.muiName === 'SvgIcon' ? true : false;
+}
 
 export type SwissArmyButtonProps = Omit<
   SwissArmyButtonVariantProps,
@@ -35,6 +43,33 @@ export default function SwissArmyButton({
   const buttonHeight = size === 'large' ? 50 : size === 'medium' ? 35 : 25;
 
   const Icon = icon;
+
+  /** Some extra work has been done here to support material-ui icons. */
+  const renderIcon = () => {
+    if (!Icon) return null;
+
+    return isMaterialIcon(Icon) ? (
+      <span
+        css={{
+          fontSize: calculatedIconSize,
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      >
+        <Icon
+          fontSize='inherit'
+          fill={styleSpec[styleState].textColor}
+          css={text && { marginRight: 10 }}
+        />
+      </span>
+    ) : (
+      <Icon
+        fontSize={calculatedIconSize}
+        fill={styleSpec[styleState].textColor}
+        css={text && { marginRight: 10 }}
+      />
+    );
+  };
 
   return (
     <div css={{ position: 'relative' }}>
@@ -82,13 +117,7 @@ export default function SwissArmyButton({
         }}
         onClick={onPress}
       >
-        {Icon && (
-          <Icon
-            fontSize={calculatedIconSize}
-            fill={styleSpec[styleState].textColor}
-            css={text && { marginRight: 10 }}
-          />
-        )}
+        {renderIcon()}
         {text}
       </button>
       {tooltip && (
