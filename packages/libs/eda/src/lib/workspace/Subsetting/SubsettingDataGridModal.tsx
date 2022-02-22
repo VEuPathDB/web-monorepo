@@ -15,7 +15,6 @@ import {
 } from '@veupathdb/coreui';
 
 import MultiSelectVariableTree from '../../core/components/variableTrees/MultiSelectVariableTree';
-import { AnalysisSummary } from '../AnalysisSummary';
 
 // Definitions
 import { AnalysisState } from '../../core/hooks/analysis';
@@ -35,6 +34,7 @@ import {
 } from '../../core/components/variableTrees/hooks';
 import { useProcessedGridData } from './hooks';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { gray } from '@veupathdb/coreui/dist/definitions/colors';
 
 type SubsettingDataGridProps = {
   /** Should the modal currently be visible? */
@@ -385,13 +385,12 @@ export default function SubsettingDataGridModal({
         },
       }}
     >
-      <div style={{ marginTop: 10, marginBottom: 20 }}>
-        <AnalysisSummary
-          analysis={analysisState.analysis!}
-          setAnalysisName={analysisState.setName}
-          saveAnalysis={analysisState.saveAnalysis}
-        />
-      </div>
+      <H5
+        additionalStyles={{ marginTop: 10, marginBottom: 25 }}
+        color={gray[700]}
+      >
+        {analysisState.analysis?.displayName}
+      </H5>
       <div
         key="Controls"
         style={{
