@@ -3,12 +3,8 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import Path from 'path';
 
 // Components
-import {
-  // Download,
-  Table,
-} from '@veupathdb/coreui/dist/components/icons';
+import { H3, Table, FloatingButton } from '@veupathdb/coreui';
 
-import FloatingButton from '@veupathdb/coreui/dist/components/buttons/FloatingButton';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { AnalysisNameDialog } from './AnalysisNameDialog';
 import AddIcon from '@material-ui/icons/Add';
@@ -53,7 +49,9 @@ export function EDAWorkspaceHeading({
   return (
     <>
       <div className={cx('-Heading')}>
-        <h1>{safeHtml(studyRecord.displayName)}</h1>
+        <H3 additionalStyles={{ padding: 0 }}>
+          {safeHtml(studyRecord.displayName)}
+        </H3>
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           {/* {studyRecord.attributes.bulk_download_url && (
             <div>
