@@ -177,7 +177,7 @@ function Buttons(props: Props) {
             )}?redirectUrl=${encodeURIComponent(window.location.href)}`;
 
             if (user.isGuest) {
-              showLoginForm(history.createHref(parsePath(loggedInRoute)));
+              showLoginForm(window.location.origin + history.createHref(parsePath(loggedInRoute)));
             } else {
               history.push(loggedInRoute);
             }
