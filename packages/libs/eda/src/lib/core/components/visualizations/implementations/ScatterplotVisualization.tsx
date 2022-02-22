@@ -65,7 +65,7 @@ import {
 } from '@veupathdb/components/lib/types/plots';
 import { CoverageStatistics } from '../../../types/visualization';
 // import axis label unit util
-import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
+import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import { NumberVariable, StudyEntity, Variable } from '../../../types/study';
 import {
   fixLabelForNumberVariables,
@@ -711,8 +711,8 @@ function ScatterplotViz(props: VisualizationProps) {
       }
       // title={'Scatter plot'}
       displayLegend={false}
-      independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-axis'}
-      dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-axis'}
+      independentAxisLabel={variableDisplayWithUnit(xAxisVariable) ?? 'X-axis'}
+      dependentAxisLabel={variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'}
       // variable's metadata-based independent axis range with margin
       independentAxisRange={defaultIndependentRangeMargin}
       // new dependent axis range
@@ -738,7 +738,7 @@ function ScatterplotViz(props: VisualizationProps) {
         NumberVariable.is(xAxisVariable) ? 'number' : 'date'
       }
       dependentValueType={NumberVariable.is(yAxisVariable) ? 'number' : 'date'}
-      legendTitle={axisLabelWithUnit(overlayVariable)}
+      legendTitle={variableDisplayWithUnit(overlayVariable)}
       // pass checked state of legend checkbox to PlotlyPlot
       checkedLegendItems={checkedLegendItems}
       // for vizconfig.checkedLegendItems
@@ -750,7 +750,7 @@ function ScatterplotViz(props: VisualizationProps) {
     <PlotLegend
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
-      legendTitle={axisLabelWithUnit(overlayVariable)}
+      legendTitle={variableDisplayWithUnit(overlayVariable)}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
     />
   );
@@ -782,23 +782,23 @@ function ScatterplotViz(props: VisualizationProps) {
           {
             role: 'X-axis',
             required: true,
-            display: axisLabelWithUnit(xAxisVariable),
+            display: variableDisplayWithUnit(xAxisVariable),
             variable: vizConfig.xAxisVariable,
           },
           {
             role: 'Y-axis',
             required: true,
-            display: axisLabelWithUnit(yAxisVariable),
+            display: variableDisplayWithUnit(yAxisVariable),
             variable: vizConfig.yAxisVariable,
           },
           {
             role: 'Overlay',
-            display: axisLabelWithUnit(overlayVariable),
+            display: variableDisplayWithUnit(overlayVariable),
             variable: vizConfig.overlayVariable,
           },
           {
             role: 'Facet',
-            display: axisLabelWithUnit(facetVariable),
+            display: variableDisplayWithUnit(facetVariable),
             variable: vizConfig.facetVariable,
           },
         ]}

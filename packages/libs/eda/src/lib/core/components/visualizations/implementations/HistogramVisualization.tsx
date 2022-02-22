@@ -58,7 +58,7 @@ import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import histogram from './selectorIcons/histogram.svg';
 // import axis label unit util
-import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
+import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import {
   vocabularyWithMissingData,
   grayOutLastSeries,
@@ -544,7 +544,7 @@ function HistogramViz(props: VisualizationProps) {
         displayLegend={false}
         outputEntity={outputEntity}
         independentAxisVariable={vizConfig.xAxisVariable}
-        independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'Main'}
+        independentAxisLabel={variableDisplayWithUnit(xAxisVariable) ?? 'Main'}
         // variable's metadata-based independent axis range
         independentAxisRange={defaultIndependentRange}
         // add dependent axis range for better displaying tick labels in log-scale
@@ -561,10 +561,10 @@ function HistogramViz(props: VisualizationProps) {
         }
         showMissingness={vizConfig.showMissingness ?? false}
         overlayVariable={vizConfig.overlayVariable}
-        overlayLabel={axisLabelWithUnit(overlayVariable)}
+        overlayLabel={variableDisplayWithUnit(overlayVariable)}
         facetVariable={vizConfig.facetVariable}
-        facetLabel={axisLabelWithUnit(facetVariable)}
-        legendTitle={axisLabelWithUnit(overlayVariable)}
+        facetLabel={variableDisplayWithUnit(facetVariable)}
+        legendTitle={variableDisplayWithUnit(overlayVariable)}
         dependentAxisLabel={
           vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion'
         }
