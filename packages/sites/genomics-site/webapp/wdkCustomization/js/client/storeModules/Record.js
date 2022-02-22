@@ -408,6 +408,8 @@ function getRecordOrganisms({
     );
 
     return uniq(organisms);
+  } else {
+    return undefined;
   }
 }
 
