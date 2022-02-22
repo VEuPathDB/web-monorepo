@@ -302,6 +302,7 @@ function MapViz(props: VisualizationProps) {
         )
       }
       flyToMarkersDelay={500}
+      showSpinner={data.pending}
     />
   );
 
