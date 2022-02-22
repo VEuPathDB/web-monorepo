@@ -355,35 +355,24 @@ function observeRequestedOrganisms(action$, state$, { wdkService }) {
   return action$.pipe(
     filter(action => action.type === RecordActions.RECORD_RECEIVED),
     tap(({ payload: { recordClass, record } }) => {
-      if (shouldReportRecordOrganisms({ recordClass })) {
-        if (!isGenomicsService(wdkService)) {
-          throw new Error('Tried to report organism metrics via a misconfigured GenomicsService');
-        }
-
-        const recordOrganisms = getRecordOrganisms({
-          recordClass,
-          record
-        });
-
-        recordOrganisms?.forEach(recordOrganism => {
-          wdkService.incrementOrganismCount(recordOrganism);
-        });
+      if (!isGenomicsService(wdkService)) {
+        throw new Error('Tried to report organism metrics via a misconfigured GenomicsService');
       }
+
+      const recordOrganisms = getRecordOrganisms({
+        recordClass,
+        record
+      });
+
+      recordOrganisms?.forEach(recordOrganism => {
+        wdkService.incrementOrganismCount(recordOrganism);
+      });
     }),
     mergeMapTo(empty())
   );
 }
 
 // TODO Declare type and clear value if it doesn't conform, e.g., validation
-
-function shouldReportRecordOrganisms({ recordClass }) {
-  return [
-    'gene',
-    'genomic-sequence',
-    'snp',
-    'dataset'
-  ].includes(recordClass.urlSegment);
-}
 
 /** Returns an array of organism names associated to the record */
 function getRecordOrganisms({
