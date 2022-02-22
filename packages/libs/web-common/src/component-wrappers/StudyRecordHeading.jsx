@@ -28,7 +28,6 @@ function StudyRecordHeading({
   loading,
   study,
   attemptAction,
-  showLoginForm,
   permissions,
   ...props
 }) {
@@ -36,7 +35,6 @@ function StudyRecordHeading({
   const location = useLocation();
   const requestAccessPath = `/request-access/${study.id}?redirectUrl=${encodeURIComponent(window.location.href + '/new')}`;
 
-  console.log({ requestAccessPath });
   return (
     <React.Fragment>
       {showAnalyzeLink && (
@@ -114,7 +112,6 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = {
   attemptAction,
-  showLoginForm
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(StudyRecordHeading);
@@ -126,7 +123,7 @@ function isPrivateStudy(access, studyId, user, permissions) {
 function UserLink({ to, user, children }) {
   const dispatch = useDispatch();
   const history = useHistory();
-  const dest = to ? history.createHref(parsePath(to)) : window.location.href;
+  const dest = to ? window.location.origin + history.createHref(parsePath(to)) : window.location.href;
   if (user.isGuest) {
     return (
       <button type="button" className="link" onClick={() => dispatch(showLoginForm(dest))}>
@@ -135,6 +132,6 @@ function UserLink({ to, user, children }) {
     );
   }
   return (
-    <Link to={route}>{children}</Link>
+    <Link to={to}>{children}</Link>
   )
 }
