@@ -8,6 +8,7 @@ import typography from '../../../styleDefinitions/typography';
 function isMaterialIcon(
   icon: SvgIconComponent | React.ComponentType<React.SVGProps<SVGSVGElement>>
 ): icon is SvgIconComponent {
+  // @ts-ignore
   return icon?.type?.render?.muiName === 'SvgIcon' ? true : false;
 }
 
