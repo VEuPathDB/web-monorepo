@@ -24,7 +24,6 @@ export default function PastRelease({
   downloadClient,
 }: PastReleaseProps) {
   const [releaseFiles, setReleaseFiles] = useState<Array<ReleaseFile>>([]);
-  const memoizedReleaseFiles = useMemo(() => releaseFiles, [releaseFiles]);
 
   useGetReleaseFiles(studyId, release, downloadClient, setReleaseFiles);
 
@@ -75,7 +74,10 @@ export default function PastRelease({
   ];
 
   return (
-    <div id="Current Release Dataset" style={{ marginBottom: 35 }}>
+    <div
+      id={`Past Release Dataset - ${release.releaseNumber}`}
+      style={{ marginBottom: 35 }}
+    >
       <ExpandablePanel
         stylePreset="floating"
         themeRole="primary"
@@ -89,7 +91,7 @@ export default function PastRelease({
           {releaseFiles.length ? (
             <DataGrid
               columns={exampleGridColumns}
-              data={memoizedReleaseFiles}
+              data={releaseFiles}
               styleOverrides={{
                 table: {
                   borderColor: colors.mutedCyan[200],

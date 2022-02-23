@@ -75,9 +75,6 @@ export default function DownloadTab({
    * that doesn't have a match in the WDKService, it gets disregarded.
    *  */
   const mergedReleaseData = useMemo(() => {
-    // console.log('WDK', WDKStudyReleases);
-    // console.log('Download Service', downloadServiceStudyReleases);
-
     if (!WDKStudyReleases.length || !downloadServiceStudyReleases.length)
       return [];
 

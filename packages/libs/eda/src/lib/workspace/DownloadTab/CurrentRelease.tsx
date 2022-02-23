@@ -23,7 +23,6 @@ export default function CurrentRelease({
   downloadClient,
 }: CurrentReleaseProps) {
   const [releaseFiles, setReleaseFiles] = useState<Array<ReleaseFile>>([]);
-  const memoizedReleaseFiles = useMemo(() => releaseFiles, [releaseFiles]);
 
   useGetReleaseFiles(studyId, release, downloadClient, setReleaseFiles);
 
@@ -100,7 +99,7 @@ export default function CurrentRelease({
       {releaseFiles.length ? (
         <DataGrid
           columns={exampleGridColumns}
-          data={memoizedReleaseFiles}
+          data={releaseFiles}
           styleOverrides={{
             table: {
               borderColor: colors.gray[200],
