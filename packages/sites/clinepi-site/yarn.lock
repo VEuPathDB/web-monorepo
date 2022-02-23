@@ -1221,7 +1221,48 @@
   resolved "https://registry.yarnpkg.com/@types/warning/-/warning-3.0.0.tgz#0d2501268ad8f9962b740d387c4654f5f8e23e52"
   integrity sha1-DSUBJorY+ZYrdA04fEZU9fjiPlI=
 
-"@veupathdb/components@^0.11.13", "@veupathdb/components@^0.11.15", "@veupathdb/components@^0.11.8":
+"@veupathdb/components@^0.11.18":
+  version "0.11.18"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.18.tgz#44e915248dcbe138dd3a7a94020c041be2bf571d"
+  integrity sha512-Nvw6g70r7eJAAmPcOGjJ3Fghb/+OA4fT8Av+d9jrLtMjRyx5S2XbRa6hNtUVg75xITH0NgzungjuI6TYPIAZGw==
+  dependencies:
+    "@emotion/react" "^11.7.0"
+    "@material-ui/core" "^4.11.2"
+    "@material-ui/icons" "^4.11.2"
+    "@material-ui/lab" "^4.0.0-alpha.57"
+    "@types/d3" "^7.1.0"
+    "@types/date-arithmetic" "^4.1.1"
+    "@veupathdb/core-components" "^0.4.0"
+    "@visx/gradient" "^1.0.0"
+    "@visx/group" "^1.0.0"
+    "@visx/hierarchy" "^1.0.0"
+    "@visx/shape" "^1.4.0"
+    "@visx/text" "^1.3.0"
+    "@visx/tooltip" "^1.3.0"
+    "@visx/visx" "^1.1.0"
+    bootstrap "^4.5.2"
+    color-math "^1.1.3"
+    d3 "^7.1.1"
+    date-arithmetic "^4.1.0"
+    debounce-promise "^3.1.2"
+    latlon-geohash "^2.0.0"
+    leaflet "^1.6.0"
+    leaflet-drift-marker "^1.0.3"
+    leaflet-simple-map-screenshoter "^0.4.5"
+    luxon "^1.25.0"
+    plotly.js "^2.6.0"
+    re-resizable "^6.9.0"
+    react "^16.13.1"
+    react-bootstrap "^1.3.0"
+    react-cool-dimensions "^1.1.11"
+    react-dom "^16.13.1"
+    react-html-parser "^2.0.2"
+    react-leaflet "^2.7.0"
+    react-plotly.js "^2.4.0"
+    react-transition-group "^4.4.1"
+    shape2geohash "^1.2.5"
+
+"@veupathdb/components@^0.11.8":
   version "0.11.15"
   resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.15.tgz#ab4f5a1828eb8515f33d8552cde127f0806e3a5e"
   integrity sha512-WAZs3fMWkL+SWpuDiOzUbJ7fAbpdeniE6Q6W4aru7lpDWccAOIN5uJo0a2n+opFXr7MzcP2JMrMN3heBFb9bAQ==
@@ -1308,10 +1349,10 @@
     react-modal "^3.14.3"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^1.3.0":
-  version "1.3.10"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.3.10.tgz#5eec5b68604aa3284d6a4c76dfea756903c2318d"
-  integrity sha512-0WrdGlGBCpjTcuDW3trYOx1kJnkO++gy/4cd90tb7ZeMvyS319Z1n0StyZeuh2zl2iu/El2uxCcun2s+Fa1gGA==
+"@veupathdb/eda@^1.5.2", "@veupathdb/eda@^1.5.3":
+  version "1.5.3"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.5.3.tgz#106f12e4c286b529a37b560ab0e98ac3d06a3f16"
+  integrity sha512-k4U4xVnspneFflA3yWU++DVGHBSJQDDFVu8mrmnior8dBe7GwouXkJnSzy7WyNAbVq3Ok0l3Kboa5sIKHbYE1g==
   dependencies:
     "@emotion/react" "^11.4.1"
     "@emotion/styled" "^11.3.0"
@@ -1319,37 +1360,7 @@
     "@material-ui/icons" "^4.11.2"
     "@material-ui/lab" "^4.0.0-alpha.58"
     "@types/debounce-promise" "^3.1.3"
-    "@veupathdb/components" "^0.11.15"
-    "@veupathdb/core-components" "^0.11.1"
-    "@veupathdb/http-utils" "^1.1.0"
-    "@veupathdb/study-data-access" "^0.1.5"
-    debounce-promise "^3.1.2"
-    file-saver "^2.0.5"
-    fp-ts "^2.9.3"
-    io-ts "^2.2.13"
-    lodash "^4.17.21"
-    monocle-ts "^2.3.11"
-    react "^17.0.1"
-    react-dom "^17.0.1"
-    react-draggable "^4.4.3"
-    react-resizable "^3.0.4"
-    react-router "^5.2.1"
-    react-router-dom "^5.3.0"
-    react-table "^7.7.0"
-    uuid "^8.3.2"
-
-"@veupathdb/eda@^1.4.2":
-  version "1.4.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.4.2.tgz#bc8f7385d58f0370f4b420748f5ab734d09a78b5"
-  integrity sha512-PWV+1OvVMimX2FoGHQGznOyR3+BCw8oUmfn5T2E/wGvuKCGKPUdphdL+43MmsAU4ojPWfv/9tIF1hptVD6a4YA==
-  dependencies:
-    "@emotion/react" "^11.4.1"
-    "@emotion/styled" "^11.3.0"
-    "@material-ui/core" "^4.11.3"
-    "@material-ui/icons" "^4.11.2"
-    "@material-ui/lab" "^4.0.0-alpha.58"
-    "@types/debounce-promise" "^3.1.3"
-    "@veupathdb/components" "^0.11.15"
+    "@veupathdb/components" "^0.11.18"
     "@veupathdb/core-components" "^0.11.1"
     "@veupathdb/http-utils" "^1.1.0"
     "@veupathdb/study-data-access" "^0.1.5"
@@ -1435,13 +1446,13 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.2.5":
-  version "0.2.5"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.2.5.tgz#c4397ce93f9877cb75f5a5c53510dd657999e982"
-  integrity sha512-nKus4d7JQuK28QUFL0ClQ1nM/LBPrDf8OFnN22AdrFnoFe2ihdvDUCMHCpC8+N6hKYJ0LWpgueG83Zk5TKxK1g==
+"@veupathdb/web-common@^0.2.6":
+  version "0.2.6"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.2.6.tgz#8e51a1ef2e98d510dc0097ec02d75abbb2f59164"
+  integrity sha512-CBnW8+UUpCWKvkr3Js/hF/YV44ENzBZZURX37Je+eM229r22Ce+Sy4g4/UD/cKWkyUVDI9KPhTKsABhVkkpbDw==
   dependencies:
-    "@veupathdb/components" "^0.11.13"
-    "@veupathdb/eda" "^1.3.0"
+    "@veupathdb/components" "^0.11.18"
+    "@veupathdb/eda" "^1.5.2"
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
     whatwg-fetch "^3.5.0"
