@@ -15,6 +15,7 @@ import {
   WorkspaceContext,
 } from '../..';
 import SubsettingClient from '../../api/SubsettingClient';
+import { DownloadClient } from '../../api/DownloadClient';
 
 const key = '123';
 
@@ -76,6 +77,7 @@ const wrapper: React.ComponentType = ({ children }) => (
       studyRecordClass: {} as StudyRecordClass,
       subsettingClient: {} as SubsettingClient,
       dataClient: {} as DataClient,
+      downloadClient: {} as DownloadClient,
     }}
   >
     {children}

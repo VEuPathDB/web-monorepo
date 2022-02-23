@@ -30,20 +30,21 @@ import reportWebVitals from './reportWebVitals';
 import Header from './Header';
 import { MapVeuContainer } from './lib/mapveu';
 import { WorkspaceRouter } from './lib/workspace/WorkspaceRouter';
-import UIThemeProvider from '@veupathdb/core-components/dist/components/theming/UIThemeProvider';
+import UIThemeProvider from '@veupathdb/coreui/dist/components/theming/UIThemeProvider';
 
 // Hooks
 import { useAttemptActionClickHandler } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
-import { useCoreUIFonts } from '@veupathdb/core-components/dist/hooks';
+import { useCoreUIFonts } from '@veupathdb/coreui/dist/hooks';
 
 // Definitions
-import { colors } from '@veupathdb/core-components';
+import { colors } from '@veupathdb/coreui';
 
 import './index.css';
 
 const subsettingServiceUrl = '/eda-subsetting-service';
 const dataServiceUrl = '/eda-data-service';
 const userServiceUrl = '/eda-user-service';
+const downloadServiceUrl = '/eda-user-service';
 
 const exampleAnalysesAuthor = process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR
   ? Number(process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR)
@@ -97,6 +98,7 @@ initialize({
             subsettingServiceUrl={subsettingServiceUrl}
             dataServiceUrl={dataServiceUrl}
             userServiceUrl={userServiceUrl}
+            downloadServiceUrl={downloadServiceUrl}
             exampleAnalysesAuthor={exampleAnalysesAuthor}
             sharingUrlPrefix={window.location.href}
             showLoginForm={showLoginForm}

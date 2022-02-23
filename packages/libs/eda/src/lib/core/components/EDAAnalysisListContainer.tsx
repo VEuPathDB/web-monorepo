@@ -7,6 +7,7 @@ import { AnalysisClient } from '../api/analysis-api';
 import SubsettingClient from '../api/SubsettingClient';
 import DataClient from '../api/DataClient';
 import { WorkspaceContext } from '../context/WorkspaceContext';
+import { DownloadClient } from '../api/DownloadClient';
 
 interface Props {
   studyId: string;
@@ -15,6 +16,7 @@ interface Props {
   analysisClient: AnalysisClient;
   subsettingClient: SubsettingClient;
   dataClient: DataClient;
+  downloadClient: DownloadClient;
 }
 
 export function EDAAnalysisListContainer(props: Props) {
@@ -23,6 +25,7 @@ export function EDAAnalysisListContainer(props: Props) {
     subsettingClient,
     dataClient,
     analysisClient,
+    downloadClient,
     className = 'EDAWorkspace',
     children,
   } = props;
@@ -38,6 +41,7 @@ export function EDAAnalysisListContainer(props: Props) {
           analysisClient,
           subsettingClient,
           dataClient,
+          downloadClient,
         }}
       >
         {children}
