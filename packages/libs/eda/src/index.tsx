@@ -140,7 +140,7 @@ initialize({
         return (
           <DevLoginFormContext.Provider value={loginFormContext}>
             <DataRestrictionDaemon
-              makeStudyPageRoute={(id: string) => `/eda/${id}/details`}
+              makeStudyPageRoute={(id: string) => `/eda/${id}`}
             />
             <UIThemeProvider
               theme={{

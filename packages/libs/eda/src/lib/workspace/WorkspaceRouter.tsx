@@ -16,12 +16,14 @@ import {
   useConfiguredSubsettingClient,
 } from '../core/hooks/client';
 import { AllAnalyses } from './AllAnalyses';
-import { EDAAnalysisList } from './EDAAnalysisList';
 import { ImportAnalysis } from './ImportAnalysis';
 import { LatestAnalysis } from './LatestAnalysis';
 import { PublicAnalysesRoute } from './PublicAnalysesRoute';
 import { StudyList } from './StudyList';
 import { WorkspaceContainer } from './WorkspaceContainer';
+import { AnalysisPanel } from './AnalysisPanel';
+import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
+import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 
 const theme = createTheme(workspaceTheme);
 
@@ -112,12 +114,18 @@ export function WorkspaceRouter({
             path={`${path}/:studyId`}
             exact
             render={(props: RouteComponentProps<{ studyId: string }>) => (
-              <EDAAnalysisList
+              <WorkspaceContainer
                 {...props.match.params}
                 subsettingServiceUrl={subsettingServiceUrl}
                 dataServiceUrl={dataServiceUrl}
                 userServiceUrl={userServiceUrl}
-              />
+              >
+                <EDAWorkspaceHeading />
+                <RecordController
+                  recordClass="dataset"
+                  primaryKey={props.match.params.studyId}
+                />
+              </WorkspaceContainer>
             )}
           />
           <Route
@@ -128,9 +136,14 @@ export function WorkspaceRouter({
                 subsettingServiceUrl={subsettingServiceUrl}
                 dataServiceUrl={dataServiceUrl}
                 userServiceUrl={userServiceUrl}
-                sharingUrlPrefix={sharingUrlPrefix}
-                showLoginForm={showLoginForm}
-              />
+              >
+                <AnalysisPanel
+                  {...props.match.params}
+                  sharingUrlPrefix={sharingUrlPrefix}
+                  showLoginForm={showLoginForm}
+                  hideSavedAnalysisButtons
+                />
+              </WorkspaceContainer>
             )}
           />
           <Route
@@ -186,9 +199,13 @@ export function WorkspaceRouter({
                 subsettingServiceUrl={subsettingServiceUrl}
                 dataServiceUrl={dataServiceUrl}
                 userServiceUrl={userServiceUrl}
-                sharingUrlPrefix={sharingUrlPrefix}
-                showLoginForm={showLoginForm}
-              />
+              >
+                <AnalysisPanel
+                  {...props.match.params}
+                  sharingUrlPrefix={sharingUrlPrefix}
+                  showLoginForm={showLoginForm}
+                />
+              </WorkspaceContainer>
             )}
           />
         </Switch>

@@ -35,10 +35,10 @@ export function useMakeVariableLink(): MakeVariableLink {
   );
 }
 
-function defaultMakeVariableLink(
-  { variableId, entityId }: Partial<VariableDescriptor>,
-  studyMetadata: StudyMetadata
-): string {
+function defaultMakeVariableLink({
+  variableId,
+  entityId,
+}: Partial<VariableDescriptor>): string {
   return variableId && entityId
     ? `/variables/${entityId}/${variableId}`
     : entityId

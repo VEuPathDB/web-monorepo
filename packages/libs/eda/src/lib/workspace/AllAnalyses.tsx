@@ -94,7 +94,11 @@ export function AllAnalyses(props: Props) {
   const classes = useStyles();
 
   const queryParams = new URLSearchParams(location.search);
-  const searchText = queryParams.get('s') ?? '';
+  const searchText = useMemo(() => {
+    const searchParam = queryParams.get('s') ?? '';
+    return stripHTML(searchParam); // matches stripHTML(dataset.displayName) below
+  }, [queryParams]);
+
   const debouncedSearchText = useDebounce(searchText, 250);
 
   const setSearchText = useCallback(

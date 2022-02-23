@@ -65,7 +65,8 @@ export interface TabularDataRequestParams {
   filters: Array<Filter>;
   outputVariableIds: Array<string>;
   reportConfig?: {
-    paging: {
+    headerFormat?: 'standard' | 'display';
+    paging?: {
       numRows: number;
       offset: number;
     };

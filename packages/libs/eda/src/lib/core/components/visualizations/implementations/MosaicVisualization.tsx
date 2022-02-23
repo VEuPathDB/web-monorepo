@@ -38,7 +38,7 @@ import twoxtwo from './selectorIcons/2x2.svg';
 import { TabbedDisplay } from '@veupathdb/coreui';
 
 // import axis label unit util
-import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
+import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import {
   fixLabelForNumberVariables,
   fixLabelsForNumberVariables,
@@ -349,8 +349,8 @@ function MosaicViz(props: Props) {
     ])
   );
 
-  const xAxisLabel = axisLabelWithUnit(xAxisVariable);
-  const yAxisLabel = axisLabelWithUnit(yAxisVariable);
+  const xAxisLabel = variableDisplayWithUnit(xAxisVariable);
+  const yAxisLabel = variableDisplayWithUnit(yAxisVariable);
 
   const tableGroupNode = (
     <>
@@ -377,18 +377,18 @@ function MosaicViz(props: Props) {
           {
             role: 'X-axis',
             required: true,
-            display: axisLabelWithUnit(xAxisVariable),
+            display: variableDisplayWithUnit(xAxisVariable),
             variable: vizConfig.xAxisVariable,
           },
           {
             role: 'Y-axis',
             required: true,
-            display: axisLabelWithUnit(yAxisVariable),
+            display: variableDisplayWithUnit(yAxisVariable),
             variable: vizConfig.yAxisVariable,
           },
           {
             role: 'Facet',
-            display: axisLabelWithUnit(facetVariable),
+            display: variableDisplayWithUnit(facetVariable),
             variable: vizConfig.facetVariable,
           },
         ]}

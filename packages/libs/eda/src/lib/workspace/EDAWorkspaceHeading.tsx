@@ -11,14 +11,12 @@ import AddIcon from '@material-ui/icons/Add';
 
 // Hooks
 import { useStudyRecord } from '../core/hooks/workspace';
-// import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 
 // Definitions & Utilities
 import { cx } from './Utils';
 import { AnalysisState, DEFAULT_ANALYSIS_NAME } from '../core';
-// import { LinkAttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-// import { Action } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUiActions';
 import { getAnalysisId, isSavedAnalysis } from '../core/utils/analysis';
+import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
 
 interface EDAWorkspaceHeadingProps {
   /** Optional AnalysisState for "New analysis" button functionality */
@@ -42,35 +40,32 @@ export function EDAWorkspaceHeading({
 
   const analysisId = getAnalysisId(analysis);
 
+  const permissionsValue = usePermissions();
+  const showButtons =
+    !permissionsValue.loading &&
+    Boolean(
+      permissionsValue.permissions.perDataset[
+        studyRecord.attributes.dataset_id as string
+      ]?.actionAuthorization.subsetting
+    );
+
   useEffect(() => {
     setDialogIsOpen(false);
   }, [analysisId]);
 
   return (
-    <>
-      <div className={cx('-Heading')}>
-        <H3 additionalStyles={{ padding: 0 }}>
-          {safeHtml(studyRecord.displayName)}
-        </H3>
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          {/* {studyRecord.attributes.bulk_download_url && (
-            <div>
-              <FloatingButton
-                text="Download"
-                tooltip="Download study files"
-                icon={Download}
-                onPress={() => {
-                  attemptAction(Action.download, {
-                    studyId: studyRecord.id[0].value,
-                    onAllow: () => {
-                      window.location.href = (studyRecord.attributes
-                        .bulk_download_url as LinkAttributeValue).url;
-                    },
-                  });
-                }}
-              />
-            </div>
-          )} */}
+    <div className={cx('-Heading')}>
+      <H3 additionalStyles={{ padding: 0 }}>
+        {safeHtml(studyRecord.displayName)}
+      </H3>
+      {showButtons && (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+          }}
+        >
           <div>
             <FloatingButton
               themeRole="primary"
@@ -106,7 +101,7 @@ export function EDAWorkspaceHeading({
             />
           </div>
         </div>
-      </div>
+      )}
       {analysisState && isSavedAnalysis(analysis) && (
         <AnalysisNameDialog
           isOpen={dialogIsOpen}
@@ -118,6 +113,6 @@ export function EDAWorkspaceHeading({
           redirectToNewAnalysis={redirectToNewAnalysis}
         />
       )}
-    </>
+    </div>
   );
 }
