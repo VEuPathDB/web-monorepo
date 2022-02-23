@@ -46,30 +46,30 @@ export function Document() {
         </li>
 
         <li>
-          Overlay: Variables must have &leq 8 unique values to associate each
+          Overlay: Variables must have &#8804; 8 unique values to associate each
           value with a color-blind friendly color
         </li>
 
         <li>
-          Facet: Variables must have &leq 10 unique values to ensure performance
-          of the application
+          Facet: Variables must have &#8804; 10 unique values to ensure
+          performance of the application
         </li>
       </ul>
       <h4 style={{ fontSize: '1.1em' }}>Bar Plot</h4>
       <ul>
         <li>
-          X-axis/Main: Variables must have &leq 10 unique values to ensure
+          X-axis/Main: Variables must have &#8804; 10 unique values to ensure
           legibility of the X-axis ticks
         </li>
 
         <li>
-          Overlay: Variables must have &leq 8 unique values to associate each
+          Overlay: Variables must have &#8804; 8 unique values to associate each
           value with a color-blind friendly color
         </li>
 
         <li>
-          Facet: Variables must have &leq 10 unique values to ensure performance
-          of the application
+          Facet: Variables must have &#8804; 10 unique values to ensure
+          performance of the application
         </li>
       </ul>
       <h4 style={{ fontSize: '1.1em' }}>Scatter Plot</h4>
@@ -85,20 +85,20 @@ export function Document() {
         </li>
 
         <li>
-          Overlay: Variables must have &leq 8 unique values to associate each
+          Overlay: Variables must have &#8804; 8 unique values to associate each
           value with a color-blind friendly color
         </li>
 
         <li>
-          Facet: Variables must have &leq 10 unique values to ensure performance
-          of the application
+          Facet: Variables must have &#8804; 10 unique values to ensure
+          performance of the application
         </li>
       </ul>
       <h4 style={{ fontSize: '1.1em' }}>Box Plot</h4>
       <ul>
         <li>
-          X-axis: Variables must have &leq 10 unique values to ensure legibility
-          of the X-axis ticks
+          X-axis: Variables must have &#8804; 10 unique values to ensure
+          legibility of the X-axis ticks
         </li>
 
         <li>
@@ -106,13 +106,13 @@ export function Document() {
         </li>
 
         <li>
-          Overlay: Variables must have &leq 8 unique values to associate each
+          Overlay: Variables must have &#8804; 8 unique values to associate each
           value with a color-blind friendly color
         </li>
 
         <li>
-          Facet: Variables must have &leq 10 unique values to ensure performance
-          of the application
+          Facet: Variables must have &#8804; 10 unique values to ensure
+          performance of the application
         </li>
       </ul>
       <h4 style={{ fontSize: '1.1em' }}>Mosaic Plot: 2x2 Table</h4>
@@ -128,25 +128,25 @@ export function Document() {
         </li>
 
         <li>
-          Facet: Variables must have &leq 10 unique values to ensure performance
-          of the application
+          Facet: Variables must have &#8804; 10 unique values to ensure
+          performance of the application
         </li>
       </ul>
       <h4 style={{ fontSize: '1.1em' }}>Mosaic Plot: RxC Table</h4>
       <ul>
         <li>
-          X-axis: Variables must have &leq 10 unique values to ensure legibility
-          of the X-axis ticks
+          X-axis: Variables must have &#8804; 10 unique values to ensure
+          legibility of the X-axis ticks
         </li>
 
         <li>
-          Y-axis: Variables must have &leq 8 unique values to associate each
+          Y-axis: Variables must have &#8804; 8 unique values to associate each
           value with a color-blind friendly color
         </li>
 
         <li>
-          Facet: Variables must have &leq 10 unique values to ensure performance
-          of the application
+          Facet: Variables must have &#8804; 10 unique values to ensure
+          performance of the application
         </li>
       </ul>
       <br /> <hr />
