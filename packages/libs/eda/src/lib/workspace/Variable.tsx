@@ -12,7 +12,7 @@ import {
 import { FilterContainer } from '../core/components/filter/FilterContainer';
 import { cx } from './Utils';
 // import axis label unit util
-import { axisLabelWithUnit } from '../core/utils/axis-label-unit';
+import { variableDisplayWithUnit } from '../core/utils/variable-display';
 import { groupBy } from 'lodash';
 
 interface Props {
@@ -68,7 +68,7 @@ export function VariableDetails(props: Props) {
   return (
     <ErrorBoundary>
       <div>
-        <h3>{axisLabelWithUnit(variable)}</h3>
+        <h3>{variableDisplayWithUnit(variable)}</h3>
         <div className={cx('-ProviderLabel')}>
           <div className={cx('-ProviderLabelPrefix')}>
             <i>

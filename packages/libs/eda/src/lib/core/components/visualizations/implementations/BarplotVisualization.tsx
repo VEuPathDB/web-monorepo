@@ -42,7 +42,7 @@ import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 
 import bar from './selectorIcons/bar.svg';
 // import axis label unit util
-import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
+import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import {
   fixLabelForNumberVariables,
   fixLabelsForNumberVariables,
@@ -434,7 +434,7 @@ function BarplotViz(props: VisualizationProps) {
     orientation: 'vertical',
     barLayout: 'group',
     displayLegend: false,
-    independentAxisLabel: axisLabelWithUnit(variable) ?? 'Main',
+    independentAxisLabel: variableDisplayWithUnit(variable) ?? 'Main',
     dependentAxisLabel:
       vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion',
     legendTitle: overlayVariable?.displayName,
@@ -499,7 +499,7 @@ function BarplotViz(props: VisualizationProps) {
     <PlotLegend
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
-      legendTitle={axisLabelWithUnit(overlayVariable)}
+      legendTitle={variableDisplayWithUnit(overlayVariable)}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
     />
   );
@@ -527,17 +527,17 @@ function BarplotViz(props: VisualizationProps) {
           {
             role: 'Main',
             required: true,
-            display: axisLabelWithUnit(variable),
+            display: variableDisplayWithUnit(variable),
             variable: vizConfig.xAxisVariable,
           },
           {
             role: 'Overlay',
-            display: axisLabelWithUnit(overlayVariable),
+            display: variableDisplayWithUnit(overlayVariable),
             variable: vizConfig.overlayVariable,
           },
           {
             role: 'Facet',
-            display: axisLabelWithUnit(facetVariable),
+            display: variableDisplayWithUnit(facetVariable),
             variable: vizConfig.facetVariable,
           },
         ]}

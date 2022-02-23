@@ -3393,10 +3393,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/components@^0.11.17":
-  version "0.11.17"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.17.tgz#c4757aae19cd2f75ed5d0f3f08eb9d3dad59834d"
-  integrity sha512-iANkClg/QYa1oi47CSU++Y6/AyEnQ7Q128Grj0JTKikVsCeATacdlqwKMV6cMHIshUOlFxu2y0b/jx/Ok1d8vg==
+"@veupathdb/components@^0.11.18":
+  version "0.11.18"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.18.tgz#44e915248dcbe138dd3a7a94020c041be2bf571d"
+  integrity sha512-Nvw6g70r7eJAAmPcOGjJ3Fghb/+OA4fT8Av+d9jrLtMjRyx5S2XbRa6hNtUVg75xITH0NgzungjuI6TYPIAZGw==
   dependencies:
     "@emotion/react" "^11.7.0"
     "@material-ui/core" "^4.11.2"
