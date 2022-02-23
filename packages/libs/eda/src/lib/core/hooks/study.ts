@@ -157,7 +157,7 @@ export function useWdkStudyReleases(): Array<WdkStudyRelease> {
       releaseNumber: release.build_number?.toString(),
       description: release.note?.toString(),
       date: release.release_date?.toString(),
-    })) ?? []
+    }), [ studyRecord.id ]) ?? []
   );
 }
 
