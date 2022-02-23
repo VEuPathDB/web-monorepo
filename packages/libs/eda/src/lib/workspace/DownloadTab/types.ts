@@ -1,6 +1,6 @@
-import { WDKStudyRelease } from '../../core/hooks/study';
+import { WdkStudyRelease } from '../../core/hooks/study';
 
-export type DownloadTabStudyRelease = WDKStudyRelease & {
+export type DownloadTabStudyRelease = WdkStudyRelease & {
   downloadServiceReleaseId: string;
 };
 

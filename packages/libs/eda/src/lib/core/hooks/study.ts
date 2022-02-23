@@ -143,7 +143,7 @@ export function useWdkStudyRecords(
  * is included.
  *
  * */
-export function useWDKStudyReleases(): Array<WDKStudyRelease> {
+export function useWdkStudyReleases(): Array<WdkStudyRelease> {
   const studyRecord = useStudyRecord();
 
   return (
@@ -161,7 +161,7 @@ export function useWDKStudyReleases(): Array<WDKStudyRelease> {
   );
 }
 
-export type WDKStudyRelease = {
+export type WdkStudyRelease = {
   releaseNumber: string | undefined;
   description: string | undefined;
   date: string | undefined;

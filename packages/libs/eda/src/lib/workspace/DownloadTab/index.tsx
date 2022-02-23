@@ -14,7 +14,7 @@ import MySubset from './MySubset';
 import CurrentRelease from './CurrentRelease';
 
 // Hooks
-import { useStudyEntities, useWDKStudyReleases } from '../../core/hooks/study';
+import { useStudyEntities, useWdkStudyReleases } from '../../core/hooks/study';
 import { useEnhancedEntityData } from './hooks/useEnhancedEntityData';
 import { DownloadTabStudyReleases } from './types';
 import PastRelease from './PastRelease';
@@ -57,7 +57,7 @@ export default function DownloadTab({
     downloadServiceStudyReleases,
     setDownloadServiceStudyReleases,
   ] = useState<Array<string>>([]);
-  const WDKStudyReleases = useWDKStudyReleases();
+  const WDKStudyReleases = useWdkStudyReleases();
 
   // Get a list of all available study releases according to the Download Service.
   useEffect(() => {
