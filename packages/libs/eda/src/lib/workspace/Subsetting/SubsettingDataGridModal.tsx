@@ -1,9 +1,11 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { ceil } from 'lodash';
+import useDimensions from 'react-cool-dimensions';
 
-// Components
+// Components & Component Generators
 import SettingsIcon from '@material-ui/icons/Settings';
-
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import MultiSelectVariableTree from '../../core/components/variableTrees/MultiSelectVariableTree';
 import {
   Modal,
   H5,
@@ -14,13 +16,12 @@ import {
   OutlinedButton,
 } from '@veupathdb/coreui';
 
-import MultiSelectVariableTree from '../../core/components/variableTrees/MultiSelectVariableTree';
-
 // Definitions
 import { AnalysisState } from '../../core/hooks/analysis';
 import { StudyEntity, TabularDataResponse } from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
 import { APIError } from '../../core/api/types';
+import { gray } from '@veupathdb/coreui/dist/definitions/colors';
 
 // Hooks
 import {
@@ -28,10 +29,9 @@ import {
   useStudyRecord,
   useSubsettingClient,
 } from '../../core';
+
 import { useFeaturedFields } from '../../core/components/variableTrees/hooks';
 import { useProcessedGridData } from './hooks';
-import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { gray } from '@veupathdb/coreui/dist/definitions/colors';
 
 type SubsettingDataGridProps = {
   /** Should the modal currently be visible? */
@@ -68,6 +68,11 @@ export default function SubsettingDataGridModal({
   starredVariables,
   toggleStarredVariable,
 }: SubsettingDataGridProps) {
+  const {
+    observe: observeEntityDescription,
+    width: entityDescriptionWidth,
+  } = useDimensions();
+
   //   Various Custom Hooks
   const studyRecord = useStudyRecord();
   const studyMetadata = useStudyMetadata();
@@ -290,7 +295,7 @@ export default function SubsettingDataGridModal({
           style={{
             position: 'absolute',
             width: 425,
-            left: 370,
+            left: entityDescriptionWidth + 195,
             top: -54,
             backgroundColor: 'rgba(255, 255, 255, 1)',
             border: '2px solid rgb(200, 200, 200)',
@@ -390,7 +395,7 @@ export default function SubsettingDataGridModal({
         }}
       >
         <div style={{ marginBottom: 15, display: 'flex' }}>
-          <div style={{ marginRight: 25 }}>
+          <div style={{ marginRight: 25 }} ref={observeEntityDescription}>
             <span
               style={{
                 fontSize: 18,
@@ -424,17 +429,6 @@ export default function SubsettingDataGridModal({
             textTransform="capitalize"
           />
         </div>
-        {selectedVariableDescriptors.length === 0 && (
-          <div
-            style={{
-              fontSize: 18,
-              fontWeight: 500,
-              color: '#646464',
-            }}
-          >
-            To configure this table, click on the "Add columns" button.
-          </div>
-        )}
         <div
           style={{
             display: 'flex',
