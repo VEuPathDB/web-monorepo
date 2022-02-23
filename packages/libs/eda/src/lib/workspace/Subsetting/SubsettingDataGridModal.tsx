@@ -121,7 +121,7 @@ export default function SubsettingDataGridModal({
     setSelectedVariableDescriptors,
   ] = useState<Array<VariableDescriptor>>(
     analysisState.analysis?.descriptor.dataTableConfig[currentEntityID]
-      .variables ?? []
+      ?.variables ?? []
   );
 
   const defaultSelection = useMemo(() => [], []);
