@@ -2,7 +2,7 @@ import { empty, of, merge } from 'rxjs';
 import { filter, map, mergeMap, mergeMapTo, switchMap, tap } from 'rxjs/operators';
 import * as RecordStoreModule from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
 import { QuestionActions, RecordActions } from '@veupathdb/wdk-client/lib/Actions';
-import { difference, get } from 'lodash';
+import { difference, get, uniq } from 'lodash';
 import * as tree from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import * as cat from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import * as persistence from '@veupathdb/web-common/lib/util/persistence';
@@ -353,24 +353,65 @@ function observeSnpsAlignment(action$) {
  */
 function observeRequestedOrganisms(action$, state$, { wdkService }) {
   return action$.pipe(
-    filter(action => action.type === RecordActions.RECORD_LOADING),
-    tap(({ payload }) => {
+    filter(action => action.type === RecordActions.RECORD_RECEIVED),
+    tap(({ payload: { recordClass, record } }) => {
       if (!isGenomicsService(wdkService)) {
         throw new Error('Tried to report organism metrics via a misconfigured GenomicsService');
       }
 
-      if (
-        payload.recordClassUrlSegment === 'gene' ||
-        payload.recordClassUrlSegment === 'genomic-sequence'
-      ) {
-        wdkService.incrementOrganismCount(payload);
-      }
+      const recordOrganisms = getRecordOrganisms({
+        recordClass,
+        record
+      });
+
+      recordOrganisms?.forEach(recordOrganism => {
+        wdkService.incrementOrganismCount(recordOrganism);
+      });
     }),
     mergeMapTo(empty())
   );
 }
 
 // TODO Declare type and clear value if it doesn't conform, e.g., validation
+
+/** Returns an array of organism names associated to the record */
+function getRecordOrganisms({
+  recordClass: { urlSegment: recordClassUrlSegment },
+  record
+}) {
+  if (
+    recordClassUrlSegment === 'gene' ||
+    recordClassUrlSegment === 'genomic-sequence' ||
+    recordClassUrlSegment === 'snp'
+  ) {
+    const organismAttributeName = recordClassUrlSegment === 'snp'
+      ? 'organism_text'
+      : 'organism_full';
+
+    const organismAttribute = record.attributes?.[organismAttributeName];
+
+    return typeof organismAttribute !== 'string'
+      ? []
+      : [organismAttribute];
+  } else if (
+    recordClassUrlSegment === 'dataset'
+  ) {
+    const versionTable = record.tables?.Version ?? [];
+
+    const organisms = versionTable.flatMap(
+      ({ organism }) => (
+        typeof organism !== 'string' ||
+        organism === 'ALL'
+      )
+        ? []
+        : [organism]
+    );
+
+    return uniq(organisms);
+  } else {
+    return undefined;
+  }
+}
 
 /** Read state property value from storage */
 function getStateFromStorage(descriptor, state, defaultValue) {

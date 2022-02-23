@@ -48,10 +48,25 @@ export function RecordController(WdkRecordController) {
   );
   class ApiRecordController extends WdkRecordController {
     getRecordRequestOptions(recordClass, categoryTree) {
-      // append MetaTable to initial request options
-      const requestOptions = super.getRecordRequestOptions(recordClass, categoryTree);
-      if (recordClass.urlSegment !== 'gene') return requestOptions;
+      // as necessary, append tables to initial request options
       // TODO We should be explicit here and not rely on what super returns
+      const requestOptions = super.getRecordRequestOptions(recordClass, categoryTree);
+      if (
+        recordClass.urlSegment !== 'gene' &&
+        recordClass.urlSegment !== 'dataset'
+      ) return requestOptions;
+
+      // Dataset records
+      if (recordClass.urlSegment === 'dataset') {
+        return [
+          {
+            attributes: requestOptions[0].attributes,
+            tables: requestOptions[0].tables.concat(['Version'])
+          }
+        ];
+      }
+
+      // Gene records
       return [
         {
           attributes: requestOptions[0].attributes,
@@ -62,7 +77,7 @@ export function RecordController(WdkRecordController) {
             .concat('CrisprPhenotypeGraphs' in recordClass.tablesMap ? ['CrisprPhenotypeGraphs'] : [])
             .concat('FungiOrgLinkoutsTable' in recordClass.tablesMap ? ['FungiOrgLinkoutsTable'] : [])
         }
-      ]
+      ];
     }
     loadData(prevProps) {
       super.loadData(prevProps);
