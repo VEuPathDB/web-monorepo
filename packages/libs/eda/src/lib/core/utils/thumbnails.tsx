@@ -17,7 +17,7 @@ export function makePlotThumbnailUrl(
   if (!isFacetedPlotRef(plotRef)) {
     // Call the plotRef.toImage function defined in web-components
     return plotRef.toImage({
-      format: 'svg',
+      format: 'jpeg',
       ...thumbnailDimensions,
     });
   } else {
@@ -35,7 +35,7 @@ async function makeFacetedPlotThumbnailUrl(
       .map((plotRef) =>
         plotRef == null
           ? null
-          : plotRef.toImage({ format: 'svg', ...thumbnailDimensions })
+          : plotRef.toImage({ format: 'jpeg', ...thumbnailDimensions })
       )
   );
 
