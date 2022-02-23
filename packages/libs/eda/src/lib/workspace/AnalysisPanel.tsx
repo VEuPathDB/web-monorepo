@@ -46,6 +46,7 @@ import { ApprovalStatus } from '@veupathdb/study-data-access/lib/data-restrictio
 import { RestrictedPage } from '@veupathdb/study-data-access/lib/data-restriction/RestrictedPage';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
+import { DownloadClient } from '../core/api/DownloadClient';
 
 const AnalysisTabErrorBoundary = ({
   children,
@@ -83,6 +84,8 @@ interface Props {
    * A callback to open a login form.
    * This is also passed down through several component layers. */
   showLoginForm: () => void;
+  /** API client that will be used in the Download Tab */
+  downloadClient: DownloadClient;
 }
 
 /**
@@ -99,6 +102,7 @@ export function AnalysisPanel({
   hideSavedAnalysisButtons = false,
   sharingUrlPrefix,
   showLoginForm,
+  downloadClient,
 }: Props) {
   const studyRecord = useStudyRecord();
   const analysisState = useWorkspaceAnalysis(studyId, analysisId);
@@ -354,6 +358,7 @@ export function AnalysisPanel({
                   analysisState={analysisState}
                   totalCounts={totalCounts.value}
                   filteredCounts={filteredCounts.value}
+                  downloadClient={downloadClient}
                 />
               </AnalysisTabErrorBoundary>
             )}

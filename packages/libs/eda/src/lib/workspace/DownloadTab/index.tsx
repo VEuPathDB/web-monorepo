@@ -1,13 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import {
-  AnalysisState,
-  useConfiguredDownloadClient,
-  useStudyMetadata,
-} from '../../core';
+import { AnalysisState, useStudyMetadata } from '../../core';
 
 // Definitions
 import { EntityCounts } from '../../core/hooks/entityCounts';
+import { DownloadClient } from '../../core/api/DownloadClient';
 
 // Components
 import MySubset from './MySubset';
@@ -20,18 +17,18 @@ import { DownloadTabStudyReleases } from './types';
 import PastRelease from './PastRelease';
 
 type DownloadsTabProps = {
+  downloadClient: DownloadClient;
   analysisState: AnalysisState;
   totalCounts: EntityCounts | undefined;
   filteredCounts: EntityCounts | undefined;
 };
 
 export default function DownloadTab({
+  downloadClient,
   analysisState,
   totalCounts,
   filteredCounts,
 }: DownloadsTabProps) {
-  const downloadClient = useConfiguredDownloadClient('/eda-user-service');
-
   const studyMetadata = useStudyMetadata();
   const entities = useStudyEntities(studyMetadata.rootEntity);
   const enhancedEntityData = useEnhancedEntityData(

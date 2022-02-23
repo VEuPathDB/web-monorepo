@@ -20,6 +20,7 @@ import {
 import { FieldWithMetadata, StudyMetadata } from '..';
 
 import { useFieldTree, useFlattenedFields } from './variableTrees/hooks';
+import { DownloadClient } from '../api/DownloadClient';
 
 export interface Props {
   studyId: string;
@@ -27,6 +28,7 @@ export interface Props {
   className?: string;
   analysisClient: AnalysisClient;
   subsettingClient: SubsettingClient;
+  downloadClient: DownloadClient;
   dataClient: DataClient;
   initializeMakeVariableLink?: (
     fieldTree: TreeNode<FieldWithMetadata>
@@ -60,6 +62,7 @@ function EDAWorkspaceContainerWithLoadedData({
   analysisClient,
   subsettingClient,
   dataClient,
+  downloadClient,
   initializeMakeVariableLink,
   wdkStudyRecord,
   studyMetadata,
@@ -81,6 +84,7 @@ function EDAWorkspaceContainerWithLoadedData({
         analysisClient,
         subsettingClient,
         dataClient,
+        downloadClient,
         makeVariableLink,
       }}
     >

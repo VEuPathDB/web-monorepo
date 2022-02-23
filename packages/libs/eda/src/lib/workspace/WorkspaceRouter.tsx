@@ -14,6 +14,7 @@ import { workspaceTheme } from '../core/components/workspaceTheme';
 import {
   useConfiguredAnalysisClient,
   useConfiguredSubsettingClient,
+  useConfiguredDownloadClient,
 } from '../core/hooks/client';
 import { AllAnalyses } from './AllAnalyses';
 import { ImportAnalysis } from './ImportAnalysis';
@@ -56,8 +57,10 @@ export function WorkspaceRouter({
   showLoginForm,
 }: Props) {
   const { path, url } = useRouteMatch();
+
   const subsettingClient = useConfiguredSubsettingClient(subsettingServiceUrl);
   const analysisClient = useConfiguredAnalysisClient(userServiceUrl);
+  const downloadClient = useConfiguredDownloadClient(downloadServiceUrl);
 
   return (
     <ThemeProvider theme={theme}>
@@ -119,6 +122,7 @@ export function WorkspaceRouter({
                 subsettingServiceUrl={subsettingServiceUrl}
                 dataServiceUrl={dataServiceUrl}
                 userServiceUrl={userServiceUrl}
+                downloadServiceUrl={downloadServiceUrl}
               >
                 <EDAWorkspaceHeading />
                 <RecordController
@@ -136,12 +140,14 @@ export function WorkspaceRouter({
                 subsettingServiceUrl={subsettingServiceUrl}
                 dataServiceUrl={dataServiceUrl}
                 userServiceUrl={userServiceUrl}
+                downloadServiceUrl={downloadServiceUrl}
               >
                 <AnalysisPanel
                   {...props.match.params}
                   sharingUrlPrefix={sharingUrlPrefix}
                   showLoginForm={showLoginForm}
                   hideSavedAnalysisButtons
+                  downloadClient={downloadClient}
                 />
               </WorkspaceContainer>
             )}
@@ -199,11 +205,13 @@ export function WorkspaceRouter({
                 subsettingServiceUrl={subsettingServiceUrl}
                 dataServiceUrl={dataServiceUrl}
                 userServiceUrl={userServiceUrl}
+                downloadServiceUrl={downloadServiceUrl}
               >
                 <AnalysisPanel
                   {...props.match.params}
                   sharingUrlPrefix={sharingUrlPrefix}
                   showLoginForm={showLoginForm}
+                  downloadClient={downloadClient}
                 />
               </WorkspaceContainer>
             )}
