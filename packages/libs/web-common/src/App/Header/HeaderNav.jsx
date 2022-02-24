@@ -87,11 +87,6 @@ class HeaderNav extends React.Component {
           </h1>
           <p>
             {subTitle} <br />
-            <small>
-              {/* <code>Prototype</code>  */}
-              Release {buildNumber} &nbsp; &nbsp;
-              {formatReleaseDate(releaseDate)}
-            </small>
           </p>
         </div>
       </div>

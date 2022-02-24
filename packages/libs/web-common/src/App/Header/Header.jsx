@@ -67,10 +67,7 @@ class Header extends React.Component {
           {!showHomeContent
             ? null
             : (
-              <div>
-                <h1 dangerouslySetInnerHTML={{ __html: heading }} />
-                <h3 dangerouslySetInnerHTML={{ __html: tagline }} />
-              </div>
+              <div><h3 dangerouslySetInnerHTML={{ __html: tagline }} /></div>
             )
           }
         </Hero>
