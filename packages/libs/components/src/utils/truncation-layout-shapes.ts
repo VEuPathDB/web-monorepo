@@ -21,6 +21,9 @@ export function truncationLayoutShapes(
   // this will be used with conditions
   let truncationLayoutShapes: Partial<Shape>[] = [{}];
 
+  // truncation color - medium yellow
+  const filledColor = '#FFF480';
+
   // independent axis min
   if (axisTruncationConfig?.independentAxis?.min) {
     truncationLayoutShapes = [
@@ -31,7 +34,7 @@ export function truncationLayoutShapes(
           width: 0,
           dash: 'dash',
         },
-        fillcolor: '#e6e6e6',
+        fillcolor: filledColor,
         opacity: 1,
         xref: orientation === 'vertical' ? 'x' : 'paper',
         yref: orientation === 'vertical' ? 'paper' : 'y',
@@ -52,9 +55,9 @@ export function truncationLayoutShapes(
         line: {
           width: 0,
           dash: 'dash',
-          color: '#999999',
+          color: filledColor,
         },
-        fillcolor: '#e6e6e6',
+        fillcolor: filledColor,
         opacity: 1,
         xref: orientation === 'vertical' ? 'x' : 'paper',
         yref: orientation === 'vertical' ? 'paper' : 'y',
@@ -76,7 +79,7 @@ export function truncationLayoutShapes(
           width: 0,
           dash: 'dash',
         },
-        fillcolor: '#e6e6e6',
+        fillcolor: filledColor,
         opacity: 1,
         xref: orientation === 'vertical' ? 'paper' : 'x',
         yref: orientation === 'vertical' ? 'y' : 'paper',
@@ -98,7 +101,7 @@ export function truncationLayoutShapes(
           width: 0,
           dash: 'dash',
         },
-        fillcolor: '#e6e6e6',
+        fillcolor: filledColor,
         opacity: 1,
         xref: orientation === 'vertical' ? 'paper' : 'x',
         yref: orientation === 'vertical' ? 'y' : 'paper',
