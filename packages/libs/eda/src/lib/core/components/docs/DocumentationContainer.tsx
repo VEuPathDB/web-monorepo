@@ -1,4 +1,4 @@
-import { Modal, Close } from '@veupathdb/core-components';
+import { Modal, Close } from '@veupathdb/coreui';
 import { Launch } from '@material-ui/icons';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import React, { useState, PropsWithChildren, useMemo } from 'react';
@@ -30,10 +30,12 @@ export function DocumentationContainer(props: PropsWithChildren<{}>) {
       onClose={() => setActiveDocument(undefined)}
       styleOverrides={{
         content: {
-          paddingTop: 0,
-          paddingRight: 50,
-          paddingBottom: 25,
-          paddingLeft: 25,
+          padding: {
+            top: 0,
+            right: 50,
+            bottom: 25,
+            left: 25,
+          },
         },
       }}
     >

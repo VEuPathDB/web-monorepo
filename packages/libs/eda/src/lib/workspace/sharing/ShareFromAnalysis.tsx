@@ -1,5 +1,5 @@
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { Modal } from '@veupathdb/core-components';
+import { Modal } from '@veupathdb/coreui';
 
 // Definitions
 import { AnalysisState } from '../../core';
@@ -55,10 +55,12 @@ export default function ShareFromAnalysis({
       styleOverrides={{
         size: { width: 700, height: 450 },
         content: {
-          paddingTop: 0,
-          paddingRight: 50,
-          paddingBottom: 0,
-          paddingLeft: 25,
+          padding: {
+            top: 0,
+            right: 50,
+            bottom: 0,
+            left: 25,
+          },
         },
       }}
     >
