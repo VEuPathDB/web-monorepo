@@ -14,7 +14,7 @@ import { memoize } from 'lodash';
 import { FacetedData, FacetedPlotRef, PlotRef } from '../types/plots';
 import { PlotProps } from './PlotlyPlot';
 
-import Modal from '@veupathdb/core-components/dist/components/containers/Modal';
+import { Modal } from '@veupathdb/coreui';
 
 type ComponentWithPlotRef<P> = ComponentType<
   PropsWithoutRef<P> & RefAttributes<PlotRef>
