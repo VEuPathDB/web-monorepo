@@ -145,7 +145,6 @@ export default function ExpandablePanel({
         }
         onKeyDown={(event) => {
           if (['Space', 'Enter'].includes(event.code)) {
-            console.log(internalComponentState);
             internalComponentState !== 'closed'
               ? setInternalComponentState('closed')
               : setInternalComponentState('open');

@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/coreui",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "author": "Michael Dunn <mdunn4@nd.edu>",
   "description": "Core components and style definitions for VEuPath applications.",
   "private": false,
@@ -58,9 +58,14 @@
     "@svgr/cli": "^6.0.0",
     "@types/lodash": "^4.14.172",
     "@types/mdx": "^2.0.1",
+    "@typescript-eslint/eslint-plugin": "^5.12.1",
+    "@typescript-eslint/parser": "^5.12.1",
     "@veupathdb/tsconfig": "^1.0.1",
     "babel-loader": "^8.2.2",
     "chromatic": "^6.2.0",
+    "eslint": "^8.9.0",
+    "eslint-plugin-react": "^7.28.0",
+    "eslint-plugin-react-hooks": "^4.3.0",
     "typescript": "^4.3.5"
   },
   "peerDependencies": {}
