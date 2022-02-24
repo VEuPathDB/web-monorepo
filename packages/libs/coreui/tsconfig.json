@@ -10,7 +10,7 @@
     "strict": true,
     "target": "ES5",
     // TODO: This is for react-table only. Hopefully can be eliminated in the future.
-    "skipLibCheck": true 
+    "skipLibCheck": true,
   },
   "include": ["src/**/*"],
   "exclude": ["src/stories"],

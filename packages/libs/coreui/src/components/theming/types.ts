@@ -1,7 +1,7 @@
 import { CSSProperties } from 'react';
 import { ColorHue } from '../../definitions/colors';
 
-type ColorDescriptor = {
+export type ColorDescriptor = {
   hue: ColorHue;
   level: 100 | 200 | 300 | 400 | 500 | 600 | 700;
 };
@@ -10,6 +10,8 @@ type TextDescriptor = {
   fontSize: CSSProperties['fontSize'];
   fontWeight: CSSProperties['fontWeight'];
 };
+
+export type ThemeRole = 'primary' | 'secondary';
 
 export type UITheme = {
   palette: {
