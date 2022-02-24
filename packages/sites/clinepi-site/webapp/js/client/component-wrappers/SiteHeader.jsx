@@ -22,7 +22,7 @@ export default function SiteHeaderWrapper() {
           heroImagePosition="left 33%"
           titleWithoutDB="ClinEpi"
           subTitle="Clinical Epidemiology Resources"
-          tagline="Advancing global public health by facilitating the exploration and analysis of epidemiological studies"
+          tagline="Share, explore, and visualize clinical and epidemiological data"
           getSiteData={getStaticSiteData}
           makeHeaderMenuItems={makeHeaderMenuItems}
           searchTerm={searchTerm}

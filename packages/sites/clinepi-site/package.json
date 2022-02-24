@@ -13,7 +13,7 @@
     "@veupathdb/core-components": "^0.12.1",
     "@veupathdb/eda": "^1.6.2",
     "@veupathdb/wdk-client": "^0.5.4",
-    "@veupathdb/web-common": "^0.2.7"
+    "@veupathdb/web-common": "^0.2.8"
   },
   "resolutions": {
     "react": "16",

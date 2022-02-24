@@ -1448,10 +1448,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.2.7":
-  version "0.2.7"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.2.7.tgz#198aec280fb6ce4ca6ee6f5098afdf239b842b62"
-  integrity sha512-D2ISCClFXO41RPL1skbPXTRLI9VCKd530D/eiSoAnFbefAVm3LO0pJY/TVkiSUTyryKPrOssJKDvYbIpcNi3vw==
+"@veupathdb/web-common@^0.2.8":
+  version "0.2.8"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.2.8.tgz#49648035e1ad2588e50e148be96e1f674777673d"
+  integrity sha512-cuVS+8n/RigGISIGL2y+E4fP+iBle780HYp2EmIywJ3cZWVhZT326Ymq4ZxZ/GzPFdMIWVhrmCzkQQ1iwcYPiQ==
   dependencies:
     "@veupathdb/components" "^0.11.19"
     "@veupathdb/eda" "^1.6.2"
