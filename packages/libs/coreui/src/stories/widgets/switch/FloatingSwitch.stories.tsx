@@ -46,6 +46,7 @@ export const Default = Template.bind({});
 Default.args = {
   options: [true, false],
   selectedOption: true,
+  disabled: false,
 } as SwitchVariantProps;
 
 export const LeftLabel = Template.bind({});
@@ -71,6 +72,16 @@ BothLabels.args = {
     left: 'Barbarian Hordes',
     right: 'Zombie Hordes',
   },
+} as SwitchVariantProps;
+
+export const Disabled = Template.bind({});
+Disabled.args = {
+  ...Default.args,
+  labels: {
+    left: 'Barbarian Hordes',
+    right: 'Zombie Hordes',
+  },
+  disabled: true,
 } as SwitchVariantProps;
 
 export const ThemeApplied = Template.bind({});

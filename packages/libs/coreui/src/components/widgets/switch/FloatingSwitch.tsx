@@ -17,6 +17,7 @@ export default function FloatingSwitch({
   options,
   selectedOption,
   onOptionChange,
+  disabled,
 }: SwitchVariantProps) {
   const theme = useUITheme();
 
@@ -40,7 +41,7 @@ export default function FloatingSwitch({
         },
       ],
       disabled: {
-        backgroundColor: gray[200],
+        backgroundColor: gray[100],
         knobColor: gray[500],
         borderColor: undefined,
         labelColor: gray[600],
@@ -73,6 +74,7 @@ export default function FloatingSwitch({
       options={options}
       onOptionChange={onOptionChange}
       selectedOption={selectedOption}
+      disabled={disabled}
     />
   );
 }

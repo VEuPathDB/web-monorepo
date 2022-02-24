@@ -9,7 +9,7 @@ import { blue, gray } from '../../../definitions/colors';
 import Switch from './Switch';
 import { useUITheme } from '../../theming';
 
-/** "Floating" style Switch component. */
+/** "Filled" style Switch component. */
 export default function FilledSwitch({
   labels,
   themeRole,
@@ -17,6 +17,7 @@ export default function FilledSwitch({
   options,
   selectedOption,
   onOptionChange,
+  disabled,
 }: SwitchVariantProps) {
   const theme = useUITheme();
 
@@ -26,7 +27,7 @@ export default function FilledSwitch({
       default: [
         {
           backgroundColor: blue[500],
-          knobColor: blue[100],
+          knobColor: 'white',
           borderColor: undefined,
           labelColor: gray[600],
         },
@@ -34,14 +35,14 @@ export default function FilledSwitch({
       hover: [
         {
           backgroundColor: blue[600],
-          knobColor: blue[100],
+          knobColor: 'white',
           borderColor: undefined,
           labelColor: gray[600],
         },
       ],
       disabled: {
-        backgroundColor: gray[200],
-        knobColor: gray[500],
+        backgroundColor: gray[500],
+        knobColor: 'white',
         borderColor: undefined,
         labelColor: gray[600],
       },
@@ -73,6 +74,7 @@ export default function FilledSwitch({
       options={options}
       onOptionChange={onOptionChange}
       selectedOption={selectedOption}
+      disabled={disabled}
     />
   );
 }

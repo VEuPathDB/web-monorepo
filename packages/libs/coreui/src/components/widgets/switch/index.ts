@@ -35,7 +35,10 @@ export type SwitchProps = {
   selectedOption: boolean | string | number;
   /** Callback to invoke when the switch is flipped. */
   onOptionChange: (selection: boolean | string | number) => void;
+  /** Specification on how switch should be styled. */
   styleSpec: SwitchStyleSpec;
+  /** Whether the component is currently disabled for user interactions. */
+  disabled: boolean;
 };
 
 export type SwitchVariantProps = Omit<SwitchProps, 'styleSpec'> & {

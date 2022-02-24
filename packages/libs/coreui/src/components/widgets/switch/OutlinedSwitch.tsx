@@ -17,6 +17,7 @@ export default function OutlinedSwitch({
   options,
   selectedOption,
   onOptionChange,
+  disabled,
 }: SwitchVariantProps) {
   const theme = useUITheme();
 
@@ -40,8 +41,8 @@ export default function OutlinedSwitch({
         },
       ],
       disabled: {
-        borderColor: gray[200],
-        knobColor: gray[100],
+        borderColor: gray[500],
+        knobColor: gray[500],
         backgroundColor: undefined,
         labelColor: gray[600],
       },
@@ -52,11 +53,13 @@ export default function OutlinedSwitch({
         default: [
           {
             borderColor: theme?.palette[themeRole].hue[500],
+            knobColor: theme?.palette[themeRole].hue[500],
           },
         ],
         hover: [
           {
             borderColor: theme?.palette[themeRole].hue[600],
+            knobColor: theme?.palette[themeRole].hue[600],
           },
         ],
       };
@@ -71,6 +74,7 @@ export default function OutlinedSwitch({
       options={options}
       onOptionChange={onOptionChange}
       selectedOption={selectedOption}
+      disabled={disabled}
     />
   );
 }

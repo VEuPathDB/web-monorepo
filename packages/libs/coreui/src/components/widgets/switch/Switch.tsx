@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react';
 
 // Definitions
 import { SwitchProps } from '.';
-import { gray } from '../../../definitions/colors';
 import { primaryFont } from '../../../styleDefinitions/typography';
 
 /** Fully controlled Switch component. */
@@ -12,16 +11,19 @@ export default function Switch({
   options,
   selectedOption,
   onOptionChange,
+  disabled,
 }: SwitchProps) {
   const [switchState, setSwitchState] =
     useState<'default' | 'hover'>('default');
 
   /**
-   * The styles that should be applied can depend
-   * on both whether or not the component is focused/hovered
-   * and which option is selected.
+   * The CSS styles that should be applied can depend
+   * on (1) whether or not the component is
+   * focused/hovered and (2) which option is selected.
    */
   const currentStyles = useMemo(() => {
+    if (disabled) return styleSpec.disabled;
+
     const selectedOptionIndex = options.findIndex(
       (option) => option === selectedOption
     );
@@ -29,10 +31,28 @@ export default function Switch({
     return styleSpec[switchState][selectedOptionIndex]
       ? styleSpec[switchState][selectedOptionIndex]
       : styleSpec[switchState][0];
-  }, [switchState, options, selectedOption, styleSpec]);
+  }, [switchState, options, selectedOption, styleSpec, disabled]);
+
+  const ariaLabel = useMemo(() => {
+    if (!labels) return 'Switch';
+
+    if (labels.left && labels.right) {
+      return `${labels.left}/${labels.right} Switch`;
+    } else if (labels.left) {
+      return `${labels.left} Switch`;
+    } else {
+      return `${labels.right} Switch`;
+    }
+  }, [labels]);
 
   return (
-    <div css={{ display: 'flex', alignItems: 'center' }}>
+    <div
+      css={{
+        display: 'flex',
+        alignItems: 'center',
+        pointerEvents: disabled ? 'none' : 'auto',
+      }}
+    >
       {labels?.left && (
         <span
           css={{
@@ -47,6 +67,9 @@ export default function Switch({
         </span>
       )}
       <div
+        role='switch'
+        aria-label={ariaLabel}
+        aria-checked={selectedOption === options[0] ? false : true}
         css={{
           display: 'flex',
           transition: 'all ease .33s',
@@ -55,12 +78,23 @@ export default function Switch({
           height: 22,
           borderRadius: 5,
           backgroundColor: currentStyles.backgroundColor,
-          ...(currentStyles.borderColor && {
-            outlineColor: currentStyles.borderColor,
-            outlineWidth: 2,
-            outlineStyle: 'solid',
-            outlineOffset: -2,
-          }),
+          ...(currentStyles.borderColor
+            ? {
+                outlineColor: currentStyles.borderColor,
+                outlineWidth: 2,
+                outlineStyle: 'solid',
+                outlineOffset: -2,
+              }
+            : {
+                outline: 'none',
+              }),
+        }}
+        onKeyDown={(event) => {
+          if (['Space', 'Enter'].includes(event.code)) {
+            onOptionChange(
+              selectedOption === options[0] ? options[1] : options[0]
+            );
+          }
         }}
         onFocus={() => setSwitchState('hover')}
         onBlur={() => setSwitchState('default')}

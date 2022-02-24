@@ -47,6 +47,7 @@ export const Default = Template.bind({});
 Default.args = {
   options: [true, false],
   selectedOption: true,
+  disabled: false,
 } as SwitchVariantProps;
 
 export const LeftLabel = Template.bind({});
@@ -74,6 +75,16 @@ BothLabels.args = {
   },
 } as SwitchVariantProps;
 
+export const Disabled = Template.bind({});
+Disabled.args = {
+  ...Default.args,
+  labels: {
+    left: 'Barbarian Hordes',
+    right: 'Zombie Hordes',
+  },
+  disabled: true,
+} as SwitchVariantProps;
+
 export const ThemeApplied = Template.bind({});
 ThemeApplied.args = {
   ...Default.args,
@@ -95,21 +106,21 @@ StyleOverrides.args = {
     default: [
       {
         backgroundColor: magenta[500],
-        knobColor: magenta[100],
+        knobColor: 'white',
       },
       {
         backgroundColor: green[600],
-        knobColor: green[100],
+        knobColor: 'white',
       },
     ],
     hover: [
       {
         backgroundColor: magenta[600],
-        knobColor: magenta[100],
+        knobColor: 'white',
       },
       {
         backgroundColor: green[700],
-        knobColor: green[100],
+        knobColor: 'white',
       },
     ],
   },
