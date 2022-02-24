@@ -26,7 +26,7 @@ export default function OutlinedSwitch({
       default: [
         {
           borderColor: blue[500],
-          knobColor: undefined,
+          knobColor: blue[500],
           backgroundColor: undefined,
           labelColor: gray[600],
         },
@@ -34,14 +34,14 @@ export default function OutlinedSwitch({
       hover: [
         {
           borderColor: blue[600],
-          knobColor: undefined,
+          knobColor: blue[600],
           backgroundColor: undefined,
           labelColor: gray[600],
         },
       ],
       disabled: {
         borderColor: gray[200],
-        knobColor: undefined,
+        knobColor: gray[100],
         backgroundColor: undefined,
         labelColor: gray[600],
       },

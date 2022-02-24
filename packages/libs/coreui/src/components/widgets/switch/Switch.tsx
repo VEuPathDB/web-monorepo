@@ -51,14 +51,15 @@ export default function Switch({
           display: 'flex',
           transition: 'all ease .33s',
           alignItems: 'center',
-          width: 50,
+          width: 45,
           height: 22,
           borderRadius: 5,
           backgroundColor: currentStyles.backgroundColor,
           ...(currentStyles.borderColor && {
-            borderColor: currentStyles.borderColor,
-            borderWidth: 1,
-            borderStyle: 'solid',
+            outlineColor: currentStyles.borderColor,
+            outlineWidth: 2,
+            outlineStyle: 'solid',
+            outlineOffset: -2,
           }),
         }}
         onFocus={() => setSwitchState('hover')}
@@ -77,7 +78,7 @@ export default function Switch({
             position: 'relative',
             width: 12,
             height: 12,
-            ...(switchState === 'default'
+            ...(switchState === 'hover'
               ? selectedOption === options[0]
                 ? {
                     borderTopRightRadius: 10,
@@ -92,23 +93,18 @@ export default function Switch({
                     borderBottomLeftRadius: 10,
                   }
               : { borderRadius: 10 }),
-            // selectedOption === options[0] ? 5 : 31,
+
             left:
               selectedOption === options[0]
                 ? switchState === 'default'
-                  ? 5
+                  ? 7
                   : 7
                 : switchState === 'default'
-                ? 31
-                : 29,
+                ? 27
+                : 27,
 
             transition: 'ease all .33s',
             backgroundColor: currentStyles.knobColor,
-            ...(currentStyles.borderColor && {
-              borderColor: currentStyles.borderColor,
-              borderWidth: 1,
-              borderStyle: 'solid',
-            }),
           }}
         />
       </div>
