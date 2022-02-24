@@ -27,7 +27,6 @@ function toCartesian(
   radius: number,
   angleInRadianInput: number
 ) {
-  // console.log("angleInRadianInput = ", angleInRadianInput)
   let angleInRadians = angleInRadianInput - Math.PI / 2;
 
   return {
@@ -44,8 +43,6 @@ function makeArc(
   startAngle: number,
   endAngle: number
 ) {
-  // console.log("startAngle = ", startAngle)
-  // console.log("endAngle = ", endAngle)
   let dValue;
   let endAngleOriginal = endAngle;
   if (endAngleOriginal - startAngle === 2 * Math.PI) {
