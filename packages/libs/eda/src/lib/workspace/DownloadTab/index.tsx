@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { AnalysisState, useStudyMetadata } from '../../core';
+import { AnalysisState, useStudyMetadata, useStudyRecord } from '../../core';
 
 // Definitions
 import { EntityCounts } from '../../core/hooks/entityCounts';
@@ -15,6 +15,7 @@ import { useStudyEntities, useWdkStudyReleases } from '../../core/hooks/study';
 import { useEnhancedEntityData } from './hooks/useEnhancedEntityData';
 import { DownloadTabStudyReleases } from './types';
 import PastRelease from './PastRelease';
+import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 
 type DownloadsTabProps = {
   downloadClient: DownloadClient;
@@ -30,12 +31,15 @@ export default function DownloadTab({
   filteredCounts,
 }: DownloadsTabProps) {
   const studyMetadata = useStudyMetadata();
+  const studyRecord = useStudyRecord();
   const entities = useStudyEntities(studyMetadata.rootEntity);
   const enhancedEntityData = useEnhancedEntityData(
     entities,
     totalCounts,
     filteredCounts
   );
+
+  const datasetId = studyRecord.id[0].value;
 
   /**
    * Ok, this is confusing, but there are two places where we need
@@ -104,6 +108,7 @@ export default function DownloadTab({
     <div style={{ display: 'flex', paddingTop: 20 }}>
       <div key="Column One" style={{ marginRight: 75 }}>
         <MySubset
+          datasetId={datasetId}
           entities={enhancedEntityData}
           analysisState={analysisState}
           totalEntityCounts={totalCounts}
@@ -113,6 +118,7 @@ export default function DownloadTab({
           index === 0 ? (
             <CurrentRelease
               key={release.releaseNumber}
+              datasetId={datasetId}
               studyId={studyMetadata.id}
               release={release}
               downloadClient={downloadClient}
@@ -120,6 +126,7 @@ export default function DownloadTab({
           ) : (
             <PastRelease
               key={release.releaseNumber}
+              datasetId={datasetId}
               studyId={studyMetadata.id}
               release={release}
               downloadClient={downloadClient}
