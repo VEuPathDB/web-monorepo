@@ -85,10 +85,10 @@ export default function MultiSelectVariableTree({
   const onActiveFieldChange = useCallback(
     (term?: string) => {
       if (term == null) return;
-      // If term is already selected, then remove it; else add it.
-      // Note that we're using the destructive `splice` method here when removing
-      // to make the code a little more efficient and succinct. We can get away
-      // with this becuase we're creating a new array, via `.map()`.
+      // If `term` is already selected, then remove it; else add it.
+      // Note that we're using the destructive `.splice()` method here when
+      // removing to make the code a little more efficient and succinct. We can
+      // get away with this becuase we're creating a new array, via `.map()`.
       const selectedVariableFieldTerms = selectedVariableFields.map(
         (field) => field.term
       );
