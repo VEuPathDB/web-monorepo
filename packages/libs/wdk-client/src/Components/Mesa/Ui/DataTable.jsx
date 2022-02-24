@@ -101,7 +101,6 @@ class DataTable extends React.Component {
       }
 
       const dynamicWidths = columns.map((c, i) => getInnerCellWidth(contentCells[i], c) - (hasSelectionColumn && !i ? 1 : 0));
-      console.debug('dynamicWidths updating', dynamicWidths);
       this.setState({ dynamicWidths }, () => {
         window.dispatchEvent(new CustomEvent(MESA_REFLOW_EVENT));
         const tableWrapperWidth = this.bodyNode && this.bodyNode.clientWidth;
