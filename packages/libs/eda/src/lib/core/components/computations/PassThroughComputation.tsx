@@ -44,7 +44,7 @@ const visualizationTypes: Record<string, VisualizationType> = {
   // densityplot: scatterplotVisualization,
   barplot: barplotVisualization,
   boxplot: boxplotVisualization,
-  'map-markers': mapVisualization,
+  // 'map-markers': mapVisualization,
 };
 
 export function PassThroughComputation(props: Props) {
