@@ -56,6 +56,7 @@ export const wrapRoutes = wdkRoutes => [
             dataServiceUrl={edaServiceUrl}
             subsettingServiceUrl={edaServiceUrl}
             userServiceUrl={edaServiceUrl}
+            downloadServiceUrl={edaServiceUrl}
             exampleAnalysesAuthor={edaExampleAnalysesAuthor}
             sharingUrlPrefix={window.location.origin}
             showLoginForm={showLoginForm}
