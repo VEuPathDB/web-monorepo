@@ -1,29 +1,27 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { ceil } from 'lodash';
+import useDimensions from 'react-cool-dimensions';
 
-// Components
+// Components & Component Generators
 import SettingsIcon from '@material-ui/icons/Settings';
-
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import MultiSelectVariableTree from '../../core/components/variableTrees/MultiSelectVariableTree';
 import {
   Modal,
-  H3,
   H5,
   DataGrid,
   MesaButton,
   Download,
-  Close,
   CloseFullscreen,
-} from '@veupathdb/core-components';
-
-import MultiSelectVariableTree from '../../core/components/variableTrees/MultiSelectVariableTree';
-import { AnalysisSummary } from '../AnalysisSummary';
+  OutlinedButton,
+} from '@veupathdb/coreui';
 
 // Definitions
 import { AnalysisState } from '../../core/hooks/analysis';
 import { StudyEntity, TabularDataResponse } from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
 import { APIError } from '../../core/api/types';
-import { colors } from '@veupathdb/core-components';
+import { gray } from '@veupathdb/coreui/dist/definitions/colors';
 
 // Hooks
 import {
@@ -31,9 +29,9 @@ import {
   useStudyRecord,
   useSubsettingClient,
 } from '../../core';
+
 import { useFeaturedFields } from '../../core/components/variableTrees/hooks';
 import { useProcessedGridData } from './hooks';
-import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 type SubsettingDataGridProps = {
   /** Should the modal currently be visible? */
@@ -70,6 +68,11 @@ export default function SubsettingDataGridModal({
   starredVariables,
   toggleStarredVariable,
 }: SubsettingDataGridProps) {
+  const {
+    observe: observeEntityDescription,
+    width: entityDescriptionWidth,
+  } = useDimensions();
+
   //   Various Custom Hooks
   const studyRecord = useStudyRecord();
   const studyMetadata = useStudyMetadata();
@@ -239,13 +242,14 @@ export default function SubsettingDataGridModal({
   // Render the table data or instructions on how to get started.
   const renderDataGridArea = () => {
     return (
-      <div style={{ overflowX: 'auto' }}>
+      <div>
         {gridData ? (
           <DataGrid
             columns={gridColumns}
             data={gridRows}
             loading={dataLoading}
             stylePreset="mesa"
+            styleOverrides={{ headerCells: { textTransform: 'none' } }}
             pagination={{
               recordsPerPage: 10,
               controlsLocation: 'bottom',
@@ -290,11 +294,11 @@ export default function SubsettingDataGridModal({
         <div
           style={{
             position: 'absolute',
-            width: 410,
-            right: 6,
-            top: 6,
+            width: 425,
+            left: entityDescriptionWidth + 195,
+            top: -54,
             backgroundColor: 'rgba(255, 255, 255, 1)',
-            border: '1px solid rgb(200, 200, 200)',
+            border: '2px solid rgb(200, 200, 200)',
             borderRadius: '.5em',
             boxShadow: '0px 0px 6px rgba(0, 0, 0, .25)',
           }}
@@ -357,42 +361,30 @@ export default function SubsettingDataGridModal({
 
   return (
     <Modal
+      title={safeHtml(studyRecord.displayName)}
+      includeCloseButton={true}
       visible={displayModal}
       toggleVisible={toggleDisplay}
       onOpen={onModalOpen}
       onClose={onModalClose}
+      themeRole="primary"
       styleOverrides={{
         content: {
-          paddingTop: 0,
-          paddingRight: 50,
-          paddingBottom: 25,
-          paddingLeft: 25,
+          padding: {
+            top: 0,
+            right: 25,
+            bottom: 25,
+            left: 25,
+          },
         },
       }}
     >
-      <div key="Title" style={{ marginBottom: 35 }}>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <H3 additionalStyles={{ margin: 0, padding: 0 }}>
-            {safeHtml(studyRecord.displayName)}
-          </H3>
-          <Close
-            fontSize={32}
-            fill={colors.gray[500]}
-            onClick={() => toggleDisplay()}
-          />
-        </div>
-        <AnalysisSummary
-          analysis={analysisState.analysis!}
-          setAnalysisName={analysisState.setName}
-          saveAnalysis={analysisState.saveAnalysis}
-        />
-      </div>
+      <H5
+        additionalStyles={{ marginTop: 10, marginBottom: 25 }}
+        color={gray[700]}
+      >
+        {analysisState.analysis?.displayName}
+      </H5>
       <div
         key="Controls"
         style={{
@@ -402,44 +394,44 @@ export default function SubsettingDataGridModal({
           alignItems: 'center',
         }}
       >
-        <div style={{ marginBottom: 15 }}>
-          <span
-            style={{
-              fontSize: 18,
-              fontWeight: 500,
-              color: '#646464',
-            }}
-          >
-            {currentEntity?.displayNamePlural}
-          </span>
-          {currentEntityRecordCounts.filtered &&
-            currentEntityRecordCounts.total && (
-              <p
-                style={{
-                  marginTop: 0,
-                  marginBottom: 0,
-                  color: 'gray',
-                }}
-              >
-                {`${currentEntityRecordCounts.filtered.toLocaleString()} of ${currentEntityRecordCounts.total.toLocaleString()} records selected`}
-              </p>
-            )}
-        </div>
-        {selectedVariableDescriptors.length === 0 && (
-          <div
-            style={{
-              fontSize: 18,
-              fontWeight: 500,
-              color: '#646464',
-            }}
-          >
-            To configure this table, click on the "Add columns" button.
+        <div style={{ marginBottom: 15, display: 'flex' }}>
+          <div style={{ marginRight: 25 }} ref={observeEntityDescription}>
+            <span
+              style={{
+                fontSize: 18,
+                fontWeight: 500,
+                color: '#646464',
+              }}
+            >
+              {currentEntity?.displayNamePlural}
+            </span>
+            {currentEntityRecordCounts.filtered &&
+              currentEntityRecordCounts.total && (
+                <p
+                  style={{
+                    marginTop: 0,
+                    marginBottom: 0,
+                    color: 'gray',
+                  }}
+                >
+                  {`${currentEntityRecordCounts.filtered.toLocaleString()} of ${currentEntityRecordCounts.total.toLocaleString()} records selected`}
+                </p>
+              )}
           </div>
-        )}
+          <OutlinedButton
+            text={displayVariableTree ? 'Close Selector' : 'Add Columns'}
+            // @ts-ignore
+            icon={displayVariableTree ? CloseFullscreen : SettingsIcon}
+            size="medium"
+            onPress={() => setDisplayVariableTree(!displayVariableTree)}
+            styleOverrides={{ container: { width: 155 } }}
+            themeRole="primary"
+            textTransform="capitalize"
+          />
+        </div>
         <div
           style={{
             display: 'flex',
-            flexBasis: 410,
             justifyContent: 'flex-end',
             marginBottom: 15,
           }}
@@ -447,16 +439,9 @@ export default function SubsettingDataGridModal({
           <MesaButton
             text="Download"
             icon={Download}
-            styleOverrides={{ container: { marginRight: 10 } }}
             onPress={downloadData}
-          />
-          <MesaButton
-            text={displayVariableTree ? 'Close Selector' : 'Select Variables'}
-            // @ts-ignore
-            icon={displayVariableTree ? CloseFullscreen : SettingsIcon}
-            size="medium"
-            onPress={() => setDisplayVariableTree(!displayVariableTree)}
-            styleOverrides={{ container: { width: 155 } }}
+            themeRole="primary"
+            textTransform="capitalize"
           />
         </div>
       </div>

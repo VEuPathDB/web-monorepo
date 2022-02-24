@@ -11,8 +11,8 @@ import {
   Filter,
   Share,
   Trash,
-} from '@veupathdb/core-components/dist/components/icons';
-import { Chip, FilledButton, FloatingButton } from '@veupathdb/core-components';
+} from '@veupathdb/coreui/dist/components/icons';
+import { Chip, FilledButton, FloatingButton } from '@veupathdb/coreui';
 
 interface Props {
   analysis: Analysis | NewAnalysis;
@@ -88,6 +88,7 @@ export function AnalysisSummary(props: Props) {
           <FilledButton
             text={(globalFiltersDialogOpen ? 'Hide' : 'Show') + ' all filters'}
             onPress={onFilterIconClick}
+            textTransform="capitalize"
             icon={Filter}
             themeRole="primary"
             styleOverrides={{
