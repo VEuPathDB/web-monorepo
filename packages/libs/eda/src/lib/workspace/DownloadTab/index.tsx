@@ -15,7 +15,6 @@ import { useStudyEntities, useWdkStudyReleases } from '../../core/hooks/study';
 import { useEnhancedEntityData } from './hooks/useEnhancedEntityData';
 import { DownloadTabStudyReleases } from './types';
 import PastRelease from './PastRelease';
-import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 
 type DownloadsTabProps = {
   downloadClient: DownloadClient;
