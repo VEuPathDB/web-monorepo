@@ -101,22 +101,26 @@ StyleOverrides.args = {
   styleOverrides: {
     default: [
       {
-        backgroundColor: mutedMagenta[200],
+        backgroundColor: undefined,
+        borderColor: mutedMagenta[500],
         knobColor: mutedMagenta[500],
       },
       {
-        backgroundColor: mutedGreen[200],
+        backgroundColor: undefined,
         knobColor: mutedGreen[500],
+        borderColor: mutedGreen[500],
       },
     ],
     hover: [
       {
-        backgroundColor: mutedMagenta[300],
-        knobColor: mutedMagenta[100],
+        backgroundColor: undefined,
+        knobColor: mutedMagenta[600],
+        borderColor: mutedMagenta[600],
       },
       {
-        backgroundColor: mutedGreen[300],
-        knobColor: mutedGreen[100],
+        backgroundColor: undefined,
+        knobColor: mutedGreen[600],
+        borderColor: mutedGreen[600],
       },
     ],
   },
