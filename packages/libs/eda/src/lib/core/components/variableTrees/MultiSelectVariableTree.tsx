@@ -70,10 +70,6 @@ export default function MultiSelectVariableTree({
     return selectedVariableFields;
   }, [selectedVariableDescriptors, fieldsByTerm]);
 
-  const onActiveFieldChange = useCallback((term?: string) => {
-    console.log('Hello from Multi-Select onActiveFieldChange', term);
-  }, []);
-
   const onSelectedVariableTermsChange = useCallback(
     (terms: Array<string>) => {
       onSelectedVariablesChange(
@@ -85,6 +81,8 @@ export default function MultiSelectVariableTree({
     },
     [onSelectedVariablesChange]
   );
+
+  const onActiveFieldChange = useCallback(() => undefined, []);
 
   return (
     <VariableList
