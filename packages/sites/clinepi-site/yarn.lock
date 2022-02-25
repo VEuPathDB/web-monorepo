@@ -1317,23 +1317,6 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/core-components@^0.12.1":
-  version "0.12.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.12.1.tgz#642ad76e5d543532ad7e124347cce3a2d234abc4"
-  integrity sha512-m2rImktyBW6BqU9NBWm4+MSCTu8osJs/yor8pY+TcnAYDNlq24YAazrRb4q/b+BxYggtZTGwQnVZn+I89ygU2A==
-  dependencies:
-    "@emotion/react" "^11.4.0"
-    "@emotion/serialize" "^1.0.2"
-    "@emotion/styled" "^11.3.0"
-    "@material-ui/core" "^4.12.3"
-    "@material-ui/icons" "^4.11.2"
-    "@react-hook/size" "^2.1.2"
-    "@types/react-table" "^7.7.8"
-    lodash "^4.17.21"
-    react-cool-dimensions "^2.0.7"
-    react-responsive-modal "^6.2.0"
-    react-table "^7.7.0"
-
 "@veupathdb/core-components@^0.4.0":
   version "0.4.6"
   resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.4.6.tgz#3ca0c4b650b6549ba9bb6218d9d108000d92d80b"
