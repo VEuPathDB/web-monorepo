@@ -51,15 +51,16 @@ export default function Switch<T extends boolean | string | number>({
         display: 'flex',
         alignItems: 'center',
         pointerEvents: disabled ? 'none' : 'auto',
+        fontFamily: primaryFont,
+        fontSize: 13,
+        fontWeight: 400,
+        ...styleSpec.container,
       }}
     >
       {labels?.left && (
         <span
           css={{
-            fontFamily: primaryFont,
-            fontWeight: 400,
             marginRight: 10,
-            fontSize: 14,
             color: currentStyles.labelColor,
           }}
         >
@@ -74,8 +75,8 @@ export default function Switch<T extends boolean | string | number>({
           display: 'flex',
           transition: 'all ease .33s',
           alignItems: 'center',
-          width: 45,
-          height: 22,
+          width: 40,
+          height: 20,
           borderRadius: 5,
           backgroundColor: currentStyles.backgroundColor,
           ...(currentStyles.borderColor
@@ -110,8 +111,8 @@ export default function Switch<T extends boolean | string | number>({
         <div
           css={{
             position: 'relative',
-            width: 12,
-            height: 12,
+            width: 10,
+            height: 10,
             ...(switchState === 'hover'
               ? selectedOption === options[0]
                 ? {
@@ -128,15 +129,7 @@ export default function Switch<T extends boolean | string | number>({
                   }
               : { borderRadius: 10 }),
 
-            left:
-              selectedOption === options[0]
-                ? switchState === 'default'
-                  ? 7
-                  : 7
-                : switchState === 'default'
-                ? 27
-                : 27,
-
+            left: selectedOption === options[0] ? 7 : 24,
             transition: 'ease all .33s',
             backgroundColor: currentStyles.knobColor,
           }}
@@ -145,10 +138,7 @@ export default function Switch<T extends boolean | string | number>({
       {labels?.right && (
         <span
           css={{
-            fontFamily: primaryFont,
-            fontWeight: 400,
             marginLeft: 10,
-            fontSize: 14,
             color: currentStyles.labelColor,
           }}
         >

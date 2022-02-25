@@ -16,7 +16,7 @@ type SwitchStateStyleSpec = {
 };
 
 export type SwitchStyleSpec = {
-  container?: React.CSSProperties;
+  container: React.CSSProperties;
   default: SwitchStateStyleSpec[];
   hover: SwitchStateStyleSpec[];
   disabled: SwitchStateStyleSpec;
