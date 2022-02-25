@@ -10,7 +10,7 @@ import Switch from './Switch';
 import { useUITheme } from '../../theming';
 
 /** "Filled" style Switch component. */
-export default function FilledSwitch({
+export default function FilledSwitch<T extends boolean | string | number>({
   labels,
   themeRole,
   styleOverrides,
@@ -18,7 +18,7 @@ export default function FilledSwitch({
   selectedOption,
   onOptionChange,
   disabled,
-}: SwitchVariantProps) {
+}: SwitchVariantProps<T>) {
   const theme = useUITheme();
 
   const styleSpec: SwitchStyleSpec = useMemo(() => {
