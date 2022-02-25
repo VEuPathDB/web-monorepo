@@ -46,7 +46,7 @@ import { cx } from '../../../workspace/Utils';
 import { pruneEmptyFields } from '../../utils/wdk-filter-param-adapter';
 
 import { Tooltip as VarTooltip } from '../docs/variable-constraints';
-import { useActiveDocument } from '../docs/DocumentationContainer';
+// import { useActiveDocument } from '../docs/DocumentationContainer';
 
 interface VariableField {
   type?: string;
@@ -157,7 +157,7 @@ export default function VariableList({
   const isMultiPick = mode === 'multiSelection';
 
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const { setActiveDocument } = useActiveDocument();
+  // const { setActiveDocument } = useActiveDocument();
   const getPathToField = useCallback(
     (field?: Field) => {
       if (field == null) return [];
@@ -460,10 +460,11 @@ export default function VariableList({
       <strong>
         <Link
           to="../../../../documentation/variable-constraints"
-          onClick={(event) => {
-            event.preventDefault();
-            setActiveDocument('variable-constraints');
-          }}
+          target="_blank"
+          // onClick={(event) => {
+          //   event.preventDefault();
+          //   setActiveDocument('variable-constraints');
+          // }}
         >
           Learn more
         </Link>
