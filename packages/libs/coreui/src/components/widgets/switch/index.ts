@@ -38,7 +38,7 @@ export type SwitchProps<T extends boolean | string | number> = {
   /** Specification on how switch should be styled. */
   styleSpec: SwitchStyleSpec;
   /** Whether the component is currently disabled for user interactions. */
-  disabled: boolean;
+  disabled?: boolean;
 };
 
 export type SwitchVariantProps<T extends boolean | string | number> = Omit<
