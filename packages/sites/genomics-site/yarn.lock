@@ -1333,12 +1333,21 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/multi-blast@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/multi-blast/-/multi-blast-1.0.2.tgz#17bc95ab3d6fa3d53d61a095f83a9d9f97bb5730"
-  integrity sha512-31nfRmruYanQYecuU8s9sb/jo/Y3IIMRwxekTN9cqSCLxhV5xkR1TevquWnBB/DNm46fN2fuV1ctcFVARm/seA==
+"@veupathdb/http-utils@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/http-utils/-/http-utils-1.1.0.tgz#fb563593aae2dd7f32eb634ea9776793b35be65f"
+  integrity sha512-pkDxTCCq2y7G7tjtFSKe3I7V/SP4jpMuvRQK1HW7c8j/uQDo4a0qLbfsdaZZ/QmVUjapPYh9JS08ehd/UnDljg==
   dependencies:
-    "@veupathdb/http-utils" "^1.0.1"
+    fp-ts "^2.11.5"
+    io-ts "^2.2.16"
+    lodash "^4.17.21"
+
+"@veupathdb/multi-blast@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@veupathdb/multi-blast/-/multi-blast-1.0.3.tgz#90b07d5daa8146789131825b25673c24947ab65b"
+  integrity sha512-ahu19zMYnkLGpvjXTF0LbmSJewEUKyE0A5UpegG6jBs58xGsmU9U6H/deHpRWBS95wgw7M3nT9KjJaqriuHe9g==
+  dependencies:
+    "@veupathdb/http-utils" "^1.1.0"
     file-saver "^2.0.5"
     fp-ts "^2.11.5"
     io-ts "^2.2.16"
