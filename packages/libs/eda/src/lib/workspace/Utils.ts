@@ -28,9 +28,7 @@ export function findFirstVariable(
   );
 
   if (entitySubtree == null) {
-    throw new Error(
-      'Tried to find the first variable of an nonexistent entity'
-    );
+    throw new Error('Tried to find the first variable of a nonexistent entity');
   }
 
   return (
