@@ -491,6 +491,8 @@ export default function VariableList({
           enterDelay={500}
           enterNextDelay={500}
           leaveDelay={0}
+          // resolving link inside material-ui's tooltip
+          disableFocusListener={true}
         >
           <button
             className="link"
