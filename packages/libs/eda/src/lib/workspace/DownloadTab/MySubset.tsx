@@ -22,8 +22,11 @@ import SubsettingDataGridModal from '../Subsetting/SubsettingDataGridModal';
 import { AnalysisState } from '../../core';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { EntityCounts } from '../../core/hooks/entityCounts';
+import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
+import { Action } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUiActions';
 
 type MySubsetProps = {
+  datasetId: string;
   entities: EnhancedEntityData;
   analysisState: AnalysisState;
   totalEntityCounts: EntityCounts | undefined;
@@ -31,6 +34,7 @@ type MySubsetProps = {
 };
 
 export default function MySubset({
+  datasetId,
   entities,
   analysisState,
   totalEntityCounts,
@@ -42,6 +46,8 @@ export default function MySubset({
   const [currentEntity, setCurrentEntity] = useState<
     EnhancedEntityDatum | undefined
   >(undefined);
+
+  const attemptAction = useAttemptActionCallback();
 
   const starredVariables = analysisState.analysis?.descriptor.starredVariables;
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
@@ -86,15 +92,20 @@ export default function MySubset({
       >
         Configure and download one or more tabular views
       </Paragraph>
-      {Object.entries(entities).map(([entityID, data], index) => (
+      {Object.values(entities).map((data, index) => (
         <FloatingButton
           key={index}
           text={`${data.filteredCount?.toLocaleString()} of ${data.totalCount?.toLocaleString()} ${startCase(
             data.displayNamePlural
           )}`}
           onPress={() => {
-            setCurrentEntity(data);
-            setMySubsetModalOpen(true);
+            attemptAction(Action.download, {
+              studyId: datasetId,
+              onAllow: () => {
+                setCurrentEntity(data);
+                setMySubsetModalOpen(true);
+              },
+            });
           }}
           icon={TableDownload}
           textTransform="none"

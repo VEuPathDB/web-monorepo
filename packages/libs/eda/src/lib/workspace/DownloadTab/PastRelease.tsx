@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Column } from 'react-table';
 
 // Components
@@ -11,21 +11,27 @@ import { DownloadTabStudyRelease } from './types';
 // Hooks
 import { ReleaseFile, useGetReleaseFiles } from './hooks/useGetReleaseFiles';
 import { ExpandablePanel } from '@veupathdb/coreui/dist/components/containers';
+import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
+import { Action } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUiActions';
 
 export type PastReleaseProps = {
   studyId: string;
+  datasetId: string;
   release: DownloadTabStudyRelease;
   downloadClient: DownloadClient;
 };
 
 export default function PastRelease({
   studyId,
+  datasetId,
   release,
   downloadClient,
 }: PastReleaseProps) {
   const [releaseFiles, setReleaseFiles] = useState<Array<ReleaseFile>>([]);
 
   useGetReleaseFiles(studyId, release, downloadClient, setReleaseFiles);
+
+  const attemptAction = useAttemptActionCallback();
 
   const exampleGridColumns: Array<Column> = [
     {
@@ -45,6 +51,7 @@ export default function PastRelease({
               color: colors.mutedCyan[500],
             }}
             href={value.url}
+            onClick={handleClick}
           >
             <Download fill={colors.mutedCyan[500]} fontSize={20} />
             <span
@@ -60,6 +67,17 @@ export default function PastRelease({
             </span>
           </a>
         );
+
+        function handleClick(event: React.MouseEvent<HTMLAnchorElement>) {
+          event.stopPropagation();
+          event.preventDefault();
+          attemptAction(Action.download, {
+            studyId: datasetId,
+            onAllow: () => {
+              window.location.assign(value.url);
+            },
+          });
+        }
       },
     },
     {
