@@ -46,7 +46,7 @@ import { cx } from '../../../workspace/Utils';
 import { pruneEmptyFields } from '../../utils/wdk-filter-param-adapter';
 
 import { Tooltip as VarTooltip } from '../docs/variable-constraints';
-import { useActiveDocument } from '../docs/DocumentationContainer';
+// import { useActiveDocument } from '../docs/DocumentationContainer';
 
 interface VariableField {
   type?: string;
@@ -68,6 +68,7 @@ interface FieldNodeProps {
   field: VariableField;
   searchTerm: string;
   isActive: boolean;
+  isMultiPick: boolean;
   isDisabled?: boolean;
   isMultiFilterDescendant: boolean;
   showMultiFilterDescendants: boolean;
@@ -153,9 +154,10 @@ export default function VariableList({
     showOnlyCompatibleVariables,
     setShowOnlyCompatibleVariablesHandler,
   } = useContext(ShowHideVariableContext);
+  const isMultiPick = mode === 'multiSelection';
 
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const { setActiveDocument } = useActiveDocument();
+  // const { setActiveDocument } = useActiveDocument();
   const getPathToField = useCallback(
     (field?: Field) => {
       if (field == null) return [];
@@ -179,7 +181,7 @@ export default function VariableList({
   // of the active field. We also want to retain the expanded state of internal nodes, so
   // we will only remove entity nodes from the list of expanded nodes.
   useEffect(() => {
-    if (activeField == null || mode === 'multiSelection') return;
+    if (activeField == null || isMultiPick) return;
     setExpandedNodes((expandedNodes) => {
       const activeNodeLineage = getPathToField(activeField);
       if (activeNodeLineage.every((node) => expandedNodes.includes(node))) {
@@ -198,13 +200,25 @@ export default function VariableList({
       );
       return newExpandedNodes;
     });
-  }, [activeField, activeFieldEntity, getPathToField, mode]);
+  }, [activeField, activeFieldEntity, getPathToField, isMultiPick]);
 
   const handleFieldSelect = useCallback(
     (field: Field) => {
-      onActiveFieldChange(field.term);
+      if (isMultiPick && onSelectedFieldsChange) {
+        // If `term` is already selected, then remove it; else add it.
+        // Note that we're using the destructive `.splice()` method here when
+        // removing to make the code a little more efficient and succinct. We can
+        // get away with this becuase we're creating a new array, via `.map()`.
+        const selectedFieldTerms = selectedFields.map((field) => field.term);
+        const indexOfField = selectedFieldTerms.indexOf(field.term);
+        if (indexOfField === -1) selectedFieldTerms.push(field.term);
+        else selectedFieldTerms.splice(indexOfField, 1);
+        onSelectedFieldsChange(selectedFieldTerms);
+      } else {
+        onActiveFieldChange(field.term);
+      }
     },
-    [onActiveFieldChange]
+    [isMultiPick, onSelectedFieldsChange, selectedFields, onActiveFieldChange]
   );
 
   const getNodeId = useCallback((node: FieldTreeNode) => {
@@ -306,6 +320,7 @@ export default function VariableList({
       return (
         <FieldNode
           field={node.field}
+          isMultiPick={isMultiPick}
           isMultiFilterDescendant={isMultiFilterDescendant}
           showMultiFilterDescendants={showMultiFilterDescendants}
           searchTerm={searchTerm}
@@ -325,6 +340,7 @@ export default function VariableList({
     },
     [
       multiFilterDescendants,
+      isMultiPick,
       showMultiFilterDescendants,
       searchTerm,
       activeField?.term,
@@ -444,10 +460,11 @@ export default function VariableList({
       <strong>
         <Link
           to="../../../../documentation/variable-constraints"
-          onClick={(event) => {
-            event.preventDefault();
-            setActiveDocument('variable-constraints');
-          }}
+          target="_blank"
+          // onClick={(event) => {
+          //   event.preventDefault();
+          //   setActiveDocument('variable-constraints');
+          // }}
         >
           Learn more
         </Link>
@@ -474,6 +491,8 @@ export default function VariableList({
           enterDelay={500}
           enterNextDelay={500}
           leaveDelay={0}
+          // resolving link inside material-ui's tooltip
+          disableFocusListener={true}
         >
           <button
             className="link"
@@ -518,7 +537,7 @@ export default function VariableList({
                   className="wdk-CheckboxTreeItem wdk-CheckboxTreeItem__leaf"
                 >
                   <div className="wdk-CheckboxTreeNodeContent">
-                    {mode === 'multiSelection' && (
+                    {isMultiPick && (
                       <input
                         type="checkbox"
                         checked={selectedFields.some(
@@ -537,6 +556,7 @@ export default function VariableList({
                       />
                     )}
                     <FieldNode
+                      isMultiPick={isMultiPick}
                       isMultiFilterDescendant={false}
                       showMultiFilterDescendants={showMultiFilterDescendants}
                       field={field}
@@ -570,7 +590,7 @@ export default function VariableList({
       {renderFeaturedFields()}
 
       <CheckboxTree
-        {...(mode === 'multiSelection' && {
+        {...(isMultiPick && {
           selectedList: selectedFields.map((field) => field.term),
           isSelectable: true,
           isMultiPick: true,
@@ -617,6 +637,7 @@ const FieldNode = ({
   searchTerm,
   isActive,
   isDisabled,
+  isMultiPick,
   customDisabledVariableMessage,
   handleFieldSelect,
   activeFieldEntity,
@@ -649,7 +670,9 @@ const FieldNode = ({
   ) ? (
     <Tooltip
       title={
-        isDisabled
+        isMultiPick
+          ? ''
+          : isDisabled
           ? customDisabledVariableMessage ??
             'This variable cannot be used with this plot and other variable selections.'
           : 'Select this variable.'

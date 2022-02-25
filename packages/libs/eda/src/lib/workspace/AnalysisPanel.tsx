@@ -183,7 +183,7 @@ export function AnalysisPanel({
         <p>Could not load the analysis.</p>
       </div>
     );
-  if (analysis == null) return <Loading />;
+  if (analysis == null || approvalStatus === 'loading') return <Loading />;
   if (approvalStatus === 'not-approved')
     return <Redirect to={Path.normalize(routeBase + '/..')} />;
   return (

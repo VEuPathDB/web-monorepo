@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Column } from 'react-table';
 
 // Components
@@ -10,19 +10,25 @@ import { DownloadTabStudyRelease } from './types';
 
 // Hooks
 import { ReleaseFile, useGetReleaseFiles } from './hooks/useGetReleaseFiles';
+import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
+import { Action } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUiActions';
 
 export type CurrentReleaseProps = {
+  datasetId: string;
   studyId: string;
   release: DownloadTabStudyRelease;
   downloadClient: DownloadClient;
 };
 
 export default function CurrentRelease({
+  datasetId,
   studyId,
   release,
   downloadClient,
 }: CurrentReleaseProps) {
   const [releaseFiles, setReleaseFiles] = useState<Array<ReleaseFile>>([]);
+
+  const attemptAction = useAttemptActionCallback();
 
   useGetReleaseFiles(studyId, release, downloadClient, setReleaseFiles);
 
@@ -44,6 +50,7 @@ export default function CurrentRelease({
               color: colors.mutedCyan[500],
             }}
             href={value.url}
+            onClick={handleClick}
           >
             <Download fill={colors.mutedCyan[500]} fontSize={20} />
             <span
@@ -59,6 +66,16 @@ export default function CurrentRelease({
             </span>
           </a>
         );
+        function handleClick(event: React.MouseEvent<HTMLAnchorElement>) {
+          event.preventDefault();
+          event.stopPropagation();
+          attemptAction(Action.download, {
+            studyId: datasetId,
+            onAllow: () => {
+              window.location.assign(value.url);
+            },
+          });
+        }
       },
     },
     {
