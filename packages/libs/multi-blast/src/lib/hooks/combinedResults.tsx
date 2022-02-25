@@ -74,6 +74,8 @@ export function useCombinedResultProps({
   wdkRecordType,
 }: ResultContainerProps & {
   combinedResult: ApiResult<MultiQueryReportJson, ErrorDetails>;
+  organismToProject: Record<string, string>;
+  projectUrls: Record<string, string>;
 }): CombinedResultProps {
   const { hitQueryCount, hitSubjectCount, totalQueryCount } = useHitCounts(
     combinedResult

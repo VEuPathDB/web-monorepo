@@ -1,6 +1,11 @@
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { ParameterValues } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
+import {
+  useOrganismToProject,
+  useProjectUrls,
+} from '@veupathdb/web-common/lib/hooks/projectUrls';
+
 import { useCombinedResultProps } from '../hooks/combinedResults';
 import { useIndividualResultProps } from '../hooks/individualResult';
 import { IndividualQuery, SelectedResult } from '../utils/CommonTypes';
@@ -29,6 +34,9 @@ export interface Props {
 }
 
 export function ResultContainer(props: Props) {
+  const organismToProject = useOrganismToProject();
+  const projectUrls = useProjectUrls();
+
   const individualResultProps = useIndividualResultProps({
     ...props,
     combinedResult:
@@ -40,7 +48,11 @@ export function ResultContainer(props: Props) {
   return (
     <div className="ResultContainer">
       {props.selectedResult.type === 'combined' ? (
-        <CombinedResultContainer {...props} />
+        <CombinedResultContainer
+          {...props}
+          organismToProject={organismToProject}
+          projectUrls={projectUrls}
+        />
       ) : (
         <IndividualResult {...individualResultProps} />
       )}
@@ -48,9 +60,16 @@ export function ResultContainer(props: Props) {
   );
 }
 
-function CombinedResultContainer(props: Props) {
+function CombinedResultContainer(
+  props: Props & {
+    organismToProject: Record<string, string> | undefined;
+    projectUrls: Record<string, string> | undefined;
+  }
+) {
   return props.multiQueryReportResult == null ||
-    props.multiQueryReportResult.value == null ? (
+    props.multiQueryReportResult.value == null ||
+    props.projectUrls == null ||
+    props.organismToProject == null ? (
     <Loading>
       <div className="wdk-LoadingData">Loading data...</div>
     </Loading>
@@ -58,6 +77,8 @@ function CombinedResultContainer(props: Props) {
     <LoadedCombinedResultContainer
       {...props}
       combinedResult={props.multiQueryReportResult.value}
+      organismToProject={props.organismToProject}
+      projectUrls={props.projectUrls}
     />
   );
 }
@@ -65,6 +86,8 @@ function CombinedResultContainer(props: Props) {
 function LoadedCombinedResultContainer(
   props: Props & {
     combinedResult: ApiResult<MultiQueryReportJson, ErrorDetails>;
+    organismToProject: Record<string, string>;
+    projectUrls: Record<string, string>;
   }
 ) {
   return <CombinedResult {...useCombinedResultProps(props)} />;
