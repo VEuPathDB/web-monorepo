@@ -91,7 +91,7 @@ export function EDAWorkspaceHeading({
               themeRole="primary"
               text="My analyses"
               textTransform="capitalize"
-              tooltip="View all your analyses of this study"
+              tooltip="View all of your analyses for this study"
               icon={Table}
               onPress={() =>
                 history.push(
