@@ -1150,6 +1150,18 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
+"@bedrock-layout/use-forwarded-ref@^1.1.4":
+  version "1.1.12"
+  resolved "https://registry.yarnpkg.com/@bedrock-layout/use-forwarded-ref/-/use-forwarded-ref-1.1.12.tgz#5df9b5177080c52c436e1dbe40d481adb7ccf486"
+  integrity sha512-FIQlXhgwB+hh3fUm0TkFjL3SFLqm0VHYhEOZhoFGhYn3n0ZOz/zSsxFH/m67GX+Q3/A5D3ox/1Y+phAMUw2L7g==
+  dependencies:
+    "@bedrock-layout/use-stateful-ref" "^1.2.0"
+
+"@bedrock-layout/use-stateful-ref@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@bedrock-layout/use-stateful-ref/-/use-stateful-ref-1.2.0.tgz#424e019d8bc976b075daa673e896d38b81a9ba6e"
+  integrity sha512-bAL7tZbd1nuriRi2i0IdTqAZuXndVVbTkOJb5/BMKOj6seOix97QnlNmE5GIkXVr8jebEHJ2KOj8HAjhK5p8Ig==
+
 "@choojs/findup@^0.2.0":
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/@choojs/findup/-/findup-0.2.1.tgz#ac13c59ae7be6e1da64de0779a0a7f03d75615a3"
@@ -1179,6 +1191,24 @@
   version "11.7.1"
   resolved "https://registry.yarnpkg.com/@emotion/babel-plugin/-/babel-plugin-11.7.1.tgz#853fc4985d89dab0ea8e17af2858473d1b11be7e"
   integrity sha512-K3/6Y+J/sIAjplf3uIteWLhPuOyuMNnE+iyYnTF/m294vc6IL90kTHp7y8ldZYbpKlP17rpOWDKM9DvTcrOmNQ==
+  dependencies:
+    "@babel/helper-module-imports" "^7.12.13"
+    "@babel/plugin-syntax-jsx" "^7.12.13"
+    "@babel/runtime" "^7.13.10"
+    "@emotion/hash" "^0.8.0"
+    "@emotion/memoize" "^0.7.5"
+    "@emotion/serialize" "^1.0.2"
+    babel-plugin-macros "^2.6.1"
+    convert-source-map "^1.5.0"
+    escape-string-regexp "^4.0.0"
+    find-root "^1.1.0"
+    source-map "^0.5.7"
+    stylis "4.0.13"
+
+"@emotion/babel-plugin@^11.7.1":
+  version "11.7.2"
+  resolved "https://registry.yarnpkg.com/@emotion/babel-plugin/-/babel-plugin-11.7.2.tgz#fec75f38a6ab5b304b0601c74e2a5e77c95e5fa0"
+  integrity sha512-6mGSCWi9UzXut/ZAN6lGFu33wGR3SJisNl3c0tvlmb8XChH1b2SUvxvnOh7hvLpqyRdHHU9AiazV3Cwbk5SXKQ==
   dependencies:
     "@babel/helper-module-imports" "^7.12.13"
     "@babel/plugin-syntax-jsx" "^7.12.13"
@@ -1257,6 +1287,20 @@
   resolved "https://registry.yarnpkg.com/@emotion/memoize/-/memoize-0.7.5.tgz#2c40f81449a4e554e9fc6396910ed4843ec2be50"
   integrity sha512-igX9a37DR2ZPGYtV6suZ6whr8pTFtyHL3K/oLUotxpSVO2ASaprmAe2Dkq7tBo7CRY7MMDrAa9nuQP9/YG8FxQ==
 
+"@emotion/react@^11.4.0":
+  version "11.8.1"
+  resolved "https://registry.yarnpkg.com/@emotion/react/-/react-11.8.1.tgz#5358b8c78367063881e26423057c030c57ce52eb"
+  integrity sha512-XGaie4nRxmtP1BZYBXqC5JGqMYF2KRKKI7vjqNvQxyRpekVAZhb6QqrElmZCAYXH1L90lAelADSVZC4PFsrJ8Q==
+  dependencies:
+    "@babel/runtime" "^7.13.10"
+    "@emotion/babel-plugin" "^11.7.1"
+    "@emotion/cache" "^11.7.1"
+    "@emotion/serialize" "^1.0.2"
+    "@emotion/sheet" "^1.1.0"
+    "@emotion/utils" "^1.1.0"
+    "@emotion/weak-memoize" "^0.2.5"
+    hoist-non-react-statics "^3.3.1"
+
 "@emotion/react@^11.4.1", "@emotion/react@^11.7.0", "@emotion/react@^11.7.1":
   version "11.7.1"
   resolved "https://registry.yarnpkg.com/@emotion/react/-/react-11.7.1.tgz#3f800ce9b20317c13e77b8489ac4a0b922b2fe07"
@@ -1332,6 +1376,11 @@
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@emotion/utils/-/utils-1.0.0.tgz#abe06a83160b10570816c913990245813a2fd6af"
   integrity sha512-mQC2b3XLDs6QCW+pDQDiyO/EdGZYOygE8s5N5rrzjSI4M3IejPE/JPndCBwRT9z982aqQNi6beWs1UeayrQxxA==
+
+"@emotion/utils@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@emotion/utils/-/utils-1.1.0.tgz#86b0b297f3f1a0f2bdb08eeac9a2f49afd40d0cf"
+  integrity sha512-iRLa/Y4Rs5H/f2nimczYmS5kFJEbpiVvgN3XVfZ022IYhuNA1IRSHEizcof88LtCTXtl9S2Cxt32KgaXEu72JQ==
 
 "@emotion/weak-memoize@0.2.5", "@emotion/weak-memoize@^0.2.5":
   version "0.2.5"
@@ -1573,6 +1622,11 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
+"@juggle/resize-observer@^3.3.1":
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/@juggle/resize-observer/-/resize-observer-3.3.1.tgz#b50a781709c81e10701004214340f25475a171a0"
+  integrity sha512-zMM9Ds+SawiUkakS7y94Ymqx+S0ORzpG3frZirN3l+UlXUmSUR7hF4wxCVqW+ei94JzV5kt0uXBcoOEAuiydrw==
+
 "@mapbox/geojson-rewind@^0.5.0":
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/@mapbox/geojson-rewind/-/geojson-rewind-0.5.1.tgz#adbe16dc683eb40e90934c51a5e28c7bbf44f4e1"
@@ -1790,6 +1844,35 @@
   version "2.11.0"
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.0.tgz#6734f8ebc106a0860dff7f92bf90df193f0935d7"
   integrity sha512-zrsUxjLOKAzdewIDRWy9nsV1GQsKBCWaGwsZQlCgr6/q+vjyZhFgqedLfFBuI9anTPEUT4APq9Mu0SZBTzIcGQ==
+
+"@react-hook/latest@^1.0.2":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@react-hook/latest/-/latest-1.0.3.tgz#c2d1d0b0af8b69ec6e2b3a2412ba0768ac82db80"
+  integrity sha512-dy6duzl+JnAZcDbNTfmaP3xHiKtbXYOaz3G51MGVljh548Y8MWzTr+PHLOfvpypEVW9zwvl+VyKjbWKEVbV1Rg==
+
+"@react-hook/passive-layout-effect@^1.2.0":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@react-hook/passive-layout-effect/-/passive-layout-effect-1.2.1.tgz#c06dac2d011f36d61259aa1c6df4f0d5e28bc55e"
+  integrity sha512-IwEphTD75liO8g+6taS+4oqz+nnroocNfWVHWz7j+N+ZO2vYrc6PV1q7GQhuahL0IOR7JccFTsFKQ/mb6iZWAg==
+
+"@react-hook/resize-observer@^1.2.1":
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/@react-hook/resize-observer/-/resize-observer-1.2.5.tgz#b59e2300de98bc6ddc6946942f21243cde10f984"
+  integrity sha512-qa0pPvRxq5VbdI8mMK2apPFsZOckhQ6D3Jc9yLuyHMNhui8yEih4qyFCZBDzzK3ymZS6LAltVSVg3l1Dg9vA0w==
+  dependencies:
+    "@juggle/resize-observer" "^3.3.1"
+    "@react-hook/latest" "^1.0.2"
+    "@react-hook/passive-layout-effect" "^1.2.0"
+    "@types/raf-schd" "^4.0.0"
+    raf-schd "^4.0.2"
+
+"@react-hook/size@^2.1.2":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@react-hook/size/-/size-2.1.2.tgz#87ed634ffb200f65d3e823501e5559aa3d584451"
+  integrity sha512-BmE5asyRDxSuQ9p14FUKJ0iBRgV9cROjqNG9jT/EjCM+xHha1HVqbPoT+14FQg1K7xIydabClCibUY4+1tw/iw==
+  dependencies:
+    "@react-hook/passive-layout-effect" "^1.2.0"
+    "@react-hook/resize-observer" "^1.2.1"
 
 "@restart/context@^2.1.4":
   version "2.1.4"
@@ -2826,6 +2909,11 @@
   dependencies:
     "@types/jquery" "*"
 
+"@types/raf-schd@^4.0.0":
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/@types/raf-schd/-/raf-schd-4.0.1.tgz#1f9e03736f277fe9c7b82102bf18570a6ee19f82"
+  integrity sha512-Ha+EnKHFIh9EKW0/XZJPUd3EGDFisEvauaBd4VVCRPKeOqUxNEc9TodiY2Zhk33XCgzJucoFEcaoNcBAPHTQ2A==
+
 "@types/react-autocomplete@^1.8.4":
   version "1.8.6"
   resolved "https://registry.yarnpkg.com/@types/react-autocomplete/-/react-autocomplete-1.8.6.tgz#999d0cd10ac4164ea605da04d263e5fb3fd5745f"
@@ -2899,6 +2987,13 @@
     "@types/react" "*"
     "@types/react-dom" "*"
     "@types/react-transition-group" "*"
+
+"@types/react-table@^7.7.8":
+  version "7.7.9"
+  resolved "https://registry.yarnpkg.com/@types/react-table/-/react-table-7.7.9.tgz#ea82875775fc6ee71a28408dcc039396ae067c92"
+  integrity sha512-ejP/J20Zlj9VmuLh73YgYkW2xOSFTW39G43rPH93M4mYWdMmqv66lCCr+axZpkdtlNLGjvMG2CwzT4S6abaeGQ==
+  dependencies:
+    "@types/react" "*"
 
 "@types/react-transition-group@*", "@types/react-transition-group@^4.2.0", "@types/react-transition-group@^4.4.1":
   version "4.4.4"
@@ -3152,6 +3247,47 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.0.0.tgz#90ca79640ffbb195a87d4d65cd4b2f92342f8b76"
   integrity sha512-qfKu1z9gaaHdMgRGaZBiayuIh92ishsf14lR+Rj61CJF131XWq3+5e2VyLyOdKsYJ1EreAxgyC/0upIBEzwQJw==
 
+"@veupathdb/components@^0.11.19":
+  version "0.11.19"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.19.tgz#52ed064ddf67ca59022c95d1c2ecb0aa338b311d"
+  integrity sha512-wWU5s/K0ckrGMRQTeFXDXbOA3l/t47Ce/wybOCNexpMnXlVFzZzjYMLxB1cccSLLTRR5xfeLuPDXk6XiDeyRjw==
+  dependencies:
+    "@emotion/react" "^11.7.0"
+    "@material-ui/core" "^4.11.2"
+    "@material-ui/icons" "^4.11.2"
+    "@material-ui/lab" "^4.0.0-alpha.57"
+    "@types/d3" "^7.1.0"
+    "@types/date-arithmetic" "^4.1.1"
+    "@veupathdb/core-components" "^0.4.0"
+    "@visx/gradient" "^1.0.0"
+    "@visx/group" "^1.0.0"
+    "@visx/hierarchy" "^1.0.0"
+    "@visx/shape" "^1.4.0"
+    "@visx/text" "^1.3.0"
+    "@visx/tooltip" "^1.3.0"
+    "@visx/visx" "^1.1.0"
+    bootstrap "^4.5.2"
+    color-math "^1.1.3"
+    d3 "^7.1.1"
+    date-arithmetic "^4.1.0"
+    debounce-promise "^3.1.2"
+    latlon-geohash "^2.0.0"
+    leaflet "^1.6.0"
+    leaflet-drift-marker "^1.0.3"
+    leaflet-simple-map-screenshoter "^0.4.5"
+    luxon "^1.25.0"
+    plotly.js "^2.6.0"
+    re-resizable "^6.9.0"
+    react "^16.13.1"
+    react-bootstrap "^1.3.0"
+    react-cool-dimensions "^1.1.11"
+    react-dom "^16.13.1"
+    react-html-parser "^2.0.2"
+    react-leaflet "^2.7.0"
+    react-plotly.js "^2.4.0"
+    react-transition-group "^4.4.1"
+    shape2geohash "^1.2.5"
+
 "@veupathdb/components@^0.11.8":
   version "0.11.8"
   resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.8.tgz#4c843309cfa835c41a8be3821801cf9a99ff78e6"
@@ -3192,7 +3328,7 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/core-components@^0.4.0", "@veupathdb/core-components@^0.4.1":
+"@veupathdb/core-components@^0.4.0":
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/@veupathdb/core-components/-/core-components-0.4.1.tgz#0f3f2f37865feeae96286018aea7517f33e96b84"
   integrity sha512-Ahov9nr831juzz3LNg/IDL2MvkhnBh+Twicz1P/pwlyhLXvJqUnAsmnZzNaZgkXVUgh1c2meb++qXgxHJj+Zxg==
@@ -3204,10 +3340,29 @@
     react-modal "^3.14.3"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^1.1.46":
-  version "1.1.46"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.1.46.tgz#28b502a158c1b4c6e19a1e0af768d4d4feba548e"
-  integrity sha512-uo+fM7P69F2tSeQ+D0nqQN0TOKzSagNll88UAwsc+wv34GBsvbZU4cE0w85PxtROxgI2Jad4WyLFpxvmVrb3Zg==
+"@veupathdb/coreui@^0.13.0":
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.13.0.tgz#aa774e71c7963f0638814f6491cf6b20bd2faae7"
+  integrity sha512-MVHx601+EdtRAuZUilDRXOTR9nfpznzAxTOiNqYZ1HTsxgVK/fFXKVgP/VwRJJU9CQ8KHHHfYkg/HWB/U9IiLg==
+  dependencies:
+    "@emotion/react" "^11.4.0"
+    "@emotion/serialize" "^1.0.2"
+    "@emotion/styled" "^11.3.0"
+    "@material-ui/core" "^4.12.3"
+    "@material-ui/icons" "^4.11.2"
+    "@react-hook/size" "^2.1.2"
+    "@types/react-table" "^7.7.8"
+    lodash "^4.17.21"
+    react "^17.0.2"
+    react-cool-dimensions "^2.0.7"
+    react-dom "^17.0.2"
+    react-responsive-modal "^6.2.0"
+    react-table "^7.7.0"
+
+"@veupathdb/eda@^1.6.2":
+  version "1.6.8"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.6.8.tgz#5d310f311a5938e3465c8cbd7437373f5be7c5c7"
+  integrity sha512-jH3vJNtwTAF/J8luHoAYfDB/JYrQs3EQNTDgaglZa7DehCIRcCuvu5Eohd1fEh9n68H+i3FTJJvlbLEOv/ouuA==
   dependencies:
     "@emotion/react" "^11.4.1"
     "@emotion/styled" "^11.3.0"
@@ -3215,18 +3370,17 @@
     "@material-ui/icons" "^4.11.2"
     "@material-ui/lab" "^4.0.0-alpha.58"
     "@types/debounce-promise" "^3.1.3"
-    "@veupathdb/components" "^0.11.8"
-    "@veupathdb/core-components" "^0.4.1"
-    "@veupathdb/http-utils" "^1.0.1"
-    "@veupathdb/study-data-access" "^0.1.3"
-    "@veupathdb/wdk-client" "^0.5.2"
+    "@veupathdb/components" "^0.11.19"
+    "@veupathdb/coreui" "^0.13.0"
+    "@veupathdb/http-utils" "^1.1.0"
+    "@veupathdb/study-data-access" "^0.1.5"
     debounce-promise "^3.1.2"
-    file-saver "^2.0.5"
     fp-ts "^2.9.3"
     io-ts "^2.2.13"
     lodash "^4.17.21"
     monocle-ts "^2.3.11"
     react "^17.0.1"
+    react-cool-dimensions "^2.0.7"
     react-dom "^17.0.1"
     react-draggable "^4.4.3"
     react-resizable "^3.0.4"
@@ -3249,10 +3403,19 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/preferred-organisms@^1.1.8":
-  version "1.1.8"
-  resolved "https://registry.yarnpkg.com/@veupathdb/preferred-organisms/-/preferred-organisms-1.1.8.tgz#d42a60782fbe9fe0184f454bba156796958fa9c2"
-  integrity sha512-CJ+kTVwTiFOFG1ivoivyuhbZKJh+Fs9DB/S1AV3OQCQqe1fBEEtHJ69h6MaYfrkLUiQCMLPwQnzePmv9uWU45A==
+"@veupathdb/http-utils@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/http-utils/-/http-utils-1.1.0.tgz#fb563593aae2dd7f32eb634ea9776793b35be65f"
+  integrity sha512-pkDxTCCq2y7G7tjtFSKe3I7V/SP4jpMuvRQK1HW7c8j/uQDo4a0qLbfsdaZZ/QmVUjapPYh9JS08ehd/UnDljg==
+  dependencies:
+    fp-ts "^2.11.5"
+    io-ts "^2.2.16"
+    lodash "^4.17.21"
+
+"@veupathdb/preferred-organisms@^1.1.10":
+  version "1.1.10"
+  resolved "https://registry.yarnpkg.com/@veupathdb/preferred-organisms/-/preferred-organisms-1.1.10.tgz#d1eaf79703c02cc09a717b4a0948314adf11d210"
+  integrity sha512-W8C0EC+I7+vQ6OTqcofgnq9jAhLIikERq0kiB5s7qnyQWdKPNVPP2uDfUaH39lVCO1fkt4PAUeRFNoNXfKQ/Rw==
   dependencies:
     lodash "^4.17.21"
     recoil "^0.2.0"
@@ -3262,10 +3425,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/prettier-config/-/prettier-config-1.0.0.tgz#6c138be7ce1c4418c7cac5609acdbc5e98bad94c"
   integrity sha512-opFJ858b0dHwHpnRbNBNfm/IXGU7RDs8EHce442YfeY1vkPkX+bE4cJgpaBZ2jrXkUDGb6+w1lqy7Ow0Y74vOQ==
 
-"@veupathdb/react-scripts@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/react-scripts/-/react-scripts-1.1.0.tgz#fdd4b0e4914e4cab0ba486baaf6b7760cd3c21ed"
-  integrity sha512-LNqypQlAf7wuOW3zqtiLcBE+4RVERw0JDQIvAMN0UgzkDHT7etLWwyBtCN+g1Z27AcKLw8veHi4PDaLslUMPzw==
+"@veupathdb/react-scripts@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/react-scripts/-/react-scripts-1.2.0.tgz#3aef2d9c4c9d3ca7b8c33ca43cf22419896e90a5"
+  integrity sha512-Pl8cF2gA2sHVnYGuGtTDP+T4Vpi4jzfNrcFyGpbhJ4f1afF0wkkzvWmVlTFJXULeV85Y/brQWF9XkPlciOKmmA==
   dependencies:
     dotenv "^8.2.0"
     fs-extra "^9.1.0"
@@ -3273,13 +3436,12 @@
     read "^1.0.7"
     set-cookie-parser "^2.4.6"
 
-"@veupathdb/study-data-access@^0.1.3":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.1.4.tgz#cf3e75761a19f6e5151d9feca9d7d2e4e301c5f7"
-  integrity sha512-Ly7F8zE6XUWfuT07W9OZ+n7+TUv8/Udrx+fQcPTwXaoHY3/+edmfSFLskLdFEa2EuYecqtbUhtDcAixpKNaDBw==
+"@veupathdb/study-data-access@^0.1.5":
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.1.6.tgz#d7d2bf61e12d69f7250cbd79a5ec99f9c3fd859e"
+  integrity sha512-Zr3en8DaDCmTbaIOuHJxs9BYu8Kgincxtitv/77BZIryAUUa7DaoOFC022TtZX4ZzsCekk99rr0Yxtx4wYUV5w==
   dependencies:
     "@veupathdb/http-utils" "^1.0.1"
-    "@veupathdb/wdk-client" "^0.5.2"
     fp-ts "^2.11.5"
     io-ts "^2.2.16"
     lodash "^4.17.21"
@@ -3289,10 +3451,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/tsconfig/-/tsconfig-1.0.1.tgz#a2b748b46838af1337ca9f23d969993fb952def4"
   integrity sha512-i6gq7mgnyEN8/xW5EaI9RiWCwS1oB8cgWqx9h5w4vZtnb10oiyyepD640l9x/gZf6IWecjynRs7weDgSRs7l0Q==
 
-"@veupathdb/wdk-client@^0.5.2":
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.5.2.tgz#3569fc7d0c58a815f5f8fa594ab5e69a3f328549"
-  integrity sha512-BI0hWSnlPeN4NrKh9UGN7PKqBqf2Ghdad9uzUz+Ba2Po6QTRHDZj70u1VJS2NmjoQxCzyuOXOprRKQIXdBGkeg==
+"@veupathdb/wdk-client@^0.5.7":
+  version "0.5.7"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.5.7.tgz#465546b14856697e9ef5606ac07b1ef3072b295f"
+  integrity sha512-1AQ2k4f0ghatZTnSVP1SnOOsbeml3zirrWrE2o/ksjM8XEmBp1rqY6dZaaPZL/2qrFSdoWSQxgqIuxrltNfGMw==
   dependencies:
     "@types/datatables.net" "^1.10.5"
     "@types/flot" "^0.0.31"
@@ -3337,13 +3499,13 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.2.0.tgz#4ea608168c3747798c26b5fa36773dcc4ca4c027"
-  integrity sha512-OQfXJkx41776VINOxESH5gOzZ9WeBjogFx4iwRMd2et7J7URZCUFl5U3HqyElKaI2+WokJMnWziCNZ+1tpywuA==
+"@veupathdb/web-common@^0.2.8":
+  version "0.2.8"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.2.8.tgz#49648035e1ad2588e50e148be96e1f674777673d"
+  integrity sha512-cuVS+8n/RigGISIGL2y+E4fP+iBle780HYp2EmIywJ3cZWVhZT326Ymq4ZxZ/GzPFdMIWVhrmCzkQQ1iwcYPiQ==
   dependencies:
-    "@veupathdb/components" "^0.11.8"
-    "@veupathdb/eda" "^1.1.46"
+    "@veupathdb/components" "^0.11.19"
+    "@veupathdb/eda" "^1.6.2"
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
     whatwg-fetch "^3.5.0"
@@ -4658,6 +4820,11 @@ body-parser@1.19.0:
     raw-body "2.4.0"
     type-is "~1.6.17"
 
+body-scroll-lock@^3.1.5:
+  version "3.1.5"
+  resolved "https://registry.yarnpkg.com/body-scroll-lock/-/body-scroll-lock-3.1.5.tgz#c1392d9217ed2c3e237fee1e910f6cdd80b7aaec"
+  integrity sha512-Yi1Xaml0EvNA0OYWxXiYNqY24AfWkbA6w5vxE7GWxtKfzIbZM+Qw+aSmkgsbWzbHiy/RCSkUZBplVxTA+E4jJg==
+
 bonjour@^3.5.0:
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/bonjour/-/bonjour-3.5.0.tgz#8e890a183d8ee9a2393b3844c691a42bcf7bc9f5"
@@ -5157,7 +5324,7 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
-classnames@^2.2.0, classnames@^2.3.1:
+classnames@^2.2.0, classnames@^2.2.6, classnames@^2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.3.1.tgz#dfcfa3891e306ec1dad105d0e88f4417b8535e8e"
   integrity sha512-OlQdbZ7gLfGarSqxesMesDa5uz7KFbID8Kpq/SxIoNGDqY8lSYs0D+hhtBXhcdB3rcbXArFr7vlHheLk1voeNA==
@@ -6798,6 +6965,11 @@ dom-serializer@0:
     domelementtype "^2.0.1"
     entities "^2.0.0"
 
+dom-to-image-more@^2.8.0:
+  version "2.9.5"
+  resolved "https://registry.yarnpkg.com/dom-to-image-more/-/dom-to-image-more-2.9.5.tgz#a5dd5a30480e01b795fde9e99278096143b3ece7"
+  integrity sha512-7pr43ZY/Nk0k2z3NXDKN4GvnZqP/3iZvddLeIuGfNTyFJuzzr0UeLl+poZ1ewYt3YIK+WHCEZUkz+RNuocN3/Q==
+
 domain-browser@^1.1.1:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/domain-browser/-/domain-browser-1.2.0.tgz#3d31f50191a6749dd1375a7f522e823d42e54eda"
@@ -7691,7 +7863,7 @@ file-loader@6.1.1:
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
 
-file-saver@^2.0.5:
+file-saver@^2.0.2, file-saver@^2.0.5:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/file-saver/-/file-saver-2.0.5.tgz#d61cfe2ce059f414d899e9dd6d4107ee25670c38"
   integrity sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==
@@ -10241,6 +10413,14 @@ leaflet-drift-marker@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/leaflet-drift-marker/-/leaflet-drift-marker-1.0.3.tgz#4b178dc22b918b4713570302461ca636241fac3f"
   integrity sha512-2b5EqL11+reMqS+RTZAwW9oglWk05V02LQzMSe3D8cPPSvz42RpoqjRI8aGvD8Yjsc31ZwLZMeJ0s3waaj3VEQ==
+
+leaflet-simple-map-screenshoter@^0.4.5:
+  version "0.4.5"
+  resolved "https://registry.yarnpkg.com/leaflet-simple-map-screenshoter/-/leaflet-simple-map-screenshoter-0.4.5.tgz#d4f093077663577e7879c0488ebc54292c34314d"
+  integrity sha512-bvd++mQstpgb7F7c2v5jCLlUitQ6CcYLZ56do7PVyyVpGvnlhIEk5S6dLXqpe3itSr2D/re5yUAOf8zBt95ViQ==
+  dependencies:
+    dom-to-image-more "^2.8.0"
+    file-saver "^2.0.2"
 
 leaflet@^1.6.0:
   version "1.7.1"
@@ -12948,6 +13128,11 @@ quickselect@^2.0.0:
   resolved "https://registry.yarnpkg.com/quickselect/-/quickselect-2.0.0.tgz#f19680a486a5eefb581303e023e98faaf25dd018"
   integrity sha512-RKJ22hX8mHe3Y6wH/N3wCM6BWtjaxIyyUIkpHOvfFnxdI4yD4tBXEBKSbriGujF6jnSVkJrffuo6vxACiSSxIw==
 
+raf-schd@^4.0.2:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/raf-schd/-/raf-schd-4.0.3.tgz#5d6c34ef46f8b2a0e880a8fcdb743efc5bfdbc1a"
+  integrity sha512-tQkJl2GRWh83ui2DiPTJz9wEiMN20syf+5oKfB03yYP7ioZcJwsIK8FjrtLwH1m7C7e+Tt2yYBlrOpdT+dyeIQ==
+
 raf@^3.4.1:
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/raf/-/raf-3.4.1.tgz#0742e99a4a6552f445d73e3ee0328af0ff1ede39"
@@ -13094,7 +13279,7 @@ react-dev-utils@^11.0.1:
     strip-ansi "6.0.0"
     text-table "0.2.0"
 
-react-dom@^16.12.0, react-dom@^16.13.1, react-dom@^17.0.1:
+react-dom@^16.12.0, react-dom@^16.13.1, react-dom@^17.0.1, react-dom@^17.0.2:
   version "17.0.1"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-17.0.1.tgz#1de2560474ec9f0e334285662ede52dbc5426fc6"
   integrity sha512-6eV150oJZ9U2t9svnsspTMrWNyHc6chX0KzDeAOXftRa8bNeOKTTfCJ7KorIwenkHd2xqVTBTCZd79yk/lx/Ug==
@@ -13102,15 +13287,6 @@ react-dom@^16.12.0, react-dom@^16.13.1, react-dom@^17.0.1:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     scheduler "^0.20.1"
-
-react-dom@^17.0.2:
-  version "17.0.2"
-  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-17.0.2.tgz#ecffb6845e3ad8dbfcdc498f0d0a939736502c23"
-  integrity sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA==
-  dependencies:
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
-    scheduler "^0.20.2"
 
 react-draggable@^4.0.3, react-draggable@^4.4.3:
   version "4.4.4"
@@ -13224,6 +13400,15 @@ react-resizable@^3.0.4:
   dependencies:
     prop-types "15.x"
     react-draggable "^4.0.3"
+
+react-responsive-modal@^6.2.0:
+  version "6.2.0"
+  resolved "https://registry.yarnpkg.com/react-responsive-modal/-/react-responsive-modal-6.2.0.tgz#339226b911d8ffaba4e0afce83387a65221b8e29"
+  integrity sha512-i3Or4ixdDnLOeZbOQltgayOj69zg6Pbd8IF+RMi6gG1hyZvXHL39QvMvXBuG7poEaBMHspXNDtCzbTBJpOmdfw==
+  dependencies:
+    "@bedrock-layout/use-forwarded-ref" "^1.1.4"
+    body-scroll-lock "^3.1.5"
+    classnames "^2.2.6"
 
 react-router-dom@^5.1.2, react-router-dom@^5.2.0, react-router-dom@^5.3.0:
   version "5.3.0"
@@ -13392,18 +13577,10 @@ react-use-measure@^2.0.4:
   dependencies:
     debounce "^1.2.1"
 
-react@^16.12.0, react@^16.13.1, react@^17.0.1:
+react@^16.12.0, react@^16.13.1, react@^17.0.1, react@^17.0.2:
   version "17.0.1"
   resolved "https://registry.yarnpkg.com/react/-/react-17.0.1.tgz#6e0600416bd57574e3f86d92edba3d9008726127"
   integrity sha512-lG9c9UuMHdcAexXtigOZLX8exLWkW0Ku29qPRU8uhF2R9BN96dLCt0psvzPLlHc5OWkgymP3qwTRgbnw5BKx3w==
-  dependencies:
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
-
-react@^17.0.2:
-  version "17.0.2"
-  resolved "https://registry.yarnpkg.com/react/-/react-17.0.2.tgz#d0b5cc516d29eb3eee383f75b62864cfb6800037"
-  integrity sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA==
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
