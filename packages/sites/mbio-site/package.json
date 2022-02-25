@@ -9,11 +9,11 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@veupathdb/components": "^0.11.18",
+    "@veupathdb/components": "^0.11.19",
     "@veupathdb/core-components": "^0.12.1",
-    "@veupathdb/eda": "^1.5.3",
+    "@veupathdb/eda": "^1.6.8",
     "@veupathdb/wdk-client": "^0.5.7",
-    "@veupathdb/web-common": "^0.2.6"
+    "@veupathdb/web-common": "^0.2.8"
   },
   "resolutions": {
     "react": "16",
