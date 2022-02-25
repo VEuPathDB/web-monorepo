@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
 import {
   safeHtml,
@@ -18,7 +20,10 @@ interface StudyListProps {
  */
 export function StudyList(props: StudyListProps) {
   const { baseUrl } = props;
-  const datasets = useWdkStudyRecords(['study_access']);
+
+  const studyRecordAttributes = useMemo(() => ['study_access'], []);
+
+  const datasets = useWdkStudyRecords(studyRecordAttributes);
 
   const permissions = usePermissions();
 
