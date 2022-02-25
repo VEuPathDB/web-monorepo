@@ -450,9 +450,6 @@ function HistogramPlotWithControls({
 
   const handleDependentAxisRangeChange = useCallback(
     (newRange?: NumberRange) => {
-      console.log(
-        `handleDependentAxisRangeChange newRange: ${newRange?.min} to ${newRange?.max}`
-      );
       updateUIState({
         dependentAxisRange: newRange,
       });
