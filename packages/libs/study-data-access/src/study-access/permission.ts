@@ -157,9 +157,6 @@ export function isUserApprovedForAction(
   datasetId: string,
   action: Action,
 ) {
-  if (approvedStudies == null) {
-    return true;
-  }
 
   const actionAuthorization =
     userPermissions.perDataset[datasetId]?.actionAuthorization;
@@ -176,9 +173,6 @@ export function isUserFullyApprovedForStudy(
   approvedStudies: string[] | undefined,
   datasetId: string
 ) {
-  if (approvedStudies == null) {
-    return true;
-  }
 
   const actionAuthorization =
     userPermissions.perDataset[datasetId]?.actionAuthorization;
@@ -202,9 +196,7 @@ export async function checkPermissions(
   user: User,
   studyAccessApi: StudyAccessApi
 ): Promise<UserPermissions> {
-  return user.properties?.approvedStudies == null
-    ? { type: 'external', perDataset: {} }
-    : await fetchPermissions(studyAccessApi);
+  return fetchPermissions(studyAccessApi);
 }
 
 export function permittedApprovalStatusChanges(oldApprovalStatus: ApprovalStatus): ApprovalStatus[] {
