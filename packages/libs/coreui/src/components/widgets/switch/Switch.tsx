@@ -5,14 +5,14 @@ import { SwitchProps } from '.';
 import { primaryFont } from '../../../styleDefinitions/typography';
 
 /** Fully controlled Switch component. */
-export default function Switch({
+export default function Switch<T extends boolean | string | number>({
   labels,
   styleSpec,
   options,
   selectedOption,
   onOptionChange,
   disabled,
-}: SwitchProps) {
+}: SwitchProps<T>) {
   const [switchState, setSwitchState] =
     useState<'default' | 'hover'>('default');
 
