@@ -70,6 +70,8 @@ export function useCombinedResultProps({
   filesToOrganisms,
   hitTypeDisplayName,
   hitTypeDisplayNamePlural,
+  organismToProject,
+  projectUrls,
   targetTypeTerm,
   wdkRecordType,
 }: ResultContainerProps & {
@@ -84,7 +86,9 @@ export function useCombinedResultProps({
   const columns = useCombinedResultColumns(
     hitTypeDisplayName,
     targetTypeTerm,
-    jobId
+    jobId,
+    organismToProject,
+    projectUrls
   );
   const rawRows = useRawCombinedResultRows(
     combinedResult,
@@ -229,7 +233,9 @@ function useHitCounts(
 function useCombinedResultColumns(
   hitTypeDisplayName: string,
   targetTypeTerm: string,
-  jobId: string
+  jobId: string,
+  organismToProject: Record<string, string>,
+  projectUrls: Record<string, string>
 ): MesaColumn<keyof CombinedResultRow>[] {
   const targetMetadataByDataType = useContext(TargetMetadataByDataType);
 
@@ -244,14 +250,11 @@ function useCombinedResultColumns(
       {
         key: 'accession',
         name: hitTypeDisplayName,
-        renderCell: ({ row }: { row: CombinedResultRow }) =>
-          recordLinkUrlSegment == null || row.wdkPrimaryKey == null ? (
-            row.accession
-          ) : (
-            <Link to={`/record/${recordLinkUrlSegment}/${row.wdkPrimaryKey}`}>
-              {row.accession}
-            </Link>
-          ),
+        renderCell: makeRenderAccessionCell({
+          recordLinkUrlSegment,
+          organismToProject,
+          projectUrls,
+        }),
         sortable: true,
         helpText: ACCESSION_HELP_TEXT,
       },
@@ -345,7 +348,13 @@ function useCombinedResultColumns(
         helpText: QUERY_COVERAGE_HELP_TEXT,
       },
     ],
-    [hitTypeDisplayName, jobId, recordLinkUrlSegment]
+    [
+      hitTypeDisplayName,
+      jobId,
+      organismToProject,
+      projectUrls,
+      recordLinkUrlSegment,
+    ]
   );
 }
 
@@ -649,4 +658,41 @@ export function useHitTypeDisplayNames(wdkRecordType: string) {
           hitTypeDisplayNamePlural: recordClass.shortDisplayNamePlural,
         };
   }, [recordClasses, wdkRecordType]);
+}
+
+function makeRenderAccessionCell({
+  recordLinkUrlSegment,
+  organismToProject,
+  projectUrls,
+}: {
+  recordLinkUrlSegment: string | undefined;
+  organismToProject: Record<string, string>;
+  projectUrls: Record<string, string>;
+}) {
+  const shouldLinkToExternalRecordPage =
+    Object.keys(organismToProject).length > 0 &&
+    Object.keys(projectUrls).length > 0;
+
+  return function renderAccessionCell({ row }: { row: CombinedResultRow }) {
+    if (recordLinkUrlSegment == null || row.wdkPrimaryKey == null) {
+      return row.accession;
+    } else {
+      const recordPath = `/record/${recordLinkUrlSegment}/${row.wdkPrimaryKey}`;
+
+      if (!shouldLinkToExternalRecordPage) {
+        return <Link to={recordPath}>{row.accession}</Link>;
+      }
+
+      const projectId = row.organism && organismToProject[row.organism];
+      const projectUrl = projectId && projectUrls[projectId];
+
+      if (projectUrl == null) {
+        return row.accession;
+      }
+
+      const externalRecordUrl = new URL(`app${recordPath}`, projectUrl);
+
+      return <a href={externalRecordUrl.href}>{row.accession}</a>;
+    }
+  };
 }
