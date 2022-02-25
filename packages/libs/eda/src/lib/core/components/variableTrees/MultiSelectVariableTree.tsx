@@ -51,12 +51,6 @@ export default function MultiSelectVariableTree({
    * Translate selectedVariableTerms to corresponding Field objects.
    */
   const selectedVariableFields = useMemo(() => {
-    // console.log(
-    //   'MultiSelect -> selectedVariableFields',
-    //   selectedVariableDescriptors,
-    //   fieldsByTerm
-    // );
-
     const selectedVariableTerms = selectedVariableDescriptors.map(
       (descriptor) => `${descriptor.entityId}/${descriptor.variableId}`
     );
@@ -66,7 +60,6 @@ export default function MultiSelectVariableTree({
       fieldsByTerm[term] && selectedVariableFields.push(fieldsByTerm[term]);
     });
 
-    // console.log('WILL RETURN', selectedVariableFields);
     return selectedVariableFields;
   }, [selectedVariableDescriptors, fieldsByTerm]);
 
