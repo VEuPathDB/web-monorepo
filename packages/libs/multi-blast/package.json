@@ -9,7 +9,6 @@
   },
   "files": [
     "lib",
-    "shims",
     "src/lib"
   ],
   "sideEffects": [
