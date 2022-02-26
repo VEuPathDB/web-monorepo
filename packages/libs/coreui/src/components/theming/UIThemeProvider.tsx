@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { ThemeProvider } from '@emotion/react';
+import { useCoreUIFonts } from '../../hooks';
 
 import { UITheme } from './types';
 
@@ -12,5 +13,6 @@ export default function UIThemeProvider({
   theme,
   children,
 }: UIThemeProviderProps) {
+  useCoreUIFonts();
   return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
 }
