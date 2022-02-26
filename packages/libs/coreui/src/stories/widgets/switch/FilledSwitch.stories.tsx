@@ -5,16 +5,7 @@ import {
   SwitchVariantProps,
 } from '../../../components/widgets/switch';
 import UIThemeProvider from '../../../components/theming/UIThemeProvider';
-import {
-  blue,
-  green,
-  magenta,
-  mutedGreen,
-  mutedMagenta,
-  orange,
-  purple,
-  teal,
-} from '../../../definitions/colors';
+import { green, magenta, orange, purple } from '../../../definitions/colors';
 import { useState } from 'react';
 
 export default {
@@ -22,7 +13,7 @@ export default {
   component: FilledSwitch,
 } as Meta;
 
-const Template: Story<SwitchVariantProps> = (args) => {
+const Template: Story<SwitchVariantProps<boolean>> = (args) => {
   const [selectedOption, setSelectedOption] = useState(args.selectedOption);
 
   return (
@@ -48,7 +39,7 @@ Default.args = {
   options: [true, false],
   selectedOption: true,
   disabled: false,
-} as SwitchVariantProps;
+} as SwitchVariantProps<boolean>;
 
 export const LeftLabel = Template.bind({});
 LeftLabel.args = {
@@ -56,7 +47,7 @@ LeftLabel.args = {
   labels: {
     left: 'Barbarian Hordes',
   },
-} as SwitchVariantProps;
+} as SwitchVariantProps<boolean>;
 
 export const RightLabel = Template.bind({});
 RightLabel.args = {
@@ -64,7 +55,7 @@ RightLabel.args = {
   labels: {
     right: 'Zombie Hordes',
   },
-} as SwitchVariantProps;
+} as SwitchVariantProps<boolean>;
 
 export const BothLabels = Template.bind({});
 BothLabels.args = {
@@ -73,7 +64,7 @@ BothLabels.args = {
     left: 'Barbarian Hordes',
     right: 'Zombie Hordes',
   },
-} as SwitchVariantProps;
+} as SwitchVariantProps<boolean>;
 
 export const Disabled = Template.bind({});
 Disabled.args = {
@@ -83,7 +74,7 @@ Disabled.args = {
     right: 'Zombie Hordes',
   },
   disabled: true,
-} as SwitchVariantProps;
+} as SwitchVariantProps<boolean>;
 
 export const ThemeApplied = Template.bind({});
 ThemeApplied.args = {
@@ -93,7 +84,7 @@ ThemeApplied.args = {
     right: 'Zombie Hordes',
   },
   themeRole: 'primary',
-} as SwitchVariantProps;
+} as SwitchVariantProps<boolean>;
 
 export const StyleOverrides = Template.bind({});
 StyleOverrides.args = {
@@ -124,4 +115,4 @@ StyleOverrides.args = {
       },
     ],
   },
-} as SwitchVariantProps;
+} as SwitchVariantProps<boolean>;

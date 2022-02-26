@@ -10,7 +10,7 @@ import Switch from './Switch';
 import { useUITheme } from '../../theming';
 
 /** "Outlined" style Switch component. */
-export default function OutlinedSwitch({
+export default function OutlinedSwitch<T extends boolean | string | number>({
   labels,
   themeRole,
   styleOverrides,
@@ -18,7 +18,7 @@ export default function OutlinedSwitch({
   selectedOption,
   onOptionChange,
   disabled,
-}: SwitchVariantProps) {
+}: SwitchVariantProps<T>) {
   const theme = useUITheme();
 
   const styleSpec: SwitchStyleSpec = useMemo(() => {

@@ -16,7 +16,7 @@ type SwitchStateStyleSpec = {
 };
 
 export type SwitchStyleSpec = {
-  container?: React.CSSProperties;
+  container: React.CSSProperties;
   default: SwitchStateStyleSpec[];
   hover: SwitchStateStyleSpec[];
   disabled: SwitchStateStyleSpec;
@@ -25,23 +25,26 @@ export type SwitchStyleSpec = {
 export type SwitchStyleSpecSubset = Subset<SwitchStyleSpec>;
 
 // Prop definitions.
-export type SwitchProps = {
+export type SwitchProps<T extends boolean | string | number> = {
   labels?: {
     left?: string;
     right?: string;
   };
-  options: [true, false] | [string, string] | [number, number];
+  options: [T, T];
   /** Currently selected option. */
-  selectedOption: boolean | string | number;
+  selectedOption: T;
   /** Callback to invoke when the switch is flipped. */
-  onOptionChange: (selection: boolean | string | number) => void;
+  onOptionChange: (selection: T) => void;
   /** Specification on how switch should be styled. */
   styleSpec: SwitchStyleSpec;
   /** Whether the component is currently disabled for user interactions. */
-  disabled: boolean;
+  disabled?: boolean;
 };
 
-export type SwitchVariantProps = Omit<SwitchProps, 'styleSpec'> & {
+export type SwitchVariantProps<T extends boolean | string | number> = Omit<
+  SwitchProps<T>,
+  'styleSpec'
+> & {
   themeRole?: ThemeRole;
   styleOverrides?: SwitchStyleSpecSubset;
 };

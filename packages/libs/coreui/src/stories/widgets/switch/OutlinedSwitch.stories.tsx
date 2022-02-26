@@ -6,13 +6,10 @@ import {
 } from '../../../components/widgets/switch';
 import UIThemeProvider from '../../../components/theming/UIThemeProvider';
 import {
-  blue,
-  green,
   mutedGreen,
   mutedMagenta,
   orange,
   purple,
-  teal,
 } from '../../../definitions/colors';
 import { useState } from 'react';
 
@@ -21,7 +18,7 @@ export default {
   component: OutlinedSwitch,
 } as Meta;
 
-const Template: Story<SwitchVariantProps> = (args) => {
+const Template: Story<SwitchVariantProps<boolean>> = (args) => {
   const [selectedOption, setSelectedOption] = useState(args.selectedOption);
 
   return (
@@ -47,7 +44,7 @@ Default.args = {
   options: [true, false],
   selectedOption: true,
   disabled: false,
-} as SwitchVariantProps;
+} as SwitchVariantProps<boolean>;
 
 export const LeftLabel = Template.bind({});
 LeftLabel.args = {
@@ -55,7 +52,7 @@ LeftLabel.args = {
   labels: {
     left: 'Barbarian Hordes',
   },
-} as SwitchVariantProps;
+} as SwitchVariantProps<boolean>;
 
 export const RightLabel = Template.bind({});
 RightLabel.args = {
@@ -63,7 +60,7 @@ RightLabel.args = {
   labels: {
     right: 'Zombie Hordes',
   },
-} as SwitchVariantProps;
+} as SwitchVariantProps<boolean>;
 
 export const BothLabels = Template.bind({});
 BothLabels.args = {
@@ -72,7 +69,7 @@ BothLabels.args = {
     left: 'Barbarian Hordes',
     right: 'Zombie Hordes',
   },
-} as SwitchVariantProps;
+} as SwitchVariantProps<boolean>;
 
 export const Disabled = Template.bind({});
 Disabled.args = {
@@ -82,7 +79,7 @@ Disabled.args = {
     right: 'Zombie Hordes',
   },
   disabled: true,
-} as SwitchVariantProps;
+} as SwitchVariantProps<boolean>;
 
 export const ThemeApplied = Template.bind({});
 ThemeApplied.args = {
@@ -92,7 +89,7 @@ ThemeApplied.args = {
     right: 'Zombie Hordes',
   },
   themeRole: 'primary',
-} as SwitchVariantProps;
+} as SwitchVariantProps<boolean>;
 
 export const StyleOverrides = Template.bind({});
 StyleOverrides.args = {
@@ -104,23 +101,27 @@ StyleOverrides.args = {
   styleOverrides: {
     default: [
       {
-        backgroundColor: mutedMagenta[200],
+        backgroundColor: undefined,
+        borderColor: mutedMagenta[500],
         knobColor: mutedMagenta[500],
       },
       {
-        backgroundColor: mutedGreen[200],
+        backgroundColor: undefined,
         knobColor: mutedGreen[500],
+        borderColor: mutedGreen[500],
       },
     ],
     hover: [
       {
-        backgroundColor: mutedMagenta[300],
-        knobColor: mutedMagenta[100],
+        backgroundColor: undefined,
+        knobColor: mutedMagenta[600],
+        borderColor: mutedMagenta[600],
       },
       {
-        backgroundColor: mutedGreen[300],
-        knobColor: mutedGreen[100],
+        backgroundColor: undefined,
+        knobColor: mutedGreen[600],
+        borderColor: mutedGreen[600],
       },
     ],
   },
-} as SwitchVariantProps;
+} as SwitchVariantProps<boolean>;
