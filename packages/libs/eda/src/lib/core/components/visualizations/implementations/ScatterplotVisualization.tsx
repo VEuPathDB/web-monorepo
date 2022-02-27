@@ -1027,6 +1027,10 @@ export function scatterplotResponseToData(
       : '__NO_FACET__'
   );
 
+  // if the vocabulary is missing (e.g. for numeric variables), we can just use the keys from the
+  // groupBy and hope they are in the right order (they seem to be produced in numeric order, even though the values are strings)
+  const fallbackFacetVocabulary = keys(facetGroupedResponseData);
+
   const processedData = mapValues(facetGroupedResponseData, (group) => {
     const { dataSetProcess, yMin, yMax } = processInputData(
       reorderResponseScatterplotData(
@@ -1063,7 +1067,7 @@ export function scatterplotResponseToData(
       : // faceted
         {
           facets: vocabularyWithMissingData(
-            facetVocabulary,
+            facetVocabulary.length ? facetVocabulary : fallbackFacetVocabulary,
             showMissingFacet
           ).map((facetValue) => ({
             label: facetValue,
