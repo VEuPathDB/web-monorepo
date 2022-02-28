@@ -102,7 +102,7 @@ export default function PastRelease({
         title={`Full Dataset (Release ${release.releaseNumber})`}
         subTitle={{
           Date: release.date ?? '',
-          Changelog: release.description ?? '',
+          'Change Log': release.description ?? '',
         }}
       >
         <div style={{ padding: 15, paddingLeft: 35 }}>
