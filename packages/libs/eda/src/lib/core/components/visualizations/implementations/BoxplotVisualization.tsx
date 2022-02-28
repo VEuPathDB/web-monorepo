@@ -723,7 +723,7 @@ export function boxplotResponseToData(
       (data) => data.label.length === 0 && data.median.length === 0
     );
     return facetIsEmpty
-      ? undefined
+      ? { series: [] }
       : {
           series: group.map((data) => ({
             lowerfence: data.lowerfence,
