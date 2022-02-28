@@ -82,8 +82,7 @@ const siteAnnouncements = [
         return (
           <div>
            Welcome to ClinEpiDB’s new and improved <span style={{fontWeight: 'bold', fontStyle: 'italic'}}>data exploration platform!</span>
-           &nbsp;Please <Link to="/contact-us">contact us</Link> with feedback.
-           &nbsp;To access data from all studies use <a href="https://clinepidb.org">clinepidb.org</a>.
+           &nbsp;Access the original version of our website, including your saved strategies at <a href="https://legacy.clinepidb.org">legacy.clinepidb.org</a>. 
           </div>
         );
       }
