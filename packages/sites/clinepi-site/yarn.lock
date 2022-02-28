@@ -1349,9 +1349,9 @@
     react-table "^7.7.0"
 
 "@veupathdb/eda@^1.6.2":
-  version "1.6.10"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.6.10.tgz#e59f80fcfad305a219ba9e2eec59c14fac4e5587"
-  integrity sha512-TCLY7n/rkLrEVA7DRaYBqmU2wDZsSbKklIHk7bUeAMm0qcG9/L64mrgQBngg/6A2S2znAF2fPLz+Cg/p7KMrpw==
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.7.0.tgz#0dfe8153e41a114b936cd741c8a4fd147da4d75f"
+  integrity sha512-x4FivFBqH0u/X//08/dP/fuZq+gjh5T/0gxHWHbF/UuDQtcNLRh2pbX+Lps51nBiNM7F6YjGDKzEJA8ZNSyGcw==
   dependencies:
     "@emotion/react" "^11.4.1"
     "@emotion/styled" "^11.3.0"
@@ -1446,9 +1446,9 @@
     uuid "^8.1.0"
 
 "@veupathdb/web-common@^0.2.8":
-  version "0.2.8"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.2.8.tgz#49648035e1ad2588e50e148be96e1f674777673d"
-  integrity sha512-cuVS+8n/RigGISIGL2y+E4fP+iBle780HYp2EmIywJ3cZWVhZT326Ymq4ZxZ/GzPFdMIWVhrmCzkQQ1iwcYPiQ==
+  version "0.2.9"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.2.9.tgz#1a92e54bce84f686d6d88e4335436c4f8eecde0d"
+  integrity sha512-hqRyroXKn4RAgjjveUvLZ88zNnNpOHejPrtKlI1eRzkX9LzhswY3eGBY3UDmZVC9tsrEbj6r3fbaFmERUhqOag==
   dependencies:
     "@veupathdb/components" "^0.11.19"
     "@veupathdb/eda" "^1.6.2"
