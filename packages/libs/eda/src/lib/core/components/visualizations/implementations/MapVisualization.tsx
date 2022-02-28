@@ -259,7 +259,11 @@ function MapViz(props: VisualizationProps) {
       studyId,
       filters,
       dataClient,
-      vizConfig,
+      // we don't want to allow vizConfig.mapCenterAndZoom to trigger an update,
+      // because boundsZoomLevel does the same thing, but they can trigger two separate updates
+      // (baseLayer doesn't matter either) - so we cherry pick properties of vizConfig
+      vizConfig.geoEntityId,
+      vizConfig.outputEntityId,
       boundsZoomLevel,
       computation.descriptor.type,
       geoConfig,
