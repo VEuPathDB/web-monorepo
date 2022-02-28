@@ -90,7 +90,7 @@ export default function MySubset({
         styleOverrides={{ margin: '0px 0px 10px 0px' }}
         textSize="small"
       >
-        Configure and download one or more tabular views
+        Configure and download one or more tabular files of the filtered dataset
       </Paragraph>
       {Object.values(entities).map((data, index) => (
         <FloatingButton
