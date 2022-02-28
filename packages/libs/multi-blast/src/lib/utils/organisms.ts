@@ -22,6 +22,6 @@ export async function fetchOrganismToFilenameMaps(
   return {
     dbTypeInternal: blastParamInternalValuesForTargetType.dbTypeInternal,
     filesToOrganisms: invert(organismsToFiles) as Record<string, string>,
-    organismsToFiles: blastParamInternalValuesForTargetType.organismValues,
+    organismsToFiles,
   };
 }
