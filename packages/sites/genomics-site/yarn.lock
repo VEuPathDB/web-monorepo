@@ -1342,10 +1342,10 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/multi-blast@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/multi-blast/-/multi-blast-1.0.3.tgz#90b07d5daa8146789131825b25673c24947ab65b"
-  integrity sha512-ahu19zMYnkLGpvjXTF0LbmSJewEUKyE0A5UpegG6jBs58xGsmU9U6H/deHpRWBS95wgw7M3nT9KjJaqriuHe9g==
+"@veupathdb/multi-blast@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@veupathdb/multi-blast/-/multi-blast-1.0.4.tgz#4ac82743a932ed21d765d484fbf5a94c96cb7d9e"
+  integrity sha512-3ZALJtqsIZBlqFSBSM+EKCk4p4Wve5aqUYaW48nkLFDbsXhElKmWFMH0CqLHcu62jgGTMNVzBMEoEZBpLFIrsQ==
   dependencies:
     "@veupathdb/http-utils" "^1.1.0"
     file-saver "^2.0.5"
