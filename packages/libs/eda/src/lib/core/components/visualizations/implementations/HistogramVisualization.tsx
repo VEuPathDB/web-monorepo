@@ -482,6 +482,12 @@ function HistogramViz(props: VisualizationProps) {
     vizConfig.checkedLegendItems
   );
 
+  const outputSize =
+    (overlayVariable != null || facetVariable != null) &&
+    !vizConfig.showMissingness
+      ? data.value?.completeCasesAllVars
+      : data.value?.completeCasesAxesVars;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -525,7 +531,7 @@ function HistogramViz(props: VisualizationProps) {
         />
       </div>
 
-      <PluginError error={data.error} />
+      <PluginError error={data.error} outputSize={outputSize} />
       <HistogramPlotWithControls
         data={data.value}
         error={data.error}
@@ -552,6 +558,7 @@ function HistogramViz(props: VisualizationProps) {
         interactive={!isFaceted(data.value) ? true : false}
         showSpinner={data.pending || filteredCounts.pending}
         filters={filters}
+        outputSize={outputSize}
         completeCases={data.pending ? undefined : data.value?.completeCases}
         completeCasesAllVars={
           data.pending ? undefined : data.value?.completeCasesAllVars
@@ -601,6 +608,7 @@ type HistogramPlotWithControlsProps = Omit<HistogramProps, 'data'> & {
   onCheckedLegendItemsChange: (checkedLegendItems: string[]) => void;
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
+  outputSize?: number;
 } & Partial<CoverageStatistics>;
 
 function HistogramPlotWithControls({
@@ -628,15 +636,11 @@ function HistogramPlotWithControls({
   onCheckedLegendItemsChange,
   totalCounts,
   filteredCounts,
+  outputSize,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   const displayLibraryControls = false;
   const opacity = 100;
-
-  const outputSize =
-    (overlayVariable != null || facetVariable != null) && !showMissingness
-      ? completeCasesAllVars
-      : completeCasesAxesVars;
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
@@ -828,7 +832,7 @@ export function histogramResponseToData(
     ? { min, max }
     : {
         min,
-        max: max > 60 ? 60 : max, // back end seems to fall over with any values >99 but 60 is used in subsetting
+        max: max != null && max > 60 ? 60 : max, // back end seems to fall over with any values >99 but 60 is used in subsetting
         unit: (binWidth as TimeDelta).unit,
       }) as NumberOrTimeDeltaRange;
   const binWidthStep = step || 0.1;
@@ -839,7 +843,7 @@ export function histogramResponseToData(
       (data) => data.binStart.length === 0 && data.value.length === 0
     );
     return facetIsEmpty
-      ? undefined
+      ? { series: [] }
       : {
           series: group.map((data) => ({
             name:
