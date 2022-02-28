@@ -467,9 +467,12 @@ function BoxplotViz(props: VisualizationProps) {
               : data.value?.facets
                   .map((el: { label: string; data?: BoxplotData }) => {
                     // faceted plot: here data.value is full data
-                    return el.data?.series[index]?.q1.some(
-                      (el: number | string) => el != null
-                    );
+                    // need to check whether el.data.series[index] exists
+                    return el.data?.series[index] == null
+                      ? false
+                      : el.data?.series[index]?.q1.some(
+                          (el: number | string) => el != null
+                        );
                   })
                   .includes(true)
               ? true
