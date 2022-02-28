@@ -49,8 +49,8 @@ import {
   RANK_PER_SUBJECT_HELP_TEXT,
   SCORE_HELP_TEXT,
   CombinedResultRow,
-  dbToOrganismFactory,
   defaultDeflineToDescription,
+  defaultDeflineToOrganism,
   defaultDeflineToSourceId,
   defaultGeneDeflineToWdkPrimaryKey,
   mergeIntervals,
@@ -415,7 +415,17 @@ function useRawCombinedResultRows(
 
     const resultsByQuery = combinedResult.value.BlastOutput2;
 
-    const dbToOrganism = dbToOrganismFactory(filesToOrganisms);
+    const organismDeflineToDisplayFormatEntries = Object.values(
+      filesToOrganisms
+    ).map((organismDisplayFormat) => {
+      const organismDeflineFormat = organismDisplayFormat.split(' ').join('_');
+
+      return [organismDeflineFormat, organismDisplayFormat] as const;
+    });
+
+    const organismDeflineToDisplayFormat = Object.fromEntries(
+      organismDeflineToDisplayFormatEntries
+    );
 
     const unrankedHits = resultsByQuery.flatMap((queryResult, queryZeroIndex) =>
       queryResult.report.results.search.hits.map((hit) => {
@@ -428,7 +438,11 @@ function useRawCombinedResultRows(
         const subjectDescription =
           defaultDeflineToDescription(defline) ?? defline;
 
-        const organism = dbToOrganism(queryResult.report.search_target.db);
+        const organismDeflineFormat = defaultDeflineToOrganism(defline);
+
+        const organism =
+          organismDeflineFormat &&
+          organismDeflineToDisplayFormat[organismDeflineFormat];
 
         const {
           query_id: queryId,

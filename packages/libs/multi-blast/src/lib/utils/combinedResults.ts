@@ -60,6 +60,9 @@ export const defaultDeflineToSourceId = retrieveDataFromHitTitleFactory(
 export const defaultGeneDeflineToWdkPrimaryKey = retrieveDataFromHitTitleFactory(
   DEFAULT_GENE_REGEX
 );
+export const defaultDeflineToOrganism = retrieveDataFromHitTitleFactory(
+  DEFAULT_ORGANISM_REGEX
+);
 
 export function dbToTargetName(db: string) {
   return db.replace(/[\s\S]*\//, '');
@@ -75,16 +78,6 @@ export function dbToOrgDirAndTargetDbName(db: string) {
   return {
     orgDir: match == null || match.length < 3 ? null : match[1],
     targetDbName: match == null || match.length < 3 ? null : match[2],
-  };
-}
-
-export function dbToOrganismFactory(filesToOrganisms: Record<string, string>) {
-  return function dbToOrganism(db: string) {
-    const { orgDir } = dbToOrgDirAndTargetDbName(db);
-
-    return orgDir == null || filesToOrganisms[orgDir] == null
-      ? null
-      : filesToOrganisms[orgDir];
   };
 }
 
