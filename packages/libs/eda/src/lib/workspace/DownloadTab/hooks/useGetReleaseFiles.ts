@@ -49,8 +49,11 @@ export function useGetReleaseFiles(
          * which can identify here as naving no real name (just an
          * extension).
          */
-        .filter((fileData) => fileData.fileDescription.length);
-
+        .filter((fileData) => fileData.fileDescription.length)
+        /**
+         * Sort alphabetically on fileDescription
+         */
+        .sort((a, b) => a.fileDescription.localeCompare(b.fileDescription));
       // Augment the URL each valid file.
       for (const fileData of filesData) {
         const fileUrl = await downloadClient.downloadStudyFileURL(
