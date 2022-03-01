@@ -34,6 +34,9 @@ import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { sumBy } from 'lodash';
 import PluginError from '../PluginError';
+import { VariableDescriptor } from '../../../types/variable';
+import { InputVariables } from '../InputVariables';
+import { VariablesByInputName } from '../../../utils/data-element-constraints';
 
 export const mapVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -87,6 +90,7 @@ const MapConfig = t.intersection([
   t.partial({
     geoEntityId: t.string,
     outputEntityId: t.string,
+    xAxisVariable: VariableDescriptor,
   }),
 ]);
 
@@ -105,6 +109,9 @@ function MapViz(props: VisualizationProps) {
     //    totalCounts,
     //    filteredCounts,
     geoConfigs,
+    otherVizOverviews,
+    starredVariables,
+    toggleStarredVariable,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -270,6 +277,18 @@ function MapViz(props: VisualizationProps) {
     ])
   );
 
+  /**
+   * Now we deal with the optional second request to pieplot
+   */
+
+  const pieOverview = otherVizOverviews.find(
+    (overview) => overview.name === 'pieplot'
+  );
+  if (pieOverview == null)
+    throw new Error('Map visualization cannot find pieplot helper');
+  const pieConstraints = pieOverview.dataElementConstraints;
+  const pieDependencyOrder = pieOverview.dataElementDependencyOrder;
+
   const [height, width] = [600, 1000];
   const { latitude, longitude, zoomLevel } = vizConfig.mapCenterAndZoom;
 
@@ -325,6 +344,13 @@ function MapViz(props: VisualizationProps) {
     (event: React.ChangeEvent<{ value: unknown }>) => {
       if (event != null)
         updateVizConfig({ outputEntityId: event.target.value as string });
+    },
+    [updateVizConfig]
+  );
+
+  const handleInputVariableChange = useCallback(
+    ({ xAxisVariable }: VariablesByInputName) => {
+      updateVizConfig({ xAxisVariable });
     },
     [updateVizConfig]
   );
@@ -386,6 +412,29 @@ function MapViz(props: VisualizationProps) {
           </p>
         </div>
       </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
+        <InputVariables
+          inputs={[
+            {
+              name: 'xAxisVariable',
+              label: 'Categorical overlay',
+              role: 'stratification',
+            },
+          ]}
+          entities={entities}
+          selectedVariables={{
+            xAxisVariable: vizConfig.xAxisVariable,
+          }}
+          onChange={handleInputVariableChange}
+          constraints={pieConstraints}
+          dataElementDependencyOrder={pieDependencyOrder}
+          starredVariables={starredVariables}
+          toggleStarredVariable={toggleStarredVariable}
+          outputEntity={outputEntity}
+        />
+      </div>
+
       <PluginError
         error={data.error}
         outputSize={data.value?.totalEntityCount}

@@ -423,7 +423,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
             totalCounts={totalCounts}
             filteredCounts={filteredCounts}
             geoConfigs={geoConfigs}
-            otherVizOverviews={overviews.other}
+            otherVizOverviews={overviews.others}
           />
         </div>
       )}
