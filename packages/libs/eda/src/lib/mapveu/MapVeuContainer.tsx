@@ -15,12 +15,15 @@ import {
   useConfiguredSubsettingClient,
   useConfiguredDataClient,
   useConfiguredAnalysisClient,
+  useConfiguredDownloadClient,
 } from '../core/hooks/client';
 
 export function MapVeuContainer() {
   const edaClient = useConfiguredSubsettingClient('/eda-subsetting-service');
   const dataClient = useConfiguredDataClient('/eda-data-service');
   const analysisClient = useConfiguredAnalysisClient('/eda-user-service');
+  const downloadClient = useConfiguredDownloadClient('/eda-user-service');
+
   // This will get the matched path of the active parent route.
   // This is useful so we don't have to hardcode the path root.
   const { path } = useRouteMatch();
@@ -38,6 +41,7 @@ export function MapVeuContainer() {
               subsettingClient={edaClient}
               analysisClient={analysisClient}
               dataClient={dataClient}
+              downloadClient={downloadClient}
             >
               <MapVeuAnalysis
                 analysisId={props.match.params.analysisId}
@@ -54,6 +58,7 @@ export function MapVeuContainer() {
               analysisClient={analysisClient}
               subsettingClient={edaClient}
               dataClient={dataClient}
+              downloadClient={downloadClient}
             >
               <AnalysisList
                 studyId={props.match.params.studyId}

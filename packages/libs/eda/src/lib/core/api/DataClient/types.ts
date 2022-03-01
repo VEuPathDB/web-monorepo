@@ -11,6 +11,7 @@ import {
   intersection,
   partial,
   keyof,
+  nullType,
 } from 'io-ts';
 import { Filter } from '../../types/filter';
 import { TimeUnit } from '../../types/general';
@@ -25,6 +26,9 @@ type ZeroToTwoVariables =
   | []
   | [VariableDescriptor]
   | [VariableDescriptor, VariableDescriptor];
+
+export type NumberOrNull = TypeOf<typeof numberOrNull>;
+const numberOrNull = union([number, nullType]);
 
 // define sampleSizeTableArray
 export type SampleSizeTableArray = TypeOf<typeof sampleSizeTableArray>;
@@ -103,15 +107,15 @@ export const HistogramResponse = type({
       completeCasesAllVars: number,
       completeCasesAxesVars: number,
       binSlider: type({
-        min: number,
-        max: number,
-        step: number,
+        min: numberOrNull,
+        max: numberOrNull,
+        step: numberOrNull,
       }),
       xVariableDetails: VariableDescriptor,
       binSpec: intersection([
         type({ type: keyof({ binWidth: null, numBins: null }) }),
         partial({
-          value: number,
+          value: numberOrNull,
           units: TimeUnit,
         }),
       ]),

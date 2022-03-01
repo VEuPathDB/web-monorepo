@@ -56,7 +56,7 @@ import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import histogram from './selectorIcons/histogram.svg';
 // import axis label unit util
-import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
+import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import {
   vocabularyWithMissingData,
   grayOutLastSeries,
@@ -522,6 +522,12 @@ function HistogramViz(props: VisualizationProps) {
     }
   }, [xAxisVariable, defaultIndependentRange]);
 
+  const outputSize =
+    (overlayVariable != null || facetVariable != null) &&
+    !vizConfig.showMissingness
+      ? data.value?.completeCasesAllVars
+      : data.value?.completeCasesAxesVars;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -565,7 +571,7 @@ function HistogramViz(props: VisualizationProps) {
         />
       </div>
 
-      <PluginError error={data.error} />
+      <PluginError error={data.error} outputSize={outputSize} />
       <HistogramPlotWithControls
         data={data.value}
         error={data.error}
@@ -584,10 +590,11 @@ function HistogramViz(props: VisualizationProps) {
         displayLegend={false}
         outputEntity={outputEntity}
         independentAxisVariable={vizConfig.xAxisVariable}
-        independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'Main'}
+        independentAxisLabel={variableDisplayWithUnit(xAxisVariable) ?? 'Main'}
         interactive={!isFaceted(data.value) ? true : false}
         showSpinner={data.pending || filteredCounts.pending}
         filters={filters}
+        outputSize={outputSize}
         completeCases={data.pending ? undefined : data.value?.completeCases}
         completeCasesAllVars={
           data.pending ? undefined : data.value?.completeCasesAllVars
@@ -597,10 +604,10 @@ function HistogramViz(props: VisualizationProps) {
         }
         showMissingness={vizConfig.showMissingness ?? false}
         overlayVariable={vizConfig.overlayVariable}
-        overlayLabel={axisLabelWithUnit(overlayVariable)}
+        overlayLabel={variableDisplayWithUnit(overlayVariable)}
         facetVariable={vizConfig.facetVariable}
-        facetLabel={axisLabelWithUnit(facetVariable)}
-        legendTitle={axisLabelWithUnit(overlayVariable)}
+        facetLabel={variableDisplayWithUnit(facetVariable)}
+        legendTitle={variableDisplayWithUnit(overlayVariable)}
         dependentAxisLabel={
           vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion'
         }
@@ -666,6 +673,7 @@ type HistogramPlotWithControlsProps = Omit<HistogramProps, 'data'> & {
   setTruncatedDependentAxisWarning: (
     truncatedDependentAxisWarning: string
   ) => void;
+  outputSize?: number;
 } & Partial<CoverageStatistics>;
 
 function HistogramPlotWithControls({
@@ -705,15 +713,11 @@ function HistogramPlotWithControls({
   setTruncatedIndependentAxisWarning,
   truncatedDependentAxisWarning,
   setTruncatedDependentAxisWarning,
+  outputSize,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   const displayLibraryControls = false;
   const opacity = 100;
-
-  const outputSize =
-    (overlayVariable != null || facetVariable != null) && !showMissingness
-      ? completeCasesAllVars
-      : completeCasesAxesVars;
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
@@ -1134,7 +1138,7 @@ export function histogramResponseToData(
     ? { min, max }
     : {
         min,
-        max: max > 60 ? 60 : max, // back end seems to fall over with any values >99 but 60 is used in subsetting
+        max: max != null && max > 60 ? 60 : max, // back end seems to fall over with any values >99 but 60 is used in subsetting
         unit: (binWidth as TimeDelta).unit,
       }) as NumberOrTimeDeltaRange;
   const binWidthStep = step || 0.1;
@@ -1145,7 +1149,7 @@ export function histogramResponseToData(
       (data) => data.binStart.length === 0 && data.value.length === 0
     );
     return facetIsEmpty
-      ? undefined
+      ? { series: [] }
       : {
           series: group.map((data) => ({
             name:
@@ -1250,6 +1254,8 @@ function reorderData(
   facetVocabulary: string[] = []
 ): HistogramDataWithCoverageStatistics | HistogramData {
   if (isFaceted(data)) {
+    if (facetVocabulary.length === 0) return data; // FIX-ME stop-gap for vocabulary-less numeric variables
+
     // for each value in the facet vocabulary's correct order
     // find the index in the series where series.name equals that value
     const facetValues = data.facets.map((facet) => facet.label);

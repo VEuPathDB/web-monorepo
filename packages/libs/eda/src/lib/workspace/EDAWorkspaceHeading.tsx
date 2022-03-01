@@ -3,12 +3,8 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import Path from 'path';
 
 // Components
-import {
-  // Download,
-  Table,
-} from '@veupathdb/core-components/dist/components/icons';
+import { H3, Table, FloatingButton } from '@veupathdb/coreui';
 
-import FloatingButton from '@veupathdb/core-components/dist/components/buttons/FloatingButton';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { AnalysisNameDialog } from './AnalysisNameDialog';
 import AddIcon from '@material-ui/icons/Add';
@@ -58,46 +54,54 @@ export function EDAWorkspaceHeading({
   }, [analysisId]);
 
   return (
-    <>
-      <div className={cx('-Heading')}>
-        <h1>{safeHtml(studyRecord.displayName)}</h1>
-        {showButtons && (
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <div>
-              <FloatingButton
-                themeRole="primary"
-                text="New Analysis"
-                tooltip="Create a new analysis"
-                size="medium"
-                // @ts-ignore
-                icon={AddIcon}
-                onPress={
-                  /** If (1) there is no analysis, (2) we're in an unsaved new
-                   * analysis (here `analysis` is still undefined in this case),
-                   * or (3) we're in a renamed analysis, just go straight to the
-                   * new analysis. Otherwise, show the renaming dialog. */
-                  analysis && analysis.displayName === DEFAULT_ANALYSIS_NAME
-                    ? () => setDialogIsOpen(true)
-                    : redirectToNewAnalysis
-                }
-              />
-            </div>
-            <div>
-              <FloatingButton
-                themeRole="primary"
-                text="My analyses"
-                tooltip="View all your analyses of this study"
-                icon={Table}
-                onPress={() =>
-                  history.push(
-                    '/eda?s=' + encodeURIComponent(studyRecord.displayName)
-                  )
-                }
-              />
-            </div>
+    <div className={cx('-Heading')}>
+      <H3 additionalStyles={{ padding: 0 }}>
+        {safeHtml(studyRecord.displayName)}
+      </H3>
+      {showButtons && (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+          }}
+        >
+          <div>
+            <FloatingButton
+              themeRole="primary"
+              text="New analysis"
+              tooltip="Create a new analysis"
+              textTransform="capitalize"
+              size="medium"
+              // @ts-ignore
+              icon={AddIcon}
+              onPress={
+                /** If (1) there is no analysis, (2) we're in an unsaved new
+                 * analysis (here `analysis` is still undefined in this case),
+                 * or (3) we're in a renamed analysis, just go straight to the
+                 * new analysis. Otherwise, show the renaming dialog. */
+                analysis && analysis.displayName === DEFAULT_ANALYSIS_NAME
+                  ? () => setDialogIsOpen(true)
+                  : redirectToNewAnalysis
+              }
+            />
           </div>
-        )}
-      </div>
+          <div>
+            <FloatingButton
+              themeRole="primary"
+              text="My analyses"
+              textTransform="capitalize"
+              tooltip="View all of your analyses for this study"
+              icon={Table}
+              onPress={() =>
+                history.push(
+                  '/eda?s=' + encodeURIComponent(studyRecord.displayName)
+                )
+              }
+            />
+          </div>
+        </div>
+      )}
       {analysisState && isSavedAnalysis(analysis) && (
         <AnalysisNameDialog
           isOpen={dialogIsOpen}
@@ -109,6 +113,6 @@ export function EDAWorkspaceHeading({
           redirectToNewAnalysis={redirectToNewAnalysis}
         />
       )}
-    </>
+    </div>
   );
 }

@@ -7,7 +7,11 @@ interface Props {
 
 export function Documentation(props: Props) {
   const Component = React.lazy(() =>
-    import('./' + props.documentName).catch((error) => {
+    import(
+      /* webpackInclude: /\.(js|jsx|ts|tsx)$/ */
+      /* webpackExclude: /\.d\.ts$/ */
+      './' + props.documentName
+    ).catch((error) => {
       console.error(error);
       return import('@veupathdb/wdk-client/lib/Components/PageStatus/Error');
     })

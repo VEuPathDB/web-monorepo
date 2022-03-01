@@ -38,7 +38,7 @@ import GlobalFiltersDialog from '../core/components/GlobalFiltersDialog';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import ShowHideVariableContextProvider from '../core/utils/show-hide-variable-context';
 import NotesTab from './NotesTab';
-import DownloadsTab from './DownloadsTab';
+import DownloadTab from './DownloadTab';
 import { Alert } from '@material-ui/lab';
 import ShareFromAnalysis from './sharing/ShareFromAnalysis';
 import { useWorkspaceAnalysis } from './hooks/analyses';
@@ -46,6 +46,7 @@ import { ApprovalStatus } from '@veupathdb/study-data-access/lib/data-restrictio
 import { RestrictedPage } from '@veupathdb/study-data-access/lib/data-restriction/RestrictedPage';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
+import { DownloadClient } from '../core/api/DownloadClient';
 
 const AnalysisTabErrorBoundary = ({
   children,
@@ -83,6 +84,8 @@ interface Props {
    * A callback to open a login form.
    * This is also passed down through several component layers. */
   showLoginForm: () => void;
+  /** API client that will be used in the Download Tab */
+  downloadClient: DownloadClient;
 }
 
 /**
@@ -99,6 +102,7 @@ export function AnalysisPanel({
   hideSavedAnalysisButtons = false,
   sharingUrlPrefix,
   showLoginForm,
+  downloadClient,
 }: Props) {
   const studyRecord = useStudyRecord();
   const analysisState = useWorkspaceAnalysis(studyId, analysisId);
@@ -179,7 +183,7 @@ export function AnalysisPanel({
         <p>Could not load the analysis.</p>
       </div>
     );
-  if (analysis == null) return <Loading />;
+  if (analysis == null || approvalStatus === 'loading') return <Loading />;
   if (approvalStatus === 'not-approved')
     return <Redirect to={Path.normalize(routeBase + '/..')} />;
   return (
@@ -255,13 +259,13 @@ export function AnalysisPanel({
             routeBase={routeBase}
             items={[
               {
-                display: 'View study details',
+                display: 'View Study Details',
                 route: `/details`,
                 exact: false,
                 replace: true,
               },
               {
-                display: 'Browse and subset',
+                display: 'Browse and Subset',
                 route: `/variables${lastVarPath}`,
                 exact: false,
                 replace: true,
@@ -277,12 +281,12 @@ export function AnalysisPanel({
                 exact: false,
                 replace: true,
               },
-              // {
-              //   display: 'Downloads',
-              //   route: '/downloads',
-              // },
               {
-                display: 'Notes',
+                display: 'Download',
+                route: '/download',
+              },
+              {
+                display: 'Record Notes',
                 route: '/notes',
               },
             ]}
@@ -346,14 +350,19 @@ export function AnalysisPanel({
               </AnalysisTabErrorBoundary>
             )}
           />
-          {/* <Route
-          path={`${routeBase}/downloads`}
-          render={() => (
-            <AnalysisTabErrorBoundary>
-              <DownloadsTab />
-            </AnalysisTabErrorBoundary>
-          )}
-        /> */}
+          <Route
+            path={`${routeBase}/download`}
+            render={() => (
+              <AnalysisTabErrorBoundary>
+                <DownloadTab
+                  analysisState={analysisState}
+                  totalCounts={totalCounts.value}
+                  filteredCounts={filteredCounts.value}
+                  downloadClient={downloadClient}
+                />
+              </AnalysisTabErrorBoundary>
+            )}
+          />
           <Route
             path={`${routeBase}/notes`}
             render={() => (

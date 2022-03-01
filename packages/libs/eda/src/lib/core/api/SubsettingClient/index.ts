@@ -1,5 +1,4 @@
 import { array, number, type } from 'io-ts';
-import { saveAs } from 'file-saver';
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import {

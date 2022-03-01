@@ -1,9 +1,9 @@
 // Components
-import { H5 } from '@veupathdb/core-components';
-import { FilledButton } from '@veupathdb/core-components/dist/components/buttons';
+import { H5 } from '@veupathdb/coreui';
+import { FilledButton } from '@veupathdb/coreui/dist/components/buttons';
 
 // Definitions
-import { gray } from '@veupathdb/core-components/dist/definitions/colors';
+import { gray } from '@veupathdb/coreui/dist/definitions/colors';
 
 export default function Login({
   onPressClose,

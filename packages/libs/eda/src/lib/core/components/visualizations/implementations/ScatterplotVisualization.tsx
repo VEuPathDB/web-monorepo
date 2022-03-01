@@ -63,7 +63,7 @@ import {
 } from '@veupathdb/components/lib/types/plots';
 import { CoverageStatistics } from '../../../types/visualization';
 // import axis label unit util
-import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
+import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import { NumberVariable, StudyEntity, Variable } from '../../../types/study';
 import {
   fixLabelForNumberVariables,
@@ -739,8 +739,8 @@ function ScatterplotViz(props: VisualizationProps) {
       }
       // title={'Scatter plot'}
       displayLegend={false}
-      independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-axis'}
-      dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-axis'}
+      independentAxisLabel={variableDisplayWithUnit(xAxisVariable) ?? 'X-axis'}
+      dependentAxisLabel={variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'}
       // set valueSpec as Raw when yAxisVariable = date
       valueSpec={
         yAxisVariable?.type === 'date' ? 'Raw' : vizConfig.valueSpecConfig
@@ -769,7 +769,7 @@ function ScatterplotViz(props: VisualizationProps) {
           ? 'number'
           : 'date'
       }
-      legendTitle={axisLabelWithUnit(overlayVariable)}
+      legendTitle={variableDisplayWithUnit(overlayVariable)}
       // pass checked state of legend checkbox to PlotlyPlot
       checkedLegendItems={checkedLegendItems}
       // for vizconfig.checkedLegendItems
@@ -793,7 +793,7 @@ function ScatterplotViz(props: VisualizationProps) {
     <PlotLegend
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
-      legendTitle={axisLabelWithUnit(overlayVariable)}
+      legendTitle={variableDisplayWithUnit(overlayVariable)}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
     />
   );
@@ -825,23 +825,23 @@ function ScatterplotViz(props: VisualizationProps) {
           {
             role: 'X-axis',
             required: true,
-            display: axisLabelWithUnit(xAxisVariable),
+            display: variableDisplayWithUnit(xAxisVariable),
             variable: vizConfig.xAxisVariable,
           },
           {
             role: 'Y-axis',
             required: true,
-            display: axisLabelWithUnit(yAxisVariable),
+            display: variableDisplayWithUnit(yAxisVariable),
             variable: vizConfig.yAxisVariable,
           },
           {
             role: 'Overlay',
-            display: axisLabelWithUnit(overlayVariable),
+            display: variableDisplayWithUnit(overlayVariable),
             variable: vizConfig.overlayVariable,
           },
           {
             role: 'Facet',
-            display: axisLabelWithUnit(facetVariable),
+            display: variableDisplayWithUnit(facetVariable),
             variable: vizConfig.facetVariable,
           },
         ]}
@@ -1347,6 +1347,10 @@ export function scatterplotResponseToData(
       : '__NO_FACET__'
   );
 
+  // if the vocabulary is missing (e.g. for numeric variables), we can just use the keys from the
+  // groupBy and hope they are in the right order (they seem to be produced in numeric order, even though the values are strings)
+  const fallbackFacetVocabulary = keys(facetGroupedResponseData);
+
   const processedData = mapValues(facetGroupedResponseData, (group) => {
     const { dataSetProcess, yMin, yMax } = processInputData(
       reorderResponseScatterplotData(
@@ -1383,7 +1387,7 @@ export function scatterplotResponseToData(
       : // faceted
         {
           facets: vocabularyWithMissingData(
-            facetVocabulary,
+            facetVocabulary.length ? facetVocabulary : fallbackFacetVocabulary,
             showMissingFacet
           ).map((facetValue) => ({
             label: facetValue,

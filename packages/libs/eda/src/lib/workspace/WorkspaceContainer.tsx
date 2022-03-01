@@ -8,6 +8,7 @@ import {
   useConfiguredAnalysisClient,
   useConfiguredDataClient,
   useConfiguredSubsettingClient,
+  useConfiguredDownloadClient,
 } from '../core/hooks/client';
 import { VariableDescriptor } from '../core/types/variable';
 import { cx, findFirstVariable } from './Utils';
@@ -28,6 +29,7 @@ interface Props {
   subsettingServiceUrl: string;
   dataServiceUrl: string;
   userServiceUrl: string;
+  downloadServiceUrl: string;
   children: ReactNode;
 }
 
@@ -37,12 +39,15 @@ export function WorkspaceContainer({
   subsettingServiceUrl,
   dataServiceUrl,
   userServiceUrl,
+  downloadServiceUrl,
   children,
 }: Props) {
   const { url } = useRouteMatch();
   const subsettingClient = useConfiguredSubsettingClient(subsettingServiceUrl);
   const dataClient = useConfiguredDataClient(dataServiceUrl);
   const analysisClient = useConfiguredAnalysisClient(userServiceUrl);
+  const downloadClient = useConfiguredDownloadClient(downloadServiceUrl);
+
   const initializeMakeVariableLink = useCallback(
     (fieldTree: TreeNode<FieldWithMetadata>) => ({
       entityId: maybeEntityId,
@@ -72,6 +77,7 @@ export function WorkspaceContainer({
       analysisClient={analysisClient}
       dataClient={dataClient}
       subsettingClient={subsettingClient}
+      downloadClient={downloadClient}
       initializeMakeVariableLink={initializeMakeVariableLink}
     >
       {children}

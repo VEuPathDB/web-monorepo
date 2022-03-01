@@ -7,7 +7,7 @@ import { AnalysisState } from '../../core';
 // Components
 import MultilineTextField, {
   MultilineTextFieldProps,
-} from '@veupathdb/core-components/dist/components/forms/MultilineTextField';
+} from '@veupathdb/coreui/dist/components/forms/MultilineTextField';
 
 type props = {
   analysisState: AnalysisState;

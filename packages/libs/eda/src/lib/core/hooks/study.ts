@@ -14,6 +14,7 @@ import {
 } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import { AnswerJsonFormatConfig } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
+// Definitions
 import {
   StudyEntity,
   StudyMetadata,
@@ -21,10 +22,15 @@ import {
   StudyRecord,
   Variable,
 } from '../types/study';
-import SubsettingClient from '../api/SubsettingClient';
 import { VariableDescriptor } from '../types/variable';
+
+// Helpers and Utilities
+import SubsettingClient from '../api/SubsettingClient';
 import { findEntityAndVariable } from '../utils/study-metadata';
 import { getStudyAccess } from '@veupathdb/study-data-access/lib/shared/studies';
+
+// Hooks
+import { useStudyRecord } from '..';
 
 const STUDY_RECORD_CLASS_NAME = 'dataset';
 
@@ -126,6 +132,44 @@ export function useWdkStudyRecords(
   )?.records;
 }
 
+/**
+ * Get a list of all the releases for the current study.
+ *
+ * The information obtained from the WDK service isn't all that
+ * user friendly so we massage the response a bit so that it is
+ * easier to interact with.
+ *
+ * To simplify the use of this data elsewhere, a type definition
+ * is included.
+ *
+ * */
+export function useWdkStudyReleases(): Array<WdkStudyRelease> {
+  const studyRecord = useStudyRecord();
+
+  return (
+    useWdkService((wdkService) => {
+      return wdkService.getRecord(STUDY_RECORD_CLASS_NAME, studyRecord.id, {
+        tables: ['DownloadVersion'],
+      });
+    })?.tables['DownloadVersion'].map(
+      (release) => ({
+        // DAVE/JAMIE: I was sure if I could tell TS that these values
+        // would always be present.
+        releaseNumber: release.build_number?.toString(),
+        description: release.note?.toString(),
+        date: release.release_date?.toString(),
+      }),
+      [studyRecord.id]
+    ) ?? []
+  );
+}
+
+export type WdkStudyRelease = {
+  releaseNumber: string | undefined;
+  description: string | undefined;
+  date: string | undefined;
+};
+
 export const STUB_ENTITY: StudyEntity = {
   id: '__STUB__',
   idColumnName: 'stub',
@@ -175,6 +219,16 @@ export function useFindEntityAndVariable(entities: StudyEntity[]) {
   );
 }
 
+/**
+ * Return an array of StudyEntities.
+ *
+ * @param rootEntity The entity in the entity hierarchy. All entities at this level and
+ * down will be returned in a flattened array.
+ *
+ * @returns Essentially, this will provide you will an array of entities in a flattened structure.
+ * Technically, the hierarchical structure is still embedded in each entity, but all of the
+ * entities are presented as siblings in the array.
+ */
 export function useStudyEntities(rootEntity: StudyEntity) {
   return useMemo(
     () => Array.from(preorder(rootEntity, (e) => e.children ?? [])),
