@@ -66,6 +66,7 @@ export interface TabularDataRequestParams {
   outputVariableIds: Array<string>;
   reportConfig?: {
     headerFormat?: 'standard' | 'display';
+    trimTimeFromDateVars?: boolean;
     paging?: {
       numRows: number;
       offset: number;
