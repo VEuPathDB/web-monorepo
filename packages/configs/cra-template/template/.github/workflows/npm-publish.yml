@@ -15,7 +15,7 @@ jobs:
       - name: Build NPM packages
         run: |
             yarn install
-            yarn build
+            yarn build-npm-modules
       - uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
