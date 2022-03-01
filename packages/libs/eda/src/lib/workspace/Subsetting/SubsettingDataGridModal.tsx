@@ -382,7 +382,11 @@ export default function SubsettingDataGridModal({
       }}
     >
       <H5
-        additionalStyles={{ marginTop: 10, marginBottom: 25 }}
+        additionalStyles={{
+          marginTop: 10,
+          marginBottom: 25,
+          fontStyle: 'italic',
+        }}
         color={gray[700]}
       >
         {analysisState.analysis?.displayName}

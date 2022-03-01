@@ -723,7 +723,7 @@ export function boxplotResponseToData(
       (data) => data.label.length === 0 && data.median.length === 0
     );
     return facetIsEmpty
-      ? undefined
+      ? { series: [] }
       : {
           series: group.map((data) => ({
             lowerfence: data.lowerfence,
@@ -822,6 +822,8 @@ function reorderData(
   facetVocabulary: string[] = []
 ): BoxplotDataWithCoverage | BoxplotData {
   if (isFaceted(data)) {
+    if (facetVocabulary.length === 0) return data; // FIX-ME stop-gap for vocabulary-less numeric variables
+
     // for each value in the facet vocabulary's correct order
     // find the index in the series where series.name equals that value
     const facetValues = data.facets.map((facet) => facet.label);
