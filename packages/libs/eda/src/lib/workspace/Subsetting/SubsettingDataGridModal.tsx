@@ -175,6 +175,8 @@ export default function SubsettingDataGridModal({
             (descriptor) => descriptor.variableId
           ),
           reportConfig: {
+            headerFormat: 'standard',
+            trimTimeFromDateVars: true,
             paging: { numRows: pageSize, offset: pageSize * pageIndex },
           },
         })
