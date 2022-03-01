@@ -5,8 +5,8 @@
       "react-dom": "^17.0.2"
     },
     "peerDependencies": {
-      "@veupathdb/wdk-client": ">=0.5.4",
-      "@veupathdb/web-common": "=>0.2.1"
+      "@veupathdb/wdk-client": ">=0.5.7",
+      "@veupathdb/web-common": "=>0.2.10"
     },
     "devDependencies": {
       "@babel/core": "^7.16.0",
@@ -24,8 +24,8 @@
       "@veupathdb/prettier-config": "^1.0.0",
       "@veupathdb/react-scripts": "^1.0.0",
       "@veupathdb/tsconfig": "^1.0.0",
-      "@veupathdb/wdk-client": "^0.5.4",
-      "@veupathdb/web-common": "^0.2.1",
+      "@veupathdb/wdk-client": "^0.5.7",
+      "@veupathdb/web-common": "^0.2.10",
       "assert": "^2.0.0",
       "autoprefixer": "^10.0.2",
       "bubleify": "^2.0.0",
