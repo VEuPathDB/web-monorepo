@@ -39,7 +39,7 @@ export function numberDateDefaultDependentAxisRange(
                 : variable.rangeMin,
             max:
               yMinMaxRange != null
-                ? Math.min(variable.rangeMax, yMinMaxRange.max as number)
+                ? Math.max(variable.rangeMax, yMinMaxRange.max as number)
                 : variable.rangeMax,
           };
     } else if (variable.type === 'date') {
