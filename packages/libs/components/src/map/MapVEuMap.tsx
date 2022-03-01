@@ -9,8 +9,13 @@ import React, {
   useMemo,
   useImperativeHandle,
   forwardRef,
+  useCallback,
 } from 'react';
-import { BoundsViewport, AnimationFunction } from './Types';
+import {
+  BoundsViewport,
+  AnimationFunction,
+  Bounds as MapVEuBounds,
+} from './Types';
 import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 import { Viewport, Map, TileLayer, LayersControl } from 'react-leaflet';
 import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
@@ -21,6 +26,9 @@ import CustomGridLayer from './CustomGridLayer';
 import MouseTools, { MouseMode } from './MouseTools';
 import { PlotRef } from '../types/plots';
 import { ToImgopts } from 'plotly.js';
+import Spinner from '../components/Spinner';
+import NoDataOverlay from '../components/NoDataOverlay';
+import { LatLngBounds } from 'leaflet';
 
 const { BaseLayer } = LayersControl;
 
@@ -31,33 +39,39 @@ export const baseLayers = {
     attribution:
       'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012',
   },
+  // change config
   Terrain: {
     url:
       'https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.{ext}',
     attribution:
-      'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     subdomains: 'abcd',
-    // minZoom='0'
-    // maxZoom='18'
-    // ext='png'
+    minZoom: 0,
+    maxZoom: 18,
+    ext: 'png',
   },
   Satellite: {
     url:
       'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
     attribution:
       'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
-    // DKDK testing worldmap issue - with bounds props, message like 'map data not yet availalbe' is not shown
+    // testing worldmap issue - with bounds props, message like 'map data not yet availalbe' is not shown
     bounds: [
       [-90, -180],
       [90, 180],
     ],
     noWrap: true,
   },
+  // change layer as previous one does not work
   Light: {
-    url: 'http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png',
+    url:
+      'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}{r}.{ext}',
     attribution:
-      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    // maxZoom='18'
+      'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    subdomains: 'abcd',
+    minZoom: 0,
+    maxZoom: 20,
+    ext: 'png',
   },
   Dark: {
     url:
@@ -101,7 +115,7 @@ export interface MapVEuMapProps {
 
   markers: ReactElement<BoundsDriftMarkerProps>[];
   recenterMarkers?: boolean;
-  //DKDK add this for closing sidebar at MapVEuMap: passing setSidebarCollapsed()
+  // closing sidebar at MapVEuMap: passing setSidebarCollapsed()
   sidebarOnClose?: (value: React.SetStateAction<boolean>) => void;
   animation: {
     method: string;
@@ -127,6 +141,14 @@ export interface MapVEuMapProps {
   baseLayer?: BaseLayerChoice;
   /** Callback for when the base layer has changed */
   onBaseLayerChanged?: (newBaseLayer: BaseLayerChoice) => void;
+  /** Whether to zoom and pan map to center on markers */
+  flyToMarkers?: boolean;
+  /** How long (in ms) after rendering to wait before flying to markers */
+  flyToMarkersDelay?: number;
+  /** Whether to show a loading spinner */
+  showSpinner?: boolean;
+  /** Whether to show the "No data" overlay */
+  showNoDataOverlay?: boolean;
 }
 
 function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
@@ -144,6 +166,10 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     showMouseToolbar,
     baseLayer,
     onBaseLayerChanged,
+    flyToMarkers,
+    flyToMarkersDelay,
+    showSpinner,
+    showNoDataOverlay,
   } = props;
 
   // this is the React Map component's onViewPortChanged handler
@@ -206,6 +232,65 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     [screenshotter]
   );
 
+  const markersBounds: MapVEuBounds | null = useMemo(() => {
+    if (markers) {
+      let [minLat, maxLat, minLng, maxLng] = [90, -90, 180, -180];
+
+      for (const marker of markers) {
+        const bounds = marker.props.bounds;
+        const ne = bounds.northEast;
+        const sw = bounds.southWest;
+
+        if (ne.lat > maxLat) maxLat = ne.lat;
+        if (ne.lat < minLat) minLat = ne.lat;
+
+        if (ne.lng > maxLng) maxLng = ne.lng;
+        if (ne.lng < minLng) minLng = ne.lng;
+
+        if (sw.lat > maxLat) maxLat = sw.lat;
+        if (sw.lat < minLat) minLat = sw.lat;
+
+        if (sw.lng > maxLng) maxLng = sw.lng;
+        if (sw.lng < minLng) minLng = sw.lng;
+      }
+
+      return {
+        southWest: { lat: minLat, lng: minLng },
+        northEast: { lat: maxLat, lng: maxLng },
+      };
+    } else {
+      return null;
+    }
+  }, [markers]);
+
+  const performFlyToMarkers = useCallback(() => {
+    if (markersBounds) {
+      const ne = markersBounds.northEast;
+      const sw = markersBounds.southWest;
+
+      const bufferFactor = 0.1;
+      const latBuffer = (ne.lat - sw.lat) * bufferFactor;
+      const lngBuffer = (ne.lng - sw.lng) * bufferFactor;
+
+      const boundingBox = new LatLngBounds([
+        [sw.lat - latBuffer, sw.lng - lngBuffer],
+        [ne.lat + latBuffer, ne.lng + lngBuffer],
+      ]);
+
+      mapRef.current?.leafletElement?.fitBounds(boundingBox);
+    }
+  }, [markersBounds, mapRef]);
+
+  useEffect(() => {
+    const asyncEffect = async () => {
+      if (flyToMarkersDelay)
+        await new Promise((resolve) => setTimeout(resolve, flyToMarkersDelay));
+      performFlyToMarkers();
+    };
+
+    if (flyToMarkers && markers.length > 0) asyncEffect();
+  }, [markers, flyToMarkers, flyToMarkersDelay, performFlyToMarkers]);
+
   const finalMarkers = useMemo(() => {
     if (mouseMode === 'magnification' && !isDragging)
       return markers.map((marker) => cloneElement(marker, { showPopup: true }));
@@ -218,8 +303,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       style={{ height, width }}
       onViewportChanged={onViewportChanged}
       className={mouseMode === 'magnification' ? 'cursor-zoom-in' : ''}
-      // DKDK testing worldmap issue: minZomm needs to be 2 (FHD) or 3 (4K): set to be 2
-      minZoom={2}
+      minZoom={1}
       worldCopyJump={false}
       ondragstart={() => setIsDragging(true)}
       ondragend={() => setIsDragging(false)}
@@ -259,6 +343,9 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
           </BaseLayer>
         ))}
       </LayersControl>
+
+      {showSpinner && <Spinner />}
+      {showNoDataOverlay && <NoDataOverlay opacity={0.9} />}
     </Map>
   );
 }
