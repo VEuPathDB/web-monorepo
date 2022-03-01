@@ -1349,9 +1349,9 @@
     react-table "^7.7.0"
 
 "@veupathdb/eda@^1.6.2":
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.7.0.tgz#0dfe8153e41a114b936cd741c8a4fd147da4d75f"
-  integrity sha512-x4FivFBqH0u/X//08/dP/fuZq+gjh5T/0gxHWHbF/UuDQtcNLRh2pbX+Lps51nBiNM7F6YjGDKzEJA8ZNSyGcw==
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.7.1.tgz#7bedacd4a5c7b2036b13ee0359adf836d8b37f90"
+  integrity sha512-ojmDWRrDw3Mz3ksRBxoxwD0eXiTUlr0CZvNW+0ooEu+Tdn/Gz3PVJMIFtxVunyQWRQ5fJq8Nddw93aRu71rD8Q==
   dependencies:
     "@emotion/react" "^11.4.1"
     "@emotion/styled" "^11.3.0"
