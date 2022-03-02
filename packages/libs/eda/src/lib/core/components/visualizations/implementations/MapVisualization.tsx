@@ -14,7 +14,11 @@ import MapVEuMap, {
 } from '@veupathdb/components/lib/map/MapVEuMap';
 import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map.json';
 import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/geohash';
-import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
+import {
+  BoundsViewport,
+  Bounds,
+  LatLng,
+} from '@veupathdb/components/lib/map/Types';
 import DonutMarker from '@veupathdb/components/lib/map/DonutMarker';
 import { BoundsDriftMarkerProps } from '@veupathdb/components/lib/map/BoundsDriftMarker';
 
@@ -94,10 +98,15 @@ const MapConfig = t.intersection([
   }),
 ]);
 
-type MarkerDataWithStatistics = {
-  markers: Array<ReactElement<BoundsDriftMarkerProps>>;
-  totalEntityCount: number;
-};
+type BasicMarkerData = {
+  geoAggregateValue: string;
+  entityCount: number;
+  position: LatLng;
+  bounds: Bounds;
+  isAtomic: boolean;
+}[];
+
+// type PieplotData (not the same as web-components pieplot data) TO DO
 
 function MapViz(props: VisualizationProps) {
   const {
@@ -165,7 +174,7 @@ function MapViz(props: VisualizationProps) {
     return [geoEntity, outputEntity ?? geoEntity];
   }, [entities, vizConfig.outputEntityId, vizConfig.geoEntityId]);
 
-  const data = usePromise<MarkerDataWithStatistics | undefined>(
+  const basicMarkerData = usePromise<BasicMarkerData | undefined>(
     useCallback(async () => {
       // check all required vizConfigs are provided
       if (
@@ -218,8 +227,7 @@ function MapViz(props: VisualizationProps) {
         requestParams
       );
 
-      // TO DO: find out if MarkerProps.id is obsolete
-      const markerElements = response.mapElements.map(
+      return response.mapElements.map(
         ({
           avgLat,
           avgLon,
@@ -231,37 +239,18 @@ function MapViz(props: VisualizationProps) {
           geoAggregateValue,
         }) => {
           const isAtomic = false; // TO DO: work with Danielle to get this info from back end
-          const data = [
-            {
-              label: 'unknown',
-              value: entityCount,
-              color: 'white',
+          return {
+            geoAggregateValue,
+            entityCount: entityCount,
+            position: { lat: avgLat, lng: avgLon },
+            bounds: {
+              southWest: { lat: minLat, lng: minLon },
+              northEast: { lat: maxLat, lng: maxLon },
             },
-          ];
-          return (
-            <DonutMarker
-              id={geoAggregateValue}
-              key={geoAggregateValue}
-              position={{ lat: avgLat, lng: avgLon }}
-              bounds={{
-                southWest: { lat: minLat, lng: minLon },
-                northEast: { lat: maxLat, lng: maxLon },
-              }}
-              data={data}
-              isAtomic={isAtomic}
-              duration={defaultAnimationDuration}
-            />
-          );
+            isAtomic,
+          };
         }
       );
-
-      return {
-        markers: markerElements,
-        totalEntityCount: sumBy(
-          response.mapElements,
-          (elem) => elem.entityCount
-        ),
-      };
     }, [
       studyId,
       filters,
@@ -289,6 +278,45 @@ function MapViz(props: VisualizationProps) {
   const pieConstraints = pieOverview.dataElementConstraints;
   const pieDependencyOrder = pieOverview.dataElementDependencyOrder;
 
+  /**
+   * Merge the pieplot data into the basicMarkerData, if available,
+   * and create markers.
+   */
+  const markers = useMemo(
+    () =>
+      basicMarkerData.value?.map((data) => {
+        return (
+          <DonutMarker
+            id={data.geoAggregateValue}
+            key={data.geoAggregateValue}
+            {...data}
+            data={[
+              {
+                label: 'unknown',
+                value: data.entityCount,
+                color: 'white',
+              },
+            ]}
+            duration={defaultAnimationDuration}
+          />
+        );
+      }),
+    [basicMarkerData]
+  );
+
+  const totalEntityCount = useMemo(
+    () =>
+      basicMarkerData.value == null
+        ? undefined
+        : sumBy(basicMarkerData.value, (elem) => elem.entityCount),
+    [basicMarkerData]
+  );
+
+  // TO DO: find out if MarkerProps.id is obsolete
+
+  /**
+   * Now render the visualization
+   */
   const [height, width] = [600, 1000];
   const { latitude, longitude, zoomLevel } = vizConfig.mapCenterAndZoom;
 
@@ -297,7 +325,7 @@ function MapViz(props: VisualizationProps) {
     updateThumbnail,
     { height, width },
     // The dependencies for needing to generate a new thumbnail
-    [data.value, latitude, longitude, zoomLevel, vizConfig.baseLayer]
+    [markers, latitude, longitude, zoomLevel, vizConfig.baseLayer]
   );
 
   const plotNode = (
@@ -305,7 +333,7 @@ function MapViz(props: VisualizationProps) {
       viewport={{ center: [latitude, longitude], zoom: zoomLevel }}
       onViewportChanged={handleViewportChanged}
       onBoundsChanged={setBoundsZoomLevel}
-      markers={data.value?.markers ?? []}
+      markers={markers ?? []}
       animation={defaultAnimation}
       height={height}
       width={width}
@@ -317,15 +345,15 @@ function MapViz(props: VisualizationProps) {
         updateVizConfig({ baseLayer: newBaseLayer })
       }
       flyToMarkers={
-        data.value?.markers &&
-        data.value?.markers.length > 0 &&
+        markers &&
+        markers.length > 0 &&
         _.isEqual(
           vizConfig.mapCenterAndZoom,
           createDefaultConfig().mapCenterAndZoom
         )
       }
       flyToMarkersDelay={500}
-      showSpinner={data.pending}
+      showSpinner={basicMarkerData.pending}
     />
   );
 
@@ -436,13 +464,10 @@ function MapViz(props: VisualizationProps) {
       </div>
 
       <PluginError
-        error={data.error}
-        outputSize={data.value?.totalEntityCount}
+        error={basicMarkerData.error}
+        outputSize={totalEntityCount}
       />
-      <OutputEntityTitle
-        entity={outputEntity}
-        outputSize={data.value?.totalEntityCount}
-      />
+      <OutputEntityTitle entity={outputEntity} outputSize={totalEntityCount} />
       <PlotLayout
         isFaceted={false}
         legendNode={null}
