@@ -24,7 +24,7 @@ Then, optionally add the following `script` entries to `package.json` in your re
       "build": "veupathdb-react-scripts build",
       "test": "veupathdb-react-scripts test",  
       "eject": "veupathdb-react-scripts eject",
-      "compile": "vepoathdb-react-scripts compile",
+      "compile": "veupathdb-react-scripts compile",
       "copy-assets": "veupathdb-react-scripts copy-assets",
       "prepare-npm": "veupathdb-react-scripts prepare"
     }
