@@ -12,9 +12,9 @@ import {
   UserDatasetDetailController,
 } from '@veupathdb/wdk-client/lib/Controllers';
 
-import * as userDatasetDetail from '@veupathdb/wdk-client/lib/StoreModules/UserDatasetDetailStoreModule';
-import * as userDatasetList from '@veupathdb/wdk-client/lib/StoreModules/UserDatasetListStoreModule';
-import * as userDatasetUpload from '@veupathdb/wdk-client/lib/StoreModules/UserDatasetUploadStoreModule';
+import * as userDatasetDetail from './lib/StoreModules/UserDatasetDetailStoreModule';
+import * as userDatasetList from './lib/StoreModules/UserDatasetListStoreModule';
+import * as userDatasetUpload from './lib/StoreModules/UserDatasetUploadStoreModule';
 
 import UserDatasetsWorkspace from '@veupathdb/wdk-client/lib/Views/UserDatasets/UserDatasetsWorkspace';
 
