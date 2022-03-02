@@ -5,7 +5,7 @@ import {
 } from '../VisualizationTypes';
 import map from './selectorIcons/map.svg';
 import * as t from 'io-ts';
-import _ from 'lodash';
+import { isEqual, zip } from 'lodash';
 
 // map component related imports
 import MapVEuMap, {
@@ -30,7 +30,10 @@ import { PlotLayout } from '../../layouts/PlotLayout';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { useMemo, useCallback, useState, ReactElement } from 'react';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import DataClient, { MapMarkersRequestParams } from '../../../api/DataClient';
+import DataClient, {
+  MapMarkersRequestParams,
+  PieplotRequestParams,
+} from '../../../api/DataClient';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { usePromise } from '../../../hooks/promise';
 import { filtersFromBoundingBox } from '../../../utils/visualization';
@@ -106,7 +109,7 @@ type BasicMarkerData = {
   isAtomic: boolean;
 }[];
 
-// type PieplotData (not the same as web-components pieplot data) TO DO
+type PieplotData = Record<string, { label: string[]; value: number[] }>;
 
 function MapViz(props: VisualizationProps) {
   const {
@@ -174,50 +177,78 @@ function MapViz(props: VisualizationProps) {
     return [geoEntity, outputEntity ?? geoEntity];
   }, [entities, vizConfig.outputEntityId, vizConfig.geoEntityId]);
 
+  // prepare some info that the map-markers and pieplot requests both need
+  const {
+    latitudeVariable,
+    longitudeVariable,
+    geoAggregateVariable,
+    filtersPlusBoundsFilter,
+  } = useMemo(() => {
+    if (
+      boundsZoomLevel == null ||
+      geoConfig == null ||
+      vizConfig.geoEntityId == null
+    )
+      return {};
+
+    const latitudeVariable = {
+      entityId: vizConfig.geoEntityId,
+      variableId: geoConfig.latitudeVariableId,
+    };
+    const longitudeVariable = {
+      entityId: vizConfig.geoEntityId,
+      variableId: geoConfig.longitudeVariableId,
+    };
+    const geoAggregateVariable = {
+      entityId: vizConfig.geoEntityId,
+      variableId:
+        geoConfig.aggregationVariableIds[
+          geoConfig.zoomLevelToAggregationLevel(boundsZoomLevel.zoomLevel) - 1
+        ],
+    };
+
+    const boundsFilters = filtersFromBoundingBox(
+      boundsZoomLevel.bounds,
+      latitudeVariable,
+      longitudeVariable
+    );
+
+    return {
+      latitudeVariable,
+      longitudeVariable,
+      geoAggregateVariable,
+      filtersPlusBoundsFilter: filters
+        ? [...filters, ...boundsFilters]
+        : boundsFilters,
+    };
+  }, [filters, boundsZoomLevel, vizConfig.geoEntityId, geoConfig]);
+
+  const outputEntityId = vizConfig.outputEntityId ?? vizConfig.geoEntityId;
+
   const basicMarkerData = usePromise<BasicMarkerData | undefined>(
     useCallback(async () => {
       // check all required vizConfigs are provided
       if (
         boundsZoomLevel == null ||
         vizConfig.geoEntityId == null ||
-        geoConfig == null
+        geoConfig == null ||
+        filtersPlusBoundsFilter == null ||
+        latitudeVariable == null ||
+        longitudeVariable == null ||
+        geoAggregateVariable == null ||
+        outputEntityId == null
       )
         return undefined;
 
-      const { bounds, zoomLevel } = boundsZoomLevel;
-      const geoEntityId = vizConfig.geoEntityId;
-      const outputEntityId = vizConfig.outputEntityId ?? geoEntityId;
-
       // now prepare the rest of the request params
-      const latitudeVariable = {
-        entityId: geoEntityId,
-        variableId: geoConfig.latitudeVariableId,
-      };
-      const longitudeVariable = {
-        entityId: geoEntityId,
-        variableId: geoConfig.longitudeVariableId,
-      };
-      const boundsFilters = filtersFromBoundingBox(
-        // this will need to be memoized outside this usePromise for re-use in pie/histogram requests
-        bounds,
-        latitudeVariable,
-        longitudeVariable
-      );
-
       const requestParams: MapMarkersRequestParams = {
         studyId,
-        filters: filters ? [...filters, ...boundsFilters] : boundsFilters,
+        filters: filtersPlusBoundsFilter,
         config: {
           outputEntityId: outputEntityId,
-          geoAggregateVariable: {
-            entityId: geoEntityId,
-            variableId:
-              geoConfig.aggregationVariableIds[
-                geoConfig.zoomLevelToAggregationLevel(zoomLevel) - 1
-              ],
-          },
-          latitudeVariable: latitudeVariable,
-          longitudeVariable: longitudeVariable,
+          geoAggregateVariable,
+          latitudeVariable,
+          longitudeVariable,
         },
       };
 
@@ -270,6 +301,56 @@ function MapViz(props: VisualizationProps) {
    * Now we deal with the optional second request to pieplot
    */
 
+  const pieplotData = usePromise<PieplotData | undefined>(
+    useCallback(async () => {
+      // check all required vizConfigs are provided
+      if (
+        boundsZoomLevel == null ||
+        vizConfig.xAxisVariable == null ||
+        filtersPlusBoundsFilter == null ||
+        geoAggregateVariable == null ||
+        outputEntityId == null
+      )
+        return undefined;
+
+      // prepare request
+      const requestParams: PieplotRequestParams = {
+        studyId,
+        filters: filtersPlusBoundsFilter,
+        config: {
+          outputEntityId: outputEntityId,
+          xAxisVariable: vizConfig.xAxisVariable,
+          facetVariable: [geoAggregateVariable],
+          showMissingness: 'FALSE',
+        },
+      };
+
+      // send request
+      const response = await dataClient.getPieplot(
+        computation.descriptor.type,
+        requestParams
+      );
+
+      // process response and return a map of "geoAgg key" => donut labels and counts
+      return response.barplot.data.reduce(
+        // KNOWN TYPO IN BACK END (should be pieplot)
+        (map, { facetVariableDetails, label, value }) => {
+          if (facetVariableDetails != null && facetVariableDetails.length === 1)
+            map[facetVariableDetails[0].value] = { label, value };
+          return map;
+        },
+        {} as PieplotData
+      );
+    }, [
+      studyId,
+      filtersPlusBoundsFilter,
+      dataClient,
+      vizConfig.xAxisVariable,
+      boundsZoomLevel,
+      computation.descriptor.type,
+    ])
+  );
+
   const pieOverview = otherVizOverviews.find(
     (overview) => overview.name === 'pieplot'
   );
@@ -284,24 +365,39 @@ function MapViz(props: VisualizationProps) {
    */
   const markers = useMemo(
     () =>
-      basicMarkerData.value?.map((data) => {
-        return (
-          <DonutMarker
-            id={data.geoAggregateValue}
-            key={data.geoAggregateValue}
-            {...data}
-            data={[
-              {
-                label: 'unknown',
-                value: data.entityCount,
-                color: 'white',
-              },
-            ]}
-            duration={defaultAnimationDuration}
-          />
-        );
-      }),
-    [basicMarkerData]
+      basicMarkerData.value?.map(
+        ({ geoAggregateValue, entityCount, bounds, position }) => {
+          const donutData =
+            pieplotData.value != null &&
+            pieplotData.value[geoAggregateValue] != null
+              ? (zip(
+                  pieplotData.value[geoAggregateValue].label,
+                  pieplotData.value[geoAggregateValue].value
+                ).map(([label, value]) => ({ label, value })) as {
+                  label: string;
+                  value: number;
+                }[])
+              : [
+                  {
+                    label: 'unknown',
+                    value: entityCount,
+                    color: 'white',
+                  },
+                ];
+
+          return (
+            <DonutMarker
+              id={geoAggregateValue}
+              key={geoAggregateValue}
+              bounds={bounds}
+              position={position}
+              data={donutData}
+              duration={defaultAnimationDuration}
+            />
+          );
+        }
+      ),
+    [basicMarkerData.value, pieplotData.value]
   );
 
   const totalEntityCount = useMemo(
@@ -347,13 +443,13 @@ function MapViz(props: VisualizationProps) {
       flyToMarkers={
         markers &&
         markers.length > 0 &&
-        _.isEqual(
+        isEqual(
           vizConfig.mapCenterAndZoom,
           createDefaultConfig().mapCenterAndZoom
         )
       }
       flyToMarkersDelay={500}
-      showSpinner={basicMarkerData.pending}
+      showSpinner={basicMarkerData.pending || pieplotData.pending}
     />
   );
 
