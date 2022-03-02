@@ -2,6 +2,10 @@
   "name": "web-user-datasets",
   "version": "0.1.0",
   "private": true,
+  "files": [
+    "lib",
+    "src/lib"
+  ],
   "dependencies": {
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
