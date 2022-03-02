@@ -303,6 +303,7 @@ export function AllAnalyses(props: Props) {
                 );
                 if (answer) {
                   deleteAnalyses(selectedAnalyses);
+                  setSelectedAnalyses(new Set());
                 }
               }}
               disabled={selectedAnalyses.size === 0}
