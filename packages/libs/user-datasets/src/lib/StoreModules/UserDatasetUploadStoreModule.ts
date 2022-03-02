@@ -25,11 +25,11 @@ export type State = {
 export function reduce(state: State = {}, action: Action): State {
   switch(action.type) {
     case receiveBadUpload.type:
-      return { ... state, badUploadMessage: action.payload.message};
+      return { ...state, badUploadMessage: action.payload.message};
     case receiveUploadMessages.type:
-      return { ... state, uploads: action.payload.uploads};
+      return { ...state, uploads: action.payload.uploads};
     case receiveBadUploadHistoryAction.type:
-      return { ... state, badAllUploadsActionMessage: action.payload.message};
+      return { ...state, badAllUploadsActionMessage: action.payload.message};
     default:
       return state;
   }

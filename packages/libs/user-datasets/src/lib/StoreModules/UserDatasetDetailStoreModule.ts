@@ -120,11 +120,9 @@ export function reduce(state: State = initialState, action: Action): State {
       removalError: action.payload.error
     };
 
-    case SHARING_SUCCESS: {
-      return {
-        ...state,
-        userDatasetsById: sharingReducer(state.userDatasetsById, action)
-      }
+    case SHARING_SUCCESS: return {
+      ...state,
+      userDatasetsById: sharingReducer(state.userDatasetsById, action)
     };
 
     default:

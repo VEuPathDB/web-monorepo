@@ -106,10 +106,10 @@ export function reduce(state: State = initialState, action: Action): State {
 
     case PROJECT_FILTER: {
       if (state.status === 'complete') {
-        return <CompleteState> {
+        return {
           ...state,
           filterByProject: action.payload.filterByProject
-        }
+        } as CompleteState
       }
       return state;
     }
