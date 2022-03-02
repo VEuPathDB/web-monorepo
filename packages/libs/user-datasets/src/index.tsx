@@ -2,14 +2,26 @@ import './globals';
 import React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
-import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
+import { RouteEntry, parseQueryString } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import Header from './Header';
 import Home from './Home';
 import { endpoint, rootElement, rootUrl } from './constants';
 import reportWebVitals from './reportWebVitals';
 
+import {
+  UserDatasetDetailController,
+} from '@veupathdb/wdk-client/lib/Controllers';
+
+import * as userDatasetDetail from '@veupathdb/wdk-client/lib/StoreModules/UserDatasetDetailStoreModule';
+import * as userDatasetList from '@veupathdb/wdk-client/lib/StoreModules/UserDatasetListStoreModule';
+import * as userDatasetUpload from '@veupathdb/wdk-client/lib/StoreModules/UserDatasetUploadStoreModule';
+
+import UserDatasetsWorkspace from '@veupathdb/wdk-client/lib/Views/UserDatasets/UserDatasetsWorkspace';
+
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
+
+type WdkStoreModules = typeof import('@veupathdb/wdk-client/lib/StoreModules').default;
 
 initialize({
   rootUrl,
@@ -19,12 +31,41 @@ initialize({
       path: '/',
       component: (props: RouteComponentProps<void>) => <Home />,
     },
+    {
+      path: '/workspace/datasets/:id(\\d+)',
+      requiresLogin: true,
+      component: (props: RouteComponentProps<{ id: string }>) => {
+        // FIXME Remove this requirement from the component by updating action creators
+        const rootUrl = window.location.href.substring(
+          0,
+          window.location.href.indexOf(`/app${props.location.pathname}`)
+        );
+        return (
+          <UserDatasetDetailController
+            {...props.match.params}
+            rootUrl={rootUrl}
+          />
+        );
+      }
+    },
+    {
+      path: '/workspace/datasets',
+      exact: false,
+      requiresLogin: false, // uses custom guest views
+      component: (props: RouteComponentProps<{}>) => < UserDatasetsWorkspace rootPath={props.match.path} urlParams={parseQueryString(props)}/>
+    },
     ...routes,
   ],
   componentWrappers: {
     SiteHeader: () => Header,
   },
   endpoint,
+  wrapStoreModules: (storeModules: WdkStoreModules) => ({
+    ...storeModules,
+    userDatasetDetail,
+    userDatasetList,
+    userDatasetUpload,
+  })
 } as any);
 
 // If you want to start measuring performance in your app, pass a function
