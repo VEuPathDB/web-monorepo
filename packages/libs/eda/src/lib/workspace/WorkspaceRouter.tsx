@@ -1,11 +1,12 @@
 import { createTheme, ThemeProvider } from '@material-ui/core';
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Route,
   RouteComponentProps,
   Switch,
   useRouteMatch,
   Redirect,
+  useHistory,
 } from 'react-router';
 import { Documentation } from '../core/components/docs/Documentation';
 import { DocumentationContainer } from '../core/components/docs/DocumentationContainer';
@@ -56,6 +57,82 @@ export function WorkspaceRouter({
   const { path, url } = useRouteMatch();
   const subsettingClient = useConfiguredSubsettingClient(subsettingServiceUrl);
   const analysisClient = useConfiguredAnalysisClient(userServiceUrl);
+
+  const history = useHistory();
+  const [locationKeys, setLocationKeys] = useState<string[]>([]);
+  const pathnamesRef = useRef([history.location.pathname]);
+  const pathnamesCursorRef = useRef(0);
+
+  useEffect(() => {
+    return history.listen((location) => {
+      console.log(history.action);
+      console.log('before updates');
+      console.log({
+        locationKeys,
+        pathnamesRef: pathnamesRef.current,
+        pathnamesCursorRef: pathnamesCursorRef.current,
+      });
+
+      if (history.action === 'PUSH') {
+        setLocationKeys([location.key!]);
+        pathnamesRef.current = pathnamesRef.current
+          .slice(0, pathnamesCursorRef.current + 1)
+          .concat(location.pathname);
+        pathnamesCursorRef.current++;
+      } else if (history.action === 'POP') {
+        if (locationKeys.length > 0) {
+          if (locationKeys[1] === location.key) {
+            console.log('forward');
+            setLocationKeys(([_, ...keys]) => keys);
+
+            // Handle forward event
+            if (pathnamesCursorRef.current + 1 < pathnamesRef.current.length)
+              pathnamesCursorRef.current++;
+          } else {
+            console.log('back');
+            setLocationKeys((keys) => [location.key!, ...keys]);
+
+            // Handle back event
+            if (pathnamesCursorRef.current > 0) {
+              pathnamesCursorRef.current--;
+              const lastPathname =
+                pathnamesRef.current[pathnamesCursorRef.current + 1];
+              const newAnalysisRegex = /eda\/.*\/new\/.*/;
+              const savedAnalysisRegex = /eda\/[^/]*\/(?!new\/)([^/]*)\/.*/;
+              const savedAnalysisMatch = lastPathname.match(savedAnalysisRegex);
+
+              if (
+                savedAnalysisMatch &&
+                newAnalysisRegex.test(location.pathname)
+              ) {
+                console.log('back to new analysis from saved analysis!');
+                const oldAnalysisId = savedAnalysisMatch[1];
+                const newPathname = location.pathname.replace(
+                  'new',
+                  oldAnalysisId
+                );
+                console.log({ newPathname });
+                pathnamesRef.current[pathnamesCursorRef.current] = newPathname;
+                console.log({ newPathnamesRef: pathnamesRef.current });
+                history.replace(newPathname);
+                console.log('after history.replace()');
+              }
+            }
+          }
+        }
+      } else if (history.action === 'REPLACE') {
+        console.log('performing REPLACE action');
+        pathnamesRef.current[pathnamesCursorRef.current] = location.pathname;
+      }
+
+      console.log('after updates');
+      console.log({
+        locationKeys,
+        pathnamesRef: pathnamesRef.current,
+        pathnamesCursorRef: pathnamesCursorRef.current,
+      });
+    });
+  }, [locationKeys, history]);
 
   return (
     <ThemeProvider theme={theme}>

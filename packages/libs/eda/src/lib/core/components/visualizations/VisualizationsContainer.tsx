@@ -39,18 +39,6 @@ import { GeoConfig } from '../../types/geoConfig';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
-// Doesn't seem to work
-const ScrolledLink = ({
-  scrollTo,
-  ...linkProps
-}: ComponentProps<typeof Link> & { scrollTo: [number, number] }) => {
-  useEffect(() => {
-    window.scrollTo(scrollTo);
-  }, [scrollTo]);
-
-  return <Link {...linkProps} />;
-};
-
 interface Props {
   computation: Computation;
   updateVisualizations: (
@@ -106,7 +94,10 @@ function ConfiguredVisualizations(props: Props) {
 
   return (
     <Grid>
-      <Link replace to={`${url}/new`} className={cx('-NewVisualization')}>
+      <Link
+        to={{ pathname: `${url}/new`, state: { scrollToTop: false } }}
+        className={cx('-NewVisualization')}
+      >
         <i className="fa fa-plus"></i>
         New visualization
       </Link>
@@ -160,9 +151,11 @@ function ConfiguredVisualizations(props: Props) {
                 </div>
                 {/* add the Link of thumbnail box here to avoid click conflict with icons */}
                 <>
-                  <ScrolledLink
-                    to={`${url}/${viz.visualizationId}`}
-                    scrollTo={[window.scrollX, window.scrollY]}
+                  <Link
+                    to={{
+                      pathname: `${url}/${viz.visualizationId}`,
+                      state: { scrollToTop: false },
+                    }}
                   >
                     {viz.descriptor.thumbnail ? (
                       <img
@@ -182,7 +175,7 @@ function ConfiguredVisualizations(props: Props) {
                           .currentPlotFilters as Filter[]
                       }
                     />
-                  </ScrolledLink>
+                  </Link>
                 </>
               </div>
               <div className={cx('-ConfiguredVisualizationTitle')}>
@@ -399,7 +392,12 @@ function FullScreenVisualization(props: Props & { id: string }) {
           </Tooltip>
         </div>
         <Tooltip title="Minimize visualization">
-          <Link replace to={`../${computationId}`}>
+          <Link
+            to={{
+              pathname: `../${computationId}`,
+              state: { scrollToTop: false },
+            }}
+          >
             <i className="fa fa-window-minimize"></i>
           </Link>
         </Tooltip>
