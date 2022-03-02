@@ -93,11 +93,11 @@ export function AllAnalyses(props: Props) {
   const location = useLocation();
   const classes = useStyles();
 
-  const queryParams = new URLSearchParams(location.search);
   const searchText = useMemo(() => {
+    const queryParams = new URLSearchParams(location.search);
     const searchParam = queryParams.get('s') ?? '';
     return stripHTML(searchParam); // matches stripHTML(dataset.displayName) below
-  }, [queryParams]);
+  }, [location.search]);
 
   const debouncedSearchText = useDebounce(searchText, 250);
 
