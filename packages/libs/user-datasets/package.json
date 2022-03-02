@@ -2,6 +2,9 @@
   "name": "web-user-datasets",
   "version": "0.1.0",
   "private": true,
+  "sideEffects": [
+    "*.scss"
+  ],
   "files": [
     "lib",
     "src/lib"
