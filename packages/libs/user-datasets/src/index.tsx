@@ -8,9 +8,7 @@ import Home from './Home';
 import { endpoint, rootElement, rootUrl } from './constants';
 import reportWebVitals from './reportWebVitals';
 
-import {
-  UserDatasetDetailController,
-} from '@veupathdb/wdk-client/lib/Controllers';
+import UserDatasetDetailController from './lib/Controllers/UserDatasetDetailController';
 
 import * as userDatasetDetail from './lib/StoreModules/UserDatasetDetailStoreModule';
 import * as userDatasetList from './lib/StoreModules/UserDatasetListStoreModule';
