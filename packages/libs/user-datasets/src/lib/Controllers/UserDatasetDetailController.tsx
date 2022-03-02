@@ -137,7 +137,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       config,
       isOwner,
       rootUrl,
-      location,
+      location: window.location,
       updateError,
       removeUserDataset,
       quotaSize,
