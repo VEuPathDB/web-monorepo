@@ -1,0 +1,84 @@
+{
+  "name": "web-user-datasets",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "5.0.0"
+  },
+  "scripts": {
+    "start": "veupathdb-react-scripts start",
+    "build": "veupathdb-react-scripts build",
+    "test": "veupathdb-react-scripts test",
+    "eject": "veupathdb-react-scripts eject",
+    "compile": "vepoathdb-react-scripts compile",
+    "copy-assets": "veupathdb-react-scripts copy-assets",
+    "build-npm-modules": "veupathdb-react-scripts prepare"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@veupathdb"
+    ]
+  },
+  "browserslist": [
+    "extends @veupathdb/browserslist-config"
+  ],
+  "devDependencies": {
+    "@babel/core": "^7.16.0",
+    "@babel/plugin-syntax-flow": "^7.14.5",
+    "@babel/plugin-transform-react-jsx": "^7.14.9",
+    "@emotion/babel-preset-css-prop": "^11.2.0",
+    "@emotion/react": "^11.4.1",
+    "@emotion/styled": "^11.3.0",
+    "@emotion/utils": "^1.1.0",
+    "@testing-library/dom": "8.11.2",
+    "@testing-library/jest-dom": "5.16.1",
+    "@testing-library/react": "12.1.2",
+    "@testing-library/user-event": "13.5.0",
+    "@types/node": "^14.0.0",
+    "@types/react": "^17.0.38",
+    "@types/react-dom": "^17.0.11",
+    "@veupathdb/browserslist-config": "^1.0.0",
+    "@veupathdb/eslint-config": "^1.0.0",
+    "@veupathdb/prettier-config": "^1.0.0",
+    "@veupathdb/react-scripts": "^1.0.0",
+    "@veupathdb/tsconfig": "^1.0.0",
+    "@veupathdb/wdk-client": "^0.5.7",
+    "@veupathdb/web-common": "^0.2.10",
+    "assert": "^2.0.0",
+    "autoprefixer": "^10.0.2",
+    "bubleify": "^2.0.0",
+    "buffer": "^6.0.3",
+    "eslint": "^8.7.0",
+    "eslint-config-react-app": "^7.0.0",
+    "husky": ">=4",
+    "ify-loader": "^1.1.0",
+    "lint-staged": ">=10",
+    "path-browserify": "^1.0.1",
+    "postcss": "^8.1.0",
+    "prettier": "2.2.1",
+    "querystring-es3": "^0.2.1",
+    "react-router": "^5.2.0",
+    "read": "^1.0.7",
+    "sass": "^1.49.0",
+    "script-loader": "^0.7.2",
+    "set-cookie-parser": "^2.4.6",
+    "stream-browserify": "^3.0.0",
+    "typescript": "^4.5.4",
+    "web-vitals": "^0.2.4"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,css,scss,md}": "prettier --write"
+  },
+  "prettier": "@veupathdb/prettier-config",
+  "resolutions": {
+    "@veupathdb/**/react": "17",
+    "@veupathdb/**/react-dom": "17"
+  }
+}

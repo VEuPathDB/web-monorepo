@@ -1,0 +1,17 @@
+name: Compile Check
+
+on:
+  pull_request:
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - name: Check TypeScript compilation
+        run: |
+          yarn install
+          yarn tsc --noEmit
