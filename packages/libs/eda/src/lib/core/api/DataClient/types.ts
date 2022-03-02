@@ -411,7 +411,7 @@ export const TwoByTwoResponse = intersection([
   partial({
     statsTable: array(
       partial({
-        oddsratio: number, // TO DO: should these stats values really all be optional?
+        oddsratio: numberOrNull, // TO DO: should these stats values really all be optional?
         pvalue: union([number, string]),
         orInterval: string,
         rrInterval: string,
