@@ -399,11 +399,9 @@ function BarplotViz(props: VisualizationProps) {
                   .map((el: { label: string; data?: BarplotData }) => {
                     // faceted plot: here data.value is full data
                     // need to check whether el.data.series[index] exists
-                    return el.data?.series[index] == null
-                      ? false
-                      : el.data?.series[index].value.some(
-                          (el: number) => el != null
-                        );
+                    return el.data?.series[index]?.value.some(
+                      (el: number) => el != null
+                    );
                   })
                   .includes(true)
               ? true
