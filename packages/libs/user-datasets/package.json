@@ -71,7 +71,7 @@
     "buffer": "^6.0.3",
     "eslint": "^8.7.0",
     "eslint-config-react-app": "^7.0.0",
-    "husky": ">=4",
+    "husky": "^4.3.8",
     "ify-loader": "^1.1.0",
     "lint-staged": ">=10",
     "path-browserify": "^1.0.1",
