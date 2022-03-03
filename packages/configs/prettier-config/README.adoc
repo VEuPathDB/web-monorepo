@@ -19,5 +19,5 @@ or with yarn:
 Then, add the following to `package.json`:
 [source, json]
 ----
-    "prettier": "@veupathdb"/prettier-config
+    "prettier": "@veupathdb/prettier-config"
 ----
