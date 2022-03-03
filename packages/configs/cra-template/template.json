@@ -6,7 +6,7 @@
     },
     "peerDependencies": {
       "@veupathdb/wdk-client": ">=0.5.7",
-      "@veupathdb/web-common": "=>0.2.10"
+      "@veupathdb/web-common": ">=0.2.10"
     },
     "devDependencies": {
       "@babel/core": "^7.16.0",
