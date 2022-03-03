@@ -17,6 +17,7 @@ export function ComputationInstance(props: Props) {
     analysisState: { analysis, setComputations },
     totalCounts,
     filteredCounts,
+    geoConfigs,
     visualizationTypes,
   } = props;
 
@@ -59,6 +60,7 @@ export function ComputationInstance(props: Props) {
 
   return (
     <VisualizationsContainer
+      geoConfigs={geoConfigs}
       computation={computation}
       visualizationsOverview={computationAppOverview.visualizations}
       visualizationTypes={visualizationTypes}

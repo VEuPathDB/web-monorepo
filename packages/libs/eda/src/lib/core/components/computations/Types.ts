@@ -1,8 +1,8 @@
-import { string } from 'fp-ts';
 import React from 'react';
 import { AnalysisState } from '../../hooks/analysis';
 import { EntityCounts } from '../../hooks/entityCounts';
 import { PromiseHookState } from '../../hooks/promise';
+import { GeoConfig } from '../../types/geoConfig';
 import { Computation, ComputationAppOverview } from '../../types/visualization';
 import { VisualizationType } from '../visualizations/VisualizationTypes';
 
@@ -11,6 +11,7 @@ export interface ComputationProps {
   computationAppOverview: ComputationAppOverview;
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
+  geoConfigs: GeoConfig[];
 }
 
 export interface ComputationConfigProps extends ComputationProps {
