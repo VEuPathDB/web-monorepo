@@ -166,11 +166,6 @@ export function AnalysisPanel({
     }
   }, [location, routeBase]);
 
-  // useEffect(() => {
-  //   window.history.scrollRestoration = 'auto';
-  //   console.log('scroll restoration value set');
-  // });
-
   useSetDocumentTitle(
     analysis
       ? `${analysis?.displayName} - ${studyRecord.displayName}`
@@ -263,13 +258,11 @@ export function AnalysisPanel({
                 display: 'View study details',
                 route: `/details`,
                 exact: false,
-                // replace: true,
               },
               {
                 display: 'Browse and subset',
                 route: `/variables${lastVarPath}`,
                 exact: false,
-                // replace: true,
               },
               {
                 display: 'Visualize',
@@ -280,7 +273,6 @@ export function AnalysisPanel({
                   ? '/visualizations'
                   : `/visualizations${lastVizPath}`,
                 exact: false,
-                // replace: true,
               },
               // {
               //   display: 'Downloads',
