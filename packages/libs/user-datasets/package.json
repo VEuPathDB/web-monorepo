@@ -39,6 +39,10 @@
   "browserslist": [
     "extends @veupathdb/browserslist-config"
   ],
+  "peerDependencies": {
+    "@veupathdb/wdk-client": ">=0.5.7",
+    "@veupathdb/web-common": ">=0.2.10"
+  },
   "devDependencies": {
     "@babel/core": "^7.16.0",
     "@babel/plugin-syntax-flow": "^7.14.5",
