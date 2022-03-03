@@ -2,22 +2,26 @@ import React from 'react';
 
 import moment from 'moment';
 
-import { IconAlt as Icon, Loading, Modal, TextBox } from '@veupathdb/wdk-client/lib/Components';
+import {
+  IconAlt as Icon,
+  Loading,
+  Modal,
+  TextBox,
+} from '@veupathdb/wdk-client/lib/Components';
 import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import './UserDatasetSharingModal.scss';
 
-
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 class UserDatasetSharingModal extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {
       recipients: [],
       recipientInput: null,
       processing: false,
-      succeeded: null
+      succeeded: null,
     };
     this.renderShareItem = this.renderShareItem.bind(this);
     this.renderShareList = this.renderShareList.bind(this);
@@ -45,157 +49,186 @@ class UserDatasetSharingModal extends React.Component {
     this.renderSharingButtons = this.renderSharingButtons.bind(this);
   }
 
-  isMyDataset (dataset) {
+  isMyDataset(dataset) {
     const { user } = this.props;
     return dataset && dataset.ownerUserId && dataset.ownerUserId === user.id;
   }
 
-  handleTextChange (recipientInput = null) {
+  handleTextChange(recipientInput = null) {
     this.setState({ recipientInput });
   }
 
-  getDatasetNoun () {
-    return this.props.datasets.length === 1
-      ? 'this dataset'
-      : 'these datasets'
+  getDatasetNoun() {
+    return this.props.datasets.length === 1 ? 'this dataset' : 'these datasets';
   }
 
-  verifyRecipient (recipientEmail) {
+  verifyRecipient(recipientEmail) {
     if (typeof recipientEmail !== 'string' || !recipientEmail.length)
-      throw new TypeError(`verifyRecipient: bad email received (${recipientEmail})`);
+      throw new TypeError(
+        `verifyRecipient: bad email received (${recipientEmail})`
+      );
 
     const { rootUrl } = this.props;
 
     return fetch(`${rootUrl}/service/user-id-query`, {
       method: 'POST',
-      body: JSON.stringify({ emails: [ recipientEmail ]}),
+      body: JSON.stringify({ emails: [recipientEmail] }),
       headers: new Headers({ 'Content-Type': 'application/json' }),
-      credentials: 'include'
+      credentials: 'include',
     })
-      .then(response => response.json())
+      .then((response) => response.json())
       .then(({ results }) => {
         if (!Array.isArray(results))
-          throw new TypeError(`verifyRecipient: received malformed repsonse from service. [${results}]`);
+          throw new TypeError(
+            `verifyRecipient: received malformed repsonse from service. [${results}]`
+          );
 
-        const foundUsers = results.find(result => Object.keys(result).includes(recipientEmail));
+        const foundUsers = results.find((result) =>
+          Object.keys(result).includes(recipientEmail)
+        );
 
         if (!results.length || !foundUsers) {
-          return this.disqualifyRecipient(recipientEmail, (
+          return this.disqualifyRecipient(
+            recipientEmail,
             <span>
-              This email is not associated with a VEuPathDB account. <br/> <b>{recipientEmail}</b> will not receive {this.getDatasetNoun()}.
+              This email is not associated with a VEuPathDB account. <br />{' '}
+              <b>{recipientEmail}</b> will not receive {this.getDatasetNoun()}.
             </span>
-          ));
+          );
         }
 
         const uid = foundUsers[recipientEmail];
 
         if (uid === this.props.user.id) {
-          return this.disqualifyRecipient(recipientEmail, (
+          return this.disqualifyRecipient(
+            recipientEmail,
             <span>Sorry, you cannot share a dataset with yourself.</span>
-          ));
+          );
         } else {
           return this.acceptRecipient(recipientEmail, uid);
         }
-      }).catch(err => {
-        console.error(`verifyRecipient:  error checking if '${recipientEmail}' exists.`, err);
-        return this.disqualifyRecipient(recipientEmail, (
+      })
+      .catch((err) => {
+        console.error(
+          `verifyRecipient:  error checking if '${recipientEmail}' exists.`,
+          err
+        );
+        return this.disqualifyRecipient(
+          recipientEmail,
           <span>An unknown error occurred.</span>
-        ));
+        );
       });
   }
 
-  removeRecipient (recipient) {
+  removeRecipient(recipient) {
     const { email } = recipient;
     const { onClose } = this.props;
-    const recipients = [ ...this.state.recipients.filter(user => user.email !== email) ];
-    return recipients.length
-      ? this.setState({ recipients })
-      : onClose();
+    const recipients = [
+      ...this.state.recipients.filter((user) => user.email !== email),
+    ];
+    return recipients.length ? this.setState({ recipients }) : onClose();
   }
 
-  acceptRecipient (recipientEmail, id) {
+  acceptRecipient(recipientEmail, id) {
     const { recipients } = this.state;
     const acceptedRecipient = {
       id,
       verified: true,
       email: recipientEmail,
-      error: null
+      error: null,
     };
     this.setState({
-      recipients: recipients.map(recipient => {
+      recipients: recipients.map((recipient) => {
         return recipient.email === recipientEmail
           ? acceptedRecipient
-          : recipient
-      })
+          : recipient;
+      }),
     });
   }
 
-  disqualifyRecipient (recipientEmail, reason) {
+  disqualifyRecipient(recipientEmail, reason) {
     const { recipients } = this.state;
     const disqualifiedRecipient = {
       email: recipientEmail,
       verified: false,
-      error: reason
+      error: reason,
     };
     this.setState({
-      recipients: recipients.map(recipient => {
+      recipients: recipients.map((recipient) => {
         return recipient.email === recipientEmail
           ? disqualifiedRecipient
-          : recipient
-      })
+          : recipient;
+      }),
     });
   }
 
-  handleRecipientAdd () {
+  handleRecipientAdd() {
     const { recipientInput, recipients } = this.state;
     if (!isValidEmail(recipientInput))
       return alert('Please enter a valid email to share with.');
-    if (recipients.find(recipient => recipient.email.toLowerCase() === recipientInput.toLowerCase()))
+    if (
+      recipients.find(
+        (recipient) =>
+          recipient.email.toLowerCase() === recipientInput.toLowerCase()
+      )
+    )
       return alert('This email has already been entered.');
-    this.setState({
-      recipientInput: null,
-      recipients: [
-        ...recipients,
-        {
-          email: recipientInput,
-          verified: null,
-          id: null
-        }
-      ]
-    }, () => this.verifyRecipient(recipientInput));
-  }
-
-  renderEmptyState () {
-    return (
-      <i className="faded">This dataset hasn't been shared yet.</i>
+    this.setState(
+      {
+        recipientInput: null,
+        recipients: [
+          ...recipients,
+          {
+            email: recipientInput,
+            verified: null,
+            id: null,
+          },
+        ],
+      },
+      () => this.verifyRecipient(recipientInput)
     );
   }
 
-  unshareWithUser (datasetId, userId) {
-    if (!window.confirm('Are you sure you want to stop sharing this dataset with this user?')) return;
-    const { unshareUserDatasets } = this.props;
-    if (typeof unshareUserDatasets !== 'function')
-      throw new TypeError('UserDatasetSharingModal:unshareWithUser: expected unshareUserDatasets to be function. Got: ' + typeof unshareUserDatasets);
-    unshareUserDatasets([ datasetId ], [ userId ]);
+  renderEmptyState() {
+    return <i className="faded">This dataset hasn't been shared yet.</i>;
   }
 
-  renderShareItem (share, index, userDataset) {
+  unshareWithUser(datasetId, userId) {
+    if (
+      !window.confirm(
+        'Are you sure you want to stop sharing this dataset with this user?'
+      )
+    )
+      return;
+    const { unshareUserDatasets } = this.props;
+    if (typeof unshareUserDatasets !== 'function')
+      throw new TypeError(
+        'UserDatasetSharingModal:unshareWithUser: expected unshareUserDatasets to be function. Got: ' +
+          typeof unshareUserDatasets
+      );
+    unshareUserDatasets([datasetId], [userId]);
+  }
+
+  renderShareItem(share, index, userDataset) {
     const { user, time, userDisplayName } = share;
     return (
       <div key={index}>
-        <span className="faded">Shared with</span> <b>{userDisplayName}</b> {moment(time).fromNow()}
-        <a onClick={() => this.unshareWithUser(userDataset.id, user)}><Icon fa="times-circle unshareRecipient"/></a>
+        <span className="faded">Shared with</span> <b>{userDisplayName}</b>{' '}
+        {moment(time).fromNow()}
+        <a onClick={() => this.unshareWithUser(userDataset.id, user)}>
+          <Icon fa="times-circle unshareRecipient" />
+        </a>
       </div>
     );
   }
 
-  unselectDataset (dataset) {
+  unselectDataset(dataset) {
     const { deselectDataset } = this.props;
     if (typeof deselectDataset !== 'function') return;
     deselectDataset(dataset);
   }
 
-  renderDatasetItem (userDataset) {
+  renderDatasetItem(userDataset) {
     const { sharedWith, id, meta } = userDataset;
     const { name, summary } = meta;
     const isOwner = this.isMyDataset(userDataset);
@@ -205,98 +238,116 @@ class UserDatasetSharingModal extends React.Component {
     const ShareList = this.renderShareList;
 
     return (
-      <div key={id} className={'UserDatasetSharing-Dataset' + (isOwner ? '' : ' invalid')}>
-
+      <div
+        key={id}
+        className={'UserDatasetSharing-Dataset' + (isOwner ? '' : ' invalid')}
+      >
         <div className="UserDatasetSharing-Dataset-Icon">
           <Icon fa={isOwner ? 'table' : 'exclamation-circle danger'} />
         </div>
 
         <div className="UserDatasetSharing-Dataset-Details">
           <h3>{name}</h3>
-          {!isOwner
-            ? <i className="faded danger">This dataset has been shared with you. Only the owner can share it.</i>
-            : Array.isArray(sharedWith) && sharedWith.length
-              ? <ShareList userDataset={userDataset} />
-              : <EmptyState/>
-          }
+          {!isOwner ? (
+            <i className="faded danger">
+              This dataset has been shared with you. Only the owner can share
+              it.
+            </i>
+          ) : Array.isArray(sharedWith) && sharedWith.length ? (
+            <ShareList userDataset={userDataset} />
+          ) : (
+            <EmptyState />
+          )}
         </div>
 
         <div className="UserDatasetSharing-Dataset-Actions">
-          {typeof deselectDataset !== 'function'
-            ? null
-            : (
-              <a
-                title="Unselect this dataset for sharing"
-                onClick={() => this.unselectDataset(userDataset)}
-                className="removalLink">
-                <Icon fa="close"/>
-              </a>
-            )
-          }
+          {typeof deselectDataset !== 'function' ? null : (
+            <a
+              title="Unselect this dataset for sharing"
+              onClick={() => this.unselectDataset(userDataset)}
+              className="removalLink"
+            >
+              <Icon fa="close" />
+            </a>
+          )}
         </div>
-
       </div>
-    )
+    );
   }
 
-  renderRecipientItem (recipient, index) {
+  renderRecipientItem(recipient, index) {
     const { email, verified, id, error } = recipient;
     const invalid = verified === false;
-    const userIcon = verified === null
-      ? 'circle-o-notch fa-spin'
-      : verified
+    const userIcon =
+      verified === null
+        ? 'circle-o-notch fa-spin'
+        : verified
         ? 'user-circle'
         : 'user-times danger';
 
     return (
-      <div key={index} className={'UserDatasetSharing-Recipient' + (invalid ? ' invalid' : '')}>
+      <div
+        key={index}
+        className={'UserDatasetSharing-Recipient' + (invalid ? ' invalid' : '')}
+      >
         <div className="UserDatasetSharing-Recipient-Icon">
-          <Icon fa={userIcon}/>
+          <Icon fa={userIcon} />
         </div>
         <div className="UserDatasetSharing-Recipient-Details">
           <h3>{email}</h3>
-          {invalid
-            ? <span className="danger">{error}</span>
-            : `will receive ${this.getDatasetNoun()}`
-          }
+          {invalid ? (
+            <span className="danger">{error}</span>
+          ) : (
+            `will receive ${this.getDatasetNoun()}`
+          )}
         </div>
         <div className="UserDatasetSharing-Recipient-Actions">
-          <a onClick={() => this.removeRecipient(recipient)} title="Remove this recipient." className="removalLink">
-            <Icon fa="close"/>
+          <a
+            onClick={() => this.removeRecipient(recipient)}
+            title="Remove this recipient."
+            className="removalLink"
+          >
+            <Icon fa="close" />
           </a>
         </div>
       </div>
     );
   }
 
-  renderRecipientList ({ recipients }) {
-    return !Array.isArray(recipients) || !recipients.length
-      ? <p className="NoRecipients"><Icon fa="user-o"/> &nbsp; No recipients.</p>
-      : recipients.map(this.renderRecipientItem);
+  renderRecipientList({ recipients }) {
+    return !Array.isArray(recipients) || !recipients.length ? (
+      <p className="NoRecipients">
+        <Icon fa="user-o" /> &nbsp; No recipients.
+      </p>
+    ) : (
+      recipients.map(this.renderRecipientItem)
+    );
   }
 
-  renderShareList ({ userDataset }) {
+  renderShareList({ userDataset }) {
     const { sharedWith } = userDataset;
     return !Array.isArray(sharedWith) || !sharedWith.length
       ? null
-      : sharedWith.map((share, index) => this.renderShareItem(share, index, userDataset));
+      : sharedWith.map((share, index) =>
+          this.renderShareItem(share, index, userDataset)
+        );
   }
 
-  renderDatasetList ({ datasets }) {
+  renderDatasetList({ datasets }) {
     return !Array.isArray(datasets) || !datasets.length
       ? null
-      : datasets.map(this.renderDatasetItem)
+      : datasets.map(this.renderDatasetItem);
   }
 
-  isRecipientValid (recipient = {}) {
+  isRecipientValid(recipient = {}) {
     return recipient.verified && recipient.id !== this.props.user.id;
   }
 
-  isDatasetShareable (dataset = {}) {
+  isDatasetShareable(dataset = {}) {
     return dataset.ownerUserId === this.props.user.id;
   }
 
-  submitShare () {
+  submitShare() {
     const recipients = this.getValidRecipients();
     const datasets = this.getShareableDatasets();
     if (!datasets.length) return;
@@ -304,23 +355,30 @@ class UserDatasetSharingModal extends React.Component {
     const datasetIds = datasets.map(({ id }) => id);
 
     this.setState({ processing: true }, () => {
-      shareUserDatasets(datasets.map(({ id }) => id), recipients.map(({ id }) => id))
-        .then(response => {
+      shareUserDatasets(
+        datasets.map(({ id }) => id),
+        recipients.map(({ id }) => id)
+      )
+        .then((response) => {
           if (response.type !== 'user-datasets/sharing-success') throw response;
           this.setState({ processing: false, succeeded: true });
-        }).catch(err => {
-          console.error('submitShare: rejected', err)
+        })
+        .catch((err) => {
+          console.error('submitShare: rejected', err);
           this.setState({ processing: false, succeeded: false });
         });
     });
   }
 
-  renderRecipientForm () {
+  renderRecipientForm() {
     const { recipientInput } = this.state;
     const { handleTextChange, handleRecipientAdd } = this;
 
     return (
-      <form className="UserDatasetSharing-RecipientForm" onSubmit={e => e.preventDefault()}>
+      <form
+        className="UserDatasetSharing-RecipientForm"
+        onSubmit={(e) => e.preventDefault()}
+      >
         <TextBox
           placeholder="name@example.com"
           onChange={handleTextChange}
@@ -330,38 +388,44 @@ class UserDatasetSharingModal extends React.Component {
           className="btn slim btn-slim"
           title="Share with this email address"
           onClick={handleRecipientAdd}
-          type="submit">
-          <Icon fa="user-plus"/>
+          type="submit"
+        >
+          <Icon fa="user-plus" />
         </button>
       </form>
     );
   }
 
-  getValidRecipients () {
+  getValidRecipients() {
     const { recipients } = this.state;
     return recipients.filter(this.isRecipientValid);
   }
 
-  getShareableDatasets () {
+  getShareableDatasets() {
     const { datasets } = this.props;
     return datasets.filter(this.isDatasetShareable);
   }
 
-  renderSharingButtons () {
+  renderSharingButtons() {
     const { submitShare } = this;
     const datasets = this.getShareableDatasets();
     const recipients = this.getValidRecipients();
 
     return (
       <div className="UserDatasetSharing-Buttons">
-        <button className="btn btn-info" disabled={!recipients.length || !datasets.length} onClick={this.submitShare}>
-          Share Datasets with {recipients.length} user{recipients.length === 1 ? '' : 's'} <Icon fa="share right-side"/>
+        <button
+          className="btn btn-info"
+          disabled={!recipients.length || !datasets.length}
+          onClick={this.submitShare}
+        >
+          Share Datasets with {recipients.length} user
+          {recipients.length === 1 ? '' : 's'} <Icon fa="share right-side" />
         </button>
       </div>
     );
   }
 
-  renderViewContent () {
+  renderViewContent() {
     const { recipients, succeeded } = this.state;
     const { datasets, onClose } = this.props;
     const datasetNoun = this.getDatasetNoun();
@@ -370,62 +434,75 @@ class UserDatasetSharingModal extends React.Component {
     const RecipientList = this.renderRecipientList;
     const RecipientForm = this.renderRecipientForm;
     const SharingButtons = this.renderSharingButtons;
-    const CloseButton = () => <button className="btn" onClick={() => onClose()}>Close this window.</button>
+    const CloseButton = () => (
+      <button className="btn" onClick={() => onClose()}>
+        Close this window.
+      </button>
+    );
 
     switch (succeeded) {
       case true:
         return (
           <div className="UserDataset-SharingModal-StatusView">
-            <Icon fa="check-circle success"/>
+            <Icon fa="check-circle success" />
             <h2>Shared successfully.</h2>
-            <CloseButton/>
+            <CloseButton />
           </div>
         );
       case false:
         return (
           <div className="UserDataset-SharingModal-StatusView">
-            <Icon fa="times-circle danger"/>
+            <Icon fa="times-circle danger" />
             <h2>Error Sharing Datasets.</h2>
-            <p>An error occurred while sharing your datasets. Please try again.</p>
-            <CloseButton/>
+            <p>
+              An error occurred while sharing your datasets. Please try again.
+            </p>
+            <CloseButton />
           </div>
         );
       default:
         return (
           <div className="UserDataset-SharingModal-FormView">
             <div className="UserDataset-SharingModal-DatasetSection">
-              <h2 className="UserDatasetSharing-SectionName">Share {datasetNoun}:</h2>
-              <DatasetList datasets={datasets}/>
+              <h2 className="UserDatasetSharing-SectionName">
+                Share {datasetNoun}:
+              </h2>
+              <DatasetList datasets={datasets} />
             </div>
             <div className="UserDataset-SharingModal-RecipientSection">
-              <h2 className="UserDatasetSharing-SectionName">With The Following Collaborators:</h2>
-              <RecipientForm/>
-              <RecipientList recipients={recipients}/>
-              <SharingButtons/>
+              <h2 className="UserDatasetSharing-SectionName">
+                With The Following Collaborators:
+              </h2>
+              <RecipientForm />
+              <RecipientList recipients={recipients} />
+              <SharingButtons />
             </div>
           </div>
         );
     }
   }
 
-  render () {
+  render() {
     const { onClose } = this.props;
     const { processing } = this.state;
     const ViewContent = this.renderViewContent;
 
     return (
       <Modal className="UserDataset-SharingModal">
-        <div className="UserDataset-SharingModal-CloseBar" title="CLose this window">
+        <div
+          className="UserDataset-SharingModal-CloseBar"
+          title="CLose this window"
+        >
           <Icon
             fa="window-close"
             className="SharingModal-Close"
-            onClick={() => typeof onClose === 'function' ? onClose() : null}
+            onClick={() => (typeof onClose === 'function' ? onClose() : null)}
           />
         </div>
-        {processing ? <Loading/> : <ViewContent/>}
-        </Modal>
-    )
+        {processing ? <Loading /> : <ViewContent />}
+      </Modal>
+    );
   }
-};
+}
 
 export default wrappable(UserDatasetSharingModal);

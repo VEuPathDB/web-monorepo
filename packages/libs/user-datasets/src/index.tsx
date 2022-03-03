@@ -1,7 +1,10 @@
 import './globals';
 import { RouteComponentProps } from 'react-router';
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
-import { RouteEntry, parseQueryString } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
+import {
+  RouteEntry,
+  parseQueryString,
+} from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import Header from './Header';
 import Home from './Home';
 import { endpoint, rootElement, rootUrl } from './constants';
@@ -41,13 +44,18 @@ initialize({
             rootUrl={rootUrl}
           />
         );
-      }
+      },
     },
     {
       path: '/workspace/datasets',
       exact: false,
       requiresLogin: false, // uses custom guest views
-      component: (props: RouteComponentProps<{}>) => < UserDatasetsWorkspace rootPath={props.match.path} urlParams={parseQueryString(props)}/>
+      component: (props: RouteComponentProps<{}>) => (
+        <UserDatasetsWorkspace
+          rootPath={props.match.path}
+          urlParams={parseQueryString(props)}
+        />
+      ),
     },
     ...routes,
   ],
@@ -60,7 +68,7 @@ initialize({
     userDatasetDetail,
     userDatasetList,
     userDatasetUpload,
-  })
+  }),
 } as any);
 
 // If you want to start measuring performance in your app, pass a function

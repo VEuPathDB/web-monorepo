@@ -1,26 +1,33 @@
 import React from 'react';
 
-import moment from 'moment'
+import moment from 'moment';
 
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import SaveableTextEditor from '@veupathdb/wdk-client/lib/Components/InputControls/SaveableTextEditor';
 import Link from '@veupathdb/wdk-client/lib/Components/Link';
-import { AnchoredTooltip, Mesa, MesaState } from '@veupathdb/wdk-client/lib/Components/Mesa';
+import {
+  AnchoredTooltip,
+  Mesa,
+  MesaState,
+} from '@veupathdb/wdk-client/lib/Components/Mesa';
 import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 
 import NotFound from '@veupathdb/wdk-client/lib/Views/NotFound/NotFound';
 
 import SharingModal from '../Sharing/UserDatasetSharingModal';
 import UserDatasetStatus from '../UserDatasetStatus';
-import { getDownloadUrl, makeClassifier, normalizePercentage } from '../UserDatasetUtils';
+import {
+  getDownloadUrl,
+  makeClassifier,
+  normalizePercentage,
+} from '../UserDatasetUtils';
 
 import './UserDatasetDetail.scss';
-
 
 const classify = makeClassifier('UserDatasetDetail');
 
 class UserDatasetDetail extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = { sharingModalOpen: false };
 
@@ -34,8 +41,12 @@ class UserDatasetDetail extends React.Component {
     this.renderHeaderSection = this.renderHeaderSection.bind(this);
     this.renderDatasetActions = this.renderDatasetActions.bind(this);
 
-    this.renderCompatibilitySection = this.renderCompatibilitySection.bind(this);
-    this.getCompatibilityTableColumns = this.getCompatibilityTableColumns.bind(this);
+    this.renderCompatibilitySection = this.renderCompatibilitySection.bind(
+      this
+    );
+    this.getCompatibilityTableColumns = this.getCompatibilityTableColumns.bind(
+      this
+    );
 
     this.openSharingModal = this.openSharingModal.bind(this);
     this.renderFileSection = this.renderFileSection.bind(this);
@@ -44,65 +55,86 @@ class UserDatasetDetail extends React.Component {
     this.renderDetailsSection = this.renderDetailsSection.bind(this);
   }
 
-  isMyDataset () {
+  isMyDataset() {
     const { user, userDataset } = this.props;
-    return user && userDataset && user.id && user.id === userDataset.ownerUserId;
+    return (
+      user && userDataset && user.id && user.id === userDataset.ownerUserId
+    );
   }
 
-  openSharingModal () {
+  openSharingModal() {
     this.setState({ sharingModalOpen: true });
   }
 
-  closeSharingModal () {
+  closeSharingModal() {
     this.setState({ sharingModalOpen: false });
   }
 
-  validateKey (key) {
+  validateKey(key) {
     const META_KEYS = ['name', 'summary', 'description'];
     if (typeof key !== 'string' || !META_KEYS.includes(key))
-      throw new TypeError(`Can't edit meta for invalid key: ${JSON.stringify(key)}`);
+      throw new TypeError(
+        `Can't edit meta for invalid key: ${JSON.stringify(key)}`
+      );
   }
 
-  onMetaSave (key) {
+  onMetaSave(key) {
     this.validateKey(key);
     return (value) => {
       if (typeof value !== 'string')
-        throw new TypeError(`onMetaSave: expected input value to be string; got ${typeof value}`);
+        throw new TypeError(
+          `onMetaSave: expected input value to be string; got ${typeof value}`
+        );
       const { userDataset, updateUserDatasetDetail } = this.props;
       const meta = { ...userDataset.meta, [key]: value };
       return updateUserDatasetDetail(userDataset, meta);
     };
   }
 
-  handleDelete () {
+  handleDelete() {
     const { isOwner, userDataset, removeUserDataset } = this.props;
     const { sharedWith } = userDataset;
     const shareCount = !Array.isArray(sharedWith) ? null : sharedWith.length;
-    const message = `Are you sure you want to ${isOwner ? 'delete' : 'remove'} this dataset? `
-      + (
-        !isOwner || !shareCount
-          ? ''
-          : `${shareCount} collaborator${shareCount === 1 ? '' : 's'} you've shared with will lose access.`
-      );
+    const message =
+      `Are you sure you want to ${
+        isOwner ? 'delete' : 'remove'
+      } this dataset? ` +
+      (!isOwner || !shareCount
+        ? ''
+        : `${shareCount} collaborator${
+            shareCount === 1 ? '' : 's'
+          } you've shared with will lose access.`);
 
     if (window.confirm(message)) {
       removeUserDataset(userDataset, '/workspace/datasets');
     }
   }
 
-  renderAllDatasetsLink () {
+  renderAllDatasetsLink() {
     return (
       <Link className="AllDatasetsLink" to={'/workspace/datasets'}>
-        <Icon fa="chevron-left"/>
+        <Icon fa="chevron-left" />
         &nbsp; All My Data Sets
       </Link>
     );
   }
 
-  getAttributes () {
+  getAttributes() {
     const { userDataset, quotaSize, questionMap } = this.props;
     const { onMetaSave } = this;
-    const { id, type, meta, projects, size, percentQuotaUsed, owner, created, sharedWith, questions, isInstalled } = userDataset;
+    const {
+      id,
+      type,
+      meta,
+      projects,
+      size,
+      percentQuotaUsed,
+      owner,
+      created,
+      sharedWith,
+      questions,
+      isInstalled,
+    } = userDataset;
     const { display, name, version } = type;
     const isOwner = this.isMyDataset();
 
@@ -116,7 +148,7 @@ class UserDatasetDetail extends React.Component {
             readOnly={!isOwner}
             onSave={this.onMetaSave('name')}
           />
-        )
+        ),
       },
       {
         attribute: 'Status',
@@ -128,9 +160,12 @@ class UserDatasetDetail extends React.Component {
             projectId={this.props.config.projectId}
             displayName={this.props.config.displayName}
           />
-        )
+        ),
       },
-      { attribute: 'Owner', value: isOwner ? <span className="faded">Me</span> : owner },
+      {
+        attribute: 'Owner',
+        value: isOwner ? <span className="faded">Me</span> : owner,
+      },
       {
         attribute: 'Description',
         value: (
@@ -141,12 +176,19 @@ class UserDatasetDetail extends React.Component {
             onSave={this.onMetaSave('description')}
             emptyText="No Description"
           />
-        )
+        ),
       },
       { attribute: 'ID', value: id },
       {
         attribute: 'Data Type',
-        value: (<span><b>{display}</b> <span className="faded">({name} {version})</span></span>)
+        value: (
+          <span>
+            <b>{display}</b>{' '}
+            <span className="faded">
+              ({name} {version})
+            </span>
+          </span>
+        ),
       },
       {
         attribute: 'Summary',
@@ -158,7 +200,7 @@ class UserDatasetDetail extends React.Component {
             onSave={onMetaSave('summary')}
             emptyText="No Summary"
           />
-        )
+        ),
       },
       // { attribute: 'Compatible Projects', value: projects.join(', ') },
       {
@@ -167,56 +209,69 @@ class UserDatasetDetail extends React.Component {
           <AnchoredTooltip content={moment(created).format()}>
             {moment(created).fromNow()}
           </AnchoredTooltip>
-        )
+        ),
       },
       { attribute: 'Dataset Size', value: bytesToHuman(size) },
-      (!isOwner ? null : {
-        attribute: 'Quota Usage',
-        value: `${normalizePercentage(percentQuotaUsed)}% of ${bytesToHuman(quotaSize)}`
-      }),
-      (
-        !isOwner || !sharedWith || !sharedWith.length
-          ? null
-          : {
+      !isOwner
+        ? null
+        : {
+            attribute: 'Quota Usage',
+            value: `${normalizePercentage(percentQuotaUsed)}% of ${bytesToHuman(
+              quotaSize
+            )}`,
+          },
+      !isOwner || !sharedWith || !sharedWith.length
+        ? null
+        : {
             attribute: 'Shared With',
             value: (
               <ul>
-                {sharedWith.map(share => (
-                  <li key={share.email}>{share.userDisplayName} <span className="faded">&lt;{share.email}&gt;</span> {moment(share.time).fromNow()}</li>
+                {sharedWith.map((share) => (
+                  <li key={share.email}>
+                    {share.userDisplayName}{' '}
+                    <span className="faded">&lt;{share.email}&gt;</span>{' '}
+                    {moment(share.time).fromNow()}
+                  </li>
                 ))}
               </ul>
-            )
-          }
-      ),
-      (
-        !questions || !questions.length || !isInstalled
-          ? null
-          : {
+            ),
+          },
+      !questions || !questions.length || !isInstalled
+        ? null
+        : {
             attribute: 'Available Searches',
             value: (
               <ul>
-                {questions.map(questionName => {
-			const q = questionMap[questionName];
-			// User dataset searches typically offer changing the dataset through a dropdown
-			// Ths dropdown is a param, "biom_dataset" on MicrobiomeDB and "rna_seq_dataset" on genomic sites
-			// Hence the regex: /dataset/
-			const ps = q.paramNames.filter(paramName => paramName.match(/dataset/));
-			const urlPath = ["", "search", q.outputRecordClassName, q.urlSegment].join("/");
-			const url = urlPath + (ps.length === 1 ? ("?param." + ps[0] + "=" + id) : "");
-                   return (<li key={questionName}>
-                     <Link to={url}>
-                       {q.displayName}
-                     </Link>
-                   </li>);
-	        })}
+                {questions.map((questionName) => {
+                  const q = questionMap[questionName];
+                  // User dataset searches typically offer changing the dataset through a dropdown
+                  // Ths dropdown is a param, "biom_dataset" on MicrobiomeDB and "rna_seq_dataset" on genomic sites
+                  // Hence the regex: /dataset/
+                  const ps = q.paramNames.filter((paramName) =>
+                    paramName.match(/dataset/)
+                  );
+                  const urlPath = [
+                    '',
+                    'search',
+                    q.outputRecordClassName,
+                    q.urlSegment,
+                  ].join('/');
+                  const url =
+                    urlPath +
+                    (ps.length === 1 ? '?param.' + ps[0] + '=' + id : '');
+                  return (
+                    <li key={questionName}>
+                      <Link to={url}>{q.displayName}</Link>
+                    </li>
+                  );
+                })}
               </ul>
-            )
-          }
-      )
-    ].filter(attr => attr);
+            ),
+          },
+    ].filter((attr) => attr);
   }
 
-  renderHeaderSection () {
+  renderHeaderSection() {
     const { userDataset } = this.props;
     const { meta } = userDataset;
     const attributes = this.getAttributes();
@@ -233,32 +288,39 @@ class UserDatasetDetail extends React.Component {
             <AttributeList />
           </div>
           <div className={classify('Header-Actions')}>
-            <DatasetActions/>
+            <DatasetActions />
           </div>
         </div>
       </section>
-    )
+    );
   }
 
-  renderAttributeList () {
+  renderAttributeList() {
     const attributes = this.getAttributes();
     return (
       <div className={classify('AttributeList')}>
         {attributes.map(({ attribute, value, className }, index) => (
-          <div className={classify('AttributeRow') + (className ? ' ' + className : '')} key={index}>
+          <div
+            className={
+              classify('AttributeRow') + (className ? ' ' + className : '')
+            }
+            key={index}
+          >
             <div className={classify('AttributeName')}>
-              {typeof attribute === 'string' ? <strong>{attribute}:</strong> : attribute}
+              {typeof attribute === 'string' ? (
+                <strong>{attribute}:</strong>
+              ) : (
+                attribute
+              )}
             </div>
-            <div className={classify('AttributeValue')}>
-              {value}
-            </div>
+            <div className={classify('AttributeValue')}>{value}</div>
           </div>
         ))}
       </div>
     );
   }
 
-  renderDatasetActions () {
+  renderDatasetActions() {
     const { userDataset } = this.props;
     const isOwner = this.isMyDataset();
     return (
@@ -277,12 +339,14 @@ class UserDatasetDetail extends React.Component {
     );
   }
 
-  renderDetailsSection () {
+  renderDetailsSection() {
     const { userDataset } = this.props;
     return (
       <section>
         <details>
-          <pre><code>{JSON.stringify(userDataset, null, '  ')}</code></pre>
+          <pre>
+            <code>{JSON.stringify(userDataset, null, '  ')}</code>
+          </pre>
         </details>
       </section>
     );
@@ -294,58 +358,61 @@ class UserDatasetDetail extends React.Component {
 
    -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= */
 
-  renderFileSection () {
+  renderFileSection() {
     const { userDataset, appUrl } = this.props;
     const fileTableState = MesaState.create({
       columns: this.getFileTableColumns({ userDataset, appUrl }),
-      rows: userDataset.datafiles
+      rows: userDataset.datafiles,
     });
 
     return (
       <section id="dataset-files">
         <h1>Data Files</h1>
         <h3 className={classify('SectionTitle')}>
-          <Icon fa="files-o"/>
+          <Icon fa="files-o" />
           Files in Dataset
         </h3>
-        <Mesa state={fileTableState}/>
+        <Mesa state={fileTableState} />
       </section>
     );
   }
 
-  getFileTableColumns () {
+  getFileTableColumns() {
     const { userDataset, rootUrl } = this.props;
     const { datafiles, type, ownerUserId, id } = userDataset;
     const trackData = type.data;
-    const shouldShowGBrowseTrackUpload = Array.isArray(datafiles)
-      && Array.isArray(trackData)
-      && datafiles.some(({ name }) => {
-        return trackData.find(uploadableFile => uploadableFile.dataFilename === name);
+    const shouldShowGBrowseTrackUpload =
+      Array.isArray(datafiles) &&
+      Array.isArray(trackData) &&
+      datafiles.some(({ name }) => {
+        return trackData.find(
+          (uploadableFile) => uploadableFile.dataFilename === name
+        );
       });
 
     return [
       {
         key: 'name',
         name: 'File Name',
-        renderCell ({ row }) {
+        renderCell({ row }) {
           const { name } = row;
-          return <code>{name}</code>
-        }
+          return <code>{name}</code>;
+        },
       },
       {
         key: 'size',
         name: 'File Size',
-        renderCell ({ row }) {
+        renderCell({ row }) {
           const { size } = row;
           return bytesToHuman(size);
-        }
+        },
       },
       {
         key: 'download',
         name: 'Download',
         width: '130px',
         headingStyle: { textAlign: 'center' },
-        renderCell ({ row }) {
+        renderCell({ row }) {
           const { name } = row;
           const downloadUrl = rootUrl + getDownloadUrl(id, name);
           return (
@@ -354,12 +421,11 @@ class UserDatasetDetail extends React.Component {
                 <Icon fa="save" className="left-side" /> Download
               </button>
             </a>
-          )
-        }
-      }
-    ].filter(column => column);
+          );
+        },
+      },
+    ].filter((column) => column);
   }
-
 
   /* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -367,13 +433,13 @@ class UserDatasetDetail extends React.Component {
 
    -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= */
 
-  renderCompatibilitySection () {
+  renderCompatibilitySection() {
     const { userDataset, config } = this.props;
     const { projectId, displayName } = config;
 
     const compatibilityTableState = MesaState.create({
       columns: this.getCompatibilityTableColumns(userDataset),
-      rows: userDataset.dependencies
+      rows: userDataset.dependencies,
     });
 
     const { buildNumber } = config;
@@ -384,67 +450,67 @@ class UserDatasetDetail extends React.Component {
       <section id="dataset-compatibility">
         <h1>Use This Dataset in {displayName}</h1>
         <h3 className={classify('SectionTitle')}>
-          <Icon fa="puzzle-piece"/>
+          <Icon fa="puzzle-piece" />
           Compatibility Information &nbsp;
           <AnchoredTooltip content="The data and genomes listed here are requisite for using the data in this user dataset.">
             <div className="HelpTrigger">
-              <Icon fa="question-circle"/>
+              <Icon fa="question-circle" />
             </div>
           </AnchoredTooltip>
         </h3>
         <div style={{ maxWidth: '600px' }}>
-          <Mesa state={compatibilityTableState}/>
+          <Mesa state={compatibilityTableState} />
         </div>
-        {isCompatibleProject && isCompatible
-          ? (
-            <p className="success">
-              This dataset is compatible with the current release, build {buildNumber}, of <b>{projectId}</b>.  It is installed for use.
-            </p>
-          ) : (
-            <p className="danger">
-              This dataset is not compatible with the current release, build {buildNumber}, of <b>{projectId}</b>. It is not installed for use.
-            </p>
-          )
-        }
+        {isCompatibleProject && isCompatible ? (
+          <p className="success">
+            This dataset is compatible with the current release, build{' '}
+            {buildNumber}, of <b>{projectId}</b>. It is installed for use.
+          </p>
+        ) : (
+          <p className="danger">
+            This dataset is not compatible with the current release, build{' '}
+            {buildNumber}, of <b>{projectId}</b>. It is not installed for use.
+          </p>
+        )}
       </section>
     );
   }
 
-  getCompatibilityTableColumns () {
+  getCompatibilityTableColumns() {
     const { userDataset } = this.props;
     const { projects } = userDataset;
     return [
       {
         key: 'project',
         name: 'VEuPathDB Website',
-        renderCell () {
+        renderCell() {
           return projects.join(', ');
-        }
+        },
       },
       {
         key: 'resourceDisplayName',
         name: 'Required Resource',
-        renderCell ({ row }) {
+        renderCell({ row }) {
           const { resourceDisplayName } = row;
           return resourceDisplayName;
-        }
+        },
       },
       {
         key: 'resourceVersion',
-        name: 'Required Resource Release'
+        name: 'Required Resource Release',
       },
       {
         key: 'installedVersion',
         name: 'Installed Resource Release',
-        renderCell ({ row }) {
+        renderCell({ row }) {
           const { compatibilityInfo } = row;
           const { currentBuild } = compatibilityInfo ? compatibilityInfo : {};
           return compatibilityInfo === null || currentBuild === null
             ? 'N/A'
             : currentBuild;
-        }
-      }
-    ]
+        },
+      },
+    ];
   }
 
   /* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -453,42 +519,50 @@ class UserDatasetDetail extends React.Component {
 
    -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= */
 
-  getPageSections () {
+  getPageSections() {
     return [
       this.renderHeaderSection,
       this.renderCompatibilitySection,
-      this.renderFileSection
+      this.renderFileSection,
     ];
   }
 
-  render () {
-    const { user, rootUrl, userDataset, shareUserDatasets, unshareUserDatasets } = this.props;
+  render() {
+    const {
+      user,
+      rootUrl,
+      userDataset,
+      shareUserDatasets,
+      unshareUserDatasets,
+    } = this.props;
     const AllDatasetsLink = this.renderAllDatasetsLink;
-    if (!userDataset) return (
-      <NotFound>
-        <AllDatasetsLink/>
-      </NotFound>
-    );
+    if (!userDataset)
+      return (
+        <NotFound>
+          <AllDatasetsLink />
+        </NotFound>
+      );
     const isOwner = this.isMyDataset();
     const { sharingModalOpen } = this.state;
-//    console.info('UDDC gettin props', this.props);
+    //    console.info('UDDC gettin props', this.props);
     return (
       <div className={classify()}>
-        {this.getPageSections().map((Section, key) => <Section key={key}/>)}
-        {!isOwner || !sharingModalOpen
-          ? null
-          : <SharingModal
-              user={user}
-              rootUrl={rootUrl}
-              datasets={[ userDataset ]}
-              onClose={this.closeSharingModal}
-              shareUserDatasets={shareUserDatasets}
-              unshareUserDatasets={unshareUserDatasets}
-            />
-        }
+        {this.getPageSections().map((Section, key) => (
+          <Section key={key} />
+        ))}
+        {!isOwner || !sharingModalOpen ? null : (
+          <SharingModal
+            user={user}
+            rootUrl={rootUrl}
+            datasets={[userDataset]}
+            onClose={this.closeSharingModal}
+            shareUserDatasets={shareUserDatasets}
+            unshareUserDatasets={unshareUserDatasets}
+          />
+        )}
       </div>
-    )
+    );
   }
-};
+}
 
 export default UserDatasetDetail;

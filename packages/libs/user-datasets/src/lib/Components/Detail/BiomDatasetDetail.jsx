@@ -6,14 +6,14 @@ import UserDatasetDetail from './UserDatasetDetail';
 const classify = makeClassifier('UserDatasetDetail', 'BiomDatasetDetail');
 
 class BiomDatasetDetail extends UserDatasetDetail {
-  constructor (props) {
+  constructor(props) {
     super(props);
   }
 
-  getPageSections () {
-    const [ headerSection, compatSection, fileSection ] = super.getPageSections();
-    return [ headerSection, fileSection ];
+  getPageSections() {
+    const [headerSection, compatSection, fileSection] = super.getPageSections();
+    return [headerSection, fileSection];
   }
-};
+}
 
 export default BiomDatasetDetail;

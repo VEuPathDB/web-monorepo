@@ -10,13 +10,13 @@ import BigwigGBrowseUploader from './BigwigGBrowseUploader';
 const classify = makeClassifier('UserDatasetDetail', 'BigwigDatasetDetail');
 
 class BigwigDatasetDetail extends UserDatasetDetail {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.renderTracksSection = this.renderTracksSection.bind(this);
     this.getTracksTableColumns = this.getTracksTableColumns.bind(this);
   }
 
-  getTracksTableColumns () {
+  getTracksTableColumns() {
     const { userDataset, appUrl, rootUrl, config } = this.props;
     const { id, ownerUserId, type, meta, dependencies } = userDataset;
     const name = meta.name;
@@ -24,29 +24,42 @@ class BigwigDatasetDetail extends UserDatasetDetail {
     const { seqId } = type && type.data ? type.data : { seqId: null };
 
     var genome;
-    dependencies.forEach( function(dependency) {
-        if (dependency.resourceIdentifier.endsWith("_Genome")) {
-           var regex = new RegExp("-" + dependency.resourceVersion + "_(.*)_Genome");
-	   var genomeList = dependency.resourceIdentifier.match(regex);
-           genome = genomeList[1];
-        };
+    dependencies.forEach(function (dependency) {
+      if (dependency.resourceIdentifier.endsWith('_Genome')) {
+        var regex = new RegExp(
+          '-' + dependency.resourceVersion + '_(.*)_Genome'
+        );
+        var genomeList = dependency.resourceIdentifier.match(regex);
+        genome = genomeList[1];
+      }
     });
-    
+
     return [
       {
         key: 'datafileName',
         name: 'Filename',
-        renderCell: ({ row }) => <code>{row.datafileName}</code>
+        renderCell: ({ row }) => <code>{row.datafileName}</code>,
       },
       {
         key: 'main',
         name: 'Genome Browser Link',
-        renderCell: ({ row }) => <BigwigGBrowseUploader sequenceId={seqId} {...row} datasetId={id} rootUrl={rootUrl} appUrl={appUrl} projectId={projectId} genome={genome} datasetName={name}/>
-      }
+        renderCell: ({ row }) => (
+          <BigwigGBrowseUploader
+            sequenceId={seqId}
+            {...row}
+            datasetId={id}
+            rootUrl={rootUrl}
+            appUrl={appUrl}
+            projectId={projectId}
+            genome={genome}
+            datasetName={name}
+          />
+        ),
+      },
     ];
   }
 
-  renderTracksSection () {
+  renderTracksSection() {
     const { userDataset, appUrl, projectName } = this.props;
 
     const { type } = userDataset;
@@ -56,15 +69,14 @@ class BigwigDatasetDetail extends UserDatasetDetail {
     const columns = this.getTracksTableColumns({ userDataset, appUrl });
     const tracksTableState = MesaState.create({ rows, columns });
 
-    return !rows.length ? null : userDataset.isInstalled
-      ? (
+    return !rows.length ? null : userDataset.isInstalled ? (
       <section>
         <h3 className={classify('SectionTitle')}>
-          <Icon fa="bar-chart"/>
+          <Icon fa="bar-chart" />
           Genome Browser Tracks
         </h3>
         <div className="TracksTable">
-          <Mesa state={tracksTableState}/>
+          <Mesa state={tracksTableState} />
         </div>
       </section>
     ) : (
@@ -74,10 +86,15 @@ class BigwigDatasetDetail extends UserDatasetDetail {
     );
   }
 
-  getPageSections () {
-    const [ headerSection, compatSection, fileSection ] = super.getPageSections();
-    return [ headerSection, compatSection, this.renderTracksSection, fileSection ];
+  getPageSections() {
+    const [headerSection, compatSection, fileSection] = super.getPageSections();
+    return [
+      headerSection,
+      compatSection,
+      this.renderTracksSection,
+      fileSection,
+    ];
   }
-};
+}
 
 export default BigwigDatasetDetail;

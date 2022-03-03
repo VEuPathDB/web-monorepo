@@ -34,14 +34,14 @@ export interface State {
   userDatasetRemoving: boolean;
   loadError?: ServiceError;
   updateError?: ServiceError;
-  removalError? : ServiceError;
+  removalError?: ServiceError;
 }
 
 const initialState: State = {
   userDatasetsById: {},
   userDatasetLoading: false,
   userDatasetUpdating: false,
-  userDatasetRemoving: false
+  userDatasetRemoving: false,
 };
 
 /**
@@ -52,79 +52,89 @@ const initialState: State = {
  */
 export function reduce(state: State = initialState, action: Action): State {
   switch (action.type) {
-    case DETAIL_LOADING: return {
-      ...state,
-      userDatasetsById: {
-        ...state.userDatasetsById,
-        [action.payload.id]: {
-          isLoading: true
-        }
-      }
-    };
+    case DETAIL_LOADING:
+      return {
+        ...state,
+        userDatasetsById: {
+          ...state.userDatasetsById,
+          [action.payload.id]: {
+            isLoading: true,
+          },
+        },
+      };
 
-    case DETAIL_RECEIVED: return {
-      ...state,
-      userDatasetLoading: false,
-      userDatasetsById: {
-        ...state.userDatasetsById,
-        [action.payload.id]: {
-          isLoading: false,
-          resource: action.payload.userDataset
-        }
-      }
-    };
+    case DETAIL_RECEIVED:
+      return {
+        ...state,
+        userDatasetLoading: false,
+        userDatasetsById: {
+          ...state.userDatasetsById,
+          [action.payload.id]: {
+            isLoading: false,
+            resource: action.payload.userDataset,
+          },
+        },
+      };
 
-    case DETAIL_ERROR: return {
-      ...state,
-      userDatasetLoading: false,
-      loadError: action.payload.error
-    };
+    case DETAIL_ERROR:
+      return {
+        ...state,
+        userDatasetLoading: false,
+        loadError: action.payload.error,
+      };
 
-    case DETAIL_UPDATING: return {
-      ...state,
-      userDatasetUpdating: true,
-      updateError: undefined
-    };
+    case DETAIL_UPDATING:
+      return {
+        ...state,
+        userDatasetUpdating: true,
+        updateError: undefined,
+      };
 
-    case DETAIL_UPDATE_SUCCESS: return {
-      ...state,
-      userDatasetUpdating: false,
-      userDatasetsById: {
-        ...state.userDatasetsById,
-        [action.payload.userDataset.id]: {
-          isLoading: false,
-          resource: action.payload.userDataset
-        }
-      }
-    };
+    case DETAIL_UPDATE_SUCCESS:
+      return {
+        ...state,
+        userDatasetUpdating: false,
+        userDatasetsById: {
+          ...state.userDatasetsById,
+          [action.payload.userDataset.id]: {
+            isLoading: false,
+            resource: action.payload.userDataset,
+          },
+        },
+      };
 
-    case DETAIL_UPDATE_ERROR: return {
-      ...state,
-      userDatasetUpdating: false,
-      updateError: action.payload.error
-    };
+    case DETAIL_UPDATE_ERROR:
+      return {
+        ...state,
+        userDatasetUpdating: false,
+        updateError: action.payload.error,
+      };
 
-    case DETAIL_REMOVING: return {
-      ...state,
-      userDatasetRemoving: true
-    };
+    case DETAIL_REMOVING:
+      return {
+        ...state,
+        userDatasetRemoving: true,
+      };
 
-    case DETAIL_REMOVE_SUCCESS: return {
-      ...state,
-      userDatasetRemoving: false,
-      removalError: undefined
-    };
+    case DETAIL_REMOVE_SUCCESS:
+      return {
+        ...state,
+        userDatasetRemoving: false,
+        removalError: undefined,
+      };
 
-    case DETAIL_REMOVE_ERROR: return {
-      ...state,
-      userDatasetRemoving: false,
-      removalError: action.payload.error
-    };
+    case DETAIL_REMOVE_ERROR:
+      return {
+        ...state,
+        userDatasetRemoving: false,
+        removalError: action.payload.error,
+      };
 
-    case SHARING_SUCCESS: return {
-      ...state,
-      userDatasetsById: sharingReducer(state.userDatasetsById, action)
-    };
+    case SHARING_SUCCESS:
+      return {
+        ...state,
+        userDatasetsById: sharingReducer(state.userDatasetsById, action),
+      };
 
     default:
       return state;

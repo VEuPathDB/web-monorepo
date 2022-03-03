@@ -34,7 +34,8 @@
     font-style: italic;
     opacity: 0.5;
   }
-  .fa, button .fa {
+  .fa,
+  button .fa {
     margin-right: 0;
   }
 
@@ -82,7 +83,7 @@
 
   .UserDatasetSharing-Dataset,
   .UserDatasetSharing-Recipient {
-    border: 1px solid rgba(0, 0, 0,0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 5px;
     display: flex;
     margin-top: 5px;
@@ -97,7 +98,7 @@
       }
       z-index: 20;
       .wdk-Icon {
-        padding-right:5px;
+        padding-right: 5px;
       }
     }
 

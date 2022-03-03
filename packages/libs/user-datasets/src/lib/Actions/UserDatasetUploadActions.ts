@@ -1,24 +1,30 @@
-import { makeActionCreator, InferAction } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
-import { UserDatasetUpload , NewUserDataset } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import {
+  makeActionCreator,
+  InferAction,
+} from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
+import {
+  UserDatasetUpload,
+  NewUserDataset,
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 export const submitUploadForm = makeActionCreator(
   'user-dataset-upload/submit-form',
-  (newUserDataset: NewUserDataset) => ({newUserDataset})
+  (newUserDataset: NewUserDataset) => ({ newUserDataset })
 );
 
 export const receiveBadUpload = makeActionCreator(
   'user-dataset-upload/receive-bad-upload',
-  (message: string) => ({message})
+  (message: string) => ({ message })
 );
 
 export const cancelCurrentUpload = makeActionCreator(
   'user-dataset-upload/cancel-upload',
-  (id: string) => ({id})
+  (id: string) => ({ id })
 );
 
 export const clearMessages = makeActionCreator(
   'user-dataset-upload/clear-messages',
-  (ids: string[]) => ({ids})
+  (ids: string[]) => ({ ids })
 );
 
 export const requestUploadMessages = makeActionCreator(
@@ -28,12 +34,12 @@ export const requestUploadMessages = makeActionCreator(
 
 export const receiveUploadMessages = makeActionCreator(
   'user-dataset-upload/receive-upload-messages',
-  (uploads: Array<UserDatasetUpload>) => ({uploads})
+  (uploads: Array<UserDatasetUpload>) => ({ uploads })
 );
 
 export const receiveBadUploadHistoryAction = makeActionCreator(
   'user-dataset-upload/receive-bad-upload-history-action',
-  (message: string) =>({message})
+  (message: string) => ({ message })
 );
 
 export type Action =
@@ -43,4 +49,4 @@ export type Action =
   | InferAction<typeof clearMessages>
   | InferAction<typeof requestUploadMessages>
   | InferAction<typeof receiveUploadMessages>
-  | InferAction<typeof receiveBadUploadHistoryAction>
+  | InferAction<typeof receiveBadUploadHistoryAction>;

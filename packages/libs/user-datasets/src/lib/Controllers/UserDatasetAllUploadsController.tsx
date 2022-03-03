@@ -14,9 +14,7 @@ import {
 
 import AllUploads from '../Components/AllUploads';
 
-import {
-  State as UserDatasetUploadState,
-} from '../StoreModules/UserDatasetUploadStoreModule';
+import { State as UserDatasetUploadState } from '../StoreModules/UserDatasetUploadStoreModule';
 
 const actionCreators = {
   showLoginForm,
@@ -29,15 +27,15 @@ interface StateSlice extends RootState {
   userDatasetUpload: UserDatasetUploadState;
 }
 
-type StateProps = UserDatasetUploadState & Pick<RootState['globalData'], 'user'>;
+type StateProps = UserDatasetUploadState &
+  Pick<RootState['globalData'], 'user'>;
 
 type DispatchProps = typeof actionCreators;
 type Props = StateProps & { actions: DispatchProps };
 
 class UserDatasetAllUploadsController extends PageController<Props> {
-
   loadData(prevProps?: Props) {
-    if (prevProps != null){
+    if (prevProps != null) {
       return;
     }
     this.props.actions.requestUploadMessages();
@@ -48,33 +46,39 @@ class UserDatasetAllUploadsController extends PageController<Props> {
   }
 
   isRenderDataLoaded() {
-    return (this.props.user != null && (this.props.uploads !=null || this.props.badAllUploadsActionMessage != null));
+    return (
+      this.props.user != null &&
+      (this.props.uploads != null ||
+        this.props.badAllUploadsActionMessage != null)
+    );
   }
 
   getTitle() {
-    return "Recent Uploads";
+    return 'Recent Uploads';
   }
 
-  renderView(){
+  renderView() {
     return (
       <div className="stack">
-        <AllUploads 
+        <AllUploads
           errorMessage={this.props.badAllUploadsActionMessage}
           uploadList={this.props.uploads}
-          actions={this.props.actions} />
+          actions={this.props.actions}
+        />
       </div>
     );
   }
 }
 
 const enhance = connect<StateProps, DispatchProps, {}, Props, StateSlice>(
-  state => ({
-    badAllUploadsActionMessage: state.userDatasetUpload.badAllUploadsActionMessage,
+  (state) => ({
+    badAllUploadsActionMessage:
+      state.userDatasetUpload.badAllUploadsActionMessage,
     uploads: state.userDatasetUpload.uploads,
-    user: state.globalData.user
+    user: state.globalData.user,
   }),
   actionCreators,
   (stateProps, dispatchProps) => ({ ...stateProps, actions: dispatchProps })
-)
+);
 
 export default enhance(wrappable(UserDatasetAllUploadsController));
