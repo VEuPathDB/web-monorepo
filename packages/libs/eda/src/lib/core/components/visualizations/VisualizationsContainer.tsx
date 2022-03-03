@@ -1,11 +1,4 @@
-import React, {
-  useCallback,
-  useMemo,
-  useEffect,
-  useRef,
-  ComponentProps,
-  useLayoutEffect,
-} from 'react';
+import React, { useCallback, useMemo, useEffect, useRef } from 'react';
 import {
   Route,
   Switch,
