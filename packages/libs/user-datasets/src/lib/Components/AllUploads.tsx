@@ -159,7 +159,7 @@ const RefreshButton = () => (
     type="submit"
     className="btn"
     onClick={() => {
-      location.reload();
+      window.location.reload();
     }}
   >
     Refresh page
