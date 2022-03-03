@@ -76,62 +76,59 @@ export function WorkspaceRouter({
 
   useEffect(() => {
     return history.listen((location) => {
-      if (location.key !== undefined) {
-        if (history.action === 'PUSH') {
-          setLocationKeys([location.key]);
-          pathnamesRef.current = pathnamesRef.current
-            .slice(0, pathnamesCursorRef.current + 1)
-            .concat(location.pathname);
-          pathnamesCursorRef.current++;
-        } else if (history.action === 'POP') {
-          // The user has navigated using either the forward or back button
+      if (location.key === undefined) return;
+
+      if (history.action === 'PUSH') {
+        setLocationKeys([location.key]);
+        pathnamesRef.current = pathnamesRef.current
+          .slice(0, pathnamesCursorRef.current + 1)
+          .concat(location.pathname);
+        pathnamesCursorRef.current++;
+      } else if (history.action === 'POP') {
+        // The user has navigated using either the forward or back button
+
+        // Sanity check
+        if (!(locationKeys.length > 0)) return;
+
+        if (locationKeys[1] === location.key) {
+          // This is a forward button press (probably)
+          setLocationKeys(([_, ...keys]) => keys);
 
           // Sanity check
-          if (!(locationKeys.length > 0)) return;
+          if (!(pathnamesCursorRef.current + 1 < pathnamesRef.current.length))
+            return;
 
-          if (locationKeys[1] === location.key) {
-            // This is a forward button press (probably)
-            setLocationKeys(([_, ...keys]) => keys);
+          pathnamesCursorRef.current++;
+        } else {
+          // This is a back button press (probably)
+          setLocationKeys((keys) => [location.key!, ...keys]);
 
-            // Sanity check
-            if (!(pathnamesCursorRef.current + 1 < pathnamesRef.current.length))
-              return;
+          // Sanity check
+          if (!(pathnamesCursorRef.current > 0)) return;
 
-            pathnamesCursorRef.current++;
-          } else {
-            // This is a back button press (probably)
-            setLocationKeys((keys) => [location.key!, ...keys]);
+          pathnamesCursorRef.current--;
 
-            // Sanity check
-            if (!(pathnamesCursorRef.current > 0)) return;
+          const lastPathname =
+            pathnamesRef.current[pathnamesCursorRef.current + 1];
+          const newAnalysisRegex = /eda\/.*\/new\/.*/;
+          const savedAnalysisRegex = /eda\/[^/]*\/(?!new\/)([^/]*)\/.*/;
+          const savedAnalysisMatch = lastPathname.match(savedAnalysisRegex);
 
-            pathnamesCursorRef.current--;
-
-            const lastPathname =
-              pathnamesRef.current[pathnamesCursorRef.current + 1];
-            const newAnalysisRegex = /eda\/.*\/new\/.*/;
-            const savedAnalysisRegex = /eda\/[^/]*\/(?!new\/)([^/]*)\/.*/;
-            const savedAnalysisMatch = lastPathname.match(savedAnalysisRegex);
-
-            if (
-              savedAnalysisMatch &&
-              newAnalysisRegex.test(location.pathname)
-            ) {
-              // The user pressed the back buton and has been moved from a
-              // saved analysis back to a new analysis. Replace the current
-              // URL with the equivalent URL in the saved analysis.
-              const savedAnalysisId = savedAnalysisMatch[1];
-              const newPathname = location.pathname.replace(
-                'new',
-                savedAnalysisId
-              );
-              pathnamesRef.current[pathnamesCursorRef.current] = newPathname;
-              history.replace(newPathname);
-            }
+          if (savedAnalysisMatch && newAnalysisRegex.test(location.pathname)) {
+            // The user pressed the back buton and has been moved from a
+            // saved analysis back to a new analysis. Replace the current
+            // URL with the equivalent URL in the saved analysis.
+            const savedAnalysisId = savedAnalysisMatch[1];
+            const newPathname = location.pathname.replace(
+              'new',
+              savedAnalysisId
+            );
+            pathnamesRef.current[pathnamesCursorRef.current] = newPathname;
+            history.replace(newPathname);
           }
-        } else if (history.action === 'REPLACE') {
-          pathnamesRef.current[pathnamesCursorRef.current] = location.pathname;
         }
+      } else if (history.action === 'REPLACE') {
+        pathnamesRef.current[pathnamesCursorRef.current] = location.pathname;
       }
     });
   }, [locationKeys, history]);
