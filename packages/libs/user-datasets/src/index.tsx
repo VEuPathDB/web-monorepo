@@ -33,10 +33,8 @@ initialize({
       requiresLogin: true,
       component: (props: RouteComponentProps<{ id: string }>) => {
         // FIXME Remove this requirement from the component by updating action creators
-        const rootUrl = window.location.href.substring(
-          0,
-          window.location.href.indexOf(`/app${props.location.pathname}`)
-        );
+        const rootUrl = window.location.origin;
+
         return (
           <UserDatasetDetailController
             {...props.match.params}
