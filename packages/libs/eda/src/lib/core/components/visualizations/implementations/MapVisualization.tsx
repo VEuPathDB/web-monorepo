@@ -22,6 +22,11 @@ import {
 import DonutMarker from '@veupathdb/components/lib/map/DonutMarker';
 import { BoundsDriftMarkerProps } from '@veupathdb/components/lib/map/BoundsDriftMarker';
 
+import {
+  ColorPaletteDefault,
+  ColorPaletteDark,
+} from '@veupathdb/components/lib/types/plots/addOns';
+
 // general ui imports
 import { FormControl, Select, MenuItem, InputLabel } from '@material-ui/core';
 
@@ -36,7 +41,10 @@ import DataClient, {
 } from '../../../api/DataClient';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { usePromise } from '../../../hooks/promise';
-import { filtersFromBoundingBox } from '../../../utils/visualization';
+import {
+  filtersFromBoundingBox,
+  fixLabelsForNumberVariables,
+} from '../../../utils/visualization';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { sumBy } from 'lodash';
@@ -44,6 +52,7 @@ import PluginError from '../PluginError';
 import { VariableDescriptor } from '../../../types/variable';
 import { InputVariables } from '../InputVariables';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
+import { useFindEntityAndVariable } from '../../../hooks/study';
 
 export const mapVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -165,17 +174,32 @@ function MapViz(props: VisualizationProps) {
     );
   }, [vizConfig.geoEntityId, geoConfigs]);
 
-  const [geoEntity, outputEntity] = useMemo(() => {
+  const findEntityAndVariable = useFindEntityAndVariable(entities);
+  const [geoEntity, outputEntity, xAxisVariable] = useMemo(() => {
     const geoEntity =
       vizConfig.geoEntityId !== null
         ? entities.find((entity) => entity.id === vizConfig.geoEntityId)
         : undefined;
+
+    const outputEntityId =
+      vizConfig.xAxisVariable?.entityId ??
+      vizConfig.outputEntityId ??
+      vizConfig.geoEntityId;
     const outputEntity =
-      vizConfig.outputEntityId !== null
-        ? entities.find((entity) => entity.id === vizConfig.outputEntityId)
+      outputEntityId !== null
+        ? entities.find((entity) => entity.id === outputEntityId)
         : undefined;
-    return [geoEntity, outputEntity ?? geoEntity];
-  }, [entities, vizConfig.outputEntityId, vizConfig.geoEntityId]);
+
+    const { variable: xAxisVariable } =
+      findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
+
+    return [geoEntity, outputEntity ?? geoEntity, xAxisVariable];
+  }, [
+    entities,
+    vizConfig.outputEntityId,
+    vizConfig.geoEntityId,
+    vizConfig.xAxisVariable,
+  ]);
 
   // prepare some info that the map-markers and pieplot requests both need
   const {
@@ -223,8 +247,6 @@ function MapViz(props: VisualizationProps) {
     };
   }, [filters, boundsZoomLevel, vizConfig.geoEntityId, geoConfig]);
 
-  const outputEntityId = vizConfig.outputEntityId ?? vizConfig.geoEntityId;
-
   const basicMarkerData = usePromise<BasicMarkerData | undefined>(
     useCallback(async () => {
       // check all required vizConfigs are provided
@@ -236,7 +258,7 @@ function MapViz(props: VisualizationProps) {
         latitudeVariable == null ||
         longitudeVariable == null ||
         geoAggregateVariable == null ||
-        outputEntityId == null
+        outputEntity == null
       )
         return undefined;
 
@@ -245,7 +267,7 @@ function MapViz(props: VisualizationProps) {
         studyId,
         filters: filtersPlusBoundsFilter,
         config: {
-          outputEntityId: outputEntityId,
+          outputEntityId: outputEntity.id,
           geoAggregateVariable,
           latitudeVariable,
           longitudeVariable,
@@ -309,7 +331,7 @@ function MapViz(props: VisualizationProps) {
         vizConfig.xAxisVariable == null ||
         filtersPlusBoundsFilter == null ||
         geoAggregateVariable == null ||
-        outputEntityId == null
+        outputEntity == null
       )
         return undefined;
 
@@ -318,7 +340,7 @@ function MapViz(props: VisualizationProps) {
         studyId,
         filters: filtersPlusBoundsFilter,
         config: {
-          outputEntityId: outputEntityId,
+          outputEntityId: outputEntity.id,
           xAxisVariable: vizConfig.xAxisVariable,
           facetVariable: [geoAggregateVariable],
           showMissingness: 'FALSE',
@@ -363,42 +385,45 @@ function MapViz(props: VisualizationProps) {
    * Merge the pieplot data into the basicMarkerData, if available,
    * and create markers.
    */
-  const markers = useMemo(
-    () =>
-      basicMarkerData.value?.map(
-        ({ geoAggregateValue, entityCount, bounds, position }) => {
-          const donutData =
-            pieplotData.value != null &&
-            pieplotData.value[geoAggregateValue] != null
-              ? (zip(
-                  pieplotData.value[geoAggregateValue].label,
-                  pieplotData.value[geoAggregateValue].value
-                ).map(([label, value]) => ({ label, value })) as {
-                  label: string;
-                  value: number;
-                }[])
-              : [
-                  {
-                    label: 'unknown',
-                    value: entityCount,
-                    color: 'white',
-                  },
-                ];
+  const markers = useMemo(() => {
+    const vocabulary = fixLabelsForNumberVariables(
+      xAxisVariable?.vocabulary,
+      xAxisVariable
+    );
+    return basicMarkerData.value?.map(
+      ({ geoAggregateValue, entityCount, bounds, position }) => {
+        const donutData =
+          pieplotData.value != null &&
+          pieplotData.value[geoAggregateValue] != null
+            ? zip(
+                pieplotData.value[geoAggregateValue].label,
+                pieplotData.value[geoAggregateValue].value
+              ).map(([label, value]) => ({
+                label: label!,
+                value: value!,
+                color: ColorPaletteDefault[vocabulary.indexOf(label!)],
+              }))
+            : [
+                {
+                  label: 'unknown',
+                  value: entityCount,
+                  color: 'white',
+                },
+              ];
 
-          return (
-            <DonutMarker
-              id={geoAggregateValue}
-              key={geoAggregateValue}
-              bounds={bounds}
-              position={position}
-              data={donutData}
-              duration={defaultAnimationDuration}
-            />
-          );
-        }
-      ),
-    [basicMarkerData.value, pieplotData.value]
-  );
+        return (
+          <DonutMarker
+            id={geoAggregateValue}
+            key={geoAggregateValue}
+            bounds={bounds}
+            position={position}
+            data={donutData}
+            duration={defaultAnimationDuration}
+          />
+        );
+      }
+    );
+  }, [basicMarkerData.value, pieplotData.value]);
 
   const totalEntityCount = useMemo(
     () =>
@@ -496,7 +521,7 @@ function MapViz(props: VisualizationProps) {
           style={{ minWidth: '450px', paddingRight: '10px' }}
           variant="filled"
         >
-          <InputLabel>Choose an entity to map the locations of</InputLabel>
+          <InputLabel>Map the locations of</InputLabel>
           <Select
             value={vizConfig.geoEntityId}
             onChange={handleGeoEntityChange}
@@ -511,7 +536,7 @@ function MapViz(props: VisualizationProps) {
         </FormControl>
         <FormControl style={{ minWidth: '450px' }} variant="filled">
           <InputLabel>
-            Choose an entity to show the counts of
+            Show counts of
             {geoEntity &&
               ' (default: ' +
                 (geoEntity.displayNamePlural ?? geoEntity.displayName) +
@@ -520,6 +545,7 @@ function MapViz(props: VisualizationProps) {
           <Select
             value={vizConfig.outputEntityId}
             onChange={handleOutputEntityChange}
+            disabled={vizConfig.xAxisVariable != null}
           >
             {availableOutputEntities.map((entity) => (
               <MenuItem key={entity.id} value={entity.id}>
