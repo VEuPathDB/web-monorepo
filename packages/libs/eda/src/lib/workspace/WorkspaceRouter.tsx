@@ -15,6 +15,7 @@ import { workspaceTheme } from '../core/components/workspaceTheme';
 import {
   useConfiguredAnalysisClient,
   useConfiguredSubsettingClient,
+  useConfiguredDownloadClient,
 } from '../core/hooks/client';
 import { AllAnalyses } from './AllAnalyses';
 import { ImportAnalysis } from './ImportAnalysis';
@@ -32,6 +33,7 @@ type Props = {
   subsettingServiceUrl: string;
   dataServiceUrl: string;
   userServiceUrl: string;
+  downloadServiceUrl: string;
   exampleAnalysesAuthor?: number;
   /**
    * The base of the URL from which to being sharing links.
@@ -50,13 +52,16 @@ export function WorkspaceRouter({
   subsettingServiceUrl,
   dataServiceUrl,
   userServiceUrl,
+  downloadServiceUrl,
   exampleAnalysesAuthor,
   sharingUrlPrefix,
   showLoginForm,
 }: Props) {
   const { path, url } = useRouteMatch();
+
   const subsettingClient = useConfiguredSubsettingClient(subsettingServiceUrl);
   const analysisClient = useConfiguredAnalysisClient(userServiceUrl);
+  const downloadClient = useConfiguredDownloadClient(downloadServiceUrl);
 
   // The following useEffect handles when the user presses the back button and
   // is inadvertently moved back to a new analysis URL from their saved analysis URL
@@ -193,6 +198,7 @@ export function WorkspaceRouter({
                 subsettingServiceUrl={subsettingServiceUrl}
                 dataServiceUrl={dataServiceUrl}
                 userServiceUrl={userServiceUrl}
+                downloadServiceUrl={downloadServiceUrl}
               >
                 <EDAWorkspaceHeading />
                 <RecordController
@@ -210,12 +216,14 @@ export function WorkspaceRouter({
                 subsettingServiceUrl={subsettingServiceUrl}
                 dataServiceUrl={dataServiceUrl}
                 userServiceUrl={userServiceUrl}
+                downloadServiceUrl={downloadServiceUrl}
               >
                 <AnalysisPanel
                   {...props.match.params}
                   sharingUrlPrefix={sharingUrlPrefix}
                   showLoginForm={showLoginForm}
                   hideSavedAnalysisButtons
+                  downloadClient={downloadClient}
                 />
               </WorkspaceContainer>
             )}
@@ -273,11 +281,13 @@ export function WorkspaceRouter({
                 subsettingServiceUrl={subsettingServiceUrl}
                 dataServiceUrl={dataServiceUrl}
                 userServiceUrl={userServiceUrl}
+                downloadServiceUrl={downloadServiceUrl}
               >
                 <AnalysisPanel
                   {...props.match.params}
                   sharingUrlPrefix={sharingUrlPrefix}
                   showLoginForm={showLoginForm}
+                  downloadClient={downloadClient}
                 />
               </WorkspaceContainer>
             )}

@@ -1,21 +1,16 @@
-import { useState } from 'react';
 import { useHistory } from 'react-router';
 
 import {
   MultiFilterVariable,
   useMakeVariableLink,
   useStudyMetadata,
-  useStudyRecord,
   Variable,
 } from '../../core';
 
 // Components
-import { MesaButton } from '@veupathdb/core-components';
 import { VariableDetails } from '../Variable';
 import VariableTree from '../../core/components/variableTrees/VariableTree';
 import FilterChipList from '../../core/components/FilterChipList';
-import SubsettingDataGridModal from './SubsettingDataGridModal';
-import { TableDownload } from '@veupathdb/core-components/dist/components/icons';
 
 // Hooks
 import { EntityCounts } from '../../core/hooks/entityCounts';
@@ -27,8 +22,6 @@ import { AnalysisState } from '../../core/hooks/analysis';
 
 // Functions
 import { cx } from '../Utils';
-import { Action } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUiActions';
-import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 
 interface SubsettingProps {
   analysisState: AnalysisState;
@@ -51,12 +44,7 @@ export default function Subsetting({
   totalCounts,
   filteredCounts,
 }: SubsettingProps) {
-  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
-
-  const studyRecord = useStudyRecord();
   const studyMetadata = useStudyMetadata();
-
-  const attemptAction = useAttemptActionCallback();
 
   // Obtain all entities and associated variables.
   const entities = useStudyEntities(studyMetadata.rootEntity);
@@ -88,19 +76,6 @@ export default function Subsetting({
 
   return (
     <div className={cx('-Subsetting')}>
-      <SubsettingDataGridModal
-        displayModal={isDownloadModalOpen}
-        toggleDisplay={() => setIsDownloadModalOpen(false)}
-        analysisState={analysisState}
-        entities={entities}
-        currentEntityID={entityId}
-        currentEntityRecordCounts={{
-          total: totalEntityCount,
-          filtered: filteredEntityCount,
-        }}
-        starredVariables={starredVariables}
-        toggleStarredVariable={toggleStarredVariable}
-      />
       <div className="Variables">
         <VariableTree
           scope="variableTree"
@@ -135,23 +110,7 @@ export default function Subsetting({
           selectedVariableId={variable.id}
         />
       </div>
-      <div className="TabularDownload">
-        <MesaButton
-          text="View and download"
-          tooltip={`View and download current subset of ${
-            entity.displayNamePlural ?? entity.displayName
-          }`}
-          icon={TableDownload}
-          onPress={() => {
-            attemptAction(Action.download, {
-              studyId: studyRecord.id[0].value,
-              onAllow: () => {
-                setIsDownloadModalOpen(true);
-              },
-            });
-          }}
-        />
-      </div>
+
       <div className="Filter">
         <VariableDetails
           entity={entity}

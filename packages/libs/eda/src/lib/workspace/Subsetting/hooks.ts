@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import { Field } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 
-import { StudyEntity, TabularDataResponse } from '../../core';
+import { StudyEntity, TabularDataResponse, Variable } from '../../core';
+import { variableDisplayWithUnit } from '../../core/utils/variable-display';
 
 /**
  * Process and transform a `TableDataResponse` into the format
@@ -9,9 +10,8 @@ import { StudyEntity, TabularDataResponse } from '../../core';
  */
 export function useProcessedGridData(
   gridData: TabularDataResponse | null,
-  flattenedFields: Array<Field>,
   entities: Array<StudyEntity>,
-  currentEntityID: string
+  currentEntity?: StudyEntity
 ): [
   Array<{
     Header: string;
@@ -32,20 +32,20 @@ export function useProcessedGridData(
        * whether the column represents an entity or a variable.
        */
 
-      // Search for it as a variable.
-      const variable = flattenedFields.find(
-        (field) => field.term === `${currentEntityID}/${columnID}`
-      );
-
       // Search for it as an entity.
       const entity = entities.find(
         (entity) => entity.idColumnName === columnID
       );
 
+      // Search for it as a variable.
+      const variable = currentEntity?.variables.find(
+        (variable) => variable.id === columnID
+      );
+
       if (variable) {
         return {
-          Header: variable.display,
-          accessor: variable.term,
+          Header: variableDisplayWithUnit(variable) ?? variable.displayName,
+          accessor: `${currentEntity?.id}/${variable.id}`,
         };
       } else if (entity) {
         return {
@@ -69,5 +69,5 @@ export function useProcessedGridData(
       }, {});
     });
     return [gridColumns, gridRows];
-  }, [gridData, flattenedFields, entities, currentEntityID]);
+  }, [gridData, entities, currentEntity]);
 }

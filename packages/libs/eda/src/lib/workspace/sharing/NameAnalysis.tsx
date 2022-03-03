@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
 // Components
-import { H5, FilledButton, FormField, Edit } from '@veupathdb/core-components';
+import { H5, FilledButton, FormField, Edit } from '@veupathdb/coreui';
 
 // Definitions
-import { gray } from '@veupathdb/core-components/dist/definitions/colors';
-import { useUITheme } from '@veupathdb/core-components/dist/components/theming';
+import { gray } from '@veupathdb/coreui/dist/definitions/colors';
+import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
 
 type NameAnalysisProps = {
   currentName: string;
