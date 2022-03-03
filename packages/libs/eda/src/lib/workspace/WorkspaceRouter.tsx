@@ -87,48 +87,46 @@ export function WorkspaceRouter({
           // The user has navigated using either the forward or back button
 
           // Sanity check
-          if (locationKeys.length > 0) {
-            if (locationKeys[1] === location.key) {
-              // This is a forward button press (probably)
-              setLocationKeys(([_, ...keys]) => keys);
+          if (!(locationKeys.length > 0)) return;
 
-              // Sanity check
-              if (pathnamesCursorRef.current + 1 < pathnamesRef.current.length)
-                pathnamesCursorRef.current++;
-            } else {
-              // This is a back button press (probably)
-              setLocationKeys((keys) => [location.key!, ...keys]);
+          if (locationKeys[1] === location.key) {
+            // This is a forward button press (probably)
+            setLocationKeys(([_, ...keys]) => keys);
 
-              // Sanity check
-              if (pathnamesCursorRef.current > 0) {
-                pathnamesCursorRef.current--;
+            // Sanity check
+            if (!(pathnamesCursorRef.current + 1 < pathnamesRef.current.length))
+              return;
 
-                const lastPathname =
-                  pathnamesRef.current[pathnamesCursorRef.current + 1];
-                const newAnalysisRegex = /eda\/.*\/new\/.*/;
-                const savedAnalysisRegex = /eda\/[^/]*\/(?!new\/)([^/]*)\/.*/;
-                const savedAnalysisMatch = lastPathname.match(
-                  savedAnalysisRegex
-                );
+            pathnamesCursorRef.current++;
+          } else {
+            // This is a back button press (probably)
+            setLocationKeys((keys) => [location.key!, ...keys]);
 
-                if (
-                  savedAnalysisMatch &&
-                  newAnalysisRegex.test(location.pathname)
-                ) {
-                  // The user pressed the back buton and has been moved from a
-                  // saved analysis back to a new analysis. Replace the current
-                  // URL with the equivalent URL in the saved analysis.
-                  const savedAnalysisId = savedAnalysisMatch[1];
-                  const newPathname = location.pathname.replace(
-                    'new',
-                    savedAnalysisId
-                  );
-                  pathnamesRef.current[
-                    pathnamesCursorRef.current
-                  ] = newPathname;
-                  history.replace(newPathname);
-                }
-              }
+            // Sanity check
+            if (!(pathnamesCursorRef.current > 0)) return;
+
+            pathnamesCursorRef.current--;
+
+            const lastPathname =
+              pathnamesRef.current[pathnamesCursorRef.current + 1];
+            const newAnalysisRegex = /eda\/.*\/new\/.*/;
+            const savedAnalysisRegex = /eda\/[^/]*\/(?!new\/)([^/]*)\/.*/;
+            const savedAnalysisMatch = lastPathname.match(savedAnalysisRegex);
+
+            if (
+              savedAnalysisMatch &&
+              newAnalysisRegex.test(location.pathname)
+            ) {
+              // The user pressed the back buton and has been moved from a
+              // saved analysis back to a new analysis. Replace the current
+              // URL with the equivalent URL in the saved analysis.
+              const savedAnalysisId = savedAnalysisMatch[1];
+              const newPathname = location.pathname.replace(
+                'new',
+                savedAnalysisId
+              );
+              pathnamesRef.current[pathnamesCursorRef.current] = newPathname;
+              history.replace(newPathname);
             }
           }
         } else if (history.action === 'REPLACE') {
