@@ -6,10 +6,6 @@ import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActi
 import PageController from '@veupathdb/wdk-client/lib/Core/Controllers/PageController';
 import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { UserDataset } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import UserDatasetList from '@veupathdb/wdk-client/lib/Views/UserDatasets/List/UserDatasetList';
-import NoDatasetsMessage from '@veupathdb/wdk-client/lib/Views/UserDatasets/NoDatasetsMessage';
-import { requestUploadMessages } from '@veupathdb/wdk-client/lib/Actions/UserDatasetUploadActions';
-import { quotaSize } from '@veupathdb/wdk-client/lib/Views/UserDatasets/UserDatasetUtils';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 
 import {
@@ -20,6 +16,13 @@ import {
   updateProjectFilter,
   updateUserDatasetDetail,
 } from '../Actions/UserDatasetsActions';
+import {
+  requestUploadMessages,
+} from '../Actions/UserDatasetUploadActions';
+
+import UserDatasetList from '../Components/List/UserDatasetList';
+import NoDatasetsMessage from '../Components/NoDatasetsMessage';
+import { quotaSize } from '../Components/UserDatasetUtils';
 
 import {
   State as UserDatasetListState,
@@ -29,7 +32,7 @@ import {
   State as UserDatasetUploadState,
 } from '../StoreModules/UserDatasetUploadStoreModule';
 
-import '@veupathdb/wdk-client/lib/Views/UserDatasets/UserDatasets.scss';
+import '../Components/UserDatasets.scss';
 
 const ActionCreators = {
   showLoginForm,

@@ -1,0 +1,96 @@
+@import '@veupathdb/wdk-client/lib/Core/Style/palette';
+
+.UserDatasetDetail {
+  details { margin: 30px 0; }
+  hr {
+    height: 0;
+    width: 100%;
+    border: none;
+    margin: 20px 0 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  }
+  .MesaComponent {
+    .DataTable {
+      table {
+        width: auto;
+      }
+    }
+  }
+
+  .AllDatasetsLink {
+    display: block;
+    padding: 20px 0;
+  }
+
+  .UserDatasetDetail-SectionTitle {
+    margin-bottom: 10px;
+    .wdk-Icon {
+      color: $blue;
+      margin-right: 10px;
+    }
+  }
+
+  .UserDatasetDetail-Actions {
+    flex: 0 0 auto;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-end;
+  }
+
+  .UserDatasetDetail-Header {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: flex-start;
+
+    .UserDatasetDetail-Header-Attributes {
+      flex: 1 1 auto;
+    }
+    .UserDatasetDetail-Header-Actions {
+      flex: 0 0 auto;
+    }
+  }
+
+  .wdk-SaveableTextEditor {
+    fieldset {
+      padding: 0 3px;
+    }
+    fieldset.wdk-SaveableTextEditor-Field {
+      flex: 0 1 auto;
+      transition: all 0.5s;
+      &.wdk-SaveableTextEditor-Field--Editing {
+        flex: 1 1 auto;
+      }
+    }
+    fieldset.wdk-SaveableTextEditor-Buttons {
+      min-height: 0;
+    }
+  }
+
+  .UserDatasetDetail-AttributeList {
+    display: flex;
+    flex-direction: column;
+    .UserDatasetDetail-AttributeRow {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: row;
+      align-items: baseline;
+      margin: .2em 0;
+      font-size: 1.4em;
+      font-weight: 300;
+
+      &.UserDatasetDetail-Name {
+        font-weight: 400;
+        font-size: 2.8em;
+        strong, b { font-weight: 400; }
+      }
+
+      .UserDatasetDetail-AttributeName {
+        flex: 0 0 auto;
+        padding-right: 10px;
+      }
+      .UserDatasetDetail-AttributeValue {
+        flex: 1 1 auto;
+      }
+    }
+  }
+}

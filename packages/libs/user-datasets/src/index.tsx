@@ -1,5 +1,4 @@
 import './globals';
-import React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
 import { RouteEntry, parseQueryString } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
@@ -14,7 +13,7 @@ import * as userDatasetDetail from './lib/StoreModules/UserDatasetDetailStoreMod
 import * as userDatasetList from './lib/StoreModules/UserDatasetListStoreModule';
 import * as userDatasetUpload from './lib/StoreModules/UserDatasetUploadStoreModule';
 
-import UserDatasetsWorkspace from '@veupathdb/wdk-client/lib/Views/UserDatasets/UserDatasetsWorkspace';
+import UserDatasetsWorkspace from './lib/Components/UserDatasetsWorkspace';
 
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';

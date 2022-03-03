@@ -5,12 +5,6 @@ import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActi
 import PageController from '@veupathdb/wdk-client/lib/Core/Controllers/PageController';
 import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import BigwigDatasetDetail from '@veupathdb/wdk-client/lib/Views/UserDatasets/Detail/BigwigDatasetDetail';
-import BiomDatasetDetail from '@veupathdb/wdk-client/lib/Views/UserDatasets/Detail/BiomDatasetDetail';
-import RnaSeqDatasetDetail from '@veupathdb/wdk-client/lib/Views/UserDatasets/Detail/RnaSeqDatasetDetail';
-import UserDatasetDetail from '@veupathdb/wdk-client/lib/Views/UserDatasets/Detail/UserDatasetDetail';
-import EmptyState from '@veupathdb/wdk-client/lib/Views/UserDatasets/EmptyState';
-import { quotaSize } from '@veupathdb/wdk-client/lib/Views/UserDatasets/UserDatasetUtils';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 
 import {
@@ -20,6 +14,13 @@ import {
   unshareUserDatasets,
   updateUserDatasetDetail,
 } from '../Actions/UserDatasetsActions';
+
+import BigwigDatasetDetail from '../Components/Detail/BigwigDatasetDetail';
+import BiomDatasetDetail from '../Components/Detail/BiomDatasetDetail';
+import RnaSeqDatasetDetail from '../Components/Detail/RnaSeqDatasetDetail';
+import UserDatasetDetail from '../Components/Detail/UserDatasetDetail';
+import EmptyState from '../Components/EmptyState';
+import { quotaSize } from '../Components/UserDatasetUtils';
 
 import {
   State as UserDatasetDetailState,

@@ -1,4 +1,3 @@
-import sharingReducer from '@veupathdb/wdk-client/lib/Views/UserDatasets/Sharing/UserDatasetSharingReducer';
 import { UserDataset } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { ServiceError } from '@veupathdb/wdk-client/lib/Service/ServiceError';
 import {
@@ -14,6 +13,8 @@ import {
   DETAIL_REMOVE_ERROR,
   SHARING_SUCCESS,
 } from '../Actions/UserDatasetsActions';
+
+import sharingReducer from '../Components/Sharing/UserDatasetSharingReducer';
 
 export const key = 'userDatasetDetail';
 

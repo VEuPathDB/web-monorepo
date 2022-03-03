@@ -2,13 +2,14 @@ import { connect } from 'react-redux';
 
 import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import PageController from '@veupathdb/wdk-client/lib/Core/Controllers/PageController';
-import MicrobiomeDBUploadForm from '@veupathdb/wdk-client/lib/Views/UserDatasets/MicrobiomeDBUploadForm';
-import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';;
+import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 
 import {
   submitUploadForm,
 } from '../Actions/UserDatasetUploadActions';
+
+import MicrobiomeDBUploadForm from '../Components/MicrobiomeDBUploadForm';
 
 import {
   State as UserDatasetUploadState,

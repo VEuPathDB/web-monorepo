@@ -2,7 +2,6 @@ import { connect } from 'react-redux';
 
 import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import PageController from '@veupathdb/wdk-client/lib/Core/Controllers/PageController';
-import AllUploads from '@veupathdb/wdk-client/lib/Views/UserDatasets/AllUploads';
 import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
 
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
@@ -12,6 +11,8 @@ import {
   cancelCurrentUpload,
   clearMessages,
 } from '../Actions/UserDatasetUploadActions';
+
+import AllUploads from '../Components/AllUploads';
 
 import {
   State as UserDatasetUploadState,

@@ -1,0 +1,29 @@
+.microbiomeDBUploadForm {
+  label {
+    font-size: large;
+  }
+  .supAsterisk {
+    font-size: large;
+    top: 0em;
+  }
+  #data-set-name {
+    min-width:300px;
+  }
+  #data-set-summary {
+    width: 100%;
+  }
+  #data-set-description {
+    width: 100%;
+    height: 8em;
+  }
+  #data-set-url {
+    width: 100%;
+  }
+  .formInfo {
+    width: 80%;
+    text-align: justify;
+  }
+  .formSection {
+    margin:1em 0;
+  }
+}

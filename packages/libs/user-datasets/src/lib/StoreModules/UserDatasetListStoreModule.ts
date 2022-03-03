@@ -1,6 +1,6 @@
 import { UserDataset } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import sharingReducer from '@veupathdb/wdk-client/lib/Views/UserDatasets/Sharing/UserDatasetSharingReducer';
 import { difference } from 'lodash';
+
 import {
   Action,
   LIST_LOADING,
@@ -11,6 +11,8 @@ import {
   SHARING_SUCCESS,
   PROJECT_FILTER
 } from '../Actions/UserDatasetsActions';
+
+import sharingReducer from '../Components/Sharing/UserDatasetSharingReducer';
 
 export const key = 'userDatasetList';
 
