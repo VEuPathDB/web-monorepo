@@ -3,6 +3,7 @@ import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDepen
 import { useMemo } from 'react';
 import { AnalysisClient } from '../api/analysis-api';
 import DataClient from '../api/DataClient';
+import { DownloadClient } from '../api/DownloadClient';
 import SubsettingClient from '../api/SubsettingClient';
 
 function useWdkServiceContext() {
@@ -29,6 +30,14 @@ export function useConfiguredDataClient(baseUrl: string) {
 export function useConfiguredSubsettingClient(baseUrl: string) {
   const wdkService = useWdkServiceContext();
   return useMemo(() => new SubsettingClient({ baseUrl }, wdkService), [
+    baseUrl,
+    wdkService,
+  ]);
+}
+
+export function useConfiguredDownloadClient(baseUrl: string) {
+  const wdkService = useWdkServiceContext();
+  return useMemo(() => new DownloadClient({ baseUrl }, wdkService), [
     baseUrl,
     wdkService,
   ]);

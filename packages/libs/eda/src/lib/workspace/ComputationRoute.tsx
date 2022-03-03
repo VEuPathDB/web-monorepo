@@ -9,11 +9,13 @@ import { createComputation } from '../core/components/computations/Utils';
 import { PromiseResult } from '../core/components/Promise';
 import { EntityCounts } from '../core/hooks/entityCounts';
 import { PromiseHookState, usePromise } from '../core/hooks/promise';
+import { GeoConfig } from '../core/types/geoConfig';
 
 export interface Props {
   analysisState: AnalysisState;
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
+  geoConfigs: GeoConfig[];
 }
 
 /**

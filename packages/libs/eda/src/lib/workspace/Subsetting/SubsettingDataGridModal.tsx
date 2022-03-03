@@ -1,27 +1,27 @@
-import { useState, useCallback, useEffect } from 'react';
-import { ceil, uniqBy } from 'lodash';
+import { useState, useCallback, useEffect, useMemo } from 'react';
+import { ceil } from 'lodash';
+import useDimensions from 'react-cool-dimensions';
 
-// Components
+// Components & Component Generators
 import SettingsIcon from '@material-ui/icons/Settings';
-import { H5, H3 } from '@veupathdb/core-components/dist/components/headers';
-import DataGrid from '@veupathdb/core-components/dist/components/grids/DataGrid';
-import { Modal } from '@veupathdb/core-components';
-
-import { MesaButton } from '@veupathdb/core-components/dist/components/buttons';
-import {
-  Download,
-  Close,
-  CloseFullscreen,
-} from '@veupathdb/core-components/dist/components/icons';
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import MultiSelectVariableTree from '../../core/components/variableTrees/MultiSelectVariableTree';
-import { AnalysisSummary } from '../AnalysisSummary';
+import {
+  Modal,
+  H5,
+  DataGrid,
+  MesaButton,
+  Download,
+  CloseFullscreen,
+  OutlinedButton,
+} from '@veupathdb/coreui';
 
 // Definitions
 import { AnalysisState } from '../../core/hooks/analysis';
 import { StudyEntity, TabularDataResponse } from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
 import { APIError } from '../../core/api/types';
-import { colors } from '@veupathdb/core-components';
+import { gray } from '@veupathdb/coreui/dist/definitions/colors';
 
 // Hooks
 import {
@@ -29,10 +29,8 @@ import {
   useStudyRecord,
   useSubsettingClient,
 } from '../../core';
-import {
-  useFeaturedFields,
-  useFlattenedFields,
-} from '../../core/components/variableTrees/hooks';
+
+import { useFeaturedFields } from '../../core/components/variableTrees/hooks';
 import { useProcessedGridData } from './hooks';
 
 type SubsettingDataGridProps = {
@@ -51,6 +49,8 @@ type SubsettingDataGridProps = {
     total: number | undefined;
     filtered: number | undefined;
   };
+  starredVariables?: VariableDescriptor[];
+  toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
 };
 
 /**
@@ -65,13 +65,35 @@ export default function SubsettingDataGridModal({
   entities,
   currentEntityID,
   currentEntityRecordCounts,
+  starredVariables,
+  toggleStarredVariable,
 }: SubsettingDataGridProps) {
+  const {
+    observe: observeEntityDescription,
+    width: entityDescriptionWidth,
+  } = useDimensions();
+
   //   Various Custom Hooks
   const studyRecord = useStudyRecord();
   const studyMetadata = useStudyMetadata();
   const subsettingClient = useSubsettingClient();
-  const featuredFields = useFeaturedFields(entities);
-  const flattenedFields = useFlattenedFields(entities);
+  const featuredFields = useFeaturedFields(entities, 'download');
+
+  const scopedFeaturedFields = useMemo(
+    () =>
+      featuredFields.filter((field) =>
+        field.term.startsWith(currentEntityID + '/')
+      ),
+    [currentEntityID, featuredFields]
+  );
+
+  const scopedStarredVariables = useMemo(
+    () =>
+      starredVariables?.filter(
+        (variable) => variable.entityId === currentEntityID
+      ) ?? [],
+    [currentEntityID, starredVariables]
+  );
 
   const [currentEntity, setCurrentEntity] = useState<StudyEntity | undefined>(
     undefined
@@ -90,9 +112,8 @@ export default function SubsettingDataGridModal({
   const [gridData, setGridData] = useState<TabularDataResponse | null>(null);
   const [gridColumns, gridRows] = useProcessedGridData(
     gridData,
-    flattenedFields,
     entities,
-    currentEntityID
+    currentEntity
   );
 
   // The current record pagecount.
@@ -103,54 +124,17 @@ export default function SubsettingDataGridModal({
   const [
     selectedVariableDescriptors,
     setSelectedVariableDescriptors,
-  ] = useState<Array<VariableDescriptor>>([]);
+  ] = useState<Array<VariableDescriptor>>(
+    analysisState.analysis?.descriptor.dataTableConfig[currentEntityID]
+      ?.variables ?? []
+  );
 
-  /**
-   * An array of variable descriptors for the current entity's
-   * featured and stared variables.
-   */
-  const [
-    featuredAndStarredVariableDescriptors,
-    setFeaturedAndStarredVariableDescriptors,
-  ] = useState<Array<VariableDescriptor>>([]);
-
-  /**
-   * If the user has not manually selected any variables for display,
-   * we will attempt to use any starred/featured variables for the current
-   * entity as default data grid columns.
-   */
-  useEffect(() => {
-    const starredVariables: Array<VariableDescriptor> =
-      analysisState.analysis?.descriptor.starredVariables.filter(
-        (variable) => variable.entityId === currentEntityID
-      ) ?? [];
-
-    const featuredVariables: Array<VariableDescriptor> = featuredFields
-      .filter((field) => field.term.startsWith(currentEntityID))
-      .map((field) => {
-        return {
-          entityId: currentEntityID,
-          variableId: field.term.split('/')[1],
-        };
-      });
-
-    setFeaturedAndStarredVariableDescriptors(
-      uniqBy(
-        [...starredVariables, ...featuredVariables],
-        (value) => `${value.entityId}/${value.variableId}`
-      )
-    );
-  }, [
-    analysisState.analysis,
-    currentEntityID,
-    featuredFields,
-    setFeaturedAndStarredVariableDescriptors,
-  ]);
+  const defaultSelection = useMemo(() => [], []);
 
   /**
    * Actions to take when the modal is opened.
    */
-  const onModalOpen = () => {
+  const onModalOpen = useCallback(() => {
     // Sync the current entity inside the modal to whatever is
     // current selected by the user outside the modal.
     setCurrentEntity(entities.find((entity) => entity.id === currentEntityID));
@@ -165,16 +149,20 @@ export default function SubsettingDataGridModal({
       setSelectedVariableDescriptors(previouslyStoredEntityData.variables);
     } else {
       // Use featured and starred variables as defaults if nothing is present on the analysis.
-      setSelectedVariableDescriptors(featuredAndStarredVariableDescriptors);
+      setSelectedVariableDescriptors(defaultSelection);
     }
-  };
+  }, [
+    analysisState.analysis?.descriptor.dataTableConfig,
+    currentEntityID,
+    defaultSelection,
+    entities,
+  ]);
 
   /** Actions to take when modal is closed. */
-  const onModalClose = () => {
+  const onModalClose = useCallback(() => {
     setGridData(null);
-    setSelectedVariableDescriptors([]);
     setDisplayVariableTree(false);
-  };
+  }, []);
 
   const fetchPaginatedData = useCallback(
     ({ pageSize, pageIndex }) => {
@@ -187,6 +175,8 @@ export default function SubsettingDataGridModal({
             (descriptor) => descriptor.variableId
           ),
           reportConfig: {
+            headerFormat: 'standard',
+            trimTimeFromDateVars: true,
             paging: { numRows: pageSize, offset: pageSize * pageIndex },
           },
         })
@@ -218,6 +208,10 @@ export default function SubsettingDataGridModal({
       outputVariableIds: selectedVariableDescriptors.map(
         (descriptor) => descriptor.variableId
       ),
+      reportConfig: {
+        headerFormat: 'display',
+        trimTimeFromDateVars: true,
+      },
     });
   }, [
     subsettingClient,
@@ -242,22 +236,22 @@ export default function SubsettingDataGridModal({
 
   /** Whenever `selectedVariableDescriptors` changes, load a new data set. */
   useEffect(() => {
+    if (!displayModal) return;
     setApiError(null);
-    selectedVariableDescriptors.length
-      ? fetchPaginatedData({ pageSize: 10, pageIndex: 0 })
-      : setGridData(null);
-  }, [selectedVariableDescriptors, fetchPaginatedData]);
+    fetchPaginatedData({ pageSize: 10, pageIndex: 0 });
+  }, [fetchPaginatedData, displayModal]);
 
   // Render the table data or instructions on how to get started.
   const renderDataGridArea = () => {
     return (
-      <div style={{ overflowX: 'auto' }}>
+      <div>
         {gridData ? (
           <DataGrid
             columns={gridColumns}
             data={gridRows}
             loading={dataLoading}
             stylePreset="mesa"
+            styleOverrides={{ headerCells: { textTransform: 'none' } }}
             pagination={{
               recordsPerPage: 10,
               controlsLocation: 'bottom',
@@ -302,12 +296,13 @@ export default function SubsettingDataGridModal({
         <div
           style={{
             position: 'absolute',
-            width: 410,
-            right: 0,
-            top: 0,
+            width: 425,
+            left: entityDescriptionWidth + 195,
+            top: -54,
             backgroundColor: 'rgba(255, 255, 255, 1)',
             border: '2px solid rgb(200, 200, 200)',
-            borderRadius: 5,
+            borderRadius: '.5em',
+            boxShadow: '0px 0px 6px rgba(0, 0, 0, .25)',
           }}
         >
           {errorMessage && (
@@ -353,8 +348,12 @@ export default function SubsettingDataGridModal({
               // we only want a user to be able to select variables from a single
               // entity at a time.
               rootEntity={{ ...currentEntity, children: [] }}
+              scope="download"
               selectedVariableDescriptors={selectedVariableDescriptors}
+              starredVariableDescriptors={scopedStarredVariables}
+              featuredFields={scopedFeaturedFields}
               onSelectedVariablesChange={handleSelectedVariablesChange}
+              toggleStarredVariable={toggleStarredVariable}
             />
           </div>
         </div>
@@ -364,42 +363,34 @@ export default function SubsettingDataGridModal({
 
   return (
     <Modal
+      title={safeHtml(studyRecord.displayName)}
+      includeCloseButton={true}
       visible={displayModal}
+      toggleVisible={toggleDisplay}
       onOpen={onModalOpen}
       onClose={onModalClose}
+      themeRole="primary"
       styleOverrides={{
         content: {
-          paddingTop: 0,
-          paddingRight: 50,
-          paddingBottom: 25,
-          paddingLeft: 25,
+          padding: {
+            top: 0,
+            right: 25,
+            bottom: 25,
+            left: 25,
+          },
         },
       }}
     >
-      <div key="Title" style={{ marginBottom: 35 }}>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <H3
-            additionalStyles={{ margin: 0, padding: 0 }}
-            text={studyRecord.displayName}
-          />
-          <Close
-            fontSize={32}
-            fill={colors.gray[500]}
-            onClick={() => toggleDisplay()}
-          />
-        </div>
-        <AnalysisSummary
-          analysis={analysisState.analysis!}
-          setAnalysisName={analysisState.setName}
-          saveAnalysis={analysisState.saveAnalysis}
-        />
-      </div>
+      <H5
+        additionalStyles={{
+          marginTop: 10,
+          marginBottom: 25,
+          fontStyle: 'italic',
+        }}
+        color={gray[700]}
+      >
+        {analysisState.analysis?.displayName}
+      </H5>
       <div
         key="Controls"
         style={{
@@ -409,34 +400,44 @@ export default function SubsettingDataGridModal({
           alignItems: 'center',
         }}
       >
-        <div style={{ marginBottom: 15 }}>
-          <span
-            style={{
-              fontSize: 18,
-              fontWeight: 500,
-              color: '#646464',
-              textTransform: 'capitalize',
-            }}
-          >
-            {currentEntity?.displayNamePlural}
-          </span>
-          {currentEntityRecordCounts.filtered &&
-            currentEntityRecordCounts.total && (
-              <p
-                style={{
-                  marginTop: 0,
-                  marginBottom: 0,
-                  color: 'gray',
-                }}
-              >
-                {`${currentEntityRecordCounts.filtered.toLocaleString()} of ${currentEntityRecordCounts.total.toLocaleString()} records selected`}
-              </p>
-            )}
+        <div style={{ marginBottom: 15, display: 'flex' }}>
+          <div style={{ marginRight: 25 }} ref={observeEntityDescription}>
+            <span
+              style={{
+                fontSize: 18,
+                fontWeight: 500,
+                color: '#646464',
+              }}
+            >
+              {currentEntity?.displayNamePlural}
+            </span>
+            {currentEntityRecordCounts.filtered &&
+              currentEntityRecordCounts.total && (
+                <p
+                  style={{
+                    marginTop: 0,
+                    marginBottom: 0,
+                    color: 'gray',
+                  }}
+                >
+                  {`${currentEntityRecordCounts.filtered.toLocaleString()} of ${currentEntityRecordCounts.total.toLocaleString()} records selected`}
+                </p>
+              )}
+          </div>
+          <OutlinedButton
+            text={displayVariableTree ? 'Close Selector' : 'Add Columns'}
+            // @ts-ignore
+            icon={displayVariableTree ? CloseFullscreen : SettingsIcon}
+            size="medium"
+            onPress={() => setDisplayVariableTree(!displayVariableTree)}
+            styleOverrides={{ container: { width: 155 } }}
+            themeRole="primary"
+            textTransform="capitalize"
+          />
         </div>
         <div
           style={{
             display: 'flex',
-            flexBasis: 410,
             justifyContent: 'flex-end',
             marginBottom: 15,
           }}
@@ -444,16 +445,9 @@ export default function SubsettingDataGridModal({
           <MesaButton
             text="Download"
             icon={Download}
-            styleOverrides={{ container: { marginRight: 10 } }}
             onPress={downloadData}
-          />
-          <MesaButton
-            text={displayVariableTree ? 'Close Selector' : 'Select Variables'}
-            // @ts-ignore
-            icon={displayVariableTree ? CloseFullscreen : SettingsIcon}
-            size="medium"
-            onPress={() => setDisplayVariableTree(!displayVariableTree)}
-            styleOverrides={{ container: { width: 155 } }}
+            themeRole="primary"
+            textTransform="capitalize"
           />
         </div>
       </div>

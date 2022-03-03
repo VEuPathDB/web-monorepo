@@ -1,5 +1,12 @@
 import './globals'; // Don't move this. There is a brittle dependency that relies on this being first.
-import React, { useEffect } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 import { partial } from 'lodash';
 
@@ -23,24 +30,35 @@ import reportWebVitals from './reportWebVitals';
 import Header from './Header';
 import { MapVeuContainer } from './lib/mapveu';
 import { WorkspaceRouter } from './lib/workspace/WorkspaceRouter';
-import UIThemeProvider from '@veupathdb/core-components/dist/components/theming/UIThemeProvider';
+import UIThemeProvider from '@veupathdb/coreui/dist/components/theming/UIThemeProvider';
 
 // Hooks
 import { useAttemptActionClickHandler } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
-import { useCoreUIFonts } from '@veupathdb/core-components/dist/hooks';
+import { useCoreUIFonts } from '@veupathdb/coreui/dist/hooks';
 
 // Definitions
-import { colors } from '@veupathdb/core-components';
+import { colors } from '@veupathdb/coreui';
 
 import './index.css';
 
 const subsettingServiceUrl = '/eda-subsetting-service';
 const dataServiceUrl = '/eda-data-service';
 const userServiceUrl = '/eda-user-service';
+const downloadServiceUrl = '/eda-user-service';
 
 const exampleAnalysesAuthor = process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR
   ? Number(process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR)
   : undefined;
+
+interface DevLoginFormState {
+  loginFormVisible: boolean;
+  setLoginFormVisible: (visible: boolean) => void;
+}
+
+export const DevLoginFormContext = createContext<DevLoginFormState>({
+  loginFormVisible: false,
+  setLoginFormVisible: () => {},
+});
 
 initialize({
   rootUrl,
@@ -68,14 +86,25 @@ initialize({
     {
       path: '/eda',
       exact: false,
-      component: () => (
-        <WorkspaceRouter
-          subsettingServiceUrl={subsettingServiceUrl}
-          dataServiceUrl={dataServiceUrl}
-          userServiceUrl={userServiceUrl}
-          exampleAnalysesAuthor={exampleAnalysesAuthor}
-        />
-      ),
+      component: function DevWorkspaceRouter() {
+        const { setLoginFormVisible } = useContext(DevLoginFormContext);
+
+        const showLoginForm = useCallback(() => {
+          setLoginFormVisible(true);
+        }, [setLoginFormVisible]);
+
+        return (
+          <WorkspaceRouter
+            subsettingServiceUrl={subsettingServiceUrl}
+            dataServiceUrl={dataServiceUrl}
+            userServiceUrl={userServiceUrl}
+            downloadServiceUrl={downloadServiceUrl}
+            exampleAnalysesAuthor={exampleAnalysesAuthor}
+            sharingUrlPrefix={window.location.href}
+            showLoginForm={showLoginForm}
+          />
+        );
+      },
     },
     {
       path: '/mapveu',
@@ -88,6 +117,15 @@ initialize({
     SiteHeader: () => Header,
     Page: (DefaultComponent: React.ComponentType<Props>) => {
       return function ClinEpiPage(props: Props) {
+        const [loginFormVisible, setLoginFormVisible] = useState(false);
+        const loginFormContext = useMemo(
+          () => ({
+            loginFormVisible,
+            setLoginFormVisible,
+          }),
+          [loginFormVisible]
+        );
+
         useEffect(() => {
           if (process.env.REACT_APP_DISABLE_DATA_RESTRICTIONS === 'true') {
             disableRestriction();
@@ -100,9 +138,9 @@ initialize({
         useCoreUIFonts();
 
         return (
-          <>
+          <DevLoginFormContext.Provider value={loginFormContext}>
             <DataRestrictionDaemon
-              makeStudyPageRoute={(id: string) => `/eda/${id}/details`}
+              makeStudyPageRoute={(id: string) => `/eda/${id}`}
             />
             <UIThemeProvider
               theme={{
@@ -114,7 +152,7 @@ initialize({
             >
               <DefaultComponent {...props} />
             </UIThemeProvider>
-          </>
+          </DevLoginFormContext.Provider>
         );
       };
     },

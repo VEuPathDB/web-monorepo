@@ -1,13 +1,23 @@
+import { groupBy, negate, partial } from 'lodash';
+
+import {
+  Filter as WdkFilter,
+  TreeNode,
+} from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
+import {
+  GENERATED_ROOT_FIELD,
+  getGenericTree,
+} from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
+import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+
+import { DistributionResponse } from '../api/SubsettingClient';
 import { Filter as EdaFilter, StringSetFilter } from '../types/filter';
 import {
-  Field,
-  FieldTreeNode,
-  Filter as WdkFilter,
-} from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
-import { DistributionResponse } from '../api/SubsettingClient';
-import { StudyEntity, VariableTreeNode } from '../types/study';
-import { getTree } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
-import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+  StudyEntity,
+  VariableScope,
+  VariableTreeNode,
+  FieldWithMetadata,
+} from '../types/study';
 
 /*
  * These adapters can be used to convert filter objects between EDA and WDK
@@ -29,6 +39,14 @@ export function toEdaFilter(filter: WdkFilter, entityId: string): EdaFilter {
             type: 'numberRange',
             min: filter.value.min!,
             max: filter.value.max!,
+          };
+        case 'longitude':
+          return {
+            entityId,
+            variableId,
+            type: 'longitudeRange',
+            left: filter.value.min!,
+            right: filter.value.max!,
           };
         case 'date':
           return {
@@ -100,6 +118,11 @@ export function fromEdaFilter(filter: EdaFilter): WdkFilter {
             min: filter.min,
             max: filter.max,
           }
+        : filter.type === 'longitudeRange'
+        ? {
+            min: filter.left,
+            max: filter.right,
+          }
         : filter.type === 'dateSet'
         ? filter[filter.type].map((d) => d.replace('T00:00:00', ''))
         : filter.type === 'stringSet'
@@ -117,7 +140,9 @@ export function fromEdaFilter(filter: EdaFilter): WdkFilter {
   } as WdkFilter;
 }
 
-export function edaVariableToWdkField(variable: VariableTreeNode): Field {
+export function edaVariableToWdkField(
+  variable: VariableTreeNode
+): FieldWithMetadata {
   return {
     display: variable.displayName,
     isRange:
@@ -132,9 +157,8 @@ export function edaVariableToWdkField(variable: VariableTreeNode): Field {
         ? variable.type
         : undefined,
     variableName: variable.providerLabel,
-    // cast to handle additional props `precision` and `variableName` that
-    // do not exist on the `Field` type
-  } as Field;
+    isFeatured: variable.type !== 'category' ? variable.isFeatured : undefined,
+  };
 }
 
 export function toWdkVariableSummary(
@@ -166,7 +190,8 @@ export function toWdkVariableSummary(
     "precision": 1,
     "term": "PCO_0000024/ENVO_00000004",
     "type": "string",
-    "variableName": "[\"SITE\"]"
+    "variableName": "[\"SITE\"]",
+    "hideFrom": []
   }
  *
  * Of note, `parent` will be a reference to one of the following:
@@ -176,11 +201,22 @@ export function toWdkVariableSummary(
  * 
  * `Term` is a reference to the item itself and can be either an 
  * entity, variable category, or variable itself.
+ *
+ * Variables which should be "hid[den] from" the specified
+ * "scope" will not be included.
  */
-export function entitiesToFields(entities: StudyEntity[]) {
+export function entitiesToFields(
+  entities: StudyEntity[],
+  scope: VariableScope
+): Array<FieldWithMetadata> {
   return entities.flatMap((entity) => {
     // Create a Set of variableId so we can lookup parentIds
     const variableIds = new Set(entity.variables.map((v) => v.id));
+
+    // Create a Set of all variables which should be hidden
+    // from the specified "scope"
+    const hiddenVariablesInScope = makeHiddenVariablesInScope(entity, scope);
+
     return [
       // Create a non-filterable field for the entity.
       // Note that we're prefixing the term. This avoids
@@ -193,8 +229,7 @@ export function entitiesToFields(entities: StudyEntity[]) {
         display: entity.displayName,
       },
       ...entity.variables
-        // add condition not to include displayType === 'hidden'
-        .filter((variable) => variable.displayType !== 'hidden')
+        .filter(negate(partial(shouldHideVariable, hiddenVariablesInScope)))
         // Before handing off to edaVariableToWdkField, we will
         // change the id of the variable to include the entityId.
         // This will make the id unique across the tree and prevent
@@ -222,12 +257,61 @@ export function entitiesToFields(entities: StudyEntity[]) {
   });
 }
 
-export function makeFieldTree(fields: Field[]): FieldTreeNode {
-  const initialTree = getTree(fields, { hideSingleRoot: false });
+export function makeHiddenVariablesInScope(
+  entity: StudyEntity,
+  scope: VariableScope
+): Set<string> {
+  const hiddenVariablesInScope = new Set<string>();
+
+  const variablesByParentId = groupBy(
+    entity.variables,
+    (variable) => variable.parentId ?? entity.id
+  );
+
+  function _traverseDescendantVariables(
+    variable: VariableTreeNode,
+    parentIsHidden: boolean
+  ) {
+    const shouldHideVariable =
+      parentIsHidden ||
+      variable.hideFrom.includes('everywhere') ||
+      variable.hideFrom.includes(scope);
+
+    if (shouldHideVariable) {
+      hiddenVariablesInScope.add(variable.id);
+    }
+
+    variablesByParentId[variable.id]?.forEach((childVariable) => {
+      _traverseDescendantVariables(childVariable, shouldHideVariable);
+    });
+  }
+
+  variablesByParentId[entity.id]?.forEach((variable) => {
+    _traverseDescendantVariables(variable, false);
+  });
+
+  return hiddenVariablesInScope;
+}
+
+export function shouldHideVariable(
+  hiddenVariables: Set<string>,
+  variable: VariableTreeNode
+) {
+  return hiddenVariables.has(variable.id);
+}
+
+export function makeFieldTree(
+  fields: Array<FieldWithMetadata>
+): TreeNode<FieldWithMetadata> {
+  const initialTree = getGenericTree<FieldWithMetadata>(
+    fields,
+    GENERATED_ROOT_FIELD,
+    { hideSingleRoot: false }
+  );
   return pruneEmptyFields(initialTree);
 }
 
-export const pruneEmptyFields = (initialTree: FieldTreeNode) =>
+export const pruneEmptyFields = (initialTree: TreeNode<FieldWithMetadata>) =>
   pruneDescendantNodes(
     (node) => node.field.type != null || node.children.length > 0,
     initialTree

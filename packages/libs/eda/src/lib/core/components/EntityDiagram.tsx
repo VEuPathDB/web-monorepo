@@ -5,7 +5,10 @@ import EntityDiagramComponent, {
 } from '@veupathdb/components/lib/EntityDiagram/EntityDiagram';
 import { StudyEntity } from '../types/study';
 import { VariableLink } from './VariableLink';
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import {
+  mapStructure,
+  preorder,
+} from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { reduce } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -22,6 +25,16 @@ interface Props {
 export function EntityDiagram(props: Props) {
   const { selectedEntity, selectedVariable } = props;
   const studyMetadata = useStudyMetadata();
+  const entityTree = useMemo((): StudyEntity => {
+    return mapStructure(
+      (node, children) => ({
+        ...node,
+        children: children.slice().reverse(),
+      }),
+      (entity) => entity.children ?? [],
+      studyMetadata.rootEntity
+    );
+  }, [studyMetadata.rootEntity]);
   const [lastVariableMap, setLastVariableMap] = useState<
     Record<string, string>
   >({});
@@ -56,7 +69,7 @@ export function EntityDiagram(props: Props) {
   };
 
   const dimensions = getDimensions(
-    studyMetadata.rootEntity,
+    entityTree,
     props.orientation,
     props.expanded
   );
@@ -67,7 +80,7 @@ export function EntityDiagram(props: Props) {
   return (
     <EntityDiagramComponent
       isExpanded={props.expanded}
-      treeData={studyMetadata.rootEntity as StudyData}
+      treeData={entityTree as StudyData}
       highlightedEntityID={props.selectedEntity}
       orientation={props.orientation}
       filteredEntities={props.filteredEntities}

@@ -41,7 +41,7 @@ import { truncationConfig } from '../../utils/truncation-config-utils';
 // use Notification for truncation warning message
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 // import axis label unit util
-import { axisLabelWithUnit } from '../../utils/axis-label-unit';
+import { variableDisplayWithUnit } from '../../utils/variable-display';
 // import variable's metadata-based independent axis range utils
 import { defaultIndependentAxisRange } from '../../utils/default-independent-axis-range';
 
@@ -450,9 +450,6 @@ function HistogramPlotWithControls({
 
   const handleDependentAxisRangeChange = useCallback(
     (newRange?: NumberRange) => {
-      console.log(
-        `handleDependentAxisRangeChange newRange: ${newRange?.min} to ${newRange?.max}`
-      );
       updateUIState({
         dependentAxisRange: newRange,
       });
@@ -549,7 +546,7 @@ function HistogramPlotWithControls({
       truncationConfigIndependentAxisMax
     ) {
       setTruncatedIndependentAxisWarning(
-        'Data may have been truncated by range selection, as indicated by the light gray shading'
+        'Data may have been truncated by range selection, as indicated by the yellow shading'
       );
     }
   }, [truncationConfigIndependentAxisMin, truncationConfigIndependentAxisMax]);
@@ -557,7 +554,7 @@ function HistogramPlotWithControls({
   useEffect(() => {
     if (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) {
       setTruncatedDependentAxisWarning(
-        'Data may have been truncated by range selection, as indicated by the light gray shading'
+        'Data may have been truncated by range selection, as indicated by the yellow shading'
       );
     }
   }, [truncationConfigDependentAxisMin, truncationConfigDependentAxisMax]);
@@ -565,7 +562,7 @@ function HistogramPlotWithControls({
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <SelectedRangeControl
-        label={'Subset on ' + axisLabelWithUnit(variable)}
+        label={'Subset on ' + variableDisplayWithUnit(variable)}
         valueType={data?.valueType}
         selectedRange={selectedRange}
         selectedRangeBounds={selectedRangeBounds}
@@ -584,7 +581,7 @@ function HistogramPlotWithControls({
         onSelectedRangeChange={handleSelectedRangeChange}
         barLayout={barLayout}
         dependentAxisLabel="Count"
-        independentAxisLabel={axisLabelWithUnit(variable)}
+        independentAxisLabel={variableDisplayWithUnit(variable)}
         independentAxisRange={uiState.independentAxisRange}
         dependentAxisRange={uiState.dependentAxisRange}
         dependentAxisLogScale={uiState.dependentAxisLogScale}
@@ -786,16 +783,24 @@ function computeBinSlider(
   type: HistogramVariable['type'],
   range: NumberOrDateRange
 ) {
+  const [minBins, maxBins] = [2, 1000];
   switch (type) {
     case 'date': {
       return { min: 1, max: 60, step: 1 };
     }
-    case 'integer':
+    case 'integer': {
+      const { min: rangeMin, max: rangeMax } = range as NumberRange;
+      const rangeSize = rangeMax - rangeMin;
+      const stepSize = Math.floor(rangeSize / maxBins);
+      const min = stepSize < 1 ? 1 : stepSize;
+      const max = Math.floor(rangeSize / minBins);
+      return { min, max, step: min };
+    }
     case 'number': {
       const { min: rangeMin, max: rangeMax } = range as NumberRange;
-      const rangeSize = Math.round((rangeMax - rangeMin) * 100) / 100;
-      const max = rangeSize;
-      const min = rangeSize / 1000;
+      const rangeSize = rangeMax - rangeMin;
+      const max = Number((rangeSize / minBins).toPrecision(2));
+      const min = Number((rangeSize / maxBins).toPrecision(2));
       return { min, max, step: min };
     }
   }

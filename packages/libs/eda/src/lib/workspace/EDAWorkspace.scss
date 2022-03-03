@@ -107,6 +107,10 @@
 
   &-AnalysisNameEditBox {
     font-style: italic;
+
+    i.wdk-Icon.edit {
+      color: #338899 !important;
+    }
   }
 
   &-SeeAllFiltersButton {
@@ -139,7 +143,7 @@
   .WorkspaceNavigation {
     position: sticky;
     top: 0;
-    z-index: 2;
+    z-index: 1050;
     background: white;
 
     h1 {

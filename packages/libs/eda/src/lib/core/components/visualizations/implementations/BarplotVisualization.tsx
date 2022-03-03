@@ -42,7 +42,7 @@ import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 
 import bar from './selectorIcons/bar.svg';
 // import axis label unit util
-import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
+import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import {
   fixLabelForNumberVariables,
   fixLabelsForNumberVariables,
@@ -418,9 +418,11 @@ function BarplotViz(props: VisualizationProps) {
     vizConfig.checkedLegendItems
   );
 
+  // Create the ref that we send to the map in web-components
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
     plotContainerStyles,
+    // The dependencies for needing to generate a new thumbnail
     [data, vizConfig.checkedLegendItems]
   );
 
@@ -432,7 +434,7 @@ function BarplotViz(props: VisualizationProps) {
     orientation: 'vertical',
     barLayout: 'group',
     displayLegend: false,
-    independentAxisLabel: axisLabelWithUnit(variable) ?? 'Main',
+    independentAxisLabel: variableDisplayWithUnit(variable) ?? 'Main',
     dependentAxisLabel:
       vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion',
     legendTitle: overlayVariable?.displayName,
@@ -497,7 +499,7 @@ function BarplotViz(props: VisualizationProps) {
     <PlotLegend
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
-      legendTitle={axisLabelWithUnit(overlayVariable)}
+      legendTitle={variableDisplayWithUnit(overlayVariable)}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
     />
   );
@@ -525,17 +527,17 @@ function BarplotViz(props: VisualizationProps) {
           {
             role: 'Main',
             required: true,
-            display: axisLabelWithUnit(variable),
+            display: variableDisplayWithUnit(variable),
             variable: vizConfig.xAxisVariable,
           },
           {
             role: 'Overlay',
-            display: axisLabelWithUnit(overlayVariable),
+            display: variableDisplayWithUnit(overlayVariable),
             variable: vizConfig.overlayVariable,
           },
           {
             role: 'Facet',
-            display: axisLabelWithUnit(facetVariable),
+            display: variableDisplayWithUnit(facetVariable),
             variable: vizConfig.facetVariable,
           },
         ]}
@@ -702,6 +704,8 @@ function reorderData(
 ): BarplotDataWithStatistics | BarplotData {
   // If faceted, reorder the facets and within the facets
   if (isFaceted(data)) {
+    if (facetVocabulary.length === 0) return data; // FIX-ME stop-gap for vocabulary-less numeric variables
+
     // for each value in the facet vocabulary's correct order
     // find the index in the series where series.name equals that value
     const facetValues = data.facets.map((facet) => facet.label);

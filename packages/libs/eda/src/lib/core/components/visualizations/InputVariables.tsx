@@ -235,6 +235,7 @@ export function InputVariables(props: Props) {
               >
                 <div className={classes.label}>{input.label}</div>
                 <VariableTreeDropdown
+                  scope="variableTree"
                   showMultiFilterDescendants
                   rootEntity={entities[0]}
                   disabledVariables={disabledVariablesByInputName[input.name]}
@@ -267,6 +268,7 @@ export function InputVariables(props: Props) {
                 >
                   <div className={classes.label}>{input.label}</div>
                   <VariableTreeDropdown
+                    scope="variableTree"
                     showMultiFilterDescendants
                     rootEntity={entities[0]}
                     disabledVariables={disabledVariablesByInputName[input.name]}

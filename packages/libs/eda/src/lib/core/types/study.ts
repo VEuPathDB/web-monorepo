@@ -5,6 +5,7 @@ import {
   RecordInstance,
 } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { TimeUnit } from './general';
+import { Field } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 
 // Aliases
 // -------
@@ -46,11 +47,18 @@ const VariableDisplayType = t.keyof({
   hidden: null,
 });
 
+export type VariableScope = t.TypeOf<typeof VariableScope>;
+export const VariableScope = t.keyof({
+  download: null,
+  variableTree: null,
+});
+
 export const VariableTreeNode_Base = t.intersection([
   t.type({
     id: t.string,
     providerLabel: t.string,
     displayName: t.string,
+    hideFrom: t.array(t.union([VariableScope, t.literal('everywhere')])),
   }),
   t.partial({
     parentId: t.string,
@@ -224,3 +232,9 @@ export const StudyMetadata = t.intersection([
     rootEntity: StudyEntity,
   }),
 ]);
+
+export type FieldWithMetadata = Field & {
+  precision?: number;
+  variableName?: string;
+  isFeatured?: boolean;
+};

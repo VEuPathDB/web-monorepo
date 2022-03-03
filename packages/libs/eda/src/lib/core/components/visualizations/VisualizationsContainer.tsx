@@ -28,6 +28,7 @@ import { Tooltip } from '@material-ui/core';
 import { isEqual } from 'lodash';
 import { EntityCounts } from '../../hooks/entityCounts';
 import { PromiseHookState } from '../../hooks/promise';
+import { GeoConfig } from '../../types/geoConfig';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -45,6 +46,7 @@ interface Props {
   toggleStarredVariable: (targetVariable: VariableDescriptor) => void;
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
+  geoConfigs: GeoConfig[];
 }
 
 /**
@@ -181,6 +183,7 @@ function NewVisualizationPicker(props: Props) {
     visualizationsOverview,
     updateVisualizations,
     computation,
+    geoConfigs,
   } = props;
   const history = useHistory();
   const { computationId } = computation;
@@ -195,9 +198,14 @@ function NewVisualizationPicker(props: Props) {
       <Grid>
         {visualizationsOverview.map((vizOverview, index) => {
           const vizType = visualizationTypes[vizOverview.name!];
+          const disabled =
+            vizType == null ||
+            (vizType.isEnabledInPicker != null &&
+              vizType.isEnabledInPicker({ geoConfigs }) == false);
+          // we could in future pass other study metadata, variable constraints, etc to isEnabledInPicker()
           return (
             <div
-              className={cx('-PickerEntry', vizType == null && 'disabled')}
+              className={cx('-PickerEntry', disabled && 'disabled')}
               key={`vizType${index}`}
             >
               {/* add viz description tooltip for viz picker */}
@@ -205,7 +213,7 @@ function NewVisualizationPicker(props: Props) {
                 <span>
                   <button
                     type="button"
-                    disabled={vizType == null}
+                    disabled={disabled}
                     onClick={async () => {
                       const visualizationId = uuid();
                       updateVisualizations((visualizations) =>
@@ -230,15 +238,15 @@ function NewVisualizationPicker(props: Props) {
                 </span>
               </Tooltip>
               <div className={cx('-PickerEntryName')}>
-                {vizOverview.displayName?.includes(', ') ? (
-                  <div>
-                    {vizOverview.displayName.split(', ')[0]} <br />
-                    {vizOverview.displayName.split(', ')[1]}
-                  </div>
-                ) : (
-                  <div>{vizOverview.displayName}</div>
-                )}
+                <div>
+                  {vizOverview.displayName
+                    ?.split(/(, )/g)
+                    .map((str) => (str === ', ' ? <br /> : str))}
+                </div>
                 {vizType == null && <i>(Coming soon!)</i>}
+                {vizType != null && disabled && (
+                  <i>(Not applicable to this study)</i>
+                )}
               </div>
             </div>
           );
@@ -260,6 +268,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
     toggleStarredVariable,
     totalCounts,
     filteredCounts,
+    geoConfigs,
   } = props;
   const history = useHistory();
   const viz = computation.visualizations.find((v) => v.visualizationId === id);
@@ -304,6 +313,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
     );
   }, [filters, id]);
 
+  // Function to update the thumbnail on the configured viz selection page
   const updateThumbnail = useCallback(
     (thumbnail: string) => {
       updateVisualizations((visualizations) =>
@@ -411,6 +421,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
             updateThumbnail={updateThumbnail}
             totalCounts={totalCounts}
             filteredCounts={filteredCounts}
+            geoConfigs={geoConfigs}
           />
         </div>
       )}
