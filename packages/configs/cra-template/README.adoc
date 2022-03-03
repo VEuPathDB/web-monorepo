@@ -1,0 +1,20 @@
+== @veupathdb/cra-template
+
+This is the official create-react-app template for developing https://github.com/VEuPathDB[VEuPathDB] web client features.
+
+To use this template, add `--template @veupathdb` when creating a new app.
+
+For example:
+[source, sh]
+----
+npx create-react-app my-app --template @veupathdb
+
+# or
+
+yarn create react-app my-app --template @veupathdb
+----
+
+For more information, please refer to:
+
+* https://create-react-app.dev/docs/getting-started[Getting Started] – How to create a new app.
+* https://create-react-app.dev[User Guide] – How to develop apps bootstrapped with Create React App.
