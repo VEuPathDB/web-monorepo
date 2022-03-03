@@ -5,15 +5,15 @@ This package includes the https://prettier.io/[prettier] configuration used by V
 === Usage
 
 First, install the package and dependencies with npm:
-[source, js]
+[source, sh]
 ----
-    npm install --save-dev @veupathdb/prettier-config
+npm install --save-dev @veupathdb/prettier-config
 ----
 
 or with yarn:
-[source, js]
+[source, sh]
 ----
-    yarn add -D @veupathdb/prettier-config
+yarn add -D @veupathdb/prettier-config
 ----
 
 Then, add the following to `package.json`:

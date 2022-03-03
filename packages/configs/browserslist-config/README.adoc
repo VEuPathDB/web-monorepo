@@ -5,15 +5,15 @@ This package includes the https://github.com/browserslist/browserslist[browsersl
 === Usage
 
 First, install the package with `npm`:
-[source, js]
+[source, sh]
 ----
-    npm install --save-dev @veupathdb/browserslist-config
+npm install --save-dev @veupathdb/browserslist-config
 ----
 
 or, if you are using `yarn`:
-[source, js]
+[source, sh]
 ----
-    yarn add -D @veupathdb/browserslist-config
+yarn add -D @veupathdb/browserslist-config
 ----
 
 Then, add the following to `package.json`
