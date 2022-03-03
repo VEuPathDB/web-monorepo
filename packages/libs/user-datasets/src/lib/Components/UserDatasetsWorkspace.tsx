@@ -2,10 +2,11 @@ import { Switch, Redirect } from 'react-router';
 
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
-import { UserDatasetAllUploadsController } from '@veupathdb/wdk-client/lib/Controllers';
-import UserDatasetListController from '@veupathdb/wdk-client/lib/Controllers/UserDatasetListController';
-import UserDatasetNewUploadController from '@veupathdb/wdk-client/lib/Controllers/UserDatasetNewUploadController';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+
+import UserDatasetAllUploadsController from '../Controllers/UserDatasetAllUploadsController';
+import UserDatasetListController from '../Controllers/UserDatasetListController';
+import UserDatasetNewUploadController from '../Controllers/UserDatasetNewUploadController';
 
 import { quotaSize } from './UserDatasetUtils';
 import UserDatasetHelp from './UserDatasetHelp';
