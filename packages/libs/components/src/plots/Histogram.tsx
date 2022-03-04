@@ -280,6 +280,7 @@ const Histogram = makePlotlyPlotComponent(
 
     // handle finshed/completed (graphical) range selection
     const handleSelectedRange = useCallback(() => {
+      // console.log(selectingRange)
       if (selectingRange) {
         onSelectedRangeChange(selectingRange);
       } else {
@@ -292,12 +293,19 @@ const Histogram = makePlotlyPlotComponent(
 
     const selectedRangeHighlighting: Partial<Shape>[] = useMemo(() => {
       const range = selectingRange ?? selectedRange;
+      console.log({ range });
+
       if (data.series.length && range) {
+        const lastBin = data.series[0].bins[data.series[0].bins.length - 1];
+        // const dataMax = data.series[0].summary?.max;
+        console.log({ lastBin });
+        // console.log(dataMax)
         // for dates, draw the blue area to the end of the day
         const rightCoordinate =
           data.valueType === 'number'
             ? range.max
-            : DateMath.endOf(new Date(range.max), 'day').toISOString();
+            : // ? range.max > lastBin.binStart && range.max < lastBin.binEnd ? lastBin.binEnd : range.max
+              DateMath.endOf(new Date(range.max), 'day').toISOString();
         return [
           {
             type: 'rect',
