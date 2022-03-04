@@ -29,11 +29,7 @@ export default wdkService => ({
   }),
   getCurrentUser: async () => {
     let user = await wdkService.getCurrentUser();
-    if (useEda) {
-      user.properties.skipStudyPermissions = false;
-    } else {
-      user.properties.skipStudyPermissions = true;
-    }
+    user.properties.skipStudyPermissions = !useEda;
     return user;
   }
 });
