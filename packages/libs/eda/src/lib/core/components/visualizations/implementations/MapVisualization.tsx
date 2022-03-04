@@ -22,10 +22,7 @@ import {
 import DonutMarker from '@veupathdb/components/lib/map/DonutMarker';
 import { BoundsDriftMarkerProps } from '@veupathdb/components/lib/map/BoundsDriftMarker';
 
-import {
-  ColorPaletteDefault,
-  ColorPaletteDark,
-} from '@veupathdb/components/lib/types/plots/addOns';
+import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 
 // general ui imports
 import { FormControl, Select, MenuItem, InputLabel } from '@material-ui/core';
@@ -267,7 +264,7 @@ function MapViz(props: VisualizationProps) {
         studyId,
         filters: filtersPlusBoundsFilter,
         config: {
-          outputEntityId: outputEntity.id,
+          outputEntityId: outputEntity.id, // might be quicker to use geoEntity.id but numbers in white markers will be wrong, momentarily
           geoAggregateVariable,
           latitudeVariable,
           longitudeVariable,
