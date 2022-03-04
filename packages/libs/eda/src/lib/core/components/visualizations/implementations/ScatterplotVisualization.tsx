@@ -768,7 +768,13 @@ function ScatterplotViz(props: VisualizationProps) {
       independentValueType={
         NumberVariable.is(xAxisVariable) ? 'number' : 'date'
       }
-      dependentValueType={NumberVariable.is(yAxisVariable) ? 'number' : 'date'}
+      // yAxisVariable will be null when a computed var takes its place. Computed vars are always numbers
+      dependentValueType={
+        NumberVariable.is(yAxisVariable) ||
+        (computation.descriptor.configuration && yAxisVariable == null)
+          ? 'number'
+          : 'date'
+      }
       legendTitle={variableDisplayWithUnit(overlayVariable)}
       // pass checked state of legend checkbox to PlotlyPlot
       checkedLegendItems={checkedLegendItems}
@@ -1276,6 +1282,8 @@ function processInputData<T extends number | string>(
           'The number of X data is not equal to the number of Y data'
         );
       }
+
+      // Computations are always numbers
 
       /*
         For raw data, there are two cases:
