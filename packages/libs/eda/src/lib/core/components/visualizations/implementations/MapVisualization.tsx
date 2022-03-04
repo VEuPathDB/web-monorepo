@@ -50,6 +50,11 @@ import { VariableDescriptor } from '../../../types/variable';
 import { InputVariables } from '../InputVariables';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { useFindEntityAndVariable } from '../../../hooks/study';
+import PlotLegend, {
+  LegendItemsProps,
+} from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
+import { variableDisplayWithUnit } from '../../../utils/variable-display';
 
 export const mapVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -104,6 +109,7 @@ const MapConfig = t.intersection([
     geoEntityId: t.string,
     outputEntityId: t.string,
     xAxisVariable: VariableDescriptor,
+    checkedLegendItems: t.array(t.string),
   }),
 ]);
 
@@ -340,7 +346,7 @@ function MapViz(props: VisualizationProps) {
           outputEntityId: outputEntity.id,
           xAxisVariable: vizConfig.xAxisVariable,
           facetVariable: [geoAggregateVariable],
-          showMissingness: 'FALSE',
+          showMissingness: 'FALSE', // current back end 'showMissing' behaviour applies to facet variable
         },
       };
 
@@ -408,6 +414,7 @@ function MapViz(props: VisualizationProps) {
                 },
               ];
 
+        // TO DO: find out if MarkerProps.id is obsolete
         return (
           <DonutMarker
             id={geoAggregateValue}
@@ -430,8 +437,6 @@ function MapViz(props: VisualizationProps) {
     [basicMarkerData]
   );
 
-  // TO DO: find out if MarkerProps.id is obsolete
-
   /**
    * Now render the visualization
    */
@@ -443,7 +448,14 @@ function MapViz(props: VisualizationProps) {
     updateThumbnail,
     { height, width },
     // The dependencies for needing to generate a new thumbnail
-    [markers, latitude, longitude, zoomLevel, vizConfig.baseLayer]
+    [
+      markers,
+      latitude,
+      longitude,
+      zoomLevel,
+      vizConfig.baseLayer,
+      vizConfig.checkedLegendItems,
+    ]
   );
 
   const plotNode = (
@@ -496,7 +508,15 @@ function MapViz(props: VisualizationProps) {
 
   const handleInputVariableChange = useCallback(
     ({ xAxisVariable }: VariablesByInputName) => {
-      updateVizConfig({ xAxisVariable });
+      updateVizConfig({ xAxisVariable, checkedLegendItems: undefined });
+    },
+    [updateVizConfig]
+  );
+
+  const handleCheckedLegendItemsChange = useCallback(
+    (newCheckedItems) => {
+      if (newCheckedItems != null)
+        updateVizConfig({ checkedLegendItems: newCheckedItems });
     },
     [updateVizConfig]
   );
@@ -510,6 +530,39 @@ function MapViz(props: VisualizationProps) {
       );
     }
   }, [entities, geoConfig]);
+
+  /**
+   * create custom legend data
+   */
+
+  const legendItems: LegendItemsProps[] = useMemo(() => {
+    const vocabulary = xAxisVariable?.vocabulary;
+    if (vocabulary == null) return [];
+
+    return vocabulary.map((label) => ({
+      label,
+      marker: 'square',
+      markerColor: ColorPaletteDefault[vocabulary.indexOf(label)],
+      hasData: true,
+      group: 1,
+      rank: 1,
+    }));
+  }, [xAxisVariable]);
+
+  // set checkedLegendItems
+  const checkedLegendItems = useCheckedLegendItemsStatus(
+    legendItems,
+    vizConfig.checkedLegendItems
+  );
+
+  const legendNode = legendItems != null && !pieplotData.pending && (
+    <PlotLegend
+      legendItems={legendItems}
+      checkedLegendItems={checkedLegendItems}
+      legendTitle={variableDisplayWithUnit(xAxisVariable)}
+      onCheckedLegendItemsChange={handleCheckedLegendItemsChange}
+    />
+  );
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -589,7 +642,7 @@ function MapViz(props: VisualizationProps) {
       <OutputEntityTitle entity={outputEntity} outputSize={totalEntityCount} />
       <PlotLayout
         isFaceted={false}
-        legendNode={null}
+        legendNode={legendNode}
         plotNode={plotNode}
         tableGroupNode={null}
       />
