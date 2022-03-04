@@ -28,7 +28,7 @@ import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import { PlotLayout } from '../../layouts/PlotLayout';
 
-import { InputVariables } from '../InputVariables';
+import { InputSpec, InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import {
   SelectorProps,
@@ -101,6 +101,7 @@ import * as ColorMath from 'color-math';
 import { ScatterplotRsquareTable } from '../../ScatterplotRsquareTable';
 //DKDK a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
+import { SignalCellularNoSimOutlined } from '@material-ui/icons';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -342,24 +343,47 @@ function ScatterplotViz(props: VisualizationProps) {
       // check variable inputs: this is necessary to prevent from data post
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
         return undefined;
-      else if (vizConfig.yAxisVariable == null || yAxisVariable == null)
+      else if (
+        computation.descriptor.configuration == null &&
+        (vizConfig.yAxisVariable == null || yAxisVariable == null)
+      )
         return undefined;
 
       const vars = [xAxisVariable, yAxisVariable, overlayVariable];
-      const unique = vars.filter((item, i, ar) => ar.indexOf(item) === i);
+      const unique = vars.filter((item, i, ar) => {
+        if (item == null) {
+          return true;
+        } else {
+          return ar.indexOf(item) === i;
+        }
+      });
       if (vars.length !== unique.length)
         throw new Error(
           'Variables must be unique. Please choose different variables.'
         );
 
       // add visualization.type here. valueSpec too?
-      const params = getRequestParams(
+
+      const params = {
         studyId,
-        filters ?? [],
-        vizConfig,
-        outputEntity,
-        visualization.descriptor.type
-      );
+        filters,
+        config: {
+          // add outputEntityId per dataElementDependencyOrder
+          outputEntityId: computation.descriptor.configuration
+            ? (computation.descriptor.configuration as any).collectionVariable
+                .entityId
+            : outputEntity.id,
+          valueSpec: 'raw',
+          xAxisVariable: vizConfig.xAxisVariable,
+          yAxisVariable: vizConfig.yAxisVariable,
+          overlayVariable: vizConfig.overlayVariable,
+          facetVariable: vizConfig.facetVariable
+            ? [vizConfig.facetVariable]
+            : [],
+          showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
+        },
+        computeConfig: computation.descriptor.configuration ?? undefined,
+      };
 
       // scatterplot, lineplot
       const response =
@@ -369,9 +393,11 @@ function ScatterplotViz(props: VisualizationProps) {
               params as LineplotRequestParams
             )
           : // set default as scatterplot/getScatterplot
-            await dataClient.getScatterplot(
+            await dataClient.getVisualizationData(
               computation.descriptor.type,
-              params as ScatterplotRequestParams
+              visualization.descriptor.type,
+              params,
+              ScatterplotResponse
             );
 
       const showMissingOverlay =
@@ -414,24 +440,25 @@ function ScatterplotViz(props: VisualizationProps) {
         facetVariable
       );
     }, [
-      studyId,
-      filters,
-      dataClient,
-      xAxisVariable,
-      yAxisVariable,
-      overlayVariable,
-      facetVariable,
-      // simply using vizConfig causes issue with onCheckedLegendItemsChange
-      // it is because vizConfig also contains vizConfig.checkedLegendItems
       vizConfig.xAxisVariable,
       vizConfig.yAxisVariable,
       vizConfig.overlayVariable,
       vizConfig.facetVariable,
       vizConfig.valueSpecConfig,
       vizConfig.showMissingness,
+      xAxisVariable,
+      computation.descriptor.configuration,
       computation.descriptor.type,
-      visualization.descriptor.type,
+      yAxisVariable,
       outputEntity,
+      overlayVariable,
+      facetVariable,
+      studyId,
+      filters,
+      dataClient,
+      visualization.descriptor.type,
+      overlayEntity,
+      facetEntity,
       filteredCounts,
     ])
   );
@@ -712,7 +739,11 @@ function ScatterplotViz(props: VisualizationProps) {
       // title={'Scatter plot'}
       displayLegend={false}
       independentAxisLabel={variableDisplayWithUnit(xAxisVariable) ?? 'X-axis'}
-      dependentAxisLabel={variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'}
+      dependentAxisLabel={
+        variableDisplayWithUnit(yAxisVariable) ??
+        computation.descriptor.type ??
+        'Y-axis'
+      }
       // variable's metadata-based independent axis range with margin
       independentAxisRange={defaultIndependentRangeMargin}
       // new dependent axis range
@@ -832,7 +863,7 @@ function ScatterplotViz(props: VisualizationProps) {
               label: 'X-axis',
               role: 'primary',
             },
-            {
+            computation.descriptor.configuration ?? {
               name: 'yAxisVariable',
               label: 'Y-axis',
               role: 'primary',
@@ -847,7 +878,7 @@ function ScatterplotViz(props: VisualizationProps) {
               label: 'Facet',
               role: 'stratification',
             },
-          ]}
+          ].filter((input): input is InputSpec => input != null)}
           entities={entities}
           selectedVariables={{
             xAxisVariable: vizConfig.xAxisVariable,
