@@ -27,8 +27,8 @@ export default wdkService => ({
     method: 'get',
     path: '/site-messages'
   }),
-  getUser: () => {
-    let user = wdkService.getCurrentUser();
+  getCurrentUser: async () => {
+    let user = await wdkService.getCurrentUser();
     if (useEda) {
       user.properties.skipStudyPermissions = false;
     } else {
