@@ -27,8 +27,10 @@ import PlaceholderIcon from './PlaceholderIcon';
 import { Tooltip } from '@material-ui/core';
 import { isEqual } from 'lodash';
 import { EntityCounts } from '../../hooks/entityCounts';
+import { useStudyRecord } from '../../hooks/workspace';
 import { PromiseHookState } from '../../hooks/promise';
 import { GeoConfig } from '../../types/geoConfig';
+import Notification from '@veupathdb/components/lib/components/widgets/Notification';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -58,8 +60,36 @@ interface Props {
  */
 export function VisualizationsContainer(props: Props) {
   const { url } = useRouteMatch();
+  const studyRecordId = useStudyRecord().id[0].value;
+  const studiesForPerformanceWarning = [
+    'DS_a885240fc4',
+    'DS_5c41b87221',
+    'DS_81ef25b6ac',
+  ];
+
   return (
     <div className={cx()}>
+      {studiesForPerformanceWarning.includes(studyRecordId) ? (
+        // <Notification
+        //   title={"Warning"}
+        //   text={"Visualizations may take up to 1 minute to appear due to the large amount of data in this study."}
+        //   onAcknowledgement={() => console.log("click")}
+        //   occurences={undefined}
+        //   color={undefined}
+        //   containerStyles={undefined}
+        //   showWarningIcon={true}
+        // />
+        <h3
+          style={{ textAlign: 'center', marginTop: '1rem', fontWeight: 'bold' }}
+        >
+          <i
+            style={{ width: '2rem', height: '2rem' }}
+            className="fa-solid fa-triangle-exclamation"
+          ></i>
+          Visualizations may take up to 1 minute to appear due to the large
+          amount of data in this study.
+        </h3>
+      ) : null}
       <Switch>
         <Route exact path={url}>
           <ConfiguredVisualizations {...props} />
