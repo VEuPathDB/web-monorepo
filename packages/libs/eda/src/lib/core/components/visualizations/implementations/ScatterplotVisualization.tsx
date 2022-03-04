@@ -101,7 +101,6 @@ import * as ColorMath from 'color-math';
 import { ScatterplotRsquareTable } from '../../ScatterplotRsquareTable';
 //DKDK a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
-import { SignalCellularNoSimOutlined } from '@material-ui/icons';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -350,19 +349,21 @@ function ScatterplotViz(props: VisualizationProps) {
         return undefined;
 
       const vars = [xAxisVariable, yAxisVariable, overlayVariable];
-      const unique = vars.filter((item, i, ar) => {
-        if (item == null) {
-          return true;
-        } else {
-          return ar.indexOf(item) === i;
-        }
-      });
+      const unique = vars.filter((item, i, ar) =>
+        item == null ? true : ar.indexOf(item) === i
+      );
       if (vars.length !== unique.length)
         throw new Error(
           'Variables must be unique. Please choose different variables.'
         );
 
-      // add visualization.type here. valueSpec too?
+      // Convert valueSpecConfig to valueSpecValue for the data client request.
+      let valueSpecValue = 'raw';
+      if (vizConfig.valueSpecConfig === 'Smoothed mean with raw') {
+        valueSpecValue = 'smoothedMeanWithRaw';
+      } else if (vizConfig.valueSpecConfig === 'Best fit line with raw') {
+        valueSpecValue = 'bestFitLineWithRaw';
+      }
 
       const params = {
         studyId,
@@ -373,7 +374,7 @@ function ScatterplotViz(props: VisualizationProps) {
             ? (computation.descriptor.configuration as any).collectionVariable
                 .entityId
             : outputEntity.id,
-          valueSpec: 'raw',
+          valueSpec: valueSpecValue,
           xAxisVariable: vizConfig.xAxisVariable,
           yAxisVariable: vizConfig.yAxisVariable,
           overlayVariable: vizConfig.overlayVariable,
@@ -1124,74 +1125,6 @@ export function scatterplotResponseToData(
   } as XYPlotDataWithCoverage;
 }
 
-// add an extended type including dataElementDependencyOrder
-type getRequestParamsProps =
-  | (ScatterplotRequestParams & {
-      vizType?: string;
-    })
-  | (LineplotRequestParams & {
-      vizType?: string;
-    });
-
-function getRequestParams(
-  studyId: string,
-  filters: Filter[],
-  vizConfig: ScatterplotConfig,
-  outputEntity?: StudyEntity,
-  vizType?: string
-): getRequestParamsProps {
-  const {
-    xAxisVariable,
-    yAxisVariable,
-    overlayVariable,
-    facetVariable,
-    valueSpecConfig,
-    showMissingness,
-  } = vizConfig;
-
-  // valueSpec
-  let valueSpecValue = 'raw';
-  if (valueSpecConfig === 'Smoothed mean with raw') {
-    valueSpecValue = 'smoothedMeanWithRaw';
-  } else if (valueSpecConfig === 'Best fit line with raw') {
-    valueSpecValue = 'bestFitLineWithRaw';
-  }
-
-  if (vizType === 'lineplot') {
-    return {
-      studyId,
-      filters,
-      config: {
-        // add outputEntityId
-        outputEntityId: outputEntity?.id,
-        xAxisVariable: xAxisVariable,
-        yAxisVariable: yAxisVariable,
-        overlayVariable: overlayVariable,
-        facetVariable: facetVariable ? [facetVariable] : [],
-        showMissingness: showMissingness ? 'TRUE' : 'FALSE',
-      },
-    } as LineplotRequestParams;
-  } else {
-    // scatterplot
-    return {
-      studyId,
-      filters,
-      config: {
-        // add outputEntityId
-        outputEntityId: outputEntity?.id,
-        // XYPlotControls
-        valueSpec: valueSpecValue,
-        xAxisVariable: xAxisVariable,
-        yAxisVariable: yAxisVariable,
-        overlayVariable: overlayVariable,
-        facetVariable: facetVariable ? [facetVariable] : [],
-        showMissingness: showMissingness ? 'TRUE' : 'FALSE',
-        maxAllowedDataPoints: MAXALLOWEDDATAPOINTS,
-      },
-    } as ScatterplotRequestParams;
-  }
-}
-
 // making plotly input data
 function processInputData<T extends number | string>(
   responseScatterplotData: ScatterplotResponse['scatterplot']['data'],
@@ -1282,8 +1215,6 @@ function processInputData<T extends number | string>(
           'The number of X data is not equal to the number of Y data'
         );
       }
-
-      // Computations are always numbers
 
       /*
         For raw data, there are two cases:
