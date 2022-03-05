@@ -401,11 +401,26 @@ function MapViz(props: VisualizationProps) {
             ? zip(
                 pieplotData.value[geoAggregateValue].label,
                 pieplotData.value[geoAggregateValue].value
-              ).map(([label, value]) => ({
-                label: label!,
-                value: value!,
-                color: ColorPaletteDefault[vocabulary.indexOf(label!)],
-              }))
+              )
+                .map(([label, value]) => ({
+                  label: label!,
+                  value: value!,
+                  color: ColorPaletteDefault[vocabulary.indexOf(label!)],
+                }))
+                // DonutMarkers don't handle checkedLegendItems automatically, like our
+                // regular PlotlyPlot components, so we do the filtering here
+                .filter(
+                  ({ label }) =>
+                    vizConfig.checkedLegendItems == null ||
+                    vizConfig.checkedLegendItems.indexOf(label) > -1
+                )
+            : [];
+
+        // provide the 'plain white' donut data if all legend items unchecked
+        // or if there is no pieplot data
+        const safeDonutData =
+          donutData.length > 0
+            ? donutData
             : [
                 {
                   label: 'unknown',
@@ -421,13 +436,13 @@ function MapViz(props: VisualizationProps) {
             key={geoAggregateValue}
             bounds={bounds}
             position={position}
-            data={donutData}
+            data={safeDonutData}
             duration={defaultAnimationDuration}
           />
         );
       }
     );
-  }, [basicMarkerData.value, pieplotData.value]);
+  }, [basicMarkerData.value, pieplotData.value, vizConfig.checkedLegendItems]);
 
   const totalEntityCount = useMemo(
     () =>
@@ -555,7 +570,7 @@ function MapViz(props: VisualizationProps) {
     vizConfig.checkedLegendItems
   );
 
-  const legendNode = legendItems != null && !pieplotData.pending && (
+  const legendNode = legendItems != null && (
     <PlotLegend
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
