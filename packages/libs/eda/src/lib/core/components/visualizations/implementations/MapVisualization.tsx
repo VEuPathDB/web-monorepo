@@ -5,7 +5,7 @@ import {
 } from '../VisualizationTypes';
 import map from './selectorIcons/map.svg';
 import * as t from 'io-ts';
-import { isEqual, zip } from 'lodash';
+import { isEqual, zip, some } from 'lodash';
 
 // map component related imports
 import MapVEuMap, {
@@ -20,7 +20,6 @@ import {
   LatLng,
 } from '@veupathdb/components/lib/map/Types';
 import DonutMarker from '@veupathdb/components/lib/map/DonutMarker';
-import { BoundsDriftMarkerProps } from '@veupathdb/components/lib/map/BoundsDriftMarker';
 
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 
@@ -30,7 +29,7 @@ import { FormControl, Select, MenuItem, InputLabel } from '@material-ui/core';
 // viz-related imports
 import { PlotLayout } from '../../layouts/PlotLayout';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
-import { useMemo, useCallback, useState, ReactElement } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import DataClient, {
   MapMarkersRequestParams,
@@ -121,7 +120,7 @@ type BasicMarkerData = {
   isAtomic: boolean;
 }[];
 
-type PieplotData = Record<string, { label: string[]; value: number[] }>;
+type PieplotData = Record<string, { label: string; value: number }[]>;
 
 function MapViz(props: VisualizationProps) {
   const {
@@ -361,7 +360,12 @@ function MapViz(props: VisualizationProps) {
         // KNOWN TYPO IN BACK END (should be pieplot)
         (map, { facetVariableDetails, label, value }) => {
           if (facetVariableDetails != null && facetVariableDetails.length === 1)
-            map[facetVariableDetails[0].value] = { label, value };
+            map[facetVariableDetails[0].value] = zip(label, value).map(
+              ([label, value]) => ({
+                label: label!,
+                value: value!,
+              })
+            );
           return map;
         },
         {} as PieplotData
@@ -375,14 +379,6 @@ function MapViz(props: VisualizationProps) {
       computation.descriptor.type,
     ])
   );
-
-  const pieOverview = otherVizOverviews.find(
-    (overview) => overview.name === 'pieplot'
-  );
-  if (pieOverview == null)
-    throw new Error('Map visualization cannot find pieplot helper');
-  const pieConstraints = pieOverview.dataElementConstraints;
-  const pieDependencyOrder = pieOverview.dataElementDependencyOrder;
 
   /**
    * Merge the pieplot data into the basicMarkerData, if available,
@@ -398,13 +394,10 @@ function MapViz(props: VisualizationProps) {
         const donutData =
           pieplotData.value != null &&
           pieplotData.value[geoAggregateValue] != null
-            ? zip(
-                pieplotData.value[geoAggregateValue].label,
-                pieplotData.value[geoAggregateValue].value
-              )
-                .map(([label, value]) => ({
-                  label: label!,
-                  value: value!,
+            ? pieplotData.value[geoAggregateValue]
+                .map(({ label, value }) => ({
+                  label,
+                  value,
                   color: ColorPaletteDefault[vocabulary.indexOf(label!)],
                 }))
                 // DonutMarkers don't handle checkedLegendItems automatically, like our
@@ -558,11 +551,15 @@ function MapViz(props: VisualizationProps) {
       label,
       marker: 'square',
       markerColor: ColorPaletteDefault[vocabulary.indexOf(label)],
-      hasData: true,
+      // has any geo-facet got an array of pieplot data
+      // containing at least one element that satisfies label==label and value>0?
+      hasData: some(pieplotData.value, (pieData) =>
+        some(pieData, (data) => data.label === label && data.value > 0)
+      ),
       group: 1,
       rank: 1,
     }));
-  }, [xAxisVariable]);
+  }, [xAxisVariable, pieplotData.value]);
 
   // set checkedLegendItems
   const checkedLegendItems = useCheckedLegendItemsStatus(
@@ -578,6 +575,15 @@ function MapViz(props: VisualizationProps) {
       onCheckedLegendItemsChange={handleCheckedLegendItemsChange}
     />
   );
+
+  // get variable constraints for InputVariables
+  const pieOverview = otherVizOverviews.find(
+    (overview) => overview.name === 'pieplot'
+  );
+  if (pieOverview == null)
+    throw new Error('Map visualization cannot find pieplot helper');
+  const pieConstraints = pieOverview.dataElementConstraints;
+  const pieDependencyOrder = pieOverview.dataElementDependencyOrder;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
