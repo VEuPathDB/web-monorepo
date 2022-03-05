@@ -69,14 +69,22 @@ type OrgFilterConfig = NO_ORGANISM_FILTER_APPLIED | {
   values: Array<string>;
 }
 
+type OrgFilterStatistics = {
+  subsetSize: number;
+  numVarValues: number;
+  numDistinctValues: number;
+  numDistinctEntityRecords: number;
+  numMissingCases: number;
+}
+
 // type of the data returned by the filter summary (byValue reporter)
 type OrgFilterSummary = {
-  totalValues: number;
-  nullValues: number;
-  uniqueValues?: number;
-  values?: Array<{
-    value: string;
-    count: number;
+  statistics: OrgFilterStatistics
+  histogram: Array<{
+    value: number;
+    binStart: string;
+    binEnd: string;
+    binLabel: string;
   }>
 }
 
@@ -340,15 +348,15 @@ function createDisplayableTree(
   const taxonomyTreeWithCount: TaxonomyNodeWithCount = mapStructure(
     (node, mappedChildren) => {
       let count = 0;
-      if (filterSummary && filterSummary.values) {
+      if (filterSummary && filterSummary.histogram) {
         if (hideZeroes) {
           // don't show children with zeroes if currently hiding zeroes
           mappedChildren = mappedChildren.filter(child => child.count > 0);
         }
         // leaf nodes try to find their counts in the column reporter result
         if (mappedChildren.length == 0) {
-          let valueTuple = filterSummary.values.find(val => val.value === node.data.term);
-          count = valueTuple ? valueTuple.count : 0;
+          let bin = filterSummary.histogram.find(val => val.binLabel === node.data.term);
+          count = bin ? bin.value : 0;
         }
         // branch nodes sum the counts of their children
         else {
