@@ -25,12 +25,12 @@ import './Visualizations.scss';
 import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
 import PlaceholderIcon from './PlaceholderIcon';
 import { Tooltip } from '@material-ui/core';
+import WarningIcon from '@material-ui/icons/Warning';
 import { isEqual } from 'lodash';
 import { EntityCounts } from '../../hooks/entityCounts';
 import { useStudyRecord } from '../../hooks/workspace';
 import { PromiseHookState } from '../../hooks/promise';
 import { GeoConfig } from '../../types/geoConfig';
-import Notification from '@veupathdb/components/lib/components/widgets/Notification';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -70,25 +70,30 @@ export function VisualizationsContainer(props: Props) {
   return (
     <div className={cx()}>
       {studiesForPerformanceWarning.includes(studyRecordId) ? (
-        // <Notification
-        //   title={"Warning"}
-        //   text={"Visualizations may take up to 1 minute to appear due to the large amount of data in this study."}
-        //   onAcknowledgement={() => console.log("click")}
-        //   occurences={undefined}
-        //   color={undefined}
-        //   containerStyles={undefined}
-        //   showWarningIcon={true}
-        // />
-        <h3
-          style={{ textAlign: 'center', marginTop: '1rem', fontWeight: 'bold' }}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            marginTop: '0.75rem',
+          }}
         >
-          <i
-            style={{ width: '2rem', height: '2rem' }}
-            className="fa-solid fa-triangle-exclamation"
-          ></i>
-          Visualizations may take up to 1 minute to appear due to the large
-          amount of data in this study.
-        </h3>
+          <WarningIcon
+            style={{
+              color: '#338899',
+              // verticalAlign: 'middle',
+              marginRight: '0.5rem',
+            }}
+            fontSize="medium"
+          />
+          <h3
+            style={{
+              color: '#338899',
+            }}
+          >
+            Visualizations may take up to 1 minute to appear due to the large
+            amount of data in this study.
+          </h3>
+        </div>
       ) : null}
       <Switch>
         <Route exact path={url}>
