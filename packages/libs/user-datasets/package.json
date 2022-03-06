@@ -99,5 +99,9 @@
   "resolutions": {
     "@veupathdb/**/react": "17",
     "@veupathdb/**/react-dom": "17"
+  },
+  "volta": {
+    "node": "14.15.5",
+    "yarn": "1.22.11"
   }
 }
