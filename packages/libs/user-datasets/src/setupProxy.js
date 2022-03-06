@@ -14,6 +14,18 @@ module.exports = function (app) {
       onProxyReq: addPrereleaseAuthCookieToProxyReq,
     })
   );
+  app.use(
+    '/dataset-import',
+    createProxyMiddleware({
+      target: process.env.DATASET_IMPORT_SERVICE_URL,
+      pathRewrite: { '^/dataset-import': '' },
+      secure: false,
+      changeOrigin: true,
+      followRedirects: true,
+      logLevel: 'debug',
+      onProxyReq: addPrereleaseAuthCookieToProxyReq,
+    })
+  );
 };
 
 function addPrereleaseAuthCookieToProxyReq(proxyReq) {

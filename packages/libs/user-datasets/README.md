@@ -19,6 +19,7 @@ You will be prompted to enter the VEuPathDB BRC Pre-Release Login credentials.
 **Required Environment Variables**
 
 - **`WDK_SERVICE_URL`** URL for a VEuPathDB service endpoint.
+- **`DATASET_IMPORT_SERVICE_URL`** URL for a dataset import service endpoint.
 
 ### `yarn test`
 
