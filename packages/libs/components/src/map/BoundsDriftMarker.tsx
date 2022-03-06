@@ -1,12 +1,8 @@
-import {
-  Rectangle,
-  useLeaflet,
-  Popup,
-  MarkerProps as LeafletMarkerProps,
-} from 'react-leaflet';
+import { Rectangle, useMap, Popup } from 'react-leaflet';
 import React, { useRef, useState } from 'react';
-import { DriftMarker } from 'leaflet-drift-marker';
-import { MarkerProps, Bounds, ExtractProps } from './Types';
+// use new ReactLeafletDriftMarker instead of DriftMarker
+import ReactLeafletDriftMarker from 'react-leaflet-drift-marker';
+import { MarkerProps, Bounds } from './Types';
 import { LeafletMouseEvent, LatLngBounds } from 'leaflet';
 
 export interface BoundsDriftMarkerProps extends MarkerProps {
@@ -19,16 +15,10 @@ export interface BoundsDriftMarkerProps extends MarkerProps {
 // Which direction the popup should come out from the marker
 export type PopupOrientation = 'up' | 'down' | 'left' | 'right';
 
-// Wrapper component for DriftMarker to "fix" its Props type.
-// We are adding the missing LeafletMarkerProps to the existing Props type of DriftMarker.
-const FixedDriftMarker = DriftMarker as React.ComponentClass<
-  ExtractProps<typeof DriftMarker> & LeafletMarkerProps
->;
-
-/*  DKDK after testing various approaches, it is found that sending mouse event props from story, like done in previous approach,
- *    seems to conflict with other mouse event like grey-box. Also, using function form of the top-marker event did not work either.
- *    The only way to work it out is to directly set function contents (e.g., e.target....) inside onMouseOver/Out
- *    For this reason, marker's props are adjusted without sending mouse event functions, but implemented here directly.
+/*  after testing various approaches, it is found that sending mouse event props from story, like done in previous approach,
+ *  seems to conflict with other mouse event like grey-box. Also, using function form of the top-marker event did not work either.
+ *  The only way to work it out is to directly set function contents (e.g., e.target....) inside onMouseOver/Out
+ *  For this reason, marker's props are adjusted without sending mouse event functions, but implemented here directly.
  */
 
 export default function BoundsDriftMarker({
@@ -41,7 +31,7 @@ export default function BoundsDriftMarker({
   popupClass,
 }: BoundsDriftMarkerProps) {
   const [displayBounds, setDisplayBounds] = useState<boolean>(false);
-  const { map } = useLeaflet();
+  const map = useMap();
   const boundingBox = new LatLngBounds([
     [bounds.southWest.lat, bounds.southWest.lng],
     [bounds.northEast.lat, bounds.northEast.lng],
@@ -52,10 +42,14 @@ export default function BoundsDriftMarker({
 
   // Update popupOrientationRef based on whether the marker is close to the viewport edge.
   // Does not actually change the popup, just the ref.
+
+  // at react-leaflet-drift-marker, there is no leafletElement
+  // rather, it seems to be exposed to upper level
+  // i.e., current.leafletElement._icon -> current._icon
   const updatePopupOrientationRef = () => {
     if (popupContent) {
       // Figure out if we're close to the viewport edge
-      const markerRect = markerRef.current.leafletElement._icon.getBoundingClientRect();
+      const markerRect = markerRef.current._icon.getBoundingClientRect();
       const markerCenterX = (markerRect.left + markerRect.right) / 2;
 
       if (markerRect.top < popupContent.size.height) {
@@ -76,7 +70,7 @@ export default function BoundsDriftMarker({
   // Change the popup's orientation
   const orientPopup = (orientation: PopupOrientation) => {
     if (popupRef.current) {
-      const popupDOMNode = popupRef.current.leafletElement._container;
+      const popupDOMNode = popupRef.current._container;
 
       if (popupDOMNode) {
         popupDOMNode.classList.remove(
@@ -121,8 +115,7 @@ export default function BoundsDriftMarker({
     orientPopup(popupOrientationRef.current);
 
     // Watch for changes to the popup's styling
-    const popupDOMNode = popupRef.current.leafletElement
-      ._container as HTMLElement;
+    const popupDOMNode = popupRef.current._container as HTMLElement;
     observer.observe(popupDOMNode, { attributeFilter: ['style'] });
   };
 
@@ -150,16 +143,19 @@ export default function BoundsDriftMarker({
   );
 
   const handleMouseOver = (e: LeafletMouseEvent) => {
-    e.target._icon.classList.add('top-marker'); //DKDK marker on top
-    setDisplayBounds(true); // Display bounds rectangle
+    // console.log('e.target =', e.target)
+    e.target._icon.classList.add('top-marker'); // marker on top
 
     if (showPopup && popupContent) {
       e.target.openPopup();
+    } else {
+      // seems like displayBounds is a bit conflict to popup so handle it here
+      setDisplayBounds(true); // Display bounds rectangle
     }
   };
 
   const handleMouseOut = (e: LeafletMouseEvent) => {
-    e.target._icon.classList.remove('top-marker'); //DKDK remove marker on top
+    e.target._icon.classList.remove('top-marker'); // remove marker on top
     setDisplayBounds(false); // Remove bounds rectangle
 
     if (showPopup && popupContent) {
@@ -186,20 +182,24 @@ export default function BoundsDriftMarker({
   const optionalIconProp = icon ? { icon } : {};
 
   return (
-    <FixedDriftMarker
+    // <FixedDriftMarker
+    <ReactLeafletDriftMarker
       ref={markerRef}
       duration={duration}
       position={position}
-      onmouseover={(e: LeafletMouseEvent) => handleMouseOver(e)}
-      onmouseout={(e: LeafletMouseEvent) => handleMouseOut(e)}
-      onclick={(e: LeafletMouseEvent) => handleClick(e)}
-      ondblclick={handleDoubleClick}
+      // new way to handle mouse events
+      eventHandlers={{
+        click: (e: LeafletMouseEvent) => handleClick(e),
+        mouseover: (e: LeafletMouseEvent) => handleMouseOver(e),
+        mouseout: (e: LeafletMouseEvent) => handleMouseOut(e),
+        dblclick: handleDoubleClick,
+      }}
       {...optionalIconProp}
     >
       {displayBounds ? (
         <Rectangle bounds={boundingBox} color={'gray'} weight={1}></Rectangle>
       ) : null}
       {showPopup && popup}
-    </FixedDriftMarker>
+    </ReactLeafletDriftMarker>
   );
 }

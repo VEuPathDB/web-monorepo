@@ -10,7 +10,7 @@ import BoundsDriftMarker, {
 import geohashAnimation from '../map/animation_functions/geohash';
 import { defaultAnimationDuration } from '../map/config/map.json';
 import { leafletZoomLevelToGeohashLevel } from '../map/utils/leaflet-geohash';
-import { Viewport } from 'react-leaflet';
+import { Viewport } from '../map/MapVEuMap';
 
 export default {
   title: 'Map/Zoom animation',
@@ -167,6 +167,8 @@ export const Default: Story<MapVEuMapProps> = (args) => {
       onBoundsChanged={handleViewportChanged}
       markers={markerElements}
       animation={defaultAnimation}
+      // testing to show/hide scale in the map
+      showScale={false}
     />
   );
 };

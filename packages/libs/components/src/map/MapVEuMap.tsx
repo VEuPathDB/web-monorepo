@@ -17,7 +17,13 @@ import {
   Bounds as MapVEuBounds,
 } from './Types';
 import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
-import { Viewport, Map, TileLayer, LayersControl } from 'react-leaflet';
+import {
+  MapContainer,
+  TileLayer,
+  LayersControl,
+  ControlledLayerProps,
+  ScaleControl,
+} from 'react-leaflet';
 import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
 import SemanticMarkers from './SemanticMarkers';
 import 'leaflet/dist/leaflet.css';
@@ -30,7 +36,11 @@ import Spinner from '../components/Spinner';
 import NoDataOverlay from '../components/NoDataOverlay';
 import { LatLngBounds } from 'leaflet';
 
-const { BaseLayer } = LayersControl;
+// define Viewport type
+export type Viewport = {
+  center: [number, number];
+  zoom: number;
+};
 
 export const baseLayers = {
   Street: {
@@ -55,12 +65,7 @@ export const baseLayers = {
       'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
     attribution:
       'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
-    // testing worldmap issue - with bounds props, message like 'map data not yet availalbe' is not shown
-    bounds: [
-      [-90, -180],
-      [90, 180],
-    ],
-    noWrap: true,
+    noWrap: false,
   },
   // change layer as previous one does not work
   Light: {
@@ -149,6 +154,8 @@ export interface MapVEuMapProps {
   showSpinner?: boolean;
   /** Whether to show the "No data" overlay */
   showNoDataOverlay?: boolean;
+  /** Whether to show the Scale in the map */
+  showScale?: boolean;
 }
 
 function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
@@ -156,7 +163,6 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     viewport,
     height,
     width,
-    onViewportChanged,
     onBoundsChanged,
     markers,
     animation,
@@ -170,6 +176,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     flyToMarkersDelay,
     showSpinner,
     showNoDataOverlay,
+    showScale = true,
   } = props;
 
   // this is the React Map component's onViewPortChanged handler
@@ -183,7 +190,9 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
   // Whether the user is currently dragging the map
   const [isDragging, setIsDragging] = useState<boolean>(false);
 
-  const mapRef = useRef<Map>(null);
+  // This may be useRef<MapContainer> but need to check with below useEffect comment
+  const mapRef = useRef<any>(null);
+
   const screenshotter = useMemo(
     () =>
       new SimpleMapScreenshoter({
@@ -193,6 +202,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     []
   );
 
+  // this needs to be checked with map Viz as it appears .leafletElement does not exist in v3
   useEffect(() => {
     if (mapRef.current?.leafletElement)
       screenshotter.addTo(mapRef.current.leafletElement);
@@ -298,19 +308,24 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
   }, [markers, isDragging, mouseMode]);
 
   return (
-    <Map
-      viewport={viewport}
+    // change from Map to MapContainer
+    <MapContainer
+      center={viewport.center}
+      zoom={viewport.zoom}
       style={{ height, width }}
-      onViewportChanged={onViewportChanged}
       className={mouseMode === 'magnification' ? 'cursor-zoom-in' : ''}
       minZoom={1}
       worldCopyJump={false}
       ondragstart={() => setIsDragging(true)}
       ondragend={() => setIsDragging(false)}
-      onbaselayerchange={(event) =>
+      onbaselayerchange={(event: ControlledLayerProps) =>
         onBaseLayerChanged && onBaseLayerChanged(event.name as BaseLayerChoice)
       }
-      ref={mapRef}
+      // "innerRef" is used instead of "ref" to avoid warning "function components cannot be given refs"
+      // need to check if it indeed works, especially with thumbnail function
+      // whenReady (taking function) or whenCreated (map instance) prop may be used instead for thumbnail ?
+      // ref={mapRef}
+      innerRef={mapRef}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -334,19 +349,21 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
 
       <LayersControl position="topright">
         {Object.entries(baseLayers).map(([name, layerProps], i) => (
-          <BaseLayer
+          <LayersControl.BaseLayer
             name={name}
             key={name}
             checked={baseLayer ? name === baseLayer : i === 0}
           >
             <TileLayer {...layerProps} />
-          </BaseLayer>
+          </LayersControl.BaseLayer>
         ))}
       </LayersControl>
 
       {showSpinner && <Spinner />}
       {showNoDataOverlay && <NoDataOverlay opacity={0.9} />}
-    </Map>
+      {/* add Scale in the map */}
+      {showScale && <ScaleControl position="bottomright" />}
+    </MapContainer>
   );
 }
 

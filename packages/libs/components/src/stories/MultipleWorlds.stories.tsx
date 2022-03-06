@@ -1,6 +1,5 @@
 import React, { ReactElement, useCallback, useState } from 'react';
 import { Story } from '@storybook/react';
-//DKDK change below
 import { BoundsViewport } from '../map/Types';
 import { BoundsDriftMarkerProps } from '../map/BoundsDriftMarker';
 import MapVEuMap, { MapVEuMapProps } from '../map/MapVEuMap';
@@ -9,7 +8,7 @@ import testDataStraddling from './fixture-data/geoclust-date-dateline-straddling
 import BoundsDriftMarker from '../map/BoundsDriftMarker';
 import { defaultAnimationDuration } from '../map/config/map.json';
 import { leafletZoomLevelToGeohashLevel } from '../map/utils/leaflet-geohash';
-import { Viewport } from 'react-leaflet';
+import { Viewport } from '../map/MapVEuMap';
 import '../map/TempIconHack';
 
 export default {

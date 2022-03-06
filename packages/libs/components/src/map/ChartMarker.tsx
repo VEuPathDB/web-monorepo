@@ -26,28 +26,16 @@ interface ChartMarkerProps extends BoundsDriftMarkerProps {
  */
 export default function ChartMarker(props: ChartMarkerProps) {
   let fullStat = [];
-  // set defaultColor to be skyblue (#7cb5ec) if props.colors does not exist
-  let defaultColor: string = '';
-  let defaultLineColor: string = '';
   // need to make a temporary stats array of objects to show marker colors - only works for demo data, not real solr data
   for (let i = 0; i < props.values.length; i++) {
-    if (props.colors) {
-      defaultColor = props.colors[i];
-      // defaultLineColor = 'grey'       // this is outline of histogram
-      defaultLineColor = '#00000088'; // this is outline of histogram
-    } else {
-      defaultColor = '#7cb5ec';
-      defaultLineColor = '#7cb5ec';
-    }
     fullStat.push({
-      // color: props.colors[i],
-      color: defaultColor,
+      color: props.colors ? props.colors[i] : '#7cb5ec',
       label: props.labels[i],
       value: props.values[i],
     });
   }
 
-  defaultLineColor = props.borderColor || defaultLineColor;
+  const defaultLineColor = props.borderColor || '#AAAAAA';
   const borderWidth = props.borderWidth || 1;
 
   // construct histogram marker icon
@@ -64,17 +52,17 @@ export default function ChartMarker(props: ChartMarkerProps) {
     (ySize + 2 * borderWidth) +
     '">'; // initiate svg marker icon
 
-  let count = fullStat.length;
-  let sumValues: number = fullStat
+  const count = fullStat.length;
+  // summation of fullStat.value per marker icon
+  const sumValues: number = fullStat
     .map((o) => o.value)
     .reduce((a, c) => {
       return a + c;
-    }); // summation of fullStat.value per marker icon
-  var maxValues: number = Math.max(...fullStat.map((o) => o.value)); // max of fullStat.value per marker icon
-  // for local max, need to check the case wherer all values are zeros that lead to maxValues equals to 0 -> "divided by 0" can happen
-  if (maxValues == 0) {
-    maxValues = 1; // this doesn't matter as all values are zeros
-  }
+    });
+
+  // max of fullStat.value per marker icon
+  const computeMaxValues: number = Math.max(...fullStat.map((o) => o.value));
+  const maxValues: number = computeMaxValues === 0 ? 1 : computeMaxValues;
 
   const roundX = 10; // round corner in pixel: 0 = right angle
   const roundY = 10; // round corner in pixel: 0 = right angle
@@ -112,65 +100,60 @@ export default function ChartMarker(props: ChartMarkerProps) {
     '"/>';
 
   // set globalMaxValue non-zero if props.yAxisRange exists
-  let globalMaxValue: number = 0;
-  // dependentAxisRange is an object with {min,max} (NumberRange)
-  if (props.dependentAxisRange) {
-    globalMaxValue =
-      props.dependentAxisRange.max - props.dependentAxisRange.min;
-  }
+  const globalMaxValue: number = props.dependentAxisRange
+    ? props.dependentAxisRange.max - props.dependentAxisRange.min
+    : 0;
 
-  // initialize variables for using at following if-else
-  let barWidth: number, startingX: number, barHeight: number, startingY: number;
-
-  if (globalMaxValue) {
-    fullStat.forEach(function (
-      el: { color: string; label: string; value: number },
-      index
-    ) {
-      // for the case of y-axis range input: a global approach that take global max = icon height
-      barWidth = (xSize - 2 * marginX) / count; // bar width
-      startingX = marginX + borderWidth + barWidth * index; // x in <react> tag: note that (0,0) is top left of the marker icon
-      barHeight = (el.value / globalMaxValue) * (size - 2 * marginY); // bar height: used 2*marginY to have margins at both top and bottom
-      startingY = size - marginY - barHeight + borderWidth; // y in <react> tag: note that (0,0) is top left of the marker icon
-      // making the last bar, noData
-      svgHTML +=
-        '<rect x=' +
-        startingX +
-        ' y=' +
-        startingY +
-        ' width=' +
-        barWidth +
-        ' height=' +
-        barHeight +
-        ' fill=' +
-        el.color +
-        ' />';
-    });
-  } else {
-    fullStat.forEach(function (
-      el: { color: string; label: string; value: number },
-      index
-    ) {
-      // for the case of auto-scale y-axis: a local approach that take local max = icon height
-      barWidth = (xSize - 2 * marginX) / count; // bar width
-      startingX = marginX + borderWidth + barWidth * index; // x in <react> tag: note that (0,0) is top left of the marker icon
-      barHeight = (el.value / maxValues) * (size - 2 * marginY); // bar height: used 2*marginY to have margins at both top and bottom
-      startingY = size - marginY - barHeight + borderWidth; // y in <react> tag: note that (0,0) is top left of the marker icon
-      // making the last bar, noData
-      svgHTML +=
-        '<rect x=' +
-        startingX +
-        ' y=' +
-        startingY +
-        ' width=' +
-        barWidth +
-        ' height=' +
-        barHeight +
-        ' fill=' +
-        el.color +
-        ' />';
-    });
-  }
+  // check global or local/regional max in display
+  // following variables, barWidth/Height and startingX/Y, could be directly defined in the svgHTML string without declarations
+  // however, for better understanding their roles, they are separated intentionally.
+  globalMaxValue
+    ? fullStat.map(
+        (el: { color: string; label: string; value: number }, index) => {
+          // for the case of y-axis range input: a global approach that take global max = icon height
+          const barWidth: number = (xSize - 2 * marginX) / count; // bar width
+          const startingX: number = marginX + borderWidth + barWidth * index; // x in <react> tag: note that (0,0) is top left of the marker icon
+          const barHeight: number =
+            (el.value / globalMaxValue) * (size - 2 * marginY); // bar height: used 2*marginY to have margins at both top and bottom
+          const startingY: number = size - marginY - barHeight + borderWidth; // y in <react> tag: note that (0,0) is top left of the marker icon
+          // making the last bar, noData
+          svgHTML +=
+            '<rect x=' +
+            startingX +
+            ' y=' +
+            startingY +
+            ' width=' +
+            barWidth +
+            ' height=' +
+            barHeight +
+            ' fill=' +
+            el.color +
+            ' />';
+        }
+      )
+    : fullStat.map(
+        (el: { color: string; label: string; value: number }, index) => {
+          // for the case of auto-scale y-axis: a local approach that take local max = icon height
+          const barWidth: number = (xSize - 2 * marginX) / count; // bar width
+          const startingX: number = marginX + borderWidth + barWidth * index; // x in <react> tag: note that (0,0) is top left of the marker icon
+          const barHeight: number =
+            (el.value / maxValues) * (size - 2 * marginY); // bar height: used 2*marginY to have margins at both top and bottom
+          const startingY: number = size - marginY - barHeight + borderWidth; // y in <react> tag: note that (0,0) is top left of the marker icon
+          // making the last bar, noData
+          svgHTML +=
+            '<rect x=' +
+            startingX +
+            ' y=' +
+            startingY +
+            ' width=' +
+            barWidth +
+            ' height=' +
+            barHeight +
+            ' fill=' +
+            el.color +
+            ' />';
+        }
+      );
 
   // add horizontal line: when using inner border (adjust x1)
   svgHTML +=
@@ -196,9 +179,10 @@ export default function ChartMarker(props: ChartMarkerProps) {
 
   // check isAtomic: draw pushpin if true
   if (props.isAtomic) {
-    let pushPinCode = '&#128392;';
+    const pushPinCode = '&#128392;'; // this does not work for me
+    // const pushPinCode = '&#128204;';  // red push pin works. idk why but black-color based one does not work here
     svgHTML +=
-      '<text x="89%" y="11%" dominant-baseline="middle" text-anchor="middle" opacity="0.75" font-weight="bold" font-size="1.2em">' +
+      '<text x="89%" y="11%" dominant-baseline="middle" text-anchor="middle" opacity="0.75" font-weight="bold" font-color="black" font-size="1.2em">' +
       pushPinCode +
       '</text>';
   }
@@ -209,7 +193,7 @@ export default function ChartMarker(props: ChartMarkerProps) {
   const totalSize = xSize + marginX + borderWidth;
 
   // set icon
-  let HistogramIcon: any = L.divIcon({
+  const HistogramIcon: any = L.divIcon({
     className: 'leaflet-canvas-icon', // need to change this className but just leave it as it for now
     iconSize: new L.Point(totalSize, totalSize), //set iconSize = 0
     iconAnchor: new L.Point(totalSize / 2, totalSize / 2), // location of topleft corner: this is used for centering of the icon like transform/translate in CSS
@@ -217,8 +201,7 @@ export default function ChartMarker(props: ChartMarkerProps) {
   });
 
   // anim check duration exists or not
-  let duration: number = props.duration ? props.duration : 300;
-  // let duration: number = (props.duration) ? 300 : 300
+  const duration: number = props.duration ? props.duration : 300;
 
   const plotSize = 200;
   const marginSize = 5;
@@ -264,7 +247,6 @@ export default function ChartMarker(props: ChartMarkerProps) {
   );
 
   return (
-    // anim
     <BoundsDriftMarker
       id={props.id}
       position={props.position}

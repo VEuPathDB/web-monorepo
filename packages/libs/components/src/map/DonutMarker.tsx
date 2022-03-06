@@ -1,34 +1,30 @@
 import React from 'react';
-
-//DKDK leaflet
 import L from 'leaflet';
-
-//DKDK anim
 import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 
 import PiePlot from '../plots/PiePlot';
 import { PiePlotData, PiePlotDatum } from '../types/plots';
 
-//DKDK ts definition for HistogramMarkerSVGProps: need some adjustment but for now, just use Donut marker one
+// ts definition for HistogramMarkerSVGProps: need some adjustment but for now, just use Donut marker one
 export interface DonutMarkerProps extends BoundsDriftMarkerProps {
   data: {
     value: number;
     label: string;
     color?: string;
   }[];
-  isAtomic?: boolean; // add a special thumbtack icon if this is true
+  // isAtomic: add a special thumbtack icon if this is true
+  isAtomic?: boolean;
   onClick?: (event: L.LeafletMouseEvent) => void | undefined;
 }
 
-// DKDK convert to Cartesian coord. toCartesian(centerX, centerY, Radius for arc to draw, arc (radian))
+// convert to Cartesian coord. toCartesian(centerX, centerY, Radius for arc to draw, arc (radian))
 function toCartesian(
   centerX: number,
   centerY: number,
   radius: number,
   angleInRadianInput: number
 ) {
-  // console.log("angleInRadianInput = ", angleInRadianInput)
-  let angleInRadians = angleInRadianInput - Math.PI / 2;
+  const angleInRadians = angleInRadianInput - Math.PI / 2;
 
   return {
     x: centerX + radius * Math.cos(angleInRadians),
@@ -36,7 +32,7 @@ function toCartesian(
   };
 }
 
-// DKDK input radian: makeArc(centerX, centerY, Radius for arc to draw, start point of arc (radian), end point of arc (radian))
+// input radian: makeArc(centerX, centerY, Radius for arc to draw, start point of arc (radian), end point of arc (radian))
 function makeArc(
   x: number,
   y: number,
@@ -44,21 +40,18 @@ function makeArc(
   startAngle: number,
   endAngle: number
 ) {
-  // console.log("startAngle = ", startAngle)
-  // console.log("endAngle = ", endAngle)
-  let dValue;
-  let endAngleOriginal = endAngle;
+  const endAngleOriginal = endAngle;
   if (endAngleOriginal - startAngle === 2 * Math.PI) {
     endAngle = (359 * Math.PI) / 180;
   }
 
-  let start = toCartesian(x, y, radius, endAngle);
-  let end = toCartesian(x, y, radius, startAngle);
+  const start = toCartesian(x, y, radius, endAngle);
+  const end = toCartesian(x, y, radius, startAngle);
 
-  let arcSweep = endAngle - startAngle <= Math.PI ? '0' : '1';
+  const arcSweep = endAngle - startAngle <= Math.PI ? '0' : '1';
 
   if (endAngleOriginal - startAngle === 2 * Math.PI) {
-    dValue = [
+    const dValue = [
       'M',
       start.x,
       start.y,
@@ -72,8 +65,10 @@ function makeArc(
       end.y,
       'z',
     ].join(' ');
+
+    return dValue;
   } else {
-    dValue = [
+    const dValue = [
       'M',
       start.x,
       start.y,
@@ -86,60 +81,51 @@ function makeArc(
       end.x,
       end.y,
     ].join(' ');
-  }
 
-  return dValue;
+    return dValue;
+  }
 }
 
 // making k over 9999, e.g., 223832 -> 234k
 function kFormatter(num: number) {
-  //DKDK fixed type error regarding toFixed() that returns string
+  // fixed type error regarding toFixed() that returns string
   return Math.abs(num) > 9999
     ? (Math.sign(num) * (Math.abs(num) / 1000)).toFixed(0) + 'k'
     : Math.sign(num) * Math.abs(num);
 }
 
 /**
- * DKDK this is a SVG donut marker icon
+ * this is a SVG donut marker icon
  */
 export default function DonutMarker(props: DonutMarkerProps) {
-  let fullStat: PiePlotData = { slices: [] };
-  let defaultColor: string = '';
-  for (let i = 0; i < props.data.length; i++) {
-    // Currently this only serves to initialize missing colors as 'silver'
-    let datum = props.data[i];
+  const fullStat: PiePlotData = {
+    slices: props.data.map((datum) => {
+      return {
+        color: datum.color ? datum.color : 'silver',
+        label: datum.label,
+        value: datum.value,
+      };
+    }),
+  };
 
-    if (datum.color) {
-      defaultColor = datum.color;
-    } else {
-      defaultColor = 'silver';
-    }
+  // construct donut marker icon
+  const size = 40; // SVG donut marker icon size: note that popbio/mapveu donut marker icons = 40
+  // divIcon HTML contents
+  let svgHTML: string = '';
 
-    fullStat.slices.push({
-      // color: props.colors[i],
-      color: defaultColor,
-      label: datum.label,
-      value: datum.value,
-    });
-  }
+  // set drawing area
+  svgHTML += '<svg width="' + size + '" height="' + size + '">';
 
-  //DKDK construct histogram marker icon
-  const size = 40; //DKDK SVG donut marker icon size: note that popbio/mapveu donut marker icons = 40
-  let svgHTML: string = ''; //DKDK divIcon HTML contents
-
-  //DKDK set drawing area
-  svgHTML += '<svg width="' + size + '" height="' + size + '">'; //DKDK initiate svg marker icon
-
-  //DKDK summation of fullStat.value per marker icon
-  let sumValues: number = fullStat.slices
+  // summation of fullStat.value per marker icon
+  const sumValues: number = fullStat.slices
     .map((o) => o.value)
     .reduce((a, c) => {
       return a + c;
     });
-  //DKDK convert large value with k (e.g., 12345 -> 12k): return original value if less than a criterion
-  let sumLabel: number | string = kFormatter(sumValues);
+  // convert large value with k (e.g., 12345 -> 12k): return original value if less than a criterion
+  const sumLabel: number | string = kFormatter(sumValues);
 
-  //DKDK draw white circle
+  // draw white circle
   svgHTML +=
     '<circle cx="' +
     size / 2 +
@@ -149,15 +135,15 @@ export default function DonutMarker(props: DonutMarkerProps) {
     size / 2 +
     '" stroke="green" stroke-width="0" fill="white" />';
 
-  //DKDK set start point of arc = 0
+  // set start point of arc = 0
   let startValue: number = 0;
-  //DKDK create arcs for data
-  fullStat.slices.forEach(function (el: PiePlotDatum) {
-    //DKDK if sumValues = 0, do not draw arc
+  // create arcs for data
+  fullStat.slices.map((el: PiePlotDatum) => {
+    // if sumValues = 0, do not draw arc
     if (sumValues > 0) {
-      //DKDK compute the ratio of each data to the total number
-      let arcValue: number = el.value / sumValues;
-      //DKDK draw arc: makeArc(centerX, centerY, Radius for arc, start point of arc (radian), end point of arc (radian))
+      // compute the ratio of each data to the total number
+      const arcValue: number = el.value / sumValues;
+      // draw arc: makeArc(centerX, centerY, Radius for arc, start point of arc (radian), end point of arc (radian))
       svgHTML +=
         '<path fill="none" stroke="' +
         el.color +
@@ -170,39 +156,40 @@ export default function DonutMarker(props: DonutMarkerProps) {
           startValue + arcValue * 2 * Math.PI
         ) +
         '" />';
-      //DKDK set next startValue to be previous arcValue
+      // set next startValue to be previous arcValue
       startValue = startValue + arcValue * 2 * Math.PI;
     }
   });
 
-  //DKDK adding total number text/label and centering it
+  // adding total number text/label and centering it
   svgHTML +=
     '<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" opacity="1" fill="#505050" font-family="Arial, Helvetica, sans-serif" font-weight="bold" font-size="1em">' +
     sumLabel +
     '</text>';
 
-  //DKDK check isAtomic: draw pushpin if true
+  // check isAtomic: draw pushpin if true
   if (props.isAtomic) {
-    let pushPinCode = '&#128392;';
+    const pushPinCode = '&#128392;'; // this does not work for me
+    // const pushPinCode = '&#128204;';  // red push pin works. idk why but black-color based one does not work here
     svgHTML +=
-      '<text x="86%" y="14%" dominant-baseline="middle" text-anchor="middle" opacity="0.75" font-weight="bold" font-size="1.2em">' +
+      '<text x="86%" y="14%" dominant-baseline="middle" text-anchor="middle" opacity="0.75" font-weight="bold" font-color="black" font-size="1.2em">' +
       pushPinCode +
       '</text>';
   }
 
-  // DKDK closing svg tag
+  //  closing svg tag
   svgHTML += '</svg>';
 
-  //DKDK set icon
-  let SVGDonutIcon: any = L.divIcon({
-    className: 'leaflet-canvas-icon', //DKDK need to change this className but just leave it as it for now
-    iconSize: new L.Point(size, size), //DKDK this will make icon to cover up SVG area!
-    iconAnchor: new L.Point(size / 2, size / 2), //DKDK location of topleft corner: this is used for centering of the icon like transform/translate in CSS
-    html: svgHTML, //DKDK divIcon HTML svg code generated above
+  // set icon as divIcon
+  const SVGDonutIcon: any = L.divIcon({
+    className: 'leaflet-canvas-icon', // may need to change this className but just leave it as it for now
+    iconSize: new L.Point(size, size), // this will make icon to cover up SVG area!
+    iconAnchor: new L.Point(size / 2, size / 2), // location of topleft corner: this is used for centering of the icon like transform/translate in CSS
+    html: svgHTML, // divIcon HTML svg code generated above
   });
 
-  //DKDK anim check duration exists or not
-  let duration: number = props.duration ? props.duration : 300;
+  // anim check duration exists or not
+  const duration: number = props.duration ? props.duration : 300;
 
   const plotSize = 150;
   const marginSize = 0;

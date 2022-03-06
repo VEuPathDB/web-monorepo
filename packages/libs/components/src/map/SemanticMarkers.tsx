@@ -6,7 +6,7 @@ import {
   Bounds,
 } from './Types';
 import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
-import { useLeaflet } from 'react-leaflet';
+import { useMap } from 'react-leaflet';
 import { LatLngBounds } from 'leaflet';
 import { debounce } from 'lodash';
 
@@ -33,7 +33,8 @@ export default function SemanticMarkers({
   animation,
   recenterMarkers = true,
 }: SemanticMarkersProps) {
-  const { map } = useLeaflet();
+  // react-leaflet v3
+  const map = useMap();
 
   const [prevMarkers, setPrevMarkers] = useState<
     ReactElement<BoundsDriftMarkerProps>[]
@@ -134,7 +135,7 @@ export default function SemanticMarkers({
 
     // Update previous markers with the original markers array
     setPrevMarkers(markers);
-  }, [markers]);
+  }, [markers, bounds]);
 
   useEffect(() => {
     /** If we are zooming in then reset the marker elements. When initially rendered
@@ -156,7 +157,7 @@ export default function SemanticMarkers({
     }
 
     return () => clearTimeout(timeoutVariable);
-  }, [zoomType]);
+  }, [zoomType, markers]);
 
   return <>{consolidatedMarkers}</>;
 }
