@@ -17,7 +17,7 @@ import { ServiceError } from '@veupathdb/wdk-client/lib/Service/ServiceError';
 import {
   UserDatasetShareResponse,
   validateUserDatasetCompatibleThunk,
-} from '../Services/UserDatasetWrappers';
+} from '../Service/UserDatasetWrappers';
 
 import { UserDataset, UserDatasetMeta } from '../Utils/types';
 
