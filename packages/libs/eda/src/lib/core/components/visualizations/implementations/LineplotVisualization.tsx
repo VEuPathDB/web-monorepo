@@ -317,14 +317,17 @@ function LineplotViz(props: VisualizationProps) {
 
   const onUseBinningChange = onChangeHandlerFactory<boolean>('useBinning');
 
-  const { xAxisVariableMetadata, outputEntity } = useMemo(() => {
-    const { entity, variable } =
-      findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
-    return {
-      outputEntity: entity,
-      xAxisVariableMetadata: variable,
-    };
+  const xAxisVariableMetadata = useMemo(() => {
+    const { variable } = findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
+    return variable;
   }, [findEntityAndVariable, vizConfig.xAxisVariable]);
+
+  const outputEntity = useFindOutputEntity(
+    dataElementDependencyOrder,
+    vizConfig,
+    'yAxisVariable',
+    entities
+  );
 
   const data = usePromise(
     useCallback(async (): Promise<LinePlotDataWithCoverage | undefined> => {
