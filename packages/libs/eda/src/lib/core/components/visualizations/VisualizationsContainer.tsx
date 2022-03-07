@@ -23,15 +23,14 @@ import { VisualizationType } from './VisualizationTypes';
 
 import './Visualizations.scss';
 import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
+import Banner from '@veupathdb/wdk-client/lib/Components/Banners/Banner';
 import PlaceholderIcon from './PlaceholderIcon';
 import { Tooltip } from '@material-ui/core';
-import WarningIcon from '@material-ui/icons/Warning';
 import { isEqual } from 'lodash';
 import { EntityCounts } from '../../hooks/entityCounts';
 import { useStudyRecord } from '../../hooks/workspace';
 import { PromiseHookState } from '../../hooks/promise';
 import { GeoConfig } from '../../types/geoConfig';
-import { CenterFocusStrong } from '@material-ui/icons';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -61,7 +60,7 @@ interface Props {
  */
 export function VisualizationsContainer(props: Props) {
   const { url } = useRouteMatch();
-  const studyRecordId = useStudyRecord().id[0].value;
+  const currentStudyRecordId = useStudyRecord().id[0].value;
   const studiesForPerformanceWarning = [
     'DS_a885240fc4',
     'DS_5c41b87221',
@@ -70,37 +69,16 @@ export function VisualizationsContainer(props: Props) {
 
   return (
     <div className={cx()}>
-      {studiesForPerformanceWarning.includes(studyRecordId) ? (
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            margin: '3px',
-            padding: '0.5em',
-            borderRadius: '0.5em',
-            border: '1px solid lightgrey',
-            background: '#E3F2FD',
+      {studiesForPerformanceWarning.includes(currentStudyRecordId) ? (
+        <Banner
+          banner={{
+            type: 'warning',
+            message:
+              'Visualizations may take up to 1 minute to appear due to the large amount of data in this study.',
+            pinned: false,
+            intense: false,
           }}
-        >
-          <WarningIcon
-            style={{
-              color: 'blue',
-              marginRight: '1em',
-            }}
-            fontSize="large"
-          />
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              color: 'black',
-              fontSize: '1.2em',
-            }}
-          >
-            Visualizations may take up to 1 minute to appear due to the large
-            amount of data in this study.
-          </div>
-        </div>
+        ></Banner>
       ) : null}
       <Switch>
         <Route exact path={url}>
