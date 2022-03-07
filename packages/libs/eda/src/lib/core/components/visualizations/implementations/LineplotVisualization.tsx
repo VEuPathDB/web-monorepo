@@ -176,6 +176,7 @@ export const LineplotConfig = t.intersection([
     binWidthTimeUnit: t.string,
     showMissingness: t.boolean,
     checkedLegendItems: t.array(t.string),
+    showErrorBars: t.boolean,
   }),
 ]);
 
@@ -315,6 +316,11 @@ function LineplotViz(props: VisualizationProps) {
     'checkedLegendItems'
   );
 
+  const onShowErrorBarsChange = onChangeHandlerFactory<boolean>(
+    'showErrorBars',
+    true
+  );
+
   const onUseBinningChange = onChangeHandlerFactory<boolean>('useBinning');
 
   const xAxisVariableMetadata = useMemo(() => {
@@ -441,6 +447,7 @@ function LineplotViz(props: VisualizationProps) {
       vizConfig.valueSpecConfig,
       vizConfig.showMissingness,
       vizConfig.useBinning,
+      vizConfig.showErrorBars,
       computation.descriptor.type,
       visualization.descriptor.type,
       outputEntity,
@@ -591,6 +598,8 @@ function LineplotViz(props: VisualizationProps) {
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
       useBinning={vizConfig.useBinning}
       onUseBinningChange={onUseBinningChange}
+      showErrorBars={vizConfig.showErrorBars ?? false}
+      onShowErrorBarsChange={onShowErrorBarsChange}
     />
   );
 
@@ -728,6 +737,8 @@ type LineplotWithControlsProps = Omit<LinePlotProps, 'data'> & {
   onCheckedLegendItemsChange: (checkedLegendItems: string[]) => void;
   useBinning: boolean;
   onUseBinningChange: (newValue: boolean) => void;
+  showErrorBars: boolean;
+  onShowErrorBarsChange: (newValue: boolean) => void;
 };
 
 function LineplotWithControls({
@@ -747,6 +758,8 @@ function LineplotWithControls({
   onCheckedLegendItemsChange,
   useBinning,
   onUseBinningChange,
+  showErrorBars,
+  onShowErrorBarsChange,
   ...lineplotProps
 }: LineplotWithControlsProps) {
   const plotRef = useUpdateThumbnailEffect(
@@ -831,6 +844,13 @@ function LineplotWithControls({
               minHeight: widgetHeight,
             }}
             disabled={!useBinning}
+          />
+        </LabelledGroup>
+        <LabelledGroup label="Y-axis">
+          <Switch
+            label="Show error bars"
+            state={showErrorBars}
+            onStateChange={onShowErrorBarsChange}
           />
         </LabelledGroup>
       </div>
@@ -991,6 +1011,7 @@ function getRequestParams(
       overlayVariable: overlayVariable,
       facetVariable: facetVariable ? [facetVariable] : [],
       showMissingness: showMissingness ? 'TRUE' : 'FALSE',
+      errorBars: vizConfig.showErrorBars ? 'TRUE' : 'FALSE',
     },
   } as LineplotRequestParams;
 }
@@ -1090,6 +1111,17 @@ function processInputData(
       dataSetProcess.push({
         x: seriesX.length ? seriesX : (([null] as unknown) as number[]), // [null] hack required to make sure
         y: seriesY.length ? seriesY : (([null] as unknown) as number[]), // Plotly has a legend entry for empty traces
+        ...(el.errorBars != null
+          ? {
+              yErrorBarUpper: el.errorBars.map((eb) => eb.upperBound),
+              yErrorBarLower: el.errorBars.map((eb) => eb.lowerBound),
+            }
+          : {}),
+        ...(el.binSampleSize != null
+          ? {
+              sampleSize: el.binSampleSize.map((bss) => bss.N),
+            }
+          : {}),
         name:
           el.overlayVariableDetails?.value != null
             ? fixLabelForNumberVariables(

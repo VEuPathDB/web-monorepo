@@ -281,6 +281,7 @@ export interface LineplotRequestParams {
     };
     showMissingness?: 'TRUE' | 'FALSE';
     valueSpec: 'mean' | 'median';
+    errorBars: 'TRUE' | 'FALSE';
   };
 }
 
@@ -293,6 +294,18 @@ const LineplotResponseData = array(
     partial({
       binStart: array(string),
       binEnd: array(string),
+      errorBars: array(
+        type({
+          lowerBound: number,
+          upperBound: number,
+          error: string,
+        })
+      ),
+      binSampleSize: array(
+        type({
+          N: number,
+        })
+      ),
       overlayVariableDetails: StringVariableValue,
       facetVariableDetails: union([
         tuple([StringVariableValue]),
