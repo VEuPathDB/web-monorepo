@@ -28,7 +28,7 @@
     "date-arithmetic": "^4.1.0",
     "debounce-promise": "^3.1.2",
     "latlon-geohash": "^2.0.0",
-    "leaflet": "^1.6.0",
+    "leaflet": "^1.7.1",
     "leaflet-simple-map-screenshoter": "^0.4.5",
     "luxon": "^1.25.0",
     "plotly.js": "^2.6.0",
