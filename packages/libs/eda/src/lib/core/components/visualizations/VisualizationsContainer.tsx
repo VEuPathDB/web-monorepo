@@ -31,6 +31,7 @@ import { EntityCounts } from '../../hooks/entityCounts';
 import { useStudyRecord } from '../../hooks/workspace';
 import { PromiseHookState } from '../../hooks/promise';
 import { GeoConfig } from '../../types/geoConfig';
+import { CenterFocusStrong } from '@material-ui/icons';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -74,25 +75,31 @@ export function VisualizationsContainer(props: Props) {
           style={{
             display: 'flex',
             justifyContent: 'center',
-            marginTop: '0.75rem',
+            margin: '3px',
+            padding: '0.5em',
+            borderRadius: '0.5em',
+            border: '1px solid lightgrey',
+            background: '#E3F2FD',
           }}
         >
           <WarningIcon
             style={{
-              color: '#338899',
-              // verticalAlign: 'middle',
-              marginRight: '0.5rem',
+              color: 'blue',
+              marginRight: '1em',
             }}
-            fontSize="medium"
+            fontSize="large"
           />
-          <h3
+          <div
             style={{
-              color: '#338899',
+              display: 'flex',
+              alignItems: 'center',
+              color: 'black',
+              fontSize: '1.2em',
             }}
           >
             Visualizations may take up to 1 minute to appear due to the large
             amount of data in this study.
-          </h3>
+          </div>
         </div>
       ) : null}
       <Switch>
