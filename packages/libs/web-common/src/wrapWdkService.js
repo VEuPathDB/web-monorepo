@@ -26,5 +26,10 @@ export default wdkService => ({
     useCache: false,
     method: 'get',
     path: '/site-messages'
-  })
+  }),
+  getCurrentUser: async () => {
+    let user = await wdkService.getCurrentUser();
+    user.properties.skipStudyPermissions = !useEda;
+    return user;
+  }
 });
