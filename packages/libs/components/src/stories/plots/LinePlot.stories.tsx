@@ -29,11 +29,15 @@ const errorBarData = {
       ...dataSet.series[0],
       yErrorBarUpper: [5, 9, 5, 14, 12.5],
       yErrorBarLower: [3, 6, 1, 10, 9.5],
+      binLabel: ['[0,2)', '[2,5)', '[5,8)', '[8,12)', '[12,15)'],
+      sampleSize: [5, 60, 43, 22, 11, 99],
     },
     {
       ...dataSet.series[1],
       yErrorBarUpper: [7, 12, 6, 12, 14.5],
       yErrorBarLower: [5, 10, 2, 8, 11.5],
+      binLabel: ['[0,2)', '[2,5)', '[5,8)', '[8,12)', '[12,15)'],
+      sampleSize: [11, 22, 33, 44, 55, 66],
     },
   ],
 };

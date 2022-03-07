@@ -16,6 +16,10 @@ export type LinePlotDataSeries = Override<
    */
   yErrorBarUpper?: number[] | string[];
   yErrorBarLower?: number[] | string[];
+  /* How many data points were binned? */
+  sampleSize?: number[];
+  /* Strings (such as '[10,15)') to describe how the x-axis variable was binned for tooltip info only */
+  binLabel?: string[];
 };
 
 export type LinePlotData = {
