@@ -68,10 +68,12 @@ function fetchDecodedJsonOrThrowMessage<Resource>(
 
       const message = responseBody.message;
       if (!message) {
-        throw 'Unexpected error: ' + response.status;
+        throw new Error('Unexpected error: ' + response.status);
       }
-      if (response.status != 422) {
-        throw 'Error type ' + responseBody.status + ': ' + responseBody.message;
+      if (response.status !== 422) {
+        throw new Error(
+          'Error type ' + responseBody.status + ': ' + responseBody.message
+        );
       }
       let errorLines = [];
       errorLines.push('Validation failed:');
@@ -90,13 +92,11 @@ function fetchDecodedJsonOrThrowMessage<Resource>(
 
       let errorMessage = `Could not decode resource from ${options.path}:`;
       if (result.context) {
-        errorMessage += '\n\n' + `  Problem at _${result.context}:`;
+        errorMessage += `\n\n  Problem at _${result.context}:`;
       }
-      errorMessage +=
-        '\n\n' +
-        `    Expected ${result.expected}, but got ${JSON.stringify(
-          result.value
-        )}.`;
+      errorMessage += `\n\n    Expected ${
+        result.expected
+      }, but got ${JSON.stringify(result.value)}.`;
       throw errorMessage;
     });
 }
