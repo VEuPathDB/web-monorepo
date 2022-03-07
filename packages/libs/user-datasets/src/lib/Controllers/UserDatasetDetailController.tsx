@@ -5,7 +5,6 @@ import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActi
 import PageController from '@veupathdb/wdk-client/lib/Core/Controllers/PageController';
 import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 
 import {
   loadUserDatasetDetail,
@@ -22,7 +21,7 @@ import UserDatasetDetail from '../Components/Detail/UserDatasetDetail';
 import EmptyState from '../Components/EmptyState';
 import { quotaSize } from '../Components/UserDatasetUtils';
 
-import { State as UserDatasetDetailState } from '../StoreModules/UserDatasetDetailStoreModule';
+import { StateSlice } from '../StoreModules/types';
 
 const ActionCreators = {
   showLoginForm,
@@ -32,10 +31,6 @@ const ActionCreators = {
   shareUserDatasets,
   unshareUserDatasets,
 };
-
-interface StateSlice extends RootState {
-  userDatasetDetail: UserDatasetDetailState;
-}
 
 type StateProps = StateSlice['userDatasetDetail'] & StateSlice['globalData'];
 type DispatchProps = typeof ActionCreators;

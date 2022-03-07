@@ -6,7 +6,6 @@ import {
 import { Observable } from 'rxjs';
 import { filter, mergeMap } from 'rxjs/operators';
 import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
-import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 
 import {
   Action,
@@ -18,6 +17,8 @@ import {
   clearMessages,
   receiveBadUploadHistoryAction,
 } from '../Actions/UserDatasetUploadActions';
+
+import { StateSlice } from '../StoreModules/types';
 
 import { UserDatasetUpload } from '../Utils/types';
 
@@ -50,7 +51,7 @@ export const observe = combineEpics(
 
 function observeSubmitUploadForm(
   action$: ActionsObservable<Action>,
-  state$: StateObservable<RootState>,
+  state$: StateObservable<StateSlice>,
   dependencies: EpicDependencies
 ): Observable<Action> {
   return action$.pipe(
@@ -68,9 +69,10 @@ function observeSubmitUploadForm(
     })
   );
 }
+
 function observeRequestUploadMessages(
   action$: ActionsObservable<Action>,
-  state$: StateObservable<RootState>,
+  state$: StateObservable<StateSlice>,
   dependencies: EpicDependencies
 ): Observable<Action> {
   return action$.pipe(
@@ -87,9 +89,10 @@ function observeRequestUploadMessages(
     })
   );
 }
+
 function observeCancelCurrentUpload(
   action$: ActionsObservable<Action>,
-  state$: StateObservable<RootState>,
+  state$: StateObservable<StateSlice>,
   dependencies: EpicDependencies
 ): Observable<Action> {
   return action$.pipe(
@@ -109,7 +112,7 @@ function observeCancelCurrentUpload(
 
 function observeClearMessages(
   action$: ActionsObservable<Action>,
-  state$: StateObservable<RootState>,
+  state$: StateObservable<StateSlice>,
   dependencies: EpicDependencies
 ): Observable<Action> {
   return action$.pipe(

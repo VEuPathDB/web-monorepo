@@ -4,8 +4,6 @@ import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import PageController from '@veupathdb/wdk-client/lib/Core/Controllers/PageController';
 import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
 
-import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
-
 import {
   requestUploadMessages,
   cancelCurrentUpload,
@@ -14,7 +12,7 @@ import {
 
 import AllUploads from '../Components/AllUploads';
 
-import { State as UserDatasetUploadState } from '../StoreModules/UserDatasetUploadStoreModule';
+import { StateSlice } from '../StoreModules/types';
 
 const actionCreators = {
   showLoginForm,
@@ -23,12 +21,8 @@ const actionCreators = {
   clearMessages,
 };
 
-interface StateSlice extends RootState {
-  userDatasetUpload: UserDatasetUploadState;
-}
-
-type StateProps = UserDatasetUploadState &
-  Pick<RootState['globalData'], 'user'>;
+type StateProps = StateSlice['userDatasetUpload'] &
+  Pick<StateSlice['globalData'], 'user'>;
 
 type DispatchProps = typeof actionCreators;
 type Props = StateProps & { actions: DispatchProps };

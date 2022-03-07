@@ -5,7 +5,6 @@ import { withRouter } from 'react-router-dom';
 import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
 import PageController from '@veupathdb/wdk-client/lib/Core/Controllers/PageController';
 import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 
 import {
   loadUserDatasetList,
@@ -21,9 +20,7 @@ import UserDatasetList from '../Components/List/UserDatasetList';
 import NoDatasetsMessage from '../Components/NoDatasetsMessage';
 import { quotaSize } from '../Components/UserDatasetUtils';
 
-import { State as UserDatasetListState } from '../StoreModules/UserDatasetListStoreModule';
-
-import { State as UserDatasetUploadState } from '../StoreModules/UserDatasetUploadStoreModule';
+import { StateSlice } from '../StoreModules/types';
 
 import { UserDataset } from '../Utils/types';
 
@@ -40,13 +37,8 @@ const ActionCreators = {
   requestUploadMessages,
 };
 
-interface StateSlice extends RootState {
-  userDatasetList: UserDatasetListState;
-  userDatasetUpload: UserDatasetUploadState;
-}
-
 type StateProps = Pick<
-  RootState,
+  StateSlice,
   'userDatasetList' | 'userDatasetUpload' | 'globalData'
 >;
 type DispatchProps = typeof ActionCreators;
