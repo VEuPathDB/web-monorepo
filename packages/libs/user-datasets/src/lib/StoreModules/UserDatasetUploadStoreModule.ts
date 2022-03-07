@@ -18,6 +18,11 @@ import {
   receiveBadUploadHistoryAction,
 } from '../Actions/UserDatasetUploadActions';
 
+import {
+  MISCONFIGURED_USER_DATASET_UPLOAD_SERVICE_ERROR_MESSAGE,
+  isUserDatasetUploadCompatibleWdkService,
+} from '../Service/UserDatasetUploadWrappers';
+
 import { StateSlice } from '../StoreModules/types';
 
 import { UserDatasetUpload } from '../Utils/types';
@@ -78,6 +83,12 @@ function observeRequestUploadMessages(
   return action$.pipe(
     filter(requestUploadMessages.isOfType),
     mergeMap(async (action) => {
+      if (!isUserDatasetUploadCompatibleWdkService(dependencies.wdkService)) {
+        throw new Error(
+          MISCONFIGURED_USER_DATASET_UPLOAD_SERVICE_ERROR_MESSAGE
+        );
+      }
+
       try {
         const uploads = await dependencies.wdkService.listStatusDetails();
         return receiveUploadMessages(uploads);
@@ -98,6 +109,12 @@ function observeCancelCurrentUpload(
   return action$.pipe(
     filter(cancelCurrentUpload.isOfType),
     mergeMap(async (action) => {
+      if (!isUserDatasetUploadCompatibleWdkService(dependencies.wdkService)) {
+        throw new Error(
+          MISCONFIGURED_USER_DATASET_UPLOAD_SERVICE_ERROR_MESSAGE
+        );
+      }
+
       try {
         await dependencies.wdkService.cancelOngoingUpload(action.payload.id);
         return requestUploadMessages();
@@ -118,6 +135,12 @@ function observeClearMessages(
   return action$.pipe(
     filter(clearMessages.isOfType),
     mergeMap(async (action) => {
+      if (!isUserDatasetUploadCompatibleWdkService(dependencies.wdkService)) {
+        throw new Error(
+          MISCONFIGURED_USER_DATASET_UPLOAD_SERVICE_ERROR_MESSAGE
+        );
+      }
+
       try {
         await dependencies.wdkService.clearMessages(action.payload.ids);
         return requestUploadMessages();
