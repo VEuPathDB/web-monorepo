@@ -9,12 +9,13 @@ import {
   PreferenceUpdateAction,
 } from '@veupathdb/wdk-client/lib/Actions/UserActions';
 import {
-  ActionThunk,
   EmptyAction,
   emptyAction,
 } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
 import { ServiceError } from '@veupathdb/wdk-client/lib/Service/ServiceError';
 import { UserDatasetShareResponse } from '@veupathdb/wdk-client/lib/Service/Mixins/UserDatasetsService';
+
+import { validateUserDatasetCompatibleThunk } from '../Services/UserDatasetWrappers';
 
 import { UserDataset, UserDatasetMeta } from '../Utils/types';
 
@@ -390,8 +391,8 @@ type SharingAction =
 
 const FILTER_BY_PROJECT_PREF = 'userDatasets.filterByProject';
 
-export function loadUserDatasetList(): ActionThunk<ListAction> {
-  return ({ wdkService }) => [
+export function loadUserDatasetList() {
+  return validateUserDatasetCompatibleThunk<ListAction>(({ wdkService }) => [
     listLoading(),
     Promise.all([
       wdkService.getCurrentUserPreferences().then(
@@ -406,47 +407,47 @@ export function loadUserDatasetList(): ActionThunk<ListAction> {
         listReceived(userDatasets, filterByProject),
       listErrorReceived
     ),
-  ];
+  ]);
 }
 
-export function loadUserDatasetDetail(id: number): ActionThunk<DetailAction> {
-  return ({ wdkService }) => [
+export function loadUserDatasetDetail(id: number) {
+  return validateUserDatasetCompatibleThunk<DetailAction>(({ wdkService }) => [
     detailLoading(id),
     wdkService.getUserDataset(id).then(
       (userDataset) => detailReceived(id, userDataset),
       (error: ServiceError) =>
         error.status === 404 ? detailReceived(id) : detailError(error)
     ),
-  ];
+  ]);
 }
 
 export function shareUserDatasets(
   userDatasetIds: number[],
   recipientUserIds: number[]
-): ActionThunk<SharingAction> {
-  return ({ wdkService }) => {
+) {
+  return validateUserDatasetCompatibleThunk<SharingAction>(({ wdkService }) => {
     return wdkService
       .editUserDatasetSharing('add', userDatasetIds, recipientUserIds)
       .then(sharingSuccess, sharingError);
-  };
+  });
 }
 
 export function unshareUserDatasets(
   userDatasetIds: number[],
   recipientUserIds: number[]
-): ActionThunk<SharingAction> {
-  return ({ wdkService }) => {
+) {
+  return validateUserDatasetCompatibleThunk<SharingAction>(({ wdkService }) => {
     return wdkService
       .editUserDatasetSharing('delete', userDatasetIds, recipientUserIds)
       .then(sharingSuccess, sharingError);
-  };
+  });
 }
 
 export function updateUserDatasetDetail(
   userDataset: UserDataset,
   meta: UserDatasetMeta
-): ActionThunk<UpdateAction> {
-  return ({ wdkService }) => [
+) {
+  return validateUserDatasetCompatibleThunk<UpdateAction>(({ wdkService }) => [
     detailUpdating(),
     wdkService
       .updateUserDataset(userDataset.id, meta)
@@ -454,14 +455,16 @@ export function updateUserDatasetDetail(
         () => detailUpdateSuccess({ ...userDataset, meta }),
         detailUpdateError
       ),
-  ];
+  ]);
 }
 
 export function removeUserDataset(
   userDataset: UserDataset,
   redirectTo?: string
-): ActionThunk<RemovalAction | EmptyAction | RouteAction> {
-  return ({ wdkService }) => [
+) {
+  return validateUserDatasetCompatibleThunk<
+    RemovalAction | EmptyAction | RouteAction
+  >(({ wdkService }) => [
     detailRemoving(),
     wdkService
       .removeUserDataset(userDataset.id)
@@ -474,18 +477,18 @@ export function removeUserDataset(
         ],
         detailRemoveError
       ),
-  ];
+  ]);
 }
 
-export function updateProjectFilter(
-  filterByProject: boolean
-): ActionThunk<PreferenceUpdateAction | ProjectFilterAction> {
-  return () => [
+export function updateProjectFilter(filterByProject: boolean) {
+  return validateUserDatasetCompatibleThunk<
+    PreferenceUpdateAction | ProjectFilterAction
+  >(() => [
     updateUserPreference(
       'global',
       FILTER_BY_PROJECT_PREF,
       JSON.stringify(filterByProject)
     ),
     projectFilter(filterByProject),
-  ];
+  ]);
 }
