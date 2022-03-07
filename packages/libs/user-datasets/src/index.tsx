@@ -1,6 +1,11 @@
 import './globals';
+
 import { RouteComponentProps } from 'react-router';
+
+import { mapValues } from 'lodash';
+
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
+import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import {
   RouteEntry,
   parseQueryString,
@@ -10,16 +15,19 @@ import Home from './Home';
 import { endpoint, rootElement, rootUrl } from './constants';
 import reportWebVitals from './reportWebVitals';
 
+import UserDatasetsWorkspace from './lib/Components/UserDatasetsWorkspace';
+
 import UserDatasetDetailController from './lib/Controllers/UserDatasetDetailController';
+
+import { userDatasetsServiceWrappers } from './lib/Service/UserDatasetWrappers';
 
 import * as userDatasetDetail from './lib/StoreModules/UserDatasetDetailStoreModule';
 import * as userDatasetList from './lib/StoreModules/UserDatasetListStoreModule';
 import * as userDatasetUpload from './lib/StoreModules/UserDatasetUploadStoreModule';
 
-import UserDatasetsWorkspace from './lib/Components/UserDatasetsWorkspace';
-
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
+import { userDatasetUploadServiceWrappers } from './lib/Service/UserDatasetUploadWrappers';
 
 type WdkStoreModules = typeof import('@veupathdb/wdk-client/lib/StoreModules').default;
 
@@ -68,6 +76,16 @@ initialize({
     userDatasetDetail,
     userDatasetList,
     userDatasetUpload,
+  }),
+  wrapWdkService: (wdkService: WdkService) => ({
+    ...wdkService,
+    ...mapValues(
+      {
+        ...userDatasetsServiceWrappers,
+        ...userDatasetUploadServiceWrappers,
+      },
+      (wdkServiceWrapper) => wdkServiceWrapper(wdkService)
+    ),
   }),
 } as any);
 
