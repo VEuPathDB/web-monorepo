@@ -13,9 +13,11 @@ import {
   emptyAction,
 } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
 import { ServiceError } from '@veupathdb/wdk-client/lib/Service/ServiceError';
-import { UserDatasetShareResponse } from '@veupathdb/wdk-client/lib/Service/Mixins/UserDatasetsService';
 
-import { validateUserDatasetCompatibleThunk } from '../Services/UserDatasetWrappers';
+import {
+  UserDatasetShareResponse,
+  validateUserDatasetCompatibleThunk,
+} from '../Services/UserDatasetWrappers';
 
 import { UserDataset, UserDatasetMeta } from '../Utils/types';
 
