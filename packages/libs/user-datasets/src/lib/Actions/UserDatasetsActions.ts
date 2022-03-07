@@ -13,12 +13,10 @@ import {
   EmptyAction,
   emptyAction,
 } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
-import {
-  UserDataset,
-  UserDatasetMeta,
-} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { ServiceError } from '@veupathdb/wdk-client/lib/Service/ServiceError';
 import { UserDatasetShareResponse } from '@veupathdb/wdk-client/lib/Service/Mixins/UserDatasetsService';
+
+import { UserDataset, UserDatasetMeta } from '../Utils/types';
 
 export type Action =
   | DetailErrorAction

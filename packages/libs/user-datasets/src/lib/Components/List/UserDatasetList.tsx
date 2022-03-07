@@ -24,12 +24,13 @@ import {
 import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 
+import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+
 import {
   UserDataset,
   UserDatasetMeta,
   UserDatasetShare,
-} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+} from '../../Utils/types';
 
 import UserDatasetEmptyState from '../EmptyState';
 import SharingModal from '../Sharing/UserDatasetSharingModal';

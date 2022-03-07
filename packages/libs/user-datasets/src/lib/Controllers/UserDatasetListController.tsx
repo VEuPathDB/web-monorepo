@@ -5,7 +5,6 @@ import { withRouter } from 'react-router-dom';
 import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
 import PageController from '@veupathdb/wdk-client/lib/Core/Controllers/PageController';
 import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { UserDataset } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 
 import {
@@ -25,6 +24,8 @@ import { quotaSize } from '../Components/UserDatasetUtils';
 import { State as UserDatasetListState } from '../StoreModules/UserDatasetListStoreModule';
 
 import { State as UserDatasetUploadState } from '../StoreModules/UserDatasetUploadStoreModule';
+
+import { UserDataset } from '../Utils/types';
 
 import '../Components/UserDatasets.scss';
 

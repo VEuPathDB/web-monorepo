@@ -4,7 +4,8 @@ import {
   Link,
   Tooltip,
 } from '@veupathdb/wdk-client/lib/Components';
-import { UserDataset } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+
+import { UserDataset } from '../Utils/types';
 
 type Props = {
   userDataset: UserDataset;

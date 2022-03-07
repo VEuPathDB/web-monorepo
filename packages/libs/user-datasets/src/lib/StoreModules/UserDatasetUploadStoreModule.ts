@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { filter, mergeMap } from 'rxjs/operators';
 import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
-import { UserDatasetUpload } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+
 import {
   Action,
   submitUploadForm,
@@ -18,6 +18,8 @@ import {
   clearMessages,
   receiveBadUploadHistoryAction,
 } from '../Actions/UserDatasetUploadActions';
+
+import { UserDatasetUpload } from '../Utils/types';
 
 export const key = 'userDatasetUpload';
 

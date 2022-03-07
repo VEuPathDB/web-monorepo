@@ -2,9 +2,10 @@ import React from 'react';
 
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
-import { UserDatasetUpload } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import UserDatasetEmptyState from '../Components/EmptyState';
+
+import { UserDatasetUpload } from '../Utils/types';
 
 interface Props {
   uploadList?: Array<UserDatasetUpload>;

@@ -6,11 +6,9 @@ import {
   FileInput,
   RadioList,
 } from '@veupathdb/wdk-client/lib/Components';
-import {
-  UserDatasetMeta,
-  NewUserDataset,
-} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+
+import { UserDatasetMeta, NewUserDataset } from '../Utils/types';
 
 import '../Components/MicrobiomeDBUploadForm.scss';
 

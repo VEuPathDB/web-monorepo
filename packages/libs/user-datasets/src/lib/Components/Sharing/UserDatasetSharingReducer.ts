@@ -1,15 +1,12 @@
 import { differenceWith, unionWith, union, Comparator } from 'lodash';
 
 import {
-  UserDataset,
-  UserDatasetShare,
-} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-
-import {
   Action,
   SharingSuccessAction,
   SHARING_SUCCESS,
 } from '../../Actions/UserDatasetsActions';
+
+import { UserDataset, UserDatasetShare } from '../../Utils/types';
 
 type Response = SharingSuccessAction['payload']['response'];
 type ShareOperation = keyof Response;
