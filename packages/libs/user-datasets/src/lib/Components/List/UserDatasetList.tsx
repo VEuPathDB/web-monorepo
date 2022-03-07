@@ -17,7 +17,6 @@ import {
 } from '@veupathdb/wdk-client/lib/Components/Mesa';
 import {
   MesaColumn,
-  MesaDataCellProps,
   MesaSortObject,
 } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
 import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -68,6 +67,14 @@ interface State {
   searchTerm: string;
   sharingModalOpen: boolean;
   editingCache: any;
+}
+
+interface MesaDataCellProps {
+  row: UserDataset;
+  column: MesaColumn;
+  rowIndex: number;
+  columnIndex: number;
+  inline?: boolean;
 }
 
 class UserDatasetList extends React.Component<Props, State> {
