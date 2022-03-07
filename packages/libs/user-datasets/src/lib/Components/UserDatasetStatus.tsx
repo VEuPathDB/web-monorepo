@@ -23,7 +23,6 @@ export default function UserDatasetStatus(props: Props) {
   const isInstallable = projects.includes(projectId);
   const isPending = isCompatible && age < FOUR_HOURS;
   const isError = isCompatible && !isPending;
-  const appNames = projects.join(', ');
   const link = `/workspace/datasets/${userDataset.id}`;
   const content = !isInstallable ? (
     <span>This data set is not compatible with {displayName}.</span>

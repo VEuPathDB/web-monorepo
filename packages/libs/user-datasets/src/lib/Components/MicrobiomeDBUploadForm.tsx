@@ -143,7 +143,7 @@ class MicrobiomeDBUploadForm extends React.Component<Props, State> {
             name="data-set-radio"
             value={this.state.dataUploadMode}
             onChange={(value) => {
-              if (value == 'url' || value == 'file') {
+              if (value === 'url' || value === 'file') {
                 this.setState({ dataUploadMode: value });
               }
             }}
@@ -153,7 +153,7 @@ class MicrobiomeDBUploadForm extends React.Component<Props, State> {
                 display: (
                   <React.Fragment>
                     <label htmlFor="data-set-file">
-                      {this.state.dataUploadMode == 'file' ? (
+                      {this.state.dataUploadMode === 'file' ? (
                         <React.Fragment>
                           Data File<sup className="supAsterisk">*</sup>:
                         </React.Fragment>
@@ -162,7 +162,7 @@ class MicrobiomeDBUploadForm extends React.Component<Props, State> {
                       )}
                       <br />
                     </label>
-                    {this.state.dataUploadMode == 'file' && (
+                    {this.state.dataUploadMode === 'file' && (
                       <FileInput
                         id="data-set-file"
                         onChange={(file) =>
@@ -180,7 +180,7 @@ class MicrobiomeDBUploadForm extends React.Component<Props, State> {
                 display: (
                   <React.Fragment>
                     <label htmlFor="data-set-url">
-                      {this.state.dataUploadMode == 'url' ? (
+                      {this.state.dataUploadMode === 'url' ? (
                         <React.Fragment>
                           Data URL<sup className="supAsterisk">*</sup>:
                         </React.Fragment>
@@ -189,7 +189,7 @@ class MicrobiomeDBUploadForm extends React.Component<Props, State> {
                       )}
                       <br />
                     </label>
-                    {this.state.dataUploadMode == 'url' && (
+                    {this.state.dataUploadMode === 'url' && (
                       <TextBox
                         type="input"
                         id="data-set-url"

@@ -1,4 +1,4 @@
-import { differenceWith, unionWith, union, Comparator } from 'lodash';
+import { differenceWith, unionWith } from 'lodash';
 
 import {
   Action,

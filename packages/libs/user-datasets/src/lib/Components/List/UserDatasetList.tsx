@@ -5,7 +5,6 @@ import moment from 'moment';
 
 import {
   Checkbox,
-  HelpIcon,
   IconAlt as Icon,
   Link,
   RealTimeSearchBox as SearchBox,
@@ -156,7 +155,6 @@ class UserDatasetList extends React.Component<Props, State> {
 
   renderOwnerCell(cellProps: MesaDataCellProps) {
     const row: UserDataset = cellProps.row;
-    const { user } = this.props;
     const { owner } = row;
     return this.isMyDataset(row) ? (
       <span className="faded">Me</span>
@@ -359,7 +357,7 @@ class UserDatasetList extends React.Component<Props, State> {
   }
 
   getTableActions() {
-    const { openSharingModal, isMyDataset } = this;
+    const { isMyDataset } = this;
     const { removeUserDataset } = this.props;
     return [
       {
@@ -426,7 +424,7 @@ class UserDatasetList extends React.Component<Props, State> {
 
   getTableOptions() {
     const { isRowSelected, toggleProjectScope } = this;
-    const { userDatasets, projectName, location, filterByProject } = this.props;
+    const { userDatasets, projectName, filterByProject } = this.props;
     const emptyMessage = !userDatasets.length ? (
       <p style={{ textAlign: 'center' }}>
         This page is empty because you do not have any data sets.
@@ -611,7 +609,7 @@ class UserDatasetList extends React.Component<Props, State> {
                 />
                 <div style={{ flex: '0 0 auto', padding: '0 10px' }}>
                   Showing {filteredRows.length} of {rows.length}{' '}
-                  {`data set${rows.length == 1 ? '' : 's'}`}
+                  {`data set${rows.length === 1 ? '' : 's'}`}
                 </div>
                 {offerProjectToggle && (
                   <div

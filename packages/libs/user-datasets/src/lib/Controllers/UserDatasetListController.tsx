@@ -81,7 +81,7 @@ class UserDatasetListController extends PageController<Props> {
       badAllUploadsActionMessage,
     } = this.props.stateProps.userDatasetUpload;
     return (
-      config.displayName == 'MicrobiomeDB' &&
+      config.displayName === 'MicrobiomeDB' &&
       uploads == null &&
       badAllUploadsActionMessage == null
     );
@@ -167,7 +167,7 @@ class UserDatasetListController extends PageController<Props> {
       userDatasets
         .map((id) => userDatasetsById[id].resource.projects)
         .flat()
-        .indexOf(projectId) == -1;
+        .indexOf(projectId) === -1;
 
     return (
       <div className="UserDatasetList-Controller">

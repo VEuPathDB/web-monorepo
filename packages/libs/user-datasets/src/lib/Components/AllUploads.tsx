@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -170,7 +168,7 @@ const ErrorMessage = (message: string) => (
   <div className="ui-state-error" style={{ fontSize: 'large' }}>
     {message.split('\n').map((line, ix) => (
       <div className="ui-state-error-text" key={ix}>
-        {ix == 0 && <Icon fa="exclamation-triangle" />}
+        {ix === 0 && <Icon fa="exclamation-triangle" />}
         {line}
       </div>
     ))}
