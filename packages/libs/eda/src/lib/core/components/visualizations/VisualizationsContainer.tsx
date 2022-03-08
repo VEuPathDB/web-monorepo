@@ -273,8 +273,12 @@ function FullScreenVisualization(props: Props & { id: string }) {
   const history = useHistory();
   const viz = computation.visualizations.find((v) => v.visualizationId === id);
   const vizType = viz && visualizationTypes[viz.descriptor.type];
-  const overviews = groupBy(visualizationsOverview, (v) =>
-    v.name === viz?.descriptor.type ? 'mine' : 'others'
+  const overviews = useMemo(
+    () =>
+      groupBy(visualizationsOverview, (v) =>
+        v.name === viz?.descriptor.type ? 'mine' : 'others'
+      ),
+    [visualizationsOverview, viz]
   );
   const overview = overviews.mine != null ? overviews.mine[0] : undefined;
   const constraints = overview?.dataElementConstraints;
