@@ -110,3 +110,12 @@ export function isArrayOfNumbers(
 ): array is number[] {
   return array.length > 0 && typeof array[0] === 'number';
 }
+
+export function isArrayOfNumbersOrNulls(
+  array: (string | number | null)[]
+): array is (number | null)[] {
+  return (
+    array.length > 0 &&
+    array.every((el) => el === null || typeof el === 'number')
+  );
+}

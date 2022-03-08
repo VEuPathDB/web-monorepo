@@ -3,7 +3,7 @@ import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
 import { LinePlotData } from '../types/plots';
 import { Layout } from 'plotly.js';
 import { NumberOrDateRange } from '../types/general';
-import { isArrayOfNumbers } from '../types/guards';
+import { isArrayOfNumbersOrNulls } from '../types/guards';
 import { zip } from 'lodash';
 
 // is it possible to have this interface extend ScatterPlotProps?
@@ -90,9 +90,9 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
               series.yErrorBarLower.length === series.y.length
             ) {
               if (
-                isArrayOfNumbers(series.yErrorBarUpper) &&
-                isArrayOfNumbers(series.yErrorBarLower) &&
-                isArrayOfNumbers(series.y)
+                isArrayOfNumbersOrNulls(series.yErrorBarUpper) &&
+                isArrayOfNumbersOrNulls(series.yErrorBarLower) &&
+                isArrayOfNumbersOrNulls(series.y)
               ) {
                 const yvals = series.y; // this is only to help TS
                 return {
@@ -100,11 +100,11 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
                   error_y: {
                     type: 'data',
                     visible: 'true',
-                    array: series.yErrorBarUpper.map(
-                      (upperValue, index) => upperValue - yvals[index]
+                    array: series.yErrorBarUpper.map((upperValue, index) =>
+                      upperValue != null ? upperValue - yvals[index] : null
                     ),
-                    arrayminus: series.yErrorBarLower.map(
-                      (lowerValue, index) => yvals[index] - lowerValue
+                    arrayminus: series.yErrorBarLower.map((lowerValue, index) =>
+                      lowerValue != null ? yvals[index] - lowerValue : null
                     ),
                   },
                 };

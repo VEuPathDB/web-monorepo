@@ -14,8 +14,8 @@ export type LinePlotDataSeries = Override<
    * y coordinates for regular error bars (vertical in regular orientation)
    *
    */
-  yErrorBarUpper?: number[] | string[];
-  yErrorBarLower?: number[] | string[];
+  yErrorBarUpper?: (number | string | null)[];
+  yErrorBarLower?: (number | string | null)[];
   /* How many data points were binned? */
   sampleSize?: number[];
   /* Strings (such as '[10,15)') to describe how the x-axis variable was binned for tooltip info only */
