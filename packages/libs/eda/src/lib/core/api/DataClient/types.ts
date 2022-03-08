@@ -10,6 +10,7 @@ import {
   union,
   intersection,
   partial,
+  unknown,
 } from 'io-ts';
 import { Filter } from '../../types/filter';
 import {
@@ -300,8 +301,8 @@ const LineplotResponseData = array(
       binEnd: array(string),
       errorBars: array(
         type({
-          lowerBound: number,
-          upperBound: number,
+          lowerBound: union([NumberOrNull, array(unknown)]), // TEMPORARY
+          upperBound: union([NumberOrNull, array(unknown)]), // back end will return number or null
           error: string,
         })
       ),

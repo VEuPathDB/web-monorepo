@@ -1118,8 +1118,13 @@ function processInputData(
         y: seriesY.length ? seriesY : (([null] as unknown) as number[]), // Plotly has a legend entry for empty traces
         ...(el.errorBars != null
           ? {
-              yErrorBarUpper: el.errorBars.map((eb) => eb.upperBound),
-              yErrorBarLower: el.errorBars.map((eb) => eb.lowerBound),
+              // TEMPORARY fix for empty arrays coming from back end
+              yErrorBarUpper: el.errorBars.map((eb) =>
+                Array.isArray(eb.upperBound) ? null : eb.upperBound
+              ),
+              yErrorBarLower: el.errorBars.map((eb) =>
+                Array.isArray(eb.lowerBound) ? null : eb.lowerBound
+              ),
             }
           : {}),
         ...(el.binSampleSize != null
