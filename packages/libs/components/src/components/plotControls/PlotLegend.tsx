@@ -87,10 +87,9 @@ export default function PlotLegend({
                     alignItems: 'center',
                     fontSize: legendTextSize,
                     // gray out for filtered item
-                    color:
-                      checkedLegendItems?.includes(item.label) && item.hasData
-                        ? ''
-                        : '#999',
+                    color: checkedLegendItems?.includes(item.label)
+                      ? ''
+                      : '#999',
                     // add this for general usage (e.g., story)
                     margin: 0,
                   }}
@@ -126,11 +125,11 @@ export default function PlotLegend({
                           height: defaultMarkerSize,
                           width: defaultMarkerSize,
                           borderWidth: '0',
-                          backgroundColor:
-                            checkedLegendItems?.includes(item.label) &&
-                            item.hasData
-                              ? item.markerColor
-                              : '#999',
+                          backgroundColor: checkedLegendItems?.includes(
+                            item.label
+                          )
+                            ? item.markerColor
+                            : '#999',
                         }}
                       />
                     )}
@@ -142,18 +141,16 @@ export default function PlotLegend({
                           width: defaultMarkerSize,
                           borderWidth: '0.125em',
                           borderStyle: 'solid',
-                          borderColor:
-                            checkedLegendItems?.includes(item.label) &&
-                            item.hasData
-                              ? item.markerColor
-                              : '#999',
-                          backgroundColor:
-                            checkedLegendItems?.includes(item.label) &&
-                            item.hasData
-                              ? ColorMath.evaluate(
-                                  item.markerColor + ' @a 50%'
-                                ).result.css()
-                              : '#999',
+                          borderColor: checkedLegendItems?.includes(item.label)
+                            ? item.markerColor
+                            : '#999',
+                          backgroundColor: checkedLegendItems?.includes(
+                            item.label
+                          )
+                            ? ColorMath.evaluate(
+                                item.markerColor + ' @a 50%'
+                              ).result.css()
+                            : '#999',
                         }}
                       />
                     )}
@@ -168,11 +165,11 @@ export default function PlotLegend({
                             borderWidth: '0.15em',
                             borderStyle: 'solid',
                             borderRadius: '0.6em',
-                            borderColor:
-                              checkedLegendItems?.includes(item.label) &&
-                              item.hasData
-                                ? item.markerColor
-                                : '#999',
+                            borderColor: checkedLegendItems?.includes(
+                              item.label
+                            )
+                              ? item.markerColor
+                              : '#999',
                           }}
                         />
                       </div>
@@ -185,11 +182,11 @@ export default function PlotLegend({
                             height: '0.15em',
                             width: scatterMarkerSpace,
                             borderWidth: '0',
-                            backgroundColor:
-                              checkedLegendItems?.includes(item.label) &&
-                              item.hasData
-                                ? item.markerColor
-                                : '#999',
+                            backgroundColor: checkedLegendItems?.includes(
+                              item.label
+                            )
+                              ? item.markerColor
+                              : '#999',
                           }}
                         />
                       </div>
@@ -202,13 +199,13 @@ export default function PlotLegend({
                             height: '0.5em',
                             width: scatterMarkerSpace,
                             borderWidth: '0',
-                            backgroundColor:
-                              checkedLegendItems?.includes(item.label) &&
-                              item.hasData
-                                ? ColorMath.evaluate(
-                                    item.markerColor + ' @a 30%'
-                                  ).result.css()
-                                : '#999',
+                            backgroundColor: checkedLegendItems?.includes(
+                              item.label
+                            )
+                              ? ColorMath.evaluate(
+                                  item.markerColor + ' @a 30%'
+                                ).result.css()
+                              : '#999',
                           }}
                         />
                       </div>
@@ -221,11 +218,9 @@ export default function PlotLegend({
                             textAlign: 'center',
                             fontWeight: 'normal',
                             fontSize: `calc(1.5 * ${legendTextSize})`,
-                            color:
-                              checkedLegendItems?.includes(item.label) &&
-                              item.hasData
-                                ? '#A6A6A6'
-                                : '#999',
+                            color: checkedLegendItems?.includes(item.label)
+                              ? '#A6A6A6'
+                              : '#999',
                           }}
                         >
                           &times;
