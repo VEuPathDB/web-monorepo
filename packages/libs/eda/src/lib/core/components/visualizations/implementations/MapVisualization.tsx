@@ -587,14 +587,19 @@ function MapViz(props: VisualizationProps) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <div>
-        <FormControl
-          style={{ minWidth: '450px', paddingRight: '10px' }}
-          variant="filled"
-        >
+      <div
+        style={{
+          width,
+          display: 'flex',
+          alignItems: 'center',
+          zIndex: 1,
+          justifyContent: 'space-between',
+        }}
+      >
+        <FormControl style={{ minWidth: '200px' }} variant="filled">
           <InputLabel>Map the locations of</InputLabel>
           <Select
-            value={vizConfig.geoEntityId}
+            value={vizConfig.geoEntityId ?? ''}
             onChange={handleGeoEntityChange}
           >
             {geoConfigs.map((geoConfig) => (
@@ -605,16 +610,10 @@ function MapViz(props: VisualizationProps) {
             ))}
           </Select>
         </FormControl>
-        <FormControl style={{ minWidth: '450px' }} variant="filled">
-          <InputLabel>
-            Show counts of
-            {geoEntity &&
-              ' (default: ' +
-                (geoEntity.displayNamePlural ?? geoEntity.displayName) +
-                ')'}
-          </InputLabel>
+        <FormControl style={{ minWidth: '200px' }} variant="filled">
+          <InputLabel>Show counts of</InputLabel>
           <Select
-            value={vizConfig.outputEntityId}
+            value={outputEntity?.id ?? ''}
             onChange={handleOutputEntityChange}
             disabled={vizConfig.xAxisVariable != null}
           >
@@ -625,16 +624,6 @@ function MapViz(props: VisualizationProps) {
             ))}
           </Select>
         </FormControl>
-        <div>
-          <p>
-            (Note: if you want to show counts for anything other than Household,
-            it's best to first subset aggressively and zoom in to a few hundred
-            households.)
-          </p>
-        </div>
-      </div>
-
-      <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
         <InputVariables
           inputs={[
             {
@@ -655,6 +644,16 @@ function MapViz(props: VisualizationProps) {
           outputEntity={outputEntity}
         />
       </div>
+
+      {studyId.startsWith('UMSP') && ( // <<<<<<<<< TEMPORARY ONLY <<<<<
+        <div>
+          <p>
+            (UMSP is BIG! If you want to show counts or a categorical overlay
+            for anything other than the Household entity, it's best to first
+            subset aggressively and zoom in to a few hundred households.)
+          </p>
+        </div>
+      )}
 
       <PluginError
         error={basicMarkerData.error}

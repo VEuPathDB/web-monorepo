@@ -276,7 +276,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
   const overviews = groupBy(visualizationsOverview, (v) =>
     v.name === viz?.descriptor.type ? 'mine' : 'others'
   );
-  const overview = overviews.mine[0];
+  const overview = overviews.mine != null ? overviews.mine[0] : undefined;
   const constraints = overview?.dataElementConstraints;
   const dataElementDependencyOrder = overview?.dataElementDependencyOrder;
   const updateConfiguration = useCallback(
