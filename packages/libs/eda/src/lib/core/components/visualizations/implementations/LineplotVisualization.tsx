@@ -155,7 +155,7 @@ function SelectorComponent() {
 
 function createDefaultConfig(): LineplotConfig {
   return {
-    valueSpecConfig: 'Median',
+    valueSpecConfig: 'Mean',
     useBinning: false,
   };
 }
@@ -586,7 +586,7 @@ function LineplotViz(props: VisualizationProps) {
       interactive={!isFaceted(data.value) ? true : false}
       showSpinner={data.pending}
       // add plotOptions to control the list of plot options
-      plotOptions={['Median', 'Mean']}
+      plotOptions={['Mean', 'Median']}
       // disabledList prop is used to disable radio options (grayed out)
       disabledList={[]}
       independentValueType={
