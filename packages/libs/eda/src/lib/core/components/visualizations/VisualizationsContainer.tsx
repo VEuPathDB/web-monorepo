@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo, useEffect, useRef } from 'react';
+import React, {
+  useCallback,
+  useMemo,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   Route,
   Switch,
@@ -60,6 +66,8 @@ interface Props {
  */
 export function VisualizationsContainer(props: Props) {
   const { url } = useRouteMatch();
+
+  const [showWarning, setShowWarning] = useState(true);
   const currentStudyRecordId = useStudyRecord().id[0].value;
   const studiesForPerformanceWarning = [
     'DS_a885240fc4',
@@ -67,9 +75,21 @@ export function VisualizationsContainer(props: Props) {
     'DS_81ef25b6ac',
   ];
 
+  useMemo(() => {
+    if (localStorage.getItem('showWarning')) {
+      setShowWarning(false);
+    }
+  }, []);
+
+  const handleCloseWarning = () => {
+    setShowWarning(false);
+    localStorage.setItem('showWarning', 'false');
+  };
+
   return (
     <div className={cx()}>
-      {studiesForPerformanceWarning.includes(currentStudyRecordId) ? (
+      {studiesForPerformanceWarning.includes(currentStudyRecordId) &&
+      showWarning ? (
         <Banner
           banner={{
             type: 'warning',
@@ -78,6 +98,7 @@ export function VisualizationsContainer(props: Props) {
             pinned: false,
             intense: false,
           }}
+          onClose={handleCloseWarning}
         ></Banner>
       ) : null}
       <Switch>
