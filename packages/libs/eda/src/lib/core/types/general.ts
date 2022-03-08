@@ -9,6 +9,7 @@ import {
   keyof,
   intersection,
   partial,
+  nullType,
 } from 'io-ts';
 import {
   NumberRange as NumberRangeT,
@@ -39,11 +40,14 @@ export const TimeUnit = keyof({
   year: null,
 });
 
+export type NumberOrNull = TypeOf<typeof NumberOrNull>;
+export const NumberOrNull = union([number, nullType]);
+
 export type BinSpec = TypeOf<typeof BinSpec>;
 export const BinSpec = intersection([
   type({ type: keyof({ binWidth: null, numBins: null }) }),
   partial({
-    value: number,
+    value: NumberOrNull,
     units: TimeUnit,
   }),
 ]);
@@ -52,7 +56,7 @@ export const BinSpec = intersection([
 // perhaps we can make these two consistent somehow?
 export type BinWidthSlider = TypeOf<typeof BinWidthSlider>;
 export const BinWidthSlider = type({
-  min: number,
-  max: number,
-  step: number,
+  min: NumberOrNull,
+  max: NumberOrNull,
+  step: NumberOrNull,
 });

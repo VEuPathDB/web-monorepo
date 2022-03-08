@@ -69,7 +69,7 @@ import {
 } from '@veupathdb/components/lib/types/plots';
 import { CoverageStatistics } from '../../../types/visualization';
 // import axis label unit util
-import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
+import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import {
   NumberVariable,
   DateVariable,
@@ -572,8 +572,8 @@ function LineplotViz(props: VisualizationProps) {
       }
       // title={'Line plot'}
       displayLegend={false}
-      independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-axis'}
-      dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-axis'}
+      independentAxisLabel={variableDisplayWithUnit(xAxisVariable) ?? 'X-axis'}
+      dependentAxisLabel={variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'}
       // variable's metadata-based independent axis range with margin
       independentAxisRange={defaultIndependentRangeMargin}
       // new dependent axis range
@@ -593,7 +593,7 @@ function LineplotViz(props: VisualizationProps) {
         NumberVariable.is(xAxisVariable) ? 'number' : 'date'
       }
       dependentValueType={NumberVariable.is(yAxisVariable) ? 'number' : 'date'}
-      legendTitle={axisLabelWithUnit(overlayVariable)}
+      legendTitle={variableDisplayWithUnit(overlayVariable)}
       checkedLegendItems={checkedLegendItems}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
       useBinning={vizConfig.useBinning}
@@ -607,7 +607,7 @@ function LineplotViz(props: VisualizationProps) {
     <PlotLegend
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
-      legendTitle={axisLabelWithUnit(overlayVariable)}
+      legendTitle={variableDisplayWithUnit(overlayVariable)}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
     />
   );
@@ -639,23 +639,23 @@ function LineplotViz(props: VisualizationProps) {
           {
             role: 'X-axis',
             required: true,
-            display: axisLabelWithUnit(xAxisVariable),
+            display: variableDisplayWithUnit(xAxisVariable),
             variable: vizConfig.xAxisVariable,
           },
           {
             role: 'Y-axis',
             required: true,
-            display: axisLabelWithUnit(yAxisVariable),
+            display: variableDisplayWithUnit(yAxisVariable),
             variable: vizConfig.yAxisVariable,
           },
           {
             role: 'Overlay',
-            display: axisLabelWithUnit(overlayVariable),
+            display: variableDisplayWithUnit(overlayVariable),
             variable: vizConfig.overlayVariable,
           },
           {
             role: 'Facet',
-            display: axisLabelWithUnit(facetVariable),
+            display: variableDisplayWithUnit(facetVariable),
             variable: vizConfig.facetVariable,
           },
         ]}
@@ -1084,7 +1084,10 @@ function processInputData(
     ? { min: binWidthSlider.min, max: binWidthSlider.max }
     : {
         min: binWidthSlider.min,
-        max: binWidthSlider.max > 60 ? 60 : binWidthSlider.max, // back end seems to fall over with any values >99 but 60 is used in subsetting
+        max:
+          binWidthSlider?.max != null && binWidthSlider?.max > 60
+            ? 60
+            : binWidthSlider.max, // back end seems to fall over with any values >99 but 60 is used in subsetting
         unit: (binWidth as TimeDelta).unit,
       }) as NumberOrTimeDeltaRange;
   const binWidthStep = binWidthSlider.step || 0.1;

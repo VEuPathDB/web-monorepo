@@ -49,7 +49,7 @@ import {
 } from '../core/utils/analysis';
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
 import ShareFromAnalysesList from './sharing/ShareFromAnalysesList';
-import { Checkbox } from '@veupathdb/core-components';
+import { Checkbox } from '@veupathdb/coreui';
 
 interface AnalysisAndDataset {
   analysis: AnalysisSummary & {
@@ -66,6 +66,10 @@ interface Props {
   analysisClient: AnalysisClient;
   subsettingClient: SubsettingClient;
   exampleAnalysesAuthor?: number;
+  /**
+   * A callback to open a login form.
+   * This is passed down through several component layers. */
+  showLoginForm: () => void;
 }
 
 const useStyles = makeStyles({
@@ -83,14 +87,18 @@ const useStyles = makeStyles({
 const UNKNOWN_DATASET_NAME = 'Unknown study';
 
 export function AllAnalyses(props: Props) {
-  const { analysisClient, exampleAnalysesAuthor } = props;
+  const { analysisClient, exampleAnalysesAuthor, showLoginForm } = props;
   const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
   const history = useHistory();
   const location = useLocation();
   const classes = useStyles();
 
-  const queryParams = new URLSearchParams(location.search);
-  const searchText = queryParams.get('s') ?? '';
+  const searchText = useMemo(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const searchParam = queryParams.get('s') ?? '';
+    return stripHTML(searchParam); // matches stripHTML(dataset.displayName) below
+  }, [location.search]);
+
   const debouncedSearchText = useDebounce(searchText, 250);
 
   const setSearchText = useCallback(
@@ -295,6 +303,7 @@ export function AllAnalyses(props: Props) {
                 );
                 if (answer) {
                   deleteAnalyses(selectedAnalyses);
+                  setSelectedAnalyses(new Set());
                 }
               }}
               disabled={selectedAnalyses.size === 0}
@@ -509,19 +518,34 @@ export function AllAnalyses(props: Props) {
           width: 100,
           sortable: true,
           renderCell: (data: { row: AnalysisAndDataset }) => {
+            const isPublic = data.row.analysis.isPublic;
             return (
               <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <Checkbox
-                  selected={data.row.analysis.isPublic}
-                  themeRole="primary"
-                  onToggle={(selected) => {
-                    if (selected) {
-                      setSelectedAnalysisId(data.row.analysis.analysisId);
-                      setSharingModalVisible(true);
-                    }
-                  }}
-                  styleOverrides={{ size: 16 }}
-                />
+                <Tooltip
+                  title={
+                    isPublic
+                      ? 'Remove this analysis from Public Analyses'
+                      : 'Add this analysis to Public Analyses'
+                  }
+                >
+                  <span>
+                    <Checkbox
+                      selected={isPublic}
+                      themeRole="primary"
+                      onToggle={(selected) => {
+                        if (selected) {
+                          setSelectedAnalysisId(data.row.analysis.analysisId);
+                          setSharingModalVisible(true);
+                        } else {
+                          updateAnalysis(data.row.analysis.analysisId, {
+                            isPublic: false,
+                          });
+                        }
+                      }}
+                      styleOverrides={{ size: 16 }}
+                    />
+                  </span>
+                </Tooltip>
               </div>
             );
           },
@@ -578,9 +602,13 @@ export function AllAnalyses(props: Props) {
         updateAnalysis={updateAnalysis}
         visible={sharingModalVisible}
         toggleVisible={setSharingModalVisible}
+        showLoginForm={showLoginForm}
       />
 
       <h1>My Analyses</h1>
+      {(loading || datasets == null) && (
+        <Loading style={{ position: 'absolute', left: '50%', top: '1em' }} />
+      )}
       {error && <ContentError>{error}</ContentError>}
       {analyses && datasets && user ? (
         <Mesa.Mesa state={tableState}>
@@ -622,7 +650,6 @@ export function AllAnalyses(props: Props) {
               analyses
             </span>
           </div>
-          {(loading || datasets == null) && <Loading />}
         </Mesa.Mesa>
       ) : (
         <Loading />

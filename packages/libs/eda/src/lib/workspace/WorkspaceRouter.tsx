@@ -14,14 +14,17 @@ import { workspaceTheme } from '../core/components/workspaceTheme';
 import {
   useConfiguredAnalysisClient,
   useConfiguredSubsettingClient,
+  useConfiguredDownloadClient,
 } from '../core/hooks/client';
 import { AllAnalyses } from './AllAnalyses';
-import { EDAAnalysisList } from './EDAAnalysisList';
 import { ImportAnalysis } from './ImportAnalysis';
 import { LatestAnalysis } from './LatestAnalysis';
 import { PublicAnalysesRoute } from './PublicAnalysesRoute';
 import { StudyList } from './StudyList';
 import { WorkspaceContainer } from './WorkspaceContainer';
+import { AnalysisPanel } from './AnalysisPanel';
+import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
+import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 
 const theme = createTheme(workspaceTheme);
 
@@ -29,7 +32,16 @@ type Props = {
   subsettingServiceUrl: string;
   dataServiceUrl: string;
   userServiceUrl: string;
+  downloadServiceUrl: string;
   exampleAnalysesAuthor?: number;
+  /**
+   * The base of the URL from which to being sharing links.
+   * This is passed down through several component layers. */
+  sharingUrlPrefix: string;
+  /**
+   * A callback to open a login form.
+   * This is also passed down through several component layers. */
+  showLoginForm: () => void;
 };
 
 /**
@@ -39,11 +51,16 @@ export function WorkspaceRouter({
   subsettingServiceUrl,
   dataServiceUrl,
   userServiceUrl,
+  downloadServiceUrl,
   exampleAnalysesAuthor,
+  sharingUrlPrefix,
+  showLoginForm,
 }: Props) {
   const { path, url } = useRouteMatch();
+
   const subsettingClient = useConfiguredSubsettingClient(subsettingServiceUrl);
   const analysisClient = useConfiguredAnalysisClient(userServiceUrl);
+  const downloadClient = useConfiguredDownloadClient(downloadServiceUrl);
 
   return (
     <ThemeProvider theme={theme}>
@@ -57,6 +74,7 @@ export function WorkspaceRouter({
                 analysisClient={analysisClient}
                 subsettingClient={subsettingClient}
                 exampleAnalysesAuthor={exampleAnalysesAuthor}
+                showLoginForm={showLoginForm}
               />
             )}
           />
@@ -99,12 +117,19 @@ export function WorkspaceRouter({
             path={`${path}/:studyId`}
             exact
             render={(props: RouteComponentProps<{ studyId: string }>) => (
-              <EDAAnalysisList
+              <WorkspaceContainer
                 {...props.match.params}
                 subsettingServiceUrl={subsettingServiceUrl}
                 dataServiceUrl={dataServiceUrl}
                 userServiceUrl={userServiceUrl}
-              />
+                downloadServiceUrl={downloadServiceUrl}
+              >
+                <EDAWorkspaceHeading />
+                <RecordController
+                  recordClass="dataset"
+                  primaryKey={props.match.params.studyId}
+                />
+              </WorkspaceContainer>
             )}
           />
           <Route
@@ -115,7 +140,16 @@ export function WorkspaceRouter({
                 subsettingServiceUrl={subsettingServiceUrl}
                 dataServiceUrl={dataServiceUrl}
                 userServiceUrl={userServiceUrl}
-              />
+                downloadServiceUrl={downloadServiceUrl}
+              >
+                <AnalysisPanel
+                  {...props.match.params}
+                  sharingUrlPrefix={sharingUrlPrefix}
+                  showLoginForm={showLoginForm}
+                  hideSavedAnalysisButtons
+                  downloadClient={downloadClient}
+                />
+              </WorkspaceContainer>
             )}
           />
           <Route
@@ -130,10 +164,9 @@ export function WorkspaceRouter({
           />
           <Route
             exact
-            path={`${path}/:studyId/:analysisId/import`}
+            path={`${path}/:analysisId/import`}
             render={(
               props: RouteComponentProps<{
-                studyId: string;
                 analysisId: string;
               }>
             ) => {
@@ -144,6 +177,20 @@ export function WorkspaceRouter({
                 />
               );
             }}
+          />
+          <Route
+            exact
+            path={`${path}/:studyId/:analysisId/import`}
+            render={(
+              props: RouteComponentProps<{
+                analysisId: string;
+                studyId: string;
+              }>
+            ) => (
+              <Redirect
+                to={`${path}/${props.match.params.analysisId}/import`}
+              />
+            )}
           />
           <Route
             path={`${path}/:studyId/:analysisId`}
@@ -158,7 +205,15 @@ export function WorkspaceRouter({
                 subsettingServiceUrl={subsettingServiceUrl}
                 dataServiceUrl={dataServiceUrl}
                 userServiceUrl={userServiceUrl}
-              />
+                downloadServiceUrl={downloadServiceUrl}
+              >
+                <AnalysisPanel
+                  {...props.match.params}
+                  sharingUrlPrefix={sharingUrlPrefix}
+                  showLoginForm={showLoginForm}
+                  downloadClient={downloadClient}
+                />
+              </WorkspaceContainer>
             )}
           />
         </Switch>

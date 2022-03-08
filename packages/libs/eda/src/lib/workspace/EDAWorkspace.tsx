@@ -1,24 +1,20 @@
-import { isNewAnalysis } from '../core/utils/analysis';
-
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
-import { AnalysisPanel } from './AnalysisPanel';
 import { useWorkspaceAnalysis } from './hooks/analyses';
+import { ReactNode } from 'react';
 
 interface Props {
   studyId: string;
   analysisId?: string;
+  children: ReactNode;
 }
 
-export const EDAWorkspace = ({ studyId, analysisId }: Props) => {
+export const EDAWorkspace = ({ studyId, analysisId, children }: Props) => {
   const analysisState = useWorkspaceAnalysis(studyId, analysisId);
 
   return (
     <>
       <EDAWorkspaceHeading analysisState={analysisState} />
-      <AnalysisPanel
-        analysisState={analysisState}
-        hideCopyAndSave={isNewAnalysis(analysisState.analysis)}
-      />
+      {children}
     </>
   );
 };

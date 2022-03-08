@@ -1,16 +1,25 @@
-import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
+import {
+  IsEnabledInPickerParams,
+  VisualizationProps,
+  VisualizationType,
+} from '../VisualizationTypes';
 import map from './selectorIcons/map.svg';
 import * as t from 'io-ts';
+import _ from 'lodash';
 
 // map component related imports
 import MapVEuMap, {
   MapVEuMapProps,
+  baseLayers,
 } from '@veupathdb/components/lib/map/MapVEuMap';
 import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map.json';
 import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/geohash';
 import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import DonutMarker from '@veupathdb/components/lib/map/DonutMarker';
 import { BoundsDriftMarkerProps } from '@veupathdb/components/lib/map/BoundsDriftMarker';
+
+// general ui imports
+import { FormControl, Select, MenuItem, InputLabel } from '@material-ui/core';
 
 // viz-related imports
 import { PlotLayout } from '../../layouts/PlotLayout';
@@ -20,16 +29,17 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import DataClient, { MapMarkersRequestParams } from '../../../api/DataClient';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { usePromise } from '../../../hooks/promise';
-import {
-  filtersFromBoundingBox,
-  geohashLevelToVariableId,
-  leafletZoomLevelToGeohashLevel,
-} from '../../../utils/visualization';
+import { filtersFromBoundingBox } from '../../../utils/visualization';
+import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
+import { OutputEntityTitle } from '../OutputEntityTitle';
+import { sumBy } from 'lodash';
+import PluginError from '../PluginError';
 
 export const mapVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
   fullscreenComponent: MapViz,
   createDefaultConfig: createDefaultConfig,
+  isEnabledInPicker: isEnabledInPicker,
 };
 
 function SelectorComponent() {
@@ -47,9 +57,14 @@ function createDefaultConfig(): MapConfig {
     mapCenterAndZoom: {
       latitude: 0,
       longitude: 0,
-      zoomLevel: 1, // TO DO: check MapVEuMap minZoom hardcoded to 2
+      zoomLevel: 2,
     },
+    baseLayer: 'Street',
   };
+}
+
+function isEnabledInPicker({ geoConfigs }: IsEnabledInPickerParams): boolean {
+  return geoConfigs != null && geoConfigs.length > 0;
 }
 
 const defaultAnimation = {
@@ -60,13 +75,25 @@ const defaultAnimation = {
 
 type MapConfig = t.TypeOf<typeof MapConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-const MapConfig = t.type({
-  mapCenterAndZoom: t.type({
-    latitude: t.number,
-    longitude: t.number,
-    zoomLevel: t.number,
+const MapConfig = t.intersection([
+  t.type({
+    mapCenterAndZoom: t.type({
+      latitude: t.number,
+      longitude: t.number,
+      zoomLevel: t.number,
+    }),
+    baseLayer: t.keyof(baseLayers),
   }),
-});
+  t.partial({
+    geoEntityId: t.string,
+    outputEntityId: t.string,
+  }),
+]);
+
+type MarkerDataWithStatistics = {
+  markers: Array<ReactElement<BoundsDriftMarkerProps>>;
+  totalEntityCount: number;
+};
 
 function MapViz(props: VisualizationProps) {
   const {
@@ -75,12 +102,9 @@ function MapViz(props: VisualizationProps) {
     updateConfiguration,
     updateThumbnail,
     filters,
-    dataElementConstraints,
-    dataElementDependencyOrder,
-    starredVariables,
-    toggleStarredVariable,
-    totalCounts,
-    filteredCounts,
+    //    totalCounts,
+    //    filteredCounts,
+    geoConfigs,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -113,62 +137,82 @@ function MapViz(props: VisualizationProps) {
     [updateVizConfig]
   );
 
-  const tempOutputEntityId = entities[0].id;
-
   const [boundsZoomLevel, setBoundsZoomLevel] = useState<BoundsViewport>();
 
-  const latitudeVariableDetails = useMemo(
-    () => ({
-      entityId: tempOutputEntityId,
-      variableId: 'OBI_0001620',
-    }),
-    [tempOutputEntityId]
-  );
-  const longitudeVariableDetails = useMemo(
-    () => ({
-      entityId: tempOutputEntityId,
-      variableId: 'OBI_0001621',
-    }),
-    [tempOutputEntityId]
-  );
+  const geoConfig = useMemo(() => {
+    if (vizConfig.geoEntityId == null) return undefined;
+    return geoConfigs.find(
+      (config) => config.entity.id === vizConfig.geoEntityId
+    );
+  }, [vizConfig.geoEntityId, geoConfigs]);
 
-  const markers = usePromise<
-    Array<ReactElement<BoundsDriftMarkerProps>> | undefined
-  >(
+  const [geoEntity, outputEntity] = useMemo(() => {
+    const geoEntity =
+      vizConfig.geoEntityId !== null
+        ? entities.find((entity) => entity.id === vizConfig.geoEntityId)
+        : undefined;
+    const outputEntity =
+      vizConfig.outputEntityId !== null
+        ? entities.find((entity) => entity.id === vizConfig.outputEntityId)
+        : undefined;
+    return [geoEntity, outputEntity ?? geoEntity];
+  }, [entities, vizConfig.outputEntityId, vizConfig.geoEntityId]);
+
+  const data = usePromise<MarkerDataWithStatistics | undefined>(
     useCallback(async () => {
-      if (boundsZoomLevel == null) return [];
+      // check all required vizConfigs are provided
+      if (
+        boundsZoomLevel == null ||
+        vizConfig.geoEntityId == null ||
+        geoConfig == null
+      )
+        return undefined;
 
       const { bounds, zoomLevel } = boundsZoomLevel;
+      const geoEntityId = vizConfig.geoEntityId;
+      const outputEntityId = vizConfig.outputEntityId ?? geoEntityId;
 
+      // now prepare the rest of the request params
+      const latitudeVariable = {
+        entityId: geoEntityId,
+        variableId: geoConfig.latitudeVariableId,
+      };
+      const longitudeVariable = {
+        entityId: geoEntityId,
+        variableId: geoConfig.longitudeVariableId,
+      };
       const boundsFilters = filtersFromBoundingBox(
+        // this will need to be memoized outside this usePromise for re-use in pie/histogram requests
         bounds,
-        latitudeVariableDetails,
-        longitudeVariableDetails
+        latitudeVariable,
+        longitudeVariable
       );
-      // TO DO: add bounding box-based filters!
 
       const requestParams: MapMarkersRequestParams = {
         studyId,
         filters: filters ? [...filters, ...boundsFilters] : boundsFilters,
         config: {
-          outputEntityId: tempOutputEntityId,
+          outputEntityId: outputEntityId,
           geoAggregateVariable: {
-            entityId: tempOutputEntityId,
-            variableId: geohashLevelToVariableId(
-              leafletZoomLevelToGeohashLevel(zoomLevel)
-            ),
+            entityId: geoEntityId,
+            variableId:
+              geoConfig.aggregationVariableIds[
+                geoConfig.zoomLevelToAggregationLevel(zoomLevel) - 1
+              ],
           },
-          latitudeVariable: latitudeVariableDetails,
-          longitudeVariable: longitudeVariableDetails,
+          latitudeVariable: latitudeVariable,
+          longitudeVariable: longitudeVariable,
         },
       };
+
+      // now get the data
       const response = await dataClient.getMapMarkers(
         computation.descriptor.type,
         requestParams
       );
 
       // TO DO: find out if MarkerProps.id is obsolete
-      return response.mapElements.map(
+      const markerElements = response.mapElements.map(
         ({
           avgLat,
           avgLon,
@@ -203,36 +247,149 @@ function MapViz(props: VisualizationProps) {
           );
         }
       );
+
+      return {
+        markers: markerElements,
+        totalEntityCount: sumBy(
+          response.mapElements,
+          (elem) => elem.entityCount
+        ),
+      };
     }, [
       studyId,
       filters,
       dataClient,
-      tempOutputEntityId,
-      latitudeVariableDetails,
-      longitudeVariableDetails,
+      vizConfig,
       boundsZoomLevel,
       computation.descriptor.type,
-      defaultAnimationDuration,
+      geoConfig,
     ])
   );
 
+  const [height, width] = [600, 1000];
   const { latitude, longitude, zoomLevel } = vizConfig.mapCenterAndZoom;
+
+  // Create the ref that we send to the map in web-components
+  const plotRef = useUpdateThumbnailEffect(
+    updateThumbnail,
+    { height, width },
+    // The dependencies for needing to generate a new thumbnail
+    [data.value, latitude, longitude, zoomLevel, vizConfig.baseLayer]
+  );
+
   const plotNode = (
     <MapVEuMap
       viewport={{ center: [latitude, longitude], zoom: zoomLevel }}
       onViewportChanged={handleViewportChanged}
       onBoundsChanged={setBoundsZoomLevel}
-      markers={markers.value ?? []}
+      markers={data.value?.markers ?? []}
       animation={defaultAnimation}
-      height={450}
-      width={750}
-      showGrid={true}
-      zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+      height={height}
+      width={width}
+      showGrid={geoConfig?.zoomLevelToAggregationLevel != null}
+      zoomLevelToGeohashLevel={geoConfig?.zoomLevelToAggregationLevel}
+      ref={plotRef}
+      baseLayer={vizConfig.baseLayer}
+      onBaseLayerChanged={(newBaseLayer) =>
+        updateVizConfig({ baseLayer: newBaseLayer })
+      }
+      flyToMarkers={
+        data.value?.markers &&
+        data.value?.markers.length > 0 &&
+        _.isEqual(
+          vizConfig.mapCenterAndZoom,
+          createDefaultConfig().mapCenterAndZoom
+        )
+      }
+      flyToMarkersDelay={500}
+      showSpinner={data.pending}
     />
   );
 
+  const handleGeoEntityChange = useCallback(
+    (event: React.ChangeEvent<{ value: unknown }>) => {
+      if (event != null)
+        updateVizConfig({
+          geoEntityId: event.target.value as string,
+          mapCenterAndZoom: createDefaultConfig().mapCenterAndZoom,
+        });
+    },
+    [updateVizConfig]
+  );
+
+  const handleOutputEntityChange = useCallback(
+    (event: React.ChangeEvent<{ value: unknown }>) => {
+      if (event != null)
+        updateVizConfig({ outputEntityId: event.target.value as string });
+    },
+    [updateVizConfig]
+  );
+
+  const availableOutputEntities = useMemo(() => {
+    if (geoConfig == null) {
+      return entities;
+    } else {
+      return Array.from(
+        preorder(geoConfig.entity, (entity) => entity.children || [])
+      );
+    }
+  }, [entities, geoConfig]);
+
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <div>
+        <FormControl
+          style={{ minWidth: '450px', paddingRight: '10px' }}
+          variant="filled"
+        >
+          <InputLabel>Choose an entity to map the locations of</InputLabel>
+          <Select
+            value={vizConfig.geoEntityId}
+            onChange={handleGeoEntityChange}
+          >
+            {geoConfigs.map((geoConfig) => (
+              <MenuItem key={geoConfig.entity.id} value={geoConfig.entity.id}>
+                {geoConfig.entity.displayNamePlural ??
+                  geoConfig.entity.displayName}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl style={{ minWidth: '450px' }} variant="filled">
+          <InputLabel>
+            Choose an entity to show the counts of
+            {geoEntity &&
+              ' (default: ' +
+                (geoEntity.displayNamePlural ?? geoEntity.displayName) +
+                ')'}
+          </InputLabel>
+          <Select
+            value={vizConfig.outputEntityId}
+            onChange={handleOutputEntityChange}
+          >
+            {availableOutputEntities.map((entity) => (
+              <MenuItem key={entity.id} value={entity.id}>
+                {entity.displayNamePlural ?? entity.displayName}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <div>
+          <p>
+            (Note: if you want to show counts for anything other than Household,
+            it's best to first subset aggressively and zoom in to a few hundred
+            households.)
+          </p>
+        </div>
+      </div>
+      <PluginError
+        error={data.error}
+        outputSize={data.value?.totalEntityCount}
+      />
+      <OutputEntityTitle
+        entity={outputEntity}
+        outputSize={data.value?.totalEntityCount}
+      />
       <PlotLayout
         isFaceted={false}
         legendNode={null}

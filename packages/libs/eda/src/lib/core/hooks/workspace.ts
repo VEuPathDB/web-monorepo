@@ -9,6 +9,7 @@ import {
 import { StudyMetadata, StudyRecord, StudyRecordClass } from '../types/study';
 import { VariableDescriptor } from '../types/variable';
 
+/** Return the study identifier and a hierarchy of the study entities. */
 export function useStudyMetadata(): StudyMetadata {
   return useNonNullableContext(WorkspaceContext).studyMetadata;
 }
@@ -34,10 +35,10 @@ export function useMakeVariableLink(): MakeVariableLink {
   );
 }
 
-function defaultMakeVariableLink(
-  { variableId, entityId }: Partial<VariableDescriptor>,
-  studyMetadata: StudyMetadata
-): string {
+function defaultMakeVariableLink({
+  variableId,
+  entityId,
+}: Partial<VariableDescriptor>): string {
   return variableId && entityId
     ? `/variables/${entityId}/${variableId}`
     : entityId

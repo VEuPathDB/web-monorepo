@@ -10,10 +10,14 @@ import {
   union,
   intersection,
   partial,
-  keyof,
 } from 'io-ts';
 import { Filter } from '../../types/filter';
-import { BinSpec, BinWidthSlider, TimeUnit } from '../../types/general';
+import {
+  BinSpec,
+  BinWidthSlider,
+  TimeUnit,
+  NumberOrNull,
+} from '../../types/general';
 import { VariableDescriptor, StringVariableValue } from '../../types/variable';
 import { ComputationAppOverview } from '../../types/visualization';
 
@@ -413,7 +417,7 @@ export const TwoByTwoResponse = intersection([
   partial({
     statsTable: array(
       partial({
-        oddsratio: number, // TO DO: should these stats values really all be optional?
+        oddsratio: NumberOrNull, // TO DO: should these stats values really all be optional?
         pvalue: union([number, string]),
         orInterval: string,
         rrInterval: string,

@@ -49,7 +49,7 @@ import {
   keys,
 } from 'lodash';
 // import axis label unit util
-import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
+import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import {
   fixLabelForNumberVariables,
   fixLabelsForNumberVariables,
@@ -496,8 +496,8 @@ function BoxplotViz(props: VisualizationProps) {
       spacingOptions={!isFaceted(data.value) ? plotSpacingOptions : undefined}
       orientation={'vertical'}
       displayLegend={false}
-      independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-axis'}
-      dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-axis'}
+      independentAxisLabel={variableDisplayWithUnit(xAxisVariable) ?? 'X-axis'}
+      dependentAxisLabel={variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'}
       // show/hide independent/dependent axis tick label
       showIndependentAxisTickLabel={true}
       showDependentAxisTickLabel={true}
@@ -506,7 +506,7 @@ function BoxplotViz(props: VisualizationProps) {
       interactive={!isFaceted(data.value) ? true : false}
       showSpinner={data.pending || filteredCounts.pending}
       showRawData={true}
-      legendTitle={axisLabelWithUnit(overlayVariable)}
+      legendTitle={variableDisplayWithUnit(overlayVariable)}
       // for custom legend passing checked state in the  checkbox to PlotlyPlot
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
@@ -518,7 +518,7 @@ function BoxplotViz(props: VisualizationProps) {
     <PlotLegend
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
-      legendTitle={axisLabelWithUnit(overlayVariable)}
+      legendTitle={variableDisplayWithUnit(overlayVariable)}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
     />
   );
@@ -550,23 +550,23 @@ function BoxplotViz(props: VisualizationProps) {
           {
             role: 'X-axis',
             required: true,
-            display: axisLabelWithUnit(xAxisVariable),
+            display: variableDisplayWithUnit(xAxisVariable),
             variable: vizConfig.xAxisVariable,
           },
           {
             role: 'Y-axis',
             required: true,
-            display: axisLabelWithUnit(yAxisVariable),
+            display: variableDisplayWithUnit(yAxisVariable),
             variable: vizConfig.yAxisVariable,
           },
           {
             role: 'Overlay',
-            display: axisLabelWithUnit(overlayVariable),
+            display: variableDisplayWithUnit(overlayVariable),
             variable: vizConfig.overlayVariable,
           },
           {
             role: 'Facet',
-            display: axisLabelWithUnit(facetVariable),
+            display: variableDisplayWithUnit(facetVariable),
             variable: vizConfig.facetVariable,
           },
         ]}
@@ -723,7 +723,7 @@ export function boxplotResponseToData(
       (data) => data.label.length === 0 && data.median.length === 0
     );
     return facetIsEmpty
-      ? undefined
+      ? { series: [] }
       : {
           series: group.map((data) => ({
             lowerfence: data.lowerfence,
@@ -822,6 +822,8 @@ function reorderData(
   facetVocabulary: string[] = []
 ): BoxplotDataWithCoverage | BoxplotData {
   if (isFaceted(data)) {
+    if (facetVocabulary.length === 0) return data; // FIX-ME stop-gap for vocabulary-less numeric variables
+
     // for each value in the facet vocabulary's correct order
     // find the index in the series where series.name equals that value
     const facetValues = data.facets.map((facet) => facet.label);

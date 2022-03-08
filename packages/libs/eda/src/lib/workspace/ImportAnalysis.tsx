@@ -3,8 +3,6 @@ import { useHistory } from 'react-router-dom';
 
 import Path from 'path';
 
-import { RestrictedPage } from '@veupathdb/study-data-access/lib/data-restriction/RestrictedPage';
-import { useApprovalStatus } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 
@@ -12,12 +10,10 @@ import { AnalysisClient } from '../core';
 
 interface Props {
   analysisClient: AnalysisClient;
-  studyId: string;
   analysisId: string;
 }
 
-export function ImportAnalysis({ analysisClient, analysisId, studyId }: Props) {
-  const approvalStatus = useApprovalStatus(studyId, 'analysis');
+export function ImportAnalysis({ analysisClient, analysisId }: Props) {
   const history = useHistory();
   const [error, setError] = useState<string | undefined>();
 
@@ -26,34 +22,37 @@ export function ImportAnalysis({ analysisClient, analysisId, studyId }: Props) {
   );
 
   useEffect(() => {
-    if (approvalStatus !== 'approved') {
-      return;
-    }
-
-    return Task.fromPromise(() =>
-      analysisClient.importAnalysis(analysisId)
-    ).run(
-      ({ analysisId: analysisCopyId }) => {
-        const newLocation = {
-          ...history.location,
-          pathname: Path.join(
-            history.location.pathname,
-            '../../..',
+    return Task.fromPromise(() => analysisClient.importAnalysis(analysisId))
+      .chain(({ analysisId: analysisCopyId }) =>
+        Task.fromPromise(() => analysisClient.getAnalysis(analysisCopyId)).map(
+          ({ studyId }) => ({
+            analysisCopyId,
             studyId,
-            analysisCopyId
-          ),
-        };
-        history.replace(newLocation);
-      },
-      (error) =>
-        setError(error instanceof Error ? error.message : String(error))
-    );
-  }, [analysisClient, history, studyId, analysisId, approvalStatus]);
+          })
+        )
+      )
+      .run(
+        ({ analysisCopyId, studyId }) => {
+          const newLocation = {
+            ...history.location,
+            pathname: Path.join(
+              history.location.pathname,
+              '../..',
+              studyId,
+              analysisCopyId
+            ),
+          };
+          history.replace(newLocation);
+        },
+        (error) =>
+          setError(error instanceof Error ? error.message : String(error))
+      );
+  }, [analysisClient, history, analysisId]);
 
   return (
-    <RestrictedPage approvalStatus={approvalStatus}>
+    <div>
       <h1>{error == null ? 'Importing Analysis...' : 'Import Unsuccessful'}</h1>
       {error && <pre>{error}</pre>}
-    </RestrictedPage>
+    </div>
   );
 }

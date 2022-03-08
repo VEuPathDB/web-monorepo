@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 
 import { Field } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 
-import { StudyEntity } from '../../types/study';
+import { StudyEntity, VariableScope } from '../../types/study';
 import { VariableDescriptor } from '../../types/variable';
 import VariableList from './VariableList';
 import './VariableTree.scss';
@@ -17,8 +17,13 @@ import {
 export interface MultiSelectVariableTreeProps {
   /** The entity from which to derive the tree structure. */
   rootEntity: StudyEntity;
+  /** The "scope" of variables which should be offered. */
+  scope: VariableScope;
   /** Which variables have been selected? */
   selectedVariableDescriptors: Array<VariableDescriptor>;
+  featuredFields: Array<Field>;
+  starredVariableDescriptors: Array<VariableDescriptor>;
+  toggleStarredVariable: (targetVariable: VariableDescriptor) => void;
   /** Callback to invoke when selected variables change. */
   onSelectedVariablesChange: (variables: Array<VariableDescriptor>) => void;
 }
@@ -29,12 +34,16 @@ export interface MultiSelectVariableTreeProps {
  */
 export default function MultiSelectVariableTree({
   rootEntity,
+  scope,
   selectedVariableDescriptors,
+  starredVariableDescriptors,
+  toggleStarredVariable,
+  featuredFields,
   onSelectedVariablesChange,
 }: MultiSelectVariableTreeProps) {
   const entities = useStudyEntities(rootEntity);
   const valuesMap = useValuesMap(entities);
-  const flattenedFields = useFlattenedFields(entities);
+  const flattenedFields = useFlattenedFields(entities, scope);
   const fieldsByTerm = useFlattenFieldsByTerm(flattenedFields);
   const fieldTree = useFieldTree(flattenedFields);
 
@@ -42,12 +51,6 @@ export default function MultiSelectVariableTree({
    * Translate selectedVariableTerms to corresponding Field objects.
    */
   const selectedVariableFields = useMemo(() => {
-    // console.log(
-    //   'MultiSelect -> selectedVariableFields',
-    //   selectedVariableDescriptors,
-    //   fieldsByTerm
-    // );
-
     const selectedVariableTerms = selectedVariableDescriptors.map(
       (descriptor) => `${descriptor.entityId}/${descriptor.variableId}`
     );
@@ -57,13 +60,8 @@ export default function MultiSelectVariableTree({
       fieldsByTerm[term] && selectedVariableFields.push(fieldsByTerm[term]);
     });
 
-    // console.log('WILL RETURN', selectedVariableFields);
     return selectedVariableFields;
   }, [selectedVariableDescriptors, fieldsByTerm]);
-
-  const onActiveFieldChange = useCallback((term?: string) => {
-    console.log('Hello from Multi-Select onActiveFieldChange', term);
-  }, []);
 
   const onSelectedVariableTermsChange = useCallback(
     (terms: Array<string>) => {
@@ -77,19 +75,21 @@ export default function MultiSelectVariableTree({
     [onSelectedVariablesChange]
   );
 
+  const onActiveFieldChange = useCallback(() => undefined, []);
+
   return (
-    // TODO: @dmfalke This is striped down to the minimum temporarily for MVP.
     <VariableList
       mode="multiSelection"
-      showMultiFilterDescendants={false}
+      showMultiFilterDescendants={true}
       selectedFields={selectedVariableFields}
       onSelectedFieldsChange={onSelectedVariableTermsChange}
       onActiveFieldChange={onActiveFieldChange}
-      featuredFields={[]}
+      featuredFields={featuredFields}
+      starredVariables={starredVariableDescriptors}
       valuesMap={valuesMap}
       fieldTree={fieldTree}
       autoFocus={false}
-      toggleStarredVariable={(variable) => console.log(`Toggle ${variable}`)}
+      toggleStarredVariable={toggleStarredVariable}
     />
   );
 }

@@ -35,10 +35,10 @@ import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import rxc from './selectorIcons/RxC.svg';
 import twoxtwo from './selectorIcons/2x2.svg';
-import { TabbedDisplay } from '@veupathdb/core-components';
+import { TabbedDisplay } from '@veupathdb/coreui';
 
 // import axis label unit util
-import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
+import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import {
   fixLabelForNumberVariables,
   fixLabelsForNumberVariables,
@@ -349,8 +349,8 @@ function MosaicViz(props: Props) {
     ])
   );
 
-  const xAxisLabel = axisLabelWithUnit(xAxisVariable);
-  const yAxisLabel = axisLabelWithUnit(yAxisVariable);
+  const xAxisLabel = variableDisplayWithUnit(xAxisVariable);
+  const yAxisLabel = variableDisplayWithUnit(yAxisVariable);
 
   const tableGroupNode = (
     <>
@@ -377,18 +377,18 @@ function MosaicViz(props: Props) {
           {
             role: 'X-axis',
             required: true,
-            display: axisLabelWithUnit(xAxisVariable),
+            display: variableDisplayWithUnit(xAxisVariable),
             variable: vizConfig.xAxisVariable,
           },
           {
             role: 'Y-axis',
             required: true,
-            display: axisLabelWithUnit(yAxisVariable),
+            display: variableDisplayWithUnit(yAxisVariable),
             variable: vizConfig.yAxisVariable,
           },
           {
             role: 'Facet',
-            display: axisLabelWithUnit(facetVariable),
+            display: variableDisplayWithUnit(facetVariable),
             variable: vizConfig.facetVariable,
           },
         ]}
@@ -398,25 +398,28 @@ function MosaicViz(props: Props) {
 
   const plotNode = (
     <TabbedDisplay
+      themeRole="primary"
       tabs={[
         {
           displayName: 'Mosaic',
           content: (
-            <MosaicPlotWithControls
-              updateThumbnail={updateThumbnail}
-              data={data.value}
-              containerStyles={
-                !isFaceted(data.value) ? plotContainerStyles : undefined
-              }
-              spacingOptions={
-                !isFaceted(data.value) ? plotSpacingOptions : undefined
-              }
-              independentAxisLabel={xAxisLabel ?? 'X-axis'}
-              dependentAxisLabel={yAxisLabel ?? 'Y-axis'}
-              displayLegend={false}
-              interactive={!isFaceted(data.value) ? true : false}
-              showSpinner={data.pending}
-            />
+            <div style={{ marginTop: 15 }}>
+              <MosaicPlotWithControls
+                updateThumbnail={updateThumbnail}
+                data={data.value}
+                containerStyles={
+                  !isFaceted(data.value) ? plotContainerStyles : undefined
+                }
+                spacingOptions={
+                  !isFaceted(data.value) ? plotSpacingOptions : undefined
+                }
+                independentAxisLabel={xAxisLabel ?? 'X-axis'}
+                dependentAxisLabel={yAxisLabel ?? 'Y-axis'}
+                displayLegend={false}
+                interactive={!isFaceted(data.value) ? true : false}
+                showSpinner={data.pending}
+              />
+            </div>
           ),
         },
         {
@@ -445,7 +448,12 @@ function MosaicViz(props: Props) {
             ? vizConfig.showMissingness
               ? 'Statistics are not calculated when the "include no data" option is selected'
               : facetVariable != null && (
-                  <div style={facetedStatsTableContainerStyles}>
+                  <div
+                    style={{
+                      ...facetedStatsTableContainerStyles,
+                      marginTop: 15,
+                    }}
+                  >
                     {data.value.facets.map(({ label, data }, index) => (
                       <table key={index}>
                         <tbody>
@@ -862,6 +870,8 @@ function reorderData(
   | ContTableDataWithCoverage
   | ContTableData {
   if (isFaceted(data)) {
+    if (facetVocabulary.length === 0) return data; // FIX-ME stop-gap for vocabulary-less numeric variables
+
     // for each value in the facet vocabulary's correct order
     // find the index in the series where series.name equals that value
     const facetValues = data.facets.map((facet) => facet.label);
