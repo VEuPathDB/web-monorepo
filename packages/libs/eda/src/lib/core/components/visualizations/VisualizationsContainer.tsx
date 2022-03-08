@@ -74,7 +74,7 @@ export function VisualizationsContainer(props: Props) {
           banner={{
             type: 'warning',
             message:
-              'Visualizations may take up to 1 minute to appear due to the large amount of data in this study.',
+              'Visualizations might take up to a minute to load because this study has a large amount of data.',
             pinned: false,
             intense: false,
           }}
