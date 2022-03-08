@@ -131,10 +131,11 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
             (series.x ?? []).map(String),
             (series.y ?? []).map(String),
             (series.yErrorBarLower ?? []).map(String),
-            (series.yErrorBarUpper ?? []).map(String)
+            (series.yErrorBarUpper ?? []).map(String),
+            (series.sampleSize ?? []).map(String)
           ).map(
-            ([binLabel, x, y, lower, upper]) =>
-              `x: ${binLabel ?? x}\ny: ${y}\nCI: ${lower} - ${upper}`
+            ([binLabel, x, y, lower, upper, n]) =>
+              `x: ${binLabel ?? x}\ny: ${y}\nCI: ${lower} - ${upper}\nN: ${n}`
           ),
         })),
     [data.series]
