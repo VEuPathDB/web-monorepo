@@ -126,7 +126,6 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
         // now do another map to sort out the mouseover/tooltip text
         .map((series) => ({
           ...series,
-          type: 'scatter',
           text: zip(
             series.binLabel ?? [],
             (series.x ?? []).map(String),
