@@ -492,6 +492,8 @@ function MapViz(props: VisualizationProps) {
       }
       flyToMarkersDelay={500}
       showSpinner={basicMarkerData.pending || pieplotData.pending}
+      // whether to show scale at map
+      showScale={zoomLevel != null && zoomLevel > 4 ? true : false}
     />
   );
 
