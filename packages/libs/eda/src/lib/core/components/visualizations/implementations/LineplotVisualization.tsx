@@ -984,10 +984,16 @@ function getRequestParams(
     ? {
         binSpec: {
           type: 'binWidth',
-          value: useBinning ? binWidth : 0,
-          ...(xAxisVariableMetadata?.type === 'date'
-            ? { units: binWidthTimeUnit }
-            : {}),
+          ...(useBinning
+            ? {
+                value: binWidth,
+                ...(xAxisVariableMetadata?.type === 'date'
+                  ? { units: binWidthTimeUnit }
+                  : {}),
+              } // not binning
+            : xAxisVariableMetadata?.type === 'date'
+            ? { value: 1, units: 'day' }
+            : { value: 0 }),
         },
       }
     : { binSpec: { type: 'binWidth' } };
