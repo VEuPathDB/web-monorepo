@@ -711,6 +711,7 @@ function LineplotViz(props: VisualizationProps) {
           outputEntity={outputEntity}
         />
       </div>
+      <PluginError error={data.error} outputSize={outputSize} />
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
       <PlotLayout
         isFaceted={isFaceted(data.value?.dataSetProcess)}
@@ -1099,6 +1100,7 @@ function processInputData(
 
       // use seriesX when binning is off or binStart when binned, and decode numbers where necessary
       const xData = binSpec.value === 0 ? el.seriesX : el.binStart;
+
       if (xData == null)
         throw new Error('response did not contain binStart data');
       const seriesX =
