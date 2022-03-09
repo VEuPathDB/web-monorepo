@@ -5,7 +5,8 @@ import React from 'react';
 const mouseModeConfig = [
   {
     name: 'default',
-    icon: 'fa-hand-point-up',
+    // icon: 'fa-hand-point-up', // for fontawesome v5
+    icon: 'fa-mouse-pointer', // for fontawesome v4 (web-eda)
     description: 'Default mouse mode',
   },
   {
@@ -39,7 +40,8 @@ export default function MouseTools(props: MouseToolsProps) {
         title={mode.description}
         key={mode.name}
       >
-        <i className={`fas ${mode.icon}`}></i>
+        {/* fontawesome v4.7 uses fa instead of fas in v5*/}
+        <i className={`fa ${mode.icon}`}></i>
       </a>
     );
   });
