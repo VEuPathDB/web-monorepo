@@ -15,6 +15,7 @@ import {
 import { VisualizationsContainer } from '../visualizations/VisualizationsContainer';
 import { VisualizationType } from '../visualizations/VisualizationTypes';
 import { scatterplotVisualization } from '../visualizations/implementations/ScatterplotVisualization';
+import { lineplotVisualization } from '../visualizations/implementations/LineplotVisualization';
 import { barplotVisualization } from '../visualizations/implementations/BarplotVisualization';
 import { boxplotVisualization } from '../visualizations/implementations/BoxplotVisualization';
 import { mapVisualization } from '../visualizations/implementations/MapVisualization';
@@ -39,7 +40,7 @@ const visualizationTypes: Record<string, VisualizationType> = {
   twobytwo: twoByTwoVisualization,
   conttable: contTableVisualization,
   scatterplot: scatterplotVisualization,
-  // lineplot: scatterplotVisualization,
+  lineplot: lineplotVisualization,
   // placeholder for densityplot
   // densityplot: scatterplotVisualization,
   barplot: barplotVisualization,
