@@ -124,8 +124,13 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
           }
         })
         // now do another map to sort out the mouseover/tooltip text
+
+        // NOTE: unfortunately the newlines do not render.  Newlines can be added to the
+        // 'hovertemplate' but from there I don't think we can access arbitrary values,
+        // such as 'upper', 'lower' and 'n'
         .map((series) => ({
           ...series,
+          hovertemplate: '%{text}',
           text: zip(
             series.binLabel ?? [],
             (series.x ?? []).map(String),
@@ -133,10 +138,13 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
             (series.yErrorBarLower ?? []).map(String),
             (series.yErrorBarUpper ?? []).map(String),
             (series.sampleSize ?? []).map(String)
-          ).map(
-            ([binLabel, x, y, lower, upper, n]) =>
-              `x: ${binLabel ?? x}\ny: ${y}\nCI: ${lower} - ${upper}\nN: ${n}`
-          ),
+          ).map(([binLabel, x, y, lower, upper, n]) => {
+            const CI =
+              lower != null && upper != null
+                ? ` (95% CI: ${lower} - ${upper})`
+                : '';
+            return `x: ${binLabel ?? x}\ny: ${y}${CI}\nN: ${n}`;
+          }),
         })),
     [data.series]
   );
