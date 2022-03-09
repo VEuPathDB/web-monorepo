@@ -494,6 +494,8 @@ function MapViz(props: VisualizationProps) {
       showSpinner={basicMarkerData.pending || pieplotData.pending}
       // whether to show scale at map
       showScale={zoomLevel != null && zoomLevel > 4 ? true : false}
+      // show mouse tool
+      showMouseToolbar={true}
     />
   );
 
