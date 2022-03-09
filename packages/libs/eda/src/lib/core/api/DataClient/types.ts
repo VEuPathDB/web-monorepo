@@ -138,8 +138,8 @@ export interface BarplotRequestParams {
     valueSpec: 'count' | 'identity' | 'proportion';
     barMode: 'group' | 'stack';
     xAxisVariable: VariableDescriptor;
-    // barplot add prop
     overlayVariable?: VariableDescriptor;
+    facetVariable?: ZeroToTwoVariables;
     showMissingness?: 'TRUE' | 'FALSE';
   };
 }
@@ -185,16 +185,15 @@ export interface ScatterplotRequestParams {
   filters: Filter[];
   config: {
     outputEntityId: string;
-    // add bestFitLineWithRaw
     valueSpec:
       | 'raw'
       | 'smoothedMean'
       | 'smoothedMeanWithRaw'
       | 'bestFitLineWithRaw';
-    facetVariable?: ZeroToTwoVariables;
     xAxisVariable: VariableDescriptor;
     yAxisVariable: VariableDescriptor;
     overlayVariable?: VariableDescriptor;
+    facetVariable?: ZeroToTwoVariables;
     showMissingness?: 'TRUE' | 'FALSE';
     maxAllowedDataPoints?: number;
   };
@@ -275,10 +274,10 @@ export interface LineplotRequestParams {
   filters: Filter[];
   config: {
     outputEntityId: string;
-    facetVariable?: ZeroToTwoVariables;
     xAxisVariable: VariableDescriptor;
     yAxisVariable: VariableDescriptor;
     overlayVariable?: VariableDescriptor;
+    facetVariable?: ZeroToTwoVariables;
     binSpec: BinSpec;
     viewport?: {
       xMin: string;
@@ -449,6 +448,7 @@ export interface BoxplotRequestParams {
     xAxisVariable: VariableDescriptor;
     yAxisVariable: VariableDescriptor;
     overlayVariable?: VariableDescriptor;
+    facetVariable?: ZeroToTwoVariables;
     showMissingness?: 'TRUE' | 'FALSE';
   };
 }
@@ -534,4 +534,44 @@ export const MapMarkersResponse = type({
       maxLon: number,
     })
   ),
+});
+
+export interface PieplotRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    outputEntityId: string;
+    showMissingness: 'TRUE' | 'FALSE';
+    xAxisVariable: VariableDescriptor;
+    facetVariable?: ZeroToTwoVariables;
+  };
+}
+
+export type PieplotResponse = TypeOf<typeof PieplotResponse>;
+export const PieplotResponse = type({
+  barplot: type({
+    // NOTE THE TYPO <<<<<<<<<<<<<<<<
+    data: array(
+      intersection([
+        type({
+          label: array(string),
+          value: array(number),
+        }),
+        partial({
+          facetVariableDetails: union([
+            tuple([StringVariableValue]),
+            tuple([StringVariableValue, StringVariableValue]),
+          ]),
+        }),
+      ])
+    ),
+    config: type({
+      xVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+    }),
+  }),
+  sampleSizeTable: sampleSizeTableArray,
+  completeCasesTable: completeCasesTableArray,
 });
