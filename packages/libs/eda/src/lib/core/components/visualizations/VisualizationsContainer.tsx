@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useMemo,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useCallback, useMemo, useEffect, useRef } from 'react';
 import {
   Route,
   Switch,
@@ -30,6 +24,7 @@ import { VisualizationType } from './VisualizationTypes';
 import './Visualizations.scss';
 import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
 import Banner from '@veupathdb/wdk-client/lib/Components/Banners/Banner';
+import { useLocalBackedState } from '@veupathdb/wdk-client/lib/Hooks/LocalBackedState';
 import PlaceholderIcon from './PlaceholderIcon';
 import { Tooltip } from '@material-ui/core';
 import { isEqual } from 'lodash';
@@ -67,29 +62,31 @@ interface Props {
 export function VisualizationsContainer(props: Props) {
   const { url } = useRouteMatch();
 
-  const [showWarning, setShowWarning] = useState(true);
   const currentStudyRecordId = useStudyRecord().id[0].value;
   const studiesForPerformanceWarning = [
     'DS_a885240fc4',
     'DS_5c41b87221',
     'DS_81ef25b6ac',
   ];
-
-  useMemo(() => {
-    if (localStorage.getItem('showWarning')) {
-      setShowWarning(false);
-    }
-  }, []);
+  const SHOULD_SHOW_WARNING_KEY = `shouldShowWarning-${currentStudyRecordId}`;
+  const [
+    shouldShowWarning,
+    setShouldShowWarning,
+  ] = useLocalBackedState<boolean>(
+    true,
+    SHOULD_SHOW_WARNING_KEY,
+    (boolean) => String(boolean),
+    (string) => string !== 'false'
+  );
 
   const handleCloseWarning = () => {
-    setShowWarning(false);
-    localStorage.setItem('showWarning', 'false');
+    setShouldShowWarning(false);
   };
 
   return (
     <div className={cx()}>
       {studiesForPerformanceWarning.includes(currentStudyRecordId) &&
-      showWarning ? (
+      shouldShowWarning ? (
         <Banner
           banner={{
             type: 'warning',
