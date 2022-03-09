@@ -1276,10 +1276,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/components@^0.11.21":
-  version "0.11.21"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.21.tgz#a2581a2a3d2e764e3e17b65b01da29ed0a911a5b"
-  integrity sha512-IJIOv8CIUPlp/Tdc1wS49Tfj7n73D9zpgP21fPm46Ia5JQ9al7tFw+Rjh9atPy/ov48bp/Y++ZVpVJuabsXiKQ==
+"@veupathdb/components@^0.11.22":
+  version "0.11.22"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.22.tgz#2ac47bbb63acbbdf473b47ff61237ae111b1e4dd"
+  integrity sha512-Be+MEmR4jQ7ghRhampDjzClYIcX8BBMveVgR0iuaCkV8PyU+p4MSB1fnlUQ3S7yqTOGXNXlW1yrtKoWwgj8/Zw==
   dependencies:
     "@emotion/react" "^11.7.0"
     "@material-ui/core" "^4.11.2"
@@ -1419,10 +1419,10 @@
     react-table "^7.7.0"
     uuid "^8.3.2"
 
-"@veupathdb/eda@^1.7.5":
-  version "1.7.5"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.7.5.tgz#af94f585ad07b495e35c138986bd73482584de2e"
-  integrity sha512-bhOh4afazVTHSjXZ5pk2zXSSeLm78fwJyBcJa0Y+AxaxtnQK8x0a4uRfM5yzK60PQl6kL7AxBvZcpWSFujadPQ==
+"@veupathdb/eda@^1.7.6":
+  version "1.7.6"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.7.6.tgz#0e10be30faac9ee97633fe020e1f4e16e0c3b8ba"
+  integrity sha512-5yWRBr3eAhxhE+2hz21m8opp1hfJydqCfnAjZ+vzWcMM5Va3dbGhGmoMxphc9kl4M+3eCYlDaqQH2Wv0AC8Wng==
   dependencies:
     "@emotion/react" "^11.4.1"
     "@emotion/styled" "^11.3.0"
@@ -1430,7 +1430,7 @@
     "@material-ui/icons" "^4.11.2"
     "@material-ui/lab" "^4.0.0-alpha.58"
     "@types/debounce-promise" "^3.1.3"
-    "@veupathdb/components" "^0.11.21"
+    "@veupathdb/components" "^0.11.22"
     "@veupathdb/coreui" "^0.13.0"
     "@veupathdb/http-utils" "^1.1.0"
     "@veupathdb/study-data-access" "^0.1.5"
