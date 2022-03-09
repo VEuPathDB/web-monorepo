@@ -132,7 +132,7 @@ export default function SemanticMarkers({
 
     // Update previous markers with the original markers array
     setPrevMarkers(markers);
-  }, [markers]);
+  }, [markers, bounds]);
 
   useEffect(() => {
     /** If we are zooming in then reset the marker elements. When initially rendered
@@ -154,7 +154,7 @@ export default function SemanticMarkers({
     }
 
     return () => clearTimeout(timeoutVariable);
-  }, [zoomType]);
+  }, [zoomType, markers]);
 
   return <>{consolidatedMarkers}</>;
 }
