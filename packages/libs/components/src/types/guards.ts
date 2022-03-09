@@ -17,7 +17,7 @@ import {
   PlotRef,
   UnionOfPlotDataTypes,
 } from './plots';
-import { LinePlotData } from './plots/linePlot';
+import { LinePlotData } from './plots/lineplot';
 
 /** Determine if data is for a histogram plot. */
 export function isHistogramData(
@@ -103,4 +103,19 @@ export function isFacetedPlotRef(
   maybeFacetedPlotRef?: FacetedPlotRef | PlotRef
 ): maybeFacetedPlotRef is FacetedPlotRef {
   return Array.isArray(maybeFacetedPlotRef);
+}
+
+export function isArrayOfNumbers(
+  array: string[] | number[]
+): array is number[] {
+  return array.length > 0 && typeof array[0] === 'number';
+}
+
+export function isArrayOfNumbersOrNulls(
+  array: (string | number | null)[]
+): array is (number | null)[] {
+  return (
+    array.length > 0 &&
+    array.every((el) => el === null || typeof el === 'number')
+  );
 }
