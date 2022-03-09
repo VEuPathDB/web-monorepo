@@ -21,6 +21,7 @@ import { FieldWithMetadata, StudyMetadata } from '..';
 
 import { useFieldTree, useFlattenedFields } from './variableTrees/hooks';
 import { DownloadClient } from '../api/DownloadClient';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 export interface Props {
   studyId: string;
@@ -75,6 +76,10 @@ function EDAWorkspaceContainerWithLoadedData({
     () => initializeMakeVariableLink?.(variableTree),
     [initializeMakeVariableLink, variableTree]
   );
+
+  const projectId = useWdkService((wdkService) => wdkService.getConfig(), [])
+    ?.projectId;
+  console.log(projectId);
 
   return (
     <WorkspaceContext.Provider
