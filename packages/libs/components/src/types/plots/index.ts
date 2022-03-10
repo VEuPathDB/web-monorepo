@@ -4,10 +4,10 @@
 import { ToImgopts } from 'plotly.js';
 
 import { HistogramData } from './histogram';
-import { LinePlotData } from './linePlot';
+import { LinePlotData } from './lineplot';
 import { PiePlotData } from './piePlot';
 import { BoxplotData } from './boxplot';
-import { XYPlotData } from './xyplot';
+import { ScatterPlotData } from './scatterplot';
 import { BarplotData } from './barplot';
 import { HeatmapData } from './heatmap';
 import { MosaicPlotData } from './mosaicPlot';
@@ -40,7 +40,7 @@ export type UnionOfPlotDataTypes =
   | PiePlotData
   | LinePlotData
   | BoxplotData
-  | XYPlotData
+  | ScatterPlotData
   | BarplotData
   | HeatmapData
   | MosaicPlotData
@@ -49,10 +49,10 @@ export type UnionOfPlotDataTypes =
 export * from './addOns';
 
 export * from './histogram';
-export * from './linePlot';
+export * from './lineplot';
 export * from './piePlot';
 export * from './boxplot';
-export * from './xyplot';
+export * from './scatterplot';
 export * from './barplot';
 export * from './heatmap';
 export * from './mosaicPlot';

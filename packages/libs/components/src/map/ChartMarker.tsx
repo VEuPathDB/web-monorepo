@@ -218,7 +218,7 @@ export default function ChartMarker(props: ChartMarkerProps) {
               binStart: i,
               binEnd: i + 1,
               binLabel: label,
-              count: props.values[i],
+              value: props.values[i],
             },
           ],
         })),
