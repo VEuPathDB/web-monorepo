@@ -47,7 +47,7 @@ const userServiceUrl = '/eda-user-service';
 const downloadServiceUrl = '/eda-user-service';
 
 // Ann dev
-const singleAppMode = 'pass';
+const singleAppMode = '';
 
 const exampleAnalysesAuthor = process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR
   ? Number(process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR)

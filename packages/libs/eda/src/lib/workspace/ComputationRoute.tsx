@@ -30,14 +30,14 @@ export function ComputationRoute(props: Props) {
   const dataClient = useDataClient();
   const projectId = useWdkService((wdkService) => wdkService.getConfig(), [])
     ?.projectId;
+  console.log(projectId);
   const promiseState = usePromise(
     useCallback(async () => {
       let { apps } = await dataClient.getApps();
-      console.log(projectId);
+      console.log(apps);
       if (projectId) {
         apps = apps.filter((app) => app.projects?.includes(projectId));
       }
-      console.log(apps);
       if (singleAppMode) {
         // find the single app within the approved apps
         console.log('single app mode');
@@ -48,7 +48,7 @@ export function ComputationRoute(props: Props) {
         throw new Error('Could not find default computation app.');
 
       return { apps };
-    }, [dataClient])
+    }, [dataClient, projectId])
   );
 
   return (
@@ -56,19 +56,24 @@ export function ComputationRoute(props: Props) {
       {({ apps }) => {
         if (singleAppMode) {
           const plugin = plugins[apps[0].name];
+          const addComputation = (name: string, configuration: unknown) => {
+            if (analysisState.analysis == null) return;
+          };
           return (
             <Switch>
               <Route exact path={url}>
                 <Redirect to={`${url}/${singleAppMode}`} />
               </Route>
               <Route path={`${url}/${singleAppMode}`}>
-                {/* <PassThroughComputation
-                  analysisState={analysisState}
-                  computationAppOverview={computationAppOverview}
-                  totalCounts={totalCounts}
-                  filteredCounts={filteredCounts}
-                  geoConfigs={geoConfigs}
-                /> */}
+                {plugin ? (
+                  <plugin.configurationComponent
+                    {...props}
+                    computationAppOverview={apps[0]}
+                    addNewComputation={addComputation}
+                  />
+                ) : (
+                  <div>App not yet implemented</div>
+                )}
               </Route>
             </Switch>
           );
