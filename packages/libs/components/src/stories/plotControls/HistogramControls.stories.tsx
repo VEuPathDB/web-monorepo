@@ -51,8 +51,10 @@ export const AdditionalOptions: Story<usePlotControlsParams<HistogramData>> = (
   });
 
   useEffect(() => {
-    console.log(`Story got new binWidth ${controls.data.binWidth}`);
-  }, [controls.data.binWidth]);
+    console.log(
+      `Story got new binWidth ${controls.data.binWidthSlider?.binWidth}`
+    );
+  }, [controls.data.binWidthSlider?.binWidth]);
 
   return (
     <HistogramControls

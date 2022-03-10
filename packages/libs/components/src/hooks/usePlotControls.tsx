@@ -56,8 +56,8 @@ type ActionType<DataShape> =
   | { type: 'histogram/onIndependentAxisRangeReset' }
   // add reset all
   | { type: 'onResetAll' }
-  // add valueSpec for XYPlotControls
-  | { type: 'XYPlot/onValueSpecChange'; payload: string };
+  // add valueSpec for ScatterPlotControls
+  | { type: 'ScatterPlot/onValueSpecChange'; payload: string };
 
 /** Reducer that is used inside the hook. */
 function reducer<DataShape extends UnionOfPlotDataTypes>(
@@ -194,12 +194,12 @@ function reducer<DataShape extends UnionOfPlotDataTypes>(
     // add reset all: nothing here but perhaps it would eventually be a function to set all params to default
     case 'onResetAll':
       return { ...state };
-    // add valueSpec for XYPlotControls
-    case 'XYPlot/onValueSpecChange':
+    // add valueSpec for ScatterPlotControls
+    case 'ScatterPlot/onValueSpecChange':
       return {
         ...state,
-        XYPlot: {
-          ...state.XYPlot,
+        ScatterPlot: {
+          ...state.ScatterPlot,
           valueSpec: action.payload,
         },
       };
@@ -276,11 +276,11 @@ type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
     /** Histogram: independent axis range reset */
     onIndependentAxisRangeReset?: () => void;
   };
-  // valueSpecChange for XYPlotControls
-  XYPlot?: {
-    /** XYPlot: valueSpec */
+  // valueSpecChange for ScatterPlotControls
+  ScatterPlot?: {
+    /** ScatterPlot: valueSpec */
     valueSpec?: string;
-    /** XYPlot: valueSpec */
+    /** ScatterPlot: valueSpec */
     onValueSpecChange?: () => void;
   };
 };
@@ -309,8 +309,8 @@ export type usePlotControlsParams<DataShape extends UnionOfPlotDataTypes> = {
     // add x-axis range
     independentAxisRange?: NumberOrDateRange;
   };
-  // valueSpec for XYPlotControls
-  XYPlot?: {
+  // valueSpec for ScatterPlotControls
+  ScatterPlot?: {
     valueSpec?: string;
   };
 };
@@ -345,7 +345,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
       dependentAxisLogScale: false,
       dependentAxisMode: 'absolute',
     },
-    XYPlot: {
+    ScatterPlot: {
       valueSpec: 'Raw',
     },
   };
@@ -366,9 +366,9 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
     if (params.histogram?.binWidthRange) {
       // Case 1: Override is provided by client.
       binWidthRange = params.histogram.binWidthRange;
-    } else if (params.data.binWidthRange) {
+    } else if (params.data.binWidthSlider?.binWidthRange) {
       // Case 2: binWidthRange is specified in `data`
-      binWidthRange = params.data.binWidthRange;
+      binWidthRange = params.data.binWidthSlider.binWidthRange;
     } else {
       // Case 3: Create some reasonable defaults if not provided by client or data.
 
@@ -413,7 +413,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
       }
     }
     const binWidth =
-      params.data.binWidth ??
+      params.data.binWidthSlider?.binWidth ??
       ('unit' in binWidthRange
         ? ({
             value: binWidthRange.max / 10,
@@ -423,7 +423,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
 
     const binWidthStep =
       params.histogram?.binWidthStep ??
-      params.data.binWidthStep ??
+      params.data.binWidthSlider?.binWidthStep ??
       (binWidthRange.max - binWidthRange.min) / 10;
 
     initialState.histogram = {
@@ -499,21 +499,21 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
          */
         if (isHistogramData(newData)) {
           if (
-            newData.binWidth &&
-            newData.binWidthRange &&
-            newData.binWidthStep
+            newData.binWidthSlider?.binWidth &&
+            newData.binWidthSlider?.binWidthRange &&
+            newData.binWidthSlider?.binWidthStep
           ) {
             dispatch({
               type: 'histogram/setBinWidthRange',
-              payload: newData.binWidthRange,
+              payload: newData.binWidthSlider?.binWidthRange,
             });
             dispatch({
               type: 'histogram/setBinWidth',
-              payload: newData.binWidth,
+              payload: newData.binWidthSlider?.binWidth,
             });
             dispatch({
               type: 'histogram/setBinWidthStep',
-              payload: newData.binWidthStep,
+              payload: newData.binWidthSlider?.binWidthStep,
             });
           } else {
             throw new Error(
@@ -590,9 +590,9 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
   // reset all
   const onResetAll = () => dispatch({ type: 'onResetAll' });
 
-  // onValueSpecChange for XYPlotControls
+  // onValueSpecChange for ScatterPlotControls
   const onValueSpecChange = (value: string) =>
-    dispatch({ type: 'XYPlot/onValueSpecChange', payload: value });
+    dispatch({ type: 'ScatterPlot/onValueSpecChange', payload: value });
 
   /**
    * Separate errors attribute from the rest of the reducer state.
@@ -636,10 +636,10 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
     toggleLibraryControls,
     // add reset all
     onResetAll,
-    // onValueSpecChange for XYPlotControls
-    XYPlot: {
-      // need to add reducerState here for XYPlotControls
-      ...reducerState.XYPlot,
+    // onValueSpecChange for ScatterPlotControls
+    ScatterPlot: {
+      // need to add reducerState here for ScatterPlotControls
+      ...reducerState.ScatterPlot,
       onValueSpecChange,
     },
   };
