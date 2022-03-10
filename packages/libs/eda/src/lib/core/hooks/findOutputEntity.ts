@@ -6,10 +6,7 @@ import { useFindEntityAndVariable } from './study';
 export function useFindOutputEntity(
   dataElementDependencyOrder: string[] | undefined,
   // need to add string at Record's Type due to valueSpecConfig
-  dataElementVariables: Record<
-    string,
-    VariableDescriptor | string | boolean | string[] | undefined
-  >,
+  dataElementVariables: Record<string, VariableDescriptor | unknown>,
   defaultVariableName: string,
   entities: StudyEntity[]
 ) {
