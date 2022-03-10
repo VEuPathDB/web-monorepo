@@ -196,9 +196,7 @@ export async function checkPermissions(
   user: User,
   studyAccessApi: StudyAccessApi
 ): Promise<UserPermissions> {
-  return user.properties?.skipStudyPermissions
-    ? { type: 'external', perDataset: {} }
-    : await fetchPermissions(studyAccessApi);
+  return await fetchPermissions(studyAccessApi);
 }
 
 export function permittedApprovalStatusChanges(oldApprovalStatus: ApprovalStatus): ApprovalStatus[] {
