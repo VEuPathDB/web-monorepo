@@ -1,10 +1,10 @@
 import { useCallback, useState } from 'react';
 
-type Encoder<T> = (t: T) => string;
-type Parser<T> = (s: string) => T;
+export type Encoder<T> = (t: T) => string;
+export type Parser<T> = (s: string) => T;
 
 export function useStorageBackedState<T>(
-    storage: Storage,
+  storage: Storage,
   defaultValue: T,
   key: string,
   encode: Encoder<T>,
@@ -20,7 +20,7 @@ export function useStorageBackedState<T>(
     }
   } catch (e) {
     console.warn(
-      `Failed attempt to retrieve state value at ${storage === window.sessionStorage ? 'session' : 'local'} key ${key}: ${e}; falling back to component state`
+      `Failed attempt to retrieve state value at storage key "${key}": "${e}"; falling back to component state`
     );
   }
 
@@ -30,7 +30,7 @@ export function useStorageBackedState<T>(
     try {
       storage.setItem(key, encode(newValue));
     } catch {
-      console.warn(`Failed attempt to persist state value ${newValue} at ${storage === window.sessionStorage ? 'session' : 'local'} key ${key}; falling back to component state`);
+      console.warn(`Failed attempt to persist state value storage key "${key}"; falling back to component state`);
     }
     setState(newValue);
   }, [ encode ]);
