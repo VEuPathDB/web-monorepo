@@ -1,26 +1,26 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
 
-import XYPlotControls from '../../components/plotControls/XYPlotControls';
+import ScatterPlotControls from '../../components/plotControls/ScatterPlotControls';
 import usePlotControls, {
   usePlotControlsParams,
 } from '../../hooks/usePlotControls';
 
 export default {
-  title: 'Plot Controls/XYPlot',
-  component: XYPlotControls,
+  title: 'Plot Controls/ScatterPlot',
+  component: ScatterPlotControls,
 } as Meta;
 
 export const Basic: Story<usePlotControlsParams<any>> = (args) => {
   const controls = usePlotControls<any>({
     data: args.data,
-    XYPlot: args.XYPlot,
+    ScatterPlot: args.ScatterPlot,
   });
 
   return (
-    <XYPlotControls
-      // label="XYPlot Control Panel"
+    <ScatterPlotControls
+      // label="ScatterPlot Control Panel"
       {...controls}
-      {...controls.XYPlot}
+      {...controls.ScatterPlot}
       // assign new props' values for tests
       label={'Plot modes'}
       orientation={'horizontal'}
@@ -36,7 +36,7 @@ export const Basic: Story<usePlotControlsParams<any>> = (args) => {
 
 Basic.args = {
   data: { series: [{ name: 'dummy data', bins: [] }] },
-  XYPlot: {
+  ScatterPlot: {
     valueSpec: 'Raw',
   },
 };

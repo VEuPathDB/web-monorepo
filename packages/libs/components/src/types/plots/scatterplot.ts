@@ -1,4 +1,4 @@
-export type XYPlotDataSeries = {
+export type ScatterPlotDataSeries = {
   /** x/y data */
   x: number[] | string[];
   y: number[] | string[];
@@ -19,6 +19,7 @@ export type XYPlotDataSeries = {
       /** marker's perimeter color: no unit */
       width?: number;
     };
+    symbol?: string;
   };
   /** plot with marker: scatter plot with smoothedMean and bestfitline; line and density plots */
   line?: {
@@ -35,9 +36,11 @@ export type XYPlotDataSeries = {
   fillcolor?: string;
   /** R-square value for Best fit option */
   r2?: number;
+  /** opacity of points? */
+  opacity?: number;
 };
 
-export type XYPlotData = {
+export type ScatterPlotData = {
   /** an array of data series (aka traces) */
-  series: XYPlotDataSeries[];
+  series: ScatterPlotDataSeries[];
 };

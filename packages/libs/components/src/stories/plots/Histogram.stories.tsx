@@ -412,12 +412,12 @@ const TemplateStaticWithRangeControls: Story<HistogramProps> = (args) => {
 
     const topTruncated =
       dependentAxisRange?.max != null &&
-      xFilteredBins.filter((bin) => bin.count > dependentAxisRange.max).length >
+      xFilteredBins.filter((bin) => bin.value > dependentAxisRange.max).length >
         0;
 
     const bottomTruncated =
       dependentAxisRange?.min != null &&
-      xFilteredBins.filter((bin) => bin.count < dependentAxisRange.min).length >
+      xFilteredBins.filter((bin) => bin.value < dependentAxisRange.min).length >
         0;
 
     setAxisTruncationConfig({
@@ -465,7 +465,7 @@ const staticData = {
         binStart: index + 1,
         binEnd: index + 2,
         binLabel: `${index + 1} to ${index + 2}`,
-        count: num,
+        value: num,
       })),
     },
   ],
@@ -490,7 +490,7 @@ ShowValues.args = {
           binStart: index + 1,
           binEnd: index + 2,
           binLabel: `${index + 1} to ${index + 2}`,
-          count: num / 10,
+          value: num / 10,
         })),
       },
     ],
