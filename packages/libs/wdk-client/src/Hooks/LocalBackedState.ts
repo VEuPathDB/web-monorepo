@@ -1,38 +1,43 @@
-import { useCallback, useState } from 'react';
+// import { useCallback, useState } from 'react';
+import { useStorageBackedState } from './StorageBackedState';
+import { partial } from 'lodash';
 
-type Encoder<T> = (t: T) => string;
-type Parser<T> = (s: string) => T;
+export const useLocalBackedState = partial(useStorageBackedState, window.localStorage)
 
-export function useLocalBackedState<T>(
-  defaultValue: T,
-  key: string,
-  encode: Encoder<T>,
-  parse: Parser<T>,
-): [ T, (newState: T) => void ] {
-  let initialValue = defaultValue;
 
-    try {
-      const storedStringValue = window.localStorage.getItem(key);
+// type Encoder<T> = (t: T) => string;
+// type Parser<T> = (s: string) => T;
 
-    if (storedStringValue !== null) {
-      initialValue = parse(storedStringValue);
-    }
-  } catch (e) {
-    console.warn(
-      `Failed attempt to retrieve state value at local key ${key}: ${e}; falling back to component state`
-    );
-  }
+// export function useLocalBackedState<T>(
+//   defaultValue: T,
+//   key: string,
+//   encode: Encoder<T>,
+//   parse: Parser<T>,
+// ): [ T, (newState: T) => void ] {
+//   let initialValue = defaultValue;
 
-  const [ state, setState ] = useState(initialValue);
+//     try {
+//       const storedStringValue = window.localStorage.getItem(key);
 
-  const setLocalBackedState = useCallback((newValue: T) => {
-    try {
-      window.localStorage.setItem(key, encode(newValue));
-    } catch {
-      console.warn(`Failed attempt to persist state value ${newValue} at local key ${key}; falling back to component state`);
-    }
-    setState(newValue);
-  }, [ encode ]);
+//     if (storedStringValue !== null) {
+//       initialValue = parse(storedStringValue);
+//     }
+//   } catch (e) {
+//     console.warn(
+//       `Failed attempt to retrieve state value at local key ${key}: ${e}; falling back to component state`
+//     );
+//   }
 
-  return [ state, setLocalBackedState ];
-};
+//   const [ state, setState ] = useState(initialValue);
+
+//   const setLocalBackedState = useCallback((newValue: T) => {
+//     try {
+//       window.localStorage.setItem(key, encode(newValue));
+//     } catch {
+//       console.warn(`Failed attempt to persist state value ${newValue} at local key ${key}; falling back to component state`);
+//     }
+//     setState(newValue);
+//   }, [ encode ]);
+
+//   return [ state, setLocalBackedState ];
+// };
