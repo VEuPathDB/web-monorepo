@@ -27,7 +27,7 @@ import Banner from '@veupathdb/wdk-client/lib/Components/Banners/Banner';
 import { useLocalBackedState } from '@veupathdb/wdk-client/lib/Hooks/LocalBackedState';
 import PlaceholderIcon from './PlaceholderIcon';
 import { Tooltip } from '@material-ui/core';
-import { isEqual } from 'lodash';
+import { isEqual, groupBy } from 'lodash';
 import { EntityCounts } from '../../hooks/entityCounts';
 import { useStudyRecord } from '../../hooks/workspace';
 import { PromiseHookState } from '../../hooks/promise';
@@ -311,9 +311,14 @@ function FullScreenVisualization(props: Props & { id: string }) {
   const history = useHistory();
   const viz = computation.visualizations.find((v) => v.visualizationId === id);
   const vizType = viz && visualizationTypes[viz.descriptor.type];
-  const overview = visualizationsOverview.find(
-    (v) => v.name === viz?.descriptor.type
+  const overviews = useMemo(
+    () =>
+      groupBy(visualizationsOverview, (v) =>
+        v.name === viz?.descriptor.type ? 'mine' : 'others'
+      ),
+    [visualizationsOverview, viz]
   );
+  const overview = overviews.mine != null ? overviews.mine[0] : undefined;
   const constraints = overview?.dataElementConstraints;
   const dataElementDependencyOrder = overview?.dataElementDependencyOrder;
   const updateConfiguration = useCallback(
@@ -460,6 +465,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
             totalCounts={totalCounts}
             filteredCounts={filteredCounts}
             geoConfigs={geoConfigs}
+            otherVizOverviews={overviews.others}
           />
         </div>
       )}
