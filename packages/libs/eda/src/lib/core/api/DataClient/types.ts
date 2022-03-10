@@ -10,11 +10,15 @@ import {
   union,
   intersection,
   partial,
-  keyof,
-  nullType,
+  unknown,
 } from 'io-ts';
 import { Filter } from '../../types/filter';
-import { TimeUnit } from '../../types/general';
+import {
+  BinSpec,
+  BinWidthSlider,
+  TimeUnit,
+  NumberOrNull,
+} from '../../types/general';
 import { VariableDescriptor, StringVariableValue } from '../../types/variable';
 import { ComputationAppOverview } from '../../types/visualization';
 
@@ -26,9 +30,6 @@ type ZeroToTwoVariables =
   | []
   | [VariableDescriptor]
   | [VariableDescriptor, VariableDescriptor];
-
-export type NumberOrNull = TypeOf<typeof numberOrNull>;
-const numberOrNull = union([number, nullType]);
 
 // define sampleSizeTableArray
 export type SampleSizeTableArray = TypeOf<typeof sampleSizeTableArray>;
@@ -106,19 +107,9 @@ export const HistogramResponse = type({
     config: type({
       completeCasesAllVars: number,
       completeCasesAxesVars: number,
-      binSlider: type({
-        min: numberOrNull,
-        max: numberOrNull,
-        step: numberOrNull,
-      }),
+      binSlider: BinWidthSlider,
       xVariableDetails: VariableDescriptor,
-      binSpec: intersection([
-        type({ type: keyof({ binWidth: null, numBins: null }) }),
-        partial({
-          value: numberOrNull,
-          units: TimeUnit,
-        }),
-      ]),
+      binSpec: BinSpec,
       summary: type({
         min: string,
         q1: string,
@@ -283,26 +274,42 @@ export interface LineplotRequestParams {
   filters: Filter[];
   config: {
     outputEntityId: string;
-    // not quite sure of overlayVariable and facetVariable yet
-    // overlayVariable?: Variable;
-    // facetVariable?: ZeroToTwoVariables;
     xAxisVariable: VariableDescriptor;
     yAxisVariable: VariableDescriptor;
     overlayVariable?: VariableDescriptor;
     facetVariable?: ZeroToTwoVariables;
+    binSpec: BinSpec;
+    viewport?: {
+      xMin: string;
+      xMax: string;
+    };
     showMissingness?: 'TRUE' | 'FALSE';
+    valueSpec: 'mean' | 'median';
+    errorBars: 'TRUE' | 'FALSE';
   };
 }
 
 const LineplotResponseData = array(
   intersection([
     type({
-      // changed to string array
       seriesX: array(string),
       seriesY: array(string),
     }),
     partial({
-      // need to make sure if below is correct (untested)
+      binStart: array(string),
+      binEnd: array(string),
+      errorBars: array(
+        type({
+          lowerBound: union([NumberOrNull, array(unknown)]), // TEMPORARY
+          upperBound: union([NumberOrNull, array(unknown)]), // back end will return number or null
+          error: string,
+        })
+      ),
+      binSampleSize: array(
+        type({
+          N: number,
+        })
+      ),
       overlayVariableDetails: StringVariableValue,
       facetVariableDetails: union([
         tuple([StringVariableValue]),
@@ -314,13 +321,13 @@ const LineplotResponseData = array(
 
 export type LineplotResponse = TypeOf<typeof LineplotResponse>;
 export const LineplotResponse = type({
-  // backend issue for lineplot returning scatterplot currently
-  // lineplot: type({
-  scatterplot: type({
+  lineplot: type({
     data: LineplotResponseData,
     config: type({
       completeCasesAllVars: number,
       completeCasesAxesVars: number,
+      binSlider: BinWidthSlider,
+      binSpec: BinSpec,
       xVariableDetails: type({
         variableId: string,
         entityId: string,
@@ -410,7 +417,7 @@ export const TwoByTwoResponse = intersection([
   partial({
     statsTable: array(
       partial({
-        oddsratio: numberOrNull, // TO DO: should these stats values really all be optional?
+        oddsratio: NumberOrNull, // TO DO: should these stats values really all be optional?
         pvalue: union([number, string]),
         orInterval: string,
         rrInterval: string,

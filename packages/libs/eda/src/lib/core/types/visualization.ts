@@ -84,6 +84,7 @@ export const DataElementConstraint = intersection([
     maxNumVars: number,
   }),
   partial({
+    isTemporal: boolean,
     allowedTypes: array(VariableType),
     allowedShapes: array(VariableDataShape),
     maxNumValues: number,
