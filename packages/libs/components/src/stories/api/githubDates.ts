@@ -2,8 +2,8 @@
  * Grab 100 items with dates from github API
  * https://api.github.com/users/VEuPathDB/events?per_page=100
  */
-import { HistogramBin, HistogramData } from '../../types/plots';
-import { TimeDelta } from '../../types/general';
+import { HistogramData } from '../../types/plots';
+import { TimeDelta, Bin } from '../../types/general';
 import * as DateMath from 'date-arithmetic';
 
 type EventData = {
@@ -58,7 +58,7 @@ export const binGithubEventDates = async ({
       ? DateMath.startOf(new Date(rawFirstDate), unit, 0).toISOString()
       : DateMath.startOf(new Date(rawFirstDate), unit).toISOString();
   const lastDate = dates[dates.length - 1];
-  const bins: HistogramBin[] = [];
+  const bins: Bin[] = [];
 
   // bin width in whole time-units
   // TO DO: Math.max(1, ...) protection added due to the Math.floor() could return zero days
@@ -96,7 +96,7 @@ export const binGithubEventDates = async ({
       binStart: date,
       binEnd: binEnd.toISOString(),
       binLabel: `${date} - ${binEnd}`,
-      count: 0,
+      value: 0,
     });
   }
 
@@ -107,9 +107,9 @@ export const binGithubEventDates = async ({
     });
     // but if we don't find that bin, we must need the final bin
     if (matchingBinIndex < 0) {
-      bins[bins.length - 1].count += 1;
+      bins[bins.length - 1].value += 1;
     } else {
-      bins[matchingBinIndex - 1].count += 1;
+      bins[matchingBinIndex - 1].value += 1;
     }
   });
 

@@ -1,8 +1,8 @@
-import XYPlot, { XYPlotProps } from '../XYPlot';
+import LinePlot, { LinePlotProps } from '../LinePlot';
 import FacetedPlot, { FacetedPlotPropsWithRef } from '../FacetedPlot';
-import { XYPlotData } from '../../types/plots';
+import { LinePlotData } from '../../types/plots';
 
-export const defaultContainerStyles: XYPlotProps['containerStyles'] = {
+export const defaultContainerStyles: LinePlotProps['containerStyles'] = {
   height: 300,
   width: 750 / 1.75,
   marginLeft: '0.75rem',
@@ -11,25 +11,25 @@ export const defaultContainerStyles: XYPlotProps['containerStyles'] = {
   boxShadow: '1px 1px 4px #00000066',
 };
 
-export const defaultSpacingOptions: XYPlotProps['spacingOptions'] = {
+export const defaultSpacingOptions: LinePlotProps['spacingOptions'] = {
   marginRight: 20,
   marginLeft: 50,
   marginBottom: 40,
   marginTop: 50,
 };
 
-type FacetedXYPlotProps = Omit<
-  FacetedPlotPropsWithRef<XYPlotData, XYPlotProps>,
+type FacetedLinePlotProps = Omit<
+  FacetedPlotPropsWithRef<LinePlotData, LinePlotProps>,
   'component'
 >;
 
-const FacetedXYPlot = (facetedXYPlotProps: FacetedXYPlotProps) => {
-  const { componentProps } = facetedXYPlotProps;
+const FacetedLinePlot = (facetedLinePlotProps: FacetedLinePlotProps) => {
+  const { componentProps } = facetedLinePlotProps;
 
   return (
     <FacetedPlot
-      component={XYPlot}
-      {...facetedXYPlotProps}
+      component={LinePlot}
+      {...facetedLinePlotProps}
       componentProps={{
         ...componentProps,
         containerStyles:
@@ -40,4 +40,4 @@ const FacetedXYPlot = (facetedXYPlotProps: FacetedXYPlotProps) => {
   );
 };
 
-export default FacetedXYPlot;
+export default FacetedLinePlot;
