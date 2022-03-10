@@ -112,9 +112,6 @@ export const ComputationAppOverview = intersection([
   partial({
     visualizations: array(VisualizationOverview),
   }),
-  partial({
-    projects: array(string),
-  }),
 ]);
 
 export type CoverageStatistics = {

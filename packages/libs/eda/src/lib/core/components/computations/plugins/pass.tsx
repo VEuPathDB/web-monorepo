@@ -8,10 +8,10 @@ import {
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { testVisualization } from '../../visualizations/implementations/TestVisualization';
 import { ComputationPlugin } from '../Types';
-import { ZeroConfigWithAutoCreate } from '../ZeroConfiguration';
+import { ZeroConfigWithButton } from '../ZeroConfiguration';
 
 export const plugin: ComputationPlugin = {
-  configurationComponent: ZeroConfigWithAutoCreate,
+  configurationComponent: ZeroConfigWithButton,
   visualizationTypes: {
     testVisualization,
     histogram: histogramVisualization,

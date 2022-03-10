@@ -28,16 +28,9 @@ export function ComputationRoute(props: Props) {
   const { url } = useRouteMatch();
   const history = useHistory();
   const dataClient = useDataClient();
-  const projectId = useWdkService((wdkService) => wdkService.getConfig(), [])
-    ?.projectId;
-  console.log(projectId);
   const promiseState = usePromise(
     useCallback(async () => {
       let { apps } = await dataClient.getApps();
-      console.log(apps);
-      if (projectId) {
-        apps = apps.filter((app) => app.projects?.includes(projectId));
-      }
       if (singleAppMode) {
         // find the single app within the approved apps
         console.log('single app mode');
@@ -48,7 +41,7 @@ export function ComputationRoute(props: Props) {
         throw new Error('Could not find default computation app.');
 
       return { apps };
-    }, [dataClient, projectId])
+    }, [dataClient, singleAppMode])
   );
 
   return (
@@ -56,25 +49,50 @@ export function ComputationRoute(props: Props) {
       {({ apps }) => {
         if (singleAppMode) {
           const plugin = plugins[apps[0].name];
-          const addComputation = (name: string, configuration: unknown) => {
-            if (analysisState.analysis == null) return;
-          };
+          if (analysisState.analysis == null) return;
+
+          const computations = analysisState.analysis.descriptor.computations;
+
+          console.log(computations);
+          let computation;
+          if (computations.length === 0) {
+            computation = createComputation(
+              apps[0],
+              singleAppMode,
+              null,
+              computations,
+              singleAppMode
+            );
+            analysisState.setComputations([computation]);
+          } else {
+            computation = props.analysisState.analysis?.descriptor.computations.find(
+              (c) => c.computationId === singleAppMode
+            );
+          }
+
+          console.log(computation);
+
           return (
             <Switch>
               <Route exact path={url}>
                 <Redirect to={`${url}/${singleAppMode}`} />
               </Route>
-              <Route path={`${url}/${singleAppMode}`}>
-                {plugin ? (
-                  <plugin.configurationComponent
-                    {...props}
-                    computationAppOverview={apps[0]}
-                    addNewComputation={addComputation}
-                  />
-                ) : (
-                  <div>App not yet implemented</div>
-                )}
-              </Route>
+              <Route
+                path={`${url}/${singleAppMode}`}
+                render={(routeProps) => {
+                  const plugin = apps[0] && plugins[apps[0].name];
+                  if (apps[0] == null || plugin == null)
+                    return <div>Cannot find app!</div>;
+                  return (
+                    <ComputationInstance
+                      {...props}
+                      computationId={singleAppMode}
+                      computationAppOverview={apps[0]}
+                      visualizationTypes={plugin.visualizationTypes}
+                    />
+                  );
+                }}
+              />
             </Switch>
           );
         } else {

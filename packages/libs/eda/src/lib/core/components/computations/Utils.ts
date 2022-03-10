@@ -7,11 +7,15 @@ export function createComputation(
   overview: ComputationAppOverview,
   displayName: string,
   configuration: unknown,
-  computations: Computation[] = []
+  computations: Computation[] = [],
+  computationId?: string
 ): Computation {
-  const computationId = createNewId(
-    new Set(computations.map((c) => c.computationId))
-  );
+  if (!computationId) {
+    computationId = createNewId(
+      new Set(computations.map((c) => c.computationId))
+    );
+  }
+
   return {
     computationId,
     displayName,
