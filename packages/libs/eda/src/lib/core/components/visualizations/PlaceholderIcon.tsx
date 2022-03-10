@@ -8,8 +8,8 @@ const style = { height: '100%', width: '100%', opacity: 0.2 };
 const images: Record<string, JSX.Element> = {
   heatmap: <img alt="Heatmap" src={heatmap} style={style} />,
   densityplot: <img alt="Density plot" src={density} style={style} />,
+  'map-markers': <img alt="Map marker" src={map} style={style} />,
   lineplot: <img alt="Time Series" src={line} style={style} />,
-  map: <img alt="Geographic map" src={map} style={style} />,
 };
 
 interface Props {

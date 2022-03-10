@@ -222,37 +222,39 @@ export function InputVariables(props: Props) {
   return (
     <div>
       <div className={classes.inputs}>
-        <div className={classes.inputGroup}>
-          <div className={classes.fullRow}>
-            <h4>Axis variables</h4>
+        {inputs.filter((input) => input.role === 'primary').length > 0 && (
+          <div className={classes.inputGroup}>
+            <div className={classes.fullRow}>
+              <h4>Axis variables</h4>
+            </div>
+            {inputs
+              .filter((input) => input.role === 'primary')
+              .map((input) => (
+                <div
+                  key={input.name}
+                  className={[classes.input, 'primary'].join(' ')}
+                >
+                  <div className={classes.label}>{input.label}</div>
+                  <VariableTreeDropdown
+                    scope="variableTree"
+                    showMultiFilterDescendants
+                    rootEntity={entities[0]}
+                    disabledVariables={disabledVariablesByInputName[input.name]}
+                    customDisabledVariableMessage={
+                      flattenedConstraints?.[input.name].description
+                    }
+                    starredVariables={starredVariables}
+                    toggleStarredVariable={toggleStarredVariable}
+                    entityId={selectedVariables[input.name]?.entityId}
+                    variableId={selectedVariables[input.name]?.variableId}
+                    onChange={(variable) => {
+                      handleChange(input.name, variable);
+                    }}
+                  />
+                </div>
+              ))}
           </div>
-          {inputs
-            .filter((input) => input.role === 'primary')
-            .map((input) => (
-              <div
-                key={input.name}
-                className={[classes.input, 'primary'].join(' ')}
-              >
-                <div className={classes.label}>{input.label}</div>
-                <VariableTreeDropdown
-                  scope="variableTree"
-                  showMultiFilterDescendants
-                  rootEntity={entities[0]}
-                  disabledVariables={disabledVariablesByInputName[input.name]}
-                  customDisabledVariableMessage={
-                    flattenedConstraints?.[input.name].description
-                  }
-                  starredVariables={starredVariables}
-                  toggleStarredVariable={toggleStarredVariable}
-                  entityId={selectedVariables[input.name]?.entityId}
-                  variableId={selectedVariables[input.name]?.variableId}
-                  onChange={(variable) => {
-                    handleChange(input.name, variable);
-                  }}
-                />
-              </div>
-            ))}
-        </div>
+        )}
         {inputs.filter((input) => input.role === 'stratification').length >
           0 && (
           <div className={classes.inputGroup}>
