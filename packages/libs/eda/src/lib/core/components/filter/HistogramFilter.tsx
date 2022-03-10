@@ -494,8 +494,8 @@ function HistogramPlotWithControls({
     return data?.series[0]?.summary && data?.binWidthSlider?.valueType
       ? fullISODateRange(
           {
-            min: data.series[0].summary.min,
-            max: data.series[0].summary.max,
+            min: data?.series[0].bins[0].binStart,
+            max: data?.series[0].bins[data.series[0].bins.length - 1].binEnd,
           } as NumberOrDateRange,
           data.binWidthSlider?.valueType
         )
