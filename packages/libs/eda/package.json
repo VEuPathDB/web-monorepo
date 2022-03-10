@@ -76,7 +76,7 @@
     "@veupathdb/prettier-config": "^1.0.0",
     "@veupathdb/react-scripts": "^1.0.1",
     "@veupathdb/tsconfig": "^1.0.1",
-    "@veupathdb/wdk-client": "^0.5.5",
+    "@veupathdb/wdk-client": "^0.5.10",
     "@veupathdb/web-common": "^0.1.12",
     "bubleify": "^2.0.0",
     "http-proxy-middleware": "^1.0.6",

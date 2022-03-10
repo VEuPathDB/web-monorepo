@@ -3722,10 +3722,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/wdk-client@^0.5.5":
-  version "0.5.5"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.5.5.tgz#2d6a6bb2e71787f0fdd5fc3638ecacd44dc1f784"
-  integrity sha512-Dvzk2ARUaPw2LxZxWwz86p2Ha5uYt3S1A8TT0Xm8xpa8iroWPlEc6tcaR9UTSLL7Qcp2ScITTBH8sdz6o6noRg==
+"@veupathdb/wdk-client@^0.5.10":
+  version "0.5.10"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.5.10.tgz#73cdff854f4f1cc22bfa7a3997707c3d97285453"
+  integrity sha512-Mqm9f3q5z5+36ZamF7Sy07RyaYHBoVexKidYeXWSVoN8qVjG7740OCkl6JlRG0n1RBB9kmMFMkZbBrUmBimpqw==
   dependencies:
     "@types/datatables.net" "^1.10.5"
     "@types/flot" "^0.0.31"
