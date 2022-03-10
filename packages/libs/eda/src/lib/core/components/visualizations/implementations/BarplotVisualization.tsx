@@ -283,7 +283,7 @@ function BarplotViz(props: VisualizationProps) {
 
       const response = await dataClient.getBarplot(
         computation.descriptor.type,
-        params as BarplotRequestParams
+        params
       );
 
       // figure out if we need to show the missing data for the stratification variables
@@ -789,7 +789,7 @@ function getRequestParams(
       barMode: 'group', // or 'stack'
       showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
     },
-  } as BarplotRequestParams;
+  };
 }
 
 /**

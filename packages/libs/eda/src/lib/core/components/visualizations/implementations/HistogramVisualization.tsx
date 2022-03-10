@@ -974,18 +974,18 @@ function HistogramPlotWithControls({
           }}
         >
           <BinWidthControl
-            binWidth={data0?.binWidth}
+            binWidth={data0?.binWidthSlider?.binWidth}
             onBinWidthChange={onBinWidthChange}
-            binWidthRange={data0?.binWidthRange}
-            binWidthStep={data0?.binWidthStep}
-            valueType={data0?.valueType}
+            binWidthRange={data0?.binWidthSlider?.binWidthRange}
+            binWidthStep={data0?.binWidthSlider?.binWidthStep}
+            valueType={data0?.binWidthSlider?.valueType}
             binUnit={
-              data0?.valueType === 'date'
-                ? (data0?.binWidth as TimeDelta).unit
+              data0?.binWidthSlider?.valueType === 'date'
+                ? (data0?.binWidthSlider?.binWidth as TimeDelta).unit
                 : undefined
             }
             binUnitOptions={
-              data0?.valueType === 'date'
+              data0?.binWidthSlider?.valueType === 'date'
                 ? ['day', 'week', 'month', 'year']
                 : undefined
             }
@@ -1169,15 +1169,16 @@ export function histogramResponseToData(
                   ? Number(data.binEnd[index])
                   : String(data.binEnd[index]),
               binLabel: data.binLabel[index],
-              count: data.value[index],
+              value: data.value[index],
             })),
           })),
-
-          valueType:
-            type === 'integer' || type === 'number' ? 'number' : 'date',
-          binWidth,
-          binWidthRange,
-          binWidthStep,
+          binWidthSlider: {
+            valueType:
+              type === 'integer' || type === 'number' ? 'number' : 'date',
+            binWidth,
+            binWidthRange,
+            binWidthStep,
+          },
         };
   });
 
@@ -1316,7 +1317,7 @@ export function findMinMaxOfStackedArray(data: HistogramDataSeries[]) {
   const sumsByLabel = data
     .flatMap(
       // make an array of [ [ label, count ], [ label, count ], ... ] from all series
-      (series) => series.bins.map((bin) => [bin.binLabel, bin.count])
+      (series) => series.bins.map((bin) => [bin.binLabel, bin.value])
     )
     // then do a sum of counts per label
     .reduce<Record<string, number>>(

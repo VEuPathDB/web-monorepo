@@ -13,6 +13,7 @@ export function useFindOutputEntity(
     // add NumberRange
     | VariableDescriptor
     | string
+    | number // for binWidth at LineplotViz
     | boolean
     | string[]
     | NumberOrDateRange

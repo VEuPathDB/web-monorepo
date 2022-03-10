@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { PromiseHookState } from './promise';
 import {
-  XYPlotDataWithCoverage,
+  ScatterPlotDataWithCoverage,
   ScatterplotConfig,
 } from '../components/visualizations/implementations/ScatterplotVisualization';
 import { Variable } from '../types/study';
@@ -15,7 +15,7 @@ import { NumberOrDateRange } from '../types/general';
  */
 
 export function useDefaultDependentAxisRange(
-  data: PromiseHookState<XYPlotDataWithCoverage | undefined>,
+  data: PromiseHookState<ScatterPlotDataWithCoverage | undefined>,
   vizConfig: ScatterplotConfig,
   updateVizConfig: (newConfig: Partial<ScatterplotConfig>) => void,
   yAxisVariable?: Variable

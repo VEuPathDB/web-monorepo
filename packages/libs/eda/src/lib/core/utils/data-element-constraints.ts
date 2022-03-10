@@ -22,6 +22,7 @@ export function filterVariablesByConstraint(
     (constraint.allowedShapes == null &&
       constraint.allowedTypes == null &&
       constraint.maxNumValues == null &&
+      constraint.isTemporal == null &&
       constraint.allowMultiValued)
   )
     return rootEntity;
@@ -73,6 +74,8 @@ function variableConstraintPredicate(
         constraint.allowedTypes.includes(variable.type)) &&
       (constraint.maxNumValues == null ||
         constraint.maxNumValues >= variable.distinctValuesCount) &&
+      (constraint.isTemporal == null ||
+        constraint.isTemporal == variable.isTemporal) &&
       (constraint.allowMultiValued || !variable.isMultiValued))
   );
 }
@@ -117,6 +120,7 @@ export function flattenConstraints(
       if (
         isEmpty(constraint.allowedShapes) &&
         isEmpty(constraint.allowedTypes) &&
+        isEmpty(constraint.isTemporal) &&
         constraint.maxNumValues === undefined &&
         constraint.allowMultiValued
       )
@@ -139,12 +143,16 @@ export function flattenConstraints(
       const passesMaxValuesConstraint =
         constraint.maxNumValues === undefined ||
         constraint.maxNumValues >= variable.distinctValuesCount;
+      const passesTemporalConstraint =
+        isEmpty(constraint.isTemporal) ||
+        constraint.isTemporal == variable.isTemporal;
       const passesMultivalueConstraint =
         constraint.allowMultiValued || !variable.isMultiValued;
       return (
         typeIsValid &&
         shapeIsValid &&
         passesMaxValuesConstraint &&
+        passesTemporalConstraint &&
         passesMultivalueConstraint
       );
     })
@@ -170,6 +178,14 @@ export function mergeConstraints(
     keys.map((key): [string, DataElementConstraint] => {
       const constraintA = constraintMapA[key];
       const constraintB = constraintMapB[key];
+      const mergedIsTemporal =
+        constraintA == null || constraintB == null
+          ? undefined
+          : constraintA.isTemporal && constraintB.isTemporal
+          ? true
+          : !constraintA.isTemporal && !constraintB.isTemporal
+          ? false
+          : undefined;
       return [
         key,
         constraintA == null
@@ -186,6 +202,7 @@ export function mergeConstraints(
                 constraintA.minNumVars,
                 constraintB.minNumVars
               ),
+
               allowedShapes: union(
                 constraintA.allowedShapes,
                 constraintB.allowedShapes
@@ -195,6 +212,7 @@ export function mergeConstraints(
                 constraintB.allowedTypes
               ),
               maxNumValues: mergeMaxNumValues(constraintA, constraintB),
+              isTemporal: mergedIsTemporal,
               allowMultiValued:
                 constraintA.allowMultiValued && constraintB.allowMultiValued,
               // Since constraintA and constraintB are for the same variable slot

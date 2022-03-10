@@ -1,5 +1,7 @@
 // load scatter plot component
-import XYPlot, { XYPlotProps } from '@veupathdb/components/lib/plots/XYPlot';
+import ScatterPlot, {
+  ScatterPlotProps,
+} from '@veupathdb/components/lib/plots/ScatterPlot';
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import * as t from 'io-ts';
@@ -9,7 +11,6 @@ import { useCallback, useMemo, useState, useEffect } from 'react';
 
 import DataClient, {
   ScatterplotRequestParams,
-  LineplotRequestParams,
   ScatterplotResponse,
 } from '../../../api/DataClient';
 
@@ -34,8 +35,6 @@ import {
   VisualizationType,
 } from '../VisualizationTypes';
 
-import density from './selectorIcons/density.svg';
-import line from './selectorIcons/line.svg';
 import scatter from './selectorIcons/scatter.svg';
 
 // use lodash instead of Math.min/max
@@ -53,12 +52,12 @@ import {
   keys,
   uniqBy,
 } from 'lodash';
-// directly use RadioButtonGroup instead of XYPlotControls
+// directly use RadioButtonGroup instead of ScatterPlotControls
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-// import XYPlotData
+// import ScatterPlotData
 import {
-  XYPlotDataSeries,
-  XYPlotData,
+  ScatterPlotDataSeries,
+  ScatterPlotData,
   FacetedData,
 } from '@veupathdb/components/lib/types/plots';
 import { CoverageStatistics } from '../../../types/visualization';
@@ -87,7 +86,7 @@ import PlotLegend, {
   LegendItemsProps,
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
-import FacetedXYPlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedXYPlot';
+import FacetedScatterPlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedScatterPlot';
 // for converting rgb() to rgba()
 import * as ColorMath from 'color-math';
 // R-square table component
@@ -136,16 +135,16 @@ const modalPlotContainerStyles = {
   margin: 'auto',
 };
 
-// define XYPlotDataWithCoverage and export
-export interface XYPlotDataWithCoverage extends CoverageStatistics {
-  dataSetProcess: XYPlotData | FacetedData<XYPlotData>;
+// define ScatterPlotDataWithCoverage and export
+export interface ScatterPlotDataWithCoverage extends CoverageStatistics {
+  dataSetProcess: ScatterPlotData | FacetedData<ScatterPlotData>;
   // change these types to be compatible with new axis range
   yMin: number | string | undefined;
   yMax: number | string | undefined;
 }
 
-// define XYPlotDataResponse
-type XYPlotDataResponse = ScatterplotResponse;
+// define ScatterPlotDataResponse
+type ScatterPlotDataResponse = ScatterplotResponse;
 
 export const scatterplotVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -153,10 +152,8 @@ export const scatterplotVisualization: VisualizationType = {
   createDefaultConfig: createDefaultConfig,
 };
 
-// this needs a handling of text/image for scatter, line, and density plots
 function SelectorComponent({ name }: SelectorProps) {
-  const src =
-    name === 'lineplot' ? line : name === 'densityplot' ? density : scatter;
+  const src = scatter;
 
   return (
     <img
@@ -340,7 +337,7 @@ function ScatterplotViz(props: VisualizationProps) {
   );
 
   const data = usePromise(
-    useCallback(async (): Promise<XYPlotDataWithCoverage | undefined> => {
+    useCallback(async (): Promise<ScatterPlotDataWithCoverage | undefined> => {
       if (
         outputEntity == null ||
         filteredCounts.pending ||
@@ -386,18 +383,10 @@ function ScatterplotViz(props: VisualizationProps) {
         visualization.descriptor.type
       );
 
-      // scatterplot, lineplot
-      const response =
-        visualization.descriptor.type === 'lineplot'
-          ? await dataClient.getLineplot(
-              computation.descriptor.type,
-              params as LineplotRequestParams
-            )
-          : // set default as scatterplot/getScatterplot
-            await dataClient.getScatterplot(
-              computation.descriptor.type,
-              params as ScatterplotRequestParams
-            );
+      const response = await dataClient.getScatterplot(
+        computation.descriptor.type,
+        params as ScatterplotRequestParams
+      );
 
       const showMissingOverlay =
         vizConfig.showMissingness &&
@@ -503,7 +492,9 @@ function ScatterplotViz(props: VisualizationProps) {
       : uniqBy(
           allData.facets
             .flatMap((facet) => facet?.data?.series)
-            .filter((element): element is XYPlotDataSeries => element != null),
+            .filter(
+              (element): element is ScatterPlotDataSeries => element != null
+            ),
           'name'
         );
 
@@ -640,66 +631,68 @@ function ScatterplotViz(props: VisualizationProps) {
 
     return sortedLegendData != null
       ? // the name 'dataItem' is used inside the map() to distinguish from the global 'data' variable
-        sortedLegendData.map((dataItem: XYPlotDataSeries, index: number) => {
-          return {
-            label: dataItem.name ?? '',
-            // maing marker info appropriately
-            marker:
-              dataItem.mode != null
-                ? dataItem.name === 'No data'
-                  ? 'x'
-                  : dataItem.mode === 'markers'
-                  ? 'circle'
-                  : dataItem.mode === 'lines'
-                  ? 'line'
-                  : ''
-                : dataItem?.fill === 'tozeroy'
-                ? 'fainted'
-                : '',
-            // set marker colors appropriately
-            markerColor:
-              dataItem.name != null &&
-              (dataItem?.name === 'No data' ||
-                dataItem.name?.includes('No data,'))
-                ? '#A6A6A6'
-                : // if there is no overlay variable, then marker colors should be the same for Data, Smoothed mean, 95% CI, and Best fit
-                vizConfig.overlayVariable != null
-                ? dataItem.name != null
-                  ? legendLabelColor
-                      ?.map((legend) => {
-                        if (
-                          dataItem.name != null &&
-                          legend.label != null &&
-                          dataItem.name.includes(legend.label)
-                        )
-                          return legend.color;
-                        else return '';
-                      })
-                      .filter((n: string) => n !== '')
-                      .toString()
-                  : '#ffffff' // just set not to be empty
-                : ColorPaletteDefault[0], // set first color for no overlay variable selected
-            // simplifying the check with the presence of data: be carefule of y:[null] case in Scatter plot
-            hasData: !isFaceted(allData)
-              ? dataItem.y != null &&
-                dataItem.y.length > 0 &&
-                dataItem.y[0] !== null
-                ? true
-                : false
-              : allData.facets
-                  .map((facet) => facet.data)
-                  .filter((data): data is XYPlotData => data != null)
-                  .map(
-                    (data) =>
-                      data.series[index]?.y != null &&
-                      data.series[index].y.length > 0 &&
-                      data.series[index].y[0] !== null
-                  )
-                  .includes(true),
-            group: 1,
-            rank: 1,
-          };
-        })
+        sortedLegendData.map(
+          (dataItem: ScatterPlotDataSeries, index: number) => {
+            return {
+              label: dataItem.name ?? '',
+              // making marker info appropriately
+              marker:
+                dataItem.mode != null
+                  ? dataItem.name === 'No data'
+                    ? 'x'
+                    : dataItem.mode === 'markers'
+                    ? 'circle'
+                    : dataItem.mode === 'lines'
+                    ? 'line'
+                    : ''
+                  : dataItem?.fill === 'tozeroy'
+                  ? 'fainted'
+                  : '',
+              // set marker colors appropriately
+              markerColor:
+                dataItem.name != null &&
+                (dataItem?.name === 'No data' ||
+                  dataItem.name?.includes('No data,'))
+                  ? '#A6A6A6'
+                  : // if there is no overlay variable, then marker colors should be the same for Data, Smoothed mean, 95% CI, and Best fit
+                  vizConfig.overlayVariable != null
+                  ? dataItem.name != null
+                    ? legendLabelColor
+                        ?.map((legend) => {
+                          if (
+                            dataItem.name != null &&
+                            legend.label != null &&
+                            dataItem.name.includes(legend.label)
+                          )
+                            return legend.color;
+                          else return '';
+                        })
+                        .filter((n: string) => n !== '')
+                        .toString()
+                    : '#ffffff' // just set not to be empty
+                  : ColorPaletteDefault[0], // set first color for no overlay variable selected
+              // simplifying the check with the presence of data: be carefule of y:[null] case in Scatter plot
+              hasData: !isFaceted(allData)
+                ? dataItem.y != null &&
+                  dataItem.y.length > 0 &&
+                  dataItem.y[0] !== null
+                  ? true
+                  : false
+                : allData.facets
+                    .map((facet) => facet.data)
+                    .filter((data): data is ScatterPlotData => data != null)
+                    .map(
+                      (data) =>
+                        data.series[index]?.y != null &&
+                        data.series[index].y.length > 0 &&
+                        data.series[index].y[0] !== null
+                    )
+                    .includes(true),
+              group: 1,
+              rank: 1,
+            };
+          }
+        )
       : [];
   }, [
     data,
@@ -944,8 +937,8 @@ function ScatterplotViz(props: VisualizationProps) {
   );
 }
 
-type ScatterplotWithControlsProps = Omit<XYPlotProps, 'data'> & {
-  data?: XYPlotData | FacetedData<XYPlotData>;
+type ScatterplotWithControlsProps = Omit<ScatterPlotProps, 'data'> & {
+  data?: ScatterPlotData | FacetedData<ScatterPlotData>;
   valueSpec: string | undefined;
   onValueSpecChange: (value: string) => void;
   updateThumbnail: (src: string) => void;
@@ -975,7 +968,7 @@ type ScatterplotWithControlsProps = Omit<XYPlotProps, 'data'> & {
 
 function ScatterplotWithControls({
   data,
-  // XYPlotControls: set initial value as 'raw' ('Raw')
+  // ScatterPlotControls: set initial value as 'raw' ('Raw')
   valueSpec = 'Raw',
   onValueSpecChange,
   vizType,
@@ -1150,7 +1143,7 @@ function ScatterplotWithControls({
   return (
     <>
       {isFaceted(data) ? (
-        <FacetedXYPlot
+        <FacetedScatterPlot
           data={data}
           // change props
           componentProps={scatterplotPlotProps}
@@ -1164,7 +1157,7 @@ function ScatterplotWithControls({
           checkedLegendItems={checkedLegendItems}
         />
       ) : (
-        <XYPlot
+        <ScatterPlot
           {...scatterplotProps}
           ref={plotRef}
           data={data}
@@ -1195,9 +1188,9 @@ function ScatterplotWithControls({
           }}
         />
       )}
-      {/*  XYPlotControls: check vizType (only for scatterplot for now) */}
+      {/*  ScatterPlotControls: check vizType (only for scatterplot for now) */}
       {vizType === 'scatterplot' && (
-        // use RadioButtonGroup directly instead of XYPlotControls
+        // use RadioButtonGroup directly instead of ScatterPlotControls
         <RadioButtonGroup
           label="Plot Modes"
           options={plotOptions}
@@ -1315,13 +1308,12 @@ function ScatterplotWithControls({
 }
 
 /**
- * Reformat response from Scatter Plot endpoints into complete ScatterplotData
+ * Reformat response from Scatter Plot endpoints into complete ScatterPlotData
  * @param response
- * @returns ScatterplotData
+ * @returns ScatterPlotData
  */
 export function scatterplotResponseToData(
-  response: XYPlotDataResponse,
-  // vizType may be used for handling other plots in this component like line and density
+  response: ScatterPlotDataResponse,
   vizType: string,
   independentValueType: string,
   dependentValueType: string,
@@ -1331,8 +1323,8 @@ export function scatterplotResponseToData(
   showMissingFacet: boolean = false,
   facetVocabulary: string[] = [],
   facetVariable?: Variable
-): XYPlotDataWithCoverage {
-  const modeValue = vizType === 'lineplot' ? 'lines' : 'markers'; // for scatterplot
+): ScatterPlotDataWithCoverage {
+  const modeValue = 'markers';
 
   const hasMissingData =
     response.scatterplot.config.completeCasesAllVars !==
@@ -1404,17 +1396,11 @@ export function scatterplotResponseToData(
     completeCases: response.completeCasesTable,
     completeCasesAllVars: response.scatterplot.config.completeCasesAllVars,
     completeCasesAxesVars: response.scatterplot.config.completeCasesAxesVars,
-  } as XYPlotDataWithCoverage;
+  } as ScatterPlotDataWithCoverage;
 }
 
 // add an extended type including dataElementDependencyOrder
-type getRequestParamsProps =
-  | (ScatterplotRequestParams & {
-      vizType?: string;
-    })
-  | (LineplotRequestParams & {
-      vizType?: string;
-    });
+type getRequestParamsProps = ScatterplotRequestParams & { vizType?: string };
 
 function getRequestParams(
   studyId: string,
@@ -1440,39 +1426,23 @@ function getRequestParams(
     valueSpecValue = 'bestFitLineWithRaw';
   }
 
-  if (vizType === 'lineplot') {
-    return {
-      studyId,
-      filters,
-      config: {
-        // add outputEntityId
-        outputEntityId: outputEntity?.id,
-        xAxisVariable: xAxisVariable,
-        yAxisVariable: yAxisVariable,
-        overlayVariable: overlayVariable,
-        facetVariable: facetVariable ? [facetVariable] : [],
-        showMissingness: showMissingness ? 'TRUE' : 'FALSE',
-      },
-    } as LineplotRequestParams;
-  } else {
-    // scatterplot
-    return {
-      studyId,
-      filters,
-      config: {
-        // add outputEntityId
-        outputEntityId: outputEntity?.id,
-        // XYPlotControls
-        valueSpec: valueSpecValue,
-        xAxisVariable: xAxisVariable,
-        yAxisVariable: yAxisVariable,
-        overlayVariable: overlayVariable,
-        facetVariable: facetVariable ? [facetVariable] : [],
-        showMissingness: showMissingness ? 'TRUE' : 'FALSE',
-        maxAllowedDataPoints: MAXALLOWEDDATAPOINTS,
-      },
-    } as ScatterplotRequestParams;
-  }
+  // scatterplot
+  return {
+    studyId,
+    filters,
+    config: {
+      // add outputEntityId
+      outputEntityId: outputEntity?.id,
+      // ScatterPlotControls
+      valueSpec: valueSpecValue,
+      xAxisVariable: xAxisVariable,
+      yAxisVariable: yAxisVariable,
+      overlayVariable: overlayVariable,
+      facetVariable: facetVariable ? [facetVariable] : [],
+      showMissingness: showMissingness ? 'TRUE' : 'FALSE',
+      maxAllowedDataPoints: MAXALLOWEDDATAPOINTS,
+    },
+  } as ScatterplotRequestParams;
 }
 
 // making plotly input data
@@ -1490,9 +1460,6 @@ function processInputData<T extends number | string>(
   // pass facetVariable to determine either scatter or scattergl
   facetVariable?: Variable
 ) {
-  // set fillAreaValue for densityplot
-  const fillAreaValue = vizType === 'densityplot' ? 'toself' : '';
-
   // set variables for x- and yaxis ranges: no default values are set
   let yMin: number | string | undefined;
   let yMax: number | string | undefined;
@@ -1612,21 +1579,14 @@ function processInputData<T extends number | string>(
               )
             : 'Data',
         mode: modeValue,
-        type:
-          vizType === 'lineplot'
-            ? 'scatter'
-            : vizType === 'densityplot'
-            ? 'scatter'
-            : scatterPlotType,
-        fill: fillAreaValue,
+        type: scatterPlotType, // for the raw data of the scatterplot
         opacity: 0.7,
         marker: {
           color: markerColor(index),
           symbol: markerSymbol(index),
         },
         // this needs to be here for the case of markers with line or lineplot.
-        // always use spline?
-        line: { color: markerColor(index), shape: 'spline' },
+        line: { color: markerColor(index), shape: 'linear' },
       });
       return breakAfterThisSeries(index);
     }
@@ -1860,7 +1820,7 @@ function getBounds<T extends number | string>(
 }
 
 function reorderResponseScatterplotData(
-  data: XYPlotDataResponse['scatterplot']['data'],
+  data: ScatterPlotDataResponse['scatterplot']['data'],
   overlayVocabulary: string[] = [],
   overlayVariable?: Variable
 ) {

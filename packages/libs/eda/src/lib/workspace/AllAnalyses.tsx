@@ -93,11 +93,11 @@ export function AllAnalyses(props: Props) {
   const location = useLocation();
   const classes = useStyles();
 
-  const queryParams = new URLSearchParams(location.search);
   const searchText = useMemo(() => {
+    const queryParams = new URLSearchParams(location.search);
     const searchParam = queryParams.get('s') ?? '';
     return stripHTML(searchParam); // matches stripHTML(dataset.displayName) below
-  }, [queryParams]);
+  }, [location.search]);
 
   const debouncedSearchText = useDebounce(searchText, 250);
 
@@ -303,6 +303,7 @@ export function AllAnalyses(props: Props) {
                 );
                 if (answer) {
                   deleteAnalyses(selectedAnalyses);
+                  setSelectedAnalyses(new Set());
                 }
               }}
               disabled={selectedAnalyses.size === 0}
@@ -517,19 +518,34 @@ export function AllAnalyses(props: Props) {
           width: 100,
           sortable: true,
           renderCell: (data: { row: AnalysisAndDataset }) => {
+            const isPublic = data.row.analysis.isPublic;
             return (
               <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <Checkbox
-                  selected={data.row.analysis.isPublic}
-                  themeRole="primary"
-                  onToggle={(selected) => {
-                    if (selected) {
-                      setSelectedAnalysisId(data.row.analysis.analysisId);
-                      setSharingModalVisible(true);
-                    }
-                  }}
-                  styleOverrides={{ size: 16 }}
-                />
+                <Tooltip
+                  title={
+                    isPublic
+                      ? 'Remove this analysis from Public Analyses'
+                      : 'Add this analysis to Public Analyses'
+                  }
+                >
+                  <span>
+                    <Checkbox
+                      selected={isPublic}
+                      themeRole="primary"
+                      onToggle={(selected) => {
+                        if (selected) {
+                          setSelectedAnalysisId(data.row.analysis.analysisId);
+                          setSharingModalVisible(true);
+                        } else {
+                          updateAnalysis(data.row.analysis.analysisId, {
+                            isPublic: false,
+                          });
+                        }
+                      }}
+                      styleOverrides={{ size: 16 }}
+                    />
+                  </span>
+                </Tooltip>
               </div>
             );
           },
@@ -590,6 +606,9 @@ export function AllAnalyses(props: Props) {
       />
 
       <h1>My Analyses</h1>
+      {(loading || datasets == null) && (
+        <Loading style={{ position: 'absolute', left: '50%', top: '1em' }} />
+      )}
       {error && <ContentError>{error}</ContentError>}
       {analyses && datasets && user ? (
         <Mesa.Mesa state={tableState}>
@@ -631,7 +650,6 @@ export function AllAnalyses(props: Props) {
               analyses
             </span>
           </div>
-          {(loading || datasets == null) && <Loading />}
         </Mesa.Mesa>
       ) : (
         <Loading />
