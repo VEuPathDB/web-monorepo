@@ -324,10 +324,13 @@ function LineplotViz(props: VisualizationProps) {
 
   const onUseBinningChange = onChangeHandlerFactory<boolean>('useBinning');
 
-  const xAxisVariableMetadata = useMemo(() => {
-    const { variable } = findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
-    return variable;
-  }, [findEntityAndVariable, vizConfig.xAxisVariable]);
+  const [xAxisVariableMetadata, yAxisVariableMetadata] = useMemo(() => {
+    const { variable: x } =
+      findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
+    const { variable: y } =
+      findEntityAndVariable(vizConfig.yAxisVariable) ?? {};
+    return [x, y];
+  }, [findEntityAndVariable, vizConfig.xAxisVariable, vizConfig.yAxisVariable]);
 
   const outputEntity = useFindOutputEntity(
     dataElementDependencyOrder,
@@ -341,6 +344,7 @@ function LineplotViz(props: VisualizationProps) {
       if (
         outputEntity == null ||
         xAxisVariableMetadata == null ||
+        yAxisVariableMetadata == null ||
         filteredCounts.pending ||
         filteredCounts.value == null
       )
@@ -381,6 +385,7 @@ function LineplotViz(props: VisualizationProps) {
         filters ?? [],
         vizConfig,
         xAxisVariableMetadata,
+        yAxisVariableMetadata,
         outputEntity
       );
 
@@ -788,6 +793,7 @@ function LineplotWithControls({
     : data;
 
   const neverUseBinning = data0?.binWidthSlider == null; // for ordinal string x-variables
+  const neverShowErrorBars = lineplotProps.dependentValueType === 'date';
 
   return (
     <>
@@ -865,6 +871,7 @@ function LineplotWithControls({
             label="Show error bars"
             state={showErrorBars}
             onStateChange={onShowErrorBarsChange}
+            disabled={neverShowErrorBars}
           />
         </LabelledGroup>
       </div>
@@ -976,6 +983,7 @@ function getRequestParams(
   filters: Filter[],
   vizConfig: LineplotConfig,
   xAxisVariableMetadata: Variable,
+  yAxisVariableMetadata: Variable,
   outputEntity?: StudyEntity
 ): getRequestParamsProps {
   const {
@@ -1033,7 +1041,11 @@ function getRequestParams(
       overlayVariable: overlayVariable,
       facetVariable: facetVariable ? [facetVariable] : [],
       showMissingness: showMissingness ? 'TRUE' : 'FALSE',
-      errorBars: vizConfig.showErrorBars ? 'TRUE' : 'FALSE',
+      // no error bars for date variables (error bar toggle switch is also disabled)
+      errorBars:
+        vizConfig.showErrorBars && yAxisVariableMetadata.type !== 'date'
+          ? 'TRUE'
+          : 'FALSE',
     },
   } as LineplotRequestParams;
 }
