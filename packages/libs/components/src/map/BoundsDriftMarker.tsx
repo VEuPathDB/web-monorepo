@@ -50,22 +50,20 @@ export default function BoundsDriftMarker({
   const popupRef = useRef<any>();
   const popupOrientationRef = useRef<PopupOrientation>('up');
 
-  // Update popupOrientationRef based on whether the marker is close to the viewport edge.
+  // Update popupOrientationRef based on whether the marker is close to the map edge.
   // Does not actually change the popup, just the ref.
   const updatePopupOrientationRef = () => {
-    if (popupContent) {
-      // Figure out if we're close to the viewport edge
-      const markerRect = markerRef.current.leafletElement._icon.getBoundingClientRect();
+    if (popupContent && map) {
+      // Figure out if we're close to the map edge
+      const mapRect = map.getContainer().getBoundingClientRect();
+      const markerRect = markerRef.current.leafletElement._icon.getBoundingClientRect() as DOMRect;
       const markerCenterX = (markerRect.left + markerRect.right) / 2;
 
-      if (markerRect.top < popupContent.size.height) {
+      if (markerRect.top - mapRect.top < popupContent.size.height) {
         popupOrientationRef.current = 'down';
-      } else if (markerCenterX < popupContent.size.width / 2) {
+      } else if (markerCenterX - mapRect.left < popupContent.size.width / 2) {
         popupOrientationRef.current = 'right';
-      } else if (
-        window.innerWidth - markerCenterX <
-        popupContent.size.width / 2
-      ) {
+      } else if (mapRect.right - markerCenterX < popupContent.size.width / 2) {
         popupOrientationRef.current = 'left';
       } else {
         popupOrientationRef.current = 'up';
@@ -76,7 +74,8 @@ export default function BoundsDriftMarker({
   // Change the popup's orientation
   const orientPopup = (orientation: PopupOrientation) => {
     if (popupRef.current) {
-      const popupDOMNode = popupRef.current.leafletElement._container;
+      const popupDOMNode = popupRef.current.leafletElement
+        ._container as HTMLElement;
 
       if (popupDOMNode) {
         popupDOMNode.classList.remove(
@@ -93,8 +92,11 @@ export default function BoundsDriftMarker({
           left: -90,
         }[orientation];
 
-        // Have to add rotate here to preserve the existing transform, which varies
-        popupDOMNode.style.transform += ` rotate(${angle}deg)`;
+        // Have to add rotate here rather than in CSS to preserve the existing
+        // transform, which is variable
+        if (!popupDOMNode.style.transform.includes('rotate'))
+          popupDOMNode.style.transform += ` rotate(${angle}deg)`;
+
         popupDOMNode.classList.add('popup-' + orientation);
       }
     }
