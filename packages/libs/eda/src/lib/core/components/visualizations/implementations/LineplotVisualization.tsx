@@ -75,6 +75,7 @@ import {
   DateVariable,
   StudyEntity,
   Variable,
+  StringVariable,
 } from '../../../types/study';
 import {
   fixLabelForNumberVariables,
@@ -590,7 +591,11 @@ function LineplotViz(props: VisualizationProps) {
       // disabledList prop is used to disable radio options (grayed out)
       disabledList={[]}
       independentValueType={
-        NumberVariable.is(xAxisVariable) ? 'number' : 'date'
+        NumberVariable.is(xAxisVariable)
+          ? 'number'
+          : StringVariable.is(xAxisVariable)
+          ? 'string'
+          : 'date'
       }
       dependentValueType={NumberVariable.is(yAxisVariable) ? 'number' : 'date'}
       legendTitle={variableDisplayWithUnit(overlayVariable)}
@@ -777,6 +782,8 @@ function LineplotWithControls({
         ?.data
     : data;
 
+  const neverUseBinning = data0?.binWidthSlider == null; // for ordinal string x-variables
+
   return (
     <>
       <RadioButtonGroup
@@ -824,6 +831,7 @@ function LineplotWithControls({
             label={`Binning ${useBinning ? 'on' : 'off'}`}
             state={useBinning}
             onStateChange={onUseBinningChange}
+            disabled={neverUseBinning}
           />
           <BinWidthControl
             binWidth={data0?.binWidthSlider?.binWidth}
@@ -1034,8 +1042,8 @@ function processInputData(
   dependentValueType: string,
   showMissingness: boolean,
   hasMissingData: boolean,
-  binSpec: BinSpec,
-  binWidthSlider: BinWidthSlider,
+  binSpec?: BinSpec,
+  binWidthSlider?: BinWidthSlider,
   overlayVariable?: Variable
 ) {
   // set fillAreaValue for densityplot
@@ -1078,25 +1086,34 @@ function processInputData(
       ? 'x'
       : 'circle';
 
-  const binWidth =
-    independentValueType === 'number' || independentValueType === 'integer'
-      ? binSpec.value || 1
-      : {
-          value: binSpec.value || 1,
-          unit: binSpec.units || 'month',
-        };
-  const binWidthRange = (independentValueType === 'number' ||
-  independentValueType === 'integer'
-    ? { min: binWidthSlider.min, max: binWidthSlider.max }
-    : {
-        min: binWidthSlider.min,
-        max:
-          binWidthSlider?.max != null && binWidthSlider?.max > 60
-            ? 60
-            : binWidthSlider.max, // back end seems to fall over with any values >99 but 60 is used in subsetting
-        unit: (binWidth as TimeDelta).unit,
-      }) as NumberOrTimeDeltaRange;
-  const binWidthStep = binWidthSlider.step || 0.1;
+  const binWidthSliderData =
+    binSpec != null && binWidthSlider != null
+      ? {
+          binWidthSlider: {
+            binWidth:
+              independentValueType === 'number' ||
+              independentValueType === 'integer'
+                ? binSpec.value || 1
+                : {
+                    value: binSpec.value || 1,
+                    unit: binSpec.units || 'month',
+                  },
+            binWidthRange: (independentValueType === 'number' ||
+            independentValueType === 'integer'
+              ? { min: binWidthSlider.min, max: binWidthSlider.max }
+              : {
+                  min: binWidthSlider.min,
+                  max:
+                    // back end seems to fall over with any values >99 but 60 is used in subsetting
+                    binWidthSlider?.max != null && binWidthSlider?.max > 60
+                      ? 60
+                      : binWidthSlider.max,
+                  unit: binSpec.units,
+                }) as NumberOrTimeDeltaRange,
+            binWidthStep: binWidthSlider.step || 0.1,
+          },
+        }
+      : {};
 
   let dataSetProcess: LinePlotDataSeries[] = [];
   responseLineplotData.some(function (el, index) {
@@ -1108,7 +1125,8 @@ function processInputData(
       }
 
       // use seriesX when binning is off or binStart when binned, and decode numbers where necessary
-      const xData = binSpec.value === 0 ? el.seriesX : el.binStart;
+      const xData =
+        binSpec == null || binSpec.value === 0 ? el.seriesX : el.binStart;
 
       if (xData == null)
         throw new Error('response did not contain binStart data');
@@ -1122,7 +1140,7 @@ function processInputData(
       dataSetProcess.push({
         x: seriesX.length ? seriesX : (([null] as unknown) as number[]), // [null] hack required to make sure
         y: seriesY.length ? seriesY : (([null] as unknown) as number[]), // Plotly has a legend entry for empty traces
-        ...(binSpec.value ? { binLabel: el.seriesX } : {}),
+        ...(binSpec?.value ? { binLabel: el.seriesX } : {}),
         ...(el.errorBars != null
           ? {
               // TEMPORARY fix for empty arrays coming from back end
@@ -1168,12 +1186,7 @@ function processInputData(
   return {
     dataSetProcess: {
       series: dataSetProcess,
-      binWidthSlider: {
-        valueType: independentValueType,
-        binWidth,
-        binWidthRange,
-        binWidthStep,
-      },
+      ...binWidthSliderData,
     },
     xMin: min(xValues),
     xMax: max(xValues),
