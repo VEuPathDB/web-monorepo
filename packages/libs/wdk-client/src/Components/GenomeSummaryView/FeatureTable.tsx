@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { defaultMemoize } from 'reselect';
 
-import { StepAnalysisEnrichmentResultTable, ColumnSettings } from 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisEnrichmentResultTable';
+import { StepAnalysisEnrichmentResultTable, ColumnSettings } from '../StepAnalysis/StepAnalysisEnrichmentResultTable';
 import { GenomeViewRegionModel, useIsPortalSite } from 'wdk-client/Utils/GenomeSummaryViewUtils';
 import { GenomeViewSequence } from 'wdk-client/Utils/WdkModel';
 
@@ -56,7 +56,7 @@ interface FeatureTableProps {
   recordType: string;
 }
 
-export const FeatureTable: React.SFC<FeatureTableProps> = ({ 
+export const FeatureTable: React.SFC<FeatureTableProps> = ({
   region,
   sequence,
   displayName,

@@ -6,7 +6,7 @@ import { get, escapeRegExp } from 'lodash';
 import { StepAnalysesState, AnalysisPanelState, AnalysisMenuState, UnsavedAnalysisState, UninitializedAnalysisPanelState, SavedAnalysisState } from './StepAnalysisState';
 import { transformPanelState } from './StepAnalysisReducer';
 import { StepAnalysisStateProps } from '../../Components/StepAnalysis/StepAnalysisView';
-import { TabConfig } from '../../Core/MoveAfterRefactor/Components/Shared/ResultTabs';
+import { TabConfig } from '../../Components/Shared/ResultTabs';
 import { StepAnalysisType } from '../../Utils/StepAnalysisUtils';
 import { Question, SummaryViewPluginField, RecordClass } from '../../Utils/WdkModel';
 import { ResultPanelState } from '../../StoreModules/ResultPanelStoreModule';

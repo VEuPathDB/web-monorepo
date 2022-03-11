@@ -5,14 +5,14 @@ import { filter, mergeMap, mergeMapTo, tap } from 'rxjs/operators';
 
 import { Action } from 'wdk-client/Actions';
 import { openTabListing, selectSummaryView, setResultTypeDetails } from 'wdk-client/Actions/ResultPanelActions';
-import { createNewTab, startLoadingTabListing } from 'wdk-client/Core/MoveAfterRefactor/Actions/StepAnalysis/StepAnalysisActionCreators';
-import { question as selectQuestion } from 'wdk-client/Core/MoveAfterRefactor/StoreModules/StepAnalysis/StepAnalysisSelectors';
+import { createNewTab, startLoadingTabListing } from '../Actions/StepAnalysis/StepAnalysisActionCreators';
+import { question as selectQuestion } from './StepAnalysis/StepAnalysisSelectors';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 import { indexByActionProperty } from 'wdk-client/Utils/ReducerUtils';
 import { prefSpecs } from 'wdk-client/Utils/UserPreferencesUtils';
-import { ANALYSIS_MENU_STATE } from 'wdk-client/Core/MoveAfterRefactor/StoreModules/StepAnalysis/StepAnalysisState';
-import {ResultTypeDetails, getResultTypeDetails} from 'wdk-client/Utils/WdkResult';
+import { ANALYSIS_MENU_STATE } from './StepAnalysis/StepAnalysisState';
+import { ResultTypeDetails, getResultTypeDetails } from 'wdk-client/Utils/WdkResult';
 
 export type ResultPanelState = {
   activeSummaryView: string | null;
@@ -70,7 +70,7 @@ function observeOpenTabListing(action$: ActionsObservable<Action>, state$: State
             type: ANALYSIS_MENU_STATE,
             displayName: 'New Analysis',
             status: 'AWAITING_USER_CHOICE',
-            errorMessage: null 
+            errorMessage: null
           }
         )) : empty()
       )
@@ -89,7 +89,7 @@ function observeSelectSummaryView(action$: ActionsObservable<Action>, state$: St
 
       if (question == null) return;
 
-      const [ scope, key ] = prefSpecs.resultPanelTab(question.fullName);
+      const [scope, key] = prefSpecs.resultPanelTab(question.fullName);
       wdkService.patchSingleUserPreference(scope, key, summaryView);
     }),
     mergeMapTo(empty())

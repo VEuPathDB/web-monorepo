@@ -1,9 +1,9 @@
 import React from 'react';
 import ViewController from 'wdk-client/Core/Controllers/ViewController';
-import { StepAnalysisEventHandlers } from 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisView';
+import { StepAnalysisEventHandlers } from '../Components/StepAnalysis/StepAnalysisView';
 import { StepAnalysisType } from 'wdk-client/Utils/StepAnalysisUtils';
 import { memoize, isEqual } from 'lodash/fp';
-import ResultTabs, { TabConfig } from 'wdk-client/Core/MoveAfterRefactor/Components/Shared/ResultTabs';
+import ResultTabs, { TabConfig } from '../Components/Shared/ResultTabs';
 import { connect } from 'react-redux';
 import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
 import { Loading } from 'wdk-client/Components';
@@ -25,7 +25,7 @@ import {
   loadingSummaryViewListing,
   resultTypeDetails,
   externalToInternalTabIdMaps
-} from 'wdk-client/Core/MoveAfterRefactor/StoreModules/StepAnalysis/StepAnalysisSelectors';
+} from '../StoreModules/StepAnalysis/StepAnalysisSelectors';
 import { Dispatch } from 'redux';
 import {
   startLoadingChosenAnalysisTab,
@@ -39,12 +39,12 @@ import {
   duplicateAnalysis,
   toggleDescription,
   toggleParameters
-} from 'wdk-client/Core/MoveAfterRefactor/Actions/StepAnalysis/StepAnalysisActionCreators';
+} from '../Actions/StepAnalysis/StepAnalysisActionCreators';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { openTabListing, selectSummaryView } from 'wdk-client/Actions/ResultPanelActions';
 import { SummaryViewPluginField } from 'wdk-client/Utils/WdkModel';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import {ResultType, ResultTypeDetails} from 'wdk-client/Utils/WdkResult';
+import { ResultType, ResultTypeDetails } from 'wdk-client/Utils/WdkResult';
 
 type StateProps = {
   resultTypeDetails?: ResultTypeDetails;
@@ -102,7 +102,7 @@ interface ResultPanelControllerProps {
   newAnalysisButton: React.ReactNode;
 }
 
-class ResultPanelController extends ViewController< ResultPanelControllerProps > {
+class ResultPanelController extends ViewController<ResultPanelControllerProps> {
 
   loadData(prevProps?: ResultPanelControllerProps) {
     if (
@@ -160,7 +160,7 @@ const mapStateToProps = (state: RootState, props: OwnProps): StateProps => ({
 
 const mapDispatchToProps = (dispatch: Dispatch, { resultType, viewId, initialTab }: OwnProps): TabEventHandlers & PanelEventHandlers => ({
   loadTabs: (resultType: ResultType) => dispatch(openTabListing(viewId, resultType, initialTab)),
-  openAnalysisMenu: () => { 
+  openAnalysisMenu: () => {
     if (resultType.type == 'step') {
       dispatch(
         transitionToInternalPage(
@@ -236,12 +236,12 @@ const mergeProps = (
   onTabSelected: (tabKey: string) => {
     if (ownProps.resultType.type === 'step') {
       eventHandlers.transitionToTabPage(
-        ownProps.resultType.step.strategyId, 
-        ownProps.resultType.step.id, 
+        ownProps.resultType.step.strategyId,
+        ownProps.resultType.step.id,
         stateProps.internalToExternalTabId[tabKey]
       );
     }
-    
+
     eventHandlers.onTabSelected(tabKey);
   },
   onTabRemoved: (key: string) => {
