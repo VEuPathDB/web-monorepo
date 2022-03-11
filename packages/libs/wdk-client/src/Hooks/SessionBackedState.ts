@@ -6,5 +6,5 @@ export function useSessionBackedState<T>(
   encode: Encoder<T>,
   parse: Parser<T>,
 ) {
-    return useStorageBackedState(window.sessionStorage, defaultValue, key, encode, parse)
-  }
+  return useStorageBackedState(window.sessionStorage, defaultValue, key, encode, parse)
+}

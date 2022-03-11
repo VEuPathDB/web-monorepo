@@ -6,5 +6,5 @@ export function useLocalBackedState<T>(
   encode: Encoder<T>,
   parse: Parser<T>,
 ) {
-    return useStorageBackedState(window.localStorage, defaultValue, key, encode, parse)
-  }
+  return useStorageBackedState(window.localStorage, defaultValue, key, encode, parse)
+}
