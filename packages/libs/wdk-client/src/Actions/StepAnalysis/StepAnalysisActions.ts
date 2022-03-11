@@ -28,7 +28,7 @@ import {
   UnsavedAnalysisState,
   AnalysisPanelState
 } from '../../StoreModules/StepAnalysis/StepAnalysisState';
-import { StepAnalysisType } from '../../../../Utils/StepAnalysisUtils';
+import { StepAnalysisType } from '../../Utils/StepAnalysisUtils';
 
 interface TypedAction<T extends string, P> {
   type: T,
@@ -57,7 +57,7 @@ export type UpdateParamValues = TypedAction<typeof UPDATE_PARAM_VALUES, { panelI
 export type ToggleDescription = TypedAction<typeof TOGGLE_DESCRIPTION, { panelId: number }>;
 export type ToggleParameters = TypedAction<typeof TOGGLE_PARAMETERS, { panelId: number }>;
 
-export type StepAnalysisAction = 
+export type StepAnalysisAction =
   | StartLoadingTabListingAction
   | FinishLoadingTabListingAction
   | SelectTabAction

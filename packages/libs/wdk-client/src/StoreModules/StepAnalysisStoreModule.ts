@@ -1,20 +1,20 @@
 import { reduce as stepAnalysisReducer } from './StepAnalysis/StepAnalysisReducer';
-import { 
-  observeStartLoadingTabListing, 
-  observeStartLoadingSavedTab, 
-  observeStartLoadingChosenAnalysisTab, 
-  observeDeleteAnalysis, 
-  observeStartFormSubmission, 
+import {
+  observeStartLoadingTabListing,
+  observeStartLoadingSavedTab,
+  observeStartLoadingChosenAnalysisTab,
+  observeDeleteAnalysis,
+  observeStartFormSubmission,
   observeRunAnalysis,
-  observeCheckResultStatus, 
-  observeCountDown, 
-  observeRenameAnalysis, 
-  observeDuplicateAnalysis, 
+  observeCheckResultStatus,
+  observeCountDown,
+  observeRenameAnalysis,
+  observeDuplicateAnalysis,
   observeRemoveTab
 } from './StepAnalysis/StepAnalysisObservers';
 import { StepAnalysesState } from './StepAnalysis/StepAnalysisState';
-import { RootState } from '../../State/Types';
-import { EpicDependencies } from '../../Store';
+import { RootState } from '../Core/State/Types';
+import { EpicDependencies } from '../Core/Store';
 import { Action } from 'redux';
 import { ActionsObservable, StateObservable } from 'redux-observable';
 import { Subject, merge } from 'rxjs';

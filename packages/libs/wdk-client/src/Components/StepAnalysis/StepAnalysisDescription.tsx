@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 
-import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
+import { safeHtml } from '../../Utils/ComponentUtils';
 
 interface StepAnalysisDescriptionProps {
   shortDescription?: string;

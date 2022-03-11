@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
-import { ParamComponent } from '../../../../Views/Question/Params';
-import { HelpIcon } from '../../../../Components';
-import { Parameter } from 'wdk-client/Utils/WdkModel';
+import { ParamComponent } from '../../Views/Question/Params';
+import { HelpIcon } from '../../Components';
+import { Parameter } from '../../Utils/WdkModel';
 import { StepAnalysisFormPluginProps } from './StepAnalysisFormPane';
 
 export const StepAnalysisDefaultForm: React.FunctionComponent<StepAnalysisFormPluginProps> = ({
@@ -101,7 +101,7 @@ const ParamDisplayName: React.SFC<ParamDisplayNameProps> = ({
 );
 
 const uiState = {};
-const NOOP = () => {};
+const NOOP = () => { };
 
 const tooltipPosition = {
   my: 'top center',

@@ -1,10 +1,10 @@
 import React, { Fragment } from 'react';
 import { StepAnalysisResultPluginProps } from './StepAnalysisResultsPane'
 import { StepAnalysisEnrichmentResultTable, ColumnSettings } from './StepAnalysisEnrichmentResultTable';
-import Templates from 'wdk-client/Components/Mesa/Templates';
+import Templates from '../../Components/Mesa/Templates';
 
 import './StepAnalysisEnrichmentResult.scss';
-import { Tooltip } from 'wdk-client/Components';
+import { Tooltip } from '../../Components';
 
 const baseColumnSettings: Pick<ColumnSettings, 'key' | 'renderCell' | 'sortable' | 'sortType' | 'type'>[] = [
   {
@@ -23,9 +23,9 @@ const baseColumnSettings: Pick<ColumnSettings, 'key' | 'renderCell' | 'sortable'
           value: cellProps.row.description
         })}
       >
-        <a 
-          title={cellProps.row.description} 
-          href={`${cellProps.row.uri}`} 
+        <a
+          title={cellProps.row.description}
+          href={`${cellProps.row.uri}`}
           target="_blank">{cellProps.row.experimentName}
         </a>
       </Tooltip>
