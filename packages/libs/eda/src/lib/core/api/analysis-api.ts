@@ -26,7 +26,6 @@ export class AnalysisClient extends FetchClientWithCredentials {
 
   private async transferGuestAnalyses() {
     const user = await this.getUser();
-    console.log(this);
 
     if (user.isGuest) {
       // If the user is a guest, persist their id
@@ -37,8 +36,6 @@ export class AnalysisClient extends FetchClientWithCredentials {
       const guestUserIdStr = sessionStorage.getItem('eda::guestUserId') ?? '';
       sessionStorage.removeItem('eda::guestUserId');
       const guestUserId = parseInt(guestUserIdStr, 10);
-
-      console.log('analysisClient');
 
       // If said guest user id is valid, initialize and retain a promise
       // which performs a transfer of that guest user's analyses to the logged-in user
@@ -70,7 +67,6 @@ export class AnalysisClient extends FetchClientWithCredentials {
     callback: (user: User, projectId: string) => ApiRequest<T>
   ): Promise<T> {
     const projectId = (await this.wdkService.getConfig()).projectId;
-    console.log(projectId);
     return this.fetchWithUser((user) => callback(user, projectId));
   }
 

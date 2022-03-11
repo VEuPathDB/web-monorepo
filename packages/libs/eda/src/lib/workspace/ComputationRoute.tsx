@@ -32,8 +32,6 @@ export function ComputationRoute(props: Props) {
     useCallback(async () => {
       let { apps } = await dataClient.getApps();
       if (singleAppMode) {
-        // find the single app within the approved apps
-        console.log('single app mode');
         apps = apps.filter((app) => app.name === singleAppMode);
       }
 
@@ -48,14 +46,16 @@ export function ComputationRoute(props: Props) {
     <PromiseResult state={promiseState}>
       {({ apps }) => {
         if (singleAppMode) {
-          const plugin = plugins[apps[0].name];
           if (analysisState.analysis == null) return;
 
           const computations = analysisState.analysis.descriptor.computations;
 
-          console.log(computations);
-          let computation;
-          if (computations.length === 0) {
+          let computation = props.analysisState.analysis?.descriptor.computations.find(
+            (c) => c.computationId === singleAppMode
+          );
+
+          // If we don't yet have a computation instance, we need to make one
+          if (computation == null) {
             computation = createComputation(
               apps[0],
               singleAppMode,
@@ -64,13 +64,7 @@ export function ComputationRoute(props: Props) {
               singleAppMode
             );
             analysisState.setComputations([computation]);
-          } else {
-            computation = props.analysisState.analysis?.descriptor.computations.find(
-              (c) => c.computationId === singleAppMode
-            );
           }
-
-          console.log(computation);
 
           return (
             <Switch>
@@ -79,7 +73,7 @@ export function ComputationRoute(props: Props) {
               </Route>
               <Route
                 path={`${url}/${singleAppMode}`}
-                render={(routeProps) => {
+                render={() => {
                   const plugin = apps[0] && plugins[apps[0].name];
                   if (apps[0] == null || plugin == null)
                     return <div>Cannot find app!</div>;
@@ -117,8 +111,6 @@ export function ComputationRoute(props: Props) {
                 </div>
               </Route>
               {apps.map((app) => {
-                // Making as many routes as we have apps. Route either goes to configuration or Not yet implemented
-                console.log(app);
                 const plugin = plugins[app.name];
                 const addComputation = (
                   name: string,
@@ -136,7 +128,6 @@ export function ComputationRoute(props: Props) {
                   analysisState.setComputations([computation, ...computations]);
                   history.push(`${url}/${computation.computationId}`);
                 };
-                console.log(plugin);
 
                 return (
                   <Route exact path={`${url}/new/${app.name}`}>
@@ -155,7 +146,6 @@ export function ComputationRoute(props: Props) {
               <Route
                 path={`${url}/:id`}
                 render={(routeProps) => {
-                  console.log(routeProps);
                   // These are routes for the computation instances already saved
                   const computation = props.analysisState.analysis?.descriptor.computations.find(
                     (c) => c.computationId === routeProps.match.params.id
@@ -163,7 +153,6 @@ export function ComputationRoute(props: Props) {
                   const app = apps.find(
                     (app) => app.name === computation?.descriptor.type
                   );
-                  console.log(app);
                   const plugin = app && plugins[app.name];
                   if (app == null || plugin == null)
                     return <div>Cannot find app!</div>;

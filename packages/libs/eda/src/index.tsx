@@ -46,8 +46,9 @@ const dataServiceUrl = '/eda-data-service';
 const userServiceUrl = '/eda-user-service';
 const downloadServiceUrl = '/eda-user-service';
 
-// Ann dev
-const singleAppMode = 'pass';
+// Set singleAppMode to the name of one app, if the eda should use one instance of one app only.
+// Otherwise, let singleAppMode remain undefined or set it to ''
+const singleAppMode = '';
 
 const exampleAnalysesAuthor = process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR
   ? Number(process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR)
@@ -105,7 +106,7 @@ initialize({
             exampleAnalysesAuthor={exampleAnalysesAuthor}
             sharingUrlPrefix={window.location.href}
             showLoginForm={showLoginForm}
-            singleAppMode={singleAppMode}
+            singleAppMode={singleAppMode == null ? '' : singleAppMode}
           />
         );
       },

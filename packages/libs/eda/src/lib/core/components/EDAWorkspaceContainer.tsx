@@ -77,10 +77,6 @@ function EDAWorkspaceContainerWithLoadedData({
     [initializeMakeVariableLink, variableTree]
   );
 
-  const projectId = useWdkService((wdkService) => wdkService.getConfig(), [])
-    ?.projectId;
-  console.log(projectId);
-
   return (
     <WorkspaceContext.Provider
       value={{
