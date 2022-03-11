@@ -408,6 +408,10 @@ function LineplotViz(props: VisualizationProps) {
           response.completeCasesTable
         );
 
+      const xAxisVocabulary = fixLabelsForNumberVariables(
+        xAxisVariable?.vocabulary,
+        xAxisVariable
+      );
       const overlayVocabulary = fixLabelsForNumberVariables(
         overlayVariable?.vocabulary,
         overlayVariable
@@ -423,6 +427,7 @@ function LineplotViz(props: VisualizationProps) {
         independentValueType,
         dependentValueType,
         showMissingOverlay,
+        xAxisVocabulary,
         overlayVocabulary,
         overlayVariable,
         showMissingFacet,
@@ -585,7 +590,7 @@ function LineplotViz(props: VisualizationProps) {
       onBinWidthChange={onBinWidthChange}
       vizType={visualization.descriptor.type}
       interactive={!isFaceted(data.value) ? true : false}
-      showSpinner={data.pending}
+      showSpinner={filteredCounts.pending || data.pending}
       // add plotOptions to control the list of plot options
       plotOptions={['Mean', 'Median']}
       // disabledList prop is used to disable radio options (grayed out)
@@ -879,6 +884,7 @@ export function lineplotResponseToData(
   independentValueType: string,
   dependentValueType: string,
   showMissingOverlay: boolean = false,
+  xAxisVocabulary: string[] = [],
   overlayVocabulary: string[] = [],
   overlayVariable?: Variable,
   showMissingFacet: boolean = false,
@@ -905,6 +911,7 @@ export function lineplotResponseToData(
       reorderResponseLineplotData(
         // reorder by overlay var within each facet
         group,
+        xAxisVocabulary,
         vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
         overlayVariable
       ),
@@ -1131,11 +1138,15 @@ function processInputData(
       if (xData == null)
         throw new Error('response did not contain binStart data');
       const seriesX =
-        independentValueType === 'number' ? xData.map(Number) : xData;
+        independentValueType === 'number' || independentValueType === 'integer'
+          ? xData.map(Number)
+          : xData;
 
       // decode numbers in y axis where necessary
       const seriesY =
-        dependentValueType === 'number' ? el.seriesY.map(Number) : el.seriesY;
+        dependentValueType === 'number' || dependentValueType === 'integer'
+          ? el.seriesY.map(Number)
+          : el.seriesY;
 
       dataSetProcess.push({
         x: seriesX.length ? seriesX : (([null] as unknown) as number[]), // [null] hack required to make sure
@@ -1201,13 +1212,55 @@ function processInputData(
 
 function reorderResponseLineplotData(
   data: LinePlotDataResponse['lineplot']['data'],
+  xAxisVocabulary: string[] = [],
   overlayVocabulary: string[] = [],
   overlayVariable?: Variable
 ) {
+  const xAxisOrderedSeries = data.map((series) => {
+    if (xAxisVocabulary.length > 0) {
+      // for each label in the vocabulary's correct order,
+      // find the index of that label in the provided series' label array
+      const labelIndices = xAxisVocabulary.map((label) =>
+        series.seriesX.indexOf(label)
+      );
+      // now return the data from the other array(s) in the same order
+      // any missing labels will be mapped to `undefined` (indexing an array with -1)
+      // note that series.binStart and series.binEnd are not present when there is an xAxisVocabulary
+      // because no binning can be done on these variables
+      return {
+        ...series,
+        seriesX: labelIndices.map(
+          (i, j) => series.seriesX[i] ?? xAxisVocabulary[j]
+        ),
+        seriesY: labelIndices.map((i) => series.seriesY[i]),
+        ...(series.errorBars != null
+          ? {
+              errorBars: labelIndices.map((i) =>
+                series.errorBars && series.errorBars[i]
+                  ? series.errorBars[i]
+                  : { lowerBound: null, upperBound: null, error: 'no data' }
+              ),
+            }
+          : {}),
+        ...(series.binSampleSize != null
+          ? {
+              binSampleSize: labelIndices.map((i) =>
+                series.binSampleSize && series.binSampleSize[i]
+                  ? series.binSampleSize[i]
+                  : { N: 0 }
+              ),
+            }
+          : {}),
+      };
+    } else {
+      return series;
+    }
+  });
+
   if (overlayVocabulary.length > 0) {
     // for each value in the overlay vocabulary's correct order
     // find the index in the series where series.name equals that value
-    const overlayValues = data
+    const overlayValues = xAxisOrderedSeries
       .map((series) => series.overlayVariableDetails?.value)
       .filter((value) => value != null)
       .map((value) => fixLabelForNumberVariables(value!, overlayVariable));
@@ -1216,7 +1269,7 @@ function reorderResponseLineplotData(
     );
     return overlayIndices.map(
       (i, j) =>
-        data[i] ?? {
+        xAxisOrderedSeries[i] ?? {
           // if there is no series, insert a dummy series
           overlayVariableDetails: {
             value: overlayVocabulary[j],
@@ -1226,6 +1279,6 @@ function reorderResponseLineplotData(
         }
     );
   } else {
-    return data;
+    return xAxisOrderedSeries;
   }
 }
