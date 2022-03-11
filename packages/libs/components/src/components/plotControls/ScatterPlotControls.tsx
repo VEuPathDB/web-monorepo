@@ -10,12 +10,12 @@ import RadioButtonGroup from '../widgets/RadioButtonGroup';
 import Notification from '../widgets/Notification';
 
 /**
- * Props for XYPlot controls.
+ * Props for ScatterPlot controls.
  *
  * The presence or absence of an optional callback will
  * determine if that control is displayed.
  */
-export type XYPlotControlsProps = {
+export type ScatterPlotControlsProps = {
   /** Additional styles for controls container. Optional */
   containerStyles?: React.CSSProperties;
   /** Color to use as an accent in the control panel. Will accept any
@@ -23,9 +23,9 @@ export type XYPlotControlsProps = {
   accentColor?: string;
   /** Attributes and methods for error management. */
   errorManagement: ErrorManagement;
-  /** XYPlot: valueSpec */
+  /** ScatterPlot: valueSpec */
   valueSpec?: string;
-  /** XYPlot: onValueSpecChange */
+  /** ScatterPlot: onValueSpecChange */
   onValueSpecChange?: (valueSpec: string) => void;
   /** How buttons are displayed. Vertical or Horizontal */
   orientation?: 'vertical' | 'horizontal';
@@ -47,13 +47,13 @@ export type XYPlotControlsProps = {
 };
 
 /**
- * A XYPlot controls panel.
+ * A ScatterPlot controls panel.
  *
  * If you prefer a different layout or composition, you can
  * contruct you own control panel by using the various
  * widgets contained here.
  */
-export default function XYPlotControls({
+export default function ScatterPlotControls({
   accentColor = LIGHT_BLUE,
   errorManagement,
   containerStyles,
@@ -67,7 +67,7 @@ export default function XYPlotControls({
   // add plotOptions
   plotOptions,
   label,
-}: XYPlotControlsProps) {
+}: ScatterPlotControlsProps) {
   const { ref, width } = useDimensions<HTMLDivElement>();
 
   const errorStacks = useMemo(() => {

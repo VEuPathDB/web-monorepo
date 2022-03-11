@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import XYPlot, { XYPlotProps } from '../../plots/XYPlot';
+import ScatterPlot, { ScatterPlotProps } from '../../plots/ScatterPlot';
 import { min, max, lte, gte } from 'lodash';
-// import { dataSetProcess, xAxisRange, yAxisRange } from './XYPlot.storyData';
+// import { dataSetProcess, xAxisRange, yAxisRange } from './ScatterPlot.storyData';
 import { Story, Meta } from '@storybook/react/types-6-0';
-// test to use RadioButtonGroup directly instead of XYPlotControls
+// test to use RadioButtonGroup directly instead of ScatterPlotControls
 import RadioButtonGroup from '../../components/widgets/RadioButtonGroup';
-import { FacetedData, XYPlotData } from '../../types/plots';
-import FacetedXYPlot from '../../plots/facetedPlots/FacetedXYPlot';
+import { FacetedData, ScatterPlotData } from '../../types/plots';
+import FacetedScatterPlot from '../../plots/facetedPlots/FacetedScatterPlot';
 
 export default {
-  title: 'Plots/XYPlot',
-  component: XYPlot,
+  title: 'Plots/ScatterPlot',
+  component: ScatterPlot,
   parameters: {
     redmine: 'https://redmine.apidb.org/issues/41310',
   },
@@ -642,7 +642,7 @@ const plotTitle = '';
  */
 export const MultipleData = () => {
   return (
-    <XYPlot
+    <ScatterPlot
       data={dataSetProcess}
       independentAxisLabel={independentAxisLabel}
       dependentAxisLabel={dependentAxisLabel}
@@ -671,7 +671,7 @@ export const MultipleData = () => {
 
 export const MultipleDataDefaultColors = () => {
   return (
-    <XYPlot
+    <ScatterPlot
       data={dataSetProcessDefaultColors}
       independentAxisLabel={independentAxisLabel}
       dependentAxisLabel={dependentAxisLabel}
@@ -700,7 +700,7 @@ export const MultipleDataDefaultColors = () => {
 
 export const EmptyData = () => {
   return (
-    <XYPlot
+    <ScatterPlot
       data={undefined}
       // independentAxisLabel={independentAxisLabel}
       // dependentAxisLabel={dependentAxisLabel}
@@ -731,7 +731,7 @@ export const EmptyData = () => {
 
 export const EmptyDataLoading = () => {
   return (
-    <XYPlot
+    <ScatterPlot
       data={undefined}
       dependentAxisRange={{ min: yMin, max: yMax }}
       title={plotTitle}
@@ -778,7 +778,7 @@ export const PlotModeControl = () => {
   );
 };
 
-const Template = (args: any) => <XYPlot {...args} />;
+const Template = (args: any) => <ScatterPlot {...args} />;
 
 const disableDataControl = {
   data: { control: { disable: true } },
@@ -1153,7 +1153,7 @@ function getBounds<T extends number | Date>(
  * FACETING
  */
 
-const facetedData: FacetedData<XYPlotData> = {
+const facetedData: FacetedData<ScatterPlotData> = {
   facets: [
     {
       label: 'Facet 1',
@@ -1177,9 +1177,9 @@ const facetedData: FacetedData<XYPlotData> = {
 };
 
 interface FacetedStoryProps {
-  data: FacetedData<XYPlotData>;
-  componentProps: XYPlotProps;
-  modalComponentProps: XYPlotProps;
+  data: FacetedData<ScatterPlotData>;
+  componentProps: ScatterPlotProps;
+  modalComponentProps: ScatterPlotProps;
 }
 
 const FacetedTemplate: Story<FacetedStoryProps> = ({
@@ -1187,7 +1187,7 @@ const FacetedTemplate: Story<FacetedStoryProps> = ({
   componentProps,
   modalComponentProps,
 }) => (
-  <FacetedXYPlot
+  <FacetedScatterPlot
     data={data}
     componentProps={componentProps}
     modalComponentProps={modalComponentProps}
@@ -1198,7 +1198,7 @@ export const Faceted = FacetedTemplate.bind({});
 Faceted.args = {
   data: facetedData,
   componentProps: {
-    title: 'Faceted XYPlot',
+    title: 'Faceted ScatterPlot',
     containerStyles: {
       width: 300,
       height: 300,
