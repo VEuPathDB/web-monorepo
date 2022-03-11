@@ -116,6 +116,10 @@ export interface MapVEuMapProps {
   height: CSSProperties['height'];
   width: CSSProperties['width'];
 
+  /** CSS styles for the map container other than height and width,
+   * which have their own dedicated props */
+  style?: Omit<React.CSSProperties, 'height' | 'width'>;
+
   /** callback for when viewport has changed, giving access to the bounding box */
   onBoundsChanged: (bvp: BoundsViewport) => void;
 
@@ -164,6 +168,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     viewport,
     height,
     width,
+    style,
     onViewportChanged,
     onBoundsChanged,
     markers,
@@ -309,7 +314,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
   return (
     <Map
       viewport={viewport}
-      style={{ height, width }}
+      style={{ height, width, ...style }}
       onViewportChanged={onViewportChanged}
       className={mouseMode === 'magnification' ? 'cursor-zoom-in' : ''}
       minZoom={1}
