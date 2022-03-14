@@ -6,20 +6,16 @@ import { mapValues } from 'lodash';
 
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
-import {
-  RouteEntry,
-  parseQueryString,
-} from '@veupathdb/wdk-client/lib/Core/RouteEntry';
+import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import Header from './Header';
 import Home from './Home';
 import { endpoint, rootElement, rootUrl } from './constants';
 import reportWebVitals from './reportWebVitals';
 
-import UserDatasetsWorkspace from './lib/Components/UserDatasetsWorkspace';
-
-import UserDatasetDetailController from './lib/Controllers/UserDatasetDetailController';
+import { UserDatasetRouter } from './lib/Controllers/UserDatasetRouter';
 
 import { userDatasetsServiceWrappers } from './lib/Service/UserDatasetWrappers';
+import { userDatasetUploadServiceWrappers } from './lib/Service/UserDatasetUploadWrappers';
 
 import * as userDatasetDetail from './lib/StoreModules/UserDatasetDetailStoreModule';
 import * as userDatasetList from './lib/StoreModules/UserDatasetListStoreModule';
@@ -27,7 +23,6 @@ import * as userDatasetUpload from './lib/StoreModules/UserDatasetUploadStoreMod
 
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
-import { userDatasetUploadServiceWrappers } from './lib/Service/UserDatasetUploadWrappers';
 
 type WdkStoreModules = typeof import('@veupathdb/wdk-client/lib/StoreModules').default;
 
@@ -40,30 +35,9 @@ initialize({
       component: (props: RouteComponentProps<void>) => <Home />,
     },
     {
-      path: '/workspace/datasets/:id(\\d+)',
-      requiresLogin: true,
-      component: (props: RouteComponentProps<{ id: string }>) => {
-        // FIXME Remove this requirement from the component by updating action creators
-        const rootUrl = window.location.origin;
-
-        return (
-          <UserDatasetDetailController
-            {...props.match.params}
-            rootUrl={rootUrl}
-          />
-        );
-      },
-    },
-    {
       path: '/workspace/datasets',
       exact: false,
-      requiresLogin: false, // uses custom guest views
-      component: (props: RouteComponentProps<{}>) => (
-        <UserDatasetsWorkspace
-          rootPath={props.match.path}
-          urlParams={parseQueryString(props)}
-        />
-      ),
+      component: () => <UserDatasetRouter rootUrl={window.location.origin} />,
     },
     ...routes,
   ],
