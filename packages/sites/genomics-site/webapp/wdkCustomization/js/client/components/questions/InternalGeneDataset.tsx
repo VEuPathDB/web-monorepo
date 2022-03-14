@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 
 import { Loading, Link, Tooltip, HelpIcon, Tabs } from '@veupathdb/wdk-client/lib/Components';
-import { StepAnalysisEnrichmentResultTable as InternalGeneDatasetTable } from '@veupathdb/wdk-client/lib/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisEnrichmentResultTable';
+import { StepAnalysisEnrichmentResultTable as InternalGeneDatasetTable } from '@veupathdb/wdk-client/lib/Components/StepAnalysis/StepAnalysisEnrichmentResultTable';
 import QuestionController, {
   useSetSearchDocumentTitle,
   OwnProps as Props
@@ -31,8 +31,8 @@ import './InternalGeneDataset.scss';
 
 const cx = makeClassNameHelper('wdk-InternalGeneDatasetForm');
 
-type InternalQuestionRecord = { 
-  target_name: string, 
+type InternalQuestionRecord = {
+  target_name: string,
   dataset_id: string,
   target_type: string,
   dataset_name: string,
@@ -51,10 +51,10 @@ type DatasetRecord = {
   isPreferred: boolean
 };
 
-type DisplayCategory = { 
-  description: string, 
-  displayName: string, 
-  shortDisplayName: string 
+type DisplayCategory = {
+  description: string,
+  displayName: string,
+  shortDisplayName: string
 };
 
 export function InternalGeneDataset(props: Props) {
@@ -74,8 +74,8 @@ function InternalGeneDatasetContent(props: Props) {
   const ontology = useSelector((state: RootState) => state.globalData.ontology?.tree);
   const recordClasses = useSelector((state: RootState) => state.globalData.recordClasses);
 
-  const [ preferredOrganisms ] = usePreferredOrganismsState();
-  const [ preferredOrganismsEnabled ] = usePreferredOrganismsEnabledState();
+  const [preferredOrganisms] = usePreferredOrganismsState();
+  const [preferredOrganismsEnabled] = usePreferredOrganismsEnabledState();
 
   const internalSearchName = props.question;
 
@@ -85,27 +85,27 @@ function InternalGeneDatasetContent(props: Props) {
     submissionMetadata
   } = props;
 
-  const [ selectedSearch, setSelectedSearch ] = useState<string | undefined>(searchNameAnchorTag);
+  const [selectedSearch, setSelectedSearch] = useState<string | undefined>(searchNameAnchorTag);
 
   useEffect(() => {
     setSelectedSearch(searchNameAnchorTag);
-  }, [ searchNameAnchorTag ]);
+  }, [searchNameAnchorTag]);
 
-  const [ searchName, showingRecordToggle ] = selectedSearch
-    ? [ selectedSearch, true ]
-    : [ internalSearchName, false ];
+  const [searchName, showingRecordToggle] = selectedSearch
+    ? [selectedSearch, true]
+    : [internalSearchName, false];
 
-  const [ internalQuestion, outputRecordClass, datasetCategory, datasetSubtype ] = useMemo(
+  const [internalQuestion, outputRecordClass, datasetCategory, datasetSubtype] = useMemo(
     () => getTableQuestionMetadata(questions, recordClasses, internalSearchName),
-    [ questions, recordClasses, internalSearchName ]
+    [questions, recordClasses, internalSearchName]
   );
 
   const serviceResult = useWdkService(async wdkService => {
     if (
-      !questions || 
+      !questions ||
       !ontology ||
-      !outputRecordClass || 
-      !datasetCategory || 
+      !outputRecordClass ||
+      !datasetCategory ||
       !datasetSubtype
     ) {
       return undefined;
@@ -126,7 +126,7 @@ function InternalGeneDatasetContent(props: Props) {
       displayCategoryOrder: displayCategoryMetadata.displayCategoryOrder,
       datasetRecords
     };
-  }, [ questions, ontology, internalSearchName, outputRecordClass, datasetCategory, datasetSubtype, preferredOrganisms ]);
+  }, [questions, ontology, internalSearchName, outputRecordClass, datasetCategory, datasetSubtype, preferredOrganisms]);
 
   const {
     questionNamesByDatasetAndCategory,
@@ -135,27 +135,27 @@ function InternalGeneDatasetContent(props: Props) {
     datasetRecords
   } = serviceResult || {};
 
-  const [ showingOneRecord, updateShowingOneRecord ] = useState(showingRecordToggle);
+  const [showingOneRecord, updateShowingOneRecord] = useState(showingRecordToggle);
 
   const selectedDataSetRecord = useMemo(
     () => getSelectedDataSetRecord(datasetRecords, questionNamesByDatasetAndCategory, searchName),
-    [ datasetRecords, questionNamesByDatasetAndCategory, searchName ]
+    [datasetRecords, questionNamesByDatasetAndCategory, searchName]
   );
 
   const filteredDatasetRecords = useMemo(
     () => getFilteredDatasetRecords(datasetRecords, displayCategoriesByName, showingOneRecord, selectedDataSetRecord, preferredOrganismsEnabled),
-    [ datasetRecords, displayCategoriesByName, showingOneRecord, selectedDataSetRecord, preferredOrganismsEnabled ]
+    [datasetRecords, displayCategoriesByName, showingOneRecord, selectedDataSetRecord, preferredOrganismsEnabled]
   );
 
   useEffect(() => {
     updateShowingOneRecord(searchName !== internalSearchName);
-  }, [ searchName, internalSearchName ]);
+  }, [searchName, internalSearchName]);
 
   useSetSearchDocumentTitle(
-    internalQuestion, 
-    internalQuestion ? 'complete' : 'loading', 
-    recordClasses, 
-    outputRecordClass, 
+    internalQuestion,
+    internalQuestion ? 'complete' : 'loading',
+    recordClasses,
+    outputRecordClass,
     shouldChangeDocumentTitle
   );
 
@@ -176,116 +176,116 @@ function InternalGeneDatasetContent(props: Props) {
         !datasetCategory ||
         !datasetSubtype
       )
-      ? <NotFound />
-      : (
-        <div className={cx()}>
-          <QuestionHeader
-            showDescriptionLink={submissionMetadata.type === 'create-strategy'}
-            showHeader={submissionMetadata.type === 'create-strategy' || submissionMetadata.type === 'edit-step'}
-            headerText={`Identify ${outputRecordClass.displayNamePlural} based on ${internalQuestion.displayName}`}
-          />
-          <InternalGeneDatasetTable
-            searchBoxHeader="Filter Data Sets:"
-            emptyResultMessage={
-              <OrganismPreferencesWarning
-                action="use this page"
-                explanation="Your current preferences exclude all organisms used in this page's searches."
-              /> as any
-            }
-            showCount={false}
-            rows={
-              showingOneRecord || preferredOrganismsEnabled
-                ? filteredDatasetRecords
-                : datasetRecords
-            }
-            columns={
-              [
-                {
-                  key: 'organism_prefix',
-                  name: 'Organism',
-                  type: 'html',
-                  sortable: true,
-                  sortType: 'htmlText',
-                  helpText: 'Organism data is aligned to'
-                },
-                {
-                  key: 'display_name',
-                  name: 'Data Set',
-                  type: 'html',
-                  sortable: true,
-                  sortType: 'htmlText',
-                  renderCell: (cellProps: any) => {
-                    const { 
-                      display_name, 
-                      summary, 
-                      publications,
-                      build_number_introduced
-                    }: DatasetRecord 
-                      = cellProps.row;
+        ? <NotFound />
+        : (
+          <div className={cx()}>
+            <QuestionHeader
+              showDescriptionLink={submissionMetadata.type === 'create-strategy'}
+              showHeader={submissionMetadata.type === 'create-strategy' || submissionMetadata.type === 'edit-step'}
+              headerText={`Identify ${outputRecordClass.displayNamePlural} based on ${internalQuestion.displayName}`}
+            />
+            <InternalGeneDatasetTable
+              searchBoxHeader="Filter Data Sets:"
+              emptyResultMessage={
+                <OrganismPreferencesWarning
+                  action="use this page"
+                  explanation="Your current preferences exclude all organisms used in this page's searches."
+                /> as any
+              }
+              showCount={false}
+              rows={
+                showingOneRecord || preferredOrganismsEnabled
+                  ? filteredDatasetRecords
+                  : datasetRecords
+              }
+              columns={
+                [
+                  {
+                    key: 'organism_prefix',
+                    name: 'Organism',
+                    type: 'html',
+                    sortable: true,
+                    sortType: 'htmlText',
+                    helpText: 'Organism data is aligned to'
+                  },
+                  {
+                    key: 'display_name',
+                    name: 'Data Set',
+                    type: 'html',
+                    sortable: true,
+                    sortType: 'htmlText',
+                    renderCell: (cellProps: any) => {
+                      const {
+                        display_name,
+                        summary,
+                        publications,
+                        build_number_introduced
+                      }: DatasetRecord
+                        = cellProps.row;
 
-                    return (
-                      <div>
-                        <HelpIcon>
-                          <div>
-                            <h4>Summary</h4>
-                            {safeHtml(summary)}
-                            {
-                              publications.length > 0 && (
-                                <>
-                                  <h4>Publications</h4>
-                                  <ul>
-                                    {
-                                      publications.map(
-                                        link =>
-                                          <li key={link.url}>
-                                            {formatLink(link, { newWindow: true })}
-                                          </li>
-                                      )
-                                    }
-                                  </ul>
-                                </>
-                              )
-                            }
-                          </div>
-                        </HelpIcon>
-                        {' '}
-                        {safeHtml(display_name)}
+                      return (
+                        <div>
+                          <HelpIcon>
+                            <div>
+                              <h4>Summary</h4>
+                              {safeHtml(summary)}
+                              {
+                                publications.length > 0 && (
+                                  <>
+                                    <h4>Publications</h4>
+                                    <ul>
+                                      {
+                                        publications.map(
+                                          link =>
+                                            <li key={link.url}>
+                                              {formatLink(link, { newWindow: true })}
+                                            </li>
+                                        )
+                                      }
+                                    </ul>
+                                  </>
+                                )
+                              }
+                            </div>
+                          </HelpIcon>
+                          {' '}
+                          {safeHtml(display_name)}
+                          {
+                            build_number_introduced === buildNumber &&
+                            <span className={cx('NewDataset')}></span>
+                          }
+                        </div>
+                      );
+                    }
+                  },
+                  {
+                    key: 'Searches',
+                    name: 'Choose a Search',
+                    sortable: false,
+                    renderCell: (cellProps: any) =>
+                      <>
                         {
-                          build_number_introduced === buildNumber &&
-                          <span className={cx('NewDataset')}></span>
-                        }
-                      </div>
-                    );
-                  }
-                },
-                {
-                  key: 'Searches',
-                  name: 'Choose a Search',
-                  sortable: false,
-                  renderCell: (cellProps: any) =>
-                    <>
-                      {
-                        displayCategoryOrder.map(
-                          categoryName => {
-                            const datasetName = cellProps.row.dataset_name;
-                            const categorySearchName = getCategorySearchName(
-                              questionNamesByDatasetAndCategory,
-                              datasetName,
-                              categoryName
-                            );
+                          displayCategoryOrder.map(
+                            categoryName => {
+                              const datasetName = cellProps.row.dataset_name;
+                              const categorySearchName = getCategorySearchName(
+                                questionNamesByDatasetAndCategory,
+                                datasetName,
+                                categoryName
+                              );
 
-                            return (
+                              return (
                                 <div key={categoryName}>
                                   {
                                     categorySearchName && (
-                                      <Link 
+                                      <Link
                                         className={
                                           categorySearchName === searchName
                                             ? "bttn bttn-cyan bttn-active"
                                             : "bttn bttn-cyan"
-                                        } 
-                                        key={categoryName} 
-                                        to={ `${internalSearchName}#${categorySearchName}`}
+                                        }
+                                        key={categoryName}
+                                        to={`${internalSearchName}#${categorySearchName}`}
                                         onClick={makeLinkClickHandler(
                                           submissionMetadata,
                                           categorySearchName,
@@ -299,23 +299,23 @@ function InternalGeneDatasetContent(props: Props) {
                                   }
                                 </div>
                               );
-                          }
-                        )
-                      }
-                    </>
-                }
-              ]
-            }
-            initialSortColumnKey="organism_prefix"
-            fixedTableHeader
-          >
-            <div className={cx('Legend')}>
-              <span>
-                Legend:
+                            }
+                          )
+                        }
+                      </>
+                  }
+                ]
+              }
+              initialSortColumnKey="organism_prefix"
+              fixedTableHeader
+            >
+              <div className={cx('Legend')}>
+                <span>
+                  Legend:
               </span>
-              {
-                displayCategoryOrder.map(
-                  categoryName =>
+                {
+                  displayCategoryOrder.map(
+                    categoryName =>
                       <Tooltip
                         key={categoryName}
                         content={
@@ -336,120 +336,120 @@ function InternalGeneDatasetContent(props: Props) {
                           </span>
                         </span>
                       </Tooltip>
-                )
-              }
-            </div>
-          </InternalGeneDatasetTable>
-          {
-            showingRecordToggle && (
-              <div 
-                className={cx('RecordToggle')}
-                onClick={() => {
-                  updateShowingOneRecord(!showingOneRecord);
-                }}
-              >
-                {
-                  showingOneRecord
-                    ? (
-                      <>
-                        <i className="fa fa-arrow-down" />
-                        {' '}
+                  )
+                }
+              </div>
+            </InternalGeneDatasetTable>
+            {
+              showingRecordToggle && (
+                <div
+                  className={cx('RecordToggle')}
+                  onClick={() => {
+                    updateShowingOneRecord(!showingOneRecord);
+                  }}
+                >
+                  {
+                    showingOneRecord
+                      ? (
+                        <>
+                          <i className="fa fa-arrow-down" />
+                          {' '}
                         Show All Data Sets
-                        {' '}
-                        <i className="fa fa-arrow-down" />
-                      </>
-                    )
-                    : (
-                      <>
-                        <i className="fa fa-arrow-up" />
-                        {' '}
-                        Hide All Data Sets
-                        {' '}
-                        <i className="fa fa-arrow-up" />
-                      </>
-                    )
-                }
-              </div>            
-            )
-          }
-          {
-            selectedDataSetRecord && (
-              <Tabs
-                tabs={
-                  displayCategoryOrder
-                    .filter(
-                      categoryName => getCategorySearchName(
-                        questionNamesByDatasetAndCategory,
-                        selectedDataSetRecord.dataset_name,
-                        categoryName
+                          {' '}
+                          <i className="fa fa-arrow-down" />
+                        </>
                       )
-                    )
-                    .map(categoryName => {
-                      const categorySearchName = getCategorySearchName(
-                        questionNamesByDatasetAndCategory,
-                        selectedDataSetRecord.dataset_name,
-                        categoryName
-                      );
-
-                      return {
-                        key: categorySearchName,
-                        display: (
-                          <Link 
-                            to={`${internalSearchName}#${categorySearchName}`}
-                            onClick={makeLinkClickHandler(
-                              submissionMetadata,
-                              categorySearchName,
-                              searchName,
-                              setSelectedSearch
-                            )}
-                          >
-                            {displayCategoriesByName[categoryName].displayName}
-                          </Link>
-                        ),
-                        content: (
-                          <Plugin
-                            context={{
-                              type: 'questionController',
-                              searchName,
-                              recordClassName: recordClass
-                            }}
-                            pluginProps={{
-                              ...props,
-                              question: searchName,
-                              shouldChangeDocumentTitle: false
-                            }}
-                            defaultComponent={QuestionController}
-                            fallback={<Loading />}
-                          />
+                      : (
+                        <>
+                          <i className="fa fa-arrow-up" />
+                          {' '}
+                        Hide All Data Sets
+                          {' '}
+                          <i className="fa fa-arrow-up" />
+                        </>
+                      )
+                  }
+                </div>
+              )
+            }
+            {
+              selectedDataSetRecord && (
+                <Tabs
+                  tabs={
+                    displayCategoryOrder
+                      .filter(
+                        categoryName => getCategorySearchName(
+                          questionNamesByDatasetAndCategory,
+                          selectedDataSetRecord.dataset_name,
+                          categoryName
                         )
-                      };
-                    })
-                }
-                activeTab={searchName}
-                onTabSelected={(tab) => {
-                  setSelectedSearch(tab);
-                }}
-              />
-            )
-          }
-        </div>
-      )
+                      )
+                      .map(categoryName => {
+                        const categorySearchName = getCategorySearchName(
+                          questionNamesByDatasetAndCategory,
+                          selectedDataSetRecord.dataset_name,
+                          categoryName
+                        );
+
+                        return {
+                          key: categorySearchName,
+                          display: (
+                            <Link
+                              to={`${internalSearchName}#${categorySearchName}`}
+                              onClick={makeLinkClickHandler(
+                                submissionMetadata,
+                                categorySearchName,
+                                searchName,
+                                setSelectedSearch
+                              )}
+                            >
+                              {displayCategoriesByName[categoryName].displayName}
+                            </Link>
+                          ),
+                          content: (
+                            <Plugin
+                              context={{
+                                type: 'questionController',
+                                searchName,
+                                recordClassName: recordClass
+                              }}
+                              pluginProps={{
+                                ...props,
+                                question: searchName,
+                                shouldChangeDocumentTitle: false
+                              }}
+                              defaultComponent={QuestionController}
+                              fallback={<Loading />}
+                            />
+                          )
+                        };
+                      })
+                  }
+                  activeTab={searchName}
+                  onTabSelected={(tab) => {
+                    setSelectedSearch(tab);
+                  }}
+                />
+              )
+            }
+          </div>
+        )
   );
 };
 
 function getTableQuestionMetadata(
-  questions: Question[] | undefined, 
+  questions: Question[] | undefined,
   recordClasses: RecordClass[] | undefined,
   internalSearchName: string
-): [ Question | undefined, RecordClass | undefined, string | undefined, string | undefined ] {
+): [Question | undefined, RecordClass | undefined, string | undefined, string | undefined] {
   if (!questions || !recordClasses) {
-    return [ undefined, undefined, undefined, undefined ];
+    return [undefined, undefined, undefined, undefined];
   }
 
   const internalQuestion = questions.find(question => question.urlSegment === internalSearchName);
 
   if (!internalQuestion || !internalQuestion.properties) {
-    return [ undefined, undefined, undefined, undefined ];
+    return [undefined, undefined, undefined, undefined];
   }
 
   const {
@@ -489,8 +489,8 @@ function getFilteredDatasetRecords(
   return !datasetRecords || !questionNamesByDatasetAndCategory
     ? undefined
     : !showingOneRecord
-    ? datasetRecords.filter(({ isPreferred }) => !preferredOrganismsEnabled || isPreferred)
-    : datasetRecords.filter(record => record === selectedDataSetRecord)
+      ? datasetRecords.filter(({ isPreferred }) => !preferredOrganismsEnabled || isPreferred)
+      : datasetRecords.filter(record => record === selectedDataSetRecord)
 }
 
 function getAnswerSpec(datasetCategory: string, datasetSubtype: string) {
@@ -511,7 +511,7 @@ const REPORT_CONFIG = {
     "display_name",
     "organism_prefix",
     "short_attribution",
-    "dataset_id", 
+    "dataset_id",
     "summary",
     "description",
     "build_number_introduced"
@@ -540,8 +540,8 @@ function getInternalQuestions(answer: Answer, outputRecordClassName: string) {
     )
     .filter(
       (reference): reference is Record<string, AttributeValue> => (
-        reference !== null && 
-        reference.target_type === 'question' && 
+        reference !== null &&
+        reference.target_type === 'question' &&
         reference.record_type === outputRecordClassName
       )
     ).map(
@@ -557,10 +557,10 @@ function getInternalQuestions(answer: Answer, outputRecordClassName: string) {
         }
 
         return {
-          target_name: reference.target_name, 
-          dataset_id: reference.dataset_id, 
-          target_type: reference.target_type, 
-          dataset_name: reference.dataset_name, 
+          target_name: reference.target_name,
+          dataset_id: reference.dataset_id,
+          target_type: reference.target_type,
+          dataset_name: reference.dataset_name,
           record_type: reference.record_type
         };
       }
@@ -568,7 +568,7 @@ function getInternalQuestions(answer: Answer, outputRecordClassName: string) {
 }
 
 function getDatasetRecords(
-  answer: Answer, 
+  answer: Answer,
   {
     displayCategoriesByName,
     displayCategoryOrder,
@@ -579,58 +579,58 @@ function getDatasetRecords(
   const preferredOrganismsSet = new Set(preferredOrganisms);
 
   return answer.records
-  .filter(
-    ({ attributes: { dataset_name } }) => 
-      Object.keys(questionNamesByDatasetAndCategory[`${dataset_name}`] || {}).length > 0
+    .filter(
+      ({ attributes: { dataset_name } }) =>
+        Object.keys(questionNamesByDatasetAndCategory[`${dataset_name}`] || {}).length > 0
     )
-  .map(
-    datasetRecord => {
-      if (
-        typeof datasetRecord.attributes.dataset_name !== 'string' ||
-        typeof datasetRecord.attributes.display_name !== 'string' ||
-        typeof datasetRecord.attributes.organism_prefix !== 'string' ||
-        typeof datasetRecord.attributes.short_attribution !== 'string' ||
-        typeof datasetRecord.attributes.dataset_id !== 'string' ||
-        typeof datasetRecord.attributes.summary !== 'string' ||
-        typeof datasetRecord.attributes.build_number_introduced !== 'string'
-      ) {
-        throw new Error(`Dataset record ${JSON.stringify(datasetRecord)} is missing required attribute fields`);
-      }
+    .map(
+      datasetRecord => {
+        if (
+          typeof datasetRecord.attributes.dataset_name !== 'string' ||
+          typeof datasetRecord.attributes.display_name !== 'string' ||
+          typeof datasetRecord.attributes.organism_prefix !== 'string' ||
+          typeof datasetRecord.attributes.short_attribution !== 'string' ||
+          typeof datasetRecord.attributes.dataset_id !== 'string' ||
+          typeof datasetRecord.attributes.summary !== 'string' ||
+          typeof datasetRecord.attributes.build_number_introduced !== 'string'
+        ) {
+          throw new Error(`Dataset record ${JSON.stringify(datasetRecord)} is missing required attribute fields`);
+        }
 
-      if (datasetRecord.tableErrors.includes('Publications')) {
-        throw new Error(`Failed to resolve Publications table for record ${JSON.stringify(datasetRecord)}`);
-      }
+        if (datasetRecord.tableErrors.includes('Publications')) {
+          throw new Error(`Failed to resolve Publications table for record ${JSON.stringify(datasetRecord)}`);
+        }
 
-      return {
-        dataset_name: datasetRecord.attributes.dataset_name,
-        display_name: `${datasetRecord.attributes.display_name} (${datasetRecord.attributes.short_attribution})`,
-        organism_prefix: datasetRecord.attributes.organism_prefix,
-        dataset_id: datasetRecord.attributes.dataset_id,
-        summary: datasetRecord.attributes.summary,
-        build_number_introduced: datasetRecord.attributes.build_number_introduced,
-        publications: datasetRecord.tables.Publications.map(
-          ({ pubmed_link }) => { 
-            if (pubmed_link === null || typeof pubmed_link === 'string') {
-              throw new Error(`Pubmed link ${JSON.stringify(pubmed_link)} is invalid - expected a LinkAttributeValue`);
+        return {
+          dataset_name: datasetRecord.attributes.dataset_name,
+          display_name: `${datasetRecord.attributes.display_name} (${datasetRecord.attributes.short_attribution})`,
+          organism_prefix: datasetRecord.attributes.organism_prefix,
+          dataset_id: datasetRecord.attributes.dataset_id,
+          summary: datasetRecord.attributes.summary,
+          build_number_introduced: datasetRecord.attributes.build_number_introduced,
+          publications: datasetRecord.tables.Publications.map(
+            ({ pubmed_link }) => {
+              if (pubmed_link === null || typeof pubmed_link === 'string') {
+                throw new Error(`Pubmed link ${JSON.stringify(pubmed_link)} is invalid - expected a LinkAttributeValue`);
+              }
+
+              return pubmed_link;
             }
-
-            return pubmed_link;
-          }
-        ),
-        searches: displayCategoryOrder
-          .filter(
-            categoryName => getCategorySearchName(
-              questionNamesByDatasetAndCategory,
-              `${datasetRecord.attributes.dataset_name}`,
-              categoryName
+          ),
+          searches: displayCategoryOrder
+            .filter(
+              categoryName => getCategorySearchName(
+                questionNamesByDatasetAndCategory,
+                `${datasetRecord.attributes.dataset_name}`,
+                categoryName
+              )
             )
-          )
-          .map(categoryName => displayCategoriesByName[categoryName].shortDisplayName)
-          .join(' '),
-        isPreferred: isPreferredDataset(datasetRecord, preferredOrganismsSet)
-      };
-    },
-  );
+            .map(categoryName => displayCategoriesByName[categoryName].shortDisplayName)
+            .join(' '),
+          isPreferred: isPreferredDataset(datasetRecord, preferredOrganismsSet)
+        };
+      },
+    );
 }
 
 function getDisplayCategoryMetadata(root: CategoryTreeNode, internalQuestions: InternalQuestionRecord[]) {
@@ -647,15 +647,15 @@ function getDisplayCategoryMetadata(root: CategoryTreeNode, internalQuestions: I
 
   const displayCategoriesByName: Record<string, DisplayCategory> = {};
 
-  function traverse(node: CategoryTreeNode, searchCategoryNode?: CategoryTreeNode) {  
+  function traverse(node: CategoryTreeNode, searchCategoryNode?: CategoryTreeNode) {
     const label = getPropertyValue('label', node) || '';
     const scope = getPropertyValues('scope', node) || [];
     const questionName = getPropertyValue('name', node) || '';
     const targetType = getPropertyValue('targetType', node) || '';
 
     if (
-      scope.includes('webservice') && 
-      targetType === 'search' && 
+      scope.includes('webservice') &&
+      targetType === 'search' &&
       datasetNamesByQuestion[questionName] &&
       searchCategoryNode
     ) {
@@ -677,8 +677,8 @@ function getDisplayCategoryMetadata(root: CategoryTreeNode, internalQuestions: I
     const nextSearchCategoryNode = searchCategoryNode
       ? searchCategoryNode
       : label.startsWith('searchCategory')
-      ? node
-      : undefined;
+        ? node
+        : undefined;
 
     node.children.forEach(
       childNode => traverse(childNode, nextSearchCategoryNode)
@@ -690,8 +690,8 @@ function getDisplayCategoryMetadata(root: CategoryTreeNode, internalQuestions: I
   const displayCategoryOrder = Object.keys(displayCategoriesByName).sort();
 
   return {
-    questionNamesByDatasetAndCategory, 
-    displayCategoriesByName, 
+    questionNamesByDatasetAndCategory,
+    displayCategoriesByName,
     displayCategoryOrder
   };
 }
@@ -710,7 +710,7 @@ function makeLinkClickHandler(
   selectedSearchName: string,
   setSelectedSearch: (newSearchName: string) => void
 ) {
-  return function(e: React.MouseEvent) {
+  return function (e: React.MouseEvent) {
     if (
       submissionMetadata.type !== 'create-strategy' ||
       categorySearchName === selectedSearchName
