@@ -41,8 +41,6 @@ import {
   isEqual,
   min,
   max,
-  lte,
-  gte,
   groupBy,
   size,
   head,
@@ -50,7 +48,6 @@ import {
   mapValues,
   map,
   keys,
-  uniqBy,
 } from 'lodash';
 // directly use RadioButtonGroup instead of LinePlotControls
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
@@ -86,10 +83,7 @@ import {
   hasIncompleteCases,
 } from '../../../utils/visualization';
 import { gray } from '../colors';
-import {
-  ColorPaletteDefault,
-  ColorPaletteDark,
-} from '@veupathdb/components/lib/types/plots/addOns';
+import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 // import variable's metadata-based independent axis range utils
 import { defaultIndependentAxisRange } from '../../../utils/default-independent-axis-range';
 import { axisRangeMargin } from '../../../utils/axis-range-margin';
@@ -103,9 +97,6 @@ import PlotLegend, {
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { isFaceted, isTimeDelta } from '@veupathdb/components/lib/types/guards';
 import FacetedLinePlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedLinePlot';
-// for converting rgb() to rgba()
-import * as ColorMath from 'color-math';
-//DKDK a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
 import { BinSpec, BinWidthSlider } from '../../../types/general';
 import { useVizConfig } from '../../../hooks/visualizations';
