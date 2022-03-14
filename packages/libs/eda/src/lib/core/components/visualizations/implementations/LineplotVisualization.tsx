@@ -859,7 +859,7 @@ function LineplotWithControls({
         </LabelledGroup>
         <LabelledGroup label="Y-axis">
           <Switch
-            label="Show error bars"
+            label="Show error bars (95% C.I.)"
             state={showErrorBars}
             onStateChange={onShowErrorBarsChange}
             disabled={neverShowErrorBars}
