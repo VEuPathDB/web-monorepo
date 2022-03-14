@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { StepAnalysisResultPluginProps } from './StepAnalysisResultsPane'
 import { StepAnalysisEnrichmentResultTable, ColumnSettings } from './StepAnalysisEnrichmentResultTable';
-import Templates from '../../Components/Mesa/Templates';
+import Templates from '../Mesa/Templates';
 
 import './StepAnalysisEnrichmentResult.scss';
 import { Tooltip } from '../../Components';

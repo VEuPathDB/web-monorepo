@@ -32,7 +32,7 @@ import * as ResultPanelActions from 'wdk-client/Actions/ResultPanelActions';
 import * as UnhandledErrorActions from 'wdk-client/Actions/UnhandledErrorActions';
 import * as UserSessionActions from 'wdk-client/Actions/UserSessionActions';
 import * as UserDatasetUploadActions from 'wdk-client/Actions/UserDatasetUploadActions';
-import { StepAnalysisAction } from './Actions/StepAnalysis/StepAnalysisActions';
+import { StepAnalysisAction } from 'wdk-client/Actions/StepAnalysis/StepAnalysisActions';
 
 export {
   AnswerActions,

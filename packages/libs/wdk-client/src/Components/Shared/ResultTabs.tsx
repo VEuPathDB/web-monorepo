@@ -2,7 +2,7 @@ import React from 'react';
 import Tabs from '../Tabs/Tabs';
 import { makeClassNameHelper, wrappable } from '../../Utils/ComponentUtils';
 
-import 'wdk-client/Core/MoveAfterRefactor/Components/Shared/ResultTabs.scss';
+import './ResultTabs.scss';
 import { ResultType } from '../../Utils/WdkResult';
 
 const cx = makeClassNameHelper('wdk-Tab');

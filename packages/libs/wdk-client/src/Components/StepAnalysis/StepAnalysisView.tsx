@@ -4,7 +4,7 @@ import { StepAnalysisSelectedPane, StepAnalysisSelectedPaneStateProps } from './
 import { LoadingOverlay } from '../../Components';
 import { StepAnalysisType } from '../../Utils/StepAnalysisUtils';
 
-import 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisView.scss';
+import './StepAnalysisView.scss';
 
 export type StepAnalysisStateProps = StepAnalysisUnopenedPaneTypedProps | StepAnalysisLoadingMenuPaneTypedProps | StepAnalysisMenuPaneTypedProps | StepAnalysisSelectedPaneTypedProps;
 

@@ -21,7 +21,7 @@ import * as ReporterUtils from 'wdk-client/Views/ReporterForm/reporterUtils';
 import * as FilterParamUtils from 'wdk-client/Views/Question/Params/FilterParamNew/FilterParamUtils';
 import * as WdkMiddleware from 'wdk-client/Core/WdkMiddleware';
 import * as SearchUtils from 'wdk-client/Utils/SearchUtils';
-import * as StepAnalysisResults from '../Components/StepAnalysis/Utils/StepAnalysisResults';
+import * as StepAnalysisResults from 'wdk-client/Components/StepAnalysis/Utils/StepAnalysisResults';
 
 export {
   Actions,
