@@ -2,10 +2,6 @@ import React from 'react';
 import { IconAlt as Icon } from '@veupathdb/wdk-client/lib/Components';
 
 class UserDatasetEmptyState extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const { message } = this.props;
     return (

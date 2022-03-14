@@ -230,7 +230,7 @@ class UserDatasetSharingModal extends React.Component {
 
   renderDatasetItem(userDataset) {
     const { sharedWith, id, meta } = userDataset;
-    const { name, summary } = meta;
+    const { name } = meta;
     const isOwner = this.isMyDataset(userDataset);
     const { deselectDataset } = this.props;
 
@@ -276,7 +276,7 @@ class UserDatasetSharingModal extends React.Component {
   }
 
   renderRecipientItem(recipient, index) {
-    const { email, verified, id, error } = recipient;
+    const { email, verified, error } = recipient;
     const invalid = verified === false;
     const userIcon =
       verified === null
@@ -352,7 +352,6 @@ class UserDatasetSharingModal extends React.Component {
     const datasets = this.getShareableDatasets();
     if (!datasets.length) return;
     const { shareUserDatasets } = this.props;
-    const datasetIds = datasets.map(({ id }) => id);
 
     this.setState({ processing: true }, () => {
       shareUserDatasets(
@@ -407,7 +406,6 @@ class UserDatasetSharingModal extends React.Component {
   }
 
   renderSharingButtons() {
-    const { submitShare } = this;
     const datasets = this.getShareableDatasets();
     const recipients = this.getValidRecipients();
 

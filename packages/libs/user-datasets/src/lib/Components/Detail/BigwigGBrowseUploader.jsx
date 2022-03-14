@@ -13,7 +13,7 @@ class BigwigGBrowseUploader extends React.Component {
     const GBrowseUrl = this.getGBrowseUrl();
     return (
       <React.Fragment>
-        <a href={GBrowseUrl} target="_blank">
+        <a href={GBrowseUrl} target="_blank" rel="noreferrer">
           <button className="btn btn-slim">
             View in Genome Browser <Icon fa="chevron-circle-right right-side" />
           </button>
@@ -23,15 +23,7 @@ class BigwigGBrowseUploader extends React.Component {
   }
 
   getGBrowseUrl() {
-    const {
-      rootUrl,
-      projectId,
-      sequenceId,
-      trackName,
-      genome,
-      datasetName,
-      datafileName,
-    } = this.props;
+    const { sequenceId, genome, datasetName, datafileName } = this.props;
     var jbrowseTrackName = datasetName + ' ' + datafileName;
     return `/a/jbrowse/index.html?data=/a/service/jbrowse/tracks/${genome}&tracks=gene,${
       jbrowseTrackName || ''

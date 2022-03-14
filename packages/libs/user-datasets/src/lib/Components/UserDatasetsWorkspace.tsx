@@ -72,7 +72,7 @@ function UserDatasetsWorkspace(props: Props) {
             disclaimerProps={{
               toDoWhatMessage: `To upload your dataset`,
               extraParagraphContent:
-                Object.entries(props.urlParams).length == 0 ? undefined : (
+                Object.entries(props.urlParams).length === 0 ? undefined : (
                   <div>
                     Afterwards, you will be taken back to an upload page with
                     these details:

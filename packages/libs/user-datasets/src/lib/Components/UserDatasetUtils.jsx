@@ -10,7 +10,6 @@ export function makeClassifier(...classNames) {
 export const quotaSize = 10737418240; // 10 G
 
 export function normalizePercentage(value) {
-  const parsed = parseFloat(value);
   return Math.floor(value * 100) / 100;
 }
 

@@ -126,7 +126,6 @@ class UserDatasetDetail extends React.Component {
       id,
       type,
       meta,
-      projects,
       size,
       percentQuotaUsed,
       owner,
@@ -272,10 +271,6 @@ class UserDatasetDetail extends React.Component {
   }
 
   renderHeaderSection() {
-    const { userDataset } = this.props;
-    const { meta } = userDataset;
-    const attributes = this.getAttributes();
-
     const AllLink = this.renderAllDatasetsLink;
     const AttributeList = this.renderAttributeList;
     const DatasetActions = this.renderDatasetActions;
@@ -321,7 +316,6 @@ class UserDatasetDetail extends React.Component {
   }
 
   renderDatasetActions() {
-    const { userDataset } = this.props;
     const isOwner = this.isMyDataset();
     return (
       <div className={classify('Actions')}>
@@ -379,16 +373,7 @@ class UserDatasetDetail extends React.Component {
 
   getFileTableColumns() {
     const { userDataset, rootUrl } = this.props;
-    const { datafiles, type, ownerUserId, id } = userDataset;
-    const trackData = type.data;
-    const shouldShowGBrowseTrackUpload =
-      Array.isArray(datafiles) &&
-      Array.isArray(trackData) &&
-      datafiles.some(({ name }) => {
-        return trackData.find(
-          (uploadableFile) => uploadableFile.dataFilename === name
-        );
-      });
+    const { id } = userDataset;
 
     return [
       {
@@ -416,7 +401,12 @@ class UserDatasetDetail extends React.Component {
           const { name } = row;
           const downloadUrl = rootUrl + getDownloadUrl(id, name);
           return (
-            <a href={downloadUrl} target="_blank" title="Download this file">
+            <a
+              href={downloadUrl}
+              target="_blank"
+              rel="noreferrer"
+              title="Download this file"
+            >
               <button className="btn btn-info">
                 <Icon fa="save" className="left-side" /> Download
               </button>
