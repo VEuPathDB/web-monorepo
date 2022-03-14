@@ -1195,7 +1195,19 @@ function processInputData(
   });
 
   const xValues = dataSetProcess.flatMap<string | number>((series) => series.x);
-  const yValues = dataSetProcess.flatMap<string | number>((series) => series.y);
+  // get all values of y (including error bars if present) in a kind of clunky way...
+  const yValues = dataSetProcess
+    .flatMap<string | number>((series) => series.y)
+    .concat(
+      dataSetProcess
+        .flatMap((series) => series.yErrorBarLower ?? [])
+        .filter((val): val is number | string => val != null)
+    )
+    .concat(
+      dataSetProcess
+        .flatMap((series) => series.yErrorBarUpper ?? [])
+        .filter((val): val is number | string => val != null)
+    );
 
   return {
     dataSetProcess: {
