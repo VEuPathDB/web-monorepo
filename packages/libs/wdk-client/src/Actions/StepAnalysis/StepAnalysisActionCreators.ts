@@ -51,7 +51,7 @@ import {
   ToggleParameters,
   RunAnalysisAction
 } from './StepAnalysisActions';
-import { StepAnalysisType } from '../../../../Utils/StepAnalysisUtils';
+import { StepAnalysisType } from '../../Utils/StepAnalysisUtils';
 
 export const startLoadingTabListing = (strategyId: number, stepId: number): StartLoadingTabListingAction => ({
   type: START_LOADING_TAB_LISTING,

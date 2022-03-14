@@ -1,11 +1,11 @@
 import { Component, Fragment } from 'react';
 
-import Mesa, { MesaState, Utils as MesaUtils } from '../../../../Components/Mesa';
-import { RealTimeSearchBox } from '../../../../Components';
+import Mesa, { MesaState, Utils as MesaUtils } from '../Mesa';
+import { RealTimeSearchBox } from '../../Components';
 import React from 'react';
-import { htmlStringValue, numericValue } from '../../../../Components/Mesa/Utils/Utils';
+import { htmlStringValue, numericValue } from '../Mesa/Utils/Utils';
 import { compose, debounce } from 'lodash/fp';
-import { MesaColumn } from 'wdk-client/Core/CommonTypes';
+import { MesaColumn } from '../../Core/CommonTypes';
 
 const simpleFilterPredicateFactory = (searchQuery: string) => (row: Record<string, string>) =>
   Object.values(row).some(entry => `${entry}`.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -41,29 +41,29 @@ export class StepAnalysisEnrichmentResultTable<R = Record<string, any>> extends 
     this.state = MesaState.create({
       rows: this.props.rows,
       columns: this.props.columns,
-      options: 
-        this.props.fixedTableHeader 
+      options:
+        this.props.fixedTableHeader
           ? {
-              showCount: this.props.showCount === undefined 
-                ? true 
-                : this.props.showCount,
-              toolbar: true
-            }
+            showCount: this.props.showCount === undefined
+              ? true
+              : this.props.showCount,
+            toolbar: true
+          }
           : {
-              showCount: this.props.showCount === undefined 
-                ? true 
-                : this.props.showCount,
-              toolbar: true,
-              useStickyHeader: true,
-              tableBodyMaxHeight: '80vh'
-            },
+            showCount: this.props.showCount === undefined
+              ? true
+              : this.props.showCount,
+            toolbar: true,
+            useStickyHeader: true,
+            tableBodyMaxHeight: '80vh'
+          },
       uiState: {
         searchQuery: this.props.initialSearchQuery || '',
         sort: {
           columnKey: this.props.initialSortColumnKey || null,
           direction: this.props.initialSortDirection || 'asc'
         },
-        pagination: this.props.pagination 
+        pagination: this.props.pagination
           ? {
             currentPage: 1,
             totalRows: this.props.rows.length,
@@ -82,7 +82,7 @@ export class StepAnalysisEnrichmentResultTable<R = Record<string, any>> extends 
   componentDidUpdate(prevProps: StepAnalysisEnrichmentResultTableProps<R>) {
     if (prevProps !== this.props) {
       this.setState(
-        (prevState: any, props: StepAnalysisEnrichmentResultTableProps<R>) => 
+        (prevState: any, props: StepAnalysisEnrichmentResultTableProps<R>) =>
           MesaState.setColumns(
             MesaState.setRows(prevState, props.rows),
             props.columns
@@ -153,29 +153,29 @@ export class StepAnalysisEnrichmentResultTable<R = Record<string, any>> extends 
       }
     );
 
-    const { currentPage = 1, rowsPerPage = 20 } = MesaState.getUiState(filteredState).pagination || { };
+    const { currentPage = 1, rowsPerPage = 20 } = MesaState.getUiState(filteredState).pagination || {};
     const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
     const newCurrentPage = Math.min(currentPage, totalPages);
 
     const pagedRows = filteredRows.slice((newCurrentPage - 1) * rowsPerPage, newCurrentPage * rowsPerPage);
-    const pagedState = MesaState.getUiState(filteredState).pagination 
+    const pagedState = MesaState.getUiState(filteredState).pagination
       ? setUiState(
-          setFilteredRows(filterCountedState, pagedRows),
-          {
-            ...MesaState.getUiState(filterCountedState),
-            pagination: {
-              ...MesaState.getUiState(filterCountedState).pagination,
-              currentPage: newCurrentPage,
-              totalPages,
-              totalRows: allRows.length
-            }
+        setFilteredRows(filterCountedState, pagedRows),
+        {
+          ...MesaState.getUiState(filterCountedState),
+          pagination: {
+            ...MesaState.getUiState(filterCountedState).pagination,
+            currentPage: newCurrentPage,
+            totalPages,
+            totalRows: allRows.length
           }
+        }
       )
       : filterCountedState;
-  
+
     const { sortType = 'text' } = getColumns(pagedState).find(({ key }) => key === sortColumnKey) || {};
     const sortMethod = sortTypes[sortType] || sortTypes['text'];
-    
+
     const unsortedRows = getFilteredRows(pagedState);
     const sortedRows = sortColumnKey === null
       ? unsortedRows

@@ -4,14 +4,14 @@ import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { requestDeleteStrategy, requestDuplicateStrategy, requestPatchStrategyProperties, requestRemoveStepFromStepTree, requestStrategy, requestUpdateStepProperties } from 'wdk-client/Actions/StrategyActions';
 import { nestStrategy, setInsertStepWizardVisibility, unnestStrategy, setReviseFormVisibility, openStrategyPanel, closeStrategyPanel } from 'wdk-client/Actions/StrategyPanelActions';
-import { createNewTab } from 'wdk-client/Core/MoveAfterRefactor/Actions/StepAnalysis/StepAnalysisActionCreators';
+import { createNewTab } from '../Actions/StepAnalysis/StepAnalysisActionCreators';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import { Step, StepTree, StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import StrategyPanel from 'wdk-client/Views/Strategy/StrategyPanel';
 import { PartialUiStepTree, AddType } from 'wdk-client/Views/Strategy/Types';
-import {removeFromOpenedStrategies} from 'wdk-client/Actions/StrategyWorkspaceActions';
-import {transitionToInternalPage} from 'wdk-client/Actions/RouterActions';
+import { removeFromOpenedStrategies } from 'wdk-client/Actions/StrategyWorkspaceActions';
+import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
 
 interface OwnProps {
   viewId: string;
@@ -101,7 +101,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): MappedDispatch
       type: 'ANALYSIS_MENU_STATE',
       displayName: 'New Analysis',
       status: 'AWAITING_USER_CHOICE',
-      errorMessage: null 
+      errorMessage: null
     }),
     onMakeNestedStrategy: (branchStepId: number) => nestStrategy(viewId, branchStepId),
     onMakeUnnestedStrategy: (branchStepId: number) => unnestStrategy(viewId, branchStepId),
@@ -118,7 +118,7 @@ function StrategyPanelController(props: Props) {
   return (
     <StrategyPanel
       {...props}
-      onDeleteStep={props.strategy == null ? () => {} : partial(props.onDeleteStep, props.strategy.stepTree)}
+      onDeleteStep={props.strategy == null ? () => { } : partial(props.onDeleteStep, props.strategy.stepTree)}
     />
   );
 }
@@ -141,7 +141,7 @@ function makeUiStepTree(
     '#A00000', // brown
     '#A0A000', // green
   ]);
-  
+
   return _recurse(strategy.stepTree).uiStepTree;
 
   type UiStepTreeMetadata = {
@@ -197,6 +197,6 @@ function makeUiStepTree(
  * Returns an iterable that cycles through the listed colors infinitely
  */
 function* colors(choices: string[]) {
-  while(true) yield* choices;
+  while (true) yield* choices;
   return undefined; // needed to prevent typescript inferring return type of void
 }

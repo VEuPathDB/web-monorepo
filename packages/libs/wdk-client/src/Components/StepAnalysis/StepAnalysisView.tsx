@@ -1,10 +1,10 @@
 import React, { Fragment, useEffect } from 'react';
 import { StepAnalysisMenuPaneProps, StepAnalysisMenuPane } from './StepAnalysisMenuPane';
 import { StepAnalysisSelectedPane, StepAnalysisSelectedPaneStateProps } from './StepAnalysisSelectedPane';
-import { LoadingOverlay } from '../../../../Components';
-import { StepAnalysisType } from '../../../../Utils/StepAnalysisUtils';
+import { LoadingOverlay } from '../../Components';
+import { StepAnalysisType } from '../../Utils/StepAnalysisUtils';
 
-import 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisView.scss';
+import './StepAnalysisView.scss';
 
 export type StepAnalysisStateProps = StepAnalysisUnopenedPaneTypedProps | StepAnalysisLoadingMenuPaneTypedProps | StepAnalysisMenuPaneTypedProps | StepAnalysisSelectedPaneTypedProps;
 
@@ -67,11 +67,11 @@ export const StepAnalysisView: React.SFC<StepAnalysisStateProps & StepAnalysisEv
       }
       {
         props.type === 'analysis-menu' &&
-        <StepAnalysisMenuPane { ...props } />
+        <StepAnalysisMenuPane {...props} />
       }
       {
         props.type === 'selected-analysis' &&
-        <StepAnalysisSelectedPane { ...props } />
+        <StepAnalysisSelectedPane {...props} />
       }
     </Fragment>
   )

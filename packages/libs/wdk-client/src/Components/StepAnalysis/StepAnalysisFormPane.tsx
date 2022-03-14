@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { StepAnalysisErrorsPane } from './StepAnalysisErrorsPane';
-import { CollapsibleSection } from 'wdk-client/Components';
-import { Parameter } from 'wdk-client/Utils/WdkModel';
+import { CollapsibleSection } from '../../Components';
+import { Parameter } from '../../Utils/WdkModel';
 
 type StepAnalysisFormPaneProps = StepAnalysisFormPluginProps & {
   hasParameters: boolean;
@@ -62,12 +62,12 @@ export const StepAnalysisFormPane: React.SFC<StepAnalysisFormPaneProps> = ({
       : (
         <Fragment>
           <div style={{ textAlign: "center" }}>
-              <input type="submit" onClick={onFormSubmit} value="Reload Analysis"/>
+            <input type="submit" onClick={onFormSubmit} value="Reload Analysis" />
             <div style={{ fontStyle: "italic" }}>
               The analysis results will be shown below.
             </div>
           </div>
-          <hr/>
+          <hr />
         </Fragment>
       )
     }

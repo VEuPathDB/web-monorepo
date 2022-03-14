@@ -1,11 +1,11 @@
 import React, { ReactNode } from 'react';
-import { StepAnalysisConfig } from '../../../../Utils/StepAnalysisUtils';
+import { StepAnalysisConfig } from '../../Utils/StepAnalysisUtils';
 
 export type StepAnalysisResultPaneProps = StepAnalysisResultState & {
   resultRenderer: (props: StepAnalysisResultPluginProps) => React.ReactNode;
 };
 
-export type StepAnalysisResultState = ({ type: 'complete-result' } & CompleteResultState) | ({ type: 'incomplete-result'} & IncompleteResultState);
+export type StepAnalysisResultState = ({ type: 'complete-result' } & CompleteResultState) | ({ type: 'incomplete-result' } & IncompleteResultState);
 
 export type StepAnalysisResultPluginProps = CompleteResultState;
 

@@ -4,7 +4,7 @@ import { StepAnalysisDescription } from './StepAnalysisDescription';
 import { StepAnalysisFormPane, StepAnalysisFormPluginState, StepAnalysisFormPluginProps } from './StepAnalysisFormPane';
 import { StepAnalysisResultsPane, StepAnalysisResultState, StepAnalysisResultPluginProps } from './StepAnalysisResultsPane';
 import { StepAnalysisEventHandlers } from './StepAnalysisView';
-import { LoadingOverlay } from 'wdk-client/Components';
+import { LoadingOverlay } from '../../Components';
 
 export type StepAnalysisSelectedPaneProps = StepAnalysisSelectedPaneStateProps & StepAnalysisEventHandlers;
 
@@ -57,16 +57,16 @@ export const StepAnalysisSelectedPane: React.SFC<StepAnalysisSelectedPaneProps> 
         <LoadingOverlay>Updating analysis...</LoadingOverlay>
       )}
       <div>
-        <StepAnalysisLinks 
-          renameAnalysis={renameAnalysis} 
-          duplicateAnalysis={duplicateAnalysis} 
+        <StepAnalysisLinks
+          renameAnalysis={renameAnalysis}
+          duplicateAnalysis={duplicateAnalysis}
         />
         {/* FIXME Make this configurable */ formState.hasParameters &&
           <>
             <h2 id="step-analysis-title">{analysisName}</h2>
-            <StepAnalysisDescription 
-              {...descriptionState} 
-              toggleDescription={toggleDescription} 
+            <StepAnalysisDescription
+              {...descriptionState}
+              toggleDescription={toggleDescription}
             />
           </>
         }

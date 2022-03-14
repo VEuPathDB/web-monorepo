@@ -3,16 +3,16 @@ import { Link } from 'react-router-dom';
 import { defaultMemoize } from 'reselect';
 
 import { EagerlyLoadedTooltip } from 'wdk-client/Components/Overlays/Tooltip';
-import { ColumnSettings, StepAnalysisEnrichmentResultTable } from 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisEnrichmentResultTable';
+import { ColumnSettings, StepAnalysisEnrichmentResultTable } from '../StepAnalysis/StepAnalysisEnrichmentResultTable';
 import { GenomeSummaryViewReportModel, GenomeViewRegionModel, GenomeViewFeatureModel, GenomeViewSequenceModel } from 'wdk-client/Utils/GenomeSummaryViewUtils';
 import { FeatureTooltip } from 'wdk-client/Components/GenomeSummaryView/FeatureTooltip';
 
 const resultColumnsFactory = defaultMemoize((
-    displayName: string, 
-    displayNamePlural: string, 
-    recordType: string,
-    showRegionDialog: (regionId: string) => void
-  ) => [
+  displayName: string,
+  displayNamePlural: string,
+  recordType: string,
+  showRegionDialog: (regionId: string) => void
+) => [
   {
     key: 'sourceId',
     name: 'Sequence',
@@ -63,30 +63,30 @@ const resultColumnsFactory = defaultMemoize((
 ] as ColumnSettings[]);
 
 const locationCellRenderFactory = (
-  displayNamePlural: string, 
+  displayNamePlural: string,
   recordType: string,
   showRegionDialog: (regionId: string) => void
 ) => ({ row: sequence }: { row: GenomeViewSequenceModel }) =>
-  <div className="canvas">
-    <div 
-      className="ruler" 
-      title={`${sequence.sourceId}, length: ${sequence.length}`}
-      style={{ width: `${sequence.percentLength}%` }}
-    >
-    </div>
-    {
-      sequence.regions.map(region =>
-        <Region 
-          key={region.sourceId} 
-          displayNamePlural={displayNamePlural}
-          region={region}
-          sequence={sequence}
-          recordType={recordType}
-          showDialog={() => showRegionDialog(region.sourceId)}
-        />
-      )
-    }
-  </div>;
+    <div className="canvas">
+      <div
+        className="ruler"
+        title={`${sequence.sourceId}, length: ${sequence.length}`}
+        style={{ width: `${sequence.percentLength}%` }}
+      >
+      </div>
+      {
+        sequence.regions.map(region =>
+          <Region
+            key={region.sourceId}
+            displayNamePlural={displayNamePlural}
+            region={region}
+            sequence={sequence}
+            recordType={recordType}
+            showDialog={() => showRegionDialog(region.sourceId)}
+          />
+        )
+      }
+    </div>;
 
 interface RegionProps {
   displayNamePlural: string;
@@ -96,18 +96,18 @@ interface RegionProps {
   showDialog: () => void;
 }
 
-const Region: React.SFC<RegionProps> = ({ 
+const Region: React.SFC<RegionProps> = ({
   displayNamePlural,
   region,
   recordType,
   sequence,
   showDialog
 }) => region.featureCount > 1
-  ? <MultiFeatureRegion displayNamePlural={displayNamePlural} region={region} showDialog={showDialog} />
-  : <SingleFeatureRegion 
-      region={region} 
-      feature={region.features[0]} 
-      recordType={recordType} 
+    ? <MultiFeatureRegion displayNamePlural={displayNamePlural} region={region} showDialog={showDialog} />
+    : <SingleFeatureRegion
+      region={region}
+      feature={region.features[0]}
+      recordType={recordType}
       sequence={sequence}
     />;
 
@@ -121,7 +121,7 @@ const MultiFeatureRegion: React.SFC<MultiFeatureRegionProps> = ({
   displayNamePlural,
   region,
   showDialog
-}) => 
+}) =>
   <div
     className={`region ${region.strand}`}
     onClick={showDialog}
@@ -140,8 +140,8 @@ interface SingleFeatureRegionProps {
   recordType: string;
 }
 
-const SingleFeatureRegion: React.SFC<SingleFeatureRegionProps> = ({ 
-  region, 
+const SingleFeatureRegion: React.SFC<SingleFeatureRegionProps> = ({
+  region,
   feature,
   sequence,
   recordType,
@@ -157,12 +157,12 @@ const SingleFeatureRegion: React.SFC<SingleFeatureRegionProps> = ({
   >
     <div
       className={`feature ${feature.strand}`}
-      style={{ 
+      style={{
         left: `${region.percentStart}%`,
-        width: `${region.percentLength}%` 
+        width: `${region.percentLength}%`
       }}
     >
-    </div> 
+    </div>
   </EagerlyLoadedTooltip>;
 
 interface ResultsTableProps {
@@ -185,10 +185,10 @@ const rowsFactory = defaultMemoize(
       )
 );
 
-export const ResultsTable: React.SFC<ResultsTableProps> = ({ 
+export const ResultsTable: React.SFC<ResultsTableProps> = ({
   emptyChromosomeFilterApplied,
-  report, 
-  displayName, 
+  report,
+  displayName,
   displayNamePlural,
   recordType,
   showRegionDialog

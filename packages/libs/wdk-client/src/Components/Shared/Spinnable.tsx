@@ -3,7 +3,7 @@ import './Spinnable.scss';
 import { flow } from 'lodash';
 import React from 'react';
 import { Spinner, SpinnerOptions } from 'spin.js';
-import { delay, wrappable } from '../../../../Utils/ComponentUtils';
+import { delay, wrappable } from '../../Utils/ComponentUtils';
 
 type Props = {
   /** Additional class name to use for container element */

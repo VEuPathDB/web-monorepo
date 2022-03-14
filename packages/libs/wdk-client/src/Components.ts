@@ -64,7 +64,7 @@ import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox
 import AttributeCell from 'wdk-client/Views/ResultTableSummaryView/AttributeCell';
 import ResultTable from 'wdk-client/Views/ResultTableSummaryView/ResultTable';
 import { ResizableContainer } from 'wdk-client/Components/Display/ResizableContainer';
-import ResultTabs from 'wdk-client/Core/MoveAfterRefactor/Components/Shared/ResultTabs';
+import ResultTabs from 'wdk-client/Components/Shared/ResultTabs';
 import { AddStepPanelView } from 'wdk-client/Views/Strategy/AddStepPanel';
 import StrategyWorkspaceController from 'wdk-client/Controllers/StrategyWorkspaceController';
 import ResultPanelHeader from 'wdk-client/Views/Strategy/ResultPanelHeader';

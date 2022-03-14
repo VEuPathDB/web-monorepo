@@ -1,5 +1,5 @@
-import { StepAnalysisConfig, StepAnalysisType } from '../../../../Utils/StepAnalysisUtils';
-import { Parameter } from 'wdk-client/Utils/WdkModel';
+import { StepAnalysisConfig, StepAnalysisType } from '../../Utils/StepAnalysisUtils';
+import { Parameter } from '../../Utils/WdkModel';
 
 export const UNINITIALIZED_PANEL_STATE = 'UNINITIALIZED_PANEL_STATE';
 export const ANALYSIS_MENU_STATE = 'ANALYSIS_MENU_STATE';

@@ -1,19 +1,19 @@
 import React, { Fragment } from 'react';
 
 import { createSelector } from 'reselect';
-import { RootState } from 'wdk-client/Core/State/Types';
+import { RootState } from '../../Core/State/Types';
 import { get, escapeRegExp } from 'lodash';
 import { StepAnalysesState, AnalysisPanelState, AnalysisMenuState, UnsavedAnalysisState, UninitializedAnalysisPanelState, SavedAnalysisState } from './StepAnalysisState';
 import { transformPanelState } from './StepAnalysisReducer';
 import { StepAnalysisStateProps } from '../../Components/StepAnalysis/StepAnalysisView';
-import { TabConfig } from 'wdk-client/Core/MoveAfterRefactor/Components/Shared/ResultTabs';
-import { StepAnalysisType } from '../../../../Utils/StepAnalysisUtils';
-import { Question, SummaryViewPluginField, RecordClass } from 'wdk-client/Utils/WdkModel';
-import { ResultPanelState } from 'wdk-client/StoreModules/ResultPanelStoreModule';
-import { UserPreferences } from 'wdk-client/Utils/WdkUser';
-import { prefSpecs } from 'wdk-client/Utils/UserPreferencesUtils';
-import {ResultType} from 'wdk-client/Utils/WdkResult';
-import { Plugin } from 'wdk-client/Utils/ClientPlugin';
+import { TabConfig } from '../../Components/Shared/ResultTabs';
+import { StepAnalysisType } from '../../Utils/StepAnalysisUtils';
+import { Question, SummaryViewPluginField, RecordClass } from '../../Utils/WdkModel';
+import { ResultPanelState } from '../../StoreModules/ResultPanelStoreModule';
+import { UserPreferences } from '../../Utils/WdkUser';
+import { prefSpecs } from '../../Utils/UserPreferencesUtils';
+import { ResultType } from '../../Utils/WdkResult';
+import { Plugin } from '../../Utils/ClientPlugin';
 import { StepAnalysisFormPluginProps } from '../../Components/StepAnalysis/StepAnalysisFormPane';
 import { StepAnalysisResultPluginProps } from '../../Components/StepAnalysis/StepAnalysisResultsPane';
 
@@ -87,7 +87,7 @@ export const defaultSummaryView = createSelector<RootState, Props, UserPreferenc
 
 export const resultPanel = ({ resultPanel }: RootState, { viewId }: Props): ResultPanelState | undefined => resultPanel[viewId];
 
-export const questionsLoaded = ({ globalData: { questions }}: RootState) => questions != null;
+export const questionsLoaded = ({ globalData: { questions } }: RootState) => questions != null;
 
 export const loadingSummaryViewListing = createSelector<RootState, Props, ResultPanelState | undefined, boolean, boolean>(
   resultPanel,
@@ -122,20 +122,20 @@ const internalToExternalAnalysisId = (internalAnalysisId: number, analysisPanelS
   const analysisPanelState = analysisPanelStates[internalAnalysisId];
 
   const externalAnalysisId = (
-    !analysisPanelState || 
+    !analysisPanelState ||
     analysisPanelState.type === 'ANALYSIS_MENU_STATE' ||
     analysisPanelState.type === 'UNSAVED_ANALYSIS_STATE'
   )
     ? null
     : analysisPanelState.type === 'UNINITIALIZED_PANEL_STATE'
-    ? analysisPanelState.analysisId
-    : analysisPanelState.analysisConfig.analysisId;
+      ? analysisPanelState.analysisId
+      : analysisPanelState.analysisConfig.analysisId;
 
   return externalAnalysisId;
 }
 
-type ExternalToInternalTabIdMaps = { 
-  externalToInternalTabId: Record<string, string | number>, 
+type ExternalToInternalTabIdMaps = {
+  externalToInternalTabId: Record<string, string | number>,
   internalToExternalTabId: Record<string | number, string>
 };
 
@@ -150,20 +150,20 @@ export const externalToInternalTabIdMaps = createSelector(
 
         return externalAnalysisId !== null
           ? {
-              externalToInternalAnalysis: {
-                ...memo.externalToInternalAnalysis,
-                [`analysis:${externalAnalysisId}`]: internalAnalysisId
-              },
-              internalToExternalAnalysis: {
-                ...memo.internalToExternalAnalysis,
-                [internalAnalysisId]: `analysis:${externalAnalysisId}`
-              }
+            externalToInternalAnalysis: {
+              ...memo.externalToInternalAnalysis,
+              [`analysis:${externalAnalysisId}`]: internalAnalysisId
+            },
+            internalToExternalAnalysis: {
+              ...memo.internalToExternalAnalysis,
+              [internalAnalysisId]: `analysis:${externalAnalysisId}`
             }
+          }
           : memo;
       },
-      { 
+      {
         externalToInternalAnalysis: {} as Record<string, number>,
-        internalToExternalAnalysis: {} as Record<number, string>, 
+        internalToExternalAnalysis: {} as Record<number, string>,
       }
     );
 
@@ -177,7 +177,7 @@ export const externalToInternalTabIdMaps = createSelector(
           ...memo.internalToExternalSummaryView,
           [internalSummaryViewId]: `summary:${internalSummaryViewId}`
         }
-      }), 
+      }),
       {
         externalToInternalSummaryView: {} as Record<string, string>,
         internalToExternalSummaryView: {} as Record<string, string>,
@@ -360,7 +360,7 @@ const mapUnsavedAnalysisStateToProps = (
     paramValues
   },
   pluginRenderers: {
-    formRenderer: (props: StepAnalysisFormPluginProps) => 
+    formRenderer: (props: StepAnalysisFormPluginProps) =>
       <Plugin<StepAnalysisFormPluginProps>
         context={{
           type: 'stepAnalysisForm',
@@ -368,7 +368,7 @@ const mapUnsavedAnalysisStateToProps = (
         }}
         pluginProps={props}
       />,
-    resultRenderer: (props: StepAnalysisResultPluginProps) => 
+    resultRenderer: (props: StepAnalysisResultPluginProps) =>
       <Plugin<StepAnalysisResultPluginProps>
         context={{
           type: 'stepAnalysisResult',
@@ -423,41 +423,41 @@ const mapSavedAnalysisStateToProps = (
       webAppUrl
     }
     : analysisConfigStatus !== 'ERROR' && (analysisConfig.status === 'PENDING' || analysisConfig.status === 'RUNNING')
-    ? {
-      type: 'incomplete-result',
-      className: 'analysis-pending-pane',
-      header: 'Results Pending...',
-      reason: (
-        <Fragment>
-          The results of this analysis are not yet available.<br/>
+      ? {
+        type: 'incomplete-result',
+        className: 'analysis-pending-pane',
+        header: 'Results Pending...',
+        reason: (
+          <Fragment>
+            The results of this analysis are not yet available.<br />
           We will check again in {pollCountdown} seconds.
-        </Fragment>
-      )
-    }
-    : analysisConfigStatus !== 'ERROR' && (analysisConfig.status === 'CREATED' || analysisConfig.status === 'INVALID' || analysisConfig.status === 'COMPLETE')
-    ? {
-      type: 'incomplete-result',
-      className: 'analysis-pending-pane',
-      header: '',
-      reason: (
-        <Fragment></Fragment>
-      )
-    }
-    : analysisConfigStatus !== 'ERROR'
-    ? {
-      type: 'incomplete-result',
-      className: 'analysis-incomplete-pane',
-      header: 'Results Unavailable:',
-      reason: <Fragment>{reasonTextMap[analysisConfig.status]} </Fragment>
-    }
-    : {
-      type: 'incomplete-result',
-      className: 'analysis-incomplete-pane',
-      header: 'Results Unavailable:',
-      reason: <Fragment>{resultErrorMessage}</Fragment>
-    },
+          </Fragment>
+        )
+      }
+      : analysisConfigStatus !== 'ERROR' && (analysisConfig.status === 'CREATED' || analysisConfig.status === 'INVALID' || analysisConfig.status === 'COMPLETE')
+        ? {
+          type: 'incomplete-result',
+          className: 'analysis-pending-pane',
+          header: '',
+          reason: (
+            <Fragment></Fragment>
+          )
+        }
+        : analysisConfigStatus !== 'ERROR'
+          ? {
+            type: 'incomplete-result',
+            className: 'analysis-incomplete-pane',
+            header: 'Results Unavailable:',
+            reason: <Fragment>{reasonTextMap[analysisConfig.status]} </Fragment>
+          }
+          : {
+            type: 'incomplete-result',
+            className: 'analysis-incomplete-pane',
+            header: 'Results Unavailable:',
+            reason: <Fragment>{resultErrorMessage}</Fragment>
+          },
   pluginRenderers: {
-    formRenderer: (props: StepAnalysisFormPluginProps) => 
+    formRenderer: (props: StepAnalysisFormPluginProps) =>
       <Plugin<StepAnalysisFormPluginProps>
         context={{
           type: 'stepAnalysisForm',
@@ -465,7 +465,7 @@ const mapSavedAnalysisStateToProps = (
         }}
         pluginProps={props}
       />,
-    resultRenderer: (props: StepAnalysisResultPluginProps) => 
+    resultRenderer: (props: StepAnalysisResultPluginProps) =>
       <Plugin<StepAnalysisResultPluginProps>
         context={{
           type: 'stepAnalysisResult',
@@ -524,7 +524,7 @@ const tabSelectorRegexp = new RegExp(`^(${escapeRegExp(SUMMARY_VIEW_TAB_PREFIX)}
 function parseTabSelector(selector: string): TabDetail | undefined {
   const matches = selector.match(tabSelectorRegexp);
   if (matches == null) return;
-  const [ , type, id ] = matches;
+  const [, type, id] = matches;
   return { type, id } as TabDetail;
 }
 

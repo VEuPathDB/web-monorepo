@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tooltip } from '../../../../Components';
+import { Tooltip } from '../../Components';
 import Spinnable from '../Shared/Spinnable';
 import { memoize } from 'lodash/fp';
 
@@ -19,8 +19,8 @@ const TOOLTIP_POSITION = {
 };
 
 export const StepAnalysisTile: React.SFC<StepAnalysisTileProps> = ({
-  shortDescription, 
-  customThumbnailUrl, 
+  shortDescription,
+  customThumbnailUrl,
   displayName,
   inactive,
   newRelease,
@@ -59,14 +59,14 @@ const onKeyDownFactory = memoize((loadChoice: () => void) => (event: React.Keybo
   }
 });
 
-const NOOP = () => {};
+const NOOP = () => { };
 
 const tileStyle = (customThumbnailUrl?: string): React.CSSProperties =>
   customThumbnailUrl
     ? {
       backgroundImage: `url(${customThumbnailUrl})`,
       height: '140px'
-    } 
+    }
     : {
       height: '140px'
     };

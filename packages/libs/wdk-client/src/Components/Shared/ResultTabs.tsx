@@ -1,9 +1,9 @@
 import React from 'react';
-import Tabs from 'wdk-client/Components/Tabs/Tabs';
-import { makeClassNameHelper, wrappable } from 'wdk-client/Utils/ComponentUtils';
+import Tabs from '../Tabs/Tabs';
+import { makeClassNameHelper, wrappable } from '../../Utils/ComponentUtils';
 
-import 'wdk-client/Core/MoveAfterRefactor/Components/Shared/ResultTabs.scss';
-import {ResultType} from 'wdk-client/Utils/WdkResult';
+import './ResultTabs.scss';
+import { ResultType } from '../../Utils/WdkResult';
 
 const cx = makeClassNameHelper('wdk-Tab');
 
@@ -28,13 +28,13 @@ type Props<TabKey extends string> = {
 };
 
 export default wrappable(function ResultTabs<T extends string>({ tabs, ...rest }: Props<T>) {
-  return <Tabs 
+  return <Tabs
     tabs={tabs.map(
       ({ tooltip, display, ...otherOptions }) => ({
         ...otherOptions,
         display: <span title={tooltip}>{display}</span>
       })
     )}
-      {...rest} 
+    {...rest}
   />;
 });

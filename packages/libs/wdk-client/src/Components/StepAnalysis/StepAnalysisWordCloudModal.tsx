@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Dialog } from '../../../../Components';
+import { Dialog } from '../../Components';
 
 interface WordCloudModalProps {
   imgUrl: string;
@@ -15,11 +15,11 @@ export const WordCloudModal: React.SFC<WordCloudModalProps> = ({
   onClose,
   toolName,
 }) => (
-  <Dialog 
-    open={open} 
-    resizable 
-    draggable 
-    onClose={onClose} 
+  <Dialog
+    open={open}
+    resizable
+    draggable
+    onClose={onClose}
     title={`Word Cloud of ${toolName} Results`}
     className="word-cloud-modal"
   >

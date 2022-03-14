@@ -16,7 +16,7 @@ import * as userRegistration from 'wdk-client/StoreModules/UserRegistrationStore
 import * as blastSummaryView from 'wdk-client/StoreModules/BlastSummaryViewStoreModule';
 import * as genomeSummaryView from 'wdk-client/StoreModules/GenomeSummaryViewStoreModule';
 import * as resultTableSummaryView from 'wdk-client/StoreModules/ResultTableSummaryViewStoreModule';
-import * as stepAnalysis from 'wdk-client/Core/MoveAfterRefactor/StoreModules/StepAnalysisStoreModule';
+import * as stepAnalysis from 'wdk-client/StoreModules/StepAnalysisStoreModule';
 import * as wordCloudAnalysis from 'wdk-client/StoreModules/WordCloudAnalysisStoreModule';
 import * as histogramAnalysis from 'wdk-client/StoreModules/HistogramAnalysisStoreModule';
 import * as basket from 'wdk-client/StoreModules/BasketStoreModule';

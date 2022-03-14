@@ -40,7 +40,7 @@ import {
 } from '../../Actions/StepAnalysis/StepAnalysisActions';
 import { ActionsObservable, StateObservable } from 'redux-observable';
 import { Action } from 'redux';
-import { EpicDependencies } from '../../../Store';
+import { EpicDependencies } from '../../Core/Store';
 import { EMPTY, of } from 'rxjs';
 import { map, filter, mergeMap, withLatestFrom, delay, mergeAll } from 'rxjs/operators';
 import {
@@ -59,9 +59,9 @@ import {
   selectTab
 } from '../../Actions/StepAnalysis/StepAnalysisActionCreators';
 
-import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
-import { StepAnalysisType } from 'wdk-client/Utils/StepAnalysisUtils';
-import { InvalidStepValidation, extractParamValues } from 'wdk-client/Utils/WdkUser';
+import { transitionToInternalPage } from '../../Actions/RouterActions';
+import { StepAnalysisType } from '../../Utils/StepAnalysisUtils';
+import { InvalidStepValidation, extractParamValues } from '../../Utils/WdkUser';
 
 export const observeStartLoadingTabListing = (action$: ActionsObservable<Action>, state$: StateObservable<StepAnalysesState>, { wdkService }: EpicDependencies) => {
   return action$.pipe(
@@ -133,11 +133,11 @@ export const observeStartLoadingSavedTab = (action$: ActionsObservable<Action>, 
           }
         );
 
-        switch(analysisConfig.status) {
+        switch (analysisConfig.status) {
           // continue to monitor status
           case 'RUNNING':
           case 'PENDING':
-            return [ finishLoading, checkResultStatus(panelId) ];
+            return [finishLoading, checkResultStatus(panelId)];
 
           // resubmit form for auto-runnable analyses when in state non-error like state
           case 'CREATED':
@@ -146,11 +146,11 @@ export const observeStartLoadingSavedTab = (action$: ActionsObservable<Action>, 
           case 'EXPIRED':
           case 'OUT_OF_DATE':
             if (isAutorun)
-              return [ finishLoading, startFormSubmission(panelId) ];
+              return [finishLoading, startFormSubmission(panelId)];
 
           // just finish for everything else
           default:
-            return [ finishLoading ];
+            return [finishLoading];
         }
 
       }
