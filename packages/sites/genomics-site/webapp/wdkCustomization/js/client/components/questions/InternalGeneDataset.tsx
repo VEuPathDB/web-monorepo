@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 
 import { Loading, Link, Tooltip, HelpIcon, Tabs } from '@veupathdb/wdk-client/lib/Components';
-import { StepAnalysisEnrichmentResultTable as InternalGeneDatasetTable } from '@veupathdb/wdk-client/lib/Components/StepAnalysis/StepAnalysisEnrichmentResultTable';
+import { CommonResultTable as InternalGeneDatasetTable } from '@veupathdb/wdk-client/lib/Components/Shared/CommonResultTable';
 import QuestionController, {
   useSetSearchDocumentTitle,
   OwnProps as Props

@@ -1,16 +1,12 @@
 import React, { Suspense } from 'react';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
-import { 
+import {
   GenomeSummaryViewPlugin,
   BlastSummaryViewPlugin,
   MatchedTranscriptsFilterPlugin,
   ResultTableSummaryViewPlugin,
-  StepAnalysisWordEnrichmentResults,
-  StepAnalysisPathwayEnrichmentResults,
-  StepAnalysisGoEnrichmentResults,
   StepAnalysisEupathExternalResult,
-  StepAnalysisHpiGeneListResults,
 } from '@veupathdb/wdk-client/lib/Plugins';
 import { ClientPluginRegistryEntry } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
 
@@ -26,6 +22,10 @@ import { GenesByOrthologPattern } from './components/questions/GenesByOrthologPa
 import { InternalGeneDataset } from './components/questions/InternalGeneDataset';
 import { hasChromosomeAndSequenceIDXorGroup } from './components/questions/MutuallyExclusiveParams/utils';
 import { CompoundsByFoldChangeForm, GenericFoldChangeForm } from './components/questions/foldChange';
+import { StepAnalysisPathwayEnrichmentResults } from './components/stepAnalysis/StepAnalysisPathwayEnrichmentResults'
+import { StepAnalysisGoEnrichmentResults } from './components/stepAnalysis/StepAnalysisGoEnrichmentResults'
+import { StepAnalysisHpiGeneListResults } from './components/stepAnalysis/StepAnalysisHpiGeneListResults'
+import { StepAnalysisWordEnrichmentResults } from './components/stepAnalysis/StepAnalysisWordEnrichmentResults'
 
 import { isMultiBlastQuestion } from '@veupathdb/multi-blast/lib/utils/pluginConfig';
 
@@ -75,10 +75,10 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
     type: 'summaryView',
     name: 'popset-view',
-    component: () => <div style={{margin: "2em", fontSize: "120%", fontWeight: "bold"}}>
-                       The Popset Isolate Sequences geographical map is not available since Google 
-                         has changed its Maps API products business model.<br/>
-                       We are working on a new and improved map for a future release.<br/>
+    component: () => <div style={{ margin: "2em", fontSize: "120%", fontWeight: "bold" }}>
+      The Popset Isolate Sequences geographical map is not available since Google
+                         has changed its Maps API products business model.<br />
+                       We are working on a new and improved map for a future release.<br />
                        Feel free to <a href='/a/app/contact-us'>contact us</a> with any comments and suggestions.
                      </div>
   },
@@ -101,7 +101,7 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
     type: 'questionController',
     test: isMultiBlastQuestion,
-    component: (props) => 
+    component: (props) =>
       <Suspense fallback={<Loading />}>
         <BlastQuestionController {...props} />
       </Suspense>
@@ -161,7 +161,7 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   },
   {
     type: 'questionForm',
-    test: ({ question }) => 
+    test: ({ question }) =>
       question?.urlSegment.endsWith('BySimilarity') ||
       question?.urlSegment === 'UnifiedBlast',
     component: BlastQuestionForm
