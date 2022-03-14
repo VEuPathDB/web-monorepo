@@ -1,7 +1,7 @@
 import { saveAs } from 'file-saver';
 import { isLeft, map } from 'fp-ts/Either';
-import { array, string, voidType } from 'io-ts';
-import { memoize, omit } from 'lodash';
+import { array, string } from 'io-ts';
+import { identity, memoize, omit } from 'lodash';
 
 import {
   ApiRequest,
@@ -181,7 +181,7 @@ export class BlastApi extends FetchClientWithCredentials {
     return this.taggedFetch({
       path: `${JOBS_PATH}/${jobId}`,
       method: 'POST',
-      transformResponse: ioTransformer(voidType),
+      transformResponse: identity,
     });
   }
 
@@ -219,7 +219,7 @@ export class BlastApi extends FetchClientWithCredentials {
     return this.taggedFetch({
       path: `${REPORTS_PATH}/${reportId}`,
       method: 'POST',
-      transformResponse: ioTransformer(voidType),
+      transformResponse: identity,
     });
   }
 
