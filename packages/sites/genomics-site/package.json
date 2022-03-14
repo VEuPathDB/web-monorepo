@@ -1,13 +1,13 @@
 {
   "name": "apidb",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
     "@types/cytoscape": "3.2.9",
     "@veupathdb/multi-blast": "^1.0.5",
     "@veupathdb/preferred-organisms": "^1.1.9",
-    "@veupathdb/wdk-client": "^0.5.12",
+    "@veupathdb/wdk-client": "^0.5.6",
     "@veupathdb/web-common": "^0.2.3",
     "ciena-dagre": "^1.0.0",
     "cytoscape": "3.2.9",
