@@ -10,7 +10,7 @@ import { MesaColumn } from '../../Core/CommonTypes';
 const simpleFilterPredicateFactory = (searchQuery: string) => (row: Record<string, string>) =>
   Object.values(row).some(entry => `${entry}`.toLowerCase().includes(searchQuery.toLowerCase()));
 
-interface StepAnalysisEnrichmentResultTableProps<R> {
+interface CommonResultTableProps<R> {
   emptyResultMessage: string;
   rows: R[];
   columns: ColumnSettings[];
@@ -30,8 +30,8 @@ export interface ColumnSettings extends MesaColumn {
 }
 
 // TODO Refactor using hooks
-export class StepAnalysisEnrichmentResultTable<R = Record<string, any>> extends Component<StepAnalysisEnrichmentResultTableProps<R>, any> {
-  constructor(props: StepAnalysisEnrichmentResultTableProps<R>) {
+export class CommonResultTable<R = Record<string, any>> extends Component<CommonResultTableProps<R>, any> {
+  constructor(props: CommonResultTableProps<R>) {
     super(props);
     this.handleSearch = debounce(200, this.handleSearch.bind(this));
     this.handleSort = this.handleSort.bind(this);
@@ -79,10 +79,10 @@ export class StepAnalysisEnrichmentResultTable<R = Record<string, any>> extends 
     });
   }
 
-  componentDidUpdate(prevProps: StepAnalysisEnrichmentResultTableProps<R>) {
+  componentDidUpdate(prevProps: CommonResultTableProps<R>) {
     if (prevProps !== this.props) {
       this.setState(
-        (prevState: any, props: StepAnalysisEnrichmentResultTableProps<R>) =>
+        (prevState: any, props: CommonResultTableProps<R>) =>
           MesaState.setColumns(
             MesaState.setRows(prevState, props.rows),
             props.columns

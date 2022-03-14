@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { defaultMemoize } from 'reselect';
 
-import { StepAnalysisEnrichmentResultTable, ColumnSettings } from '../StepAnalysis/StepAnalysisEnrichmentResultTable';
+import { CommonResultTable, ColumnSettings } from '../Shared/CommonResultTable';
 import { GenomeViewRegionModel, useIsPortalSite } from 'wdk-client/Utils/GenomeSummaryViewUtils';
 import { GenomeViewSequence } from 'wdk-client/Utils/WdkModel';
 
@@ -65,7 +65,7 @@ export const FeatureTable: React.SFC<FeatureTableProps> = ({
   const isPortalSite = useIsPortalSite();
 
   return (
-    <StepAnalysisEnrichmentResultTable
+    <CommonResultTable
       rows={region.features}
       columns={featureColumnsFactory(displayName, recordType, sequence, isPortalSite)}
       emptyResultMessage="No Features present in region"
