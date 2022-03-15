@@ -24,6 +24,8 @@ import {
   staffList
 } from './EntityTypes';
 
+import { stubbedPerDataset } from './permission'
+
 // API  defined in https://veupathdb.github.io/service-dataset-access/api.html
 const STAFF_PATH = '/staff';
 const PROVIDERS_PATH = '/dataset-providers';
@@ -219,4 +221,13 @@ function makeQueryString(
   return nonNullParams.length === 0
     ? ''
     : `?${nonNullParams.join('&')}`;
+}
+
+// For legacy sites
+export class StubbedStudyAccessApi extends StudyAccessApi {
+  fetchPermissions = async () => {
+    return {
+      perDataset: stubbedPerDataset,
+    };
+  }
 }

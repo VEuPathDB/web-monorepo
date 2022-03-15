@@ -204,3 +204,31 @@ export function permittedApprovalStatusChanges(oldApprovalStatus: ApprovalStatus
     ? [ 'approved', 'denied' ]
     : [ 'requested', 'approved', 'denied'];
 }
+
+// The following is used for legacy sites (such as MicrobiomeDB) 
+// that would return an empty perDataset obj
+
+const stubbedPermissionEntry: DatasetPermissionEntry = {
+  type: 'end-user',
+  studyId: 'stub',
+  sha1Hash: 'stub-hash',
+  actionAuthorization: {
+    studyMetadata: true,
+    subsetting: true,
+    visualizations: true,
+    resultsFirstPage: true,
+    resultsAll: true,
+  },
+};
+
+export const stubbedPerDataset: Record<string, DatasetPermissionEntry> = new Proxy(
+  {},
+  {
+    get(target, property, receiver) {
+      // Always return the stubbed permission entry,
+      // regardless of which property (dataset id) is requested
+      return stubbedPermissionEntry;
+    },
+  }
+);
+
