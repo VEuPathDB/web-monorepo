@@ -34,7 +34,7 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
   const [collectionVariable, setCollectionVariable] = useState(
     variableDescriptorToString(ABUNDANCE_COLLECTION_VARIABLES[0])
   );
-  const [abundanceMethod, setAbundanceMethod] = useState(ABUNDANCE_METHODS[0]);
+  const [rankingMethod, setRankingMethod] = useState(ABUNDANCE_METHODS[0]);
   const { computationAppOverview, addNewComputation } = props;
   const study = useStudyMetadata();
   const entities = useStudyEntities(study.rootEntity);
@@ -76,8 +76,8 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
         </select>
         <div style={{ justifySelf: 'end' }}>Method: </div>
         <select
-          value={abundanceMethod}
-          onChange={(e) => setAbundanceMethod(e.target.value)}
+          value={rankingMethod}
+          onChange={(e) => setRankingMethod(e.target.value)}
         >
           {ABUNDANCE_METHODS.map((method) => (
             <option value={method}>{method}</option>
@@ -90,7 +90,7 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
               addNewComputation(name, {
                 name: 'RankedAbundanceComputation',
                 collectionVariable: JSON.parse(collectionVariable),
-                abundanceMethod,
+                rankingMethod,
               })
             }
           >
