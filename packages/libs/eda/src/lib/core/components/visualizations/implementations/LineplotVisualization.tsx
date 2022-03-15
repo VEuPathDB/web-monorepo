@@ -41,8 +41,6 @@ import {
   isEqual,
   min,
   max,
-  lte,
-  gte,
   groupBy,
   size,
   head,
@@ -50,7 +48,6 @@ import {
   mapValues,
   map,
   keys,
-  uniqBy,
 } from 'lodash';
 // directly use RadioButtonGroup instead of LinePlotControls
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
@@ -86,10 +83,7 @@ import {
   hasIncompleteCases,
 } from '../../../utils/visualization';
 import { gray } from '../colors';
-import {
-  ColorPaletteDefault,
-  ColorPaletteDark,
-} from '@veupathdb/components/lib/types/plots/addOns';
+import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 // import variable's metadata-based independent axis range utils
 import { defaultIndependentAxisRange } from '../../../utils/default-independent-axis-range';
 import { axisRangeMargin } from '../../../utils/axis-range-margin';
@@ -103,9 +97,6 @@ import PlotLegend, {
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { isFaceted, isTimeDelta } from '@veupathdb/components/lib/types/guards';
 import FacetedLinePlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedLinePlot';
-// for converting rgb() to rgba()
-import * as ColorMath from 'color-math';
-//DKDK a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
 import { BinSpec, BinWidthSlider } from '../../../types/general';
 import { useVizConfig } from '../../../hooks/visualizations';
@@ -868,7 +859,7 @@ function LineplotWithControls({
         </LabelledGroup>
         <LabelledGroup label="Y-axis">
           <Switch
-            label="Show error bars"
+            label="Show error bars (95% C.I.)"
             state={showErrorBars}
             onStateChange={onShowErrorBarsChange}
             disabled={neverShowErrorBars}
@@ -1204,7 +1195,19 @@ function processInputData(
   });
 
   const xValues = dataSetProcess.flatMap<string | number>((series) => series.x);
-  const yValues = dataSetProcess.flatMap<string | number>((series) => series.y);
+  // get all values of y (including error bars if present) in a kind of clunky way...
+  const yValues = dataSetProcess
+    .flatMap<string | number>((series) => series.y)
+    .concat(
+      dataSetProcess
+        .flatMap((series) => series.yErrorBarLower ?? [])
+        .filter((val): val is number | string => val != null)
+    )
+    .concat(
+      dataSetProcess
+        .flatMap((series) => series.yErrorBarUpper ?? [])
+        .filter((val): val is number | string => val != null)
+    );
 
   return {
     dataSetProcess: {
