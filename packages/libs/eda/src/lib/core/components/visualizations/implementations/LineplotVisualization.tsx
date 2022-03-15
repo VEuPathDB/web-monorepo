@@ -88,8 +88,8 @@ import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOn
 import { defaultIndependentAxisRange } from '../../../utils/default-independent-axis-range';
 import { axisRangeMargin } from '../../../utils/axis-range-margin';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
-// util to find dependent axis range
-import { defaultDependentAxisRange } from '../../../utils/default-dependent-axis-range';
+// util to find dependent axis range - changed the name
+import { numberDateDefaultDependentAxisRange } from '../../../utils/default-dependent-axis-range';
 import PluginError from '../PluginError';
 // for custom legend
 import PlotLegend, {
@@ -495,7 +495,7 @@ function LineplotViz(props: VisualizationProps) {
         ? { min: data.value.yMin, max: data.value?.yMax }
         : undefined;
 
-    const defaultDependentRange = defaultDependentAxisRange(
+    const defaultDependentRange = numberDateDefaultDependentAxisRange(
       yAxisVariable,
       'lineplot',
       yMinMaxRange
