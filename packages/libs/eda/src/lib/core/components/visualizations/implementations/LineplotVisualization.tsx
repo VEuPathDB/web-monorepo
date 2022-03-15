@@ -75,6 +75,7 @@ import {
   DateVariable,
   StudyEntity,
   Variable,
+  StringVariable,
 } from '../../../types/study';
 import {
   fixLabelForNumberVariables,
@@ -323,10 +324,13 @@ function LineplotViz(props: VisualizationProps) {
 
   const onUseBinningChange = onChangeHandlerFactory<boolean>('useBinning');
 
-  const xAxisVariableMetadata = useMemo(() => {
-    const { variable } = findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
-    return variable;
-  }, [findEntityAndVariable, vizConfig.xAxisVariable]);
+  const [xAxisVariableMetadata, yAxisVariableMetadata] = useMemo(() => {
+    const { variable: x } =
+      findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
+    const { variable: y } =
+      findEntityAndVariable(vizConfig.yAxisVariable) ?? {};
+    return [x, y];
+  }, [findEntityAndVariable, vizConfig.xAxisVariable, vizConfig.yAxisVariable]);
 
   const outputEntity = useFindOutputEntity(
     dataElementDependencyOrder,
@@ -340,6 +344,7 @@ function LineplotViz(props: VisualizationProps) {
       if (
         outputEntity == null ||
         xAxisVariableMetadata == null ||
+        yAxisVariableMetadata == null ||
         filteredCounts.pending ||
         filteredCounts.value == null
       )
@@ -380,6 +385,7 @@ function LineplotViz(props: VisualizationProps) {
         filters ?? [],
         vizConfig,
         xAxisVariableMetadata,
+        yAxisVariableMetadata,
         outputEntity
       );
 
@@ -407,6 +413,10 @@ function LineplotViz(props: VisualizationProps) {
           response.completeCasesTable
         );
 
+      const xAxisVocabulary = fixLabelsForNumberVariables(
+        xAxisVariable?.vocabulary,
+        xAxisVariable
+      );
       const overlayVocabulary = fixLabelsForNumberVariables(
         overlayVariable?.vocabulary,
         overlayVariable
@@ -422,6 +432,7 @@ function LineplotViz(props: VisualizationProps) {
         independentValueType,
         dependentValueType,
         showMissingOverlay,
+        xAxisVocabulary,
         overlayVocabulary,
         overlayVariable,
         showMissingFacet,
@@ -584,13 +595,17 @@ function LineplotViz(props: VisualizationProps) {
       onBinWidthChange={onBinWidthChange}
       vizType={visualization.descriptor.type}
       interactive={!isFaceted(data.value) ? true : false}
-      showSpinner={data.pending}
+      showSpinner={filteredCounts.pending || data.pending}
       // add plotOptions to control the list of plot options
       plotOptions={['Mean', 'Median']}
       // disabledList prop is used to disable radio options (grayed out)
       disabledList={[]}
       independentValueType={
-        NumberVariable.is(xAxisVariable) ? 'number' : 'date'
+        NumberVariable.is(xAxisVariable)
+          ? 'number'
+          : StringVariable.is(xAxisVariable)
+          ? 'string'
+          : 'date'
       }
       dependentValueType={NumberVariable.is(yAxisVariable) ? 'number' : 'date'}
       legendTitle={variableDisplayWithUnit(overlayVariable)}
@@ -777,6 +792,9 @@ function LineplotWithControls({
         ?.data
     : data;
 
+  const neverUseBinning = data0?.binWidthSlider == null; // for ordinal string x-variables
+  const neverShowErrorBars = lineplotProps.dependentValueType === 'date';
+
   return (
     <>
       <RadioButtonGroup
@@ -824,6 +842,7 @@ function LineplotWithControls({
             label={`Binning ${useBinning ? 'on' : 'off'}`}
             state={useBinning}
             onStateChange={onUseBinningChange}
+            disabled={neverUseBinning}
           />
           <BinWidthControl
             binWidth={data0?.binWidthSlider?.binWidth}
@@ -852,6 +871,7 @@ function LineplotWithControls({
             label="Show error bars"
             state={showErrorBars}
             onStateChange={onShowErrorBarsChange}
+            disabled={neverShowErrorBars}
           />
         </LabelledGroup>
       </div>
@@ -871,6 +891,7 @@ export function lineplotResponseToData(
   independentValueType: string,
   dependentValueType: string,
   showMissingOverlay: boolean = false,
+  xAxisVocabulary: string[] = [],
   overlayVocabulary: string[] = [],
   overlayVariable?: Variable,
   showMissingFacet: boolean = false,
@@ -897,6 +918,7 @@ export function lineplotResponseToData(
       reorderResponseLineplotData(
         // reorder by overlay var within each facet
         group,
+        xAxisVocabulary,
         vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
         overlayVariable
       ),
@@ -961,6 +983,7 @@ function getRequestParams(
   filters: Filter[],
   vizConfig: LineplotConfig,
   xAxisVariableMetadata: Variable,
+  yAxisVariableMetadata: Variable,
   outputEntity?: StudyEntity
 ): getRequestParamsProps {
   const {
@@ -1018,7 +1041,11 @@ function getRequestParams(
       overlayVariable: overlayVariable,
       facetVariable: facetVariable ? [facetVariable] : [],
       showMissingness: showMissingness ? 'TRUE' : 'FALSE',
-      errorBars: vizConfig.showErrorBars ? 'TRUE' : 'FALSE',
+      // no error bars for date variables (error bar toggle switch is also disabled)
+      errorBars:
+        vizConfig.showErrorBars && yAxisVariableMetadata.type !== 'date'
+          ? 'TRUE'
+          : 'FALSE',
     },
   } as LineplotRequestParams;
 }
@@ -1034,8 +1061,8 @@ function processInputData(
   dependentValueType: string,
   showMissingness: boolean,
   hasMissingData: boolean,
-  binSpec: BinSpec,
-  binWidthSlider: BinWidthSlider,
+  binSpec?: BinSpec,
+  binWidthSlider?: BinWidthSlider,
   overlayVariable?: Variable
 ) {
   // set fillAreaValue for densityplot
@@ -1078,25 +1105,34 @@ function processInputData(
       ? 'x'
       : 'circle';
 
-  const binWidth =
-    independentValueType === 'number' || independentValueType === 'integer'
-      ? binSpec.value || 1
-      : {
-          value: binSpec.value || 1,
-          unit: binSpec.units || 'month',
-        };
-  const binWidthRange = (independentValueType === 'number' ||
-  independentValueType === 'integer'
-    ? { min: binWidthSlider.min, max: binWidthSlider.max }
-    : {
-        min: binWidthSlider.min,
-        max:
-          binWidthSlider?.max != null && binWidthSlider?.max > 60
-            ? 60
-            : binWidthSlider.max, // back end seems to fall over with any values >99 but 60 is used in subsetting
-        unit: (binWidth as TimeDelta).unit,
-      }) as NumberOrTimeDeltaRange;
-  const binWidthStep = binWidthSlider.step || 0.1;
+  const binWidthSliderData =
+    binSpec != null && binWidthSlider != null
+      ? {
+          binWidthSlider: {
+            binWidth:
+              independentValueType === 'number' ||
+              independentValueType === 'integer'
+                ? binSpec.value || 1
+                : {
+                    value: binSpec.value || 1,
+                    unit: binSpec.units || 'month',
+                  },
+            binWidthRange: (independentValueType === 'number' ||
+            independentValueType === 'integer'
+              ? { min: binWidthSlider.min, max: binWidthSlider.max }
+              : {
+                  min: binWidthSlider.min,
+                  max:
+                    // back end seems to fall over with any values >99 but 60 is used in subsetting
+                    binWidthSlider?.max != null && binWidthSlider?.max > 60
+                      ? 60
+                      : binWidthSlider.max,
+                  unit: binSpec.units,
+                }) as NumberOrTimeDeltaRange,
+            binWidthStep: binWidthSlider.step || 0.1,
+          },
+        }
+      : {};
 
   let dataSetProcess: LinePlotDataSeries[] = [];
   responseLineplotData.some(function (el, index) {
@@ -1108,21 +1144,26 @@ function processInputData(
       }
 
       // use seriesX when binning is off or binStart when binned, and decode numbers where necessary
-      const xData = binSpec.value === 0 ? el.seriesX : el.binStart;
+      const xData =
+        binSpec == null || binSpec.value === 0 ? el.seriesX : el.binStart;
 
       if (xData == null)
         throw new Error('response did not contain binStart data');
       const seriesX =
-        independentValueType === 'number' ? xData.map(Number) : xData;
+        independentValueType === 'number' || independentValueType === 'integer'
+          ? xData.map(Number)
+          : xData;
 
       // decode numbers in y axis where necessary
       const seriesY =
-        dependentValueType === 'number' ? el.seriesY.map(Number) : el.seriesY;
+        dependentValueType === 'number' || dependentValueType === 'integer'
+          ? el.seriesY.map(Number)
+          : el.seriesY;
 
       dataSetProcess.push({
         x: seriesX.length ? seriesX : (([null] as unknown) as number[]), // [null] hack required to make sure
         y: seriesY.length ? seriesY : (([null] as unknown) as number[]), // Plotly has a legend entry for empty traces
-        ...(binSpec.value ? { binLabel: el.seriesX } : {}),
+        ...(binSpec?.value ? { binLabel: el.seriesX } : {}),
         ...(el.errorBars != null
           ? {
               // TEMPORARY fix for empty arrays coming from back end
@@ -1168,12 +1209,7 @@ function processInputData(
   return {
     dataSetProcess: {
       series: dataSetProcess,
-      binWidthSlider: {
-        valueType: independentValueType,
-        binWidth,
-        binWidthRange,
-        binWidthStep,
-      },
+      ...binWidthSliderData,
     },
     xMin: min(xValues),
     xMax: max(xValues),
@@ -1188,13 +1224,55 @@ function processInputData(
 
 function reorderResponseLineplotData(
   data: LinePlotDataResponse['lineplot']['data'],
+  xAxisVocabulary: string[] = [],
   overlayVocabulary: string[] = [],
   overlayVariable?: Variable
 ) {
+  const xAxisOrderedSeries = data.map((series) => {
+    if (xAxisVocabulary.length > 0) {
+      // for each label in the vocabulary's correct order,
+      // find the index of that label in the provided series' label array
+      const labelIndices = xAxisVocabulary.map((label) =>
+        series.seriesX.indexOf(label)
+      );
+      // now return the data from the other array(s) in the same order
+      // any missing labels will be mapped to `undefined` (indexing an array with -1)
+      // note that series.binStart and series.binEnd are not present when there is an xAxisVocabulary
+      // because no binning can be done on these variables
+      return {
+        ...series,
+        seriesX: labelIndices.map(
+          (i, j) => series.seriesX[i] ?? xAxisVocabulary[j]
+        ),
+        seriesY: labelIndices.map((i) => series.seriesY[i]),
+        ...(series.errorBars != null
+          ? {
+              errorBars: labelIndices.map((i) =>
+                series.errorBars && series.errorBars[i]
+                  ? series.errorBars[i]
+                  : { lowerBound: null, upperBound: null, error: 'no data' }
+              ),
+            }
+          : {}),
+        ...(series.binSampleSize != null
+          ? {
+              binSampleSize: labelIndices.map((i) =>
+                series.binSampleSize && series.binSampleSize[i]
+                  ? series.binSampleSize[i]
+                  : { N: 0 }
+              ),
+            }
+          : {}),
+      };
+    } else {
+      return series;
+    }
+  });
+
   if (overlayVocabulary.length > 0) {
     // for each value in the overlay vocabulary's correct order
     // find the index in the series where series.name equals that value
-    const overlayValues = data
+    const overlayValues = xAxisOrderedSeries
       .map((series) => series.overlayVariableDetails?.value)
       .filter((value) => value != null)
       .map((value) => fixLabelForNumberVariables(value!, overlayVariable));
@@ -1203,7 +1281,7 @@ function reorderResponseLineplotData(
     );
     return overlayIndices.map(
       (i, j) =>
-        data[i] ?? {
+        xAxisOrderedSeries[i] ?? {
           // if there is no series, insert a dummy series
           overlayVariableDetails: {
             value: overlayVocabulary[j],
@@ -1213,6 +1291,6 @@ function reorderResponseLineplotData(
         }
     );
   } else {
-    return data;
+    return xAxisOrderedSeries;
   }
 }
