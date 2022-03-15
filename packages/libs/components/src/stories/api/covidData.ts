@@ -189,6 +189,7 @@ export const binDailyCovidStats = async (
   ]);
 
   const objectToReturn = {
+    valueType: 'number',
     series: binnedData,
     ...(includeExtraDirectives
       ? {
