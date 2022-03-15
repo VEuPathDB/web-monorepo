@@ -9,8 +9,9 @@ import { createComputation } from '../core/components/computations/Utils';
 import { PromiseResult } from '../core/components/Promise';
 import { EntityCounts } from '../core/hooks/entityCounts';
 import { PromiseHookState, usePromise } from '../core/hooks/promise';
-import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { GeoConfig } from '../core/types/geoConfig';
+import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 
 export interface Props {
   analysisState: AnalysisState;
@@ -27,25 +28,24 @@ export function ComputationRoute(props: Props) {
   const { url } = useRouteMatch();
   const history = useHistory();
   const dataClient = useDataClient();
-  const projectId = useWdkService((wdkService) => wdkService.getConfig(), [])
-    ?.projectId;
+  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
+
   const promiseState = usePromise(
     useCallback(async () => {
       let { apps } = await dataClient.getApps();
+      const { projectId } = await wdkService.getConfig();
+      apps = apps.filter((app) => app.projects?.includes(projectId));
 
-      if (projectId) {
-        apps = apps.filter((app) => app.projects?.includes(projectId));
-      }
+      if (apps == null || !apps.length)
+        throw new Error('Could not find any computation app.');
 
-      if (apps == null) throw new Error('Could not find any computation app.');
-
-      return { apps };
-    }, [dataClient, projectId])
+      return apps;
+    }, [dataClient, wdkService])
   );
 
   return (
     <PromiseResult state={promiseState}>
-      {({ apps }) => (
+      {(apps) => (
         <Switch>
           <Route exact path={url}>
             <StartPage baseUrl={url} apps={apps} {...props} />
