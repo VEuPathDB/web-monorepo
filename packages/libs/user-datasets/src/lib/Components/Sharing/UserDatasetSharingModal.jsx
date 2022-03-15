@@ -215,9 +215,13 @@ class UserDatasetSharingModal extends React.Component {
       <div key={index}>
         <span className="faded">Shared with</span> <b>{userDisplayName}</b>{' '}
         {moment(time).fromNow()}
-        <a onClick={() => this.unshareWithUser(userDataset.id, user)}>
+        <button
+          type="button"
+          onClick={() => this.unshareWithUser(userDataset.id, user)}
+          className="link"
+        >
           <Icon fa="times-circle unshareRecipient" />
-        </a>
+        </button>
       </div>
     );
   }
@@ -262,13 +266,14 @@ class UserDatasetSharingModal extends React.Component {
 
         <div className="UserDatasetSharing-Dataset-Actions">
           {typeof deselectDataset !== 'function' ? null : (
-            <a
+            <button
+              type="button"
               title="Unselect this dataset for sharing"
               onClick={() => this.unselectDataset(userDataset)}
-              className="removalLink"
+              className="link removalLink"
             >
               <Icon fa="close" />
-            </a>
+            </button>
           )}
         </div>
       </div>
@@ -302,13 +307,14 @@ class UserDatasetSharingModal extends React.Component {
           )}
         </div>
         <div className="UserDatasetSharing-Recipient-Actions">
-          <a
+          <button
+            type="button"
             onClick={() => this.removeRecipient(recipient)}
             title="Remove this recipient."
-            className="removalLink"
+            className="link removalLink"
           >
             <Icon fa="close" />
-          </a>
+          </button>
         </div>
       </div>
     );
