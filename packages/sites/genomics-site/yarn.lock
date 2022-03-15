@@ -1374,10 +1374,10 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/wdk-client@^0.5.12":
-  version "0.5.12"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.5.12.tgz#fc2bca2e8cfebfa2d6682dea465bc41bcd11b1ec"
-  integrity sha512-Iqyc35og5rG7a/bnQQlj4AYTkYt1VT2YCYBUDu9aRzNs2NLFF+lmJ2XT6YuhOZn/m8vHt+pQiU8U0RsNSQ9T6A==
+"@veupathdb/wdk-client@^0.5.13":
+  version "0.5.13"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.5.13.tgz#3688793e2667c9d1d3c39d3568e00a67632129f0"
+  integrity sha512-f0akno04JhvnOIF3+N10UvRwXcSw9vdDyzu/3PaM6KMcX+3gt1ZS00AMhSSXboKkBjj2aLO0cyJjZB9/TTKkTA==
   dependencies:
     "@types/datatables.net" "^1.10.5"
     "@types/flot" "^0.0.31"
