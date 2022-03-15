@@ -66,10 +66,10 @@ export function getRestrictionMessage ({ action, permissions, study, user }) {
 
 // CHECKERS! =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-export function isAllowedAccess ({ permissions, approvedStudies, action, study }) {
+export function isAllowedAccess ({ permissions, action, study }) {
   const id = getStudyId(study);
   if (sessionStorage.getItem('restriction_override') === 'true') return true;
-  if (isUserApprovedForAction(permissions, approvedStudies, id, action)) return true;
+  if (isUserApprovedForAction(permissions, id, action)) return true;
   // access not allowed, we need to build the modal popup
   return false;
 }
@@ -89,7 +89,7 @@ export function isPrereleaseStudy (access, studyId, user, permissions) {
     if (permissions != null) {
       if (
         access === 'prerelease' &&
-        !isUserFullyApprovedForStudy(permissions, user.properties.approvedStudies, studyId)
+        !isUserFullyApprovedForStudy(permissions, studyId)
       ) {
         return true;
       } else {
@@ -97,7 +97,7 @@ export function isPrereleaseStudy (access, studyId, user, permissions) {
       }
     }
 
-    if ( (access === 'prerelease') && (!user.properties.approvedStudies.includes(studyId))  ) 
+    if (access === 'prerelease') 
       return true;
     else return false;
   }
@@ -113,7 +113,6 @@ export function actionRequiresApproval ({ action, permissions, study, user }) {
 
   return isUserApprovedForAction(
     permissions,
-    user.properties.approvedStudies,
     datasetId,
     action
   ) === false;

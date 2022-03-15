@@ -153,7 +153,6 @@ export function shouldDisplayHistoryTable(userPermissions: UserPermissions) {
 
 export function isUserApprovedForAction(
   userPermissions: UserPermissions,
-  approvedStudies: string[] | undefined,
   datasetId: string,
   action: Action,
 ) {
@@ -170,7 +169,6 @@ export function isUserApprovedForAction(
 
 export function isUserFullyApprovedForStudy(
   userPermissions: UserPermissions,
-  approvedStudies: string[] | undefined,
   datasetId: string
 ) {
 

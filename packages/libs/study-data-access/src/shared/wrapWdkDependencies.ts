@@ -16,35 +16,14 @@ export function areCompatibleWdkDependencies(
 }
 
 export function wrapWdkDependencies(
-  wdkDependencies: WdkDependencies,
-  studyAccessApiUrl?: string
+  studyAccessApiUrl: string,
+  wdkDependencies: WdkDependencies
 ): WdkDependenciesWithStudyAccessApi {
 
   let studyAccessApi = new StudyAccessApi(
-    { baseUrl: studyAccessApiUrl || ''},
+    { baseUrl: studyAccessApiUrl },
     wdkDependencies.wdkService
   );
-
-  // If no studyAccessApiUrl provided, ensure the fetchPermissions always returns 'approved'
-  if (!studyAccessApiUrl) {
-
-    const studyAccessHandler = {
-      
-      get: function(target: StudyAccessApi, propKey: string, receiver: StudyAccessApi){
-        const propValue = target[propKey];
-        if (propValue === "fetchPermissions") {
-          return function(){
-            console.log("intercepting fetchPermissions");
-            return "approved" 
-          }
-        } else {
-          return propValue;
-        }
-      }
-    }
-
-    studyAccessApi = new Proxy(studyAccessApi, studyAccessHandler)
-  }
 
   return {
     ...wdkDependencies,
