@@ -83,6 +83,7 @@ function UserDatasetHelp({ projectId, quotaSize }) {
         <div className="box xs-12">
           <h2>Introduction</h2>
           <iframe
+            title="Introduction to User Datasets"
             src="https://www.youtube-nocookie.com/embed/igQZHjRBqV0"
             frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -93,7 +94,7 @@ function UserDatasetHelp({ projectId, quotaSize }) {
         </div>
         <div className="box xs-12 md-6">
           <h2>VEuPathDB Galaxy</h2>
-          <img src={tutStep2} />
+          <img alt="Screenshoot for step 2 of tutorial" src={tutStep2} />
           <ul>
             <li>
               Use the <b>VEuPathDB Export Tools</b> on the left-side navigation,
@@ -116,7 +117,7 @@ function UserDatasetHelp({ projectId, quotaSize }) {
         </div>
         <div className="box xs-12 md-6">
           <h2>My Data Sets page</h2>
-          <img src={tutStep3} />
+          <img alt="Screenshoot for step 3 of tutorial" src={tutStep3} />
           <ul>
             <li>
               You can now view, manage, share, and utilize your data set in{' '}
