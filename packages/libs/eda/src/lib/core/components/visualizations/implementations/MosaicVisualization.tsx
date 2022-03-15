@@ -9,8 +9,6 @@ import {
 import { ContingencyTable } from '@veupathdb/components/lib/components/ContingencyTable';
 // import { ErrorManagement } from '@veupathdb/components/lib/types/general';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { getOrElse } from 'fp-ts/lib/Either';
-import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import _ from 'lodash';
 import DataClient, {
@@ -52,6 +50,7 @@ import { Variable } from '../../../types/study';
 import PluginError from '../PluginError';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import FacetedMosaicPlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedMosaicPlot';
+import { useVizConfig } from '../../../hooks/visualizations';
 
 const plotContainerStyles = {
   width: 750,
@@ -187,18 +186,11 @@ function MosaicViz(props: Props) {
   );
   const dataClient: DataClient = useDataClient();
 
-  const vizConfig = useMemo(() => {
-    return pipe(
-      MosaicConfig.decode(visualization.descriptor.configuration),
-      getOrElse((): t.TypeOf<typeof MosaicConfig> => createDefaultConfig())
-    );
-  }, [visualization.descriptor.configuration]);
-
-  const updateVizConfig = useCallback(
-    (newConfig: Partial<MosaicConfig>) => {
-      updateConfiguration({ ...vizConfig, ...newConfig });
-    },
-    [updateConfiguration, vizConfig]
+  const [vizConfig, updateVizConfig] = useVizConfig(
+    visualization.descriptor.configuration,
+    MosaicConfig,
+    createDefaultConfig,
+    updateConfiguration
   );
 
   const handleInputVariableChange = useCallback(

@@ -23,10 +23,13 @@ import { VisualizationType } from './VisualizationTypes';
 
 import './Visualizations.scss';
 import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
+import Banner from '@veupathdb/wdk-client/lib/Components/Banners/Banner';
+import { useLocalBackedState } from '@veupathdb/wdk-client/lib/Hooks/LocalBackedState';
 import PlaceholderIcon from './PlaceholderIcon';
 import { Tooltip } from '@material-ui/core';
-import { isEqual } from 'lodash';
+import { isEqual, groupBy } from 'lodash';
 import { EntityCounts } from '../../hooks/entityCounts';
+import { useStudyRecord } from '../../hooks/workspace';
 import { PromiseHookState } from '../../hooks/promise';
 import { GeoConfig } from '../../types/geoConfig';
 
@@ -58,8 +61,43 @@ interface Props {
  */
 export function VisualizationsContainer(props: Props) {
   const { url } = useRouteMatch();
+
+  const currentStudyRecordId = useStudyRecord().id[0].value;
+  const studiesForPerformanceWarning = [
+    'DS_a885240fc4',
+    'DS_5c41b87221',
+    'DS_81ef25b6ac',
+  ];
+  const SHOULD_SHOW_WARNING_KEY = `shouldShowWarning-${currentStudyRecordId}`;
+  const [
+    shouldShowWarning,
+    setShouldShowWarning,
+  ] = useLocalBackedState<boolean>(
+    true,
+    SHOULD_SHOW_WARNING_KEY,
+    (boolean) => String(boolean),
+    (string) => string !== 'false'
+  );
+
+  const handleCloseWarning = () => {
+    setShouldShowWarning(false);
+  };
+
   return (
     <div className={cx()}>
+      {studiesForPerformanceWarning.includes(currentStudyRecordId) &&
+      shouldShowWarning ? (
+        <Banner
+          banner={{
+            type: 'warning',
+            message:
+              'Visualizations might take up to a minute to load because this study has a large amount of data.',
+            pinned: false,
+            intense: false,
+          }}
+          onClose={handleCloseWarning}
+        ></Banner>
+      ) : null}
       <Switch>
         <Route exact path={url}>
           <ConfiguredVisualizations {...props} />
@@ -273,9 +311,14 @@ function FullScreenVisualization(props: Props & { id: string }) {
   const history = useHistory();
   const viz = computation.visualizations.find((v) => v.visualizationId === id);
   const vizType = viz && visualizationTypes[viz.descriptor.type];
-  const overview = visualizationsOverview.find(
-    (v) => v.name === viz?.descriptor.type
+  const overviews = useMemo(
+    () =>
+      groupBy(visualizationsOverview, (v) =>
+        v.name === viz?.descriptor.type ? 'mine' : 'others'
+      ),
+    [visualizationsOverview, viz]
   );
+  const overview = overviews.mine != null ? overviews.mine[0] : undefined;
   const constraints = overview?.dataElementConstraints;
   const dataElementDependencyOrder = overview?.dataElementDependencyOrder;
   const updateConfiguration = useCallback(
@@ -422,6 +465,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
             totalCounts={totalCounts}
             filteredCounts={filteredCounts}
             geoConfigs={geoConfigs}
+            otherVizOverviews={overviews.others}
           />
         </div>
       )}

@@ -27,6 +27,7 @@ export interface VisualizationProps {
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
   geoConfigs: GeoConfig[];
+  otherVizOverviews: VisualizationOverview[];
 }
 
 export type SelectorProps = VisualizationOverview;
