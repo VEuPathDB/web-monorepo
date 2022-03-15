@@ -718,7 +718,7 @@ function ScatterplotViz(props: VisualizationProps) {
       // send visualization.type here
       vizType={visualization.descriptor.type}
       interactive={!isFaceted(data.value) ? true : false}
-      showSpinner={data.pending}
+      showSpinner={filteredCounts.pending || data.pending}
       // add plotOptions to control the list of plot options
       plotOptions={['Raw', 'Smoothed mean with raw', 'Best fit line with raw']}
       // disabledList prop is used to disable radio options (grayed out)
