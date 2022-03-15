@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { defaultMemoize } from 'reselect';
 
 import { EagerlyLoadedTooltip } from 'wdk-client/Components/Overlays/Tooltip';
-import { ColumnSettings, StepAnalysisEnrichmentResultTable } from '../StepAnalysis/StepAnalysisEnrichmentResultTable';
+import { ColumnSettings, CommonResultTable } from '../Shared/CommonResultTable';
 import { GenomeSummaryViewReportModel, GenomeViewRegionModel, GenomeViewFeatureModel, GenomeViewSequenceModel } from 'wdk-client/Utils/GenomeSummaryViewUtils';
 import { FeatureTooltip } from 'wdk-client/Components/GenomeSummaryView/FeatureTooltip';
 
@@ -193,7 +193,7 @@ export const ResultsTable: React.SFC<ResultsTableProps> = ({
   recordType,
   showRegionDialog
 }) =>
-  <StepAnalysisEnrichmentResultTable
+  <CommonResultTable
     rows={rowsFactory(report, emptyChromosomeFilterApplied)}
     columns={resultColumnsFactory(displayName, displayNamePlural, recordType, showRegionDialog)}
     initialSortColumnKey="featureCount"
