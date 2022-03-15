@@ -372,7 +372,9 @@ function PlotlyPlot<T>(
           onUpdate={onRender}
           onInitialized={onInitialized}
         />
-        {showNoDataOverlay && <NoDataOverlay plotTitle={title} />}
+        {showNoDataOverlay && (
+          <NoDataOverlay plotTitle={title} opacity={0.85} />
+        )}
         {title && (
           <div
             style={{

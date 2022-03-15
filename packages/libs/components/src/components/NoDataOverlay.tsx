@@ -17,7 +17,7 @@ export default ({ plotTitle, opacity = 0.97 }: NoDataOverlayProps) => (
           : '#f8f8f8',
       opacity: opacity,
       fontSize: 24,
-      color: ' #e8e8e8',
+      color: '#C1C1C1',
       userSelect: 'none',
       display: 'flex',
       justifyContent: 'center',
