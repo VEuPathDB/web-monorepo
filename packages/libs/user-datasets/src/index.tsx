@@ -26,6 +26,8 @@ import '@veupathdb/web-common/lib/styles/client.scss';
 
 type WdkStoreModules = typeof import('@veupathdb/wdk-client/lib/StoreModules').default;
 
+const hasDirectUpload = process.env.REACT_APP_HAS_DIRECT_UPLOAD === 'true';
+
 initialize({
   rootUrl,
   rootElement,
@@ -37,7 +39,12 @@ initialize({
     {
       path: '/workspace/datasets',
       exact: false,
-      component: () => <UserDatasetRouter rootUrl={window.location.origin} />,
+      component: () => (
+        <UserDatasetRouter
+          hasDirectUpload={hasDirectUpload}
+          rootUrl={window.location.origin}
+        />
+      ),
     },
     ...routes,
   ],

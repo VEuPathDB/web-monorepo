@@ -8,10 +8,11 @@ import UserDatasetsWorkspace from '../Components/UserDatasetsWorkspace';
 import UserDatasetDetailController from './UserDatasetDetailController';
 
 interface Props {
+  hasDirectUpload: boolean;
   rootUrl: string;
 }
 
-export function UserDatasetRouter({ rootUrl }: Props) {
+export function UserDatasetRouter({ hasDirectUpload, rootUrl }: Props) {
   const { path } = useRouteMatch();
 
   return (
@@ -20,9 +21,6 @@ export function UserDatasetRouter({ rootUrl }: Props) {
         path={`${path}/:id(\\d+)`}
         requiresLogin
         component={(props: RouteComponentProps<{ id: string }>) => {
-          // FIXME Remove this requirement from the component by updating action creators
-          const rootUrl = window.location.origin;
-
           return (
             <UserDatasetDetailController
               {...props.match.params}
@@ -37,6 +35,7 @@ export function UserDatasetRouter({ rootUrl }: Props) {
         requiresLogin={false} // uses custom guest views
         component={(props: RouteComponentProps<{}>) => (
           <UserDatasetsWorkspace
+            hasDirectUpload={hasDirectUpload}
             rootPath={props.match.path}
             urlParams={parseQueryString(props)}
           />

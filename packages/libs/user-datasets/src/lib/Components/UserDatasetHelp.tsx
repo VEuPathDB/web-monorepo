@@ -5,8 +5,15 @@ import { Link } from '@veupathdb/wdk-client/lib/Components';
 import tutStep2 from './images/tut-step-2.jpg';
 import tutStep3 from './images/tut-step-3.jpg';
 
-function UserDatasetHelp({ projectId, quotaSize }) {
-  return projectId === 'MicrobiomeDB' ? (
+interface Props {
+  hasDirectUpload: boolean;
+  projectName: string;
+  quotaSize: number;
+}
+
+function UserDatasetHelp({ hasDirectUpload, projectName, quotaSize }: Props) {
+  // FIXME: Perhaps this should be provided via static content?
+  return hasDirectUpload ? (
     <div className="UserDataset-Help">
       <section>
         <h2>Preparing data for upload</h2>
@@ -85,9 +92,9 @@ function UserDatasetHelp({ projectId, quotaSize }) {
           <iframe
             title="Introduction to User Datasets"
             src="https://www.youtube-nocookie.com/embed/igQZHjRBqV0"
-            frameborder="0"
+            frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
+            allowFullScreen
             width="560"
             height="315"
           ></iframe>
@@ -121,7 +128,7 @@ function UserDatasetHelp({ projectId, quotaSize }) {
           <ul>
             <li>
               You can now view, manage, share, and utilize your data set in{' '}
-              <b>{projectId}</b>.
+              <b>{projectName}</b>.
             </li>
             <li>
               My Data sets you’ve created contribute to a per-user upload

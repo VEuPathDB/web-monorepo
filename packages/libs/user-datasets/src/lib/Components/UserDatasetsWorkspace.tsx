@@ -14,13 +14,13 @@ import UserDatasetHelp from './UserDatasetHelp';
 interface Props {
   rootPath: string;
   urlParams: Record<string, string>;
+  hasDirectUpload: boolean;
 }
 
 function UserDatasetsWorkspace(props: Props) {
   const config = useWdkService((wdkService) => wdkService.getConfig(), []);
   if (config == null) return null;
-  const { rootPath } = props;
-  const hasDirectUpload = config.projectId === 'MicrobiomeDB';
+  const { hasDirectUpload, rootPath } = props;
   return (
     <div>
       <WorkspaceNavigation
@@ -58,7 +58,9 @@ function UserDatasetsWorkspace(props: Props) {
           exact
           requiresLogin
           path={rootPath}
-          component={() => <UserDatasetListController />}
+          component={() => (
+            <UserDatasetListController hasDirectUpload={hasDirectUpload} />
+          )}
           disclaimerProps={{ toDoWhatMessage: 'To view your datasets' }}
         />
         {hasDirectUpload && (
@@ -106,7 +108,8 @@ function UserDatasetsWorkspace(props: Props) {
           path={`${rootPath}/help`}
           component={() => (
             <UserDatasetHelp
-              projectId={config.projectId}
+              hasDirectUpload={hasDirectUpload}
+              projectName={config.displayName}
               quotaSize={quotaSize}
             />
           )}

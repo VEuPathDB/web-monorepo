@@ -1,6 +1,5 @@
-import { Location } from 'history';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { RouteComponentProps, withRouter } from 'react-router';
 
 import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
 import PageController from '@veupathdb/wdk-client/lib/Core/Controllers/PageController';
@@ -42,9 +41,9 @@ type StateProps = Pick<
   'userDatasetList' | 'userDatasetUpload' | 'globalData'
 >;
 type DispatchProps = typeof ActionCreators;
-type OwnProps = {
-  location: Location;
-};
+interface OwnProps extends RouteComponentProps<{}> {
+  hasDirectUpload: boolean;
+}
 type Props = {
   ownProps: OwnProps;
   dispatchProps: DispatchProps;
@@ -65,6 +64,7 @@ class UserDatasetListController extends PageController<Props> {
   }
   needsUploadMessages() {
     const { config } = this.props.stateProps.globalData;
+    const { hasDirectUpload } = this.props.ownProps;
     if (config == null) {
       return true;
     }
@@ -73,9 +73,7 @@ class UserDatasetListController extends PageController<Props> {
       badAllUploadsActionMessage,
     } = this.props.stateProps.userDatasetUpload;
     return (
-      config.displayName === 'MicrobiomeDB' &&
-      uploads == null &&
-      badAllUploadsActionMessage == null
+      hasDirectUpload && uploads == null && badAllUploadsActionMessage == null
     );
   }
 
@@ -120,7 +118,7 @@ class UserDatasetListController extends PageController<Props> {
 
     const { projectId, displayName: projectName } = config;
 
-    const { location } = this.props.ownProps;
+    const { hasDirectUpload, location } = this.props.ownProps;
 
     const {
       userDatasetList: { userDatasets, userDatasetsById, filterByProject },
@@ -165,7 +163,7 @@ class UserDatasetListController extends PageController<Props> {
       <div className="UserDatasetList-Controller">
         <div className="UserDatasetList-Content">
           {noDatasetsForThisProject ? (
-            <NoDatasetsMessage projectName={projectName} />
+            <NoDatasetsMessage hasDirectUpload={hasDirectUpload} />
           ) : (
             <UserDatasetList {...listProps} />
           )}

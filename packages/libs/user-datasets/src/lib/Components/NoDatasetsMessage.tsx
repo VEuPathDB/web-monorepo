@@ -1,14 +1,17 @@
-import React from 'react';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 
-function NoDatasetsMessage({ projectName }) {
+interface Props {
+  hasDirectUpload: boolean;
+}
+
+function NoDatasetsMessage({ hasDirectUpload }: Props) {
   return (
     <div className="UserDataset-NoDatasets">
       <div className="UserDataset-NoDatasets__lead">
         You do not have any data sets.
       </div>
       <ul>
-        {projectName === 'MicrobiomeDB' ? (
+        {hasDirectUpload ? (
           <li>
             Try adding a data set using the{' '}
             <Link to="/workspace/datasets/new">New upload</Link> section above.
