@@ -23,6 +23,8 @@ import {
   BoxplotResponse,
   MapMarkersResponse,
   MapMarkersRequestParams,
+  PieplotRequestParams,
+  PieplotResponse,
 } from './types';
 
 export default class DataClient extends FetchClientWithCredentials {
@@ -151,6 +153,19 @@ export default class DataClient extends FetchClientWithCredentials {
       'map-markers',
       params,
       MapMarkersResponse
+    );
+  }
+
+  // pieplot
+  getPieplot(
+    computationName: string,
+    params: PieplotRequestParams
+  ): Promise<PieplotResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'pieplot',
+      params,
+      PieplotResponse
     );
   }
 }
