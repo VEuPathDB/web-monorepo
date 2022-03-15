@@ -2,11 +2,9 @@
  * Some quick and poor code quality API calls for use in Storybook examples.
  * If other people start to use these, I'll come and clean them up...
  */
-import {
-  HistogramBin,
-  HistogramData,
-  HistogramDataSeries,
-} from '../../types/plots';
+import { HistogramData, HistogramDataSeries } from '../../types/plots';
+
+import { Bin } from '../../types/general';
 
 type covidStateData = {
   fips: string;
@@ -104,7 +102,7 @@ export const binDailyCovidStats = async (
 
   const lowNewCases = Math.min(...newCasesStats, 0);
   const highNewCases = Math.max(...newCasesStats);
-  const newCasesBins: HistogramBin[] = [];
+  const newCasesBins: Bin[] = [];
 
   for (
     let index = lowNewCases;
@@ -116,7 +114,7 @@ export const binDailyCovidStats = async (
       binStart: index,
       binEnd: binEnd,
       binLabel: `${index} - ${binEnd}`,
-      count: 0,
+      value: 0,
     });
   }
 
@@ -128,7 +126,7 @@ export const binDailyCovidStats = async (
   );
   const lowHospitalized = Math.min(...hospitalizedStats);
   const highHospitalized = Math.max(...hospitalizedStats);
-  const hospitalizationBins: HistogramBin[] = [];
+  const hospitalizationBins: Bin[] = [];
 
   for (
     let index = lowHospitalized;
@@ -140,7 +138,7 @@ export const binDailyCovidStats = async (
       binStart: index,
       binEnd: binEnd,
       binLabel: `${index} - ${binEnd}`,
-      count: 0,
+      value: 0,
     });
   }
 
@@ -158,11 +156,11 @@ export const binDailyCovidStats = async (
     });
 
     if (matchingCasesBinIndex !== -1) {
-      newCasesBins[matchingCasesBinIndex].count =
-        newCasesBins[matchingCasesBinIndex].count + 1;
+      newCasesBins[matchingCasesBinIndex].value =
+        newCasesBins[matchingCasesBinIndex].value + 1;
     } else {
-      newCasesBins[newCasesBins.length - 1].count =
-        newCasesBins[newCasesBins.length - 1].count + 1;
+      newCasesBins[newCasesBins.length - 1].value =
+        newCasesBins[newCasesBins.length - 1].value + 1;
     }
 
     const stateHospitalUsageData =
@@ -175,11 +173,11 @@ export const binDailyCovidStats = async (
     });
 
     if (matchingBinIndex !== -1) {
-      hospitalizationBins[matchingBinIndex].count =
-        hospitalizationBins[matchingBinIndex].count + 1;
+      hospitalizationBins[matchingBinIndex].value =
+        hospitalizationBins[matchingBinIndex].value + 1;
     } else {
-      hospitalizationBins[hospitalizationBins.length - 1].count =
-        hospitalizationBins[hospitalizationBins.length - 1].count + 1;
+      hospitalizationBins[hospitalizationBins.length - 1].value =
+        hospitalizationBins[hospitalizationBins.length - 1].value + 1;
     }
 
     return accumulator;

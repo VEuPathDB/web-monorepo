@@ -26,6 +26,8 @@ export interface BinWidthControlProps
   binWidthRange?: NumberOrTimeDeltaRange;
   /** The step to take when adjusting binWidth. Optional. Downstream defaults to 1. */
   binWidthStep?: number;
+  /** Is the widget disabled (grayed out and inoperable)?  Default is false */
+  disabled?: boolean;
 }
 
 export default function BinWidthControl({
@@ -38,6 +40,7 @@ export default function BinWidthControl({
   binWidthRange,
   binWidthStep,
   containerStyles,
+  disabled = false,
 }: BinWidthControlProps) {
   const unit =
     valueType != null && valueType === 'date'
@@ -56,7 +59,10 @@ export default function BinWidthControl({
     >
       <Typography
         variant="button"
-        style={{ color: MEDIUM_GRAY, paddingRight: 15 }}
+        style={{
+          color: disabled ? MEDIUM_GRAY : 'rgb(0, 0, 0)',
+          paddingRight: 15,
+        }}
       >
         {label}
       </Typography>
@@ -73,6 +79,7 @@ export default function BinWidthControl({
 
             onBinWidthChange({ value, unit } as TimeDelta);
           }}
+          disabled={disabled}
         >
           {binUnitOptions.map((option) => (
             <MenuItem value={option}>{option}</MenuItem>
@@ -101,6 +108,7 @@ export default function BinWidthControl({
         }}
         containerStyles={containerStyles}
         showLimits={true}
+        disabled={disabled}
       />
     </div>
   ) : null;
