@@ -86,22 +86,11 @@ export function isPrereleaseStudyTemp (access) {
 // - the user doesnt have access
 export function isPrereleaseStudy (access, studyId, user, permissions) {
   if (typeof(user) != "undefined") {
-    if (permissions != null) {
-      if (
-        access === 'prerelease' &&
-        !isUserFullyApprovedForStudy(permissions, studyId)
-      ) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-
-    if (access === 'prerelease') 
-      return true;
-    else return false;
-  }
-  else {
+    return (
+      access === 'prerelease' &&
+      !isUserFullyApprovedForStudy(permissions, studyId)
+    );
+  } else {
     console.log("ATTENTION: user undefined in isPrerelease(),  study ID: " + studyId + " -- access: " + access + " --  showing searches");
     return false;
   }
