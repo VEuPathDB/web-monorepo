@@ -4,12 +4,14 @@ import { useStudyEntities } from '../../../hooks/study';
 import { VariableDescriptor } from '../../../types/variable';
 import { findEntityAndVariable } from '../../../utils/study-metadata';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
+import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 
 export const plugin: ComputationPlugin = {
   configurationComponent: AlphaDivConfiguration,
   visualizationTypes: {
     boxplot: boxplotVisualization,
+    scatterplot: scatterplotVisualization,
   },
 };
 
@@ -18,7 +20,7 @@ const ALPHA_DIV_METHODS = ['shannon', 'simpson', 'evenness'];
 
 // Include known collection variables in this array.
 const ALPHA_DIV_COLLECTION_VARIABLES = [
-  { entityId: 'EUPATH_0000738', variableId: 'OGMS_0000083' },
+  { entityId: 'EUPATH_0000808', variableId: 'EUPATH_0009253' },
 ];
 
 function variableDescriptorToString(
