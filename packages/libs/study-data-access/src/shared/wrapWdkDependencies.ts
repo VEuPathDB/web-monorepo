@@ -16,8 +16,8 @@ export function areCompatibleWdkDependencies(
 }
 
 export function wrapWdkDependencies(
+  studyAccessApiUrl: string | undefined
   wdkDependencies: WdkDependencies,
-  studyAccessApiUrl?: string
 ): WdkDependenciesWithStudyAccessApi {
 
   let studyAccessApi;
