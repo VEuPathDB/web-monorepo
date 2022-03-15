@@ -4,10 +4,8 @@ import ScatterPlot, {
 } from '@veupathdb/components/lib/plots/ScatterPlot';
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { getOrElse } from 'fp-ts/lib/Either';
-import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 
 // need to set for Scatterplot
 
@@ -79,12 +77,7 @@ import {
   ColorPaletteDefault,
   ColorPaletteDark,
 } from '@veupathdb/components/lib/types/plots/addOns';
-// import variable's metadata-based independent axis range utils
-import { defaultIndependentAxisRange } from '../../../utils/default-independent-axis-range';
-import { axisRangeMargin } from '../../../utils/axis-range-margin';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
-// util to find dependent axis range
-import { defaultDependentAxisRange } from '../../../utils/default-dependent-axis-range';
 import { useRouteMatch } from 'react-router';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import PluginError from '../PluginError';
@@ -98,8 +91,25 @@ import FacetedScatterPlot from '@veupathdb/components/lib/plots/facetedPlots/Fac
 import * as ColorMath from 'color-math';
 // R-square table component
 import { ScatterplotRsquareTable } from '../../ScatterplotRsquareTable';
-//DKDK a custom hook to preserve the status of checked legend items
+// a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
+
+// concerning axis range control
+import { NumberOrDateRange } from '../../../types/general';
+import { padISODateTime } from '../../../utils/date-conversion';
+// reusable util for computing truncationConfig
+import { truncationConfig } from '../../../utils/truncation-config-utils-viz';
+// use Notification for truncation warning message
+import Notification from '@veupathdb/components/lib/components/widgets//Notification';
+import Button from '@veupathdb/components/lib/components/widgets/Button';
+import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
+import { UIState } from '../../filter/HistogramFilter';
+// change defaultIndependentAxisRange to hook
+import { useDefaultIndependentAxisRange } from '../../../hooks/computeDefaultIndependentAxisRange';
+// for scatter plot, use another custom hook different from other Vizs
+import { useDefaultDependentAxisRange } from '../../../hooks/computeNumberDateDefaultDependentAxisRange';
+import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
+import { useVizConfig } from '../../../hooks/visualizations';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -125,8 +135,8 @@ const modalPlotContainerStyles = {
   margin: 'auto',
 };
 
-// define ScatterPlotDataWithCoverage
-interface ScatterPlotDataWithCoverage extends CoverageStatistics {
+// define ScatterPlotDataWithCoverage and export
+export interface ScatterPlotDataWithCoverage extends CoverageStatistics {
   dataSetProcess: ScatterPlotData | FacetedData<ScatterPlotData>;
   // change these types to be compatible with new axis range
   yMin: number | string | undefined;
@@ -171,6 +181,9 @@ export const ScatterplotConfig = t.partial({
   showMissingness: t.boolean,
   // for vizconfig.checkedLegendItems
   checkedLegendItems: t.array(t.string),
+  // axis range control
+  independentAxisRange: NumberOrDateRange,
+  dependentAxisRange: NumberOrDateRange,
 });
 
 function ScatterplotViz(props: VisualizationProps) {
@@ -196,18 +209,11 @@ function ScatterplotViz(props: VisualizationProps) {
   );
   const dataClient: DataClient = useDataClient();
 
-  const vizConfig = useMemo(() => {
-    return pipe(
-      ScatterplotConfig.decode(visualization.descriptor.configuration),
-      getOrElse((): t.TypeOf<typeof ScatterplotConfig> => createDefaultConfig())
-    );
-  }, [visualization.descriptor.configuration]);
-
-  const updateVizConfig = useCallback(
-    (newConfig: Partial<ScatterplotConfig>) => {
-      updateConfiguration({ ...vizConfig, ...newConfig });
-    },
-    [updateConfiguration, vizConfig]
+  const [vizConfig, updateVizConfig] = useVizConfig(
+    visualization.descriptor.configuration,
+    ScatterplotConfig,
+    createDefaultConfig,
+    updateConfiguration
   );
 
   // moved the location of this findEntityAndVariable
@@ -245,6 +251,16 @@ function ScatterplotViz(props: VisualizationProps) {
     vizConfig.facetVariable,
   ]);
 
+  // set the state of truncation warning message
+  const [
+    truncatedIndependentAxisWarning,
+    setTruncatedIndependentAxisWarning,
+  ] = useState<string>('');
+  const [
+    truncatedDependentAxisWarning,
+    setTruncatedDependentAxisWarning,
+  ] = useState<string>('');
+
   // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
@@ -266,7 +282,13 @@ function ScatterplotViz(props: VisualizationProps) {
             : vizConfig.valueSpecConfig,
         // set undefined for variable change
         checkedLegendItems: undefined,
+        // set independentAxisRange undefined
+        independentAxisRange: undefined,
+        dependentAxisRange: undefined,
       });
+      // close truncation warnings here
+      setTruncatedIndependentAxisWarning('');
+      setTruncatedDependentAxisWarning('');
     },
     [updateVizConfig, findEntityAndVariable, vizConfig.valueSpecConfig]
   );
@@ -274,16 +296,17 @@ function ScatterplotViz(props: VisualizationProps) {
   // prettier-ignore
   // allow 2nd parameter of resetCheckedLegendItems for checking legend status
   const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof ScatterplotConfig, resetCheckedLegendItems?: boolean) => (newValue?: ValueType) => {
-      const newPartialConfig = resetCheckedLegendItems
-        ? {
-            [key]: newValue,
-            checkedLegendItems: undefined
-          }
-        : {
-          [key]: newValue
-        };
-       updateVizConfig(newPartialConfig);
+    < ValueType,>(key: keyof ScatterplotConfig, resetCheckedLegendItems?: boolean, resetAxisRanges?: boolean) => (newValue?: ValueType) => {
+      const newPartialConfig = {
+        [key]: newValue,
+        ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
+      	...(resetAxisRanges ? { independentAxisRange: undefined, dependentAxisRange: undefined } : {}),
+      };
+      updateVizConfig(newPartialConfig);
+      if (resetAxisRanges) {
+        setTruncatedIndependentAxisWarning('');
+        setTruncatedDependentAxisWarning('');
+      }
     },
     [updateVizConfig]
   );
@@ -291,10 +314,12 @@ function ScatterplotViz(props: VisualizationProps) {
   // set checkedLegendItems: undefined for the change of both plot options and showMissingness
   const onValueSpecChange = onChangeHandlerFactory<string>(
     'valueSpecConfig',
+    true,
     true
   );
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
     'showMissingness',
+    true,
     true
   );
 
@@ -422,6 +447,8 @@ function ScatterplotViz(props: VisualizationProps) {
       visualization.descriptor.type,
       outputEntity,
       filteredCounts,
+      // // get data when changing independentAxisRange
+      // vizConfig.independentAxisRange,
     ])
   );
 
@@ -430,31 +457,20 @@ function ScatterplotViz(props: VisualizationProps) {
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
 
-  // variable's metadata-based independent axis range with margin
-  const defaultIndependentRangeMargin = useMemo(() => {
-    const defaultIndependentRange = defaultIndependentAxisRange(
-      xAxisVariable,
-      'scatterplot'
-    );
-    return axisRangeMargin(defaultIndependentRange, xAxisVariable?.type);
-  }, [xAxisVariable]);
+  // use hook
+  const defaultIndependentRange = useDefaultIndependentAxisRange(
+    xAxisVariable,
+    'scatterplot',
+    updateVizConfig
+  );
 
-  // find deependent axis range and its margin
-  const defaultDependentRangeMargin = useMemo(() => {
-    //K set yMinMaxRange using yMin/yMax obtained from processInputData()
-    const yMinMaxRange =
-      data.value != null
-        ? { min: data.value.yMin, max: data.value?.yMax }
-        : undefined;
-
-    const defaultDependentRange = defaultDependentAxisRange(
-      yAxisVariable,
-      'scatterplot',
-      yMinMaxRange
-    );
-
-    return axisRangeMargin(defaultDependentRange, yAxisVariable?.type);
-  }, [data, yAxisVariable]);
+  // use custom hook
+  const defaultDependentAxisRange = useDefaultDependentAxisRange(
+    data,
+    vizConfig,
+    updateVizConfig,
+    yAxisVariable
+  );
 
   const { url } = useRouteMatch();
 
@@ -691,6 +707,18 @@ function ScatterplotViz(props: VisualizationProps) {
     vizConfig.checkedLegendItems
   );
 
+  // axis range control
+  const defaultUIState = useMemo(() => {
+    if (xAxisVariable != null)
+      return {
+        independentAxisRange: defaultIndependentRange,
+      };
+    else
+      return {
+        independentAxisRange: undefined,
+      };
+  }, [xAxisVariable, defaultIndependentRange]);
+
   const plotNode = (
     <ScatterplotWithControls
       // data.value
@@ -706,10 +734,6 @@ function ScatterplotViz(props: VisualizationProps) {
       displayLegend={false}
       independentAxisLabel={variableDisplayWithUnit(xAxisVariable) ?? 'X-axis'}
       dependentAxisLabel={variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'}
-      // variable's metadata-based independent axis range with margin
-      independentAxisRange={defaultIndependentRangeMargin}
-      // new dependent axis range
-      dependentAxisRange={data.value ? defaultDependentRangeMargin : undefined}
       // set valueSpec as Raw when yAxisVariable = date
       valueSpec={
         yAxisVariable?.type === 'date' ? 'Raw' : vizConfig.valueSpecConfig
@@ -718,7 +742,7 @@ function ScatterplotViz(props: VisualizationProps) {
       // send visualization.type here
       vizType={visualization.descriptor.type}
       interactive={!isFaceted(data.value) ? true : false}
-      showSpinner={data.pending}
+      showSpinner={filteredCounts.pending || data.pending}
       // add plotOptions to control the list of plot options
       plotOptions={['Raw', 'Smoothed mean with raw', 'Best fit line with raw']}
       // disabledList prop is used to disable radio options (grayed out)
@@ -727,15 +751,34 @@ function ScatterplotViz(props: VisualizationProps) {
           ? ['Smoothed mean with raw', 'Best fit line with raw']
           : []
       }
+      // set default as number
       independentValueType={
-        NumberVariable.is(xAxisVariable) ? 'number' : 'date'
+        xAxisVariable == null || NumberVariable.is(xAxisVariable)
+          ? 'number'
+          : 'date'
       }
-      dependentValueType={NumberVariable.is(yAxisVariable) ? 'number' : 'date'}
+      dependentValueType={
+        yAxisVariable == null || NumberVariable.is(yAxisVariable)
+          ? 'number'
+          : 'date'
+      }
       legendTitle={variableDisplayWithUnit(overlayVariable)}
       // pass checked state of legend checkbox to PlotlyPlot
       checkedLegendItems={checkedLegendItems}
       // for vizconfig.checkedLegendItems
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
+      // axis range control
+      vizConfig={vizConfig}
+      updateVizConfig={updateVizConfig}
+      defaultUIState={defaultUIState}
+      defaultIndependentRange={defaultIndependentRange}
+      // add dependent axis range for better displaying tick labels in log-scale
+      defaultDependentAxisRange={defaultDependentAxisRange}
+      // pass useState of truncation warnings
+      truncatedIndependentAxisWarning={truncatedIndependentAxisWarning}
+      setTruncatedIndependentAxisWarning={setTruncatedIndependentAxisWarning}
+      truncatedDependentAxisWarning={truncatedDependentAxisWarning}
+      setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
     />
   );
 
@@ -906,6 +949,21 @@ type ScatterplotWithControlsProps = Omit<ScatterPlotProps, 'data'> & {
   // custom legend
   checkedLegendItems: string[] | undefined;
   onCheckedLegendItemsChange: (checkedLegendItems: string[]) => void;
+  // define types for axis range control
+  vizConfig: ScatterplotConfig;
+  updateVizConfig: (newConfig: Partial<ScatterplotConfig>) => void;
+  defaultUIState: Partial<UIState>;
+  defaultIndependentRange: NumberOrDateRange | undefined;
+  defaultDependentAxisRange: NumberOrDateRange | undefined;
+  // pass useState of truncation warnings
+  truncatedIndependentAxisWarning: string;
+  setTruncatedIndependentAxisWarning: (
+    truncatedIndependentAxisWarning: string
+  ) => void;
+  truncatedDependentAxisWarning: string;
+  setTruncatedDependentAxisWarning: (
+    truncatedDependentAxisWarning: string
+  ) => void;
 };
 
 function ScatterplotWithControls({
@@ -922,6 +980,19 @@ function ScatterplotWithControls({
   // custom legend
   checkedLegendItems,
   onCheckedLegendItemsChange,
+  // for axis range control
+  vizConfig,
+  updateVizConfig,
+  independentValueType,
+  dependentValueType,
+  defaultUIState,
+  defaultIndependentRange,
+  defaultDependentAxisRange,
+  // pass useState of truncation warnings
+  truncatedIndependentAxisWarning,
+  setTruncatedIndependentAxisWarning,
+  truncatedDependentAxisWarning,
+  setTruncatedDependentAxisWarning,
   ...scatterplotProps
 }: ScatterplotWithControlsProps) {
   // TODO Use UIState
@@ -937,15 +1008,145 @@ function ScatterplotWithControls({
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
     plotContainerStyles,
-    [data, checkedLegendItems]
+    [
+      data,
+      checkedLegendItems,
+      vizConfig.independentAxisRange,
+      vizConfig.dependentAxisRange,
+    ]
   );
+
+  // axis range control
+  const handleIndependentAxisRangeChange = useCallback(
+    (newRange?: NumberOrDateRange) => {
+      updateVizConfig({
+        independentAxisRange:
+          newRange &&
+          ({
+            min:
+              typeof newRange.min === 'string'
+                ? padISODateTime(newRange.min)
+                : newRange.min,
+            max:
+              typeof newRange.max === 'string'
+                ? padISODateTime(newRange.max)
+                : newRange.max,
+          } as NumberOrDateRange),
+      });
+    },
+    [updateVizConfig]
+  );
+
+  const handleIndependentAxisSettingsReset = useCallback(() => {
+    updateVizConfig({
+      independentAxisRange: undefined,
+    });
+    // add reset for truncation message: including dependent axis warning as well
+    setTruncatedIndependentAxisWarning('');
+  }, [defaultUIState.independentAxisRange, updateVizConfig]);
+
+  const handleDependentAxisRangeChange = useCallback(
+    (newRange?: NumberOrDateRange) => {
+      updateVizConfig({
+        dependentAxisRange:
+          newRange &&
+          ({
+            min:
+              typeof newRange.min === 'string'
+                ? padISODateTime(newRange.min)
+                : newRange.min,
+            max:
+              typeof newRange.max === 'string'
+                ? padISODateTime(newRange.max)
+                : newRange.max,
+          } as NumberOrDateRange),
+      });
+    },
+    [updateVizConfig]
+  );
+
+  const handleDependentAxisSettingsReset = useCallback(() => {
+    updateVizConfig({
+      dependentAxisRange: undefined,
+    });
+    // add reset for truncation message as well
+    setTruncatedDependentAxisWarning('');
+  }, [updateVizConfig]);
+
+  // set truncation flags: will see if this is reusable with other application
+  const {
+    truncationConfigIndependentAxisMin,
+    truncationConfigIndependentAxisMax,
+    truncationConfigDependentAxisMin,
+    truncationConfigDependentAxisMax,
+  } = useMemo(
+    () =>
+      truncationConfig(defaultUIState, vizConfig, defaultDependentAxisRange),
+    [
+      defaultUIState.independentAxisRange,
+      vizConfig.xAxisVariable,
+      vizConfig.independentAxisRange,
+      vizConfig.dependentAxisRange,
+      defaultDependentAxisRange,
+    ]
+  );
+
+  // set useEffect for changing truncation warning message
+  useEffect(() => {
+    if (
+      truncationConfigIndependentAxisMin ||
+      truncationConfigIndependentAxisMax
+    ) {
+      setTruncatedIndependentAxisWarning(
+        'Data may have been truncated by range selection, as indicated by the light gray shading'
+      );
+    }
+  }, [truncationConfigIndependentAxisMin, truncationConfigIndependentAxisMax]);
+
+  useEffect(() => {
+    if (
+      // (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) &&
+      // !scatterplotProps.showSpinner
+      truncationConfigDependentAxisMin ||
+      truncationConfigDependentAxisMax
+    ) {
+      setTruncatedDependentAxisWarning(
+        'Data may have been truncated by range selection, as indicated by the light gray shading'
+      );
+    }
+  }, [truncationConfigDependentAxisMin, truncationConfigDependentAxisMax]);
+
+  // send histogramProps with additional props
+  const scatterplotPlotProps = {
+    ...scatterplotProps,
+    // axis range control
+    independentAxisRange:
+      vizConfig.independentAxisRange ?? defaultIndependentRange,
+    dependentAxisRange:
+      vizConfig.dependentAxisRange ?? defaultDependentAxisRange,
+    // pass valueTypes
+    independentValueType: independentValueType,
+    dependentValueType: dependentValueType,
+    // pass axisTruncationConfig
+    axisTruncationConfig: {
+      independentAxis: {
+        min: truncationConfigIndependentAxisMin,
+        max: truncationConfigIndependentAxisMax,
+      },
+      dependentAxis: {
+        min: truncationConfigDependentAxisMin,
+        max: truncationConfigDependentAxisMax,
+      },
+    },
+  };
 
   return (
     <>
       {isFaceted(data) ? (
         <FacetedScatterPlot
           data={data}
-          componentProps={scatterplotProps}
+          // change props
+          componentProps={scatterplotPlotProps}
           modalComponentProps={{
             independentAxisLabel: scatterplotProps.independentAxisLabel,
             dependentAxisLabel: scatterplotProps.dependentAxisLabel,
@@ -964,6 +1165,27 @@ function ScatterplotWithControls({
           displayLibraryControls={false}
           // custom legend: pass checkedLegendItems to PlotlyPlot
           checkedLegendItems={checkedLegendItems}
+          // axis range control
+          independentAxisRange={
+            vizConfig.independentAxisRange ?? defaultIndependentRange
+          }
+          dependentAxisRange={
+            vizConfig.dependentAxisRange ?? defaultDependentAxisRange
+          }
+          // pass valueTypes
+          independentValueType={independentValueType}
+          dependentValueType={dependentValueType}
+          // pass axisTruncationConfig
+          axisTruncationConfig={{
+            independentAxis: {
+              min: truncationConfigIndependentAxisMin,
+              max: truncationConfigIndependentAxisMax,
+            },
+            dependentAxis: {
+              min: truncationConfigDependentAxisMin,
+              max: truncationConfigDependentAxisMax,
+            },
+          }}
         />
       )}
       {/*  ScatterPlotControls: check vizType (only for scatterplot for now) */}
@@ -983,6 +1205,104 @@ function ScatterplotWithControls({
           itemMarginRight={50}
         />
       )}
+
+      {/* axis range control UIs */}
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
+        {/* make switch and radiobutton single line with space
+                 also marginRight at LabelledGroup is set to 0.5625em: default - 1.5625em*/}
+        <LabelledGroup
+          label="Y-axis"
+          containerStyles={{
+            marginRight: '0.5625em',
+          }}
+        >
+          {/* Y-axis range control */}
+          <AxisRangeControl
+            label="Range"
+            range={vizConfig.dependentAxisRange ?? defaultDependentAxisRange}
+            valueType={dependentValueType === 'date' ? 'date' : 'number'}
+            onRangeChange={(newRange?: NumberOrDateRange) => {
+              handleDependentAxisRangeChange(newRange);
+            }}
+            // set maxWidth
+            containerStyles={{ maxWidth: '350px' }}
+          />
+          {/* truncation notification */}
+          {truncatedDependentAxisWarning ? (
+            <Notification
+              title={''}
+              text={truncatedDependentAxisWarning}
+              // this was defined as LIGHT_BLUE
+              color={'#5586BE'}
+              onAcknowledgement={() => {
+                setTruncatedDependentAxisWarning('');
+              }}
+              showWarningIcon={true}
+              // change maxWidth
+              containerStyles={{ maxWidth: '350px' }}
+            />
+          ) : null}
+          <Button
+            type={'outlined'}
+            // change text
+            text={'Reset to defaults'}
+            onClick={handleDependentAxisSettingsReset}
+            containerStyles={{
+              paddingTop: '1.0em',
+              width: '50%',
+              float: 'right',
+              // to match reset button with date range form
+              marginRight: dependentValueType === 'date' ? '-1em' : '',
+            }}
+          />
+        </LabelledGroup>
+
+        <LabelledGroup
+          label="X-axis"
+          containerStyles={{
+            marginRight: '0em',
+          }}
+        >
+          {/* X-Axis range control */}
+          <AxisRangeControl
+            label="Range"
+            range={vizConfig.independentAxisRange ?? defaultIndependentRange}
+            onRangeChange={handleIndependentAxisRangeChange}
+            valueType={independentValueType === 'date' ? 'date' : 'number'}
+            // set maxWidth
+            containerStyles={{ maxWidth: '350px' }}
+          />
+          {/* truncation notification */}
+          {truncatedIndependentAxisWarning ? (
+            <Notification
+              title={''}
+              text={truncatedIndependentAxisWarning}
+              // this was defined as LIGHT_BLUE
+              color={'#5586BE'}
+              onAcknowledgement={() => {
+                setTruncatedIndependentAxisWarning('');
+              }}
+              showWarningIcon={true}
+              containerStyles={{
+                maxWidth: independentValueType === 'date' ? '350px' : '350px',
+              }}
+            />
+          ) : null}
+          <Button
+            type={'outlined'}
+            // change text
+            text={'Reset to defaults'}
+            onClick={handleIndependentAxisSettingsReset}
+            containerStyles={{
+              paddingTop: '1.0em',
+              width: '50%',
+              float: 'right',
+              // to match reset button with date range form
+              marginRight: independentValueType === 'date' ? '-1em' : '',
+            }}
+          />
+        </LabelledGroup>
+      </div>
     </>
   );
 }

@@ -1,7 +1,7 @@
 import { Variable } from '../types/study';
 import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
 
-export function defaultDependentAxisRange(
+export function numberDateDefaultDependentAxisRange(
   variable: Variable | undefined,
   plotName: string,
   yMinMaxRange:
@@ -9,7 +9,10 @@ export function defaultDependentAxisRange(
     | undefined
 ): NumberOrDateRange | undefined {
   // make universal range variable
-  if (variable != null && plotName === 'scatterplot') {
+  if (
+    variable != null &&
+    (plotName === 'scatterplot' || plotName === 'lineplot')
+  ) {
     // this should check integer as well
     if (variable.type === 'number' || variable.type === 'integer') {
       return variable.displayRangeMin != null &&
