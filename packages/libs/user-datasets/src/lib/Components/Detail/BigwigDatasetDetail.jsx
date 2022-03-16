@@ -17,7 +17,7 @@ class BigwigDatasetDetail extends UserDatasetDetail {
   }
 
   getTracksTableColumns() {
-    const { userDataset, appUrl, rootUrl, config } = this.props;
+    const { userDataset, appUrl, config } = this.props;
     const { id, type, meta, dependencies } = userDataset;
     const name = meta.name;
     const { projectId } = config;
@@ -48,7 +48,6 @@ class BigwigDatasetDetail extends UserDatasetDetail {
             sequenceId={seqId}
             {...row}
             datasetId={id}
-            rootUrl={rootUrl}
             appUrl={appUrl}
             projectId={projectId}
             genome={genome}
