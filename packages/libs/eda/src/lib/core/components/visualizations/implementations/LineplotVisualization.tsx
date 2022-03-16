@@ -145,6 +145,13 @@ function SelectorComponent() {
   );
 }
 
+// Display names to internal names
+const valueSpecLookup = {
+  Mean: 'mean',
+  Median: 'median',
+  'Ratio or proportion': 'proportion',
+};
+
 function createDefaultConfig(): LineplotConfig {
   return {
     valueSpecConfig: 'Mean',
@@ -156,7 +163,7 @@ export type LineplotConfig = t.TypeOf<typeof LineplotConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const LineplotConfig = t.intersection([
   t.type({
-    valueSpecConfig: t.string,
+    valueSpecConfig: t.keyof(valueSpecLookup),
     useBinning: t.boolean,
   }),
   t.partial({
@@ -239,27 +246,26 @@ function LineplotViz(props: VisualizationProps) {
 
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
-      const {
-        xAxisVariable,
-        yAxisVariable,
-        overlayVariable,
-        facetVariable,
-      } = selectedVariables;
-      const keepBin = isEqual(xAxisVariable, vizConfig.xAxisVariable);
+      const keepBin = isEqual(
+        selectedVariables.xAxisVariable,
+        vizConfig.xAxisVariable
+      );
+      const valueSpec =
+        yAxisVariable?.distinctValuesCount != null &&
+        yAxisVariable.distinctValuesCount <= 8
+          ? 'Ratio or proportion'
+          : vizConfig.valueSpecConfig;
       updateVizConfig({
-        xAxisVariable,
-        yAxisVariable,
-        overlayVariable,
-        facetVariable,
+        ...selectedVariables,
         binWidth: keepBin ? vizConfig.binWidth : undefined,
         binWidthTimeUnit: keepBin ? vizConfig.binWidthTimeUnit : undefined,
         // set valueSpec as Raw when yAxisVariable = date
-        valueSpecConfig: vizConfig.valueSpecConfig,
+        valueSpecConfig: valueSpec,
         // set undefined for variable change
         checkedLegendItems: undefined,
       });
     },
-    [updateVizConfig, findEntityAndVariable, vizConfig.valueSpecConfig]
+    [updateVizConfig, yAxisVariable, vizConfig.valueSpecConfig]
   );
 
   const onBinWidthChange = useCallback(
@@ -315,14 +321,6 @@ function LineplotViz(props: VisualizationProps) {
 
   const onUseBinningChange = onChangeHandlerFactory<boolean>('useBinning');
 
-  const [xAxisVariableMetadata, yAxisVariableMetadata] = useMemo(() => {
-    const { variable: x } =
-      findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
-    const { variable: y } =
-      findEntityAndVariable(vizConfig.yAxisVariable) ?? {};
-    return [x, y];
-  }, [findEntityAndVariable, vizConfig.xAxisVariable, vizConfig.yAxisVariable]);
-
   const outputEntity = useFindOutputEntity(
     dataElementDependencyOrder,
     vizConfig,
@@ -334,8 +332,8 @@ function LineplotViz(props: VisualizationProps) {
     useCallback(async (): Promise<LinePlotDataWithCoverage | undefined> => {
       if (
         outputEntity == null ||
-        xAxisVariableMetadata == null ||
-        yAxisVariableMetadata == null ||
+        xAxisVariable == null ||
+        yAxisVariable == null ||
         filteredCounts.pending ||
         filteredCounts.value == null
       )
@@ -363,20 +361,13 @@ function LineplotViz(props: VisualizationProps) {
       else if (vizConfig.yAxisVariable == null || yAxisVariable == null)
         return undefined;
 
-      const vars = [xAxisVariable, yAxisVariable, overlayVariable];
-      const unique = vars.filter((item, i, ar) => ar.indexOf(item) === i);
-      if (vars.length !== unique.length)
-        throw new Error(
-          'Variables must be unique. Please choose different variables.'
-        );
-
       // add visualization.type here. valueSpec too?
       const params = getRequestParams(
         studyId,
         filters ?? [],
         vizConfig,
-        xAxisVariableMetadata,
-        yAxisVariableMetadata,
+        xAxisVariable,
+        yAxisVariable,
         outputEntity
       );
 
@@ -588,7 +579,7 @@ function LineplotViz(props: VisualizationProps) {
       interactive={!isFaceted(data.value) ? true : false}
       showSpinner={filteredCounts.pending || data.pending}
       // add plotOptions to control the list of plot options
-      plotOptions={['Mean', 'Median']}
+      plotOptions={keys(valueSpecLookup)}
       // disabledList prop is used to disable radio options (grayed out)
       disabledList={[]}
       independentValueType={
@@ -1012,12 +1003,6 @@ function getRequestParams(
       }
     : { binSpec: { type: 'binWidth' } };
 
-  // valueSpec
-  let valueSpecValue = 'median';
-  if (valueSpecConfig === 'Mean') {
-    valueSpecValue = 'mean';
-  }
-
   return {
     studyId,
     filters,
@@ -1025,7 +1010,7 @@ function getRequestParams(
       // add outputEntityId
       outputEntityId: outputEntity?.id,
       // LinePlotControls
-      valueSpec: valueSpecValue,
+      valueSpec: valueSpecLookup[valueSpecConfig],
       xAxisVariable: xAxisVariable,
       yAxisVariable: yAxisVariable,
       ...binSpec,
