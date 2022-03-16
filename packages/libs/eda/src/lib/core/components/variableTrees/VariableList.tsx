@@ -267,10 +267,12 @@ export default function VariableList({
   );
 
   // make visibleStarredVariableTerms state be used at MyVariable
-  const [
-    visibleStarredVariableTerms,
-    setVisibleStarredVariableTerms,
-  ] = useState<string[]>([]);
+  const visibleStarredVariableTerms = useMemo(() => {
+    const newVisibleStarredVariableTerms = starredVariables?.map(
+      ({ entityId, variableId }) => `${entityId}/${variableId}`
+    );
+    return newVisibleStarredVariableTerms ?? [];
+  }, [starredVariables]);
 
   const starredVariableTermsSet = useMemo(() => {
     const presentStarredVariableTerms = starredVariables
@@ -356,11 +358,7 @@ export default function VariableList({
 
   const toggleShowOnlyStarredVariables = useCallback(() => {
     setShowOnlyStarredVariables((oldValue) => !oldValue);
-    const newVisibleStarredVariableTerms = starredVariables?.map(
-      ({ entityId, variableId }) => `${entityId}/${variableId}`
-    );
-    setVisibleStarredVariableTerms(newVisibleStarredVariableTerms ?? []);
-  }, [starredVariables]);
+  }, [setShowOnlyStarredVariables]);
 
   const starredVariableToggleDisabled =
     !showOnlyStarredVariables && starredVariableTermsSet.size === 0;
