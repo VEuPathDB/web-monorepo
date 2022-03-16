@@ -10,17 +10,16 @@ import {
   Mesa,
   MesaState,
 } from '@veupathdb/wdk-client/lib/Components/Mesa';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 
 import NotFound from '@veupathdb/wdk-client/lib/Views/NotFound/NotFound';
 
+import { isUserDatasetsCompatibleWdkService } from '../../Service/UserDatasetWrappers';
+
 import SharingModal from '../Sharing/UserDatasetSharingModal';
 import UserDatasetStatus from '../UserDatasetStatus';
-import {
-  getDownloadUrl,
-  makeClassifier,
-  normalizePercentage,
-} from '../UserDatasetUtils';
+import { makeClassifier, normalizePercentage } from '../UserDatasetUtils';
 
 import './UserDatasetDetail.scss';
 
@@ -372,8 +371,9 @@ class UserDatasetDetail extends React.Component {
   }
 
   getFileTableColumns() {
-    const { userDataset, rootUrl } = this.props;
+    const { userDataset } = this.props;
     const { id } = userDataset;
+    const { wdkService } = this.context;
 
     return [
       {
@@ -399,7 +399,13 @@ class UserDatasetDetail extends React.Component {
         headingStyle: { textAlign: 'center' },
         renderCell({ row }) {
           const { name } = row;
-          const downloadUrl = rootUrl + getDownloadUrl(id, name);
+
+          const downloadUrl = !isUserDatasetsCompatibleWdkService(wdkService)
+            ? undefined
+            : wdkService.getUserDatasetDownloadUrl(id, name);
+
+          const downloadAvailable = downloadUrl != null;
+
           return (
             <a
               href={downloadUrl}
@@ -407,7 +413,15 @@ class UserDatasetDetail extends React.Component {
               rel="noreferrer"
               title="Download this file"
             >
-              <button className="btn btn-info">
+              <button
+                className="btn btn-info"
+                disabled={!downloadAvailable}
+                title={
+                  downloadAvailable
+                    ? undefined
+                    : 'This download is unavailable. Please contact us if this problem persists.'
+                }
+              >
                 <Icon fa="save" className="left-side" /> Download
               </button>
             </a>
@@ -554,5 +568,7 @@ class UserDatasetDetail extends React.Component {
     );
   }
 }
+
+UserDatasetDetail.contextType = WdkDependenciesContext;
 
 export default UserDatasetDetail;
