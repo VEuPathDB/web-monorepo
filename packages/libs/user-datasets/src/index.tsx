@@ -12,17 +12,11 @@ import { endpoint, rootElement, rootUrl } from './constants';
 import reportWebVitals from './reportWebVitals';
 
 import { UserDatasetRouter } from './lib/Controllers/UserDatasetRouter';
-
 import { wrapWdkService } from './lib/Service';
-
-import * as userDatasetDetail from './lib/StoreModules/UserDatasetDetailStoreModule';
-import * as userDatasetList from './lib/StoreModules/UserDatasetListStoreModule';
-import * as userDatasetUpload from './lib/StoreModules/UserDatasetUploadStoreModule';
+import { wrapStoreModules } from './lib/StoreModules';
 
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
-
-type WdkStoreModules = typeof import('@veupathdb/wdk-client/lib/StoreModules').default;
 
 const hasDirectUpload = process.env.REACT_APP_HAS_DIRECT_UPLOAD === 'true';
 
@@ -47,12 +41,7 @@ initialize({
     SiteHeader: () => Header,
   },
   endpoint,
-  wrapStoreModules: (storeModules: WdkStoreModules) => ({
-    ...storeModules,
-    userDatasetDetail,
-    userDatasetList,
-    userDatasetUpload,
-  }),
+  wrapStoreModules,
   wrapWdkService: partial(wrapWdkService, datasetImportUrl),
 } as any);
 
