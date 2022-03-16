@@ -1,9 +1,25 @@
+import { useMemo } from 'react';
 import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
-import { ScatterPlotData, LinePlotData } from '../types/plots';
-import { Layout } from 'plotly.js';
+// truncation
+import {
+  ScatterPlotData,
+  OrientationAddon,
+  OrientationDefault,
+  AxisTruncationAddon,
+} from '../types/plots';
+// add Shape for truncation
+import { Layout, Shape } from 'plotly.js';
 import { NumberOrDateRange } from '../types/general';
 
-export interface ScatterPlotProps extends PlotProps<ScatterPlotData> {
+// import truncation util functions
+import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations';
+import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
+
+export interface ScatterPlotProps
+  extends PlotProps<ScatterPlotData>,
+    // truncation
+    OrientationAddon,
+    AxisTruncationAddon {
   /** x-axis range: required for confidence interval - not really */
   independentAxisRange?: NumberOrDateRange;
   /** y-axis range: required for confidence interval */
@@ -44,14 +60,65 @@ const ScatterPlot = makePlotlyPlotComponent(
       dependentAxisLabel,
       independentValueType,
       dependentValueType,
+      // truncation
+      orientation = OrientationDefault,
+      axisTruncationConfig,
       ...restProps
     } = props;
+
+    // truncation axis range
+    const standardIndependentAxisRange = independentAxisRange;
+    const extendedIndependentAxisRange = extendAxisRangeForTruncations(
+      standardIndependentAxisRange,
+      axisTruncationConfig?.independentAxis,
+      independentValueType === 'date' ? 'date' : 'number'
+    );
+
+    // truncation
+    const standardDependentAxisRange = dependentAxisRange;
+    const extendedDependentAxisRange = extendAxisRangeForTruncations(
+      standardDependentAxisRange,
+      axisTruncationConfig?.dependentAxis,
+      dependentValueType === 'date' ? 'date' : 'number'
+    );
+
+    // make rectangular layout shapes for truncated axis/missing data
+    const truncatedAxisHighlighting:
+      | Partial<Shape>[]
+      | undefined = useMemo(() => {
+      if (data.series.length > 0) {
+        const filteredTruncationLayoutShapes = truncationLayoutShapes(
+          orientation,
+          standardIndependentAxisRange, // send undefined for independentAxisRange
+          standardDependentAxisRange,
+          extendedIndependentAxisRange, // send undefined for independentAxisRange
+          extendedDependentAxisRange,
+          axisTruncationConfig
+        );
+
+        return filteredTruncationLayoutShapes;
+      } else {
+        return [];
+      }
+    }, [
+      standardDependentAxisRange,
+      extendedDependentAxisRange,
+      orientation,
+      data,
+      axisTruncationConfig,
+    ]);
 
     const layout: Partial<Layout> = {
       hovermode: 'closest',
       xaxis: {
         title: independentAxisLabel,
-        range: [independentAxisRange?.min, independentAxisRange?.max], // set this for better display: esp. for CI plot
+        // truncation
+        range: data.series.length
+          ? [
+              extendedIndependentAxisRange?.min,
+              extendedIndependentAxisRange?.max,
+            ]
+          : undefined,
         zeroline: false, // disable yaxis line
         // make plot border
         mirror: true,
@@ -61,7 +128,10 @@ const ScatterPlot = makePlotlyPlotComponent(
       },
       yaxis: {
         title: dependentAxisLabel,
-        range: [dependentAxisRange?.min, dependentAxisRange?.max], // set this for better display: esp. for CI plot
+        // with the truncated axis, negative values need to be checked for log scale
+        range: data.series.length
+          ? [extendedDependentAxisRange?.min, extendedDependentAxisRange?.max]
+          : undefined,
         zeroline: false, // disable xaxis line
         // make plot border
         mirror: true,
@@ -69,6 +139,8 @@ const ScatterPlot = makePlotlyPlotComponent(
         type: dependentValueType === 'date' ? 'date' : undefined,
         tickfont: data.series.length ? {} : { color: 'transparent' },
       },
+      // add truncatedAxisHighlighting for layout.shapes
+      shapes: truncatedAxisHighlighting,
     };
 
     return {

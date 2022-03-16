@@ -25,7 +25,7 @@ const FixedDriftMarker = DriftMarker as React.ComponentClass<
   ExtractProps<typeof DriftMarker> & LeafletMarkerProps
 >;
 
-/*  DKDK after testing various approaches, it is found that sending mouse event props from story, like done in previous approach,
+/*    after testing various approaches, it is found that sending mouse event props from story, like done in previous approach,
  *    seems to conflict with other mouse event like grey-box. Also, using function form of the top-marker event did not work either.
  *    The only way to work it out is to directly set function contents (e.g., e.target....) inside onMouseOver/Out
  *    For this reason, marker's props are adjusted without sending mouse event functions, but implemented here directly.
@@ -150,20 +150,23 @@ export default function BoundsDriftMarker({
   );
 
   const handleMouseOver = (e: LeafletMouseEvent) => {
-    e.target._icon.classList.add('top-marker'); //DKDK marker on top
-    setDisplayBounds(true); // Display bounds rectangle
+    e.target._icon.classList.add('top-marker'); // marker on top
 
     if (showPopup && popupContent) {
       e.target.openPopup();
+    } else {
+      // there is a conflict with popup so bounds only shows no popup case
+      setDisplayBounds(true); // Display bounds rectangle
     }
   };
 
   const handleMouseOut = (e: LeafletMouseEvent) => {
-    e.target._icon.classList.remove('top-marker'); //DKDK remove marker on top
-    setDisplayBounds(false); // Remove bounds rectangle
+    e.target._icon.classList.remove('top-marker'); // remove marker on top
 
     if (showPopup && popupContent) {
       e.target.closePopup();
+    } else {
+      setDisplayBounds(false); // Remove bounds rectangle
     }
   };
 
