@@ -20,22 +20,22 @@ export function extendAxisRangeForTruncations(
         DateMath.diff(
           new Date(axisRange?.min as string),
           new Date(axisRange?.max as string),
-          'day'
+          'hours'
         ) * 0.05
-      ); // unit in days
+      ); // unit in hours
 
       const axisLowerExtensionStart = config?.min
         ? DateMath.subtract(
             new Date(axisRange?.min as string),
             dateRangeDiff,
-            'day'
+            'hours'
           ).toISOString()
         : (axisRange?.min as string);
       const axisUpperExtensionEnd = config?.max
         ? DateMath.add(
             new Date(axisRange?.max as string),
             dateRangeDiff,
-            'day'
+            'hours'
           ).toISOString()
         : (axisRange?.max as string);
 
