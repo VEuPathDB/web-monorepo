@@ -3428,10 +3428,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/components@^0.11.22":
-  version "0.11.22"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.22.tgz#2ac47bbb63acbbdf473b47ff61237ae111b1e4dd"
-  integrity sha512-Be+MEmR4jQ7ghRhampDjzClYIcX8BBMveVgR0iuaCkV8PyU+p4MSB1fnlUQ3S7yqTOGXNXlW1yrtKoWwgj8/Zw==
+"@veupathdb/components@^0.11.25":
+  version "0.11.25"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.25.tgz#4a9554d9f6f5ab6834d6392aa993fd34bd99364e"
+  integrity sha512-jhkV7PajcBsD6XTPUsbhBPz4u10ktFBFHKcih8oPlv9HY1OjX8qIuZ9FqXQrXeVV2qt7N566ftUvNRDzW89RDg==
   dependencies:
     "@emotion/react" "^11.7.0"
     "@material-ui/core" "^4.11.2"
@@ -3722,10 +3722,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/wdk-client@^0.5.10":
-  version "0.5.10"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.5.10.tgz#73cdff854f4f1cc22bfa7a3997707c3d97285453"
-  integrity sha512-Mqm9f3q5z5+36ZamF7Sy07RyaYHBoVexKidYeXWSVoN8qVjG7740OCkl6JlRG0n1RBB9kmMFMkZbBrUmBimpqw==
+"@veupathdb/wdk-client@^0.5.11":
+  version "0.5.11"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.5.11.tgz#ba7d220d3933b19809181b1cbf91f39438f1f16e"
+  integrity sha512-dOfmvyrnH6eL6Rf8f5DCAtH+0L56Cj6JfRB4KWXYiNM5BKOs4AeeJpm33gS8GHIUJsjh1F6+k5WX37Z2l1IljA==
   dependencies:
     "@types/datatables.net" "^1.10.5"
     "@types/flot" "^0.0.31"
