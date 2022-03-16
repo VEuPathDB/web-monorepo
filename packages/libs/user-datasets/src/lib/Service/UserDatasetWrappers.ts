@@ -68,6 +68,21 @@ export const userDatasetsServiceWrappers = {
       delta
     );
   },
+  getDatasetDownloadUrl: (wdkService: WdkService) => (
+    datasetId: number,
+    filename: string
+  ) => {
+    if (typeof datasetId !== 'number')
+      throw new TypeError(
+        `Can't build downloadUrl; invalid datasetId given (${datasetId}) [${typeof datasetId}]`
+      );
+    if (typeof filename !== 'string')
+      throw new TypeError(
+        `Can't build downloadUrl; invalid filename given (${filename}) [${typeof filename}]`
+      );
+
+    return `${wdkService.serviceUrl}/users/current/user-datasets/${datasetId}/user-datafiles/${filename}`;
+  },
 };
 
 export function isUserDatasetsCompatibleWdkService(
@@ -79,15 +94,13 @@ export function isUserDatasetsCompatibleWdkService(
   );
 }
 
-export function validateUserDatasetCompatibleThunk<
-  T,
-  S extends EpicDependencies = EpicDependencies
->(
-  thunk: ActionThunk<
-    T,
-    Omit<S, 'wdkService'> & { wdkService: UserDatasetsCompatibleWdkService }
-  >
-): ActionThunk<T, S> {
+interface UserDatasetCompatibleEpicDependencies extends EpicDependencies {
+  wdkService: UserDatasetsCompatibleWdkService;
+}
+
+export function validateUserDatasetCompatibleThunk<T>(
+  thunk: ActionThunk<T, UserDatasetCompatibleEpicDependencies>
+): ActionThunk<T, UserDatasetCompatibleEpicDependencies> {
   return (wdkDependencies) => {
     if (!isUserDatasetsCompatibleWdkService(wdkDependencies.wdkService)) {
       throw new Error(
