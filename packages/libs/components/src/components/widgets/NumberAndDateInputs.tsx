@@ -98,6 +98,8 @@ function BaseInput({
     root: {
       height: 36.5, // default height is 56 and is waaaay too tall
       // 34.5 is the height of the reset button, but 36.5 lines up better
+      // set width for date
+      width: valueType === 'date' ? 165 : '',
     },
   })();
 
@@ -172,6 +174,7 @@ function BaseInput({
 
   return (
     <div
+      // containerStyles is not used here - but bin control uses this!
       style={{ ...containerStyles }}
       onMouseOver={() => setFocused(true)}
       onMouseOut={() => setFocused(false)}

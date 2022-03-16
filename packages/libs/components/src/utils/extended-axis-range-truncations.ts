@@ -10,49 +10,51 @@ import { AxisTruncationConfig } from '../types/plots';
 export function extendAxisRangeForTruncations(
   axisRange?: NumberOrDateRange,
   config?: AxisTruncationConfig['independentAxis' | 'dependentAxis'],
-  valueType: 'number' | 'date' = 'number'
+  valueType?: 'number' | 'date'
 ): NumberOrDateRange | undefined {
   // compute truncated axis with 5 % area from the range of min and max
-  if (valueType != null && valueType === 'date') {
-    // find date diff (days) between range.min and range.max, take 5 % of range, and round up!
-    const dateRangeDiff = Math.round(
-      DateMath.diff(
-        new Date(axisRange?.min as string),
-        new Date(axisRange?.max as string),
-        'day'
-      ) * 0.05
-    ); // unit in days
-
-    const axisLowerExtensionStart = config?.min
-      ? DateMath.subtract(
+  if (valueType != null) {
+    if (valueType === 'date') {
+      // find date diff (days) between range.min and range.max, take 5 % of range, and round up!
+      const dateRangeDiff = Math.round(
+        DateMath.diff(
           new Date(axisRange?.min as string),
-          dateRangeDiff,
-          'day'
-        ).toISOString()
-      : (axisRange?.min as string);
-    const axisUpperExtensionEnd = config?.max
-      ? DateMath.add(
           new Date(axisRange?.max as string),
-          dateRangeDiff,
-          'day'
-        ).toISOString()
-      : (axisRange?.max as string);
+          'hours'
+        ) * 0.05
+      ); // unit in hours
 
-    return {
-      min: axisLowerExtensionStart,
-      max: axisUpperExtensionEnd,
-    };
-  } else {
-    const axisLowerExtensionStart = config?.min
-      ? (axisRange?.min as number) * 1.05 - (axisRange?.max as number) * 0.05
-      : (axisRange?.min as number);
-    const axisUpperExtensionEnd = config?.max
-      ? (axisRange?.max as number) * 1.05 - (axisRange?.min as number) * 0.05
-      : (axisRange?.max as number);
+      const axisLowerExtensionStart = config?.min
+        ? DateMath.subtract(
+            new Date(axisRange?.min as string),
+            dateRangeDiff,
+            'hours'
+          ).toISOString()
+        : (axisRange?.min as string);
+      const axisUpperExtensionEnd = config?.max
+        ? DateMath.add(
+            new Date(axisRange?.max as string),
+            dateRangeDiff,
+            'hours'
+          ).toISOString()
+        : (axisRange?.max as string);
 
-    return {
-      min: axisLowerExtensionStart,
-      max: axisUpperExtensionEnd,
-    };
-  }
+      return {
+        min: axisLowerExtensionStart,
+        max: axisUpperExtensionEnd,
+      };
+    } else {
+      const axisLowerExtensionStart = config?.min
+        ? (axisRange?.min as number) * 1.05 - (axisRange?.max as number) * 0.05
+        : (axisRange?.min as number);
+      const axisUpperExtensionEnd = config?.max
+        ? (axisRange?.max as number) * 1.05 - (axisRange?.min as number) * 0.05
+        : (axisRange?.max as number);
+
+      return {
+        min: axisLowerExtensionStart,
+        max: axisUpperExtensionEnd,
+      };
+    }
+  } else return undefined;
 }

@@ -292,6 +292,7 @@ const Histogram = makePlotlyPlotComponent(
 
     const selectedRangeHighlighting: Partial<Shape>[] = useMemo(() => {
       const range = selectingRange ?? selectedRange;
+
       if (data.series.length && range) {
         // for dates, draw the blue area to the end of the day
         const rightCoordinate =
