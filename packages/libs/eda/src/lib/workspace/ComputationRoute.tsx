@@ -10,6 +10,8 @@ import { PromiseResult } from '../core/components/Promise';
 import { EntityCounts } from '../core/hooks/entityCounts';
 import { PromiseHookState, usePromise } from '../core/hooks/promise';
 import { GeoConfig } from '../core/types/geoConfig';
+import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 
 export interface Props {
   analysisState: AnalysisState;
@@ -26,13 +28,24 @@ export function ComputationRoute(props: Props) {
   const { url } = useRouteMatch();
   const history = useHistory();
   const dataClient = useDataClient();
+  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
+
   const promiseState = usePromise(
-    useCallback(() => dataClient.getApps(), [dataClient])
+    useCallback(async () => {
+      let { apps } = await dataClient.getApps();
+      const { projectId } = await wdkService.getConfig();
+      apps = apps.filter((app) => app.projects?.includes(projectId));
+
+      if (apps == null || !apps.length)
+        throw new Error('Could not find any computation app.');
+
+      return apps;
+    }, [dataClient, wdkService])
   );
 
   return (
     <PromiseResult state={promiseState}>
-      {({ apps }) => (
+      {(apps) => (
         <Switch>
           <Route exact path={url}>
             <StartPage baseUrl={url} apps={apps} {...props} />

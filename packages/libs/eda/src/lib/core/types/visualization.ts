@@ -112,6 +112,7 @@ export const ComputationAppOverview = intersection([
   Thing,
   partial({
     visualizations: array(VisualizationOverview),
+    projects: array(string),
   }),
 ]);
 
