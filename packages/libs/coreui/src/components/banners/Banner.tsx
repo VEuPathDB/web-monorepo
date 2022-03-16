@@ -1,4 +1,4 @@
-import { CSSProperties } from 'react';
+import { css } from '@emotion/react'
 
 import WarningIcon from '@material-ui/icons/Warning';
 import ErrorIcon from '@material-ui/icons/Error';
@@ -7,111 +7,106 @@ import InfoIcon from '@material-ui/icons/Info';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import CloseIcon from '@material-ui/icons/Close';
 
-import { gray, green, mutedOrange, red, blue } from '../../definitions/colors'
+import { gray, mutedGreen, orange, red, blue, ColorHue } from '../../definitions/colors'
 
 type BannerProps = {
-  type: string;
+  type: 'warning' | 'danger' | 'error' | 'success' | 'info' | 'normal';
   message: string;
   pinned: boolean;
   intense: boolean;
 }
 
-type BannerComponentProps = {
+export type BannerComponentProps = {
   banner: BannerProps;
   onClose: () => void;
+}
+
+function getIconComponentFromType(type: BannerProps['type']) {
+  switch (type) {
+    case 'warning':
+      return WarningIcon;
+    case 'danger':
+    case 'error':
+      return ErrorIcon;
+    case 'success':
+      return CheckCircleIcon;
+    case 'info':
+      return InfoIcon;
+    case 'normal':
+    default:
+      return NotificationsIcon;
+  }
+}
+
+function getColorTheme(type: BannerProps['type'], weight: keyof ColorHue) {
+  switch (type) {
+    case 'warning':
+      return orange[weight];
+    case 'danger':
+      return red[weight];
+    case 'error':
+      return gray[weight];
+    case 'success':
+      return mutedGreen[weight];
+    case 'info':
+      return blue[weight];
+    case 'normal':
+      return gray[weight];
+    default:
+      return gray[weight];
+  }
 }
 
 export default function BannerTest(props: BannerComponentProps) {
   const { banner, onClose } = props;
   const { type, message, pinned, intense } = banner;
 
-  function getIconFromType(type: string) {
-    switch (type) {
-      case 'warning':
-        return <WarningIcon style={iconStyle}></WarningIcon>;
-      case 'danger':
-      case 'error':
-        return <ErrorIcon style={iconStyle}></ErrorIcon>;
-      case 'success':
-        return <CheckCircleIcon style={iconStyle}></CheckCircleIcon>;
-      case 'info':
-        return <InfoIcon style={iconStyle}></InfoIcon>;
-      case 'normal':
-      default:
-        return <NotificationsIcon style={iconStyle}></NotificationsIcon>;
-    }
-  }
-
-  function getColorTheme(type: string, weight: number) {
-    switch (type) {
-      case 'warning':
-        return mutedOrange[weight];
-      case 'danger':
-        return red[weight];
-      case 'error':
-        return gray[weight];
-      case 'success':
-        return green[weight];
-      case 'info':
-        return blue[weight];
-      case 'normal':
-        return gray[weight];
-      default:
-        return gray[weight];
-    }
-  }
-
-  function isStandardType(type: string) {
-    const types = [
-      'warning',
-      'danger',
-      'success',
-      'info',
-      'normal',
-    ];
-    return types.indexOf(type) >= 0;
-  }
-
-  const bannerStyle: CSSProperties = {
-    display: "flex",
-    color: intense ? 'white' : 'black',
-    backgroundColor: intense ? getColorTheme(type, 800) : getColorTheme(type, 100),
-    border: intense ? 'none' : `1px solid ${getColorTheme(type, 400)}`,
-    boxSizing: "border-box",
-    borderRadius: "7px",
-    margin: "10px 0",
-    width: "100%",
-    padding: "10px",
-    alignItems: "center"
-  }
-
-  const iconStyle: CSSProperties = {
-    color: intense ? 'white' : 'black',
-    fontSize: "1.6em",
-    lineHeight: "1.6em",
-    width: "30px",
-    textAlign: "center",
-    marginRight: "5px"
-  }
-
-  const collapseLinkStyle: CSSProperties = {
-    flex: '1',
-    textAlign: 'right',
-    paddingRight: '10px'
-  }
+  const IconComponent = getIconComponentFromType(type);
 
   return (
     <div
-      style={bannerStyle}
+      css={css`
+        display: flex;
+        color: ${intense ? 'white' : 'black'};
+        background-color: ${intense ? getColorTheme(type, 600) : getColorTheme(type, 100)};
+        border: ${intense ? 'none' : `1px solid ${getColorTheme(type, 600)}`};
+        box-sizing: border-box;
+        border-radius: 7px;
+        margin: 10px 0;
+        width: 100%;
+        padding: 10px;
+        align-items: center;
+        font-family: 'Roboto', 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif;
+        font-size: 13px;
+      `}
     >
-      {getIconFromType(banner.type)}
-      <span>{message}</span>
+      <IconComponent
+        css={css`
+          color: ${intense ? 'white' : 'black'};
+          font-size: 1.4em;
+          line-height: 1.4em;
+          width: 30px;
+          text-align: center;
+          margin-right: 5px;
+        `}>
+      </IconComponent>
+      <span css={css`
+        margin-right: auto;
+      `}>
+        {message}
+      </span>
       {pinned || !onClose ? null : (
         <a
-          style={collapseLinkStyle}
+          css={css`
+            text-align: right;
+            padding-right: 10px;
+            &:hover {
+              color: ${intense ? 'black' : getColorTheme(type, 600)};
+            }
+          `}
           onClick={onClose}
         >
-          <CloseIcon />
+          <CloseIcon css={css`vertical-align: middle`} />
         </a>
       )}
     </div>
