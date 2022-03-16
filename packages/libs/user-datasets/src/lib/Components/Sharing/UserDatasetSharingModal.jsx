@@ -8,7 +8,10 @@ import {
   Modal,
   TextBox,
 } from '@veupathdb/wdk-client/lib/Components';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+
+import { isUserDatasetsCompatibleWdkService } from '../../Service/UserDatasetWrappers';
 
 import './UserDatasetSharingModal.scss';
 
@@ -68,21 +71,17 @@ class UserDatasetSharingModal extends React.Component {
         `verifyRecipient: bad email received (${recipientEmail})`
       );
 
-    const { rootUrl } = this.props;
+    const { wdkService } = this.context;
 
-    return fetch(`${rootUrl}/service/user-id-query`, {
-      method: 'POST',
-      body: JSON.stringify({ emails: [recipientEmail] }),
-      headers: new Headers({ 'Content-Type': 'application/json' }),
-      credentials: 'include',
-    })
-      .then((response) => response.json())
+    if (!isUserDatasetsCompatibleWdkService(wdkService)) {
+      throw new Error(
+        `verifyRecipient: must have a properly configured UserDatasetsCompatibleWdkService`
+      );
+    }
+
+    return wdkService
+      .getUserIdsByEmail([recipientEmail])
       .then(({ results }) => {
-        if (!Array.isArray(results))
-          throw new TypeError(
-            `verifyRecipient: received malformed repsonse from service. [${results}]`
-          );
-
         const foundUsers = results.find((result) =>
           Object.keys(result).includes(recipientEmail)
         );
@@ -508,5 +507,7 @@ class UserDatasetSharingModal extends React.Component {
     );
   }
 }
+
+UserDatasetSharingModal.contextType = WdkDependenciesContext;
 
 export default wrappable(UserDatasetSharingModal);
