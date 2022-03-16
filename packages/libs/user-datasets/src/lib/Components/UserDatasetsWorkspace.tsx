@@ -12,7 +12,7 @@ import { quotaSize } from './UserDatasetUtils';
 import UserDatasetHelp from './UserDatasetHelp';
 
 interface Props {
-  rootPath: string;
+  baseUrl: string;
   urlParams: Record<string, string>;
   hasDirectUpload: boolean;
 }
@@ -20,12 +20,12 @@ interface Props {
 function UserDatasetsWorkspace(props: Props) {
   const config = useWdkService((wdkService) => wdkService.getConfig(), []);
   if (config == null) return null;
-  const { hasDirectUpload, rootPath } = props;
+  const { hasDirectUpload, baseUrl } = props;
   return (
     <div>
       <WorkspaceNavigation
         heading={<>My Data Sets</>}
-        routeBase={rootPath}
+        routeBase={baseUrl}
         items={[
           [
             {
@@ -57,7 +57,7 @@ function UserDatasetsWorkspace(props: Props) {
         <WdkRoute
           exact
           requiresLogin
-          path={rootPath}
+          path={baseUrl}
           component={() => (
             <UserDatasetListController hasDirectUpload={hasDirectUpload} />
           )}
@@ -67,7 +67,7 @@ function UserDatasetsWorkspace(props: Props) {
           <WdkRoute
             requiresLogin
             exact
-            path={`${rootPath}/new`}
+            path={`${baseUrl}/new`}
             component={() => (
               <UserDatasetNewUploadController urlParams={props.urlParams} />
             )}
@@ -97,7 +97,7 @@ function UserDatasetsWorkspace(props: Props) {
           <WdkRoute
             requiresLogin
             exact
-            path={`${rootPath}/recent`}
+            path={`${baseUrl}/recent`}
             component={() => <UserDatasetAllUploadsController />}
             disclaimerProps={{ toDoWhatMessage: 'To view your recent uploads' }}
           />
@@ -105,7 +105,7 @@ function UserDatasetsWorkspace(props: Props) {
         <WdkRoute
           exact
           requiresLogin={false}
-          path={`${rootPath}/help`}
+          path={`${baseUrl}/help`}
           component={() => (
             <UserDatasetHelp
               hasDirectUpload={hasDirectUpload}
@@ -114,7 +114,7 @@ function UserDatasetsWorkspace(props: Props) {
             />
           )}
         />
-        <Redirect to={rootPath} />
+        <Redirect to={baseUrl} />
       </Switch>
     </div>
   );

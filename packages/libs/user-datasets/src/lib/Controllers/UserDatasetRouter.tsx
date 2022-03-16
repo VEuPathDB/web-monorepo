@@ -30,7 +30,7 @@ export function UserDatasetRouter({ hasDirectUpload }: Props) {
         component={(props: RouteComponentProps<{}>) => (
           <UserDatasetsWorkspace
             hasDirectUpload={hasDirectUpload}
-            rootPath={props.match.path}
+            baseUrl={path}
             urlParams={parseQueryString(props)}
           />
         )}
