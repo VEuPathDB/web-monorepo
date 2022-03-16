@@ -196,10 +196,11 @@ export const makeUserDatasetUploadServiceWrappers = (
       description: newUserDataset.description,
       summary: newUserDataset.summary,
       projects: newUserDataset.projects,
-      origin: 'DIRECT_UPLOAD',
+      origin: 'direct-upload',
     });
 
     const fileBody = new FormData();
+    fileBody.append('uploadMethod', 'file');
     fileBody.append('file', newUserDataset.file);
 
     return fetchDecodedJsonOrThrowMessage(
