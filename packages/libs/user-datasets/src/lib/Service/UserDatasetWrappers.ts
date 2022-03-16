@@ -1,4 +1,10 @@
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
+import {
+  arrayOf,
+  number,
+  objectOf,
+  record,
+} from '@veupathdb/wdk-client/lib/Utils/Json';
 import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
 import { ActionThunk } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
 
@@ -18,6 +24,10 @@ export type UserDatasetShareResponse = {
 };
 
 type UserDatasetsServiceWrappers = typeof userDatasetsServiceWrappers;
+
+const userIdsByEmailDecoder = record({
+  results: arrayOf(objectOf(number)),
+});
 
 export const userDatasetsServiceWrappers = {
   getCurrentUserDatasets: (wdkService: WdkService) => () =>
@@ -82,6 +92,15 @@ export const userDatasetsServiceWrappers = {
       );
 
     return `${wdkService.serviceUrl}/users/current/user-datasets/${datasetId}/user-datafiles/${filename}`;
+  },
+  getUserIdsByEmail: (wdkService: WdkService) => (emails: string[]) => {
+    return wdkService.sendRequest(userIdsByEmailDecoder, {
+      path: '/user-id-query',
+      method: 'POST',
+      body: JSON.stringify({
+        emails,
+      }),
+    });
   },
 };
 
