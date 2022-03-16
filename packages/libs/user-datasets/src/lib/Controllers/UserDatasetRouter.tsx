@@ -9,10 +9,9 @@ import UserDatasetDetailController from './UserDatasetDetailController';
 
 interface Props {
   hasDirectUpload: boolean;
-  rootUrl: string;
 }
 
-export function UserDatasetRouter({ hasDirectUpload, rootUrl }: Props) {
+export function UserDatasetRouter({ hasDirectUpload }: Props) {
   const { path } = useRouteMatch();
 
   return (
@@ -21,12 +20,7 @@ export function UserDatasetRouter({ hasDirectUpload, rootUrl }: Props) {
         path={`${path}/:id(\\d+)`}
         requiresLogin
         component={(props: RouteComponentProps<{ id: string }>) => {
-          return (
-            <UserDatasetDetailController
-              {...props.match.params}
-              rootUrl={rootUrl}
-            />
-          );
+          return <UserDatasetDetailController {...props.match.params} />;
         }}
       />
       <WdkRoute

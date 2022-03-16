@@ -536,11 +536,6 @@ class UserDatasetList extends React.Component<Props, State> {
     this.setState({ sharingModalOpen });
   }
 
-  getRootUrl() {
-    const { href } = window.location;
-    return href.substring(0, href.indexOf('/app/'));
-  }
-
   toggleProjectScope(newValue: boolean) {
     this.props.updateProjectFilter(newValue);
   }
@@ -560,7 +555,6 @@ class UserDatasetList extends React.Component<Props, State> {
 
     const rows = userDatasets;
     const selectedDatasets = rows.filter(isRowSelected);
-    const rootUrl = this.getRootUrl();
     const columns = this.getColumns();
     const actions = this.getTableActions();
     const options = this.getTableOptions();
@@ -601,7 +595,6 @@ class UserDatasetList extends React.Component<Props, State> {
                 {sharingModalOpen && selectedDatasets.length ? (
                   <SharingModal
                     user={user}
-                    rootUrl={rootUrl}
                     datasets={selectedDatasets}
                     deselectDataset={this.onRowDeselect}
                     shareUserDatasets={shareUserDatasets}

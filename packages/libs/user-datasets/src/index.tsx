@@ -39,12 +39,7 @@ initialize({
     {
       path: '/workspace/datasets',
       exact: false,
-      component: () => (
-        <UserDatasetRouter
-          hasDirectUpload={hasDirectUpload}
-          rootUrl={window.location.origin}
-        />
-      ),
+      component: () => <UserDatasetRouter hasDirectUpload={hasDirectUpload} />,
     },
     ...routes,
   ],

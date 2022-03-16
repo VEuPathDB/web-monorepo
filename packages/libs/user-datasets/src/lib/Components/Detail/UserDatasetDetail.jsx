@@ -534,7 +534,6 @@ class UserDatasetDetail extends React.Component {
   render() {
     const {
       user,
-      rootUrl,
       userDataset,
       shareUserDatasets,
       unshareUserDatasets,
@@ -557,7 +556,6 @@ class UserDatasetDetail extends React.Component {
         {!isOwner || !sharingModalOpen ? null : (
           <SharingModal
             user={user}
-            rootUrl={rootUrl}
             datasets={[userDataset]}
             onClose={this.closeSharingModal}
             shareUserDatasets={shareUserDatasets}
