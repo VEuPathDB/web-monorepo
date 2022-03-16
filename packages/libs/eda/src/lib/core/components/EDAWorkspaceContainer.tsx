@@ -21,7 +21,6 @@ import { FieldWithMetadata, StudyMetadata } from '..';
 
 import { useFieldTree, useFlattenedFields } from './variableTrees/hooks';
 import { DownloadClient } from '../api/DownloadClient';
-import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 export interface Props {
   studyId: string;
