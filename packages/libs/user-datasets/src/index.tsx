@@ -2,10 +2,9 @@ import './globals';
 
 import { RouteComponentProps } from 'react-router';
 
-import { mapValues } from 'lodash';
+import { partial } from 'lodash';
 
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
-import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import Header from './Header';
 import Home from './Home';
@@ -14,8 +13,7 @@ import reportWebVitals from './reportWebVitals';
 
 import { UserDatasetRouter } from './lib/Controllers/UserDatasetRouter';
 
-import { userDatasetsServiceWrappers } from './lib/Service/UserDatasetWrappers';
-import { userDatasetUploadServiceWrappers } from './lib/Service/UserDatasetUploadWrappers';
+import { wrapWdkService } from './lib/Service';
 
 import * as userDatasetDetail from './lib/StoreModules/UserDatasetDetailStoreModule';
 import * as userDatasetList from './lib/StoreModules/UserDatasetListStoreModule';
@@ -27,6 +25,8 @@ import '@veupathdb/web-common/lib/styles/client.scss';
 type WdkStoreModules = typeof import('@veupathdb/wdk-client/lib/StoreModules').default;
 
 const hasDirectUpload = process.env.REACT_APP_HAS_DIRECT_UPLOAD === 'true';
+
+const datasetImportUrl = !hasDirectUpload ? undefined : '/dataset-import';
 
 initialize({
   rootUrl,
@@ -53,16 +53,7 @@ initialize({
     userDatasetList,
     userDatasetUpload,
   }),
-  wrapWdkService: (wdkService: WdkService) => ({
-    ...wdkService,
-    ...mapValues(
-      {
-        ...userDatasetsServiceWrappers,
-        ...userDatasetUploadServiceWrappers,
-      },
-      (wdkServiceWrapper) => wdkServiceWrapper(wdkService)
-    ),
-  }),
+  wrapWdkService: partial(wrapWdkService, datasetImportUrl),
 } as any);
 
 // If you want to start measuring performance in your app, pass a function

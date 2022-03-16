@@ -1,10 +1,10 @@
+import { partial } from 'lodash';
+
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import * as Decode from '@veupathdb/wdk-client/lib/Utils/Json';
 import { appendUrlAndRethrow } from '@veupathdb/wdk-client/lib/Service/ServiceUtils';
 
 import { NewUserDataset, UserDatasetUpload } from '../Utils/types';
-
-const serviceUrl = '/dataset-import';
 
 export type UserDatasetUploadCompatibleWdkService = WdkService &
   {
@@ -13,12 +13,15 @@ export type UserDatasetUploadCompatibleWdkService = WdkService &
     >;
   };
 
-type UserDatasetUploadServiceWrappers = typeof userDatasetUploadServiceWrappers;
+type UserDatasetUploadServiceWrappers = ReturnType<
+  typeof makeUserDatasetUploadServiceWrappers
+>;
 
 /*
  * The authentication method uses an 'Auth-Key' header, not the cookie like in WDK
  */
 function fetchWithCredentials(
+  serviceUrl: string,
   path: string,
   method: string,
   body: any,
@@ -49,11 +52,13 @@ function fetchWithCredentials(
  * See doc: /api#type:err.ErrorResponse
  */
 function fetchDecodedJsonOrThrowMessage<Resource>(
+  serviceUrl: string,
   decoder: Decode.Decoder<Resource>,
   options: { path: string; method: string; body?: any }
 ): Promise<Resource> {
   let { method, path, body } = options;
   return fetchWithCredentials(
+    serviceUrl,
     path,
     method,
     body,
@@ -165,8 +170,12 @@ function userDatasetUploadFromStatusDetail(
   };
 }
 
-function issueDeleteCommand(jobId: string): Promise<void> {
+function issueDeleteCommand(
+  datasetImportUrl: string,
+  jobId: string
+): Promise<void> {
   return fetchWithCredentials(
+    datasetImportUrl,
     '/user-datasets/' + jobId,
     'DELETE',
     undefined,
@@ -174,10 +183,13 @@ function issueDeleteCommand(jobId: string): Promise<void> {
   ).then((x) => {});
 }
 
-export const userDatasetUploadServiceWrappers = {
-  addDataset: (wdkService: WdkService) => (
-    newUserDataset: NewUserDataset
-  ): Promise<void> => {
+const DATASET_IMPORT_URL_KEY = 'datasetImportUrl';
+
+export const makeUserDatasetUploadServiceWrappers = (
+  datasetImportUrl: string
+) => ({
+  [DATASET_IMPORT_URL_KEY]: (wdkService: WdkService) => datasetImportUrl,
+  addDataset: () => (newUserDataset: NewUserDataset): Promise<void> => {
     const metaBody = JSON.stringify({
       datasetName: newUserDataset.name,
       datasetType: newUserDataset.datasetType,
@@ -191,6 +203,7 @@ export const userDatasetUploadServiceWrappers = {
     fileBody.append('file', newUserDataset.file);
 
     return fetchDecodedJsonOrThrowMessage(
+      datasetImportUrl,
       Decode.field('jobId', Decode.string),
       {
         path: '/user-datasets',
@@ -199,40 +212,38 @@ export const userDatasetUploadServiceWrappers = {
       }
     ).then(({ jobId }) =>
       fetchWithCredentials(
+        datasetImportUrl,
         '/user-datasets/' + jobId,
         'POST',
         fileBody
       ).then((response) => {})
     );
   },
-  listStatusDetails: (wdkService: WdkService) => (): Promise<
-    UserDatasetUpload[]
-  > => {
-    return fetchDecodedJsonOrThrowMessage(Decode.arrayOf(statusDetailDecoder), {
-      path: '/user-datasets',
-      method: 'GET',
-    }).then((uploads) => uploads.map(userDatasetUploadFromStatusDetail));
+  listStatusDetails: () => (): Promise<UserDatasetUpload[]> => {
+    return fetchDecodedJsonOrThrowMessage(
+      datasetImportUrl,
+      Decode.arrayOf(statusDetailDecoder),
+      {
+        path: '/user-datasets',
+        method: 'GET',
+      }
+    ).then((uploads) => uploads.map(userDatasetUploadFromStatusDetail));
   },
   // Currently only works for jobs whose status is awaiting-upload
-  cancelOngoingUpload: (wdkService: WdkService) => (
-    jobId: string
-  ): Promise<void> => {
-    return issueDeleteCommand(jobId);
+  cancelOngoingUpload: () => (jobId: string): Promise<void> => {
+    return issueDeleteCommand(datasetImportUrl, jobId);
   },
-  clearMessages: (wdkService: WdkService) => (
-    jobIds: string[]
-  ): Promise<void> => {
-    return Promise.all(jobIds.map(issueDeleteCommand)).then((x) => {});
+  clearMessages: () => (jobIds: string[]): Promise<void> => {
+    return Promise.all(
+      jobIds.map(partial(issueDeleteCommand, datasetImportUrl))
+    ).then((x) => {});
   },
-};
+});
 
 export function isUserDatasetUploadCompatibleWdkService(
   wdkService: WdkService
 ): wdkService is UserDatasetUploadCompatibleWdkService {
-  return Object.keys(userDatasetUploadServiceWrappers).every(
-    (userDatasetUploadServiceWrapperKey) =>
-      userDatasetUploadServiceWrapperKey in wdkService
-  );
+  return DATASET_IMPORT_URL_KEY in wdkService;
 }
 
 export const MISCONFIGURED_USER_DATASET_UPLOAD_SERVICE_ERROR_MESSAGE =
