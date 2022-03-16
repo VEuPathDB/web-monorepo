@@ -68,7 +68,7 @@ export const userDatasetsServiceWrappers = {
       delta
     );
   },
-  getDatasetDownloadUrl: (wdkService: WdkService) => (
+  getUserDatasetDownloadUrl: (wdkService: WdkService) => (
     datasetId: number,
     filename: string
   ) => {
