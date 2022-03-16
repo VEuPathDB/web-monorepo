@@ -21,9 +21,10 @@ type State = UserDatasetMeta & {
 };
 
 type Props = {
+  baseUrl: string;
   badUploadMessage?: string;
   urlParams: Record<string, string>;
-  submitForm: (newUserDataset: NewUserDataset) => void;
+  submitForm: (newUserDataset: NewUserDataset, redirectTo?: string) => void;
 };
 
 class MicrobiomeDBUploadForm extends React.Component<Props, State> {
@@ -77,7 +78,7 @@ class MicrobiomeDBUploadForm extends React.Component<Props, State> {
           : (this.state.file as File),
       };
       this.setState({ submitting: true }, () =>
-        this.props.submitForm(newUserDataset)
+        this.props.submitForm(newUserDataset, `${this.props.baseUrl}/recent`)
       );
     }
   }

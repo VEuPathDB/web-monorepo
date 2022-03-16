@@ -59,7 +59,10 @@ function UserDatasetsWorkspace(props: Props) {
           requiresLogin
           path={baseUrl}
           component={() => (
-            <UserDatasetListController hasDirectUpload={hasDirectUpload} />
+            <UserDatasetListController
+              baseUrl={baseUrl}
+              hasDirectUpload={hasDirectUpload}
+            />
           )}
           disclaimerProps={{ toDoWhatMessage: 'To view your datasets' }}
         />
@@ -69,7 +72,10 @@ function UserDatasetsWorkspace(props: Props) {
             exact
             path={`${baseUrl}/new`}
             component={() => (
-              <UserDatasetNewUploadController urlParams={props.urlParams} />
+              <UserDatasetNewUploadController
+                baseUrl={baseUrl}
+                urlParams={props.urlParams}
+              />
             )}
             disclaimerProps={{
               toDoWhatMessage: `To upload your dataset`,
@@ -98,7 +104,9 @@ function UserDatasetsWorkspace(props: Props) {
             requiresLogin
             exact
             path={`${baseUrl}/recent`}
-            component={() => <UserDatasetAllUploadsController />}
+            component={() => (
+              <UserDatasetAllUploadsController baseUrl={baseUrl} />
+            )}
             disclaimerProps={{ toDoWhatMessage: 'To view your recent uploads' }}
           />
         )}

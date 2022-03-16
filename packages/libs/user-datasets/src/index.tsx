@@ -37,7 +37,7 @@ initialize({
       component: (props: RouteComponentProps<void>) => <Home />,
     },
     {
-      path: '/workspace/datasets',
+      path: '/user-datasets',
       exact: false,
       component: () => <UserDatasetRouter hasDirectUpload={hasDirectUpload} />,
     },

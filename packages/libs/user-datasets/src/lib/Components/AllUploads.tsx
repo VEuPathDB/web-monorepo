@@ -6,6 +6,7 @@ import UserDatasetEmptyState from '../Components/EmptyState';
 import { UserDatasetUpload } from '../Utils/types';
 
 interface Props {
+  baseUrl: string;
   uploadList?: Array<UserDatasetUpload>;
   errorMessage?: string;
   actions: {
@@ -60,7 +61,7 @@ const OngoingUpload = (
   </div>
 );
 
-const SuccessfulUpload = (upload: UserDatasetUpload) => (
+const SuccessfulUpload = (upload: UserDatasetUpload, baseUrl: string) => (
   <div>
     <UploadHeader
       color="green"
@@ -69,11 +70,7 @@ const SuccessfulUpload = (upload: UserDatasetUpload) => (
     />
     Successfully uploaded: &nbsp;
     <Link
-      to={
-        upload.datasetId != null
-          ? '/workspace/datasets/' + upload.datasetId
-          : '/workspace/datasets'
-      }
+      to={upload.datasetId != null ? `${baseUrl}/${upload.datasetId}` : baseUrl}
     >
       <code>{upload.datasetName}</code>
     </Link>
@@ -129,10 +126,11 @@ const FailedUpload = (upload: UserDatasetUpload) => (
 );
 
 const UploadsTable = (props: {
+  baseUrl: string;
   uploads: Array<UserDatasetUpload>;
   cancelCurrentUpload: (id: string) => void;
 }) => {
-  const { uploads, cancelCurrentUpload } = props;
+  const { baseUrl, uploads, cancelCurrentUpload } = props;
   return (
     <table style={{ margin: '1em 0' }}>
       <tbody>
@@ -142,7 +140,7 @@ const UploadsTable = (props: {
               {upload.isOngoing
                 ? OngoingUpload(upload, () => cancelCurrentUpload(upload.id))
                 : upload.isSuccessful
-                ? SuccessfulUpload(upload)
+                ? SuccessfulUpload(upload, baseUrl)
                 : upload.isUserError
                 ? InvalidatedUpload(upload)
                 : FailedUpload(upload)}
@@ -185,6 +183,7 @@ const AllUploads = (props: Props) => {
       {ongoingUploads.length > 0 && RefreshButton()}
       {uploads.length > 0 && (
         <UploadsTable
+          baseUrl={props.baseUrl}
           uploads={uploads}
           cancelCurrentUpload={props.actions.cancelCurrentUpload}
         />

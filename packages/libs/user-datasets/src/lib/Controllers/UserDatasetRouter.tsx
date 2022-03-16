@@ -12,7 +12,7 @@ interface Props {
 }
 
 export function UserDatasetRouter({ hasDirectUpload }: Props) {
-  const { path } = useRouteMatch();
+  const { path, url } = useRouteMatch();
 
   return (
     <Switch>
@@ -20,7 +20,12 @@ export function UserDatasetRouter({ hasDirectUpload }: Props) {
         path={`${path}/:id(\\d+)`}
         requiresLogin
         component={(props: RouteComponentProps<{ id: string }>) => {
-          return <UserDatasetDetailController {...props.match.params} />;
+          return (
+            <UserDatasetDetailController
+              baseUrl={url}
+              {...props.match.params}
+            />
+          );
         }}
       />
       <WdkRoute
@@ -30,7 +35,7 @@ export function UserDatasetRouter({ hasDirectUpload }: Props) {
         component={(props: RouteComponentProps<{}>) => (
           <UserDatasetsWorkspace
             hasDirectUpload={hasDirectUpload}
-            baseUrl={path}
+            baseUrl={url}
             urlParams={parseQueryString(props)}
           />
         )}

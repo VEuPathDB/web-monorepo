@@ -42,6 +42,7 @@ type StateProps = Pick<
 >;
 type DispatchProps = typeof ActionCreators;
 interface OwnProps extends RouteComponentProps<{}> {
+  baseUrl: string;
   hasDirectUpload: boolean;
 }
 type Props = {
@@ -118,7 +119,7 @@ class UserDatasetListController extends PageController<Props> {
 
     const { projectId, displayName: projectName } = config;
 
-    const { hasDirectUpload, location } = this.props.ownProps;
+    const { baseUrl, hasDirectUpload, location } = this.props.ownProps;
 
     const {
       userDatasetList: { userDatasets, userDatasetsById, filterByProject },
@@ -137,6 +138,7 @@ class UserDatasetListController extends PageController<Props> {
     } = this.props.dispatchProps;
 
     const listProps = {
+      baseUrl,
       user,
       location,
       projectId,
@@ -163,7 +165,10 @@ class UserDatasetListController extends PageController<Props> {
       <div className="UserDatasetList-Controller">
         <div className="UserDatasetList-Content">
           {noDatasetsForThisProject ? (
-            <NoDatasetsMessage hasDirectUpload={hasDirectUpload} />
+            <NoDatasetsMessage
+              baseUrl={baseUrl}
+              hasDirectUpload={hasDirectUpload}
+            />
           ) : (
             <UserDatasetList {...listProps} />
           )}

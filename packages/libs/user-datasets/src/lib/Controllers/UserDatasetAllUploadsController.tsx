@@ -25,7 +25,8 @@ type StateProps = StateSlice['userDatasetUpload'] &
   Pick<StateSlice['globalData'], 'user'>;
 
 type DispatchProps = typeof actionCreators;
-type Props = StateProps & { actions: DispatchProps };
+type OwnProps = { baseUrl: string };
+type Props = StateProps & { actions: DispatchProps } & OwnProps;
 
 class UserDatasetAllUploadsController extends PageController<Props> {
   loadData(prevProps?: Props) {
@@ -55,6 +56,7 @@ class UserDatasetAllUploadsController extends PageController<Props> {
     return (
       <div className="stack">
         <AllUploads
+          baseUrl={this.props.baseUrl}
           errorMessage={this.props.badAllUploadsActionMessage}
           uploadList={this.props.uploads}
           actions={this.props.actions}
@@ -64,7 +66,7 @@ class UserDatasetAllUploadsController extends PageController<Props> {
   }
 }
 
-const enhance = connect<StateProps, DispatchProps, {}, Props, StateSlice>(
+const enhance = connect<StateProps, DispatchProps, OwnProps, Props, StateSlice>(
   (state) => ({
     badAllUploadsActionMessage:
       state.userDatasetUpload.badAllUploadsActionMessage,
@@ -72,7 +74,11 @@ const enhance = connect<StateProps, DispatchProps, {}, Props, StateSlice>(
     user: state.globalData.user,
   }),
   actionCreators,
-  (stateProps, dispatchProps) => ({ ...stateProps, actions: dispatchProps })
+  (stateProps, dispatchProps, ownProps) => ({
+    ...stateProps,
+    actions: dispatchProps,
+    ...ownProps,
+  })
 );
 
 export default enhance(wrappable(UserDatasetAllUploadsController));

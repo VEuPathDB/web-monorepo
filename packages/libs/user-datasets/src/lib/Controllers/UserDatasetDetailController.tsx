@@ -34,7 +34,7 @@ const ActionCreators = {
 
 type StateProps = StateSlice['userDatasetDetail'] & StateSlice['globalData'];
 type DispatchProps = typeof ActionCreators;
-type OwnProps = { id: string };
+type OwnProps = { baseUrl: string; id: string };
 type MergedProps = {
   ownProps: OwnProps;
   dispatchProps: DispatchProps;
@@ -129,7 +129,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
   }
 
   renderView() {
-    const { id } = this.props.ownProps;
+    const { baseUrl, id } = this.props.ownProps;
     const {
       updateUserDatasetDetail,
       shareUserDatasets,
@@ -152,6 +152,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
     );
 
     const props = {
+      baseUrl,
       user,
       config,
       isOwner,

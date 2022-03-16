@@ -38,6 +38,7 @@ import { normalizePercentage, textCell } from '../UserDatasetUtils';
 import './UserDatasetList.scss';
 
 interface Props {
+  baseUrl: string;
   user: User;
   location: any;
   projectId: string;
@@ -148,9 +149,10 @@ class UserDatasetList extends React.Component<Props, State> {
 
   renderStatusCell(cellProps: MesaDataCellProps) {
     const userDataset: UserDataset = cellProps.row;
-    const { projectId, projectName } = this.props;
+    const { baseUrl, projectId, projectName } = this.props;
     return (
       <UserDatasetStatus
+        baseUrl={baseUrl}
         linkToDataset={true}
         useTooltip={true}
         userDataset={userDataset}
@@ -171,7 +173,7 @@ class UserDatasetList extends React.Component<Props, State> {
   }
 
   getColumns(): any[] {
-    const { userDatasets, user } = this.props;
+    const { baseUrl, userDatasets, user } = this.props;
     function isOwner(ownerId: number): boolean {
       return user.id === ownerId;
     }
@@ -193,7 +195,7 @@ class UserDatasetList extends React.Component<Props, State> {
               readOnly={!isOwner(dataset.ownerUserId)}
               displayValue={(value: string) => (
                 <React.Fragment>
-                  <Link to={`/workspace/datasets/${dataset.id}`}>{value}</Link>
+                  <Link to={`${baseUrl}/${dataset.id}`}>{value}</Link>
                   <br />
                   <span className="faded">({dataset.id})</span>
                 </React.Fragment>

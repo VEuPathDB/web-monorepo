@@ -1,10 +1,11 @@
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 
 interface Props {
+  baseUrl: string;
   hasDirectUpload: boolean;
 }
 
-function NoDatasetsMessage({ hasDirectUpload }: Props) {
+function NoDatasetsMessage({ baseUrl, hasDirectUpload }: Props) {
   return (
     <div className="UserDataset-NoDatasets">
       <div className="UserDataset-NoDatasets__lead">
@@ -14,7 +15,7 @@ function NoDatasetsMessage({ hasDirectUpload }: Props) {
         {hasDirectUpload ? (
           <li>
             Try adding a data set using the{' '}
-            <Link to="/workspace/datasets/new">New upload</Link> section above.
+            <Link to={`${baseUrl}/new`}>New upload</Link> section above.
           </li>
         ) : (
           <li>
@@ -24,7 +25,7 @@ function NoDatasetsMessage({ hasDirectUpload }: Props) {
         )}
         <li>
           For an overview of the functionality, see the{' '}
-          <Link to="/workspace/datasets/help">Help</Link> section.
+          <Link to={`${baseUrl}/help`}>Help</Link> section.
         </li>
       </ul>
     </div>

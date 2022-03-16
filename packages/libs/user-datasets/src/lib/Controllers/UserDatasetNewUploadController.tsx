@@ -21,6 +21,7 @@ type StateProps = Pick<StateSlice['userDatasetUpload'], 'badUploadMessage'> &
 type DispatchProps = typeof actionCreators;
 
 type OwnProps = {
+  baseUrl: string;
   urlParams: Record<string, string>;
 };
 
@@ -61,6 +62,7 @@ class UserDatasetUploadController extends PageController<MergedProps> {
       <div className="stack">
         {projectName === 'MicrobiomeDB' ? (
           <MicrobiomeDBUploadForm
+            baseUrl={this.props.baseUrl}
             badUploadMessage={this.props.badUploadMessage}
             submitForm={this.props.userEvents.submitUploadForm}
             urlParams={this.props.urlParams}

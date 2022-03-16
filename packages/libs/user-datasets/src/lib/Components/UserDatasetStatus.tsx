@@ -7,23 +7,24 @@ import {
 
 import { UserDataset } from '../Utils/types';
 
-type Props = {
+interface Props {
+  baseUrl: string;
   userDataset: UserDataset;
   projectId: string;
   displayName: string;
   linkToDataset: boolean;
   useTooltip: boolean;
-};
+}
 
 const FOUR_HOURS = 4 * (1000 * 60 * 60);
 
 export default function UserDatasetStatus(props: Props) {
-  const { userDataset, projectId, displayName } = props;
+  const { baseUrl, userDataset, projectId, displayName } = props;
   const { isInstalled, isCompatible, projects, age } = userDataset;
   const isInstallable = projects.includes(projectId);
   const isPending = isCompatible && age < FOUR_HOURS;
   const isError = isCompatible && !isPending;
-  const link = `/workspace/datasets/${userDataset.id}`;
+  const link = `${baseUrl}/${userDataset.id}`;
   const content = !isInstallable ? (
     <span>This data set is not compatible with {displayName}.</span>
   ) : isInstalled ? (

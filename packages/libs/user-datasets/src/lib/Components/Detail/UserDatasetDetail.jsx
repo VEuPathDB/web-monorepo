@@ -52,6 +52,7 @@ class UserDatasetDetail extends React.Component {
     this.closeSharingModal = this.closeSharingModal.bind(this);
     this.getFileTableColumns = this.getFileTableColumns.bind(this);
     this.renderDetailsSection = this.renderDetailsSection.bind(this);
+    this.renderAllDatasetsLink = this.renderAllDatasetsLink.bind(this);
   }
 
   isMyDataset() {
@@ -91,7 +92,7 @@ class UserDatasetDetail extends React.Component {
   }
 
   handleDelete() {
-    const { isOwner, userDataset, removeUserDataset } = this.props;
+    const { baseUrl, isOwner, userDataset, removeUserDataset } = this.props;
     const { sharedWith } = userDataset;
     const shareCount = !Array.isArray(sharedWith) ? null : sharedWith.length;
     const message =
@@ -105,13 +106,13 @@ class UserDatasetDetail extends React.Component {
           } you've shared with will lose access.`);
 
     if (window.confirm(message)) {
-      removeUserDataset(userDataset, '/workspace/datasets');
+      removeUserDataset(userDataset, baseUrl);
     }
   }
 
   renderAllDatasetsLink() {
     return (
-      <Link className="AllDatasetsLink" to={'/workspace/datasets'}>
+      <Link className="AllDatasetsLink" to={this.props.baseUrl}>
         <Icon fa="chevron-left" />
         &nbsp; All My Data Sets
       </Link>

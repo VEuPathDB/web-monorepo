@@ -7,7 +7,10 @@ import { NewUserDataset, UserDatasetUpload } from '../Utils/types';
 
 export const submitUploadForm = makeActionCreator(
   'user-dataset-upload/submit-form',
-  (newUserDataset: NewUserDataset) => ({ newUserDataset })
+  (newUserDataset: NewUserDataset, redirectTo?: string) => ({
+    newUserDataset,
+    redirectTo,
+  })
 );
 
 export const receiveBadUpload = makeActionCreator(
