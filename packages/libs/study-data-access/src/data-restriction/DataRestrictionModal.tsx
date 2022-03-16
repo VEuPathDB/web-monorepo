@@ -64,7 +64,6 @@ function Message(props: Props) {
   return isPrereleaseStudy(
     getStudyAccess(study),
     getStudyId(study),
-    user,
     permissions
   ) ? (
     <div>
@@ -91,7 +90,6 @@ function PolicyNotice(props: Props) {
   return isPrereleaseStudy(
     getStudyAccess(study),
     getStudyId(study),
-    user,
     permissions
   ) ? null : !policyUrl ? null : getRequestNeedsApproval(study) == '0' ? (
     <p>
@@ -132,7 +130,6 @@ function Buttons(props: Props) {
   return isPrereleaseStudy(
     getStudyAccess(study),
     getStudyId(study),
-    user,
     permissions
   ) ? (
     <div className="DataRestrictionModal-Buttons">
