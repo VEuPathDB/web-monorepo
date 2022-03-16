@@ -100,6 +100,9 @@ import FacetedLinePlot from '@veupathdb/components/lib/plots/facetedPlots/Facete
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
 import { BinSpec, BinWidthSlider } from '../../../types/general';
 import { useVizConfig } from '../../../hooks/visualizations';
+import PopoverButton from '@veupathdb/components/lib/components/widgets/PopoverButton';
+
+import { useInputStyles } from '../inputStyles';
 
 const plotContainerStyles = {
   width: 750,
@@ -348,6 +351,9 @@ function LineplotViz(props: VisualizationProps) {
         ])
       )
         throw new Error(nonUniqueWarning);
+
+      if (vizConfig.valueSpecConfig === 'Ratio or proportion')
+        throw new Error('Not yet implemented - no back end request made');
 
       // check independentValueType/dependentValueType
       const independentValueType = xAxisVariable?.type
@@ -776,6 +782,7 @@ function LineplotWithControls({
 
   const neverUseBinning = data0?.binWidthSlider == null; // for ordinal string x-variables
   const neverShowErrorBars = lineplotProps.dependentValueType === 'date';
+  const classes = useInputStyles();
 
   return (
     <>
@@ -792,6 +799,23 @@ function LineplotWithControls({
         margins={['1em', '0', '0', '6em']}
         itemMarginRight={50}
       />
+
+      {valueSpec === 'Ratio or proportion' && (
+        <div className={classes.inputs}>
+          <div className={classes.inputGroup}>
+            <div className={classes.fullRow}>
+              <h4>Build your own ratio or proportion</h4>
+            </div>
+            <div className={classes.input}>
+              <div className={classes.label}>Numerator</div>
+              <PopoverButton label="will be vizConfig.numerator summary">
+                {' '}
+                fun times{' '}
+              </PopoverButton>
+            </div>
+          </div>
+        </div>
+      )}
 
       {isFaceted(data) ? (
         <FacetedLinePlot
