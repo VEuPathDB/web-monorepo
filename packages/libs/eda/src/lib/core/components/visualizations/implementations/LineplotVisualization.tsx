@@ -754,7 +754,7 @@ function LineplotViz(props: VisualizationProps) {
         {vizConfig.valueSpecConfig === 'Ratio or proportion' && (
           <div className={classes.inputGroup}>
             <div className={classes.fullRow}>
-              <h4>Build your own ratio or proportion</h4>
+              <h4>Ratio or proportion specification</h4>
             </div>
             <div className={classes.input}>
               <div className={classes.label}>
