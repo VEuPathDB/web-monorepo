@@ -57,8 +57,12 @@ export function ComputationRoute(props: Props) {
 
           const computations = analysisState.analysis.descriptor.computations;
 
+          // The pass app's id should be 'pass-through' for backwards compatability
+          const singleAppComputationId =
+            singleAppMode === 'pass' ? 'pass-through' : singleAppMode;
+
           let computation = props.analysisState.analysis?.descriptor.computations.find(
-            (c) => c.computationId === singleAppMode
+            (c) => c.computationId === singleAppComputationId
           );
 
           // If we don't yet have a computation instance, we need to make one
@@ -68,7 +72,7 @@ export function ComputationRoute(props: Props) {
               singleAppMode,
               null,
               computations,
-              singleAppMode
+              singleAppComputationId
             );
             analysisState.setComputations([computation]);
           }
@@ -76,10 +80,10 @@ export function ComputationRoute(props: Props) {
           return (
             <Switch>
               <Route exact path={url}>
-                <Redirect to={`${url}/${singleAppMode}`} />
+                <Redirect to={`${url}/${singleAppComputationId}`} />
               </Route>
               <Route
-                path={`${url}/${singleAppMode}`}
+                path={`${url}/${singleAppComputationId}`}
                 render={() => {
                   const plugin = apps[0] && plugins[apps[0].name];
                   if (apps[0] == null || plugin == null)
@@ -87,7 +91,7 @@ export function ComputationRoute(props: Props) {
                   return (
                     <ComputationInstance
                       {...props}
-                      computationId={singleAppMode}
+                      computationId={singleAppComputationId}
                       computationAppOverview={apps[0]}
                       visualizationTypes={plugin.visualizationTypes}
                     />
