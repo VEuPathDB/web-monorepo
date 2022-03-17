@@ -110,8 +110,10 @@ export function WorkspaceRouter({
 
           const lastPathname =
             pathnamesRef.current[pathnamesCursorRef.current + 1];
-          const newAnalysisRegex = /eda\/.*\/new\/.*/;
-          const savedAnalysisRegex = /eda\/[^/]*\/(?!new\/)([^/]*)\/.*/;
+          const newAnalysisRegex = new RegExp(path + '/.*/new/.*');
+          const savedAnalysisRegex = new RegExp(
+            path + '/[^/]*/(?!new/)([^/]*)/.*'
+          );
           const savedAnalysisMatch = lastPathname.match(savedAnalysisRegex);
 
           if (savedAnalysisMatch && newAnalysisRegex.test(location.pathname)) {
