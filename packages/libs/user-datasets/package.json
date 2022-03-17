@@ -1,5 +1,5 @@
 {
-  "name": "web-user-datasets",
+  "name": "@veupathdb/user-datasets",
   "version": "0.1.0",
   "private": true,
   "sideEffects": [
