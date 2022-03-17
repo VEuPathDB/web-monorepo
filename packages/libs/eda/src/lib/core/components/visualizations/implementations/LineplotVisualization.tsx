@@ -27,11 +27,7 @@ import { PlotLayout } from '../../layouts/PlotLayout';
 
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
-import {
-  SelectorProps,
-  VisualizationProps,
-  VisualizationType,
-} from '../VisualizationTypes';
+import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 
 import Switch from '@veupathdb/components/lib/components/widgets/Switch';
 import line from './selectorIcons/line.svg';
@@ -253,11 +249,17 @@ function LineplotViz(props: VisualizationProps) {
         selectedVariables.xAxisVariable,
         vizConfig.xAxisVariable
       );
-      const valueSpec =
-        yAxisVariable?.distinctValuesCount != null &&
-        yAxisVariable.distinctValuesCount <= 8
-          ? 'Ratio or proportion'
-          : vizConfig.valueSpecConfig;
+      // need to get the yAxisVariable metadata right here, right now
+      // (we can't use the more generally scoped 'yAxisVariable' because it's based on vizConfig and is out of date)
+      const { variable: yAxisVar } =
+        findEntityAndVariable(selectedVariables.yAxisVariable) ?? {};
+
+      const valueSpec = isSuitableCategoricalVariable(yAxisVar)
+        ? 'Ratio or proportion'
+        : vizConfig.valueSpecConfig === 'Ratio or proportion'
+        ? createDefaultConfig().valueSpecConfig
+        : vizConfig.valueSpecConfig;
+
       updateVizConfig({
         ...selectedVariables,
         binWidth: keepBin ? vizConfig.binWidth : undefined,
@@ -268,7 +270,15 @@ function LineplotViz(props: VisualizationProps) {
         checkedLegendItems: undefined,
       });
     },
-    [updateVizConfig, yAxisVariable, vizConfig.valueSpecConfig]
+    [
+      updateVizConfig,
+      vizConfig.xAxisVariable,
+      vizConfig.valueSpecConfig,
+      vizConfig.valueSpecConfig,
+      vizConfig.binWidth,
+      vizConfig.binWidthTimeUnit,
+      findEntityAndVariable,
+    ]
   );
 
   const onBinWidthChange = useCallback(
@@ -352,7 +362,7 @@ function LineplotViz(props: VisualizationProps) {
       )
         throw new Error(nonUniqueWarning);
 
-      if (vizConfig.valueSpecConfig === 'Ratio or proportion')
+      if (categoricalMode)
         throw new Error('Not yet implemented - no back end request made');
 
       // check independentValueType/dependentValueType
@@ -361,11 +371,13 @@ function LineplotViz(props: VisualizationProps) {
         : '';
       const dependentValueType = yAxisVariable?.type ? yAxisVariable.type : '';
 
-      // check variable inputs: this is necessary to prevent from data post
-      if (vizConfig.xAxisVariable == null || xAxisVariable == null)
-        return undefined;
-      else if (vizConfig.yAxisVariable == null || yAxisVariable == null)
-        return undefined;
+      if (
+        !categoricalMode &&
+        !(dependentValueType === 'number' || dependentValueType === 'integer')
+      )
+        throw new Error(
+          "TEMPORARY ERROR... this variable isn't suitable (possibly too many distinct values) and constraints will handle this soon..."
+        );
 
       // add visualization.type here. valueSpec too?
       const params = getRequestParams(
@@ -578,16 +590,10 @@ function LineplotViz(props: VisualizationProps) {
       // new dependent axis range
       dependentAxisRange={data.value ? defaultDependentRangeMargin : undefined}
       // set valueSpec as Raw when yAxisVariable = date
-      valueSpec={vizConfig.valueSpecConfig}
-      onValueSpecChange={onValueSpecChange}
       onBinWidthChange={onBinWidthChange}
       vizType={visualization.descriptor.type}
       interactive={!isFaceted(data.value) ? true : false}
       showSpinner={filteredCounts.pending || data.pending}
-      // add plotOptions to control the list of plot options
-      plotOptions={keys(valueSpecLookup)}
-      // disabledList prop is used to disable radio options (grayed out)
-      disabledList={[]}
       independentValueType={
         NumberVariable.is(xAxisVariable)
           ? 'number'
@@ -666,6 +672,17 @@ function LineplotViz(props: VisualizationProps) {
     </>
   );
 
+  const classes = useInputStyles();
+
+  const categoricalMode = isSuitableCategoricalVariable(yAxisVariable);
+
+  const disabledValueSpecs =
+    yAxisVariable == null
+      ? []
+      : categoricalMode
+      ? ['Mean', 'Median']
+      : ['Ratio or proportion'];
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -714,6 +731,59 @@ function LineplotViz(props: VisualizationProps) {
           outputEntity={outputEntity}
         />
       </div>
+
+      <div className={classes.inputs}>
+        <div className={classes.inputGroup}>
+          <div className={classes.fullRow}>
+            <h4>Y-axis aggregation</h4>
+          </div>
+          <div className={classes.input}>
+            <RadioButtonGroup
+              options={keys(valueSpecLookup)}
+              selectedOption={vizConfig.valueSpecConfig}
+              onOptionSelected={onValueSpecChange}
+              disabledList={disabledValueSpecs}
+              orientation={'horizontal'}
+              labelPlacement={'end'}
+              buttonColor={'primary'}
+              itemMarginRight={50}
+            />
+          </div>
+        </div>
+
+        {vizConfig.valueSpecConfig === 'Ratio or proportion' && (
+          <div className={classes.inputGroup}>
+            <div className={classes.fullRow}>
+              <h4>Build your own ratio or proportion</h4>
+            </div>
+            <div className={classes.input}>
+              <div className={classes.label}>
+                Value(s) of interest (numerator)
+              </div>
+              <PopoverButton
+                label="will be vizConfig.numerator summary"
+                key="numerator"
+              >
+                {' '}
+                fun times{' '}
+              </PopoverButton>
+            </div>
+            <div className={classes.input}>
+              <div className={classes.label}>
+                Value(s) of interest (denominator)
+              </div>
+              <PopoverButton
+                label="will be vizConfig.numerator summary"
+                key="denominator"
+              >
+                {' '}
+                fun times{' '}
+              </PopoverButton>
+            </div>
+          </div>
+        )}
+      </div>
+
       <PluginError error={data.error} outputSize={outputSize} />
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
       <PlotLayout
@@ -728,14 +798,9 @@ function LineplotViz(props: VisualizationProps) {
 
 type LineplotWithControlsProps = Omit<LinePlotProps, 'data'> & {
   data?: LinePlotData | FacetedData<LinePlotData>;
-  valueSpec: string | undefined;
-  onValueSpecChange: (value: string) => void;
   onBinWidthChange: (newBinWidth: NumberOrTimeDelta) => void;
   updateThumbnail: (src: string) => void;
   vizType: string;
-  plotOptions: string[];
-  // add disabledList
-  disabledList: string[];
   // custom legend
   checkedLegendItems: string[] | undefined;
   onCheckedLegendItemsChange: (checkedLegendItems: string[]) => void;
@@ -748,14 +813,8 @@ type LineplotWithControlsProps = Omit<LinePlotProps, 'data'> & {
 function LineplotWithControls({
   data,
   // LinePlotControls: set initial value as 'raw' ('Raw')
-  valueSpec = 'Median',
-  onValueSpecChange,
   onBinWidthChange,
   vizType,
-  // add plotOptions
-  plotOptions,
-  // add disabledList
-  disabledList,
   updateThumbnail,
   // custom legend
   checkedLegendItems,
@@ -782,41 +841,9 @@ function LineplotWithControls({
 
   const neverUseBinning = data0?.binWidthSlider == null; // for ordinal string x-variables
   const neverShowErrorBars = lineplotProps.dependentValueType === 'date';
-  const classes = useInputStyles();
 
   return (
     <>
-      <RadioButtonGroup
-        label="Y-axis aggregation:"
-        options={plotOptions}
-        selectedOption={valueSpec}
-        onOptionSelected={onValueSpecChange}
-        // disabledList prop is used to disable radio options (grayed out)
-        disabledList={disabledList}
-        orientation={'horizontal'}
-        labelPlacement={'end'}
-        buttonColor={'primary'}
-        margins={['1em', '0', '0', '6em']}
-        itemMarginRight={50}
-      />
-
-      {valueSpec === 'Ratio or proportion' && (
-        <div className={classes.inputs}>
-          <div className={classes.inputGroup}>
-            <div className={classes.fullRow}>
-              <h4>Build your own ratio or proportion</h4>
-            </div>
-            <div className={classes.input}>
-              <div className={classes.label}>Numerator</div>
-              <PopoverButton label="will be vizConfig.numerator summary">
-                {' '}
-                fun times{' '}
-              </PopoverButton>
-            </div>
-          </div>
-        </div>
-      )}
-
       {isFaceted(data) ? (
         <FacetedLinePlot
           data={data}
@@ -1305,4 +1332,15 @@ function reorderResponseLineplotData(
   } else {
     return xAxisOrderedSeries;
   }
+}
+
+/**
+ * TEMPORARY function to determine if we are dealing with a categorical variable
+ */
+function isSuitableCategoricalVariable(variable?: Variable): boolean {
+  return (
+    variable?.vocabulary != null &&
+    variable?.distinctValuesCount != null &&
+    variable?.distinctValuesCount <= 8
+  );
 }
