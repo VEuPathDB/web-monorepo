@@ -9,7 +9,7 @@ import CloseIcon from '@material-ui/icons/Close';
 
 import { gray, mutedGreen, orange, red, blue, ColorHue } from '../../definitions/colors'
 
-type BannerProps = {
+export type BannerProps = {
   type: 'warning' | 'danger' | 'error' | 'success' | 'info' | 'normal';
   message: string;
   pinned: boolean;
