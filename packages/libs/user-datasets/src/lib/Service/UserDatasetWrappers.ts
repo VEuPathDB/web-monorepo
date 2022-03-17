@@ -113,7 +113,8 @@ export function isUserDatasetsCompatibleWdkService(
   );
 }
 
-interface UserDatasetCompatibleEpicDependencies extends EpicDependencies {
+export interface UserDatasetCompatibleEpicDependencies
+  extends EpicDependencies {
   wdkService: UserDatasetsCompatibleWdkService;
 }
 
