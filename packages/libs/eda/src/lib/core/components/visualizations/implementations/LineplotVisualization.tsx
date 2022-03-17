@@ -99,6 +99,7 @@ import { useVizConfig } from '../../../hooks/visualizations';
 import PopoverButton from '@veupathdb/components/lib/components/widgets/PopoverButton';
 
 import { useInputStyles } from '../inputStyles';
+import { FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
 
 const plotContainerStyles = {
   width: 750,
@@ -175,6 +176,8 @@ export const LineplotConfig = t.intersection([
     showMissingness: t.boolean,
     checkedLegendItems: t.array(t.string),
     showErrorBars: t.boolean,
+    numeratorValues: t.array(t.string),
+    denominatorValues: t.array(t.string),
   }),
 ]);
 
@@ -333,6 +336,12 @@ function LineplotViz(props: VisualizationProps) {
   );
 
   const onUseBinningChange = onChangeHandlerFactory<boolean>('useBinning');
+  const onNumeratorValuesChange = onChangeHandlerFactory<string[]>(
+    'numeratorValues'
+  );
+  const onDenominatorValuesChange = onChangeHandlerFactory<string[]>(
+    'denominatorValues'
+  );
 
   const outputEntity = useFindOutputEntity(
     dataElementDependencyOrder,
@@ -761,11 +770,28 @@ function LineplotViz(props: VisualizationProps) {
                 Value(s) of interest (numerator)
               </div>
               <PopoverButton
-                label="will be vizConfig.numerator summary"
+                label={
+                  vizConfig.numeratorValues && vizConfig.numeratorValues.length
+                    ? vizConfig.numeratorValues.join(', ')
+                    : 'Choose value(s)'
+                }
                 key="numerator"
               >
-                {' '}
-                fun times{' '}
+                <FormControl style={{ minWidth: '300px' }}>
+                  <Select
+                    multiple
+                    value={vizConfig.numeratorValues ?? []}
+                    onChange={(event) => {
+                      onNumeratorValuesChange(event.target.value as string[]);
+                    }}
+                  >
+                    {(yAxisVariable?.vocabulary ?? []).map((value) => (
+                      <MenuItem key={value} value={value}>
+                        {value}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </PopoverButton>
             </div>
             <div className={classes.input}>
