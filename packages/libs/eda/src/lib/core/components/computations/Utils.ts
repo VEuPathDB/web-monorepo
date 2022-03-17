@@ -10,9 +10,11 @@ export function createComputation(
   computations: Computation[] = [],
   computationId?: string
 ): Computation {
-    computationId ??= createNewId(
+  if (!computationId) {
+    computationId = createNewId(
       new Set(computations.map((c) => c.computationId))
     );
+  }
 
   return {
     computationId,
