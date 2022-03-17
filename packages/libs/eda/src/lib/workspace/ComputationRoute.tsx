@@ -1,3 +1,4 @@
+import { string } from 'fp-ts';
 import React, { useCallback } from 'react';
 import { Route, Switch, useHistory } from 'react-router';
 import { Link, useRouteMatch } from 'react-router-dom';
@@ -10,6 +11,8 @@ import { PromiseResult } from '../core/components/Promise';
 import { EntityCounts } from '../core/hooks/entityCounts';
 import { PromiseHookState, usePromise } from '../core/hooks/promise';
 import { GeoConfig } from '../core/types/geoConfig';
+// alphadiv abundance
+import { ComputationConfiguration } from '../core/types/visualization';
 
 export interface Props {
   analysisState: AnalysisState;
@@ -51,7 +54,11 @@ export function ComputationRoute(props: Props) {
           </Route>
           {apps.map((app) => {
             const plugin = plugins[app.name];
-            const addComputation = (name: string, configuration: unknown) => {
+            // alphadiv abundance
+            const addComputation = (
+              name: string,
+              configuration: ComputationConfiguration
+            ) => {
               if (analysisState.analysis == null) return;
               const computations =
                 analysisState.analysis.descriptor.computations;

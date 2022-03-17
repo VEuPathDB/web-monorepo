@@ -15,6 +15,7 @@ import { VariableDataShape, VariableType } from './study';
 
 import { CompleteCasesTable } from '../api/DataClient';
 import { Filter } from './filter';
+import { VariableDescriptor } from './variable';
 
 /**
  * Metadata for the visualization object stored in user's analysis
@@ -49,10 +50,24 @@ export const Visualization = intersection([
 /**
  * Type and configuration of the app object stored in user's analysis
  */
+// alphadiv abundance
+export type ComputationConfiguration = TypeOf<typeof ComputationConfiguration>;
+export const ComputationConfiguration = intersection([
+  type({
+    name: string,
+    collectionVariable: VariableDescriptor,
+  }),
+  partial({
+    abundanceMethod: string,
+    alphaDivMethod: string,
+  }),
+]);
+
+// alphadiv abundance
 export type ComputationDescriptor = TypeOf<typeof ComputationDescriptor>;
 export const ComputationDescriptor = type({
   type: string,
-  configuration: unknown,
+  configuration: ComputationConfiguration,
 });
 
 /**
