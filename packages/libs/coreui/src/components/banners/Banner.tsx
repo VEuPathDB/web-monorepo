@@ -12,8 +12,8 @@ import { gray, mutedGreen, orange, red, blue, ColorHue } from '../../definitions
 export type BannerProps = {
   type: 'warning' | 'danger' | 'error' | 'success' | 'info' | 'normal';
   message: string;
-  pinned: boolean;
-  intense: boolean;
+  pinned?: boolean;
+  intense?: boolean;
 }
 
 export type BannerComponentProps = {
