@@ -29,8 +29,6 @@ export function attemptAction(action: DataRestrictionActionType, details: Action
       return checkPermissions(user, studyAccessApi).then(permissions => {
         return handleAction(
           permissions,
-          // FIXME: Either properly type the approvedStudies property, or retire it
-          user.properties.approvedStudies as unknown as string[] | undefined,
           studies.records,
           action,
           details
@@ -61,7 +59,6 @@ export const clearRestrictions = makeActionCreator('data-restriction/cleared');
 // Create restriction action
 function handleAction(
   permissions: UserPermissions,
-  approvedStudies: string[] | undefined,
   studies: Study[],
   action: DataRestrictionActionType,
   { studyId, onAllow, onDeny }: Partial<ActionAttemptDetails> = {}
@@ -77,7 +74,7 @@ function handleAction(
     return clearRestrictions();
   }
 
-  if (isAllowedAccess({ permissions, approvedStudies, action, study })) {
+  if (isAllowedAccess({ permissions, action, study })) {
     if (typeof onAllow === 'function') onAllow();
     return unrestricted(study, action);
   }

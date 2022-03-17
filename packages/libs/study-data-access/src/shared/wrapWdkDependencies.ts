@@ -1,6 +1,6 @@
 import { WdkDependencies } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 
-import { StudyAccessApi } from '../study-access/api';
+import { StudyAccessApi, StubbedStudyAccessApi } from '../study-access/api';
 
 export interface WdkDependenciesWithStudyAccessApi extends WdkDependencies {
   studyAccessApi: StudyAccessApi;
@@ -16,13 +16,24 @@ export function areCompatibleWdkDependencies(
 }
 
 export function wrapWdkDependencies(
-  studyAccessApiUrl: string,
-  wdkDependencies: WdkDependencies
+  studyAccessApiUrl: string | undefined,
+  wdkDependencies: WdkDependencies,
 ): WdkDependenciesWithStudyAccessApi {
-  const studyAccessApi = new StudyAccessApi(
-    { baseUrl: studyAccessApiUrl },
-    wdkDependencies.wdkService
-  );
+
+  let studyAccessApi;
+
+  if (studyAccessApiUrl) {
+    studyAccessApi = new StudyAccessApi(
+      { baseUrl: studyAccessApiUrl },
+      wdkDependencies.wdkService
+    );
+  } else {
+    // The stubbed version's fetchPermissions returns a perDataset obj that allows all actions.
+    studyAccessApi = new StubbedStudyAccessApi(
+      { baseUrl: '' },
+      wdkDependencies.wdkService
+    );
+  }
 
   return {
     ...wdkDependencies,

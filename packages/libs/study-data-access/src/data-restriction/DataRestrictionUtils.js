@@ -66,10 +66,10 @@ export function getRestrictionMessage ({ action, permissions, study, user }) {
 
 // CHECKERS! =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-export function isAllowedAccess ({ permissions, approvedStudies, action, study }) {
+export function isAllowedAccess ({ permissions, action, study }) {
   const id = getStudyId(study);
   if (sessionStorage.getItem('restriction_override') === 'true') return true;
-  if (isUserApprovedForAction(permissions, approvedStudies, id, action)) return true;
+  if (isUserApprovedForAction(permissions, id, action)) return true;
   // access not allowed, we need to build the modal popup
   return false;
 }
@@ -84,27 +84,11 @@ export function isPrereleaseStudyTemp (access) {
 // the UI in (1) home page study card, (2) study menu, (3) study record page is different when
 // - the study.access is prerelease
 // - the user doesnt have access
-export function isPrereleaseStudy (access, studyId, user, permissions) {
-  if (typeof(user) != "undefined") {
-    if (permissions != null) {
-      if (
-        access === 'prerelease' &&
-        !isUserFullyApprovedForStudy(permissions, user.properties.approvedStudies, studyId)
-      ) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-
-    if ( (access === 'prerelease') && (!user.properties.approvedStudies.includes(studyId))  ) 
-      return true;
-    else return false;
-  }
-  else {
-    console.log("ATTENTION: user undefined in isPrerelease(),  study ID: " + studyId + " -- access: " + access + " --  showing searches");
-    return false;
-  }
+export function isPrereleaseStudy (access, studyId, permissions) {
+  return (
+    access === 'prerelease' &&
+    !isUserFullyApprovedForStudy(permissions, studyId)
+  );
 }
 
 // we will request the user to request approval if explicit approval needed (guest or not)
@@ -113,7 +97,6 @@ export function actionRequiresApproval ({ action, permissions, study, user }) {
 
   return isUserApprovedForAction(
     permissions,
-    user.properties.approvedStudies,
     datasetId,
     action
   ) === false;

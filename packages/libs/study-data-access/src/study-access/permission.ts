@@ -153,13 +153,9 @@ export function shouldDisplayHistoryTable(userPermissions: UserPermissions) {
 
 export function isUserApprovedForAction(
   userPermissions: UserPermissions,
-  approvedStudies: string[] | undefined,
   datasetId: string,
   action: Action,
 ) {
-  if (approvedStudies == null) {
-    return true;
-  }
 
   const actionAuthorization =
     userPermissions.perDataset[datasetId]?.actionAuthorization;
@@ -173,12 +169,8 @@ export function isUserApprovedForAction(
 
 export function isUserFullyApprovedForStudy(
   userPermissions: UserPermissions,
-  approvedStudies: string[] | undefined,
   datasetId: string
 ) {
-  if (approvedStudies == null) {
-    return true;
-  }
 
   const actionAuthorization =
     userPermissions.perDataset[datasetId]?.actionAuthorization;
@@ -202,9 +194,7 @@ export async function checkPermissions(
   user: User,
   studyAccessApi: StudyAccessApi
 ): Promise<UserPermissions> {
-  return user.properties?.approvedStudies == null
-    ? { type: 'external', perDataset: {} }
-    : await fetchPermissions(studyAccessApi);
+  return await fetchPermissions(studyAccessApi);
 }
 
 export function permittedApprovalStatusChanges(oldApprovalStatus: ApprovalStatus): ApprovalStatus[] {
@@ -214,3 +204,31 @@ export function permittedApprovalStatusChanges(oldApprovalStatus: ApprovalStatus
     ? [ 'approved', 'denied' ]
     : [ 'requested', 'approved', 'denied'];
 }
+
+// The following is used for legacy sites (such as MicrobiomeDB) 
+// that would return an empty perDataset obj
+
+const stubbedPermissionEntry: DatasetPermissionEntry = {
+  type: 'end-user',
+  studyId: 'stub',
+  sha1Hash: 'stub-hash',
+  actionAuthorization: {
+    studyMetadata: true,
+    subsetting: true,
+    visualizations: true,
+    resultsFirstPage: true,
+    resultsAll: true,
+  },
+};
+
+export const stubbedPerDataset: Record<string, DatasetPermissionEntry> = new Proxy(
+  {},
+  {
+    get(target, property, receiver) {
+      // Always return the stubbed permission entry,
+      // regardless of which property (dataset id) is requested
+      return stubbedPermissionEntry;
+    },
+  }
+);
+
