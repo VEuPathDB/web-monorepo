@@ -1,4 +1,5 @@
 import React from 'react';
+import { siteSearchServiceUrl } from 'ebrc-client/config';
 import SiteMenu from 'ebrc-client/App/SiteMenu';
 import UserMenu from 'ebrc-client/App/UserMenu';
 import { formatReleaseDate } from 'ebrc-client/util/formatters';
@@ -6,6 +7,7 @@ import { IconAlt as Icon, Link, Mesa } from '@veupathdb/wdk-client/lib/Component
 import partofveupath from '../../../images/partofveupath.png';
 
 import './HeaderNav.scss';
+import { SiteSearchInput } from 'ebrc-client/components';
 
 class HeaderNav extends React.Component {
   constructor (props) {
@@ -58,8 +60,13 @@ class HeaderNav extends React.Component {
             </Link>
           </h2>
         </div>
-        <div className="box grow-1">
+        <div className="box row grow-1">
           <SiteMenu items={mainMenu} config={siteConfig}  actions={actions} user={user}/>
+          {siteSearchServiceUrl && (
+            <div style={{ color: 'black', marginLeft: '2em', width: '35em', alignSelf: 'center' }}>
+              <SiteSearchInput placeholderText="GEMS or malaria"/>
+            </div>
+          )}
         </div>
         <div className="box">
           <IconMenu items={iconMenu} />
@@ -150,6 +157,11 @@ class HeaderNav extends React.Component {
           <div className="HeaderNav-Switch">
             <div className="row HeaderNav-Primary">
               <SiteMenu items={mainMenu} config={siteConfig} actions={actions} user={user} />
+              {siteSearchServiceUrl && (
+                <div style={{ color: 'black', fontSize: '1rem', flex: 0.5 }}>
+                  <SiteSearchInput placeholderText="GEMS or malaria"/>
+                </div>
+              )}
             </div>
 
             <div className="row HeaderNav-Secondary">
