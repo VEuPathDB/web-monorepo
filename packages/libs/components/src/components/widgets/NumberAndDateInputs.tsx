@@ -29,6 +29,8 @@ type BaseProps<M extends NumberOrDate> = {
   containerStyles?: React.CSSProperties;
   /** Do not flag up value range violations */
   displayRangeViolationWarnings?: boolean;
+  /** Disabled? Default is false */
+  disabled?: boolean;
 };
 
 export type NumberInputProps = BaseProps<number>;
@@ -78,6 +80,7 @@ function BaseInput({
   valueType,
   containerStyles,
   displayRangeViolationWarnings = true,
+  disabled = false,
 }: BaseInputProps) {
   if (validator && (required || minValue != null || maxValue != null))
     console.log(
@@ -95,6 +98,8 @@ function BaseInput({
     root: {
       height: 36.5, // default height is 56 and is waaaay too tall
       // 34.5 is the height of the reset button, but 36.5 lines up better
+      // set width for date
+      width: valueType === 'date' ? 165 : '',
     },
   })();
 
@@ -169,6 +174,7 @@ function BaseInput({
 
   return (
     <div
+      // containerStyles is not used here - but bin control uses this!
       style={{ ...containerStyles }}
       onMouseOver={() => setFocused(true)}
       onMouseOut={() => setFocused(false)}
@@ -197,6 +203,7 @@ function BaseInput({
           onFocus={(event) => event.currentTarget.select()}
           error={errorState.error}
           helperText={displayRangeViolationWarnings && errorState.helperText}
+          disabled={disabled}
         />
       </div>
     </div>

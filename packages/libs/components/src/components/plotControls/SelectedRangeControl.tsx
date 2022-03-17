@@ -47,7 +47,6 @@ export default function SelectedRangeControl({
               (range.max as string).substring(0, 10)
             : range?.min > range?.max)
         ) {
-          console.log(range);
           return {
             validity: false,
             message: 'Range start cannot be above range end',

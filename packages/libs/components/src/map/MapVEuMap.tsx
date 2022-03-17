@@ -17,7 +17,13 @@ import {
   Bounds as MapVEuBounds,
 } from './Types';
 import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
-import { Viewport, Map, TileLayer, LayersControl } from 'react-leaflet';
+import {
+  Viewport,
+  Map,
+  TileLayer,
+  LayersControl,
+  ScaleControl,
+} from 'react-leaflet';
 import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
 import SemanticMarkers from './SemanticMarkers';
 import 'leaflet/dist/leaflet.css';
@@ -110,6 +116,10 @@ export interface MapVEuMapProps {
   height: CSSProperties['height'];
   width: CSSProperties['width'];
 
+  /** CSS styles for the map container other than height and width,
+   * which have their own dedicated props */
+  style?: Omit<React.CSSProperties, 'height' | 'width'>;
+
   /** callback for when viewport has changed, giving access to the bounding box */
   onBoundsChanged: (bvp: BoundsViewport) => void;
 
@@ -149,6 +159,8 @@ export interface MapVEuMapProps {
   showSpinner?: boolean;
   /** Whether to show the "No data" overlay */
   showNoDataOverlay?: boolean;
+  /** Whether to show the Scale in the map */
+  showScale?: boolean;
 }
 
 function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
@@ -156,6 +168,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     viewport,
     height,
     width,
+    style,
     onViewportChanged,
     onBoundsChanged,
     markers,
@@ -170,6 +183,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     flyToMarkersDelay,
     showSpinner,
     showNoDataOverlay,
+    showScale = true,
   } = props;
 
   // this is the React Map component's onViewPortChanged handler
@@ -300,7 +314,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
   return (
     <Map
       viewport={viewport}
-      style={{ height, width }}
+      style={{ height, width, ...style }}
       onViewportChanged={onViewportChanged}
       className={mouseMode === 'magnification' ? 'cursor-zoom-in' : ''}
       minZoom={1}
@@ -346,6 +360,8 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
 
       {showSpinner && <Spinner />}
       {showNoDataOverlay && <NoDataOverlay opacity={0.9} />}
+      {/* add Scale in the map: currently set to show from zoom = 5 */}
+      {showScale && <ScaleControl position="bottomright" />}
     </Map>
   );
 }

@@ -85,14 +85,12 @@ export default function SemanticMarkers({
         } = marker.props.bounds;
         let recentered: boolean = false;
         while (lng > bounds.northEast.lng) {
-          //	  console.log(`marker ${marker.props.id} shifting left from ${lng}`);
           lng -= 360;
           lnMax -= 360;
           lnMin -= 360;
           recentered = true;
         }
         while (lng < bounds.southWest.lng) {
-          //	  console.log(`marker ${marker.props.id} shifting right from ${lng}`);
           lng += 360;
           lnMax += 360;
           lnMin += 360;
@@ -134,7 +132,7 @@ export default function SemanticMarkers({
 
     // Update previous markers with the original markers array
     setPrevMarkers(markers);
-  }, [markers]);
+  }, [markers, bounds]);
 
   useEffect(() => {
     /** If we are zooming in then reset the marker elements. When initially rendered
@@ -156,7 +154,7 @@ export default function SemanticMarkers({
     }
 
     return () => clearTimeout(timeoutVariable);
-  }, [zoomType]);
+  }, [zoomType, markers]);
 
   return <>{consolidatedMarkers}</>;
 }
