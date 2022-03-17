@@ -77,6 +77,8 @@ import { truncationConfig } from '../../../utils/truncation-config-utils-viz';
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 import Button from '@veupathdb/components/lib/components/widgets/Button';
 import { useDefaultDependentAxisRange } from '../../../hooks/computeDefaultDependentAxisRange';
+// alphadiv abundance this should be used for collection variable
+import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from '../../../utils/study-metadata';
 
 type BoxplotData = { series: BoxplotSeries };
 
@@ -265,11 +267,13 @@ function BoxplotViz(props: VisualizationProps) {
     entities
   );
 
+  // add to support both alphadiv and abundance
   const data = usePromise(
     useCallback(async (): Promise<BoxplotDataWithCoverage | undefined> => {
       if (
-        vizConfig.xAxisVariable == null ||
-        xAxisVariable == null ||
+        // abundance case for xAxisVariable
+        (computation.descriptor.configuration == null &&
+          (vizConfig.xAxisVariable == null || xAxisVariable == null)) ||
         (computation.descriptor.configuration == null &&
           (vizConfig.yAxisVariable == null || yAxisVariable == null)) ||
         outputEntity == null ||
@@ -295,8 +299,8 @@ function BoxplotViz(props: VisualizationProps) {
         config: {
           // add outputEntityId per dataElementDependencyOrder
           outputEntityId: computation.descriptor.configuration
-            ? (computation.descriptor.configuration as any).collectionVariable
-                .entityId
+            ? // alphadiv abundance remove any as configuration is defined instead of unknown
+              computation.descriptor.configuration.collectionVariable.entityId
             : outputEntity.id,
           // post options: 'all', 'outliers'
           points: 'outliers',
@@ -340,7 +344,7 @@ function BoxplotViz(props: VisualizationProps) {
         );
 
       const vocabulary = fixLabelsForNumberVariables(
-        xAxisVariable.vocabulary,
+        xAxisVariable?.vocabulary,
         xAxisVariable
       );
       const overlayVocabulary = fixLabelsForNumberVariables(
@@ -453,6 +457,20 @@ function BoxplotViz(props: VisualizationProps) {
     vizConfig.checkedLegendItems
   );
 
+  // alphadiv abundance findEntityAndVariable does not work properly for collection variable
+  const independentAxisLabel = useMemo(
+    () =>
+      computation.descriptor.configuration != null &&
+      computation.descriptor.type === 'abundance'
+        ? findCollectionVariableEntityAndVariable(
+            entities,
+            computation.descriptor.configuration.collectionVariable
+          )
+        : undefined,
+    // [findCollectionVariableEntityAndVariable, entities, computation.descriptor.configuration.collectionVariable]
+    [findCollectionVariableEntityAndVariable, entities, computation]
+  );
+
   const plotNode = (
     <BoxplotWithControls
       // data.value
@@ -462,11 +480,21 @@ function BoxplotViz(props: VisualizationProps) {
       spacingOptions={!isFaceted(data.value) ? plotSpacingOptions : undefined}
       orientation={'vertical'}
       displayLegend={false}
-      independentAxisLabel={variableDisplayWithUnit(xAxisVariable) ?? 'X-axis'}
+      // alphadiv abundance: set independentAxisLabel
+      independentAxisLabel={
+        computation.descriptor.configuration != null &&
+        computation.descriptor.type === 'abundance' &&
+        independentAxisLabel != null
+          ? independentAxisLabel?.entity.displayName +
+            ': ' +
+            independentAxisLabel?.variable.displayName
+          : variableDisplayWithUnit(xAxisVariable) ?? 'X-axis'
+      }
+      // for now let's use computation.descriptor.type for both alphadiv and abundance
       dependentAxisLabel={
-        variableDisplayWithUnit(yAxisVariable) ??
-        computation.descriptor.type ??
-        'Y-axis'
+        computation.descriptor.configuration != null
+          ? computation.descriptor.type
+          : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'
       }
       // show/hide independent/dependent axis tick label
       showIndependentAxisTickLabel={true}
@@ -552,16 +580,20 @@ function BoxplotViz(props: VisualizationProps) {
     </>
   );
 
+  // for handling alphadiv abundance
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
         <InputVariables
           inputs={[
-            {
-              name: 'xAxisVariable',
-              label: 'X-axis',
-              role: 'primary',
-            },
+            computation.descriptor.configuration != null &&
+            computation.descriptor.type === 'abundance'
+              ? {}
+              : {
+                  name: 'xAxisVariable',
+                  label: 'X-axis',
+                  role: 'primary',
+                },
             computation.descriptor.configuration ?? {
               name: 'yAxisVariable',
               label: 'Y-axis',
@@ -762,7 +794,6 @@ function BoxplotWithControls({
         />
       )}
       {/* potential controls go here  */}
-
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <LabelledGroup label="Y-axis">
           {/* Y-axis range control */}
@@ -819,7 +850,8 @@ function BoxplotWithControls({
  */
 export function boxplotResponseToData(
   response: BoxplotResponse,
-  variable: Variable,
+  // alphadiv abundance: change variable to be possibly undefined for abundance case
+  variable?: Variable,
   overlayVariable?: Variable,
   facetVariable?: Variable
 ): BoxplotDataWithCoverage {

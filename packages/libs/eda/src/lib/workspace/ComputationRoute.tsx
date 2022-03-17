@@ -1,3 +1,4 @@
+import { string } from 'fp-ts';
 import React, { useCallback } from 'react';
 import { Route, Switch, useHistory } from 'react-router';
 import { Link, useRouteMatch } from 'react-router-dom';
@@ -12,6 +13,8 @@ import { PromiseHookState, usePromise } from '../core/hooks/promise';
 import { GeoConfig } from '../core/types/geoConfig';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+// alphadiv abundance
+import { ComputationConfiguration } from '../core/types/visualization';
 
 export interface Props {
   analysisState: AnalysisState;
@@ -64,7 +67,11 @@ export function ComputationRoute(props: Props) {
           </Route>
           {apps.map((app) => {
             const plugin = plugins[app.name];
-            const addComputation = (name: string, configuration: unknown) => {
+            // alphadiv abundance
+            const addComputation = (
+              name: string,
+              configuration: ComputationConfiguration
+            ) => {
               if (analysisState.analysis == null) return;
               const computations =
                 analysisState.analysis.descriptor.computations;

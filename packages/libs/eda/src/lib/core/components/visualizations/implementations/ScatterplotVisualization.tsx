@@ -110,6 +110,8 @@ import { useDefaultIndependentAxisRange } from '../../../hooks/computeDefaultInd
 import { useDefaultDependentAxisRange } from '../../../hooks/computeNumberDateDefaultDependentAxisRange';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import { useVizConfig } from '../../../hooks/visualizations';
+// alphadiv abundance: this should be used for collection variable
+import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from '../../../utils/study-metadata';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -393,8 +395,8 @@ function ScatterplotViz(props: VisualizationProps) {
         config: {
           // add outputEntityId per dataElementDependencyOrder
           outputEntityId: computation.descriptor.configuration
-            ? (computation.descriptor.configuration as any).collectionVariable
-                .entityId
+            ? // alphadiv abundance: remove any as configuration is defined instead of unknown
+              computation.descriptor.configuration.collectionVariable.entityId
             : outputEntity.id,
           valueSpec: valueSpecValue,
           xAxisVariable: vizConfig.xAxisVariable,
@@ -747,6 +749,19 @@ function ScatterplotViz(props: VisualizationProps) {
       };
   }, [xAxisVariable, defaultIndependentRange]);
 
+  // alphadiv abundance: legend title for abundance?
+  const legendTitle = useMemo(
+    () =>
+      computation.descriptor.configuration != null &&
+      computation.descriptor.type === 'abundance'
+        ? findCollectionVariableEntityAndVariable(
+            entities,
+            computation.descriptor.configuration.collectionVariable
+          )
+        : undefined,
+    [findCollectionVariableEntityAndVariable, entities, computation]
+  );
+
   const plotNode = (
     <ScatterplotWithControls
       // data.value
@@ -758,13 +773,13 @@ function ScatterplotViz(props: VisualizationProps) {
       spacingOptions={
         !isFaceted(data.value?.dataSetProcess) ? plotSpacingOptions : undefined
       }
-      // title={'Scatter plot'}
       displayLegend={false}
       independentAxisLabel={variableDisplayWithUnit(xAxisVariable) ?? 'X-axis'}
+      // for now let's use computation.descriptor.type for both alphadiv and abundance
       dependentAxisLabel={
-        variableDisplayWithUnit(yAxisVariable) ??
-        computation.descriptor.type ??
-        'Y-axis'
+        computation.descriptor.configuration != null
+          ? computation.descriptor.type
+          : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'
       }
       // set valueSpec as Raw when yAxisVariable = date
       valueSpec={
@@ -789,16 +804,21 @@ function ScatterplotViz(props: VisualizationProps) {
           ? 'number'
           : 'date'
       }
-      // yAxisVariable will be null when a computed var takes its place. Computed vars are always numbers
-      // will revisit this as this new condition would set default axis range control as date
-      // perhaps fundamental question is whether we will offer axis range controls for alphaDiv and rankedAbun
+      // alphadiv and abundance: simply setting yAxisVariable == null would work
       dependentValueType={
-        NumberVariable.is(yAxisVariable) ||
-        (computation.descriptor.configuration && yAxisVariable == null)
+        NumberVariable.is(yAxisVariable) || yAxisVariable == null
           ? 'number'
           : 'date'
       }
-      legendTitle={variableDisplayWithUnit(overlayVariable)}
+      // alphadiv abundance: legend title for abundance?
+      legendTitle={
+        computation.descriptor.configuration != null &&
+        computation.descriptor.type === 'abundance'
+          ? legendTitle?.entity.displayName +
+            ': ' +
+            legendTitle?.variable.displayName
+          : variableDisplayWithUnit(overlayVariable)
+      }
       // pass checked state of legend checkbox to PlotlyPlot
       checkedLegendItems={checkedLegendItems}
       // for vizconfig.checkedLegendItems
@@ -822,7 +842,15 @@ function ScatterplotViz(props: VisualizationProps) {
     <PlotLegend
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
-      legendTitle={variableDisplayWithUnit(overlayVariable)}
+      // alphadiv abundance: legend title for abundance?
+      legendTitle={
+        computation.descriptor.configuration != null &&
+        computation.descriptor.type === 'abundance'
+          ? legendTitle?.entity.displayName +
+            ': ' +
+            legendTitle?.variable.displayName
+          : variableDisplayWithUnit(overlayVariable)
+      }
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
     />
   );
@@ -894,6 +922,7 @@ function ScatterplotViz(props: VisualizationProps) {
     </>
   );
 
+  // alphadiv abundance: y-axis and overlayVariable
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -909,11 +938,14 @@ function ScatterplotViz(props: VisualizationProps) {
               label: 'Y-axis',
               role: 'primary',
             },
-            {
-              name: 'overlayVariable',
-              label: 'Overlay',
-              role: 'stratification',
-            },
+            computation.descriptor.configuration != null &&
+            computation.descriptor.type === 'abundance'
+              ? {}
+              : {
+                  name: 'overlayVariable',
+                  label: 'Overlay',
+                  role: 'stratification',
+                },
             {
               name: 'facetVariable',
               label: 'Facet',

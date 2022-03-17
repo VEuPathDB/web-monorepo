@@ -5,6 +5,8 @@ import { PromiseHookState } from '../../hooks/promise';
 import { GeoConfig } from '../../types/geoConfig';
 import { Computation, ComputationAppOverview } from '../../types/visualization';
 import { VisualizationType } from '../visualizations/VisualizationTypes';
+// alphadiv abundance
+import { ComputationConfiguration } from '../../types/visualization';
 
 export interface ComputationProps {
   analysisState: AnalysisState;
@@ -15,7 +17,11 @@ export interface ComputationProps {
 }
 
 export interface ComputationConfigProps extends ComputationProps {
-  addNewComputation: (name: string, configuration: unknown) => void;
+  // alphadiv abundance
+  addNewComputation: (
+    name: string,
+    configuration: ComputationConfiguration
+  ) => void;
 }
 
 export interface ComputationOverviewProps extends ComputationProps {}

@@ -1,4 +1,6 @@
 import { Computation, ComputationAppOverview } from '../../types/visualization';
+// alphadiv abundance
+import { ComputationConfiguration } from '../../types/visualization';
 
 /**
  * Creates a new `Computation` with a unique id
@@ -6,7 +8,8 @@ import { Computation, ComputationAppOverview } from '../../types/visualization';
 export function createComputation(
   overview: ComputationAppOverview,
   displayName: string,
-  configuration: unknown,
+  // alphadiv abundance
+  configuration: ComputationConfiguration,
   computations: Computation[] = []
 ): Computation {
   const computationId = createNewId(
