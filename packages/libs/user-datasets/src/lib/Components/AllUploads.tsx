@@ -1,6 +1,5 @@
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
-import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import UserDatasetEmptyState from '../Components/EmptyState';
 
 import { UserDatasetUpload } from '../Utils/types';
@@ -200,4 +199,4 @@ const AllUploads = (props: Props) => {
     </div>
   );
 };
-export default wrappable(AllUploads);
+export default AllUploads;

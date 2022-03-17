@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 
 import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
 import PageController from '@veupathdb/wdk-client/lib/Core/Controllers/PageController';
-import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import {
@@ -199,4 +198,4 @@ const enhance = connect<
   })
 );
 
-export default enhance(wrappable(UserDatasetDetailController));
+export default enhance(UserDatasetDetailController);

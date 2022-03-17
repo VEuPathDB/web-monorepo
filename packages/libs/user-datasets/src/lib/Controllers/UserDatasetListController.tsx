@@ -3,7 +3,6 @@ import { RouteComponentProps, withRouter } from 'react-router';
 
 import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
 import PageController from '@veupathdb/wdk-client/lib/Core/Controllers/PageController';
-import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import {
   loadUserDatasetList,
@@ -192,4 +191,4 @@ const enhance = connect<StateProps, DispatchProps, OwnProps, Props, StateSlice>(
   })
 );
 
-export default withRouter(enhance(wrappable(UserDatasetListController)));
+export default withRouter(enhance(UserDatasetListController));

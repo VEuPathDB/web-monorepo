@@ -9,7 +9,6 @@ import {
   TextBox,
 } from '@veupathdb/wdk-client/lib/Components';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
-import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { isUserDatasetsCompatibleWdkService } from '../../Service/UserDatasetWrappers';
 
@@ -510,4 +509,4 @@ class UserDatasetSharingModal extends React.Component {
 
 UserDatasetSharingModal.contextType = WdkDependenciesContext;
 
-export default wrappable(UserDatasetSharingModal);
+export default UserDatasetSharingModal;

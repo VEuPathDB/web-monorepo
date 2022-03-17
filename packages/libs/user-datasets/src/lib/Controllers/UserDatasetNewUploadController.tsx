@@ -1,6 +1,5 @@
 import { connect } from 'react-redux';
 
-import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import PageController from '@veupathdb/wdk-client/lib/Core/Controllers/PageController';
 import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
 
@@ -95,4 +94,4 @@ const enhance = connect<
   })
 );
 
-export default enhance(wrappable(UserDatasetUploadController));
+export default enhance(UserDatasetUploadController);

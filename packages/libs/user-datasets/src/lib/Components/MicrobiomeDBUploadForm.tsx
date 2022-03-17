@@ -6,7 +6,6 @@ import {
   FileInput,
   RadioList,
 } from '@veupathdb/wdk-client/lib/Components';
-import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { UserDatasetMeta, NewUserDataset } from '../Utils/types';
 
@@ -262,4 +261,4 @@ function isValidUrl(string: string) {
   return true;
 }
 
-export default wrappable(MicrobiomeDBUploadForm);
+export default MicrobiomeDBUploadForm;

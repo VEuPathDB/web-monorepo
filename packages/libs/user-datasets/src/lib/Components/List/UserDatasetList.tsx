@@ -19,7 +19,6 @@ import {
   MesaColumn,
   MesaSortObject,
 } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
-import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
@@ -644,4 +643,4 @@ class UserDatasetList extends React.Component<Props, State> {
   }
 }
 
-export default wrappable(UserDatasetList);
+export default UserDatasetList;
