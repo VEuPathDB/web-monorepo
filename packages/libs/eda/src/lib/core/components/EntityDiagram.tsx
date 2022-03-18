@@ -62,7 +62,7 @@ export function EntityDiagram(props: Props) {
         entityId={node.id}
         variableId={lastVariableMap[node.id]}
         children={children}
-        replace={true}
+        replace={false}
         style={{ textDecoration: 'none' }}
       ></VariableLink>
     );
