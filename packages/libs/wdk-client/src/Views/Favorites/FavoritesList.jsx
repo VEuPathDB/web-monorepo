@@ -1,7 +1,6 @@
 import { escape } from 'lodash';
 import React, { Component } from 'react';
 import { withRouter } from 'react-router';
-// import BannerList from 'wdk-client/Components/Banners/BannerList';
 import BannerList from '@veupathdb/coreui/dist/components/banners/BannerList'
 import Icon from 'wdk-client/Components/Icon/IconAlt';
 import TextArea from 'wdk-client/Components/InputControls/TextArea';
@@ -87,7 +86,7 @@ class FavoritesList extends Component {
       output.message = (
         <span>
           <b>{deleted.displayName}</b> was removed from your favorites.
-          <a onClick={undoDelete}>Undo <Icon fa="undo" /></a>
+          <a style={{ marginLeft: "5px" }} onClick={undoDelete}>Undo <Icon fa="undo" /></a>
         </span>
       );
     } else {
