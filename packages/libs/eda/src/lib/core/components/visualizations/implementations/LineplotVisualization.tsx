@@ -96,10 +96,9 @@ import FacetedLinePlot from '@veupathdb/components/lib/plots/facetedPlots/Facete
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
 import { BinSpec, BinWidthSlider } from '../../../types/general';
 import { useVizConfig } from '../../../hooks/visualizations';
-import PopoverButton from '@veupathdb/components/lib/components/widgets/PopoverButton';
-
 import { useInputStyles } from '../inputStyles';
-import { FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
+import { ValuePicker } from './ValuePicker';
+import PopoverButton from '@veupathdb/components/lib/components/widgets/PopoverButton';
 
 const plotContainerStyles = {
   width: 750,
@@ -252,6 +251,11 @@ function LineplotViz(props: VisualizationProps) {
         selectedVariables.xAxisVariable,
         vizConfig.xAxisVariable
       );
+      const keepValues = isEqual(
+        selectedVariables.yAxisVariable,
+        vizConfig.yAxisVariable
+      );
+
       // need to get the yAxisVariable metadata right here, right now
       // (we can't use the more generally scoped 'yAxisVariable' because it's based on vizConfig and is out of date)
       const { variable: yAxisVar } =
@@ -271,6 +275,9 @@ function LineplotViz(props: VisualizationProps) {
         valueSpecConfig: valueSpec,
         // set undefined for variable change
         checkedLegendItems: undefined,
+        ...(keepValues
+          ? {}
+          : { numeratorValues: undefined, denominatorValues: undefined }),
       });
     },
     [
@@ -768,43 +775,27 @@ function LineplotViz(props: VisualizationProps) {
             <div className={classes.input}>
               <div className={classes.label}>
                 Value(s) of interest (numerator)
+                <PopoverButton
+                  key={`${yAxisVariable?.id}:${vizConfig.numeratorValues}`}
+                  label={
+                    vizConfig.numeratorValues &&
+                    vizConfig.numeratorValues.length
+                      ? vizConfig.numeratorValues.join(', ')
+                      : 'Choose value(s)'
+                  }
+                >
+                  <ValuePicker
+                    allowedValues={yAxisVariable?.vocabulary ?? []}
+                    selectedValues={vizConfig.numeratorValues ?? []}
+                    onSelectedValuesChange={onNumeratorValuesChange}
+                  />
+                </PopoverButton>
               </div>
-              <PopoverButton
-                label={
-                  vizConfig.numeratorValues && vizConfig.numeratorValues.length
-                    ? vizConfig.numeratorValues.join(', ')
-                    : 'Choose value(s)'
-                }
-                key="numerator"
-              >
-                <FormControl style={{ minWidth: '300px' }}>
-                  <Select
-                    multiple
-                    value={vizConfig.numeratorValues ?? []}
-                    onChange={(event) => {
-                      onNumeratorValuesChange(event.target.value as string[]);
-                    }}
-                  >
-                    {(yAxisVariable?.vocabulary ?? []).map((value) => (
-                      <MenuItem key={value} value={value}>
-                        {value}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </PopoverButton>
             </div>
             <div className={classes.input}>
               <div className={classes.label}>
                 Value(s) of interest (denominator)
               </div>
-              <PopoverButton
-                label="will be vizConfig.numerator summary"
-                key="denominator"
-              >
-                {' '}
-                fun times{' '}
-              </PopoverButton>
             </div>
           </div>
         )}
