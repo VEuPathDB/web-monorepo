@@ -396,7 +396,8 @@ function ScatterplotViz(props: VisualizationProps) {
           // add outputEntityId per dataElementDependencyOrder
           outputEntityId: computation.descriptor.configuration
             ? // alphadiv abundance: remove any as configuration is defined instead of unknown
-              computation.descriptor.configuration.collectionVariable.entityId
+              (computation.descriptor.configuration as any).collectionVariable
+                .entityId
             : outputEntity.id,
           valueSpec: valueSpecValue,
           xAxisVariable: vizConfig.xAxisVariable,
@@ -760,7 +761,7 @@ function ScatterplotViz(props: VisualizationProps) {
       computation.descriptor.type === 'abundance'
         ? findCollectionVariableEntityAndVariable(
             entities,
-            computation.descriptor.configuration.collectionVariable
+            (computation.descriptor.configuration as any).collectionVariable
           )
         : undefined,
     [findCollectionVariableEntityAndVariable, entities, computation]

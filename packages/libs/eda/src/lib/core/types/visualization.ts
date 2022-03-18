@@ -10,6 +10,10 @@ import {
   number,
   array,
   record,
+  nullType,
+  NullType,
+  union,
+  NullC,
 } from 'io-ts';
 import { VariableDataShape, VariableType } from './study';
 
@@ -51,7 +55,10 @@ export const Visualization = intersection([
  * Type and configuration of the app object stored in user's analysis
  */
 // alphadiv abundance
-export type ComputationConfiguration = TypeOf<typeof ComputationConfiguration>;
+export type ComputationConfiguration = TypeOf<
+  typeof ComputationConfiguration | NullType
+>;
+// export type ComputationConfiguration = TypeOf<typeof ComputationConfiguration>;
 export const ComputationConfiguration = intersection([
   type({
     name: string,
@@ -67,7 +74,10 @@ export const ComputationConfiguration = intersection([
 export type ComputationDescriptor = TypeOf<typeof ComputationDescriptor>;
 export const ComputationDescriptor = type({
   type: string,
-  configuration: ComputationConfiguration,
+  // using ComputationConfiguration here cannot handle null case correctly that causes issues for pass-through app
+  // thus it is reverted to unknown for now
+  // configuration: ComputationConfiguration,
+  configuration: unknown,
 });
 
 /**
