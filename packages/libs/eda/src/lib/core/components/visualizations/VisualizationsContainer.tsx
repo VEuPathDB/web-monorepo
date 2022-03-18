@@ -23,7 +23,7 @@ import { VisualizationType } from './VisualizationTypes';
 
 import './Visualizations.scss';
 import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
-import Banner from '@veupathdb/wdk-client/lib/Components/Banners/Banner';
+import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
 import { useLocalBackedState } from '@veupathdb/wdk-client/lib/Hooks/LocalBackedState';
 import PlaceholderIcon from './PlaceholderIcon';
 import { Tooltip } from '@material-ui/core';
