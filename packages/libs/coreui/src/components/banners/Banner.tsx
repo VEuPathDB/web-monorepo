@@ -57,7 +57,7 @@ function getColorTheme(type: BannerProps['type'], weight: keyof ColorHue) {
   }
 }
 
-export default function BannerTest(props: BannerComponentProps) {
+export default function Banner(props: BannerComponentProps) {
   const { banner, onClose } = props;
   const { type, message, pinned, intense } = banner;
 
