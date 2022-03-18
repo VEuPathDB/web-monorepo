@@ -133,7 +133,7 @@ export function WorkspaceRouter({
         pathnamesRef.current[pathnamesCursorRef.current] = location.pathname;
       }
     });
-  }, [locationKeys, history]);
+  }, [locationKeys, history, path]);
 
   return (
     <ThemeProvider theme={theme}>
