@@ -5,7 +5,7 @@ import LinePlot, {
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import * as t from 'io-ts';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import DataClient, {
   LineplotRequestParams,
@@ -356,6 +356,17 @@ function LineplotViz(props: VisualizationProps) {
     'yAxisVariable',
     entities
   );
+
+  // we need to watch for changes in numeratorValues, especially when
+  // the referentially unequal but content-wise the same
+  // (e.g. when pressing 'ok' on the ValuePicker without making any changes)
+  const [
+    numeratorValuesSerialNumber,
+    setNumeratorValuesSerialNumber,
+  ] = useState(1);
+  useEffect(() => {
+    setNumeratorValuesSerialNumber((prev) => prev + 1);
+  }, [vizConfig.numeratorValues]);
 
   const data = usePromise(
     useCallback(async (): Promise<LinePlotDataWithCoverage | undefined> => {
@@ -776,7 +787,7 @@ function LineplotViz(props: VisualizationProps) {
               <div className={classes.label}>
                 Value(s) of interest (numerator)
                 <PopoverButton
-                  key={`${yAxisVariable?.id}:${vizConfig.numeratorValues}`}
+                  key={`numerator-${numeratorValuesSerialNumber}`}
                   label={
                     vizConfig.numeratorValues &&
                     vizConfig.numeratorValues.length
