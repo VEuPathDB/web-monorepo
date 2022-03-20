@@ -180,11 +180,15 @@ export default function DataGrid({
               </div>
             ),
             // The cell can use the individual row's getToggleRowSelectedProps method
-            // to the render a checkbox
+            // to the render a checkbox.
+	    // The `checked` prop returned by getToggleRowSelectedProps is not fit for purpose
+	    // because it only considers initial pre-selected/checked state (originalData[].isSelected).
+	    // Luckily `row.isSelected` has the correct "live" state.
             Cell: ({ row }) => (
               <div>
                 <IndeterminateCheckbox
                   {...row.getToggleRowSelectedProps()}
+	          checked={row.isSelected}
                   themeRole={themeRole}
                 />
               </div>
