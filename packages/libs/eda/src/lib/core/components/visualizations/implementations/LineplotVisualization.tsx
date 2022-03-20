@@ -245,6 +245,8 @@ function LineplotViz(props: VisualizationProps) {
     vizConfig.facetVariable,
   ]);
 
+  const categoricalMode = isSuitableCategoricalVariable(yAxisVariable);
+
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
       const keepBin = isEqual(
@@ -367,9 +369,27 @@ function LineplotViz(props: VisualizationProps) {
   useEffect(() => {
     setNumeratorValuesSerialNumber((prev) => prev + 1);
   }, [vizConfig.numeratorValues]);
+  // and, crudely, the same for denominator
+  const [
+    denominatorValuesSerialNumber,
+    setDenominatorValuesSerialNumber,
+  ] = useState(1);
+  useEffect(() => {
+    setDenominatorValuesSerialNumber((prev) => prev + 1);
+  }, [vizConfig.denominatorValues]);
 
   const data = usePromise(
     useCallback(async (): Promise<LinePlotDataWithCoverage | undefined> => {
+      if (
+        categoricalMode &&
+        vizConfig.numeratorValues != null &&
+        vizConfig.numeratorValues.length > 0 &&
+        isEqual(vizConfig.numeratorValues, vizConfig.denominatorValues)
+      )
+        throw new Error(
+          'Numerator and denominator value(s) cannot be the same'
+        );
+
       if (
         outputEntity == null ||
         xAxisVariable == null ||
@@ -486,10 +506,13 @@ function LineplotViz(props: VisualizationProps) {
       vizConfig.showMissingness,
       vizConfig.useBinning,
       vizConfig.showErrorBars,
+      vizConfig.numeratorValues,
+      vizConfig.denominatorValues,
       computation.descriptor.type,
       visualization.descriptor.type,
       outputEntity,
       filteredCounts,
+      categoricalMode,
     ])
   );
 
@@ -701,14 +724,14 @@ function LineplotViz(props: VisualizationProps) {
 
   const classes = useInputStyles();
 
-  const categoricalMode = isSuitableCategoricalVariable(yAxisVariable);
-
   const disabledValueSpecs =
     yAxisVariable == null
       ? []
       : categoricalMode
       ? ['Mean', 'Median']
       : ['Ratio or proportion'];
+
+  const valuesOfInterestLabelStyle = { minWidth: '200px' };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -783,30 +806,44 @@ function LineplotViz(props: VisualizationProps) {
             <div className={classes.fullRow}>
               <h4>Ratio or proportion specification</h4>
             </div>
-            <div className={classes.input}>
-              <div className={classes.label}>
+            <div className={[classes.input, classes.fullRow].join(' ')}>
+              <div className={classes.label} style={valuesOfInterestLabelStyle}>
                 Value(s) of interest (numerator)
-                <PopoverButton
-                  key={`numerator-${numeratorValuesSerialNumber}`}
-                  label={
-                    vizConfig.numeratorValues &&
-                    vizConfig.numeratorValues.length
-                      ? vizConfig.numeratorValues.join(', ')
-                      : 'Choose value(s)'
-                  }
-                >
-                  <ValuePicker
-                    allowedValues={yAxisVariable?.vocabulary ?? []}
-                    selectedValues={vizConfig.numeratorValues ?? []}
-                    onSelectedValuesChange={onNumeratorValuesChange}
-                  />
-                </PopoverButton>
               </div>
+              <PopoverButton
+                key={`numerator-${numeratorValuesSerialNumber}`}
+                label={
+                  vizConfig.numeratorValues && vizConfig.numeratorValues.length
+                    ? vizConfig.numeratorValues.join(', ')
+                    : 'Choose value(s)'
+                }
+              >
+                <ValuePicker
+                  allowedValues={yAxisVariable?.vocabulary ?? []}
+                  selectedValues={vizConfig.numeratorValues ?? []}
+                  onSelectedValuesChange={onNumeratorValuesChange}
+                />
+              </PopoverButton>
             </div>
-            <div className={classes.input}>
-              <div className={classes.label}>
+            <div className={[classes.input, classes.fullRow].join(' ')}>
+              <div className={classes.label} style={valuesOfInterestLabelStyle}>
                 Value(s) of interest (denominator)
               </div>
+              <PopoverButton
+                key={`denominator-${denominatorValuesSerialNumber}`}
+                label={
+                  vizConfig.denominatorValues &&
+                  vizConfig.denominatorValues.length
+                    ? vizConfig.denominatorValues.join(', ')
+                    : 'Choose value(s)'
+                }
+              >
+                <ValuePicker
+                  allowedValues={yAxisVariable?.vocabulary ?? []}
+                  selectedValues={vizConfig.denominatorValues ?? []}
+                  onSelectedValuesChange={onDenominatorValuesChange}
+                />
+              </PopoverButton>
             </div>
           </div>
         )}

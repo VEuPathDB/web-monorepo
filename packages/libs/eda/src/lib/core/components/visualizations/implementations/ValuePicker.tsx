@@ -34,7 +34,6 @@ export function ValuePicker({
   const onRowSelection = useCallback(
     (rows: Row<object>[]) => {
       const newValues = rows.map(({ values: { value } }) => value);
-      console.log(`onRowSelection newValues ${newValues}`);
       setCurrentlySelected(newValues);
     },
     [setCurrentlySelected]
@@ -50,10 +49,7 @@ export function ValuePicker({
           variant="contained"
           color="default"
           size="small"
-          onClick={() => {
-            console.log(`button click currentlySelected: ${currentlySelected}`);
-            onSelectedValuesChange(currentlySelected);
-          }}
+          onClick={() => onSelectedValuesChange(currentlySelected)}
         >
           Confirm
         </Button>
