@@ -52,6 +52,7 @@
     "@emotion/babel-plugin": "^11.3.0",
     "@emotion/babel-preset-css-prop": "^11.2.0",
     "@storybook/addon-actions": "^6.4.19",
+    "@storybook/addon-console": "^1.2.3",
     "@storybook/addon-essentials": "^6.4.19",
     "@storybook/addon-links": "^6.4.19",
     "@storybook/react": "^6.4.19",

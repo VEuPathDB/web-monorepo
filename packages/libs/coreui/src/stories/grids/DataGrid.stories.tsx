@@ -20,7 +20,8 @@ export default {
   component: DataGrid,
 } as Meta;
 
-const Template: Story<DataGridProps> = (args) => (
+const Template: Story<DataGridProps> = (args) => {
+  return (
   <UIThemeProvider
     theme={{
       palette: {
@@ -29,9 +30,12 @@ const Template: Story<DataGridProps> = (args) => (
       },
     }}
   >
-    <DataGrid {...args} columns={columns({ role: args.themeRole })} />
+    <DataGrid {...args} columns={columns({ role: args.themeRole })}/>
   </UIThemeProvider>
-);
+  );
+};
+
+
 export const Basic = Template.bind({});
 Basic.args = {
   title: 'Basic Data Grid',
@@ -56,13 +60,30 @@ WithPagination.args = {
   },
 };
 
+const reportSelectedRows = (rows) => console.log(`checked rows: ${rows.map((row) => row.original.record_id)}`);
+
 export const WithRowSelection = Template.bind({});
 WithRowSelection.args = {
   ...Basic.args,
-  onRowSelection: (rows) => console.log('Rows selected', rows),
+  onRowSelection: reportSelectedRows,
   title: 'Data Grid w/ Row Selection',
   pagination: {
     recordsPerPage: 2,
+    controlsLocation: 'bottom',
+  },
+};
+
+export const WithPreselectedRowSelection = Template.bind({});
+WithPreselectedRowSelection.args = {
+  ...Basic.args,
+  data: ROWS.map((row, index) => ({
+    ...row,
+    isSelected: index % 3 === 0,
+  })),
+  onRowSelection: reportSelectedRows,
+  title: 'Data Grid w/ Row Selection',
+  pagination: {
+    recordsPerPage: 10,
     controlsLocation: 'bottom',
   },
 };
