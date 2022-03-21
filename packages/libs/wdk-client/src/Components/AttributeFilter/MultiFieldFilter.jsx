@@ -3,14 +3,12 @@ import naturalSort from 'natural-sort';
 import React from 'react';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
-import Icon from 'wdk-client/Components/Icon/IconAlt';
 import { MesaController as Mesa } from 'wdk-client/Components/Mesa';
 import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
 import StackedBar from 'wdk-client/Components/AttributeFilter/StackedBar';
 import { toPercentage, getOperationDisplay, isRange, shouldAddFilter, findAncestorFields } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
 import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
 import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
-import UnknownCount from 'wdk-client/Components/AttributeFilter/UnknownCount';
 
 const cx = makeClassNameHelper('wdk-MultiFieldFilter');
 
@@ -259,12 +257,6 @@ export default class MultiFieldFilter extends React.Component {
 
     return (
       <div className={cx()}>
-        {/*
-          padding: .5em;
-          border: 1px solid #cccccc;
-          border-radius: 6px;
-          background: #fbfbf1;
-        */}
         {!hasRowWithRemaining && (
           <Banner banner={{
             type: 'warning',
