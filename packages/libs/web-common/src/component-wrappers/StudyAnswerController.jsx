@@ -42,8 +42,8 @@ function StudyAnswerController(props) {
   );
 
   const renderCellContent = useMemo(
-    () => makeRenderCellContent(user, props.permissions),
-    [ user, props.permissions ]
+    () => makeRenderCellContent(props.permissions),
+    [ props.permissions ]
   );
 
   return (
@@ -85,11 +85,10 @@ interface RenderCellProps extends CellContentProps {
 }
 */
 
-const makeRenderCellContent = (user, permissions) => props => {
+const makeRenderCellContent = (permissions) => props => {
   const shouldRenderAsPrerelease = isPrereleaseStudy(
     props.record.attributes.study_access.toLowerCase(),
     props.record.attributes.dataset_id,
-    user,
     permissions
   );
 
