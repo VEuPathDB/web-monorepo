@@ -212,7 +212,8 @@ export const ScatterplotResponseData = array(
     // add bestFitLineWithRaw
     bestFitLineX: array(string),
     bestFitLineY: array(number),
-    r2: number,
+    // allow null for r2
+    r2: NumberOrNull,
     // need to make sure if below is correct (untested)
     overlayVariableDetails: type({
       entityId: string,
@@ -323,20 +324,24 @@ export type LineplotResponse = TypeOf<typeof LineplotResponse>;
 export const LineplotResponse = type({
   lineplot: type({
     data: LineplotResponseData,
-    config: type({
-      completeCasesAllVars: number,
-      completeCasesAxesVars: number,
-      binSlider: BinWidthSlider,
-      binSpec: BinSpec,
-      xVariableDetails: type({
-        variableId: string,
-        entityId: string,
+    config: intersection([
+      type({
+        completeCasesAllVars: number,
+        completeCasesAxesVars: number,
+        xVariableDetails: type({
+          variableId: string,
+          entityId: string,
+        }),
+        yVariableDetails: type({
+          variableId: string,
+          entityId: string,
+        }),
       }),
-      yVariableDetails: type({
-        variableId: string,
-        entityId: string,
+      partial({
+        binSlider: BinWidthSlider,
+        binSpec: BinSpec,
       }),
-    }),
+    ]),
   }),
   sampleSizeTable: sampleSizeTableArray,
   completeCasesTable: completeCasesTableArray,

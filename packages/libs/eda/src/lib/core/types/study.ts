@@ -44,7 +44,10 @@ export const VariableDataShape = t.union([
 const VariableDisplayType = t.keyof({
   default: null,
   multifilter: null,
-  hidden: null,
+  hidden: null, // to be deprecated
+  geoaggregator: null,
+  latitude: null,
+  longitude: null,
 });
 
 export type VariableScope = t.TypeOf<typeof VariableScope>;

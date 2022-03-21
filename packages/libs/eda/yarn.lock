@@ -3428,10 +3428,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/components@^0.11.23":
-  version "0.11.23"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.23.tgz#0b082834900765846941b6fba3ae0b3e3b8dafe0"
-  integrity sha512-JOK8jfJcfki8UOBfdv5+4xfBqCWoLyMEzZ0tBmvxC4iwF+2FTI+dNH6fwIzge2j/58rRi9Y5D5in5rpqS9vxQw==
+"@veupathdb/components@^0.11.27":
+  version "0.11.27"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.27.tgz#4654c210a978af04cf38599556f4ef4725bcefb4"
+  integrity sha512-nJC4MzApWSMR25NQ1Db3QHIFNNr5y2+YovdXNomax4MdtFZrr1ER9RoxqtmftzDzbq6+GjtvdAKFnDjRpusjIg==
   dependencies:
     "@emotion/react" "^11.7.0"
     "@material-ui/core" "^4.11.2"
@@ -3659,10 +3659,10 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/study-data-access@^0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.1.5.tgz#8f0aae7c4c35f001b8f3bff77feeeba3c86df578"
-  integrity sha512-CPoQ03Hg8O35JaAbhx0g22eAHOaDQ14pvydjMEs1oYFQggw6+cckp6tEpOCHhbAlwIBn0rvSdntGeJho2iLY/w==
+"@veupathdb/study-data-access@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.2.0.tgz#e6508397caea29578ff3fa07b09970f3dd0afe9a"
+  integrity sha512-roRKPykO/2izuWD/9ihDaMbXPIZFQIo8zCQpT9dyAFJRppvFjkQWLadBOECHqoC7zOj1W3hm7sPoZiz6UbrRzQ==
   dependencies:
     "@veupathdb/http-utils" "^1.0.1"
     fp-ts "^2.11.5"

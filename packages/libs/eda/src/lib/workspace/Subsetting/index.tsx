@@ -87,8 +87,10 @@ export default function Subsetting({
           onChange={(variable) => {
             if (variable) {
               const { entityId, variableId } = variable;
-              history.replace(makeVariableLink({ entityId, variableId }));
-            } else history.replace('..');
+              const scrollPosition = [window.scrollX, window.scrollY];
+              history.push(makeVariableLink({ entityId, variableId }));
+              window.scrollTo(scrollPosition[0], scrollPosition[1]);
+            } else history.push('..');
           }}
         />
       </div>

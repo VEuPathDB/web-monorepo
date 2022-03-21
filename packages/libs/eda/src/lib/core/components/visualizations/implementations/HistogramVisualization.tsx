@@ -18,8 +18,6 @@ import {
   HistogramDataSeries,
 } from '@veupathdb/components/lib/types/plots';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { getOrElse } from 'fp-ts/lib/Either';
-import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import {
   isEqual,
@@ -33,7 +31,7 @@ import {
   map,
   keys,
 } from 'lodash';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import {
   HistogramRequestParams,
   HistogramResponse,
@@ -71,7 +69,6 @@ import {
 import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 // import variable's metadata-based independent axis range utils
-import { defaultIndependentAxisRange } from '../../../utils/default-independent-axis-range';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import PluginError from '../PluginError';
 // for custom legend
@@ -80,10 +77,30 @@ import PlotLegend, {
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 import { EntityCounts } from '../../../hooks/entityCounts';
-//DKDK a custom hook to preserve the status of checked legend items
+// a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
 
-type HistogramDataWithCoverageStatistics = (
+// concerning axis range control
+import {
+  NumberOrDateRange,
+  NumberRange,
+  DateRange,
+} from '../../../types/general';
+import { padISODateTime } from '../../../utils/date-conversion';
+import { NumberRangeInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateRangeInputs';
+// use variant
+import { truncationConfig } from '../../../utils/truncation-config-utils-viz';
+// use Notification for truncation warning message
+import Notification from '@veupathdb/components/lib/components/widgets//Notification';
+import Button from '@veupathdb/components/lib/components/widgets/Button';
+import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
+import { UIState } from '../../filter/HistogramFilter';
+// change defaultIndependentAxisRange to hook
+import { useDefaultIndependentAxisRange } from '../../../hooks/computeDefaultIndependentAxisRange';
+import { useDefaultDependentAxisRange } from '../../../hooks/computeDefaultDependentAxisRange';
+import { useVizConfig } from '../../../hooks/visualizations';
+
+export type HistogramDataWithCoverageStatistics = (
   | HistogramData
   | FacetedData<HistogramData>
 ) &
@@ -134,9 +151,9 @@ type ValueSpec = t.TypeOf<typeof ValueSpec>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 const ValueSpec = t.keyof({ count: null, proportion: null });
 
-type HistogramConfig = t.TypeOf<typeof HistogramConfig>;
+export type HistogramConfig = t.TypeOf<typeof HistogramConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-const HistogramConfig = t.intersection([
+export const HistogramConfig = t.intersection([
   t.type({
     dependentAxisLogScale: t.boolean,
     valueSpec: ValueSpec,
@@ -150,6 +167,9 @@ const HistogramConfig = t.intersection([
     showMissingness: t.boolean,
     // for custom legend: vizconfig.checkedLegendItems
     checkedLegendItems: t.array(t.string),
+    // axis range control
+    independentAxisRange: NumberOrDateRange,
+    dependentAxisRange: NumberRange,
   }),
 ]);
 
@@ -176,19 +196,22 @@ function HistogramViz(props: VisualizationProps) {
   );
   const dataClient: DataClient = useDataClient();
 
-  const vizConfig = useMemo(() => {
-    return pipe(
-      HistogramConfig.decode(visualization.descriptor.configuration),
-      getOrElse((): t.TypeOf<typeof HistogramConfig> => createDefaultConfig())
-    );
-  }, [visualization.descriptor.configuration]);
-
-  const updateVizConfig = useCallback(
-    (newConfig: Partial<HistogramConfig>) => {
-      updateConfiguration({ ...vizConfig, ...newConfig });
-    },
-    [updateConfiguration, vizConfig]
+  const [vizConfig, updateVizConfig] = useVizConfig(
+    visualization.descriptor.configuration,
+    HistogramConfig,
+    createDefaultConfig,
+    updateConfiguration
   );
+
+  // set the state of truncation warning message here
+  const [
+    truncatedIndependentAxisWarning,
+    setTruncatedIndependentAxisWarning,
+  ] = useState<string>('');
+  const [
+    truncatedDependentAxisWarning,
+    setTruncatedDependentAxisWarning,
+  ] = useState<string>('');
 
   // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
@@ -207,7 +230,13 @@ function HistogramViz(props: VisualizationProps) {
         binWidthTimeUnit: keepBin ? vizConfig.binWidthTimeUnit : undefined,
         // set undefined for variable change
         checkedLegendItems: undefined,
+        // set independentAxisRange undefined
+        independentAxisRange: undefined,
+        dependentAxisRange: undefined,
       });
+      // close truncation warnings if exists
+      setTruncatedIndependentAxisWarning('');
+      setTruncatedDependentAxisWarning('');
     },
     [updateVizConfig, vizConfig]
   );
@@ -229,16 +258,16 @@ function HistogramViz(props: VisualizationProps) {
   // prettier-ignore
   // allow 2nd parameter of resetCheckedLegendItems for checking legend status
   const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof HistogramConfig, resetCheckedLegendItems?: boolean) => (newValue?: ValueType) => {
-      const newPartialConfig = resetCheckedLegendItems
-        ? {
-            [key]: newValue,
-            checkedLegendItems: undefined
-          }
-        : {
-          [key]: newValue
-        };
-       updateVizConfig(newPartialConfig);
+    < ValueType,>(key: keyof HistogramConfig, resetCheckedLegendItems?: boolean, resetAxisRanges?: boolean) => (newValue?: ValueType) => {
+      const newPartialConfig = {
+        [key]: newValue,
+        ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
+      	...(resetAxisRanges ? { independentAxisRange: undefined, dependentAxisRange: undefined } : {}),
+      };
+      updateVizConfig(newPartialConfig);
+      if (resetAxisRanges)
+        setTruncatedIndependentAxisWarning('');
+	      setTruncatedDependentAxisWarning('');
     },
     [updateVizConfig]
   );
@@ -246,11 +275,17 @@ function HistogramViz(props: VisualizationProps) {
   const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
     'dependentAxisLogScale'
   );
-  const onValueSpecChange = onChangeHandlerFactory<ValueSpec>('valueSpec');
+
+  const onValueSpecChange = onChangeHandlerFactory<ValueSpec>(
+    'valueSpec',
+    false,
+    true
+  );
 
   // set checkedLegendItems: undefined for the change of showMissingness
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
     'showMissingness',
+    true,
     true
   );
 
@@ -382,59 +417,25 @@ function HistogramViz(props: VisualizationProps) {
       overlayVariable,
       facetVariable,
       valueType,
+      // get data when changing independentAxisRange
+      vizConfig.independentAxisRange,
     ])
   );
 
-  // variable's metadata-based independent axis range with margin
-  const defaultIndependentRange = useMemo(
-    () => defaultIndependentAxisRange(xAxisVariable, 'histogram'),
-    [xAxisVariable]
+  // use custom hook
+  const defaultIndependentRange = useDefaultIndependentAxisRange(
+    xAxisVariable,
+    'histogram',
+    updateVizConfig
   );
 
-  // find max of stacked array, especially with overlayVariable
-  const defaultDependentAxisMinMax = useMemo(() => {
-    if (isFaceted(data.value)) {
-      const facetMinMaxes =
-        data?.value?.facets != null
-          ? data.value.facets
-              .map((facet) => facet.data)
-              .filter(
-                (data): data is HistogramData =>
-                  data != null && data.series != null
-              )
-              .map((data) => findMinMaxOfStackedArray(data.series))
-          : undefined;
-      return (
-        facetMinMaxes && {
-          min: min(map(facetMinMaxes, 'min')),
-          max: max(map(facetMinMaxes, 'max')),
-        }
-      );
-    } else {
-      return data.value && data.value.series.length > 0
-        ? findMinMaxOfStackedArray(data.value.series)
-        : undefined;
-    }
-  }, [data]);
-
-  // set default dependent axis range for better displaying tick labels in log-scale
-  const defaultDependentAxisRange =
-    defaultDependentAxisMinMax?.min != null &&
-    defaultDependentAxisMinMax?.max != null
-      ? {
-          // set min as 0 (count, proportion) for non-logscale
-          min:
-            vizConfig.valueSpec === 'count'
-              ? 0
-              : vizConfig.dependentAxisLogScale
-              ? // determine min based on data for log-scale at proportion
-                defaultDependentAxisMinMax.min < 0.001
-                ? defaultDependentAxisMinMax.min * 0.8
-                : 0.001
-              : 0,
-          max: defaultDependentAxisMinMax.max * 1.05,
-        }
-      : undefined;
+  // use custom hook
+  const defaultDependentAxisRange = useDefaultDependentAxisRange(
+    data,
+    vizConfig,
+    updateVizConfig,
+    'Histogram'
+  );
 
   // custom legend items for checkbox
   const legendItems: LegendItemsProps[] = useMemo(() => {
@@ -481,6 +482,45 @@ function HistogramViz(props: VisualizationProps) {
     legendItems,
     vizConfig.checkedLegendItems
   );
+
+  // axis range control
+  // get as much default axis range from variable annotations as possible
+  const defaultUIState: UIState = useMemo(() => {
+    if (xAxisVariable != null) {
+      const otherDefaults = {
+        dependentAxisLogScale: false,
+      };
+
+      if (NumberVariable.is(xAxisVariable)) {
+        return {
+          binWidth:
+            xAxisVariable.binWidthOverride ?? xAxisVariable.binWidth ?? 0.1,
+          binWidthTimeUnit: undefined,
+          independentAxisRange: defaultIndependentRange as NumberRange,
+          ...otherDefaults,
+        };
+      }
+      // else date variable
+      const binWidth =
+        (xAxisVariable as DateVariable)?.binWidthOverride ??
+        (xAxisVariable as DateVariable)?.binWidth;
+      const binUnits = (xAxisVariable as DateVariable)?.binUnits;
+
+      return {
+        binWidth: binWidth ?? 1,
+        binWidthTimeUnit: binUnits ?? (xAxisVariable as DateVariable).binUnits!, // bit nasty!
+        independentAxisRange: defaultIndependentRange as DateRange,
+        ...otherDefaults,
+      };
+    } else {
+      return {
+        binWidth: 0,
+        binWidthTimeUnit: undefined,
+        independentAxisRange: { min: 0, max: 0 },
+        dependentAxisLogScale: false,
+      };
+    }
+  }, [xAxisVariable, defaultIndependentRange]);
 
   const outputSize =
     (overlayVariable != null || facetVariable != null) &&
@@ -551,10 +591,6 @@ function HistogramViz(props: VisualizationProps) {
         outputEntity={outputEntity}
         independentAxisVariable={vizConfig.xAxisVariable}
         independentAxisLabel={variableDisplayWithUnit(xAxisVariable) ?? 'Main'}
-        // variable's metadata-based independent axis range
-        independentAxisRange={defaultIndependentRange}
-        // add dependent axis range for better displaying tick labels in log-scale
-        dependentAxisRange={defaultDependentAxisRange}
         interactive={!isFaceted(data.value) ? true : false}
         showSpinner={data.pending || filteredCounts.pending}
         filters={filters}
@@ -581,6 +617,19 @@ function HistogramViz(props: VisualizationProps) {
         onCheckedLegendItemsChange={onCheckedLegendItemsChange}
         totalCounts={totalCounts}
         filteredCounts={filteredCounts}
+        // axis range control
+        vizConfig={vizConfig}
+        updateVizConfig={updateVizConfig}
+        valueType={valueType}
+        defaultUIState={defaultUIState}
+        defaultIndependentRange={defaultIndependentRange}
+        // add dependent axis range for better displaying tick labels in log-scale
+        defaultDependentAxisRange={defaultDependentAxisRange}
+        // pass truncation warning props
+        truncatedIndependentAxisWarning={truncatedIndependentAxisWarning}
+        setTruncatedIndependentAxisWarning={setTruncatedIndependentAxisWarning}
+        truncatedDependentAxisWarning={truncatedDependentAxisWarning}
+        setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
       />
     </div>
   );
@@ -608,6 +657,22 @@ type HistogramPlotWithControlsProps = Omit<HistogramProps, 'data'> & {
   onCheckedLegendItemsChange: (checkedLegendItems: string[]) => void;
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
+  // define types for axis range control
+  vizConfig: HistogramConfig;
+  updateVizConfig: (newConfig: Partial<HistogramConfig>) => void;
+  valueType: 'number' | 'date';
+  defaultUIState: UIState;
+  defaultIndependentRange: NumberOrDateRange | undefined;
+  defaultDependentAxisRange: NumberRange | undefined;
+  // pass truncation warning props
+  truncatedIndependentAxisWarning: string;
+  setTruncatedIndependentAxisWarning: (
+    truncatedIndependentAxisWarning: string
+  ) => void;
+  truncatedDependentAxisWarning: string;
+  setTruncatedDependentAxisWarning: (
+    truncatedDependentAxisWarning: string
+  ) => void;
   outputSize?: number;
 } & Partial<CoverageStatistics>;
 
@@ -636,6 +701,18 @@ function HistogramPlotWithControls({
   onCheckedLegendItemsChange,
   totalCounts,
   filteredCounts,
+  // for axis range control
+  vizConfig,
+  updateVizConfig,
+  valueType,
+  defaultUIState,
+  defaultIndependentRange,
+  defaultDependentAxisRange,
+  // pass truncation warning props
+  truncatedIndependentAxisWarning,
+  setTruncatedIndependentAxisWarning,
+  truncatedDependentAxisWarning,
+  setTruncatedDependentAxisWarning,
   outputSize,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
@@ -645,7 +722,12 @@ function HistogramPlotWithControls({
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
     plotContainerStyles,
-    [data, checkedLegendItems, histogramProps.dependentAxisLogScale]
+    [
+      data,
+      checkedLegendItems,
+      histogramProps.dependentAxisLogScale,
+      vizConfig.dependentAxisRange,
+    ]
   );
 
   const widgetHeight = '4em';
@@ -656,12 +738,126 @@ function HistogramPlotWithControls({
         ?.data
     : data;
 
+  // axis range control
+  const handleIndependentAxisRangeChange = useCallback(
+    (newRange?: NumberOrDateRange) => {
+      updateVizConfig({
+        independentAxisRange:
+          newRange &&
+          ({
+            min:
+              typeof newRange.min === 'string'
+                ? padISODateTime(newRange.min)
+                : newRange.min,
+            max:
+              typeof newRange.max === 'string'
+                ? padISODateTime(newRange.max)
+                : newRange.max,
+          } as NumberOrDateRange),
+      });
+    },
+    [updateVizConfig]
+  );
+
+  const handleIndependentAxisSettingsReset = useCallback(() => {
+    updateVizConfig({
+      independentAxisRange: undefined,
+      binWidth: defaultUIState.binWidth,
+      binWidthTimeUnit: defaultUIState.binWidthTimeUnit,
+    });
+    // add reset for truncation message: including dependent axis warning as well
+    setTruncatedIndependentAxisWarning('');
+  }, [
+    defaultUIState.binWidth,
+    defaultUIState.binWidthTimeUnit,
+    defaultUIState.independentAxisRange,
+    updateVizConfig,
+  ]);
+
+  const handleDependentAxisRangeChange = useCallback(
+    (newRange?: NumberRange) => {
+      updateVizConfig({
+        dependentAxisRange: newRange,
+      });
+    },
+    [updateVizConfig]
+  );
+
+  const handleDependentAxisSettingsReset = useCallback(() => {
+    updateVizConfig({
+      dependentAxisRange: undefined,
+      dependentAxisLogScale: false,
+    });
+    // add reset for truncation message as well
+    setTruncatedDependentAxisWarning('');
+  }, [updateVizConfig]);
+
+  // set truncation flags: will see if this is reusable with other application
+  const {
+    truncationConfigIndependentAxisMin,
+    truncationConfigIndependentAxisMax,
+    truncationConfigDependentAxisMin,
+    truncationConfigDependentAxisMax,
+  } = useMemo(
+    () =>
+      truncationConfig(defaultUIState, vizConfig, defaultDependentAxisRange),
+    [
+      defaultUIState.independentAxisRange,
+      vizConfig.xAxisVariable,
+      vizConfig.independentAxisRange,
+      vizConfig.dependentAxisRange,
+      defaultDependentAxisRange,
+    ]
+  );
+
+  // set useEffect for changing truncation warning message
+  useEffect(() => {
+    if (
+      truncationConfigIndependentAxisMin ||
+      truncationConfigIndependentAxisMax
+    ) {
+      setTruncatedIndependentAxisWarning(
+        'Data may have been truncated by range selection, as indicated by the yellow shading'
+      );
+    }
+  }, [truncationConfigIndependentAxisMin, truncationConfigIndependentAxisMax]);
+
+  useEffect(() => {
+    if (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) {
+      setTruncatedDependentAxisWarning(
+        'Data may have been truncated by range selection, as indicated by the yellow shading'
+      );
+    }
+  }, [truncationConfigDependentAxisMin, truncationConfigDependentAxisMax]);
+
+  // send histogramProps with additional props
+  const histogramPlotProps = {
+    ...histogramProps,
+    // axis range control
+    independentAxisRange:
+      vizConfig.independentAxisRange ?? defaultIndependentRange,
+    dependentAxisRange:
+      vizConfig.dependentAxisRange ?? defaultDependentAxisRange,
+    // pass axisTruncationConfig props
+    axisTruncationConfig: {
+      independentAxis: {
+        min: truncationConfigIndependentAxisMin,
+        max: truncationConfigIndependentAxisMax,
+      },
+      dependentAxis: {
+        min: truncationConfigDependentAxisMin,
+        max: truncationConfigDependentAxisMax,
+      },
+    },
+  };
+
   const plotNode = (
     <>
       {isFaceted(data) ? (
         <FacetedHistogram
           data={data}
-          componentProps={histogramProps}
+          // send histogramProps with additional props
+          componentProps={histogramPlotProps}
           modalComponentProps={{
             independentAxisLabel: histogramProps.independentAxisLabel,
             dependentAxisLabel: histogramProps.dependentAxisLabel,
@@ -682,32 +878,101 @@ function HistogramPlotWithControls({
           showValues={false}
           // for custom legend: pass checkedLegendItems to PlotlyPlot
           checkedLegendItems={checkedLegendItems}
+          // axis range control
+          independentAxisRange={
+            vizConfig.independentAxisRange ?? defaultIndependentRange
+          }
+          dependentAxisRange={
+            vizConfig.dependentAxisRange ?? defaultDependentAxisRange
+          }
+          // pass axisTruncationConfig
+          axisTruncationConfig={{
+            independentAxis: {
+              min: truncationConfigIndependentAxisMin,
+              max: truncationConfigIndependentAxisMax,
+            },
+            dependentAxis: {
+              min: truncationConfigDependentAxisMin,
+              max: truncationConfigDependentAxisMax,
+            },
+          }}
         />
       )}
 
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <LabelledGroup label="Y-axis">
-          <Switch
-            label="Log scale"
-            state={histogramProps.dependentAxisLogScale}
-            onStateChange={onDependentAxisLogScaleChange}
-            containerStyles={{
-              minHeight: widgetHeight,
+        {/* make switch and radiobutton single line with space
+                 also marginRight at LabelledGroup is set to 0.5625em: default - 1.5625em*/}
+        <LabelledGroup
+          label="Y-axis"
+          containerStyles={{
+            marginRight: '0.5625em',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <Switch
+              label="Log scale"
+              state={histogramProps.dependentAxisLogScale}
+              onStateChange={onDependentAxisLogScaleChange}
+              containerStyles={{
+                minHeight: widgetHeight,
+              }}
+            />
+            <div style={{ width: '4em' }}>{''}</div>
+            <RadioButtonGroup
+              selectedOption={valueSpec}
+              options={['count', 'proportion']}
+              onOptionSelected={(newOption) => {
+                if (newOption === 'proportion') {
+                  onValueSpecChange('proportion');
+                } else {
+                  onValueSpecChange('count');
+                }
+              }}
+            />
+          </div>
+          {/* Y-axis range control */}
+          <NumberRangeInput
+            label="Range"
+            range={vizConfig.dependentAxisRange ?? defaultDependentAxisRange}
+            onRangeChange={(newRange?: NumberOrDateRange) => {
+              handleDependentAxisRangeChange(newRange as NumberRange);
             }}
+            allowPartialRange={false}
+            // set maxWidth
+            containerStyles={{ maxWidth: '350px' }}
           />
-          <RadioButtonGroup
-            selectedOption={valueSpec}
-            options={['count', 'proportion']}
-            onOptionSelected={(newOption) => {
-              if (newOption === 'proportion') {
-                onValueSpecChange('proportion');
-              } else {
-                onValueSpecChange('count');
-              }
+          {/* truncation notification */}
+          {truncatedDependentAxisWarning ? (
+            <Notification
+              title={''}
+              text={truncatedDependentAxisWarning}
+              // this was defined as LIGHT_BLUE
+              color={'#5586BE'}
+              onAcknowledgement={() => {
+                setTruncatedDependentAxisWarning('');
+              }}
+              showWarningIcon={true}
+              // change maxWidth
+              containerStyles={{ maxWidth: '350px' }}
+            />
+          ) : null}
+          <Button
+            type={'outlined'}
+            text={'Reset to defaults'}
+            onClick={handleDependentAxisSettingsReset}
+            containerStyles={{
+              paddingTop: '1.0em',
+              width: '50%',
+              float: 'right',
             }}
           />
         </LabelledGroup>
-        <LabelledGroup label="X-axis">
+        <LabelledGroup
+          label="X-axis"
+          containerStyles={{
+            marginRight: '0em',
+          }}
+        >
           <BinWidthControl
             binWidth={data0?.binWidthSlider?.binWidth}
             onBinWidthChange={onBinWidthChange}
@@ -726,6 +991,47 @@ function HistogramPlotWithControls({
             }
             containerStyles={{
               minHeight: widgetHeight,
+              // set maxWidth
+              maxWidth: valueType === 'date' ? '250px' : '350px',
+            }}
+          />
+
+          {/* X-Axis range control - temp block to check date  */}
+          <AxisRangeControl
+            label="Range"
+            range={vizConfig.independentAxisRange ?? defaultIndependentRange}
+            onRangeChange={handleIndependentAxisRangeChange}
+            valueType={valueType}
+            // set maxWidth
+            containerStyles={{ maxWidth: '350px' }}
+          />
+          {/* truncation notification */}
+          {truncatedIndependentAxisWarning ? (
+            <Notification
+              title={''}
+              text={truncatedIndependentAxisWarning}
+              // this was defined as LIGHT_BLUE
+              color={'#5586BE'}
+              onAcknowledgement={() => {
+                setTruncatedIndependentAxisWarning('');
+              }}
+              showWarningIcon={true}
+              // set maxWidth per type
+              containerStyles={{
+                maxWidth: valueType === 'date' ? '350px' : '350px',
+              }}
+            />
+          ) : null}
+          <Button
+            type={'outlined'}
+            text={'Reset to defaults'}
+            onClick={handleIndependentAxisSettingsReset}
+            containerStyles={{
+              paddingTop: '1.0em',
+              width: '50%',
+              float: 'right',
+              // to match reset button with date range form
+              marginRight: valueType === 'date' ? '-1em' : '',
             }}
           />
         </LabelledGroup>
@@ -1006,7 +1312,7 @@ function reorderData(
  * Need to make stacked count array and then max
  */
 
-function findMinMaxOfStackedArray(data: HistogramDataSeries[]) {
+export function findMinMaxOfStackedArray(data: HistogramDataSeries[]) {
   // calculate the sum of all the counts from bins with the same label
   const sumsByLabel = data
     .flatMap(
