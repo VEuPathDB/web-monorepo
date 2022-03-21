@@ -21,6 +21,7 @@ type State = UserDatasetMeta & {
 
 type Props = {
   baseUrl: string;
+  projectId: string;
   badUploadMessage?: string;
   urlParams: Record<string, string>;
   submitForm: (newUserDataset: NewUserDataset, redirectTo?: string) => void;
@@ -68,7 +69,7 @@ class UploadForm extends React.Component<Props, State> {
         summary: this.state.summary as string,
         description: this.state.description as string,
         datasetType: 'biom',
-        projects: ['MicrobiomeDB'],
+        projects: [this.props.projectId],
         uploadMethod: this.state.url
           ? {
               type: 'url',
