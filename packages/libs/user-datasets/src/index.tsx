@@ -19,8 +19,9 @@ import { isDirectUploadAvailable } from './lib/Utils/upload-config';
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
 
-const availableUploadTypes =
-  process.env.REACT_APP_HAS_DIRECT_UPLOAD !== 'true' ? undefined : ['biom'];
+const availableUploadTypes = process.env.REACT_APP_AVAILABLE_UPLOAD_TYPES?.trim().split(
+  /\s*,\s*/g
+);
 
 const datasetImportUrl = !isDirectUploadAvailable(availableUploadTypes)
   ? undefined
