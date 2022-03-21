@@ -11,21 +11,21 @@ import { UserDatasetMeta, NewUserDataset } from '../Utils/types';
 
 import './UploadForm.scss';
 
-type State = UserDatasetMeta & {
-  badFormStateMessages: string[];
-  submitting: boolean;
-  url?: string;
-  dataUploadMode: 'url' | 'file';
-  file?: File;
-};
-
-type Props = {
+interface Props {
   baseUrl: string;
   projectId: string;
   badUploadMessage?: string;
   urlParams: Record<string, string>;
   submitForm: (newUserDataset: NewUserDataset, redirectTo?: string) => void;
-};
+}
+
+interface State extends UserDatasetMeta {
+  badFormStateMessages: string[];
+  submitting: boolean;
+  url?: string;
+  dataUploadMode: 'url' | 'file';
+  file?: File;
+}
 
 class UploadForm extends React.Component<Props, State> {
   constructor(props: Props) {
