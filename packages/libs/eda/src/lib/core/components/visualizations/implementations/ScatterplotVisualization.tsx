@@ -9,17 +9,13 @@ import { useCallback, useMemo, useState, useEffect } from 'react';
 
 // need to set for Scatterplot
 
-import DataClient, {
-  ScatterplotRequestParams,
-  ScatterplotResponse,
-} from '../../../api/DataClient';
+import DataClient, { ScatterplotResponse } from '../../../api/DataClient';
 
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
-import { Filter } from '../../../types/filter';
 
 import { VariableDescriptor } from '../../../types/variable';
 
@@ -63,7 +59,7 @@ import {
 import { CoverageStatistics } from '../../../types/visualization';
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
-import { NumberVariable, StudyEntity, Variable } from '../../../types/study';
+import { NumberVariable, Variable } from '../../../types/study';
 import {
   fixLabelForNumberVariables,
   fixLabelsForNumberVariables,
@@ -396,8 +392,7 @@ function ScatterplotViz(props: VisualizationProps) {
           // add outputEntityId per dataElementDependencyOrder
           outputEntityId: computation.descriptor.configuration
             ? // alphadiv abundance: remove any as configuration is defined instead of unknown
-              (computation.descriptor.configuration as any).collectionVariable
-                .entityId
+              computation.descriptor.configuration.collectionVariable.entityId
             : outputEntity.id,
           valueSpec: valueSpecValue,
           xAxisVariable: vizConfig.xAxisVariable,

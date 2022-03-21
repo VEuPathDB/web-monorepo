@@ -32,18 +32,7 @@ import { BirdsEyeView } from '../../BirdsEyeView';
 import { PlotLayout } from '../../layouts/PlotLayout';
 import PluginError from '../PluginError';
 
-import {
-  at,
-  groupBy,
-  mapValues,
-  size,
-  head,
-  map,
-  values,
-  max,
-  min,
-  keys,
-} from 'lodash';
+import { at, groupBy, mapValues, size, head, map, values, keys } from 'lodash';
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import {
@@ -300,8 +289,7 @@ function BoxplotViz(props: VisualizationProps) {
           // add outputEntityId per dataElementDependencyOrder
           outputEntityId: computation.descriptor.configuration
             ? // alphadiv abundance remove any as configuration is defined instead of unknown
-              (computation.descriptor.configuration as any).collectionVariable
-                .entityId
+              computation.descriptor.configuration.collectionVariable.entityId
             : outputEntity.id,
           // post options: 'all', 'outliers'
           points: 'outliers',
