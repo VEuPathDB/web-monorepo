@@ -9,7 +9,7 @@ import {
 
 import { UserDatasetMeta, NewUserDataset } from '../Utils/types';
 
-import '../Components/MicrobiomeDBUploadForm.scss';
+import './UploadForm.scss';
 
 type State = UserDatasetMeta & {
   badFormStateMessages: string[];
@@ -26,7 +26,7 @@ type Props = {
   submitForm: (newUserDataset: NewUserDataset, redirectTo?: string) => void;
 };
 
-class MicrobiomeDBUploadForm extends React.Component<Props, State> {
+class UploadForm extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -238,7 +238,7 @@ class MicrobiomeDBUploadForm extends React.Component<Props, State> {
   render() {
     return (
       <div
-        className="microbiomeDBUploadForm"
+        className="UploadForm"
         style={this.state.submitting ? { opacity: '0.5' } : {}}
       >
         {(this.props.badUploadMessage != null ||
@@ -261,4 +261,4 @@ function isValidUrl(string: string) {
   return true;
 }
 
-export default MicrobiomeDBUploadForm;
+export default UploadForm;
