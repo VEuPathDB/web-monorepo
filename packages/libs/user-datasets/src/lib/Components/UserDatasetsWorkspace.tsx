@@ -8,19 +8,22 @@ import UserDatasetAllUploadsController from '../Controllers/UserDatasetAllUpload
 import UserDatasetListController from '../Controllers/UserDatasetListController';
 import UserDatasetNewUploadController from '../Controllers/UserDatasetNewUploadController';
 
+import { DatasetUploadPageConfig } from '../Utils/types';
+
 import { quotaSize } from './UserDatasetUtils';
 import UserDatasetHelp from './UserDatasetHelp';
 
 interface Props {
   baseUrl: string;
+  uploadPageConfig: DatasetUploadPageConfig;
   urlParams: Record<string, string>;
-  hasDirectUpload: boolean;
 }
 
 function UserDatasetsWorkspace(props: Props) {
   const config = useWdkService((wdkService) => wdkService.getConfig(), []);
   if (config == null) return null;
-  const { hasDirectUpload, baseUrl } = props;
+  const { baseUrl, uploadPageConfig } = props;
+
   return (
     <div>
       <WorkspaceNavigation
@@ -33,7 +36,7 @@ function UserDatasetsWorkspace(props: Props) {
               route: '',
             },
           ],
-          hasDirectUpload
+          uploadPageConfig.hasDirectUpload
             ? [
                 {
                   display: 'New upload',
@@ -61,12 +64,12 @@ function UserDatasetsWorkspace(props: Props) {
           component={() => (
             <UserDatasetListController
               baseUrl={baseUrl}
-              hasDirectUpload={hasDirectUpload}
+              hasDirectUpload={uploadPageConfig.hasDirectUpload}
             />
           )}
           disclaimerProps={{ toDoWhatMessage: 'To view your datasets' }}
         />
-        {hasDirectUpload && (
+        {uploadPageConfig.hasDirectUpload && (
           <WdkRoute
             requiresLogin
             exact
@@ -74,6 +77,8 @@ function UserDatasetsWorkspace(props: Props) {
             component={() => (
               <UserDatasetNewUploadController
                 baseUrl={baseUrl}
+                // TODO When more than one type is available, offer a data type selector
+                datasetType={uploadPageConfig.availableUploadTypes[0]}
                 urlParams={props.urlParams}
               />
             )}
@@ -99,7 +104,7 @@ function UserDatasetsWorkspace(props: Props) {
             }}
           />
         )}
-        {hasDirectUpload && (
+        {uploadPageConfig.hasDirectUpload && (
           <WdkRoute
             requiresLogin
             exact
@@ -116,7 +121,7 @@ function UserDatasetsWorkspace(props: Props) {
           path={`${baseUrl}/help`}
           component={() => (
             <UserDatasetHelp
-              hasDirectUpload={hasDirectUpload}
+              hasDirectUpload={uploadPageConfig.hasDirectUpload}
               projectName={config.displayName}
               quotaSize={quotaSize}
             />

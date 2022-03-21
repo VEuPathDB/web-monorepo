@@ -60,9 +60,9 @@ export interface UserDatasetUpload {
   isUserError: boolean;
 }
 
-export interface UserDatasetUploadPageConfigEntry<T extends string> {
-  type: T;
-}
+export type DatasetUploadPageConfig =
+  | { hasDirectUpload: false }
+  | { hasDirectUpload: true; availableUploadTypes: string[] };
 
 export interface NewUserDataset extends UserDatasetMeta {
   datasetType: string; // In prototype, the only value is "biom" - will eventually be an enum

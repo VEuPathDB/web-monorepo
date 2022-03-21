@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { RouteComponentProps, Switch, useRouteMatch } from 'react-router';
 
 import { parseQueryString } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
@@ -5,14 +7,21 @@ import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
 
 import UserDatasetsWorkspace from '../Components/UserDatasetsWorkspace';
 
+import { isDirectUploadAvailable } from '../Utils/upload-config';
+
 import UserDatasetDetailController from './UserDatasetDetailController';
 
 interface Props {
-  hasDirectUpload: boolean;
+  availableUploadTypes?: string[];
 }
 
-export function UserDatasetRouter({ hasDirectUpload }: Props) {
+export function UserDatasetRouter({ availableUploadTypes }: Props) {
   const { path, url } = useRouteMatch();
+
+  const uploadPageConfig = useMemo(
+    () => isDirectUploadAvailable(availableUploadTypes),
+    [availableUploadTypes]
+  );
 
   return (
     <Switch>
@@ -34,8 +43,9 @@ export function UserDatasetRouter({ hasDirectUpload }: Props) {
         requiresLogin={false} // uses custom guest views
         component={(props: RouteComponentProps<{}>) => (
           <UserDatasetsWorkspace
-            hasDirectUpload={hasDirectUpload}
             baseUrl={url}
+            uploadPageConfig={uploadPageConfig}
+            // FIXME This should be memoized
             urlParams={parseQueryString(props)}
           />
         )}

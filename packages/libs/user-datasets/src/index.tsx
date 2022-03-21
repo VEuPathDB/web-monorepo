@@ -14,13 +14,17 @@ import reportWebVitals from './reportWebVitals';
 import { UserDatasetRouter } from './lib/Controllers/UserDatasetRouter';
 import { wrapWdkService } from './lib/Service';
 import { wrapStoreModules } from './lib/StoreModules';
+import { isDirectUploadAvailable } from './lib/Utils/upload-config';
 
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
 
-const hasDirectUpload = process.env.REACT_APP_HAS_DIRECT_UPLOAD === 'true';
+const availableUploadTypes =
+  process.env.REACT_APP_HAS_DIRECT_UPLOAD !== 'true' ? undefined : ['biom'];
 
-const datasetImportUrl = !hasDirectUpload ? undefined : '/dataset-import';
+const datasetImportUrl = !isDirectUploadAvailable(availableUploadTypes)
+  ? undefined
+  : '/dataset-import';
 
 initialize({
   rootUrl,
@@ -33,7 +37,9 @@ initialize({
     {
       path: '/user-datasets',
       exact: false,
-      component: () => <UserDatasetRouter hasDirectUpload={hasDirectUpload} />,
+      component: () => (
+        <UserDatasetRouter availableUploadTypes={availableUploadTypes} />
+      ),
     },
     ...routes,
   ],

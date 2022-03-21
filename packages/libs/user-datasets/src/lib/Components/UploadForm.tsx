@@ -13,6 +13,7 @@ import './UploadForm.scss';
 
 interface Props {
   baseUrl: string;
+  datasetType: string;
   projectId: string;
   badUploadMessage?: string;
   urlParams: Record<string, string>;
@@ -68,7 +69,7 @@ class UploadForm extends React.Component<Props, State> {
         name: this.state.name as string,
         summary: this.state.summary as string,
         description: this.state.description as string,
-        datasetType: 'biom',
+        datasetType: this.props.datasetType,
         projects: [this.props.projectId],
         uploadMethod: this.state.url
           ? {
