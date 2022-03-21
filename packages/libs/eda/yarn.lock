@@ -3659,10 +3659,10 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/study-data-access@^0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.1.5.tgz#8f0aae7c4c35f001b8f3bff77feeeba3c86df578"
-  integrity sha512-CPoQ03Hg8O35JaAbhx0g22eAHOaDQ14pvydjMEs1oYFQggw6+cckp6tEpOCHhbAlwIBn0rvSdntGeJho2iLY/w==
+"@veupathdb/study-data-access@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.2.0.tgz#e6508397caea29578ff3fa07b09970f3dd0afe9a"
+  integrity sha512-roRKPykO/2izuWD/9ihDaMbXPIZFQIo8zCQpT9dyAFJRppvFjkQWLadBOECHqoC7zOj1W3hm7sPoZiz6UbrRzQ==
   dependencies:
     "@veupathdb/http-utils" "^1.0.1"
     fp-ts "^2.11.5"
