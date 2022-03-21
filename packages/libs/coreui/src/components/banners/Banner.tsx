@@ -1,4 +1,5 @@
-import { css } from '@emotion/react'
+import { css } from '@emotion/react';
+import { ReactNode } from 'react';
 
 import WarningIcon from '@material-ui/icons/Warning';
 import ErrorIcon from '@material-ui/icons/Error';
@@ -7,18 +8,18 @@ import InfoIcon from '@material-ui/icons/Info';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import CloseIcon from '@material-ui/icons/Close';
 
-import { gray, mutedGreen, orange, red, blue, ColorHue } from '../../definitions/colors'
+import { gray, mutedGreen, orange, red, blue, ColorHue } from '../../definitions/colors';
 
 export type BannerProps = {
   type: 'warning' | 'danger' | 'error' | 'success' | 'info' | 'normal';
-  message: string;
+  message: ReactNode;
   pinned?: boolean;
   intense?: boolean;
 }
 
 export type BannerComponentProps = {
   banner: BannerProps;
-  onClose: () => void;
+  onClose?: () => void;
 }
 
 function getIconComponentFromType(type: BannerProps['type']) {
@@ -57,7 +58,7 @@ function getColorTheme(type: BannerProps['type'], weight: keyof ColorHue) {
   }
 }
 
-export default function BannerTest(props: BannerComponentProps) {
+export default function Banner(props: BannerComponentProps) {
   const { banner, onClose } = props;
   const { type, message, pinned, intense } = banner;
 
