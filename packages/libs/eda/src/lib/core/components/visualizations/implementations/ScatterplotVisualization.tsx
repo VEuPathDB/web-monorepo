@@ -1171,7 +1171,7 @@ function ScatterplotWithControls({
       truncationConfigIndependentAxisMax
     ) {
       setTruncatedIndependentAxisWarning(
-        'Data may have been truncated by range selection, as indicated by the light gray shading'
+        'Data may have been truncated by range selection, as indicated by the yellow shading'
       );
     }
   }, [truncationConfigIndependentAxisMin, truncationConfigIndependentAxisMax]);
@@ -1184,7 +1184,7 @@ function ScatterplotWithControls({
       truncationConfigDependentAxisMax
     ) {
       setTruncatedDependentAxisWarning(
-        'Data may have been truncated by range selection, as indicated by the light gray shading'
+        'Data may have been truncated by range selection, as indicated by the yellow shading'
       );
     }
   }, [truncationConfigDependentAxisMin, truncationConfigDependentAxisMax]);

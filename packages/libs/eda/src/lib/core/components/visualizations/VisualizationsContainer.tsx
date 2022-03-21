@@ -125,7 +125,10 @@ function ConfiguredVisualizations(props: Props) {
 
   return (
     <Grid>
-      <Link replace to={`${url}/new`} className={cx('-NewVisualization')}>
+      <Link
+        to={{ pathname: `${url}/new`, state: { scrollToTop: false } }}
+        className={cx('-NewVisualization')}
+      >
         <i className="fa fa-plus"></i>
         New visualization
       </Link>
@@ -179,7 +182,12 @@ function ConfiguredVisualizations(props: Props) {
                 </div>
                 {/* add the Link of thumbnail box here to avoid click conflict with icons */}
                 <>
-                  <Link replace to={`${url}/${viz.visualizationId}`}>
+                  <Link
+                    to={{
+                      pathname: `${url}/${viz.visualizationId}`,
+                      state: { scrollToTop: false },
+                    }}
+                  >
                     {viz.descriptor.thumbnail ? (
                       <img
                         alt={viz.displayName}
@@ -420,7 +428,12 @@ function FullScreenVisualization(props: Props & { id: string }) {
           </Tooltip>
         </div>
         <Tooltip title="Minimize visualization">
-          <Link replace to={`../${computationId}`}>
+          <Link
+            to={{
+              pathname: `../${computationId}`,
+              state: { scrollToTop: false },
+            }}
+          >
             <i className="fa fa-window-minimize"></i>
           </Link>
         </Tooltip>
