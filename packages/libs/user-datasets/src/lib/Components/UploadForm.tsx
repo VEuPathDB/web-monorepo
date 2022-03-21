@@ -69,12 +69,15 @@ class UploadForm extends React.Component<Props, State> {
         description: this.state.description as string,
         datasetType: 'biom',
         projects: ['MicrobiomeDB'],
-        file: this.state.url
-          ? new File(
-              [this.state.url],
-              `${this.state.name.replace(/\W+/g, '_')}.path-to.biom`
-            )
-          : (this.state.file as File),
+        uploadMethod: this.state.url
+          ? {
+              type: 'url',
+              url: this.state.url,
+            }
+          : {
+              type: 'file',
+              file: this.state.file as File,
+            },
       };
       this.setState({ submitting: true }, () =>
         this.props.submitForm(newUserDataset, `${this.props.baseUrl}/recent`)

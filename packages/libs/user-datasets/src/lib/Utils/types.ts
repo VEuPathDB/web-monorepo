@@ -63,5 +63,13 @@ export interface UserDatasetUpload {
 export interface NewUserDataset extends UserDatasetMeta {
   datasetType: string; // In prototype, the only value is "biom" - will eventually be an enum
   projects: string[];
-  file: File;
+  uploadMethod:
+    | {
+        type: 'file';
+        file: File;
+      }
+    | {
+        type: 'url';
+        url: string;
+      };
 }

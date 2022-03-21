@@ -200,8 +200,14 @@ export const makeUserDatasetUploadServiceWrappers = (
     });
 
     const fileBody = new FormData();
-    fileBody.append('uploadMethod', 'file');
-    fileBody.append('file', newUserDataset.file);
+
+    if (newUserDataset.uploadMethod.type === 'file') {
+      fileBody.append('uploadMethod', 'file');
+      fileBody.append('file', newUserDataset.uploadMethod.file);
+    } else {
+      fileBody.append('uploadMethod', 'url');
+      fileBody.append('url', newUserDataset.uploadMethod.url);
+    }
 
     return fetchDecodedJsonOrThrowMessage(
       datasetImportUrl,
