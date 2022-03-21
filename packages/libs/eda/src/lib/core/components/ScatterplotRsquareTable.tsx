@@ -56,7 +56,7 @@ export function ScatterplotRsquareTable({
               <th>
                 {overlayVariable != null ? overlayVariable.displayName : 'Name'}
               </th>
-              <th className="numeric">
+              <th className="">
                 R<sup>2</sup> (Best fit)
               </th>
             </tr>
@@ -83,7 +83,7 @@ export function ScatterplotRsquareTable({
               {overlayVariable != null && (
                 <th>{overlayVariable.displayName}</th>
               )}
-              <th className="numeric">
+              <th className="">
                 R<sup>2</sup> (Best fit)
               </th>
             </tr>

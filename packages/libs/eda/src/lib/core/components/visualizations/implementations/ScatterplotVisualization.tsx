@@ -683,8 +683,9 @@ function ScatterplotViz(props: VisualizationProps) {
                   : // if there is no overlay variable, then marker colors should be the same for Data, Smoothed mean, 95% CI, and Best fit
                   // with another apps like alphadiv, abundance, etc., this condition needs to be changed: check with data more
                   ((computation.descriptor.type === 'pass' ||
-                      computation.descriptor.type === 'alphadiv') &&
-                      vizConfig.overlayVariable != null) || // pass-through & alphadiv
+                      computation.descriptor.type === 'alphadiv' ||
+                      computation.descriptor.type === 'xyrelationships') &&
+                      vizConfig.overlayVariable != null) || // pass-through & alphadiv & // X-Y relationships
                     computation.descriptor.type === 'abundance' // abundance
                   ? dataItem.name != null
                     ? legendLabelColor
