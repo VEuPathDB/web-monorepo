@@ -63,6 +63,12 @@ function observeSubmitUploadForm(
     filter(submitUploadForm.isOfType),
     mergeMap(async (action) => {
       try {
+        if (!isUserDatasetUploadCompatibleWdkService(dependencies.wdkService)) {
+          throw new Error(
+            MISCONFIGURED_USER_DATASET_UPLOAD_SERVICE_ERROR_MESSAGE
+          );
+        }
+
         await dependencies.wdkService.addDataset(action.payload.newUserDataset);
         if (action.payload.redirectTo != null) {
           dependencies.transitioner.transitionToInternalPage(
