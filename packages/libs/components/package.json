@@ -8,10 +8,6 @@
     "url": "https://github.com/veupathdb/web-components.git"
   },
   "dependencies": {
-    "@emotion/react": "^11.7.0",
-    "@material-ui/core": "^4.11.2",
-    "@material-ui/icons": "^4.11.2",
-    "@material-ui/lab": "^4.0.0-alpha.57",
     "@visx/gradient": "^1.0.0",
     "@visx/group": "^1.0.0",
     "@visx/hierarchy": "^1.0.0",
@@ -68,6 +64,10 @@
   "devDependencies": {
     "@babel/core": "^7.10.4",
     "@babel/preset-env": "^7.16.11",
+    "@emotion/react": "^11.7.0",
+    "@material-ui/core": "^4.11.2",
+    "@material-ui/icons": "^4.11.2",
+    "@material-ui/lab": "^4.0.0-alpha.57",
     "@storybook/addon-actions": "^6.3.6",
     "@storybook/addon-console": "^1.2.3",
     "@storybook/addon-controls": "^6.3.6",
@@ -110,6 +110,10 @@
     "typescript": "4.3.4"
   },
   "peerDependencies": {
+    "@emotion/react": "^11.7.0",
+    "@material-ui/core": "^4.11.2",
+    "@material-ui/icons": "^4.11.2",
+    "@material-ui/lab": "^4.0.0-alpha.57",
     "@veupathdb/coreui": "^0.15.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
