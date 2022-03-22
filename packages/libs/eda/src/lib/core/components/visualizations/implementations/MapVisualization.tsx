@@ -152,6 +152,9 @@ function MapViz(props: VisualizationProps) {
     updateConfiguration
   );
 
+  if (geoConfigs.length == 1 && vizConfig.geoEntityId === undefined)
+    updateVizConfig({ geoEntityId: geoConfigs[0].entity.id });
+
   const handleViewportChanged: MapVEuMapProps['onViewportChanged'] = useCallback(
     ({ center, zoom }) => {
       if (center != null && center.length === 2 && zoom != null) {
@@ -260,7 +263,8 @@ function MapViz(props: VisualizationProps) {
         latitudeVariable == null ||
         longitudeVariable == null ||
         geoAggregateVariable == null ||
-        outputEntity == null
+        outputEntity == null ||
+        vizConfig.xAxisVariable == null
       )
         return undefined;
 
@@ -315,6 +319,7 @@ function MapViz(props: VisualizationProps) {
       // (baseLayer doesn't matter either) - so we cherry pick properties of vizConfig
       vizConfig.geoEntityId,
       vizConfig.outputEntityId,
+      vizConfig.xAxisVariable,
       boundsZoomLevel,
       computation.descriptor.type,
       geoConfig,
@@ -466,6 +471,8 @@ function MapViz(props: VisualizationProps) {
     ]
   );
 
+  console.log({ zoomLevel });
+
   const plotNode = (
     <MapVEuMap
       viewport={{ center: [latitude, longitude], zoom: zoomLevel }}
@@ -600,21 +607,23 @@ function MapViz(props: VisualizationProps) {
           justifyContent: 'space-between',
         }}
       >
-        <FormControl style={{ minWidth: '200px' }} variant="filled">
-          <InputLabel>Map the locations of</InputLabel>
-          <Select
-            value={vizConfig.geoEntityId ?? ''}
-            onChange={handleGeoEntityChange}
-          >
-            {geoConfigs.map((geoConfig) => (
-              <MenuItem key={geoConfig.entity.id} value={geoConfig.entity.id}>
-                {geoConfig.entity.displayNamePlural ??
-                  geoConfig.entity.displayName}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl style={{ minWidth: '200px' }} variant="filled">
+        {geoConfigs.length > 1 && (
+          <FormControl style={{ minWidth: '200px' }} variant="filled">
+            <InputLabel>Map the locations of</InputLabel>
+            <Select
+              value={vizConfig.geoEntityId ?? ''}
+              onChange={handleGeoEntityChange}
+            >
+              {geoConfigs.map((geoConfig) => (
+                <MenuItem key={geoConfig.entity.id} value={geoConfig.entity.id}>
+                  {geoConfig.entity.displayNamePlural ??
+                    geoConfig.entity.displayName}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
+        {/* <FormControl style={{ minWidth: '200px' }} variant="filled">
           <InputLabel>Show counts of</InputLabel>
           <Select
             value={outputEntity?.id ?? ''}
@@ -627,13 +636,12 @@ function MapViz(props: VisualizationProps) {
               </MenuItem>
             ))}
           </Select>
-        </FormControl>
+        </FormControl> */}
         <InputVariables
           inputs={[
             {
               name: 'xAxisVariable',
-              label: 'Categorical overlay',
-              role: 'stratification',
+              label: 'Main',
             },
           ]}
           entities={entities}

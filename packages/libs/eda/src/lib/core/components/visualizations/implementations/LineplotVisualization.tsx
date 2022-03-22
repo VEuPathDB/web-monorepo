@@ -677,12 +677,12 @@ function LineplotViz(props: VisualizationProps) {
             {
               name: 'xAxisVariable',
               label: 'X-axis',
-              role: 'primary',
+              role: 'axis',
             },
             {
               name: 'yAxisVariable',
               label: 'Y-axis',
-              role: 'primary',
+              role: 'axis',
             },
             {
               name: 'overlayVariable',
