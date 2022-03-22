@@ -198,7 +198,7 @@ class UploadForm extends React.Component<Props, State> {
                       <TextBox
                         type="input"
                         id="data-set-url"
-                        placeholder="Address of a data BIOM file from the Web"
+                        placeholder="Address of a data file from the Web"
                         value={this.state.url}
                         onChange={(url) => this.setState({ url })}
                       />
