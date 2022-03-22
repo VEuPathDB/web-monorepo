@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 export interface UserDatasetMeta {
   description: string;
   name: string;
@@ -60,9 +62,27 @@ export interface UserDatasetUpload {
   isUserError: boolean;
 }
 
-export type DatasetUploadPageConfig =
+export type DatasetUploadTypeConfig<T extends string> = {
+  [K in T]: DatasetUploadTypeConfigEntry<K>;
+};
+
+export interface DatasetUploadTypeConfigEntry<T extends string> {
+  type: T;
+  formConfig: {
+    renderInfo: () => ReactNode;
+  };
+}
+
+export type DatasetUploadPageConfig<
+  T1 extends string = string,
+  T2 extends string = string
+> =
   | { hasDirectUpload: false }
-  | { hasDirectUpload: true; availableUploadTypes: string[] };
+  | {
+      hasDirectUpload: true;
+      availableUploadTypes: T1[];
+      uploadTypeConfig: DatasetUploadTypeConfig<T2>;
+    };
 
 export interface NewUserDataset extends UserDatasetMeta {
   datasetType: string; // In prototype, the only value is "biom" - will eventually be an enum

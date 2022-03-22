@@ -7,20 +7,25 @@ import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
 
 import UserDatasetsWorkspace from '../Components/UserDatasetsWorkspace';
 
-import { isDirectUploadAvailable } from '../Utils/upload-config';
+import { makeDatasetUploadPageConfig } from '../Utils/upload-config';
+import { DatasetUploadTypeConfig } from '../Utils/types';
 
 import UserDatasetDetailController from './UserDatasetDetailController';
 
-interface Props {
-  availableUploadTypes?: string[];
+interface Props<T1 extends string = string, T2 extends string = string> {
+  availableUploadTypes?: T1[];
+  uploadTypeConfig: DatasetUploadTypeConfig<T2>;
 }
 
-export function UserDatasetRouter({ availableUploadTypes }: Props) {
+export function UserDatasetRouter<T1 extends string, T2 extends string>({
+  availableUploadTypes,
+  uploadTypeConfig,
+}: Props<T1, T2>) {
   const { path, url } = useRouteMatch();
 
   const uploadPageConfig = useMemo(
-    () => isDirectUploadAvailable(availableUploadTypes),
-    [availableUploadTypes]
+    () => makeDatasetUploadPageConfig(availableUploadTypes, uploadTypeConfig),
+    [availableUploadTypes, uploadTypeConfig]
   );
 
   return (
