@@ -16,6 +16,7 @@ import { NewStrategySpec, NewStepSpec } from '@veupathdb/wdk-client/lib/Utils/Wd
 import { DEFAULT_STRATEGY_NAME } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
 
 import './SiteSearch.scss';
+import { makeEdaRoute } from 'ebrc-client/routes';
 
 interface Props {
   loading: boolean;
@@ -348,6 +349,8 @@ interface HitProps {
   classNameModifier?: string;
 }
 
+
+
 function Hit(props: HitProps) {
   const { classNameModifier, document, documentType } = props;
   const { link, summary } = resultDetails(document, documentType);
@@ -639,6 +642,37 @@ function resultDetails(document: SiteSearchDocument, documentType: SiteSearchDoc
   if (documentType.isWdkRecordType) {
     return {
       link: makeRecordLink(document, projectUrls, organismToProject, projectId),
+      summary: makeGenericSummary(document, documentType)
+    }
+  }
+
+  // eda study
+  if (documentType.id === 'dataset') {
+    const [ datasetId ] = document.primaryKey;
+    return {
+      link: {
+        isRoute: true,
+        url: `${makeEdaRoute(datasetId)}/new`,
+        text: document.hyperlinkName
+      },
+      summary: makeGenericSummary(document, documentType)
+    }
+  }
+
+  // eda variable
+  if (documentType.id === 'variable') {
+    const [ datasetId, variableId, entityId ] = document.primaryKey;
+    const {
+      TEXT__variable_study_name: studyName,
+      TEXT__variable_entity_type: entityName,
+      TEXT__variable_attribute_name: variableName,
+    } = document.summaryFieldData;
+    return {
+      link: {
+        isRoute: true,
+        url: `${makeEdaRoute(datasetId)}/new/variables/${entityId}/${variableId}`,
+        text: [studyName, entityName, variableName].join(' - ')
+      },
       summary: makeGenericSummary(document, documentType)
     }
   }
