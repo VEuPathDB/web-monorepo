@@ -130,6 +130,8 @@ export default function DataGrid({
     previousPage,
     setPageSize,
     state: { pageIndex, pageSize, selectedRowIds },
+    rows,
+    toggleRowSelected,
   } = useTable(
     {
       columns,
@@ -178,11 +180,15 @@ export default function DataGrid({
               </div>
             ),
             // The cell can use the individual row's getToggleRowSelectedProps method
-            // to the render a checkbox
+            // to the render a checkbox.
+	    // The `checked` prop returned by getToggleRowSelectedProps is not fit for purpose
+	    // because it only considers initial pre-selected/checked state (originalData[].isSelected).
+	    // Luckily `row.isSelected` has the correct "live" state.
             Cell: ({ row }) => (
               <div>
                 <IndeterminateCheckbox
                   {...row.getToggleRowSelectedProps()}
+	          checked={row.isSelected}
                   themeRole={themeRole}
                 />
               </div>
@@ -212,6 +218,16 @@ export default function DataGrid({
     onRowSelection && onRowSelection(selectedFlatRows);
   }, [selectedFlatRows]);
 
+  // Fix from https://github.com/TanStack/react-table/issues/2459#issuecomment-851523333
+  // to properly set selected state from incoming `isSelected` prop in data
+  useEffect(() => {
+    rows.forEach(({ id, original } : {id: string, original: { isSelected?: boolean }}) => {
+      if (original.isSelected != null) {
+	toggleRowSelected(id, original.isSelected);
+      }
+    });
+  }, [rows, toggleRowSelected]);
+  
   return (
     <div>
       {title && <H3 text={title} additionalStyles={{ marginBottom: 20 }} />}
