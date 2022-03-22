@@ -77,7 +77,7 @@ function Results(props: Props) {
     <>
       <div className={cx('--TitleLine')}>
         <h1>{Title(props)}</h1>
-        {response.searchResults.totalCount > 0 && <StrategyLinkout {...props}/>}
+        {response.searchResults.totalCount > 0 && response.documentTypes.some(docType => docType.isWdkRecordType) &&  <StrategyLinkout {...props}/>}
       </div>
       <div className={cx('--Results')}>
         <Pagination {...props} />
