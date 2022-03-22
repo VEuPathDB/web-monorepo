@@ -5,6 +5,7 @@ import useDimensions from 'react-cool-dimensions';
 // Components & Component Generators
 import SettingsIcon from '@material-ui/icons/Settings';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import MultiSelectVariableTree from '../../core/components/variableTrees/MultiSelectVariableTree';
 import {
   Modal,
@@ -278,7 +279,9 @@ export default function SubsettingDataGridModal({
               additionalStyles={{ fontSize: 18 }}
             />
           </div>
-        ) : null}
+        ) : (
+          <Loading />
+        )}
       </div>
     );
   };
