@@ -7,13 +7,17 @@ import {
   RadioList,
 } from '@veupathdb/wdk-client/lib/Components';
 
-import { UserDatasetMeta, NewUserDataset } from '../Utils/types';
+import {
+  DatasetUploadTypeConfigEntry,
+  NewUserDataset,
+  UserDatasetMeta,
+} from '../Utils/types';
 
 import './UploadForm.scss';
 
-interface Props {
+interface Props<T extends string = string> {
   baseUrl: string;
-  datasetType: string;
+  datasetUploadType: DatasetUploadTypeConfigEntry<T>;
   projectId: string;
   badUploadMessage?: string;
   urlParams: Record<string, string>;
@@ -69,7 +73,7 @@ class UploadForm extends React.Component<Props, State> {
         name: this.state.name as string,
         summary: this.state.summary as string,
         description: this.state.description as string,
-        datasetType: this.props.datasetType,
+        datasetType: this.props.datasetUploadType.type,
         projects: [this.props.projectId],
         uploadMethod: this.state.url
           ? {
@@ -213,25 +217,6 @@ class UploadForm extends React.Component<Props, State> {
     );
   }
 
-  renderInfo() {
-    return (
-      <p className="formInfo">
-        <span>* </span> All form fields are required.
-        <br />
-        <br />
-        We accept any file in the{' '}
-        <a href="http://biom-format.org">BIOM format</a>, either JSON-based
-        (BIOM 1.0) or HDF5 (BIOM 2.0+). The maximum allowed file size is 1GB.
-        <br />
-        <br />
-        If possible, try including taxonomic information and rich sample details
-        in your file. This will allow you to select groups of samples and create
-        meaningful comparisons at a desired aggregation level, using our
-        filtering and visualisation tools.
-      </p>
-    );
-  }
-
   renderSubmit() {
     return (
       <button type="submit" className="btn" onClick={() => this.trySubmit()}>
@@ -251,7 +236,7 @@ class UploadForm extends React.Component<Props, State> {
           this.renderErrorMessage()}
         {this.renderForm()}
         {this.renderSubmit()}
-        {this.renderInfo()}
+        {this.props.datasetUploadType.formConfig.renderInfo()}
       </div>
     );
   }

@@ -12,17 +12,17 @@ import UploadForm from '../Components/UploadForm';
 
 import { StateSlice } from '../StoreModules/types';
 
-import { NewUserDataset } from '../Utils/types';
+import { DatasetUploadTypeConfigEntry, NewUserDataset } from '../Utils/types';
 
-interface Props {
+interface Props<T extends string = string> {
   baseUrl: string;
-  datasetType: string;
+  datasetUploadType: DatasetUploadTypeConfigEntry<T>;
   urlParams: Record<string, string>;
 }
 
 export default function UserDatasetUploadController({
   baseUrl,
-  datasetType,
+  datasetUploadType,
   urlParams,
 }: Props) {
   useSetDocumentTitle('Upload My New Data Set');
@@ -51,7 +51,7 @@ export default function UserDatasetUploadController({
     <div className="stack">
       <UploadForm
         baseUrl={baseUrl}
-        datasetType={datasetType}
+        datasetUploadType={datasetUploadType}
         projectId={projectId}
         badUploadMessage={badUploadMessage}
         submitForm={submitForm}

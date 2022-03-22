@@ -78,7 +78,11 @@ function UserDatasetsWorkspace(props: Props) {
               <UserDatasetNewUploadController
                 baseUrl={baseUrl}
                 // TODO When more than one type is available, offer a data type selector
-                datasetType={uploadPageConfig.availableUploadTypes[0]}
+                datasetUploadType={
+                  uploadPageConfig.uploadTypeConfig[
+                    uploadPageConfig.availableUploadTypes[0]
+                  ]
+                }
                 urlParams={props.urlParams}
               />
             )}
