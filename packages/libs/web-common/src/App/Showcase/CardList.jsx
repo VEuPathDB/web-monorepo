@@ -10,6 +10,8 @@ import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip'
 const CLASS_NAME = 'CardList';
 const SHOW_CATEGORIES_DROPDOWN = (projectId === 'MicrobiomeDB');
 
+const EXPANDABLE_CLASS_NAME = `${CLASS_NAME}_Expandable`;
+const SEARCHABLE_CLASS_NAME = `${CLASS_NAME}_Searchable`;
 const EXPANDED_CLASS_NAME = `${CLASS_NAME}_Expanded`;
 const LOADING_CLASS_NAME = `${CLASS_NAME}_Loading`;
 const EMPTY_CLASS_NAME = `${CLASS_NAME}_Empty`;
@@ -31,6 +33,7 @@ export default function CardList(props) {
     filters,
     filtersLabel = 'category',
     isExpandable,
+    isSearchable,
     tableViewLink,
     tableViewLinkText = 'Table view',
     contentNamePlural,
@@ -71,6 +74,8 @@ export default function CardList(props) {
   const isEmpty = list != null && list.length === 0;
   const className = `${CLASS_NAME} ${isLoading ? LOADING_CLASS_NAME : ''} ` +
     `${isEmpty ? EMPTY_CLASS_NAME : ''} ` +
+    `${isExpandable ? EXPANDABLE_CLASS_NAME : ''} ` +
+    `${isSearchable ? SEARCHABLE_CLASS_NAME : ''} ` +
     `${isExpandable && isExpanded ? EXPANDED_CLASS_NAME : ''} ${additionalClassName}`;
 
   const cardElements = list == null || isEmpty || isLoading
@@ -121,7 +126,7 @@ export default function CardList(props) {
       </button>
     </Tooltip>
 
-  const filterInput = isExpandable &&
+  const filterInput = isSearchable && 
     <RealTimeSearchBox
       className={FILTER_CLASS_NAME}
       searchTerm={filterString}
@@ -175,6 +180,7 @@ CardList.propTypes = {
   isLoading: PropTypes.bool,
   list: PropTypes.array,
   isExpandable: PropTypes.bool,
+  isSearchable: PropTypes.bool,
   isExpanded: PropTypes.bool,
   filterString: PropTypes.string,
   contentNamePlural: PropTypes.string,

@@ -22,6 +22,7 @@ export default function Showcase(props) {
     description,
     isLoading,
     isExpandable,
+    isSearchable,
     tableViewLink,
     tableViewLinkText,
     cardComponent: Card,
@@ -78,6 +79,7 @@ export default function Showcase(props) {
           isLoading={isLoading}
           list={list}
           isExpandable={isExpandable}
+          isSearchable={isSearchable}
           tableViewLink={tableViewLink}
           tableViewLinkText={tableViewLinkText}
           getSearchStringForItem={getSearchStringForItem}
