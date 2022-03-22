@@ -5,7 +5,7 @@ import LinePlot, {
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import * as t from 'io-ts';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import DataClient, {
   LineplotRequestParams,
@@ -98,7 +98,6 @@ import { BinSpec, BinWidthSlider } from '../../../types/general';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { useInputStyles } from '../inputStyles';
 import { ValuePicker } from './ValuePicker';
-import PopoverButton from '@veupathdb/components/lib/components/widgets/PopoverButton';
 
 const plotContainerStyles = {
   width: 750,
@@ -358,25 +357,6 @@ function LineplotViz(props: VisualizationProps) {
     'yAxisVariable',
     entities
   );
-
-  // we need to watch for changes in numeratorValues, especially when
-  // the referentially unequal but content-wise the same
-  // (e.g. when pressing 'ok' on the ValuePicker without making any changes)
-  const [
-    numeratorValuesSerialNumber,
-    setNumeratorValuesSerialNumber,
-  ] = useState(1);
-  useEffect(() => {
-    setNumeratorValuesSerialNumber((prev) => prev + 1);
-  }, [vizConfig.numeratorValues]);
-  // and, crudely, the same for denominator
-  const [
-    denominatorValuesSerialNumber,
-    setDenominatorValuesSerialNumber,
-  ] = useState(1);
-  useEffect(() => {
-    setDenominatorValuesSerialNumber((prev) => prev + 1);
-  }, [vizConfig.denominatorValues]);
 
   const data = usePromise(
     useCallback(async (): Promise<LinePlotDataWithCoverage | undefined> => {
@@ -810,40 +790,21 @@ function LineplotViz(props: VisualizationProps) {
               <div className={classes.label} style={valuesOfInterestLabelStyle}>
                 Value(s) of interest (numerator)
               </div>
-              <PopoverButton
-                key={`numerator-${numeratorValuesSerialNumber}`}
-                label={
-                  vizConfig.numeratorValues && vizConfig.numeratorValues.length
-                    ? vizConfig.numeratorValues.join(', ')
-                    : 'Choose value(s)'
-                }
-              >
-                <ValuePicker
-                  allowedValues={yAxisVariable?.vocabulary ?? []}
-                  selectedValues={vizConfig.numeratorValues ?? []}
-                  onSelectedValuesChange={onNumeratorValuesChange}
-                />
-              </PopoverButton>
+              <ValuePicker
+                allowedValues={yAxisVariable?.vocabulary}
+                selectedValues={vizConfig.numeratorValues}
+                onSelectedValuesChange={onNumeratorValuesChange}
+              />
             </div>
             <div className={[classes.input, classes.fullRow].join(' ')}>
               <div className={classes.label} style={valuesOfInterestLabelStyle}>
                 Value(s) of interest (denominator)
               </div>
-              <PopoverButton
-                key={`denominator-${denominatorValuesSerialNumber}`}
-                label={
-                  vizConfig.denominatorValues &&
-                  vizConfig.denominatorValues.length
-                    ? vizConfig.denominatorValues.join(', ')
-                    : 'Choose value(s)'
-                }
-              >
-                <ValuePicker
-                  allowedValues={yAxisVariable?.vocabulary ?? []}
-                  selectedValues={vizConfig.denominatorValues ?? []}
-                  onSelectedValuesChange={onDenominatorValuesChange}
-                />
-              </PopoverButton>
+              <ValuePicker
+                allowedValues={yAxisVariable?.vocabulary}
+                selectedValues={vizConfig.denominatorValues}
+                onSelectedValuesChange={onDenominatorValuesChange}
+              />
             </div>
           </div>
         )}
