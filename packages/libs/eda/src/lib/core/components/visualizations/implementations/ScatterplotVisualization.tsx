@@ -56,7 +56,8 @@ import {
   ScatterPlotData,
   FacetedData,
 } from '@veupathdb/components/lib/types/plots';
-import { CoverageStatistics } from '../../../types/visualization';
+// import Computation ts
+import { CoverageStatistics, Computation } from '../../../types/visualization';
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import { NumberVariable, Variable } from '../../../types/study';
@@ -450,7 +451,9 @@ function ScatterplotViz(props: VisualizationProps) {
         overlayVariable,
         showMissingFacet,
         facetVocabulary,
-        facetVariable
+        facetVariable,
+        // pass computation
+        computation
       );
     }, [
       vizConfig.xAxisVariable,
@@ -1391,7 +1394,8 @@ export function scatterplotResponseToData(
   overlayVariable?: Variable,
   showMissingFacet: boolean = false,
   facetVocabulary: string[] = [],
-  facetVariable?: Variable
+  facetVariable?: Variable,
+  computation?: Computation
 ): ScatterPlotDataWithCoverage {
   const modeValue = 'markers';
 
@@ -1428,7 +1432,9 @@ export function scatterplotResponseToData(
       hasMissingData,
       overlayVariable,
       // pass facetVariable to determine either scatter or scattergl
-      facetVariable
+      facetVariable,
+      // pass computation here to add conditions for apps
+      computation
     );
 
     return {
@@ -1481,7 +1487,8 @@ function processInputData<T extends number | string>(
   hasMissingData: boolean,
   overlayVariable?: Variable,
   // pass facetVariable to determine either scatter or scattergl
-  facetVariable?: Variable
+  facetVariable?: Variable,
+  computation?: Computation
 ) {
   // set variables for x- and yaxis ranges: no default values are set
   let yMin: number | string | undefined;
@@ -1796,7 +1803,14 @@ function processInputData<T extends number | string>(
         r2: el.r2,
         // display R-square value at legend for no overlay and facet variable
         name:
-          overlayVariable == null && facetVariable == null
+          // revisit this overlayVariable == null should be conditional: may not work properly
+          (((computation?.descriptor.type === 'pass' ||
+            computation?.descriptor.type === 'alphadiv' ||
+            computation?.descriptor.type === 'xyrelationships') &&
+            overlayVariable == null) || // pass-through & alphadiv & // X-Y relationships
+            (computation?.descriptor.type === 'abundance' &&
+              responseScatterplotData.length === 1)) && // abundance & single data case (revisit)
+          facetVariable == null
             ? 'Best fit, R² = ' + el.r2
             : el.overlayVariableDetails
             ? fixLabelForNumberVariables(
