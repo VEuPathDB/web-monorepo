@@ -471,8 +471,6 @@ function MapViz(props: VisualizationProps) {
     ]
   );
 
-  console.log({ zoomLevel });
-
   const plotNode = (
     <MapVEuMap
       viewport={{ center: [latitude, longitude], zoom: zoomLevel }}
