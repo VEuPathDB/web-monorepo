@@ -286,6 +286,8 @@ export interface LineplotRequestParams {
     showMissingness?: 'TRUE' | 'FALSE';
     valueSpec: 'mean' | 'median';
     errorBars: 'TRUE' | 'FALSE';
+    yAxisNumeratorValues?: string[];
+    yAxisDenominatorValues?: string[];
   };
 }
 
@@ -305,11 +307,19 @@ const LineplotResponseData = array(
           error: string,
         })
       ),
-      binSampleSize: array(
-        type({
-          N: number,
-        })
-      ),
+      binSampleSize: union([
+        array(
+          type({
+            N: number,
+          })
+        ),
+        array(
+          type({
+            numeratorN: number,
+            denominatorN: number,
+          })
+        ),
+      ]),
       overlayVariableDetails: StringVariableValue,
       facetVariableDetails: union([
         tuple([StringVariableValue]),

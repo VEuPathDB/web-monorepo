@@ -245,6 +245,11 @@ function LineplotViz(props: VisualizationProps) {
   ]);
 
   const categoricalMode = isSuitableCategoricalVariable(yAxisVariable);
+  const valuesAreSpecified =
+    vizConfig.numeratorValues != null &&
+    vizConfig.numeratorValues.length > 0 &&
+    vizConfig.denominatorValues != null &&
+    vizConfig.denominatorValues.length > 0;
 
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
@@ -360,6 +365,8 @@ function LineplotViz(props: VisualizationProps) {
 
   const data = usePromise(
     useCallback(async (): Promise<LinePlotDataWithCoverage | undefined> => {
+      if (categoricalMode && !valuesAreSpecified) return undefined;
+
       if (
         categoricalMode &&
         vizConfig.numeratorValues != null &&
@@ -388,9 +395,6 @@ function LineplotViz(props: VisualizationProps) {
         ])
       )
         throw new Error(nonUniqueWarning);
-
-      if (categoricalMode)
-        throw new Error('Not yet implemented - no back end request made');
 
       // check independentValueType/dependentValueType
       const independentValueType = xAxisVariable?.type
@@ -455,6 +459,7 @@ function LineplotViz(props: VisualizationProps) {
 
       return lineplotResponseToData(
         response,
+        categoricalMode,
         visualization.descriptor.type,
         independentValueType,
         dependentValueType,
@@ -663,7 +668,10 @@ function LineplotViz(props: VisualizationProps) {
         outputEntity={outputEntity}
         stratificationIsActive={overlayVariable != null}
         enableSpinner={
-          xAxisVariable != null && yAxisVariable != null && !data.error
+          xAxisVariable != null &&
+          yAxisVariable != null &&
+          !data.error &&
+          (!categoricalMode || valuesAreSpecified)
         }
         totalCounts={totalCounts.value}
         filteredCounts={filteredCounts.value}
@@ -945,6 +953,7 @@ function LineplotWithControls({
  */
 export function lineplotResponseToData(
   response: LinePlotDataResponse,
+  categoricalMode: boolean,
   // vizType may be used for handling other plots in this component like line and density
   vizType: string,
   independentValueType: string,
@@ -977,10 +986,12 @@ export function lineplotResponseToData(
       reorderResponseLineplotData(
         // reorder by overlay var within each facet
         group,
+        categoricalMode,
         xAxisVocabulary,
         vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
         overlayVariable
       ),
+      categoricalMode,
       vizType,
       modeValue,
       independentValueType,
@@ -1043,7 +1054,7 @@ function getRequestParams(
   vizConfig: LineplotConfig,
   xAxisVariableMetadata: Variable,
   yAxisVariableMetadata: Variable,
-  outputEntity?: StudyEntity
+  outputEntity: StudyEntity
 ): getRequestParamsProps {
   const {
     xAxisVariable,
@@ -1060,6 +1071,8 @@ function getRequestParams(
       ? xAxisVariableMetadata.binUnits
       : undefined,
     useBinning,
+    numeratorValues,
+    denominatorValues,
   } = vizConfig;
 
   const binSpec = binWidth
@@ -1080,6 +1093,8 @@ function getRequestParams(
       }
     : { binSpec: { type: 'binWidth' } };
 
+  const valueSpec = valueSpecLookup[valueSpecConfig];
+
   return {
     studyId,
     filters,
@@ -1087,11 +1102,11 @@ function getRequestParams(
       // add outputEntityId
       outputEntityId: outputEntity?.id,
       // LinePlotControls
-      valueSpec: valueSpecLookup[valueSpecConfig],
-      xAxisVariable: xAxisVariable,
-      yAxisVariable: yAxisVariable,
+      valueSpec,
+      xAxisVariable,
+      yAxisVariable,
       ...binSpec,
-      overlayVariable: overlayVariable,
+      overlayVariable,
       facetVariable: facetVariable ? [facetVariable] : [],
       showMissingness: showMissingness ? 'TRUE' : 'FALSE',
       // no error bars for date variables (error bar toggle switch is also disabled)
@@ -1099,6 +1114,12 @@ function getRequestParams(
         vizConfig.showErrorBars && yAxisVariableMetadata.type !== 'date'
           ? 'TRUE'
           : 'FALSE',
+      ...(valueSpec === 'proportion'
+        ? {
+            yAxisNumeratorValues: numeratorValues,
+            yAxisDenominatorValues: denominatorValues,
+          }
+        : {}),
     },
   } as LineplotRequestParams;
 }
@@ -1106,6 +1127,7 @@ function getRequestParams(
 // making plotly input data
 function processInputData(
   responseLineplotData: LineplotResponse['lineplot']['data'],
+  categoricalMode: boolean,
   vizType: string,
   // line, marker,
   modeValue: LinePlotDataSeries['mode'],
@@ -1230,7 +1252,11 @@ function processInputData(
           : {}),
         ...(el.binSampleSize != null
           ? {
-              sampleSize: el.binSampleSize.map((bss) => bss.N),
+              sampleSize: categoricalMode
+                ? el.binSampleSize.map(
+                    (bss) => (bss as { denominatorN: number }).denominatorN
+                  )
+                : el.binSampleSize.map((bss) => (bss as { N: number }).N),
             }
           : {}),
         name:
@@ -1289,6 +1315,7 @@ function processInputData(
 
 function reorderResponseLineplotData(
   data: LinePlotDataResponse['lineplot']['data'],
+  categoricalMode: boolean,
   xAxisVocabulary: string[] = [],
   overlayVocabulary: string[] = [],
   overlayVariable?: Variable
@@ -1321,18 +1348,21 @@ function reorderResponseLineplotData(
           : {}),
         ...(series.binSampleSize != null
           ? {
+              // it won't ever be a mixed array but TS doesn't know this
               binSampleSize: labelIndices.map((i) =>
                 series.binSampleSize && series.binSampleSize[i]
                   ? series.binSampleSize[i]
+                  : categoricalMode
+                  ? { numeratorN: 0, denominatorN: 0 }
                   : { N: 0 }
-              ),
+              ) as LinePlotDataResponse['lineplot']['data'][number]['binSampleSize'],
             }
           : {}),
       };
     } else {
       return series;
     }
-  });
+  }); // as LinePlotDataResponse['lineplot']['data'];
 
   if (overlayVocabulary.length > 0) {
     // for each value in the overlay vocabulary's correct order
@@ -1367,6 +1397,6 @@ function isSuitableCategoricalVariable(variable?: Variable): boolean {
   return (
     variable?.vocabulary != null &&
     variable?.distinctValuesCount != null &&
-    variable?.distinctValuesCount <= 8
+    variable?.distinctValuesCount > 1
   );
 }
