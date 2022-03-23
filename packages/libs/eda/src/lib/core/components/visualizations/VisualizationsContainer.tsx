@@ -244,11 +244,11 @@ function NewVisualizationPicker(props: Props) {
       <h3>Select a visualization</h3>
       <Grid>
         {/* orderBy ensures that available visualizations render ahead of those in development */}
-        {orderBy(visualizationsOverview, [
-          function (viz) {
-            return viz.name ? visualizationTypes[viz.name] : undefined;
-          },
-        ]).map((vizOverview, index) => {
+        {orderBy(
+          visualizationsOverview,
+          [(viz) => (viz.name && visualizationTypes[viz.name] ? 1 : 0)],
+          ['desc']
+        ).map((vizOverview, index) => {
           const vizType = visualizationTypes[vizOverview.name!];
           const disabled =
             vizType == null ||
