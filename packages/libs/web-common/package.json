@@ -14,7 +14,6 @@
     "relativize": "ts-node-script ./scripts/relativize.ts lib ebrc-client",
     "generate-icons": "mkdir -p dist && icon-font-generator icons/* -o dist -n ebrc-icons -p ebrc-icon --normalize --center --csstp ./templates/icons-css.hbs",
     "build": "npm-run-all compile copy-assets relativize generate-icons",
-    "prepare": "npm-run-all build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "files": [
@@ -26,19 +25,21 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@veupathdb/components": "^0.11.23",
-    "@veupathdb/eda": "^1.7.8",
     "custom-event-polyfill": "^1.0.7",
     "md5": "^2.3.0",
     "whatwg-fetch": "^3.5.0"
   },
   "peerDependencies": {
+    "@veupathdb/components": "^0.11.23",
+    "@veupathdb/eda": "^1.7.8",
     "@veupathdb/wdk-client": ">=0.5.4"
   },
   "devDependencies": {
     "@types/node": "^14.14.7",
     "@types/shelljs": "^0.8.8",
     "@veupathdb/react-scripts": "^1.2.0",
+    "@veupathdb/components": "^0.11.23",
+    "@veupathdb/eda": "^1.7.8",
     "@veupathdb/wdk-client": "^0.5.7",
     "bubleify": "^2.0.0",
     "icon-font-generator": "^2.1.11",
