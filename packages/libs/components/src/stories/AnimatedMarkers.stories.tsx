@@ -158,17 +158,32 @@ export const Default: Story<MapVEuMapProps> = (args) => {
     },
     [setMarkerElements]
   );
-  const [viewport] = useState<Viewport>({ center: [20, -3], zoom: 5 });
+
+  // add setViewport and onViewportChanged to test showScale
+  const [viewport, setViewport] = useState<Viewport>({
+    center: [20, -3],
+    zoom: 5,
+  });
+  const onViewportChanged: MapVEuMapProps['onViewportChanged'] = useCallback(
+    ({ center, zoom }) => {
+      if (center != null && center.length === 2 && zoom != null) {
+        setViewport({ center: center, zoom: zoom });
+      }
+    },
+    [setMarkerElements]
+  );
 
   return (
     <MapVEuMap
       {...args}
       viewport={viewport}
+      // add onViewportChanged to test showScale
+      onViewportChanged={onViewportChanged}
       onBoundsChanged={handleViewportChanged}
       markers={markerElements}
       animation={defaultAnimation}
-      // testing to show/hide scale in the map
-      showScale={false}
+      // test showScale: currently set to show from zoom = 5
+      showScale={viewport.zoom != null && viewport.zoom > 4 ? true : false}
     />
   );
 };
