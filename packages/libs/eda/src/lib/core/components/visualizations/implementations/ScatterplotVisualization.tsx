@@ -857,7 +857,14 @@ function ScatterplotViz(props: VisualizationProps) {
       }
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
       // add a condition to show legend even for single overlay data
-      showOverlayLegend={vizConfig.overlayVariable != null}
+      showOverlayLegend={
+        ((computation?.descriptor.type === 'pass' ||
+          computation?.descriptor.type === 'alphadiv' ||
+          computation?.descriptor.type === 'xyrelationships') &&
+          vizConfig.overlayVariable != null) || // pass-through & alphadiv & X-Y relationships
+        (computation?.descriptor.type === 'abundance' &&
+          legendItems.length === 1) // show legend for single overlay
+      }
     />
   );
 
