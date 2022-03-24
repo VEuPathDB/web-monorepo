@@ -5,6 +5,7 @@ import { DatasetUploadPageConfig, DatasetUploadTypeConfig } from './types';
 export const uploadTypeConfig = {
   biom: {
     type: 'biom',
+    uploadTitle: 'Upload My Data Set',
     formConfig: {
       renderInfo: () => (
         <p className="formInfo">

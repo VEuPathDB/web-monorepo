@@ -109,6 +109,7 @@ class UploadForm extends React.Component<Props, State> {
   renderForm() {
     return (
       <div>
+        <h2>{this.props.datasetUploadType.uploadTitle}</h2>
         <div className="formSection">
           <label htmlFor="data-set-name">
             Name<sup className="supAsterisk">*</sup>:<br />
