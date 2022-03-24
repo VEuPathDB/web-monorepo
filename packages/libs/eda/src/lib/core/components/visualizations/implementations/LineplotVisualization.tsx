@@ -147,7 +147,7 @@ function SelectorComponent() {
 const valueSpecLookup = {
   Mean: 'mean',
   Median: 'median',
-  'Ratio or proportion': 'proportion',
+  Proportion: 'proportion', // used to be 'Ratio or proportion' hence the lookup rather than simple lowercasing
 };
 
 function createDefaultConfig(): LineplotConfig {
@@ -268,8 +268,8 @@ function LineplotViz(props: VisualizationProps) {
         findEntityAndVariable(selectedVariables.yAxisVariable) ?? {};
 
       const valueSpec = isSuitableCategoricalVariable(yAxisVar)
-        ? 'Ratio or proportion'
-        : vizConfig.valueSpecConfig === 'Ratio or proportion'
+        ? 'Proportion'
+        : vizConfig.valueSpecConfig === 'Proportion'
         ? createDefaultConfig().valueSpecConfig
         : vizConfig.valueSpecConfig;
 
@@ -283,7 +283,11 @@ function LineplotViz(props: VisualizationProps) {
         checkedLegendItems: undefined,
         ...(keepValues
           ? {}
-          : { numeratorValues: undefined, denominatorValues: undefined }),
+          : {
+              numeratorValues: undefined,
+              denominatorValues:
+                yAxisVar != null ? yAxisVar.vocabulary : undefined,
+            }),
       });
     },
     [
@@ -367,15 +371,21 @@ function LineplotViz(props: VisualizationProps) {
     useCallback(async (): Promise<LinePlotDataWithCoverage | undefined> => {
       if (categoricalMode && !valuesAreSpecified) return undefined;
 
-      if (
-        categoricalMode &&
-        vizConfig.numeratorValues != null &&
-        vizConfig.numeratorValues.length > 0 &&
-        isEqual(vizConfig.numeratorValues, vizConfig.denominatorValues)
-      )
-        throw new Error(
-          'Numerator and denominator value(s) cannot be the same'
-        );
+      if (categoricalMode && valuesAreSpecified) {
+        if (isEqual(vizConfig.numeratorValues, vizConfig.denominatorValues))
+          throw new Error(
+            'Numerator and denominator value(s) cannot be the same. Numerator values must be a subset of the denominator values.'
+          );
+        if (
+          vizConfig.numeratorValues != null &&
+          !vizConfig.numeratorValues.every((value) =>
+            vizConfig.denominatorValues?.includes(value)
+          )
+        )
+          throw new Error(
+            'To calculate a proportion, all selected numerator values must also be present in the denominator'
+          );
+      }
 
       if (
         outputEntity == null ||
@@ -636,7 +646,7 @@ function LineplotViz(props: VisualizationProps) {
           ? 'string'
           : 'date'
       }
-      dependentValueType={NumberVariable.is(yAxisVariable) ? 'number' : 'date'}
+      dependentValueType={DateVariable.is(yAxisVariable) ? 'date' : 'number'}
       legendTitle={variableDisplayWithUnit(overlayVariable)}
       checkedLegendItems={checkedLegendItems}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
@@ -717,7 +727,7 @@ function LineplotViz(props: VisualizationProps) {
       ? []
       : categoricalMode
       ? ['Mean', 'Median']
-      : ['Ratio or proportion'];
+      : ['Proportion'];
 
   const valuesOfInterestLabelStyle = { minWidth: '200px' };
 
@@ -789,10 +799,15 @@ function LineplotViz(props: VisualizationProps) {
           </div>
         </div>
 
-        {vizConfig.valueSpecConfig === 'Ratio or proportion' && (
+        {vizConfig.valueSpecConfig === 'Proportion' && (
           <div className={classes.inputGroup}>
             <div className={classes.fullRow}>
-              <h4>Ratio or proportion specification</h4>
+              <h4>
+                Proportion specification for Y-axis variable
+                {yAxisVariable
+                  ? ` (${variableDisplayWithUnit(yAxisVariable)})`
+                  : ''}
+              </h4>
             </div>
             <div className={[classes.input, classes.fullRow].join(' ')}>
               <div className={classes.label} style={valuesOfInterestLabelStyle}>
@@ -1233,7 +1248,7 @@ function processInputData(
       const seriesY =
         dependentValueType === 'number' || dependentValueType === 'integer'
           ? el.seriesY.map(Number)
-          : el.seriesY;
+          : (el.seriesY as string[]);
 
       dataSetProcess.push({
         x: seriesX.length ? seriesX : (([null] as unknown) as number[]), // [null] hack required to make sure

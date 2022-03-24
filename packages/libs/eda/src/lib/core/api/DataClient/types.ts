@@ -11,6 +11,7 @@ import {
   intersection,
   partial,
   unknown,
+  nullType,
 } from 'io-ts';
 import { Filter } from '../../types/filter';
 import {
@@ -295,7 +296,7 @@ const LineplotResponseData = array(
   intersection([
     type({
       seriesX: array(string),
-      seriesY: array(string),
+      seriesY: array(union([string, nullType])),
     }),
     partial({
       binStart: array(string),
