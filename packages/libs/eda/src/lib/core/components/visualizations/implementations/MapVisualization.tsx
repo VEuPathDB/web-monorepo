@@ -54,6 +54,7 @@ import PlotLegend, {
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
+import { BirdsEyeView } from '../../BirdsEyeView';
 
 export const mapVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -129,8 +130,8 @@ function MapViz(props: VisualizationProps) {
     updateConfiguration,
     updateThumbnail,
     filters,
-    //    totalCounts,
-    //    filteredCounts,
+    totalCounts,
+    filteredCounts,
     geoConfigs,
     otherVizOverviews,
     starredVariables,
@@ -594,6 +595,26 @@ function MapViz(props: VisualizationProps) {
   const pieConstraints = pieOverview.dataElementConstraints;
   const pieDependencyOrder = pieOverview.dataElementDependencyOrder;
 
+  const tableGroupNode = (
+    // Bird's eye plot isn't yet functional
+    <BirdsEyeView
+      // Nonfuntional (and nonsensical) prop values for map viz
+      // completeCasesAllVars={
+      //   pieplotData.pending
+      //     ? undefined
+      //     : pieplotData.value?.completeCasesAllVars?.[0].value
+      // }
+      // completeCasesAxesVars={
+      //   data.pending ? undefined : data.value?.completeCasesAxesVars
+      // }
+      outputEntity={outputEntity}
+      stratificationIsActive={false}
+      // enableSpinner={vizConfig.xAxisVariable != null && !pieplotData.error}
+      totalCounts={totalCounts.value}
+      filteredCounts={filteredCounts.value}
+    />
+  );
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div
@@ -674,7 +695,7 @@ function MapViz(props: VisualizationProps) {
         isFaceted={false}
         legendNode={legendNode}
         plotNode={plotNode}
-        tableGroupNode={null}
+        tableGroupNode={tableGroupNode}
       />
     </div>
   );
