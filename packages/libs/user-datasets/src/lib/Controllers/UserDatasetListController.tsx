@@ -43,6 +43,7 @@ type DispatchProps = typeof ActionCreators;
 interface OwnProps extends RouteComponentProps<{}> {
   baseUrl: string;
   hasDirectUpload: boolean;
+  helpRoute: string;
   workspaceTitle: string;
 }
 type Props = {
@@ -119,7 +120,12 @@ class UserDatasetListController extends PageController<Props> {
 
     const { projectId, displayName: projectName } = config;
 
-    const { baseUrl, hasDirectUpload, location } = this.props.ownProps;
+    const {
+      baseUrl,
+      hasDirectUpload,
+      helpRoute,
+      location,
+    } = this.props.ownProps;
 
     const {
       userDatasetList: { userDatasets, userDatasetsById, filterByProject },
@@ -168,6 +174,7 @@ class UserDatasetListController extends PageController<Props> {
             <NoDatasetsMessage
               baseUrl={baseUrl}
               hasDirectUpload={hasDirectUpload}
+              helpRoute={helpRoute}
             />
           ) : (
             <UserDatasetList {...listProps} />

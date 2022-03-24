@@ -3,9 +3,10 @@ import { Link } from '@veupathdb/wdk-client/lib/Components';
 interface Props {
   baseUrl: string;
   hasDirectUpload: boolean;
+  helpRoute: string;
 }
 
-function NoDatasetsMessage({ baseUrl, hasDirectUpload }: Props) {
+function NoDatasetsMessage({ baseUrl, hasDirectUpload, helpRoute }: Props) {
   return (
     <div className="UserDataset-NoDatasets">
       <div className="UserDataset-NoDatasets__lead">
@@ -25,7 +26,7 @@ function NoDatasetsMessage({ baseUrl, hasDirectUpload }: Props) {
         )}
         <li>
           For an overview of the functionality, see the{' '}
-          <Link to={`${baseUrl}/help`}>Help</Link> section.
+          <Link to={`${helpRoute}`}>Help</Link> page.
         </li>
       </ul>
     </div>

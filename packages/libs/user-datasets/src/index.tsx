@@ -11,6 +11,11 @@ import Home from './Home';
 import { endpoint, rootElement, rootUrl } from './constants';
 import reportWebVitals from './reportWebVitals';
 
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+
+import UserDatasetHelp from './lib/Components/UserDatasetHelp';
+import { quotaSize } from './lib/Components/UserDatasetUtils';
 import { UserDatasetRouter } from './lib/Controllers/UserDatasetRouter';
 import { wrapWdkService } from './lib/Service';
 import { wrapStoreModules } from './lib/StoreModules';
@@ -26,12 +31,12 @@ const availableUploadTypes = process.env.REACT_APP_AVAILABLE_UPLOAD_TYPES?.trim(
   /\s*,\s*/g
 );
 
-const datasetImportUrl = makeDatasetUploadPageConfig(
+const hasDirectUpload = makeDatasetUploadPageConfig(
   availableUploadTypes,
   uploadTypeConfig
-).hasDirectUpload
-  ? '/dataset-import'
-  : undefined;
+).hasDirectUpload;
+
+const datasetImportUrl = hasDirectUpload ? '/dataset-import' : undefined;
 
 initialize({
   rootUrl,
@@ -48,10 +53,32 @@ initialize({
         <UserDatasetRouter
           availableUploadTypes={availableUploadTypes}
           detailsPageTitle="My Data Set"
+          helpRoute="/help"
           workspaceTitle="My Data"
           uploadTypeConfig={uploadTypeConfig}
         />
       ),
+    },
+    {
+      path: '/help',
+      exact: true,
+      component: function DevHelp() {
+        const projectName = useWdkService(
+          async (wdkService) => (await wdkService.getConfig()).displayName,
+          []
+        );
+
+        return projectName == null ? (
+          <Loading />
+        ) : (
+          <UserDatasetHelp
+            hasDirectUpload={hasDirectUpload}
+            projectName={projectName}
+            quotaSize={quotaSize}
+            workspaceTitle="My Data"
+          />
+        );
+      },
     },
     ...routes,
   ],

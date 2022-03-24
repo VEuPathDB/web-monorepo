@@ -15,15 +15,17 @@ import UserDatasetDetailController from './UserDatasetDetailController';
 interface Props<T1 extends string = string, T2 extends string = string> {
   availableUploadTypes?: T1[];
   detailsPageTitle: string;
-  workspaceTitle: string;
+  helpRoute: string;
   uploadTypeConfig: DatasetUploadTypeConfig<T2>;
+  workspaceTitle: string;
 }
 
 export function UserDatasetRouter<T1 extends string, T2 extends string>({
   availableUploadTypes,
   detailsPageTitle,
-  workspaceTitle,
+  helpRoute,
   uploadTypeConfig,
+  workspaceTitle,
 }: Props<T1, T2>) {
   const { path, url } = useRouteMatch();
 
@@ -55,10 +57,11 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
         component={(props: RouteComponentProps<{}>) => (
           <UserDatasetsWorkspace
             baseUrl={url}
-            workspaceTitle={workspaceTitle}
+            helpRoute={helpRoute}
             uploadPageConfig={uploadPageConfig}
             // FIXME This should be memoized
             urlParams={parseQueryString(props)}
+            workspaceTitle={workspaceTitle}
           />
         )}
       />

@@ -10,11 +10,9 @@ import UserDatasetNewUploadController from '../Controllers/UserDatasetNewUploadC
 
 import { DatasetUploadPageConfig } from '../Utils/types';
 
-import { quotaSize } from './UserDatasetUtils';
-import UserDatasetHelp from './UserDatasetHelp';
-
 interface Props {
   baseUrl: string;
+  helpRoute: string;
   uploadPageConfig: DatasetUploadPageConfig;
   urlParams: Record<string, string>;
   workspaceTitle: string;
@@ -23,7 +21,7 @@ interface Props {
 function UserDatasetsWorkspace(props: Props) {
   const config = useWdkService((wdkService) => wdkService.getConfig(), []);
   if (config == null) return null;
-  const { baseUrl, uploadPageConfig, workspaceTitle } = props;
+  const { baseUrl, helpRoute, uploadPageConfig, workspaceTitle } = props;
 
   return (
     <div>
@@ -49,12 +47,6 @@ function UserDatasetsWorkspace(props: Props) {
                 },
               ]
             : [],
-          [
-            {
-              display: 'Help',
-              route: '/help',
-            },
-          ],
         ].flat()}
       />
       <Switch>
@@ -66,6 +58,7 @@ function UserDatasetsWorkspace(props: Props) {
             <UserDatasetListController
               baseUrl={baseUrl}
               hasDirectUpload={uploadPageConfig.hasDirectUpload}
+              helpRoute={helpRoute}
               workspaceTitle={workspaceTitle}
             />
           )}
@@ -121,19 +114,6 @@ function UserDatasetsWorkspace(props: Props) {
             disclaimerProps={{ toDoWhatMessage: 'To view your recent uploads' }}
           />
         )}
-        <WdkRoute
-          exact
-          requiresLogin={false}
-          path={`${baseUrl}/help`}
-          component={() => (
-            <UserDatasetHelp
-              hasDirectUpload={uploadPageConfig.hasDirectUpload}
-              projectName={config.displayName}
-              quotaSize={quotaSize}
-              workspaceTitle={workspaceTitle}
-            />
-          )}
-        />
         <Redirect to={baseUrl} />
       </Switch>
     </div>
