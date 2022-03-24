@@ -1,5 +1,3 @@
-import { ReactNode } from 'react';
-
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 
@@ -45,7 +43,7 @@ type DispatchProps = typeof ActionCreators;
 interface OwnProps extends RouteComponentProps<{}> {
   baseUrl: string;
   hasDirectUpload: boolean;
-  workspaceTitle: ReactNode;
+  workspaceTitle: string;
 }
 type Props = {
   ownProps: OwnProps;
@@ -59,7 +57,7 @@ class UserDatasetListController extends PageController<Props> {
     this.needsUploadMessages = this.needsUploadMessages.bind(this);
   }
   getTitle() {
-    return `${this.props.ownProps.workspaceTitle}`;
+    return this.props.ownProps.workspaceTitle;
   }
 
   getActionCreators() {

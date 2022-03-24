@@ -1,4 +1,4 @@
-import { ReactNode, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { RouteComponentProps, Switch, useRouteMatch } from 'react-router';
 
@@ -14,8 +14,8 @@ import UserDatasetDetailController from './UserDatasetDetailController';
 
 interface Props<T1 extends string = string, T2 extends string = string> {
   availableUploadTypes?: T1[];
-  detailsPageTitle: ReactNode;
-  workspaceTitle: ReactNode;
+  detailsPageTitle: string;
+  workspaceTitle: string;
   uploadTypeConfig: DatasetUploadTypeConfig<T2>;
 }
 

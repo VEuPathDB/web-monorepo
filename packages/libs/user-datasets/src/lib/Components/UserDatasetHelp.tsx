@@ -1,4 +1,3 @@
-import { ReactNode } from 'react';
 import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 
@@ -9,7 +8,7 @@ interface Props {
   hasDirectUpload: boolean;
   projectName: string;
   quotaSize: number;
-  workspaceTitle: ReactNode;
+  workspaceTitle: string;
 }
 
 function UserDatasetHelp({

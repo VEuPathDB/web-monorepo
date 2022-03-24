@@ -1,5 +1,3 @@
-import { ReactNode } from 'react';
-
 import { connect } from 'react-redux';
 
 import { keyBy } from 'lodash';
@@ -38,8 +36,8 @@ type StateProps = StateSlice['userDatasetDetail'] & StateSlice['globalData'];
 type DispatchProps = typeof ActionCreators;
 type OwnProps = {
   baseUrl: string;
-  detailsPageTitle: ReactNode;
-  workspaceTitle: ReactNode;
+  detailsPageTitle: string;
+  workspaceTitle: string;
   id: string;
 };
 type MergedProps = {

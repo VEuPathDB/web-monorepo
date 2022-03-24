@@ -1,4 +1,3 @@
-import { ReactNode } from 'react';
 import { Switch, Redirect } from 'react-router';
 
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
@@ -18,7 +17,7 @@ interface Props {
   baseUrl: string;
   uploadPageConfig: DatasetUploadPageConfig;
   urlParams: Record<string, string>;
-  workspaceTitle: ReactNode;
+  workspaceTitle: string;
 }
 
 function UserDatasetsWorkspace(props: Props) {
