@@ -100,11 +100,19 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
                   error_y: {
                     type: 'data',
                     visible: 'true',
-                    array: series.yErrorBarUpper.map((upperValue, index) =>
-                      upperValue != null ? upperValue - yvals[index] : null
-                    ),
-                    arrayminus: series.yErrorBarLower.map((lowerValue, index) =>
-                      lowerValue != null ? yvals[index] - lowerValue : null
+                    array: series.yErrorBarUpper.map((upperValue, index) => {
+                      const yval = yvals[index];
+                      return upperValue != null && yval != null
+                        ? upperValue - yval
+                        : null;
+                    }),
+                    arrayminus: series.yErrorBarLower.map(
+                      (lowerValue, index) => {
+                        const yval = yvals[index];
+                        return lowerValue != null && yval != null
+                          ? yval - lowerValue
+                          : null;
+                      }
                     ),
                   },
                 };
@@ -137,13 +145,13 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
             (series.y ?? []).map(String),
             (series.yErrorBarLower ?? []).map(String),
             (series.yErrorBarUpper ?? []).map(String),
-            (series.sampleSize ?? []).map(String)
-          ).map(([binLabel, x, y, lower, upper, n]) => {
+            series.extraTooltipText ?? []
+          ).map(([binLabel, x, y, lower, upper, xtra]) => {
             const CI =
               lower != null && upper != null
                 ? ` (95% CI: ${lower} - ${upper})`
                 : '';
-            return `x: ${binLabel ?? x}\ny: ${y}${CI}\nN: ${n}`;
+            return `x: ${binLabel ?? x}\ny: ${y}${CI}\n${xtra}`;
           }),
         })),
     [data.series]
