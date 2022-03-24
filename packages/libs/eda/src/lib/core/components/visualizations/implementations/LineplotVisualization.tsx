@@ -805,7 +805,7 @@ function LineplotViz(props: VisualizationProps) {
               <h4>
                 Proportion specification for Y-axis variable
                 {yAxisVariable
-                  ? ` (${variableDisplayWithUnit(yAxisVariable)})`
+                  ? `: ${variableDisplayWithUnit(yAxisVariable)}`
                   : ''}
               </h4>
             </div>
