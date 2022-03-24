@@ -94,5 +94,5 @@ class StudyMenuItem extends React.Component {
   }
 }
 
-export default connect( state => ({user: state.globalData.user}) )(StudyMenuItem);
+export default StudyMenuItem;
 

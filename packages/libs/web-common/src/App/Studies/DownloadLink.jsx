@@ -47,5 +47,4 @@ function DownloadLink(props) {
 // attemptAction gets bound to the store, the store receives the action, which will get executed when user clicks.
 export default compose(
   wrappable,
-  connect(state => ({user: state.globalData.user}), { attemptAction })
-)(DownloadLink);
+  connect(null, { attemptAction }))(DownloadLink);

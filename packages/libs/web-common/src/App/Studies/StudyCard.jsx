@@ -155,4 +155,4 @@ class StudyCard extends React.Component {
   }
 }
 
-export default connect( state => ({user: state.globalData.user}) )(StudyCard);
+export default StudyCard;
