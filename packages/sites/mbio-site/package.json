@@ -11,7 +11,8 @@
   "dependencies": {
     "@veupathdb/components": "^0.11.24",
     "@veupathdb/core-components": "^0.12.1",
-    "@veupathdb/eda": "^1.7.9",
+    "@veupathdb/eda": "^1.8.3",
+    "@veupathdb/study-data-access": "^0.2.0",
     "@veupathdb/wdk-client": "^0.5.11",
     "@veupathdb/web-common": "^0.2.13"
   },
