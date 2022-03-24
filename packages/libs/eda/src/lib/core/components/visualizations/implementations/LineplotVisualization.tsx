@@ -545,18 +545,27 @@ function LineplotViz(props: VisualizationProps) {
   const defaultDependentRangeMargin = useMemo(() => {
     //K set yMinMaxRange using yMin/yMax obtained from processInputData()
     const yMinMaxRange =
-      data.value != null
-        ? { min: data.value.yMin, max: data.value?.yMax }
+      data.value?.yMin != null && data.value?.yMax != null
+        ? ({ min: data.value.yMin, max: data.value.yMax } as NumberOrDateRange)
         : undefined;
 
-    const defaultDependentRange = numberDateDefaultDependentAxisRange(
-      yAxisVariable,
-      'lineplot',
-      yMinMaxRange
-    );
+    const defaultDependentRange = categoricalMode
+      ? ({
+          // this is where the proportion y-axis starts at zero
+          min:
+            yMinMaxRange?.min != null
+              ? Math.min(0, yMinMaxRange.min as number)
+              : undefined,
+          max: yMinMaxRange?.max,
+        } as NumberOrDateRange)
+      : numberDateDefaultDependentAxisRange(
+          yAxisVariable,
+          'lineplot',
+          yMinMaxRange
+        );
 
     return axisRangeMargin(defaultDependentRange, yAxisVariable?.type);
-  }, [data, yAxisVariable]);
+  }, [data, yAxisVariable, categoricalMode]);
 
   // custom legend list
   const legendItems: LegendItemsProps[] = useMemo(() => {
@@ -1031,7 +1040,7 @@ export function lineplotResponseToData(
   const xMax = max(map(processedData, ({ xMax }) => xMax));
   const yMin = min(map(processedData, ({ yMin }) => yMin));
   const yMax = max(map(processedData, ({ yMax }) => yMax));
-
+  console.log(`yMin ${yMin} yMax ${yMax}`);
   const dataSetProcess =
     size(processedData) === 1 && head(keys(processedData)) === '__NO_FACET__'
       ? // unfaceted
@@ -1246,7 +1255,9 @@ function processInputData(
 
       // decode numbers in y axis where necessary
       const seriesY =
-        dependentValueType === 'number' || dependentValueType === 'integer'
+        dependentValueType === 'number' ||
+        dependentValueType === 'integer' ||
+        categoricalMode
           ? el.seriesY.map(Number)
           : (el.seriesY as string[]);
 
