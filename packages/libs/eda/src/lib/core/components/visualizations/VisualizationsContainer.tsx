@@ -8,6 +8,7 @@ import {
 } from 'react-router-dom';
 import Path from 'path';
 import { v4 as uuid } from 'uuid';
+import { orderBy } from 'lodash';
 import { Link, SaveableTextEditor } from '@veupathdb/wdk-client/lib/Components';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Filter } from '../../types/filter';
@@ -242,7 +243,12 @@ function NewVisualizationPicker(props: Props) {
       </div>
       <h3>Select a visualization</h3>
       <Grid>
-        {visualizationsOverview.map((vizOverview, index) => {
+        {/* orderBy ensures that available visualizations render ahead of those in development */}
+        {orderBy(
+          visualizationsOverview,
+          [(viz) => (viz.name && visualizationTypes[viz.name] ? 1 : 0)],
+          ['desc']
+        ).map((vizOverview, index) => {
           const vizType = visualizationTypes[vizOverview.name!];
           const disabled =
             vizType == null ||
