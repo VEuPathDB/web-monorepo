@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 
 import { RouteComponentProps, Switch, useRouteMatch } from 'react-router';
 
@@ -14,11 +14,15 @@ import UserDatasetDetailController from './UserDatasetDetailController';
 
 interface Props<T1 extends string = string, T2 extends string = string> {
   availableUploadTypes?: T1[];
+  detailsPageTitle: ReactNode;
+  workspaceTitle: ReactNode;
   uploadTypeConfig: DatasetUploadTypeConfig<T2>;
 }
 
 export function UserDatasetRouter<T1 extends string, T2 extends string>({
   availableUploadTypes,
+  detailsPageTitle,
+  workspaceTitle,
   uploadTypeConfig,
 }: Props<T1, T2>) {
   const { path, url } = useRouteMatch();
@@ -37,6 +41,8 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
           return (
             <UserDatasetDetailController
               baseUrl={url}
+              detailsPageTitle={detailsPageTitle}
+              workspaceTitle={workspaceTitle}
               {...props.match.params}
             />
           );
@@ -49,6 +55,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
         component={(props: RouteComponentProps<{}>) => (
           <UserDatasetsWorkspace
             baseUrl={url}
+            workspaceTitle={workspaceTitle}
             uploadPageConfig={uploadPageConfig}
             // FIXME This should be memoized
             urlParams={parseQueryString(props)}

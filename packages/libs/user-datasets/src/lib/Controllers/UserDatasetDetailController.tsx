@@ -1,5 +1,8 @@
-import { keyBy } from 'lodash';
+import { ReactNode } from 'react';
+
 import { connect } from 'react-redux';
+
+import { keyBy } from 'lodash';
 
 import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
 import PageController from '@veupathdb/wdk-client/lib/Core/Controllers/PageController';
@@ -33,7 +36,12 @@ const ActionCreators = {
 
 type StateProps = StateSlice['userDatasetDetail'] & StateSlice['globalData'];
 type DispatchProps = typeof ActionCreators;
-type OwnProps = { baseUrl: string; id: string };
+type OwnProps = {
+  baseUrl: string;
+  detailsPageTitle: ReactNode;
+  workspaceTitle: ReactNode;
+  id: string;
+};
 type MergedProps = {
   ownProps: OwnProps;
   dispatchProps: DispatchProps;
@@ -57,12 +65,12 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       this.props.ownProps.id
     ];
     if (entry && entry.resource) {
-      return `My Data Set ${entry.resource.meta.name}`;
+      return `${this.props.ownProps.detailsPageTitle} ${entry.resource.meta.name}`;
     }
     if (entry && !entry.resource) {
-      return `My Data Set not found`;
+      return `${this.props.ownProps.detailsPageTitle} not found`;
     }
-    return `My Data Set ...`;
+    return `${this.props.ownProps.detailsPageTitle} ...`;
   }
 
   getActionCreators() {
@@ -120,7 +128,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
             className="btn"
             onClick={() => this.props.dispatchProps.showLoginForm()}
           >
-            Please log in to access My Data Sets.
+            Please log in to access {this.props.ownProps.workspaceTitle}.
           </button>
         }
       />
@@ -128,7 +136,12 @@ class UserDatasetDetailController extends PageController<MergedProps> {
   }
 
   renderView() {
-    const { baseUrl, id } = this.props.ownProps;
+    const {
+      baseUrl,
+      detailsPageTitle,
+      id,
+      workspaceTitle,
+    } = this.props.ownProps;
     const {
       updateUserDatasetDetail,
       shareUserDatasets,
@@ -166,6 +179,8 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       userDataset: entry.resource,
       getQuestionUrl: this.getQuestionUrl,
       questionMap: keyBy(questions, 'fullName'),
+      workspaceTitle,
+      detailsPageTitle,
     };
 
     const DetailView = this.getDetailView(

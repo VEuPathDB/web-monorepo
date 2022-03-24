@@ -1,4 +1,4 @@
-import React from 'react';
+import { ReactNode } from 'react';
 import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 
@@ -9,9 +9,15 @@ interface Props {
   hasDirectUpload: boolean;
   projectName: string;
   quotaSize: number;
+  workspaceTitle: ReactNode;
 }
 
-function UserDatasetHelp({ hasDirectUpload, projectName, quotaSize }: Props) {
+function UserDatasetHelp({
+  hasDirectUpload,
+  projectName,
+  quotaSize,
+  workspaceTitle,
+}: Props) {
   // FIXME: Perhaps this should be provided via static content?
   return hasDirectUpload ? (
     <div className="UserDataset-Help">
@@ -113,7 +119,7 @@ function UserDatasetHelp({ hasDirectUpload, projectName, quotaSize }: Props) {
             </li>
             <li>
               The data set name, summary and description can be edited later in
-              the <i>My Data Sets</i> page.
+              the <i>{workspaceTitle}</i> page.
             </li>
             <li>
               When you’re ready, <code>Execute</code> the export. The process of
@@ -123,7 +129,7 @@ function UserDatasetHelp({ hasDirectUpload, projectName, quotaSize }: Props) {
           </ul>
         </div>
         <div className="box xs-12 md-6">
-          <h2>My Data Sets page</h2>
+          <h2>{workspaceTitle} page</h2>
           <img alt="Screenshoot for step 3 of tutorial" src={tutStep3} />
           <ul>
             <li>
@@ -131,7 +137,7 @@ function UserDatasetHelp({ hasDirectUpload, projectName, quotaSize }: Props) {
               <b>{projectName}</b>.
             </li>
             <li>
-              My Data sets you’ve created contribute to a per-user upload
+              {workspaceTitle} you’ve created contribute to a per-user upload
               limit/quota of <b>{bytesToHuman(quotaSize)}</b>.
             </li>
             <li>

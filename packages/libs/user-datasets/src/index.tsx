@@ -47,6 +47,8 @@ initialize({
       component: () => (
         <UserDatasetRouter
           availableUploadTypes={availableUploadTypes}
+          detailsPageTitle="My Data Set"
+          workspaceTitle="My Data"
           uploadTypeConfig={uploadTypeConfig}
         />
       ),

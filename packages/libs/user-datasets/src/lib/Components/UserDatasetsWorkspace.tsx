@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { Switch, Redirect } from 'react-router';
 
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
@@ -17,17 +18,18 @@ interface Props {
   baseUrl: string;
   uploadPageConfig: DatasetUploadPageConfig;
   urlParams: Record<string, string>;
+  workspaceTitle: ReactNode;
 }
 
 function UserDatasetsWorkspace(props: Props) {
   const config = useWdkService((wdkService) => wdkService.getConfig(), []);
   if (config == null) return null;
-  const { baseUrl, uploadPageConfig } = props;
+  const { baseUrl, uploadPageConfig, workspaceTitle } = props;
 
   return (
     <div>
       <WorkspaceNavigation
-        heading={<>My Data Sets</>}
+        heading={workspaceTitle}
         routeBase={baseUrl}
         items={[
           [
@@ -65,6 +67,7 @@ function UserDatasetsWorkspace(props: Props) {
             <UserDatasetListController
               baseUrl={baseUrl}
               hasDirectUpload={uploadPageConfig.hasDirectUpload}
+              workspaceTitle={workspaceTitle}
             />
           )}
           disclaimerProps={{ toDoWhatMessage: 'To view your datasets' }}
@@ -128,6 +131,7 @@ function UserDatasetsWorkspace(props: Props) {
               hasDirectUpload={uploadPageConfig.hasDirectUpload}
               projectName={config.displayName}
               quotaSize={quotaSize}
+              workspaceTitle={workspaceTitle}
             />
           )}
         />

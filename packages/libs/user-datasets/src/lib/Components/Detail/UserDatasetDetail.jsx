@@ -114,7 +114,7 @@ class UserDatasetDetail extends React.Component {
     return (
       <Link className="AllDatasetsLink" to={this.props.baseUrl}>
         <Icon fa="chevron-left" />
-        &nbsp; All My Data Sets
+        &nbsp; All {this.props.workspaceTitle}
       </Link>
     );
   }
@@ -140,7 +140,7 @@ class UserDatasetDetail extends React.Component {
     return [
       {
         className: classify('Name'),
-        attribute: 'My Dataset',
+        attribute: this.props.detailsPageTitle,
         value: (
           <SaveableTextEditor
             value={meta.name}
