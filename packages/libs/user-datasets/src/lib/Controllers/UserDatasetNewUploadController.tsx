@@ -25,7 +25,7 @@ export default function UserDatasetUploadController({
   datasetUploadType,
   urlParams,
 }: Props) {
-  useSetDocumentTitle(`${datasetUploadType.uploadTitle}`);
+  useSetDocumentTitle(datasetUploadType.uploadTitle);
 
   const projectId = useWdkService(
     (wdkService) => wdkService.getConfig().then((config) => config.projectId),
