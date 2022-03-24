@@ -1290,6 +1290,16 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
+"@veupathdb/study-data-access@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.2.0.tgz#e6508397caea29578ff3fa07b09970f3dd0afe9a"
+  integrity sha512-roRKPykO/2izuWD/9ihDaMbXPIZFQIo8zCQpT9dyAFJRppvFjkQWLadBOECHqoC7zOj1W3hm7sPoZiz6UbrRzQ==
+  dependencies:
+    "@veupathdb/http-utils" "^1.0.1"
+    fp-ts "^2.11.5"
+    io-ts "^2.2.16"
+    lodash "^4.17.21"
+
 "@veupathdb/wdk-client@^0.5.4":
   version "0.5.13"
   resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.5.13.tgz#3688793e2667c9d1d3c39d3568e00a67632129f0"

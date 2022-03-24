@@ -13,6 +13,7 @@
     "@veupathdb/components": "^0.12.0",
     "@veupathdb/coreui": "^0.15.0",
     "@veupathdb/eda": "^1.7.8",
+    "@veupathdb/study-data-access": "^0.2.0",
     "@veupathdb/wdk-client": "^0.5.4",
     "@veupathdb/web-common": "^0.2.13"
   },

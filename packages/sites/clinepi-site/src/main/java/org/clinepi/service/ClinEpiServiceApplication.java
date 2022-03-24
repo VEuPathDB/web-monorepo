@@ -19,9 +19,6 @@ public class ClinEpiServiceApplication extends EuPathServiceApplication {
       // add all Ebrc and WDK classes
       .addAll(super.getClasses())
 
-      // custom profile endpoint that contains study access info
-      .replace(ProfileService.class, CustomProfileService.class)
-
       // custom project endpoint provides clinepi-specific site config
       .replace(ProjectService.class,  CustomProjectService.class)
 
