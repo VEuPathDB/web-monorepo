@@ -93,7 +93,11 @@ export function ValuePicker({
               variant="contained"
               color="default"
               size="small"
-              onClick={() => onSelectedValuesChange(currentlySelected)}
+              onClick={() =>
+                onSelectedValuesChange(
+                  sortBy(currentlySelected, (val) => allowedValues.indexOf(val))
+                )
+              }
               disabled={!isModified}
             >
               Save
