@@ -72,6 +72,7 @@ import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from
 type BoxplotData = { series: BoxplotSeries };
 
 // export
+//to-do: probably need to add computedVariableMetadata type later
 export type BoxplotDataWithCoverage = (BoxplotData | FacetedData<BoxplotData>) &
   CoverageStatistics;
 
@@ -456,7 +457,6 @@ function BoxplotViz(props: VisualizationProps) {
             (computation.descriptor.configuration as any).collectionVariable
           )
         : undefined,
-    // [findCollectionVariableEntityAndVariable, entities, computation.descriptor.configuration.collectionVariable]
     [findCollectionVariableEntityAndVariable, entities, computation]
   );
 
@@ -469,20 +469,24 @@ function BoxplotViz(props: VisualizationProps) {
       spacingOptions={!isFaceted(data.value) ? plotSpacingOptions : undefined}
       orientation={'vertical'}
       displayLegend={false}
-      // alphadiv abundance: set independentAxisLabel
+      // alphadiv abundance: set a independentAxisLabel condition for abundance
       independentAxisLabel={
         computation.descriptor.configuration != null &&
         computation.descriptor.type === 'abundance' &&
         independentAxisLabel != null
-          ? independentAxisLabel?.entity.displayName +
-            ': ' +
-            independentAxisLabel?.variable.displayName
+          ? independentAxisLabel?.variable.displayName
           : variableDisplayWithUnit(xAxisVariable) ?? 'X-axis'
       }
-      // for now let's use computation.descriptor.type for both alphadiv and abundance
+      //to-do: revisit for alphadiv and abundance in detail
       dependentAxisLabel={
         computation.descriptor.configuration != null
-          ? computation.descriptor.type
+          ? computation.descriptor.type === 'alphadiv'
+            ? //to-do: this should be computedVariableMetadata.displayName for alphadiv later
+              // ? computedVariableMetadata.displayName
+              computation.descriptor.type
+            : computation.descriptor.type === 'abundance'
+            ? 'Relative abundance'
+            : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'
           : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'
       }
       // show/hide independent/dependent axis tick label
@@ -911,6 +915,8 @@ export function boxplotResponseToData(
     completeCases: response.completeCasesTable,
     completeCasesAllVars: response.boxplot.config.completeCasesAllVars,
     completeCasesAxesVars: response.boxplot.config.completeCasesAxesVars,
+    //to-do: config.computedVariableMetadata should also be returned later
+    //computedVariableMetadata: response.boxplot.config.computedVariableMetadata,
   } as BoxplotDataWithCoverage;
 }
 

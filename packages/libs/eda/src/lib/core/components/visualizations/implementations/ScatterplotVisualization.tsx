@@ -135,6 +135,7 @@ const modalPlotContainerStyles = {
 };
 
 // define ScatterPlotDataWithCoverage and export
+//to-do: probably need to add computedVariableMetadata type later
 export interface ScatterPlotDataWithCoverage extends CoverageStatistics {
   dataSetProcess: ScatterPlotData | FacetedData<ScatterPlotData>;
   // change these types to be compatible with new axis range
@@ -779,10 +780,16 @@ function ScatterplotViz(props: VisualizationProps) {
       }
       displayLegend={false}
       independentAxisLabel={variableDisplayWithUnit(xAxisVariable) ?? 'X-axis'}
-      // for now let's use computation.descriptor.type for both alphadiv and abundance
+      //to-do: revisit for alphadiv and abundance in detail
       dependentAxisLabel={
         computation.descriptor.configuration != null
-          ? computation.descriptor.type
+          ? computation.descriptor.type === 'alphadiv'
+            ? //to-do: this should be computedVariableMetadata.displayName for alphadiv later
+              // ? computedVariableMetadata.displayName
+              computation.descriptor.type
+            : computation.descriptor.type === 'abundance'
+            ? 'Relative abundance'
+            : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'
           : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'
       }
       // set valueSpec as Raw when yAxisVariable = date
@@ -818,9 +825,7 @@ function ScatterplotViz(props: VisualizationProps) {
       legendTitle={
         computation.descriptor.configuration != null &&
         computation.descriptor.type === 'abundance'
-          ? legendTitle?.entity.displayName +
-            ': ' +
-            legendTitle?.variable.displayName
+          ? legendTitle?.variable.displayName
           : variableDisplayWithUnit(overlayVariable)
       }
       // pass checked state of legend checkbox to PlotlyPlot
@@ -850,9 +855,7 @@ function ScatterplotViz(props: VisualizationProps) {
       legendTitle={
         computation.descriptor.configuration != null &&
         computation.descriptor.type === 'abundance'
-          ? legendTitle?.entity.displayName +
-            ': ' +
-            legendTitle?.variable.displayName
+          ? legendTitle?.variable.displayName
           : variableDisplayWithUnit(overlayVariable)
       }
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
@@ -1480,6 +1483,8 @@ export function scatterplotResponseToData(
     completeCases: response.completeCasesTable,
     completeCasesAllVars: response.scatterplot.config.completeCasesAllVars,
     completeCasesAxesVars: response.scatterplot.config.completeCasesAxesVars,
+    //to-do: config.computedVariableMetadata should also be returned later
+    //computedVariableMetadata: response.scatterplot.config.computedVariableMetadata,
   } as ScatterPlotDataWithCoverage;
 }
 
