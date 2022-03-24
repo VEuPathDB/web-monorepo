@@ -1258,7 +1258,7 @@ function processInputData(
         dependentValueType === 'number' ||
         dependentValueType === 'integer' ||
         categoricalMode
-          ? el.seriesY.map(Number)
+          ? el.seriesY.map((val) => (val == null ? null : Number(val)))
           : (el.seriesY as string[]);
 
       dataSetProcess.push({
@@ -1278,11 +1278,16 @@ function processInputData(
           : {}),
         ...(el.binSampleSize != null
           ? {
-              sampleSize: categoricalMode
+              extraTooltipText: categoricalMode
                 ? el.binSampleSize.map(
-                    (bss) => (bss as { denominatorN: number }).denominatorN
+                    (bss) =>
+                      `n: ${(bss as { numeratorN: number }).numeratorN}/${
+                        (bss as { denominatorN: number }).denominatorN
+                      }`
                   )
-                : el.binSampleSize.map((bss) => (bss as { N: number }).N),
+                : el.binSampleSize.map(
+                    (bss) => `n: ${(bss as { N: number }).N}`
+                  ),
             }
           : {}),
         name:
@@ -1308,10 +1313,12 @@ function processInputData(
     return false;
   });
 
-  const xValues = dataSetProcess.flatMap<string | number>((series) => series.x);
+  const xValues = dataSetProcess.flatMap<string | number | null>(
+    (series) => series.x
+  );
   // get all values of y (including error bars if present) in a kind of clunky way...
   const yValues = dataSetProcess
-    .flatMap<string | number>((series) => series.y)
+    .flatMap<string | number | null>((series) => series.y)
     .concat(
       dataSetProcess
         .flatMap((series) => series.yErrorBarLower ?? [])
