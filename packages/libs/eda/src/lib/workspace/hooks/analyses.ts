@@ -35,13 +35,15 @@ export function useWorkspaceAnalysis(
 
   const creatingAnalysis = useRef(false);
 
-  // Ann testing!
+  // When we only want to use a single app, extract the computation and pass it to
+  // makeNewAnalysis so that it will by default only use this single computation.
   const singleAppComputationId =
     singleAppMode === 'pass' ? 'pass-through' : singleAppMode;
 
   const dataClient = useDataClient();
   const { wdkService } = useNonNullableContext(WdkDependenciesContext);
 
+  // Get apps that are appropriate for this project and check singleAppMode is one of these approved apps
   const promiseState = usePromise(
     useCallback(async () => {
       let { apps } = await dataClient.getApps();
@@ -59,13 +61,14 @@ export function useWorkspaceAnalysis(
       return apps;
     }, [dataClient, wdkService, singleAppMode])
   );
-
-  const myapps =
+  const singleApp =
     promiseState.value !== undefined ? promiseState.value[0] : null;
+
+  // If using singleAppMode, create a computation object that will be used in our default analysis.
   let computation: Computation | undefined = undefined;
-  if (singleAppMode && myapps) {
+  if (singleAppMode && singleApp) {
     computation = createComputation(
-      myapps,
+      singleApp,
       singleAppMode,
       null,
       [],
@@ -75,7 +78,7 @@ export function useWorkspaceAnalysis(
 
   const defaultAnalysis = useMemo(() => makeNewAnalysis(studyId, computation), [
     studyId,
-    myapps,
+    singleApp,
   ]);
 
   const createAnalysis = useCallback(
