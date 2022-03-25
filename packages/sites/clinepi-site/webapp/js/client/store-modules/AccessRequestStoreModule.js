@@ -130,7 +130,6 @@ function observeStaticDataLoaded(action$, state$, dependencies) {
         payload.user.isGuest ||
         isUserFullyApprovedForStudy(
           permissions,
-          payload.user.properties.approvedStudies,
           datasetId
         )
       ) {

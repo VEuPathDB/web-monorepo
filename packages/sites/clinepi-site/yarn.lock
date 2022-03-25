@@ -1241,10 +1241,10 @@
     react-responsive-modal "^6.2.0"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^1.7.8":
-  version "1.7.14"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.7.14.tgz#0cf057bb0fc31589e1bca138dd6ee1e2ce4dea63"
-  integrity sha512-MitG9yH1mfo/LObqgtQxZYIgrxGimR1pAP75wQmoMBSrmYdBJEOJ7CAPyL5SKRtLVcHJxuRSe41XQ9tj9fV7Vw==
+"@veupathdb/eda@^1.8.3":
+  version "1.8.3"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.8.3.tgz#ec18949aeb13502875be0ca0b833f503e6b88f72"
+  integrity sha512-dkzlsnz2BfTfuIApu5B84zLpqfdrN+TDt4w+u+GyzhNUo++oSc80+7g02hI9a5mP8gctVXCN+kNWVluG9u3vWw==
   dependencies:
     "@emotion/react" "^11.4.1"
     "@emotion/styled" "^11.3.0"
@@ -1255,7 +1255,6 @@
     "@veupathdb/components" "^0.11.27"
     "@veupathdb/coreui" "^0.13.0"
     "@veupathdb/http-utils" "^1.1.0"
-    "@veupathdb/study-data-access" "^0.1.5"
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
     io-ts "^2.2.13"
@@ -1280,10 +1279,10 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/study-data-access@^0.1.5":
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.1.6.tgz#d7d2bf61e12d69f7250cbd79a5ec99f9c3fd859e"
-  integrity sha512-Zr3en8DaDCmTbaIOuHJxs9BYu8Kgincxtitv/77BZIryAUUa7DaoOFC022TtZX4ZzsCekk99rr0Yxtx4wYUV5w==
+"@veupathdb/study-data-access@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.2.0.tgz#e6508397caea29578ff3fa07b09970f3dd0afe9a"
+  integrity sha512-roRKPykO/2izuWD/9ihDaMbXPIZFQIo8zCQpT9dyAFJRppvFjkQWLadBOECHqoC7zOj1W3hm7sPoZiz6UbrRzQ==
   dependencies:
     "@veupathdb/http-utils" "^1.0.1"
     fp-ts "^2.11.5"
@@ -1338,13 +1337,13 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.2.13":
-  version "0.2.13"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.2.13.tgz#d19da00dc2467b7934a4237e3fb3014e7e3a9bc8"
-  integrity sha512-rMA1VqVEdEe+HIZa7EoiKrVutB5saCIyTE6vkzFG2Jd4lMOgErGHgNuOT51gAafYTC5e8IGIUSfkbQClsivQ9w==
+"@veupathdb/web-common@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.3.0.tgz#9733f85cca324dc79f8143d68f1ac8eb7fd7fd64"
+  integrity sha512-3qt1+goiNwz1TRgkkfKaQCRHsutektNthJjk5PLZVd36jAWjn82lJ9lhvLOZhFiOtXzyq0z5fgYM2AB7jY7uaQ==
   dependencies:
     "@veupathdb/components" "^0.11.23"
-    "@veupathdb/eda" "^1.7.8"
+    "@veupathdb/eda" "^1.8.3"
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
     whatwg-fetch "^3.5.0"
