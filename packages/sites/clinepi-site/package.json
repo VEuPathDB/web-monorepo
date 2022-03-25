@@ -15,7 +15,7 @@
     "@veupathdb/eda": "^1.8.3",
     "@veupathdb/study-data-access": "^0.2.0",
     "@veupathdb/wdk-client": "^0.5.4",
-    "@veupathdb/web-common": "^0.2.13"
+    "@veupathdb/web-common": "^0.3.0"
   },
   "resolutions": {
     "react": "16",
