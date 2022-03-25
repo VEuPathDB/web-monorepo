@@ -258,16 +258,42 @@ const Histogram = makePlotlyPlotComponent(
             binSummaries,
             (bin) => rawRange.max > bin.binMiddle
           );
+
+          /* !---- OVERRIDES THE LOGIC THAT PLOTLY USES FOR LAST BIN WITH DATES ----!
+              This block calculates a date that is the midpoint of the lastBin's binMiddle and binEnd
+              This midpoint is used as the threshold that determines if the selection should snap
+              to lastBin.binEnd
+              TODO: MOVE INTO A "getMaxDate" FUNCTION OUTSIDE OF HANDLER TO AVOID NEEDLESS COMPUTATIONS FOR NUMERICAL BINNING
+          */
+          const lastBin = binSummaries[binSummaries.length - 1];
+          const dateThresholdForSnapToEnd = DateMath.add(
+            new Date(lastBin.binMiddle as string),
+            DateMath.diff(
+              new Date(lastBin.binMiddle as string),
+              new Date(lastBin.binEnd as string),
+              'seconds',
+              false
+            ) * 500,
+            'milliseconds'
+          ).toISOString();
+          const shouldSnapToEnd = rawRange.max >= dateThresholdForSnapToEnd;
+          // --------------------------------------------------------------------- //
+
           if (leftBin && rightBin && leftBin.binStart <= rightBin.binStart) {
             setSelectingRange({
               min: leftBin.binStart,
               max:
                 data.binWidthSlider?.valueType === 'date'
-                  ? DateMath.subtract(
-                      new Date(rightBin.binEnd),
-                      1,
-                      'day'
-                    ).toISOString()
+                  ? // TODO: USE THE "getMaxDate"'s RETURN TO SIMPLIFY THIS
+                    shouldSnapToEnd
+                    ? lastBin.binEnd // allows user to select to the very end of a date bin
+                    : rawRange.max > lastBin.binStart
+                    ? lastBin.binStart // overrides the following subtraction to give a little more control in lastBin
+                    : DateMath.subtract(
+                        new Date(rightBin.binEnd),
+                        1,
+                        'day'
+                      ).toISOString()
                   : rightBin.binEnd,
             } as NumberOrDateRange);
           } else {
@@ -295,10 +321,10 @@ const Histogram = makePlotlyPlotComponent(
 
       if (data.series.length && range) {
         // for dates, draw the blue area to the end of the day
-        const rightCoordinate =
-          data.binWidthSlider?.valueType === 'number'
-            ? range.max
-            : DateMath.endOf(new Date(range.max), 'day').toISOString();
+        const rightCoordinate = range.max;
+        // data.binWidthSlider?.valueType === 'number'
+        //   ? range.max
+        //   : DateMath.endOf(new Date(range.max), 'day').toISOString();
         return [
           {
             type: 'rect',
