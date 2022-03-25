@@ -157,7 +157,7 @@ const makeRenderParamGroup = (
           sequence_id:start-end:strand
         </div>
         <div className={cx('Example')}>
-          (Examples: TGME49_chrIa:10000-10500:f, Pf3D7_04:100-200:r)
+          (Examples: TGME49_chrIa:10000-10500:f, Pf3D7_04_v3:100-200:r)
         </div>
       </div>
       {props.parameterElements[SPAN_ID_LIST_PARAM]}
