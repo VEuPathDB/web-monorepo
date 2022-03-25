@@ -1069,6 +1069,75 @@ export function lineplotResponseToData(
   } as LinePlotDataWithCoverage;
 }
 
+type PickByType<T, Value> = {
+  [P in keyof T as T[P] extends Value | undefined ? P : never]: T[P];
+};
+type ArrayTypes = PickByType<
+  LinePlotDataSeries,
+  string[] | (number | null | string)[]
+>;
+
+/**
+ * Where there are nulls in the 'y' array, duplicate them and put a zero in between.
+ * This is a way to get Plotly to plot an unconnected point at zero (nulls in y break the line)
+ * All the duplications have to apply to ALL arrays in the dataSetProcess object.
+ * simple example:
+ * input:  { x: [1,2,3,4,5], y: [6,1,null,9,11], foo: ['a','b','c','d','e'] }
+ * output: { x: [1,2,3,3,3,4,5], y: [ 6,1,null,0,null,9,11, foo: ['a','b','c','c','c','d','e'] ] }
+ */
+function nullZeroHack(
+  dataSetProcess: LinePlotDataSeries[],
+  dependentValueType: string
+): LinePlotDataSeries[] {
+  if (dependentValueType === 'date') return dataSetProcess;
+
+  return dataSetProcess.map((series) => {
+    const y = series.y as (number | null)[];
+    // which are the arrays in the series object? (no length checks at the moment...)
+    const arrayKeys = Object.keys(series)
+      .filter((_): _ is keyof LinePlotDataSeries => true)
+      .filter((key): key is keyof ArrayTypes => Array.isArray(series[key]));
+
+    const otherArrayKeys = arrayKeys.filter((key) => key !== 'y');
+
+    return {
+      ...series,
+      ...y.reduce((accum, current, index) => {
+        if (accum.y == null) accum.y = [];
+
+        const newY = accum.y as (number | null)[];
+
+        if (current == null) {
+          newY.push(null);
+          newY.push(0);
+          newY.push(null);
+        } else {
+          newY.push(current);
+        }
+
+        otherArrayKeys.forEach(
+          // e.g. x, binLabel etc
+          (key) => {
+            // initialize empty array if needed
+            if (accum[key] == null) accum[key] = [];
+            // figure out if we're going to push one or three values
+            const value = series[key]![index];
+            const oneOrThree = current == null ? 3 : 1;
+            for (
+              var i = 0;
+              i < oneOrThree;
+              i = i + 1 // can be more concise?
+            )
+              (accum[key] as (number | null | string)[]).push(value);
+          }
+        );
+
+        return accum;
+      }, {} as Partial<LinePlotDataSeries>),
+    };
+  });
+}
+
 // add an extended type including dataElementDependencyOrder
 type getRequestParamsProps = LineplotRequestParams & { vizType?: string };
 
@@ -1332,7 +1401,7 @@ function processInputData(
 
   return {
     dataSetProcess: {
-      series: dataSetProcess,
+      series: nullZeroHack(dataSetProcess, dependentValueType),
       ...binWidthSliderData,
     },
     xMin: min(xValues),
