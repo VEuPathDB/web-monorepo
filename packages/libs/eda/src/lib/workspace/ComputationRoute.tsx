@@ -55,29 +55,12 @@ export function ComputationRoute(props: Props) {
         if (singleAppMode) {
           if (analysisState.analysis == null) return;
 
-          const computations = analysisState.analysis.descriptor.computations;
+          const computationType =
+            analysisState.analysis.descriptor.computations[0].descriptor.type;
 
           // The pass app's id should be 'pass-through' for backwards compatability
           const singleAppComputationId =
-            singleAppMode === 'pass' ? 'pass-through' : singleAppMode;
-
-          let computation = props.analysisState.analysis?.descriptor.computations.find(
-            (c) => c.computationId === singleAppComputationId
-          );
-
-          // If we don't yet have a computation instance, we need to make one
-          if (computation == null) {
-            computation = createComputation(
-              apps[0],
-              singleAppMode,
-              null,
-              computations,
-              singleAppComputationId
-            );
-            // If we only have one instance, don't save until the user makes a visualization or otherwise
-            // changes something in the analysis
-            analysisState.setComputations([computation]);
-          }
+            computationType === 'pass' ? 'pass-through' : computationType;
 
           return (
             <Switch>
