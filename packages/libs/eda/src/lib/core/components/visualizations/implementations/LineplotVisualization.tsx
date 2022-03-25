@@ -1118,6 +1118,15 @@ function nullZeroHack(
 
     return {
       ...series,
+      // What does the reduce do?
+      // It goes through the series.y array makes a copy of it into the output (accum.y)
+      // However, when a null value is encountered, three values go into the output: null, 0 null.
+      // It also copies all the other arrays present in `series`, adding three identical values where
+      // the y array had a null value.
+      //
+      // The final value of accum has x, y, binLabel, yErrorBarUpper etc, and this is
+      // spread back into he return value for the map.
+      //
       ...y.reduce((accum, current, index) => {
         if (accum.y == null) accum.y = [];
 
