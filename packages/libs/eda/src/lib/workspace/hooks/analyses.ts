@@ -11,9 +11,20 @@ import {
   useAnalysis,
   useAnalysisClient,
   usePreloadAnalysis,
+  useDataClient,
 } from '../../core';
 
-export function useWorkspaceAnalysis(studyId: string, analysisId?: string) {
+import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { createComputation } from '../../core/components/computations/Utils';
+import { Computation } from '../../core/types/visualization';
+import { usePromise } from '../../core/hooks/promise';
+
+export function useWorkspaceAnalysis(
+  studyId: string,
+  analysisId?: string,
+  singleAppMode?: string
+) {
   const analysisClient = useAnalysisClient();
 
   const history = useHistory();
@@ -24,7 +35,48 @@ export function useWorkspaceAnalysis(studyId: string, analysisId?: string) {
 
   const creatingAnalysis = useRef(false);
 
-  const defaultAnalysis = useMemo(() => makeNewAnalysis(studyId), [studyId]);
+  // Ann testing!
+  const singleAppComputationId =
+    singleAppMode === 'pass' ? 'pass-through' : singleAppMode;
+
+  const dataClient = useDataClient();
+  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
+
+  const promiseState = usePromise(
+    useCallback(async () => {
+      let { apps } = await dataClient.getApps();
+
+      const { projectId } = await wdkService.getConfig();
+      apps = apps.filter((app) => app.projects?.includes(projectId));
+
+      if (singleAppMode) {
+        apps = apps.filter((app) => app.name === singleAppMode);
+      }
+
+      if (apps == null || !apps.length)
+        throw new Error('Could not find any computation app.');
+
+      return apps;
+    }, [dataClient, wdkService, singleAppMode])
+  );
+
+  const myapps =
+    promiseState.value !== undefined ? promiseState.value[0] : null;
+  let computation: Computation | undefined = undefined;
+  if (singleAppMode && myapps) {
+    computation = createComputation(
+      myapps,
+      singleAppMode,
+      null,
+      [],
+      singleAppComputationId
+    );
+  }
+
+  const defaultAnalysis = useMemo(() => makeNewAnalysis(studyId, computation), [
+    studyId,
+    myapps,
+  ]);
 
   const createAnalysis = useCallback(
     async (newAnalysis: NewAnalysis) => {

@@ -42,7 +42,6 @@ export type AnalysisState = {
   setIsPublic: Setter<Analysis['isPublic']>;
   setFilters: Setter<Analysis['descriptor']['subset']['descriptor']>;
   setComputations: Setter<Analysis['descriptor']['computations']>;
-  setComputationsWithoutSave: Setter<Analysis['descriptor']['computations']>;
   setDerivedVariables: Setter<Analysis['descriptor']['derivedVariables']>;
   setStarredVariables: Setter<Analysis['descriptor']['starredVariables']>;
   setVariableUISettings: Setter<Analysis['descriptor']['subset']['uiSettings']>;
@@ -199,12 +198,6 @@ export function useAnalysis(
     analysis,
     createAnalysis
   );
-  const setComputationsWithoutSave = useSetter(
-    analysisToComputationsLens,
-    analysis,
-    createAnalysis,
-    false
-  );
   const setDerivedVariables = useSetter(
     analysisToDerivedVariablesLens,
     analysis,
@@ -287,7 +280,6 @@ export function useAnalysis(
     setIsPublic,
     setFilters,
     setComputations,
-    setComputationsWithoutSave,
     setDerivedVariables,
     setStarredVariables,
     setVariableUISettings,

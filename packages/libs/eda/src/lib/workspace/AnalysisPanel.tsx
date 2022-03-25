@@ -107,7 +107,11 @@ export function AnalysisPanel({
   singleAppMode,
 }: Props) {
   const studyRecord = useStudyRecord();
-  const analysisState = useWorkspaceAnalysis(studyId, analysisId);
+  const analysisState = useWorkspaceAnalysis(
+    studyId,
+    analysisId,
+    singleAppMode
+  );
 
   const {
     status,

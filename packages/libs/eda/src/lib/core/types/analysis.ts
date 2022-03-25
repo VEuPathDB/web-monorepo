@@ -130,7 +130,10 @@ export const Analysis = t.intersection([
 
 export const DEFAULT_ANALYSIS_NAME = 'Unnamed Analysis';
 
-export function makeNewAnalysis(studyId: string): NewAnalysis {
+export function makeNewAnalysis(
+  studyId: string,
+  computation?: Computation
+): NewAnalysis {
   return {
     displayName: DEFAULT_ANALYSIS_NAME,
     studyId,
@@ -145,7 +148,7 @@ export function makeNewAnalysis(studyId: string): NewAnalysis {
       starredVariables: [],
       dataTableConfig: {},
       derivedVariables: [],
-      computations: [],
+      computations: computation ? [computation] : [],
     },
   };
 }

@@ -76,7 +76,7 @@ export function ComputationRoute(props: Props) {
             );
             // If we only have one instance, don't save until the user makes a visualization or otherwise
             // changes something in the analysis
-            analysisState.setComputationsWithoutSave([computation]);
+            analysisState.setComputations([computation]);
           }
 
           return (
