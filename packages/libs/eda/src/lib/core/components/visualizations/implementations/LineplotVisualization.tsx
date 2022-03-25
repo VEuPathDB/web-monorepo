@@ -94,7 +94,7 @@ import PlotLegend, {
 import { isFaceted, isTimeDelta } from '@veupathdb/components/lib/types/guards';
 import FacetedLinePlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedLinePlot';
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
-import { BinSpec, BinWidthSlider } from '../../../types/general';
+import { BinSpec, BinWidthSlider, TimeUnit } from '../../../types/general';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { useInputStyles } from '../inputStyles';
 import { ValuePicker } from './ValuePicker';
@@ -144,10 +144,20 @@ function SelectorComponent() {
 }
 
 // Display names to internal names
-const valueSpecLookup = {
+const valueSpecLookup: Record<
+  string,
+  LineplotRequestParams['config']['valueSpec']
+> = {
   Mean: 'mean',
   Median: 'median',
   Proportion: 'proportion', // used to be 'Ratio or proportion' hence the lookup rather than simple lowercasing
+};
+
+const timeUnitLookup: Record<string, TimeUnit> = {
+  day: 'day',
+  week: 'week',
+  month: 'month',
+  year: 'year',
 };
 
 function createDefaultConfig(): LineplotConfig {
@@ -170,7 +180,7 @@ export const LineplotConfig = t.intersection([
     overlayVariable: VariableDescriptor,
     facetVariable: VariableDescriptor,
     binWidth: t.number,
-    binWidthTimeUnit: t.string,
+    binWidthTimeUnit: TimeUnit,
     showMissingness: t.boolean,
     checkedLegendItems: t.array(t.string),
     showErrorBars: t.boolean,
@@ -307,7 +317,7 @@ function LineplotViz(props: VisualizationProps) {
         updateVizConfig({
           binWidth: isTimeDelta(newBinWidth) ? newBinWidth.value : newBinWidth,
           binWidthTimeUnit: isTimeDelta(newBinWidth)
-            ? newBinWidth.unit
+            ? timeUnitLookup[newBinWidth.unit]
             : undefined,
         });
       }
@@ -432,7 +442,7 @@ function LineplotViz(props: VisualizationProps) {
 
       const response = await dataClient.getLineplot(
         computation.descriptor.type,
-        params as LineplotRequestParams
+        params
       );
 
       const showMissingOverlay =
@@ -1079,8 +1089,10 @@ type ArrayTypes = PickByType<
 
 /**
  * Where there are nulls in the 'y' array, duplicate them and put a zero in between.
- * This is a way to get Plotly to plot an unconnected point at zero (nulls in y break the line)
- * All the duplications have to apply to ALL arrays in the dataSetProcess object.
+ * This is a way to get Plotly to plot an unconnected point at zero (nulls in y break the line).
+ * All the duplications have to apply to ALL arrays in the dataSetProcess object, so we jump
+ * through some hoops to iterate over these other arrays rather than name them explicitly.
+ *
  * simple example:
  * input:  { x: [1,2,3,4,5], y: [6,1,null,9,11], foo: ['a','b','c','d','e'] }
  * output: { x: [1,2,3,3,3,4,5], y: [ 6,1,null,0,null,9,11, foo: ['a','b','c','c','c','d','e'] ] }
@@ -1089,16 +1101,20 @@ function nullZeroHack(
   dataSetProcess: LinePlotDataSeries[],
   dependentValueType: string
 ): LinePlotDataSeries[] {
+  // make no attempt to process date values
   if (dependentValueType === 'date') return dataSetProcess;
 
   return dataSetProcess.map((series) => {
-    const y = series.y as (number | null)[];
-    // which are the arrays in the series object? (no length checks at the moment...)
+    // which are the arrays in the series object?
+    // (assumption: the lengths of all arrays are all the same)
     const arrayKeys = Object.keys(series)
       .filter((_): _ is keyof LinePlotDataSeries => true)
       .filter((key): key is keyof ArrayTypes => Array.isArray(series[key]));
 
     const otherArrayKeys = arrayKeys.filter((key) => key !== 'y');
+
+    // coersce type of y knowing that we're not dealing with dates (as string[])
+    const y = series.y as (number | null)[];
 
     return {
       ...series,
@@ -1120,15 +1136,14 @@ function nullZeroHack(
           (key) => {
             // initialize empty array if needed
             if (accum[key] == null) accum[key] = [];
-            // figure out if we're going to push one or three values
+            // get the value of, e.g. x[i]
             const value = series[key]![index];
+            // figure out if we're going to push one or three identical values
             const oneOrThree = current == null ? 3 : 1;
-            for (
-              var i = 0;
-              i < oneOrThree;
-              i = i + 1 // can be more concise?
-            )
-              (accum[key] as (number | null | string)[]).push(value);
+            // and do it
+            [...Array(oneOrThree)].forEach(() =>
+              (accum[key] as (number | null | string)[]).push(value)
+            );
           }
         );
 
@@ -1138,9 +1153,6 @@ function nullZeroHack(
   });
 }
 
-// add an extended type including dataElementDependencyOrder
-type getRequestParamsProps = LineplotRequestParams & { vizType?: string };
-
 function getRequestParams(
   studyId: string,
   filters: Filter[],
@@ -1148,7 +1160,7 @@ function getRequestParams(
   xAxisVariableMetadata: Variable,
   yAxisVariableMetadata: Variable,
   outputEntity: StudyEntity
-): getRequestParamsProps {
+): LineplotRequestParams {
   const {
     xAxisVariable,
     yAxisVariable,
@@ -1168,7 +1180,7 @@ function getRequestParams(
     denominatorValues,
   } = vizConfig;
 
-  const binSpec = binWidth
+  const binSpec: Pick<LineplotRequestParams['config'], 'binSpec'> = binWidth
     ? {
         binSpec: {
           type: 'binWidth',
@@ -1192,12 +1204,10 @@ function getRequestParams(
     studyId,
     filters,
     config: {
-      // add outputEntityId
       outputEntityId: outputEntity?.id,
-      // LinePlotControls
       valueSpec,
-      xAxisVariable,
-      yAxisVariable,
+      xAxisVariable: xAxisVariable!, // these will never be undefined because
+      yAxisVariable: yAxisVariable!, // data requests are only made when they have been chosen by user
       ...binSpec,
       overlayVariable,
       facetVariable: facetVariable ? [facetVariable] : [],
@@ -1214,7 +1224,7 @@ function getRequestParams(
           }
         : {}),
     },
-  } as LineplotRequestParams;
+  };
 }
 
 // making plotly input data
@@ -1464,7 +1474,7 @@ function reorderResponseLineplotData(
     } else {
       return series;
     }
-  }); // as LinePlotDataResponse['lineplot']['data'];
+  });
 
   if (overlayVocabulary.length > 0) {
     // for each value in the overlay vocabulary's correct order
