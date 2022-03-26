@@ -98,6 +98,7 @@ import { BinSpec, BinWidthSlider, TimeUnit } from '../../../types/general';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { useInputStyles } from '../inputStyles';
 import { ValuePicker } from './ValuePicker';
+import Tooltip from '@veupathdb/wdk-client/lib/Components/Overlays/Tooltip';
 
 const plotContainerStyles = {
   width: 750,
@@ -750,6 +751,34 @@ function LineplotViz(props: VisualizationProps) {
 
   const valuesOfInterestLabelStyle = { minWidth: '200px' };
 
+  const aggregationHelp = (
+    <div>
+      “Mean” and “Median” are y-axis aggregation functions that can only be used
+      when continuous variables <i className="fa fa-bar-chart-o  wdk-Icon"> </i>{' '}
+      are selected for the y-axis.
+      <ul>
+        <li>
+          Mean = Sum of values for all data points / Number of all data points
+        </li>
+        <li>
+          Median = The middle number in a sorted list of numbers. The median is
+          a better measure of central tendency than the mean when data are not
+          normally distributed.
+        </li>
+      </ul>
+      <p>
+        “Proportion” is the only y-axis aggregation function that can be used
+        when categorical variables <i className="fa fa-list  wdk-Icon"> </i> are
+        selected for the y-axis.
+        <ul>
+          <li>Ratio or Proportion = Numerator count / Denominator count</li>
+        </ul>
+        The variable's values that count towards numerator and denominator must
+        be selected in the “Proportion specification” drop-downs.
+      </p>
+    </div>
+  );
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -802,7 +831,16 @@ function LineplotViz(props: VisualizationProps) {
       <div className={classes.inputs}>
         <div className={classes.inputGroup}>
           <div className={classes.fullRow}>
-            <h4>Y-axis aggregation</h4>
+            <h4>
+              Y-axis aggregation
+              <Tooltip content={aggregationHelp}>
+                <i
+                  style={{ marginLeft: '5px' }}
+                  className="fa fa-question-circle"
+                  aria-hidden="true"
+                ></i>
+              </Tooltip>
+            </h4>
           </div>
           <div className={classes.input}>
             <RadioButtonGroup
