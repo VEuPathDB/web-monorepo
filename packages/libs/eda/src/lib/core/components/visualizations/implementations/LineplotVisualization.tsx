@@ -771,7 +771,7 @@ function LineplotViz(props: VisualizationProps) {
         when categorical variables <i className="fa fa-list  wdk-Icon"> </i> are
         selected for the y-axis.
         <ul>
-          <li>Ratio or Proportion = Numerator count / Denominator count</li>
+          <li>Proportion = Numerator count / Denominator count</li>
         </ul>
         The variable's values that count towards numerator and denominator must
         be selected in the “Proportion specification” drop-downs.
