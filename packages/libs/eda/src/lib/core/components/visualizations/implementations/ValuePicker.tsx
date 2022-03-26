@@ -50,7 +50,15 @@ export function ValuePicker({
   }, [selectedValues]);
 
   const label = (
-    <span style={{ ...(isModified ? { color: '#ccc' } : {}) }}>
+    <span
+      style={{
+        ...(isModified ? { color: '#ccc' } : {}),
+        maxWidth: '300px',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+      }}
+    >
       {selectedValues.length > 0
         ? selectedValues.join(', ')
         : 'Choose value(s)'}

@@ -813,7 +813,7 @@ function LineplotViz(props: VisualizationProps) {
               orientation={'horizontal'}
               labelPlacement={'end'}
               buttonColor={'primary'}
-              itemMarginRight={50}
+              itemMarginRight={20}
             />
           </div>
         </div>
@@ -821,12 +821,7 @@ function LineplotViz(props: VisualizationProps) {
         {vizConfig.valueSpecConfig === 'Proportion' && (
           <div className={classes.inputGroup}>
             <div className={classes.fullRow}>
-              <h4>
-                Proportion specification for Y-axis variable
-                {yAxisVariable
-                  ? `: ${variableDisplayWithUnit(yAxisVariable)}`
-                  : ''}
-              </h4>
+              <h4>Proportion specification for Y-axis variable</h4>
             </div>
             <div className={[classes.input, classes.fullRow].join(' ')}>
               <div className={classes.label} style={valuesOfInterestLabelStyle}>
