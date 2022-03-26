@@ -1050,7 +1050,7 @@ export function lineplotResponseToData(
   const xMax = max(map(processedData, ({ xMax }) => xMax));
   const yMin = min(map(processedData, ({ yMin }) => yMin));
   const yMax = max(map(processedData, ({ yMax }) => yMax));
-  console.log(`yMin ${yMin} yMax ${yMax}`);
+
   const dataSetProcess =
     size(processedData) === 1 && head(keys(processedData)) === '__NO_FACET__'
       ? // unfaceted
@@ -1296,6 +1296,11 @@ function processInputData(
     binSpec != null && binWidthSlider != null
       ? {
           binWidthSlider: {
+            valueType:
+              independentValueType === 'integer' ||
+              independentValueType === 'number'
+                ? 'number'
+                : 'date',
             binWidth:
               independentValueType === 'number' ||
               independentValueType === 'integer'
