@@ -380,24 +380,6 @@ function LineplotViz(props: VisualizationProps) {
 
   const data = usePromise(
     useCallback(async (): Promise<LinePlotDataWithCoverage | undefined> => {
-      if (categoricalMode && !valuesAreSpecified) return undefined;
-
-      if (categoricalMode && valuesAreSpecified) {
-        if (isEqual(vizConfig.numeratorValues, vizConfig.denominatorValues))
-          throw new Error(
-            'Numerator and denominator value(s) cannot be the same. Numerator values must be a subset of the denominator values.'
-          );
-        if (
-          vizConfig.numeratorValues != null &&
-          !vizConfig.numeratorValues.every((value) =>
-            vizConfig.denominatorValues?.includes(value)
-          )
-        )
-          throw new Error(
-            'To calculate a proportion, all selected numerator values must also be present in the denominator'
-          );
-      }
-
       if (
         outputEntity == null ||
         xAxisVariable == null ||
@@ -417,6 +399,24 @@ function LineplotViz(props: VisualizationProps) {
       )
         throw new Error(nonUniqueWarning);
 
+      if (categoricalMode && !valuesAreSpecified) return undefined;
+
+      if (categoricalMode && valuesAreSpecified) {
+        if (isEqual(vizConfig.numeratorValues, vizConfig.denominatorValues))
+          throw new Error(
+            'Numerator and denominator value(s) cannot be the same. Numerator values must be a subset of the denominator values.'
+          );
+        if (
+          vizConfig.numeratorValues != null &&
+          !vizConfig.numeratorValues.every((value) =>
+            vizConfig.denominatorValues?.includes(value)
+          )
+        )
+          throw new Error(
+            'To calculate a proportion, all selected numerator values must also be present in the denominator'
+          );
+      }
+
       // check independentValueType/dependentValueType
       const independentValueType = xAxisVariable?.type
         ? xAxisVariable.type
@@ -425,10 +425,14 @@ function LineplotViz(props: VisualizationProps) {
 
       if (
         !categoricalMode &&
-        !(dependentValueType === 'number' || dependentValueType === 'integer')
+        !(
+          dependentValueType === 'number' ||
+          dependentValueType === 'integer' ||
+          dependentValueType === 'date'
+        )
       )
         throw new Error(
-          "TEMPORARY ERROR... this variable isn't suitable (possibly too many distinct values) and constraints will handle this soon..."
+          "TEMPORARY ERROR... this variable isn't suitable (perhaps no distinct values) and constraints will handle this soon..."
         );
 
       // add visualization.type here. valueSpec too?
@@ -574,9 +578,8 @@ function LineplotViz(props: VisualizationProps) {
           'lineplot',
           yMinMaxRange
         );
-
     return axisRangeMargin(defaultDependentRange, yAxisVariable?.type);
-  }, [data, yAxisVariable, categoricalMode]);
+  }, [data.value, yAxisVariable, categoricalMode]);
 
   // custom legend list
   const legendItems: LegendItemsProps[] = useMemo(() => {

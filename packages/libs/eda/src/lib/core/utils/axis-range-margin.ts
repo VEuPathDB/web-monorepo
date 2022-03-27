@@ -21,7 +21,6 @@ export function axisRangeMargin(
           'day'
         ) * 0.05
       ); // unit in days
-
       const axisLowerExtensionStart = DateMath.subtract(
         new Date(axisRange.min as string),
         dateRangeDiff,

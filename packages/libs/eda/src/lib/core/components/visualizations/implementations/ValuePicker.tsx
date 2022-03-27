@@ -45,7 +45,6 @@ export function ValuePicker({
     1
   );
   useEffect(() => {
-    console.log(selectedValues);
     setSelectedValuesSerialNumber((prev) => prev + 1);
   }, [selectedValues]);
 
