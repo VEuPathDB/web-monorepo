@@ -3,9 +3,8 @@ import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 import {
-  makeCommonProxyConfig,
-  makeLegacyWebAppProxyConfig,
-} from '@veupathdb/react-scripts/utils/proxy-reqs.js';
+  makeCommonDevServerConfig,
+} from '@veupathdb/react-scripts/utils/dev-server-config.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -15,43 +14,16 @@ const { additionalConfig } = await import('./webpack.config.js');
 
 export default configure({
   ...additionalConfig,
-  output: {
-    publicPath: '/'
-  },
-  devServer: {
-    https: true,
-    open: true,
-    setupMiddlewares: (middlewares, devServer) => {
-      devServer.app.get('/', (req, res) => {
-        if (process.env.ROOT_URL !== '/') {
-          res.redirect(process.env.ROOT_URL);
-        }
-      });
-
-      return middlewares;
+  ...makeCommonDevServerConfig({
+    rootClientUrl: process.env.ROOT_URL,
+    proxies: {
+      [process.env.WDK_SERVICE_ENDPOINT]: process.env.WDK_SERVICE_URL,
+      [process.env.EDA_SERVICE_ENDPOINT]: process.env.EDA_SERVICE_URL,
+      [process.env.DOCUMENTS_ENDPOINT]: process.env.DOCUMENTS_URL,
     },
-    client: {
-      overlay: {
-        errors: true,
-        warnings: false,
-      },
-    },
-    historyApiFallback: {
-      disableDotRule: true
-    },
-    proxy: {
-      ...makeCommonProxyConfig({
-        [process.env.WDK_SERVICE_ENDPOINT]: process.env.WDK_SERVICE_URL,
-        [process.env.EDA_SERVICE_ENDPOINT]: process.env.EDA_SERVICE_URL,
-        [process.env.DOCUMENTS_ENDPOINT]: process.env.DOCUMENTS_URL,
-      }),
-      [process.env.LEGACY_WEB_APP_ENDPOINT]: makeLegacyWebAppProxyConfig({
-        endpoint: process.env.LEGACY_WEB_APP_ENDPOINT,
-        target: process.env.LEGACY_WEB_APP_URL,
-        rootClientUrl: process.env.ROOT_URL,
-      })
-    }
-  },
+    legacyWebAppEndpoint: process.env.LEGACY_WEB_APP_ENDPOINT,
+    legacyWebAppUrl: process.env.LEGACY_WEB_APP_URL,
+  }),
   plugins: [
     new webpack.DefinePlugin({
       'window.__SITE_CONFIG__': JSON.stringify({
