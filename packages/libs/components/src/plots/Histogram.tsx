@@ -231,6 +231,42 @@ const Histogram = makePlotlyPlotComponent(
     // local state for range **while selecting** graphically
     const [selectingRange, setSelectingRange] = useState<NumberOrDateRange>();
 
+    /* !---- OVERRIDES THE LOGIC THAT PLOTLY USES FOR LAST BIN WITH DATES ----!
+    This block calculates a date that is the midpoint of the lastBin's binMiddle and binEnd
+    This midpoint is used as the threshold that determines if the selection should snap
+    to lastBin.binEnd
+      **  It's still unclear to me why we subtract 1 day. After further thought, I think most
+          if not all of these changes are moot just by removing that piece of logic.
+    */
+    function getMaxDateSelection(
+      lastBin: BinSummary,
+      rawRange: NumberOrDateRange,
+      rightBin: BinSummary
+    ) {
+      const dateThresholdForSnapToEnd = DateMath.add(
+        new Date(lastBin.binMiddle as string),
+        DateMath.diff(
+          new Date(lastBin.binMiddle as string),
+          new Date(lastBin.binEnd as string),
+          'seconds',
+          false
+        ) * 500,
+        'milliseconds'
+      ).toISOString();
+      const shouldSnapToEnd = rawRange.max >= dateThresholdForSnapToEnd;
+      return shouldSnapToEnd
+        ? lastBin.binEnd
+        : rawRange.max > lastBin.binStart
+        ? lastBin.binStart
+        : DateMath.subtract(
+            // ** SEE NOTE IN COMMENTS
+            new Date(rightBin.binEnd),
+            1,
+            'day'
+          ).toISOString();
+    }
+    // --------------------------------------------------------------------- //
+
     const handleSelectingRange = useCallback(
       (object: any) => {
         if (object && object.range) {
@@ -259,41 +295,16 @@ const Histogram = makePlotlyPlotComponent(
             (bin) => rawRange.max > bin.binMiddle
           );
 
-          /* !---- OVERRIDES THE LOGIC THAT PLOTLY USES FOR LAST BIN WITH DATES ----!
-              This block calculates a date that is the midpoint of the lastBin's binMiddle and binEnd
-              This midpoint is used as the threshold that determines if the selection should snap
-              to lastBin.binEnd
-              TODO: MOVE INTO A "getMaxDate" FUNCTION OUTSIDE OF HANDLER TO AVOID NEEDLESS COMPUTATIONS FOR NUMERICAL BINNING
-          */
-          const lastBin = binSummaries[binSummaries.length - 1];
-          const dateThresholdForSnapToEnd = DateMath.add(
-            new Date(lastBin.binMiddle as string),
-            DateMath.diff(
-              new Date(lastBin.binMiddle as string),
-              new Date(lastBin.binEnd as string),
-              'seconds',
-              false
-            ) * 500,
-            'milliseconds'
-          ).toISOString();
-          const shouldSnapToEnd = rawRange.max >= dateThresholdForSnapToEnd;
-          // --------------------------------------------------------------------- //
-
           if (leftBin && rightBin && leftBin.binStart <= rightBin.binStart) {
             setSelectingRange({
               min: leftBin.binStart,
               max:
                 data.binWidthSlider?.valueType === 'date'
-                  ? // TODO: USE THE "getMaxDate"'s RETURN TO SIMPLIFY THIS
-                    shouldSnapToEnd
-                    ? lastBin.binEnd // allows user to select to the very end of a date bin
-                    : rawRange.max > lastBin.binStart
-                    ? lastBin.binStart // overrides the following subtraction to give a little more control in lastBin
-                    : DateMath.subtract(
-                        new Date(rightBin.binEnd),
-                        1,
-                        'day'
-                      ).toISOString()
+                  ? getMaxDateSelection(
+                      binSummaries[binSummaries.length - 1],
+                      rawRange,
+                      rightBin
+                    )
                   : rightBin.binEnd,
             } as NumberOrDateRange);
           } else {
@@ -320,11 +331,6 @@ const Histogram = makePlotlyPlotComponent(
       const range = selectingRange ?? selectedRange;
 
       if (data.series.length && range) {
-        // for dates, draw the blue area to the end of the day
-        const rightCoordinate = range.max;
-        // data.binWidthSlider?.valueType === 'number'
-        //   ? range.max
-        //   : DateMath.endOf(new Date(range.max), 'day').toISOString();
         return [
           {
             type: 'rect',
@@ -333,7 +339,7 @@ const Histogram = makePlotlyPlotComponent(
                   xref: 'x',
                   yref: 'paper',
                   x0: range.min,
-                  x1: rightCoordinate,
+                  x1: range.max,
                   y0: 0,
                   y1: 1,
                 }
@@ -343,7 +349,7 @@ const Histogram = makePlotlyPlotComponent(
                   x0: 0,
                   x1: 1,
                   y0: range.min,
-                  y1: rightCoordinate,
+                  y1: range.max,
                 }),
             line: {
               color: 'blue',
