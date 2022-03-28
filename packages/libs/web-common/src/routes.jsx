@@ -106,7 +106,7 @@ export const wrapRoutes = wdkRoutes => [
     path: `${STATIC_ROUTE_PATH}/:path*`,
     component: props =>
       <ExternalContentController
-        url={'https://' + communitySite + props.match.params.path + props.location.search + props.location.hash}
+        url={communitySite + props.match.params.path + props.location.search + props.location.hash}
       />
   },
 
