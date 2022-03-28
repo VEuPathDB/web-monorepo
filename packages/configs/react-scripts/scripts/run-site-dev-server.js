@@ -1,5 +1,6 @@
 import { spawn } from 'child_process';
 import dotenv from 'dotenv';
+import dotenvExpand from 'dotenv-expand';
 
 import { checkVEuPathDBAuth } from '../utils/veupathdb-auth.js';
 
@@ -10,7 +11,8 @@ export async function main({
   const authTkt = await checkVEuPathDBAuth(siteConfigPath);
   process.env.VEUPATHDB_AUTH_TKT = authTkt;
 
-  dotenv.config({ path: siteConfigPath });
+  const devEnv = dotenv.config({ path: siteConfigPath });
+  dotenvExpand(devEnv);
 
   spawn(
     'npx',
