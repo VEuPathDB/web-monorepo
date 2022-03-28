@@ -17,6 +17,8 @@ import { ImageCard } from '@veupathdb/web-common/lib/App/ImageCard';
 
 import { studyMatchPredicate, studyFilters } from '@veupathdb/web-common/lib/util/homeContent';
 
+import { Page } from './Page';
+
 export default {
   SiteHeader: () => SiteHeader,
   IndexController: () => IndexController,
@@ -26,7 +28,8 @@ export default {
     : <DefaultComponent {...props }/>,
   AnswerController: DefaultComponent => props => props.ownProps.recordClass === 'dataset'
     ? <StudyAnswerController {...props} DefaultComponent={DefaultComponent} />
-    : <DefaultComponent {...props }/>
+    : <DefaultComponent {...props }/>,
+  Page
 }
 
 function SiteFooter() {
