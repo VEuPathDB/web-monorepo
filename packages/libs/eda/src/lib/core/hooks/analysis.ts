@@ -473,8 +473,6 @@ const analysisToDataTableConfig = Lens.fromPath<NewAnalysis | Analysis>()([
   'dataTableConfig',
 ]);
 
-const createAnalysisOnChange: boolean | undefined = true;
-
 function updateAnalysis<T>(
   analysis: NewAnalysis | Analysis,
   nestedValueLens: Lens<NewAnalysis | Analysis, T>,

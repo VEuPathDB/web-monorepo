@@ -58,9 +58,14 @@ export function ComputationRoute(props: Props) {
           const computationType =
             analysisState.analysis.descriptor.computations[0].descriptor.type;
 
-          // The pass app's id should be 'pass-through' for backwards compatability
+          // Check to ensure ananlysisState didn't somehow get the wrong app
+          if (computationType !== singleAppMode) {
+            throw new Error('Incompatible app type supplied.');
+          }
+
+          // Note: the pass app's id will be 'pass-through' for backwards compatability
           const singleAppComputationId =
-            computationType === 'pass' ? 'pass-through' : computationType;
+            analysisState.analysis.descriptor.computations[0].computationId;
 
           return (
             <Switch>
@@ -116,7 +121,7 @@ export function ComputationRoute(props: Props) {
                   const computations =
                     analysisState.analysis.descriptor.computations;
                   const computation = createComputation(
-                    app,
+                    app.name,
                     name,
                     configuration,
                     computations

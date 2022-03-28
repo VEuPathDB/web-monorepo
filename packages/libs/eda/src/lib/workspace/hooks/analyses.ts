@@ -11,14 +11,9 @@ import {
   useAnalysis,
   useAnalysisClient,
   usePreloadAnalysis,
-  useDataClient,
 } from '../../core';
 
-import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
-import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { createComputation } from '../../core/components/computations/Utils';
-import { Computation } from '../../core/types/visualization';
-import { usePromise } from '../../core/hooks/promise';
 
 export function useWorkspaceAnalysis(
   studyId: string,
@@ -36,49 +31,24 @@ export function useWorkspaceAnalysis(
   const creatingAnalysis = useRef(false);
 
   // When we only want to use a single app, extract the computation and pass it to
-  // makeNewAnalysis so that it will by default only use this single computation.
+  // makeNewAnalysis so that by default we will only use this single computation.
   const singleAppComputationId =
-    singleAppMode === 'pass' ? 'pass-through' : singleAppMode;
-
-  const dataClient = useDataClient();
-  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
-
-  // Get apps that are appropriate for this project and check singleAppMode is one of these approved apps
-  const promiseState = usePromise(
-    useCallback(async () => {
-      let { apps } = await dataClient.getApps();
-
-      const { projectId } = await wdkService.getConfig();
-      apps = apps.filter((app) => app.projects?.includes(projectId));
-
-      if (singleAppMode) {
-        apps = apps.filter((app) => app.name === singleAppMode);
-      }
-
-      if (apps == null || !apps.length)
-        throw new Error('Could not find any computation app.');
-
-      return apps;
-    }, [dataClient, wdkService, singleAppMode])
-  );
-  const singleApp =
-    promiseState.value !== undefined ? promiseState.value[0] : null;
+    singleAppMode === 'pass' ? 'pass-through' : singleAppMode; // for backwards compatibility
 
   // If using singleAppMode, create a computation object that will be used in our default analysis.
-  let computation: Computation | undefined = undefined;
-  if (singleAppMode && singleApp) {
-    computation = createComputation(
-      singleApp,
-      singleAppMode,
-      null,
-      [],
-      singleAppComputationId
-    );
-  }
+  const computation = singleAppMode
+    ? createComputation(
+        singleAppMode,
+        singleAppMode,
+        null,
+        [],
+        singleAppComputationId
+      )
+    : undefined;
 
   const defaultAnalysis = useMemo(() => makeNewAnalysis(studyId, computation), [
     studyId,
-    singleApp,
+    singleAppMode,
   ]);
 
   const createAnalysis = useCallback(
