@@ -8,7 +8,7 @@ import { menuItemsFromSocials, iconMenuItemsFromSocials } from '@veupathdb/web-c
 import { StudyMenuItem } from '@veupathdb/web-common/lib/App/Studies';
 import logoUrl from 'site/images/18170.png';
 import heroImageUrl from 'site/images/mbio_hero.png';
-import vizData from './visualizations.json';
+import vizData from '../visualizations.json';
 import { STATIC_ROUTE_PATH } from '@veupathdb/web-common/lib/routes';
 
 import { StudyCard } from '@veupathdb/web-common/lib/App/Studies';

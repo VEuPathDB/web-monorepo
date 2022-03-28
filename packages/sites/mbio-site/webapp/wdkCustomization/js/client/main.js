@@ -4,7 +4,7 @@ import { edaServiceUrl } from '@veupathdb/web-common/lib/config';
 
 import '@veupathdb/web-common/lib/styles/client.scss';
 
-import componentWrappers from './componentWrappers';
+import componentWrappers from './component-wrappers';
 import wrapStoreModules from './wrapStoreModules';
 import { wrapRoutes } from './routes';
 import { wrapWdkDependencies } from '@veupathdb/study-data-access/lib/shared/wrapWdkDependencies';
