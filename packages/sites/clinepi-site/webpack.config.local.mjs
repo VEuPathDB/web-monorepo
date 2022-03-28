@@ -34,12 +34,9 @@ export default configure({
         webAppUrl: process.env.LEGACY_WEB_APP_ENDPOINT,
         facebookUrl: process.env.FACEBOOK_URL,
         twitterUrl: process.env.TWITTER_URL,
-        twitterUrl2: process.env.TWITTER_URL_2,
         youtubeUrl: process.env.YOUTUBE_URL,
-        redditUrl: process.env.REDDIT_URL,
-        vimeoUrl: process.env.VIMEO_URL,
         communitySite: process.env.COMMUNITY_SITE,
-        useEda: Boolean(process.env.USE_EDA),
+        useEda: Boolean(process.env.EDA_ENABLED),
         edaExampleAnalysesAuthor: process.env.EDA_EXAMPLE_ANALYSES_AUTHOR,
         edaServiceUrl: process.env.EDA_SERVICE_ENDPOINT,
       })
