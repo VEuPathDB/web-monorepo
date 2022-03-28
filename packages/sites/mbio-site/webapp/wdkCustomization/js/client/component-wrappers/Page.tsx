@@ -9,7 +9,7 @@ import { colors } from '@veupathdb/coreui';
 import { useCoreUIFonts } from '@veupathdb/coreui/dist/hooks';
 
 export function Page(DefaultComponent: React.ComponentType<Props>) {
-  return function MicrbobiomePage(props: Props) {
+  return function MicrobiomePage(props: Props) {
     // useAttemptActionClickHandler();
     useCoreUIFonts();
 
