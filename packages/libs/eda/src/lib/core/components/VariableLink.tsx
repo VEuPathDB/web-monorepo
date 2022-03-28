@@ -22,5 +22,11 @@ export function VariableLink(props: Props) {
     [makeVariableLink, entityId, variableId]
   );
 
-  return <Link {...rest} replace to={variableLink} />;
+  return (
+    <Link
+      replace
+      {...rest}
+      to={{ pathname: variableLink, state: { scrollToTop: false } }}
+    />
+  );
 }

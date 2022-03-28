@@ -448,7 +448,7 @@ function BarplotViz(props: VisualizationProps) {
   useEffect(() => {
     if (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) {
       setTruncatedDependentAxisWarning(
-        'Data may have been truncated by range selection, as indicated by the light gray shading'
+        'Data may have been truncated by range selection, as indicated by the yellow shading'
       );
     }
   }, [truncationConfigDependentAxisMin, truncationConfigDependentAxisMax]);
@@ -606,6 +606,8 @@ function BarplotViz(props: VisualizationProps) {
       checkedLegendItems={checkedLegendItems}
       legendTitle={variableDisplayWithUnit(overlayVariable)}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
+      // add a condition to show legend even for single overlay data
+      showOverlayLegend={vizConfig.overlayVariable != null}
     />
   );
 

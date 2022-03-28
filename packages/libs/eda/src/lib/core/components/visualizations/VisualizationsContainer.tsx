@@ -8,6 +8,7 @@ import {
 } from 'react-router-dom';
 import Path from 'path';
 import { v4 as uuid } from 'uuid';
+import { orderBy } from 'lodash';
 import { Link, SaveableTextEditor } from '@veupathdb/wdk-client/lib/Components';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Filter } from '../../types/filter';
@@ -23,7 +24,7 @@ import { VisualizationType } from './VisualizationTypes';
 
 import './Visualizations.scss';
 import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
-import Banner from '@veupathdb/wdk-client/lib/Components/Banners/Banner';
+import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
 import { useLocalBackedState } from '@veupathdb/wdk-client/lib/Hooks/LocalBackedState';
 import PlaceholderIcon from './PlaceholderIcon';
 import { Tooltip } from '@material-ui/core';
@@ -125,7 +126,10 @@ function ConfiguredVisualizations(props: Props) {
 
   return (
     <Grid>
-      <Link replace to={`${url}/new`} className={cx('-NewVisualization')}>
+      <Link
+        to={{ pathname: `${url}/new`, state: { scrollToTop: false } }}
+        className={cx('-NewVisualization')}
+      >
         <i className="fa fa-plus"></i>
         New visualization
       </Link>
@@ -179,7 +183,12 @@ function ConfiguredVisualizations(props: Props) {
                 </div>
                 {/* add the Link of thumbnail box here to avoid click conflict with icons */}
                 <>
-                  <Link replace to={`${url}/${viz.visualizationId}`}>
+                  <Link
+                    to={{
+                      pathname: `${url}/${viz.visualizationId}`,
+                      state: { scrollToTop: false },
+                    }}
+                  >
                     {viz.descriptor.thumbnail ? (
                       <img
                         alt={viz.displayName}
@@ -234,7 +243,12 @@ function NewVisualizationPicker(props: Props) {
       </div>
       <h3>Select a visualization</h3>
       <Grid>
-        {visualizationsOverview.map((vizOverview, index) => {
+        {/* orderBy ensures that available visualizations render ahead of those in development */}
+        {orderBy(
+          visualizationsOverview,
+          [(viz) => (viz.name && visualizationTypes[viz.name] ? 1 : 0)],
+          ['desc']
+        ).map((vizOverview, index) => {
           const vizType = visualizationTypes[vizOverview.name!];
           const disabled =
             vizType == null ||
@@ -420,7 +434,12 @@ function FullScreenVisualization(props: Props & { id: string }) {
           </Tooltip>
         </div>
         <Tooltip title="Minimize visualization">
-          <Link replace to={`../${computationId}`}>
+          <Link
+            to={{
+              pathname: `../${computationId}`,
+              state: { scrollToTop: false },
+            }}
+          >
             <i className="fa fa-window-minimize"></i>
           </Link>
         </Tooltip>
