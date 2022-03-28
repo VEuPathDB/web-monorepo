@@ -15,7 +15,8 @@
     "@veupathdb/study-data-access": "^0.2.0",
     "@veupathdb/wdk-client": "^0.5.4",
     "@veupathdb/web-common": "^0.3.1",
-    "core-js": "^3.21.1"
+    "core-js": "^3.21.1",
+    "react-router": "^5.1.2"
   },
   "resolutions": {
     "react": "16",
