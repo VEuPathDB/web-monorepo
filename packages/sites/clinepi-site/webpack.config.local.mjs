@@ -19,7 +19,17 @@ export default configure({
     publicPath: '/'
   },
   devServer: {
-    open: [process.env.ROOT_URL],
+    https: true,
+    open: true,
+    setupMiddlewares: (middlewares, devServer) => {
+      devServer.app.get('/', (req, res) => {
+        if (process.env.ROOT_URL !== '/') {
+          res.redirect(process.env.ROOT_URL);
+        }
+      });
+
+      return middlewares;
+    },
     client: {
       overlay: {
         errors: true,
