@@ -10,7 +10,8 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@veupathdb/wdk-client": "^0.5.4",
-    "@veupathdb/web-common": "^0.2.1"
+    "@veupathdb/web-common": "^0.2.1",
+    "core-js": "^3.21.1"
   },
   "resolutions": {
     "react": "16",
