@@ -141,13 +141,13 @@ export const RecordHeading = connect(
   }
 
   render() {
-    // FungiOrgLinkoutsTable is requested in componentWrappers
+    // FungiVBOrgLinkoutsTable is requested in componentWrappers
     return (
       <React.Fragment>
         <div ref={node => this.node = node}>
           <this.props.DefaultComponent {...this.props} />
         </div>
-        <FungiOrgLinkoutsTable value={this.props.record.tables.FungiOrgLinkoutsTable}/>
+        <FungiVBOrgLinkoutsTable value={this.props.record.tables.FungiVBOrgLinkoutsTable}/>
       </React.Fragment>
     );
   }
@@ -170,12 +170,12 @@ export const RecordMainSection = connect(null)(({ DefaultComponent, dispatch, ..
   );
   });
 
-function FungiOrgLinkoutsTable(props) {
+function FungiVBOrgLinkoutsTable(props) {
   if (props.value == null || props.value.length === 0) return null;
   const groupedLinks = lodash.groupBy(props.value, 'dataset');
   return (
     <div style={{marginTop: '2em'}}>
-      <div className="eupathdb-RecordOverviewItem"><strong>Model Organism Orthologs</strong></div>
+      <div className="eupathdb-RecordOverviewItem"><strong>Model Organism Databases</strong></div>
       {Object.entries(groupedLinks).map(([dataset, rows]) =>
         <div key={dataset} className="eupathdb-RecordOverviewItem" >
           <strong>{dataset}:</strong> {rows.map((row, index) => 
