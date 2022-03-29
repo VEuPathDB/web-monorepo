@@ -25,6 +25,7 @@ import { WorkspaceContainer } from './WorkspaceContainer';
 import { AnalysisPanel } from './AnalysisPanel';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
+import { string } from 'fp-ts';
 
 const theme = createTheme(workspaceTheme);
 
@@ -42,6 +43,11 @@ type Props = {
    * A callback to open a login form.
    * This is also passed down through several component layers. */
   showLoginForm: () => void;
+  /**
+   * Should be the name of the one, singular app the eda should run,
+   * or left undefined to use all apps associated with the project.
+   * This is passed down through several component layers. */
+  singleAppMode?: string;
 };
 
 /**
@@ -55,6 +61,7 @@ export function WorkspaceRouter({
   exampleAnalysesAuthor,
   sharingUrlPrefix,
   showLoginForm,
+  singleAppMode,
 }: Props) {
   const { path, url } = useRouteMatch();
 
@@ -148,6 +155,7 @@ export function WorkspaceRouter({
                   showLoginForm={showLoginForm}
                   hideSavedAnalysisButtons
                   downloadClient={downloadClient}
+                  singleAppMode={singleAppMode}
                 />
               </WorkspaceContainer>
             )}
@@ -212,6 +220,7 @@ export function WorkspaceRouter({
                   sharingUrlPrefix={sharingUrlPrefix}
                   showLoginForm={showLoginForm}
                   downloadClient={downloadClient}
+                  singleAppMode={singleAppMode}
                 />
               </WorkspaceContainer>
             )}

@@ -86,6 +86,7 @@ interface Props {
   showLoginForm: () => void;
   /** API client that will be used in the Download Tab */
   downloadClient: DownloadClient;
+  singleAppMode?: string;
 }
 
 /**
@@ -103,9 +104,14 @@ export function AnalysisPanel({
   sharingUrlPrefix,
   showLoginForm,
   downloadClient,
+  singleAppMode,
 }: Props) {
   const studyRecord = useStudyRecord();
-  const analysisState = useWorkspaceAnalysis(studyId, analysisId);
+  const analysisState = useWorkspaceAnalysis(
+    studyId,
+    analysisId,
+    singleAppMode
+  );
 
   const {
     status,
@@ -346,6 +352,7 @@ export function AnalysisPanel({
                   totalCounts={totalCounts}
                   filteredCounts={filteredCounts}
                   geoConfigs={geoConfigs}
+                  singleAppMode={singleAppMode}
                 />
               </AnalysisTabErrorBoundary>
             )}
