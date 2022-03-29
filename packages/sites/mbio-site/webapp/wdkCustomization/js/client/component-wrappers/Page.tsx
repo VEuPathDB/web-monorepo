@@ -17,7 +17,7 @@ export function Page(DefaultComponent: React.ComponentType<Props>) {
            <UIThemeProvider
               theme={{
                 palette: {
-                  primary: { hue: colors.mutedBlue, level: 600 },
+                  primary: { hue: colors.mutedBlue, level: 500 },
                   secondary: { hue: colors.mutedRed, level: 500 },
                 },
               }}
