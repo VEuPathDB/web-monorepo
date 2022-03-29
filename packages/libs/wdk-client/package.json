@@ -9,7 +9,7 @@
     "copy-assets": "veupathdb-react-scripts copy-assets src lib",
     "relativize": "ts-node-script ./scripts/relativize.ts lib wdk-client",
     "build": "npm-run-all compile copy-assets relativize",
-    "prepare-npm-modules": "npm-run-all clean build",
+    "build-npm-modules": "npm-run-all clean build",
     "check-ts": "tsc --version && tsc --noEmit",
     "watch-ts": "tsc --noEmit --watch -p ."
   },
