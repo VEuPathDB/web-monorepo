@@ -64,14 +64,14 @@ export const useDefaultOnSubmit = (
           ...(
             submissionMetadata.type === 'create-strategy'
               ? {
-                  webServicesTutorialSubmission: forWebServicesTutorial
-                }
+                webServicesTutorialSubmission: forWebServicesTutorial
+              }
               : {}
           )
         }
       }));
     },
-    [ dispatchAction, urlSegment, submissionMetadata, forWebServicesTutorial ]
+    [dispatchAction, urlSegment, submissionMetadata, forWebServicesTutorial]
   );
 
 export default function DefaultQuestionForm(props: Props) {
@@ -106,7 +106,7 @@ export default function DefaultQuestionForm(props: Props) {
 
       return defaultOnSubmit(event);
     },
-    [ onSubmit, defaultOnSubmit ]
+    [onSubmit, defaultOnSubmit]
   );
 
   let handleWebservicesTutorialLinkClick = React.useCallback(
@@ -117,7 +117,7 @@ export default function DefaultQuestionForm(props: Props) {
 
       return defaultOnWebservicesLinkClick(event);
     },
-    [ onSubmit, defaultOnWebservicesLinkClick ]
+    [onSubmit, defaultOnWebservicesLinkClick]
   );
 
   let handleCustomNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -132,14 +132,14 @@ export default function DefaultQuestionForm(props: Props) {
   let Description = props.DescriptionComponent || QuestionDescription;
 
   let fullContainerClassName = `${containerClassName || ''} ` + (
-    question.parameters.every(({ type }) => type !== 'filter') 
+    question.parameters.every(({ type }) => type !== 'filter')
       ? cx('', 'default-width')
       : cx('', 'wide-width')
   );
 
   let containerRef = React.useRef<HTMLDivElement>(null);
 
-  let [ navigatingToDescription, setNavigatingToDescription ] = React.useState(false);
+  let [navigatingToDescription, setNavigatingToDescription] = React.useState(false);
 
   let defaultOnClickDescriptionLink = React.useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -161,7 +161,7 @@ export default function DefaultQuestionForm(props: Props) {
     if (stepValidation && !stepValidation.isValid && containerRef.current instanceof HTMLElement) {
       scrollIntoView(containerRef.current);
     }
-  }, [ stepValidation ]);
+  }, [stepValidation]);
 
   return (
     <div className={fullContainerClassName} ref={containerRef}>
@@ -171,7 +171,7 @@ export default function DefaultQuestionForm(props: Props) {
         showHeader={submissionMetadata.type === 'create-strategy' || submissionMetadata.type === 'edit-step'}
         headerText={`Identify ${recordClass.displayNamePlural} based on ${question.displayName}`}
       />
-      <StepValidationInfo stepValidation={stepValidation} question={question} isRevise={submissionMetadata.type === 'edit-step'}/>
+      <StepValidationInfo stepValidation={stepValidation} question={question} isRevise={submissionMetadata.type === 'edit-step'} />
       {resetFormConfig.offered && <ResetFormButton {...resetFormConfig} />}
       <form onSubmit={handleSubmit} noValidate={!validateForm}>
         {question.groups
@@ -198,8 +198,8 @@ export default function DefaultQuestionForm(props: Props) {
   );
 }
 
-type QuestionHeaderProps = { 
-  headerText: string, 
+type QuestionHeaderProps = {
+  headerText: string,
   showHeader: boolean,
   showDescriptionLink?: boolean,
   onClickDescriptionLink?: (e: React.MouseEvent<HTMLAnchorElement>) => void
@@ -311,9 +311,9 @@ type GroupProps = {
 }
 
 export function Group(props: GroupProps) {
-  switch(props.group.displayType) {
+  switch (props.group.displayType) {
     case 'ShowHide':
-      return <ShowHideGroup {...props}/>
+      return <ShowHideGroup {...props} />
     default:
       return <div>{props.children}</div>;
   }
@@ -334,7 +334,7 @@ function ShowHideGroup(props: GroupProps) {
           })
         }}
       >
-        <IconAlt fa={`caret-${isVisible ? 'down' : 'right'}`}/> {group.displayName}
+        <IconAlt fa={`caret-${isVisible ? 'down' : 'right'}`} /> {group.displayName}
       </button>
       <div className={cx('ShowHideGroupContent')} >
         {isVisible ? props.children : null}
@@ -358,15 +358,15 @@ export function ParameterList(props: ParameterListProps) {
         .map(paramName => parameterMap[paramName])
         .map(parameter => (
           <React.Fragment key={parameter.name}>
-            <ParameterHeading 
-              parameter={parameter} 
+            <ParameterHeading
+              parameter={parameter}
               paramDependencyUpdating={!!paramDependenciesUpdating[parameter.name]}
             />
-            { 
-                parameter.visibleHelp !== undefined &&
-                <div className={cx('VisibleHelp')}>
-                  {safeHtml(parameter.visibleHelp)}
-                </div>
+            {
+              parameter.visibleHelp !== undefined &&
+              <div className={cx('VisibleHelp')}>
+                {safeHtml(parameter.visibleHelp)}
+              </div>
             }
             <div className={cx('ParameterControl')}>
               {parameterElements[parameter.name]}
@@ -395,18 +395,18 @@ export function SubmitButton(
   return props.submitting
     ? <div className={cx('SubmittingIndicator')}></div>
     : <button type="submit" className="btn">
-        {getSubmitButtonText(props.submissionMetadata, props.submitButtonText)}
-      </button>;
+      {getSubmitButtonText(props.submissionMetadata, props.submitButtonText)}
+    </button>;
 }
 
 export const getSubmitButtonText = (submissionMetadata: SubmissionMetadata, submitButtonText?: string) =>
   submitButtonText
     ? submitButtonText
     : submissionMetadata.type === 'create-strategy'
-    ? 'Get Answer'
-    : submissionMetadata.type === 'edit-step'
-    ? 'Revise Step'
-    : 'Run Step';
+      ? 'Get Answer'
+      : submissionMetadata.type === 'edit-step'
+        ? 'Revise Step'
+        : 'Run Step';
 
 interface SearchNameInputProps {
   tooltipPosition: TooltipPosition;
@@ -418,7 +418,7 @@ export function SearchNameInput(props: SearchNameInputProps) {
   let { tooltipPosition, customName, handleCustomNameChange } = props;
   return (
     <div>
-      <HelpIcon tooltipPosition={tooltipPosition}>
+      <HelpIcon>
         Give this search strategy a custom name. The name will appear in the
         first step box (truncated to 15 characters).
       </HelpIcon>
@@ -442,7 +442,7 @@ export function WeightInput(props: WeightInputProps) {
   let { tooltipPosition, weight, handleWeightChange } = props;
   return (
     <div>
-      <HelpIcon tooltipPosition={tooltipPosition}>
+      <HelpIcon>
         Give this search a weight (for example 10, 200, -50, integer only). It
         will show in a column in your result. In a search strategy, unions and
         intersects will sum the weights, giving higher scores to items found in
@@ -463,7 +463,7 @@ export function QuestionDescription(props: { description?: string, navigatingToD
   return !props.description ? null : (
     <div className={cx('DescriptionSection')}>
       <div className={cx('Description')}>
-        <hr/>
+        <hr />
         <h2 className={props.navigatingToDescription ? 'navigatingToDescription' : undefined}>Description</h2>
         {safeHtml(props.description)}
       </div>
@@ -478,7 +478,7 @@ interface WebServicesTutorialLinkProps {
 function WebServicesTutorialLink(props: WebServicesTutorialLinkProps) {
   let { onClick } = props;
   return (
-    <div style={{marginBottom:"5px"}}>
+    <div style={{ marginBottom: "5px" }}>
       <Link
         to="#"
         onClick={(event: React.MouseEvent) => {
@@ -499,7 +499,7 @@ interface SubmitSectionProps {
   tooltipPosition: TooltipPosition;
   customName?: string;
   searchName: string;
-  paramValues: Record<string,string>;
+  paramValues: Record<string, string>;
   weight?: string;
   handleCustomNameChange: TextboxChangeHandler;
   handleWeightChange: TextboxChangeHandler;
@@ -510,16 +510,16 @@ interface SubmitSectionProps {
 }
 
 export function SubmitSection(props: SubmitSectionProps) {
-  let { 
-    className, 
-    tooltipPosition, 
-    customName, 
-    handleCustomNameChange, 
-    searchName, 
-    paramValues, 
-    weight, 
-    handleWeightChange, 
-    submissionMetadata, 
+  let {
+    className,
+    tooltipPosition,
+    customName,
+    handleCustomNameChange,
+    searchName,
+    paramValues,
+    weight,
+    handleWeightChange,
+    submissionMetadata,
     submitting,
     submitButtonText,
     onClickWebservicesTutorialLink
