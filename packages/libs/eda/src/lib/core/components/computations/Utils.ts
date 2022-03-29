@@ -1,4 +1,4 @@
-import { Computation, ComputationAppOverview } from '../../types/visualization';
+import { Computation } from '../../types/visualization';
 // alphadiv abundance
 import { ComputationConfiguration } from '../../types/visualization';
 
@@ -6,20 +6,23 @@ import { ComputationConfiguration } from '../../types/visualization';
  * Creates a new `Computation` with a unique id
  */
 export function createComputation(
-  overview: ComputationAppOverview,
+  computationType: string,
   displayName: string,
-  // alphadiv abundance
   configuration: ComputationConfiguration,
-  computations: Computation[] = []
+  computations: Computation[] = [],
+  computationId?: string
 ): Computation {
-  const computationId = createNewId(
-    new Set(computations.map((c) => c.computationId))
-  );
+  if (!computationId) {
+    computationId = createNewId(
+      new Set(computations.map((c) => c.computationId))
+    );
+  }
+
   return {
     computationId,
     displayName,
     descriptor: {
-      type: overview.name,
+      type: computationType,
       configuration,
     },
     visualizations: [],
