@@ -14,6 +14,7 @@
     "relativize": "ts-node-script ./scripts/relativize.ts lib ebrc-client",
     "generate-icons": "mkdir -p dist && icon-font-generator icons/* -o dist -n ebrc-icons -p ebrc-icon --normalize --center --csstp ./templates/icons-css.hbs",
     "build": "npm-run-all compile copy-assets relativize generate-icons",
+    "build-npm-modules": "npm-run-all build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "files": [
