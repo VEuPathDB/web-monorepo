@@ -8,7 +8,7 @@ import { menuItemsFromSocials, iconMenuItemsFromSocials } from '@veupathdb/web-c
 import { StudyMenuItem } from '@veupathdb/web-common/lib/App/Studies';
 import logoUrl from 'site/images/18170.png';
 import heroImageUrl from 'site/images/mbio_hero.png';
-import vizData from './visualizations.json';
+import vizData from '../visualizations.json';
 import { STATIC_ROUTE_PATH } from '@veupathdb/web-common/lib/routes';
 
 import { StudyCard } from '@veupathdb/web-common/lib/App/Studies';
@@ -16,6 +16,8 @@ import { SearchCard } from '@veupathdb/web-common/lib/App/Searches';
 import { ImageCard } from '@veupathdb/web-common/lib/App/ImageCard';
 
 import { studyMatchPredicate, studyFilters } from '@veupathdb/web-common/lib/util/homeContent';
+
+import { Page } from './Page';
 
 export default {
   SiteHeader: () => SiteHeader,
@@ -26,7 +28,8 @@ export default {
     : <DefaultComponent {...props }/>,
   AnswerController: DefaultComponent => props => props.ownProps.recordClass === 'dataset'
     ? <StudyAnswerController {...props} DefaultComponent={DefaultComponent} />
-    : <DefaultComponent {...props }/>
+    : <DefaultComponent {...props }/>,
+  Page
 }
 
 function SiteFooter() {
