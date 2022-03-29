@@ -4,6 +4,7 @@ import NewWindowLink from './NewWindowLink';
 import { formatReleaseDate } from '../util/formatters';
 
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip'
 
 import 'ebrc-client/components/homepage/ProjectLink.scss';
 
@@ -40,9 +41,9 @@ export default enhance(function Footer(props) {
     <div className="Footer">
       <div>
         <div>
-            <a href={`//${location.hostname}`}>{displayName}</a>
-            <span>&nbsp;Release {buildNumber}</span>
-            <span style={{whiteSpace: 'nowrap'}}> &nbsp;&nbsp; {releaseDate && formatReleaseDate(releaseDate)}</span>
+          <a href={`//${location.hostname}`}>{displayName}</a>
+          <span>&nbsp;Release {buildNumber}</span>
+          <span style={{ whiteSpace: 'nowrap' }}> &nbsp;&nbsp; {releaseDate && formatReleaseDate(releaseDate)}</span>
         </div>
         <div className="copyright">©{new Date().getFullYear()} The VEuPathDB Project Team</div>
       </div>
@@ -51,11 +52,13 @@ export default enhance(function Footer(props) {
         <ul className="site-icons">
           {projects.map(project =>
             <React.Fragment key={project}>
-              <li title={`${project}.org`} className={projectLinkCx()}>
-                <a href={`https://${project.toLowerCase()}.org`} className={project}>
-                  https://{project.toLowerCase()}.org
+              <Tooltip title={`${project}.org`}>
+                <li className={projectLinkCx()}>
+                  <a href={`https://${project.toLowerCase()}.org`} className={project}>
+                    https://{project.toLowerCase()}.org
                 </a>
-              </li>
+                </li>
+              </Tooltip>
               {
                 project === 'VectorBase' &&
                 <li className="divider"></li>
@@ -70,14 +73,14 @@ export default enhance(function Footer(props) {
           Please <NewWindowLink href={webAppUrl + '/app/contact-us'}>Contact Us</NewWindowLink> with any questions or comments
         </div>
       </div>
-  
+
       {siteAck != null && (<div className="siteAck">
         <a href={siteAck.linkTo}>
-          <img width="120" src={siteAck.imageLocation}/>
+          <img width="120" src={siteAck.imageLocation} />
         </a>
       </div>
       )}
- 
+
     </div>
   );
 });

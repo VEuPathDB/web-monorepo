@@ -5,6 +5,7 @@ import Select from 'react-select';
 import { Link, RealTimeSearchBox } from '@veupathdb/wdk-client/lib/Components';
 import { projectId } from '@veupathdb/web-common/lib/config';
 import PlaceholderCard from './PlaceholderCard';
+import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip'
 
 const CLASS_NAME = 'CardList';
 const SHOW_CATEGORIES_DROPDOWN = (projectId === 'MicrobiomeDB');
@@ -38,9 +39,9 @@ export default function CardList(props) {
   } = props;
 
   // state
-  const [ isExpanded, setIsExpanded ] = React.useState(null);
-  const [ filterString, setFilterString ] = React.useState(null);
-  const [ categoryFilter, setCategoryFilter ] = React.useState();
+  const [isExpanded, setIsExpanded] = React.useState(null);
+  const [filterString, setFilterString] = React.useState(null);
+  const [categoryFilter, setCategoryFilter] = React.useState();
 
   // save state to session storage
   React.useEffect(() => {
@@ -63,7 +64,7 @@ export default function CardList(props) {
       sessionStorage.setItem(filterStringStorageKey, filterString);
     }
 
-  }, [ isExpanded, filterString, additionalClassName ]);
+  }, [isExpanded, filterString, additionalClassName]);
 
   if (filterString == null) return null;
 
@@ -73,19 +74,19 @@ export default function CardList(props) {
     `${isExpandable && isExpanded ? EXPANDED_CLASS_NAME : ''} ${additionalClassName}`;
 
   const cardElements = list == null || isEmpty || isLoading
-    ? Array(5).fill(null).map((_, index) => <PlaceholderCard key={index}/>)
+    ? Array(5).fill(null).map((_, index) => <PlaceholderCard key={index} />)
     : list
-    .filter(item => {
-      if (!isExpandable) return true;
-      const searchString = getSearchStringForItem(item);
+      .filter(item => {
+        if (!isExpandable) return true;
+        const searchString = getSearchStringForItem(item);
 
-      return matchPredicate(searchString, filterString);
-    })
-    .filter(item => {
-      if (categoryFilter == null) return true;
-      return item.categories.includes(categoryFilter);
-    })
-    .map((item, index) => renderCard(item, index));
+        return matchPredicate(searchString, filterString);
+      })
+      .filter(item => {
+        if (categoryFilter == null) return true;
+        return item.categories.includes(categoryFilter);
+      })
+      .map((item, index) => renderCard(item, index));
 
   const cardList = cardElements.length > 0
     ? <div className={LIST_CLASS_NAME}>{cardElements}</div>
@@ -111,14 +112,16 @@ export default function CardList(props) {
     ? `Hide expanded view and list all ${contentNamePlural} horizontally`
     : `Show expanded view and search for specific ${contentNamePlural}`
   const expandButton = isExpandable &&
-    <button type="button" className={EXPAND_BUTTON_CLASS_NAME} onClick={() => setIsExpanded(!isExpanded)} title={buttonTitle}>
-      {isExpanded
-        ? <React.Fragment><i className="fa fa-ellipsis-h" aria-hidden="true"></i> Row view</React.Fragment>
-        : <React.Fragment><i className="fa fa-th" aria-hidden="true"></i> Grid view</React.Fragment>
-      }
-    </button>
+    <Tooltip title={buttonTitle}>
+      <button type="button" className={EXPAND_BUTTON_CLASS_NAME} onClick={() => setIsExpanded(!isExpanded)} title={buttonTitle}>
+        {isExpanded
+          ? <React.Fragment><i className="fa fa-ellipsis-h" aria-hidden="true"></i> Row view</React.Fragment>
+          : <React.Fragment><i className="fa fa-th" aria-hidden="true"></i> Grid view</React.Fragment>
+        }
+      </button>
+    </Tooltip>
 
-  const filterInput = isExpandable && 
+  const filterInput = isExpandable &&
     <RealTimeSearchBox
       className={FILTER_CLASS_NAME}
       searchTerm={filterString}
@@ -127,7 +130,7 @@ export default function CardList(props) {
       helpText={`Find ${contentNamePlural} by searching the visible content.`}
     />
 
-// not in clinepi, redmine #43134
+  // not in clinepi, redmine #43134
   const categorySelector = filters && SHOW_CATEGORIES_DROPDOWN &&
     <Select
       placeholder={`Select a ${filtersLabel}`}
@@ -143,7 +146,9 @@ export default function CardList(props) {
       onChange={option => setCategoryFilter(option && option.value)}
     />
   const tableLink = tableViewLink &&
-    <Link to={tableViewLink} className={ALLSTUDIES_LINK_CLASS_NAME} title="View content as a table"><i className="ebrc-icon-table" aria-hidden="true"></i> {tableViewLinkText}</Link>
+    <Tooltip title={"View content as a table"}>
+      <Link to={tableViewLink} className={ALLSTUDIES_LINK_CLASS_NAME} title="View content as a table"><i className="ebrc-icon-table" aria-hidden="true"></i> {tableViewLinkText}</Link>
+    </Tooltip>
 
   return (
     <div className={className}>
