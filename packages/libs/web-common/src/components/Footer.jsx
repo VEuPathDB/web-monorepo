@@ -52,7 +52,7 @@ export default enhance(function Footer(props) {
         <ul className="site-icons">
           {projects.map(project =>
             <React.Fragment key={project}>
-              <Tooltip title={`${project}.org`}>
+              <Tooltip css={{}} title={`${project}.org`}>
                 <li className={projectLinkCx()}>
                   <a href={`https://${project.toLowerCase()}.org`} className={project}>
                     https://{project.toLowerCase()}.org

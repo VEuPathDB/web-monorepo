@@ -16,7 +16,7 @@ class CategoryIcon extends React.Component {
 
     return (
       <div style={{ position: 'relative' }}>
-        <Tooltip title={categoryName}>
+        <Tooltip css={{}} title={categoryName}>
           <span className="CategoryIcon" style={categoryStyle}>
             {category[0].toUpperCase()}
           </span>

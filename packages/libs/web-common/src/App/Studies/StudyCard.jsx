@@ -131,7 +131,7 @@ class StudyCard extends React.Component {
       <div className={'Card StudyCard ' + (disabled ? 'disabled' : '') + ' StudyCard__' + id}>
         <div className="box StudyCard-Heading">
           <h2>
-            <Tooltip title={myStudyTitle}>
+            <Tooltip css={{}} title={myStudyTitle}>
               <Link to={useEda ? edaRoute + '/details' : route}>{safeHtml(name)}</Link>
             </Tooltip>
           </h2>
@@ -142,7 +142,7 @@ class StudyCard extends React.Component {
             <Icon fa="angle-double-right" /> 
           </Link> */}
         </div>
-        <Tooltip title={myStudyTitle}>
+        <Tooltip css={{}} title={myStudyTitle}>
           <Link to={useEda ? edaRoute + '/details' : route} className="StudyCard-DetailsLink">
             <small>Study Details <Icon fa="chevron-circle-right" /></small>
           </Link>
