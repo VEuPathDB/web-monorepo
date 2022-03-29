@@ -12,6 +12,7 @@ type Props = {
 export default function HelpIcon(props: Props) {
   return (
     <Tooltip
+      css={{}}
       title={props.children}
     >
       <button type="button" className="link HelpTrigger">
