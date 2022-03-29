@@ -109,6 +109,8 @@ import LabelledGroup from '@veupathdb/components/lib/components/widgets/Labelled
 import { useVizConfig } from '../../../hooks/visualizations';
 // alphadiv abundance: this should be used for collection variable
 import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from '../../../utils/study-metadata';
+// typing computedVariableMetadata for computation apps such as alphadiv and abundance
+import { ComputedVariableMetadata } from '../../../api/DataClient/types';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -141,6 +143,8 @@ export interface ScatterPlotDataWithCoverage extends CoverageStatistics {
   // change these types to be compatible with new axis range
   yMin: number | string | undefined;
   yMax: number | string | undefined;
+  // add computedVariableMetadata for computation apps such as alphadiv and abundance
+  computedVariableMetadata?: ComputedVariableMetadata;
 }
 
 // define ScatterPlotDataResponse
@@ -499,7 +503,9 @@ function ScatterplotViz(props: VisualizationProps) {
     data,
     vizConfig,
     updateVizConfig,
-    yAxisVariable
+    yAxisVariable,
+    // pass computedVariableMetadata
+    data?.value?.computedVariableMetadata
   );
 
   const { url } = useRouteMatch();
@@ -780,15 +786,15 @@ function ScatterplotViz(props: VisualizationProps) {
       }
       displayLegend={false}
       independentAxisLabel={variableDisplayWithUnit(xAxisVariable) ?? 'X-axis'}
-      //to-do: revisit for alphadiv and abundance in detail
       dependentAxisLabel={
         computation.descriptor.configuration != null
           ? computation.descriptor.type === 'alphadiv'
-            ? //to-do: this should be computedVariableMetadata.displayName for alphadiv later
-              // ? computedVariableMetadata.displayName
-              computation.descriptor.type
+            ? // considering computedVariableMetadata.displayName for alphadiv
+              data?.value?.computedVariableMetadata?.displayName != null
+              ? data?.value?.computedVariableMetadata?.displayName[0]
+              : computation.descriptor.type
             : computation.descriptor.type === 'abundance'
-            ? 'Relative abundance'
+            ? 'Relative Abundance'
             : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'
           : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'
       }
@@ -1483,8 +1489,9 @@ export function scatterplotResponseToData(
     completeCases: response.completeCasesTable,
     completeCasesAllVars: response.scatterplot.config.completeCasesAllVars,
     completeCasesAxesVars: response.scatterplot.config.completeCasesAxesVars,
-    //to-do: config.computedVariableMetadata should also be returned later
-    //computedVariableMetadata: response.scatterplot.config.computedVariableMetadata,
+    // config.computedVariableMetadata should also be returned
+    computedVariableMetadata:
+      response.scatterplot.config.computedVariableMetadata,
   } as ScatterPlotDataWithCoverage;
 }
 

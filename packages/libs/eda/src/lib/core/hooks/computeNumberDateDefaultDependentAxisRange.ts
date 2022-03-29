@@ -9,6 +9,8 @@ import { Variable } from '../types/study';
 import { numberDateDefaultDependentAxisRange } from '../utils/default-dependent-axis-range';
 import { axisRangeMargin } from '../utils/axis-range-margin';
 import { NumberOrDateRange } from '../types/general';
+// type of computedVariableMetadata for computation apps such as alphadiv and abundance
+import { ComputedVariableMetadata } from '../api/DataClient/types';
 
 /**
  * A custom hook to compute default dependent axis range
@@ -18,7 +20,9 @@ export function useDefaultDependentAxisRange(
   data: PromiseHookState<ScatterPlotDataWithCoverage | undefined>,
   vizConfig: ScatterplotConfig,
   updateVizConfig: (newConfig: Partial<ScatterplotConfig>) => void,
-  yAxisVariable?: Variable
+  yAxisVariable?: Variable,
+  // use computedVariableMetadata for axis range of computation apps
+  computedVariableMetadata?: ComputedVariableMetadata
 ): NumberOrDateRange | undefined {
   // find max of stacked array, especially with overlayVariable
   const defaultDependentAxisRange = useMemo(() => {
@@ -31,10 +35,16 @@ export function useDefaultDependentAxisRange(
     const defaultDependentRange = numberDateDefaultDependentAxisRange(
       yAxisVariable,
       'scatterplot',
-      yMinMaxRange
+      yMinMaxRange,
+      // pass computedVariableMetadata
+      computedVariableMetadata
     );
 
-    return axisRangeMargin(defaultDependentRange, yAxisVariable?.type);
+    // add a condition for computation apps
+    return axisRangeMargin(
+      defaultDependentRange,
+      computedVariableMetadata != null ? 'number' : yAxisVariable?.type
+    );
   }, [data, yAxisVariable, vizConfig.valueSpecConfig]);
 
   return defaultDependentAxisRange;

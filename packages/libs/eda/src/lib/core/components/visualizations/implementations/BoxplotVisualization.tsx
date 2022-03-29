@@ -68,13 +68,19 @@ import Button from '@veupathdb/components/lib/components/widgets/Button';
 import { useDefaultDependentAxisRange } from '../../../hooks/computeDefaultDependentAxisRange';
 // alphadiv abundance this should be used for collection variable
 import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from '../../../utils/study-metadata';
+// type of computedVariableMetadata for computation apps such as alphadiv and abundance
+import { ComputedVariableMetadata } from '../../../api/DataClient/types';
 
 type BoxplotData = { series: BoxplotSeries };
+// type of computedVariableMetadata for computation apps such as alphadiv and abundance
+type BoxplotComputedVariableMetadata = {
+  computedVariableMetadata?: ComputedVariableMetadata;
+};
 
-// export
-//to-do: probably need to add computedVariableMetadata type later
+// add type of computedVariableMetadata for computation apps such as alphadiv and abundance
 export type BoxplotDataWithCoverage = (BoxplotData | FacetedData<BoxplotData>) &
-  CoverageStatistics;
+  CoverageStatistics &
+  BoxplotComputedVariableMetadata;
 
 const plotContainerStyles = {
   height: 450,
@@ -396,7 +402,9 @@ function BoxplotViz(props: VisualizationProps) {
     vizConfig,
     updateVizConfig,
     'Boxplot',
-    yAxisVariable
+    yAxisVariable,
+    // pass computedVariableMetadata
+    data?.value?.computedVariableMetadata
   );
 
   // custom legend items for checkbox
@@ -477,15 +485,15 @@ function BoxplotViz(props: VisualizationProps) {
           ? independentAxisLabel?.variable.displayName
           : variableDisplayWithUnit(xAxisVariable) ?? 'X-axis'
       }
-      //to-do: revisit for alphadiv and abundance in detail
       dependentAxisLabel={
         computation.descriptor.configuration != null
           ? computation.descriptor.type === 'alphadiv'
-            ? //to-do: this should be computedVariableMetadata.displayName for alphadiv later
-              // ? computedVariableMetadata.displayName
-              computation.descriptor.type
+            ? // considering computedVariableMetadata.displayName for alphadiv
+              data?.value?.computedVariableMetadata?.displayName != null
+              ? data?.value?.computedVariableMetadata?.displayName[0]
+              : computation.descriptor.type
             : computation.descriptor.type === 'abundance'
-            ? 'Relative abundance'
+            ? 'Relative Abundance'
             : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'
           : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'
       }
@@ -915,8 +923,8 @@ export function boxplotResponseToData(
     completeCases: response.completeCasesTable,
     completeCasesAllVars: response.boxplot.config.completeCasesAllVars,
     completeCasesAxesVars: response.boxplot.config.completeCasesAxesVars,
-    //to-do: config.computedVariableMetadata should also be returned later
-    //computedVariableMetadata: response.boxplot.config.computedVariableMetadata,
+    // config.computedVariableMetadata should also be returned
+    computedVariableMetadata: response.boxplot.config.computedVariableMetadata,
   } as BoxplotDataWithCoverage;
 }
 
