@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/multi-blast",
-  "version": "1.0.5",
+  "version": "2.0.0",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -15,21 +15,21 @@
     "*.scss"
   ],
   "dependencies": {
-    "@veupathdb/http-utils": "^1.1.0",
     "file-saver": "^2.0.5",
     "fp-ts": "^2.11.5",
     "io-ts": "^2.2.16",
     "lodash": "^4.17.20",
-    "react-redux": "^7.2.6",
-    "react-select": "^3.0.4",
-    "redux": "^4.0.0"
+    "react-select": "^3.0.4"
   },
   "peerDependencies": {
+    "@veupathdb/http-utils": "^1.1.0",
     "@veupathdb/preferred-organisms": ">=1.1.6",
     "@veupathdb/wdk-client": ">=0.5.2",
     "@veupathdb/web-common": ">=0.2.0",
     "react": ">=16.14.0",
-    "react-dom": ">=16.14.0"
+    "react-dom": ">=16.14.0",
+    "react-redux": "^7.2.6",
+    "redux": "^4.0.0"
   },
   "scripts": {
     "start": "veupathdb-react-scripts start",
@@ -38,7 +38,7 @@
     "eject": "veupathdb-react-scripts eject",
     "compile": "veupathdb-react-scripts compile",
     "copy-assets": "veupathdb-react-scripts copy-assets",
-    "prepare-npm": "veupathdb-react-scripts prepare"
+    "build-npm-modules": "veupathdb-react-scripts prepare"
   },
   "eslintConfig": {
     "extends": [
@@ -55,31 +55,37 @@
     "@testing-library/user-event": "^12.1.10",
     "@types/file-saver": "^2.0.3",
     "@types/jest": "^26.0.15",
+    "@types/lodash": "^4.14.181",
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
     "@types/react-redux": "^7.1.5",
     "@types/react-router": "^5.1.17",
+    "@types/react-router-dom": "^5.3.3",
+    "@types/react-select": "^3.1.2",
     "@veupathdb/browserslist-config": "^1.0.0",
     "@veupathdb/eslint-config": "^1.0.0",
+    "@veupathdb/http-utils": "^1.1.0",
     "@veupathdb/preferred-organisms": "^1.1.10",
     "@veupathdb/prettier-config": "^1.0.0",
     "@veupathdb/react-scripts": "^1.2.0",
     "@veupathdb/tsconfig": "^1.0.0",
-    "@veupathdb/wdk-client": "^0.5.7",
-    "@veupathdb/web-common": "^0.2.8",
+    "@veupathdb/wdk-client": "^0.6.0",
+    "@veupathdb/web-common": "^0.4.0",
     "http-proxy-middleware": "^1.0.6",
     "husky": "4",
     "lint-staged": ">=10",
     "node-sass": "^4.12.0",
     "prettier": "2.2.1",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "react-dom": ">=16.14.0",
+    "react-redux": "^7.2.6",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
     "read": "^1.0.7",
     "recoil": "^0.2.0",
+    "redux": "^4.0.0",
     "script-loader": "^0.7.2",
     "set-cookie-parser": "^2.4.6",
     "typescript": "^4.0.3",
