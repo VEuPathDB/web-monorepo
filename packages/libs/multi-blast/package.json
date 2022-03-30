@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/multi-blast",
-  "version": "1.0.5",
+  "version": "2.0.0",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -22,10 +22,10 @@
     "react-select": "^3.0.4"
   },
   "peerDependencies": {
+    "@veupathdb/http-utils": "^1.1.0",
     "@veupathdb/preferred-organisms": ">=1.1.6",
     "@veupathdb/wdk-client": ">=0.5.2",
     "@veupathdb/web-common": ">=0.2.0",
-    "@veupathdb/http-utils": "^1.1.0",
     "react": ">=16.14.0",
     "react-dom": ">=16.14.0",
     "react-redux": "^7.2.6",
