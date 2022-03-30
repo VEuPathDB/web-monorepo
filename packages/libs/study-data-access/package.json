@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/study-data-access",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Utilities and hooks for controlling end user access to study data",
   "main": "lib/index.js",
   "repository": "git@github.com:VEuPathDB/web-study-data-access.git",
@@ -25,6 +25,7 @@
     "@types/node": "^12.0.0",
     "@veupathdb/browserslist-config": "^1.0.0",
     "@veupathdb/eslint-config": "^1.0.0",
+    "@veupathdb/http-utils": "^1.0.1",
     "@veupathdb/prettier-config": "^1.0.0",
     "@veupathdb/react-scripts": "^1.2.0",
     "@veupathdb/tsconfig": "^1.0.1",
@@ -48,12 +49,12 @@
     "yarn": "1.22.10"
   },
   "dependencies": {
-    "@veupathdb/http-utils": "^1.0.1",
     "fp-ts": "^2.11.5",
     "io-ts": "^2.2.16",
     "lodash": "^4.17.21"
   },
   "peerDependencies": {
+    "@veupathdb/http-utils": "^1.0.1",
     "@veupathdb/wdk-client": ">=0.5.4"
   }
 }
