@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip'
 
 import './ProjectLink.scss';
 
@@ -11,8 +12,10 @@ type ProjectLinkProps = {
 };
 
 export const ProjectLink = ({ projectId }: ProjectLinkProps) =>
-  <div title={`${projectId}.org`} className={cx()}>
-    <a target="_blank" href={`https://${projectId.toLowerCase()}.org`} className={projectId}>
-      https://{projectId.toLowerCase()}.org
+  <Tooltip css={{}} title={`${projectId}.org`}>
+    <div className={cx()}>
+      <a target="_blank" href={`https://${projectId.toLowerCase()}.org`} className={projectId}>
+        https://{projectId.toLowerCase()}.org
     </a>
-  </div>;
+    </div>
+  </Tooltip>;
