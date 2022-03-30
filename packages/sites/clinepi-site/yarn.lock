@@ -1189,10 +1189,15 @@
   resolved "https://registry.yarnpkg.com/@types/json-stable-stringify/-/json-stable-stringify-1.0.34.tgz#c0fb25e4d957e0ee2e497c1f553d7f8bb668fd75"
   integrity sha512-s2cfwagOQAS8o06TcwKfr9Wx11dNGbH2E9vJz1cqV+a/LOyhWNLUNd6JSRYNzvB4d29UuJX2M0Dj9vE1T8fRXw==
 
-"@types/lodash@^4.14.104", "@types/lodash@^4.14.146", "@types/lodash@^4.14.160":
+"@types/lodash@^4.14.104":
   version "4.14.180"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.180.tgz#4ab7c9ddfc92ec4a887886483bc14c79fb380670"
   integrity sha512-XOKXa1KIxtNXgASAnwj7cnttJxS4fksBRywK/9LzRV5YxrF80BXZIGeQSuoESQ/VkUj30Ae0+YcuHc15wJCB2g==
+
+"@types/lodash@^4.14.146", "@types/lodash@^4.14.160":
+  version "4.14.181"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.181.tgz#d1d3740c379fda17ab175165ba04e2d03389385d"
+  integrity sha512-n3tyKthHJbkiWhDZs3DkhkCzt2MexYHXlX0td5iMplyfwketaOeKboEVBqzceH7juqvEg3q5oUoBFxSLu7zFag==
 
 "@types/mime@^1":
   version "1.3.2"
@@ -1411,7 +1416,7 @@
   dependencies:
     "@types/node" "*"
 
-"@veupathdb/components@^0.11.23", "@veupathdb/components@^0.11.27", "@veupathdb/components@^0.11.8":
+"@veupathdb/components@^0.11.23", "@veupathdb/components@^0.11.8":
   version "0.11.27"
   resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.27.tgz#4654c210a978af04cf38599556f4ef4725bcefb4"
   integrity sha512-nJC4MzApWSMR25NQ1Db3QHIFNNr5y2+YovdXNomax4MdtFZrr1ER9RoxqtmftzDzbq6+GjtvdAKFnDjRpusjIg==
@@ -1423,6 +1428,47 @@
     "@types/d3" "^7.1.0"
     "@types/date-arithmetic" "^4.1.1"
     "@veupathdb/core-components" "^0.4.0"
+    "@visx/gradient" "^1.0.0"
+    "@visx/group" "^1.0.0"
+    "@visx/hierarchy" "^1.0.0"
+    "@visx/shape" "^1.4.0"
+    "@visx/text" "^1.3.0"
+    "@visx/tooltip" "^1.3.0"
+    "@visx/visx" "^1.1.0"
+    bootstrap "^4.5.2"
+    color-math "^1.1.3"
+    d3 "^7.1.1"
+    date-arithmetic "^4.1.0"
+    debounce-promise "^3.1.2"
+    latlon-geohash "^2.0.0"
+    leaflet "^1.6.0"
+    leaflet-drift-marker "^1.0.3"
+    leaflet-simple-map-screenshoter "^0.4.5"
+    luxon "^1.25.0"
+    plotly.js "^2.6.0"
+    re-resizable "^6.9.0"
+    react "^16.13.1"
+    react-bootstrap "^1.3.0"
+    react-cool-dimensions "^1.1.11"
+    react-dom "^16.13.1"
+    react-html-parser "^2.0.2"
+    react-leaflet "^2.7.0"
+    react-plotly.js "^2.4.0"
+    react-transition-group "^4.4.1"
+    shape2geohash "^1.2.5"
+
+"@veupathdb/components@^0.12.1":
+  version "0.12.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.12.1.tgz#c91815f221f1773fe24276389b0007136332a978"
+  integrity sha512-D3wrWGCj6f0WIgxvbxfszCRKQ2RUn+lReEzTSjOwrfyAL+FgtrNGBF/pA8UmoHizXAgqhXk3Btt2GuPgR2DwnQ==
+  dependencies:
+    "@emotion/react" "^11.7.0"
+    "@material-ui/core" "^4.11.2"
+    "@material-ui/icons" "^4.11.2"
+    "@material-ui/lab" "^4.0.0-alpha.57"
+    "@types/d3" "^7.1.0"
+    "@types/date-arithmetic" "^4.1.1"
+    "@veupathdb/coreui" "^0.15.1"
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
     "@visx/hierarchy" "^1.0.0"
@@ -1464,26 +1510,7 @@
     react-modal "^3.14.3"
     react-table "^7.7.0"
 
-"@veupathdb/coreui@^0.13.0":
-  version "0.13.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.13.0.tgz#aa774e71c7963f0638814f6491cf6b20bd2faae7"
-  integrity sha512-MVHx601+EdtRAuZUilDRXOTR9nfpznzAxTOiNqYZ1HTsxgVK/fFXKVgP/VwRJJU9CQ8KHHHfYkg/HWB/U9IiLg==
-  dependencies:
-    "@emotion/react" "^11.4.0"
-    "@emotion/serialize" "^1.0.2"
-    "@emotion/styled" "^11.3.0"
-    "@material-ui/core" "^4.12.3"
-    "@material-ui/icons" "^4.11.2"
-    "@react-hook/size" "^2.1.2"
-    "@types/react-table" "^7.7.8"
-    lodash "^4.17.21"
-    react "^17.0.2"
-    react-cool-dimensions "^2.0.7"
-    react-dom "^17.0.2"
-    react-responsive-modal "^6.2.0"
-    react-table "^7.7.0"
-
-"@veupathdb/coreui@^0.15.0":
+"@veupathdb/coreui@^0.15.0", "@veupathdb/coreui@^0.15.1", "@veupathdb/coreui@^0.15.4":
   version "0.15.4"
   resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.15.4.tgz#dac65ffc58fc4106e3c4110b261998bdb696f60b"
   integrity sha512-Jnpdf6JD865+IBM07MIq0GLaee9D2haKcioXq+kVOPkvrHMeb1+nGjtRaNRplZ09zWS5iuzRc6xsRwnfOCK5Qg==
@@ -1503,9 +1530,9 @@
     react-table "^7.7.0"
 
 "@veupathdb/eda@^1.8.3":
-  version "1.8.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.8.3.tgz#ec18949aeb13502875be0ca0b833f503e6b88f72"
-  integrity sha512-dkzlsnz2BfTfuIApu5B84zLpqfdrN+TDt4w+u+GyzhNUo++oSc80+7g02hI9a5mP8gctVXCN+kNWVluG9u3vWw==
+  version "1.8.5"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.8.5.tgz#4052ce71b22537a4bf4bd3297680c12c4943e8cc"
+  integrity sha512-yiwjPyme69uY7FscPLbjJNvyWttfZ3cKsD4Agj51rc3m4dPXobCD6ZHwZMhA9wQjw3yrBlNGP03Igca5gAI6iQ==
   dependencies:
     "@emotion/react" "^11.4.1"
     "@emotion/styled" "^11.3.0"
@@ -1513,8 +1540,8 @@
     "@material-ui/icons" "^4.11.2"
     "@material-ui/lab" "^4.0.0-alpha.58"
     "@types/debounce-promise" "^3.1.3"
-    "@veupathdb/components" "^0.11.27"
-    "@veupathdb/coreui" "^0.13.0"
+    "@veupathdb/components" "^0.12.1"
+    "@veupathdb/coreui" "^0.15.4"
     "@veupathdb/http-utils" "^1.1.0"
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -3439,9 +3466,9 @@ d3-color@1:
   integrity sha512-SPXi0TSKPD4g9tw0NMZFnR95XVgUZiBH+uUTqQuDu1OsE2zomHU7ho0FISciaPvosimixwHFl3WHLGabv6dDgQ==
 
 "d3-color@1 - 3", d3-color@3:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/d3-color/-/d3-color-3.0.1.tgz#03316e595955d1fcd39d9f3610ad41bb90194d0a"
-  integrity sha512-6/SlHkDOBLyQSJ1j1Ghs82OIUXpKWlR0hCsw0XrLSQhuUPuCSmLQ1QPH98vpnQxMUQM2/gfAkUEWsupVpd9JGw==
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/d3-color/-/d3-color-3.1.0.tgz#395b2833dfac71507f12ac2f7af23bf819de24e2"
+  integrity sha512-zg/chbXyeBtMQ1LbD/WSoW2DpC3I0mpmPdW+ynRTj/x2DAWYrIY7qeZIHidozwV24m4iavr15lNwIwLxRmOxhA==
 
 d3-contour@3:
   version "3.0.1"
@@ -3764,9 +3791,9 @@ d3-zoom@3:
     d3-transition "2 - 3"
 
 d3@^7.1.1:
-  version "7.3.0"
-  resolved "https://registry.yarnpkg.com/d3/-/d3-7.3.0.tgz#f3d5a22c1f658952a6491cf50132f5267ed7a40a"
-  integrity sha512-MDRLJCMK232OJQRqGljQ/gCxtB8k3/sLKFjftMjzPB3nKVUODpdW9Rb3vcq7U8Ka5YKoZkAmp++Ur6I+6iNWIw==
+  version "7.4.0"
+  resolved "https://registry.yarnpkg.com/d3/-/d3-7.4.0.tgz#8755620b9a63eca698718f8d0e2eeaa9dc699e35"
+  integrity sha512-/xKyIYpKzd+I2DhiS2ANYJtEfHkE9lHKBFwqsplKsazPcXy2N1KIJSMTJsRk42jHbHCH0KPJGd0RnBt6NBJ1MA==
   dependencies:
     d3-array "3"
     d3-axis "3"
@@ -6360,10 +6387,15 @@ minimatch@^3.0.4:
   dependencies:
     brace-expansion "^1.1.7"
 
-minimist@^1.2.0, minimist@^1.2.5:
+minimist@^1.2.0:
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.5.tgz#67d66014b66a6a8aaa0c083c5fd58df4e4e97602"
   integrity sha512-FM9nNUYrRBAELZQT3xeZQ7fmMOBg6nWNmJKTcgsJeaLstP/UODVpGsr5OhXhhXg6f+qtJ8uiZ+PUxkDWcgIXLw==
+
+minimist@^1.2.5:
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.6.tgz#8637a5b759ea0d6e98702cfb3a9283323c93af44"
+  integrity sha512-Jsjnk4bw3YJqYzbdyBiNsPWHPfO++UGG749Cxs6peCu5Xg4nrena6OVxOYxrQTqww0Jmwt+Ref8rggumkTLz9Q==
 
 mississippi@^3.0.0:
   version "3.0.0"
