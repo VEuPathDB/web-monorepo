@@ -151,7 +151,8 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
               lower != null && upper != null
                 ? ` (95% CI: ${lower} - ${upper})`
                 : '';
-            return `x: ${binLabel ?? x}\ny: ${y}${CI}\n${xtra}`;
+            // use <br> instead of \n for line break
+            return `x: ${binLabel ?? x}<br>y: ${y}${CI}<br>${xtra}`;
           }),
         })),
     [data.series]
