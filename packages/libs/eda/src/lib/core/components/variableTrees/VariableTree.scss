@@ -68,6 +68,7 @@
   .wdk-CheckboxTree {
     display: flex;
     flex-flow: column;
+    overflow: auto;
   }
 
   /* configuring scrolling for CheckboxTree list only: anchoring search bar */
