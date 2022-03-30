@@ -5,7 +5,7 @@ import useDimensions from 'react-cool-dimensions';
 // Components & Component Generators
 import SettingsIcon from '@material-ui/icons/Settings';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { Loading, LoadingOverlay } from '@veupathdb/wdk-client/lib/Components';
 import MultiSelectVariableTree from '../../core/components/variableTrees/MultiSelectVariableTree';
 import {
   Modal,
@@ -262,6 +262,7 @@ export default function SubsettingDataGridModal({
         ) : (
           <Loading />
         )}
+        {dataLoading && gridData ? <LoadingOverlay /> : null}
       </div>
     );
   };
@@ -286,6 +287,7 @@ export default function SubsettingDataGridModal({
             border: '2px solid rgb(200, 200, 200)',
             borderRadius: '.5em',
             boxShadow: '0px 0px 6px rgba(0, 0, 0, .25)',
+            zIndex: '2',
           }}
         >
           {errorMessage && (
