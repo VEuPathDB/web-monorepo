@@ -19,8 +19,6 @@ interface Props {
 }
 
 function UserDatasetsWorkspace(props: Props) {
-  const config = useWdkService((wdkService) => wdkService.getConfig(), []);
-  if (config == null) return null;
   const { baseUrl, helpRoute, uploadPageConfig, workspaceTitle } = props;
 
   return (
