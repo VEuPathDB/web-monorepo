@@ -1310,6 +1310,47 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
+"@veupathdb/components@^0.11.27":
+  version "0.11.27"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.27.tgz#4654c210a978af04cf38599556f4ef4725bcefb4"
+  integrity sha512-nJC4MzApWSMR25NQ1Db3QHIFNNr5y2+YovdXNomax4MdtFZrr1ER9RoxqtmftzDzbq6+GjtvdAKFnDjRpusjIg==
+  dependencies:
+    "@emotion/react" "^11.7.0"
+    "@material-ui/core" "^4.11.2"
+    "@material-ui/icons" "^4.11.2"
+    "@material-ui/lab" "^4.0.0-alpha.57"
+    "@types/d3" "^7.1.0"
+    "@types/date-arithmetic" "^4.1.1"
+    "@veupathdb/core-components" "^0.4.0"
+    "@visx/gradient" "^1.0.0"
+    "@visx/group" "^1.0.0"
+    "@visx/hierarchy" "^1.0.0"
+    "@visx/shape" "^1.4.0"
+    "@visx/text" "^1.3.0"
+    "@visx/tooltip" "^1.3.0"
+    "@visx/visx" "^1.1.0"
+    bootstrap "^4.5.2"
+    color-math "^1.1.3"
+    d3 "^7.1.1"
+    date-arithmetic "^4.1.0"
+    debounce-promise "^3.1.2"
+    latlon-geohash "^2.0.0"
+    leaflet "^1.6.0"
+    leaflet-drift-marker "^1.0.3"
+    leaflet-simple-map-screenshoter "^0.4.5"
+    luxon "^1.25.0"
+    plotly.js "^2.6.0"
+    re-resizable "^6.9.0"
+    react "^16.13.1"
+    react-bootstrap "^1.3.0"
+    react-cool-dimensions "^1.1.11"
+    react-dom "^16.13.1"
+    react-html-parser "^2.0.2"
+    react-leaflet "^2.7.0"
+    react-plotly.js "^2.4.0"
+    react-transition-group "^4.4.1"
+    shape2geohash "^1.2.5"
+
 "@veupathdb/components@^0.11.8":
   version "0.11.14"
   resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.11.14.tgz#f8a3d4e2c20bdbaa75657763d4bf2ac5a56188f2"
@@ -1382,10 +1423,10 @@
     react-responsive-modal "^6.2.0"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^1.7.8":
-  version "1.7.8"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.7.8.tgz#5ae0c19bda892a6f9fa3d8d520c5582995c8f188"
-  integrity sha512-cYK5s0/1yHURJ1TjueEhRMWC1AN1paGMse+fNbsQzDK7K4F9bzPHHx5Grj+XPwxRFd8eSj+Sm9q742ZP7bR1ng==
+"@veupathdb/eda@^1.8.3":
+  version "1.8.3"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-1.8.3.tgz#ec18949aeb13502875be0ca0b833f503e6b88f72"
+  integrity sha512-dkzlsnz2BfTfuIApu5B84zLpqfdrN+TDt4w+u+GyzhNUo++oSc80+7g02hI9a5mP8gctVXCN+kNWVluG9u3vWw==
   dependencies:
     "@emotion/react" "^11.4.1"
     "@emotion/styled" "^11.3.0"
@@ -1393,10 +1434,9 @@
     "@material-ui/icons" "^4.11.2"
     "@material-ui/lab" "^4.0.0-alpha.58"
     "@types/debounce-promise" "^3.1.3"
-    "@veupathdb/components" "^0.11.23"
+    "@veupathdb/components" "^0.11.27"
     "@veupathdb/coreui" "^0.13.0"
     "@veupathdb/http-utils" "^1.1.0"
-    "@veupathdb/study-data-access" "^0.1.5"
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
     io-ts "^2.2.13"
@@ -1412,7 +1452,7 @@
     react-table "^7.7.0"
     uuid "^8.3.2"
 
-"@veupathdb/http-utils@^1.0.1", "@veupathdb/http-utils@^1.1.0":
+"@veupathdb/http-utils@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@veupathdb/http-utils/-/http-utils-1.1.0.tgz#fb563593aae2dd7f32eb634ea9776793b35be65f"
   integrity sha512-pkDxTCCq2y7G7tjtFSKe3I7V/SP4jpMuvRQK1HW7c8j/uQDo4a0qLbfsdaZZ/QmVUjapPYh9JS08ehd/UnDljg==
@@ -1431,16 +1471,6 @@
     react-app-rewired "^2.1.8"
     read "^1.0.7"
     set-cookie-parser "^2.4.6"
-
-"@veupathdb/study-data-access@^0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.1.5.tgz#8f0aae7c4c35f001b8f3bff77feeeba3c86df578"
-  integrity sha512-CPoQ03Hg8O35JaAbhx0g22eAHOaDQ14pvydjMEs1oYFQggw6+cckp6tEpOCHhbAlwIBn0rvSdntGeJho2iLY/w==
-  dependencies:
-    "@veupathdb/http-utils" "^1.0.1"
-    fp-ts "^2.11.5"
-    io-ts "^2.2.16"
-    lodash "^4.17.21"
 
 "@veupathdb/wdk-client@^0.5.7":
   version "0.5.7"

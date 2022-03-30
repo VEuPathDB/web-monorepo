@@ -86,7 +86,7 @@ export default function Showcase(props) {
           attemptAction={attemptAction}
           additionalClassName={contentType}
           renderCard={(card) =>
-            <Card analyses={analyses} card={card} attemptAction={attemptAction} prefix={prefix} key={card.name} />
+            <Card analyses={analyses} card={card} attemptAction={attemptAction} prefix={prefix} key={card.name} permissions={permissions}/>
           }
         />
       </div>

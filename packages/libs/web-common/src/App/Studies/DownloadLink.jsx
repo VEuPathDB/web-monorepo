@@ -9,11 +9,11 @@ import { connect } from 'react-redux'
 import { isPrereleaseStudy } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
 
 function DownloadLink(props) {
-  const { attemptAction, studyAccess, studyId, studyUrl, user, permissions, className, linkText = '', iconFirst = false } = props;
+  const { attemptAction, studyAccess, studyId, studyUrl, permissions, className, linkText = '', iconFirst = false } = props;
   const myDownloadTitle = "Download data files";
   return (
     <div className={className}> 
-      { !isPrereleaseStudy(studyAccess, studyId, user, permissions)
+      { !isPrereleaseStudy(studyAccess, studyId, permissions)
         ? <Mesa.AnchoredTooltip
         fadeOut
         content={myDownloadTitle}>
@@ -47,5 +47,4 @@ function DownloadLink(props) {
 // attemptAction gets bound to the store, the store receives the action, which will get executed when user clicks.
 export default compose(
   wrappable,
-  connect(state => ({user: state.globalData.user}), { attemptAction })
-)(DownloadLink);
+  connect(null, { attemptAction }))(DownloadLink);

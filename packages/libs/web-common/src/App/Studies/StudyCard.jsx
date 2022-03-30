@@ -52,20 +52,20 @@ class StudyCard extends React.Component {
   }
 
   renderFooter() {
-    const { card, user, permissions } = this.props;
+    const { card, permissions } = this.props;
     if (useEda) {
       const { disabled } = card;
       const edaRoute = makeEdaRoute(card.id) + '/new';
       return (
         <Link className="StudyCard-SearchLink" to={edaRoute}>
           <div className="box StudyCard-PreFooter">
-            { isPrereleaseStudy(card.access, card.id, user, permissions)
+            { isPrereleaseStudy(card.access, card.id, permissions)
               ? <span title="Please check the study page">Coming Soon!</span>
               : <span>{disabled ? 'Explore Unavailable' : 'Explore The Data'}</span>
             }
           </div>
           <div className="box StudyCard-Footer">
-            { (!isPrereleaseStudy(card.access, card.id, user, permissions))
+            { (!isPrereleaseStudy(card.access, card.id, permissions))
              ? (
                <div className="box">
                  <i className="ebrc-icon-edaIcon"/>
@@ -85,7 +85,7 @@ class StudyCard extends React.Component {
       return (
         <>
           <div className="box StudyCard-PreFooter">
-            { isPrereleaseStudy(card.access, card.id, user, permissions)
+            { isPrereleaseStudy(card.access, card.id, permissions)
               ? <span title="Please check the study page">Coming Soon!</span>
               : searchType
                 ? <span>by <b>{searchType}</b></span>
@@ -93,7 +93,7 @@ class StudyCard extends React.Component {
             }
           </div>
           <div className="box StudyCard-Footer">
-            { (!isPrereleaseStudy(card.access, card.id, user, permissions) && searches.length)
+            { (!isPrereleaseStudy(card.access, card.id, permissions) && searches.length)
               ? searches.map(({ icon, displayName, path }) => {
                   const route = `/search/${path}`;
                   return (
@@ -155,4 +155,4 @@ class StudyCard extends React.Component {
   }
 }
 
-export default connect( state => ({user: state.globalData.user}) )(StudyCard);
+export default StudyCard;

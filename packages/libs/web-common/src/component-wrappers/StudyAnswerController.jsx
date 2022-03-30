@@ -12,7 +12,6 @@ import { useEda } from 'ebrc-client/config';
 
 // wrapping WDKClient AnswerController for specific rendering on certain columns
 function StudyAnswerController(props) {
-  const user = useSelector(state => state.globalData.user);
   const studyEntities = useSelector(state => state.studies && state.studies.entities);
 
   const { visibleRecords, totalCount } = useMemo(
@@ -42,15 +41,14 @@ function StudyAnswerController(props) {
   );
 
   const renderCellContent = useMemo(
-    () => makeRenderCellContent(user, props.permissions),
-    [ user, props.permissions ]
+    () => makeRenderCellContent(props.permissions),
+    [ props.permissions ]
   );
 
   return (
     <React.Fragment>
       <props.DefaultComponent 
         {...props}
-        user={user}
         stateProps={{
           ...props.stateProps,
           records: visibleRecords,
@@ -85,11 +83,10 @@ interface RenderCellProps extends CellContentProps {
 }
 */
 
-const makeRenderCellContent = (user, permissions) => props => {
+const makeRenderCellContent = (permissions) => props => {
   const shouldRenderAsPrerelease = isPrereleaseStudy(
     props.record.attributes.study_access.toLowerCase(),
     props.record.attributes.dataset_id,
-    user,
     permissions
   );
 
@@ -145,7 +142,7 @@ const makeRenderCellContent = (user, permissions) => props => {
 function mapStateToProps(state,props) {
   const { record } = props;
   const { globalData, studies } = state;
-  const { siteConfig, user } = globalData;
+  const { siteConfig } = globalData;
   const { webAppUrl } = siteConfig;
 
   if (studies.loading) {
@@ -159,7 +156,7 @@ function mapStateToProps(state,props) {
   const study = get(studies, 'entities', [])
     .find(study => study.id === studyId);
 
-  return { study, webAppUrl, user };
+  return { study, webAppUrl };
 }
 
 export default StudyAnswerController;
