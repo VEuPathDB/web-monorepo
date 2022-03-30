@@ -46,6 +46,10 @@
     "uuid": "^8.1.0"
   },
   "devDependencies": {
+    "@emotion/react": "^11.7.0",
+    "@material-ui/core": "^4.12.3",
+    "@material-ui/icons": "^4.11.2",
+    "@material-ui/lab": "^4.0.0-alpha.57",
     "@testing-library/react-hooks": "^3.4.2",
     "@types/datatables.net": "^1.10.5",
     "@types/flot": "^0.0.31",
@@ -69,7 +73,8 @@
     "@types/uuid": "^8.0.0",
     "@typescript-eslint/eslint-plugin": "^4.6.0",
     "@typescript-eslint/parser": "^4.6.0",
-    "@veupathdb/components": "^0.11.8",
+    "@veupathdb/components": "^0.13.0",
+    "@veupathdb/coreui": "^0.16.0",
     "@veupathdb/react-scripts": "^1.2.0",
     "babel-eslint": "^8.0.1",
     "babel-jest": "^23.1.2",
