@@ -971,12 +971,19 @@
   resolved "https://registry.yarnpkg.com/@types/range-parser/-/range-parser-1.2.4.tgz#cd667bcfdd025213aafb7ca5915a932590acdcdc"
   integrity sha512-EEhsLsD6UsDM1yFhAvy0Cjr6VwmpMWqFBCb9w07wVugF7w9nfajxLuVmngTIpgS6svCnm6Vaw+MZhoDCKnOfsw==
 
-"@types/react-dom@*", "@types/react-dom@16":
+"@types/react-dom@*":
   version "16.9.14"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.9.14.tgz#674b8f116645fe5266b40b525777fc6bb8eb3bcd"
   integrity sha512-FIX2AVmPTGP30OUJ+0vadeIFJJ07Mh1m+U0rxfgyW34p3rTlXI+nlenvAxNn4BP36YyI9IJ/+UJ7Wu22N1pI7A==
   dependencies:
     "@types/react" "^16"
+
+"@types/react-dom@^17.0.14":
+  version "17.0.14"
+  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-17.0.14.tgz#c8f917156b652ddf807711f5becbd2ab018dea9f"
+  integrity sha512-H03xwEP1oXmSfl3iobtmQ/2dHF5aBHr8aUMwyGZya6OW45G+xtdzmq6HkncefiBt5JU8DVyaWl/nWZbjZCnzAQ==
+  dependencies:
+    "@types/react" "*"
 
 "@types/react-redux@^7.1.20":
   version "7.1.23"
@@ -995,7 +1002,16 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@16", "@types/react@>=16.14.8", "@types/react@>=16.9.11", "@types/react@^16":
+"@types/react@*", "@types/react@^17.0.43":
+  version "17.0.43"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.43.tgz#4adc142887dd4a2601ce730bc56c3436fdb07a55"
+  integrity sha512-8Q+LNpdxf057brvPu1lMtC5Vn7J119xrP1aq4qiaefNioQUYANF/CYeK4NsKorSZyUGJ66g0IM+4bbjwx45o2A==
+  dependencies:
+    "@types/prop-types" "*"
+    "@types/scheduler" "*"
+    csstype "^3.0.2"
+
+"@types/react@>=16.14.8", "@types/react@>=16.9.11", "@types/react@^16":
   version "16.14.24"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-16.14.24.tgz#f2c5e9fa78f83f769884b83defcf7924b9eb5c82"
   integrity sha512-e7U2WC8XQP/xfR7bwhOhNFZKPTfW1ph+MiqtudKb8tSV8RyCsovQx2sNVtKoOryjxFKpHPPC/yNiGfdeVM5Gyw==
@@ -1176,9 +1192,9 @@
     lodash "^4.17.21"
 
 "@veupathdb/wdk-client@^0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.6.0.tgz#04f190c3b9916e93d008f606814f10b98f22359a"
-  integrity sha512-q/2980lnadFHG6CfjIZCjTNaliMtiVsuHQjRO9UgmcM8b9dNMZLqZjSsdkpW0jN94192AxO5ZzGOyv/sEDYpGg==
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.6.1.tgz#66cba8329ad2aa84b8d7d18f6cfd3e74f23433b5"
+  integrity sha512-eTKi18NnT4opHp12lPLvUIF+/e1bKP5Q0R1KcGUE38r4RLWmRiCQrccEOgvWcXDL7QBj62p7a270n0zkUI520g==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
@@ -1201,9 +1217,9 @@
     uuid "^8.1.0"
 
 "@veupathdb/web-common@^0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.4.0.tgz#e8cee9b08aaa229b4efe67c2ca3e2a3018808f47"
-  integrity sha512-t7GAgdi+fyIHgH4UIwQJK6k5W6HJMiP0TpxJ3Sy7osn3F/FbHyh4LGmIHqC7pzT3vWNA8mGZ9at++oNcukcuhA==
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.4.1.tgz#c4a31282d6ab39818eac255f8d8c837ac978e412"
+  integrity sha512-9fnDJUWT8EOSZmaZLU8Pqe/7BB5rT4nkEtrrx4Vto4seRsz8VAirQ1gKmYXQyW5i2A2A8A4/xauPXQGHyISXJw==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
@@ -7056,9 +7072,9 @@ react-plotly.js@^2.4.0:
     prop-types "^15.7.2"
 
 react-redux@^7.1.3:
-  version "7.2.6"
-  resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-7.2.6.tgz#49633a24fe552b5f9caf58feb8a138936ddfe9aa"
-  integrity sha512-10RPdsz0UUrRL1NZE0ejTkucnclYSgXp5q+tB5SWx2qeG2ZJQJyymgAhwKy73yiL/13btfB6fPr+rgbMAaZIAQ==
+  version "7.2.7"
+  resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-7.2.7.tgz#f5edd4e4bc34ec8787451d77d16663abf12f8be9"
+  integrity sha512-kpstUHhXgT5HOLwzoRhDr3AWHO7H5mgTN5pX1H02OuoIMaZiOLYlul8vgan2WE8eEttAEMew8Npgzd3C6Asdow==
   dependencies:
     "@babel/runtime" "^7.15.4"
     "@types/react-redux" "^7.1.20"
