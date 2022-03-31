@@ -31,8 +31,8 @@
     "whatwg-fetch": "^3.5.0"
   },
   "peerDependencies": {
-    "@veupathdb/components": "^0.11.23",
-    "@veupathdb/eda": "^1.7.8",
+    "@veupathdb/components": "^0.13.0",
+    "@veupathdb/eda": "^2.0.0",
     "@veupathdb/wdk-client": ">=0.5.4",
     "react": ">=16.14",
     "react-dom": ">=16.14"
