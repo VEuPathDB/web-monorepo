@@ -1369,10 +1369,10 @@
     read "^1.0.7"
     set-cookie-parser "^2.4.6"
 
-"@veupathdb/wdk-client@^0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.6.0.tgz#04f190c3b9916e93d008f606814f10b98f22359a"
-  integrity sha512-q/2980lnadFHG6CfjIZCjTNaliMtiVsuHQjRO9UgmcM8b9dNMZLqZjSsdkpW0jN94192AxO5ZzGOyv/sEDYpGg==
+"@veupathdb/wdk-client@^0.6.1":
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.6.1.tgz#66cba8329ad2aa84b8d7d18f6cfd3e74f23433b5"
+  integrity sha512-eTKi18NnT4opHp12lPLvUIF+/e1bKP5Q0R1KcGUE38r4RLWmRiCQrccEOgvWcXDL7QBj62p7a270n0zkUI520g==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
