@@ -558,7 +558,7 @@ function LineplotViz(props: VisualizationProps) {
 
   // find deependent axis range and its margin
   const defaultDependentRangeMargin = useMemo(() => {
-    //K set yMinMaxRange using yMin/yMax obtained from processInputData()
+    // set yMinMaxRange using yMin/yMax obtained from processInputData()
     const yMinMaxRange =
       data.value?.yMin != null && data.value?.yMax != null
         ? ({ min: data.value.yMin, max: data.value.yMax } as NumberOrDateRange)
@@ -573,12 +573,31 @@ function LineplotViz(props: VisualizationProps) {
               : undefined,
           max: yMinMaxRange?.max,
         } as NumberOrDateRange)
-      : numberDateDefaultDependentAxisRange(
+      : // add conditions to prevent previous yMinMaxRange from calling the function, e.g., date to categorical
+      ((yAxisVariable?.type === 'number' ||
+          yAxisVariable?.type === 'integer') &&
+          typeof yMinMaxRange?.min === 'number' &&
+          typeof yMinMaxRange?.max === 'number') ||
+        (yAxisVariable?.type === 'date' &&
+          typeof yMinMaxRange?.min === 'string' &&
+          typeof yMinMaxRange?.max === 'string')
+      ? numberDateDefaultDependentAxisRange(
           yAxisVariable,
           'lineplot',
           yMinMaxRange
-        );
-    return axisRangeMargin(defaultDependentRange, yAxisVariable?.type);
+        )
+      : undefined;
+
+    // add conditions to prevent previous defaultDependentRange from calling the function due to categorical
+    return yAxisVariable?.type === 'number' ||
+      yAxisVariable?.type === 'integer' ||
+      yAxisVariable?.type === 'date' ||
+      (yAxisVariable?.type === 'string' &&
+        categoricalMode &&
+        typeof defaultDependentRange?.min === 'number' &&
+        typeof defaultDependentRange?.max === 'number')
+      ? axisRangeMargin(defaultDependentRange, yAxisVariable?.type)
+      : undefined;
   }, [data.value, yAxisVariable, categoricalMode]);
 
   // custom legend list
