@@ -462,7 +462,7 @@ function BoxplotViz(props: VisualizationProps) {
       computation.descriptor.type === 'abundance'
         ? findCollectionVariableEntityAndVariable(
             entities,
-            (computation.descriptor.configuration as any).collectionVariable
+            computation.descriptor.configuration.collectionVariable
           )
         : undefined,
     [findCollectionVariableEntityAndVariable, entities, computation]
