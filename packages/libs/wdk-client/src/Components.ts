@@ -14,8 +14,6 @@ import PrimaryKeySpan from 'wdk-client/Views/ReporterForm/PrimaryKeySpan';
 import ReporterSortMessage from 'wdk-client/Views/ReporterForm/ReporterSortMessage';
 import ApplicationSpecificProperties from 'wdk-client/Views/User/ApplicationSpecificProperties';
 import ServerSideAttributeFilter from 'wdk-client/Components/AttributeFilter/ServerSideAttributeFilter';
-import Banner from 'wdk-client/Components/Banners/Banner';
-import BannerList from 'wdk-client/Components/Banners/BannerList';
 import AccordionButton from 'wdk-client/Components/CheckboxTree/AccordionButton';
 import CategoriesCheckboxTree from 'wdk-client/Components/CheckboxTree/CategoriesCheckboxTree';
 import CheckboxTree from 'wdk-client/Components/CheckboxTree/CheckboxTree';
@@ -79,8 +77,6 @@ export {
   AnswerTableCell,
   ApplicationSpecificProperties,
   AddStepPanelView,
-  Banner,
-  BannerList,
   CategoriesCheckboxTree,
   Checkbox,
   CheckboxList,
