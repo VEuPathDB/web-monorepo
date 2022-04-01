@@ -2,7 +2,6 @@ import { Switch, Redirect } from 'react-router';
 
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
-import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 import UserDatasetAllUploadsController from '../Controllers/UserDatasetAllUploadsController';
 import UserDatasetListController from '../Controllers/UserDatasetListController';
