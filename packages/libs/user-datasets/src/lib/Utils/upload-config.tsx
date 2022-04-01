@@ -25,6 +25,28 @@ export const uploadTypeConfig = {
       ),
     },
   },
+  study: {
+    type: 'study',
+    uploadTitle: 'Upload My Study',
+    formConfig: {
+      renderInfo: () => (
+        <p className="formInfo">
+          <span>* </span> All form fields are required.
+        </p>
+      ),
+    },
+  },
+  geneList: {
+    type: 'geneList',
+    uploadTitle: 'Upload My Gene List',
+    formConfig: {
+      renderInfo: () => (
+        <p className="formInfo">
+          <span>* </span> All form fields are required.
+        </p>
+      ),
+    },
+  },
 } as const;
 
 export function makeDatasetUploadPageConfig<
