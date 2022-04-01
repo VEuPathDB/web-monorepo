@@ -18,7 +18,7 @@ const rootEntity: StudyData = {
   description: 'Households from the study area',
   children: [
     {
-      id: 'GEMS_HouseObs',
+      id: 'EUPATH_0000776',
       displayName: 'Household Observation',
       description: '',
       children: [],
@@ -164,7 +164,7 @@ const entityCounts: EntityCounts = {
     total: 100,
     filtered: 5,
   },
-  GEMS_HouseObs: {
+  EUPATH_0000776: {
     total: 100,
     filtered: 2,
   },
