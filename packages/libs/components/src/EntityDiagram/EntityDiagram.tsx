@@ -336,16 +336,18 @@ export default function EntityDiagram({
     if (isOneToMany) {
       oneToManyNodeEndpoints.push(
         {
-          x: to.x + offset,
-          y: to.y + nodeHeight / 4,
+          x: to.x + (orientation == 'horizontal' ? offset : nodeHeight / 2),
+          y: to.y + (orientation == 'horizontal' ? nodeHeight / 4 : 0),
         },
         {
-          x: to.x + offset,
+          x: to.x + (orientation == 'horizontal' ? offset : 0),
           y: to.y,
         },
         {
-          x: to.x + offset,
-          y: to.y - nodeHeight / 4,
+          x:
+            to.x +
+            (orientation == 'horizontal' ? offset : (nodeHeight / 2) * -1),
+          y: to.y - (orientation == 'horizontal' ? nodeHeight / 4 : 0),
         }
       );
     }
@@ -357,12 +359,19 @@ export default function EntityDiagram({
           to={to}
           stroke="#777"
           strokeWidth={3}
+          // markerStart fills in the void caused by two lines starting from same position
+          markerStart={
+            link.source.children && link.source.children.length > 1
+              ? 'url(#dot-start'
+              : ''
+          }
           markerEnd={isOneToMany ? '' : 'url(#dot)'}
         />
         {isOneToMany
-          ? oneToManyNodeEndpoints.map((endpoint) => {
+          ? oneToManyNodeEndpoints.map((endpoint, index) => {
               return (
                 <Line
+                  key={index}
                   from={to}
                   to={endpoint}
                   stroke="#777"
@@ -376,6 +385,9 @@ export default function EntityDiagram({
     );
   }
 
+  // Can be used to adjust node size if/when this feature is implemented
+  const nodeSize = isExpanded ? 3.5 : 3.5;
+  const markerStartSize = 2;
   return (
     <div className={isExpanded ? 'expanded-diagram' : 'mini-diagram'}>
       <svg width={size.width} height={size.height}>
@@ -383,16 +395,30 @@ export default function EntityDiagram({
           <marker
             id="dot"
             viewBox="0 0 10 10"
-            // markerWidth={isExpanded ? '6' : '3'}
-            // markerHeight={isExpanded ? '4' : '3'}
-            markerWidth={'3.5'}
-            markerHeight={'3.5'}
+            markerWidth={nodeSize}
+            markerHeight={nodeSize}
             orient="auto"
             fill="#777"
-            refX={3.5}
-            refY={3.5}
+            refX={nodeSize}
+            refY={nodeSize}
           >
-            <circle cx="3.5" cy="3.5" r="3.5" />
+            <circle cx={nodeSize} cy={nodeSize} r={nodeSize} />
+          </marker>
+          <marker
+            id="dot-start"
+            viewBox="0 0 10 10"
+            markerWidth={markerStartSize}
+            markerHeight={markerStartSize}
+            orient="auto"
+            fill="#777"
+            refX={markerStartSize + 0.5}
+            refY={markerStartSize}
+          >
+            <circle
+              cx={markerStartSize}
+              cy={markerStartSize}
+              r={markerStartSize}
+            />
           </marker>
           <filter id="shadow" x="-20%" y="-40%" width="150%" height="200%">
             <feDropShadow
