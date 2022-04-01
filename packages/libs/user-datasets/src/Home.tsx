@@ -1,4 +1,4 @@
-import React from 'react';
+import { Link } from '@veupathdb/wdk-client/lib/Components';
 
 export default function Home() {
   return (
@@ -15,6 +15,12 @@ export default function Home() {
           </li>
           <li>
             Configure external services in <code>src/setupProxy.js</code>
+          </li>
+        </ul>
+        <p>Work under development:</p>
+        <ul>
+          <li>
+            <Link to="/user-datasets">User Datasets workspace</Link>
           </li>
         </ul>
       </div>
