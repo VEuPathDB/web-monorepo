@@ -56,7 +56,7 @@ function StudyRecordHeading({
       {study != null && permissions != null && shouldOfferLinkToDashboard(permissions) && (
         <div className={cx('DashboardLink')}><Link className={'btn ' + cx('DashboardLink')} to={`/study-access/${study.id}`}>Data Access Dashboard</Link></div>
       )}
-      {study != null &&  showSearches && (!isPrereleaseStudy(study.access, study.id, user, permissions)) && (
+      {study != null &&  showSearches && (!isPrereleaseStudy(study.access, study.id, permissions)) && (
         <div className={cx()}>
           <div className={cx('Label')}>Search the data</div>
           {loading ? null :
@@ -71,20 +71,20 @@ function StudyRecordHeading({
           }
         </div>
       )}
-      {study != null && isPrereleaseStudy(study.access, study.id, user, permissions) && (
+      {study != null && isPrereleaseStudy(study.access, study.id, permissions) && (
         <div style={{backgroundColor:'lightblue',padding:'0.5em', fontSize:'1.8em',margin:'1.5em 0 0'}} className='record-page-banner'>
           This study has not yet been released. <span style={{fontSize:'80%'}}>
             For more information, please email {props.record.attributes.contact} at <a href={"mailto:" + study.email}>{study.email}</a>.</span>
         </div>
       )}
-      {study != null && isPrivateStudy(study.access, study.id, user, permissions) && (
+      {study != null && isPrivateStudy(study.access, study.id, permissions) && (
         <div style={{backgroundColor:'lightblue',padding:'0.5em', fontSize:'1.8em',margin:'1.5em 0 0'}} className='record-page-banner'>
           This study has data access restrictions. <span style={{fontSize:'80%'}}>
           Please <UserLink to={location.pathname + '/new'} user={user}>login</UserLink> or <UserLink user={user} to={requestAccessPath}>acquire research approval</UserLink> in order to search the data. The data from this study requires approval to download and use in research projects.
           </span>
         </div>
       )}
-      {study != null && showDownload && (!isPrereleaseStudy(study.access, study.id, user, permissions)) && (
+      {study != null && showDownload && (!isPrereleaseStudy(study.access, study.id, permissions)) && (
         <div className={cx()}>
           <div className={cx('Label')}>Download the data</div>
           { study && showDownload && <DownloadLink className="StudySearchIconLinksItem" studyId={study.id} studyUrl={study.downloadUrl.url} attemptAction={attemptAction}/> }
@@ -116,8 +116,8 @@ const mapDispatchToProps = {
 
 export default connect(mapStateToProps, mapDispatchToProps)(StudyRecordHeading);
 
-function isPrivateStudy(access, studyId, user, permissions) {
-  return access === 'private' && !isUserFullyApprovedForStudy(permissions, user.properties.approvedStudies, studyId);
+function isPrivateStudy(access, studyId, permissions) {
+  return access === 'private' && !isUserFullyApprovedForStudy(permissions, studyId);
 }
 
 function UserLink({ to, user, children }) {

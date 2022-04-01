@@ -39,7 +39,7 @@ class StudyMenuItem extends React.Component {
   }
 
   renderWdkMenuItem() {
-    const { study, user, permissions } = this.props;
+    const { study, permissions } = this.props;
     const { name, id, disabled, route, searches } = study;
     const SearchLink = this.renderSearchLink;
 
@@ -52,7 +52,7 @@ class StudyMenuItem extends React.Component {
           </Link>
         </div>
         <div className="row StudyMenuItem-Links">
-        { (!isPrereleaseStudy(study.access, study.id, user, permissions))
+        { (!isPrereleaseStudy(study.access, study.id, permissions))
           ? searches.map(({ path, displayName, icon }) => <SearchLink key={path} path={path} displayName={displayName} icon={icon} />)
           : (
             <div className="prerelease">
@@ -66,7 +66,7 @@ class StudyMenuItem extends React.Component {
   }
 
   renderEdaMenuItem() {
-    const { study, user, permissions } = this.props;
+    const { study, permissions } = this.props;
     const { name, id, disabled } = study;
     const edaRoute = makeEdaRoute(study.id) + '/new';
 
@@ -79,7 +79,7 @@ class StudyMenuItem extends React.Component {
         </div>
         <div className="row StudyMenuItem-Links">
         {
-          isPrereleaseStudy(study.access, study.id, user, permissions) &&
+          isPrereleaseStudy(study.access, study.id, permissions) &&
           <div className="prerelease">
             <small>(coming soon)</small>
           </div>
@@ -94,5 +94,5 @@ class StudyMenuItem extends React.Component {
   }
 }
 
-export default connect( state => ({user: state.globalData.user}) )(StudyMenuItem);
+export default StudyMenuItem;
 
