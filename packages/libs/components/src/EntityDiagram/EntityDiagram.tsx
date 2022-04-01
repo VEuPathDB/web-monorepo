@@ -359,12 +359,7 @@ export default function EntityDiagram({
           to={to}
           stroke="#777"
           strokeWidth={3}
-          // markerStart fills in the void caused by two lines starting from same position
-          markerStart={
-            link.source.children && link.source.children.length > 1
-              ? 'url(#dot-start'
-              : ''
-          }
+          markerStart={'url(#dot)'}
           markerEnd={isOneToMany ? '' : 'url(#dot)'}
         />
         {isOneToMany
@@ -387,7 +382,6 @@ export default function EntityDiagram({
 
   // Can be used to adjust node size if/when this feature is implemented
   const nodeSize = isExpanded ? 3.5 : 3.5;
-  const markerStartSize = 2;
   return (
     <div className={isExpanded ? 'expanded-diagram' : 'mini-diagram'}>
       <svg width={size.width} height={size.height}>
@@ -403,22 +397,6 @@ export default function EntityDiagram({
             refY={nodeSize}
           >
             <circle cx={nodeSize} cy={nodeSize} r={nodeSize} />
-          </marker>
-          <marker
-            id="dot-start"
-            viewBox="0 0 10 10"
-            markerWidth={markerStartSize}
-            markerHeight={markerStartSize}
-            orient="auto"
-            fill="#777"
-            refX={markerStartSize + 0.5}
-            refY={markerStartSize}
-          >
-            <circle
-              cx={markerStartSize}
-              cy={markerStartSize}
-              r={markerStartSize}
-            />
           </marker>
           <filter id="shadow" x="-20%" y="-40%" width="150%" height="200%">
             <feDropShadow
