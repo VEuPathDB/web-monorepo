@@ -32,8 +32,8 @@
     "extends @veupathdb/browserslist-config"
   ],
   "peerDependencies": {
-    "@veupathdb/wdk-client": ">=0.5.7",
-    "@veupathdb/web-common": ">=0.2.10",
+    "@veupathdb/wdk-client": ">=0.6.2",
+    "@veupathdb/web-common": ">=0.4.2",
     "react": "^16.14.0 || ^17.0.2",
     "react-dom": "^16.14.0 || ^17.0.2",
     "react-redux": "^7.1.3",
