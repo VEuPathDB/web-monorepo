@@ -1,4 +1,4 @@
-import { Switch, Redirect } from 'react-router';
+import { Switch, Redirect } from 'react-router-dom';
 
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';

@@ -1,6 +1,6 @@
 import './globals';
 
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps } from 'react-router-dom';
 
 import { partial } from 'lodash';
 

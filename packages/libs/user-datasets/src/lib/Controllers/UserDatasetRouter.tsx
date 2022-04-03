@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { RouteComponentProps, Switch, useRouteMatch } from 'react-router';
+import { RouteComponentProps, Switch, useRouteMatch } from 'react-router-dom';
 
 import { parseQueryString } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
