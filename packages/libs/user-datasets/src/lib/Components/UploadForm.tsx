@@ -106,6 +106,7 @@ function UploadForm({
   useEffect(() => {
     if (badUploadMessage != null) {
       setErrorMessages([badUploadMessage]);
+      setSubmitting(false);
     }
   }, [badUploadMessage]);
 
