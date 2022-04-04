@@ -5,8 +5,9 @@ import { connect } from 'react-redux';
 import { PageController } from '@veupathdb/wdk-client/lib/Controllers';
 
 import { 
+  loadStudy,
   onChangeFieldFactory, 
-  submitForm 
+  submitForm,
 } from '../action-creators/AccessRequestActionCreators';
 
 import { 
@@ -31,6 +32,18 @@ import './AccessRequestController.scss';
 class AccessRequestController extends PageController {
   getTitle() {
     return this.props.title;
+  }
+
+  loadData(prevProps) {
+    if (
+      prevProps == null ||
+      (
+        prevProps.datasetId !==
+        this.props.datasetId
+      )
+    ) {
+      this.props.loadStudy(this.props.datasetId);
+    }
   }
 
   isRenderDataLoaded() {
@@ -70,6 +83,7 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = {
+  loadStudy,
   onChangePurpose: onChangeFieldFactory('purpose'),
   onChangePriorAuth: onChangeFieldFactory('prior_auth'),
   onChangeResearchQuestion: onChangeFieldFactory('research_question'),

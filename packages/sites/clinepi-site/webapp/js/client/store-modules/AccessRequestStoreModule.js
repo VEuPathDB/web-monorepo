@@ -1,9 +1,9 @@
 import { of, merge } from 'rxjs';
 import { filter, mergeAll, mergeMap, withLatestFrom } from 'rxjs/operators';
-import { StaticDataActions } from '@veupathdb/wdk-client/lib/Actions';
 
 import { 
   FINISH_SUBMISSION,
+  LOAD_STUDY,
   SUBMIT_FORM,
   UPDATE_FIELD, 
   UPDATE_STUDY, 
@@ -14,7 +14,7 @@ import {
   updateField,
   updateLoadingError,
   updateStudy,
-  updateUserId
+  updateUserId,
 } from '../action-creators/AccessRequestActionCreators';
 import { datasetId, formValues, userId } from '../selectors/AccessRequestSelectors';
 import { parse } from 'querystring';
@@ -107,27 +107,20 @@ export function reduce(state = initialState, { type, payload }) {
 
 export function observe(action$, state$, dependencies) {
   return merge(
-    observeStaticDataLoaded(action$, state$, dependencies),
+    observeLoadStudy(action$, state$, dependencies),
     observeSubmitForm(action$, state$, dependencies)
   );
 }
 
-function observeStaticDataLoaded(action$, state$, dependencies) {
+function observeLoadStudy(action$, state$, dependencies) {
   return action$.pipe(
-    filter(StaticDataActions.userLoaded.isOfType),
-    mergeMap(async ({ payload }) => {
-      const onRequestAccessRoute = window.location.pathname.includes('/request-access/');
-
-      if (!onRequestAccessRoute) {
-        return [];
-      }
-
-      const datasetId = window.location.pathname.replace(/.*\/request-access\//, '');
-
-      const permissions = await checkPermissions(payload.user, dependencies.studyAccessApi);
+    filter(({ type }) => type === LOAD_STUDY),
+    mergeMap(async ({ payload: { datasetId } }) => {
+      const user = await dependencies.wdkService.getCurrentUser();
+      const permissions = await checkPermissions(user, dependencies.studyAccessApi);
 
       if (
-        payload.user.isGuest ||
+        user.isGuest ||
         isUserFullyApprovedForStudy(
           permissions,
           datasetId
@@ -149,7 +142,7 @@ function observeStaticDataLoaded(action$, state$, dependencies) {
             email = '',
             properties: { firstName, middleName, lastName, organization } = 
               { firstName: '', middleName: '', lastName: '', organization: '' }
-          } = payload.user;
+          } = user;
 
           return [
             updateUserId(id),
