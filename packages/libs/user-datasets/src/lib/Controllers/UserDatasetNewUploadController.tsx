@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { StrategySummary } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 import { submitUploadForm } from '../Actions/UserDatasetUploadActions';
 
@@ -32,6 +33,26 @@ export default function UserDatasetUploadController({
     []
   );
 
+  const strategyOptions = useWdkService(
+    async (wdkService): Promise<StrategySummary[]> => {
+      if (!datasetUploadType.formConfig.uploadMethodConfig.strategy.offer) {
+        return [];
+      }
+
+      const strategies = await wdkService.getStrategies();
+      const compatibleRecordTypeSet = new Set(
+        datasetUploadType.formConfig.uploadMethodConfig.strategy.compatibleRecordTypes
+      );
+
+      return strategies.filter(
+        (strategy) =>
+          strategy.recordClassName != null &&
+          compatibleRecordTypeSet.has(strategy.recordClassName)
+      );
+    },
+    [datasetUploadType.formConfig.uploadMethodConfig.strategy.offer]
+  );
+
   const badUploadMessage = useSelector(
     (stateSlice: StateSlice) => stateSlice.userDatasetUpload.badUploadMessage
   );
@@ -45,7 +66,7 @@ export default function UserDatasetUploadController({
     [dispatch]
   );
 
-  return projectId == null ? (
+  return projectId == null || strategyOptions == null ? (
     <Loading />
   ) : (
     <div className="stack">
