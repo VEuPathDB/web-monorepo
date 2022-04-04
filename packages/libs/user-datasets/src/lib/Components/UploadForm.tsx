@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import {
   TextBox,
@@ -251,18 +251,35 @@ type DataUploadSelection =
 
 type CompleteDataUploadSelection = Required<DataUploadSelection>;
 
-function NewUploadForm(props: Props) {
-  const [name, setName] = useState(props.urlParams.datasetName ?? '');
-  const [summary, setSummary] = useState(props.urlParams.datasetSummary ?? '');
+interface FormContent {
+  name: string;
+  summary: string;
+  description: string;
+  dataUploadSelection: DataUploadSelection;
+}
+
+type FormValidation =
+  | { valid: false; errors: string[] }
+  | { valid: true; submission: NewUserDataset };
+
+function NewUploadForm({
+  badUploadMessage,
+  baseUrl,
+  projectId,
+  urlParams,
+  submitForm,
+}: Props) {
+  const [name, setName] = useState(urlParams.datasetName ?? '');
+  const [summary, setSummary] = useState(urlParams.datasetSummary ?? '');
   const [description, setDescription] = useState(
-    props.urlParams.datasetDescription ?? ''
+    urlParams.datasetDescription ?? ''
   );
 
   const [dataUploadMode, setDataUploadMode] = useState<DataUploadMode>(
-    props.urlParams.datasetUrl ? 'url' : 'file'
+    urlParams.datasetUrl ? 'url' : 'file'
   );
   const [file, setFile] = useState<File>();
-  const [url, setUrl] = useState(props.urlParams.datasetUrl ?? '');
+  const [url, setUrl] = useState(urlParams.datasetUrl ?? '');
 
   const [badFormSubmitMessages, setBadFormSubmitMessages] = useState<string[]>(
     []
@@ -274,6 +291,83 @@ function NewUploadForm(props: Props) {
       dataUploadMode === 'file' ? { type: 'file', file } : { type: 'url', url },
     [dataUploadMode, file, url]
   );
+
+  const onSubmit = useCallback(() => {
+    const formValidation = validateForm(projectId, {
+      name,
+      summary,
+      description,
+      dataUploadSelection,
+    });
+
+    if (!formValidation.valid) {
+      setBadFormSubmitMessages(formValidation.errors);
+    } else {
+      setSubmitting(true);
+      submitForm(formValidation.submission, `${baseUrl}/recent`);
+    }
+  }, [
+    baseUrl,
+    projectId,
+    name,
+    summary,
+    description,
+    dataUploadSelection,
+    submitForm,
+  ]);
+}
+
+function validateForm(
+  projectId: string,
+  formContent: FormContent
+): FormValidation {
+  const { name, summary, description, dataUploadSelection } = formContent;
+
+  const errors: string[] = [];
+
+  if (!name) {
+    errors.push('Required: data set name');
+  }
+  if (!summary) {
+    errors.push('Required: data set summary');
+  }
+  if (!description) {
+    errors.push('Required: data set description');
+  }
+
+  if (!isCompleteDataUploadSelection(dataUploadSelection)) {
+    errors.push('Required: data file or URL');
+    return {
+      valid: false,
+      errors,
+    };
+  }
+
+  if (
+    dataUploadSelection.type === 'url' &&
+    !isValidUrl(dataUploadSelection.url)
+  ) {
+    errors.push('The provided data URL does not seem valid');
+  }
+
+  if (errors.length === 0) {
+    return {
+      valid: false,
+      errors,
+    };
+  }
+
+  return {
+    valid: true,
+    submission: {
+      name,
+      summary,
+      description,
+      datasetType: dataUploadSelection.type,
+      projects: [projectId],
+      uploadMethod: dataUploadSelection,
+    },
+  };
 }
 
 function isCompleteDataUploadSelection(
