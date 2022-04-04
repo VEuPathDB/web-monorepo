@@ -265,9 +265,10 @@ type FormValidation =
 function NewUploadForm({
   badUploadMessage,
   baseUrl,
+  datasetUploadType,
   projectId,
-  urlParams,
   submitForm,
+  urlParams,
 }: Props) {
   const [name, setName] = useState(urlParams.datasetName ?? '');
   const [summary, setSummary] = useState(urlParams.datasetSummary ?? '');
@@ -327,6 +328,10 @@ function NewUploadForm({
       onSubmit={onSubmit}
     >
       {errorMessages.length > 0 && <ErrorMessage errors={errorMessages} />}
+      <button type="submit" className="btn">
+        Upload Data Set
+      </button>
+      {datasetUploadType.formConfig.renderInfo()}
     </form>
   );
 }
