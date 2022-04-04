@@ -226,7 +226,7 @@ function UploadForm({
           />
         </div>
       </div>
-      <button type="submit" className="btn">
+      <button type="submit" className="btn" disabled={submitting}>
         Upload Data Set
       </button>
       {datasetUploadType.formConfig.renderInfo()}
