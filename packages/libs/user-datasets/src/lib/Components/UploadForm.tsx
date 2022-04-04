@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  FormEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import {
   TextBox,
@@ -68,29 +74,34 @@ function UploadForm({
     [dataUploadMode, file, url]
   );
 
-  const onSubmit = useCallback(() => {
-    const formValidation = validateForm(projectId, {
+  const onSubmit = useCallback(
+    (event: FormEvent) => {
+      event.preventDefault();
+
+      const formValidation = validateForm(projectId, {
+        name,
+        summary,
+        description,
+        dataUploadSelection,
+      });
+
+      if (!formValidation.valid) {
+        setErrorMessages(formValidation.errors);
+      } else {
+        setSubmitting(true);
+        submitForm(formValidation.submission, `${baseUrl}/recent`);
+      }
+    },
+    [
+      baseUrl,
+      projectId,
       name,
       summary,
       description,
       dataUploadSelection,
-    });
-
-    if (!formValidation.valid) {
-      setErrorMessages(formValidation.errors);
-    } else {
-      setSubmitting(true);
-      submitForm(formValidation.submission, `${baseUrl}/recent`);
-    }
-  }, [
-    baseUrl,
-    projectId,
-    name,
-    summary,
-    description,
-    dataUploadSelection,
-    submitForm,
-  ]);
+      submitForm,
+    ]
+  );
 
   useEffect(() => {
     if (badUploadMessage != null) {
