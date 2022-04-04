@@ -1,11 +1,6 @@
 import { useMemo } from 'react';
 
-import {
-  RouteComponentProps,
-  Switch,
-  useLocation,
-  useRouteMatch,
-} from 'react-router-dom';
+import { RouteComponentProps, Switch, useRouteMatch } from 'react-router-dom';
 
 import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
 
