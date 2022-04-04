@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import {
   TextBox,
@@ -281,9 +281,7 @@ function NewUploadForm({
   const [file, setFile] = useState<File>();
   const [url, setUrl] = useState(urlParams.datasetUrl ?? '');
 
-  const [badFormSubmitMessages, setBadFormSubmitMessages] = useState<string[]>(
-    []
-  );
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
 
   const dataUploadSelection = useMemo(
@@ -301,7 +299,7 @@ function NewUploadForm({
     });
 
     if (!formValidation.valid) {
-      setBadFormSubmitMessages(formValidation.errors);
+      setErrorMessages(formValidation.errors);
     } else {
       setSubmitting(true);
       submitForm(formValidation.submission, `${baseUrl}/recent`);
@@ -316,12 +314,36 @@ function NewUploadForm({
     submitForm,
   ]);
 
+  useEffect(() => {
+    if (badUploadMessage != null) {
+      setErrorMessages([badUploadMessage]);
+    }
+  }, [badUploadMessage]);
+
   return (
     <form
       className="UploadForm"
       style={submitting ? { opacity: '0.5' } : {}}
       onSubmit={onSubmit}
-    ></form>
+    >
+      {errorMessages.length > 0 && <ErrorMessage errors={errorMessages} />}
+    </form>
+  );
+}
+
+function ErrorMessage({ errors }: { errors: string[] }) {
+  return (
+    <div className="ui-state-error" style={{ fontSize: 'large' }}>
+      <div>
+        <Icon fa="exclamation-triangle" />
+        &nbsp; Could not upload data set
+      </div>
+      {errors.map((error, ix) => (
+        <div key={ix} className="ui-state-error-text">
+          {error}
+        </div>
+      ))}
+    </div>
   );
 }
 
