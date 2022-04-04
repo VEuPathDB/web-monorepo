@@ -560,8 +560,7 @@ function LineplotViz(props: VisualizationProps) {
       outputEntity,
       filteredCounts,
       categoricalMode,
-      // axis range control: get data but no need for now
-      // vizConfig.independentAxisRange,
+      vizConfig.independentAxisRange,
     ])
   );
 
@@ -1620,6 +1619,16 @@ function getRequestParams(
 
   const valueSpec = valueSpecLookup[valueSpecConfig];
 
+  // define viewport based on independent axis range: need to check undefined case
+  const viewport =
+    vizConfig?.independentAxisRange?.min != null &&
+    vizConfig?.independentAxisRange?.max != null
+      ? {
+          xMin: String(vizConfig?.independentAxisRange?.min),
+          xMax: String(vizConfig?.independentAxisRange?.max),
+        }
+      : undefined;
+
   return {
     studyId,
     filters,
@@ -1643,6 +1652,7 @@ function getRequestParams(
             yAxisDenominatorValues: denominatorValues,
           }
         : {}),
+      viewport,
     },
   };
 }
