@@ -315,6 +315,14 @@ function NewUploadForm({
     dataUploadSelection,
     submitForm,
   ]);
+
+  return (
+    <form
+      className="UploadForm"
+      style={submitting ? { opacity: '0.5' } : {}}
+      onSubmit={onSubmit}
+    ></form>
+  );
 }
 
 function validateForm(
