@@ -78,7 +78,7 @@ function UploadForm({
     (event: FormEvent) => {
       event.preventDefault();
 
-      const formValidation = validateForm(projectId, {
+      const formValidation = validateForm(projectId, datasetUploadType, {
         name,
         summary,
         description,
@@ -250,8 +250,9 @@ function ErrorMessage({ errors }: { errors: string[] }) {
   );
 }
 
-function validateForm(
+function validateForm<T extends string = string>(
   projectId: string,
+  datasetUploadType: DatasetUploadTypeConfigEntry<T>,
   formContent: FormContent
 ): FormValidation {
   const { name, summary, description, dataUploadSelection } = formContent;
@@ -279,7 +280,7 @@ function validateForm(
       name,
       summary,
       description,
-      datasetType: dataUploadSelection.type,
+      datasetType: datasetUploadType.type,
       projects: [projectId],
       uploadMethod: dataUploadSelection,
     },
