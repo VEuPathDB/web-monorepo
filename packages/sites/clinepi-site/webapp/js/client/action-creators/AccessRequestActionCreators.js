@@ -12,7 +12,7 @@ export const loadStudy = datasetId => ({
   payload: {
     datasetId
   }
-})
+});
 
 export const updateUserId = userId => ({
   type: UPDATE_USER_ID,
