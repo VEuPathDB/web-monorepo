@@ -23,6 +23,7 @@ export const uploadTypeConfig = {
           using our filtering and visualisation tools.
         </p>
       ),
+      uploadMethodConfig: {},
     },
   },
   study: {
@@ -34,6 +35,7 @@ export const uploadTypeConfig = {
           <span>* </span> All form fields are required.
         </p>
       ),
+      uploadMethodConfig: {},
     },
   },
   geneList: {
@@ -45,6 +47,7 @@ export const uploadTypeConfig = {
           <span>* </span> All form fields are required.
         </p>
       ),
+      uploadMethodConfig: {},
     },
   },
 } as const;
