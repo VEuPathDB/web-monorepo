@@ -95,6 +95,7 @@ function UploadForm({
     [
       baseUrl,
       projectId,
+      datasetUploadType,
       name,
       summary,
       description,
