@@ -1,8 +1,12 @@
 import { useMemo } from 'react';
 
-import { RouteComponentProps, Switch, useRouteMatch } from 'react-router-dom';
+import {
+  RouteComponentProps,
+  Switch,
+  useLocation,
+  useRouteMatch,
+} from 'react-router-dom';
 
-import { parseQueryString } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
 
 import UserDatasetsWorkspace from '../Components/UserDatasetsWorkspace';
@@ -54,16 +58,27 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
         path={path}
         exact={false}
         requiresLogin={false} // uses custom guest views
-        component={(props: RouteComponentProps<{}>) => (
-          <UserDatasetsWorkspace
-            baseUrl={url}
-            helpRoute={helpRoute}
-            uploadPageConfig={uploadPageConfig}
-            // FIXME This should be memoized
-            urlParams={parseQueryString(props)}
-            workspaceTitle={workspaceTitle}
-          />
-        )}
+        component={function UserDatasetsWorkspaceRoute(
+          props: RouteComponentProps<{}>
+        ) {
+          const urlParams = useMemo(() => {
+            const searchParamEntries = new URLSearchParams(
+              props.location.search
+            ).entries();
+
+            return Object.fromEntries(searchParamEntries);
+          }, [props.location.search]);
+
+          return (
+            <UserDatasetsWorkspace
+              baseUrl={url}
+              helpRoute={helpRoute}
+              uploadPageConfig={uploadPageConfig}
+              urlParams={urlParams}
+              workspaceTitle={workspaceTitle}
+            />
+          );
+        }}
       />
     </Switch>
   );
