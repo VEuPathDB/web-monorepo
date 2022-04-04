@@ -244,23 +244,10 @@ function validateForm(
 ): FormValidation {
   const { name, summary, description, dataUploadSelection } = formContent;
 
-  const errors: string[] = [];
-
-  if (!name) {
-    errors.push('Required: data set name');
-  }
-  if (!summary) {
-    errors.push('Required: data set summary');
-  }
-  if (!description) {
-    errors.push('Required: data set description');
-  }
-
   if (!isCompleteDataUploadSelection(dataUploadSelection)) {
-    errors.push('Required: data file or URL');
     return {
       valid: false,
-      errors,
+      errors: ['Required: data file or URL'],
     };
   }
 
@@ -268,13 +255,9 @@ function validateForm(
     dataUploadSelection.type === 'url' &&
     !isValidUrl(dataUploadSelection.url)
   ) {
-    errors.push('The provided data URL does not seem valid');
-  }
-
-  if (errors.length === 0) {
     return {
       valid: false,
-      errors,
+      errors: ['The provided data URL does not seem valid'],
     };
   }
 
