@@ -773,6 +773,18 @@ function ScatterplotViz(props: VisualizationProps) {
     [findCollectionVariableEntityAndVariable, entities, computation]
   );
 
+  const dependentAxisLabel =
+    computation.descriptor.configuration != null
+      ? computation.descriptor.type === 'alphadiv'
+        ? // considering computedVariableMetadata.displayName for alphadiv
+          data?.value?.computedVariableMetadata?.displayName != null
+          ? data?.value?.computedVariableMetadata?.displayName[0]
+          : computation.descriptor.type
+        : computation.descriptor.type === 'abundance'
+        ? 'Relative Abundance'
+        : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'
+      : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis';
+
   const plotNode = (
     <ScatterplotWithControls
       // data.value
@@ -786,18 +798,7 @@ function ScatterplotViz(props: VisualizationProps) {
       }
       displayLegend={false}
       independentAxisLabel={variableDisplayWithUnit(xAxisVariable) ?? 'X-axis'}
-      dependentAxisLabel={
-        computation.descriptor.configuration != null
-          ? computation.descriptor.type === 'alphadiv'
-            ? // considering computedVariableMetadata.displayName for alphadiv
-              data?.value?.computedVariableMetadata?.displayName != null
-              ? data?.value?.computedVariableMetadata?.displayName[0]
-              : computation.descriptor.type
-            : computation.descriptor.type === 'abundance'
-            ? 'Relative Abundance'
-            : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'
-          : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'
-      }
+      dependentAxisLabel={dependentAxisLabel}
       // set valueSpec as Raw when yAxisVariable = date
       valueSpec={
         yAxisVariable?.type === 'date' ? 'Raw' : vizConfig.valueSpecConfig
@@ -955,25 +956,30 @@ function ScatterplotViz(props: VisualizationProps) {
               label: 'X-axis',
               role: 'primary',
             },
-            computation.descriptor.configuration ?? {
+            {
               name: 'yAxisVariable',
               label: 'Y-axis',
               role: 'primary',
+              readonlyValue: computation.descriptor.configuration
+                ? dependentAxisLabel
+                : undefined,
             },
-            computation.descriptor.configuration != null &&
+            ...(computation.descriptor.configuration != null &&
             computation.descriptor.type === 'abundance'
-              ? {}
-              : {
-                  name: 'overlayVariable',
-                  label: 'Overlay',
-                  role: 'stratification',
-                },
+              ? []
+              : [
+                  {
+                    name: 'overlayVariable',
+                    label: 'Overlay',
+                    role: 'stratification',
+                  } as const,
+                ]),
             {
               name: 'facetVariable',
               label: 'Facet',
               role: 'stratification',
             },
-          ].filter((input): input is InputSpec => input != null)}
+          ]}
           entities={entities}
           selectedVariables={{
             xAxisVariable: vizConfig.xAxisVariable,

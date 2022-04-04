@@ -456,7 +456,7 @@ function BoxplotViz(props: VisualizationProps) {
   );
 
   // alphadiv abundance findEntityAndVariable does not work properly for collection variable
-  const independentAxisLabel = useMemo(
+  const independentAxisEntityAndVariable = useMemo(
     () =>
       computation.descriptor.configuration != null &&
       computation.descriptor.type === 'abundance'
@@ -467,6 +467,24 @@ function BoxplotViz(props: VisualizationProps) {
         : undefined,
     [findCollectionVariableEntityAndVariable, entities, computation]
   );
+  const independentAxisLabel =
+    computation.descriptor.configuration != null &&
+    computation.descriptor.type === 'abundance' &&
+    independentAxisEntityAndVariable != null
+      ? independentAxisEntityAndVariable?.variable.displayName
+      : variableDisplayWithUnit(xAxisVariable) ?? 'X-axis';
+
+  const dependentAxisLabel =
+    computation.descriptor.configuration != null
+      ? computation.descriptor.type === 'alphadiv'
+        ? // considering computedVariableMetadata.displayName for alphadiv
+          data?.value?.computedVariableMetadata?.displayName != null
+          ? data?.value?.computedVariableMetadata?.displayName[0]
+          : computation.descriptor.type
+        : computation.descriptor.type === 'abundance'
+        ? 'Relative Abundance'
+        : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'
+      : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis';
 
   const plotNode = (
     <BoxplotWithControls
@@ -478,25 +496,8 @@ function BoxplotViz(props: VisualizationProps) {
       orientation={'vertical'}
       displayLegend={false}
       // alphadiv abundance: set a independentAxisLabel condition for abundance
-      independentAxisLabel={
-        computation.descriptor.configuration != null &&
-        computation.descriptor.type === 'abundance' &&
-        independentAxisLabel != null
-          ? independentAxisLabel?.variable.displayName
-          : variableDisplayWithUnit(xAxisVariable) ?? 'X-axis'
-      }
-      dependentAxisLabel={
-        computation.descriptor.configuration != null
-          ? computation.descriptor.type === 'alphadiv'
-            ? // considering computedVariableMetadata.displayName for alphadiv
-              data?.value?.computedVariableMetadata?.displayName != null
-              ? data?.value?.computedVariableMetadata?.displayName[0]
-              : computation.descriptor.type
-            : computation.descriptor.type === 'abundance'
-            ? 'Relative Abundance'
-            : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'
-          : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'
-      }
+      independentAxisLabel={independentAxisLabel}
+      dependentAxisLabel={dependentAxisLabel}
       // show/hide independent/dependent axis tick label
       showIndependentAxisTickLabel={true}
       showDependentAxisTickLabel={true}
@@ -589,18 +590,23 @@ function BoxplotViz(props: VisualizationProps) {
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
         <InputVariables
           inputs={[
-            computation.descriptor.configuration != null &&
-            computation.descriptor.type === 'abundance'
-              ? {}
-              : {
-                  name: 'xAxisVariable',
-                  label: 'X-axis',
-                  role: 'primary',
-                },
-            computation.descriptor.configuration ?? {
+            {
+              name: 'xAxisVariable',
+              label: 'X-axis',
+              role: 'primary',
+              readonlyValue:
+                computation.descriptor.configuration != null &&
+                computation.descriptor.type === 'abundance'
+                  ? independentAxisLabel
+                  : undefined,
+            },
+            {
               name: 'yAxisVariable',
               label: 'Y-axis',
               role: 'primary',
+              readonlyValue: computation.descriptor.configuration
+                ? dependentAxisLabel
+                : undefined,
             },
             {
               name: 'overlayVariable',
@@ -612,7 +618,7 @@ function BoxplotViz(props: VisualizationProps) {
               label: 'Facet',
               role: 'stratification',
             },
-          ].filter((input): input is InputSpec => input != null)}
+          ]}
           entities={entities}
           selectedVariables={{
             xAxisVariable: vizConfig.xAxisVariable,
