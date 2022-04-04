@@ -70,7 +70,14 @@ export interface DatasetUploadTypeConfigEntry<T extends string> {
   type: T;
   uploadTitle: string;
   formConfig: {
-    uploadMethodConfig: {};
+    uploadMethodConfig: {
+      strategy:
+        | { offer: false }
+        | {
+            offer: true;
+            compatibleRecordTypes: string[];
+          };
+    };
     renderInfo: () => ReactNode;
   };
 }

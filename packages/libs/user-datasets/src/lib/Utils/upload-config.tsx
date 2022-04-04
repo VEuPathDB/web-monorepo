@@ -2,7 +2,9 @@ import { intersection } from 'lodash';
 
 import { DatasetUploadPageConfig, DatasetUploadTypeConfig } from './types';
 
-export const uploadTypeConfig = {
+type ImplementedUploadTypes = 'biom' | 'geneList' | 'study';
+
+export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> = {
   biom: {
     type: 'biom',
     uploadTitle: 'Upload My Data Set',
@@ -23,19 +25,11 @@ export const uploadTypeConfig = {
           using our filtering and visualisation tools.
         </p>
       ),
-      uploadMethodConfig: {},
-    },
-  },
-  study: {
-    type: 'study',
-    uploadTitle: 'Upload My Study',
-    formConfig: {
-      renderInfo: () => (
-        <p className="formInfo">
-          <span>* </span> All form fields are required.
-        </p>
-      ),
-      uploadMethodConfig: {},
+      uploadMethodConfig: {
+        strategy: {
+          offer: false,
+        },
+      },
     },
   },
   geneList: {
@@ -47,10 +41,31 @@ export const uploadTypeConfig = {
           <span>* </span> All form fields are required.
         </p>
       ),
-      uploadMethodConfig: {},
+      uploadMethodConfig: {
+        strategy: {
+          offer: true,
+          compatibleRecordTypes: ['gene', 'transcript'],
+        },
+      },
     },
   },
-} as const;
+  study: {
+    type: 'study',
+    uploadTitle: 'Upload My Study',
+    formConfig: {
+      renderInfo: () => (
+        <p className="formInfo">
+          <span>* </span> All form fields are required.
+        </p>
+      ),
+      uploadMethodConfig: {
+        strategy: {
+          offer: false,
+        },
+      },
+    },
+  },
+};
 
 export function makeDatasetUploadPageConfig<
   T1 extends string,
