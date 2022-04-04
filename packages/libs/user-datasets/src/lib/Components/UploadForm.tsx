@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import {
   TextBox,
@@ -242,6 +242,48 @@ class UploadForm extends React.Component<Props, State> {
     );
   }
 }
+
+type DataUploadMode = 'file' | 'url';
+
+type DataUploadSelection =
+  | { type: 'file'; file?: File }
+  | { type: 'url'; url?: string };
+
+type CompleteDataUploadSelection = Required<DataUploadSelection>;
+
+function NewUploadForm(props: Props) {
+  const [name, setName] = useState(props.urlParams.datasetName ?? '');
+  const [summary, setSummary] = useState(props.urlParams.datasetSummary ?? '');
+  const [description, setDescription] = useState(
+    props.urlParams.datasetDescription ?? ''
+  );
+
+  const [dataUploadMode, setDataUploadMode] = useState<DataUploadMode>(
+    props.urlParams.datasetUrl ? 'url' : 'file'
+  );
+  const [file, setFile] = useState<File>();
+  const [url, setUrl] = useState(props.urlParams.datasetUrl ?? '');
+
+  const [badFormSubmitMessages, setBadFormSubmitMessages] = useState<string[]>(
+    []
+  );
+  const [submitting, setSubmitting] = useState(false);
+
+  const dataUploadSelection = useMemo(
+    (): DataUploadSelection =>
+      dataUploadMode === 'file' ? { type: 'file', file } : { type: 'url', url },
+    [dataUploadMode, file, url]
+  );
+}
+
+function isCompleteDataUploadSelection(
+  dataUploadSelection: DataUploadSelection
+): dataUploadSelection is CompleteDataUploadSelection {
+  return dataUploadSelection.type === 'file'
+    ? dataUploadSelection.file != null
+    : dataUploadSelection.url != null;
+}
+
 // https://stackoverflow.com/a/43467144
 function isValidUrl(string: string) {
   try {
