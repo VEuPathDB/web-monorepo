@@ -231,42 +231,6 @@ const Histogram = makePlotlyPlotComponent(
     // local state for range **while selecting** graphically
     const [selectingRange, setSelectingRange] = useState<NumberOrDateRange>();
 
-    /* !---- OVERRIDES THE LOGIC THAT PLOTLY USES FOR LAST BIN WITH DATES ----!
-    This block calculates a date that is the midpoint of the lastBin's binMiddle and binEnd
-    This midpoint is used as the threshold that determines if the selection should snap
-    to lastBin.binEnd
-      **  It's still unclear to me why we subtract 1 day. After further thought, I think most
-          if not all of these changes are moot just by removing that piece of logic.
-    */
-    function getMaxDateSelection(
-      lastBin: BinSummary,
-      rawRange: NumberOrDateRange,
-      rightBin: BinSummary
-    ) {
-      const dateThresholdForSnapToEnd = DateMath.add(
-        new Date(lastBin.binMiddle as string),
-        DateMath.diff(
-          new Date(lastBin.binMiddle as string),
-          new Date(lastBin.binEnd as string),
-          'seconds',
-          false
-        ) * 500,
-        'milliseconds'
-      ).toISOString();
-      const shouldSnapToEnd = rawRange.max >= dateThresholdForSnapToEnd;
-      return shouldSnapToEnd
-        ? lastBin.binEnd
-        : rawRange.max > lastBin.binStart
-        ? lastBin.binStart
-        : DateMath.subtract(
-            // ** SEE NOTE IN COMMENTS
-            new Date(rightBin.binEnd),
-            1,
-            'day'
-          ).toISOString();
-    }
-    // --------------------------------------------------------------------- //
-
     const handleSelectingRange = useCallback(
       (object: any) => {
         if (object && object.range) {
@@ -296,15 +260,25 @@ const Histogram = makePlotlyPlotComponent(
           );
 
           if (leftBin && rightBin && leftBin.binStart <= rightBin.binStart) {
+            const timezoneOffset =
+              data.binWidthSlider?.valueType === 'date'
+                ? DateMath.endOf(
+                    new Date(rightBin.binEnd),
+                    'day'
+                  ).getTimezoneOffset()
+                : 0;
             setSelectingRange({
               min: leftBin.binStart,
               max:
                 data.binWidthSlider?.valueType === 'date'
-                  ? getMaxDateSelection(
-                      binSummaries[binSummaries.length - 1],
-                      rawRange,
-                      rightBin
-                    )
+                  ? DateMath.subtract(
+                      DateMath.endOf(new Date(rightBin.binEnd), 'day'),
+                      // subtracts an extra day when the offset is negative
+                      timezoneOffset > 0
+                        ? timezoneOffset
+                        : timezoneOffset + 24 * 60,
+                      'minutes'
+                    ).toISOString()
                   : rightBin.binEnd,
             } as NumberOrDateRange);
           } else {
