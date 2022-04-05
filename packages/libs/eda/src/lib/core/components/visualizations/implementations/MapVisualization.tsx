@@ -43,7 +43,7 @@ import {
 } from '../../../utils/visualization';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { OutputEntityTitle } from '../OutputEntityTitle';
-import { sumBy } from 'lodash';
+import { sumBy, values } from 'lodash';
 import PluginError from '../PluginError';
 import { VariableDescriptor } from '../../../types/variable';
 import { InputVariables } from '../InputVariables';
@@ -451,6 +451,17 @@ function MapViz(props: VisualizationProps) {
     [basicMarkerData]
   );
 
+  // TEMPORARY for placeholder BirdsEye
+  const totalPieplotCount = useMemo(
+    () =>
+      pieplotData.value == null
+        ? undefined
+        : sumBy(values(pieplotData.value), (pieData) =>
+            sumBy(pieData, (elem) => elem.value)
+          ),
+    [pieplotData]
+  );
+
   /**
    * Now render the visualization
    */
@@ -598,6 +609,9 @@ function MapViz(props: VisualizationProps) {
   const tableGroupNode = (
     // Bird's eye plot isn't yet functional
     <BirdsEyeView
+      // placeholder values - FIX ME!!
+      completeCasesAxesVars={totalEntityCount}
+      completeCasesAllVars={totalPieplotCount}
       // Nonfuntional (and nonsensical) prop values for map viz
       // completeCasesAllVars={
       //   pieplotData.pending
@@ -608,7 +622,7 @@ function MapViz(props: VisualizationProps) {
       //   data.pending ? undefined : data.value?.completeCasesAxesVars
       // }
       outputEntity={outputEntity}
-      stratificationIsActive={false}
+      stratificationIsActive={true} // TEMPORARY? FIX ME!
       // enableSpinner={vizConfig.xAxisVariable != null && !pieplotData.error}
       totalCounts={totalCounts.value}
       filteredCounts={filteredCounts.value}
