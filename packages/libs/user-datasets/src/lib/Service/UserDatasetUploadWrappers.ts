@@ -69,7 +69,6 @@ function fetchDecodedJsonOrThrowMessage<Resource>(
       if (response.ok) {
         return responseBody;
       }
-      console.log(response);
 
       const message = responseBody.message;
       if (!message) {
