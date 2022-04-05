@@ -26,4 +26,10 @@
   .formSection {
     margin: 1em 0;
   }
+  select {
+    max-width: 450px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }

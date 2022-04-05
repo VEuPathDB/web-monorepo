@@ -77,6 +77,7 @@ export default function UserDatasetUploadController({
         badUploadMessage={badUploadMessage}
         submitForm={submitForm}
         urlParams={urlParams}
+        strategyOptions={strategyOptions}
       />
     </div>
   );

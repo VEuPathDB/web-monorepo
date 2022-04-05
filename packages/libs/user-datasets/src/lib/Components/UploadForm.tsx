@@ -11,7 +11,10 @@ import {
   TextArea,
   FileInput,
   RadioList,
+  SingleSelect,
 } from '@veupathdb/wdk-client/lib/Components';
+
+import { StrategySummary } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 import { DatasetUploadTypeConfigEntry, NewUserDataset } from '../Utils/types';
 
@@ -23,14 +26,16 @@ interface Props<T extends string = string> {
   projectId: string;
   badUploadMessage?: string;
   urlParams: Record<string, string>;
+  strategyOptions: StrategySummary[];
   submitForm: (newUserDataset: NewUserDataset, redirectTo?: string) => void;
 }
 
-type DataUploadMode = 'file' | 'url';
+type DataUploadMode = 'file' | 'url' | 'strategy';
 
 type DataUploadSelection =
   | { type: 'file'; file?: File }
-  | { type: 'url'; url?: string };
+  | { type: 'url'; url?: string }
+  | { type: 'strategy'; rootStepId?: number };
 
 type CompleteDataUploadSelection = Required<DataUploadSelection>;
 
@@ -50,9 +55,16 @@ function UploadForm({
   baseUrl,
   datasetUploadType,
   projectId,
-  submitForm,
   urlParams,
+  strategyOptions,
+  submitForm,
 }: Props) {
+  const displayStrategyUploadMethod =
+    datasetUploadType.formConfig.uploadMethodConfig.strategy.offer;
+
+  const enableStrategyUploadMethod =
+    displayStrategyUploadMethod && strategyOptions.length > 0;
+
   const [name, setName] = useState(urlParams.datasetName ?? '');
   const [summary, setSummary] = useState(urlParams.datasetSummary ?? '');
   const [description, setDescription] = useState(
@@ -60,30 +72,50 @@ function UploadForm({
   );
 
   const [dataUploadMode, setDataUploadMode] = useState<DataUploadMode>(
-    urlParams.datasetUrl ? 'url' : 'file'
+    urlParams.datasetStrategy && enableStrategyUploadMethod
+      ? 'strategy'
+      : urlParams.datasetUrl
+      ? 'url'
+      : 'file'
   );
   const [file, setFile] = useState<File>();
   const [url, setUrl] = useState(urlParams.datasetUrl ?? '');
+  const [strategy, setStrategy] = useState(() => {
+    const parsedStrategyParam = Number(urlParams.datasetStrategy);
+
+    return !enableStrategyUploadMethod || !isFinite(parsedStrategyParam)
+      ? undefined
+      : parsedStrategyParam;
+  });
 
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
 
   const dataUploadSelection = useMemo(
     (): DataUploadSelection =>
-      dataUploadMode === 'file' ? { type: 'file', file } : { type: 'url', url },
-    [dataUploadMode, file, url]
+      dataUploadMode === 'file'
+        ? { type: 'file', file }
+        : dataUploadMode === 'url'
+        ? { type: 'url', url }
+        : { type: 'strategy', rootStepId: strategy },
+    [dataUploadMode, file, url, strategy]
   );
 
   const onSubmit = useCallback(
     (event: FormEvent) => {
       event.preventDefault();
 
-      const formValidation = validateForm(projectId, datasetUploadType, {
-        name,
-        summary,
-        description,
-        dataUploadSelection,
-      });
+      const formValidation = validateForm(
+        projectId,
+        datasetUploadType,
+        enableStrategyUploadMethod,
+        {
+          name,
+          summary,
+          description,
+          dataUploadSelection,
+        }
+      );
 
       if (!formValidation.valid) {
         setErrorMessages(formValidation.errors);
@@ -96,6 +128,7 @@ function UploadForm({
       baseUrl,
       projectId,
       datasetUploadType,
+      enableStrategyUploadMethod,
       name,
       summary,
       description,
@@ -110,6 +143,12 @@ function UploadForm({
       setSubmitting(false);
     }
   }, [badUploadMessage]);
+
+  useEffect(() => {
+    if (strategyOptions.length > 0) {
+      setStrategy(strategyOptions[0].rootStepId);
+    }
+  }, [strategyOptions]);
 
   return (
     <form
@@ -163,9 +202,9 @@ function UploadForm({
             name="data-set-radio"
             value={dataUploadMode}
             onChange={(value) => {
-              if (value !== 'url' && value !== 'file') {
+              if (value !== 'url' && value !== 'file' && value !== 'strategy') {
                 throw new Error(
-                  `Data sets of type '${datasetUploadType.type}' do not support '${value}' uploads.`
+                  `Unrecognized upload method '${value}' encountered.`
                 );
               }
 
@@ -174,6 +213,7 @@ function UploadForm({
             items={[
               {
                 value: 'file',
+                disabled: false,
                 display: (
                   <React.Fragment>
                     <label htmlFor="data-set-file">
@@ -199,6 +239,7 @@ function UploadForm({
               },
               {
                 value: 'url',
+                disabled: false,
                 display: (
                   <React.Fragment>
                     <label htmlFor="data-set-url">
@@ -223,7 +264,43 @@ function UploadForm({
                   </React.Fragment>
                 ),
               },
-            ]}
+            ].concat(
+              !displayStrategyUploadMethod
+                ? []
+                : [
+                    {
+                      value: 'strategy',
+                      disabled: !enableStrategyUploadMethod,
+                      display: (
+                        <React.Fragment>
+                          <label htmlFor="data-set-url">
+                            {dataUploadMode === 'strategy' ? (
+                              <React.Fragment>
+                                Strategy<sup className="supAsterisk">*</sup>:
+                              </React.Fragment>
+                            ) : (
+                              'Strategy'
+                            )}
+                            <br />
+                          </label>
+                          {dataUploadMode === 'strategy' && (
+                            <SingleSelect
+                              items={strategyOptions.map((option) => ({
+                                value: `${option.strategyId}`,
+                                display: `${option.name}${
+                                  option.isSaved ? '*' : ''
+                                }`,
+                              }))}
+                              onChange={(value) => {
+                                setStrategy(Number(value));
+                              }}
+                            />
+                          )}
+                        </React.Fragment>
+                      ),
+                    },
+                  ]
+            )}
           />
         </div>
       </div>
@@ -254,6 +331,7 @@ function ErrorMessage({ errors }: { errors: string[] }) {
 function validateForm<T extends string = string>(
   projectId: string,
   datasetUploadType: DatasetUploadTypeConfigEntry<T>,
+  enableStrategyUploadMethod: boolean,
   formContent: FormContent
 ): FormValidation {
   const { name, summary, description, dataUploadSelection } = formContent;
@@ -261,7 +339,9 @@ function validateForm<T extends string = string>(
   if (!isCompleteDataUploadSelection(dataUploadSelection)) {
     return {
       valid: false,
-      errors: ['Required: data file or URL'],
+      errors: !enableStrategyUploadMethod
+        ? ['Required: data file or URL']
+        : ['Required: data file, URL, or strategy'],
     };
   }
 
@@ -283,7 +363,10 @@ function validateForm<T extends string = string>(
       description,
       datasetType: datasetUploadType.type,
       projects: [projectId],
-      uploadMethod: dataUploadSelection,
+      uploadMethod:
+        dataUploadSelection.type === 'strategy'
+          ? { type: 'url', url: '#' }
+          : dataUploadSelection,
     },
   };
 }
@@ -293,7 +376,9 @@ function isCompleteDataUploadSelection(
 ): dataUploadSelection is CompleteDataUploadSelection {
   return dataUploadSelection.type === 'file'
     ? dataUploadSelection.file != null
-    : dataUploadSelection.url != null;
+    : dataUploadSelection.type === 'url'
+    ? dataUploadSelection.url != null
+    : dataUploadSelection.rootStepId != null;
 }
 
 // https://stackoverflow.com/a/43467144
