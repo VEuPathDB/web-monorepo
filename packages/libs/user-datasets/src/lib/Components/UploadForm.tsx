@@ -16,6 +16,7 @@ import {
 
 import { StrategySummary } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
+import { State } from '../StoreModules/UserDatasetUploadStoreModule';
 import { DatasetUploadTypeConfigEntry, NewUserDataset } from '../Utils/types';
 
 import './UploadForm.scss';
@@ -24,7 +25,7 @@ interface Props<T extends string = string> {
   baseUrl: string;
   datasetUploadType: DatasetUploadTypeConfigEntry<T>;
   projectId: string;
-  badUploadMessage?: string;
+  badUploadMessage: State['badUploadMessage'];
   urlParams: Record<string, string>;
   strategyOptions: StrategySummary[];
   submitForm: (newUserDataset: NewUserDataset, redirectTo?: string) => void;
@@ -139,7 +140,7 @@ function UploadForm({
 
   useEffect(() => {
     if (badUploadMessage != null) {
-      setErrorMessages([badUploadMessage]);
+      setErrorMessages([badUploadMessage.message]);
       setSubmitting(false);
     }
   }, [badUploadMessage]);

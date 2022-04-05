@@ -15,7 +15,7 @@ export const submitUploadForm = makeActionCreator(
 
 export const receiveBadUpload = makeActionCreator(
   'user-dataset-upload/receive-bad-upload',
-  (message: string) => ({ message })
+  (message: string) => ({ message, timestamp: Date.now() })
 );
 
 export const cancelCurrentUpload = makeActionCreator(
@@ -40,7 +40,7 @@ export const receiveUploadMessages = makeActionCreator(
 
 export const receiveBadUploadHistoryAction = makeActionCreator(
   'user-dataset-upload/receive-bad-upload-history-action',
-  (message: string) => ({ message })
+  (message: string) => ({ message, timestamp: Date.now() })
 );
 
 export type Action =

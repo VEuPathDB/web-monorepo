@@ -31,17 +31,17 @@ export const key = 'userDatasetUpload';
 
 export type State = {
   uploads?: Array<UserDatasetUpload>;
-  badUploadMessage?: string;
-  badAllUploadsActionMessage?: string;
+  badUploadMessage?: { message: string; timestamp: number };
+  badAllUploadsActionMessage?: { message: string; timestamp: number };
 };
 export function reduce(state: State = {}, action: Action): State {
   switch (action.type) {
     case receiveBadUpload.type:
-      return { ...state, badUploadMessage: action.payload.message };
+      return { ...state, badUploadMessage: action.payload };
     case receiveUploadMessages.type:
       return { ...state, uploads: action.payload.uploads };
     case receiveBadUploadHistoryAction.type:
-      return { ...state, badAllUploadsActionMessage: action.payload.message };
+      return { ...state, badAllUploadsActionMessage: action.payload };
     default:
       return state;
   }

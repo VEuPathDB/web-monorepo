@@ -56,7 +56,7 @@ class UserDatasetAllUploadsController extends PageController<Props> {
       <div className="stack">
         <AllUploads
           baseUrl={this.props.baseUrl}
-          errorMessage={this.props.badAllUploadsActionMessage}
+          errorMessage={this.props.badAllUploadsActionMessage?.message}
           uploadList={this.props.uploads}
           actions={this.props.actions}
         />
