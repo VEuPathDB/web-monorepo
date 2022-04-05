@@ -147,8 +147,10 @@ function useTableState (props) {
   );
 
   const rows = useMemo(() => {
-    const sortingAttribute = visibleAttributes.find( attribute => attribute.name === sorting[0].attributeName )
-    const sortKeys = makeSortKeys(sortingAttribute, customSortBys);
+    const sortingAttribute = visibleAttributes.find(attribute => attribute.name === sorting[0].attributeName)
+    console.log({ sortingAttribute })
+    console.log({ visibleAttributes })
+    const sortKeys = makeSortKeys(sortingAttribute ? sortingAttribute : visibleAttributes[0].name, customSortBys);
     const sortDirections = sortKeys.map(_ => sorting[0].direction.toLowerCase() || 'asc');
 
     return orderBy(records, sortKeys, sortDirections);
