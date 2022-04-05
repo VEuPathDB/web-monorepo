@@ -188,7 +188,9 @@ export const makeUserDatasetUploadServiceWrappers = (
   datasetImportUrl: string
 ) => ({
   [DATASET_IMPORT_URL_KEY]: (wdkService: WdkService) => datasetImportUrl,
-  addDataset: () => (newUserDataset: NewUserDataset): Promise<void> => {
+  addDataset: (wdkService: WdkService) => async (
+    newUserDataset: NewUserDataset
+  ): Promise<void> => {
     const metaBody = JSON.stringify({
       datasetName: newUserDataset.name,
       datasetType: newUserDataset.datasetType,
@@ -203,9 +205,23 @@ export const makeUserDatasetUploadServiceWrappers = (
     if (newUserDataset.uploadMethod.type === 'file') {
       fileBody.append('uploadMethod', 'file');
       fileBody.append('file', newUserDataset.uploadMethod.file);
-    } else {
+    } else if (newUserDataset.uploadMethod.type === 'url') {
       fileBody.append('uploadMethod', 'url');
       fileBody.append('url', newUserDataset.uploadMethod.url);
+    } else {
+      // FIXME: Adjust this request to accommodate the format expected by the handler
+      const temporaryResultPath = await wdkService.getTemporaryResultPath(
+        newUserDataset.uploadMethod.rootStepId,
+        'standard',
+        {}
+      );
+
+      const temporaryResultUrl = `${wdkService.serviceUrl}${temporaryResultPath}`;
+
+      console.log(temporaryResultUrl);
+
+      fileBody.append('uploadMethod', 'url');
+      fileBody.append('url', temporaryResultUrl);
     }
 
     return fetchDecodedJsonOrThrowMessage(

@@ -104,5 +104,9 @@ export interface NewUserDataset extends UserDatasetMeta {
     | {
         type: 'url';
         url: string;
+      }
+    | {
+        type: 'strategy';
+        rootStepId: number;
       };
 }

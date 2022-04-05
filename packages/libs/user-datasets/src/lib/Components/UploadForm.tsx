@@ -364,10 +364,7 @@ function validateForm<T extends string = string>(
       description,
       datasetType: datasetUploadType.type,
       projects: [projectId],
-      uploadMethod:
-        dataUploadSelection.type === 'strategy'
-          ? { type: 'url', url: '#' }
-          : dataUploadSelection,
+      uploadMethod: dataUploadSelection,
     },
   };
 }
