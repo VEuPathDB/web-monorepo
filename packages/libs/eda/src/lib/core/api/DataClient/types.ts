@@ -213,7 +213,8 @@ export const ScatterplotResponseData = array(
     // add bestFitLineWithRaw
     bestFitLineX: array(string),
     bestFitLineY: array(number),
-    r2: number,
+    // allow null for r2
+    r2: NumberOrNull,
     // need to make sure if below is correct (untested)
     overlayVariableDetails: type({
       entityId: string,
