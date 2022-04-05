@@ -81,7 +81,7 @@ function UploadForm({
   );
   const [file, setFile] = useState<File>();
   const [url, setUrl] = useState(urlParams.datasetUrl ?? '');
-  const [strategy, setStrategy] = useState(() => {
+  const [strategyRootStepId, setStrategyRootStepId] = useState(() => {
     const parsedStrategyParam = Number(urlParams.datasetStrategy);
 
     return !enableStrategyUploadMethod || !isFinite(parsedStrategyParam)
@@ -98,8 +98,8 @@ function UploadForm({
         ? { type: 'file', file }
         : dataUploadMode === 'url'
         ? { type: 'url', url }
-        : { type: 'strategy', rootStepId: strategy },
-    [dataUploadMode, file, url, strategy]
+        : { type: 'strategy', rootStepId: strategyRootStepId },
+    [dataUploadMode, file, url, strategyRootStepId]
   );
 
   const onSubmit = useCallback(
@@ -147,7 +147,7 @@ function UploadForm({
 
   useEffect(() => {
     if (strategyOptions.length > 0) {
-      setStrategy(strategyOptions[0].rootStepId);
+      setStrategyRootStepId(strategyOptions[0].rootStepId);
     }
   }, [strategyOptions]);
 
@@ -287,13 +287,13 @@ function UploadForm({
                           {dataUploadMode === 'strategy' && (
                             <SingleSelect
                               items={strategyOptions.map((option) => ({
-                                value: `${option.strategyId}`,
+                                value: `${option.rootStepId}`,
                                 display: `${option.name}${
                                   !option.isSaved ? '*' : ''
                                 }`,
                               }))}
                               onChange={(value) => {
-                                setStrategy(Number(value));
+                                setStrategyRootStepId(Number(value));
                               }}
                             />
                           )}
