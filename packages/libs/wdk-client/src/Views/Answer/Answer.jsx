@@ -148,15 +148,12 @@ function useTableState (props) {
 
   const rows = useMemo(() => {
     const sortingAttribute = visibleAttributes.find( attribute => attribute.name === sorting[0].attributeName )
-    console.log(sortingAttribute, customSortBys)
-    const sortKeys = makeSortKeys(sortingAttribute, customSortBys, sorting);
+    console.log(sortingAttribute)
+    console.log(visibleAttributes)
+    const sortKeys = makeSortKeys(sortingAttribute, customSortBys);
     const sortDirections = sortKeys.map(_ => sorting[0].direction.toLowerCase() || 'asc');
-    // console.log(makeSortKeys(sortingAttribute, customSortBys))
-    // console.log({ records, sortDirections })
     return orderBy(records, sortKeys, sortDirections);
   }, [records, sorting, visibleAttributes, customSortBys]);
-  console.log(rows)
-  console.log(sorting)
 
   const eventHandlers = useMemo(
     () => ({
@@ -183,35 +180,30 @@ function useTableState (props) {
   );
 }
 
-function makeSortKeys(sortingAttribute, customSortBys = {}, sorting) {
+function makeSortKeys(sortingAttribute, customSortBys = {}) {
   if (customSortBys[sortingAttribute.name] != null) {
     return customSortBys[sortingAttribute.name];
   } else if (sortingAttribute.type === 'number') {
     return [
       record => castValue(
         record.attributes[sortingAttribute.name] &&
-        record.attributes[sortingAttribute.name].replace(/,/g, ''), sorting
+        record.attributes[sortingAttribute.name].replace(/,/g, '')
       )
     ];
   } else if (sortingAttribute.type === 'link') {
     return [
       record => castValue(
         record.attributes[sortingAttribute.name] &&
-        record.attributes[sortingAttribute.name].displayText, sorting
+        record.attributes[sortingAttribute.name].displayText
       )
     ];
   } else {
     return [
       record => {
         if (record.attributes[sortingAttribute.name] === null) {
-          // return sorting[0].direction.toLowerCase() === 'asc' ? null : '10FFFF';
           return '10FFFF'
-          // return '0000'
-        // if (record.attributes[sortingAttribute.name] === 'NA') {
-        } else if (record.attributes[sortingAttribute.name] === 'NA') {
-          return sorting[0].direction.toLowerCase() === 'asc' ? '10FFFF' : '0000';
         } else {
-          // return record.attributes[sortingAttribute.name]
+          // compare strings as lowercase to normalize the sorting behavior
           return record.attributes[sortingAttribute.name].toLowerCase()
         }
       }
@@ -219,9 +211,7 @@ function makeSortKeys(sortingAttribute, customSortBys = {}, sorting) {
   }
 }
 
-function castValue(value, sorting) {
-  // if (value == null) return value;
-  // if (value == null) return sorting[0].direction.toLowerCase() === 'asc' ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY;
+function castValue(value) {
   if (value == null) return Number.NEGATIVE_INFINITY;
   const numberValue = Number(value);
   return Number.isNaN(numberValue) ? value : numberValue;
