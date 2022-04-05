@@ -70,6 +70,9 @@ const EUPATH_RELEASE_REGEX = new RegExp(/(\w+)\s[\w.]+\s(\d+\.?\d*)\,\s(\d\d\d\d
 const APPROVED_REGEX = new RegExp(/(\d+)/);
 
 const totalToSortKey = memoize((total: AttributeValue) => {
+  if (total === 'NA') {
+    return [ Number.NEGATIVE_INFINITY ]
+  }
   if (typeof total !== 'string') {
     return [ 0 ];
   }
@@ -80,6 +83,9 @@ const totalToSortKey = memoize((total: AttributeValue) => {
   ];
 });
 const approvedToSortKey = memoize((approved: AttributeValue) => {
+  if (approved === 'NA') {
+    return [ Number.NEGATIVE_INFINITY ]
+  }
   if (typeof approved !== 'string') {
     return [ 0 ];
   }
@@ -90,6 +96,9 @@ const approvedToSortKey = memoize((approved: AttributeValue) => {
   ];
 });
 const percentToSortKey = memoize((percentApproved: AttributeValue) => {
+  if (percentApproved === 'NA') {
+    return [ Number.NEGATIVE_INFINITY ]
+  }
   if (typeof percentApproved !== 'string') {
     return [ 0 ];
   }
