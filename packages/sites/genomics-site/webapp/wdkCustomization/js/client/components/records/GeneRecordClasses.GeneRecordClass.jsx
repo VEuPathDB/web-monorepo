@@ -175,7 +175,7 @@ function FungiVBOrgLinkoutsTable(props) {
   const groupedLinks = lodash.groupBy(props.value, 'dataset');
   return (
     <div style={{marginTop: '2em'}}>
-      <div className="eupathdb-RecordOverviewItem"><strong>Model Organism Databases</strong></div>
+      <div className="eupathdb-RecordOverviewItem"><strong>Model Organism Database(s)</strong></div>
       {Object.entries(groupedLinks).map(([dataset, rows]) =>
         <div key={dataset} className="eupathdb-RecordOverviewItem" >
           <strong>{dataset}:</strong> {rows.map((row, index) => 
