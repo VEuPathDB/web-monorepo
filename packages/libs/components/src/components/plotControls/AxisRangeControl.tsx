@@ -18,6 +18,8 @@ export interface AxisRangeControlProps
   range?: NumberOrDateRange;
   /** function to call when widget updates the range */
   onRangeChange?: (newRange?: NumberOrDateRange) => void;
+  // add disabled prop to disable input fields
+  disabled?: boolean;
 }
 
 export default function AxisRangeControl({
@@ -26,6 +28,8 @@ export default function AxisRangeControl({
   range,
   onRangeChange,
   containerStyles,
+  // add disabled prop to disable input fields: default is false
+  disabled = false,
 }: AxisRangeControlProps) {
   const validator = useCallback((range?: NumberOrDateRange): {
     validity: boolean;
@@ -56,6 +60,8 @@ export default function AxisRangeControl({
         allowPartialRange={false}
         containerStyles={containerStyles}
         validator={validator}
+        // add disabled prop to disable input fields
+        disabled={disabled}
       />
     ) : (
       <NumberRangeInput
@@ -65,6 +71,8 @@ export default function AxisRangeControl({
         allowPartialRange={false}
         containerStyles={containerStyles}
         validator={validator}
+        // add disabled prop to disable input fields
+        disabled={disabled}
       />
     )
   ) : null;

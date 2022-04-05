@@ -1,14 +1,28 @@
 import { useMemo } from 'react';
 import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
-import { LinePlotData } from '../types/plots';
-import { Layout } from 'plotly.js';
+import { Layout, Shape } from 'plotly.js';
 import { NumberOrDateRange } from '../types/general';
 import { isArrayOfNumbersOrNulls } from '../types/guards';
 import { zip } from 'lodash';
+// add axis range control truncation
+import {
+  LinePlotData,
+  OrientationAddon,
+  OrientationDefault,
+  AxisTruncationAddon,
+} from '../types/plots';
+// import truncation util functions
+import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations';
+import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
 
 // is it possible to have this interface extend ScatterPlotProps?
 // or would we need some abstract layer, w scatter and line both as equal children below it?
-export interface LinePlotProps extends PlotProps<LinePlotData> {
+// add axis range control
+export interface LinePlotProps
+  extends PlotProps<LinePlotData>,
+    // truncation
+    OrientationAddon,
+    AxisTruncationAddon {
   /** x-axis range: required for confidence interval - not really */
   independentAxisRange?: NumberOrDateRange;
   /** y-axis range: required for confidence interval */
@@ -47,14 +61,62 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
     dependentAxisLabel,
     independentValueType,
     dependentValueType,
+    // add axis range control truncation
+    orientation = OrientationDefault,
+    axisTruncationConfig,
     ...restProps
   } = props;
+
+  // add axis range control truncation axis range
+  const standardIndependentAxisRange = independentAxisRange;
+  const extendedIndependentAxisRange = extendAxisRangeForTruncations(
+    standardIndependentAxisRange,
+    axisTruncationConfig?.independentAxis,
+    independentValueType === 'date' ? 'date' : 'number'
+  );
+
+  // truncation
+  const standardDependentAxisRange = dependentAxisRange;
+  const extendedDependentAxisRange = extendAxisRangeForTruncations(
+    standardDependentAxisRange,
+    axisTruncationConfig?.dependentAxis,
+    dependentValueType === 'date' ? 'date' : 'number'
+  );
+
+  // make rectangular layout shapes for truncated axis/missing data
+  const truncatedAxisHighlighting:
+    | Partial<Shape>[]
+    | undefined = useMemo(() => {
+    if (data.series.length > 0) {
+      const filteredTruncationLayoutShapes = truncationLayoutShapes(
+        orientation,
+        standardIndependentAxisRange, // send undefined for independentAxisRange
+        standardDependentAxisRange,
+        extendedIndependentAxisRange, // send undefined for independentAxisRange
+        extendedDependentAxisRange,
+        axisTruncationConfig
+      );
+
+      return filteredTruncationLayoutShapes;
+    } else {
+      return [];
+    }
+  }, [
+    standardDependentAxisRange,
+    extendedDependentAxisRange,
+    orientation,
+    data,
+    axisTruncationConfig,
+  ]);
 
   const layout: Partial<Layout> = {
     hovermode: 'closest',
     xaxis: {
       title: independentAxisLabel,
-      range: [independentAxisRange?.min, independentAxisRange?.max], // set this for better display: esp. for CI plot
+      // add axis range control truncation
+      range: data.series.length
+        ? [extendedIndependentAxisRange?.min, extendedIndependentAxisRange?.max]
+        : undefined,
       zeroline: false, // disable line at 0 value
       // make plot border
       mirror: true,
@@ -64,7 +126,10 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
     },
     yaxis: {
       title: dependentAxisLabel,
-      range: [dependentAxisRange?.min, dependentAxisRange?.max], // set this for better display: esp. for CI plot
+      // add axis range control
+      range: data.series.length
+        ? [extendedDependentAxisRange?.min, extendedDependentAxisRange?.max]
+        : undefined,
       zeroline: false, // disable line at 0 value
       // make plot border
       mirror: true,
@@ -72,6 +137,8 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
       type: dependentValueType === 'date' ? 'date' : undefined,
       tickfont: data.series.length ? {} : { color: 'transparent' },
     },
+    // axis range control: add truncatedAxisHighlighting for layout.shapes
+    shapes: truncatedAxisHighlighting,
   };
 
   // Convert upper and lower error bar data from absolute to relative
@@ -100,11 +167,19 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
                   error_y: {
                     type: 'data',
                     visible: 'true',
-                    array: series.yErrorBarUpper.map((upperValue, index) =>
-                      upperValue != null ? upperValue - yvals[index] : null
-                    ),
-                    arrayminus: series.yErrorBarLower.map((lowerValue, index) =>
-                      lowerValue != null ? yvals[index] - lowerValue : null
+                    array: series.yErrorBarUpper.map((upperValue, index) => {
+                      const yval = yvals[index];
+                      return upperValue != null && yval != null
+                        ? upperValue - yval
+                        : null;
+                    }),
+                    arrayminus: series.yErrorBarLower.map(
+                      (lowerValue, index) => {
+                        const yval = yvals[index];
+                        return lowerValue != null && yval != null
+                          ? yval - lowerValue
+                          : null;
+                      }
                     ),
                   },
                 };
@@ -137,13 +212,14 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
             (series.y ?? []).map(String),
             (series.yErrorBarLower ?? []).map(String),
             (series.yErrorBarUpper ?? []).map(String),
-            (series.sampleSize ?? []).map(String)
-          ).map(([binLabel, x, y, lower, upper, n]) => {
+            series.extraTooltipText ?? []
+          ).map(([binLabel, x, y, lower, upper, xtra]) => {
             const CI =
               lower != null && upper != null
                 ? ` (95% CI: ${lower} - ${upper})`
                 : '';
-            return `x: ${binLabel ?? x}\ny: ${y}${CI}\nN: ${n}`;
+            // use <br> instead of \n for line break
+            return `x: ${binLabel ?? x}<br>y: ${y}${CI}<br>${xtra}`;
           }),
         })),
     [data.series]

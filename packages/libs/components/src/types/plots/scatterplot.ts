@@ -1,7 +1,7 @@
 export type ScatterPlotDataSeries = {
   /** x/y data */
-  x: number[] | string[];
-  y: number[] | string[];
+  x: (number | null)[] | string[];
+  y: (number | null)[] | string[];
   /** legend text */
   name?: string;
   /** plot style */
