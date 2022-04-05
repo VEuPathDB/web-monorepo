@@ -87,7 +87,15 @@ initialize({
   },
   endpoint,
   wrapStoreModules,
-  wrapWdkService: partial(wrapWdkService, datasetImportUrl),
+  wrapWdkService: partial(
+    wrapWdkService,
+    datasetImportUrl == null || process.env.REACT_APP_WDK_SERVICE_URL == null
+      ? undefined
+      : {
+          datasetImportUrl,
+          fullWdkServiceUrl: process.env.REACT_APP_WDK_SERVICE_URL,
+        }
+  ),
 } as any);
 
 // If you want to start measuring performance in your app, pass a function

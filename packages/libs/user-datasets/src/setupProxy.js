@@ -5,7 +5,7 @@ module.exports = function (app) {
   app.use(
     endpoint,
     createProxyMiddleware({
-      target: process.env.WDK_SERVICE_URL,
+      target: process.env.REACT_APP_WDK_SERVICE_URL,
       pathRewrite: { [`^${endpoint}`]: '' },
       secure: false,
       changeOrigin: true,

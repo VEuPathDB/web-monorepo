@@ -3,18 +3,21 @@ import { mapValues } from 'lodash';
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 
 import { userDatasetsServiceWrappers } from './UserDatasetWrappers';
-import { makeUserDatasetUploadServiceWrappers } from './UserDatasetUploadWrappers';
+import {
+  ServiceConfig as UserDatasetUploadServiceConfig,
+  makeUserDatasetUploadServiceWrappers,
+} from './UserDatasetUploadWrappers';
 
 export function wrapWdkService(
-  datasetImportUrl: string | undefined,
+  serviceConfig: UserDatasetUploadServiceConfig | undefined,
   wdkService: WdkService
 ) {
   const wrappersToInclude =
-    datasetImportUrl == null
+    serviceConfig == null
       ? userDatasetsServiceWrappers
       : {
           ...userDatasetsServiceWrappers,
-          ...makeUserDatasetUploadServiceWrappers(datasetImportUrl),
+          ...makeUserDatasetUploadServiceWrappers(serviceConfig),
         };
 
   return {

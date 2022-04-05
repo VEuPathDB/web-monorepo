@@ -6,6 +6,11 @@ import { appendUrlAndRethrow } from '@veupathdb/wdk-client/lib/Service/ServiceUt
 
 import { NewUserDataset, UserDatasetUpload } from '../Utils/types';
 
+export interface ServiceConfig {
+  datasetImportUrl: string;
+  fullWdkServiceUrl: string;
+}
+
 export type UserDatasetUploadCompatibleWdkService = WdkService &
   {
     [Key in keyof UserDatasetUploadServiceWrappers]: ReturnType<
@@ -184,9 +189,10 @@ function issueDeleteCommand(
 
 const DATASET_IMPORT_URL_KEY = 'datasetImportUrl';
 
-export const makeUserDatasetUploadServiceWrappers = (
-  datasetImportUrl: string
-) => ({
+export const makeUserDatasetUploadServiceWrappers = ({
+  datasetImportUrl,
+  fullWdkServiceUrl,
+}: ServiceConfig) => ({
   [DATASET_IMPORT_URL_KEY]: (wdkService: WdkService) => datasetImportUrl,
   addDataset: (wdkService: WdkService) => async (
     newUserDataset: NewUserDataset
@@ -216,7 +222,7 @@ export const makeUserDatasetUploadServiceWrappers = (
         {}
       );
 
-      const temporaryResultUrl = `${wdkService.serviceUrl}${temporaryResultPath}`;
+      const temporaryResultUrl = `${fullWdkServiceUrl}${temporaryResultPath}`;
 
       console.log(temporaryResultUrl);
 
