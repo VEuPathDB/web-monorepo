@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/eda",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "dependencies": {
     "debounce-promise": "^3.1.2",
     "fp-ts": "^2.9.3",
@@ -78,7 +78,7 @@
     "@types/react-table": "^7.7.9",
     "@types/uuid": "^8.3.0",
     "@veupathdb/browserslist-config": "^1.0.0",
-    "@veupathdb/components": "^0.13.0",
+    "@veupathdb/components": "^0.14.0",
     "@veupathdb/coreui": "^0.16.0",
     "@veupathdb/eda": "^1.8.5",
     "@veupathdb/eslint-config": "^1.0.0",
