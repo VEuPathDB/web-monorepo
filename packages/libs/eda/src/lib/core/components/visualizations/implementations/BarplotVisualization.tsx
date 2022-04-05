@@ -606,6 +606,8 @@ function BarplotViz(props: VisualizationProps) {
       checkedLegendItems={checkedLegendItems}
       legendTitle={variableDisplayWithUnit(overlayVariable)}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
+      // add a condition to show legend even for single overlay data
+      showOverlayLegend={vizConfig.overlayVariable != null}
     />
   );
 

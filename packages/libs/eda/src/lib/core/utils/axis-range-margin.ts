@@ -21,7 +21,6 @@ export function axisRangeMargin(
           'day'
         ) * 0.05
       ); // unit in days
-
       const axisLowerExtensionStart = DateMath.subtract(
         new Date(axisRange.min as string),
         dateRangeDiff,
@@ -38,11 +37,9 @@ export function axisRangeMargin(
         max: axisUpperExtensionEnd,
       };
     } else {
-      const axisLowerExtensionStart =
-        (axisRange.min as number) * 1.05 - (axisRange.max as number) * 0.05;
-      const axisUpperExtensionEnd =
-        (axisRange.max as number) * 1.05 - (axisRange.min as number) * 0.05;
-
+      const diff = (axisRange.max as number) - (axisRange.min as number);
+      const axisLowerExtensionStart = (axisRange.min as number) - 0.05 * diff;
+      const axisUpperExtensionEnd = (axisRange.max as number) + 0.05 * diff;
       return {
         min: numberDecimalPoint(axisLowerExtensionStart, 4),
         max: numberDecimalPoint(axisUpperExtensionEnd, 4),

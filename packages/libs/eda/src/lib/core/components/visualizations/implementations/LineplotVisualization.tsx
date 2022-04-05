@@ -5,7 +5,7 @@ import LinePlot, {
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import * as t from 'io-ts';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 
 import DataClient, {
   LineplotRequestParams,
@@ -27,11 +27,7 @@ import { PlotLayout } from '../../layouts/PlotLayout';
 
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
-import {
-  SelectorProps,
-  VisualizationProps,
-  VisualizationType,
-} from '../VisualizationTypes';
+import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 
 import Switch from '@veupathdb/components/lib/components/widgets/Switch';
 import line from './selectorIcons/line.svg';
@@ -98,8 +94,22 @@ import PlotLegend, {
 import { isFaceted, isTimeDelta } from '@veupathdb/components/lib/types/guards';
 import FacetedLinePlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedLinePlot';
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
-import { BinSpec, BinWidthSlider } from '../../../types/general';
+import { BinSpec, BinWidthSlider, TimeUnit } from '../../../types/general';
 import { useVizConfig } from '../../../hooks/visualizations';
+import { useInputStyles } from '../inputStyles';
+import { ValuePicker } from './ValuePicker';
+import Tooltip from '@veupathdb/wdk-client/lib/Components/Overlays/Tooltip';
+
+// concerning axis range control
+import { NumberOrDateRange as NumberOrDateRangeT } from '../../../types/general';
+import { padISODateTime } from '../../../utils/date-conversion';
+// reusable util for computing truncationConfig
+import { truncationConfig } from '../../../utils/truncation-config-utils-viz';
+// use Notification for truncation warning message
+import Notification from '@veupathdb/components/lib/components/widgets//Notification';
+import Button from '@veupathdb/components/lib/components/widgets/Button';
+import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
+import { UIState } from '../../filter/HistogramFilter';
 
 const plotContainerStyles = {
   width: 750,
@@ -145,6 +155,23 @@ function SelectorComponent() {
   );
 }
 
+// Display names to internal names
+const valueSpecLookup: Record<
+  string,
+  LineplotRequestParams['config']['valueSpec']
+> = {
+  Mean: 'mean',
+  Median: 'median',
+  Proportion: 'proportion', // used to be 'Ratio or proportion' hence the lookup rather than simple lowercasing
+};
+
+const timeUnitLookup: Record<string, TimeUnit> = {
+  day: 'day',
+  week: 'week',
+  month: 'month',
+  year: 'year',
+};
+
 function createDefaultConfig(): LineplotConfig {
   return {
     valueSpecConfig: 'Mean',
@@ -156,7 +183,7 @@ export type LineplotConfig = t.TypeOf<typeof LineplotConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const LineplotConfig = t.intersection([
   t.type({
-    valueSpecConfig: t.string,
+    valueSpecConfig: t.keyof(valueSpecLookup),
     useBinning: t.boolean,
   }),
   t.partial({
@@ -165,10 +192,15 @@ export const LineplotConfig = t.intersection([
     overlayVariable: VariableDescriptor,
     facetVariable: VariableDescriptor,
     binWidth: t.number,
-    binWidthTimeUnit: t.string,
+    binWidthTimeUnit: TimeUnit,
     showMissingness: t.boolean,
     checkedLegendItems: t.array(t.string),
     showErrorBars: t.boolean,
+    numeratorValues: t.array(t.string),
+    denominatorValues: t.array(t.string),
+    // axis range control
+    independentAxisRange: NumberOrDateRangeT,
+    dependentAxisRange: NumberOrDateRangeT,
   }),
 ]);
 
@@ -237,29 +269,77 @@ function LineplotViz(props: VisualizationProps) {
     vizConfig.facetVariable,
   ]);
 
+  const categoricalMode = isSuitableCategoricalVariable(yAxisVariable);
+  const valuesAreSpecified =
+    vizConfig.numeratorValues != null &&
+    vizConfig.numeratorValues.length > 0 &&
+    vizConfig.denominatorValues != null &&
+    vizConfig.denominatorValues.length > 0;
+
+  // axis range control: set the state of truncation warning message
+  const [
+    truncatedIndependentAxisWarning,
+    setTruncatedIndependentAxisWarning,
+  ] = useState<string>('');
+  const [
+    truncatedDependentAxisWarning,
+    setTruncatedDependentAxisWarning,
+  ] = useState<string>('');
+
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
-      const {
-        xAxisVariable,
-        yAxisVariable,
-        overlayVariable,
-        facetVariable,
-      } = selectedVariables;
-      const keepBin = isEqual(xAxisVariable, vizConfig.xAxisVariable);
+      const keepBin = isEqual(
+        selectedVariables.xAxisVariable,
+        vizConfig.xAxisVariable
+      );
+      const keepValues = isEqual(
+        selectedVariables.yAxisVariable,
+        vizConfig.yAxisVariable
+      );
+
+      // need to get the yAxisVariable metadata right here, right now
+      // (we can't use the more generally scoped 'yAxisVariable' because it's based on vizConfig and is out of date)
+      const { variable: yAxisVar } =
+        findEntityAndVariable(selectedVariables.yAxisVariable) ?? {};
+
+      const valueSpec = isSuitableCategoricalVariable(yAxisVar)
+        ? 'Proportion'
+        : vizConfig.valueSpecConfig === 'Proportion'
+        ? createDefaultConfig().valueSpecConfig
+        : vizConfig.valueSpecConfig;
+
       updateVizConfig({
-        xAxisVariable,
-        yAxisVariable,
-        overlayVariable,
-        facetVariable,
+        ...selectedVariables,
         binWidth: keepBin ? vizConfig.binWidth : undefined,
         binWidthTimeUnit: keepBin ? vizConfig.binWidthTimeUnit : undefined,
         // set valueSpec as Raw when yAxisVariable = date
-        valueSpecConfig: vizConfig.valueSpecConfig,
+        valueSpecConfig: valueSpec,
         // set undefined for variable change
         checkedLegendItems: undefined,
+        // axis range control: set independentAxisRange undefined
+        independentAxisRange: undefined,
+        dependentAxisRange: undefined,
+        ...(keepValues
+          ? {}
+          : {
+              numeratorValues: undefined,
+              denominatorValues:
+                yAxisVar != null ? yAxisVar.vocabulary : undefined,
+            }),
       });
+      // axis range control: close truncation warnings here
+      setTruncatedIndependentAxisWarning('');
+      setTruncatedDependentAxisWarning('');
     },
-    [updateVizConfig, findEntityAndVariable, vizConfig.valueSpecConfig]
+    [
+      updateVizConfig,
+      vizConfig.xAxisVariable,
+      vizConfig.valueSpecConfig,
+      vizConfig.valueSpecConfig,
+      vizConfig.binWidth,
+      vizConfig.binWidthTimeUnit,
+      findEntityAndVariable,
+    ]
   );
 
   const onBinWidthChange = useCallback(
@@ -268,7 +348,7 @@ function LineplotViz(props: VisualizationProps) {
         updateVizConfig({
           binWidth: isTimeDelta(newBinWidth) ? newBinWidth.value : newBinWidth,
           binWidthTimeUnit: isTimeDelta(newBinWidth)
-            ? newBinWidth.unit
+            ? timeUnitLookup[newBinWidth.unit]
             : undefined,
         });
       }
@@ -278,17 +358,19 @@ function LineplotViz(props: VisualizationProps) {
 
   // prettier-ignore
   // allow 2nd parameter of resetCheckedLegendItems for checking legend status
+  // considering axis range control
   const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof LineplotConfig, resetCheckedLegendItems?: boolean) => (newValue?: ValueType) => {
-      const newPartialConfig = resetCheckedLegendItems
-        ? {
-            [key]: newValue,
-            checkedLegendItems: undefined
-          }
-        : {
-          [key]: newValue
-        };
-       updateVizConfig(newPartialConfig);
+    < ValueType,>(key: keyof LineplotConfig, resetCheckedLegendItems?: boolean, resetAxisRanges?: boolean) => (newValue?: ValueType) => {
+      const newPartialConfig = {
+        [key]: newValue,
+        ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
+      	...(resetAxisRanges ? { independentAxisRange: undefined, dependentAxisRange: undefined } : {}),
+      };
+      updateVizConfig(newPartialConfig);
+      if (resetAxisRanges) {
+        setTruncatedIndependentAxisWarning('');
+        setTruncatedDependentAxisWarning('');
+      }
     },
     [updateVizConfig]
   );
@@ -296,10 +378,14 @@ function LineplotViz(props: VisualizationProps) {
   // set checkedLegendItems: undefined for the change of both plot options and showMissingness
   const onValueSpecChange = onChangeHandlerFactory<string>(
     'valueSpecConfig',
+    true,
+    // axis range control: resetAxisRange
     true
   );
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
     'showMissingness',
+    true,
+    // axis range control: resetAxisRange
     true
   );
 
@@ -311,17 +397,16 @@ function LineplotViz(props: VisualizationProps) {
   const onShowErrorBarsChange = onChangeHandlerFactory<boolean>(
     'showErrorBars',
     true
+    // need to consider axis range control: resetAxisRange? seems not
   );
 
   const onUseBinningChange = onChangeHandlerFactory<boolean>('useBinning');
-
-  const [xAxisVariableMetadata, yAxisVariableMetadata] = useMemo(() => {
-    const { variable: x } =
-      findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
-    const { variable: y } =
-      findEntityAndVariable(vizConfig.yAxisVariable) ?? {};
-    return [x, y];
-  }, [findEntityAndVariable, vizConfig.xAxisVariable, vizConfig.yAxisVariable]);
+  const onNumeratorValuesChange = onChangeHandlerFactory<string[]>(
+    'numeratorValues'
+  );
+  const onDenominatorValuesChange = onChangeHandlerFactory<string[]>(
+    'denominatorValues'
+  );
 
   const outputEntity = useFindOutputEntity(
     dataElementDependencyOrder,
@@ -334,8 +419,8 @@ function LineplotViz(props: VisualizationProps) {
     useCallback(async (): Promise<LinePlotDataWithCoverage | undefined> => {
       if (
         outputEntity == null ||
-        xAxisVariableMetadata == null ||
-        yAxisVariableMetadata == null ||
+        xAxisVariable == null ||
+        yAxisVariable == null ||
         filteredCounts.pending ||
         filteredCounts.value == null
       )
@@ -351,23 +436,40 @@ function LineplotViz(props: VisualizationProps) {
       )
         throw new Error(nonUniqueWarning);
 
+      if (categoricalMode && !valuesAreSpecified) return undefined;
+
+      if (categoricalMode && valuesAreSpecified) {
+        if (isEqual(vizConfig.numeratorValues, vizConfig.denominatorValues))
+          throw new Error(
+            'Numerator and denominator value(s) cannot be the same. Numerator values must be a subset of the denominator values.'
+          );
+        if (
+          vizConfig.numeratorValues != null &&
+          !vizConfig.numeratorValues.every((value) =>
+            vizConfig.denominatorValues?.includes(value)
+          )
+        )
+          throw new Error(
+            'To calculate a proportion, all selected numerator values must also be present in the denominator'
+          );
+      }
+
       // check independentValueType/dependentValueType
       const independentValueType = xAxisVariable?.type
         ? xAxisVariable.type
         : '';
       const dependentValueType = yAxisVariable?.type ? yAxisVariable.type : '';
 
-      // check variable inputs: this is necessary to prevent from data post
-      if (vizConfig.xAxisVariable == null || xAxisVariable == null)
-        return undefined;
-      else if (vizConfig.yAxisVariable == null || yAxisVariable == null)
-        return undefined;
-
-      const vars = [xAxisVariable, yAxisVariable, overlayVariable];
-      const unique = vars.filter((item, i, ar) => ar.indexOf(item) === i);
-      if (vars.length !== unique.length)
+      if (
+        !categoricalMode &&
+        !(
+          dependentValueType === 'number' ||
+          dependentValueType === 'integer' ||
+          dependentValueType === 'date'
+        )
+      )
         throw new Error(
-          'Variables must be unique. Please choose different variables.'
+          "TEMPORARY ERROR... this variable isn't suitable (perhaps no distinct values) and constraints will handle this soon..."
         );
 
       // add visualization.type here. valueSpec too?
@@ -375,14 +477,14 @@ function LineplotViz(props: VisualizationProps) {
         studyId,
         filters ?? [],
         vizConfig,
-        xAxisVariableMetadata,
-        yAxisVariableMetadata,
+        xAxisVariable,
+        yAxisVariable,
         outputEntity
       );
 
       const response = await dataClient.getLineplot(
         computation.descriptor.type,
-        params as LineplotRequestParams
+        params
       );
 
       const showMissingOverlay =
@@ -419,6 +521,7 @@ function LineplotViz(props: VisualizationProps) {
 
       return lineplotResponseToData(
         response,
+        categoricalMode,
         visualization.descriptor.type,
         independentValueType,
         dependentValueType,
@@ -450,10 +553,14 @@ function LineplotViz(props: VisualizationProps) {
       vizConfig.showMissingness,
       vizConfig.useBinning,
       vizConfig.showErrorBars,
+      vizConfig.numeratorValues,
+      vizConfig.denominatorValues,
       computation.descriptor.type,
       visualization.descriptor.type,
       outputEntity,
       filteredCounts,
+      categoricalMode,
+      vizConfig.independentAxisRange,
     ])
   );
 
@@ -491,18 +598,56 @@ function LineplotViz(props: VisualizationProps) {
   const defaultDependentRangeMargin = useMemo(() => {
     //K set yMinMaxRange using yMin/yMax obtained from processInputData()
     const yMinMaxRange =
-      data.value != null
-        ? { min: data.value.yMin, max: data.value?.yMax }
+      data.value?.yMin != null && data.value?.yMax != null
+        ? ({ min: data.value.yMin, max: data.value.yMax } as NumberOrDateRange)
         : undefined;
 
-    const defaultDependentRange = numberDateDefaultDependentAxisRange(
-      yAxisVariable,
-      'lineplot',
-      yMinMaxRange
-    );
+    /**
+     * Temporarily, two methods, Method 1 & 2, are implemented in the following
+     * Simply commenting out each of them would work as designed
+     * Currently, Method 1 is used: thus Method 2 is commented out
+     */
+    // Method 1: considering variable's metadata as well
+    const defaultDependentRange = categoricalMode
+      ? ({
+          // this is where the proportion y-axis starts at zero
+          min:
+            yMinMaxRange?.min != null
+              ? Math.min(0, yMinMaxRange.min as number)
+              : undefined,
+          max: yMinMaxRange?.max,
+        } as NumberOrDateRange)
+      : // add conditions to prevent previous yMinMaxRange from calling the function, e.g., date to categorical
+      ((yAxisVariable?.type === 'number' ||
+          yAxisVariable?.type === 'integer') &&
+          typeof yMinMaxRange?.min === 'number' &&
+          typeof yMinMaxRange?.max === 'number') ||
+        (yAxisVariable?.type === 'date' &&
+          typeof yMinMaxRange?.min === 'string' &&
+          typeof yMinMaxRange?.max === 'string')
+      ? numberDateDefaultDependentAxisRange(
+          yAxisVariable,
+          'lineplot',
+          yMinMaxRange
+        )
+      : undefined;
+    // add conditions to prevent previous defaultDependentRange from calling the function due to categorical
+    return yAxisVariable?.type === 'number' ||
+      yAxisVariable?.type === 'integer' ||
+      yAxisVariable?.type === 'date' ||
+      (yAxisVariable?.type === 'string' &&
+        categoricalMode &&
+        typeof defaultDependentRange?.min === 'number' &&
+        typeof defaultDependentRange?.max === 'number')
+      ? axisRangeMargin(defaultDependentRange, yAxisVariable?.type)
+      : undefined;
 
-    return axisRangeMargin(defaultDependentRange, yAxisVariable?.type);
-  }, [data, yAxisVariable]);
+    // // Method 2: purely data-based min/max (yMinMaxRange only): this will reduce empty ranges
+    // return ((yAxisVariable?.type === 'number' || yAxisVariable?.type === 'integer' || (yAxisVariable?.type === 'string' && categoricalMode)) && typeof yMinMaxRange?.min === 'number' && typeof yMinMaxRange?.max === 'number') ||
+    //   (yAxisVariable?.type === 'date' && typeof yMinMaxRange?.min === 'string' && typeof yMinMaxRange?.max === 'string')
+    //   ? axisRangeMargin(yMinMaxRange, yAxisVariable?.type)
+    //   : undefined;
+  }, [data.value, yAxisVariable, categoricalMode]);
 
   // custom legend list
   const legendItems: LegendItemsProps[] = useMemo(() => {
@@ -561,6 +706,18 @@ function LineplotViz(props: VisualizationProps) {
     vizConfig.checkedLegendItems
   );
 
+  // axis range control
+  const defaultUIState = useMemo(() => {
+    if (xAxisVariable != null)
+      return {
+        independentAxisRange: defaultIndependentRangeMargin,
+      };
+    else
+      return {
+        independentAxisRange: undefined,
+      };
+  }, [xAxisVariable, defaultIndependentRangeMargin]);
+
   const plotNode = (
     <LineplotWithControls
       // data.value
@@ -576,29 +733,20 @@ function LineplotViz(props: VisualizationProps) {
       displayLegend={false}
       independentAxisLabel={variableDisplayWithUnit(xAxisVariable) ?? 'X-axis'}
       dependentAxisLabel={variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'}
-      // variable's metadata-based independent axis range with margin
-      independentAxisRange={defaultIndependentRangeMargin}
-      // new dependent axis range
-      dependentAxisRange={data.value ? defaultDependentRangeMargin : undefined}
       // set valueSpec as Raw when yAxisVariable = date
-      valueSpec={vizConfig.valueSpecConfig}
-      onValueSpecChange={onValueSpecChange}
       onBinWidthChange={onBinWidthChange}
       vizType={visualization.descriptor.type}
       interactive={!isFaceted(data.value) ? true : false}
       showSpinner={filteredCounts.pending || data.pending}
-      // add plotOptions to control the list of plot options
-      plotOptions={['Mean', 'Median']}
-      // disabledList prop is used to disable radio options (grayed out)
-      disabledList={[]}
+      // axis range control: make default as number format
       independentValueType={
-        NumberVariable.is(xAxisVariable)
-          ? 'number'
+        DateVariable.is(xAxisVariable)
+          ? 'date'
           : StringVariable.is(xAxisVariable)
           ? 'string'
-          : 'date'
+          : 'number'
       }
-      dependentValueType={NumberVariable.is(yAxisVariable) ? 'number' : 'date'}
+      dependentValueType={DateVariable.is(yAxisVariable) ? 'date' : 'number'}
       legendTitle={variableDisplayWithUnit(overlayVariable)}
       checkedLegendItems={checkedLegendItems}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
@@ -606,6 +754,18 @@ function LineplotViz(props: VisualizationProps) {
       onUseBinningChange={onUseBinningChange}
       showErrorBars={vizConfig.showErrorBars ?? false}
       onShowErrorBarsChange={onShowErrorBarsChange}
+      // axis range control
+      vizConfig={vizConfig}
+      updateVizConfig={updateVizConfig}
+      defaultUIState={defaultUIState}
+      defaultIndependentRange={defaultIndependentRangeMargin}
+      // add dependent axis range for better displaying tick labels in log-scale
+      defaultDependentAxisRange={defaultDependentRangeMargin}
+      // pass useState of truncation warnings
+      truncatedIndependentAxisWarning={truncatedIndependentAxisWarning}
+      setTruncatedIndependentAxisWarning={setTruncatedIndependentAxisWarning}
+      truncatedDependentAxisWarning={truncatedDependentAxisWarning}
+      setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
     />
   );
 
@@ -615,6 +775,8 @@ function LineplotViz(props: VisualizationProps) {
       checkedLegendItems={checkedLegendItems}
       legendTitle={variableDisplayWithUnit(overlayVariable)}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
+      // add a condition to show legend even for single overlay data
+      showOverlayLegend={vizConfig.overlayVariable != null}
     />
   );
 
@@ -630,7 +792,10 @@ function LineplotViz(props: VisualizationProps) {
         outputEntity={outputEntity}
         stratificationIsActive={overlayVariable != null}
         enableSpinner={
-          xAxisVariable != null && yAxisVariable != null && !data.error
+          xAxisVariable != null &&
+          yAxisVariable != null &&
+          !data.error &&
+          (!categoricalMode || valuesAreSpecified)
         }
         totalCounts={totalCounts.value}
         filteredCounts={filteredCounts.value}
@@ -667,6 +832,45 @@ function LineplotViz(props: VisualizationProps) {
         ]}
       />
     </>
+  );
+
+  const classes = useInputStyles();
+
+  const disabledValueSpecs =
+    yAxisVariable == null
+      ? []
+      : categoricalMode
+      ? ['Mean', 'Median']
+      : ['Proportion'];
+
+  const valuesOfInterestLabelStyle = { minWidth: '200px' };
+
+  const aggregationHelp = (
+    <div>
+      “Mean” and “Median” are y-axis aggregation functions that can only be used
+      when continuous variables <i className="fa fa-bar-chart-o  wdk-Icon"> </i>{' '}
+      are selected for the y-axis.
+      <ul>
+        <li>
+          Mean = Sum of values for all data points / Number of all data points
+        </li>
+        <li>
+          Median = The middle number in a sorted list of numbers. The median is
+          a better measure of central tendency than the mean when data are not
+          normally distributed.
+        </li>
+      </ul>
+      <p>
+        “Proportion” is the only y-axis aggregation function that can be used
+        when categorical variables <i className="fa fa-list  wdk-Icon"> </i> are
+        selected for the y-axis.
+        <ul>
+          <li>Proportion = Numerator count / Denominator count</li>
+        </ul>
+        The variable's values that count towards numerator and denominator must
+        be selected in the “Proportion specification” drop-downs.
+      </p>
+    </div>
   );
 
   return (
@@ -717,6 +921,64 @@ function LineplotViz(props: VisualizationProps) {
           outputEntity={outputEntity}
         />
       </div>
+
+      <div className={classes.inputs}>
+        <div className={classes.inputGroup}>
+          <div className={classes.fullRow}>
+            <h4>
+              Y-axis aggregation
+              <Tooltip content={aggregationHelp}>
+                <i
+                  style={{ marginLeft: '5px' }}
+                  className="fa fa-question-circle"
+                  aria-hidden="true"
+                ></i>
+              </Tooltip>
+            </h4>
+          </div>
+          <div className={classes.input}>
+            <RadioButtonGroup
+              options={keys(valueSpecLookup)}
+              selectedOption={vizConfig.valueSpecConfig}
+              onOptionSelected={onValueSpecChange}
+              disabledList={disabledValueSpecs}
+              orientation={'horizontal'}
+              labelPlacement={'end'}
+              buttonColor={'primary'}
+              itemMarginRight={20}
+            />
+          </div>
+        </div>
+
+        {vizConfig.valueSpecConfig === 'Proportion' && (
+          <div className={classes.inputGroup}>
+            <div className={classes.fullRow}>
+              <h4>Proportion specification for Y-axis variable</h4>
+            </div>
+            <div className={[classes.input, classes.fullRow].join(' ')}>
+              <div className={classes.label} style={valuesOfInterestLabelStyle}>
+                Value(s) of interest (numerator)
+              </div>
+              <ValuePicker
+                allowedValues={yAxisVariable?.vocabulary}
+                selectedValues={vizConfig.numeratorValues}
+                onSelectedValuesChange={onNumeratorValuesChange}
+              />
+            </div>
+            <div className={[classes.input, classes.fullRow].join(' ')}>
+              <div className={classes.label} style={valuesOfInterestLabelStyle}>
+                Value(s) of interest (denominator)
+              </div>
+              <ValuePicker
+                allowedValues={yAxisVariable?.vocabulary}
+                selectedValues={vizConfig.denominatorValues}
+                onSelectedValuesChange={onDenominatorValuesChange}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
       <PluginError error={data.error} outputSize={outputSize} />
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
       <PlotLayout
@@ -731,14 +993,9 @@ function LineplotViz(props: VisualizationProps) {
 
 type LineplotWithControlsProps = Omit<LinePlotProps, 'data'> & {
   data?: LinePlotData | FacetedData<LinePlotData>;
-  valueSpec: string | undefined;
-  onValueSpecChange: (value: string) => void;
   onBinWidthChange: (newBinWidth: NumberOrTimeDelta) => void;
   updateThumbnail: (src: string) => void;
   vizType: string;
-  plotOptions: string[];
-  // add disabledList
-  disabledList: string[];
   // custom legend
   checkedLegendItems: string[] | undefined;
   onCheckedLegendItemsChange: (checkedLegendItems: string[]) => void;
@@ -746,19 +1003,28 @@ type LineplotWithControlsProps = Omit<LinePlotProps, 'data'> & {
   onUseBinningChange: (newValue: boolean) => void;
   showErrorBars: boolean;
   onShowErrorBarsChange: (newValue: boolean) => void;
+  // define types for axis range control
+  vizConfig: LineplotConfig;
+  updateVizConfig: (newConfig: Partial<LineplotConfig>) => void;
+  defaultUIState: Partial<UIState>;
+  defaultIndependentRange: NumberOrDateRange | undefined;
+  defaultDependentAxisRange: NumberOrDateRange | undefined;
+  // pass useState of truncation warnings
+  truncatedIndependentAxisWarning: string;
+  setTruncatedIndependentAxisWarning: (
+    truncatedIndependentAxisWarning: string
+  ) => void;
+  truncatedDependentAxisWarning: string;
+  setTruncatedDependentAxisWarning: (
+    truncatedDependentAxisWarning: string
+  ) => void;
 };
 
 function LineplotWithControls({
   data,
   // LinePlotControls: set initial value as 'raw' ('Raw')
-  valueSpec = 'Median',
-  onValueSpecChange,
   onBinWidthChange,
   vizType,
-  // add plotOptions
-  plotOptions,
-  // add disabledList
-  disabledList,
   updateThumbnail,
   // custom legend
   checkedLegendItems,
@@ -767,12 +1033,30 @@ function LineplotWithControls({
   onUseBinningChange,
   showErrorBars,
   onShowErrorBarsChange,
+  // for axis range control
+  vizConfig,
+  updateVizConfig,
+  independentValueType,
+  dependentValueType,
+  defaultUIState,
+  defaultIndependentRange,
+  defaultDependentAxisRange,
+  truncatedIndependentAxisWarning,
+  setTruncatedIndependentAxisWarning,
+  truncatedDependentAxisWarning,
+  setTruncatedDependentAxisWarning,
   ...lineplotProps
 }: LineplotWithControlsProps) {
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
     plotContainerStyles,
-    [data, checkedLegendItems]
+    [
+      data,
+      checkedLegendItems,
+      // considering axis range control too
+      vizConfig.independentAxisRange,
+      vizConfig.dependentAxisRange,
+    ]
   );
 
   const widgetHeight = '4em';
@@ -784,28 +1068,140 @@ function LineplotWithControls({
     : data;
 
   const neverUseBinning = data0?.binWidthSlider == null; // for ordinal string x-variables
-  const neverShowErrorBars = lineplotProps.dependentValueType === 'date';
+  // axis range control
+  const neverShowErrorBars = dependentValueType === 'date';
+
+  // axis range control
+  const handleIndependentAxisRangeChange = useCallback(
+    (newRange?: NumberOrDateRange) => {
+      updateVizConfig({
+        independentAxisRange:
+          newRange &&
+          ({
+            min:
+              typeof newRange.min === 'string'
+                ? padISODateTime(newRange.min)
+                : newRange.min,
+            max:
+              typeof newRange.max === 'string'
+                ? padISODateTime(newRange.max)
+                : newRange.max,
+          } as NumberOrDateRange),
+      });
+    },
+    [updateVizConfig]
+  );
+
+  const handleIndependentAxisSettingsReset = useCallback(() => {
+    updateVizConfig({
+      independentAxisRange: undefined,
+    });
+    // add reset for truncation message: including dependent axis warning as well
+    setTruncatedIndependentAxisWarning('');
+  }, [defaultUIState.independentAxisRange, updateVizConfig]);
+
+  const handleDependentAxisRangeChange = useCallback(
+    (newRange?: NumberOrDateRange) => {
+      updateVizConfig({
+        dependentAxisRange:
+          newRange &&
+          ({
+            min:
+              typeof newRange.min === 'string'
+                ? padISODateTime(newRange.min)
+                : newRange.min,
+            max:
+              typeof newRange.max === 'string'
+                ? padISODateTime(newRange.max)
+                : newRange.max,
+          } as NumberOrDateRange),
+      });
+    },
+    [updateVizConfig]
+  );
+
+  const handleDependentAxisSettingsReset = useCallback(() => {
+    updateVizConfig({
+      dependentAxisRange: undefined,
+    });
+    // add reset for truncation message as well
+    setTruncatedDependentAxisWarning('');
+  }, [updateVizConfig]);
+
+  // set truncation flags: will see if this is reusable with other application
+  const {
+    truncationConfigIndependentAxisMin,
+    truncationConfigIndependentAxisMax,
+    truncationConfigDependentAxisMin,
+    truncationConfigDependentAxisMax,
+  } = useMemo(
+    () =>
+      truncationConfig(defaultUIState, vizConfig, defaultDependentAxisRange),
+    [
+      defaultUIState.independentAxisRange,
+      vizConfig.xAxisVariable,
+      vizConfig.independentAxisRange,
+      vizConfig.dependentAxisRange,
+      defaultDependentAxisRange,
+    ]
+  );
+
+  // set useEffect for changing truncation warning message
+  useEffect(() => {
+    if (
+      truncationConfigIndependentAxisMin ||
+      truncationConfigIndependentAxisMax
+    ) {
+      setTruncatedIndependentAxisWarning(
+        'Data may have been truncated by range selection, as indicated by the yellow shading'
+      );
+    }
+  }, [truncationConfigIndependentAxisMin, truncationConfigIndependentAxisMax]);
+
+  useEffect(() => {
+    if (
+      // (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) &&
+      // !scatterplotProps.showSpinner
+      truncationConfigDependentAxisMin ||
+      truncationConfigDependentAxisMax
+    ) {
+      setTruncatedDependentAxisWarning(
+        'Data may have been truncated by range selection, as indicated by the yellow shading'
+      );
+    }
+  }, [truncationConfigDependentAxisMin, truncationConfigDependentAxisMax]);
+
+  // send histogramProps with additional props
+  const lineplotPlotProps = {
+    ...lineplotProps,
+    // axis range control
+    independentAxisRange:
+      vizConfig.independentAxisRange ?? defaultIndependentRange,
+    dependentAxisRange:
+      vizConfig.dependentAxisRange ?? defaultDependentAxisRange,
+    // pass valueTypes
+    independentValueType: independentValueType,
+    dependentValueType: dependentValueType,
+    // pass axisTruncationConfig
+    axisTruncationConfig: {
+      independentAxis: {
+        min: truncationConfigIndependentAxisMin,
+        max: truncationConfigIndependentAxisMax,
+      },
+      dependentAxis: {
+        min: truncationConfigDependentAxisMin,
+        max: truncationConfigDependentAxisMax,
+      },
+    },
+  };
 
   return (
     <>
-      <RadioButtonGroup
-        label="Y-axis aggregation:"
-        options={plotOptions}
-        selectedOption={valueSpec}
-        onOptionSelected={onValueSpecChange}
-        // disabledList prop is used to disable radio options (grayed out)
-        disabledList={disabledList}
-        orientation={'horizontal'}
-        labelPlacement={'end'}
-        buttonColor={'primary'}
-        margins={['1em', '0', '0', '6em']}
-        itemMarginRight={50}
-      />
-
       {isFaceted(data) ? (
         <FacetedLinePlot
           data={data}
-          componentProps={lineplotProps}
+          // considering axis range control
+          componentProps={lineplotPlotProps}
           modalComponentProps={{
             independentAxisLabel: lineplotProps.independentAxisLabel,
             dependentAxisLabel: lineplotProps.dependentAxisLabel,
@@ -824,11 +1220,92 @@ function LineplotWithControls({
           displayLibraryControls={false}
           // custom legend: pass checkedLegendItems to PlotlyPlot
           checkedLegendItems={checkedLegendItems}
+          // pass axis range control
+          independentAxisRange={
+            vizConfig.independentAxisRange ?? defaultIndependentRange
+          }
+          dependentAxisRange={
+            vizConfig.dependentAxisRange ?? defaultDependentAxisRange
+          }
+          // pass valueTypes
+          independentValueType={independentValueType}
+          dependentValueType={dependentValueType}
+          // pass axisTruncationConfig
+          axisTruncationConfig={{
+            independentAxis: {
+              min: truncationConfigIndependentAxisMin,
+              max: truncationConfigIndependentAxisMax,
+            },
+            dependentAxis: {
+              min: truncationConfigDependentAxisMin,
+              max: truncationConfigDependentAxisMax,
+            },
+          }}
         />
       )}
 
+      {/* add axis range control */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <LabelledGroup label="X-axis">
+        <LabelledGroup
+          label="Y-axis"
+          containerStyles={{
+            marginRight: '0.5625em',
+          }}
+        >
+          <Switch
+            label="Show error bars (95% C.I.)"
+            state={showErrorBars}
+            onStateChange={onShowErrorBarsChange}
+            disabled={neverShowErrorBars}
+          />
+          {/* Y-axis range control */}
+          {/* make some space to match with X-axis range control */}
+          <div style={{ height: '4em' }} />
+          <AxisRangeControl
+            label="Range"
+            range={vizConfig.dependentAxisRange ?? defaultDependentAxisRange}
+            valueType={dependentValueType === 'date' ? 'date' : 'number'}
+            onRangeChange={(newRange?: NumberOrDateRange) => {
+              handleDependentAxisRangeChange(newRange);
+            }}
+            // set maxWidth
+            containerStyles={{ maxWidth: '350px' }}
+          />
+          {/* truncation notification */}
+          {truncatedDependentAxisWarning ? (
+            <Notification
+              title={''}
+              text={truncatedDependentAxisWarning}
+              // this was defined as LIGHT_BLUE
+              color={'#5586BE'}
+              onAcknowledgement={() => {
+                setTruncatedDependentAxisWarning('');
+              }}
+              showWarningIcon={true}
+              // change maxWidth
+              containerStyles={{ maxWidth: '350px' }}
+            />
+          ) : null}
+          <Button
+            type={'outlined'}
+            // change text
+            text={'Reset to defaults'}
+            onClick={handleDependentAxisSettingsReset}
+            containerStyles={{
+              paddingTop: '1.0em',
+              width: '50%',
+              float: 'right',
+              // to match reset button with date range form
+              marginRight: dependentValueType === 'date' ? '-1em' : '',
+            }}
+          />
+        </LabelledGroup>
+        <LabelledGroup
+          label="X-axis"
+          containerStyles={{
+            marginRight: '0em',
+          }}
+        >
           <Switch
             label={`Binning ${useBinning ? 'on' : 'off'}`}
             state={useBinning}
@@ -853,16 +1330,59 @@ function LineplotWithControls({
             }
             containerStyles={{
               minHeight: widgetHeight,
+              // considering axis range control
+              maxWidth: independentValueType === 'date' ? '250px' : '350px',
             }}
             disabled={!useBinning}
           />
-        </LabelledGroup>
-        <LabelledGroup label="Y-axis">
-          <Switch
-            label="Show error bars (95% C.I.)"
-            state={showErrorBars}
-            onStateChange={onShowErrorBarsChange}
-            disabled={neverShowErrorBars}
+          {/* X-Axis range control */}
+          {/* designed to disable X-axis range control for categorical X */}
+          <AxisRangeControl
+            // change label for disabled case
+            label={
+              independentValueType === 'string'
+                ? 'Range (not available)'
+                : 'Range'
+            }
+            range={vizConfig.independentAxisRange ?? defaultIndependentRange}
+            onRangeChange={handleIndependentAxisRangeChange}
+            // will disable for categorical X so this is sufficient
+            valueType={independentValueType === 'date' ? 'date' : 'number'}
+            // set maxWidth
+            containerStyles={{ maxWidth: '350px' }}
+            // input forms are diabled for categorical X
+            disabled={independentValueType === 'string'}
+          />
+          {/* truncation notification */}
+          {truncatedIndependentAxisWarning ? (
+            <Notification
+              title={''}
+              text={truncatedIndependentAxisWarning}
+              // this was defined as LIGHT_BLUE
+              color={'#5586BE'}
+              onAcknowledgement={() => {
+                setTruncatedIndependentAxisWarning('');
+              }}
+              showWarningIcon={true}
+              // set maxWidth per type
+              containerStyles={{
+                maxWidth: independentValueType === 'date' ? '350px' : '350px',
+              }}
+            />
+          ) : null}
+          <Button
+            type={'outlined'}
+            text={'Reset to defaults'}
+            onClick={handleIndependentAxisSettingsReset}
+            containerStyles={{
+              paddingTop: '1.0em',
+              width: '50%',
+              float: 'right',
+              // to match reset button with date range form
+              marginRight: independentValueType === 'date' ? '-1em' : '',
+            }}
+            // reset button is diabled for categorical X
+            disabled={independentValueType === 'string'}
           />
         </LabelledGroup>
       </div>
@@ -877,6 +1397,7 @@ function LineplotWithControls({
  */
 export function lineplotResponseToData(
   response: LinePlotDataResponse,
+  categoricalMode: boolean,
   // vizType may be used for handling other plots in this component like line and density
   vizType: string,
   independentValueType: string,
@@ -909,10 +1430,12 @@ export function lineplotResponseToData(
       reorderResponseLineplotData(
         // reorder by overlay var within each facet
         group,
+        categoricalMode,
         xAxisVocabulary,
         vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
         overlayVariable
       ),
+      categoricalMode,
       vizType,
       modeValue,
       independentValueType,
@@ -966,8 +1489,88 @@ export function lineplotResponseToData(
   } as LinePlotDataWithCoverage;
 }
 
-// add an extended type including dataElementDependencyOrder
-type getRequestParamsProps = LineplotRequestParams & { vizType?: string };
+type PickByType<T, Value> = {
+  [P in keyof T as T[P] extends Value | undefined ? P : never]: T[P];
+};
+type ArrayTypes = PickByType<
+  LinePlotDataSeries,
+  string[] | (number | null | string)[]
+>;
+
+/**
+ * Where there are nulls in the 'y' array, duplicate them and put a zero in between.
+ * This is a way to get Plotly to plot an unconnected point at zero (nulls in y break the line).
+ * All the duplications have to apply to ALL arrays in the dataSetProcess object, so we jump
+ * through some hoops to iterate over these other arrays rather than name them explicitly.
+ *
+ * simple example:
+ * input:  { x: [1,2,3,4,5], y: [6,1,null,9,11], foo: ['a','b','c','d','e'] }
+ * output: { x: [1,2,3,3,3,4,5], y: [ 6,1,null,0,null,9,11, foo: ['a','b','c','c','c','d','e'] ] }
+ */
+function nullZeroHack(
+  dataSetProcess: LinePlotDataSeries[],
+  dependentValueType: string
+): LinePlotDataSeries[] {
+  // make no attempt to process date values
+  if (dependentValueType === 'date') return dataSetProcess;
+
+  return dataSetProcess.map((series) => {
+    // which are the arrays in the series object?
+    // (assumption: the lengths of all arrays are all the same)
+    const arrayKeys = Object.keys(series)
+      .filter((_): _ is keyof LinePlotDataSeries => true)
+      .filter((key): key is keyof ArrayTypes => Array.isArray(series[key]));
+
+    const otherArrayKeys = arrayKeys.filter((key) => key !== 'y');
+
+    // coersce type of y knowing that we're not dealing with dates (as string[])
+    const y = series.y as (number | null)[];
+
+    return {
+      ...series,
+      // What does the reduce do?
+      // It goes through the series.y array makes a copy of it into the output (accum.y)
+      // However, when a null value is encountered, three values go into the output: null, 0 null.
+      // It also copies all the other arrays present in `series`, adding three identical values where
+      // the y array had a null value.
+      //
+      // The final value of accum has x, y, binLabel, yErrorBarUpper etc, and this is
+      // spread back into he return value for the map.
+      //
+      ...y.reduce((accum, current, index) => {
+        if (accum.y == null) accum.y = [];
+
+        const newY = accum.y as (number | null)[];
+
+        if (current == null) {
+          newY.push(null);
+          newY.push(0);
+          newY.push(null);
+        } else {
+          newY.push(current);
+        }
+
+        otherArrayKeys.forEach(
+          // e.g. x, binLabel etc
+          (key) => {
+            // initialize empty array if needed
+            if (accum[key] == null) accum[key] = [];
+            // get the value of, e.g. x[i]
+            const value = series[key]![index];
+            // figure out if we're going to push one or three identical values
+            const oneOrThree = current == null ? 3 : 1;
+            // and do it
+            [...Array(oneOrThree)].forEach(() =>
+              (accum[key] as (number | null | string)[]).push(value)
+            );
+          }
+        );
+
+        return accum;
+      }, {} as Partial<LinePlotDataSeries>),
+    };
+  });
+}
 
 function getRequestParams(
   studyId: string,
@@ -975,8 +1578,8 @@ function getRequestParams(
   vizConfig: LineplotConfig,
   xAxisVariableMetadata: Variable,
   yAxisVariableMetadata: Variable,
-  outputEntity?: StudyEntity
-): getRequestParamsProps {
+  outputEntity: StudyEntity
+): LineplotRequestParams {
   const {
     xAxisVariable,
     yAxisVariable,
@@ -992,9 +1595,11 @@ function getRequestParams(
       ? xAxisVariableMetadata.binUnits
       : undefined,
     useBinning,
+    numeratorValues,
+    denominatorValues,
   } = vizConfig;
 
-  const binSpec = binWidth
+  const binSpec: Pick<LineplotRequestParams['config'], 'binSpec'> = binWidth
     ? {
         binSpec: {
           type: 'binWidth',
@@ -1012,24 +1617,28 @@ function getRequestParams(
       }
     : { binSpec: { type: 'binWidth' } };
 
-  // valueSpec
-  let valueSpecValue = 'median';
-  if (valueSpecConfig === 'Mean') {
-    valueSpecValue = 'mean';
-  }
+  const valueSpec = valueSpecLookup[valueSpecConfig];
+
+  // define viewport based on independent axis range: need to check undefined case
+  const viewport =
+    vizConfig?.independentAxisRange?.min != null &&
+    vizConfig?.independentAxisRange?.max != null
+      ? {
+          xMin: String(vizConfig?.independentAxisRange?.min),
+          xMax: String(vizConfig?.independentAxisRange?.max),
+        }
+      : undefined;
 
   return {
     studyId,
     filters,
     config: {
-      // add outputEntityId
       outputEntityId: outputEntity?.id,
-      // LinePlotControls
-      valueSpec: valueSpecValue,
-      xAxisVariable: xAxisVariable,
-      yAxisVariable: yAxisVariable,
+      valueSpec,
+      xAxisVariable: xAxisVariable!, // these will never be undefined because
+      yAxisVariable: yAxisVariable!, // data requests are only made when they have been chosen by user
       ...binSpec,
-      overlayVariable: overlayVariable,
+      overlayVariable,
       facetVariable: facetVariable ? [facetVariable] : [],
       showMissingness: showMissingness ? 'TRUE' : 'FALSE',
       // no error bars for date variables (error bar toggle switch is also disabled)
@@ -1037,13 +1646,21 @@ function getRequestParams(
         vizConfig.showErrorBars && yAxisVariableMetadata.type !== 'date'
           ? 'TRUE'
           : 'FALSE',
+      ...(valueSpec === 'proportion'
+        ? {
+            yAxisNumeratorValues: numeratorValues,
+            yAxisDenominatorValues: denominatorValues,
+          }
+        : {}),
+      viewport,
     },
-  } as LineplotRequestParams;
+  };
 }
 
 // making plotly input data
 function processInputData(
   responseLineplotData: LineplotResponse['lineplot']['data'],
+  categoricalMode: boolean,
   vizType: string,
   // line, marker,
   modeValue: LinePlotDataSeries['mode'],
@@ -1100,6 +1717,11 @@ function processInputData(
     binSpec != null && binWidthSlider != null
       ? {
           binWidthSlider: {
+            valueType:
+              independentValueType === 'integer' ||
+              independentValueType === 'number'
+                ? 'number'
+                : 'date',
             binWidth:
               independentValueType === 'number' ||
               independentValueType === 'integer'
@@ -1147,9 +1769,11 @@ function processInputData(
 
       // decode numbers in y axis where necessary
       const seriesY =
-        dependentValueType === 'number' || dependentValueType === 'integer'
-          ? el.seriesY.map(Number)
-          : el.seriesY;
+        dependentValueType === 'number' ||
+        dependentValueType === 'integer' ||
+        categoricalMode
+          ? el.seriesY.map((val) => (val == null ? null : Number(val)))
+          : (el.seriesY as string[]);
 
       dataSetProcess.push({
         x: seriesX.length ? seriesX : (([null] as unknown) as number[]), // [null] hack required to make sure
@@ -1168,7 +1792,16 @@ function processInputData(
           : {}),
         ...(el.binSampleSize != null
           ? {
-              sampleSize: el.binSampleSize.map((bss) => bss.N),
+              extraTooltipText: categoricalMode
+                ? el.binSampleSize.map(
+                    (bss) =>
+                      `n: ${(bss as { numeratorN: number }).numeratorN}/${
+                        (bss as { denominatorN: number }).denominatorN
+                      }`
+                  )
+                : el.binSampleSize.map(
+                    (bss) => `n: ${(bss as { N: number }).N}`
+                  ),
             }
           : {}),
         name:
@@ -1194,10 +1827,12 @@ function processInputData(
     return false;
   });
 
-  const xValues = dataSetProcess.flatMap<string | number>((series) => series.x);
+  const xValues = dataSetProcess.flatMap<string | number | null>(
+    (series) => series.x
+  );
   // get all values of y (including error bars if present) in a kind of clunky way...
   const yValues = dataSetProcess
-    .flatMap<string | number>((series) => series.y)
+    .flatMap<string | number | null>((series) => series.y)
     .concat(
       dataSetProcess
         .flatMap((series) => series.yErrorBarLower ?? [])
@@ -1211,7 +1846,7 @@ function processInputData(
 
   return {
     dataSetProcess: {
-      series: dataSetProcess,
+      series: nullZeroHack(dataSetProcess, dependentValueType),
       ...binWidthSliderData,
     },
     xMin: min(xValues),
@@ -1227,6 +1862,7 @@ function processInputData(
 
 function reorderResponseLineplotData(
   data: LinePlotDataResponse['lineplot']['data'],
+  categoricalMode: boolean,
   xAxisVocabulary: string[] = [],
   overlayVocabulary: string[] = [],
   overlayVariable?: Variable
@@ -1259,11 +1895,14 @@ function reorderResponseLineplotData(
           : {}),
         ...(series.binSampleSize != null
           ? {
+              // it won't ever be a mixed array but TS doesn't know this
               binSampleSize: labelIndices.map((i) =>
                 series.binSampleSize && series.binSampleSize[i]
                   ? series.binSampleSize[i]
+                  : categoricalMode
+                  ? { numeratorN: 0, denominatorN: 0 }
                   : { N: 0 }
-              ),
+              ) as LinePlotDataResponse['lineplot']['data'][number]['binSampleSize'],
             }
           : {}),
       };
@@ -1296,4 +1935,15 @@ function reorderResponseLineplotData(
   } else {
     return xAxisOrderedSeries;
   }
+}
+
+/**
+ * TEMPORARY function to determine if we are dealing with a categorical variable
+ */
+function isSuitableCategoricalVariable(variable?: Variable): boolean {
+  return (
+    variable?.vocabulary != null &&
+    variable?.distinctValuesCount != null &&
+    variable?.distinctValuesCount > 1
+  );
 }

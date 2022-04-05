@@ -11,6 +11,7 @@ import {
   intersection,
   partial,
   unknown,
+  nullType,
 } from 'io-ts';
 import { Filter } from '../../types/filter';
 import {
@@ -285,8 +286,10 @@ export interface LineplotRequestParams {
       xMax: string;
     };
     showMissingness?: 'TRUE' | 'FALSE';
-    valueSpec: 'mean' | 'median';
+    valueSpec: 'mean' | 'median' | 'proportion';
     errorBars: 'TRUE' | 'FALSE';
+    yAxisNumeratorValues?: string[];
+    yAxisDenominatorValues?: string[];
   };
 }
 
@@ -294,7 +297,7 @@ const LineplotResponseData = array(
   intersection([
     type({
       seriesX: array(string),
-      seriesY: array(string),
+      seriesY: array(union([string, nullType])),
     }),
     partial({
       binStart: array(string),
@@ -306,11 +309,19 @@ const LineplotResponseData = array(
           error: string,
         })
       ),
-      binSampleSize: array(
-        type({
-          N: number,
-        })
-      ),
+      binSampleSize: union([
+        array(
+          type({
+            N: number,
+          })
+        ),
+        array(
+          type({
+            numeratorN: number,
+            denominatorN: number,
+          })
+        ),
+      ]),
       overlayVariableDetails: StringVariableValue,
       facetVariableDetails: union([
         tuple([StringVariableValue]),
