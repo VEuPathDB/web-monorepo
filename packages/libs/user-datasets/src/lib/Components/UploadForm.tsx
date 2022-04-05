@@ -289,7 +289,7 @@ function UploadForm({
                               items={strategyOptions.map((option) => ({
                                 value: `${option.strategyId}`,
                                 display: `${option.name}${
-                                  option.isSaved ? '*' : ''
+                                  !option.isSaved ? '*' : ''
                                 }`,
                               }))}
                               onChange={(value) => {
