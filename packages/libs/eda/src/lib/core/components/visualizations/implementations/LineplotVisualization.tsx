@@ -899,6 +899,18 @@ function LineplotViz(props: VisualizationProps) {
               role: 'stratification',
             },
           ]}
+          customSections={[
+            {
+              title: 'Crazy new section',
+              order: 75,
+              content: (
+                <span>
+                  just a span just a span just a span just a span just a span
+                  just a span just a span just a span{' '}
+                </span>
+              ),
+            },
+          ]}
           entities={entities}
           selectedVariables={{
             xAxisVariable: vizConfig.xAxisVariable,
