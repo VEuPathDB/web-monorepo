@@ -82,11 +82,14 @@ function UploadForm({
   const [file, setFile] = useState<File>();
   const [url, setUrl] = useState(urlParams.datasetUrl ?? '');
   const [strategyRootStepId, setStrategyRootStepId] = useState(() => {
-    const parsedStrategyParam = Number(urlParams.datasetStrategyRootStepId);
+    const parsedStrategyRootStepIdParam = Number(
+      urlParams.datasetStrategyRootStepId
+    );
 
-    return !enableStrategyUploadMethod || !isFinite(parsedStrategyParam)
-      ? undefined
-      : parsedStrategyParam;
+    return !enableStrategyUploadMethod ||
+      !isFinite(parsedStrategyRootStepIdParam)
+      ? strategyOptions[0]?.rootStepId
+      : parsedStrategyRootStepIdParam;
   });
 
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
