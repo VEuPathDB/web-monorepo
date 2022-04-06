@@ -20,6 +20,17 @@ interface InputSpec {
   role: 'primary' | 'stratification';
 }
 
+const sectionInfo = {
+  primary: {
+    order: 50,
+    title: 'Axis variables',
+  },
+  stratification: {
+    order: 100,
+    title: 'Stratification variables (optional)',
+  },
+};
+
 export interface Props {
   /**
    * This defines the order the variables appear, and the names associated with
