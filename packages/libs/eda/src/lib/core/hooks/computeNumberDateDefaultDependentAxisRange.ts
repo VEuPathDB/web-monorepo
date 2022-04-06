@@ -22,19 +22,31 @@ export function useDefaultDependentAxisRange(
 ): NumberOrDateRange | undefined {
   // find max of stacked array, especially with overlayVariable
   const defaultDependentAxisRange = useMemo(() => {
-    //K set yMinMaxRange using yMin/yMax obtained from processInputData()
+    // set yMinMaxRange using yMin/yMax obtained from processInputData()
     const yMinMaxRange =
       data.value != null
         ? { min: data.value.yMin, max: data.value?.yMax }
         : undefined;
 
-    const defaultDependentRange = numberDateDefaultDependentAxisRange(
-      yAxisVariable,
-      'scatterplot',
-      yMinMaxRange
-    );
-
-    return axisRangeMargin(defaultDependentRange, yAxisVariable?.type);
+    // check whether yAxisVariable.type and yMinMaxRange values match each other: checking string for date type would be sufficient
+    if (
+      ((yAxisVariable?.type === 'number' ||
+        yAxisVariable?.type === 'integer') &&
+        typeof yMinMaxRange?.min === 'number' &&
+        typeof yMinMaxRange?.max === 'number') ||
+      (yAxisVariable?.type === 'date' &&
+        typeof yMinMaxRange?.min === 'string' &&
+        typeof yMinMaxRange?.max === 'string')
+    ) {
+      const defaultDependentRange = numberDateDefaultDependentAxisRange(
+        yAxisVariable,
+        'scatterplot',
+        yMinMaxRange
+      );
+      return axisRangeMargin(defaultDependentRange, yAxisVariable?.type);
+    } else {
+      return undefined;
+    }
   }, [data, yAxisVariable, vizConfig.valueSpecConfig]);
 
   return defaultDependentAxisRange;

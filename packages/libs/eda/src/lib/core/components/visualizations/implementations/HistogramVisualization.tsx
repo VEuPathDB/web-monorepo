@@ -1235,6 +1235,16 @@ function getRequestParams(
       }
     : { binSpec: { type: 'binWidth' } };
 
+  // define viewport based on independent axis range: need to check undefined case
+  const viewport =
+    vizConfig?.independentAxisRange?.min != null &&
+    vizConfig?.independentAxisRange?.max != null
+      ? {
+          xMin: vizConfig?.independentAxisRange?.min,
+          xMax: vizConfig?.independentAxisRange?.max,
+        }
+      : undefined;
+
   return {
     studyId,
     filters,
@@ -1247,6 +1257,8 @@ function getRequestParams(
       valueSpec,
       ...binSpec,
       showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
+      // pass viewport to get appropriate display range
+      viewport: viewport,
     },
   } as HistogramRequestParams;
 }
