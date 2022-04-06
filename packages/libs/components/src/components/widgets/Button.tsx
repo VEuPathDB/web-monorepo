@@ -20,6 +20,8 @@ export type ButtonProps = {
   textColor?: string;
   /** Additional styles to apply to the widget container. */
   containerStyles?: React.CSSProperties;
+  /** add disabled prop to disable button */
+  disabled?: boolean;
 };
 
 /** A simple button with a few customization options. */
@@ -30,6 +32,8 @@ export default function Button({
   color = LIGHT_BLUE,
   textColor,
   containerStyles = {},
+  // add disabled prop to disable button
+  disabled = false,
 }: ButtonProps) {
   // Override Material UI color scheme.
   const theme = createMuiTheme({
@@ -57,6 +61,8 @@ export default function Button({
           }}
           color="primary"
           onClick={onClick}
+          // add disabled prop to disable button
+          disabled={disabled}
         >
           {text}
         </MaterialButton>
