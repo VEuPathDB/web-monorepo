@@ -43,6 +43,13 @@ export interface Props {
   closeAttributeAnalysis: CloseAttributeAnalysis;
   updateSelectedIds: UpdateSelectedIds;
   showLoginWarning: ShowLoginWarning;
+  renderTableActions?: (props: TableActionsProps) => React.ReactNode;
+}
+
+export interface TableActionsProps {
+  addColumnsNode: React.ReactNode;
+  addToBasketNode: React.ReactNode;
+  downloadLinkNode: React.ReactNode;
 }
 
 function ResultTable(props: Props) {
@@ -55,7 +62,8 @@ function ResultTable(props: Props) {
     actions,
     selectedIds,
     userIsGuest,
-    showLoginWarning
+    showLoginWarning,
+    renderTableActions = defaultRenderTableActions
   } = props;
   const columns = getColumns(props);
   const rows = answer.records;
@@ -95,17 +103,21 @@ function ResultTable(props: Props) {
   const downloadLink = resultType.type === 'step' ? `/step/${resultType.step.id}/download`
     : resultType.type === 'basket' ? `/workspace/basket/${resultType.basketName}/download`
     : undefined;
-  return (
-    <Mesa state={tableState}>
-      {downloadLink &&
-        <div className="ResultTableButton">
+
+  const downloadLinkNode = (
+    downloadLink == null
+      ? null
+      : <div className="ResultTableButton">
           <Link className="btn" to={downloadLink}>
             <IconAlt fa="download"/> Download
           </Link>
         </div>
-      }
-      {!recordClass.useBasket || resultType.type !== 'step' ? null :
-        <div className="ResultTableButton">
+  );
+
+  const addToBasketNode = (
+    !recordClass.useBasket || resultType.type !== 'step'
+      ? null
+      : <div className="ResultTableButton">
           <button type="button"
             className="btn"
             title={userIsGuest ? 'You must login to use baskets' : 'Add all records returned by this search to your basket'}
@@ -116,12 +128,23 @@ function ResultTable(props: Props) {
             <IconAlt fa="shopping-basket"/> Add to Basket
           </button>
         </div>
-      }
-      <div className="ResultTableButton">
-        <button className="btn" type="button" onClick={() => showHideAddColumnsDialog(true)}>
-          <IconAlt fa="cog"/> Add Columns
-        </button>
-      </div>
+  );
+
+  const addColumnsNode = (
+    <div className="ResultTableButton">
+      <button className="btn" type="button" onClick={() => showHideAddColumnsDialog(true)}>
+        <IconAlt fa="cog"/> Add Columns
+      </button>
+    </div>
+  );
+
+  return (
+    <Mesa state={tableState}>
+      {renderTableActions({
+        addColumnsNode,
+        addToBasketNode,
+        downloadLinkNode
+      })}
     </Mesa>
   );
 }
@@ -289,4 +312,14 @@ function getColumns({
     }));
 
   return recordClass.useBasket ? [basketColumn, ...answerColumns] : answerColumns;
+}
+
+function defaultRenderTableActions(props: TableActionsProps) {
+  return (
+    <>
+      {props.downloadLinkNode}
+      {props.addToBasketNode}
+      {props.addColumnsNode}
+    </>
+  );
 }
