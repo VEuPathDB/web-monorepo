@@ -73,7 +73,7 @@ function UploadForm({
   );
 
   const [dataUploadMode, setDataUploadMode] = useState<DataUploadMode>(
-    urlParams.datasetStrategy && enableStrategyUploadMethod
+    urlParams.datasetStrategyRootStepId && enableStrategyUploadMethod
       ? 'strategy'
       : urlParams.datasetUrl
       ? 'url'
@@ -82,7 +82,7 @@ function UploadForm({
   const [file, setFile] = useState<File>();
   const [url, setUrl] = useState(urlParams.datasetUrl ?? '');
   const [strategyRootStepId, setStrategyRootStepId] = useState(() => {
-    const parsedStrategyParam = Number(urlParams.datasetStrategy);
+    const parsedStrategyParam = Number(urlParams.datasetStrategyRootStepId);
 
     return !enableStrategyUploadMethod || !isFinite(parsedStrategyParam)
       ? undefined
@@ -146,10 +146,13 @@ function UploadForm({
   }, [badUploadMessage]);
 
   useEffect(() => {
-    if (strategyOptions.length > 0) {
+    if (
+      strategyOptions.length > 0 &&
+      !strategyOptions.find((option) => option.rootStepId)
+    ) {
       setStrategyRootStepId(strategyOptions[0].rootStepId);
     }
-  }, [strategyOptions]);
+  }, [strategyOptions, strategyRootStepId]);
 
   return (
     <form
@@ -286,6 +289,7 @@ function UploadForm({
                           </label>
                           {dataUploadMode === 'strategy' && (
                             <SingleSelect
+                              value={`${strategyRootStepId}`}
                               items={strategyOptions.map((option) => ({
                                 value: `${option.rootStepId}`,
                                 display: `${option.name}${
