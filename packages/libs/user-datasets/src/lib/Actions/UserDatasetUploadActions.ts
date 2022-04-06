@@ -18,6 +18,11 @@ export const receiveBadUpload = makeActionCreator(
   (message: string) => ({ message, timestamp: Date.now() })
 );
 
+export const clearBadUpload = makeActionCreator(
+  'user-dataset-upload/clear-bad-upload',
+  () => ({})
+);
+
 export const cancelCurrentUpload = makeActionCreator(
   'user-dataset-upload/cancel-upload',
   (id: string) => ({ id })
@@ -46,6 +51,7 @@ export const receiveBadUploadHistoryAction = makeActionCreator(
 export type Action =
   | InferAction<typeof submitUploadForm>
   | InferAction<typeof receiveBadUpload>
+  | InferAction<typeof clearBadUpload>
   | InferAction<typeof cancelCurrentUpload>
   | InferAction<typeof clearMessages>
   | InferAction<typeof requestUploadMessages>

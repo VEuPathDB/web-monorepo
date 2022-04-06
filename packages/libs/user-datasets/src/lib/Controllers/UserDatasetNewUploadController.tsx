@@ -7,7 +7,10 @@ import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { StrategySummary } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
-import { submitUploadForm } from '../Actions/UserDatasetUploadActions';
+import {
+  clearBadUpload,
+  submitUploadForm,
+} from '../Actions/UserDatasetUploadActions';
 
 import UploadForm from '../Components/UploadForm';
 
@@ -59,6 +62,10 @@ export default function UserDatasetUploadController({
 
   const dispatch = useDispatch();
 
+  const clearBadUploadMessage = useCallback(() => {
+    dispatch(clearBadUpload);
+  }, [dispatch]);
+
   const submitForm = useCallback(
     (newUserDataset: NewUserDataset, redirectTo?: string) => {
       dispatch(submitUploadForm(newUserDataset, redirectTo));
@@ -75,6 +82,7 @@ export default function UserDatasetUploadController({
         datasetUploadType={datasetUploadType}
         projectId={projectId}
         badUploadMessage={badUploadMessage}
+        clearBadUpload={clearBadUploadMessage}
         submitForm={submitForm}
         urlParams={urlParams}
         strategyOptions={strategyOptions}

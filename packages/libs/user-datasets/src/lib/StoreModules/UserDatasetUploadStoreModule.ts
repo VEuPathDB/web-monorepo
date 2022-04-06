@@ -16,6 +16,7 @@ import {
   cancelCurrentUpload,
   clearMessages,
   receiveBadUploadHistoryAction,
+  clearBadUpload,
 } from '../Actions/UserDatasetUploadActions';
 
 import {
@@ -38,6 +39,8 @@ export function reduce(state: State = {}, action: Action): State {
   switch (action.type) {
     case receiveBadUpload.type:
       return { ...state, badUploadMessage: action.payload };
+    case clearBadUpload.type:
+      return { ...state, badUploadMessage: undefined };
     case receiveUploadMessages.type:
       return { ...state, uploads: action.payload.uploads };
     case receiveBadUploadHistoryAction.type:

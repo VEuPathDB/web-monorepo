@@ -28,6 +28,7 @@ interface Props<T extends string = string> {
   badUploadMessage: State['badUploadMessage'];
   urlParams: Record<string, string>;
   strategyOptions: StrategySummary[];
+  clearBadUpload: () => void;
   submitForm: (newUserDataset: NewUserDataset, redirectTo?: string) => void;
 }
 
@@ -58,6 +59,7 @@ function UploadForm({
   projectId,
   urlParams,
   strategyOptions,
+  clearBadUpload,
   submitForm,
 }: Props) {
   const displayStrategyUploadMethod =
@@ -156,6 +158,12 @@ function UploadForm({
       setStrategyRootStepId(strategyOptions[0].rootStepId);
     }
   }, [strategyOptions, strategyRootStepId]);
+
+  useEffect(() => {
+    return () => {
+      clearBadUpload();
+    };
+  }, [clearBadUpload]);
 
   return (
     <form
