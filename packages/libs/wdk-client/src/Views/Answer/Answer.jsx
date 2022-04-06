@@ -199,7 +199,7 @@ function makeSortKeys(sortingAttribute, customSortBys = {}) {
     return [
       record => {
         if (record.attributes[sortingAttribute.name] === null) {
-          return '10FFFF';
+          return String.fromCodePoint(0x10FFFF);
         } else {
           // compare strings as lowercase to normalize the sorting behavior
           return record.attributes[sortingAttribute.name].toLowerCase();
