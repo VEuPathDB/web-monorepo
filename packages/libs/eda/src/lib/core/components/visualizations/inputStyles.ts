@@ -31,7 +31,7 @@ export const useInputStyles = makeStyles({
   fullRow: {
     flexBasis: '100%',
   },
-  primary: {},
-  stratification: {},
+  primary: { order: 100 },
+  stratification: { order: 10 },
   showMissingness: {},
 });

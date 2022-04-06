@@ -187,17 +187,14 @@ export function InputVariables(props: Props) {
     <div>
       <div className={classes.inputs}>
         {inputs.filter((input) => input.role === 'primary').length > 0 && (
-          <div className={classes.inputGroup}>
+          <div className={[classes.inputGroup, classes.primary].join(' ')}>
             <div className={classes.fullRow}>
               <h4>Axis variables</h4>
             </div>
             {inputs
               .filter((input) => input.role === 'primary')
               .map((input) => (
-                <div
-                  key={input.name}
-                  className={[classes.input, 'primary'].join(' ')}
-                >
+                <div key={input.name} className={classes.input}>
                   <div className={classes.label}>{input.label}</div>
                   <VariableTreeDropdown
                     scope="variableTree"
@@ -221,17 +218,16 @@ export function InputVariables(props: Props) {
         )}
         {inputs.filter((input) => input.role === 'stratification').length >
           0 && (
-          <div className={classes.inputGroup}>
+          <div
+            className={[classes.inputGroup, classes.stratification].join(' ')}
+          >
             <div className={classes.fullRow}>
               <h4>Stratification variables (optional)</h4>
             </div>
             {inputs
               .filter((input) => input.role === 'stratification')
               .map((input) => (
-                <div
-                  key={input.name}
-                  className={[classes.input, 'stratification'].join(' ')}
-                >
+                <div key={input.name} className={classes.input}>
                   <div className={classes.label}>{input.label}</div>
                   <VariableTreeDropdown
                     scope="variableTree"
