@@ -199,7 +199,8 @@ function makeSortKeys(sortingAttribute, customSortBys = {}) {
     return [
       record => {
         if (record.attributes[sortingAttribute.name] === null) {
-          return String.fromCodePoint(0x10FFFF);
+          // return a string from the smallest UTF-16
+          return String.fromCharCode(0);
         } else {
           // compare strings as lowercase to normalize the sorting behavior
           return record.attributes[sortingAttribute.name].toLowerCase();
