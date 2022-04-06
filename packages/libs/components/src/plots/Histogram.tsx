@@ -258,26 +258,15 @@ const Histogram = makePlotlyPlotComponent(
             binSummaries,
             (bin) => rawRange.max > bin.binMiddle
           );
-
           if (leftBin && rightBin && leftBin.binStart <= rightBin.binStart) {
-            const timezoneOffset =
-              data.binWidthSlider?.valueType === 'date'
-                ? DateMath.endOf(
-                    new Date(rightBin.binEnd),
-                    'day'
-                  ).getTimezoneOffset()
-                : 0;
             setSelectingRange({
               min: leftBin.binStart,
               max:
                 data.binWidthSlider?.valueType === 'date'
                   ? DateMath.subtract(
-                      DateMath.endOf(new Date(rightBin.binEnd), 'day'),
-                      // subtracts an extra day when the offset is negative
-                      timezoneOffset > 0
-                        ? timezoneOffset
-                        : timezoneOffset + 24 * 60,
-                      'minutes'
+                      new Date(rightBin.binEnd),
+                      1,
+                      'day'
                     ).toISOString()
                   : rightBin.binEnd,
             } as NumberOrDateRange);
@@ -305,6 +294,11 @@ const Histogram = makePlotlyPlotComponent(
       const range = selectingRange ?? selectedRange;
 
       if (data.series.length && range) {
+        // for dates, draw the blue area to the end of the day
+        const rightCoordinate =
+          data.binWidthSlider?.valueType === 'number'
+            ? range.max
+            : DateMath.add(new Date(range.max), 0.9999, 'day').toISOString();
         return [
           {
             type: 'rect',
@@ -313,7 +307,7 @@ const Histogram = makePlotlyPlotComponent(
                   xref: 'x',
                   yref: 'paper',
                   x0: range.min,
-                  x1: range.max,
+                  x1: rightCoordinate,
                   y0: 0,
                   y1: 1,
                 }
@@ -323,7 +317,7 @@ const Histogram = makePlotlyPlotComponent(
                   x0: 0,
                   x1: 1,
                   y0: range.min,
-                  y1: range.max,
+                  y1: rightCoordinate,
                 }),
             line: {
               color: 'blue',
