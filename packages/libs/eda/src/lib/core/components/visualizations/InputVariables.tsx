@@ -17,11 +17,15 @@ import { useInputStyles } from './inputStyles';
 interface InputSpec {
   name: string;
   label: string;
-  role: 'primary' | 'stratification';
+  role?: 'axis' | 'stratification';
 }
 
 const sectionInfo = {
-  primary: {
+  default: {
+    order: 0,
+    title: 'Variables',
+  },
+  axis: {
     order: 50,
     title: 'Axis variables',
   },
@@ -197,13 +201,43 @@ export function InputVariables(props: Props) {
   return (
     <div>
       <div className={classes.inputs}>
-        {inputs.filter((input) => input.role === 'primary').length > 0 && (
-          <div className={[classes.inputGroup, classes.primary].join(' ')}>
+        {inputs.filter((input) => input.role === undefined).length > 0 && (
+          <div className={classes.inputGroup}>
+            <div className={classes.fullRow}>
+              <h4>Variables</h4>
+            </div>
+            {inputs
+              .filter((input) => input.role === undefined)
+              .map((input) => (
+                <div key={input.name} className={classes.input}>
+                  <div className={classes.label}>{input.label}</div>
+                  <VariableTreeDropdown
+                    scope="variableTree"
+                    showMultiFilterDescendants
+                    rootEntity={entities[0]}
+                    disabledVariables={disabledVariablesByInputName[input.name]}
+                    customDisabledVariableMessage={
+                      flattenedConstraints?.[input.name].description
+                    }
+                    starredVariables={starredVariables}
+                    toggleStarredVariable={toggleStarredVariable}
+                    entityId={selectedVariables[input.name]?.entityId}
+                    variableId={selectedVariables[input.name]?.variableId}
+                    onChange={(variable) => {
+                      handleChange(input.name, variable);
+                    }}
+                  />
+                </div>
+              ))}
+          </div>
+        )}
+        {inputs.filter((input) => input.role === 'axis').length > 0 && (
+          <div className={classes.inputGroup}>
             <div className={classes.fullRow}>
               <h4>Axis variables</h4>
             </div>
             {inputs
-              .filter((input) => input.role === 'primary')
+              .filter((input) => input.role === 'axis')
               .map((input) => (
                 <div key={input.name} className={classes.input}>
                   <div className={classes.label}>{input.label}</div>
@@ -229,9 +263,7 @@ export function InputVariables(props: Props) {
         )}
         {inputs.filter((input) => input.role === 'stratification').length >
           0 && (
-          <div
-            className={[classes.inputGroup, classes.stratification].join(' ')}
-          >
+          <div className={classes.inputGroup}>
             <div className={classes.fullRow}>
               <h4>Stratification variables (optional)</h4>
             </div>
