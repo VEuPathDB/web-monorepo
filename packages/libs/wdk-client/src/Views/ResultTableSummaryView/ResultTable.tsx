@@ -171,11 +171,10 @@ function getEventHandlers(props: Props) {
     viewPageNumber(newPage);
   }
   function onRowsPerPageChange(newRowsPerPage: number) {
-    // NOTE: To avoid an error, invoke requestPageSizeUpdate before invoking viewPageNumber
     requestPageSizeUpdate(newRowsPerPage);
-    /* 
-      Calculates which page to set every time "Rows per page" is changed. Specifically, it sets 
-      the page such that the top row's data is included on the new page's render. This ensures that
+    /*
+      Calculates which page to set every time "Rows per page" is changed such that 
+      the top row's data is included on the new page's render. This ensures that
       the user is in close proximity to whatever data they were previously viewing.
     */
     viewPageNumber(Math.ceil((answer.meta.pagination.offset + 1) / newRowsPerPage));
