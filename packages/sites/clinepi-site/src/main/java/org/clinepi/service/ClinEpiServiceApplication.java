@@ -8,7 +8,6 @@ import org.clinepi.service.services.ShinyQueryService;
 import org.eupathdb.common.service.EuPathServiceApplication;
 import org.gusdb.fgputil.SetBuilder;
 import org.gusdb.wdk.service.service.ProjectService;
-import org.gusdb.wdk.service.service.user.ProfileService;
 
 public class ClinEpiServiceApplication extends EuPathServiceApplication {
 
