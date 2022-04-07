@@ -44,7 +44,17 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
       uploadMethodConfig: {
         strategy: {
           offer: true,
-          compatibleRecordTypes: ['gene', 'transcript'],
+          compatibleRecordTypes: {
+            transcript: () => ({
+              reportName: 'attributesTabular',
+              reportConfig: {
+                attributes: ['primary_key'],
+                includeHeader: false,
+                attachmentType: 'plain',
+                applyFilter: true,
+              },
+            }),
+          },
         },
       },
     },

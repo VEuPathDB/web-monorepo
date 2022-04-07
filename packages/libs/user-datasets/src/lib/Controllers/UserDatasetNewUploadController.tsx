@@ -43,14 +43,17 @@ export default function UserDatasetUploadController({
       }
 
       const strategies = await wdkService.getStrategies();
-      const compatibleRecordTypeSet = new Set(
-        datasetUploadType.formConfig.uploadMethodConfig.strategy.compatibleRecordTypes
+      const compatibleRecordTypeNames = new Set(
+        Object.keys(
+          datasetUploadType.formConfig.uploadMethodConfig.strategy
+            .compatibleRecordTypes
+        )
       );
 
       return strategies.filter(
         (strategy) =>
           strategy.recordClassName != null &&
-          compatibleRecordTypeSet.has(strategy.recordClassName)
+          compatibleRecordTypeNames.has(strategy.recordClassName)
       );
     },
     [datasetUploadType.formConfig.uploadMethodConfig.strategy.offer]

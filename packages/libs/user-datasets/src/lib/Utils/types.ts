@@ -1,5 +1,7 @@
 import { ReactNode } from 'react';
 
+import { StandardReportConfig } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+
 export interface UserDatasetMeta {
   description: string;
   name: string;
@@ -75,7 +77,10 @@ export interface DatasetUploadTypeConfigEntry<T extends string> {
         | { offer: false }
         | {
             offer: true;
-            compatibleRecordTypes: string[];
+            compatibleRecordTypes: Record<
+              string,
+              () => { reportName: string; reportConfig: StandardReportConfig }
+            >;
           };
     };
     renderInfo: () => ReactNode;
