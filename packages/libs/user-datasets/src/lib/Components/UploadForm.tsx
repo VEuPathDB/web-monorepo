@@ -5,6 +5,9 @@ import React, {
   useMemo,
   useState,
 } from 'react';
+
+import { keyBy } from 'lodash';
+
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import {
   TextBox,
@@ -14,10 +17,15 @@ import {
   SingleSelect,
 } from '@veupathdb/wdk-client/lib/Components';
 
+import { StandardReportConfig } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { StrategySummary } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 import { State } from '../StoreModules/UserDatasetUploadStoreModule';
-import { DatasetUploadTypeConfigEntry, NewUserDataset } from '../Utils/types';
+import {
+  DatasetUploadTypeConfigEntry,
+  NewUserDataset,
+  StrategyUploadConfig,
+} from '../Utils/types';
 
 import './UploadForm.scss';
 
@@ -28,6 +36,7 @@ interface Props<T extends string = string> {
   badUploadMessage: State['badUploadMessage'];
   urlParams: Record<string, string>;
   strategyOptions: StrategySummary[];
+  strategyUploadConfig: StrategyUploadConfig;
   clearBadUpload: () => void;
   submitForm: (newUserDataset: NewUserDataset, redirectTo?: string) => void;
 }
@@ -37,7 +46,12 @@ type DataUploadMode = 'file' | 'url' | 'strategy';
 type DataUploadSelection =
   | { type: 'file'; file?: File }
   | { type: 'url'; url?: string }
-  | { type: 'strategy'; rootStepId?: number };
+  | {
+      type: 'strategy';
+      rootStepId?: number;
+      reportName?: string;
+      reportConfig?: StandardReportConfig;
+    };
 
 type CompleteDataUploadSelection = Required<DataUploadSelection>;
 
@@ -59,9 +73,15 @@ function UploadForm({
   projectId,
   urlParams,
   strategyOptions,
+  strategyUploadConfig,
   clearBadUpload,
   submitForm,
 }: Props) {
+  const strategyOptionsByRootStepId = useMemo(
+    () => keyBy(strategyOptions, (option) => option.rootStepId),
+    [strategyOptions]
+  );
+
   const displayStrategyUploadMethod =
     datasetUploadType.formConfig.uploadMethodConfig.strategy.offer;
 
@@ -97,15 +117,62 @@ function UploadForm({
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
 
-  const dataUploadSelection = useMemo(
-    (): DataUploadSelection =>
-      dataUploadMode === 'file'
-        ? { type: 'file', file }
-        : dataUploadMode === 'url'
-        ? { type: 'url', url }
-        : { type: 'strategy', rootStepId: strategyRootStepId },
-    [dataUploadMode, file, url, strategyRootStepId]
-  );
+  const dataUploadSelection = useMemo((): DataUploadSelection => {
+    if (dataUploadMode === 'file') {
+      return { type: 'file', file };
+    }
+
+    if (dataUploadMode === 'url') {
+      return { type: 'url', url };
+    }
+
+    if (strategyUploadConfig.offer === false) {
+      throw new Error('This data set type does not support strategy uploads.');
+    }
+
+    if (strategyRootStepId == null) {
+      return { type: 'strategy', rootStepId: undefined };
+    }
+
+    const selectedStrategy = strategyOptionsByRootStepId[strategyRootStepId];
+
+    if (selectedStrategy == null) {
+      throw new Error(
+        `Tried to select an unavailable strategy with root step ${strategyRootStepId}.`
+      );
+    }
+
+    const strategyRecordClass = selectedStrategy.recordClassName;
+
+    if (strategyRecordClass == null) {
+      throw new Error(
+        `Tried to upload a strategy (id ${selectedStrategy.strategyId}) with no record type.`
+      );
+    }
+
+    const strategyReportSettings = strategyUploadConfig.compatibleRecordTypes[
+      strategyRecordClass
+    ]?.();
+
+    if (strategyReportSettings == null) {
+      throw new Error(
+        `Tried to upload a strategy (id ${selectedStrategy.strategyId}) with an incompatible record type ${selectedStrategy.recordClassName}.`
+      );
+    }
+
+    return {
+      type: 'strategy',
+      rootStepId: strategyRootStepId,
+      ...strategyReportSettings,
+    };
+  }, [
+    dataUploadMode,
+    file,
+    url,
+    strategyUploadConfig,
+    strategyRootStepId,
+    strategyOptionsByRootStepId,
+  ]);
 
   const onSubmit = useCallback(
     (event: FormEvent) => {
@@ -387,11 +454,7 @@ function validateForm<T extends string = string>(
 function isCompleteDataUploadSelection(
   dataUploadSelection: DataUploadSelection
 ): dataUploadSelection is CompleteDataUploadSelection {
-  return dataUploadSelection.type === 'file'
-    ? dataUploadSelection.file != null
-    : dataUploadSelection.type === 'url'
-    ? dataUploadSelection.url != null
-    : dataUploadSelection.rootStepId != null;
+  return Object.values(dataUploadSelection).every((value) => value != null);
 }
 
 // https://stackoverflow.com/a/43467144

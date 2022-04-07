@@ -89,6 +89,9 @@ export default function UserDatasetUploadController({
         submitForm={submitForm}
         urlParams={urlParams}
         strategyOptions={strategyOptions}
+        strategyUploadConfig={
+          datasetUploadType.formConfig.uploadMethodConfig.strategy
+        }
       />
     </div>
   );
