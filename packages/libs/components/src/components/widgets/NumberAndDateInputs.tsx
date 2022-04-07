@@ -182,7 +182,8 @@ function BaseInput({
       {label && (
         <Typography
           variant="button"
-          style={{ color: focused ? DARK_GRAY : MEDIUM_GRAY }}
+          // style={{ color: focused ? DARK_GRAY : MEDIUM_GRAY }}
+          style={{ color: 'black' }}
         >
           {label}
         </Typography>
