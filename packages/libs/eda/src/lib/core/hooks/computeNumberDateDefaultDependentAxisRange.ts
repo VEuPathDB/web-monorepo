@@ -9,6 +9,8 @@ import { Variable } from '../types/study';
 import { numberDateDefaultDependentAxisRange } from '../utils/default-dependent-axis-range';
 import { axisRangeMargin } from '../utils/axis-range-margin';
 import { NumberOrDateRange } from '../types/general';
+//DKDK
+import { isFaceted } from '@veupathdb/components/lib/types/guards';
 
 /**
  * A custom hook to compute default dependent axis range
@@ -22,6 +24,17 @@ export function useDefaultDependentAxisRange(
 ): NumberOrDateRange | undefined {
   // find max of stacked array, especially with overlayVariable
   const defaultDependentAxisRange = useMemo(() => {
+    // explicitly check empty data
+    if (
+      (!isFaceted(data?.value?.dataSetProcess) &&
+        data?.value?.dataSetProcess.series == null) ||
+      (isFaceted(data?.value?.dataSetProcess) &&
+        data?.value?.dataSetProcess?.facets != null &&
+        data?.value?.dataSetProcess?.facets?.length === 0)
+    ) {
+      return undefined;
+    }
+
     // set yMinMaxRange using yMin/yMax obtained from processInputData()
     const yMinMaxRange =
       data.value != null
