@@ -171,12 +171,14 @@ function getEventHandlers(props: Props) {
     viewPageNumber(newPage);
   }
   function onRowsPerPageChange(newRowsPerPage: number) {
+    // NOTE: To avoid an error, invoke requestPageSizeUpdate before invoking viewPageNumber
     requestPageSizeUpdate(newRowsPerPage);
-    // NOTE: When this condition is met, ensure viewPageNumber is invoked after invoking requestPageSizeUpdate
-    if (Math.ceil(answer.meta.totalCount / newRowsPerPage) < Math.ceil((answer.meta.pagination.offset + 1) / answer.meta.pagination.numRecords)) {
-      // Sets the page to the last available page when setting newRowsPerPage results in the currentPage no longer existing
-      viewPageNumber(Math.ceil(answer.meta.totalCount/newRowsPerPage));
-    }
+    /* 
+      Calculates which page to set every time "Rows per page" is changed. Specifically, it sets 
+      the page such that the top row's data is included on the new page's render. This ensures that
+      the user is in close proximity to whatever data they were previously viewing.
+    */
+    viewPageNumber(Math.ceil((answer.meta.pagination.offset + 1) / newRowsPerPage));
   }
   function onRowSelect(row: RecordInstance) {
     onMultipleRowSelect([row]);
