@@ -298,7 +298,7 @@ const Histogram = makePlotlyPlotComponent(
         const rightCoordinate =
           data.binWidthSlider?.valueType === 'number'
             ? range.max
-            : DateMath.endOf(new Date(range.max), 'day').toISOString();
+            : DateMath.add(new Date(range.max), 0.9999, 'day').toISOString();
         return [
           {
             type: 'rect',
