@@ -719,9 +719,6 @@ function ScatterplotViz(props: VisualizationProps) {
       };
   }, [xAxisVariable, defaultIndependentRange]);
 
-  //DKDK
-  console.log('legendItems =', legendItems);
-
   const plotNode = (
     <ScatterplotWithControls
       // data.value

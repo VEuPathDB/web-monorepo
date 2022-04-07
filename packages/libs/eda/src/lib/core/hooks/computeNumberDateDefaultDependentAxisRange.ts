@@ -22,8 +22,6 @@ export function useDefaultDependentAxisRange(
   updateVizConfig: (newConfig: Partial<ScatterplotConfig>) => void,
   yAxisVariable?: Variable
 ): NumberOrDateRange | undefined {
-  //DKDK
-  console.log('data =', data);
   // find max of stacked array, especially with overlayVariable
   const defaultDependentAxisRange = useMemo(() => {
     // explicitly check empty data
