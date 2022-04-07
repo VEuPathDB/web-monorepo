@@ -843,7 +843,10 @@ function LineplotViz(props: VisualizationProps) {
       ? ['Mean', 'Median']
       : ['Proportion'];
 
-  const valuesOfInterestLabelStyle = { marginLeft: '0.5em' };
+  const valuesOfInterestLabelStyle = {
+    marginLeft: 'auto',
+    paddingLeft: '0.5em',
+  };
 
   const aggregationHelp = (
     <div>
