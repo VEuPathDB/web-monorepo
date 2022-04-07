@@ -903,11 +903,23 @@ function HistogramPlotWithControls({
         {/* make switch and radiobutton single line with space
                  also marginRight at LabelledGroup is set to 0.5625em: default - 1.5625em*/}
         <LabelledGroup
-          label="Y-axis"
+          label=""
           containerStyles={{
             marginRight: '0.5625em',
           }}
         >
+          {/* add this Y-axis label to underline it */}
+          <div
+            style={{
+              fontSize: '1.1em',
+              fontWeight: 'bold',
+              textDecoration: 'underline',
+              marginTop: '0.5em',
+              marginBottom: '0.5em',
+            }}
+          >
+            Y-axis
+          </div>
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <Switch
               label="Log scale"
@@ -967,12 +979,37 @@ function HistogramPlotWithControls({
             }}
           />
         </LabelledGroup>
+        {/* add vertical line in btw Y- and X- controls */}
+        <div
+          style={{
+            display: 'inline-flex',
+            borderLeft: '2px solid lightgray',
+            height: '13.5em',
+            position: 'relative',
+            marginLeft: '-1px',
+            top: '1.5em',
+          }}
+        >
+          {' '}
+        </div>
         <LabelledGroup
-          label="X-axis"
+          label=""
           containerStyles={{
             marginRight: '0em',
           }}
         >
+          {/* add this X-axis label here to underline it */}
+          <div
+            style={{
+              fontSize: '1.1em',
+              fontWeight: 'bold',
+              textDecoration: 'underline',
+              marginTop: '0.5em',
+              marginBottom: '0.5em',
+            }}
+          >
+            X-axis
+          </div>
           <BinWidthControl
             binWidth={data0?.binWidthSlider?.binWidth}
             onBinWidthChange={onBinWidthChange}
@@ -1003,7 +1040,9 @@ function HistogramPlotWithControls({
             onRangeChange={handleIndependentAxisRangeChange}
             valueType={valueType}
             // set maxWidth
-            containerStyles={{ maxWidth: '350px' }}
+            containerStyles={{
+              maxWidth: '350px',
+            }}
           />
           {/* truncation notification */}
           {truncatedIndependentAxisWarning ? (
