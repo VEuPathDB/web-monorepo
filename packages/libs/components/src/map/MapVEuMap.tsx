@@ -44,6 +44,7 @@ export const baseLayers = {
       'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
     attribution:
       'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012',
+    maxZoom: 17,
   },
   // change config
   Terrain: {
@@ -67,6 +68,7 @@ export const baseLayers = {
       [90, 180],
     ],
     noWrap: true,
+    maxZoom: 17,
   },
   // change layer as previous one does not work
   Light: {
