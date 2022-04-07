@@ -43,7 +43,7 @@ import {
 } from '../../../utils/visualization';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { OutputEntityTitle } from '../OutputEntityTitle';
-import { sumBy } from 'lodash';
+import { sumBy, values } from 'lodash';
 import PluginError from '../PluginError';
 import { VariableDescriptor } from '../../../types/variable';
 import { InputVariables } from '../InputVariables';
@@ -54,6 +54,7 @@ import PlotLegend, {
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
+import { BirdsEyeView } from '../../BirdsEyeView';
 
 export const mapVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -129,8 +130,8 @@ function MapViz(props: VisualizationProps) {
     updateConfiguration,
     updateThumbnail,
     filters,
-    //    totalCounts,
-    //    filteredCounts,
+    totalCounts,
+    filteredCounts,
     geoConfigs,
     otherVizOverviews,
     starredVariables,
@@ -151,6 +152,9 @@ function MapViz(props: VisualizationProps) {
     createDefaultConfig,
     updateConfiguration
   );
+
+  if (geoConfigs.length == 1 && vizConfig.geoEntityId === undefined)
+    updateVizConfig({ geoEntityId: geoConfigs[0].entity.id });
 
   const handleViewportChanged: MapVEuMapProps['onViewportChanged'] = useCallback(
     ({ center, zoom }) => {
@@ -260,7 +264,8 @@ function MapViz(props: VisualizationProps) {
         latitudeVariable == null ||
         longitudeVariable == null ||
         geoAggregateVariable == null ||
-        outputEntity == null
+        outputEntity == null ||
+        vizConfig.xAxisVariable == null
       )
         return undefined;
 
@@ -315,6 +320,7 @@ function MapViz(props: VisualizationProps) {
       // (baseLayer doesn't matter either) - so we cherry pick properties of vizConfig
       vizConfig.geoEntityId,
       vizConfig.outputEntityId,
+      vizConfig.xAxisVariable,
       boundsZoomLevel,
       computation.descriptor.type,
       geoConfig,
@@ -443,6 +449,17 @@ function MapViz(props: VisualizationProps) {
         ? undefined
         : sumBy(basicMarkerData.value, (elem) => elem.entityCount),
     [basicMarkerData]
+  );
+
+  // TEMPORARY for placeholder BirdsEye
+  const totalPieplotCount = useMemo(
+    () =>
+      pieplotData.value == null
+        ? undefined
+        : sumBy(values(pieplotData.value), (pieData) =>
+            sumBy(pieData, (elem) => elem.value)
+          ),
+    [pieplotData]
   );
 
   /**
@@ -589,6 +606,29 @@ function MapViz(props: VisualizationProps) {
   const pieConstraints = pieOverview.dataElementConstraints;
   const pieDependencyOrder = pieOverview.dataElementDependencyOrder;
 
+  const tableGroupNode = (
+    // Bird's eye plot isn't yet functional
+    <BirdsEyeView
+      // placeholder values - FIX ME!!
+      completeCasesAxesVars={totalEntityCount}
+      completeCasesAllVars={totalPieplotCount}
+      // Nonfuntional (and nonsensical) prop values for map viz
+      // completeCasesAllVars={
+      //   pieplotData.pending
+      //     ? undefined
+      //     : pieplotData.value?.completeCasesAllVars?.[0].value
+      // }
+      // completeCasesAxesVars={
+      //   data.pending ? undefined : data.value?.completeCasesAxesVars
+      // }
+      outputEntity={outputEntity}
+      stratificationIsActive={true} // TEMPORARY? FIX ME!
+      // enableSpinner={vizConfig.xAxisVariable != null && !pieplotData.error}
+      totalCounts={totalCounts.value}
+      filteredCounts={filteredCounts.value}
+    />
+  );
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div
@@ -600,21 +640,23 @@ function MapViz(props: VisualizationProps) {
           justifyContent: 'space-between',
         }}
       >
-        <FormControl style={{ minWidth: '200px' }} variant="filled">
-          <InputLabel>Map the locations of</InputLabel>
-          <Select
-            value={vizConfig.geoEntityId ?? ''}
-            onChange={handleGeoEntityChange}
-          >
-            {geoConfigs.map((geoConfig) => (
-              <MenuItem key={geoConfig.entity.id} value={geoConfig.entity.id}>
-                {geoConfig.entity.displayNamePlural ??
-                  geoConfig.entity.displayName}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl style={{ minWidth: '200px' }} variant="filled">
+        {geoConfigs.length > 1 && (
+          <FormControl style={{ minWidth: '200px' }} variant="filled">
+            <InputLabel>Map the locations of</InputLabel>
+            <Select
+              value={vizConfig.geoEntityId ?? ''}
+              onChange={handleGeoEntityChange}
+            >
+              {geoConfigs.map((geoConfig) => (
+                <MenuItem key={geoConfig.entity.id} value={geoConfig.entity.id}>
+                  {geoConfig.entity.displayNamePlural ??
+                    geoConfig.entity.displayName}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
+        {/* <FormControl style={{ minWidth: '200px' }} variant="filled">
           <InputLabel>Show counts of</InputLabel>
           <Select
             value={outputEntity?.id ?? ''}
@@ -627,13 +669,12 @@ function MapViz(props: VisualizationProps) {
               </MenuItem>
             ))}
           </Select>
-        </FormControl>
+        </FormControl> */}
         <InputVariables
           inputs={[
             {
               name: 'xAxisVariable',
-              label: 'Categorical overlay',
-              role: 'stratification',
+              label: 'Main',
             },
           ]}
           entities={entities}
@@ -668,7 +709,7 @@ function MapViz(props: VisualizationProps) {
         isFaceted={false}
         legendNode={legendNode}
         plotNode={plotNode}
-        tableGroupNode={null}
+        tableGroupNode={tableGroupNode}
       />
     </div>
   );

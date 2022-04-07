@@ -671,7 +671,7 @@ function BarplotViz(props: VisualizationProps) {
             {
               name: 'xAxisVariable',
               label: 'Main',
-              role: 'primary',
+              role: 'axis',
             },
             {
               name: 'overlayVariable',
