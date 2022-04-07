@@ -843,13 +843,16 @@ function LineplotViz(props: VisualizationProps) {
       ? ['Mean', 'Median']
       : ['Proportion'];
 
-  const valuesOfInterestLabelStyle = { minWidth: '200px' };
+  const valuesOfInterestLabelStyle = { marginLeft: '0.5em' };
 
   const aggregationHelp = (
     <div>
-      “Mean” and “Median” are y-axis aggregation functions that can only be used
-      when continuous variables <i className="fa fa-bar-chart-o  wdk-Icon"> </i>{' '}
-      are selected for the y-axis.
+      <p>
+        “Mean” and “Median” are y-axis aggregation functions that can only be
+        used when continuous variables{' '}
+        <i className="fa fa-bar-chart-o  wdk-Icon"> </i> are selected for the
+        y-axis.
+      </p>
       <ul>
         <li>
           Mean = Sum of values for all data points / Number of all data points
@@ -864,12 +867,69 @@ function LineplotViz(props: VisualizationProps) {
         “Proportion” is the only y-axis aggregation function that can be used
         when categorical variables <i className="fa fa-list  wdk-Icon"> </i> are
         selected for the y-axis.
-        <ul>
-          <li>Proportion = Numerator count / Denominator count</li>
-        </ul>
+      </p>
+      <ul>
+        <li>Proportion = Numerator count / Denominator count</li>
+      </ul>
+      <p>
         The variable's values that count towards numerator and denominator must
         be selected in the “Proportion specification” drop-downs.
       </p>
+    </div>
+  );
+
+  const proportionInputs = (
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <RadioButtonGroup
+        options={keys(valueSpecLookup)}
+        selectedOption={vizConfig.valueSpecConfig}
+        onOptionSelected={onValueSpecChange}
+        disabledList={disabledValueSpecs}
+        orientation={'horizontal'}
+        labelPlacement={'end'}
+        buttonColor={'primary'}
+        itemMarginRight={20}
+      />
+
+      {vizConfig.valueSpecConfig === 'Proportion' && (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, auto)',
+            gridTemplateRows: 'repeat(3, auto)',
+          }}
+        >
+          <div className={classes.label} style={{ gridColumn: 1, gridRow: 2 }}>
+            Proportion&nbsp;=
+          </div>
+          <div
+            className={classes.input}
+            style={{ gridColumn: 2, gridRow: 1, marginBottom: 0 }}
+          >
+            <ValuePicker
+              allowedValues={yAxisVariable?.vocabulary}
+              selectedValues={vizConfig.numeratorValues}
+              onSelectedValuesChange={onNumeratorValuesChange}
+            />
+            <div className={classes.label} style={valuesOfInterestLabelStyle}>
+              (numerator)
+            </div>
+          </div>
+          <div style={{ gridColumn: 2, gridRow: 2, marginRight: '2em' }}>
+            <hr style={{ marginTop: '0.6em' }} />
+          </div>
+          <div className={classes.input} style={{ gridColumn: 2, gridRow: 3 }}>
+            <ValuePicker
+              allowedValues={yAxisVariable?.vocabulary}
+              selectedValues={vizConfig.denominatorValues}
+              onSelectedValuesChange={onDenominatorValuesChange}
+            />
+            <div className={classes.label} style={valuesOfInterestLabelStyle}>
+              (denominator)
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 
@@ -901,14 +961,20 @@ function LineplotViz(props: VisualizationProps) {
           ]}
           customSections={[
             {
-              title: 'Crazy new section',
-              order: 75,
-              content: (
-                <span>
-                  just a span just a span just a span just a span just a span
-                  just a span just a span just a span{' '}
-                </span>
+              title: (
+                <>
+                  Y-axis aggregation
+                  <Tooltip content={aggregationHelp}>
+                    <i
+                      style={{ marginLeft: '5px' }}
+                      className="fa fa-question-circle"
+                      aria-hidden="true"
+                    ></i>
+                  </Tooltip>
+                </>
               ),
+              order: 75,
+              content: proportionInputs,
             },
           ]}
           entities={entities}
@@ -932,63 +998,6 @@ function LineplotViz(props: VisualizationProps) {
           onShowMissingnessChange={onShowMissingnessChange}
           outputEntity={outputEntity}
         />
-      </div>
-
-      <div className={classes.inputs}>
-        <div className={classes.inputGroup}>
-          <div className={classes.fullRow}>
-            <h4>
-              Y-axis aggregation
-              <Tooltip content={aggregationHelp}>
-                <i
-                  style={{ marginLeft: '5px' }}
-                  className="fa fa-question-circle"
-                  aria-hidden="true"
-                ></i>
-              </Tooltip>
-            </h4>
-          </div>
-          <div className={classes.input}>
-            <RadioButtonGroup
-              options={keys(valueSpecLookup)}
-              selectedOption={vizConfig.valueSpecConfig}
-              onOptionSelected={onValueSpecChange}
-              disabledList={disabledValueSpecs}
-              orientation={'horizontal'}
-              labelPlacement={'end'}
-              buttonColor={'primary'}
-              itemMarginRight={20}
-            />
-          </div>
-        </div>
-
-        {vizConfig.valueSpecConfig === 'Proportion' && (
-          <div className={classes.inputGroup}>
-            <div className={classes.fullRow}>
-              <h4>Proportion specification for Y-axis variable</h4>
-            </div>
-            <div className={[classes.input, classes.fullRow].join(' ')}>
-              <div className={classes.label} style={valuesOfInterestLabelStyle}>
-                Value(s) of interest (numerator)
-              </div>
-              <ValuePicker
-                allowedValues={yAxisVariable?.vocabulary}
-                selectedValues={vizConfig.numeratorValues}
-                onSelectedValuesChange={onNumeratorValuesChange}
-              />
-            </div>
-            <div className={[classes.input, classes.fullRow].join(' ')}>
-              <div className={classes.label} style={valuesOfInterestLabelStyle}>
-                Value(s) of interest (denominator)
-              </div>
-              <ValuePicker
-                allowedValues={yAxisVariable?.vocabulary}
-                selectedValues={vizConfig.denominatorValues}
-                onSelectedValuesChange={onDenominatorValuesChange}
-              />
-            </div>
-          </div>
-        )}
       </div>
 
       <PluginError error={data.error} outputSize={outputSize} />

@@ -22,7 +22,7 @@ interface InputSpec {
 
 interface SectionSpec {
   order: number;
-  title: string;
+  title: string | ReactNode;
 }
 
 // order is used to sort the inputGroups
