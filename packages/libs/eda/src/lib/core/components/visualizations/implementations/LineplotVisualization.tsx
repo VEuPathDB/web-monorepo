@@ -1362,7 +1362,7 @@ function LineplotWithControls({
               // considering axis range control
               maxWidth: independentValueType === 'date' ? '250px' : '350px',
             }}
-            disabled={!useBinning}
+            disabled={!useBinning || neverUseBinning}
           />
           {/* X-Axis range control */}
           {/* designed to disable X-axis range control for categorical X */}
