@@ -876,7 +876,7 @@ function LineplotViz(props: VisualizationProps) {
       </ul>
       <p>
         The variable's values that count towards numerator and denominator must
-        be selected in the “Proportion specification” drop-downs.
+        be selected in the two drop-downs.
       </p>
     </div>
   );
@@ -907,29 +907,37 @@ function LineplotViz(props: VisualizationProps) {
           </div>
           <div
             className={classes.input}
-            style={{ gridColumn: 2, gridRow: 1, marginBottom: 0 }}
+            style={{
+              gridColumn: 2,
+              gridRow: 1,
+              marginBottom: 0,
+              justifyContent: 'center',
+            }}
           >
             <ValuePicker
               allowedValues={yAxisVariable?.vocabulary}
               selectedValues={vizConfig.numeratorValues}
               onSelectedValuesChange={onNumeratorValuesChange}
             />
-            <div className={classes.label} style={valuesOfInterestLabelStyle}>
+            {/*<div className={classes.label} style={valuesOfInterestLabelStyle}>
               (numerator)
-            </div>
+            </div>*/}
           </div>
           <div style={{ gridColumn: 2, gridRow: 2, marginRight: '2em' }}>
             <hr style={{ marginTop: '0.6em' }} />
           </div>
-          <div className={classes.input} style={{ gridColumn: 2, gridRow: 3 }}>
+          <div
+            className={classes.input}
+            style={{ gridColumn: 2, gridRow: 3, justifyContent: 'center' }}
+          >
             <ValuePicker
               allowedValues={yAxisVariable?.vocabulary}
               selectedValues={vizConfig.denominatorValues}
               onSelectedValuesChange={onDenominatorValuesChange}
             />
-            <div className={classes.label} style={valuesOfInterestLabelStyle}>
+            {/*<div className={classes.label} style={valuesOfInterestLabelStyle}>
               (denominator)
-            </div>
+            </div>*/}
           </div>
         </div>
       )}
