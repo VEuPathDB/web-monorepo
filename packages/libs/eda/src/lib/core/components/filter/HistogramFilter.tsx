@@ -659,7 +659,7 @@ function HistogramPlotWithControls({
           style={{
             display: 'inline-flex',
             borderLeft: '2px solid lightgray',
-            height: '14em',
+            height: '13.6em',
             position: 'relative',
             marginLeft: '-1.2em',
             top: '1.5em',
