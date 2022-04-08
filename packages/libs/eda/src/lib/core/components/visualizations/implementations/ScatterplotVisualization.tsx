@@ -1215,23 +1215,12 @@ function ScatterplotWithControls({
         {/* make switch and radiobutton single line with space
                  also marginRight at LabelledGroup is set to 0.5625em: default - 1.5625em*/}
         <LabelledGroup
-          label=""
+          label="Y-axis controls"
           containerStyles={{
             marginRight: '0.5625em',
           }}
         >
           {/* Y-axis range control */}
-          <div
-            style={{
-              fontSize: '1.1em',
-              fontWeight: 'bold',
-              textDecoration: 'underline',
-              marginTop: '0.5em',
-              marginBottom: '0.5em',
-            }}
-          >
-            Y-axis
-          </div>
           <AxisRangeControl
             label="Range"
             range={vizConfig.dependentAxisRange ?? defaultDependentAxisRange}
@@ -1276,7 +1265,7 @@ function ScatterplotWithControls({
           style={{
             display: 'inline-flex',
             borderLeft: '2px solid lightgray',
-            height: '10.5em',
+            height: '9.7em',
             position: 'relative',
             marginLeft: '-1px',
             top: '1.5em',
@@ -1285,23 +1274,12 @@ function ScatterplotWithControls({
           {' '}
         </div>
         <LabelledGroup
-          label=""
+          label="X-axis controls"
           containerStyles={{
             marginRight: '0em',
           }}
         >
           {/* X-Axis range control */}
-          <div
-            style={{
-              fontSize: '1.1em',
-              fontWeight: 'bold',
-              textDecoration: 'underline',
-              marginTop: '0.5em',
-              marginBottom: '0.5em',
-            }}
-          >
-            X-axis
-          </div>
           <AxisRangeControl
             label="Range"
             range={vizConfig.independentAxisRange ?? defaultIndependentRange}

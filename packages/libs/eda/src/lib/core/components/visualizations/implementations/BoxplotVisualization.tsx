@@ -752,19 +752,8 @@ function BoxplotWithControls({
       {/* potential controls go here  */}
 
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <LabelledGroup label="">
+        <LabelledGroup label="Y-axis controls">
           {/* Y-axis range control */}
-          <div
-            style={{
-              fontSize: '1.1em',
-              fontWeight: 'bold',
-              textDecoration: 'underline',
-              marginTop: '0.5em',
-              marginBottom: '0.5em',
-            }}
-          >
-            Y-axis
-          </div>
           <NumberRangeInput
             label="Range"
             // add range: for now, handle number only

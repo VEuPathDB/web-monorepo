@@ -1249,22 +1249,11 @@ function LineplotWithControls({
       {/* add axis range control */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <LabelledGroup
-          label=""
+          label="Y-axis controls"
           containerStyles={{
             marginRight: '0.5625em',
           }}
         >
-          <div
-            style={{
-              fontSize: '1.1em',
-              fontWeight: 'bold',
-              textDecoration: 'underline',
-              marginTop: '0.5em',
-              marginBottom: '0.5em',
-            }}
-          >
-            Y-axis
-          </div>
           <Switch
             label="Show error bars (95% C.I.)"
             state={showErrorBars}
@@ -1318,7 +1307,7 @@ function LineplotWithControls({
           style={{
             display: 'inline-flex',
             borderLeft: '2px solid lightgray',
-            height: '16.4em',
+            height: '15.5em',
             position: 'relative',
             marginLeft: '-1px',
             top: '1.5em',
@@ -1327,22 +1316,11 @@ function LineplotWithControls({
           {' '}
         </div>
         <LabelledGroup
-          label=""
+          label="X-axis controls"
           containerStyles={{
             marginRight: '0em',
           }}
         >
-          <div
-            style={{
-              fontSize: '1.1em',
-              fontWeight: 'bold',
-              textDecoration: 'underline',
-              marginTop: '0.5em',
-              marginBottom: '0.5em',
-            }}
-          >
-            X-axis
-          </div>
           <Switch
             label={`Binning ${useBinning ? 'on' : 'off'}`}
             state={useBinning}

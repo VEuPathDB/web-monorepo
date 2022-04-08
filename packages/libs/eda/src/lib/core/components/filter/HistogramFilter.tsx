@@ -609,7 +609,7 @@ function HistogramPlotWithControls({
       />
 
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <LabelledGroup label="Y-axis">
+        <LabelledGroup label="Y-axis controls">
           <Switch
             label="Log scale"
             state={uiState.dependentAxisLogScale}
@@ -654,8 +654,20 @@ function HistogramPlotWithControls({
             }}
           />
         </LabelledGroup>
-
-        <LabelledGroup label="X-axis">
+        {/* add vertical line in btw Y- and X- controls */}
+        <div
+          style={{
+            display: 'inline-flex',
+            borderLeft: '2px solid lightgray',
+            height: '14em',
+            position: 'relative',
+            marginLeft: '-1.2em',
+            top: '1.5em',
+          }}
+        >
+          {' '}
+        </div>
+        <LabelledGroup label="X-axis controls">
           <BinWidthControl
             binWidth={data?.binWidthSlider?.binWidth}
             binWidthStep={data?.binWidthSlider?.binWidthStep}
