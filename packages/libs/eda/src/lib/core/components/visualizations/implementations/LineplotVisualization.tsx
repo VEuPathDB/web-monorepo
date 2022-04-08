@@ -838,7 +838,7 @@ function LineplotViz(props: VisualizationProps) {
 
   const disabledValueSpecs =
     yAxisVariable == null
-      ? []
+      ? ['Mean', 'Median', 'Proportion']
       : categoricalMode
       ? ['Mean', 'Median']
       : ['Proportion'];
