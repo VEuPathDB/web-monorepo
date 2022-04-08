@@ -1,5 +1,4 @@
-import { string } from 'fp-ts';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { Route, Switch, useHistory, Redirect } from 'react-router';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { AnalysisState, useDataClient } from '../core';
