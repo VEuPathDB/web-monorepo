@@ -10,20 +10,19 @@ const defaultContainerStyles: CSSProperties = {
   alignItems: 'flex-start',
 };
 
-const defaultLegendStyles: CSSProperties = {
-  marginLeft: '2em',
-};
-
 const defaultPlotStyles: CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
+  width: '100%',
 };
 
 const defaultTableGroupStyles: CSSProperties = {
-  display: 'grid',
-  gridAutoFlow: 'row',
-  gap: '0.75em',
-  marginLeft: '3em',
+  display: 'flex',
+  flexWrap: 'wrap',
+  alignItems: 'flex-start',
+  maxWidth: '100%',
+  margin: '1em',
+  gap: '2em',
 };
 
 export function SinglePlotLayout({
@@ -37,15 +36,11 @@ export function SinglePlotLayout({
 }: Props) {
   return (
     <div style={{ ...defaultContainerStyles, ...containerStyles }}>
-      <div style={{ ...defaultPlotStyles, ...plotStyles }}>{plotNode}</div>
-      {legendNode && (
-        <div style={{ ...defaultLegendStyles, ...legendStyles }}>
-          {legendNode}
-        </div>
-      )}
       <div style={{ ...defaultTableGroupStyles, ...tableGroupStyles }}>
         {tableGroupNode}
+        {legendNode && <div style={{ ...legendStyles }}>{legendNode}</div>}
       </div>
+      <div style={{ ...defaultPlotStyles, ...plotStyles }}>{plotNode}</div>
     </div>
   );
 }

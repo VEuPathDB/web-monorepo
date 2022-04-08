@@ -207,7 +207,7 @@ $data-table-inner-border: 1px solid #888;
 .VariableCoverageTable {
   @include data-table;
   width: 400px;
-
+  order: -1;
   .percentage {
     color: #333;
     font-size: 0.85em;
