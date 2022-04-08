@@ -260,7 +260,6 @@ function MapViz(props: VisualizationProps) {
         boundsZoomLevel == null ||
         vizConfig.geoEntityId == null ||
         geoConfig == null ||
-        filtersPlusBoundsFilter == null ||
         latitudeVariable == null ||
         longitudeVariable == null ||
         geoAggregateVariable == null ||
@@ -269,15 +268,30 @@ function MapViz(props: VisualizationProps) {
       )
         return undefined;
 
+      const {
+        northEast: { lat: xMax, lng: right },
+        southWest: { lat: xMin, lng: left },
+      } = boundsZoomLevel.bounds;
+
       // now prepare the rest of the request params
       const requestParams: MapMarkersRequestParams = {
         studyId,
-        filters: filtersPlusBoundsFilter,
+        filters: filters || [],
         config: {
           outputEntityId: outputEntity.id, // might be quicker to use geoEntity.id but numbers in white markers will be wrong, momentarily
           geoAggregateVariable,
           latitudeVariable,
           longitudeVariable,
+          viewport: {
+            latitude: {
+              xMin,
+              xMax,
+            },
+            longitude: {
+              left,
+              right,
+            },
+          },
         },
       };
 
@@ -351,7 +365,8 @@ function MapViz(props: VisualizationProps) {
           outputEntityId: outputEntity.id,
           xAxisVariable: vizConfig.xAxisVariable,
           facetVariable: [geoAggregateVariable],
-          showMissingness: 'FALSE', // current back end 'showMissing' behaviour applies to facet variable
+          showMissingness: 'noVariables', // current back end 'showMissing' behaviour applies to facet variable
+          valueSpec: 'count',
         },
       };
 
@@ -362,7 +377,7 @@ function MapViz(props: VisualizationProps) {
       );
 
       // process response and return a map of "geoAgg key" => donut labels and counts
-      return response.barplot.data.reduce(
+      return response.pieplot.data.reduce(
         // KNOWN TYPO IN BACK END (should be pieplot)
         (map, { facetVariableDetails, label, value }) => {
           if (facetVariableDetails != null && facetVariableDetails.length === 1)
