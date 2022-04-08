@@ -872,8 +872,8 @@ function LineplotViz(props: VisualizationProps) {
         <li>Proportion = Numerator count / Denominator count</li>
       </ul>
       <p>
-        The variable's values that count towards numerator and denominator must
-        be selected in the two drop-downs.
+        The y-axis variable's values that count towards numerator and
+        denominator must be selected in the two drop-downs.
       </p>
     </div>
   );
