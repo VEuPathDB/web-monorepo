@@ -176,6 +176,7 @@ function createDefaultConfig(): LineplotConfig {
   return {
     valueSpecConfig: 'Mean',
     useBinning: false,
+    showErrorBars: true,
   };
 }
 
@@ -195,7 +196,7 @@ export const LineplotConfig = t.intersection([
     binWidthTimeUnit: TimeUnit,
     showMissingness: t.boolean,
     checkedLegendItems: t.array(t.string),
-    showErrorBars: t.boolean,
+    showErrorBars: t.boolean, // now has a default value, could move out of partial/optionals but this will break old saved visualizations
     numeratorValues: t.array(t.string),
     denominatorValues: t.array(t.string),
     // axis range control
