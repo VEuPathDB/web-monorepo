@@ -29,7 +29,7 @@ import SiteHeader from './SiteHeader';
 import IndexController from './IndexController';
 import AnswerController from './AnswerController';
 import ReporterSortMessage from './ReporterSortMessage';
-import { SpecialContactUsInstructions } from './SpecialContactUsInstructions';
+//import { SpecialContactUsInstructions } from './SpecialContactUsInstructions';
 import { Page } from './Page';
 
 import { withPermissions } from '@veupathdb/study-data-access/lib/data-restriction/Permissions';
