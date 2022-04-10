@@ -181,15 +181,8 @@ export default function SliderWidget({
           }
           displayRangeViolationWarnings={false}
           containerStyles={{
-            width:
-              Math.max(
-                String(maximum).length,
-                String(minimum).length,
-                String(localValue).length,
-                String(undefined).length
-              ) +
-              7 +
-              'ch',
+            // simplifying width
+            maxWidth: 100,
             marginRight: 10,
           }}
           disabled={disabled}
