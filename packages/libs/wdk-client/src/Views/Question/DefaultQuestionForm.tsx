@@ -16,7 +16,6 @@ import {
   updateQuestionWeight
 } from 'wdk-client/Actions/QuestionActions';
 import 'wdk-client/Views/Question/DefaultQuestionForm.scss';
-import { TooltipPosition } from 'wdk-client/Components/Overlays/Tooltip';
 import { scrollIntoView } from 'wdk-client/Utils/DomUtils';
 import StepValidationInfo from 'wdk-client/Views/Question/StepValidationInfo';
 
@@ -45,7 +44,6 @@ export type Props = {
 }
 
 const cx = makeClassNameHelper('wdk-QuestionForm');
-const tooltipPosition = { my: 'right center', at: 'left center' };
 
 // FIXME Should be made nicer once we upgrade to a version of Redux that supports hooks
 export const useDefaultOnSubmit = (
@@ -180,7 +178,6 @@ export default function DefaultQuestionForm(props: Props) {
         }
         <SubmitSection
           className={cx('SubmitSection')}
-          tooltipPosition={tooltipPosition}
           customName={customName}
           searchName={question.urlSegment}
           paramValues={paramValues}
@@ -409,16 +406,15 @@ export const getSubmitButtonText = (submissionMetadata: SubmissionMetadata, subm
     : 'Run Step';
 
 interface SearchNameInputProps {
-  tooltipPosition: TooltipPosition;
   customName?: string;
   handleCustomNameChange: TextboxChangeHandler;
 }
 
 export function SearchNameInput(props: SearchNameInputProps) {
-  let { tooltipPosition, customName, handleCustomNameChange } = props;
+  let { customName, handleCustomNameChange } = props;
   return (
     <div>
-      <HelpIcon tooltipPosition={tooltipPosition}>
+      <HelpIcon>
         Give this search strategy a custom name. The name will appear in the
         first step box (truncated to 15 characters).
       </HelpIcon>
@@ -433,16 +429,15 @@ export function SearchNameInput(props: SearchNameInputProps) {
 }
 
 interface WeightInputProps {
-  tooltipPosition: TooltipPosition;
   weight?: string;
   handleWeightChange: TextboxChangeHandler;
 }
 
 export function WeightInput(props: WeightInputProps) {
-  let { tooltipPosition, weight, handleWeightChange } = props;
+  let { weight, handleWeightChange } = props;
   return (
     <div>
-      <HelpIcon tooltipPosition={tooltipPosition}>
+      <HelpIcon>
         Give this search a weight (for example 10, 200, -50, integer only). It
         will show in a column in your result. In a search strategy, unions and
         intersects will sum the weights, giving higher scores to items found in
@@ -496,7 +491,6 @@ function WebServicesTutorialLink(props: WebServicesTutorialLinkProps) {
 
 interface SubmitSectionProps {
   className: string;
-  tooltipPosition: TooltipPosition;
   customName?: string;
   searchName: string;
   paramValues: Record<string,string>;
@@ -512,7 +506,6 @@ interface SubmitSectionProps {
 export function SubmitSection(props: SubmitSectionProps) {
   let { 
     className, 
-    tooltipPosition, 
     customName, 
     handleCustomNameChange, 
     searchName, 
@@ -537,12 +530,10 @@ export function SubmitSection(props: SubmitSectionProps) {
         <WebServicesTutorialLink onClick={onClickWebservicesTutorialLink} />
       }
       <SearchNameInput
-        tooltipPosition={tooltipPosition}
         customName={customName}
         handleCustomNameChange={handleCustomNameChange}
       />
       <WeightInput
-        tooltipPosition={tooltipPosition}
         weight={weight}
         handleWeightChange={handleWeightChange}
       />

@@ -64,7 +64,7 @@ class RadioList extends React.Component<Props> {
               />
               {' '}{item.display}{' '}
               {item.description != null &&
-                <HelpIcon tooltipPosition={{ my: 'center left', at: 'center right' }}>
+                <HelpIcon>
                   {item.description}
                 </HelpIcon>
               }

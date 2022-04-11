@@ -62,7 +62,7 @@ const StepAnalysisParamRow: React.FunctionComponent<StepAnalysisRowProps> = ({
         <span style={labelSpanStyle}>{displayName}</span>
         {
           paramSpec.help &&
-          <HelpIcon tooltipPosition={tooltipPosition}>{paramSpec.help}</HelpIcon>
+          <HelpIcon>{paramSpec.help}</HelpIcon>
         }
       </label>
     </td>
@@ -102,11 +102,6 @@ const ParamDisplayName: React.SFC<ParamDisplayNameProps> = ({
 
 const uiState = {};
 const NOOP = () => { };
-
-const tooltipPosition = {
-  my: 'top center',
-  at: 'bottom center'
-};
 
 const tableStyle: React.CSSProperties = {
   margin: '0px auto'
