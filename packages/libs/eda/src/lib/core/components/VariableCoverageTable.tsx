@@ -59,7 +59,10 @@ export function VariableCoverageTable({
       ? 'VariableCoverageTable'
       : `${containerClassName} VariableCoverageTable`;
 
-  return (
+  return variableSpecs[0].display ||
+    variableSpecs[1].display ||
+    variableSpecs[2].display ||
+    variableSpecs[3].display ? (
     <div className={className}>
       <table>
         <tbody>
@@ -104,5 +107,5 @@ export function VariableCoverageTable({
         </tbody>
       </table>
     </div>
-  );
+  ) : null;
 }
