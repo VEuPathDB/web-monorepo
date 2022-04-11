@@ -176,6 +176,7 @@ function createDefaultConfig(): LineplotConfig {
   return {
     valueSpecConfig: 'Mean',
     useBinning: false,
+    showErrorBars: true,
   };
 }
 
@@ -195,7 +196,7 @@ export const LineplotConfig = t.intersection([
     binWidthTimeUnit: TimeUnit,
     showMissingness: t.boolean,
     checkedLegendItems: t.array(t.string),
-    showErrorBars: t.boolean,
+    showErrorBars: t.boolean, // now has a default value, could move out of partial/optionals but this will break old saved visualizations
     numeratorValues: t.array(t.string),
     denominatorValues: t.array(t.string),
     // axis range control
@@ -596,57 +597,30 @@ function LineplotViz(props: VisualizationProps) {
 
   // find deependent axis range and its margin
   const defaultDependentRangeMargin = useMemo(() => {
-    //K set yMinMaxRange using yMin/yMax obtained from processInputData()
-    const yMinMaxRange =
-      data.value?.yMin != null && data.value?.yMax != null
-        ? ({ min: data.value.yMin, max: data.value.yMax } as NumberOrDateRange)
-        : undefined;
-
-    /**
-     * Temporarily, two methods, Method 1 & 2, are implemented in the following
-     * Simply commenting out each of them would work as designed
-     * Currently, Method 1 is used: thus Method 2 is commented out
-     */
-    // Method 1: considering variable's metadata as well
-    const defaultDependentRange = categoricalMode
+    const yMinMaxRange = categoricalMode
+      ? { min: 0, max: 1 }
+      : data.value?.yMin != null && data.value?.yMax != null
       ? ({
-          // this is where the proportion y-axis starts at zero
-          min:
-            yMinMaxRange?.min != null
-              ? Math.min(0, yMinMaxRange.min as number)
-              : undefined,
-          max: yMinMaxRange?.max,
+          // make sure axis range includes a zero (except for dates, see below)
+          min: min([data.value.yMin, 0]), // lodash min/max handles strings
+          max: max([data.value.yMax, 0]), // or numbers appropriately
+          // and with strings/dates, if you put the zero as the second value, min or max always returns the string
+          // so min(["foo", 0]) is "foo" and min([0, "foo"]) is 0 **
+          // which is our desired behaviour (no need to anchor date axes at 1970 or whatever)
+          // (** TO DO: is this documented lodash behaviour, or likely to change?)
         } as NumberOrDateRange)
-      : // add conditions to prevent previous yMinMaxRange from calling the function, e.g., date to categorical
-      ((yAxisVariable?.type === 'number' ||
-          yAxisVariable?.type === 'integer') &&
-          typeof yMinMaxRange?.min === 'number' &&
-          typeof yMinMaxRange?.max === 'number') ||
-        (yAxisVariable?.type === 'date' &&
-          typeof yMinMaxRange?.min === 'string' &&
-          typeof yMinMaxRange?.max === 'string')
-      ? numberDateDefaultDependentAxisRange(
-          yAxisVariable,
-          'lineplot',
-          yMinMaxRange
-        )
-      : undefined;
-    // add conditions to prevent previous defaultDependentRange from calling the function due to categorical
-    return yAxisVariable?.type === 'number' ||
-      yAxisVariable?.type === 'integer' ||
-      yAxisVariable?.type === 'date' ||
-      (yAxisVariable?.type === 'string' &&
-        categoricalMode &&
-        typeof defaultDependentRange?.min === 'number' &&
-        typeof defaultDependentRange?.max === 'number')
-      ? axisRangeMargin(defaultDependentRange, yAxisVariable?.type)
       : undefined;
 
-    // // Method 2: purely data-based min/max (yMinMaxRange only): this will reduce empty ranges
-    // return ((yAxisVariable?.type === 'number' || yAxisVariable?.type === 'integer' || (yAxisVariable?.type === 'string' && categoricalMode)) && typeof yMinMaxRange?.min === 'number' && typeof yMinMaxRange?.max === 'number') ||
-    //   (yAxisVariable?.type === 'date' && typeof yMinMaxRange?.min === 'string' && typeof yMinMaxRange?.max === 'string')
-    //   ? axisRangeMargin(yMinMaxRange, yAxisVariable?.type)
-    //   : undefined;
+    return ((yAxisVariable?.type === 'number' ||
+      yAxisVariable?.type === 'integer' ||
+      (yAxisVariable?.type === 'string' && categoricalMode)) &&
+      typeof yMinMaxRange?.min === 'number' &&
+      typeof yMinMaxRange?.max === 'number') ||
+      (yAxisVariable?.type === 'date' &&
+        typeof yMinMaxRange?.min === 'string' &&
+        typeof yMinMaxRange?.max === 'string')
+      ? axisRangeMargin(yMinMaxRange, yAxisVariable?.type)
+      : undefined;
   }, [data.value, yAxisVariable, categoricalMode]);
 
   // custom legend list
