@@ -20,6 +20,7 @@ import {
   LatLng,
 } from '@veupathdb/components/lib/map/Types';
 import DonutMarker from '@veupathdb/components/lib/map/DonutMarker';
+import ChartMarker from '@veupathdb/components/lib/map/ChartMarker';
 
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 
@@ -55,6 +56,7 @@ import PlotLegend, {
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import { BirdsEyeView } from '../../BirdsEyeView';
+import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 
 export const mapVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -110,6 +112,11 @@ const MapConfig = t.intersection([
     outputEntityId: t.string,
     xAxisVariable: VariableDescriptor,
     checkedLegendItems: t.array(t.string),
+    markerType: t.keyof({
+      count: null,
+      proportion: null,
+      pie: null,
+    }),
   }),
 ]);
 
@@ -174,6 +181,18 @@ function MapViz(props: VisualizationProps) {
     [updateVizConfig]
   );
 
+  // prettier-ignore
+  const onChangeHandlerFactory = useCallback(
+    < ValueType,>(key: keyof MapConfig) => (newValue?: ValueType) => {
+      updateVizConfig({
+	[key] : newValue
+      });
+    },
+    [updateVizConfig]
+  );
+
+  const onMarkerTypeChange = onChangeHandlerFactory('markerType');
+
   const [boundsZoomLevel, setBoundsZoomLevel] = useState<BoundsViewport>();
 
   const geoConfig = useMemo(() => {
@@ -184,7 +203,7 @@ function MapViz(props: VisualizationProps) {
   }, [vizConfig.geoEntityId, geoConfigs]);
 
   const findEntityAndVariable = useFindEntityAndVariable(entities);
-  const [geoEntity, outputEntity, xAxisVariable] = useMemo(() => {
+  const [outputEntity, xAxisVariable] = useMemo(() => {
     const geoEntity =
       vizConfig.geoEntityId !== null
         ? entities.find((entity) => entity.id === vizConfig.geoEntityId)
@@ -202,7 +221,7 @@ function MapViz(props: VisualizationProps) {
     const { variable: xAxisVariable } =
       findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
 
-    return [geoEntity, outputEntity ?? geoEntity, xAxisVariable];
+    return [outputEntity ?? geoEntity, xAxisVariable];
   }, [
     entities,
     vizConfig.outputEntityId,
@@ -372,7 +391,8 @@ function MapViz(props: VisualizationProps) {
           xAxisVariable: vizConfig.xAxisVariable,
           facetVariable: [geoAggregateVariable],
           showMissingness: 'noVariables', // current back end 'showMissing' behaviour applies to facet variable
-          valueSpec: 'count',
+          valueSpec:
+            vizConfig.markerType === 'proportion' ? 'proportion' : 'count',
         },
       };
 
@@ -402,6 +422,7 @@ function MapViz(props: VisualizationProps) {
       filtersPlusBoundsFilter,
       dataClient,
       vizConfig.xAxisVariable,
+      vizConfig.markerType === 'proportion',
       boundsZoomLevel,
       computation.descriptor.type,
     ])
@@ -450,7 +471,16 @@ function MapViz(props: VisualizationProps) {
               ];
 
         // TO DO: find out if MarkerProps.id is obsolete
-        return (
+        return donutData.length > 0 && vizConfig.markerType !== 'pie' ? (
+          <ChartMarker
+            id={geoAggregateValue}
+            key={geoAggregateValue}
+            bounds={bounds}
+            position={position}
+            data={donutData}
+            duration={defaultAnimationDuration}
+          />
+        ) : (
           <DonutMarker
             id={geoAggregateValue}
             key={geoAggregateValue}
@@ -462,7 +492,12 @@ function MapViz(props: VisualizationProps) {
         );
       }
     );
-  }, [basicMarkerData.value, pieplotData.value, vizConfig.checkedLegendItems]);
+  }, [
+    basicMarkerData.value,
+    pieplotData.value,
+    vizConfig.checkedLegendItems,
+    vizConfig.markerType,
+  ]);
 
   const totalEntityCount = basicMarkerData.value?.completeCasesGeoVar;
 
@@ -488,36 +523,44 @@ function MapViz(props: VisualizationProps) {
   );
 
   const plotNode = (
-    <MapVEuMap
-      viewport={{ center: [latitude, longitude], zoom: zoomLevel }}
-      onViewportChanged={handleViewportChanged}
-      onBoundsChanged={setBoundsZoomLevel}
-      markers={markers ?? []}
-      animation={defaultAnimation}
-      height={height}
-      width={width}
-      showGrid={geoConfig?.zoomLevelToAggregationLevel != null}
-      zoomLevelToGeohashLevel={geoConfig?.zoomLevelToAggregationLevel}
-      ref={plotRef}
-      baseLayer={vizConfig.baseLayer}
-      onBaseLayerChanged={(newBaseLayer) =>
-        updateVizConfig({ baseLayer: newBaseLayer })
-      }
-      flyToMarkers={
-        markers &&
-        markers.length > 0 &&
-        isEqual(
-          vizConfig.mapCenterAndZoom,
-          createDefaultConfig().mapCenterAndZoom
-        )
-      }
-      flyToMarkersDelay={500}
-      showSpinner={basicMarkerData.pending || pieplotData.pending}
-      // whether to show scale at map
-      showScale={zoomLevel != null && zoomLevel > 4 ? true : false}
-      // show mouse tool
-      showMouseToolbar={true}
-    />
+    <>
+      <MapVEuMap
+        viewport={{ center: [latitude, longitude], zoom: zoomLevel }}
+        onViewportChanged={handleViewportChanged}
+        onBoundsChanged={setBoundsZoomLevel}
+        markers={markers ?? []}
+        animation={defaultAnimation}
+        height={height}
+        width={width}
+        showGrid={geoConfig?.zoomLevelToAggregationLevel != null}
+        zoomLevelToGeohashLevel={geoConfig?.zoomLevelToAggregationLevel}
+        ref={plotRef}
+        baseLayer={vizConfig.baseLayer}
+        onBaseLayerChanged={(newBaseLayer) =>
+          updateVizConfig({ baseLayer: newBaseLayer })
+        }
+        flyToMarkers={
+          markers &&
+          markers.length > 0 &&
+          isEqual(
+            vizConfig.mapCenterAndZoom,
+            createDefaultConfig().mapCenterAndZoom
+          )
+        }
+        flyToMarkersDelay={500}
+        showSpinner={basicMarkerData.pending || pieplotData.pending}
+        // whether to show scale at map
+        showScale={zoomLevel != null && zoomLevel > 4 ? true : false}
+        // show mouse tool
+        showMouseToolbar={true}
+      />
+      <RadioButtonGroup
+        label="Marker style"
+        selectedOption={vizConfig.markerType || 'pie'}
+        options={['count', 'proportion', 'pie']}
+        onOptionSelected={onMarkerTypeChange}
+      />
+    </>
   );
 
   const handleGeoEntityChange = useCallback(
