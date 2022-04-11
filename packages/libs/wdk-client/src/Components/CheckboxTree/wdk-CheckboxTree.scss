@@ -1,6 +1,7 @@
 /* Enclosing div for checkbox tree */
 .wdk-CheckboxTree {
   padding: 0.2em;
+  flex-grow: 1;
 
   &List {
     margin: 0;

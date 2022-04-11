@@ -3,14 +3,12 @@ import naturalSort from 'natural-sort';
 import React from 'react';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
-import Icon from 'wdk-client/Components/Icon/IconAlt';
 import { MesaController as Mesa } from 'wdk-client/Components/Mesa';
 import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
 import StackedBar from 'wdk-client/Components/AttributeFilter/StackedBar';
 import { toPercentage, getOperationDisplay, isRange, shouldAddFilter, findAncestorFields } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
 import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
-import Banner from 'wdk-client/Components/Banners/Banner';
-import UnknownCount from 'wdk-client/Components/AttributeFilter/UnknownCount';
+import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
 
 const cx = makeClassNameHelper('wdk-MultiFieldFilter');
 
@@ -146,7 +144,7 @@ export default class MultiFieldFilter extends React.Component {
     const internalsCount = key === 'count' ? row.summary.internalsCount : row.summary.internalsFilteredCount;
     const count = row.value == null
       ? internalsCount
-      : ( key === 'count' ? getCount(row.summary, row.value) : getFilteredCount(row.summary, row.value) );
+      : (key === 'count' ? getCount(row.summary, row.value) : getFilteredCount(row.summary, row.value));
     return (
       <React.Fragment>
         <div>
@@ -164,8 +162,8 @@ export default class MultiFieldFilter extends React.Component {
     const notAll = (row.value == null);
     let percent = 0;
 
-    if( notAll ) // NOT all (displayName) have data for this row/variable
-      {  percent = Math.round(row.summary.internalsCount*100/this.props.dataCount); }
+    if (notAll) // NOT all (displayName) have data for this row/variable
+    { percent = Math.round(row.summary.internalsCount * 100 / this.props.dataCount); }
 
     return !notAll // all (displayName) have data for this variable
       ? (
@@ -181,7 +179,7 @@ export default class MultiFieldFilter extends React.Component {
       )
       : unknownCount > 0 && (
         <div style={{ fontWeight: 300 }}>
-          <b>{toPercentage(row.summary.internalsCount,this.props.dataCount).toLocaleString()}% of {this.props.dataCount.toLocaleString()}</b> {this.props.displayName} have data
+          <b>{toPercentage(row.summary.internalsCount, this.props.dataCount).toLocaleString()}% of {this.props.dataCount.toLocaleString()}</b> {this.props.displayName} have data
         </div>
       )
   }
@@ -201,7 +199,7 @@ export default class MultiFieldFilter extends React.Component {
     const handleChange = event =>
       this.handleLeafFilterChange(
         this.getFieldByTerm(summary.term),
-        ( event.target.checked
+        (event.target.checked
           ? [value].concat(filterValue)
           : filterValue.filter(item => item !== value)
         ),
@@ -245,7 +243,7 @@ export default class MultiFieldFilter extends React.Component {
           summary,
           value,
           filter: filtersByField[summary.term],
-          isSelected: get(filtersByField, [ summary.term, 'value' ], []).includes(value),
+          isSelected: get(filtersByField, [summary.term, 'value'], []).includes(value),
           isLast: index === values.length - 1
         }))
       ])
@@ -259,23 +257,17 @@ export default class MultiFieldFilter extends React.Component {
 
     return (
       <div className={cx()}>
-        {/*
-          padding: .5em;
-          border: 1px solid #cccccc;
-          border-radius: 6px;
-          background: #fbfbf1;
-        */}
         {!hasRowWithRemaining && (
           <Banner banner={{
             type: 'warning',
             message: 'Given prior selections, there is no remaining data available for this variable.',
             pinned: true
-          }}/>
+          }} />
         )}
         <div style={{ margin: '.5em 0' }}>
           Find {this.props.displayName} with <select
             value={this.getOrCreateFilter(this.props, this.state).value.operation}
-            onChange={e => this.setOperation(e.target.value) }
+            onChange={e => this.setOperation(e.target.value)}
           >
             <option value="union">{getOperationDisplay('union')}</option>
             <option value="intersect">{getOperationDisplay('intersect')}</option>
@@ -301,7 +293,7 @@ export default class MultiFieldFilter extends React.Component {
               sortable: true,
               // width: '40%',
               wrapCustomHeadings: ({ headingRowIndex }) => headingRowIndex === 0,
-              renderHeading: [ this.renderDisplayHeadingName, this.renderDisplayHeadingSearch ],
+              renderHeading: [this.renderDisplayHeadingName, this.renderDisplayHeadingSearch],
               renderCell: this.renderDisplayCell
             },
             {
@@ -316,7 +308,7 @@ export default class MultiFieldFilter extends React.Component {
                 </div>
               ),
               wrapCustomHeadings: ({ headingRowIndex }) => headingRowIndex === 0,
-              name: <div style={{textAlign: 'center'}}>Subset of <i>{this.props.displayName}</i></div>,
+              name: <div style={{ textAlign: 'center' }}>Subset of <i>{this.props.displayName}</i></div>,
               renderCell: this.renderCountCell
             },
             {
@@ -330,7 +322,7 @@ export default class MultiFieldFilter extends React.Component {
                 </div>
               ),
               wrapCustomHeadings: ({ headingRowIndex }) => headingRowIndex === 0,
-              name: <div style={{textAlign: 'center'}}>All <i>{this.props.displayName}</i></div>,
+              name: <div style={{ textAlign: 'center' }}>All <i>{this.props.displayName}</i></div>,
               renderCell: this.renderCountCell
             },
             {
