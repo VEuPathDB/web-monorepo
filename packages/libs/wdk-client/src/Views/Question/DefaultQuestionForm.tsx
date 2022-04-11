@@ -96,15 +96,30 @@ export default function DefaultQuestionForm(props: Props) {
   let defaultOnSubmit = useDefaultOnSubmit(dispatchAction, question.urlSegment, submissionMetadata, false);
   let defaultOnWebservicesLinkClick = useDefaultOnSubmit(dispatchAction, question.urlSegment, submissionMetadata, true);
 
+  let dependentParamsAreUpdating = React.useMemo(
+    () => Object.values(
+      state.paramsUpdatingDependencies
+    ).some(x => x),
+    [state.paramsUpdatingDependencies]
+  );
+
+  let submissionDisabled = dependentParamsAreUpdating;
+
   let handleSubmit = React.useCallback(
     (event: React.FormEvent) => {
-      if (onSubmit && !onSubmit(event)) {
+      if (
+        submissionDisabled ||
+        (
+          onSubmit != null &&
+          !onSubmit(event)
+        )
+      ) {
         return false;
       }
 
       return defaultOnSubmit(event);
     },
-    [ onSubmit, defaultOnSubmit ]
+    [ onSubmit, defaultOnSubmit, submissionDisabled ]
   );
 
   let handleWebservicesTutorialLinkClick = React.useCallback(
@@ -187,6 +202,7 @@ export default function DefaultQuestionForm(props: Props) {
           submissionMetadata={submissionMetadata}
           submitting={submitting}
           submitButtonText={submitButtonText}
+          submissionDisabled={submissionDisabled}
           onClickWebservicesTutorialLink={handleWebservicesTutorialLinkClick}
         />
         <Description description={question.description} navigatingToDescription={navigatingToDescription} />
@@ -387,11 +403,20 @@ function ParameterHeading(props: { parameter: Parameter, paramDependencyUpdating
 }
 
 export function SubmitButton(
-  props: { submissionMetadata: SubmissionMetadata, submitButtonText?: string, submitting: boolean }
+  props: {
+    submissionMetadata: SubmissionMetadata,
+    submitButtonText?: string,
+    submitting: boolean,
+    submissionDisabled?: boolean
+  }
 ) {
   return props.submitting
     ? <div className={cx('SubmittingIndicator')}></div>
-    : <button type="submit" className="btn">
+    : <button
+        type="submit"
+        className="btn"
+        disabled={props.submissionDisabled}
+      >
         {getSubmitButtonText(props.submissionMetadata, props.submitButtonText)}
       </button>;
 }
@@ -500,6 +525,7 @@ interface SubmitSectionProps {
   submissionMetadata: SubmissionMetadata;
   submitting: boolean;
   submitButtonText?: string;
+  submissionDisabled?: boolean;
   onClickWebservicesTutorialLink: (event: React.MouseEvent) => void;
 }
 
@@ -508,13 +534,12 @@ export function SubmitSection(props: SubmitSectionProps) {
     className, 
     customName, 
     handleCustomNameChange, 
-    searchName, 
-    paramValues, 
     weight, 
     handleWeightChange, 
     submissionMetadata, 
     submitting,
     submitButtonText,
+    submissionDisabled,
     onClickWebservicesTutorialLink
   } = props;
   return (
@@ -523,6 +548,7 @@ export function SubmitSection(props: SubmitSectionProps) {
         submissionMetadata={submissionMetadata}
         submitting={submitting}
         submitButtonText={submitButtonText}
+        submissionDisabled={submissionDisabled}
       />
       {
         submissionMetadata.type === 'create-strategy' &&
