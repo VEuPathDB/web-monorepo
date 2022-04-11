@@ -73,7 +73,8 @@ export type ComputationDescriptor = TypeOf<typeof ComputationDescriptor>;
 export const ComputationDescriptor = type({
   type: string,
   // handle configuration=null for ZeroConfiguration
-  configuration: union([ComputationConfiguration, nullType]),
+  // configuration: union([ComputationConfiguration, nullType]),
+  configuration: unknown,
 });
 
 /**

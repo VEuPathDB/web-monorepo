@@ -296,7 +296,8 @@ function BoxplotViz(props: VisualizationProps) {
           // add outputEntityId per dataElementDependencyOrder
           outputEntityId: computation.descriptor.configuration
             ? // alphadiv abundance remove any as configuration is defined instead of unknown
-              computation.descriptor.configuration.collectionVariable.entityId
+              (computation.descriptor.configuration as any).collectionVariable
+                .entityId
             : outputEntity.id,
           // post options: 'all', 'outliers'
           points: 'outliers',
@@ -462,7 +463,7 @@ function BoxplotViz(props: VisualizationProps) {
       computation.descriptor.type === 'abundance'
         ? findCollectionVariableEntityAndVariable(
             entities,
-            computation.descriptor.configuration.collectionVariable
+            (computation.descriptor.configuration as any).collectionVariable
           )
         : undefined,
     [entities, computation]
