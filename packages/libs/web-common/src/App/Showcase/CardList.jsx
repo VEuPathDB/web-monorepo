@@ -5,6 +5,7 @@ import Select from 'react-select';
 import { Link, RealTimeSearchBox } from '@veupathdb/wdk-client/lib/Components';
 import { projectId } from '@veupathdb/web-common/lib/config';
 import PlaceholderCard from './PlaceholderCard';
+import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip'
 
 const CLASS_NAME = 'CardList';
 const SHOW_CATEGORIES_DROPDOWN = (projectId === 'MicrobiomeDB');
@@ -111,14 +112,16 @@ export default function CardList(props) {
     ? `Hide expanded view and list all ${contentNamePlural} horizontally`
     : `Show expanded view and search for specific ${contentNamePlural}`
   const expandButton = isExpandable &&
-    <button type="button" className={EXPAND_BUTTON_CLASS_NAME} onClick={() => setIsExpanded(!isExpanded)} title={buttonTitle}>
-      {isExpanded
-        ? <React.Fragment><i className="fa fa-ellipsis-h" aria-hidden="true"></i> Row view</React.Fragment>
-        : <React.Fragment><i className="fa fa-th" aria-hidden="true"></i> Grid view</React.Fragment>
-      }
-    </button>
+    <Tooltip css={{}} title={buttonTitle}>
+      <button type="button" className={EXPAND_BUTTON_CLASS_NAME} onClick={() => setIsExpanded(!isExpanded)}>
+        {isExpanded
+          ? <React.Fragment><i className="fa fa-ellipsis-h" aria-hidden="true"></i> Row view</React.Fragment>
+          : <React.Fragment><i className="fa fa-th" aria-hidden="true"></i> Grid view</React.Fragment>
+        }
+      </button>
+    </Tooltip>
 
-  const filterInput = isExpandable && 
+  const filterInput = isExpandable &&
     <RealTimeSearchBox
       className={FILTER_CLASS_NAME}
       searchTerm={filterString}
@@ -143,7 +146,9 @@ export default function CardList(props) {
       onChange={option => setCategoryFilter(option && option.value)}
     />
   const tableLink = tableViewLink &&
-    <Link to={tableViewLink} className={ALLSTUDIES_LINK_CLASS_NAME} title="View content as a table"><i className="ebrc-icon-table" aria-hidden="true"></i> {tableViewLinkText}</Link>
+    <Tooltip css={{}} title={"View content as a table"}>
+      <Link to={tableViewLink} className={ALLSTUDIES_LINK_CLASS_NAME}><i className="ebrc-icon-table" aria-hidden="true"></i> {tableViewLinkText}</Link>
+    </Tooltip>
 
   return (
     <div className={className}>

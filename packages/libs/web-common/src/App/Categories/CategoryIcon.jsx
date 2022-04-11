@@ -2,9 +2,8 @@ import './CategoryIcon.css';
 
 import { capitalize } from 'lodash';
 import React from 'react';
-import { Mesa } from '@veupathdb/wdk-client/lib/Components';
+import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 
-const { AnchoredTooltip } = Mesa;
 import { getCategoryColor } from './CategoryUtils';
 
 class CategoryIcon extends React.Component {
@@ -17,14 +16,11 @@ class CategoryIcon extends React.Component {
 
     return (
       <div style={{ position: 'relative' }}>
-        <AnchoredTooltip
-          debug={true}
-          content={<div><strong>{categoryName}</strong></div>}
-          style={{ width: 'auto', textTransform: 'capitalize' }}>
+        <Tooltip css={{}} title={categoryName}>
           <span className="CategoryIcon" style={categoryStyle}>
             {category[0].toUpperCase()}
           </span>
-        </AnchoredTooltip>
+        </Tooltip>
       </div>
     );
   }

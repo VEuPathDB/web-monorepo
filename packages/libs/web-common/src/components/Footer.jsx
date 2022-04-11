@@ -4,6 +4,7 @@ import NewWindowLink from './NewWindowLink';
 import { formatReleaseDate } from '../util/formatters';
 
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip'
 
 import 'ebrc-client/components/homepage/ProjectLink.scss';
 
@@ -51,11 +52,13 @@ export default enhance(function Footer(props) {
         <ul className="site-icons">
           {projects.map(project =>
             <React.Fragment key={project}>
-              <li title={`${project}.org`} className={projectLinkCx()}>
-                <a href={`https://${project.toLowerCase()}.org`} className={project}>
-                  https://{project.toLowerCase()}.org
+              <Tooltip css={{}} title={`${project}.org`}>
+                <li className={projectLinkCx()}>
+                  <a href={`https://${project.toLowerCase()}.org`} className={project}>
+                    https://{project.toLowerCase()}.org
                 </a>
-              </li>
+                </li>
+              </Tooltip>
               {
                 project === 'VectorBase' &&
                 <li className="divider"></li>

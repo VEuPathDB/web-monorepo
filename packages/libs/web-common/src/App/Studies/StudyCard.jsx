@@ -8,6 +8,7 @@ import DownloadLink from './DownloadLink';
 import { isPrereleaseStudy } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
 import './StudyCard.scss';
 import { makeEdaRoute } from 'ebrc-client/routes';
+import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip'
 
 
 class StudyCard extends React.Component {
@@ -129,7 +130,11 @@ class StudyCard extends React.Component {
     return (
       <div className={'Card StudyCard ' + (disabled ? 'disabled' : '') + ' StudyCard__' + id}>
         <div className="box StudyCard-Heading">
-          <h2 title={myStudyTitle}><Link to={useEda ? edaRoute + '/details' : route}>{safeHtml(name)}</Link></h2>
+          <h2>
+            <Tooltip css={{}} title={myStudyTitle}>
+              <Link to={useEda ? edaRoute + '/details' : route}>{safeHtml(name)}</Link>
+            </Tooltip>
+          </h2>
           <div className="box StudyCard-Categories">
             {primaryCategory && <CategoryIcon category={primaryCategory}/>}
           </div>
@@ -137,9 +142,11 @@ class StudyCard extends React.Component {
             <Icon fa="angle-double-right" /> 
           </Link> */}
         </div>
-        <Link to={useEda ? edaRoute + '/details' : route} className="StudyCard-DetailsLink" title={myStudyTitle}>
-          <small>Study Details <Icon fa="chevron-circle-right"/></small>
-        </Link>
+        <Tooltip css={{}} title={myStudyTitle}>
+          <Link to={useEda ? edaRoute + '/details' : route} className="StudyCard-DetailsLink">
+            <small>Study Details <Icon fa="chevron-circle-right" /></small>
+          </Link>
+        </Tooltip>
         <div className="box StudyCard-Stripe">
           {headline}
         </div>
