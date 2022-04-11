@@ -560,6 +560,9 @@ export const MapMarkersResponse = type({
       maxLon: number,
     })
   ),
+  config: type({
+    completeCasesGeoVar: number,
+  }),
 });
 
 export interface PieplotRequestParams {
