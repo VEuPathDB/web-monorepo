@@ -106,11 +106,6 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
   }
 ];
 
-const IDS_HELP_TOOLTIP_POSITION = {
-  my: 'bottom left',
-  at: 'top right'
-};
-
 export function Srt() {
   const compatibleSrtConfigs = useCompatibleSrtFormConfigs();
   const [ selectedSrtForm, setSelectedSrtForm ] = useState<string>('');
@@ -180,7 +175,7 @@ function SrtForm({
         {' '}
         {
           idsInputHelp != null &&
-          <HelpIcon tooltipPosition={IDS_HELP_TOOLTIP_POSITION}>
+          <HelpIcon>
             {idsInputHelp}
           </HelpIcon>
         }
