@@ -172,6 +172,12 @@ function getEventHandlers(props: Props) {
   }
   function onRowsPerPageChange(newRowsPerPage: number) {
     requestPageSizeUpdate(newRowsPerPage);
+    /*
+      Calculates which page to set every time "Rows per page" is changed such that 
+      the top row's data is included on the new page's render. This ensures that
+      the user is in close proximity to whatever data they were previously viewing.
+    */
+    viewPageNumber(Math.ceil((answer.meta.pagination.offset + 1) / newRowsPerPage));
   }
   function onRowSelect(row: RecordInstance) {
     onMultipleRowSelect([row]);
