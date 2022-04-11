@@ -12,11 +12,6 @@ import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 
 import { NodeSearchCriteria } from './pathway-utils';
 
-const TOOLTIP_POSITION = {
-  my: 'bottom left',
-  at: 'top right'
-};
-
 interface Props {
   cy: Core;
   helpText?: JSX.Element;
@@ -188,7 +183,7 @@ export function PathwaySearchById({
       />
       {
         helpText &&
-        <HelpIcon tooltipPosition={TOOLTIP_POSITION}>
+        <HelpIcon>
           {helpText}
         </HelpIcon>
       }

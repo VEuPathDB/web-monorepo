@@ -8,11 +8,6 @@ import newFeatureImage from '@veupathdb/wdk-client/lib/Core/Style/images/new-fea
 
 import './Gbrowse.scss';
 
-const SCROLL_AND_ZOOM_CHECKBOX_TOOLTIP_POSITION = {
-  my: 'bottom right',
-  at: 'top center'
-};
-
 /**
  * Each entry below is used in two scenarios:
  *
@@ -152,9 +147,7 @@ function JbrowseIframe({ jbrowseUrl,ht }) {
     <small className="jbrowse-scroll-zoom-toggle-caption">
       Scroll and zoom
       {' '}
-      <HelpIcon
-        tooltipPosition={SCROLL_AND_ZOOM_CHECKBOX_TOOLTIP_POSITION}
-      >
+      <HelpIcon>
         Select to enable using mouse / track pad for scrolling &amp; zoom
         <br />
         (double click to zoom in; shift-double click to zoom out)
