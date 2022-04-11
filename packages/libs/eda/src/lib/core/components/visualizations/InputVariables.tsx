@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { makeStyles } from '@material-ui/core';
 import { StudyEntity } from '../../types/study';
 import { VariableDescriptor } from '../../types/variable';
 import {
@@ -13,11 +12,12 @@ import VariableTreeDropdown from '../variableTrees/VariableTreeDropdown';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import Switch from '@veupathdb/components/lib/components/widgets/Switch';
 import { makeEntityDisplayName } from '../../utils/study-metadata';
+import { useInputStyles } from './inputStyles';
 
 interface InputSpec {
   name: string;
   label: string;
-  role: 'primary' | 'stratification';
+  role?: 'axis' | 'stratification';
 }
 
 export interface Props {
@@ -68,42 +68,6 @@ export interface Props {
   outputEntity?: StudyEntity;
 }
 
-const useStyles = makeStyles({
-  inputs: {
-    display: 'flex',
-    flexWrap: 'nowrap', // if it didn't wrap so aggressively, it would be good to allow wrapping
-    // perhaps after the Material UI capitalization is removed.
-    marginLeft: '0.5em', // this indent is only needed because the wdk-SaveableTextEditor above it is indented
-    alignItems: 'flex-start',
-  },
-  inputGroup: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  input: {
-    display: 'flex',
-    alignItems: 'center',
-    marginBottom: '0.5em', // in case they end up stacked vertically on a narrow screen
-    marginRight: '2em',
-  },
-  label: {
-    marginRight: '1ex',
-    fontWeight: 500,
-  },
-  dataLabel: {
-    textAlign: 'right',
-    marginTop: '2em',
-    fontSize: '1.35em',
-    fontWeight: 500,
-  },
-  fullRow: {
-    flexBasis: '100%',
-  },
-  primary: {},
-  stratification: {},
-  showMissingness: {},
-});
-
 export function InputVariables(props: Props) {
   const {
     inputs,
@@ -119,7 +83,7 @@ export function InputVariables(props: Props) {
     onShowMissingnessChange,
     outputEntity,
   } = props;
-  const classes = useStyles();
+  const classes = useInputStyles();
   const handleChange = (
     inputName: string,
     selectedVariable?: VariableDescriptor
@@ -222,13 +186,46 @@ export function InputVariables(props: Props) {
   return (
     <div>
       <div className={classes.inputs}>
-        {inputs.filter((input) => input.role === 'primary').length > 0 && (
+        {inputs.filter((input) => input.role === undefined).length > 0 && (
+          <div className={classes.inputGroup}>
+            <div className={classes.fullRow}>
+              <h4>Variables</h4>
+            </div>
+            {inputs
+              .filter((input) => input.role === undefined)
+              .map((input) => (
+                <div
+                  key={input.name}
+                  className={[classes.input, 'primary'].join(' ')}
+                >
+                  <div className={classes.label}>{input.label}</div>
+                  <VariableTreeDropdown
+                    scope="variableTree"
+                    showMultiFilterDescendants
+                    rootEntity={entities[0]}
+                    disabledVariables={disabledVariablesByInputName[input.name]}
+                    customDisabledVariableMessage={
+                      flattenedConstraints?.[input.name].description
+                    }
+                    starredVariables={starredVariables}
+                    toggleStarredVariable={toggleStarredVariable}
+                    entityId={selectedVariables[input.name]?.entityId}
+                    variableId={selectedVariables[input.name]?.variableId}
+                    onChange={(variable) => {
+                      handleChange(input.name, variable);
+                    }}
+                  />
+                </div>
+              ))}
+          </div>
+        )}
+        {inputs.filter((input) => input.role === 'axis').length > 0 && (
           <div className={classes.inputGroup}>
             <div className={classes.fullRow}>
               <h4>Axis variables</h4>
             </div>
             {inputs
-              .filter((input) => input.role === 'primary')
+              .filter((input) => input.role === 'axis')
               .map((input) => (
                 <div
                   key={input.name}

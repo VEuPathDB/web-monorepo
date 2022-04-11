@@ -536,7 +536,7 @@ function HistogramViz(props: VisualizationProps) {
             {
               name: 'xAxisVariable',
               label: 'Main',
-              role: 'primary',
+              role: 'axis',
             },
             {
               name: 'overlayVariable',
@@ -903,7 +903,7 @@ function HistogramPlotWithControls({
         {/* make switch and radiobutton single line with space
                  also marginRight at LabelledGroup is set to 0.5625em: default - 1.5625em*/}
         <LabelledGroup
-          label="Y-axis"
+          label="Y-axis controls"
           containerStyles={{
             marginRight: '0.5625em',
           }}
@@ -967,8 +967,21 @@ function HistogramPlotWithControls({
             }}
           />
         </LabelledGroup>
+        {/* add vertical line in btw Y- and X- controls */}
+        <div
+          style={{
+            display: 'inline-flex',
+            borderLeft: '2px solid lightgray',
+            height: '13.7em',
+            position: 'relative',
+            marginLeft: '-1px',
+            top: '1.5em',
+          }}
+        >
+          {' '}
+        </div>
         <LabelledGroup
-          label="X-axis"
+          label="X-axis controls"
           containerStyles={{
             marginRight: '0em',
           }}
@@ -1003,7 +1016,9 @@ function HistogramPlotWithControls({
             onRangeChange={handleIndependentAxisRangeChange}
             valueType={valueType}
             // set maxWidth
-            containerStyles={{ maxWidth: '350px' }}
+            containerStyles={{
+              maxWidth: '350px',
+            }}
           />
           {/* truncation notification */}
           {truncatedIndependentAxisWarning ? (
@@ -1047,8 +1062,10 @@ function HistogramPlotWithControls({
         checkedLegendItems={checkedLegendItems}
         legendTitle={histogramProps.legendTitle}
         onCheckedLegendItemsChange={onCheckedLegendItemsChange}
-        // add a condition to show legend even for single overlay data
-        showOverlayLegend={vizConfig.overlayVariable != null}
+        // add a condition to show legend even for single overlay data and check legendItems exist
+        showOverlayLegend={
+          vizConfig.overlayVariable != null && legendItems.length > 0
+        }
       />
     );
 
@@ -1235,6 +1252,16 @@ function getRequestParams(
       }
     : { binSpec: { type: 'binWidth' } };
 
+  // define viewport based on independent axis range: need to check undefined case
+  const viewport =
+    vizConfig?.independentAxisRange?.min != null &&
+    vizConfig?.independentAxisRange?.max != null
+      ? {
+          xMin: vizConfig?.independentAxisRange?.min,
+          xMax: vizConfig?.independentAxisRange?.max,
+        }
+      : undefined;
+
   return {
     studyId,
     filters,
@@ -1247,6 +1274,8 @@ function getRequestParams(
       valueSpec,
       ...binSpec,
       showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
+      // pass viewport to get appropriate display range
+      viewport: viewport,
     },
   } as HistogramRequestParams;
 }
