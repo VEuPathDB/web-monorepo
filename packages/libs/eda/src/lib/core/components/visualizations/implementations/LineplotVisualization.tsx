@@ -597,18 +597,19 @@ function LineplotViz(props: VisualizationProps) {
 
   // find deependent axis range and its margin
   const defaultDependentRangeMargin = useMemo(() => {
-    const yMinMaxRange =
-      data.value?.yMin != null && data.value?.yMax != null
-        ? ({
-            // make sure axis range includes a zero (except for dates, see below)
-            min: min([data.value.yMin, 0]), // lodash min/max handles strings
-            max: max([data.value.yMax, 0]), // or numbers appropriately
-            // and with strings/dates, if you put the zero as the second value, min or max always returns the string
-            // so min(["foo", 0]) is "foo" and min([0, "foo"]) is 0 **
-            // which is our desired behaviour (no need to anchor date axes at 1970 or whatever)
-            // (** TO DO: is this documented lodash behaviour, or likely to change?)
-          } as NumberOrDateRange)
-        : undefined;
+    const yMinMaxRange = categoricalMode
+      ? { min: 0, max: 1 }
+      : data.value?.yMin != null && data.value?.yMax != null
+      ? ({
+          // make sure axis range includes a zero (except for dates, see below)
+          min: min([data.value.yMin, 0]), // lodash min/max handles strings
+          max: max([data.value.yMax, 0]), // or numbers appropriately
+          // and with strings/dates, if you put the zero as the second value, min or max always returns the string
+          // so min(["foo", 0]) is "foo" and min([0, "foo"]) is 0 **
+          // which is our desired behaviour (no need to anchor date axes at 1970 or whatever)
+          // (** TO DO: is this documented lodash behaviour, or likely to change?)
+        } as NumberOrDateRange)
+      : undefined;
 
     return ((yAxisVariable?.type === 'number' ||
       yAxisVariable?.type === 'integer' ||
