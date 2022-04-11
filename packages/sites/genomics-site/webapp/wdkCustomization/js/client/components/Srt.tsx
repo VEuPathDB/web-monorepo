@@ -63,10 +63,10 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
       return sourceId == null
         ? ''
         : [
-          sourceId,
-          `${sourceId}:14..700`,
-          `${sourceId}:100..2000:r`
-        ].join('\r\n');
+            sourceId,
+            `${sourceId}:14..700`,
+            `${sourceId}:100..2000:r`
+          ].join('\r\n');
     },
     idsInputHelp: (
       <div>
@@ -108,7 +108,7 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
 
 export function Srt() {
   const compatibleSrtConfigs = useCompatibleSrtFormConfigs();
-  const [selectedSrtForm, setSelectedSrtForm] = useState<string>('');
+  const [ selectedSrtForm, setSelectedSrtForm ] = useState<string>('');
 
   useEffect(() => {
     if (!selectedSrtForm && compatibleSrtConfigs && compatibleSrtConfigs.length >= 1) {
