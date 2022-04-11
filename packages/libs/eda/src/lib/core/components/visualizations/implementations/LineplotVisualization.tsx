@@ -176,6 +176,7 @@ function createDefaultConfig(): LineplotConfig {
   return {
     valueSpecConfig: 'Mean',
     useBinning: false,
+    showErrorBars: true,
   };
 }
 
@@ -195,7 +196,7 @@ export const LineplotConfig = t.intersection([
     binWidthTimeUnit: TimeUnit,
     showMissingness: t.boolean,
     checkedLegendItems: t.array(t.string),
-    showErrorBars: t.boolean,
+    showErrorBars: t.boolean, // now has a default value, could move out of partial/optionals but this will break old saved visualizations
     numeratorValues: t.array(t.string),
     denominatorValues: t.array(t.string),
     // axis range control
@@ -596,57 +597,30 @@ function LineplotViz(props: VisualizationProps) {
 
   // find deependent axis range and its margin
   const defaultDependentRangeMargin = useMemo(() => {
-    //K set yMinMaxRange using yMin/yMax obtained from processInputData()
-    const yMinMaxRange =
-      data.value?.yMin != null && data.value?.yMax != null
-        ? ({ min: data.value.yMin, max: data.value.yMax } as NumberOrDateRange)
-        : undefined;
-
-    /**
-     * Temporarily, two methods, Method 1 & 2, are implemented in the following
-     * Simply commenting out each of them would work as designed
-     * Currently, Method 1 is used: thus Method 2 is commented out
-     */
-    // Method 1: considering variable's metadata as well
-    const defaultDependentRange = categoricalMode
+    const yMinMaxRange = categoricalMode
+      ? { min: 0, max: 1 }
+      : data.value?.yMin != null && data.value?.yMax != null
       ? ({
-          // this is where the proportion y-axis starts at zero
-          min:
-            yMinMaxRange?.min != null
-              ? Math.min(0, yMinMaxRange.min as number)
-              : undefined,
-          max: yMinMaxRange?.max,
+          // make sure axis range includes a zero (except for dates, see below)
+          min: min([data.value.yMin, 0]), // lodash min/max handles strings
+          max: max([data.value.yMax, 0]), // or numbers appropriately
+          // and with strings/dates, if you put the zero as the second value, min or max always returns the string
+          // so min(["foo", 0]) is "foo" and min([0, "foo"]) is 0 **
+          // which is our desired behaviour (no need to anchor date axes at 1970 or whatever)
+          // (** TO DO: is this documented lodash behaviour, or likely to change?)
         } as NumberOrDateRange)
-      : // add conditions to prevent previous yMinMaxRange from calling the function, e.g., date to categorical
-      ((yAxisVariable?.type === 'number' ||
-          yAxisVariable?.type === 'integer') &&
-          typeof yMinMaxRange?.min === 'number' &&
-          typeof yMinMaxRange?.max === 'number') ||
-        (yAxisVariable?.type === 'date' &&
-          typeof yMinMaxRange?.min === 'string' &&
-          typeof yMinMaxRange?.max === 'string')
-      ? numberDateDefaultDependentAxisRange(
-          yAxisVariable,
-          'lineplot',
-          yMinMaxRange
-        )
-      : undefined;
-    // add conditions to prevent previous defaultDependentRange from calling the function due to categorical
-    return yAxisVariable?.type === 'number' ||
-      yAxisVariable?.type === 'integer' ||
-      yAxisVariable?.type === 'date' ||
-      (yAxisVariable?.type === 'string' &&
-        categoricalMode &&
-        typeof defaultDependentRange?.min === 'number' &&
-        typeof defaultDependentRange?.max === 'number')
-      ? axisRangeMargin(defaultDependentRange, yAxisVariable?.type)
       : undefined;
 
-    // // Method 2: purely data-based min/max (yMinMaxRange only): this will reduce empty ranges
-    // return ((yAxisVariable?.type === 'number' || yAxisVariable?.type === 'integer' || (yAxisVariable?.type === 'string' && categoricalMode)) && typeof yMinMaxRange?.min === 'number' && typeof yMinMaxRange?.max === 'number') ||
-    //   (yAxisVariable?.type === 'date' && typeof yMinMaxRange?.min === 'string' && typeof yMinMaxRange?.max === 'string')
-    //   ? axisRangeMargin(yMinMaxRange, yAxisVariable?.type)
-    //   : undefined;
+    return ((yAxisVariable?.type === 'number' ||
+      yAxisVariable?.type === 'integer' ||
+      (yAxisVariable?.type === 'string' && categoricalMode)) &&
+      typeof yMinMaxRange?.min === 'number' &&
+      typeof yMinMaxRange?.max === 'number') ||
+      (yAxisVariable?.type === 'date' &&
+        typeof yMinMaxRange?.min === 'string' &&
+        typeof yMinMaxRange?.max === 'string')
+      ? axisRangeMargin(yMinMaxRange, yAxisVariable?.type)
+      : undefined;
   }, [data.value, yAxisVariable, categoricalMode]);
 
   // custom legend list
@@ -840,18 +814,19 @@ function LineplotViz(props: VisualizationProps) {
 
   const disabledValueSpecs =
     yAxisVariable == null
-      ? []
+      ? ['Mean', 'Median', 'Proportion']
       : categoricalMode
       ? ['Mean', 'Median']
       : ['Proportion'];
 
-  const valuesOfInterestLabelStyle = { minWidth: '200px' };
-
   const aggregationHelp = (
     <div>
-      “Mean” and “Median” are y-axis aggregation functions that can only be used
-      when continuous variables <i className="fa fa-bar-chart-o  wdk-Icon"> </i>{' '}
-      are selected for the y-axis.
+      <p>
+        “Mean” and “Median” are y-axis aggregation functions that can only be
+        used when continuous variables{' '}
+        <i className="fa fa-bar-chart-o  wdk-Icon"> </i> are selected for the
+        y-axis.
+      </p>
       <ul>
         <li>
           Mean = Sum of values for all data points / Number of all data points
@@ -866,12 +841,77 @@ function LineplotViz(props: VisualizationProps) {
         “Proportion” is the only y-axis aggregation function that can be used
         when categorical variables <i className="fa fa-list  wdk-Icon"> </i> are
         selected for the y-axis.
-        <ul>
-          <li>Proportion = Numerator count / Denominator count</li>
-        </ul>
-        The variable's values that count towards numerator and denominator must
-        be selected in the “Proportion specification” drop-downs.
       </p>
+      <ul>
+        <li>Proportion = Numerator count / Denominator count</li>
+      </ul>
+      <p>
+        The y-axis variable's values that count towards numerator and
+        denominator must be selected in the two drop-downs.
+      </p>
+    </div>
+  );
+
+  const proportionInputs = (
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <RadioButtonGroup
+        options={keys(valueSpecLookup)}
+        selectedOption={vizConfig.valueSpecConfig}
+        onOptionSelected={onValueSpecChange}
+        disabledList={disabledValueSpecs}
+        orientation={'horizontal'}
+        labelPlacement={'end'}
+        buttonColor={'primary'}
+        itemMarginRight={20}
+      />
+
+      {vizConfig.valueSpecConfig === 'Proportion' && (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, auto)',
+            gridTemplateRows: 'repeat(3, auto)',
+          }}
+        >
+          <div className={classes.label} style={{ gridColumn: 1, gridRow: 2 }}>
+            Proportion&nbsp;=
+          </div>
+          <div
+            className={classes.input}
+            style={{
+              gridColumn: 2,
+              gridRow: 1,
+              marginBottom: 0,
+              justifyContent: 'center',
+            }}
+          >
+            <ValuePicker
+              allowedValues={yAxisVariable?.vocabulary}
+              selectedValues={vizConfig.numeratorValues}
+              onSelectedValuesChange={onNumeratorValuesChange}
+            />
+            {/*<div className={classes.label} style={valuesOfInterestLabelStyle}>
+              (numerator)
+            </div>*/}
+          </div>
+          <div style={{ gridColumn: 2, gridRow: 2, marginRight: '2em' }}>
+            <hr style={{ marginTop: '0.6em' }} />
+          </div>
+          <div
+            className={classes.input}
+            style={{ gridColumn: 2, gridRow: 3, justifyContent: 'center' }}
+          >
+            <ValuePicker
+              allowedValues={yAxisVariable?.vocabulary}
+              selectedValues={vizConfig.denominatorValues}
+              onSelectedValuesChange={onDenominatorValuesChange}
+            />
+            {/*<div className={classes.label} style={valuesOfInterestLabelStyle}>
+              (denominator)
+            </div>*/}
+          </div>
+        </div>
+      )}
     </div>
   );
 
@@ -901,6 +941,24 @@ function LineplotViz(props: VisualizationProps) {
               role: 'stratification',
             },
           ]}
+          customSections={[
+            {
+              title: (
+                <>
+                  Y-axis aggregation
+                  <Tooltip content={aggregationHelp}>
+                    <i
+                      style={{ marginLeft: '5px' }}
+                      className="fa fa-question-circle"
+                      aria-hidden="true"
+                    ></i>
+                  </Tooltip>
+                </>
+              ),
+              order: 75,
+              content: proportionInputs,
+            },
+          ]}
           entities={entities}
           selectedVariables={{
             xAxisVariable: vizConfig.xAxisVariable,
@@ -922,63 +980,6 @@ function LineplotViz(props: VisualizationProps) {
           onShowMissingnessChange={onShowMissingnessChange}
           outputEntity={outputEntity}
         />
-      </div>
-
-      <div className={classes.inputs}>
-        <div className={classes.inputGroup}>
-          <div className={classes.fullRow}>
-            <h4>
-              Y-axis aggregation
-              <Tooltip content={aggregationHelp}>
-                <i
-                  style={{ marginLeft: '5px' }}
-                  className="fa fa-question-circle"
-                  aria-hidden="true"
-                ></i>
-              </Tooltip>
-            </h4>
-          </div>
-          <div className={classes.input}>
-            <RadioButtonGroup
-              options={keys(valueSpecLookup)}
-              selectedOption={vizConfig.valueSpecConfig}
-              onOptionSelected={onValueSpecChange}
-              disabledList={disabledValueSpecs}
-              orientation={'horizontal'}
-              labelPlacement={'end'}
-              buttonColor={'primary'}
-              itemMarginRight={20}
-            />
-          </div>
-        </div>
-
-        {vizConfig.valueSpecConfig === 'Proportion' && (
-          <div className={classes.inputGroup}>
-            <div className={classes.fullRow}>
-              <h4>Proportion specification for Y-axis variable</h4>
-            </div>
-            <div className={[classes.input, classes.fullRow].join(' ')}>
-              <div className={classes.label} style={valuesOfInterestLabelStyle}>
-                Value(s) of interest (numerator)
-              </div>
-              <ValuePicker
-                allowedValues={yAxisVariable?.vocabulary}
-                selectedValues={vizConfig.numeratorValues}
-                onSelectedValuesChange={onNumeratorValuesChange}
-              />
-            </div>
-            <div className={[classes.input, classes.fullRow].join(' ')}>
-              <div className={classes.label} style={valuesOfInterestLabelStyle}>
-                Value(s) of interest (denominator)
-              </div>
-              <ValuePicker
-                allowedValues={yAxisVariable?.vocabulary}
-                selectedValues={vizConfig.denominatorValues}
-                onSelectedValuesChange={onDenominatorValuesChange}
-              />
-            </div>
-          </div>
-        )}
       </div>
 
       <PluginError error={data.error} outputSize={outputSize} />
@@ -1348,7 +1349,7 @@ function LineplotWithControls({
               // considering axis range control
               maxWidth: independentValueType === 'date' ? '250px' : '350px',
             }}
-            disabled={!useBinning}
+            disabled={!useBinning || neverUseBinning}
           />
           {/* X-Axis range control */}
           {/* designed to disable X-axis range control for categorical X */}
