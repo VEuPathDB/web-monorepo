@@ -538,7 +538,7 @@ function BarplotViz(props: VisualizationProps) {
       )}
 
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <LabelledGroup label="Y-axis">
+        <LabelledGroup label="Y-axis controls">
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <Switch
               label="Log Scale:"
@@ -606,8 +606,10 @@ function BarplotViz(props: VisualizationProps) {
       checkedLegendItems={checkedLegendItems}
       legendTitle={variableDisplayWithUnit(overlayVariable)}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
-      // add a condition to show legend even for single overlay data
-      showOverlayLegend={vizConfig.overlayVariable != null}
+      // add a condition to show legend even for single overlay data and check legendItems exist
+      showOverlayLegend={
+        vizConfig.overlayVariable != null && legendItems.length > 0
+      }
     />
   );
 
@@ -660,7 +662,7 @@ function BarplotViz(props: VisualizationProps) {
             {
               name: 'xAxisVariable',
               label: 'Main',
-              role: 'primary',
+              role: 'axis',
             },
             {
               name: 'overlayVariable',

@@ -870,7 +870,8 @@ function ScatterplotViz(props: VisualizationProps) {
         ((computation?.descriptor.type === 'pass' ||
           computation?.descriptor.type === 'alphadiv' ||
           computation?.descriptor.type === 'xyrelationships') &&
-          vizConfig.overlayVariable != null) || // pass-through & alphadiv & X-Y relationships
+          vizConfig.overlayVariable != null &&
+          legendItems.length > 0) || // pass-through & alphadiv & X-Y relationships
         (computation?.descriptor.type === 'abundance' &&
           legendItems.length === 1) // show legend for single overlay
       }
@@ -953,16 +954,18 @@ function ScatterplotViz(props: VisualizationProps) {
             {
               name: 'xAxisVariable',
               label: 'X-axis',
-              role: 'primary',
+              role: 'axis',
             },
-            computation.descriptor.configuration ?? {
-              name: 'yAxisVariable',
-              label: 'Y-axis',
-              role: 'primary',
-            },
+            computation.descriptor.configuration != null
+              ? undefined
+              : {
+                  name: 'yAxisVariable',
+                  label: 'Y-axis',
+                  role: 'axis',
+                },
             computation.descriptor.configuration != null &&
             computation.descriptor.type === 'abundance'
-              ? {}
+              ? undefined
               : {
                   name: 'overlayVariable',
                   label: 'Overlay',
@@ -973,7 +976,7 @@ function ScatterplotViz(props: VisualizationProps) {
               label: 'Facet',
               role: 'stratification',
             },
-          ].filter((input): input is InputSpec => input != null)}
+          ].filter((input): input is any => input != null)}
           entities={entities}
           selectedVariables={{
             xAxisVariable: vizConfig.xAxisVariable,
@@ -1301,7 +1304,7 @@ function ScatterplotWithControls({
         {/* make switch and radiobutton single line with space
                  also marginRight at LabelledGroup is set to 0.5625em: default - 1.5625em*/}
         <LabelledGroup
-          label="Y-axis"
+          label="Y-axis controls"
           containerStyles={{
             marginRight: '0.5625em',
           }}
@@ -1346,9 +1349,21 @@ function ScatterplotWithControls({
             }}
           />
         </LabelledGroup>
-
+        {/* add vertical line in btw Y- and X- controls */}
+        <div
+          style={{
+            display: 'inline-flex',
+            borderLeft: '2px solid lightgray',
+            height: '9.7em',
+            position: 'relative',
+            marginLeft: '-1px',
+            top: '1.5em',
+          }}
+        >
+          {' '}
+        </div>
         <LabelledGroup
-          label="X-axis"
+          label="X-axis controls"
           containerStyles={{
             marginRight: '0em',
           }}

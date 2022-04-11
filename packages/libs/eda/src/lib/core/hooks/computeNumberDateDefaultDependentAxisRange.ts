@@ -11,6 +11,7 @@ import { axisRangeMargin } from '../utils/axis-range-margin';
 import { NumberOrDateRange } from '../types/general';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
 import { ComputedVariableMetadata } from '../api/DataClient/types';
+import { isFaceted } from '@veupathdb/components/lib/types/guards';
 
 /**
  * A custom hook to compute default dependent axis range
@@ -26,6 +27,16 @@ export function useDefaultDependentAxisRange(
 ): NumberOrDateRange | undefined {
   // find max of stacked array, especially with overlayVariable
   const defaultDependentAxisRange = useMemo(() => {
+    // explicitly check empty data
+    if (
+      (!isFaceted(data?.value?.dataSetProcess) &&
+        data?.value?.dataSetProcess.series == null) ||
+      (isFaceted(data?.value?.dataSetProcess) &&
+        data?.value?.dataSetProcess?.facets?.length === 0)
+    ) {
+      return undefined;
+    }
+
     // set yMinMaxRange using yMin/yMax obtained from processInputData()
     const yMinMaxRange =
       data.value != null

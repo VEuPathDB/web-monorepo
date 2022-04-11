@@ -527,8 +527,10 @@ function BoxplotViz(props: VisualizationProps) {
       checkedLegendItems={checkedLegendItems}
       legendTitle={variableDisplayWithUnit(overlayVariable)}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
-      // add a condition to show legend even for single overlay data
-      showOverlayLegend={vizConfig.overlayVariable != null}
+      // add a condition to show legend even for single overlay data and check legendItems exist
+      showOverlayLegend={
+        vizConfig.overlayVariable != null && legendItems.length > 0
+      }
     />
   );
 
@@ -591,17 +593,19 @@ function BoxplotViz(props: VisualizationProps) {
           inputs={[
             computation.descriptor.configuration != null &&
             computation.descriptor.type === 'abundance'
-              ? {}
+              ? undefined
               : {
                   name: 'xAxisVariable',
                   label: 'X-axis',
-                  role: 'primary',
+                  role: 'axis',
                 },
-            computation.descriptor.configuration ?? {
-              name: 'yAxisVariable',
-              label: 'Y-axis',
-              role: 'primary',
-            },
+            computation.descriptor.configuration != null
+              ? undefined
+              : {
+                  name: 'yAxisVariable',
+                  label: 'Y-axis',
+                  role: 'axis',
+                },
             {
               name: 'overlayVariable',
               label: 'Overlay',
@@ -612,7 +616,7 @@ function BoxplotViz(props: VisualizationProps) {
               label: 'Facet',
               role: 'stratification',
             },
-          ].filter((input): input is InputSpec => input != null)}
+          ].filter((input): input is any => input != null)}
           entities={entities}
           selectedVariables={{
             xAxisVariable: vizConfig.xAxisVariable,
@@ -798,7 +802,7 @@ function BoxplotWithControls({
       )}
       {/* potential controls go here  */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <LabelledGroup label="Y-axis">
+        <LabelledGroup label="Y-axis controls">
           {/* Y-axis range control */}
           <NumberRangeInput
             label="Range"
