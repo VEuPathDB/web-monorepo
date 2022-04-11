@@ -1303,10 +1303,10 @@
     "@typescript-eslint/types" "4.8.1"
     eslint-visitor-keys "^2.0.0"
 
-"@veupathdb/components@^0.13.0":
-  version "0.13.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.13.0.tgz#5c43164a937fcfbba67f4d32a2be88ee21edfafa"
-  integrity sha512-hS+TP3zVzba/BJUZS88Fa8o932IHo40tRo4kkhfmXhpJwaB6/mS/l4VcVYOicUY6cM4JQCdl72BVXCntj6IxkA==
+"@veupathdb/components@^0.14.4":
+  version "0.14.4"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.14.4.tgz#cdb293c265487182878f9757935845cf476332d4"
+  integrity sha512-Rayyxbv2qDJvahD9VX1SBvk1z2M79SCP/B71GDTAYHF9OSd3bV/MCsnVKPbSEbmQCDEonn+klKZ5trMPeVF+9A==
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
