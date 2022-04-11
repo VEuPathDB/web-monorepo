@@ -1249,7 +1249,7 @@ function LineplotWithControls({
       {/* add axis range control */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <LabelledGroup
-          label="Y-axis"
+          label="Y-axis controls"
           containerStyles={{
             marginRight: '0.5625em',
           }}
@@ -1302,8 +1302,21 @@ function LineplotWithControls({
             }}
           />
         </LabelledGroup>
+        {/* add vertical line in btw Y- and X- controls */}
+        <div
+          style={{
+            display: 'inline-flex',
+            borderLeft: '2px solid lightgray',
+            height: '15.5em',
+            position: 'relative',
+            marginLeft: '-1px',
+            top: '1.5em',
+          }}
+        >
+          {' '}
+        </div>
         <LabelledGroup
-          label="X-axis"
+          label="X-axis controls"
           containerStyles={{
             marginRight: '0em',
           }}
