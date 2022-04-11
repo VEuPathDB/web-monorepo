@@ -616,7 +616,9 @@ function MapViz(props: VisualizationProps) {
       completeCasesAxesVars={totalEntityCount}
       completeCasesAllVars={0 /* can't be undefined for some reason */}
       outputEntity={outputEntity}
-      stratificationIsActive={false}
+      stratificationIsActive={
+        false /* this disables the 'strata and axes' bar/impulse */
+      }
       // enableSpinner={vizConfig.xAxisVariable != null && !pieplotData.error}
       totalCounts={totalCounts.value}
       filteredCounts={filteredCounts.value}
