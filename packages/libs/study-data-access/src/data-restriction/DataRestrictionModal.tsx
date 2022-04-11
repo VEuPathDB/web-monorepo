@@ -97,10 +97,10 @@ function PolicyNotice(props: Props) {
       <br />
       <br />
       Please read the{' '}
-      <a href={policyUrl} target="_blank" rel="noreferrer">
+      <Link to={policyUrl} target="_blank" rel="noreferrer">
         {' '}
         Data Access and Use Policy.
-      </a>
+      </Link>
     </p>
   ) : (
     <p>
@@ -109,10 +109,10 @@ function PolicyNotice(props: Props) {
       <br />
       <br />
       Please read the{' '}
-      <a href={policyUrl} target="_blank" rel="noreferrer">
+      <Link to={policyUrl} target="_blank" rel="noreferrer">
         {' '}
         Data Access and Use Policy.
-      </a>
+      </Link>
     </p>
   );
 }

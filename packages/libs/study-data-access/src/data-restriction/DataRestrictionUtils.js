@@ -14,12 +14,10 @@ import {
 
 // Getters!   =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-export function getPolicyUrl (study = {}, webAppUrl = '') {
+export function getPolicyUrl (study = {}) {
   return !study
     ? null
-    : getStudyPolicyUrl(study)
-      ? webAppUrl + '/' + getStudyPolicyUrl(study)
-      : null;
+    : getStudyPolicyUrl(study);
 }
 
 export function getRequestNeedsApproval (study = {}) {
