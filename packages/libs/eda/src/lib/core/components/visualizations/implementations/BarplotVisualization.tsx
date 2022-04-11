@@ -538,7 +538,7 @@ function BarplotViz(props: VisualizationProps) {
       )}
 
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <LabelledGroup label="Y-axis">
+        <LabelledGroup label="Y-axis controls">
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <Switch
               label="Log Scale:"
