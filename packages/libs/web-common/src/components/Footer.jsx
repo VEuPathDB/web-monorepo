@@ -41,9 +41,9 @@ export default enhance(function Footer(props) {
     <div className="Footer">
       <div>
         <div>
-          <a href={`//${location.hostname}`}>{displayName}</a>
-          <span>&nbsp;Release {buildNumber}</span>
-          <span style={{ whiteSpace: 'nowrap' }}> &nbsp;&nbsp; {releaseDate && formatReleaseDate(releaseDate)}</span>
+            <a href={`//${location.hostname}`}>{displayName}</a>
+            <span>&nbsp;Release {buildNumber}</span>
+            <span style={{whiteSpace: 'nowrap'}}> &nbsp;&nbsp; {releaseDate && formatReleaseDate(releaseDate)}</span>
         </div>
         <div className="copyright">©{new Date().getFullYear()} The VEuPathDB Project Team</div>
       </div>
@@ -73,14 +73,14 @@ export default enhance(function Footer(props) {
           Please <NewWindowLink href={webAppUrl + '/app/contact-us'}>Contact Us</NewWindowLink> with any questions or comments
         </div>
       </div>
-
+  
       {siteAck != null && (<div className="siteAck">
         <a href={siteAck.linkTo}>
-          <img width="120" src={siteAck.imageLocation} />
+          <img width="120" src={siteAck.imageLocation}/>
         </a>
       </div>
       )}
-
+ 
     </div>
   );
 });
