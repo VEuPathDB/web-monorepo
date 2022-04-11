@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Icon from 'wdk-client/Components/Icon/IconAlt';
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip'
+import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 
 import 'wdk-client/Components/Icon/HelpIcon.scss';
 
@@ -9,14 +9,14 @@ type Props = {
   children: string | React.ReactElement<any>;
 };
 
-export default function HelpIcon(props: Props) {
+export default function HelpIcon (props: Props) {
   return (
     <Tooltip
       css={{}}
       title={props.children}
     >
       <button type="button" className="link HelpTrigger">
-        <Icon fa="question-circle" />
+        <Icon fa="question-circle"/>
       </button>
     </Tooltip>
   )
