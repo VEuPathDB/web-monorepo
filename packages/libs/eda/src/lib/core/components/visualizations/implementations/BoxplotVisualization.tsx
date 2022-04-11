@@ -465,7 +465,7 @@ function BoxplotViz(props: VisualizationProps) {
             computation.descriptor.configuration.collectionVariable
           )
         : undefined,
-    [findCollectionVariableEntityAndVariable, entities, computation]
+    [entities, computation]
   );
 
   const plotNode = (

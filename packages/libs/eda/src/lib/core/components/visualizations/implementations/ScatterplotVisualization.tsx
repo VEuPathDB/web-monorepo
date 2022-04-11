@@ -740,6 +740,7 @@ function ScatterplotViz(props: VisualizationProps) {
     vizConfig.overlayVariable,
     vizConfig.showMissingness,
     vizConfig.valueSpecConfig,
+    computation.descriptor.type,
   ]);
 
   // set checkedLegendItems: not working well with plot options
@@ -770,7 +771,7 @@ function ScatterplotViz(props: VisualizationProps) {
             computation.descriptor.configuration.collectionVariable
           )
         : undefined,
-    [findCollectionVariableEntityAndVariable, entities, computation]
+    [entities, computation]
   );
 
   const plotNode = (
