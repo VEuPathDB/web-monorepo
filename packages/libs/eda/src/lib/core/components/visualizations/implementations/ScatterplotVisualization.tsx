@@ -659,13 +659,31 @@ function ScatterplotViz(props: VisualizationProps) {
                   ? dataItem.name != null
                     ? legendLabelColor
                         ?.map((legend) => {
-                          if (
-                            dataItem.name != null &&
-                            legend.label != null &&
-                            dataItem.name.includes(legend.label)
-                          )
-                            return legend.color;
-                          else return '';
+                          // works but bug when changing plot control
+                          if (dataItem.name != null && legend.label != null) {
+                            if (
+                              vizConfig.valueSpecConfig === 'Raw' &&
+                              dataItem.name === legend.label
+                            ) {
+                              return legend.color;
+                            } else if (
+                              vizConfig.valueSpecConfig ===
+                                'Smoothed mean with raw' &&
+                              (dataItem.name === legend.label ||
+                                dataItem.name ===
+                                  legend.label + SMOOTHEDMEANSUFFIX ||
+                                dataItem.name === legend.label + CI95SUFFIX)
+                            ) {
+                              return legend.color;
+                            } else if (
+                              vizConfig.valueSpecConfig ===
+                                'Best fit line with raw' &&
+                              (dataItem.name === legend.label ||
+                                dataItem.name === legend.label + BESTFITSUFFIX)
+                            ) {
+                              return legend.color;
+                            } else return '';
+                          } else return '';
                         })
                         .filter((n: string) => n !== '')
                         .toString()
