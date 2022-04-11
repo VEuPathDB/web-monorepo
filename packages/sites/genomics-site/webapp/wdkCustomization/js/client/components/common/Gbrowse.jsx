@@ -1,4 +1,4 @@
-import { once, debounce } from 'lodash';
+import {once, debounce} from 'lodash';
 import PropTypes from 'prop-types';
 import React, { PureComponent, useCallback, useEffect, useState, useRef } from 'react';
 import { httpGet } from '@veupathdb/web-common/lib/util/http';
@@ -7,6 +7,11 @@ import { Checkbox, HelpIcon, Loading } from '@veupathdb/wdk-client/lib/Component
 import newFeatureImage from '@veupathdb/wdk-client/lib/Core/Style/images/new-feature.png';
 
 import './Gbrowse.scss';
+
+const SCROLL_AND_ZOOM_CHECKBOX_TOOLTIP_POSITION = {
+  my: 'bottom right',
+  at: 'top center'
+};
 
 /**
  * Each entry below is used in two scenarios:
@@ -116,25 +121,25 @@ export let contexts = [
 ];
 
 const JbrowseLink = ({ url }) =>
-  <div style={{ textAlign: 'center', margin: 25 }}>
-    <a href={url} className="eupathdb-BigButton" target="_blank">View in JBrowse genome browser</a>
-  </div>
+    <div style={{ textAlign: 'center', margin: 25 }}>
+<a href={url} className="eupathdb-BigButton" target="_blank">View in JBrowse genome browser</a>
+</div>
 
 const ApolloJbrowseLink = ({ url, urlApollo }) =>
-  <div style={{ textAlign: 'center', margin: 25 }}>
-    <a href={url} className="eupathdb-BigButton" target="_blank">View in JBrowse genome browser</a>
-    <a href={urlApollo} className="eupathdb-BigButton" target="_blank">&emsp;&emsp;&emsp;&emsp;Annotate in Apollo&emsp;&emsp;&emsp;&emsp;</a>
-  </div>
+    <div style={{ textAlign: 'center', margin: 25 }}>
+<a href={url} className="eupathdb-BigButton" target="_blank">View in JBrowse genome browser</a>
+<a href={urlApollo} className="eupathdb-BigButton" target="_blank">&emsp;&emsp;&emsp;&emsp;Annotate in Apollo&emsp;&emsp;&emsp;&emsp;</a>
+</div>
 
 
 const PbrowseJbrowseLink = ({ url }) =>
-  <div style={{ textAlign: 'center', margin: 25 }}>
-    <a href={url} className="eupathdb-BigButton">View in protein browser</a>
-  </div>
+    <div style={{ textAlign: 'center', margin: 25 }}>
+<a href={url} className="eupathdb-BigButton">View in protein browser</a>
+</div>
 
 
-function JbrowseIframe({ jbrowseUrl, ht }) {
-  const [isLocked, setIsLocked] = useState(true);
+function JbrowseIframe({ jbrowseUrl,ht }) {
+  const [ isLocked, setIsLocked ] = useState(true);
   const onCheckboxToggle = useCallback(
     newIsUnlockedValue => {
       setIsLocked(!newIsUnlockedValue);
@@ -147,7 +152,9 @@ function JbrowseIframe({ jbrowseUrl, ht }) {
     <small className="jbrowse-scroll-zoom-toggle-caption">
       Scroll and zoom
       {' '}
-      <HelpIcon>
+      <HelpIcon
+        tooltipPosition={SCROLL_AND_ZOOM_CHECKBOX_TOOLTIP_POSITION}
+      >
         Select to enable using mouse / track pad for scrolling &amp; zoom
         <br />
         (double click to zoom in; shift-double click to zoom out)
@@ -157,12 +164,12 @@ function JbrowseIframe({ jbrowseUrl, ht }) {
 
   useEffect(() => {
     updateBehaviors();
-  }, [isLocked]);
+  }, [ isLocked ]);
 
   function onLoad(event) {
     const { JBrowse } = event.currentTarget.contentWindow;
     if (JBrowse == null) throw new Error("Could not load embedded JBrowse instance.");
-    JBrowse.afterMilestone('completely initialized', function () {
+    JBrowse.afterMilestone('completely initialized', function() {
       jbrowseViewContainer.current = JBrowse.view;
       updateBehaviors();
     });
@@ -212,116 +219,116 @@ export function GbrowseContext(props) {
   let jbrowseUrl = record.attributes.jbrowseLink;
   let jbrowseCommonUrl = record.attributes.jbrowseUrl;
 
-  if (attribute.name == 'GeneModelGbrowseUrl') {
-    jbrowseUrlMinimal = record.attributes.geneJbrowseUrl;
-    jbrowseUrlFull = record.attributes.geneJbrowseFullUrl;
-    apolloUrlFull = record.attributes.geneApolloFullUrl;
-    apolloHelp = record.attributes.apolloHelp;
-    isInApollo = record.attributes.apolloIdCheck;
-    if (isInApollo !== "" && isInApollo !== null) {
+  if (attribute.name == 'GeneModelGbrowseUrl'){
+      jbrowseUrlMinimal = record.attributes.geneJbrowseUrl;
+      jbrowseUrlFull = record.attributes.geneJbrowseFullUrl;
+      apolloUrlFull = record.attributes.geneApolloFullUrl;
+      apolloHelp = record.attributes.apolloHelp;
+      isInApollo = record.attributes.apolloIdCheck;
+      if (isInApollo !== "" && isInApollo !== null){
       return (
         <div>
-          <p><img src={newFeatureImage} />This gene is available in <b>Apollo</b> for community annotation. To find out more about Apollo, please visit <a href={apolloHelp}>this help page.</a></p>
-          <ApolloJbrowseLink url={jbrowseUrlFull} urlApollo={apolloUrlFull} />
-          <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="400" />
-          <ApolloJbrowseLink url={jbrowseUrlFull} urlApollo={apolloUrlFull} />
+        <p><img src={newFeatureImage}/>This gene is available in <b>Apollo</b> for community annotation. To find out more about Apollo, please visit <a href={apolloHelp}>this help page.</a></p>
+        <ApolloJbrowseLink url={jbrowseUrlFull} urlApollo={apolloUrlFull}/>
+        <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="400" />
+        <ApolloJbrowseLink url={jbrowseUrlFull} urlApollo={apolloUrlFull}/>
         </div>
-      )
-    }
-    else {
+        )
+      }
+      else{
       return (
         <div>
-          <JbrowseLink url={jbrowseUrlFull} />
-          <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="400" />
-          <JbrowseLink url={jbrowseUrlFull} />
+        <JbrowseLink url={jbrowseUrlFull}/>
+        <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="400" />
+        <JbrowseLink url={jbrowseUrlFull}/>
         </div>
-      )
-    }
-  }
-  if (attribute.name == 'SyntenyGbrowseUrl' || attribute.name == 'BlatAlignmentsGbrowseUrl' || attribute.name == 'SnpsGbrowseUrl') {
-    if (attribute.name == 'SyntenyGbrowseUrl') {
+        )
+      }
+  }	
+  if (attribute.name == 'SyntenyGbrowseUrl' || attribute.name == 'BlatAlignmentsGbrowseUrl' || attribute.name == 'SnpsGbrowseUrl'){ 
+    if (attribute.name == 'SyntenyGbrowseUrl'){ 
       jbrowseUrlMinimal = record.attributes.syntenyJbrowseUrl;
       jbrowseUrlFull = record.attributes.syntenyJbrowseFullUrl;
     }
-    if (attribute.name == 'BlatAlignmentsGbrowseUrl') {
-      jbrowseUrlMinimal = record.attributes.blatJbrowseUrl;
-      jbrowseUrlFull = record.attributes.blatJbrowseFullUrl;
+    if (attribute.name == 'BlatAlignmentsGbrowseUrl'){ 
+        jbrowseUrlMinimal = record.attributes.blatJbrowseUrl;
+        jbrowseUrlFull = record.attributes.blatJbrowseFullUrl;
     }
-    if (attribute.name == 'SnpsGbrowseUrl') {
+    if (attribute.name == 'SnpsGbrowseUrl'){ 
       jbrowseUrlMinimal = record.attributes.snpsJbrowseUrl;
       jbrowseUrlFull = record.attributes.snpsJbrowseFullUrl;
     }
     return (
-      <div>
-        <JbrowseLink url={jbrowseUrlFull} />
+        <div>
+      	<JbrowseLink url={jbrowseUrlFull}/>
         <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="500" />
-        <JbrowseLink url={jbrowseUrlFull} />
+      	<JbrowseLink url={jbrowseUrlFull}/>
       </div>
-    )
+	  )
   }
 
-  if (attribute.name == 'snpJbrowseUrl' || attribute.name == 'spanJbrowseUrl') {
-    return (
-      <div>
-        <JbrowseIframe jbrowseUrl={url} ht="400" />
-        <br></br>
-      </div>
-    )
-  }
-  if (attribute.name == 'dnaContextUrl') {
-    jbrowseUrlFull = record.attributes.jbrowseUrl;
-    jbrowseUrlMinimal = record.attributes.dnaContextUrl;
-    return (
-      <div>
-        <JbrowseLink url={jbrowseUrlFull} />
-        <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="250" />
-        <JbrowseLink url={jbrowseUrlFull} />
-      </div>
-    )
-  }
-  if (attribute.name == 'snpGbrowseImageUrl') {
-    jbrowseUrlFull = record.attributes.snpGbrowseImageUrl;
-    return (
-      <div>
-        <JbrowseIframe jbrowseUrl={jbrowseUrlFull} ht="500" />
-      </div>
-    )
-  }
-  if (attribute.name == 'snpChipGbrowseImageUrl') {
-    jbrowseUrlFull = record.attributes.snpChipGbrowseImageUrl;
-    return (
-      <div>
-        <JbrowseIframe jbrowseUrl={jbrowseUrlFull} ht="300" />
-      </div>
-    )
-  }
-  if (attribute.name == 'spanGbrowseImageUrl') {
-    jbrowseUrlFull = record.attributes.spanGbrowseImageUrl;
-    return (
-      <div>
-        <JbrowseIframe jbrowseUrl={jbrowseUrlFull} ht="500" />
-      </div>
-    )
-  }
+  if ( attribute.name == 'snpJbrowseUrl' || attribute.name == 'spanJbrowseUrl' ){
+  return (
+    <div>
+      <JbrowseIframe jbrowseUrl={url} ht="400" />
+      <br></br>
+    </div>
+	  )
+    }
+  if (attribute.name == 'dnaContextUrl'){ 
+      jbrowseUrlFull = record.attributes.jbrowseUrl;
+      jbrowseUrlMinimal = record.attributes.dnaContextUrl;
+      return (
+    	<div>
+      	<JbrowseLink url={jbrowseUrlFull}/>
+      	<JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="250" />
+      	<JbrowseLink url={jbrowseUrlFull}/>
+      	</div>
+	)
+  }	
+  if (attribute.name == 'snpGbrowseImageUrl'){ 
+      jbrowseUrlFull = record.attributes.snpGbrowseImageUrl;
+      return (
+    	<div>
+      	<JbrowseIframe jbrowseUrl={jbrowseUrlFull} ht="500" />
+      	</div>
+	)
+  }	
+  if (attribute.name == 'snpChipGbrowseImageUrl'){ 
+      jbrowseUrlFull = record.attributes.snpChipGbrowseImageUrl;
+      return (
+    	<div>
+      	<JbrowseIframe jbrowseUrl={jbrowseUrlFull} ht="300" />
+      	</div>
+	)
+  }	
+  if (attribute.name == 'spanGbrowseImageUrl'){ 
+      jbrowseUrlFull = record.attributes.spanGbrowseImageUrl;
+      return (
+    	<div>
+      	<JbrowseIframe jbrowseUrl={jbrowseUrlFull} ht="500" />
+      	</div>
+	)
+  }	
 
   return (
     <div>
-      <JbrowseLink url={jbrowseCommonUrl} />
+      <JbrowseLink url={jbrowseCommonUrl}/>
       <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="500" />
-      <JbrowseLink url={jbrowseCommonUrl} />
+      <JbrowseLink url={jbrowseCommonUrl}/>
     </div>
   );
 }
 
 export function ProteinContext(props) {
   let url = props.rowData.ProteinPbrowseUrl;
-  let jbrowseUrl = props.rowData.pJbrowseUrl;
+  let jbrowseUrl =        props.rowData.pJbrowseUrl;
   let jbrowseUrlMinimal = props.rowData.proteinJbrowseUrl;
   return (
     <div>
-      <PbrowseJbrowseLink url={jbrowseUrl} />
+      <PbrowseJbrowseLink url={jbrowseUrl}/>
       <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="500" />
-      <PbrowseJbrowseLink url={jbrowseUrl} />
+      <PbrowseJbrowseLink url={jbrowseUrl}/>
     </div>
   );
 
@@ -414,62 +421,62 @@ export class GbrowseImage extends PureComponent {
       map.name += '__' + this.gbrowse_img_id;
       img.useMap += '__' + this.gbrowse_img_id;
       $container.append(img).append(map)
-        .find('area[onmouseover]')
-        .attr('gbrowse-onmouseover', function () {
-          let onmouseoverValue = this.getAttribute('onmouseover');
-          this.removeAttribute('onmouseover');
-          this.onmouseover = null;
-          return onmouseoverValue;
-        })
-        .qtip({
-          content: {
-            text(event, api) {
-              let matches = onMouseOverRegexp.exec(this.attr('gbrowse-onmouseover'));
-              if (matches == null) {
-                return;
-              }
-              let [, pragma = '', content = ''] = matches;
-              if (pragma === 'javascript:') {
-                // FIXME inject helpers here?
-                let contentFn = new Function('"use strict"; return ' + content.replace(/^escape\((.*)\)$/, '$1').replace(/\\/g, ''));
-                return contentFn.call(this.get(0));
-              }
-              else if (pragma === 'url:') {
-                httpGet(content).promise().then(
-                  (data) => api.set('content.text', data).reposition(event, false),
-                  (xhr, status, error) => api.set('content.text', status + ': ' + error).reposition(event, false)
-                );
-              }
-              else {
-                return content;
-              }
-            },
-            title: 'Track details', // adds the top border that the close button resides within
-            button: true // close button
-          },
-          position: {
-            my: 'bottom center',
-            at: 'center center',
-            effect: false,
-            target: 'event',
-            viewport: $(window),
-            adjust: {
-              method: 'shift'
+      .find('area[onmouseover]')
+      .attr('gbrowse-onmouseover', function() {
+        let onmouseoverValue = this.getAttribute('onmouseover');
+        this.removeAttribute('onmouseover');
+        this.onmouseover = null;
+        return onmouseoverValue;
+      })
+      .qtip({
+        content: {
+          text(event, api) {
+            let matches = onMouseOverRegexp.exec(this.attr('gbrowse-onmouseover'));
+            if (matches == null) {
+              return;
+            }
+            let [, pragma = '', content = '' ] = matches;
+            if (pragma === 'javascript:') {
+              // FIXME inject helpers here?
+              let contentFn = new Function('"use strict"; return ' + content.replace(/^escape\((.*)\)$/, '$1').replace(/\\/g, ''));
+              return contentFn.call(this.get(0));
+            }
+            else if (pragma === 'url:') {
+              httpGet(content).promise().then(
+                (data) => api.set('content.text', data).reposition(event, false),
+                (xhr, status, error) => api.set('content.text', status + ': ' + error).reposition(event, false)
+              );
+            }
+            else {
+              return content;
             }
           },
-          show: {
-            solo: true,
-            delay: 500
-          },
-          hide: {
-            fixed: true,
-            delay: 2000
-          },
-          style: {
-            classes: 'qtip-bootstrap eupathdb-GbrowseImageMapTooltip',
-            tip: { height: 12, width: 18 }
+          title: 'Track details', // adds the top border that the close button resides within
+          button: true // close button
+        },
+        position: {
+          my: 'bottom center',
+          at: 'center center',
+          effect: false,
+          target: 'event',
+          viewport: $(window),
+          adjust: {
+            method: 'shift'
           }
-        });
+        },
+        show: {
+          solo: true,
+          delay: 500
+        },
+        hide: {
+          fixed: true,
+          delay: 2000
+        },
+        style: {
+          classes: 'qtip-bootstrap eupathdb-GbrowseImageMapTooltip',
+          tip: { height: 12, width: 18 }
+        }
+      });
 
       this.mapCoordsCache = [];
       for (let area of map.querySelectorAll('area')) {
@@ -498,9 +505,9 @@ export class GbrowseImage extends PureComponent {
     for (let area of this.map.querySelectorAll('area')) {
       let orignalCoords = this.mapCoordsCache[index++];
       let coords = orignalCoords
-        .split(/\s*,\s*/)
-        .map((coord, i) => Number(coord) * (i % 2 === 0 ? widthScale : heightScale)) // only works for shape="rect"
-        .join(',');
+      .split(/\s*,\s*/)
+      .map((coord, i) => Number(coord) * (i % 2 === 0 ? widthScale : heightScale)) // only works for shape="rect"
+      .join(',');
       area.setAttribute('coords', coords);
     }
   }
@@ -517,7 +524,7 @@ export class GbrowseImage extends PureComponent {
     if (this.state.loading) {
       return (
         <div style={{ position: 'relative', height: loadingHeight }}>
-          <Loading />
+          <Loading/>
         </div>
       );
     }
@@ -528,7 +535,7 @@ export class GbrowseImage extends PureComponent {
       <div>
         {this.renderLoading()}
         {this.renderError()}
-        <div ref={node => this.containerNode = node} />
+        <div ref={node => this.containerNode = node}/>
       </div>
     );
   }
@@ -544,7 +551,7 @@ GbrowseImage.defaultProps = {
 };
 
 let loadGbrowseScripts = once(() => {
-  return new Promise(function (resolve, reject) {
+  return new Promise(function(resolve, reject) {
     $.getScript('/gbrowse/apiGBrowsePopups.js').then(
       () => resolve(),
       (jqxhr, settings, exception) => reject(String(exception))

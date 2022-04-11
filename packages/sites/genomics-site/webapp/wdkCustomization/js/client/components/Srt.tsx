@@ -106,6 +106,11 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
   }
 ];
 
+const IDS_HELP_TOOLTIP_POSITION = {
+  my: 'bottom left',
+  at: 'top right'
+};
+
 export function Srt() {
   const compatibleSrtConfigs = useCompatibleSrtFormConfigs();
   const [ selectedSrtForm, setSelectedSrtForm ] = useState<string>('');
@@ -114,7 +119,7 @@ export function Srt() {
     if (!selectedSrtForm && compatibleSrtConfigs && compatibleSrtConfigs.length >= 1) {
       setSelectedSrtForm(compatibleSrtConfigs[0].recordClassUrlSegment);
     }
-  }, [compatibleSrtConfigs]);
+  }, [ compatibleSrtConfigs ]);
 
   return (
     <div className={cx()}>
@@ -125,30 +130,30 @@ export function Srt() {
         !compatibleSrtConfigs
           ? <Loading />
           : <React.Fragment>
-            <p className={cx('--BulkDownloadLink')}>
-              Use this tool to retrieve FASTA sequences based on identifiers you supply. <br />
+              <p className={cx('--BulkDownloadLink')}>
+                Use this tool to retrieve FASTA sequences based on identifiers you supply. <br />
                 (If instead you would like to download sequences in bulk, please visit our
                 {' '}
-              {(projectId === 'EuPathDB') ? ' file download section in your component site of interest, eg: ' : ''}
-              {(projectId === 'EuPathDB')
-                ? <a href="https://plasmodb.org/plasmo/app/downloads/" target="_blank"> PlasmoDB file download section</a>
-                : <Link to={BULK_DOWNLOAD_URL} target="_blank">file download section</Link>
-              }
+                { (projectId === 'EuPathDB') ? ' file download section in your component site of interest, eg: ' : '' }
+                { (projectId === 'EuPathDB')
+                  ? <a href="https://plasmodb.org/plasmo/app/downloads/" target="_blank"> PlasmoDB file download section</a>
+                  : <Link to={BULK_DOWNLOAD_URL} target="_blank">file download section</Link>
+                } 
                 .)
               </p>
-            <Tabs
-              containerClassName={cx('--SrtForms')}
-              activeTab={selectedSrtForm}
-              onTabSelected={setSelectedSrtForm}
-              tabs={compatibleSrtConfigs.map(
-                config => ({
-                  key: config.recordClassUrlSegment,
-                  display: config.display,
-                  content: <SrtForm {...config} />
-                })
-              )}
-            />
-          </React.Fragment>
+              <Tabs
+                containerClassName={cx('--SrtForms')}
+                activeTab={selectedSrtForm}
+                onTabSelected={setSelectedSrtForm}
+                tabs={compatibleSrtConfigs.map(
+                  config => ({
+                    key: config.recordClassUrlSegment,
+                    display: config.display,
+                    content: <SrtForm {...config} />
+                  })
+                )}
+              />
+            </React.Fragment>
       }
     </div>
   );
@@ -163,8 +168,8 @@ function SrtForm({
   projectId,
   formActionUrl
 }: SrtFormConfig) {
-  const [idsState, setIdsState] = useState(initialIdsState);
-  const [formState, updateFormState] = useState(initialReporterFormState);
+  const [ idsState, setIdsState ] = useState(initialIdsState);
+  const [ formState, updateFormState ] = useState(initialReporterFormState);
 
   return (
     <form action={formActionUrl} method="post" target="_blank">
@@ -175,7 +180,7 @@ function SrtForm({
         {' '}
         {
           idsInputHelp != null &&
-          <HelpIcon>
+          <HelpIcon tooltipPosition={IDS_HELP_TOOLTIP_POSITION}>
             {idsInputHelp}
           </HelpIcon>
         }
@@ -207,7 +212,7 @@ function useCompatibleSrtFormConfigs() {
     wdkService.getQuestionAndParameters(SRT_QUESTION)
   ]), []);
 
-  const [{ projectId }, srtQuestion] = serviceResult || [{}, undefined];
+  const [ { projectId }, srtQuestion ] = serviceResult || [ {}, undefined ];
 
   const srtQuestionParamDisplayMap = useMemo(
     () => srtQuestion?.parameters.reduce(
@@ -217,12 +222,12 @@ function useCompatibleSrtFormConfigs() {
       }),
       {} as Record<string, string | undefined>
     ),
-    [srtQuestion]
+    [ srtQuestion ]
   );
 
   const recordClassUrlSegments = useMemo(
     () => recordClasses && new Set(recordClasses.map(({ urlSegment }) => urlSegment)),
-    [recordClasses]
+    [ recordClasses ]
   );
 
   const compatibleSrtConfigs = useMemo(() =>
@@ -236,7 +241,7 @@ function useCompatibleSrtFormConfigs() {
         initialIdsState: initialSrtConfig.makeInitialIdsState(srtQuestionParamDisplayMap),
         projectId
       }) as SrtFormConfig),
-    [recordClassUrlSegments, projectId, srtQuestionParamDisplayMap]
+    [ recordClassUrlSegments, projectId, srtQuestionParamDisplayMap ]
   );
 
   return compatibleSrtConfigs;

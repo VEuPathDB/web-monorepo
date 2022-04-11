@@ -12,6 +12,11 @@ import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 
 import { NodeSearchCriteria } from './pathway-utils';
 
+const TOOLTIP_POSITION = {
+  my: 'bottom left',
+  at: 'top right'
+};
+
 interface Props {
   cy: Core;
   helpText?: JSX.Element;
@@ -28,7 +33,7 @@ export function PathwaySearchById({
   helpText,
   onSearchCriteriaChange
 }: Props) {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [ searchTerm, setSearchTerm ] = useState('');
 
   const options = useMemo(
     () => {
@@ -62,36 +67,36 @@ export function PathwaySearchById({
         nodeOption => nodeOption.label
       );
     },
-    [cy]
+    [ cy ]
   );
 
   const fullOptions = useMemo(
     () => searchTerm.length > 0
       ? [
-        {
-          label: `Free-text search for "${searchTerm}"`,
-          value: makeOptionValue(searchTerm, searchTerm),
-          data: 'free-text'
-        },
-        ...options
-      ]
+          {
+            label: `Free-text search for "${searchTerm}"`,
+            value: makeOptionValue(searchTerm, searchTerm),
+            data: 'free-text'
+          },
+          ...options
+        ]
       : options,
-    [options, searchTerm]
+    [ options, searchTerm ]
   );
 
-  const [selection, setSelection] = useState([] as Option[]);
+  const [ selection, setSelection ] = useState([] as Option[]);
 
   useEffect(() => {
     setSearchTerm('');
     setSelection([]);
-  }, [cy]);
+  }, [ cy ]);
 
   const onChange = useCallback((newSelection: unknown) => {
     const newSelectionArray = newSelection == null
       ? []
       : Array.isArray(newSelection)
-        ? (newSelection as Option[])
-        : [newSelection as Option];
+      ? (newSelection as Option[])
+      : [newSelection as Option];
 
     setSelection(newSelectionArray);
     setSearchTerm('');
@@ -141,7 +146,7 @@ export function PathwaySearchById({
           : `[name ${operator} '${name}']`;
 
         if (item.data === 'free-text') {
-          return [nodeIdentifierSelector, nameSelector]
+          return [ nodeIdentifierSelector, nameSelector ]
             .filter(selector => selector.length > 0)
             .map(selector => `node${selector}`)
             .join(', ');
@@ -152,7 +157,7 @@ export function PathwaySearchById({
 
       onSearchCriteriaChange(newSearchCriteria.join(', '));
     }
-  }, [selection]);
+  }, [ selection ]);
 
   return (
     <div className="veupathdb-PathwaySearchById">
@@ -183,7 +188,7 @@ export function PathwaySearchById({
       />
       {
         helpText &&
-        <HelpIcon>
+        <HelpIcon tooltipPosition={TOOLTIP_POSITION}>
           {helpText}
         </HelpIcon>
       }
@@ -196,7 +201,7 @@ function makeOptionValue(node_identifier: string | undefined = '', name: string 
 }
 
 function parseOptionValue(value: string) {
-  const [node_identifier = '', name = ''] = value.split('\0');
+  const [ node_identifier = '', name = '' ] = value.split('\0');
 
   return {
     node_identifier,
