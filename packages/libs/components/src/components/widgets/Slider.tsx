@@ -181,7 +181,6 @@ export default function SliderWidget({
           }
           displayRangeViolationWarnings={false}
           containerStyles={{
-            // simplifying width
             maxWidth: 100,
             marginRight: 10,
           }}

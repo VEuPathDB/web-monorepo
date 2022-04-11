@@ -62,7 +62,6 @@ export default function BinWidthControl({
         style={{
           color: disabled ? MEDIUM_GRAY : 'rgb(0, 0, 0)',
           paddingRight: 15,
-          // add nowrap
           whiteSpace: 'nowrap',
         }}
       >
