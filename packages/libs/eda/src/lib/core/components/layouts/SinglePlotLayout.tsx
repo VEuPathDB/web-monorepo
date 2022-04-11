@@ -13,16 +13,14 @@ const defaultContainerStyles: CSSProperties = {
 const defaultPlotStyles: CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
-  width: '100%',
 };
 
 const defaultTableGroupStyles: CSSProperties = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  alignItems: 'flex-start',
-  maxWidth: '100%',
   margin: '1em',
-  gap: '2em',
+  display: 'grid',
+  gridAutoFlow: 'row',
+  gap: '1.5em',
+  marginLeft: '3em',
 };
 
 export function SinglePlotLayout({
@@ -36,11 +34,11 @@ export function SinglePlotLayout({
 }: Props) {
   return (
     <div style={{ ...defaultContainerStyles, ...containerStyles }}>
-      <div style={{ ...defaultTableGroupStyles, ...tableGroupStyles }}>
-        {tableGroupNode}
-        {legendNode && <div style={{ ...legendStyles }}>{legendNode}</div>}
-      </div>
       <div style={{ ...defaultPlotStyles, ...plotStyles }}>{plotNode}</div>
+      <div style={{ ...defaultTableGroupStyles, ...tableGroupStyles }}>
+        {legendNode && <div style={{ ...legendStyles }}>{legendNode}</div>}
+        {tableGroupNode}
+      </div>
     </div>
   );
 }
