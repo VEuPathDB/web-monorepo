@@ -10,6 +10,10 @@ const defaultContainerStyles: CSSProperties = {
   alignItems: 'flex-start',
 };
 
+const defaultLegendStyles: CSSProperties = {
+  order: -1,
+};
+
 const defaultPlotStyles: CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
@@ -42,8 +46,12 @@ export function FacetedPlotLayout({
       }}
     >
       <div style={{ ...defaultTableGroupStyles, ...tableGroupStyles }}>
+        {legendNode && (
+          <div style={{ ...defaultLegendStyles, ...legendStyles }}>
+            {legendNode}
+          </div>
+        )}
         {tableGroupNode}
-        {legendNode && <div style={{ ...legendStyles }}>{legendNode}</div>}
       </div>
       <div style={{ ...defaultPlotStyles, ...plotStyles }}>{plotNode}</div>
     </div>
