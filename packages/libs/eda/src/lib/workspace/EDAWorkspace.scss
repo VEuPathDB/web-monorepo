@@ -201,6 +201,7 @@
     padding-top: 1em;
     .Variables {
       grid-area: variables;
+      max-height: 70vh;
     }
     .FilterChips {
       height: 2em;
@@ -209,7 +210,6 @@
     .TabularDownload {
       grid-area: tabular-download;
       font-size: 3em;
-      // margin-right: 1em;
     }
     .Filter {
       grid-area: filter;
