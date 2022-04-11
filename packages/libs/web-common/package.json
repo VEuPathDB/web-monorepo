@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/web-common",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "repository": {
     "url": "https://github.com/VEuPathDB/EbrcWebsiteCommon",
     "directory": "Client"
@@ -31,9 +31,9 @@
     "whatwg-fetch": "^3.5.0"
   },
   "peerDependencies": {
-    "@veupathdb/components": "^0.13.0",
-    "@veupathdb/eda": "^2.0.0",
-    "@veupathdb/wdk-client": ">=0.5.4",
+    "@veupathdb/components": "^0.14.4",
+    "@veupathdb/eda": "^2.1.8",
+    "@veupathdb/wdk-client": ">=0.6.7",
     "react": ">=16.14",
     "react-dom": ">=16.14"
   },
@@ -49,11 +49,11 @@
     "@types/react-router": "^5.1.18",
     "@types/react-router-dom": "^5.3.3",
     "@types/shelljs": "^0.8.8",
-    "@veupathdb/components": "^0.13.0",
+    "@veupathdb/components": "^0.14.4",
     "@veupathdb/coreui": "^0.16.0",
-    "@veupathdb/eda": "^1.7.8",
+    "@veupathdb/eda": "^2.1.8",
     "@veupathdb/react-scripts": "^1.2.0",
-    "@veupathdb/wdk-client": "^0.6.1",
+    "@veupathdb/wdk-client": "^0.6.7",
     "bubleify": "^2.0.0",
     "icon-font-generator": "^2.1.11",
     "ify-loader": "^1.1.0",
