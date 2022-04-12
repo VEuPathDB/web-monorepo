@@ -5,7 +5,7 @@ import {
 } from '../VisualizationTypes';
 import map from './selectorIcons/map.svg';
 import * as t from 'io-ts';
-import _ from 'lodash';
+import { isEqual, zip, some } from 'lodash';
 
 // map component related imports
 import MapVEuMap, {
@@ -14,9 +14,14 @@ import MapVEuMap, {
 } from '@veupathdb/components/lib/map/MapVEuMap';
 import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map.json';
 import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/geohash';
-import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
+import {
+  BoundsViewport,
+  Bounds,
+  LatLng,
+} from '@veupathdb/components/lib/map/Types';
 import DonutMarker from '@veupathdb/components/lib/map/DonutMarker';
-import { BoundsDriftMarkerProps } from '@veupathdb/components/lib/map/BoundsDriftMarker';
+
+import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 
 // general ui imports
 import { FormControl, Select, MenuItem, InputLabel } from '@material-ui/core';
@@ -24,16 +29,32 @@ import { FormControl, Select, MenuItem, InputLabel } from '@material-ui/core';
 // viz-related imports
 import { PlotLayout } from '../../layouts/PlotLayout';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
-import { useMemo, useCallback, useState, ReactElement } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import DataClient, { MapMarkersRequestParams } from '../../../api/DataClient';
+import DataClient, {
+  MapMarkersRequestParams,
+  PieplotRequestParams,
+} from '../../../api/DataClient';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { usePromise } from '../../../hooks/promise';
-import { filtersFromBoundingBox } from '../../../utils/visualization';
+import {
+  filtersFromBoundingBox,
+  fixLabelsForNumberVariables,
+} from '../../../utils/visualization';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { OutputEntityTitle } from '../OutputEntityTitle';
-import { sumBy } from 'lodash';
+import { sumBy, values } from 'lodash';
 import PluginError from '../PluginError';
+import { VariableDescriptor } from '../../../types/variable';
+import { InputVariables } from '../InputVariables';
+import { VariablesByInputName } from '../../../utils/data-element-constraints';
+import { useFindEntityAndVariable } from '../../../hooks/study';
+import PlotLegend, {
+  LegendItemsProps,
+} from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
+import { variableDisplayWithUnit } from '../../../utils/variable-display';
+import { BirdsEyeView } from '../../BirdsEyeView';
 
 export const mapVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -87,13 +108,23 @@ const MapConfig = t.intersection([
   t.partial({
     geoEntityId: t.string,
     outputEntityId: t.string,
+    xAxisVariable: VariableDescriptor,
+    checkedLegendItems: t.array(t.string),
   }),
 ]);
 
-type MarkerDataWithStatistics = {
-  markers: Array<ReactElement<BoundsDriftMarkerProps>>;
-  totalEntityCount: number;
+type BasicMarkerData = {
+  completeCasesGeoVar: number;
+  markerData: {
+    geoAggregateValue: string;
+    entityCount: number;
+    position: LatLng;
+    bounds: Bounds;
+    isAtomic: boolean;
+  }[];
 };
+
+type PieplotData = Record<string, { label: string; value: number }[]>;
 
 function MapViz(props: VisualizationProps) {
   const {
@@ -102,9 +133,12 @@ function MapViz(props: VisualizationProps) {
     updateConfiguration,
     updateThumbnail,
     filters,
-    //    totalCounts,
-    //    filteredCounts,
+    totalCounts,
+    filteredCounts,
     geoConfigs,
+    otherVizOverviews,
+    starredVariables,
+    toggleStarredVariable,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -121,6 +155,9 @@ function MapViz(props: VisualizationProps) {
     createDefaultConfig,
     updateConfiguration
   );
+
+  if (geoConfigs.length == 1 && vizConfig.geoEntityId === undefined)
+    updateVizConfig({ geoEntityId: geoConfigs[0].entity.id });
 
   const handleViewportChanged: MapVEuMapProps['onViewportChanged'] = useCallback(
     ({ center, zoom }) => {
@@ -146,62 +183,118 @@ function MapViz(props: VisualizationProps) {
     );
   }, [vizConfig.geoEntityId, geoConfigs]);
 
-  const [geoEntity, outputEntity] = useMemo(() => {
+  const findEntityAndVariable = useFindEntityAndVariable(entities);
+  const [geoEntity, outputEntity, xAxisVariable] = useMemo(() => {
     const geoEntity =
       vizConfig.geoEntityId !== null
         ? entities.find((entity) => entity.id === vizConfig.geoEntityId)
         : undefined;
-    const outputEntity =
-      vizConfig.outputEntityId !== null
-        ? entities.find((entity) => entity.id === vizConfig.outputEntityId)
-        : undefined;
-    return [geoEntity, outputEntity ?? geoEntity];
-  }, [entities, vizConfig.outputEntityId, vizConfig.geoEntityId]);
 
-  const data = usePromise<MarkerDataWithStatistics | undefined>(
+    const outputEntityId =
+      vizConfig.xAxisVariable?.entityId ??
+      vizConfig.outputEntityId ??
+      vizConfig.geoEntityId;
+    const outputEntity =
+      outputEntityId !== null
+        ? entities.find((entity) => entity.id === outputEntityId)
+        : undefined;
+
+    const { variable: xAxisVariable } =
+      findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
+
+    return [geoEntity, outputEntity ?? geoEntity, xAxisVariable];
+  }, [
+    entities,
+    vizConfig.outputEntityId,
+    vizConfig.geoEntityId,
+    vizConfig.xAxisVariable,
+  ]);
+
+  // prepare some info that the map-markers and pieplot requests both need
+  const {
+    latitudeVariable,
+    longitudeVariable,
+    geoAggregateVariable,
+    filtersPlusBoundsFilter,
+  } = useMemo(() => {
+    if (
+      boundsZoomLevel == null ||
+      geoConfig == null ||
+      vizConfig.geoEntityId == null
+    )
+      return {};
+
+    const latitudeVariable = {
+      entityId: vizConfig.geoEntityId,
+      variableId: geoConfig.latitudeVariableId,
+    };
+    const longitudeVariable = {
+      entityId: vizConfig.geoEntityId,
+      variableId: geoConfig.longitudeVariableId,
+    };
+    const geoAggregateVariable = {
+      entityId: vizConfig.geoEntityId,
+      variableId:
+        geoConfig.aggregationVariableIds[
+          geoConfig.zoomLevelToAggregationLevel(boundsZoomLevel.zoomLevel) - 1
+        ],
+    };
+
+    const boundsFilters = filtersFromBoundingBox(
+      boundsZoomLevel.bounds,
+      latitudeVariable,
+      longitudeVariable
+    );
+
+    return {
+      latitudeVariable,
+      longitudeVariable,
+      geoAggregateVariable,
+      filtersPlusBoundsFilter: filters
+        ? [...filters, ...boundsFilters]
+        : boundsFilters,
+    };
+  }, [filters, boundsZoomLevel, vizConfig.geoEntityId, geoConfig]);
+
+  const basicMarkerData = usePromise<BasicMarkerData | undefined>(
     useCallback(async () => {
       // check all required vizConfigs are provided
       if (
         boundsZoomLevel == null ||
         vizConfig.geoEntityId == null ||
-        geoConfig == null
+        geoConfig == null ||
+        latitudeVariable == null ||
+        longitudeVariable == null ||
+        geoAggregateVariable == null ||
+        outputEntity == null ||
+        vizConfig.xAxisVariable == null
       )
         return undefined;
 
-      const { bounds, zoomLevel } = boundsZoomLevel;
-      const geoEntityId = vizConfig.geoEntityId;
-      const outputEntityId = vizConfig.outputEntityId ?? geoEntityId;
+      const {
+        northEast: { lat: xMax, lng: right },
+        southWest: { lat: xMin, lng: left },
+      } = boundsZoomLevel.bounds;
 
       // now prepare the rest of the request params
-      const latitudeVariable = {
-        entityId: geoEntityId,
-        variableId: geoConfig.latitudeVariableId,
-      };
-      const longitudeVariable = {
-        entityId: geoEntityId,
-        variableId: geoConfig.longitudeVariableId,
-      };
-      const boundsFilters = filtersFromBoundingBox(
-        // this will need to be memoized outside this usePromise for re-use in pie/histogram requests
-        bounds,
-        latitudeVariable,
-        longitudeVariable
-      );
-
       const requestParams: MapMarkersRequestParams = {
         studyId,
-        filters: filters ? [...filters, ...boundsFilters] : boundsFilters,
+        filters: filters || [],
         config: {
-          outputEntityId: outputEntityId,
-          geoAggregateVariable: {
-            entityId: geoEntityId,
-            variableId:
-              geoConfig.aggregationVariableIds[
-                geoConfig.zoomLevelToAggregationLevel(zoomLevel) - 1
-              ],
+          outputEntityId: outputEntity.id, // might be quicker to use geoEntity.id but numbers in white markers will be wrong, momentarily
+          geoAggregateVariable,
+          latitudeVariable,
+          longitudeVariable,
+          viewport: {
+            latitude: {
+              xMin,
+              xMax,
+            },
+            longitude: {
+              left,
+              right,
+            },
           },
-          latitudeVariable: latitudeVariable,
-          longitudeVariable: longitudeVariable,
         },
       };
 
@@ -211,61 +304,171 @@ function MapViz(props: VisualizationProps) {
         requestParams
       );
 
-      // TO DO: find out if MarkerProps.id is obsolete
-      const markerElements = response.mapElements.map(
-        ({
-          avgLat,
-          avgLon,
-          minLat,
-          minLon,
-          maxLat,
-          maxLon,
-          entityCount,
-          geoAggregateValue,
-        }) => {
-          const isAtomic = false; // TO DO: work with Danielle to get this info from back end
-          const data = [
-            {
-              label: 'unknown',
-              value: entityCount,
-              color: 'white',
-            },
-          ];
-          return (
-            <DonutMarker
-              id={geoAggregateValue}
-              key={geoAggregateValue}
-              position={{ lat: avgLat, lng: avgLon }}
-              bounds={{
+      return {
+        markerData: response.mapElements.map(
+          ({
+            avgLat,
+            avgLon,
+            minLat,
+            minLon,
+            maxLat,
+            maxLon,
+            entityCount,
+            geoAggregateValue,
+          }) => {
+            const isAtomic = false; // TO DO: work with Danielle to get this info from back end
+            return {
+              geoAggregateValue,
+              entityCount: entityCount,
+              position: { lat: avgLat, lng: avgLon },
+              bounds: {
                 southWest: { lat: minLat, lng: minLon },
                 northEast: { lat: maxLat, lng: maxLon },
-              }}
-              data={data}
-              isAtomic={isAtomic}
-              duration={defaultAnimationDuration}
-            />
-          );
-        }
-      );
-
-      return {
-        markers: markerElements,
-        totalEntityCount: sumBy(
-          response.mapElements,
-          (elem) => elem.entityCount
+              },
+              isAtomic,
+            };
+          }
         ),
+        completeCasesGeoVar: response.config.completeCasesGeoVar,
       };
     }, [
       studyId,
       filters,
       dataClient,
-      vizConfig,
+      // we don't want to allow vizConfig.mapCenterAndZoom to trigger an update,
+      // because boundsZoomLevel does the same thing, but they can trigger two separate updates
+      // (baseLayer doesn't matter either) - so we cherry pick properties of vizConfig
+      vizConfig.geoEntityId,
+      vizConfig.outputEntityId,
+      vizConfig.xAxisVariable,
       boundsZoomLevel,
       computation.descriptor.type,
       geoConfig,
     ])
   );
 
+  /**
+   * Now we deal with the optional second request to pieplot
+   */
+
+  const pieplotData = usePromise<PieplotData | undefined>(
+    useCallback(async () => {
+      // check all required vizConfigs are provided
+      if (
+        boundsZoomLevel == null ||
+        vizConfig.xAxisVariable == null ||
+        filtersPlusBoundsFilter == null ||
+        geoAggregateVariable == null ||
+        outputEntity == null
+      )
+        return undefined;
+
+      // prepare request
+      const requestParams: PieplotRequestParams = {
+        studyId,
+        filters: filtersPlusBoundsFilter,
+        config: {
+          outputEntityId: outputEntity.id,
+          xAxisVariable: vizConfig.xAxisVariable,
+          facetVariable: [geoAggregateVariable],
+          showMissingness: 'noVariables', // current back end 'showMissing' behaviour applies to facet variable
+          valueSpec: 'count',
+        },
+      };
+
+      // send request
+      const response = await dataClient.getPieplot(
+        computation.descriptor.type,
+        requestParams
+      );
+
+      // process response and return a map of "geoAgg key" => donut labels and counts
+      return response.pieplot.data.reduce(
+        // KNOWN TYPO IN BACK END (should be pieplot)
+        (map, { facetVariableDetails, label, value }) => {
+          if (facetVariableDetails != null && facetVariableDetails.length === 1)
+            map[facetVariableDetails[0].value] = zip(label, value).map(
+              ([label, value]) => ({
+                label: label!,
+                value: value!,
+              })
+            );
+          return map;
+        },
+        {} as PieplotData
+      );
+    }, [
+      studyId,
+      filtersPlusBoundsFilter,
+      dataClient,
+      vizConfig.xAxisVariable,
+      boundsZoomLevel,
+      computation.descriptor.type,
+    ])
+  );
+
+  /**
+   * Merge the pieplot data into the basicMarkerData, if available,
+   * and create markers.
+   */
+  const markers = useMemo(() => {
+    const vocabulary = fixLabelsForNumberVariables(
+      xAxisVariable?.vocabulary,
+      xAxisVariable
+    );
+    return basicMarkerData.value?.markerData.map(
+      ({ geoAggregateValue, entityCount, bounds, position }) => {
+        const donutData =
+          pieplotData.value != null &&
+          pieplotData.value[geoAggregateValue] != null
+            ? pieplotData.value[geoAggregateValue]
+                .map(({ label, value }) => ({
+                  label,
+                  value,
+                  color: ColorPaletteDefault[vocabulary.indexOf(label!)],
+                }))
+                // DonutMarkers don't handle checkedLegendItems automatically, like our
+                // regular PlotlyPlot components, so we do the filtering here
+                .filter(
+                  ({ label }) =>
+                    vizConfig.checkedLegendItems == null ||
+                    vizConfig.checkedLegendItems.indexOf(label) > -1
+                )
+            : [];
+
+        // provide the 'plain white' donut data if all legend items unchecked
+        // or if there is no pieplot data
+        const safeDonutData =
+          donutData.length > 0
+            ? donutData
+            : [
+                {
+                  label: 'unknown',
+                  value: entityCount,
+                  color: 'white',
+                },
+              ];
+
+        // TO DO: find out if MarkerProps.id is obsolete
+        return (
+          <DonutMarker
+            id={geoAggregateValue}
+            key={geoAggregateValue}
+            bounds={bounds}
+            position={position}
+            data={safeDonutData}
+            duration={defaultAnimationDuration}
+          />
+        );
+      }
+    );
+  }, [basicMarkerData.value, pieplotData.value, vizConfig.checkedLegendItems]);
+
+  const totalEntityCount = basicMarkerData.value?.completeCasesGeoVar;
+
+  /**
+   * Now render the visualization
+   */
   const [height, width] = [600, 1000];
   const { latitude, longitude, zoomLevel } = vizConfig.mapCenterAndZoom;
 
@@ -274,7 +477,14 @@ function MapViz(props: VisualizationProps) {
     updateThumbnail,
     { height, width },
     // The dependencies for needing to generate a new thumbnail
-    [data.value, latitude, longitude, zoomLevel, vizConfig.baseLayer]
+    [
+      markers,
+      latitude,
+      longitude,
+      zoomLevel,
+      vizConfig.baseLayer,
+      vizConfig.checkedLegendItems,
+    ]
   );
 
   const plotNode = (
@@ -282,7 +492,7 @@ function MapViz(props: VisualizationProps) {
       viewport={{ center: [latitude, longitude], zoom: zoomLevel }}
       onViewportChanged={handleViewportChanged}
       onBoundsChanged={setBoundsZoomLevel}
-      markers={data.value?.markers ?? []}
+      markers={markers ?? []}
       animation={defaultAnimation}
       height={height}
       width={width}
@@ -294,15 +504,19 @@ function MapViz(props: VisualizationProps) {
         updateVizConfig({ baseLayer: newBaseLayer })
       }
       flyToMarkers={
-        data.value?.markers &&
-        data.value?.markers.length > 0 &&
-        _.isEqual(
+        markers &&
+        markers.length > 0 &&
+        isEqual(
           vizConfig.mapCenterAndZoom,
           createDefaultConfig().mapCenterAndZoom
         )
       }
       flyToMarkersDelay={500}
-      showSpinner={data.pending}
+      showSpinner={basicMarkerData.pending || pieplotData.pending}
+      // whether to show scale at map
+      showScale={zoomLevel != null && zoomLevel > 4 ? true : false}
+      // show mouse tool
+      showMouseToolbar={true}
     />
   );
 
@@ -325,6 +539,21 @@ function MapViz(props: VisualizationProps) {
     [updateVizConfig]
   );
 
+  const handleInputVariableChange = useCallback(
+    ({ xAxisVariable }: VariablesByInputName) => {
+      updateVizConfig({ xAxisVariable, checkedLegendItems: undefined });
+    },
+    [updateVizConfig]
+  );
+
+  const handleCheckedLegendItemsChange = useCallback(
+    (newCheckedItems) => {
+      if (newCheckedItems != null)
+        updateVizConfig({ checkedLegendItems: newCheckedItems });
+    },
+    [updateVizConfig]
+  );
+
   const availableOutputEntities = useMemo(() => {
     if (geoConfig == null) {
       return entities;
@@ -335,37 +564,100 @@ function MapViz(props: VisualizationProps) {
     }
   }, [entities, geoConfig]);
 
+  /**
+   * create custom legend data
+   */
+
+  const legendItems: LegendItemsProps[] = useMemo(() => {
+    const vocabulary = xAxisVariable?.vocabulary;
+    if (vocabulary == null) return [];
+
+    return vocabulary.map((label) => ({
+      label,
+      marker: 'square',
+      markerColor: ColorPaletteDefault[vocabulary.indexOf(label)],
+      // has any geo-facet got an array of pieplot data
+      // containing at least one element that satisfies label==label and value>0?
+      hasData: some(pieplotData.value, (pieData) =>
+        some(pieData, (data) => data.label === label && data.value > 0)
+      ),
+      group: 1,
+      rank: 1,
+    }));
+  }, [xAxisVariable, pieplotData.value]);
+
+  // set checkedLegendItems
+  const checkedLegendItems = useCheckedLegendItemsStatus(
+    legendItems,
+    vizConfig.checkedLegendItems
+  );
+
+  const legendNode = legendItems != null && (
+    <PlotLegend
+      legendItems={legendItems}
+      checkedLegendItems={checkedLegendItems}
+      legendTitle={variableDisplayWithUnit(xAxisVariable)}
+      onCheckedLegendItemsChange={handleCheckedLegendItemsChange}
+    />
+  );
+
+  // get variable constraints for InputVariables
+  const pieOverview = otherVizOverviews.find(
+    (overview) => overview.name === 'pieplot'
+  );
+  if (pieOverview == null)
+    throw new Error('Map visualization cannot find pieplot helper');
+  const pieConstraints = pieOverview.dataElementConstraints;
+  const pieDependencyOrder = pieOverview.dataElementDependencyOrder;
+
+  const tableGroupNode = (
+    // Bird's eye plot isn't yet functional
+    <BirdsEyeView
+      completeCasesAxesVars={totalEntityCount}
+      completeCasesAllVars={0 /* can't be undefined for some reason */}
+      outputEntity={outputEntity}
+      stratificationIsActive={
+        false /* this disables the 'strata and axes' bar/impulse */
+      }
+      // enableSpinner={vizConfig.xAxisVariable != null && !pieplotData.error}
+      totalCounts={totalCounts.value}
+      filteredCounts={filteredCounts.value}
+    />
+  );
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <div>
-        <FormControl
-          style={{ minWidth: '450px', paddingRight: '10px' }}
-          variant="filled"
-        >
-          <InputLabel>Choose an entity to map the locations of</InputLabel>
+      <div
+        style={{
+          width,
+          display: 'flex',
+          alignItems: 'center',
+          zIndex: 1,
+          justifyContent: 'space-between',
+        }}
+      >
+        {geoConfigs.length > 1 && (
+          <FormControl style={{ minWidth: '200px' }} variant="filled">
+            <InputLabel>Map the locations of</InputLabel>
+            <Select
+              value={vizConfig.geoEntityId ?? ''}
+              onChange={handleGeoEntityChange}
+            >
+              {geoConfigs.map((geoConfig) => (
+                <MenuItem key={geoConfig.entity.id} value={geoConfig.entity.id}>
+                  {geoConfig.entity.displayNamePlural ??
+                    geoConfig.entity.displayName}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
+        {/* <FormControl style={{ minWidth: '200px' }} variant="filled">
+          <InputLabel>Show counts of</InputLabel>
           <Select
-            value={vizConfig.geoEntityId}
-            onChange={handleGeoEntityChange}
-          >
-            {geoConfigs.map((geoConfig) => (
-              <MenuItem key={geoConfig.entity.id} value={geoConfig.entity.id}>
-                {geoConfig.entity.displayNamePlural ??
-                  geoConfig.entity.displayName}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl style={{ minWidth: '450px' }} variant="filled">
-          <InputLabel>
-            Choose an entity to show the counts of
-            {geoEntity &&
-              ' (default: ' +
-                (geoEntity.displayNamePlural ?? geoEntity.displayName) +
-                ')'}
-          </InputLabel>
-          <Select
-            value={vizConfig.outputEntityId}
+            value={outputEntity?.id ?? ''}
             onChange={handleOutputEntityChange}
+            disabled={vizConfig.xAxisVariable != null}
           >
             {availableOutputEntities.map((entity) => (
               <MenuItem key={entity.id} value={entity.id}>
@@ -373,28 +665,47 @@ function MapViz(props: VisualizationProps) {
               </MenuItem>
             ))}
           </Select>
-        </FormControl>
+        </FormControl> */}
+        <InputVariables
+          inputs={[
+            {
+              name: 'xAxisVariable',
+              label: 'Main',
+            },
+          ]}
+          entities={entities}
+          selectedVariables={{
+            xAxisVariable: vizConfig.xAxisVariable,
+          }}
+          onChange={handleInputVariableChange}
+          constraints={pieConstraints}
+          dataElementDependencyOrder={pieDependencyOrder}
+          starredVariables={starredVariables}
+          toggleStarredVariable={toggleStarredVariable}
+          outputEntity={outputEntity}
+        />
+      </div>
+
+      {studyId.startsWith('UMSP') && ( // <<<<<<<<< TEMPORARY ONLY <<<<<
         <div>
           <p>
-            (Note: if you want to show counts for anything other than Household,
-            it's best to first subset aggressively and zoom in to a few hundred
-            households.)
+            (UMSP is BIG! If you want to show counts or a categorical overlay
+            for anything other than the Household entity, it's best to first
+            subset aggressively and zoom in to a few hundred households.)
           </p>
         </div>
-      </div>
+      )}
+
       <PluginError
-        error={data.error}
-        outputSize={data.value?.totalEntityCount}
+        error={basicMarkerData.error}
+        outputSize={totalEntityCount}
       />
-      <OutputEntityTitle
-        entity={outputEntity}
-        outputSize={data.value?.totalEntityCount}
-      />
+      <OutputEntityTitle entity={outputEntity} outputSize={totalEntityCount} />
       <PlotLayout
         isFaceted={false}
-        legendNode={null}
+        legendNode={legendNode}
         plotNode={plotNode}
-        tableGroupNode={null}
+        tableGroupNode={tableGroupNode}
       />
     </div>
   );

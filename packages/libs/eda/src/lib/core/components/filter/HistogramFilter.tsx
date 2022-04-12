@@ -197,11 +197,13 @@ export function HistogramFilter(props: Props) {
         distribution.background.statistics.numDistinctEntityRecords;
 
       return {
-        valueType: NumberVariable.is(variable) ? 'number' : 'date',
         series,
-        binWidth,
-        binWidthRange,
-        binWidthStep,
+        binWidthSlider: {
+          valueType: NumberVariable.is(variable) ? 'number' : 'date',
+          binWidth,
+          binWidthRange,
+          binWidthStep,
+        },
         variableId: variable.id,
         entityId: entity.id,
         hasDataEntitiesCount: hasDataEntitiesCount ?? 0,
@@ -489,16 +491,16 @@ function HistogramPlotWithControls({
   // selectedRangeBounds is used for auto-filling the start (or end)
   // in the SelectedRangeControl
   const selectedRangeBounds = useMemo((): NumberOrDateRange | undefined => {
-    return data?.series[0]?.summary && data?.valueType
+    return data?.series[0]?.summary && data?.binWidthSlider?.valueType
       ? fullISODateRange(
           {
-            min: data.series[0].summary.min,
-            max: data.series[0].summary.max,
+            min: data?.series[0].bins[0].binStart,
+            max: data?.series[0].bins[data.series[0].bins.length - 1].binEnd,
           } as NumberOrDateRange,
-          data.valueType
+          data.binWidthSlider?.valueType
         )
       : undefined;
-  }, [data?.series, data?.valueType]);
+  }, [data?.series, data?.binWidthSlider?.valueType]);
 
   const handleSelectedRangeChange = useCallback(
     (range?: NumberOrDateRange) => {
@@ -563,7 +565,7 @@ function HistogramPlotWithControls({
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <SelectedRangeControl
         label={'Subset on ' + variableDisplayWithUnit(variable)}
-        valueType={data?.valueType}
+        valueType={data?.binWidthSlider?.valueType}
         selectedRange={selectedRange}
         selectedRangeBounds={selectedRangeBounds}
         onSelectedRangeChange={handleSelectedRangeChange}
@@ -607,7 +609,7 @@ function HistogramPlotWithControls({
       />
 
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <LabelledGroup label="Y-axis">
+        <LabelledGroup label="Y-axis controls">
           <Switch
             label="Log scale"
             state={uiState.dependentAxisLogScale}
@@ -652,20 +654,32 @@ function HistogramPlotWithControls({
             }}
           />
         </LabelledGroup>
-
-        <LabelledGroup label="X-axis">
+        {/* add vertical line in btw Y- and X- controls */}
+        <div
+          style={{
+            display: 'inline-flex',
+            borderLeft: '2px solid lightgray',
+            height: '13.6em',
+            position: 'relative',
+            marginLeft: '-1.2em',
+            top: '1.5em',
+          }}
+        >
+          {' '}
+        </div>
+        <LabelledGroup label="X-axis controls">
           <BinWidthControl
-            binWidth={data?.binWidth}
-            binWidthStep={data?.binWidthStep}
-            binWidthRange={data?.binWidthRange}
+            binWidth={data?.binWidthSlider?.binWidth}
+            binWidthStep={data?.binWidthSlider?.binWidthStep}
+            binWidthRange={data?.binWidthSlider?.binWidthRange}
             binUnit={uiState.binWidthTimeUnit ?? 'year'}
             binUnitOptions={
-              data?.valueType === 'date'
+              data?.binWidthSlider?.valueType === 'date'
                 ? ['day', 'week', 'month', 'year']
                 : undefined
             }
             onBinWidthChange={handleBinWidthChange}
-            valueType={data?.valueType}
+            valueType={data?.binWidthSlider?.valueType}
             containerStyles={{ minHeight: widgetHeight }}
           />
 
@@ -673,7 +687,7 @@ function HistogramPlotWithControls({
             label="Range"
             range={uiState.independentAxisRange}
             onRangeChange={handleIndependentAxisRangeChange}
-            valueType={data?.valueType}
+            valueType={data?.binWidthSlider?.valueType}
             containerStyles={{ minWidth: '400px' }}
           />
           {/* truncation notification */}
@@ -688,7 +702,10 @@ function HistogramPlotWithControls({
               }}
               showWarningIcon={true}
               containerStyles={{
-                maxWidth: data?.valueType === 'date' ? '34.5em' : '38.5em',
+                maxWidth:
+                  data?.binWidthSlider?.valueType === 'date'
+                    ? '34.5em'
+                    : '38.5em',
               }}
             />
           ) : null}
@@ -719,7 +736,7 @@ function distributionResponseToDataSeries(
       binStart: type === 'date' ? binStart : Number(binStart),
       binEnd: type === 'date' ? binEnd : Number(binEnd),
       binLabel: tidyBinLabel(binLabel),
-      count: value,
+      value: value,
     })
   );
   return {

@@ -5,6 +5,7 @@ import useDimensions from 'react-cool-dimensions';
 // Components & Component Generators
 import SettingsIcon from '@material-ui/icons/Settings';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { Loading, LoadingOverlay } from '@veupathdb/wdk-client/lib/Components';
 import MultiSelectVariableTree from '../../core/components/variableTrees/MultiSelectVariableTree';
 import {
   Modal,
@@ -129,8 +130,6 @@ export default function SubsettingDataGridModal({
       ?.variables ?? []
   );
 
-  const defaultSelection = useMemo(() => [], []);
-
   /**
    * Actions to take when the modal is opened.
    */
@@ -138,25 +137,7 @@ export default function SubsettingDataGridModal({
     // Sync the current entity inside the modal to whatever is
     // current selected by the user outside the modal.
     setCurrentEntity(entities.find((entity) => entity.id === currentEntityID));
-
-    // Determine if we need to load previously selected variables for the current
-    // entity by seeing if any variable selections are stored in the analysis.
-    const previouslyStoredEntityData =
-      analysisState.analysis?.descriptor.dataTableConfig[currentEntityID];
-
-    if (previouslyStoredEntityData) {
-      // Load variables selections from analysis.
-      setSelectedVariableDescriptors(previouslyStoredEntityData.variables);
-    } else {
-      // Use featured and starred variables as defaults if nothing is present on the analysis.
-      setSelectedVariableDescriptors(defaultSelection);
-    }
-  }, [
-    analysisState.analysis?.descriptor.dataTableConfig,
-    currentEntityID,
-    defaultSelection,
-    entities,
-  ]);
+  }, [currentEntityID, entities]);
 
   /** Actions to take when modal is closed. */
   const onModalClose = useCallback(() => {
@@ -278,7 +259,10 @@ export default function SubsettingDataGridModal({
               additionalStyles={{ fontSize: 18 }}
             />
           </div>
-        ) : null}
+        ) : (
+          <Loading />
+        )}
+        {dataLoading && gridData ? <LoadingOverlay /> : null}
       </div>
     );
   };
@@ -303,6 +287,7 @@ export default function SubsettingDataGridModal({
             border: '2px solid rgb(200, 200, 200)',
             borderRadius: '.5em',
             boxShadow: '0px 0px 6px rgba(0, 0, 0, .25)',
+            zIndex: '2',
           }}
         >
           {errorMessage && (
