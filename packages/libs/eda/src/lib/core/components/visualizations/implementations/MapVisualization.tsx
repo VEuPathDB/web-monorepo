@@ -114,12 +114,15 @@ const MapConfig = t.intersection([
 ]);
 
 type BasicMarkerData = {
-  geoAggregateValue: string;
-  entityCount: number;
-  position: LatLng;
-  bounds: Bounds;
-  isAtomic: boolean;
-}[];
+  completeCasesGeoVar: number;
+  markerData: {
+    geoAggregateValue: string;
+    entityCount: number;
+    position: LatLng;
+    bounds: Bounds;
+    isAtomic: boolean;
+  }[];
+};
 
 type PieplotData = Record<string, { label: string; value: number }[]>;
 
@@ -260,7 +263,6 @@ function MapViz(props: VisualizationProps) {
         boundsZoomLevel == null ||
         vizConfig.geoEntityId == null ||
         geoConfig == null ||
-        filtersPlusBoundsFilter == null ||
         latitudeVariable == null ||
         longitudeVariable == null ||
         geoAggregateVariable == null ||
@@ -269,15 +271,30 @@ function MapViz(props: VisualizationProps) {
       )
         return undefined;
 
+      const {
+        northEast: { lat: xMax, lng: right },
+        southWest: { lat: xMin, lng: left },
+      } = boundsZoomLevel.bounds;
+
       // now prepare the rest of the request params
       const requestParams: MapMarkersRequestParams = {
         studyId,
-        filters: filtersPlusBoundsFilter,
+        filters: filters || [],
         config: {
           outputEntityId: outputEntity.id, // might be quicker to use geoEntity.id but numbers in white markers will be wrong, momentarily
           geoAggregateVariable,
           latitudeVariable,
           longitudeVariable,
+          viewport: {
+            latitude: {
+              xMin,
+              xMax,
+            },
+            longitude: {
+              left,
+              right,
+            },
+          },
         },
       };
 
@@ -287,30 +304,33 @@ function MapViz(props: VisualizationProps) {
         requestParams
       );
 
-      return response.mapElements.map(
-        ({
-          avgLat,
-          avgLon,
-          minLat,
-          minLon,
-          maxLat,
-          maxLon,
-          entityCount,
-          geoAggregateValue,
-        }) => {
-          const isAtomic = false; // TO DO: work with Danielle to get this info from back end
-          return {
+      return {
+        markerData: response.mapElements.map(
+          ({
+            avgLat,
+            avgLon,
+            minLat,
+            minLon,
+            maxLat,
+            maxLon,
+            entityCount,
             geoAggregateValue,
-            entityCount: entityCount,
-            position: { lat: avgLat, lng: avgLon },
-            bounds: {
-              southWest: { lat: minLat, lng: minLon },
-              northEast: { lat: maxLat, lng: maxLon },
-            },
-            isAtomic,
-          };
-        }
-      );
+          }) => {
+            const isAtomic = false; // TO DO: work with Danielle to get this info from back end
+            return {
+              geoAggregateValue,
+              entityCount: entityCount,
+              position: { lat: avgLat, lng: avgLon },
+              bounds: {
+                southWest: { lat: minLat, lng: minLon },
+                northEast: { lat: maxLat, lng: maxLon },
+              },
+              isAtomic,
+            };
+          }
+        ),
+        completeCasesGeoVar: response.config.completeCasesGeoVar,
+      };
     }, [
       studyId,
       filters,
@@ -351,7 +371,8 @@ function MapViz(props: VisualizationProps) {
           outputEntityId: outputEntity.id,
           xAxisVariable: vizConfig.xAxisVariable,
           facetVariable: [geoAggregateVariable],
-          showMissingness: 'FALSE', // current back end 'showMissing' behaviour applies to facet variable
+          showMissingness: 'noVariables', // current back end 'showMissing' behaviour applies to facet variable
+          valueSpec: 'count',
         },
       };
 
@@ -362,7 +383,7 @@ function MapViz(props: VisualizationProps) {
       );
 
       // process response and return a map of "geoAgg key" => donut labels and counts
-      return response.barplot.data.reduce(
+      return response.pieplot.data.reduce(
         // KNOWN TYPO IN BACK END (should be pieplot)
         (map, { facetVariableDetails, label, value }) => {
           if (facetVariableDetails != null && facetVariableDetails.length === 1)
@@ -395,7 +416,7 @@ function MapViz(props: VisualizationProps) {
       xAxisVariable?.vocabulary,
       xAxisVariable
     );
-    return basicMarkerData.value?.map(
+    return basicMarkerData.value?.markerData.map(
       ({ geoAggregateValue, entityCount, bounds, position }) => {
         const donutData =
           pieplotData.value != null &&
@@ -443,24 +464,7 @@ function MapViz(props: VisualizationProps) {
     );
   }, [basicMarkerData.value, pieplotData.value, vizConfig.checkedLegendItems]);
 
-  const totalEntityCount = useMemo(
-    () =>
-      basicMarkerData.value == null
-        ? undefined
-        : sumBy(basicMarkerData.value, (elem) => elem.entityCount),
-    [basicMarkerData]
-  );
-
-  // TEMPORARY for placeholder BirdsEye
-  const totalPieplotCount = useMemo(
-    () =>
-      pieplotData.value == null
-        ? undefined
-        : sumBy(values(pieplotData.value), (pieData) =>
-            sumBy(pieData, (elem) => elem.value)
-          ),
-    [pieplotData]
-  );
+  const totalEntityCount = basicMarkerData.value?.completeCasesGeoVar;
 
   /**
    * Now render the visualization
@@ -609,20 +613,12 @@ function MapViz(props: VisualizationProps) {
   const tableGroupNode = (
     // Bird's eye plot isn't yet functional
     <BirdsEyeView
-      // placeholder values - FIX ME!!
       completeCasesAxesVars={totalEntityCount}
-      completeCasesAllVars={totalPieplotCount}
-      // Nonfuntional (and nonsensical) prop values for map viz
-      // completeCasesAllVars={
-      //   pieplotData.pending
-      //     ? undefined
-      //     : pieplotData.value?.completeCasesAllVars?.[0].value
-      // }
-      // completeCasesAxesVars={
-      //   data.pending ? undefined : data.value?.completeCasesAxesVars
-      // }
+      completeCasesAllVars={0 /* can't be undefined for some reason */}
       outputEntity={outputEntity}
-      stratificationIsActive={true} // TEMPORARY? FIX ME!
+      stratificationIsActive={
+        false /* this disables the 'strata and axes' bar/impulse */
+      }
       // enableSpinner={vizConfig.xAxisVariable != null && !pieplotData.error}
       totalCounts={totalCounts.value}
       filteredCounts={filteredCounts.value}
