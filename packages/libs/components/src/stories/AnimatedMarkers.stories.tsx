@@ -8,7 +8,7 @@ import BoundsDriftMarker, {
   BoundsDriftMarkerProps,
 } from '../map/BoundsDriftMarker';
 import geohashAnimation from '../map/animation_functions/geohash';
-import { defaultAnimationDuration } from '../map/config/map.json';
+import { defaultAnimationDuration } from '../map/config/map';
 import { leafletZoomLevelToGeohashLevel } from '../map/utils/leaflet-geohash';
 import { Viewport } from 'react-leaflet';
 
