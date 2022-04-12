@@ -404,7 +404,6 @@ function MapViz(props: VisualizationProps) {
 
       // process response and return a map of "geoAgg key" => donut labels and counts
       return response.pieplot.data.reduce(
-        // KNOWN TYPO IN BACK END (should be pieplot)
         (map, { facetVariableDetails, label, value }) => {
           if (facetVariableDetails != null && facetVariableDetails.length === 1)
             map[facetVariableDetails[0].value] = zip(label, value).map(
@@ -471,17 +470,10 @@ function MapViz(props: VisualizationProps) {
               ];
 
         // TO DO: find out if MarkerProps.id is obsolete
-        return donutData.length > 0 && vizConfig.markerType !== 'pie' ? (
-          <ChartMarker
-            id={geoAggregateValue}
-            key={geoAggregateValue}
-            bounds={bounds}
-            position={position}
-            data={donutData}
-            duration={defaultAnimationDuration}
-          />
-        ) : (
-          <DonutMarker
+        const MarkerComponent =
+          vizConfig.markerType === 'pie' ? DonutMarker : ChartMarker;
+        return (
+          <MarkerComponent
             id={geoAggregateValue}
             key={geoAggregateValue}
             bounds={bounds}
