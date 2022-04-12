@@ -36,19 +36,21 @@ export function useWorkspaceAnalysis(
     singleAppMode === 'pass' ? 'pass-through' : singleAppMode; // for backwards compatibility
 
   // If using singleAppMode, create a computation object that will be used in our default analysis.
-  const computation = singleAppMode
-    ? createComputation(
-        singleAppMode,
-        singleAppMode,
-        null,
-        [],
-        singleAppComputationId
-      )
-    : undefined;
+  const computation = useMemo(() => {
+    return singleAppMode
+      ? createComputation(
+          singleAppMode,
+          singleAppMode,
+          null,
+          [],
+          singleAppComputationId
+        )
+      : undefined;
+  }, [singleAppMode, singleAppComputationId]);
 
   const defaultAnalysis = useMemo(() => makeNewAnalysis(studyId, computation), [
     studyId,
-    singleAppMode,
+    computation,
   ]);
 
   const createAnalysis = useCallback(

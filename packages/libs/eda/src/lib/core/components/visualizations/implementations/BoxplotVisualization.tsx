@@ -296,7 +296,8 @@ function BoxplotViz(props: VisualizationProps) {
           // add outputEntityId per dataElementDependencyOrder
           outputEntityId: computation.descriptor.configuration
             ? // alphadiv abundance remove any as configuration is defined instead of unknown
-              computation.descriptor.configuration.collectionVariable.entityId
+              (computation.descriptor.configuration as any).collectionVariable
+                .entityId
             : outputEntity.id,
           // post options: 'all', 'outliers'
           points: 'outliers',
@@ -462,10 +463,10 @@ function BoxplotViz(props: VisualizationProps) {
       computation.descriptor.type === 'abundance'
         ? findCollectionVariableEntityAndVariable(
             entities,
-            computation.descriptor.configuration.collectionVariable
+            (computation.descriptor.configuration as any).collectionVariable
           )
         : undefined,
-    [findCollectionVariableEntityAndVariable, entities, computation]
+    [entities, computation]
   );
   const independentAxisLabel =
     computation.descriptor.configuration != null &&
@@ -528,8 +529,10 @@ function BoxplotViz(props: VisualizationProps) {
       checkedLegendItems={checkedLegendItems}
       legendTitle={variableDisplayWithUnit(overlayVariable)}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
-      // add a condition to show legend even for single overlay data
-      showOverlayLegend={vizConfig.overlayVariable != null}
+      // add a condition to show legend even for single overlay data and check legendItems exist
+      showOverlayLegend={
+        vizConfig.overlayVariable != null && legendItems.length > 0
+      }
     />
   );
 
@@ -593,7 +596,7 @@ function BoxplotViz(props: VisualizationProps) {
             {
               name: 'xAxisVariable',
               label: 'X-axis',
-              role: 'primary',
+              role: 'axis',
               readonlyValue:
                 computation.descriptor.configuration != null &&
                 computation.descriptor.type === 'abundance'
@@ -603,7 +606,7 @@ function BoxplotViz(props: VisualizationProps) {
             {
               name: 'yAxisVariable',
               label: 'Y-axis',
-              role: 'primary',
+              role: 'axis',
               readonlyValue: computation.descriptor.configuration
                 ? dependentAxisLabel
                 : undefined,
@@ -804,7 +807,7 @@ function BoxplotWithControls({
       )}
       {/* potential controls go here  */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <LabelledGroup label="Y-axis">
+        <LabelledGroup label="Y-axis controls">
           {/* Y-axis range control */}
           <NumberRangeInput
             label="Range"
