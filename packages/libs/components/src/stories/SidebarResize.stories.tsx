@@ -4,7 +4,7 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 // import MapVEuMap from './MapVEuMap';
 import { BoundsViewport, Bounds } from '../map/Types';
 import { BoundsDriftMarkerProps } from '../map/BoundsDriftMarker';
-import { defaultAnimationDuration } from '../map/config/map.json';
+import { defaultAnimationDuration } from '../map/config/map';
 import { Viewport } from 'react-leaflet';
 
 //let's use new approach for data retrieval

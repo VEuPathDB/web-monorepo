@@ -165,7 +165,10 @@ function BaseInput({
   return (
     <div style={{ ...containerStyles }}>
       {label && (
-        <Typography variant="button" style={{ color: MEDIUM_GRAY }}>
+        <Typography
+          variant="button"
+          style={{ color: disabled ? MEDIUM_GRAY : 'black' }}
+        >
           {label}
         </Typography>
       )}
@@ -210,7 +213,10 @@ function BaseInput({
               margin: 'auto 10px',
             }}
           >
-            <Typography variant="button" style={{ color: MEDIUM_GRAY }}>
+            <Typography
+              variant="button"
+              style={{ color: disabled ? MEDIUM_GRAY : 'black' }}
+            >
               to
             </Typography>
           </div>
