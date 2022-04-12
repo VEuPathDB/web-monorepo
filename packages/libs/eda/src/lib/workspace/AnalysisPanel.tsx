@@ -262,13 +262,11 @@ export function AnalysisPanel({
                 display: 'View Study Details',
                 route: `/details`,
                 exact: false,
-                replace: true,
               },
               {
                 display: 'Browse and Subset',
                 route: `/variables${lastVarPath}`,
                 exact: false,
-                replace: true,
               },
               {
                 display: 'Visualize',
@@ -279,7 +277,6 @@ export function AnalysisPanel({
                   ? '/visualizations'
                   : `/visualizations${lastVizPath}`,
                 exact: false,
-                replace: true,
               },
               {
                 display: 'Download',

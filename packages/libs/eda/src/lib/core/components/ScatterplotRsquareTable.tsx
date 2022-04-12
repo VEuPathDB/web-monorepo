@@ -1,18 +1,18 @@
 import React from 'react';
 import {
-  XYPlotDataSeries,
-  XYPlotData,
+  ScatterPlotDataSeries,
+  ScatterPlotData,
   FacetedData,
 } from '@veupathdb/components/lib/types/plots';
 import { VariableTreeNode } from '../types/study';
 
-type FacetDataProps = FacetedData<XYPlotData>['facets'];
+type FacetDataProps = FacetedData<ScatterPlotData>['facets'];
 
 // introduce discriminated union
 type TypedScatterplotRsquareData =
   | {
       isFaceted: false;
-      data?: XYPlotDataSeries[];
+      data?: ScatterPlotDataSeries[];
     }
   | {
       isFaceted: true;

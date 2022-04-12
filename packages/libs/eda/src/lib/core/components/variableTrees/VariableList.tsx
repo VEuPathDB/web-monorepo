@@ -46,7 +46,7 @@ import { cx } from '../../../workspace/Utils';
 import { pruneEmptyFields } from '../../utils/wdk-filter-param-adapter';
 
 import { Tooltip as VarTooltip } from '../docs/variable-constraints';
-// import { useActiveDocument } from '../docs/DocumentationContainer';
+import { useActiveDocument } from '../docs/DocumentationContainer';
 
 interface VariableField {
   type?: string;
@@ -157,7 +157,7 @@ export default function VariableList({
   const isMultiPick = mode === 'multiSelection';
 
   const [searchTerm, setSearchTerm] = useState<string>('');
-  // const { setActiveDocument } = useActiveDocument();
+  const { setActiveDocument } = useActiveDocument();
   const getPathToField = useCallback(
     (field?: Field) => {
       if (field == null) return [];
@@ -267,10 +267,12 @@ export default function VariableList({
   );
 
   // make visibleStarredVariableTerms state be used at MyVariable
-  const [
-    visibleStarredVariableTerms,
-    setVisibleStarredVariableTerms,
-  ] = useState<string[]>([]);
+  const visibleStarredVariableTerms = useMemo(() => {
+    const newVisibleStarredVariableTerms = starredVariables?.map(
+      ({ entityId, variableId }) => `${entityId}/${variableId}`
+    );
+    return newVisibleStarredVariableTerms ?? [];
+  }, [starredVariables]);
 
   const starredVariableTermsSet = useMemo(() => {
     const presentStarredVariableTerms = starredVariables
@@ -356,11 +358,7 @@ export default function VariableList({
 
   const toggleShowOnlyStarredVariables = useCallback(() => {
     setShowOnlyStarredVariables((oldValue) => !oldValue);
-    const newVisibleStarredVariableTerms = starredVariables?.map(
-      ({ entityId, variableId }) => `${entityId}/${variableId}`
-    );
-    setVisibleStarredVariableTerms(newVisibleStarredVariableTerms ?? []);
-  }, [starredVariables]);
+  }, [setShowOnlyStarredVariables]);
 
   const starredVariableToggleDisabled =
     !showOnlyStarredVariables && starredVariableTermsSet.size === 0;
@@ -461,10 +459,10 @@ export default function VariableList({
         <Link
           to="../../../../documentation/variable-constraints"
           target="_blank"
-          // onClick={(event) => {
-          //   event.preventDefault();
-          //   setActiveDocument('variable-constraints');
-          // }}
+          onClick={(event) => {
+            event.preventDefault();
+            setActiveDocument('variable-constraints');
+          }}
         >
           Learn more
         </Link>
@@ -478,14 +476,13 @@ export default function VariableList({
     disabledFields.size > 0 && (
       <div className={cx('-DisabledVariablesToggle')}>
         <HtmlTooltip
-          css={
-            {
-              /*
-               * This is needed to address a compiler error.
-               * Not sure why it's complaining, but here we are...
-               */
-            }
-          }
+          css={{
+            zIndex: 1,
+            /*
+             * This is needed to address a compiler error.
+             * Not sure why it's complaining, but here we are...
+             */
+          }}
           title={tooltipContent}
           interactive
           enterDelay={500}

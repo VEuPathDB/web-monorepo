@@ -10,11 +10,16 @@ import {
   union,
   intersection,
   partial,
-  keyof,
+  unknown,
   nullType,
 } from 'io-ts';
 import { Filter } from '../../types/filter';
-import { TimeUnit } from '../../types/general';
+import {
+  BinSpec,
+  BinWidthSlider,
+  TimeUnit,
+  NumberOrNull,
+} from '../../types/general';
 import { VariableDescriptor, StringVariableValue } from '../../types/variable';
 import { ComputationAppOverview } from '../../types/visualization';
 
@@ -26,9 +31,6 @@ type ZeroToTwoVariables =
   | []
   | [VariableDescriptor]
   | [VariableDescriptor, VariableDescriptor];
-
-export type NumberOrNull = TypeOf<typeof numberOrNull>;
-const numberOrNull = union([number, nullType]);
 
 // define sampleSizeTableArray
 export type SampleSizeTableArray = TypeOf<typeof sampleSizeTableArray>;
@@ -106,19 +108,9 @@ export const HistogramResponse = type({
     config: type({
       completeCasesAllVars: number,
       completeCasesAxesVars: number,
-      binSlider: type({
-        min: numberOrNull,
-        max: numberOrNull,
-        step: numberOrNull,
-      }),
+      binSlider: BinWidthSlider,
       xVariableDetails: VariableDescriptor,
-      binSpec: intersection([
-        type({ type: keyof({ binWidth: null, numBins: null }) }),
-        partial({
-          value: numberOrNull,
-          units: TimeUnit,
-        }),
-      ]),
+      binSpec: BinSpec,
       summary: type({
         min: string,
         q1: string,
@@ -147,8 +139,8 @@ export interface BarplotRequestParams {
     valueSpec: 'count' | 'identity' | 'proportion';
     barMode: 'group' | 'stack';
     xAxisVariable: VariableDescriptor;
-    // barplot add prop
     overlayVariable?: VariableDescriptor;
+    facetVariable?: ZeroToTwoVariables;
     showMissingness?: 'TRUE' | 'FALSE';
   };
 }
@@ -194,17 +186,15 @@ export interface ScatterplotRequestParams {
   filters: Filter[];
   config: {
     outputEntityId: string;
-    // add bestFitLineWithRaw
     valueSpec:
       | 'raw'
       | 'smoothedMean'
       | 'smoothedMeanWithRaw'
       | 'bestFitLineWithRaw';
-    // not quite sure of overlayVariable and facetVariable yet
-    // facetVariable?: ZeroToTwoVariables;
     xAxisVariable: VariableDescriptor;
     yAxisVariable: VariableDescriptor;
     overlayVariable?: VariableDescriptor;
+    facetVariable?: ZeroToTwoVariables;
     showMissingness?: 'TRUE' | 'FALSE';
     maxAllowedDataPoints?: number;
   };
@@ -223,7 +213,8 @@ export const ScatterplotResponseData = array(
     // add bestFitLineWithRaw
     bestFitLineX: array(string),
     bestFitLineY: array(number),
-    r2: number,
+    // allow null for r2
+    r2: NumberOrNull,
     // need to make sure if below is correct (untested)
     overlayVariableDetails: type({
       entityId: string,
@@ -285,25 +276,52 @@ export interface LineplotRequestParams {
   filters: Filter[];
   config: {
     outputEntityId: string;
-    // not quite sure of overlayVariable and facetVariable yet
-    // overlayVariable?: Variable;
-    // facetVariable?: ZeroToTwoVariables;
     xAxisVariable: VariableDescriptor;
     yAxisVariable: VariableDescriptor;
     overlayVariable?: VariableDescriptor;
+    facetVariable?: ZeroToTwoVariables;
+    binSpec: BinSpec;
+    viewport?: {
+      xMin: string;
+      xMax: string;
+    };
     showMissingness?: 'TRUE' | 'FALSE';
+    valueSpec: 'mean' | 'median' | 'proportion';
+    errorBars: 'TRUE' | 'FALSE';
+    yAxisNumeratorValues?: string[];
+    yAxisDenominatorValues?: string[];
   };
 }
 
 const LineplotResponseData = array(
   intersection([
     type({
-      // changed to string array
       seriesX: array(string),
-      seriesY: array(string),
+      seriesY: array(union([string, nullType])),
     }),
     partial({
-      // need to make sure if below is correct (untested)
+      binStart: array(string),
+      binEnd: array(string),
+      errorBars: array(
+        type({
+          lowerBound: union([NumberOrNull, array(unknown)]), // TEMPORARY
+          upperBound: union([NumberOrNull, array(unknown)]), // back end will return number or null
+          error: string,
+        })
+      ),
+      binSampleSize: union([
+        array(
+          type({
+            N: number,
+          })
+        ),
+        array(
+          type({
+            numeratorN: number,
+            denominatorN: number,
+          })
+        ),
+      ]),
       overlayVariableDetails: StringVariableValue,
       facetVariableDetails: union([
         tuple([StringVariableValue]),
@@ -315,22 +333,26 @@ const LineplotResponseData = array(
 
 export type LineplotResponse = TypeOf<typeof LineplotResponse>;
 export const LineplotResponse = type({
-  // backend issue for lineplot returning scatterplot currently
-  // lineplot: type({
-  scatterplot: type({
+  lineplot: type({
     data: LineplotResponseData,
-    config: type({
-      completeCasesAllVars: number,
-      completeCasesAxesVars: number,
-      xVariableDetails: type({
-        variableId: string,
-        entityId: string,
+    config: intersection([
+      type({
+        completeCasesAllVars: number,
+        completeCasesAxesVars: number,
+        xVariableDetails: type({
+          variableId: string,
+          entityId: string,
+        }),
+        yVariableDetails: type({
+          variableId: string,
+          entityId: string,
+        }),
       }),
-      yVariableDetails: type({
-        variableId: string,
-        entityId: string,
+      partial({
+        binSlider: BinWidthSlider,
+        binSpec: BinSpec,
       }),
-    }),
+    ]),
   }),
   sampleSizeTable: sampleSizeTableArray,
   completeCasesTable: completeCasesTableArray,
@@ -411,7 +433,7 @@ export const TwoByTwoResponse = intersection([
   partial({
     statsTable: array(
       partial({
-        oddsratio: number, // TO DO: should these stats values really all be optional?
+        oddsratio: NumberOrNull, // TO DO: should these stats values really all be optional?
         pvalue: union([number, string]),
         orInterval: string,
         rrInterval: string,
@@ -442,6 +464,7 @@ export interface BoxplotRequestParams {
     xAxisVariable: VariableDescriptor;
     yAxisVariable: VariableDescriptor;
     overlayVariable?: VariableDescriptor;
+    facetVariable?: ZeroToTwoVariables;
     showMissingness?: 'TRUE' | 'FALSE';
   };
 }
@@ -510,6 +533,16 @@ export interface MapMarkersRequestParams {
     geoAggregateVariable: VariableDescriptor;
     latitudeVariable: VariableDescriptor;
     longitudeVariable: VariableDescriptor;
+    viewport: {
+      latitude: {
+        xMin: number;
+        xMax: number;
+      };
+      longitude: {
+        left: number;
+        right: number;
+      };
+    };
   };
 }
 
@@ -527,4 +560,52 @@ export const MapMarkersResponse = type({
       maxLon: number,
     })
   ),
+  config: type({
+    completeCasesGeoVar: number,
+  }),
+});
+
+export interface PieplotRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    outputEntityId: string;
+    showMissingness:
+      | 'TRUE'
+      | 'FALSE'
+      | 'noVariables'
+      | 'allVariables'
+      | 'strataVariables';
+    xAxisVariable: VariableDescriptor;
+    facetVariable?: ZeroToTwoVariables;
+    valueSpec: 'count' | 'proportion';
+  };
+}
+
+export type PieplotResponse = TypeOf<typeof PieplotResponse>;
+export const PieplotResponse = type({
+  pieplot: type({
+    data: array(
+      intersection([
+        type({
+          label: array(string),
+          value: array(number),
+        }),
+        partial({
+          facetVariableDetails: union([
+            tuple([StringVariableValue]),
+            tuple([StringVariableValue, StringVariableValue]),
+          ]),
+        }),
+      ])
+    ),
+    config: type({
+      xVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+    }),
+  }),
+  sampleSizeTable: sampleSizeTableArray,
+  completeCasesTable: completeCasesTableArray,
 });

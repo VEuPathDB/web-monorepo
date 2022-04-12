@@ -151,13 +151,16 @@ export function useWdkStudyReleases(): Array<WdkStudyRelease> {
       return wdkService.getRecord(STUDY_RECORD_CLASS_NAME, studyRecord.id, {
         tables: ['DownloadVersion'],
       });
-    })?.tables['DownloadVersion'].map((release) => ({
-      // DAVE/JAMIE: I was sure if I could tell TS that these values
-      // would always be present.
-      releaseNumber: release.build_number?.toString(),
-      description: release.note?.toString(),
-      date: release.release_date?.toString(),
-    }), [ studyRecord.id ]) ?? []
+    })?.tables['DownloadVersion'].map(
+      (release) => ({
+        // DAVE/JAMIE: I was sure if I could tell TS that these values
+        // would always be present.
+        releaseNumber: release.build_number?.toString(),
+        description: release.note?.toString(),
+        date: release.release_date?.toString(),
+      }),
+      [studyRecord.id]
+    ) ?? []
   );
 }
 
