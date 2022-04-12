@@ -75,7 +75,7 @@ export default function RadioButtonGroup({
           variant="button"
           // perhaps not using focused?
           // style={{ color: focused ? DARK_GRAY : MEDIUM_GRAY }}
-          style={{ color: '#000000', fontWeight: 'bold' }}
+          style={{ color: '#000000', fontWeight: 'bold', fontSize: '1.2em' }}
         >
           {label}
         </Typography>
