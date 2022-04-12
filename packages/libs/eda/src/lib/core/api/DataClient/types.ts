@@ -228,22 +228,43 @@ export const ScatterplotResponseData = array(
   })
 );
 
+// typing computedVariableMetadata for computation apps such as alphadiv and abundance
+export type ComputedVariableMetadata = TypeOf<typeof ComputedVariableMetadata>;
+export const ComputedVariableMetadata = partial({
+  displayName: array(string),
+  displayRangeMin: string,
+  displayRangeMax: string,
+  // collectionVariable for abundance app
+  collectionVariable: partial({
+    collectionType: string,
+    collectionValuePlotRef: string, // e.g., yAxisVariable
+    collectionVariablePlotRef: string, // e.g., overlayVariable
+    collectionVariableDetails: array(VariableDescriptor),
+  }),
+});
+
 export type ScatterplotResponse = TypeOf<typeof ScatterplotResponse>;
 export const ScatterplotResponse = type({
   scatterplot: type({
     data: ScatterplotResponseData,
-    config: type({
-      completeCasesAllVars: number,
-      completeCasesAxesVars: number,
-      xVariableDetails: type({
-        variableId: string,
-        entityId: string,
+    // typing computedVariableMetadata for computation apps such as alphadiv and abundance
+    config: intersection([
+      type({
+        completeCasesAllVars: number,
+        completeCasesAxesVars: number,
+        xVariableDetails: type({
+          variableId: string,
+          entityId: string,
+        }),
+        yVariableDetails: type({
+          variableId: string,
+          entityId: string,
+        }),
       }),
-      yVariableDetails: type({
-        variableId: string,
-        entityId: string,
+      partial({
+        computedVariableMetadata: ComputedVariableMetadata,
       }),
-    }),
+    ]),
   }),
   sampleSizeTable: sampleSizeTableArray,
   completeCasesTable: completeCasesTableArray,
@@ -456,11 +477,7 @@ export interface BoxplotRequestParams {
     outputEntityId: string;
     // add bestFitLineWithRaw
     points: 'outliers' | 'all';
-    // boolean or string?
-    // mean: boolean;
     mean: 'TRUE' | 'FALSE';
-    // not quite sure of overlayVariable and facetVariable yet
-    // facetVariable?: ZeroToTwoVariables;
     xAxisVariable: VariableDescriptor;
     yAxisVariable: VariableDescriptor;
     overlayVariable?: VariableDescriptor;
@@ -508,18 +525,24 @@ export type BoxplotResponse = TypeOf<typeof BoxplotResponse>;
 export const BoxplotResponse = type({
   boxplot: type({
     data: BoxplotResponseData,
-    config: type({
-      completeCasesAllVars: number,
-      completeCasesAxesVars: number,
-      xVariableDetails: type({
-        variableId: string,
-        entityId: string,
+    // typing computedVariableMetadata for computation apps such as alphadiv and abundance
+    config: intersection([
+      type({
+        completeCasesAllVars: number,
+        completeCasesAxesVars: number,
+        xVariableDetails: type({
+          variableId: string,
+          entityId: string,
+        }),
+        yVariableDetails: type({
+          variableId: string,
+          entityId: string,
+        }),
       }),
-      yVariableDetails: type({
-        variableId: string,
-        entityId: string,
+      partial({
+        computedVariableMetadata: ComputedVariableMetadata,
       }),
-    }),
+    ]),
   }),
   sampleSizeTable: sampleSizeTableArray,
   completeCasesTable: completeCasesTableArray,

@@ -1,12 +1,17 @@
 import { Variable } from '../types/study';
 import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
+// type of computedVariableMetadata for computation apps such as alphadiv and abundance
+import { ComputedVariableMetadata } from '../api/DataClient/types';
+import { min, max } from 'lodash';
 
 export function numberDateDefaultDependentAxisRange(
   variable: Variable | undefined,
   plotName: string,
   yMinMaxRange:
     | { min: number | string | undefined; max: number | string | undefined }
-    | undefined
+    | undefined,
+  // pass computedVariableMetadata
+  computedVariableMetadata?: ComputedVariableMetadata
 ): NumberOrDateRange | undefined {
   // make universal range variable
   if (
@@ -99,5 +104,18 @@ export function numberDateDefaultDependentAxisRange(
                 : defaults.rangeMax + 'T00:00:00Z',
           };
     }
+    // for the case of computation apps such as alphadiv and abundance
+  } else if (computedVariableMetadata != null && plotName === 'scatterplot') {
+    return {
+      min: min([
+        // computedVariableMetadata.displayRangeMin/Max are strings
+        Number(computedVariableMetadata.displayRangeMin),
+        yMinMaxRange?.min as number,
+      ]) as number,
+      max: max([
+        Number(computedVariableMetadata.displayRangeMax),
+        yMinMaxRange?.max as number,
+      ]) as number,
+    };
   } else return undefined;
 }

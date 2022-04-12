@@ -13,7 +13,13 @@ import {
   usePreloadAnalysis,
 } from '../../core';
 
-export function useWorkspaceAnalysis(studyId: string, analysisId?: string) {
+import { createComputation } from '../../core/components/computations/Utils';
+
+export function useWorkspaceAnalysis(
+  studyId: string,
+  analysisId?: string,
+  singleAppMode?: string
+) {
   const analysisClient = useAnalysisClient();
 
   const history = useHistory();
@@ -24,7 +30,28 @@ export function useWorkspaceAnalysis(studyId: string, analysisId?: string) {
 
   const creatingAnalysis = useRef(false);
 
-  const defaultAnalysis = useMemo(() => makeNewAnalysis(studyId), [studyId]);
+  // When we only want to use a single app, extract the computation and pass it to
+  // makeNewAnalysis so that by default we will only use this single computation.
+  const singleAppComputationId =
+    singleAppMode === 'pass' ? 'pass-through' : singleAppMode; // for backwards compatibility
+
+  // If using singleAppMode, create a computation object that will be used in our default analysis.
+  const computation = useMemo(() => {
+    return singleAppMode
+      ? createComputation(
+          singleAppMode,
+          singleAppMode,
+          null,
+          [],
+          singleAppComputationId
+        )
+      : undefined;
+  }, [singleAppMode, singleAppComputationId]);
+
+  const defaultAnalysis = useMemo(() => makeNewAnalysis(studyId, computation), [
+    studyId,
+    computation,
+  ]);
 
   const createAnalysis = useCallback(
     async (newAnalysis: NewAnalysis) => {
