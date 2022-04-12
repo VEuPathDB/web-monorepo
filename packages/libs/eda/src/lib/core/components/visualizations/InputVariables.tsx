@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { StudyEntity } from '../../types/study';
 import { VariableDescriptor } from '../../types/variable';
 import {
@@ -20,6 +20,33 @@ interface InputSpec {
   role?: 'axis' | 'stratification';
 }
 
+interface SectionSpec {
+  order: number;
+  title: ReactNode;
+}
+
+// order is used to sort the inputGroups
+// (customInput ordering will use the same coordinate system, so you can slot
+// one in where you need it)
+const sectionInfo: Record<string, SectionSpec> = {
+  default: {
+    order: 0,
+    title: 'Variables',
+  },
+  axis: {
+    order: 50,
+    title: 'Axis variables',
+  },
+  stratification: {
+    order: 100,
+    title: 'Stratification variables (optional)',
+  },
+};
+
+interface CustomSectionSpec extends SectionSpec {
+  content: ReactNode;
+}
+
 export interface Props {
   /**
    * This defines the order the variables appear, and the names associated with
@@ -27,6 +54,11 @@ export interface Props {
    * associated constraint will be applied.
    */
   inputs: InputSpec[];
+  /**
+   * If you need additional controls or sections in the input variable area
+     you can add them here.
+   */
+  customSections?: CustomSectionSpec[];
   /**
    * Study entities used to look up entity and variable details.
    */
@@ -82,6 +114,7 @@ export function InputVariables(props: Props) {
     showMissingness,
     onShowMissingnessChange,
     outputEntity,
+    customSections,
   } = props;
   const classes = useInputStyles();
   const handleChange = (
@@ -184,124 +217,72 @@ export function InputVariables(props: Props) {
   );
 
   return (
-    <div>
-      <div className={classes.inputs}>
-        {inputs.filter((input) => input.role === undefined).length > 0 && (
-          <div className={classes.inputGroup}>
-            <div className={classes.fullRow}>
-              <h4>Variables</h4>
-            </div>
-            {inputs
-              .filter((input) => input.role === undefined)
-              .map((input) => (
-                <div
-                  key={input.name}
-                  className={[classes.input, 'primary'].join(' ')}
-                >
-                  <div className={classes.label}>{input.label}</div>
-                  <VariableTreeDropdown
-                    scope="variableTree"
-                    showMultiFilterDescendants
-                    rootEntity={entities[0]}
-                    disabledVariables={disabledVariablesByInputName[input.name]}
-                    customDisabledVariableMessage={
-                      flattenedConstraints?.[input.name].description
-                    }
-                    starredVariables={starredVariables}
-                    toggleStarredVariable={toggleStarredVariable}
-                    entityId={selectedVariables[input.name]?.entityId}
-                    variableId={selectedVariables[input.name]?.variableId}
-                    onChange={(variable) => {
-                      handleChange(input.name, variable);
-                    }}
-                  />
-                </div>
-              ))}
-          </div>
-        )}
-        {inputs.filter((input) => input.role === 'axis').length > 0 && (
-          <div className={classes.inputGroup}>
-            <div className={classes.fullRow}>
-              <h4>Axis variables</h4>
-            </div>
-            {inputs
-              .filter((input) => input.role === 'axis')
-              .map((input) => (
-                <div
-                  key={input.name}
-                  className={[classes.input, 'primary'].join(' ')}
-                >
-                  <div className={classes.label}>{input.label}</div>
-                  <VariableTreeDropdown
-                    scope="variableTree"
-                    showMultiFilterDescendants
-                    rootEntity={entities[0]}
-                    disabledVariables={disabledVariablesByInputName[input.name]}
-                    customDisabledVariableMessage={
-                      flattenedConstraints?.[input.name].description
-                    }
-                    starredVariables={starredVariables}
-                    toggleStarredVariable={toggleStarredVariable}
-                    entityId={selectedVariables[input.name]?.entityId}
-                    variableId={selectedVariables[input.name]?.variableId}
-                    onChange={(variable) => {
-                      handleChange(input.name, variable);
-                    }}
-                  />
-                </div>
-              ))}
-          </div>
-        )}
-        {inputs.filter((input) => input.role === 'stratification').length >
-          0 && (
-          <div className={classes.inputGroup}>
-            <div className={classes.fullRow}>
-              <h4>Stratification variables (optional)</h4>
-            </div>
-            {inputs
-              .filter((input) => input.role === 'stratification')
-              .map((input) => (
-                <div
-                  key={input.name}
-                  className={[classes.input, 'stratification'].join(' ')}
-                >
-                  <div className={classes.label}>{input.label}</div>
-                  <VariableTreeDropdown
-                    scope="variableTree"
-                    showMultiFilterDescendants
-                    rootEntity={entities[0]}
-                    disabledVariables={disabledVariablesByInputName[input.name]}
-                    customDisabledVariableMessage={
-                      flattenedConstraints?.[input.name].description
-                    }
-                    starredVariables={starredVariables}
-                    toggleStarredVariable={toggleStarredVariable}
-                    entityId={selectedVariables[input.name]?.entityId}
-                    variableId={selectedVariables[input.name]?.variableId}
-                    onChange={(variable) => {
-                      handleChange(input.name, variable);
-                    }}
-                  />
-                </div>
-              ))}
-            {onShowMissingnessChange && (
-              <div className={classes.showMissingness}>
-                <Switch
-                  label={`Include ${
-                    outputEntity
-                      ? makeEntityDisplayName(outputEntity, true)
-                      : 'points'
-                  } with no data for selected stratification variable(s)`}
-                  state={showMissingness}
-                  onStateChange={onShowMissingnessChange}
-                  disabled={!enableShowMissingnessToggle}
-                  labelPosition="after"
-                />
+    <div className={classes.inputs}>
+      {[undefined, 'axis', 'stratification'].map(
+        (inputRole) =>
+          inputs.filter((input) => input.role === inputRole).length > 0 && (
+            <div
+              className={classes.inputGroup}
+              style={{ order: sectionInfo[inputRole ?? 'default'].order }}
+            >
+              <div className={classes.fullRow}>
+                <h4>{sectionInfo[inputRole ?? 'default'].title}</h4>
               </div>
-            )}
+              {inputs
+                .filter((input) => input.role === inputRole)
+                .map((input) => (
+                  <div key={input.name} className={classes.input}>
+                    <div className={classes.label}>{input.label}</div>
+                    <VariableTreeDropdown
+                      scope="variableTree"
+                      showMultiFilterDescendants
+                      rootEntity={entities[0]}
+                      disabledVariables={
+                        disabledVariablesByInputName[input.name]
+                      }
+                      customDisabledVariableMessage={
+                        flattenedConstraints?.[input.name].description
+                      }
+                      starredVariables={starredVariables}
+                      toggleStarredVariable={toggleStarredVariable}
+                      entityId={selectedVariables[input.name]?.entityId}
+                      variableId={selectedVariables[input.name]?.variableId}
+                      onChange={(variable) => {
+                        handleChange(input.name, variable);
+                      }}
+                    />
+                  </div>
+                ))}
+              {
+                // slightly hacky add-on for the stratification section
+                // it could possibly be done using a custom section?
+                inputRole === 'stratification' && onShowMissingnessChange && (
+                  <div className={classes.showMissingness}>
+                    <Switch
+                      label={`Include ${
+                        outputEntity
+                          ? makeEntityDisplayName(outputEntity, true)
+                          : 'points'
+                      } with no data for selected stratification variable(s)`}
+                      state={showMissingness}
+                      onStateChange={onShowMissingnessChange}
+                      disabled={!enableShowMissingnessToggle}
+                      labelPosition="after"
+                    />
+                  </div>
+                )
+              }
+            </div>
+          )
+      )}
+      {customSections?.map(({ order, title, content }) => (
+        <div className={classes.inputGroup} style={{ order }}>
+          <div className={classes.fullRow}>
+            <h4>{title}</h4>
           </div>
-        )}
-      </div>
+          {content}
+        </div>
+      ))}
     </div>
   );
 }
