@@ -19,6 +19,8 @@ import { min, max, map } from 'lodash';
 import { Variable } from '../types/study';
 // util to get specific decimal points as a number, not string
 import { numberDecimalPoint } from '../utils/number-decimal-point';
+// type of computedVariableMetadata for computation apps such as alphadiv and abundance
+import { ComputedVariableMetadata } from '../api/DataClient/types';
 
 /**
  * A custom hook to compute default dependent axis range
@@ -42,7 +44,9 @@ export function useDefaultDependentAxisRange(
   // HistogramConfig contains most options
   updateVizConfig: (newConfig: Partial<HistogramConfig>) => void,
   plotType?: 'Histogram' | 'Barplot' | 'Boxplot' | undefined,
-  yAxisVariable?: Variable
+  yAxisVariable?: Variable,
+  // pass computedVariableMetadata for axis range of computation apps
+  computedVariableMetadata?: ComputedVariableMetadata
 ): defaultDependentAxisRangeProps {
   // find max of stacked array, especially with overlayVariable
   const defaultDependentAxisMinMax = useMemo(() => {
@@ -64,7 +68,9 @@ export function useDefaultDependentAxisRange(
     else if (plotType === 'Boxplot')
       return boxplotDefaultDependentAxisMinMax(
         data as PromiseHookState<BoxplotDataWithCoverage | undefined>,
-        yAxisVariable
+        yAxisVariable,
+        // pass computedVariableMetadata
+        computedVariableMetadata
       );
   }, [data]);
 
@@ -158,7 +164,9 @@ function barplotDefaultDependentAxisMax(
 
 function boxplotDefaultDependentAxisMinMax(
   data: PromiseHookState<BoxplotDataWithCoverage | undefined>,
-  yAxisVariable: Variable | undefined
+  yAxisVariable: Variable | undefined,
+  // use computedVariableMetadata for computation apps
+  computedVariableMetadata?: ComputedVariableMetadata
 ) {
   if (isFaceted(data?.value)) {
     // may not need to check yAxisVariable?.type but just in case
@@ -208,7 +216,9 @@ function boxplotDefaultDependentAxisMinMax(
       : undefined;
   } else {
     return data?.value?.series != null &&
-      (yAxisVariable?.type === 'number' || yAxisVariable?.type === 'integer')
+      (yAxisVariable?.type === 'number' ||
+        yAxisVariable?.type === 'integer' ||
+        computedVariableMetadata != null)
       ? {
           min:
             (min([
@@ -219,6 +229,8 @@ function boxplotDefaultDependentAxisMinMax(
                   .flat()
               ),
               min(data.value.series.flatMap((o) => o.lowerfence as number[])),
+              // check displayRange with computedVariableMetadata
+              computedVariableMetadata?.displayRangeMin,
             ]) as number) * 1.05,
           max:
             (max([
@@ -228,6 +240,8 @@ function boxplotDefaultDependentAxisMinMax(
                   .flat()
               ),
               max(data.value.series.flatMap((o) => o.upperfence as number[])),
+              // check displayRange with computedVariableMetadata
+              computedVariableMetadata?.displayRangeMax,
             ]) as number) * 1.05,
         }
       : undefined;

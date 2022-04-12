@@ -9,17 +9,13 @@ import { useCallback, useMemo, useState, useEffect } from 'react';
 
 // need to set for Scatterplot
 
-import DataClient, {
-  ScatterplotRequestParams,
-  ScatterplotResponse,
-} from '../../../api/DataClient';
+import DataClient, { ScatterplotResponse } from '../../../api/DataClient';
 
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
-import { Filter } from '../../../types/filter';
 
 import { VariableDescriptor } from '../../../types/variable';
 
@@ -27,7 +23,7 @@ import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import { PlotLayout } from '../../layouts/PlotLayout';
 
-import { InputVariables } from '../InputVariables';
+import { InputSpec, InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import {
   SelectorProps,
@@ -60,10 +56,11 @@ import {
   ScatterPlotData,
   FacetedData,
 } from '@veupathdb/components/lib/types/plots';
-import { CoverageStatistics } from '../../../types/visualization';
+// import Computation ts
+import { CoverageStatistics, Computation } from '../../../types/visualization';
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
-import { NumberVariable, StudyEntity, Variable } from '../../../types/study';
+import { NumberVariable, Variable } from '../../../types/study';
 import {
   fixLabelForNumberVariables,
   fixLabelsForNumberVariables,
@@ -110,6 +107,10 @@ import { useDefaultIndependentAxisRange } from '../../../hooks/computeDefaultInd
 import { useDefaultDependentAxisRange } from '../../../hooks/computeNumberDateDefaultDependentAxisRange';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import { useVizConfig } from '../../../hooks/visualizations';
+// alphadiv abundance: this should be used for collection variable
+import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from '../../../utils/study-metadata';
+// typing computedVariableMetadata for computation apps such as alphadiv and abundance
+import { ComputedVariableMetadata } from '../../../api/DataClient/types';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -136,11 +137,14 @@ const modalPlotContainerStyles = {
 };
 
 // define ScatterPlotDataWithCoverage and export
+//to-do: probably need to add computedVariableMetadata type later
 export interface ScatterPlotDataWithCoverage extends CoverageStatistics {
   dataSetProcess: ScatterPlotData | FacetedData<ScatterPlotData>;
   // change these types to be compatible with new axis range
   yMin: number | string | undefined;
   yMax: number | string | undefined;
+  // add computedVariableMetadata for computation apps such as alphadiv and abundance
+  computedVariableMetadata?: ComputedVariableMetadata;
 }
 
 // define ScatterPlotDataResponse
@@ -364,28 +368,56 @@ function ScatterplotViz(props: VisualizationProps) {
       // check variable inputs: this is necessary to prevent from data post
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
         return undefined;
-      else if (vizConfig.yAxisVariable == null || yAxisVariable == null)
+      else if (
+        computation.descriptor.configuration == null &&
+        (vizConfig.yAxisVariable == null || yAxisVariable == null)
+      )
         return undefined;
 
       const vars = [xAxisVariable, yAxisVariable, overlayVariable];
-      const unique = vars.filter((item, i, ar) => ar.indexOf(item) === i);
+      const unique = vars.filter((item, i, ar) =>
+        item == null ? true : ar.indexOf(item) === i
+      );
       if (vars.length !== unique.length)
         throw new Error(
           'Variables must be unique. Please choose different variables.'
         );
 
-      // add visualization.type here. valueSpec too?
-      const params = getRequestParams(
-        studyId,
-        filters ?? [],
-        vizConfig,
-        outputEntity,
-        visualization.descriptor.type
-      );
+      // Convert valueSpecConfig to valueSpecValue for the data client request.
+      let valueSpecValue = 'raw';
+      if (vizConfig.valueSpecConfig === 'Smoothed mean with raw') {
+        valueSpecValue = 'smoothedMeanWithRaw';
+      } else if (vizConfig.valueSpecConfig === 'Best fit line with raw') {
+        valueSpecValue = 'bestFitLineWithRaw';
+      }
 
-      const response = await dataClient.getScatterplot(
+      const params = {
+        studyId,
+        filters,
+        config: {
+          // add outputEntityId per dataElementDependencyOrder
+          outputEntityId: computation.descriptor.configuration
+            ? // alphadiv abundance: remove any as configuration is defined instead of unknown
+              (computation.descriptor.configuration as any).collectionVariable
+                .entityId
+            : outputEntity.id,
+          valueSpec: valueSpecValue,
+          xAxisVariable: vizConfig.xAxisVariable,
+          yAxisVariable: vizConfig.yAxisVariable,
+          overlayVariable: vizConfig.overlayVariable,
+          facetVariable: vizConfig.facetVariable
+            ? [vizConfig.facetVariable]
+            : [],
+          showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
+        },
+        computeConfig: computation.descriptor.configuration ?? undefined,
+      };
+
+      const response = await dataClient.getVisualizationData(
         computation.descriptor.type,
-        params as ScatterplotRequestParams
+        visualization.descriptor.type,
+        params,
+        ScatterplotResponse
       );
 
       const showMissingOverlay =
@@ -425,27 +457,30 @@ function ScatterplotViz(props: VisualizationProps) {
         overlayVariable,
         showMissingFacet,
         facetVocabulary,
-        facetVariable
+        facetVariable,
+        // pass computation
+        computation
       );
     }, [
-      studyId,
-      filters,
-      dataClient,
-      xAxisVariable,
-      yAxisVariable,
-      overlayVariable,
-      facetVariable,
-      // simply using vizConfig causes issue with onCheckedLegendItemsChange
-      // it is because vizConfig also contains vizConfig.checkedLegendItems
       vizConfig.xAxisVariable,
       vizConfig.yAxisVariable,
       vizConfig.overlayVariable,
       vizConfig.facetVariable,
       vizConfig.valueSpecConfig,
       vizConfig.showMissingness,
+      xAxisVariable,
+      computation.descriptor.configuration,
       computation.descriptor.type,
-      visualization.descriptor.type,
+      yAxisVariable,
       outputEntity,
+      overlayVariable,
+      facetVariable,
+      studyId,
+      filters,
+      dataClient,
+      visualization.descriptor.type,
+      overlayEntity,
+      facetEntity,
       filteredCounts,
       // // get data when changing independentAxisRange
       // vizConfig.independentAxisRange,
@@ -469,7 +504,9 @@ function ScatterplotViz(props: VisualizationProps) {
     data,
     vizConfig,
     updateVizConfig,
-    yAxisVariable
+    yAxisVariable,
+    // pass computedVariableMetadata
+    data?.value?.computedVariableMetadata
   );
 
   const { url } = useRouteMatch();
@@ -655,7 +692,12 @@ function ScatterplotViz(props: VisualizationProps) {
                   dataItem.name?.includes('No data,'))
                   ? '#A6A6A6'
                   : // if there is no overlay variable, then marker colors should be the same for Data, Smoothed mean, 95% CI, and Best fit
-                  vizConfig.overlayVariable != null
+                  // with another apps like alphadiv, abundance, etc., this condition needs to be changed: check with data more
+                  ((computation.descriptor.type === 'pass' ||
+                      computation.descriptor.type === 'alphadiv' ||
+                      computation.descriptor.type === 'xyrelationships') &&
+                      vizConfig.overlayVariable != null) || // pass-through & alphadiv & // X-Y relationships
+                    computation.descriptor.type === 'abundance' // abundance
                   ? dataItem.name != null
                     ? legendLabelColor
                         ?.map((legend) => {
@@ -704,6 +746,7 @@ function ScatterplotViz(props: VisualizationProps) {
     vizConfig.overlayVariable,
     vizConfig.showMissingness,
     vizConfig.valueSpecConfig,
+    computation.descriptor.type,
   ]);
 
   // set checkedLegendItems
@@ -723,6 +766,31 @@ function ScatterplotViz(props: VisualizationProps) {
         independentAxisRange: undefined,
       };
   }, [xAxisVariable, defaultIndependentRange]);
+
+  // alphadiv abundance: legend title for abundance?
+  const legendTitle = useMemo(
+    () =>
+      computation.descriptor.configuration != null &&
+      computation.descriptor.type === 'abundance'
+        ? findCollectionVariableEntityAndVariable(
+            entities,
+            (computation.descriptor.configuration as any).collectionVariable
+          )
+        : undefined,
+    [entities, computation]
+  );
+
+  const dependentAxisLabel =
+    computation.descriptor.configuration != null
+      ? computation.descriptor.type === 'alphadiv'
+        ? // considering computedVariableMetadata.displayName for alphadiv
+          data?.value?.computedVariableMetadata?.displayName != null
+          ? data?.value?.computedVariableMetadata?.displayName[0]
+          : computation.descriptor.type
+        : computation.descriptor.type === 'abundance'
+        ? 'Relative Abundance'
+        : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'
+      : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis';
 
   // dataWithoutSmoothedMean returns array of data that does not have smoothed mean
   // Thus, if dataWithoutSmoothedMean.length > 0, then there is at least one data without smoothed mean
@@ -754,10 +822,9 @@ function ScatterplotViz(props: VisualizationProps) {
       spacingOptions={
         !isFaceted(data.value?.dataSetProcess) ? plotSpacingOptions : undefined
       }
-      // title={'Scatter plot'}
       displayLegend={false}
       independentAxisLabel={variableDisplayWithUnit(xAxisVariable) ?? 'X-axis'}
-      dependentAxisLabel={variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'}
+      dependentAxisLabel={dependentAxisLabel}
       // set valueSpec as Raw when yAxisVariable = date
       valueSpec={
         yAxisVariable?.type === 'date' ? 'Raw' : vizConfig.valueSpecConfig
@@ -781,12 +848,19 @@ function ScatterplotViz(props: VisualizationProps) {
           ? 'number'
           : 'date'
       }
+      // alphadiv and abundance: simply setting yAxisVariable == null would work
       dependentValueType={
-        yAxisVariable == null || NumberVariable.is(yAxisVariable)
+        NumberVariable.is(yAxisVariable) || yAxisVariable == null
           ? 'number'
           : 'date'
       }
-      legendTitle={variableDisplayWithUnit(overlayVariable)}
+      // alphadiv abundance: legend title for abundance?
+      legendTitle={
+        computation.descriptor.configuration != null &&
+        computation.descriptor.type === 'abundance'
+          ? legendTitle?.variable.displayName
+          : variableDisplayWithUnit(overlayVariable)
+      }
       // pass checked state of legend checkbox to PlotlyPlot
       checkedLegendItems={checkedLegendItems}
       // for vizconfig.checkedLegendItems
@@ -810,11 +884,23 @@ function ScatterplotViz(props: VisualizationProps) {
     <PlotLegend
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
-      legendTitle={variableDisplayWithUnit(overlayVariable)}
+      // alphadiv abundance: legend title for abundance?
+      legendTitle={
+        computation.descriptor.configuration != null &&
+        computation.descriptor.type === 'abundance'
+          ? legendTitle?.variable.displayName
+          : variableDisplayWithUnit(overlayVariable)
+      }
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
-      // add a condition to show legend even for single overlay data and check legendItems exist
+      // add a condition to show legend even for single overlay data
       showOverlayLegend={
-        vizConfig.overlayVariable != null && legendItems.length > 0
+        ((computation?.descriptor.type === 'pass' ||
+          computation?.descriptor.type === 'alphadiv' ||
+          computation?.descriptor.type === 'xyrelationships') &&
+          vizConfig.overlayVariable != null &&
+          legendItems.length > 0) || // pass-through & alphadiv & X-Y relationships
+        (computation?.descriptor.type === 'abundance' &&
+          legendItems.length === 1) // show legend for single overlay
       }
     />
   );
@@ -886,6 +972,7 @@ function ScatterplotViz(props: VisualizationProps) {
     </>
   );
 
+  // alphadiv abundance: y-axis and overlayVariable
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -900,12 +987,20 @@ function ScatterplotViz(props: VisualizationProps) {
               name: 'yAxisVariable',
               label: 'Y-axis',
               role: 'axis',
+              readonlyValue: computation.descriptor.configuration
+                ? dependentAxisLabel
+                : undefined,
             },
-            {
-              name: 'overlayVariable',
-              label: 'Overlay',
-              role: 'stratification',
-            },
+            ...(computation.descriptor.configuration != null &&
+            computation.descriptor.type === 'abundance'
+              ? []
+              : [
+                  {
+                    name: 'overlayVariable',
+                    label: 'Overlay',
+                    role: 'stratification',
+                  } as const,
+                ]),
             {
               name: 'facetVariable',
               label: 'Facet',
@@ -1387,7 +1482,8 @@ export function scatterplotResponseToData(
   overlayVariable?: Variable,
   showMissingFacet: boolean = false,
   facetVocabulary: string[] = [],
-  facetVariable?: Variable
+  facetVariable?: Variable,
+  computation?: Computation
 ): ScatterPlotDataWithCoverage {
   const modeValue = 'markers';
 
@@ -1424,7 +1520,9 @@ export function scatterplotResponseToData(
       hasMissingData,
       overlayVariable,
       // pass facetVariable to determine either scatter or scattergl
-      facetVariable
+      facetVariable,
+      // pass computation here to add conditions for apps
+      computation
     );
 
     return {
@@ -1461,53 +1559,10 @@ export function scatterplotResponseToData(
     completeCases: response.completeCasesTable,
     completeCasesAllVars: response.scatterplot.config.completeCasesAllVars,
     completeCasesAxesVars: response.scatterplot.config.completeCasesAxesVars,
+    // config.computedVariableMetadata should also be returned
+    computedVariableMetadata:
+      response.scatterplot.config.computedVariableMetadata,
   } as ScatterPlotDataWithCoverage;
-}
-
-// add an extended type including dataElementDependencyOrder
-type getRequestParamsProps = ScatterplotRequestParams & { vizType?: string };
-
-function getRequestParams(
-  studyId: string,
-  filters: Filter[],
-  vizConfig: ScatterplotConfig,
-  outputEntity?: StudyEntity,
-  vizType?: string
-): getRequestParamsProps {
-  const {
-    xAxisVariable,
-    yAxisVariable,
-    overlayVariable,
-    facetVariable,
-    valueSpecConfig,
-    showMissingness,
-  } = vizConfig;
-
-  // valueSpec
-  let valueSpecValue = 'raw';
-  if (valueSpecConfig === 'Smoothed mean with raw') {
-    valueSpecValue = 'smoothedMeanWithRaw';
-  } else if (valueSpecConfig === 'Best fit line with raw') {
-    valueSpecValue = 'bestFitLineWithRaw';
-  }
-
-  // scatterplot
-  return {
-    studyId,
-    filters,
-    config: {
-      // add outputEntityId
-      outputEntityId: outputEntity?.id,
-      // ScatterPlotControls
-      valueSpec: valueSpecValue,
-      xAxisVariable: xAxisVariable,
-      yAxisVariable: yAxisVariable,
-      overlayVariable: overlayVariable,
-      facetVariable: facetVariable ? [facetVariable] : [],
-      showMissingness: showMissingness ? 'TRUE' : 'FALSE',
-      maxAllowedDataPoints: MAXALLOWEDDATAPOINTS,
-    },
-  } as ScatterplotRequestParams;
 }
 
 // making plotly input data
@@ -1523,7 +1578,8 @@ function processInputData<T extends number | string>(
   hasMissingData: boolean,
   overlayVariable?: Variable,
   // pass facetVariable to determine either scatter or scattergl
-  facetVariable?: Variable
+  facetVariable?: Variable,
+  computation?: Computation
 ) {
   // set variables for x- and yaxis ranges: no default values are set
   let yMin: number | string | undefined;
@@ -1841,7 +1897,14 @@ function processInputData<T extends number | string>(
         r2: el.r2,
         // display R-square value at legend for no overlay and facet variable
         name:
-          overlayVariable == null && facetVariable == null
+          // revisit this overlayVariable == null should be conditional: may not work properly
+          (((computation?.descriptor.type === 'pass' ||
+            computation?.descriptor.type === 'alphadiv' ||
+            computation?.descriptor.type === 'xyrelationships') &&
+            overlayVariable == null) || // pass-through & alphadiv & // X-Y relationships
+            (computation?.descriptor.type === 'abundance' &&
+              responseScatterplotData.length === 1)) && // abundance & single data case (revisit)
+          facetVariable == null
             ? 'Best fit, R² = ' + el.r2
             : el.overlayVariableDetails
             ? fixLabelForNumberVariables(
