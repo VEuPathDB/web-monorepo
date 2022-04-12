@@ -500,7 +500,9 @@ function MapViz(props: VisualizationProps) {
 
         // TO DO: find out if MarkerProps.id is obsolete
         const MarkerComponent =
-          vizConfig.markerType === 'pie' ? DonutMarker : ChartMarker;
+          vizConfig.markerType == null || vizConfig.markerType === 'pie'
+            ? DonutMarker
+            : ChartMarker;
         return (
           <MarkerComponent
             id={geoAggregateValue}
@@ -580,9 +582,9 @@ function MapViz(props: VisualizationProps) {
         showMouseToolbar={true}
       />
       <RadioButtonGroup
-        label="Marker style"
         selectedOption={vizConfig.markerType || 'pie'}
         options={['count', 'proportion', 'pie']}
+        optionLabels={['Bar plot: count', 'Bar plot: proportion', 'Pie plot']}
         onOptionSelected={onMarkerTypeChange}
       />
     </>
