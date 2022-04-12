@@ -1,6 +1,6 @@
 import React from 'react';
 import { BoundsViewport, Bounds } from '../../map/Types';
-import { allColorsHex, chartMarkerColorsHex } from '../../map/config/map.json';
+import { allColorsHex, chartMarkerColorsHex } from '../../map/config/map';
 import { leafletZoomLevelToGeohashLevel } from '../../map/utils/leaflet-geohash';
 import DonutMarker, { DonutMarkerProps } from '../../map/DonutMarker';
 import ChartMarker from '../../map/ChartMarker';
