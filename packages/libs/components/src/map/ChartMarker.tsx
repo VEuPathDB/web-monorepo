@@ -240,7 +240,6 @@ export default function ChartMarker(props: ChartMarkerProps) {
         ],
       }}
       orientation="vertical"
-      barLayout="stack"
       containerStyles={{
         width: plotSize + 'px',
         height: plotSize + 'px',
@@ -259,6 +258,7 @@ export default function ChartMarker(props: ChartMarkerProps) {
       // dependentAxisRange is an object with {min, max} (NumberRange)
       dependentAxisRange={props.dependentAxisRange ?? undefined}
       showValues={true}
+      showIndependentAxisTickLabel={false}
     />
   );
 
