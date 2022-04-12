@@ -1136,10 +1136,10 @@
   resolved "https://registry.yarnpkg.com/@types/warning/-/warning-3.0.0.tgz#0d2501268ad8f9962b740d387c4654f5f8e23e52"
   integrity sha1-DSUBJorY+ZYrdA04fEZU9fjiPlI=
 
-"@veupathdb/components@^0.13.0":
-  version "0.13.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.13.0.tgz#5c43164a937fcfbba67f4d32a2be88ee21edfafa"
-  integrity sha512-hS+TP3zVzba/BJUZS88Fa8o932IHo40tRo4kkhfmXhpJwaB6/mS/l4VcVYOicUY6cM4JQCdl72BVXCntj6IxkA==
+"@veupathdb/components@^0.14.4":
+  version "0.14.4"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.14.4.tgz#cdb293c265487182878f9757935845cf476332d4"
+  integrity sha512-Rayyxbv2qDJvahD9VX1SBvk1z2M79SCP/B71GDTAYHF9OSd3bV/MCsnVKPbSEbmQCDEonn+klKZ5trMPeVF+9A==
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
@@ -1179,10 +1179,10 @@
     react-responsive-modal "^6.2.0"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-2.0.0.tgz#c703a441e5493a4349ad9e26282a37eb379c510c"
-  integrity sha512-gCz3CCp2/KNJ1iZXhDMyJF97UxXF1cwitetglLnjJWag6SPYOlghBMiPgN0tVVTh+TW1KSXvmo89y0bYoxF4WA==
+"@veupathdb/eda@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.0.0.tgz#fb37d1013da1cc77cd431277ab9302bce460ef56"
+  integrity sha512-yD0ZRGAGuoqGDQLD05PA7/hQav5+fPoj6FV/60jhVrmzcAA/eXThEe6AonG4de4nZGT03DDyG6Ro1XcojndRlQ==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -1204,19 +1204,19 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/study-data-access@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.3.0.tgz#c9276947f5ec4387daee2db465bdb1b61c0fbbd0"
-  integrity sha512-fXr9BdwmMkgho3aDD7D+j9gXY1hzZPjajiY8JkmPv+/rPjkU3cdD6aethF8bPZyV9IQrAQRInXivh2i481R17Q==
+"@veupathdb/study-data-access@^0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.3.1.tgz#319d2c4bcc6e101bc48647b7a2011b1c0d346de3"
+  integrity sha512-buohdGAVNDMJa5S2p+Ob4dn6GeKBO13UAsyJTSztcAH2jfws/+dVGTbPj5TFvmt4PrT4A4CpktyYkYnLtv6KZg==
   dependencies:
     fp-ts "^2.11.5"
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/wdk-client@^0.6.1":
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.6.1.tgz#66cba8329ad2aa84b8d7d18f6cfd3e74f23433b5"
-  integrity sha512-eTKi18NnT4opHp12lPLvUIF+/e1bKP5Q0R1KcGUE38r4RLWmRiCQrccEOgvWcXDL7QBj62p7a270n0zkUI520g==
+"@veupathdb/wdk-client@^0.6.7":
+  version "0.6.7"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.6.7.tgz#2bf512c396c3ff1547195231e01864e80abbc9a1"
+  integrity sha512-YS1Tz0Uoem+ew8ngHtZJQspCAy2ErTgv8yLgvJ2oPpepO53xSeAIqPx0FUGVrUCQaaSwsm0w3ONIy4C+cQ5k9g==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
@@ -1238,10 +1238,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.4.1":
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.4.1.tgz#c4a31282d6ab39818eac255f8d8c837ac978e412"
-  integrity sha512-9fnDJUWT8EOSZmaZLU8Pqe/7BB5rT4nkEtrrx4Vto4seRsz8VAirQ1gKmYXQyW5i2A2A8A4/xauPXQGHyISXJw==
+"@veupathdb/web-common@^0.4.4":
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.4.4.tgz#0fbe6333c8b4bd85a9144c2fa147017a0cf70f3f"
+  integrity sha512-n3SJiCQFE4sZgAZ/f04tLgCxQ4rXEL5sfzaXWmJTJuyuTrMtm1cJedxudrrvdss9Iu1nrvyygV+T2pUAc84yZA==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
@@ -4507,7 +4507,7 @@ react-responsive-modal@^6.2.0:
     body-scroll-lock "^3.1.5"
     classnames "^2.2.6"
 
-react-router-dom@5:
+react-router-dom@^5.3.0:
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-5.3.0.tgz#da1bfb535a0e89a712a93b97dd76f47ad1f32363"
   integrity sha512-ObVBLjUZsphUUMVycibxgMdh5jJ1e3o+KpAZBVeHcNQZ4W+uUGGWsokurzlF4YOldQYRQL4y6yFRWM4m3svmuQ==
