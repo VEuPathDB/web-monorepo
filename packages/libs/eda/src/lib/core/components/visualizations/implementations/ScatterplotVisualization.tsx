@@ -706,7 +706,7 @@ function ScatterplotViz(props: VisualizationProps) {
     vizConfig.valueSpecConfig,
   ]);
 
-  // set checkedLegendItems: not working well with plot options
+  // set checkedLegendItems
   const checkedLegendItems = useCheckedLegendItemsStatus(
     legendItems,
     vizConfig.checkedLegendItems
@@ -723,6 +723,25 @@ function ScatterplotViz(props: VisualizationProps) {
         independentAxisRange: undefined,
       };
   }, [xAxisVariable, defaultIndependentRange]);
+
+  // dataWithoutSmoothedMean returns array of data that does not have smoothed mean
+  // Thus, if dataWithoutSmoothedMean.length > 0, then there is at least one data without smoothed mean
+  const dataWithoutSmoothedMean = useMemo(
+    () =>
+      !isFaceted(data?.value?.dataSetProcess)
+        ? data?.value?.dataSetProcess.series.filter(
+            (data) => data.hasSmoothedMeanData === false
+          )
+        : data?.value?.dataSetProcess.facets
+            .map((facet) => facet.data)
+            .filter((data) => data != null)
+            .flatMap((data) =>
+              data?.series.filter(
+                (series) => series.hasSmoothedMeanData === false
+              )
+            ),
+    [data]
+  );
 
   const plotNode = (
     <ScatterplotWithControls
@@ -935,6 +954,31 @@ function ScatterplotViz(props: VisualizationProps) {
             ) : undefined,
         ]}
       />
+
+      {/* show message if no smoothed mean exists */}
+      {!data.pending &&
+        vizConfig.valueSpecConfig === 'Smoothed mean with raw' &&
+        dataWithoutSmoothedMean != null &&
+        dataWithoutSmoothedMean?.length > 0 && (
+          <div
+            style={{
+              fontSize: '1.2em',
+              padding: '1em',
+              background: 'rgb(230, 255, 230) none repeat scroll 0% 0%',
+              borderRadius: '.5em',
+              margin: '.5em 0',
+              color: '#333',
+              border: '1px solid #d9cdcd',
+              display: 'flex',
+            }}
+          >
+            One or more smoothing for some data are not available: Possibly the
+            sample is too small or too highly skewed. <br />
+            Relevant smoothed mean and confidence interval items in the legend
+            are disabled and marked as lightly grayed checkboxes.
+          </div>
+        )}
+
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
       <PlotLayout
         isFaceted={isFaceted(data.value?.dataSetProcess)}
@@ -1701,6 +1745,9 @@ function processInputData<T extends number | string>(
           width: 2,
         },
         type: scatterPlotType,
+        // check whether smoothed mean exists
+        hasSmoothedMeanData:
+          xIntervalLineValue.length > 0 && yIntervalLineValue.length > 0,
       });
 
       // make Confidence Interval (CI) or Bounds (filled area)
