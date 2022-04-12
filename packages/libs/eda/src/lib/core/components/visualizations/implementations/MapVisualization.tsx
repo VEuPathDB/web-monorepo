@@ -589,16 +589,6 @@ function MapViz(props: VisualizationProps) {
     [updateVizConfig]
   );
 
-  const availableOutputEntities = useMemo(() => {
-    if (geoConfig == null) {
-      return entities;
-    } else {
-      return Array.from(
-        preorder(geoConfig.entity, (entity) => entity.children || [])
-      );
-    }
-  }, [entities, geoConfig]);
-
   /**
    * create custom legend data
    */
@@ -687,20 +677,6 @@ function MapViz(props: VisualizationProps) {
             </Select>
           </FormControl>
         )}
-        {/* <FormControl style={{ minWidth: '200px' }} variant="filled">
-          <InputLabel>Show counts of</InputLabel>
-          <Select
-            value={outputEntity?.id ?? ''}
-            onChange={handleOutputEntityChange}
-            disabled={vizConfig.xAxisVariable != null}
-          >
-            {availableOutputEntities.map((entity) => (
-              <MenuItem key={entity.id} value={entity.id}>
-                {entity.displayNamePlural ?? entity.displayName}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl> */}
         <InputVariables
           inputs={[
             {
