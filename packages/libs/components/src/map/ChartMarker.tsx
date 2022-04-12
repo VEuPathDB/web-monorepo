@@ -73,6 +73,11 @@ export default function ChartMarker(props: ChartMarkerProps) {
     .reduce((a, c) => {
       return a + c;
     }); // summation of fullStat.value per marker icon
+  const sumValuesString =
+    sumValues <= 0.99 && sumValues > 0
+      ? sumValues.toFixed(2)
+      : sumValues.toFixed(0);
+
   var maxValues: number = Math.max(...fullStat.map((o) => o.value)); // max of fullStat.value per marker icon
   // for local max, need to check the case wherer all values are zeros that lead to maxValues equals to 0 -> "divided by 0" can happen
   if (maxValues == 0) {
@@ -194,7 +199,7 @@ export default function ChartMarker(props: ChartMarkerProps) {
     '<text x="50%" y=' +
     (size - 2 + borderWidth + 7) +
     ' dominant-baseline="middle" text-anchor="middle" opacity="1">' +
-    sumValues +
+    sumValuesString +
     '</text>';
 
   // check isAtomic: draw pushpin if true
@@ -254,7 +259,7 @@ export default function ChartMarker(props: ChartMarkerProps) {
       displayLibraryControls={false}
       interactive={false}
       dependentAxisLabel=""
-      independentAxisLabel={`Total: ${sumValues.toString()}`}
+      independentAxisLabel={`Total: ${sumValuesString}`}
       // dependentAxisRange is an object with {min, max} (NumberRange)
       dependentAxisRange={props.dependentAxisRange ?? undefined}
       showValues={true}
