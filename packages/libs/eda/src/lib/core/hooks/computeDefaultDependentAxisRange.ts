@@ -39,20 +39,18 @@ export function useDefaultDependentAxisRange(
     | undefined
   >,
   vizConfig: HistogramConfig | BarplotConfig | BoxplotConfig,
-  // HistogramConfig contains most options
-  updateVizConfig: (newConfig: Partial<HistogramConfig>) => void,
   plotType?: 'Histogram' | 'Barplot' | 'Boxplot' | undefined,
   yAxisVariable?: Variable
 ): defaultDependentAxisRangeProps {
   // find max of stacked array, especially with overlayVariable
   const defaultDependentAxisMinMax = useMemo(() => {
-    if (plotType == null || plotType == 'Histogram')
+    if (plotType == null || plotType === 'Histogram')
       return histogramDefaultDependentAxisMinMax(
         data as PromiseHookState<
           HistogramDataWithCoverageStatistics | undefined
         >
       );
-    else if (plotType == 'Barplot')
+    else if (plotType === 'Barplot')
       // barplot only computes max value
       return {
         min: 0,
@@ -66,10 +64,14 @@ export function useDefaultDependentAxisRange(
         data as PromiseHookState<BoxplotDataWithCoverage | undefined>,
         yAxisVariable
       );
-  }, [data]);
+  }, [data, plotType, yAxisVariable]);
 
   // set useMemo to avoid infinite loop
   // set default dependent axis range for better displaying tick labels in log-scale
+  const valueSpec = (vizConfig as HistogramConfig | BarplotConfig).valueSpec;
+  const dependentAxisLogScale = (vizConfig as HistogramConfig | BarplotConfig)
+    .dependentAxisLogScale;
+
   const defaultDependentAxisRange = useMemo(() => {
     if (plotType === 'Histogram' || plotType === 'Barplot')
       return defaultDependentAxisMinMax?.min != null &&
@@ -77,11 +79,9 @@ export function useDefaultDependentAxisRange(
         ? {
             // set min as 0 (count, proportion) for non-logscale for histogram/barplot
             min:
-              (vizConfig as HistogramConfig | BarplotConfig).valueSpec ===
-              'count'
+              valueSpec === 'count'
                 ? 0
-                : (vizConfig as HistogramConfig | BarplotConfig)
-                    .dependentAxisLogScale
+                : dependentAxisLogScale
                 ? // determine min based on data for log-scale at proportion
                   // need to check defaultDependentAxisMinMax.min !== 0
                   defaultDependentAxisMinMax.min !== 0 &&
@@ -101,11 +101,7 @@ export function useDefaultDependentAxisRange(
             max: numberDecimalPoint(defaultDependentAxisMinMax.max * 1.05, 4),
           }
         : undefined;
-  }, [
-    defaultDependentAxisMinMax,
-    (vizConfig as HistogramConfig | BarplotConfig).valueSpec,
-    (vizConfig as HistogramConfig | BarplotConfig).dependentAxisLogScale,
-  ]);
+  }, [defaultDependentAxisMinMax, plotType, valueSpec, dependentAxisLogScale]);
 
   return defaultDependentAxisRange;
 }

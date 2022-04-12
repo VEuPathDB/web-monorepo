@@ -36,18 +36,7 @@ import { BirdsEyeView } from '../../BirdsEyeView';
 import { PlotLayout } from '../../layouts/PlotLayout';
 import PluginError from '../PluginError';
 
-import {
-  at,
-  groupBy,
-  mapValues,
-  size,
-  head,
-  map,
-  values,
-  max,
-  min,
-  keys,
-} from 'lodash';
+import { at, groupBy, mapValues, size, head, map, values, keys } from 'lodash';
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import {
@@ -364,7 +353,9 @@ function BoxplotViz(props: VisualizationProps) {
       xAxisVariable,
       yAxisVariable,
       overlayVariable,
+      overlayEntity,
       facetVariable,
+      facetEntity,
       // using vizConfig only causes issue with onCheckedLegendItemsChange
       vizConfig.xAxisVariable,
       vizConfig.yAxisVariable,
@@ -374,7 +365,6 @@ function BoxplotViz(props: VisualizationProps) {
       outputEntity,
       filteredCounts,
       computation.descriptor.type,
-      outputEntity?.id,
     ])
   );
 
@@ -388,7 +378,6 @@ function BoxplotViz(props: VisualizationProps) {
   const defaultDependentAxisRange = useDefaultDependentAxisRange(
     data,
     vizConfig,
-    updateVizConfig,
     'Boxplot',
     yAxisVariable
   );
@@ -657,7 +646,7 @@ function BoxplotWithControls({
     });
     // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
-  }, [updateVizConfig]);
+  }, [updateVizConfig, setTruncatedDependentAxisWarning]);
 
   // set truncation flags: will see if this is reusable with other application
   const {
@@ -682,7 +671,11 @@ function BoxplotWithControls({
         'Data may have been truncated by range selection, as indicated by the yellow shading'
       );
     }
-  }, [truncationConfigDependentAxisMin, truncationConfigDependentAxisMax]);
+  }, [
+    truncationConfigDependentAxisMin,
+    truncationConfigDependentAxisMax,
+    setTruncatedDependentAxisWarning,
+  ]);
 
   // send boxplotComponentProps with axisTruncationConfig
   const boxplotFacetProps = {

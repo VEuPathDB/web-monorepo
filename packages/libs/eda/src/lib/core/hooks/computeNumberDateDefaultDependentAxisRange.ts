@@ -1,9 +1,6 @@
 import { useMemo } from 'react';
 import { PromiseHookState } from './promise';
-import {
-  ScatterPlotDataWithCoverage,
-  ScatterplotConfig,
-} from '../components/visualizations/implementations/ScatterplotVisualization';
+import { ScatterPlotDataWithCoverage } from '../components/visualizations/implementations/ScatterplotVisualization';
 import { Variable } from '../types/study';
 // for scatter plot
 import { numberDateDefaultDependentAxisRange } from '../utils/default-dependent-axis-range';
@@ -18,8 +15,6 @@ import { isFaceted } from '@veupathdb/components/lib/types/guards';
 
 export function useDefaultDependentAxisRange(
   data: PromiseHookState<ScatterPlotDataWithCoverage | undefined>,
-  vizConfig: ScatterplotConfig,
-  updateVizConfig: (newConfig: Partial<ScatterplotConfig>) => void,
   yAxisVariable?: Variable
 ): NumberOrDateRange | undefined {
   // find max of stacked array, especially with overlayVariable
@@ -59,7 +54,7 @@ export function useDefaultDependentAxisRange(
     } else {
       return undefined;
     }
-  }, [data, yAxisVariable, vizConfig.valueSpecConfig]);
+  }, [data, yAxisVariable]);
 
   return defaultDependentAxisRange;
 }

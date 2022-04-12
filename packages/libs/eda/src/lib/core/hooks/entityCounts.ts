@@ -40,6 +40,6 @@ export function useEntityCounts(filters: Filter[] = []) {
         counts[entity.id] = count;
       }
       return counts;
-    }, [rootEntity, isStub, subsettingClient, id, filtersJSON])
+    }, [rootEntity, isStub, subsettingClient, id, filtersJSON]) // do NOT add `filters` here
   );
 }

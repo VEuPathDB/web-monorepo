@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { DateVariable, NumberVariable, Variable } from '../types/study';
 import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
-import { HistogramConfig } from '../components/visualizations/implementations/HistogramVisualization';
 // adding margin for scatter plot range
 import { axisRangeMargin } from '../utils/axis-range-margin';
 
@@ -55,8 +54,7 @@ export function defaultIndependentAxisRangeFunction(
 
 export function useDefaultIndependentAxisRange(
   variable: Variable | undefined,
-  plotName: string,
-  updateVizConfig: (newConfig: Partial<HistogramConfig>) => void
+  plotName: string
 ): NumberOrDateRange | undefined {
   // consider both histogram and scatterplot at once
   const defaultIndependentAxisRange:

@@ -434,7 +434,9 @@ function ScatterplotViz(props: VisualizationProps) {
       xAxisVariable,
       yAxisVariable,
       overlayVariable,
+      overlayEntity,
       facetVariable,
+      facetEntity,
       // simply using vizConfig causes issue with onCheckedLegendItemsChange
       // it is because vizConfig also contains vizConfig.checkedLegendItems
       vizConfig.xAxisVariable,
@@ -460,15 +462,12 @@ function ScatterplotViz(props: VisualizationProps) {
   // use hook
   const defaultIndependentRange = useDefaultIndependentAxisRange(
     xAxisVariable,
-    'scatterplot',
-    updateVizConfig
+    'scatterplot'
   );
 
   // use custom hook
   const defaultDependentAxisRange = useDefaultDependentAxisRange(
     data,
-    vizConfig,
-    updateVizConfig,
     yAxisVariable
   );
 
@@ -1047,7 +1046,7 @@ function ScatterplotWithControls({
     });
     // add reset for truncation message: including dependent axis warning as well
     setTruncatedIndependentAxisWarning('');
-  }, [defaultUIState.independentAxisRange, updateVizConfig]);
+  }, [updateVizConfig, setTruncatedIndependentAxisWarning]);
 
   const handleDependentAxisRangeChange = useCallback(
     (newRange?: NumberOrDateRange) => {
@@ -1075,7 +1074,7 @@ function ScatterplotWithControls({
     });
     // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
-  }, [updateVizConfig]);
+  }, [updateVizConfig, setTruncatedDependentAxisWarning]);
 
   // set truncation flags: will see if this is reusable with other application
   const {
@@ -1087,7 +1086,7 @@ function ScatterplotWithControls({
     () =>
       truncationConfig(defaultUIState, vizConfig, defaultDependentAxisRange),
     [
-      defaultUIState.independentAxisRange,
+      defaultUIState,
       vizConfig.xAxisVariable,
       vizConfig.independentAxisRange,
       vizConfig.dependentAxisRange,
@@ -1105,7 +1104,11 @@ function ScatterplotWithControls({
         'Data may have been truncated by range selection, as indicated by the yellow shading'
       );
     }
-  }, [truncationConfigIndependentAxisMin, truncationConfigIndependentAxisMax]);
+  }, [
+    truncationConfigIndependentAxisMin,
+    truncationConfigIndependentAxisMax,
+    setTruncatedIndependentAxisWarning,
+  ]);
 
   useEffect(() => {
     if (
@@ -1118,7 +1121,11 @@ function ScatterplotWithControls({
         'Data may have been truncated by range selection, as indicated by the yellow shading'
       );
     }
-  }, [truncationConfigDependentAxisMin, truncationConfigDependentAxisMax]);
+  }, [
+    truncationConfigDependentAxisMin,
+    truncationConfigDependentAxisMax,
+    setTruncatedDependentAxisWarning,
+  ]);
 
   // send histogramProps with additional props
   const scatterplotPlotProps = {

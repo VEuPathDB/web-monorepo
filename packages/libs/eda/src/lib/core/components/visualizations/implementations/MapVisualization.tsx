@@ -44,7 +44,7 @@ import {
 } from '../../../utils/visualization';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { OutputEntityTitle } from '../OutputEntityTitle';
-import { sumBy, values } from 'lodash';
+import { values } from 'lodash';
 import PluginError from '../PluginError';
 import { VariableDescriptor } from '../../../types/variable';
 import { InputVariables } from '../InputVariables';
@@ -163,7 +163,7 @@ function MapViz(props: VisualizationProps) {
     updateConfiguration
   );
 
-  if (geoConfigs.length == 1 && vizConfig.geoEntityId === undefined)
+  if (geoConfigs.length === 1 && vizConfig.geoEntityId === undefined)
     updateVizConfig({ geoEntityId: geoConfigs[0].entity.id });
 
   const handleViewportChanged: MapVEuMapProps['onViewportChanged'] = useCallback(
@@ -227,6 +227,7 @@ function MapViz(props: VisualizationProps) {
     vizConfig.outputEntityId,
     vizConfig.geoEntityId,
     vizConfig.xAxisVariable,
+    findEntityAndVariable,
   ]);
 
   // prepare some info that the map-markers and pieplot requests both need
@@ -358,8 +359,11 @@ function MapViz(props: VisualizationProps) {
       // because boundsZoomLevel does the same thing, but they can trigger two separate updates
       // (baseLayer doesn't matter either) - so we cherry pick properties of vizConfig
       vizConfig.geoEntityId,
-      vizConfig.outputEntityId,
       vizConfig.xAxisVariable,
+      geoAggregateVariable,
+      latitudeVariable,
+      longitudeVariable,
+      outputEntity,
       boundsZoomLevel,
       computation.descriptor.type,
       geoConfig,
@@ -369,7 +373,7 @@ function MapViz(props: VisualizationProps) {
   /**
    * Now we deal with the optional second request to pieplot
    */
-
+  const proportionMode = vizConfig.markerType === 'proportion';
   const pieplotData = usePromise<PieplotData | undefined>(
     useCallback(async () => {
       // check all required vizConfigs are provided
@@ -391,8 +395,7 @@ function MapViz(props: VisualizationProps) {
           xAxisVariable: vizConfig.xAxisVariable,
           facetVariable: [geoAggregateVariable],
           showMissingness: 'noVariables', // current back end 'showMissing' behaviour applies to facet variable
-          valueSpec:
-            vizConfig.markerType === 'proportion' ? 'proportion' : 'count',
+          valueSpec: proportionMode ? 'proportion' : 'count',
         },
       };
 
@@ -421,9 +424,11 @@ function MapViz(props: VisualizationProps) {
       filtersPlusBoundsFilter,
       dataClient,
       vizConfig.xAxisVariable,
-      vizConfig.markerType === 'proportion',
+      proportionMode,
       boundsZoomLevel,
       computation.descriptor.type,
+      geoAggregateVariable,
+      outputEntity,
     ])
   );
 
@@ -436,6 +441,16 @@ function MapViz(props: VisualizationProps) {
       xAxisVariable?.vocabulary,
       xAxisVariable
     );
+    const pieValueMax =
+      pieplotData.value != null
+        ? values(pieplotData.value) // it's a Record 'object' of Array<{ label, value }>
+            .flat() // flatten all the arrays into one
+            .reduce(
+              (accum, elem) => (elem.value > accum ? elem.value : accum),
+              0
+            ) // find max value
+        : 0;
+
     return basicMarkerData.value?.markerData.map(
       ({ geoAggregateValue, entityCount, bounds, position }) => {
         const donutData =
@@ -456,11 +471,20 @@ function MapViz(props: VisualizationProps) {
                 )
             : [];
 
+        // now reorder the data in vocabulary order, adding zeroes if necessary.
+        const reorderedData = vocabulary.map(
+          (vocabularyLabel) =>
+            donutData.find(({ label }) => label === vocabularyLabel) ?? {
+              label: vocabularyLabel,
+              value: 0,
+            }
+        );
+
         // provide the 'plain white' donut data if all legend items unchecked
         // or if there is no pieplot data
         const safeDonutData =
-          donutData.length > 0
-            ? donutData
+          reorderedData.length > 0
+            ? reorderedData
             : [
                 {
                   label: 'unknown',
@@ -468,6 +492,11 @@ function MapViz(props: VisualizationProps) {
                   color: 'white',
                 },
               ];
+
+        const yRange = {
+          min: 0,
+          max: vizConfig.markerType === 'count' ? pieValueMax : 1,
+        };
 
         // TO DO: find out if MarkerProps.id is obsolete
         const MarkerComponent =
@@ -480,6 +509,9 @@ function MapViz(props: VisualizationProps) {
             position={position}
             data={safeDonutData}
             duration={defaultAnimationDuration}
+            {...(vizConfig.markerType !== 'pie'
+              ? { dependentAxisRange: yRange }
+              : {})}
           />
         );
       }
@@ -489,6 +521,7 @@ function MapViz(props: VisualizationProps) {
     pieplotData.value,
     vizConfig.checkedLegendItems,
     vizConfig.markerType,
+    xAxisVariable,
   ]);
 
   const totalEntityCount = basicMarkerData.value?.completeCasesGeoVar;
@@ -562,14 +595,6 @@ function MapViz(props: VisualizationProps) {
           geoEntityId: event.target.value as string,
           mapCenterAndZoom: createDefaultConfig().mapCenterAndZoom,
         });
-    },
-    [updateVizConfig]
-  );
-
-  const handleOutputEntityChange = useCallback(
-    (event: React.ChangeEvent<{ value: unknown }>) => {
-      if (event != null)
-        updateVizConfig({ outputEntityId: event.target.value as string });
     },
     [updateVizConfig]
   );

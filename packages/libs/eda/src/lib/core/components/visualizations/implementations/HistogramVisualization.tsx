@@ -415,7 +415,9 @@ function HistogramViz(props: VisualizationProps) {
       computation.descriptor.type,
       xAxisVariable,
       overlayVariable,
+      overlayEntity,
       facetVariable,
+      facetEntity,
       valueType,
       // get data when changing independentAxisRange
       vizConfig.independentAxisRange,
@@ -425,15 +427,13 @@ function HistogramViz(props: VisualizationProps) {
   // use custom hook
   const defaultIndependentRange = useDefaultIndependentAxisRange(
     xAxisVariable,
-    'histogram',
-    updateVizConfig
+    'histogram'
   );
 
   // use custom hook
   const defaultDependentAxisRange = useDefaultDependentAxisRange(
     data,
     vizConfig,
-    updateVizConfig,
     'Histogram'
   );
 
@@ -770,8 +770,8 @@ function HistogramPlotWithControls({
   }, [
     defaultUIState.binWidth,
     defaultUIState.binWidthTimeUnit,
-    defaultUIState.independentAxisRange,
     updateVizConfig,
+    setTruncatedIndependentAxisWarning,
   ]);
 
   const handleDependentAxisRangeChange = useCallback(
@@ -790,7 +790,7 @@ function HistogramPlotWithControls({
     });
     // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
-  }, [updateVizConfig]);
+  }, [updateVizConfig, setTruncatedDependentAxisWarning]);
 
   // set truncation flags: will see if this is reusable with other application
   const {
@@ -802,8 +802,7 @@ function HistogramPlotWithControls({
     () =>
       truncationConfig(defaultUIState, vizConfig, defaultDependentAxisRange),
     [
-      defaultUIState.independentAxisRange,
-      vizConfig.xAxisVariable,
+      defaultUIState,
       vizConfig.independentAxisRange,
       vizConfig.dependentAxisRange,
       defaultDependentAxisRange,
@@ -820,7 +819,11 @@ function HistogramPlotWithControls({
         'Data may have been truncated by range selection, as indicated by the yellow shading'
       );
     }
-  }, [truncationConfigIndependentAxisMin, truncationConfigIndependentAxisMax]);
+  }, [
+    truncationConfigIndependentAxisMin,
+    truncationConfigIndependentAxisMax,
+    setTruncatedIndependentAxisWarning,
+  ]);
 
   useEffect(() => {
     if (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) {
@@ -828,7 +831,11 @@ function HistogramPlotWithControls({
         'Data may have been truncated by range selection, as indicated by the yellow shading'
       );
     }
-  }, [truncationConfigDependentAxisMin, truncationConfigDependentAxisMax]);
+  }, [
+    truncationConfigDependentAxisMin,
+    truncationConfigDependentAxisMax,
+    setTruncatedDependentAxisWarning,
+  ]);
 
   // send histogramProps with additional props
   const histogramPlotProps = {
