@@ -43,7 +43,7 @@ export default function LabelledGroup(props: LabelledGroupProps) {
         {label && (
           <Typography
             variant="button"
-            style={{ color: '#000000', fontWeight: 'bold' }}
+            style={{ color: '#000000', fontWeight: 'bold', fontSize: '1.2em' }}
           >
             {label}
           </Typography>
