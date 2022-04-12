@@ -533,6 +533,16 @@ export interface MapMarkersRequestParams {
     geoAggregateVariable: VariableDescriptor;
     latitudeVariable: VariableDescriptor;
     longitudeVariable: VariableDescriptor;
+    viewport: {
+      latitude: {
+        xMin: number;
+        xMax: number;
+      };
+      longitude: {
+        left: number;
+        right: number;
+      };
+    };
   };
 }
 
@@ -550,6 +560,9 @@ export const MapMarkersResponse = type({
       maxLon: number,
     })
   ),
+  config: type({
+    completeCasesGeoVar: number,
+  }),
 });
 
 export interface PieplotRequestParams {
@@ -557,16 +570,21 @@ export interface PieplotRequestParams {
   filters: Filter[];
   config: {
     outputEntityId: string;
-    showMissingness: 'TRUE' | 'FALSE';
+    showMissingness:
+      | 'TRUE'
+      | 'FALSE'
+      | 'noVariables'
+      | 'allVariables'
+      | 'strataVariables';
     xAxisVariable: VariableDescriptor;
     facetVariable?: ZeroToTwoVariables;
+    valueSpec: 'count' | 'proportion';
   };
 }
 
 export type PieplotResponse = TypeOf<typeof PieplotResponse>;
 export const PieplotResponse = type({
-  barplot: type({
-    // NOTE THE TYPO <<<<<<<<<<<<<<<<
+  pieplot: type({
     data: array(
       intersection([
         type({
