@@ -44,7 +44,7 @@ export function numberDateDefaultDependentAxisRange(
             max:
               yMinMaxRange != null
                 ? Math.max(defaults.rangeMax, yMinMaxRange.max as number)
-                : variable.rangeMax,
+                : defaults.rangeMax,
           };
     } else if (variable.type === 'date') {
       const defaults = variable.distributionDefaults;
