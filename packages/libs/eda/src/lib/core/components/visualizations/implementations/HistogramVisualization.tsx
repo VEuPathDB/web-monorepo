@@ -905,10 +905,11 @@ function getRequestParams(
 ): HistogramRequestParams {
   const {
     binWidth = NumberVariable.is(variable) || DateVariable.is(variable)
-      ? variable.binWidthOverride ?? variable.binWidth
+      ? variable.distributionDefaults.binWidthOverride ??
+        variable.distributionDefaults.binWidth
       : undefined,
     binWidthTimeUnit = variable?.type === 'date'
-      ? variable.binUnits
+      ? variable.distributionDefaults.binUnits
       : undefined,
     valueSpec,
     overlayVariable,

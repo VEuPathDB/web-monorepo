@@ -12,50 +12,52 @@ export function defaultDependentAxisRange(
   if (variable != null && plotName === 'scatterplot') {
     // this should check integer as well
     if (variable.type === 'number' || variable.type === 'integer') {
-      return variable.displayRangeMin != null &&
-        variable.displayRangeMax != null
+      const defaults = variable.distributionDefaults;
+      return defaults.displayRangeMin != null &&
+        defaults.displayRangeMax != null
         ? {
             min:
               yMinMaxRange != null
                 ? Math.min(
-                    variable.displayRangeMin,
-                    variable.rangeMin,
+                    defaults.displayRangeMin,
+                    defaults.rangeMin,
                     yMinMaxRange.min as number
                   )
-                : Math.min(variable.displayRangeMin, variable.rangeMin),
+                : Math.min(defaults.displayRangeMin, defaults.rangeMin),
             max:
               yMinMaxRange != null
                 ? Math.max(
-                    variable.displayRangeMax,
-                    variable.rangeMax,
+                    defaults.displayRangeMax,
+                    defaults.rangeMax,
                     yMinMaxRange.max as number
                   )
-                : Math.max(variable.displayRangeMax, variable.rangeMax),
+                : Math.max(defaults.displayRangeMax, defaults.rangeMax),
           }
         : {
             min:
               yMinMaxRange != null
-                ? Math.min(variable.rangeMin, yMinMaxRange.min as number)
-                : variable.rangeMin,
+                ? Math.min(defaults.rangeMin, yMinMaxRange.min as number)
+                : defaults.rangeMin,
             max:
               yMinMaxRange != null
-                ? Math.min(variable.rangeMax, yMinMaxRange.max as number)
-                : variable.rangeMax,
+                ? Math.min(defaults.rangeMax, yMinMaxRange.max as number)
+                : defaults.rangeMax,
           };
     } else if (variable.type === 'date') {
-      return variable.displayRangeMin != null &&
-        variable.displayRangeMax != null
+      const defaults = variable.distributionDefaults;
+      return defaults.displayRangeMin != null &&
+        defaults.displayRangeMax != null
         ? {
             min:
               yMinMaxRange != null
                 ? [
-                    variable.displayRangeMin,
-                    variable.rangeMin,
+                    defaults.displayRangeMin,
+                    defaults.rangeMin,
                     yMinMaxRange.min as string,
                   ].reduce(function (a, b) {
                     return a < b ? a : b;
                   }) + 'T00:00:00Z'
-                : [variable.displayRangeMin, variable.rangeMin].reduce(
+                : [defaults.displayRangeMin, defaults.rangeMin].reduce(
                     function (a, b) {
                       return a < b ? a : b;
                     }
@@ -63,13 +65,13 @@ export function defaultDependentAxisRange(
             max:
               yMinMaxRange != null
                 ? [
-                    variable.displayRangeMax,
-                    variable.rangeMax,
+                    defaults.displayRangeMax,
+                    defaults.rangeMax,
                     yMinMaxRange.max as string,
                   ].reduce(function (a, b) {
                     return a > b ? a : b;
                   }) + 'T00:00:00Z'
-                : [variable.displayRangeMax, variable.rangeMax].reduce(
+                : [defaults.displayRangeMax, defaults.rangeMax].reduce(
                     function (a, b) {
                       return a > b ? a : b;
                     }
@@ -78,20 +80,20 @@ export function defaultDependentAxisRange(
         : {
             min:
               yMinMaxRange != null
-                ? [variable.rangeMin, yMinMaxRange.min as string].reduce(
+                ? [defaults.rangeMin, yMinMaxRange.min as string].reduce(
                     function (a, b) {
                       return a < b ? a : b;
                     }
                   ) + 'T00:00:00Z'
-                : variable.rangeMin + 'T00:00:00Z',
+                : defaults.rangeMin + 'T00:00:00Z',
             max:
               yMinMaxRange != null
-                ? [variable.rangeMax, yMinMaxRange.max as string].reduce(
+                ? [defaults.rangeMax, yMinMaxRange.max as string].reduce(
                     function (a, b) {
                       return a > b ? a : b;
                     }
                   ) + 'T00:00:00Z'
-                : variable.rangeMax + 'T00:00:00Z',
+                : defaults.rangeMax + 'T00:00:00Z',
           };
     }
   } else return undefined;
