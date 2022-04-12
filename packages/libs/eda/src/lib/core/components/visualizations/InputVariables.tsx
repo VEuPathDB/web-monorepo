@@ -17,6 +17,10 @@ import { useInputStyles } from './inputStyles';
 export interface InputSpec {
   name: string;
   label: string;
+  /** Provide a string here to indicate that the input is readonly.
+   * The string will be displayed instead of a variable selector.
+   */
+  readonlyValue?: string;
   role?: 'axis' | 'stratification';
 }
 
@@ -232,25 +236,33 @@ export function InputVariables(props: Props) {
                 .filter((input) => input.role === inputRole)
                 .map((input) => (
                   <div key={input.name} className={classes.input}>
-                    <div className={classes.label}>{input.label}</div>
-                    <VariableTreeDropdown
-                      scope="variableTree"
-                      showMultiFilterDescendants
-                      rootEntity={entities[0]}
-                      disabledVariables={
-                        disabledVariablesByInputName[input.name]
-                      }
-                      customDisabledVariableMessage={
-                        flattenedConstraints?.[input.name].description
-                      }
-                      starredVariables={starredVariables}
-                      toggleStarredVariable={toggleStarredVariable}
-                      entityId={selectedVariables[input.name]?.entityId}
-                      variableId={selectedVariables[input.name]?.variableId}
-                      onChange={(variable) => {
-                        handleChange(input.name, variable);
-                      }}
-                    />
+                    <div className={classes.label}>
+                      {input.label + (input.readonlyValue ? ' (fixed)' : '')}
+                    </div>
+                    {!input.readonlyValue ? (
+                      <VariableTreeDropdown
+                        scope="variableTree"
+                        showMultiFilterDescendants
+                        rootEntity={entities[0]}
+                        disabledVariables={
+                          disabledVariablesByInputName[input.name]
+                        }
+                        customDisabledVariableMessage={
+                          flattenedConstraints?.[input.name].description
+                        }
+                        starredVariables={starredVariables}
+                        toggleStarredVariable={toggleStarredVariable}
+                        entityId={selectedVariables[input.name]?.entityId}
+                        variableId={selectedVariables[input.name]?.variableId}
+                        onChange={(variable) => {
+                          handleChange(input.name, variable);
+                        }}
+                      />
+                    ) : (
+                      <span style={{ height: '32px', lineHeight: '32px' }}>
+                        {input.readonlyValue}
+                      </span>
+                    )}
                   </div>
                 ))}
               {
