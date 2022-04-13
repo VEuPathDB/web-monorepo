@@ -1605,10 +1605,11 @@ function getRequestParams(
     showMissingness,
     binWidth = NumberVariable.is(xAxisVariableMetadata) ||
     DateVariable.is(xAxisVariableMetadata)
-      ? xAxisVariableMetadata.binWidthOverride ?? xAxisVariableMetadata.binWidth
+      ? xAxisVariableMetadata.distributionDefaults.binWidthOverride ??
+        xAxisVariableMetadata.distributionDefaults.binWidth
       : undefined,
     binWidthTimeUnit = xAxisVariableMetadata?.type === 'date'
-      ? xAxisVariableMetadata.binUnits
+      ? xAxisVariableMetadata.distributionDefaults.binUnits
       : undefined,
     useBinning,
     numeratorValues,

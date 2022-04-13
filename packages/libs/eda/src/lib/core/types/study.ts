@@ -13,6 +13,43 @@ import { Field } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Type
 export type StudyRecordClass = RecordClass;
 export type StudyRecord = RecordInstance;
 
+// DistributionDefaults
+// --------------------
+
+export type DateDistributionDefaults = t.TypeOf<
+  typeof DateDistributionDefaults
+>;
+export const DateDistributionDefaults = t.intersection([
+  t.type({
+    rangeMin: t.string,
+    rangeMax: t.string,
+  }),
+  t.partial({
+    displayRangeMin: t.string,
+    displayRangeMax: t.string,
+    binWidth: t.number,
+    binUnits: TimeUnit,
+    binWidthOverride: t.number,
+  }),
+]);
+
+export type NumberDistributionDefaults = t.TypeOf<
+  typeof NumberDistributionDefaults
+>;
+export const NumberDistributionDefaults = t.intersection([
+  t.type({
+    rangeMin: t.number,
+    rangeMax: t.number,
+  }),
+  t.partial({
+    // TODO This is supposed to be required, but the backend isn't populating it.
+    displayRangeMin: t.number,
+    displayRangeMax: t.number,
+    binWidth: t.number,
+    binWidthOverride: t.number,
+  }),
+]);
+
 // StudyVariable
 // -------------
 
@@ -110,15 +147,7 @@ export const NumberVariable = t.intersection([
   ]),
   t.type({
     dataShape: VariableDataShape,
-    rangeMin: t.number,
-    rangeMax: t.number,
-  }),
-  t.partial({
-    // TODO This is supposed to be required, but the backend isn't populating it.
-    displayRangeMin: t.number,
-    displayRangeMax: t.number,
-    binWidth: t.number,
-    binWidthOverride: t.number,
+    distributionDefaults: NumberDistributionDefaults,
   }),
 ]);
 
@@ -130,15 +159,7 @@ export const DateVariable = t.intersection([
   }),
   t.type({
     dataShape: VariableDataShape,
-    rangeMin: t.string,
-    rangeMax: t.string,
-  }),
-  t.partial({
-    displayRangeMin: t.string,
-    displayRangeMax: t.string,
-    binWidth: t.number,
-    binUnits: TimeUnit,
-    binWidthOverride: t.number,
+    distributionDefaults: DateDistributionDefaults,
   }),
 ]);
 

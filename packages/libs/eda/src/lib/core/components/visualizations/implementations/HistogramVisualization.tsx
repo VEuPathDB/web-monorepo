@@ -494,7 +494,9 @@ function HistogramViz(props: VisualizationProps) {
       if (NumberVariable.is(xAxisVariable)) {
         return {
           binWidth:
-            xAxisVariable.binWidthOverride ?? xAxisVariable.binWidth ?? 0.1,
+            xAxisVariable.distributionDefaults.binWidthOverride ??
+            xAxisVariable.distributionDefaults.binWidth ??
+            0.1,
           binWidthTimeUnit: undefined,
           independentAxisRange: defaultIndependentRange as NumberRange,
           ...otherDefaults,
@@ -502,13 +504,17 @@ function HistogramViz(props: VisualizationProps) {
       }
       // else date variable
       const binWidth =
-        (xAxisVariable as DateVariable)?.binWidthOverride ??
-        (xAxisVariable as DateVariable)?.binWidth;
-      const binUnits = (xAxisVariable as DateVariable)?.binUnits;
+        (xAxisVariable as DateVariable)?.distributionDefaults
+          .binWidthOverride ??
+        (xAxisVariable as DateVariable)?.distributionDefaults.binWidth;
+      const binUnits = (xAxisVariable as DateVariable)?.distributionDefaults
+        .binUnits;
 
       return {
         binWidth: binWidth ?? 1,
-        binWidthTimeUnit: binUnits ?? (xAxisVariable as DateVariable).binUnits!, // bit nasty!
+        binWidthTimeUnit:
+          binUnits ??
+          (xAxisVariable as DateVariable).distributionDefaults.binUnits!, // bit nasty!
         independentAxisRange: defaultIndependentRange as DateRange,
         ...otherDefaults,
       };
@@ -1231,10 +1237,11 @@ function getRequestParams(
 ): HistogramRequestParams {
   const {
     binWidth = NumberVariable.is(variable) || DateVariable.is(variable)
-      ? variable.binWidthOverride ?? variable.binWidth
+      ? variable.distributionDefaults.binWidthOverride ??
+        variable.distributionDefaults.binWidth
       : undefined,
     binWidthTimeUnit = variable?.type === 'date'
-      ? variable.binUnits
+      ? variable.distributionDefaults.binUnits
       : undefined,
     valueSpec,
     overlayVariable,
