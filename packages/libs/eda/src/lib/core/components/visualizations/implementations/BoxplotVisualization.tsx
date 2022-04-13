@@ -7,17 +7,13 @@ import * as t from 'io-ts';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 
 // need to set for Boxplot
-import DataClient, {
-  BoxplotRequestParams,
-  BoxplotResponse,
-} from '../../../api/DataClient';
+import DataClient, { BoxplotResponse } from '../../../api/DataClient';
 
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
-import { Filter } from '../../../types/filter';
 import { VariableDescriptor } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
@@ -70,12 +66,21 @@ import { truncationConfig } from '../../../utils/truncation-config-utils-viz';
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 import Button from '@veupathdb/components/lib/components/widgets/Button';
 import { useDefaultDependentAxisRange } from '../../../hooks/computeDefaultDependentAxisRange';
+// alphadiv abundance this should be used for collection variable
+import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from '../../../utils/study-metadata';
+// type of computedVariableMetadata for computation apps such as alphadiv and abundance
+import { ComputedVariableMetadata } from '../../../api/DataClient/types';
 
 type BoxplotData = { series: BoxplotSeries };
+// type of computedVariableMetadata for computation apps such as alphadiv and abundance
+type BoxplotComputedVariableMetadata = {
+  computedVariableMetadata?: ComputedVariableMetadata;
+};
 
-// export
+// add type of computedVariableMetadata for computation apps such as alphadiv and abundance
 export type BoxplotDataWithCoverage = (BoxplotData | FacetedData<BoxplotData>) &
-  CoverageStatistics;
+  CoverageStatistics &
+  BoxplotComputedVariableMetadata;
 
 const plotContainerStyles = {
   height: 450,
@@ -258,13 +263,15 @@ function BoxplotViz(props: VisualizationProps) {
     entities
   );
 
+  // add to support both alphadiv and abundance
   const data = usePromise(
     useCallback(async (): Promise<BoxplotDataWithCoverage | undefined> => {
       if (
-        vizConfig.xAxisVariable == null ||
-        xAxisVariable == null ||
-        vizConfig.yAxisVariable == null ||
-        yAxisVariable == null ||
+        // abundance case for xAxisVariable
+        (computation.descriptor.configuration == null &&
+          (vizConfig.xAxisVariable == null || xAxisVariable == null)) ||
+        (computation.descriptor.configuration == null &&
+          (vizConfig.yAxisVariable == null || yAxisVariable == null)) ||
         outputEntity == null ||
         filteredCounts.pending ||
         filteredCounts.value == null
@@ -282,22 +289,36 @@ function BoxplotViz(props: VisualizationProps) {
         throw new Error(nonUniqueWarning);
 
       // add visualization.type here. valueSpec too?
-      const params = getRequestParams(
+      const params = {
         studyId,
-        filters ?? [],
-        vizConfig.xAxisVariable,
-        vizConfig.yAxisVariable,
-        vizConfig.overlayVariable,
-        vizConfig.facetVariable,
-        // pass outputEntity.id
-        outputEntity?.id,
-        vizConfig.showMissingness
-      );
+        filters,
+        config: {
+          // add outputEntityId per dataElementDependencyOrder
+          outputEntityId: computation.descriptor.configuration
+            ? // alphadiv abundance remove any as configuration is defined instead of unknown
+              (computation.descriptor.configuration as any).collectionVariable
+                .entityId
+            : outputEntity.id,
+          // post options: 'all', 'outliers'
+          points: 'outliers',
+          mean: 'TRUE',
+          xAxisVariable: vizConfig.xAxisVariable,
+          yAxisVariable: vizConfig.yAxisVariable,
+          overlayVariable: vizConfig.overlayVariable,
+          facetVariable: vizConfig.facetVariable
+            ? [vizConfig.facetVariable]
+            : [],
+          showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
+        },
+        computeConfig: computation.descriptor.configuration ?? undefined,
+      };
 
       // boxplot
-      const response = await dataClient.getBoxplot(
+      const response = await dataClient.getVisualizationData(
         computation.descriptor.type,
-        params as BoxplotRequestParams
+        visualization.descriptor.type,
+        params,
+        BoxplotResponse
       );
 
       const showMissingOverlay =
@@ -320,7 +341,7 @@ function BoxplotViz(props: VisualizationProps) {
         );
 
       const vocabulary = fixLabelsForNumberVariables(
-        xAxisVariable.vocabulary,
+        xAxisVariable?.vocabulary,
         xAxisVariable
       );
       const overlayVocabulary = fixLabelsForNumberVariables(
@@ -347,24 +368,27 @@ function BoxplotViz(props: VisualizationProps) {
         '#a0a0a0'
       );
     }, [
-      studyId,
-      filters,
-      dataClient,
-      xAxisVariable,
-      yAxisVariable,
-      overlayVariable,
-      overlayEntity,
-      facetVariable,
-      facetEntity,
-      // using vizConfig only causes issue with onCheckedLegendItemsChange
       vizConfig.xAxisVariable,
       vizConfig.yAxisVariable,
       vizConfig.overlayVariable,
       vizConfig.facetVariable,
       vizConfig.showMissingness,
-      outputEntity,
-      filteredCounts,
+      xAxisVariable,
+      computation.descriptor.configuration,
       computation.descriptor.type,
+      yAxisVariable,
+      outputEntity,
+      filteredCounts.pending,
+      filteredCounts.value,
+      overlayVariable,
+      facetVariable,
+      studyId,
+      filters,
+      dataClient,
+      visualization.descriptor.type,
+      overlayEntity,
+      facetEntity,
+      computation,
     ])
   );
 
@@ -379,7 +403,9 @@ function BoxplotViz(props: VisualizationProps) {
     data,
     vizConfig,
     'Boxplot',
-    yAxisVariable
+    yAxisVariable,
+    // pass computedVariableMetadata
+    data?.value?.computedVariableMetadata
   );
 
   // custom legend items for checkbox
@@ -430,6 +456,37 @@ function BoxplotViz(props: VisualizationProps) {
     vizConfig.checkedLegendItems
   );
 
+  // alphadiv abundance findEntityAndVariable does not work properly for collection variable
+  const independentAxisEntityAndVariable = useMemo(
+    () =>
+      computation.descriptor.configuration != null &&
+      computation.descriptor.type === 'abundance'
+        ? findCollectionVariableEntityAndVariable(
+            entities,
+            (computation.descriptor.configuration as any).collectionVariable
+          )
+        : undefined,
+    [entities, computation]
+  );
+  const independentAxisLabel =
+    computation.descriptor.configuration != null &&
+    computation.descriptor.type === 'abundance' &&
+    independentAxisEntityAndVariable != null
+      ? independentAxisEntityAndVariable?.variable.displayName
+      : variableDisplayWithUnit(xAxisVariable) ?? 'X-axis';
+
+  const dependentAxisLabel =
+    computation.descriptor.configuration != null
+      ? computation.descriptor.type === 'alphadiv'
+        ? // considering computedVariableMetadata.displayName for alphadiv
+          data?.value?.computedVariableMetadata?.displayName != null
+          ? data?.value?.computedVariableMetadata?.displayName[0]
+          : computation.descriptor.type
+        : computation.descriptor.type === 'abundance'
+        ? 'Relative Abundance'
+        : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'
+      : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis';
+
   const plotNode = (
     <BoxplotWithControls
       // data.value
@@ -439,8 +496,9 @@ function BoxplotViz(props: VisualizationProps) {
       spacingOptions={!isFaceted(data.value) ? plotSpacingOptions : undefined}
       orientation={'vertical'}
       displayLegend={false}
-      independentAxisLabel={variableDisplayWithUnit(xAxisVariable) ?? 'X-axis'}
-      dependentAxisLabel={variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'}
+      // alphadiv abundance: set a independentAxisLabel condition for abundance
+      independentAxisLabel={independentAxisLabel}
+      dependentAxisLabel={dependentAxisLabel}
       // show/hide independent/dependent axis tick label
       showIndependentAxisTickLabel={true}
       showDependentAxisTickLabel={true}
@@ -529,6 +587,7 @@ function BoxplotViz(props: VisualizationProps) {
     </>
   );
 
+  // for handling alphadiv abundance
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -538,11 +597,19 @@ function BoxplotViz(props: VisualizationProps) {
               name: 'xAxisVariable',
               label: 'X-axis',
               role: 'axis',
+              readonlyValue:
+                computation.descriptor.configuration != null &&
+                computation.descriptor.type === 'abundance'
+                  ? independentAxisLabel
+                  : undefined,
             },
             {
               name: 'yAxisVariable',
               label: 'Y-axis',
               role: 'axis',
+              readonlyValue: computation.descriptor.configuration
+                ? dependentAxisLabel
+                : undefined,
             },
             {
               name: 'overlayVariable',
@@ -743,7 +810,6 @@ function BoxplotWithControls({
         />
       )}
       {/* potential controls go here  */}
-
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <LabelledGroup label="Y-axis controls">
           {/* Y-axis range control */}
@@ -800,7 +866,8 @@ function BoxplotWithControls({
  */
 export function boxplotResponseToData(
   response: BoxplotResponse,
-  variable: Variable,
+  // alphadiv abundance: change variable to be possibly undefined for abundance case
+  variable?: Variable,
   overlayVariable?: Variable,
   facetVariable?: Variable
 ): BoxplotDataWithCoverage {
@@ -869,39 +936,9 @@ export function boxplotResponseToData(
     completeCases: response.completeCasesTable,
     completeCasesAllVars: response.boxplot.config.completeCasesAllVars,
     completeCasesAxesVars: response.boxplot.config.completeCasesAxesVars,
+    // config.computedVariableMetadata should also be returned
+    computedVariableMetadata: response.boxplot.config.computedVariableMetadata,
   } as BoxplotDataWithCoverage;
-}
-
-// add an extended type
-type getRequestParamsProps = BoxplotRequestParams;
-
-function getRequestParams(
-  studyId: string,
-  filters: Filter[],
-  xAxisVariable: VariableDescriptor,
-  yAxisVariable: VariableDescriptor,
-  overlayVariable?: VariableDescriptor,
-  facetVariable?: VariableDescriptor,
-  // pass outputEntityId
-  outputEntityId?: string,
-  showMissingness?: boolean
-): getRequestParamsProps {
-  return {
-    studyId,
-    filters,
-    config: {
-      // add outputEntityId per dataElementDependencyOrder
-      outputEntityId: outputEntityId,
-      // post options: 'all', 'outliers'
-      points: 'outliers',
-      mean: 'TRUE',
-      xAxisVariable: xAxisVariable,
-      yAxisVariable: yAxisVariable,
-      overlayVariable: overlayVariable,
-      facetVariable: facetVariable ? [facetVariable] : [],
-      showMissingness: showMissingness ? 'TRUE' : 'FALSE',
-    },
-  } as BoxplotRequestParams;
 }
 
 /**
