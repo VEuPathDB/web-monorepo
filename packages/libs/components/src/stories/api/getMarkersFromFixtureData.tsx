@@ -309,7 +309,7 @@ export const getCollectionDateChartMarkers = async (
         const label = `${start}-${end}`;
         markerData.push({
           label,
-          count: bucket.count,
+          value: bucket.count,
           color: chartMarkerColorsHex[index],
         });
 
