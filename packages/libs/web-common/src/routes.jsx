@@ -16,7 +16,7 @@ import StudyAccessController from '@veupathdb/study-data-access/lib/study-access
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { showLoginForm as showLoginFormAction } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
 
-import { edaExampleAnalysesAuthor, edaServiceUrl } from './config';
+import { edaExampleAnalysesAuthor, edaServiceUrl, edaSingleAppMode } from './config';
 
 export const STATIC_ROUTE_PATH = '/static-content';
 
@@ -60,6 +60,7 @@ export const wrapRoutes = wdkRoutes => [
             exampleAnalysesAuthor={edaExampleAnalysesAuthor}
             sharingUrlPrefix={window.location.origin}
             showLoginForm={showLoginForm}
+            singleAppMode={edaSingleAppMode}
           />
         </Suspense>
       );
