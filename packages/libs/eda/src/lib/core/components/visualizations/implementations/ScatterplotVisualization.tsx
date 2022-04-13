@@ -1061,7 +1061,7 @@ function ScatterplotViz(props: VisualizationProps) {
             banner={{
               type: 'info',
               message:
-                'A smoothed mean could not be calculated for one or more data series. Likely the sample is too small or the data too highly skewed. Smoothed mean and confidence interval items for these traces have been disabled in the legend and marked with light gray checkboxes',
+                'A smoothed mean could not be calculated for one or more data series. Likely the sample is too small or the data too highly skewed. Smoothed mean and confidence interval items for these traces have been disabled in the legend and marked with light gray checkboxes.',
               pinned: true,
               intense: false,
             }}
