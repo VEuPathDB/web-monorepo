@@ -27,6 +27,7 @@ export const {
   retainContainerContent = false,
   useEda = false,
   edaServiceUrl = '',
+  edaSingleAppMode = undefined
 } = window.__SITE_CONFIG__;
 
 const edaExampleAnalysesAuthorNum = parseInt(window.__SITE_CONFIG__.edaExampleAnalysesAuthor ?? '', 10);
