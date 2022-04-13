@@ -1,5 +1,7 @@
 import { intersection } from 'lodash';
 
+import { StandardReportConfig } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+
 import { DatasetUploadPageConfig, DatasetUploadTypeConfig } from './types';
 
 type ImplementedUploadTypes = 'biom' | 'geneList' | 'study';
@@ -26,7 +28,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
         </p>
       ),
       uploadMethodConfig: {
-        strategy: {
+        result: {
           offer: false,
         },
       },
@@ -42,18 +44,18 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
         </p>
       ),
       uploadMethodConfig: {
-        strategy: {
+        result: {
           offer: true,
           compatibleRecordTypes: {
-            transcript: () => ({
+            transcript: {
               reportName: 'attributesTabular',
               reportConfig: {
                 attributes: ['primary_key'],
                 includeHeader: false,
                 attachmentType: 'plain',
                 applyFilter: true,
-              },
-            }),
+              } as StandardReportConfig,
+            },
           },
         },
       },
@@ -69,7 +71,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
         </p>
       ),
       uploadMethodConfig: {
-        strategy: {
+        result: {
           offer: false,
         },
       },

@@ -217,7 +217,7 @@ export const makeUserDatasetUploadServiceWrappers = ({
     } else {
       // FIXME: Adjust this request to accommodate the format expected by the handler
       const temporaryResultPath = await wdkService.getTemporaryResultPath(
-        newUserDataset.uploadMethod.rootStepId,
+        newUserDataset.uploadMethod.stepId,
         newUserDataset.uploadMethod.reportName,
         newUserDataset.uploadMethod.reportConfig
       );

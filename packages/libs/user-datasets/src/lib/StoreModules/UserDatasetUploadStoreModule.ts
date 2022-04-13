@@ -5,6 +5,8 @@ import {
 } from 'redux-observable';
 import { Observable } from 'rxjs';
 import { filter, mergeMap } from 'rxjs/operators';
+
+import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
 
 import {
@@ -19,6 +21,8 @@ import {
   clearBadUpload,
 } from '../Actions/UserDatasetUploadActions';
 
+import { FormSubmission } from '../Components/UploadForm';
+
 import {
   MISCONFIGURED_USER_DATASET_UPLOAD_SERVICE_ERROR_MESSAGE,
   isUserDatasetUploadCompatibleWdkService,
@@ -26,7 +30,7 @@ import {
 
 import { StateSlice } from '../StoreModules/types';
 
-import { UserDatasetUpload } from '../Utils/types';
+import { NewUserDataset, UserDatasetUpload } from '../Utils/types';
 
 export const key = 'userDatasetUpload';
 
@@ -72,7 +76,13 @@ function observeSubmitUploadForm(
           );
         }
 
-        await dependencies.wdkService.addDataset(action.payload.newUserDataset);
+        const newUserDatasetConfig = await makeNewUserDatasetConfig(
+          dependencies.wdkService,
+          action.payload.formSubmission
+        );
+
+        await dependencies.wdkService.addDataset(newUserDatasetConfig);
+
         if (action.payload.redirectTo != null) {
           dependencies.transitioner.transitionToInternalPage(
             action.payload.redirectTo
@@ -162,4 +172,37 @@ function observeClearMessages(
       }
     })
   );
+}
+
+async function makeNewUserDatasetConfig(
+  wdkService: WdkService,
+  formSubmission: FormSubmission
+): Promise<NewUserDataset> {
+  if (formSubmission.dataUploadSelection.type !== 'result') {
+    return {
+      ...formSubmission,
+      uploadMethod: formSubmission.dataUploadSelection,
+    };
+  }
+
+  const { compatibleRecordTypes, stepId } = formSubmission.dataUploadSelection;
+
+  const { recordClassName } = await wdkService.findStep(stepId);
+
+  const resultReportSettings = compatibleRecordTypes[recordClassName];
+
+  if (resultReportSettings == null) {
+    throw new Error(
+      `Tried to upload a result (step id ${stepId}) with an incompatible record type ${recordClassName}.`
+    );
+  }
+
+  return {
+    ...formSubmission,
+    uploadMethod: {
+      type: 'result',
+      stepId,
+      ...resultReportSettings,
+    },
+  };
 }

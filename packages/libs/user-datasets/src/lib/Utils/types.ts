@@ -73,21 +73,23 @@ export interface DatasetUploadTypeConfigEntry<T extends string> {
   uploadTitle: string;
   formConfig: {
     uploadMethodConfig: {
-      strategy: StrategyUploadConfig;
+      result: ResultUploadConfig;
     };
     renderInfo: () => ReactNode;
   };
 }
 
-export type StrategyUploadConfig =
+export type ResultUploadConfig =
   | { offer: false }
   | {
       offer: true;
-      compatibleRecordTypes: Record<
-        string,
-        () => { reportName: string; reportConfig: StandardReportConfig }
-      >;
+      compatibleRecordTypes: CompatibleRecordTypes;
     };
+
+export type CompatibleRecordTypes = Record<
+  string,
+  { reportName: string; reportConfig: StandardReportConfig }
+>;
 
 export type DatasetUploadPageConfig<
   T1 extends string = string,
@@ -113,8 +115,8 @@ export interface NewUserDataset extends UserDatasetMeta {
         url: string;
       }
     | {
-        type: 'strategy';
-        rootStepId: number;
+        type: 'result';
+        stepId: number;
         reportName: string;
         reportConfig: StandardReportConfig;
       };

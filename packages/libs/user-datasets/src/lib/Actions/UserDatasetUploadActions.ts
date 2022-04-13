@@ -3,12 +3,13 @@ import {
   InferAction,
 } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
 
-import { NewUserDataset, UserDatasetUpload } from '../Utils/types';
+import { FormSubmission } from '../Components/UploadForm';
+import { UserDatasetUpload } from '../Utils/types';
 
 export const submitUploadForm = makeActionCreator(
   'user-dataset-upload/submit-form',
-  (newUserDataset: NewUserDataset, redirectTo?: string) => ({
-    newUserDataset,
+  (formSubmission: FormSubmission, redirectTo?: string) => ({
+    formSubmission,
     redirectTo,
   })
 );

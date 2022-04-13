@@ -12,11 +12,11 @@ import {
   submitUploadForm,
 } from '../Actions/UserDatasetUploadActions';
 
-import UploadForm from '../Components/UploadForm';
+import UploadForm, { FormSubmission } from '../Components/UploadForm';
 
 import { StateSlice } from '../StoreModules/types';
 
-import { DatasetUploadTypeConfigEntry, NewUserDataset } from '../Utils/types';
+import { DatasetUploadTypeConfigEntry } from '../Utils/types';
 
 interface Props<T extends string = string> {
   baseUrl: string;
@@ -38,14 +38,14 @@ export default function UserDatasetUploadController({
 
   const strategyOptions = useWdkService(
     async (wdkService): Promise<StrategySummary[]> => {
-      if (!datasetUploadType.formConfig.uploadMethodConfig.strategy.offer) {
+      if (!datasetUploadType.formConfig.uploadMethodConfig.result.offer) {
         return [];
       }
 
       const strategies = await wdkService.getStrategies();
       const compatibleRecordTypeNames = new Set(
         Object.keys(
-          datasetUploadType.formConfig.uploadMethodConfig.strategy
+          datasetUploadType.formConfig.uploadMethodConfig.result
             .compatibleRecordTypes
         )
       );
@@ -56,7 +56,7 @@ export default function UserDatasetUploadController({
           compatibleRecordTypeNames.has(strategy.recordClassName)
       );
     },
-    [datasetUploadType.formConfig.uploadMethodConfig.strategy.offer]
+    [datasetUploadType.formConfig.uploadMethodConfig.result.offer]
   );
 
   const badUploadMessage = useSelector(
@@ -70,8 +70,8 @@ export default function UserDatasetUploadController({
   }, [dispatch]);
 
   const submitForm = useCallback(
-    (newUserDataset: NewUserDataset, redirectTo?: string) => {
-      dispatch(submitUploadForm(newUserDataset, redirectTo));
+    (formSubmission: FormSubmission, redirectTo?: string) => {
+      dispatch(submitUploadForm(formSubmission, redirectTo));
     },
     [dispatch]
   );
@@ -89,8 +89,8 @@ export default function UserDatasetUploadController({
         submitForm={submitForm}
         urlParams={urlParams}
         strategyOptions={strategyOptions}
-        strategyUploadConfig={
-          datasetUploadType.formConfig.uploadMethodConfig.strategy
+        resultUploadConfig={
+          datasetUploadType.formConfig.uploadMethodConfig.result
         }
       />
     </div>
