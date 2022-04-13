@@ -111,6 +111,8 @@ import { useVizConfig } from '../../../hooks/visualizations';
 import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from '../../../utils/study-metadata';
 // typing computedVariableMetadata for computation apps such as alphadiv and abundance
 import { ComputedVariableMetadata } from '../../../api/DataClient/types';
+// use Banner from CoreUI for showing message for no smoothing
+import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -1050,28 +1052,20 @@ function ScatterplotViz(props: VisualizationProps) {
         ]}
       />
 
-      {/* show message if no smoothed mean exists */}
+      {/* show Banner message if no smoothed mean exists */}
       {!data.pending &&
         vizConfig.valueSpecConfig === 'Smoothed mean with raw' &&
         dataWithoutSmoothedMean != null &&
         dataWithoutSmoothedMean?.length > 0 && (
-          <div
-            style={{
-              fontSize: '1.2em',
-              padding: '1em',
-              background: 'rgb(230, 255, 230) none repeat scroll 0% 0%',
-              borderRadius: '.5em',
-              margin: '.5em 0',
-              color: '#333',
-              border: '1px solid #d9cdcd',
-              display: 'flex',
+          <Banner
+            banner={{
+              type: 'info',
+              message:
+                'A smoothed mean could not be calculated for one or more data series. Likely the sample is too small or the data too highly skewed. Smoothed mean and confidence interval items for these traces have been disabled in the legend and marked with light gray checkboxes',
+              pinned: true,
+              intense: false,
             }}
-          >
-            One or more smoothing for some data are not available: Possibly the
-            sample is too small or too highly skewed. <br />
-            Relevant smoothed mean and confidence interval items in the legend
-            are disabled and marked as lightly grayed checkboxes.
-          </div>
+          />
         )}
 
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
