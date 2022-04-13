@@ -6,9 +6,9 @@ import {
   BlastSummaryViewPlugin,
   MatchedTranscriptsFilterPlugin,
   ResultTableSummaryViewPlugin,
-  StepAnalysisEupathExternalResult,
 } from '@veupathdb/wdk-client/lib/Plugins';
 import { ClientPluginRegistryEntry } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
+import { StepAnalysisEupathExternalResult } from '@veupathdb/web-common/lib/plugins/StepAnalysisEupathExternalResult'
 
 import { ByGenotypeNumberCheckbox } from './components/questions/ByGenotypeNumberCheckbox';
 
