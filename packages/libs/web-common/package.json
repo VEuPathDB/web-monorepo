@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/web-common",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "repository": {
     "url": "https://github.com/VEuPathDB/EbrcWebsiteCommon",
     "directory": "Client"
@@ -32,7 +32,7 @@
   },
   "peerDependencies": {
     "@veupathdb/components": "^0.14.4",
-    "@veupathdb/eda": "^2.1.8",
+    "@veupathdb/eda": ">=2.1.8",
     "@veupathdb/wdk-client": ">=0.6.7",
     "react": ">=16.14",
     "react-dom": ">=16.14"
