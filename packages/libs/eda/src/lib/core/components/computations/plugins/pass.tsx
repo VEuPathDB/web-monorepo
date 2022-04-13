@@ -6,6 +6,8 @@ import {
   twoByTwoVisualization,
 } from '../../visualizations/implementations/MosaicVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
+import { lineplotVisualization } from '../../visualizations/implementations/LineplotVisualization';
+import { mapVisualization } from '../../visualizations/implementations/MapVisualization';
 import { testVisualization } from '../../visualizations/implementations/TestVisualization';
 import { ComputationPlugin } from '../Types';
 import { ZeroConfigWithButton } from '../ZeroConfiguration';
@@ -18,7 +20,8 @@ export const plugin: ComputationPlugin = {
     twobytwo: twoByTwoVisualization,
     conttable: contTableVisualization,
     scatterplot: scatterplotVisualization,
-    // lineplot: scatterplotVisualization,
+    lineplot: lineplotVisualization,
+    'map-markers': mapVisualization,
     // placeholder for densityplot
     // densityplot: scatterplotVisualization,
     barplot: barplotVisualization,
