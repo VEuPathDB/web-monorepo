@@ -30,6 +30,7 @@ export const {
   edaSingleAppMode = undefined,
   useUserDatasetsWorkspace = false,
   datasetImportUrl = '',
+  showUnreleasedData = false,
 } = window.__SITE_CONFIG__;
 
 const edaExampleAnalysesAuthorNum = parseInt(window.__SITE_CONFIG__.edaExampleAnalysesAuthor ?? '', 10);

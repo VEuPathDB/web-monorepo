@@ -1,5 +1,6 @@
 import { get, identity, keyBy, mapValues, orderBy, spread } from 'lodash';
 import { emptyAction } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
+import { showUnreleasedData } from 'ebrc-client/config';
 
 import { getSearchableString } from '@veupathdb/wdk-client/lib/Views/Records/RecordUtils'
 import { isPrereleaseStudyTemp } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
@@ -68,7 +69,6 @@ function loadStudies() {
 
 export function fetchStudies(wdkService) {
   return Promise.all([
-    wdkService.getConfig().then(config => config.projectId),
     wdkService.getQuestions(),
     wdkService.getRecordClasses(),
     wdkService.getStudies('__ALL_ATTRIBUTES__', '__ALL_TABLES__')
@@ -99,7 +99,7 @@ const parseStudy = mapProps({
 });
   
 
-function formatStudies(projectId, questions, recordClasses, answer) {
+function formatStudies(questions, recordClasses, answer) {
   const questionsByName = keyBy(questions, 'fullName');
   const recordClassesByName = keyBy(recordClasses, 'urlSegment');
 
@@ -139,7 +139,7 @@ function formatStudies(projectId, questions, recordClasses, answer) {
 
   const unsortedValidRecords = records.valid
     .map(study => Object.assign(study, {
-      disabled: study.projectAvailability && !study.projectAvailability.includes(projectId),
+      disabled: study.access === 'private' && !showUnreleasedData,
       // searchUrls: mapValues(study.searches, search => `/showQuestion.do?questionFullName=${search}`),
       searches: Object.values(study.searches)
         .map(questionName => questionsByName[questionName])
