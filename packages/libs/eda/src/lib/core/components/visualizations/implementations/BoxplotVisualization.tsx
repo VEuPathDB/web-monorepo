@@ -388,7 +388,6 @@ function BoxplotViz(props: VisualizationProps) {
       visualization.descriptor.type,
       overlayEntity,
       facetEntity,
-      computation,
     ])
   );
 

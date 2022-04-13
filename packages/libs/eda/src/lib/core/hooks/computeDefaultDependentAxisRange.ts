@@ -70,7 +70,7 @@ export function useDefaultDependentAxisRange(
         // pass computedVariableMetadata
         computedVariableMetadata
       );
-  }, [data, plotType, yAxisVariable]);
+  }, [data, plotType, yAxisVariable, computedVariableMetadata]);
 
   // set useMemo to avoid infinite loop
   // set default dependent axis range for better displaying tick labels in log-scale

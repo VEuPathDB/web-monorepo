@@ -23,7 +23,7 @@ import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import { PlotLayout } from '../../layouts/PlotLayout';
 
-import { InputSpec, InputVariables } from '../InputVariables';
+import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import {
   SelectorProps,
@@ -469,8 +469,6 @@ function ScatterplotViz(props: VisualizationProps) {
       vizConfig.valueSpecConfig,
       vizConfig.showMissingness,
       xAxisVariable,
-      computation.descriptor.configuration,
-      computation.descriptor.type,
       yAxisVariable,
       outputEntity,
       overlayVariable,
@@ -482,6 +480,7 @@ function ScatterplotViz(props: VisualizationProps) {
       overlayEntity,
       facetEntity,
       filteredCounts,
+      computation,
       // // get data when changing independentAxisRange
       // vizConfig.independentAxisRange,
     ])

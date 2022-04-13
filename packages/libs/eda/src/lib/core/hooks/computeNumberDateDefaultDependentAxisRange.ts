@@ -63,7 +63,7 @@ export function useDefaultDependentAxisRange(
     } else {
       return undefined;
     }
-  }, [data, yAxisVariable]);
+  }, [data, yAxisVariable, computedVariableMetadata]);
 
   return defaultDependentAxisRange;
 }
