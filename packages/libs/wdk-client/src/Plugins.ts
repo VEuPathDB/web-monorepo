@@ -5,8 +5,3 @@ export { default as GenomeSummaryViewPlugin } from 'wdk-client/Controllers/Genom
 export { default as BlastSummaryViewPlugin } from 'wdk-client/Controllers/BlastSummaryViewController';
 export { default as ResultTableSummaryViewPlugin } from 'wdk-client/Controllers/ResultTableSummaryViewController';
 export { default as MatchedTranscriptsFilterPlugin } from 'wdk-client/Controllers/MatchedTranscriptsFilterController';
-
-// FIXME: Move these to Ebrc/Api as appropriate
-export { StepAnalysisDefaultForm } from './Components/StepAnalysis/StepAnalysisDefaultForm';
-export { StepAnalysisDefaultResult } from './Components/StepAnalysis/StepAnalysisDefaultResult';
-export { StepAnalysisEupathExternalResult } from './Components/StepAnalysis/StepAnalysisEupathExternalResult';
