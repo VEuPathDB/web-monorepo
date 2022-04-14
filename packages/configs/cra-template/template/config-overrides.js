@@ -10,10 +10,6 @@ module.exports = function override(config, env) {
     ...config,
     resolve: {
       ...config.resolve,
-      modules: [
-        path.join(__dirname, 'node_modules'),
-        ...(config.resolve?.modules || ['node_modules']),
-      ],
       fallback: {
         "assert": require.resolve("assert/"),
         "buffer": require.resolve("buffer/"),
@@ -22,13 +18,6 @@ module.exports = function override(config, env) {
         "fs": false,
         "stream": require.resolve("stream-browserify")
       },
-    },
-    resolveLoader: {
-      ...config.resolveLoader,
-      modules: [
-        path.join(__dirname, 'node_modules'),
-        ...(config.resolveLoader?.modules || ['node_modules']),
-      ],
     },
     externals: [{ jquery: 'jQuery' }],
     module: {
