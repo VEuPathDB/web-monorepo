@@ -7,7 +7,7 @@ import MapVEuMap, { MapVEuMapProps } from '../map/MapVEuMap';
 import geohashAnimation from '../map/animation_functions/geohash';
 import testDataStraddling from './fixture-data/geoclust-date-dateline-straddling-all-levels.json';
 import BoundsDriftMarker from '../map/BoundsDriftMarker';
-import { defaultAnimationDuration } from '../map/config/map.json';
+import { defaultAnimationDuration } from '../map/config/map';
 import { leafletZoomLevelToGeohashLevel } from '../map/utils/leaflet-geohash';
 import { Viewport } from 'react-leaflet';
 import '../map/TempIconHack';
