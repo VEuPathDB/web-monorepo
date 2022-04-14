@@ -300,18 +300,18 @@ export const getCollectionDateChartMarkers = async (
       southWest: { lat: bucket.ltMin, lng: bucket.lnMin },
       northEast: { lat: bucket.ltMax, lng: bucket.lnMax },
     };
-    let labels = [];
-    let values = [];
-    let colors: string[] = [];
+    let markerData = [];
     let noDataValue: number = 0;
     bucket.term.buckets.forEach(
       (bucket: { count: number; val: string }, index: number) => {
         const start = bucket.val.substring(0, 4);
         const end = parseInt(start, 10) + 3;
         const label = `${start}-${end}`;
-        labels.push(label);
-        values.push(bucket.count);
-        colors.push(chartMarkerColorsHex[index]);
+        markerData.push({
+          label,
+          value: bucket.count,
+          color: chartMarkerColorsHex[index],
+        });
 
         // sum all counts for legend
         if (legendSums[index] == null) {
@@ -325,10 +325,11 @@ export const getCollectionDateChartMarkers = async (
 
     // calculate the number of no data (or data before first bin, or after last bin) and make 6th bar
     noDataValue = bucket.count - bucket.term.between.count;
-    labels.push('noDataOrOutOfBounds');
-    values.push(noDataValue);
-    colors.push('silver'); // fill the last color
-
+    markerData.push({
+      label: 'noDataOrOutOfBounds',
+      value: noDataValue,
+      color: 'silver', // fill the last color
+    });
     legendLabels[5] = 'no data/out of bounds';
     if (legendSums[5] == null) legendSums[5] = 0;
     legendSums[5] += noDataValue;
@@ -354,9 +355,7 @@ export const getCollectionDateChartMarkers = async (
         key={key}
         position={{ lat, lng }}
         bounds={bounds}
-        labels={labels}
-        values={values}
-        colors={colors}
+        data={markerData}
         isAtomic={atomicValue}
         // dependentAxisRange is an object with {min,max} (NumberRange)
         dependentAxisRange={
@@ -425,10 +424,6 @@ export const getCollectionDateBasicMarkers = async (
       northEast: { lat: bucket.ltMax, lng: bucket.lnMax },
     };
 
-    const labels = ['count'];
-    const values = [bucket.count];
-    const colors: string[] = ['white'];
-
     // check isAtomic for push pin for chart marker
     const atomicValue =
       bucket.atomicCount && bucket.atomicCount === 1 ? true : false;
@@ -446,9 +441,13 @@ export const getCollectionDateBasicMarkers = async (
         key={key}
         position={{ lat, lng }}
         bounds={bounds}
-        labels={labels}
-        values={values}
-        colors={colors}
+        data={[
+          {
+            label: 'count',
+            value: bucket.count,
+            color: 'white',
+          },
+        ]}
         isAtomic={atomicValue}
         // change to dependentAxisRange
         dependentAxisRange={null}
