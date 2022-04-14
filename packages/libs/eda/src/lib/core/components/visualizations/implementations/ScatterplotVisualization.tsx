@@ -480,7 +480,8 @@ function ScatterplotViz(props: VisualizationProps) {
       overlayEntity,
       facetEntity,
       filteredCounts,
-      computation,
+      computation.descriptor.configuration,
+      computation.descriptor.type,
       // // get data when changing independentAxisRange
       // vizConfig.independentAxisRange,
     ])
