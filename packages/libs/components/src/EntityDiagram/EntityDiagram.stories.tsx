@@ -165,7 +165,7 @@ const entityCounts: EntityCounts = {
     total: 100,
     filtered: 5,
   },
-  EUPATH_0000776: {
+  GEMS_HouseObs: {
     total: 100,
     filtered: 2,
   },
