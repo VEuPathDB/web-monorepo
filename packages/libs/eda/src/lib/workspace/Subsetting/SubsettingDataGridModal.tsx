@@ -327,7 +327,11 @@ export default function SubsettingDataGridModal({
               />
             </div>
           )}
-          <div>
+          <div
+            style={{
+              height: '60vh',
+            }}
+          >
             <MultiSelectVariableTree
               // NOTE: We are purposely removing all child entities here because
               // we only want a user to be able to select variables from a single
