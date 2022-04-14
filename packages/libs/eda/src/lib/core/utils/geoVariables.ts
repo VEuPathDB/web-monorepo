@@ -1,6 +1,5 @@
 import { GeoConfig } from '../types/geoConfig';
 import { StudyEntity } from '../types/study';
-import { sortBy } from 'lodash';
 
 /**
  * Given a study, search its variable tree to find a node that has the following direct children

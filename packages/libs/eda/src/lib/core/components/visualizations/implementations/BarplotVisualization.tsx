@@ -348,8 +348,10 @@ function BarplotViz(props: VisualizationProps) {
       variable,
       entity,
       overlayVariable,
+      overlayEntity,
       facetVariable,
       computation.descriptor.type,
+      facetEntity,
     ])
   );
 
@@ -410,7 +412,6 @@ function BarplotViz(props: VisualizationProps) {
   const defaultDependentAxisRange = useDefaultDependentAxisRange(
     data,
     vizConfig,
-    updateVizConfig,
     'Barplot'
   );
 

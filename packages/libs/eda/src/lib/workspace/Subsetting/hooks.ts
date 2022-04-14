@@ -1,7 +1,5 @@
 import { useMemo } from 'react';
-import { Field } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
-
-import { StudyEntity, TabularDataResponse, Variable } from '../../core';
+import { StudyEntity, TabularDataResponse } from '../../core';
 import { variableDisplayWithUnit } from '../../core/utils/variable-display';
 
 /**
