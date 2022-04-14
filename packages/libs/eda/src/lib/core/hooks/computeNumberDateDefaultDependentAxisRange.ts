@@ -1,15 +1,13 @@
 import { useMemo } from 'react';
 import { PromiseHookState } from './promise';
-import {
-  ScatterPlotDataWithCoverage,
-  ScatterplotConfig,
-} from '../components/visualizations/implementations/ScatterplotVisualization';
+import { ScatterPlotDataWithCoverage } from '../components/visualizations/implementations/ScatterplotVisualization';
 import { Variable } from '../types/study';
 // for scatter plot
 import { numberDateDefaultDependentAxisRange } from '../utils/default-dependent-axis-range';
 import { axisRangeMargin } from '../utils/axis-range-margin';
 import { NumberOrDateRange } from '../types/general';
-//DKDK
+// type of computedVariableMetadata for computation apps such as alphadiv and abundance
+import { ComputedVariableMetadata } from '../api/DataClient/types';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 
 /**
@@ -18,9 +16,9 @@ import { isFaceted } from '@veupathdb/components/lib/types/guards';
 
 export function useDefaultDependentAxisRange(
   data: PromiseHookState<ScatterPlotDataWithCoverage | undefined>,
-  vizConfig: ScatterplotConfig,
-  updateVizConfig: (newConfig: Partial<ScatterplotConfig>) => void,
-  yAxisVariable?: Variable
+  yAxisVariable?: Variable,
+  // use computedVariableMetadata for axis range of computation apps
+  computedVariableMetadata?: ComputedVariableMetadata
 ): NumberOrDateRange | undefined {
   // find max of stacked array, especially with overlayVariable
   const defaultDependentAxisRange = useMemo(() => {
@@ -48,18 +46,24 @@ export function useDefaultDependentAxisRange(
         typeof yMinMaxRange?.max === 'number') ||
       (yAxisVariable?.type === 'date' &&
         typeof yMinMaxRange?.min === 'string' &&
-        typeof yMinMaxRange?.max === 'string')
+        typeof yMinMaxRange?.max === 'string') ||
+      computedVariableMetadata != null // this is necessary for computation apps
     ) {
       const defaultDependentRange = numberDateDefaultDependentAxisRange(
         yAxisVariable,
         'scatterplot',
-        yMinMaxRange
+        yMinMaxRange,
+        // pass computedVariableMetadata
+        computedVariableMetadata
       );
-      return axisRangeMargin(defaultDependentRange, yAxisVariable?.type);
+      return axisRangeMargin(
+        defaultDependentRange,
+        computedVariableMetadata != null ? 'number' : yAxisVariable?.type
+      );
     } else {
       return undefined;
     }
-  }, [data, yAxisVariable, vizConfig.valueSpecConfig]);
+  }, [data, yAxisVariable, computedVariableMetadata]);
 
   return defaultDependentAxisRange;
 }

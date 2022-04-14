@@ -348,8 +348,10 @@ function BarplotViz(props: VisualizationProps) {
       variable,
       entity,
       overlayVariable,
+      overlayEntity,
       facetVariable,
       computation.descriptor.type,
+      facetEntity,
     ])
   );
 
@@ -410,7 +412,6 @@ function BarplotViz(props: VisualizationProps) {
   const defaultDependentAxisRange = useDefaultDependentAxisRange(
     data,
     vizConfig,
-    updateVizConfig,
     'Barplot'
   );
 
@@ -538,7 +539,7 @@ function BarplotViz(props: VisualizationProps) {
       )}
 
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <LabelledGroup label="Y-axis">
+        <LabelledGroup label="Y-axis controls">
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <Switch
               label="Log Scale:"

@@ -10,11 +10,13 @@ import {
   number,
   array,
   record,
+  NullType,
 } from 'io-ts';
 import { VariableDataShape, VariableType } from './study';
 
 import { CompleteCasesTable } from '../api/DataClient';
 import { Filter } from './filter';
+import { VariableDescriptor } from './variable';
 
 /**
  * Metadata for the visualization object stored in user's analysis
@@ -49,9 +51,27 @@ export const Visualization = intersection([
 /**
  * Type and configuration of the app object stored in user's analysis
  */
+// alphadiv abundance: add NullType here to remove "null as any" at ZeroConfiguration
+export type ComputationConfiguration = TypeOf<
+  typeof ComputationConfiguration | NullType
+>;
+export const ComputationConfiguration = intersection([
+  type({
+    name: string,
+    collectionVariable: VariableDescriptor,
+  }),
+  partial({
+    alphaDivMethod: string,
+    rankingMethod: string,
+  }),
+]);
+
+// alphadiv abundance
 export type ComputationDescriptor = TypeOf<typeof ComputationDescriptor>;
 export const ComputationDescriptor = type({
   type: string,
+  // handle configuration=null for ZeroConfiguration
+  // configuration: union([ComputationConfiguration, nullType]),
   configuration: unknown,
 });
 
@@ -70,11 +90,15 @@ export const Computation = intersection([
   }),
 ]);
 
-const Thing = partial({
-  name: string,
-  displayName: string,
-  description: string,
-});
+const Thing = intersection([
+  type({
+    name: string,
+    displayName: string,
+  }),
+  partial({
+    description: string,
+  }),
+]);
 
 export type DataElementConstraint = TypeOf<typeof DataElementConstraint>;
 export const DataElementConstraint = intersection([
@@ -108,6 +132,7 @@ export const ComputationAppOverview = intersection([
   Thing,
   partial({
     visualizations: array(VisualizationOverview),
+    projects: array(string),
   }),
 ]);
 

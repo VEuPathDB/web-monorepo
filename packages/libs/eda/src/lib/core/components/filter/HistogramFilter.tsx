@@ -94,19 +94,24 @@ export function HistogramFilter(props: Props) {
 
     if (NumberVariable.is(variable))
       return {
-        binWidth: variable.binWidthOverride ?? variable.binWidth ?? 0.1,
+        binWidth:
+          variable.distributionDefaults.binWidthOverride ??
+          variable.distributionDefaults.binWidth ??
+          0.1,
         binWidthTimeUnit: undefined,
         independentAxisRange: defaultIndependentRange as NumberRange,
         ...otherDefaults,
       };
 
     // else date variable
-    const binWidth = variable.binWidthOverride ?? variable.binWidth;
-    const binUnits = variable.binUnits;
+    const binWidth =
+      variable.distributionDefaults.binWidthOverride ??
+      variable.distributionDefaults.binWidth;
+    const binUnits = variable.distributionDefaults.binUnits;
 
     return {
       binWidth: binWidth ?? 1,
-      binWidthTimeUnit: binUnits ?? variable.binUnits!, // bit nasty!
+      binWidthTimeUnit: binUnits ?? variable.distributionDefaults.binUnits!, // bit nasty!
       independentAxisRange: defaultIndependentRange as DateRange,
       ...otherDefaults,
     };
@@ -609,7 +614,7 @@ function HistogramPlotWithControls({
       />
 
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <LabelledGroup label="Y-axis">
+        <LabelledGroup label="Y-axis controls">
           <Switch
             label="Log scale"
             state={uiState.dependentAxisLogScale}
@@ -654,8 +659,20 @@ function HistogramPlotWithControls({
             }}
           />
         </LabelledGroup>
-
-        <LabelledGroup label="X-axis">
+        {/* add vertical line in btw Y- and X- controls */}
+        <div
+          style={{
+            display: 'inline-flex',
+            borderLeft: '2px solid lightgray',
+            height: '13.6em',
+            position: 'relative',
+            marginLeft: '-1.2em',
+            top: '1.5em',
+          }}
+        >
+          {' '}
+        </div>
+        <LabelledGroup label="X-axis controls">
           <BinWidthControl
             binWidth={data?.binWidthSlider?.binWidth}
             binWidthStep={data?.binWidthSlider?.binWidthStep}

@@ -1,12 +1,17 @@
 import { Variable } from '../types/study';
 import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
+// type of computedVariableMetadata for computation apps such as alphadiv and abundance
+import { ComputedVariableMetadata } from '../api/DataClient/types';
+import { min, max } from 'lodash';
 
 export function numberDateDefaultDependentAxisRange(
   variable: Variable | undefined,
   plotName: string,
   yMinMaxRange:
     | { min: number | string | undefined; max: number | string | undefined }
-    | undefined
+    | undefined,
+  // pass computedVariableMetadata
+  computedVariableMetadata?: ComputedVariableMetadata
 ): NumberOrDateRange | undefined {
   // make universal range variable
   if (
@@ -15,50 +20,52 @@ export function numberDateDefaultDependentAxisRange(
   ) {
     // this should check integer as well
     if (variable.type === 'number' || variable.type === 'integer') {
-      return variable.displayRangeMin != null &&
-        variable.displayRangeMax != null
+      const defaults = variable.distributionDefaults;
+      return defaults.displayRangeMin != null &&
+        defaults.displayRangeMax != null
         ? {
             min:
               yMinMaxRange != null
                 ? Math.min(
-                    variable.displayRangeMin,
-                    variable.rangeMin,
+                    defaults.displayRangeMin,
+                    defaults.rangeMin,
                     yMinMaxRange.min as number
                   )
-                : Math.min(variable.displayRangeMin, variable.rangeMin),
+                : Math.min(defaults.displayRangeMin, defaults.rangeMin),
             max:
               yMinMaxRange != null
                 ? Math.max(
-                    variable.displayRangeMax,
-                    variable.rangeMax,
+                    defaults.displayRangeMax,
+                    defaults.rangeMax,
                     yMinMaxRange.max as number
                   )
-                : Math.max(variable.displayRangeMax, variable.rangeMax),
+                : Math.max(defaults.displayRangeMax, defaults.rangeMax),
           }
         : {
             min:
               yMinMaxRange != null
-                ? Math.min(variable.rangeMin, yMinMaxRange.min as number)
-                : variable.rangeMin,
+                ? Math.min(defaults.rangeMin, yMinMaxRange.min as number)
+                : defaults.rangeMin,
             max:
               yMinMaxRange != null
-                ? Math.max(variable.rangeMax, yMinMaxRange.max as number)
-                : variable.rangeMax,
+                ? Math.max(defaults.rangeMax, yMinMaxRange.max as number)
+                : defaults.rangeMax,
           };
     } else if (variable.type === 'date') {
-      return variable.displayRangeMin != null &&
-        variable.displayRangeMax != null
+      const defaults = variable.distributionDefaults;
+      return defaults.displayRangeMin != null &&
+        defaults.displayRangeMax != null
         ? {
             min:
               yMinMaxRange != null
                 ? [
-                    variable.displayRangeMin,
-                    variable.rangeMin,
+                    defaults.displayRangeMin,
+                    defaults.rangeMin,
                     yMinMaxRange.min as string,
                   ].reduce(function (a, b) {
                     return a < b ? a : b;
                   }) + 'T00:00:00Z'
-                : [variable.displayRangeMin, variable.rangeMin].reduce(
+                : [defaults.displayRangeMin, defaults.rangeMin].reduce(
                     function (a, b) {
                       return a < b ? a : b;
                     }
@@ -66,13 +73,13 @@ export function numberDateDefaultDependentAxisRange(
             max:
               yMinMaxRange != null
                 ? [
-                    variable.displayRangeMax,
-                    variable.rangeMax,
+                    defaults.displayRangeMax,
+                    defaults.rangeMax,
                     yMinMaxRange.max as string,
                   ].reduce(function (a, b) {
                     return a > b ? a : b;
                   }) + 'T00:00:00Z'
-                : [variable.displayRangeMax, variable.rangeMax].reduce(
+                : [defaults.displayRangeMax, defaults.rangeMax].reduce(
                     function (a, b) {
                       return a > b ? a : b;
                     }
@@ -81,21 +88,34 @@ export function numberDateDefaultDependentAxisRange(
         : {
             min:
               yMinMaxRange != null
-                ? [variable.rangeMin, yMinMaxRange.min as string].reduce(
+                ? [defaults.rangeMin, yMinMaxRange.min as string].reduce(
                     function (a, b) {
                       return a < b ? a : b;
                     }
                   ) + 'T00:00:00Z'
-                : variable.rangeMin + 'T00:00:00Z',
+                : defaults.rangeMin + 'T00:00:00Z',
             max:
               yMinMaxRange != null
-                ? [variable.rangeMax, yMinMaxRange.max as string].reduce(
+                ? [defaults.rangeMax, yMinMaxRange.max as string].reduce(
                     function (a, b) {
                       return a > b ? a : b;
                     }
                   ) + 'T00:00:00Z'
-                : variable.rangeMax + 'T00:00:00Z',
+                : defaults.rangeMax + 'T00:00:00Z',
           };
     }
+    // for the case of computation apps such as alphadiv and abundance
+  } else if (computedVariableMetadata != null && plotName === 'scatterplot') {
+    return {
+      min: min([
+        // computedVariableMetadata.displayRangeMin/Max are strings
+        Number(computedVariableMetadata.displayRangeMin),
+        yMinMaxRange?.min as number,
+      ]) as number,
+      max: max([
+        Number(computedVariableMetadata.displayRangeMax),
+        yMinMaxRange?.max as number,
+      ]) as number,
+    };
   } else return undefined;
 }

@@ -8,7 +8,11 @@ import { BoxplotConfig } from '../components/visualizations/implementations/Boxp
 // visualizations (continuous x-axis with known bounds, y-axis showing non-negative counts)
 export function truncationConfig(
   defaultUIState: Partial<UIState> | undefined,
-  vizConfig: HistogramConfig | BarplotConfig | BoxplotConfig,
+  vizConfig: Pick<
+    HistogramConfig | BarplotConfig | BoxplotConfig,
+    'dependentAxisRange'
+  > &
+    Pick<HistogramConfig, 'independentAxisRange'>,
   defaultDependentAxisRange: NumberRange | NumberOrDateRange | undefined
 ) {
   const truncationConfigIndependentAxisMin =
@@ -43,7 +47,7 @@ export function truncationConfig(
       : defaultDependentAxisRange.min === 0 &&
         vizConfig.dependentAxisRange.min === 0.001
       ? false
-      : defaultDependentAxisRange.min != vizConfig.dependentAxisRange.min &&
+      : defaultDependentAxisRange.min !== vizConfig.dependentAxisRange.min &&
         defaultDependentAxisRange.min < vizConfig.dependentAxisRange.min
       ? true
       : false;
@@ -52,7 +56,7 @@ export function truncationConfig(
       ? false
       : vizConfig.dependentAxisRange?.max == null
       ? false
-      : defaultDependentAxisRange.max != vizConfig.dependentAxisRange.max &&
+      : defaultDependentAxisRange.max !== vizConfig.dependentAxisRange.max &&
         defaultDependentAxisRange.max > vizConfig.dependentAxisRange.max;
 
   return {

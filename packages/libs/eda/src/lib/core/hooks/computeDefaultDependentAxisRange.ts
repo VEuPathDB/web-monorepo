@@ -19,6 +19,8 @@ import { min, max, map } from 'lodash';
 import { Variable } from '../types/study';
 // util to get specific decimal points as a number, not string
 import { numberDecimalPoint } from '../utils/number-decimal-point';
+// type of computedVariableMetadata for computation apps such as alphadiv and abundance
+import { ComputedVariableMetadata } from '../api/DataClient/types';
 
 /**
  * A custom hook to compute default dependent axis range
@@ -39,20 +41,20 @@ export function useDefaultDependentAxisRange(
     | undefined
   >,
   vizConfig: HistogramConfig | BarplotConfig | BoxplotConfig,
-  // HistogramConfig contains most options
-  updateVizConfig: (newConfig: Partial<HistogramConfig>) => void,
   plotType?: 'Histogram' | 'Barplot' | 'Boxplot' | undefined,
-  yAxisVariable?: Variable
+  yAxisVariable?: Variable,
+  // pass computedVariableMetadata for axis range of computation apps
+  computedVariableMetadata?: ComputedVariableMetadata
 ): defaultDependentAxisRangeProps {
   // find max of stacked array, especially with overlayVariable
   const defaultDependentAxisMinMax = useMemo(() => {
-    if (plotType == null || plotType == 'Histogram')
+    if (plotType == null || plotType === 'Histogram')
       return histogramDefaultDependentAxisMinMax(
         data as PromiseHookState<
           HistogramDataWithCoverageStatistics | undefined
         >
       );
-    else if (plotType == 'Barplot')
+    else if (plotType === 'Barplot')
       // barplot only computes max value
       return {
         min: 0,
@@ -64,12 +66,18 @@ export function useDefaultDependentAxisRange(
     else if (plotType === 'Boxplot')
       return boxplotDefaultDependentAxisMinMax(
         data as PromiseHookState<BoxplotDataWithCoverage | undefined>,
-        yAxisVariable
+        yAxisVariable,
+        // pass computedVariableMetadata
+        computedVariableMetadata
       );
-  }, [data]);
+  }, [data, plotType, yAxisVariable, computedVariableMetadata]);
 
   // set useMemo to avoid infinite loop
   // set default dependent axis range for better displaying tick labels in log-scale
+  const valueSpec = (vizConfig as HistogramConfig | BarplotConfig).valueSpec;
+  const dependentAxisLogScale = (vizConfig as HistogramConfig | BarplotConfig)
+    .dependentAxisLogScale;
+
   const defaultDependentAxisRange = useMemo(() => {
     if (plotType === 'Histogram' || plotType === 'Barplot')
       return defaultDependentAxisMinMax?.min != null &&
@@ -77,11 +85,9 @@ export function useDefaultDependentAxisRange(
         ? {
             // set min as 0 (count, proportion) for non-logscale for histogram/barplot
             min:
-              (vizConfig as HistogramConfig | BarplotConfig).valueSpec ===
-              'count'
+              valueSpec === 'count'
                 ? 0
-                : (vizConfig as HistogramConfig | BarplotConfig)
-                    .dependentAxisLogScale
+                : dependentAxisLogScale
                 ? // determine min based on data for log-scale at proportion
                   // need to check defaultDependentAxisMinMax.min !== 0
                   defaultDependentAxisMinMax.min !== 0 &&
@@ -101,11 +107,7 @@ export function useDefaultDependentAxisRange(
             max: numberDecimalPoint(defaultDependentAxisMinMax.max * 1.05, 4),
           }
         : undefined;
-  }, [
-    defaultDependentAxisMinMax,
-    (vizConfig as HistogramConfig | BarplotConfig).valueSpec,
-    (vizConfig as HistogramConfig | BarplotConfig).dependentAxisLogScale,
-  ]);
+  }, [defaultDependentAxisMinMax, plotType, valueSpec, dependentAxisLogScale]);
 
   return defaultDependentAxisRange;
 }
@@ -158,7 +160,9 @@ function barplotDefaultDependentAxisMax(
 
 function boxplotDefaultDependentAxisMinMax(
   data: PromiseHookState<BoxplotDataWithCoverage | undefined>,
-  yAxisVariable: Variable | undefined
+  yAxisVariable: Variable | undefined,
+  // use computedVariableMetadata for computation apps
+  computedVariableMetadata?: ComputedVariableMetadata
 ) {
   if (isFaceted(data?.value)) {
     // may not need to check yAxisVariable?.type but just in case
@@ -208,7 +212,9 @@ function boxplotDefaultDependentAxisMinMax(
       : undefined;
   } else {
     return data?.value?.series != null &&
-      (yAxisVariable?.type === 'number' || yAxisVariable?.type === 'integer')
+      (yAxisVariable?.type === 'number' ||
+        yAxisVariable?.type === 'integer' ||
+        computedVariableMetadata != null)
       ? {
           min:
             (min([
@@ -219,6 +225,8 @@ function boxplotDefaultDependentAxisMinMax(
                   .flat()
               ),
               min(data.value.series.flatMap((o) => o.lowerfence as number[])),
+              // check displayRange with computedVariableMetadata
+              computedVariableMetadata?.displayRangeMin,
             ]) as number) * 1.05,
           max:
             (max([
@@ -228,6 +236,8 @@ function boxplotDefaultDependentAxisMinMax(
                   .flat()
               ),
               max(data.value.series.flatMap((o) => o.upperfence as number[])),
+              // check displayRange with computedVariableMetadata
+              computedVariableMetadata?.displayRangeMax,
             ]) as number) * 1.05,
         }
       : undefined;

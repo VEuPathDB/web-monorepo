@@ -253,7 +253,7 @@ function NewVisualizationPicker(props: Props) {
           const disabled =
             vizType == null ||
             (vizType.isEnabledInPicker != null &&
-              vizType.isEnabledInPicker({ geoConfigs }) == false);
+              vizType.isEnabledInPicker({ geoConfigs }) === false);
           // we could in future pass other study metadata, variable constraints, etc to isEnabledInPicker()
           return (
             <div

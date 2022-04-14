@@ -1,4 +1,5 @@
 .EDAWorkspace-VariableList {
+  height: 100%;
   display: flex;
   flex-flow: column;
 
@@ -65,9 +66,9 @@
   }
 
   .wdk-CheckboxTree {
-    height: 60vh;
     display: flex;
     flex-flow: column;
+    overflow: auto;
   }
 
   /* configuring scrolling for CheckboxTree list only: anchoring search bar */
