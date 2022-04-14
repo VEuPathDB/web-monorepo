@@ -1969,8 +1969,10 @@ function reorderResponseLineplotData(
  */
 function isSuitableCategoricalVariable(variable?: Variable): boolean {
   return (
-    variable?.vocabulary != null &&
-    variable?.distinctValuesCount != null &&
-    variable?.distinctValuesCount > 1
+    variable != null &&
+    variable.dataShape !== 'continuous' &&
+    variable.vocabulary != null &&
+    variable.distinctValuesCount != null &&
+    variable.distinctValuesCount > 1
   );
 }
