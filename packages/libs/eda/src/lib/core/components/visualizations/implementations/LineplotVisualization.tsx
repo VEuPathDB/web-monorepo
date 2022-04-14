@@ -592,7 +592,13 @@ function LineplotViz(props: VisualizationProps) {
                 : defaultIndependentRange.max,
           } as NumberOrDateRange)
         : defaultIndependentRange;
-    return axisRangeMargin(extendedIndependentRange, xAxisVariable?.type);
+    // need to check date type for the case switching from string to date variable
+    // it is because date value is also string which causes issue at axisRangeMargin
+    return xAxisVariable?.type === 'date' &&
+      (isNaN(Date.parse(extendedIndependentRange?.min as string)) ||
+        isNaN(Date.parse(extendedIndependentRange?.max as string)))
+      ? undefined
+      : axisRangeMargin(extendedIndependentRange, xAxisVariable?.type);
   }, [xAxisVariable, data.value]);
 
   // find deependent axis range and its margin
@@ -698,10 +704,20 @@ function LineplotViz(props: VisualizationProps) {
       spacingOptions={
         !isFaceted(data.value?.dataSetProcess) ? plotSpacingOptions : undefined
       }
-      // title={'Line plot'}
       displayLegend={false}
       independentAxisLabel={variableDisplayWithUnit(xAxisVariable) ?? 'X-axis'}
-      dependentAxisLabel={variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'}
+      // set dependent axis label as Proportion conditionally
+      dependentAxisLabel={
+        vizConfig.valueSpecConfig === 'Proportion'
+          ? 'Proportion'
+          : variableDisplayWithUnit(yAxisVariable)
+          ? vizConfig.valueSpecConfig === 'Mean'
+            ? 'Mean: ' + variableDisplayWithUnit(yAxisVariable)
+            : vizConfig.valueSpecConfig === 'Median'
+            ? 'Median: ' + variableDisplayWithUnit(yAxisVariable)
+            : 'Y-axis'
+          : 'Y-axis'
+      }
       // set valueSpec as Raw when yAxisVariable = date
       onBinWidthChange={onBinWidthChange}
       vizType={visualization.descriptor.type}
