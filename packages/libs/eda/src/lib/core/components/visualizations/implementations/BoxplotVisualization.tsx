@@ -18,7 +18,7 @@ import { VariableDescriptor } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 
-import { InputSpec, InputVariables } from '../InputVariables';
+import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import box from './selectorIcons/box.svg';
@@ -401,7 +401,6 @@ function BoxplotViz(props: VisualizationProps) {
   const defaultDependentAxisRange = useDefaultDependentAxisRange(
     data,
     vizConfig,
-    updateVizConfig,
     'Boxplot',
     yAxisVariable,
     // pass computedVariableMetadata
@@ -713,7 +712,7 @@ function BoxplotWithControls({
     });
     // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
-  }, [updateVizConfig]);
+  }, [updateVizConfig, setTruncatedDependentAxisWarning]);
 
   // set truncation flags: will see if this is reusable with other application
   const {
@@ -738,7 +737,11 @@ function BoxplotWithControls({
         'Data may have been truncated by range selection, as indicated by the yellow shading'
       );
     }
-  }, [truncationConfigDependentAxisMin, truncationConfigDependentAxisMax]);
+  }, [
+    truncationConfigDependentAxisMin,
+    truncationConfigDependentAxisMax,
+    setTruncatedDependentAxisWarning,
+  ]);
 
   // send boxplotComponentProps with axisTruncationConfig
   const boxplotFacetProps = {

@@ -84,10 +84,7 @@ import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOn
 import { defaultIndependentAxisRange } from '../../../utils/default-independent-axis-range';
 import { axisRangeMargin } from '../../../utils/axis-range-margin';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
-// util to find dependent axis range - changed the name
-import { numberDateDefaultDependentAxisRange } from '../../../utils/default-dependent-axis-range';
 import PluginError from '../PluginError';
-// for custom legend
 import PlotLegend, {
   LegendItemsProps,
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
@@ -335,7 +332,7 @@ function LineplotViz(props: VisualizationProps) {
     [
       updateVizConfig,
       vizConfig.xAxisVariable,
-      vizConfig.valueSpecConfig,
+      vizConfig.yAxisVariable,
       vizConfig.valueSpecConfig,
       vizConfig.binWidth,
       vizConfig.binWidthTimeUnit,
@@ -541,7 +538,9 @@ function LineplotViz(props: VisualizationProps) {
       xAxisVariable,
       yAxisVariable,
       overlayVariable,
+      overlayEntity,
       facetVariable,
+      facetEntity,
       // simply using vizConfig causes issue with onCheckedLegendItemsChange
       // it is because vizConfig also contains vizConfig.checkedLegendItems
       vizConfig.xAxisVariable,
@@ -562,6 +561,7 @@ function LineplotViz(props: VisualizationProps) {
       filteredCounts,
       categoricalMode,
       vizConfig.independentAxisRange,
+      valuesAreSpecified,
     ])
   );
 
@@ -592,7 +592,13 @@ function LineplotViz(props: VisualizationProps) {
                 : defaultIndependentRange.max,
           } as NumberOrDateRange)
         : defaultIndependentRange;
-    return axisRangeMargin(extendedIndependentRange, xAxisVariable?.type);
+    // need to check date type for the case switching from string to date variable
+    // it is because date value is also string which causes issue at axisRangeMargin
+    return xAxisVariable?.type === 'date' &&
+      (isNaN(Date.parse(extendedIndependentRange?.min as string)) ||
+        isNaN(Date.parse(extendedIndependentRange?.max as string)))
+      ? undefined
+      : axisRangeMargin(extendedIndependentRange, xAxisVariable?.type);
   }, [xAxisVariable, data.value]);
 
   // find deependent axis range and its margin
@@ -667,12 +673,7 @@ function LineplotViz(props: VisualizationProps) {
           };
         })
       : [];
-  }, [
-    data,
-    vizConfig.overlayVariable,
-    vizConfig.showMissingness,
-    vizConfig.valueSpecConfig,
-  ]);
+  }, [data]);
 
   // set checkedLegendItems: not working well with plot options
   const checkedLegendItems = useCheckedLegendItemsStatus(
@@ -703,10 +704,20 @@ function LineplotViz(props: VisualizationProps) {
       spacingOptions={
         !isFaceted(data.value?.dataSetProcess) ? plotSpacingOptions : undefined
       }
-      // title={'Line plot'}
       displayLegend={false}
       independentAxisLabel={variableDisplayWithUnit(xAxisVariable) ?? 'X-axis'}
-      dependentAxisLabel={variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'}
+      // set dependent axis label as Proportion conditionally
+      dependentAxisLabel={
+        vizConfig.valueSpecConfig === 'Proportion'
+          ? 'Proportion'
+          : variableDisplayWithUnit(yAxisVariable)
+          ? vizConfig.valueSpecConfig === 'Mean'
+            ? 'Mean: ' + variableDisplayWithUnit(yAxisVariable)
+            : vizConfig.valueSpecConfig === 'Median'
+            ? 'Median: ' + variableDisplayWithUnit(yAxisVariable)
+            : 'Y-axis'
+          : 'Y-axis'
+      }
       // set valueSpec as Raw when yAxisVariable = date
       onBinWidthChange={onBinWidthChange}
       vizType={visualization.descriptor.type}
@@ -1101,7 +1112,7 @@ function LineplotWithControls({
     });
     // add reset for truncation message: including dependent axis warning as well
     setTruncatedIndependentAxisWarning('');
-  }, [defaultUIState.independentAxisRange, updateVizConfig]);
+  }, [updateVizConfig, setTruncatedIndependentAxisWarning]);
 
   const handleDependentAxisRangeChange = useCallback(
     (newRange?: NumberOrDateRange) => {
@@ -1129,7 +1140,7 @@ function LineplotWithControls({
     });
     // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
-  }, [updateVizConfig]);
+  }, [updateVizConfig, setTruncatedDependentAxisWarning]);
 
   // set truncation flags: will see if this is reusable with other application
   const {
@@ -1141,8 +1152,7 @@ function LineplotWithControls({
     () =>
       truncationConfig(defaultUIState, vizConfig, defaultDependentAxisRange),
     [
-      defaultUIState.independentAxisRange,
-      vizConfig.xAxisVariable,
+      defaultUIState,
       vizConfig.independentAxisRange,
       vizConfig.dependentAxisRange,
       defaultDependentAxisRange,
@@ -1159,7 +1169,11 @@ function LineplotWithControls({
         'Data may have been truncated by range selection, as indicated by the yellow shading'
       );
     }
-  }, [truncationConfigIndependentAxisMin, truncationConfigIndependentAxisMax]);
+  }, [
+    truncationConfigIndependentAxisMin,
+    truncationConfigIndependentAxisMax,
+    setTruncatedIndependentAxisWarning,
+  ]);
 
   useEffect(() => {
     if (
@@ -1172,7 +1186,11 @@ function LineplotWithControls({
         'Data may have been truncated by range selection, as indicated by the yellow shading'
       );
     }
-  }, [truncationConfigDependentAxisMin, truncationConfigDependentAxisMax]);
+  }, [
+    truncationConfigDependentAxisMin,
+    truncationConfigDependentAxisMax,
+    setTruncatedDependentAxisWarning,
+  ]);
 
   // send histogramProps with additional props
   const lineplotPlotProps = {
@@ -1588,10 +1606,18 @@ function nullZeroHack(
   });
 }
 
+/**
+ * Passing the whole of `vizConfig` creates a problem with the TypeScript compiler warnings
+ * for the dependencies of the `data = usePromise(...)` that calls this function. It warns
+ * that `vizConfig` is a missing dependency because it see it being used (passed to `getRequestParams()`)
+ * We can't use the whole of `vizConfig` as a dependency because then data will be re-requested
+ * when only client-side configs are changed. There should probably be two sub-objects of `vizConfig`,
+ * for client and server-side configs.
+ */
 function getRequestParams(
   studyId: string,
   filters: Filter[],
-  vizConfig: LineplotConfig,
+  vizConfig: Omit<LineplotConfig, 'dependentAxisRange' | 'checkedLegendItems'>,
   xAxisVariableMetadata: Variable,
   yAxisVariableMetadata: Variable,
   outputEntity: StudyEntity
@@ -1955,12 +1981,14 @@ function reorderResponseLineplotData(
 }
 
 /**
- * TEMPORARY function to determine if we are dealing with a categorical variable
+ * determine if we are dealing with a categorical variable
  */
 function isSuitableCategoricalVariable(variable?: Variable): boolean {
   return (
-    variable?.vocabulary != null &&
-    variable?.distinctValuesCount != null &&
-    variable?.distinctValuesCount > 1
+    variable != null &&
+    variable.dataShape !== 'continuous' &&
+    variable.vocabulary != null &&
+    variable.distinctValuesCount != null &&
+    variable.distinctValuesCount > 1
   );
 }

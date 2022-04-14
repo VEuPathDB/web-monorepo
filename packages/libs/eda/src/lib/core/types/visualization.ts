@@ -10,9 +10,7 @@ import {
   number,
   array,
   record,
-  union,
   NullType,
-  nullType,
 } from 'io-ts';
 import { VariableDataShape, VariableType } from './study';
 
