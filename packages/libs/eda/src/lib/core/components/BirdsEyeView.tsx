@@ -126,7 +126,6 @@ export function BirdsEyeView(props: Props) {
         containerStyles={{
           width: '400px',
           height: '110px',
-          marginBottom: '1.5em',
         }}
         spacingOptions={{
           marginTop: 5,
