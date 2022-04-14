@@ -6,6 +6,10 @@ import { findEntityAndVariable } from '../../../utils/study-metadata';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
+import {
+  StudyMetadata,
+  CollectionVariableTreeNode,
+} from '../../../types/study';
 
 export const plugin: ComputationPlugin = {
   configurationComponent: AbundanceConfiguration,
@@ -19,9 +23,7 @@ export const plugin: ComputationPlugin = {
 const ABUNDANCE_METHODS = ['median', 'q3', 'variance', 'max'];
 
 // Include known collection variables in this array.
-const ABUNDANCE_COLLECTION_VARIABLES = [
-  { entityId: 'EUPATH_0000808', variableId: 'EUPATH_0009253' },
-];
+// const studyMetadata = useStudyMetadata();
 
 function variableDescriptorToString(
   variableDescriptor: VariableDescriptor
@@ -31,13 +33,23 @@ function variableDescriptorToString(
 
 export function AbundanceConfiguration(props: ComputationConfigProps) {
   const [name, setName] = useState('New ranked abundance app');
+  const [rankingMethod, setRankingMethod] = useState(ABUNDANCE_METHODS[0]);
+  const { computationAppOverview, addNewComputation } = props;
+  const studyMetadata = useStudyMetadata();
+  console.log(studyMetadata);
+  console.log(studyMetadata.rootEntity);
+  const entities = useStudyEntities(studyMetadata.rootEntity);
+  function findCollections(studyMetadata: StudyMetadata) {
+    console.log('hi ann');
+  }
+  const ABUNDANCE_COLLECTION_VARIABLES = [
+    { entityId: 'EUPATH_0000808', variableId: 'EUPATH_0009253' },
+    { entityId: 'EUPATH_0000808', variableId: 'EUPATH_0009251' },
+  ];
   const [collectionVariable, setCollectionVariable] = useState(
     variableDescriptorToString(ABUNDANCE_COLLECTION_VARIABLES[0])
   );
-  const [rankingMethod, setRankingMethod] = useState(ABUNDANCE_METHODS[0]);
-  const { computationAppOverview, addNewComputation } = props;
-  const study = useStudyMetadata();
-  const entities = useStudyEntities(study.rootEntity);
+  console.log(collectionVariable);
 
   return (
     <div style={{ padding: '1em 0' }}>
