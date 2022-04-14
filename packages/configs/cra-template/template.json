@@ -93,6 +93,10 @@
     },
     "browserslist": [
       "extends @veupathdb/browserslist-config"
-    ]
+    ],
+    "volta": {
+      "node": "16.14.1",
+      "yarn": "1.22.11"
+    }
   }
 }
