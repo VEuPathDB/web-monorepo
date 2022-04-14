@@ -110,7 +110,7 @@ export function BirdsEyeView(props: Props) {
     </div>
   );
 
-  return (
+  return birdsEyeData ? (
     <Tooltip
       content={tooltipContent}
       position={{
@@ -138,5 +138,7 @@ export function BirdsEyeView(props: Props) {
         showSpinner={enableSpinner && !birdsEyeData}
       />
     </Tooltip>
+  ) : (
+    <div style={{ width: '400px', height: '110px' }}></div>
   );
 }
