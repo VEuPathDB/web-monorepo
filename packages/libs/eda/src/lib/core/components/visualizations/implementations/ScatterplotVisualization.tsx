@@ -111,6 +111,8 @@ import { useVizConfig } from '../../../hooks/visualizations';
 import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from '../../../utils/study-metadata';
 // typing computedVariableMetadata for computation apps such as alphadiv and abundance
 import { ComputedVariableMetadata } from '../../../api/DataClient/types';
+// use Banner from CoreUI for showing message for no smoothing
+import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -698,10 +700,15 @@ function ScatterplotViz(props: VisualizationProps) {
                   ? dataItem.name != null
                     ? legendLabelColor
                         ?.map((legend) => {
+                          // fixed bug and simplified
                           if (
                             dataItem.name != null &&
                             legend.label != null &&
-                            dataItem.name.includes(legend.label)
+                            (dataItem.name === legend.label ||
+                              dataItem.name ===
+                                legend.label + SMOOTHEDMEANSUFFIX ||
+                              dataItem.name === legend.label + CI95SUFFIX ||
+                              dataItem.name === legend.label + BESTFITSUFFIX)
                           )
                             return legend.color;
                           else return '';
@@ -741,7 +748,7 @@ function ScatterplotViz(props: VisualizationProps) {
     computation.descriptor.type,
   ]);
 
-  // set checkedLegendItems: not working well with plot options
+  // set checkedLegendItems
   const checkedLegendItems = useCheckedLegendItemsStatus(
     legendItems,
     vizConfig.checkedLegendItems
@@ -783,6 +790,25 @@ function ScatterplotViz(props: VisualizationProps) {
         ? 'Relative Abundance'
         : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'
       : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis';
+
+  // dataWithoutSmoothedMean returns array of data that does not have smoothed mean
+  // Thus, if dataWithoutSmoothedMean.length > 0, then there is at least one data without smoothed mean
+  const dataWithoutSmoothedMean = useMemo(
+    () =>
+      !isFaceted(data?.value?.dataSetProcess)
+        ? data?.value?.dataSetProcess.series.filter(
+            (data) => data.hasSmoothedMeanData === false
+          )
+        : data?.value?.dataSetProcess.facets
+            .map((facet) => facet.data)
+            .filter((data) => data != null)
+            .flatMap((data) =>
+              data?.series.filter(
+                (series) => series.hasSmoothedMeanData === false
+              )
+            ),
+    [data]
+  );
 
   const plotNode = (
     <ScatterplotWithControls
@@ -1022,6 +1048,23 @@ function ScatterplotViz(props: VisualizationProps) {
             ) : undefined,
         ]}
       />
+
+      {/* show Banner message if no smoothed mean exists */}
+      {!data.pending &&
+        vizConfig.valueSpecConfig === 'Smoothed mean with raw' &&
+        dataWithoutSmoothedMean != null &&
+        dataWithoutSmoothedMean?.length > 0 && (
+          <Banner
+            banner={{
+              type: 'info',
+              message:
+                'A smoothed mean could not be calculated for one or more data series. Likely the sample is too small or the data too highly skewed. Smoothed mean and confidence interval items for these traces have been disabled in the legend and marked with light gray checkboxes.',
+              pinned: true,
+              intense: false,
+            }}
+          />
+        )}
+
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
       <PlotLayout
         isFaceted={isFaceted(data.value?.dataSetProcess)}
@@ -1296,7 +1339,7 @@ function ScatterplotWithControls({
       {vizType === 'scatterplot' && (
         // use RadioButtonGroup directly instead of ScatterPlotControls
         <RadioButtonGroup
-          label="Plot Modes"
+          label="Plot modes"
           options={plotOptions}
           selectedOption={valueSpec}
           onOptionSelected={onValueSpecChange}
@@ -1305,7 +1348,7 @@ function ScatterplotWithControls({
           orientation={'horizontal'}
           labelPlacement={'end'}
           buttonColor={'primary'}
-          margins={['1em', '0', '0', '6em']}
+          margins={['1em', '0', '0', '1em']}
           itemMarginRight={50}
         />
       )}
@@ -1757,6 +1800,9 @@ function processInputData<T extends number | string>(
           width: 2,
         },
         type: scatterPlotType,
+        // check whether smoothed mean exists
+        hasSmoothedMeanData:
+          xIntervalLineValue.length > 0 && yIntervalLineValue.length > 0,
       });
 
       // make Confidence Interval (CI) or Bounds (filled area)
