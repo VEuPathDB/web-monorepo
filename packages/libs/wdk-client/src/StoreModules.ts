@@ -30,8 +30,8 @@ import * as publicStrategies from 'wdk-client/StoreModules/PublicStrategyStoreMo
 import * as unhandledErrors from 'wdk-client/StoreModules/UnhandledErrorStoreModule';
 import * as matchedTranscriptsFilter from 'wdk-client/StoreModules/MatchedTranscriptsFilterStoreModule';
 import * as router from 'wdk-client/StoreModules/RouterStoreModule';
-import * as userCommentForm from 'wdk-client/StoreModules/UserCommentFormStoreModule';
-import * as userCommentShow from 'wdk-client/StoreModules/UserCommentShowStoreModule';
+// import * as userCommentForm from 'wdk-client/StoreModules/UserCommentFormStoreModule';
+// import * as userCommentShow from 'wdk-client/StoreModules/UserCommentShowStoreModule';
 import * as userSession from 'wdk-client/StoreModules/UserSessionStoreModule';
 import * as userDatasetUpload from 'wdk-client/StoreModules/UserDatasetUploadStoreModule';
 
@@ -58,8 +58,8 @@ export default {
   strategyList,
   publicStrategies,
   router,
-  userCommentForm,
-  userCommentShow,
+  // userCommentForm,
+  // userCommentShow,
   userDatasetDetail,
   userDatasetList,
   userProfile,

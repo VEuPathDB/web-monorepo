@@ -15,7 +15,7 @@ import StepsService from 'wdk-client/Service/Mixins/StepsService';
 import StrategiesService from 'wdk-client/Service/Mixins/StrategiesService';
 import StrategyListsService from 'wdk-client/Service/Mixins/StrategyListsService';
 import TemporaryFilesService from 'wdk-client/Service/Mixins/TemporaryFilesService';
-import UserCommentsService from 'wdk-client/Service/Mixins/UserCommentsService';
+// import UserCommentsService from '@veupathdb/web-common/lib/service/UserCommentsService';
 import UserDatasetsService from 'wdk-client/Service/Mixins/UserDatasetsService';
 import UserPreferencesService from 'wdk-client/Service/Mixins/UserPreferencesService';
 import UsersService from 'wdk-client/Service/Mixins/UsersService';
@@ -43,7 +43,7 @@ export function composeMixins(baseUrl: string) {
     ...StrategiesService(base),
     ...StrategyListsService(base),
     ...TemporaryFilesService(base),
-    ...UserCommentsService(base),
+    // ...UserCommentsService(base),
     ...UserDatasetsService(base),
     ...UserPreferencesService(base),
     ...UsersService(base),
