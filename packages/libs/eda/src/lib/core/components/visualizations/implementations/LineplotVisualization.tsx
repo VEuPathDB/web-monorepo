@@ -1965,7 +1965,7 @@ function reorderResponseLineplotData(
 }
 
 /**
- * TEMPORARY function to determine if we are dealing with a categorical variable
+ * determine if we are dealing with a categorical variable
  */
 function isSuitableCategoricalVariable(variable?: Variable): boolean {
   return (
