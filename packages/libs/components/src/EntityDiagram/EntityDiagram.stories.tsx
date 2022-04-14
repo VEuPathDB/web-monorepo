@@ -22,6 +22,7 @@ const rootEntity: StudyData = {
       displayName: 'Household Observation',
       description: '',
       children: [],
+      isManyToOneWithParent: true,
       variables: [
         {
           id: 'var-19',
