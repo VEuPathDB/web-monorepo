@@ -2920,10 +2920,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.0.0.tgz#90ca79640ffbb195a87d4d65cd4b2f92342f8b76"
   integrity sha512-qfKu1z9gaaHdMgRGaZBiayuIh92ishsf14lR+Rj61CJF131XWq3+5e2VyLyOdKsYJ1EreAxgyC/0upIBEzwQJw==
 
-"@veupathdb/components@^0.13.0":
-  version "0.13.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.13.0.tgz#5c43164a937fcfbba67f4d32a2be88ee21edfafa"
-  integrity sha512-hS+TP3zVzba/BJUZS88Fa8o932IHo40tRo4kkhfmXhpJwaB6/mS/l4VcVYOicUY6cM4JQCdl72BVXCntj6IxkA==
+"@veupathdb/components@^0.15.1":
+  version "0.15.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.15.1.tgz#7990e974228d74bcf19f985c84d328588b0b0a06"
+  integrity sha512-heZV1L//lIdPAdSfhmpfi34f6+8WihH1UXJO05x1D7p4FTIyz6c8jBv1Sja2pKW7nyADUCWLb+oNJVzguQCp4A==
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
@@ -2963,10 +2963,10 @@
     react-responsive-modal "^6.2.0"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-2.0.0.tgz#c703a441e5493a4349ad9e26282a37eb379c510c"
-  integrity sha512-gCz3CCp2/KNJ1iZXhDMyJF97UxXF1cwitetglLnjJWag6SPYOlghBMiPgN0tVVTh+TW1KSXvmo89y0bYoxF4WA==
+"@veupathdb/eda@^3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.2.0.tgz#5fdbf3a50539b34cd67f18aea830b66163b172ff"
+  integrity sha512-ymDM7Rd7G8zQQAa9cSpQuY/G7/PvKZmKY2oDk6trJwdgw05p8skJX1iipoAY1dUxTBI+8JjDnnglMMufOrJB8g==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -3023,10 +3023,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/tsconfig/-/tsconfig-1.0.1.tgz#a2b748b46838af1337ca9f23d969993fb952def4"
   integrity sha512-i6gq7mgnyEN8/xW5EaI9RiWCwS1oB8cgWqx9h5w4vZtnb10oiyyepD640l9x/gZf6IWecjynRs7weDgSRs7l0Q==
 
-"@veupathdb/wdk-client@^0.6.2":
-  version "0.6.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.6.2.tgz#990381db73ebf1c3d520ffd64c82cb1a51acd0a4"
-  integrity sha512-wM6YC2cJ48mdGt97fPo3NKqLHnsx8MCJD/mv5ex3ElaqfbJBeJh8LlOL/C7MPXc8nmiWfH+nubLYzD4zPGdWiQ==
+"@veupathdb/wdk-client@^0.6.7":
+  version "0.6.7"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.6.7.tgz#2bf512c396c3ff1547195231e01864e80abbc9a1"
+  integrity sha512-YS1Tz0Uoem+ew8ngHtZJQspCAy2ErTgv8yLgvJ2oPpepO53xSeAIqPx0FUGVrUCQaaSwsm0w3ONIy4C+cQ5k9g==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
@@ -3048,10 +3048,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.4.2":
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.4.2.tgz#cbeb914f7438938c0726208b5d8f59f3e4ed834e"
-  integrity sha512-BtBQeg4UBn6s70wSbnIh0RZ/9PAeVl0yVi1FVSXTuR3EU2hEQy6NczE/jCuN8LM6hIbK56IbdczdZGVtr3szvQ==
+"@veupathdb/web-common@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.5.0.tgz#782b997c3f5cead7cda49764aac045899ce1ac60"
+  integrity sha512-T4bda+0GgM4Yr6op6Np2ardsPiCJcfISE5kns3D9j36X69rMb/hcPqeEXw3dzoTq/WN2NU/Cf4PxYcgJ5ayxRg==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
