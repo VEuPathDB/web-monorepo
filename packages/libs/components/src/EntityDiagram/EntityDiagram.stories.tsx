@@ -18,10 +18,11 @@ const rootEntity: StudyData = {
   description: 'Households from the study area',
   children: [
     {
-      id: 'EUPATH_0000776',
+      id: 'GEMS_HouseObs',
       displayName: 'Household Observation',
       description: '',
       children: [],
+      isManyToOneWithParent: true,
       variables: [
         {
           id: 'var-19',

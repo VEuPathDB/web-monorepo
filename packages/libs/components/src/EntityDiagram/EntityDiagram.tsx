@@ -49,6 +49,7 @@ export interface StudyData {
   displayNamePlural?: string;
   description: string;
   children?: this[];
+  isManyToOneWithParent?: boolean;
   variables: Variables[];
 }
 
@@ -298,12 +299,8 @@ export default function EntityDiagram({
     orientation,
   }: OffsetLine) {
     let to: NodePoint, from: NodePoint;
-    const oneToManyEntityIDs = [
-      'EUPATH_0000776',
-      'EUPATH_0000738',
-      'EUPATH_0043226',
-    ];
-    const isOneToMany = oneToManyEntityIDs.includes(link.target.data.id);
+
+    const isOneToMany = link.target.data.isManyToOneWithParent;
 
     // TODO Compute angle of line so it points into center of node or edge,
     // but begins in same place as now. Use pythagorean theorem to compute
@@ -381,7 +378,7 @@ export default function EntityDiagram({
   }
 
   // Can be used to adjust node size if/when this feature is implemented
-  const nodeSize = isExpanded ? 4.5 : 3.5;
+  const nodeSize = isExpanded ? 4.25 : 3.5;
   return (
     <div className={isExpanded ? 'expanded-diagram' : 'mini-diagram'}>
       <svg width={size.width} height={size.height}>
