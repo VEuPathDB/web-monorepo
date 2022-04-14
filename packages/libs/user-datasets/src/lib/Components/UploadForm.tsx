@@ -93,6 +93,8 @@ function UploadForm({
   clearBadUpload,
   submitForm,
 }: Props) {
+  const { useFixedUploadMethod } = urlParams;
+
   const displayResultUploadMethod =
     datasetUploadType.formConfig.uploadMethodConfig.result.offer;
 
@@ -106,7 +108,9 @@ function UploadForm({
   );
 
   const [dataUploadMode, setDataUploadMode] = useState<DataUploadMode>(
-    urlParams.datasetStrategyRootStepId && enableResultUploadMethod
+    urlParams.datasetStepId
+      ? 'result'
+      : urlParams.datasetStrategyRootStepId && enableResultUploadMethod
       ? 'result'
       : urlParams.datasetUrl
       ? 'url'
@@ -114,15 +118,31 @@ function UploadForm({
   );
   const [file, setFile] = useState<File>();
   const [url, setUrl] = useState(urlParams.datasetUrl ?? '');
-  const [strategyRootStepId, setStrategyRootStepId] = useState(() => {
+  const initialStepId = useMemo(() => {
+    const parsedStepIdParam = Number(urlParams.datasetStepId);
+
+    if (isFinite(parsedStepIdParam)) {
+      return parsedStepIdParam;
+    }
+
     const parsedStrategyRootStepIdParam = Number(
       urlParams.datasetStrategyRootStepId
     );
 
     return !enableResultUploadMethod || !isFinite(parsedStrategyRootStepIdParam)
-      ? strategyOptions[0]?.rootStepId
+      ? strategyOptions[0].rootStepId
       : parsedStrategyRootStepIdParam;
-  });
+  }, [
+    urlParams.stepId,
+    urlParams.datasetStrategyRootStepId,
+    strategyOptions,
+    enableResultUploadMethod,
+  ]);
+  const [stepId, setStepId] = useState(initialStepId);
+
+  useEffect(() => {
+    setStepId(initialStepId);
+  }, [initialStepId]);
 
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
@@ -140,16 +160,16 @@ function UploadForm({
       throw new Error('This data set type does not support result uploads.');
     }
 
-    if (strategyRootStepId == null) {
+    if (stepId == null) {
       return { type: 'result' };
     }
 
     return {
       type: 'result',
-      stepId: strategyRootStepId,
+      stepId,
       compatibleRecordTypes: resultUploadConfig.compatibleRecordTypes,
     };
-  }, [dataUploadMode, file, url, resultUploadConfig, strategyRootStepId]);
+  }, [dataUploadMode, file, url, resultUploadConfig, stepId]);
 
   const onSubmit = useCallback(
     (event: FormEvent) => {
@@ -193,15 +213,6 @@ function UploadForm({
       setSubmitting(false);
     }
   }, [badUploadMessage]);
-
-  useEffect(() => {
-    if (
-      strategyOptions.length > 0 &&
-      !strategyOptions.find((option) => option.rootStepId)
-    ) {
-      setStrategyRootStepId(strategyOptions[0].rootStepId);
-    }
-  }, [strategyOptions, strategyRootStepId]);
 
   useEffect(() => {
     return () => {
@@ -256,113 +267,115 @@ function UploadForm({
             onChange={setDescription}
           />
         </div>
-        <div className="formSection" style={{ minHeight: '8em' }}>
-          <RadioList
-            name="data-set-radio"
-            value={dataUploadMode}
-            onChange={(value) => {
-              if (value !== 'url' && value !== 'file' && value !== 'result') {
-                throw new Error(
-                  `Unrecognized upload method '${value}' encountered.`
-                );
-              }
+        {!useFixedUploadMethod && (
+          <div className="formSection" style={{ minHeight: '8em' }}>
+            <RadioList
+              name="data-set-radio"
+              value={dataUploadMode}
+              onChange={(value) => {
+                if (value !== 'url' && value !== 'file' && value !== 'result') {
+                  throw new Error(
+                    `Unrecognized upload method '${value}' encountered.`
+                  );
+                }
 
-              setDataUploadMode(value);
-            }}
-            items={[
-              {
-                value: 'file',
-                disabled: false,
-                display: (
-                  <React.Fragment>
-                    <label htmlFor="data-set-file">
-                      {dataUploadMode === 'file' ? (
-                        <React.Fragment>
-                          Data File<sup className="supAsterisk">*</sup>:
-                        </React.Fragment>
-                      ) : (
-                        'Data File'
+                setDataUploadMode(value);
+              }}
+              items={[
+                {
+                  value: 'file',
+                  disabled: false,
+                  display: (
+                    <React.Fragment>
+                      <label htmlFor="data-set-file">
+                        {dataUploadMode === 'file' ? (
+                          <React.Fragment>
+                            Data File<sup className="supAsterisk">*</sup>:
+                          </React.Fragment>
+                        ) : (
+                          'Data File'
+                        )}
+                        <br />
+                      </label>
+                      {dataUploadMode === 'file' && (
+                        <FileInput
+                          id="data-set-file"
+                          onChange={(file) => {
+                            setFile(file ?? undefined);
+                          }}
+                        />
                       )}
-                      <br />
-                    </label>
-                    {dataUploadMode === 'file' && (
-                      <FileInput
-                        id="data-set-file"
-                        onChange={(file) => {
-                          setFile(file ?? undefined);
-                        }}
-                      />
-                    )}
-                  </React.Fragment>
-                ),
-              },
-              {
-                value: 'url',
-                disabled: false,
-                display: (
-                  <React.Fragment>
-                    <label htmlFor="data-set-url">
-                      {dataUploadMode === 'url' ? (
-                        <React.Fragment>
-                          Data URL<sup className="supAsterisk">*</sup>:
-                        </React.Fragment>
-                      ) : (
-                        'Data URL'
+                    </React.Fragment>
+                  ),
+                },
+                {
+                  value: 'url',
+                  disabled: false,
+                  display: (
+                    <React.Fragment>
+                      <label htmlFor="data-set-url">
+                        {dataUploadMode === 'url' ? (
+                          <React.Fragment>
+                            Data URL<sup className="supAsterisk">*</sup>:
+                          </React.Fragment>
+                        ) : (
+                          'Data URL'
+                        )}
+                        <br />
+                      </label>
+                      {dataUploadMode === 'url' && (
+                        <TextBox
+                          type="input"
+                          id="data-set-url"
+                          placeholder="Address of a data file from the Web"
+                          value={url}
+                          onChange={setUrl}
+                        />
                       )}
-                      <br />
-                    </label>
-                    {dataUploadMode === 'url' && (
-                      <TextBox
-                        type="input"
-                        id="data-set-url"
-                        placeholder="Address of a data file from the Web"
-                        value={url}
-                        onChange={setUrl}
-                      />
-                    )}
-                  </React.Fragment>
-                ),
-              },
-            ].concat(
-              !displayResultUploadMethod
-                ? []
-                : [
-                    {
-                      value: 'result',
-                      disabled: !enableResultUploadMethod,
-                      display: (
-                        <React.Fragment>
-                          <label htmlFor="data-set-url">
-                            {dataUploadMode === 'result' ? (
-                              <React.Fragment>
-                                Strategy<sup className="supAsterisk">*</sup>:
-                              </React.Fragment>
-                            ) : (
-                              'Strategy'
+                    </React.Fragment>
+                  ),
+                },
+              ].concat(
+                !displayResultUploadMethod
+                  ? []
+                  : [
+                      {
+                        value: 'result',
+                        disabled: !enableResultUploadMethod,
+                        display: (
+                          <React.Fragment>
+                            <label htmlFor="data-set-url">
+                              {dataUploadMode === 'result' ? (
+                                <React.Fragment>
+                                  Strategy<sup className="supAsterisk">*</sup>:
+                                </React.Fragment>
+                              ) : (
+                                'Strategy'
+                              )}
+                              <br />
+                            </label>
+                            {dataUploadMode === 'result' && (
+                              <SingleSelect
+                                value={`${stepId}`}
+                                items={strategyOptions.map((option) => ({
+                                  value: `${option.rootStepId}`,
+                                  display: `${option.name}${
+                                    !option.isSaved ? '*' : ''
+                                  }`,
+                                }))}
+                                onChange={(value) => {
+                                  setStepId(Number(value));
+                                }}
+                              />
                             )}
-                            <br />
-                          </label>
-                          {dataUploadMode === 'result' && (
-                            <SingleSelect
-                              value={`${strategyRootStepId}`}
-                              items={strategyOptions.map((option) => ({
-                                value: `${option.rootStepId}`,
-                                display: `${option.name}${
-                                  !option.isSaved ? '*' : ''
-                                }`,
-                              }))}
-                              onChange={(value) => {
-                                setStrategyRootStepId(Number(value));
-                              }}
-                            />
-                          )}
-                        </React.Fragment>
-                      ),
-                    },
-                  ]
-            )}
-          />
-        </div>
+                          </React.Fragment>
+                        ),
+                      },
+                    ]
+              )}
+            />
+          </div>
+        )}
       </div>
       <button type="submit" className="btn" disabled={submitting}>
         Upload Data Set
