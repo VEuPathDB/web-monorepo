@@ -59,10 +59,7 @@ export function VariableCoverageTable({
       ? 'VariableCoverageTable'
       : `${containerClassName} VariableCoverageTable`;
 
-  return variableSpecs[0].display ||
-    variableSpecs[1].display ||
-    variableSpecs[2].display ||
-    variableSpecs[3].display ? (
+  return variableSpecs.some((spec) => spec.variable) ? (
     <div className={className}>
       <table>
         <tbody>
