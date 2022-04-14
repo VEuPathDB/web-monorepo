@@ -84,10 +84,7 @@ import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOn
 import { defaultIndependentAxisRange } from '../../../utils/default-independent-axis-range';
 import { axisRangeMargin } from '../../../utils/axis-range-margin';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
-// util to find dependent axis range - changed the name
-import { numberDateDefaultDependentAxisRange } from '../../../utils/default-dependent-axis-range';
 import PluginError from '../PluginError';
-// for custom legend
 import PlotLegend, {
   LegendItemsProps,
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
@@ -335,7 +332,7 @@ function LineplotViz(props: VisualizationProps) {
     [
       updateVizConfig,
       vizConfig.xAxisVariable,
-      vizConfig.valueSpecConfig,
+      vizConfig.yAxisVariable,
       vizConfig.valueSpecConfig,
       vizConfig.binWidth,
       vizConfig.binWidthTimeUnit,
@@ -541,7 +538,9 @@ function LineplotViz(props: VisualizationProps) {
       xAxisVariable,
       yAxisVariable,
       overlayVariable,
+      overlayEntity,
       facetVariable,
+      facetEntity,
       // simply using vizConfig causes issue with onCheckedLegendItemsChange
       // it is because vizConfig also contains vizConfig.checkedLegendItems
       vizConfig.xAxisVariable,
@@ -562,6 +561,7 @@ function LineplotViz(props: VisualizationProps) {
       filteredCounts,
       categoricalMode,
       vizConfig.independentAxisRange,
+      valuesAreSpecified,
     ])
   );
 
@@ -673,12 +673,7 @@ function LineplotViz(props: VisualizationProps) {
           };
         })
       : [];
-  }, [
-    data,
-    vizConfig.overlayVariable,
-    vizConfig.showMissingness,
-    vizConfig.valueSpecConfig,
-  ]);
+  }, [data]);
 
   // set checkedLegendItems: not working well with plot options
   const checkedLegendItems = useCheckedLegendItemsStatus(
@@ -1111,7 +1106,7 @@ function LineplotWithControls({
     });
     // add reset for truncation message: including dependent axis warning as well
     setTruncatedIndependentAxisWarning('');
-  }, [defaultUIState.independentAxisRange, updateVizConfig]);
+  }, [updateVizConfig, setTruncatedIndependentAxisWarning]);
 
   const handleDependentAxisRangeChange = useCallback(
     (newRange?: NumberOrDateRange) => {
@@ -1139,7 +1134,7 @@ function LineplotWithControls({
     });
     // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
-  }, [updateVizConfig]);
+  }, [updateVizConfig, setTruncatedDependentAxisWarning]);
 
   // set truncation flags: will see if this is reusable with other application
   const {
@@ -1151,8 +1146,7 @@ function LineplotWithControls({
     () =>
       truncationConfig(defaultUIState, vizConfig, defaultDependentAxisRange),
     [
-      defaultUIState.independentAxisRange,
-      vizConfig.xAxisVariable,
+      defaultUIState,
       vizConfig.independentAxisRange,
       vizConfig.dependentAxisRange,
       defaultDependentAxisRange,
@@ -1169,7 +1163,11 @@ function LineplotWithControls({
         'Data may have been truncated by range selection, as indicated by the yellow shading'
       );
     }
-  }, [truncationConfigIndependentAxisMin, truncationConfigIndependentAxisMax]);
+  }, [
+    truncationConfigIndependentAxisMin,
+    truncationConfigIndependentAxisMax,
+    setTruncatedIndependentAxisWarning,
+  ]);
 
   useEffect(() => {
     if (
@@ -1182,7 +1180,11 @@ function LineplotWithControls({
         'Data may have been truncated by range selection, as indicated by the yellow shading'
       );
     }
-  }, [truncationConfigDependentAxisMin, truncationConfigDependentAxisMax]);
+  }, [
+    truncationConfigDependentAxisMin,
+    truncationConfigDependentAxisMax,
+    setTruncatedDependentAxisWarning,
+  ]);
 
   // send histogramProps with additional props
   const lineplotPlotProps = {
@@ -1598,10 +1600,18 @@ function nullZeroHack(
   });
 }
 
+/**
+ * Passing the whole of `vizConfig` creates a problem with the TypeScript compiler warnings
+ * for the dependencies of the `data = usePromise(...)` that calls this function. It warns
+ * that `vizConfig` is a missing dependency because it see it being used (passed to `getRequestParams()`)
+ * We can't use the whole of `vizConfig` as a dependency because then data will be re-requested
+ * when only client-side configs are changed. There should probably be two sub-objects of `vizConfig`,
+ * for client and server-side configs.
+ */
 function getRequestParams(
   studyId: string,
   filters: Filter[],
-  vizConfig: LineplotConfig,
+  vizConfig: Omit<LineplotConfig, 'dependentAxisRange' | 'checkedLegendItems'>,
   xAxisVariableMetadata: Variable,
   yAxisVariableMetadata: Variable,
   outputEntity: StudyEntity
@@ -1615,10 +1625,11 @@ function getRequestParams(
     showMissingness,
     binWidth = NumberVariable.is(xAxisVariableMetadata) ||
     DateVariable.is(xAxisVariableMetadata)
-      ? xAxisVariableMetadata.binWidthOverride ?? xAxisVariableMetadata.binWidth
+      ? xAxisVariableMetadata.distributionDefaults.binWidthOverride ??
+        xAxisVariableMetadata.distributionDefaults.binWidth
       : undefined,
     binWidthTimeUnit = xAxisVariableMetadata?.type === 'date'
-      ? xAxisVariableMetadata.binUnits
+      ? xAxisVariableMetadata.distributionDefaults.binUnits
       : undefined,
     useBinning,
     numeratorValues,

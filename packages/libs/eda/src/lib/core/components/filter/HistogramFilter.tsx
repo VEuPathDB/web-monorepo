@@ -94,19 +94,24 @@ export function HistogramFilter(props: Props) {
 
     if (NumberVariable.is(variable))
       return {
-        binWidth: variable.binWidthOverride ?? variable.binWidth ?? 0.1,
+        binWidth:
+          variable.distributionDefaults.binWidthOverride ??
+          variable.distributionDefaults.binWidth ??
+          0.1,
         binWidthTimeUnit: undefined,
         independentAxisRange: defaultIndependentRange as NumberRange,
         ...otherDefaults,
       };
 
     // else date variable
-    const binWidth = variable.binWidthOverride ?? variable.binWidth;
-    const binUnits = variable.binUnits;
+    const binWidth =
+      variable.distributionDefaults.binWidthOverride ??
+      variable.distributionDefaults.binWidth;
+    const binUnits = variable.distributionDefaults.binUnits;
 
     return {
       binWidth: binWidth ?? 1,
-      binWidthTimeUnit: binUnits ?? variable.binUnits!, // bit nasty!
+      binWidthTimeUnit: binUnits ?? variable.distributionDefaults.binUnits!, // bit nasty!
       independentAxisRange: defaultIndependentRange as DateRange,
       ...otherDefaults,
     };

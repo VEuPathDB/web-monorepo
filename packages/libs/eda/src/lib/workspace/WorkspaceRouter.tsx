@@ -26,7 +26,6 @@ import { WorkspaceContainer } from './WorkspaceContainer';
 import { AnalysisPanel } from './AnalysisPanel';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
-import { string } from 'fp-ts';
 
 const theme = createTheme(workspaceTheme);
 

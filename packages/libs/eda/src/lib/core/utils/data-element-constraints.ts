@@ -75,7 +75,7 @@ function variableConstraintPredicate(
       (constraint.maxNumValues == null ||
         constraint.maxNumValues >= variable.distinctValuesCount) &&
       (constraint.isTemporal == null ||
-        constraint.isTemporal == variable.isTemporal) &&
+        constraint.isTemporal === variable.isTemporal) &&
       (constraint.allowMultiValued || !variable.isMultiValued))
   );
 }
@@ -145,7 +145,7 @@ export function flattenConstraints(
         constraint.maxNumValues >= variable.distinctValuesCount;
       const passesTemporalConstraint =
         isEmpty(constraint.isTemporal) ||
-        constraint.isTemporal == variable.isTemporal;
+        constraint.isTemporal === variable.isTemporal;
       const passesMultivalueConstraint =
         constraint.allowMultiValued || !variable.isMultiValued;
       return (

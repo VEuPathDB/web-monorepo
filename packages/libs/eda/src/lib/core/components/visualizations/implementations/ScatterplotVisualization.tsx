@@ -23,7 +23,7 @@ import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import { PlotLayout } from '../../layouts/PlotLayout';
 
-import { InputSpec, InputVariables } from '../InputVariables';
+import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import {
   SelectorProps,
@@ -469,8 +469,6 @@ function ScatterplotViz(props: VisualizationProps) {
       vizConfig.valueSpecConfig,
       vizConfig.showMissingness,
       xAxisVariable,
-      computation.descriptor.configuration,
-      computation.descriptor.type,
       yAxisVariable,
       outputEntity,
       overlayVariable,
@@ -482,6 +480,8 @@ function ScatterplotViz(props: VisualizationProps) {
       overlayEntity,
       facetEntity,
       filteredCounts,
+      computation.descriptor.configuration,
+      computation.descriptor.type,
       // // get data when changing independentAxisRange
       // vizConfig.independentAxisRange,
     ])
@@ -495,15 +495,12 @@ function ScatterplotViz(props: VisualizationProps) {
   // use hook
   const defaultIndependentRange = useDefaultIndependentAxisRange(
     xAxisVariable,
-    'scatterplot',
-    updateVizConfig
+    'scatterplot'
   );
 
   // use custom hook
   const defaultDependentAxisRange = useDefaultDependentAxisRange(
     data,
-    vizConfig,
-    updateVizConfig,
     yAxisVariable,
     // pass computedVariableMetadata
     data?.value?.computedVariableMetadata
@@ -1142,7 +1139,7 @@ function ScatterplotWithControls({
     });
     // add reset for truncation message: including dependent axis warning as well
     setTruncatedIndependentAxisWarning('');
-  }, [defaultUIState.independentAxisRange, updateVizConfig]);
+  }, [updateVizConfig, setTruncatedIndependentAxisWarning]);
 
   const handleDependentAxisRangeChange = useCallback(
     (newRange?: NumberOrDateRange) => {
@@ -1170,7 +1167,7 @@ function ScatterplotWithControls({
     });
     // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
-  }, [updateVizConfig]);
+  }, [updateVizConfig, setTruncatedDependentAxisWarning]);
 
   // set truncation flags: will see if this is reusable with other application
   const {
@@ -1182,7 +1179,7 @@ function ScatterplotWithControls({
     () =>
       truncationConfig(defaultUIState, vizConfig, defaultDependentAxisRange),
     [
-      defaultUIState.independentAxisRange,
+      defaultUIState,
       vizConfig.xAxisVariable,
       vizConfig.independentAxisRange,
       vizConfig.dependentAxisRange,
@@ -1200,7 +1197,11 @@ function ScatterplotWithControls({
         'Data may have been truncated by range selection, as indicated by the yellow shading'
       );
     }
-  }, [truncationConfigIndependentAxisMin, truncationConfigIndependentAxisMax]);
+  }, [
+    truncationConfigIndependentAxisMin,
+    truncationConfigIndependentAxisMax,
+    setTruncatedIndependentAxisWarning,
+  ]);
 
   useEffect(() => {
     if (
@@ -1213,7 +1214,11 @@ function ScatterplotWithControls({
         'Data may have been truncated by range selection, as indicated by the yellow shading'
       );
     }
-  }, [truncationConfigDependentAxisMin, truncationConfigDependentAxisMax]);
+  }, [
+    truncationConfigDependentAxisMin,
+    truncationConfigDependentAxisMax,
+    setTruncatedDependentAxisWarning,
+  ]);
 
   // send histogramProps with additional props
   const scatterplotPlotProps = {
