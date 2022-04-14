@@ -6,6 +6,8 @@ import React, {
   useState,
 } from 'react';
 
+import { keyBy } from 'lodash';
+
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import {
   TextBox,
@@ -93,6 +95,11 @@ function UploadForm({
   clearBadUpload,
   submitForm,
 }: Props) {
+  const strategyOptionsByStrategyId = useMemo(
+    () => keyBy(strategyOptions, (option) => option.strategyId),
+    [strategyOptions]
+  );
+
   const { useFixedUploadMethod } = urlParams;
 
   const displayResultUploadMethod =
@@ -125,17 +132,16 @@ function UploadForm({
       return parsedStepIdParam;
     }
 
-    const parsedStrategyRootStepIdParam = Number(
-      urlParams.datasetStrategyRootStepId
-    );
+    const parsedStrategyIdParam = Number(urlParams.datasetStrategyId);
 
-    return !enableResultUploadMethod || !isFinite(parsedStrategyRootStepIdParam)
-      ? strategyOptions[0].rootStepId
-      : parsedStrategyRootStepIdParam;
+    return !enableResultUploadMethod || !isFinite(parsedStrategyIdParam)
+      ? strategyOptions[0]?.rootStepId
+      : strategyOptionsByStrategyId[parsedStrategyIdParam]?.rootStepId;
   }, [
-    urlParams.stepId,
-    urlParams.datasetStrategyRootStepId,
+    urlParams.datasetStepId,
+    urlParams.datasetStrategyId,
     strategyOptions,
+    strategyOptionsByStrategyId,
     enableResultUploadMethod,
   ]);
   const [stepId, setStepId] = useState(initialStepId);
