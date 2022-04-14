@@ -12,33 +12,35 @@ export function defaultIndependentAxisRangeFunction(
   // make universal range variable
   if (variable != null) {
     if (NumberVariable.is(variable)) {
-      return variable.displayRangeMin != null &&
-        variable.displayRangeMax != null
+      const defaults = variable.distributionDefaults;
+      return defaults.displayRangeMin != null &&
+        defaults.displayRangeMax != null
         ? {
-            min: Math.min(variable.displayRangeMin, variable.rangeMin),
-            max: Math.max(variable.displayRangeMax, variable.rangeMax),
+            min: Math.min(defaults.displayRangeMin, defaults.rangeMin),
+            max: Math.max(defaults.displayRangeMax, defaults.rangeMax),
           }
         : {
             // separate histogram following the criterion at histogram filter
             min:
               plotName === 'histogram'
-                ? Math.min(0, variable.rangeMin)
-                : variable.rangeMin,
-            max: variable.rangeMax,
+                ? Math.min(0, defaults.rangeMin)
+                : defaults.rangeMin,
+            max: defaults.rangeMax,
           };
     } else if (DateVariable.is(variable)) {
-      return variable.displayRangeMin != null &&
-        variable.displayRangeMax != null
+      const defaults = variable.distributionDefaults;
+      return defaults.displayRangeMin != null &&
+        defaults.displayRangeMax != null
         ? {
             min:
-              [variable.displayRangeMin, variable.rangeMin].reduce(function (
+              [defaults.displayRangeMin, defaults.rangeMin].reduce(function (
                 a,
                 b
               ) {
                 return a < b ? a : b;
               }) + 'T00:00:00Z',
             max:
-              [variable.displayRangeMax, variable.rangeMax].reduce(function (
+              [defaults.displayRangeMax, defaults.rangeMax].reduce(function (
                 a,
                 b
               ) {
@@ -46,8 +48,8 @@ export function defaultIndependentAxisRangeFunction(
               }) + 'T00:00:00Z',
           }
         : {
-            min: variable.rangeMin + 'T00:00:00Z',
-            max: variable.rangeMax + 'T00:00:00Z',
+            min: defaults.rangeMin + 'T00:00:00Z',
+            max: defaults.rangeMax + 'T00:00:00Z',
           };
     }
   } else return undefined;
