@@ -2,16 +2,19 @@ import React from 'react';
 import L from 'leaflet';
 
 import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
-import Histogram from '../plots/Histogram';
+import Barplot from '../plots/Barplot';
+//import Histogram from '../plots/Histogram';
 // import NumberRange type def
 import { NumberRange } from '../types/general';
 
 interface ChartMarkerProps extends BoundsDriftMarkerProps {
   borderColor?: string;
   borderWidth?: number;
-  labels: Array<string>; // the labels (not likely to be shown at normal marker size)
-  values: Array<number>; // the counts or totals to be shown in the donut
-  colors?: Array<string> | null; // bar colors: set to be optional with array or null type
+  data: {
+    value: number;
+    label: string;
+    color?: string;
+  }[];
   isAtomic?: boolean; // add a special thumbtack icon if this is true (it's a marker that won't disaggregate if zoomed in further)
   // changed to dependentAxisRange
   dependentAxisRange?: NumberRange | null; // y-axis range for setting global max
@@ -30,9 +33,9 @@ export default function ChartMarker(props: ChartMarkerProps) {
   let defaultColor: string = '';
   let defaultLineColor: string = '';
   // need to make a temporary stats array of objects to show marker colors - only works for demo data, not real solr data
-  for (let i = 0; i < props.values.length; i++) {
-    if (props.colors) {
-      defaultColor = props.colors[i];
+  for (let i = 0; i < props.data.length; i++) {
+    if (props.data[i].color != null) {
+      defaultColor = props.data[i].color as string;
       // defaultLineColor = 'grey'       // this is outline of histogram
       defaultLineColor = '#00000088'; // this is outline of histogram
     } else {
@@ -42,8 +45,8 @@ export default function ChartMarker(props: ChartMarkerProps) {
     fullStat.push({
       // color: props.colors[i],
       color: defaultColor,
-      label: props.labels[i],
-      value: props.values[i],
+      label: props.data[i].label,
+      value: props.data[i].value,
     });
   }
 
@@ -70,6 +73,11 @@ export default function ChartMarker(props: ChartMarkerProps) {
     .reduce((a, c) => {
       return a + c;
     }); // summation of fullStat.value per marker icon
+  const sumValuesString =
+    sumValues <= 0.99 && sumValues > 0
+      ? sumValues.toFixed(2)
+      : sumValues.toFixed(0);
+
   var maxValues: number = Math.max(...fullStat.map((o) => o.value)); // max of fullStat.value per marker icon
   // for local max, need to check the case wherer all values are zeros that lead to maxValues equals to 0 -> "divided by 0" can happen
   if (maxValues == 0) {
@@ -191,7 +199,7 @@ export default function ChartMarker(props: ChartMarkerProps) {
     '<text x="50%" y=' +
     (size - 2 + borderWidth + 7) +
     ' dominant-baseline="middle" text-anchor="middle" opacity="1">' +
-    sumValues +
+    sumValuesString +
     '</text>';
 
   // check isAtomic: draw pushpin if true
@@ -225,23 +233,18 @@ export default function ChartMarker(props: ChartMarkerProps) {
   const popupSize = plotSize + 2 * marginSize;
 
   const popupPlot = (
-    <Histogram
+    <Barplot
       data={{
-        series: props.labels.map((label, i) => ({
-          name: label,
-          color: props.colors ? props.colors[i] : undefined,
-          bins: [
-            {
-              binStart: i,
-              binEnd: i + 1,
-              binLabel: label,
-              value: props.values[i],
-            },
-          ],
-        })),
+        series: [
+          {
+            name: 'do not display me',
+            label: props.data.map(({ label }) => label),
+            value: props.data.map(({ value }) => value),
+            color: props.data.map(({ color }) => color ?? ''),
+          },
+        ],
       }}
       orientation="vertical"
-      barLayout="stack"
       containerStyles={{
         width: plotSize + 'px',
         height: plotSize + 'px',
@@ -256,10 +259,11 @@ export default function ChartMarker(props: ChartMarkerProps) {
       displayLibraryControls={false}
       interactive={false}
       dependentAxisLabel=""
-      independentAxisLabel={`Total: ${sumValues.toString()}`}
+      independentAxisLabel={`Total: ${sumValuesString}`}
       // dependentAxisRange is an object with {min, max} (NumberRange)
       dependentAxisRange={props.dependentAxisRange ?? undefined}
       showValues={true}
+      showIndependentAxisTickLabel={false}
     />
   );
 
