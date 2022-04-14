@@ -28,5 +28,6 @@ module.exports = function override(config, env) {
       ],
     },
     stats: 'errors-warnings',
+    ignoreWarnings: [/Failed to parse source map/],
   };
 };
