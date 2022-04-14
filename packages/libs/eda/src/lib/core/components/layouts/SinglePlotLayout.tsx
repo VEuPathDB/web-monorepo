@@ -16,11 +16,10 @@ const defaultPlotStyles: CSSProperties = {
 };
 
 const defaultTableGroupStyles: CSSProperties = {
-  margin: '1em',
+  margin: '0em 1.5em',
   display: 'grid',
   gridAutoFlow: 'row',
   gap: '1.5em',
-  marginLeft: '3em',
 };
 
 export function SinglePlotLayout({
