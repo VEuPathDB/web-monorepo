@@ -1981,12 +1981,14 @@ function reorderResponseLineplotData(
 }
 
 /**
- * TEMPORARY function to determine if we are dealing with a categorical variable
+ * determine if we are dealing with a categorical variable
  */
 function isSuitableCategoricalVariable(variable?: Variable): boolean {
   return (
-    variable?.vocabulary != null &&
-    variable?.distinctValuesCount != null &&
-    variable?.distinctValuesCount > 1
+    variable != null &&
+    variable.dataShape !== 'continuous' &&
+    variable.vocabulary != null &&
+    variable.distinctValuesCount != null &&
+    variable.distinctValuesCount > 1
   );
 }
