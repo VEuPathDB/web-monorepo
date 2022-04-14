@@ -1,5 +1,3 @@
-const path = require('path');
-
 /*
  * The following gives preference to the project's root node_modules directory when loading modules and loaders.
  * This necessary when using modules that are symlinked into node_modules (e.g., using `yarn link` or `npm link`).
