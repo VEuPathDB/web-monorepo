@@ -358,7 +358,7 @@ export default function EntityDiagram({
           from={from}
           to={to}
           stroke="#777"
-          strokeWidth={3}
+          strokeWidth={2}
           markerStart={'url(#dot)'}
           markerEnd={isOneToMany ? '' : 'url(#dot)'}
         />
@@ -370,7 +370,7 @@ export default function EntityDiagram({
                   from={to}
                   to={endpoint}
                   stroke="#777"
-                  strokeWidth={3}
+                  strokeWidth={2}
                   markerEnd="url(#dot)"
                 />
               );
@@ -381,7 +381,7 @@ export default function EntityDiagram({
   }
 
   // Can be used to adjust node size if/when this feature is implemented
-  const nodeSize = isExpanded ? 3.5 : 3.5;
+  const nodeSize = isExpanded ? 4.5 : 3.5;
   return (
     <div className={isExpanded ? 'expanded-diagram' : 'mini-diagram'}>
       <svg width={size.width} height={size.height}>
