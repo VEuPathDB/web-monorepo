@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { UserCommentAttachedFile } from 'wdk-client/Utils/WdkUser';
-import { UploadedFileRow } from 'wdk-client/Views/UserCommentShow/UploadedFileRow';
+import { UserCommentAttachedFile } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+import { UploadedFileRow } from './UploadedFileRow';
 
 interface UploadedFileEntry extends UserCommentAttachedFile {
   url: string;

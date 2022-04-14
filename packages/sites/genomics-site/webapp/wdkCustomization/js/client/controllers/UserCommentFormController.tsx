@@ -12,10 +12,10 @@ import { CheckboxList, TextArea, TextBox, Link, HelpIcon } from '@veupathdb/wdk-
 import { UserCommentFormView, UserCommentFormViewProps } from '../components/userComments/UserCommentForm/UserCommentFormView';
 import { get, omit } from 'lodash';
 import { GlobalData } from '@veupathdb/wdk-client/lib/StoreModules/GlobalData';
-import { openUserCommentForm, requestSubmitComment, updateFormFields, requestPubmedPreview, closePubmedPreview, addFileToAttach, removeFileToAttach, modifyFileToAttach, removeAttachedFile, updateRawFormFields, changePubmedIdSearchQuery, closeUserCommentForm } from '@veupathdb/wdk-client/lib/Actions/UserCommentFormActions';
+import { openUserCommentForm, requestSubmitComment, updateFormFields, requestPubmedPreview, closePubmedPreview, addFileToAttach, removeFileToAttach, modifyFileToAttach, removeAttachedFile, updateRawFormFields, changePubmedIdSearchQuery, closeUserCommentForm } from '../actions/UserCommentFormActions';
 import { UserCommentPostRequest, PubmedPreview, UserCommentAttachedFileSpec, UserCommentAttachedFile, KeyedUserCommentAttachedFileSpec, UserCommentRawFormFields, UserCommentLocation } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { createSelector } from 'reselect';
-import { UserCommentFormState, CategoryChoice } from '@veupathdb/wdk-client/lib/StoreModules/UserCommentFormStoreModule';
+import { UserCommentFormState, CategoryChoice } from '../storeModules/UserCommentFormStoreModule';
 
 import { PubMedIdsField } from '../components/userComments/UserCommentForm/PubmedIdField';
 import { AttachmentsField } from '../components/userComments/UserCommentForm/AttachmentsField';
