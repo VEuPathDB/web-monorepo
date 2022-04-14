@@ -12,7 +12,7 @@ import MapVEuMap, {
   MapVEuMapProps,
   baseLayers,
 } from '@veupathdb/components/lib/map/MapVEuMap';
-import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map.json';
+import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
 import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/geohash';
 import {
   BoundsViewport,
