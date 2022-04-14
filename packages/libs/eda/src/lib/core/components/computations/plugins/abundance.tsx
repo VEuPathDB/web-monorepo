@@ -8,6 +8,7 @@ import { scatterplotVisualization } from '../../visualizations/implementations/S
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import {
   StudyMetadata,
+  StudyEntity,
   CollectionVariableTreeNode,
 } from '../../../types/study';
 
@@ -36,18 +37,32 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
   const [rankingMethod, setRankingMethod] = useState(ABUNDANCE_METHODS[0]);
   const { computationAppOverview, addNewComputation } = props;
   const studyMetadata = useStudyMetadata();
-  console.log(studyMetadata);
-  console.log(studyMetadata.rootEntity);
   const entities = useStudyEntities(studyMetadata.rootEntity);
-  function findCollections(studyMetadata: StudyMetadata) {
-    console.log('hi ann');
+  let collections: Array<any> = [];
+  function findCollections(entity: StudyEntity) {
+    if (entity.collections?.length) {
+      collections.push(
+        entity.collections.map((collection) => {
+          collection.entityId = entity.id;
+          collection.entityDisplayName = entity.displayName;
+          return { entityId: entity.id, variableId: collection.id };
+        })
+      );
+    }
+    if (entity.children?.length) {
+      entity.children.forEach((childEntity) => findCollections(childEntity));
+    }
   }
+  findCollections(studyMetadata.rootEntity);
+  collections = collections[0];
+  console.log(collections);
+
   const ABUNDANCE_COLLECTION_VARIABLES = [
     { entityId: 'EUPATH_0000808', variableId: 'EUPATH_0009253' },
     { entityId: 'EUPATH_0000808', variableId: 'EUPATH_0009251' },
   ];
   const [collectionVariable, setCollectionVariable] = useState(
-    variableDescriptorToString(ABUNDANCE_COLLECTION_VARIABLES[0])
+    variableDescriptorToString(collections[0])
   );
   console.log(collectionVariable);
 
@@ -75,12 +90,12 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
           value={collectionVariable}
           onChange={(e) => setCollectionVariable(e.target.value)}
         >
-          {ABUNDANCE_COLLECTION_VARIABLES.map((collectionVar) => {
+          {collections.map((collectionVar) => {
             const result = findEntityAndVariable(entities, collectionVar);
             return (
               result && (
                 <option value={variableDescriptorToString(collectionVar)}>
-                  {result.entity.displayName}: {result.variable.displayName}
+                  {result?.entity.displayName}: {result?.variable.displayName}
                 </option>
               )
             );
