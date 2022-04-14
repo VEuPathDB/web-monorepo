@@ -710,7 +710,13 @@ function LineplotViz(props: VisualizationProps) {
       dependentAxisLabel={
         vizConfig.valueSpecConfig === 'Proportion'
           ? 'Proportion'
-          : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'
+          : variableDisplayWithUnit(yAxisVariable)
+          ? vizConfig.valueSpecConfig === 'Mean'
+            ? 'Mean: ' + variableDisplayWithUnit(yAxisVariable)
+            : vizConfig.valueSpecConfig === 'Median'
+            ? 'Median: ' + variableDisplayWithUnit(yAxisVariable)
+            : 'Y-axis'
+          : 'Y-axis'
       }
       // set valueSpec as Raw when yAxisVariable = date
       onBinWidthChange={onBinWidthChange}
