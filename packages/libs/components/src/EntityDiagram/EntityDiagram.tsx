@@ -20,6 +20,11 @@ interface OffsetLine {
   orientation: Orientation;
 }
 
+type NodePoint = {
+  x: number;
+  y: number;
+};
+
 export type VariableType =
   | 'category'
   | 'string'
@@ -44,6 +49,7 @@ export interface StudyData {
   displayNamePlural?: string;
   description: string;
   children?: this[];
+  isManyToOneWithParent?: boolean;
   variables: Variables[];
 }
 
@@ -292,7 +298,9 @@ export default function EntityDiagram({
     nodeWidth,
     orientation,
   }: OffsetLine) {
-    let to, from;
+    let to: NodePoint, from: NodePoint;
+
+    const isOneToMany = link.target.data.isManyToOneWithParent;
 
     // TODO Compute angle of line so it points into center of node or edge,
     // but begins in same place as now. Use pythagorean theorem to compute
@@ -308,7 +316,9 @@ export default function EntityDiagram({
     if (orientation == 'horizontal') {
       from = { x: link.source.y + nodeWidth / 2 + offset, y: link.source.x };
       to = {
-        x: link.target.y - nodeWidth / 2 - 5 - offset,
+        x: isOneToMany
+          ? link.target.y - nodeWidth / 2 - 5 - offset * 2
+          : link.target.y - nodeWidth / 2 - 5 - offset,
         y: link.target.x,
       };
     } else {
@@ -319,31 +329,71 @@ export default function EntityDiagram({
       };
     }
 
+    const oneToManyNodeEndpoints = [];
+    if (isOneToMany) {
+      oneToManyNodeEndpoints.push(
+        {
+          x: to.x + (orientation == 'horizontal' ? offset : nodeHeight / 2),
+          y: to.y + (orientation == 'horizontal' ? nodeHeight / 4 : 0),
+        },
+        {
+          x: to.x + (orientation == 'horizontal' ? offset : 0),
+          y: to.y,
+        },
+        {
+          x:
+            to.x +
+            (orientation == 'horizontal' ? offset : (nodeHeight / 2) * -1),
+          y: to.y - (orientation == 'horizontal' ? nodeHeight / 4 : 0),
+        }
+      );
+    }
+
     return (
-      <Line
-        from={from}
-        to={to}
-        stroke="#777"
-        strokeWidth={3}
-        markerEnd="url(#arrow)"
-      />
+      <>
+        <Line
+          from={from}
+          to={to}
+          stroke="#777"
+          strokeWidth={2}
+          markerStart={'url(#dot)'}
+          markerEnd={isOneToMany ? '' : 'url(#dot)'}
+        />
+        {isOneToMany
+          ? oneToManyNodeEndpoints.map((endpoint, index) => {
+              return (
+                <Line
+                  key={index}
+                  from={to}
+                  to={endpoint}
+                  stroke="#777"
+                  strokeWidth={2}
+                  markerEnd="url(#dot)"
+                />
+              );
+            })
+          : null}
+      </>
     );
   }
 
+  // Can be used to adjust node size if/when this feature is implemented
+  const nodeSize = isExpanded ? 4.25 : 3.5;
   return (
     <div className={isExpanded ? 'expanded-diagram' : 'mini-diagram'}>
       <svg width={size.width} height={size.height}>
         <defs>
           <marker
-            id="arrow"
-            viewBox="0 -5 10 10"
-            markerWidth={isExpanded ? '6' : '3'}
-            markerHeight={isExpanded ? '4' : '3'}
+            id="dot"
+            viewBox="0 0 10 10"
+            markerWidth={nodeSize}
+            markerHeight={nodeSize}
             orient="auto"
             fill="#777"
-            refX={5}
+            refX={nodeSize}
+            refY={nodeSize}
           >
-            <path d="M0,-5L10,0L0,5" />
+            <circle cx={nodeSize} cy={nodeSize} r={nodeSize} />
           </marker>
           <filter id="shadow" x="-20%" y="-40%" width="150%" height="200%">
             <feDropShadow
