@@ -1819,8 +1819,8 @@ function processInputData(
           : (el.seriesY as string[]);
 
       dataSetProcess.push({
-        x: seriesX.length ? seriesX : (([null] as unknown) as number[]), // [null] hack required to make sure
-        y: seriesY.length ? seriesY : (([null] as unknown) as number[]), // Plotly has a legend entry for empty traces
+        x: seriesX,
+        y: seriesY,
         ...(binSpec?.value ? { binLabel: el.seriesX } : {}),
         ...(el.errorBars != null
           ? {
