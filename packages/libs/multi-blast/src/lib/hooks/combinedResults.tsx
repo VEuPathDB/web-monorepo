@@ -652,26 +652,34 @@ export function useTargetTypeTermAndWdkRecordType(targets: Target[]) {
   }, [targets, targetMetadataByDataType]);
 }
 
-export function useHitTypeDisplayNames(wdkRecordType: string) {
+export function useHitTypeDisplayNames(
+  wdkRecordType: string,
+  targetType: string
+) {
   const recordClasses = useSelector(
     (state: RootState) => state.globalData.recordClasses
   );
+
+  const targetMetadataByDataType = useContext(TargetMetadataByDataType);
+  const targetMetadata = targetMetadataByDataType[targetType];
 
   return useMemo(() => {
     const recordClass = recordClasses?.find(
       ({ urlSegment }) => urlSegment === wdkRecordType
     );
 
-    return recordClass == null
-      ? {
-          hitTypeDisplayName: 'Hit',
-          hitTypeDisplayNamePlural: 'Hits',
-        }
-      : {
-          hitTypeDisplayName: recordClass.shortDisplayName,
-          hitTypeDisplayNamePlural: recordClass.shortDisplayNamePlural,
-        };
-  }, [recordClasses, wdkRecordType]);
+    const hitTypeDisplayName =
+      targetMetadata?.hitDisplayName ?? recordClass?.shortDisplayName ?? 'Hit';
+    const hitTypeDisplayNamePlural =
+      targetMetadata?.hitDisplayNamePlural ??
+      recordClass?.shortDisplayNamePlural ??
+      'Hit';
+
+    return {
+      hitTypeDisplayName,
+      hitTypeDisplayNamePlural,
+    };
+  }, [recordClasses, targetMetadata, wdkRecordType]);
 }
 
 function makeRenderAccessionCell({

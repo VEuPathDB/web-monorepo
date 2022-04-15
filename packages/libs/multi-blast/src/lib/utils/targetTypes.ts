@@ -5,6 +5,8 @@ export interface TargetMetadata {
   recordClassUrlSegment: string;
   recordLinkUrlSegment?: string;
   searchUrlSegment: string;
+  hitDisplayName?: string;
+  hitDisplayNamePlural?: string;
 }
 
 export type BlastOntologyDatabase = 'blast-est-ontology' | 'blast-orf-ontology';
@@ -15,12 +17,16 @@ const targetMetadataByDataType: Record<string, TargetMetadata> = {
     recordClassUrlSegment: 'transcript',
     recordLinkUrlSegment: 'gene',
     searchUrlSegment: 'GenesByMultiBlast',
+    hitDisplayName: 'Transcript',
+    hitDisplayNamePlural: 'Transcripts',
   },
   AnnotatedProteins: {
     blastOntologyDatabase: 'blast-orf-ontology',
     recordClassUrlSegment: 'transcript',
     recordLinkUrlSegment: 'gene',
     searchUrlSegment: 'GenesByMultiBlast',
+    hitDisplayName: 'Protein',
+    hitDisplayNamePlural: 'Proteins',
   },
   Genome: {
     blastOntologyDatabase: 'blast-est-ontology',
