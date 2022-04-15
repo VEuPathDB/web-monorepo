@@ -37,10 +37,13 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
   const [rankingMethod, setRankingMethod] = useState(ABUNDANCE_METHODS[0]);
   const { computationAppOverview, addNewComputation } = props;
   const studyMetadata = useStudyMetadata();
+  console.log(studyMetadata);
   const entities = useStudyEntities(studyMetadata.rootEntity);
   let collections: Array<any> = [];
   function findCollections(entity: StudyEntity) {
+    console.log(entity.displayName);
     if (entity.collections?.length) {
+      console.log(entity.displayName);
       collections.push(
         entity.collections.map((collection) => {
           collection.entityId = entity.id;
@@ -54,17 +57,12 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
     }
   }
   findCollections(studyMetadata.rootEntity);
-  collections = collections[0];
-  console.log(collections);
+  console.log(collections.flat());
+  collections = collections.flat();
 
-  const ABUNDANCE_COLLECTION_VARIABLES = [
-    { entityId: 'EUPATH_0000808', variableId: 'EUPATH_0009253' },
-    { entityId: 'EUPATH_0000808', variableId: 'EUPATH_0009251' },
-  ];
   const [collectionVariable, setCollectionVariable] = useState(
     variableDescriptorToString(collections[0])
   );
-  console.log(collectionVariable);
 
   return (
     <div style={{ padding: '1em 0' }}>
