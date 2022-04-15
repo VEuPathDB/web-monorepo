@@ -9,15 +9,15 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@types/cytoscape": "3.2.9",
-    "@veupathdb/components": "^0.14.4",
+    "@veupathdb/components": "^0.15.2",
     "@veupathdb/coreui": "^0.16.0",
-    "@veupathdb/eda": "^2.2.1",
+    "@veupathdb/eda": "^3.2.5",
     "@veupathdb/http-utils": "^1.1.0",
     "@veupathdb/multi-blast": "^2.0.1",
     "@veupathdb/preferred-organisms": "^1.1.11",
     "@veupathdb/study-data-access": "^0.3.1",
     "@veupathdb/wdk-client": "^0.6.7",
-    "@veupathdb/web-common": "^0.4.4",
+    "@veupathdb/web-common": "^0.5.0",
     "ciena-dagre": "^1.0.0",
     "core-js": "^3.21.1",
     "cytoscape": "3.2.9",
@@ -32,12 +32,18 @@
     "redux": "^4.0.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@emotion/serialize": "^1.0.2",
+    "@emotion/styled": "^11.7.0",
     "@types/jqueryui": "^1.12.16",
     "@types/react": "^17.0.43",
     "@types/react-dom": "^17.0.14",
     "@types/react-router-dom": "^5.3.3",
     "@types/react-select": "3",
     "bubleify": "^2.0.0",
-    "ify-loader": "^1.1.0"
+    "ify-loader": "^1.1.0",
+    "jquery": "1.9.1",
+    "popper.js": "^1.16.1",
+    "react-spring": "^8.0.27"
   }
 }
