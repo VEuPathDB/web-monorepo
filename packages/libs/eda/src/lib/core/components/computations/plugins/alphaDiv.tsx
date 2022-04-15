@@ -6,6 +6,11 @@ import { findEntityAndVariable } from '../../../utils/study-metadata';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
+import {
+  StudyMetadata,
+  StudyEntity,
+  CollectionVariableTreeNode,
+} from '../../../types/study';
 
 export const plugin: ComputationPlugin = {
   configurationComponent: AlphaDivConfiguration,
@@ -36,8 +41,28 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
   );
   const [alphaDivMethod, setAlphaDivMethod] = useState(ALPHA_DIV_METHODS[0]);
   const { computationAppOverview, addNewComputation } = props;
-  const study = useStudyMetadata();
-  const entities = useStudyEntities(study.rootEntity);
+  const studyMetadata = useStudyMetadata();
+  const entities = useStudyEntities(studyMetadata.rootEntity);
+
+  let collections: Array<any> = [];
+  function findCollections(entity: StudyEntity) {
+    console.log(entity.displayName);
+    if (entity.collections?.length) {
+      console.log(entity.displayName);
+      collections.push(
+        entity.collections.map((collection) => {
+          collection.entityId = entity.id;
+          collection.entityDisplayName = entity.displayName;
+          return { entityId: entity.id, variableId: collection.id };
+        })
+      );
+    }
+    if (entity.children?.length) {
+      entity.children.forEach((childEntity) => findCollections(childEntity));
+    }
+  }
+  findCollections(studyMetadata.rootEntity);
+  collections = collections.flat();
 
   return (
     <div style={{ padding: '1em 0' }}>
@@ -63,7 +88,7 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
           value={collectionVariable}
           onChange={(e) => setCollectionVariable(e.target.value)}
         >
-          {ALPHA_DIV_COLLECTION_VARIABLES.map((collectionVar) => {
+          {collections.map((collectionVar) => {
             const result = findEntityAndVariable(entities, collectionVar);
             return (
               result && (
