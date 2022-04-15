@@ -1,11 +1,15 @@
-import { DispatchAction } from 'wdk-client/Core/CommonTypes';
-import React, { useCallback } from 'react';
-import { EMPTY } from 'rxjs';
-import { Action } from 'wdk-client/Actions';
-import { Parameter, ParameterValues } from 'wdk-client/Utils/WdkModel';
+
+import React, { useCallback, useMemo } from 'react';
+
+import { fromPairs } from 'lodash';
 import { Epic } from 'redux-observable';
-import { State, QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
+import { EMPTY } from 'rxjs';
+
+import { Action } from 'wdk-client/Actions';
+import { DispatchAction } from 'wdk-client/Core/CommonTypes';
 import { EpicDependencies } from 'wdk-client/Core/Store';
+import { State, QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
+import { Parameter, ParameterValues, QuestionWithParameters } from 'wdk-client/Utils/WdkModel';
 import { Props as FormProps } from 'wdk-client/Views/Question/DefaultQuestionForm';
 
 // Types
@@ -105,3 +109,46 @@ export const useChangeParamValue = (parameter: Parameter, state: QuestionState, 
 
   return changeParamValue;
 };
+
+export function useDependentParamsAreUpdating(
+  question: QuestionWithParameters,
+  paramsUpdatingDependencies: Record<string, boolean>
+) {
+  const paramDependenciesUpdating = useParamDependenciesUpdating(
+    question,
+    paramsUpdatingDependencies
+  );
+
+  return useMemo(
+    () => Object.values(paramDependenciesUpdating).some(x => x),
+    [paramDependenciesUpdating]
+  );
+}
+
+export function useParamDependenciesUpdating(
+  question: QuestionWithParameters,
+  paramsUpdatingDependencies: Record<string, boolean>
+) {
+  return useMemo(
+    () => makeParamDependenciesUpdating(
+      question,
+      paramsUpdatingDependencies
+    ),
+    [question, paramsUpdatingDependencies]
+  );
+}
+
+export function makeParamDependenciesUpdating(
+  question: QuestionWithParameters,
+  paramsUpdatingDependencies: Record<string, boolean>
+): Record<string, boolean> {
+  return fromPairs(
+    question.parameters.filter(
+      parameter => paramsUpdatingDependencies[parameter.name]
+    ).flatMap(
+      parameter => parameter.dependentParams.map(
+        pn => [pn, true]
+      )
+    )
+  );
+}

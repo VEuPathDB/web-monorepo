@@ -1,12 +1,5 @@
-import { fromPairs } from 'lodash';
 import * as React from 'react';
 
-import { HelpIcon, IconAlt, Link } from 'wdk-client/Components';
-import { DispatchAction } from 'wdk-client/Core/CommonTypes';
-import { makeClassNameHelper, safeHtml } from 'wdk-client/Utils/ComponentUtils';
-import { Seq } from 'wdk-client/Utils/IterableUtils';
-import { Parameter, ParameterGroup, RecordClass } from 'wdk-client/Utils/WdkModel';
-import { QuestionState, QuestionWithMappedParameters } from 'wdk-client/StoreModules/QuestionStoreModule';
 import {
   SubmissionMetadata,
   changeGroupVisibility,
@@ -15,9 +8,17 @@ import {
   updateParamValue,
   updateQuestionWeight
 } from 'wdk-client/Actions/QuestionActions';
-import 'wdk-client/Views/Question/DefaultQuestionForm.scss';
+import { HelpIcon, IconAlt, Link } from 'wdk-client/Components';
+import { DispatchAction } from 'wdk-client/Core/CommonTypes';
+import { QuestionState, QuestionWithMappedParameters } from 'wdk-client/StoreModules/QuestionStoreModule';
+import { makeClassNameHelper, safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { scrollIntoView } from 'wdk-client/Utils/DomUtils';
+import { Seq } from 'wdk-client/Utils/IterableUtils';
+import { Parameter, ParameterGroup, RecordClass } from 'wdk-client/Utils/WdkModel';
+import { makeParamDependenciesUpdating, useDependentParamsAreUpdating } from 'wdk-client/Views/Question/Params/Utils';
 import StepValidationInfo from 'wdk-client/Views/Question/StepValidationInfo';
+
+import 'wdk-client/Views/Question/DefaultQuestionForm.scss';
 
 type TextboxChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => void;
 
@@ -96,11 +97,9 @@ export default function DefaultQuestionForm(props: Props) {
   let defaultOnSubmit = useDefaultOnSubmit(dispatchAction, question.urlSegment, submissionMetadata, false);
   let defaultOnWebservicesLinkClick = useDefaultOnSubmit(dispatchAction, question.urlSegment, submissionMetadata, true);
 
-  let dependentParamsAreUpdating = React.useMemo(
-    () => Object.values(
-      state.paramsUpdatingDependencies
-    ).some(x => x),
-    [state.paramsUpdatingDependencies]
+  let dependentParamsAreUpdating = useDependentParamsAreUpdating(
+    question,
+    state.paramsUpdatingDependencies
   );
 
   let submissionDisabled = dependentParamsAreUpdating;
@@ -268,10 +267,9 @@ function ResetFormButton({
 export function renderDefaultParamGroup(group: ParameterGroup, formProps: Props) {
   let { state, eventHandlers, parameterElements } = formProps;
   let { question, groupUIState, paramsUpdatingDependencies } = state;
-  const paramDependenciesUpdating = fromPairs(
-    question.parameters.filter(
-      parameter => paramsUpdatingDependencies[parameter.name]
-    ).flatMap(parameter => parameter.dependentParams.map(pn => [pn, true]))
+  const paramDependenciesUpdating = makeParamDependenciesUpdating(
+    question,
+    paramsUpdatingDependencies
   );
   return (
     <DefaultGroup
