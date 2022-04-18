@@ -368,7 +368,8 @@ function BoxplotViz(props: VisualizationProps) {
           ),
           vocabulary,
           vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
-          vocabularyWithMissingData(facetVocabulary, showMissingFacet)
+          vocabularyWithMissingData(facetVocabulary, showMissingFacet),
+          entities
         ),
         showMissingOverlay,
         '#a0a0a0'
@@ -893,11 +894,6 @@ export function boxplotResponseToData(
     const facetIsEmpty = group.every(
       (data) => data.label.length === 0 && data.median.length === 0
     );
-    console.log(group);
-    console.log(
-      response.boxplot.config.computedVariableMetadata?.collectionVariable
-        ?.collectionVariableDetails
-    );
     return facetIsEmpty
       ? { series: [] }
       : {
@@ -977,8 +973,28 @@ function reorderData(
   data: BoxplotDataWithCoverage | BoxplotData,
   labelVocabulary: string[] = [],
   overlayVocabulary: string[] = [],
-  facetVocabulary: string[] = []
+  facetVocabulary: string[] = [],
+  entities?: StudyEntity[]
 ): BoxplotDataWithCoverage | BoxplotData {
+  if ('computedVariableMetadata' in data) {
+    // If we're returning a list of vars within computedVariableMetadata, then we need to respect that ordering
+    if (
+      data.computedVariableMetadata?.collectionVariable
+        ?.collectionVariableDetails &&
+      entities
+    ) {
+      const rawLabels = data.computedVariableMetadata?.collectionVariable?.collectionVariableDetails?.map(
+        (variable) => variable.variableId
+      );
+      labelVocabulary = fixVarIdLabels(
+        rawLabels,
+        data.computedVariableMetadata?.collectionVariable
+          ?.collectionVariableDetails,
+        entities
+      );
+    }
+  }
+
   if (isFaceted(data)) {
     if (facetVocabulary.length === 0) return data; // FIX-ME stop-gap for vocabulary-less numeric variables
 
@@ -1010,7 +1026,6 @@ function reorderData(
   }
 
   const labelOrderedSeries = data.series.map((series) => {
-    console.log(series);
     if (labelVocabulary.length > 0) {
       // for each label in the vocabulary's correct order,
       // find the index of that label in the provided series' label array
