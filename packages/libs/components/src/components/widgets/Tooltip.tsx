@@ -1,7 +1,7 @@
 import { Theme, Tooltip, withStyles } from '@material-ui/core';
 
 // This is just for convenience.
-export { Tooltip };
+export { HtmlTooltip as Tooltip };
 
 export const HtmlTooltip = withStyles((theme: Theme) => ({
   tooltip: {

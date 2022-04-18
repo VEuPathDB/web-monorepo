@@ -4,7 +4,7 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 import MapVEuMap, { MapVEuMapProps } from '../map/MapVEuMap';
 import { BoundsViewport } from '../map/Types';
 import { BoundsDriftMarkerProps } from '../map/BoundsDriftMarker';
-import { defaultAnimationDuration } from '../map/config/map.json';
+import { defaultAnimationDuration } from '../map/config/map';
 import { leafletZoomLevelToGeohashLevel } from '../map/utils/leaflet-geohash';
 import { Viewport } from '../map/MapVEuMap';
 import {

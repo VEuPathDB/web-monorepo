@@ -1,7 +1,7 @@
 export type ScatterPlotDataSeries = {
   /** x/y data */
-  x: number[] | string[];
-  y: number[] | string[];
+  x: (number | null)[] | string[];
+  y: (number | null)[] | string[];
   /** legend text */
   name?: string;
   /** plot style */
@@ -38,6 +38,8 @@ export type ScatterPlotDataSeries = {
   r2?: number;
   /** opacity of points? */
   opacity?: number;
+  /** add a prop to check whether smoothed mean exists */
+  hasSmoothedMeanData?: boolean;
 };
 
 export type ScatterPlotData = {

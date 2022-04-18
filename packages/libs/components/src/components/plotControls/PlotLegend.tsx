@@ -19,6 +19,8 @@ interface PlotLegendProps {
   legendTitle?: string;
   // use onCheckedLegendItemsChange
   onCheckedLegendItemsChange?: (checkedLegendItems: string[]) => void;
+  // add a condition to show legend for single overlay data
+  showOverlayLegend?: boolean;
 }
 export default function PlotLegend({
   legendItems,
@@ -26,6 +28,7 @@ export default function PlotLegend({
   legendTitle,
   // use onCheckedLegendItemsChange
   onCheckedLegendItemsChange,
+  showOverlayLegend = false,
 }: PlotLegendProps) {
   // change checkbox state by click
   const handleLegendCheckboxClick = (checked: boolean, id: string) => {
@@ -52,7 +55,8 @@ export default function PlotLegend({
 
   return (
     <>
-      {legendItems.length > 1 && (
+      {/* add a condition to show legend for single overlay data */}
+      {(legendItems.length > 1 || showOverlayLegend) && (
         <div
           style={{
             display: 'inline-block', // for general usage (e.g., story)
@@ -238,7 +242,6 @@ export default function PlotLegend({
                       legendEllipsis(item.label, 20)
                     )}
                   </div>
-                  {/* </div> */}
                 </label>
               </div>
             ))}

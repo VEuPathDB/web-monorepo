@@ -2,16 +2,19 @@ import React from 'react';
 import L from 'leaflet';
 
 import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
-import Histogram from '../plots/Histogram';
+import Barplot from '../plots/Barplot';
+//import Histogram from '../plots/Histogram';
 // import NumberRange type def
 import { NumberRange } from '../types/general';
 
 interface ChartMarkerProps extends BoundsDriftMarkerProps {
   borderColor?: string;
   borderWidth?: number;
-  labels: Array<string>; // the labels (not likely to be shown at normal marker size)
-  values: Array<number>; // the counts or totals to be shown in the donut
-  colors?: Array<string> | null; // bar colors: set to be optional with array or null type
+  data: {
+    value: number;
+    label: string;
+    color?: string;
+  }[];
   isAtomic?: boolean; // add a special thumbtack icon if this is true (it's a marker that won't disaggregate if zoomed in further)
   // changed to dependentAxisRange
   dependentAxisRange?: NumberRange | null; // y-axis range for setting global max
@@ -27,11 +30,11 @@ interface ChartMarkerProps extends BoundsDriftMarkerProps {
 export default function ChartMarker(props: ChartMarkerProps) {
   let fullStat = [];
   // need to make a temporary stats array of objects to show marker colors - only works for demo data, not real solr data
-  for (let i = 0; i < props.values.length; i++) {
+  for (let i = 0; i < props.data.length; i++) {
     fullStat.push({
-      color: props.colors ? props.colors[i] : '#7cb5ec',
-      label: props.labels[i],
-      value: props.values[i],
+      color: props.data[i].color ? props.data[i].color : '#7cb5ec',
+      label: props.data[i].label,
+      value: props.data[i].value,
     });
   }
 
@@ -58,11 +61,17 @@ export default function ChartMarker(props: ChartMarkerProps) {
     .map((o) => o.value)
     .reduce((a, c) => {
       return a + c;
-    });
+    }); // summation of fullStat.value per marker icon
+  const sumValuesString =
+    sumValues <= 0.99 && sumValues > 0
+      ? sumValues.toFixed(2)
+      : sumValues.toFixed(0);
 
-  // max of fullStat.value per marker icon
-  const computeMaxValues: number = Math.max(...fullStat.map((o) => o.value));
-  const maxValues: number = computeMaxValues === 0 ? 1 : computeMaxValues;
+  var maxValues: number = Math.max(...fullStat.map((o) => o.value)); // max of fullStat.value per marker icon
+  // for local max, need to check the case wherer all values are zeros that lead to maxValues equals to 0 -> "divided by 0" can happen
+  if (maxValues == 0) {
+    maxValues = 1; // this doesn't matter as all values are zeros
+  }
 
   const roundX = 10; // round corner in pixel: 0 = right angle
   const roundY = 10; // round corner in pixel: 0 = right angle
@@ -109,7 +118,10 @@ export default function ChartMarker(props: ChartMarkerProps) {
   // however, for better understanding their roles, they are separated intentionally.
   globalMaxValue
     ? fullStat.map(
-        (el: { color: string; label: string; value: number }, index) => {
+        (
+          el: { color: string | undefined; label: string; value: number },
+          index
+        ) => {
           // for the case of y-axis range input: a global approach that take global max = icon height
           const barWidth: number = (xSize - 2 * marginX) / count; // bar width
           const startingX: number = marginX + borderWidth + barWidth * index; // x in <react> tag: note that (0,0) is top left of the marker icon
@@ -132,7 +144,10 @@ export default function ChartMarker(props: ChartMarkerProps) {
         }
       )
     : fullStat.map(
-        (el: { color: string; label: string; value: number }, index) => {
+        (
+          el: { color: string | undefined; label: string; value: number },
+          index
+        ) => {
           // for the case of auto-scale y-axis: a local approach that take local max = icon height
           const barWidth: number = (xSize - 2 * marginX) / count; // bar width
           const startingX: number = marginX + borderWidth + barWidth * index; // x in <react> tag: note that (0,0) is top left of the marker icon
@@ -174,7 +189,7 @@ export default function ChartMarker(props: ChartMarkerProps) {
     '<text x="50%" y=' +
     (size - 2 + borderWidth + 7) +
     ' dominant-baseline="middle" text-anchor="middle" opacity="1">' +
-    sumValues +
+    sumValuesString +
     '</text>';
 
   // check isAtomic: draw pushpin if true
@@ -208,23 +223,18 @@ export default function ChartMarker(props: ChartMarkerProps) {
   const popupSize = plotSize + 2 * marginSize;
 
   const popupPlot = (
-    <Histogram
+    <Barplot
       data={{
-        series: props.labels.map((label, i) => ({
-          name: label,
-          color: props.colors ? props.colors[i] : undefined,
-          bins: [
-            {
-              binStart: i,
-              binEnd: i + 1,
-              binLabel: label,
-              value: props.values[i],
-            },
-          ],
-        })),
+        series: [
+          {
+            name: 'do not display me',
+            label: props.data.map(({ label }) => label),
+            value: props.data.map(({ value }) => value),
+            color: props.data.map(({ color }) => color ?? ''),
+          },
+        ],
       }}
       orientation="vertical"
-      barLayout="stack"
       containerStyles={{
         width: plotSize + 'px',
         height: plotSize + 'px',
@@ -239,10 +249,11 @@ export default function ChartMarker(props: ChartMarkerProps) {
       displayLibraryControls={false}
       interactive={false}
       dependentAxisLabel=""
-      independentAxisLabel={`Total: ${sumValues.toString()}`}
+      independentAxisLabel={`Total: ${sumValuesString}`}
       // dependentAxisRange is an object with {min, max} (NumberRange)
       dependentAxisRange={props.dependentAxisRange ?? undefined}
       showValues={true}
+      showIndependentAxisTickLabel={false}
     />
   );
 

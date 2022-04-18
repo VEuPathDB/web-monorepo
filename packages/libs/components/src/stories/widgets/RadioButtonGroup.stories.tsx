@@ -34,3 +34,9 @@ Basic.args = {
   margins: ['10em', '0', '0', '10em'],
   itemMarginRight: 50,
 };
+
+export const Renamed = Template.bind({});
+Renamed.args = {
+  ...Basic.args,
+  optionLabels: ['Sideways', 'Upright'],
+};

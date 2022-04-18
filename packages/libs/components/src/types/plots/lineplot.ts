@@ -17,7 +17,7 @@ export type LinePlotDataSeries = Override<
   yErrorBarUpper?: (number | string | null)[];
   yErrorBarLower?: (number | string | null)[];
   /* How many data points were binned? */
-  sampleSize?: number[];
+  extraTooltipText?: string[];
   /* Strings (such as '[10,15)') to describe how the x-axis variable was binned for tooltip info only */
   binLabel?: string[];
 };
