@@ -27,7 +27,7 @@ import {
   FacetedData,
   BoxplotDataObject,
 } from '@veupathdb/components/lib/types/plots';
-import { CoverageStatistics } from '../../../types/visualization';
+import { Computation, CoverageStatistics } from '../../../types/visualization';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import { PlotLayout } from '../../layouts/PlotLayout';
 import PluginError from '../PluginError';
@@ -43,9 +43,10 @@ import {
   hasIncompleteCases,
   variablesAreUnique,
   vocabularyWithMissingData,
+  fixVarIdLabels,
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
-import { Variable } from '../../../types/study';
+import { StudyEntity, Variable } from '../../../types/study';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 // custom legend
 import PlotLegend, {
@@ -67,7 +68,10 @@ import Notification from '@veupathdb/components/lib/components/widgets//Notifica
 import Button from '@veupathdb/components/lib/components/widgets/Button';
 import { useDefaultDependentAxisRange } from '../../../hooks/computeDefaultDependentAxisRange';
 // alphadiv abundance this should be used for collection variable
-import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from '../../../utils/study-metadata';
+import {
+  findEntityAndVariable as findCollectionVariableEntityAndVariable,
+  findEntityAndVariable,
+} from '../../../utils/study-metadata';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
 import { ComputedVariableMetadata } from '../../../api/DataClient/types';
 
@@ -358,7 +362,9 @@ function BoxplotViz(props: VisualizationProps) {
             response,
             xAxisVariable,
             overlayVariable,
-            facetVariable
+            facetVariable,
+            computation,
+            entities
           ),
           vocabulary,
           vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
@@ -868,7 +874,9 @@ export function boxplotResponseToData(
   // alphadiv abundance: change variable to be possibly undefined for abundance case
   variable?: Variable,
   overlayVariable?: Variable,
-  facetVariable?: Variable
+  facetVariable?: Variable,
+  computation?: Computation,
+  entities?: StudyEntity[]
 ): BoxplotDataWithCoverage {
   // group by facet variable value (if only one facet variable in response - there may be up to two in future)
   const facetGroupedResponseData = groupBy(response.boxplot.data, (data) =>
@@ -884,6 +892,11 @@ export function boxplotResponseToData(
   const processedData = mapValues(facetGroupedResponseData, (group) => {
     const facetIsEmpty = group.every(
       (data) => data.label.length === 0 && data.median.length === 0
+    );
+    console.log(group);
+    console.log(
+      response.boxplot.config.computedVariableMetadata?.collectionVariable
+        ?.collectionVariableDetails
     );
     return facetIsEmpty
       ? { series: [] }
@@ -912,7 +925,19 @@ export function boxplotResponseToData(
                     overlayVariable
                   )
                 : '',
-            label: fixLabelsForNumberVariables(data.label, variable),
+            label:
+              computation?.descriptor.type === 'abundance' &&
+              entities &&
+              response.boxplot.config.computedVariableMetadata
+                ?.collectionVariable?.collectionVariableDetails
+                ? // abundance box labels are variableIds. Need to replace with that variable's display name
+                  fixVarIdLabels(
+                    data.label,
+                    response.boxplot.config.computedVariableMetadata
+                      ?.collectionVariable?.collectionVariableDetails,
+                    entities
+                  )
+                : fixLabelsForNumberVariables(data.label, variable),
           })),
         };
   });
@@ -985,6 +1010,7 @@ function reorderData(
   }
 
   const labelOrderedSeries = data.series.map((series) => {
+    console.log(series);
     if (labelVocabulary.length > 0) {
       // for each label in the vocabulary's correct order,
       // find the index of that label in the provided series' label array

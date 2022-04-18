@@ -12,6 +12,7 @@ import { CompleteCasesTable } from '../api/DataClient';
 import { Bounds } from '@veupathdb/components/lib/map/Types';
 import { Filter } from '../types/filter';
 import { VariableDescriptor } from '../types/variable';
+import { findEntityAndVariable } from './study-metadata';
 
 // was: BarplotData | HistogramData | { series: BoxplotData };
 type SeriesWithStatistics<T> = T & CoverageStatistics;
@@ -114,6 +115,34 @@ export function fixLabelsForNumberVariables(
     ? labels.map((n) => String(Number(n)))
     : labels;
 }
+
+export function fixVarIdLabels(
+  labels: string[] = [],
+  variableList: VariableDescriptor[],
+  entities: StudyEntity[]
+): string[] {
+  const displayNames: string[] = labels.map((label) => {
+    // Label is variable id. Get entity and var id from collection list.
+    const variableDescriptors = variableList.filter(
+      (varItem) => varItem.variableId === label
+    );
+    const variableDescriptor = variableDescriptors && variableDescriptors[0];
+    const retrievedVariable = findEntityAndVariable(
+      entities,
+      variableDescriptor
+    );
+    return retrievedVariable?.variable.displayName || label;
+  });
+  return displayNames;
+}
+
+// ? data.label.map((label) => {
+//   const labelVariables = response.boxplot.config.computedVariableMetadata?.collectionVariable?.collectionVariableDetails?.filter((varDetails) => varDetails.variableId === label);
+//   const labelVariable = labelVariables && labelVariables[0];
+//   const retrievedVariable = entities && findEntityAndVariable(entities, labelVariable);
+//   return retrievedVariable?.variable.displayName || label;
+// })
+// : fixLabelsForNumberVariables(data.label, variable),
 
 /**
  * non-array version of fixLabelsForNumberVariables
