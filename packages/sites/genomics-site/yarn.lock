@@ -1186,10 +1186,10 @@
     react-responsive-modal "^6.2.0"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^3.2.5":
-  version "3.2.5"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.2.5.tgz#9c6a05368701a38c31cba17e936c76fbd93feb37"
-  integrity sha512-fNyytq4ZpcNOvIhZqWnvmvj2/O7G5R2na73waPjCTS7NbHg/JxQYJ5udxsAK0+VIQ65xACL+7jqN/Zx8XxgefQ==
+"@veupathdb/eda@^3.2.6":
+  version "3.2.6"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.2.6.tgz#2568064cd5ba5314f393d7b916248d26715f7cfc"
+  integrity sha512-axEBWeXAJSc/gqWbDg8CkEgOGaOvUnzNw5ZG62PXrtxbLrokzlT1EJYb3ruTD4hewymnf9AFAGTztH1jcwtmrw==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -1211,10 +1211,10 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/multi-blast@^2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/multi-blast/-/multi-blast-2.0.1.tgz#2cf1d1567c4795ae34647f739e84920f17ccf1c5"
-  integrity sha512-iGozEDIS2y0XWD75sL0dFL+TwoClvvaY8rChOgJFE9LBcG+jnKN7kThkxPQXo5krdJ3DJGc5wYwSs0vh9hCdnQ==
+"@veupathdb/multi-blast@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/multi-blast/-/multi-blast-3.0.0.tgz#7decd0ef5bd97d063abafcaea3265a30ffb947b8"
+  integrity sha512-lDylzRULidB3quHFPF2dzbst7tE23l/BnW9sM8bNittWgiylVUQt6B/ZGdiH62Fc8oUEPZe7oxv95JGMYCsT9w==
   dependencies:
     file-saver "^2.0.5"
     fp-ts "^2.11.5"
@@ -1239,10 +1239,10 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/wdk-client@^0.6.7":
-  version "0.6.7"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.6.7.tgz#2bf512c396c3ff1547195231e01864e80abbc9a1"
-  integrity sha512-YS1Tz0Uoem+ew8ngHtZJQspCAy2ErTgv8yLgvJ2oPpepO53xSeAIqPx0FUGVrUCQaaSwsm0w3ONIy4C+cQ5k9g==
+"@veupathdb/wdk-client@^0.6.8":
+  version "0.6.8"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.6.8.tgz#0b7b94e166e49911ce7516f699a1067b67dc882b"
+  integrity sha512-814dHWH1gXMWzNNfPqSJ6YaiR8zhxfc2tLGyvX1tWwvIJGgwX0GWmss5d2M7trGGl440W+G1ox7+TxBgmrBadQ==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
