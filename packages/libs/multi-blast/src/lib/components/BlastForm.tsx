@@ -9,7 +9,7 @@ import {
 } from 'react';
 import { useHistory } from 'react-router';
 
-import { fromPairs, keyBy } from 'lodash';
+import { keyBy } from 'lodash';
 
 import {
   ENABLE_SUBMISSION,
@@ -36,7 +36,11 @@ import DefaultQuestionForm, {
   renderDefaultParamGroup,
 } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 import { Plugin } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
-import { useChangeParamValue } from '@veupathdb/wdk-client/lib/Views/Question/Params/Utils';
+import {
+  makeParamDependenciesUpdating,
+  useChangeParamValue,
+  useDependentParamsAreUpdating,
+} from '@veupathdb/wdk-client/lib/Views/Question/Params/Utils';
 
 import { useBlastApi } from '../hooks/api';
 import { useEnabledAlgorithms } from '../hooks/blastAlgorithms';
@@ -302,17 +306,9 @@ function BlastFormWithTransformedQuestion(props: Props) {
                 parameters={restrictedAdvancedParamGroup.parameters}
                 parameterMap={formProps.state.question.parametersByName}
                 parameterElements={formProps.parameterElements}
-                paramDependenciesUpdating={fromPairs(
-                  formProps.state.question.parameters
-                    .filter(
-                      (parameter) =>
-                        formProps.state.paramsUpdatingDependencies[
-                          parameter.name
-                        ]
-                    )
-                    .flatMap((parameter) =>
-                      parameter.dependentParams.map((pn) => [pn, true])
-                    )
+                paramDependenciesUpdating={makeParamDependenciesUpdating(
+                  formProps.state.question,
+                  formProps.state.paramsUpdatingDependencies
                 )}
               />
             </>
@@ -394,6 +390,11 @@ function NewJobForm(props: NewJobFormProps) {
   const [inputErrors, setInputErrors] = useState<InputErrors | undefined>(
     undefined
   );
+  const dependentParamsAreUpdating = useDependentParamsAreUpdating(
+    props.state.question,
+    props.state.paramsUpdatingDependencies
+  );
+  const submissionDisabled = dependentParamsAreUpdating;
 
   const api = useBlastApi();
 
@@ -421,6 +422,10 @@ function NewJobForm(props: NewJobFormProps) {
       }
 
       event.preventDefault();
+
+      if (submissionDisabled) {
+        return false;
+      }
 
       setSubmitting(true);
 
@@ -490,6 +495,7 @@ function NewJobForm(props: NewJobFormProps) {
       targetMetadataByDataType,
       wdkDependencies,
       props.state.paramValues,
+      submissionDisabled,
     ]
   );
 
@@ -505,6 +511,7 @@ function NewJobForm(props: NewJobFormProps) {
             submissionMetadata={props.submissionMetadata}
             submitting={submitting}
             submitButtonText={props.submitButtonText}
+            submissionDisabled={dependentParamsAreUpdating}
           />
         </div>
       </form>

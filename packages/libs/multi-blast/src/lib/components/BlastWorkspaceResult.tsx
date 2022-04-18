@@ -283,7 +283,7 @@ function BlastSummary({
   const {
     hitTypeDisplayName,
     hitTypeDisplayNamePlural,
-  } = useHitTypeDisplayNames(wdkRecordType);
+  } = useHitTypeDisplayNames(wdkRecordType, targetTypeTerm);
 
   const multiQueryParamValues = useMemo(
     () =>

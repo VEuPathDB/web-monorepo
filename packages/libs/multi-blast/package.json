@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/multi-blast",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -24,8 +24,8 @@
   "peerDependencies": {
     "@veupathdb/http-utils": "^1.1.0",
     "@veupathdb/preferred-organisms": ">=1.1.6",
-    "@veupathdb/wdk-client": ">=0.5.2",
-    "@veupathdb/web-common": ">=0.2.0",
+    "@veupathdb/wdk-client": ">=0.6.8",
+    "@veupathdb/web-common": ">=0.4.3",
     "react": ">=16.14.0",
     "react-dom": ">=16.14.0",
     "react-redux": "^7.2.6",
@@ -83,7 +83,7 @@
     "@veupathdb/react-scripts": "^1.2.0",
     "@veupathdb/study-data-access": "^0.3.0",
     "@veupathdb/tsconfig": "^1.0.0",
-    "@veupathdb/wdk-client": "^0.6.5",
+    "@veupathdb/wdk-client": "^0.6.8",
     "@veupathdb/web-common": "^0.4.3",
     "babel-eslint": "^10.0.0",
     "eslint": "^7.5.0",
