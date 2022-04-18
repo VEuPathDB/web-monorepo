@@ -33,7 +33,7 @@ Then, optionally add the following `script` entries to `package.json` in your re
 === Environment Variables
 
 The following environment variables are used by the `start` script. They may be
-stored in a `.env.local` file located at the project root, or defined in other
+stored in a `.env` file located at the project root, or defined in other
 standard ways.
 
   | Variable name          | Description                          | Optional / Required |

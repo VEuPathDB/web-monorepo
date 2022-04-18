@@ -16,7 +16,10 @@ const {
   targetDir: process.argv[4]
 });
 
-const siteConfigPath = path.resolve(process.cwd(), '.env.local');
+const siteConfigPath = [
+  path.resolve(process.cwd(), '.env.local'),
+  path.resolve(process.cwd(), '.env')
+];
 
 switch(script) {
   case "run-site-dev-server":
