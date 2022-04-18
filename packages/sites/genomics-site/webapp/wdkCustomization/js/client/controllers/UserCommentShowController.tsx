@@ -4,9 +4,8 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 
 import PageController from '@veupathdb/wdk-client/lib/Core/Controllers/PageController';
-import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
+import { RootState, UserCommentGetResponse } from '../types/userCommentTypes';
 import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { UserCommentGetResponse } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { createSelector } from 'reselect';
 import { UserCommentShowState } from '../storeModules/UserCommentShowStoreModule';
 import { openUserCommentShow, requestDeleteUserComment } from '../actions/UserCommentShowActions';

@@ -1,5 +1,10 @@
 import { ServiceBase, CLIENT_WDK_VERSION_HEADER, StandardWdkPostResponse } from '@veupathdb/wdk-client/lib/Service/ServiceBase';
-import { UserCommentPostRequest, UserCommentAttachedFileSpec, PubmedPreview, UserCommentGetResponse } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+import {
+  UserCommentPostRequest,
+  UserCommentAttachedFileSpec,
+  PubmedPreview,
+  UserCommentGetResponse
+} from '../types/userCommentTypes';
 
 // TODO: this should be defined here or in wdk model or someplace, and imported in the store module
 import { CategoryChoice } from '../storeModules/UserCommentFormStoreModule';

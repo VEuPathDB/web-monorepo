@@ -2,7 +2,7 @@ import React from 'react';
 
 import { PubmedIdEntry } from './PubmedIdEntry';
 
-import { PubmedPreview } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+import { PubmedPreview } from '../../../types/userCommentTypes';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
 interface PubmedIdPreviewProps {

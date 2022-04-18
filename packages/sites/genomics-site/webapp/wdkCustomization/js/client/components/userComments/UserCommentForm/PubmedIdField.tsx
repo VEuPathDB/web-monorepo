@@ -1,5 +1,5 @@
 import React from 'react';
-import { PubmedPreview } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+import { PubmedPreview } from '../../../types/userCommentTypes';
 import { TextBox, HelpIcon } from '@veupathdb/wdk-client/lib/Components';
 import { PubmedIdPreview } from './PubmedIdPreview';
 import { PubmedIdSearchField } from './PubmedIdSearchField';

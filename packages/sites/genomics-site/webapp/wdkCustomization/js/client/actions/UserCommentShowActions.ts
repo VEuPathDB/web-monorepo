@@ -1,5 +1,5 @@
 import { makeActionCreator, InferAction } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
-import { UserCommentGetResponse } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+import { UserCommentGetResponse } from '../types/userCommentTypes';
 
 export const openUserCommentShow = makeActionCreator(
   'user-comment-show/open-user-comment-show',

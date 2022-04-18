@@ -19,7 +19,7 @@ export const PubmedIdSearchField: React.SFC<PubmedIdSearchFieldProps> = ({
         return;
       }
       const newWindow = window.open(`http://www.ncbi.nlm.nih.gov/pubmed?term=${query}`,'_blank');
-      if (window.focus && newWindow !== null) {
+      if (newWindow !== null) {
         newWindow.focus()
       }
     }}>Search for PubMed ID(s)</button>

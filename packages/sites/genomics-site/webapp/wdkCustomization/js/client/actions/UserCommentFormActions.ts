@@ -1,5 +1,12 @@
 import { makeActionCreator, InferAction } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
-import { UserCommentPostRequest, UserCommentFormFields, UserCommentAttachedFileSpec, PubmedPreview, UserCommentGetResponse, UserCommentRawFormFields } from "@veupathdb/wdk-client/lib/Utils/WdkUser";
+import {
+    UserCommentPostRequest,
+    UserCommentFormFields,
+    UserCommentAttachedFileSpec,
+    PubmedPreview,
+    UserCommentGetResponse,
+    UserCommentRawFormFields
+} from "../types/userCommentTypes";
 import { CategoryChoice } from '../storeModules/UserCommentFormStoreModule';
 
 // we open the form in one of two modes:

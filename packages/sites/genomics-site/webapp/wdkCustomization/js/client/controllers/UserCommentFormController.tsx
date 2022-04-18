@@ -5,15 +5,36 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 
 import PageController from '@veupathdb/wdk-client/lib/Core/Controllers/PageController';
-import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { CheckboxList, TextArea, TextBox, Link, HelpIcon } from '@veupathdb/wdk-client/lib/Components';
 import { UserCommentFormView, UserCommentFormViewProps } from '../components/userComments/UserCommentForm/UserCommentFormView';
 import { get, omit } from 'lodash';
 import { GlobalData } from '@veupathdb/wdk-client/lib/StoreModules/GlobalData';
-import { openUserCommentForm, requestSubmitComment, updateFormFields, requestPubmedPreview, closePubmedPreview, addFileToAttach, removeFileToAttach, modifyFileToAttach, removeAttachedFile, updateRawFormFields, changePubmedIdSearchQuery, closeUserCommentForm } from '../actions/UserCommentFormActions';
-import { UserCommentPostRequest, PubmedPreview, UserCommentAttachedFileSpec, UserCommentAttachedFile, KeyedUserCommentAttachedFileSpec, UserCommentRawFormFields, UserCommentLocation } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+import {
+  openUserCommentForm,
+  requestSubmitComment,
+  updateFormFields,
+  requestPubmedPreview,
+  closePubmedPreview,
+  addFileToAttach,
+  removeFileToAttach,
+  modifyFileToAttach,
+  removeAttachedFile,
+  updateRawFormFields,
+  changePubmedIdSearchQuery,
+  closeUserCommentForm
+} from '../actions/UserCommentFormActions';
+import {
+  RootState,
+  UserCommentPostRequest,
+  PubmedPreview,
+  UserCommentAttachedFileSpec,
+  UserCommentAttachedFile,
+  KeyedUserCommentAttachedFileSpec,
+  UserCommentRawFormFields,
+  UserCommentLocation
+} from '../types/userCommentTypes';
 import { createSelector } from 'reselect';
 import { UserCommentFormState, CategoryChoice } from '../storeModules/UserCommentFormStoreModule';
 

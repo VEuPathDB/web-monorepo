@@ -1,5 +1,9 @@
 import React from 'react';
-import { UserCommentAttachedFile, KeyedUserCommentAttachedFileSpec, UserCommentAttachedFileSpec } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+import {
+  UserCommentAttachedFile,
+  KeyedUserCommentAttachedFileSpec,
+  UserCommentAttachedFileSpec
+} from '../../../types/userCommentTypes';
 import { FileInputSubfield } from './FileInputSubfield';
 
 interface AttachmentsFieldProps {

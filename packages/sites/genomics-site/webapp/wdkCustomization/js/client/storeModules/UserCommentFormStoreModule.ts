@@ -19,14 +19,22 @@ import {
     reportBackendValidationErrors,
     reportInternalError
 } from '../actions/UserCommentFormActions';
-import { UserCommentPostRequest, UserCommentAttachedFileSpec, KeyedUserCommentAttachedFileSpec, UserCommentAttachedFile, PubmedPreview, UserCommentGetResponse, UserCommentRawFormFields } from "@veupathdb/wdk-client/lib/Utils/WdkUser";
+import {
+    RootState,
+    UserCommentPostRequest,
+    UserCommentAttachedFileSpec,
+    KeyedUserCommentAttachedFileSpec,
+    UserCommentAttachedFile,
+    PubmedPreview,
+    UserCommentGetResponse,
+    UserCommentRawFormFields
+} from "../types/userCommentTypes";
 import { InferAction } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
-import { Action } from '@veupathdb/wdk-client/lib/Actions';
+import { Action } from '../actions/userCommentActions';
 import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
 import { combineEpics, StateObservable } from 'redux-observable';
 import { mergeMapRequestActionsToEpic as mrate, takeEpicInWindow } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
 import { allDataLoaded } from '@veupathdb/wdk-client/lib/Actions/StaticDataActions';
-import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { get } from 'lodash';
 
 export const key = 'userCommentForm';

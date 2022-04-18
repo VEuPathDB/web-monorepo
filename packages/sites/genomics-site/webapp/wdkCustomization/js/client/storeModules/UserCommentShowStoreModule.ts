@@ -1,7 +1,17 @@
-import { Action } from '@veupathdb/wdk-client/lib/Actions';
-import { UserCommentGetResponse } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
-import { fulfillUserComments, openUserCommentShow, closeUserCommentShow, requestDeleteUserComment, fulfillDeleteUserComment } from '../actions/UserCommentShowActions';
-import { takeEpicInWindow, mergeMapRequestActionsToEpic as mrate, InferAction } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
+import { Action } from '../actions/userCommentActions';
+import { UserCommentGetResponse } from '../types/userCommentTypes';
+import {
+  fulfillUserComments,
+  openUserCommentShow,
+  closeUserCommentShow,
+  requestDeleteUserComment,
+  fulfillDeleteUserComment
+} from '../actions/UserCommentShowActions';
+import {
+  takeEpicInWindow,
+  mergeMapRequestActionsToEpic as mrate,
+  InferAction
+} from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
 
 import { combineEpics, StateObservable } from 'redux-observable';
 import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
