@@ -7,12 +7,12 @@
 // Those options will be merged with `baseConfig`, and the result will be
 // returned.
 
-var path = require('path');
-var webpack = require('webpack');
-var webpackMerge = require('webpack-merge');
-var MiniCssExtractPlugin = require('mini-css-extract-plugin');
-var isModern = process.env.BROWSERSLIST_ENV === 'modern';
-var outputSubDir = isModern ? 'modern' : 'legacy';
+const path = require('path');
+const webpack = require('webpack');
+const webpackMerge = require('webpack-merge');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const isModern = process.env.BROWSERSLIST_ENV === 'modern';
+const outputSubDir = isModern ? 'modern' : 'legacy';
 console.log('BROWSERSLIST_ENV:', process.env.BROWSERSLIST_ENV)
 
 /**
@@ -26,7 +26,7 @@ console.log('BROWSERSLIST_ENV:', process.env.BROWSERSLIST_ENV)
  */
 exports.merge = function merge(additionConfig) {
   return function (env, argv) {
-    var isDevelopment = argv.mode !== 'production';
+    const isDevelopment = argv.mode !== 'production';
     return webpackMerge.smart([{
       bail: true,
       context: process.cwd(),
