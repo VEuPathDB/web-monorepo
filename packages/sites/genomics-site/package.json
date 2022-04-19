@@ -16,7 +16,7 @@
     "@veupathdb/multi-blast": "^3.0.0",
     "@veupathdb/preferred-organisms": "^1.1.11",
     "@veupathdb/study-data-access": "^0.3.1",
-    "@veupathdb/wdk-client": "^0.6.8",
+    "@veupathdb/wdk-client": "^0.6.9",
     "@veupathdb/web-common": "^0.5.0",
     "ciena-dagre": "^1.0.0",
     "core-js": "^3.21.1",
