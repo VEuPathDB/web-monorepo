@@ -36,11 +36,13 @@ import { combineEpics, StateObservable } from 'redux-observable';
 import { mergeMapRequestActionsToEpic as mrate, takeEpicInWindow } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
 import { allDataLoaded } from '@veupathdb/wdk-client/lib/Actions/StaticDataActions';
 import { get } from 'lodash';
+import { isGenomicsService } from '../wrapWdkService';
 
 export const key = 'userCommentForm';
 
 const openUCF = openUserCommentForm;
 const ATTACHED_FILES_KEY = 'attachedFiles';
+const USER_COMMENTS_ERR_MSG = 'Tried to use a UserComments method via a misconfigured GenomicsService';
 
 export type UserCommentFormState = {
     userCommentPostRequest?: UserCommentPostRequest; // will include previous comment id if editing
@@ -253,6 +255,9 @@ export function reduce(state: State = initialState, action: Action): State {
 }
 
 async function getFulfillUserComment([openAction]: [InferAction<typeof openUCF>], state$: StateObservable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillUserComment>> {
+    if (!isGenomicsService(wdkService)) {
+        throw new Error(USER_COMMENTS_ERR_MSG);
+    }
     if (openAction.payload.isNew) {
         return fulfillUserComment({ 
             editMode: false, 
@@ -275,10 +280,16 @@ async function getFulfillUserComment([openAction]: [InferAction<typeof openUCF>]
 }
 
 async function getFulfillPubmedPreview([requestAction]: [InferAction<typeof requestPubmedPreview>], state$: StateObservable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillPubmedPreview>> {
-     return fulfillPubmedPreview( requestAction.payload.pubMedIds,  await wdkService.getPubmedPreview(requestAction.payload.pubMedIds));
+    if (!isGenomicsService(wdkService)) {
+        throw new Error(USER_COMMENTS_ERR_MSG);
+    } 
+    return fulfillPubmedPreview(requestAction.payload.pubMedIds, await wdkService.getPubmedPreview(requestAction.payload.pubMedIds));
 }
 
 async function getFulfillSubmitComment([requestAction]: [ InferAction<typeof requestSubmitComment>], state$: StateObservable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillSubmitComment | typeof reportBackendValidationErrors | typeof reportInternalError>> {
+    if (!isGenomicsService(wdkService)) {
+        throw new Error(USER_COMMENTS_ERR_MSG);
+    }
     const responseData = await wdkService.postUserComment(requestAction.payload.userCommentPostRequest);
 
     if (responseData.type === 'success') {
@@ -303,6 +314,9 @@ async function getRequestUpdateAttachedFiles([fulfillSubmitCommentAction]: [ Inf
 }
 
 async function getFulfillUpdateAttachedFiles([fulfillSubmitCommentAction, requestUpdateAttachedFilesAction]: [ InferAction<typeof fulfillSubmitComment>, InferAction<typeof requestUpdateAttachedFiles>], state$: StateObservable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillUpdateAttachedFiles>> {
+    if (!isGenomicsService(wdkService)) {
+        throw new Error(USER_COMMENTS_ERR_MSG);
+    }
     let commentId = requestUpdateAttachedFilesAction.payload.userCommentId;
     let fileIdsToRemove: number[] = requestUpdateAttachedFilesAction.payload.fileIdsToRemove;
     let filesToAttach: UserCommentAttachedFileSpec[] = requestUpdateAttachedFilesAction.payload.filesToAttach;

@@ -16,6 +16,9 @@ import {
 import { combineEpics, StateObservable } from 'redux-observable';
 import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
 import { allDataLoaded } from '@veupathdb/wdk-client/lib/Actions/StaticDataActions';
+import { isGenomicsService } from '../wrapWdkService';
+
+const USER_COMMENTS_ERR_MSG = 'Tried to use a UserComments method via a misconfigured GenomicsService';
 
 export const key = 'userCommentShow';
 
@@ -67,6 +70,9 @@ export const reduce = (state: UserCommentShowState = initialState, action: Actio
 }
 
 async function getFulfillUserComments([ openAction ]: [ InferAction<typeof openUserCommentShow> ], state$: StateObservable<UserCommentShowState>, { wdkService }: EpicDependencies) {
+  if (!isGenomicsService(wdkService)) {
+    throw new Error(USER_COMMENTS_ERR_MSG);
+  }
   return fulfillUserComments(
     openAction.payload.targetType,
     openAction.payload.targetId,
@@ -78,6 +84,9 @@ async function getFulfillUserComments([ openAction ]: [ InferAction<typeof openU
 }
 
 async function getFulfillDeleteUserComment([ requestAction ]: [ InferAction<typeof requestDeleteUserComment> ], state$: StateObservable<UserCommentShowState>, { wdkService }: EpicDependencies ) {
+  if (!isGenomicsService(wdkService)) {
+    throw new Error(USER_COMMENTS_ERR_MSG);
+  }
   await wdkService.deleteUserComment(requestAction.payload.commentId);
 
   return fulfillDeleteUserComment(
