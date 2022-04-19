@@ -11,8 +11,6 @@ var path = require('path');
 var webpack = require('webpack');
 var webpackMerge = require('webpack-merge');
 var MiniCssExtractPlugin = require('mini-css-extract-plugin');
-var projectHome = path.resolve(__dirname, '../..');
-var devtoolPathPrefixRe = new RegExp('^' + projectHome + '/');
 var isModern = process.env.BROWSERSLIST_ENV === 'modern';
 var outputSubDir = isModern ? 'modern' : 'legacy';
 console.log('BROWSERSLIST_ENV:', process.env.BROWSERSLIST_ENV)
@@ -35,17 +33,10 @@ exports.merge = function merge(additionConfig) {
       resolve: {
         extensions: [ ".js", ".jsx", ".ts", ".tsx" ],
       },
-      resolveLoader: {
-        modules: [ path.join(process.cwd(), 'node_modules'), path.join(__dirname, 'node_modules') ]
-      },
       output: {
         path: path.join(process.cwd(), 'dist', outputSubDir),
         filename: '[name].bundle.js',
         chunkFilename: '[id].bundle-[chunkhash].js',
-        devtoolModuleFilenameTemplate: function(info) {
-          // strip prefix from absolute path
-          return 'webpack:///' + info.absoluteResourcePath.replace(devtoolPathPrefixRe, './');
-        },
         hashDigestLength: 20
       },
       module: {
@@ -103,9 +94,6 @@ exports.merge = function merge(additionConfig) {
 
         ]
       },
-      resolveLoader: {
-        modules: [ 'node_modules', path.join(__dirname, 'node_modules') ]
-      },
       devtool: 'source-map',
       plugins: [
         new webpack.optimize.ModuleConcatenationPlugin(),
@@ -128,9 +116,3 @@ exports.merge = function merge(additionConfig) {
     }].concat(typeof additionConfig === 'function' ? additionConfig(env, argv) : additionConfig));
   }
 }
-
-// expose webpack in case consumers want to add more plugins
-exports.webpack = webpack;
-
-/** no nothing */
-function noop(){}
