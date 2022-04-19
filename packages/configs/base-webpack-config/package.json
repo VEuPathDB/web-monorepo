@@ -1,5 +1,5 @@
 {
-  "name": "base-webpack-config",
+  "name": "@veupathdb/base-webpack-config",
   "version": "0.1.0",
   "main": "index.js",
   "license": "Apache-2.0",
