@@ -68,10 +68,7 @@ import Notification from '@veupathdb/components/lib/components/widgets//Notifica
 import Button from '@veupathdb/components/lib/components/widgets/Button';
 import { useDefaultDependentAxisRange } from '../../../hooks/computeDefaultDependentAxisRange';
 // alphadiv abundance this should be used for collection variable
-import {
-  findEntityAndVariable as findCollectionVariableEntityAndVariable,
-  findEntityAndVariable,
-} from '../../../utils/study-metadata';
+import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from '../../../utils/study-metadata';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
 import { ComputedVariableMetadata } from '../../../api/DataClient/types';
 

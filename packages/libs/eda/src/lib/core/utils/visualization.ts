@@ -13,6 +13,7 @@ import { Bounds } from '@veupathdb/components/lib/map/Types';
 import { Filter } from '../types/filter';
 import { VariableDescriptor } from '../types/variable';
 import { findEntityAndVariable } from './study-metadata';
+import { updateColumnsDialogSelection } from '@veupathdb/wdk-client/lib/Actions/SummaryView/ResultTableSummaryViewActions';
 
 // was: BarplotData | HistogramData | { series: BoxplotData };
 type SeriesWithStatistics<T> = T & CoverageStatistics;
@@ -111,38 +112,12 @@ export function fixLabelsForNumberVariables(
   labels: string[] = [],
   variable?: Variable
 ): string[] {
+  console.log('fixing number labels');
+  console.log(labels);
   return variable != null && variable.type === 'number'
     ? labels.map((n) => String(Number(n)))
     : labels;
 }
-
-export function fixVarIdLabels(
-  labels: string[] = [],
-  variableList: VariableDescriptor[],
-  entities: StudyEntity[]
-): string[] {
-  const displayNames: string[] = labels.map((label) => {
-    // Label is variable id. Get entity and var id from collection list.
-    const variableDescriptors = variableList.filter(
-      (varItem) => varItem.variableId === label
-    );
-    const variableDescriptor = variableDescriptors && variableDescriptors[0];
-    const retrievedVariable = findEntityAndVariable(
-      entities,
-      variableDescriptor
-    );
-    return retrievedVariable?.variable.displayName || label;
-  });
-  return displayNames;
-}
-
-// ? data.label.map((label) => {
-//   const labelVariables = response.boxplot.config.computedVariableMetadata?.collectionVariable?.collectionVariableDetails?.filter((varDetails) => varDetails.variableId === label);
-//   const labelVariable = labelVariables && labelVariables[0];
-//   const retrievedVariable = entities && findEntityAndVariable(entities, labelVariable);
-//   return retrievedVariable?.variable.displayName || label;
-// })
-// : fixLabelsForNumberVariables(data.label, variable),
 
 /**
  * non-array version of fixLabelsForNumberVariables
@@ -157,6 +132,55 @@ export function fixLabelForNumberVariables(
   return variable != null && variable.type === 'number'
     ? String(isNaN(Number(label)) ? label : Number(label))
     : label;
+}
+
+/**
+ *
+ * In the abundance app, var ids show up like normal variable values. This function
+ * takes these ids (labels) and returns that variable's display name, if it exists.
+ *
+ * If no variable is found with that id, the original label is returned.
+ */
+export function fixVarIdLabels(
+  labels: string[] = [],
+  variableList: VariableDescriptor[],
+  entities: StudyEntity[]
+): string[] {
+  console.log(labels);
+  const displayNames: string[] = labels.map((label) => {
+    // Label is a variable id. Get entity and var id from variable list.
+    const variableDescriptors = variableList.filter(
+      (varItem) => varItem.variableId === label
+    );
+    const variableDescriptor = variableDescriptors && variableDescriptors[0];
+    const retrievedVariable = findEntityAndVariable(
+      entities,
+      variableDescriptor
+    );
+    return retrievedVariable?.variable.displayName || label;
+  });
+  return displayNames;
+}
+
+/**
+ *
+ * non-array version of fixVarIdLabels
+ *
+ * If no variable is found with that id, the original label is returned.
+ */
+export function fixVarIdLabel(
+  label: string,
+  variableList: VariableDescriptor[],
+  entities: StudyEntity[]
+): string {
+  // Label is a variable id. Get entity and var id from variable list.
+  const variableDescriptors = variableList.filter(
+    (varItem) => varItem.variableId === label
+  );
+  const variableDescriptor = variableDescriptors && variableDescriptors[0];
+  const retrievedVariable = findEntityAndVariable(entities, variableDescriptor);
+  const displayName: string = retrievedVariable?.variable.displayName || label;
+  return displayName;
 }
 
 export const nonUniqueWarning =
