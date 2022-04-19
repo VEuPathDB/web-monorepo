@@ -21,7 +21,7 @@
     "@veupathdb/eda": "^3.2.6",
     "@veupathdb/http-utils": "^1.1.0",
     "@veupathdb/study-data-access": "^0.3.1",
-    "@veupathdb/wdk-client": "^0.6.7",
+    "@veupathdb/wdk-client": "^0.6.9",
     "@veupathdb/web-common": "^0.5.0",
     "core-js": "^3.21.1",
     "react": "16",
