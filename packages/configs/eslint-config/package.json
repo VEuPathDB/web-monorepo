@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/eslint-config",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "main": "index.js",
   "license": "Apache-2.0",
   "repository": {
@@ -12,12 +12,12 @@
     "index.js"
   ],
   "engines": {
-    "node": ">=10"
+    "node": ">=14"
   },
   "bugs": {
     "url": "https://github.com/VEuPathDB/web-dev/issues"
   },
   "peerDependencies": {
-    "eslint-config-react-app": "^6.0.0"
+    "eslint-config-react-app": "^7.0.0"
   }
 }

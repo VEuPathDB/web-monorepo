@@ -2,12 +2,14 @@ import { promisify } from 'util';
 import { request } from 'https';
 import { stringify } from 'querystring';
 import { parse } from 'set-cookie-parser';
-import dotenv from 'dotenv';
 import _read from 'read';
+
+import { applyConfig } from './apply-config.js';
+
 const read = promisify(_read);
 
 export const checkVEuPathDBAuth = promisify(async function(siteConfigPath, callback) {
-  dotenv.config({ path: siteConfigPath });
+  applyConfig(siteConfigPath);
 
   const username = process.env.VEUPATHDB_LOGIN_USER ?? await read({ prompt: 'VEuPathDB BRC Pre-Release Username: ' });
   const password = process.env.VEUPATHDB_LOGIN_PASS ?? await read({ prompt: 'VEuPathDB BRC Pre-Release Password: ', silent: true });
