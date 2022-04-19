@@ -724,16 +724,6 @@ function MapViz(props: VisualizationProps) {
         />
       </div>
 
-      {studyId.startsWith('UMSP') && ( // <<<<<<<<< TEMPORARY ONLY <<<<<
-        <div>
-          <p>
-            (UMSP is BIG! If you want to show counts or a categorical overlay
-            for anything other than the Household entity, it's best to first
-            subset aggressively and zoom in to a few hundred households.)
-          </p>
-        </div>
-      )}
-
       <PluginError
         error={basicMarkerData.error}
         outputSize={totalEntityCount}
