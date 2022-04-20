@@ -147,19 +147,7 @@ export function fixVarIdLabels(
   entities: StudyEntity[]
 ): string[] {
   console.log(labels);
-  const displayNames: string[] = labels.map((label) => {
-    // Label is a variable id. Get entity and var id from variable list.
-    const variableDescriptors = variableList.filter(
-      (varItem) => varItem.variableId === label
-    );
-    const variableDescriptor = variableDescriptors && variableDescriptors[0];
-    const retrievedVariable = findEntityAndVariable(
-      entities,
-      variableDescriptor
-    );
-    return retrievedVariable?.variable.displayName || label;
-  });
-  return displayNames;
+  return labels.map((label) => fixVarIdLabel(label, variableList, entities);
 }
 
 /**
