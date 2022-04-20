@@ -4,6 +4,8 @@ import * as globalData from './storeModules/GlobalData';
 import * as record from './storeModules/Record';
 import * as userCommentForm from './storeModules/UserCommentFormStoreModule';
 import * as userCommentShow from './storeModules/UserCommentShowStoreModule';
+import * as blastSummaryView from './storeModules/BlastSummaryViewStoreModule';
+import * as genomeSummaryView from './storeModules/GenomeSummaryViewStoreModule';
 
 /**
  * Compose reducer functions from right to left. In other words, the
@@ -30,4 +32,6 @@ export default storeModules => ({
   },
   userCommentForm,
   userCommentShow,
+  blastSummaryView,
+  genomeSummaryView,
 })
