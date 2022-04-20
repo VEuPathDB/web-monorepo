@@ -13,8 +13,6 @@ import * as userDatasetDetail from 'wdk-client/StoreModules/UserDatasetDetailSto
 import * as userDatasetList from 'wdk-client/StoreModules/UserDatasetListStoreModule';
 import * as userProfile from 'wdk-client/StoreModules/UserProfileStoreModule';
 import * as userRegistration from 'wdk-client/StoreModules/UserRegistrationStoreModule';
-import * as blastSummaryView from 'wdk-client/StoreModules/BlastSummaryViewStoreModule';
-import * as genomeSummaryView from 'wdk-client/StoreModules/GenomeSummaryViewStoreModule';
 import * as resultTableSummaryView from 'wdk-client/StoreModules/ResultTableSummaryViewStoreModule';
 import * as stepAnalysis from 'wdk-client/StoreModules/StepAnalysisStoreModule';
 import * as wordCloudAnalysis from 'wdk-client/StoreModules/WordCloudAnalysisStoreModule';
@@ -36,10 +34,8 @@ import * as userDatasetUpload from 'wdk-client/StoreModules/UserDatasetUploadSto
 export default {
   answerView,
   attributeAnalysis,
-  blastSummaryView,
   downloadForm,
   favorites,
-  genomeSummaryView,
   globalData,
   passwordChange,
   passwordReset,

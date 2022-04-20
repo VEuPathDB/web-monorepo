@@ -15,8 +15,6 @@ import * as StaticDataActions from 'wdk-client/Actions/StaticDataActions';
 import * as SiteMapActions from 'wdk-client/Actions/SiteMapActions';
 import * as UserDatasetsActions from 'wdk-client/Actions/UserDatasetsActions';
 import * as ResultTableSummaryViewActions from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
-import * as BlastSummaryViewActions from 'wdk-client/Actions/SummaryView/BlastSummaryViewActions';
-import * as GenomeSummaryViewActions from 'wdk-client/Actions/SummaryView/GenomeSummaryViewActions';
 import * as ImportStrategyActions from 'wdk-client/Actions/ImportStrategyActions';
 import * as StrategyPanelActions from 'wdk-client/Actions/StrategyPanelActions';
 import * as StrategyActions from 'wdk-client/Actions/StrategyActions';
@@ -56,8 +54,6 @@ export {
   PublicStrategyActions,
   UserDatasetsActions,
   ResultTableSummaryViewActions,
-  BlastSummaryViewActions,
-  GenomeSummaryViewActions,
   WordCloudAnalysisActions,
   HistogramAnalysisActions,
   MatchedTranscriptsFilterActions,
@@ -90,8 +86,6 @@ export type Action =
   | PublicStrategyActions.Action
   | UserDatasetsActions.Action
   | ResultTableSummaryViewActions.Action
-  | BlastSummaryViewActions.Action
-  | GenomeSummaryViewActions.Action
   | WordCloudAnalysisActions.Action
   | HistogramAnalysisActions.Action
   | MatchedTranscriptsFilterActions.Action
