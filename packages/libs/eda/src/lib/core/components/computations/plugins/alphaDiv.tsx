@@ -2,15 +2,13 @@ import React, { useState } from 'react';
 import { useStudyMetadata } from '../../..';
 import { useStudyEntities } from '../../../hooks/study';
 import { VariableDescriptor } from '../../../types/variable';
-import { findEntityAndVariable } from '../../../utils/study-metadata';
+import {
+  findEntityAndVariable,
+  findCollections,
+} from '../../../utils/study-metadata';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import {
-  StudyMetadata,
-  StudyEntity,
-  CollectionVariableTreeNode,
-} from '../../../types/study';
 
 export const plugin: ComputationPlugin = {
   configurationComponent: AlphaDivConfiguration,
@@ -23,11 +21,6 @@ export const plugin: ComputationPlugin = {
 // Include available methods in this array.
 const ALPHA_DIV_METHODS = ['shannon', 'simpson', 'evenness'];
 
-// Include known collection variables in this array.
-const ALPHA_DIV_COLLECTION_VARIABLES = [
-  { entityId: 'EUPATH_0000808', variableId: 'EUPATH_0009253' },
-];
-
 function variableDescriptorToString(
   variableDescriptor: VariableDescriptor
 ): string {
@@ -35,34 +28,17 @@ function variableDescriptorToString(
 }
 
 export function AlphaDivConfiguration(props: ComputationConfigProps) {
-  const [name, setName] = useState('New boxplot app');
-  const [collectionVariable, setCollectionVariable] = useState(
-    variableDescriptorToString(ALPHA_DIV_COLLECTION_VARIABLES[0])
-  );
+  const [name, setName] = useState('New alpha diversity module');
   const [alphaDivMethod, setAlphaDivMethod] = useState(ALPHA_DIV_METHODS[0]);
   const { computationAppOverview, addNewComputation } = props;
   const studyMetadata = useStudyMetadata();
   const entities = useStudyEntities(studyMetadata.rootEntity);
+  // Include known collection variables in this array.
+  const collections = findCollections(studyMetadata.rootEntity).flat();
 
-  let collections: Array<any> = [];
-  function findCollections(entity: StudyEntity) {
-    console.log(entity.displayName);
-    if (entity.collections?.length) {
-      console.log(entity.displayName);
-      collections.push(
-        entity.collections.map((collection) => {
-          collection.entityId = entity.id;
-          collection.entityDisplayName = entity.displayName;
-          return { entityId: entity.id, variableId: collection.id };
-        })
-      );
-    }
-    if (entity.children?.length) {
-      entity.children.forEach((childEntity) => findCollections(childEntity));
-    }
-  }
-  findCollections(studyMetadata.rootEntity);
-  collections = collections.flat();
+  const [collectionVariable, setCollectionVariable] = useState(
+    variableDescriptorToString(collections[0])
+  );
 
   return (
     <div style={{ padding: '1em 0' }}>

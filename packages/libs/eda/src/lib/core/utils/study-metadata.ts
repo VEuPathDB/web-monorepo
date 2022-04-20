@@ -31,3 +31,25 @@ export function makeEntityDisplayName(entity: StudyEntity, isPlural: boolean) {
     ? entity.displayName
     : entity.displayNamePlural ?? `${entity.displayName}s`;
 }
+
+export function findCollections(
+  entity: StudyEntity,
+  collections: Array<any> = []
+) {
+  if (entity.collections?.length) {
+    collections.push(
+      entity.collections.map((collection) => {
+        collection.entityId = entity.id;
+        collection.entityDisplayName = entity.displayName;
+        return { entityId: entity.id, variableId: collection.id };
+      })
+    );
+  }
+  if (entity.children?.length) {
+    entity.children.forEach((childEntity) =>
+      findCollections(childEntity, collections)
+    );
+  }
+
+  return collections;
+}

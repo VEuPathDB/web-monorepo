@@ -2,15 +2,13 @@ import React, { useState } from 'react';
 import { useStudyMetadata } from '../../..';
 import { useStudyEntities } from '../../../hooks/study';
 import { VariableDescriptor } from '../../../types/variable';
-import { findEntityAndVariable } from '../../../utils/study-metadata';
+import {
+  findEntityAndVariable,
+  findCollections,
+} from '../../../utils/study-metadata';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import {
-  StudyMetadata,
-  StudyEntity,
-  CollectionVariableTreeNode,
-} from '../../../types/study';
 
 export const plugin: ComputationPlugin = {
   configurationComponent: AbundanceConfiguration,
@@ -23,9 +21,6 @@ export const plugin: ComputationPlugin = {
 // Include available methods in this array.
 const ABUNDANCE_METHODS = ['median', 'q3', 'variance', 'max'];
 
-// Include known collection variables in this array.
-// const studyMetadata = useStudyMetadata();
-
 function variableDescriptorToString(
   variableDescriptor: VariableDescriptor
 ): string {
@@ -33,32 +28,13 @@ function variableDescriptorToString(
 }
 
 export function AbundanceConfiguration(props: ComputationConfigProps) {
-  const [name, setName] = useState('New ranked abundance app');
+  const [name, setName] = useState('New ranked abundance tool');
   const [rankingMethod, setRankingMethod] = useState(ABUNDANCE_METHODS[0]);
   const { computationAppOverview, addNewComputation } = props;
   const studyMetadata = useStudyMetadata();
-  console.log(studyMetadata);
   const entities = useStudyEntities(studyMetadata.rootEntity);
-  let collections: Array<any> = [];
-  function findCollections(entity: StudyEntity) {
-    console.log(entity.displayName);
-    if (entity.collections?.length) {
-      console.log(entity.displayName);
-      collections.push(
-        entity.collections.map((collection) => {
-          collection.entityId = entity.id;
-          collection.entityDisplayName = entity.displayName;
-          return { entityId: entity.id, variableId: collection.id };
-        })
-      );
-    }
-    if (entity.children?.length) {
-      entity.children.forEach((childEntity) => findCollections(childEntity));
-    }
-  }
-  findCollections(studyMetadata.rootEntity);
-  console.log(collections.flat());
-  collections = collections.flat();
+  // Include known collection variables in this array.
+  const collections = findCollections(studyMetadata.rootEntity).flat();
 
   const [collectionVariable, setCollectionVariable] = useState(
     variableDescriptorToString(collections[0])
@@ -93,7 +69,7 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
             return (
               result && (
                 <option value={variableDescriptorToString(collectionVar)}>
-                  {result?.entity.displayName}: {result?.variable.displayName}
+                  {result.entity.displayName}: {result.variable.displayName}
                 </option>
               )
             );

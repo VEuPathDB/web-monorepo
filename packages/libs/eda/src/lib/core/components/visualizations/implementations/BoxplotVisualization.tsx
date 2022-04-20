@@ -148,7 +148,6 @@ function BoxplotViz(props: VisualizationProps) {
     filteredCounts,
   } = props;
   const studyMetadata = useStudyMetadata();
-  console.log(studyMetadata);
   const { id: studyId } = studyMetadata;
   const entities = useMemo(
     () =>
