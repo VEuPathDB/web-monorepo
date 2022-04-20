@@ -112,8 +112,6 @@ export function fixLabelsForNumberVariables(
   labels: string[] = [],
   variable?: Variable
 ): string[] {
-  console.log('fixing number labels');
-  console.log(labels);
   return variable != null && variable.type === 'number'
     ? labels.map((n) => String(Number(n)))
     : labels;
@@ -146,8 +144,7 @@ export function fixVarIdLabels(
   variableList: VariableDescriptor[],
   entities: StudyEntity[]
 ): string[] {
-  console.log(labels);
-  return labels.map((label) => fixVarIdLabel(label, variableList, entities);
+  return labels.map((label) => fixVarIdLabel(label, variableList, entities));
 }
 
 /**
