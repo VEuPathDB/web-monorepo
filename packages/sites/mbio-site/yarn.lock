@@ -1148,10 +1148,10 @@
   resolved "https://registry.yarnpkg.com/@types/warning/-/warning-3.0.0.tgz#0d2501268ad8f9962b740d387c4654f5f8e23e52"
   integrity sha1-DSUBJorY+ZYrdA04fEZU9fjiPlI=
 
-"@veupathdb/components@0.14.4":
-  version "0.14.4"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.14.4.tgz#cdb293c265487182878f9757935845cf476332d4"
-  integrity sha512-Rayyxbv2qDJvahD9VX1SBvk1z2M79SCP/B71GDTAYHF9OSd3bV/MCsnVKPbSEbmQCDEonn+klKZ5trMPeVF+9A==
+"@veupathdb/components@^0.15.3":
+  version "0.15.3"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.15.3.tgz#590a2911d4fb2b883332e40fa16997f261fb74a1"
+  integrity sha512-rtK/z0sxQw/qP5d6Jjj/gDnFrc2liLzXUwQHMo8/LYo0USSneCxH7ndTpRkeclRX5Cv/cx2INBD94sdlyYSQdw==
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
@@ -1191,10 +1191,10 @@
     react-responsive-modal "^6.2.0"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^3.1.0":
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.1.1.tgz#09ee5301e38e07253671e12bd6531594501d401d"
-  integrity sha512-xE5z3KsH3SpgAUN04qkoGuh9PyCSiSltcS1l7MeOc0VyBaDIdUZ3rMx6RGmCnH4mI0Yg5xZrr6IAQEE5la7NuQ==
+"@veupathdb/eda@^3.2.9":
+  version "3.2.9"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.2.9.tgz#f9feec12e5d5ae09efe256103819870fe09226f9"
+  integrity sha512-+QQaAY7sQM8/Fjk4FMk6EAISuRQV4/19mF4uM0rKUYQSzlJATmwYK/QlHywLRqMgQxq5YYJG9q/IJr7mILgskQ==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -1225,10 +1225,10 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/wdk-client@^0.6.7":
-  version "0.6.7"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.6.7.tgz#2bf512c396c3ff1547195231e01864e80abbc9a1"
-  integrity sha512-YS1Tz0Uoem+ew8ngHtZJQspCAy2ErTgv8yLgvJ2oPpepO53xSeAIqPx0FUGVrUCQaaSwsm0w3ONIy4C+cQ5k9g==
+"@veupathdb/wdk-client@^0.6.9":
+  version "0.6.9"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.6.9.tgz#cf9ef0cf6d3a0f11933d8cb1a3e10dece226ced5"
+  integrity sha512-VTdKMiEieO1z/ZoFm+TzafjUj63TngCsVbKKPAP7Vww6Q+utzvyYu4ULlWZ/dDzGfI9V7F+rY7PD7Ru6i5I6QA==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
