@@ -3,3 +3,5 @@ export { default as HistogramAnalysisPlugin } from 'wdk-client/Controllers/Histo
 export { StepAnalysisView as StepAnalysisViewPlugin } from 'wdk-client/Components/StepAnalysis/StepAnalysisView';
 export { default as ResultTableSummaryViewPlugin } from 'wdk-client/Controllers/ResultTableSummaryViewController';
 export { default as MatchedTranscriptsFilterPlugin } from 'wdk-client/Controllers/MatchedTranscriptsFilterController';
+export { StepAnalysisDefaultForm } from './Components/StepAnalysis/StepAnalysisDefaultForm';
+export { StepAnalysisDefaultResult } from './Components/StepAnalysis/StepAnalysisDefaultResult';
