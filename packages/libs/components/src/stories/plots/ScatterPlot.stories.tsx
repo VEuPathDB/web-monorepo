@@ -1350,7 +1350,6 @@ function processInputData<T extends number | string>(
           overlayMax = defaultOverlayMax;
         }
         // -- end for storybook only code section
-        console.log([defaultOverlayMin, overlayMax]);
 
         // Determine marker colors
         if (
