@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useStudyMetadata } from '../../..';
-import { useStudyEntities } from '../../../hooks/study';
-import { VariableDescriptor } from '../../../types/variable';
 import {
-  findEntityAndVariable,
-  findCollections,
-} from '../../../utils/study-metadata';
+  useStudyEntities,
+  useFlattenedCollectionVariables,
+} from '../../../hooks/study';
+import { VariableDescriptor } from '../../../types/variable';
+import { findEntityAndVariable } from '../../../utils/study-metadata';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
@@ -34,7 +34,7 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
   const studyMetadata = useStudyMetadata();
   const entities = useStudyEntities(studyMetadata.rootEntity);
   // Include known collection variables in this array.
-  const collections = findCollections(studyMetadata.rootEntity).flat();
+  const collections = useFlattenedCollectionVariables(studyMetadata.rootEntity);
 
   const [collectionVariable, setCollectionVariable] = useState(
     variableDescriptorToString(collections[0])

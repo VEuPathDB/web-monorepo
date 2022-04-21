@@ -26,7 +26,10 @@ import { VariableDescriptor } from '../types/variable';
 
 // Helpers and Utilities
 import SubsettingClient from '../api/SubsettingClient';
-import { findEntityAndVariable } from '../utils/study-metadata';
+import {
+  findEntityAndVariable,
+  findCollections,
+} from '../utils/study-metadata';
 import { getStudyAccess } from '@veupathdb/study-data-access/lib/shared/studies';
 
 // Hooks
@@ -217,6 +220,10 @@ export function useFindEntityAndVariable(entities: StudyEntity[]) {
     },
     [entities]
   );
+}
+
+export function useFlattenedCollectionVariables(entity: StudyEntity) {
+  return useMemo(() => findCollections(entity).flat(), [entity]);
 }
 
 /**
