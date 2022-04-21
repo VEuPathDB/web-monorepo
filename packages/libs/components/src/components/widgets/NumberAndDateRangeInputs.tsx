@@ -39,6 +39,8 @@ export type BaseProps<M extends NumberOrDateRange> = {
   showClearButton?: boolean;
   /** Text to adorn the clear button; Default is 'Clear' */
   clearButtonLabel?: string;
+  /** add disabled prop to disable input fields */
+  disabled?: boolean;
 };
 
 export type NumberRangeInputProps = BaseProps<NumberRange>;
@@ -80,6 +82,8 @@ function BaseInput({
   containerStyles,
   showClearButton = false,
   clearButtonLabel = 'Clear',
+  // add disabled prop to disable input fields
+  disabled = false,
 }: BaseInputProps) {
   if (validator && required)
     console.log(
@@ -161,7 +165,10 @@ function BaseInput({
   return (
     <div style={{ ...containerStyles }}>
       {label && (
-        <Typography variant="button" style={{ color: MEDIUM_GRAY }}>
+        <Typography
+          variant="button"
+          style={{ color: disabled ? MEDIUM_GRAY : '#222' }}
+        >
           {label}
         </Typography>
       )}
@@ -179,6 +186,8 @@ function BaseInput({
               setIsReceiving(false);
               setLocalRange({ min: newValue, max } as NumberRange);
             }}
+            // add disabled prop to disable input fields
+            disabled={disabled}
           />
         ) : (
           <DateInput
@@ -193,12 +202,21 @@ function BaseInput({
               setIsReceiving(false);
               setLocalRange({ min: newValue, max } as DateRange);
             }}
+            // add disabled prop to disable input fields
+            disabled={disabled}
           />
         )}
         <div style={{ display: 'flex', flexDirection: 'row' }}>
           {/* change margin */}
-          <div style={{ margin: '3px 15px 15px 15px' }}>
-            <Typography variant="button" style={{ color: MEDIUM_GRAY }}>
+          <div
+            style={{
+              margin: 'auto 10px',
+            }}
+          >
+            <Typography
+              variant="button"
+              style={{ color: disabled ? MEDIUM_GRAY : '#222' }}
+            >
               to
             </Typography>
           </div>
@@ -216,6 +234,8 @@ function BaseInput({
               setIsReceiving(false);
               setLocalRange({ min, max: newValue } as NumberRange);
             }}
+            // add disabled prop to disable input fields
+            disabled={disabled}
           />
         ) : (
           <DateInput
@@ -230,6 +250,8 @@ function BaseInput({
               setIsReceiving(false);
               setLocalRange({ min, max: newValue } as DateRange);
             }}
+            // add disabled prop to disable input fields
+            disabled={disabled}
           />
         )}
         {showClearButton && (

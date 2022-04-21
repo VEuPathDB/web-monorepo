@@ -1,14 +1,11 @@
-import React, { ReactElement, useState, useCallback, useEffect } from 'react';
+import { ReactElement, useState, useCallback } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 // import { action } from '@storybook/addon-actions';
 import { BoundsViewport } from '../map/Types';
 import { BoundsDriftMarkerProps } from '../map/BoundsDriftMarker';
 import { defaultAnimationDuration } from '../map/config/map';
 import { leafletZoomLevelToGeohashLevel } from '../map/utils/leaflet-geohash';
-import {
-  getSpeciesDonuts,
-  getSpeciesBasicMarkers,
-} from './api/getMarkersFromFixtureData';
+import { getSpeciesDonuts } from './api/getMarkersFromFixtureData';
 
 import { LeafletMouseEvent } from 'leaflet';
 import { Viewport } from 'react-leaflet';
@@ -27,7 +24,7 @@ import MapVEuLegendSampleList, {
 import geohashAnimation from '../map/animation_functions/geohash';
 
 export default {
-  title: 'Map/Donut Markers',
+  title: 'Map/General',
   component: MapVEuMapSidebar,
 } as Meta;
 
@@ -83,7 +80,7 @@ const handleMarkerClick = (e: LeafletMouseEvent) => {
   //console.log("I've been clicked")
 };
 
-export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
+export const Spinner: Story<MapVEuMapProps> = (args) => {
   const [markerElements, setMarkerElements] = useState<
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
@@ -124,25 +121,26 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
   );
 };
 
-AllInOneRequest.args = {
+Spinner.args = {
   height: '100vh',
   width: '100vw',
   showGrid: true,
   showMouseToolbar: true,
+  showSpinner: true,
 };
 
-export const FirstRequest: Story<MapVEuMapProps> = (args) => {
+export const NoDataOverlay: Story<MapVEuMapProps> = (args) => {
   const [markerElements, setMarkerElements] = useState<
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
-  const [legendData] = useState<LegendProps['data']>([]);
+  const [legendData, setLegendData] = useState<LegendProps['data']>([]);
   const [viewport] = useState<Viewport>({ center: [13, 16], zoom: 4 });
-
   const handleViewportChanged = useCallback(
     async (bvp: BoundsViewport) => {
-      const markers = await getSpeciesBasicMarkers(
+      const markers = await getSpeciesDonuts(
         bvp,
         defaultAnimationDuration,
+        setLegendData,
         handleMarkerClick
       );
       setMarkerElements(markers);
@@ -172,61 +170,32 @@ export const FirstRequest: Story<MapVEuMapProps> = (args) => {
   );
 };
 
-FirstRequest.args = {
+NoDataOverlay.args = {
   height: '100vh',
   width: '100vw',
   showGrid: true,
   showMouseToolbar: true,
+  showNoDataOverlay: true,
 };
 
-export const TwoRequests: Story<MapVEuMapProps> = (args) => {
-  // With this approach, the handler simply updates the state `bvp`.
-  // The `useEffect` hook runs when the value of `bvp` changes. Within this
-  // hook, we use the variable `isCancelled` to determine if `setMarkerElements`
-  // should be called. It's possible to get fancier and cancel any in-flight requests,
-  // but this will require a bit of refactoring and even more indirection.
-  const [bvp, setBvp] = useState<BoundsViewport | null>(null);
+export const Windowed: Story<MapVEuMapProps> = (args) => {
   const [markerElements, setMarkerElements] = useState<
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
   const [legendData, setLegendData] = useState<LegendProps['data']>([]);
   const [viewport] = useState<Viewport>({ center: [13, 16], zoom: 4 });
-
   const handleViewportChanged = useCallback(
     async (bvp: BoundsViewport) => {
-      setBvp(bvp);
-    },
-    [setBvp]
-  );
-
-  useEffect(() => {
-    // track if effect has been cancelled
-    let isCancelled = false;
-    if (bvp == null) return;
-    // Create an anonymous async function, and call it immediately.
-    // This way we can use async-await
-    (async () => {
-      const markers = await getSpeciesBasicMarkers(
-        bvp,
-        defaultAnimationDuration,
-        handleMarkerClick
-      );
-      if (!isCancelled) setMarkerElements(markers);
-      if (isCancelled) return; // avoid the next request if this effect has already been cancelled
-      const fullMarkers = await getSpeciesDonuts(
+      const markers = await getSpeciesDonuts(
         bvp,
         defaultAnimationDuration,
         setLegendData,
-        handleMarkerClick,
-        2000
+        handleMarkerClick
       );
-      if (!isCancelled) setMarkerElements(fullMarkers);
-    })();
-    // Cleanup function to set `isCancelled` to `true`
-    return () => {
-      isCancelled = true;
-    };
-  }, [bvp]);
+      setMarkerElements(markers);
+    },
+    [setMarkerElements]
+  );
 
   return (
     <>
@@ -250,9 +219,14 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
   );
 };
 
-TwoRequests.args = {
-  height: '100vh',
-  width: '100vw',
+Windowed.args = {
+  height: 500,
+  width: 700,
+  style: {
+    marginTop: 100,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
   showGrid: true,
   showMouseToolbar: true,
 };

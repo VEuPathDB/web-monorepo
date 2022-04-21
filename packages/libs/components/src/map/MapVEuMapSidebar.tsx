@@ -33,7 +33,6 @@ function removeClassName(targetClass: string) {
 function removeClassNameActive(targetClass: string) {
   //DKDK much convenient to use jquery here but try not to use it
   let targetElement = document.getElementsByClassName(targetClass)[0];
-  // console.log(targetElement)
   if (targetElement != null) {
     targetElement.classList.remove('active');
   }
@@ -167,7 +166,7 @@ export default function MapVEuMapSidebarSibling({
         </LayersControl>
 
         <SemanticMarkers
-          onViewportChanged={onViewportChanged}
+          onBoundsChanged={onViewportChanged}
           markers={markers}
           animation={animation}
           // nudge={nudge}

@@ -4,7 +4,6 @@ import { PlotParams } from 'react-plotly.js';
 // Definitions
 import {
   HistogramData,
-  HistogramBin,
   OpacityAddon,
   OpacityDefault,
   OrientationAddon,
@@ -14,7 +13,7 @@ import {
   DependentAxisLogScaleDefault,
   AxisTruncationAddon,
 } from '../types/plots';
-import { NumberOrDateRange, NumberRange } from '../types/general';
+import { NumberOrDateRange, NumberRange, Bin } from '../types/general';
 
 // Libraries
 import * as DateMath from 'date-arithmetic';
@@ -38,9 +37,9 @@ import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
 
 // bin middles needed for highlighting
 interface BinSummary {
-  binStart: HistogramBin['binStart'];
-  binEnd: HistogramBin['binEnd'];
-  binMiddle: HistogramBin['binEnd'];
+  binStart: Bin['binStart'];
+  binEnd: Bin['binEnd'];
+  binMiddle: Bin['binEnd'];
 }
 
 const EmptyHistogramData: HistogramData = { series: [] };
@@ -131,14 +130,17 @@ const Histogram = makePlotlyPlotComponent(
             series.color === 'white' || series.color === '#ffffff';
           const binStarts = series.bins.map((bin) => bin.binStart);
           const binLabels = series.bins.map((bin) => bin.binLabel); // see TO DO: below
-          const binCounts = series.bins.map((bin) => bin.count);
+          const binCounts = series.bins.map((bin) => bin.value);
           const binWidths = series.bins.map((bin, index) => {
             // Final bar needs to be a tiny bit narrower, especially
             // if you are using white bars with borderColor,
             // so that the right hand border is visible.
             // Might be worth checking in future versions of Plotly if this
             // was a bug or not.
-            if (data.valueType != null && data.valueType === 'date') {
+            if (
+              data.binWidthSlider?.valueType != null &&
+              data.binWidthSlider?.valueType === 'date'
+            ) {
               // date, needs to be in milliseconds
               // TO DO: bars seem very slightly too narrow at monthly resolution (multiplying by 1009 fixes it)
               return (
@@ -201,9 +203,7 @@ const Histogram = makePlotlyPlotComponent(
      * calculate midpoints of a unique set of bins
      */
     const binSummaries: BinSummary[] = useMemo(() => {
-      const allBins: HistogramBin[] = data.series.flatMap(
-        (series) => series.bins
-      );
+      const allBins: Bin[] = data.series.flatMap((series) => series.bins);
 
       const sortedBins = sortBy(allBins, (bin) => bin.binStart);
       const uniqueBins = sortedUniqBy(sortedBins, (bin) => bin.binLabel);
@@ -213,7 +213,7 @@ const Histogram = makePlotlyPlotComponent(
         binStart,
         binEnd,
         binMiddle:
-          data.valueType === 'date'
+          data.binWidthSlider?.valueType === 'date'
             ? DateMath.add(
                 new Date(binStart as string),
                 DateMath.diff(
@@ -226,7 +226,7 @@ const Histogram = makePlotlyPlotComponent(
               ).toISOString()
             : ((binStart as number) + (binEnd as number)) / 2.0,
       }));
-    }, [data.series, data.valueType]);
+    }, [data.series, data.binWidthSlider?.valueType]);
 
     // local state for range **while selecting** graphically
     const [selectingRange, setSelectingRange] = useState<NumberOrDateRange>();
@@ -262,7 +262,7 @@ const Histogram = makePlotlyPlotComponent(
             setSelectingRange({
               min: leftBin.binStart,
               max:
-                data.valueType === 'date'
+                data.binWidthSlider?.valueType === 'date'
                   ? DateMath.subtract(
                       new Date(rightBin.binEnd),
                       1,
@@ -275,7 +275,7 @@ const Histogram = makePlotlyPlotComponent(
           }
         }
       },
-      [orientation, binSummaries, data.valueType]
+      [orientation, binSummaries, data.binWidthSlider?.valueType]
     );
 
     // handle finshed/completed (graphical) range selection
@@ -292,12 +292,13 @@ const Histogram = makePlotlyPlotComponent(
 
     const selectedRangeHighlighting: Partial<Shape>[] = useMemo(() => {
       const range = selectingRange ?? selectedRange;
+
       if (data.series.length && range) {
         // for dates, draw the blue area to the end of the day
         const rightCoordinate =
-          data.valueType === 'number'
+          data.binWidthSlider?.valueType === 'number'
             ? range.max
-            : DateMath.endOf(new Date(range.max), 'day').toISOString();
+            : DateMath.add(new Date(range.max), 0.9999, 'day').toISOString();
         return [
           {
             type: 'rect',
@@ -363,7 +364,7 @@ const Histogram = makePlotlyPlotComponent(
             : last(binSummaries)?.binEnd,
       } as NumberOrDateRange;
     }, [
-      data?.valueType,
+      data?.binWidthSlider?.valueType,
       independentAxisRange,
       binSummaries,
       binStartType,
@@ -374,7 +375,7 @@ const Histogram = makePlotlyPlotComponent(
     const extendedIndependentAxisRange = extendAxisRangeForTruncations(
       standardIndependentAxisRange,
       axisTruncationConfig?.independentAxis,
-      data.valueType
+      data.binWidthSlider?.valueType
     );
 
     const plotlyIndependentAxisRange = [
@@ -383,7 +384,7 @@ const Histogram = makePlotlyPlotComponent(
     ];
 
     const independentAxisLayout: Layout['xaxis'] | Layout['yaxis'] = {
-      type: data?.valueType === 'date' ? 'date' : 'linear',
+      type: data?.binWidthSlider?.valueType === 'date' ? 'date' : 'linear',
       automargin: true,
       showgrid: false,
       zeroline: false,
@@ -401,7 +402,7 @@ const Histogram = makePlotlyPlotComponent(
     // worst case is that mouseovers contain integers followed by .0000
     const dataLooksFractional = useMemo(() => {
       return some(
-        data.series.flatMap((series) => series.bins.map((bin) => bin.count)),
+        data.series.flatMap((series) => series.bins.map((bin) => bin.value)),
         (val) => val > 0 && val < 1
       );
     }, [data.series]);

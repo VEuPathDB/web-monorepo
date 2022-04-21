@@ -1,5 +1,5 @@
 // widget for radio button group
-import React from 'react';
+import React, { ReactNode } from 'react';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -13,6 +13,8 @@ export type RadioButtonGroupProps = {
   orientation?: 'vertical' | 'horizontal';
   /** Options that will be presented as buttons. */
   options: Array<string>;
+  /** Optional display labels for the options (otherwise the `options` array will be used) */
+  optionLabels?: Array<ReactNode>;
   /** The currently selected option.  */
   selectedOption: string;
   /** Action to take when an option is selected by the user. */
@@ -41,6 +43,7 @@ export default function RadioButtonGroup({
   label = undefined,
   orientation = 'horizontal',
   options,
+  optionLabels,
   selectedOption,
   onOptionSelected,
   containerStyles = {},
@@ -75,7 +78,7 @@ export default function RadioButtonGroup({
           variant="button"
           // perhaps not using focused?
           // style={{ color: focused ? DARK_GRAY : MEDIUM_GRAY }}
-          style={{ color: '#000000', fontWeight: 'bold' }}
+          style={{ color: '#222', fontWeight: 500, fontSize: '1.2em' }}
         >
           {label}
         </Typography>
@@ -91,7 +94,11 @@ export default function RadioButtonGroup({
             <FormControlLabel
               key={index}
               value={option}
-              label={option}
+              label={
+                optionLabels != null && optionLabels.length === options.length
+                  ? optionLabels[index]
+                  : option
+              }
               disabled={disabledList?.includes(option)}
               labelPlacement={labelPlacement}
               // primary: blue; secondary: red

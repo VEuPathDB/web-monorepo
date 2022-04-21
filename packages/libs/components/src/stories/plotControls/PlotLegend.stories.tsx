@@ -20,31 +20,31 @@ const data: HistogramData = {
           binStart: 0,
           binEnd: 3,
           binLabel: '[0,3]',
-          count: 1465,
+          value: 1465,
         },
         {
           binStart: 3,
           binEnd: 6,
           binLabel: '(3,6]',
-          count: 3962,
+          value: 3962,
         },
         {
           binStart: 6,
           binEnd: 9,
           binLabel: '(6,9]',
-          count: 6023,
+          value: 6023,
         },
         {
           binStart: 9,
           binEnd: 12,
           binLabel: '(9,12]',
-          count: 4745,
+          value: 4745,
         },
         {
           binStart: 12,
           binEnd: 15,
           binLabel: '(12,15]',
-          count: 801,
+          value: 801,
         },
       ],
     },
@@ -55,37 +55,37 @@ const data: HistogramData = {
           binStart: 9,
           binEnd: 12,
           binLabel: '(9,12]',
-          count: 830,
+          value: 830,
         },
         {
           binStart: 12,
           binEnd: 15,
           binLabel: '(12,15]',
-          count: 3718,
+          value: 3718,
         },
         {
           binStart: 15,
           binEnd: 18,
           binLabel: '(15,18]',
-          count: 4118,
+          value: 4118,
         },
         {
           binStart: 18,
           binEnd: 21,
           binLabel: '(18,21]',
-          count: 3481,
+          value: 3481,
         },
         {
           binStart: 21,
           binEnd: 24,
           binLabel: '(21,24]',
-          count: 2077,
+          value: 2077,
         },
         {
           binStart: 24,
           binEnd: 27,
           binLabel: '(24,27]',
-          count: 349,
+          value: 349,
         },
       ],
     },
@@ -96,96 +96,98 @@ const data: HistogramData = {
           binStart: 21,
           binEnd: 24,
           binLabel: '(21,24]',
-          count: 401,
+          value: 401,
         },
         {
           binStart: 24,
           binEnd: 27,
           binLabel: '(24,27]',
-          count: 1825,
+          value: 1825,
         },
         {
           binStart: 27,
           binEnd: 30,
           binLabel: '(27,30]',
-          count: 2078,
+          value: 2078,
         },
         {
           binStart: 30,
           binEnd: 33,
           binLabel: '(30,33]',
-          count: 1531,
+          value: 1531,
         },
         {
           binStart: 33,
           binEnd: 36,
           binLabel: '(33,36]',
-          count: 1295,
+          value: 1295,
         },
         {
           binStart: 36,
           binEnd: 39,
           binLabel: '(36,39]',
-          count: 995,
+          value: 995,
         },
         {
           binStart: 39,
           binEnd: 42,
           binLabel: '(39,42]',
-          count: 790,
+          value: 790,
         },
         {
           binStart: 42,
           binEnd: 45,
           binLabel: '(42,45]',
-          count: 685,
+          value: 685,
         },
         {
           binStart: 45,
           binEnd: 48,
           binLabel: '(45,48]',
-          count: 601,
+          value: 601,
         },
         {
           binStart: 48,
           binEnd: 51,
           binLabel: '(48,51]',
-          count: 570,
+          value: 570,
         },
         {
           binStart: 51,
           binEnd: 54,
           binLabel: '(51,54]',
-          count: 387,
+          value: 387,
         },
         {
           binStart: 54,
           binEnd: 57,
           binLabel: '(54,57]',
-          count: 314,
+          value: 314,
         },
         {
           binStart: 57,
           binEnd: 60,
           binLabel: '(57,60]',
-          count: 242,
+          value: 242,
         },
         {
           binStart: 60,
           binEnd: 63,
           binLabel: '(60,63]',
-          count: 38,
+          value: 38,
         },
       ],
     },
   ],
-  valueType: 'number',
-  binWidth: 3,
-  binWidthRange: {
-    min: 0.1,
-    max: 31,
+  binWidthSlider: {
+    valueType: 'number',
+    binWidth: 3,
+    binWidthRange: {
+      min: 0.1,
+      max: 31,
+    },
+    binWidthStep: 0.03,
   },
-  binWidthStep: 0.03,
 };
 
 // legend items processed from data.value
@@ -210,6 +212,178 @@ const legendItems = [
     label: '0-11 months',
     marker: 'square',
     markerColor: 'rgb(136,34,85)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+];
+
+// test data for long legend items: taken from Scatterplot with Smoothed mean
+const longLegendItems = [
+  {
+    label: 'Bangladesh',
+    marker: 'circle',
+    markerColor: 'rgb(136,34,85)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'India',
+    marker: 'circle',
+    markerColor: 'rgb(136,204,238)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Kenya',
+    marker: 'circle',
+    markerColor: 'rgb(153,153,51)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Mali',
+    marker: 'circle',
+    markerColor: 'rgb(51,34,136)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Mozambique',
+    marker: 'circle',
+    markerColor: 'rgb(68,170,153)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Pakistan',
+    marker: 'circle',
+    markerColor: 'rgb(221,204,119)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'The Gambia',
+    marker: 'circle',
+    markerColor: 'rgb(204,102,119)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Bangladesh, Smoothed mean',
+    marker: 'line',
+    markerColor: 'rgb(136,34,85)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Bangladesh, 95% Confidence interval',
+    marker: 'fainted',
+    markerColor: 'rgb(136,34,85)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'India, Smoothed mean',
+    marker: 'line',
+    markerColor: 'rgb(136,204,238)',
+    hasData: false,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'India, 95% Confidence interval',
+    marker: 'fainted',
+    markerColor: 'rgb(136,204,238)',
+    hasData: false,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Kenya, Smoothed mean',
+    marker: 'line',
+    markerColor: 'rgb(153,153,51)',
+    hasData: false,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Kenya, 95% Confidence interval',
+    marker: 'fainted',
+    markerColor: 'rgb(153,153,51)',
+    hasData: false,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Mali, Smoothed mean',
+    marker: 'line',
+    markerColor: 'rgb(51,34,136)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Mali, 95% Confidence interval',
+    marker: 'fainted',
+    markerColor: 'rgb(51,34,136)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Mozambique, Smoothed mean',
+    marker: 'line',
+    markerColor: 'rgb(68,170,153)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Mozambique, 95% Confidence interval',
+    marker: 'fainted',
+    markerColor: 'rgb(68,170,153)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Pakistan, Smoothed mean',
+    marker: 'line',
+    markerColor: 'rgb(221,204,119)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'Pakistan, 95% Confidence interval',
+    marker: 'fainted',
+    markerColor: 'rgb(221,204,119)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'The Gambia, Smoothed mean',
+    marker: 'line',
+    markerColor: 'rgb(204,102,119)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'The Gambia, 95% Confidence interval',
+    marker: 'fainted',
+    markerColor: 'rgb(204,102,119)',
     hasData: true,
     group: 1,
     rank: 1,
@@ -275,6 +449,28 @@ export const GradientPlotLegend = () => {
         // pass legend title
         legendTitle={'Very very very long name'}
         nTicks={5}
+      />
+    </div>
+  );
+};
+
+// custom legend with histogram
+export const TestLongLegendItems = () => {
+  // long legend test
+  const [checkedLongLegendItems, setCheckedLongLegendItems] = useState<
+    string[]
+  >(longLegendItems.map((item) => item.label));
+
+  return (
+    <div>
+      {/* testing long legend items: taken from a Scatter plot with smoothed mean */}
+      <h5># Testing long legend items</h5>
+      <PlotLegend
+        legendItems={longLegendItems}
+        checkedLegendItems={checkedLongLegendItems}
+        onCheckedLegendItemsChange={setCheckedLongLegendItems}
+        // pass legend title
+        legendTitle={'Country'}
       />
     </div>
   );

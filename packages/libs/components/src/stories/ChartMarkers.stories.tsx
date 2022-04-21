@@ -4,7 +4,9 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 import MapVEuMap, { MapVEuMapProps } from '../map/MapVEuMap';
 import { BoundsViewport } from '../map/Types';
 import { BoundsDriftMarkerProps } from '../map/BoundsDriftMarker';
-import { defaultAnimationDuration } from '../map/config/map.json';
+import { defaultAnimationDuration } from '../map/config/map';
+import { leafletZoomLevelToGeohashLevel } from '../map/utils/leaflet-geohash';
+import { Viewport } from 'react-leaflet';
 import {
   getCollectionDateChartMarkers,
   getCollectionDateBasicMarkers,
@@ -52,6 +54,7 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
   const [legendRadioValue, setLegendRadioValue] = useState<string>(
     'Individual'
   );
+  const [viewport] = useState<Viewport>({ center: [13, 0], zoom: 6 });
 
   const legendRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLegendRadioValue(e.target.value);
@@ -86,12 +89,13 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
     <>
       <MapVEuMap
         {...args}
-        viewport={{ center: [13, 0], zoom: 6 }}
-        onViewportChanged={handleViewportChanged}
+        viewport={viewport}
+        onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         showGrid={true}
         showMouseToolbar={true}
         animation={defaultAnimation}
+        zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
@@ -121,6 +125,8 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
   const [legendRadioValue, setLegendRadioValue] = useState<string>(
     'Individual'
   );
+  const [viewport] = useState<Viewport>({ center: [13, 0], zoom: 6 });
+
   const legendRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLegendRadioValue(e.target.value);
   };
@@ -176,12 +182,13 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
     <>
       <MapVEuMap
         {...args}
-        viewport={{ center: [13, 0], zoom: 6 }}
-        onViewportChanged={handleViewportChanged}
+        viewport={viewport}
+        onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         showGrid={true}
         showMouseToolbar={true}
         animation={defaultAnimation}
+        zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
       />
       <MapVEuLegendSampleList
         legendType={legendType}

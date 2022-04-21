@@ -19,6 +19,8 @@ interface PlotLegendProps {
   legendTitle?: string;
   // use onCheckedLegendItemsChange
   onCheckedLegendItemsChange?: (checkedLegendItems: string[]) => void;
+  // add a condition to show legend for single overlay data
+  showOverlayLegend?: boolean;
 }
 export default function PlotLegend({
   legendItems,
@@ -26,6 +28,7 @@ export default function PlotLegend({
   legendTitle,
   // use onCheckedLegendItemsChange
   onCheckedLegendItemsChange,
+  showOverlayLegend = false,
 }: PlotLegendProps) {
   // change checkbox state by click
   const handleLegendCheckboxClick = (checked: boolean, id: string) => {
@@ -52,12 +55,19 @@ export default function PlotLegend({
 
   return (
     <>
-      {legendItems.length > 1 && (
+      {/* add a condition to show legend for single overlay data */}
+      {(legendItems.length > 1 || showOverlayLegend) && (
         <div
           style={{
+            display: 'inline-block', // for general usage (e.g., story)
             border: '1px solid #dedede',
             boxShadow: '1px 1px 4px #00000066',
             padding: '1em',
+            // implementing scrolling for vertical direction
+            maxHeight: 250, // same height with Scatterplot R-square table
+            minWidth: 250, // for firefox
+            overflowX: 'hidden',
+            overflowY: 'auto',
           }}
         >
           <div
@@ -70,20 +80,37 @@ export default function PlotLegend({
           </div>
           <div className="plotLegendCheckbox">
             {legendItems.map((item: LegendItemsProps, index: number) => (
-              <div key={item.label} style={{ display: 'flex' }}>
-                <>
+              <div key={item.label}>
+                {/* wrap checkbox with label so that label text is clickable */}
+                <label
+                  key={item.label}
+                  title={item.label}
+                  style={{
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    fontSize: legendTextSize,
+                    // gray out for filtered item
+                    color: checkedLegendItems?.includes(item.label)
+                      ? ''
+                      : '#999',
+                    // add this for general usage (e.g., story)
+                    margin: 0,
+                  }}
+                >
                   <Checkbox
                     key={item.label}
                     id={item.label}
                     value={item.label}
-                    color="primary"
+                    // gray checkbox: default
+                    color={'default'}
                     onChange={(e) => {
                       handleLegendCheckboxClick(e.target.checked, item.label);
                     }}
                     checked={
                       checkedLegendItems?.includes(item.label) ? true : false
                     }
-                    style={{ padding: 0 }}
+                    style={{ padding: 0, width: '1em', height: '1em' }}
                     // disable when hasData is false
                     // but scatter plot needs further change due to smoothed mean and best fit
                     disabled={!item.hasData}
@@ -91,8 +118,8 @@ export default function PlotLegend({
                   &nbsp;&nbsp;
                   <div
                     style={{
-                      position: 'relative',
-                      margin: 'auto 0',
+                      display: 'flex',
+                      alignItems: 'center',
                     }}
                   >
                     {/* for histogram, barplot, Mosaic (2X2, RXC) - Mosaic does not use custom legend though */}
@@ -102,11 +129,11 @@ export default function PlotLegend({
                           height: defaultMarkerSize,
                           width: defaultMarkerSize,
                           borderWidth: '0',
-                          backgroundColor:
-                            checkedLegendItems?.includes(item.label) &&
-                            item.hasData
-                              ? item.markerColor
-                              : '#999',
+                          backgroundColor: checkedLegendItems?.includes(
+                            item.label
+                          )
+                            ? item.markerColor
+                            : '#999',
                         }}
                       />
                     )}
@@ -118,18 +145,16 @@ export default function PlotLegend({
                           width: defaultMarkerSize,
                           borderWidth: '0.125em',
                           borderStyle: 'solid',
-                          borderColor:
-                            checkedLegendItems?.includes(item.label) &&
-                            item.hasData
-                              ? item.markerColor
-                              : '#999',
-                          backgroundColor:
-                            checkedLegendItems?.includes(item.label) &&
-                            item.hasData
-                              ? ColorMath.evaluate(
-                                  item.markerColor + ' @a 50%'
-                                ).result.css()
-                              : '#999',
+                          borderColor: checkedLegendItems?.includes(item.label)
+                            ? item.markerColor
+                            : '#999',
+                          backgroundColor: checkedLegendItems?.includes(
+                            item.label
+                          )
+                            ? ColorMath.evaluate(
+                                item.markerColor + ' @a 50%'
+                              ).result.css()
+                            : '#999',
                         }}
                       />
                     )}
@@ -144,11 +169,11 @@ export default function PlotLegend({
                             borderWidth: '0.15em',
                             borderStyle: 'solid',
                             borderRadius: '0.6em',
-                            borderColor:
-                              checkedLegendItems?.includes(item.label) &&
-                              item.hasData
-                                ? item.markerColor
-                                : '#999',
+                            borderColor: checkedLegendItems?.includes(
+                              item.label
+                            )
+                              ? item.markerColor
+                              : '#999',
                           }}
                         />
                       </div>
@@ -161,13 +186,11 @@ export default function PlotLegend({
                             height: '0.15em',
                             width: scatterMarkerSpace,
                             borderWidth: '0',
-                            // borderStyle: 'solid',
-                            // borderRadius: '0.6em',
-                            backgroundColor:
-                              checkedLegendItems?.includes(item.label) &&
-                              item.hasData
-                                ? item.markerColor
-                                : '#999',
+                            backgroundColor: checkedLegendItems?.includes(
+                              item.label
+                            )
+                              ? item.markerColor
+                              : '#999',
                           }}
                         />
                       </div>
@@ -180,13 +203,13 @@ export default function PlotLegend({
                             height: '0.5em',
                             width: scatterMarkerSpace,
                             borderWidth: '0',
-                            backgroundColor:
-                              checkedLegendItems?.includes(item.label) &&
-                              item.hasData
-                                ? ColorMath.evaluate(
-                                    item.markerColor + ' @a 30%'
-                                  ).result.css()
-                                : '#999',
+                            backgroundColor: checkedLegendItems?.includes(
+                              item.label
+                            )
+                              ? ColorMath.evaluate(
+                                  item.markerColor + ' @a 30%'
+                                ).result.css()
+                              : '#999',
                           }}
                         />
                       </div>
@@ -199,11 +222,9 @@ export default function PlotLegend({
                             textAlign: 'center',
                             fontWeight: 'normal',
                             fontSize: `calc(1.5 * ${legendTextSize})`,
-                            color:
-                              checkedLegendItems?.includes(item.label) &&
-                              item.hasData
-                                ? '#A6A6A6'
-                                : '#999',
+                            color: checkedLegendItems?.includes(item.label)
+                              ? '#A6A6A6'
+                              : '#999',
                           }}
                         >
                           &times;
@@ -211,29 +232,17 @@ export default function PlotLegend({
                       </div>
                     )}
                   </div>
+                  {/* below is label text */}
                   &nbsp;&nbsp;
-                  <label
-                    title={item.label}
-                    style={{
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      fontSize: legendTextSize,
-                      // gray out for filtered item
-                      color:
-                        checkedLegendItems?.includes(item.label) && item.hasData
-                          ? ''
-                          : '#999',
-                    }}
-                  >
+                  <div>
                     {item.label === 'No data' ||
                     item.label.includes('No data,') ? (
                       <i>{legendEllipsis(item.label, 20)}</i>
                     ) : (
                       legendEllipsis(item.label, 20)
                     )}
-                  </label>
-                </>
+                  </div>
+                </label>
               </div>
             ))}
           </div>

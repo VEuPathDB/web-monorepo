@@ -51,6 +51,8 @@ export type SliderWidgetProps = {
   showTextInput?: boolean;
   /** Show min and max limits */
   showLimits?: boolean;
+  /** Disable the slider. Default is false */
+  disabled?: boolean;
 };
 
 /** A customizable slider widget.
@@ -72,14 +74,17 @@ export default function SliderWidget({
   containerStyles = {},
   showTextInput,
   showLimits = false,
+  disabled = false,
 }: SliderWidgetProps) {
   // Used to track whether or not has mouse hovering over widget.
   const [focused, setFocused] = useState(false);
 
+  // NOTE: the default MUI disabled styling changes the size of the 'thumb'
+  // It's very difficult to control this if we also set its size.  So we don't
   const useStyles = makeStyles({
     root: {
       height: 0,
-      paddingTop: 5,
+      paddingTop: 11,
       flex: 1,
       width: '11em',
       ...(showLimits && minimum != null && maximum != null
@@ -95,16 +100,19 @@ export default function SliderWidget({
       opacity: 1,
       height: 8,
       borderRadius: 5,
+      marginTop: -3,
     },
     track: {
       display: 'none',
     },
     thumb: {
-      height: 18,
-      width: 18,
       backgroundColor: '#fff',
-      border: `2px solid ${colorSpec ? colorSpec.knobColor : MEDIUM_GRAY}`,
-      marginTop: -5,
+      border: `2px solid ${
+        colorSpec ? colorSpec.knobColor : disabled ? LIGHT_GRAY : MEDIUM_GRAY
+      }`,
+    },
+    disabled: {
+      // this is not very usable - it affects root and thumb!
     },
     valueLabel: {
       color: colorSpec ? colorSpec.tooltip : MEDIUM_GRAY,
@@ -140,6 +148,7 @@ export default function SliderWidget({
   );
 
   const valueLabelDisplay = showTextInput ? 'off' : 'auto';
+  const fontColor = disabled ? MEDIUM_GRAY : DARK_GRAY; // don't use focus any more?
 
   return (
     <div
@@ -156,7 +165,7 @@ export default function SliderWidget({
       {label && (
         <Typography
           variant="button"
-          style={{ color: focused ? DARK_GRAY : MEDIUM_GRAY, paddingRight: 15 }}
+          style={{ color: fontColor, paddingRight: 15 }}
         >
           {label}
         </Typography>
@@ -172,21 +181,16 @@ export default function SliderWidget({
           }
           displayRangeViolationWarnings={false}
           containerStyles={{
-            width:
-              Math.max(
-                String(maximum).length,
-                String(minimum).length,
-                String(localValue).length,
-                String(undefined).length
-              ) +
-              7 +
-              'ch',
+            maxWidth: 100,
             marginRight: 10,
           }}
+          disabled={disabled}
         />
       )}
       {showLimits && minimum != null && maximum != null && (
-        <Typography style={{ fontSize: '0.75em' }}>{minimum}</Typography>
+        <Typography style={{ color: fontColor, fontSize: '0.75em' }}>
+          {minimum}
+        </Typography>
       )}
       <Slider
         classes={{
@@ -195,6 +199,7 @@ export default function SliderWidget({
           track: classes.track,
           thumb: classes.thumb,
           valueLabel: classes.valueLabel,
+          disabled: classes.disabled,
         }}
         aria-label={label ?? 'slider'}
         min={minimum}
@@ -204,9 +209,12 @@ export default function SliderWidget({
         valueLabelDisplay={valueLabelDisplay}
         valueLabelFormat={valueFormatter}
         onChange={handleChange}
+        disabled={disabled}
       />
       {showLimits && minimum != null && maximum != null && (
-        <Typography style={{ fontSize: '0.75em' }}>{maximum}</Typography>
+        <Typography style={{ color: fontColor, fontSize: '0.75em' }}>
+          {maximum}
+        </Typography>
       )}
     </div>
   );

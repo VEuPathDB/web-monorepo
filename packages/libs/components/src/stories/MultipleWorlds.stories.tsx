@@ -7,10 +7,9 @@ import MapVEuMap, { MapVEuMapProps } from '../map/MapVEuMap';
 import geohashAnimation from '../map/animation_functions/geohash';
 import testDataStraddling from './fixture-data/geoclust-date-dateline-straddling-all-levels.json';
 import BoundsDriftMarker from '../map/BoundsDriftMarker';
-import {
-  zoomLevelToGeohashLevel,
-  defaultAnimationDuration,
-} from '../map/config/map.json';
+import { defaultAnimationDuration } from '../map/config/map';
+import { leafletZoomLevelToGeohashLevel } from '../map/utils/leaflet-geohash';
+import { Viewport } from 'react-leaflet';
 import '../map/TempIconHack';
 
 export default {
@@ -31,7 +30,7 @@ const getMarkerElements = (
     `I've been triggered with long bounds=[${west} TO ${east}] and zoom=${zoomLevel}`
   );
 
-  const geohashLevel = zoomLevelToGeohashLevel[zoomLevel];
+  const geohashLevel = leafletZoomLevelToGeohashLevel(zoomLevel);
   // filter data taking care of both east<west and east>west possibilities
   const buckets = (data as { [key: string]: any })[
     `geohash_${geohashLevel}`
@@ -71,6 +70,7 @@ const getDatelineArgs = () => {
   const [markerElements, setMarkerElements] = useState<
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
+  const [viewport] = useState<Viewport>({ center: [0, 0], zoom: 2 });
   const duration = defaultAnimationDuration;
 
   const handleViewportChanged = useCallback(
@@ -81,10 +81,10 @@ const getDatelineArgs = () => {
   );
 
   return {
-    viewport: { center: [0, 0] as [number, number], zoom: 2 },
+    viewport: viewport,
     height: '100vh',
     width: '100vw',
-    onViewportChanged: handleViewportChanged,
+    onBoundsChanged: handleViewportChanged,
     markers: markerElements,
     animation: {
       method: 'geohash',
@@ -92,6 +92,7 @@ const getDatelineArgs = () => {
       animationFunction: geohashAnimation,
     },
     showGrid: true,
+    zoomLevelToGeohashLevel: leafletZoomLevelToGeohashLevel,
   };
 };
 
