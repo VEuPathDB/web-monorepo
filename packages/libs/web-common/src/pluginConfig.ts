@@ -3,10 +3,10 @@ import {
   WordCloudAnalysisPlugin,
   StepAnalysisViewPlugin,
   ResultTableSummaryViewPlugin,
+  StepAnalysisDefaultForm,
+  StepAnalysisDefaultResult
 } from '@veupathdb/wdk-client/lib/Plugins';
 import { ClientPluginRegistryEntry } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
-import { StepAnalysisDefaultForm } from './plugins/StepAnalysisDefaultForm';
-import { StepAnalysisDefaultResult } from './plugins/StepAnalysisDefaultResult';
 import { StepAnalysisEupathExternalResult } from './plugins/StepAnalysisEupathExternalResult'
 
 import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDefaultQuestionForm';
