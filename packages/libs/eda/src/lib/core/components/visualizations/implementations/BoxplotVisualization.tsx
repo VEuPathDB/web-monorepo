@@ -27,7 +27,7 @@ import {
   FacetedData,
   BoxplotDataObject,
 } from '@veupathdb/components/lib/types/plots';
-import { CoverageStatistics } from '../../../types/visualization';
+import { Computation, CoverageStatistics } from '../../../types/visualization';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import { PlotLayout } from '../../layouts/PlotLayout';
 import PluginError from '../PluginError';
@@ -43,9 +43,10 @@ import {
   hasIncompleteCases,
   variablesAreUnique,
   vocabularyWithMissingData,
+  fixVarIdLabels,
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
-import { Variable } from '../../../types/study';
+import { StudyEntity, Variable } from '../../../types/study';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 // custom legend
 import PlotLegend, {
@@ -358,11 +359,14 @@ function BoxplotViz(props: VisualizationProps) {
             response,
             xAxisVariable,
             overlayVariable,
-            facetVariable
+            facetVariable,
+            computation,
+            entities
           ),
           vocabulary,
           vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
-          vocabularyWithMissingData(facetVocabulary, showMissingFacet)
+          vocabularyWithMissingData(facetVocabulary, showMissingFacet),
+          entities
         ),
         showMissingOverlay,
         '#a0a0a0'
@@ -868,7 +872,9 @@ export function boxplotResponseToData(
   // alphadiv abundance: change variable to be possibly undefined for abundance case
   variable?: Variable,
   overlayVariable?: Variable,
-  facetVariable?: Variable
+  facetVariable?: Variable,
+  computation?: Computation,
+  entities?: StudyEntity[]
 ): BoxplotDataWithCoverage {
   // group by facet variable value (if only one facet variable in response - there may be up to two in future)
   const facetGroupedResponseData = groupBy(response.boxplot.data, (data) =>
@@ -912,7 +918,19 @@ export function boxplotResponseToData(
                     overlayVariable
                   )
                 : '',
-            label: fixLabelsForNumberVariables(data.label, variable),
+            label:
+              computation?.descriptor.type === 'abundance' &&
+              entities &&
+              response.boxplot.config.computedVariableMetadata
+                ?.collectionVariable?.collectionVariableDetails
+                ? // abundance box labels are variableIds. Need to replace with that variable's display name
+                  fixVarIdLabels(
+                    data.label,
+                    response.boxplot.config.computedVariableMetadata
+                      ?.collectionVariable?.collectionVariableDetails,
+                    entities
+                  )
+                : fixLabelsForNumberVariables(data.label, variable),
           })),
         };
   });
@@ -952,8 +970,28 @@ function reorderData(
   data: BoxplotDataWithCoverage | BoxplotData,
   labelVocabulary: string[] = [],
   overlayVocabulary: string[] = [],
-  facetVocabulary: string[] = []
+  facetVocabulary: string[] = [],
+  entities?: StudyEntity[]
 ): BoxplotDataWithCoverage | BoxplotData {
+  if ('computedVariableMetadata' in data) {
+    // If we're returning a list of vars within computedVariableMetadata, then we need to respect that ordering
+    if (
+      data.computedVariableMetadata?.collectionVariable
+        ?.collectionVariableDetails &&
+      entities
+    ) {
+      const rawLabels = data.computedVariableMetadata?.collectionVariable?.collectionVariableDetails?.map(
+        (variable) => variable.variableId
+      );
+      labelVocabulary = fixVarIdLabels(
+        rawLabels,
+        data.computedVariableMetadata?.collectionVariable
+          ?.collectionVariableDetails,
+        entities
+      );
+    }
+  }
+
   if (isFaceted(data)) {
     if (facetVocabulary.length === 0) return data; // FIX-ME stop-gap for vocabulary-less numeric variables
 
