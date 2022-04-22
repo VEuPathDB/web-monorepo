@@ -4,10 +4,10 @@ import {
   StepAnalysisViewPlugin,
   ResultTableSummaryViewPlugin,
   StepAnalysisDefaultForm,
-  StepAnalysisDefaultResult,
-  StepAnalysisEupathExternalResult,
+  StepAnalysisDefaultResult
 } from '@veupathdb/wdk-client/lib/Plugins';
 import { ClientPluginRegistryEntry } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
+import { StepAnalysisEupathExternalResult } from './plugins/StepAnalysisEupathExternalResult'
 
 import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDefaultQuestionForm';
 import { RadioParams } from 'ebrc-client/plugins/RadioParams';
