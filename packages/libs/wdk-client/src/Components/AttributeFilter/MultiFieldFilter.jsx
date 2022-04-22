@@ -218,14 +218,6 @@ export default class MultiFieldFilter extends React.Component {
   }
 
   render() {
-    // const values = this.props.activeFieldState.leafSummaries
-    const values = Seq.from(this.props.activeFieldState.leafSummaries)
-      .flatMap(summary => summary.valueCounts)
-      .map(count => count.value)
-      .uniq()
-      .toArray()
-      // .sort(naturalSort());
-    console.log(values)
     const { searchTerm = '' } = this.props.activeFieldState;
     const searchRe = new RegExp(escapeRegExp(searchTerm), 'i');
     const filter = this.getOrCreateFilter(this.props, this.state);
@@ -249,7 +241,6 @@ export default class MultiFieldFilter extends React.Component {
           isLast: index === summary.valueCounts.length - 1
         }))
       ])
-    console.log(rows)
 
     const filteredRows = rows
       .filter(({ summary }) =>
