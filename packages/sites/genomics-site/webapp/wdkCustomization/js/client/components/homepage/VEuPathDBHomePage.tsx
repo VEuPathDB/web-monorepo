@@ -523,12 +523,6 @@ const useHeaderMenuItems = (
               display: 'Public search strategies',
               type: 'reactRoute',
               url: '/workspace/strategies/public'
-        },
-        { 
-          key: 'upload-genes',
-          display: 'Upload your gene list',
-          type: 'reactRoute',
-          url: '/search/transcript/GeneByLocusTag'
         }
       ]
     },
