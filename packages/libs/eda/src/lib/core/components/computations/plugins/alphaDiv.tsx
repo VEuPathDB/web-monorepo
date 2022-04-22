@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import { useStudyMetadata } from '../../..';
-import {
-  useStudyEntities,
-  useFlattenedCollectionVariables,
-} from '../../../hooks/study';
+import { useFlattenedCollectionVariables } from '../../../hooks/study';
 import { VariableDescriptor } from '../../../types/variable';
-import { findEntityAndVariable } from '../../../utils/study-metadata';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
@@ -32,12 +28,16 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
   const [alphaDivMethod, setAlphaDivMethod] = useState(ALPHA_DIV_METHODS[0]);
   const { computationAppOverview, addNewComputation } = props;
   const studyMetadata = useStudyMetadata();
-  const entities = useStudyEntities(studyMetadata.rootEntity);
   // Include known collection variables in this array.
   const collections = useFlattenedCollectionVariables(studyMetadata.rootEntity);
+  if (collections == null || !collections[0])
+    throw new Error('Could not find any collections for this app.');
 
   const [collectionVariable, setCollectionVariable] = useState(
-    variableDescriptorToString(collections[0])
+    variableDescriptorToString({
+      variableId: collections[0].id,
+      entityId: collections[0].entityId,
+    })
   );
 
   return (
@@ -65,11 +65,15 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
           onChange={(e) => setCollectionVariable(e.target.value)}
         >
           {collections.map((collectionVar) => {
-            const result = findEntityAndVariable(entities, collectionVar);
             return (
-              result && (
-                <option value={variableDescriptorToString(collectionVar)}>
-                  {result.entity.displayName}: {result.variable.displayName}
+              collectionVar && (
+                <option
+                  value={variableDescriptorToString({
+                    variableId: collectionVar.id,
+                    entityId: collectionVar.entityId,
+                  })}
+                >
+                  {collectionVar.entityDisplayName}: {collectionVar.displayName}
                 </option>
               )
             );

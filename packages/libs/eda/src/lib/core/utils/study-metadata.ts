@@ -1,6 +1,7 @@
 import { find } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import { StudyEntity, VariableTreeNode } from '../types/study';
 import { VariableDescriptor } from '../types/variable';
+import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 export interface EntityAndVariable {
   entity: StudyEntity;
@@ -32,24 +33,22 @@ export function makeEntityDisplayName(entity: StudyEntity, isPlural: boolean) {
     : entity.displayNamePlural ?? `${entity.displayName}s`;
 }
 
-export function findCollections(
-  entity: StudyEntity,
-  collections: Array<any> = []
-) {
-  if (entity.collections?.length) {
-    collections.push(
-      entity.collections.map((collection) => {
-        collection.entityId = entity.id;
-        collection.entityDisplayName = entity.displayName;
-        return { entityId: entity.id, variableId: collection.id };
-      })
-    );
-  }
-  if (entity.children?.length) {
-    entity.children.forEach((childEntity) =>
-      findCollections(childEntity, collections)
-    );
-  }
+// Traverse down the entities and return an array of collection variables.
+export function findCollections(entity: StudyEntity) {
+  // Create an array of collections, where each collection element is a CollectionVariableTreeNode
+  // that includes that collection's entity id and display name
+  const collections = Array.from(
+    preorder(entity, (e) => e.children ?? [])
+  ).flatMap((e) => {
+    const collectionWithEntity = e.collections?.map((collection) => {
+      return {
+        ...collection,
+        entityId: e.id,
+        entityDisplayName: e.displayName,
+      };
+    });
+    return collectionWithEntity;
+  });
 
   return collections;
 }
