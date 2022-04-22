@@ -2,6 +2,10 @@
 
 import * as globalData from './storeModules/GlobalData';
 import * as record from './storeModules/Record';
+import * as userCommentForm from './storeModules/UserCommentFormStoreModule';
+import * as userCommentShow from './storeModules/UserCommentShowStoreModule';
+import * as blastSummaryView from './storeModules/BlastSummaryViewStoreModule';
+import * as genomeSummaryView from './storeModules/GenomeSummaryViewStoreModule';
 
 /**
  * Compose reducer functions from right to left. In other words, the
@@ -25,10 +29,9 @@ export default storeModules => ({
       state = storeModules.globalData.reduce(state, action);
       return globalData.reduce(state, action);
     }
-  }
+  },
+  userCommentForm,
+  userCommentShow,
+  blastSummaryView,
+  genomeSummaryView,
 })
-
-// export default compose(
-//   update('globalData.reduce', composeReducerWith(globalData.reduce)),
-//   set('record', record),
-// );

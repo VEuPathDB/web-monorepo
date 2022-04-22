@@ -1,0 +1,69 @@
+.wdk-UserComments-Show {
+  .wdk-UserComments-Show-Body {
+    > div:first-child {
+      display: grid;
+      grid-template-columns: 1fr;
+      margin-top: 1em;
+  
+      // TODO: Once (if?) we drop IE11 support, we can use 
+      // "row-gap" instead of applying "margin-bottom"
+      // to the direct descendants
+      > * {
+        margin-bottom: 1em;
+      }
+
+      .wdk-UserComments-Show-Group {
+        .wdk-UserComments-Show-Group-Header {
+          display: grid;
+          grid-template-columns: 30em 60em 1fr;
+          font-weight: bold;
+          padding: 0.5em 1em;
+          border-top: 2px black solid;
+          border-bottom: 2px black solid;
+        }
+    
+        .wdk-UserComments-Show-Group-Body {
+          display: grid;
+          grid-template-columns: 30em 1fr;
+          margin-top: 0.5em;
+  
+          // TODO: Once (if?) we drop IE11 support, we can use 
+          // "row-gap" instead of applying "margin-bottom"
+          // to the direct descendants
+          > * {
+            margin-bottom: 0.5em;
+          }
+  
+          > label {            
+            margin-left: 1em;
+          }
+
+          > div {
+            margin-left: 1em;
+
+            .wdk-PubmedIdEntry {
+              padding-bottom: 0.5em;
+              border-bottom: 1px rgb(128, 128, 128) solid;
+              margin-bottom: 1em;
+              
+              display: grid;
+              grid-template-columns: 10ch 1fr;    
+              
+              > * {
+                padding: 0.5em;
+              }
+
+              > *:nth-child(1), > *:nth-child(2) {
+                background-color: lightgrey;
+              }
+            }
+
+            .wdk-UserCommentUploadedFiles {
+              width: 100%;
+            }
+          }
+        }
+      }
+    }
+  }
+}

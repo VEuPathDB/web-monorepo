@@ -23,6 +23,7 @@ import SampleForm from './components/samples/SampleForm';
 import { projectId } from './config';
 
 import { blastRoutes } from './blastRoutes';
+import { userCommentRoutes } from './userCommentRoutes';
 import { preferredOrganismsRoutes } from './preferredOrganismRoutes';
 
 // Project id is not needed for these record classes.
@@ -155,6 +156,8 @@ export const wrapRoutes = ebrcRoutes => [
   ...blastRoutes,
 
   ...preferredOrganismsRoutes,
+
+  ...userCommentRoutes,
 
   ...ebrcRoutes.map(route => route.path.includes(':primaryKey+')
     ? { ...route, component: addProjectIdPkValueWrapper(route.component) }

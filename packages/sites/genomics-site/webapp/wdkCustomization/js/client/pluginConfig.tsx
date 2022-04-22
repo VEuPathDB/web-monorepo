@@ -2,13 +2,13 @@ import React, { Suspense } from 'react';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import {
-  GenomeSummaryViewPlugin,
-  BlastSummaryViewPlugin,
   MatchedTranscriptsFilterPlugin,
   ResultTableSummaryViewPlugin,
-  StepAnalysisEupathExternalResult,
 } from '@veupathdb/wdk-client/lib/Plugins';
 import { ClientPluginRegistryEntry } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
+import { StepAnalysisEupathExternalResult } from '@veupathdb/web-common/lib/plugins/StepAnalysisEupathExternalResult';
+import { default as GenomeSummaryViewPlugin } from './controllers/GenomeSummaryViewController'
+import { default as BlastSummaryViewPlugin } from './controllers/BlastSummaryViewController'
 
 import { ByGenotypeNumberCheckbox } from './components/questions/ByGenotypeNumberCheckbox';
 
