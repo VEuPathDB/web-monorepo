@@ -15,14 +15,14 @@ type GenomicsServiceWrappers = typeof genomicsServiceWrappers;
 
 export const genomicsServiceWrappers = {
   ...blastCompatibleWdkServiceWrappers,
-  getUserComment: (wdkService: WdkService) => userCommentsService(wdkService).getUserComment,
-  getUserComments: (wdkService: WdkService) => userCommentsService(wdkService).getUserComments,
-  getPubmedPreview: (wdkService: WdkService) => userCommentsService(wdkService).getPubmedPreview,
-  getUserCommentCategories: (wdkService: WdkService) => userCommentsService(wdkService).getUserCommentCategories,
-  postUserComment: (wdkService: WdkService) => userCommentsService(wdkService).postUserComment,
-  deleteUserComment: (wdkService: WdkService) => userCommentsService(wdkService).deleteUserComment,
-  deleteUserCommentAttachedFile: (wdkService: WdkService) => userCommentsService(wdkService).deleteUserCommentAttachedFile,
-  postUserCommentAttachedFile: (wdkService: WdkService) => userCommentsService(wdkService).postUserCommentAttachedFile,
+  getUserComment: (wdkService: WdkService) => getUserCommentsInstance(wdkService).getUserComment,
+  getUserComments: (wdkService: WdkService) => getUserCommentsInstance(wdkService).getUserComments,
+  getPubmedPreview: (wdkService: WdkService) => getUserCommentsInstance(wdkService).getPubmedPreview,
+  getUserCommentCategories: (wdkService: WdkService) => getUserCommentsInstance(wdkService).getUserCommentCategories,
+  postUserComment: (wdkService: WdkService) => getUserCommentsInstance(wdkService).postUserComment,
+  deleteUserComment: (wdkService: WdkService) => getUserCommentsInstance(wdkService).deleteUserComment,
+  deleteUserCommentAttachedFile: (wdkService: WdkService) => getUserCommentsInstance(wdkService).deleteUserCommentAttachedFile,
+  postUserCommentAttachedFile: (wdkService: WdkService) => getUserCommentsInstance(wdkService).postUserCommentAttachedFile,
   incrementOrganismCount: (wdkService: WdkService) => function(
     organismBearingEntity:
       string | { recordClassUrlSegment: string, primaryKeyValues: string[] }
