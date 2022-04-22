@@ -197,12 +197,17 @@ export function useStudyMetadata(datasetId: string, client: SubsettingClient) {
         throw new Error(
           'Could not find study with associated dataset id `' + datasetId + '`.'
         );
-      if (getStudyAccess(studyRecord) === 'prerelease')
+      try {
+        return await client.getStudyMetadata(
+          studyRecord.attributes.eda_study_id
+        );
+      } catch (error) {
+        console.error(error);
         return {
           id: studyRecord.attributes.eda_study_id,
           rootEntity: STUB_ENTITY,
         };
-      return client.getStudyMetadata(studyRecord.attributes.eda_study_id);
+      }
     },
     [datasetId, client]
   );

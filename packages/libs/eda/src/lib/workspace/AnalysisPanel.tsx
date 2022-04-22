@@ -18,7 +18,7 @@ import { Status } from '../core';
 // Hooks
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { usePrevious } from '../core/hooks/previousValue';
-import { useStudyEntities } from '../core/hooks/study';
+import { isStubEntity, useStudyEntities } from '../core/hooks/study';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { useStudyMetadata, useStudyRecord } from '../core';
 import { useGeoConfig } from '../core/hooks/geoConfig';
@@ -190,7 +190,10 @@ export function AnalysisPanel({
       </div>
     );
   if (analysis == null || approvalStatus === 'loading') return <Loading />;
-  if (approvalStatus === 'not-approved')
+  if (
+    approvalStatus === 'not-approved' ||
+    isStubEntity(studyMetadata.rootEntity)
+  )
     return <Redirect to={Path.normalize(routeBase + '/..')} />;
   return (
     <RestrictedPage approvalStatus={approvalStatus}>
