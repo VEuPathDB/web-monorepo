@@ -413,7 +413,9 @@ const Histogram = makePlotlyPlotComponent(
     const extendedDependentAxisRange = extendAxisRangeForTruncations(
       standardDependentAxisRange,
       axisTruncationConfig?.dependentAxis,
-      'number'
+      'number',
+      // set no minimum padding
+      true
     ) as NumberRange | undefined;
 
     // make rectangular layout shapes for truncated axis/missing data
