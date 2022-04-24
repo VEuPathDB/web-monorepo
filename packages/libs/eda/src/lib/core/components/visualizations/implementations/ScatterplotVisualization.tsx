@@ -1339,7 +1339,7 @@ function ScatterplotWithControls({
       {vizType === 'scatterplot' && (
         // use RadioButtonGroup directly instead of ScatterPlotControls
         <RadioButtonGroup
-          label="Plot modes"
+          label="Plot mode"
           options={plotOptions}
           selectedOption={valueSpec}
           onOptionSelected={onValueSpecChange}
