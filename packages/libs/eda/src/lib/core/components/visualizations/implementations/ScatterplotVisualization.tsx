@@ -60,7 +60,7 @@ import {
 import { CoverageStatistics, Computation } from '../../../types/visualization';
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
-import { NumberVariable, Variable } from '../../../types/study';
+import { NumberVariable, Variable, StudyEntity } from '../../../types/study';
 import {
   fixLabelForNumberVariables,
   fixLabelsForNumberVariables,
@@ -68,6 +68,7 @@ import {
   nonUniqueWarning,
   vocabularyWithMissingData,
   hasIncompleteCases,
+  fixVarIdLabel,
 } from '../../../utils/visualization';
 import { gray } from '../colors';
 import {
@@ -139,7 +140,6 @@ const modalPlotContainerStyles = {
 };
 
 // define ScatterPlotDataWithCoverage and export
-//to-do: probably need to add computedVariableMetadata type later
 export interface ScatterPlotDataWithCoverage extends CoverageStatistics {
   dataSetProcess: ScatterPlotData | FacetedData<ScatterPlotData>;
   // change these types to be compatible with new axis range
@@ -441,10 +441,20 @@ function ScatterplotViz(props: VisualizationProps) {
           response.completeCasesTable
         );
 
-      const overlayVocabulary = fixLabelsForNumberVariables(
-        overlayVariable?.vocabulary,
-        overlayVariable
-      );
+      // For the abundance app, the overlay vocabulary is within the comptuedVariableMetadata.
+      const overlayVocabulary =
+        computation?.descriptor.type === 'abundance' &&
+        entities &&
+        response.scatterplot.config.computedVariableMetadata?.collectionVariable
+          ?.collectionVariableDetails
+          ? response.scatterplot.config.computedVariableMetadata?.collectionVariable?.collectionVariableDetails.map(
+              (variableDetails) => variableDetails.variableId
+            )
+          : fixLabelsForNumberVariables(
+              overlayVariable?.vocabulary,
+              overlayVariable
+            );
+
       const facetVocabulary = fixLabelsForNumberVariables(
         facetVariable?.vocabulary,
         facetVariable
@@ -461,7 +471,8 @@ function ScatterplotViz(props: VisualizationProps) {
         facetVocabulary,
         facetVariable,
         // pass computation
-        computation
+        computation,
+        entities
       );
     }, [
       vizConfig.xAxisVariable,
@@ -1482,7 +1493,8 @@ export function scatterplotResponseToData(
   showMissingFacet: boolean = false,
   facetVocabulary: string[] = [],
   facetVariable?: Variable,
-  computation?: Computation
+  computation?: Computation,
+  entities?: StudyEntity[]
 ): ScatterPlotDataWithCoverage {
   const modeValue = 'markers';
 
@@ -1521,7 +1533,9 @@ export function scatterplotResponseToData(
       // pass facetVariable to determine either scatter or scattergl
       facetVariable,
       // pass computation here to add conditions for apps
-      computation
+      computation,
+      response.scatterplot.config.computedVariableMetadata,
+      entities
     );
 
     return {
@@ -1578,7 +1592,9 @@ function processInputData<T extends number | string>(
   overlayVariable?: Variable,
   // pass facetVariable to determine either scatter or scattergl
   facetVariable?: Variable,
-  computation?: Computation
+  computation?: Computation,
+  computedVariableMetadata?: ComputedVariableMetadata,
+  entities?: StudyEntity[]
 ) {
   // set variables for x- and yaxis ranges: no default values are set
   let yMin: number | string | undefined;
@@ -1643,6 +1659,24 @@ function processInputData<T extends number | string>(
     let seriesX = [];
     let seriesY = [];
 
+    // Fix overlay variable label. If a numeric var, fix with fixLabelForNumberVariables. If the overlay variable
+    // is from the abundance app, it is a var id that needs to be swapped for it's display name (fixVarIdLabel)
+    const fixedOverlayLabel =
+      el.overlayVariableDetails &&
+      (computation?.descriptor.type === 'abundance' &&
+      entities &&
+      computedVariableMetadata?.collectionVariable?.collectionVariableDetails
+        ? fixVarIdLabel(
+            el.overlayVariableDetails.value,
+            computedVariableMetadata.collectionVariable
+              .collectionVariableDetails,
+            entities
+          )
+        : fixLabelForNumberVariables(
+            el.overlayVariableDetails.value,
+            overlayVariable
+          ));
+
     // series is for scatter plot
     if (el.seriesX && el.seriesY) {
       // check the number of x = number of y
@@ -1691,13 +1725,7 @@ function processInputData<T extends number | string>(
         x: seriesX.length ? seriesX : [null], // [null] hack required to make sure
         y: seriesY.length ? seriesY : [null], // Plotly has a legend entry for empty traces
         // distinguish X/Y Data from Overlay
-        name:
-          el.overlayVariableDetails?.value != null
-            ? fixLabelForNumberVariables(
-                el.overlayVariableDetails.value,
-                overlayVariable
-              )
-            : 'Data',
+        name: fixedOverlayLabel ?? 'Data',
         mode: modeValue,
         type: scatterPlotType, // for the raw data of the scatterplot
         opacity: 0.7,
@@ -1726,6 +1754,24 @@ function processInputData<T extends number | string>(
     // initialize smoothedMeanX, bestFitLineX
     let smoothedMeanX = [];
     let bestFitLineX = [];
+
+    // Fix overlay variable label. If a numeric var, fix with fixLabelForNumberVariables. If the overlay variable
+    // is from the abundance app, it is a var id that needs to be swapped for it's display name (fixVarIdLabel)
+    const fixedOverlayLabel =
+      el.overlayVariableDetails &&
+      (computation?.descriptor.type === 'abundance' &&
+      entities &&
+      computedVariableMetadata?.collectionVariable?.collectionVariableDetails
+        ? fixVarIdLabel(
+            el.overlayVariableDetails.value,
+            computedVariableMetadata.collectionVariable
+              .collectionVariableDetails,
+            entities
+          )
+        : fixLabelForNumberVariables(
+            el.overlayVariableDetails.value,
+            overlayVariable
+          ));
 
     // check if smoothedMean prop exists
     if (el.smoothedMeanX && el.smoothedMeanY && el.smoothedMeanSE) {
@@ -1786,11 +1832,8 @@ function processInputData<T extends number | string>(
         x: xIntervalLineValue,
         y: yIntervalLineValue,
         // name: 'Smoothed mean',
-        name: el.overlayVariableDetails
-          ? fixLabelForNumberVariables(
-              el.overlayVariableDetails.value,
-              overlayVariable
-            ) + SMOOTHEDMEANSUFFIX
+        name: fixedOverlayLabel
+          ? fixedOverlayLabel + SMOOTHEDMEANSUFFIX
           : SMOOTHEDMEANTEXT,
         mode: 'lines', // no data point is displayed: only line
         line: {
@@ -1834,12 +1877,7 @@ function processInputData<T extends number | string>(
         x: xIntervalBounds,
         y: yIntervalBounds,
         // name: '95% Confidence interval',
-        name: el.overlayVariableDetails
-          ? fixLabelForNumberVariables(
-              el.overlayVariableDetails.value,
-              overlayVariable
-            ) + CI95SUFFIX
-          : CI95TEXT,
+        name: fixedOverlayLabel ? fixedOverlayLabel + CI95SUFFIX : CI95TEXT,
         // this is better to be tozeroy, not tozerox
         fill: 'tozeroy',
         // opacity only works for type: scattergl
@@ -1905,11 +1943,8 @@ function processInputData<T extends number | string>(
               responseScatterplotData.length === 1)) && // abundance & single data case (revisit)
           facetVariable == null
             ? 'Best fit, R² = ' + el.r2
-            : el.overlayVariableDetails
-            ? fixLabelForNumberVariables(
-                el.overlayVariableDetails.value,
-                overlayVariable
-              ) + BESTFITSUFFIX
+            : fixedOverlayLabel
+            ? fixedOverlayLabel + BESTFITSUFFIX
             : BESTFITTEXT,
         mode: 'lines', // no data point is displayed: only line
         line: {
