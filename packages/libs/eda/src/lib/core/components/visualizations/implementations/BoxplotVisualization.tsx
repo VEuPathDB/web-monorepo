@@ -814,6 +814,9 @@ function BoxplotWithControls({
       )}
       {/* potential controls go here  */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
+        {/* add X-axis space */}
+        <div style={{ width: '30em' }} />
+
         <LabelledGroup label="Y-axis controls">
           {/* Y-axis range control */}
           <NumberRangeInput
@@ -847,7 +850,6 @@ function BoxplotWithControls({
           ) : null}
           <Button
             type={'outlined'}
-            // change text
             text={'Reset to defaults'}
             onClick={handleDependentAxisSettingsReset}
             containerStyles={{

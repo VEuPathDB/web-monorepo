@@ -614,64 +614,6 @@ function HistogramPlotWithControls({
       />
 
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <LabelledGroup label="Y-axis controls">
-          <Switch
-            label="Log scale"
-            state={uiState.dependentAxisLogScale}
-            onStateChange={handleDependentAxisLogScale}
-            containerStyles={{
-              paddingBottom: '0.3125em',
-              minHeight: widgetHeight,
-            }}
-          />
-
-          <NumberRangeInput
-            label="Range"
-            range={uiState.dependentAxisRange}
-            onRangeChange={(newRange?: NumberOrDateRange) => {
-              handleDependentAxisRangeChange(newRange as NumberRange);
-            }}
-            allowPartialRange={false}
-            containerStyles={{ minWidth: '400px' }}
-          />
-          {/* truncation notification */}
-          {truncatedDependentAxisWarning ? (
-            <Notification
-              title={''}
-              text={truncatedDependentAxisWarning}
-              // this was defined as LIGHT_BLUE
-              color={'#5586BE'}
-              onAcknowledgement={() => {
-                setTruncatedDependentAxisWarning('');
-              }}
-              showWarningIcon={true}
-              containerStyles={{ maxWidth: '38.5em' }}
-            />
-          ) : null}
-          <Button
-            type={'outlined'}
-            text={'Reset Y-axis to defaults'}
-            onClick={handleDependentAxisSettingsReset}
-            containerStyles={{
-              paddingTop: '1.0em',
-              width: '50%',
-              float: 'right',
-            }}
-          />
-        </LabelledGroup>
-        {/* add vertical line in btw Y- and X- controls */}
-        <div
-          style={{
-            display: 'inline-flex',
-            borderLeft: '2px solid lightgray',
-            height: '13.6em',
-            position: 'relative',
-            marginLeft: '-1.2em',
-            top: '1.5em',
-          }}
-        >
-          {' '}
-        </div>
         <LabelledGroup label="X-axis controls">
           <BinWidthControl
             binWidth={data?.binWidthSlider?.binWidth}
@@ -718,6 +660,66 @@ function HistogramPlotWithControls({
             type={'outlined'}
             text={'Reset X-axis to defaults'}
             onClick={handleIndependentAxisSettingsReset}
+            containerStyles={{
+              paddingTop: '1.0em',
+              width: '50%',
+              float: 'right',
+            }}
+          />
+        </LabelledGroup>
+
+        {/* add vertical line in btw Y- and X- controls */}
+        <div
+          style={{
+            display: 'inline-flex',
+            borderLeft: '2px solid lightgray',
+            height: '13.6em',
+            position: 'relative',
+            marginLeft: '-1.2em',
+            top: '1.5em',
+          }}
+        >
+          {' '}
+        </div>
+
+        <LabelledGroup label="Y-axis controls">
+          <Switch
+            label="Log scale"
+            state={uiState.dependentAxisLogScale}
+            onStateChange={handleDependentAxisLogScale}
+            containerStyles={{
+              paddingBottom: '0.3125em',
+              minHeight: widgetHeight,
+            }}
+          />
+
+          <NumberRangeInput
+            label="Range"
+            range={uiState.dependentAxisRange}
+            onRangeChange={(newRange?: NumberOrDateRange) => {
+              handleDependentAxisRangeChange(newRange as NumberRange);
+            }}
+            allowPartialRange={false}
+            containerStyles={{ minWidth: '400px' }}
+          />
+          {/* truncation notification */}
+          {truncatedDependentAxisWarning ? (
+            <Notification
+              title={''}
+              text={truncatedDependentAxisWarning}
+              // this was defined as LIGHT_BLUE
+              color={'#5586BE'}
+              onAcknowledgement={() => {
+                setTruncatedDependentAxisWarning('');
+              }}
+              showWarningIcon={true}
+              containerStyles={{ maxWidth: '38.5em' }}
+            />
+          ) : null}
+          <Button
+            type={'outlined'}
+            text={'Reset Y-axis to defaults'}
+            onClick={handleDependentAxisSettingsReset}
             containerStyles={{
               paddingTop: '1.0em',
               width: '50%',
