@@ -11,12 +11,6 @@
   "files": [
     ".babelrc"
   ],
-  "devDependencies": {
-    "@babel/cli": "^7.4.4",
-    "@babel/core": "^7.17.9",
-    "@babel/preset-env": "^7.16.11",
-    "@babel/preset-react": "^7.0.0"
-  },
   "peerDependencies": {
     "@babel/cli": "^7.4.4",
     "@babel/core": "^7.17.9",
