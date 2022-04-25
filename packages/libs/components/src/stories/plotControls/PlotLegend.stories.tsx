@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import Histogram from '../../plots/Histogram';
 import PlotLegend from '../../components/plotControls/PlotLegend';
+import PlotGradientLegend from '../../components/plotControls/PlotGradientLegend';
 import { HistogramData } from '../../types/plots';
 
 export default {
@@ -431,6 +432,23 @@ export const HistogramPlotLegend = () => {
         onCheckedLegendItemsChange={setCheckedLegendItems}
         // pass legend title
         legendTitle={'Age group'}
+      />
+    </div>
+  );
+};
+
+// custom legend with scatterplot gradient colorscale
+export const GradientPlotLegend = () => {
+  return (
+    <div>
+      <PlotGradientLegend
+        legendMax={100}
+        legendMin={5}
+        // Options are 'sequential' and 'divergent'
+        gradientColorscaleType={'divergent'}
+        // pass legend title
+        legendTitle={'Very very very long name'}
+        nTicks={5}
       />
     </div>
   );

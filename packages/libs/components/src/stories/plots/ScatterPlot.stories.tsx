@@ -5,6 +5,12 @@ import { min, max, lte, gte } from 'lodash';
 import { Story, Meta } from '@storybook/react/types-6-0';
 // test to use RadioButtonGroup directly instead of ScatterPlotControls
 import RadioButtonGroup from '../../components/widgets/RadioButtonGroup';
+import {
+  gradientSequentialColorscaleMap,
+  gradientDivergingColorscaleMap,
+} from '../../types/plots/addOns';
+import { scaleLinear } from 'd3-scale';
+import PlotGradientLegend from '../../components/plotControls/PlotGradientLegend';
 import { FacetedData, ScatterPlotData } from '../../types/plots';
 import FacetedScatterPlot from '../../plots/facetedPlots/FacetedScatterPlot';
 
@@ -26,9 +32,328 @@ interface VEuPathDBScatterPlotData {
       smoothedMeanSE?: number[];
       bestFitLineX?: number[] | string[];
       bestFitLineY?: number[];
+      seriesGradientColorscale?: number[] | string[];
     }>;
   };
 }
+
+// data with 'seriesGradientColorscale' column (for Gradient Colorscale). Sequential (all positive)
+const dataSetSequentialGradient: VEuPathDBScatterPlotData = {
+  scatterplot: {
+    data: [
+      {
+        // scatter plot with gradient colorscale
+        seriesX: [
+          '0',
+          '1',
+          '2',
+          '3',
+          '4',
+          '5',
+          '6',
+          '7',
+          '8',
+          '9',
+          '10',
+          '11',
+          '12',
+          '13',
+          '14',
+          '15',
+          '16',
+          '17',
+          '18',
+          '19',
+          '20',
+          '21',
+          '22',
+          '23',
+          '24',
+          '25',
+          '26',
+          '27',
+          '28',
+          '29',
+          '30',
+          '31',
+          '32',
+          '33',
+          '34',
+          '35',
+          '36',
+          '37',
+          '38',
+          '39',
+          '40',
+          '41',
+          '42',
+          '43',
+          '44',
+          '46',
+          '47',
+        ],
+        seriesY: [
+          '0.58',
+          '0.54',
+          '0.43',
+          '0.86',
+          '1.19',
+          '1.47',
+          '0.98',
+          '1.36',
+          '0.58',
+          '0.82',
+          '0.77',
+          '1.22',
+          '2.21',
+          '0.46',
+          '1.55',
+          '1.38',
+          '0.98',
+          '1.4',
+          '1.29',
+          '1.3',
+          '1.56',
+          '1.73',
+          '1.48',
+          '1.38',
+          '1.1',
+          '1.14',
+          '0.84',
+          '1.12',
+          '1.07',
+          '1.1',
+          '0.73',
+          '0.86',
+          '1.16',
+          '1.02',
+          '0.77',
+          '1.04',
+          '0.57',
+          '0.08',
+          '0.2',
+          '0.4',
+          '0.23',
+          '0.13',
+          '-0.51',
+          '0',
+          '-0.35',
+          '0.21',
+          '-0.08',
+        ],
+        // variable mapped to color (same as seriesX for easier checking the colorscale)
+        seriesGradientColorscale: [
+          '0',
+          '1',
+          '2',
+          '3',
+          '4',
+          '5',
+          '6',
+          '7',
+          '8',
+          '9',
+          '10',
+          '11',
+          '12',
+          '13',
+          '14',
+          '15',
+          '16',
+          '17',
+          '18',
+          '19',
+          '20',
+          '21',
+          '22',
+          '23',
+          '24',
+          '25',
+          '26',
+          '27',
+          '28',
+          '29',
+          '30',
+          '31',
+          '32',
+          '33',
+          '34',
+          '35',
+          '36',
+          '37',
+          '38',
+          '39',
+          '40',
+          '41',
+          '42',
+          '43',
+          '44',
+          '46',
+          '47',
+        ],
+      },
+    ],
+  },
+};
+
+// data with 'seriesGradientColorscale' column (for Gradient Colorscale). Diverging (some negative and some positive)
+const dataSetDivergingGradient: VEuPathDBScatterPlotData = {
+  scatterplot: {
+    data: [
+      {
+        // scatter plot with gradient colorscale
+        seriesX: [
+          '0',
+          '1',
+          '2',
+          '3',
+          '4',
+          '5',
+          '6',
+          '7',
+          '8',
+          '9',
+          '10',
+          '11',
+          '12',
+          '13',
+          '14',
+          '15',
+          '16',
+          '17',
+          '18',
+          '19',
+          '20',
+          '21',
+          '22',
+          '23',
+          '24',
+          '25',
+          '26',
+          '27',
+          '28',
+          '29',
+          '30',
+          '31',
+          '32',
+          '33',
+          '34',
+          '35',
+          '36',
+          '37',
+          '38',
+          '39',
+          '40',
+          '41',
+          '42',
+          '43',
+          '44',
+          '46',
+          '47',
+        ],
+        seriesY: [
+          '0.58',
+          '0.54',
+          '0.43',
+          '0.86',
+          '1.19',
+          '1.47',
+          '0.98',
+          '1.36',
+          '0.58',
+          '0.82',
+          '0.77',
+          '1.22',
+          '2.21',
+          '0.46',
+          '1.55',
+          '1.38',
+          '0.98',
+          '1.4',
+          '1.29',
+          '1.3',
+          '1.56',
+          '1.73',
+          '1.48',
+          '1.38',
+          '1.1',
+          '1.14',
+          '0.84',
+          '1.12',
+          '1.07',
+          '1.1',
+          '0.73',
+          '0.86',
+          '1.16',
+          '1.02',
+          '0.77',
+          '1.04',
+          '0.57',
+          '0.08',
+          '0.2',
+          '0.4',
+          '0.23',
+          '0.13',
+          '-0.51',
+          '0',
+          '-0.35',
+          '0.21',
+          '-0.08',
+        ],
+        // variable mapped to color (same as seriesX for easier checking the colorscale)
+        seriesGradientColorscale: [
+          '0.58',
+          '0.54',
+          '0.43',
+          '0.86',
+          '1.19',
+          '1.47',
+          '0.98',
+          '1.36',
+          '0.58',
+          '0.82',
+          '0.77',
+          '1.22',
+          '2.21',
+          '0.46',
+          '1.55',
+          '1.38',
+          '0.98',
+          '1.4',
+          '1.29',
+          '1.3',
+          '1.56',
+          '1.73',
+          '1.48',
+          '1.38',
+          '1.1',
+          '1.14',
+          '0.84',
+          '1.12',
+          '1.07',
+          '1.1',
+          '0.73',
+          '0.86',
+          '1.16',
+          '1.02',
+          '0.77',
+          '1.04',
+          '0.57',
+          '0.08',
+          '0.2',
+          '0.4',
+          '0.23',
+          '0.13',
+          '-0.51',
+          '0',
+          '-0.35',
+          '0.21',
+          '-0.08',
+        ],
+      },
+    ],
+  },
+};
 
 // use actual data response format (number/string) following scatter plot data API
 const dataSet: VEuPathDBScatterPlotData = {
@@ -607,6 +932,24 @@ const { dataSetProcess: dataSetProcessDefaultColors } = processInputData(
   dependentValueType,
   false
 );
+
+const { dataSetProcess: dataSetProcessSequentialGradient } = processInputData(
+  dataSetSequentialGradient,
+  'scatterplot',
+  'markers',
+  independentValueType,
+  dependentValueType,
+  false
+);
+
+const { dataSetProcess: dataSetProcessDivergingGradient } = processInputData(
+  dataSetDivergingGradient,
+  'scatterplot',
+  'markers',
+  independentValueType,
+  dependentValueType,
+  false
+);
 // Case 1-2) checking line plot: raw data with line
 // const { dataSetProcess, yMin, yMax } = processInputData(
 //   dataSet,
@@ -623,9 +966,9 @@ const { dataSetProcess: dataSetProcessDefaultColors } = processInputData(
 // const independentValueType = 'date';
 // const dependentValueType = 'number';
 // // Case 2-2
-// // const independentValueType = 'number';
-// // const dependentValueType = 'date';
-// const { dataSetProcess, yMin, yMax } = processInputData(dateStringDataSet, 'scatterplot', 'markers', independentValueType, dependentValueType);
+// const independentValueType = 'number';
+// const dependentValueType = 'date';
+// const { dataSetProcess, yMin, yMax } = processInputData(dateStringDataSet, 'scatterplot', 'markers', independentValueType, dependentValueType, false);
 
 // set some default props
 const plotWidth = 1000;
@@ -695,6 +1038,73 @@ export const MultipleDataDefaultColors = () => {
       independentValueType={independentValueType}
       dependentValueType={dependentValueType}
     />
+  );
+};
+
+export const GradientColorscaleSequential = () => {
+  return (
+    <ScatterPlot
+      data={dataSetProcessSequentialGradient}
+      independentAxisLabel={independentAxisLabel}
+      dependentAxisLabel={dependentAxisLabel}
+      // not to use independentAxisRange
+      // independentAxisRange={[xMin, xMax]}
+      dependentAxisRange={{ min: yMin, max: yMax }}
+      title={plotTitle}
+      // width height is replaced with containerStyles
+      containerStyles={{
+        width: plotWidth,
+        height: plotHeight,
+      }}
+      // staticPlot is changed to interactive
+      interactive={true}
+      // check enable/disable legend and built-in controls
+      displayLegend={true}
+      displayLibraryControls={true}
+      // margin={{l: 50, r: 10, b: 20, t: 10}}
+      // add legend title
+      legendTitle={'legend title example'}
+      independentValueType={independentValueType}
+      dependentValueType={dependentValueType}
+    />
+  );
+};
+
+export const GradientColorscaleDiverging = () => {
+  return (
+    <div>
+      <ScatterPlot
+        data={dataSetProcessDivergingGradient}
+        independentAxisLabel={independentAxisLabel}
+        dependentAxisLabel={dependentAxisLabel}
+        // not to use independentAxisRange
+        // independentAxisRange={[xMin, xMax]}
+        dependentAxisRange={{ min: yMin, max: yMax }}
+        title={plotTitle}
+        // width height is replaced with containerStyles
+        containerStyles={{
+          width: plotWidth,
+          height: plotHeight,
+        }}
+        // staticPlot is changed to interactive
+        interactive={true}
+        // check enable/disable legend and built-in controls
+        displayLegend={true}
+        displayLibraryControls={true}
+        // margin={{l: 50, r: 10, b: 20, t: 10}}
+        // add legend title
+        legendTitle={'legend title example'}
+        independentValueType={independentValueType}
+        dependentValueType={dependentValueType}
+      />
+      {/* <PlotGradientLegend
+        legendMin={-3.5}
+        legendMax={3.5}
+        gradientColorscale={DivergingGradientColorscale}
+        nTicks={7}
+        legendTitle="Diverging colorscale"
+      /> */}
+    </div>
   );
 };
 
@@ -856,6 +1266,10 @@ function processInputData<T extends number | string>(
     let seriesX = [];
     let seriesY = [];
 
+    // initialize gradient colorscale arrays
+    let seriesGradientColorscale = [];
+    let markerColorsGradient = [];
+
     // series is for scatter plot
     if (el.seriesX && el.seriesY) {
       // check the number of x = number of y
@@ -896,6 +1310,89 @@ function processInputData<T extends number | string>(
         yMax = gte(yMax, max(seriesY)) ? yMax : max(seriesY);
       }
 
+      // If seriesGradientColorscale column exists, need to use gradient colorscales
+      if (el.seriesGradientColorscale) {
+        // Assuming only allowing numbers for now - later will add dates
+        seriesGradientColorscale = el.seriesGradientColorscale.map(Number);
+
+        // For storybook only - determine overlayMin, overlayMax, and gradientColorscaleType inside processInputData
+        // In web-eda, these need to be determined *outside* of this function so that we handle facets correctly.
+        let overlayMin: number | undefined;
+        let overlayMax: number | undefined;
+        let gradientColorscaleType: string | undefined;
+
+        const defaultOverlayMin: number = min(
+          seriesGradientColorscale
+        ) as number;
+        const defaultOverlayMax: number = max(
+          seriesGradientColorscale
+        ) as number;
+        // Note overlayMin and/or overlayMax could be intentionally 0.
+        gradientColorscaleType =
+          defaultOverlayMin >= 0 && defaultOverlayMax >= 0
+            ? 'sequential'
+            : defaultOverlayMin <= 0 && defaultOverlayMax <= 0
+            ? 'sequential reversed'
+            : 'divergent';
+
+        // Update overlay min and max
+        if (gradientColorscaleType === 'divergent') {
+          overlayMin = -Math.max(
+            Math.abs(defaultOverlayMin),
+            Math.abs(defaultOverlayMax)
+          );
+          overlayMax = Math.max(
+            Math.abs(defaultOverlayMin),
+            Math.abs(defaultOverlayMax)
+          );
+        } else {
+          overlayMin = defaultOverlayMin;
+          overlayMax = defaultOverlayMax;
+        }
+        // -- end for storybook only code section
+
+        // Determine marker colors
+        if (
+          gradientColorscaleType &&
+          (overlayMin || overlayMin === 0) &&
+          overlayMax
+        ) {
+          // If we have data, use a gradient colorscale. No data series will have all NaN values in seriesGradientColorscale
+
+          // Initialize normalization function.
+          const normalize = scaleLinear();
+
+          if (gradientColorscaleType === 'divergent') {
+            // Diverging colorscale, assume 0 is midpoint. Colorscale must be symmetric around the midpoint
+            const maxAbsOverlay =
+              Math.abs(overlayMin) > overlayMax
+                ? Math.abs(overlayMin)
+                : overlayMax;
+
+            // For each point, normalize the data to [-1, 1], then retrieve the corresponding color
+            normalize.domain([-maxAbsOverlay, maxAbsOverlay]).range([-1, 1]);
+            markerColorsGradient = seriesGradientColorscale.map((a: number) =>
+              gradientDivergingColorscaleMap(normalize(a))
+            );
+          } else if (gradientColorscaleType === 'sequntial reverse') {
+            // Normalize data to [1, 0], so that the colorscale goes in reverse. NOTE: can remove once we add the ability for users to set colorscale range.
+            normalize.domain([overlayMin, overlayMax]).range([1, 0]);
+            markerColorsGradient = seriesGradientColorscale.map((a: number) =>
+              gradientSequentialColorscaleMap(normalize(a))
+            );
+            gradientColorscaleType = 'sequential';
+          } else {
+            // Then we use the sequential (from 0 to inf) colorscale.
+            // For each point, normalize the data to [0, 1], then retrieve the corresponding color
+            normalize.domain([overlayMin, overlayMax]).range([0, 1]);
+            markerColorsGradient = seriesGradientColorscale.map((a: number) =>
+              gradientSequentialColorscaleMap(normalize(a))
+            );
+            gradientColorscaleType = 'sequential';
+          }
+        }
+      }
+
       // add scatter data considering input options
       dataSetProcess.push({
         x: seriesX,
@@ -915,6 +1412,8 @@ function processInputData<T extends number | string>(
         marker: {
           color: defineColors
             ? 'rgba(' + markerColors[index] + ',0.7)'
+            : seriesGradientColorscale?.length > 0
+            ? markerColorsGradient
             : undefined,
           // size: 6,
           // line: { color: 'rgba(' + markerColors[index] + ',0.7)', width: 2 },

@@ -4,6 +4,8 @@
 
 import { CSSProperties } from 'react';
 import { BarLayoutOptions, OrientationOptions } from '.';
+import { scaleLinear } from 'd3-scale';
+import { interpolateLab, extent, range } from 'd3';
 
 /** PlotProps addons */
 
@@ -134,6 +136,72 @@ export const ColorPaletteDark: string[] = [
   'rgb(197, 82, 102)',
   'rgb(13, 96, 41)',
 ];
+
+/** Sequential gradient colorscale. Useful for coloring based on a continuous variable that is always positive, for example. */
+/** Using oslo from https://www.fabiocrameri.ch/colourmaps/, copied from https://github.com/empet/scientific-colorscales/blob/master/scicolorscales.py */
+export const SequentialGradientColorscale: string[] = [
+  'rgb(0, 1, 0)',
+  'rgb(11, 25, 39)',
+  'rgb(17, 48, 77)',
+  'rgb(27, 73, 117)',
+  'rgb(46, 98, 160)',
+  'rgb(78, 125, 199)',
+  'rgb(111, 146, 202)',
+  'rgb(144, 166, 201)',
+  'rgb(176, 185, 200)',
+  'rgb(215, 215, 216)',
+  // 'rgb(255, 255, 255)',  Removing final, lightest, color for best visibility
+];
+
+/** Diverging gradient colorscale. Useful for coloring a continuous variable that has values above and below a midpoint (usually 0) */
+/** Using vik from https://www.fabiocrameri.ch/colourmaps/, copied from https://github.com/empet/scientific-colorscales/blob/master/scicolorscales.py */
+/** MUST have ODD number of colors! Assume the middle color maps to the midpoint */
+export const DivergingGradientColorscale: string[] = [
+  'rgb(1, 18, 97)',
+  'rgb(2, 37, 109)',
+  'rgb(2, 57, 122)',
+  'rgb(3, 78, 135)',
+  'rgb(16, 100, 150)',
+  'rgb(47, 125, 166)',
+  'rgb(83, 149, 183)',
+  'rgb(125, 176, 201)',
+  'rgb(166, 201, 218)',
+  'rgb(207, 225, 234)',
+  'rgb(235, 237, 233)', // midpoint
+  'rgb(234, 225, 206)',
+  'rgb(220, 203, 168)',
+  'rgb(205, 181, 131)',
+  'rgb(190, 159, 95)',
+  'rgb(174, 136, 60)',
+  'rgb(159, 113, 28)',
+  'rgb(141, 87, 4)',
+  'rgb(126, 63, 1)',
+  'rgb(111, 41, 1)',
+  'rgb(97, 18, 0)',
+];
+
+// Create colorscale for series. Maps [0, 1] to gradient colorscale using Lab interpolation
+export const gradientSequentialColorscaleMap = scaleLinear<string>()
+  .domain(
+    range(SequentialGradientColorscale.length).map(
+      (a: number) => a / (SequentialGradientColorscale.length - 1)
+    )
+  )
+  .range(SequentialGradientColorscale)
+  .interpolate(interpolateLab);
+
+// Create diverging colorscale. Maps [-1, 1] to gradient colorscale using Lab interpolation
+const divergingColorscaleSteps = Math.floor(
+  DivergingGradientColorscale.length / 2
+);
+export const gradientDivergingColorscaleMap = scaleLinear<string>()
+  .domain(
+    range(-divergingColorscaleSteps, divergingColorscaleSteps + 1).map(
+      (a: number) => a / divergingColorscaleSteps
+    )
+  )
+  .range(DivergingGradientColorscale)
+  .interpolate(interpolateLab);
 
 /** truncated axis flags */
 export type AxisTruncationAddon = {
