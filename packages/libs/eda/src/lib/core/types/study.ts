@@ -201,6 +201,27 @@ export const Variable = t.union([
 export type VariableTreeNode = t.TypeOf<typeof VariableTreeNode>;
 export const VariableTreeNode = t.union([Variable, VariableCategory]);
 
+export type CollectionVariableTreeNode = t.TypeOf<
+  typeof CollectionVariableTreeNode
+>;
+export const CollectionVariableTreeNode = t.intersection([
+  t.type({
+    dataShape: t.string,
+    distributionDefaults: NumberDistributionDefaults,
+    id: t.string,
+    memberVariableIds: t.array(t.string),
+    type: t.string,
+  }),
+  t.partial({
+    displayName: t.string,
+    imputeZero: t.boolean,
+    precision: t.number,
+    units: t.string,
+    entityId: t.string,
+    entityDisplayName: t.string,
+  }),
+]);
+
 // StudyEntity
 // -----------
 
@@ -223,6 +244,7 @@ const _StudyEntityBase = t.intersection([
   }),
   t.partial({
     displayNamePlural: t.string,
+    collections: t.array(CollectionVariableTreeNode),
   }),
 ]);
 
