@@ -218,12 +218,6 @@ export default class MultiFieldFilter extends React.Component {
   }
 
   render() {
-    const values = Seq.from(this.props.activeFieldState.leafSummaries)
-      .flatMap(summary => summary.valueCounts)
-      .map(count => count.value)
-      .uniq()
-      .toArray()
-      .sort(naturalSort());
     const { searchTerm = '' } = this.props.activeFieldState;
     const searchRe = new RegExp(escapeRegExp(searchTerm), 'i');
     const filter = this.getOrCreateFilter(this.props, this.state);
@@ -239,12 +233,12 @@ export default class MultiFieldFilter extends React.Component {
           summary,
           filter: filtersByField[summary.term]
         },
-        ...values.map((value, index) => ({
+        ...summary.valueCounts.map((data, index) => ({
           summary,
-          value,
+          value: data.value,
           filter: filtersByField[summary.term],
-          isSelected: get(filtersByField, [summary.term, 'value'], []).includes(value),
-          isLast: index === values.length - 1
+          isSelected: get(filtersByField, [summary.term, 'value'], []).includes(data.value),
+          isLast: index === summary.valueCounts.length - 1
         }))
       ])
 
