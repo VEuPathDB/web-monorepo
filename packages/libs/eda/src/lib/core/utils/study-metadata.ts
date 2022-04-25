@@ -47,7 +47,7 @@ export function findCollections(entity: StudyEntity) {
         entityDisplayName: e.displayName,
       };
     });
-    return collectionWithEntity;
+    return collectionWithEntity ?? [];
   });
 
   return collections;

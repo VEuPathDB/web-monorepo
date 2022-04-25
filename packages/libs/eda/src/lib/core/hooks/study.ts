@@ -227,7 +227,7 @@ export function useFindEntityAndVariable(entities: StudyEntity[]) {
   );
 }
 
-export function useFlattenedCollectionVariables(entity: StudyEntity) {
+export function useCollectionVariables(entity: StudyEntity) {
   return useMemo(() => findCollections(entity).flat(), [entity]);
 }
 

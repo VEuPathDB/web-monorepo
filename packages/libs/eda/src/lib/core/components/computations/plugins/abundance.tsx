@@ -30,7 +30,7 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
   const studyMetadata = useStudyMetadata();
   // Include known collection variables in this array.
   const collections = useFlattenedCollectionVariables(studyMetadata.rootEntity);
-  if (collections == null || !collections[0])
+  if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
 
   const [collectionVariable, setCollectionVariable] = useState(
@@ -66,7 +66,6 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
         >
           {collections.map((collectionVar) => {
             return (
-              collectionVar && (
                 <option
                   value={variableDescriptorToString({
                     variableId: collectionVar.id,
@@ -75,7 +74,6 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
                 >
                   {collectionVar.entityDisplayName}: {collectionVar.displayName}
                 </option>
-              )
             );
           })}
         </select>
