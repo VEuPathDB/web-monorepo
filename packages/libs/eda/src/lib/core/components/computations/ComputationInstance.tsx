@@ -1,3 +1,4 @@
+import { string } from 'fp-ts';
 import React, { useCallback, useMemo } from 'react';
 import { useToggleStarredVariable } from '../../hooks/starredVariables';
 import { Visualization } from '../../types/visualization';
@@ -8,6 +9,7 @@ import { ComputationProps } from './Types';
 export interface Props extends ComputationProps {
   computationId: string;
   visualizationTypes: Record<string, VisualizationType>;
+  baseUrl?: string;
 }
 
 export function ComputationInstance(props: Props) {
@@ -19,6 +21,7 @@ export function ComputationInstance(props: Props) {
     filteredCounts,
     geoConfigs,
     visualizationTypes,
+    baseUrl,
   } = props;
 
   const computation = useMemo(() => {
@@ -59,17 +62,21 @@ export function ComputationInstance(props: Props) {
     return null;
 
   return (
-    <VisualizationsContainer
-      geoConfigs={geoConfigs}
-      computation={computation}
-      visualizationsOverview={computationAppOverview.visualizations}
-      visualizationTypes={visualizationTypes}
-      updateVisualizations={updateVisualizations}
-      filters={analysis.descriptor.subset.descriptor}
-      starredVariables={analysis?.descriptor.starredVariables}
-      toggleStarredVariable={toggleStarredVariable}
-      totalCounts={totalCounts}
-      filteredCounts={filteredCounts}
-    />
+    <div>
+      <h3>{computation.displayName}</h3>
+      <VisualizationsContainer
+        geoConfigs={geoConfigs}
+        computation={computation}
+        visualizationsOverview={computationAppOverview.visualizations}
+        visualizationTypes={visualizationTypes}
+        updateVisualizations={updateVisualizations}
+        filters={analysis.descriptor.subset.descriptor}
+        starredVariables={analysis?.descriptor.starredVariables}
+        toggleStarredVariable={toggleStarredVariable}
+        totalCounts={totalCounts}
+        filteredCounts={filteredCounts}
+        baseUrl={baseUrl}
+      />
+    </div>
   );
 }

@@ -95,23 +95,31 @@ export function ComputationRoute(props: Props) {
         } else {
           return (
             <Switch>
-              <Route exact path={url}>
-                <StartPage baseUrl={url} apps={apps} {...props} />
+              <Route exact path={`${url}`}>
                 <div>
-                  <h2>Saved apps</h2>
-                  <ul>
-                    {analysisState.analysis?.descriptor.computations.map(
-                      (c) => (
-                        <li>
-                          <Link to={`${url}/${c.computationId}`}>
-                            {c.displayName ?? 'No name'} &mdash;{' '}
-                            {c.descriptor.type}
-                          </Link>
-                        </li>
+                  <Link to={`${url}/new`}> + New app</Link>
+                  <h2>Saved apps and vizs</h2>
+                  {analysisState.analysis?.descriptor.computations.map((c) => {
+                    const app = apps.find(
+                      (app) => app.name === c.descriptor.type
+                    );
+                    const plugin = app && plugins[app.name];
+                    return (
+                      plugin && (
+                        <ComputationInstance
+                          {...props}
+                          computationId={c.computationId}
+                          computationAppOverview={app}
+                          visualizationTypes={plugin.visualizationTypes}
+                          baseUrl={`${url}/${c.computationId}`}
+                        />
                       )
-                    )}
-                  </ul>
+                    );
+                  })}
                 </div>
+              </Route>
+              <Route exact path={`${url}/new`}>
+                <StartPage baseUrl={`${url}`} apps={apps} {...props} />
               </Route>
               {apps.map((app) => {
                 const plugin = plugins[app.name];
@@ -165,6 +173,7 @@ export function ComputationRoute(props: Props) {
                       computationId={routeProps.match.params.id}
                       computationAppOverview={app}
                       visualizationTypes={plugin.visualizationTypes}
+                      baseUrl={`${url}/${computation?.computationId}`}
                     />
                   );
                 }}
