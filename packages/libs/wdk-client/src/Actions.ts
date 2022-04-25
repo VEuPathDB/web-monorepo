@@ -10,15 +10,11 @@ import * as FilterParamActions from 'wdk-client/Actions/FilterParamActions';
 import * as DatasetParamActions from 'wdk-client/Actions/DatasetParamActions';
 import * as TreeBoxEnumParamActions from 'wdk-client/Actions/TreeBoxEnumParamActions';
 import * as UserActions from 'wdk-client/Actions/UserActions';
-import * as UserCommentFormActions from 'wdk-client/Actions/UserCommentFormActions';
-import * as UserCommentShowActions from 'wdk-client/Actions/UserCommentShowActions';
 import * as RecordActions from 'wdk-client/Actions/RecordActions';
 import * as StaticDataActions from 'wdk-client/Actions/StaticDataActions';
 import * as SiteMapActions from 'wdk-client/Actions/SiteMapActions';
 import * as UserDatasetsActions from 'wdk-client/Actions/UserDatasetsActions';
 import * as ResultTableSummaryViewActions from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
-import * as BlastSummaryViewActions from 'wdk-client/Actions/SummaryView/BlastSummaryViewActions';
-import * as GenomeSummaryViewActions from 'wdk-client/Actions/SummaryView/GenomeSummaryViewActions';
 import * as ImportStrategyActions from 'wdk-client/Actions/ImportStrategyActions';
 import * as StrategyPanelActions from 'wdk-client/Actions/StrategyPanelActions';
 import * as StrategyActions from 'wdk-client/Actions/StrategyActions';
@@ -58,14 +54,10 @@ export {
   PublicStrategyActions,
   UserDatasetsActions,
   ResultTableSummaryViewActions,
-  BlastSummaryViewActions,
-  GenomeSummaryViewActions,
   WordCloudAnalysisActions,
   HistogramAnalysisActions,
   MatchedTranscriptsFilterActions,
   ResultPanelActions,
-  UserCommentFormActions,
-  UserCommentShowActions,
   UserSessionActions,
   UserDatasetUploadActions,
 };
@@ -93,11 +85,7 @@ export type Action =
   | StrategyListActions.Action
   | PublicStrategyActions.Action
   | UserDatasetsActions.Action
-  | UserCommentFormActions.Action
-  | UserCommentShowActions.Action
   | ResultTableSummaryViewActions.Action
-  | BlastSummaryViewActions.Action
-  | GenomeSummaryViewActions.Action
   | WordCloudAnalysisActions.Action
   | HistogramAnalysisActions.Action
   | MatchedTranscriptsFilterActions.Action

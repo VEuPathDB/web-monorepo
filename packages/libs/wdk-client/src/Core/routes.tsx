@@ -20,8 +20,6 @@ import UserMessageController from 'wdk-client/Controllers/UserMessageController'
 import SiteMapController from 'wdk-client/Controllers/SiteMapController';
 import UserDatasetDetailController from 'wdk-client/Controllers/UserDatasetDetailController';
 import FavoritesController from 'wdk-client/Controllers/FavoritesController';
-import UserCommentFormController from 'wdk-client/Controllers/UserCommentFormController';
-import UserCommentShowController from 'wdk-client/Controllers/UserCommentShowController';
 import UserLoginController from 'wdk-client/Controllers/UserLoginController';
 import QuestionController from 'wdk-client/Controllers/QuestionController';
 
@@ -255,44 +253,6 @@ const routes: RouteEntry[] = [
   },
 
   {
-    path: '/user-comments/add',
-    requiresLogin: true,
-    component: (props: RouteComponentProps<{}>) => {
-      const parsedProps = parseUserCommentQueryString(props);
-      return (
-        <UserCommentFormController {...parsedProps} />
-      );
-    }
-  },
-
-  {
-    path: '/user-comments/edit',
-    requiresLogin: true,
-    component: (props: RouteComponentProps<{}>) => {
-      const parsedProps = parseUserCommentQueryString(props);
-      return (
-        <UserCommentFormController {...parsedProps} />
-      );
-    }
-  },
-
-  {
-    path: '/user-comments/show',
-    component: (props: RouteComponentProps<{}>) => {
-      const { stableId = '', commentTargetId = '' } = parseQueryString(props);
-      const initialCommentId = parseInt((props.location.hash || '#').slice(1)) || undefined;
-
-      return (
-        <UserCommentShowController
-          targetId={stableId}
-          targetType={commentTargetId}
-          initialCommentId={initialCommentId}
-        />
-      );
-    }
-  },
-
-  {
     path: '/import/:signature',
     component: (props: RouteComponentProps<{ signature: string }>) => 
       <Redirect to={`/workspace/strategies/import/${props.match.params.signature}`} />
@@ -328,36 +288,4 @@ function parseSearchParamsFromQueryParams(restQueryParams: { [x: string]: string
   return initialParamValuesEntries.length > 0
     ? Object.fromEntries(initialParamValuesEntries)
     : undefined;
-}
-
-function parseUserCommentQueryString(props: RouteComponentProps<{}>) {
-  const {
-    commentId: stringCommentId,
-    commentTargetId: targetType,
-    stableId: targetId,
-    externalDbName,
-    externalDbVersion,
-    organism,
-    locations,
-    contig,
-    strand
-  } = parseQueryString(props);
-
-  const commentId = parseInt(stringCommentId || '') || undefined;
-  const target = targetId && targetType
-    ? { id: targetId, type: targetType }
-    : undefined;
-  const externalDatabase = externalDbName && externalDbVersion
-    ? { name: externalDbName, version: externalDbVersion }
-    : undefined;
-
-  return {
-    commentId,
-    target,
-    externalDatabase,
-    organism,
-    locations,
-    contig,
-    strand
-  };
 }

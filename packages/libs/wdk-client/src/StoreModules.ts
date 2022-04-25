@@ -13,8 +13,6 @@ import * as userDatasetDetail from 'wdk-client/StoreModules/UserDatasetDetailSto
 import * as userDatasetList from 'wdk-client/StoreModules/UserDatasetListStoreModule';
 import * as userProfile from 'wdk-client/StoreModules/UserProfileStoreModule';
 import * as userRegistration from 'wdk-client/StoreModules/UserRegistrationStoreModule';
-import * as blastSummaryView from 'wdk-client/StoreModules/BlastSummaryViewStoreModule';
-import * as genomeSummaryView from 'wdk-client/StoreModules/GenomeSummaryViewStoreModule';
 import * as resultTableSummaryView from 'wdk-client/StoreModules/ResultTableSummaryViewStoreModule';
 import * as stepAnalysis from 'wdk-client/StoreModules/StepAnalysisStoreModule';
 import * as wordCloudAnalysis from 'wdk-client/StoreModules/WordCloudAnalysisStoreModule';
@@ -30,18 +28,14 @@ import * as publicStrategies from 'wdk-client/StoreModules/PublicStrategyStoreMo
 import * as unhandledErrors from 'wdk-client/StoreModules/UnhandledErrorStoreModule';
 import * as matchedTranscriptsFilter from 'wdk-client/StoreModules/MatchedTranscriptsFilterStoreModule';
 import * as router from 'wdk-client/StoreModules/RouterStoreModule';
-import * as userCommentForm from 'wdk-client/StoreModules/UserCommentFormStoreModule';
-import * as userCommentShow from 'wdk-client/StoreModules/UserCommentShowStoreModule';
 import * as userSession from 'wdk-client/StoreModules/UserSessionStoreModule';
 import * as userDatasetUpload from 'wdk-client/StoreModules/UserDatasetUploadStoreModule';
 
 export default {
   answerView,
   attributeAnalysis,
-  blastSummaryView,
   downloadForm,
   favorites,
-  genomeSummaryView,
   globalData,
   passwordChange,
   passwordReset,
@@ -58,8 +52,6 @@ export default {
   strategyList,
   publicStrategies,
   router,
-  userCommentForm,
-  userCommentShow,
   userDatasetDetail,
   userDatasetList,
   userProfile,
