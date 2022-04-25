@@ -19,8 +19,6 @@
   },
   "devDependencies": {
     "@veupathdb/base-webpack-config": "*",
-    "bubleify": "^2.0.0",
-    "ify-loader": "^1.1.0",
     "source-map-loader": "^1.1.2"
   }
 }
