@@ -241,7 +241,9 @@ export function MultiFilter(props: Props) {
             );
             const variable = variablesById[leaf.term];
             if (variable == null || !isTableVariable(variable))
-              throw new Error('Ooops');
+              throw new Error(
+                `Could not find a categorical EDA variable associated with the leaf field "${leaf.term}".`
+              );
             return {
               term: leaf.term,
               display: leaf.display,
