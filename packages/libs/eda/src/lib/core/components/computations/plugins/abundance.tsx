@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useStudyMetadata } from '../../..';
-import { useFlattenedCollectionVariables } from '../../../hooks/study';
+import { useCollectionVariables } from '../../../hooks/study';
 import { VariableDescriptor } from '../../../types/variable';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
@@ -29,7 +29,7 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
   const { computationAppOverview, addNewComputation } = props;
   const studyMetadata = useStudyMetadata();
   // Include known collection variables in this array.
-  const collections = useFlattenedCollectionVariables(studyMetadata.rootEntity);
+  const collections = useCollectionVariables(studyMetadata.rootEntity);
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
 
@@ -66,14 +66,14 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
         >
           {collections.map((collectionVar) => {
             return (
-                <option
-                  value={variableDescriptorToString({
-                    variableId: collectionVar.id,
-                    entityId: collectionVar.entityId,
-                  })}
-                >
-                  {collectionVar.entityDisplayName}: {collectionVar.displayName}
-                </option>
+              <option
+                value={variableDescriptorToString({
+                  variableId: collectionVar.id,
+                  entityId: collectionVar.entityId,
+                })}
+              >
+                {collectionVar.entityDisplayName}: {collectionVar.displayName}
+              </option>
             );
           })}
         </select>
