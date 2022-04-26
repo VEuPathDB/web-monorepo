@@ -8,11 +8,16 @@ import { TextArea, Loading, HelpIcon, Tabs, Link } from '@veupathdb/wdk-client/l
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
+import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
 
 import FastaGeneReporterForm from '@veupathdb/web-common/lib/components/reporters/FastaGeneReporterForm';
 import { fastaGenomicSequenceReporterFormFactory } from '@veupathdb/web-common/lib/components/reporters/FastaGenomicSequenceReporterForm';
+import { ParamValueStore } from '@veupathdb/wdk-client/lib/Utils/ParamValueStore';
 
 import './Srt.scss';
+import { param } from 'jquery';
 
 const cx = makeClassNameHelper('vpdb-Srt');
 const FastaGenomicSequenceReporterForm = fastaGenomicSequenceReporterFormFactory('default region');
@@ -33,6 +38,8 @@ interface InitialSrtFormConfig extends BaseSrtFormConfig {
 interface SrtFormConfig extends BaseSrtFormConfig {
   initialIdsState: string;
   projectId: string;
+  paramValueStore?: ParamValueStore;
+  selectedSrtForm?: string;
 }
 
 const SRT_QUESTION = 'SRT';
@@ -108,13 +115,48 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
 
 export function Srt() {
   const compatibleSrtConfigs = useCompatibleSrtFormConfigs();
-  const [ selectedSrtForm, setSelectedSrtForm ] = useState<string>('');
+  const [selectedSrtForm, setSelectedSrtForm] = useState<string>('');
+  const { paramValueStore } = useNonNullableContext(WdkDependenciesContext);
 
   useEffect(() => {
     if (!selectedSrtForm && compatibleSrtConfigs && compatibleSrtConfigs.length >= 1) {
       setSelectedSrtForm(compatibleSrtConfigs[0].recordClassUrlSegment);
     }
-  }, [ compatibleSrtConfigs ]);
+  }, [compatibleSrtConfigs]);
+
+  useEffect(() => {
+    const fetchedIds: any = [];
+    const fetchedFormData: any = [];
+    SUPPORTED_RECORD_CLASS_CONFIGS.map(
+      config => fetchedIds.push(paramValueStore.fetchParamValues(`srt/${config.recordClassUrlSegment}/ids`))
+    );
+    SUPPORTED_RECORD_CLASS_CONFIGS.map(
+      config => fetchedFormData.push(paramValueStore.fetchParamValues(`srt/${config.recordClassUrlSegment}`))
+    );
+    console.log(fetchedIds)
+    console.log(fetchedFormData)
+  }, [])
+
+  // console.log({compatibleSrtConfigs})
+  // console.log({selectedSrtForm})
+  // console.log({serviceResult})
+  
+  // // srtStore && serviceResult ? srtStore.setVersionAndUserId(serviceResult[1], serviceResult[2].id) : null
+  // if (srtStore) {
+  //   // const fetchedData = srtStore.fetchSrtValues(selectedSrtForm);
+  //   // console.log(fetchedData);
+  //   syncData()
+  // }
+
+  // async function syncData() {
+  //   if (srtStore) {
+  //     const fetchedData = await srtStore.fetchSrtValues(selectedSrtForm);
+  //     if (typeof fetchedData === 'string') {
+  //       const parsedData = JSON.parse(fetchedData);
+  //       console.log(parsedData)
+  //     }
+  //   }
+  // }
 
   return (
     <div className={cx()}>
@@ -144,7 +186,7 @@ export function Srt() {
                   config => ({
                     key: config.recordClassUrlSegment,
                     display: config.display,
-                    content: <SrtForm {...config} />
+                    content: <SrtForm {...config} paramValueStore={paramValueStore} selectedSrtForm={selectedSrtForm}/>
                   })
                 )}
               />
@@ -161,10 +203,18 @@ function SrtForm({
   initialIdsState,
   idsInputHelp,
   projectId,
-  formActionUrl
+  formActionUrl,
+  paramValueStore,
+  selectedSrtForm
 }: SrtFormConfig) {
   const [ idsState, setIdsState ] = useState(initialIdsState);
   const [ formState, updateFormState ] = useState(initialReporterFormState);
+
+  useEffect(() => {
+    paramValueStore?.updateParamValues(`srt/${selectedSrtForm}/ids`, { idsState })
+    paramValueStore?.updateParamValues(`srt/${selectedSrtForm}`, { formState: JSON.stringify(formState) })
+  }, [idsState, formState]);
+
 
   return (
     <form action={formActionUrl} method="post" target="_blank">
@@ -204,9 +254,9 @@ function useCompatibleSrtFormConfigs() {
 
   const serviceResult = useWdkService(wdkService => Promise.all([
     wdkService.getConfig(),
-    wdkService.getQuestionAndParameters(SRT_QUESTION)
+    wdkService.getQuestionAndParameters(SRT_QUESTION),
   ]), []);
-
+  
   const [ { projectId }, srtQuestion ] = serviceResult || [ {}, undefined ];
 
   const srtQuestionParamDisplayMap = useMemo(
@@ -234,7 +284,7 @@ function useCompatibleSrtFormConfigs() {
       .map(initialSrtConfig => ({
         ...initialSrtConfig,
         initialIdsState: initialSrtConfig.makeInitialIdsState(srtQuestionParamDisplayMap),
-        projectId
+        projectId,
       }) as SrtFormConfig),
     [ recordClassUrlSegments, projectId, srtQuestionParamDisplayMap ]
   );
