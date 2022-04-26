@@ -11,8 +11,9 @@ export function extendAxisRangeForTruncations(
   axisRange?: NumberOrDateRange,
   config?: AxisTruncationConfig['independentAxis' | 'dependentAxis'],
   valueType?: 'number' | 'date',
-  // set no minimum padding for histogram & barplot (boxplot?)
-  noMinPadding?: boolean
+  // set plot type to adjust padding/margin
+  // histogram: no padding for X and Y; barplot: no min padding for Y
+  plotType?: string
 ): NumberOrDateRange | undefined {
   // set this to avoid error
   if (axisRange == null) return undefined;
@@ -41,7 +42,12 @@ export function extendAxisRangeForTruncations(
       const axisLowerExtensionStart = DateMath.subtract(
         new Date(axisRange.min as string),
         // padding: check truncation or not
-        config?.min ? dateRangeDiff : dateRangeDiffNoTruncation,
+        config?.min
+          ? dateRangeDiff
+          : plotType === 'histogram'
+          ? // no padding/margin
+            0
+          : dateRangeDiffNoTruncation,
         'hours'
       ).toISOString();
 
@@ -49,7 +55,12 @@ export function extendAxisRangeForTruncations(
       const axisUpperExtensionEnd = DateMath.add(
         new Date(axisRange.max as string),
         // padding: check truncation or not
-        config?.max ? dateRangeDiff : dateRangeDiffNoTruncation,
+        config?.max
+          ? dateRangeDiff
+          : plotType === 'histogram'
+          ? // no padding/margin
+            0
+          : dateRangeDiffNoTruncation,
         'hours'
       ).toISOString();
 
@@ -63,11 +74,14 @@ export function extendAxisRangeForTruncations(
       const axisLowerExtensionStart = config?.min
         ? (axisRange.min as number) - 0.05 * diff
         : // set exceptions: no need to have min padding for histogram & barplot (boxplot?)
-        noMinPadding
+        plotType === 'histogram' || plotType === 'barplot'
         ? (axisRange.min as number)
         : (axisRange.min as number) - 0.02 * diff;
       const axisUpperExtensionEnd = config?.max
         ? (axisRange.max as number) + 0.05 * diff
+        : // set exceptions: no need to have max padding for histogram
+        plotType === 'histogram'
+        ? (axisRange.max as number)
         : (axisRange.max as number) + 0.02 * diff;
 
       return {
