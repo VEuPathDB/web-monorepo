@@ -9,7 +9,7 @@ import { ComputationProps } from './Types';
 export interface Props extends ComputationProps {
   computationId: string;
   visualizationTypes: Record<string, VisualizationType>;
-  baseUrl?: string;
+  baseUrl?: string; // right now only defined when *not* using single app mode
 }
 
 export function ComputationInstance(props: Props) {
@@ -63,7 +63,7 @@ export function ComputationInstance(props: Props) {
 
   return (
     <div>
-      <h3>{computation.displayName}</h3>
+      {baseUrl && <h3>{computation.displayName}</h3>}
       <VisualizationsContainer
         geoConfigs={geoConfigs}
         computation={computation}
