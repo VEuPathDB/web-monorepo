@@ -1,4 +1,5 @@
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
+import { lineplotVisualization } from '../../visualizations/implementations/LineplotVisualization';
 import { testVisualization } from '../../visualizations/implementations/TestVisualization';
 import { ComputationPlugin } from '../Types';
 import { ZeroConfigWithButton } from '../ZeroConfiguration';
@@ -8,6 +9,6 @@ export const plugin: ComputationPlugin = {
   visualizationTypes: {
     testVisualization,
     scatterplot: scatterplotVisualization,
-    // lineplot: scatterplotVisualization,
+    lineplot: lineplotVisualization,
   },
 };

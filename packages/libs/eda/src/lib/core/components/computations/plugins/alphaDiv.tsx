@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useStudyMetadata } from '../../..';
-import { useStudyEntities } from '../../../hooks/study';
+import { useCollectionVariables } from '../../../hooks/study';
 import { VariableDescriptor } from '../../../types/variable';
-import { findEntityAndVariable } from '../../../utils/study-metadata';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
@@ -18,11 +17,6 @@ export const plugin: ComputationPlugin = {
 // Include available methods in this array.
 const ALPHA_DIV_METHODS = ['shannon', 'simpson', 'evenness'];
 
-// Include known collection variables in this array.
-const ALPHA_DIV_COLLECTION_VARIABLES = [
-  { entityId: 'EUPATH_0000808', variableId: 'EUPATH_0009253' },
-];
-
 function variableDescriptorToString(
   variableDescriptor: VariableDescriptor
 ): string {
@@ -30,14 +24,21 @@ function variableDescriptorToString(
 }
 
 export function AlphaDivConfiguration(props: ComputationConfigProps) {
-  const [name, setName] = useState('New boxplot app');
-  const [collectionVariable, setCollectionVariable] = useState(
-    variableDescriptorToString(ALPHA_DIV_COLLECTION_VARIABLES[0])
-  );
+  const [name, setName] = useState('New alpha diversity module');
   const [alphaDivMethod, setAlphaDivMethod] = useState(ALPHA_DIV_METHODS[0]);
   const { computationAppOverview, addNewComputation } = props;
-  const study = useStudyMetadata();
-  const entities = useStudyEntities(study.rootEntity);
+  const studyMetadata = useStudyMetadata();
+  // Include known collection variables in this array.
+  const collections = useCollectionVariables(studyMetadata.rootEntity);
+  if (collections.length === 0)
+    throw new Error('Could not find any collections for this app.');
+
+  const [collectionVariable, setCollectionVariable] = useState(
+    variableDescriptorToString({
+      variableId: collections[0].id,
+      entityId: collections[0].entityId,
+    })
+  );
 
   return (
     <div style={{ padding: '1em 0' }}>
@@ -63,14 +64,16 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
           value={collectionVariable}
           onChange={(e) => setCollectionVariable(e.target.value)}
         >
-          {ALPHA_DIV_COLLECTION_VARIABLES.map((collectionVar) => {
-            const result = findEntityAndVariable(entities, collectionVar);
+          {collections.map((collectionVar) => {
             return (
-              result && (
-                <option value={variableDescriptorToString(collectionVar)}>
-                  {result.entity.displayName}: {result.variable.displayName}
-                </option>
-              )
+              <option
+                value={variableDescriptorToString({
+                  variableId: collectionVar.id,
+                  entityId: collectionVar.entityId,
+                })}
+              >
+                {collectionVar.entityDisplayName}: {collectionVar.displayName}
+              </option>
             );
           })}
         </select>

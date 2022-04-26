@@ -31,6 +31,7 @@ import {
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
 import { gray, red } from './colors';
 import { debounce } from 'lodash';
+import { isTableVariable } from './guards';
 
 export interface Props {
   analysisState: AnalysisState;
@@ -84,6 +85,12 @@ export function MultiFilter(props: Props) {
             : field.parent?.split('/')[1],
         })),
     [entity]
+  );
+
+  // Used to look up a variable and grab its vocabulary property in leafSummariesPromise
+  const variablesById = useMemo(
+    () => Object.fromEntries(entity.variables.map((v) => [v.id, v])),
+    [entity.variables]
   );
 
   // Create a WDK FieldTree
@@ -232,10 +239,15 @@ export function MultiFilter(props: Props) {
                 value ?? 0,
               ])
             );
+            const variable = variablesById[leaf.term];
+            if (variable == null || !isTableVariable(variable))
+              throw new Error(
+                `Could not find a categorical EDA variable associated with the leaf field "${leaf.term}".`
+              );
             return {
               term: leaf.term,
               display: leaf.display,
-              valueCounts: Object.keys(bgValueByLabel).map((label) => ({
+              valueCounts: variable.vocabulary?.map((label) => ({
                 value: label,
                 count: bgValueByLabel[label],
                 filteredCount: fgValueByLabel[label] ?? 0,
@@ -255,6 +267,7 @@ export function MultiFilter(props: Props) {
       entity.id,
       subsettingClient,
       studyMetadata.id,
+      variablesById,
     ])
   );
 
