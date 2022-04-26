@@ -97,8 +97,15 @@ export function ComputationRoute(props: Props) {
             <Switch>
               <Route exact path={`${url}`}>
                 <div>
-                  <Link to={`${url}/new`}> + New app</Link>
-                  <h2>Saved apps and vizs</h2>
+                  <div>
+                    <Link to={`${url}/new`}>
+                      {' '}
+                      <h2>+ New module</h2>
+                    </Link>
+                  </div>
+                  <br></br>
+                  <h2>Saved modules and vizs</h2>
+                  <hr></hr>
                   {analysisState.analysis?.descriptor.computations.map((c) => {
                     const app = apps.find(
                       (app) => app.name === c.descriptor.type

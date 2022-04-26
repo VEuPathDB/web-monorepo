@@ -334,7 +334,6 @@ function FullScreenVisualization(props: Props & { id: string }) {
     baseUrl,
   } = props;
   const history = useHistory();
-  const { url } = useRouteMatch();
   const viz = computation.visualizations.find((v) => v.visualizationId === id);
   const vizType = viz && visualizationTypes[viz.descriptor.type];
   const overviews = useMemo(
