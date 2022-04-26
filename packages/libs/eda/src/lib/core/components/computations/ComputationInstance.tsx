@@ -9,7 +9,7 @@ import {
 import { VisualizationsContainer } from '../visualizations/VisualizationsContainer';
 import { VisualizationType } from '../visualizations/VisualizationTypes';
 import { ComputationProps } from './Types';
-import { Link, useRouteMatch } from 'react-router-dom';
+import { useRouteMatch } from 'react-router-dom';
 
 export interface Props extends ComputationProps {
   computationId: string;
@@ -26,7 +26,7 @@ export function ComputationInstance(props: Props) {
     filteredCounts,
     geoConfigs,
     visualizationTypes,
-    baseUrl, // Only set when we are *not* using single app mode
+    baseUrl,
   } = props;
 
   const computation = useMemo(() => {
@@ -68,22 +68,19 @@ export function ComputationInstance(props: Props) {
   )
     return null;
 
+  // If we can have multiple app instances, add a title. Otherwise, use
+  // the normal VisualizationsContainer.
   return (
     <div>
-      {baseUrl &&
-        (url.replace(/\/+$/, '').split('/').pop() === 'visualizations' ? (
-          <AppTitle
-            computation={computation}
-            computationAppOverview={computationAppOverview}
-            condensed={true}
-          />
-        ) : (
-          <AppTitle
-            computation={computation}
-            computationAppOverview={computationAppOverview}
-            condensed={false}
-          />
-        ))}
+      {baseUrl && (
+        <AppTitle
+          computation={computation}
+          computationAppOverview={computationAppOverview}
+          condensed={
+            url.replace(/\/+$/, '').split('/').pop() === 'visualizations'
+          }
+        />
+      )}
       <VisualizationsContainer
         geoConfigs={geoConfigs}
         computation={computation}
@@ -113,8 +110,8 @@ interface AppTitleProps {
 // is the "condensed" version. May make sense to break into two components when
 // further styling is applied?
 function AppTitle(props: AppTitleProps) {
-  const { computation, computationAppOverview, condensed } = { ...props };
-  const style = {
+  const { computation, computationAppOverview, condensed } = props;
+  const expandedStyle = {
     borderRadius: 5,
     paddingTop: 10,
     paddingRight: 35,
@@ -135,7 +132,7 @@ function AppTitle(props: AppTitleProps) {
       </h4>
     </div>
   ) : (
-    <div style={style}>
+    <div style={expandedStyle}>
       <h3>
         {computation.displayName} <i className="fa fa-cog"></i>{' '}
         <i className="fa fa-clone"></i> <i className="fa fa-trash"></i>

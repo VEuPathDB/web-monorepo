@@ -447,7 +447,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
         <Tooltip title="Minimize visualization">
           <Link
             to={{
-              pathname: `../${baseUrl ? '' : computationId}`, // Should go to ../visualizations
+              pathname: `../${baseUrl ? '' : computationId}`, // Should go to ../visualizations unless in single app mode
               state: { scrollToTop: false },
             }}
           >
