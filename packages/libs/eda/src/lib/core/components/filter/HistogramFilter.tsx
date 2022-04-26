@@ -44,6 +44,7 @@ import Notification from '@veupathdb/components/lib/components/widgets//Notifica
 import { variableDisplayWithUnit } from '../../utils/variable-display';
 // import variable's metadata-based independent axis range utils
 import { defaultIndependentAxisRange } from '../../utils/default-independent-axis-range';
+import { max } from 'lodash';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -297,6 +298,22 @@ export function HistogramFilter(props: Props) {
   // stats from foreground
   const fgSummaryStats = data?.value?.series[1].summary;
 
+  // set defaultDependentAxisRange
+  const defaultDependentAxisRange = useMemo(() => {
+    const defaultDependentAxisMinMax =
+      !data.pending && data.value != null
+        ? {
+            min: 0,
+            max: max(
+              data.value.series
+                .flatMap((data) => data.bins)
+                .map((data) => data.value)
+            ) as number,
+          }
+        : undefined;
+    return defaultDependentAxisMinMax;
+  }, [data]);
+
   // Note use of `key` used with HistogramPlotWithControls. This is a little hack to force
   // the range to be reset if the filter is removed.
   return (
@@ -373,6 +390,8 @@ export function HistogramFilter(props: Props) {
           updateUIState={updateUIState}
           showSpinner={data.pending}
           variable={variable}
+          // pass defaultDependentAxisRange
+          defaultDependentAxisRange={defaultDependentAxisRange}
         />
       </div>
     </div>
@@ -386,6 +405,8 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   updateUIState: (uiState: Partial<UIState>) => void;
   filter?: DateRangeFilter | NumberRangeFilter;
   variable?: HistogramVariable;
+  // typing defaultDependentAxisRange
+  defaultDependentAxisRange?: NumberRange | undefined;
 };
 
 function HistogramPlotWithControls({
@@ -396,6 +417,7 @@ function HistogramPlotWithControls({
   updateUIState,
   filter,
   variable,
+  defaultDependentAxisRange,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   // set the state of truncation warning message
@@ -590,7 +612,10 @@ function HistogramPlotWithControls({
         dependentAxisLabel="Count"
         independentAxisLabel={variableDisplayWithUnit(variable)}
         independentAxisRange={uiState.independentAxisRange}
-        dependentAxisRange={uiState.dependentAxisRange}
+        // pass defaultDependentAxisRange as a default range
+        dependentAxisRange={
+          uiState.dependentAxisRange ?? defaultDependentAxisRange
+        }
         dependentAxisLogScale={uiState.dependentAxisLogScale}
         legendOptions={{
           verticalPosition: 'top',
