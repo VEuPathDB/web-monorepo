@@ -24,7 +24,7 @@ console.log('BROWSERSLIST_ENV:', process.env.BROWSERSLIST_ENV)
  *
  * @param {object|object[]} additionalConfig
  */
-exports.merge = function merge(additionConfig) {
+exports.merge = function merge(additionalConfig) {
   return function (env, argv) {
     const isDevelopment = argv.mode !== 'production';
     return webpackMerge.smart([{
@@ -113,6 +113,6 @@ exports.merge = function merge(additionConfig) {
         optimizationBailout: true,
         modules: false
       }
-    }].concat(typeof additionConfig === 'function' ? additionConfig(env, argv) : additionConfig));
+    }].concat(typeof additionalConfig === 'function' ? additionalConfig(env, argv) : additionalConfig));
   }
 }
