@@ -1,0 +1,25 @@
+== @veupathdb/site-tsconfig
+
+Base TypeScript configuration used for VEuPathDB websites.
+
+=== Usage
+
+First, install the package with npm:
+[source, sh]
+----
+npm install --save-dev @veupathdb/site-tsconfig
+----
+
+or with yarn:
+[source, sh]
+----
+yarn add -D @veupathdb/site-tsconfig
+----
+
+Then, add the following to `tsconfig.json`:
+[source, json]
+----
+{
+  "extends": "@veupathdb/site-tsconfig/tsconfig.json"
+}
+----

@@ -1,0 +1,17 @@
+== @veupathdb/base-webpack-config
+
+Base webpack configuration used for VEuPathDB features.
+
+=== Installation
+
+Install the package with npm:
+[source, sh]
+----
+npm install --save-dev @veupathdb/base-webpack-config
+----
+
+or with yarn:
+[source, sh]
+----
+yarn add -D @veupathdb/base-webpack-config
+----
