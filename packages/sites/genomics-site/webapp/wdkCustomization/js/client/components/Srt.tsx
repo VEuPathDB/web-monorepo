@@ -17,7 +17,6 @@ import { fastaGenomicSequenceReporterFormFactory } from '@veupathdb/web-common/l
 import { ParamValueStore } from '@veupathdb/wdk-client/lib/Utils/ParamValueStore';
 
 import './Srt.scss';
-import { param } from 'jquery';
 
 const cx = makeClassNameHelper('vpdb-Srt');
 const FastaGenomicSequenceReporterForm = fastaGenomicSequenceReporterFormFactory('default region');
@@ -114,9 +113,27 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
 ];
 
 export function Srt() {
-  const compatibleSrtConfigs = useCompatibleSrtFormConfigs();
+  const defaultSrtConfigs = useCompatibleSrtFormConfigs();
+  const [compatibleSrtConfigs, setCompatibleSrtConfigs] = useState<false | SrtFormConfig[]>();
   const [selectedSrtForm, setSelectedSrtForm] = useState<string>('');
   const { paramValueStore } = useNonNullableContext(WdkDependenciesContext);
+
+  const storedSrtData = usePromise(async () => {
+    try {
+      const storedIdsState = await Promise.all(
+        SUPPORTED_RECORD_CLASS_CONFIGS.map(
+          async config => await paramValueStore.fetchParamValues(`srt/${config.recordClassUrlSegment}/ids`)
+        ));
+      const storedFormDataState = await Promise.all(
+        SUPPORTED_RECORD_CLASS_CONFIGS.map(
+          async config => await paramValueStore.fetchParamValues(`srt/${config.recordClassUrlSegment}`)
+        ));
+      return [storedIdsState, storedFormDataState];
+    } catch (error) {
+      console.error(error);
+      return { type: 'error', error };
+    }
+  }, []);
 
   useEffect(() => {
     if (!selectedSrtForm && compatibleSrtConfigs && compatibleSrtConfigs.length >= 1) {
@@ -125,38 +142,28 @@ export function Srt() {
   }, [compatibleSrtConfigs]);
 
   useEffect(() => {
-    const fetchedIds: any = [];
-    const fetchedFormData: any = [];
-    SUPPORTED_RECORD_CLASS_CONFIGS.map(
-      config => fetchedIds.push(paramValueStore.fetchParamValues(`srt/${config.recordClassUrlSegment}/ids`))
-    );
-    SUPPORTED_RECORD_CLASS_CONFIGS.map(
-      config => fetchedFormData.push(paramValueStore.fetchParamValues(`srt/${config.recordClassUrlSegment}`))
-    );
-    console.log(fetchedIds)
-    console.log(fetchedFormData)
-  }, [])
+    if (!Array.isArray(storedSrtData.value) || !defaultSrtConfigs) return;
 
-  // console.log({compatibleSrtConfigs})
-  // console.log({selectedSrtForm})
-  // console.log({serviceResult})
-  
-  // // srtStore && serviceResult ? srtStore.setVersionAndUserId(serviceResult[1], serviceResult[2].id) : null
-  // if (srtStore) {
-  //   // const fetchedData = srtStore.fetchSrtValues(selectedSrtForm);
-  //   // console.log(fetchedData);
-  //   syncData()
-  // }
-
-  // async function syncData() {
-  //   if (srtStore) {
-  //     const fetchedData = await srtStore.fetchSrtValues(selectedSrtForm);
-  //     if (typeof fetchedData === 'string') {
-  //       const parsedData = JSON.parse(fetchedData);
-  //       console.log(parsedData)
-  //     }
-  //   }
-  // }
+    storedSrtData.value.forEach((array, outerIndex) => {
+      // storedSrtData.value is an array of [ storedIdsState, storedFormDataState ]
+      // storedIdsState is an array of each tab's stored initialIdsState string
+      // storedFormDataState is an array of each tab's stored stringified initialReporterFormState object
+      array.forEach((data, innerIndex) => {
+        if (outerIndex === 0) {
+          // if a tab's storedIdsState exists, replace defaultSrtConfigs's initialIdsState
+          data ?
+            defaultSrtConfigs[innerIndex] = { ...defaultSrtConfigs[innerIndex], ...data }
+            : null;
+        } else {
+          // if a tab's storedFormDataState exists, replace defaultSrtConfigs's initialReporterFormState
+          data ?
+            defaultSrtConfigs[innerIndex] = { ...defaultSrtConfigs[innerIndex], initialReporterFormState: JSON.parse(data.initialReporterFormState) }
+            : null;
+        }
+      });
+    });
+    setCompatibleSrtConfigs(defaultSrtConfigs);
+  }, [storedSrtData, defaultSrtConfigs]);
 
   return (
     <div className={cx()}>
@@ -211,10 +218,9 @@ function SrtForm({
   const [ formState, updateFormState ] = useState(initialReporterFormState);
 
   useEffect(() => {
-    paramValueStore?.updateParamValues(`srt/${selectedSrtForm}/ids`, { idsState })
-    paramValueStore?.updateParamValues(`srt/${selectedSrtForm}`, { formState: JSON.stringify(formState) })
+    paramValueStore?.updateParamValues(`srt/${selectedSrtForm}/ids`, { initialIdsState: idsState })
+    paramValueStore?.updateParamValues(`srt/${selectedSrtForm}`, { initialReporterFormState: JSON.stringify(formState) })
   }, [idsState, formState]);
-
 
   return (
     <form action={formActionUrl} method="post" target="_blank">
