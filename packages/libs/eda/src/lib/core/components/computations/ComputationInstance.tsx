@@ -1,4 +1,3 @@
-import { string } from 'fp-ts';
 import React, { useCallback, useMemo } from 'react';
 import { useToggleStarredVariable } from '../../hooks/starredVariables';
 import {
