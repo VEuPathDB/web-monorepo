@@ -95,7 +95,7 @@ export function useDefaultDependentAxisRange(
                   ? numberDecimalPoint(defaultDependentAxisMinMax.min * 0.8, 4)
                   : 0.001
                 : 0,
-            max: numberDecimalPoint(defaultDependentAxisMinMax.max * 1.05, 4),
+            max: numberDecimalPoint(defaultDependentAxisMinMax.max, 4),
           }
         : undefined;
     // boxplot
@@ -104,7 +104,7 @@ export function useDefaultDependentAxisRange(
         defaultDependentAxisMinMax?.max != null
         ? {
             min: numberDecimalPoint(defaultDependentAxisMinMax.min, 4),
-            max: numberDecimalPoint(defaultDependentAxisMinMax.max * 1.05, 4),
+            max: numberDecimalPoint(defaultDependentAxisMinMax.max, 4),
           }
         : undefined;
   }, [defaultDependentAxisMinMax, plotType, valueSpec, dependentAxisLogScale]);
@@ -169,45 +169,43 @@ function boxplotDefaultDependentAxisMinMax(
     return data?.value?.facets != null &&
       (yAxisVariable?.type === 'number' || yAxisVariable?.type === 'integer')
       ? {
-          min:
-            (min([
-              0,
-              min(
-                data.value.facets
-                  .filter((facet) => facet.data != null)
-                  .flatMap((facet) =>
-                    facet.data?.series
-                      .flatMap((o) => o.outliers as number[][])
-                      .flat()
-                  )
-              ),
-              min(
-                data.value.facets
-                  .filter((facet) => facet.data != null)
-                  .flatMap((facet) =>
-                    facet.data?.series.flatMap((o) => o.lowerfence as number[])
-                  )
-              ),
-            ]) as number) * 1.05,
-          max:
-            (max([
-              max(
-                data.value.facets
-                  .filter((facet) => facet.data != null)
-                  .flatMap((facet) =>
-                    facet.data?.series
-                      .flatMap((o) => o.outliers as number[][])
-                      .flat()
-                  )
-              ),
-              max(
-                data.value.facets
-                  .filter((facet) => facet.data != null)
-                  .flatMap((facet) =>
-                    facet.data?.series.flatMap((o) => o.upperfence as number[])
-                  )
-              ),
-            ]) as number) * 1.05,
+          min: min([
+            0,
+            min(
+              data.value.facets
+                .filter((facet) => facet.data != null)
+                .flatMap((facet) =>
+                  facet.data?.series
+                    .flatMap((o) => o.outliers as number[][])
+                    .flat()
+                )
+            ),
+            min(
+              data.value.facets
+                .filter((facet) => facet.data != null)
+                .flatMap((facet) =>
+                  facet.data?.series.flatMap((o) => o.lowerfence as number[])
+                )
+            ),
+          ]) as number,
+          max: max([
+            max(
+              data.value.facets
+                .filter((facet) => facet.data != null)
+                .flatMap((facet) =>
+                  facet.data?.series
+                    .flatMap((o) => o.outliers as number[][])
+                    .flat()
+                )
+            ),
+            max(
+              data.value.facets
+                .filter((facet) => facet.data != null)
+                .flatMap((facet) =>
+                  facet.data?.series.flatMap((o) => o.upperfence as number[])
+                )
+            ),
+          ]) as number,
         }
       : undefined;
   } else {
@@ -216,29 +214,23 @@ function boxplotDefaultDependentAxisMinMax(
         yAxisVariable?.type === 'integer' ||
         computedVariableMetadata != null)
       ? {
-          min:
-            (min([
-              0,
-              min(
-                data.value.series
-                  .flatMap((o) => o.outliers as number[][])
-                  .flat()
-              ),
-              min(data.value.series.flatMap((o) => o.lowerfence as number[])),
-              // check displayRange with computedVariableMetadata
-              computedVariableMetadata?.displayRangeMin,
-            ]) as number) * 1.05,
-          max:
-            (max([
-              max(
-                data.value.series
-                  .flatMap((o) => o.outliers as number[][])
-                  .flat()
-              ),
-              max(data.value.series.flatMap((o) => o.upperfence as number[])),
-              // check displayRange with computedVariableMetadata
-              computedVariableMetadata?.displayRangeMax,
-            ]) as number) * 1.05,
+          min: min([
+            0,
+            min(
+              data.value.series.flatMap((o) => o.outliers as number[][]).flat()
+            ),
+            min(data.value.series.flatMap((o) => o.lowerfence as number[])),
+            // check displayRange with computedVariableMetadata
+            computedVariableMetadata?.displayRangeMin,
+          ]) as number,
+          max: max([
+            max(
+              data.value.series.flatMap((o) => o.outliers as number[][]).flat()
+            ),
+            max(data.value.series.flatMap((o) => o.upperfence as number[])),
+            // check displayRange with computedVariableMetadata
+            computedVariableMetadata?.displayRangeMax,
+          ]) as number,
         }
       : undefined;
   }
