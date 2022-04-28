@@ -24,7 +24,7 @@ function variableDescriptorToString(
 }
 
 export function AlphaDivConfiguration(props: ComputationConfigProps) {
-  const [name, setName] = useState('New alpha diversity module');
+  const [name, setName] = useState('Unnamed alpha diversity module');
   const [alphaDivMethod, setAlphaDivMethod] = useState(ALPHA_DIV_METHODS[0]);
   const { computationAppOverview, addNewComputation } = props;
   const studyMetadata = useStudyMetadata();
