@@ -1,6 +1,6 @@
-var configure = require('../../EbrcWebsiteCommon/Site/site.webpack.config');
+var configure = require('@veupathdb/site-webpack-config');
 
-module.exports = configure({
+var additionalConfig = {
   entry: {
     'site-client': __dirname + '/webapp/wdkCustomization/js/client/main.js'
   },
@@ -10,4 +10,7 @@ module.exports = configure({
       'ortho-images': __dirname + '/webapp/wdkCustomization/images'
     }
   }
-});
+};
+
+module.exports = configure(additionalConfig);
+module.exports.additionalConfig = additionalConfig;
