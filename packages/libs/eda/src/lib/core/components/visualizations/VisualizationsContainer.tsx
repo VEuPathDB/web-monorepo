@@ -51,6 +51,7 @@ interface Props {
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
   geoConfigs: GeoConfig[];
+  baseUrl?: string;
 }
 
 /**
@@ -61,6 +62,7 @@ interface Props {
  * @param props Props
  */
 export function VisualizationsContainer(props: Props) {
+  const { baseUrl } = { ...props };
   const { url } = useRouteMatch();
 
   const currentStudyRecordId = useStudyRecord().id[0].value;
@@ -103,11 +105,11 @@ export function VisualizationsContainer(props: Props) {
         <Route exact path={url}>
           <ConfiguredVisualizations {...props} />
         </Route>
-        <Route exact path={`${url}/new`}>
+        <Route exact path={`${baseUrl || url}/new`}>
           <NewVisualizationPicker {...props} />
         </Route>
         <Route
-          path={`${url}/:id`}
+          path={`${baseUrl || url}/:id`}
           render={(routeProps: RouteComponentProps<{ id: string }>) => (
             <FullScreenVisualization
               id={routeProps.match.params.id}
@@ -121,13 +123,21 @@ export function VisualizationsContainer(props: Props) {
 }
 
 function ConfiguredVisualizations(props: Props) {
-  const { computation, updateVisualizations, visualizationsOverview } = props;
+  const {
+    computation,
+    updateVisualizations,
+    visualizationsOverview,
+    baseUrl,
+  } = props;
   const { url } = useRouteMatch();
 
   return (
     <Grid>
       <Link
-        to={{ pathname: `${url}/new`, state: { scrollToTop: false } }}
+        to={{
+          pathname: `${baseUrl || url}/new`,
+          state: { scrollToTop: false },
+        }}
         className={cx('-NewVisualization')}
       >
         <i className="fa fa-plus"></i>
@@ -185,7 +195,7 @@ function ConfiguredVisualizations(props: Props) {
                 <>
                   <Link
                     to={{
-                      pathname: `${url}/${viz.visualizationId}`,
+                      pathname: `${baseUrl || url}/${viz.visualizationId}`,
                       state: { scrollToTop: false },
                     }}
                   >
@@ -321,6 +331,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
     totalCounts,
     filteredCounts,
     geoConfigs,
+    baseUrl,
   } = props;
   const history = useHistory();
   const viz = computation.visualizations.find((v) => v.visualizationId === id);
@@ -436,7 +447,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
         <Tooltip title="Minimize visualization">
           <Link
             to={{
-              pathname: `../${computationId}`,
+              pathname: `../${baseUrl ? '' : computationId}`, // Should go to ../visualizations unless in single app mode
               state: { scrollToTop: false },
             }}
           >
