@@ -519,7 +519,7 @@ function BoxplotViz(props: VisualizationProps) {
       updateVizConfig={updateVizConfig}
       // add dependent axis range for better displaying tick labels in log-scale
       defaultDependentAxisRange={defaultDependentAxisRange}
-      dependentAxisRange={vizConfig.dependentAxisRange}
+      // no need to pass dependentAxisRange
       // pass useState of truncation warnings
       truncatedDependentAxisWarning={truncatedDependentAxisWarning}
       setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}

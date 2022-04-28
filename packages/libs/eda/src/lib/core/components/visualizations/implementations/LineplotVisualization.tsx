@@ -598,7 +598,8 @@ function LineplotViz(props: VisualizationProps) {
       (isNaN(Date.parse(extendedIndependentRange?.min as string)) ||
         isNaN(Date.parse(extendedIndependentRange?.max as string)))
       ? undefined
-      : axisRangeMargin(extendedIndependentRange, xAxisVariable?.type);
+      : // no padding is made here
+        extendedIndependentRange;
   }, [xAxisVariable, data.value]);
 
   // find deependent axis range and its margin
@@ -625,7 +626,8 @@ function LineplotViz(props: VisualizationProps) {
       (yAxisVariable?.type === 'date' &&
         typeof yMinMaxRange?.min === 'string' &&
         typeof yMinMaxRange?.max === 'string')
-      ? axisRangeMargin(yMinMaxRange, yAxisVariable?.type)
+      ? // no padding is made here
+        yMinMaxRange
       : undefined;
   }, [data.value, yAxisVariable, categoricalMode]);
 

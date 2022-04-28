@@ -1,8 +1,6 @@
 import { useMemo } from 'react';
 import { DateVariable, NumberVariable, Variable } from '../types/study';
 import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
-// adding margin for scatter plot range
-import { axisRangeMargin } from '../utils/axis-range-margin';
 
 export function defaultIndependentAxisRangeFunction(
   variable: Variable | undefined,
@@ -66,9 +64,7 @@ export function useDefaultIndependentAxisRange(
       variable,
       plotName
     );
-    return plotName === 'scatterplot'
-      ? axisRangeMargin(defaultIndependentRange, variable?.type)
-      : defaultIndependentRange;
+    return defaultIndependentRange;
   }, [variable, plotName]);
 
   return defaultIndependentAxisRange;

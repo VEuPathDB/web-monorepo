@@ -56,10 +56,8 @@ export function useDefaultDependentAxisRange(
         // pass computedVariableMetadata
         computedVariableMetadata
       );
-      return axisRangeMargin(
-        defaultDependentRange,
-        computedVariableMetadata != null ? 'number' : yAxisVariable?.type
-      );
+
+      return defaultDependentRange;
     } else {
       return undefined;
     }

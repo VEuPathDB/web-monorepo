@@ -209,7 +209,7 @@ function BarplotViz(props: VisualizationProps) {
       const newPartialConfig = {
         [key]: newValue,
         ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
-	...(resetAxisRanges ? { dependentAxisRange: undefined } : {}),
+	      ...(resetAxisRanges ? { dependentAxisRange: undefined } : {}),
       };
       updateVizConfig(newPartialConfig);
       if (resetAxisRanges)
