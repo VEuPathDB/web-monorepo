@@ -1,6 +1,6 @@
-var configure = require('../../EbrcWebsiteCommon/Site/site.webpack.config');
+var configure = require('@veupathdb/site-webpack-config');
 
-module.exports = configure({
+const additionalConfig = {
   entry: {
     'site-client': __dirname + '/webapp/wdkCustomization/js/client/main.js'
   },
@@ -12,4 +12,7 @@ module.exports = configure({
       'ciena-graphlib': 'ciena-graphlib/lib'
     }
   }
-});
+};
+
+module.exports = configure(additionalConfig);
+module.exports.additionalConfig = additionalConfig;
