@@ -1,0 +1,28 @@
+== @veupathdb/site-babel-config
+
+Babel configuration used when bundling VEuPathDB websites.
+
+=== Installation
+
+Install the package with npm:
+[source, sh]
+----
+npm install --save-dev @veupathdb/site-babel-config
+----
+
+or with yarn:
+[source, sh]
+----
+yarn add -D @veupathdb/site-babel-config
+----
+
+Then, add the following to the consumer's `.babelrc`:
+[source, json]
+----
+{
+  "extends": "@veupathdb/site-babel-config"
+}
+----
+
+==== NOTE
+This package's peer dependencies should be installed as `devDependencies`, except for `core-js`, which should be installed in the consumer's `dependencies`.

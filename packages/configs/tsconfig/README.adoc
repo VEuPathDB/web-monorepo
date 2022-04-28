@@ -1,6 +1,6 @@
 == @veupathdb/tsconfig
 
-TypeScript configuration used by VEuPathDB websites.
+Base TypeScript configuration used for individual VEuPathDB client features.
 
 === Usage
 
