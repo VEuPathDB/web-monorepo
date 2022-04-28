@@ -1,6 +1,7 @@
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
+import webpack from 'webpack';
 
 import {
   makeCommonDevServerConfig,
@@ -8,8 +9,7 @@ import {
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const { webpack } = await import('../../install/base.webpack.config.js');
-const { default: configure } = await import('../../EbrcWebsiteCommon/Site/site.webpack.config.js');
+const { default: configure } = await import('@veupathdb/site-webpack-config');
 const { additionalConfig } = await import('./webpack.config.js');
 
 export default configure({
@@ -36,9 +36,16 @@ export default configure({
         twitterUrl: process.env.TWITTER_URL,
         youtubeUrl: process.env.YOUTUBE_URL,
         communitySite: process.env.COMMUNITY_SITE,
-        useEda: Boolean(process.env.EDA_ENABLED),
-        edaExampleAnalysesAuthor: process.env.EDA_EXAMPLE_ANALYSES_AUTHOR,
-        edaServiceUrl: process.env.EDA_SERVICE_ENDPOINT,
+        ...(
+          process.env.EDA_ENABLED === 'true'
+            ? {
+                useEda: true,
+                edaExampleAnalysesAuthor: process.env.EDA_EXAMPLE_ANALYSES_AUTHOR,
+                edaServiceUrl: process.env.EDA_SERVICE_ENDPOINT,
+                edaSingleAppMode: process.env.EDA_SINGLE_APP_MODE,
+              }
+            : { useEda: false }
+        )
       })
     }),
     new HtmlWebpackPlugin({
