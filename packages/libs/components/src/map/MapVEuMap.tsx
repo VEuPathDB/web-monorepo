@@ -23,6 +23,8 @@ import {
   LayersControl,
   ControlledLayerProps,
   ScaleControl,
+  // import useMap hook
+  useMap,
 } from 'react-leaflet';
 import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
 import SemanticMarkers from './SemanticMarkers';
@@ -205,9 +207,10 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
   // Whether the user is currently dragging the map
   const [isDragging, setIsDragging] = useState<boolean>(false);
 
-  // This may be useRef<MapContainer> but need to check with below useEffect comment
-  const mapRef = useRef<any>(null);
+  // set useSatate to handle map instance instead of useRef using 'whenCreated' prop at MapContainer
+  const [mapRef, setMapRef] = useState<any>(null);
 
+  // screenshot part
   const screenshotter = useMemo(
     () =>
       new SimpleMapScreenshoter({
@@ -217,10 +220,10 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     []
   );
 
-  // this needs to be checked with map Viz as it appears .leafletElement does not exist in v3
   useEffect(() => {
-    if (mapRef.current?.leafletElement)
-      screenshotter.addTo(mapRef.current.leafletElement);
+    if (mapRef) {
+      screenshotter.addTo(mapRef);
+    }
   }, [screenshotter, mapRef]);
 
   useImperativeHandle<PlotRef, PlotRef>(
@@ -232,8 +235,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
           // Wait to allow map to finish rendering
           await new Promise((resolve) => setTimeout(resolve, 1000));
 
-          // Check that map leaflet element still exists
-          if (mapRef.current) {
+          if (mapRef) {
             // Call the 3rd party function that actually creates the image
             const screenshot = await screenshotter.takeScreen('image', {
               domtoimageOptions: {
@@ -241,6 +243,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
                 height: imageOpts.height,
               },
             });
+
             // The screenshotter library's types are wrong. TS thinks this next line
             // will never happen, but takeScreen('image') should in fact return a string
             if (typeof screenshot === 'string') return screenshot;
@@ -254,8 +257,99 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
         return '';
       },
     }),
-    [screenshotter]
+    [screenshotter, mapRef]
   );
+
+  const finalMarkers = useMemo(() => {
+    if (mouseMode === 'magnification' && !isDragging)
+      return markers.map((marker) => cloneElement(marker, { showPopup: true }));
+    return markers;
+  }, [markers, isDragging, mouseMode]);
+
+  return (
+    // change from Map to MapContainer
+    <MapContainer
+      center={viewport.center}
+      zoom={viewport.zoom}
+      style={{ height, width, ...style }}
+      className={mouseMode === 'magnification' ? 'cursor-zoom-in' : ''}
+      minZoom={1}
+      worldCopyJump={false}
+      ondragstart={() => setIsDragging(true)}
+      ondragend={() => setIsDragging(false)}
+      onbaselayerchange={(event: ControlledLayerProps) =>
+        onBaseLayerChanged && onBaseLayerChanged(event.name as BaseLayerChoice)
+      }
+      // this prop is used to use map instance
+      whenCreated={setMapRef}
+    >
+      {/* PerformFlyToMarkers component for flyTo functionality */}
+      {flyToMarkers && (
+        <PerformFlyToMarkers
+          markers={markers}
+          flyToMarkers={flyToMarkers}
+          flyToMarkersDelay={flyToMarkersDelay}
+        />
+      )}
+
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+      />
+
+      <SemanticMarkers
+        onBoundsChanged={onBoundsChanged}
+        markers={finalMarkers}
+        animation={animation}
+        recenterMarkers={recenterMarkers}
+      />
+
+      {showMouseToolbar && (
+        <MouseTools mouseMode={mouseMode} setMouseMode={setMouseMode} />
+      )}
+
+      {showGrid && zoomLevelToGeohashLevel ? (
+        <CustomGridLayer zoomLevelToGeohashLevel={zoomLevelToGeohashLevel} />
+      ) : null}
+
+      <LayersControl position="topright">
+        {Object.entries(baseLayers).map(([name, layerProps], i) => (
+          <LayersControl.BaseLayer
+            name={name}
+            key={name}
+            checked={baseLayer ? name === baseLayer : i === 0}
+          >
+            <TileLayer {...layerProps} />
+          </LayersControl.BaseLayer>
+        ))}
+      </LayersControl>
+
+      {showSpinner && <Spinner />}
+      {showNoDataOverlay && <NoDataOverlay opacity={0.9} />}
+      {/* add Scale in the map */}
+      {showScale && <ScaleControl position="bottomright" />}
+    </MapContainer>
+  );
+}
+
+export default forwardRef(MapVEuMap);
+
+// for flyTo
+interface PerformFlyToMarkersProps {
+  /* markers */
+  markers: ReactElement<BoundsDriftMarkerProps>[];
+  /** Whether to zoom and pan map to center on markers */
+  flyToMarkers?: boolean;
+  /** How long (in ms) after rendering to wait before flying to markers */
+  flyToMarkersDelay?: number;
+}
+
+// component to implement flyTo functionality
+function PerformFlyToMarkers(props: PerformFlyToMarkersProps) {
+  const { markers, flyToMarkers, flyToMarkersDelay } = props;
+
+  // instead of using useRef() to the map in v2, useMap() should be used instead in v3
+  const map = useMap();
 
   const markersBounds: MapVEuBounds | null = useMemo(() => {
     if (markers) {
@@ -302,9 +396,9 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
         [ne.lat + latBuffer, ne.lng + lngBuffer],
       ]);
 
-      mapRef.current?.leafletElement?.fitBounds(boundingBox);
+      map.fitBounds(boundingBox);
     }
-  }, [markersBounds, mapRef]);
+  }, [markersBounds, map]);
 
   useEffect(() => {
     const asyncEffect = async () => {
@@ -316,70 +410,5 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     if (flyToMarkers && markers.length > 0) asyncEffect();
   }, [markers, flyToMarkers, flyToMarkersDelay, performFlyToMarkers]);
 
-  const finalMarkers = useMemo(() => {
-    if (mouseMode === 'magnification' && !isDragging)
-      return markers.map((marker) => cloneElement(marker, { showPopup: true }));
-    return markers;
-  }, [markers, isDragging, mouseMode]);
-
-  return (
-    // change from Map to MapContainer
-    <MapContainer
-      center={viewport.center}
-      zoom={viewport.zoom}
-      style={{ height, width, ...style }}
-      className={mouseMode === 'magnification' ? 'cursor-zoom-in' : ''}
-      minZoom={1}
-      worldCopyJump={false}
-      ondragstart={() => setIsDragging(true)}
-      ondragend={() => setIsDragging(false)}
-      onbaselayerchange={(event: ControlledLayerProps) =>
-        onBaseLayerChanged && onBaseLayerChanged(event.name as BaseLayerChoice)
-      }
-      // "innerRef" is used instead of "ref" to avoid warning "function components cannot be given refs"
-      // need to check if it indeed works, especially with thumbnail function
-      // whenReady (taking function) or whenCreated (map instance) prop may be used instead for thumbnail ?
-      // ref={mapRef}
-      innerRef={mapRef}
-    >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-      />
-
-      <SemanticMarkers
-        onBoundsChanged={onBoundsChanged}
-        markers={finalMarkers}
-        animation={animation}
-        recenterMarkers={recenterMarkers}
-      />
-
-      {showMouseToolbar && (
-        <MouseTools mouseMode={mouseMode} setMouseMode={setMouseMode} />
-      )}
-
-      {showGrid && zoomLevelToGeohashLevel ? (
-        <CustomGridLayer zoomLevelToGeohashLevel={zoomLevelToGeohashLevel} />
-      ) : null}
-
-      <LayersControl position="topright">
-        {Object.entries(baseLayers).map(([name, layerProps], i) => (
-          <LayersControl.BaseLayer
-            name={name}
-            key={name}
-            checked={baseLayer ? name === baseLayer : i === 0}
-          >
-            <TileLayer {...layerProps} />
-          </LayersControl.BaseLayer>
-        ))}
-      </LayersControl>
-
-      {showSpinner && <Spinner />}
-      {showNoDataOverlay && <NoDataOverlay opacity={0.9} />}
-      {/* add Scale in the map */}
-      {showScale && <ScaleControl position="bottomright" />}
-    </MapContainer>
-  );
+  return null;
 }
-
-export default forwardRef(MapVEuMap);
