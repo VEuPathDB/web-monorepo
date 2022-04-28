@@ -1,5 +1,5 @@
 {
-  "extends": "../../install/base.tsconfig.json",
+  "extends": "@veupathdb/site-tsconfig/tsconfig.json",
   "include": [
     "./webapp/**/*"
   ]
