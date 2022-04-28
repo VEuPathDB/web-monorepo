@@ -375,7 +375,9 @@ const Histogram = makePlotlyPlotComponent(
     const extendedIndependentAxisRange = extendAxisRangeForTruncations(
       standardIndependentAxisRange,
       axisTruncationConfig?.independentAxis,
-      data.binWidthSlider?.valueType
+      data.binWidthSlider?.valueType,
+      // set plot type not to have padding/margin on the min/max
+      'histogram'
     );
 
     const plotlyIndependentAxisRange = [
@@ -413,7 +415,9 @@ const Histogram = makePlotlyPlotComponent(
     const extendedDependentAxisRange = extendAxisRangeForTruncations(
       standardDependentAxisRange,
       axisTruncationConfig?.dependentAxis,
-      'number'
+      'number',
+      // set plot type not to have padding/margin on the min/max
+      'histogram'
     ) as NumberRange | undefined;
 
     // make rectangular layout shapes for truncated axis/missing data
