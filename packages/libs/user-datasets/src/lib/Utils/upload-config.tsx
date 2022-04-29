@@ -4,7 +4,7 @@ import { StandardReportConfig } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import { DatasetUploadPageConfig, DatasetUploadTypeConfig } from './types';
 
-type ImplementedUploadTypes = 'biom' | 'geneList' | 'study';
+type ImplementedUploadTypes = 'biom' | 'gene-list' | 'study';
 
 export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> = {
   biom: {
@@ -34,8 +34,8 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
       },
     },
   },
-  geneList: {
-    type: 'geneList',
+  'gene-list': {
+    type: 'gene-list',
     uploadTitle: 'Upload My Gene List',
     formConfig: {
       renderInfo: () => (
