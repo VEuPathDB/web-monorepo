@@ -113,6 +113,17 @@ export function isUserDatasetsCompatibleWdkService(
   );
 }
 
+export function assertIsUserDatasetCompatibleWdkService(
+  wdkService: WdkService
+): asserts wdkService is UserDatasetsCompatibleWdkService {
+  if (!isUserDatasetsCompatibleWdkService(wdkService)) {
+    throw new Error(MISCONFIGURED_USER_DATASET_SERVICE_ERROR_MESSAGE);
+  }
+}
+
+export const MISCONFIGURED_USER_DATASET_SERVICE_ERROR_MESSAGE =
+  'In order to use this feature, a UserDatasetsCompatibleWdkService must be configured.';
+
 export interface UserDatasetCompatibleEpicDependencies
   extends EpicDependencies {
   wdkService: UserDatasetsCompatibleWdkService;
@@ -122,11 +133,7 @@ export function validateUserDatasetCompatibleThunk<T>(
   thunk: ActionThunk<T, UserDatasetCompatibleEpicDependencies>
 ): ActionThunk<T, UserDatasetCompatibleEpicDependencies> {
   return (wdkDependencies) => {
-    if (!isUserDatasetsCompatibleWdkService(wdkDependencies.wdkService)) {
-      throw new Error(
-        'Tried to execute a thunk with a misconfigured UserDatasetsCompatibleWdkService.'
-      );
-    }
+    assertIsUserDatasetCompatibleWdkService(wdkDependencies.wdkService);
 
     return thunk(wdkDependencies);
   };

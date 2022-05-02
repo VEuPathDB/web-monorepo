@@ -23,10 +23,7 @@ import {
 
 import { FormSubmission } from '../Components/UploadForm';
 
-import {
-  MISCONFIGURED_USER_DATASET_UPLOAD_SERVICE_ERROR_MESSAGE,
-  isUserDatasetUploadCompatibleWdkService,
-} from '../Service/UserDatasetUploadWrappers';
+import { assertIsUserDatasetUploadCompatibleWdkService } from '../Service/UserDatasetUploadWrappers';
 
 import { StateSlice } from '../StoreModules/types';
 
@@ -70,11 +67,7 @@ function observeSubmitUploadForm(
     filter(submitUploadForm.isOfType),
     mergeMap(async (action) => {
       try {
-        if (!isUserDatasetUploadCompatibleWdkService(dependencies.wdkService)) {
-          throw new Error(
-            MISCONFIGURED_USER_DATASET_UPLOAD_SERVICE_ERROR_MESSAGE
-          );
-        }
+        assertIsUserDatasetUploadCompatibleWdkService(dependencies.wdkService);
 
         const newUserDatasetConfig = await makeNewUserDatasetConfig(
           dependencies.wdkService,
@@ -104,11 +97,7 @@ function observeRequestUploadMessages(
   return action$.pipe(
     filter(requestUploadMessages.isOfType),
     mergeMap(async (action) => {
-      if (!isUserDatasetUploadCompatibleWdkService(dependencies.wdkService)) {
-        throw new Error(
-          MISCONFIGURED_USER_DATASET_UPLOAD_SERVICE_ERROR_MESSAGE
-        );
-      }
+      assertIsUserDatasetUploadCompatibleWdkService(dependencies.wdkService);
 
       try {
         const uploads = await dependencies.wdkService.listStatusDetails();
@@ -130,11 +119,7 @@ function observeCancelCurrentUpload(
   return action$.pipe(
     filter(cancelCurrentUpload.isOfType),
     mergeMap(async (action) => {
-      if (!isUserDatasetUploadCompatibleWdkService(dependencies.wdkService)) {
-        throw new Error(
-          MISCONFIGURED_USER_DATASET_UPLOAD_SERVICE_ERROR_MESSAGE
-        );
-      }
+      assertIsUserDatasetUploadCompatibleWdkService(dependencies.wdkService);
 
       try {
         await dependencies.wdkService.cancelOngoingUpload(action.payload.id);
@@ -156,11 +141,7 @@ function observeClearMessages(
   return action$.pipe(
     filter(clearMessages.isOfType),
     mergeMap(async (action) => {
-      if (!isUserDatasetUploadCompatibleWdkService(dependencies.wdkService)) {
-        throw new Error(
-          MISCONFIGURED_USER_DATASET_UPLOAD_SERVICE_ERROR_MESSAGE
-        );
-      }
+      assertIsUserDatasetUploadCompatibleWdkService(dependencies.wdkService);
 
       try {
         await dependencies.wdkService.clearMessages(action.payload.ids);

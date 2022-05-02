@@ -274,5 +274,13 @@ export function isUserDatasetUploadCompatibleWdkService(
   return DATASET_IMPORT_URL_KEY in wdkService;
 }
 
+export function assertIsUserDatasetUploadCompatibleWdkService(
+  wdkService: WdkService
+): asserts wdkService is UserDatasetUploadCompatibleWdkService {
+  if (!isUserDatasetUploadCompatibleWdkService(wdkService)) {
+    throw new Error(MISCONFIGURED_USER_DATASET_UPLOAD_SERVICE_ERROR_MESSAGE);
+  }
+}
+
 export const MISCONFIGURED_USER_DATASET_UPLOAD_SERVICE_ERROR_MESSAGE =
   'In order to use this feature, a UserDatasetUploadCompatibleWdkService must be configured.';
