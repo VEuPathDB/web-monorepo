@@ -1,9 +1,11 @@
 import { get } from 'lodash';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { connect } from 'react-redux';
 
 import { IconAlt, Link } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkServiceWithRefresh } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+
+import { rootUrl } from '@veupathdb/web-common/lib/config';
 
 import {
   isTranscripFilterEnabled,
@@ -85,6 +87,27 @@ const ConnectedTranscriptViewFilter = connect(
 )(TranscriptViewFilter);
 
 export function ResultTable(props) {
+  const geneListExportUrl = useMemo(() => {
+    if (props.resultType.type !== 'step') {
+      return undefined;
+    }
+
+    const step = props.resultType.step;
+
+    const resultWorkspaceUrl =
+     `${window.location.origin}${rootUrl}/workspace/strategies/${step.strategyId}/${step.id}`;
+
+    const urlParams = new URLSearchParams({
+      useFixedUploadMethod: 'true',
+      datasetStepId: String(step.id),
+      datasetName: props.resultType.step.customName,
+      datasetSummary: `Genes from result "${props.resultType.step.customName}"`,
+      datasetDescription: `Uploaded from ${resultWorkspaceUrl}`
+    });
+
+    return `/workspace/datasets/new?${urlParams.toString()}`;
+  }, [props.resultType]);
+
   const renderTableActions = useCallback(({
     addColumnsNode,
     addToBasketNode,
@@ -94,9 +117,9 @@ export function ResultTable(props) {
         {downloadLinkNode}
         {addToBasketNode}
         {
-          props.resultType.type === 'step' &&
+          geneListExportUrl != null &&
           <div className="ResultTableButton">
-            <Link className="btn" to={`/workspace/datasets/new?datasetStepId=${props.resultType.step.id}&useFixedUploadMethod=true`}>
+            <Link className="btn" to={geneListExportUrl}>
               <IconAlt fa="plus"/> Add To My Data
             </Link>
           </div>
@@ -104,12 +127,15 @@ export function ResultTable(props) {
         {addColumnsNode}
       </>
     ),
-    [props.resultType]
+    [geneListExportUrl]
   );
 
   return <React.Fragment>
     <ConnectedTranscriptViewFilter {...props}/>
-    <props.DefaultComponent {...props} renderTableActions={renderTableActions} />
+    <props.DefaultComponent
+      {...props}
+      renderTableActions={renderTableActions}
+    />
   </React.Fragment>
 }
 
