@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { noop } from 'lodash';
+import { noop, zipWith } from 'lodash';
 
 import { projectId } from '@veupathdb/web-common/lib/config';
 import { TextArea, Loading, HelpIcon, Tabs, Link } from '@veupathdb/wdk-client/lib/Components';
@@ -113,7 +113,6 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
 
 export function Srt() {
   const compatibleSrtConfigs = useCompatibleSrtFormConfigs();
-  console.log(compatibleSrtConfigs);
   const [selectedSrtForm, setSelectedSrtForm] = useState<string>('');
 
   useEffect(() => {
@@ -236,10 +235,21 @@ function useCompatibleSrtFormConfigs() {
         SUPPORTED_RECORD_CLASS_CONFIGS.map(
           async config => await paramValueStore.fetchParamValues(`srt/${config.recordClassUrlSegment}`)
         ));
-      return storedFormDataState;
+      return zipWith(storedFormDataState, SUPPORTED_RECORD_CLASS_CONFIGS,
+        function (storedConfigs, initialConfigs) {
+          if (storedConfigs) {
+            return {
+              ...initialConfigs,
+              makeInitialIdsState: () => storedConfigs.initialIdsState,
+              initialReporterFormState: JSON.parse(storedConfigs.initialReporterFormState)
+            } as InitialSrtFormConfig;
+          } else {
+            return initialConfigs;
+          }
+        });
     } catch (error) {
       console.error(error);
-      return { type: 'error', error };
+      return SUPPORTED_RECORD_CLASS_CONFIGS;
     }
   }, []);
 
@@ -259,30 +269,26 @@ function useCompatibleSrtFormConfigs() {
     [ recordClasses ]
   );
 
-  const compatibleSrtConfigs = useMemo(() =>
-    recordClassUrlSegments != null &&
-    projectId != null &&
-    srtQuestionParamDisplayMap != null &&
-    SUPPORTED_RECORD_CLASS_CONFIGS
-      .filter((initialSrtConfig) => recordClassUrlSegments.has(initialSrtConfig.recordClassUrlSegment))
-      .map(initialSrtConfig => ({
-        ...initialSrtConfig,
-        initialIdsState: initialSrtConfig.makeInitialIdsState(srtQuestionParamDisplayMap),
-        projectId,
-      }) as SrtFormConfig),
-    [ recordClassUrlSegments, projectId, srtQuestionParamDisplayMap ]
-  );
-
-  useEffect(() => {
-    if (Array.isArray(storedSrtData.value) && compatibleSrtConfigs) {
-      storedSrtData.value.forEach((data, index) => {
-        // if a tab's storedFormDataState exists, replace defaultSrtConfigs's initialIdsState and initialReporterFormState
-        data ?
-          compatibleSrtConfigs[index] = { ...compatibleSrtConfigs[index], ...data, initialReporterFormState: JSON.parse(data.initialReporterFormState) }
-          : null;
-      });
+  const compatibleSrtConfigs = useMemo(() => {
+    if (
+      recordClassUrlSegments != null &&
+      projectId != null &&
+      srtQuestionParamDisplayMap != null &&
+      storedSrtData.value != null
+    ) {
+      return storedSrtData.value
+        .filter((initialSrtConfig) => recordClassUrlSegments.has(initialSrtConfig.recordClassUrlSegment))
+        .map(initialSrtConfig => ({
+          ...initialSrtConfig,
+          initialIdsState: initialSrtConfig.makeInitialIdsState(srtQuestionParamDisplayMap),
+          projectId,
+        }) as SrtFormConfig);
+    } else {
+      return false;
     }
-  }, [storedSrtData.value, compatibleSrtConfigs]);
+  },
+  [ recordClassUrlSegments, projectId, srtQuestionParamDisplayMap, storedSrtData.value ]
+  );
 
   return compatibleSrtConfigs;
 }
