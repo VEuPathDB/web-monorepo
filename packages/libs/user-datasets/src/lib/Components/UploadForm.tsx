@@ -36,7 +36,7 @@ interface Props<T extends string = string> {
   badUploadMessage: State['badUploadMessage'];
   urlParams: Record<string, string>;
   strategyOptions: StrategySummary[];
-  resultUploadConfig: ResultUploadConfig;
+  resultUploadConfig?: ResultUploadConfig;
   clearBadUpload: () => void;
   submitForm: (newUserDataset: FormSubmission, redirectTo?: string) => void;
 }
@@ -102,11 +102,11 @@ function UploadForm({
 
   const { useFixedUploadMethod } = urlParams;
 
-  const displayResultUploadMethod =
-    datasetUploadType.formConfig.uploadMethodConfig.result.offer;
+  const displayStrategyUploadMethod =
+    datasetUploadType.formConfig.uploadMethodConfig.result?.offerStrategyUpload;
 
-  const enableResultUploadMethod =
-    displayResultUploadMethod && strategyOptions.length > 0;
+  const enableStrategyUploadMethod =
+    Boolean(displayStrategyUploadMethod) && strategyOptions.length > 0;
 
   const [name, setName] = useState(urlParams.datasetName ?? '');
   const [summary, setSummary] = useState(urlParams.datasetSummary ?? '');
@@ -117,7 +117,7 @@ function UploadForm({
   const [dataUploadMode, setDataUploadMode] = useState<DataUploadMode>(
     urlParams.datasetStepId
       ? 'result'
-      : urlParams.datasetStrategyRootStepId && enableResultUploadMethod
+      : urlParams.datasetStrategyRootStepId && enableStrategyUploadMethod
       ? 'result'
       : urlParams.datasetUrl
       ? 'url'
@@ -134,7 +134,7 @@ function UploadForm({
 
     const parsedStrategyIdParam = Number(urlParams.datasetStrategyId);
 
-    return !enableResultUploadMethod || !isFinite(parsedStrategyIdParam)
+    return !enableStrategyUploadMethod || !isFinite(parsedStrategyIdParam)
       ? strategyOptions[0]?.rootStepId
       : strategyOptionsByStrategyId[parsedStrategyIdParam]?.rootStepId;
   }, [
@@ -142,7 +142,7 @@ function UploadForm({
     urlParams.datasetStrategyId,
     strategyOptions,
     strategyOptionsByStrategyId,
-    enableResultUploadMethod,
+    enableStrategyUploadMethod,
   ]);
   const [stepId, setStepId] = useState(initialStepId);
 
@@ -162,7 +162,7 @@ function UploadForm({
       return { type: 'url', url };
     }
 
-    if (resultUploadConfig.offer === false) {
+    if (resultUploadConfig == null) {
       throw new Error('This data set type does not support result uploads.');
     }
 
@@ -184,7 +184,7 @@ function UploadForm({
       const formValidation = validateForm(
         projectId,
         datasetUploadType,
-        enableResultUploadMethod,
+        enableStrategyUploadMethod,
         {
           name,
           summary,
@@ -204,7 +204,7 @@ function UploadForm({
       baseUrl,
       projectId,
       datasetUploadType,
-      enableResultUploadMethod,
+      enableStrategyUploadMethod,
       name,
       summary,
       description,
@@ -342,12 +342,12 @@ function UploadForm({
                   ),
                 },
               ].concat(
-                !displayResultUploadMethod
+                !displayStrategyUploadMethod
                   ? []
                   : [
                       {
                         value: 'result',
-                        disabled: !enableResultUploadMethod,
+                        disabled: !displayStrategyUploadMethod,
                         display: (
                           <React.Fragment>
                             <label htmlFor="data-set-url">

@@ -38,7 +38,10 @@ export default function UserDatasetUploadController({
 
   const strategyOptions = useWdkService(
     async (wdkService): Promise<StrategySummary[]> => {
-      if (!datasetUploadType.formConfig.uploadMethodConfig.result.offer) {
+      if (
+        !datasetUploadType.formConfig.uploadMethodConfig.result
+          ?.offerStrategyUpload
+      ) {
         return [];
       }
 
@@ -56,7 +59,10 @@ export default function UserDatasetUploadController({
           compatibleRecordTypeNames.has(strategy.recordClassName)
       );
     },
-    [datasetUploadType.formConfig.uploadMethodConfig.result.offer]
+    [
+      datasetUploadType.formConfig.uploadMethodConfig.result
+        ?.offerStrategyUpload,
+    ]
   );
 
   const badUploadMessage = useSelector(

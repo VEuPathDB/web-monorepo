@@ -73,18 +73,16 @@ export interface DatasetUploadTypeConfigEntry<T extends string> {
   uploadTitle: string;
   formConfig: {
     uploadMethodConfig: {
-      result: ResultUploadConfig;
+      result?: ResultUploadConfig;
     };
     renderInfo: () => ReactNode;
   };
 }
 
-export type ResultUploadConfig =
-  | { offer: false }
-  | {
-      offer: true;
-      compatibleRecordTypes: CompatibleRecordTypes;
-    };
+export interface ResultUploadConfig {
+  offerStrategyUpload: boolean;
+  compatibleRecordTypes: CompatibleRecordTypes;
+}
 
 export type CompatibleRecordTypes = Record<
   string,

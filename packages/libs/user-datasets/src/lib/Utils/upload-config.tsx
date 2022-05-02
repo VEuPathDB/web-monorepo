@@ -27,11 +27,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
           using our filtering and visualisation tools.
         </p>
       ),
-      uploadMethodConfig: {
-        result: {
-          offer: false,
-        },
-      },
+      uploadMethodConfig: {},
     },
   },
   'gene-list': {
@@ -45,7 +41,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
       ),
       uploadMethodConfig: {
         result: {
-          offer: true,
+          offerStrategyUpload: false,
           compatibleRecordTypes: {
             transcript: {
               reportName: 'attributesTabular',
@@ -70,11 +66,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
           <span>* </span> All form fields are required.
         </p>
       ),
-      uploadMethodConfig: {
-        result: {
-          offer: false,
-        },
-      },
+      uploadMethodConfig: {},
     },
   },
 };
