@@ -35,6 +35,7 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import DataClient, {
   MapMarkersRequestParams,
   PieplotRequestParams,
+  PieplotResponse,
 } from '../../../api/DataClient';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { usePromise } from '../../../hooks/promise';
@@ -57,6 +58,7 @@ import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsSt
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
+import { VariableCoverageTable } from '../../VariableCoverageTable';
 
 export const mapVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -374,7 +376,7 @@ function MapViz(props: VisualizationProps) {
    * Now we deal with the optional second request to pieplot
    */
   const proportionMode = vizConfig.markerType === 'proportion';
-  const pieplotData = usePromise<PieplotData | undefined>(
+  const piePlotResponse = usePromise<PieplotResponse | undefined>(
     useCallback(async () => {
       // check all required vizConfigs are provided
       if (
@@ -400,24 +402,9 @@ function MapViz(props: VisualizationProps) {
       };
 
       // send request
-      const response = await dataClient.getPieplot(
+      return await dataClient.getPieplot(
         computation.descriptor.type,
         requestParams
-      );
-
-      // process response and return a map of "geoAgg key" => donut labels and counts
-      return response.pieplot.data.reduce(
-        (map, { facetVariableDetails, label, value }) => {
-          if (facetVariableDetails != null && facetVariableDetails.length === 1)
-            map[facetVariableDetails[0].value] = zip(label, value).map(
-              ([label, value]) => ({
-                label: label!,
-                value: value!,
-              })
-            );
-          return map;
-        },
-        {} as PieplotData
       );
     }, [
       studyId,
@@ -430,6 +417,29 @@ function MapViz(props: VisualizationProps) {
       geoAggregateVariable,
       outputEntity,
     ])
+  );
+  const pieplotData = usePromise<PieplotData | undefined>(
+    useCallback(async () => {
+      // process response and return a map of "geoAgg key" => donut labels and counts
+      return !piePlotResponse.pending && piePlotResponse.value
+        ? piePlotResponse.value.pieplot.data.reduce(
+            (map, { facetVariableDetails, label, value }) => {
+              if (
+                facetVariableDetails != null &&
+                facetVariableDetails.length === 1
+              )
+                map[facetVariableDetails[0].value] = zip(label, value).map(
+                  ([label, value]) => ({
+                    label: label!,
+                    value: value!,
+                  })
+                );
+              return map;
+            },
+            {} as PieplotData
+          )
+        : undefined;
+    }, [piePlotResponse])
   );
 
   /**
@@ -582,10 +592,14 @@ function MapViz(props: VisualizationProps) {
         showMouseToolbar={true}
       />
       <RadioButtonGroup
+        label="Plot mode"
         selectedOption={vizConfig.markerType || 'pie'}
         options={['count', 'proportion', 'pie']}
         optionLabels={['Bar plot: count', 'Bar plot: proportion', 'Pie plot']}
         onOptionSelected={onMarkerTypeChange}
+        buttonColor={'primary'}
+        margins={['1em', '0', '1em', '1.5em']}
+        itemMarginRight={40}
       />
     </>
   );
@@ -662,19 +676,48 @@ function MapViz(props: VisualizationProps) {
   const pieConstraints = pieOverview.dataElementConstraints;
   const pieDependencyOrder = pieOverview.dataElementDependencyOrder;
 
+  const geohashEntityAndVariable = piePlotResponse.value
+    ? findEntityAndVariable(
+        piePlotResponse.value.completeCasesTable[1].variableDetails
+      )
+    : undefined;
+
   const tableGroupNode = (
-    // Bird's eye plot isn't yet functional
-    <BirdsEyeView
-      completeCasesAxesVars={totalEntityCount}
-      completeCasesAllVars={0 /* can't be undefined for some reason */}
-      outputEntity={outputEntity}
-      stratificationIsActive={
-        false /* this disables the 'strata and axes' bar/impulse */
-      }
-      // enableSpinner={vizConfig.xAxisVariable != null && !pieplotData.error}
-      totalCounts={totalCounts.value}
-      filteredCounts={filteredCounts.value}
-    />
+    <>
+      <BirdsEyeView
+        completeCasesAxesVars={totalEntityCount}
+        completeCasesAllVars={0 /* can't be undefined for some reason */}
+        outputEntity={outputEntity}
+        stratificationIsActive={
+          false /* this disables the 'strata and axes' bar/impulse */
+        }
+        // enableSpinner={vizConfig.xAxisVariable != null && !pieplotData.error}
+        totalCounts={totalCounts.value}
+        filteredCounts={filteredCounts.value}
+      />
+      {!piePlotResponse.pending && piePlotResponse.value ? (
+        <VariableCoverageTable
+          completeCases={piePlotResponse.value.completeCasesTable}
+          filteredCounts={filteredCounts}
+          outputEntityId={outputEntity?.id}
+          variableSpecs={[
+            {
+              role: 'Main',
+              required: true,
+              display: variableDisplayWithUnit(xAxisVariable),
+              variable: vizConfig.xAxisVariable,
+            },
+            {
+              role: 'Geo',
+              required: true,
+              display: geohashEntityAndVariable?.variable.displayName,
+              variable:
+                piePlotResponse.value.completeCasesTable[1].variableDetails,
+            },
+          ]}
+        />
+      ) : null}
+    </>
   );
 
   return (
