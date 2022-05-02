@@ -1,7 +1,8 @@
 import { get } from 'lodash';
-import React, { useState } from 'react';
+import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
 
+import { IconAlt, Link } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkServiceWithRefresh } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 import {
@@ -84,9 +85,31 @@ const ConnectedTranscriptViewFilter = connect(
 )(TranscriptViewFilter);
 
 export function ResultTable(props) {
+  const renderTableActions = useCallback(({
+    addColumnsNode,
+    addToBasketNode,
+    downloadLinkNode,
+  }) => (
+      <>
+        {downloadLinkNode}
+        {addToBasketNode}
+        {
+          props.resultType.type === 'step' &&
+          <div className="ResultTableButton">
+            <Link className="btn" to={`/user-datasets/new?datasetStepId=${props.resultType.step.id}&useFixedUploadMethod=true`}>
+              <IconAlt fa="plus"/> Add To My Data
+            </Link>
+          </div>
+        }
+        {addColumnsNode}
+      </>
+    ),
+    [props.resultType]
+  );
+
   return <React.Fragment>
     <ConnectedTranscriptViewFilter {...props}/>
-    <props.DefaultComponent {...props}/>
+    <props.DefaultComponent {...props} renderTableActions={renderTableActions} />
   </React.Fragment>
 }
 

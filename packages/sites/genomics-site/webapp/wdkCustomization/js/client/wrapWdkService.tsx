@@ -1,9 +1,11 @@
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import { ok } from '@veupathdb/wdk-client/lib/Utils/Json';
-import { memoize } from 'lodash';
+import { endpoint, webAppUrl } from '@veupathdb/web-common/lib/config';
+import { flowRight, memoize, partial } from 'lodash';
 
-import { blastCompatibleWdkServiceWrappers } from '@veupathdb/multi-blast/lib/utils/wdkServiceIntegration';
-import userCommentsService from './service/UserCommentsService'
+import { wrapWdkService as addMultiBlastService } from '@veupathdb/multi-blast/lib/utils/wdkServiceIntegration';
+import { wrapWdkService as addUserDatasetsServices } from '@veupathdb/user-datasets/lib/Service';
+import userCommentsService from './service/UserCommentsService';
 
 export type GenomicsService = WdkService & {
   [K in keyof GenomicsServiceWrappers]: ReturnType<GenomicsServiceWrappers[K]>;
@@ -14,7 +16,6 @@ const getUserCommentsInstance = memoize(userCommentsService);
 type GenomicsServiceWrappers = typeof genomicsServiceWrappers;
 
 export const genomicsServiceWrappers = {
-  ...blastCompatibleWdkServiceWrappers,
   getUserComment: (wdkService: WdkService) => getUserCommentsInstance(wdkService).getUserComment,
   getUserComments: (wdkService: WdkService) => getUserCommentsInstance(wdkService).getUserComments,
   getPubmedPreview: (wdkService: WdkService) => getUserCommentsInstance(wdkService).getPubmedPreview,
@@ -46,21 +47,30 @@ export const genomicsServiceWrappers = {
   }
 };
 
-export function wrapWdkService(wdkService: WdkService): GenomicsService {
-  return {
-    ...wdkService,
-    getBlastParamInternalValues: genomicsServiceWrappers.getBlastParamInternalValues(wdkService),
-    incrementOrganismCount: genomicsServiceWrappers.incrementOrganismCount(wdkService),
-    getUserComment: genomicsServiceWrappers.getUserComment(wdkService),
-    getUserComments: genomicsServiceWrappers.getUserComments(wdkService),
-    getPubmedPreview: genomicsServiceWrappers.getPubmedPreview(wdkService),
-    getUserCommentCategories: genomicsServiceWrappers.getUserCommentCategories(wdkService),
-    postUserComment: genomicsServiceWrappers.postUserComment(wdkService),
-    deleteUserComment: genomicsServiceWrappers.deleteUserComment(wdkService),
-    deleteUserCommentAttachedFile: genomicsServiceWrappers.deleteUserCommentAttachedFile(wdkService),
-    postUserCommentAttachedFile: genomicsServiceWrappers.postUserCommentAttachedFile(wdkService),
-  };
-}
+export const wrapWdkService = flowRight(
+  partial(
+    addUserDatasetsServices,
+    {
+      datasetImportUrl: '/dataset-import',
+      fullWdkServiceUrl: `${window.location.origin}${webAppUrl}${endpoint}`
+    }
+  ),
+  addMultiBlastService,
+  function addGenomicsServices(wdkService: WdkService): GenomicsService {
+    return {
+      ...wdkService,
+      incrementOrganismCount: genomicsServiceWrappers.incrementOrganismCount(wdkService),
+      getUserComment: genomicsServiceWrappers.getUserComment(wdkService),
+      getUserComments: genomicsServiceWrappers.getUserComments(wdkService),
+      getPubmedPreview: genomicsServiceWrappers.getPubmedPreview(wdkService),
+      getUserCommentCategories: genomicsServiceWrappers.getUserCommentCategories(wdkService),
+      postUserComment: genomicsServiceWrappers.postUserComment(wdkService),
+      deleteUserComment: genomicsServiceWrappers.deleteUserComment(wdkService),
+      deleteUserCommentAttachedFile: genomicsServiceWrappers.deleteUserCommentAttachedFile(wdkService),
+      postUserCommentAttachedFile: genomicsServiceWrappers.postUserCommentAttachedFile(wdkService),
+    };
+  }
+);
 
 export function isGenomicsService(wdkService: WdkService): wdkService is GenomicsService  {
   return Object.keys(genomicsServiceWrappers).every(
