@@ -36,7 +36,6 @@ interface InitialSrtFormConfig extends BaseSrtFormConfig {
 interface SrtFormConfig extends BaseSrtFormConfig {
   initialIdsState: string;
   projectId: string;
-  // paramValueStore?: ParamValueStore;
   selectedSrtForm?: string;
 }
 
@@ -278,11 +277,11 @@ function useCompatibleSrtFormConfigs() {
     ) {
       return storedSrtData.value
         .filter((initialSrtConfig) => recordClassUrlSegments.has(initialSrtConfig.recordClassUrlSegment))
-        .map(initialSrtConfig => ({
+        .map((initialSrtConfig): SrtFormConfig => ({
           ...initialSrtConfig,
           initialIdsState: initialSrtConfig.makeInitialIdsState(srtQuestionParamDisplayMap),
           projectId,
-        }) as SrtFormConfig);
+        }));
     } else {
       return false;
     }
