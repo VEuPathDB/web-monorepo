@@ -96,7 +96,7 @@ export function ResultTable(props) {
         {
           props.resultType.type === 'step' &&
           <div className="ResultTableButton">
-            <Link className="btn" to={`/user-datasets/new?datasetStepId=${props.resultType.step.id}&useFixedUploadMethod=true`}>
+            <Link className="btn" to={`/workspace/datasets/new?datasetStepId=${props.resultType.step.id}&useFixedUploadMethod=true`}>
               <IconAlt fa="plus"/> Add To My Data
             </Link>
           </div>
