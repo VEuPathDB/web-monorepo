@@ -1021,6 +1021,7 @@ function HistogramPlotWithControls({
             <RadioButtonGroup
               selectedOption={valueSpec}
               options={['count', 'proportion']}
+              buttonColor={'primary'}
               onOptionSelected={(newOption) => {
                 if (newOption === 'proportion') {
                   onValueSpecChange('proportion');

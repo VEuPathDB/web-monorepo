@@ -553,6 +553,7 @@ function BarplotViz(props: VisualizationProps) {
             <RadioButtonGroup
               selectedOption={vizConfig.valueSpec}
               options={['count', 'proportion']}
+              buttonColor={'primary'}
               onOptionSelected={(newOption) => {
                 if (newOption === 'proportion') {
                   onValueSpecChange('proportion');
