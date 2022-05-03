@@ -62,6 +62,10 @@ export default function makeHeaderMenuItemsFactory(permissionsValue) {
               route: makeEdaRoute()
             },
             {
+              text: 'My Data',
+              route: '/workspace/datasets'
+            },
+            {
               text: 'Public Analyses',
               route: `${makeEdaRoute()}/public`
             }

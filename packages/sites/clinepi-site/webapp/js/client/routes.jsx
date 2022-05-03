@@ -2,6 +2,7 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { makeEdaRoute } from '@veupathdb/web-common/lib/routes';
 import AccessRequestController from './controllers/AccessRequestController';
+import { userDatasetRoutes } from './routes/userDatasetRoutes';
 
 export const wrapRoutes = ebrcRoutes => { 
   return [
@@ -16,6 +17,8 @@ export const wrapRoutes = ebrcRoutes => {
       path: '/record/dataset/:datasetId',
       component: props => <Redirect to={makeEdaRoute(props.match.params.datasetId) + '/new'}/>
     },
+
+    ...userDatasetRoutes,
 
     ...ebrcRoutes
   ];

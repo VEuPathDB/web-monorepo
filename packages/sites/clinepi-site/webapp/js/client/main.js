@@ -10,6 +10,7 @@ import '@veupathdb/web-common/lib/styles/client.scss';
 
 import componentWrappers from './component-wrappers';
 import wrapStoreModules from './wrapStoreModules';
+import wrapWdkService from './wrapWdkService';
 import { wrapRoutes } from './routes';
 
 import 'site/css/ClinEpiSite.scss';
@@ -17,6 +18,7 @@ import 'site/css/ClinEpiSite.scss';
 initialize({
   componentWrappers,
   wrapWdkDependencies: partial(wrapWdkDependencies, edaServiceUrl),
+  wrapWdkService,
   wrapStoreModules,
   wrapRoutes,
   additionalMiddleware: [ reduxMiddleware ]
