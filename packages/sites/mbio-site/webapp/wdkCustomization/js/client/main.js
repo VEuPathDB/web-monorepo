@@ -4,6 +4,7 @@ import '@veupathdb/web-common/lib/styles/client.scss';
 
 import componentWrappers from './componentWrappers';
 import wrapStoreModules from './wrapStoreModules';
+import wrapWdkService from './wrapWdkService';
 import { wrapRoutes } from './routes';
 
 import 'site/css/MicrobiomeSite.css';
@@ -12,5 +13,6 @@ import 'site/css/MicrobiomeSite.css';
 initialize({
   componentWrappers,
   wrapStoreModules,
+  wrapWdkService,
   wrapRoutes,
 })
