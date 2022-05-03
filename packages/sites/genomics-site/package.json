@@ -17,7 +17,7 @@
     "@veupathdb/preferred-organisms": "^1.1.11",
     "@veupathdb/study-data-access": "^0.3.1",
     "@veupathdb/wdk-client": "^0.7.0",
-    "@veupathdb/web-common": "file:local_modules/@veupathdb/web-common",
+    "@veupathdb/web-common": "^0.5.1",
     "ciena-dagre": "^1.0.0",
     "core-js": "^3.21.1",
     "cytoscape": "3.2.9",
