@@ -221,7 +221,7 @@ function boxplotDefaultDependentAxisMinMax(
             ),
             min(data.value.series.flatMap((o) => o.lowerfence as number[])),
             // check displayRange with computedVariableMetadata
-            computedVariableMetadata?.displayRangeMin,
+            Number(computedVariableMetadata?.displayRangeMin),
           ]) as number,
           max: max([
             max(
@@ -229,7 +229,7 @@ function boxplotDefaultDependentAxisMinMax(
             ),
             max(data.value.series.flatMap((o) => o.upperfence as number[])),
             // check displayRange with computedVariableMetadata
-            computedVariableMetadata?.displayRangeMax,
+            Number(computedVariableMetadata?.displayRangeMax),
           ]) as number,
         }
       : undefined;

@@ -596,6 +596,7 @@ function MapViz(props: VisualizationProps) {
         selectedOption={vizConfig.markerType || 'pie'}
         options={['count', 'proportion', 'pie']}
         optionLabels={['Bar plot: count', 'Bar plot: proportion', 'Pie plot']}
+        buttonColor={'primary'}
         onOptionSelected={onMarkerTypeChange}
         buttonColor={'primary'}
         margins={['1em', '0', '1em', '1.5em']}
