@@ -598,7 +598,6 @@ function MapViz(props: VisualizationProps) {
         optionLabels={['Bar plot: count', 'Bar plot: proportion', 'Pie plot']}
         buttonColor={'primary'}
         onOptionSelected={onMarkerTypeChange}
-        buttonColor={'primary'}
         margins={['1em', '0', '1em', '1.5em']}
         itemMarginRight={40}
       />
@@ -711,7 +710,7 @@ function MapViz(props: VisualizationProps) {
             {
               role: 'Geo',
               required: true,
-              display: geohashEntityAndVariable?.variable.displayName,
+              display: 'Geolocation',
               variable:
                 piePlotResponse.value.completeCasesTable[1].variableDetails,
             },
