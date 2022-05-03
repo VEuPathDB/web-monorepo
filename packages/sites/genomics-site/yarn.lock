@@ -1264,10 +1264,8 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.5.1":
+"@veupathdb/web-common@file:local_modules/@veupathdb/web-common":
   version "0.5.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.5.1.tgz#5eb99b7a60d3f199b9fb72ed51a5d59771d64f48"
-  integrity sha512-ylTaIes1Mn6qSbAqUudqQ+xCHNokWMu81AGnLmfAxccus3IgHbKiQaGhhHVc6uA+E9TcEyOJT00wAgBgGU92Hw==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"

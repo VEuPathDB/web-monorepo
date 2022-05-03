@@ -37,6 +37,7 @@ interface SrtFormConfig extends BaseSrtFormConfig {
   initialIdsState: string;
   projectId: string;
   selectedSrtForm?: string;
+  defaultSrtConfigs?: SrtFormConfig[];
 }
 
 const SRT_QUESTION = 'SRT';
@@ -116,7 +117,7 @@ export function Srt() {
 
   useEffect(() => {
     if (!selectedSrtForm && compatibleSrtConfigs && compatibleSrtConfigs.length >= 1) {
-      setSelectedSrtForm(compatibleSrtConfigs[0].recordClassUrlSegment);
+      setSelectedSrtForm(compatibleSrtConfigs[0][0].recordClassUrlSegment);
     }
   }, [compatibleSrtConfigs]);
 
@@ -144,7 +145,7 @@ export function Srt() {
                 containerClassName={cx('--SrtForms')}
                 activeTab={selectedSrtForm}
                 onTabSelected={setSelectedSrtForm}
-                tabs={compatibleSrtConfigs.map(
+                tabs={compatibleSrtConfigs[0].map(
                   config => ({
                     key: config.recordClassUrlSegment,
                     display: config.display,
@@ -152,6 +153,7 @@ export function Srt() {
                       <SrtForm
                         {...config}
                         selectedSrtForm={selectedSrtForm}
+                        defaultSrtConfigs={compatibleSrtConfigs[1]}
                       />
                   })
                 )}
@@ -170,10 +172,11 @@ function SrtForm({
   idsInputHelp,
   projectId,
   formActionUrl,
-  selectedSrtForm
+  selectedSrtForm,
+  defaultSrtConfigs
 }: SrtFormConfig) {
   const [ idsState, setIdsState ] = useState(initialIdsState);
-  const [formState, updateFormState] = useState(initialReporterFormState);
+  const [ formState, updateFormState ] = useState(initialReporterFormState);
   const { paramValueStore } = useNonNullableContext(WdkDependenciesContext);
 
   useEffect(() => {
@@ -183,6 +186,15 @@ function SrtForm({
         initialReporterFormState: JSON.stringify(formState),
       });
   }, [idsState, formState]);
+
+  function onReset() {
+    const defaultSrtConfig = defaultSrtConfigs?.filter(config => config.recordClassUrlSegment === selectedSrtForm);
+    if (defaultSrtConfig) {
+      console.log(defaultSrtConfig[0]);
+      updateFormState(defaultSrtConfig[0].initialReporterFormState);
+      setIdsState(defaultSrtConfig[0].initialIdsState);
+    }
+  };
 
   return (
     <form action={formActionUrl} method="post" target="_blank">
@@ -211,6 +223,7 @@ function SrtForm({
         formState={formState}
         updateFormState={updateFormState}
         onSubmit={noop}
+        onReset={onReset}
         includeSubmit
       />
     </form>
@@ -275,13 +288,22 @@ function useCompatibleSrtFormConfigs() {
       srtQuestionParamDisplayMap != null &&
       storedSrtData.value != null
     ) {
-      return storedSrtData.value
-        .filter((initialSrtConfig) => recordClassUrlSegments.has(initialSrtConfig.recordClassUrlSegment))
-        .map((initialSrtConfig): SrtFormConfig => ({
-          ...initialSrtConfig,
-          initialIdsState: initialSrtConfig.makeInitialIdsState(srtQuestionParamDisplayMap),
-          projectId,
-        }));
+      return [
+        storedSrtData.value
+          .filter((initialSrtConfig) => recordClassUrlSegments.has(initialSrtConfig.recordClassUrlSegment))
+          .map((initialSrtConfig): SrtFormConfig => ({
+            ...initialSrtConfig,
+            initialIdsState: initialSrtConfig.makeInitialIdsState(srtQuestionParamDisplayMap),
+            projectId,
+          })),
+        SUPPORTED_RECORD_CLASS_CONFIGS
+          .filter((initialSrtConfig) => recordClassUrlSegments.has(initialSrtConfig.recordClassUrlSegment))
+          .map((initialSrtConfig): SrtFormConfig => ({
+            ...initialSrtConfig,
+            initialIdsState: initialSrtConfig.makeInitialIdsState(srtQuestionParamDisplayMap),
+            projectId,
+          }))
+      ];
     } else {
       return false;
     }
