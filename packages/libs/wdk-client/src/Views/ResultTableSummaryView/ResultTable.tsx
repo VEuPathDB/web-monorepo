@@ -43,10 +43,10 @@ export interface Props {
   closeAttributeAnalysis: CloseAttributeAnalysis;
   updateSelectedIds: UpdateSelectedIds;
   showLoginWarning: ShowLoginWarning;
-  renderTableActions?: (props: TableActionsProps) => React.ReactNode;
+  renderToolbarContent?: (props: ToolbarContentProps) => React.ReactNode;
 }
 
-export interface TableActionsProps {
+export interface ToolbarContentProps {
   addColumnsNode: React.ReactNode;
   addToBasketNode: React.ReactNode;
   downloadLinkNode: React.ReactNode;
@@ -63,7 +63,7 @@ function ResultTable(props: Props) {
     selectedIds,
     userIsGuest,
     showLoginWarning,
-    renderTableActions = defaultRenderTableActions
+    renderToolbarContent = defaultRenderToolbarContent,
   } = props;
   const columns = getColumns(props);
   const rows = answer.records;
@@ -140,7 +140,7 @@ function ResultTable(props: Props) {
 
   return (
     <Mesa state={tableState}>
-      {renderTableActions({
+      {renderToolbarContent({
         addColumnsNode,
         addToBasketNode,
         downloadLinkNode
@@ -314,7 +314,7 @@ function getColumns({
   return recordClass.useBasket ? [basketColumn, ...answerColumns] : answerColumns;
 }
 
-function defaultRenderTableActions(props: TableActionsProps) {
+function defaultRenderToolbarContent(props: ToolbarContentProps) {
   return (
     <>
       {props.downloadLinkNode}
