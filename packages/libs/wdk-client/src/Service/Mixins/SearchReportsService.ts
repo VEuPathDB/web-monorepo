@@ -91,7 +91,7 @@ export default (base: ServiceBase) => {
   async function getTemporaryResultPath(
     answerSpecOrStepId: AnswerSpec | number,
     reportName: string,
-    reportConfig: StandardReportConfig
+    reportConfig: unknown
   ) {
     const reportSubrequest = {
       reportName: reportName,
