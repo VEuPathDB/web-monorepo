@@ -24,20 +24,22 @@ interface BaseSrtFormConfig {
   recordClassUrlSegment: string;
   display: string;
   ReporterForm: React.ComponentType<any>;
+  defaultReporterFormState: Record<string, string | number | boolean>;
   initialReporterFormState: Record<string, string | number | boolean>;
   idsInputHelp?: React.ReactElement;
   formActionUrl: string;
 }
 
 interface InitialSrtFormConfig extends BaseSrtFormConfig {
+  makeDefaultIdsState: (paramDisplayMap: Record<string, string | undefined>) => string;
   makeInitialIdsState: (paramDisplayMap: Record<string, string | undefined>) => string;
 }
 
 interface SrtFormConfig extends BaseSrtFormConfig {
   initialIdsState: string;
+  defaultIdsState: string;
   projectId: string;
   selectedSrtForm?: string;
-  defaultSrtConfigs?: SrtFormConfig[];
 }
 
 const SRT_QUESTION = 'SRT';
@@ -49,7 +51,9 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
     recordClassUrlSegment: 'gene',
     display: 'Gene IDs',
     ReporterForm: FastaGeneReporterForm,
+    defaultReporterFormState: FastaGeneReporterForm.getInitialState().formState,
     initialReporterFormState: FastaGeneReporterForm.getInitialState().formState,
+    makeDefaultIdsState: paramDisplayMap => paramDisplayMap['genes_ids'] || '',
     makeInitialIdsState: paramDisplayMap => paramDisplayMap['genes_ids'] || '',
     formActionUrl: '/cgi-bin/geneSrt'
   },
@@ -57,10 +61,26 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
     recordClassUrlSegment: 'genomic-sequence',
     display: 'Genomic Sequence IDs',
     ReporterForm: FastaGenomicSequenceReporterForm,
+    defaultReporterFormState: {
+      ...FastaGenomicSequenceReporterForm.getInitialState().formState,
+      revComp: false,
+      end: 10000
+    },
     initialReporterFormState: {
       ...FastaGenomicSequenceReporterForm.getInitialState().formState,
       revComp: false,
       end: 10000
+    },
+    makeDefaultIdsState: paramDisplayMap => {
+      const sourceId = paramDisplayMap['contigs_ids'];
+
+      return sourceId == null
+        ? ''
+        : [
+            sourceId,
+            `${sourceId}:14..700`,
+            `${sourceId}:100..2000:r`
+          ].join('\r\n');
     },
     makeInitialIdsState: paramDisplayMap => {
       const sourceId = paramDisplayMap['contigs_ids'];
@@ -89,11 +109,17 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
     recordClassUrlSegment: 'est',
     display: 'EST IDs',
     ReporterForm: FastaGenomicSequenceReporterForm,
+    defaultReporterFormState: {
+      ...FastaGenomicSequenceReporterForm.getInitialState().formState,
+      revComp: false,
+      end: 200
+    },
     initialReporterFormState: {
       ...FastaGenomicSequenceReporterForm.getInitialState().formState,
       revComp: false,
       end: 200
     },
+    makeDefaultIdsState: () => '',
     makeInitialIdsState: () => '',
     formActionUrl: '/cgi-bin/estSrt'
   },
@@ -101,11 +127,17 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
     recordClassUrlSegment: 'popsetSequence',
     display: 'Popset Isolate IDs',
     ReporterForm: FastaGenomicSequenceReporterForm,
+    defaultReporterFormState: {
+      ...FastaGenomicSequenceReporterForm.getInitialState().formState,
+      revComp: false,
+      end: 200
+    },
     initialReporterFormState: {
       ...FastaGenomicSequenceReporterForm.getInitialState().formState,
       revComp: false,
       end: 200
     },
+    makeDefaultIdsState: () => '',
     makeInitialIdsState: () => '',
     formActionUrl: '/cgi-bin/isolateSrt'
   }
@@ -117,7 +149,7 @@ export function Srt() {
 
   useEffect(() => {
     if (!selectedSrtForm && compatibleSrtConfigs && compatibleSrtConfigs.length >= 1) {
-      setSelectedSrtForm(compatibleSrtConfigs[0][0].recordClassUrlSegment);
+      setSelectedSrtForm(compatibleSrtConfigs[0].recordClassUrlSegment);
     }
   }, [compatibleSrtConfigs]);
 
@@ -145,7 +177,7 @@ export function Srt() {
                 containerClassName={cx('--SrtForms')}
                 activeTab={selectedSrtForm}
                 onTabSelected={setSelectedSrtForm}
-                tabs={compatibleSrtConfigs[0].map(
+                tabs={compatibleSrtConfigs.map(
                   config => ({
                     key: config.recordClassUrlSegment,
                     display: config.display,
@@ -153,7 +185,6 @@ export function Srt() {
                       <SrtForm
                         {...config}
                         selectedSrtForm={selectedSrtForm}
-                        defaultSrtConfigs={compatibleSrtConfigs[1]}
                       />
                   })
                 )}
@@ -173,7 +204,8 @@ function SrtForm({
   projectId,
   formActionUrl,
   selectedSrtForm,
-  defaultSrtConfigs
+  defaultIdsState,
+  defaultReporterFormState
 }: SrtFormConfig) {
   const [ idsState, setIdsState ] = useState(initialIdsState);
   const [ formState, updateFormState ] = useState(initialReporterFormState);
@@ -188,12 +220,8 @@ function SrtForm({
   }, [idsState, formState]);
 
   function onReset() {
-    const defaultSrtConfig = defaultSrtConfigs?.filter(config => config.recordClassUrlSegment === selectedSrtForm);
-    if (defaultSrtConfig) {
-      console.log(defaultSrtConfig[0]);
-      updateFormState(defaultSrtConfig[0].initialReporterFormState);
-      setIdsState(defaultSrtConfig[0].initialIdsState);
-    }
+    updateFormState(defaultReporterFormState);
+    setIdsState(defaultIdsState);
   };
 
   return (
@@ -288,22 +316,14 @@ function useCompatibleSrtFormConfigs() {
       srtQuestionParamDisplayMap != null &&
       storedSrtData.value != null
     ) {
-      return [
-        storedSrtData.value
+      return storedSrtData.value
           .filter((initialSrtConfig) => recordClassUrlSegments.has(initialSrtConfig.recordClassUrlSegment))
           .map((initialSrtConfig): SrtFormConfig => ({
             ...initialSrtConfig,
-            initialIdsState: initialSrtConfig.makeInitialIdsState(srtQuestionParamDisplayMap),
-            projectId,
-          })),
-        SUPPORTED_RECORD_CLASS_CONFIGS
-          .filter((initialSrtConfig) => recordClassUrlSegments.has(initialSrtConfig.recordClassUrlSegment))
-          .map((initialSrtConfig): SrtFormConfig => ({
-            ...initialSrtConfig,
+            defaultIdsState: initialSrtConfig.makeDefaultIdsState(srtQuestionParamDisplayMap),
             initialIdsState: initialSrtConfig.makeInitialIdsState(srtQuestionParamDisplayMap),
             projectId,
           }))
-      ];
     } else {
       return false;
     }
