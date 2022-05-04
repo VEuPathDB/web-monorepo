@@ -108,7 +108,7 @@ export function ResultTable(props) {
     return `/workspace/datasets/new?${urlParams.toString()}`;
   }, [props.resultType]);
 
-  const renderTableActions = useCallback(({
+  const renderToolbarContent = useCallback(({
     addColumnsNode,
     addToBasketNode,
     downloadLinkNode,
@@ -134,7 +134,7 @@ export function ResultTable(props) {
     <ConnectedTranscriptViewFilter {...props}/>
     <props.DefaultComponent
       {...props}
-      renderTableActions={renderTableActions}
+      renderToolbarContent={renderToolbarContent}
     />
   </React.Fragment>
 }
