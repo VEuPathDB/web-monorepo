@@ -2,6 +2,7 @@ import React from 'react';
 import { StudyMenuItem, StudyMenuSearch } from '@veupathdb/web-common/lib/App/Studies';
 import { menuItemsFromSocials, iconMenuItemsFromSocials } from '@veupathdb/web-common/lib/App/Utils/Utils';
 import { getStaticSiteData } from '../selectors/siteData';
+import { useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
 import { STATIC_ROUTE_PATH, makeEdaRoute } from '@veupathdb/web-common/lib/routes';
 
 export default function makeHeaderMenuItemsFactory(permissionsValue) {
@@ -61,10 +62,16 @@ export default function makeHeaderMenuItemsFactory(permissionsValue) {
               text: 'My Analyses',
               route: makeEdaRoute()
             },
-            {
-              text: 'My Data',
-              route: '/workspace/datasets'
-            },
+            ...(
+              useUserDatasetsWorkspace
+                ? [
+                    {
+                      text: 'My Data',
+                      route: '/workspace/datasets'
+                    }
+                  ]
+                : []
+            ),
             {
               text: 'Public Analyses',
               route: `${makeEdaRoute()}/public`
