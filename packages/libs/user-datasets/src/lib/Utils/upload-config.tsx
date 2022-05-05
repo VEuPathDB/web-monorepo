@@ -1,7 +1,5 @@
 import { intersection } from 'lodash';
 
-import { StandardReportConfig } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-
 import { DatasetUploadPageConfig, DatasetUploadTypeConfig } from './types';
 
 type ImplementedUploadTypes = 'biom' | 'gene-list' | 'study';
@@ -50,7 +48,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
                 includeHeader: false,
                 attachmentType: 'plain',
                 applyFilter: true,
-              } as StandardReportConfig,
+              },
             },
           },
         },

@@ -1,7 +1,5 @@
 import { ReactNode } from 'react';
 
-import { StandardReportConfig } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-
 export interface UserDatasetMeta {
   description: string;
   name: string;
@@ -86,7 +84,7 @@ export interface ResultUploadConfig {
 
 export type CompatibleRecordTypes = Record<
   string,
-  { reportName: string; reportConfig: StandardReportConfig }
+  { reportName: string; reportConfig: unknown }
 >;
 
 export type DatasetUploadPageConfig<
@@ -116,6 +114,6 @@ export interface NewUserDataset extends UserDatasetMeta {
         type: 'result';
         stepId: number;
         reportName: string;
-        reportConfig: StandardReportConfig;
+        reportConfig: unknown;
       };
 }
