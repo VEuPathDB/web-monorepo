@@ -208,26 +208,29 @@ export const makeUserDatasetUploadServiceWrappers = ({
 
     const fileBody = new FormData();
 
-    if (newUserDataset.uploadMethod.type === 'file') {
+    const { uploadMethod } = newUserDataset;
+
+    if (uploadMethod.type === 'file') {
       fileBody.append('uploadMethod', 'file');
-      fileBody.append('file', newUserDataset.uploadMethod.file);
-    } else if (newUserDataset.uploadMethod.type === 'url') {
+      fileBody.append('file', uploadMethod.file);
+    } else if (uploadMethod.type === 'url') {
       fileBody.append('uploadMethod', 'url');
-      fileBody.append('url', newUserDataset.uploadMethod.url);
-    } else {
-      // FIXME: Adjust this request to accommodate the format expected by the handler
+      fileBody.append('url', uploadMethod.url);
+    } else if (newUserDataset.uploadMethod.type === 'result') {
       const temporaryResultPath = await wdkService.getTemporaryResultPath(
-        newUserDataset.uploadMethod.stepId,
-        newUserDataset.uploadMethod.reportName,
-        newUserDataset.uploadMethod.reportConfig
+        uploadMethod.stepId,
+        uploadMethod.reportName,
+        uploadMethod.reportConfig
       );
 
       const temporaryResultUrl = `${fullWdkServiceUrl}${temporaryResultPath}`;
 
-      console.log(temporaryResultUrl);
-
       fileBody.append('uploadMethod', 'url');
       fileBody.append('url', temporaryResultUrl);
+    } else {
+      throw new Error(
+        `Tried to upload a dataset via an unrecognized upload method '${uploadMethod.type}'`
+      );
     }
 
     return fetchDecodedJsonOrThrowMessage(
