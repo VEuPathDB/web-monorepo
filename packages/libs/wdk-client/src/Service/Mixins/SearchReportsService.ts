@@ -89,23 +89,35 @@ export default (base: ServiceBase) => {
   }
 
   async function getTemporaryResultPath(
-    answerSpec: AnswerSpec,
+    answerSpecOrStepId: AnswerSpec | number,
     reportName: string,
-    reportConfig: StandardReportConfig
+    reportConfig: unknown
   ) {
+    const reportSubrequest = {
+      reportName: reportName,
+      reportConfig: reportConfig
+    };
+
+    const requestBody = typeof answerSpecOrStepId === 'number'
+      ? stringify({
+          ...reportSubrequest,
+          stepId: answerSpecOrStepId,
+        })
+      : stringify({
+          ...reportSubrequest,
+          searchName: answerSpecOrStepId.searchName,
+          searchConfig: answerSpecOrStepId.searchConfig,
+        });
+
     const { id } = await base.sendRequest<{ id: string }>(
       record({ id: string }),
       {
         method: 'post',
         path: '/temporary-results',
-        body: stringify({
-          searchName: answerSpec.searchName,
-          searchConfig: answerSpec.searchConfig,
-          reportName: reportName,
-          reportConfig: reportConfig
-        })
+        body: requestBody
       }
     );
+
     return '/temporary-results/' + id;
   }
 
