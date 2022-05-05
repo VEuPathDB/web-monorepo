@@ -1,6 +1,6 @@
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import { ok } from '@veupathdb/wdk-client/lib/Utils/Json';
-import { endpoint } from '@veupathdb/web-common/lib/config';
+import { datasetImportUrl, endpoint } from '@veupathdb/web-common/lib/config';
 import { flowRight, memoize, partial } from 'lodash';
 
 import { wrapWdkService as addMultiBlastService } from '@veupathdb/multi-blast/lib/utils/wdkServiceIntegration';
@@ -51,7 +51,7 @@ export const wrapWdkService = flowRight(
   partial(
     addUserDatasetsServices,
     {
-      datasetImportUrl: '/dataset-import',
+      datasetImportUrl,
       fullWdkServiceUrl: `${window.location.origin}${endpoint}`
     }
   ),
