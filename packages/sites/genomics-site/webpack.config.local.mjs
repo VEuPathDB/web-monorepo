@@ -19,7 +19,7 @@ export default configure({
     proxies: {
       [process.env.WDK_SERVICE_ENDPOINT]: process.env.WDK_SERVICE_URL,
       [process.env.SITE_SEARCH_SERVICE_ENDPOINT]: process.env.SITE_SEARCH_SERVICE_URL,
-      [process.env.USER_DATASET_WORKSPACE_IMPORT_SERVICE_ENDPOINT]: process.env.USER_DATASET_WORKSPACE_IMPORT_SERVICE_URL,
+      [process.env.USER_DATASETS_WORKSPACE_IMPORT_SERVICE_ENDPOINT]: process.env.USER_DATASETS_WORKSPACE_IMPORT_SERVICE_URL,
       [process.env.DOCUMENTS_ENDPOINT]: process.env.DOCUMENTS_URL,
       [process.env.ASSETS_ENDPOINT]: process.env.ASSETS_URL,
     },
@@ -40,8 +40,8 @@ export default configure({
         youtubeUrl: process.env.YOUTUBE_URL,
         communitySite: process.env.COMMUNITY_SITE,
         siteSearchServiceUrl: process.env.SITE_SEARCH_SERVICE_ENDPOINT,
-        useUserDatasetsWorkspace: process.env.USER_DATASET_WORKSPACE_ENABLED === 'true',
-        datasetImportUrl: process.env.USER_DATASET_WORKSPACE_IMPORT_SERVICE_ENDPOINT,
+        useUserDatasetsWorkspace: process.env.USER_DATASETS_WORKSPACE_ENABLED === 'true',
+        datasetImportUrl: process.env.USER_DATASETS_WORKSPACE_IMPORT_SERVICE_ENDPOINT,
       })
     }),
     new HtmlWebpackPlugin({
