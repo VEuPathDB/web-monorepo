@@ -25,19 +25,20 @@ interface BaseSrtFormConfig {
   display: string;
   ReporterForm: React.ComponentType<any>;
   defaultReporterFormState: Record<string, string | number | boolean>;
-  initialReporterFormState: Record<string, string | number | boolean>;
   idsInputHelp?: React.ReactElement;
   formActionUrl: string;
 }
 
 interface InitialSrtFormConfig extends BaseSrtFormConfig {
-  makeDefaultIdsState: (paramDisplayMap: Record<string, string | undefined>) => string;
   makeInitialIdsState: (paramDisplayMap: Record<string, string | undefined>) => string;
+  storedIdsState: string | undefined;
+  storedFormState: Record<string, string | number | boolean> | undefined;
 }
 
 interface SrtFormConfig extends BaseSrtFormConfig {
   initialIdsState: string;
   defaultIdsState: string;
+  initialReporterFormState: Record<string, string | number | boolean>;
   projectId: string;
   selectedSrtForm?: string;
 }
@@ -52,9 +53,9 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
     display: 'Gene IDs',
     ReporterForm: FastaGeneReporterForm,
     defaultReporterFormState: FastaGeneReporterForm.getInitialState().formState,
-    initialReporterFormState: FastaGeneReporterForm.getInitialState().formState,
-    makeDefaultIdsState: paramDisplayMap => paramDisplayMap['genes_ids'] || '',
     makeInitialIdsState: paramDisplayMap => paramDisplayMap['genes_ids'] || '',
+    storedIdsState: undefined,
+    storedFormState: undefined,
     formActionUrl: '/cgi-bin/geneSrt'
   },
   {
@@ -65,22 +66,6 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
       ...FastaGenomicSequenceReporterForm.getInitialState().formState,
       revComp: false,
       end: 10000
-    },
-    initialReporterFormState: {
-      ...FastaGenomicSequenceReporterForm.getInitialState().formState,
-      revComp: false,
-      end: 10000
-    },
-    makeDefaultIdsState: paramDisplayMap => {
-      const sourceId = paramDisplayMap['contigs_ids'];
-
-      return sourceId == null
-        ? ''
-        : [
-            sourceId,
-            `${sourceId}:14..700`,
-            `${sourceId}:100..2000:r`
-          ].join('\r\n');
     },
     makeInitialIdsState: paramDisplayMap => {
       const sourceId = paramDisplayMap['contigs_ids'];
@@ -93,6 +78,8 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
             `${sourceId}:100..2000:r`
           ].join('\r\n');
     },
+    storedIdsState: undefined,
+    storedFormState: undefined,
     idsInputHelp: (
       <div>
         Valid formats of specified Genomic Sequence IDs are:
@@ -114,13 +101,9 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
       revComp: false,
       end: 200
     },
-    initialReporterFormState: {
-      ...FastaGenomicSequenceReporterForm.getInitialState().formState,
-      revComp: false,
-      end: 200
-    },
-    makeDefaultIdsState: () => '',
     makeInitialIdsState: () => '',
+    storedIdsState: undefined,
+    storedFormState: undefined,
     formActionUrl: '/cgi-bin/estSrt'
   },
   {
@@ -132,13 +115,9 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
       revComp: false,
       end: 200
     },
-    initialReporterFormState: {
-      ...FastaGenomicSequenceReporterForm.getInitialState().formState,
-      revComp: false,
-      end: 200
-    },
-    makeDefaultIdsState: () => '',
     makeInitialIdsState: () => '',
+    storedIdsState: undefined,
+    storedFormState: undefined,
     formActionUrl: '/cgi-bin/isolateSrt'
   }
 ];
@@ -226,6 +205,7 @@ function SrtForm({
 
   return (
     <form action={formActionUrl} method="post" target="_blank">
+      <button className="btn" type="reset" onClick={onReset}>Reset values to default</button>
       <input type="hidden" name="project_id" value={projectId} />
       <input type="hidden" name="downloadType" value={String(formState.attachmentType)} />
       <h3 className={cx('--IdsHeader')} >
@@ -280,8 +260,8 @@ function useCompatibleSrtFormConfigs() {
           if (storedConfigs) {
             return {
               ...initialConfigs,
-              makeInitialIdsState: () => storedConfigs.initialIdsState,
-              initialReporterFormState: JSON.parse(storedConfigs.initialReporterFormState)
+              storedIdsState: storedConfigs.initialIdsState,
+              storedFormState: JSON.parse(storedConfigs.initialReporterFormState)
             } as InitialSrtFormConfig;
           } else {
             return initialConfigs;
@@ -320,8 +300,9 @@ function useCompatibleSrtFormConfigs() {
           .filter((initialSrtConfig) => recordClassUrlSegments.has(initialSrtConfig.recordClassUrlSegment))
           .map((initialSrtConfig): SrtFormConfig => ({
             ...initialSrtConfig,
-            defaultIdsState: initialSrtConfig.makeDefaultIdsState(srtQuestionParamDisplayMap),
-            initialIdsState: initialSrtConfig.makeInitialIdsState(srtQuestionParamDisplayMap),
+            defaultIdsState: initialSrtConfig.makeInitialIdsState(srtQuestionParamDisplayMap),
+            initialIdsState: initialSrtConfig.storedIdsState ?? initialSrtConfig.makeInitialIdsState(srtQuestionParamDisplayMap),
+            initialReporterFormState: initialSrtConfig.storedFormState ?? initialSrtConfig.defaultReporterFormState,
             projectId,
           }))
     } else {
