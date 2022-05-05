@@ -1,4 +1,6 @@
-import { flowRight } from 'lodash';
+import { flowRight, identity } from 'lodash';
+
+import { useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
 
 import { wrapStoreModules as addUserDatasetStoreModules } from '@veupathdb/user-datasets/lib/StoreModules';
 
@@ -9,8 +11,11 @@ import * as userCommentShow from './storeModules/UserCommentShowStoreModule';
 import * as blastSummaryView from './storeModules/BlastSummaryViewStoreModule';
 import * as genomeSummaryView from './storeModules/GenomeSummaryViewStoreModule';
 
+
 export default flowRight(
-  addUserDatasetStoreModules,
+  useUserDatasetsWorkspace
+    ? addUserDatasetStoreModules
+    : identity,
   storeModules => ({
     ...storeModules,
     record,

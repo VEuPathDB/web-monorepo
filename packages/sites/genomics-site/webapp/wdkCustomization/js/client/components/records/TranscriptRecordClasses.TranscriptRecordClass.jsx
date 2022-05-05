@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { IconAlt, Link } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkServiceWithRefresh } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
-import { rootUrl } from '@veupathdb/web-common/lib/config';
+import { rootUrl, useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
 
 import {
   isTranscripFilterEnabled,
@@ -88,7 +88,10 @@ const ConnectedTranscriptViewFilter = connect(
 
 export function ResultTable(props) {
   const geneListExportUrl = useMemo(() => {
-    if (props.resultType.type !== 'step') {
+    if (
+      !useUserDatasetsWorkspace ||
+      props.resultType.type !== 'step'
+    ) {
       return undefined;
     }
 

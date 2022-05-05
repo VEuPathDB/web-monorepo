@@ -1,7 +1,9 @@
+import { flowRight, identity, memoize, partial } from 'lodash';
+
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import { ok } from '@veupathdb/wdk-client/lib/Utils/Json';
-import { datasetImportUrl, endpoint } from '@veupathdb/web-common/lib/config';
-import { flowRight, memoize, partial } from 'lodash';
+
+import { datasetImportUrl, endpoint, useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
 
 import { wrapWdkService as addMultiBlastService } from '@veupathdb/multi-blast/lib/utils/wdkServiceIntegration';
 import { wrapWdkService as addUserDatasetsServices } from '@veupathdb/user-datasets/lib/Service';
@@ -48,13 +50,15 @@ export const genomicsServiceWrappers = {
 };
 
 export const wrapWdkService = flowRight(
-  partial(
-    addUserDatasetsServices,
-    {
-      datasetImportUrl,
-      fullWdkServiceUrl: `${window.location.origin}${endpoint}`
-    }
-  ),
+  useUserDatasetsWorkspace
+    ? partial(
+        addUserDatasetsServices,
+        {
+          datasetImportUrl,
+          fullWdkServiceUrl: `${window.location.origin}${endpoint}`
+        }
+      )
+    : identity,
   addMultiBlastService,
   function addGenomicsServices(wdkService: WdkService): GenomicsService {
     return {
