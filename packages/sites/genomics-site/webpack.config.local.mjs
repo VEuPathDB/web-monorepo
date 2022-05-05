@@ -40,7 +40,7 @@ export default configure({
         youtubeUrl: process.env.YOUTUBE_URL,
         communitySite: process.env.COMMUNITY_SITE,
         siteSearchServiceUrl: process.env.SITE_SEARCH_SERVICE_ENDPOINT,
-        useUserDatasetsWorkspace: process.env.USER_DATASET_WORKSPACE_ENABLED,
+        useUserDatasetsWorkspace: process.env.USER_DATASET_WORKSPACE_ENABLED === 'true',
         datasetImportUrl: process.env.USER_DATASET_WORKSPACE_IMPORT_SERVICE_ENDPOINT,
       })
     }),
