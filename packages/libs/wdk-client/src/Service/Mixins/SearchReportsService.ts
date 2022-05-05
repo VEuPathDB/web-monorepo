@@ -98,32 +98,25 @@ export default (base: ServiceBase) => {
       reportConfig: reportConfig
     };
 
-    const temporaryResult$ = typeof answerSpecOrStepId === 'number'
-      ? await base.sendRequest<{ id: string }>(
-          record({ id: string }),
-          {
-            method: 'post',
-            path: '/temporary-results',
-            body: stringify({
-              ...reportSubrequest,
-              stepId: answerSpecOrStepId,
-            })
-          }
-        )
-      : await base.sendRequest<{ id: string }>(
-          record({ id: string }),
-          {
-            method: 'post',
-            path: '/temporary-results',
-            body: stringify({
-              ...reportSubrequest,
-              searchName: answerSpecOrStepId.searchName,
-              searchConfig: answerSpecOrStepId.searchConfig,
-            })
-          }
-        );
+    const requestBody = typeof answerSpecOrStepId === 'number'
+      ? stringify({
+          ...reportSubrequest,
+          stepId: answerSpecOrStepId,
+        })
+      : stringify({
+          ...reportSubrequest,
+          searchName: answerSpecOrStepId.searchName,
+          searchConfig: answerSpecOrStepId.searchConfig,
+        });
 
-    const { id } = await temporaryResult$;
+    const { id } = await base.sendRequest<{ id: string }>(
+      record({ id: string }),
+      {
+        method: 'post',
+        path: '/temporary-results',
+        body: requestBody
+      }
+    );
 
     return '/temporary-results/' + id;
   }
