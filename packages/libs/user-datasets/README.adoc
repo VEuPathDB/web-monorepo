@@ -16,10 +16,13 @@ You will also see any lint errors in the console.
 
 You will be prompted to enter the VEuPathDB BRC Pre-Release Login credentials.
 
-**Required Environment Variables**
+**Environment Variables**
 
-- **`REACT_APP_WDK_SERVICE_URL`** URL for a VEuPathDB service endpoint.
-- **`DATASET_IMPORT_SERVICE_URL`** URL for a dataset import service endpoint.
+- **`VEUPATHDB_LOGIN_USER`** VEuPathDB BRC prerelease user name (optional, but recommended)
+- **`VEUPATHDB_LOGIN_PASS`** VEuPathDB BRC prerelease user password (optional, but recommended)
+- **`REACT_APP_WDK_SERVICE_URL`** URL for a VEuPathDB service endpoint (required)
+- **`DATASET_IMPORT_SERVICE_URL`** URL for a dataset import service endpoint (required)
+- **`REACT_APP_AVAILABLE_UPLOAD_TYPES`** Comma-separated list of upload types which the local client will support (required)
 
 ### `yarn test`
 
