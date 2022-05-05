@@ -16,6 +16,7 @@ import { SearchCard } from '@veupathdb/web-common/lib/App/Searches';
 import { ImageCard } from '@veupathdb/web-common/lib/App/ImageCard';
 
 import { studyMatchPredicate, studyFilters } from '@veupathdb/web-common/lib/util/homeContent';
+import { useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
 
 export default {
   SiteHeader: () => SiteHeader,
@@ -158,10 +159,16 @@ function makeHeaderMenuItems(state) {
             text: 'Public Search Strategies',
             route: '/workspace/strategies/public'
           },
-          {
-            text: 'My Data Sets',
-            route: '/workspace/datasets'
-          }
+          ...(
+            useUserDatasetsWorkspace 
+              ? [
+                  {
+                    text: 'My Data Sets',
+                    route: '/workspace/datasets'
+                  }
+                ]
+              : []
+          )
         ]
       },
       {

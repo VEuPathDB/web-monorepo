@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
+
 import AboutController from './controllers/AboutController';
 import { userDatasetRoutes } from './routes/userDatasetRoutes';
 
@@ -10,7 +12,11 @@ export function wrapRoutes(ebrcRoutes) {
       component: () => <AboutController/>
     },
     
-    ...userDatasetRoutes,
+    ...(
+      useUserDatasetsWorkspace
+        ? userDatasetRoutes
+        : []
+    ),
 
     ...ebrcRoutes
   ];
