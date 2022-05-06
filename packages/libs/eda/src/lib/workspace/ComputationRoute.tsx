@@ -134,6 +134,7 @@ export function ComputationRoute(props: Props) {
                   name: string,
                   configuration: ComputationConfiguration
                 ) => {
+                  // console.log({ analysisState });
                   if (analysisState.analysis == null) return;
                   const computations =
                     analysisState.analysis.descriptor.computations;
@@ -143,8 +144,19 @@ export function ComputationRoute(props: Props) {
                     configuration,
                     computations
                   );
-                  analysisState.setComputations([computation, ...computations]);
-                  history.push(`${url}/${computation.computationId}`);
+                  analysisState.setComputations(
+                    [computation, ...computations],
+                    `/visualizations/${computation.computationId}`
+                  );
+                  // console.log(
+                  //   'redirecting in ComputationRoute: ' +
+                  //     `${url}/${computation.computationId}`
+                  // );
+                  if (
+                    analysisState.analysis &&
+                    analysisState.analysis.hasOwnProperty('analysisId')
+                  )
+                    history.push(`${url}/${computation.computationId}`);
                 };
 
                 return (
