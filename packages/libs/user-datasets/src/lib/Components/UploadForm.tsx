@@ -61,14 +61,7 @@ interface FormContent {
   dataUploadSelection: DataUploadSelection;
 }
 
-export type FormValidation =
-  | InvalidForm
-  | {
-      valid: true;
-      submission: Omit<NewUserDataset, 'uploadMethod'> & {
-        dataUploadSelection: CompleteDataUploadSelection;
-      };
-    };
+export type FormValidation = InvalidForm | ValidForm;
 
 export interface InvalidForm {
   valid: false;
