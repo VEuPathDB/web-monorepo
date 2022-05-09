@@ -15,7 +15,10 @@ import { isNewAnalysis, isSavedAnalysis } from '../utils/analysis';
 import { useAnalysisClient } from './workspace';
 
 /** Type definition for function that will set an attribute of an Analysis. */
-type Setter<T> = (value: T | ((value: T) => T), newSubpath?: string) => void;
+type Setter<T> = (
+  value: T | ((value: T) => T),
+  newSubpath?: string
+) => Promise<string | undefined>;
 
 /** Status options for an analysis. */
 export enum Status {
@@ -70,7 +73,10 @@ export function usePreloadAnalysis() {
  * */
 export function useAnalysis(
   defaultAnalysis: NewAnalysis,
-  createAnalysis: (analysis: NewAnalysis, newSubpath?: string) => void,
+  createAnalysis: (
+    analysis: NewAnalysis,
+    newSubpath?: string
+  ) => Promise<string | undefined>,
   analysisId?: string
 ): AnalysisState {
   const analysisClient = useAnalysisClient();
@@ -150,22 +156,20 @@ export function useAnalysis(
   const useSetter = <T>(
     nestedValueLens: Lens<Analysis | NewAnalysis, T>,
     analysis: NewAnalysis | Analysis | undefined,
-    createAnalysis: (newAnalysis: NewAnalysis, newSubpath?: string) => void,
+    createAnalysis: (newAnalysis: NewAnalysis) => Promise<string | undefined>,
     createAnalysisOnChange = true
   ) =>
     useCallback(
-      (nestedValue: T | ((nestedValue: T) => T), newSubpath?: string) => {
+      async (nestedValue: T | ((nestedValue: T) => T)) => {
         if (analysis == null)
           throw new Error(
             "Attempt to update an analysis that hasn't been loaded."
           );
 
         if (isNewAnalysis(analysis) && createAnalysisOnChange) {
-          createAnalysis(
-            updateAnalysis(analysis, nestedValueLens, nestedValue),
-            newSubpath
+          return await createAnalysis(
+            updateAnalysis(analysis, nestedValueLens, nestedValue)
           );
-          return;
         }
 
         setCurrent((_a) => {

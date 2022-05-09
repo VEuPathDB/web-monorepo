@@ -54,7 +54,7 @@ export function useWorkspaceAnalysis(
   ]);
 
   const createAnalysis = useCallback(
-    async (newAnalysis: NewAnalysis, newSubpath?: string) => {
+    async (newAnalysis: NewAnalysis) => {
       if (!creatingAnalysis.current) {
         creatingAnalysis.current = true;
 
@@ -62,15 +62,13 @@ export function useWorkspaceAnalysis(
         await preloadAnalysis(analysisId);
         creatingAnalysis.current = false;
 
-        const subPath = newSubpath ?? findSubPath(newAnalysis, location, url);
+        const subPath = findSubPath(newAnalysis, location, url);
         const newLocation = {
           ...location,
           pathname: Path.resolve(url, '..', analysisId + subPath),
         };
-
-        // console.log('redirecting in createAnalysis: ');
-        // console.log({ newLocation });
         history.replace(newLocation);
+        return analysisId;
       }
     },
     [analysisClient, history, location, preloadAnalysis, url]
