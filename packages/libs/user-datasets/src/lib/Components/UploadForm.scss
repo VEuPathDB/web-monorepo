@@ -1,10 +1,6 @@
 .UploadForm {
-  label {
-    font-size: large;
-  }
-  .supAsterisk {
-    font-size: large;
-    top: 0em;
+  .formSection > label {
+    font-size: medium;
   }
   #data-set-name {
     min-width: 300px;
@@ -31,5 +27,26 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+  & &--UploadMethodSelector {
+    margin-top: 2em;
+
+    li > label {
+      display: flex;
+
+      label {
+        font-size: medium;
+        margin-left: 0.25em;
+        flex: 1;
+      }
+    }
+  }
+  & &--UploadMethodField {
+    flex: 10;
+
+    &__disabled {
+      opacity: 0.3;
+      pointer-events: none;
+    }
   }
 }
