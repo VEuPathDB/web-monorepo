@@ -111,6 +111,7 @@ export const wrapRoutes = ebrcRoutes => [
 
   {
     path: '/fasta-tool',
+    exact: false,
     component: () => <FastaConfigController/>
   },
 
