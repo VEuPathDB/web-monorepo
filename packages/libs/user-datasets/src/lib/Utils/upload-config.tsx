@@ -32,11 +32,6 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
     type: 'gene-list',
     uploadTitle: 'Upload My Gene List',
     formConfig: {
-      renderInfo: () => (
-        <p className="formInfo">
-          <span>* </span> All form fields are required.
-        </p>
-      ),
       uploadMethodConfig: {
         result: {
           offerStrategyUpload: false,
@@ -59,11 +54,6 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
     type: 'isasimple',
     uploadTitle: 'Upload My Study',
     formConfig: {
-      renderInfo: () => (
-        <p className="formInfo">
-          <span>* </span> All form fields are required.
-        </p>
-      ),
       uploadMethodConfig: {},
     },
   },

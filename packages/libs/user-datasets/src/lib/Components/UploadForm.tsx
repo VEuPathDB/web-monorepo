@@ -379,7 +379,7 @@ function UploadForm({
       <button type="submit" className="btn" disabled={submitting}>
         Upload Data Set
       </button>
-      {datasetUploadType.formConfig.renderInfo()}
+      {datasetUploadType.formConfig?.renderInfo?.()}
     </form>
   );
 }
