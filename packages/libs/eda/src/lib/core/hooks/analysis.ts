@@ -15,10 +15,7 @@ import { isNewAnalysis, isSavedAnalysis } from '../utils/analysis';
 import { useAnalysisClient } from './workspace';
 
 /** Type definition for function that will set an attribute of an Analysis. */
-type Setter<T> = (
-  value: T | ((value: T) => T),
-  newSubpath?: string
-) => Promise<string | undefined>;
+type Setter<T> = (value: T | ((value: T) => T)) => Promise<string | undefined>;
 
 /** Status options for an analysis. */
 export enum Status {
@@ -73,10 +70,7 @@ export function usePreloadAnalysis() {
  * */
 export function useAnalysis(
   defaultAnalysis: NewAnalysis,
-  createAnalysis: (
-    analysis: NewAnalysis,
-    newSubpath?: string
-  ) => Promise<string | undefined>,
+  createAnalysis: (analysis: NewAnalysis) => Promise<string | undefined>,
   analysisId?: string
 ): AnalysisState {
   const analysisClient = useAnalysisClient();

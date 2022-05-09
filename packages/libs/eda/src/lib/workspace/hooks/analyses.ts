@@ -67,6 +67,7 @@ export function useWorkspaceAnalysis(
           ...location,
           pathname: Path.resolve(url, '..', analysisId + subPath),
         };
+
         history.replace(newLocation);
         return analysisId;
       }

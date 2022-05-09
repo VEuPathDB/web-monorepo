@@ -134,7 +134,6 @@ export function ComputationRoute(props: Props) {
                   name: string,
                   configuration: ComputationConfiguration
                 ) => {
-                  // console.log({ analysisState });
                   if (analysisState.analysis == null) return;
                   const computations =
                     analysisState.analysis.descriptor.computations;
