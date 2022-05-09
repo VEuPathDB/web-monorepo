@@ -44,7 +44,7 @@ interface Props<T extends string = string> {
   submitForm: (newUserDataset: FormSubmission, redirectTo?: string) => void;
 }
 
-type DataUploadMode = 'file' | 'url' | 'result';
+type DataUploadMode = 'file' | 'url' | 'strategy' | 'step';
 
 type DataUploadSelection =
   | { type: 'file'; file?: File }
@@ -96,7 +96,12 @@ function UploadForm({
     [strategyOptions]
   );
 
-  const { useFixedUploadMethod } = urlParams;
+  const { useFixedUploadMethod: useFixedUploadMethodStr } = urlParams;
+
+  const useFixedUploadMethod = useMemo(
+    () => useFixedUploadMethodStr === 'true',
+    [useFixedUploadMethodStr]
+  );
 
   const displayStrategyUploadMethod =
     datasetUploadType.formConfig.uploadMethodConfig.result?.offerStrategyUpload;
@@ -112,9 +117,9 @@ function UploadForm({
 
   const [dataUploadMode, setDataUploadMode] = useState<DataUploadMode>(
     urlParams.datasetStepId
-      ? 'result'
+      ? 'step'
       : urlParams.datasetStrategyRootStepId && enableStrategyUploadMethod
-      ? 'result'
+      ? 'strategy'
       : urlParams.datasetUrl
       ? 'url'
       : 'file'
@@ -266,14 +271,18 @@ function UploadForm({
             onChange={setDescription}
           />
         </div>
-        {!useFixedUploadMethod && (
+        {
           <div className="formSection" style={{ minHeight: '8em' }}>
             <RadioList
               name="data-set-radio"
               className={cx('--UploadMethodSelector')}
               value={dataUploadMode}
               onChange={(value) => {
-                if (value !== 'url' && value !== 'file' && value !== 'result') {
+                if (
+                  value !== 'url' &&
+                  value !== 'file' &&
+                  value !== 'strategy'
+                ) {
                   throw new Error(
                     `Unrecognized upload method '${value}' encountered.`
                   );
@@ -284,7 +293,7 @@ function UploadForm({
               items={[
                 {
                   value: 'file',
-                  disabled: false,
+                  disabled: useFixedUploadMethod,
                   display: (
                     <React.Fragment>
                       <label htmlFor="data-set-file">Upload File:</label>
@@ -297,6 +306,7 @@ function UploadForm({
                       >
                         <FileInput
                           required={dataUploadMode === 'file'}
+                          disabled={dataUploadMode !== 'file'}
                           onChange={(file) => {
                             setFile(file ?? undefined);
                           }}
@@ -307,7 +317,7 @@ function UploadForm({
                 },
                 {
                   value: 'url',
-                  disabled: false,
+                  disabled: useFixedUploadMethod,
                   display: (
                     <React.Fragment>
                       <label htmlFor="data-set-url">Upload URL:</label>
@@ -321,6 +331,7 @@ function UploadForm({
                         placeholder="Address of a data file from the Web"
                         value={url}
                         required={dataUploadMode === 'url'}
+                        disabled={dataUploadMode !== 'url'}
                         onChange={setUrl}
                       />
                     </React.Fragment>
@@ -331,8 +342,9 @@ function UploadForm({
                   ? []
                   : [
                       {
-                        value: 'result',
-                        disabled: !displayStrategyUploadMethod,
+                        value: 'strategy',
+                        disabled:
+                          !enableStrategyUploadMethod || useFixedUploadMethod,
                         display: (
                           <React.Fragment>
                             <label htmlFor="data-set-strategy">
@@ -342,7 +354,7 @@ function UploadForm({
                               id="data-set-strategy"
                               className={cx(
                                 '--UploadMethodField',
-                                dataUploadMode !== 'result' && 'disabled'
+                                dataUploadMode !== 'strategy' && 'disabled'
                               )}
                             >
                               <SingleSelect
@@ -353,7 +365,7 @@ function UploadForm({
                                     !option.isSaved ? '*' : ''
                                   }`,
                                 }))}
-                                required={dataUploadMode === 'result'}
+                                required={dataUploadMode === 'strategy'}
                                 onChange={(value) => {
                                   setStepId(Number(value));
                                 }}
@@ -366,7 +378,7 @@ function UploadForm({
               )}
             />
           </div>
-        )}
+        }
       </div>
       <button type="submit" className="btn" disabled={submitting}>
         Upload Data Set
