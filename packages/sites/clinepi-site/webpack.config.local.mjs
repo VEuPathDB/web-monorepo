@@ -18,6 +18,7 @@ export default configure({
     rootClientUrl: process.env.ROOT_URL,
     proxies: {
       [process.env.WDK_SERVICE_ENDPOINT]: process.env.WDK_SERVICE_URL,
+      [process.env.SITE_SEARCH_SERVICE_ENDPOINT]: process.env.SITE_SEARCH_SERVICE_URL,
       [process.env.EDA_SERVICE_ENDPOINT]: process.env.EDA_SERVICE_URL,
       [process.env.USER_DATASETS_WORKSPACE_IMPORT_SERVICE_ENDPOINT]: process.env.USER_DATASETS_WORKSPACE_IMPORT_SERVICE_URL,
       [process.env.DOCUMENTS_ENDPOINT]: process.env.DOCUMENTS_URL,
@@ -38,6 +39,7 @@ export default configure({
         youtubeUrl: process.env.YOUTUBE_URL,
         communitySite: process.env.COMMUNITY_SITE,
         showUnreleasedData: process.env.SHOW_UNRELEASED_DATA === 'true',
+        siteSearchServiceUrl: process.env.SITE_SEARCH_SERVICE_ENDPOINT,
         ...(
           process.env.EDA_ENABLED === 'true'
             ? {
