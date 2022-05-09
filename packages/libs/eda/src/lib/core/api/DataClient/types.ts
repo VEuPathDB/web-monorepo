@@ -602,6 +602,16 @@ export interface PieplotRequestParams {
     xAxisVariable: VariableDescriptor;
     facetVariable?: ZeroToTwoVariables;
     valueSpec: 'count' | 'proportion';
+    viewport: {
+      latitude: {
+        xMin: number;
+        xMax: number;
+      };
+      longitude: {
+        left: number;
+        right: number;
+      };
+    };
   };
 }
 
@@ -623,6 +633,19 @@ export const PieplotResponse = type({
       ])
     ),
     config: type({
+      completeCasesAllVars: number,
+      completeCasesAxesVars: number,
+      rankedValues: array(unknown),
+      viewport: type({
+        latitude: type({
+          xMin: number,
+          xMax: number,
+        }),
+        longitude: type({
+          left: number,
+          right: number,
+        }),
+      }),
       xVariableDetails: type({
         variableId: string,
         entityId: string,

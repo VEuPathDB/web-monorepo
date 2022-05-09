@@ -39,10 +39,7 @@ import DataClient, {
 } from '../../../api/DataClient';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { usePromise } from '../../../hooks/promise';
-import {
-  filtersFromBoundingBox,
-  fixLabelsForNumberVariables,
-} from '../../../utils/visualization';
+import { fixLabelsForNumberVariables } from '../../../utils/visualization';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { values } from 'lodash';
@@ -237,7 +234,6 @@ function MapViz(props: VisualizationProps) {
     latitudeVariable,
     longitudeVariable,
     geoAggregateVariable,
-    filtersPlusBoundsFilter,
   } = useMemo(() => {
     if (
       boundsZoomLevel == null ||
@@ -262,21 +258,12 @@ function MapViz(props: VisualizationProps) {
         ],
     };
 
-    const boundsFilters = filtersFromBoundingBox(
-      boundsZoomLevel.bounds,
-      latitudeVariable,
-      longitudeVariable
-    );
-
     return {
       latitudeVariable,
       longitudeVariable,
       geoAggregateVariable,
-      filtersPlusBoundsFilter: filters
-        ? [...filters, ...boundsFilters]
-        : boundsFilters,
     };
-  }, [filters, boundsZoomLevel, vizConfig.geoEntityId, geoConfig]);
+  }, [boundsZoomLevel, vizConfig.geoEntityId, geoConfig]);
 
   const basicMarkerData = usePromise<BasicMarkerData | undefined>(
     useCallback(async () => {
@@ -382,22 +369,36 @@ function MapViz(props: VisualizationProps) {
       if (
         boundsZoomLevel == null ||
         vizConfig.xAxisVariable == null ||
-        filtersPlusBoundsFilter == null ||
         geoAggregateVariable == null ||
         outputEntity == null
       )
         return undefined;
 
+      const {
+        northEast: { lat: xMax, lng: right },
+        southWest: { lat: xMin, lng: left },
+      } = boundsZoomLevel.bounds;
+
       // prepare request
       const requestParams: PieplotRequestParams = {
         studyId,
-        filters: filtersPlusBoundsFilter,
+        filters: filters || [],
         config: {
           outputEntityId: outputEntity.id,
           xAxisVariable: vizConfig.xAxisVariable,
           facetVariable: [geoAggregateVariable],
           showMissingness: 'noVariables', // current back end 'showMissing' behaviour applies to facet variable
           valueSpec: proportionMode ? 'proportion' : 'count',
+          viewport: {
+            latitude: {
+              xMin,
+              xMax,
+            },
+            longitude: {
+              left,
+              right,
+            },
+          },
         },
       };
 
@@ -408,7 +409,6 @@ function MapViz(props: VisualizationProps) {
       );
     }, [
       studyId,
-      filtersPlusBoundsFilter,
       dataClient,
       vizConfig.xAxisVariable,
       proportionMode,
@@ -416,6 +416,7 @@ function MapViz(props: VisualizationProps) {
       computation.descriptor.type,
       geoAggregateVariable,
       outputEntity,
+      filters,
     ])
   );
   const pieplotData = usePromise<PieplotData | undefined>(
@@ -676,17 +677,13 @@ function MapViz(props: VisualizationProps) {
   const pieConstraints = pieOverview.dataElementConstraints;
   const pieDependencyOrder = pieOverview.dataElementDependencyOrder;
 
-  const geohashEntityAndVariable = piePlotResponse.value
-    ? findEntityAndVariable(
-        piePlotResponse.value.completeCasesTable[1].variableDetails
-      )
-    : undefined;
-
   const tableGroupNode = (
     <>
       <BirdsEyeView
-        completeCasesAxesVars={totalEntityCount}
-        completeCasesAllVars={0 /* can't be undefined for some reason */}
+        completeCasesAxesVars={basicMarkerData.value?.completeCasesGeoVar}
+        completeCasesAllVars={
+          piePlotResponse.value?.pieplot.config.completeCasesAllVars
+        }
         outputEntity={outputEntity}
         stratificationIsActive={
           false /* this disables the 'strata and axes' bar/impulse */
