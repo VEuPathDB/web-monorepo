@@ -265,6 +265,11 @@
     }
   }
 
+  &--ResultSummary .wdk-CollapsibleSection {
+    padding: .5em 0;
+    margin-bottom: -1em;
+  }
+
   &--ResultSubTitle {
     display: inline;
     margin-left: 1em;
