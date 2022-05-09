@@ -3,5 +3,5 @@ export function numberDecimalPoint(
   value: number,
   decimalPoint: number
 ): number {
-  return Number(value.toFixed(decimalPoint));
+  return Number.isInteger(value) ? value : Number(value.toFixed(decimalPoint));
 }
