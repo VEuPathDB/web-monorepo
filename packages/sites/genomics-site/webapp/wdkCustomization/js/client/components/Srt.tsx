@@ -1,10 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { Switch, Route, useRouteMatch, useLocation, Redirect } from 'react-router-dom';
 
 import { noop, zipWith } from 'lodash';
 
 import { projectId } from '@veupathdb/web-common/lib/config';
-import { TextArea, Loading, HelpIcon, Tabs, Link } from '@veupathdb/wdk-client/lib/Components';
+import { TextArea, Loading, HelpIcon, Link } from '@veupathdb/wdk-client/lib/Components';
+import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -40,7 +42,6 @@ interface SrtFormConfig extends BaseSrtFormConfig {
   defaultIdsState: string;
   initialReporterFormState: Record<string, string | number | boolean>;
   projectId: string;
-  selectedSrtForm?: string;
 }
 
 const SRT_QUESTION = 'SRT';
@@ -123,14 +124,17 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
 ];
 
 export function Srt() {
+  const routeBase = useRouteMatch();
+  const { pathname } = useLocation();
   const compatibleSrtConfigs = useCompatibleSrtFormConfigs();
   const [selectedSrtForm, setSelectedSrtForm] = useState<string>('');
 
   useEffect(() => {
-    if (!selectedSrtForm && compatibleSrtConfigs && compatibleSrtConfigs.length >= 1) {
-      setSelectedSrtForm(compatibleSrtConfigs[0].recordClassUrlSegment);
+    if (compatibleSrtConfigs && compatibleSrtConfigs.length >= 1) {
+      const matchedConfig = compatibleSrtConfigs.find(config => pathname.includes(config.recordClassUrlSegment));
+      setSelectedSrtForm(matchedConfig ? matchedConfig.recordClassUrlSegment : compatibleSrtConfigs[0].recordClassUrlSegment);
     }
-  }, [compatibleSrtConfigs]);
+  }, [compatibleSrtConfigs, pathname]);
 
   return (
     <div className={cx()}>
@@ -152,22 +156,31 @@ export function Srt() {
                 } 
                 .)
               </p>
-              <Tabs
-                containerClassName={cx('--SrtForms')}
-                activeTab={selectedSrtForm}
-                onTabSelected={setSelectedSrtForm}
-                tabs={compatibleSrtConfigs.map(
-                  config => ({
-                    key: config.recordClassUrlSegment,
-                    display: config.display,
-                    content:
-                      <SrtForm
-                        {...config}
-                        selectedSrtForm={selectedSrtForm}
-                      />
-                  })
-                )}
-              />
+            <WorkspaceNavigation
+              heading={''}
+              routeBase={routeBase.url}
+              items={
+                compatibleSrtConfigs.map(config => ({
+                  display: config.display,
+                  route: `/${config.recordClassUrlSegment}`,
+                  isActive: () => config.recordClassUrlSegment === selectedSrtForm,
+                }))}
+            />
+              <Switch>
+                <Route
+                  exact  
+                  path={routeBase.url}
+                  >
+                  <Redirect to={routeBase.url + `/${compatibleSrtConfigs[0].recordClassUrlSegment}`}></Redirect>
+                </Route>
+                <Route
+                  path={routeBase.url + '/:recordType'}
+                >
+                  <SrtForm
+                    {...compatibleSrtConfigs.filter(config => config.recordClassUrlSegment === selectedSrtForm)[0]}
+                  />
+                </Route>
+              </Switch>
             </React.Fragment>
       }
     </div>
@@ -182,7 +195,7 @@ function SrtForm({
   idsInputHelp,
   projectId,
   formActionUrl,
-  selectedSrtForm,
+  recordClassUrlSegment,
   defaultIdsState,
   defaultReporterFormState
 }: SrtFormConfig) {
@@ -191,7 +204,12 @@ function SrtForm({
   const { paramValueStore } = useNonNullableContext(WdkDependenciesContext);
 
   useEffect(() => {
-    paramValueStore?.updateParamValues(`srt/${selectedSrtForm}`,
+    setIdsState(initialIdsState);
+    updateFormState(initialReporterFormState);
+  }, [initialIdsState, initialReporterFormState]);
+
+  useEffect(() => {
+    paramValueStore?.updateParamValues(`srt/${recordClassUrlSegment}`,
       {
         initialIdsState: idsState,
         initialReporterFormState: JSON.stringify(formState),
@@ -205,7 +223,7 @@ function SrtForm({
 
   return (
     <form action={formActionUrl} method="post" target="_blank">
-      <button className="btn" type="reset" onClick={onReset}>Reset values to default</button>
+      <button className="btn" type="button" onClick={onReset}>Reset values to default</button>
       <input type="hidden" name="project_id" value={projectId} />
       <input type="hidden" name="downloadType" value={String(formState.attachmentType)} />
       <h3 className={cx('--IdsHeader')} >
@@ -231,7 +249,6 @@ function SrtForm({
         formState={formState}
         updateFormState={updateFormState}
         onSubmit={noop}
-        onReset={onReset}
         includeSubmit
       />
     </form>
@@ -261,7 +278,7 @@ function useCompatibleSrtFormConfigs() {
             return {
               ...initialConfigs,
               storedIdsState: storedConfigs.initialIdsState,
-              storedFormState: JSON.parse(storedConfigs.initialReporterFormState)
+              storedFormState: JSON.parse(storedConfigs.initialReporterFormState),
             } as InitialSrtFormConfig;
           } else {
             return initialConfigs;
