@@ -2,7 +2,7 @@ import { intersection } from 'lodash';
 
 import { DatasetUploadPageConfig, DatasetUploadTypeConfig } from './types';
 
-type ImplementedUploadTypes = 'biom' | 'gene-list' | 'study';
+type ImplementedUploadTypes = 'biom' | 'gene-list' | 'isasimple';
 
 export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> = {
   biom: {
@@ -55,8 +55,8 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
       },
     },
   },
-  study: {
-    type: 'study',
+  isasimple: {
+    type: 'isasimple',
     uploadTitle: 'Upload My Study',
     formConfig: {
       renderInfo: () => (
