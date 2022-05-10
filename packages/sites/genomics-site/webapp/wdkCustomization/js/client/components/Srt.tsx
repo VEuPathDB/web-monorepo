@@ -175,10 +175,13 @@ export function Srt() {
                 </Route>
                 <Route
                   path={routeBase.url + '/:recordType'}
-                >
-                  <SrtForm
-                    {...compatibleSrtConfigs.filter(config => config.recordClassUrlSegment === selectedSrtForm)[0]}
-                  />
+                > 
+                  {compatibleSrtConfigs.length && selectedSrtForm ? 
+                    <SrtForm
+                      {...compatibleSrtConfigs.filter(config => config.recordClassUrlSegment === selectedSrtForm)[0]}
+                    />
+                    : null
+                  }
                 </Route>
               </Switch>
             </React.Fragment>
