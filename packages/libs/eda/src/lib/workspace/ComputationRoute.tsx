@@ -126,7 +126,12 @@ export function ComputationRoute(props: Props) {
                 </div>
               </Route>
               <Route exact path={`${url}/new`}>
-                <StartPage baseUrl={`${url}`} apps={apps} {...props} />
+                <StartPage
+                  baseUrl={`${url}`}
+                  apps={apps}
+                  plugins={plugins}
+                  {...props}
+                />
               </Route>
               {apps.map((app) => {
                 const plugin = plugins[app.name];
