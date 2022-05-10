@@ -203,10 +203,25 @@ function SrtForm({
   const [ formState, updateFormState ] = useState(initialReporterFormState);
   const { paramValueStore } = useNonNullableContext(WdkDependenciesContext);
 
+  const storedSrtData = usePromise(async () => {
+    try {
+      const storedFormDataState = await paramValueStore.fetchParamValues(`srt/${recordClassUrlSegment}`)
+      return storedFormDataState;
+    } catch (error) {
+      console.error(error);
+      return;
+    }
+  }, [recordClassUrlSegment]);
+  
   useEffect(() => {
-    setIdsState(initialIdsState);
-    updateFormState(initialReporterFormState);
-  }, [initialIdsState, initialReporterFormState]);
+    if (!storedSrtData.value) {
+      setIdsState(initialIdsState);
+      updateFormState(initialReporterFormState);
+    } else {
+      setIdsState(storedSrtData.value.initialIdsState);
+      updateFormState(JSON.parse(storedSrtData.value.initialReporterFormState));
+    }
+  }, [initialIdsState, initialReporterFormState, storedSrtData.value]);
 
   useEffect(() => {
     paramValueStore?.updateParamValues(`srt/${recordClassUrlSegment}`,
