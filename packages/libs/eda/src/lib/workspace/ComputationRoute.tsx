@@ -135,7 +135,7 @@ export function ComputationRoute(props: Props) {
               </Route>
               {apps.map((app) => {
                 const plugin = plugins[app.name];
-                const addComputation = (
+                const addComputation = async (
                   name: string,
                   configuration: ComputationConfiguration
                 ) => {
@@ -148,8 +148,14 @@ export function ComputationRoute(props: Props) {
                     configuration,
                     computations
                   );
-                  analysisState.setComputations([computation, ...computations]);
-                  history.push(`${url}/${computation.computationId}`);
+                  const newAnalysisId = await analysisState.setComputations([
+                    computation,
+                    ...computations,
+                  ]);
+                  const urlBase = newAnalysisId
+                    ? url.replace('new', newAnalysisId)
+                    : url;
+                  history.push(`${urlBase}/${computation.computationId}`);
                 };
 
                 return (

@@ -69,6 +69,7 @@ export function useWorkspaceAnalysis(
         };
 
         history.replace(newLocation);
+        return analysisId;
       }
     },
     [analysisClient, history, location, preloadAnalysis, url]
