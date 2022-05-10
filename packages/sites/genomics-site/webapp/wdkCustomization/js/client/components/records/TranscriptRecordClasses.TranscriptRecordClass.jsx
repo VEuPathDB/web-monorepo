@@ -1,9 +1,10 @@
 import { get } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
-import { IconAlt, Link } from '@veupathdb/wdk-client/lib/Components';
-import { useWdkServiceWithRefresh } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { IconAlt } from '@veupathdb/wdk-client/lib/Components';
+import { useWdkServiceWithRefresh, useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 import { rootUrl, useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
 
@@ -11,6 +12,9 @@ import {
   isTranscripFilterEnabled,
   requestTranscriptFilterUpdate
 } from '../../util/transcriptFilters';
+
+import { ResultExportSelector } from './ResultExportSelector';
+import { requestAddStepToBasket } from '@veupathdb/wdk-client/lib/Actions/BasketActions';
 
 // --------------
 // GeneRecordLink
@@ -87,6 +91,30 @@ const ConnectedTranscriptViewFilter = connect(
 )(TranscriptViewFilter);
 
 export function ResultTable(props) {
+  const isGuest = useWdkService(
+    async (service) => (await service.getCurrentUser()).isGuest,
+    []
+  );
+
+  const exportStatus = isGuest === false
+    ? { available: true }
+    : {
+        available: false,
+        reason: 'You must be logged in to use this feature.'
+      };
+
+  const dispatch = useDispatch();
+
+  const onSelectBasketExport = useMemo(() => {
+    if (props.resultType.type !== 'step') {
+      return undefined;
+    }
+
+    return () => {
+      dispatch(requestAddStepToBasket(props.resultType.step.id));
+    };
+  }, [dispatch, props.resultType]);
+
   const geneListExportUrl = useMemo(() => {
     if (
       !useUserDatasetsWorkspace ||
@@ -103,6 +131,7 @@ export function ResultTable(props) {
     const urlParams = new URLSearchParams({
       useFixedUploadMethod: 'true',
       datasetStepId: String(step.id),
+      datasetSource: `Result "${props.resultType.step.customName}"`,
       datasetName: props.resultType.step.customName,
       datasetSummary: `Genes from result "${props.resultType.step.customName}"`,
       datasetDescription: `Uploaded from ${resultWorkspaceUrl}`
@@ -111,26 +140,84 @@ export function ResultTable(props) {
     return `/workspace/datasets/new?${urlParams.toString()}`;
   }, [props.resultType]);
 
+  const history = useHistory();
+
+  const onSelectGeneListExport = useMemo(() => {
+    if (geneListExportUrl == null) {
+      return undefined;
+    }
+
+    return () => {
+      history.push(geneListExportUrl);
+    };
+  }, [geneListExportUrl, history]);
+
+  const exportOptions = useMemo(
+    () => [
+      ...(
+        onSelectBasketExport
+          ? [
+              {
+                label: (
+                  <>
+                    <IconAlt fa="shopping-basket" />
+                    {' '}
+                    <span style={{ marginLeft: '0.5em' }}>
+                      Basket
+                    </span>
+                  </>
+                ),
+                value: 'basket',
+                onSelect: onSelectBasketExport,
+              }
+            ]
+          : []
+      ),
+      ...(
+        onSelectGeneListExport
+          ? [
+              {
+                label: (
+                  <>
+                    <IconAlt fa="file" />
+                    {' '}
+                    <span style={{ marginLeft: '0.5em' }}>
+                      My Data Sets
+                    </span>
+                  </>
+                ),
+                value: 'my-data-sets',
+                onSelect: onSelectGeneListExport,
+              }
+            ]
+          : []
+      )
+    ],
+    [onSelectBasketExport, onSelectGeneListExport]
+  );
+  
   const renderToolbarContent = useCallback(({
     addColumnsNode,
-    addToBasketNode,
     downloadLinkNode,
   }) => (
       <>
         {downloadLinkNode}
-        {addToBasketNode}
-        {
-          geneListExportUrl != null &&
-          <div className="ResultTableButton">
-            <Link className="btn" to={geneListExportUrl}>
-              <IconAlt fa="plus"/> Add To My Data
-            </Link>
-          </div>
-        }
         {addColumnsNode}
+        <span
+          title={
+            exportStatus.available
+              ? undefined
+              : exportStatus.reason
+          }
+        >
+          <ResultExportSelector
+            isDisabled={!exportStatus.available}
+            options={exportOptions}
+          />
+        </span>
       </>
     ),
-    [geneListExportUrl]
+    [exportOptions, exportStatus]
   );
 
   return <React.Fragment>
