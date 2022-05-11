@@ -224,6 +224,7 @@ export function ResultTable(props) {
     <ConnectedTranscriptViewFilter {...props}/>
     <props.DefaultComponent
       {...props}
+      renderToolbarContent={renderToolbarContent}
     />
   </React.Fragment>
 }
