@@ -3,6 +3,7 @@ import React, { useCallback, useMemo } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
+import { requestAddStepToBasket } from '@veupathdb/wdk-client/lib/Actions/BasketActions';
 import { IconAlt } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkServiceWithRefresh, useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
@@ -14,7 +15,6 @@ import {
 } from '../../util/transcriptFilters';
 
 import { ResultExportSelector } from './ResultExportSelector';
-import { requestAddStepToBasket } from '@veupathdb/wdk-client/lib/Actions/BasketActions';
 
 // --------------
 // GeneRecordLink
