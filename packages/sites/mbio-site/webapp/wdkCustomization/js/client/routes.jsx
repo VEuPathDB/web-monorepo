@@ -1,14 +1,23 @@
 import React from 'react';
 
-import AboutController from './controllers/AboutController';
+import { useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
 
-export function wrapRoutes(routes) {
+import AboutController from './controllers/AboutController';
+import { userDatasetRoutes } from './routes/userDatasetRoutes';
+
+export function wrapRoutes(ebrcRoutes) {
   return [
     {
       path: '/about',
       component: () => <AboutController/>
     },
+    
+    ...(
+      useUserDatasetsWorkspace
+        ? userDatasetRoutes
+        : []
+    ),
 
-    ...routes
+    ...ebrcRoutes
   ];
 }
