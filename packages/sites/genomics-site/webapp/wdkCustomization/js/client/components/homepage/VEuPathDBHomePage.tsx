@@ -502,7 +502,7 @@ const useHeaderMenuItems = (
         },
         { 
           key: 'user-data-sets',
-          display: 'My data',
+          display: 'My data sets',
           type: 'reactRoute',
           url: '/workspace/datasets',
           metadata: {
