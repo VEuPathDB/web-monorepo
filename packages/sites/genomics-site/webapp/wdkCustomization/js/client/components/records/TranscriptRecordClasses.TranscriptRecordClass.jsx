@@ -160,7 +160,7 @@ export function ResultTable(props) {
               {
                 label: (
                   <>
-                    <IconAlt fa="shopping-basket" />
+                    <IconAlt fa="shopping-basket fa-fw" />
                     {' '}
                     <span style={{ marginLeft: '0.5em' }}>
                       Basket
@@ -179,7 +179,7 @@ export function ResultTable(props) {
               {
                 label: (
                   <>
-                    <IconAlt fa="file" />
+                    <IconAlt fa="files-o fa-fw" />
                     {' '}
                     <span style={{ marginLeft: '0.5em' }}>
                       My Data Sets
