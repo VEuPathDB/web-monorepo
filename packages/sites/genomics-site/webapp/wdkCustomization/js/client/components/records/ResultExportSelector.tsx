@@ -29,7 +29,7 @@ export function ResultExportSelector<T extends string>({
     ) {
       option.onSelect();
     }
-  }, [options]);
+  }, []);
 
   const styles = useMemo((): Partial<Styles<ExportOption<T>, false>> => ({
     container: (baseStyles) => ({
