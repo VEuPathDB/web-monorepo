@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Switch, Route, useRouteMatch, useLocation, Redirect } from 'react-router-dom';
 
@@ -42,6 +42,7 @@ interface SrtFormConfig extends BaseSrtFormConfig {
   defaultIdsState: string;
   initialReporterFormState: Record<string, string | number | boolean>;
   projectId: string;
+  updateSrtConfigsState?: any;
 }
 
 const SRT_QUESTION = 'SRT';
@@ -128,6 +129,45 @@ export function Srt() {
   const { pathname } = useLocation();
   const compatibleSrtConfigs = useCompatibleSrtFormConfigs();
   const [selectedSrtForm, setSelectedSrtForm] = useState<string>('');
+  const [srtConfigsState, setSrtConfigsState] = useState<any>();
+  const { paramValueStore } = useNonNullableContext(WdkDependenciesContext);
+
+  useEffect(() => {
+    if (!selectedSrtForm || !srtConfigsState) return;
+    paramValueStore.updateParamValues(`srt/${selectedSrtForm}`,
+      {
+        initialIdsState: srtConfigsState[selectedSrtForm].initialIdsState,
+        initialReporterFormState: JSON.stringify(srtConfigsState[selectedSrtForm].initialReporterFormState),
+      });
+  }, [srtConfigsState]);
+
+  const updateSrtConfigsState = useCallback(
+    (idsState, formState) => {
+      const newConfigsState = {
+        ...srtConfigsState,
+        [selectedSrtForm]: {
+          initialIdsState: idsState,
+          initialReporterFormState: formState,
+        }
+      };
+      setSrtConfigsState(newConfigsState);
+    },
+    [selectedSrtForm]);
+
+  useEffect(() => {
+    if (!compatibleSrtConfigs) return;
+    const configObject = {}
+    for (const config of compatibleSrtConfigs) {
+      Object.assign(configObject, {
+        ...configObject,
+        [config.recordClassUrlSegment]: {
+          initialIdsState: config.initialIdsState,
+          initialReporterFormState: config.initialReporterFormState
+        }
+      })
+    };
+    setSrtConfigsState(configObject);
+  }, [compatibleSrtConfigs]);
 
   useEffect(() => {
     if (compatibleSrtConfigs && compatibleSrtConfigs.length >= 1) {
@@ -176,9 +216,12 @@ export function Srt() {
                 <Route
                   path={routeBase.url + '/:recordType'}
                 > 
-                  {compatibleSrtConfigs.length && selectedSrtForm ? 
+                  {compatibleSrtConfigs.length && selectedSrtForm && srtConfigsState ?
                     <SrtForm
                       {...compatibleSrtConfigs.filter(config => config.recordClassUrlSegment === selectedSrtForm)[0]}
+                      updateSrtConfigsState={updateSrtConfigsState}
+                      initialReporterFormState={srtConfigsState[selectedSrtForm].initialReporterFormState}
+                      initialIdsState={srtConfigsState[selectedSrtForm].initialIdsState}
                     />
                     : null
                   }
@@ -200,38 +243,19 @@ function SrtForm({
   formActionUrl,
   recordClassUrlSegment,
   defaultIdsState,
-  defaultReporterFormState
+  defaultReporterFormState,
+  updateSrtConfigsState
 }: SrtFormConfig) {
   const [ idsState, setIdsState ] = useState(initialIdsState);
   const [ formState, updateFormState ] = useState(initialReporterFormState);
-  const { paramValueStore } = useNonNullableContext(WdkDependenciesContext);
-
-  const storedSrtData = usePromise(async () => {
-    try {
-      const storedFormDataState = await paramValueStore.fetchParamValues(`srt/${recordClassUrlSegment}`)
-      return storedFormDataState;
-    } catch (error) {
-      console.error(error);
-      return;
-    }
-  }, [recordClassUrlSegment]);
   
   useEffect(() => {
-    if (!storedSrtData.value) {
-      setIdsState(initialIdsState);
-      updateFormState(initialReporterFormState);
-    } else {
-      setIdsState(storedSrtData.value.initialIdsState);
-      updateFormState(JSON.parse(storedSrtData.value.initialReporterFormState));
-    }
-  }, [initialIdsState, initialReporterFormState, storedSrtData.value]);
+    setIdsState(initialIdsState);
+    updateFormState(initialReporterFormState);
+  }, [recordClassUrlSegment]);
 
   useEffect(() => {
-    paramValueStore?.updateParamValues(`srt/${recordClassUrlSegment}`,
-      {
-        initialIdsState: idsState,
-        initialReporterFormState: JSON.stringify(formState),
-      });
+    updateSrtConfigsState(idsState, formState);
   }, [idsState, formState]);
 
   function onReset() {
