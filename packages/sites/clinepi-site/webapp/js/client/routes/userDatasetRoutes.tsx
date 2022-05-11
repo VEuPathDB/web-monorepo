@@ -20,8 +20,8 @@ export const userDatasetRoutes: RouteEntry[] = [
         <UserDatasetRouter
           availableUploadTypes={availableUploadTypes}
           detailsPageTitle="My Data Set"
-          helpRoute="/help"
-          workspaceTitle="My Data"
+          helpRoute="/workspace/datasets/help"
+          workspaceTitle="My Studies"
           uploadTypeConfig={uploadTypeConfig}
         />
       </Suspense>
