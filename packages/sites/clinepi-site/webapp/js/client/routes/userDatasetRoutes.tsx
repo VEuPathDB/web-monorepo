@@ -9,7 +9,7 @@ import {
 
 const UserDatasetRouter = React.lazy(() => import('../controllers/UserDatasetRouter'));
 
-const availableUploadTypes = ['study'];
+const availableUploadTypes = ['isasimple'];
 
 export const userDatasetRoutes: RouteEntry[] = [
   {
