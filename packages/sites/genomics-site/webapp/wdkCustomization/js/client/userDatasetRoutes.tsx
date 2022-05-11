@@ -9,7 +9,7 @@ import {
 
 const UserDatasetRouter = React.lazy(() => import('./controllers/UserDatasetRouter'));
 
-const availableUploadTypes = ['gene-list'];
+const availableUploadTypes: string[] = [];
 
 export const userDatasetRoutes: RouteEntry[] = [
   {
