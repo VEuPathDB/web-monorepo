@@ -17,10 +17,10 @@ import { Main } from '@veupathdb/web-common/lib/components/homepage/Main';
 import { NewsPane } from '@veupathdb/web-common/lib/components/homepage/NewsPane';
 import { SearchPane, SearchCheckboxTree } from '@veupathdb/web-common/lib/components/homepage/SearchPane';
 import { combineClassNames, useAlphabetizedSearchTree } from '@veupathdb/web-common/lib/components/homepage/Utils';
+import { useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
 import { useAnnouncementsState } from '@veupathdb/web-common/lib/hooks/announcements';
-
 import { useCommunitySiteRootUrl } from '@veupathdb/web-common/lib/hooks/staticData';
-
+import { STATIC_ROUTE_PATH } from '@veupathdb/web-common/lib/routes';
 import { formatReleaseDate } from '@veupathdb/web-common/lib/util/formatters';
 
 import { PreferredOrganismsSummary } from '@veupathdb/preferred-organisms/lib/components/PreferredOrganismsSummary';
@@ -29,7 +29,6 @@ import { PageDescription } from './PageDescription';
 import { makeVpdbClassNameHelper } from './Utils';
 
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
-import { STATIC_ROUTE_PATH } from '@veupathdb/web-common/lib/routes';
 
 import './VEuPathDBHomePage.scss';
 
@@ -262,7 +261,8 @@ function makeExternalStaticPageUrl(communitySiteUrl: string | undefined, subPath
 
 type HeaderMenuItemEntry = HeaderMenuItem<{
   include?: string[],
-  exclude?: string[]
+  exclude?: string[],
+  test?: () => boolean
 }>;
 
 const useHeaderMenuItems = (
@@ -506,7 +506,10 @@ const useHeaderMenuItems = (
           type: 'reactRoute',
           url: '/workspace/datasets',
           metadata: {
-            exclude: [ EuPathDB ]
+            exclude: [ EuPathDB ],
+            test: () => Boolean(
+              useUserDatasetsWorkspace
+            ),
           }
         },
         {   
@@ -948,6 +951,9 @@ const filterMenuItemEntry = (
       ) ||
       ( 
         projectId != null && menuItemEntry.metadata.exclude && menuItemEntry.metadata.exclude.includes(projectId)
+      ) ||
+      (
+        menuItemEntry.metadata.test?.() === false
       )
     )
   ) 

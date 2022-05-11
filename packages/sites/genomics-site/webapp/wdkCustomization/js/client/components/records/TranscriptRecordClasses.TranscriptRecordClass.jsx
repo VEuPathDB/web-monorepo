@@ -1,8 +1,11 @@
 import { get } from 'lodash';
-import React, { useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { connect } from 'react-redux';
 
+import { IconAlt, Link } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkServiceWithRefresh } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+
+import { rootUrl, useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
 
 import {
   isTranscripFilterEnabled,
@@ -84,9 +87,58 @@ const ConnectedTranscriptViewFilter = connect(
 )(TranscriptViewFilter);
 
 export function ResultTable(props) {
+  const geneListExportUrl = useMemo(() => {
+    if (
+      !useUserDatasetsWorkspace ||
+      props.resultType.type !== 'step'
+    ) {
+      return undefined;
+    }
+
+    const step = props.resultType.step;
+
+    const resultWorkspaceUrl =
+     `${window.location.origin}${rootUrl}/workspace/strategies/${step.strategyId}/${step.id}`;
+
+    const urlParams = new URLSearchParams({
+      useFixedUploadMethod: 'true',
+      datasetStepId: String(step.id),
+      datasetName: props.resultType.step.customName,
+      datasetSummary: `Genes from result "${props.resultType.step.customName}"`,
+      datasetDescription: `Uploaded from ${resultWorkspaceUrl}`
+    });
+
+    return `/workspace/datasets/new?${urlParams.toString()}`;
+  }, [props.resultType]);
+
+  const renderToolbarContent = useCallback(({
+    addColumnsNode,
+    addToBasketNode,
+    downloadLinkNode,
+  }) => (
+      <>
+        {downloadLinkNode}
+        {addToBasketNode}
+        {
+          geneListExportUrl != null &&
+          <div className="ResultTableButton">
+            <Link className="btn" to={geneListExportUrl}>
+              <IconAlt fa="plus"/> Add To My Data
+            </Link>
+          </div>
+        }
+        {addColumnsNode}
+      </>
+    ),
+    [geneListExportUrl]
+  );
+
   return <React.Fragment>
     <ConnectedTranscriptViewFilter {...props}/>
-    <props.DefaultComponent {...props}/>
+    <props.DefaultComponent
+      {...props}
+      renderToolbarContent={renderToolbarContent}
+    />
   </React.Fragment>
 }
 
