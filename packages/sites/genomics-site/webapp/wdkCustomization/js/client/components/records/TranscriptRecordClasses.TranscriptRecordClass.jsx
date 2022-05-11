@@ -91,17 +91,19 @@ const ConnectedTranscriptViewFilter = connect(
 )(TranscriptViewFilter);
 
 export function ResultTable(props) {
-  const isGuest = useWdkService(
-    async (service) => (await service.getCurrentUser()).isGuest,
+  const exportStatus = useWdkService(
+    async (service) => {
+      const { isGuest } = await service.getCurrentUser();
+
+      return isGuest
+        ? { available: true }
+        : {
+            available: false,
+            reason: 'You must be logged in to use this feature.'
+          };
+    },
     []
   );
-
-  const exportStatus = isGuest === false
-    ? { available: true }
-    : {
-        available: false,
-        reason: 'You must be logged in to use this feature.'
-      };
 
   const dispatch = useDispatch();
 
