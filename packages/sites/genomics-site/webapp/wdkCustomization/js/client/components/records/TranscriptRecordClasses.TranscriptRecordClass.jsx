@@ -197,7 +197,7 @@ export function ResultTable(props) {
     ],
     [onSelectBasketExport, onSelectGeneListExport]
   );
-  
+
   const renderToolbarContent = useCallback(({
     addColumnsNode,
     downloadLinkNode,
