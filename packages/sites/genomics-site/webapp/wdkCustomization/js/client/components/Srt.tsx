@@ -2,10 +2,11 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Switch, Route, useRouteMatch, useLocation, Redirect } from 'react-router-dom';
 
-import { noop, zipWith } from 'lodash';
+import { noop, zipWith, isEqual } from 'lodash';
 
 import { projectId } from '@veupathdb/web-common/lib/config';
 import { TextArea, Loading, HelpIcon, Link } from '@veupathdb/wdk-client/lib/Components';
+import { ResetFormButton } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
@@ -265,7 +266,11 @@ function SrtForm({
 
   return (
     <form action={formActionUrl} method="post" target="_blank">
-      <button className="btn" type="button" onClick={onReset}>Reset values to default</button>
+      <ResetFormButton
+        disabled={isEqual(defaultIdsState, initialIdsState) && isEqual(defaultReporterFormState, initialReporterFormState)}
+        onResetForm={onReset}
+        resetFormContent={<><i className="fa fa-refresh"></i>Reset to default</>}
+      />
       <input type="hidden" name="project_id" value={projectId} />
       <input type="hidden" name="downloadType" value={String(formState.attachmentType)} />
       <h3 className={cx('--IdsHeader')} >
