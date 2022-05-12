@@ -10,14 +10,13 @@ import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDepen
 import { useWdkServiceWithRefresh, useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 
-import { endpoint, rootUrl, useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
-
 import {
   isTranscripFilterEnabled,
   requestTranscriptFilterUpdate
 } from '../../util/transcriptFilters';
 
 import { ResultExportSelector } from './ResultExportSelector';
+import { makeGeneListExportUrl } from './gene-list-export-utils';
 
 // --------------
 // GeneRecordLink
@@ -266,37 +265,4 @@ function OrthologCount(props) {
       }
     </React.Fragment>
   );
-}
-
-async function makeGeneListExportUrl(
-  wdkService,
-  step
-) {
-  const temporaryResultPath = await wdkService.getTemporaryResultPath(
-    step.id,
-    'attributesTabular',
-    {
-      attributes: ['primary_key'],
-      includeHeader: false,
-      attachmentType: 'plain',
-      applyFilter: true,
-    }
-  );
-
-  const temporaryResultUrl =
-    `${window.location.origin}${endpoint}${temporaryResultPath}`;
-
-  const resultWorkspaceUrl =
-   `${window.location.origin}${rootUrl}/workspace/strategies/${step.strategyId}/${step.id}`;
-
-  const urlParams = new URLSearchParams({
-    useFixedUploadMethod: 'true',
-    datasetUrl: temporaryResultUrl,
-    datasetSource: `Result "${step.customName}"`,
-    datasetName: step.customName,
-    datasetSummary: `Genes from result "${step.customName}"`,
-    datasetDescription: `Uploaded from ${resultWorkspaceUrl}`
-  });
-
-  return `/workspace/datasets/new?${urlParams.toString()}`;
 }
