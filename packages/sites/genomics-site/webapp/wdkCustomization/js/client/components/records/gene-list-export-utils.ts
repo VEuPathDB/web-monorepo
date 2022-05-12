@@ -1,7 +1,64 @@
+import { useMemo } from 'react';
+
+import { useDispatch } from 'react-redux';
+
+import { requestAddStepToBasket } from '@veupathdb/wdk-client/lib/Actions/BasketActions';
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
+import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
+import { ResultType } from '@veupathdb/wdk-client/lib/Utils/WdkResult';
 import { Step } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 import { endpoint, rootUrl } from '@veupathdb/web-common/lib/config';
+import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { useHistory } from 'react-router-dom';
+
+export function useSendToBasketConfig(
+  resultType: ResultType
+) {
+  const dispatch = useDispatch();
+
+  return useMemo(() => {
+    if (resultType.type !== 'step') {
+      return undefined;
+    }
+
+    return {
+      onSelectionTask: Task.of(
+        requestAddStepToBasket(
+          resultType.step.id
+        )
+      ),
+      onSelectionFulfillment: dispatch
+    };
+  }, [dispatch, resultType]);
+}
+
+export function useSendToGeneListUserDatasetConfig(
+  resultType: ResultType
+) {
+  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
+
+  const history = useHistory();
+
+  return useMemo(() => {
+    if (resultType.type !== 'step') {
+      return undefined;
+    }
+
+    return {
+      onSelectionTask: Task.fromPromise(
+        () => makeGeneListUserDatasetExportUrl(
+          wdkService,
+          resultType.step
+        )
+      ),
+      onSelectionFulfillment: (geneListExportUrl: string) => {
+        history.push(geneListExportUrl);
+      },
+    };
+  }, [resultType, wdkService, history]);
+}
 
 export async function makeGeneListUserDatasetExportUrl(
   wdkService: WdkService,

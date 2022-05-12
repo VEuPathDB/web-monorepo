@@ -1,14 +1,9 @@
 import { get } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
-import { connect, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { connect } from 'react-redux';
 
-import { requestAddStepToBasket } from '@veupathdb/wdk-client/lib/Actions/BasketActions';
 import { IconAlt } from '@veupathdb/wdk-client/lib/Components';
-import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
-import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useWdkServiceWithRefresh, useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 
 import {
   isTranscripFilterEnabled,
@@ -16,7 +11,7 @@ import {
 } from '../../util/transcriptFilters';
 
 import { ResultExportSelector } from './ResultExportSelector';
-import { makeGeneListUserDatasetExportUrl } from './gene-list-export-utils';
+import { useSendToBasketConfig, useSendToGeneListUserDatasetConfig } from './gene-list-export-utils';
 
 // --------------
 // GeneRecordLink
@@ -107,44 +102,9 @@ export function ResultTable(props) {
     []
   );
 
-  const dispatch = useDispatch();
+  const onSelectBasketExportConfig = useSendToBasketConfig(props.resultType);
 
-  const onSelectBasketExportConfig = useMemo(() => {
-    if (props.resultType.type !== 'step') {
-      return undefined;
-    }
-
-    return {
-      onSelectionTask: Task.of(
-        requestAddStepToBasket(
-          props.resultType.step.id
-        )
-      ),
-      onSelectionFulfillment: dispatch
-    };
-  }, [dispatch, props.resultType]);
-
-  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
-
-  const history = useHistory();
-
-  const onSelectGeneListExportConfig = useMemo(() => {
-    if (props.resultType.type !== 'step') {
-      return undefined;
-    }
-
-    return {
-      onSelectionTask: Task.fromPromise(
-        () => makeGeneListUserDatasetExportUrl(
-          wdkService,
-          props.resultType.step
-        )
-      ),
-      onSelectionFulfillment: (geneListExportUrl) => {
-        history.push(geneListExportUrl);
-      },
-    };
-  }, [props.resultType, wdkService, history]);
+  const onSelectGeneListExportConfig = useSendToGeneListUserDatasetConfig(props.resultType);
 
   const exportOptions = useMemo(
     () => [
