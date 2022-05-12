@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import Select, { ActionMeta, Styles, ValueType } from 'react-select';
+import Select, { ActionMeta, Styles, ValueType, mergeStyles } from 'react-select';
 
 import { IconAlt } from '@veupathdb/wdk-client/lib/Components';
 import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
@@ -16,11 +16,13 @@ export interface ExportOption<T extends string, S, E> {
 export interface Props<T extends string, S, E> {
   isDisabled?: boolean;
   options: ExportOption<T, S, E>[];
+  styleOverrides: Partial<Styles<ExportOption<T, S, E>, false>>;
 }
 
 export function ResultExportSelector<T extends string, S, E>({
   isDisabled = false,
   options,
+  styleOverrides
 }: Props<T, S, E>) {
   const [ selectedOption, setSelectedOption ] = useState<ExportOption<T, S, E>>();
 
@@ -45,7 +47,34 @@ export function ResultExportSelector<T extends string, S, E>({
       );
   }, [selectedOption]);
 
-  const styles = useMemo((): Partial<Styles<ExportOption<T, S, E>, false>> => ({
+  const styles = useStyles(styleOverrides);
+
+  return (
+    <Select
+      styles={styles}
+      options={options}
+      value={null}
+      onChange={onChange}
+      placeholder={
+        <>
+          <IconAlt fa="upload" className="button" />
+          {' '}
+          <span style={{ marginLeft: '0.5em' }}>
+            Send to...
+          </span>
+        </>
+      }
+      isDisabled={isDisabled}
+      controlShouldRenderValue={false}
+      isSearchable={false}
+    />
+  );
+}
+
+function useStyles<T extends string, S, E>(
+  styleOverrides: Partial<Styles<ExportOption<T, S, E>, false>>
+) {
+  const defaultStyles = useMemo((): Partial<Styles<ExportOption<T, S, E>, false>> => ({
     container: (baseStyles) => ({
       ...baseStyles,
       width: '13em',
@@ -76,24 +105,11 @@ export function ResultExportSelector<T extends string, S, E>({
     }),
   }), []);
 
-  return (
-    <Select
-      styles={styles}
-      options={options}
-      value={null}
-      onChange={onChange}
-      placeholder={
-        <>
-          <IconAlt fa="upload" className="button" />
-          {' '}
-          <span style={{ marginLeft: '0.5em' }}>
-            Send to...
-          </span>
-        </>
-      }
-      isDisabled={isDisabled}
-      controlShouldRenderValue={false}
-      isSearchable={false}
-    />
+  return useMemo(
+    () => mergeStyles(
+      defaultStyles,
+      styleOverrides
+    ),
+    [defaultStyles, styleOverrides]
   );
 }
