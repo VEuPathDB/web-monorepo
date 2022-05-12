@@ -247,7 +247,7 @@ interface ResetFormButtonProps {
   resetFormContent: React.ReactNode;
 }
 
-function ResetFormButton({
+export function ResetFormButton({
   disabled,
   onResetForm,
   resetFormContent
