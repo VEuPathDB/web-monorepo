@@ -113,18 +113,21 @@ export function ResultTable(props) {
       <>
         {downloadLinkNode}
         {addColumnsNode}
-        <span
-          title={
-            exportStatus?.available
-              ? undefined
-              : exportStatus?.reason
-          }
-        >
-          <ResultExportSelector
-            isDisabled={!exportStatus?.available}
-            options={exportOptions}
-          />
-        </span>
+        {
+          exportOptions.length > 0 &&
+          <span
+            title={
+              exportStatus?.available
+                ? undefined
+                : exportStatus?.reason
+            }
+          >
+            <ResultExportSelector
+              isDisabled={!exportStatus?.available}
+              options={exportOptions}
+            />
+          </span>
+        }
       </>
     ),
     [exportOptions, exportStatus]
