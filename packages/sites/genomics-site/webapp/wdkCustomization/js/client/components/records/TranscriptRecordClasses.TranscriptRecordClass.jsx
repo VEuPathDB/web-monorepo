@@ -5,9 +5,12 @@ import { useHistory } from 'react-router-dom';
 
 import { requestAddStepToBasket } from '@veupathdb/wdk-client/lib/Actions/BasketActions';
 import { IconAlt } from '@veupathdb/wdk-client/lib/Components';
+import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useWdkServiceWithRefresh, useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 
-import { rootUrl, useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
+import { endpoint, rootUrl, useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
 
 import {
   isTranscripFilterEnabled,
@@ -92,10 +95,10 @@ const ConnectedTranscriptViewFilter = connect(
 
 export function ResultTable(props) {
   const exportStatus = useWdkService(
-    async (service) => {
-      const { isGuest } = await service.getCurrentUser();
+    async (wdkService) => {
+      const { isGuest } = await wdkService.getCurrentUser();
 
-      return isGuest
+      return !isGuest
         ? { available: true }
         : {
             available: false,
@@ -107,57 +110,47 @@ export function ResultTable(props) {
 
   const dispatch = useDispatch();
 
-  const onSelectBasketExport = useMemo(() => {
+  const onSelectBasketExportConfig = useMemo(() => {
     if (props.resultType.type !== 'step') {
       return undefined;
     }
 
-    return () => {
-      dispatch(requestAddStepToBasket(props.resultType.step.id));
+    return {
+      onSelectionTask: Task.of(
+        requestAddStepToBasket(
+          props.resultType.step.id
+        )
+      ),
+      onSelectionFulfillment: dispatch
     };
   }, [dispatch, props.resultType]);
 
-  const geneListExportUrl = useMemo(() => {
-    if (
-      !useUserDatasetsWorkspace ||
-      props.resultType.type !== 'step'
-    ) {
-      return undefined;
-    }
-
-    const step = props.resultType.step;
-
-    const resultWorkspaceUrl =
-     `${window.location.origin}${rootUrl}/workspace/strategies/${step.strategyId}/${step.id}`;
-
-    const urlParams = new URLSearchParams({
-      useFixedUploadMethod: 'true',
-      datasetStepId: String(step.id),
-      datasetSource: `Result "${props.resultType.step.customName}"`,
-      datasetName: props.resultType.step.customName,
-      datasetSummary: `Genes from result "${props.resultType.step.customName}"`,
-      datasetDescription: `Uploaded from ${resultWorkspaceUrl}`
-    });
-
-    return `/workspace/datasets/new?${urlParams.toString()}`;
-  }, [props.resultType]);
+  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
 
   const history = useHistory();
 
-  const onSelectGeneListExport = useMemo(() => {
-    if (geneListExportUrl == null) {
+  const onSelectGeneListExportConfig = useMemo(() => {
+    if (props.resultType.type !== 'step') {
       return undefined;
     }
 
-    return () => {
-      history.push(geneListExportUrl);
+    return {
+      onSelectionTask: Task.fromPromise(
+        () => makeGeneListExportUrl(
+          wdkService,
+          props.resultType.step
+        )
+      ),
+      onSelectionFulfillment: (geneListExportUrl) => {
+        history.push(geneListExportUrl);
+      },
     };
-  }, [geneListExportUrl, history]);
+  }, [props.resultType, wdkService, history]);
 
   const exportOptions = useMemo(
     () => [
       ...(
-        onSelectBasketExport
+        onSelectBasketExportConfig
           ? [
               {
                 label: (
@@ -170,13 +163,13 @@ export function ResultTable(props) {
                   </>
                 ),
                 value: 'basket',
-                onSelect: onSelectBasketExport,
+                ...onSelectBasketExportConfig,
               }
             ]
           : []
       ),
       ...(
-        onSelectGeneListExport
+        onSelectGeneListExportConfig
           ? [
               {
                 label: (
@@ -189,13 +182,13 @@ export function ResultTable(props) {
                   </>
                 ),
                 value: 'my-data-sets',
-                onSelect: onSelectGeneListExport,
+                ...onSelectGeneListExportConfig
               }
             ]
           : []
       )
     ],
-    [onSelectBasketExport, onSelectGeneListExport]
+    [onSelectBasketExportConfig, onSelectGeneListExportConfig]
   );
 
   const renderToolbarContent = useCallback(({
@@ -207,13 +200,13 @@ export function ResultTable(props) {
         {addColumnsNode}
         <span
           title={
-            exportStatus.available
+            exportStatus?.available
               ? undefined
-              : exportStatus.reason
+              : exportStatus?.reason
           }
         >
           <ResultExportSelector
-            isDisabled={!exportStatus.available}
+            isDisabled={!exportStatus?.available}
             options={exportOptions}
           />
         </span>
@@ -273,4 +266,37 @@ function OrthologCount(props) {
       }
     </React.Fragment>
   );
+}
+
+async function makeGeneListExportUrl(
+  wdkService,
+  step
+) {
+  const temporaryResultPath = await wdkService.getTemporaryResultPath(
+    step.id,
+    'attributesTabular',
+    {
+      attributes: ['primary_key'],
+      includeHeader: false,
+      attachmentType: 'plain',
+      applyFilter: true,
+    }
+  );
+
+  const temporaryResultUrl =
+    `${window.location.origin}${endpoint}${temporaryResultPath}`;
+
+  const resultWorkspaceUrl =
+   `${window.location.origin}${rootUrl}/workspace/strategies/${step.strategyId}/${step.id}`;
+
+  const urlParams = new URLSearchParams({
+    useFixedUploadMethod: 'true',
+    datasetUrl: temporaryResultUrl,
+    datasetSource: `Result "${step.customName}"`,
+    datasetName: step.customName,
+    datasetSummary: `Genes from result "${step.customName}"`,
+    datasetDescription: `Uploaded from ${resultWorkspaceUrl}`
+  });
+
+  return `/workspace/datasets/new?${urlParams.toString()}`;
 }

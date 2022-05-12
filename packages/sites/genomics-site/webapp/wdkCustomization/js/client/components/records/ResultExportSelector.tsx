@@ -1,37 +1,51 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import Select, { ActionMeta, Styles, ValueType } from 'react-select';
 
 import { IconAlt } from '@veupathdb/wdk-client/lib/Components';
+import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 
-export interface ExportOption<T extends string> {
+export interface ExportOption<T extends string, S, E> {
   label: React.ReactNode;
   value: T;
-  onSelect: () => void;
+  onSelectionTask: Task<S, E>;
+  onSelectionFulfillment?: (selection: S) => void;
+  onSelectionError?: (error: E) => void;
 }
 
-export interface Props<T extends string> {
+export interface Props<T extends string, S, E> {
   isDisabled?: boolean;
-  options: ExportOption<T>[];
+  options: ExportOption<T, S, E>[];
 }
 
-export function ResultExportSelector<T extends string>({
+export function ResultExportSelector<T extends string, S, E>({
   isDisabled = false,
   options,
-}: Props<T>) {
+}: Props<T, S, E>) {
+  const [ selectedOption, setSelectedOption ] = useState<ExportOption<T, S, E>>();
+
   const onChange = useCallback((
-    option: ValueType<ExportOption<T>, false>,
-    { action }: ActionMeta<ExportOption<T>>
+    option: ValueType<ExportOption<T, S, E>, false>,
+    { action }: ActionMeta<ExportOption<T, S, E>>
   ) => {
     if (
       option != null &&
       action === 'select-option'
     ) {
-      option.onSelect();
+      setSelectedOption(option);
     }
   }, []);
 
-  const styles = useMemo((): Partial<Styles<ExportOption<T>, false>> => ({
+  useEffect(() => {
+    return selectedOption
+      ?.onSelectionTask
+      .run(
+        selectedOption.onSelectionFulfillment,
+        selectedOption.onSelectionError
+      );
+  }, [selectedOption]);
+
+  const styles = useMemo((): Partial<Styles<ExportOption<T, S, E>, false>> => ({
     container: (baseStyles) => ({
       ...baseStyles,
       width: '20em',
