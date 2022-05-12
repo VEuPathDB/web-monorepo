@@ -16,7 +16,7 @@ import {
 } from '../../util/transcriptFilters';
 
 import { ResultExportSelector } from './ResultExportSelector';
-import { makeGeneListExportUrl } from './gene-list-export-utils';
+import { makeGeneListUserDatasetExportUrl } from './gene-list-export-utils';
 
 // --------------
 // GeneRecordLink
@@ -135,7 +135,7 @@ export function ResultTable(props) {
 
     return {
       onSelectionTask: Task.fromPromise(
-        () => makeGeneListExportUrl(
+        () => makeGeneListUserDatasetExportUrl(
           wdkService,
           props.resultType.step
         )

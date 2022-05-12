@@ -3,7 +3,7 @@ import { Step } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 import { endpoint, rootUrl } from '@veupathdb/web-common/lib/config';
 
-export async function makeGeneListExportUrl(
+export async function makeGeneListUserDatasetExportUrl(
   wdkService: WdkService,
   step: Step
 ) {
