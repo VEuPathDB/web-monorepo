@@ -48,7 +48,7 @@ export function ResultExportSelector<T extends string, S, E>({
   const styles = useMemo((): Partial<Styles<ExportOption<T, S, E>, false>> => ({
     container: (baseStyles) => ({
       ...baseStyles,
-      width: '20em',
+      width: '13em',
       marginLeft: '3em',
       borderBottom: '2px bottom #999',
     }),
@@ -56,7 +56,7 @@ export function ResultExportSelector<T extends string, S, E>({
       ...baseStyles,
       ...(
         !placeholderProps.isDisabled
-          ? { color: 'black' }
+          ? { color: 'black', }
           : {}
       ),
     }),
@@ -66,7 +66,7 @@ export function ResultExportSelector<T extends string, S, E>({
       height: '35px',
       ...(
         !controlProps.isDisabled
-          ? { borderBottom: '2px solid #999' }
+          ? { borderBottom: '2px solid #999', }
           : {}
       ),
     }),
