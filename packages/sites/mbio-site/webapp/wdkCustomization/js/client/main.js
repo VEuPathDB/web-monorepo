@@ -1,4 +1,7 @@
+import { partial } from 'lodash';
+
 import { initialize } from '@veupathdb/web-common';
+import { wrapWdkDependencies } from '@veupathdb/study-data-access/lib/shared/wrapWdkDependencies';
 
 import '@veupathdb/web-common/lib/styles/client.scss';
 
@@ -14,5 +17,6 @@ initialize({
   componentWrappers,
   wrapStoreModules,
   wrapWdkService,
+  wrapWdkDependencies: partial(wrapWdkDependencies, undefined),
   wrapRoutes,
 })
