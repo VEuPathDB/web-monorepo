@@ -7,12 +7,25 @@ import { requestAddStepToBasket } from '@veupathdb/wdk-client/lib/Actions/Basket
 import { IconAlt } from '@veupathdb/wdk-client/lib/Components';
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
-import { ResultType } from '@veupathdb/wdk-client/lib/Utils/WdkResult';
+import { ResultType, StepResultType } from '@veupathdb/wdk-client/lib/Utils/WdkResult';
 import { Step } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 import { endpoint, rootUrl } from '@veupathdb/web-common/lib/config';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+
+const SUPPORTED_RECORD_CLASS_URL_SEGMENTS = new Set([
+  'transcript'
+]);
+
+function isSupportedResult(resultType: ResultType): resultType is StepResultType {
+  return (
+    resultType.type === 'step' &&
+    SUPPORTED_RECORD_CLASS_URL_SEGMENTS.has(
+      resultType.step.recordClassName
+    )
+  );
+}
 
 export function useGeneListExportOptions(
   resultType: ResultType
@@ -70,20 +83,19 @@ export function useSendToBasketConfig(
 ) {
   const dispatch = useDispatch();
 
-  return useMemo(() => {
-    if (resultType.type !== 'step') {
-      return undefined;
-    }
-
-    return {
-      onSelectionTask: Task.of(
-        requestAddStepToBasket(
-          resultType.step.id
-        )
-      ),
-      onSelectionFulfillment: dispatch
-    };
-  }, [dispatch, resultType]);
+  return useMemo(
+    () => isSupportedResult(resultType)
+      ? ({
+          onSelectionTask: Task.of(
+            requestAddStepToBasket(
+              resultType.step.id
+            )
+          ),
+          onSelectionFulfillment: dispatch
+        })
+      : undefined,
+    [resultType, dispatch]
+  );
 }
 
 export function useSendToGeneListUserDatasetConfig(
@@ -93,23 +105,22 @@ export function useSendToGeneListUserDatasetConfig(
 
   const history = useHistory();
 
-  return useMemo(() => {
-    if (resultType.type !== 'step') {
-      return undefined;
-    }
-
-    return {
-      onSelectionTask: Task.fromPromise(
-        () => makeGeneListUserDatasetExportUrl(
-          wdkService,
-          resultType.step
-        )
-      ),
-      onSelectionFulfillment: (geneListExportUrl: string) => {
-        history.push(geneListExportUrl);
-      },
-    };
-  }, [resultType, wdkService, history]);
+  return useMemo(
+    () => isSupportedResult(resultType)
+      ? ({
+          onSelectionTask: Task.fromPromise(
+            () => makeGeneListUserDatasetExportUrl(
+              wdkService,
+              resultType.step
+            )
+          ),
+          onSelectionFulfillment: (geneListExportUrl: string) => {
+            history.push(geneListExportUrl);
+          },
+        })
+      : undefined,
+    [resultType, wdkService, history]
+  );
 }
 
 export async function makeGeneListUserDatasetExportUrl(
