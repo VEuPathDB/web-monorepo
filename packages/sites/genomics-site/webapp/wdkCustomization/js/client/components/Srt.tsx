@@ -6,7 +6,7 @@ import { noop, zipWith, isEqual } from 'lodash';
 
 import { projectId } from '@veupathdb/web-common/lib/config';
 import { TextArea, Loading, HelpIcon, Link } from '@veupathdb/wdk-client/lib/Components';
-import { ResetFormButton } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
+import { ResetFormButton } from '@veupathdb/wdk-client/lib/Components/Shared/ResetFormButton';
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
@@ -242,27 +242,22 @@ function SrtForm({
   idsInputHelp,
   projectId,
   formActionUrl,
-  recordClassUrlSegment,
   defaultIdsState,
   defaultReporterFormState,
   updateSrtConfigsState
 }: SrtFormConfig) {
-  const [ idsState, setIdsState ] = useState(initialIdsState);
-  const [ formState, updateFormState ] = useState(initialReporterFormState);
-  
-  useEffect(() => {
-    setIdsState(initialIdsState);
-    updateFormState(initialReporterFormState);
-  }, [recordClassUrlSegment]);
-
-  useEffect(() => {
-    updateSrtConfigsState(idsState, formState);
-  }, [idsState, formState]);
-
+    
   function onReset() {
-    updateFormState(defaultReporterFormState);
-    setIdsState(defaultIdsState);
+      updateSrtConfigsState(defaultIdsState, defaultReporterFormState);
   };
+
+  const updateIdsState = useCallback((newIdsState) => {
+    updateSrtConfigsState(newIdsState, initialReporterFormState);
+  }, [initialReporterFormState]);
+
+  const updateFormState = useCallback((newFormState) => {
+    updateSrtConfigsState(initialIdsState, newFormState);
+  }, [initialIdsState]);
 
   return (
     <form action={formActionUrl} method="post" target="_blank">
@@ -272,7 +267,7 @@ function SrtForm({
         resetFormContent={<><i className="fa fa-refresh"></i>Reset to default</>}
       />
       <input type="hidden" name="project_id" value={projectId} />
-      <input type="hidden" name="downloadType" value={String(formState.attachmentType)} />
+      <input type="hidden" name="downloadType" value={String(initialReporterFormState.attachmentType)} />
       <h3 className={cx('--IdsHeader')} >
         Enter a list of {display} (each ID on a separate line):
         {' '}
@@ -286,18 +281,18 @@ function SrtForm({
       <div className={cx('--IdsInput')} >
         <TextArea
           name="ids"
-          value={idsState}
-          onChange={setIdsState}
+          value={initialIdsState}
+          onChange={updateIdsState}
           rows={4}
           cols={60}
         />
       </div>
-      <ReporterForm
-        formState={formState}
-        updateFormState={updateFormState}
-        onSubmit={noop}
-        includeSubmit
-      />
+        <ReporterForm
+          formState={initialReporterFormState}
+          updateFormState={updateFormState}
+          onSubmit={noop}
+          includeSubmit
+        />
     </form>
   );
 }
