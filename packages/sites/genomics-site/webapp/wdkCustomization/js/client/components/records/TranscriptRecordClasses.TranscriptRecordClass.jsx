@@ -1,9 +1,11 @@
 import { get } from 'lodash';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
 
-import { IconAlt } from '@veupathdb/wdk-client/lib/Components';
-import { useWdkServiceWithRefresh, useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import {
+  useWdkServiceWithRefresh,
+  useWdkService,
+} from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 import {
   isTranscripFilterEnabled,
@@ -11,7 +13,7 @@ import {
 } from '../../util/transcriptFilters';
 
 import { ResultExportSelector } from './ResultExportSelector';
-import { useSendToBasketConfig, useSendToGeneListUserDatasetConfig } from './gene-list-export-utils';
+import { useGeneListExportOptions } from './gene-list-export-utils';
 
 // --------------
 // GeneRecordLink
@@ -102,53 +104,7 @@ export function ResultTable(props) {
     []
   );
 
-  const onSelectBasketExportConfig = useSendToBasketConfig(props.resultType);
-
-  const onSelectGeneListExportConfig = useSendToGeneListUserDatasetConfig(props.resultType);
-
-  const exportOptions = useMemo(
-    () => [
-      ...(
-        onSelectBasketExportConfig
-          ? [
-              {
-                label: (
-                  <>
-                    <IconAlt fa="shopping-basket fa-fw" />
-                    {' '}
-                    <span style={{ marginLeft: '0.5em' }}>
-                      Basket
-                    </span>
-                  </>
-                ),
-                value: 'basket',
-                ...onSelectBasketExportConfig,
-              }
-            ]
-          : []
-      ),
-      ...(
-        onSelectGeneListExportConfig
-          ? [
-              {
-                label: (
-                  <>
-                    <IconAlt fa="files-o fa-fw" />
-                    {' '}
-                    <span style={{ marginLeft: '0.5em' }}>
-                      My Data Sets
-                    </span>
-                  </>
-                ),
-                value: 'my-data-sets',
-                ...onSelectGeneListExportConfig
-              }
-            ]
-          : []
-      )
-    ],
-    [onSelectBasketExportConfig, onSelectGeneListExportConfig]
-  );
+  const exportOptions = useGeneListExportOptions(props.resultType);
 
   const renderToolbarContent = useCallback(({
     addColumnsNode,
