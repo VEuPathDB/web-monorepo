@@ -47,7 +47,7 @@ export function useProcessedGridData(
         };
       } else if (entity) {
         return {
-          Header: entity.displayName,
+          Header: `${entity.displayName} ID`,
           accessor: `${entity.id}/${columnID}`,
         };
       } else {
