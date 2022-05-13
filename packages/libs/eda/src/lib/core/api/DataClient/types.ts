@@ -600,6 +600,8 @@ export interface PieplotRequestParams {
       | 'allVariables'
       | 'strataVariables';
     xAxisVariable: VariableDescriptor;
+    latitudeVariable: VariableDescriptor;
+    longitudeVariable: VariableDescriptor;
     facetVariable?: ZeroToTwoVariables;
     valueSpec: 'count' | 'proportion';
     viewport: {

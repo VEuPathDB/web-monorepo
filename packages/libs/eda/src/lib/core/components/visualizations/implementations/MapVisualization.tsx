@@ -370,7 +370,9 @@ function MapViz(props: VisualizationProps) {
         boundsZoomLevel == null ||
         vizConfig.xAxisVariable == null ||
         geoAggregateVariable == null ||
-        outputEntity == null
+        outputEntity == null ||
+        latitudeVariable == undefined ||
+        longitudeVariable == undefined
       )
         return undefined;
 
@@ -386,6 +388,8 @@ function MapViz(props: VisualizationProps) {
         config: {
           outputEntityId: outputEntity.id,
           xAxisVariable: vizConfig.xAxisVariable,
+          latitudeVariable: latitudeVariable,
+          longitudeVariable: longitudeVariable,
           facetVariable: [geoAggregateVariable],
           showMissingness: 'noVariables', // current back end 'showMissing' behaviour applies to facet variable
           valueSpec: proportionMode ? 'proportion' : 'count',
