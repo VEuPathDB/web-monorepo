@@ -312,7 +312,9 @@ function UploadForm({
                       >
                         <FileInput
                           required={dataUploadMode === 'file'}
-                          disabled={dataUploadMode !== 'file'}
+                          disabled={
+                            dataUploadMode !== 'file' || useFixedUploadMethod
+                          }
                           onChange={(file) => {
                             setFile(file ?? undefined);
                           }}
@@ -337,7 +339,9 @@ function UploadForm({
                         placeholder="Address of a data file from the Web"
                         value={url}
                         required={dataUploadMode === 'url'}
-                        disabled={dataUploadMode !== 'url'}
+                        disabled={
+                          dataUploadMode !== 'url' || useFixedUploadMethod
+                        }
                         onChange={setUrl}
                       />
                     </React.Fragment>
