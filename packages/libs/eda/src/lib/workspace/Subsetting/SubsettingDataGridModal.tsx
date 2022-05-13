@@ -22,6 +22,7 @@ import { AnalysisState } from '../../core/hooks/analysis';
 import { StudyEntity, TabularDataResponse } from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
 import { APIError } from '../../core/api/types';
+import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
 import { gray } from '@veupathdb/coreui/dist/definitions/colors';
 
 // Hooks
@@ -54,6 +55,51 @@ type SubsettingDataGridProps = {
   toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
 };
 
+const NumberedHeader = (props: {
+  number: number;
+  text: string;
+  color?: string;
+}) => {
+  const color = props.color ?? 'black';
+  const height = 25;
+
+  return (
+    <div>
+      <div
+        style={{
+          display: 'inline-block',
+          width: height,
+          height: height,
+          lineHeight: height + 'px',
+          color: color,
+          border: '2px solid ' + color,
+          borderRadius: height,
+          fontSize: 18,
+          fontWeight: 'bold',
+          textAlign: 'center',
+          boxSizing: 'content-box',
+          userSelect: 'none',
+        }}
+      >
+        {props.number}
+      </div>
+      <div
+        style={{
+          display: 'inline-block',
+          marginLeft: 5,
+          height: height,
+          lineHeight: height + 'px',
+          color: color,
+          fontSize: 16,
+          fontWeight: 'bold',
+        }}
+      >
+        {props.text}
+      </div>
+    </div>
+  );
+};
+
 /**
  * Displays a modal through with the user can:
  * 1. Select entity/variable data for display in a tabular format.
@@ -69,6 +115,9 @@ export default function SubsettingDataGridModal({
   starredVariables,
   toggleStarredVariable,
 }: SubsettingDataGridProps) {
+  const theme = useUITheme();
+  const primaryColor = theme?.palette.primary.hue[theme.palette.primary.level];
+
   const {
     observe: observeEntityDescription,
     width: entityDescriptionWidth,
@@ -107,7 +156,7 @@ export default function SubsettingDataGridModal({
   const [apiError, setApiError] = useState<APIError | null>(null);
 
   // Whether or not to display the variable tree.
-  const [displayVariableTree, setDisplayVariableTree] = useState(false);
+  const [tableIsExpanded, setTableIsExpanded] = useState(false);
 
   // Internal storage of currently loaded data from API.
   const [gridData, setGridData] = useState<TabularDataResponse | null>(null);
@@ -142,7 +191,7 @@ export default function SubsettingDataGridModal({
   /** Actions to take when modal is closed. */
   const onModalClose = useCallback(() => {
     setGridData(null);
-    setDisplayVariableTree(false);
+    setTableIsExpanded(false);
   }, []);
 
   const fetchPaginatedData = useCallback(
@@ -225,7 +274,29 @@ export default function SubsettingDataGridModal({
   // Render the table data or instructions on how to get started.
   const renderDataGridArea = () => {
     return (
-      <div>
+      <div style={{ width: '100%' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            marginBottom: 30,
+          }}
+        >
+          {!tableIsExpanded && (
+            <NumberedHeader
+              number={2}
+              text={'View table and download'}
+              color={primaryColor}
+            />
+          )}
+          <MesaButton
+            text="Download"
+            icon={Download}
+            onPress={downloadData}
+            themeRole="primary"
+            textTransform="capitalize"
+          />
+        </div>
         {gridData ? (
           <DataGrid
             columns={gridColumns}
@@ -275,75 +346,82 @@ export default function SubsettingDataGridModal({
         : 'An unexpected error occurred while trying to retrieve the requested data.'
       : null;
 
-    if ((displayVariableTree || errorMessage) && currentEntity) {
+    if ((!tableIsExpanded || errorMessage) && currentEntity) {
       return (
-        <div
-          style={{
-            position: 'absolute',
-            width: 425,
-            left: entityDescriptionWidth + 195,
-            top: -54,
-            backgroundColor: 'rgba(255, 255, 255, 1)',
-            border: '2px solid rgb(200, 200, 200)',
-            borderRadius: '.5em',
-            boxShadow: '0px 0px 6px rgba(0, 0, 0, .25)',
-            zIndex: '2',
-          }}
-        >
-          {errorMessage && (
-            <div
-              style={{
-                borderColor: '#d32323',
-                backgroundColor: '#d32323',
-                borderRadius: 5,
-                borderWidth: 2,
-                borderStyle: 'solid',
-                display: 'flex',
-                alignItems: 'center',
-              }}
-            >
-              <H5
-                text="Error"
-                textTransform="uppercase"
-                color="white"
-                additionalStyles={{
-                  margin: 0,
-                  paddingLeft: 10,
-                  paddingRight: 10,
-                  fontSize: 12,
-                  fontWeight: 600,
-                }}
+        <div>
+          <div style={{ marginBottom: 30 }}>
+            {!tableIsExpanded && (
+              <NumberedHeader
+                number={1}
+                text={'Choose variables'}
+                color={primaryColor}
               />
-              <H5
-                text={errorMessage}
-                color="#d32323"
-                additionalStyles={{
-                  flex: 1,
-                  fontSize: 14,
-                  padding: 5,
-                  paddingLeft: 10,
-                  backgroundColor: 'white',
-                }}
-              />
-            </div>
-          )}
+            )}
+          </div>
           <div
             style={{
-              height: '60vh',
+              // position: 'absolute',
+              width: 400,
+              // left: entityDescriptionWidth + 195,
+              // top: -54,
+              backgroundColor: 'rgba(255, 255, 255, 1)',
+              border: '2px solid rgb(200, 200, 200)',
+              borderRadius: '.5em',
+              boxShadow: '0px 0px 6px rgba(0, 0, 0, .25)',
+              // zIndex: '2',
             }}
           >
-            <MultiSelectVariableTree
-              // NOTE: We are purposely removing all child entities here because
-              // we only want a user to be able to select variables from a single
-              // entity at a time.
-              rootEntity={{ ...currentEntity, children: [] }}
-              scope="download"
-              selectedVariableDescriptors={selectedVariableDescriptors}
-              starredVariableDescriptors={scopedStarredVariables}
-              featuredFields={scopedFeaturedFields}
-              onSelectedVariablesChange={handleSelectedVariablesChange}
-              toggleStarredVariable={toggleStarredVariable}
-            />
+            {errorMessage && (
+              <div
+                style={{
+                  borderColor: '#d32323',
+                  backgroundColor: '#d32323',
+                  borderRadius: 5,
+                  borderWidth: 2,
+                  borderStyle: 'solid',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <H5
+                  text="Error"
+                  textTransform="uppercase"
+                  color="white"
+                  additionalStyles={{
+                    margin: 0,
+                    paddingLeft: 10,
+                    paddingRight: 10,
+                    fontSize: 12,
+                    fontWeight: 600,
+                  }}
+                />
+                <H5
+                  text={errorMessage}
+                  color="#d32323"
+                  additionalStyles={{
+                    flex: 1,
+                    fontSize: 14,
+                    padding: 5,
+                    paddingLeft: 10,
+                    backgroundColor: 'white',
+                  }}
+                />
+              </div>
+            )}
+            <div style={{ height: '60vh' }}>
+              <MultiSelectVariableTree
+                // NOTE: We are purposely removing all child entities here because
+                // we only want a user to be able to select variables from a single
+                // entity at a time.
+                rootEntity={{ ...currentEntity, children: [] }}
+                scope="download"
+                selectedVariableDescriptors={selectedVariableDescriptors}
+                starredVariableDescriptors={scopedStarredVariables}
+                featuredFields={scopedFeaturedFields}
+                onSelectedVariablesChange={handleSelectedVariablesChange}
+                toggleStarredVariable={toggleStarredVariable}
+              />
+            </div>
           </div>
         </div>
       );
@@ -414,35 +492,28 @@ export default function SubsettingDataGridModal({
               )}
           </div>
           <OutlinedButton
-            text={displayVariableTree ? 'Close Selector' : 'Add Columns'}
+            text={tableIsExpanded ? 'Shrink table' : 'Expand table'}
             // @ts-ignore
-            icon={displayVariableTree ? CloseFullscreen : SettingsIcon}
+            // icon={displayVariableTree ? CloseFullscreen : SettingsIcon}
             size="medium"
-            onPress={() => setDisplayVariableTree(!displayVariableTree)}
+            onPress={() => setTableIsExpanded(!tableIsExpanded)}
             styleOverrides={{ container: { width: 155 } }}
             themeRole="primary"
             textTransform="capitalize"
           />
         </div>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            marginBottom: 15,
-          }}
-        >
-          <MesaButton
-            text="Download"
-            icon={Download}
-            onPress={downloadData}
-            themeRole="primary"
-            textTransform="capitalize"
-          />
-        </div>
       </div>
-      <div style={{ position: 'relative' }}>
-        {renderDataGridArea()}
+      <div
+        style={{
+          position: 'relative',
+          display: 'flex',
+          flexDirection: 'row',
+          gap: 50,
+          marginTop: 15,
+        }}
+      >
         {renderVariableSelectionArea()}
+        {renderDataGridArea()}
       </div>
     </Modal>
   );
