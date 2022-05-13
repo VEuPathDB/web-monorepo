@@ -16,7 +16,8 @@ import {
 import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
 import Error from 'wdk-client/Components/PageStatus/Error';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
-import { Props as FormProps, ResetFormConfig } from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { Props as FormProps } from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { ResetFormConfig } from 'wdk-client/Components/Shared/ResetFormButton';
 import { GlobalData } from 'wdk-client/StoreModules/GlobalData';
 import { ParameterValues, RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 
