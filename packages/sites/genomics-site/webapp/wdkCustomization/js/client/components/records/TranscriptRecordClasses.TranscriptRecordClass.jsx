@@ -112,7 +112,6 @@ export function ResultTable(props) {
   }) => (
       <>
         {downloadLinkNode}
-        {addColumnsNode}
         {
           exportOptions.length > 0 &&
           <span
@@ -128,6 +127,7 @@ export function ResultTable(props) {
             />
           </span>
         }
+        {addColumnsNode}
       </>
     ),
     [exportOptions, exportStatus]

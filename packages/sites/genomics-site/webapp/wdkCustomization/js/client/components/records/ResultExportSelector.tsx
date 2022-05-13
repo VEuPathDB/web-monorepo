@@ -57,7 +57,7 @@ export function ResultExportSelector<T extends string, S, E>({
       onChange={onChange}
       placeholder={
         <>
-          <IconAlt fa="upload" className="button" />
+          <IconAlt fa="arrow-up" className="button" />
           {' '}
           <span style={{ marginLeft: '0.5em' }}>
             Send to...
@@ -77,31 +77,53 @@ function useStyles<T extends string, S, E>(
   const defaultStyles = useMemo((): Partial<Styles<ExportOption<T, S, E>, false>> => ({
     container: (baseStyles) => ({
       ...baseStyles,
+      margin: '0 calc(1em + 5px)',
       width: '13em',
-      marginLeft: '3em',
-      borderBottom: '2px bottom #999',
     }),
     placeholder: (baseStyles, placeholderProps) => ({
       ...baseStyles,
+      '> i': {
+        fontSize: '1.2em',
+        color: '#3e3e3e',
+        marginRight: '2px',
+      },
       ...(
         !placeholderProps.isDisabled
-          ? { color: 'black', }
+          ? {
+              color: '#3e3e3e',
+            }
           : {}
       ),
     }),
     control: (baseStyles, controlProps) => ({
       ...baseStyles,
-      minHeight: '35px',
-      height: '35px',
+      minHeight: '33.5px',
+      height: '33.5px',
       ...(
         !controlProps.isDisabled
-          ? { borderBottom: '2px solid #999', }
-          : {}
+          ? {
+              backgroundColor: '#f5f5f7',
+              border: '0.5px solid rgba(0, 0, 0, 0.1)',
+              borderBottom: '3px solid #999',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              marginTop: '4px',
+              '&:hover': {
+                backgroundColor: '#f0f0f2',
+                transform: 'scale(0.98)',
+                WebkitTransform: 'scale(0.98)',
+                boxShadow: '0 2px 5px rgb(0 0 0 / 5%)',
+              }
+            }
+          : {
+              cursor: 'not-allowed',
+            }
       ),
     }),
     dropdownIndicator: (baseStyles) => ({
       ...baseStyles,
       padding: '0 8px',
+      color: '#3e3e3e',
     }),
   }), []);
 
