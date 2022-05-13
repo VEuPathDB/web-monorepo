@@ -9,6 +9,7 @@ import {
   updateQuestionWeight
 } from 'wdk-client/Actions/QuestionActions';
 import { HelpIcon, IconAlt, Link } from 'wdk-client/Components';
+import { ResetFormButton, ResetFormConfig } from 'wdk-client/Components/Shared/ResetFormButton';
 import { DispatchAction } from 'wdk-client/Core/CommonTypes';
 import { QuestionState, QuestionWithMappedParameters } from 'wdk-client/StoreModules/QuestionStoreModule';
 import { makeClassNameHelper, safeHtml } from 'wdk-client/Utils/ComponentUtils';
@@ -235,33 +236,6 @@ export function QuestionHeader(props: QuestionHeaderProps) {
       </div>
     )
     : <></>;
-}
-
-export type ResetFormConfig =
-  | { offered: false }
-  | { disabled: boolean, offered: true } & ResetFormButtonProps;
-
-interface ResetFormButtonProps {
-  disabled?: boolean;
-  onResetForm: () => void;
-  resetFormContent: React.ReactNode;
-}
-
-export function ResetFormButton({
-  disabled,
-  onResetForm,
-  resetFormContent
-}: ResetFormButtonProps) {
-  return (
-    <button
-      type="button"
-      disabled={disabled}
-      className={`${cx('ResetFormButton')} btn`}
-      onClick={onResetForm}
-    >
-      {resetFormContent}
-    </button>
-  );
 }
 
 export function renderDefaultParamGroup(group: ParameterGroup, formProps: Props) {
