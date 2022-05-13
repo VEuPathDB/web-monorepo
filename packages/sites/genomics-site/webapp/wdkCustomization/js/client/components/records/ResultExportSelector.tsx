@@ -84,13 +84,15 @@ function useStyles<T extends string, S, E>(
       ...baseStyles,
       '> i': {
         fontSize: '1.2em',
-        color: '#3e3e3e',
         marginRight: '2px',
       },
       ...(
         !placeholderProps.isDisabled
           ? {
               color: '#3e3e3e',
+              '> i': {
+                color: '#3e3e3e',
+              },
             }
           : {}
       ),
@@ -117,13 +119,20 @@ function useStyles<T extends string, S, E>(
             }
           : {
               cursor: 'not-allowed',
+              borderWidth: '0.5px 0.5px 3px 0.5px',
             }
       ),
     }),
-    dropdownIndicator: (baseStyles) => ({
+    dropdownIndicator: (baseStyles, dropdownIndicatorProps) => ({
       ...baseStyles,
       padding: '0 8px',
-      color: '#3e3e3e',
+      ...(
+        !dropdownIndicatorProps.isDisabled
+          ? {
+              color: '#3e3e3e',
+            }
+          : {}
+      )
     }),
   }), []);
 
