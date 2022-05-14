@@ -148,12 +148,20 @@ export default function SubsettingDataGridModal({
   const fetchPaginatedData = useCallback(
     ({ pageSize, pageIndex }) => {
       setDataLoading(true);
+      if (!currentEntity) return;
+      const mergeKeys = () => {
+        return currentEntity.variables
+          .filter((variable) => 'isMergeKey' in variable && variable.isMergeKey)
+          .map((mergeKey) => mergeKey.id);
+      };
 
       subsettingClient
         .getTabularData(studyMetadata.id, currentEntityID, {
           filters: analysisState.analysis?.descriptor.subset.descriptor ?? [],
-          outputVariableIds: selectedVariableDescriptors.map(
-            (descriptor) => descriptor.variableId
+          outputVariableIds: mergeKeys().concat(
+            selectedVariableDescriptors.map(
+              (descriptor) => descriptor.variableId
+            )
           ),
           reportConfig: {
             headerFormat: 'standard',
@@ -179,6 +187,7 @@ export default function SubsettingDataGridModal({
       studyMetadata.id,
       subsettingClient,
       analysisState.analysis?.descriptor.subset.descriptor,
+      currentEntity,
     ]
   );
 
