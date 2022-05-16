@@ -1368,7 +1368,6 @@ function LineplotWithControls({
         >
           {' '}
         </div>
-
         <LabelledGroup
           label="Y-axis controls"
           containerStyles={{

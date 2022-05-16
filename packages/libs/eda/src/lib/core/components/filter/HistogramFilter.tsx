@@ -390,7 +390,6 @@ export function HistogramFilter(props: Props) {
           updateUIState={updateUIState}
           showSpinner={data.pending}
           variable={variable}
-          // pass defaultDependentAxisRange
           defaultDependentAxisRange={defaultDependentAxisRange}
         />
       </div>
@@ -405,7 +404,6 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   updateUIState: (uiState: Partial<UIState>) => void;
   filter?: DateRangeFilter | NumberRangeFilter;
   variable?: HistogramVariable;
-  // typing defaultDependentAxisRange
   defaultDependentAxisRange?: NumberRange | undefined;
 };
 

@@ -941,11 +941,11 @@ function HistogramPlotWithControls({
             containerStyles={{
               minHeight: widgetHeight,
               // set maxWidth
-              maxWidth: valueType === 'date' ? '250px' : '350px',
+              maxWidth: valueType === 'date' ? '215px' : '315px',
             }}
           />
 
-          {/* X-Axis range control - temp block to check date  */}
+          {/* X-Axis range control */}
           <AxisRangeControl
             label="Range"
             range={vizConfig.independentAxisRange ?? defaultIndependentRange}
@@ -993,7 +993,7 @@ function HistogramPlotWithControls({
           style={{
             display: 'inline-flex',
             borderLeft: '2px solid lightgray',
-            height: '13.7em',
+            height: '14em',
             position: 'relative',
             marginLeft: '-1px',
             top: '1.5em',
