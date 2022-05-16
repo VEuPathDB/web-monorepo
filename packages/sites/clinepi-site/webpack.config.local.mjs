@@ -37,6 +37,7 @@ export default configure({
         twitterUrl: process.env.TWITTER_URL,
         youtubeUrl: process.env.YOUTUBE_URL,
         communitySite: process.env.COMMUNITY_SITE,
+        showUnreleasedData: process.env.SHOW_UNRELEASED_DATA === 'true',
         ...(
           process.env.EDA_ENABLED === 'true'
             ? {
