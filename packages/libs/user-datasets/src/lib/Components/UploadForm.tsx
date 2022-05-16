@@ -96,10 +96,7 @@ function UploadForm({
     [strategyOptions]
   );
 
-  const {
-    useFixedUploadMethod: useFixedUploadMethodStr,
-    datasetSource,
-  } = urlParams;
+  const { useFixedUploadMethod: useFixedUploadMethodStr } = urlParams;
 
   const useFixedUploadMethod = useMemo(
     () => useFixedUploadMethodStr === 'true',
@@ -238,10 +235,7 @@ function UploadForm({
     >
       {errorMessages.length > 0 && <ErrorMessage errors={errorMessages} />}
       <div>
-        <h2>
-          {datasetUploadType.uploadTitle}
-          {datasetSource && ` from ${datasetSource}`}
-        </h2>
+        <h2>{datasetUploadType.uploadTitle}</h2>
         <div className="formSection">
           <label htmlFor="data-set-name">
             Name:
