@@ -1239,10 +1239,10 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/wdk-client@^0.7.0":
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.7.0.tgz#4879365244a7935081b4527b2e6d73b20fb8c02e"
-  integrity sha512-pe5GGNNcKHRA+v8mdVZaZwmjJyeyQ4fOTLbwFm+rPNMNtrZpsekwxBI/LKg/DF8SzrYOJUBW6NI1rvXA3OSRlw==
+"@veupathdb/wdk-client@^0.7.3":
+  version "0.7.3"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.7.3.tgz#ffda54d968841a7cf3bbd0534836299cb44cde5a"
+  integrity sha512-lBxmoVT5cfesckfM3GYvuJ6p9ELKGZHylWV3onBJbun19cJPg3vtzcTrM/cGHaLH8unmf0ivudRp1P3/ZnAqHw==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
