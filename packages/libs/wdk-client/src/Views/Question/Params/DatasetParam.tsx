@@ -26,6 +26,7 @@ import {
   SET_SOURCE_TYPE,
   SET_STRATEGY_ID,
   SET_STRATEGY_LIST,
+  SET_URL,
   setBasketCount,
   setFile,
   setFileParser,
@@ -34,6 +35,7 @@ import {
   setSourceType,
   setStrategyId,
   setStrategyList,
+  setUrl,
 } from 'wdk-client/Actions/DatasetParamActions';
 import { Action } from 'wdk-client/Actions';
 
@@ -57,6 +59,7 @@ type State = {
   strategyId?: number;
   basketCount?: number;
   fileParser?: DatasetParam['parsers'][number]['name'];
+  url?: string;
 }
 
 
@@ -110,6 +113,8 @@ function reduce(state: State = defaultState, action: Action): State {
       return { ...state, basketCount: action.payload.basketCount };
     case SET_FILE_PARSER:
       return { ...state, fileParser: action.payload.fileParser };
+    case SET_URL:
+      return { ...state, url: action.payload.url };
     default:
       return state;
   }

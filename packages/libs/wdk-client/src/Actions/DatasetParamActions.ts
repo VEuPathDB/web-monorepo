@@ -13,6 +13,7 @@ export type Action =
   | SetSourceTypeAction
   | SetStrategyIdAction
   | SetStrategyListAction
+  | SetUrlAction
 
 //==============================================================================
 
@@ -159,6 +160,24 @@ export interface SetFileParserAction {
 export function setFileParser(payload: SetFileParserAction['payload']): SetFileParserAction {
   return {
     type: SET_FILE_PARSER,
+    payload
+  }
+}
+
+//==============================================================================
+
+export const SET_URL = 'dataset-param/set-url';
+
+export interface SetUrlAction {
+  type: typeof SET_URL;
+  payload: Payload<{
+    url?: string;
+  }>;
+}
+
+export function setUrl(payload: SetUrlAction['payload']): SetUrlAction {
+  return {
+    type: SET_URL,
     payload
   }
 }
