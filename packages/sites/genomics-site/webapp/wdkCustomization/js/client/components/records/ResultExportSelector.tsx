@@ -70,7 +70,10 @@ export function ResultExportSelector<T extends string, S, E>({
           </span>
         </>
       }
-      isDisabled={isDisabled}
+      isDisabled={
+        isDisabled ||
+        Boolean(selectedOption)
+      }
       controlShouldRenderValue={false}
       isSearchable={false}
     />
