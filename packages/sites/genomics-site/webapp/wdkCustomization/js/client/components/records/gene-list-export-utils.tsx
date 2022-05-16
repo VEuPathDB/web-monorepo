@@ -144,13 +144,21 @@ export async function makeGeneListUserDatasetExportUrl(
   const resultWorkspaceUrl =
    `${window.location.origin}${rootUrl}/workspace/strategies/${step.strategyId}/${step.id}`;
 
+  const datasetDescription =
+    `Uploaded a snapshot of ${
+      step.estimatedSize == null ?
+        'IDs' :
+        `${step.estimatedSize} IDs`
+    }` +
+    ` on ${
+      new Date().toUTCString()
+    } from step "${step.customName}" (${resultWorkspaceUrl}).`;
+
   const urlParams = new URLSearchParams({
-    useFixedUploadMethod: 'true',
     datasetUrl: temporaryResultUrl,
-    datasetSource: `Result "${step.customName}"`,
     datasetName: step.customName,
     datasetSummary: `Genes from result "${step.customName}"`,
-    datasetDescription: `Uploaded from ${resultWorkspaceUrl}`
+    datasetDescription,
   });
 
   return `/workspace/datasets/new?${urlParams.toString()}`;
