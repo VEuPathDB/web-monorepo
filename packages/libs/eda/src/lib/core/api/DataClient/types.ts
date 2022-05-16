@@ -35,15 +35,23 @@ type ZeroToTwoVariables =
 // define sampleSizeTableArray
 export type SampleSizeTableArray = TypeOf<typeof sampleSizeTableArray>;
 const sampleSizeTableArray = array(
-  partial({
-    // set union for size as it depends on the presence of overlay variable
-    size: union([number, array(number)]),
-    overlayVariableDetails: type({
-      entityId: string,
-      variableId: string,
-      value: string,
+  intersection([
+    type({
+      size: array(number),
     }),
-  })
+    partial({
+      facetVariableDetails: union([
+        tuple([StringVariableValue]),
+        tuple([StringVariableValue, StringVariableValue]),
+      ]),
+      overlayVariableDetails: StringVariableValue,
+      xVariableDetails: type({
+        entityId: string,
+        variableId: string,
+        value: array(string),
+      }),
+    }),
+  ])
 );
 
 // define completeCases

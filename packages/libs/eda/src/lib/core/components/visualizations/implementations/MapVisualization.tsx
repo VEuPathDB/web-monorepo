@@ -5,7 +5,7 @@ import {
 } from '../VisualizationTypes';
 import map from './selectorIcons/map.svg';
 import * as t from 'io-ts';
-import { isEqual, zip, some } from 'lodash';
+import { isEqual, zip, some, sum } from 'lodash';
 
 // map component related imports
 import MapVEuMap, {
@@ -131,7 +131,10 @@ type BasicMarkerData = {
   }[];
 };
 
-type PieplotData = Record<string, { label: string; value: number }[]>;
+type PieplotData = Record<
+  string,
+  { label: string; data: { label: string; value: number }[] }
+>;
 
 function MapViz(props: VisualizationProps) {
   const {
@@ -408,13 +411,27 @@ function MapViz(props: VisualizationProps) {
       // process response and return a map of "geoAgg key" => donut labels and counts
       return response.pieplot.data.reduce(
         (map, { facetVariableDetails, label, value }) => {
-          if (facetVariableDetails != null && facetVariableDetails.length === 1)
-            map[facetVariableDetails[0].value] = zip(label, value).map(
-              ([label, value]) => ({
+          if (
+            facetVariableDetails != null &&
+            facetVariableDetails.length === 1
+          ) {
+            const geoAggKey = facetVariableDetails[0].value;
+            map[geoAggKey] = {
+              label: String(
+                sum(
+                  response.sampleSizeTable.find(
+                    (item) =>
+                      item.facetVariableDetails != null &&
+                      item.facetVariableDetails[0].value === geoAggKey
+                  )?.size
+                )
+              ),
+              data: zip(label, value).map(([label, value]) => ({
                 label: label!,
                 value: value!,
-              })
-            );
+              })),
+            };
+          }
           return map;
         },
         {} as PieplotData
@@ -444,6 +461,7 @@ function MapViz(props: VisualizationProps) {
     const pieValueMax =
       pieplotData.value != null
         ? values(pieplotData.value) // it's a Record 'object' of Array<{ label, value }>
+            .map((record) => record.data)
             .flat() // flatten all the arrays into one
             .reduce(
               (accum, elem) => (elem.value > accum ? elem.value : accum),
@@ -456,7 +474,7 @@ function MapViz(props: VisualizationProps) {
         const donutData =
           pieplotData.value != null &&
           pieplotData.value[geoAggregateValue] != null
-            ? pieplotData.value[geoAggregateValue]
+            ? pieplotData.value[geoAggregateValue].data
                 .map(({ label, value }) => ({
                   label,
                   value,
@@ -503,6 +521,11 @@ function MapViz(props: VisualizationProps) {
           vizConfig.markerType == null || vizConfig.markerType === 'pie'
             ? DonutMarker
             : ChartMarker;
+
+        const markerLabel =
+          pieplotData.value != null
+            ? pieplotData.value[geoAggregateValue].label
+            : '';
         return (
           <MarkerComponent
             id={geoAggregateValue}
@@ -512,7 +535,13 @@ function MapViz(props: VisualizationProps) {
             data={safeDonutData}
             duration={defaultAnimationDuration}
             {...(vizConfig.markerType !== 'pie'
-              ? { dependentAxisRange: yRange }
+              ? {
+                  dependentAxisRange: yRange,
+                  markerLabel,
+                  independentAxisLabel: `${markerLabel} ${
+                    outputEntity?.displayNamePlural ?? outputEntity?.displayName
+                  }`,
+                }
               : {})}
           />
         );
@@ -524,6 +553,7 @@ function MapViz(props: VisualizationProps) {
     vizConfig.checkedLegendItems,
     vizConfig.markerType,
     xAxisVariable,
+    outputEntity,
   ]);
 
   const totalEntityCount = basicMarkerData.value?.completeCasesGeoVar;
@@ -632,7 +662,7 @@ function MapViz(props: VisualizationProps) {
       // has any geo-facet got an array of pieplot data
       // containing at least one element that satisfies label==label and value>0?
       hasData: some(pieplotData.value, (pieData) =>
-        some(pieData, (data) => data.label === label && data.value > 0)
+        some(pieData.data, (data) => data.label === label && data.value > 0)
       ),
       group: 1,
       rank: 1,
