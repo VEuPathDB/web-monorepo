@@ -18,6 +18,14 @@ export type DatasetConfig = {
 } | {
     sourceType: 'strategy',
     sourceContent: { strategyId: number }
+} | {
+    sourceType: 'url',
+    sourceContent: {
+        url: string;
+        parser: string,
+        searchName: string,
+        parameterName: string
+    }
 }
 
 export default (base: ServiceBase) => {
