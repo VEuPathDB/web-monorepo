@@ -17,6 +17,7 @@ import {
 } from '@veupathdb/web-common/lib/config';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 const SUPPORTED_RECORD_CLASS_URL_SEGMENTS = new Set([
   'transcript'
@@ -35,7 +36,8 @@ export function useGeneListExportOptions(
   resultType: ResultType
 ) {
   const onSelectBasketExportConfig = useSendToBasketConfig(resultType);
-  const onSelectGeneListExportConfig = useSendToGeneListUserDatasetConfig(resultType);
+  const onSelectGeneListUserDatasetExportConfig = useSendToGeneListUserDatasetConfig(resultType);
+  const onSelectPortalExportConfig = useSendGeneListToPortalStrategyConfig(resultType);
 
   return useMemo(
     () => [
@@ -59,7 +61,7 @@ export function useGeneListExportOptions(
           : []
       ),
       ...(
-        onSelectGeneListExportConfig
+        onSelectGeneListUserDatasetExportConfig
           ? [
               {
                 label: (
@@ -72,13 +74,36 @@ export function useGeneListExportOptions(
                   </>
                 ),
                 value: 'my-data-sets',
-                ...onSelectGeneListExportConfig
+                ...onSelectGeneListUserDatasetExportConfig,
+              }
+            ]
+          : []
+      ),
+      ...(
+        onSelectPortalExportConfig
+          ? [
+              {
+                label: (
+                  <>
+                    <IconAlt fa="code-fork fa-rotate-270 fa-fw" />
+                    {' '}
+                    <span style={{ marginLeft: '0.5em' }}>
+                      VEuPathDB.org Strategy
+                    </span>
+                  </>
+                ),
+                value: 'portal-strategy',
+                ...onSelectPortalExportConfig,
               }
             ]
           : []
       )
     ],
-    [onSelectBasketExportConfig, onSelectGeneListExportConfig]
+    [
+      onSelectBasketExportConfig,
+      onSelectGeneListUserDatasetExportConfig,
+      onSelectPortalExportConfig
+    ]
   );
 }
 
@@ -127,23 +152,52 @@ export function useSendToGeneListUserDatasetConfig(
   );
 }
 
+export function useSendGeneListToPortalStrategyConfig(
+  resultType: ResultType,
+  portalSiteRootUrl?: string
+) {
+  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
+
+  const projectId = useWdkService(
+    async wdkService => (await wdkService.getConfig()).projectId
+  );
+
+  return useMemo(
+    () => (
+      isGeneListStep(resultType) &&
+      projectId != null &&
+      projectId !== 'EuPathDB'
+    )
+      ? ({
+          onSelectionTask: Task.fromPromise(
+            () => makeGeneListPortalSearchUrl(
+              wdkService,
+              resultType.step,
+              portalSiteRootUrl
+            )
+          ),
+          onSelectionFulfillment: (portalSearchUrl: string) => {
+            window.open(portalSearchUrl, '_blank');
+          },
+        })
+      : undefined,
+    [
+      resultType,
+      portalSiteRootUrl,
+      wdkService,
+      projectId
+    ]
+  );
+}
+
 export async function makeGeneListUserDatasetExportUrl(
   wdkService: WdkService,
   step: Step
 ) {
-  const temporaryResultPath = await wdkService.getTemporaryResultPath(
-    step.id,
-    'attributesTabular',
-    {
-      attributes: ['primary_key'],
-      includeHeader: false,
-      attachmentType: 'plain',
-      applyFilter: true,
-    }
+  const temporaryResultUrl = await getGeneListTemporaryResultUrl(
+    wdkService,
+    step.id
   );
-
-  const temporaryResultUrl =
-    `${window.location.origin}${endpoint}${temporaryResultPath}`;
 
   const resultWorkspaceUrl =
    `${window.location.origin}${rootUrl}/workspace/strategies/${step.strategyId}/${step.id}`;
@@ -166,4 +220,44 @@ export async function makeGeneListUserDatasetExportUrl(
   });
 
   return `/workspace/datasets/new?${urlParams.toString()}`;
+}
+
+export async function makeGeneListPortalSearchUrl(
+  wdkService: WdkService,
+  step: Step,
+  portalSiteRootUrl: string = 'https://veupathdb.org/veupathdb/app',
+) {
+  const temporaryResultUrl = await getGeneListTemporaryResultUrl(
+    wdkService,
+    step.id
+  );
+
+  const searchUrl =
+   `${portalSiteRootUrl}/search/transcript/GeneByLocusTag`;
+
+  const urlParams = new URLSearchParams({
+    'param.ds_gene_ids.url': temporaryResultUrl,
+    autoRun: 'true',
+  });
+
+  return `${searchUrl}?${urlParams.toString()}`;
+}
+
+export async function getGeneListTemporaryResultUrl(
+  wdkService: WdkService,
+  stepId: number,
+  fullWdkServiceUrl = `${window.location.origin}${endpoint}`
+) {
+  const temporaryResultPath = await wdkService.getTemporaryResultPath(
+    stepId,
+    'attributesTabular',
+    {
+      attributes: ['primary_key'],
+      includeHeader: false,
+      attachmentType: 'plain',
+      applyFilter: true,
+    }
+  );
+
+  return `${fullWdkServiceUrl}${temporaryResultPath}`;
 }

@@ -87,7 +87,7 @@ function useStyles<T extends string, S, E>(
     container: (baseStyles) => ({
       ...baseStyles,
       margin: '0 calc(1em + 5px)',
-      width: '13em',
+      width: '15em',
     }),
     placeholder: (baseStyles, placeholderProps) => ({
       ...baseStyles,
