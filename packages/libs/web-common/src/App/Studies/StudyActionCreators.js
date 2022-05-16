@@ -1,5 +1,6 @@
 import { get, identity, keyBy, mapValues, orderBy, spread } from 'lodash';
 import { emptyAction } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
+import { showUnreleasedData } from 'ebrc-client/config';
 
 import { getSearchableString } from '@veupathdb/wdk-client/lib/Views/Records/RecordUtils'
 import { isPrereleaseStudyTemp } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
@@ -49,7 +50,7 @@ const requiredAttributes = [
   'card_questions',
   'dataset_id',
   'display_name',
-  'project_availability',
+  'is_public',
   'study_access',
   'bulk_download_url',
 ];
@@ -68,7 +69,6 @@ function loadStudies() {
 
 export function fetchStudies(wdkService) {
   return Promise.all([
-    wdkService.getConfig().then(config => config.projectId),
     wdkService.getQuestions(),
     wdkService.getRecordClasses(),
     wdkService.getStudies('__ALL_ATTRIBUTES__', '__ALL_TABLES__')
@@ -88,18 +88,18 @@ const parseStudy = mapProps({
     : JSON.parse(record.attributes.study_categories)],
   // TODO Remove .toLowerCase() when attribute display value is updated
   access: ['attributes.study_access', access => access && access.toLowerCase()],
+  isReleased: ['attributes.is_public', str => str === 'true'],
   email: ['attributes.email'],
   policyUrl: ['attributes.policy_url'],
   requestNeedsApproval: ['attributes.request_needs_approval'],
   downloadUrl: ['attributes.bulk_download_url'],
-  projectAvailability: ['attributes.project_availability', JSON.parse],
   headline: ['attributes.card_headline'],
   points: ['attributes.card_points', JSON.parse],
   searches: ['attributes.card_questions', JSON.parse]
 });
   
 
-function formatStudies(projectId, questions, recordClasses, answer) {
+function formatStudies(questions, recordClasses, answer) {
   const questionsByName = keyBy(questions, 'fullName');
   const recordClassesByName = keyBy(recordClasses, 'urlSegment');
 
@@ -139,7 +139,7 @@ function formatStudies(projectId, questions, recordClasses, answer) {
 
   const unsortedValidRecords = records.valid
     .map(study => Object.assign(study, {
-      disabled: study.projectAvailability && !study.projectAvailability.includes(projectId),
+      disabled: !showUnreleasedData && !study.isReleased,
       // searchUrls: mapValues(study.searches, search => `/showQuestion.do?questionFullName=${search}`),
       searches: Object.values(study.searches)
         .map(questionName => questionsByName[questionName])
