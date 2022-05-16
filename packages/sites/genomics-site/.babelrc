@@ -1,4 +1,4 @@
 {
-  "extends": "../../install/.babelrc",
+  "extends": "@veupathdb/site-babel-config",
   "ignore": [ "cytoscapeweb.min.js" ]
 }
