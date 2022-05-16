@@ -26,7 +26,7 @@
     "@veupathdb/study-data-access": "^0.3.1",
     "@veupathdb/user-datasets": "^0.1.0",
     "@veupathdb/wdk-client": "^0.7.2",
-    "@veupathdb/web-common": "file:local_modules/@veupathdb/web-common",
+    "@veupathdb/web-common": "^0.6.0",
     "core-js": "^3.21.1",
     "react": "16",
     "react-dom": "16",
