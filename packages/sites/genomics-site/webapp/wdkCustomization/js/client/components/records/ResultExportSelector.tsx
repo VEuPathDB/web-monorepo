@@ -42,8 +42,14 @@ export function ResultExportSelector<T extends string, S, E>({
     return selectedOption
       ?.onSelectionTask
       .run(
-        selectedOption.onSelectionFulfillment,
-        selectedOption.onSelectionError
+        selection => {
+          setSelectedOption(undefined);
+          selectedOption?.onSelectionFulfillment?.(selection);
+        },
+        error => {
+          setSelectedOption(undefined);
+          selectedOption?.onSelectionError?.(error);
+        }
       );
   }, [selectedOption]);
 
