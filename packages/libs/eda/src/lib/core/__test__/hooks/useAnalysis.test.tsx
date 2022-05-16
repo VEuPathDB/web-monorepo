@@ -1,4 +1,4 @@
-import { noop, omit } from 'lodash';
+import { omit } from 'lodash';
 import { act, renderHook } from '@testing-library/react-hooks';
 import { computeSummaryCounts } from '../../Mocks';
 import { useAnalysis, Status } from '../../hooks/analysis';
@@ -100,7 +100,9 @@ beforeEach(() => {
 });
 
 const render = () =>
-  renderHook(() => useAnalysis(stubAnalysis, noop, key), { wrapper });
+  renderHook(() => useAnalysis(stubAnalysis, async () => undefined, key), {
+    wrapper,
+  });
 
 describe('useAnalysis', () => {
   it('should have the correct status on success path', async () => {
@@ -136,7 +138,9 @@ describe('useAnalysis', () => {
   it('should update store on save', async () => {
     const { result, waitFor } = render();
     await waitFor(() => result.current.status === Status.Loaded);
-    act(() => result.current.setName('New Name'));
+    act(() => {
+      result.current.setName('New Name');
+    });
     expect(result.current.hasUnsavedChanges).toBeTruthy();
     await act(() => result.current.saveAnalysis());
     const analyses = await analysisClient.getAnalyses();
