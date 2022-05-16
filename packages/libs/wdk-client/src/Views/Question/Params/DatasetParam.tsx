@@ -44,7 +44,12 @@ const cx = makeClassNameHelper('wdk-DatasetParam');
 // awaiting of some sort, using Promises, some state flag, or something else.
 
 type State = {
-  sourceType: 'idList' | 'file' | 'basket' | 'strategy';
+  sourceType:
+    | 'idList'
+    | 'file'
+    | 'basket'
+    | 'strategy'
+    | 'url';
   idList?: string;
   loadingIdList?: boolean;
   file?: File | null;

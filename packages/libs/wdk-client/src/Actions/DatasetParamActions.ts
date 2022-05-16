@@ -21,7 +21,12 @@ export const SET_SOURCE_TYPE = 'dataset-param/set-source-type';
 export interface SetSourceTypeAction {
   type: typeof SET_SOURCE_TYPE;
   payload: Payload<{
-    sourceType: 'idList' | 'file' | 'basket' | 'strategy';
+    sourceType:
+      | 'idList'
+      | 'file'
+      | 'basket'
+      | 'strategy'
+      | 'url';
   }>;
 }
 
