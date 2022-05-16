@@ -812,35 +812,8 @@ function BoxplotWithControls({
           {...boxplotComponentProps}
         />
       )}
-      {/* axis range controls */}
+      {/* Y-axis range control */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        {/* add empty space for X-axis control */}
-        <div style={{ width: '30em' }}>
-          <LabelledGroup
-            label="X-axis controls"
-            containerStyles={{
-              marginRight: '1em',
-            }}
-            disabled={true}
-          >
-            {''}
-          </LabelledGroup>
-        </div>
-
-        {/* add vertical line in btw X- and Y- controls */}
-        <div
-          style={{
-            display: 'inline-flex',
-            borderLeft: '2px solid lightgray',
-            height: '10.5em',
-            position: 'relative',
-            marginLeft: '-1px',
-            top: '1.5em',
-          }}
-        >
-          {' '}
-        </div>
-
         <LabelledGroup label="Y-axis controls">
           {/* Y-axis range control */}
           <NumberRangeInput
