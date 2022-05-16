@@ -111,7 +111,15 @@ export function ResultTable(props) {
     downloadLinkNode,
   }) => (
       <>
-        {downloadLinkNode}
+        <span
+          className={
+            exportOptions.length > 0
+              ? 'TranscriptResultTableButton'
+              : undefined
+            }
+        >
+          {downloadLinkNode}
+        </span>
         {
           exportOptions.length > 0 &&
           <span
@@ -127,7 +135,15 @@ export function ResultTable(props) {
             />
           </span>
         }
-        {addColumnsNode}
+        <span
+          className={
+            exportOptions.length > 0
+              ? 'TranscriptResultTableButton'
+              : undefined
+            }
+        >
+          {addColumnsNode}
+        </span>
       </>
     ),
     [exportOptions, exportStatus]
