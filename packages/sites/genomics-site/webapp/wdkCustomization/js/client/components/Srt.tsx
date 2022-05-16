@@ -46,7 +46,15 @@ interface SrtFormConfig extends BaseSrtFormConfig {
   defaultIdsState: string;
   initialReporterFormState: Record<string, string | number | boolean>;
   projectId: string;
-  updateSrtTabsState?: any;
+}
+
+interface SrtFormProps extends SrtFormConfig {
+  updateSrtTabsState: (
+    idsState: string,
+    reporterFormState: Record<string, string | number | boolean>,
+  ) => void;
+  idsState: string;
+  formState: Record<string, string | number | boolean>;
 }
 
 type SrtTabsState = Record<
@@ -228,8 +236,8 @@ export function Srt() {
                     <SrtForm
                       {...selectedSrtForm}
                       updateSrtTabsState={updateSrtTabsState}
-                      initialReporterFormState={srtTabsState[selectedSrtForm.recordClassUrlSegment].reporterFormState}
-                      initialIdsState={srtTabsState[selectedSrtForm.recordClassUrlSegment].idsState}
+                      formState={srtTabsState[selectedSrtForm.recordClassUrlSegment].reporterFormState}
+                      idsState={srtTabsState[selectedSrtForm.recordClassUrlSegment].idsState}
                     />
                     : null
                   }
@@ -243,32 +251,32 @@ export function Srt() {
 
 function SrtForm({
   display,
-  initialReporterFormState,
+  formState,
   ReporterForm,
-  initialIdsState,
+  idsState,
   idsInputHelp,
   projectId,
   formActionUrl,
   defaultIdsState,
   defaultReporterFormState,
   updateSrtTabsState
-}: SrtFormConfig) {
+}: SrtFormProps) {
     
   const onReset = useCallback(() => {
     updateSrtTabsState(defaultIdsState, defaultReporterFormState);
   }, [defaultIdsState, defaultReporterFormState, updateSrtTabsState]);
 
   const updateIdsState = useCallback((newIdsState) => {
-    updateSrtTabsState(newIdsState, initialReporterFormState);
-  }, [initialReporterFormState, updateSrtTabsState]);
+    updateSrtTabsState(newIdsState, formState);
+  }, [formState, updateSrtTabsState]);
 
   const updateFormState = useCallback((newFormState) => {
-    updateSrtTabsState(initialIdsState, newFormState);
-  }, [initialIdsState, updateSrtTabsState]);
+    updateSrtTabsState(idsState, newFormState);
+  }, [idsState, updateSrtTabsState]);
 
   const isResetButtonDisabled = useMemo(
-    () => isEqual(defaultIdsState, initialIdsState) && isEqual(defaultReporterFormState, initialReporterFormState),
-  [defaultIdsState, initialIdsState, defaultReporterFormState, initialReporterFormState]);
+    () => isEqual(defaultIdsState, idsState) && isEqual(defaultReporterFormState, formState),
+  [defaultIdsState, idsState, defaultReporterFormState, formState]);
 
   return (
     <form action={formActionUrl} method="post" target="_blank">
@@ -278,7 +286,7 @@ function SrtForm({
         resetFormContent={<><i className="fa fa-refresh"></i>Reset to default</>}
       />
       <input type="hidden" name="project_id" value={projectId} />
-      <input type="hidden" name="downloadType" value={String(initialReporterFormState.attachmentType)} />
+      <input type="hidden" name="downloadType" value={String(formState.attachmentType)} />
       <h3 className={cx('--IdsHeader')} >
         Enter a list of {display} (each ID on a separate line):
         {' '}
@@ -292,14 +300,14 @@ function SrtForm({
       <div className={cx('--IdsInput')} >
         <TextArea
           name="ids"
-          value={initialIdsState}
+          value={idsState}
           onChange={updateIdsState}
           rows={4}
           cols={60}
         />
       </div>
         <ReporterForm
-          formState={initialReporterFormState}
+          formState={formState}
           updateFormState={updateFormState}
           onSubmit={noop}
           includeSubmit
