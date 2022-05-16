@@ -85,13 +85,22 @@ function reduce(state: State = defaultState, action: Action): State {
   switch(action.type) {
     case INIT_PARAM: {
       const { parameter, initialParamData } = action.payload;
-      const initialListName = parameter.name + '.idList';
+
+      const initialListName = `${parameter.name}.idList`;
+      const initialList = initialParamData?.[initialListName];
+
+      const initialUrlName = `${parameter.name}.url`;
+      const initialUrl = initialParamData?.[initialUrlName];
+
       return {
         ...state,
-        sourceType: 'idList',
-        idList: initialParamData?.[initialListName] != null
-          ? initialParamData[initialListName]
-          : (parameter as DatasetParam).defaultIdList
+        sourceType: initialUrl != null
+          ? 'url'
+          : 'idList',
+        idList: initialList != null
+          ? initialList
+          : (parameter as DatasetParam).defaultIdList,
+        url: initialUrl,
       }
     }
     case SET_SOURCE_TYPE:
@@ -205,6 +214,7 @@ const sections: Section[] = [
     render: ({ uiState, dispatch, ctx, parameter }) =>
       <>
         <TextBox
+          value={uiState.url}
           onChange={(newUrl) => {
             dispatch(setUrl({
               ...ctx,
