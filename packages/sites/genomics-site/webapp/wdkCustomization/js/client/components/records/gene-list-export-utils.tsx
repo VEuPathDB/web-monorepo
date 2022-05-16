@@ -10,7 +10,11 @@ import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 import { ResultType, StepResultType } from '@veupathdb/wdk-client/lib/Utils/WdkResult';
 import { Step } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
-import { endpoint, rootUrl } from '@veupathdb/web-common/lib/config';
+import {
+  endpoint,
+  rootUrl,
+  useUserDatasetsWorkspace,
+} from '@veupathdb/web-common/lib/config';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 
@@ -18,7 +22,7 @@ const SUPPORTED_RECORD_CLASS_URL_SEGMENTS = new Set([
   'transcript'
 ]);
 
-function isSupportedResult(resultType: ResultType): resultType is StepResultType {
+function isGeneListStep(resultType: ResultType): resultType is StepResultType {
   return (
     resultType.type === 'step' &&
     SUPPORTED_RECORD_CLASS_URL_SEGMENTS.has(
@@ -84,7 +88,7 @@ export function useSendToBasketConfig(
   const dispatch = useDispatch();
 
   return useMemo(
-    () => isSupportedResult(resultType)
+    () => isGeneListStep(resultType)
       ? ({
           onSelectionTask: Task.of(
             requestAddStepToBasket(
@@ -106,7 +110,7 @@ export function useSendToGeneListUserDatasetConfig(
   const history = useHistory();
 
   return useMemo(
-    () => isSupportedResult(resultType)
+    () => isGeneListStep(resultType) && useUserDatasetsWorkspace
       ? ({
           onSelectionTask: Task.fromPromise(
             () => makeGeneListUserDatasetExportUrl(
