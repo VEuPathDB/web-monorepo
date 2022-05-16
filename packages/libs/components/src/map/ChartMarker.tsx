@@ -19,6 +19,10 @@ interface ChartMarkerProps extends BoundsDriftMarkerProps {
   // changed to dependentAxisRange
   dependentAxisRange?: NumberRange | null; // y-axis range for setting global max
   onClick?: (event: L.LeafletMouseEvent) => void | undefined;
+  /** x-axis title for marker (defaults to sum of data[].value) */
+  markerLabel?: string;
+  /** x-axis title for enlarged mouse-over marker (defaults to "Total: sum(data[].value)") */
+  independentAxisLabel?: string;
 }
 
 /**
@@ -199,7 +203,7 @@ export default function ChartMarker(props: ChartMarkerProps) {
     '<text x="50%" y=' +
     (size - 2 + borderWidth + 7) +
     ' dominant-baseline="middle" text-anchor="middle" opacity="1">' +
-    sumValuesString +
+    (props.markerLabel ?? sumValuesString) +
     '</text>';
 
   // check isAtomic: draw pushpin if true
@@ -259,7 +263,9 @@ export default function ChartMarker(props: ChartMarkerProps) {
       displayLibraryControls={false}
       interactive={false}
       dependentAxisLabel=""
-      independentAxisLabel={`Total: ${sumValuesString}`}
+      independentAxisLabel={
+        props.independentAxisLabel ?? `Total: ${sumValuesString}`
+      }
       // dependentAxisRange is an object with {min, max} (NumberRange)
       dependentAxisRange={props.dependentAxisRange ?? undefined}
       showValues={true}
