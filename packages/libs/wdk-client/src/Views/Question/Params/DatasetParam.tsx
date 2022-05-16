@@ -39,6 +39,8 @@ import {
 } from 'wdk-client/Actions/DatasetParamActions';
 import { Action } from 'wdk-client/Actions';
 
+import { TextBox } from 'wdk-client/Components';
+
 const cx = makeClassNameHelper('wdk-DatasetParam');
 
 // TODO We will have to include an onSubmit hook that will convert the user's
@@ -198,6 +200,25 @@ const sections: Section[] = [
       </>
   },
   {
+    sourceType: 'url',
+    label: 'Upload from a URL',
+    render: ({ uiState, dispatch, ctx, parameter }) =>
+      <>
+        <TextBox
+          onChange={(newUrl) => {
+            dispatch(setUrl({
+              ...ctx,
+              url: newUrl
+            }));
+          }}
+          required={
+            uiState.sourceType === 'url' &&
+            !parameter.allowEmptyValue
+          }
+        />
+      </>
+  },
+  {
     sourceType: 'basket',
     label: 'Copy from My Basket',
     isAvailable: ({ uiState }) => typeof uiState.basketCount === 'number',
@@ -334,7 +355,7 @@ const observeParam: ParamModule['observeParam'] = (action$, state$, services) =>
 const getValueFromState: ParamModule<DatasetParam>['getValueFromState'] = (context, questionState, { wdkService }) => {
   const { parameter } = context;
   const state : State = questionState.paramUIState[parameter.name];
-  const { file, sourceType } : State = questionState.paramUIState[parameter.name];
+  const { file, sourceType, url } : State = questionState.paramUIState[parameter.name];
   const idList = getIdList(state, parameter);
   const strategyId = getStrategyId(state, parameter);
   const parser = getParser(state, parameter);
@@ -352,6 +373,16 @@ const getValueFromState: ParamModule<DatasetParam>['getValueFromState'] = (conte
     : sourceType === 'basket' ? Promise.resolve({ sourceType, sourceContent: { basketName: questionState.question.outputRecordClassName } })
     : sourceType === 'strategy' && strategyId ? Promise.resolve({ sourceType, sourceContent: { strategyId } })
     : sourceType === 'idList' ? Promise.resolve({ sourceType, sourceContent: { ids: idListToArray(idList) } })
+    : sourceType === 'url' && url
+      ? Promise.resolve({
+        sourceType,
+        sourceContent: {
+          url,
+          parser: getInitialParser(parameter),
+          searchName: questionState.question.urlSegment,
+          parameterName: parameter.name
+        }
+      })
     : Promise.resolve();
 
   return datasetConfigPromise.then(config => config == null ? '' : wdkService.createDataset(config).then(String));
