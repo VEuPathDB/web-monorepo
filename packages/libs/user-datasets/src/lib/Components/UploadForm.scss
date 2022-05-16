@@ -14,6 +14,7 @@
   }
   #data-set-url {
     width: 100%;
+    max-width: 50em;
   }
   .formInfo {
     width: 80%;
@@ -32,18 +33,16 @@
     margin-top: 2em;
 
     li > label {
-      display: flex;
+      display: grid;
+      grid-template-columns: auto 10em 1fr;
 
       label {
         font-size: medium;
         margin-left: 0.25em;
-        flex: 1;
       }
     }
   }
   & &--UploadMethodField {
-    flex: 10;
-
     &__disabled {
       opacity: 0.3;
       pointer-events: none;
