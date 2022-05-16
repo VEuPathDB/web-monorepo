@@ -34,6 +34,9 @@ interface BaseSrtFormConfig {
 
 interface InitialSrtFormConfig extends BaseSrtFormConfig {
   makeInitialIdsState: (paramDisplayMap: Record<string, string | undefined>) => string;
+}
+
+interface InitialSrtFormConfigWithStoredTabData extends InitialSrtFormConfig {
   storedIdsState: string | undefined;
   storedFormState: Record<string, string | number | boolean> | undefined;
 }
@@ -43,8 +46,16 @@ interface SrtFormConfig extends BaseSrtFormConfig {
   defaultIdsState: string;
   initialReporterFormState: Record<string, string | number | boolean>;
   projectId: string;
-  updateSrtConfigsState?: any;
+  updateSrtTabsState?: any;
 }
+
+type SrtTabsState = Record<
+  string,
+  {
+    idsState: string;
+    reporterFormState: Record<string, string | number | boolean>;
+  }
+>;
 
 const SRT_QUESTION = 'SRT';
 
@@ -57,8 +68,6 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
     ReporterForm: FastaGeneReporterForm,
     defaultReporterFormState: FastaGeneReporterForm.getInitialState().formState,
     makeInitialIdsState: paramDisplayMap => paramDisplayMap['genes_ids'] || '',
-    storedIdsState: undefined,
-    storedFormState: undefined,
     formActionUrl: '/cgi-bin/geneSrt'
   },
   {
@@ -81,8 +90,6 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
             `${sourceId}:100..2000:r`
           ].join('\r\n');
     },
-    storedIdsState: undefined,
-    storedFormState: undefined,
     idsInputHelp: (
       <div>
         Valid formats of specified Genomic Sequence IDs are:
@@ -105,8 +112,6 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
       end: 200
     },
     makeInitialIdsState: () => '',
-    storedIdsState: undefined,
-    storedFormState: undefined,
     formActionUrl: '/cgi-bin/estSrt'
   },
   {
@@ -119,8 +124,6 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
       end: 200
     },
     makeInitialIdsState: () => '',
-    storedIdsState: undefined,
-    storedFormState: undefined,
     formActionUrl: '/cgi-bin/isolateSrt'
   }
 ];
@@ -129,53 +132,62 @@ export function Srt() {
   const routeBase = useRouteMatch();
   const { pathname } = useLocation();
   const compatibleSrtConfigs = useCompatibleSrtFormConfigs();
-  const [selectedSrtForm, setSelectedSrtForm] = useState<string>('');
-  const [srtConfigsState, setSrtConfigsState] = useState<any>();
+  const [selectedSrtForm, setSelectedSrtForm] = useState<SrtFormConfig>();
+  const [srtTabsState, setSrtTabsState] = useState<SrtTabsState>();
   const { paramValueStore } = useNonNullableContext(WdkDependenciesContext);
 
   useEffect(() => {
-    if (!selectedSrtForm || !srtConfigsState) return;
-    paramValueStore.updateParamValues(`srt/${selectedSrtForm}`,
+    if (!selectedSrtForm || !srtTabsState) return;
+    paramValueStore.updateParamValues(`srt/${selectedSrtForm.recordClassUrlSegment}`,
       {
-        initialIdsState: srtConfigsState[selectedSrtForm].initialIdsState,
-        initialReporterFormState: JSON.stringify(srtConfigsState[selectedSrtForm].initialReporterFormState),
+        idsState: srtTabsState[selectedSrtForm.recordClassUrlSegment].idsState,
+        reporterFormState: JSON.stringify(srtTabsState[selectedSrtForm.recordClassUrlSegment].reporterFormState),
       });
-  }, [srtConfigsState]);
+  }, [selectedSrtForm, srtTabsState]);
 
-  const updateSrtConfigsState = useCallback(
+  const updateSrtTabsState = useCallback(
     (idsState, formState) => {
-      const newConfigsState = {
-        ...srtConfigsState,
-        [selectedSrtForm]: {
-          initialIdsState: idsState,
-          initialReporterFormState: formState,
+      if (!selectedSrtForm) return;
+      setSrtTabsState(prevTabsState => (
+        {
+          ...prevTabsState,
+          [selectedSrtForm.recordClassUrlSegment]: {
+            idsState: idsState,
+            reporterFormState: formState,
+          }
         }
-      };
-      setSrtConfigsState(newConfigsState);
-    },
-    [selectedSrtForm]);
+      ));
+  }, [selectedSrtForm]);
 
   useEffect(() => {
     if (!compatibleSrtConfigs) return;
-    const configObject = {}
+    const initialSrtTabsObject = {}
     for (const config of compatibleSrtConfigs) {
-      Object.assign(configObject, {
-        ...configObject,
+      Object.assign(initialSrtTabsObject, {
         [config.recordClassUrlSegment]: {
-          initialIdsState: config.initialIdsState,
-          initialReporterFormState: config.initialReporterFormState
+          idsState: config.initialIdsState,
+          reporterFormState: config.initialReporterFormState
         }
       })
     };
-    setSrtConfigsState(configObject);
+    setSrtTabsState(initialSrtTabsObject);
   }, [compatibleSrtConfigs]);
 
   useEffect(() => {
     if (compatibleSrtConfigs && compatibleSrtConfigs.length >= 1) {
       const matchedConfig = compatibleSrtConfigs.find(config => pathname.includes(config.recordClassUrlSegment));
-      setSelectedSrtForm(matchedConfig ? matchedConfig.recordClassUrlSegment : compatibleSrtConfigs[0].recordClassUrlSegment);
+      setSelectedSrtForm(matchedConfig ?? compatibleSrtConfigs[0]);
     }
   }, [compatibleSrtConfigs, pathname]);
+
+  const workspaceNavigationItems = useMemo(() => {
+    if (!compatibleSrtConfigs) return;
+    return compatibleSrtConfigs.map(config => ({
+      display: config.display,
+      route: `/${config.recordClassUrlSegment}`,
+      isActive: () => config.recordClassUrlSegment === selectedSrtForm?.recordClassUrlSegment,
+    }))
+  }, [compatibleSrtConfigs, selectedSrtForm]);
 
   return (
     <div className={cx()}>
@@ -183,7 +195,7 @@ export function Srt() {
         Retrieve Sequences
       </h1>
       {
-        !compatibleSrtConfigs
+        !compatibleSrtConfigs || !workspaceNavigationItems
           ? <Loading />
           : <React.Fragment>
               <p className={cx('--BulkDownloadLink')}>
@@ -200,12 +212,7 @@ export function Srt() {
             <WorkspaceNavigation
               heading={''}
               routeBase={routeBase.url}
-              items={
-                compatibleSrtConfigs.map(config => ({
-                  display: config.display,
-                  route: `/${config.recordClassUrlSegment}`,
-                  isActive: () => config.recordClassUrlSegment === selectedSrtForm,
-                }))}
+              items={workspaceNavigationItems}
             />
               <Switch>
                 <Route
@@ -217,12 +224,12 @@ export function Srt() {
                 <Route
                   path={routeBase.url + '/:recordType'}
                 > 
-                  {compatibleSrtConfigs.length && selectedSrtForm && srtConfigsState ?
+                  {compatibleSrtConfigs.length && selectedSrtForm && srtTabsState ?
                     <SrtForm
-                      {...compatibleSrtConfigs.filter(config => config.recordClassUrlSegment === selectedSrtForm)[0]}
-                      updateSrtConfigsState={updateSrtConfigsState}
-                      initialReporterFormState={srtConfigsState[selectedSrtForm].initialReporterFormState}
-                      initialIdsState={srtConfigsState[selectedSrtForm].initialIdsState}
+                      {...selectedSrtForm}
+                      updateSrtTabsState={updateSrtTabsState}
+                      initialReporterFormState={srtTabsState[selectedSrtForm.recordClassUrlSegment].reporterFormState}
+                      initialIdsState={srtTabsState[selectedSrtForm.recordClassUrlSegment].idsState}
                     />
                     : null
                   }
@@ -244,25 +251,29 @@ function SrtForm({
   formActionUrl,
   defaultIdsState,
   defaultReporterFormState,
-  updateSrtConfigsState
+  updateSrtTabsState
 }: SrtFormConfig) {
     
-  function onReset() {
-      updateSrtConfigsState(defaultIdsState, defaultReporterFormState);
-  };
+  const onReset = useCallback(() => {
+    updateSrtTabsState(defaultIdsState, defaultReporterFormState);
+  }, [defaultIdsState, defaultReporterFormState, updateSrtTabsState]);
 
   const updateIdsState = useCallback((newIdsState) => {
-    updateSrtConfigsState(newIdsState, initialReporterFormState);
-  }, [initialReporterFormState]);
+    updateSrtTabsState(newIdsState, initialReporterFormState);
+  }, [initialReporterFormState, updateSrtTabsState]);
 
   const updateFormState = useCallback((newFormState) => {
-    updateSrtConfigsState(initialIdsState, newFormState);
-  }, [initialIdsState]);
+    updateSrtTabsState(initialIdsState, newFormState);
+  }, [initialIdsState, updateSrtTabsState]);
+
+  const isResetButtonDisabled = useMemo(
+    () => isEqual(defaultIdsState, initialIdsState) && isEqual(defaultReporterFormState, initialReporterFormState),
+  [defaultIdsState, initialIdsState, defaultReporterFormState, initialReporterFormState]);
 
   return (
     <form action={formActionUrl} method="post" target="_blank">
       <ResetFormButton
-        disabled={isEqual(defaultIdsState, initialIdsState) && isEqual(defaultReporterFormState, initialReporterFormState)}
+        disabled={isResetButtonDisabled}
         onResetForm={onReset}
         resetFormContent={<><i className="fa fa-refresh"></i>Reset to default</>}
       />
@@ -315,20 +326,30 @@ function useCompatibleSrtFormConfigs() {
           async config => await paramValueStore.fetchParamValues(`srt/${config.recordClassUrlSegment}`)
         ));
       return zipWith(storedFormDataState, SUPPORTED_RECORD_CLASS_CONFIGS,
-        function (storedConfigs, initialConfigs) {
+        function (storedConfigs, initialConfigs): InitialSrtFormConfigWithStoredTabData {
           if (storedConfigs) {
             return {
               ...initialConfigs,
-              storedIdsState: storedConfigs.initialIdsState,
-              storedFormState: JSON.parse(storedConfigs.initialReporterFormState),
-            } as InitialSrtFormConfig;
+              storedIdsState: storedConfigs.idsState,
+              storedFormState: JSON.parse(storedConfigs.reporterFormState),
+            };
           } else {
-            return initialConfigs;
-          }
+            return {
+              ...initialConfigs,
+              storedIdsState: undefined,
+              storedFormState: undefined,
+            }
+          };
         });
     } catch (error) {
       console.error(error);
-      return SUPPORTED_RECORD_CLASS_CONFIGS;
+      return SUPPORTED_RECORD_CLASS_CONFIGS.map(config => {
+        return {
+          ...config,
+          storedIdsState: undefined,
+          storedFormState: undefined,
+        }
+      });
     }
   }, []);
 
@@ -356,16 +377,16 @@ function useCompatibleSrtFormConfigs() {
       storedSrtData.value != null
     ) {
       return storedSrtData.value
-          .filter((initialSrtConfig) => recordClassUrlSegments.has(initialSrtConfig.recordClassUrlSegment))
-          .map((initialSrtConfig): SrtFormConfig => ({
-            ...initialSrtConfig,
-            defaultIdsState: initialSrtConfig.makeInitialIdsState(srtQuestionParamDisplayMap),
-            initialIdsState: initialSrtConfig.storedIdsState ?? initialSrtConfig.makeInitialIdsState(srtQuestionParamDisplayMap),
-            initialReporterFormState: initialSrtConfig.storedFormState ?? initialSrtConfig.defaultReporterFormState,
-            projectId,
-          }))
+        .filter((initialSrtConfig) => recordClassUrlSegments.has(initialSrtConfig.recordClassUrlSegment))
+        .map((initialSrtConfig): SrtFormConfig => ({
+          ...initialSrtConfig,
+          defaultIdsState: initialSrtConfig.makeInitialIdsState(srtQuestionParamDisplayMap),
+          initialIdsState: initialSrtConfig.storedIdsState ?? initialSrtConfig.makeInitialIdsState(srtQuestionParamDisplayMap),
+          initialReporterFormState: initialSrtConfig.storedFormState ?? initialSrtConfig.defaultReporterFormState,
+          projectId,
+        }));
     } else {
-      return false;
+      return undefined;
     }
   },
   [ recordClassUrlSegments, projectId, srtQuestionParamDisplayMap, storedSrtData.value ]
