@@ -52,6 +52,7 @@ interface Props {
   filteredCounts: PromiseHookState<EntityCounts>;
   geoConfigs: GeoConfig[];
   baseUrl?: string;
+  showHeading: boolean;
 }
 
 /**
@@ -62,7 +63,7 @@ interface Props {
  * @param props Props
  */
 export function VisualizationsContainer(props: Props) {
-  const { baseUrl } = { ...props };
+  const { baseUrl, showHeading } = { ...props };
   const { url } = useRouteMatch();
 
   const currentStudyRecordId = useStudyRecord().id[0].value;
@@ -128,21 +129,24 @@ function ConfiguredVisualizations(props: Props) {
     updateVisualizations,
     visualizationsOverview,
     baseUrl,
+    showHeading,
   } = props;
   const { url } = useRouteMatch();
 
   return (
     <Grid>
-      <Link
-        to={{
-          pathname: `${baseUrl || url}/new`,
-          state: { scrollToTop: false },
-        }}
-        className={cx('-NewVisualization')}
-      >
-        <i className="fa fa-plus"></i>
-        New visualization
-      </Link>
+      {!showHeading && (
+        <Link
+          to={{
+            pathname: `${baseUrl || url}/new`,
+            state: { scrollToTop: false },
+          }}
+          className={cx('-NewVisualization')}
+        >
+          <i className="fa fa-plus"></i>
+          New visualization
+        </Link>
+      )}
       {computation.visualizations
         .map((viz) => {
           const meta = visualizationsOverview.find(

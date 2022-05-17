@@ -14,6 +14,7 @@ export interface Props extends ComputationProps {
   computationId: string;
   visualizationTypes: Record<string, VisualizationType>;
   baseUrl?: string; // right now only defined when *not* using single app mode
+  singleAppMode: string | undefined;
 }
 
 export function ComputationInstance(props: Props) {
@@ -26,6 +27,7 @@ export function ComputationInstance(props: Props) {
     geoConfigs,
     visualizationTypes,
     baseUrl,
+    singleAppMode,
   } = props;
 
   const computation = useMemo(() => {
@@ -92,6 +94,7 @@ export function ComputationInstance(props: Props) {
         totalCounts={totalCounts}
         filteredCounts={filteredCounts}
         baseUrl={baseUrl}
+        showHeading={!singleAppMode}
       />
     </div>
   );
@@ -121,22 +124,18 @@ function AppTitle(props: AppTitleProps) {
     marginTop: 10,
   };
   return condensed ? (
-    <div>
-      <h3>
-        {computation.displayName} <i className="fa fa-cog"></i>{' '}
-        <i className="fa fa-clone"></i> <i className="fa fa-trash"></i>
-      </h3>
-      <h4>
-        <i>{computationAppOverview.displayName}</i>
+    <div style={{ marginTop: 10 }}>
+      <h4>{computationAppOverview.displayName}</h4>
+      <h4 style={{ marginLeft: 20 }}>
+        <em>{computation.displayName}</em>
       </h4>
     </div>
   ) : (
     <div style={expandedStyle}>
-      <h3>
-        {computation.displayName} <i className="fa fa-cog"></i>{' '}
-        <i className="fa fa-clone"></i> <i className="fa fa-trash"></i>
-      </h3>
       <h4>{computationAppOverview.displayName}</h4>
+      <h4>
+        <em>{computation.displayName}</em>
+      </h4>
     </div>
   );
 }

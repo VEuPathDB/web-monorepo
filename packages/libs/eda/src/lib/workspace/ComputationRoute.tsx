@@ -12,6 +12,8 @@ import { PromiseHookState, usePromise } from '../core/hooks/promise';
 import { GeoConfig } from '../core/types/geoConfig';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { FilledButton } from '@veupathdb/coreui/dist/components/buttons';
+import AddIcon from '@material-ui/icons/Add';
 // alphadiv abundance
 import { ComputationConfiguration } from '../core/types/visualization';
 
@@ -86,6 +88,7 @@ export function ComputationRoute(props: Props) {
                       computationId={singleAppComputationId}
                       computationAppOverview={apps[0]}
                       visualizationTypes={plugin.visualizationTypes}
+                      singleAppMode={singleAppMode}
                     />
                   );
                 }}
@@ -97,15 +100,20 @@ export function ComputationRoute(props: Props) {
             <Switch>
               <Route exact path={`${url}`}>
                 <div>
-                  <div>
+                  <div style={{ width: 'max-content' }}>
                     <Link to={`${url}/new`}>
-                      {' '}
-                      <h2>+ New module</h2>
+                      <FilledButton
+                        text="New visualization"
+                        onPress={() => null}
+                        textTransform="none"
+                        themeRole="primary"
+                        icon={AddIcon}
+                        styleOverrides={{
+                          container: { marginTop: 15 },
+                        }}
+                      />
                     </Link>
                   </div>
-                  <br></br>
-                  <h2>Saved modules and vizs</h2>
-                  <hr></hr>
                   {analysisState.analysis?.descriptor.computations.map((c) => {
                     const app = apps.find(
                       (app) => app.name === c.descriptor.type
@@ -119,6 +127,7 @@ export function ComputationRoute(props: Props) {
                           computationAppOverview={app}
                           visualizationTypes={plugin.visualizationTypes}
                           baseUrl={`${url}/${c.computationId}`}
+                          singleAppMode={singleAppMode}
                         />
                       )
                     );
@@ -192,6 +201,7 @@ export function ComputationRoute(props: Props) {
                       computationAppOverview={app}
                       visualizationTypes={plugin.visualizationTypes}
                       baseUrl={`${url}/${computation?.computationId}`}
+                      singleAppMode={singleAppMode}
                     />
                   );
                 }}
