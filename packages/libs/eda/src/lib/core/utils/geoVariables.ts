@@ -2,16 +2,13 @@ import { GeoConfig } from '../types/geoConfig';
 import { StudyEntity } from '../types/study';
 
 /**
- * Given a study, search its variable tree to find a node that has the following direct children
+ * Given an entity note in the study tree, check to see if it has the following variables
  *
- * a longitude variable
- * a number variable
- * six string categorical variables
- * and nothing more!
+ * longitude (exactly one)
+ * latitude (exactly one)
+ * geoaggregator (multiple)
  *
- * returns the VariableTreNode or null
- *
- * This is a placeholder implementation, until more direct variable annotations (displayType) are available for b57
+ * If they exist, return a GeoConfig, else return undefined.
  */
 export function entityToGeoConfig(
   entity: StudyEntity,
