@@ -63,7 +63,7 @@ export function ResultExportSelector<T extends string, S, E>({
       onChange={onChange}
       placeholder={
         <>
-          <IconAlt fa="arrow-up" className="button" />
+          <IconAlt fa="arrow-up fa-rotate-90" className="button" />
           {' '}
           <span style={{ marginLeft: '0.5em' }}>
             Send to...
@@ -105,6 +105,9 @@ function useStyles<T extends string, S, E>(
             }
           : {}
       ),
+    }),
+    indicatorSeparator: () => ({
+      display: 'none'
     }),
     control: (baseStyles, controlProps) => ({
       ...baseStyles,
