@@ -19,34 +19,30 @@ export function entityToGeoConfig(
 ): GeoConfig | undefined {
   // first find the longitude variable
   const longitudeVariables = entity.variables.filter(
-    (variable) => variable.type === 'longitude'
+    (variable) => variable.displayType === 'longitude'
   );
   if (longitudeVariables.length === 1) {
     const longitudeVariable = longitudeVariables[0];
-    const siblingVariables = entity.variables.filter(
-      (variable) => variable.parentId === longitudeVariable.parentId
+    const latitudeVariables = entity.variables.filter(
+      (variable) => variable.displayType === 'latitude'
     );
-    const numberSiblings = siblingVariables.filter(
-      (variable) => variable.type === 'number'
-    );
-    if (numberSiblings.length === 1) {
-      const stringCategoricals = siblingVariables.filter(
-        (variable) =>
-          variable.type === 'string' &&
-          (variable.dataShape === 'categorical' ||
-            variable.dataShape === 'binary')
-      );
-
-      if (stringCategoricals.length === 6) {
+    if (latitudeVariables.length === 1) {
+      const latitudeVariable = latitudeVariables[0];
+      const geoAggregatorVariables = entity.variables
+        .filter((variable) => variable.displayType === 'geoaggregator')
+        .sort((a, b) =>
+          a.displayOrder != null && b.displayOrder != null
+            ? a.displayOrder - b.displayOrder
+            : 0
+        );
+      if (geoAggregatorVariables.length > 0) {
         return {
           entity,
           zoomLevelToAggregationLevel,
-          latitudeVariableId: numberSiblings[0].id,
+          latitudeVariableId: latitudeVariable.id,
           longitudeVariableId: longitudeVariable.id,
-          aggregationVariableIds: stringCategoricals.map(({ id }) => id),
+          aggregationVariableIds: geoAggregatorVariables.map(({ id }) => id),
         };
-      } else {
-        return undefined;
       }
     }
   }
