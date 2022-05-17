@@ -185,24 +185,16 @@ const sections: Section[] = [
           {parameter.parsers.length > 1 && (
             <>
               <div>Alternatively, please use other file formats:</div>
-              <ul className={cx('FileParserList')}>
-                {parameter.parsers.map(parser =>
-                  <li key={parser.name} className={cx('FileParser')}>
-                    <label
-                      style={{marginRight: '1em'}}
-                      key={parser.name}
-                      title={parser.description}
-                    >
-                      <input
-                        type="radio"
-                        value={parser.name}
-                        checked={getParser(uiState, parameter) === parser.name}
-                        onChange={e => e.target.checked && dispatch(setFileParser({...ctx, fileParser: parser.name}))}
-                      /> {parser.displayName}
-                    </label>
-                  </li>
-                )}
-              </ul>
+              <FileParserOptions
+                parameter={parameter}
+                selectedParser={getParser(uiState, parameter)}
+                onSelectParser={selectedParser => {
+                  dispatch(setFileParser({
+                    ...ctx,
+                    fileParser: selectedParser
+                  }));
+                }}
+              />
             </>
           )}
         </small>
@@ -396,6 +388,39 @@ const getValueFromState: ParamModule<DatasetParam>['getValueFromState'] = (conte
     : Promise.resolve();
 
   return datasetConfigPromise.then(config => config == null ? '' : wdkService.createDataset(config).then(String));
+}
+
+interface FileParserOptionsProps {
+  parameter: DatasetParam;
+  selectedParser: string;
+  onSelectParser: (selectedParser: string) => void;
+}
+
+function FileParserOptions({
+  parameter,
+  selectedParser,
+  onSelectParser,
+}: FileParserOptionsProps) {
+  return (
+    <ul className={cx('FileParserList')}>
+      {parameter.parsers.map(parser =>
+        <li key={parser.name} className={cx('FileParser')}>
+          <label
+            style={{marginRight: '1em'}}
+            key={parser.name}
+            title={parser.description}
+          >
+            <input
+              type="radio"
+              value={parser.name}
+              checked={selectedParser === parser.name}
+              onChange={e => e.target.checked && onSelectParser(parser.name)}
+            /> {parser.displayName}
+          </label>
+        </li>
+      )}
+    </ul>
+  );
 }
 
 export default createParamModule({
