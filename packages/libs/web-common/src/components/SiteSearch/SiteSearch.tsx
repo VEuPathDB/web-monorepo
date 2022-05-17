@@ -1,5 +1,4 @@
-import { capitalize, chunk, keyBy, add, isEmpty, isEqual, xor, intersection, orderBy } from 'lodash';
-import { join, compose } from 'lodash/fp';
+import { capitalize, chunk, keyBy, add, isEmpty, isEqual, xor, intersection, orderBy, memoize } from 'lodash';
 import React, { useMemo, useState, useCallback, useContext, useEffect, ReactNode } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { DataGrid } from '@veupathdb/coreui';
@@ -16,10 +15,11 @@ import { useProjectUrls, ProjectUrls, useOrganismToProject, OrganismToProject } 
 import { SiteSearchResponse, SiteSearchDocumentType, SiteSearchDocument } from 'ebrc-client/SiteSearch/Types';
 import { NewStrategySpec, NewStepSpec } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { DEFAULT_STRATEGY_NAME } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
-
-import './SiteSearch.scss';
 import { makeEdaRoute } from 'ebrc-client/routes';
 import { Column } from 'react-table';
+import { WdkService } from '@veupathdb/wdk-client/lib/Core';
+
+import './SiteSearch.scss';
 
 interface Props {
   loading: boolean;
@@ -364,7 +364,7 @@ function Hit(props: HitProps) {
       <div className={cx('--ResultLink', classNameModifier)}>
         {display.route ?  <Link to={display.route} target={display.target}>{documentType.displayName} - {display.text}</Link> :
           display.url ?  <a href={display.url} target={display.target}>{documentType.displayName} - {display.text}</a> :
-          <span>{documentType.displayName} - {display.text}</span>}
+          <span>{documentType.displayName} - <strong>{display.text}</strong></span>}
         {subTitle && <div className={cx('--ResultSubTitle')}>{formatSummaryFieldValue(subTitle)}</div>}
       </div>
       {summary && <div className={cx('--ResultSummary', classNameModifier)}>{summary}</div>}
@@ -667,12 +667,27 @@ function resultDetails(document: SiteSearchDocument, documentType: SiteSearchDoc
     const studyInfoField = 'MULTITEXT__variable_StudyInfo';
     return {
       display: {
-        text: <strong>{document.hyperlinkName}</strong>
+        text: document.hyperlinkName
       },
       summary: (
         <>
           {makeGenericSummary(document, documentType, { [studyInfoField]: () => null })}
-          {makeStudyInfoTableSection(document, studyInfoField)}
+          <StudyInfoTableSection document={document} fieldName={studyInfoField}/>
+        </>
+      )
+    }
+  }
+
+  // eda variable value
+  if (documentType.id === 'variableValue') {
+    return {
+      display: {
+        text: document.hyperlinkName,
+      },
+      summary: (
+        <>
+          {makeGenericSummary(document, documentType, { MULTITEXT__variableValue_All: () => null })}
+          <VariableList document={document} fieldName="MULTITEXT__variableValue_All"/>
         </>
       )
     }
@@ -732,7 +747,8 @@ function resultDetails(document: SiteSearchDocument, documentType: SiteSearchDoc
   }
 }
 
-function makeStudyInfoTableSection(document: SiteSearchDocument, fieldName: string) {
+function StudyInfoTableSection(props: { document: SiteSearchDocument, fieldName: string }) {
+  const { document, fieldName } = props;
   const [collapsed, setCollapsed] = useState(true);
   try {
   const studyInfoRaw = document.summaryFieldData[fieldName];
@@ -742,26 +758,28 @@ function makeStudyInfoTableSection(document: SiteSearchDocument, fieldName: stri
     },
     {
       accessor: "studyName",
-      Header: "Study name",
-      Cell: ({ value, row }) =>
-        safeHtml(value, { to: makeEdaRoute(row.values.studyId) }, Link),
+      Header: "Study",
+      Cell: ({ value, row }) => {
+        return safeHtml(value, { to: makeEdaRoute(useDatasetId((row.original as Record<string, string>).studyId)) + '/new' }, Link);
+      }
     },
     {
       accessor: "entityTypeId",
     },
     {
       accessor: "entityType",
-      Header: "Entity type",
-      Cell: ({ value, row }) =>
-        safeHtml(
+      Header: "Entity",
+      Cell: ({ value, row }) => {
+        return safeHtml(
           value,
           {
-            to: `${makeEdaRoute(row.values.studyId)}/new/variables/${
+            to: `${makeEdaRoute(useDatasetId((row.original as Record<string, string>).studyId))}/new/variables/${
               row.values.entityTypeId
             }/${document.wdkPrimaryKeyString}`,
           },
           Link
-        ),
+        )
+      },
     },
     {
       accessor: "providerLabel",
@@ -788,7 +806,7 @@ function makeStudyInfoTableSection(document: SiteSearchDocument, fieldName: stri
     ["Study name", "Entity type"]
   );
   return (
-    <CollapsibleSection headerContent={<strong>Study info</strong>} isCollapsed={collapsed} onCollapsedChange={setCollapsed}>
+    <CollapsibleSection headerContent={<strong>Studies matched</strong>} isCollapsed={collapsed} onCollapsedChange={setCollapsed}>
       <DataGrid
         columns={columns}
         data={data}
@@ -808,6 +826,52 @@ function makeStudyInfoTableSection(document: SiteSearchDocument, fieldName: stri
       />
     </CollapsibleSection>
   );
+  }
+  catch {
+    return null;
+  }
+}
+
+function VariableList(props: { document: SiteSearchDocument, fieldName: string }) {
+  const { document, fieldName } = props;
+  const [collapsed, setCollapsed] = useState(true);
+  const datasets = useDatasets();
+  try {
+    const data = JSON.parse(document.summaryFieldData[fieldName] as string) as string[];
+    return (
+      <CollapsibleSection headerContent={<strong>Studies matched</strong>} isCollapsed={collapsed} onCollapsedChange={setCollapsed}>
+        <DataGrid
+          columns={[
+            {
+              accessor: '1',
+              Header: 'Study'
+            },
+            {
+              accessor: '2',
+              Header: 'Entity'
+            },
+            {
+              accessor: '0',
+              Header: 'Variable'
+            },
+          ]}
+          data={chunk(data, 3)}
+          styleOverrides={{
+            headerCells: {
+              fontSize: "1em",
+              padding: ".5em",
+              lineBreak: "normal",
+            },
+            dataCells: {
+              fontSize: "1em",
+              padding: ".5em",
+              borderWidth: 1,
+              lineBreak: "normal",
+            },
+          }}
+        />
+      </CollapsibleSection>
+    );
   }
   catch {
     return null;
@@ -917,4 +981,27 @@ function makeFullOrganismFilterSelection(
     allSiteSearchOrganisms,
     organismFilterLeaves
   );
+}
+
+const getDatasetsOnce = memoize((wdkService: WdkService) =>
+   wdkService.getAnswerJson({
+    searchName: 'AllDatasets',
+    searchConfig: {
+      parameters: {}
+    }
+  }, {
+    attributes: ['eda_study_id']
+  })
+)
+
+function useDatasets() {
+  return useWdkService(getDatasetsOnce);
+}
+
+function useDatasetId(edaStudyId: string) {
+  const datasets = useDatasets();
+  if (datasets == null) return;
+  const dataset = datasets.records.find(d => d.attributes.eda_study_id === edaStudyId);
+  if (dataset == null) throw new Error("Could not find a dataset with eda_study_id = " + edaStudyId);
+  return dataset.id[0].value;
 }
