@@ -33,6 +33,10 @@
     }
   }
 
+  &URLField {
+    width: 40em;
+  }
+
   &FileParserList {
     list-style: none;
     display: flex;

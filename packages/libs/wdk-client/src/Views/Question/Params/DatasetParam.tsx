@@ -222,6 +222,7 @@ const sections: Section[] = [
     render: ({ uiState, dispatch, ctx, parameter }) =>
       <>
         <TextBox
+          className={cx('URLField')}
           value={uiState.url}
           onChange={(newUrl) => {
             dispatch(setUrl({
