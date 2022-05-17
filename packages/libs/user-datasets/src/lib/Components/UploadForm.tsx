@@ -17,6 +17,7 @@ import {
   SingleSelect,
 } from '@veupathdb/wdk-client/lib/Components';
 
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { StrategySummary } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 import { State } from '../StoreModules/UserDatasetUploadStoreModule';
@@ -28,6 +29,8 @@ import {
 } from '../Utils/types';
 
 import './UploadForm.scss';
+
+const cx = makeClassNameHelper('UploadForm');
 
 interface Props<T extends string = string> {
   baseUrl: string;
@@ -41,7 +44,7 @@ interface Props<T extends string = string> {
   submitForm: (newUserDataset: FormSubmission, redirectTo?: string) => void;
 }
 
-type DataUploadMode = 'file' | 'url' | 'result';
+type DataUploadMode = 'file' | 'url' | 'strategy' | 'step';
 
 type DataUploadSelection =
   | { type: 'file'; file?: File }
@@ -93,7 +96,12 @@ function UploadForm({
     [strategyOptions]
   );
 
-  const { useFixedUploadMethod } = urlParams;
+  const { useFixedUploadMethod: useFixedUploadMethodStr } = urlParams;
+
+  const useFixedUploadMethod = useMemo(
+    () => useFixedUploadMethodStr === 'true',
+    [useFixedUploadMethodStr]
+  );
 
   const displayStrategyUploadMethod =
     datasetUploadType.formConfig.uploadMethodConfig.result?.offerStrategyUpload;
@@ -109,9 +117,9 @@ function UploadForm({
 
   const [dataUploadMode, setDataUploadMode] = useState<DataUploadMode>(
     urlParams.datasetStepId
-      ? 'result'
+      ? 'step'
       : urlParams.datasetStrategyRootStepId && enableStrategyUploadMethod
-      ? 'result'
+      ? 'strategy'
       : urlParams.datasetUrl
       ? 'url'
       : 'file'
@@ -221,7 +229,7 @@ function UploadForm({
 
   return (
     <form
-      className="UploadForm"
+      className={cx()}
       style={submitting ? { opacity: '0.5' } : {}}
       onSubmit={onSubmit}
     >
@@ -230,7 +238,8 @@ function UploadForm({
         <h2>{datasetUploadType.uploadTitle}</h2>
         <div className="formSection">
           <label htmlFor="data-set-name">
-            Name<sup className="supAsterisk">*</sup>:<br />
+            Name:
+            <br />
           </label>
           <TextBox
             type="input"
@@ -242,9 +251,7 @@ function UploadForm({
           />
         </div>
         <div className="formSection">
-          <label htmlFor="data-set-summary">
-            Summary<sup className="supAsterisk">*</sup>:<br />
-          </label>
+          <label htmlFor="data-set-summary">Summary:</label>
           <TextBox
             type="input"
             id="data-set-summary"
@@ -255,9 +262,7 @@ function UploadForm({
           />
         </div>
         <div className="formSection">
-          <label htmlFor="data-set-description">
-            Description<sup className="supAsterisk">*</sup>:<br />
-          </label>
+          <label htmlFor="data-set-description">Description:</label>
           <TextArea
             id="data-set-description"
             required={true}
@@ -266,13 +271,18 @@ function UploadForm({
             onChange={setDescription}
           />
         </div>
-        {!useFixedUploadMethod && (
+        {
           <div className="formSection" style={{ minHeight: '8em' }}>
             <RadioList
               name="data-set-radio"
+              className={cx('--UploadMethodSelector')}
               value={dataUploadMode}
               onChange={(value) => {
-                if (value !== 'url' && value !== 'file' && value !== 'result') {
+                if (
+                  value !== 'url' &&
+                  value !== 'file' &&
+                  value !== 'strategy'
+                ) {
                   throw new Error(
                     `Unrecognized upload method '${value}' encountered.`
                   );
@@ -283,54 +293,51 @@ function UploadForm({
               items={[
                 {
                   value: 'file',
-                  disabled: false,
+                  disabled: useFixedUploadMethod,
                   display: (
                     <React.Fragment>
-                      <label htmlFor="data-set-file">
-                        {dataUploadMode === 'file' ? (
-                          <React.Fragment>
-                            Data File<sup className="supAsterisk">*</sup>:
-                          </React.Fragment>
-                        ) : (
-                          'Data File'
+                      <label htmlFor="data-set-file">Upload File:</label>
+                      <div
+                        id="data-set-file"
+                        className={cx(
+                          '--UploadMethodField',
+                          dataUploadMode !== 'file' && 'disabled'
                         )}
-                        <br />
-                      </label>
-                      {dataUploadMode === 'file' && (
+                      >
                         <FileInput
-                          id="data-set-file"
+                          required={dataUploadMode === 'file'}
+                          disabled={
+                            dataUploadMode !== 'file' || useFixedUploadMethod
+                          }
                           onChange={(file) => {
                             setFile(file ?? undefined);
                           }}
                         />
-                      )}
+                      </div>
                     </React.Fragment>
                   ),
                 },
                 {
                   value: 'url',
-                  disabled: false,
+                  disabled: useFixedUploadMethod,
                   display: (
                     <React.Fragment>
-                      <label htmlFor="data-set-url">
-                        {dataUploadMode === 'url' ? (
-                          <React.Fragment>
-                            Data URL<sup className="supAsterisk">*</sup>:
-                          </React.Fragment>
-                        ) : (
-                          'Data URL'
+                      <label htmlFor="data-set-url">Upload URL:</label>
+                      <TextBox
+                        type="input"
+                        className={cx(
+                          '--UploadMethodField',
+                          dataUploadMode !== 'url' && 'disabled'
                         )}
-                        <br />
-                      </label>
-                      {dataUploadMode === 'url' && (
-                        <TextBox
-                          type="input"
-                          id="data-set-url"
-                          placeholder="Address of a data file from the Web"
-                          value={url}
-                          onChange={setUrl}
-                        />
-                      )}
+                        id="data-set-url"
+                        placeholder="Address of a data file from the Web"
+                        value={url}
+                        required={dataUploadMode === 'url'}
+                        disabled={
+                          dataUploadMode !== 'url' || useFixedUploadMethod
+                        }
+                        onChange={setUrl}
+                      />
                     </React.Fragment>
                   ),
                 },
@@ -339,21 +346,21 @@ function UploadForm({
                   ? []
                   : [
                       {
-                        value: 'result',
-                        disabled: !displayStrategyUploadMethod,
+                        value: 'strategy',
+                        disabled:
+                          !enableStrategyUploadMethod || useFixedUploadMethod,
                         display: (
                           <React.Fragment>
-                            <label htmlFor="data-set-url">
-                              {dataUploadMode === 'result' ? (
-                                <React.Fragment>
-                                  Strategy<sup className="supAsterisk">*</sup>:
-                                </React.Fragment>
-                              ) : (
-                                'Strategy'
-                              )}
-                              <br />
+                            <label htmlFor="data-set-strategy">
+                              Upload Strategy:
                             </label>
-                            {dataUploadMode === 'result' && (
+                            <div
+                              id="data-set-strategy"
+                              className={cx(
+                                '--UploadMethodField',
+                                dataUploadMode !== 'strategy' && 'disabled'
+                              )}
+                            >
                               <SingleSelect
                                 value={`${stepId}`}
                                 items={strategyOptions.map((option) => ({
@@ -362,11 +369,12 @@ function UploadForm({
                                     !option.isSaved ? '*' : ''
                                   }`,
                                 }))}
+                                required={dataUploadMode === 'strategy'}
                                 onChange={(value) => {
                                   setStepId(Number(value));
                                 }}
                               />
-                            )}
+                            </div>
                           </React.Fragment>
                         ),
                       },
@@ -374,12 +382,12 @@ function UploadForm({
               )}
             />
           </div>
-        )}
+        }
       </div>
       <button type="submit" className="btn" disabled={submitting}>
         Upload Data Set
       </button>
-      {datasetUploadType.formConfig.renderInfo()}
+      {datasetUploadType.formConfig?.renderInfo?.()}
     </form>
   );
 }

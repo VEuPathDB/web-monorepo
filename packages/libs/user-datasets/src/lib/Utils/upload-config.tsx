@@ -11,9 +11,6 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
     formConfig: {
       renderInfo: () => (
         <p className="formInfo">
-          <span>* </span> All form fields are required.
-          <br />
-          <br />
           We accept any file in the{' '}
           <a href="http://biom-format.org">BIOM format</a>, either JSON-based
           (BIOM 1.0) or HDF5 (BIOM 2.0+). The maximum allowed file size is 1GB.
@@ -32,11 +29,6 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
     type: 'gene-list',
     uploadTitle: 'Upload My Gene List',
     formConfig: {
-      renderInfo: () => (
-        <p className="formInfo">
-          <span>* </span> All form fields are required.
-        </p>
-      ),
       uploadMethodConfig: {
         result: {
           offerStrategyUpload: false,
@@ -59,11 +51,6 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
     type: 'isasimple',
     uploadTitle: 'Upload My Study',
     formConfig: {
-      renderInfo: () => (
-        <p className="formInfo">
-          <span>* </span> All form fields are required.
-        </p>
-      ),
       uploadMethodConfig: {},
     },
   },

@@ -73,7 +73,7 @@ export interface DatasetUploadTypeConfigEntry<T extends string> {
     uploadMethodConfig: {
       result?: ResultUploadConfig;
     };
-    renderInfo: () => ReactNode;
+    renderInfo?: () => ReactNode;
   };
 }
 

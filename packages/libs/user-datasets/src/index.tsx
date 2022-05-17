@@ -54,7 +54,7 @@ initialize({
           availableUploadTypes={availableUploadTypes}
           detailsPageTitle="My Data Set"
           helpRoute="/help"
-          workspaceTitle="My Data"
+          workspaceTitle="My Data Sets"
           uploadTypeConfig={uploadTypeConfig}
         />
       ),
@@ -75,7 +75,7 @@ initialize({
             hasDirectUpload={hasDirectUpload}
             projectName={projectName}
             quotaSize={quotaSize}
-            workspaceTitle="My Data"
+            workspaceTitle="My Data Sets"
           />
         );
       },
