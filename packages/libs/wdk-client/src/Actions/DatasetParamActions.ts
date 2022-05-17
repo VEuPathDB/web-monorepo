@@ -14,6 +14,7 @@ export type Action =
   | SetStrategyIdAction
   | SetStrategyListAction
   | SetUrlAction
+  | SetUrlParserAction
 
 //==============================================================================
 
@@ -178,6 +179,24 @@ export interface SetUrlAction {
 export function setUrl(payload: SetUrlAction['payload']): SetUrlAction {
   return {
     type: SET_URL,
+    payload
+  }
+}
+
+//==============================================================================
+
+export const SET_URL_PARSER = 'dataset-param/set-url-parser';
+
+export interface SetUrlParserAction {
+  type: typeof SET_URL_PARSER;
+  payload: Payload<{
+    urlParser: DatasetParam['parsers'][number]['name'];
+  }>;
+}
+
+export function setUrlParser(payload: SetUrlParserAction['payload']): SetUrlParserAction {
+  return {
+    type: SET_URL_PARSER,
     payload
   }
 }

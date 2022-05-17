@@ -27,6 +27,7 @@ import {
   SET_STRATEGY_ID,
   SET_STRATEGY_LIST,
   SET_URL,
+  SET_URL_PARSER,
   setBasketCount,
   setFile,
   setFileParser,
@@ -36,6 +37,7 @@ import {
   setStrategyId,
   setStrategyList,
   setUrl,
+  setUrlParser,
 } from 'wdk-client/Actions/DatasetParamActions';
 import { Action } from 'wdk-client/Actions';
 
@@ -62,6 +64,7 @@ type State = {
   basketCount?: number;
   fileParser?: DatasetParam['parsers'][number]['name'];
   url?: string;
+  urlParser?: DatasetParam['parsers'][number]['name'];
 }
 
 
@@ -126,6 +129,8 @@ function reduce(state: State = defaultState, action: Action): State {
       return { ...state, fileParser: action.payload.fileParser };
     case SET_URL:
       return { ...state, url: action.payload.url };
+    case SET_URL_PARSER:
+      return { ...state, urlParser: action.payload.urlParser };
     default:
       return state;
   }
@@ -134,10 +139,17 @@ function reduce(state: State = defaultState, action: Action): State {
 const getIdList = (uiState: State, parameter: DatasetParam) =>
     uiState.idList
 
-const getParser = (uiState: State, parameter: DatasetParam) =>
-  uiState.fileParser == null
+const getParser = (
+  parserStateSelector: (uiState: State) => string | undefined,
+  uiState: State,
+  parameter: DatasetParam
+) => {
+  const parserState = parserStateSelector(uiState);
+
+  return parserState == null
     ? getInitialParser(parameter)
-    : uiState.fileParser;
+    : parserState;
+}
 
 const getStrategyId = (uiState: State, parameter: DatasetParam) =>
   uiState.strategyId != null
@@ -187,11 +199,15 @@ const sections: Section[] = [
               <div>Alternatively, please use other file formats:</div>
               <FileParserOptions
                 parameter={parameter}
-                selectedParser={getParser(uiState, parameter)}
+                selectedParser={getParser(
+                  uiState => uiState.fileParser,
+                  uiState,
+                  parameter
+                )}
                 onSelectParser={selectedParser => {
                   dispatch(setFileParser({
                     ...ctx,
-                    fileParser: selectedParser
+                    fileParser: selectedParser,
                   }));
                 }}
               />
@@ -218,6 +234,28 @@ const sections: Section[] = [
             !parameter.allowEmptyValue
           }
         />
+        <small>
+          <div>The URL should resolve to a list of IDs.</div>
+          {parameter.parsers.length > 1 && (
+            <>
+              <div>Alternatively, please use other formats:</div>
+              <FileParserOptions
+                parameter={parameter}
+                selectedParser={getParser(
+                  uiState => uiState.urlParser,
+                  uiState,
+                  parameter
+                )}
+                onSelectParser={selectedParser => {
+                  dispatch(setUrlParser({
+                    ...ctx,
+                    urlParser: selectedParser,
+                  }));
+                }}
+              />
+            </>
+          )}
+        </small>
       </>
   },
   {
@@ -360,14 +398,15 @@ const getValueFromState: ParamModule<DatasetParam>['getValueFromState'] = (conte
   const { file, sourceType, url } : State = questionState.paramUIState[parameter.name];
   const idList = getIdList(state, parameter);
   const strategyId = getStrategyId(state, parameter);
-  const parser = getParser(state, parameter);
+  const fileParser = getParser(uiState => uiState.fileParser, state, parameter);
+  const urlParser = getParser(uiState => uiState.urlParser, state, parameter);
   const datasetConfigPromise: Promise<DatasetConfig | void> =
     sourceType === 'file' && file
       ? wdkService.createTemporaryFile(file).then(temporaryFileId => ({
         sourceType,
         sourceContent: {
           temporaryFileId,
-          parser,
+          parser: fileParser,
           searchName: questionState.question.urlSegment,
           parameterName: parameter.name
         }
@@ -380,7 +419,7 @@ const getValueFromState: ParamModule<DatasetParam>['getValueFromState'] = (conte
         sourceType,
         sourceContent: {
           url,
-          parser: getInitialParser(parameter),
+          parser: urlParser,
           searchName: questionState.question.urlSegment,
           parameterName: parameter.name
         }
