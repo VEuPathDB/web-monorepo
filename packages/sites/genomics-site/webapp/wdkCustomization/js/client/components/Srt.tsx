@@ -1,13 +1,19 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { Switch, Route, useRouteMatch, useLocation, Redirect } from 'react-router-dom';
 
-import { noop } from 'lodash';
+import { noop, zipWith, isEqual } from 'lodash';
 
 import { projectId } from '@veupathdb/web-common/lib/config';
-import { TextArea, Loading, HelpIcon, Tabs, Link } from '@veupathdb/wdk-client/lib/Components';
+import { TextArea, Loading, HelpIcon, Link } from '@veupathdb/wdk-client/lib/Components';
+import { ResetFormButton } from '@veupathdb/wdk-client/lib/Components/Shared/ResetFormButton';
+import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
+import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
 
 import FastaGeneReporterForm from '@veupathdb/web-common/lib/components/reporters/FastaGeneReporterForm';
 import { fastaGenomicSequenceReporterFormFactory } from '@veupathdb/web-common/lib/components/reporters/FastaGenomicSequenceReporterForm';
@@ -21,7 +27,7 @@ interface BaseSrtFormConfig {
   recordClassUrlSegment: string;
   display: string;
   ReporterForm: React.ComponentType<any>;
-  initialReporterFormState: Record<string, string | number | boolean>;
+  defaultReporterFormState: Record<string, string | number | boolean>;
   idsInputHelp?: React.ReactElement;
   formActionUrl: string;
 }
@@ -30,10 +36,34 @@ interface InitialSrtFormConfig extends BaseSrtFormConfig {
   makeInitialIdsState: (paramDisplayMap: Record<string, string | undefined>) => string;
 }
 
+interface InitialSrtFormConfigWithStoredTabData extends InitialSrtFormConfig {
+  storedIdsState: string | undefined;
+  storedFormState: Record<string, string | number | boolean> | undefined;
+}
+
 interface SrtFormConfig extends BaseSrtFormConfig {
   initialIdsState: string;
+  defaultIdsState: string;
+  initialReporterFormState: Record<string, string | number | boolean>;
   projectId: string;
 }
+
+interface SrtFormProps extends SrtFormConfig {
+  updateSrtTabsState: (
+    idsState: string,
+    reporterFormState: Record<string, string | number | boolean>,
+  ) => void;
+  idsState: string;
+  formState: Record<string, string | number | boolean>;
+}
+
+type SrtTabsState = Record<
+  string,
+  {
+    idsState: string;
+    reporterFormState: Record<string, string | number | boolean>;
+  }
+>;
 
 const SRT_QUESTION = 'SRT';
 
@@ -44,7 +74,7 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
     recordClassUrlSegment: 'gene',
     display: 'Gene IDs',
     ReporterForm: FastaGeneReporterForm,
-    initialReporterFormState: FastaGeneReporterForm.getInitialState().formState,
+    defaultReporterFormState: FastaGeneReporterForm.getInitialState().formState,
     makeInitialIdsState: paramDisplayMap => paramDisplayMap['genes_ids'] || '',
     formActionUrl: '/cgi-bin/geneSrt'
   },
@@ -52,7 +82,7 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
     recordClassUrlSegment: 'genomic-sequence',
     display: 'Genomic Sequence IDs',
     ReporterForm: FastaGenomicSequenceReporterForm,
-    initialReporterFormState: {
+    defaultReporterFormState: {
       ...FastaGenomicSequenceReporterForm.getInitialState().formState,
       revComp: false,
       end: 10000
@@ -84,7 +114,7 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
     recordClassUrlSegment: 'est',
     display: 'EST IDs',
     ReporterForm: FastaGenomicSequenceReporterForm,
-    initialReporterFormState: {
+    defaultReporterFormState: {
       ...FastaGenomicSequenceReporterForm.getInitialState().formState,
       revComp: false,
       end: 200
@@ -96,7 +126,7 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
     recordClassUrlSegment: 'popsetSequence',
     display: 'Popset Isolate IDs',
     ReporterForm: FastaGenomicSequenceReporterForm,
-    initialReporterFormState: {
+    defaultReporterFormState: {
       ...FastaGenomicSequenceReporterForm.getInitialState().formState,
       revComp: false,
       end: 200
@@ -107,14 +137,65 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
 ];
 
 export function Srt() {
+  const routeBase = useRouteMatch();
+  const { pathname } = useLocation();
   const compatibleSrtConfigs = useCompatibleSrtFormConfigs();
-  const [ selectedSrtForm, setSelectedSrtForm ] = useState<string>('');
+  const [selectedSrtForm, setSelectedSrtForm] = useState<SrtFormConfig>();
+  const [srtTabsState, setSrtTabsState] = useState<SrtTabsState>();
+  const { paramValueStore } = useNonNullableContext(WdkDependenciesContext);
 
   useEffect(() => {
-    if (!selectedSrtForm && compatibleSrtConfigs && compatibleSrtConfigs.length >= 1) {
-      setSelectedSrtForm(compatibleSrtConfigs[0].recordClassUrlSegment);
+    if (!selectedSrtForm || !srtTabsState) return;
+    paramValueStore.updateParamValues(`srt/${selectedSrtForm.recordClassUrlSegment}`,
+      {
+        idsState: srtTabsState[selectedSrtForm.recordClassUrlSegment].idsState,
+        reporterFormState: JSON.stringify(srtTabsState[selectedSrtForm.recordClassUrlSegment].reporterFormState),
+      });
+  }, [selectedSrtForm, srtTabsState]);
+
+  const updateSrtTabsState = useCallback(
+    (idsState, formState) => {
+      if (!selectedSrtForm) return;
+      setSrtTabsState(prevTabsState => (
+        {
+          ...prevTabsState,
+          [selectedSrtForm.recordClassUrlSegment]: {
+            idsState: idsState,
+            reporterFormState: formState,
+          }
+        }
+      ));
+  }, [selectedSrtForm]);
+
+  useEffect(() => {
+    if (!compatibleSrtConfigs) return;
+    const initialSrtTabsObject = {}
+    for (const config of compatibleSrtConfigs) {
+      Object.assign(initialSrtTabsObject, {
+        [config.recordClassUrlSegment]: {
+          idsState: config.initialIdsState,
+          reporterFormState: config.initialReporterFormState
+        }
+      })
+    };
+    setSrtTabsState(initialSrtTabsObject);
+  }, [compatibleSrtConfigs]);
+
+  useEffect(() => {
+    if (compatibleSrtConfigs && compatibleSrtConfigs.length >= 1) {
+      const matchedConfig = compatibleSrtConfigs.find(config => pathname.includes(config.recordClassUrlSegment));
+      setSelectedSrtForm(matchedConfig ?? compatibleSrtConfigs[0]);
     }
-  }, [ compatibleSrtConfigs ]);
+  }, [compatibleSrtConfigs, pathname]);
+
+  const workspaceNavigationItems = useMemo(() => {
+    if (!compatibleSrtConfigs) return;
+    return compatibleSrtConfigs.map(config => ({
+      display: config.display,
+      route: `/${config.recordClassUrlSegment}`,
+      isActive: () => config.recordClassUrlSegment === selectedSrtForm?.recordClassUrlSegment,
+    }))
+  }, [compatibleSrtConfigs, selectedSrtForm]);
 
   return (
     <div className={cx()}>
@@ -122,7 +203,7 @@ export function Srt() {
         Retrieve Sequences
       </h1>
       {
-        !compatibleSrtConfigs
+        !compatibleSrtConfigs || !workspaceNavigationItems
           ? <Loading />
           : <React.Fragment>
               <p className={cx('--BulkDownloadLink')}>
@@ -136,18 +217,32 @@ export function Srt() {
                 } 
                 .)
               </p>
-              <Tabs
-                containerClassName={cx('--SrtForms')}
-                activeTab={selectedSrtForm}
-                onTabSelected={setSelectedSrtForm}
-                tabs={compatibleSrtConfigs.map(
-                  config => ({
-                    key: config.recordClassUrlSegment,
-                    display: config.display,
-                    content: <SrtForm {...config} />
-                  })
-                )}
-              />
+            <WorkspaceNavigation
+              heading={''}
+              routeBase={routeBase.url}
+              items={workspaceNavigationItems}
+            />
+              <Switch>
+                <Route
+                  exact  
+                  path={routeBase.url}
+                  >
+                  <Redirect to={routeBase.url + `/${compatibleSrtConfigs[0].recordClassUrlSegment}`}></Redirect>
+                </Route>
+                <Route
+                  path={routeBase.url + '/:recordType'}
+                > 
+                  {compatibleSrtConfigs.length && selectedSrtForm && srtTabsState ?
+                    <SrtForm
+                      {...selectedSrtForm}
+                      updateSrtTabsState={updateSrtTabsState}
+                      formState={srtTabsState[selectedSrtForm.recordClassUrlSegment].reporterFormState}
+                      idsState={srtTabsState[selectedSrtForm.recordClassUrlSegment].idsState}
+                    />
+                    : null
+                  }
+                </Route>
+              </Switch>
             </React.Fragment>
       }
     </div>
@@ -156,18 +251,40 @@ export function Srt() {
 
 function SrtForm({
   display,
-  initialReporterFormState,
+  formState,
   ReporterForm,
-  initialIdsState,
+  idsState,
   idsInputHelp,
   projectId,
-  formActionUrl
-}: SrtFormConfig) {
-  const [ idsState, setIdsState ] = useState(initialIdsState);
-  const [ formState, updateFormState ] = useState(initialReporterFormState);
+  formActionUrl,
+  defaultIdsState,
+  defaultReporterFormState,
+  updateSrtTabsState
+}: SrtFormProps) {
+    
+  const onReset = useCallback(() => {
+    updateSrtTabsState(defaultIdsState, defaultReporterFormState);
+  }, [defaultIdsState, defaultReporterFormState, updateSrtTabsState]);
+
+  const updateIdsState = useCallback((newIdsState) => {
+    updateSrtTabsState(newIdsState, formState);
+  }, [formState, updateSrtTabsState]);
+
+  const updateFormState = useCallback((newFormState) => {
+    updateSrtTabsState(idsState, newFormState);
+  }, [idsState, updateSrtTabsState]);
+
+  const isResetButtonDisabled = useMemo(
+    () => isEqual(defaultIdsState, idsState) && isEqual(defaultReporterFormState, formState),
+  [defaultIdsState, idsState, defaultReporterFormState, formState]);
 
   return (
     <form action={formActionUrl} method="post" target="_blank">
+      <ResetFormButton
+        disabled={isResetButtonDisabled}
+        onResetForm={onReset}
+        resetFormContent={<><i className="fa fa-refresh"></i>Reset to default</>}
+      />
       <input type="hidden" name="project_id" value={projectId} />
       <input type="hidden" name="downloadType" value={String(formState.attachmentType)} />
       <h3 className={cx('--IdsHeader')} >
@@ -184,30 +301,65 @@ function SrtForm({
         <TextArea
           name="ids"
           value={idsState}
-          onChange={setIdsState}
+          onChange={updateIdsState}
           rows={4}
           cols={60}
         />
       </div>
-      <ReporterForm
-        formState={formState}
-        updateFormState={updateFormState}
-        onSubmit={noop}
-        includeSubmit
-      />
+        <ReporterForm
+          formState={formState}
+          updateFormState={updateFormState}
+          onSubmit={noop}
+          includeSubmit
+        />
     </form>
   );
 }
 
 function useCompatibleSrtFormConfigs() {
   const recordClasses = useSelector((state: RootState) => state.globalData.recordClasses);
+  const { paramValueStore } = useNonNullableContext(WdkDependenciesContext);
 
   const serviceResult = useWdkService(wdkService => Promise.all([
     wdkService.getConfig(),
-    wdkService.getQuestionAndParameters(SRT_QUESTION)
+    wdkService.getQuestionAndParameters(SRT_QUESTION),
   ]), []);
-
-  const [ { projectId }, srtQuestion ] = serviceResult || [ {}, undefined ];
+  
+  const [{ projectId }, srtQuestion] = serviceResult || [{}, undefined];
+  
+  const storedSrtData = usePromise(async () => {
+    try {
+      const storedFormDataState = await Promise.all(
+        SUPPORTED_RECORD_CLASS_CONFIGS.map(
+          async config => await paramValueStore.fetchParamValues(`srt/${config.recordClassUrlSegment}`)
+        ));
+      return zipWith(storedFormDataState, SUPPORTED_RECORD_CLASS_CONFIGS,
+        function (storedConfigs, initialConfigs): InitialSrtFormConfigWithStoredTabData {
+          if (storedConfigs) {
+            return {
+              ...initialConfigs,
+              storedIdsState: storedConfigs.idsState,
+              storedFormState: JSON.parse(storedConfigs.reporterFormState),
+            };
+          } else {
+            return {
+              ...initialConfigs,
+              storedIdsState: undefined,
+              storedFormState: undefined,
+            }
+          };
+        });
+    } catch (error) {
+      console.error(error);
+      return SUPPORTED_RECORD_CLASS_CONFIGS.map(config => {
+        return {
+          ...config,
+          storedIdsState: undefined,
+          storedFormState: undefined,
+        }
+      });
+    }
+  }, []);
 
   const srtQuestionParamDisplayMap = useMemo(
     () => srtQuestion?.parameters.reduce(
@@ -225,18 +377,27 @@ function useCompatibleSrtFormConfigs() {
     [ recordClasses ]
   );
 
-  const compatibleSrtConfigs = useMemo(() =>
-    recordClassUrlSegments != null &&
-    projectId != null &&
-    srtQuestionParamDisplayMap != null &&
-    SUPPORTED_RECORD_CLASS_CONFIGS
-      .filter(initialSrtConfig => recordClassUrlSegments.has(initialSrtConfig.recordClassUrlSegment))
-      .map(initialSrtConfig => ({
-        ...initialSrtConfig,
-        initialIdsState: initialSrtConfig.makeInitialIdsState(srtQuestionParamDisplayMap),
-        projectId
-      }) as SrtFormConfig),
-    [ recordClassUrlSegments, projectId, srtQuestionParamDisplayMap ]
+  const compatibleSrtConfigs = useMemo(() => {
+    if (
+      recordClassUrlSegments != null &&
+      projectId != null &&
+      srtQuestionParamDisplayMap != null &&
+      storedSrtData.value != null
+    ) {
+      return storedSrtData.value
+        .filter((initialSrtConfig) => recordClassUrlSegments.has(initialSrtConfig.recordClassUrlSegment))
+        .map((initialSrtConfig): SrtFormConfig => ({
+          ...initialSrtConfig,
+          defaultIdsState: initialSrtConfig.makeInitialIdsState(srtQuestionParamDisplayMap),
+          initialIdsState: initialSrtConfig.storedIdsState ?? initialSrtConfig.makeInitialIdsState(srtQuestionParamDisplayMap),
+          initialReporterFormState: initialSrtConfig.storedFormState ?? initialSrtConfig.defaultReporterFormState,
+          projectId,
+        }));
+    } else {
+      return undefined;
+    }
+  },
+  [ recordClassUrlSegments, projectId, srtQuestionParamDisplayMap, storedSrtData.value ]
   );
 
   return compatibleSrtConfigs;
