@@ -523,9 +523,9 @@ function MapViz(props: VisualizationProps) {
             : ChartMarker;
 
         const markerLabel =
-          pieplotData.value != null
-            ? pieplotData.value[geoAggregateValue].label
-            : '';
+          pieplotData.value != null && !pieplotData.pending
+            ? pieplotData.value[geoAggregateValue]?.label ?? ''
+            : String(entityCount);
         return (
           <MarkerComponent
             id={geoAggregateValue}
@@ -534,10 +534,10 @@ function MapViz(props: VisualizationProps) {
             position={position}
             data={safeDonutData}
             duration={defaultAnimationDuration}
+            markerLabel={markerLabel}
             {...(vizConfig.markerType !== 'pie'
               ? {
                   dependentAxisRange: yRange,
-                  markerLabel,
                   independentAxisLabel: `${markerLabel} ${
                     outputEntity?.displayNamePlural ?? outputEntity?.displayName
                   }`,
@@ -759,6 +759,7 @@ function MapViz(props: VisualizationProps) {
         error={basicMarkerData.error}
         outputSize={totalEntityCount}
       />
+      <PluginError error={pieplotData.error} outputSize={totalEntityCount} />
       <OutputEntityTitle entity={outputEntity} outputSize={totalEntityCount} />
       <PlotLayout
         isFaceted={false}
