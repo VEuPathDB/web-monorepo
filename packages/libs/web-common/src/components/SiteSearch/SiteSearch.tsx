@@ -377,11 +377,12 @@ function DirectHit(props: Props) {
   const { response, searchString } = props;
   // quote chars to "remove" when comparing
   const quotes = [``, `'`, `"`];
+  const docTypeIdsToSkip = ['variableValue'];
   const firstHit = response?.searchResults?.documents[0];
   const firstHitDocType = response?.documentTypes.find(d => d.id === firstHit?.documentType);
   const firstHitIsExact = firstHit != null && quotes.some(q => searchString.toLowerCase() === (q + firstHit.wdkPrimaryKeyString + q).toLowerCase());
 
-  if (!response || !firstHit || !firstHitDocType || !firstHitIsExact) return null;
+  if (!response || !firstHit || !firstHitDocType || !firstHitIsExact || docTypeIdsToSkip.includes(firstHitDocType.id)) return null;
 
   return (
     <Hit
