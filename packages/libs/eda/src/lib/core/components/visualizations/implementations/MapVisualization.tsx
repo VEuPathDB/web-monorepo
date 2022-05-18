@@ -133,7 +133,7 @@ type BasicMarkerData = {
 
 type PieplotData = Record<
   string,
-  { label: string; data: { label: string; value: number }[] }
+  { entityCount: number; data: { label: string; value: number }[] }
 >;
 
 function MapViz(props: VisualizationProps) {
@@ -417,14 +417,12 @@ function MapViz(props: VisualizationProps) {
           ) {
             const geoAggKey = facetVariableDetails[0].value;
             map[geoAggKey] = {
-              label: String(
-                sum(
-                  response.sampleSizeTable.find(
-                    (item) =>
-                      item.facetVariableDetails != null &&
-                      item.facetVariableDetails[0].value === geoAggKey
-                  )?.size
-                )
+              entityCount: sum(
+                response.sampleSizeTable.find(
+                  (item) =>
+                    item.facetVariableDetails != null &&
+                    item.facetVariableDetails[0].value === geoAggKey
+                )?.size
               ),
               data: zip(label, value).map(([label, value]) => ({
                 label: label!,
@@ -522,10 +520,12 @@ function MapViz(props: VisualizationProps) {
             ? DonutMarker
             : ChartMarker;
 
-        const markerLabel =
+        const count =
           pieplotData.value != null && !pieplotData.pending
-            ? pieplotData.value[geoAggregateValue]?.label ?? ''
-            : String(entityCount);
+            ? pieplotData.value[geoAggregateValue]?.entityCount ?? ''
+            : entityCount;
+        const formattedCount = mFormatter(count);
+
         return (
           <MarkerComponent
             id={geoAggregateValue}
@@ -534,11 +534,11 @@ function MapViz(props: VisualizationProps) {
             position={position}
             data={safeDonutData}
             duration={defaultAnimationDuration}
-            markerLabel={markerLabel}
+            markerLabel={formattedCount}
             {...(vizConfig.markerType !== 'pie'
               ? {
                   dependentAxisRange: yRange,
-                  independentAxisLabel: `${markerLabel} ${
+                  independentAxisLabel: `${formattedCount} ${
                     outputEntity?.displayNamePlural ?? outputEntity?.displayName
                   }`,
                 }
@@ -769,4 +769,15 @@ function MapViz(props: VisualizationProps) {
       />
     </div>
   );
+}
+
+/**
+ * Somewhat analagous to kFormatter in web-components DonutMarker.tsx
+ * M is the S.I. abbreviation for million,
+ * and, to be honest, it looks clearer than 'm'
+ */
+function mFormatter(num: number): string {
+  return Math.abs(num) > 999999
+    ? (Math.sign(num) * (Math.abs(num) / 1000000)).toFixed(1) + 'M'
+    : num.toLocaleString(undefined, { useGrouping: true });
 }
