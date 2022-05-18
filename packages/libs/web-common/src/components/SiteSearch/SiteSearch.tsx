@@ -62,7 +62,7 @@ export default function SiteSearch(props: Props) {
 }
 
 function Results(props: Props) {
-  const { response, documentType, filters = [], filterOrganisms = [] } = props;
+  const { response, documentType, filters = [], filterOrganisms = [], onClearFilters } = props;
 
   if (response.searchResults.totalCount === 0 && documentType == null && filters.length === 0 && filterOrganisms.length === 0) {
     return (
@@ -92,8 +92,8 @@ function Results(props: Props) {
           {response.searchResults.totalCount === 0
             ? (
               <div style={{ textAlign: 'center', fontSize: '1.2em' }}>
-                <p style={{ fontSize: '1.2em' }}>Your search term and filters did not yield results.</p>
-                <p>Try a different search term, or clearing your filters in the panel on the left.</p>
+                <p style={{ fontSize: '1.2em' }}>Your <strong>search term</strong> and <strong>filters</strong> did not yield results.</p>
+                <p>Try a different search term, or <button className="link" type="button" onClick={onClearFilters}>clearing your filters</button> in the panel on the left.</p>
               </div>
             )
             : <SearchResult {...props} />
@@ -334,9 +334,9 @@ function SearchResult(props: Props) {
     <React.Fragment>
       <DirectHit {...props}/>
       <div className={cx('--ResultList')}>
-        {result.documents.map((document, index) => (
+        {result.documents.map((document) => (
           <Hit
-            key={index}
+            key={document.wdkPrimaryKeyString}
             document={document}
             documentType={documentTypesById[document.documentType]}
           />
@@ -807,10 +807,11 @@ function StudyInfoTableSection(props: { document: SiteSearchDocument, fieldName:
     ["Study name", "Entity type"]
   );
   return (
-    <CollapsibleSection headerContent={<strong>Studies matched</strong>} isCollapsed={collapsed} onCollapsedChange={setCollapsed}>
+    <CollapsibleSection headerContent={<strong>Studies matched ({data.length})</strong>} isCollapsed={collapsed} onCollapsedChange={setCollapsed}>
       <DataGrid
         columns={columns}
         data={data}
+        stylePreset="mesa"
         styleOverrides={{
           headerCells: {
             fontSize: "1em",
@@ -838,9 +839,10 @@ function VariableList(props: { document: SiteSearchDocument, fieldName: string }
   const [collapsed, setCollapsed] = useState(true);
   const datasets = useDatasets();
   try {
-    const data = JSON.parse(document.summaryFieldData[fieldName] as string) as string[];
+    const flatData = JSON.parse(document.summaryFieldData[fieldName] as string) as string[];
+    const data = chunk(flatData, 3);
     return (
-      <CollapsibleSection headerContent={<strong>Studies matched</strong>} isCollapsed={collapsed} onCollapsedChange={setCollapsed}>
+      <CollapsibleSection headerContent={<strong>Studies matched ({data.length})</strong>} isCollapsed={collapsed} onCollapsedChange={setCollapsed}>
         <DataGrid
           columns={[
             {
@@ -856,7 +858,8 @@ function VariableList(props: { document: SiteSearchDocument, fieldName: string }
               Header: 'Variable'
             },
           ]}
-          data={chunk(data, 3)}
+          data={data}
+          stylePreset="mesa"
           styleOverrides={{
             headerCells: {
               fontSize: "1em",
