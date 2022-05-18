@@ -90,12 +90,17 @@ function makeArc(
   return dValue;
 }
 
-// making k over 9999, e.g., 223832 -> 234k
-function kFormatter(num: number) {
-  //DKDK fixed type error regarding toFixed() that returns string
-  return Math.abs(num) > 9999
+/**
+ * if arg is over 9999 return 'k version' e.g., 223832 -> 234k otherwise return original number
+ * if string arg is not a number, return unchanged
+ */
+function kFormatter(arg: number | string): number | string {
+  const num = Number(arg);
+  return Number.isNaN(num)
+    ? arg
+    : Math.abs(num) > 9999
     ? (Math.sign(num) * (Math.abs(num) / 1000)).toFixed(0) + 'k'
-    : Math.sign(num) * Math.abs(num);
+    : num;
 }
 
 /**
@@ -137,7 +142,7 @@ export default function DonutMarker(props: DonutMarkerProps) {
     });
 
   // for display, convert large value with k (e.g., 12345 -> 12k): return original value if less than a criterion
-  const sumLabel: number | string = props.markerLabel ?? kFormatter(sumValues);
+  const sumLabel = kFormatter(props.markerLabel ?? sumValues);
 
   //DKDK draw white circle
   svgHTML +=
