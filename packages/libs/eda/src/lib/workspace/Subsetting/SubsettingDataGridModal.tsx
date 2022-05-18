@@ -194,15 +194,36 @@ export default function SubsettingDataGridModal({
     setTableIsExpanded(false);
   }, []);
 
+  const mergeKeys = useMemo(() => {
+    if (!currentEntity) return [];
+    return currentEntity.variables
+      .filter((variable) => 'isMergeKey' in variable && variable.isMergeKey)
+      .map((mergeKey) => mergeKey.id);
+  }, [currentEntity]);
+
+  const selectedVariableDescriptorsWithMergeKeys = useMemo(() => {
+    if (!currentEntity) return [];
+    return mergeKeys
+      .map((key) => {
+        return { entityId: currentEntity?.id, variableId: key };
+      })
+      .concat(selectedVariableDescriptors);
+  }, [mergeKeys, selectedVariableDescriptors, currentEntity]);
+
   const fetchPaginatedData = useCallback(
     ({ pageSize, pageIndex }) => {
+      if (!currentEntity) return;
       setDataLoading(true);
 
       subsettingClient
         .getTabularData(studyMetadata.id, currentEntityID, {
           filters: analysisState.analysis?.descriptor.subset.descriptor ?? [],
-          outputVariableIds: selectedVariableDescriptors.map(
-            (descriptor) => descriptor.variableId
+          outputVariableIds: mergeKeys.concat(
+            selectedVariableDescriptors
+              .filter(
+                (descriptor) => !mergeKeys.includes(descriptor.variableId)
+              )
+              .map((descriptor) => descriptor.variableId)
           ),
           reportConfig: {
             headerFormat: 'standard',
@@ -228,6 +249,8 @@ export default function SubsettingDataGridModal({
       studyMetadata.id,
       subsettingClient,
       analysisState.analysis?.descriptor.subset.descriptor,
+      currentEntity,
+      mergeKeys,
     ]
   );
 
@@ -251,7 +274,7 @@ export default function SubsettingDataGridModal({
     analysisState.analysis?.descriptor.subset.descriptor,
   ]);
 
-  /** Handler for when a user selects/de-selectors variables. */
+  /** Handler for when a user selects/de-selects variables. */
   const handleSelectedVariablesChange = (
     variableDescriptors: Array<VariableDescriptor>
   ) => {
@@ -371,57 +394,20 @@ export default function SubsettingDataGridModal({
               // zIndex: '2',
             }}
           >
-            {errorMessage && (
-              <div
-                style={{
-                  borderColor: '#d32323',
-                  backgroundColor: '#d32323',
-                  borderRadius: 5,
-                  borderWidth: 2,
-                  borderStyle: 'solid',
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-              >
-                <H5
-                  text="Error"
-                  textTransform="uppercase"
-                  color="white"
-                  additionalStyles={{
-                    margin: 0,
-                    paddingLeft: 10,
-                    paddingRight: 10,
-                    fontSize: 12,
-                    fontWeight: 600,
-                  }}
-                />
-                <H5
-                  text={errorMessage}
-                  color="#d32323"
-                  additionalStyles={{
-                    flex: 1,
-                    fontSize: 14,
-                    padding: 5,
-                    paddingLeft: 10,
-                    backgroundColor: 'white',
-                  }}
-                />
-              </div>
-            )}
-            <div style={{ height: '60vh' }}>
-              <MultiSelectVariableTree
-                // NOTE: We are purposely removing all child entities here because
-                // we only want a user to be able to select variables from a single
-                // entity at a time.
-                rootEntity={{ ...currentEntity, children: [] }}
-                scope="download"
-                selectedVariableDescriptors={selectedVariableDescriptors}
-                starredVariableDescriptors={scopedStarredVariables}
-                featuredFields={scopedFeaturedFields}
-                onSelectedVariablesChange={handleSelectedVariablesChange}
-                toggleStarredVariable={toggleStarredVariable}
-              />
-            </div>
+            <MultiSelectVariableTree
+              // NOTE: We are purposely removing all child entities here because
+              // we only want a user to be able to select variables from a single
+              // entity at a time.
+              rootEntity={{ ...currentEntity, children: [] }}
+              scope="download"
+              selectedVariableDescriptors={
+                selectedVariableDescriptorsWithMergeKeys
+              }
+              starredVariableDescriptors={scopedStarredVariables}
+              featuredFields={scopedFeaturedFields}
+              onSelectedVariablesChange={handleSelectedVariablesChange}
+              toggleStarredVariable={toggleStarredVariable}
+            />
           </div>
         </div>
       );
