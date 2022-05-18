@@ -80,7 +80,10 @@ export default function ChartMarker(props: ChartMarkerProps) {
   const sumValuesString =
     sumValues <= 0.99 && sumValues > 0
       ? sumValues.toFixed(2)
-      : sumValues.toFixed(0);
+      : sumValues.toLocaleString(undefined, {
+          useGrouping: true,
+          maximumFractionDigits: 0,
+        });
 
   var maxValues: number = Math.max(...fullStat.map((o) => o.value)); // max of fullStat.value per marker icon
   // for local max, need to check the case wherer all values are zeros that lead to maxValues equals to 0 -> "divided by 0" can happen
