@@ -83,6 +83,7 @@ function createDefaultConfig(): MapConfig {
       zoomLevel: 2,
     },
     baseLayer: 'Street',
+    mouseModeConfig: 'default',
   };
 }
 
@@ -106,6 +107,10 @@ const MapConfig = t.intersection([
       zoomLevel: t.number,
     }),
     baseLayer: t.keyof(baseLayers),
+    mouseModeConfig: t.keyof({
+      default: null,
+      magnification: null,
+    }),
   }),
   t.partial({
     geoEntityId: t.string,
@@ -192,6 +197,8 @@ function MapViz(props: VisualizationProps) {
   );
 
   const onMarkerTypeChange = onChangeHandlerFactory('markerType');
+
+  const onMouseModeChange = onChangeHandlerFactory<string>('mouseModeConfig');
 
   const [boundsZoomLevel, setBoundsZoomLevel] = useState<BoundsViewport>();
 
@@ -546,6 +553,7 @@ function MapViz(props: VisualizationProps) {
       zoomLevel,
       vizConfig.baseLayer,
       vizConfig.checkedLegendItems,
+      vizConfig.mouseModeConfig,
     ]
   );
 
@@ -580,6 +588,8 @@ function MapViz(props: VisualizationProps) {
         showScale={zoomLevel != null && zoomLevel > 4 ? true : false}
         // show mouse tool
         showMouseToolbar={true}
+        mouseMode={vizConfig.mouseModeConfig}
+        setMouseMode={onMouseModeChange}
       />
       <RadioButtonGroup
         selectedOption={vizConfig.markerType || 'pie'}
