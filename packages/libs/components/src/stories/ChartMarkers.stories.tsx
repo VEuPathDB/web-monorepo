@@ -19,6 +19,7 @@ import MapVEuLegendSampleList, {
 
 // anim
 import geohashAnimation from '../map/animation_functions/geohash';
+import { MouseMode } from '../map/MouseTools';
 
 export default {
   title: 'Map/Chart Markers',
@@ -45,6 +46,8 @@ const variableProps = {
   quantityLabel: '<b>Record count</b>',
   legendInfoNumberText: 'Collections',
 };
+
+const defaultMouseMode: MouseMode = 'default';
 
 export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
   const [markerElements, setMarkerElements] = useState<
@@ -86,9 +89,7 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
   );
 
   // define mouseMode
-  const [mouseMode, setMouseMode] = useState<'default' | 'magnification'>(
-    'default'
-  );
+  const [mouseMode, setMouseMode] = useState<MouseMode>(defaultMouseMode);
 
   return (
     <>
@@ -102,7 +103,7 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
         animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
         mouseMode={mouseMode}
-        setMouseMode={setMouseMode}
+        onMouseModeChange={setMouseMode}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
@@ -155,9 +156,7 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
   const duration = defaultAnimationDuration;
 
   // define mouseMode
-  const [mouseMode, setMouseMode] = useState<'default' | 'magnification'>(
-    'default'
-  );
+  const [mouseMode, setMouseMode] = useState<MouseMode>(defaultMouseMode);
 
   useEffect(() => {
     // track if effect has been cancelled
@@ -202,7 +201,7 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
         animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
         mouseMode={mouseMode}
-        setMouseMode={setMouseMode}
+        onMouseModeChange={setMouseMode}
       />
       <MapVEuLegendSampleList
         legendType={legendType}

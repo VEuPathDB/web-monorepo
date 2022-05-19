@@ -166,7 +166,7 @@ export interface MapVEuMapProps {
   /** mouseMode control */
   mouseMode: 'default' | 'magnification';
   /** a function for changing mouseMode */
-  setMouseMode: (value: 'default' | 'magnification') => void;
+  onMouseModeChange: (value: 'default' | 'magnification') => void;
 }
 
 function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
@@ -191,7 +191,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     showNoDataOverlay,
     showScale = true,
     mouseMode,
-    setMouseMode,
+    onMouseModeChange,
   } = props;
 
   // Whether the user is currently dragging the map
@@ -339,7 +339,10 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       />
 
       {showMouseToolbar && (
-        <MouseTools mouseMode={mouseMode} setMouseMode={setMouseMode} />
+        <MouseTools
+          mouseMode={mouseMode}
+          onMouseModeChange={onMouseModeChange}
+        />
       )}
 
       {showGrid && zoomLevelToGeohashLevel ? (

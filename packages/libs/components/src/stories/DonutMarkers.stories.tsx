@@ -22,6 +22,7 @@ import MapVEuLegendSampleList, {
 } from '../map/MapVEuLegendSampleList';
 
 import geohashAnimation from '../map/animation_functions/geohash';
+import { MouseMode } from '../map/MouseTools';
 
 export default {
   title: 'Map/Donut Markers',
@@ -80,6 +81,8 @@ const handleMarkerClick = (e: LeafletMouseEvent) => {
   //console.log("I've been clicked")
 };
 
+const defaultMouseMode: MouseMode = 'default';
+
 export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
   const [markerElements, setMarkerElements] = useState<
     ReactElement<BoundsDriftMarkerProps>[]
@@ -99,9 +102,7 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
     [setMarkerElements]
   );
   // define mouseMode
-  const [mouseMode, setMouseMode] = useState<'default' | 'magnification'>(
-    'default'
-  );
+  const [mouseMode, setMouseMode] = useState<MouseMode>(defaultMouseMode);
 
   return (
     <>
@@ -113,7 +114,7 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
         animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
         mouseMode={mouseMode}
-        setMouseMode={setMouseMode}
+        onMouseModeChange={setMouseMode}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
@@ -154,9 +155,7 @@ export const FirstRequest: Story<MapVEuMapProps> = (args) => {
   );
 
   // define mouseMode
-  const [mouseMode, setMouseMode] = useState<'default' | 'magnification'>(
-    'default'
-  );
+  const [mouseMode, setMouseMode] = useState<MouseMode>(defaultMouseMode);
 
   return (
     <>
@@ -168,7 +167,7 @@ export const FirstRequest: Story<MapVEuMapProps> = (args) => {
         animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
         mouseMode={mouseMode}
-        setMouseMode={setMouseMode}
+        onMouseModeChange={setMouseMode}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
@@ -210,9 +209,7 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
   );
 
   // define mouseMode
-  const [mouseMode, setMouseMode] = useState<'default' | 'magnification'>(
-    'default'
-  );
+  const [mouseMode, setMouseMode] = useState<MouseMode>(defaultMouseMode);
 
   useEffect(() => {
     // track if effect has been cancelled
@@ -253,7 +250,7 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
         animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
         mouseMode={mouseMode}
-        setMouseMode={setMouseMode}
+        onMouseModeChange={setMouseMode}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
