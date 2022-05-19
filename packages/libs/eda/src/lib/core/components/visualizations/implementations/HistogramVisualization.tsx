@@ -916,9 +916,96 @@ function HistogramPlotWithControls({
         {/* make switch and radiobutton single line with space
                  also marginRight at LabelledGroup is set to 0.5625em: default - 1.5625em*/}
         <LabelledGroup
+          label="X-axis controls"
+          containerStyles={{
+            marginRight: '1em',
+            // marginRight: valueType === 'date' ? '1em' : '0em',
+          }}
+        >
+          <BinWidthControl
+            binWidth={data0?.binWidthSlider?.binWidth}
+            onBinWidthChange={onBinWidthChange}
+            binWidthRange={data0?.binWidthSlider?.binWidthRange}
+            binWidthStep={data0?.binWidthSlider?.binWidthStep}
+            valueType={data0?.binWidthSlider?.valueType}
+            binUnit={
+              data0?.binWidthSlider?.valueType === 'date'
+                ? (data0?.binWidthSlider?.binWidth as TimeDelta).unit
+                : undefined
+            }
+            binUnitOptions={
+              data0?.binWidthSlider?.valueType === 'date'
+                ? ['day', 'week', 'month', 'year']
+                : undefined
+            }
+            containerStyles={{
+              minHeight: widgetHeight,
+              // set maxWidth
+              maxWidth: valueType === 'date' ? '215px' : '315px',
+            }}
+          />
+
+          {/* X-Axis range control */}
+          <AxisRangeControl
+            label="Range"
+            range={vizConfig.independentAxisRange ?? defaultIndependentRange}
+            onRangeChange={handleIndependentAxisRangeChange}
+            valueType={valueType}
+            // set maxWidth
+            containerStyles={{
+              maxWidth: '350px',
+            }}
+          />
+          {/* truncation notification */}
+          {truncatedIndependentAxisWarning ? (
+            <Notification
+              title={''}
+              text={truncatedIndependentAxisWarning}
+              // this was defined as LIGHT_BLUE
+              color={'#5586BE'}
+              onAcknowledgement={() => {
+                setTruncatedIndependentAxisWarning('');
+              }}
+              showWarningIcon={true}
+              // set maxWidth per type
+              containerStyles={{
+                // maxWidth: valueType === 'date' ? '362px': '350px',
+                maxWidth: '350px',
+              }}
+            />
+          ) : null}
+          <Button
+            type={'outlined'}
+            text={'Reset to defaults'}
+            onClick={handleIndependentAxisSettingsReset}
+            containerStyles={{
+              paddingTop: '1.0em',
+              width: '50%',
+              float: 'right',
+              // to match reset button with date range form
+              marginRight: valueType === 'date' ? '-1em' : '',
+            }}
+          />
+        </LabelledGroup>
+
+        {/* add vertical line in btw Y- and X- controls */}
+        <div
+          style={{
+            display: 'inline-flex',
+            borderLeft: '2px solid lightgray',
+            height: '14em',
+            position: 'relative',
+            marginLeft: '-1px',
+            top: '1.5em',
+          }}
+        >
+          {' '}
+        </div>
+
+        <LabelledGroup
           label="Y-axis controls"
           containerStyles={{
-            marginRight: '0.5625em',
+            marginRight: '0em',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -978,89 +1065,6 @@ function HistogramPlotWithControls({
               paddingTop: '1.0em',
               width: '50%',
               float: 'right',
-            }}
-          />
-        </LabelledGroup>
-        {/* add vertical line in btw Y- and X- controls */}
-        <div
-          style={{
-            display: 'inline-flex',
-            borderLeft: '2px solid lightgray',
-            height: '13.7em',
-            position: 'relative',
-            marginLeft: '-1px',
-            top: '1.5em',
-          }}
-        >
-          {' '}
-        </div>
-        <LabelledGroup
-          label="X-axis controls"
-          containerStyles={{
-            marginRight: '0em',
-          }}
-        >
-          <BinWidthControl
-            binWidth={data0?.binWidthSlider?.binWidth}
-            onBinWidthChange={onBinWidthChange}
-            binWidthRange={data0?.binWidthSlider?.binWidthRange}
-            binWidthStep={data0?.binWidthSlider?.binWidthStep}
-            valueType={data0?.binWidthSlider?.valueType}
-            binUnit={
-              data0?.binWidthSlider?.valueType === 'date'
-                ? (data0?.binWidthSlider?.binWidth as TimeDelta).unit
-                : undefined
-            }
-            binUnitOptions={
-              data0?.binWidthSlider?.valueType === 'date'
-                ? ['day', 'week', 'month', 'year']
-                : undefined
-            }
-            containerStyles={{
-              minHeight: widgetHeight,
-              // set maxWidth
-              maxWidth: valueType === 'date' ? '250px' : '350px',
-            }}
-          />
-
-          {/* X-Axis range control - temp block to check date  */}
-          <AxisRangeControl
-            label="Range"
-            range={vizConfig.independentAxisRange ?? defaultIndependentRange}
-            onRangeChange={handleIndependentAxisRangeChange}
-            valueType={valueType}
-            // set maxWidth
-            containerStyles={{
-              maxWidth: '350px',
-            }}
-          />
-          {/* truncation notification */}
-          {truncatedIndependentAxisWarning ? (
-            <Notification
-              title={''}
-              text={truncatedIndependentAxisWarning}
-              // this was defined as LIGHT_BLUE
-              color={'#5586BE'}
-              onAcknowledgement={() => {
-                setTruncatedIndependentAxisWarning('');
-              }}
-              showWarningIcon={true}
-              // set maxWidth per type
-              containerStyles={{
-                maxWidth: valueType === 'date' ? '350px' : '350px',
-              }}
-            />
-          ) : null}
-          <Button
-            type={'outlined'}
-            text={'Reset to defaults'}
-            onClick={handleIndependentAxisSettingsReset}
-            containerStyles={{
-              paddingTop: '1.0em',
-              width: '50%',
-              float: 'right',
-              // to match reset button with date range form
-              marginRight: valueType === 'date' ? '-1em' : '',
             }}
           />
         </LabelledGroup>

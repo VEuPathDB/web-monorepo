@@ -1270,76 +1270,9 @@ function LineplotWithControls({
       {/* add axis range control */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <LabelledGroup
-          label="Y-axis controls"
-          containerStyles={{
-            marginRight: '0.5625em',
-          }}
-        >
-          <Switch
-            label="Show error bars (95% C.I.)"
-            state={showErrorBars}
-            onStateChange={onShowErrorBarsChange}
-            disabled={neverShowErrorBars}
-          />
-          {/* Y-axis range control */}
-          {/* make some space to match with X-axis range control */}
-          <div style={{ height: '4em' }} />
-          <AxisRangeControl
-            label="Range"
-            range={vizConfig.dependentAxisRange ?? defaultDependentAxisRange}
-            valueType={dependentValueType === 'date' ? 'date' : 'number'}
-            onRangeChange={(newRange?: NumberOrDateRange) => {
-              handleDependentAxisRangeChange(newRange);
-            }}
-            // set maxWidth
-            containerStyles={{ maxWidth: '350px' }}
-          />
-          {/* truncation notification */}
-          {truncatedDependentAxisWarning ? (
-            <Notification
-              title={''}
-              text={truncatedDependentAxisWarning}
-              // this was defined as LIGHT_BLUE
-              color={'#5586BE'}
-              onAcknowledgement={() => {
-                setTruncatedDependentAxisWarning('');
-              }}
-              showWarningIcon={true}
-              // change maxWidth
-              containerStyles={{ maxWidth: '350px' }}
-            />
-          ) : null}
-          <Button
-            type={'outlined'}
-            // change text
-            text={'Reset to defaults'}
-            onClick={handleDependentAxisSettingsReset}
-            containerStyles={{
-              paddingTop: '1.0em',
-              width: '50%',
-              float: 'right',
-              // to match reset button with date range form
-              marginRight: dependentValueType === 'date' ? '-1em' : '',
-            }}
-          />
-        </LabelledGroup>
-        {/* add vertical line in btw Y- and X- controls */}
-        <div
-          style={{
-            display: 'inline-flex',
-            borderLeft: '2px solid lightgray',
-            height: '15.5em',
-            position: 'relative',
-            marginLeft: '-1px',
-            top: '1.5em',
-          }}
-        >
-          {' '}
-        </div>
-        <LabelledGroup
           label="X-axis controls"
           containerStyles={{
-            marginRight: '0em',
+            marginRight: '1em',
           }}
         >
           <Switch
@@ -1419,6 +1352,74 @@ function LineplotWithControls({
             }}
             // reset button is diabled for categorical X
             disabled={independentValueType === 'string'}
+          />
+        </LabelledGroup>
+
+        {/* add vertical line in btw Y- and X- controls */}
+        <div
+          style={{
+            display: 'inline-flex',
+            borderLeft: '2px solid lightgray',
+            height: '15.5em',
+            position: 'relative',
+            marginLeft: '-1px',
+            top: '1.5em',
+          }}
+        >
+          {' '}
+        </div>
+        <LabelledGroup
+          label="Y-axis controls"
+          containerStyles={{
+            marginRight: '0em',
+          }}
+        >
+          <Switch
+            label="Show error bars (95% C.I.)"
+            state={showErrorBars}
+            onStateChange={onShowErrorBarsChange}
+            disabled={neverShowErrorBars}
+          />
+          {/* Y-axis range control */}
+          {/* make some space to match with X-axis range control */}
+          <div style={{ height: '4em' }} />
+          <AxisRangeControl
+            label="Range"
+            range={vizConfig.dependentAxisRange ?? defaultDependentAxisRange}
+            valueType={dependentValueType === 'date' ? 'date' : 'number'}
+            onRangeChange={(newRange?: NumberOrDateRange) => {
+              handleDependentAxisRangeChange(newRange);
+            }}
+            // set maxWidth
+            containerStyles={{ maxWidth: '350px' }}
+          />
+          {/* truncation notification */}
+          {truncatedDependentAxisWarning ? (
+            <Notification
+              title={''}
+              text={truncatedDependentAxisWarning}
+              // this was defined as LIGHT_BLUE
+              color={'#5586BE'}
+              onAcknowledgement={() => {
+                setTruncatedDependentAxisWarning('');
+              }}
+              showWarningIcon={true}
+              // change maxWidth
+              containerStyles={{ maxWidth: '350px' }}
+            />
+          ) : null}
+          <Button
+            type={'outlined'}
+            // change text
+            text={'Reset to defaults'}
+            onClick={handleDependentAxisSettingsReset}
+            containerStyles={{
+              paddingTop: '1.0em',
+              width: '50%',
+              float: 'right',
+              // to match reset button with date range form
+              marginRight: dependentValueType === 'date' ? '-1em' : '',
+            }}
           />
         </LabelledGroup>
       </div>
