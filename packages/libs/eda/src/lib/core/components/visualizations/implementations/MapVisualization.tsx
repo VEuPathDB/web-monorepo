@@ -57,6 +57,7 @@ import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsSt
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
+import { MouseMode } from '@veupathdb/components/lib/map/MouseTools';
 
 export const mapVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -83,7 +84,7 @@ function createDefaultConfig(): MapConfig {
       zoomLevel: 2,
     },
     baseLayer: 'Street',
-    mouseModeConfig: 'default',
+    mouseMode: 'default',
   };
 }
 
@@ -107,7 +108,7 @@ const MapConfig = t.intersection([
       zoomLevel: t.number,
     }),
     baseLayer: t.keyof(baseLayers),
-    mouseModeConfig: t.keyof({
+    mouseMode: t.keyof({
       default: null,
       magnification: null,
     }),
@@ -198,7 +199,7 @@ function MapViz(props: VisualizationProps) {
 
   const onMarkerTypeChange = onChangeHandlerFactory('markerType');
 
-  const onMouseModeChange = onChangeHandlerFactory<string>('mouseModeConfig');
+  const onMouseModeChange = onChangeHandlerFactory<MouseMode>('mouseMode');
 
   const [boundsZoomLevel, setBoundsZoomLevel] = useState<BoundsViewport>();
 
@@ -553,7 +554,7 @@ function MapViz(props: VisualizationProps) {
       zoomLevel,
       vizConfig.baseLayer,
       vizConfig.checkedLegendItems,
-      vizConfig.mouseModeConfig,
+      vizConfig.mouseMode,
     ]
   );
 
@@ -588,8 +589,8 @@ function MapViz(props: VisualizationProps) {
         showScale={zoomLevel != null && zoomLevel > 4 ? true : false}
         // show mouse tool
         showMouseToolbar={true}
-        mouseMode={vizConfig.mouseModeConfig}
-        setMouseMode={onMouseModeChange}
+        mouseMode={vizConfig.mouseMode}
+        onMouseModeChange={onMouseModeChange}
       />
       <RadioButtonGroup
         selectedOption={vizConfig.markerType || 'pie'}
