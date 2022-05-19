@@ -36,6 +36,21 @@ export function ComputationInstance(props: Props) {
     );
   }, [computationId, analysis]);
 
+  // const groupingObject = useMemo(() => {
+  //   if (!analysis?.descriptor.computations.length) return {};
+  //   const test: any = {};
+  //   for (const computation of analysis?.descriptor.computations) {
+  //     const key  = computation.descriptor.type;
+  //     if (!(key in test)) {
+  //       test[key] = [computation]
+  //     } else {
+  //       test[key] = test[key].concat(computation)
+  //     }
+  //   }
+  //   return test;
+  // }, [analysis]);
+  // console.log(groupingObject);
+
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
 
   const updateVisualizations = useCallback(
@@ -82,6 +97,28 @@ export function ComputationInstance(props: Props) {
           }
         />
       )}
+      {/* {groupingObject && 'pass' in groupingObject ?
+        groupingObject.pass.map((comp: Computation) => {
+          return (
+            <VisualizationsContainer
+              geoConfigs={geoConfigs}
+              // computation={computation}
+              computation={comp}
+              // @ts-ignore
+              visualizationsOverview={computationAppOverview.visualizations}
+              visualizationTypes={visualizationTypes}
+              updateVisualizations={updateVisualizations}
+              filters={analysis.descriptor.subset.descriptor}
+              starredVariables={analysis?.descriptor.starredVariables}
+              toggleStarredVariable={toggleStarredVariable}
+              totalCounts={totalCounts}
+              filteredCounts={filteredCounts}
+              baseUrl={baseUrl}
+              showHeading={!singleAppMode}
+            />
+          )
+        }) : null
+      } */}
       <VisualizationsContainer
         geoConfigs={geoConfigs}
         computation={computation}
@@ -125,7 +162,7 @@ function AppTitle(props: AppTitleProps) {
   };
   return condensed ? (
     <div style={{ marginTop: 10 }}>
-      <h4>{computationAppOverview.displayName}</h4>
+      {/* <h4>{computationAppOverview.displayName}</h4> */}
       <h4 style={{ marginLeft: 20 }}>
         <em>{computation.displayName}</em>
       </h4>

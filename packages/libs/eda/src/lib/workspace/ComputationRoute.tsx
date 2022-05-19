@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Route, Switch, useHistory, Redirect } from 'react-router';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { AnalysisState, useDataClient } from '../core';
@@ -52,6 +52,20 @@ export function ComputationRoute(props: Props) {
       return apps;
     }, [dataClient, wdkService, singleAppMode])
   );
+
+  const appsGroupedByType = useMemo(() => {
+    if (!analysisState.analysis?.descriptor.computations.length) return [];
+    const groupingObject: any = {};
+    for (const computation of analysisState.analysis?.descriptor.computations) {
+      const key = computation.descriptor.type;
+      if (!(key in groupingObject)) {
+        groupingObject[key] = [computation];
+      } else {
+        groupingObject[key] = groupingObject[key].concat(computation);
+      }
+    }
+    return Object.entries(groupingObject);
+  }, [analysisState]);
 
   return (
     <PromiseResult state={promiseState}>
@@ -114,24 +128,58 @@ export function ComputationRoute(props: Props) {
                       />
                     </Link>
                   </div>
-                  {analysisState.analysis?.descriptor.computations.map((c) => {
-                    const app = apps.find(
-                      (app) => app.name === c.descriptor.type
-                    );
-                    const plugin = app && plugins[app.name];
-                    return (
-                      plugin && (
-                        <ComputationInstance
-                          {...props}
-                          computationId={c.computationId}
-                          computationAppOverview={app}
-                          visualizationTypes={plugin.visualizationTypes}
-                          baseUrl={`${url}/${c.computationId}`}
-                          singleAppMode={singleAppMode}
-                        />
-                      )
-                    );
-                  })}
+                  {
+                    // @ts-ignore
+                    appsGroupedByType.map((appType) => {
+                      const app = apps.find((app) => app.name === appType[0]);
+                      const appName = <h4>{app?.displayName}</h4>;
+                      const plugin = app && plugins[app.name];
+                      return (
+                        plugin && (
+                          <>
+                            {appName}
+                            {
+                              // @ts-ignore
+                              appType[1].map((c) => {
+                                return (
+                                  <ComputationInstance
+                                    {...props}
+                                    computationId={c.computationId}
+                                    computationAppOverview={app}
+                                    visualizationTypes={
+                                      plugin.visualizationTypes
+                                    }
+                                    baseUrl={`${url}/${c.computationId}`}
+                                    singleAppMode={singleAppMode}
+                                  />
+                                );
+                              })
+                            }
+                          </>
+                        )
+                      );
+                    })
+                    // analysisState.analysis?.descriptor.computations.map((c) => {
+                    // const app = apps.find(
+                    //   (app) => app.name === c.descriptor.type
+                    // );
+                    // const plugin = app && plugins[app.name];
+                    // // console.log({app})
+                    // // console.log({plugin})
+                    // return (
+                    //   plugin && (
+                    //     <ComputationInstance
+                    //       {...props}
+                    //       computationId={c.computationId}
+                    //       computationAppOverview={app}
+                    //       visualizationTypes={plugin.visualizationTypes}
+                    //       baseUrl={`${url}/${c.computationId}`}
+                    //       singleAppMode={singleAppMode}
+                    //     />
+                    //   )
+                    // );
+                    // })
+                  }
                 </div>
               </Route>
               <Route exact path={`${url}/new`}>

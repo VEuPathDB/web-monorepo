@@ -33,6 +33,8 @@ import { EntityCounts } from '../../hooks/entityCounts';
 import { useStudyRecord } from '../../hooks/workspace';
 import { PromiseHookState } from '../../hooks/promise';
 import { GeoConfig } from '../../types/geoConfig';
+import { FilledButton } from '@veupathdb/coreui/dist/components/buttons';
+import AddIcon from '@material-ui/icons/Add';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -134,107 +136,118 @@ function ConfiguredVisualizations(props: Props) {
   const { url } = useRouteMatch();
 
   return (
-    <Grid>
-      {!showHeading && (
+    <>
+      {!showHeading ? (
         <Link
           to={{
             pathname: `${baseUrl || url}/new`,
             state: { scrollToTop: false },
           }}
-          className={cx('-NewVisualization')}
         >
-          <i className="fa fa-plus"></i>
-          New visualization
+          <FilledButton
+            text="New visualization"
+            onPress={() => null}
+            textTransform="none"
+            themeRole="primary"
+            icon={AddIcon}
+            styleOverrides={{
+              container: { marginTop: 15 },
+            }}
+          />
         </Link>
-      )}
-      {computation.visualizations
-        .map((viz) => {
-          const meta = visualizationsOverview.find(
-            (v) => v.name === viz.descriptor.type
-          );
-          return (
-            <div key={viz.visualizationId}>
-              <div className={cx('-ConfiguredVisualization')}>
-                <div className={cx('-ConfiguredVisualizationActions')}>
-                  <div>
-                    <Tooltip title="Delete visualization">
-                      <button
-                        type="button"
-                        className="link"
-                        onClick={() =>
-                          updateVisualizations((visualizations) =>
-                            visualizations.filter(
-                              (v) => v.visualizationId !== viz.visualizationId
+      ) : null}
+      <Grid>
+        {computation.visualizations
+          .map((viz) => {
+            const meta = visualizationsOverview.find(
+              (v) => v.name === viz.descriptor.type
+            );
+            return (
+              <div key={viz.visualizationId}>
+                <div className={cx('-ConfiguredVisualization')}>
+                  <div className={cx('-ConfiguredVisualizationActions')}>
+                    <div>
+                      <Tooltip title="Delete visualization">
+                        <button
+                          type="button"
+                          className="link"
+                          onClick={() =>
+                            updateVisualizations((visualizations) =>
+                              visualizations.filter(
+                                (v) => v.visualizationId !== viz.visualizationId
+                              )
                             )
-                          )
-                        }
-                      >
-                        <i className="fa fa-trash"></i>
-                      </button>
-                    </Tooltip>
+                          }
+                        >
+                          <i className="fa fa-trash"></i>
+                        </button>
+                      </Tooltip>
+                    </div>
+                    <div>
+                      <Tooltip title="Copy visualization">
+                        <button
+                          type="button"
+                          className="link"
+                          onClick={() =>
+                            updateVisualizations((visualizations) =>
+                              visualizations.concat({
+                                ...viz,
+                                displayName: `Copy of ${
+                                  viz.displayName ?? 'visualization'
+                                }`,
+                                visualizationId: uuid(),
+                              })
+                            )
+                          }
+                        >
+                          <i className="fa fa-clone"></i>
+                        </button>
+                      </Tooltip>
+                    </div>
                   </div>
-                  <div>
-                    <Tooltip title="Copy visualization">
-                      <button
-                        type="button"
-                        className="link"
-                        onClick={() =>
-                          updateVisualizations((visualizations) =>
-                            visualizations.concat({
-                              ...viz,
-                              displayName: `Copy of ${
-                                viz.displayName ?? 'visualization'
-                              }`,
-                              visualizationId: uuid(),
-                            })
-                          )
+                  {/* add the Link of thumbnail box here to avoid click conflict with icons */}
+                  <>
+                    <Link
+                      to={{
+                        pathname: `${baseUrl || url}/${viz.visualizationId}`,
+                        state: { scrollToTop: false },
+                      }}
+                    >
+                      {viz.descriptor.thumbnail ? (
+                        <img
+                          alt={viz.displayName}
+                          src={viz.descriptor.thumbnail}
+                        />
+                      ) : (
+                        <div
+                          className={cx('-ConfiguredVisualizationNoPreview')}
+                        >
+                          Preview unavailable
+                        </div>
+                      )}
+                      {/* make gray-out box on top of thumbnail */}
+                      <ConfiguredVisualizationGrayOut
+                        filters={props.filters}
+                        currentPlotFilters={
+                          (viz.descriptor as VisualizationDescriptor)
+                            .currentPlotFilters as Filter[]
                         }
-                      >
-                        <i className="fa fa-clone"></i>
-                      </button>
-                    </Tooltip>
-                  </div>
-                </div>
-                {/* add the Link of thumbnail box here to avoid click conflict with icons */}
-                <>
-                  <Link
-                    to={{
-                      pathname: `${baseUrl || url}/${viz.visualizationId}`,
-                      state: { scrollToTop: false },
-                    }}
-                  >
-                    {viz.descriptor.thumbnail ? (
-                      <img
-                        alt={viz.displayName}
-                        src={viz.descriptor.thumbnail}
                       />
-                    ) : (
-                      <div className={cx('-ConfiguredVisualizationNoPreview')}>
-                        Preview unavailable
-                      </div>
-                    )}
-                    {/* make gray-out box on top of thumbnail */}
-                    <ConfiguredVisualizationGrayOut
-                      filters={props.filters}
-                      currentPlotFilters={
-                        (viz.descriptor as VisualizationDescriptor)
-                          .currentPlotFilters as Filter[]
-                      }
-                    />
-                  </Link>
-                </>
+                    </Link>
+                  </>
+                </div>
+                <div className={cx('-ConfiguredVisualizationTitle')}>
+                  {viz.displayName ?? 'Unnamed visualization'}
+                </div>
+                <div className={cx('-ConfiguredVisualizationSubtitle')}>
+                  {meta?.displayName}
+                </div>
               </div>
-              <div className={cx('-ConfiguredVisualizationTitle')}>
-                {viz.displayName ?? 'Unnamed visualization'}
-              </div>
-              <div className={cx('-ConfiguredVisualizationSubtitle')}>
-                {meta?.displayName}
-              </div>
-            </div>
-          );
-        })
-        .reverse()}
-    </Grid>
+            );
+          })
+          .reverse()}
+      </Grid>
+    </>
   );
 }
 
