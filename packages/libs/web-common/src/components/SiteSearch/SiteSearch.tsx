@@ -1,4 +1,4 @@
-import { capitalize, chunk, keyBy, add, isEmpty, isEqual, xor, intersection, orderBy, memoize } from 'lodash';
+import { capitalize, chunk, keyBy, add, isEmpty, isEqual, xor, intersection, orderBy, memoize, unzip } from 'lodash';
 import React, { useMemo, useState, useCallback, useContext, useEffect, ReactNode } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { DataGrid } from '@veupathdb/coreui';
@@ -16,7 +16,7 @@ import { SiteSearchResponse, SiteSearchDocumentType, SiteSearchDocument } from '
 import { NewStrategySpec, NewStepSpec } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { DEFAULT_STRATEGY_NAME } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
 import { makeEdaRoute } from 'ebrc-client/routes';
-import { Column } from 'react-table';
+import { CellProps, Column, Renderer } from 'react-table';
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 
 import './SiteSearch.scss';
@@ -750,136 +750,94 @@ function resultDetails(document: SiteSearchDocument, documentType: SiteSearchDoc
 
 function StudyInfoTableSection(props: { document: SiteSearchDocument, fieldName: string }) {
   const { document, fieldName } = props;
-  const [collapsed, setCollapsed] = useState(true);
-  try {
-  const studyInfoRaw = document.summaryFieldData[fieldName];
-  const columnDefs: Column[] = [
-    {
-      accessor: "studyId",
-    },
-    {
-      accessor: "studyName",
-      Header: "Study",
-      Cell: ({ value, row }) => {
-        return safeHtml(value, { to: makeEdaRoute(useDatasetId((row.original as Record<string, string>).studyId)) + '/new' }, Link);
-      }
-    },
-    {
-      accessor: "entityTypeId",
-    },
-    {
-      accessor: "entityType",
-      Header: "Entity",
-      Cell: ({ value, row }) => {
-        return safeHtml(
-          value,
-          {
-            to: `${makeEdaRoute(useDatasetId((row.original as Record<string, string>).studyId))}/new/variables/${
-              row.values.entityTypeId
-            }/${document.wdkPrimaryKeyString}`,
-          },
-          Link
-        )
-      },
-    },
-    {
-      accessor: "providerLabel",
-      Header: "Provider label",
-      Cell: ({ value }) => JSON.parse(value).join(" | "),
-    },
-    {
-      accessor: "description",
-      Header: "Description",
-      Cell: ({ value }) => safeHtml(value),
-    },
-  ];
-  const columns = columnDefs.filter((col) => "Cell" in col);
-
-  const data = orderBy(
-    chunk(
-      JSON.parse(studyInfoRaw as string) as string[],
-      columnDefs.length
-    ).map((rowArray) =>
-      Object.fromEntries(
-        columnDefs.map((def, index) => [def.accessor, rowArray[index]])
-      )
-    ),
-    ["Study name", "Entity type"]
-  );
   return (
-    <CollapsibleSection headerContent={<strong>Studies matched ({data.length})</strong>} isCollapsed={collapsed} onCollapsedChange={setCollapsed}>
-      <DataGrid
-        columns={columns}
-        data={data}
-        stylePreset="mesa"
-        styleOverrides={{
-          headerCells: {
-            fontSize: "1em",
-            padding: ".5em",
-            lineBreak: "normal",
-          },
-          dataCells: {
-            fontSize: "1em",
-            padding: ".5em",
-            borderWidth: 1,
-            lineBreak: "normal",
-          },
-        }}
-      />
-    </CollapsibleSection>
+    <SummaryTable
+      document={document}
+      summaryFieldName={fieldName}
+      sorting={[
+        { accessor: 'studyName' },
+        { accessor: 'entityName' }
+      ]}
+      columnDefs={[
+        { accessor: 'studyId' },
+        {
+          accessor: 'studyName',
+          header: 'Study',
+          render: ({ value, row }) => safeHtml(value, { to: makeEdaRoute(useDatasetId(row.studyId))}, Link)
+        },
+        { accessor: 'entityId' },
+        {
+          accessor: 'entityName',
+          header: 'Entity',
+          render: ({ value, row }) => safeHtml(
+            value,
+            {
+              to: `${makeEdaRoute(useDatasetId(row.studyId))}/new/variables/${
+                row.entityId
+              }/${document.wdkPrimaryKeyString}`,
+            },
+            Link
+          )
+        },
+        {
+          accessor: "providerLabel",
+          header: "Provider label",
+          render: ({ value }) => decodeOrElse(arrayOf(string), [], value).join(" | "),
+        },
+        {
+          accessor: "description",
+          header: "Description",
+          render: ({ value }) => safeHtml(value),
+        },
+    
+      ]}
+    />
   );
-  }
-  catch {
-    return null;
-  }
 }
 
 function VariableList(props: { document: SiteSearchDocument, fieldName: string }) {
   const { document, fieldName } = props;
-  const [collapsed, setCollapsed] = useState(true);
   const datasets = useDatasets();
-  try {
-    const flatData = JSON.parse(document.summaryFieldData[fieldName] as string) as string[];
-    const data = chunk(flatData, 3);
-    return (
-      <CollapsibleSection headerContent={<strong>Studies matched ({data.length})</strong>} isCollapsed={collapsed} onCollapsedChange={setCollapsed}>
-        <DataGrid
-          columns={[
-            {
-              accessor: '1',
-              Header: 'Study'
-            },
-            {
-              accessor: '2',
-              Header: 'Entity'
-            },
-            {
-              accessor: '0',
-              Header: 'Variable'
-            },
-          ]}
-          data={data}
-          stylePreset="mesa"
-          styleOverrides={{
-            headerCells: {
-              fontSize: "1em",
-              padding: ".5em",
-              lineBreak: "normal",
-            },
-            dataCells: {
-              fontSize: "1em",
-              padding: ".5em",
-              borderWidth: 1,
-              lineBreak: "normal",
-            },
-          }}
-        />
-      </CollapsibleSection>
-    );
+  function makeLink(studyId: string, entityId?: string, variableId?: string) {
+    if (datasets == null) return '';
+    const dataset = datasets?.records.find(d => d.attributes.eda_study_id === studyId);
+    if (dataset == null) throw new Error("Cannot find dataset with eda_study_id = '" + studyId + "'.");
+    const base = makeEdaRoute(dataset?.id[0].value) + '/new';
+    if (entityId == null) return base;
+    if (variableId == null) return base + `/variables/${entityId}`;
+    return base + `/variables/${entityId}/${variableId}`;
   }
-  catch {
-    return null;
-  }
+  return (
+    <SummaryTable
+      document={document}
+      summaryFieldName={fieldName}
+      sorting={[
+        { accessor: 'studyName' },
+        { accessor: 'entityName' },
+        { accessor: 'variableName' }
+      ]}
+      columnDefs={[
+        { accessor: 'variableId' },
+        { accessor: 'studyId' },
+        { accessor: 'entityId' },
+        {
+          accessor: 'studyName',
+          header: 'Study',
+          render: ({ value, row }) => safeHtml(value, { to: makeLink(row.studyId) }, Link),
+        },
+        {
+          accessor: 'entityName',
+          header: 'Entity',
+          render: ({ value, row }) => safeHtml(value, { to: makeLink(row.studyId, row.entityId) }, Link),
+        },
+        {
+          accessor: 'variableName',
+          header: 'Variable',
+          render: ({ value, row }) => safeHtml(value, { to: makeLink(row.studyId, row.entityId, row.variableId) }, Link),
+        },
+      ]}
+    />
+  )
 }
 
 function makeRecordLink(document: SiteSearchDocument, projectUrls?: ProjectUrls, organismToProject?: OrganismToProject, projectId?: string): ResultEntryDetails['display'] {
@@ -1008,4 +966,91 @@ function useDatasetId(edaStudyId: string) {
   const dataset = datasets.records.find(d => d.attributes.eda_study_id === edaStudyId);
   if (dataset == null) throw new Error("Could not find a dataset with eda_study_id = " + edaStudyId);
   return dataset.id[0].value;
+}
+
+interface ColumnDef<T extends string> {
+  accessor: T;
+  header?: string;
+  render?(data: { value: string, row: Record<T, string> }): ReactNode;
+}
+
+interface SortSpec<T extends string> {
+  accessor: T;
+  direction?: 'asc' | 'desc';
+}
+
+interface SummaryTableProps<T extends string> {
+  document: SiteSearchDocument;
+  summaryFieldName: string;
+  columnDefs: ColumnDef<T>[];
+  sorting: SortSpec<T>[];
+}
+
+function SummaryTable<T extends string>(props: SummaryTableProps<T>) {
+  const { document, summaryFieldName, columnDefs, sorting } = props;
+  const [collapsed, setCollapsed] = useState(true);
+  const data = makeStructuredTableData(
+    document.summaryFieldData[summaryFieldName] as string,
+    columnDefs.map(d => d.accessor),
+    sorting
+  );
+
+  const columns = columnDefs
+    .filter(d => d.header)
+    .map((d) => ({
+      accessor: d.accessor,
+      Header: d.header,
+      Cell: ({ value, row }: CellProps<Record<T, string>, string>) => d.render ? d.render({ value, row: row.original }) : value
+    } as Column<Record<T, string>>));
+  return (
+    <CollapsibleSection headerContent={<strong>Studies matched ({data.length})</strong>} isCollapsed={collapsed} onCollapsedChange={setCollapsed}>
+
+    <DataGrid
+      columns={columns as Column[]}
+      data={data}
+      stylePreset="mesa"
+      styleOverrides={{
+        headerCells: {
+          fontSize: "1em",
+          padding: ".5em",
+          lineBreak: "normal",
+        },
+        dataCells: {
+          fontSize: "1em",
+          padding: ".5em",
+          borderWidth: 1,
+          lineBreak: "normal",
+        },
+      }}
+    />
+    </CollapsibleSection>
+  );
+
+}
+
+/**
+ * Take a JSON string representing a string[], and return an array of objects.
+ * The properties of the objects are determined by the accessors array.
+ */
+function makeStructuredTableData<T extends string>(jsonString: string, accessors: T[], sorting: SortSpec<T>[]): Record<T, string>[] {
+  try {
+    const flatData = decodeOrElse(arrayOf(string), [], jsonString);
+    const data = chunk(flatData, accessors.length)
+    .map(values => {
+      const row = {} as Record<T, string>;
+      for (const index in accessors) {
+        row[accessors[index]] = values[index];
+      }
+      return row;
+    });
+    if (sorting) {
+      const [ orderKeys, orderDirs] = unzip(sorting.map(spec => [spec.accessor, spec.direction ?? 'asc']));
+      return orderBy(data, orderKeys, orderDirs as ('asc'|'desc')[]) as Record<T, string>[];
+    }
+    return data;
+  }
+  catch(error) {
+    console.error(error);
+    return [];
+  }
 }
