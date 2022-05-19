@@ -163,6 +163,10 @@ export interface MapVEuMapProps {
   showNoDataOverlay?: boolean;
   /** Whether to show the Scale in the map */
   showScale?: boolean;
+  /** mouseMode control */
+  mouseMode: 'default' | 'magnification';
+  /** a function for changing mouseMode */
+  setMouseMode: (value: 'default' | 'magnification') => void;
 }
 
 function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
@@ -186,16 +190,10 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     showSpinner,
     showNoDataOverlay,
     showScale = true,
+    mouseMode,
+    setMouseMode,
   } = props;
 
-  // this is the React Map component's onViewPortChanged handler
-  // we may not need to use it.
-  // onViewportchanged in SemanticMarkers is more relevant
-  // because it can access the map's bounding box (aka bounds)
-  // which is useful for fetching data to show on the map.
-  // The Viewport info (center and zoom) handled here would be useful for saving a
-  // 'bookmarkable' state of the map.
-  const [mouseMode, setMouseMode] = useState<MouseMode>('default');
   // Whether the user is currently dragging the map
   const [isDragging, setIsDragging] = useState<boolean>(false);
 

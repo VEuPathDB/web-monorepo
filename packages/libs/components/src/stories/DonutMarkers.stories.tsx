@@ -13,17 +13,14 @@ import {
 import { LeafletMouseEvent } from 'leaflet';
 import { Viewport } from 'react-leaflet';
 
-//DKDK sidebar & legend
+// sidebar & legend
 import MapVEuMap, { MapVEuMapProps } from '../map/MapVEuMap';
 import MapVEuMapSidebar from '../map/MapVEuMapSidebar';
-//DKDK import legend
+// import legend
 import MapVEuLegendSampleList, {
   LegendProps,
 } from '../map/MapVEuLegendSampleList';
 
-//DKDK anim
-// import Geohash from 'latlon-geohash';
-// import {DriftMarker} from "leaflet-drift-marker";
 import geohashAnimation from '../map/animation_functions/geohash';
 
 export default {
@@ -59,27 +56,27 @@ const dropdownItemText: string[] = [
 ];
 const legendInfoNumberText: string = 'Species';
 
-//DKDK a generic function to remove a class: here it is used for removing highlight-marker
+// a generic function to remove a class: here it is used for removing highlight-marker
 function removeClassName(targetClass: string) {
-  //DKDK much convenient to use jquery here but try not to use it
+  // much convenient to use jquery here but try not to use it
   let targetElement = document.getElementsByClassName(targetClass)[0];
   if (targetElement != null) {
     targetElement.classList.remove(targetClass);
   }
 }
 
-//DKDK this onClick event may need to be changed in the future like onMouseOver event
+// this onClick event may need to be changed in the future like onMouseOver event
 const handleMarkerClick = (e: LeafletMouseEvent) => {
   /**
-   * DKDK this only works when selecting other marker: not working when clicking map
+   *  this only works when selecting other marker: not working when clicking map
    * it may be achieved by setting all desirable events (e.g., map click, preserving highlight, etc.)
    * just stop here and leave detailed events to be handled later
    */
-  // DKDK use a resuable function to remove a class
+  //  use a resuable function to remove a class
   removeClassName('highlight-marker');
-  //DKDK native manner, but not React style? Either way this is arguably the simplest solution
+  // native manner, but not React style? Either way this is arguably the simplest solution
   e.target._icon.classList.add('highlight-marker');
-  //DKDK here, perhaps we can add additional click event, like opening sidebar when clicking
+  // here, perhaps we can add additional click event, like opening sidebar when clicking
   //console.log("I've been clicked")
 };
 
@@ -101,6 +98,10 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
     },
     [setMarkerElements]
   );
+  // define mouseMode
+  const [mouseMode, setMouseMode] = useState<'default' | 'magnification'>(
+    'default'
+  );
 
   return (
     <>
@@ -111,6 +112,8 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
         markers={markerElements}
         animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+        mouseMode={mouseMode}
+        setMouseMode={setMouseMode}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
@@ -150,6 +153,11 @@ export const FirstRequest: Story<MapVEuMapProps> = (args) => {
     [setMarkerElements]
   );
 
+  // define mouseMode
+  const [mouseMode, setMouseMode] = useState<'default' | 'magnification'>(
+    'default'
+  );
+
   return (
     <>
       <MapVEuMap
@@ -159,6 +167,8 @@ export const FirstRequest: Story<MapVEuMapProps> = (args) => {
         markers={markerElements}
         animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+        mouseMode={mouseMode}
+        setMouseMode={setMouseMode}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
@@ -199,6 +209,11 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
     [setBvp]
   );
 
+  // define mouseMode
+  const [mouseMode, setMouseMode] = useState<'default' | 'magnification'>(
+    'default'
+  );
+
   useEffect(() => {
     // track if effect has been cancelled
     let isCancelled = false;
@@ -237,6 +252,8 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
         markers={markerElements}
         animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+        mouseMode={mouseMode}
+        setMouseMode={setMouseMode}
       />
       <MapVEuLegendSampleList
         legendType={legendType}

@@ -85,6 +85,11 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
     [setMarkerElements, legendRadioValue]
   );
 
+  // define mouseMode
+  const [mouseMode, setMouseMode] = useState<'default' | 'magnification'>(
+    'default'
+  );
+
   return (
     <>
       <MapVEuMap
@@ -96,6 +101,8 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
         showMouseToolbar={true}
         animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+        mouseMode={mouseMode}
+        setMouseMode={setMouseMode}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
@@ -147,6 +154,11 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
   const legendType = 'numeric';
   const duration = defaultAnimationDuration;
 
+  // define mouseMode
+  const [mouseMode, setMouseMode] = useState<'default' | 'magnification'>(
+    'default'
+  );
+
   useEffect(() => {
     // track if effect has been cancelled
     let isCancelled = false;
@@ -189,6 +201,8 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
         showMouseToolbar={true}
         animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+        mouseMode={mouseMode}
+        setMouseMode={setMouseMode}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
