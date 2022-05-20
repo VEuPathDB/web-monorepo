@@ -19,7 +19,7 @@ import {
 
 // Definitions
 import { AnalysisState } from '../../core/hooks/analysis';
-import { StudyEntity, TabularDataResponse } from '../../core';
+import { StudyEntity, TabularDataResponse, usePromise } from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
 import { APIError } from '../../core/api/types';
 import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
@@ -33,7 +33,7 @@ import {
 } from '../../core';
 
 import { useFeaturedFields } from '../../core/components/variableTrees/hooks';
-import { useProcessedGridData } from './hooks';
+import { useProcessedGridData, processGridData } from './hooks';
 
 type SubsettingDataGridProps = {
   /** Should the modal currently be visible? */
@@ -179,6 +179,31 @@ export default function SubsettingDataGridModal({
       ?.variables ?? []
   );
 
+  // Required columns
+  const requiredColumns = usePromise(
+    useCallback(async () => {
+      const data = await subsettingClient.getTabularData(
+        studyMetadata.id,
+        currentEntityID,
+        {
+          filters: [],
+          outputVariableIds: [],
+          reportConfig: {
+            headerFormat: 'standard',
+            paging: { numRows: 1, offset: 0 },
+          },
+        }
+      );
+      return processGridData(data, entities, currentEntity)[0];
+    }, [
+      subsettingClient,
+      studyMetadata.id,
+      currentEntityID,
+      entities,
+      currentEntity,
+    ])
+  );
+
   /**
    * Actions to take when the modal is opened.
    */
@@ -209,6 +234,15 @@ export default function SubsettingDataGridModal({
       })
       .concat(selectedVariableDescriptors);
   }, [mergeKeys, selectedVariableDescriptors, currentEntity]);
+
+  console.log({
+    mergeKeys,
+    selectedVariableDescriptors,
+    selectedVariableDescriptorsWithMergeKeys,
+    gridColumns,
+    gridData,
+    requiredColumns,
+  });
 
   const fetchPaginatedData = useCallback(
     ({ pageSize, pageIndex }) => {
@@ -297,7 +331,7 @@ export default function SubsettingDataGridModal({
   // Render the table data or instructions on how to get started.
   const renderDataGridArea = () => {
     return (
-      <div style={{ width: '100%' }}>
+      <div style={{ flex: 2, maxWidth: tableIsExpanded ? '100%' : '65%' }}>
         <div
           style={{
             display: 'flex',
@@ -312,6 +346,7 @@ export default function SubsettingDataGridModal({
               color={primaryColor}
             />
           )}
+          <span />
           <MesaButton
             text="Download"
             icon={Download}
@@ -326,7 +361,17 @@ export default function SubsettingDataGridModal({
             data={gridRows}
             loading={dataLoading}
             stylePreset="mesa"
-            styleOverrides={{ headerCells: { textTransform: 'none' } }}
+            styleOverrides={{
+              headerCells: { textTransform: 'none' },
+              table: {
+                width: '100%',
+                height: '100%',
+                overflow: 'auto',
+                borderStyle: undefined,
+                primaryRowColor: undefined,
+                secondaryRowColor: undefined,
+              },
+            }}
             pagination={{
               recordsPerPage: 10,
               controlsLocation: 'bottom',
@@ -371,7 +416,7 @@ export default function SubsettingDataGridModal({
 
     if ((!tableIsExpanded || errorMessage) && currentEntity) {
       return (
-        <div>
+        <div style={{ flex: 1, minWidth: '25%' }}>
           <div style={{ marginBottom: 30 }}>
             {!tableIsExpanded && (
               <NumberedHeader
@@ -384,16 +429,26 @@ export default function SubsettingDataGridModal({
           <div
             style={{
               // position: 'absolute',
-              width: 400,
+              width: '100%',
               // left: entityDescriptionWidth + 195,
               // top: -54,
               backgroundColor: 'rgba(255, 255, 255, 1)',
-              border: '2px solid rgb(200, 200, 200)',
-              borderRadius: '.5em',
-              boxShadow: '0px 0px 6px rgba(0, 0, 0, .25)',
+              // border: '2px solid rgb(200, 200, 200)',
+              // borderRadius: '.5em',
+              // boxShadow: '0px 0px 6px rgba(0, 0, 0, .25)',
               // zIndex: '2',
             }}
           >
+            {!requiredColumns.pending && requiredColumns.value && (
+              <div style={{ margin: 10 }}>
+                <h4>Required columns</h4>
+                <ul>
+                  {requiredColumns.value.map((column) => (
+                    <li>{column.Header}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
             <MultiSelectVariableTree
               // NOTE: We are purposely removing all child entities here because
               // we only want a user to be able to select variables from a single
