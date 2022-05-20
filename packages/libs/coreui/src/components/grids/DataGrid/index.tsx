@@ -247,54 +247,60 @@ export default function DataGrid({
           pagination={pagination}
         />
       )}
-      <table
-        {...getTableProps()}
-        css={{
-          borderCollapse: 'collapse',
-          marginBottom: 10,
-          ...pickBy(finalStyle.table, (value, key) => key.includes('border')),
-        }}
-      >
-        {/* Render Table Header */}
-        <thead>
-          {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((header, index) => (
-                <HeaderCell
-                  key={index}
-                  headerGroup={header}
-                  styleSpec={finalStyle}
-                  sortable={sortable}
-                  extraHeaderControls={extraHeaderControls}
-                />
-              ))}
-            </tr>
-          ))}
-        </thead>
-
-        {/* Render Table Body */}
-        <tbody {...getTableBodyProps()}>
-          {page.map((row: Row, index: number) => {
-            prepareRow(row);
-
-            return (
-              <tr
-                {...row.getRowProps()}
-                css={{
-                  backgroundColor:
-                    index % 2 === 0
-                      ? finalStyle.table.primaryRowColor
-                      : finalStyle.table.secondaryRowColor,
-                }}
-              >
-                {row.cells.map((cell: Cell, index) => (
-                  <DataCell key={index} cell={cell} styleSpec={finalStyle} />
+      <div css={{overflow: finalStyle.table.overflow}}>
+        <table
+          {...getTableProps()}
+          css={{
+            borderCollapse: 'collapse',
+            marginBottom: 10,
+            borderWidth: finalStyle.table.borderWidth,
+            borderStyle: finalStyle.table.borderStyle,
+            borderColor: finalStyle.table.borderColor,
+            width: finalStyle.table.width,
+            height: finalStyle.table.height,
+          }}
+        >
+          {/* Render Table Header */}
+          <thead>
+            {headerGroups.map((headerGroup) => (
+              <tr {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((header, index) => (
+                  <HeaderCell
+                    key={index}
+                    headerGroup={header}
+                    styleSpec={finalStyle}
+                    sortable={sortable}
+                    extraHeaderControls={extraHeaderControls}
+                  />
                 ))}
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            ))}
+          </thead>
+
+          {/* Render Table Body */}
+          <tbody {...getTableBodyProps()}>
+            {page.map((row: Row, index: number) => {
+              prepareRow(row);
+
+              return (
+                <tr
+                  {...row.getRowProps()}
+                  css={{
+                    backgroundColor:
+                      index % 2 === 0
+                        ? finalStyle.table.primaryRowColor
+                        : finalStyle.table.secondaryRowColor,
+                  }}
+                >
+                  {row.cells.map((cell: Cell, index) => (
+                    <DataCell key={index} cell={cell} styleSpec={finalStyle} />
+                  ))}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
       {['bottom', 'both'].includes(pagination?.controlsLocation ?? '') && (
         <PaginationControls
           loading={loading}
