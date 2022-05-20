@@ -417,14 +417,14 @@ const getValueFromState: ParamModule<DatasetParam>['getValueFromState'] = (conte
     : sourceType === 'idList' ? Promise.resolve({ sourceType, sourceContent: { ids: idListToArray(idList) } })
     : sourceType === 'url' && url
       ? Promise.resolve({
-        sourceType,
-        sourceContent: {
-          url,
-          parser: urlParser,
-          searchName: questionState.question.urlSegment,
-          parameterName: parameter.name
-        }
-      })
+          sourceType,
+          sourceContent: {
+            url,
+            parser: urlParser,
+            searchName: questionState.question.urlSegment,
+            parameterName: parameter.name
+          }
+        })
     : Promise.resolve();
 
   return datasetConfigPromise.then(config => config == null ? '' : wdkService.createDataset(config).then(String));
