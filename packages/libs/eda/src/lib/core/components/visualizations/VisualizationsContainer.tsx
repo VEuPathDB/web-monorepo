@@ -137,25 +137,25 @@ function ConfiguredVisualizations(props: Props) {
 
   return (
     <>
-      {!showHeading ? (
-        <Link
-          to={{
-            pathname: `${baseUrl || url}/new`,
-            state: { scrollToTop: false },
+      {/* {!showHeading ? ( */}
+      <Link
+        to={{
+          pathname: `${baseUrl || url}/new`,
+          state: { scrollToTop: false },
+        }}
+      >
+        <FilledButton
+          text="New visualization"
+          onPress={() => null}
+          textTransform="none"
+          themeRole="primary"
+          icon={AddIcon}
+          styleOverrides={{
+            container: { marginTop: 15 },
           }}
-        >
-          <FilledButton
-            text="New visualization"
-            onPress={() => null}
-            textTransform="none"
-            themeRole="primary"
-            icon={AddIcon}
-            styleOverrides={{
-              container: { marginTop: 15 },
-            }}
-          />
-        </Link>
-      ) : null}
+        />
+      </Link>
+      {/* ) : null} */}
       <Grid>
         {computation.visualizations
           .map((viz) => {

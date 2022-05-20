@@ -16,6 +16,7 @@ import { FilledButton } from '@veupathdb/coreui/dist/components/buttons';
 import AddIcon from '@material-ui/icons/Add';
 // alphadiv abundance
 import { ComputationConfiguration } from '../core/types/visualization';
+import { isEqual } from 'lodash';
 
 export interface Props {
   analysisState: AnalysisState;
@@ -199,20 +200,35 @@ export function ComputationRoute(props: Props) {
                   if (analysisState.analysis == null) return;
                   const computations =
                     analysisState.analysis.descriptor.computations;
-                  const computation = createComputation(
-                    app.name,
-                    name,
-                    configuration,
-                    computations
+                  // @ts-ignore
+                  const existingConfig = computations.find((c) =>
+                    isEqual(c.descriptor.configuration, configuration)
                   );
-                  const newAnalysisId = await analysisState.setComputations([
-                    computation,
-                    ...computations,
-                  ]);
-                  const urlBase = newAnalysisId
-                    ? url.replace('new', newAnalysisId)
-                    : url;
-                  history.push(`${urlBase}/${computation.computationId}`);
+                  // console.log(existingConfig);
+                  if (!existingConfig) {
+                    const computation = createComputation(
+                      app.name,
+                      name,
+                      configuration,
+                      computations
+                    );
+                    const newAnalysisId = await analysisState.setComputations([
+                      computation,
+                      ...computations,
+                    ]);
+                    const urlBase = newAnalysisId
+                      ? url.replace('new', newAnalysisId)
+                      : url;
+                    history.push(`${urlBase}/${computation.computationId}`);
+                  } else {
+                    console.log(computations);
+                    console.log(existingConfig);
+                    const newAnalysisId = existingConfig.computationId;
+                    const urlBase = newAnalysisId
+                      ? url.replace('new', newAnalysisId)
+                      : url;
+                    history.push(`${urlBase}/${existingConfig.computationId}`);
+                  }
                 };
 
                 return (

@@ -160,11 +160,35 @@ function AppTitle(props: AppTitleProps) {
     margin: 'auto',
     marginTop: 10,
   };
+
+  let method = 'n/a';
+  let dataset = 'n/a';
+  if (
+    typeof computation.descriptor.configuration === 'object' &&
+    computation.descriptor.configuration
+  ) {
+    const methodKey = Object.keys(
+      computation.descriptor.configuration
+    ).find((c) => c.includes('Method'));
+    // @ts-ignore
+    method = methodKey
+      ? computation.descriptor.configuration[methodKey]
+      : 'n/a';
+    // @ts-ignore
+    dataset = computation.descriptor.configuration.hasOwnProperty(
+      'collectionVariable'
+    )
+      ? computation.descriptor.configuration.collectionVariable.variableId
+      : 'n/a';
+  }
+
   return condensed ? (
     <div style={{ marginTop: 10 }}>
       {/* <h4>{computationAppOverview.displayName}</h4> */}
       <h4 style={{ marginLeft: 20 }}>
-        <em>{computation.displayName}</em>
+        <em>
+          Data: {dataset}, Method: {method}
+        </em>
       </h4>
     </div>
   ) : (
