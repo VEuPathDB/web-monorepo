@@ -9,6 +9,7 @@ import { VisualizationsContainer } from '../visualizations/VisualizationsContain
 import { VisualizationType } from '../visualizations/VisualizationTypes';
 import { ComputationProps } from './Types';
 import { useRouteMatch } from 'react-router-dom';
+import { useAppPropertiesForDisplay } from './getAppDisplayProperties';
 
 export interface Props extends ComputationProps {
   computationId: string;
@@ -36,21 +37,6 @@ export function ComputationInstance(props: Props) {
     );
   }, [computationId, analysis]);
 
-  // const groupingObject = useMemo(() => {
-  //   if (!analysis?.descriptor.computations.length) return {};
-  //   const test: any = {};
-  //   for (const computation of analysis?.descriptor.computations) {
-  //     const key  = computation.descriptor.type;
-  //     if (!(key in test)) {
-  //       test[key] = [computation]
-  //     } else {
-  //       test[key] = test[key].concat(computation)
-  //     }
-  //   }
-  //   return test;
-  // }, [analysis]);
-  // console.log(groupingObject);
-
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
 
   const updateVisualizations = useCallback(
@@ -76,6 +62,7 @@ export function ComputationInstance(props: Props) {
   );
 
   const { url } = useRouteMatch();
+  const getAppDescription = useAppPropertiesForDisplay(computation);
 
   if (
     analysis == null ||
@@ -95,30 +82,9 @@ export function ComputationInstance(props: Props) {
           condensed={
             url.replace(/\/+$/, '').split('/').pop() === 'visualizations'
           }
+          description={getAppDescription}
         />
       )}
-      {/* {groupingObject && 'pass' in groupingObject ?
-        groupingObject.pass.map((comp: Computation) => {
-          return (
-            <VisualizationsContainer
-              geoConfigs={geoConfigs}
-              // computation={computation}
-              computation={comp}
-              // @ts-ignore
-              visualizationsOverview={computationAppOverview.visualizations}
-              visualizationTypes={visualizationTypes}
-              updateVisualizations={updateVisualizations}
-              filters={analysis.descriptor.subset.descriptor}
-              starredVariables={analysis?.descriptor.starredVariables}
-              toggleStarredVariable={toggleStarredVariable}
-              totalCounts={totalCounts}
-              filteredCounts={filteredCounts}
-              baseUrl={baseUrl}
-              showHeading={!singleAppMode}
-            />
-          )
-        }) : null
-      } */}
       <VisualizationsContainer
         geoConfigs={geoConfigs}
         computation={computation}
@@ -142,6 +108,12 @@ interface AppTitleProps {
   computation: Computation;
   computationAppOverview: ComputationAppOverview;
   condensed: boolean;
+  description:
+    | {
+        displayName: string;
+        method: string;
+      }
+    | undefined;
 }
 
 // We expect two different types of app titles: one in /visualizations that labels each app's row
@@ -149,7 +121,7 @@ interface AppTitleProps {
 // is the "condensed" version. May make sense to break into two components when
 // further styling is applied?
 function AppTitle(props: AppTitleProps) {
-  const { computation, computationAppOverview, condensed } = props;
+  const { computation, computationAppOverview, condensed, description } = props;
   const expandedStyle = {
     borderRadius: 5,
     paddingTop: 10,
@@ -161,41 +133,27 @@ function AppTitle(props: AppTitleProps) {
     marginTop: 10,
   };
 
-  let method = 'n/a';
-  let dataset = 'n/a';
-  if (
-    typeof computation.descriptor.configuration === 'object' &&
-    computation.descriptor.configuration
-  ) {
-    const methodKey = Object.keys(
-      computation.descriptor.configuration
-    ).find((c) => c.includes('Method'));
-    // @ts-ignore
-    method = methodKey
-      ? computation.descriptor.configuration[methodKey]
-      : 'n/a';
-    // @ts-ignore
-    dataset = computation.descriptor.configuration.hasOwnProperty(
-      'collectionVariable'
-    )
-      ? computation.descriptor.configuration.collectionVariable.variableId
-      : 'n/a';
-  }
-
   return condensed ? (
     <div style={{ marginTop: 10 }}>
-      {/* <h4>{computationAppOverview.displayName}</h4> */}
-      <h4 style={{ marginLeft: 20 }}>
-        <em>
-          Data: {dataset}, Method: {method}
-        </em>
-      </h4>
+      {computation.descriptor.configuration && description ? (
+        <h4 style={{ marginLeft: 20 }}>
+          <em>
+            Data: {description.displayName}, Method: {description.method}
+          </em>
+        </h4>
+      ) : null}
     </div>
   ) : (
     <div style={expandedStyle}>
       <h4>{computationAppOverview.displayName}</h4>
-      <h4>
-        <em>{computation.displayName}</em>
+      <h4 style={{ marginLeft: 20 }}>
+        {computation.descriptor.configuration && description ? (
+          <em>
+            Data: {description.displayName}, Method: {description.method}
+          </em>
+        ) : (
+          <em>{computation.displayName}</em>
+        )}
       </h4>
     </div>
   );
