@@ -15,9 +15,9 @@ export function useAppPropertiesForDisplay(
     if (computation && !computation.descriptor.configuration) return;
     const displayProperties = collections
       .filter(
-        // @ts-ignore
         (collection) =>
           collection.id ===
+          // @ts-ignore
           computation?.descriptor.configuration.collectionVariable.variableId
       )
       .map((varProperties) => ({
