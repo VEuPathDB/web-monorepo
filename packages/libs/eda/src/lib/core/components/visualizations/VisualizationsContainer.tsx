@@ -143,6 +143,10 @@ function ConfiguredVisualizations(props: Props) {
           pathname: `${baseUrl || url}/new`,
           state: { scrollToTop: false },
         }}
+        style={{
+          display: 'block',
+          width: 'fit-content',
+        }}
       >
         <FilledButton
           text="New visualization"
