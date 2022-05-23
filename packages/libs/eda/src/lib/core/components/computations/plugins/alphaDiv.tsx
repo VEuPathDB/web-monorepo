@@ -93,7 +93,7 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
               addNewComputation(name, {
                 name: 'AlphaDivComputation',
                 collectionVariable: JSON.parse(collectionVariable),
-                alphaDivMethod,
+                method: alphaDivMethod,
               })
             }
           >
