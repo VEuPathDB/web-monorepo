@@ -50,6 +50,7 @@ import {
 } from 'lodash';
 // directly use RadioButtonGroup instead of ScatterPlotControls
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
+import Switch from '@veupathdb/components/lib/components/widgets/Switch';
 // import ScatterPlotData
 import {
   ScatterPlotDataSeries,
@@ -173,6 +174,8 @@ function SelectorComponent({ name }: SelectorProps) {
 function createDefaultConfig(): ScatterplotConfig {
   return {
     valueSpecConfig: 'Raw',
+    independentAxisLogScale: false,
+    dependentAxisLogScale: false,
   };
 }
 
@@ -190,6 +193,8 @@ export const ScatterplotConfig = t.partial({
   // axis range control
   independentAxisRange: NumberOrDateRange,
   dependentAxisRange: NumberOrDateRange,
+  independentAxisLogScale: t.boolean,
+  dependentAxisLogScale: t.boolean,
 });
 
 function ScatterplotViz(props: VisualizationProps) {
@@ -291,6 +296,8 @@ function ScatterplotViz(props: VisualizationProps) {
         // set independentAxisRange undefined
         independentAxisRange: undefined,
         dependentAxisRange: undefined,
+        independentAxisLogScale: false,
+        dependentAxisLogScale: false,
       });
       // close truncation warnings here
       setTruncatedIndependentAxisWarning('');
@@ -332,6 +339,14 @@ function ScatterplotViz(props: VisualizationProps) {
   // for vizconfig.checkedLegendItems
   const onCheckedLegendItemsChange = onChangeHandlerFactory<string[]>(
     'checkedLegendItems'
+  );
+
+  const onIndependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
+    'independentAxisLogScale'
+  );
+
+  const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
+    'dependentAxisLogScale'
   );
 
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
@@ -887,6 +902,8 @@ function ScatterplotViz(props: VisualizationProps) {
       setTruncatedIndependentAxisWarning={setTruncatedIndependentAxisWarning}
       truncatedDependentAxisWarning={truncatedDependentAxisWarning}
       setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
+      onIndependentAxisLogScaleChange={onIndependentAxisLogScaleChange}
+      onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
     />
   );
 
@@ -1114,6 +1131,8 @@ type ScatterplotWithControlsProps = Omit<ScatterPlotProps, 'data'> & {
   setTruncatedDependentAxisWarning: (
     truncatedDependentAxisWarning: string
   ) => void;
+  onIndependentAxisLogScaleChange: (value: boolean) => void;
+  onDependentAxisLogScaleChange: (value: boolean) => void;
 };
 
 function ScatterplotWithControls({
@@ -1143,6 +1162,8 @@ function ScatterplotWithControls({
   setTruncatedIndependentAxisWarning,
   truncatedDependentAxisWarning,
   setTruncatedDependentAxisWarning,
+  onIndependentAxisLogScaleChange,
+  onDependentAxisLogScaleChange,
   ...scatterplotProps
 }: ScatterplotWithControlsProps) {
   // TODO Use UIState
@@ -1163,6 +1184,8 @@ function ScatterplotWithControls({
       checkedLegendItems,
       vizConfig.independentAxisRange,
       vizConfig.dependentAxisRange,
+      vizConfig.independentAxisLogScale,
+      vizConfig.dependentAxisLogScale,
     ]
   );
 
@@ -1190,6 +1213,7 @@ function ScatterplotWithControls({
   const handleIndependentAxisSettingsReset = useCallback(() => {
     updateVizConfig({
       independentAxisRange: undefined,
+      independentAxisLogScale: false,
     });
     // add reset for truncation message: including dependent axis warning as well
     setTruncatedIndependentAxisWarning('');
@@ -1218,6 +1242,7 @@ function ScatterplotWithControls({
   const handleDependentAxisSettingsReset = useCallback(() => {
     updateVizConfig({
       dependentAxisRange: undefined,
+      dependentAxisLogScale: false,
     });
     // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
@@ -1296,6 +1321,8 @@ function ScatterplotWithControls({
         max: truncationConfigDependentAxisMax,
       },
     },
+    independentAxisLogScale: vizConfig.independentAxisLogScale,
+    dependentAxisLogScale: vizConfig.dependentAxisLogScale,
   };
 
   return (
@@ -1344,6 +1371,8 @@ function ScatterplotWithControls({
               max: truncationConfigDependentAxisMax,
             },
           }}
+          independentAxisLogScale={vizConfig.independentAxisLogScale}
+          dependentAxisLogScale={vizConfig.dependentAxisLogScale}
         />
       )}
       {/*  ScatterPlotControls: check vizType (only for scatterplot for now) */}
@@ -1375,6 +1404,21 @@ function ScatterplotWithControls({
           }}
         >
           {/* X-Axis range control */}
+          <div
+            style={{
+              display: 'flex',
+              marginTop: '0.8em',
+              marginBottom: '0.8em',
+            }}
+          >
+            <Switch
+              label="Log Scale:"
+              state={vizConfig.independentAxisLogScale}
+              onStateChange={onIndependentAxisLogScaleChange}
+              // disable log scale for date variable
+              disabled={independentValueType === 'date'}
+            />
+          </div>
           <AxisRangeControl
             label="Range"
             range={vizConfig.independentAxisRange ?? defaultIndependentRange}
@@ -1419,7 +1463,7 @@ function ScatterplotWithControls({
           style={{
             display: 'inline-flex',
             borderLeft: '2px solid lightgray',
-            height: '9.7em',
+            height: '13.5em',
             position: 'relative',
             marginLeft: '-1px',
             top: '1.5em',
@@ -1435,6 +1479,21 @@ function ScatterplotWithControls({
           }}
         >
           {/* Y-axis range control */}
+          <div
+            style={{
+              display: 'flex',
+              marginTop: '0.8em',
+              marginBottom: '0.8em',
+            }}
+          >
+            <Switch
+              label="Log Scale:"
+              state={vizConfig.dependentAxisLogScale}
+              onStateChange={onDependentAxisLogScaleChange}
+              // disable log scale for date variable
+              disabled={dependentValueType === 'date'}
+            />
+          </div>
           <AxisRangeControl
             label="Range"
             range={vizConfig.dependentAxisRange ?? defaultDependentAxisRange}
