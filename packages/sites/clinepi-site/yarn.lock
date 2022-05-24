@@ -2068,10 +2068,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.1.0.tgz#5c7eecc048a91195404411d8729393197af0128c"
   integrity sha512-TQ58MbCy7UZN/h11HZ31CSJfywG17oDNHQzQJysj65Fvv2gAM1w7CjwCvV0bG3sRESKUDORSA7sJrVVv27GHBw==
 
-"@veupathdb/components@^0.16.0":
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.16.0.tgz#af26f0716db08bcdc3f4a2df1bbe8f3a10807311"
-  integrity sha512-bYgD94dzNyLdlSHm+wqMkZi58awosMVAQdBq02CT5M6xa9rNe12a8I3lyPNiG6YUAGvUemNmbodfAicsbRj1lQ==
+"@veupathdb/components@^0.16.1":
+  version "0.16.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.16.1.tgz#1a5a7b307c65519b5355856664dc8d8690bfa94c"
+  integrity sha512-Aj/e02vfO1qg7ml2geyDgGR7gGbX7Hx1iTi/N+/mraPmAKaLG8z4vCsbf1AVShEG3TsPAxZsHAOz/xBOZVmW0w==
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
@@ -2111,10 +2111,10 @@
     react-responsive-modal "^6.2.0"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^3.5.1":
-  version "3.5.7"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.5.7.tgz#a7959bb54cc3a36332d198c5c04754a382bb2ce5"
-  integrity sha512-yEAhF2n5P9/KeDaS6dRRoJqfmxNtHETnnmjmTA0UFek2smwsBDoXlqTslrCMB/JZHaYtS+zwVN5o4qGPllcsvA==
+"@veupathdb/eda@^3.5.9":
+  version "3.5.9"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.5.9.tgz#1553af5b294b643b28e09df678cea6f579f62b44"
+  integrity sha512-8gc6eR+njXVQkA00rXf+EWxtkShuFsBmtmLOiXsXgVNstHInsX9bMzt7ruB8Hs9CRFPGtnPMMW2mzcYwbINhCw==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
