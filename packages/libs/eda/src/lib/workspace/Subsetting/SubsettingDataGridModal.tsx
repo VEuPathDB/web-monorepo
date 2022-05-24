@@ -145,15 +145,36 @@ export default function SubsettingDataGridModal({
     setDisplayVariableTree(false);
   }, []);
 
+  const mergeKeys = useMemo(() => {
+    if (!currentEntity) return [];
+    return currentEntity.variables
+      .filter((variable) => 'isMergeKey' in variable && variable.isMergeKey)
+      .map((mergeKey) => mergeKey.id);
+  }, [currentEntity]);
+
+  const selectedVariableDescriptorsWithMergeKeys = useMemo(() => {
+    if (!currentEntity) return [];
+    return mergeKeys
+      .map((key) => {
+        return { entityId: currentEntity?.id, variableId: key };
+      })
+      .concat(selectedVariableDescriptors);
+  }, [mergeKeys, selectedVariableDescriptors, currentEntity]);
+
   const fetchPaginatedData = useCallback(
     ({ pageSize, pageIndex }) => {
+      if (!currentEntity) return;
       setDataLoading(true);
 
       subsettingClient
         .getTabularData(studyMetadata.id, currentEntityID, {
           filters: analysisState.analysis?.descriptor.subset.descriptor ?? [],
-          outputVariableIds: selectedVariableDescriptors.map(
-            (descriptor) => descriptor.variableId
+          outputVariableIds: mergeKeys.concat(
+            selectedVariableDescriptors
+              .filter(
+                (descriptor) => !mergeKeys.includes(descriptor.variableId)
+              )
+              .map((descriptor) => descriptor.variableId)
           ),
           reportConfig: {
             headerFormat: 'standard',
@@ -179,6 +200,8 @@ export default function SubsettingDataGridModal({
       studyMetadata.id,
       subsettingClient,
       analysisState.analysis?.descriptor.subset.descriptor,
+      currentEntity,
+      mergeKeys,
     ]
   );
 
@@ -202,7 +225,7 @@ export default function SubsettingDataGridModal({
     analysisState.analysis?.descriptor.subset.descriptor,
   ]);
 
-  /** Handler for when a user selects/de-selectors variables. */
+  /** Handler for when a user selects/de-selects variables. */
   const handleSelectedVariablesChange = (
     variableDescriptors: Array<VariableDescriptor>
   ) => {
@@ -338,7 +361,9 @@ export default function SubsettingDataGridModal({
               // entity at a time.
               rootEntity={{ ...currentEntity, children: [] }}
               scope="download"
-              selectedVariableDescriptors={selectedVariableDescriptors}
+              selectedVariableDescriptors={
+                selectedVariableDescriptorsWithMergeKeys
+              }
               starredVariableDescriptors={scopedStarredVariables}
               featuredFields={scopedFeaturedFields}
               onSelectedVariablesChange={handleSelectedVariablesChange}
