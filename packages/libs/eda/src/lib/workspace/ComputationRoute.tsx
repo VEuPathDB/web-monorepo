@@ -73,7 +73,6 @@ export function ComputationRoute(props: Props) {
     }
     return Object.entries(groupingObject);
   }, [analysisState]);
-  console.log(appsGroupedByType);
 
   return (
     <PromiseResult state={promiseState}>
@@ -196,8 +195,10 @@ export function ComputationRoute(props: Props) {
                     If there's a match, we'll store it as existingConfig and use that data in the else block
                   */
                   // @ts-ignore
-                  const existingConfig = computations.find((c) =>
-                    isEqual(c.descriptor.configuration, configuration)
+                  const existingConfig = computations.find(
+                    (c) =>
+                      isEqual(c.descriptor.configuration, configuration) &&
+                      app.name === c.descriptor.type
                   );
                   if (!existingConfig) {
                     const computation = createComputation(

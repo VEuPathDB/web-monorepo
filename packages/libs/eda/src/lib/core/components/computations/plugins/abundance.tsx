@@ -93,7 +93,7 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
               addNewComputation(name, {
                 name: 'RankedAbundanceComputation',
                 collectionVariable: JSON.parse(collectionVariable),
-                method: rankingMethod,
+                rankingMethod,
               })
             }
           >

@@ -61,7 +61,8 @@ export const ComputationConfiguration = intersection([
     collectionVariable: VariableDescriptor,
   }),
   partial({
-    method: string,
+    alphaDivMethod: string,
+    rankingMethod: string,
   }),
 ]);
 

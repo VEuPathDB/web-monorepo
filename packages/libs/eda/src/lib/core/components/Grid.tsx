@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import './Grid.scss';
 
@@ -7,16 +7,9 @@ interface Props {
 }
 
 export function Grid(props: Props) {
-  const children = useMemo(() => {
-    if (Array.isArray(props.children)) {
-      return props.children.filter((child) => !!child);
-    } else {
-      return props.children;
-    }
-  }, [props.children]);
   return (
     <div className="Grid">
-      {React.Children.map(children, (child) => (
+      {React.Children.map(props.children, (child) => (
         <div>{child}</div>
       ))}
     </div>

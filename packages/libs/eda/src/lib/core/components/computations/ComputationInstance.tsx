@@ -10,6 +10,7 @@ import { VisualizationType } from '../visualizations/VisualizationTypes';
 import { ComputationProps } from './Types';
 import { useRouteMatch } from 'react-router-dom';
 import { useAppPropertiesForDisplay } from './getAppDisplayProperties';
+import { string } from 'fp-ts';
 
 export interface Props extends ComputationProps {
   computationId: string;
@@ -108,12 +109,7 @@ interface AppTitleProps {
   computation: Computation;
   computationAppOverview: ComputationAppOverview;
   condensed: boolean;
-  description:
-    | {
-        displayName: string;
-        method: string;
-      }
-    | undefined;
+  description: string | undefined;
 }
 
 // We expect two different types of app titles: one in /visualizations that labels each app's row
@@ -137,9 +133,7 @@ function AppTitle(props: AppTitleProps) {
     <div style={{ marginTop: 10 }}>
       {computation.descriptor.configuration && description ? (
         <h4 style={{ marginLeft: 20 }}>
-          <em>
-            Data: {description.displayName}, Method: {description.method}
-          </em>
+          <em>{description}</em>
         </h4>
       ) : null}
     </div>
@@ -148,9 +142,7 @@ function AppTitle(props: AppTitleProps) {
       <h4>{computationAppOverview.displayName}</h4>
       <h4 style={{ marginLeft: 20 }}>
         {computation.descriptor.configuration && description ? (
-          <em>
-            Data: {description.displayName}, Method: {description.method}
-          </em>
+          <em>{description}</em>
         ) : (
           <em>{computation.displayName}</em>
         )}

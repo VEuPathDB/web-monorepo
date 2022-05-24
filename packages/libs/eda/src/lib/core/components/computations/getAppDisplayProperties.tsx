@@ -3,9 +3,6 @@ import { useStudyMetadata } from '../..';
 import { useCollectionVariables } from '../../hooks/study';
 import { Computation } from '../../types/visualization';
 
-const ABUNDANCE_METHODS = ['median', 'q3', 'variance', 'max'];
-const ALPHA_DIV_METHODS = ['shannon', 'simpson', 'evenness'];
-
 export function useAppPropertiesForDisplay(
   computation: Computation | undefined
 ) {
@@ -13,6 +10,7 @@ export function useAppPropertiesForDisplay(
   const collections = useCollectionVariables(studyMetadata.rootEntity);
   return useMemo(() => {
     if (computation && !computation.descriptor.configuration) return;
+    const appType = computation?.descriptor.type;
     const displayProperties = collections
       .filter(
         (collection) =>
@@ -21,11 +19,16 @@ export function useAppPropertiesForDisplay(
           computation?.descriptor.configuration.collectionVariable.variableId
       )
       .map((varProperties) => ({
-        displayName:
+        params:
           varProperties.entityDisplayName + ': ' + varProperties.displayName,
         // @ts-ignore
-        method: computation?.descriptor.configuration.method,
+        method:
+          appType === 'alphadiv'
+            ? // @ts-ignore
+              computation?.descriptor.configuration.alphaDivMethod
+            : // @ts-ignore
+              computation?.descriptor.configuration.rankingMethod,
       }));
-    return displayProperties[0];
+    return `Data: ${displayProperties[0].params}, Method: ${displayProperties[0].method}`;
   }, [computation, collections]);
 }
