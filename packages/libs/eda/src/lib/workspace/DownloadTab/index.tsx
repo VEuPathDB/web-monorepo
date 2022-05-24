@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useRouteMatch } from 'react-router';
 
 import { AnalysisState, useStudyMetadata, useStudyRecord } from '../../core';
 
@@ -9,12 +10,18 @@ import { DownloadClient } from '../../core/api/DownloadClient';
 // Components
 import MySubset from './MySubset';
 import CurrentRelease from './CurrentRelease';
+import { H6, Paragraph } from '@veupathdb/coreui';
 
 // Hooks
 import { useStudyEntities, useWdkStudyReleases } from '../../core/hooks/study';
 import { useEnhancedEntityData } from './hooks/useEnhancedEntityData';
 import { DownloadTabStudyReleases } from './types';
 import PastRelease from './PastRelease';
+import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { StudyAccessApi } from '@veupathdb/study-data-access/lib/study-access/api';
+import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 
 type DownloadsTabProps = {
   downloadClient: DownloadClient;
@@ -37,6 +44,36 @@ export default function DownloadTab({
     totalCounts,
     filteredCounts
   );
+  const permission = usePermissions();
+  const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
+
+  // function useWdkServiceContext() {
+  //   const { wdkService } = useNonNullableContext(WdkDependenciesContext);
+  //   return wdkService;
+  // }
+  // const wdkService = useWdkServiceContext();
+  // const { url } = useRouteMatch();
+  // console.log(user);
+  // if (wdkService) {
+  //   const userStudyAccess = new StudyAccessApi({baseUrl: url}, wdkService);
+  //   console.log(userStudyAccess.fetchPermissions());
+  // }
+
+  const dataAccessDeclaration = useMemo(() => {
+    if (!user || !permission || !studyRecord || permission.loading) return;
+    const studyAccess =
+      typeof studyRecord.attributes['study_access'] === 'string'
+        ? studyRecord.attributes['study_access']
+        : '';
+    const hasPermission =
+      permission.permissions.perDataset[studyRecord.id[0].value]
+        ?.actionAuthorization['resultsAll'];
+    return getDataAccessDeclaration(
+      studyAccess,
+      user.isGuest,
+      hasPermission ?? false
+    );
+  }, [user, permission, studyRecord]);
 
   const datasetId = studyRecord.id[0].value;
 
@@ -104,8 +141,12 @@ export default function DownloadTab({
   }, [WDKStudyReleases, downloadServiceStudyReleases]);
 
   return (
-    <div style={{ display: 'flex', paddingTop: 20 }}>
+    <div style={{ display: 'flex', paddingTop: 10 }}>
       <div key="Column One" style={{ marginRight: 75 }}>
+        {/* <H6 text={dataAccessDeclaration ?? ''} additionalStyles={{ margin: 0, marginBottom: 10 }} /> */}
+        <Paragraph styleOverrides={{ margin: '0 0 10px 0' }} textSize="medium">
+          {dataAccessDeclaration ?? ''}
+        </Paragraph>
         <MySubset
           datasetId={datasetId}
           entities={enhancedEntityData}
@@ -139,4 +180,40 @@ export default function DownloadTab({
       </div>
     </div>
   );
+}
+
+function getDataAccessDeclaration(
+  studyAccess: string,
+  isGuest: boolean,
+  hasPermission: boolean = false
+): string {
+  const DATA_ACCESS_STUB = `Data downloads for this study are ${studyAccess.toLowerCase()}. `;
+  const PUBLIC_ACCESS_STUB = 'You can download the data without logging in.';
+  const LOGIN_REQUEST_STUB =
+    'You must register or log in and request access to download data;';
+  const CONTROLLED_ACCESS_STUB =
+    ' data can be downloaded immediately following request submission. ';
+  const PROTECTED_ACCESS_STUB =
+    ' data can be downloaded after the study team reviews and grants you access. ';
+  const REQUEST_ACCESS_STUB = 'Click here to request access.';
+  const ACCESS_GRANTED_STUB =
+    'You have been granted access to download the data.';
+  const ACCESS_PENDING_STUB = 'Your data access request is pending.';
+
+  let dataAccessDeclaration = DATA_ACCESS_STUB;
+  if (studyAccess === 'Public') {
+    dataAccessDeclaration += PUBLIC_ACCESS_STUB;
+  } else if (isGuest || (!isGuest && !hasPermission)) {
+    dataAccessDeclaration += LOGIN_REQUEST_STUB;
+    dataAccessDeclaration +=
+      studyAccess === 'Controlled'
+        ? CONTROLLED_ACCESS_STUB
+        : PROTECTED_ACCESS_STUB;
+    dataAccessDeclaration += REQUEST_ACCESS_STUB;
+  } else if (!isGuest && hasPermission) {
+    dataAccessDeclaration += ACCESS_GRANTED_STUB;
+  } else {
+    dataAccessDeclaration += ACCESS_PENDING_STUB;
+  }
+  return dataAccessDeclaration;
 }
