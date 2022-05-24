@@ -6,6 +6,10 @@ import {
   OrientationAddon,
   OrientationDefault,
   AxisTruncationAddon,
+  independentAxisLogScaleAddon,
+  independentAxisLogScaleDefault,
+  DependentAxisLogScaleAddon,
+  DependentAxisLogScaleDefault,
 } from '../types/plots';
 // add Shape for truncation
 import { Layout, Shape } from 'plotly.js';
@@ -19,6 +23,8 @@ export interface ScatterPlotProps
   extends PlotProps<ScatterPlotData>,
     // truncation
     OrientationAddon,
+    independentAxisLogScaleAddon,
+    DependentAxisLogScaleAddon,
     AxisTruncationAddon {
   /** x-axis range: required for confidence interval - not really */
   independentAxisRange?: NumberOrDateRange;
@@ -63,6 +69,8 @@ const ScatterPlot = makePlotlyPlotComponent(
       // truncation
       orientation = OrientationDefault,
       axisTruncationConfig,
+      independentAxisLogScale = independentAxisLogScaleDefault,
+      dependentAxisLogScale = DependentAxisLogScaleDefault,
       ...restProps
     } = props;
 
@@ -117,27 +125,54 @@ const ScatterPlot = makePlotlyPlotComponent(
           ? [
               extendedIndependentAxisRange?.min,
               extendedIndependentAxisRange?.max,
-            ]
+            ].map((val) =>
+              independentAxisLogScale && val != null
+                ? val <= 0
+                  ? -0.1
+                  : Math.log10(val as number)
+                : val
+            )
           : undefined,
         zeroline: false, // disable yaxis line
         // make plot border
         mirror: true,
-        // date or number type (from variable.type)
-        type: independentValueType === 'date' ? 'date' : undefined,
+        // date or number type (from variable.type): no log scale for date
+        type:
+          independentValueType === 'date'
+            ? 'date'
+            : independentAxisLogScale
+            ? 'log'
+            : undefined,
         tickfont: data.series.length ? {} : { color: 'transparent' },
+        dtick: independentAxisLogScale ? 1 : undefined,
       },
       yaxis: {
         title: dependentAxisLabel,
         // with the truncated axis, negative values need to be checked for log scale
         range: data.series.length
-          ? [extendedDependentAxisRange?.min, extendedDependentAxisRange?.max]
+          ? [
+              extendedDependentAxisRange?.min,
+              extendedDependentAxisRange?.max,
+            ].map((val) =>
+              dependentAxisLogScale && val != null
+                ? val <= 0
+                  ? -0.1
+                  : Math.log10(val as number)
+                : val
+            )
           : undefined,
         zeroline: false, // disable xaxis line
         // make plot border
         mirror: true,
-        // date or number type (from variable.type)
-        type: dependentValueType === 'date' ? 'date' : undefined,
+        // date or number type (from variable.type): no log scale for date
+        type:
+          dependentValueType === 'date'
+            ? 'date'
+            : dependentAxisLogScale
+            ? 'log'
+            : undefined,
         tickfont: data.series.length ? {} : { color: 'transparent' },
+        dtick: dependentAxisLogScale ? 1 : undefined,
       },
       // add truncatedAxisHighlighting for layout.shapes
       shapes: truncatedAxisHighlighting,
