@@ -3330,10 +3330,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/components@^0.16.0":
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.16.0.tgz#af26f0716db08bcdc3f4a2df1bbe8f3a10807311"
-  integrity sha512-bYgD94dzNyLdlSHm+wqMkZi58awosMVAQdBq02CT5M6xa9rNe12a8I3lyPNiG6YUAGvUemNmbodfAicsbRj1lQ==
+"@veupathdb/components@^0.16.1":
+  version "0.16.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.16.1.tgz#1a5a7b307c65519b5355856664dc8d8690bfa94c"
+  integrity sha512-Aj/e02vfO1qg7ml2geyDgGR7gGbX7Hx1iTi/N+/mraPmAKaLG8z4vCsbf1AVShEG3TsPAxZsHAOz/xBOZVmW0w==
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
