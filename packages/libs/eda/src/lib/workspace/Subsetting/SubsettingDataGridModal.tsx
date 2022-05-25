@@ -204,6 +204,10 @@ export default function SubsettingDataGridModal({
     ])
   );
 
+  const requiredColumnAccessors = requiredColumns.value?.map(
+    (column) => column.accessor
+  );
+
   /**
    * Actions to take when the modal is opened.
    */
@@ -362,7 +366,11 @@ export default function SubsettingDataGridModal({
             loading={dataLoading}
             stylePreset="mesa"
             styleOverrides={{
-              headerCells: { textTransform: 'none' },
+              headerCells: {
+                textTransform: 'none',
+                position: 'relative',
+                height: '100%',
+              },
               table: {
                 width: '100%',
                 height: '100%',
@@ -380,6 +388,49 @@ export default function SubsettingDataGridModal({
                 pageCount,
               },
             }}
+            extraHeaderControls={[
+              (headerGroup) => (
+                <div style={{ display: 'inline-block', width: 20, height: 20 }}>
+                  <div
+                    style={{
+                      position: 'absolute',
+                      right: 0,
+                      top: 0,
+                    }}
+                  >
+                    {requiredColumnAccessors?.includes(headerGroup.id) ? (
+                      <i
+                        className="fa fa-lock"
+                        title="This column is required"
+                        style={{ padding: '2px 6px' }}
+                      />
+                    ) : (
+                      <button
+                        onClick={() =>
+                          handleSelectedVariablesChange(
+                            selectedVariableDescriptors.filter(
+                              (descriptor) =>
+                                descriptor.entityId +
+                                  '/' +
+                                  descriptor.variableId !==
+                                headerGroup.id
+                            )
+                          )
+                        }
+                        title="Remove column"
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: 'inherit',
+                        }}
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ),
+            ]}
           />
         ) : !dataLoading ? (
           <div
