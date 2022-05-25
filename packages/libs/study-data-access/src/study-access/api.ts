@@ -142,7 +142,7 @@ export class StudyAccessApi extends FetchClientWithCredentials {
     );
 
     return this.fetch({
-      path: `${END_USERS_PATH}/${wdkUserId}-${endUserId}`,
+      path: `${END_USERS_PATH}/${endUserId}`,
       method: 'GET',
       transformResponse: ioTransformer(endUser)
     });
