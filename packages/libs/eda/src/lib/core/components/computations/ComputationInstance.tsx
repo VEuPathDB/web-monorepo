@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useToggleStarredVariable } from '../../hooks/starredVariables';
 import {
   Computation,
@@ -9,8 +9,6 @@ import { VisualizationsContainer } from '../visualizations/VisualizationsContain
 import { VisualizationType } from '../visualizations/VisualizationTypes';
 import { ComputationProps } from './Types';
 import { useRouteMatch } from 'react-router-dom';
-import { useAppPropertiesForDisplay } from './getAppDisplayProperties';
-import { string } from 'fp-ts';
 
 export interface Props extends ComputationProps {
   computationId: string;
@@ -63,7 +61,6 @@ export function ComputationInstance(props: Props) {
   );
 
   const { url } = useRouteMatch();
-  const getAppDescription = useAppPropertiesForDisplay(computation);
 
   if (
     analysis == null ||
@@ -83,7 +80,8 @@ export function ComputationInstance(props: Props) {
           condensed={
             url.replace(/\/+$/, '').split('/').pop() === 'visualizations'
           }
-          description={getAppDescription}
+          // @ts-ignore
+          description={computation.descriptor.configuration.description}
         />
       )}
       <VisualizationsContainer

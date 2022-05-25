@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useStudyMetadata } from '../../..';
 import { useCollectionVariables } from '../../../hooks/study';
 import { VariableDescriptor } from '../../../types/variable';
@@ -39,6 +39,18 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
       entityId: collections[0].entityId,
     })
   );
+
+  const configDescription = useMemo(() => {
+    if (!collections.length || !collectionVariable) return '';
+    const variableObject = collections.find(
+      (collectionVar) =>
+        variableDescriptorToString({
+          variableId: collectionVar.id,
+          entityId: collectionVar.entityId,
+        }) === collectionVariable
+    );
+    return `Data: ${variableObject?.entityDisplayName}: ${variableObject?.displayName}; Method: ${rankingMethod}`;
+  }, [collections, collectionVariable, rankingMethod]);
 
   return (
     <div style={{ padding: '1em 0' }}>
@@ -94,6 +106,7 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
                 name: 'RankedAbundanceComputation',
                 collectionVariable: JSON.parse(collectionVariable),
                 rankingMethod,
+                description: configDescription,
               })
             }
           >
