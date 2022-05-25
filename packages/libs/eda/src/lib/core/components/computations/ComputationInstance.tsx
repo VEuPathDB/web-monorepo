@@ -80,8 +80,6 @@ export function ComputationInstance(props: Props) {
           condensed={
             url.replace(/\/+$/, '').split('/').pop() === 'visualizations'
           }
-          // @ts-ignore
-          description={computation.descriptor.configuration.description}
         />
       )}
       <VisualizationsContainer
@@ -107,7 +105,6 @@ interface AppTitleProps {
   computation: Computation;
   computationAppOverview: ComputationAppOverview;
   condensed: boolean;
-  description: string | undefined;
 }
 
 // We expect two different types of app titles: one in /visualizations that labels each app's row
@@ -115,7 +112,7 @@ interface AppTitleProps {
 // is the "condensed" version. May make sense to break into two components when
 // further styling is applied?
 function AppTitle(props: AppTitleProps) {
-  const { computation, computationAppOverview, condensed, description } = props;
+  const { computation, computationAppOverview, condensed } = props;
   const expandedStyle = {
     borderRadius: 5,
     paddingTop: 10,
@@ -129,9 +126,10 @@ function AppTitle(props: AppTitleProps) {
 
   return condensed ? (
     <div style={{ marginTop: 10 }}>
-      {computation.descriptor.configuration && description ? (
+      {computation.descriptor.configuration ? (
         <h4 style={{ marginLeft: 20 }}>
-          <em>{description}</em>
+          {/* @ts-ignore */}
+          <em>{computation.descriptor.configuration.description}</em>
         </h4>
       ) : null}
     </div>
@@ -139,8 +137,9 @@ function AppTitle(props: AppTitleProps) {
     <div style={expandedStyle}>
       <h4>{computationAppOverview.displayName}</h4>
       <h4 style={{ marginLeft: 20 }}>
-        {computation.descriptor.configuration && description ? (
-          <em>{description}</em>
+        {computation.descriptor.configuration ? (
+          /* @ts-ignore */
+          <em>{computation.descriptor.configuration.description}</em>
         ) : (
           <em>{computation.displayName}</em>
         )}
