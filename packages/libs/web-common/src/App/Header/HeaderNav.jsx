@@ -155,13 +155,13 @@ class HeaderNav extends React.Component {
           )}
           <Branding {...this.props} />
           <div className="HeaderNav-Switch">
-            <div className="row HeaderNav-Primary">
-              <SiteMenu items={mainMenu} config={siteConfig} actions={actions} user={user} />
+            <div className="stack HeaderNav-Primary" style={{ maxWidth: '80em', marginLeft: '7%' }}>
               {siteSearchServiceUrl && (
-                <div style={{ color: 'black', fontSize: '1rem', flex: 0.5 }}>
+                <div style={{ color: 'black', fontSize: '1rem', width: '70%' }}>
                   <SiteSearchInput placeholderText="GEMS or malaria"/>
                 </div>
               )}
+              <SiteMenu items={mainMenu} config={siteConfig} actions={actions} user={user} />
             </div>
 
             <div className="row HeaderNav-Secondary">
