@@ -1,25 +1,27 @@
-import { capitalize, chunk, keyBy, add, isEmpty, isEqual, xor, intersection, orderBy, memoize, unzip } from 'lodash';
-import React, { useMemo, useState, useCallback, useContext, useEffect, ReactNode } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import { DataGrid } from '@veupathdb/coreui';
-import { CheckboxTree, CheckboxList, CollapsibleSection, LoadingOverlay } from '@veupathdb/wdk-client/lib/Components';
-import { PaginationMenu, AnchoredTooltip } from '@veupathdb/wdk-client/lib/Components/Mesa';
+import { CheckboxList, CheckboxTree, CollapsibleSection, LoadingOverlay } from '@veupathdb/wdk-client/lib/Components';
+import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
+import { AnchoredTooltip, PaginationMenu } from '@veupathdb/wdk-client/lib/Components/Mesa';
+import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { DEFAULT_STRATEGY_NAME } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
 import { makeClassNameHelper, safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { arrayOf, decodeOrElse, string } from '@veupathdb/wdk-client/lib/Utils/Json';
 import { areTermsInString, makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import { getLeaves, pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { TreeBoxVocabNode, StringParam } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { useProjectUrls, ProjectUrls, useOrganismToProject, OrganismToProject } from 'ebrc-client/hooks/projectUrls';
-import { SiteSearchResponse, SiteSearchDocumentType, SiteSearchDocument } from 'ebrc-client/SiteSearch/Types';
-import { NewStrategySpec, NewStepSpec } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
-import { DEFAULT_STRATEGY_NAME } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
+import { StringParam, TreeBoxVocabNode } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { NewStepSpec, NewStrategySpec } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+import { OrganismToProject, ProjectUrls, useOrganismToProject, useProjectUrls } from 'ebrc-client/hooks/projectUrls';
 import { makeEdaRoute } from 'ebrc-client/routes';
-import { CellProps, Column, Renderer } from 'react-table';
-import { WdkService } from '@veupathdb/wdk-client/lib/Core';
-
+import { SiteSearchDocument, SiteSearchDocumentType, SiteSearchResponse } from 'ebrc-client/SiteSearch/Types';
+import { add, capitalize, chunk, intersection, isEmpty, isEqual, keyBy, memoize, orderBy, unzip, xor } from 'lodash';
+import React, { ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+import { CellProps, Column } from 'react-table';
 import './SiteSearch.scss';
+
 
 interface Props {
   loading: boolean;
@@ -64,13 +66,18 @@ export default function SiteSearch(props: Props) {
 function Results(props: Props) {
   const { response, documentType, filters = [], filterOrganisms = [], onClearFilters } = props;
 
+  const pStyle = {
+    margin: '.5em 0',
+  };
+
   if (response.searchResults.totalCount === 0 && documentType == null && filters.length === 0 && filterOrganisms.length === 0) {
     return (
       <>
         <h1><Title {...props}/></h1>
-        <div style={{ fontSize: '1.1em' }}>
-          <p style={{ fontSize: '1.1em' }}>Your search returned 0 results. <br/> Consider using a wildcard to broaden your search.  
-                                           <br/>Examples:  use A0A509AH24* instead of A0A509AH24   OR   phospho* instead of phospho.</p>
+        <div style={{ fontSize: '1.2em' }}>
+          <p style={pStyle}>Your search returned 0 results.</p>
+          <p style={pStyle}>Consider using a wildcard to broaden your search. For example, <strong>phospho*</strong> instead of <strong>phospho</strong>.
+           </p>
         </div>
 
       </>
@@ -754,42 +761,46 @@ function StudyInfoTableSection(props: { document: SiteSearchDocument, fieldName:
     <SummaryTable
       document={document}
       summaryFieldName={fieldName}
-      sorting={[
-        { accessor: 'studyName' },
-        { accessor: 'entityName' }
-      ]}
+      sorting={[{ accessor: "studyName" }, { accessor: "entityName" }]}
       columnDefs={[
-        { accessor: 'studyId' },
         {
-          accessor: 'studyName',
-          header: 'Study',
-          render: ({ value, row }) => safeHtml(value, { to: makeEdaRoute(useDatasetId(row.studyId))}, Link)
-        },
-        { accessor: 'entityId' },
-        {
-          accessor: 'entityName',
-          header: 'Entity',
-          render: ({ value, row }) => safeHtml(
-            value,
-            {
-              to: `${makeEdaRoute(useDatasetId(row.studyId))}/new/variables/${
+          accessor: "_",
+          header: <Icon fa="external-link" />,
+          render: ({ row }) => (
+            <Link
+              to={`${makeEdaRoute(useDatasetId(row.studyId))}/new/variables/${
                 row.entityId
-              }/${document.wdkPrimaryKeyString}`,
-            },
-            Link
-          )
+              }/${document.wdkPrimaryKeyString}`}
+            >
+              <Tooltip css={{}} title="View variable in a new analysis">
+                <Icon fa="external-link" />
+              </Tooltip>
+            </Link>
+          ),
+        },
+        { accessor: "studyId" },
+        {
+          accessor: "studyName",
+          header: "Study",
+          render: ({ value }) => safeHtml(value),
+        },
+        { accessor: "entityId" },
+        {
+          accessor: "entityName",
+          header: "Entity",
+          render: ({ value }) => safeHtml(value),
         },
         {
           accessor: "providerLabel",
           header: "Provider label",
-          render: ({ value }) => decodeOrElse(arrayOf(string), [], value).join(" | "),
+          render: ({ value }) =>
+            decodeOrElse(arrayOf(string), [], value).join(" | "),
         },
         {
           accessor: "description",
           header: "Description",
           render: ({ value }) => safeHtml(value),
         },
-    
       ]}
     />
   );
@@ -801,7 +812,7 @@ function VariableList(props: { document: SiteSearchDocument, fieldName: string }
   function makeLink(studyId: string, entityId?: string, variableId?: string) {
     if (datasets == null) return '';
     const dataset = datasets?.records.find(d => d.attributes.eda_study_id === studyId);
-    if (dataset == null) throw new Error("Cannot find dataset with eda_study_id = '" + studyId + "'.");
+    // if (dataset == null) throw new Error("Cannot find dataset with eda_study_id = '" + studyId + "'.");
     const base = makeEdaRoute(dataset?.id[0].value) + '/new';
     if (entityId == null) return base;
     if (variableId == null) return base + `/variables/${entityId}`;
@@ -817,23 +828,34 @@ function VariableList(props: { document: SiteSearchDocument, fieldName: string }
         { accessor: 'variableName' }
       ]}
       columnDefs={[
+        {
+          accessor: '_',
+          header: <Icon fa="external-link"/>,
+          render: ({ row }) => (
+            <Link to={makeLink(row.studyId, row.entityId, row.variableId)}>
+              <Tooltip css={null} title="View variable in a new analysis">
+                <Icon fa="external-link"/>
+              </Tooltip>
+            </Link>
+          )
+        },
         { accessor: 'variableId' },
         { accessor: 'studyId' },
         { accessor: 'entityId' },
         {
           accessor: 'studyName',
           header: 'Study',
-          render: ({ value, row }) => safeHtml(value, { to: makeLink(row.studyId) }, Link),
+          render: ({ value }) => safeHtml(value),
         },
         {
           accessor: 'entityName',
           header: 'Entity',
-          render: ({ value, row }) => safeHtml(value, { to: makeLink(row.studyId, row.entityId) }, Link),
+          render: ({ value }) => safeHtml(value),
         },
         {
           accessor: 'variableName',
           header: 'Variable',
-          render: ({ value, row }) => safeHtml(value, { to: makeLink(row.studyId, row.entityId, row.variableId) }, Link),
+          render: ({ value }) => safeHtml(value),
         },
       ]}
     />
@@ -964,13 +986,14 @@ function useDatasetId(edaStudyId: string) {
   const datasets = useDatasets();
   if (datasets == null) return;
   const dataset = datasets.records.find(d => d.attributes.eda_study_id === edaStudyId);
-  if (dataset == null) throw new Error("Could not find a dataset with eda_study_id = " + edaStudyId);
+  // if (dataset == null) throw new Error("Could not find a dataset with eda_study_id = " + edaStudyId);
+  if (dataset == null) return edaStudyId;
   return dataset.id[0].value;
 }
 
 interface ColumnDef<T extends string> {
   accessor: T;
-  header?: string;
+  header?: ReactNode;
   render?(data: { value: string, row: Record<T, string> }): ReactNode;
 }
 
@@ -991,7 +1014,7 @@ function SummaryTable<T extends string>(props: SummaryTableProps<T>) {
   const [collapsed, setCollapsed] = useState(true);
   const data = makeStructuredTableData(
     document.summaryFieldData[summaryFieldName] as string,
-    columnDefs.map(d => d.accessor),
+    columnDefs.filter(d => d.accessor !== '_').map(d => d.accessor),
     sorting
   );
 
