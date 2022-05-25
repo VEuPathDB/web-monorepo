@@ -65,7 +65,7 @@ export default function HeaderCell({
     <th
       {...headerGroup.getHeaderProps()}
       {...(sortable && headerGroup.getSortByToggleProps())}
-      css={{ padding: 0, verticalAlign: 'bottom', ...borderCSSOverrides }}
+      css={{ padding: 0, verticalAlign: 'bottom', height: '100%', ...borderCSSOverrides }}
     >
       <div
         css={[
