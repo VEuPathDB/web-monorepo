@@ -363,7 +363,7 @@ function MapViz(props: VisualizationProps) {
    * Now we deal with the optional second request to pieplot
    */
   const proportionMode = vizConfig.markerType === 'proportion';
-  const piePlotResponse = usePromise<PieplotResponse | undefined>(
+  const pieplotResponse = usePromise<PieplotResponse | undefined>(
     useCallback(async () => {
       // check all required vizConfigs are provided
       if (
@@ -423,29 +423,27 @@ function MapViz(props: VisualizationProps) {
       filters,
     ])
   );
-  const pieplotData = usePromise<PieplotData | undefined>(
-    useCallback(async () => {
-      // process response and return a map of "geoAgg key" => donut labels and counts
-      return !piePlotResponse.pending && piePlotResponse.value
-        ? piePlotResponse.value.pieplot.data.reduce(
-            (map, { facetVariableDetails, label, value }) => {
-              if (
-                facetVariableDetails != null &&
-                facetVariableDetails.length === 1
-              )
-                map[facetVariableDetails[0].value] = zip(label, value).map(
-                  ([label, value]) => ({
-                    label: label!,
-                    value: value!,
-                  })
-                );
-              return map;
-            },
-            {} as PieplotData
-          )
-        : undefined;
-    }, [piePlotResponse])
-  );
+  const pieplotData = useMemo(() => {
+    // process response and return a map of "geoAgg key" => donut labels and counts
+    return !pieplotResponse.pending && pieplotResponse.value
+      ? pieplotResponse.value.pieplot.data.reduce(
+          (map, { facetVariableDetails, label, value }) => {
+            if (
+              facetVariableDetails != null &&
+              facetVariableDetails.length === 1
+            )
+              map[facetVariableDetails[0].value] = zip(label, value).map(
+                ([label, value]) => ({
+                  label: label!,
+                  value: value!,
+                })
+              );
+            return map;
+          },
+          {} as PieplotData
+        )
+      : undefined;
+  }, [pieplotResponse]);
 
   /**
    * Merge the pieplot data into the basicMarkerData, if available,
@@ -456,22 +454,17 @@ function MapViz(props: VisualizationProps) {
       xAxisVariable?.vocabulary,
       xAxisVariable
     );
-    const pieValueMax =
-      pieplotData.value != null
-        ? values(pieplotData.value) // it's a Record 'object' of Array<{ label, value }>
-            .flat() // flatten all the arrays into one
-            .reduce(
-              (accum, elem) => (elem.value > accum ? elem.value : accum),
-              0
-            ) // find max value
-        : 0;
+    const pieValueMax = pieplotData
+      ? values(pieplotData) // it's a Record 'object' of Array<{ label, value }>
+          .flat() // flatten all the arrays into one
+          .reduce((accum, elem) => (elem.value > accum ? elem.value : accum), 0) // find max value
+      : 0;
 
     return basicMarkerData.value?.markerData.map(
       ({ geoAggregateValue, entityCount, bounds, position }) => {
         const donutData =
-          pieplotData.value != null &&
-          pieplotData.value[geoAggregateValue] != null
-            ? pieplotData.value[geoAggregateValue]
+          pieplotData?.[geoAggregateValue] != null
+            ? pieplotData[geoAggregateValue]
                 .map(({ label, value }) => ({
                   label,
                   value,
@@ -535,7 +528,7 @@ function MapViz(props: VisualizationProps) {
     );
   }, [
     basicMarkerData.value,
-    pieplotData.value,
+    pieplotData,
     vizConfig.checkedLegendItems,
     vizConfig.markerType,
     xAxisVariable,
@@ -590,7 +583,7 @@ function MapViz(props: VisualizationProps) {
           )
         }
         flyToMarkersDelay={500}
-        showSpinner={basicMarkerData.pending || pieplotData.pending}
+        showSpinner={basicMarkerData.pending || pieplotResponse.pending}
         // whether to show scale at map
         showScale={zoomLevel != null && zoomLevel > 4 ? true : false}
         // show mouse tool
@@ -649,13 +642,15 @@ function MapViz(props: VisualizationProps) {
       markerColor: ColorPaletteDefault[vocabulary.indexOf(label)],
       // has any geo-facet got an array of pieplot data
       // containing at least one element that satisfies label==label and value>0?
-      hasData: some(pieplotData.value, (pieData) =>
-        some(pieData, (data) => data.label === label && data.value > 0)
-      ),
+      hasData: pieplotData
+        ? some(pieplotData, (pieData) =>
+            some(pieData, (data) => data.label === label && data.value > 0)
+          )
+        : false,
       group: 1,
       rank: 1,
     }));
-  }, [xAxisVariable, pieplotData.value]);
+  }, [xAxisVariable, pieplotData]);
 
   // set checkedLegendItems
   const checkedLegendItems = useCheckedLegendItemsStatus(
@@ -686,7 +681,7 @@ function MapViz(props: VisualizationProps) {
       <BirdsEyeView
         completeCasesAxesVars={basicMarkerData.value?.completeCasesGeoVar}
         completeCasesAllVars={
-          piePlotResponse.value?.pieplot.config.completeCasesAllVars
+          pieplotResponse.value?.pieplot.config.completeCasesAllVars
         }
         outputEntity={outputEntity}
         stratificationIsActive={
@@ -696,9 +691,9 @@ function MapViz(props: VisualizationProps) {
         totalCounts={totalCounts.value}
         filteredCounts={filteredCounts.value}
       />
-      {!piePlotResponse.pending && piePlotResponse.value ? (
+      {!pieplotResponse.pending && pieplotResponse.value ? (
         <VariableCoverageTable
-          completeCases={piePlotResponse.value.completeCasesTable}
+          completeCases={pieplotResponse.value.completeCasesTable}
           filteredCounts={filteredCounts}
           outputEntityId={outputEntity?.id}
           variableSpecs={[
@@ -713,7 +708,7 @@ function MapViz(props: VisualizationProps) {
               required: true,
               display: 'Geolocation',
               variable:
-                piePlotResponse.value.completeCasesTable[1].variableDetails,
+                pieplotResponse.value.completeCasesTable[1].variableDetails,
             },
           ]}
         />
