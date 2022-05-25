@@ -54,8 +54,8 @@ export default function DownloadTab({
       attemptAction(Action.download, {
         studyId: datasetId,
         onAllow: () => {
-          // @ts-ignore
           window.location.assign(
+            // @ts-ignore
             studyRecord.attributes['bulk_download_url'].url
           );
         },
