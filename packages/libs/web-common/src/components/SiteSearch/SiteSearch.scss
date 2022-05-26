@@ -259,9 +259,15 @@
   }
 
   &--SummaryField {
+    line-break: anywhere;
     strong {
       font-weight: 500;
     }
+  }
+
+  &--ResultSummary .wdk-CollapsibleSection {
+    padding: .5em 0;
+    margin-bottom: -1em;
   }
 
   &--ResultSubTitle {

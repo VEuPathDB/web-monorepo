@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/web-common",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "repository": {
     "url": "https://github.com/VEuPathDB/EbrcWebsiteCommon",
     "directory": "Client"
@@ -50,6 +50,7 @@
     "@types/react-dom": "^17.0.14",
     "@types/react-router": "^5.1.18",
     "@types/react-router-dom": "^5.3.3",
+    "@types/react-table": "^7.7.11",
     "@types/shelljs": "^0.8.8",
     "@veupathdb/components": "^0.14.4",
     "@veupathdb/coreui": "^0.16.0",

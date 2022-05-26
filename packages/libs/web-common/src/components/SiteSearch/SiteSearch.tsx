@@ -1,21 +1,27 @@
-import { capitalize, keyBy, add, isEmpty, isEqual, xor, intersection } from 'lodash';
-import React, { useMemo, useState, useCallback, useContext, useEffect } from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import { CheckboxTree, CheckboxList, CollapsibleSection, LoadingOverlay } from '@veupathdb/wdk-client/lib/Components';
-import { PaginationMenu, AnchoredTooltip } from '@veupathdb/wdk-client/lib/Components/Mesa';
+import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { DataGrid } from '@veupathdb/coreui';
+import { CheckboxList, CheckboxTree, CollapsibleSection, LoadingOverlay } from '@veupathdb/wdk-client/lib/Components';
+import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
+import { AnchoredTooltip, PaginationMenu } from '@veupathdb/wdk-client/lib/Components/Mesa';
+import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { DEFAULT_STRATEGY_NAME } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
 import { makeClassNameHelper, safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { arrayOf, decodeOrElse, string } from '@veupathdb/wdk-client/lib/Utils/Json';
 import { areTermsInString, makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import { getLeaves, pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { TreeBoxVocabNode, StringParam } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { useProjectUrls, ProjectUrls, useOrganismToProject, OrganismToProject } from 'ebrc-client/hooks/projectUrls';
-import { SiteSearchResponse, SiteSearchDocumentType, SiteSearchDocument } from 'ebrc-client/SiteSearch/Types';
-import { NewStrategySpec, NewStepSpec } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
-import { DEFAULT_STRATEGY_NAME } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
-
+import { StringParam, TreeBoxVocabNode } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { NewStepSpec, NewStrategySpec } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+import { OrganismToProject, ProjectUrls, useOrganismToProject, useProjectUrls } from 'ebrc-client/hooks/projectUrls';
+import { makeEdaRoute } from 'ebrc-client/routes';
+import { SiteSearchDocument, SiteSearchDocumentType, SiteSearchResponse } from 'ebrc-client/SiteSearch/Types';
+import { add, capitalize, chunk, intersection, isEmpty, isEqual, keyBy, memoize, orderBy, unzip, xor } from 'lodash';
+import React, { ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+import { CellProps, Column } from 'react-table';
 import './SiteSearch.scss';
+
 
 interface Props {
   loading: boolean;
@@ -58,15 +64,20 @@ export default function SiteSearch(props: Props) {
 }
 
 function Results(props: Props) {
-  const { response, documentType, filters = [], filterOrganisms = [] } = props;
+  const { response, documentType, filters = [], filterOrganisms = [], onClearFilters } = props;
+
+  const pStyle = {
+    margin: '.5em 0',
+  };
 
   if (response.searchResults.totalCount === 0 && documentType == null && filters.length === 0 && filterOrganisms.length === 0) {
     return (
       <>
         <h1><Title {...props}/></h1>
-        <div style={{ fontSize: '1.1em' }}>
-          <p style={{ fontSize: '1.1em' }}>Your search returned 0 results. <br/> Consider using a wildcard to broaden your search.  
-                                           <br/>Examples:  use A0A509AH24* instead of A0A509AH24   OR   phospho* instead of phospho.</p>
+        <div style={{ fontSize: '1.2em' }}>
+          <p style={pStyle}>Your search returned 0 results.</p>
+          <p style={pStyle}>Consider using a wildcard to broaden your search. For example, <strong>phospho*</strong> instead of <strong>phospho</strong>.
+           </p>
         </div>
 
       </>
@@ -77,7 +88,7 @@ function Results(props: Props) {
     <>
       <div className={cx('--TitleLine')}>
         <h1>{Title(props)}</h1>
-        {response.searchResults.totalCount > 0 && <StrategyLinkout {...props}/>}
+        {response.searchResults.totalCount > 0 && response.documentTypes.some(docType => docType.isWdkRecordType) &&  <StrategyLinkout {...props}/>}
       </div>
       <div className={cx('--Results')}>
         <Pagination {...props} />
@@ -88,8 +99,8 @@ function Results(props: Props) {
           {response.searchResults.totalCount === 0
             ? (
               <div style={{ textAlign: 'center', fontSize: '1.2em' }}>
-                <p style={{ fontSize: '1.2em' }}>Your search term and filters did not yield results.</p>
-                <p>Try a different search term, or clearing your filters in the panel on the left.</p>
+                <p style={{ fontSize: '1.2em' }}>Your <strong>search term</strong> and <strong>filters</strong> did not yield results.</p>
+                <p>Try a different search term, or <button className="link" type="button" onClick={onClearFilters}>clearing your filters</button> in the panel on the left.</p>
               </div>
             )
             : <SearchResult {...props} />
@@ -330,9 +341,9 @@ function SearchResult(props: Props) {
     <React.Fragment>
       <DirectHit {...props}/>
       <div className={cx('--ResultList')}>
-        {result.documents.map((document, index) => (
+        {result.documents.map((document) => (
           <Hit
-            key={index}
+            key={document.wdkPrimaryKeyString}
             document={document}
             documentType={documentTypesById[document.documentType]}
           />
@@ -348,17 +359,19 @@ interface HitProps {
   classNameModifier?: string;
 }
 
+
+
 function Hit(props: HitProps) {
   const { classNameModifier, document, documentType } = props;
-  const { link, summary } = resultDetails(document, documentType);
+  const { display, summary } = resultDetails(document, documentType);
   const subTitleField = documentType.summaryFields.find(f => f.isSubtitle);
   const subTitle = subTitleField && document.summaryFieldData[subTitleField.name];
   return (
     <div className={cx('--Result', classNameModifier)}>
       <div className={cx('--ResultLink', classNameModifier)}>
-        {link.isRoute ?
-          <Link to={link.url} target={link.target}>{documentType.displayName} - {link.text}</Link> :
-          <a href={link.url} target={link.target}>{documentType.displayName} - {link.text}</a>}
+        {display.route ?  <Link to={display.route} target={display.target}>{documentType.displayName} - {display.text}</Link> :
+          display.url ?  <a href={display.url} target={display.target}>{documentType.displayName} - {display.text}</a> :
+          <span>{documentType.displayName} - <strong>{display.text}</strong></span>}
         {subTitle && <div className={cx('--ResultSubTitle')}>{formatSummaryFieldValue(subTitle)}</div>}
       </div>
       {summary && <div className={cx('--ResultSummary', classNameModifier)}>{summary}</div>}
@@ -371,11 +384,12 @@ function DirectHit(props: Props) {
   const { response, searchString } = props;
   // quote chars to "remove" when comparing
   const quotes = [``, `'`, `"`];
+  const docTypeIdsToSkip = ['variableValue'];
   const firstHit = response?.searchResults?.documents[0];
   const firstHitDocType = response?.documentTypes.find(d => d.id === firstHit?.documentType);
   const firstHitIsExact = firstHit != null && quotes.some(q => searchString.toLowerCase() === (q + firstHit.wdkPrimaryKeyString + q).toLowerCase());
 
-  if (!response || !firstHit || !firstHitDocType || !firstHitIsExact) return null;
+  if (!response || !firstHit || !firstHitDocType || !firstHitIsExact || docTypeIdsToSkip.includes(firstHitDocType.id)) return null;
 
   return (
     <Hit
@@ -619,16 +633,17 @@ function Pagination(props: Props) {
 }
 
 interface ResultEntryDetails {
-  link: {
-    isRoute: boolean;
-    url: string;
+  display: {
+    // `route` will take precedence over `url`
+    route?: string;
+    url?: string;
     text: React.ReactNode;
     target?: string;
   };
   summary: React.ReactNode;
 }
 
-// For now, all entries will have a link and a summary
+// For now, all entries will have a display and a summary
 function resultDetails(document: SiteSearchDocument, documentType: SiteSearchDocumentType): ResultEntryDetails {
 
   const projectUrls = useProjectUrls();
@@ -638,8 +653,51 @@ function resultDetails(document: SiteSearchDocument, documentType: SiteSearchDoc
   // wdk records
   if (documentType.isWdkRecordType) {
     return {
-      link: makeRecordLink(document, projectUrls, organismToProject, projectId),
+      display: makeRecordLink(document, projectUrls, organismToProject, projectId),
       summary: makeGenericSummary(document, documentType)
+    }
+  }
+
+  // eda study
+  if (documentType.id === 'dataset') {
+    const [ datasetId ] = document.primaryKey;
+    return {
+      display: {
+        route: `${makeEdaRoute(datasetId)}/new`,
+        text: document.hyperlinkName
+      },
+      summary: makeGenericSummary(document, documentType)
+    }
+  }
+
+  // eda variable
+  if (documentType.id === 'variable') {
+    const studyInfoField = 'MULTITEXT__variable_StudyInfo';
+    return {
+      display: {
+        text: document.hyperlinkName
+      },
+      summary: (
+        <>
+          {makeGenericSummary(document, documentType, { [studyInfoField]: () => null })}
+          <StudyInfoTableSection document={document} fieldName={studyInfoField}/>
+        </>
+      )
+    }
+  }
+
+  // eda variable value
+  if (documentType.id === 'variableValue') {
+    return {
+      display: {
+        text: document.hyperlinkName,
+      },
+      summary: (
+        <>
+          {makeGenericSummary(document, documentType, { MULTITEXT__variableValue_All: () => null })}
+          <VariableList document={document} fieldName="MULTITEXT__variableValue_All"/>
+        </>
+      )
     }
   }
 
@@ -647,9 +705,8 @@ function resultDetails(document: SiteSearchDocument, documentType: SiteSearchDoc
   if (documentType.id === 'search') {
     const [ searchName, recordName ] = document.primaryKey;
     return {
-      link: {
-        isRoute: true,
-        url: `/search/${recordName}/${searchName}`,
+      display: {
+        route: `/search/${recordName}/${searchName}`,
         text: document.hyperlinkName || document.primaryKey.join(' - ')
       },
       summary: makeGenericSummary(document, documentType)
@@ -659,8 +716,7 @@ function resultDetails(document: SiteSearchDocument, documentType: SiteSearchDoc
   // mapveu
   if (documentType.id === 'popbio-sample') {
     return {
-      link: {
-        isRoute: false,
+      display: {
         url: `/popbio-map/web/?sampleID=${document.primaryKey[0]}`,
         text: document.hyperlinkName || document.primaryKey.join(' - '),
         target: '_blank'
@@ -677,14 +733,13 @@ function resultDetails(document: SiteSearchDocument, documentType: SiteSearchDoc
     documentType.id === 'workshop-exercise'
   ) {
     // Handle the special case of tutorials that are offered as home page cards
-    const url = documentType.id === 'tutorial' && document.primaryKey.length === 1 && document.primaryKey[0].startsWith('#')
+    const route = documentType.id === 'tutorial' && document.primaryKey.length === 1 && document.primaryKey[0].startsWith('#')
       ? `/${document.primaryKey[0]}`
       : `/static-content/${document.primaryKey.join('/')}.html`;
 
     return {
-      link: {
-        isRoute: true,
-        url,
+      display: {
+        route,
         text: document.hyperlinkName || document.primaryKey.join(' - ')
       },
       summary: makeGenericSummary(document, documentType)
@@ -692,24 +747,129 @@ function resultDetails(document: SiteSearchDocument, documentType: SiteSearchDoc
   }
 
   return {
-    link: {
-      isRoute: true,
-      url: '',
+    display: {
+      route: '',
       text: document.hyperlinkName || document.primaryKey.join('/')
     },
     summary: makeGenericSummary(document, documentType)
   }
 }
 
-function makeRecordLink(document: SiteSearchDocument, projectUrls?: ProjectUrls, organismToProject?: OrganismToProject, projectId?: string): ResultEntryDetails['link'] {
+function StudyInfoTableSection(props: { document: SiteSearchDocument, fieldName: string }) {
+  const { document, fieldName } = props;
+  return (
+    <SummaryTable
+      document={document}
+      summaryFieldName={fieldName}
+      sorting={[{ accessor: "studyName" }, { accessor: "entityName" }]}
+      columnDefs={[
+        {
+          accessor: "_",
+          header: <Icon fa="external-link" />,
+          render: ({ row }) => (
+            <Link
+              to={`${makeEdaRoute(useDatasetId(row.studyId))}/new/variables/${
+                row.entityId
+              }/${document.wdkPrimaryKeyString}`}
+            >
+              <Tooltip css={{}} title="View variable in a new analysis">
+                <Icon fa="external-link" />
+              </Tooltip>
+            </Link>
+          ),
+        },
+        { accessor: "studyId" },
+        {
+          accessor: "studyName",
+          header: "Study",
+          render: ({ value }) => safeHtml(value),
+        },
+        { accessor: "entityId" },
+        {
+          accessor: "entityName",
+          header: "Entity",
+          render: ({ value }) => safeHtml(value),
+        },
+        {
+          accessor: "providerLabel",
+          header: "Provider label",
+          render: ({ value }) =>
+            decodeOrElse(arrayOf(string), [], value).join(" | "),
+        },
+        {
+          accessor: "description",
+          header: "Description",
+          render: ({ value }) => safeHtml(value),
+        },
+      ]}
+    />
+  );
+}
+
+function VariableList(props: { document: SiteSearchDocument, fieldName: string }) {
+  const { document, fieldName } = props;
+  const datasets = useDatasets();
+  function makeLink(studyId: string, entityId?: string, variableId?: string) {
+    if (datasets == null) return '';
+    const dataset = datasets?.records.find(d => d.attributes.eda_study_id === studyId);
+    // if (dataset == null) throw new Error("Cannot find dataset with eda_study_id = '" + studyId + "'.");
+    const base = makeEdaRoute(dataset?.id[0].value) + '/new';
+    if (entityId == null) return base;
+    if (variableId == null) return base + `/variables/${entityId}`;
+    return base + `/variables/${entityId}/${variableId}`;
+  }
+  return (
+    <SummaryTable
+      document={document}
+      summaryFieldName={fieldName}
+      sorting={[
+        { accessor: 'studyName' },
+        { accessor: 'entityName' },
+        { accessor: 'variableName' }
+      ]}
+      columnDefs={[
+        {
+          accessor: '_',
+          header: <Icon fa="external-link"/>,
+          render: ({ row }) => (
+            <Link to={makeLink(row.studyId, row.entityId, row.variableId)}>
+              <Tooltip css={null} title="View variable in a new analysis">
+                <Icon fa="external-link"/>
+              </Tooltip>
+            </Link>
+          )
+        },
+        { accessor: 'variableId' },
+        { accessor: 'studyId' },
+        { accessor: 'entityId' },
+        {
+          accessor: 'studyName',
+          header: 'Study',
+          render: ({ value }) => safeHtml(value),
+        },
+        {
+          accessor: 'entityName',
+          header: 'Entity',
+          render: ({ value }) => safeHtml(value),
+        },
+        {
+          accessor: 'variableName',
+          header: 'Variable',
+          render: ({ value }) => safeHtml(value),
+        },
+      ]}
+    />
+  )
+}
+
+function makeRecordLink(document: SiteSearchDocument, projectUrls?: ProjectUrls, organismToProject?: OrganismToProject, projectId?: string): ResultEntryDetails['display'] {
   const text = safeHtml(document.hyperlinkName || document.primaryKey.join(' - '));
   const route = `/record/${document.documentType}/${document.primaryKey.join('/')}`;
 
   // use standard link if not in portal, or if no organism present
   if (projectId !== 'EuPathDB' || document.organism == null) {
     return {
-      isRoute: true,
-      url: route,
+      route,
       text
     }
   }
@@ -717,7 +877,6 @@ function makeRecordLink(document: SiteSearchDocument, projectUrls?: ProjectUrls,
   // stub url. these are nullish while loading
   if (projectId == null || projectUrls == null || organismToProject == null) {
     return {
-      isRoute: false,
       url: '',
       text
     };
@@ -728,17 +887,23 @@ function makeRecordLink(document: SiteSearchDocument, projectUrls?: ProjectUrls,
 
   // if baseUrl is not found, return standard link. we _could_ throw instead...
   return {
-    isRoute: !baseUrl,
-    url: baseUrl ? new URL('app' + route, baseUrl).toString() : route,
+    [baseUrl ? 'url' : 'route']: baseUrl ? new URL('app' + route, baseUrl).toString() : route,
     text: document.hyperlinkName || document.primaryKey.join(' - ')
   }
 }
 
-function makeGenericSummary(document: SiteSearchDocument, documentType: SiteSearchDocumentType) {
+interface SummaryFieldFormatter {
+  (value?: string | string[]): ReactNode;
+}
+
+function makeGenericSummary(document: SiteSearchDocument, documentType: SiteSearchDocumentType, customFormmaters: Record<string, SummaryFieldFormatter> = {}) {
   const summaryFields = documentType.summaryFields
     .flatMap(summaryField => {
       if (summaryField.isSubtitle) return [];
-      const value = formatSummaryFieldValue(document.summaryFieldData[summaryField.name]);
+      const summaryFieldDataEntry = document.summaryFieldData[summaryField.name];
+      const value = summaryField.name in customFormmaters
+        ? customFormmaters[summaryField.name](summaryFieldDataEntry)
+        : formatSummaryFieldValue(summaryFieldDataEntry);
       return value == null ? [] : [ { ...summaryField, value } ]
     });
 
@@ -747,10 +912,14 @@ function makeGenericSummary(document: SiteSearchDocument, documentType: SiteSear
   return (
     <React.Fragment>
       {summaryFields.map(({ name, displayName, value }) => (
-        <div key={name} className={cx('--SummaryField')}><strong>{displayName}:</strong> {safeHtml(value, null, 'span')}</div>
+        <div key={name} className={cx('--SummaryField')}><strong>{displayName}:</strong> {renderValue(value)}</div>
       ))}
     </React.Fragment>
   );
+}
+
+function renderValue(value: ReactNode): ReactNode {
+  return (typeof value === 'string') ? safeHtml(value, null, 'span') : value;
 }
 
 function formatSummaryFieldValue(value?: string | string[]) {
@@ -796,4 +965,115 @@ function makeFullOrganismFilterSelection(
     allSiteSearchOrganisms,
     organismFilterLeaves
   );
+}
+
+const getDatasetsOnce = memoize((wdkService: WdkService) =>
+   wdkService.getAnswerJson({
+    searchName: 'AllDatasets',
+    searchConfig: {
+      parameters: {}
+    }
+  }, {
+    attributes: ['eda_study_id']
+  })
+)
+
+function useDatasets() {
+  return useWdkService(getDatasetsOnce);
+}
+
+function useDatasetId(edaStudyId: string) {
+  const datasets = useDatasets();
+  if (datasets == null) return;
+  const dataset = datasets.records.find(d => d.attributes.eda_study_id === edaStudyId);
+  // if (dataset == null) throw new Error("Could not find a dataset with eda_study_id = " + edaStudyId);
+  if (dataset == null) return edaStudyId;
+  return dataset.id[0].value;
+}
+
+interface ColumnDef<T extends string> {
+  accessor: T;
+  header?: ReactNode;
+  render?(data: { value: string, row: Record<T, string> }): ReactNode;
+}
+
+interface SortSpec<T extends string> {
+  accessor: T;
+  direction?: 'asc' | 'desc';
+}
+
+interface SummaryTableProps<T extends string> {
+  document: SiteSearchDocument;
+  summaryFieldName: string;
+  columnDefs: ColumnDef<T>[];
+  sorting: SortSpec<T>[];
+}
+
+function SummaryTable<T extends string>(props: SummaryTableProps<T>) {
+  const { document, summaryFieldName, columnDefs, sorting } = props;
+  const [collapsed, setCollapsed] = useState(true);
+  const data = makeStructuredTableData(
+    document.summaryFieldData[summaryFieldName] as string,
+    columnDefs.filter(d => d.accessor !== '_').map(d => d.accessor),
+    sorting
+  );
+
+  const columns = columnDefs
+    .filter(d => d.header)
+    .map((d) => ({
+      accessor: d.accessor,
+      Header: d.header,
+      Cell: ({ value, row }: CellProps<Record<T, string>, string>) => d.render ? d.render({ value, row: row.original }) : value
+    } as Column<Record<T, string>>));
+  return (
+    <CollapsibleSection headerContent={<strong>Studies matched ({data.length})</strong>} isCollapsed={collapsed} onCollapsedChange={setCollapsed}>
+
+    <DataGrid
+      columns={columns as Column[]}
+      data={data}
+      stylePreset="mesa"
+      styleOverrides={{
+        headerCells: {
+          fontSize: "1em",
+          padding: ".5em",
+          lineBreak: "normal",
+        },
+        dataCells: {
+          fontSize: "1em",
+          padding: ".5em",
+          borderWidth: 1,
+          lineBreak: "normal",
+        },
+      }}
+    />
+    </CollapsibleSection>
+  );
+
+}
+
+/**
+ * Take a JSON string representing a string[], and return an array of objects.
+ * The properties of the objects are determined by the accessors array.
+ */
+function makeStructuredTableData<T extends string>(jsonString: string, accessors: T[], sorting: SortSpec<T>[]): Record<T, string>[] {
+  try {
+    const flatData = decodeOrElse(arrayOf(string), [], jsonString);
+    const data = chunk(flatData, accessors.length)
+    .map(values => {
+      const row = {} as Record<T, string>;
+      for (const index in accessors) {
+        row[accessors[index]] = values[index];
+      }
+      return row;
+    });
+    if (sorting) {
+      const [ orderKeys, orderDirs] = unzip(sorting.map(spec => [spec.accessor, spec.direction ?? 'asc']));
+      return orderBy(data, orderKeys, orderDirs as ('asc'|'desc')[]) as Record<T, string>[];
+    }
+    return data;
+  }
+  catch(error) {
+    console.error(error);
+    return [];
+  }
 }

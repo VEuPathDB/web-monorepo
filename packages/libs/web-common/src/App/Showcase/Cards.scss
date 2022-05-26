@@ -15,6 +15,14 @@
   position: relative;
   width: 100%;
 
+  &_Expandable {
+    padding-top: 2em;
+  }
+
+  &_Searchable {
+    padding-top: 10px;
+  }
+
   .filters {
     display: flex;
     justify-content: center;
@@ -57,15 +65,18 @@
     font-weight: 500;
     font-size: 120%;
     margin-left: auto !important;
-    height: 0;
     z-index: 1;
+    position: absolute;
+    top: .75em;
+    right: 1em;
   }
 
   a.CardList__TableViewLink {
     font-weight: 500;
     font-size: 120%;
-    height: 0;
-    margin-right: auto !important;
+    position: absolute;
+    top: .75em;
+    left: 1em;
     z-index: 1;
   }
 
