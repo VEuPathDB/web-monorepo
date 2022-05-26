@@ -20,6 +20,7 @@ import { usePermissions } from '@veupathdb/study-data-access/lib/data-restrictio
 import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { Action } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUiActions';
+import { getStudyRequestNeedsApproval } from '@veupathdb/study-data-access/lib/shared/studies';
 
 type DownloadsTabProps = {
   downloadClient: DownloadClient;
@@ -48,56 +49,52 @@ export default function DownloadTab({
   const attemptAction = useAttemptActionCallback();
 
   const handleClick = useCallback(
-    (event: React.MouseEvent<HTMLAnchorElement>) => {
+    (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
-      event.stopPropagation();
       attemptAction(Action.download, {
         studyId: datasetId,
-        onAllow: () => {
-          window.location.assign(
-            // @ts-ignore
-            studyRecord.attributes['bulk_download_url'].url
-          );
-        },
       });
     },
-    [studyRecord, datasetId, attemptAction]
+    [datasetId, attemptAction]
   );
 
   const dataAccessDeclaration = useMemo(() => {
-    if (!user || !permission || !studyRecord || permission.loading) return;
+    if (
+      !user ||
+      !permission ||
+      !studyRecord ||
+      permission.loading ||
+      !datasetId
+    )
+      return;
     const studyAccess =
       typeof studyRecord.attributes['study_access'] === 'string'
         ? studyRecord.attributes['study_access']
         : '<status not found>';
+    const requestNeedsApproval =
+      getStudyRequestNeedsApproval(studyRecord) ?? '1';
     const hasPermission =
       permission.permissions.perDataset[studyRecord.id[0].value]
         ?.actionAuthorization['resultsAll'];
     const requestAnchor = (
-      <a
-        style={{
-          cursor: 'pointer',
-        }}
-        // @ts-ignore
-        href={studyRecord.attributes['bulk_download_url'].url}
-        onClick={handleClick}
-      >
+      <button className="link" onClick={handleClick}>
         Click here to request access.
-      </a>
+      </button>
     );
     return (
       <Paragraph styleOverrides={{ margin: '0 0 10px 0' }} textSize="medium">
         {getDataAccessDeclaration(
           studyAccess,
+          requestNeedsApproval,
           user.isGuest,
           hasPermission ?? false
         )}{' '}
         {studyAccess !== 'Public' &&
-          (user.isGuest || (!user.isGuest && !hasPermission)) &&
+          (user.isGuest || !hasPermission) &&
           requestAnchor}
       </Paragraph>
     );
-  }, [user, permission, studyRecord, handleClick]);
+  }, [user, permission, studyRecord, handleClick, datasetId]);
 
   /**
    * Ok, this is confusing, but there are two places where we need
@@ -203,6 +200,7 @@ export default function DownloadTab({
 
 function getDataAccessDeclaration(
   studyAccess: string,
+  requestNeedsApproval: string,
   isGuest: boolean,
   hasPermission: boolean = false
 ): string {
@@ -222,10 +220,10 @@ function getDataAccessDeclaration(
   let dataAccessDeclaration = DATA_ACCESS_STUB;
   if (studyAccess === 'Public') {
     return (dataAccessDeclaration += PUBLIC_ACCESS_STUB);
-  } else if (isGuest || (!isGuest && !hasPermission)) {
+  } else if (isGuest || !hasPermission) {
     dataAccessDeclaration += LOGIN_REQUEST_STUB;
     return (dataAccessDeclaration +=
-      studyAccess === 'Controlled'
+      requestNeedsApproval === '0'
         ? CONTROLLED_ACCESS_STUB
         : PROTECTED_ACCESS_STUB);
   } else if (!isGuest && hasPermission) {
