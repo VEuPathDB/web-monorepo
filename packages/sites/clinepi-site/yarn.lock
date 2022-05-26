@@ -2164,9 +2164,9 @@
   integrity sha512-J8sPtD8+Zp1ZBhgU+mX7O737zaZ28s7P/9RJjbh5nXYB5IgP6yRm+bvj0ewmW7W9NBAPUHJzeEDxMbYDExb85g==
 
 "@veupathdb/study-data-access@^0.3.1":
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.3.1.tgz#319d2c4bcc6e101bc48647b7a2011b1c0d346de3"
-  integrity sha512-buohdGAVNDMJa5S2p+Ob4dn6GeKBO13UAsyJTSztcAH2jfws/+dVGTbPj5TFvmt4PrT4A4CpktyYkYnLtv6KZg==
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.3.2.tgz#810e03a7a7e2033ef4d6c59902560bdc81a2f3fd"
+  integrity sha512-KgqPx0LA1MYmWGeXkHlJUjhWg6TSocjiTsd3DcwqfyF584SeJVgUaaqDLnBFwy7Xma/OlXp8+NuEaptKkA+IXw==
   dependencies:
     fp-ts "^2.11.5"
     io-ts "^2.2.16"
@@ -2206,9 +2206,9 @@
     uuid "^8.1.0"
 
 "@veupathdb/web-common@^0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.6.0.tgz#05ee0783e7268e2cd1e5e6f3d476811e945b0942"
-  integrity sha512-cMnJUnAGTI0ZyTU7G79HtSMPMxTqNDEbn0Z3aUxJCDohmwIzO9uYdPjeElLNtoFoaJ3jJBAju502vq6ft1YBgw==
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.6.1.tgz#b44b2f48e65cdb65a9c46c994397664ac3b729d1"
+  integrity sha512-caRN/oUBKKbqu2gOAjkoCrYDkGVfnOchzJWjw+2IuyiSF/50wWZWX26xIxezk3w3LjGhg+eL6LJNGJu3JwUikQ==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
@@ -3588,7 +3588,7 @@ chalk@^2.0.0, chalk@^2.3.0, chalk@^2.4.2:
 charenc@0.0.2:
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/charenc/-/charenc-0.0.2.tgz#c0a1d2f3a7092e03774bfa83f14c0fc5790a8667"
-  integrity sha1-wKHS86cJLgN3S/qD8UwPxXkKhmc=
+  integrity sha512-yrLQ/yVUFXkzg7EDQsPieE/53+0RlaWTs+wBrvW36cyilJ2SaDWfl4Yj7MtLTXleV9uEKefbAGUPv2/iWSooRA==
 
 chokidar@^2.1.8:
   version "2.1.8"
@@ -5653,12 +5653,7 @@ forwarded@0.2.0:
   resolved "https://registry.yarnpkg.com/forwarded/-/forwarded-0.2.0.tgz#2269936428aad4c15c7ebe9779a84bf0b2a81811"
   integrity sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==
 
-fp-ts@^2.11.5:
-  version "2.11.9"
-  resolved "https://registry.yarnpkg.com/fp-ts/-/fp-ts-2.11.9.tgz#bbc204e0932954b59c98a282635754a4b624a05e"
-  integrity sha512-GhYlNKkCOfdjp71ocdtyaQGoqCswEoWDJLRr+2jClnBBq2dnSOtd6QxmJdALq8UhfqCyZZ0f0lxadU4OhwY9nw==
-
-fp-ts@^2.9.3:
+fp-ts@^2.11.5, fp-ts@^2.9.3:
   version "2.12.1"
   resolved "https://registry.yarnpkg.com/fp-ts/-/fp-ts-2.12.1.tgz#e389488bfd1507af06bd5965e97367edcd4fabad"
   integrity sha512-oxvgqUYR6O9VkKXrxkJ0NOyU0FrE705MeqgBUMEPWyTu6Pwn768cJbHChw2XOBlgFLKfIHxjr2OOBFpv2mUGZw==
