@@ -72,11 +72,11 @@ export default function DownloadTab({
         ? studyRecord.attributes['study_access']
         : '<status not found>';
     const requestNeedsApproval =
-      getStudyRequestNeedsApproval(studyRecord) ?? '1';
+      getStudyRequestNeedsApproval(studyRecord) !== '0';
     const hasPermission =
       permission.permissions.perDataset[studyRecord.id[0].value]
         ?.actionAuthorization['resultsAll'];
-    const requestAnchor = (
+    const requestElement = (
       <button className="link" onClick={handleClick}>
         Click here to request access.
       </button>
@@ -91,7 +91,7 @@ export default function DownloadTab({
         )}{' '}
         {studyAccess !== 'Public' &&
           (user.isGuest || !hasPermission) &&
-          requestAnchor}
+          requestElement}
       </Paragraph>
     );
   }, [user, permission, studyRecord, handleClick, datasetId]);
@@ -200,7 +200,7 @@ export default function DownloadTab({
 
 function getDataAccessDeclaration(
   studyAccess: string,
-  requestNeedsApproval: string,
+  requestNeedsApproval: boolean,
   isGuest: boolean,
   hasPermission: boolean = false
 ): string {
@@ -212,7 +212,6 @@ function getDataAccessDeclaration(
     ' data can be downloaded immediately following request submission. ';
   const PROTECTED_ACCESS_STUB =
     ' data can be downloaded after the study team reviews and grants you access. ';
-  // const REQUEST_ACCESS_STUB = 'Click here to request access.';
   const ACCESS_GRANTED_STUB =
     'You have been granted access to download the data.';
   // const ACCESS_PENDING_STUB = 'Your data access request is pending.';
@@ -222,10 +221,9 @@ function getDataAccessDeclaration(
     return (dataAccessDeclaration += PUBLIC_ACCESS_STUB);
   } else if (isGuest || !hasPermission) {
     dataAccessDeclaration += LOGIN_REQUEST_STUB;
-    return (dataAccessDeclaration +=
-      requestNeedsApproval === '0'
-        ? CONTROLLED_ACCESS_STUB
-        : PROTECTED_ACCESS_STUB);
+    return (dataAccessDeclaration += !requestNeedsApproval
+      ? CONTROLLED_ACCESS_STUB
+      : PROTECTED_ACCESS_STUB);
   } else if (!isGuest && hasPermission) {
     return (dataAccessDeclaration += ACCESS_GRANTED_STUB);
   } else {
