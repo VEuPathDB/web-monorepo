@@ -194,3 +194,58 @@ MapThumbnail.args = {
   showGrid: true,
   showMouseToolbar: true,
 };
+
+// testing the changes of viewport and baselayer
+export const ChangeViewportAndBaseLayer: Story<MapVEuMapProps> = (args) => {
+  const [markerElements, setMarkerElements] = useState<
+    ReactElement<BoundsDriftMarkerProps>[]
+  >([]);
+  const [legendData, setLegendData] = useState<LegendProps['data']>([]);
+  // starting from world map to check FlyTo functionality
+  // set setViewport setState() to  test onViewportChanged
+  const [viewport, setViewport] = useState<Viewport>({
+    center: [0, 0],
+    zoom: 2,
+  });
+  const handleViewportChanged = useCallback(
+    async (bvp: BoundsViewport) => {
+      const markers = await getSpeciesDonuts(
+        bvp,
+        defaultAnimationDuration,
+        setLegendData,
+        handleMarkerClick
+      );
+      setMarkerElements(markers);
+    },
+    [setMarkerElements]
+  );
+
+  // change base layer
+  const [baseLayer, setBaseLayer] = useState<any>('Terrain');
+
+  return (
+    <>
+      <MapVEuMap
+        {...args}
+        viewport={viewport}
+        onViewportChanged={setViewport}
+        onBoundsChanged={handleViewportChanged}
+        markers={markerElements}
+        animation={defaultAnimation}
+        zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+        flyToMarkers={true}
+        // set a bit longer delay for a demonstrate purpose at story
+        flyToMarkersDelay={2000}
+        baseLayer={baseLayer}
+        onBaseLayerChanged={setBaseLayer}
+      />
+    </>
+  );
+};
+
+ChangeViewportAndBaseLayer.args = {
+  height: '50vh',
+  width: '50vw',
+  showGrid: true,
+  showMouseToolbar: true,
+};

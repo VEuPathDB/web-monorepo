@@ -4,7 +4,6 @@ import React, {
   CSSProperties,
   ReactElement,
   cloneElement,
-  useRef,
   Ref,
   useMemo,
   useImperativeHandle,
@@ -21,10 +20,9 @@ import {
   MapContainer,
   TileLayer,
   LayersControl,
-  ControlledLayerProps,
   ScaleControl,
-  // import useMap hook
   useMap,
+  useMapEvents,
 } from 'react-leaflet';
 import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
 import SemanticMarkers from './SemanticMarkers';
@@ -104,6 +102,19 @@ export const baseLayers = {
     // minZoom='2'
     // maxZoom='18'
     // noWrap='0'
+  },
+  // new tilelayers for thumbnail
+  Terrain_Alt1: {
+    url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+    attribution:
+      'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
+    maxZoom: 17,
+  },
+  Light_Alt1: {
+    url: 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png',
+    attribution:
+      '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
+    maxZoom: 20,
   },
 };
 
@@ -235,22 +246,20 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
           // Wait to allow map to finish rendering
           await new Promise((resolve) => setTimeout(resolve, 1000));
 
-          if (mapRef) {
-            // Call the 3rd party function that actually creates the image
-            const screenshot = await screenshotter.takeScreen('image', {
-              domtoimageOptions: {
-                width: imageOpts.width,
-                height: imageOpts.height,
-              },
-            });
+          // Call the 3rd party function that actually creates the image
+          const screenshot = await screenshotter.takeScreen('image', {
+            domtoimageOptions: {
+              width: imageOpts.width,
+              height: imageOpts.height,
+            },
+          });
 
-            // The screenshotter library's types are wrong. TS thinks this next line
-            // will never happen, but takeScreen('image') should in fact return a string
-            if (typeof screenshot === 'string') return screenshot;
-            console.error(
-              'Map screenshot not string type. Value:\n' + screenshot
-            );
-          }
+          // The screenshotter library's types are wrong. TS thinks this next line
+          // will never happen, but takeScreen('image') should in fact return a string
+          if (typeof screenshot === 'string') return screenshot;
+          console.error(
+            'Map screenshot not string type. Value:\n' + screenshot
+          );
         } catch (error) {
           console.error('Could not create image for plot: ', error);
         }
@@ -267,7 +276,6 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
   }, [markers, isDragging, mouseMode]);
 
   return (
-    // change from Map to MapContainer
     <MapContainer
       center={viewport.center}
       zoom={viewport.zoom}
@@ -275,23 +283,12 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       className={mouseMode === 'magnification' ? 'cursor-zoom-in' : ''}
       minZoom={1}
       worldCopyJump={false}
+      // ondragstart and ondragend work?
       ondragstart={() => setIsDragging(true)}
       ondragend={() => setIsDragging(false)}
-      onbaselayerchange={(event: ControlledLayerProps) =>
-        onBaseLayerChanged && onBaseLayerChanged(event.name as BaseLayerChoice)
-      }
       // this prop is used to use map instance
       whenCreated={setMapRef}
     >
-      {/* PerformFlyToMarkers component for flyTo functionality */}
-      {flyToMarkers && (
-        <PerformFlyToMarkers
-          markers={markers}
-          flyToMarkers={flyToMarkers}
-          flyToMarkersDelay={flyToMarkersDelay}
-        />
-      )}
-
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -328,6 +325,20 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       {showNoDataOverlay && <NoDataOverlay opacity={0.9} />}
       {/* add Scale in the map */}
       {showScale && <ScaleControl position="bottomright" />}
+
+      {/* PerformFlyToMarkers component for flyTo functionality */}
+      {flyToMarkers && (
+        <PerformFlyToMarkers
+          markers={markers}
+          flyToMarkers={flyToMarkers}
+          flyToMarkersDelay={flyToMarkersDelay}
+        />
+      )}
+      {/* component for map events */}
+      <MapVEuMapEvents
+        onViewportChanged={onViewportChanged}
+        onBaseLayerChanged={onBaseLayerChanged}
+      />
     </MapContainer>
   );
 }
@@ -409,6 +420,30 @@ function PerformFlyToMarkers(props: PerformFlyToMarkersProps) {
 
     if (flyToMarkers && markers.length > 0) asyncEffect();
   }, [markers, flyToMarkers, flyToMarkersDelay, performFlyToMarkers]);
+
+  return null;
+}
+
+// function to handle map events such as onViewportChanged and baselayerchange
+function MapVEuMapEvents(props: any) {
+  const { onViewportChanged, onBaseLayerChanged } = props;
+  const mapEvents = useMapEvents({
+    zoomend: () => {
+      onViewportChanged({
+        center: [mapEvents.getCenter().lat, mapEvents.getCenter().lng],
+        zoom: mapEvents.getZoom(),
+      });
+    },
+    moveend: () => {
+      onViewportChanged({
+        center: [mapEvents.getCenter().lat, mapEvents.getCenter().lng],
+        zoom: mapEvents.getZoom(),
+      });
+    },
+    baselayerchange: (e: { name: string }) => {
+      onBaseLayerChanged && onBaseLayerChanged(e.name as BaseLayerChoice);
+    },
+  });
 
   return null;
 }
