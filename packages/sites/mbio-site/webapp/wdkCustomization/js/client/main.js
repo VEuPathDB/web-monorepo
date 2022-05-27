@@ -1,7 +1,6 @@
 import { partial } from 'lodash';
 
 import { initialize } from '@veupathdb/web-common';
-import { partial } from 'lodash';
 import { edaServiceUrl } from '@veupathdb/web-common/lib/config';
 
 import '@veupathdb/web-common/lib/styles/client.scss';
