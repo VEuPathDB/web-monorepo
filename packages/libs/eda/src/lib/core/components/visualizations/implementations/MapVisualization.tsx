@@ -57,6 +57,7 @@ import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsSt
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
+import { kFormatter, mFormatter } from '../../../utils/big-number-formatters';
 
 export const mapVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -524,7 +525,10 @@ function MapViz(props: VisualizationProps) {
           pieplotData.value != null && !pieplotData.pending
             ? pieplotData.value[geoAggregateValue]?.entityCount ?? ''
             : entityCount;
-        const formattedCount = mFormatter(count);
+        const formattedCount =
+          MarkerComponent === ChartMarker
+            ? mFormatter(count)
+            : kFormatter(count);
 
         return (
           <MarkerComponent
@@ -769,15 +773,4 @@ function MapViz(props: VisualizationProps) {
       />
     </div>
   );
-}
-
-/**
- * Somewhat analagous to kFormatter in web-components DonutMarker.tsx
- * M is the S.I. abbreviation for million,
- * and, to be honest, it looks clearer than 'm'
- */
-function mFormatter(num: number): string {
-  return Math.abs(num) > 999999
-    ? (Math.sign(num) * (Math.abs(num) / 1000000)).toFixed(1) + 'M'
-    : num.toLocaleString(undefined, { useGrouping: true });
 }
