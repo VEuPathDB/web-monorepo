@@ -91,19 +91,6 @@ function makeArc(
 }
 
 /**
- * if arg is over 9999 return 'k version' e.g., 223832 -> 234k otherwise return original number
- * if string arg is not a number, return unchanged
- */
-function kFormatter(arg: number | string): number | string {
-  const num = Number(arg);
-  return Number.isNaN(num)
-    ? arg
-    : Math.abs(num) > 9999
-    ? (Math.sign(num) * (Math.abs(num) / 1000)).toFixed(0) + 'k'
-    : num;
-}
-
-/**
  * DKDK this is a SVG donut marker icon
  */
 export default function DonutMarker(props: DonutMarkerProps) {
@@ -142,7 +129,7 @@ export default function DonutMarker(props: DonutMarkerProps) {
     });
 
   // for display, convert large value with k (e.g., 12345 -> 12k): return original value if less than a criterion
-  const sumLabel = kFormatter(props.markerLabel ?? sumValues);
+  const sumLabel = props.markerLabel ?? String(sumValues);
 
   //DKDK draw white circle
   svgHTML +=
