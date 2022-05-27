@@ -478,6 +478,7 @@ export default function SubsettingDataGridModal({
             )}
           </div>
           <div
+            className="Variables"
             style={{
               // position: 'absolute',
               width: '100%',
@@ -491,13 +492,39 @@ export default function SubsettingDataGridModal({
             }}
           >
             {!requiredColumns.pending && requiredColumns.value && (
-              <div style={{ margin: 10 }}>
-                <h4>Required columns</h4>
-                <ul>
-                  {requiredColumns.value.map((column) => (
-                    <li>{column.Header}</li>
-                  ))}
-                </ul>
+              <div
+                className="EDAWorkspace-VariableList"
+                style={{ marginBottom: 10 }}
+              >
+                <details
+                  className="FeaturedVariables"
+                  open={true}
+                  style={{
+                    border: '1px solid #ccc',
+                    backgroundColor: 'rgb(245,245,245)',
+                  }}
+                >
+                  <summary>
+                    <h3>Required columns</h3>
+                  </summary>
+                  <ul>
+                    {requiredColumns.value.map((column) => (
+                      <li className="wdk-CheckboxTreeItem">
+                        <div className="wdk-CheckboxTreeNodeContent wdk-AttributeFilterFieldItem">
+                          <i
+                            className="fa fa-lock"
+                            style={{
+                              position: 'relative',
+                              left: -4,
+                              marginRight: 5,
+                            }}
+                          />
+                          <span>{column.Header}</span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </details>
               </div>
             )}
             <MultiSelectVariableTree
