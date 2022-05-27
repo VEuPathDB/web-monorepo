@@ -1,5 +1,12 @@
-import { compose, curryN, update, partition } from 'lodash/fp';
+import { compose, curryN, identity, partition, update } from 'lodash/fp';
+
 import { getLeaves } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+
+import { useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
+
+import {
+  wrapStoreModules as addUserDatasetStoreModules
+} from '@veupathdb/user-datasets/lib/StoreModules';
 
 /** Compose reducer functions from right to left */
 const composeReducers = (...reducers) => (state, action) =>
@@ -8,6 +15,9 @@ const composeReducers = (...reducers) => (state, action) =>
 const composeReducerWith = curryN(2, composeReducers);
 
 export default compose(
+  useUserDatasetsWorkspace
+    ? addUserDatasetStoreModules
+    : identity,
   update('globalData.reduce', composeReducerWith(mbioGlobalData)),
   update('studies.reduce', composeReducerWith(applyCustomDisplayNameToStudySearches)),
   update('searchCards.reduce', composeReducerWith(applyCustomIconToSearchCards))

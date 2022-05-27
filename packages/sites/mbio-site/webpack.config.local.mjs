@@ -19,6 +19,7 @@ export default configure({
     proxies: {
       [process.env.WDK_SERVICE_ENDPOINT]: process.env.WDK_SERVICE_URL,
       [process.env.EDA_SERVICE_ENDPOINT]: process.env.EDA_SERVICE_URL,
+      [process.env.USER_DATASETS_WORKSPACE_IMPORT_SERVICE_ENDPOINT]: process.env.USER_DATASETS_WORKSPACE_IMPORT_SERVICE_URL,
       [process.env.DOCUMENTS_ENDPOINT]: process.env.DOCUMENTS_URL,
     },
     legacyWebAppEndpoint: process.env.LEGACY_WEB_APP_ENDPOINT,
@@ -45,7 +46,9 @@ export default configure({
                 edaSingleAppMode: process.env.EDA_SINGLE_APP_MODE,
               }
             : { useEda: false }
-        )
+        ),
+        useUserDatasetsWorkspace: process.env.USER_DATASETS_WORKSPACE_ENABLED === 'true',
+        datasetImportUrl: process.env.USER_DATASETS_WORKSPACE_IMPORT_SERVICE_ENDPOINT,
       })
     }),
     new HtmlWebpackPlugin({
