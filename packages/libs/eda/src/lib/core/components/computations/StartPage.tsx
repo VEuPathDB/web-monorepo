@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+import { Link, useRouteMatch } from 'react-router-dom';
+import { useHistory } from 'react-router';
 import { ComputationAppOverview } from '../../types/visualization';
 import { ComputationPlugin } from './Types';
 import { orderBy } from 'lodash';
@@ -6,16 +7,25 @@ import { H5, H6 } from '@veupathdb/coreui';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import '../visualizations/Visualizations.scss';
 import { Tooltip } from '@material-ui/core';
+import { useDefaultPluginConfiguration } from './getAppsDefaultConfigs';
+import { AnalysisState } from '../../../core';
+import { createComputation } from '../../../core/components/computations/Utils';
+import { v4 as uuid } from 'uuid';
 
 interface Props {
+  analysisState: AnalysisState;
   baseUrl: string;
   apps: ComputationAppOverview[];
   plugins: Record<string, ComputationPlugin>;
 }
 
 export function StartPage(props: Props) {
-  const { apps, baseUrl, plugins } = props;
+  const { analysisState, apps, baseUrl, plugins } = props;
   const cx = makeClassNameHelper('VisualizationsContainer');
+  const defaultConfigs = useDefaultPluginConfiguration(apps);
+  const history = useHistory();
+  const { url } = useRouteMatch();
+
   // Used temporarily to render a disabled scatterplot for betadiv
   const helperPlugin = plugins['alphadiv'];
 
@@ -76,6 +86,7 @@ export function StartPage(props: Props) {
                         .selectorComponent
                     : helperPlugin.visualizationTypes['scatterplot']
                         .selectorComponent;
+
                   return (
                     <div
                       className={cx('-PickerEntry', disabled && 'disabled')}
@@ -85,7 +96,57 @@ export function StartPage(props: Props) {
                       }}
                     >
                       <Tooltip title={<>{vizType.description}</>}>
-                        <button disabled={disabled}>
+                        <button
+                          disabled={disabled}
+                          onClick={async () => {
+                            if (analysisState.analysis == null) return;
+                            const computations =
+                              analysisState.analysis.descriptor.computations;
+                            const defaultConfig = defaultConfigs.find(
+                              (config) => config?.name === app.name
+                            );
+                            console.log(defaultConfig);
+                            const visualizationId = uuid();
+                            const newVisualization = {
+                              visualizationId,
+                              displayName: 'Unnamed visualization',
+                              descriptor: {
+                                type: vizType.name!,
+                                configuration: plugins[
+                                  app.name
+                                ].visualizationTypes[
+                                  vizType.name
+                                ].createDefaultConfig(),
+                              },
+                            };
+                            const computation = createComputation(
+                              app.name,
+                              //@ts-ignore
+                              defaultConfig
+                                ? defaultConfig.configuration.name
+                                : '',
+                              //@ts-ignore
+                              defaultConfig
+                                ? defaultConfig.configuration
+                                : null,
+                              computations,
+                              [newVisualization]
+                            );
+                            console.log(computation);
+                            const newAnalysisId = await analysisState.setComputations(
+                              [computation, ...computations]
+                            );
+                            const urlBase = newAnalysisId
+                              ? url.replace('new', newAnalysisId)
+                              : url;
+                            history.push(
+                              urlBase.replace(
+                                'new',
+                                `${computation.computationId}/${visualizationId}`
+                              )
+                            );
+                          }}
+                        >
                           <VizSelector {...app} />
                         </button>
                       </Tooltip>
