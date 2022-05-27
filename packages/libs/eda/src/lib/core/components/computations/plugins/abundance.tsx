@@ -102,11 +102,10 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
           <button
             type="button"
             onClick={() =>
-              addNewComputation(name, {
+              addNewComputation(name, configDescription, {
                 name: 'RankedAbundanceComputation',
                 collectionVariable: JSON.parse(collectionVariable),
                 rankingMethod,
-                description: configDescription,
               })
             }
           >

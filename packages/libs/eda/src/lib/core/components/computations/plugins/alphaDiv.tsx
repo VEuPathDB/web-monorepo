@@ -102,11 +102,10 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
           <button
             type="button"
             onClick={() =>
-              addNewComputation(name, {
+              addNewComputation(name, configDescription, {
                 name: 'AlphaDivComputation',
                 collectionVariable: JSON.parse(collectionVariable),
                 alphaDivMethod,
-                description: configDescription,
               })
             }
           >

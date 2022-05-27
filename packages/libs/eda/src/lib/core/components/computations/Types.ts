@@ -20,6 +20,7 @@ export interface ComputationConfigProps extends ComputationProps {
   // alphadiv abundance
   addNewComputation: (
     name: string,
+    displayName: string,
     configuration: ComputationConfiguration
   ) => void;
 }
