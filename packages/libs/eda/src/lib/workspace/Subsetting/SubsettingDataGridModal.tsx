@@ -3,19 +3,12 @@ import { ceil } from 'lodash';
 import useDimensions from 'react-cool-dimensions';
 
 // Components & Component Generators
-import SettingsIcon from '@material-ui/icons/Settings';
+import FullscreenIcon from '@material-ui/icons/Fullscreen';
+import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Loading, LoadingOverlay } from '@veupathdb/wdk-client/lib/Components';
 import MultiSelectVariableTree from '../../core/components/variableTrees/MultiSelectVariableTree';
-import {
-  Modal,
-  H5,
-  DataGrid,
-  MesaButton,
-  Download,
-  CloseFullscreen,
-  OutlinedButton,
-} from '@veupathdb/coreui';
+import { Modal, H5, DataGrid, MesaButton, Download } from '@veupathdb/coreui';
 
 // Definitions
 import { AnalysisState } from '../../core/hooks/analysis';
@@ -341,6 +334,7 @@ export default function SubsettingDataGridModal({
             display: 'flex',
             justifyContent: 'space-between',
             marginBottom: 30,
+            height: 30,
           }}
         >
           {!tableIsExpanded && (
@@ -360,78 +354,112 @@ export default function SubsettingDataGridModal({
           />
         </div>
         {gridData ? (
-          <DataGrid
-            columns={gridColumns}
-            data={gridRows}
-            loading={dataLoading}
-            stylePreset="mesa"
-            styleOverrides={{
-              headerCells: {
-                textTransform: 'none',
-                position: 'relative',
-                height: '100%',
-              },
-              table: {
-                width: '100%',
-                height: '100%',
-                overflow: 'auto',
-                borderStyle: undefined,
-                primaryRowColor: undefined,
-                secondaryRowColor: undefined,
-              },
-            }}
-            pagination={{
-              recordsPerPage: 10,
-              controlsLocation: 'bottom',
-              serverSidePagination: {
-                fetchPaginatedData,
-                pageCount,
-              },
-            }}
-            extraHeaderControls={[
-              (headerGroup) => (
-                <div style={{ display: 'inline-block', width: 20, height: 20 }}>
+          <div style={{ position: 'relative' }}>
+            <DataGrid
+              columns={gridColumns}
+              data={gridRows}
+              loading={dataLoading}
+              stylePreset="mesa"
+              styleOverrides={{
+                headerCells: {
+                  textTransform: 'none',
+                  position: 'relative',
+                  height: '100%',
+                },
+                table: {
+                  width: '100%',
+                  height: '100%',
+                  overflow: 'auto',
+                  borderStyle: undefined,
+                  primaryRowColor: undefined,
+                  secondaryRowColor: undefined,
+                },
+              }}
+              pagination={{
+                recordsPerPage: 10,
+                controlsLocation: 'bottom',
+                serverSidePagination: {
+                  fetchPaginatedData,
+                  pageCount,
+                },
+              }}
+              extraHeaderControls={[
+                (headerGroup) => (
                   <div
-                    style={{
-                      position: 'absolute',
-                      right: 0,
-                      top: 0,
-                    }}
+                    style={{ display: 'inline-block', width: 20, height: 20 }}
                   >
-                    {requiredColumnAccessors?.includes(headerGroup.id) ? (
-                      <i
-                        className="fa fa-lock"
-                        title="This column is required"
-                        style={{ padding: '2px 6px' }}
-                      />
-                    ) : (
-                      <button
-                        onClick={() =>
-                          handleSelectedVariablesChange(
-                            selectedVariableDescriptors.filter(
-                              (descriptor) =>
-                                descriptor.entityId +
-                                  '/' +
-                                  descriptor.variableId !==
-                                headerGroup.id
+                    <div
+                      style={{
+                        position: 'absolute',
+                        right: 0,
+                        top: 0,
+                      }}
+                    >
+                      {requiredColumnAccessors?.includes(headerGroup.id) ? (
+                        <i
+                          className="fa fa-lock"
+                          title="This column is required"
+                          style={{ padding: '2px 6px' }}
+                        />
+                      ) : (
+                        <button
+                          onClick={() =>
+                            handleSelectedVariablesChange(
+                              selectedVariableDescriptors.filter(
+                                (descriptor) =>
+                                  descriptor.entityId +
+                                    '/' +
+                                    descriptor.variableId !==
+                                  headerGroup.id
+                              )
                             )
-                          )
-                        }
-                        title="Remove column"
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          color: 'inherit',
-                        }}
-                      >
-                        ✕
-                      </button>
-                    )}
+                          }
+                          title="Remove column"
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: 'inherit',
+                          }}
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ),
-            ]}
-          />
+                ),
+              ]}
+            />
+            <button
+              className="css-uaczjh-PaginationControls"
+              style={{
+                position: 'absolute',
+                bottom: 0,
+                right: 0,
+                // paddingLeft: 10,
+                // paddingRight: 10,
+                display: 'flex',
+                justifyContent: 'space-evenly',
+                alignItems: 'center',
+                width: 120,
+              }}
+              // @ts-ignore
+              // icon={displayVariableTree ? CloseFullscreen : SettingsIcon}
+              onClick={() => setTableIsExpanded(!tableIsExpanded)}
+            >
+              {/* <i className="fa fa-arrows-alt" /> */}
+              {tableIsExpanded ? (
+                <>
+                  <FullscreenExitIcon />
+                  Collapse table
+                </>
+              ) : (
+                <>
+                  <FullscreenIcon />
+                  Expand table
+                </>
+              )}
+            </button>
+          </div>
         ) : !dataLoading ? (
           <div
             style={{
@@ -468,7 +496,7 @@ export default function SubsettingDataGridModal({
     if ((!tableIsExpanded || errorMessage) && currentEntity) {
       return (
         <div style={{ flex: 1, minWidth: '25%' }}>
-          <div style={{ marginBottom: 30 }}>
+          <div style={{ marginBottom: 30, height: 30 }}>
             {!tableIsExpanded && (
               <NumberedHeader
                 number={1}
@@ -499,10 +527,7 @@ export default function SubsettingDataGridModal({
                 <details
                   className="FeaturedVariables"
                   open={true}
-                  style={{
-                    border: '1px solid #ccc',
-                    backgroundColor: 'rgb(245,245,245)',
-                  }}
+                  style={{ backgroundColor: 'rgb(245,245,245)' }}
                 >
                   <summary>
                     <h3>Required columns</h3>
@@ -610,16 +635,6 @@ export default function SubsettingDataGridModal({
                 </p>
               )}
           </div>
-          <OutlinedButton
-            text={tableIsExpanded ? 'Shrink table' : 'Expand table'}
-            // @ts-ignore
-            // icon={displayVariableTree ? CloseFullscreen : SettingsIcon}
-            size="medium"
-            onPress={() => setTableIsExpanded(!tableIsExpanded)}
-            styleOverrides={{ container: { width: 155 } }}
-            themeRole="primary"
-            textTransform="capitalize"
-          />
         </div>
       </div>
       <div
