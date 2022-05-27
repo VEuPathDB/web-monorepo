@@ -185,6 +185,7 @@ export function ComputationRoute(props: Props) {
                 const plugin = plugins[app.name];
                 const addComputation = async (
                   name: string,
+                  displayName: string,
                   configuration: ComputationConfiguration
                 ) => {
                   if (analysisState.analysis == null) return;
@@ -203,7 +204,7 @@ export function ComputationRoute(props: Props) {
                   if (!existingConfig) {
                     const computation = createComputation(
                       app.name,
-                      name,
+                      displayName,
                       configuration,
                       computations
                     );

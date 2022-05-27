@@ -65,7 +65,7 @@ interface Props {
  * @param props Props
  */
 export function VisualizationsContainer(props: Props) {
-  const { baseUrl, showHeading } = { ...props };
+  const { baseUrl } = { ...props };
   const { url } = useRouteMatch();
 
   const currentStudyRecordId = useStudyRecord().id[0].value;
@@ -137,29 +137,29 @@ function ConfiguredVisualizations(props: Props) {
 
   return (
     <>
-      {/* {!showHeading ? ( */}
-      <Link
-        to={{
-          pathname: `${baseUrl || url}/new`,
-          state: { scrollToTop: false },
-        }}
-        style={{
-          display: 'block',
-          width: 'fit-content',
-        }}
-      >
-        <FilledButton
-          text="New visualization"
-          onPress={() => null}
-          textTransform="none"
-          themeRole="primary"
-          icon={AddIcon}
-          styleOverrides={{
-            container: { marginTop: 15 },
+      {!showHeading ? (
+        <Link
+          to={{
+            pathname: `${baseUrl || url}/new`,
+            state: { scrollToTop: false },
           }}
-        />
-      </Link>
-      {/* ) : null} */}
+          style={{
+            display: 'block',
+            width: 'fit-content',
+          }}
+        >
+          <FilledButton
+            text="New visualization"
+            onPress={() => null}
+            textTransform="none"
+            themeRole="primary"
+            icon={AddIcon}
+            styleOverrides={{
+              container: { marginTop: 15 },
+            }}
+          />
+        </Link>
+      ) : null}
       <Grid>
         {computation.visualizations
           .map((viz) => {
