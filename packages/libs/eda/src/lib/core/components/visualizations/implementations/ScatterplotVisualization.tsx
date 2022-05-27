@@ -50,6 +50,7 @@ import {
 } from 'lodash';
 // directly use RadioButtonGroup instead of ScatterPlotControls
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
+import Switch from '@veupathdb/components/lib/components/widgets/Switch';
 // import ScatterPlotData
 import {
   ScatterPlotDataSeries,
@@ -173,6 +174,8 @@ function SelectorComponent({ name }: SelectorProps) {
 function createDefaultConfig(): ScatterplotConfig {
   return {
     valueSpecConfig: 'Raw',
+    independentAxisLogScale: false,
+    dependentAxisLogScale: false,
   };
 }
 
@@ -190,6 +193,8 @@ export const ScatterplotConfig = t.partial({
   // axis range control
   independentAxisRange: NumberOrDateRange,
   dependentAxisRange: NumberOrDateRange,
+  independentAxisLogScale: t.boolean,
+  dependentAxisLogScale: t.boolean,
 });
 
 function ScatterplotViz(props: VisualizationProps) {
@@ -291,6 +296,8 @@ function ScatterplotViz(props: VisualizationProps) {
         // set independentAxisRange undefined
         independentAxisRange: undefined,
         dependentAxisRange: undefined,
+        independentAxisLogScale: false,
+        dependentAxisLogScale: false,
       });
       // close truncation warnings here
       setTruncatedIndependentAxisWarning('');
@@ -332,6 +339,14 @@ function ScatterplotViz(props: VisualizationProps) {
   // for vizconfig.checkedLegendItems
   const onCheckedLegendItemsChange = onChangeHandlerFactory<string[]>(
     'checkedLegendItems'
+  );
+
+  const onIndependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
+    'independentAxisLogScale'
+  );
+
+  const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
+    'dependentAxisLogScale'
   );
 
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
@@ -887,6 +902,8 @@ function ScatterplotViz(props: VisualizationProps) {
       setTruncatedIndependentAxisWarning={setTruncatedIndependentAxisWarning}
       truncatedDependentAxisWarning={truncatedDependentAxisWarning}
       setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
+      onIndependentAxisLogScaleChange={onIndependentAxisLogScaleChange}
+      onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
     />
   );
 
@@ -1114,6 +1131,8 @@ type ScatterplotWithControlsProps = Omit<ScatterPlotProps, 'data'> & {
   setTruncatedDependentAxisWarning: (
     truncatedDependentAxisWarning: string
   ) => void;
+  onIndependentAxisLogScaleChange: (value: boolean) => void;
+  onDependentAxisLogScaleChange: (value: boolean) => void;
 };
 
 function ScatterplotWithControls({
@@ -1143,6 +1162,8 @@ function ScatterplotWithControls({
   setTruncatedIndependentAxisWarning,
   truncatedDependentAxisWarning,
   setTruncatedDependentAxisWarning,
+  onIndependentAxisLogScaleChange,
+  onDependentAxisLogScaleChange,
   ...scatterplotProps
 }: ScatterplotWithControlsProps) {
   // TODO Use UIState
@@ -1163,6 +1184,8 @@ function ScatterplotWithControls({
       checkedLegendItems,
       vizConfig.independentAxisRange,
       vizConfig.dependentAxisRange,
+      vizConfig.independentAxisLogScale,
+      vizConfig.dependentAxisLogScale,
     ]
   );
 
@@ -1190,6 +1213,7 @@ function ScatterplotWithControls({
   const handleIndependentAxisSettingsReset = useCallback(() => {
     updateVizConfig({
       independentAxisRange: undefined,
+      independentAxisLogScale: false,
     });
     // add reset for truncation message: including dependent axis warning as well
     setTruncatedIndependentAxisWarning('');
@@ -1218,6 +1242,7 @@ function ScatterplotWithControls({
   const handleDependentAxisSettingsReset = useCallback(() => {
     updateVizConfig({
       dependentAxisRange: undefined,
+      dependentAxisLogScale: false,
     });
     // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
@@ -1296,6 +1321,8 @@ function ScatterplotWithControls({
         max: truncationConfigDependentAxisMax,
       },
     },
+    independentAxisLogScale: vizConfig.independentAxisLogScale,
+    dependentAxisLogScale: vizConfig.dependentAxisLogScale,
   };
 
   return (
@@ -1344,6 +1371,8 @@ function ScatterplotWithControls({
               max: truncationConfigDependentAxisMax,
             },
           }}
+          independentAxisLogScale={vizConfig.independentAxisLogScale}
+          dependentAxisLogScale={vizConfig.dependentAxisLogScale}
         />
       )}
       {/*  ScatterPlotControls: check vizType (only for scatterplot for now) */}
@@ -1369,12 +1398,102 @@ function ScatterplotWithControls({
         {/* make switch and radiobutton single line with space
                  also marginRight at LabelledGroup is set to 0.5625em: default - 1.5625em*/}
         <LabelledGroup
+          label="X-axis controls"
+          containerStyles={{
+            marginRight: '1em',
+          }}
+        >
+          {/* X-Axis range control */}
+          <div
+            style={{
+              display: 'flex',
+              marginTop: '0.8em',
+              marginBottom: '0.8em',
+            }}
+          >
+            <Switch
+              label="Log Scale:"
+              state={vizConfig.independentAxisLogScale}
+              onStateChange={onIndependentAxisLogScaleChange}
+              // disable log scale for date variable
+              disabled={independentValueType === 'date'}
+            />
+          </div>
+          <AxisRangeControl
+            label="Range"
+            range={vizConfig.independentAxisRange ?? defaultIndependentRange}
+            onRangeChange={handleIndependentAxisRangeChange}
+            valueType={independentValueType === 'date' ? 'date' : 'number'}
+            // set maxWidth
+            containerStyles={{ maxWidth: '350px' }}
+          />
+          {/* truncation notification */}
+          {truncatedIndependentAxisWarning ? (
+            <Notification
+              title={''}
+              text={truncatedIndependentAxisWarning}
+              // this was defined as LIGHT_BLUE
+              color={'#5586BE'}
+              onAcknowledgement={() => {
+                setTruncatedIndependentAxisWarning('');
+              }}
+              showWarningIcon={true}
+              containerStyles={{
+                maxWidth: independentValueType === 'date' ? '350px' : '350px',
+              }}
+            />
+          ) : null}
+          <Button
+            type={'outlined'}
+            // change text
+            text={'Reset to defaults'}
+            onClick={handleIndependentAxisSettingsReset}
+            containerStyles={{
+              paddingTop: '1.0em',
+              width: '50%',
+              float: 'right',
+              // to match reset button with date range form
+              marginRight: independentValueType === 'date' ? '-1em' : '',
+            }}
+          />
+        </LabelledGroup>
+
+        {/* add vertical line in btw Y- and X- controls */}
+        <div
+          style={{
+            display: 'inline-flex',
+            borderLeft: '2px solid lightgray',
+            height: '13.5em',
+            position: 'relative',
+            marginLeft: '-1px',
+            top: '1.5em',
+          }}
+        >
+          {' '}
+        </div>
+
+        <LabelledGroup
           label="Y-axis controls"
           containerStyles={{
-            marginRight: '0.5625em',
+            marginRight: '0em',
           }}
         >
           {/* Y-axis range control */}
+          <div
+            style={{
+              display: 'flex',
+              marginTop: '0.8em',
+              marginBottom: '0.8em',
+            }}
+          >
+            <Switch
+              label="Log Scale:"
+              state={vizConfig.dependentAxisLogScale}
+              onStateChange={onDependentAxisLogScaleChange}
+              // disable log scale for date variable
+              disabled={dependentValueType === 'date'}
+            />
+          </div>
           <AxisRangeControl
             label="Range"
             range={vizConfig.dependentAxisRange ?? defaultDependentAxisRange}
@@ -1411,64 +1530,6 @@ function ScatterplotWithControls({
               float: 'right',
               // to match reset button with date range form
               marginRight: dependentValueType === 'date' ? '-1em' : '',
-            }}
-          />
-        </LabelledGroup>
-        {/* add vertical line in btw Y- and X- controls */}
-        <div
-          style={{
-            display: 'inline-flex',
-            borderLeft: '2px solid lightgray',
-            height: '9.7em',
-            position: 'relative',
-            marginLeft: '-1px',
-            top: '1.5em',
-          }}
-        >
-          {' '}
-        </div>
-        <LabelledGroup
-          label="X-axis controls"
-          containerStyles={{
-            marginRight: '0em',
-          }}
-        >
-          {/* X-Axis range control */}
-          <AxisRangeControl
-            label="Range"
-            range={vizConfig.independentAxisRange ?? defaultIndependentRange}
-            onRangeChange={handleIndependentAxisRangeChange}
-            valueType={independentValueType === 'date' ? 'date' : 'number'}
-            // set maxWidth
-            containerStyles={{ maxWidth: '350px' }}
-          />
-          {/* truncation notification */}
-          {truncatedIndependentAxisWarning ? (
-            <Notification
-              title={''}
-              text={truncatedIndependentAxisWarning}
-              // this was defined as LIGHT_BLUE
-              color={'#5586BE'}
-              onAcknowledgement={() => {
-                setTruncatedIndependentAxisWarning('');
-              }}
-              showWarningIcon={true}
-              containerStyles={{
-                maxWidth: independentValueType === 'date' ? '350px' : '350px',
-              }}
-            />
-          ) : null}
-          <Button
-            type={'outlined'}
-            // change text
-            text={'Reset to defaults'}
-            onClick={handleIndependentAxisSettingsReset}
-            containerStyles={{
-              paddingTop: '1.0em',
-              width: '50%',
-              float: 'right',
-              // to match reset button with date range form
-              marginRight: independentValueType === 'date' ? '-1em' : '',
             }}
           />
         </LabelledGroup>
