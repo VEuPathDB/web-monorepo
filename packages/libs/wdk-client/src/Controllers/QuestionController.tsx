@@ -116,9 +116,10 @@ function QuestionController(props: Props) {
       autoRun,
       initialParamData: autoRun && initialParamData == null ? {} : initialParamData,
       prepopulateWithLastParamValues,
-      stepId
+      stepId,
+      submissionMetadata,
     }))
-  }, [searchName, stepId]);
+  }, [searchName, stepId, submissionMetadata]);
 
   // useEffect(() => {
   //   // FIXME This is getting called twice when a question form is loaded a second time
@@ -141,7 +142,8 @@ function QuestionController(props: Props) {
     prepopulateWithLastParamValues,
     state.paramValues,
     state.defaultParamValues,
-    dispatch
+    dispatch,
+    submissionMetadata
   );
   
   if (state.questionStatus === 'error') return <Error/>;
@@ -223,7 +225,8 @@ function useResetFormConfig(
   prepopulateWithLastParamValues: boolean,
   paramValues: ParameterValues,
   defaultParamValues: ParameterValues,
-  dispatch: Dispatch<Action>
+  dispatch: Dispatch<Action>,
+  submissionMetadata: SubmissionMetadata,
 ): ResetFormConfig {
   const reloadFormWithSystemDefaults = useCallback(
     () => {
@@ -232,10 +235,11 @@ function useResetFormConfig(
         searchName,
         prepopulateWithLastParamValues: false,
         initialParamData: {},
-        stepId
+        stepId,
+        submissionMetadata
       }));
     },
-    [ searchName, stepId ]
+    [ searchName, stepId, submissionMetadata ]
   );
 
   return useMemo(
