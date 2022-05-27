@@ -26,6 +26,8 @@ import {
   SET_SOURCE_TYPE,
   SET_STRATEGY_ID,
   SET_STRATEGY_LIST,
+  SET_URL,
+  SET_URL_PARSER,
   setBasketCount,
   setFile,
   setFileParser,
@@ -34,8 +36,12 @@ import {
   setSourceType,
   setStrategyId,
   setStrategyList,
+  setUrl,
+  setUrlParser,
 } from 'wdk-client/Actions/DatasetParamActions';
 import { Action } from 'wdk-client/Actions';
+
+import { TextBox } from 'wdk-client/Components';
 
 const cx = makeClassNameHelper('wdk-DatasetParam');
 
@@ -44,7 +50,12 @@ const cx = makeClassNameHelper('wdk-DatasetParam');
 // awaiting of some sort, using Promises, some state flag, or something else.
 
 type State = {
-  sourceType: 'idList' | 'file' | 'basket' | 'strategy';
+  sourceType:
+    | 'idList'
+    | 'file'
+    | 'basket'
+    | 'strategy'
+    | 'url';
   idList?: string;
   loadingIdList?: boolean;
   file?: File | null;
@@ -52,6 +63,8 @@ type State = {
   strategyId?: number;
   basketCount?: number;
   fileParser?: DatasetParam['parsers'][number]['name'];
+  url?: string;
+  urlParser?: DatasetParam['parsers'][number]['name'];
 }
 
 
@@ -75,13 +88,22 @@ function reduce(state: State = defaultState, action: Action): State {
   switch(action.type) {
     case INIT_PARAM: {
       const { parameter, initialParamData } = action.payload;
-      const initialListName = parameter.name + '.idList';
+
+      const initialListName = `${parameter.name}.idList`;
+      const initialList = initialParamData?.[initialListName];
+
+      const initialUrlName = `${parameter.name}.url`;
+      const initialUrl = initialParamData?.[initialUrlName];
+
       return {
         ...state,
-        sourceType: 'idList',
-        idList: initialParamData?.[initialListName] != null
-          ? initialParamData[initialListName]
-          : (parameter as DatasetParam).defaultIdList
+        sourceType: initialUrl != null
+          ? 'url'
+          : 'idList',
+        idList: initialList != null
+          ? initialList
+          : (parameter as DatasetParam).defaultIdList,
+        url: initialUrl,
       }
     }
     case SET_SOURCE_TYPE:
@@ -105,6 +127,10 @@ function reduce(state: State = defaultState, action: Action): State {
       return { ...state, basketCount: action.payload.basketCount };
     case SET_FILE_PARSER:
       return { ...state, fileParser: action.payload.fileParser };
+    case SET_URL:
+      return { ...state, url: action.payload.url };
+    case SET_URL_PARSER:
+      return { ...state, urlParser: action.payload.urlParser };
     default:
       return state;
   }
@@ -113,10 +139,17 @@ function reduce(state: State = defaultState, action: Action): State {
 const getIdList = (uiState: State, parameter: DatasetParam) =>
     uiState.idList
 
-const getParser = (uiState: State, parameter: DatasetParam) =>
-  uiState.fileParser == null
+const getParser = (
+  parserStateSelector: (uiState: State) => string | undefined,
+  uiState: State,
+  parameter: DatasetParam
+) => {
+  const parserState = parserStateSelector(uiState);
+
+  return parserState == null
     ? getInitialParser(parameter)
-    : uiState.fileParser;
+    : parserState;
+}
 
 const getStrategyId = (uiState: State, parameter: DatasetParam) =>
   uiState.strategyId != null
@@ -164,24 +197,63 @@ const sections: Section[] = [
           {parameter.parsers.length > 1 && (
             <>
               <div>Alternatively, please use other file formats:</div>
-              <ul className={cx('FileParserList')}>
-                {parameter.parsers.map(parser =>
-                  <li key={parser.name} className={cx('FileParser')}>
-                    <label
-                      style={{marginRight: '1em'}}
-                      key={parser.name}
-                      title={parser.description}
-                    >
-                      <input
-                        type="radio"
-                        value={parser.name}
-                        checked={getParser(uiState, parameter) === parser.name}
-                        onChange={e => e.target.checked && dispatch(setFileParser({...ctx, fileParser: parser.name}))}
-                      /> {parser.displayName}
-                    </label>
-                  </li>
+              <FileParserOptions
+                parameter={parameter}
+                selectedParser={getParser(
+                  uiState => uiState.fileParser,
+                  uiState,
+                  parameter
                 )}
-              </ul>
+                onSelectParser={selectedParser => {
+                  dispatch(setFileParser({
+                    ...ctx,
+                    fileParser: selectedParser,
+                  }));
+                }}
+              />
+            </>
+          )}
+        </small>
+      </>
+  },
+  {
+    sourceType: 'url',
+    label: 'Upload from a URL',
+    render: ({ uiState, dispatch, ctx, parameter }) =>
+      <>
+        <TextBox
+          className={cx('URLField')}
+          value={uiState.url}
+          onChange={(newUrl) => {
+            dispatch(setUrl({
+              ...ctx,
+              url: newUrl
+            }));
+          }}
+          required={
+            uiState.sourceType === 'url' &&
+            !parameter.allowEmptyValue
+          }
+        />
+        <small>
+          <div>The URL should resolve to a list of IDs.</div>
+          {parameter.parsers.length > 1 && (
+            <>
+              <div>Alternatively, please use other formats:</div>
+              <FileParserOptions
+                parameter={parameter}
+                selectedParser={getParser(
+                  uiState => uiState.urlParser,
+                  uiState,
+                  parameter
+                )}
+                onSelectParser={selectedParser => {
+                  dispatch(setUrlParser({
+                    ...ctx,
+                    urlParser: selectedParser,
+                  }));
+                }}
+              />
             </>
           )}
         </small>
@@ -324,17 +396,18 @@ const observeParam: ParamModule['observeParam'] = (action$, state$, services) =>
 const getValueFromState: ParamModule<DatasetParam>['getValueFromState'] = (context, questionState, { wdkService }) => {
   const { parameter } = context;
   const state : State = questionState.paramUIState[parameter.name];
-  const { file, sourceType } : State = questionState.paramUIState[parameter.name];
+  const { file, sourceType, url } : State = questionState.paramUIState[parameter.name];
   const idList = getIdList(state, parameter);
   const strategyId = getStrategyId(state, parameter);
-  const parser = getParser(state, parameter);
+  const fileParser = getParser(uiState => uiState.fileParser, state, parameter);
+  const urlParser = getParser(uiState => uiState.urlParser, state, parameter);
   const datasetConfigPromise: Promise<DatasetConfig | void> =
     sourceType === 'file' && file
       ? wdkService.createTemporaryFile(file).then(temporaryFileId => ({
         sourceType,
         sourceContent: {
           temporaryFileId,
-          parser,
+          parser: fileParser,
           searchName: questionState.question.urlSegment,
           parameterName: parameter.name
         }
@@ -342,9 +415,52 @@ const getValueFromState: ParamModule<DatasetParam>['getValueFromState'] = (conte
     : sourceType === 'basket' ? Promise.resolve({ sourceType, sourceContent: { basketName: questionState.question.outputRecordClassName } })
     : sourceType === 'strategy' && strategyId ? Promise.resolve({ sourceType, sourceContent: { strategyId } })
     : sourceType === 'idList' ? Promise.resolve({ sourceType, sourceContent: { ids: idListToArray(idList) } })
+    : sourceType === 'url' && url
+      ? Promise.resolve({
+          sourceType,
+          sourceContent: {
+            url,
+            parser: urlParser,
+            searchName: questionState.question.urlSegment,
+            parameterName: parameter.name
+          }
+        })
     : Promise.resolve();
 
   return datasetConfigPromise.then(config => config == null ? '' : wdkService.createDataset(config).then(String));
+}
+
+interface FileParserOptionsProps {
+  parameter: DatasetParam;
+  selectedParser: string;
+  onSelectParser: (selectedParser: string) => void;
+}
+
+function FileParserOptions({
+  parameter,
+  selectedParser,
+  onSelectParser,
+}: FileParserOptionsProps) {
+  return (
+    <ul className={cx('FileParserList')}>
+      {parameter.parsers.map(parser =>
+        <li key={parser.name} className={cx('FileParser')}>
+          <label
+            style={{marginRight: '1em'}}
+            key={parser.name}
+            title={parser.description}
+          >
+            <input
+              type="radio"
+              value={parser.name}
+              checked={selectedParser === parser.name}
+              onChange={e => e.target.checked && onSelectParser(parser.name)}
+            /> {parser.displayName}
+          </label>
+        </li>
+      )}
+    </ul>
+  );
 }
 
 export default createParamModule({

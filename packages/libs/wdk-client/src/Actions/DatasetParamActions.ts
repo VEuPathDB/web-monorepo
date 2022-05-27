@@ -13,6 +13,8 @@ export type Action =
   | SetSourceTypeAction
   | SetStrategyIdAction
   | SetStrategyListAction
+  | SetUrlAction
+  | SetUrlParserAction
 
 //==============================================================================
 
@@ -21,7 +23,12 @@ export const SET_SOURCE_TYPE = 'dataset-param/set-source-type';
 export interface SetSourceTypeAction {
   type: typeof SET_SOURCE_TYPE;
   payload: Payload<{
-    sourceType: 'idList' | 'file' | 'basket' | 'strategy';
+    sourceType:
+      | 'idList'
+      | 'file'
+      | 'basket'
+      | 'strategy'
+      | 'url';
   }>;
 }
 
@@ -154,6 +161,42 @@ export interface SetFileParserAction {
 export function setFileParser(payload: SetFileParserAction['payload']): SetFileParserAction {
   return {
     type: SET_FILE_PARSER,
+    payload
+  }
+}
+
+//==============================================================================
+
+export const SET_URL = 'dataset-param/set-url';
+
+export interface SetUrlAction {
+  type: typeof SET_URL;
+  payload: Payload<{
+    url?: string;
+  }>;
+}
+
+export function setUrl(payload: SetUrlAction['payload']): SetUrlAction {
+  return {
+    type: SET_URL,
+    payload
+  }
+}
+
+//==============================================================================
+
+export const SET_URL_PARSER = 'dataset-param/set-url-parser';
+
+export interface SetUrlParserAction {
+  type: typeof SET_URL_PARSER;
+  payload: Payload<{
+    urlParser: DatasetParam['parsers'][number]['name'];
+  }>;
+}
+
+export function setUrlParser(payload: SetUrlParserAction['payload']): SetUrlParserAction {
+  return {
+    type: SET_URL_PARSER,
     payload
   }
 }

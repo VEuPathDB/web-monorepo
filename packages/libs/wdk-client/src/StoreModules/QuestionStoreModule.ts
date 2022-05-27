@@ -844,7 +844,19 @@ function initialParamDataFromStep(step: Step): ParameterValues {
 
 function initialParamDataWithDatasetParamSpecialCase(initialParamData: ParameterValues){
   return Object.keys(initialParamData).reduce(function(result, paramName) {
-    return paramName.indexOf(".idList") > -1 ? result : Object.assign(result, {[paramName] : initialParamData[paramName]});
+    if (
+      paramName.endsWith('.idList') ||
+      paramName.endsWith('.url')
+    ) {
+      return result;
+    }
+
+    return Object.assign(
+      result,
+      {
+        [paramName]: initialParamData[paramName]
+      }
+    );
   }, {});
 }
 
