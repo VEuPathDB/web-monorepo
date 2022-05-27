@@ -30,7 +30,6 @@ import {
   findEntityAndVariable,
   findCollections,
 } from '../utils/study-metadata';
-import { getStudyAccess } from '@veupathdb/study-data-access/lib/shared/studies';
 
 // Hooks
 import { useStudyRecord } from '..';
@@ -66,7 +65,7 @@ export function useWdkStudyRecord(datasetId: string): HookValue | undefined {
         )
         .map(getNodeId)
         .toArray()
-        .concat(['bulk_download_url']);
+        .concat(['bulk_download_url', 'request_needs_approval']);
       const studyRecord = await wdkService
         .getRecord(
           STUDY_RECORD_CLASS_NAME,
