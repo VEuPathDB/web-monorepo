@@ -43,6 +43,7 @@ export function useWorkspaceAnalysis(
           singleAppMode,
           null,
           [],
+          [],
           singleAppComputationId
         )
       : undefined;
