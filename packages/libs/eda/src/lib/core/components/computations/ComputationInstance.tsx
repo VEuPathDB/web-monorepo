@@ -21,7 +21,8 @@ export function ComputationInstance(props: Props) {
   const {
     computationAppOverview,
     computationId,
-    analysisState: { analysis, setComputations },
+    analysisState,
+    // analysisState: { analysis, setComputations },
     totalCounts,
     filteredCounts,
     geoConfigs,
@@ -29,6 +30,8 @@ export function ComputationInstance(props: Props) {
     baseUrl,
     singleAppMode,
   } = props;
+
+  const { analysis, setComputations } = analysisState;
 
   const computation = useMemo(() => {
     return analysis?.descriptor.computations.find(
@@ -76,13 +79,14 @@ export function ComputationInstance(props: Props) {
       {baseUrl && (
         <AppTitle
           computation={computation}
-          computationAppOverview={computationAppOverview}
           condensed={
             url.replace(/\/+$/, '').split('/').pop() === 'visualizations'
           }
         />
       )}
       <VisualizationsContainer
+        analysisState={analysisState}
+        computationAppOverview={computationAppOverview}
         geoConfigs={geoConfigs}
         computation={computation}
         visualizationsOverview={computationAppOverview.visualizations}
@@ -103,7 +107,6 @@ export function ComputationInstance(props: Props) {
 // Title above each app in /visualizations
 interface AppTitleProps {
   computation: Computation;
-  computationAppOverview: ComputationAppOverview;
   condensed: boolean;
 }
 
@@ -112,38 +115,15 @@ interface AppTitleProps {
 // is the "condensed" version. May make sense to break into two components when
 // further styling is applied?
 function AppTitle(props: AppTitleProps) {
-  const { computation, computationAppOverview, condensed } = props;
-  const expandedStyle = {
-    borderRadius: 5,
-    paddingTop: 10,
-    paddingRight: 35,
-    paddingBottom: 10,
-    paddingLeft: 20,
-    backgroundColor: 'lightblue',
-    margin: 'auto',
-    marginTop: 10,
-  };
+  const { computation, condensed } = props;
 
   return condensed ? (
     <div style={{ marginTop: 10 }}>
       {computation.descriptor.configuration ? (
         <h4 style={{ marginLeft: 20 }}>
-          {/* @ts-ignore */}
-          <em>{computation.descriptor.configuration.description}</em>
+          <em>{computation.displayName}</em>
         </h4>
       ) : null}
     </div>
-  ) : (
-    <div style={expandedStyle}>
-      <h4>{computationAppOverview.displayName}</h4>
-      <h4 style={{ marginLeft: 20 }}>
-        {computation.descriptor.configuration ? (
-          /* @ts-ignore */
-          <em>{computation.descriptor.configuration.description}</em>
-        ) : (
-          <em>{computation.displayName}</em>
-        )}
-      </h4>
-    </div>
-  );
+  ) : null;
 }
