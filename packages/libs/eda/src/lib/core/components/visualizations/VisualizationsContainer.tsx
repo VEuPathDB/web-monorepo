@@ -35,10 +35,15 @@ import { PromiseHookState } from '../../hooks/promise';
 import { GeoConfig } from '../../types/geoConfig';
 import { FilledButton } from '@veupathdb/coreui/dist/components/buttons';
 import AddIcon from '@material-ui/icons/Add';
+import { plugins } from '../computations/plugins';
+import { AnalysisState } from '../../hooks/analysis';
+import { ComputationAppOverview } from '../../types/visualization';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
 interface Props {
+  analysisState: AnalysisState;
+  computationAppOverview: ComputationAppOverview;
   computation: Computation;
   updateVisualizations: (
     visualizations:
@@ -341,6 +346,8 @@ function NewVisualizationPicker(props: Props) {
 
 function FullScreenVisualization(props: Props & { id: string }) {
   const {
+    analysisState,
+    computationAppOverview,
     visualizationTypes,
     visualizationsOverview,
     id,
@@ -419,6 +426,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
   if (vizType == null) return <div>Visualization type not implemented.</div>;
 
   const { computationId } = computation;
+  const plugin = plugins[computation.descriptor.type] ?? undefined;
 
   return (
     <div className={cx('-FullScreenContainer')}>
@@ -503,6 +511,16 @@ function FullScreenVisualization(props: Props & { id: string }) {
             />
           </h3>
           <div className="Subtitle">{overview?.displayName}</div>
+          {plugin && (
+            <plugin.configurationComponent
+              analysisState={analysisState}
+              computationAppOverview={computationAppOverview}
+              totalCounts={totalCounts}
+              filteredCounts={filteredCounts}
+              geoConfigs={geoConfigs}
+              addNewComputation={() => null}
+            />
+          )}
           <vizType.fullscreenComponent
             dataElementConstraints={constraints}
             dataElementDependencyOrder={dataElementDependencyOrder}
