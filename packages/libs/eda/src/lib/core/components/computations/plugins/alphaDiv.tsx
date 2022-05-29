@@ -5,6 +5,9 @@ import { VariableDescriptor } from '../../../types/variable';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
+import { H6 } from '@veupathdb/coreui';
+import { SingleSelect } from '@veupathdb/wdk-client/lib/Components';
+import PopoverButton from '@veupathdb/components/lib/components/widgets/PopoverButton';
 
 export const plugin: ComputationPlugin = {
   configurationComponent: AlphaDivConfiguration,
@@ -24,7 +27,6 @@ function variableDescriptorToString(
 }
 
 export function AlphaDivConfiguration(props: ComputationConfigProps) {
-  const [name, setName] = useState('Unnamed alpha diversity module');
   const [alphaDivMethod, setAlphaDivMethod] = useState(ALPHA_DIV_METHODS[0]);
   const { computationAppOverview, addNewComputation } = props;
   const studyMetadata = useStudyMetadata();
@@ -53,8 +55,12 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
   }, [collections, collectionVariable, alphaDivMethod]);
 
   return (
-    <div style={{ padding: '1em 0' }}>
-      <h1>{computationAppOverview.displayName}</h1>
+    <div style={{ display: 'flex', gap: '0 2em', padding: '1em 0' }}>
+      <H6 additionalStyles={{ margin: 0 }}>
+        {computationAppOverview.displayName[0].toUpperCase() +
+          computationAppOverview.displayName.substring(1).toLowerCase() +
+          ' parameters:'}
+      </H6>
       <div
         style={{
           display: 'grid',
@@ -65,13 +71,7 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
           alignItems: 'center',
         }}
       >
-        <label style={{ justifySelf: 'end' }}>Name: </label>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <div style={{ justifySelf: 'end' }}>Collection variable: </div>
+        <div style={{ justifySelf: 'end' }}>Data: </div>
         <select
           value={collectionVariable}
           onChange={(e) => setCollectionVariable(e.target.value)}
@@ -98,20 +98,6 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
             <option value={method}>{method}</option>
           ))}
         </select>
-        <div>
-          <button
-            type="button"
-            onClick={() =>
-              addNewComputation(name, configDescription, {
-                name: 'AlphaDivComputation',
-                collectionVariable: JSON.parse(collectionVariable),
-                alphaDivMethod,
-              })
-            }
-          >
-            Add app
-          </button>
-        </div>
       </div>
     </div>
   );

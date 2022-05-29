@@ -5,6 +5,7 @@ import { VariableDescriptor } from '../../../types/variable';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
+import { H6 } from '@veupathdb/coreui';
 
 export const plugin: ComputationPlugin = {
   configurationComponent: AbundanceConfiguration,
@@ -24,7 +25,6 @@ function variableDescriptorToString(
 }
 
 export function AbundanceConfiguration(props: ComputationConfigProps) {
-  const [name, setName] = useState('New ranked abundance tool');
   const [rankingMethod, setRankingMethod] = useState(ABUNDANCE_METHODS[0]);
   const { computationAppOverview, addNewComputation } = props;
   const studyMetadata = useStudyMetadata();
@@ -53,8 +53,12 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
   }, [collections, collectionVariable, rankingMethod]);
 
   return (
-    <div style={{ padding: '1em 0' }}>
-      <h1>{computationAppOverview.displayName}</h1>
+    <div style={{ display: 'flex', gap: '0 2em', padding: '1em 0' }}>
+      <H6 additionalStyles={{ margin: 0 }}>
+        {computationAppOverview.displayName[0].toUpperCase() +
+          computationAppOverview.displayName.substring(1).toLowerCase() +
+          ' parameters:'}
+      </H6>
       <div
         style={{
           display: 'grid',
@@ -65,13 +69,7 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
           alignItems: 'center',
         }}
       >
-        <label style={{ justifySelf: 'end' }}>Name: </label>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <div style={{ justifySelf: 'end' }}>Collection variable: </div>
+        <div style={{ justifySelf: 'end' }}>Data: </div>
         <select
           value={collectionVariable}
           onChange={(e) => setCollectionVariable(e.target.value)}
@@ -98,20 +96,6 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
             <option value={method}>{method}</option>
           ))}
         </select>
-        <div>
-          <button
-            type="button"
-            onClick={() =>
-              addNewComputation(name, configDescription, {
-                name: 'RankedAbundanceComputation',
-                collectionVariable: JSON.parse(collectionVariable),
-                rankingMethod,
-              })
-            }
-          >
-            Add app
-          </button>
-        </div>
       </div>
     </div>
   );
