@@ -2,7 +2,7 @@ import { Link, useRouteMatch } from 'react-router-dom';
 import { useHistory } from 'react-router';
 import { ComputationAppOverview } from '../../types/visualization';
 import { ComputationPlugin } from './Types';
-import { orderBy } from 'lodash';
+import { orderBy, isEqual } from 'lodash';
 import { H5, H6 } from '@veupathdb/coreui';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import '../visualizations/Visualizations.scss';
@@ -105,7 +105,18 @@ export function StartPage(props: Props) {
                             const defaultConfig = defaultConfigs.find(
                               (config) => config?.name === app.name
                             );
-                            console.log(defaultConfig);
+                            /*
+                              The first instance of a configurable app will be derived by a default configuration.
+                              Here we're checking if a computation with a defaultConfig already exists.
+                            */
+                            // @ts-ignore
+                            const existingComputation = computations.find(
+                              (c) =>
+                                isEqual(
+                                  c.descriptor.configuration,
+                                  defaultConfig?.configuration
+                                ) && app.name === c.descriptor.type
+                            );
                             const visualizationId = uuid();
                             const newVisualization = {
                               visualizationId,
@@ -119,32 +130,46 @@ export function StartPage(props: Props) {
                                 ].createDefaultConfig(),
                               },
                             };
-                            const computation = createComputation(
-                              app.name,
-                              //@ts-ignore
-                              defaultConfig
-                                ? defaultConfig.configuration.name
-                                : '',
-                              //@ts-ignore
-                              defaultConfig
-                                ? defaultConfig.configuration
-                                : null,
-                              computations,
-                              [newVisualization]
-                            );
-                            console.log(computation);
-                            const newAnalysisId = await analysisState.setComputations(
-                              [computation, ...computations]
-                            );
-                            const urlBase = newAnalysisId
-                              ? url.replace('new', newAnalysisId)
-                              : url;
-                            history.push(
-                              urlBase.replace(
+                            if (!existingComputation) {
+                              const computation = createComputation(
+                                app.name,
+                                //@ts-ignore
+                                defaultConfig ? defaultConfig.displayName : '',
+                                //@ts-ignore
+                                defaultConfig
+                                  ? defaultConfig.configuration
+                                  : null,
+                                computations,
+                                [newVisualization]
+                              );
+                              const newAnalysisId = await analysisState.setComputations(
+                                [computation, ...computations]
+                              );
+                              const urlBase = newAnalysisId
+                                ? url.replace('new', newAnalysisId)
+                                : url;
+                              history.push(
+                                urlBase.replace(
+                                  'new',
+                                  `${computation.computationId}/${visualizationId}`
+                                )
+                              );
+                            } else {
+                              const updatedComputation = {
+                                ...existingComputation,
+                                visualizations: existingComputation.visualizations.concat(
+                                  newVisualization
+                                ),
+                              };
+                              analysisState.setComputations([
+                                updatedComputation,
+                              ]);
+                              const urlBase = url.replace(
                                 'new',
-                                `${computation.computationId}/${visualizationId}`
-                              )
-                            );
+                                existingComputation.computationId
+                              );
+                              history.push(`${urlBase}/${visualizationId}`);
+                            }
                           }}
                         >
                           <VizSelector {...app} />
