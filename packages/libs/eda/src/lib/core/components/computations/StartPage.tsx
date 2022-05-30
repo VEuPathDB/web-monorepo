@@ -109,7 +109,6 @@ export function StartPage(props: Props) {
                               The first instance of a configurable app will be derived by a default configuration.
                               Here we're checking if a computation with a defaultConfig already exists.
                             */
-                            // @ts-ignore
                             const existingComputation = computations.find(
                               (c) =>
                                 isEqual(
@@ -163,6 +162,11 @@ export function StartPage(props: Props) {
                               };
                               analysisState.setComputations([
                                 updatedComputation,
+                                ...computations.filter(
+                                  (c) =>
+                                    c.computationId !==
+                                    updatedComputation.computationId
+                                ),
                               ]);
                               const urlBase = url.replace(
                                 'new',
