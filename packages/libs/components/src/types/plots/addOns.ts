@@ -64,6 +64,12 @@ export type OpacityAddon = {
 };
 export const OpacityDefault: number = 0.5;
 
+export type independentAxisLogScaleAddon = {
+  /** Use a log scale for independent axis. Default is false */
+  independentAxisLogScale?: boolean;
+};
+export const independentAxisLogScaleDefault: boolean = false;
+
 export type DependentAxisLogScaleAddon = {
   /** Use a log scale for dependent axis. Default is false */
   dependentAxisLogScale?: boolean;
