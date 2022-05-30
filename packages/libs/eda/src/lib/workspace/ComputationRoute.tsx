@@ -227,7 +227,7 @@ export function ComputationRoute(props: Props) {
 
                 return (
                   <Route exact path={`${url}/new/${app.name}`}>
-                    {plugin ? (
+                    {/* {plugin ? (
                       <plugin.configurationComponent
                         {...props}
                         computationAppOverview={app}
@@ -235,7 +235,7 @@ export function ComputationRoute(props: Props) {
                       />
                     ) : (
                       <div>App not yet implemented</div>
-                    )}
+                    )} */}
                   </Route>
                 );
               })}

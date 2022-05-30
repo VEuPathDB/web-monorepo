@@ -514,6 +514,8 @@ function FullScreenVisualization(props: Props & { id: string }) {
           {plugin && (
             <plugin.configurationComponent
               analysisState={analysisState}
+              computation={computation}
+              visualizationId={viz.visualizationId}
               computationAppOverview={computationAppOverview}
               totalCounts={totalCounts}
               filteredCounts={filteredCounts}
