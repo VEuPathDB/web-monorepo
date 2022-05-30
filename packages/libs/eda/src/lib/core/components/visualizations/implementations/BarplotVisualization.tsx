@@ -537,10 +537,10 @@ function BarplotViz(props: VisualizationProps) {
           {...plotProps}
         />
       )}
-
+      {/* Y-axis range control */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <LabelledGroup label="Y-axis controls">
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ display: 'flex' }}>
             <Switch
               label="Log Scale:"
               state={vizConfig.dependentAxisLogScale}

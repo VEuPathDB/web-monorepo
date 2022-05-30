@@ -3330,10 +3330,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/components@^0.16.0":
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.16.0.tgz#af26f0716db08bcdc3f4a2df1bbe8f3a10807311"
-  integrity sha512-bYgD94dzNyLdlSHm+wqMkZi58awosMVAQdBq02CT5M6xa9rNe12a8I3lyPNiG6YUAGvUemNmbodfAicsbRj1lQ==
+"@veupathdb/components@^0.16.2":
+  version "0.16.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.16.2.tgz#e97eabe69d254d0ad0f92b624fc06d1b175702bf"
+  integrity sha512-X7IJ99Q5erILkXrRvVCB8cqiVo38vAS36wN9T5MN1gtdhGBK5xv2dUvx+xFLKdJpxLbZCnFqjDTilXz7YYsAng==
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
@@ -3451,10 +3451,10 @@
     read "^1.0.7"
     set-cookie-parser "^2.4.6"
 
-"@veupathdb/study-data-access@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.3.0.tgz#c9276947f5ec4387daee2db465bdb1b61c0fbbd0"
-  integrity sha512-fXr9BdwmMkgho3aDD7D+j9gXY1hzZPjajiY8JkmPv+/rPjkU3cdD6aethF8bPZyV9IQrAQRInXivh2i481R17Q==
+"@veupathdb/study-data-access@^0.3.2":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.3.2.tgz#810e03a7a7e2033ef4d6c59902560bdc81a2f3fd"
+  integrity sha512-KgqPx0LA1MYmWGeXkHlJUjhWg6TSocjiTsd3DcwqfyF584SeJVgUaaqDLnBFwy7Xma/OlXp8+NuEaptKkA+IXw==
   dependencies:
     fp-ts "^2.11.5"
     io-ts "^2.2.16"
