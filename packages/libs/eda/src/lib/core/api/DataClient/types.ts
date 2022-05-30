@@ -596,7 +596,7 @@ export const MapMarkersResponse = type({
   }),
 });
 
-export interface PieplotRequestParams {
+export interface MapMarkersOverlayRequestParams {
   studyId: string;
   filters: Filter[];
   config: {
@@ -610,8 +610,13 @@ export interface PieplotRequestParams {
     xAxisVariable: VariableDescriptor;
     latitudeVariable: VariableDescriptor;
     longitudeVariable: VariableDescriptor;
-    facetVariable?: ZeroToTwoVariables;
+    geoAggregateVariable: VariableDescriptor;
     valueSpec: 'count' | 'proportion';
+    binSpec: {
+      type?: 'binWidth' | 'numBins';
+      value?: number;
+      units?: TimeUnit;
+    };
     viewport: {
       latitude: {
         xMin: number;
@@ -625,9 +630,11 @@ export interface PieplotRequestParams {
   };
 }
 
-export type PieplotResponse = TypeOf<typeof PieplotResponse>;
-export const PieplotResponse = type({
-  pieplot: type({
+export type MapMarkersOverlayResponse = TypeOf<
+  typeof MapMarkersOverlayResponse
+>;
+export const MapMarkersOverlayResponse = type({
+  mapMarkers: type({
     data: array(
       intersection([
         type({

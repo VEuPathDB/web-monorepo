@@ -23,8 +23,8 @@ import {
   BoxplotResponse,
   MapMarkersResponse,
   MapMarkersRequestParams,
-  PieplotRequestParams,
-  PieplotResponse,
+  MapMarkersOverlayRequestParams,
+  MapMarkersOverlayResponse,
 } from './types';
 
 export default class DataClient extends FetchClientWithCredentials {
@@ -156,16 +156,16 @@ export default class DataClient extends FetchClientWithCredentials {
     );
   }
 
-  // pieplot
-  getPieplot(
+  // map-markers-overlay (previously pieplot)
+  getMapMarkersOverlay(
     computationName: string,
-    params: PieplotRequestParams
-  ): Promise<PieplotResponse> {
+    params: MapMarkersOverlayRequestParams
+  ): Promise<MapMarkersOverlayResponse> {
     return this.getVisualizationData(
       computationName,
-      'pieplot',
+      'map-markers-overlay',
       params,
-      PieplotResponse
+      MapMarkersOverlayResponse
     );
   }
 }
