@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useRouteMatch } from 'react-router-dom';
+import { useHistory } from 'react-router';
 import { useStudyMetadata } from '../../..';
 import { useCollectionVariables } from '../../../hooks/study';
 import { VariableDescriptor } from '../../../types/variable';
@@ -6,8 +7,8 @@ import { boxplotVisualization } from '../../visualizations/implementations/Boxpl
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { H6 } from '@veupathdb/coreui';
-import { SingleSelect } from '@veupathdb/wdk-client/lib/Components';
-import PopoverButton from '@veupathdb/components/lib/components/widgets/PopoverButton';
+import { isEqual } from 'lodash';
+import { createComputation } from '../Utils';
 
 export const plugin: ComputationPlugin = {
   configurationComponent: AlphaDivConfiguration,
@@ -27,32 +28,136 @@ function variableDescriptorToString(
 }
 
 export function AlphaDivConfiguration(props: ComputationConfigProps) {
-  const [alphaDivMethod, setAlphaDivMethod] = useState(ALPHA_DIV_METHODS[0]);
-  const { computationAppOverview, addNewComputation } = props;
+  const {
+    computationAppOverview,
+    computation,
+    analysisState,
+    visualizationId,
+  } = props;
   const studyMetadata = useStudyMetadata();
+  const { url } = useRouteMatch();
+  const history = useHistory();
   // Include known collection variables in this array.
   const collections = useCollectionVariables(studyMetadata.rootEntity);
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
 
-  const [collectionVariable, setCollectionVariable] = useState(
-    variableDescriptorToString({
-      variableId: collections[0].id,
-      entityId: collections[0].entityId,
-    })
-  );
+  const alphaDivMethod =
+    // @ts-ignore
+    computation.descriptor.configuration.alphaDivMethod ?? ALPHA_DIV_METHODS[0];
+  // @ts-ignore
+  const collectionVariable = computation.descriptor.configuration
+    .collectionVariable ?? {
+    variableId: collections[0].id,
+    entityId: collections[0].entityId,
+  };
 
-  const configDescription = useMemo(() => {
-    if (!collections.length || !collectionVariable) return '';
-    const variableObject = collections.find(
-      (collectionVar) =>
-        variableDescriptorToString({
-          variableId: collectionVar.id,
-          entityId: collectionVar.entityId,
-        }) === collectionVariable
+  const changeConfigHandler = async (
+    changedConfigPropertyName: string,
+    newConfigValue: string
+  ) => {
+    // when a config value changes:
+    // 1. remove viz from current computation
+    // 2. check if the newConfig exists
+    // Y? move viz to the found computation, "existingComputation"
+    // N? create new computation
+    const computations = analysisState.analysis
+      ? analysisState.analysis.descriptor.computations
+      : [];
+    const newConfigObject = typeof computation.descriptor.configuration ===
+      'object' && {
+      ...computation.descriptor.configuration,
+      [changedConfigPropertyName]: newConfigValue,
+    };
+    const existingComputation = computations.find(
+      (c) =>
+        isEqual(c.descriptor.configuration, newConfigObject) &&
+        c.descriptor.type === computation.descriptor.type
     );
-    return `Data: ${variableObject?.entityDisplayName}: ${variableObject?.displayName}; Method: ${alphaDivMethod}`;
-  }, [collections, collectionVariable, alphaDivMethod]);
+    const existingVisualization = computation.visualizations.filter(
+      (viz) => viz.visualizationId === visualizationId
+    );
+    const computationAfterVizRemoval = {
+      ...computation,
+      visualizations: computation.visualizations.filter(
+        (viz) => viz.visualizationId !== visualizationId
+      ),
+    };
+    if (existingComputation) {
+      // 2Y:  move viz to existingComputation
+      const existingComputationWithVizAdded = {
+        ...existingComputation,
+        visualizations: existingComputation.visualizations.concat(
+          existingVisualization
+        ),
+      };
+      computationAfterVizRemoval.visualizations.length
+        ? await analysisState.setComputations([
+            computationAfterVizRemoval,
+            existingComputationWithVizAdded,
+            ...computations
+              .filter(
+                (c) => c.computationId !== existingComputation.computationId
+              )
+              .filter((c) => c.computationId !== computation.computationId),
+          ])
+        : await analysisState.setComputations([
+            existingComputationWithVizAdded,
+            ...computations
+              .filter(
+                (c) => c.computationId !== existingComputation.computationId
+              )
+              .filter((c) => c.computationId !== computation.computationId),
+          ]);
+      history.push(
+        url.replace(
+          computation.computationId,
+          existingComputation.computationId
+        )
+      );
+    } else {
+      // 2N:  existingComputation was not found
+      //      get config displayName for new computation
+      //      create a new computation with the existing viz
+      // @ts-ignore
+      const variableObject = collections.find((collectionVar) =>
+        isEqual(
+          {
+            variableId: collectionVar.id,
+            entityId: collectionVar.entityId,
+          },
+          // @ts-ignore
+          newConfigObject.collectionVariable
+        )
+      );
+      const newComputation = createComputation(
+        computation.descriptor.type,
+        // @ts-ignore
+        `Data: ${variableObject?.entityDisplayName}: ${variableObject?.displayName}; Method: ${newConfigObject.alphaDivMethod}`,
+        // @ts-ignore
+        newConfigObject,
+        computations,
+        existingVisualization
+      );
+      computationAfterVizRemoval.visualizations.length
+        ? await analysisState.setComputations([
+            computationAfterVizRemoval,
+            newComputation,
+            ...computations.filter(
+              (c) => c.computationId !== computation.computationId
+            ),
+          ])
+        : await analysisState.setComputations([
+            newComputation,
+            ...computations.filter(
+              (c) => c.computationId !== computation.computationId
+            ),
+          ]);
+      history.push(
+        url.replace(computation.computationId, newComputation.computationId)
+      );
+    }
+  };
 
   return (
     <div style={{ display: 'flex', gap: '0 2em', padding: '1em 0' }}>
@@ -73,8 +178,16 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
       >
         <div style={{ justifySelf: 'end' }}>Data: </div>
         <select
-          value={collectionVariable}
-          onChange={(e) => setCollectionVariable(e.target.value)}
+          value={variableDescriptorToString({
+            variableId: collectionVariable.variableId,
+            entityId: collectionVariable.entityId,
+          })}
+          onChange={(e) =>
+            changeConfigHandler(
+              'collectionVariable',
+              JSON.parse(e.target.value)
+            )
+          }
         >
           {collections.map((collectionVar) => {
             return (
@@ -92,7 +205,9 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
         <div style={{ justifySelf: 'end' }}>Method: </div>
         <select
           value={alphaDivMethod}
-          onChange={(e) => setAlphaDivMethod(e.target.value)}
+          onChange={(e) =>
+            changeConfigHandler('alphaDivMethod', e.target.value)
+          }
         >
           {ALPHA_DIV_METHODS.map((method) => (
             <option value={method}>{method}</option>
