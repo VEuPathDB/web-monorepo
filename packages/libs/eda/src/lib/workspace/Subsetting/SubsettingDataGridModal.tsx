@@ -27,6 +27,7 @@ import {
 
 import { useFeaturedFields } from '../../core/components/variableTrees/hooks';
 import { useProcessedGridData, processGridData } from './hooks';
+import tableSVG from './cartoon_table.svg';
 
 type SubsettingDataGridProps = {
   /** Should the modal currently be visible? */
@@ -341,145 +342,151 @@ export default function SubsettingDataGridModal({
             <NumberedHeader
               number={2}
               text={'View table and download'}
-              color={primaryColor}
+              color={
+                selectedVariableDescriptors.length > 0
+                  ? primaryColor
+                  : 'darkgrey'
+              }
             />
           )}
           <span />
-          <MesaButton
-            text="Download"
-            icon={Download}
-            onPress={downloadData}
-            themeRole="primary"
-            textTransform="capitalize"
-          />
+          {selectedVariableDescriptors.length > 0 && (
+            <MesaButton
+              text="Download"
+              icon={Download}
+              onPress={downloadData}
+              themeRole="primary"
+              textTransform="capitalize"
+            />
+          )}
         </div>
         {gridData ? (
-          <div style={{ position: 'relative' }}>
-            <DataGrid
-              columns={gridColumns}
-              data={gridRows}
-              loading={dataLoading}
-              stylePreset="mesa"
-              styleOverrides={{
-                headerCells: {
-                  textTransform: 'none',
-                  position: 'relative',
-                  height: '100%',
-                },
-                table: {
-                  width: '100%',
-                  height: '100%',
-                  overflow: 'auto',
-                  borderStyle: undefined,
-                  primaryRowColor: undefined,
-                  secondaryRowColor: undefined,
-                },
-              }}
-              pagination={{
-                recordsPerPage: 10,
-                controlsLocation: 'bottom',
-                serverSidePagination: {
-                  fetchPaginatedData,
-                  pageCount,
-                },
-              }}
-              extraHeaderControls={[
-                (headerGroup) => (
-                  <div
-                    style={{ display: 'inline-block', width: 20, height: 20 }}
-                  >
+          selectedVariableDescriptors.length > 0 ? (
+            <div style={{ position: 'relative' }}>
+              <DataGrid
+                columns={gridColumns}
+                data={gridRows}
+                loading={dataLoading}
+                stylePreset="mesa"
+                styleOverrides={{
+                  headerCells: {
+                    textTransform: 'none',
+                    position: 'relative',
+                    height: '100%',
+                  },
+                  table: {
+                    width: '100%',
+                    height: '100%',
+                    overflow: 'auto',
+                    borderStyle: undefined,
+                    primaryRowColor: undefined,
+                    secondaryRowColor: undefined,
+                  },
+                }}
+                pagination={{
+                  recordsPerPage: 10,
+                  controlsLocation: 'bottom',
+                  serverSidePagination: {
+                    fetchPaginatedData,
+                    pageCount,
+                  },
+                }}
+                extraHeaderControls={[
+                  (headerGroup) => (
                     <div
-                      style={{
-                        position: 'absolute',
-                        right: 0,
-                        top: 0,
-                      }}
+                      style={{ display: 'inline-block', width: 20, height: 20 }}
                     >
-                      {requiredColumnAccessors?.includes(headerGroup.id) ? (
-                        <i
-                          className="fa fa-lock"
-                          title="This column is required"
-                          style={{ padding: '2px 6px' }}
-                        />
-                      ) : (
-                        <button
-                          onClick={() =>
-                            handleSelectedVariablesChange(
-                              selectedVariableDescriptors.filter(
-                                (descriptor) =>
-                                  descriptor.entityId +
-                                    '/' +
-                                    descriptor.variableId !==
-                                  headerGroup.id
+                      <div
+                        style={{
+                          position: 'absolute',
+                          right: 0,
+                          top: 0,
+                        }}
+                      >
+                        {requiredColumnAccessors?.includes(headerGroup.id) ? (
+                          <i
+                            className="fa fa-lock"
+                            title="This column is required"
+                            style={{ padding: '2px 6px' }}
+                          />
+                        ) : (
+                          <button
+                            onClick={() =>
+                              handleSelectedVariablesChange(
+                                selectedVariableDescriptors.filter(
+                                  (descriptor) =>
+                                    descriptor.entityId +
+                                      '/' +
+                                      descriptor.variableId !==
+                                    headerGroup.id
+                                )
                               )
-                            )
-                          }
-                          title="Remove column"
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            color: 'inherit',
-                          }}
-                        >
-                          ✕
-                        </button>
-                      )}
+                            }
+                            title="Remove column"
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              color: 'inherit',
+                            }}
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ),
-              ]}
-            />
-            <button
-              className="css-uaczjh-PaginationControls"
+                  ),
+                ]}
+              />
+              <button
+                className="css-uaczjh-PaginationControls"
+                style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  right: 0,
+                  // paddingLeft: 10,
+                  // paddingRight: 10,
+                  display: 'flex',
+                  justifyContent: 'space-evenly',
+                  alignItems: 'center',
+                  width: 120,
+                }}
+                // @ts-ignore
+                // icon={displayVariableTree ? CloseFullscreen : SettingsIcon}
+                onClick={() => setTableIsExpanded(!tableIsExpanded)}
+              >
+                {/* <i className="fa fa-arrows-alt" /> */}
+                {tableIsExpanded ? (
+                  <>
+                    <FullscreenExitIcon />
+                    Collapse table
+                  </>
+                ) : (
+                  <>
+                    <FullscreenIcon />
+                    Expand table
+                  </>
+                )}
+              </button>
+            </div>
+          ) : (
+            <div
               style={{
-                position: 'absolute',
-                bottom: 0,
-                right: 0,
-                // paddingLeft: 10,
-                // paddingRight: 10,
+                width: '100%',
                 display: 'flex',
-                justifyContent: 'space-evenly',
-                alignItems: 'center',
-                width: 120,
+                justifyContent: 'center',
+                paddingTop: 25,
               }}
-              // @ts-ignore
-              // icon={displayVariableTree ? CloseFullscreen : SettingsIcon}
-              onClick={() => setTableIsExpanded(!tableIsExpanded)}
             >
-              {/* <i className="fa fa-arrows-alt" /> */}
-              {tableIsExpanded ? (
-                <>
-                  <FullscreenExitIcon />
-                  Collapse table
-                </>
-              ) : (
-                <>
-                  <FullscreenIcon />
-                  Expand table
-                </>
-              )}
-            </button>
-          </div>
-        ) : !dataLoading ? (
-          <div
-            style={{
-              border: '2px solid lightgray',
-              padding: 10,
-              borderRadius: 5,
-              height: '25vh',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <H5
-              text='To get started, click on the "Select Variables" button above.'
-              additionalStyles={{ fontSize: 18 }}
-            />
-          </div>
-        ) : (
+              <img
+                src={tableSVG}
+                title="Choose a variable to see the table"
+                width={400}
+              />
+            </div>
+          )
+        ) : dataLoading ? (
           <Loading />
-        )}
+        ) : null}
         {dataLoading && gridData ? <LoadingOverlay /> : null}
       </div>
     );
