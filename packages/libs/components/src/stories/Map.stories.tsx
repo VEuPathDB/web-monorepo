@@ -10,17 +10,14 @@ import { getSpeciesDonuts } from './api/getMarkersFromFixtureData';
 import { LeafletMouseEvent } from 'leaflet';
 import { Viewport } from 'react-leaflet';
 
-//DKDK sidebar & legend
+// sidebar & legend
 import MapVEuMap, { MapVEuMapProps } from '../map/MapVEuMap';
 import MapVEuMapSidebar from '../map/MapVEuMapSidebar';
-//DKDK import legend
+// import legend
 import MapVEuLegendSampleList, {
   LegendProps,
 } from '../map/MapVEuLegendSampleList';
-
-//DKDK anim
-// import Geohash from 'latlon-geohash';
-// import {DriftMarker} from "leaflet-drift-marker";
+import { Checkbox } from '@material-ui/core';
 import geohashAnimation from '../map/animation_functions/geohash';
 
 export default {
@@ -56,28 +53,27 @@ const dropdownItemText: string[] = [
 ];
 const legendInfoNumberText: string = 'Species';
 
-//DKDK a generic function to remove a class: here it is used for removing highlight-marker
+// a generic function to remove a class: here it is used for removing highlight-marker
 function removeClassName(targetClass: string) {
-  //DKDK much convenient to use jquery here but try not to use it
+  // much convenient to use jquery here but try not to use it
   let targetElement = document.getElementsByClassName(targetClass)[0];
   if (targetElement != null) {
     targetElement.classList.remove(targetClass);
   }
 }
 
-//DKDK this onClick event may need to be changed in the future like onMouseOver event
+// this onClick event may need to be changed in the future like onMouseOver event
 const handleMarkerClick = (e: LeafletMouseEvent) => {
   /**
-   * DKDK this only works when selecting other marker: not working when clicking map
+   * this only works when selecting other marker: not working when clicking map
    * it may be achieved by setting all desirable events (e.g., map click, preserving highlight, etc.)
    * just stop here and leave detailed events to be handled later
    */
-  // DKDK use a resuable function to remove a class
+  // use a resuable function to remove a class
   removeClassName('highlight-marker');
-  //DKDK native manner, but not React style? Either way this is arguably the simplest solution
+  // native manner, but not React style? Either way this is arguably the simplest solution
   e.target._icon.classList.add('highlight-marker');
-  //DKDK here, perhaps we can add additional click event, like opening sidebar when clicking
-  //console.log("I've been clicked")
+  // here, perhaps we can add additional click event, like opening sidebar when clicking
 };
 
 export const Spinner: Story<MapVEuMapProps> = (args) => {
@@ -224,6 +220,87 @@ Windowed.args = {
   width: 700,
   style: {
     marginTop: 100,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
+  showGrid: true,
+  showMouseToolbar: true,
+};
+
+export const ScrollAndZoom: Story<MapVEuMapProps> = (args) => {
+  const [markerElements, setMarkerElements] = useState<
+    ReactElement<BoundsDriftMarkerProps>[]
+  >([]);
+  const [legendData, setLegendData] = useState<LegendProps['data']>([]);
+  const [viewport] = useState<Viewport>({ center: [13, 16], zoom: 4 });
+  const handleViewportChanged = useCallback(
+    async (bvp: BoundsViewport) => {
+      const markers = await getSpeciesDonuts(
+        bvp,
+        defaultAnimationDuration,
+        setLegendData,
+        handleMarkerClick
+      );
+      setMarkerElements(markers);
+    },
+    [setMarkerElements]
+  );
+
+  // add useState for controlling scroll and zoom
+  const [mapScroll, setMapScroll] = useState<boolean>(false);
+  const textSize = '1.0em';
+
+  return (
+    <>
+      <div
+        style={{
+          // height: 500,
+          display: 'flex',
+          flexDirection: 'column',
+          width: 700,
+          marginTop: 100,
+          marginLeft: 'auto',
+          marginRight: 'auto',
+        }}
+      >
+        <label
+          style={{
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            fontSize: textSize,
+            color: '',
+            // add this for general usage (e.g., story)
+            margin: 0,
+          }}
+        >
+          <Checkbox
+            color={'primary'}
+            checked={mapScroll}
+            onChange={() => setMapScroll(!mapScroll)}
+          />
+          Scroll and Zoom
+        </label>
+        <MapVEuMap
+          {...args}
+          viewport={viewport}
+          onBoundsChanged={handleViewportChanged}
+          markers={markerElements}
+          animation={defaultAnimation}
+          zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+          isMapScroll={mapScroll}
+        />
+      </div>
+    </>
+  );
+};
+
+ScrollAndZoom.args = {
+  height: 500,
+  width: 700,
+  style: {
+    // marginTop: 100,
     marginLeft: 'auto',
     marginRight: 'auto',
   },

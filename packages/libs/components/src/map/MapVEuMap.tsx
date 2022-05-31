@@ -163,6 +163,8 @@ export interface MapVEuMapProps {
   showNoDataOverlay?: boolean;
   /** Whether to show the Scale in the map */
   showScale?: boolean;
+  /** is map scroll and zoom allowed? */
+  isMapScroll?: boolean;
 }
 
 function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
@@ -186,6 +188,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     showSpinner,
     showNoDataOverlay,
     showScale = true,
+    isMapScroll,
   } = props;
 
   // this is the React Map component's onViewPortChanged handler
@@ -327,6 +330,8 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
         onBaseLayerChanged && onBaseLayerChanged(event.name as BaseLayerChoice)
       }
       ref={mapRef}
+      // add scrool wheel control
+      scrollWheelZoom={isMapScroll}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
