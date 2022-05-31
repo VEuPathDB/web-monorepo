@@ -2130,10 +2130,10 @@
     react-responsive-modal "^6.2.0"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^3.5.2":
-  version "3.5.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.5.2.tgz#05d93e1d893c7e6fac9840a3ac486498b90df8df"
-  integrity sha512-ljuVC7cqA7n9MWieqXEB799RtHwOCjgUvogJ7C9tQPgTh1TC7uX4fSmZWZB8zzZrfyrVWqhAdE7ufwWZjhutUg==
+"@veupathdb/eda@^3.5.14":
+  version "3.5.14"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.5.14.tgz#51bdd5f9ae51441ce00fa28a4698d28b03743a42"
+  integrity sha512-HXJlFAOmjOTmTYplw/c5rVjW0yPcCWSz1SVbCsipzT7/aRrNhTvAZGYKTwDgou3JJpYybhH3SZCkNRpwzrvsZg==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -9023,9 +9023,9 @@ react-spring@^8.0.27:
     prop-types "^15.5.8"
 
 react-table@^7.7.0:
-  version "7.7.0"
-  resolved "https://registry.yarnpkg.com/react-table/-/react-table-7.7.0.tgz#e2ce14d7fe3a559f7444e9ecfe8231ea8373f912"
-  integrity sha512-jBlj70iBwOTvvImsU9t01LjFjy4sXEtclBovl3mTiqjz23Reu0DKnRza4zlLtOPACx6j2/7MrQIthIK1Wi+LIA==
+  version "7.8.0"
+  resolved "https://registry.yarnpkg.com/react-table/-/react-table-7.8.0.tgz#07858c01c1718c09f7f1aed7034fcfd7bda907d2"
+  integrity sha512-hNaz4ygkZO4bESeFfnfOft73iBUj8K5oKi1EcSHPAibEydfsX2MyU6Z8KCr3mv3C9Kqqh71U+DhZkFvibbnPbA==
 
 react-transition-group@^2.2.1:
   version "2.9.0"
