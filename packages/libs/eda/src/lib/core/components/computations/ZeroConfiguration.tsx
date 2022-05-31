@@ -17,12 +17,13 @@ function ZeroConfig(props: Props) {
   }, [addNewComputation, autoCreate]);
 
   return (
-    <button
-      type="button"
-      onClick={() => addNewComputation('Unnamed computation', '', null)}
-    >
-      Add computation
-    </button>
+    // <button
+    //   type="button"
+    //   onClick={() => addNewComputation('Unnamed computation', '', null)}
+    // >
+    //   Add computation
+    // </button>
+    null
   );
 }
 
