@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { useHistory } from 'react-router';
 import { useStudyMetadata } from '../../..';
@@ -29,12 +29,12 @@ function variableDescriptorToString(
 }
 
 export function AbundanceConfiguration(props: ComputationConfigProps) {
-  // @ts-ignore
-  const [rankingMethod, setRankingMethod] = useState(
-    props.computation.descriptor.configuration.rankingMethod ??
-      ABUNDANCE_METHODS[0]
-  );
-  const { computationAppOverview, addNewComputation } = props;
+  const {
+    computationAppOverview,
+    computation,
+    analysisState,
+    visualizationId,
+  } = props;
   const studyMetadata = useStudyMetadata();
   const { url } = useRouteMatch();
   const history = useHistory();
@@ -43,88 +43,119 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
 
-  const [collectionVariable, setCollectionVariable] = useState(
-    variableDescriptorToString({
-      variableId: collections[0].id,
-      entityId: collections[0].entityId,
-    })
-  );
-
-  const configDescription = useMemo(() => {
-    if (!collections.length || !collectionVariable) return '';
-    const variableObject = collections.find(
-      (collectionVar) =>
-        variableDescriptorToString({
-          variableId: collectionVar.id,
-          entityId: collectionVar.entityId,
-        }) === collectionVariable
-    );
-    return `Data: ${variableObject?.entityDisplayName}: ${variableObject?.displayName}; Method: ${rankingMethod}`;
-  }, [collections, collectionVariable, rankingMethod]);
+  const rankingMethod =
+    // @ts-ignore
+    computation.descriptor.configuration.rankingMethod ?? ABUNDANCE_METHODS[0];
+  // @ts-ignore
+  const collectionVariable = computation.descriptor.configuration
+    .collectionVariable ?? {
+    variableId: collections[0].id,
+    entityId: collections[0].entityId,
+  };
 
   const changeConfigHandler = async (
-    valueChanged: string,
-    newConfigValue: string,
-    setConfigValue: any
+    changedConfigPropertyName: string,
+    newConfigValue: string
   ) => {
     // when a config value changes:
     // 1. remove viz from current computation
     // 2. check if the newConfig exists
-    // Y? move viz to the found computation, existingComputation
+    // Y? move viz to the found computation, "existingComputation"
     // N? create new computation
-    setConfigValue(newConfigValue);
-    const newConfigObject = typeof props.computation.descriptor
-      .configuration === 'object' && {
-      ...props.computation.descriptor.configuration,
-      [valueChanged]: newConfigValue,
+    const computations = analysisState.analysis
+      ? analysisState.analysis.descriptor.computations
+      : [];
+    const newConfigObject = typeof computation.descriptor.configuration ===
+      'object' && {
+      ...computation.descriptor.configuration,
+      [changedConfigPropertyName]: newConfigValue,
     };
-    const existingComputation = props.analysisState.analysis?.descriptor.computations.find(
+    const existingComputation = computations.find(
       (c) =>
         isEqual(c.descriptor.configuration, newConfigObject) &&
-        c.descriptor.type === props.computation.descriptor.type
+        c.descriptor.type === computation.descriptor.type
     );
-    const existingVisualization = props.computation.visualizations.filter(
-      (viz) => viz.visualizationId === props.visualizationId
+    const existingVisualization = computation.visualizations.filter(
+      (viz) => viz.visualizationId === visualizationId
     );
     const computationAfterVizRemoval = {
-      ...props.computation,
-      visualizations: props.computation.visualizations.filter(
-        (viz) => viz.visualizationId !== props.visualizationId
+      ...computation,
+      visualizations: computation.visualizations.filter(
+        (viz) => viz.visualizationId !== visualizationId
       ),
     };
-    if (props.analysisState.analysis) {
-      await props.analysisState.setComputations([
-        computationAfterVizRemoval,
-        ...props.analysisState.analysis?.descriptor.computations.filter(
-          (c) => c.computationId !== computationAfterVizRemoval.computationId
-        ),
-      ]);
-    }
     if (existingComputation) {
       // 2Y:  move viz to existingComputation
+      const existingComputationWithVizAdded = {
+        ...existingComputation,
+        visualizations: existingComputation.visualizations.concat(
+          existingVisualization
+        ),
+      };
+      computationAfterVizRemoval.visualizations.length
+        ? await analysisState.setComputations([
+            computationAfterVizRemoval,
+            existingComputationWithVizAdded,
+            ...computations
+              .filter(
+                (c) => c.computationId !== existingComputation.computationId
+              )
+              .filter((c) => c.computationId !== computation.computationId),
+          ])
+        : await analysisState.setComputations([
+            existingComputationWithVizAdded,
+            ...computations
+              .filter(
+                (c) => c.computationId !== existingComputation.computationId
+              )
+              .filter((c) => c.computationId !== computation.computationId),
+          ]);
+      history.push(
+        url.replace(
+          computation.computationId,
+          existingComputation.computationId
+        )
+      );
     } else {
       // 2N:  existingComputation was not found
+      //      get config displayName for new computation
       //      create a new computation with the existing viz
-      const computations = props.analysisState.analysis
-        ? props.analysisState.analysis.descriptor.computations
-        : [];
+      // @ts-ignore
+      const variableObject = collections.find((collectionVar) =>
+        isEqual(
+          {
+            variableId: collectionVar.id,
+            entityId: collectionVar.entityId,
+          },
+          // @ts-ignore
+          newConfigObject.collectionVariable
+        )
+      );
       const newComputation = createComputation(
-        props.computation.descriptor.type,
-        '',
+        computation.descriptor.type,
+        // @ts-ignore
+        `Data: ${variableObject?.entityDisplayName}: ${variableObject?.displayName}; Method: ${newConfigObject.rankingMethod}`,
         // @ts-ignore
         newConfigObject,
         computations,
         existingVisualization
       );
-      await props.analysisState.setComputations([
-        newComputation,
-        ...computations,
-      ]);
+      computationAfterVizRemoval.visualizations.length
+        ? await analysisState.setComputations([
+            computationAfterVizRemoval,
+            newComputation,
+            ...computations.filter(
+              (c) => c.computationId !== computation.computationId
+            ),
+          ])
+        : await analysisState.setComputations([
+            newComputation,
+            ...computations.filter(
+              (c) => c.computationId !== computation.computationId
+            ),
+          ]);
       history.push(
-        url.replace(
-          props.computation.computationId,
-          newComputation.computationId
-        )
+        url.replace(computation.computationId, newComputation.computationId)
       );
     }
   };
@@ -148,12 +179,14 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
       >
         <div style={{ justifySelf: 'end' }}>Data: </div>
         <select
-          value={collectionVariable}
+          value={variableDescriptorToString({
+            variableId: collectionVariable.variableId,
+            entityId: collectionVariable.entityId,
+          })}
           onChange={(e) =>
             changeConfigHandler(
               'collectionVariable',
-              e.target.value,
-              setCollectionVariable
+              JSON.parse(e.target.value)
             )
           }
         >
@@ -173,13 +206,7 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
         <div style={{ justifySelf: 'end' }}>Method: </div>
         <select
           value={rankingMethod}
-          onChange={(e) =>
-            changeConfigHandler(
-              'rankingMethod',
-              e.target.value,
-              setRankingMethod
-            )
-          }
+          onChange={(e) => changeConfigHandler('rankingMethod', e.target.value)}
         >
           {ABUNDANCE_METHODS.map((method) => (
             <option value={method}>{method}</option>
