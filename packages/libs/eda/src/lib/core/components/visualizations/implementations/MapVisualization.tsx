@@ -432,28 +432,23 @@ function MapViz(props: VisualizationProps) {
     // process response and return a map of "geoAgg key" => donut labels and counts
     return !overlayResponse.pending && overlayResponse.value
       ? overlayResponse.value.mapMarkers.data.reduce(
-          (map, { facetVariableDetails, label, value }) => {
-            if (
-              facetVariableDetails != null &&
-              facetVariableDetails.length === 1
-            ) {
-              const geoAggKey = facetVariableDetails[0].value;
-              if (overlayResponse.value)
-                // don't know why TS makes us do this check *again*...
-                map[geoAggKey] = {
-                  entityCount: sum(
-                    overlayResponse.value.sampleSizeTable.find(
-                      (item) =>
-                        item.facetVariableDetails != null &&
-                        item.facetVariableDetails[0].value === geoAggKey
-                    )?.size
-                  ),
-                  data: zip(label, value).map(([label, value]) => ({
-                    label: label!,
-                    value: value!,
-                  })),
-                };
-            }
+          (map, { geoAggregateVariableDetails, label, value }) => {
+            const geoAggKey = geoAggregateVariableDetails.value;
+            if (overlayResponse.value)
+              // don't know why TS makes us do this check *again*...
+              map[geoAggKey] = {
+                entityCount: sum(
+                  overlayResponse.value.sampleSizeTable.find(
+                    (item) =>
+                      item.geoAggregateVariableDetails != null &&
+                      item.geoAggregateVariableDetails.value === geoAggKey
+                  )?.size
+                ),
+                data: zip(label, value).map(([label, value]) => ({
+                  label: label!,
+                  value: value!,
+                })),
+              };
             return map;
           },
           {} as MapMarkersOverlayData

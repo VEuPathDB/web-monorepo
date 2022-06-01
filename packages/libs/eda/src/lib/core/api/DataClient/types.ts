@@ -44,6 +44,7 @@ const sampleSizeTableArray = array(
         tuple([StringVariableValue]),
         tuple([StringVariableValue, StringVariableValue]),
       ]),
+      geoAggregateVariableDetails: StringVariableValue,
       overlayVariableDetails: StringVariableValue,
       xVariableDetails: type({
         entityId: string,
@@ -636,18 +637,11 @@ export type MapMarkersOverlayResponse = TypeOf<
 export const MapMarkersOverlayResponse = type({
   mapMarkers: type({
     data: array(
-      intersection([
-        type({
-          label: array(string),
-          value: array(number),
-        }),
-        partial({
-          facetVariableDetails: union([
-            tuple([StringVariableValue]),
-            tuple([StringVariableValue, StringVariableValue]),
-          ]),
-        }),
-      ])
+      type({
+        label: array(string),
+        value: array(number),
+        geoAggregateVariableDetails: StringVariableValue,
+      })
     ),
     config: type({
       completeCasesAllVars: number,
