@@ -49,7 +49,7 @@ const sampleSizeTableArray = array(
       xVariableDetails: type({
         entityId: string,
         variableId: string,
-        value: array(string),
+        value: union([string, array(string)]),
       }),
     }),
   ])
