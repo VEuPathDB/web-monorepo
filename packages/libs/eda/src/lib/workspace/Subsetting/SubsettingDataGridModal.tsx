@@ -173,35 +173,6 @@ export default function SubsettingDataGridModal({
       ?.variables ?? []
   );
 
-  // Required columns
-  const requiredColumns = usePromise(
-    useCallback(async () => {
-      const data = await subsettingClient.getTabularData(
-        studyMetadata.id,
-        currentEntityID,
-        {
-          filters: [],
-          outputVariableIds: [],
-          reportConfig: {
-            headerFormat: 'standard',
-            paging: { numRows: 1, offset: 0 },
-          },
-        }
-      );
-      return processGridData(data, entities, currentEntity)[0];
-    }, [
-      subsettingClient,
-      studyMetadata.id,
-      currentEntityID,
-      entities,
-      currentEntity,
-    ])
-  );
-
-  const requiredColumnAccessors = requiredColumns.value?.map(
-    (column) => column.accessor
-  );
-
   /**
    * Actions to take when the modal is opened.
    */
@@ -224,6 +195,35 @@ export default function SubsettingDataGridModal({
       .map((mergeKey) => mergeKey.id);
   }, [currentEntity]);
 
+  // Required columns
+  const requiredColumns = usePromise(
+    useCallback(async () => {
+      const data = await subsettingClient.getTabularData(
+        studyMetadata.id,
+        currentEntityID,
+        {
+          filters: [],
+          outputVariableIds: mergeKeys,
+          reportConfig: {
+            headerFormat: 'standard',
+            paging: { numRows: 1, offset: 0 },
+          },
+        }
+      );
+      return processGridData(data, entities, currentEntity)[0];
+    }, [
+      subsettingClient,
+      studyMetadata.id,
+      currentEntityID,
+      entities,
+      currentEntity,
+    ])
+  );
+
+  const requiredColumnAccessors = requiredColumns.value?.map(
+    (column) => column.accessor
+  );
+
   const selectedVariableDescriptorsWithMergeKeys = useMemo(() => {
     if (!currentEntity) return [];
     return mergeKeys
@@ -233,14 +233,14 @@ export default function SubsettingDataGridModal({
       .concat(selectedVariableDescriptors);
   }, [mergeKeys, selectedVariableDescriptors, currentEntity]);
 
-  console.log({
-    mergeKeys,
-    selectedVariableDescriptors,
-    selectedVariableDescriptorsWithMergeKeys,
-    gridColumns,
-    gridData,
-    requiredColumns,
-  });
+  // console.log({
+  //   mergeKeys,
+  //   selectedVariableDescriptors,
+  //   selectedVariableDescriptorsWithMergeKeys,
+  //   gridColumns,
+  //   gridData,
+  //   requiredColumns,
+  // });
 
   const fetchPaginatedData = useCallback(
     ({ pageSize, pageIndex }) => {
@@ -450,11 +450,8 @@ export default function SubsettingDataGridModal({
                   alignItems: 'center',
                   width: 120,
                 }}
-                // @ts-ignore
-                // icon={displayVariableTree ? CloseFullscreen : SettingsIcon}
                 onClick={() => setTableIsExpanded(!tableIsExpanded)}
               >
-                {/* <i className="fa fa-arrows-alt" /> */}
                 {tableIsExpanded ? (
                   <>
                     <FullscreenExitIcon />
@@ -515,15 +512,8 @@ export default function SubsettingDataGridModal({
           <div
             className="Variables"
             style={{
-              // position: 'absolute',
               width: '100%',
-              // left: entityDescriptionWidth + 195,
-              // top: -54,
               backgroundColor: 'rgba(255, 255, 255, 1)',
-              // border: '2px solid rgb(200, 200, 200)',
-              // borderRadius: '.5em',
-              // boxShadow: '0px 0px 6px rgba(0, 0, 0, .25)',
-              // zIndex: '2',
             }}
           >
             {!requiredColumns.pending && requiredColumns.value && (

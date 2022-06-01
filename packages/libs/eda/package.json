@@ -117,7 +117,7 @@
     "*.{js,jsx,ts,tsx,css,scss,md}": "prettier --write"
   },
   "volta": {
-    "node": "14.15.5",
+    "node": "14.19.3",
     "yarn": "1.22.11"
   }
 }
