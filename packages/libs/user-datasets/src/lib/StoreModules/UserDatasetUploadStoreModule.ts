@@ -6,7 +6,6 @@ import {
 import { Observable } from 'rxjs';
 import { filter, mergeMap } from 'rxjs/operators';
 
-import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
 
 import {
@@ -21,13 +20,12 @@ import {
   clearBadUpload,
 } from '../Actions/UserDatasetUploadActions';
 
-import { FormSubmission } from '../Components/UploadForm';
-
 import { assertIsUserDatasetUploadCompatibleWdkService } from '../Service/UserDatasetUploadWrappers';
 
 import { StateSlice } from '../StoreModules/types';
 
-import { NewUserDataset, UserDatasetUpload } from '../Utils/types';
+import { UserDatasetUpload } from '../Utils/types';
+import { uploadUserDataset } from '../Utils/upload-user-dataset';
 
 export const key = 'userDatasetUpload';
 
@@ -67,14 +65,10 @@ function observeSubmitUploadForm(
     filter(submitUploadForm.isOfType),
     mergeMap(async (action) => {
       try {
-        assertIsUserDatasetUploadCompatibleWdkService(dependencies.wdkService);
-
-        const newUserDatasetConfig = await makeNewUserDatasetConfig(
+        await uploadUserDataset(
           dependencies.wdkService,
           action.payload.formSubmission
         );
-
-        await dependencies.wdkService.addDataset(newUserDatasetConfig);
 
         if (action.payload.redirectTo != null) {
           dependencies.transitioner.transitionToInternalPage(
@@ -153,37 +147,4 @@ function observeClearMessages(
       }
     })
   );
-}
-
-async function makeNewUserDatasetConfig(
-  wdkService: WdkService,
-  formSubmission: FormSubmission
-): Promise<NewUserDataset> {
-  if (formSubmission.dataUploadSelection.type !== 'result') {
-    return {
-      ...formSubmission,
-      uploadMethod: formSubmission.dataUploadSelection,
-    };
-  }
-
-  const { compatibleRecordTypes, stepId } = formSubmission.dataUploadSelection;
-
-  const { recordClassName } = await wdkService.findStep(stepId);
-
-  const resultReportSettings = compatibleRecordTypes[recordClassName];
-
-  if (resultReportSettings == null) {
-    throw new Error(
-      `Tried to upload a result (step id ${stepId}) with an incompatible record type ${recordClassName}.`
-    );
-  }
-
-  return {
-    ...formSubmission,
-    uploadMethod: {
-      type: 'result',
-      stepId,
-      ...resultReportSettings,
-    },
-  };
 }

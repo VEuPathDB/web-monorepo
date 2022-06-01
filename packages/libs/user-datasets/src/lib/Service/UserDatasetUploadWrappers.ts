@@ -247,7 +247,15 @@ export const makeUserDatasetUploadServiceWrappers = ({
         '/user-datasets/' + jobId,
         'POST',
         fileBody
-      ).then((response) => {})
+      ).then((response) => {
+        if (!response.ok) {
+          return response.text().then((error) => {
+            throw error;
+          });
+        }
+
+        return;
+      })
     );
   },
   listStatusDetails: () => (): Promise<UserDatasetUpload[]> => {
