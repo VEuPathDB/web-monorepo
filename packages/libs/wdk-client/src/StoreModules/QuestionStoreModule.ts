@@ -32,7 +32,8 @@ import {
   questionError,
   ENABLE_SUBMISSION,
   reportSubmissionError,
-  submitQuestion
+  submitQuestion,
+  SubmissionMetadata,
 } from 'wdk-client/Actions/QuestionActions';
 
 import {
@@ -397,7 +398,8 @@ const observeLoadQuestion: QuestionEpic = (action$, state$, { paramValueStore, w
       action.payload.autoRun,
       action.payload.prepopulateWithLastParamValues,
       action.payload.stepId,
-      action.payload.initialParamData
+      action.payload.initialParamData,
+      action.payload.submissionMetadata,
     )).pipe(
     takeUntil(action$.pipe(filter(killAction => (
       killAction.type === UNLOAD_QUESTION &&
@@ -413,7 +415,7 @@ const observeAutoRun: QuestionEpic = (action$, state$, { wdkService }) => action
   map(action => submitQuestion({
     searchName: action.payload.searchName,
     autoRun: action.payload.autoRun,
-    submissionMetadata: {
+    submissionMetadata: action.payload.submissionMetadata ?? {
       type: 'create-strategy'
     }
   }))
@@ -647,7 +649,10 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
                     stepTree: {
                       stepId: newSearchStepId
                     },
-                    name: DEFAULT_STRATEGY_NAME
+                    name: (
+                      submissionMetadata.strategyName ??
+                      DEFAULT_STRATEGY_NAME
+                    ),
                 })
               );
           })
@@ -767,6 +772,7 @@ async function loadQuestion(
   prepopulateWithLastParamValues: boolean,
   stepId?: number,
   initialParamData?: ParameterValues,
+  submissionMetadata?: SubmissionMetadata,
 ) {
   const step = stepId ? await wdkService.findStep(stepId) : undefined;
   const initialParams = await fetchInitialParams(
@@ -806,7 +812,8 @@ async function loadQuestion(
       initialParamData, // Intentionally not initialParams to preserve previous behaviour ( an "INIT_PARAM" action triggered)
       wdkWeight,
       customName: step?.customName,
-      stepValidation: step?.validation
+      stepValidation: step?.validation,
+      submissionMetadata,
     })
   }
   catch (error) {

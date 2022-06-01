@@ -1,5 +1,5 @@
 import { isArray, castArray } from 'lodash';
-import React from 'react';
+import React, { useMemo } from 'react';
 import QueryString from 'querystring';
 import { RouteComponentProps, Redirect } from 'react-router';
 
@@ -23,6 +23,7 @@ import FavoritesController from 'wdk-client/Controllers/FavoritesController';
 import UserLoginController from 'wdk-client/Controllers/UserLoginController';
 import QuestionController from 'wdk-client/Controllers/QuestionController';
 
+import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import StrategyWorkspaceController from 'wdk-client/Controllers/StrategyWorkspaceController';
 import BasketController from 'wdk-client/Controllers/BasketController';
@@ -58,12 +59,26 @@ const routes: RouteEntry[] = [
   {
     path: '/search/:recordClass/:question',
     component: (props: RouteComponentProps<{recordClass: string; question: string;}>) => {
-      // Parse querystring. Two types of query params are supported: autoRun
+      // Parse querystring. Three types of query params are supported: autoRun, strategyName,
       // and param data:
       // - autoRun: boolean (interpretted as true if present without a value, or with 'true' or '1')
+      // - strategyName: string
       // - param data: Prefix with "param.". E.g., "param.organism=Plasmodium+falciparum+3D7", or "param.ds_gene_ids.idList=PF3D7_1133400,PF3D7_1133401"
-      const { autoRun, ...restQueryParams } = parseQueryString(props);
+      const {
+        autoRun,
+        strategyName,
+        ...restQueryParams
+      } = parseQueryString(props);
       const initialParamData = parseSearchParamsFromQueryParams(restQueryParams);
+
+      const submissionMetadata = useMemo(
+        (): SubmissionMetadata => ({
+          type: 'create-strategy',
+          strategyName,
+        }),
+        [strategyName]
+      );
+
       return (
         <Plugin
           context={{
@@ -73,9 +88,7 @@ const routes: RouteEntry[] = [
           }}
           pluginProps={{
             ...props.match.params,
-            submissionMetadata: {
-              type: 'create-strategy'
-            } as const,
+            submissionMetadata,
             shouldChangeDocumentTitle: true,
             initialParamData,
             autoRun: autoRun === '' || autoRun === 'true' || autoRun === '1',

@@ -46,6 +46,7 @@ export interface UpdateActiveQuestionAction {
     prepopulateWithLastParamValues: boolean;
     initialParamData?: Record<string, string>;
     stepId: number | undefined;
+    submissionMetadata?: SubmissionMetadata; 
   }>
 }
 
@@ -54,7 +55,8 @@ export function updateActiveQuestion(payload: {
   autoRun: boolean,
   prepopulateWithLastParamValues: boolean,
   initialParamData?: Record<string, string>,
-  stepId: number | undefined
+  stepId: number | undefined,
+  submissionMetadata?: SubmissionMetadata,
 }): UpdateActiveQuestionAction {
   return {
     type: UPDATE_ACTIVE_QUESTION,
@@ -79,6 +81,7 @@ export interface QuestionLoadedAction {
     wdkWeight?: number;
     customName?: string;
     stepValidation?: Step['validation'];
+    submissionMetadata?: SubmissionMetadata;
   }>
 }
 
@@ -181,6 +184,7 @@ export const SUBMIT_QUESTION = 'question/submit-question';
 type NewStrategy = {
   type: 'create-strategy',
   webServicesTutorialSubmission?: boolean
+  strategyName?: string;
 }
 
 type AddBinaryStep = {
