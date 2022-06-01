@@ -397,7 +397,7 @@ function MapViz(props: VisualizationProps) {
           geoAggregateVariable: geoAggregateVariable,
           showMissingness: 'noVariables', // current back end 'showMissing' behaviour applies to facet variable
           valueSpec: proportionMode ? 'proportion' : 'count',
-          binSpec: { type: 'binWidth', value: 5 },
+          binSpec: { type: 'binWidth', value: 25 },
           viewport: {
             latitude: {
               xMin,
@@ -461,10 +461,13 @@ function MapViz(props: VisualizationProps) {
    * and create markers.
    */
   const markers = useMemo(() => {
-    const vocabulary = fixLabelsForNumberVariables(
-      xAxisVariable?.vocabulary,
-      xAxisVariable
-    );
+    const vocabulary =
+      xAxisVariable?.vocabulary != null
+        ? fixLabelsForNumberVariables(xAxisVariable.vocabulary, xAxisVariable)
+        : overlayResponse.value != null
+        ? overlayResponse.value.mapMarkers.config.rankedValues
+        : [];
+
     const pieValueMax = overlayData
       ? values(overlayData) // it's a Record 'object'
           .map((record) => record.data)
@@ -556,6 +559,7 @@ function MapViz(props: VisualizationProps) {
     );
   }, [
     basicMarkerData.value,
+    overlayResponse,
     overlayData,
     vizConfig.checkedLegendItems,
     vizConfig.markerType,

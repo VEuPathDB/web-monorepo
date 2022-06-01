@@ -646,7 +646,7 @@ export const MapMarkersOverlayResponse = type({
     config: type({
       completeCasesAllVars: number,
       completeCasesAxesVars: number,
-      rankedValues: array(unknown),
+      rankedValues: array(string),
       viewport: type({
         latitude: type({
           xMin: number,
