@@ -203,6 +203,12 @@ function constrainLongitudeToMainWorld({
     newWest -= 360;
   }
 
+  // fully zoomed out, the longitude bounds are often the same
+  // but we need to make sure that west is slightly greater than east
+  // so that they "wrap around" the whole globe
+  // (if west was slightly less than east, it would represent a very tiny sliver)
+  if (newWest === newEast) newWest = newWest + 1e-8;
+
   return {
     southWest: { lat: south, lng: newWest },
     northEast: { lat: north, lng: newEast },
