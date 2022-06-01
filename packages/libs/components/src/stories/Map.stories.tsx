@@ -289,7 +289,7 @@ export const ScrollAndZoom: Story<MapVEuMapProps> = (args) => {
           markers={markerElements}
           animation={defaultAnimation}
           zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-          isMapScroll={mapScroll}
+          scrollingEnabled={mapScroll}
         />
       </div>
     </>
