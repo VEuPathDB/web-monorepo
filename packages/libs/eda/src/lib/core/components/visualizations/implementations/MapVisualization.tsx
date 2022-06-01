@@ -437,6 +437,8 @@ function MapViz(props: VisualizationProps) {
             if (overlayResponse.value)
               // don't know why TS makes us do this check *again*...
               map[geoAggKey] = {
+                // sum up the entity count from the sampleSizeTable because
+                // the data.label values might be proportions (and sum to 1)
                 entityCount: sum(
                   overlayResponse.value.sampleSizeTable.find(
                     (item) =>
@@ -456,17 +458,22 @@ function MapViz(props: VisualizationProps) {
       : undefined;
   }, [overlayResponse]);
 
+  // `vocabulary` is taken from the response, not the study metadata
+  // this is because not all values are shown (up to 8 or 7 most popular + 'other')
+  const vocabulary = useMemo(
+    () =>
+      overlayResponse.value != null
+        ? overlayResponse.value.mapMarkers.config.rankedValues
+        : undefined,
+    [overlayResponse.value]
+  );
+
   /**
    * Merge the overlay data into the basicMarkerData, if available,
    * and create markers.
    */
   const markers = useMemo(() => {
-    const vocabulary =
-      xAxisVariable?.vocabulary != null
-        ? fixLabelsForNumberVariables(xAxisVariable.vocabulary, xAxisVariable)
-        : overlayResponse.value != null
-        ? overlayResponse.value.mapMarkers.config.rankedValues
-        : [];
+    if (vocabulary == null) return [];
 
     const pieValueMax = overlayData
       ? values(overlayData) // it's a Record 'object'
@@ -559,7 +566,7 @@ function MapViz(props: VisualizationProps) {
     );
   }, [
     basicMarkerData.value,
-    overlayResponse,
+    vocabulary,
     overlayData,
     vizConfig.checkedLegendItems,
     vizConfig.markerType,
@@ -666,7 +673,6 @@ function MapViz(props: VisualizationProps) {
    */
 
   const legendItems: LegendItemsProps[] = useMemo(() => {
-    const vocabulary = xAxisVariable?.vocabulary;
     if (vocabulary == null) return [];
 
     return vocabulary.map((label) => ({
@@ -683,7 +689,7 @@ function MapViz(props: VisualizationProps) {
       group: 1,
       rank: 1,
     }));
-  }, [xAxisVariable, overlayData]);
+  }, [xAxisVariable, vocabulary]);
 
   // set checkedLegendItems
   const checkedLegendItems = useCheckedLegendItemsStatus(
