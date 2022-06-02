@@ -1,10 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useToggleStarredVariable } from '../../hooks/starredVariables';
-import {
-  Computation,
-  ComputationAppOverview,
-  Visualization,
-} from '../../types/visualization';
+import { Computation, Visualization } from '../../types/visualization';
 import { VisualizationsContainer } from '../visualizations/VisualizationsContainer';
 import { VisualizationType } from '../visualizations/VisualizationTypes';
 import { ComputationProps } from './Types';
@@ -22,7 +18,6 @@ export function ComputationInstance(props: Props) {
     computationAppOverview,
     computationId,
     analysisState,
-    // analysisState: { analysis, setComputations },
     totalCounts,
     filteredCounts,
     geoConfigs,
@@ -76,14 +71,7 @@ export function ComputationInstance(props: Props) {
   // the normal VisualizationsContainer.
   return (
     <div>
-      {baseUrl && (
-        <AppTitle
-          computation={computation}
-          condensed={
-            url.replace(/\/+$/, '').split('/').pop() === 'visualizations'
-          }
-        />
-      )}
+      {baseUrl && <AppTitle computation={computation} />}
       <VisualizationsContainer
         analysisState={analysisState}
         computationAppOverview={computationAppOverview}
@@ -107,23 +95,16 @@ export function ComputationInstance(props: Props) {
 // Title above each app in /visualizations
 interface AppTitleProps {
   computation: Computation;
-  condensed: boolean;
 }
 
-// We expect two different types of app titles: one in /visualizations that labels each app's row
-// and one just below the navigation when we're working on a viz within an app. The former
-// is the "condensed" version. May make sense to break into two components when
-// further styling is applied?
 function AppTitle(props: AppTitleProps) {
-  const { computation, condensed } = props;
+  const { computation } = props;
 
-  return condensed ? (
+  return computation.descriptor.configuration ? (
     <div style={{ marginTop: 10 }}>
-      {computation.descriptor.configuration ? (
-        <h4 style={{ marginLeft: 20 }}>
-          <em>{computation.displayName}</em>
-        </h4>
-      ) : null}
+      <h4 style={{ marginLeft: 20 }}>
+        <em>{computation.displayName}</em>
+      </h4>
     </div>
   ) : null;
 }

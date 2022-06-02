@@ -1,5 +1,4 @@
 /** @jsxImportSource @emotion/react */
-import { jsx } from '@emotion/react';
 import { useRouteMatch } from 'react-router-dom';
 import { useHistory } from 'react-router';
 import { useStudyMetadata } from '../../..';
@@ -46,13 +45,10 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
 
   const alphaDivMethod =
     // @ts-ignore
-    computation.descriptor.configuration.alphaDivMethod ?? ALPHA_DIV_METHODS[0];
-  // @ts-ignore
-  const collectionVariable = computation.descriptor.configuration
-    .collectionVariable ?? {
-    variableId: collections[0].id,
-    entityId: collections[0].entityId,
-  };
+    computation.descriptor.configuration.alphaDivMethod;
+  const collectionVariable =
+    // @ts-ignore
+    computation.descriptor.configuration.collectionVariable;
 
   const changeConfigHandler = async (
     changedConfigPropertyName: string,
@@ -121,7 +117,6 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
       // 2N:  existingComputation was not found
       //      get config displayName for new computation
       //      create a new computation with the existing viz
-      // @ts-ignore
       const variableObject = collections.find((collectionVar) =>
         isEqual(
           {

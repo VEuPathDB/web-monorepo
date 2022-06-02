@@ -1,4 +1,4 @@
-import { Link, useRouteMatch } from 'react-router-dom';
+import { useRouteMatch } from 'react-router-dom';
 import { useHistory } from 'react-router';
 import { ComputationAppOverview } from '../../types/visualization';
 import { ComputationPlugin } from './Types';
@@ -20,7 +20,7 @@ interface Props {
 }
 
 export function StartPage(props: Props) {
-  const { analysisState, apps, baseUrl, plugins } = props;
+  const { analysisState, apps, plugins } = props;
   const cx = makeClassNameHelper('VisualizationsContainer');
   const defaultConfigs = useDefaultPluginConfiguration(apps);
   const history = useHistory();
@@ -52,6 +52,7 @@ export function StartPage(props: Props) {
                   padding: '1em',
                   margin: '1em 0',
                 }}
+                key={app.name}
               >
                 <div style={{ width: '25em', margin: '0 8em' }}>
                   <H6
@@ -67,18 +68,6 @@ export function StartPage(props: Props) {
                     {app.description}
                   </span>
                 </div>
-                {/* <Link
-                to={`${baseUrl}/new/${app.name}`}
-                style={{
-                  pointerEvents: plugins[app.name] ? 'auto' : 'none',
-                }}
-              >
-                <div style={{ fontWeight: 'bold', fontSize: '1.2em' }}>
-                  {app.displayName}
-                  {plugins[app.name] ? '' : <i> (Coming soon!)</i>}
-                </div>
-                <div>{app.description}</div>
-              </Link> */}
                 {app.visualizations?.map((vizType, index) => {
                   const disabled = plugins[app.name] === undefined;
                   const VizSelector = plugins[app.name]
@@ -96,88 +85,99 @@ export function StartPage(props: Props) {
                       }}
                     >
                       <Tooltip title={<>{vizType.description}</>}>
-                        <button
-                          disabled={disabled}
-                          onClick={async () => {
-                            if (analysisState.analysis == null) return;
-                            const computations =
-                              analysisState.analysis.descriptor.computations;
-                            const defaultConfig = defaultConfigs.find(
-                              (config) => config?.name === app.name
-                            );
-                            /*
-                              The first instance of a configurable app will be derived by a default configuration.
-                              Here we're checking if a computation with a defaultConfig already exists.
-                            */
-                            const existingComputation = computations.find(
-                              (c) =>
-                                isEqual(
-                                  c.descriptor.configuration,
-                                  defaultConfig?.configuration
-                                ) && app.name === c.descriptor.type
-                            );
-                            const visualizationId = uuid();
-                            const newVisualization = {
-                              visualizationId,
-                              displayName: 'Unnamed visualization',
-                              descriptor: {
-                                type: vizType.name!,
-                                configuration: plugins[
-                                  app.name
-                                ].visualizationTypes[
-                                  vizType.name
-                                ].createDefaultConfig(),
-                              },
-                            };
-                            if (!existingComputation) {
-                              const computation = createComputation(
-                                app.name,
-                                //@ts-ignore
-                                defaultConfig ? defaultConfig.displayName : '',
-                                //@ts-ignore
-                                defaultConfig
-                                  ? defaultConfig.configuration
-                                  : null,
-                                computations,
-                                [newVisualization]
+                        {/* 
+                          The span element removes the following MUI error: 
+                          "Material-UI: You are providing a disabled `button` child to the Tooltip component." 
+                        */}
+                        <span>
+                          <button
+                            disabled={disabled}
+                            style={{
+                              cursor: disabled ? 'not-allowed' : 'pointer',
+                            }}
+                            onClick={async () => {
+                              if (analysisState.analysis == null) return;
+                              const computations =
+                                analysisState.analysis.descriptor.computations;
+                              const defaultConfig = defaultConfigs.find(
+                                (config) => config?.name === app.name
                               );
-                              const newAnalysisId = await analysisState.setComputations(
-                                [computation, ...computations]
+                              /*
+                                The first instance of a configurable app will be derived by a default configuration.
+                                Here we're checking if a computation with a defaultConfig already exists.
+                              */
+                              const existingComputation = computations.find(
+                                (c) =>
+                                  isEqual(
+                                    c.descriptor.configuration,
+                                    defaultConfig?.configuration
+                                  ) && app.name === c.descriptor.type
                               );
-                              const urlBase = newAnalysisId
-                                ? url.replace('new', newAnalysisId)
-                                : url;
-                              history.push(
-                                urlBase.replace(
-                                  'new',
-                                  `${computation.computationId}/${visualizationId}`
-                                )
-                              );
-                            } else {
-                              const updatedComputation = {
-                                ...existingComputation,
-                                visualizations: existingComputation.visualizations.concat(
-                                  newVisualization
-                                ),
+                              const visualizationId = uuid();
+                              const newVisualization = {
+                                visualizationId,
+                                displayName: 'Unnamed visualization',
+                                descriptor: {
+                                  type: vizType.name!,
+                                  configuration: plugins[
+                                    app.name
+                                  ].visualizationTypes[
+                                    vizType.name
+                                  ].createDefaultConfig(),
+                                },
                               };
-                              analysisState.setComputations([
-                                updatedComputation,
-                                ...computations.filter(
-                                  (c) =>
-                                    c.computationId !==
-                                    updatedComputation.computationId
-                                ),
-                              ]);
-                              const urlBase = url.replace(
-                                'new',
-                                existingComputation.computationId
-                              );
-                              history.push(`${urlBase}/${visualizationId}`);
-                            }
-                          }}
-                        >
-                          <VizSelector {...app} />
-                        </button>
+                              if (!existingComputation) {
+                                const computation = createComputation(
+                                  app.name,
+                                  //@ts-ignore
+                                  defaultConfig
+                                    ? defaultConfig.displayName
+                                    : '',
+                                  //@ts-ignore
+                                  defaultConfig
+                                    ? defaultConfig.configuration
+                                    : null,
+                                  computations,
+                                  [newVisualization]
+                                );
+                                const newAnalysisId = await analysisState.setComputations(
+                                  [computation, ...computations]
+                                );
+                                const urlBase = newAnalysisId
+                                  ? url.replace('new', newAnalysisId)
+                                  : url;
+                                history.push(
+                                  urlBase.replace(
+                                    'new',
+                                    `${computation.computationId}/${visualizationId}`
+                                  )
+                                );
+                              } else {
+                                const updatedComputation = {
+                                  ...existingComputation,
+                                  visualizations: existingComputation.visualizations.concat(
+                                    newVisualization
+                                  ),
+                                };
+                                analysisState.setComputations([
+                                  updatedComputation,
+                                  ...computations.filter(
+                                    (c) =>
+                                      c.computationId !==
+                                      updatedComputation.computationId
+                                  ),
+                                ]);
+                                const urlBase = url.replace(
+                                  'new',
+                                  existingComputation.computationId
+                                );
+                                history.push(`${urlBase}/${visualizationId}`);
+                              }
+                            }}
+                          >
+                            <VizSelector {...app} />
+                          </button>
+                        </span>
                       </Tooltip>
                       <div className={cx('-PickerEntryName')}>
                         <div>

@@ -1,5 +1,4 @@
 /** @jsxImportSource @emotion/react */
-import { jsx } from '@emotion/react';
 import { useRouteMatch } from 'react-router-dom';
 import { useHistory } from 'react-router';
 import { useStudyMetadata } from '../../..';
@@ -118,15 +117,13 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
       // 2N:  existingComputation was not found
       //      get config displayName for new computation
       //      create a new computation with the existing viz
-      // @ts-ignore
       const variableObject = collections.find((collectionVar) =>
         isEqual(
           {
             variableId: collectionVar.id,
             entityId: collectionVar.entityId,
           },
-          // @ts-ignore
-          newConfigObject.collectionVariable
+          newConfigObject && newConfigObject.collectionVariable
         )
       );
       const newComputation = createComputation(
