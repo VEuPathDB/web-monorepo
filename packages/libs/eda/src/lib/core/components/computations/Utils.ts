@@ -1,4 +1,4 @@
-import { Computation } from '../../types/visualization';
+import { Computation, Visualization } from '../../types/visualization';
 // alphadiv abundance
 import { ComputationConfiguration } from '../../types/visualization';
 
@@ -10,6 +10,7 @@ export function createComputation(
   displayName: string,
   configuration: ComputationConfiguration,
   computations: Computation[] = [],
+  visualizations: Visualization[] = [],
   computationId?: string
 ): Computation {
   if (!computationId) {
@@ -25,7 +26,7 @@ export function createComputation(
       type: computationType,
       configuration,
     },
-    visualizations: [],
+    visualizations,
   };
 }
 

@@ -18,8 +18,11 @@ export interface ComputationProps {
 
 export interface ComputationConfigProps extends ComputationProps {
   // alphadiv abundance
+  computation: Computation;
+  visualizationId: string;
   addNewComputation: (
     name: string,
+    displayName: string,
     configuration: ComputationConfiguration
   ) => void;
 }
