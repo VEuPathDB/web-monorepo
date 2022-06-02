@@ -2,7 +2,7 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 import UIThemeProvider from '../../components/theming/UIThemeProvider';
 import { gray } from '../../definitions/colors'
 
-import Banner, { BannerComponentProps } from '../../components/notifications/Banner'
+import Banner, { BannerComponentProps } from '../../components/banners/Banner'
 
 export default {
     title: 'Notifications/Banners',
