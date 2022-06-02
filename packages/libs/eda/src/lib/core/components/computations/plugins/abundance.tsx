@@ -1,3 +1,5 @@
+/** @jsxImportSource @emotion/react */
+import { jsx } from '@emotion/react';
 import { useRouteMatch } from 'react-router-dom';
 import { useHistory } from 'react-router';
 import { useStudyMetadata } from '../../..';
@@ -44,13 +46,10 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
 
   const rankingMethod =
     // @ts-ignore
-    computation.descriptor.configuration.rankingMethod ?? ABUNDANCE_METHODS[0];
-  // @ts-ignore
-  const collectionVariable = computation.descriptor.configuration
-    .collectionVariable ?? {
-    variableId: collections[0].id,
-    entityId: collections[0].entityId,
-  };
+    computation.descriptor.configuration.rankingMethod;
+  const collectionVariable =
+    // @ts-ignore
+    computation.descriptor.configuration.collectionVariable;
 
   const changeConfigHandler = async (
     changedConfigPropertyName: string,
@@ -176,8 +175,31 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
           alignItems: 'center',
         }}
       >
-        <div style={{ justifySelf: 'end' }}>Data: </div>
+        <span style={{ justifySelf: 'end', fontWeight: 500 }}>Data</span>
         <select
+          css={{
+            backgroundColor: '#e0e0e0',
+            cursor: 'pointer',
+            border: 0,
+            padding: '6px 16px',
+            fontSize: '0.8125rem',
+            minWidth: '64px',
+            boxSizing: 'border-box',
+            transition:
+              'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+            fontFamily:
+              'Roboto, "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif',
+            fontWeight: 500,
+            lineHeight: 1.25,
+            borderRadius: '4px',
+            textTransform: 'none',
+            boxShadow:
+              '0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)',
+            '&:hover': {
+              boxShadow: `0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)`,
+              backgroundColor: `#d5d5d5`,
+            },
+          }}
           value={variableDescriptorToString({
             variableId: collectionVariable.variableId,
             entityId: collectionVariable.entityId,
@@ -202,8 +224,31 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
             );
           })}
         </select>
-        <div style={{ justifySelf: 'end' }}>Method: </div>
+        <span style={{ justifySelf: 'end', fontWeight: 500 }}>Method</span>
         <select
+          css={{
+            backgroundColor: '#e0e0e0',
+            cursor: 'pointer',
+            border: 0,
+            padding: '6px 16px',
+            fontSize: '0.8125rem',
+            minWidth: '64px',
+            boxSizing: 'border-box',
+            transition:
+              'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+            fontFamily:
+              'Roboto, "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif',
+            fontWeight: 500,
+            lineHeight: 1.25,
+            borderRadius: '4px',
+            textTransform: 'none',
+            boxShadow:
+              '0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)',
+            '&:hover': {
+              boxShadow: `0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)`,
+              backgroundColor: `#d5d5d5`,
+            },
+          }}
           value={rankingMethod}
           onChange={(e) => changeConfigHandler('rankingMethod', e.target.value)}
         >
