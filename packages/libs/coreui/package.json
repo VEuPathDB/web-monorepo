@@ -79,6 +79,7 @@
     "@emotion/styled": "^11.7.0",
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
+    "notistack": "^1.0.10",
     "react": ">=16.14"
   },
   "volta": {
