@@ -24,7 +24,7 @@ export default function makeSnackbarProvider<
   StyleProps extends object,
   ClassKey extends CombinedClassKey = CombinedClassKey,
 >(
-  styles: Styles<Theme, StyleProps, ClassKey>,
+  styles?: Styles<Theme, StyleProps, ClassKey>,
   displayName: string = 'SnackbarProvider'
 ) {
   const useStyles = makeStyles({
