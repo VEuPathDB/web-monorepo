@@ -2,10 +2,10 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 import UIThemeProvider from '../../components/theming/UIThemeProvider';
 import { gray } from '../../definitions/colors'
 
-import Banner, { BannerComponentProps } from '../../components/banners/Banner'
+import Banner, { BannerComponentProps } from '../../components/notifications/Banner'
 
 export default {
-    title: 'Banners/Banners',
+    title: 'Notifications/Banners',
     component: Banner
 } as Meta;
 
