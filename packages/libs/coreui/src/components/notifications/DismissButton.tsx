@@ -5,7 +5,7 @@ interface Props {
   onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-export function DismissButton(props: Props) {
+export default function DismissButton(props: Props) {
   return (
     <button
       type="button"
