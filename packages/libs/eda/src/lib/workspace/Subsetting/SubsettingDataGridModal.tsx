@@ -1,3 +1,4 @@
+/** @jsxImportSource @emotion/react */
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { ceil } from 'lodash';
 import useDimensions from 'react-cool-dimensions';
@@ -401,6 +402,8 @@ export default function SubsettingDataGridModal({
                           position: 'absolute',
                           right: 0,
                           top: 0,
+                          margin: 3,
+                          fontSize: 11,
                         }}
                       >
                         {requiredColumnAccessors?.includes(headerGroup.id) ? (
@@ -423,10 +426,14 @@ export default function SubsettingDataGridModal({
                               )
                             }
                             title="Remove column"
-                            style={{
+                            css={{
                               background: 'none',
                               border: 'none',
+                              borderRadius: 2,
                               color: 'inherit',
+                              '&:hover': {
+                                background: '#e6e6e6',
+                              },
                             }}
                           >
                             ✕
