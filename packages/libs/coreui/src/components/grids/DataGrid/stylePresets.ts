@@ -9,6 +9,9 @@ export type DataGridStyleSpec = {
     borderColor?: React.CSSProperties['borderColor'];
     primaryRowColor: React.CSSProperties['color'];
     secondaryRowColor: React.CSSProperties['color'];
+    width?: React.CSSProperties['width'];
+    height?: React.CSSProperties['height'];
+    overflow?: React.CSSProperties['overflow'];
   };
   /** Styles for header cells. */
   headerCells: React.CSSProperties;
