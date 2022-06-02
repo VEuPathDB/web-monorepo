@@ -6,6 +6,14 @@ import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { DevLoginFormContext } from '.';
 import { endpoint } from './constants';
 
+const buttonLinkStyle = {
+  color: 'whitesmoke',
+  background: 'transparent',
+  border: 'none',
+  fontWeight: 500,
+  padding: '.5em 0',
+};
+
 export default function Header() {
   const { loginFormVisible, setLoginFormVisible } = React.useContext(
     DevLoginFormContext
@@ -38,7 +46,16 @@ export default function Header() {
   }
 
   return (
-    <h1 style={{ background: 'black', color: 'whitesmoke' }}>
+    <h1
+      style={{
+        background: 'black',
+        color: 'whitesmoke',
+        margin: 0,
+        fontSize: '2.5em',
+        fontWeight: 400,
+        textAlign: 'left',
+      }}
+    >
       {/* eslint-disable-next-line react/jsx-no-comment-textnodes */}
       <code>/// ========================== \\\</code>
       <br />
@@ -54,8 +71,7 @@ export default function Header() {
           <>
             <button
               type="button"
-              className="link"
-              style={{ color: 'whitesmoke' }}
+              style={buttonLinkStyle}
               onClick={() => setLoginFormVisible(true)}
             >
               Log In
@@ -64,8 +80,7 @@ export default function Header() {
         ) : (
           <button
             type="button"
-            className="link"
-            style={{ color: 'whitesmoke' }}
+            style={buttonLinkStyle}
             onClick={() => logout()}
           >
             Log Out ({user.email})
@@ -120,12 +135,15 @@ export default function Header() {
                 }}
               >
                 <div>
-                  <button style={{ fontSize: '1em' }} type="submit">
+                  <button
+                    style={{ fontSize: '1em', color: 'black' }}
+                    type="submit"
+                  >
                     Submit
                   </button>{' '}
                   &nbsp;
                   <button
-                    style={{ fontSize: '1em' }}
+                    style={{ fontSize: '1em', color: 'black' }}
                     type="button"
                     onClick={() => setLoginFormVisible(false)}
                   >

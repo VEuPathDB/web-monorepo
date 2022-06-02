@@ -2,16 +2,13 @@ import { GeoConfig } from '../types/geoConfig';
 import { StudyEntity } from '../types/study';
 
 /**
- * Given a study, search its variable tree to find a node that has the following direct children
+ * Given an entity note in the study tree, check to see if it has the following variables
  *
- * a longitude variable
- * a number variable
- * six string categorical variables
- * and nothing more!
+ * longitude (exactly one)
+ * latitude (exactly one)
+ * geoaggregator (multiple)
  *
- * returns the VariableTreNode or null
- *
- * This is a placeholder implementation, until more direct variable annotations (displayType) are available for b57
+ * If they exist, return a GeoConfig, else return undefined.
  */
 export function entityToGeoConfig(
   entity: StudyEntity,
@@ -19,34 +16,30 @@ export function entityToGeoConfig(
 ): GeoConfig | undefined {
   // first find the longitude variable
   const longitudeVariables = entity.variables.filter(
-    (variable) => variable.type === 'longitude'
+    (variable) => variable.displayType === 'longitude'
   );
   if (longitudeVariables.length === 1) {
     const longitudeVariable = longitudeVariables[0];
-    const siblingVariables = entity.variables.filter(
-      (variable) => variable.parentId === longitudeVariable.parentId
+    const latitudeVariables = entity.variables.filter(
+      (variable) => variable.displayType === 'latitude'
     );
-    const numberSiblings = siblingVariables.filter(
-      (variable) => variable.type === 'number'
-    );
-    if (numberSiblings.length === 1) {
-      const stringCategoricals = siblingVariables.filter(
-        (variable) =>
-          variable.type === 'string' &&
-          (variable.dataShape === 'categorical' ||
-            variable.dataShape === 'binary')
-      );
-
-      if (stringCategoricals.length === 6) {
+    if (latitudeVariables.length === 1) {
+      const latitudeVariable = latitudeVariables[0];
+      const geoAggregatorVariables = entity.variables
+        .filter((variable) => variable.displayType === 'geoaggregator')
+        .sort((a, b) =>
+          a.displayOrder != null && b.displayOrder != null
+            ? a.displayOrder - b.displayOrder
+            : 0
+        );
+      if (geoAggregatorVariables.length > 0) {
         return {
           entity,
           zoomLevelToAggregationLevel,
-          latitudeVariableId: numberSiblings[0].id,
+          latitudeVariableId: latitudeVariable.id,
           longitudeVariableId: longitudeVariable.id,
-          aggregationVariableIds: stringCategoricals.map(({ id }) => id),
+          aggregationVariableIds: geoAggregatorVariables.map(({ id }) => id),
         };
-      } else {
-        return undefined;
       }
     }
   }
