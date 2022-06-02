@@ -2,7 +2,6 @@ import { ReactNode, useMemo } from 'react';
 
 import { Grow, makeStyles } from '@material-ui/core';
 import { Styles, StyleRules } from '@material-ui/core/styles/withStyles';
-import { Close } from '@material-ui/icons';
 import {
   CombinedClassKey,
   OptionsObject,
@@ -20,6 +19,8 @@ import {
   mutedRed,
   mutedYellow
 } from '../../definitions/colors';
+
+import { DismissButton } from './DismissButton';
 
 const variantHueMap: Array<[VariantClassKey, ColorHue]> = [
   ['variantError', mutedRed],
@@ -118,34 +119,4 @@ export function useSnackbar(): ProviderContext {
     },
     closeSnackbar
   }), [ enqueueSnackbar, closeSnackbar ]);
-}
-
-interface DismissButtonProps {
-  className?: string;
-  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
-}
-
-export function DismissButton(props: DismissButtonProps) {
-  return (
-    <button
-      type="button"
-      className={props.className}
-      onClick={props.onClick}
-      css={{
-        border: 'none',
-        background: 'transparent',
-        padding: 'none',
-        margin: 'none',
-        cursor: 'pointer'
-      }}
-    >
-      <Close
-        height="1.5em"
-        width="1.5em"
-        css={{
-          verticalAlign: 'middle',
-        }}
-      />
-    </button>
-  );
 }
