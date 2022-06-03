@@ -1,9 +1,10 @@
-import { ReactNode, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { Grow } from '@material-ui/core';
 import {
   OptionsObject,
   ProviderContext,
+  SnackbarMessage,
   useSnackbar as useNotistackSnackbar
 } from 'notistack';
 
@@ -27,7 +28,7 @@ export default function useSnackbar(): ProviderContext {
   } = useNotistackSnackbar();
 
   return useMemo(() => ({
-    enqueueSnackbar(message: ReactNode, options?: OptionsObject) {
+    enqueueSnackbar(message: SnackbarMessage, options?: OptionsObject) {
       return enqueueSnackbar(
         message,
         {

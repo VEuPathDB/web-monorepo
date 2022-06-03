@@ -1,7 +1,5 @@
-import { ReactNode } from 'react';
-
 import { Story, Meta } from '@storybook/react/types-6-0';
-import { OptionsObject } from 'notistack';
+import { OptionsObject, SnackbarMessage } from 'notistack';
 
 import { FilledButton } from '../../components/buttons';
 
@@ -16,7 +14,7 @@ export default {
 } as Meta;
 
 interface SnackbarStoryArgs {
-  message: ReactNode;
+  message: SnackbarMessage;
   options?: OptionsObject;
 }
 
