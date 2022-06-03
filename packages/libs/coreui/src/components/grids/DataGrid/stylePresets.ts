@@ -41,7 +41,7 @@ const mesa: DataGridStyleSpec = {
     paddingRight: 30,
     paddingBottom: 10,
     paddingTop: 10,
-    color: gray[500],
+    color: gray[700],
     alignContent: 'center',
     backgroundColor: gray[100],
     fontSize: 13,
@@ -52,7 +52,7 @@ const mesa: DataGridStyleSpec = {
     borderLeft: 'solid 1px',
     borderRight: 'solid 1px',
     borderColor: gray[200],
-    color: gray[500],
+    color: gray[800],
     fontSize: 12,
   },
   icons: {
