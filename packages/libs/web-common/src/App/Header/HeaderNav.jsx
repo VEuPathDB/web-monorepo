@@ -5,9 +5,9 @@ import UserMenu from 'ebrc-client/App/UserMenu';
 import { formatReleaseDate } from 'ebrc-client/util/formatters';
 import { IconAlt as Icon, Link, Mesa } from '@veupathdb/wdk-client/lib/Components';
 import partofveupath from '../../../images/partofveupath.png';
+import { SiteSearchInput } from 'ebrc-client/components';
 
 import './HeaderNav.scss';
-import { SiteSearchInput } from 'ebrc-client/components';
 
 class HeaderNav extends React.Component {
   constructor (props) {
@@ -157,7 +157,7 @@ class HeaderNav extends React.Component {
           <div className="HeaderNav-Switch">
             <div className="stack HeaderNav-Primary" style={{ maxWidth: '80em', marginLeft: '7%' }}>
               {siteSearchServiceUrl && (
-                <div style={{ color: 'black', fontSize: '1rem', width: '70%' }}>
+                <div style={{ color: 'black', fontSize: '1rem', width: '70%', margin: '1em 0' }}>
                   <SiteSearchInput/>
                 </div>
               )}
