@@ -4,7 +4,6 @@ import { Computation, Visualization } from '../../types/visualization';
 import { VisualizationsContainer } from '../visualizations/VisualizationsContainer';
 import { VisualizationType } from '../visualizations/VisualizationTypes';
 import { ComputationProps } from './Types';
-import { useRouteMatch } from 'react-router-dom';
 
 export interface Props extends ComputationProps {
   computationId: string;
@@ -57,8 +56,6 @@ export function ComputationInstance(props: Props) {
     },
     [setComputations, computationId]
   );
-
-  const { url } = useRouteMatch();
 
   if (
     analysis == null ||

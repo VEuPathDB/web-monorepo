@@ -75,11 +75,10 @@ export function StartPage(props: Props) {
                         .selectorComponent
                     : helperPlugin.visualizationTypes['scatterplot']
                         .selectorComponent;
-
                   return (
                     <div
                       className={cx('-PickerEntry', disabled && 'disabled')}
-                      key={`vizType${index}`}
+                      key={`${app.name}-vizType-${index}`}
                       style={{
                         margin: '0 3em',
                       }}
