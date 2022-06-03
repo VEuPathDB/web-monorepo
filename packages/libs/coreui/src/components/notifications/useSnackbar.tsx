@@ -1,6 +1,6 @@
 import { ReactNode, useMemo } from 'react';
 
-import { Grow  } from '@material-ui/core';
+import { Grow } from '@material-ui/core';
 import {
   OptionsObject,
   ProviderContext,
