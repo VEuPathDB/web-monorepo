@@ -2100,10 +2100,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/coreui@^0.16.0":
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.16.0.tgz#bb0e549d854f57a2dd784f1a3f8532d9685196ef"
-  integrity sha512-B6twkOliirk980Fau1a7r5F6yPMvKltkrqLMCnGHw6VRnw0TCtU+O334z1gznprPcn17rU0TiVPOB2SgJYTgjg==
+"@veupathdb/coreui@^0.16.1":
+  version "0.16.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.16.1.tgz#a25c5667fc152a786ea2ec8a9eab3e0dec522786"
+  integrity sha512-AI6EEifiJQmaI5+Cz8hmgmHdM/YXptZ5Gu3/gevzVRa7q4en3mztkcTwHkjl/tU5XDUm5dUmIENY6ww6jw/2uA==
   dependencies:
     "@react-hook/size" "^2.1.2"
     lodash "^4.17.21"
@@ -2111,10 +2111,10 @@
     react-responsive-modal "^6.2.0"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^3.5.14":
-  version "3.5.14"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.5.14.tgz#51bdd5f9ae51441ce00fa28a4698d28b03743a42"
-  integrity sha512-HXJlFAOmjOTmTYplw/c5rVjW0yPcCWSz1SVbCsipzT7/aRrNhTvAZGYKTwDgou3JJpYybhH3SZCkNRpwzrvsZg==
+"@veupathdb/eda@^3.5.17":
+  version "3.5.17"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.5.17.tgz#b90a05e833ec5ce60926c4706db156082274d5ae"
+  integrity sha512-vxxPONGd1kDquZKmcIwlcAADpn7OgBVc2c/OLIQOAnrqhbjsGyKnamNCqtje7yqSMWgDlP5ra2CEEAmqXX6wTA==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -2172,18 +2172,18 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/user-datasets@^0.1.0":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/user-datasets/-/user-datasets-0.1.1.tgz#06eb1f8b9e7b586a547adf675df9fbdd9ee6074c"
-  integrity sha512-CvfYdBJjF+f0xfQrLyMpuelAJ5XpyLDeyvqLIYhSsTdY9BwddM4zv0UXzUpSRPzkvD533nU5p2Zt2SPirg3L0g==
+"@veupathdb/user-datasets@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/user-datasets/-/user-datasets-0.1.2.tgz#9b0a3bf7fcf6afc70d15cc799551022ad1639664"
+  integrity sha512-0JbMOnDjMuuGDeBQTgaEaZaiuPpRHlidWwcRuP//3HcCfAt0k4CW+yVa1jY3x2LqSwl9ZoNXo/W/ocxskJnhfQ==
   dependencies:
     lodash "^4.17.21"
     moment "^2.21.0"
 
-"@veupathdb/wdk-client@^0.7.4":
-  version "0.7.4"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.7.4.tgz#ca7c2d7ca93898a2d7337cc77d99f3be89777812"
-  integrity sha512-ecJr1eJC9DexB0UwasXlpPmn0pLx3DEVCVPLvWHhkOZRkLFratX77Xy8dj1U/xM6o2lmTevpGq3OgnjIRjB4yg==
+"@veupathdb/wdk-client@^0.7.5":
+  version "0.7.5"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.7.5.tgz#a24e0d0dead953ca408866b777f9ab622c7e3a19"
+  integrity sha512-iVRC+y+QARZ8lxETeROQn0LK6rsAMMpJmdQheI3at9g4EPfOnQ6UzAQAHp5+/+yy27TmBnHA6K4uN2rSHTo0Yw==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
