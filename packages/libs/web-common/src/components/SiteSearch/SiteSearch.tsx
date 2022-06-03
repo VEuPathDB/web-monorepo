@@ -765,17 +765,17 @@ function StudyInfoTableSection(props: { document: SiteSearchDocument, fieldName:
       columnDefs={[
         {
           accessor: "_",
-          header: <Icon fa="external-link" />,
+          header: <div><Icon fa="external-link" /> View</div>,
           render: ({ row }) => (
-            <Link
-              to={`${makeEdaRoute(useDatasetId(row.studyId))}/new/variables/${
-                row.entityId
-              }/${document.wdkPrimaryKeyString}`}
-            >
-              <Tooltip css={{}} title="View variable in a new analysis">
-                <Icon fa="external-link" />
-              </Tooltip>
-            </Link>
+            <Tooltip css={{}} title="View variable in a new analysis">
+              <Link
+                to={`${makeEdaRoute(useDatasetId(row.studyId))}/new/variables/${
+                  row.entityId
+                }/${document.wdkPrimaryKeyString}`}
+              >
+                <Icon fa="external-link" /> View
+              </Link>
+            </Tooltip>
           ),
         },
         { accessor: "studyId" },
@@ -830,13 +830,13 @@ function VariableList(props: { document: SiteSearchDocument, fieldName: string }
       columnDefs={[
         {
           accessor: '_',
-          header: <Icon fa="external-link"/>,
+          header: <div><Icon fa="external-link"/> View</div>,
           render: ({ row }) => (
-            <Link to={makeLink(row.studyId, row.entityId, row.variableId)}>
-              <Tooltip css={null} title="View variable in a new analysis">
-                <Icon fa="external-link"/>
-              </Tooltip>
-            </Link>
+            <Tooltip css={null} title="View variable in a new analysis">
+              <Link to={makeLink(row.studyId, row.entityId, row.variableId)}>
+                <Icon fa="external-link"/> View
+              </Link>
+            </Tooltip>
           )
         },
         { accessor: 'variableId' },
