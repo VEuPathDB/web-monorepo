@@ -54,3 +54,11 @@ a,
   padding: none;
   margin: none;
 }
+.btn {
+  padding: 0.5em;
+  margin: 0 0.5em;
+}
+.btn .fa.right-side {
+  margin-left: 0.5em;
+  margin-right: 0;
+}

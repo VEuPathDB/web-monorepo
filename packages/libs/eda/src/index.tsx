@@ -1,4 +1,14 @@
 import './globals'; // Don't move this. There is a brittle dependency that relies on this being first.
+
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import '!!script-loader!@veupathdb/wdk-client/vendored/jquery';
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import '!!script-loader!@veupathdb/wdk-client/vendored/jquery-migrate-1.2.1';
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import '!!script-loader!@veupathdb/wdk-client/vendored/jquery-ui';
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import '!!script-loader!@veupathdb/wdk-client/vendored/jquery.qtip.min';
+
 import React, {
   createContext,
   useCallback,
@@ -20,6 +30,7 @@ import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import { Props } from '@veupathdb/wdk-client/lib/Components/Layout/Page';
 
 import { DataRestrictionDaemon } from '@veupathdb/study-data-access/lib/data-restriction';
+import dataRestrictionReducer from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionReducer';
 import { wrapWdkDependencies } from '@veupathdb/study-data-access/lib/shared/wrapWdkDependencies';
 import {
   disableRestriction,
@@ -42,6 +53,7 @@ import { useCoreUIFonts } from '@veupathdb/coreui/dist/hooks';
 import { colors, H3 } from '@veupathdb/coreui';
 
 import './index.css';
+import { StoreModule } from '@veupathdb/wdk-client/lib/Core/Store';
 
 const subsettingServiceUrl = '/eda-subsetting-service';
 const dataServiceUrl = '/eda-data-service';
@@ -167,6 +179,13 @@ initialize({
     ...routes,
   ],
   wrapWdkDependencies: partial(wrapWdkDependencies, '/eda-dataset-access'),
+  wrapStoreModules: (storeModules: any) => ({
+    ...storeModules,
+    dataRestriction: {
+      key: 'dataRestriction',
+      reduce: dataRestrictionReducer,
+    },
+  }),
   endpoint,
   additionalMiddleware: [reduxMiddleware],
 } as any);
