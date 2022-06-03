@@ -234,15 +234,6 @@ export default function SubsettingDataGridModal({
       .concat(selectedVariableDescriptors);
   }, [mergeKeys, selectedVariableDescriptors, currentEntity]);
 
-  // console.log({
-  //   mergeKeys,
-  //   selectedVariableDescriptors,
-  //   selectedVariableDescriptorsWithMergeKeys,
-  //   gridColumns,
-  //   gridData,
-  //   requiredColumns,
-  // });
-
   const fetchPaginatedData = useCallback(
     ({ pageSize, pageIndex }) => {
       if (!currentEntity) return;
@@ -450,8 +441,6 @@ export default function SubsettingDataGridModal({
                   position: 'absolute',
                   bottom: 0,
                   right: 0,
-                  // paddingLeft: 10,
-                  // paddingRight: 10,
                   display: 'flex',
                   justifyContent: 'space-evenly',
                   alignItems: 'center',
