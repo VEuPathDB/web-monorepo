@@ -4,7 +4,7 @@ import { Grow  } from '@material-ui/core';
 import {
   OptionsObject,
   ProviderContext,
-  useSnackbar as useNotistackSnackbar,
+  useSnackbar as useNotistackSnackbar
 } from 'notistack';
 
 import DismissButton from './DismissButton';
