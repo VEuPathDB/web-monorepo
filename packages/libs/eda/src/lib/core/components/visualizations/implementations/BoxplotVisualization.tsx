@@ -27,7 +27,11 @@ import {
   FacetedData,
   BoxplotDataObject,
 } from '@veupathdb/components/lib/types/plots';
-import { Computation, CoverageStatistics } from '../../../types/visualization';
+import {
+  Computation,
+  ComputationConfiguration,
+  CoverageStatistics,
+} from '../../../types/visualization';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import { PlotLayout } from '../../layouts/PlotLayout';
 import PluginError from '../PluginError';
@@ -257,12 +261,23 @@ function BoxplotViz(props: VisualizationProps) {
   );
 
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
-  const outputEntity = useFindOutputEntity(
+  let outputEntity = useFindOutputEntity(
     dataElementDependencyOrder,
     vizConfig,
     'xAxisVariable',
     entities
   );
+
+  // Abundance boxplots already know their entity, x, and y vars. Set the output entity here so that
+  // the boxplot can appear on load.
+  if (computation.descriptor.type === 'abundance') {
+    outputEntity = entities.find(
+      (e) =>
+        e.id ===
+        (computation.descriptor.configuration as ComputationConfiguration)
+          ?.collectionVariable.entityId
+    );
+  }
 
   // add to support both alphadiv and abundance
   const data = usePromise(
