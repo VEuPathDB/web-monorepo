@@ -5,6 +5,7 @@ interface Props {
   onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
+/** Button suitable for dismissible notifications */
 export default function DismissButton(props: Props) {
   return (
     <button

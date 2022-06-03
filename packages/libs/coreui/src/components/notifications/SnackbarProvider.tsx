@@ -19,6 +19,14 @@ interface WrappedSnackbarProviderProps<StyleProps> extends SnackbarProviderProps
   styleProps: StyleProps;
 }
 
+/**
+ * @param styles A JSS (https://cssinjs.org/?v=v10.9.1-alpha.2) styling
+ * object
+ * @param displayName The displayName for the returned component
+ * @returns A wrapping of a notistack (https://www.iamhosseindhv.com/notistack)
+ * SnackbarProvider to which our "defaultStyles" and the consumer's passed
+ * "styles" have been applied.
+ */
 export default function makeSnackbarProvider<
   Theme,
   StyleProps extends object,
