@@ -64,7 +64,7 @@ class HeaderNav extends React.Component {
           <SiteMenu items={mainMenu} config={siteConfig}  actions={actions} user={user}/>
           {siteSearchServiceUrl && (
             <div style={{ color: 'black', marginLeft: '2em', width: '35em', alignSelf: 'center' }}>
-              <SiteSearchInput placeholderText="GEMS or malaria"/>
+              <SiteSearchInput/>
             </div>
           )}
         </div>
@@ -158,7 +158,7 @@ class HeaderNav extends React.Component {
             <div className="stack HeaderNav-Primary" style={{ maxWidth: '80em', marginLeft: '7%' }}>
               {siteSearchServiceUrl && (
                 <div style={{ color: 'black', fontSize: '1rem', width: '70%' }}>
-                  <SiteSearchInput placeholderText="GEMS or malaria"/>
+                  <SiteSearchInput/>
                 </div>
               )}
               <SiteMenu items={mainMenu} config={siteConfig} actions={actions} user={user} />
