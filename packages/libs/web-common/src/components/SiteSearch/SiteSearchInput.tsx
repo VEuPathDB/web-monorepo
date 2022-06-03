@@ -66,6 +66,11 @@ export const SiteSearchInput = wrappable(function ({ placeholderText }: Props) {
       {docType && <input type="hidden" name={DOCUMENT_TYPE_PARAM} value={docType}/>}
       {organisms.map(organism => <input key={organism} type="hidden" name={ORGANISM_PARAM} value={organism}/>)}
       {fields.map(field => <input key={field} type="hidden" name={FILTERS_PARAM} value={field}/>)}
+      {hasFilters ? (
+        <Tooltip content="Run a new search, without your existing filters">
+          <button className="reset" type="button" onClick={handleSubmitWithoutFilters}>Clear filters</button>
+        </Tooltip>
+      ) : null}
       <input
         ref={inputRef}
         type="input"
@@ -82,11 +87,6 @@ export const SiteSearchInput = wrappable(function ({ placeholderText }: Props) {
           </button>
         </Tooltip>
       )}
-      {hasFilters ? (
-        <Tooltip content="Run a new search, without your existing filters">
-          <button className="reset" type="button" onClick={handleSubmitWithoutFilters}>Clear filters</button>
-        </Tooltip>
-      ) : null}
       <Tooltip content={hasFilters ? 'Update your search, keeping existing filters' : 'Run a new search'}>
         <button type="submit">
           <i className="fa fa-search" />
