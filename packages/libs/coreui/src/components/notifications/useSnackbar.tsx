@@ -32,10 +32,6 @@ export default function useSnackbar(): ProviderContext {
         message,
         {
           variant: 'info',
-          anchorOrigin: {
-            horizontal: 'center',
-            vertical: 'top',
-          },
           TransitionComponent: Grow as React.ComponentType,
           action: options?.persist === true
             ? function (key) {
