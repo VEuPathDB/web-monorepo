@@ -41,7 +41,7 @@ const mesa: DataGridStyleSpec = {
     paddingRight: 30,
     paddingBottom: 10,
     paddingTop: 10,
-    color: gray[700],
+    color: gray[800],
     alignContent: 'center',
     backgroundColor: gray[100],
     fontSize: 13,
