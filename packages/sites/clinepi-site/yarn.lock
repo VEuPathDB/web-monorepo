@@ -2100,10 +2100,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/coreui@^0.16.1":
-  version "0.16.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.16.1.tgz#a25c5667fc152a786ea2ec8a9eab3e0dec522786"
-  integrity sha512-AI6EEifiJQmaI5+Cz8hmgmHdM/YXptZ5Gu3/gevzVRa7q4en3mztkcTwHkjl/tU5XDUm5dUmIENY6ww6jw/2uA==
+"@veupathdb/coreui@^0.16.2":
+  version "0.16.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.16.2.tgz#55e9c6c8a3df695b647662a521e6f5cd90c1a889"
+  integrity sha512-8LwhZA+SVN3LoTHj5DVnumJZK/mTBI6wF3cQUCU4AzxAn/Wrlvw65prZlcInkn4MwjlC1GFtu2cUX1qyPqHnTw==
   dependencies:
     "@react-hook/size" "^2.1.2"
     lodash "^4.17.21"
@@ -2205,10 +2205,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.6.0":
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.6.1.tgz#b44b2f48e65cdb65a9c46c994397664ac3b729d1"
-  integrity sha512-caRN/oUBKKbqu2gOAjkoCrYDkGVfnOchzJWjw+2IuyiSF/50wWZWX26xIxezk3w3LjGhg+eL6LJNGJu3JwUikQ==
+"@veupathdb/web-common@^0.6.2":
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.6.2.tgz#6d7c0f59e0dc156a35a24121ffe36518eeceb2cc"
+  integrity sha512-hB4PLsDTvjXVoWrdPlIqoAHtByHDDYWVSn9r9XMDC84IYzPBY1QmIMWyHatgf9VGmS/ASm3FtLO2INTA+Q/COA==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
