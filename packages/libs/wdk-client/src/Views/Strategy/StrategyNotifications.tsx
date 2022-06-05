@@ -6,7 +6,7 @@ import { OptionsObject, SnackbarKey, SnackbarMessage, useSnackbar } from 'notist
 
 import DismissButton from '@veupathdb/coreui/dist/components/notifications/DismissButton';
 
-import { closeSnackbar, enqueueSnackbar } from 'wdk-client/Actions/NotificationActions';
+import { enqueueSnackbar } from 'wdk-client/Actions/NotificationActions';
 import { Link } from 'wdk-client/Components';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 import { Step } from 'wdk-client/Utils/WdkUser';
