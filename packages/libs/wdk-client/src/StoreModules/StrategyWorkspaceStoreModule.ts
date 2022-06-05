@@ -10,7 +10,7 @@ import { fulfillPublicStrategies, fulfillPublicStrategiesError, requestPublicStr
 import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
 import { cancelRequestDeleteOrRestoreStrategies, fulfillCreateStrategy, fulfillDeleteOrRestoreStrategies, fulfillDeleteStrategy, fulfillDraftStrategy, fulfillDuplicateStrategy, fulfillPatchStrategyProperties, fulfillPutStrategy, fulfillSaveAsStrategy, requestDeleteOrRestoreStrategies, requestDeleteStrategy, requestDuplicateStrategy } from 'wdk-client/Actions/StrategyActions';
 import { fulfillStrategiesList, requestStrategiesList } from 'wdk-client/Actions/StrategyListActions';
-import { addNotification, addToOpenedStrategies, clearActiveModal, closeStrategyView, openStrategyView, removeFromOpenedStrategies, removeNotification, setActiveModal, setActiveStrategy, setOpenedStrategies, setOpenedStrategiesVisibility } from 'wdk-client/Actions/StrategyWorkspaceActions';
+import { addToOpenedStrategies, clearActiveModal, closeStrategyView, openStrategyView, removeFromOpenedStrategies, setActiveModal, setActiveStrategy, setOpenedStrategies, setOpenedStrategiesVisibility } from 'wdk-client/Actions/StrategyWorkspaceActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 import { getValue, preferences, setValue } from 'wdk-client/Preferences';
@@ -31,7 +31,6 @@ export interface State {
   activeModal?: { type: string, strategyId: number }
   isOpenedStrategiesVisible?: boolean;
   openedStrategies?: number[];
-  notifications: Record<string, string | undefined>;
   strategySummaries?: StrategySummary[];
   strategySummariesLoading?: boolean;
   publicStrategySummaries?: StrategySummary[];
@@ -39,7 +38,6 @@ export interface State {
 }
 
 const initialState: State = {
-  notifications: {}
 }
 
 export function reduce(state: State = initialState, action: Action): State {
@@ -120,24 +118,6 @@ export function reduce(state: State = initialState, action: Action): State {
         isOpenedStrategiesVisible: action.payload.isVisible
       }
 
-    case addNotification.type:
-      return {
-        ...state,
-        notifications: {
-          ...state.notifications,
-          [action.payload.id]: action.payload.message
-        }
-      };
-
-    case removeNotification.type:
-      return {
-        ...state,
-        notifications: {
-          ...state.notifications,
-          [action.payload.id]: undefined
-        }
-      }
-
     case requestDeleteStrategy.type:
     case requestDuplicateStrategy.type:
     case requestDeleteOrRestoreStrategies.type:
@@ -189,7 +169,6 @@ export const observe = takeEpicInWindow(
     mrate([fulfillDuplicateStrategy], getAddNotification),
     mrate([fulfillPutStrategy], getAddNotification),
     mrate([fulfillPatchStrategyProperties], getAddNotification),
-    mrate([addNotification], getRemoveNotification),
 
     srate([openStrategyView, fulfillCreateStrategy], getRequestStrategiesList,
       { areActionsNew: stubTrue }),
@@ -417,16 +396,6 @@ function mapActionToDisplayString(action: NotifiableAction): string {
     case fulfillPatchStrategyProperties.type:
       return 'updated';
   }
-}
-
-const NOTIFICATION_DURATION_MS = 5000;
-
-async function getRemoveNotification(
-  [addAction]: [InferAction<typeof addNotification>]
-): Promise<InferAction<typeof removeNotification>> {
-  const { id } = addAction.payload;
-  await delay(NOTIFICATION_DURATION_MS);
-  return removeNotification(id);
 }
 
 async function getRequestStrategiesList(

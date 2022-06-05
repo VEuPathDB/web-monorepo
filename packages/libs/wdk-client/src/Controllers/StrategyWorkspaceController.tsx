@@ -6,7 +6,6 @@ import {Dispatch} from 'redux';
 import {wrappable, useSetDocumentTitle} from 'wdk-client/Utils/ComponentUtils';
 import {RootState} from 'wdk-client/Core/State/Types';
 import StrategyHeader from 'wdk-client/Views/Strategy/StrategyHeader';
-import StrategyNotifications from 'wdk-client/Views/Strategy/StrategyNotifications';
 import StrategyViewController from 'wdk-client/Controllers/StrategyViewController';
 import AllStrategiesController from 'wdk-client/Controllers/AllStrategiesController';
 import { PublicStrategiesController } from 'wdk-client/Controllers/PublicStrategiesController';
@@ -33,7 +32,6 @@ interface DispatchProps {
 interface MappedProps {
   activeStrategy?: { strategyId: number, stepId?: number };
   activeModal?: RootState['strategyWorkspace']['activeModal'];
-  notifications: Record<string, string | undefined>;
   openedStrategies?: number[];
   strategySummaries?: StrategySummary[];
   strategySummariesLoading?: boolean;
@@ -45,7 +43,7 @@ interface MappedProps {
 type Props = OwnProps & DispatchProps & MappedProps;
 
 function StrategyWorkspaceController(props: Props) {
-  const { dispatch, activeStrategy, notifications, openedStrategies, strategySummaries, publicStrategySummaries, publicStrategySummariesError } = props;
+  const { dispatch, activeStrategy, openedStrategies, strategySummaries, publicStrategySummaries, publicStrategySummariesError } = props;
 
   useEffect(() => {
     dispatch(openStrategyView());
@@ -62,7 +60,6 @@ function StrategyWorkspaceController(props: Props) {
 
   return (
     <div className="StrategyWorkspace">
-      <StrategyNotifications notifications={notifications}/>
       <StrategyActionModal activeModal={props.activeModal} strategySummaries={strategySummaries}/>
       <StrategyHeader
         activeStrategy={activeStrategy} 
@@ -175,11 +172,10 @@ function parseSubPath(subPath: string, allowEmptyOpened: boolean, queryParams: R
 
 function mapState(rootState: RootState): MappedProps {
   const { strategies: { strategies } } = rootState;
-  const { activeStrategy, notifications, openedStrategies, strategySummaries, publicStrategySummaries, publicStrategySummariesError, activeModal, strategySummariesLoading } = rootState.strategyWorkspace;
+  const { activeStrategy, openedStrategies, strategySummaries, publicStrategySummaries, publicStrategySummariesError, activeModal, strategySummariesLoading } = rootState.strategyWorkspace;
   return {
     activeStrategy,
     activeModal,
-    notifications,
     openedStrategies,
     strategySummaries,
     strategySummariesLoading,
