@@ -29,6 +29,7 @@ import * as UnhandledErrorActions from 'wdk-client/Actions/UnhandledErrorActions
 import * as UserSessionActions from 'wdk-client/Actions/UserSessionActions';
 import * as UserDatasetUploadActions from 'wdk-client/Actions/UserDatasetUploadActions';
 import { StepAnalysisAction } from 'wdk-client/Actions/StepAnalysis/StepAnalysisActions';
+import * as NotificationActions from 'wdk-client/Actions/NotificationActions';
 
 export {
   AnswerActions,
@@ -95,3 +96,4 @@ export type Action =
   | UserSessionActions.Action
   | UserDatasetUploadActions.Action
   | StepAnalysisAction
+  | NotificationActions.Action
