@@ -3,7 +3,9 @@ import { ActionsObservable, combineEpics, StateObservable } from 'redux-observab
 import { empty, merge, Observable, of } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import { Action } from 'wdk-client/Actions';
+import { fulfillAddStepToBasket } from 'wdk-client/Actions/BasketActions';
 import { fulfillImportStrategy } from 'wdk-client/Actions/ImportStrategyActions';
+import { enqueueSnackbar } from 'wdk-client/Actions/NotificationActions';
 import { fulfillPublicStrategies, fulfillPublicStrategiesError, requestPublicStrategies } from 'wdk-client/Actions/PublicStrategyActions';
 import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
 import { cancelRequestDeleteOrRestoreStrategies, fulfillCreateStrategy, fulfillDeleteOrRestoreStrategies, fulfillDeleteStrategy, fulfillDraftStrategy, fulfillDuplicateStrategy, fulfillPatchStrategyProperties, fulfillPutStrategy, fulfillSaveAsStrategy, requestDeleteOrRestoreStrategies, requestDeleteStrategy, requestDuplicateStrategy } from 'wdk-client/Actions/StrategyActions';
@@ -17,6 +19,7 @@ import { stateEffect } from 'wdk-client/Utils/ObserverUtils';
 import { delay } from 'wdk-client/Utils/PromiseUtils';
 import { diffSimilarStepTrees } from 'wdk-client/Utils/StrategyUtils';
 import { StepTree, StrategyDetails, StrategySummary } from 'wdk-client/Utils/WdkUser';
+import { enqueueAddStepToBasketNotificationAction, enqueueStrategyNotificationAction } from 'wdk-client/Views/Strategy/StrategyNotifications';
 
 export const key = 'strategyWorkspace';
 
@@ -206,6 +209,8 @@ export const observe = takeEpicInWindow(
       { areActionsNew: stubTrue }),
     srate([openStrategyView, fulfillPatchStrategyProperties], getRequestStrategiesList,
       { areActionsNew: stubTrue }),
+    srate([fulfillAddStepToBasket], getAddStepToBasketNotification,
+      { areActionsNew: stubTrue }),
 
     srate([openStrategyView, requestStrategiesList], getFulfillStrategiesList,
       { areActionsNew: stubTrue }),
@@ -374,8 +379,29 @@ type NotifiableAction =
 
 async function getAddNotification(
   [action]: [NotifiableAction]
-): Promise<InferAction<typeof addNotification>> {
-  return addNotification(`Your strategy has been ${mapActionToDisplayString(action)}.`);
+): Promise<ReturnType<typeof enqueueStrategyNotificationAction>> {
+  return enqueueStrategyNotificationAction(
+    `Your strategy has been ${mapActionToDisplayString(action)}.`,
+    {
+      key: `${action.type}-${Date.now()}`,
+      persist: false,
+    }
+  );
+}
+
+async function getAddStepToBasketNotification(
+  [action]: [InferAction<typeof fulfillAddStepToBasket>],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof enqueueSnackbar>> {
+  const step = action.payload.step;
+
+  const recordClass = await wdkService.findRecordClass(step.recordClassName);
+
+  return enqueueAddStepToBasketNotificationAction(
+    step,
+    recordClass
+  );
 }
 
 function mapActionToDisplayString(action: NotifiableAction): string {
