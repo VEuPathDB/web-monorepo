@@ -90,20 +90,6 @@ const ConnectedTranscriptViewFilter = connect(
 )(TranscriptViewFilter);
 
 export function ResultTable(props) {
-  const exportStatus = useWdkService(
-    async (wdkService) => {
-      const { isGuest } = await wdkService.getCurrentUser();
-
-      return !isGuest
-        ? { available: true }
-        : {
-            available: false,
-            reason: 'You must be logged in to use this feature.'
-          };
-    },
-    []
-  );
-
   const exportOptions = useGeneListExportOptions(props.resultType);
 
   const renderToolbarContent = useCallback(({
@@ -122,18 +108,7 @@ export function ResultTable(props) {
         </span>
         {
           exportOptions.length > 0 &&
-          <span
-            title={
-              exportStatus?.available
-                ? undefined
-                : exportStatus?.reason
-            }
-          >
-            <ResultExportSelector
-              isDisabled={!exportStatus?.available}
-              options={exportOptions}
-            />
-          </span>
+          <ResultExportSelector options={exportOptions} />
         }
         <span
           className={
@@ -146,7 +121,7 @@ export function ResultTable(props) {
         </span>
       </>
     ),
-    [exportOptions, exportStatus]
+    [exportOptions]
   );
 
   return <React.Fragment>
