@@ -1,11 +1,22 @@
-import React, { FunctionComponent, useCallback, useEffect, useLayoutEffect, useState } from 'react';
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+  useMemo
+} from 'react';
 import { connect } from 'react-redux';
 
 import { get, memoize } from 'lodash';
 
+import makeSnackbarProvider, { SnackbarStyleProps } from '@veupathdb/coreui/dist/components/notifications/SnackbarProvider';
+
 import { Loading, Link } from '@veupathdb/wdk-client/lib/Components';
+import { ReduxNotificationHandler } from '@veupathdb/wdk-client/lib/Components/Notifications';
 import { ErrorBoundary } from '@veupathdb/wdk-client/lib/Controllers';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
+import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import { CategoryTreeNode } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import { arrayOf, decode, string } from '@veupathdb/wdk-client/lib/Utils/Json';
 
@@ -27,8 +38,6 @@ import { PreferredOrganismsSummary } from '@veupathdb/preferred-organisms/lib/co
 
 import { PageDescription } from './PageDescription';
 import { makeVpdbClassNameHelper } from './Utils';
-
-import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 
 import './VEuPathDBHomePage.scss';
 
@@ -172,51 +181,60 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
     </>
   );
 
+  const snackbarStyleProps = useMemo(
+    () => ({ headerExpanded }),
+    [headerExpanded]
+  );
+
   return (
-    <div className={rootContainerClassName}>
-      <ErrorBoundary>
-        <Header 
-          menuItems={headerMenuItems} 
-          containerClassName={headerClassName} 
-          onShowAnnouncements={onShowAnnouncements}
-          showAnnouncementsToggle={isHomePage && closedBanners.length > 0}
-          branding={branding}
-        />
-      </ErrorBoundary>
-      <div className={subHeaderClassName}>
-        <PreferredOrganismsSummary />
-      </div>
-      <div className={vpdbCx('Announcements')}>
-        <Announcements
-          closedBanners={closedBanners}
-          setClosedBanners={setClosedBanners}
-        />
-      </div>
-      {isHomePage &&
-        <ErrorBoundary>
-          <SearchPane 
-            containerClassName={searchPaneClassName} 
-            searchTree={props.searchTree}
-          />
-        </ErrorBoundary>
-      }
-      <Main containerClassName={mainClassName}>
-        {props.children}
-      </Main>
-      {isHomePage && 
-        <ErrorBoundary>
-          <NewsPane containerClassName={newsPaneClassName} isNewsExpanded={isNewsExpanded} toggleNews={toggleNews} />
-        </ErrorBoundary>
-      }
-      <ErrorBoundary>
-        <Footer containerClassName={footerClassName}>
-          <PageDescription />
-        </Footer>
-      </ErrorBoundary>
-      <ErrorBoundary>
-        <CookieBanner/>
-      </ErrorBoundary>
-    </div>
+    <VEuPathDBSnackbarProvider styleProps={snackbarStyleProps}>
+      <ReduxNotificationHandler>
+        <div className={rootContainerClassName}>
+          <ErrorBoundary>
+            <Header
+              menuItems={headerMenuItems}
+              containerClassName={headerClassName}
+              onShowAnnouncements={onShowAnnouncements}
+              showAnnouncementsToggle={isHomePage && closedBanners.length > 0}
+              branding={branding}
+            />
+          </ErrorBoundary>
+          <div className={subHeaderClassName}>
+            <PreferredOrganismsSummary />
+          </div>
+          <div className={vpdbCx('Announcements')}>
+            <Announcements
+              closedBanners={closedBanners}
+              setClosedBanners={setClosedBanners}
+            />
+          </div>
+          {isHomePage &&
+            <ErrorBoundary>
+              <SearchPane
+                containerClassName={searchPaneClassName}
+                searchTree={props.searchTree}
+              />
+            </ErrorBoundary>
+          }
+          <Main containerClassName={mainClassName}>
+            {props.children}
+          </Main>
+          {isHomePage &&
+            <ErrorBoundary>
+              <NewsPane containerClassName={newsPaneClassName} isNewsExpanded={isNewsExpanded} toggleNews={toggleNews} />
+            </ErrorBoundary>
+          }
+          <ErrorBoundary>
+            <Footer containerClassName={footerClassName}>
+              <PageDescription />
+            </Footer>
+          </ErrorBoundary>
+          <ErrorBoundary>
+            <CookieBanner/>
+          </ErrorBoundary>
+        </div>
+      </ReduxNotificationHandler>
+    </VEuPathDBSnackbarProvider>
   );
 }
 
@@ -978,5 +996,26 @@ const mapStateToProps = (state: RootState) => ({
   displayName: state.globalData.config?.displayName,
   projectId: state.globalData.siteConfig?.projectId
 });
+
+function translateNotificationsOnTop({ headerExpanded }: SnackbarStyleProps<{ headerExpanded: boolean }>) {
+  return {
+    transform: headerExpanded
+      ? 'translateY(149px)'
+      : 'translateY(84px)'
+  };
+}
+
+const VEuPathDBSnackbarProvider = makeSnackbarProvider(
+  {
+    containerRoot: {
+      zIndex: 99
+    },
+    anchorOriginTopLeft: translateNotificationsOnTop,
+    anchorOriginTopCenter: translateNotificationsOnTop,
+    anchorOriginTopRight: translateNotificationsOnTop,
+  },
+  'VEuPathDBSnackbarProvider',
+);
+
 
 export const VEuPathDBHomePage = connect(mapStateToProps)(VEuPathDBHomePageView);
