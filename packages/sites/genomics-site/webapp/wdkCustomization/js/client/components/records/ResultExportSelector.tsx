@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 
 import Select, { ActionMeta, Styles, ValueType, mergeStyles } from 'react-select';
 
@@ -11,6 +17,7 @@ export interface ExportOption<T extends string, S, E> {
   onSelectionTask: Task<S, E>;
   onSelectionFulfillment?: (selection: S) => void;
   onSelectionError?: (error: E) => void;
+  isDisabled?: boolean;
 }
 
 export interface Props<T extends string, S, E> {
@@ -87,7 +94,6 @@ function useStyles<T extends string, S, E>(
     container: (baseStyles) => ({
       ...baseStyles,
       margin: '0 calc(1em + 5px)',
-      width: '15em',
     }),
     placeholder: (baseStyles, placeholderProps) => ({
       ...baseStyles,
@@ -106,13 +112,11 @@ function useStyles<T extends string, S, E>(
           : {}
       ),
     }),
-    indicatorSeparator: () => ({
-      display: 'none'
-    }),
     control: (baseStyles, controlProps) => ({
       ...baseStyles,
       minHeight: '33.5px',
       height: '33.5px',
+      width: '10.5em',
       ...(
         !controlProps.isDisabled
           ? {
@@ -135,6 +139,10 @@ function useStyles<T extends string, S, E>(
             }
       ),
     }),
+    indicatorSeparator: (baseStyles) => ({
+      ...baseStyles,
+      display: 'none',
+    }),
     dropdownIndicator: (baseStyles, dropdownIndicatorProps) => ({
       ...baseStyles,
       padding: '0 8px',
@@ -145,6 +153,10 @@ function useStyles<T extends string, S, E>(
             }
           : {}
       )
+    }),
+    menu: (baseStyles) => ({
+      ...baseStyles,
+      width: '15em',
     }),
   }), []);
 
