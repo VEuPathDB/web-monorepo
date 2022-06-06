@@ -261,23 +261,23 @@ function BoxplotViz(props: VisualizationProps) {
   );
 
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
-  let outputEntity = useFindOutputEntity(
-    dataElementDependencyOrder,
-    vizConfig,
-    'xAxisVariable',
-    entities
-  );
-
-  // Abundance boxplots already know their entity, x, and y vars. Set the output entity here so that
-  // the boxplot can appear on load.
-  if (computation.descriptor.type === 'abundance') {
-    outputEntity = entities.find(
-      (e) =>
-        e.id ===
-        (computation.descriptor.configuration as ComputationConfiguration)
-          ?.collectionVariable.entityId
-    );
-  }
+  // Abundance boxplots already know their entity, x, and y vars. If we're in the abundance app, set
+  // the output entity here so that the boxplot can appear on load.
+  const outputEntity =
+    useFindOutputEntity(
+      dataElementDependencyOrder,
+      vizConfig,
+      'xAxisVariable',
+      entities
+    ) ??
+    (computation.descriptor.type === 'abundance'
+      ? entities.find(
+          (e) =>
+            e.id ===
+            (computation.descriptor.configuration as ComputationConfiguration)
+              ?.collectionVariable.entityId
+        )
+      : undefined);
 
   // add to support both alphadiv and abundance
   const data = usePromise(
