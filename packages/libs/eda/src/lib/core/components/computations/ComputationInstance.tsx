@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react';
+import { useRouteMatch } from 'react-router-dom';
 import { useToggleStarredVariable } from '../../hooks/starredVariables';
 import { Computation, Visualization } from '../../types/visualization';
 import { VisualizationsContainer } from '../visualizations/VisualizationsContainer';
@@ -57,6 +58,8 @@ export function ComputationInstance(props: Props) {
     [setComputations, computationId]
   );
 
+  const { url } = useRouteMatch();
+
   if (
     analysis == null ||
     computation == null ||
@@ -68,7 +71,14 @@ export function ComputationInstance(props: Props) {
   // the normal VisualizationsContainer.
   return (
     <div>
-      {baseUrl && <AppTitle computation={computation} />}
+      {baseUrl && (
+        <AppTitle
+          computation={computation}
+          condensed={
+            url.replace(/\/+$/, '').split('/').pop() === 'visualizations'
+          }
+        />
+      )}
       <VisualizationsContainer
         analysisState={analysisState}
         computationAppOverview={computationAppOverview}
@@ -92,16 +102,19 @@ export function ComputationInstance(props: Props) {
 // Title above each app in /visualizations
 interface AppTitleProps {
   computation: Computation;
+  condensed: boolean;
 }
 
 function AppTitle(props: AppTitleProps) {
-  const { computation } = props;
+  const { computation, condensed } = props;
 
-  return computation.descriptor.configuration ? (
-    <div style={{ marginTop: 10 }}>
-      <h4 style={{ marginLeft: 20 }}>
-        <em>{computation.displayName}</em>
-      </h4>
-    </div>
+  return condensed ? (
+    computation.descriptor.configuration ? (
+      <div style={{ marginTop: 10 }}>
+        <h4 style={{ marginLeft: 20 }}>
+          <em>{computation.displayName}</em>
+        </h4>
+      </div>
+    ) : null
   ) : null;
 }
