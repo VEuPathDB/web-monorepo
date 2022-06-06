@@ -1,5 +1,7 @@
+import { useMemo } from 'react';
+
 import { makeStyles } from '@material-ui/core';
-import { Styles, StyleRules } from '@material-ui/core/styles/withStyles';
+import { CSSProperties, StyleRules } from '@material-ui/core/styles/withStyles';
 import {
   CombinedClassKey,
   SnackbarProvider,
@@ -14,9 +16,14 @@ import {
   mutedRed,
   mutedYellow
 } from '../../definitions/colors';
+import { UITheme, useUITheme } from '../theming';
 
-interface WrappedSnackbarProviderProps<StyleProps> extends SnackbarProviderProps {
-  styleProps: StyleProps;
+export type SnackbarStyleProps<T> = T & { theme?: UITheme };
+
+export interface WrappedSnackbarProviderProps<
+  StyleProps
+> extends SnackbarProviderProps {
+  styleProps: Omit<SnackbarStyleProps<StyleProps>, 'theme'>;
 }
 
 /**
@@ -28,23 +35,39 @@ interface WrappedSnackbarProviderProps<StyleProps> extends SnackbarProviderProps
  * "styles" have been applied.
  */
 export default function makeSnackbarProvider<
-  Theme,
-  StyleProps extends object,
-  ClassKey extends CombinedClassKey = CombinedClassKey,
+  StyleProps extends { theme?: UITheme },
+  ClassKey extends CombinedClassKey
 >(
-  styles?: Styles<Theme, StyleProps, ClassKey>,
+  styles?: StyleRules<ClassKey, StyleProps>,
   displayName: string = 'SnackbarProvider'
 ) {
   const useStyles = makeStyles({
-    ...defaultStyles,
-    ...styles
-  } as Styles<Theme, StyleProps, ClassKey>);
+    variantSuccess: makeSnackbarVariantStyles(mutedGreen),
+    variantError: makeSnackbarVariantStyles(mutedRed),
+    variantWarning: makeSnackbarVariantStyles(mutedYellow),
+    variantInfo({ theme }) {
+      return makeSnackbarVariantStyles(
+        theme?.palette.primary.hue ?? mutedBlue
+      )
+    },
+    ...styles,
+  } as StyleRules<ClassKey | VariantClassKey, StyleProps>);
 
   function WrappedSnackbarProvider({
     styleProps,
     ...snackbarProps
   }: WrappedSnackbarProviderProps<StyleProps>) {
-    const classes = useStyles(styleProps);
+    const theme = useUITheme();
+
+    const fullStyleProps = useMemo(
+      () => ({
+        ...styleProps,
+        theme
+      } as StyleProps),
+      [theme, styleProps]
+    );
+
+    const classes = useStyles(fullStyleProps);
 
     return (
       <SnackbarProvider classes={classes} {...snackbarProps}>
@@ -58,30 +81,20 @@ export default function makeSnackbarProvider<
   return WrappedSnackbarProvider;
 }
 
-const variantHueMap: Array<[VariantClassKey, ColorHue]> = [
-  ['variantError', mutedRed],
-  ['variantInfo', mutedBlue],
-  ['variantSuccess', mutedGreen],
-  ['variantWarning', mutedYellow],
-];
-
-export const defaultStyles = variantHueMap.reduce(
-  (memo, [variantKey, variantHue]) => {
-    memo[variantKey] = {
-      backgroundColor: variantHue[100],
-      border: `1px solid ${variantHue[600]}`,
-      color: variantHue[900],
-      '& a': {
-        color: 'inherit',
-        textDecoration: 'underline',
-        fontWeight: 'bold',
-      },
-      '& svg': {
-        fill: variantHue[600],
-      }
-    };
-
-    return memo;
-  },
-  {} as StyleRules<VariantClassKey>
-);
+export function makeSnackbarVariantStyles(
+  variantHue: ColorHue,
+): CSSProperties {
+  return {
+    backgroundColor: variantHue[100],
+    border: `1px solid ${variantHue[600]}`,
+    color: variantHue[900],
+    '& a': {
+      color: 'inherit',
+      textDecoration: 'underline',
+      fontWeight: 'bold',
+    },
+    '& svg': {
+      fill: variantHue[600],
+    }
+  };
+}
