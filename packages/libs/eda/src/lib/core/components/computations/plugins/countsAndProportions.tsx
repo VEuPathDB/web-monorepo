@@ -18,4 +18,9 @@ export const plugin: ComputationPlugin = {
     // densityplot: scatterplotVisualization,
     barplot: barplotVisualization,
   },
+  createDefaultConfig: createDefaultConfig,
 };
+
+function createDefaultConfig() {
+  return {};
+}

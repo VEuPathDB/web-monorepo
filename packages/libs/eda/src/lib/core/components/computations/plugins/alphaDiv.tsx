@@ -2,6 +2,7 @@
 import { useRouteMatch } from 'react-router-dom';
 import { useHistory } from 'react-router';
 import { useStudyMetadata } from '../../..';
+import { StudyEntity } from '../../../types/study';
 import { useCollectionVariables } from '../../../hooks/study';
 import { VariableDescriptor } from '../../../types/variable';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
@@ -10,6 +11,8 @@ import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { H6 } from '@veupathdb/coreui';
 import { isEqual } from 'lodash';
 import { createComputation } from '../Utils';
+import { findCollections } from '../../../utils/study-metadata';
+import * as t from 'io-ts';
 
 export const plugin: ComputationPlugin = {
   configurationComponent: AlphaDivConfiguration,
@@ -17,7 +20,33 @@ export const plugin: ComputationPlugin = {
     boxplot: boxplotVisualization,
     scatterplot: scatterplotVisualization,
   },
+  createDefaultConfig: createDefaultConfig,
 };
+
+function createDefaultConfig(rootEntity: StudyEntity) {
+  const collections = findCollections(rootEntity);
+  const configuration: AlphaDivConfig = {
+    name: 'AlphaDivComputation',
+    collectionVariable: {
+      variableId: collections[0].id,
+      entityId: collections[0].entityId,
+    },
+    alphaDivMethod: 'shannon',
+  };
+  return {
+    name: 'alphadiv',
+    displayName: `Data: ${collections[0].entityDisplayName}: ${collections[0].displayName}; Method: shannon`,
+    configuration,
+  };
+}
+
+export type AlphaDivConfig = t.TypeOf<typeof AlphaDivConfig>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AlphaDivConfig = t.type({
+  name: t.string,
+  collectionVariable: VariableDescriptor,
+  alphaDivMethod: t.string,
+});
 
 // Include available methods in this array.
 const ALPHA_DIV_METHODS = ['shannon', 'simpson', 'evenness'];
@@ -212,6 +241,7 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
           {collections.map((collectionVar) => {
             return (
               <option
+                key={collectionVar.id}
                 value={variableDescriptorToString({
                   variableId: collectionVar.id,
                   entityId: collectionVar.entityId,
@@ -253,7 +283,9 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
           }
         >
           {ALPHA_DIV_METHODS.map((method) => (
-            <option value={method}>{method}</option>
+            <option key={method} value={method}>
+              {method}
+            </option>
           ))}
         </select>
       </div>

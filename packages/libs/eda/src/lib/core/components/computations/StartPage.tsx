@@ -7,10 +7,10 @@ import { H5, H6 } from '@veupathdb/coreui';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import '../visualizations/Visualizations.scss';
 import { Tooltip } from '@material-ui/core';
-import { useDefaultPluginConfiguration } from './getAppsDefaultConfigs';
 import { AnalysisState } from '../../../core';
 import { createComputation } from '../../../core/components/computations/Utils';
 import { v4 as uuid } from 'uuid';
+import { useStudyMetadata } from '../../';
 
 interface Props {
   analysisState: AnalysisState;
@@ -22,7 +22,7 @@ interface Props {
 export function StartPage(props: Props) {
   const { analysisState, apps, plugins } = props;
   const cx = makeClassNameHelper('VisualizationsContainer');
-  const defaultConfigs = useDefaultPluginConfiguration(apps);
+  const studyMetadata = useStudyMetadata();
   const history = useHistory();
   const { url } = useRouteMatch();
 
@@ -98,9 +98,10 @@ export function StartPage(props: Props) {
                               if (analysisState.analysis == null) return;
                               const computations =
                                 analysisState.analysis.descriptor.computations;
-                              const defaultConfig = defaultConfigs.find(
-                                (config) => config?.name === app.name
-                              );
+                              const defaultConfig = plugins[
+                                app.name
+                              ].createDefaultConfig(studyMetadata.rootEntity);
+                              console.log(defaultConfig);
                               /*
                                 The first instance of a configurable app will be derived by a default configuration.
                                 Here we're checking if a computation with a defaultConfig already exists.
@@ -109,7 +110,11 @@ export function StartPage(props: Props) {
                                 (c) =>
                                   isEqual(
                                     c.descriptor.configuration,
-                                    defaultConfig?.configuration
+                                    // @ts-ignore
+                                    'configuration' in defaultConfig
+                                      ? // @ts-ignore
+                                        defaultConfig.configuration
+                                      : {}
                                   ) && app.name === c.descriptor.type
                               );
                               const visualizationId = uuid();
@@ -128,13 +133,13 @@ export function StartPage(props: Props) {
                               if (!existingComputation) {
                                 const computation = createComputation(
                                   app.name,
-                                  //@ts-ignore
                                   defaultConfig
-                                    ? defaultConfig.displayName
+                                    ? //@ts-ignore
+                                      defaultConfig.displayName
                                     : '',
-                                  //@ts-ignore
                                   defaultConfig
-                                    ? defaultConfig.configuration
+                                    ? //@ts-ignore
+                                      defaultConfig.configuration
                                     : null,
                                   computations,
                                   [newVisualization]

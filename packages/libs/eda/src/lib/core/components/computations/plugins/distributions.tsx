@@ -12,4 +12,9 @@ export const plugin: ComputationPlugin = {
     // densityplot: scatterplotVisualization,
     boxplot: boxplotVisualization,
   },
+  createDefaultConfig: createDefaultConfig,
 };
+
+function createDefaultConfig() {
+  return {};
+}

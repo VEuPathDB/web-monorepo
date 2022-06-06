@@ -4,12 +4,15 @@ import { useHistory } from 'react-router';
 import { useStudyMetadata } from '../../..';
 import { useCollectionVariables } from '../../../hooks/study';
 import { VariableDescriptor } from '../../../types/variable';
+import { StudyEntity } from '../../../types/study';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { H6 } from '@veupathdb/coreui';
 import { isEqual } from 'lodash';
 import { createComputation } from '../Utils';
+import { findCollections } from '../../../utils/study-metadata';
+import * as t from 'io-ts';
 
 export const plugin: ComputationPlugin = {
   configurationComponent: AbundanceConfiguration,
@@ -17,7 +20,33 @@ export const plugin: ComputationPlugin = {
     boxplot: boxplotVisualization,
     scatterplot: scatterplotVisualization,
   },
+  createDefaultConfig: createDefaultConfig,
 };
+
+function createDefaultConfig(rootEntity: StudyEntity) {
+  const collections = findCollections(rootEntity);
+  const configuration: AbundanceConfig = {
+    name: 'RankedAbundanceComputation',
+    collectionVariable: {
+      variableId: collections[0].id,
+      entityId: collections[0].entityId ?? '',
+    },
+    rankingMethod: 'median',
+  };
+  return {
+    name: 'abundance',
+    displayName: `Data: ${collections[0].entityDisplayName}: ${collections[0].displayName}; Method: median`,
+    configuration,
+  };
+}
+
+export type AbundanceConfig = t.TypeOf<typeof AbundanceConfig>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AbundanceConfig = t.type({
+  name: t.string,
+  collectionVariable: VariableDescriptor,
+  rankingMethod: t.string,
+});
 
 // Include available methods in this array.
 const ABUNDANCE_METHODS = ['median', 'q3', 'variance', 'max'];
