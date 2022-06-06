@@ -11,9 +11,4 @@ export const plugin: ComputationPlugin = {
     scatterplot: scatterplotVisualization,
     lineplot: lineplotVisualization,
   },
-  createDefaultConfig: createDefaultConfig,
 };
-
-function createDefaultConfig() {
-  return {};
-}

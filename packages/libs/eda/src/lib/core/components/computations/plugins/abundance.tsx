@@ -10,7 +10,7 @@ import { scatterplotVisualization } from '../../visualizations/implementations/S
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { H6 } from '@veupathdb/coreui';
 import { isEqual } from 'lodash';
-import { createComputation } from '../Utils';
+import { createComputation, assertConfigType } from '../Utils';
 import { findCollections } from '../../../utils/study-metadata';
 import * as t from 'io-ts';
 
@@ -72,11 +72,10 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
 
-  const rankingMethod =
-    // @ts-ignore
-    computation.descriptor.configuration.rankingMethod;
+  assertConfigType(computation.descriptor.configuration, AbundanceConfig);
+
+  const rankingMethod = computation.descriptor.configuration.rankingMethod;
   const collectionVariable =
-    // @ts-ignore
     computation.descriptor.configuration.collectionVariable;
 
   const changeConfigHandler = async (

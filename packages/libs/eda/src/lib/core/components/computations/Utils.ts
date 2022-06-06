@@ -1,6 +1,9 @@
 import { Computation, Visualization } from '../../types/visualization';
 // alphadiv abundance
 import { ComputationConfiguration } from '../../types/visualization';
+import * as t from 'io-ts';
+import { pipe } from 'fp-ts/lib/function';
+import { fold } from 'fp-ts/lib/Either';
 
 /**
  * Creates a new `Computation` with a unique id
@@ -46,4 +49,15 @@ function createRandomString(numChars: number) {
   return Math.random()
     .toString(36)
     .slice(2, numChars + 2);
+}
+
+export function assertConfigType<ConfigType>(
+  config: unknown,
+  configDecoder: t.Type<ConfigType, unknown, unknown>
+): asserts config is ConfigType {
+  const onLeft = (errors: t.Errors) => {
+    throw new Error(`Invalid configuration: ${errors}`);
+  };
+  const onRight = () => null;
+  pipe(configDecoder.decode(config), fold(onLeft, onRight));
 }

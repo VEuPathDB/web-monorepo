@@ -27,9 +27,4 @@ export const plugin: ComputationPlugin = {
     barplot: barplotVisualization,
     boxplot: boxplotVisualization,
   },
-  createDefaultConfig: createDefaultConfig,
 };
-
-function createDefaultConfig() {
-  return {};
-}

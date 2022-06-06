@@ -98,6 +98,7 @@ export function StartPage(props: Props) {
                               if (analysisState.analysis == null) return;
                               const computations =
                                 analysisState.analysis.descriptor.computations;
+                              // @ts-ignore
                               const defaultConfig = plugins[
                                 app.name
                               ].createDefaultConfig(studyMetadata.rootEntity);
