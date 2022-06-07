@@ -1054,9 +1054,9 @@ function ScatterplotViz(props: VisualizationProps) {
           showMissingness={vizConfig.showMissingness}
           // this can be used to show and hide no data control
           onShowMissingnessChange={
-            computation.descriptor.configuration != null
-              ? undefined
-              : onShowMissingnessChange
+            computation.descriptor.type === 'pass'
+              ? onShowMissingnessChange
+              : undefined
           }
           outputEntity={outputEntity}
         />
