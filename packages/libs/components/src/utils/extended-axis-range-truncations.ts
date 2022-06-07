@@ -13,10 +13,14 @@ export function extendAxisRangeForTruncations(
   valueType?: 'number' | 'date',
   // set plot type to adjust padding/margin
   // histogram: no padding for X and Y; barplot: no min padding for Y
-  plotType?: string
+  plotType?: string,
+  logScale?: boolean
 ): NumberOrDateRange | undefined {
   // set this to avoid error
   if (axisRange == null) return undefined;
+
+  // adjust margin per log scale
+  const noTruncationMargin = logScale ? 0.3 : 0.02;
 
   // compute truncated axis with 5 % area from the range of min and max
   if (valueType != null) {
@@ -82,7 +86,7 @@ export function extendAxisRangeForTruncations(
         : // set exceptions: no need to have max padding for histogram
         plotType === 'histogram'
         ? (axisRange.max as number)
-        : (axisRange.max as number) + 0.02 * diff;
+        : (axisRange.max as number) + noTruncationMargin * diff;
 
       return {
         min: axisLowerExtensionStart,
