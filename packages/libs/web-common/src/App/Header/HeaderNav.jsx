@@ -136,7 +136,7 @@ class HeaderNav extends React.Component {
 
   render () {
     const { stickyHeaderVisible } = this.state;
-    const { headerMenuItems, siteConfig, user, actions } = this.props;
+    const { headerMenuItems, siteConfig, user, actions, tagline } = this.props;
     const { webAppUrl } = siteConfig;
     const { mainMenu, iconMenu } = headerMenuItems;
 
@@ -146,32 +146,35 @@ class HeaderNav extends React.Component {
     const StickyHeader = this.renderStickyHeader;
 
     return (
-      <div className="HeaderNav-Wrapper">
-        <div className="row HeaderNav">
-          {!stickyHeaderVisible ? null : (
-            <Mesa.BodyLayer>
-              <StickyHeader />
-            </Mesa.BodyLayer>
-          )}
-          <Branding {...this.props} />
-          <div className="HeaderNav-Switch">
-            <div className="stack HeaderNav-Primary" style={{ maxWidth: '80em', marginLeft: '7%' }}>
-              {siteSearchServiceUrl && (
-                <div style={{ color: 'black', fontSize: '1rem', width: '70%', margin: '1em 0' }}>
-                  <SiteSearchInput/>
-                </div>
-              )}
-              <SiteMenu items={mainMenu} config={siteConfig} actions={actions} user={user} />
-            </div>
-
-            <div className="row HeaderNav-Secondary">
-              <IconMenu items={iconMenu} />
-              <UserMenu webAppUrl={webAppUrl} actions={actions} user={user} />
-            </div>
+      <div style={{ width: '100%', zIndex: 4 }}>
+        {!stickyHeaderVisible ? null : (
+          <Mesa.BodyLayer>
+            <StickyHeader />
+          </Mesa.BodyLayer>
+        )}
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div>
+            <Branding {...this.props} />
           </div>
+          <div style={{ marginRight: 'auto', alignSelf: 'center', }}><h3 dangerouslySetInnerHTML={{ __html: tagline }} /></div>
           <a href="https://veupathdb.org" target="_blank">
             <img src={partofveupath} id="VEuPathLogo" />
           </a>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center'}}>
+          <div>
+            <SiteMenu items={mainMenu} config={siteConfig} actions={actions} user={user} />
+          </div>
+          {siteSearchServiceUrl && (
+            <div style={{ width: '33%', maxWidth: '45em',  color: 'black', marginLeft: '2em', marginRight: 'auto', fontSize: '1.2em' }}>
+              <SiteSearchInput/>
+            </div>
+          )}
+          <div style={{ display: 'flex' }}>
+            <IconMenu items={iconMenu} />
+            <UserMenu webAppUrl={webAppUrl} actions={actions} user={user} />
+          </div>
+
         </div>
       </div>
     );
