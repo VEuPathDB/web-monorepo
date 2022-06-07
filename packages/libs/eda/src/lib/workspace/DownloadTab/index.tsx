@@ -76,7 +76,7 @@ export default function DownloadTab({
       permission.permissions.perDataset[studyRecord.id[0].value]
         ?.actionAuthorization['resultsAll'];
     const requestElement = (
-      <button className="link" onClick={handleClick}>
+      <button className="link" style={{ padding: 0 }} onClick={handleClick}>
         Click here to request access.
       </button>
     );
@@ -216,9 +216,9 @@ function getDataAccessDeclaration(
   const LOGIN_REQUEST_STUB =
     'You must register or log in and request access to download data;';
   const CONTROLLED_ACCESS_STUB =
-    ' data can be downloaded immediately following request submission.';
+    ' data can be downloaded immediately following request submission. ';
   const PROTECTED_ACCESS_STUB =
-    ' data can be downloaded after the study team reviews and grants you access.';
+    ' data can be downloaded after the study team reviews your request and grants you access. ';
   const ACCESS_GRANTED_STUB =
     'You have been granted access to download the data.';
   // const ACCESS_PENDING_STUB = 'Your data access request is pending.';

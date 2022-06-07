@@ -405,7 +405,9 @@ export default function SubsettingDataGridModal({
                           />
                         ) : (
                           <button
-                            onClick={() =>
+                            onClick={() => {
+                              if (selectedVariableDescriptors.length == 1)
+                                setTableIsExpanded(false);
                               handleSelectedVariablesChange(
                                 selectedVariableDescriptors.filter(
                                   (descriptor) =>
@@ -414,8 +416,8 @@ export default function SubsettingDataGridModal({
                                       descriptor.variableId !==
                                     headerGroup.id
                                 )
-                              )
-                            }
+                              );
+                            }}
                             title="Remove column"
                             css={{
                               background: 'none',
