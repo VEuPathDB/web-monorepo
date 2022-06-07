@@ -222,7 +222,8 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
                   entityId: collectionVar.entityId,
                 })}
               >
-                {collectionVar.entityDisplayName}: {collectionVar.displayName}
+                {collectionVar.entityDisplayName} {' > '}{' '}
+                {collectionVar.displayName}
               </option>
             );
           })}

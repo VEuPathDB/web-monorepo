@@ -219,7 +219,8 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
                   entityId: collectionVar.entityId,
                 })}
               >
-                {collectionVar.entityDisplayName}: {collectionVar.displayName}
+                {collectionVar.entityDisplayName} {' > '}{' '}
+                {collectionVar.displayName}
               </option>
             );
           })}
