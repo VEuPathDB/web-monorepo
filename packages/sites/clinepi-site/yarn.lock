@@ -2237,9 +2237,9 @@
     uuid "^8.1.0"
 
 "@veupathdb/web-common@^0.6.2":
-  version "0.6.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.6.2.tgz#6d7c0f59e0dc156a35a24121ffe36518eeceb2cc"
-  integrity sha512-hB4PLsDTvjXVoWrdPlIqoAHtByHDDYWVSn9r9XMDC84IYzPBY1QmIMWyHatgf9VGmS/ASm3FtLO2INTA+Q/COA==
+  version "0.6.4"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.6.4.tgz#ab93aa19cb193f24fa9c7fd40253609919302a7a"
+  integrity sha512-puOJCIakBj8jNL2CDKxZPSut3qLx9tU9r2zlJz73WLVO3ujrBPSbz0+IUiOYwobcun+8SjyaYzWQHuI9l+noUA==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
@@ -4035,7 +4035,7 @@ cross-spawn@^7.0.3:
 crypt@0.0.2:
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/crypt/-/crypt-0.0.2.tgz#88d7ff7ec0dfb86f713dc87bbb42d044d3e6c41b"
-  integrity sha1-iNf/fsDfuG9xPch7u0LQRNPmxBs=
+  integrity sha512-mCxBlsHFYh9C+HVpiEacem8FEBnMXgU9gy4zmNC+SXAZNB/1idgp/aulFJ4FgCi7GPEVbfyng092GqL2k2rmow==
 
 crypto-browserify@^3.11.0:
   version "3.12.0"
