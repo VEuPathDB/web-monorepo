@@ -99,9 +99,13 @@ export function StartPage(props: Props) {
                               const computations =
                                 analysisState.analysis.descriptor.computations;
                               // @ts-ignore
-                              const defaultConfig = plugins[
-                                app.name
-                              ].createDefaultConfig(studyMetadata.rootEntity);
+                              const defaultConfig =
+                                'createDefaultConfig' in plugins[app.name]
+                                  ? // @ts-ignore
+                                    plugins[app.name].createDefaultConfig(
+                                      studyMetadata.rootEntity
+                                    )
+                                  : {};
                               console.log(defaultConfig);
                               /*
                                 The first instance of a configurable app will be derived by a default configuration.
