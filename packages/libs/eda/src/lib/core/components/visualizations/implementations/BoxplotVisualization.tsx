@@ -605,9 +605,6 @@ function BoxplotViz(props: VisualizationProps) {
     </>
   );
 
-  //DKDK
-  console.log('computation =', computation);
-
   // for handling alphadiv abundance
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
