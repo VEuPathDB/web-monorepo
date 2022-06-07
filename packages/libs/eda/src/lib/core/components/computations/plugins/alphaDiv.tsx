@@ -20,10 +20,10 @@ export const plugin: ComputationPlugin = {
     boxplot: boxplotVisualization,
     scatterplot: scatterplotVisualization,
   },
-  createDefaultConfig: createDefaultConfig,
+  createDefaultComputationSpec: createDefaultComputationSpec,
 };
 
-function createDefaultConfig(rootEntity: StudyEntity) {
+function createDefaultComputationSpec(rootEntity: StudyEntity) {
   const collections = findCollections(rootEntity);
   const configuration: AlphaDivConfig = {
     name: 'AlphaDivComputation',
@@ -34,7 +34,6 @@ function createDefaultConfig(rootEntity: StudyEntity) {
     alphaDivMethod: 'shannon',
   };
   return {
-    name: 'alphadiv',
     displayName: `Data: ${collections[0].entityDisplayName}: ${collections[0].displayName}; Method: shannon`,
     configuration,
   };

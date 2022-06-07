@@ -20,10 +20,10 @@ export const plugin: ComputationPlugin = {
     boxplot: boxplotVisualization,
     scatterplot: scatterplotVisualization,
   },
-  createDefaultConfig: createDefaultConfig,
+  createDefaultComputationSpec: createDefaultComputationSpec,
 };
 
-function createDefaultConfig(rootEntity: StudyEntity) {
+function createDefaultComputationSpec(rootEntity: StudyEntity) {
   const collections = findCollections(rootEntity);
   const configuration: AbundanceConfig = {
     name: 'RankedAbundanceComputation',
@@ -34,7 +34,6 @@ function createDefaultConfig(rootEntity: StudyEntity) {
     rankingMethod: 'median',
   };
   return {
-    name: 'abundance',
     displayName: `Data: ${collections[0].entityDisplayName}: ${collections[0].displayName}; Method: median`,
     configuration,
   };

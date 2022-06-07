@@ -75,6 +75,7 @@ export function StartPage(props: Props) {
                         .selectorComponent
                     : helperPlugin.visualizationTypes['scatterplot']
                         .selectorComponent;
+                  const plugin = plugins[app.name];
                   return (
                     <div
                       className={cx('-PickerEntry', disabled && 'disabled')}
@@ -98,15 +99,15 @@ export function StartPage(props: Props) {
                               if (analysisState.analysis == null) return;
                               const computations =
                                 analysisState.analysis.descriptor.computations;
-                              // @ts-ignore
-                              const defaultConfig =
-                                'createDefaultConfig' in plugins[app.name]
-                                  ? // @ts-ignore
-                                    plugins[app.name].createDefaultConfig(
+                              const defaultComputationSpec =
+                                plugin.createDefaultComputationSpec != null
+                                  ? plugin.createDefaultComputationSpec(
                                       studyMetadata.rootEntity
                                     )
-                                  : {};
-                              console.log(defaultConfig);
+                                  : {
+                                      configuration: undefined,
+                                      displayName: '',
+                                    };
                               /*
                                 The first instance of a configurable app will be derived by a default configuration.
                                 Here we're checking if a computation with a defaultConfig already exists.
@@ -115,10 +116,8 @@ export function StartPage(props: Props) {
                                 (c) =>
                                   isEqual(
                                     c.descriptor.configuration,
-                                    // @ts-ignore
-                                    'configuration' in defaultConfig
-                                      ? // @ts-ignore
-                                        defaultConfig.configuration
+                                    'configuration' in defaultComputationSpec
+                                      ? defaultComputationSpec.configuration
                                       : {}
                                   ) && app.name === c.descriptor.type
                               );
@@ -138,13 +137,11 @@ export function StartPage(props: Props) {
                               if (!existingComputation) {
                                 const computation = createComputation(
                                   app.name,
-                                  defaultConfig
-                                    ? //@ts-ignore
-                                      defaultConfig.displayName
+                                  defaultComputationSpec
+                                    ? defaultComputationSpec.displayName
                                     : '',
-                                  defaultConfig
-                                    ? //@ts-ignore
-                                      defaultConfig.configuration
+                                  defaultComputationSpec.configuration != null
+                                    ? defaultComputationSpec.configuration
                                     : null,
                                   computations,
                                   [newVisualization]

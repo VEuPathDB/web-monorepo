@@ -11,7 +11,7 @@ import { fold } from 'fp-ts/lib/Either';
 export function createComputation(
   computationType: string,
   displayName: string,
-  configuration: ComputationConfiguration,
+  configuration: unknown,
   computations: Computation[] = [],
   visualizations: Visualization[] = [],
   computationId?: string
