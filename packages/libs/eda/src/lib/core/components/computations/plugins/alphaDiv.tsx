@@ -135,7 +135,7 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
       const newComputation = createComputation(
         computation.descriptor.type,
         // @ts-ignore
-        `Data: ${variableObject?.entityDisplayName}: ${variableObject?.displayName}; Method: ${newConfigObject.alphaDivMethod}`,
+        `${variableObject?.entityDisplayName} > ${variableObject?.displayName}&;&${newConfigObject.alphaDivMethod}`,
         // @ts-ignore
         newConfigObject,
         computations,
@@ -222,7 +222,8 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
                   entityId: collectionVar.entityId,
                 })}
               >
-                {collectionVar.entityDisplayName}: {collectionVar.displayName}
+                {collectionVar.entityDisplayName} {' > '}{' '}
+                {collectionVar.displayName}
               </option>
             );
           })}

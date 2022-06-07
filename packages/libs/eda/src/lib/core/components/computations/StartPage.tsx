@@ -97,6 +97,9 @@ export function StartPage(props: Props) {
                     >
                       <Tooltip title={<>{vizType.description}</>}>
                         <button
+                          style={{
+                            cursor: disabled ? 'not-allowed' : 'cursor',
+                          }}
                           disabled={disabled}
                           onClick={async () => {
                             if (analysisState.analysis == null) return;
