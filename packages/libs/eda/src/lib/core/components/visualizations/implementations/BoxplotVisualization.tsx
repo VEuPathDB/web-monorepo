@@ -658,7 +658,12 @@ function BoxplotViz(props: VisualizationProps) {
               data.value?.completeCasesAxesVars
           }
           showMissingness={vizConfig.showMissingness}
-          onShowMissingnessChange={onShowMissingnessChange}
+          // this can be used to show and hide no data control
+          onShowMissingnessChange={
+            computation.descriptor.configuration != null
+              ? undefined
+              : onShowMissingnessChange
+          }
           outputEntity={outputEntity}
         />
       </div>
