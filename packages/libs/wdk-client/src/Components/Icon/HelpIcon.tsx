@@ -14,6 +14,7 @@ export default function HelpIcon (props: Props) {
     <Tooltip
       css={{}}
       title={props.children}
+      interactive
     >
       <button type="button" className="link HelpTrigger">
         <Icon fa="question-circle"/>
