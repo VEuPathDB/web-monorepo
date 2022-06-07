@@ -4,8 +4,7 @@
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "veupathdb-react-scripts run-site-dev-server --config webpack.config.local.mjs --port 3000",
-    "prepare": "relative-deps"
+    "start": "veupathdb-react-scripts run-site-dev-server --config webpack.config.local.mjs --port 3000"
   },
   "keywords": [],
   "author": "",
