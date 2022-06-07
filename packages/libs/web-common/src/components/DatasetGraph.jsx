@@ -165,8 +165,8 @@ export default class DatasetGraph extends React.PureComponent {
     let baseUrlWithMetadata = `${baseUrlWithState}&facet=${facet}&contXAxis=${contXAxis}`;
     let imgUrl = baseUrlWithMetadata + '&fmt=svg';
     // let pngUrl = baseUrlWithMetadata + '&fmt=png';
-    let covImgUrl = dataTable && dataTable.record.attributes.CoverageJbrowseIntUrl + '%2C' + dataset_name + '%20Density%20-%20Unique%20Only';
-    let covImgJbrowseUrl = dataTable && dataTable.record.attributes.CoverageJbrowseUrl + '%2C' + dataset_name + '%20Density%20-%20Unique%20Only';
+    let covImgUrl = dataTable && dataTable.record.attributes.CoverageJbrowseIntUrl + '%2C' + dataset_name + '%20Density%20-%20Unique%20Only' + '%2C' + dataset_name + '%20XYPlot%20-%20Unique%20Only';
+    let covImgJbrowseUrl = dataTable && dataTable.record.attributes.CoverageJbrowseUrl + '%2C' + dataset_name + '%20Density%20-%20Unique%20Only' + '%2C' + dataset_name + '%20XYPlot%20-%20Unique%20Only';
 
     let specialImgUrl = dataTable && dataTable.record.attributes.specialJbrowseUrl;
 
@@ -236,11 +236,20 @@ hook: HostResponseGraphs
          {graphId !== source_id? <div><b><font color="firebrick">WARNING</font></b>: This Gene ({source_id} ) does not have data for this experiment. Instead, we are showing data for this same gene(s) from the reference strain for this species. This may or may NOT accurately represent the gene you are interested in. </div>
            : null}
 
+           <div>
+           {assay_type == 'RNA-Seq' && module !== 'SpliceSites' && covImgUrl && !isUserDataset ?
+             <h4><a href={covImgJbrowseUrl.replace('/rnaseqTracks/', '/tracks/')}>
+                    View in genome browser
+             </a></h4>
+          : null}
+           </div>
+
            {assay_type == 'RNA-Seq'  && (paralog_number > 0) && module !== 'SpliceSites' && covImgUrl && !isUserDataset ?
-             <div>
+           <div>
              <b><font color="firebrick">Warning: This gene has {safeHtml(paralog_number, {}, 'b')} paralogs!</font></b>
 <br></br>Please consider non-unique aligned reads in the expression graph and coverage plots in the genome browser (<a href={tutorial_link}><b>tutorial</b></a>).</div>
           : null}
+
 
           {assay_type == 'RNA-Seq' && module !== 'SpliceSites' && !isUserDataset && covImgUrl ?
             <CollapsibleSection
@@ -254,11 +263,8 @@ hook: HostResponseGraphs
               <div>
                 Non-unique mapping may be examined in the genome browser (<a href={tutorial_link}><b>tutorial</b></a>)
                 <br></br><br></br>
-                <a href={covImgJbrowseUrl.replace('/rnaseqTracks/', '/tracks/')}>
-                    View in genome browser
-                </a>
               </div>
-              <div><iframe src={covImgUrl + "&tracklist=0&nav=0&overview=0&fullviewlink=0&meno=0"} width="100%" height="200" scrolling="yes" allowfullscreen="false" /></div>
+              <div><iframe src={covImgUrl + "&tracklist=0&nav=0&overview=0&fullviewlink=0&meno=0"} width="100%" height="200" scrolling="no" allowfullscreen="false" /></div>
             </CollapsibleSection>
           : null}
 
