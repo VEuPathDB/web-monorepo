@@ -112,7 +112,7 @@ export default function SiteSearchController({
       [DOCUMENT_TYPE_PARAM]: nextDocumentType,
       [ORGANISM_PARAM]: organisms
     })
-  }, [ updateParams, searchString, organisms ]);
+  }, [ updateParams, searchString, organisms, documentType ]);
 
   const setOrganisms = useCallback((organisms: string[]) => {
     updateParams({

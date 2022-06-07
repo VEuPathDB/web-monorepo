@@ -45,7 +45,6 @@ class Header extends React.Component {
       logoUrl,
     } = this.props;
     const { rootUrl } = siteConfig;
-    const heading = `Welcome To <span class="Hero-Title">${titleWithoutDB}</span><span style="color:#DD314E">DB</span>`;
     const { pathname } = window.location;
     const showHomeContent = (rootUrl === pathname || (rootUrl + '/') === pathname);
 
@@ -63,13 +62,8 @@ class Header extends React.Component {
             subTitle={subTitle}
             logoUrl={logoUrl}
             heroImageUrl={heroImageUrl}
+            tagline={tagline}
           />
-          {!showHomeContent
-            ? null
-            : (
-              <div><h3 dangerouslySetInnerHTML={{ __html: tagline }} /></div>
-            )
-          }
         </Hero>
       </header>
     );
