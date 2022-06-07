@@ -26,7 +26,7 @@ export const useDefaultPluginConfiguration = (
     if (!defaultObject) return null;
     return {
       name: app.name,
-      displayName: `Data: ${collections[0].entityDisplayName}: ${collections[0].displayName}; Method: ${defaultObject.method}`,
+      displayName: `${collections[0].entityDisplayName} > ${collections[0].displayName}&;&${defaultObject.method}`,
       configuration: {
         name: defaultObject.name,
         collectionVariable: {

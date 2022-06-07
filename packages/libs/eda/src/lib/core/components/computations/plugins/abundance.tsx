@@ -132,7 +132,7 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
       const newComputation = createComputation(
         computation.descriptor.type,
         // @ts-ignore
-        `Data: ${variableObject?.entityDisplayName}: ${variableObject?.displayName}; Method: ${newConfigObject.rankingMethod}`,
+        `${variableObject?.entityDisplayName} > ${variableObject?.displayName}&;&${newConfigObject.rankingMethod}`,
         // @ts-ignore
         newConfigObject,
         computations,
