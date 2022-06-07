@@ -4,7 +4,8 @@
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "veupathdb-react-scripts run-site-dev-server --config webpack.config.local.mjs --port 3000"
+    "start": "veupathdb-react-scripts run-site-dev-server --config webpack.config.local.mjs --port 3000",
+    "prepare": "relative-deps"
   },
   "keywords": [],
   "author": "",
@@ -56,6 +57,7 @@
     "html-webpack-plugin": "^4.5.2",
     "ify-loader": "^1.1.0",
     "mini-css-extract-plugin": "^0.6.0",
+    "relative-deps": "^1.0.7",
     "sass": "^1.52.2",
     "sass-loader": "^7.1.0",
     "script-loader": "^0.7.2",
@@ -67,5 +69,8 @@
     "webpack-cli": "^4.9.2",
     "webpack-dev-server": "^4.7.4",
     "webpack-merge": "^4.2.1"
+  },
+  "relativeDependencies": {
+    "@veupathdb/web-common": "../../EbrcWebsiteCommon/Client"
   }
 }

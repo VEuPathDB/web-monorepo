@@ -15,8 +15,7 @@ export default permissionsValue => ({ studies, searches, visualizations }) => ([
     isLoading: studies.loading || permissionsValue.loading,
     isExpandable: true,
     // uncomment the next line to disable the cards search
-    // isSearchable: !siteSearchServiceUrl,
-    isSearchable: true,
+    isSearchable: !siteSearchServiceUrl,
     tableViewLink: '/search/dataset/Studies/result',
     tableViewLinkText: 'Study summaries table',
     cardComponent: StudyCard,
