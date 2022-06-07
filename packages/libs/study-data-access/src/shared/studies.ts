@@ -4,7 +4,6 @@ import { RecordInstance } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 export type Study = RecordInstance;
 
 export async function fetchStudies(wdkService: WdkService) {
-  const { projectId } = await wdkService.getConfig();
   const answer = await wdkService.getAnswerJson(
     {
       searchName: 'AllDatasets',
@@ -19,15 +18,11 @@ export async function fetchStudies(wdkService: WdkService) {
         'policy_url',
         'request_needs_approval',
         'bulk_download_url',
-        'project_availability',
       ],
       tables: []
     }
   );
-  answer.records = answer.records.filter(record => {
-    const projectAvailability = getProjectAvailability(record);
-    return projectAvailability == null || projectAvailability.includes(projectId);
-  });
+
   return answer;
 }
 
@@ -53,11 +48,6 @@ export function getStudyPolicyUrl(record: RecordInstance) {
 
 export function getStudyRequestNeedsApproval(record: RecordInstance) {
   return getStringAttributeValue(record, 'request_needs_approval');
-}
-
-export function getProjectAvailability(record: RecordInstance) {
-  const value = getStringAttributeValue(record, 'project_availability');
-  return value == null ? null : JSON.parse(value) as string[];
 }
 
 function getStringAttributeValue(record: RecordInstance, attributeName: string) {
