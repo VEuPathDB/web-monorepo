@@ -64,7 +64,7 @@ export default function MySubset({
   }, [currentEntity, totalEntityCounts, filteredEntityCounts]);
 
   return (
-    <div key="My Subset" style={{ marginBottom: 35 }}>
+    <div key="My Subset" style={{ marginTop: 10, marginBottom: 35 }}>
       {currentEntity ? (
         <SubsettingDataGridModal
           displayModal={mySubsetModalOpen}

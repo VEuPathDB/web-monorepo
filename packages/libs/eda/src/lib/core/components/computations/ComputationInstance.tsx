@@ -1,10 +1,6 @@
-import React, { useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useToggleStarredVariable } from '../../hooks/starredVariables';
-import {
-  Computation,
-  ComputationAppOverview,
-  Visualization,
-} from '../../types/visualization';
+import { Computation, Visualization } from '../../types/visualization';
 import { VisualizationsContainer } from '../visualizations/VisualizationsContainer';
 import { VisualizationType } from '../visualizations/VisualizationTypes';
 import { ComputationProps } from './Types';
@@ -14,19 +10,23 @@ export interface Props extends ComputationProps {
   computationId: string;
   visualizationTypes: Record<string, VisualizationType>;
   baseUrl?: string; // right now only defined when *not* using single app mode
+  singleAppMode: string | undefined;
 }
 
 export function ComputationInstance(props: Props) {
   const {
     computationAppOverview,
     computationId,
-    analysisState: { analysis, setComputations },
+    analysisState,
     totalCounts,
     filteredCounts,
     geoConfigs,
     visualizationTypes,
     baseUrl,
+    singleAppMode,
   } = props;
+
+  const { analysis, setComputations } = analysisState;
 
   const computation = useMemo(() => {
     return analysis?.descriptor.computations.find(
@@ -74,13 +74,14 @@ export function ComputationInstance(props: Props) {
       {baseUrl && (
         <AppTitle
           computation={computation}
-          computationAppOverview={computationAppOverview}
           condensed={
             url.replace(/\/+$/, '').split('/').pop() === 'visualizations'
           }
         />
       )}
       <VisualizationsContainer
+        analysisState={analysisState}
+        computationAppOverview={computationAppOverview}
         geoConfigs={geoConfigs}
         computation={computation}
         visualizationsOverview={computationAppOverview.visualizations}
@@ -92,6 +93,7 @@ export function ComputationInstance(props: Props) {
         totalCounts={totalCounts}
         filteredCounts={filteredCounts}
         baseUrl={baseUrl}
+        showHeading={!singleAppMode}
       />
     </div>
   );
@@ -100,7 +102,6 @@ export function ComputationInstance(props: Props) {
 // Title above each app in /visualizations
 interface AppTitleProps {
   computation: Computation;
-  computationAppOverview: ComputationAppOverview;
   condensed: boolean;
 }
 
@@ -109,34 +110,27 @@ interface AppTitleProps {
 // is the "condensed" version. May make sense to break into two components when
 // further styling is applied?
 function AppTitle(props: AppTitleProps) {
-  const { computation, computationAppOverview, condensed } = props;
-  const expandedStyle = {
-    borderRadius: 5,
-    paddingTop: 10,
-    paddingRight: 35,
-    paddingBottom: 10,
-    paddingLeft: 20,
-    backgroundColor: 'lightblue',
-    margin: 'auto',
-    marginTop: 10,
-  };
+  const { computation, condensed } = props;
+  const splitDisplayName = computation.displayName
+    ? computation.displayName.split('&;&')
+    : '';
+
   return condensed ? (
-    <div>
-      <h3>
-        {computation.displayName} <i className="fa fa-cog"></i>{' '}
-        <i className="fa fa-clone"></i> <i className="fa fa-trash"></i>
-      </h3>
-      <h4>
-        <i>{computationAppOverview.displayName}</i>
-      </h4>
+    <div style={{ lineHeight: 1.5 }}>
+      {computation.descriptor.configuration ? (
+        <>
+          <h4 style={{ padding: '15px 0 0 0', marginLeft: 20 }}>
+            Data: <span style={{ fontWeight: 300 }}>{splitDisplayName[0]}</span>
+          </h4>
+          <h4 style={{ padding: 0, marginLeft: 20 }}>
+            Method:{' '}
+            <span style={{ fontWeight: 300 }}>
+              {splitDisplayName[1][0].toUpperCase() +
+                splitDisplayName[1].slice(1)}
+            </span>
+          </h4>
+        </>
+      ) : null}
     </div>
-  ) : (
-    <div style={expandedStyle}>
-      <h3>
-        {computation.displayName} <i className="fa fa-cog"></i>{' '}
-        <i className="fa fa-clone"></i> <i className="fa fa-trash"></i>
-      </h3>
-      <h4>{computationAppOverview.displayName}</h4>
-    </div>
-  );
+  ) : null;
 }

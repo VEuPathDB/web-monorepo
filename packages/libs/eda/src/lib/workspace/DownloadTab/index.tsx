@@ -9,7 +9,6 @@ import { DownloadClient } from '../../core/api/DownloadClient';
 // Components
 import MySubset from './MySubset';
 import CurrentRelease from './CurrentRelease';
-import { Paragraph } from '@veupathdb/coreui';
 
 // Hooks
 import { useStudyEntities, useWdkStudyReleases } from '../../core/hooks/study';
@@ -77,22 +76,30 @@ export default function DownloadTab({
       permission.permissions.perDataset[studyRecord.id[0].value]
         ?.actionAuthorization['resultsAll'];
     const requestElement = (
-      <button className="link" onClick={handleClick}>
+      <button className="link" style={{ padding: 0 }} onClick={handleClick}>
         Click here to request access.
       </button>
     );
     return (
-      <Paragraph styleOverrides={{ margin: '0 0 10px 0' }} textSize="medium">
-        {getDataAccessDeclaration(
-          studyAccess,
-          requestNeedsApproval,
-          user.isGuest,
-          hasPermission ?? false
-        )}{' '}
-        {studyAccess !== 'Public' &&
-          (user.isGuest || !hasPermission) &&
-          requestElement}
-      </Paragraph>
+      <span
+        style={{
+          lineHeight: '150%',
+          fontWeight: 300,
+          fontSize: '1.4em',
+        }}
+      >
+        <em>
+          {getDataAccessDeclaration(
+            studyAccess,
+            requestNeedsApproval,
+            user.isGuest,
+            hasPermission ?? false
+          )}
+          {studyAccess !== 'Public' &&
+            (user.isGuest || !hasPermission) &&
+            requestElement}
+        </em>
+      </span>
     );
   }, [user, permission, studyRecord, handleClick, datasetId]);
 
@@ -211,7 +218,7 @@ function getDataAccessDeclaration(
   const CONTROLLED_ACCESS_STUB =
     ' data can be downloaded immediately following request submission. ';
   const PROTECTED_ACCESS_STUB =
-    ' data can be downloaded after the study team reviews and grants you access. ';
+    ' data can be downloaded after the study team reviews your request and grants you access. ';
   const ACCESS_GRANTED_STUB =
     'You have been granted access to download the data.';
   // const ACCESS_PENDING_STUB = 'Your data access request is pending.';

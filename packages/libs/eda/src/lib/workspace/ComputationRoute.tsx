@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Route, Switch, useHistory, Redirect } from 'react-router';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { AnalysisState, useDataClient } from '../core';
@@ -12,8 +12,11 @@ import { PromiseHookState, usePromise } from '../core/hooks/promise';
 import { GeoConfig } from '../core/types/geoConfig';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { FilledButton } from '@veupathdb/coreui/dist/components/buttons';
+import AddIcon from '@material-ui/icons/Add';
 // alphadiv abundance
 import { ComputationConfiguration } from '../core/types/visualization';
+import { isEqual } from 'lodash';
 
 export interface Props {
   analysisState: AnalysisState;
@@ -51,6 +54,26 @@ export function ComputationRoute(props: Props) {
     }, [dataClient, wdkService, singleAppMode])
   );
 
+  /*  
+    Callback creates an object that will group apps by type, then returns an array 
+    for each type as [appType, computation]. This allows me to map over each appType
+    and its corresponding computations.
+    Lots of room to improve this approach.
+  */
+  const appsGroupedByType = useMemo(() => {
+    if (!analysisState.analysis?.descriptor.computations.length) return [];
+    const groupingObject: any = {};
+    for (const computation of analysisState.analysis?.descriptor.computations) {
+      const key = computation.descriptor.type;
+      if (!(key in groupingObject)) {
+        groupingObject[key] = [computation];
+      } else {
+        groupingObject[key] = groupingObject[key].concat(computation);
+      }
+    }
+    return Object.entries(groupingObject);
+  }, [analysisState]);
+
   return (
     <PromiseResult state={promiseState}>
       {(apps) => {
@@ -86,6 +109,7 @@ export function ComputationRoute(props: Props) {
                       computationId={singleAppComputationId}
                       computationAppOverview={apps[0]}
                       visualizationTypes={plugin.visualizationTypes}
+                      singleAppMode={singleAppMode}
                     />
                   );
                 }}
@@ -97,32 +121,58 @@ export function ComputationRoute(props: Props) {
             <Switch>
               <Route exact path={`${url}`}>
                 <div>
-                  <div>
+                  <div style={{ width: 'max-content' }}>
                     <Link to={`${url}/new`}>
-                      {' '}
-                      <h2>+ New module</h2>
+                      <FilledButton
+                        text="New visualization"
+                        onPress={() => null}
+                        textTransform="none"
+                        themeRole="primary"
+                        icon={AddIcon}
+                        styleOverrides={{
+                          container: { margin: '15px 0' },
+                        }}
+                      />
                     </Link>
                   </div>
-                  <br></br>
-                  <h2>Saved modules and vizs</h2>
-                  <hr></hr>
-                  {analysisState.analysis?.descriptor.computations.map((c) => {
-                    const app = apps.find(
-                      (app) => app.name === c.descriptor.type
-                    );
-                    const plugin = app && plugins[app.name];
-                    return (
-                      plugin && (
-                        <ComputationInstance
-                          {...props}
-                          computationId={c.computationId}
-                          computationAppOverview={app}
-                          visualizationTypes={plugin.visualizationTypes}
-                          baseUrl={`${url}/${c.computationId}`}
-                        />
-                      )
-                    );
-                  })}
+                  {
+                    /* 
+                      Here we're mapping over the grouped apps such that the computation instances are
+                      also grouped together within the appType
+                    */
+                    // @ts-ignore
+                    appsGroupedByType.map((appType) => {
+                      const app = apps.find((app) => app.name === appType[0]);
+                      const appName = (
+                        <h4 style={{ paddingBottom: 0 }}>{app?.displayName}</h4>
+                      );
+                      const plugin = app && plugins[app.name];
+                      return (
+                        plugin && (
+                          <>
+                            {appName}
+                            {
+                              // @ts-ignore
+                              appType[1].map((c) => {
+                                return (
+                                  <ComputationInstance
+                                    {...props}
+                                    computationId={c.computationId}
+                                    computationAppOverview={app}
+                                    visualizationTypes={
+                                      plugin.visualizationTypes
+                                    }
+                                    baseUrl={`${url}/${c.computationId}`}
+                                    singleAppMode={singleAppMode}
+                                  />
+                                );
+                              })
+                            }
+                          </>
+                        )
+                      );
+                    })
+                  }
                 </div>
               </Route>
               <Route exact path={`${url}/new`}>
@@ -137,30 +187,49 @@ export function ComputationRoute(props: Props) {
                 const plugin = plugins[app.name];
                 const addComputation = async (
                   name: string,
+                  displayName: string,
                   configuration: ComputationConfiguration
                 ) => {
                   if (analysisState.analysis == null) return;
                   const computations =
                     analysisState.analysis.descriptor.computations;
-                  const computation = createComputation(
-                    app.name,
-                    name,
-                    configuration,
-                    computations
+                  /* 
+                    Here we're checking for a matching configuration before instantiating a new one
+                    If there's a match, we'll store it as existingConfig and use that data in the else block
+                  */
+                  // @ts-ignore
+                  const existingConfig = computations.find(
+                    (c) =>
+                      isEqual(c.descriptor.configuration, configuration) &&
+                      app.name === c.descriptor.type
                   );
-                  const newAnalysisId = await analysisState.setComputations([
-                    computation,
-                    ...computations,
-                  ]);
-                  const urlBase = newAnalysisId
-                    ? url.replace('new', newAnalysisId)
-                    : url;
-                  history.push(`${urlBase}/${computation.computationId}`);
+                  if (!existingConfig) {
+                    const computation = createComputation(
+                      app.name,
+                      displayName,
+                      configuration,
+                      computations
+                    );
+                    const newAnalysisId = await analysisState.setComputations([
+                      computation,
+                      ...computations,
+                    ]);
+                    const urlBase = newAnalysisId
+                      ? url.replace('new', newAnalysisId)
+                      : url;
+                    history.push(`${urlBase}/${computation.computationId}`);
+                  } else {
+                    const newAnalysisId = existingConfig.computationId;
+                    const urlBase = newAnalysisId
+                      ? url.replace('new', newAnalysisId)
+                      : url;
+                    history.push(`${urlBase}/${existingConfig.computationId}`);
+                  }
                 };
 
                 return (
                   <Route exact path={`${url}/new/${app.name}`}>
-                    {plugin ? (
+                    {/* {plugin ? (
                       <plugin.configurationComponent
                         {...props}
                         computationAppOverview={app}
@@ -168,7 +237,7 @@ export function ComputationRoute(props: Props) {
                       />
                     ) : (
                       <div>App not yet implemented</div>
-                    )}
+                    )} */}
                   </Route>
                 );
               })}
@@ -192,6 +261,7 @@ export function ComputationRoute(props: Props) {
                       computationAppOverview={app}
                       visualizationTypes={plugin.visualizationTypes}
                       baseUrl={`${url}/${computation?.computationId}`}
+                      singleAppMode={singleAppMode}
                     />
                   );
                 }}
