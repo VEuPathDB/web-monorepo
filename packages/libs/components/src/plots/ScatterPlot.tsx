@@ -87,7 +87,10 @@ const ScatterPlot = makePlotlyPlotComponent(
     const extendedDependentAxisRange = extendAxisRangeForTruncations(
       standardDependentAxisRange,
       axisTruncationConfig?.dependentAxis,
-      dependentValueType === 'date' ? 'date' : 'number'
+      dependentValueType === 'date' ? 'date' : 'number',
+      // adjust range for log scale
+      'scatterplot',
+      dependentAxisLogScale
     );
 
     // make rectangular layout shapes for truncated axis/missing data
