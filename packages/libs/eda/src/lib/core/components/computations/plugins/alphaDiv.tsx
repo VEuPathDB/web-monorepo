@@ -34,7 +34,7 @@ function createDefaultComputationSpec(rootEntity: StudyEntity) {
     alphaDivMethod: 'shannon',
   };
   return {
-    displayName: `Data: ${collections[0].entityDisplayName}: ${collections[0].displayName}; Method: shannon`,
+    displayName: `${collections[0].entityDisplayName} > ${collections[0].displayName}&;&shannon`,
     configuration,
   };
 }
@@ -89,8 +89,10 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
     const computations = analysisState.analysis
       ? analysisState.analysis.descriptor.computations
       : [];
-    const newConfigObject = typeof computation.descriptor.configuration ===
-      'object' && {
+
+    assertConfigType(computation.descriptor.configuration, AlphaDivConfig);
+
+    const newConfigObject = {
       ...computation.descriptor.configuration,
       [changedConfigPropertyName]: newConfigValue,
     };
@@ -150,15 +152,12 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
             variableId: collectionVar.id,
             entityId: collectionVar.entityId,
           },
-          // @ts-ignore
           newConfigObject.collectionVariable
         )
       );
       const newComputation = createComputation(
         computation.descriptor.type,
-        // @ts-ignore
-        `Data: ${variableObject?.entityDisplayName}: ${variableObject?.displayName}; Method: ${newConfigObject.alphaDivMethod}`,
-        // @ts-ignore
+        `${variableObject?.entityDisplayName} > ${variableObject?.displayName}&;&${newConfigObject.alphaDivMethod}`,
         newConfigObject,
         computations,
         existingVisualization
@@ -245,7 +244,8 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
                   entityId: collectionVar.entityId,
                 })}
               >
-                {collectionVar.entityDisplayName}: {collectionVar.displayName}
+                {collectionVar.entityDisplayName} {' > '}{' '}
+                {collectionVar.displayName}
               </option>
             );
           })}

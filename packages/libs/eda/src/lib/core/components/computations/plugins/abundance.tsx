@@ -34,7 +34,7 @@ function createDefaultComputationSpec(rootEntity: StudyEntity) {
     rankingMethod: 'median',
   };
   return {
-    displayName: `Data: ${collections[0].entityDisplayName}: ${collections[0].displayName}; Method: median`,
+    displayName: `${collections[0].entityDisplayName} > ${collections[0].displayName}&;&median`,
     configuration,
   };
 }
@@ -89,8 +89,10 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
     const computations = analysisState.analysis
       ? analysisState.analysis.descriptor.computations
       : [];
-    const newConfigObject = typeof computation.descriptor.configuration ===
-      'object' && {
+
+    assertConfigType(computation.descriptor.configuration, AbundanceConfig);
+
+    const newConfigObject = {
       ...computation.descriptor.configuration,
       [changedConfigPropertyName]: newConfigValue,
     };
@@ -155,9 +157,7 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
       );
       const newComputation = createComputation(
         computation.descriptor.type,
-        // @ts-ignore
-        `Data: ${variableObject?.entityDisplayName}: ${variableObject?.displayName}; Method: ${newConfigObject.rankingMethod}`,
-        // @ts-ignore
+        `${variableObject?.entityDisplayName} > ${variableObject?.displayName}&;&${newConfigObject.rankingMethod}`,
         newConfigObject,
         computations,
         existingVisualization
@@ -243,7 +243,8 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
                   entityId: collectionVar.entityId,
                 })}
               >
-                {collectionVar.entityDisplayName}: {collectionVar.displayName}
+                {collectionVar.entityDisplayName} {' > '}{' '}
+                {collectionVar.displayName}
               </option>
             );
           })}

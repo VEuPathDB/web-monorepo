@@ -107,14 +107,26 @@ interface AppTitleProps {
 
 function AppTitle(props: AppTitleProps) {
   const { computation, condensed } = props;
+  const splitDisplayName = computation.displayName
+    ? computation.displayName.split('&;&')
+    : '';
 
   return condensed ? (
-    computation.descriptor.configuration ? (
-      <div style={{ marginTop: 10 }}>
-        <h4 style={{ marginLeft: 20 }}>
-          <em>{computation.displayName}</em>
-        </h4>
-      </div>
-    ) : null
+    <div style={{ lineHeight: 1.5 }}>
+      {computation.descriptor.configuration ? (
+        <>
+          <h4 style={{ padding: '15px 0 0 0', marginLeft: 20 }}>
+            Data: <span style={{ fontWeight: 300 }}>{splitDisplayName[0]}</span>
+          </h4>
+          <h4 style={{ padding: 0, marginLeft: 20 }}>
+            Method:{' '}
+            <span style={{ fontWeight: 300 }}>
+              {splitDisplayName[1][0].toUpperCase() +
+                splitDisplayName[1].slice(1)}
+            </span>
+          </h4>
+        </>
+      ) : null}
+    </div>
   ) : null;
 }

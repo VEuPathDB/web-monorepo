@@ -128,7 +128,7 @@ export function ComputationRoute(props: Props) {
                         themeRole="primary"
                         icon={AddIcon}
                         styleOverrides={{
-                          container: { marginTop: 15 },
+                          container: { margin: '15px 0' },
                         }}
                       />
                     </Link>
@@ -140,7 +140,9 @@ export function ComputationRoute(props: Props) {
                     */
                     appsGroupedByType.map((appType) => {
                       const app = apps.find((app) => app.name === appType[0]);
-                      const appName = <h4>{app?.displayName}</h4>;
+                      const appName = (
+                        <h4 style={{ paddingBottom: 0 }}>{app?.displayName}</h4>
+                      );
                       const plugin = app && plugins[app.name];
                       return (
                         plugin && (
