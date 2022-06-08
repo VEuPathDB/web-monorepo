@@ -5,7 +5,7 @@ import {
 } from '../VisualizationTypes';
 import map from './selectorIcons/map.svg';
 import * as t from 'io-ts';
-import { isEqual, zip, some, sum } from 'lodash';
+import { isEqual, zip, some, sum, sortBy } from 'lodash';
 
 // map component related imports
 import MapVEuMap, {
@@ -22,7 +22,10 @@ import {
 import DonutMarker from '@veupathdb/components/lib/map/DonutMarker';
 import ChartMarker from '@veupathdb/components/lib/map/ChartMarker';
 
-import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
+import {
+  ColorPaletteDefault,
+  gradientSequentialColorscaleMap,
+} from '@veupathdb/components/lib/types/plots/addOns';
 
 // general ui imports
 import { FormControl, Select, MenuItem, InputLabel } from '@material-ui/core';
@@ -397,7 +400,7 @@ function MapViz(props: VisualizationProps) {
           geoAggregateVariable: geoAggregateVariable,
           showMissingness: 'noVariables', // current back end 'showMissing' behaviour applies to facet variable
           valueSpec: proportionMode ? 'proportion' : 'count',
-          binSpec: { type: 'binWidth', value: 25 },
+          binSpec: {}, // { type: 'binWidth', value: 450.25 },
           viewport: {
             latitude: {
               xMin,
@@ -460,13 +463,16 @@ function MapViz(props: VisualizationProps) {
 
   // `vocabulary` is taken from the response, not the study metadata
   // this is because not all values are shown (up to 8 or 7 most popular + 'other')
-  const vocabulary = useMemo(
-    () =>
+  const vocabulary = useMemo(() => {
+    const rankedValues =
       overlayResponse.value != null
         ? overlayResponse.value.mapMarkers.config.rankedValues
-        : undefined,
-    [overlayResponse.value]
-  );
+        : undefined;
+    return xAxisVariable?.type === 'string'
+      ? rankedValues
+      : // quick and dirty hack to sort by the bin-start in the string like "(625,750]"
+        sortBy(rankedValues, (value) => value.split(/[[(,]/)[1]);
+  }, [overlayResponse.value, xAxisVariable]);
 
   /**
    * Merge the overlay data into the basicMarkerData, if available,
@@ -490,7 +496,12 @@ function MapViz(props: VisualizationProps) {
                 .map(({ label, value }) => ({
                   label,
                   value,
-                  color: ColorPaletteDefault[vocabulary.indexOf(label!)],
+                  color:
+                    xAxisVariable?.type === 'string'
+                      ? ColorPaletteDefault[vocabulary.indexOf(label!)]
+                      : gradientSequentialColorscaleMap(
+                          vocabulary.indexOf(label!) / (vocabulary.length - 1)
+                        ),
                 }))
                 // DonutMarkers don't handle checkedLegendItems automatically, like our
                 // regular PlotlyPlot components, so we do the filtering here
@@ -501,6 +512,7 @@ function MapViz(props: VisualizationProps) {
                 )
             : [];
 
+        console.log(donutData);
         // now reorder the data in vocabulary order, adding zeroes if necessary.
         const reorderedData = vocabulary.map(
           (vocabularyLabel) =>
@@ -678,7 +690,12 @@ function MapViz(props: VisualizationProps) {
     return vocabulary.map((label) => ({
       label,
       marker: 'square',
-      markerColor: ColorPaletteDefault[vocabulary.indexOf(label)],
+      markerColor:
+        xAxisVariable?.type === 'string'
+          ? ColorPaletteDefault[vocabulary.indexOf(label)]
+          : gradientSequentialColorscaleMap(
+              vocabulary.indexOf(label) / (vocabulary.length - 1)
+            ),
       // has any geo-facet got an array of overlay data
       // containing at least one element that satisfies label==label and value>0?
       hasData: overlayData
