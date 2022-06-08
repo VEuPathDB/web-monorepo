@@ -999,6 +999,12 @@ function ScatterplotViz(props: VisualizationProps) {
     </>
   );
 
+  // plot subtitle
+  const plotSubtitle =
+    computation.descriptor.type === 'abundance'
+      ? `Ranked abundance: Variables with median = 0 removed. Showing up to the top eight variables.`
+      : undefined;
+
   // alphadiv abundance: y-axis and overlayVariable
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -1093,7 +1099,11 @@ function ScatterplotViz(props: VisualizationProps) {
           />
         )}
 
-      <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
+      <OutputEntityTitle
+        entity={outputEntity}
+        outputSize={outputSize}
+        subtitle={plotSubtitle}
+      />
       <PlotLayout
         isFaceted={isFaceted(data.value?.dataSetProcess)}
         legendNode={legendNode}

@@ -605,6 +605,12 @@ function BoxplotViz(props: VisualizationProps) {
     </>
   );
 
+  // plot subtitle
+  const plotSubtitle =
+    computation.descriptor.type === 'abundance'
+      ? `Ranked abundance: Variables with median = 0 removed. Showing up to the top ten variables.`
+      : undefined;
+
   // for handling alphadiv abundance
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -664,7 +670,11 @@ function BoxplotViz(props: VisualizationProps) {
       </div>
 
       <PluginError error={data.error} outputSize={outputSize} />
-      <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
+      <OutputEntityTitle
+        entity={outputEntity}
+        outputSize={outputSize}
+        subtitle={plotSubtitle}
+      />
       <PlotLayout
         isFaceted={isFaceted(data.value)}
         legendNode={legendNode}

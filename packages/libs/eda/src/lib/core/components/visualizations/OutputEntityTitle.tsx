@@ -1,4 +1,5 @@
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { gray } from '@veupathdb/coreui/dist/definitions/colors';
 
 import { StudyEntity } from '../../types/study';
 import { makeEntityDisplayName } from '../../utils/study-metadata';
@@ -6,11 +7,13 @@ import { makeEntityDisplayName } from '../../utils/study-metadata';
 interface Props {
   entity?: StudyEntity;
   outputSize?: number;
+  subtitle?: string;
 }
 
 const cx = makeClassNameHelper('OutputEntityTitle');
+const cxSubtitle = makeClassNameHelper('OutputEntitySubtitle');
 
-export function OutputEntityTitle({ entity, outputSize }: Props) {
+export function OutputEntityTitle({ entity, outputSize, subtitle }: Props) {
   return (
     <p className={cx()}>
       {outputSize != null && <>{outputSize.toLocaleString()} </>}
@@ -22,6 +25,12 @@ export function OutputEntityTitle({ entity, outputSize }: Props) {
             )
           : 'No entity selected'}
       </span>
+      {subtitle && (
+        <div className={cxSubtitle()} style={{ color: gray[700] }}>
+          <br />
+          {subtitle}
+        </div>
+      )}
     </p>
   );
 }
