@@ -471,7 +471,7 @@ function MapViz(props: VisualizationProps) {
     return xAxisVariable?.type === 'string'
       ? rankedValues
       : // quick and dirty hack to sort by the bin-start in the string like "(625,750]"
-        sortBy(rankedValues, (value) => value.split(/[[(,]/)[1]);
+        sortBy(rankedValues, (value) => Number(value.split(/[[(,]/)[1]));
   }, [overlayResponse.value, xAxisVariable]);
 
   /**
