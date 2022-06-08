@@ -282,6 +282,12 @@ $data-table-inner-border: 1px solid #888;
   }
 }
 
+.OutputEntitySubtitle {
+  font-style: italic;
+  font-size: 0.9em;
+  margin-top: -10px;
+}
+
 // R-square table for Scatter plot's Best fit option
 .ScatterRsquareTable {
   @include data-table;
