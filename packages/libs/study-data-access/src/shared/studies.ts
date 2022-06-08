@@ -4,7 +4,7 @@ import { RecordInstance } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 export type Study = RecordInstance;
 
 export async function fetchStudies(wdkService: WdkService) {
-  const answer = await wdkService.getAnswerJson(
+  return await wdkService.getAnswerJson(
     {
       searchName: 'AllDatasets',
       searchConfig: { parameters: {} },
@@ -22,8 +22,6 @@ export async function fetchStudies(wdkService: WdkService) {
       tables: []
     }
   );
-
-  return answer;
 }
 
 export function getStudyId(record: RecordInstance) {
