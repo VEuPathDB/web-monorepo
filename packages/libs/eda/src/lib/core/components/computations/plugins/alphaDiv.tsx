@@ -92,13 +92,13 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
 
     assertConfigType(computation.descriptor.configuration, AlphaDivConfig);
 
-    const newConfigObject = {
+    const updatedConfiguration = {
       ...computation.descriptor.configuration,
       [changedConfigPropertyName]: newConfigValue,
     };
     const existingComputation = computations.find(
       (c) =>
-        isEqual(c.descriptor.configuration, newConfigObject) &&
+        isEqual(c.descriptor.configuration, updatedConfiguration) &&
         c.descriptor.type === computation.descriptor.type
     );
     const existingVisualization = computation.visualizations.filter(
@@ -146,19 +146,19 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
       // 2N:  existingComputation was not found
       //      get config displayName for new computation
       //      create a new computation with the existing viz
-      const variableObject = collections.find((collectionVar) =>
+      const updatedCollectionVariable = collections.find((collectionVar) =>
         isEqual(
           {
             variableId: collectionVar.id,
             entityId: collectionVar.entityId,
           },
-          newConfigObject.collectionVariable
+          updatedConfiguration.collectionVariable
         )
       );
       const newComputation = createComputation(
         computation.descriptor.type,
-        `${variableObject?.entityDisplayName} > ${variableObject?.displayName}&;&${newConfigObject.alphaDivMethod}`,
-        newConfigObject,
+        `${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}&;&${updatedConfiguration.alphaDivMethod}`,
+        updatedConfiguration,
         computations,
         existingVisualization
       );
