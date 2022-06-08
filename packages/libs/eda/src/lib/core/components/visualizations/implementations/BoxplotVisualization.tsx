@@ -607,8 +607,11 @@ function BoxplotViz(props: VisualizationProps) {
 
   // plot subtitle
   const plotSubtitle =
-    computation.descriptor.type === 'abundance'
-      ? `Ranked abundance: Variables with median = 0 removed. Showing up to the top ten variables.`
+    computation.descriptor.type === 'abundance' && outputSize != null
+      ? `Ranked abundance: Variables with ${
+          (computation.descriptor.configuration as ComputationConfiguration)
+            ?.rankingMethod
+        } = 0 removed. Showing up to the top ten variables.`
       : undefined;
 
   // for handling alphadiv abundance
