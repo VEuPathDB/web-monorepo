@@ -158,7 +158,8 @@ export default function ChartMarker(props: ChartMarkerProps) {
         ' height=' +
         barHeight +
         ' fill=' +
-        el.color +
+        // rgb strings with spaces in them don't work in SVG?
+        el.color.replace(/\s/g, '') +
         ' />';
     });
   } else {
@@ -182,7 +183,8 @@ export default function ChartMarker(props: ChartMarkerProps) {
         ' height=' +
         barHeight +
         ' fill=' +
-        el.color +
+        // rgb strings with spaces in them don't work in SVG?
+        el.color.replace(/\s/g, '') +
         ' />';
     });
   }
