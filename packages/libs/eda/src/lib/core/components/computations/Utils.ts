@@ -4,6 +4,7 @@ import { ComputationConfiguration } from '../../types/visualization';
 import * as t from 'io-ts';
 import { pipe } from 'fp-ts/lib/function';
 import { fold } from 'fp-ts/lib/Either';
+import { isEqual } from 'lodash';
 
 /**
  * Creates a new `Computation` with a unique id
@@ -60,4 +61,31 @@ export function assertConfigType<ConfigType>(
   };
   const onRight = () => null;
   pipe(configDecoder.decode(config), fold(onLeft, onRight));
+}
+
+export function getConfigHandlerObjects<ConfigType>(
+  computations: Computation[],
+  computation: Computation,
+  visualizationId: string,
+  updatedConfiguration: t.Type<ConfigType, unknown, unknown>
+) {
+  const existingComputation = computations.find(
+    (c) =>
+      isEqual(c.descriptor.configuration, updatedConfiguration) &&
+      c.descriptor.type === computation.descriptor.type
+  );
+  const existingVisualization = computation.visualizations.filter(
+    (viz) => viz.visualizationId === visualizationId
+  );
+  const computationAfterVizRemoval = {
+    ...computation,
+    visualizations: computation.visualizations.filter(
+      (viz) => viz.visualizationId !== visualizationId
+    ),
+  };
+  return {
+    existingComputation,
+    existingVisualization,
+    computationAfterVizRemoval,
+  };
 }
