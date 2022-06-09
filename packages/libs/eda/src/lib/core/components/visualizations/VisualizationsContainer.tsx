@@ -59,7 +59,7 @@ interface Props {
   filteredCounts: PromiseHookState<EntityCounts>;
   geoConfigs: GeoConfig[];
   baseUrl?: string;
-  showHeading: boolean;
+  isSingleAppMode: boolean;
 }
 
 /**
@@ -132,17 +132,18 @@ export function VisualizationsContainer(props: Props) {
 
 function ConfiguredVisualizations(props: Props) {
   const {
+    analysisState,
     computation,
     updateVisualizations,
     visualizationsOverview,
     baseUrl,
-    showHeading,
+    isSingleAppMode,
   } = props;
   const { url } = useRouteMatch();
 
   return (
     <>
-      {!showHeading ? (
+      {!isSingleAppMode ? (
         <Link
           to={{
             pathname: `${baseUrl || url}/new`,
@@ -180,13 +181,27 @@ function ConfiguredVisualizations(props: Props) {
                         <button
                           type="button"
                           className="link"
-                          onClick={() =>
+                          onClick={() => {
                             updateVisualizations((visualizations) =>
                               visualizations.filter(
                                 (v) => v.visualizationId !== viz.visualizationId
                               )
-                            )
-                          }
+                            );
+                            const computations =
+                              analysisState.analysis?.descriptor.computations;
+                            if (
+                              computation.visualizations.length === 1 &&
+                              computations
+                            ) {
+                              analysisState.setComputations([
+                                ...computations.filter(
+                                  (c) =>
+                                    c.computationId !==
+                                    computation.computationId
+                                ),
+                              ]);
+                            }
+                          }}
                         >
                           <i className="fa fa-trash"></i>
                         </button>
@@ -360,6 +375,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
     filteredCounts,
     geoConfigs,
     baseUrl,
+    isSingleAppMode,
   } = props;
   const history = useHistory();
   const viz = computation.visualizations.find((v) => v.visualizationId === id);
@@ -441,7 +457,21 @@ function FullScreenVisualization(props: Props & { id: string }) {
                 updateVisualizations((visualizations) =>
                   visualizations.filter((v) => v.visualizationId !== id)
                 );
-                history.replace(Path.resolve(history.location.pathname, '..'));
+                const computations =
+                  analysisState.analysis?.descriptor.computations;
+                if (computation.visualizations.length === 1 && computations) {
+                  analysisState.setComputations([
+                    ...computations.filter(
+                      (c) => c.computationId !== computationId
+                    ),
+                  ]);
+                }
+                history.replace(
+                  Path.resolve(
+                    history.location.pathname,
+                    isSingleAppMode ? '../..' : '..'
+                  )
+                );
               }}
             >
               <i className="fa fa-trash"></i>
