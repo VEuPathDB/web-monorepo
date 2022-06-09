@@ -2126,10 +2126,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/coreui@^0.16.2":
-  version "0.16.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.16.2.tgz#55e9c6c8a3df695b647662a521e6f5cd90c1a889"
-  integrity sha512-8LwhZA+SVN3LoTHj5DVnumJZK/mTBI6wF3cQUCU4AzxAn/Wrlvw65prZlcInkn4MwjlC1GFtu2cUX1qyPqHnTw==
+"@veupathdb/coreui@^0.16.3":
+  version "0.16.3"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.16.3.tgz#c262500c42a56344d5a576f4befe48b6ed9dc7d3"
+  integrity sha512-zAmOQaStkRrORdwg9QoqbXyP00JY1he0YP8coweiocPbqhvnRZ1YAxUTMguh9svdLHUt+I35/RyB/uS88LhTdw==
   dependencies:
     "@react-hook/size" "^2.1.2"
     lodash "^4.17.21"
@@ -2225,10 +2225,10 @@
     lodash "^4.17.21"
     moment "^2.21.0"
 
-"@veupathdb/wdk-client@^0.7.5":
-  version "0.7.5"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.7.5.tgz#a24e0d0dead953ca408866b777f9ab622c7e3a19"
-  integrity sha512-iVRC+y+QARZ8lxETeROQn0LK6rsAMMpJmdQheI3at9g4EPfOnQ6UzAQAHp5+/+yy27TmBnHA6K4uN2rSHTo0Yw==
+"@veupathdb/wdk-client@^0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.8.0.tgz#554ec6ad64ba67073c16247d70a19898b60f9dc3"
+  integrity sha512-p2lxOEYJGQnM4WZ30yDwy3dPB+8XJV4imbqNL/uoQd21Ddr6oFfLNzBGkAuiNKsCyTvuxrpE9xYaDJZQaqPOOQ==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
@@ -3630,7 +3630,7 @@ clone-deep@^4.0.1:
     kind-of "^6.0.2"
     shallow-clone "^3.0.0"
 
-clsx@^1.0.4, clsx@^1.1.1:
+clsx@^1.0.4, clsx@^1.1.0, clsx@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.1.1.tgz#98b3134f9abbdf23b2663491ace13c5c03a73188"
   integrity sha512-6/bPho624p3S2pMyvP5kKBPXnI3ufHLObBFCfgx+LkeR5lg2XYy2hqZqUf45ypD8COn2bhgGJSUE+l5dhNBieA==
@@ -7522,6 +7522,14 @@ normalize-url@^2.0.1:
     prepend-http "^2.0.0"
     query-string "^5.0.1"
     sort-keys "^2.0.0"
+
+notistack@^1.0.10:
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/notistack/-/notistack-1.0.10.tgz#8db90830034383467a04184f1fa8ff77f4fc58a5"
+  integrity sha512-z0y4jJaVtOoH3kc3GtNUlhNTY+5LE04QDeLVujX3VPhhzg67zw055mZjrBF+nzpv3V9aiPNph1EgRU4+t8kQTQ==
+  dependencies:
+    clsx "^1.1.0"
+    hoist-non-react-statics "^3.3.0"
 
 npm-install-security-check@^1.0.2:
   version "1.0.4"
