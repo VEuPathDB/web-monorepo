@@ -5,7 +5,7 @@ import {
 } from '../VisualizationTypes';
 import map from './selectorIcons/map.svg';
 import * as t from 'io-ts';
-import { isEqual, zip, some } from 'lodash';
+import { isEqual, zip, some, sum, sortBy } from 'lodash';
 
 // map component related imports
 import MapVEuMap, {
@@ -22,7 +22,10 @@ import {
 import DonutMarker from '@veupathdb/components/lib/map/DonutMarker';
 import ChartMarker from '@veupathdb/components/lib/map/ChartMarker';
 
-import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
+import {
+  ColorPaletteDefault,
+  gradientSequentialColorscaleMap,
+} from '@veupathdb/components/lib/types/plots/addOns';
 
 // general ui imports
 import { FormControl, Select, MenuItem, InputLabel } from '@material-ui/core';
@@ -34,8 +37,8 @@ import { useMemo, useCallback, useState } from 'react';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import DataClient, {
   MapMarkersRequestParams,
-  PieplotRequestParams,
-  PieplotResponse,
+  MapMarkersOverlayRequestParams,
+  MapMarkersOverlayResponse,
 } from '../../../api/DataClient';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { usePromise } from '../../../hooks/promise';
@@ -55,6 +58,7 @@ import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsSt
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
+import { kFormatter, mFormatter } from '../../../utils/big-number-formatters';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 
 export const mapVisualization: VisualizationType = {
@@ -130,7 +134,10 @@ type BasicMarkerData = {
   }[];
 };
 
-type PieplotData = Record<string, { label: string; value: number }[]>;
+type MapMarkersOverlayData = Record<
+  string,
+  { entityCount: number; data: { label: string; value: number }[] }
+>;
 
 function MapViz(props: VisualizationProps) {
   const {
@@ -229,7 +236,7 @@ function MapViz(props: VisualizationProps) {
     findEntityAndVariable,
   ]);
 
-  // prepare some info that the map-markers and pieplot requests both need
+  // prepare some info that the map-markers and overlay requests both need
   const {
     latitudeVariable,
     longitudeVariable,
@@ -360,10 +367,10 @@ function MapViz(props: VisualizationProps) {
   );
 
   /**
-   * Now we deal with the optional second request to pieplot
+   * Now we deal with the optional second request to map-markers-overlay
    */
   const proportionMode = vizConfig.markerType === 'proportion';
-  const pieplotResponse = usePromise<PieplotResponse | undefined>(
+  const overlayResponse = usePromise<MapMarkersOverlayResponse | undefined>(
     useCallback(async () => {
       // check all required vizConfigs are provided
       if (
@@ -382,7 +389,7 @@ function MapViz(props: VisualizationProps) {
       } = boundsZoomLevel.bounds;
 
       // prepare request
-      const requestParams: PieplotRequestParams = {
+      const requestParams: MapMarkersOverlayRequestParams = {
         studyId,
         filters: filters || [],
         config: {
@@ -390,9 +397,10 @@ function MapViz(props: VisualizationProps) {
           xAxisVariable: vizConfig.xAxisVariable,
           latitudeVariable: latitudeVariable,
           longitudeVariable: longitudeVariable,
-          facetVariable: [geoAggregateVariable],
+          geoAggregateVariable: geoAggregateVariable,
           showMissingness: 'noVariables', // current back end 'showMissing' behaviour applies to facet variable
           valueSpec: proportionMode ? 'proportion' : 'count',
+          binSpec: {}, // { type: 'binWidth', value: 450.25 },
           viewport: {
             latitude: {
               xMin,
@@ -407,7 +415,7 @@ function MapViz(props: VisualizationProps) {
       };
 
       // send request
-      return await dataClient.getPieplot(
+      return await dataClient.getMapMarkersOverlay(
         computation.descriptor.type,
         requestParams
       );
@@ -423,39 +431,59 @@ function MapViz(props: VisualizationProps) {
       filters,
     ])
   );
-  const pieplotData = useMemo(() => {
+  const overlayData = useMemo(() => {
     // process response and return a map of "geoAgg key" => donut labels and counts
-    return !pieplotResponse.pending && pieplotResponse.value
-      ? pieplotResponse.value.pieplot.data.reduce(
-          (map, { facetVariableDetails, label, value }) => {
-            if (
-              facetVariableDetails != null &&
-              facetVariableDetails.length === 1
-            )
-              map[facetVariableDetails[0].value] = zip(label, value).map(
-                ([label, value]) => ({
+    return !overlayResponse.pending && overlayResponse.value
+      ? overlayResponse.value.mapMarkers.data.reduce(
+          (map, { geoAggregateVariableDetails, label, value }) => {
+            const geoAggKey = geoAggregateVariableDetails.value;
+            if (overlayResponse.value)
+              // don't know why TS makes us do this check *again*...
+              map[geoAggKey] = {
+                // sum up the entity count from the sampleSizeTable because
+                // the data.label values might be proportions (and sum to 1)
+                entityCount: sum(
+                  overlayResponse.value.sampleSizeTable.find(
+                    (item) =>
+                      item.geoAggregateVariableDetails != null &&
+                      item.geoAggregateVariableDetails.value === geoAggKey
+                  )?.size
+                ),
+                data: zip(label, value).map(([label, value]) => ({
                   label: label!,
                   value: value!,
-                })
-              );
+                })),
+              };
             return map;
           },
-          {} as PieplotData
+          {} as MapMarkersOverlayData
         )
       : undefined;
-  }, [pieplotResponse]);
+  }, [overlayResponse]);
+
+  // `vocabulary` is taken from the response, not the study metadata
+  // this is because not all values are shown (up to 8 or 7 most popular + 'other')
+  const vocabulary = useMemo(() => {
+    const rankedValues =
+      overlayResponse.value != null
+        ? overlayResponse.value.mapMarkers.config.rankedValues
+        : undefined;
+    return xAxisVariable?.type === 'string'
+      ? rankedValues
+      : // quick and dirty hack to sort by the bin-start in the string like "(625,750]"
+        sortBy(rankedValues, (value) => Number(value.split(/[[(,]/)[1]));
+  }, [overlayResponse.value, xAxisVariable]);
 
   /**
-   * Merge the pieplot data into the basicMarkerData, if available,
+   * Merge the overlay data into the basicMarkerData, if available,
    * and create markers.
    */
   const markers = useMemo(() => {
-    const vocabulary = fixLabelsForNumberVariables(
-      xAxisVariable?.vocabulary,
-      xAxisVariable
-    );
-    const pieValueMax = pieplotData
-      ? values(pieplotData) // it's a Record 'object' of Array<{ label, value }>
+    if (vocabulary == null) return [];
+
+    const pieValueMax = overlayData
+      ? values(overlayData) // it's a Record 'object'
+          .map((record) => record.data)
           .flat() // flatten all the arrays into one
           .reduce((accum, elem) => (elem.value > accum ? elem.value : accum), 0) // find max value
       : 0;
@@ -463,12 +491,17 @@ function MapViz(props: VisualizationProps) {
     return basicMarkerData.value?.markerData.map(
       ({ geoAggregateValue, entityCount, bounds, position }) => {
         const donutData =
-          pieplotData?.[geoAggregateValue] != null
-            ? pieplotData[geoAggregateValue]
+          overlayData?.[geoAggregateValue] != null
+            ? overlayData[geoAggregateValue].data
                 .map(({ label, value }) => ({
                   label,
                   value,
-                  color: ColorPaletteDefault[vocabulary.indexOf(label!)],
+                  color:
+                    xAxisVariable?.type === 'string'
+                      ? ColorPaletteDefault[vocabulary.indexOf(label!)]
+                      : gradientSequentialColorscaleMap(
+                          vocabulary.indexOf(label!) / (vocabulary.length - 1)
+                        ),
                 }))
                 // DonutMarkers don't handle checkedLegendItems automatically, like our
                 // regular PlotlyPlot components, so we do the filtering here
@@ -479,6 +512,7 @@ function MapViz(props: VisualizationProps) {
                 )
             : [];
 
+        console.log(donutData);
         // now reorder the data in vocabulary order, adding zeroes if necessary.
         const reorderedData = vocabulary.map(
           (vocabularyLabel) =>
@@ -489,7 +523,7 @@ function MapViz(props: VisualizationProps) {
         );
 
         // provide the 'plain white' donut data if all legend items unchecked
-        // or if there is no pieplot data
+        // or if there is no overlay data
         const safeDonutData =
           reorderedData.length > 0
             ? reorderedData
@@ -511,6 +545,16 @@ function MapViz(props: VisualizationProps) {
           vizConfig.markerType == null || vizConfig.markerType === 'pie'
             ? DonutMarker
             : ChartMarker;
+
+        const count =
+          overlayData != null
+            ? overlayData[geoAggregateValue].entityCount ?? ''
+            : entityCount;
+        const formattedCount =
+          MarkerComponent === ChartMarker
+            ? mFormatter(count)
+            : kFormatter(count);
+
         return (
           <MarkerComponent
             id={geoAggregateValue}
@@ -519,8 +563,14 @@ function MapViz(props: VisualizationProps) {
             position={position}
             data={safeDonutData}
             duration={defaultAnimationDuration}
+            markerLabel={formattedCount}
             {...(vizConfig.markerType !== 'pie'
-              ? { dependentAxisRange: yRange }
+              ? {
+                  dependentAxisRange: yRange,
+                  independentAxisLabel: `${formattedCount} ${
+                    outputEntity?.displayNamePlural ?? outputEntity?.displayName
+                  }`,
+                }
               : {})}
           />
         );
@@ -528,10 +578,12 @@ function MapViz(props: VisualizationProps) {
     );
   }, [
     basicMarkerData.value,
-    pieplotData,
+    vocabulary,
+    overlayData,
     vizConfig.checkedLegendItems,
     vizConfig.markerType,
     xAxisVariable,
+    outputEntity,
   ]);
 
   const totalEntityCount = basicMarkerData.value?.completeCasesGeoVar;
@@ -583,7 +635,7 @@ function MapViz(props: VisualizationProps) {
           )
         }
         flyToMarkersDelay={500}
-        showSpinner={basicMarkerData.pending || pieplotResponse.pending}
+        showSpinner={basicMarkerData.pending || overlayResponse.pending}
         // whether to show scale at map
         showScale={zoomLevel != null && zoomLevel > 4 ? true : false}
         // show mouse tool
@@ -633,24 +685,28 @@ function MapViz(props: VisualizationProps) {
    */
 
   const legendItems: LegendItemsProps[] = useMemo(() => {
-    const vocabulary = xAxisVariable?.vocabulary;
     if (vocabulary == null) return [];
 
     return vocabulary.map((label) => ({
       label,
       marker: 'square',
-      markerColor: ColorPaletteDefault[vocabulary.indexOf(label)],
-      // has any geo-facet got an array of pieplot data
+      markerColor:
+        xAxisVariable?.type === 'string'
+          ? ColorPaletteDefault[vocabulary.indexOf(label)]
+          : gradientSequentialColorscaleMap(
+              vocabulary.indexOf(label) / (vocabulary.length - 1)
+            ),
+      // has any geo-facet got an array of overlay data
       // containing at least one element that satisfies label==label and value>0?
-      hasData: pieplotData
-        ? some(pieplotData, (pieData) =>
-            some(pieData, (data) => data.label === label && data.value > 0)
+      hasData: overlayData
+        ? some(overlayData, (pieData) =>
+            some(pieData.data, (data) => data.label === label && data.value > 0)
           )
         : false,
       group: 1,
       rank: 1,
     }));
-  }, [xAxisVariable, pieplotData]);
+  }, [xAxisVariable, vocabulary]);
 
   // set checkedLegendItems
   const checkedLegendItems = useCheckedLegendItemsStatus(
@@ -669,10 +725,10 @@ function MapViz(props: VisualizationProps) {
 
   // get variable constraints for InputVariables
   const pieOverview = otherVizOverviews.find(
-    (overview) => overview.name === 'pieplot'
+    (overview) => overview.name === 'map-markers-overlay'
   );
   if (pieOverview == null)
-    throw new Error('Map visualization cannot find pieplot helper');
+    throw new Error('Map visualization cannot find map-markers-overlay helper');
   const pieConstraints = pieOverview.dataElementConstraints;
   const pieDependencyOrder = pieOverview.dataElementDependencyOrder;
 
@@ -681,19 +737,19 @@ function MapViz(props: VisualizationProps) {
       <BirdsEyeView
         completeCasesAxesVars={basicMarkerData.value?.completeCasesGeoVar}
         completeCasesAllVars={
-          pieplotResponse.value?.pieplot.config.completeCasesAllVars
+          overlayResponse.value?.mapMarkers.config.completeCasesAllVars
         }
         outputEntity={outputEntity}
         stratificationIsActive={
           false /* this disables the 'strata and axes' bar/impulse */
         }
-        // enableSpinner={vizConfig.xAxisVariable != null && !pieplotData.error}
+        // enableSpinner={vizConfig.xAxisVariable != null && !overlayData.error}
         totalCounts={totalCounts.value}
         filteredCounts={filteredCounts.value}
       />
-      {!pieplotResponse.pending && pieplotResponse.value ? (
+      {!overlayResponse.pending && overlayResponse.value ? (
         <VariableCoverageTable
-          completeCases={pieplotResponse.value.completeCasesTable}
+          completeCases={overlayResponse.value.completeCasesTable}
           filteredCounts={filteredCounts}
           outputEntityId={outputEntity?.id}
           variableSpecs={[
@@ -708,7 +764,7 @@ function MapViz(props: VisualizationProps) {
               required: true,
               display: 'Geolocation',
               variable:
-                pieplotResponse.value.completeCasesTable[1].variableDetails,
+                overlayResponse.value.completeCasesTable[1].variableDetails,
             },
           ]}
         />
@@ -765,6 +821,10 @@ function MapViz(props: VisualizationProps) {
 
       <PluginError
         error={basicMarkerData.error}
+        outputSize={totalEntityCount}
+      />
+      <PluginError
+        error={overlayResponse.error}
         outputSize={totalEntityCount}
       />
       <OutputEntityTitle entity={outputEntity} outputSize={totalEntityCount} />
