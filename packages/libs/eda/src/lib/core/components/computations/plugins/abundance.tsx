@@ -10,7 +10,14 @@ import { scatterplotVisualization } from '../../visualizations/implementations/S
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { H6 } from '@veupathdb/coreui';
 import { isEqual } from 'lodash';
-import { createComputation, assertConfigType } from '../Utils';
+import {
+  createComputation,
+  assertConfigType,
+  getConfigHandlerObjects,
+  updateAnalysisWithAmendedComputations,
+  handleRouting,
+  handleConfigurationChanges,
+} from '../Utils';
 import { findCollections } from '../../../utils/study-metadata';
 import * as t from 'io-ts';
 
@@ -81,105 +88,34 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
     changedConfigPropertyName: string,
     newConfigValue: string
   ) => {
-    // when a config value changes:
-    // 1. remove viz from current computation
-    // 2. check if the newConfig exists
-    // Y? move viz to the found computation, "existingComputation"
-    // N? create new computation
-    const computations = analysisState.analysis
-      ? analysisState.analysis.descriptor.computations
-      : [];
-
     assertConfigType(computation.descriptor.configuration, AbundanceConfig);
 
     const updatedConfiguration = {
       ...computation.descriptor.configuration,
       [changedConfigPropertyName]: newConfigValue,
     };
-    const existingComputation = computations.find(
-      (c) =>
-        isEqual(c.descriptor.configuration, updatedConfiguration) &&
-        c.descriptor.type === computation.descriptor.type
+
+    const updatedCollectionVariable = collections.find((collectionVar) =>
+      isEqual(
+        {
+          variableId: collectionVar.id,
+          entityId: collectionVar.entityId,
+        },
+        updatedConfiguration.collectionVariable
+      )
     );
-    const existingVisualization = computation.visualizations.filter(
-      (viz) => viz.visualizationId === visualizationId
+
+    const configurationDisplayString = `${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}&;&${updatedConfiguration.rankingMethod}`;
+
+    handleConfigurationChanges<AbundanceConfig>(
+      analysisState,
+      computation,
+      updatedConfiguration,
+      visualizationId,
+      url,
+      history,
+      configurationDisplayString
     );
-    const computationAfterVizRemoval = {
-      ...computation,
-      visualizations: computation.visualizations.filter(
-        (viz) => viz.visualizationId !== visualizationId
-      ),
-    };
-    if (existingComputation) {
-      // 2Y:  move viz to existingComputation
-      const existingComputationWithVizAdded = {
-        ...existingComputation,
-        visualizations: existingComputation.visualizations.concat(
-          existingVisualization
-        ),
-      };
-      computationAfterVizRemoval.visualizations.length
-        ? await analysisState.setComputations([
-            computationAfterVizRemoval,
-            existingComputationWithVizAdded,
-            ...computations
-              .filter(
-                (c) => c.computationId !== existingComputation.computationId
-              )
-              .filter((c) => c.computationId !== computation.computationId),
-          ])
-        : await analysisState.setComputations([
-            existingComputationWithVizAdded,
-            ...computations
-              .filter(
-                (c) => c.computationId !== existingComputation.computationId
-              )
-              .filter((c) => c.computationId !== computation.computationId),
-          ]);
-      history.push(
-        url.replace(
-          computation.computationId,
-          existingComputation.computationId
-        )
-      );
-    } else {
-      // 2N:  existingComputation was not found
-      //      get config displayName for new computation
-      //      create a new computation with the existing viz
-      const updatedCollectionVariable = collections.find((collectionVar) =>
-        isEqual(
-          {
-            variableId: collectionVar.id,
-            entityId: collectionVar.entityId,
-          },
-          updatedConfiguration.collectionVariable
-        )
-      );
-      const newComputation = createComputation(
-        computation.descriptor.type,
-        `${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}&;&${updatedConfiguration.rankingMethod}`,
-        updatedConfiguration,
-        computations,
-        existingVisualization
-      );
-      computationAfterVizRemoval.visualizations.length
-        ? await analysisState.setComputations([
-            computationAfterVizRemoval,
-            newComputation,
-            ...computations.filter(
-              (c) => c.computationId !== computation.computationId
-            ),
-          ])
-        : await analysisState.setComputations([
-            newComputation,
-            ...computations.filter(
-              (c) => c.computationId !== computation.computationId
-            ),
-          ]);
-      history.push(
-        url.replace(computation.computationId, newComputation.computationId)
-      );
-    }
   };
 
   return (

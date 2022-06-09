@@ -1,10 +1,10 @@
 import { Computation, Visualization } from '../../types/visualization';
-// alphadiv abundance
-import { ComputationConfiguration } from '../../types/visualization';
 import * as t from 'io-ts';
 import { pipe } from 'fp-ts/lib/function';
 import { fold } from 'fp-ts/lib/Either';
 import { isEqual } from 'lodash';
+import { AnalysisState, CollectionVariableTreeNode } from '../..';
+import { RouterChildContext } from 'react-router';
 
 /**
  * Creates a new `Computation` with a unique id
@@ -67,7 +67,7 @@ export function getConfigHandlerObjects<ConfigType>(
   computations: Computation[],
   computation: Computation,
   visualizationId: string,
-  updatedConfiguration: t.Type<ConfigType, unknown, unknown>
+  updatedConfiguration: ConfigType
 ) {
   const existingComputation = computations.find(
     (c) =>
@@ -88,4 +88,116 @@ export function getConfigHandlerObjects<ConfigType>(
     existingVisualization,
     computationAfterVizRemoval,
   };
+}
+
+export async function updateAnalysisWithAmendedComputations(
+  newOrExistingComputation: Computation,
+  computationAfterVizRemoval: Computation,
+  analysisState: AnalysisState,
+  computations: Computation[],
+  filteringCallback: (c: Computation) => void
+) {
+  computationAfterVizRemoval.visualizations.length
+    ? await analysisState.setComputations([
+        newOrExistingComputation,
+        computationAfterVizRemoval,
+        ...computations.filter(filteringCallback),
+      ])
+    : await analysisState.setComputations([
+        newOrExistingComputation,
+        ...computations.filter(filteringCallback),
+      ]);
+}
+
+export function handleRouting(
+  history: RouterChildContext['router']['history'],
+  baseUrl: string,
+  urlToReplace: string,
+  urlToReplaceWith: string
+) {
+  history.push(baseUrl.replace(urlToReplace, urlToReplaceWith));
+}
+
+export function handleConfigurationChanges<ConfigType>(
+  analysisState: AnalysisState,
+  computation: Computation,
+  updatedConfiguration: ConfigType,
+  visualizationId: string,
+  url: string,
+  history: RouterChildContext['router']['history'],
+  configurationDisplayString: string
+) {
+  // when a config value changes:
+  // 1. remove viz from current computation
+  // 2. check if the newConfig exists
+  // Y? move viz to the found computation, "existingComputation"
+  // N? create new computation
+  const computations = analysisState.analysis
+    ? analysisState.analysis.descriptor.computations
+    : [];
+
+  const {
+    existingComputation,
+    existingVisualization,
+    computationAfterVizRemoval,
+  } = getConfigHandlerObjects<ConfigType>(
+    computations,
+    computation,
+    visualizationId,
+    updatedConfiguration
+  );
+
+  if (existingComputation) {
+    // 2Y:  move viz to existingComputation
+
+    const existingComputationWithVizAdded = {
+      ...existingComputation,
+      visualizations: existingComputation.visualizations.concat(
+        existingVisualization
+      ),
+    };
+
+    updateAnalysisWithAmendedComputations(
+      existingComputationWithVizAdded,
+      computationAfterVizRemoval,
+      analysisState,
+      computations,
+      (c) =>
+        c.computationId !== existingComputation.computationId &&
+        c.computationId !== computation.computationId
+    );
+
+    handleRouting(
+      history,
+      url,
+      computation.computationId,
+      existingComputation.computationId
+    );
+  } else {
+    // 2N:  existingComputation was not found
+    //      get config displayName for new computation
+    //      create a new computation with the existing viz
+    const newComputation = createComputation(
+      computation.descriptor.type,
+      configurationDisplayString,
+      updatedConfiguration,
+      computations,
+      existingVisualization
+    );
+
+    updateAnalysisWithAmendedComputations(
+      newComputation,
+      computationAfterVizRemoval,
+      analysisState,
+      computations,
+      (c) => c.computationId !== computation.computationId
+    );
+
+    handleRouting(
+      history,
+      url,
+      computation.computationId,
+      newComputation.computationId
+    );
+  }
 }
