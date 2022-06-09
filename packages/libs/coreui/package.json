@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/coreui",
-  "version": "0.16.2",
+  "version": "0.16.3",
   "author": "Michael Dunn <mdunn4@nd.edu>",
   "description": "Core components and style definitions for VEuPath applications.",
   "private": false,
@@ -67,6 +67,7 @@
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
     "eslint-plugin-storybook": "^0.5.7",
+    "notistack": "^1.0.10",
     "npm-run-all": "^4.1.5",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -78,6 +79,7 @@
     "@emotion/styled": "^11.7.0",
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
+    "notistack": "^1.0.10",
     "react": ">=16.14"
   },
   "volta": {

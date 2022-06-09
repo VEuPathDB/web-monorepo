@@ -5,7 +5,7 @@ import { gray } from '../../definitions/colors'
 import Banner, { BannerComponentProps } from '../../components/banners/Banner'
 
 export default {
-    title: 'Banners/Banners',
+    title: 'Notifications/Banners',
     component: Banner
 } as Meta;
 
