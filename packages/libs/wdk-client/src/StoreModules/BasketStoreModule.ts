@@ -90,7 +90,7 @@ async function getFulfillAddStepToBasket(
     step.recordClassName,
     step.id
   );
-  return fulfillAddStepToBasket(step.id);
+  return fulfillAddStepToBasket(step);
 }
 
 async function getFulfillBasketCounts(

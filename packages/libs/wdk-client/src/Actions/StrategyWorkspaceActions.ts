@@ -30,16 +30,6 @@ export const setOpenedStrategiesVisibility = makeActionCreator(
   (isVisible: boolean) => ({ isVisible })
 )
 
-export const addNotification = makeActionCreator(
-  'strategy-view/addNotification',
-  (message: string) => ({ message, id: uniqueId('strategy-view-notification-') })
-);
-
-export const removeNotification = makeActionCreator(
-  'strategy-view/removeNotification',
-  (id: string) => ({ id })
-);
-
 export const setActiveModal = makeActionCreator(
   'strategyPanel/setActiveModal',
   (activeModal: {type: string, strategyId: number}) => activeModal
@@ -57,7 +47,5 @@ export type Action =
   | InferAction<typeof addToOpenedStrategies>
   | InferAction<typeof removeFromOpenedStrategies>
   | InferAction<typeof setOpenedStrategiesVisibility>
-  | InferAction<typeof addNotification>
-  | InferAction<typeof removeNotification>
   | InferAction<typeof setActiveModal>
   | InferAction<typeof clearActiveModal>
