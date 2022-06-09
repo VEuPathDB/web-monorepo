@@ -71,7 +71,7 @@ Success.args = {
 
 export const Info = Template.bind({});
 Info.args = {
-  message: 'This is an "info" snackbar. Its styling is pulled from the CoreUI theme.',
+  message: 'This is an "info" snackbar. Its styling is derived from the CoreUI theme.',
   options: undefined
 } as SnackbarStoryArgs;
 
