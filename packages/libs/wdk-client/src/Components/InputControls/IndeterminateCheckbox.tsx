@@ -2,7 +2,7 @@ import ReactDOM from 'react-dom';
 import React from 'react';
 import FormEvent = React.FormEvent;
 
-type Props<T> = {
+export type IndeterminateCheckboxProps<T> = {
   checked: boolean;
   className: string;
   indeterminate: boolean;
@@ -15,9 +15,9 @@ type Props<T> = {
 /**
  * React Component that provides a 3-state checkbox
  */
-export default class IndeterminateCheckbox<T> extends React.Component<Props<T>> {
+export default class IndeterminateCheckbox<T> extends React.Component<IndeterminateCheckboxProps<T>> {
 
-  constructor(props: Props<T>) {
+  constructor(props: IndeterminateCheckboxProps<T>) {
     super(props);
 
     // hard bind the handleChange functions to the IndeterminateCheckbox object

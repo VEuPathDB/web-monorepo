@@ -1,7 +1,7 @@
 import React, { Component, StatelessComponent, MouseEventHandler } from 'react';
 
 import Icon from 'wdk-client/Components/Icon/Icon';
-import CheckboxTreeNode from 'wdk-client/Components/CheckboxTree/CheckboxTreeNode';
+import CheckboxTreeNode, { CheckboxFactory } from 'wdk-client/Components/CheckboxTree/CheckboxTreeNode';
 import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
 
 import { addOrRemove, propsDiffer } from 'wdk-client/Utils/ComponentUtils';
@@ -73,6 +73,9 @@ export type Props<T> = {
 
   /** List of selected nodes as represented by their ids, defaults to [ ] */
   selectedList: string[];
+
+  /** An object mapping a node (by its id) to a function that returns a React component. This component will be used instead of the default checkbox. */
+  customCheckboxes?: {[index: string]: CheckboxFactory<T>};
 
   /** Tells whether more than one selection is allowed; defaults to true.  If false, only the first item in selectedList is selected, and radio boxes are rendered. */
   isMultiPick?: boolean;
@@ -540,6 +543,7 @@ export default class CheckboxTree<T> extends Component<Props<T>, State<T>> {
     expandedList: null,
     isSelectable: false,
     selectedList: [],
+    customCheckboxes: {},
     isMultiPick: true,
     onSelectionChange: () => {},
     isSearchable: false,
@@ -735,7 +739,7 @@ export default class CheckboxTree<T> extends Component<Props<T>, State<T>> {
    */
   render() {
     let {
-      name, showRoot, getNodeId, isSelectable, isMultiPick,
+      name, showRoot, getNodeId, isSelectable, customCheckboxes, isMultiPick,
       isSearchable, currentList, defaultList, showSearchBox, searchTerm,
       searchBoxPlaceholder, searchBoxHelp, searchIconName,
       linksPosition = LinksPosition.Both, additionalActions,
@@ -771,12 +775,15 @@ export default class CheckboxTree<T> extends Component<Props<T>, State<T>> {
 
     let listClassName = 'wdk-CheckboxTreeList' + (isSelectable ? ' wdk-CheckboxTreeList__selectable' : '');
     let CheckboxTreeNodeT = (CheckboxTreeNode as new () => CheckboxTreeNode<StatefulNode<T>>);
+    console.log({customCheckboxes});
 
     let treeSection = (
       <ul className={listClassName}>
-      {topLevelNodes.map((node, index) =>
-        <CheckboxTreeNodeT
-          key={"node_" + getNodeId(node)}
+      {topLevelNodes.map((node, index) => {
+        const nodeId = getNodeId(node);
+        console.log({nodeId});
+        return <CheckboxTreeNodeT
+          key={"node_" + nodeId}
           name={name || ''}
           node={node}
           path={[index]}
@@ -790,8 +797,9 @@ export default class CheckboxTree<T> extends Component<Props<T>, State<T>> {
           shouldExpandOnClick={shouldExpandOnClick}
           getNodeId={getNodeId}
           getNodeChildren={getStatefulChildren}
-          renderNode={this.renderNode} />
-      )}
+          renderNode={this.renderNode}
+          customCheckboxes={customCheckboxes as any} />
+  })}
     </ul>
     );
 
