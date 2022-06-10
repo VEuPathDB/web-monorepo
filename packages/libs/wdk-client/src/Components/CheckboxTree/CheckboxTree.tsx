@@ -1,7 +1,7 @@
 import React, { Component, StatelessComponent, MouseEventHandler } from 'react';
 
 import Icon from 'wdk-client/Components/Icon/Icon';
-import CheckboxTreeNode, { CheckboxFactory } from 'wdk-client/Components/CheckboxTree/CheckboxTreeNode';
+import CheckboxTreeNode, { CustomCheckboxes } from 'wdk-client/Components/CheckboxTree/CheckboxTreeNode';
 import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
 
 import { addOrRemove, propsDiffer } from 'wdk-client/Utils/ComponentUtils';
@@ -75,7 +75,7 @@ export type Props<T> = {
   selectedList: string[];
 
   /** An object mapping a node (by its id) to a function that returns a React component. This component will be used instead of the default checkbox. */
-  customCheckboxes?: {[index: string]: CheckboxFactory<T>};
+  customCheckboxes?: CustomCheckboxes<T>;
 
   /** Tells whether more than one selection is allowed; defaults to true.  If false, only the first item in selectedList is selected, and radio boxes are rendered. */
   isMultiPick?: boolean;
@@ -798,7 +798,7 @@ export default class CheckboxTree<T> extends Component<Props<T>, State<T>> {
           getNodeId={getNodeId}
           getNodeChildren={getStatefulChildren}
           renderNode={this.renderNode}
-          customCheckboxes={customCheckboxes as any} />
+          customCheckboxes={customCheckboxes as unknown as CustomCheckboxes<StatefulNode<T>>} />
   })}
     </ul>
     );

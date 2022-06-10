@@ -39,7 +39,8 @@ type NodeState = {
   isExpanded?: boolean;
 }
 
-export type CheckboxFactory<T> = (state?: Partial<IndeterminateCheckboxProps<T>>) => React.ReactNode;
+// export type CheckboxFactory<T> = (state?: Partial<IndeterminateCheckboxProps<T>>) => React.ReactNode;
+export type CustomCheckboxes<T> = {[index: string]: React.ComponentType<Partial<IndeterminateCheckboxProps<T>>>};
 
 type Props<T> = {
   node: T;
@@ -55,7 +56,7 @@ type Props<T> = {
   getNodeId: (node: T) => string;
   getNodeChildren: (node: T) => T[];
   renderNode: (node: T, path?: number[]) => React.ReactNode;
-  customCheckboxes?: {[index: string]: CheckboxFactory<T>};
+  customCheckboxes?: CustomCheckboxes<T>;
   shouldExpandOnClick: boolean;
 }
 
@@ -113,6 +114,7 @@ class CheckboxTreeNode<T> extends Component<Props<T>> {
       value: nodeId,
     };
     const checkboxProps: IndeterminateCheckboxProps<T> = {...commonInputProps, indeterminate: !!isIndeterminate, toggleCheckbox: toggleSelection};
+    const CustomCheckbox = (customCheckboxes && (nodeId in customCheckboxes)) ? customCheckboxes[nodeId] : undefined;
 
     return (
       <li className={classNames} style={nodeVisibilityCss}>
@@ -135,7 +137,7 @@ class CheckboxTreeNode<T> extends Component<Props<T>> {
             </div>
           ) : (
             <label className="wdk-CheckboxTreeNodeContent">
-              {customCheckboxes && (nodeId in customCheckboxes) ? customCheckboxes[nodeId](checkboxProps) : isMultiPick
+              {CustomCheckbox ? <CustomCheckbox {...checkboxProps} /> : isMultiPick
                   ? <IndeterminateCheckboxT {...checkboxProps} />
                   : <TreeRadioT
                       {...commonInputProps}
