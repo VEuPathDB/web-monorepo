@@ -26,7 +26,7 @@
     "@veupathdb/study-data-access": "^0.3.3",
     "@veupathdb/user-datasets": "^0.1.2",
     "@veupathdb/wdk-client": "^0.8.0",
-    "@veupathdb/web-common": "^0.6.5",
+    "@veupathdb/web-common": "^0.6.6",
     "core-js": "^3.21.1",
     "notistack": "^1.0.10",
     "react": "16",
