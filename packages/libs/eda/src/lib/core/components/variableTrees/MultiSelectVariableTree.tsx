@@ -4,7 +4,7 @@ import { Field } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Type
 
 import { StudyEntity, VariableScope } from '../../types/study';
 import { VariableDescriptor } from '../../types/variable';
-import VariableList from './VariableList';
+import VariableList, { VariableFieldTreeNode } from './VariableList';
 import './VariableTree.scss';
 import { useStudyEntities } from '../../hooks/study';
 import {
@@ -13,6 +13,7 @@ import {
   useFlattenFieldsByTerm,
   useValuesMap,
 } from './hooks';
+import { CustomCheckboxes } from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTreeNode';
 
 export interface MultiSelectVariableTreeProps {
   /** The entity from which to derive the tree structure. */
@@ -26,6 +27,7 @@ export interface MultiSelectVariableTreeProps {
   toggleStarredVariable: (targetVariable: VariableDescriptor) => void;
   /** Callback to invoke when selected variables change. */
   onSelectedVariablesChange: (variables: Array<VariableDescriptor>) => void;
+  customCheckboxes?: CustomCheckboxes<VariableFieldTreeNode>;
 }
 
 /**
@@ -40,6 +42,7 @@ export default function MultiSelectVariableTree({
   toggleStarredVariable,
   featuredFields,
   onSelectedVariablesChange,
+  customCheckboxes,
 }: MultiSelectVariableTreeProps) {
   const entities = useStudyEntities(rootEntity);
   const valuesMap = useValuesMap(entities);
@@ -90,6 +93,7 @@ export default function MultiSelectVariableTree({
       fieldTree={fieldTree}
       autoFocus={false}
       toggleStarredVariable={toggleStarredVariable}
+      customCheckboxes={customCheckboxes}
     />
   );
 }

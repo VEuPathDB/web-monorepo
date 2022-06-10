@@ -487,6 +487,28 @@ export default function SubsettingDataGridModal({
     );
   };
 
+  const LockIcon = () => (
+    <div
+      style={{
+        width: 13,
+        height: 13,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: '1px 4px 1px 0',
+      }}
+    >
+      <i className="fa fa-lock" title="This variable is required" />
+    </div>
+  );
+  const customCheckboxes = mergeKeys.reduce(
+    (checkboxes, mergeKey) => ({
+      ...checkboxes,
+      [currentEntityID + '/' + mergeKey]: LockIcon,
+    }),
+    {}
+  );
+
   // Render the variable selection panel.
   const renderVariableSelectionArea = () => {
     const errorMessage = apiError
@@ -560,6 +582,7 @@ export default function SubsettingDataGridModal({
               featuredFields={scopedFeaturedFields}
               onSelectedVariablesChange={handleSelectedVariablesChange}
               toggleStarredVariable={toggleStarredVariable}
+              customCheckboxes={customCheckboxes}
             />
           </div>
         </div>

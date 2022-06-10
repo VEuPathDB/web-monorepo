@@ -47,6 +47,7 @@ import { pruneEmptyFields } from '../../utils/wdk-filter-param-adapter';
 
 import { Tooltip as VarTooltip } from '../docs/variable-constraints';
 import { useActiveDocument } from '../docs/DocumentationContainer';
+import { CustomCheckboxes } from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTreeNode';
 
 interface VariableField {
   type?: string;
@@ -59,7 +60,7 @@ interface VariableField {
   description?: string;
 }
 
-interface VariableFieldTreeNode extends FieldTreeNode {
+export interface VariableFieldTreeNode extends FieldTreeNode {
   field: VariableField;
   children: VariableFieldTreeNode[];
 }
@@ -126,6 +127,7 @@ interface VariableListProps {
   // Entities in which single child nodes should be promoted
   // (replacing their parent in the tree)
   singleChildPromotionEntityIds?: string[];
+  customCheckboxes?: CustomCheckboxes<VariableFieldTreeNode>;
 }
 
 // TODO: Needs documentation of general component purpose.
@@ -148,6 +150,7 @@ export default function VariableList({
   customDisabledVariableMessage,
   showMultiFilterDescendants,
   singleChildPromotionEntityIds,
+  customCheckboxes,
 }: VariableListProps) {
   // useContext is used here with ShowHideVariableContext
   const {
@@ -609,6 +612,7 @@ export default function VariableList({
         onSearchTermChange={setSearchTerm}
         searchPredicate={searchPredicate}
         renderNode={renderNode}
+        customCheckboxes={customCheckboxes}
         additionalFilters={additionalFilters}
         isAdditionalFilterApplied={isAdditionalFilterApplied}
       />
