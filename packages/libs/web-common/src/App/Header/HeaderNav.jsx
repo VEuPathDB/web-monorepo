@@ -50,28 +50,25 @@ class HeaderNav extends React.Component {
     const IconMenu = this.renderIconMenu;
     return (
       <div className="HeaderNav-Sticky" style={{ backgroundImage: `url(${heroImageUrl})` }}>
-        <div className="box">
+        <div>
           <img src={logoUrl} className="HeaderNav-Sticky-Logo" />
         </div>
-        <div className="box">
+        <div>
           <h2 className="HeaderNav-Title">
             <Link to="/" style={{ color: '#DD314E' }}>
               <mark>{titleWithoutDB}</mark>DB
             </Link>
           </h2>
         </div>
-        <div className="box row grow-1">
+        <div style={{ display: 'flex', flexGrow: 1 }}>
           <SiteMenu items={mainMenu} config={siteConfig}  actions={actions} user={user}/>
           {siteSearchServiceUrl && (
-            <div style={{ color: 'black', marginLeft: '2em', width: '35em', alignSelf: 'center' }}>
+            <div style={{ color: 'black', marginLeft: 'auto', alignSelf: 'center', flexGrow: 1, maxWidth: '35em' }}>
               <SiteSearchInput/>
             </div>
           )}
         </div>
-        <div className="box">
-          <IconMenu items={iconMenu} />
-        </div>
-        <div className="box">
+        <div>
           <UserMenu webAppUrl={webAppUrl} actions={actions} user={user} />
         </div>
       </div>
@@ -162,11 +159,9 @@ class HeaderNav extends React.Component {
           </a>
         </div>
         <div style={{ display: 'flex', alignItems: 'center'}}>
-          <div>
-            <SiteMenu items={mainMenu} config={siteConfig} actions={actions} user={user} />
-          </div>
+          <SiteMenu items={mainMenu} config={siteConfig} actions={actions} user={user} />
           {siteSearchServiceUrl && (
-            <div style={{ width: '33%', maxWidth: '45em',  color: 'black', marginLeft: '2em', marginRight: 'auto', fontSize: '1.2em' }}>
+            <div style={{ width: '30em',  color: 'black', marginLeft: 'auto', fontSize: '1.2em' }}>
               <SiteSearchInput/>
             </div>
           )}

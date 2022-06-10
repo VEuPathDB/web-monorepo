@@ -11,7 +11,7 @@ class SiteMenu extends React.Component {
   render () {
     const { items, config, actions, user} = this.props;
     return (
-      <div className="row SiteMenu">
+      <div className="SiteMenu">
         {!items ? null : items.map((item, key) => (
           <SiteMenuItem
             key={key}

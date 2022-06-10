@@ -107,12 +107,13 @@ $red: #DD314E;
   position: relative;
   z-index: 1;
   justify-content: right;
+  align-items: center;
   a.HeaderNav-Social-Link {
     &, &:link, &:active, &:visited { color: #fff; }
     opacity: 0.7;
     transition: all 0.6s;
     font-size: 25px;
-    padding: 8px;
+    padding: 0 8px;
     display: block;
     &:hover {
       opacity: 1;
@@ -141,6 +142,7 @@ $red: #DD314E;
   * { box-sizing: border-box; }
 
   width: 100%;
+  min-width: 1200px;
   height: 40px;
   position: fixed;
   top: 0;
@@ -161,7 +163,6 @@ $red: #DD314E;
 
   .UserMenu {
     height: 100%;
-    margin: 0 30px;
     flex-direction: row;
     align-items: center;
 
@@ -169,6 +170,10 @@ $red: #DD314E;
       font-size: 25px;
       margin-right: 10px;
     }
+  }
+
+  .HeaderNav-Social {
+    margin-left: 2em;
   }
 
   .HeaderNav-Title {
@@ -184,7 +189,6 @@ $red: #DD314E;
 
   .SiteMenu {
     width: auto;
-    margin: 5px 30px 0;
     font-size: 0.9em;
 
     .SiteMenuItem {

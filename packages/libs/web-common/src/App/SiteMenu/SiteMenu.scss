@@ -1,7 +1,7 @@
 .SiteMenu {
-  flex: 0.8;
+  display: flex;
   box-sizing: border-box;
   flex-wrap: nowrap;
   justify-content: space-around;
-  padding: 0 0 5px;
+  padding: 0;
 }
