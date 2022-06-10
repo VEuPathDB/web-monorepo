@@ -5,7 +5,7 @@ import {
 } from '../VisualizationTypes';
 import map from './selectorIcons/map.svg';
 import * as t from 'io-ts';
-import { isEqual, zip, some, sum, sortBy } from 'lodash';
+import { isEqual, zip, some, sum } from 'lodash';
 
 // map component related imports
 import MapVEuMap, {
@@ -33,7 +33,7 @@ import { FormControl, Select, MenuItem, InputLabel } from '@material-ui/core';
 // viz-related imports
 import { PlotLayout } from '../../layouts/PlotLayout';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
-import { useMemo, useCallback, useState } from 'react';
+import { useMemo, useCallback, useState, useEffect } from 'react';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import DataClient, {
   MapMarkersRequestParams,
@@ -461,25 +461,34 @@ function MapViz(props: VisualizationProps) {
       : undefined;
   }, [overlayResponse]);
 
-  // `vocabulary` is taken from the response, not the study metadata
-  // this is because not all values are shown (up to 8 or 7 most popular + 'other')
-  const vocabulary = useMemo(() => {
-    const rankedValues =
-      overlayResponse.value != null
-        ? overlayResponse.value.mapMarkers.config.rankedValues
-        : undefined;
-    return xAxisVariable?.type === 'string'
-      ? rankedValues
-      : // quick and dirty hack to sort by the bin-start in the string like "(625,750]"
-        sortBy(rankedValues, (value) => Number(value.split(/[[(,]/)[1]));
-  }, [overlayResponse.value, xAxisVariable]);
+  // If it's a string variable and a small vocabulary, use it as-is from the study metadata.
+  // This ensures that for low cardinality categoricals, the colours are always the same.
+  // Otherwise use the overlayValues from the back end (which are either bins or a Top7+Other)
+  const vocabulary =
+    xAxisVariable?.type === 'string' &&
+    xAxisVariable?.vocabulary != null &&
+    xAxisVariable.vocabulary.length <= 8
+      ? xAxisVariable.vocabulary
+      : overlayResponse.value?.mapMarkers.config.overlayValues;
+
+  // reset checkedLegendItems if any of the checked items are NOT in the vocabulary
+  useEffect(() => {
+    if (vizConfig.checkedLegendItems == null || vocabulary == null) return;
+
+    if (
+      vizConfig.checkedLegendItems.some(
+        (label) => vocabulary.findIndex((vocab) => vocab === label) === -1
+      )
+    )
+      updateVizConfig({ checkedLegendItems: undefined });
+  }, [vocabulary, vizConfig.checkedLegendItems, updateVizConfig]);
 
   /**
    * Merge the overlay data into the basicMarkerData, if available,
    * and create markers.
    */
   const markers = useMemo(() => {
-    if (vocabulary == null) return [];
+    if (vocabulary == null) return undefined;
 
     const pieValueMax = overlayData
       ? values(overlayData) // it's a Record 'object'
@@ -512,11 +521,13 @@ function MapViz(props: VisualizationProps) {
                 )
             : [];
 
-        // now reorder the data in vocabulary order, adding zeroes if necessary.
+        // now reorder the data, adding zeroes if necessary.
         const reorderedData = vocabulary.map(
-          (vocabularyLabel) =>
-            donutData.find(({ label }) => label === vocabularyLabel) ?? {
-              label: vocabularyLabel,
+          (
+            overlayLabel // overlay label can be 'female' or a bin label '(0,100]'
+          ) =>
+            donutData.find(({ label }) => label === overlayLabel) ?? {
+              label: overlayLabel,
               value: 0,
             }
         );
@@ -719,6 +730,7 @@ function MapViz(props: VisualizationProps) {
       checkedLegendItems={checkedLegendItems}
       legendTitle={variableDisplayWithUnit(xAxisVariable)}
       onCheckedLegendItemsChange={handleCheckedLegendItemsChange}
+      showOverlayLegend={true}
     />
   );
 

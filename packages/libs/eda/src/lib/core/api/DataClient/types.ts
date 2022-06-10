@@ -19,6 +19,7 @@ import {
   BinWidthSlider,
   TimeUnit,
   NumberOrNull,
+  NumberOrDateRange,
 } from '../../types/general';
 import { VariableDescriptor, StringVariableValue } from '../../types/variable';
 import { ComputationAppOverview } from '../../types/visualization';
@@ -617,6 +618,7 @@ export interface MapMarkersOverlayRequestParams {
       type?: 'binWidth' | 'numBins';
       value?: number;
       units?: TimeUnit;
+      range?: NumberOrDateRange;
     };
     viewport: {
       latitude: {
@@ -643,25 +645,32 @@ export const MapMarkersOverlayResponse = type({
         geoAggregateVariableDetails: StringVariableValue,
       })
     ),
-    config: type({
-      completeCasesAllVars: number,
-      completeCasesAxesVars: number,
-      rankedValues: array(string),
-      viewport: type({
-        latitude: type({
-          xMin: number,
-          xMax: number,
+    config: intersection([
+      type({
+        completeCasesAllVars: number,
+        completeCasesAxesVars: number,
+        rankedValues: array(string),
+        overlayValues: array(string),
+        viewport: type({
+          latitude: type({
+            xMin: number,
+            xMax: number,
+          }),
+          longitude: type({
+            left: number,
+            right: number,
+          }),
         }),
-        longitude: type({
-          left: number,
-          right: number,
+        xVariableDetails: type({
+          variableId: string,
+          entityId: string,
         }),
       }),
-      xVariableDetails: type({
-        variableId: string,
-        entityId: string,
+      partial({
+        binSpec: BinSpec,
+        binSlider: BinWidthSlider,
       }),
-    }),
+    ]),
   }),
   sampleSizeTable: sampleSizeTableArray,
   completeCasesTable: completeCasesTableArray,
