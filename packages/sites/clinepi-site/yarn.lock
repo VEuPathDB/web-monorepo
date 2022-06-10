@@ -2099,10 +2099,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.1.0.tgz#5c7eecc048a91195404411d8729393197af0128c"
   integrity sha512-TQ58MbCy7UZN/h11HZ31CSJfywG17oDNHQzQJysj65Fvv2gAM1w7CjwCvV0bG3sRESKUDORSA7sJrVVv27GHBw==
 
-"@veupathdb/components@^0.16.3":
-  version "0.16.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.16.3.tgz#3f043d12b2eae29f9c747fe6226d30fa35812411"
-  integrity sha512-TJq4WHxss4l69lLDTZNtgg78/BSSWBCKnJ+0atXpmbgF7Q8eYIVtz+08IYgYkSGDaEXxLZWcoWPBUYxVZN3Skw==
+"@veupathdb/components@^0.16.4":
+  version "0.16.4"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.16.4.tgz#b9c1e49790939851104d742210452fb6dbb37e18"
+  integrity sha512-75omxvigR11ZQ0lu3zGkIwaORjMJ9hO/4EzdbsOkjyTjN7gVMcpWS33emHzcJYG1YZ9v9byyHbXVaLL1O6wfoA==
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
@@ -2131,10 +2131,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/coreui@^0.16.2":
-  version "0.16.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.16.2.tgz#55e9c6c8a3df695b647662a521e6f5cd90c1a889"
-  integrity sha512-8LwhZA+SVN3LoTHj5DVnumJZK/mTBI6wF3cQUCU4AzxAn/Wrlvw65prZlcInkn4MwjlC1GFtu2cUX1qyPqHnTw==
+"@veupathdb/coreui@^0.16.3":
+  version "0.16.3"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.16.3.tgz#c262500c42a56344d5a576f4befe48b6ed9dc7d3"
+  integrity sha512-zAmOQaStkRrORdwg9QoqbXyP00JY1he0YP8coweiocPbqhvnRZ1YAxUTMguh9svdLHUt+I35/RyB/uS88LhTdw==
   dependencies:
     "@react-hook/size" "^2.1.2"
     lodash "^4.17.21"
@@ -2142,10 +2142,10 @@
     react-responsive-modal "^6.2.0"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^3.5.23":
-  version "3.5.23"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.5.23.tgz#89a5486a5ed7c9f40015d91344ae8176983e9ce3"
-  integrity sha512-/KIgHapaVhwIyeq81a2BokU8zQZhtA6bOk+UQb4NlohFGHDK56zV9f1GB64XnkQ9ZO7ArvBoOaAfTod9xTyQig==
+"@veupathdb/eda@^3.6.0":
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.6.0.tgz#287edbe346681114956f7bc488adf00242ec1e88"
+  integrity sha512-qrJZGV0/aewZOwCPwZKE9+mBYvc9jQ/9bo6EOLlWO6S03cU40AL1UerzY/xpxMfu7X+CY641ThL5w/iKRpOo5w==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -2194,10 +2194,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/site-webpack-config/-/site-webpack-config-0.1.0.tgz#b63464c5ce70297102aecd700069f1059f371fe9"
   integrity sha512-J8sPtD8+Zp1ZBhgU+mX7O737zaZ28s7P/9RJjbh5nXYB5IgP6yRm+bvj0ewmW7W9NBAPUHJzeEDxMbYDExb85g==
 
-"@veupathdb/study-data-access@^0.3.1":
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.3.2.tgz#810e03a7a7e2033ef4d6c59902560bdc81a2f3fd"
-  integrity sha512-KgqPx0LA1MYmWGeXkHlJUjhWg6TSocjiTsd3DcwqfyF584SeJVgUaaqDLnBFwy7Xma/OlXp8+NuEaptKkA+IXw==
+"@veupathdb/study-data-access@^0.3.3":
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.3.3.tgz#41bfd0b37cdd6200be46f8d14b0eb10d61829e08"
+  integrity sha512-K3jmHICU9kqym56q/Cnl6vKJ1JrDSGB/ONw3VNJA1sROivBdEOgbO41YqXVih6975B3fPFM7TQfl5N5SV6rOrQ==
   dependencies:
     fp-ts "^2.11.5"
     io-ts "^2.2.16"
@@ -2211,10 +2211,10 @@
     lodash "^4.17.21"
     moment "^2.21.0"
 
-"@veupathdb/wdk-client@^0.7.6":
-  version "0.7.6"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.7.6.tgz#ffac9b89d15a02e64da8afc3a2c1b11d809dcd4b"
-  integrity sha512-ZAahlyDuilUnj1WfJXKXy90qXqHL0juIoSmC6/TaUm72vOtxzA15IB1wOZ0a7NZvL3DHtYZf4aIMryVny8opTg==
+"@veupathdb/wdk-client@^0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.8.0.tgz#554ec6ad64ba67073c16247d70a19898b60f9dc3"
+  integrity sha512-p2lxOEYJGQnM4WZ30yDwy3dPB+8XJV4imbqNL/uoQd21Ddr6oFfLNzBGkAuiNKsCyTvuxrpE9xYaDJZQaqPOOQ==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
@@ -3661,7 +3661,7 @@ clone-deep@^4.0.1:
     kind-of "^6.0.2"
     shallow-clone "^3.0.0"
 
-clsx@^1.0.4, clsx@^1.1.1:
+clsx@^1.0.4, clsx@^1.1.0, clsx@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.1.1.tgz#98b3134f9abbdf23b2663491ace13c5c03a73188"
   integrity sha512-6/bPho624p3S2pMyvP5kKBPXnI3ufHLObBFCfgx+LkeR5lg2XYy2hqZqUf45ypD8COn2bhgGJSUE+l5dhNBieA==
@@ -7654,6 +7654,14 @@ normalize-url@^2.0.1:
     prepend-http "^2.0.0"
     query-string "^5.0.1"
     sort-keys "^2.0.0"
+
+notistack@^1.0.10:
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/notistack/-/notistack-1.0.10.tgz#8db90830034383467a04184f1fa8ff77f4fc58a5"
+  integrity sha512-z0y4jJaVtOoH3kc3GtNUlhNTY+5LE04QDeLVujX3VPhhzg67zw055mZjrBF+nzpv3V9aiPNph1EgRU4+t8kQTQ==
+  dependencies:
+    clsx "^1.1.0"
+    hoist-non-react-statics "^3.3.0"
 
 npm-normalize-package-bin@^1.0.0:
   version "1.0.1"
