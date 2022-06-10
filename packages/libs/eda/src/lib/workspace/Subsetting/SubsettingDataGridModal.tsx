@@ -583,6 +583,7 @@ export default function SubsettingDataGridModal({
               onSelectedVariablesChange={handleSelectedVariablesChange}
               toggleStarredVariable={toggleStarredVariable}
               customCheckboxes={customCheckboxes}
+              startExpanded
             />
           </div>
         </div>

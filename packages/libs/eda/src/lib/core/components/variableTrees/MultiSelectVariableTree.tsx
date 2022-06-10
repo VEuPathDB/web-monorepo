@@ -28,6 +28,7 @@ export interface MultiSelectVariableTreeProps {
   /** Callback to invoke when selected variables change. */
   onSelectedVariablesChange: (variables: Array<VariableDescriptor>) => void;
   customCheckboxes?: CustomCheckboxes<VariableFieldTreeNode>;
+  startExpanded?: boolean;
 }
 
 /**
@@ -43,6 +44,7 @@ export default function MultiSelectVariableTree({
   featuredFields,
   onSelectedVariablesChange,
   customCheckboxes,
+  startExpanded,
 }: MultiSelectVariableTreeProps) {
   const entities = useStudyEntities(rootEntity);
   const valuesMap = useValuesMap(entities);
@@ -94,6 +96,7 @@ export default function MultiSelectVariableTree({
       autoFocus={false}
       toggleStarredVariable={toggleStarredVariable}
       customCheckboxes={customCheckboxes}
+      startExpanded={startExpanded}
     />
   );
 }
