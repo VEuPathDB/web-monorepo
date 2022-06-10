@@ -102,7 +102,7 @@ class CheckboxTreeNode<T> extends Component<Props<T>> {
                  : isExpanded ? "expanded"
                  : "collapsed";
     let classNames = 'wdk-CheckboxTreeItem wdk-CheckboxTreeItem__' + nodeType +
-      (isSelectable ? ' wdk-CheckboxTreeItem__selectable' : '');
+      (isSelectable ? ' wdk-CheckboxTreeItem__selectable' : ' wdk-CheckboxTreeItem__not-selectable');
     let inputName = isLeafNode ? name : '';
     let nodeId = getNodeId(node);
     const nodeElement = renderNode(node, path);
