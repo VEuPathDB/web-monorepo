@@ -113,10 +113,7 @@ export default function SubsettingDataGridModal({
   const theme = useUITheme();
   const primaryColor = theme?.palette.primary.hue[theme.palette.primary.level];
 
-  const {
-    observe: observeEntityDescription,
-    width: entityDescriptionWidth,
-  } = useDimensions();
+  const { observe: observeEntityDescription } = useDimensions();
 
   //   Various Custom Hooks
   const studyRecord = useStudyRecord();
@@ -218,6 +215,7 @@ export default function SubsettingDataGridModal({
       currentEntityID,
       entities,
       currentEntity,
+      mergeKeys,
     ])
   );
 
@@ -406,7 +404,7 @@ export default function SubsettingDataGridModal({
                         ) : (
                           <button
                             onClick={() => {
-                              if (selectedVariableDescriptors.length == 1)
+                              if (selectedVariableDescriptors.length === 1)
                                 setTableIsExpanded(false);
                               handleSelectedVariablesChange(
                                 selectedVariableDescriptors.filter(
@@ -475,6 +473,7 @@ export default function SubsettingDataGridModal({
               <img
                 src={tableSVG}
                 title="Choose a variable to see the table"
+                alt="Choose a variable to see the table"
                 width={400}
               />
             </div>
