@@ -109,7 +109,7 @@ export function ComputationRoute(props: Props) {
                       computationId={singleAppComputationId}
                       computationAppOverview={apps[0]}
                       visualizationTypes={plugin.visualizationTypes}
-                      isSingleAppMode={!singleAppMode}
+                      isSingleAppMode={!!singleAppMode}
                     />
                   );
                 }}
@@ -163,7 +163,7 @@ export function ComputationRoute(props: Props) {
                                       plugin.visualizationTypes
                                     }
                                     baseUrl={`${url}/${c.computationId}`}
-                                    isSingleAppMode={!singleAppMode}
+                                    isSingleAppMode={!!singleAppMode}
                                   />
                                 );
                               })
@@ -261,7 +261,7 @@ export function ComputationRoute(props: Props) {
                       computationAppOverview={app}
                       visualizationTypes={plugin.visualizationTypes}
                       baseUrl={`${url}/${computation?.computationId}`}
-                      isSingleAppMode={!singleAppMode}
+                      isSingleAppMode={!!singleAppMode}
                     />
                   );
                 }}

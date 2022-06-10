@@ -143,7 +143,7 @@ function ConfiguredVisualizations(props: Props) {
 
   return (
     <>
-      {!isSingleAppMode ? (
+      {isSingleAppMode ? (
         <Link
           to={{
             pathname: `${baseUrl || url}/new`,
@@ -187,19 +187,18 @@ function ConfiguredVisualizations(props: Props) {
                                 (v) => v.visualizationId !== viz.visualizationId
                               )
                             );
-                            const computations =
-                              analysisState.analysis?.descriptor.computations;
+                            /* 
+                              Here we're deleting the computation in the event we delete
+                              the computation's last remaining visualization.
+                            */
                             if (
-                              computation.visualizations.length === 1 &&
-                              computations
+                              !isSingleAppMode &&
+                              computation.visualizations.length === 1
                             ) {
-                              analysisState.setComputations([
-                                ...computations.filter(
-                                  (c) =>
-                                    c.computationId !==
-                                    computation.computationId
-                                ),
-                              ]);
+                              deleteComputationWithNoVisualizations(
+                                analysisState,
+                                computation.computationId
+                              );
                             }
                           }}
                         >
@@ -457,19 +456,23 @@ function FullScreenVisualization(props: Props & { id: string }) {
                 updateVisualizations((visualizations) =>
                   visualizations.filter((v) => v.visualizationId !== id)
                 );
-                const computations =
-                  analysisState.analysis?.descriptor.computations;
-                if (computation.visualizations.length === 1 && computations) {
-                  analysisState.setComputations([
-                    ...computations.filter(
-                      (c) => c.computationId !== computationId
-                    ),
-                  ]);
+                /* 
+                  Here we're deleting the computation in the event we delete
+                  the computation's last remaining visualization.
+                */
+                if (
+                  !isSingleAppMode &&
+                  computation.visualizations.length === 1
+                ) {
+                  deleteComputationWithNoVisualizations(
+                    analysisState,
+                    computationId
+                  );
                 }
                 history.replace(
                   Path.resolve(
                     history.location.pathname,
-                    isSingleAppMode ? '../..' : '..'
+                    isSingleAppMode ? '..' : '../..'
                   )
                 );
               }}
@@ -598,4 +601,16 @@ function ConfiguredVisualizationGrayOut({
   ) : (
     <></>
   );
+}
+
+function deleteComputationWithNoVisualizations(
+  analysisState: AnalysisState,
+  computationId: string
+) {
+  const computations = analysisState.analysis?.descriptor.computations;
+  if (computations) {
+    analysisState.setComputations([
+      ...computations.filter((c) => c.computationId !== computationId),
+    ]);
+  }
 }
