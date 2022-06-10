@@ -2142,10 +2142,10 @@
     react-responsive-modal "^6.2.0"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^3.6.0":
-  version "3.6.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.6.0.tgz#287edbe346681114956f7bc488adf00242ec1e88"
-  integrity sha512-qrJZGV0/aewZOwCPwZKE9+mBYvc9jQ/9bo6EOLlWO6S03cU40AL1UerzY/xpxMfu7X+CY641ThL5w/iKRpOo5w==
+"@veupathdb/eda@^3.6.1":
+  version "3.6.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.6.1.tgz#cbee646e8e56519c21dc2fa2472e8c76f588593a"
+  integrity sha512-syN4c9FSJ3Zy6S3gLtoAw60BF+m2OpS/bZQ7PwaiakaMWDtCLrgYRjUY2d7licsPpHuzGaL4Fzh7w/4kyWbeeA==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -2236,10 +2236,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.6.2":
-  version "0.6.4"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.6.4.tgz#ab93aa19cb193f24fa9c7fd40253609919302a7a"
-  integrity sha512-puOJCIakBj8jNL2CDKxZPSut3qLx9tU9r2zlJz73WLVO3ujrBPSbz0+IUiOYwobcun+8SjyaYzWQHuI9l+noUA==
+"@veupathdb/web-common@^0.6.5":
+  version "0.6.5"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.6.5.tgz#6f0873bdb188ee56878a7f5227bc2812be922389"
+  integrity sha512-vBqtXHiw+9fjfkGXVNJyCbHAw3pL3Ej4ihk6qpXK1OX42/sEr1rXo+b8dUijafn3GgpCRH2A1BPxBBfICKQ1Aw==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
