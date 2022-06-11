@@ -138,9 +138,10 @@ function formatStudies(questions, recordClasses, answer) {
   }, { valid: [], invalid: [], appearFirst: new Set() });
 
   const unsortedValidRecords = records.valid
+    // remove unrelease studies, unless `showUnreleasedData = true`
+    .filter(study => study.isReleased || showUnreleasedData)
     .map(study => Object.assign(study, {
-      disabled: !showUnreleasedData && !study.isReleased,
-      // searchUrls: mapValues(study.searches, search => `/showQuestion.do?questionFullName=${search}`),
+      disabled: false,
       searches: Object.values(study.searches)
         .map(questionName => questionsByName[questionName])
         .filter(question => question != null)
