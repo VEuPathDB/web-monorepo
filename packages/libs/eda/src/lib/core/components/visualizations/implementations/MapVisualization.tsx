@@ -42,6 +42,8 @@ import DataClient, {
 } from '../../../api/DataClient';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { usePromise } from '../../../hooks/promise';
+// the next import is unused, but leaving it there as a reminder to
+// test more types of variable in future (e.g. low cardinality numbers?)
 import { fixLabelsForNumberVariables } from '../../../utils/visualization';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { OutputEntityTitle } from '../OutputEntityTitle';
@@ -60,6 +62,10 @@ import { BirdsEyeView } from '../../BirdsEyeView';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { kFormatter, mFormatter } from '../../../utils/big-number-formatters';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
+import { NumberVariable } from '../../../types/study';
+import { BinSpec } from '../../../types/general';
+
+const numContinuousBins = 8;
 
 export const mapVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -388,6 +394,24 @@ function MapViz(props: VisualizationProps) {
         southWest: { lat: xMin, lng: left },
       } = boundsZoomLevel.bounds;
 
+      // For now, just calculate a static binSpec from variable metadata for numeric continous only
+      // TO DO: date variables when we have testable data (UMSP has them but difficult to test, and back end was giving 500s)
+      // date variables need special date maths for calculating the width, and probably rounding aggressively to whole months/years etc - not trivial.
+      const binSpec: BinSpec | undefined = NumberVariable.is(xAxisVariable)
+        ? {
+            range: {
+              min: xAxisVariable.distributionDefaults.rangeMin,
+              max: xAxisVariable.distributionDefaults.rangeMax,
+            },
+            type: 'binWidth',
+            value:
+              (xAxisVariable.distributionDefaults.rangeMax -
+                xAxisVariable.distributionDefaults.rangeMin) /
+              (numContinuousBins - 1),
+          }
+        : // : DateVariable.is(xAxisVariable) ? ... TO DO
+          undefined;
+
       // prepare request
       const requestParams: MapMarkersOverlayRequestParams = {
         studyId,
@@ -400,7 +424,7 @@ function MapViz(props: VisualizationProps) {
           geoAggregateVariable: geoAggregateVariable,
           showMissingness: 'noVariables', // current back end 'showMissing' behaviour applies to facet variable
           valueSpec: proportionMode ? 'proportion' : 'count',
-          binSpec: {}, // { type: 'binWidth', value: 450.25 },
+          binSpec: binSpec ?? {},
           viewport: {
             latitude: {
               xMin,
@@ -422,6 +446,7 @@ function MapViz(props: VisualizationProps) {
     }, [
       studyId,
       dataClient,
+      xAxisVariable,
       vizConfig.xAxisVariable,
       proportionMode,
       boundsZoomLevel,

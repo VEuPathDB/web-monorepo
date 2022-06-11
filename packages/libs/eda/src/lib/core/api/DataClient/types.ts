@@ -616,7 +616,7 @@ export interface MapMarkersOverlayRequestParams {
     valueSpec: 'count' | 'proportion';
     binSpec: {
       type?: 'binWidth' | 'numBins';
-      value?: number;
+      value?: NumberOrNull;
       units?: TimeUnit;
       range?: NumberOrDateRange;
     };
