@@ -174,6 +174,8 @@ function createDefaultConfig(): LineplotConfig {
     valueSpecConfig: 'Mean',
     useBinning: false,
     showErrorBars: true,
+    independentAxisLogScale: false,
+    dependentAxisLogScale: false,
   };
 }
 
@@ -199,6 +201,8 @@ export const LineplotConfig = t.intersection([
     // axis range control
     independentAxisRange: NumberOrDateRangeT,
     dependentAxisRange: NumberOrDateRangeT,
+    independentAxisLogScale: t.boolean,
+    dependentAxisLogScale: t.boolean,
   }),
 ]);
 
@@ -324,6 +328,8 @@ function LineplotViz(props: VisualizationProps) {
               denominatorValues:
                 yAxisVar != null ? yAxisVar.vocabulary : undefined,
             }),
+        independentAxisLogScale: false,
+        dependentAxisLogScale: false,
       });
       // axis range control: close truncation warnings here
       setTruncatedIndependentAxisWarning('');
@@ -404,6 +410,14 @@ function LineplotViz(props: VisualizationProps) {
   );
   const onDenominatorValuesChange = onChangeHandlerFactory<string[]>(
     'denominatorValues'
+  );
+
+  const onIndependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
+    'independentAxisLogScale'
+  );
+
+  const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
+    'dependentAxisLogScale'
   );
 
   const outputEntity = useFindOutputEntity(
@@ -753,6 +767,8 @@ function LineplotViz(props: VisualizationProps) {
       setTruncatedIndependentAxisWarning={setTruncatedIndependentAxisWarning}
       truncatedDependentAxisWarning={truncatedDependentAxisWarning}
       setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
+      onIndependentAxisLogScaleChange={onIndependentAxisLogScaleChange}
+      onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
     />
   );
 
@@ -1034,6 +1050,8 @@ type LineplotWithControlsProps = Omit<LinePlotProps, 'data'> & {
   setTruncatedDependentAxisWarning: (
     truncatedDependentAxisWarning: string
   ) => void;
+  onIndependentAxisLogScaleChange: (value: boolean) => void;
+  onDependentAxisLogScaleChange: (value: boolean) => void;
 };
 
 function LineplotWithControls({
@@ -1061,6 +1079,8 @@ function LineplotWithControls({
   setTruncatedIndependentAxisWarning,
   truncatedDependentAxisWarning,
   setTruncatedDependentAxisWarning,
+  onIndependentAxisLogScaleChange,
+  onDependentAxisLogScaleChange,
   ...lineplotProps
 }: LineplotWithControlsProps) {
   const plotRef = useUpdateThumbnailEffect(
@@ -1072,6 +1092,8 @@ function LineplotWithControls({
       // considering axis range control too
       vizConfig.independentAxisRange,
       vizConfig.dependentAxisRange,
+      vizConfig.independentAxisLogScale,
+      vizConfig.dependentAxisLogScale,
     ]
   );
 
@@ -1111,6 +1133,7 @@ function LineplotWithControls({
   const handleIndependentAxisSettingsReset = useCallback(() => {
     updateVizConfig({
       independentAxisRange: undefined,
+      independentAxisLogScale: false,
     });
     // add reset for truncation message: including dependent axis warning as well
     setTruncatedIndependentAxisWarning('');
@@ -1139,6 +1162,7 @@ function LineplotWithControls({
   const handleDependentAxisSettingsReset = useCallback(() => {
     updateVizConfig({
       dependentAxisRange: undefined,
+      dependentAxisLogScale: false,
     });
     // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
@@ -1216,6 +1240,8 @@ function LineplotWithControls({
         max: truncationConfigDependentAxisMax,
       },
     },
+    independentAxisLogScale: vizConfig.independentAxisLogScale,
+    dependentAxisLogScale: vizConfig.dependentAxisLogScale,
   };
 
   return (
@@ -1264,6 +1290,8 @@ function LineplotWithControls({
               max: truncationConfigDependentAxisMax,
             },
           }}
+          independentAxisLogScale={vizConfig.independentAxisLogScale}
+          dependentAxisLogScale={vizConfig.dependentAxisLogScale}
         />
       )}
 
@@ -1275,6 +1303,20 @@ function LineplotWithControls({
             marginRight: '1em',
           }}
         >
+          <div
+            style={{
+              display: 'flex',
+              marginTop: '0.8em',
+              marginBottom: '0.8em',
+            }}
+          >
+            <Switch
+              label="Log Scale:"
+              state={vizConfig.independentAxisLogScale}
+              onStateChange={onIndependentAxisLogScaleChange}
+              disabled={independentValueType === 'date'}
+            />
+          </div>
           <Switch
             label={`Binning ${useBinning ? 'on' : 'off'}`}
             state={useBinning}
@@ -1360,7 +1402,7 @@ function LineplotWithControls({
           style={{
             display: 'inline-flex',
             borderLeft: '2px solid lightgray',
-            height: '15.5em',
+            height: '19.3em',
             position: 'relative',
             marginLeft: '-1px',
             top: '1.5em',
@@ -1374,6 +1416,20 @@ function LineplotWithControls({
             marginRight: '0em',
           }}
         >
+          <div
+            style={{
+              display: 'flex',
+              marginTop: '0.8em',
+              marginBottom: '0.8em',
+            }}
+          >
+            <Switch
+              label="Log Scale:"
+              state={vizConfig.dependentAxisLogScale}
+              onStateChange={onDependentAxisLogScaleChange}
+              disabled={dependentValueType === 'date'}
+            />
+          </div>
           <Switch
             label="Show error bars (95% C.I.)"
             state={showErrorBars}

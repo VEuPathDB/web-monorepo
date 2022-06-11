@@ -309,11 +309,12 @@ function ScatterplotViz(props: VisualizationProps) {
   // prettier-ignore
   // allow 2nd parameter of resetCheckedLegendItems for checking legend status
   const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof ScatterplotConfig, resetCheckedLegendItems?: boolean, resetAxisRanges?: boolean) => (newValue?: ValueType) => {
+    < ValueType,>(key: keyof ScatterplotConfig, resetCheckedLegendItems?: boolean, resetAxisRanges?: boolean, resetValueSpecConfig?: boolean) => (newValue?: ValueType) => {
       const newPartialConfig = {
         [key]: newValue,
         ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
       	...(resetAxisRanges ? { independentAxisRange: undefined, dependentAxisRange: undefined } : {}),
+        ...(resetValueSpecConfig ? { valueSpecConfig: 'Raw' } : {}),
       };
       updateVizConfig(newPartialConfig);
       if (resetAxisRanges) {
@@ -342,11 +343,17 @@ function ScatterplotViz(props: VisualizationProps) {
   );
 
   const onIndependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
-    'independentAxisLogScale'
+    'independentAxisLogScale',
+    true,
+    true,
+    true
   );
 
   const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
-    'dependentAxisLogScale'
+    'dependentAxisLogScale',
+    true,
+    true,
+    true
   );
 
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
@@ -863,7 +870,9 @@ function ScatterplotViz(props: VisualizationProps) {
       plotOptions={['Raw', 'Smoothed mean with raw', 'Best fit line with raw']}
       // disabledList prop is used to disable radio options (grayed out)
       disabledList={
-        yAxisVariable?.type === 'date'
+        yAxisVariable?.type === 'date' ||
+        vizConfig.independentAxisLogScale ||
+        vizConfig.dependentAxisLogScale
           ? ['Smoothed mean with raw', 'Best fit line with raw']
           : []
       }
