@@ -10,6 +10,10 @@ import {
   OrientationAddon,
   OrientationDefault,
   AxisTruncationAddon,
+  independentAxisLogScaleAddon,
+  independentAxisLogScaleDefault,
+  DependentAxisLogScaleAddon,
+  DependentAxisLogScaleDefault,
 } from '../types/plots';
 // import truncation util functions
 import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations';
@@ -22,6 +26,8 @@ export interface LinePlotProps
   extends PlotProps<LinePlotData>,
     // truncation
     OrientationAddon,
+    independentAxisLogScaleAddon,
+    DependentAxisLogScaleAddon,
     AxisTruncationAddon {
   /** x-axis range: required for confidence interval - not really */
   independentAxisRange?: NumberOrDateRange;
@@ -64,6 +70,8 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
     // add axis range control truncation
     orientation = OrientationDefault,
     axisTruncationConfig,
+    independentAxisLogScale = independentAxisLogScaleDefault,
+    dependentAxisLogScale = DependentAxisLogScaleDefault,
     ...restProps
   } = props;
 
@@ -80,7 +88,10 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
   const extendedDependentAxisRange = extendAxisRangeForTruncations(
     standardDependentAxisRange,
     axisTruncationConfig?.dependentAxis,
-    dependentValueType === 'date' ? 'date' : 'number'
+    dependentValueType === 'date' ? 'date' : 'number',
+    // adjust range for log scale
+    'lineplot',
+    dependentAxisLogScale
   );
 
   // make rectangular layout shapes for truncated axis/missing data
@@ -115,27 +126,57 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
       title: independentAxisLabel,
       // add axis range control truncation
       range: data.series.length
-        ? [extendedIndependentAxisRange?.min, extendedIndependentAxisRange?.max]
+        ? [
+            extendedIndependentAxisRange?.min,
+            extendedIndependentAxisRange?.max,
+          ].map((val) =>
+            independentAxisLogScale && val != null
+              ? val <= 0
+                ? -0.1 // for count's logscale
+                : Math.log10(val as number)
+              : val
+          )
         : undefined,
       zeroline: false, // disable line at 0 value
       // make plot border
       mirror: true,
       // date or number type (from variable.type)
-      type: independentValueType === 'date' ? 'date' : undefined,
+      type:
+        independentValueType === 'date'
+          ? 'date'
+          : independentAxisLogScale
+          ? 'log'
+          : undefined,
       tickfont: data.series.length ? {} : { color: 'transparent' },
+      dtick: independentAxisLogScale ? 1 : undefined,
     },
     yaxis: {
       title: dependentAxisLabel,
       // add axis range control
       range: data.series.length
-        ? [extendedDependentAxisRange?.min, extendedDependentAxisRange?.max]
+        ? [
+            extendedDependentAxisRange?.min,
+            extendedDependentAxisRange?.max,
+          ].map((val) =>
+            dependentAxisLogScale && val != null
+              ? val <= 0
+                ? -0.1 // for count's logscale
+                : Math.log10(val as number)
+              : val
+          )
         : undefined,
       zeroline: false, // disable line at 0 value
       // make plot border
       mirror: true,
       // date or number type (from variable.type)
-      type: dependentValueType === 'date' ? 'date' : undefined,
+      type:
+        dependentValueType === 'date'
+          ? 'date'
+          : dependentAxisLogScale
+          ? 'log'
+          : undefined,
       tickfont: data.series.length ? {} : { color: 'transparent' },
+      dtick: dependentAxisLogScale ? 1 : undefined,
     },
     // axis range control: add truncatedAxisHighlighting for layout.shapes
     shapes: truncatedAxisHighlighting,
