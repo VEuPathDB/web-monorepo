@@ -496,16 +496,17 @@ function MapViz(props: VisualizationProps) {
       ? xAxisVariable.vocabulary
       : overlayResponse.value?.mapMarkers.config.overlayValues;
 
-  // reset checkedLegendItems if any of the checked items are NOT in the vocabulary
+  // reset checkedLegendItems to all-checked if any of the checked items are NOT in the vocabulary
   useEffect(() => {
     if (vizConfig.checkedLegendItems == null || vocabulary == null) return;
+    // could possibly optimize by also returning if vocabulary.length <= 8 ?
 
     if (
       vizConfig.checkedLegendItems.some(
         (label) => vocabulary.findIndex((vocab) => vocab === label) === -1
       )
     )
-      updateVizConfig({ checkedLegendItems: undefined });
+      updateVizConfig({ checkedLegendItems: vocabulary });
   }, [vocabulary, vizConfig.checkedLegendItems, updateVizConfig]);
 
   /**
@@ -741,7 +742,7 @@ function MapViz(props: VisualizationProps) {
       group: 1,
       rank: 1,
     }));
-  }, [xAxisVariable, vocabulary]);
+  }, [xAxisVariable, vocabulary, overlayData]);
 
   // set checkedLegendItems
   const checkedLegendItems = useCheckedLegendItemsStatus(
