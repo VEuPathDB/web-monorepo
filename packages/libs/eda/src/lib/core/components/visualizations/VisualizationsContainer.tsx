@@ -314,6 +314,9 @@ function NewVisualizationPicker(props: Props) {
               <Tooltip title={<>{vizOverview.description}</>}>
                 <span>
                   <button
+                    style={{
+                      cursor: disabled ? 'not-allowed' : 'cursor',
+                    }}
                     type="button"
                     disabled={disabled}
                     onClick={async () => {
