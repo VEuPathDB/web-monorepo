@@ -58,7 +58,11 @@ import {
   FacetedData,
 } from '@veupathdb/components/lib/types/plots';
 // import Computation ts
-import { CoverageStatistics, Computation } from '../../../types/visualization';
+import {
+  CoverageStatistics,
+  Computation,
+  ComputationConfiguration,
+} from '../../../types/visualization';
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import { NumberVariable, Variable, StudyEntity } from '../../../types/study';
@@ -999,6 +1003,15 @@ function ScatterplotViz(props: VisualizationProps) {
     </>
   );
 
+  // plot subtitle
+  const plotSubtitle =
+    computation.descriptor.type === 'abundance' && outputSize != null
+      ? `Ranked abundance: Variables with ${
+          (computation.descriptor.configuration as ComputationConfiguration)
+            ?.rankingMethod
+        } = 0 removed. Showing up to the top eight variables.`
+      : undefined;
+
   // alphadiv abundance: y-axis and overlayVariable
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -1052,7 +1065,12 @@ function ScatterplotViz(props: VisualizationProps) {
               data.value?.completeCasesAxesVars
           }
           showMissingness={vizConfig.showMissingness}
-          onShowMissingnessChange={onShowMissingnessChange}
+          // this can be used to show and hide no data control
+          onShowMissingnessChange={
+            computation.descriptor.type === 'pass'
+              ? onShowMissingnessChange
+              : undefined
+          }
           outputEntity={outputEntity}
         />
       </div>
@@ -1093,7 +1111,11 @@ function ScatterplotViz(props: VisualizationProps) {
           />
         )}
 
-      <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
+      <OutputEntityTitle
+        entity={outputEntity}
+        outputSize={outputSize}
+        subtitle={plotSubtitle}
+      />
       <PlotLayout
         isFaceted={isFaceted(data.value?.dataSetProcess)}
         legendNode={legendNode}

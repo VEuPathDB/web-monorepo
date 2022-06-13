@@ -10,7 +10,7 @@ export interface Props extends ComputationProps {
   computationId: string;
   visualizationTypes: Record<string, VisualizationType>;
   baseUrl?: string; // right now only defined when *not* using single app mode
-  singleAppMode: string | undefined;
+  isSingleAppMode: boolean;
 }
 
 export function ComputationInstance(props: Props) {
@@ -23,7 +23,7 @@ export function ComputationInstance(props: Props) {
     geoConfigs,
     visualizationTypes,
     baseUrl,
-    singleAppMode,
+    isSingleAppMode,
   } = props;
 
   const { analysis, setComputations } = analysisState;
@@ -93,7 +93,7 @@ export function ComputationInstance(props: Props) {
         totalCounts={totalCounts}
         filteredCounts={filteredCounts}
         baseUrl={baseUrl}
-        showHeading={!singleAppMode}
+        isSingleAppMode={isSingleAppMode}
       />
     </div>
   );
