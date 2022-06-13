@@ -221,7 +221,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       toImage: async (imageOpts: ToImgopts) => {
         try {
           // Wait to allow map to finish rendering
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+          // await new Promise((resolve) => setTimeout(resolve, 1000));
 
           // Check that map leaflet element still exists
           if (mapRef.current) {
