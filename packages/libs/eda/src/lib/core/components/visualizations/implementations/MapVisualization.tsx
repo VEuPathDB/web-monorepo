@@ -63,7 +63,8 @@ import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/Radio
 import { kFormatter, mFormatter } from '../../../utils/big-number-formatters';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { NumberVariable } from '../../../types/study';
-import { BinSpec } from '../../../types/general';
+import { BinSpec, NumberRange } from '../../../types/general';
+import { useDefaultIndependentAxisRange } from '../../../hooks/computeDefaultIndependentAxisRange';
 
 const numContinuousBins = 8;
 
@@ -372,6 +373,11 @@ function MapViz(props: VisualizationProps) {
     ])
   );
 
+  const defaultOverlayRange = useDefaultIndependentAxisRange(
+    xAxisVariable,
+    'histogram'
+  );
+
   /**
    * Now we deal with the optional second request to map-markers-overlay
    */
@@ -397,20 +403,19 @@ function MapViz(props: VisualizationProps) {
       // For now, just calculate a static binSpec from variable metadata for numeric continous only
       // TO DO: date variables when we have testable data (UMSP has them but difficult to test, and back end was giving 500s)
       // date variables need special date maths for calculating the width, and probably rounding aggressively to whole months/years etc - not trivial.
-      const binSpec: BinSpec | undefined = NumberVariable.is(xAxisVariable)
-        ? {
-            range: {
-              min: xAxisVariable.distributionDefaults.rangeMin,
-              max: xAxisVariable.distributionDefaults.rangeMax,
-            },
-            type: 'binWidth',
-            value:
-              (xAxisVariable.distributionDefaults.rangeMax -
-                xAxisVariable.distributionDefaults.rangeMin) /
-              (numContinuousBins - 1),
-          }
-        : // : DateVariable.is(xAxisVariable) ? ... TO DO
-          undefined;
+      const binSpec: BinSpec | undefined =
+        NumberVariable.is(xAxisVariable) &&
+        defaultOverlayRange != null &&
+        NumberRange.is(defaultOverlayRange)
+          ? {
+              range: defaultOverlayRange,
+              type: 'binWidth',
+              value:
+                (defaultOverlayRange.max - defaultOverlayRange.min) /
+                (numContinuousBins - 1),
+            }
+          : // : DateVariable.is(xAxisVariable) && DateRange.is(defaultOverlayRange) ? ... TO DO
+            undefined;
 
       // prepare request
       const requestParams: MapMarkersOverlayRequestParams = {
