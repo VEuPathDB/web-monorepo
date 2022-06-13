@@ -693,7 +693,12 @@ function BarplotViz(props: VisualizationProps) {
               data.value?.completeCasesAxesVars
           }
           toggleStarredVariable={toggleStarredVariable}
-          onShowMissingnessChange={onShowMissingnessChange}
+          // this can be used to show and hide no data control
+          onShowMissingnessChange={
+            computation.descriptor.type === 'pass'
+              ? onShowMissingnessChange
+              : undefined
+          }
           showMissingness={vizConfig.showMissingness}
           outputEntity={entity}
         />
