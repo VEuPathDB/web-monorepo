@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 import { Switch, Redirect } from 'react-router-dom';
 
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
@@ -15,10 +17,17 @@ interface Props {
   uploadPageConfig: DatasetUploadPageConfig;
   urlParams: Record<string, string>;
   workspaceTitle: string;
+  helpTabContents?: ReactNode;
 }
 
 function UserDatasetsWorkspace(props: Props) {
-  const { baseUrl, helpRoute, uploadPageConfig, workspaceTitle } = props;
+  const {
+    baseUrl,
+    helpRoute,
+    uploadPageConfig,
+    workspaceTitle,
+    helpTabContents,
+  } = props;
 
   return (
     <div>
@@ -41,6 +50,14 @@ function UserDatasetsWorkspace(props: Props) {
                 {
                   display: 'Recent uploads',
                   route: '/recent',
+                },
+              ]
+            : [],
+          helpTabContents != null
+            ? [
+                {
+                  display: 'Help',
+                  route: '/help',
                 },
               ]
             : [],
@@ -109,6 +126,14 @@ function UserDatasetsWorkspace(props: Props) {
               <UserDatasetAllUploadsController baseUrl={baseUrl} />
             )}
             disclaimerProps={{ toDoWhatMessage: 'To view your recent uploads' }}
+          />
+        )}
+        {helpTabContents != null && (
+          <WdkRoute
+            requiresLogin
+            exact
+            path={`${baseUrl}/help`}
+            component={() => <>{helpTabContents}</>}
           />
         )}
         <Redirect to={baseUrl} />
