@@ -198,10 +198,9 @@ export default function Modal({
 
           background: colors.white,
           borderRadius: componentStyle.border.radius,
-          outlineColor: componentStyle.border.color,
-          outlineWidth: componentStyle.border.width,
-          outlineStyle: componentStyle.border.style,
-          outlineOffset: -1 * componentStyle.border.width + 1,
+          borderColor: componentStyle.border.color,
+          borderWidth: componentStyle.border.width,
+          borderStyle: componentStyle.border.style,
           overflow: 'hidden',
           opacity: visible ? 1 : 0,
         },
