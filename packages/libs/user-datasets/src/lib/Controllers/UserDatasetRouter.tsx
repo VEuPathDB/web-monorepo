@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 
 import { RouteComponentProps, Switch, useRouteMatch } from 'react-router-dom';
 
@@ -17,6 +17,7 @@ interface Props<T1 extends string = string, T2 extends string = string> {
   helpRoute: string;
   uploadTypeConfig: DatasetUploadTypeConfig<T2>;
   workspaceTitle: string;
+  helpTabContents?: ReactNode;
 }
 
 export function UserDatasetRouter<T1 extends string, T2 extends string>({
@@ -25,6 +26,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
   helpRoute,
   uploadTypeConfig,
   workspaceTitle,
+  helpTabContents,
 }: Props<T1, T2>) {
   const { path, url } = useRouteMatch();
 
@@ -71,6 +73,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
               uploadPageConfig={uploadPageConfig}
               urlParams={urlParams}
               workspaceTitle={workspaceTitle}
+              helpTabContents={helpTabContents}
             />
           );
         }}
