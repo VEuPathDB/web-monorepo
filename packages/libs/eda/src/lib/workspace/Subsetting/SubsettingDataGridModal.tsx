@@ -7,7 +7,11 @@ import useDimensions from 'react-cool-dimensions';
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { Loading, LoadingOverlay } from '@veupathdb/wdk-client/lib/Components';
+import {
+  Loading,
+  LoadingOverlay,
+  HelpIcon,
+} from '@veupathdb/wdk-client/lib/Components';
 import MultiSelectVariableTree from '../../core/components/variableTrees/MultiSelectVariableTree';
 import { Modal, H5, DataGrid, MesaButton, Download } from '@veupathdb/coreui';
 
@@ -546,7 +550,15 @@ export default function SubsettingDataGridModal({
                   style={{ backgroundColor: 'rgb(245,245,245)' }}
                 >
                   <summary>
-                    <h3>Required columns</h3>
+                    <h3>
+                      Required columns{' '}
+                      <span css={{ '& i': { verticalAlign: 'bottom' } }}>
+                        <HelpIcon>
+                          Required columns are unique identifiers needed to
+                          merge data across download files.
+                        </HelpIcon>
+                      </span>
+                    </h3>
                   </summary>
                   <ul>
                     {requiredColumns.value.map((column) => (
