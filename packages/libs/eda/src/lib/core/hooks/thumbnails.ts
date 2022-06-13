@@ -46,7 +46,7 @@ export function useUpdateThumbnailEffect(
     return Task.fromPromise(
       () =>
         new Promise((resolve) => {
-          setTimeout(resolve, 0);
+          setTimeout(resolve, 5000);
         })
     )
       .chain(() =>
@@ -60,6 +60,32 @@ export function useUpdateThumbnailEffect(
     // of "deps" which are not array literals
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
+
+  //  // When the client component dismounts, also make a screenshot
+  //  useLayoutEffect(() => {
+  //    return function cleanup() {
+  //      const plotInstance = plotRef.current;
+  //
+  //      if (plotInstance == null) {
+  //	console.log("With useEffect(), plotInstance is not available in cleanup...");
+  //	return;
+  //      }
+  //
+  //      const { updateThumbnail, thumbnailDimensions } = thumbnailArgsRef.current;
+  //
+  //      Task.fromPromise(
+  //	() =>
+  //          new Promise((resolve) => {
+  //            setTimeout(resolve, 0);
+  //          })
+  //      )
+  //	.chain(() =>
+  //          Task.fromPromise(() =>
+  //	    makePlotThumbnailUrl(plotInstance, thumbnailDimensions)
+  //			  )
+  //	      ).run(updateThumbnail);
+  //    }
+  //  }, []);
 
   // Return a ref callback which can be passed to plot components
   return useCallback((instance: FacetedPlotRef | PlotRef | null) => {
