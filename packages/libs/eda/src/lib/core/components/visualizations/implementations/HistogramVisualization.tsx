@@ -572,7 +572,12 @@ function HistogramViz(props: VisualizationProps) {
               data.value?.completeCasesAxesVars
           }
           showMissingness={vizConfig.showMissingness}
-          onShowMissingnessChange={onShowMissingnessChange}
+          // this can be used to show and hide no data control
+          onShowMissingnessChange={
+            computation.descriptor.type === 'pass'
+              ? onShowMissingnessChange
+              : undefined
+          }
           outputEntity={outputEntity}
         />
       </div>

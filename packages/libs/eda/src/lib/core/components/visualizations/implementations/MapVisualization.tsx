@@ -512,7 +512,6 @@ function MapViz(props: VisualizationProps) {
                 )
             : [];
 
-        console.log(donutData);
         // now reorder the data in vocabulary order, adding zeroes if necessary.
         const reorderedData = vocabulary.map(
           (vocabularyLabel) =>
@@ -548,7 +547,7 @@ function MapViz(props: VisualizationProps) {
 
         const count =
           overlayData != null
-            ? overlayData[geoAggregateValue].entityCount ?? ''
+            ? overlayData[geoAggregateValue]?.entityCount ?? ''
             : entityCount;
         const formattedCount =
           MarkerComponent === ChartMarker
