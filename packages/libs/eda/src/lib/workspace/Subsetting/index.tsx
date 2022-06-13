@@ -1,4 +1,5 @@
-import { useHistory } from 'react-router';
+import { useMemo } from 'react';
+import { Redirect, useHistory } from 'react-router';
 
 import {
   MultiFilterVariable,
@@ -22,6 +23,7 @@ import { AnalysisState } from '../../core/hooks/analysis';
 
 // Functions
 import { cx } from '../Utils';
+import { findMultiFilterParent } from '../../core/utils/study-metadata';
 
 interface SubsettingProps {
   analysisState: AnalysisState;
@@ -61,11 +63,22 @@ export default function Subsetting({
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
+  // Find multifilter parent. We will redirect to it later, if one is found.
+  const multiFilterParent = useMemo(
+    () => entity && variable && findMultiFilterParent(entity, variable),
+    [entity, variable]
+  );
+
   if (
     entity == null ||
     (!Variable.is(variable) && !MultiFilterVariable.is(variable))
-  )
+  ) {
     return <div>Could not find specified variable.</div>;
+  }
+
+  if (multiFilterParent) {
+    return <Redirect to={multiFilterParent.id} />;
+  }
 
   const totalEntityCount = totalCounts && totalCounts[entity.id];
 
