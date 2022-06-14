@@ -15,7 +15,7 @@ import { StringParam, TreeBoxVocabNode } from '@veupathdb/wdk-client/lib/Utils/W
 import { NewStepSpec, NewStrategySpec } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { OrganismToProject, ProjectUrls, useOrganismToProject, useProjectUrls } from 'ebrc-client/hooks/projectUrls';
 import { makeEdaRoute } from 'ebrc-client/routes';
-import { SiteSearchDocument, SiteSearchDocumentType, SiteSearchResponse } from 'ebrc-client/SiteSearch/Types';
+import { SiteSearchDocument, SiteSearchDocumentType, SiteSearchDocumentTypeField, SiteSearchResponse } from 'ebrc-client/SiteSearch/Types';
 import { add, capitalize, chunk, intersection, isEmpty, isEqual, keyBy, memoize, orderBy, unzip, xor } from 'lodash';
 import React, { ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
@@ -673,6 +673,7 @@ function resultDetails(document: SiteSearchDocument, documentType: SiteSearchDoc
   // eda variable
   if (documentType.id === 'variable') {
     const studyInfoField = 'MULTITEXT__variable_StudyInfo';
+    const summaryField = findSummaryField(studyInfoField, documentType);
     return {
       display: {
         text: document.hyperlinkName
@@ -680,7 +681,7 @@ function resultDetails(document: SiteSearchDocument, documentType: SiteSearchDoc
       summary: (
         <>
           {makeGenericSummary(document, documentType, { [studyInfoField]: () => null })}
-          <StudyInfoTableSection document={document} fieldName={studyInfoField}/>
+          <VariableStudyTable document={document} summaryField={summaryField}/>
         </>
       )
     }
@@ -688,6 +689,8 @@ function resultDetails(document: SiteSearchDocument, documentType: SiteSearchDoc
 
   // eda variable value
   if (documentType.id === 'variableValue') {
+    const studyInfoField = 'MULTITEXT__variableValue_All';
+    const summaryField = findSummaryField(studyInfoField, documentType);
     return {
       display: {
         text: document.hyperlinkName,
@@ -695,7 +698,7 @@ function resultDetails(document: SiteSearchDocument, documentType: SiteSearchDoc
       summary: (
         <>
           {makeGenericSummary(document, documentType, { MULTITEXT__variableValue_All: () => null })}
-          <VariableList document={document} fieldName="MULTITEXT__variableValue_All"/>
+          <VariableValueStudyTable document={document} summaryField={summaryField}/>
         </>
       )
     }
@@ -755,12 +758,12 @@ function resultDetails(document: SiteSearchDocument, documentType: SiteSearchDoc
   }
 }
 
-function StudyInfoTableSection(props: { document: SiteSearchDocument, fieldName: string }) {
-  const { document, fieldName } = props;
+function VariableStudyTable(props: { document: SiteSearchDocument, summaryField: SiteSearchDocumentTypeField }) {
+  const { document, summaryField } = props;
   return (
     <SummaryTable
       document={document}
-      summaryFieldName={fieldName}
+      summaryField={summaryField}
       sorting={[{ accessor: "studyName" }, { accessor: "entityName" }]}
       columnDefs={[
         {
@@ -792,13 +795,13 @@ function StudyInfoTableSection(props: { document: SiteSearchDocument, fieldName:
         },
         {
           accessor: "providerLabel",
-          header: "Provider label",
+          header: "Original variable name",
           render: ({ value }) =>
             decodeOrElse(arrayOf(string), [], value).join(" | "),
         },
         {
-          accessor: "description",
-          header: "Description",
+          accessor: "definition",
+          header: "Definition",
           render: ({ value }) => safeHtml(value),
         },
       ]}
@@ -806,8 +809,8 @@ function StudyInfoTableSection(props: { document: SiteSearchDocument, fieldName:
   );
 }
 
-function VariableList(props: { document: SiteSearchDocument, fieldName: string }) {
-  const { document, fieldName } = props;
+function VariableValueStudyTable(props: { document: SiteSearchDocument, summaryField: SiteSearchDocumentTypeField }) {
+  const { document, summaryField } = props;
   const datasets = useDatasets();
   function makeLink(studyId: string, entityId?: string, variableId?: string) {
     if (datasets == null) return '';
@@ -821,7 +824,7 @@ function VariableList(props: { document: SiteSearchDocument, fieldName: string }
   return (
     <SummaryTable
       document={document}
-      summaryFieldName={fieldName}
+      summaryField={summaryField}
       sorting={[
         { accessor: 'studyName' },
         { accessor: 'entityName' },
@@ -854,7 +857,7 @@ function VariableList(props: { document: SiteSearchDocument, fieldName: string }
         },
         {
           accessor: 'variableName',
-          header: 'Variable',
+          header: 'Variable name',
           render: ({ value }) => safeHtml(value),
         },
       ]}
@@ -1004,16 +1007,16 @@ interface SortSpec<T extends string> {
 
 interface SummaryTableProps<T extends string> {
   document: SiteSearchDocument;
-  summaryFieldName: string;
+  summaryField: SiteSearchDocumentTypeField;
   columnDefs: ColumnDef<T>[];
   sorting: SortSpec<T>[];
 }
 
 function SummaryTable<T extends string>(props: SummaryTableProps<T>) {
-  const { document, summaryFieldName, columnDefs, sorting } = props;
+  const { document, summaryField, columnDefs, sorting } = props;
   const [collapsed, setCollapsed] = useState(true);
   const data = makeStructuredTableData(
-    document.summaryFieldData[summaryFieldName] as string,
+    document.summaryFieldData[summaryField.name] as string,
     columnDefs.filter(d => d.accessor !== '_').map(d => d.accessor),
     sorting
   );
@@ -1026,7 +1029,7 @@ function SummaryTable<T extends string>(props: SummaryTableProps<T>) {
       Cell: ({ value, row }: CellProps<Record<T, string>, string>) => d.render ? d.render({ value, row: row.original }) : value
     } as Column<Record<T, string>>));
   return (
-    <CollapsibleSection headerContent={<strong>Studies matched ({data.length})</strong>} isCollapsed={collapsed} onCollapsedChange={setCollapsed}>
+    <CollapsibleSection headerContent={<strong>{summaryField.displayName} ({data.length})</strong>} isCollapsed={collapsed} onCollapsedChange={setCollapsed}>
 
     <DataGrid
       columns={columns as Column[]}
@@ -1037,6 +1040,7 @@ function SummaryTable<T extends string>(props: SummaryTableProps<T>) {
           fontSize: "1em",
           padding: ".5em",
           lineBreak: "normal",
+          whiteSpace: 'nowrap',
         },
         dataCells: {
           fontSize: "1em",
@@ -1076,4 +1080,10 @@ function makeStructuredTableData<T extends string>(jsonString: string, accessors
     console.error(error);
     return [];
   }
+}
+
+function findSummaryField(summaryFieldName: string, documentType: SiteSearchDocumentType): SiteSearchDocumentTypeField {
+  const field = documentType.summaryFields.find(f => f.name === summaryFieldName);
+  if (field == null) throw new Error(`Could not find the summary field "${summaryFieldName} in document type "${documentType.displayName}".`);
+  return field;
 }
