@@ -42,7 +42,9 @@ export function useUpdateThumbnailEffect(
 
     const { updateThumbnail, thumbnailDimensions } = thumbnailArgsRef.current;
 
-    // Update the thumbnail
+    // Update the thumbnail.
+    // Returns a cancel function for the useLayoutEffect's cleanup.
+    // This in effect (pun intended) provides debouncing functionality
     return Task.fromPromise(
       () =>
         new Promise((resolve) => {
