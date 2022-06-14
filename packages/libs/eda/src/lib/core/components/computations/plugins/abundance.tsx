@@ -1,6 +1,4 @@
 /** @jsxImportSource @emotion/react */
-import { useRouteMatch } from 'react-router-dom';
-import { useHistory } from 'react-router';
 import { useStudyMetadata } from '../../..';
 import { useCollectionVariables } from '../../../hooks/study';
 import { VariableDescriptor } from '../../../types/variable';
@@ -8,27 +6,58 @@ import { StudyEntity } from '../../../types/study';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
+import { ComputationConfiguration } from '../../../types/visualization';
 import { H6 } from '@veupathdb/coreui';
 import { isEqual } from 'lodash';
-import {
-  createComputation,
-  assertConfigType,
-  getConfigHandlerObjects,
-  updateAnalysisWithAmendedComputations,
-  handleRouting,
-  handleConfigurationChanges,
-} from '../Utils';
+import { assertConfigType, useConfigChangeHandler } from '../Utils';
 import { findCollections } from '../../../utils/study-metadata';
 import * as t from 'io-ts';
 
 export const plugin: ComputationPlugin = {
   configurationComponent: AbundanceConfiguration,
+  configurationDescriptionComponent: AbundanceConfigDescriptionComponent,
   visualizationTypes: {
     boxplot: boxplotVisualization,
     scatterplot: scatterplotVisualization,
   },
   createDefaultComputationSpec: createDefaultComputationSpec,
 };
+
+function AbundanceConfigDescriptionComponent({
+  config,
+}: {
+  config: ComputationConfiguration;
+}) {
+  const studyMetadata = useStudyMetadata();
+  const collections = useCollectionVariables(studyMetadata.rootEntity);
+  assertConfigType(config, AbundanceConfig);
+  const { rankingMethod } = config;
+  const updatedCollectionVariable = collections.find((collectionVar) =>
+    isEqual(
+      {
+        variableId: collectionVar.id,
+        entityId: collectionVar.entityId,
+      },
+      config.collectionVariable
+    )
+  );
+  return (
+    <>
+      <h4 style={{ padding: '15px 0 0 0', marginLeft: 20 }}>
+        Data:{' '}
+        <span style={{ fontWeight: 300 }}>
+          {`${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}`}
+        </span>
+      </h4>
+      <h4 style={{ padding: 0, marginLeft: 20 }}>
+        Method:{' '}
+        <span style={{ fontWeight: 300 }}>
+          {rankingMethod[0].toUpperCase() + rankingMethod.slice(1)}
+        </span>
+      </h4>
+    </>
+  );
+}
 
 function createDefaultComputationSpec(rootEntity: StudyEntity) {
   const collections = findCollections(rootEntity);
@@ -40,15 +69,12 @@ function createDefaultComputationSpec(rootEntity: StudyEntity) {
     },
     rankingMethod: 'median',
   };
-  return {
-    displayName: `${collections[0].entityDisplayName} > ${collections[0].displayName}&;&median`,
-    configuration,
-  };
+  return { configuration };
 }
 
 export type AbundanceConfig = t.TypeOf<typeof AbundanceConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AbundanceConfig = t.type({
+const AbundanceConfig = t.type({
   name: t.string,
   collectionVariable: VariableDescriptor,
   rankingMethod: t.string,
@@ -71,52 +97,21 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
     visualizationId,
   } = props;
   const studyMetadata = useStudyMetadata();
-  const { url } = useRouteMatch();
-  const history = useHistory();
   // Include known collection variables in this array.
   const collections = useCollectionVariables(studyMetadata.rootEntity);
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
 
-  assertConfigType(computation.descriptor.configuration, AbundanceConfig);
+  const configuration = computation.descriptor.configuration;
+  assertConfigType(configuration, AbundanceConfig);
+  const { rankingMethod, collectionVariable } = configuration;
 
-  const rankingMethod = computation.descriptor.configuration.rankingMethod;
-  const collectionVariable =
-    computation.descriptor.configuration.collectionVariable;
-
-  const changeConfigHandler = async (
-    changedConfigPropertyName: string,
-    newConfigValue: string
-  ) => {
-    assertConfigType(computation.descriptor.configuration, AbundanceConfig);
-
-    const updatedConfiguration = {
-      ...computation.descriptor.configuration,
-      [changedConfigPropertyName]: newConfigValue,
-    };
-
-    const updatedCollectionVariable = collections.find((collectionVar) =>
-      isEqual(
-        {
-          variableId: collectionVar.id,
-          entityId: collectionVar.entityId,
-        },
-        updatedConfiguration.collectionVariable
-      )
-    );
-
-    const configurationDisplayString = `${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}&;&${updatedConfiguration.rankingMethod}`;
-
-    handleConfigurationChanges<AbundanceConfig>(
-      analysisState,
-      computation,
-      updatedConfiguration,
-      visualizationId,
-      url,
-      history,
-      configurationDisplayString
-    );
-  };
+  const changeConfigHandler = useConfigChangeHandler<AbundanceConfig>(
+    analysisState,
+    computation,
+    visualizationId,
+    AbundanceConfig
+  );
 
   return (
     <div style={{ display: 'flex', gap: '0 2em', padding: '1em 0' }}>

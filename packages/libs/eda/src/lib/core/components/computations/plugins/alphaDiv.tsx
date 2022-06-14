@@ -1,6 +1,4 @@
 /** @jsxImportSource @emotion/react */
-import { useRouteMatch } from 'react-router-dom';
-import { useHistory } from 'react-router';
 import { useStudyMetadata } from '../../..';
 import { StudyEntity } from '../../../types/study';
 import { useCollectionVariables } from '../../../hooks/study';
@@ -8,20 +6,58 @@ import { VariableDescriptor } from '../../../types/variable';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
+import { ComputationConfiguration } from '../../../types/visualization';
 import { H6 } from '@veupathdb/coreui';
 import { isEqual } from 'lodash';
-import { createComputation, assertConfigType } from '../Utils';
+import { useConfigChangeHandler, assertConfigType } from '../Utils';
 import { findCollections } from '../../../utils/study-metadata';
 import * as t from 'io-ts';
 
 export const plugin: ComputationPlugin = {
   configurationComponent: AlphaDivConfiguration,
+  configurationDescriptionComponent: AlphaDivConfigDescriptionComponent,
   visualizationTypes: {
     boxplot: boxplotVisualization,
     scatterplot: scatterplotVisualization,
   },
   createDefaultComputationSpec: createDefaultComputationSpec,
 };
+
+function AlphaDivConfigDescriptionComponent({
+  config,
+}: {
+  config: ComputationConfiguration;
+}) {
+  const studyMetadata = useStudyMetadata();
+  const collections = useCollectionVariables(studyMetadata.rootEntity);
+  assertConfigType(config, AlphaDivConfig);
+  const { alphaDivMethod } = config;
+  const updatedCollectionVariable = collections.find((collectionVar) =>
+    isEqual(
+      {
+        variableId: collectionVar.id,
+        entityId: collectionVar.entityId,
+      },
+      config.collectionVariable
+    )
+  );
+  return (
+    <>
+      <h4 style={{ padding: '15px 0 0 0', marginLeft: 20 }}>
+        Data:{' '}
+        <span style={{ fontWeight: 300 }}>
+          {`${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}`}
+        </span>
+      </h4>
+      <h4 style={{ padding: 0, marginLeft: 20 }}>
+        Method:{' '}
+        <span style={{ fontWeight: 300 }}>
+          {alphaDivMethod[0].toUpperCase() + alphaDivMethod.slice(1)}
+        </span>
+      </h4>
+    </>
+  );
+}
 
 function createDefaultComputationSpec(rootEntity: StudyEntity) {
   const collections = findCollections(rootEntity);
@@ -33,15 +69,12 @@ function createDefaultComputationSpec(rootEntity: StudyEntity) {
     },
     alphaDivMethod: 'shannon',
   };
-  return {
-    displayName: `${collections[0].entityDisplayName} > ${collections[0].displayName}&;&shannon`,
-    configuration,
-  };
+  return { configuration };
 }
 
-export type AlphaDivConfig = t.TypeOf<typeof AlphaDivConfig>;
+type AlphaDivConfig = t.TypeOf<typeof AlphaDivConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AlphaDivConfig = t.type({
+const AlphaDivConfig = t.type({
   name: t.string,
   collectionVariable: VariableDescriptor,
   alphaDivMethod: t.string,
@@ -64,123 +97,21 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
     visualizationId,
   } = props;
   const studyMetadata = useStudyMetadata();
-  const { url } = useRouteMatch();
-  const history = useHistory();
   // Include known collection variables in this array.
   const collections = useCollectionVariables(studyMetadata.rootEntity);
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
 
-  assertConfigType(computation.descriptor.configuration, AlphaDivConfig);
+  const configuration = computation.descriptor.configuration;
+  assertConfigType(configuration, AlphaDivConfig);
+  const { alphaDivMethod, collectionVariable } = configuration;
 
-  const alphaDivMethod = computation.descriptor.configuration.alphaDivMethod;
-  const collectionVariable =
-    computation.descriptor.configuration.collectionVariable;
-
-  const changeConfigHandler = async (
-    changedConfigPropertyName: string,
-    newConfigValue: string
-  ) => {
-    // when a config value changes:
-    // 1. remove viz from current computation
-    // 2. check if the newConfig exists
-    // Y? move viz to the found computation, "existingComputation"
-    // N? create new computation
-    const computations = analysisState.analysis
-      ? analysisState.analysis.descriptor.computations
-      : [];
-
-    assertConfigType(computation.descriptor.configuration, AlphaDivConfig);
-
-    const updatedConfiguration = {
-      ...computation.descriptor.configuration,
-      [changedConfigPropertyName]: newConfigValue,
-    };
-    const existingComputation = computations.find(
-      (c) =>
-        isEqual(c.descriptor.configuration, updatedConfiguration) &&
-        c.descriptor.type === computation.descriptor.type
-    );
-    const existingVisualization = computation.visualizations.filter(
-      (viz) => viz.visualizationId === visualizationId
-    );
-    const computationAfterVizRemoval = {
-      ...computation,
-      visualizations: computation.visualizations.filter(
-        (viz) => viz.visualizationId !== visualizationId
-      ),
-    };
-    if (existingComputation) {
-      // 2Y:  move viz to existingComputation
-      const existingComputationWithVizAdded = {
-        ...existingComputation,
-        visualizations: existingComputation.visualizations.concat(
-          existingVisualization
-        ),
-      };
-      computationAfterVizRemoval.visualizations.length
-        ? await analysisState.setComputations([
-            computationAfterVizRemoval,
-            existingComputationWithVizAdded,
-            ...computations
-              .filter(
-                (c) => c.computationId !== existingComputation.computationId
-              )
-              .filter((c) => c.computationId !== computation.computationId),
-          ])
-        : await analysisState.setComputations([
-            existingComputationWithVizAdded,
-            ...computations
-              .filter(
-                (c) => c.computationId !== existingComputation.computationId
-              )
-              .filter((c) => c.computationId !== computation.computationId),
-          ]);
-      history.push(
-        url.replace(
-          computation.computationId,
-          existingComputation.computationId
-        )
-      );
-    } else {
-      // 2N:  existingComputation was not found
-      //      get config displayName for new computation
-      //      create a new computation with the existing viz
-      const updatedCollectionVariable = collections.find((collectionVar) =>
-        isEqual(
-          {
-            variableId: collectionVar.id,
-            entityId: collectionVar.entityId,
-          },
-          updatedConfiguration.collectionVariable
-        )
-      );
-      const newComputation = createComputation(
-        computation.descriptor.type,
-        `${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}&;&${updatedConfiguration.alphaDivMethod}`,
-        updatedConfiguration,
-        computations,
-        existingVisualization
-      );
-      computationAfterVizRemoval.visualizations.length
-        ? await analysisState.setComputations([
-            computationAfterVizRemoval,
-            newComputation,
-            ...computations.filter(
-              (c) => c.computationId !== computation.computationId
-            ),
-          ])
-        : await analysisState.setComputations([
-            newComputation,
-            ...computations.filter(
-              (c) => c.computationId !== computation.computationId
-            ),
-          ]);
-      history.push(
-        url.replace(computation.computationId, newComputation.computationId)
-      );
-    }
-  };
+  const changeConfigHandler = useConfigChangeHandler<AlphaDivConfig>(
+    analysisState,
+    computation,
+    visualizationId,
+    AlphaDivConfig
+  );
 
   return (
     <div style={{ display: 'flex', gap: '0 2em', padding: '1em 0' }}>
