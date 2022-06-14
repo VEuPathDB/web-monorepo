@@ -7,7 +7,7 @@ import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { DEFAULT_STRATEGY_NAME } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
-import { makeClassNameHelper, safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { arrayOf, decodeOrElse, string } from '@veupathdb/wdk-client/lib/Utils/Json';
 import { areTermsInString, makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import { getLeaves, pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
@@ -426,9 +426,12 @@ function FieldsHit(props: HitProps) {
         {foundInFields.map(f => (
           <li key={f.name} className={cx('--FieldHighlight')}>
             <strong>{f.displayName}: </strong>
-            {document.foundInFields[f.name].flatMap((value, index, array) =>
-              [ safeHtml(value, { key: index }), index < array.length - 1 && '...' ]
-              )}
+            {document.foundInFields[f.name].flatMap((value, index, array) => (
+              <React.Fragment key={value}>
+                <HtmlString value={value}/>
+                {index < array.length - 1 && '...'}
+              </React.Fragment>
+            ))}
           </li>
         ))}
       </ul>
@@ -785,13 +788,13 @@ function VariableStudyTable(props: { document: SiteSearchDocument, summaryField:
         {
           accessor: "studyName",
           header: "Study",
-          render: ({ value }) => safeHtml(value),
+          render: HtmlString
         },
         { accessor: "entityId" },
         {
           accessor: "entityName",
           header: "Entity",
-          render: ({ value }) => safeHtml(value),
+          render: HtmlString,
         },
         {
           accessor: "providerLabel",
@@ -802,7 +805,7 @@ function VariableStudyTable(props: { document: SiteSearchDocument, summaryField:
         {
           accessor: "definition",
           header: "Definition",
-          render: ({ value }) => safeHtml(value),
+          render: HtmlString,
         },
       ]}
     />
@@ -848,17 +851,17 @@ function VariableValueStudyTable(props: { document: SiteSearchDocument, summaryF
         {
           accessor: 'studyName',
           header: 'Study',
-          render: ({ value }) => safeHtml(value),
+          render: HtmlString,
         },
         {
           accessor: 'entityName',
           header: 'Entity',
-          render: ({ value }) => safeHtml(value),
+          render: HtmlString,
         },
         {
           accessor: 'variableName',
           header: 'Variable name',
-          render: ({ value }) => safeHtml(value),
+          render: HtmlString,
         },
       ]}
     />
@@ -866,7 +869,7 @@ function VariableValueStudyTable(props: { document: SiteSearchDocument, summaryF
 }
 
 function makeRecordLink(document: SiteSearchDocument, projectUrls?: ProjectUrls, organismToProject?: OrganismToProject, projectId?: string): ResultEntryDetails['display'] {
-  const text = safeHtml(document.hyperlinkName || document.primaryKey.join(' - '));
+  const text = <HtmlString value={document.hyperlinkName || document.primaryKey.join(' - ')}/>;
   const route = `/record/${document.documentType}/${document.primaryKey.join('/')}`;
 
   // use standard link if not in portal, or if no organism present
@@ -915,14 +918,24 @@ function makeGenericSummary(document: SiteSearchDocument, documentType: SiteSear
   return (
     <React.Fragment>
       {summaryFields.map(({ name, displayName, value }) => (
-        <div key={name} className={cx('--SummaryField')}><strong>{displayName}:</strong> {renderValue(value)}</div>
+        <div key={name} className={cx('--SummaryField')}><strong>{displayName}:</strong> 
+        {typeof value === 'string' ? <HtmlString value={value}/> : value}</div>
       ))}
     </React.Fragment>
   );
 }
 
-function renderValue(value: ReactNode): ReactNode {
-  return (typeof value === 'string') ? safeHtml(value, null, 'span') : value;
+function HtmlString(props: { value: string }) {
+  const { value } = props;
+  const formattedValue = useMemo(() => {
+    const div = document.createElement('div');
+    div.innerHTML = value;
+    div.querySelectorAll('img, object, iframe').forEach(el => el.parentElement?.removeChild(el));
+    return div.innerHTML;
+  }, [value]);
+  return (
+    <span dangerouslySetInnerHTML={{ __html: formattedValue }}/>
+  );
 }
 
 function formatSummaryFieldValue(value?: string | string[]) {
