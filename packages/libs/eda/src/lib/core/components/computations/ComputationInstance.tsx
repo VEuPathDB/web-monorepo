@@ -5,6 +5,7 @@ import { Computation, Visualization } from '../../types/visualization';
 import { VisualizationsContainer } from '../visualizations/VisualizationsContainer';
 import { VisualizationType } from '../visualizations/VisualizationTypes';
 import { ComputationProps } from './Types';
+import { plugins } from './plugins';
 
 export interface Props extends ComputationProps {
   computationId: string;
@@ -107,26 +108,16 @@ interface AppTitleProps {
 
 function AppTitle(props: AppTitleProps) {
   const { computation, condensed } = props;
-  const splitDisplayName = computation.displayName
-    ? computation.displayName.split('&;&')
-    : '';
+  const plugin = plugins[computation.descriptor?.type];
+  const ConfigDescription = plugin.configurationDescriptionComponent;
+  const { configuration } = computation.descriptor;
 
   return condensed ? (
     <div style={{ lineHeight: 1.5 }}>
-      {computation.descriptor.configuration ? (
-        <>
-          <h4 style={{ padding: '15px 0 0 0', marginLeft: 20 }}>
-            Data: <span style={{ fontWeight: 300 }}>{splitDisplayName[0]}</span>
-          </h4>
-          <h4 style={{ padding: 0, marginLeft: 20 }}>
-            Method:{' '}
-            <span style={{ fontWeight: 300 }}>
-              {splitDisplayName[1][0].toUpperCase() +
-                splitDisplayName[1].slice(1)}
-            </span>
-          </h4>
-        </>
-      ) : null}
+      {plugin && configuration
+        ? // @ts-ignore
+          ConfigDescription && <ConfigDescription config={configuration} />
+        : null}
     </div>
   ) : null;
 }
