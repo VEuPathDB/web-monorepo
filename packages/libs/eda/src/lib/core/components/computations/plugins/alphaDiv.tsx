@@ -6,12 +6,19 @@ import { VariableDescriptor } from '../../../types/variable';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { ComputationConfiguration } from '../../../types/visualization';
 import { H6 } from '@veupathdb/coreui';
 import { isEqual } from 'lodash';
 import { useConfigChangeHandler, assertConfigType } from '../Utils';
 import { findCollections } from '../../../utils/study-metadata';
 import * as t from 'io-ts';
+
+export type AlphaDivConfig = t.TypeOf<typeof AlphaDivConfig>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AlphaDivConfig = t.type({
+  name: t.string,
+  collectionVariable: VariableDescriptor,
+  alphaDivMethod: t.string,
+});
 
 export const plugin: ComputationPlugin = {
   configurationComponent: AlphaDivConfiguration,
@@ -23,11 +30,7 @@ export const plugin: ComputationPlugin = {
   createDefaultComputationSpec: createDefaultComputationSpec,
 };
 
-function AlphaDivConfigDescriptionComponent({
-  config,
-}: {
-  config: ComputationConfiguration;
-}) {
+function AlphaDivConfigDescriptionComponent({ config }: { config: unknown }) {
   const studyMetadata = useStudyMetadata();
   const collections = useCollectionVariables(studyMetadata.rootEntity);
   assertConfigType(config, AlphaDivConfig);
@@ -71,14 +74,6 @@ function createDefaultComputationSpec(rootEntity: StudyEntity) {
   };
   return { configuration };
 }
-
-type AlphaDivConfig = t.TypeOf<typeof AlphaDivConfig>;
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-const AlphaDivConfig = t.type({
-  name: t.string,
-  collectionVariable: VariableDescriptor,
-  alphaDivMethod: t.string,
-});
 
 // Include available methods in this array.
 const ALPHA_DIV_METHODS = ['shannon', 'simpson', 'evenness'];
