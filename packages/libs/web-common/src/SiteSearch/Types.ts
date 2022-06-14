@@ -65,6 +65,7 @@ export const siteSearchResponse = record({
 
 export type SiteSearchDocument = Unpack<typeof siteSearchDocument>;
 export type SiteSearchDocumentType = Unpack<typeof siteSearchDocumentType>;
+export type SiteSearchDocumentTypeField = Unpack<typeof siteSearchDocumentTypeField>;
 export type SiteSearchResponse = Unpack<typeof siteSearchResponse>;
 
 
