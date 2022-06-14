@@ -2131,10 +2131,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/coreui@^0.16.3":
-  version "0.16.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.16.3.tgz#c262500c42a56344d5a576f4befe48b6ed9dc7d3"
-  integrity sha512-zAmOQaStkRrORdwg9QoqbXyP00JY1he0YP8coweiocPbqhvnRZ1YAxUTMguh9svdLHUt+I35/RyB/uS88LhTdw==
+"@veupathdb/coreui@^0.16.4":
+  version "0.16.4"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.16.4.tgz#9027d4cdb68d5249177a231d57fe9f2f6147d4ed"
+  integrity sha512-AjBMLAkQUO5A83IqkVqfWgdqtr+YgQzFGaVdAtsSUQYdvBZELZw8Oaap9hx9XAhNDaJtIF2GsZO1EHdQ0H7a3A==
   dependencies:
     "@react-hook/size" "^2.1.2"
     lodash "^4.17.21"
@@ -2142,10 +2142,10 @@
     react-responsive-modal "^6.2.0"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^3.6.2":
-  version "3.6.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.6.2.tgz#84a6b18b1add32d25e131370b7312bbc3ee1945d"
-  integrity sha512-IndY/1Aq0R++meouJIPF0cbK6nCPVJN6BiOL40ZA1iKguR9jR2+e44XWCYV+UDTNfLlmWBkuM1gFD/dDNyFPow==
+"@veupathdb/eda@^3.6.6":
+  version "3.6.6"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.6.6.tgz#e2fef34136e19480b7f3e9df9f0a379a4f7730b6"
+  integrity sha512-9543/2Z1EmT6rb0aKh3uldPMuTcX54KfdGY6lJfOemAWeJzxOCgb4n6C7L+8618D1pQmeCnIeUcZGipKO/nnvw==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -2203,10 +2203,10 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/user-datasets@^0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/user-datasets/-/user-datasets-0.1.2.tgz#9b0a3bf7fcf6afc70d15cc799551022ad1639664"
-  integrity sha512-0JbMOnDjMuuGDeBQTgaEaZaiuPpRHlidWwcRuP//3HcCfAt0k4CW+yVa1jY3x2LqSwl9ZoNXo/W/ocxskJnhfQ==
+"@veupathdb/user-datasets@^0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@veupathdb/user-datasets/-/user-datasets-0.1.3.tgz#b08803a0c7f8dc49f9ad66802ff47ae6d70b0298"
+  integrity sha512-b+yPvnyil1M4ZqHDsXNcf4Gut5LwADHOtES9SFNmp7rcHe3NMSdxfTLvSXK0Rny/MP1M5G5SUI0UwMflv0d9rQ==
   dependencies:
     lodash "^4.17.21"
     moment "^2.21.0"
@@ -2236,10 +2236,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.6.8":
-  version "0.6.8"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.6.8.tgz#4cd952bcd35a4438ef3aa468b624868fc968667a"
-  integrity sha512-xG9AjUSLipBmYK+VHglih6r1fZse/a08OOwwL7QEMdHJYqMtNxTZeZwrmxAKDn6+8qC+Wtt3IJgyw847Zba+Dw==
+"@veupathdb/web-common@^0.6.9":
+  version "0.6.9"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.6.9.tgz#93c8264456d20ae41fdcd88382b2c0eb912f7e55"
+  integrity sha512-XNtiPQJWGN4GFEoI2n1DDeDcnxBtewead0YOtcv0BxfvXBVeoJZooSa0cLcy1yqUpEZQlKDAnqJhxx563VOfLw==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
