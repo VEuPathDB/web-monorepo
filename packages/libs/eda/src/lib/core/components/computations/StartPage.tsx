@@ -137,7 +137,6 @@ export function StartPage(props: Props) {
                               if (!existingComputation) {
                                 const computation = createComputation(
                                   app.name,
-                                  defaultComputationSpec.displayName,
                                   defaultComputationSpec.configuration,
                                   computations,
                                   [newVisualization]

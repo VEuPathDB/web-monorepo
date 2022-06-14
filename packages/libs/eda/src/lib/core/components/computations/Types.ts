@@ -23,7 +23,6 @@ export interface ComputationConfigProps extends ComputationProps {
   visualizationId: string;
   addNewComputation: (
     name: string,
-    displayName: string,
     configuration: ComputationConfiguration
   ) => void;
 }
@@ -47,8 +46,11 @@ export interface ComputationComponents {
 
 export interface ComputationPlugin {
   configurationComponent: React.ComponentType<ComputationConfigProps>;
+  configurationDescriptionComponent?: React.ComponentType<{
+    config: ComputationConfiguration;
+  }>;
   visualizationTypes: Record<string, VisualizationType>;
   createDefaultComputationSpec?: (
     rootEntity: StudyEntity
-  ) => { displayName: string; configuration: unknown };
+  ) => { configuration: unknown };
 }
