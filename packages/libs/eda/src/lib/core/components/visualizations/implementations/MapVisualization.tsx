@@ -5,7 +5,7 @@ import {
 } from '../VisualizationTypes';
 import map from './selectorIcons/map.svg';
 import * as t from 'io-ts';
-import { isEqual, zip, some, sum, sortBy } from 'lodash';
+import { isEqual, zip, some, sum } from 'lodash';
 
 // map component related imports
 import MapVEuMap, {
@@ -33,7 +33,7 @@ import { FormControl, Select, MenuItem, InputLabel } from '@material-ui/core';
 // viz-related imports
 import { PlotLayout } from '../../layouts/PlotLayout';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
-import { useMemo, useCallback, useState } from 'react';
+import { useMemo, useCallback, useState, useEffect } from 'react';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import DataClient, {
   MapMarkersRequestParams,
@@ -42,6 +42,8 @@ import DataClient, {
 } from '../../../api/DataClient';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { usePromise } from '../../../hooks/promise';
+// the next import is unused, but leaving it there as a reminder to
+// test more types of variable in future (e.g. low cardinality numbers?)
 import { fixLabelsForNumberVariables } from '../../../utils/visualization';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { OutputEntityTitle } from '../OutputEntityTitle';
@@ -60,6 +62,11 @@ import { BirdsEyeView } from '../../BirdsEyeView';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { kFormatter, mFormatter } from '../../../utils/big-number-formatters';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
+import { NumberVariable } from '../../../types/study';
+import { BinSpec, NumberRange } from '../../../types/general';
+import { useDefaultIndependentAxisRange } from '../../../hooks/computeDefaultIndependentAxisRange';
+
+const numContinuousBins = 8;
 
 export const mapVisualization: VisualizationType = {
   selectorComponent: SelectorComponent,
@@ -366,6 +373,11 @@ function MapViz(props: VisualizationProps) {
     ])
   );
 
+  const defaultOverlayRange = useDefaultIndependentAxisRange(
+    xAxisVariable,
+    'histogram'
+  );
+
   /**
    * Now we deal with the optional second request to map-markers-overlay
    */
@@ -388,6 +400,23 @@ function MapViz(props: VisualizationProps) {
         southWest: { lat: xMin, lng: left },
       } = boundsZoomLevel.bounds;
 
+      // For now, just calculate a static binSpec from variable metadata for numeric continous only
+      // TO DO: date variables when we have testable data (UMSP has them but difficult to test, and back end was giving 500s)
+      // date variables need special date maths for calculating the width, and probably rounding aggressively to whole months/years etc - not trivial.
+      const binSpec: BinSpec | undefined =
+        NumberVariable.is(xAxisVariable) &&
+        defaultOverlayRange != null &&
+        NumberRange.is(defaultOverlayRange)
+          ? {
+              range: defaultOverlayRange,
+              type: 'binWidth',
+              value:
+                (defaultOverlayRange.max - defaultOverlayRange.min) /
+                (numContinuousBins - 1),
+            }
+          : // : DateVariable.is(xAxisVariable) && DateRange.is(defaultOverlayRange) ? ... TO DO
+            undefined;
+
       // prepare request
       const requestParams: MapMarkersOverlayRequestParams = {
         studyId,
@@ -400,7 +429,7 @@ function MapViz(props: VisualizationProps) {
           geoAggregateVariable: geoAggregateVariable,
           showMissingness: 'noVariables', // current back end 'showMissing' behaviour applies to facet variable
           valueSpec: proportionMode ? 'proportion' : 'count',
-          binSpec: {}, // { type: 'binWidth', value: 450.25 },
+          binSpec: binSpec ?? {},
           viewport: {
             latitude: {
               xMin,
@@ -422,6 +451,7 @@ function MapViz(props: VisualizationProps) {
     }, [
       studyId,
       dataClient,
+      xAxisVariable,
       vizConfig.xAxisVariable,
       proportionMode,
       boundsZoomLevel,
@@ -461,25 +491,46 @@ function MapViz(props: VisualizationProps) {
       : undefined;
   }, [overlayResponse]);
 
-  // `vocabulary` is taken from the response, not the study metadata
-  // this is because not all values are shown (up to 8 or 7 most popular + 'other')
-  const vocabulary = useMemo(() => {
-    const rankedValues =
-      overlayResponse.value != null
-        ? overlayResponse.value.mapMarkers.config.rankedValues
-        : undefined;
-    return xAxisVariable?.type === 'string'
-      ? rankedValues
-      : // quick and dirty hack to sort by the bin-start in the string like "(625,750]"
-        sortBy(rankedValues, (value) => Number(value.split(/[[(,]/)[1]));
-  }, [overlayResponse.value, xAxisVariable]);
+  // If it's a string variable and a small vocabulary, use it as-is from the study metadata.
+  // This ensures that for low cardinality categoricals, the colours are always the same.
+  // Otherwise use the overlayValues from the back end (which are either bins or a Top7+Other)
+  const vocabulary =
+    xAxisVariable?.type === 'string' &&
+    xAxisVariable?.vocabulary != null &&
+    xAxisVariable.vocabulary.length <= 8
+      ? xAxisVariable.vocabulary
+      : overlayResponse.value?.mapMarkers.config.overlayValues;
+
+  /**
+   * Reset checkedLegendItems to all-checked (actually none checked)
+   * if ANY of the checked items are NOT in the vocabulary
+   * OR if ALL of the checked items ARE in the vocabulary
+   *
+   * TO DO: generalise this for use in other visualizations
+   */
+  useEffect(() => {
+    if (
+      vizConfig.checkedLegendItems == null ||
+      vocabulary == null ||
+      vocabulary.length <= 8
+    )
+      return;
+
+    if (
+      vizConfig.checkedLegendItems.some(
+        (label) => vocabulary.findIndex((vocab) => vocab === label) === -1
+      ) ||
+      vizConfig.checkedLegendItems.length === vocabulary.length
+    )
+      updateVizConfig({ checkedLegendItems: undefined });
+  }, [vocabulary, vizConfig.checkedLegendItems, updateVizConfig]);
 
   /**
    * Merge the overlay data into the basicMarkerData, if available,
    * and create markers.
    */
   const markers = useMemo(() => {
-    if (vocabulary == null) return [];
+    if (vocabulary == null) return undefined;
 
     const pieValueMax = overlayData
       ? values(overlayData) // it's a Record 'object'
@@ -512,11 +563,13 @@ function MapViz(props: VisualizationProps) {
                 )
             : [];
 
-        // now reorder the data in vocabulary order, adding zeroes if necessary.
+        // now reorder the data, adding zeroes if necessary.
         const reorderedData = vocabulary.map(
-          (vocabularyLabel) =>
-            donutData.find(({ label }) => label === vocabularyLabel) ?? {
-              label: vocabularyLabel,
+          (
+            overlayLabel // overlay label can be 'female' or a bin label '(0,100]'
+          ) =>
+            donutData.find(({ label }) => label === overlayLabel) ?? {
+              label: overlayLabel,
               value: 0,
             }
         );
@@ -547,8 +600,13 @@ function MapViz(props: VisualizationProps) {
 
         const count =
           overlayData != null
-            ? overlayData[geoAggregateValue]?.entityCount ?? ''
+            ? vizConfig.markerType === 'pie'
+              ? // pies always show sum of legend checked items (donutData is already filtered on checkboxes)
+                donutData.reduce((sum, item) => (sum = sum + item.value), 0)
+              : // the bar/histogram charts always show the constant entity count
+                overlayData[geoAggregateValue]?.entityCount ?? ''
             : entityCount;
+
         const formattedCount =
           MarkerComponent === ChartMarker
             ? mFormatter(count)
@@ -696,16 +754,19 @@ function MapViz(props: VisualizationProps) {
               vocabulary.indexOf(label) / (vocabulary.length - 1)
             ),
       // has any geo-facet got an array of overlay data
-      // containing at least one element that satisfies label==label and value>0?
+      // containing at least one element that satisfies label==label
+      // (do not check that value > 0, because the back end doesn't return
+      // zero counts, but does sometimes return near-zero counts that get
+      // rounded to zero)
       hasData: overlayData
         ? some(overlayData, (pieData) =>
-            some(pieData.data, (data) => data.label === label && data.value > 0)
+            some(pieData.data, (data) => data.label === label)
           )
         : false,
       group: 1,
       rank: 1,
     }));
-  }, [xAxisVariable, vocabulary]);
+  }, [xAxisVariable, vocabulary, overlayData]);
 
   // set checkedLegendItems
   const checkedLegendItems = useCheckedLegendItemsStatus(
@@ -719,6 +780,7 @@ function MapViz(props: VisualizationProps) {
       checkedLegendItems={checkedLegendItems}
       legendTitle={variableDisplayWithUnit(xAxisVariable)}
       onCheckedLegendItemsChange={handleCheckedLegendItemsChange}
+      showOverlayLegend={true}
     />
   );
 

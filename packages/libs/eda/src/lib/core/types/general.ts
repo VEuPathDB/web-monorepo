@@ -49,6 +49,7 @@ export const BinSpec = intersection([
   partial({
     value: NumberOrNull,
     units: TimeUnit,
+    range: NumberOrDateRange,
   }),
 ]);
 
