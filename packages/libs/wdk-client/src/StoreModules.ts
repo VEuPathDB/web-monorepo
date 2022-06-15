@@ -30,6 +30,7 @@ import * as matchedTranscriptsFilter from 'wdk-client/StoreModules/MatchedTransc
 import * as router from 'wdk-client/StoreModules/RouterStoreModule';
 import * as userSession from 'wdk-client/StoreModules/UserSessionStoreModule';
 import * as userDatasetUpload from 'wdk-client/StoreModules/UserDatasetUploadStoreModule';
+import * as notification from 'wdk-client/StoreModules/NotificationStoreModule';
 
 export default {
   answerView,
@@ -63,5 +64,6 @@ export default {
   unhandledErrors,
   matchedTranscriptsFilter,
   userSession,
-  userDatasetUpload
+  userDatasetUpload,
+  notification,
 };

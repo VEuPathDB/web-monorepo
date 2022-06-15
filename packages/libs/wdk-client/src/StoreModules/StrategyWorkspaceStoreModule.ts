@@ -3,12 +3,14 @@ import { ActionsObservable, combineEpics, StateObservable } from 'redux-observab
 import { empty, merge, Observable, of } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import { Action } from 'wdk-client/Actions';
+import { fulfillAddStepToBasket } from 'wdk-client/Actions/BasketActions';
 import { fulfillImportStrategy } from 'wdk-client/Actions/ImportStrategyActions';
+import { enqueueSnackbar } from 'wdk-client/Actions/NotificationActions';
 import { fulfillPublicStrategies, fulfillPublicStrategiesError, requestPublicStrategies } from 'wdk-client/Actions/PublicStrategyActions';
 import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
 import { cancelRequestDeleteOrRestoreStrategies, fulfillCreateStrategy, fulfillDeleteOrRestoreStrategies, fulfillDeleteStrategy, fulfillDraftStrategy, fulfillDuplicateStrategy, fulfillPatchStrategyProperties, fulfillPutStrategy, fulfillSaveAsStrategy, requestDeleteOrRestoreStrategies, requestDeleteStrategy, requestDuplicateStrategy } from 'wdk-client/Actions/StrategyActions';
 import { fulfillStrategiesList, requestStrategiesList } from 'wdk-client/Actions/StrategyListActions';
-import { addNotification, addToOpenedStrategies, clearActiveModal, closeStrategyView, openStrategyView, removeFromOpenedStrategies, removeNotification, setActiveModal, setActiveStrategy, setOpenedStrategies, setOpenedStrategiesVisibility } from 'wdk-client/Actions/StrategyWorkspaceActions';
+import { addToOpenedStrategies, clearActiveModal, closeStrategyView, openStrategyView, removeFromOpenedStrategies, setActiveModal, setActiveStrategy, setOpenedStrategies, setOpenedStrategiesVisibility } from 'wdk-client/Actions/StrategyWorkspaceActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 import { getValue, preferences, setValue } from 'wdk-client/Preferences';
@@ -17,6 +19,7 @@ import { stateEffect } from 'wdk-client/Utils/ObserverUtils';
 import { delay } from 'wdk-client/Utils/PromiseUtils';
 import { diffSimilarStepTrees } from 'wdk-client/Utils/StrategyUtils';
 import { StepTree, StrategyDetails, StrategySummary } from 'wdk-client/Utils/WdkUser';
+import { enqueueAddStepToBasketNotificationAction, enqueueStrategyNotificationAction } from 'wdk-client/Views/Strategy/StrategyNotifications';
 
 export const key = 'strategyWorkspace';
 
@@ -28,7 +31,6 @@ export interface State {
   activeModal?: { type: string, strategyId: number }
   isOpenedStrategiesVisible?: boolean;
   openedStrategies?: number[];
-  notifications: Record<string, string | undefined>;
   strategySummaries?: StrategySummary[];
   strategySummariesLoading?: boolean;
   publicStrategySummaries?: StrategySummary[];
@@ -36,7 +38,6 @@ export interface State {
 }
 
 const initialState: State = {
-  notifications: {}
 }
 
 export function reduce(state: State = initialState, action: Action): State {
@@ -117,24 +118,6 @@ export function reduce(state: State = initialState, action: Action): State {
         isOpenedStrategiesVisible: action.payload.isVisible
       }
 
-    case addNotification.type:
-      return {
-        ...state,
-        notifications: {
-          ...state.notifications,
-          [action.payload.id]: action.payload.message
-        }
-      };
-
-    case removeNotification.type:
-      return {
-        ...state,
-        notifications: {
-          ...state.notifications,
-          [action.payload.id]: undefined
-        }
-      }
-
     case requestDeleteStrategy.type:
     case requestDuplicateStrategy.type:
     case requestDeleteOrRestoreStrategies.type:
@@ -186,7 +169,6 @@ export const observe = takeEpicInWindow(
     mrate([fulfillDuplicateStrategy], getAddNotification),
     mrate([fulfillPutStrategy], getAddNotification),
     mrate([fulfillPatchStrategyProperties], getAddNotification),
-    mrate([addNotification], getRemoveNotification),
 
     srate([openStrategyView, fulfillCreateStrategy], getRequestStrategiesList,
       { areActionsNew: stubTrue }),
@@ -205,6 +187,8 @@ export const observe = takeEpicInWindow(
     srate([openStrategyView, fulfillPutStrategy], getRequestStrategiesList,
       { areActionsNew: stubTrue }),
     srate([openStrategyView, fulfillPatchStrategyProperties], getRequestStrategiesList,
+      { areActionsNew: stubTrue }),
+    srate([fulfillAddStepToBasket], getAddStepToBasketNotification,
       { areActionsNew: stubTrue }),
 
     srate([openStrategyView, requestStrategiesList], getFulfillStrategiesList,
@@ -374,8 +358,29 @@ type NotifiableAction =
 
 async function getAddNotification(
   [action]: [NotifiableAction]
-): Promise<InferAction<typeof addNotification>> {
-  return addNotification(`Your strategy has been ${mapActionToDisplayString(action)}.`);
+): Promise<ReturnType<typeof enqueueStrategyNotificationAction>> {
+  return enqueueStrategyNotificationAction(
+    `Your strategy has been ${mapActionToDisplayString(action)}.`,
+    {
+      key: `${action.type}-${Date.now()}`,
+      persist: false,
+    }
+  );
+}
+
+async function getAddStepToBasketNotification(
+  [action]: [InferAction<typeof fulfillAddStepToBasket>],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof enqueueSnackbar>> {
+  const step = action.payload.step;
+
+  const recordClass = await wdkService.findRecordClass(step.recordClassName);
+
+  return enqueueAddStepToBasketNotificationAction(
+    step,
+    recordClass
+  );
 }
 
 function mapActionToDisplayString(action: NotifiableAction): string {
@@ -391,16 +396,6 @@ function mapActionToDisplayString(action: NotifiableAction): string {
     case fulfillPatchStrategyProperties.type:
       return 'updated';
   }
-}
-
-const NOTIFICATION_DURATION_MS = 5000;
-
-async function getRemoveNotification(
-  [addAction]: [InferAction<typeof addNotification>]
-): Promise<InferAction<typeof removeNotification>> {
-  const { id } = addAction.payload;
-  await delay(NOTIFICATION_DURATION_MS);
-  return removeNotification(id);
 }
 
 async function getRequestStrategiesList(

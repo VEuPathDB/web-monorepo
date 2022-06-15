@@ -3,7 +3,9 @@ import {
   InferAction
 } from 'wdk-client/Utils/ActionCreatorUtils';
 import { PrimaryKey } from 'wdk-client/Utils/WdkModel';
+import { Step } from 'wdk-client/Utils/WdkUser';
 import { BasketPatchIdsOperation } from 'wdk-client/Service/Mixins/BasketsService';
+
 export type BasketScope = 'global' | 'project';
 
 export const requestUpdateBasket = makeActionCreator(
@@ -49,7 +51,7 @@ export const requestAddStepToBasket = makeActionCreator(
 
 export const fulfillAddStepToBasket = makeActionCreator(
   'fulfillAddStepToBasket',
-  (stepId: number) => ({ stepId })
+  (step: Step) => ({ step })
 )
 
 export const requestBasketCounts = makeActionCreator(
