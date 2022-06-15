@@ -437,10 +437,6 @@ function LineplotViz(props: VisualizationProps) {
       if (categoricalMode && !valuesAreSpecified) return undefined;
 
       if (categoricalMode && valuesAreSpecified) {
-        if (isEqual(vizConfig.numeratorValues, vizConfig.denominatorValues))
-          throw new Error(
-            'Numerator and denominator value(s) cannot be the same. Numerator values must be a subset of the denominator values.'
-          );
         if (
           vizConfig.numeratorValues != null &&
           !vizConfig.numeratorValues.every((value) =>
@@ -457,18 +453,6 @@ function LineplotViz(props: VisualizationProps) {
         ? xAxisVariable.type
         : '';
       const dependentValueType = yAxisVariable?.type ? yAxisVariable.type : '';
-
-      if (
-        !categoricalMode &&
-        !(
-          dependentValueType === 'number' ||
-          dependentValueType === 'integer' ||
-          dependentValueType === 'date'
-        )
-      )
-        throw new Error(
-          "TEMPORARY ERROR... this variable isn't suitable (perhaps no distinct values) and constraints will handle this soon..."
-        );
 
       // add visualization.type here. valueSpec too?
       const params = getRequestParams(
@@ -990,7 +974,12 @@ function LineplotViz(props: VisualizationProps) {
               data.value?.completeCasesAxesVars
           }
           showMissingness={vizConfig.showMissingness}
-          onShowMissingnessChange={onShowMissingnessChange}
+          // this can be used to show and hide no data control
+          onShowMissingnessChange={
+            computation.descriptor.type === 'pass'
+              ? onShowMissingnessChange
+              : undefined
+          }
           outputEntity={outputEntity}
         />
       </div>
@@ -1991,7 +1980,6 @@ function isSuitableCategoricalVariable(variable?: Variable): boolean {
     variable != null &&
     variable.dataShape !== 'continuous' &&
     variable.vocabulary != null &&
-    variable.distinctValuesCount != null &&
-    variable.distinctValuesCount > 1
+    variable.distinctValuesCount != null
   );
 }
