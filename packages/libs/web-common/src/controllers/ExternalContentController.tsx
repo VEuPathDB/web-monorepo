@@ -1,7 +1,11 @@
 import React, { useEffect, useRef } from 'react';
+
+import { useLocation } from 'react-router-dom';
+
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { scrollIntoView } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 
 interface Props {
   url: string;
@@ -12,6 +16,7 @@ const EXTERNAL_CONTENT_CONTROLLER_CLASSNAME = 'ExternalContentController';
 export default function ExternalContentController(props: Props) {
   const { url } = props;
   const ref = useRef<HTMLDivElement>(null);
+  const location = useLocation();
 
   const { value: content } = usePromise(async () => {
     try {
@@ -36,7 +41,9 @@ export default function ExternalContentController(props: Props) {
           target.open = true;
         }
         // scroll to element identified by hash
-        location.assign(location.hash);
+        if (target instanceof HTMLElement) {
+          scrollIntoView(target);
+        }
       }
     }
     catch(error) {
