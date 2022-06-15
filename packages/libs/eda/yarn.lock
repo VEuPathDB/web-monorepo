@@ -3123,10 +3123,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/tsconfig/-/tsconfig-1.0.1.tgz#a2b748b46838af1337ca9f23d969993fb952def4"
   integrity sha512-i6gq7mgnyEN8/xW5EaI9RiWCwS1oB8cgWqx9h5w4vZtnb10oiyyepD640l9x/gZf6IWecjynRs7weDgSRs7l0Q==
 
-"@veupathdb/wdk-client@^0.7.1":
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.7.1.tgz#7606ad8e8de7ff60f556c1338cff943c79536e3f"
-  integrity sha512-3/zeGssdf0MlFSxFF5f5TA63uK/FD9slzvZUeQH35ZSah1TEDz/GDFtuKYXWMSxITRjL6/lm/UTsOJLbv+DaTQ==
+"@veupathdb/wdk-client@^0.8.1":
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.8.1.tgz#828fc632f0766bba05d77efdf531f8c85f6a965f"
+  integrity sha512-vXvTBvhnshqGtbujKdHbfEcrpUQ7KbaWMJwFVk6u26I7BKLdUqOphUywdt+7dnnzEp4PmM1MszCiHcZUlpNwNA==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
