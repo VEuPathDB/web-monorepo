@@ -775,13 +775,12 @@ export default class CheckboxTree<T> extends Component<Props<T>, State<T>> {
 
     let listClassName = 'wdk-CheckboxTreeList' + (isSelectable ? ' wdk-CheckboxTreeList__selectable' : ' wdk-CheckboxTreeList__not-selectable');
     let CheckboxTreeNodeT = (CheckboxTreeNode as new () => CheckboxTreeNode<StatefulNode<T>>);
-    console.log({customCheckboxes});
 
     let treeSection = (
       <ul className={listClassName}>
       {topLevelNodes.map((node, index) => {
         const nodeId = getNodeId(node);
-        console.log({nodeId});
+
         return <CheckboxTreeNodeT
           key={"node_" + nodeId}
           name={name || ''}
