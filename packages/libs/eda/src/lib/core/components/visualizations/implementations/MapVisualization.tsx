@@ -600,10 +600,13 @@ function MapViz(props: VisualizationProps) {
 
         const count =
           overlayData != null
-            ? vizConfig.markerType === 'proportion'
-              ? overlayData[geoAggregateValue]?.entityCount ?? ''
-              : donutData.reduce((sum, item) => (sum = sum + item.value), 0)
+            ? vizConfig.markerType === 'pie'
+              ? // pies always show sum of legend checked items (donutData is already filtered on checkboxes)
+                donutData.reduce((sum, item) => (sum = sum + item.value), 0)
+              : // the bar/histogram charts always show the constant entity count
+                overlayData[geoAggregateValue]?.entityCount ?? ''
             : entityCount;
+
         const formattedCount =
           MarkerComponent === ChartMarker
             ? mFormatter(count)
