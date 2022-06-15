@@ -41,7 +41,9 @@ export interface ComputationComponents {
 
 export interface ComputationPlugin {
   configurationComponent: React.ComponentType<ComputationConfigProps>;
-  configurationDescriptionComponent?: React.ComponentType<{ config: unknown }>;
+  configurationDescriptionComponent?: React.ComponentType<{
+    computation: Computation;
+  }>;
   visualizationTypes: Record<string, VisualizationType>;
   createDefaultComputationSpec?: (
     rootEntity: StudyEntity

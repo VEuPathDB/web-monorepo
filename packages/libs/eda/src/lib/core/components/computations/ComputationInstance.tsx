@@ -115,7 +115,7 @@ function AppTitle(props: AppTitleProps) {
   return condensed ? (
     <div style={{ lineHeight: 1.5 }}>
       {plugin && configuration
-        ? ConfigDescription && <ConfigDescription config={configuration} />
+        ? ConfigDescription && <ConfigDescription computation={computation} />
         : null}
     </div>
   ) : null;

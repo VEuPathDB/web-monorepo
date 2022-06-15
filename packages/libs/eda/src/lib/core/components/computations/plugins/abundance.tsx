@@ -8,9 +8,10 @@ import { scatterplotVisualization } from '../../visualizations/implementations/S
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { H6 } from '@veupathdb/coreui';
 import { isEqual } from 'lodash';
-import { assertConfigType, useConfigChangeHandler } from '../Utils';
+import { assertComputationWithConfig, useConfigChangeHandler } from '../Utils';
 import { findCollections } from '../../../utils/study-metadata';
 import * as t from 'io-ts';
+import { Computation } from '../../../types/visualization';
 
 export type AbundanceConfig = t.TypeOf<typeof AbundanceConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -30,18 +31,22 @@ export const plugin: ComputationPlugin = {
   createDefaultComputationSpec: createDefaultComputationSpec,
 };
 
-function AbundanceConfigDescriptionComponent({ config }: { config: unknown }) {
+function AbundanceConfigDescriptionComponent({
+  computation,
+}: {
+  computation: Computation;
+}) {
   const studyMetadata = useStudyMetadata();
   const collections = useCollectionVariables(studyMetadata.rootEntity);
-  assertConfigType(config, AbundanceConfig);
-  const { rankingMethod } = config;
+  assertComputationWithConfig<AbundanceConfig>(computation, Computation);
+  const { configuration } = computation.descriptor;
   const updatedCollectionVariable = collections.find((collectionVar) =>
     isEqual(
       {
         variableId: collectionVar.id,
         entityId: collectionVar.entityId,
       },
-      config.collectionVariable
+      configuration.collectionVariable
     )
   );
   return (
@@ -55,7 +60,8 @@ function AbundanceConfigDescriptionComponent({ config }: { config: unknown }) {
       <h4 style={{ padding: 0, marginLeft: 20 }}>
         Method:{' '}
         <span style={{ fontWeight: 300 }}>
-          {rankingMethod[0].toUpperCase() + rankingMethod.slice(1)}
+          {configuration.rankingMethod[0].toUpperCase() +
+            configuration.rankingMethod.slice(1)}
         </span>
       </h4>
     </>
@@ -97,15 +103,14 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
 
+  assertComputationWithConfig<AbundanceConfig>(computation, Computation);
   const configuration = computation.descriptor.configuration;
-  assertConfigType(configuration, AbundanceConfig);
   const { rankingMethod, collectionVariable } = configuration;
 
   const changeConfigHandler = useConfigChangeHandler<AbundanceConfig>(
     analysisState,
     computation,
-    visualizationId,
-    AbundanceConfig
+    visualizationId
   );
 
   return (

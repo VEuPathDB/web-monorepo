@@ -8,9 +8,10 @@ import { scatterplotVisualization } from '../../visualizations/implementations/S
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { H6 } from '@veupathdb/coreui';
 import { isEqual } from 'lodash';
-import { useConfigChangeHandler, assertConfigType } from '../Utils';
+import { useConfigChangeHandler, assertComputationWithConfig } from '../Utils';
 import { findCollections } from '../../../utils/study-metadata';
 import * as t from 'io-ts';
+import { Computation } from '../../../types/visualization';
 
 export type AlphaDivConfig = t.TypeOf<typeof AlphaDivConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -30,18 +31,22 @@ export const plugin: ComputationPlugin = {
   createDefaultComputationSpec: createDefaultComputationSpec,
 };
 
-function AlphaDivConfigDescriptionComponent({ config }: { config: unknown }) {
+function AlphaDivConfigDescriptionComponent({
+  computation,
+}: {
+  computation: Computation;
+}) {
   const studyMetadata = useStudyMetadata();
   const collections = useCollectionVariables(studyMetadata.rootEntity);
-  assertConfigType(config, AlphaDivConfig);
-  const { alphaDivMethod } = config;
+  assertComputationWithConfig<AlphaDivConfig>(computation, Computation);
+  const { configuration } = computation.descriptor;
   const updatedCollectionVariable = collections.find((collectionVar) =>
     isEqual(
       {
         variableId: collectionVar.id,
         entityId: collectionVar.entityId,
       },
-      config.collectionVariable
+      configuration.collectionVariable
     )
   );
   return (
@@ -55,7 +60,8 @@ function AlphaDivConfigDescriptionComponent({ config }: { config: unknown }) {
       <h4 style={{ padding: 0, marginLeft: 20 }}>
         Method:{' '}
         <span style={{ fontWeight: 300 }}>
-          {alphaDivMethod[0].toUpperCase() + alphaDivMethod.slice(1)}
+          {configuration.alphaDivMethod[0].toUpperCase() +
+            configuration.alphaDivMethod.slice(1)}
         </span>
       </h4>
     </>
@@ -97,15 +103,14 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
 
+  assertComputationWithConfig<AlphaDivConfig>(computation, Computation);
   const configuration = computation.descriptor.configuration;
-  assertConfigType(configuration, AlphaDivConfig);
   const { alphaDivMethod, collectionVariable } = configuration;
 
   const changeConfigHandler = useConfigChangeHandler<AlphaDivConfig>(
     analysisState,
     computation,
-    visualizationId,
-    AlphaDivConfig
+    visualizationId
   );
 
   return (

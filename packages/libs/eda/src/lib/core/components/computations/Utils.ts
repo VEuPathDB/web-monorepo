@@ -51,22 +51,21 @@ function createRandomString(numChars: number) {
     .slice(2, numChars + 2);
 }
 
-export function assertConfigType<ConfigType>(
-  config: unknown,
-  configDecoder: t.Type<ConfigType, unknown, unknown>
-): asserts config is ConfigType {
+export function assertComputationWithConfig<ConfigType>(
+  computation: Computation,
+  decoder: t.Type<Computation, unknown, unknown>
+): asserts computation is Computation<ConfigType> {
   const onLeft = (errors: t.Errors) => {
-    throw new Error(`Invalid configuration: ${errors}`);
+    throw new Error(`Invalid computation configuration: ${errors}`);
   };
   const onRight = () => null;
-  pipe(configDecoder.decode(config), fold(onLeft, onRight));
+  pipe(decoder.decode(computation), fold(onLeft, onRight));
 }
 
 export function useConfigChangeHandler<ConfigType>(
   analysisState: AnalysisState,
-  computation: Computation,
-  visualizationId: string,
-  decoder: t.Type<ConfigType, unknown, unknown>
+  computation: Computation<ConfigType>,
+  visualizationId: string
 ) {
   const { url } = useRouteMatch();
   const history = useHistory();
@@ -76,7 +75,6 @@ export function useConfigChangeHandler<ConfigType>(
       value: ConfigType[typeof propertyName]
     ) => {
       const { configuration } = computation.descriptor;
-      assertConfigType(configuration, decoder);
       handleConfigurationChanges(
         analysisState,
         computation,
