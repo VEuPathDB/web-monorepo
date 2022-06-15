@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { isLeaf } from 'wdk-client/Utils/TreeUtils';
-import IndeterminateCheckbox from 'wdk-client/Components/InputControls/IndeterminateCheckbox';
+import IndeterminateCheckbox, { IndeterminateCheckboxProps } from 'wdk-client/Components/InputControls/IndeterminateCheckbox';
 
 const visibleElement = {display: ""};
 const hiddenElement = {display: "none"};
@@ -39,6 +39,9 @@ type NodeState = {
   isExpanded?: boolean;
 }
 
+// export type CheckboxFactory<T> = (state?: Partial<IndeterminateCheckboxProps<T>>) => React.ReactNode;
+export type CustomCheckboxes<T> = {[index: string]: React.ComponentType<Partial<IndeterminateCheckboxProps<T>>>};
+
 type Props<T> = {
   node: T;
   name: string;
@@ -53,6 +56,7 @@ type Props<T> = {
   getNodeId: (node: T) => string;
   getNodeChildren: (node: T) => T[];
   renderNode: (node: T, path?: number[]) => React.ReactNode;
+  customCheckboxes?: CustomCheckboxes<T>;
   shouldExpandOnClick: boolean;
 }
 
@@ -81,6 +85,7 @@ class CheckboxTreeNode<T> extends Component<Props<T>> {
       getNodeId,
       getNodeChildren,
       renderNode,
+      customCheckboxes,
       shouldExpandOnClick
     } = this.props;
 
@@ -97,9 +102,19 @@ class CheckboxTreeNode<T> extends Component<Props<T>> {
                  : isExpanded ? "expanded"
                  : "collapsed";
     let classNames = 'wdk-CheckboxTreeItem wdk-CheckboxTreeItem__' + nodeType +
-      (isSelectable ? ' wdk-CheckboxTreeItem__selectable' : '');
+      (isSelectable ? ' wdk-CheckboxTreeItem__selectable' : ' wdk-CheckboxTreeItem__not-selectable');
     let inputName = isLeafNode ? name : '';
+    let nodeId = getNodeId(node);
     const nodeElement = renderNode(node, path);
+    const commonInputProps = {
+      className: "wdk-CheckboxTreeCheckbox",
+      name: inputName,
+      checked: isSelected,
+      node,
+      value: nodeId,
+    };
+    const checkboxProps: IndeterminateCheckboxProps<T> = {...commonInputProps, indeterminate: !!isIndeterminate, toggleCheckbox: toggleSelection};
+    const CustomCheckbox = (customCheckboxes && (nodeId in customCheckboxes)) ? customCheckboxes[nodeId] : undefined;
 
     return (
       <li className={classNames} style={nodeVisibilityCss}>
@@ -122,22 +137,12 @@ class CheckboxTreeNode<T> extends Component<Props<T>> {
             </div>
           ) : (
             <label className="wdk-CheckboxTreeNodeContent">
-              {isMultiPick ?
-                <IndeterminateCheckboxT
-                  className="wdk-CheckboxTreeCheckbox"
-                  name={inputName}
-                  checked={isSelected}
-                  indeterminate={!!isIndeterminate}
-                  node={node}
-                  value={getNodeId(node)}
-                  toggleCheckbox={toggleSelection} /> :
-                <TreeRadioT
-                  className="wdk-CheckboxTreeCheckbox"
-                  name={inputName}
-                  checked={isSelected}
-                  value={getNodeId(node)}
-                  node={node}
-                  onChange={toggleSelection} />
+              {CustomCheckbox ? <CustomCheckbox {...checkboxProps} /> : isMultiPick
+                  ? <IndeterminateCheckboxT {...checkboxProps} />
+                  : <TreeRadioT
+                      {...commonInputProps}
+                      onChange={toggleSelection}
+                    />
               } {nodeElement}
             </label>
           )}
@@ -160,7 +165,8 @@ class CheckboxTreeNode<T> extends Component<Props<T>> {
                 shouldExpandOnClick={shouldExpandOnClick}
                 getNodeId={getNodeId}
                 getNodeChildren={getNodeChildren}
-                renderNode={renderNode} />
+                renderNode={renderNode}
+                customCheckboxes={customCheckboxes} />
             )}
           </ul>
         }
