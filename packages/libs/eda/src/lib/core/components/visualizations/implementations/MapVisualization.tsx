@@ -509,8 +509,12 @@ function MapViz(props: VisualizationProps) {
    * TO DO: generalise this for use in other visualizations
    */
   useEffect(() => {
-    if (vizConfig.checkedLegendItems == null || vocabulary == null) return;
-    // could possibly optimize by also returning if vocabulary.length <= 8 ?
+    if (
+      vizConfig.checkedLegendItems == null ||
+      vocabulary == null ||
+      vocabulary.length <= 8
+    )
+      return;
 
     if (
       vizConfig.checkedLegendItems.some(
