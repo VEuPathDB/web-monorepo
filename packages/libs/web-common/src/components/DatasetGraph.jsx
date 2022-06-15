@@ -3,6 +3,7 @@ import { httpGet } from '../util/http';
 import { CollapsibleSection, Loading, Link } from '@veupathdb/wdk-client/lib/Components';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import ExternalResource from './ExternalResource';
+import { JbrowseIframe } from './JbrowseIframe';
 
 /**
  * Renders an Dataset graph with the provided rowData.
@@ -264,7 +265,12 @@ hook: HostResponseGraphs
                 Non-unique mapping may be examined in the genome browser (<a href={tutorial_link}><b>tutorial</b></a>)
                 <br></br><br></br>
               </div>
-              <div><iframe src={covImgUrl + "&tracklist=0&nav=0&overview=0&fullviewlink=0&meno=0"} width="100%" height="200" scrolling="no" allowfullscreen="false" /></div>
+              <div>
+                <JbrowseIframe
+                  jbrowseUrl={covImgUrl}
+                  height="200"
+                />
+              </div>
             </CollapsibleSection>
           : null}
 
@@ -298,7 +304,12 @@ hook: HostResponseGraphs
                   View in genome browser
                 </a>
               </div>
-              <ExternalResource><iframe src={specialImgUrl.replace('/app/jbrowse', '/jbrowse/index.html') + "&tracklist=0&nav=0&overview=0&fullviewlink=0&meno=0"} width="100%" height="185" scrolling="yes" allowfullscreen="false" /></ExternalResource>
+              <ExternalResource>
+                <JbrowseIframe
+                  jbrowseUrl={specialImgUrl.replace('/app/jbrowse', '/jbrowse/index.html')}
+                  height="185"
+                />
+              </ExternalResource>
               <br></br><br></br>
             </CollapsibleSection>
           : null}
