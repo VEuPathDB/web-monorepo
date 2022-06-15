@@ -600,7 +600,9 @@ function MapViz(props: VisualizationProps) {
 
         const count =
           overlayData != null
-            ? overlayData[geoAggregateValue]?.entityCount ?? ''
+            ? vizConfig.markerType === 'proportion'
+              ? overlayData[geoAggregateValue]?.entityCount ?? ''
+              : donutData.reduce((sum, item) => (sum = sum + item.value), 0)
             : entityCount;
         const formattedCount =
           MarkerComponent === ChartMarker
@@ -749,10 +751,13 @@ function MapViz(props: VisualizationProps) {
               vocabulary.indexOf(label) / (vocabulary.length - 1)
             ),
       // has any geo-facet got an array of overlay data
-      // containing at least one element that satisfies label==label and value>0?
+      // containing at least one element that satisfies label==label
+      // (do not check that value > 0, because the back end doesn't return
+      // zero counts, but does sometimes return near-zero counts that get
+      // rounded to zero)
       hasData: overlayData
         ? some(overlayData, (pieData) =>
-            some(pieData.data, (data) => data.label === label && data.value > 0)
+            some(pieData.data, (data) => data.label === label)
           )
         : false,
       group: 1,
