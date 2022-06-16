@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/eda",
-  "version": "3.6.9",
+  "version": "3.6.10",
   "dependencies": {
     "debounce-promise": "^3.1.2",
     "fp-ts": "^2.9.3",
@@ -23,7 +23,7 @@
     "@veupathdb/coreui": "^0.16.4",
     "@veupathdb/http-utils": "^1.1.0",
     "@veupathdb/study-data-access": "^0.3.2",
-    "@veupathdb/wdk-client": ">=0.7.1",
+    "@veupathdb/wdk-client": "^0.8.1",
     "react": ">=16.14",
     "react-dom": ">=16.14",
     "react-router-dom": "^5.3.0"
@@ -86,13 +86,14 @@
     "@veupathdb/react-scripts": "^1.0.1",
     "@veupathdb/study-data-access": "^0.3.2",
     "@veupathdb/tsconfig": "^1.0.1",
-    "@veupathdb/wdk-client": "^0.7.1",
+    "@veupathdb/wdk-client": "^0.8.1",
     "bubleify": "^2.0.0",
     "http-proxy-middleware": "^1.0.6",
     "husky": "^4.3.8",
     "ify-loader": "^1.1.0",
     "lint-staged": ">=10",
     "node-sass": "4",
+    "notistack": "^1.0.10",
     "prettier": "2.2.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
