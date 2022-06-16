@@ -774,7 +774,7 @@ function MapViz(props: VisualizationProps) {
     vizConfig.checkedLegendItems
   );
 
-  const legendNode = legendItems != null && (
+  const legendNode = legendItems != null && xAxisVariable != null && (
     <PlotLegend
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
