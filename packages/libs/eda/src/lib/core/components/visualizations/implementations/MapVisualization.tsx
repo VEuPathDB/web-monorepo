@@ -412,7 +412,7 @@ function MapViz(props: VisualizationProps) {
               type: 'binWidth',
               value:
                 (defaultOverlayRange.max - defaultOverlayRange.min) /
-                (numContinuousBins - 1),
+                numContinuousBins,
             }
           : // : DateVariable.is(xAxisVariable) && DateRange.is(defaultOverlayRange) ? ... TO DO
             undefined;
@@ -774,7 +774,7 @@ function MapViz(props: VisualizationProps) {
     vizConfig.checkedLegendItems
   );
 
-  const legendNode = legendItems != null && (
+  const legendNode = legendItems != null && xAxisVariable != null && (
     <PlotLegend
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
