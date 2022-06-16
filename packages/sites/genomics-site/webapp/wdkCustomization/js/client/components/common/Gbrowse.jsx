@@ -1,9 +1,10 @@
+import $ from 'jquery';
 import {once, debounce} from 'lodash';
 import PropTypes from 'prop-types';
-import React, { PureComponent, useCallback, useEffect, useState, useRef } from 'react';
+import React, { PureComponent } from 'react';
 import { httpGet } from '@veupathdb/web-common/lib/util/http';
-import $ from 'jquery';
-import { Checkbox, HelpIcon, Loading } from '@veupathdb/wdk-client/lib/Components';
+import { JbrowseIframe } from '@veupathdb/web-common/lib/components/JbrowseIframe';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import newFeatureImage from '@veupathdb/wdk-client/lib/Core/Style/images/new-feature.png';
 
 import './Gbrowse.scss';
@@ -133,73 +134,6 @@ const PbrowseJbrowseLink = ({ url }) =>
 </div>
 
 
-function JbrowseIframe({ jbrowseUrl,ht }) {
-  const [ isLocked, setIsLocked ] = useState(true);
-  const onCheckboxToggle = useCallback(
-    newIsUnlockedValue => {
-      setIsLocked(!newIsUnlockedValue);
-    },
-    []
-  );
-
-  const jbrowseViewContainer = useRef(null);
-  const lockText = (
-    <small className="jbrowse-scroll-zoom-toggle-caption">
-      Scroll and zoom
-      {' '}
-      <HelpIcon>
-        Select to enable using mouse / track pad for scrolling &amp; zoom
-        <br />
-        (double click to zoom in; shift-double click to zoom out)
-      </HelpIcon>
-    </small>
-  );
-
-  useEffect(() => {
-    updateBehaviors();
-  }, [ isLocked ]);
-
-  function onLoad(event) {
-    const { JBrowse } = event.currentTarget.contentWindow;
-    if (JBrowse == null) throw new Error("Could not load embedded JBrowse instance.");
-    JBrowse.afterMilestone('completely initialized', function() {
-      jbrowseViewContainer.current = JBrowse.view;
-      updateBehaviors();
-    });
-  }
-
-  function updateBehaviors() {
-    const view = jbrowseViewContainer.current;
-    if (view == null) return;
-    if (isLocked) view.behaviorManager.removeAll();
-    else view.behaviorManager.initialize();
-  }
-
-  return (
-    <div>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          alignItems: 'center',
-          marginBottom: '0.5em'
-        }}
-      >
-        <label className="jbrowse-scroll-zoom-toggle">
-          <Checkbox
-            style={{ marginRight: '0.25em' }}
-            value={!isLocked}
-            onChange={onCheckboxToggle}
-          />
-          {lockText}
-        </label>
-      </div>
-      <iframe onLoad={onLoad} src={jbrowseUrl + "&tracklist=0&nav=1&overview=0&fullviewlink=0&menu=0"} width="100%" height={ht} scrolling="no" allowFullScreen={false} />
-    </div>
-  );
-}
-
-
 export function GbrowseContext(props) {
   let { attribute, record } = props;
   let url = record.attributes[attribute.name];
@@ -223,7 +157,7 @@ export function GbrowseContext(props) {
         <div>
         <p><img src={newFeatureImage}/>This gene is available in <b>Apollo</b> for community annotation. To find out more about Apollo, please visit <a href={apolloHelp}>this help page.</a></p>
         <ApolloJbrowseLink url={jbrowseUrlFull} urlApollo={apolloUrlFull}/>
-        <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="400" />
+        <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} height="400" />
         <ApolloJbrowseLink url={jbrowseUrlFull} urlApollo={apolloUrlFull}/>
         </div>
         )
@@ -232,7 +166,7 @@ export function GbrowseContext(props) {
       return (
         <div>
         <JbrowseLink url={jbrowseUrlFull}/>
-        <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="400" />
+        <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} height="400" />
         <JbrowseLink url={jbrowseUrlFull}/>
         </div>
         )
@@ -254,7 +188,7 @@ export function GbrowseContext(props) {
     return (
         <div>
       	<JbrowseLink url={jbrowseUrlFull}/>
-        <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="500" />
+        <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} height="500" />
       	<JbrowseLink url={jbrowseUrlFull}/>
       </div>
 	  )
@@ -263,7 +197,7 @@ export function GbrowseContext(props) {
   if ( attribute.name == 'snpJbrowseUrl' || attribute.name == 'spanJbrowseUrl' ){
   return (
     <div>
-      <JbrowseIframe jbrowseUrl={url} ht="400" />
+      <JbrowseIframe jbrowseUrl={url} height="400" />
       <br></br>
     </div>
 	  )
@@ -274,7 +208,7 @@ export function GbrowseContext(props) {
       return (
     	<div>
       	<JbrowseLink url={jbrowseUrlFull}/>
-      	<JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="250" />
+      	<JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} height="250" />
       	<JbrowseLink url={jbrowseUrlFull}/>
       	</div>
 	)
@@ -283,7 +217,7 @@ export function GbrowseContext(props) {
       jbrowseUrlFull = record.attributes.snpGbrowseImageUrl;
       return (
     	<div>
-      	<JbrowseIframe jbrowseUrl={jbrowseUrlFull} ht="500" />
+      	<JbrowseIframe jbrowseUrl={jbrowseUrlFull} height="500" />
       	</div>
 	)
   }	
@@ -291,7 +225,7 @@ export function GbrowseContext(props) {
       jbrowseUrlFull = record.attributes.snpChipGbrowseImageUrl;
       return (
     	<div>
-      	<JbrowseIframe jbrowseUrl={jbrowseUrlFull} ht="300" />
+      	<JbrowseIframe jbrowseUrl={jbrowseUrlFull} height="300" />
       	</div>
 	)
   }	
@@ -299,7 +233,7 @@ export function GbrowseContext(props) {
       jbrowseUrlFull = record.attributes.spanGbrowseImageUrl;
       return (
     	<div>
-      	<JbrowseIframe jbrowseUrl={jbrowseUrlFull} ht="500" />
+      	<JbrowseIframe jbrowseUrl={jbrowseUrlFull} height="500" />
       	</div>
 	)
   }	
@@ -307,7 +241,7 @@ export function GbrowseContext(props) {
   return (
     <div>
       <JbrowseLink url={jbrowseCommonUrl}/>
-      <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="500" />
+      <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} height="500" />
       <JbrowseLink url={jbrowseCommonUrl}/>
     </div>
   );
@@ -320,7 +254,7 @@ export function ProteinContext(props) {
   return (
     <div>
       <PbrowseJbrowseLink url={jbrowseUrl}/>
-      <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="500" />
+      <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} height="500" />
       <PbrowseJbrowseLink url={jbrowseUrl}/>
     </div>
   );
