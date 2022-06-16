@@ -509,12 +509,7 @@ function MapViz(props: VisualizationProps) {
    * TO DO: generalise this for use in other visualizations
    */
   useEffect(() => {
-    if (
-      vizConfig.checkedLegendItems == null ||
-      vocabulary == null ||
-      vocabulary.length <= 8
-    )
-      return;
+    if (vizConfig.checkedLegendItems == null || vocabulary == null) return;
 
     if (
       vizConfig.checkedLegendItems.some(
@@ -600,11 +595,12 @@ function MapViz(props: VisualizationProps) {
 
         const count =
           overlayData != null
-            ? vizConfig.markerType === 'pie'
+            ? vizConfig.markerType == null || vizConfig.markerType === 'pie'
               ? // pies always show sum of legend checked items (donutData is already filtered on checkboxes)
                 donutData.reduce((sum, item) => (sum = sum + item.value), 0)
               : // the bar/histogram charts always show the constant entity count
-                overlayData[geoAggregateValue]?.entityCount ?? ''
+                // however, if there is no data at all we can safely infer a zero
+                overlayData[geoAggregateValue]?.entityCount ?? 0
             : entityCount;
 
         const formattedCount =
