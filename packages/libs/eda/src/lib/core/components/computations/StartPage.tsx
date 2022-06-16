@@ -48,7 +48,6 @@ export function StartPage(props: Props) {
                 style={{
                   display: 'grid',
                   gridTemplateColumns: 'auto 4fr',
-                  gridTemplateRows: 'auto',
                   padding: '1em',
                   margin: '1em 0',
                 }}
