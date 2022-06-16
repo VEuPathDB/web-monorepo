@@ -412,7 +412,7 @@ function MapViz(props: VisualizationProps) {
               type: 'binWidth',
               value:
                 (defaultOverlayRange.max - defaultOverlayRange.min) /
-                (numContinuousBins - 1),
+                numContinuousBins,
             }
           : // : DateVariable.is(xAxisVariable) && DateRange.is(defaultOverlayRange) ? ... TO DO
             undefined;
