@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createSelector } from 'reselect';
 
-import { updateParamValue } from 'wdk-client/Actions/QuestionActions';
+import { SubmissionMetadata, updateParamValue } from 'wdk-client/Actions/QuestionActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { Loading } from 'wdk-client/Components';
 import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
@@ -86,6 +86,16 @@ const CombineStepFormView = ({
     () => inputRecordClass.searches.find(({ urlSegment }) => urlSegment === currentPage), 
     [ inputRecordClass, currentPage ]
   );
+
+  const submissionMetadata: SubmissionMetadata = useMemo(
+    () => ({
+      type: 'add-binary-step',
+      strategyId: strategy.strategyId,
+      operatorSearchName: booleanSearchUrlSegment,
+      addType
+    }),
+    [addType, booleanSearchUrlSegment, strategy.strategyId]
+  );
   
   return !booleanSearchState || booleanSearchState.questionStatus === 'loading' 
     ? <Loading />
@@ -115,12 +125,7 @@ const CombineStepFormView = ({
             pluginProps={{
               question: currentPage,
               recordClass: inputRecordClass.urlSegment,
-              submissionMetadata: {
-                type: 'add-binary-step',
-                strategyId: strategy.strategyId,
-                operatorSearchName: booleanSearchUrlSegment,
-                addType
-              }
+              submissionMetadata
             }}
             fallback={<Loading />}
           />  

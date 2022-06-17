@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
+import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
 import { Loading } from 'wdk-client/Components';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
@@ -22,6 +23,15 @@ export const ConvertStepForm = ({
   const outputRecordClassName = transformQuestion && transformQuestion.outputRecordClassName;
   const outputRecordClass = recordClassesByUrlSegment[outputRecordClassName];
 
+  const submissionMetadata: SubmissionMetadata = useMemo(
+    () => ({
+      type: 'add-unary-step',
+      strategyId: strategy.strategyId,
+      addType
+    }),
+    [strategy.strategyId]
+  );
+
   return (
     <div className={cx()}>
       <div className={cx('--Header')}>
@@ -43,11 +53,7 @@ export const ConvertStepForm = ({
           pluginProps={{
             question: currentPage,
             recordClass: inputRecordClass.urlSegment,
-            submissionMetadata: {
-              type: 'add-unary-step',
-              strategyId: strategy.strategyId,
-              addType
-            }
+            submissionMetadata
           }}
           fallback={<Loading />}
         />
