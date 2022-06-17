@@ -11,6 +11,7 @@ import { AnalysisState } from '../../../core';
 import { createComputation } from '../../../core/components/computations/Utils';
 import { v4 as uuid } from 'uuid';
 import { useStudyMetadata } from '../../';
+import PlaceholderIcon from '../visualizations/PlaceholderIcon';
 
 interface Props {
   analysisState: AnalysisState;
@@ -25,9 +26,6 @@ export function StartPage(props: Props) {
   const studyMetadata = useStudyMetadata();
   const history = useHistory();
   const { url } = useRouteMatch();
-
-  // Used temporarily to render a disabled scatterplot for betadiv
-  const helperPlugin = plugins['alphadiv'];
 
   return (
     apps &&
@@ -48,13 +46,14 @@ export function StartPage(props: Props) {
             (app) => (
               <div
                 style={{
-                  display: 'flex',
+                  display: 'grid',
+                  gridTemplateColumns: 'auto 4fr',
                   padding: '1em',
                   margin: '1em 0',
                 }}
                 key={app.name}
               >
-                <div style={{ width: '25em', margin: '0 8em' }}>
+                <div style={{ width: '300px', margin: '0 8em' }}>
                   <H6
                     text={app.displayName}
                     additionalStyles={{ margin: 0, marginBottom: 5 }}
@@ -68,33 +67,37 @@ export function StartPage(props: Props) {
                     {app.description}
                   </span>
                 </div>
-                {app.visualizations?.map((vizType, index) => {
-                  const disabled = plugins[app.name] === undefined;
-                  const VizSelector = plugins[app.name]
-                    ? plugins[app.name].visualizationTypes[vizType.name]
-                        .selectorComponent
-                    : helperPlugin.visualizationTypes['scatterplot']
-                        .selectorComponent;
-                  const plugin = plugins[app.name];
-                  return (
-                    <div
-                      className={cx('-PickerEntry', disabled && 'disabled')}
-                      key={`${app.name}-vizType-${index}`}
-                      style={{
-                        margin: '0 3em',
-                      }}
-                    >
-                      <Tooltip title={<>{vizType.description}</>}>
-                        {/* 
-                          The span element removes the following MUI error: 
-                          "Material-UI: You are providing a disabled `button` child to the Tooltip component." 
-                        */}
-                        <span>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    rowGap: '2em',
+                  }}
+                >
+                  {app.visualizations?.map((vizType, index) => {
+                    const plugin = plugins[app.name];
+                    const disabled =
+                      !plugin || !plugin.visualizationTypes[vizType.name];
+                    const VizSelector =
+                      plugin && plugin.visualizationTypes[vizType.name]
+                        ? plugin.visualizationTypes[vizType.name]
+                            .selectorComponent
+                        : undefined;
+
+                    return (
+                      <div
+                        className={cx('-PickerEntry', disabled && 'disabled')}
+                        key={`vizType${index}`}
+                        style={{
+                          margin: '0 3em',
+                        }}
+                      >
+                        <Tooltip title={<>{vizType.description}</>}>
                           <button
-                            disabled={disabled}
                             style={{
-                              cursor: disabled ? 'not-allowed' : 'pointer',
+                              cursor: disabled ? 'not-allowed' : 'cursor',
                             }}
+                            disabled={disabled}
                             onClick={async () => {
                               if (analysisState.analysis == null) return;
                               const computations =
@@ -176,21 +179,25 @@ export function StartPage(props: Props) {
                               }
                             }}
                           >
-                            <VizSelector {...app} />
+                            {VizSelector ? (
+                              <VizSelector {...app} />
+                            ) : (
+                              <PlaceholderIcon name={vizType.name} />
+                            )}
                           </button>
-                        </span>
-                      </Tooltip>
-                      <div className={cx('-PickerEntryName')}>
-                        <div>
-                          {vizType.displayName
-                            ?.split(/(, )/g)
-                            .map((str) => (str === ', ' ? <br /> : str))}
+                        </Tooltip>
+                        <div className={cx('-PickerEntryName')}>
+                          <div>
+                            {vizType.displayName
+                              ?.split(/(, )/g)
+                              .map((str) => (str === ', ' ? <br /> : str))}
+                          </div>
+                          {disabled && <i>(Coming soon!)</i>}
                         </div>
-                        {disabled && <i>(Coming soon!)</i>}
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             )
           )}
