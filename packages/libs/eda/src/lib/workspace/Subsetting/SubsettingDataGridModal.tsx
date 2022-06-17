@@ -7,7 +7,11 @@ import useDimensions from 'react-cool-dimensions';
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { Loading, LoadingOverlay } from '@veupathdb/wdk-client/lib/Components';
+import {
+  Loading,
+  LoadingOverlay,
+  HelpIcon,
+} from '@veupathdb/wdk-client/lib/Components';
 import MultiSelectVariableTree from '../../core/components/variableTrees/MultiSelectVariableTree';
 import { Modal, H5, DataGrid, MesaButton, Download } from '@veupathdb/coreui';
 
@@ -113,10 +117,7 @@ export default function SubsettingDataGridModal({
   const theme = useUITheme();
   const primaryColor = theme?.palette.primary.hue[theme.palette.primary.level];
 
-  const {
-    observe: observeEntityDescription,
-    width: entityDescriptionWidth,
-  } = useDimensions();
+  const { observe: observeEntityDescription } = useDimensions();
 
   //   Various Custom Hooks
   const studyRecord = useStudyRecord();
@@ -218,6 +219,7 @@ export default function SubsettingDataGridModal({
       currentEntityID,
       entities,
       currentEntity,
+      mergeKeys,
     ])
   );
 
@@ -406,7 +408,7 @@ export default function SubsettingDataGridModal({
                         ) : (
                           <button
                             onClick={() => {
-                              if (selectedVariableDescriptors.length == 1)
+                              if (selectedVariableDescriptors.length === 1)
                                 setTableIsExpanded(false);
                               handleSelectedVariablesChange(
                                 selectedVariableDescriptors.filter(
@@ -475,6 +477,7 @@ export default function SubsettingDataGridModal({
               <img
                 src={tableSVG}
                 title="Choose a variable to see the table"
+                alt="Choose a variable to see the table"
                 width={400}
               />
             </div>
@@ -486,6 +489,28 @@ export default function SubsettingDataGridModal({
       </div>
     );
   };
+
+  const LockIcon = () => (
+    <div
+      style={{
+        width: 13,
+        height: 13,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: '1px 4px 1px 0',
+      }}
+    >
+      <i className="fa fa-lock" title="This variable is required" />
+    </div>
+  );
+  const customCheckboxes = mergeKeys.reduce(
+    (checkboxes, mergeKey) => ({
+      ...checkboxes,
+      [currentEntityID + '/' + mergeKey]: LockIcon,
+    }),
+    {}
+  );
 
   // Render the variable selection panel.
   const renderVariableSelectionArea = () => {
@@ -525,7 +550,15 @@ export default function SubsettingDataGridModal({
                   style={{ backgroundColor: 'rgb(245,245,245)' }}
                 >
                   <summary>
-                    <h3>Required columns</h3>
+                    <h3>
+                      Required columns{' '}
+                      <span css={{ '& i': { verticalAlign: 'bottom' } }}>
+                        <HelpIcon>
+                          Required columns are unique identifiers needed to
+                          merge data across download files.
+                        </HelpIcon>
+                      </span>
+                    </h3>
                   </summary>
                   <ul>
                     {requiredColumns.value.map((column) => (
@@ -560,6 +593,8 @@ export default function SubsettingDataGridModal({
               featuredFields={scopedFeaturedFields}
               onSelectedVariablesChange={handleSelectedVariablesChange}
               toggleStarredVariable={toggleStarredVariable}
+              customCheckboxes={customCheckboxes}
+              startExpanded
             />
           </div>
         </div>

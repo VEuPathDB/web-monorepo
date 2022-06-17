@@ -47,6 +47,7 @@ import { pruneEmptyFields } from '../../utils/wdk-filter-param-adapter';
 
 import { Tooltip as VarTooltip } from '../docs/variable-constraints';
 import { useActiveDocument } from '../docs/DocumentationContainer';
+import { CustomCheckboxes } from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTreeNode';
 
 interface VariableField {
   type?: string;
@@ -59,7 +60,7 @@ interface VariableField {
   description?: string;
 }
 
-interface VariableFieldTreeNode extends FieldTreeNode {
+export interface VariableFieldTreeNode extends FieldTreeNode {
   field: VariableField;
   children: VariableFieldTreeNode[];
 }
@@ -126,6 +127,8 @@ interface VariableListProps {
   // Entities in which single child nodes should be promoted
   // (replacing their parent in the tree)
   singleChildPromotionEntityIds?: string[];
+  customCheckboxes?: CustomCheckboxes<VariableFieldTreeNode>;
+  startExpanded?: boolean;
 }
 
 // TODO: Needs documentation of general component purpose.
@@ -148,6 +151,8 @@ export default function VariableList({
   customDisabledVariableMessage,
   showMultiFilterDescendants,
   singleChildPromotionEntityIds,
+  customCheckboxes,
+  startExpanded,
 }: VariableListProps) {
   // useContext is used here with ShowHideVariableContext
   const {
@@ -169,8 +174,12 @@ export default function VariableList({
     [fieldTree]
   );
 
+  const fieldSequence = useMemo(() => preorderSeq(fieldTree), [fieldTree]);
+
   const [expandedNodes, setExpandedNodes] = useState(() =>
-    mode === 'singleSelection'
+    startExpanded
+      ? fieldSequence.map((node) => node.field.term).toArray()
+      : mode === 'singleSelection'
       ? getPathToField(activeField)
       : uniq(selectedFields.flatMap(getPathToField))
   );
@@ -251,13 +260,13 @@ export default function VariableList({
   );
 
   const availableVariableTerms = useMemo(() => {
-    const availableVariableTermsArray = preorderSeq(fieldTree)
+    const availableVariableTermsArray = fieldSequence
       .filter((node) => isFilterField(node.field))
       .map((node) => node.field.term)
       .toArray();
 
     return new Set(availableVariableTermsArray);
-  }, [fieldTree]);
+  }, [fieldSequence]);
 
   const starredVariablesLoading = starredVariables == null;
 
@@ -298,7 +307,7 @@ export default function VariableList({
   const multiFilterDescendants = useMemo(() => {
     const children = new Map<string, string>();
     if (!showMultiFilterDescendants) return children;
-    preorderSeq(fieldTree).forEach((node) => {
+    fieldSequence.forEach((node) => {
       if (isMulti(node.field)) {
         preorderSeq(node)
           .drop(1)
@@ -309,7 +318,7 @@ export default function VariableList({
       }
     });
     return children;
-  }, [fieldTree, showMultiFilterDescendants]);
+  }, [fieldSequence, showMultiFilterDescendants]);
 
   const renderNode = useCallback(
     (node: FieldTreeNode) => {
@@ -609,6 +618,7 @@ export default function VariableList({
         onSearchTermChange={setSearchTerm}
         searchPredicate={searchPredicate}
         renderNode={renderNode}
+        customCheckboxes={customCheckboxes}
         additionalFilters={additionalFilters}
         isAdditionalFilterApplied={isAdditionalFilterApplied}
       />
