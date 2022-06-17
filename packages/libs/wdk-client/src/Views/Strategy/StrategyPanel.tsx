@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
 import { SaveableTextEditor, Loading } from 'wdk-client/Components';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { QuestionController } from 'wdk-client/Controllers';
@@ -66,6 +67,30 @@ export default function StrategyPanel(props: Props) {
 
   const reviseStep = reviseFormStepId != null && strategy != null ? strategy.steps[reviseFormStepId] : undefined;
 
+  const submissionMetadata: SubmissionMetadata | undefined = useMemo(
+    () => {
+      if (
+        strategy?.strategyId == null ||
+        reviseStep?.id == null ||
+        reviseStep?.searchConfig == null
+      ) {
+        return undefined;
+      }
+
+      return {
+        type: 'edit-step',
+        strategyId: strategy.strategyId,
+        stepId: reviseStep.id,
+        previousSearchConfig: reviseStep.searchConfig
+      };
+    },
+    [
+      strategy?.strategyId,
+      reviseStep?.id,
+      reviseStep?.searchConfig
+    ]
+  );
+
   return (
     <div className={cx()}>
       <h2 className={cx('--Heading')}>
@@ -123,7 +148,7 @@ export default function StrategyPanel(props: Props) {
               uiStepTree={uiStepTree}
             />
           ) : null}
-      {strategy != null && reviseStep != null ? (
+      {strategy != null && reviseStep != null && submissionMetadata != null ? (
         <StrategyModal title="Revise your step" onClose={setReviseFormStepId} >
           <div className={cx('--ReviseForm')}>
             <Plugin
@@ -135,12 +160,7 @@ export default function StrategyPanel(props: Props) {
               pluginProps={{
                 question: reviseStep.searchName,
                 recordClass: reviseStep.recordClassName,
-                submissionMetadata: {
-                  type: 'edit-step',
-                  strategyId: strategy.strategyId,
-                  stepId: reviseStep.id,
-                  previousSearchConfig: reviseStep.searchConfig
-                } as const,
+                submissionMetadata,
                 submitButtonText: 'Revise'
               }}
               defaultComponent={QuestionController}
