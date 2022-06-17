@@ -1,6 +1,7 @@
 import { useCallback, useContext, useMemo } from 'react';
 import { RouteComponentProps, StaticContext } from 'react-router';
 
+import { SubmissionMetadata } from '@veupathdb/wdk-client/lib/Actions/QuestionActions';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import {
   NotFoundController,
@@ -77,6 +78,13 @@ export function BlastWorkspaceNew(
     [workspaceMetadata]
   );
 
+  const submissionMetadata: SubmissionMetadata = useMemo(
+    () => ({
+      type: 'create-strategy',
+    }),
+    []
+  );
+
   return workspaceMetadata.searchName == null ? (
     <NotFoundController />
   ) : (
@@ -89,9 +97,7 @@ export function BlastWorkspaceNew(
       pluginProps={{
         question: workspaceMetadata.searchName,
         recordClass: workspaceMetadata.recordClassName,
-        submissionMetadata: {
-          type: 'create-strategy',
-        } as const,
+        submissionMetadata,
         shouldChangeDocumentTitle: false,
         autoRun: false,
         prepopulateWithLastParamValues: false,
