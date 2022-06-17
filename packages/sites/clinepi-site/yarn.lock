@@ -2142,10 +2142,10 @@
     react-responsive-modal "^6.2.0"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^3.6.9":
-  version "3.6.9"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.6.9.tgz#ae8bd6c8a4703a57b4e7e9c571ac0bebbfa01574"
-  integrity sha512-sCTadAHw76A8T8IWVDvou8Um4kbvynwTsozRybfKJ+1Io7udXmGN1KhLYN8nJMz5r30SJ1iXQLZIkt4zXwwDcA==
+"@veupathdb/eda@^3.6.11":
+  version "3.6.11"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.6.11.tgz#707a4da269292c63f9a94feed110ccb4b962847c"
+  integrity sha512-fYbC+kybCjgllyKGNwWE11aEw3BfGNVAnexHyQx2eCDU3S6yEl+/9Bk3wbM85llPMudQizT7FLH22xQySMU71A==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -2211,10 +2211,10 @@
     lodash "^4.17.21"
     moment "^2.21.0"
 
-"@veupathdb/wdk-client@^0.8.1":
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.8.1.tgz#828fc632f0766bba05d77efdf531f8c85f6a965f"
-  integrity sha512-vXvTBvhnshqGtbujKdHbfEcrpUQ7KbaWMJwFVk6u26I7BKLdUqOphUywdt+7dnnzEp4PmM1MszCiHcZUlpNwNA==
+"@veupathdb/wdk-client@^0.8.2":
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.8.2.tgz#3c5231467bf49b07db492f905ed8a058abddcc98"
+  integrity sha512-06DF4SawIJDyoWJDCJM3+wPohbFHjs6Ceez7mFIEX4NNbpKSB81ho+571XvGDy394ZxFzWnSYpcBObTwnjJh7g==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
