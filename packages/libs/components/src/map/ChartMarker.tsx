@@ -19,6 +19,10 @@ interface ChartMarkerProps extends BoundsDriftMarkerProps {
   // changed to dependentAxisRange
   dependentAxisRange?: NumberRange | null; // y-axis range for setting global max
   onClick?: (event: L.LeafletMouseEvent) => void | undefined;
+  /** x-axis title for marker (defaults to sum of data[].value) */
+  markerLabel?: string;
+  /** x-axis title for enlarged mouse-over marker (defaults to "Total: sum(data[].value)") */
+  independentAxisLabel?: string;
 }
 
 /**
@@ -76,7 +80,10 @@ export default function ChartMarker(props: ChartMarkerProps) {
   const sumValuesString =
     sumValues <= 0.99 && sumValues > 0
       ? sumValues.toFixed(2)
-      : sumValues.toFixed(0);
+      : sumValues.toLocaleString(undefined, {
+          useGrouping: true,
+          maximumFractionDigits: 0,
+        });
 
   var maxValues: number = Math.max(...fullStat.map((o) => o.value)); // max of fullStat.value per marker icon
   // for local max, need to check the case wherer all values are zeros that lead to maxValues equals to 0 -> "divided by 0" can happen
@@ -151,7 +158,8 @@ export default function ChartMarker(props: ChartMarkerProps) {
         ' height=' +
         barHeight +
         ' fill=' +
-        el.color +
+        // rgb strings with spaces in them don't work in SVG?
+        el.color.replace(/\s/g, '') +
         ' />';
     });
   } else {
@@ -175,7 +183,8 @@ export default function ChartMarker(props: ChartMarkerProps) {
         ' height=' +
         barHeight +
         ' fill=' +
-        el.color +
+        // rgb strings with spaces in them don't work in SVG?
+        el.color.replace(/\s/g, '') +
         ' />';
     });
   }
@@ -199,7 +208,7 @@ export default function ChartMarker(props: ChartMarkerProps) {
     '<text x="50%" y=' +
     (size - 2 + borderWidth + 7) +
     ' dominant-baseline="middle" text-anchor="middle" opacity="1">' +
-    sumValuesString +
+    (props.markerLabel ?? sumValuesString) +
     '</text>';
 
   // check isAtomic: draw pushpin if true
@@ -259,7 +268,9 @@ export default function ChartMarker(props: ChartMarkerProps) {
       displayLibraryControls={false}
       interactive={false}
       dependentAxisLabel=""
-      independentAxisLabel={`Total: ${sumValuesString}`}
+      independentAxisLabel={
+        props.independentAxisLabel ?? `Total: ${sumValuesString}`
+      }
       // dependentAxisRange is an object with {min, max} (NumberRange)
       dependentAxisRange={props.dependentAxisRange ?? undefined}
       showValues={true}
