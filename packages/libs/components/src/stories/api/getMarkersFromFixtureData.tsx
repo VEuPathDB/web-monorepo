@@ -17,9 +17,13 @@ export const getSpeciesDonuts = async (
     legendData: Array<{ label: string; value: number; color: string }>
   ) => void,
   handleMarkerClick: (e: LeafletMouseEvent) => void,
-  delay: number = 0
+  delay: number = 0,
+  zoomLevelToGeohashLevel: (
+    zoomLevel: number
+  ) => number = leafletZoomLevelToGeohashLevel,
+  donutSize: number = 40
 ) => {
-  const geohash_level = leafletZoomLevelToGeohashLevel(zoomLevel);
+  const geohash_level = zoomLevelToGeohashLevel(zoomLevel);
   delay && (await sleep(delay));
   const response = await fetch('data/geoclust-species-testing-all-levels.json');
   const speciesData = await response.json();
@@ -120,6 +124,8 @@ export const getSpeciesDonuts = async (
         isAtomic={atomicValue}
         onClick={handleMarkerClick}
         duration={duration}
+        size={donutSize}
+        markerLabel={donutSize < 40 ? '' : undefined}
       />
     );
   });

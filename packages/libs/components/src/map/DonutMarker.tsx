@@ -20,6 +20,8 @@ export interface DonutMarkerProps extends BoundsDriftMarkerProps {
   onClick?: (event: L.LeafletMouseEvent) => void | undefined;
   /** center title/number for marker (defaults to sum of data[].value) */
   markerLabel?: string;
+  /** size of donut (default = 40) */
+  size?: number;
 }
 
 // DKDK convert to Cartesian coord. toCartesian(centerX, centerY, Radius for arc to draw, arc (radian))
@@ -115,7 +117,7 @@ export default function DonutMarker(props: DonutMarkerProps) {
   }
 
   //DKDK construct histogram marker icon
-  const size = 40; //DKDK SVG donut marker icon size: note that popbio/mapveu donut marker icons = 40
+  const size = props.size ?? 40;
   let svgHTML: string = ''; //DKDK divIcon HTML contents
 
   //DKDK set drawing area

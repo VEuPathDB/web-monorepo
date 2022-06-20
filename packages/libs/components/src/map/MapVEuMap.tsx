@@ -153,6 +153,13 @@ export interface MapVEuMapProps {
   baseLayer?: BaseLayerChoice;
   /** Callback for when the base layer has changed */
   onBaseLayerChanged?: (newBaseLayer: BaseLayerChoice) => void;
+  /** Show layers control, default true */
+  showLayerSelector?: boolean;
+  /** Show attribution, default true */
+  showAttribution?: boolean;
+  /** Show zoom control, default true */
+  showZoomControl?: boolean;
+
   /** Whether to zoom and pan map to center on markers */
   flyToMarkers?: boolean;
   /** How long (in ms) after rendering to wait before flying to markers */
@@ -186,6 +193,9 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     showSpinner,
     showNoDataOverlay,
     showScale = true,
+    showLayerSelector = true,
+    showAttribution = true,
+    showZoomControl = true,
   } = props;
 
   // this is the React Map component's onViewPortChanged handler
@@ -327,6 +337,8 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
         onBaseLayerChanged && onBaseLayerChanged(event.name as BaseLayerChoice)
       }
       ref={mapRef}
+      attributionControl={showAttribution}
+      zoomControl={showZoomControl}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -348,18 +360,19 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
         <CustomGridLayer zoomLevelToGeohashLevel={zoomLevelToGeohashLevel} />
       ) : null}
 
-      <LayersControl position="topright">
-        {Object.entries(baseLayers).map(([name, layerProps], i) => (
-          <BaseLayer
-            name={name}
-            key={name}
-            checked={baseLayer ? name === baseLayer : i === 0}
-          >
-            <TileLayer {...layerProps} />
-          </BaseLayer>
-        ))}
-      </LayersControl>
-
+      {showLayerSelector && (
+        <LayersControl position="topright">
+          {Object.entries(baseLayers).map(([name, layerProps], i) => (
+            <BaseLayer
+              name={name}
+              key={name}
+              checked={baseLayer ? name === baseLayer : i === 0}
+            >
+              <TileLayer {...layerProps} />
+            </BaseLayer>
+          ))}
+        </LayersControl>
+      )}
       {showSpinner && <Spinner />}
       {showNoDataOverlay && <NoDataOverlay opacity={0.9} />}
       {/* add Scale in the map: currently set to show from zoom = 5 */}
