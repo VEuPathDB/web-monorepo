@@ -18,6 +18,8 @@ export interface DonutMarkerProps extends BoundsDriftMarkerProps {
   }[];
   isAtomic?: boolean; // add a special thumbtack icon if this is true
   onClick?: (event: L.LeafletMouseEvent) => void | undefined;
+  /** center title/number for marker (defaults to sum of data[].value) */
+  markerLabel?: string;
 }
 
 // DKDK convert to Cartesian coord. toCartesian(centerX, centerY, Radius for arc to draw, arc (radian))
@@ -88,14 +90,6 @@ function makeArc(
   return dValue;
 }
 
-// making k over 9999, e.g., 223832 -> 234k
-function kFormatter(num: number) {
-  //DKDK fixed type error regarding toFixed() that returns string
-  return Math.abs(num) > 9999
-    ? (Math.sign(num) * (Math.abs(num) / 1000)).toFixed(0) + 'k'
-    : Math.sign(num) * Math.abs(num);
-}
-
 /**
  * DKDK this is a SVG donut marker icon
  */
@@ -127,14 +121,15 @@ export default function DonutMarker(props: DonutMarkerProps) {
   //DKDK set drawing area
   svgHTML += '<svg width="' + size + '" height="' + size + '">'; //DKDK initiate svg marker icon
 
-  //DKDK summation of fullStat.value per marker icon
-  let sumValues: number = fullStat.slices
+  // summation of fullStat.value per marker icon
+  const sumValues: number = fullStat.slices
     .map((o) => o.value)
     .reduce((a, c) => {
       return a + c;
     });
-  //DKDK convert large value with k (e.g., 12345 -> 12k): return original value if less than a criterion
-  let sumLabel: number | string = kFormatter(sumValues);
+
+  // for display, convert large value with k (e.g., 12345 -> 12k): return original value if less than a criterion
+  const sumLabel = props.markerLabel ?? String(sumValues);
 
   //DKDK draw white circle
   svgHTML +=
@@ -209,7 +204,7 @@ export default function DonutMarker(props: DonutMarkerProps) {
       data={fullStat}
       donutOptions={{
         size: 0.5,
-        text: sumLabel as string,
+        text: String(sumLabel),
         fontSize: 18,
       }}
       containerStyles={{

@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState, cloneElement } from 'react';
+import { ReactElement, useEffect, useState, cloneElement } from 'react';
 import {
   MarkerProps,
   BoundsViewport,
@@ -62,14 +62,18 @@ export default function SemanticMarkers({
       }
     }
 
-    updateBounds();
-
     // debounce needed to avoid cyclic in/out zooming behaviour
     const debouncedUpdateBounds = debounce(updateBounds, 1000);
+    // call it at least once at the beginning of the life cycle
+    debouncedUpdateBounds();
+
+    // attach to leaflet events handler
     map.on('resize dragend zoomend', debouncedUpdateBounds); // resize is there hopefully when we have full screen mode
 
     return () => {
+      // detach from leaflet events handler
       map.off('resize dragend zoomend', debouncedUpdateBounds);
+      debouncedUpdateBounds.cancel();
     };
   }, [map, onBoundsChanged]);
 
