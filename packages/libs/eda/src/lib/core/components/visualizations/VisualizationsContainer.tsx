@@ -59,7 +59,7 @@ interface Props {
   filteredCounts: PromiseHookState<EntityCounts>;
   geoConfigs: GeoConfig[];
   baseUrl?: string;
-  showHeading: boolean;
+  isSingleAppMode: boolean;
 }
 
 /**
@@ -132,17 +132,18 @@ export function VisualizationsContainer(props: Props) {
 
 function ConfiguredVisualizations(props: Props) {
   const {
+    analysisState,
     computation,
     updateVisualizations,
     visualizationsOverview,
     baseUrl,
-    showHeading,
+    isSingleAppMode,
   } = props;
   const { url } = useRouteMatch();
 
   return (
     <>
-      {!showHeading ? (
+      {isSingleAppMode ? (
         <Link
           to={{
             pathname: `${baseUrl || url}/new`,
@@ -180,13 +181,26 @@ function ConfiguredVisualizations(props: Props) {
                         <button
                           type="button"
                           className="link"
-                          onClick={() =>
+                          onClick={() => {
                             updateVisualizations((visualizations) =>
                               visualizations.filter(
                                 (v) => v.visualizationId !== viz.visualizationId
                               )
-                            )
-                          }
+                            );
+                            /* 
+                              Here we're deleting the computation in the event we delete
+                              the computation's last remaining visualization.
+                            */
+                            if (
+                              !isSingleAppMode &&
+                              computation.visualizations.length === 1
+                            ) {
+                              deleteComputationWithNoVisualizations(
+                                analysisState,
+                                computation.computationId
+                              );
+                            }
+                          }}
                         >
                           <i className="fa fa-trash"></i>
                         </button>
@@ -300,6 +314,9 @@ function NewVisualizationPicker(props: Props) {
               <Tooltip title={<>{vizOverview.description}</>}>
                 <span>
                   <button
+                    style={{
+                      cursor: disabled ? 'not-allowed' : 'cursor',
+                    }}
                     type="button"
                     disabled={disabled}
                     onClick={async () => {
@@ -360,6 +377,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
     filteredCounts,
     geoConfigs,
     baseUrl,
+    isSingleAppMode,
   } = props;
   const history = useHistory();
   const viz = computation.visualizations.find((v) => v.visualizationId === id);
@@ -441,7 +459,25 @@ function FullScreenVisualization(props: Props & { id: string }) {
                 updateVisualizations((visualizations) =>
                   visualizations.filter((v) => v.visualizationId !== id)
                 );
-                history.replace(Path.resolve(history.location.pathname, '..'));
+                /* 
+                  Here we're deleting the computation in the event we delete
+                  the computation's last remaining visualization.
+                */
+                if (
+                  !isSingleAppMode &&
+                  computation.visualizations.length === 1
+                ) {
+                  deleteComputationWithNoVisualizations(
+                    analysisState,
+                    computationId
+                  );
+                }
+                history.replace(
+                  Path.resolve(
+                    history.location.pathname,
+                    isSingleAppMode ? '..' : '../..'
+                  )
+                );
               }}
             >
               <i className="fa fa-trash"></i>
@@ -568,4 +604,16 @@ function ConfiguredVisualizationGrayOut({
   ) : (
     <></>
   );
+}
+
+function deleteComputationWithNoVisualizations(
+  analysisState: AnalysisState,
+  computationId: string
+) {
+  const computations = analysisState.analysis?.descriptor.computations;
+  if (computations) {
+    analysisState.setComputations([
+      ...computations.filter((c) => c.computationId !== computationId),
+    ]);
+  }
 }
