@@ -218,8 +218,8 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       // Set the ref's toImage function that will be called in web-eda
       toImage: async (imageOpts: ToImgopts) => {
         try {
-          // Wait to allow map to finish rendering
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+          // There was a 1000ms sleep/timeout here, but it is better
+          // to let the client caller handle this (and cancel that timeout if needed)
 
           // Check that map leaflet element still exists
           if (mapRef.current) {
