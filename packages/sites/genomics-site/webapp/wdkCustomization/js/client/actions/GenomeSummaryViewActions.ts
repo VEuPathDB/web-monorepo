@@ -1,9 +1,10 @@
+import { GenomeSummaryViewReport } from '../types/summaryViewTypes';
+
 import {
   makeActionCreator,
   InferAction
 } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
 import { RecordClass } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { GenomeSummaryViewReport } from '../types/summaryViewTypes';
 import { ResultType } from '@veupathdb/wdk-client/lib/Utils/WdkResult';
 
 export const requestGenomeSummaryReport = makeActionCreator(
