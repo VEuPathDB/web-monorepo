@@ -22,6 +22,7 @@
     align-items: center;
     white-space: nowrap;
     width: 25%;
+    margin-right: 1.25rem;
     
     span {
       margin-right: 1em;
@@ -31,8 +32,6 @@
   .wdk-InternalGeneDatasetFormLegend {
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
-
     background-color: #f6f6f6;
     padding: 0.5rem;
 

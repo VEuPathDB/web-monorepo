@@ -192,7 +192,7 @@ function InternalGeneDatasetContent(props: Props) {
                   explanation="Your current preferences exclude all organisms used in this page's searches."
                 /> as any
               }
-              showCount={false}
+              showCount={true}
               rows={
                 showingOneRecord || preferredOrganismsEnabled
                   ? filteredDatasetRecords
@@ -310,34 +310,36 @@ function InternalGeneDatasetContent(props: Props) {
               fixedTableHeader
             >
               <div className={cx('Legend')}>
-                <span>
+                <span style={{fontWeight: 'bold', fontSize: '13px'}}>
                   Legend:
-              </span>
-                {
-                  displayCategoryOrder.map(
-                    categoryName =>
-                      <Tooltip
-                        key={categoryName}
-                        content={
-                          <div>
-                            <h4>
+                </span>
+                <div style={{display: 'flex', flexWrap: 'wrap', rowGap: '0.25rem'}}>
+                  {
+                    displayCategoryOrder.map(
+                      categoryName =>
+                        <Tooltip
+                          key={categoryName}
+                          content={
+                            <div>
+                              <h4>
+                                {displayCategoriesByName[categoryName].displayName}
+                              </h4>
+                              {displayCategoriesByName[categoryName].description}
+                            </div>
+                          }
+                        >
+                          <span key={categoryName}>
+                            <span className="bttn bttn-cyan bttn-legend">
+                              {displayCategoriesByName[categoryName].shortDisplayName}
+                            </span>
+                            <span>
                               {displayCategoriesByName[categoryName].displayName}
-                            </h4>
-                            {displayCategoriesByName[categoryName].description}
-                          </div>
-                        }
-                      >
-                        <span key={categoryName}>
-                          <span className="bttn bttn-cyan bttn-legend">
-                            {displayCategoriesByName[categoryName].shortDisplayName}
+                            </span>
                           </span>
-                          <span>
-                            {displayCategoriesByName[categoryName].displayName}
-                          </span>
-                        </span>
-                      </Tooltip>
-                  )
-                }
+                        </Tooltip>
+                    )
+                  }
+                </div>
               </div>
             </InternalGeneDatasetTable>
             {
