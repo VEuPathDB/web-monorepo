@@ -20,6 +20,9 @@ import MapVEuLegendSampleList, {
 // anim
 import geohashAnimation from '../map/animation_functions/geohash';
 
+import LabelledGroup from '../components/widgets/LabelledGroup';
+import Switch from '../components/widgets/Switch';
+
 export default {
   title: 'Map/Chart Markers',
   component: MapVEuMap,
@@ -206,6 +209,85 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
 TwoRequests.args = {
   height: '100vh',
   width: '100vw',
+  showGrid: true,
+  showMouseToolbar: false, // not yet implemented
+};
+
+// dependent axis log scale story
+export const LogScale: Story<MapVEuMapProps> = (args) => {
+  const [markerElements, setMarkerElements] = useState<
+    ReactElement<BoundsDriftMarkerProps>[]
+  >([]);
+  const [legendData, setLegendData] = useState<LegendProps['data']>([]);
+  const [legendRadioValue, setLegendRadioValue] = useState<string>(
+    'Individual'
+  );
+  const [viewport] = useState<Viewport>({ center: [13, 0], zoom: 6 });
+
+  const legendRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLegendRadioValue(e.target.value);
+  };
+  const [dependentAxisRange, setDependentAxisRange] = useState<number[]>([
+    0,
+    0,
+  ]);
+
+  const legendType = 'numeric';
+
+  const duration = defaultAnimationDuration;
+
+  const [dependentAxisLogScale, setDependentAxisLogScale] = useState(false);
+
+  // send legendRadioValue instead of knob_YAxisRangeMethod: also send setYAxisRangeValue
+  const handleViewportChanged = useCallback(
+    async (bvp: BoundsViewport) => {
+      // anim add duration & scrambleKeys
+      const markers = await getCollectionDateChartMarkers(
+        bvp,
+        duration,
+        setLegendData,
+        handleMarkerClick,
+        legendRadioValue,
+        setDependentAxisRange,
+        0,
+        dependentAxisLogScale
+      );
+      setMarkerElements(markers);
+    },
+    [setMarkerElements, legendRadioValue, dependentAxisLogScale]
+  );
+
+  return (
+    <>
+      <MapVEuMap
+        {...args}
+        viewport={viewport}
+        onBoundsChanged={handleViewportChanged}
+        markers={markerElements}
+        showGrid={true}
+        showMouseToolbar={true}
+        animation={defaultAnimation}
+        zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+      />
+      {/* Y-axis range control */}
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <LabelledGroup label="Y-axis controls">
+          <div style={{ display: 'flex' }}>
+            <Switch
+              label="Log Scale:"
+              state={dependentAxisLogScale}
+              onStateChange={setDependentAxisLogScale}
+            />
+          </div>
+        </LabelledGroup>
+      </div>
+    </>
+  );
+};
+
+LogScale.args = {
+  height: '50vh',
+  width: '50vw',
   showGrid: true,
   showMouseToolbar: false, // not yet implemented
 };
