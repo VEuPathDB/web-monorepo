@@ -196,6 +196,7 @@ function BarplotViz(props: VisualizationProps) {
         // set undefined for variable change
         checkedLegendItems: undefined,
         dependentAxisRange: undefined,
+        dependentAxisLogScale: false,
       });
       // close truncation warnings
       setTruncatedDependentAxisWarning('');

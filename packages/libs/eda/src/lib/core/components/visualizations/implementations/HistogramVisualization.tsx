@@ -233,6 +233,7 @@ function HistogramViz(props: VisualizationProps) {
         // set independentAxisRange undefined
         independentAxisRange: undefined,
         dependentAxisRange: undefined,
+        dependentAxisLogScale: false,
       });
       // close truncation warnings if exists
       setTruncatedIndependentAxisWarning('');

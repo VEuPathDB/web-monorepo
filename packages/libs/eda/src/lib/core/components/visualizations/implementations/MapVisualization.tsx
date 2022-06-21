@@ -66,6 +66,9 @@ import { NumberVariable } from '../../../types/study';
 import { BinSpec, NumberRange } from '../../../types/general';
 import { useDefaultIndependentAxisRange } from '../../../hooks/computeDefaultIndependentAxisRange';
 
+import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
+import Switch from '@veupathdb/components/lib/components/widgets/Switch';
+
 const numContinuousBins = 8;
 
 export const mapVisualization: VisualizationType = {
@@ -93,6 +96,7 @@ function createDefaultConfig(): MapConfig {
       zoomLevel: 2,
     },
     baseLayer: 'Street',
+    dependentAxisLogScale: false,
   };
 }
 
@@ -127,6 +131,7 @@ const MapConfig = t.intersection([
       proportion: null,
       pie: null,
     }),
+    dependentAxisLogScale: t.boolean,
   }),
 ]);
 
@@ -198,13 +203,17 @@ function MapViz(props: VisualizationProps) {
   const onChangeHandlerFactory = useCallback(
     < ValueType,>(key: keyof MapConfig) => (newValue?: ValueType) => {
       updateVizConfig({
-	[key] : newValue
+	      [key] : newValue,
       });
     },
     [updateVizConfig]
   );
 
   const onMarkerTypeChange = onChangeHandlerFactory('markerType');
+
+  const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
+    'dependentAxisLogScale'
+  );
 
   const [boundsZoomLevel, setBoundsZoomLevel] = useState<BoundsViewport>();
 
@@ -619,10 +628,13 @@ function MapViz(props: VisualizationProps) {
             markerLabel={formattedCount}
             {...(vizConfig.markerType !== 'pie'
               ? {
-                  dependentAxisRange: yRange,
+                  dependentAxisRange: !vizConfig.dependentAxisLogScale
+                    ? yRange
+                    : undefined,
                   independentAxisLabel: `${formattedCount} ${
                     outputEntity?.displayNamePlural ?? outputEntity?.displayName
                   }`,
+                  dependentAxisLogScale: vizConfig.dependentAxisLogScale,
                 }
               : {})}
           />
@@ -637,6 +649,8 @@ function MapViz(props: VisualizationProps) {
     vizConfig.markerType,
     xAxisVariable,
     outputEntity,
+    // add vizConfig.dependentAxisLogScale to reflect its state change
+    vizConfig.dependentAxisLogScale,
   ]);
 
   const totalEntityCount = basicMarkerData.value?.completeCasesGeoVar;
@@ -704,6 +718,23 @@ function MapViz(props: VisualizationProps) {
         margins={['1em', '0', '1em', '1.5em']}
         itemMarginRight={40}
       />
+      {/* Y-axis range control */}
+      <div
+        style={{ display: 'flex', flexDirection: 'row', marginLeft: '0.5em' }}
+      >
+        <LabelledGroup label="Y-axis controls">
+          <div style={{ display: 'flex' }}>
+            <Switch
+              label="Log Scale:"
+              state={vizConfig.dependentAxisLogScale}
+              onStateChange={onDependentAxisLogScaleChange}
+              disabled={
+                vizConfig.markerType == null || vizConfig.markerType === 'pie'
+              }
+            />
+          </div>
+        </LabelledGroup>
+      </div>
     </>
   );
 
@@ -720,7 +751,11 @@ function MapViz(props: VisualizationProps) {
 
   const handleInputVariableChange = useCallback(
     ({ xAxisVariable }: VariablesByInputName) => {
-      updateVizConfig({ xAxisVariable, checkedLegendItems: undefined });
+      updateVizConfig({
+        xAxisVariable,
+        checkedLegendItems: undefined,
+        dependentAxisLogScale: false,
+      });
     },
     [updateVizConfig]
   );
