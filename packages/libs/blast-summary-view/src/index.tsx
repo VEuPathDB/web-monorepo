@@ -8,7 +8,7 @@ import Home from './Home';
 import { endpoint, rootElement, rootUrl } from './constants';
 import reportWebVitals from './reportWebVitals';
 
-import * as blastSummaryViewStoreModule from './StoreModules/BlastSummaryViewStoreModule';
+import * as blastSummaryViewStoreModule from './lib/StoreModules/BlastSummaryViewStoreModule';
 
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
