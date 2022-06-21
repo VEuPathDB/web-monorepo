@@ -2108,6 +2108,13 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/base-webpack-config/-/base-webpack-config-0.1.0.tgz#9cd17a190ebb05c0a0aad6a397eddd5701f58065"
   integrity sha512-XzVjv0czRbV99UwaeJp/CC4tlUjiyYZGL0QDxBfSWQL6Ad54Jp3lFKjgXfWlmjZzCfQwyjS7hmnd6e8KL0Z/Mg==
 
+"@veupathdb/blast-summary-view@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/blast-summary-view/-/blast-summary-view-0.1.0.tgz#f9306f18968140a87b2c602a7d7eb9b95ad98ef6"
+  integrity sha512-Ea8lwoTxGK8osCoalecHGPKWxlqlDRH6TVkrX7FesJn1Dio/CCbM1BBDFTjx5e7OO9TC0SutuVfhmX4CL3DxTQ==
+  dependencies:
+    lodash "^4.17.5"
+
 "@veupathdb/browserslist-config@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.1.0.tgz#5c7eecc048a91195404411d8729393197af0128c"
