@@ -2944,10 +2944,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.1.0.tgz#5c7eecc048a91195404411d8729393197af0128c"
   integrity sha512-TQ58MbCy7UZN/h11HZ31CSJfywG17oDNHQzQJysj65Fvv2gAM1w7CjwCvV0bG3sRESKUDORSA7sJrVVv27GHBw==
 
-"@veupathdb/components@^0.15.0":
-  version "0.15.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.15.3.tgz#590a2911d4fb2b883332e40fa16997f261fb74a1"
-  integrity sha512-rtK/z0sxQw/qP5d6Jjj/gDnFrc2liLzXUwQHMo8/LYo0USSneCxH7ndTpRkeclRX5Cv/cx2INBD94sdlyYSQdw==
+"@veupathdb/components@^0.16.6":
+  version "0.16.6"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.16.6.tgz#b60f08c7479f40a2e283697849ea1604f375cb02"
+  integrity sha512-FZoOFO74KkT0nHkr42KgFMlQ4bjMTGXGBWBGUtjMRswsY5i8cfasVGtsY6mVfY3EV0RXbI956QRTi/aR6tjsCg==
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
@@ -3048,10 +3048,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/tsconfig/-/tsconfig-2.0.0.tgz#bfbf9cd60a5e284d14728412a625d3df2f55a91e"
   integrity sha512-NiGLeoxOZQEIUsgyQ5Lxj0r7C+rfad6mF394wBL95r9BzpLjFEoEfVhLf6Owv2ybPrK+AaUjG4QN5QD0/55MPw==
 
-"@veupathdb/wdk-client@^0.6.7":
-  version "0.6.9"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.6.9.tgz#cf9ef0cf6d3a0f11933d8cb1a3e10dece226ced5"
-  integrity sha512-VTdKMiEieO1z/ZoFm+TzafjUj63TngCsVbKKPAP7Vww6Q+utzvyYu4ULlWZ/dDzGfI9V7F+rY7PD7Ru6i5I6QA==
+"@veupathdb/wdk-client@^0.8.2":
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.8.2.tgz#3c5231467bf49b07db492f905ed8a058abddcc98"
+  integrity sha512-06DF4SawIJDyoWJDCJM3+wPohbFHjs6Ceez7mFIEX4NNbpKSB81ho+571XvGDy394ZxFzWnSYpcBObTwnjJh7g==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
@@ -3073,10 +3073,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.5.0":
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.5.2.tgz#852c3c6345cc7b5e4d95901c3af2f6240f6edcf7"
-  integrity sha512-MgVuCEaWoPNSnXCVQyRghgIkRXN9GMtToS6jVvL71gdhSsm9PfbGI3QcGiDfKH6ODX5mWOdloC24k7uUMkj0qQ==
+"@veupathdb/web-common@^0.6.11":
+  version "0.6.11"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.6.11.tgz#e69ebc4d76e1ab095e9688c8f1ba28f33eca6d1f"
+  integrity sha512-zB1vcOMFTcGIXZJpcl2KRDyy/F+JAxDxfcWpj6S4NsktEby+8s4nAeCGniTWqyy+5soyJD8awoYQqOFHe+4R0g==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
@@ -4571,7 +4571,7 @@ cliui@^7.0.2:
     strip-ansi "^6.0.0"
     wrap-ansi "^7.0.0"
 
-clsx@^1.0.4, clsx@^1.1.1:
+clsx@^1.0.4, clsx@^1.1.0, clsx@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.1.1.tgz#98b3134f9abbdf23b2663491ace13c5c03a73188"
   integrity sha512-6/bPho624p3S2pMyvP5kKBPXnI3ufHLObBFCfgx+LkeR5lg2XYy2hqZqUf45ypD8COn2bhgGJSUE+l5dhNBieA==
@@ -9501,6 +9501,14 @@ normalize-url@^6.0.1:
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/normalize-url/-/normalize-url-6.1.0.tgz#40d0885b535deffe3f3147bec877d05fe4c5668a"
   integrity sha512-DlL+XwOy3NxAQ8xuC0okPgK46iuVNAK01YN7RueYBqqFeGsBjV9XmCAzAdgt+667bCl5kPh9EqKKDwnaPG1I7A==
+
+notistack@^1.0.10:
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/notistack/-/notistack-1.0.10.tgz#8db90830034383467a04184f1fa8ff77f4fc58a5"
+  integrity sha512-z0y4jJaVtOoH3kc3GtNUlhNTY+5LE04QDeLVujX3VPhhzg67zw055mZjrBF+nzpv3V9aiPNph1EgRU4+t8kQTQ==
+  dependencies:
+    clsx "^1.1.0"
+    hoist-non-react-statics "^3.3.0"
 
 npm-normalize-package-bin@^1.0.0:
   version "1.0.1"
