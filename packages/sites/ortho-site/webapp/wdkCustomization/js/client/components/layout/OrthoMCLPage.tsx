@@ -4,6 +4,7 @@ import { useLocation } from 'react-router';
 
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { Props } from '@veupathdb/wdk-client/lib/Components/Layout/Page';
+import { ReduxNotificationHandler } from '@veupathdb/wdk-client/lib/Components/Notifications';
 import { ErrorBoundary } from '@veupathdb/wdk-client/lib/Controllers';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -18,6 +19,8 @@ import { useAnnouncementsState } from '@veupathdb/web-common/lib/hooks/announcem
 import { STATIC_ROUTE_PATH } from '@veupathdb/web-common/lib/routes';
 import { useCommunitySiteRootUrl } from '@veupathdb/web-common/lib/hooks/staticData';
 import { formatReleaseDate } from '@veupathdb/web-common/lib/util/formatters';
+
+import makeSnackbarProvider, { SnackbarStyleProps } from '@veupathdb/coreui/dist/components/notifications/SnackbarProvider';
 
 import {
   useSearchTree,
@@ -63,36 +66,65 @@ export const OrthoMCLPage: FunctionComponent<Props> = props => {
     </>
   );
 
+  const snackbarStyleProps = useMemo(
+    () => ({ isHeaderExpanded }),
+    [isHeaderExpanded]
+  );
+
   return (
-    <div className={cx('RootContainer', props.classNameModifier)}>
-      <ErrorBoundary>
-        <Header
-          menuItems={menuItems}
-          containerClassName={cx('Header', isHeaderExpanded ? 'expanded' : 'collapsed')}
-          onShowAnnouncements={onShowAnnouncements}
-          showAnnouncementsToggle={showAnnouncementsToggle}
-          branding={branding}
-        />
-      </ErrorBoundary>
-      <div className={cx('Announcements')}>
-        <Announcements
-          closedBanners={closedBanners}
-          setClosedBanners={setClosedBanners}
-        />
-      </div>
-      <Main containerClassName={cx('Main')}>
-        {props.children}
-      </Main>
-      <ErrorBoundary>
-        <Footer containerClassName={cx('Footer')}>
-        </Footer>
-      </ErrorBoundary>
-      <ErrorBoundary>
-        <CookieBanner/>
-      </ErrorBoundary>
-    </div>
+    <OrthoMCLSnackbarProvider styleProps={snackbarStyleProps}>
+      <ReduxNotificationHandler>
+        <div className={cx('RootContainer', props.classNameModifier)}>
+          <ErrorBoundary>
+            <Header
+              menuItems={menuItems}
+              containerClassName={cx('Header', isHeaderExpanded ? 'expanded' : 'collapsed')}
+              onShowAnnouncements={onShowAnnouncements}
+              showAnnouncementsToggle={showAnnouncementsToggle}
+              branding={branding}
+            />
+          </ErrorBoundary>
+          <div className={cx('Announcements')}>
+            <Announcements
+              closedBanners={closedBanners}
+              setClosedBanners={setClosedBanners}
+            />
+          </div>
+          <Main containerClassName={cx('Main')}>
+            {props.children}
+          </Main>
+          <ErrorBoundary>
+            <Footer containerClassName={cx('Footer')}>
+            </Footer>
+          </ErrorBoundary>
+          <ErrorBoundary>
+            <CookieBanner/>
+          </ErrorBoundary>
+        </div>
+      </ReduxNotificationHandler>
+    </OrthoMCLSnackbarProvider>
   );
 }
+
+function translateNotificationsOnTop({ isHeaderExpanded }: SnackbarStyleProps<{ isHeaderExpanded: boolean }>) {
+  return {
+    transform: isHeaderExpanded
+      ? 'translateY(112px)'
+      : 'translateY(47px)'
+  };
+}
+
+const OrthoMCLSnackbarProvider = makeSnackbarProvider(
+  {
+    containerRoot: {
+      zIndex: 99
+    },
+    anchorOriginTopLeft: translateNotificationsOnTop,
+    anchorOriginTopCenter: translateNotificationsOnTop,
+    anchorOriginTopRight: translateNotificationsOnTop,
+  },
+  'OrthoMCLSnackbarProvider',
+);
 
 function useIsHomePage() {
   const location = useLocation();
