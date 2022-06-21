@@ -8,7 +8,7 @@ import {
 import { ClientPluginRegistryEntry } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
 import { StepAnalysisEupathExternalResult } from '@veupathdb/web-common/lib/plugins/StepAnalysisEupathExternalResult';
 import { default as GenomeSummaryViewPlugin } from './controllers/GenomeSummaryViewController'
-import { default as BlastSummaryViewPlugin } from './controllers/BlastSummaryViewController'
+import { default as BlastSummaryViewPlugin } from '@veupathdb/blast-summary-view/lib/Controllers/BlastSummaryViewController';
 
 import { ByGenotypeNumberCheckbox } from './components/questions/ByGenotypeNumberCheckbox';
 

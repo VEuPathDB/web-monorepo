@@ -8,7 +8,7 @@ import * as globalData from './storeModules/GlobalData';
 import * as record from './storeModules/Record';
 import * as userCommentForm from './storeModules/UserCommentFormStoreModule';
 import * as userCommentShow from './storeModules/UserCommentShowStoreModule';
-import * as blastSummaryView from './storeModules/BlastSummaryViewStoreModule';
+import * as blastSummaryView from '@veupathdb/blast-summary-view/lib/StoreModules/BlastSummaryViewStoreModule';
 import * as genomeSummaryView from './storeModules/GenomeSummaryViewStoreModule';
 
 
