@@ -2,8 +2,9 @@ import {
   makeActionCreator,
   InferAction,
 } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
-import { BlastSummaryViewReport } from '../Utils/types';
 import { ResultType } from '@veupathdb/wdk-client/lib/Utils/WdkResult';
+
+import { BlastSummaryViewReport } from '../Utils/types';
 
 export const requestBlastSummaryReport = makeActionCreator(
   'blastSummaryView/requestBlastSummaryReport',
