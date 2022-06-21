@@ -1,8 +1,13 @@
 import './globals';
-import React from 'react';
+
 import { RouteComponentProps } from 'react-router';
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
+import { ClientPluginRegistryEntry } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
+
+import BlastSummaryViewPlugin from './lib/Controllers/BlastSummaryViewController';
+import * as blastSummaryViewStoreModule from './lib/StoreModules/BlastSummaryViewStoreModule';
+
 import Header from './Header';
 import Home from './Home';
 import { endpoint, rootElement, rootUrl } from './constants';
@@ -21,9 +26,20 @@ initialize({
     },
     ...routes,
   ],
+  wrapStoreModules: (storeModules: any) => ({
+    ...storeModules,
+    [blastSummaryViewStoreModule.key]: blastSummaryViewStoreModule,
+  }),
   componentWrappers: {
     SiteHeader: () => Header,
   },
+  pluginConfig: [
+    {
+      type: 'summaryView',
+      name: 'blast-view',
+      component: BlastSummaryViewPlugin,
+    },
+  ] as ClientPluginRegistryEntry<any>[],
   endpoint,
 } as any);
 
