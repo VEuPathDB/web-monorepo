@@ -1,13 +1,20 @@
-import { partial } from 'lodash';
 import * as React from 'react';
+
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
 
-import ViewController from '@veupathdb/wdk-client/lib/Core/Controllers/ViewController';
-import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { get, partial } from 'lodash';
+import { createSelector } from 'reselect';
+import { identity } from 'rxjs';
+
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
 import LoadError from '@veupathdb/wdk-client/lib/Components/PageStatus/LoadError';
-import { RootState, GenomeSummaryViewReport } from '../types/summaryViewTypes';
+import ViewController from '@veupathdb/wdk-client/lib/Core/Controllers/ViewController';
+import { Partial1 } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
+import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { ResultType } from '@veupathdb/wdk-client/lib/Utils/WdkResult';
+
 import {
   requestGenomeSummaryReport,
   showRegionDialog,
@@ -15,14 +22,12 @@ import {
   applyEmptyChromosomesFilter,
   unapplyEmptyChromosomesFilter
 } from '../actions/GenomeSummaryViewActions';
+
 import { GenomeSummaryView } from '../components/genomeSummaryView/GenomeSummaryView';
-import { get } from 'lodash';
-import { createSelector } from 'reselect';
+
+import { RootState, GenomeSummaryViewReport } from '../types/summaryViewTypes';
+
 import { GenomeSummaryViewReportModel, toReportModel } from '../util/GenomeSummaryViewUtils';
-import { identity } from 'rxjs';
-import { Partial1 } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
-import { ResultType } from '@veupathdb/wdk-client/lib/Utils/WdkResult';
-import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
 
 type StateProps = 
   | { status: 'loading' }
@@ -146,4 +151,3 @@ export default connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
   mapDispatchToProps,
   (state, actionCreators, ownProps) => ({ state, actionCreators, ownProps })
 ) (wrappable(GenomeSummaryViewController));
-
