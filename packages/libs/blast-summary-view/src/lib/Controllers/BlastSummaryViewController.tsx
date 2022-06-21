@@ -1,10 +1,8 @@
-import React from 'react';
 import { connect } from 'react-redux';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import {
   safeHtml,
-  wrappable,
   renderAttributeValue,
 } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import ViewController from '@veupathdb/wdk-client/lib/Core/Controllers/ViewController';
@@ -83,4 +81,4 @@ const mapStateToProps = (state: StateSlice, props: OwnProps) =>
 export default connect<StateProps, DispatchProps, OwnProps, StateSlice>(
   mapStateToProps,
   actionCreators
-)(wrappable(BlastSummaryViewController));
+)(BlastSummaryViewController);
