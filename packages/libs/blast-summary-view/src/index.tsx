@@ -8,6 +8,8 @@ import Home from './Home';
 import { endpoint, rootElement, rootUrl } from './constants';
 import reportWebVitals from './reportWebVitals';
 
+import * as blastSummaryViewStoreModule from './StoreModules/BlastSummaryViewStoreModule';
+
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
 
@@ -21,6 +23,10 @@ initialize({
     },
     ...routes,
   ],
+  wrapStoreModules: (storeModules: any) => ({
+    ...storeModules,
+    [blastSummaryViewStoreModule.key]: blastSummaryViewStoreModule,
+  }),
   componentWrappers: {
     SiteHeader: () => Header,
   },
