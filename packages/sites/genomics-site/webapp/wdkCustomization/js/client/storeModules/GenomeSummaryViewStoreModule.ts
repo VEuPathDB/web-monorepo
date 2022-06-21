@@ -29,7 +29,7 @@ import {
   unapplyEmptyChromosomesFilter,
   rejectGenomeSummaryReport
 } from '../actions/GenomeSummaryViewActions';
-import { GenomeSummaryViewReport } from '../types/summaryViewTypes';
+import { GenomeSummaryViewReport } from '../types/genomeSummaryViewTypes';
 
 export const key = 'genomeSummaryView';
 export type State = IndexedState<ViewState>;

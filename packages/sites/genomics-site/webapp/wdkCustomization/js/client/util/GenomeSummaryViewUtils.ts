@@ -1,10 +1,11 @@
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+
 import {
   GenomeViewSequence,
   GenomeSummaryViewReport,
   GenomeViewFeature,
   GenomeViewRegion
-} from '../types/summaryViewTypes';
+} from '../types/genomeSummaryViewTypes';
 
 export type GenomeSummaryViewReportModel =
   TruncatedGenomeSummaryViewReportModel | UntruncatedGenomeSummaryViewReportModel;

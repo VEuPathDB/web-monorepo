@@ -1,11 +1,3 @@
-import summaryViewStoreModules from '../storeModules/summaryViewStoreModules';
-
-type StoreModules = typeof summaryViewStoreModules;
-
-export type RootState = {
-  [K in keyof StoreModules]: ReturnType<StoreModules[K]['reduce']>
-}
-
 export interface GenomeSummaryViewReport {
   isTruncate?: boolean;
   isDetail: boolean;

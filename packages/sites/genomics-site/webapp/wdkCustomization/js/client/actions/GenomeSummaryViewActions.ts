@@ -1,4 +1,4 @@
-import { GenomeSummaryViewReport } from '../types/summaryViewTypes';
+import { GenomeSummaryViewReport } from '../types/genomeSummaryViewTypes';
 
 import {
   makeActionCreator,
