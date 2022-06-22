@@ -83,18 +83,18 @@ export default function TabbedDisplay({
   const [activeTabInternal, setActiveTabInternal] = useState(
     activeTab ?? tabs[0].displayName
   );
-
+  
   // Listen for changes to the `activeTab` prop. This allows the component
   // to be controlled programmatically.
   useEffect(() => {
-    if (activeTab && activeTab !== activeTabInternal) {
+    if (tabs && activeTab && activeTab !== activeTabInternal) {
       const matchingTabRecord = tabs.find(
         (tab) => tab.displayName === activeTab
       );
       matchingTabRecord && setActiveTabInternal(activeTab);
       matchingTabRecord?.onSelect && matchingTabRecord.onSelect();
     }
-  }, [activeTab]);
+  }, [tabs, activeTab]);
 
   const [hoveredTab, setHoveredTab] = useState<null | string>(null);
 
@@ -123,7 +123,11 @@ export default function TabbedDisplay({
   );
 
   const tabContent = useMemo(
-    () => tabs.find((tab) => tab.displayName === activeTabInternal)!.content,
+    () => {
+      if (tabs && activeTabInternal === activeTab) {
+        return tabs.find((tab) => tab.displayName === activeTabInternal)!.content
+      }
+    },
     [tabs, activeTabInternal]
   );
 
