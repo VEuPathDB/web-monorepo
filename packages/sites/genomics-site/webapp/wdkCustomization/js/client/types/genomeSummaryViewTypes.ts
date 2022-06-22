@@ -1,20 +1,3 @@
-import summaryViewStoreModules from '../storeModules/summaryViewStoreModules';
-import { Answer } from '@veupathdb/wdk-client/lib/Utils/WdkModel'
-
-type StoreModules = typeof summaryViewStoreModules;
-
-export type RootState = {
-  [K in keyof StoreModules]: ReturnType<StoreModules[K]['reduce']>
-}
-
-export interface BlastSummaryViewReport extends Answer {
-  blastMeta: {
-    blastHeader: string;
-    blastMiddle: string;
-    blastFooter: string;
-  }
-}
-
 export interface GenomeSummaryViewReport {
   isTruncate?: boolean;
   isDetail: boolean;

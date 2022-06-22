@@ -15,6 +15,7 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@types/cytoscape": "3.2.9",
+    "@veupathdb/blast-summary-view": "^0.1.0",
     "@veupathdb/components": "^0.16.6",
     "@veupathdb/coreui": "^0.16.4",
     "@veupathdb/eda": "^3.6.13",

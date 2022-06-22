@@ -1,7 +1,26 @@
 import { get } from 'lodash/fp';
 import { combineEpics, StateObservable } from 'redux-observable';
-import { Action } from '../actions/summaryViewActions';
+
+import { Action as WdkAction } from '@veupathdb/wdk-client/lib/Actions'
+import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
+import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
+import WdkService from '@veupathdb/wdk-client/lib/Service/WdkService';
 import {
+  InferAction,
+  mergeMapRequestActionsToEpic
+} from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
+import { makeCommonErrorMessage } from '@veupathdb/wdk-client/lib/Utils/Errors';
+import { indexByActionProperty, IndexedState } from '@veupathdb/wdk-client/lib/Utils/ReducerUtils';
+import { RecordClass } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+
+import {
+  getCustomReport,
+  getResultTypeDetails,
+  ResultType
+} from '@veupathdb/wdk-client/lib/Utils/WdkResult';
+
+import {
+  Action as GenomeSummaryViewAction,
   applyEmptyChromosomesFilter,
   fulfillGenomeSummaryReport,
   hideRegionDialog,
@@ -10,24 +29,11 @@ import {
   unapplyEmptyChromosomesFilter,
   rejectGenomeSummaryReport
 } from '../actions/GenomeSummaryViewActions';
-import { RootState, GenomeSummaryViewReport } from '../types/summaryViewTypes';
-import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
-import {
-  InferAction,
-  mergeMapRequestActionsToEpic
-} from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
-import { makeCommonErrorMessage } from '@veupathdb/wdk-client/lib/Utils/Errors';
-import { indexByActionProperty, IndexedState } from '@veupathdb/wdk-client/lib/Utils/ReducerUtils';
-import { RecordClass } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import WdkService from '@veupathdb/wdk-client/lib/Service/WdkService';
-import {
-  getCustomReport,
-  getResultTypeDetails,
-  ResultType
-} from '@veupathdb/wdk-client/lib/Utils/WdkResult';
+import { GenomeSummaryViewReport } from '../types/genomeSummaryViewTypes';
 
 export const key = 'genomeSummaryView';
 export type State = IndexedState<ViewState>;
+export type Action = WdkAction | GenomeSummaryViewAction;
 export const reduce = indexByActionProperty(reduceView, get(['payload', 'viewId']));
 
 type ViewState = {
