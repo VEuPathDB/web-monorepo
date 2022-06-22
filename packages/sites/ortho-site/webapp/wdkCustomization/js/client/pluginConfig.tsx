@@ -1,6 +1,13 @@
+import React, { Suspense } from 'react';
+
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { ClientPluginRegistryEntry } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
-import { BlastSummaryViewPlugin } from '@veupathdb/wdk-client/lib/Plugins';
+
 import { Form as GroupsByPhyleticPatternForm } from '../questions/GroupsByPhyleticPattern/Form';
+
+const BlastSummaryViewPlugin = React.lazy(
+  () => import('@veupathdb/blast-summary-view/lib/Controllers/BlastSummaryViewController')
+);
 
 const orthoPluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
@@ -11,7 +18,10 @@ const orthoPluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
     type: 'summaryView',
     name: 'blast-view',
-    component: BlastSummaryViewPlugin
+    component: (props) =>
+      <Suspense fallback={<Loading />}>
+        <BlastSummaryViewPlugin {...props} />
+      </Suspense>
   }
 ];
 
