@@ -57,6 +57,7 @@ export type TabbedDisplayProps = {
     displayName: string;
     content?: React.ReactNode;
   }>;
+  onClick: (tabDisplayName: string) => void;
   /**
    * Optional. If you want, you can use this prop to set the
    * initially selected tab OR control the currently selected
@@ -64,8 +65,6 @@ export type TabbedDisplayProps = {
    *
    * The value MUST be the displayName of one of the tabs. */
   activeTab?: string;
-  /** */
-  onClick?: (tabDisplayName: string) => void;
   /** Optional. Any desired style overrides. */
   styleOverrides?: Partial<TabbedDisplayStyleSpec>;
   /**
@@ -82,7 +81,8 @@ export default function TabbedDisplay({
   styleOverrides = {},
   themeRole,
 }: TabbedDisplayProps) {
-  const tabContent = tabs.find(tab => tab.displayName === activeTab)!.content
+  const internalActiveTab = activeTab ?? tabs[0].displayName;
+  const tabContent = tabs.find(tab => tab.displayName === internalActiveTab)!.content
   const [hoveredTab, setHoveredTab] = useState<null | string>(null);
 
   const theme = useUITheme();
@@ -118,7 +118,7 @@ export default function TabbedDisplay({
       >
         {tabs.map((tab) => {
           const tabState =
-            tab.displayName === activeTab
+            tab.displayName === internalActiveTab
               ? 'active'
               : tab.displayName === hoveredTab
               ? 'hover'
