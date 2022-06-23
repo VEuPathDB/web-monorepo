@@ -1,4 +1,4 @@
-import React, { Suspense, useMemo, useState, useEffect } from 'react';
+import React, { Suspense, useMemo, useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useHistory } from 'react-router';
 
@@ -171,6 +171,25 @@ function InternalGeneDatasetContent(props: Props) {
     }
     return tab;
   }, [questionNamesByDatasetAndCategory, selectedDataSetRecord, displayCategoriesByName, searchName]);
+
+  const changeTabHandler = useCallback(
+    (tabDisplayName: string) => {
+      if (
+        !questionNamesByDatasetAndCategory || 
+        !selectedDataSetRecord || 
+        !displayCategoriesByName ||
+        activeTab === tabDisplayName
+        ) return;
+      for (const category in displayCategoriesByName) {
+        if (displayCategoriesByName[category].displayName === tabDisplayName) {
+          const newCategorySearchName = questionNamesByDatasetAndCategory[selectedDataSetRecord['dataset_name']][category];
+          setSelectedSearch(newCategorySearchName);
+          if (submissionMetadata.type === 'create-strategy') {
+            history.push(location.pathname + '#' + newCategorySearchName)
+          }
+        }
+      }
+  }, [questionNamesByDatasetAndCategory, selectedDataSetRecord, displayCategoriesByName, activeTab])
 
   return (
     (
@@ -396,21 +415,9 @@ function InternalGeneDatasetContent(props: Props) {
                         categoryName
                       )
                     )
-                  .map(categoryName => {
-                    const categorySearchName = getCategorySearchName(
-                      questionNamesByDatasetAndCategory,
-                      selectedDataSetRecord.dataset_name,
-                      categoryName
-                    );
-                      return {
+                  .map(categoryName => (
+                      {
                         displayName: displayCategoriesByName[categoryName].displayName,
-                        onSelect: 
-                          () => {
-                            if (categorySearchName !== searchName) { 
-                              setSelectedSearch(categorySearchName);
-                              if (submissionMetadata.type === 'create-strategy') history.push(location.pathname + '#' + categorySearchName)
-                            }
-                          },
                         content: (
                           <Plugin
                             context={{
@@ -427,9 +434,10 @@ function InternalGeneDatasetContent(props: Props) {
                             fallback={<Loading />}
                           />
                         )
-                      };
-                    })
+                      }
+                    ))
                   }
+                onClick={changeTabHandler}
                 activeTab={activeTab}
               />
               )
