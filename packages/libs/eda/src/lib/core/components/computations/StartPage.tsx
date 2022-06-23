@@ -1,4 +1,4 @@
-import { Link, useRouteMatch } from 'react-router-dom';
+import { useRouteMatch } from 'react-router-dom';
 import { useHistory } from 'react-router';
 import { ComputationAppOverview } from '../../types/visualization';
 import { ComputationPlugin } from './Types';
@@ -7,10 +7,10 @@ import { H5, H6 } from '@veupathdb/coreui';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import '../visualizations/Visualizations.scss';
 import { Tooltip } from '@material-ui/core';
-import { useDefaultPluginConfiguration } from './getAppsDefaultConfigs';
 import { AnalysisState } from '../../../core';
 import { createComputation } from '../../../core/components/computations/Utils';
 import { v4 as uuid } from 'uuid';
+import { useStudyMetadata } from '../../';
 import PlaceholderIcon from '../visualizations/PlaceholderIcon';
 
 interface Props {
@@ -21,9 +21,9 @@ interface Props {
 }
 
 export function StartPage(props: Props) {
-  const { analysisState, apps, baseUrl, plugins } = props;
+  const { analysisState, apps, plugins } = props;
   const cx = makeClassNameHelper('VisualizationsContainer');
-  const defaultConfigs = useDefaultPluginConfiguration(apps);
+  const studyMetadata = useStudyMetadata();
   const history = useHistory();
   const { url } = useRouteMatch();
 
@@ -51,6 +51,7 @@ export function StartPage(props: Props) {
                   padding: '1em',
                   margin: '1em 0',
                 }}
+                key={app.name}
               >
                 <div style={{ width: '300px', margin: '0 8em' }}>
                   <H6
@@ -66,18 +67,6 @@ export function StartPage(props: Props) {
                     {app.description}
                   </span>
                 </div>
-                {/* <Link
-                to={`${baseUrl}/new/${app.name}`}
-                style={{
-                  pointerEvents: plugins[app.name] ? 'auto' : 'none',
-                }}
-              >
-                <div style={{ fontWeight: 'bold', fontSize: '1.2em' }}>
-                  {app.displayName}
-                  {plugins[app.name] ? '' : <i> (Coming soon!)</i>}
-                </div>
-                <div>{app.description}</div>
-              </Link> */}
                 <div
                   style={{
                     display: 'flex',
@@ -87,13 +76,16 @@ export function StartPage(props: Props) {
                 >
                   {app.visualizations?.map((vizType, index) => {
                     const plugin = plugins[app.name];
-                    const disabled =
-                      !plugin || !plugin.visualizationTypes[vizType.name];
-                    const VizSelector =
-                      plugin && plugin.visualizationTypes[vizType.name]
-                        ? plugin.visualizationTypes[vizType.name]
-                            .selectorComponent
-                        : undefined;
+                    if (!plugin) {
+                      throw new Error(
+                        `No plugin corresponding to '${app.name}' was found.`
+                      );
+                    }
+                    const disabled = !plugin.visualizationTypes[vizType.name];
+                    const VizSelector = plugin.visualizationTypes[vizType.name]
+                      ? plugin.visualizationTypes[vizType.name]
+                          .selectorComponent
+                      : undefined;
 
                     return (
                       <div
@@ -113,18 +105,26 @@ export function StartPage(props: Props) {
                               if (analysisState.analysis == null) return;
                               const computations =
                                 analysisState.analysis.descriptor.computations;
-                              const defaultConfig = defaultConfigs.find(
-                                (config) => config?.name === app.name
-                              );
+                              const defaultComputationSpec =
+                                plugin.createDefaultComputationSpec != null
+                                  ? plugin.createDefaultComputationSpec(
+                                      studyMetadata.rootEntity
+                                    )
+                                  : {
+                                      configuration: undefined,
+                                      displayName: '',
+                                    };
                               /*
-                              The first instance of a configurable app will be derived by a default configuration.
-                              Here we're checking if a computation with a defaultConfig already exists.
-                            */
+                                The first instance of a configurable app will be derived by a default configuration.
+                                Here we're checking if a computation with a defaultConfig already exists.
+                              */
                               const existingComputation = computations.find(
                                 (c) =>
                                   isEqual(
                                     c.descriptor.configuration,
-                                    defaultConfig?.configuration
+                                    'configuration' in defaultComputationSpec
+                                      ? defaultComputationSpec.configuration
+                                      : {}
                                   ) && app.name === c.descriptor.type
                               );
                               const visualizationId = uuid();
@@ -133,9 +133,7 @@ export function StartPage(props: Props) {
                                 displayName: 'Unnamed visualization',
                                 descriptor: {
                                   type: vizType.name!,
-                                  configuration: plugins[
-                                    app.name
-                                  ].visualizationTypes[
+                                  configuration: plugin.visualizationTypes[
                                     vizType.name
                                   ].createDefaultConfig(),
                                 },
@@ -143,14 +141,7 @@ export function StartPage(props: Props) {
                               if (!existingComputation) {
                                 const computation = createComputation(
                                   app.name,
-                                  //@ts-ignore
-                                  defaultConfig
-                                    ? defaultConfig.displayName
-                                    : '',
-                                  //@ts-ignore
-                                  defaultConfig
-                                    ? defaultConfig.configuration
-                                    : null,
+                                  defaultComputationSpec.configuration,
                                   computations,
                                   [newVisualization]
                                 );

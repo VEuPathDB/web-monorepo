@@ -5,8 +5,7 @@ import { PromiseHookState } from '../../hooks/promise';
 import { GeoConfig } from '../../types/geoConfig';
 import { Computation, ComputationAppOverview } from '../../types/visualization';
 import { VisualizationType } from '../visualizations/VisualizationTypes';
-// alphadiv abundance
-import { ComputationConfiguration } from '../../types/visualization';
+import { StudyEntity } from '../..';
 
 export interface ComputationProps {
   analysisState: AnalysisState;
@@ -20,11 +19,7 @@ export interface ComputationConfigProps extends ComputationProps {
   // alphadiv abundance
   computation: Computation;
   visualizationId: string;
-  addNewComputation: (
-    name: string,
-    displayName: string,
-    configuration: ComputationConfiguration
-  ) => void;
+  addNewComputation: (name: string, configuration: unknown) => void;
 }
 
 export interface ComputationOverviewProps extends ComputationProps {}
@@ -46,5 +41,11 @@ export interface ComputationComponents {
 
 export interface ComputationPlugin {
   configurationComponent: React.ComponentType<ComputationConfigProps>;
+  configurationDescriptionComponent?: React.ComponentType<{
+    computation: Computation;
+  }>;
   visualizationTypes: Record<string, VisualizationType>;
+  createDefaultComputationSpec?: (
+    rootEntity: StudyEntity
+  ) => { configuration: unknown };
 }

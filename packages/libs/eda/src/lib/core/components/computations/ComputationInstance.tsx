@@ -1,10 +1,11 @@
 import { useCallback, useMemo } from 'react';
+import { useRouteMatch } from 'react-router-dom';
 import { useToggleStarredVariable } from '../../hooks/starredVariables';
 import { Computation, Visualization } from '../../types/visualization';
 import { VisualizationsContainer } from '../visualizations/VisualizationsContainer';
 import { VisualizationType } from '../visualizations/VisualizationTypes';
 import { ComputationProps } from './Types';
-import { useRouteMatch } from 'react-router-dom';
+import { plugins } from './plugins';
 
 export interface Props extends ComputationProps {
   computationId: string;
@@ -105,32 +106,19 @@ interface AppTitleProps {
   condensed: boolean;
 }
 
-// We expect two different types of app titles: one in /visualizations that labels each app's row
-// and one just below the navigation when we're working on a viz within an app. The former
-// is the "condensed" version. May make sense to break into two components when
-// further styling is applied?
 function AppTitle(props: AppTitleProps) {
   const { computation, condensed } = props;
-  const splitDisplayName = computation.displayName
-    ? computation.displayName.split('&;&')
-    : '';
+  const plugin = plugins[computation.descriptor?.type];
+  const ConfigDescription = plugin
+    ? plugin.configurationDescriptionComponent
+    : undefined;
+  const { configuration } = computation.descriptor;
 
   return condensed ? (
     <div style={{ lineHeight: 1.5 }}>
-      {computation.descriptor.configuration ? (
-        <>
-          <h4 style={{ padding: '15px 0 0 0', marginLeft: 20 }}>
-            Data: <span style={{ fontWeight: 300 }}>{splitDisplayName[0]}</span>
-          </h4>
-          <h4 style={{ padding: 0, marginLeft: 20 }}>
-            Method:{' '}
-            <span style={{ fontWeight: 300 }}>
-              {splitDisplayName[1][0].toUpperCase() +
-                splitDisplayName[1].slice(1)}
-            </span>
-          </h4>
-        </>
-      ) : null}
+      {plugin && configuration
+        ? ConfigDescription && <ConfigDescription computation={computation} />
+        : null}
     </div>
   ) : null;
 }

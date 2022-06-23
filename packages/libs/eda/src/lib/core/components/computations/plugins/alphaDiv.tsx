@@ -1,8 +1,6 @@
 /** @jsxImportSource @emotion/react */
-import { jsx } from '@emotion/react';
-import { useRouteMatch } from 'react-router-dom';
-import { useHistory } from 'react-router';
 import { useStudyMetadata } from '../../..';
+import { StudyEntity } from '../../../types/study';
 import { useCollectionVariables } from '../../../hooks/study';
 import { VariableDescriptor } from '../../../types/variable';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
@@ -10,15 +8,78 @@ import { scatterplotVisualization } from '../../visualizations/implementations/S
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { H6 } from '@veupathdb/coreui';
 import { isEqual } from 'lodash';
-import { createComputation } from '../Utils';
+import { useConfigChangeHandler, assertComputationWithConfig } from '../Utils';
+import { findCollections } from '../../../utils/study-metadata';
+import * as t from 'io-ts';
+import { Computation } from '../../../types/visualization';
+
+export type AlphaDivConfig = t.TypeOf<typeof AlphaDivConfig>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AlphaDivConfig = t.type({
+  name: t.string,
+  collectionVariable: VariableDescriptor,
+  alphaDivMethod: t.string,
+});
 
 export const plugin: ComputationPlugin = {
   configurationComponent: AlphaDivConfiguration,
+  configurationDescriptionComponent: AlphaDivConfigDescriptionComponent,
   visualizationTypes: {
     boxplot: boxplotVisualization,
     scatterplot: scatterplotVisualization,
   },
+  createDefaultComputationSpec: createDefaultComputationSpec,
 };
+
+function AlphaDivConfigDescriptionComponent({
+  computation,
+}: {
+  computation: Computation;
+}) {
+  const studyMetadata = useStudyMetadata();
+  const collections = useCollectionVariables(studyMetadata.rootEntity);
+  assertComputationWithConfig<AlphaDivConfig>(computation, Computation);
+  const { configuration } = computation.descriptor;
+  const updatedCollectionVariable = collections.find((collectionVar) =>
+    isEqual(
+      {
+        variableId: collectionVar.id,
+        entityId: collectionVar.entityId,
+      },
+      configuration.collectionVariable
+    )
+  );
+  return (
+    <>
+      <h4 style={{ padding: '15px 0 0 0', marginLeft: 20 }}>
+        Data:{' '}
+        <span style={{ fontWeight: 300 }}>
+          {`${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}`}
+        </span>
+      </h4>
+      <h4 style={{ padding: 0, marginLeft: 20 }}>
+        Method:{' '}
+        <span style={{ fontWeight: 300 }}>
+          {configuration.alphaDivMethod[0].toUpperCase() +
+            configuration.alphaDivMethod.slice(1)}
+        </span>
+      </h4>
+    </>
+  );
+}
+
+function createDefaultComputationSpec(rootEntity: StudyEntity) {
+  const collections = findCollections(rootEntity);
+  const configuration: AlphaDivConfig = {
+    name: 'AlphaDivComputation',
+    collectionVariable: {
+      variableId: collections[0].id,
+      entityId: collections[0].entityId,
+    },
+    alphaDivMethod: 'shannon',
+  };
+  return { configuration };
+}
 
 // Include available methods in this array.
 const ALPHA_DIV_METHODS = ['shannon', 'simpson', 'evenness'];
@@ -37,129 +98,20 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
     visualizationId,
   } = props;
   const studyMetadata = useStudyMetadata();
-  const { url } = useRouteMatch();
-  const history = useHistory();
   // Include known collection variables in this array.
   const collections = useCollectionVariables(studyMetadata.rootEntity);
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
 
-  const alphaDivMethod =
-    // @ts-ignore
-    computation.descriptor.configuration.alphaDivMethod ?? ALPHA_DIV_METHODS[0];
-  // @ts-ignore
-  const collectionVariable = computation.descriptor.configuration
-    .collectionVariable ?? {
-    variableId: collections[0].id,
-    entityId: collections[0].entityId,
-  };
+  assertComputationWithConfig<AlphaDivConfig>(computation, Computation);
+  const configuration = computation.descriptor.configuration;
+  const { alphaDivMethod, collectionVariable } = configuration;
 
-  const changeConfigHandler = async (
-    changedConfigPropertyName: string,
-    newConfigValue: string
-  ) => {
-    // when a config value changes:
-    // 1. remove viz from current computation
-    // 2. check if the newConfig exists
-    // Y? move viz to the found computation, "existingComputation"
-    // N? create new computation
-    const computations = analysisState.analysis
-      ? analysisState.analysis.descriptor.computations
-      : [];
-    const newConfigObject = typeof computation.descriptor.configuration ===
-      'object' && {
-      ...computation.descriptor.configuration,
-      [changedConfigPropertyName]: newConfigValue,
-    };
-    const existingComputation = computations.find(
-      (c) =>
-        isEqual(c.descriptor.configuration, newConfigObject) &&
-        c.descriptor.type === computation.descriptor.type
-    );
-    const existingVisualization = computation.visualizations.filter(
-      (viz) => viz.visualizationId === visualizationId
-    );
-    const computationAfterVizRemoval = {
-      ...computation,
-      visualizations: computation.visualizations.filter(
-        (viz) => viz.visualizationId !== visualizationId
-      ),
-    };
-    if (existingComputation) {
-      // 2Y:  move viz to existingComputation
-      const existingComputationWithVizAdded = {
-        ...existingComputation,
-        visualizations: existingComputation.visualizations.concat(
-          existingVisualization
-        ),
-      };
-      computationAfterVizRemoval.visualizations.length
-        ? await analysisState.setComputations([
-            computationAfterVizRemoval,
-            existingComputationWithVizAdded,
-            ...computations
-              .filter(
-                (c) => c.computationId !== existingComputation.computationId
-              )
-              .filter((c) => c.computationId !== computation.computationId),
-          ])
-        : await analysisState.setComputations([
-            existingComputationWithVizAdded,
-            ...computations
-              .filter(
-                (c) => c.computationId !== existingComputation.computationId
-              )
-              .filter((c) => c.computationId !== computation.computationId),
-          ]);
-      history.push(
-        url.replace(
-          computation.computationId,
-          existingComputation.computationId
-        )
-      );
-    } else {
-      // 2N:  existingComputation was not found
-      //      get config displayName for new computation
-      //      create a new computation with the existing viz
-      // @ts-ignore
-      const variableObject = collections.find((collectionVar) =>
-        isEqual(
-          {
-            variableId: collectionVar.id,
-            entityId: collectionVar.entityId,
-          },
-          // @ts-ignore
-          newConfigObject.collectionVariable
-        )
-      );
-      const newComputation = createComputation(
-        computation.descriptor.type,
-        // @ts-ignore
-        `${variableObject?.entityDisplayName} > ${variableObject?.displayName}&;&${newConfigObject.alphaDivMethod}`,
-        // @ts-ignore
-        newConfigObject,
-        computations,
-        existingVisualization
-      );
-      computationAfterVizRemoval.visualizations.length
-        ? await analysisState.setComputations([
-            computationAfterVizRemoval,
-            newComputation,
-            ...computations.filter(
-              (c) => c.computationId !== computation.computationId
-            ),
-          ])
-        : await analysisState.setComputations([
-            newComputation,
-            ...computations.filter(
-              (c) => c.computationId !== computation.computationId
-            ),
-          ]);
-      history.push(
-        url.replace(computation.computationId, newComputation.computationId)
-      );
-    }
-  };
+  const changeConfigHandler = useConfigChangeHandler<AlphaDivConfig>(
+    analysisState,
+    computation,
+    visualizationId
+  );
 
   return (
     <div style={{ display: 'flex', gap: '0 2em', padding: '1em 0' }}>
@@ -217,6 +169,7 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
           {collections.map((collectionVar) => {
             return (
               <option
+                key={collectionVar.id}
                 value={variableDescriptorToString({
                   variableId: collectionVar.id,
                   entityId: collectionVar.entityId,
@@ -259,7 +212,9 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
           }
         >
           {ALPHA_DIV_METHODS.map((method) => (
-            <option value={method}>{method}</option>
+            <option key={method} value={method}>
+              {method}
+            </option>
           ))}
         </select>
       </div>
