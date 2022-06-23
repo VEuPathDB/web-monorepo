@@ -3036,10 +3036,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.0.0.tgz#90ca79640ffbb195a87d4d65cd4b2f92342f8b76"
   integrity sha512-qfKu1z9gaaHdMgRGaZBiayuIh92ishsf14lR+Rj61CJF131XWq3+5e2VyLyOdKsYJ1EreAxgyC/0upIBEzwQJw==
 
-"@veupathdb/components@^0.16.6":
-  version "0.16.6"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.16.6.tgz#b60f08c7479f40a2e283697849ea1604f375cb02"
-  integrity sha512-FZoOFO74KkT0nHkr42KgFMlQ4bjMTGXGBWBGUtjMRswsY5i8cfasVGtsY6mVfY3EV0RXbI956QRTi/aR6tjsCg==
+"@veupathdb/components@^0.16.7":
+  version "0.16.7"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.16.7.tgz#b62b69e85101a73025147ebef387434db3d26cd6"
+  integrity sha512-9bnn8eBQB2RdNGM9c4uulIrriwo3iWv9b2HLFMcwXmEXBqb20i2eY6ZBjysP6gTmXCHr3wrwztxtbGXXvC9+fg==
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
@@ -3053,10 +3053,10 @@
     d3 "^7.1.1"
     date-arithmetic "^4.1.0"
     debounce-promise "^3.1.2"
+    dom-to-image "^2.6.0"
     latlon-geohash "^2.0.0"
     leaflet "^1.6.0"
     leaflet-drift-marker "^1.0.3"
-    leaflet-simple-map-screenshoter "^0.4.5"
     luxon "^1.25.0"
     plotly.js "^2.6.0"
     re-resizable "^6.9.0"
@@ -3109,10 +3109,10 @@
     read "^1.0.7"
     set-cookie-parser "^2.4.6"
 
-"@veupathdb/study-data-access@^0.3.2":
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.3.2.tgz#810e03a7a7e2033ef4d6c59902560bdc81a2f3fd"
-  integrity sha512-KgqPx0LA1MYmWGeXkHlJUjhWg6TSocjiTsd3DcwqfyF584SeJVgUaaqDLnBFwy7Xma/OlXp8+NuEaptKkA+IXw==
+"@veupathdb/study-data-access@^0.3.3":
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.3.3.tgz#41bfd0b37cdd6200be46f8d14b0eb10d61829e08"
+  integrity sha512-K3jmHICU9kqym56q/Cnl6vKJ1JrDSGB/ONw3VNJA1sROivBdEOgbO41YqXVih6975B3fPFM7TQfl5N5SV6rOrQ==
   dependencies:
     fp-ts "^2.11.5"
     io-ts "^2.2.16"
@@ -3123,10 +3123,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/tsconfig/-/tsconfig-1.0.1.tgz#a2b748b46838af1337ca9f23d969993fb952def4"
   integrity sha512-i6gq7mgnyEN8/xW5EaI9RiWCwS1oB8cgWqx9h5w4vZtnb10oiyyepD640l9x/gZf6IWecjynRs7weDgSRs7l0Q==
 
-"@veupathdb/wdk-client@^0.8.1":
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.8.1.tgz#828fc632f0766bba05d77efdf531f8c85f6a965f"
-  integrity sha512-vXvTBvhnshqGtbujKdHbfEcrpUQ7KbaWMJwFVk6u26I7BKLdUqOphUywdt+7dnnzEp4PmM1MszCiHcZUlpNwNA==
+"@veupathdb/wdk-client@^0.8.2":
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.8.2.tgz#3c5231467bf49b07db492f905ed8a058abddcc98"
+  integrity sha512-06DF4SawIJDyoWJDCJM3+wPohbFHjs6Ceez7mFIEX4NNbpKSB81ho+571XvGDy394ZxFzWnSYpcBObTwnjJh7g==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
@@ -6704,10 +6704,10 @@ dom-serializer@^1.0.1:
     domhandler "^4.2.0"
     entities "^2.0.0"
 
-dom-to-image-more@^2.8.0:
-  version "2.9.5"
-  resolved "https://registry.yarnpkg.com/dom-to-image-more/-/dom-to-image-more-2.9.5.tgz#a5dd5a30480e01b795fde9e99278096143b3ece7"
-  integrity sha512-7pr43ZY/Nk0k2z3NXDKN4GvnZqP/3iZvddLeIuGfNTyFJuzzr0UeLl+poZ1ewYt3YIK+WHCEZUkz+RNuocN3/Q==
+dom-to-image@^2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/dom-to-image/-/dom-to-image-2.6.0.tgz#8a503608088c87b1c22f9034ae032e1898955867"
+  integrity sha512-Dt0QdaHmLpjURjU7Tnu3AgYSF2LuOmksSGsUcE6ItvJoCWTBEmiMXcqBdNSAm9+QbbwD7JMoVsuuKX6ZVQv1qA==
 
 domain-browser@^1.1.1:
   version "1.2.0"
@@ -7643,11 +7643,6 @@ file-loader@6.1.1:
   dependencies:
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
-
-file-saver@^2.0.2:
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/file-saver/-/file-saver-2.0.5.tgz#d61cfe2ce059f414d899e9dd6d4107ee25670c38"
-  integrity sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==
 
 file-uri-to-path@1.0.0:
   version "1.0.0"
@@ -10373,14 +10368,6 @@ leaflet-drift-marker@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/leaflet-drift-marker/-/leaflet-drift-marker-1.0.3.tgz#4b178dc22b918b4713570302461ca636241fac3f"
   integrity sha512-2b5EqL11+reMqS+RTZAwW9oglWk05V02LQzMSe3D8cPPSvz42RpoqjRI8aGvD8Yjsc31ZwLZMeJ0s3waaj3VEQ==
-
-leaflet-simple-map-screenshoter@^0.4.5:
-  version "0.4.5"
-  resolved "https://registry.yarnpkg.com/leaflet-simple-map-screenshoter/-/leaflet-simple-map-screenshoter-0.4.5.tgz#d4f093077663577e7879c0488ebc54292c34314d"
-  integrity sha512-bvd++mQstpgb7F7c2v5jCLlUitQ6CcYLZ56do7PVyyVpGvnlhIEk5S6dLXqpe3itSr2D/re5yUAOf8zBt95ViQ==
-  dependencies:
-    dom-to-image-more "^2.8.0"
-    file-saver "^2.0.2"
 
 leaflet@^1.6.0:
   version "1.7.1"
