@@ -16,7 +16,7 @@ import DataClient, {
   MosaicRequestParams,
   TwoByTwoResponse,
 } from '../../../api/DataClient';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
@@ -185,6 +185,9 @@ function MosaicViz(props: Props) {
     [studyMetadata]
   );
   const dataClient: DataClient = useDataClient();
+
+  // set default tab to Mosaic in TabbedDisplay component
+  const [activeTab, setActiveTab] = useState('Mosaic');
 
   const [vizConfig, updateVizConfig] = useVizConfig(
     visualization.descriptor.configuration,
@@ -391,6 +394,8 @@ function MosaicViz(props: Props) {
   const plotNode = (
     <TabbedDisplay
       themeRole="primary"
+      onClick={(tabDisplayName: string) => setActiveTab(tabDisplayName)}
+      activeTab={activeTab}
       tabs={[
         {
           displayName: 'Mosaic',
