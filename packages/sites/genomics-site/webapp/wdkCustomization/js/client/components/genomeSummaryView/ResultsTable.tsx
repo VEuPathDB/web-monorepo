@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { defaultMemoize } from 'reselect';
 
-import { EagerlyLoadedTooltip } from '@veupathdb/wdk-client/lib/Components/Overlays/Tooltip';
 import { ColumnSettings, CommonResultTable } from '@veupathdb/wdk-client/lib/Components/Shared/CommonResultTable';
 import {
   GenomeSummaryViewReportModel,
@@ -11,6 +10,7 @@ import {
   GenomeViewSequenceModel
 } from '../../util/GenomeSummaryViewUtils';
 import { FeatureTooltip } from './FeatureTooltip';
+import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 
 const resultColumnsFactory = defaultMemoize((
   displayName: string,
@@ -151,8 +151,10 @@ const SingleFeatureRegion: React.SFC<SingleFeatureRegionProps> = ({
   sequence,
   recordType,
 }) =>
-  <EagerlyLoadedTooltip
-    content={
+  <Tooltip
+    css={{}}
+    interactive
+    title={
       <FeatureTooltip
         feature={feature}
         sequence={sequence}
@@ -168,7 +170,7 @@ const SingleFeatureRegion: React.SFC<SingleFeatureRegionProps> = ({
       }}
     >
     </div>
-  </EagerlyLoadedTooltip>;
+  </Tooltip>;
 
 interface ResultsTableProps {
   emptyChromosomeFilterApplied: boolean;

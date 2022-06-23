@@ -1,10 +1,10 @@
 import React from 'react';
 
 import { Dialog } from '@veupathdb/wdk-client/lib/Components';
-import { EagerlyLoadedTooltip } from '@veupathdb/wdk-client/lib/Components/Overlays/Tooltip';
 import { GenomeViewSequenceModel, GenomeViewRegionModel } from '../../util/GenomeSummaryViewUtils';
 import { FeatureTable } from './FeatureTable';
 import { FeatureTooltip } from './FeatureTooltip';
+import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 
 interface RegionDialogProps {
   region: GenomeViewRegionModel;
@@ -38,9 +38,11 @@ export const RegionDialog: React.SFC<RegionDialogProps> = ({
         <div className="ruler">
           {
             region.features.map(feature =>
-              <EagerlyLoadedTooltip
+              <Tooltip
                 key={feature.sourceId}
-                content={
+                interactive
+                css={{}}
+                title={
                   <FeatureTooltip
                     feature={feature}
                     sequence={sequence}
@@ -57,7 +59,7 @@ export const RegionDialog: React.SFC<RegionDialogProps> = ({
                   }}
                 >
                 </div>      
-              </EagerlyLoadedTooltip>        
+              </Tooltip>        
             )
           }
         </div>
