@@ -394,7 +394,9 @@ function MosaicViz(props: Props) {
   const plotNode = (
     <TabbedDisplay
       themeRole="primary"
-      onClick={(tabDisplayName: string) => setActiveTab(tabDisplayName)}
+      onClick={(tabDisplayName: string) => {
+        if (activeTab !== tabDisplayName) setActiveTab(tabDisplayName);
+      }}
       activeTab={activeTab}
       tabs={[
         {
