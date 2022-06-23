@@ -101,6 +101,9 @@ function handleConfigurationChanges<ConfigType>(
   // 2. check if the newConfig exists
   // Y? move viz to the found computation, "existingComputation"
   // N? create new computation
+  // 3. update analysis, during which check if "removed from" computation has any visualizations
+  // Y? include the "removed from" and "added to" computations
+  // N? only include the "added to" computation
   const computations = analysisState.analysis
     ? analysisState.analysis.descriptor.computations
     : [];
@@ -126,6 +129,7 @@ function handleConfigurationChanges<ConfigType>(
       ),
     };
 
+    // 3: update analysis
     updateAnalysisWithAmendedComputations(
       existingComputationWithVizAdded,
       computationAfterVizRemoval,
@@ -153,6 +157,7 @@ function handleConfigurationChanges<ConfigType>(
       existingVisualization
     );
 
+    // 3: update analysis
     updateAnalysisWithAmendedComputations(
       newComputation,
       computationAfterVizRemoval,

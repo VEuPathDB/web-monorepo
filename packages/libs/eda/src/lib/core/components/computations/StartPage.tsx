@@ -103,6 +103,7 @@ export function StartPage(props: Props) {
                               const computations =
                                 analysisState.analysis.descriptor.computations;
                               const defaultComputationSpec =
+                                plugin &&
                                 plugin.createDefaultComputationSpec != null
                                   ? plugin.createDefaultComputationSpec(
                                       studyMetadata.rootEntity
@@ -130,9 +131,7 @@ export function StartPage(props: Props) {
                                 displayName: 'Unnamed visualization',
                                 descriptor: {
                                   type: vizType.name!,
-                                  configuration: plugins[
-                                    app.name
-                                  ].visualizationTypes[
+                                  configuration: plugin.visualizationTypes[
                                     vizType.name
                                   ].createDefaultConfig(),
                                 },

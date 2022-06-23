@@ -109,7 +109,9 @@ interface AppTitleProps {
 function AppTitle(props: AppTitleProps) {
   const { computation, condensed } = props;
   const plugin = plugins[computation.descriptor?.type];
-  const ConfigDescription = plugin.configurationDescriptionComponent;
+  const ConfigDescription = plugin
+    ? plugin.configurationDescriptionComponent
+    : undefined;
   const { configuration } = computation.descriptor;
 
   return condensed ? (
