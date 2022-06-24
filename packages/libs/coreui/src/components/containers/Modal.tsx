@@ -1,4 +1,4 @@
-import { CSSProperties, ReactNode, useMemo, useState } from 'react';
+import { CSSProperties, ReactNode, useMemo } from 'react';
 import { merge } from 'lodash';
 import useDimensions from 'react-cool-dimensions';
 import { Modal as ResponsiveModal } from 'react-responsive-modal';
@@ -13,7 +13,6 @@ import { UITheme } from '../theming/types';
 
 // Hooks
 import useUITheme from '../theming/useUITheme';
-import { useEffect } from 'react';
 import { Subset } from '../../definitions/types';
 
 type ModalStyleSpec = {
@@ -62,10 +61,6 @@ export type ModalProps = {
    * the `visible` prop.
    */
   toggleVisible: (visible: boolean) => void;
-  /** Optional. Function to invoke when modal is opened. */
-  onOpen?: () => void;
-  /** Optional. Function to invoke when modal is closed. */
-  onClose?: () => void;
   /** Controls the visibility of the modal. */
   visible: boolean;
   /** Optional. Control the zIndex of the modal. Defaults to 1000. */
@@ -81,15 +76,12 @@ export default function Modal({
   visible,
   zIndex = 1000,
   toggleVisible,
-  onOpen,
-  onClose,
   includeCloseButton = false,
   themeRole,
   styleOverrides = {},
   children,
 }: ModalProps) {
   const theme = useUITheme();
-  const [hasModalBeenOpened, setHasModalBeenOpened] = useState(false);
 
   // Track the height of the title text.
   const { observe, height: titleHeight } = useDimensions();
@@ -143,20 +135,6 @@ export default function Modal({
 
     return merge({}, defaultStyle, themeStyle, styleOverrides);
   }, [themeRole, styleOverrides, theme]);
-
-  // Invoke onOpen and onClose callbacks if specified as appropriate.
-  useEffect(() => {
-    if (visible) {
-      // If this is the first time the modal has been open, let's record that.
-      !hasModalBeenOpened && setHasModalBeenOpened(true);
-      // Invoke onOpenCallback if it is defined.
-      onOpen && onOpen();
-    } else {
-      // Invoke the onClose callback if that modal has been opened
-      // previously and it is defined.
-      hasModalBeenOpened && onClose && onClose();
-    }
-  }, [visible, onOpen, onClose]);
 
   return (
     <ResponsiveModal
