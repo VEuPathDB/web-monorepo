@@ -173,15 +173,15 @@ function InternalGeneDatasetContent(props: Props) {
   }, [questionNamesByDatasetAndCategory, selectedDataSetRecord, displayCategoriesByName, searchName]);
 
   const changeTabHandler = useCallback(
-    (tabDisplayName: string) => {
+    (selectedTabDisplayName: string) => {
       if (
         !questionNamesByDatasetAndCategory || 
         !selectedDataSetRecord || 
         !displayCategoriesByName ||
-        activeTab === tabDisplayName
+        activeTab === selectedTabDisplayName
         ) return;
       for (const category in displayCategoriesByName) {
-        if (displayCategoriesByName[category].displayName === tabDisplayName) {
+        if (displayCategoriesByName[category].displayName === selectedTabDisplayName) {
           const newCategorySearchName = questionNamesByDatasetAndCategory[selectedDataSetRecord['dataset_name']][category];
           setSelectedSearch(newCategorySearchName);
           if (submissionMetadata.type === 'create-strategy') {
@@ -437,7 +437,7 @@ function InternalGeneDatasetContent(props: Props) {
                       }
                     ))
                   }
-                onClick={changeTabHandler}
+                onTabSelected={changeTabHandler}
                 activeTab={activeTab}
               />
               )
