@@ -57,7 +57,7 @@ export type TabbedDisplayProps = {
     displayName: string;
     content?: React.ReactNode;
   }>;
-  onClick: (tabDisplayName: string) => void;
+  onTabSelected: (selectedTabDisplayName: string) => void;
   /**
    * The value MUST be the displayName of one of the tabs. */
   activeTab: string;
@@ -73,11 +73,13 @@ export type TabbedDisplayProps = {
 export default function TabbedDisplay({
   tabs,
   activeTab,
-  onClick,
+  onTabSelected,
   styleOverrides = {},
   themeRole,
 }: TabbedDisplayProps) {
-  const tabContent = tabs.find(tab => tab.displayName === activeTab)!.content
+  const selectedTab = tabs.find(tab => tab.displayName === activeTab);
+  const tabContent = selectedTab ? selectedTab.content : null;
+
   const [hoveredTab, setHoveredTab] = useState<null | string>(null);
 
   const theme = useUITheme();
@@ -137,14 +139,14 @@ export default function TabbedDisplay({
                     'background-color .5s, border-color .5s, color .5s',
                 },
               ]}
-              onClick={() => onClick && onClick(tab.displayName)}
+              onClick={() => onTabSelected && onTabSelected(tab.displayName)}
               onFocus={() => setHoveredTab(tab.displayName)}
               onBlur={() => setHoveredTab(null)}
               onMouseOver={() => setHoveredTab(tab.displayName)}
               onMouseOut={() => setHoveredTab(null)}
               onKeyDown={(event) => {
                 if (['Space', 'Enter'].includes(event.code)) {
-                  onClick && onClick(tab.displayName);
+                  onTabSelected && onTabSelected(tab.displayName);
                 }
               }}
             >
