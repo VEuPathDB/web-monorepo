@@ -161,35 +161,19 @@ function InternalGeneDatasetContent(props: Props) {
     shouldChangeDocumentTitle
   );
 
-  const activeTab = useMemo(() => {
-    if (!questionNamesByDatasetAndCategory || !selectedDataSetRecord || !displayCategoriesByName) return;
-    let tab;
-    for (const property in questionNamesByDatasetAndCategory[selectedDataSetRecord['dataset_name']]) {
-      if (questionNamesByDatasetAndCategory[selectedDataSetRecord['dataset_name']][property] === searchName) {
-        tab = displayCategoriesByName[property].displayName
-      }
-    }
-    return tab;
-  }, [questionNamesByDatasetAndCategory, selectedDataSetRecord, displayCategoriesByName, searchName]);
-
   const changeTabHandler = useCallback(
-    (selectedTabDisplayName: string) => {
+    (selectedTabKey: string) => {
       if (
         !questionNamesByDatasetAndCategory || 
         !selectedDataSetRecord || 
         !displayCategoriesByName ||
-        activeTab === selectedTabDisplayName
+        searchName === selectedTabKey
         ) return;
-      for (const category in displayCategoriesByName) {
-        if (displayCategoriesByName[category].displayName === selectedTabDisplayName) {
-          const newCategorySearchName = questionNamesByDatasetAndCategory[selectedDataSetRecord['dataset_name']][category];
-          setSelectedSearch(newCategorySearchName);
-          if (submissionMetadata.type === 'create-strategy') {
-            history.push(location.pathname + '#' + newCategorySearchName)
-          }
+        setSelectedSearch(selectedTabKey);
+        if (submissionMetadata.type === 'create-strategy') {
+          history.push(location.pathname + '#' + selectedTabKey)
         }
-      }
-  }, [questionNamesByDatasetAndCategory, selectedDataSetRecord, displayCategoriesByName, activeTab])
+  }, [questionNamesByDatasetAndCategory, selectedDataSetRecord, displayCategoriesByName, searchName, submissionMetadata])
 
   return (
     (
@@ -405,7 +389,7 @@ function InternalGeneDatasetContent(props: Props) {
               )
             }
             {
-              selectedDataSetRecord && activeTab && (
+              selectedDataSetRecord && (
               <TabbedDisplay
                 tabs={displayCategoryOrder
                   .filter(
@@ -415,30 +399,36 @@ function InternalGeneDatasetContent(props: Props) {
                         categoryName
                       )
                     )
-                  .map(categoryName => (
-                      {
-                        displayName: displayCategoriesByName[categoryName].displayName,
-                        content: (
-                          <Plugin
-                            context={{
-                              type: 'questionController',
-                              searchName,
-                              recordClassName: recordClass
-                            }}
-                            pluginProps={{
-                              ...props,
-                              question: searchName,
-                              shouldChangeDocumentTitle: false
-                            }}
-                            defaultComponent={QuestionController}
-                            fallback={<Loading />}
-                          />
-                        )
-                      }
-                    ))
+                  .map(categoryName => {
+                    const categorySearchName = getCategorySearchName(
+                      questionNamesByDatasetAndCategory,
+                      selectedDataSetRecord.dataset_name,
+                      categoryName
+                    );
+                    return {
+                      key: categorySearchName,
+                      displayName: displayCategoriesByName[categoryName].displayName,
+                      content: (
+                        <Plugin
+                          context={{
+                            type: 'questionController',
+                            searchName,
+                            recordClassName: recordClass
+                          }}
+                          pluginProps={{
+                            ...props,
+                            question: searchName,
+                            shouldChangeDocumentTitle: false
+                          }}
+                          defaultComponent={QuestionController}
+                          fallback={<Loading />}
+                        />
+                      )
+                    }
+                  })
                   }
                 onTabSelected={changeTabHandler}
-                activeTab={activeTab}
+                activeTab={searchName}
               />
               )
             }
