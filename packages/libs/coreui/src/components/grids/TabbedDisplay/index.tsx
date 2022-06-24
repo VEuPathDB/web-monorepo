@@ -55,16 +55,12 @@ export type TabbedDisplayProps = {
   tabs: Array<{
     // The name to display in the tab. Also used as the key.
     displayName: string;
-    onSelect?: () => void;
     content?: React.ReactNode;
   }>;
+  onTabSelected: (selectedTabDisplayName: string) => void;
   /**
-   * Optional. If you want, you can use this prop to set the
-   * initially selected tab OR control the currently selected
-   * tab programatically.
-   *
    * The value MUST be the displayName of one of the tabs. */
-  activeTab?: string;
+  activeTab: string;
   /** Optional. Any desired style overrides. */
   styleOverrides?: Partial<TabbedDisplayStyleSpec>;
   /**
@@ -77,24 +73,12 @@ export type TabbedDisplayProps = {
 export default function TabbedDisplay({
   tabs,
   activeTab,
+  onTabSelected,
   styleOverrides = {},
   themeRole,
 }: TabbedDisplayProps) {
-  const [activeTabInternal, setActiveTabInternal] = useState(
-    activeTab ?? tabs[0].displayName
-  );
-
-  // Listen for changes to the `activeTab` prop. This allows the component
-  // to be controlled programmatically.
-  useEffect(() => {
-    if (activeTab && activeTab !== activeTabInternal) {
-      const matchingTabRecord = tabs.find(
-        (tab) => tab.displayName === activeTab
-      );
-      matchingTabRecord && setActiveTabInternal(activeTab);
-      matchingTabRecord?.onSelect && matchingTabRecord.onSelect();
-    }
-  }, [activeTab]);
+  const selectedTab = tabs.find(tab => tab.displayName === activeTab);
+  const tabContent = selectedTab ? selectedTab.content : null;
 
   const [hoveredTab, setHoveredTab] = useState<null | string>(null);
 
@@ -121,12 +105,7 @@ export default function TabbedDisplay({
     () => merge({}, DEFAULT_STYLE, themeStyle, styleOverrides),
     [themeStyle, styleOverrides]
   );
-
-  const tabContent = useMemo(
-    () => tabs.find((tab) => tab.displayName === activeTabInternal)!.content,
-    [tabs, activeTabInternal]
-  );
-
+  
   return (
     <div css={{ ...finalStyle.container }}>
       <div
@@ -136,7 +115,7 @@ export default function TabbedDisplay({
       >
         {tabs.map((tab) => {
           const tabState =
-            tab.displayName === activeTabInternal
+            tab.displayName === activeTab
               ? 'active'
               : tab.displayName === hoveredTab
               ? 'hover'
@@ -160,18 +139,14 @@ export default function TabbedDisplay({
                     'background-color .5s, border-color .5s, color .5s',
                 },
               ]}
-              onClick={() => {
-                tab.onSelect && tab.onSelect();
-                setActiveTabInternal(tab.displayName);
-              }}
+              onClick={() => onTabSelected && onTabSelected(tab.displayName)}
               onFocus={() => setHoveredTab(tab.displayName)}
               onBlur={() => setHoveredTab(null)}
               onMouseOver={() => setHoveredTab(tab.displayName)}
               onMouseOut={() => setHoveredTab(null)}
               onKeyDown={(event) => {
                 if (['Space', 'Enter'].includes(event.code)) {
-                  tab.onSelect && tab.onSelect();
-                  setActiveTabInternal(tab.displayName);
+                  onTabSelected && onTabSelected(tab.displayName);
                 }
               }}
             >
