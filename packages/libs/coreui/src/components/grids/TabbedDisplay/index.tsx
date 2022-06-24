@@ -53,13 +53,14 @@ export type TabbedDisplayProps = {
    * for the tab display name and the actual content to display to the user.
    * */
   tabs: Array<{
-    // The name to display in the tab. Also used as the key.
+    key: string;
+    // The name to display in the tab.
     displayName: string;
     content?: React.ReactNode;
   }>;
-  onTabSelected: (selectedTabDisplayName: string) => void;
+  onTabSelected: (selectedTabKey: string) => void;
   /**
-   * The value MUST be the displayName of one of the tabs. */
+   * The key of the currently selected tab. */
   activeTab: string;
   /** Optional. Any desired style overrides. */
   styleOverrides?: Partial<TabbedDisplayStyleSpec>;
@@ -77,7 +78,7 @@ export default function TabbedDisplay({
   styleOverrides = {},
   themeRole,
 }: TabbedDisplayProps) {
-  const selectedTab = tabs.find(tab => tab.displayName === activeTab);
+  const selectedTab = tabs.find(tab => tab.key === activeTab);
   const tabContent = selectedTab ? selectedTab.content : null;
 
   const [hoveredTab, setHoveredTab] = useState<null | string>(null);
@@ -115,9 +116,9 @@ export default function TabbedDisplay({
       >
         {tabs.map((tab) => {
           const tabState =
-            tab.displayName === activeTab
+            tab.key === activeTab
               ? 'active'
-              : tab.displayName === hoveredTab
+              : tab.key === hoveredTab
               ? 'hover'
               : 'inactive';
 
@@ -125,7 +126,7 @@ export default function TabbedDisplay({
             <div
               role='tab'
               tabIndex={0}
-              key={tab.displayName}
+              key={tab.key}
               css={[
                 finalStyle[tabState],
                 {
@@ -139,14 +140,14 @@ export default function TabbedDisplay({
                     'background-color .5s, border-color .5s, color .5s',
                 },
               ]}
-              onClick={() => onTabSelected && onTabSelected(tab.displayName)}
-              onFocus={() => setHoveredTab(tab.displayName)}
+              onClick={() => onTabSelected && onTabSelected(tab.key)}
+              onFocus={() => setHoveredTab(tab.key)}
               onBlur={() => setHoveredTab(null)}
-              onMouseOver={() => setHoveredTab(tab.displayName)}
+              onMouseOver={() => setHoveredTab(tab.key)}
               onMouseOut={() => setHoveredTab(null)}
               onKeyDown={(event) => {
                 if (['Space', 'Enter'].includes(event.code)) {
-                  onTabSelected && onTabSelected(tab.displayName);
+                  onTabSelected && onTabSelected(tab.key);
                 }
               }}
             >
