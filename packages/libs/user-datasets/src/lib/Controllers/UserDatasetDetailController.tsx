@@ -1,3 +1,5 @@
+import { ComponentType } from 'react';
+
 import { connect } from 'react-redux';
 
 import { keyBy } from 'lodash';
@@ -32,6 +34,8 @@ const ActionCreators = {
   unshareUserDatasets,
 };
 
+export type UserDatasetDetailProps = any;
+
 type StateProps = StateSlice['userDatasetDetail'] & StateSlice['globalData'];
 type DispatchProps = typeof ActionCreators;
 type OwnProps = {
@@ -39,6 +43,10 @@ type OwnProps = {
   detailsPageTitle: string;
   workspaceTitle: string;
   id: string;
+  detailComponentsByTypeName?: Record<
+    string,
+    ComponentType<UserDatasetDetailProps>
+  >;
 };
 type MergedProps = {
   ownProps: OwnProps;
@@ -104,6 +112,11 @@ class UserDatasetDetailController extends PageController<MergedProps> {
 
   getDetailView(type: any) {
     const name: string = type && typeof type === 'object' ? type.name : null;
+
+    if (this.props.ownProps.detailComponentsByTypeName?.[name] != null) {
+      return this.props.ownProps.detailComponentsByTypeName[name];
+    }
+
     switch (name) {
       case 'Bigwigs':
       case 'BigwigFiles':

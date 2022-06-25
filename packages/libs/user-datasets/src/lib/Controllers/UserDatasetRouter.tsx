@@ -1,4 +1,4 @@
-import { ReactNode, useMemo } from 'react';
+import { ComponentType, ReactNode, useMemo } from 'react';
 
 import { RouteComponentProps, Switch, useRouteMatch } from 'react-router-dom';
 
@@ -9,7 +9,9 @@ import UserDatasetsWorkspace from '../Components/UserDatasetsWorkspace';
 import { makeDatasetUploadPageConfig } from '../Utils/upload-config';
 import { DatasetUploadTypeConfig } from '../Utils/types';
 
-import UserDatasetDetailController from './UserDatasetDetailController';
+import UserDatasetDetailController, {
+  UserDatasetDetailProps,
+} from './UserDatasetDetailController';
 
 interface Props<T1 extends string = string, T2 extends string = string> {
   availableUploadTypes?: T1[];
@@ -18,6 +20,10 @@ interface Props<T1 extends string = string, T2 extends string = string> {
   uploadTypeConfig: DatasetUploadTypeConfig<T2>;
   workspaceTitle: string;
   helpTabContents?: ReactNode;
+  detailComponentsByTypeName?: Record<
+    string,
+    ComponentType<UserDatasetDetailProps>
+  >;
 }
 
 export function UserDatasetRouter<T1 extends string, T2 extends string>({
@@ -27,6 +33,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
   uploadTypeConfig,
   workspaceTitle,
   helpTabContents,
+  detailComponentsByTypeName,
 }: Props<T1, T2>) {
   const { path, url } = useRouteMatch();
 
@@ -46,6 +53,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
               baseUrl={url}
               detailsPageTitle={detailsPageTitle}
               workspaceTitle={workspaceTitle}
+              detailComponentsByTypeName={detailComponentsByTypeName}
               {...props.match.params}
             />
           );
