@@ -1,0 +1,43 @@
+.SubsetDownloadModal {
+  .css-ro2cao-Modal {
+    overflow: hidden;
+  }
+
+  .css-ob34sg-Modal {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .css-1s830cx-Modal {
+    overflow: hidden;
+  }
+
+  .EDAWorkspace-VariableList {
+    height: auto;
+    display: block;
+  }
+
+  .DataGrid-Wrapper > :nth-child(1) {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .css-1723gmh-DataGrid {
+    height: 100%;
+  }
+
+  .css-1xfyas5-DataGrid {
+    height: 100%;
+    margin-bottom: 0;
+  }
+
+  // .css-1nxo5ei-HeaderCell {
+  //   height: auto;
+  // }
+
+  .css-1pxh26w-PaginationControls {
+    margin-bottom: 0;
+  }
+}

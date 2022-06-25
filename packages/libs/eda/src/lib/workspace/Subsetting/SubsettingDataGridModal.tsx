@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { ceil } from 'lodash';
 import useDimensions from 'react-cool-dimensions';
 
@@ -33,6 +33,7 @@ import {
 import { useFeaturedFields } from '../../core/components/variableTrees/hooks';
 import { useProcessedGridData, processGridData } from './hooks';
 import tableSVG from './cartoon_table.svg';
+import './SubsetDownloadModal.scss';
 
 type SubsettingDataGridProps = {
   /** Should the modal currently be visible? */
@@ -320,15 +321,64 @@ export default function SubsettingDataGridModal({
     fetchPaginatedData({ pageSize: 10, pageIndex: 0 });
   }, [fetchPaginatedData, displayModal]);
 
+  const dataGridWrapperRef = useRef<HTMLDivElement>(null);
+
+  // This is to fix a strange layout bug with the table header icons on Firefox
+  // where they won't sit at the top right of the header cells
+  useEffect(() => {
+    // The recommended duck-typing to determine whether the browser is Firefox
+    // @ts-ignore
+    const browserIsFirefox = typeof InstallTrigger !== 'undefined';
+
+    if (browserIsFirefox && dataGridWrapperRef.current) {
+      // We're essentially going to set the div inside each table header cell
+      // to the same height as the header row itself
+      const headerDivElements = [
+        ...dataGridWrapperRef.current.getElementsByTagName('th'),
+      ].flatMap(
+        (headerElement) => (headerElement.firstChild as HTMLDivElement) ?? []
+      );
+
+      // We need to do this by finding the height of the tallest header text
+      // node (trying to use the header row height directly causes it to grow
+      // slightly each time and never shrink)
+      let maxHeight = 0;
+
+      for (const divElement of headerDivElements) {
+        const textNode = divElement.firstChild as Text;
+        const range = document.createRange();
+        range.selectNodeContents(textNode);
+        const height = range.getBoundingClientRect().height;
+        maxHeight = height > maxHeight ? height : maxHeight;
+      }
+
+      for (const divElement of headerDivElements) {
+        const paddingSize = 10;
+        divElement.style.height =
+          (maxHeight + 2 * paddingSize).toString() + 'px';
+      }
+    }
+    // We should do this whenever there's new data or the table size changes
+  }, [dataLoading, tableIsExpanded]);
+
+  const headerMarginBottom = 15;
+
   // Render the table data or instructions on how to get started.
   const renderDataGridArea = () => {
     return (
-      <div style={{ flex: 2, maxWidth: tableIsExpanded ? '100%' : '65%' }}>
+      <div
+        style={{
+          flex: 2,
+          maxWidth: tableIsExpanded ? '100%' : '65%',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
         <div
           style={{
             display: 'flex',
             justifyContent: 'space-between',
-            marginBottom: 30,
+            marginBottom: headerMarginBottom,
             height: 30,
           }}
         >
@@ -356,7 +406,16 @@ export default function SubsettingDataGridModal({
         </div>
         {gridData ? (
           selectedVariableDescriptors.length > 0 ? (
-            <div style={{ position: 'relative' }}>
+            <div
+              css={{
+                position: 'relative',
+                flex: '0 1 auto',
+                minHeight: 0,
+                '.css-1nxo5ei-HeaderCell': { height: 'auto' },
+              }}
+              className="DataGrid-Wrapper"
+              ref={dataGridWrapperRef}
+            >
               <DataGrid
                 columns={gridColumns}
                 data={gridRows}
@@ -522,8 +581,15 @@ export default function SubsettingDataGridModal({
 
     if ((!tableIsExpanded || errorMessage) && currentEntity) {
       return (
-        <div style={{ flex: 1, minWidth: '25%' }}>
-          <div style={{ marginBottom: 30, height: 30 }}>
+        <div
+          style={{
+            flex: 1,
+            minWidth: '25%',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          <div style={{ marginBottom: headerMarginBottom, height: 30 }}>
             {!tableIsExpanded && (
               <NumberedHeader
                 number={1}
@@ -536,18 +602,25 @@ export default function SubsettingDataGridModal({
             className="Variables"
             style={{
               width: '100%',
+              height: '100%',
               backgroundColor: 'rgba(255, 255, 255, 1)',
+              overflow: 'auto',
+              minHeight: 0,
+              flex: '0 1 auto',
             }}
           >
             {!requiredColumns.pending && requiredColumns.value && (
               <div
                 className="EDAWorkspace-VariableList"
-                style={{ marginBottom: 10 }}
+                style={{ marginBottom: 10, height: 'auto', display: 'block' }}
               >
                 <details
                   className="FeaturedVariables"
                   open={true}
-                  style={{ backgroundColor: 'rgb(245,245,245)' }}
+                  style={{
+                    backgroundColor: 'rgb(245,245,245)',
+                    height: 'auto',
+                  }}
                 >
                   <summary>
                     <h3>
@@ -562,7 +635,10 @@ export default function SubsettingDataGridModal({
                   </summary>
                   <ul>
                     {requiredColumns.value.map((column) => (
-                      <li className="wdk-CheckboxTreeItem">
+                      <li
+                        className="wdk-CheckboxTreeItem"
+                        key={column.accessor}
+                      >
                         <div className="wdk-CheckboxTreeNodeContent wdk-AttributeFilterFieldItem">
                           <i
                             className="fa fa-lock"
@@ -611,6 +687,7 @@ export default function SubsettingDataGridModal({
       onOpen={onModalOpen}
       onClose={onModalClose}
       themeRole="primary"
+      className="SubsetDownloadModal"
       styleOverrides={{
         content: {
           padding: {
@@ -622,27 +699,26 @@ export default function SubsettingDataGridModal({
         },
       }}
     >
-      <H5
-        additionalStyles={{
-          marginTop: 10,
-          marginBottom: 25,
-          fontStyle: 'italic',
-        }}
-        color={gray[700]}
-      >
-        {analysisState.analysis?.displayName}
-      </H5>
-      <div
-        key="Controls"
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-        }}
-      >
-        <div style={{ marginBottom: 15, display: 'flex' }}>
-          <div style={{ marginRight: 25 }} ref={observeEntityDescription}>
+      <div css={{ display: 'flex', flexDirection: 'column' }}>
+        <div
+          css={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            marginTop: 10,
+            marginBottom: 15,
+            height: '100%',
+          }}
+        >
+          <H5
+            additionalStyles={{
+              marginBottom: 5,
+              fontStyle: 'italic',
+            }}
+            color={gray[700]}
+          >
+            {analysisState.analysis?.displayName}
+          </H5>
+          <div style={{ textAlign: 'right' }}>
             <span
               style={{
                 fontSize: 18,
@@ -652,18 +728,20 @@ export default function SubsettingDataGridModal({
             >
               {currentEntity?.displayNamePlural}
             </span>
-            {currentEntityRecordCounts.filtered &&
-              currentEntityRecordCounts.total && (
-                <p
-                  style={{
-                    marginTop: 0,
-                    marginBottom: 0,
-                    color: 'gray',
-                  }}
-                >
-                  {`${currentEntityRecordCounts.filtered.toLocaleString()} of ${currentEntityRecordCounts.total.toLocaleString()} records selected`}
-                </p>
-              )}
+            <div ref={observeEntityDescription}>
+              {currentEntityRecordCounts.filtered &&
+                currentEntityRecordCounts.total && (
+                  <p
+                    style={{
+                      marginTop: 0,
+                      marginBottom: 0,
+                      color: 'gray',
+                    }}
+                  >
+                    {`${currentEntityRecordCounts.filtered.toLocaleString()} of ${currentEntityRecordCounts.total.toLocaleString()} records selected`}
+                  </p>
+                )}
+            </div>
           </div>
         </div>
       </div>
@@ -673,7 +751,8 @@ export default function SubsettingDataGridModal({
           display: 'flex',
           flexDirection: 'row',
           gap: 50,
-          marginTop: 15,
+          minHeight: 0,
+          flex: '0 1 auto',
         }}
       >
         {renderVariableSelectionArea()}
