@@ -98,7 +98,7 @@ class UserDatasetDetail extends React.Component {
     const message =
       `Are you sure you want to ${
         isOwner ? 'delete' : 'remove'
-      } this dataset? ` +
+      } this data set? ` +
       (!isOwner || !shareCount
         ? ''
         : `${shareCount} collaborator${
@@ -210,7 +210,7 @@ class UserDatasetDetail extends React.Component {
           </AnchoredTooltip>
         ),
       },
-      { attribute: 'Dataset Size', value: bytesToHuman(size) },
+      { attribute: 'Data set size', value: bytesToHuman(size) },
       !isOwner
         ? null
         : {
@@ -364,7 +364,7 @@ class UserDatasetDetail extends React.Component {
         <h1>Data Files</h1>
         <h3 className={classify('SectionTitle')}>
           <Icon fa="files-o" />
-          Files in Dataset
+          Files in Data Set
         </h3>
         <Mesa state={fileTableState} />
       </section>
@@ -453,11 +453,11 @@ class UserDatasetDetail extends React.Component {
 
     return (
       <section id="dataset-compatibility">
-        <h1>Use This Dataset in {displayName}</h1>
+        <h1>Use This Data Set in {displayName}</h1>
         <h3 className={classify('SectionTitle')}>
           <Icon fa="puzzle-piece" />
           Compatibility Information &nbsp;
-          <AnchoredTooltip content="The data and genomes listed here are requisite for using the data in this user dataset.">
+          <AnchoredTooltip content="The data and genomes listed here are requisite for using the data in this user data set.">
             <div className="HelpTrigger">
               <Icon fa="question-circle" />
             </div>
@@ -468,12 +468,12 @@ class UserDatasetDetail extends React.Component {
         </div>
         {isCompatibleProject && isCompatible ? (
           <p className="success">
-            This dataset is compatible with the current release, build{' '}
+            This data set is compatible with the current release, build{' '}
             {buildNumber}, of <b>{projectId}</b>. It is installed for use.
           </p>
         ) : (
           <p className="danger">
-            This dataset is not compatible with the current release, build{' '}
+            This data set is not compatible with the current release, build{' '}
             {buildNumber}, of <b>{projectId}</b>. It is not installed for use.
           </p>
         )}

@@ -80,7 +80,7 @@ class BigwigDatasetDetail extends UserDatasetDetail {
       </section>
     ) : (
       <section>
-        This dataset isn't installed to {projectName} or contains no files.
+        This data set isn't installed to {projectName} or contains no files.
       </section>
     );
   }
