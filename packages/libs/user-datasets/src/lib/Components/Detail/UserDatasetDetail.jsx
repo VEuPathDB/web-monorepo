@@ -198,7 +198,6 @@ class UserDatasetDetail extends React.Component {
           />
         ),
       },
-      // { attribute: 'Compatible Projects', value: projects.join(', ') },
       {
         attribute: 'Created',
         value: (
@@ -544,7 +543,7 @@ class UserDatasetDetail extends React.Component {
       );
     const isOwner = this.isMyDataset();
     const { sharingModalOpen } = this.state;
-    //    console.info('UDDC gettin props', this.props);
+
     return (
       <div className={classify()}>
         {this.getPageSections().map((Section, key) => (
