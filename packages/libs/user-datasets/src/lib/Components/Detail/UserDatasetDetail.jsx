@@ -163,7 +163,7 @@ class UserDatasetDetail extends React.Component {
       },
       {
         attribute: 'Owner',
-        value: isOwner ? <span className="faded">Me</span> : owner,
+        value: isOwner ? 'Me' : owner,
       },
       {
         attribute: 'Description',
@@ -179,13 +179,10 @@ class UserDatasetDetail extends React.Component {
       },
       { attribute: 'ID', value: id },
       {
-        attribute: 'Data Type',
+        attribute: 'Data type',
         value: (
           <span>
-            <b>{display}</b>{' '}
-            <span className="faded">
-              ({name} {version})
-            </span>
+            {display} ({name} {version})
           </span>
         ),
       },
@@ -214,7 +211,7 @@ class UserDatasetDetail extends React.Component {
       !isOwner
         ? null
         : {
-            attribute: 'Quota Usage',
+            attribute: 'Quota usage',
             value: `${normalizePercentage(percentQuotaUsed)}% of ${bytesToHuman(
               quotaSize
             )}`,
@@ -222,13 +219,12 @@ class UserDatasetDetail extends React.Component {
       !isOwner || !sharedWith || !sharedWith.length
         ? null
         : {
-            attribute: 'Shared With',
+            attribute: 'Shared with',
             value: (
               <ul>
                 {sharedWith.map((share) => (
                   <li key={share.email}>
-                    {share.userDisplayName}{' '}
-                    <span className="faded">&lt;{share.email}&gt;</span>{' '}
+                    {share.userDisplayName} &lt;{share.email}&gt;{' '}
                     {moment(share.time).fromNow()}
                   </li>
                 ))}
@@ -238,7 +234,7 @@ class UserDatasetDetail extends React.Component {
       !questions || !questions.length || !isInstalled
         ? null
         : {
-            attribute: 'Available Searches',
+            attribute: 'Available searches',
             value: (
               <ul>
                 {questions.map((questionName) => {

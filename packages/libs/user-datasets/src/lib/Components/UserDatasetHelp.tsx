@@ -121,7 +121,7 @@ function UserDatasetHelp({
               the <i>{workspaceTitle}</i> page.
             </li>
             <li>
-              When you’re ready, <code>Execute</code> the export. The process of
+              When you're ready, <code>Execute</code> the export. The process of
               exporting to VEuPathDB may take some time. Progress can be
               monitored from the right-side history panel in Galaxy.
             </li>
@@ -136,12 +136,12 @@ function UserDatasetHelp({
               <b>{projectName}</b>.
             </li>
             <li>
-              {workspaceTitle} you’ve created contribute to a per-user upload
+              {workspaceTitle} you've created contribute to a per-user upload
               limit/quota of <b>{bytesToHuman(quotaSize)}</b>.
             </li>
             <li>
               {' '}
-              Bigwig files can be sent to JBrowse in the data set’s detail page.
+              Bigwig files can be sent to JBrowse in the data set's detail page.
               Click the data set name or status icon to see this page.
             </li>
           </ul>
