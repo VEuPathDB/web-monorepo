@@ -1,9 +1,11 @@
 import { get, identity, keyBy, mapValues, orderBy, spread } from 'lodash';
 import { emptyAction } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
-import { showUnreleasedData } from 'ebrc-client/config';
 
 import { getSearchableString } from '@veupathdb/wdk-client/lib/Views/Records/RecordUtils'
 import { isPrereleaseStudyTemp } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
+
+import { showUnreleasedData } from 'ebrc-client/config';
+import { isDiyWdkRecordId } from 'ebrc-client/util/diyDatasets';
 
 export const STUDIES_REQUESTED = 'studies/studies-requested';
 export const STUDIES_RECEIVED = 'studies/studies-received';
@@ -138,8 +140,13 @@ function formatStudies(questions, recordClasses, answer) {
   }, { valid: [], invalid: [], appearFirst: new Set() });
 
   const unsortedValidRecords = records.valid
-    // remove unrelease studies, unless `showUnreleasedData = true`
-    .filter(study => study.isReleased || showUnreleasedData)
+    // remove unreleased studies, unless `showUnreleasedData = true`
+    // also, remove DIY studies
+    .filter(
+      study =>
+        (study.isReleased || showUnreleasedData) &&
+        !isDiyWdkRecordId(study.id)
+    )
     .map(study => Object.assign(study, {
       disabled: false,
       searches: Object.values(study.searches)
