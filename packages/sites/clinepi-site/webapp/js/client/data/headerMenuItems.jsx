@@ -116,7 +116,7 @@ export default function makeHeaderMenuItemsFactory(permissionsValue, diyDatasets
               useUserDatasetsWorkspace
                 ? [
                     {
-                      text: 'My Studies',
+                      text: 'My User Studies',
                       route: '/workspace/datasets'
                     }
                   ]
