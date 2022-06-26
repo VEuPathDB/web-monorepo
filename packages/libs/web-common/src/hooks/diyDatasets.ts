@@ -1,5 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 
+import { orderBy } from 'lodash';
+
 import { useWdkServiceWithRefresh } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 import { makeEdaRoute } from '../routes';
@@ -25,33 +27,36 @@ export function useDiyDatasets() {
       }
     );
 
-    return (
-      datasetRecords.flatMap(
-        record => {
-          const wdkDatasetId = record.id
-            .filter(part => part.name === 'dataset_id')
-            .map(part => part.value)[0];
+    const unsortedDiyEntries = datasetRecords.flatMap(
+      record => {
+        const wdkDatasetId = record.id
+          .filter(part => part.name === 'dataset_id')
+          .map(part => part.value)[0];
 
-          if (
-            wdkDatasetId == null ||
-            !isDiyWdkRecordId(wdkDatasetId)
-          ) {
-            return [];
-          }
-
-          const userDatasetId = wdkRecordIdToDiyUserDatasetId(wdkDatasetId);
-
-          return [
-            {
-              name: record.displayName,
-              wdkDatasetId,
-              userDatasetId,
-              baseEdaRoute: `${makeEdaRoute(wdkDatasetId)}`,
-              userDatasetsRoute: `/workspace/datasets/${userDatasetId}`
-            }
-          ];
+        if (
+          wdkDatasetId == null ||
+          !isDiyWdkRecordId(wdkDatasetId)
+        ) {
+          return [];
         }
-      )
+
+        const userDatasetId = wdkRecordIdToDiyUserDatasetId(wdkDatasetId);
+
+        return [
+          {
+            name: record.displayName,
+            wdkDatasetId,
+            userDatasetId,
+            baseEdaRoute: `${makeEdaRoute(wdkDatasetId)}`,
+            userDatasetsRoute: `/workspace/datasets/${userDatasetId}`
+          }
+        ];
+      }
+    );
+
+    return orderBy(
+      unsortedDiyEntries,
+      ({ name }) => name
     );
   }, [requestTimestamp]);
 
