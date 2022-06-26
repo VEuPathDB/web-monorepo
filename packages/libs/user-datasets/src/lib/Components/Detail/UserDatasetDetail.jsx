@@ -356,7 +356,7 @@ class UserDatasetDetail extends React.Component {
 
     return (
       <section id="dataset-files">
-        <h1>Data Files</h1>
+        <h2>Data Files</h2>
         <h3 className={classify('SectionTitle')}>
           <Icon fa="files-o" />
           Files in Data Set
@@ -448,7 +448,7 @@ class UserDatasetDetail extends React.Component {
 
     return (
       <section id="dataset-compatibility">
-        <h1>Use This Data Set in {displayName}</h1>
+        <h2>Use This Data Set in {displayName}</h2>
         <h3 className={classify('SectionTitle')}>
           <Icon fa="puzzle-piece" />
           Compatibility Information &nbsp;
