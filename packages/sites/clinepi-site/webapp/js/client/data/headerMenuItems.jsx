@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StudyMenuItem, StudyMenuSearch } from '@veupathdb/web-common/lib/App/Studies';
 import { menuItemsFromSocials, iconMenuItemsFromSocials } from '@veupathdb/web-common/lib/App/Utils/Utils';
 import { getStaticSiteData } from '../selectors/siteData';
@@ -147,4 +147,17 @@ export default function makeHeaderMenuItemsFactory(permissionsValue, diyDatasets
       iconMenu: [ ...socialIcons ]
     }
   };
+}
+
+/**
+ * Effectful component which reloads DIY studies whenever "focused"
+ */
+function DiyStudiesDaemon(props) {
+  useEffect(() => {
+    if (props.isFocused) {
+      props.reloadDiyDatasets();
+    }
+  }, [props.isFocused, props.reloadDiyDatasets]);
+
+  return null;
 }
