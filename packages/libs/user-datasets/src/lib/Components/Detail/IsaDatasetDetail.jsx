@@ -18,7 +18,9 @@ class IsaDatasetDetail extends UserDatasetDetail {
     return !isInstalled || !edaWorkspaceUrl ? null : (
       <section id="eda-linkout">
         <h2>
-          <Link to={edaWorkspaceUrl}>Explore in {displayName}</Link>
+          <Link to={edaWorkspaceUrl}>
+            <i className="ebrc-icon-edaIcon"></i> Explore in {displayName}
+          </Link>
         </h2>
       </section>
     );
