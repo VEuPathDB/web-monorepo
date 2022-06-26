@@ -5,7 +5,7 @@ import { getStaticSiteData } from '../selectors/siteData';
 import { useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
 import { STATIC_ROUTE_PATH, makeEdaRoute } from '@veupathdb/web-common/lib/routes';
 
-export default function makeHeaderMenuItemsFactory(permissionsValue) {
+export default function makeHeaderMenuItemsFactory(permissionsValue, diyDatasets, reloadDiyDatasets) {
   return function makeHeaderMenuItems(state, props) {
     const { siteConfig } = state.globalData;
     const siteData = getStaticSiteData(state);
