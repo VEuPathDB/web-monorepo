@@ -6,8 +6,6 @@ import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import { makeEdaRoute } from '@veupathdb/web-common/lib/routes';
 import { diyUserDatasetIdToWdkRecordId } from '@veupathdb/web-common/lib/util/diyDatasets';
 
-import IsaDatasetDetail from '@veupathdb/user-datasets/lib/Components/Detail/IsaDatasetDetail';
-
 import {
   UserDatasetDetailProps
 } from '@veupathdb/user-datasets/lib/Controllers/UserDatasetDetailController';
@@ -15,6 +13,10 @@ import {
 import {
   uploadTypeConfig
 } from '@veupathdb/user-datasets/lib/Utils/upload-config';
+
+const IsaDatasetDetail = React.lazy(
+  () => import('@veupathdb/user-datasets/lib/Components/Detail/IsaDatasetDetail')
+);
 
 const UserDatasetRouter = React.lazy(() => import('../controllers/UserDatasetRouter'));
 
