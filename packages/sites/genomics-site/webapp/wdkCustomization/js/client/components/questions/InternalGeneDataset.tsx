@@ -164,16 +164,13 @@ function InternalGeneDatasetContent(props: Props) {
   const changeTabHandler = useCallback(
     (selectedTabKey: string) => {
       if (
-        !questionNamesByDatasetAndCategory || 
-        !selectedDataSetRecord || 
-        !displayCategoriesByName ||
         searchName === selectedTabKey
         ) return;
         setSelectedSearch(selectedTabKey);
         if (submissionMetadata.type === 'create-strategy') {
           history.push(location.pathname + '#' + selectedTabKey)
         }
-  }, [questionNamesByDatasetAndCategory, selectedDataSetRecord, displayCategoriesByName, searchName, submissionMetadata])
+  }, [searchName, submissionMetadata])
 
   return (
     (
