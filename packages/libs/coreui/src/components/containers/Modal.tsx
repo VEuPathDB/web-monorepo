@@ -69,6 +69,8 @@ export type ModalProps = {
   styleOverrides?: Subset<ModalStyleSpec>;
   /** The contents of the modal.  */
   children: ReactNode;
+  /** The classname to pass to the modal */
+  className?: string;
 };
 
 export default function Modal({
@@ -80,6 +82,7 @@ export default function Modal({
   themeRole,
   styleOverrides = {},
   children,
+  className,
 }: ModalProps) {
   const theme = useUITheme();
 
@@ -143,6 +146,7 @@ export default function Modal({
       onClose={() => toggleVisible && toggleVisible(false)}
       showCloseIcon={false}
       closeOnEsc={true}
+      classNames={{root: className}}
       styles={{
         root: {
           position: 'fixed',
