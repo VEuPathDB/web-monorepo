@@ -1,4 +1,4 @@
-import React, {  useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import Header from '@veupathdb/web-common/lib/App/Header';
 import { useDiyDatasets } from '@veupathdb/web-common/lib/hooks/diyDatasets';
