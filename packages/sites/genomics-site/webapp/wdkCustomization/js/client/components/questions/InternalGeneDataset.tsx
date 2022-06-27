@@ -1,8 +1,9 @@
-import React, { Suspense, useMemo, useState, useEffect } from 'react';
+import React, { Suspense, useMemo, useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router';
+import { useLocation, useHistory } from 'react-router';
 
-import { Loading, Link, Tooltip, HelpIcon, Tabs } from '@veupathdb/wdk-client/lib/Components';
+import { Loading, Link, Tooltip, HelpIcon } from '@veupathdb/wdk-client/lib/Components';
+import { TabbedDisplay } from '@veupathdb/coreui';
 import { CommonResultTable as InternalGeneDatasetTable } from '@veupathdb/wdk-client/lib/Components/Shared/CommonResultTable';
 import QuestionController, {
   useSetSearchDocumentTitle,
@@ -67,6 +68,7 @@ export function InternalGeneDataset(props: Props) {
 
 function InternalGeneDatasetContent(props: Props) {
   const location = useLocation();
+  const history = useHistory();
   const searchNameAnchorTag = location.hash.slice(1);
 
   const buildNumber = useSelector((state: RootState) => state.globalData?.config?.buildNumber);
@@ -158,6 +160,17 @@ function InternalGeneDatasetContent(props: Props) {
     outputRecordClass,
     shouldChangeDocumentTitle
   );
+
+  const changeTabHandler = useCallback(
+    (selectedTabKey: string) => {
+      if (
+        searchName === selectedTabKey
+        ) return;
+        setSelectedSearch(selectedTabKey);
+        if (submissionMetadata.type === 'create-strategy') {
+          history.push(location.pathname + '#' + selectedTabKey)
+        }
+  }, [searchName, submissionMetadata])
 
   return (
     (
@@ -376,62 +389,46 @@ function InternalGeneDatasetContent(props: Props) {
             }
             {
               selectedDataSetRecord && (
-                <Tabs
-                  tabs={
-                    displayCategoryOrder
-                      .filter(
-                        categoryName => getCategorySearchName(
-                          questionNamesByDatasetAndCategory,
-                          selectedDataSetRecord.dataset_name,
-                          categoryName
-                        )
+              <TabbedDisplay
+                tabs={displayCategoryOrder
+                  .filter(
+                    categoryName => getCategorySearchName(
+                        questionNamesByDatasetAndCategory,
+                        selectedDataSetRecord.dataset_name,
+                        categoryName
                       )
-                      .map(categoryName => {
-                        const categorySearchName = getCategorySearchName(
-                          questionNamesByDatasetAndCategory,
-                          selectedDataSetRecord.dataset_name,
-                          categoryName
-                        );
-
-                        return {
-                          key: categorySearchName,
-                          display: (
-                            <Link
-                              to={`${internalSearchName}#${categorySearchName}`}
-                              onClick={makeLinkClickHandler(
-                                submissionMetadata,
-                                categorySearchName,
-                                searchName,
-                                setSelectedSearch
-                              )}
-                            >
-                              {displayCategoriesByName[categoryName].displayName}
-                            </Link>
-                          ),
-                          content: (
-                            <Plugin
-                              context={{
-                                type: 'questionController',
-                                searchName,
-                                recordClassName: recordClass
-                              }}
-                              pluginProps={{
-                                ...props,
-                                question: searchName,
-                                shouldChangeDocumentTitle: false
-                              }}
-                              defaultComponent={QuestionController}
-                              fallback={<Loading />}
-                            />
-                          )
-                        };
-                      })
+                    )
+                  .map(categoryName => {
+                    const categorySearchName = getCategorySearchName(
+                      questionNamesByDatasetAndCategory,
+                      selectedDataSetRecord.dataset_name,
+                      categoryName
+                    );
+                    return {
+                      key: categorySearchName,
+                      displayName: displayCategoriesByName[categoryName].displayName,
+                      content: (
+                        <Plugin
+                          context={{
+                            type: 'questionController',
+                            searchName,
+                            recordClassName: recordClass
+                          }}
+                          pluginProps={{
+                            ...props,
+                            question: searchName,
+                            shouldChangeDocumentTitle: false
+                          }}
+                          defaultComponent={QuestionController}
+                          fallback={<Loading />}
+                        />
+                      )
+                    }
+                  })
                   }
-                  activeTab={searchName}
-                  onTabSelected={(tab) => {
-                    setSelectedSearch(tab);
-                  }}
-                />
+                onTabSelected={changeTabHandler}
+                activeTab={searchName}
+              />
               )
             }
           </div>

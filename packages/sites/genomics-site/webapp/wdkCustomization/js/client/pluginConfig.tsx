@@ -8,7 +8,6 @@ import {
 import { ClientPluginRegistryEntry } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
 import { StepAnalysisEupathExternalResult } from '@veupathdb/web-common/lib/plugins/StepAnalysisEupathExternalResult';
 import { default as GenomeSummaryViewPlugin } from './controllers/GenomeSummaryViewController'
-import { default as BlastSummaryViewPlugin } from './controllers/BlastSummaryViewController'
 
 import { ByGenotypeNumberCheckbox } from './components/questions/ByGenotypeNumberCheckbox';
 
@@ -31,8 +30,11 @@ import { isMultiBlastQuestion } from '@veupathdb/multi-blast/lib/utils/pluginCon
 
 import { OrganismParam, isOrganismParam } from '@veupathdb/preferred-organisms/lib/components/OrganismParam';
 
-const BlastQuestionController = React.lazy(() => import('./plugins/BlastQuestionController'));
 const BlastForm = React.lazy(() => import('./plugins/BlastForm'));
+const BlastQuestionController = React.lazy(() => import('./plugins/BlastQuestionController'));
+const BlastSummaryViewPlugin = React.lazy(
+  () => import('@veupathdb/blast-summary-view/lib/Controllers/BlastSummaryViewController')
+);
 
 const isInternalGeneDatasetQuestion: ClientPluginRegistryEntry<any>['test'] =
   ({ question }) => (
@@ -70,7 +72,10 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
     type: 'summaryView',
     name: 'blast-view',
-    component: BlastSummaryViewPlugin
+    component: (props) =>
+      <Suspense fallback={<Loading />}>
+        <BlastSummaryViewPlugin {...props} />
+      </Suspense>
   },
   {
     type: 'summaryView',
