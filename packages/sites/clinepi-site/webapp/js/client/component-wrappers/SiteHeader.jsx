@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import Header from '@veupathdb/web-common/lib/App/Header';
+import { useDiyDatasets } from '@veupathdb/web-common/lib/hooks/diyDatasets';
 import { makeEdaRoute } from '@veupathdb/web-common/lib/routes';
 import { DataRestrictionDaemon } from '@veupathdb/study-data-access/lib/data-restriction';
 import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
@@ -18,9 +19,11 @@ export default function SiteHeaderWrapper() {
 
     const permissions = usePermissions();
 
+    const { diyDatasets, reloadDiyDatasets } = useDiyDatasets();
+
     const makeHeaderMenuItems = useMemo(
-      () => makeHeaderMenuItemsFactory(permissions), 
-      [permissions]
+      () => makeHeaderMenuItemsFactory(permissions, diyDatasets, reloadDiyDatasets),
+      [permissions, diyDatasets, reloadDiyDatasets]
     );
 
     return (

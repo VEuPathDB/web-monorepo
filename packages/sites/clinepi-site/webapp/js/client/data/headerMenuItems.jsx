@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StudyMenuItem, StudyMenuSearch } from '@veupathdb/web-common/lib/App/Studies';
+import { DIYStudyMenuItem } from '@veupathdb/web-common/lib/App/Studies/DIYStudyMenuItem';
 import { menuItemsFromSocials, iconMenuItemsFromSocials } from '@veupathdb/web-common/lib/App/Utils/Utils';
 import { getStaticSiteData } from '../selectors/siteData';
-import { useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
+import { useEda, useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
 import { STATIC_ROUTE_PATH, makeEdaRoute } from '@veupathdb/web-common/lib/routes';
 
-export default function makeHeaderMenuItemsFactory(permissionsValue) {
+export default function makeHeaderMenuItemsFactory(permissionsValue, diyDatasets, reloadDiyDatasets) {
   return function makeHeaderMenuItems(state, props) {
     const { siteConfig } = state.globalData;
     const siteData = getStaticSiteData(state);
@@ -23,17 +24,40 @@ export default function makeHeaderMenuItemsFactory(permissionsValue) {
       bottom: '-.25em'
     }
 
+    const filteredUserStudies = (
+      useEda &&
+      useUserDatasetsWorkspace
+        ? diyDatasets
+        : []
+    )?.filter(
+      study => (
+        study.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
+
+    const filteredCuratedStudies = studies.entities?.filter(
+      study => (
+        study.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
+
     return {
       mainMenu: [
         {
           id: 'studies',
           text: 'Studies',
-          children:[
+          children: ({ isFocused }) => [
             {
               text: (
-                <div style={{ padding: '0.5em 0' }}>
-                  <i className="ebrc-icon-table" style={studyTableIconStyle}></i> Study summaries table
-                </div>
+                <>
+                  <DiyStudiesDaemon
+                    isFocused={isFocused}
+                    reloadDiyDatasets={reloadDiyDatasets}
+                  />
+                  <div style={{ padding: '0.5em 0' }}>
+                    <i className="ebrc-icon-table" style={studyTableIconStyle}></i> Study summaries table
+                  </div>
+                </>
               ),
               route: '/search/dataset/Studies/result'
             },
@@ -41,18 +65,49 @@ export default function makeHeaderMenuItemsFactory(permissionsValue) {
               text: <StudyMenuSearch searchTerm={searchTerm} onSearchTermChange={setSearchTerm}/>
             }
           ].concat(
-            studies.entities != null && !permissionsValue.loading
-            ? studies.entities
-                .filter(
-                  study => (
-                    study.name.toLowerCase().includes(searchTerm.toLowerCase())
+            filteredCuratedStudies != null && filteredUserStudies != null && !permissionsValue.loading
+              ? (
+                  filteredUserStudies.length > 0 && studies.entities?.length > 0
+                    ? [
+                        {
+                          text: <small>User studies</small>
+                        }
+                      ]
+                    : []
+                ).concat(
+                  filteredUserStudies.map(
+                    study => ({
+                      text: (
+                        <DIYStudyMenuItem
+                          name={study.name}
+                          link={`${study.baseEdaRoute}/new`}
+                        />
+                      )
+                    })
                   )
-                ).map(
-                  study => ({
-                    text: <StudyMenuItem study={study} config={siteConfig} permissions={permissionsValue.permissions} />
-                  })
+                ).concat(
+                  filteredCuratedStudies.length > 0 && diyDatasets?.length > 0
+                    ? [
+                        {
+                          text: <small>Curated studies</small>
+                        }
+                      ]
+                    : []
+                ).concat(
+                  filteredCuratedStudies
+                    .map(
+                      study => ({
+                        text: (
+                          <StudyMenuItem
+                            study={study}
+                            config={siteConfig}
+                            permissions={permissionsValue.permissions}
+                          />
+                        )
+                      })
+                    )
                 )
-            : [{ text: <i style={{ fontSize: '13em' }} className="fa fa-align-justify"/> }])
+              : [{ text: <i style={{ fontSize: '13em' }} className="fa fa-align-justify"/> }])
         },
         {
           id: 'workspace',
@@ -63,10 +118,11 @@ export default function makeHeaderMenuItemsFactory(permissionsValue) {
               route: makeEdaRoute()
             },
             ...(
+              useEda &&
               useUserDatasetsWorkspace
                 ? [
                     {
-                      text: 'My Studies',
+                      text: 'My User Studies',
                       route: '/workspace/datasets'
                     }
                   ]
@@ -147,4 +203,17 @@ export default function makeHeaderMenuItemsFactory(permissionsValue) {
       iconMenu: [ ...socialIcons ]
     }
   };
+}
+
+/**
+ * Effectful component which reloads DIY studies whenever "focused"
+ */
+function DiyStudiesDaemon(props) {
+  useEffect(() => {
+    if (props.isFocused) {
+      props.reloadDiyDatasets();
+    }
+  }, [props.isFocused, props.reloadDiyDatasets]);
+
+  return null;
 }
