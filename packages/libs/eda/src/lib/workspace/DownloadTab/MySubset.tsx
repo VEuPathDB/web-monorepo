@@ -17,11 +17,10 @@ import {
   EnhancedEntityData,
   EnhancedEntityDatum,
 } from './hooks/useEnhancedEntityData';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import SubsettingDataGridModal from '../Subsetting/SubsettingDataGridModal';
 import { AnalysisState } from '../../core';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
-import { EntityCounts } from '../../core/hooks/entityCounts';
 import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 import { Action } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUiActions';
 
@@ -29,16 +28,12 @@ type MySubsetProps = {
   datasetId: string;
   entities: EnhancedEntityData;
   analysisState: AnalysisState;
-  totalEntityCounts: EntityCounts | undefined;
-  filteredEntityCounts: EntityCounts | undefined;
 };
 
 export default function MySubset({
   datasetId,
   entities,
   analysisState,
-  totalEntityCounts,
-  filteredEntityCounts,
 }: MySubsetProps) {
   const theme = useUITheme();
 
@@ -52,17 +47,6 @@ export default function MySubset({
   const starredVariables = analysisState.analysis?.descriptor.starredVariables;
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
-  const [totalEntityCount, filteredEntityCount] = useMemo(() => {
-    if (currentEntity && totalEntityCounts && filteredEntityCounts) {
-      return [
-        totalEntityCounts[currentEntity.id],
-        filteredEntityCounts[currentEntity.id],
-      ];
-    } else {
-      return [undefined, undefined];
-    }
-  }, [currentEntity, totalEntityCounts, filteredEntityCounts]);
-
   return (
     <div key="My Subset" style={{ marginTop: 10, marginBottom: 35 }}>
       {currentEntity ? (
@@ -74,11 +58,7 @@ export default function MySubset({
           }}
           analysisState={analysisState}
           entities={entities}
-          currentEntityID={currentEntity.id}
-          currentEntityRecordCounts={{
-            total: totalEntityCount,
-            filtered: filteredEntityCount,
-          }}
+          currentEntity={currentEntity}
           starredVariables={starredVariables}
           toggleStarredVariable={toggleStarredVariable}
         />

@@ -16,7 +16,7 @@ import DataClient, {
   MosaicRequestParams,
   TwoByTwoResponse,
 } from '../../../api/DataClient';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
@@ -185,6 +185,9 @@ function MosaicViz(props: Props) {
     [studyMetadata]
   );
   const dataClient: DataClient = useDataClient();
+
+  // set default tab to Mosaic in TabbedDisplay component
+  const [activeTab, setActiveTab] = useState('Mosaic');
 
   const [vizConfig, updateVizConfig] = useVizConfig(
     visualization.descriptor.configuration,
@@ -391,8 +394,13 @@ function MosaicViz(props: Props) {
   const plotNode = (
     <TabbedDisplay
       themeRole="primary"
+      onTabSelected={(selectedTabKey: string) => {
+        if (activeTab !== selectedTabKey) setActiveTab(selectedTabKey);
+      }}
+      activeTab={activeTab}
       tabs={[
         {
+          key: 'Mosaic',
           displayName: 'Mosaic',
           content: (
             <div style={{ marginTop: 15 }}>
@@ -415,6 +423,7 @@ function MosaicViz(props: Props) {
           ),
         },
         {
+          key: 'Table',
           displayName: 'Table',
           content: (
             <ContingencyTable
@@ -435,6 +444,7 @@ function MosaicViz(props: Props) {
           ),
         },
         {
+          key: 'Statistics',
           displayName: 'Statistics',
           content: isFaceted(data.value)
             ? vizConfig.showMissingness
