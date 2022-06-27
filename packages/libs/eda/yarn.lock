@@ -3068,10 +3068,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/coreui@^0.17.1":
-  version "0.17.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.17.1.tgz#65497a56e671d6f098c60f40ba745cc47bc37739"
-  integrity sha512-XQSSDIwqRi7JqfeLKpj+qIeMacTU6XatOIEWOMeXGg1EE+aW9ZWJ4MGPJGkx9/rc4SovwmWTWNNx9RKwge/ZoQ==
+"@veupathdb/coreui@^0.17.2":
+  version "0.17.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.17.2.tgz#9147f08956623882a386ee2c53ce9c4613dab05a"
+  integrity sha512-Wpp8niDk/FM7BTPCI1Mwac3BFOnSSUq5Xb3Wsx0VDSUaiQLc1FUfLn0yY6pxP1SUn3T8amgsuzNYcvnE6CfJgg==
   dependencies:
     "@react-hook/size" "^2.1.2"
     lodash "^4.17.21"
