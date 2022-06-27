@@ -17,11 +17,15 @@ import { Modal, H5, DataGrid, MesaButton, Download } from '@veupathdb/coreui';
 
 // Definitions
 import { AnalysisState } from '../../core/hooks/analysis';
-import { StudyEntity, TabularDataResponse, usePromise } from '../../core';
+import { TabularDataResponse, usePromise } from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
 import { APIError } from '../../core/api/types';
 import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
 import { gray } from '@veupathdb/coreui/dist/definitions/colors';
+import {
+  EnhancedEntityData,
+  EnhancedEntityDatum,
+} from '../DownloadTab/hooks/useEnhancedEntityData';
 
 // Hooks
 import {
@@ -42,14 +46,8 @@ type SubsettingDataGridProps = {
   /** Analysis state. We will read/write to this object. */
   analysisState: AnalysisState;
   /** The entities for the Study/Analysis being interacted with. */
-  entities: Array<StudyEntity>;
-  /** The ID of the currently selected entity. */
-  currentEntityID: string;
-  /** Record counts for the currently selected entity. With an without any applied filters. */
-  currentEntityRecordCounts: {
-    total: number | undefined;
-    filtered: number | undefined;
-  };
+  entities: EnhancedEntityData;
+  currentEntity: EnhancedEntityDatum;
   starredVariables?: VariableDescriptor[];
   toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
 };
@@ -109,8 +107,7 @@ export default function SubsettingDataGridModal({
   toggleDisplay,
   analysisState,
   entities,
-  currentEntityID,
-  currentEntityRecordCounts,
+  currentEntity,
   starredVariables,
   toggleStarredVariable,
 }: SubsettingDataGridProps) {
@@ -128,21 +125,17 @@ export default function SubsettingDataGridModal({
   const scopedFeaturedFields = useMemo(
     () =>
       featuredFields.filter((field) =>
-        field.term.startsWith(currentEntityID + '/')
+        field.term.startsWith(currentEntity.id + '/')
       ),
-    [currentEntityID, featuredFields]
+    [currentEntity, featuredFields]
   );
 
   const scopedStarredVariables = useMemo(
     () =>
       starredVariables?.filter(
-        (variable) => variable.entityId === currentEntityID
+        (variable) => variable.entityId === currentEntity.id
       ) ?? [],
-    [currentEntityID, starredVariables]
-  );
-
-  const [currentEntity, setCurrentEntity] = useState<StudyEntity | undefined>(
-    undefined
+    [currentEntity, starredVariables]
   );
 
   // Used to track if there is an inflight API call.
@@ -171,24 +164,17 @@ export default function SubsettingDataGridModal({
     selectedVariableDescriptors,
     setSelectedVariableDescriptors,
   ] = useState<Array<VariableDescriptor>>(
-    analysisState.analysis?.descriptor.dataTableConfig[currentEntityID]
+    analysisState.analysis?.descriptor.dataTableConfig[currentEntity.id]
       ?.variables ?? []
   );
 
-  /**
-   * Actions to take when the modal is opened.
-   */
-  const onModalOpen = useCallback(() => {
-    // Sync the current entity inside the modal to whatever is
-    // current selected by the user outside the modal.
-    setCurrentEntity(entities.find((entity) => entity.id === currentEntityID));
-  }, [currentEntityID, entities]);
-
-  /** Actions to take when modal is closed. */
-  const onModalClose = useCallback(() => {
-    setGridData(null);
-    setTableIsExpanded(false);
-  }, []);
+  useEffect(() => {
+    /** Actions to take when modal is closed. */
+    if (!displayModal) {
+      setGridData(null);
+      setTableIsExpanded(false);
+    }
+  }, [displayModal]);
 
   const mergeKeys = useMemo(() => {
     if (!currentEntity) return [];
@@ -202,7 +188,7 @@ export default function SubsettingDataGridModal({
     useCallback(async () => {
       const data = await subsettingClient.getTabularData(
         studyMetadata.id,
-        currentEntityID,
+        currentEntity.id,
         {
           filters: [],
           outputVariableIds: mergeKeys,
@@ -213,14 +199,7 @@ export default function SubsettingDataGridModal({
         }
       );
       return processGridData(data, entities, currentEntity)[0];
-    }, [
-      subsettingClient,
-      studyMetadata.id,
-      currentEntityID,
-      entities,
-      currentEntity,
-      mergeKeys,
-    ])
+    }, [subsettingClient, studyMetadata.id, entities, currentEntity, mergeKeys])
   );
 
   const requiredColumnAccessors = requiredColumns.value?.map(
@@ -242,7 +221,7 @@ export default function SubsettingDataGridModal({
       setDataLoading(true);
 
       subsettingClient
-        .getTabularData(studyMetadata.id, currentEntityID, {
+        .getTabularData(studyMetadata.id, currentEntity.id, {
           filters: analysisState.analysis?.descriptor.subset.descriptor ?? [],
           outputVariableIds: mergeKeys.concat(
             selectedVariableDescriptors
@@ -259,7 +238,7 @@ export default function SubsettingDataGridModal({
         })
         .then((data) => {
           setGridData(data);
-          setPageCount(ceil(currentEntityRecordCounts.filtered! / pageSize));
+          setPageCount(ceil(currentEntity.filteredCount! / pageSize));
         })
         .catch((error: Error) => {
           setApiError(JSON.parse(error.message.split('\n')[1]));
@@ -269,8 +248,6 @@ export default function SubsettingDataGridModal({
         });
     },
     [
-      currentEntityID,
-      currentEntityRecordCounts.filtered,
       selectedVariableDescriptors,
       studyMetadata.id,
       subsettingClient,
@@ -282,7 +259,7 @@ export default function SubsettingDataGridModal({
 
   // Function to download selected data.
   const downloadData = useCallback(() => {
-    subsettingClient.tabularDataDownload(studyMetadata.id, currentEntityID, {
+    subsettingClient.tabularDataDownload(studyMetadata.id, currentEntity.id, {
       filters: analysisState.analysis?.descriptor.subset.descriptor ?? [],
       outputVariableIds: selectedVariableDescriptors.map(
         (descriptor) => descriptor.variableId
@@ -295,7 +272,7 @@ export default function SubsettingDataGridModal({
   }, [
     subsettingClient,
     selectedVariableDescriptors,
-    currentEntityID,
+    currentEntity,
     studyMetadata.id,
     analysisState.analysis?.descriptor.subset.descriptor,
   ]);
@@ -307,7 +284,7 @@ export default function SubsettingDataGridModal({
     // Update the analysis to save the user's selections.
     analysisState.setDataTableConfig({
       ...analysisState.analysis?.descriptor.dataTableConfig,
-      [currentEntityID]: { variables: variableDescriptors, sorting: null },
+      [currentEntity.id]: { variables: variableDescriptors, sorting: null },
     });
 
     setSelectedVariableDescriptors(variableDescriptors);
@@ -507,7 +484,7 @@ export default function SubsettingDataGridModal({
   const customCheckboxes = mergeKeys.reduce(
     (checkboxes, mergeKey) => ({
       ...checkboxes,
-      [currentEntityID + '/' + mergeKey]: LockIcon,
+      [currentEntity.id + '/' + mergeKey]: LockIcon,
     }),
     {}
   );
@@ -608,8 +585,6 @@ export default function SubsettingDataGridModal({
       includeCloseButton={true}
       visible={displayModal}
       toggleVisible={toggleDisplay}
-      onOpen={onModalOpen}
-      onClose={onModalClose}
       themeRole="primary"
       styleOverrides={{
         content: {
@@ -652,18 +627,17 @@ export default function SubsettingDataGridModal({
             >
               {currentEntity?.displayNamePlural}
             </span>
-            {currentEntityRecordCounts.filtered &&
-              currentEntityRecordCounts.total && (
-                <p
-                  style={{
-                    marginTop: 0,
-                    marginBottom: 0,
-                    color: 'gray',
-                  }}
-                >
-                  {`${currentEntityRecordCounts.filtered.toLocaleString()} of ${currentEntityRecordCounts.total.toLocaleString()} records selected`}
-                </p>
-              )}
+            {currentEntity.filteredCount && currentEntity.totalCount && (
+              <p
+                style={{
+                  marginTop: 0,
+                  marginBottom: 0,
+                  color: 'gray',
+                }}
+              >
+                {`${currentEntity.filteredCount.toLocaleString()} of ${currentEntity.totalCount.toLocaleString()} records selected`}
+              </p>
+            )}
           </div>
         </div>
       </div>
