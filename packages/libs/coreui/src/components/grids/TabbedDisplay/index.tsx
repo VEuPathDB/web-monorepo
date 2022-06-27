@@ -47,20 +47,16 @@ const DEFAULT_STYLE: TabbedDisplayStyleSpec = {
   },
 };
 
-export type TabbedDisplayProps = {
+export type TabbedDisplayProps<TabKey extends string> = {
   /**
    * The content for the tab display. Each array item containts properties
    * for the tab display name and the actual content to display to the user.
    * */
-  tabs: Array<{
-    // The name to display in the tab. Also used as the key.
-    displayName: string;
-    content?: React.ReactNode;
-  }>;
-  onTabSelected: (selectedTabDisplayName: string) => void;
+  tabs: TabConfig<TabKey>[];
+  onTabSelected: (selectedTabKey: string) => void;
   /**
-   * The value MUST be the displayName of one of the tabs. */
-  activeTab: string;
+   * The key of the currently selected tab. */
+  activeTab: TabKey;
   /** Optional. Any desired style overrides. */
   styleOverrides?: Partial<TabbedDisplayStyleSpec>;
   /**
@@ -69,15 +65,24 @@ export type TabbedDisplayProps = {
   themeRole?: keyof UITheme['palette'];
 };
 
+export type TabConfig<TabKey extends string> = {
+  /** A unique key for the given tab */
+  key: TabKey;
+  /** The name to display in the tab */
+  displayName: React.ReactNode;
+  /** The content for the tab */
+  content?: React.ReactNode;
+}
+
 /** Allows the developer to create a tabbed display of content. */
-export default function TabbedDisplay({
+export default function TabbedDisplay<T extends string = string>({
   tabs,
   activeTab,
   onTabSelected,
   styleOverrides = {},
   themeRole,
-}: TabbedDisplayProps) {
-  const selectedTab = tabs.find(tab => tab.displayName === activeTab);
+}: TabbedDisplayProps<T>) {
+  const selectedTab = tabs.find(tab => tab.key === activeTab);
   const tabContent = selectedTab ? selectedTab.content : null;
 
   const [hoveredTab, setHoveredTab] = useState<null | string>(null);
@@ -115,9 +120,9 @@ export default function TabbedDisplay({
       >
         {tabs.map((tab) => {
           const tabState =
-            tab.displayName === activeTab
+            tab.key === activeTab
               ? 'active'
-              : tab.displayName === hoveredTab
+              : tab.key === hoveredTab
               ? 'hover'
               : 'inactive';
 
@@ -125,7 +130,7 @@ export default function TabbedDisplay({
             <div
               role='tab'
               tabIndex={0}
-              key={tab.displayName}
+              key={tab.key}
               css={[
                 finalStyle[tabState],
                 {
@@ -139,19 +144,19 @@ export default function TabbedDisplay({
                     'background-color .5s, border-color .5s, color .5s',
                 },
               ]}
-              onClick={() => onTabSelected && onTabSelected(tab.displayName)}
-              onFocus={() => setHoveredTab(tab.displayName)}
+              onClick={() => onTabSelected && onTabSelected(tab.key)}
+              onFocus={() => setHoveredTab(tab.key)}
               onBlur={() => setHoveredTab(null)}
-              onMouseOver={() => setHoveredTab(tab.displayName)}
+              onMouseOver={() => setHoveredTab(tab.key)}
               onMouseOut={() => setHoveredTab(null)}
               onKeyDown={(event) => {
                 if (['Space', 'Enter'].includes(event.code)) {
-                  onTabSelected && onTabSelected(tab.displayName);
+                  onTabSelected && onTabSelected(tab.key);
                 }
               }}
             >
               <H6
-                text={tab.displayName}
+                children={tab.displayName}
                 additionalStyles={{ margin: 0 }}
                 color={finalStyle[tabState].textColor}
               />
