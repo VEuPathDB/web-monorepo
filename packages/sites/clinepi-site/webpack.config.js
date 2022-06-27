@@ -1,4 +1,4 @@
-const configure = require('../../EbrcWebsiteCommon/Site/site.webpack.config.js');
+const configure = require('@veupathdb/site-webpack-config');
 
 const additionalConfig = {
   entry: {

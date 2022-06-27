@@ -1,3 +1,4 @@
+import { siteSearchServiceUrl } from '@veupathdb/web-common/lib/config';
 import { StudyCard } from '@veupathdb/web-common/lib/App/Studies';
 import { AnalysisCard } from '@veupathdb/web-common/lib/App/Analyses';
 
@@ -13,6 +14,8 @@ export default permissionsValue => ({ studies, searches, visualizations }) => ([
     items: studies.entities,
     isLoading: studies.loading || permissionsValue.loading,
     isExpandable: true,
+    // uncomment the next line to disable the cards search
+    isSearchable: !siteSearchServiceUrl,
     tableViewLink: '/search/dataset/Studies/result',
     tableViewLinkText: 'Study summaries table',
     cardComponent: StudyCard,
