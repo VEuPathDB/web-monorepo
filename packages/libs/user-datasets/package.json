@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/user-datasets",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "sideEffects": [
     "src/globals.js",
     "*.scss"
@@ -15,7 +15,7 @@
   },
   "scripts": {
     "start": "veupathdb-react-scripts start",
-    "build": "veupathdb-react-scripts build",
+    "build": "veupathdb-react-scripts prepare",
     "test": "veupathdb-react-scripts test",
     "eject": "veupathdb-react-scripts eject",
     "compile": "veupathdb-react-scripts compile",
