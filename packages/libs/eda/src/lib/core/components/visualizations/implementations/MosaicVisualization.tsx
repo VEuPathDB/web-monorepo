@@ -394,13 +394,13 @@ function MosaicViz(props: Props) {
   const plotNode = (
     <TabbedDisplay
       themeRole="primary"
-      onTabSelected={(selectedTabDisplayName: string) => {
-        if (activeTab !== selectedTabDisplayName)
-          setActiveTab(selectedTabDisplayName);
+      onTabSelected={(selectedTabKey: string) => {
+        if (activeTab !== selectedTabKey) setActiveTab(selectedTabKey);
       }}
       activeTab={activeTab}
       tabs={[
         {
+          key: 'Mosaic',
           displayName: 'Mosaic',
           content: (
             <div style={{ marginTop: 15 }}>
@@ -423,6 +423,7 @@ function MosaicViz(props: Props) {
           ),
         },
         {
+          key: 'Table',
           displayName: 'Table',
           content: (
             <ContingencyTable
@@ -443,6 +444,7 @@ function MosaicViz(props: Props) {
           ),
         },
         {
+          key: 'Statistics',
           displayName: 'Statistics',
           content: isFaceted(data.value)
             ? vizConfig.showMissingness
