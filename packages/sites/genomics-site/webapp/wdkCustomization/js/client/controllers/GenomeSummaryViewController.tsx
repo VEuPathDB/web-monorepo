@@ -1,13 +1,20 @@
-import { partial } from 'lodash';
 import * as React from 'react';
+
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
 
-import ViewController from '@veupathdb/wdk-client/lib/Core/Controllers/ViewController';
-import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { get, partial } from 'lodash';
+import { createSelector } from 'reselect';
+import { identity } from 'rxjs';
+
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
 import LoadError from '@veupathdb/wdk-client/lib/Components/PageStatus/LoadError';
-import { RootState, GenomeSummaryViewReport } from '../types/summaryViewTypes';
+import ViewController from '@veupathdb/wdk-client/lib/Core/Controllers/ViewController';
+import { Partial1 } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
+import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { ResultType } from '@veupathdb/wdk-client/lib/Utils/WdkResult';
+
 import {
   requestGenomeSummaryReport,
   showRegionDialog,
@@ -15,14 +22,18 @@ import {
   applyEmptyChromosomesFilter,
   unapplyEmptyChromosomesFilter
 } from '../actions/GenomeSummaryViewActions';
+
 import { GenomeSummaryView } from '../components/genomeSummaryView/GenomeSummaryView';
-import { get } from 'lodash';
-import { createSelector } from 'reselect';
+
+import * as genomeSummaryViewStoreModule from '../storeModules/GenomeSummaryViewStoreModule';
+
+import { GenomeSummaryViewReport } from '../types/genomeSummaryViewTypes';
+
 import { GenomeSummaryViewReportModel, toReportModel } from '../util/GenomeSummaryViewUtils';
-import { identity } from 'rxjs';
-import { Partial1 } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
-import { ResultType } from '@veupathdb/wdk-client/lib/Utils/WdkResult';
-import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
+
+interface StateSlice {
+  [genomeSummaryViewStoreModule.key]: genomeSummaryViewStoreModule.State
+}
 
 type StateProps = 
   | { status: 'loading' }
@@ -107,9 +118,8 @@ const reportModel = createSelector<GenomeSummaryViewReport, GenomeSummaryViewRep
   toReportModel
 );
 
-function mapStateToProps(state: RootState, props: OwnProps): StateProps {
+function mapStateToProps(state: StateSlice, props: OwnProps): StateProps {
   const genomeSummaryViewState = state.genomeSummaryView[props.viewId];
-  const globalDataState = state.globalData;
 
   if (genomeSummaryViewState == null) return { status: 'loading' };
 
@@ -141,9 +151,8 @@ function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): DispatchProps 
   }, dispatch);
 }
 
-export default connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
+export default connect<StateProps, DispatchProps, OwnProps, Props, StateSlice>(
   mapStateToProps,
   mapDispatchToProps,
   (state, actionCreators, ownProps) => ({ state, actionCreators, ownProps })
 ) (wrappable(GenomeSummaryViewController));
-

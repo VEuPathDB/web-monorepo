@@ -446,7 +446,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
             },
 
             {
-              selector: 'node[node_type= "enzyme"][gene_count > 0]',
+              selector: 'node[node_type= "enzyme"][gene_count > 0][display_label != "-.-.-.-"]',
               style: {
                 'border-color':'orange',
                   'background-color': 'orange',
@@ -1589,7 +1589,7 @@ function EnzymeNodeDetails(props) {
            <p><b>Cellular Location:</b> {safeHtml(cellular_location)}</p>
       )}
 
-      {gene_count > 0 && (
+      { (gene_count > 0 && display_label != '-.-.-.-') && (
         <div>
             <a href={props.wdkConfig.webAppUrl + EC_NUMBER_SEARCH_PREFIX + display_label}>Show {gene_count} gene(s) which match this EC number in {projectId}</a>
         </div>

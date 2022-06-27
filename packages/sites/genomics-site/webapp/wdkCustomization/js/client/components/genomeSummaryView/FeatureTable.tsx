@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { defaultMemoize } from 'reselect';
 
 import { CommonResultTable, ColumnSettings } from '@veupathdb/wdk-client/lib/Components/Shared/CommonResultTable';
+import { GenomeViewSequence } from '../../types/genomeSummaryViewTypes';
 import { GenomeViewRegionModel, useIsPortalSite } from '../../util/GenomeSummaryViewUtils';
-import { GenomeViewSequence } from '../../types/summaryViewTypes';
 
 const featureColumnsFactory = defaultMemoize((
   displayName: string,

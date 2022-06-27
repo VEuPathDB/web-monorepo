@@ -2120,6 +2120,13 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/base-webpack-config/-/base-webpack-config-0.1.0.tgz#9cd17a190ebb05c0a0aad6a397eddd5701f58065"
   integrity sha512-XzVjv0czRbV99UwaeJp/CC4tlUjiyYZGL0QDxBfSWQL6Ad54Jp3lFKjgXfWlmjZzCfQwyjS7hmnd6e8KL0Z/Mg==
 
+"@veupathdb/blast-summary-view@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/blast-summary-view/-/blast-summary-view-0.1.0.tgz#f9306f18968140a87b2c602a7d7eb9b95ad98ef6"
+  integrity sha512-Ea8lwoTxGK8osCoalecHGPKWxlqlDRH6TVkrX7FesJn1Dio/CCbM1BBDFTjx5e7OO9TC0SutuVfhmX4CL3DxTQ==
+  dependencies:
+    lodash "^4.17.5"
+
 "@veupathdb/browserslist-config@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.1.0.tgz#5c7eecc048a91195404411d8729393197af0128c"
@@ -2193,10 +2200,10 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/multi-blast@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/multi-blast/-/multi-blast-3.0.0.tgz#7decd0ef5bd97d063abafcaea3265a30ffb947b8"
-  integrity sha512-lDylzRULidB3quHFPF2dzbst7tE23l/BnW9sM8bNittWgiylVUQt6B/ZGdiH62Fc8oUEPZe7oxv95JGMYCsT9w==
+"@veupathdb/multi-blast@^3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/multi-blast/-/multi-blast-3.0.1.tgz#5425a9ddd9c8444cff6b8efb98fbc0cf894f7f32"
+  integrity sha512-ZNfUuPtxnebcYbRYeMpWZqZMTLrAqaH2G8PfE23Nzo8hWGz4rNOLMkUH/Fng3g6vj8VaF0t3TJG4wmvycE5lNw==
   dependencies:
     file-saver "^2.0.5"
     fp-ts "^2.11.5"
@@ -2256,10 +2263,10 @@
     lodash "^4.17.21"
     moment "^2.21.0"
 
-"@veupathdb/wdk-client@^0.8.1":
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.8.1.tgz#828fc632f0766bba05d77efdf531f8c85f6a965f"
-  integrity sha512-vXvTBvhnshqGtbujKdHbfEcrpUQ7KbaWMJwFVk6u26I7BKLdUqOphUywdt+7dnnzEp4PmM1MszCiHcZUlpNwNA==
+"@veupathdb/wdk-client@^0.8.2":
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.8.2.tgz#3c5231467bf49b07db492f905ed8a058abddcc98"
+  integrity sha512-06DF4SawIJDyoWJDCJM3+wPohbFHjs6Ceez7mFIEX4NNbpKSB81ho+571XvGDy394ZxFzWnSYpcBObTwnjJh7g==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
