@@ -174,8 +174,6 @@ export default function DownloadTab({
           datasetId={datasetId}
           entities={enhancedEntityData}
           analysisState={analysisState}
-          totalEntityCounts={totalCounts}
-          filteredEntityCounts={filteredCounts}
         />
         {mergedReleaseData.map((release, index) =>
           index === 0 ? (
