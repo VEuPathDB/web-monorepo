@@ -3,7 +3,7 @@ import { StudyMenuItem, StudyMenuSearch } from '@veupathdb/web-common/lib/App/St
 import { DIYStudyMenuItem } from '@veupathdb/web-common/lib/App/Studies/DIYStudyMenuItem';
 import { menuItemsFromSocials, iconMenuItemsFromSocials } from '@veupathdb/web-common/lib/App/Utils/Utils';
 import { getStaticSiteData } from '../selectors/siteData';
-import { useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
+import { useEda, useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
 import { STATIC_ROUTE_PATH, makeEdaRoute } from '@veupathdb/web-common/lib/routes';
 
 export default function makeHeaderMenuItemsFactory(permissionsValue, diyDatasets, reloadDiyDatasets) {
@@ -24,7 +24,12 @@ export default function makeHeaderMenuItemsFactory(permissionsValue, diyDatasets
       bottom: '-.25em'
     }
 
-    const filteredUserStudies = diyDatasets?.filter(
+    const filteredUserStudies = (
+      useEda &&
+      useUserDatasetsWorkspace
+        ? diyDatasets
+        : []
+    )?.filter(
       study => (
         study.name.toLowerCase().includes(searchTerm.toLowerCase())
       )
@@ -113,6 +118,7 @@ export default function makeHeaderMenuItemsFactory(permissionsValue, diyDatasets
               route: makeEdaRoute()
             },
             ...(
+              useEda &&
               useUserDatasetsWorkspace
                 ? [
                     {
