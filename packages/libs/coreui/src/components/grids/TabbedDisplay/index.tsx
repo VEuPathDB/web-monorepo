@@ -47,21 +47,16 @@ const DEFAULT_STYLE: TabbedDisplayStyleSpec = {
   },
 };
 
-export type TabbedDisplayProps = {
+export type TabbedDisplayProps<TabKey extends string> = {
   /**
    * The content for the tab display. Each array item containts properties
    * for the tab display name and the actual content to display to the user.
    * */
-  tabs: Array<{
-    key: string;
-    // The name to display in the tab.
-    displayName: string;
-    content?: React.ReactNode;
-  }>;
+  tabs: TabConfig<TabKey>[];
   onTabSelected: (selectedTabKey: string) => void;
   /**
    * The key of the currently selected tab. */
-  activeTab: string;
+  activeTab: TabKey;
   /** Optional. Any desired style overrides. */
   styleOverrides?: Partial<TabbedDisplayStyleSpec>;
   /**
@@ -70,14 +65,23 @@ export type TabbedDisplayProps = {
   themeRole?: keyof UITheme['palette'];
 };
 
+export type TabConfig<TabKey extends string> = {
+  /** A unique key for the given tab */
+  key: TabKey;
+  /** The name to display in the tab */
+  displayName: React.ReactNode;
+  /** The content for the tab */
+  content?: React.ReactNode;
+}
+
 /** Allows the developer to create a tabbed display of content. */
-export default function TabbedDisplay({
+export default function TabbedDisplay<T extends string = string>({
   tabs,
   activeTab,
   onTabSelected,
   styleOverrides = {},
   themeRole,
-}: TabbedDisplayProps) {
+}: TabbedDisplayProps<T>) {
   const selectedTab = tabs.find(tab => tab.key === activeTab);
   const tabContent = selectedTab ? selectedTab.content : null;
 
@@ -152,7 +156,7 @@ export default function TabbedDisplay({
               }}
             >
               <H6
-                text={tab.displayName}
+                children={tab.displayName}
                 additionalStyles={{ margin: 0 }}
                 color={finalStyle[tabState].textColor}
               />
