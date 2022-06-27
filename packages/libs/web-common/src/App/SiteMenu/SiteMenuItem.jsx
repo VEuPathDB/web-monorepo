@@ -40,7 +40,7 @@ class SiteMenuItem extends React.Component {
     }
 
     const children = (typeof item.children === 'function')
-      ? item.children({ webAppUrl, projectId })
+      ? item.children({ webAppUrl, projectId, isFocused })
       : item.children;
 
     const destination = appUrl && appUrl.length
