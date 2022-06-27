@@ -2203,10 +2203,10 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/user-datasets@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/user-datasets/-/user-datasets-0.1.3.tgz#b08803a0c7f8dc49f9ad66802ff47ae6d70b0298"
-  integrity sha512-b+yPvnyil1M4ZqHDsXNcf4Gut5LwADHOtES9SFNmp7rcHe3NMSdxfTLvSXK0Rny/MP1M5G5SUI0UwMflv0d9rQ==
+"@veupathdb/user-datasets@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@veupathdb/user-datasets/-/user-datasets-0.1.4.tgz#8ff44895bb799b6968c1b6b2b08fe020a6fddacb"
+  integrity sha512-/7J5RoEtc/w3lq6n9aISeXhV+KDPIfMroIL2cRPz0MQPzA8krCX6VfE84GtA6DG1rkiyybl1T61ZPJiZ1PqThg==
   dependencies:
     lodash "^4.17.21"
     moment "^2.21.0"
@@ -2236,10 +2236,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.6.11":
-  version "0.6.11"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.6.11.tgz#e69ebc4d76e1ab095e9688c8f1ba28f33eca6d1f"
-  integrity sha512-zB1vcOMFTcGIXZJpcl2KRDyy/F+JAxDxfcWpj6S4NsktEby+8s4nAeCGniTWqyy+5soyJD8awoYQqOFHe+4R0g==
+"@veupathdb/web-common@^0.6.12":
+  version "0.6.12"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.6.12.tgz#51cc1c2f7d0fe8c5302adbfc830daf7a524e1252"
+  integrity sha512-WpatwlMgEZhEroZyCr2cStO/rrzClpkMZqiRdfKNeRqQDDvy0FMH208IEqPxu0mJRu+iEK3TopvVxFTmeV7IuA==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
