@@ -1,6 +1,5 @@
 import React from 'react';
 
-import Icon from 'wdk-client/Components/Mesa/Components/Icon';
 import TableSearch from 'wdk-client/Components/Mesa/Ui/TableSearch';
 import RowCounter from 'wdk-client/Components/Mesa/Ui/RowCounter';
 
@@ -26,7 +25,7 @@ class TableToolbar extends React.PureComponent {
   }
 
   renderSearch () {
-    const { options, uiState, eventHandlers } = this.props;
+    const { uiState, eventHandlers } = this.props;
     const { onSearch } = eventHandlers;
     const { searchQuery } = uiState;
 
@@ -52,7 +51,7 @@ class TableToolbar extends React.PureComponent {
     const isSearching = uiState.searchQuery && uiState.searchQuery.length;
 
     const count = totalRows ? totalRows : rows.length;
-    const noun = (isSearching ? 'result' : 'row') + (count % rowsPerPage === 1 ? '' : 's');
+    const noun = (isSearching ? 'result' : 'row') + ((count - filteredRowCount) === 1 ? '' : 's');
     const start = !isPaginated ? null : ((pagination.currentPage - 1) * rowsPerPage) + 1;
     const end = !isPaginated ? null : (start + rowsPerPage > (count - filteredRowCount) ? (count - filteredRowCount) : (start - 1) + rowsPerPage);
 
