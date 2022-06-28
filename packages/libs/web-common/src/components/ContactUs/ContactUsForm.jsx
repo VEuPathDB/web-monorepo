@@ -43,7 +43,7 @@ const ContactUsForm = ({
                 type="text"
                 value={subjectValue}
                 onChange={updateSubject} 
-                size={80} 
+                size={82}
               />
             }
           />
@@ -55,7 +55,7 @@ const ContactUsForm = ({
                 value={reporterEmailValue}
                 validity={reporterEmailValidity}
                 onChange={updateReporterEmail} 
-                size={80} 
+                size={82}
               />
             }
           />
@@ -67,7 +67,7 @@ const ContactUsForm = ({
                 value={ccEmailsValue}
                 validity={ccEmailsValidity}
                 onChange={updateCcEmails} 
-                size={80} 
+                size={82}
               />
             }
           />
@@ -108,6 +108,7 @@ const ContactUsForm = ({
             submitDisabled={submitDisabled}
             submissionFailed={submissionFailed}
             responseMessage={responseMessage}
+            reporterEmailValue={reporterEmailValue}
           />
       </tbody>
     </table>
