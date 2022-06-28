@@ -10,18 +10,16 @@
     display: none;
   }
 
-  .TableToolbar-Children {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
+  .TableToolbar-Info {
+    font-size: 100%;
+    margin-bottom: 0.25em;
   }
 
   .wdk-RealTimeSearchBoxContainer {
     display: flex;
     align-items: center;
     white-space: nowrap;
-    width: 25%;
+    margin-right: 0.5rem;
     
     span {
       margin-right: 1em;
@@ -30,9 +28,6 @@
 
   .wdk-InternalGeneDatasetFormLegend {
     display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-
     background-color: #f6f6f6;
     padding: 0.5rem;
 
