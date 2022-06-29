@@ -364,12 +364,7 @@ function UploadForm({
           />
         </div>
         {
-          <div
-            className="formSection"
-            style={{
-              minHeight: uploadMethodItems.length === 1 ? '5em' : '8em',
-            }}
-          >
+          <div className="formSection">
             {uploadMethodItems.length === 1 ? (
               <div className={cx('--UploadMethodSelector')}>
                 <div className={cx('--FixedUploadItem')}>
