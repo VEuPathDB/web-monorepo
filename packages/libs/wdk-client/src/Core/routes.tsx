@@ -18,7 +18,6 @@ import UserPasswordChangeController from 'wdk-client/Controllers/UserPasswordCha
 import UserPasswordResetController from 'wdk-client/Controllers/UserPasswordResetController';
 import UserMessageController from 'wdk-client/Controllers/UserMessageController';
 import SiteMapController from 'wdk-client/Controllers/SiteMapController';
-import UserDatasetDetailController from 'wdk-client/Controllers/UserDatasetDetailController';
 import FavoritesController from 'wdk-client/Controllers/FavoritesController';
 import UserLoginController from 'wdk-client/Controllers/UserLoginController';
 import QuestionController from 'wdk-client/Controllers/QuestionController';
@@ -203,24 +202,6 @@ const routes: RouteEntry[] = [
     path: '/workspace/basket',
     requiresLogin: true,
     component: BasketController
-  },
-
-  {
-    path: '/workspace/datasets/:id(\\d+)',
-    requiresLogin: true,
-    component: (props: RouteComponentProps<{ id: string }>) => {
-      // FIXME Remove this requirement from the component by updating action creators
-      const rootUrl = window.location.href.substring(
-        0,
-        window.location.href.indexOf(`/app${props.location.pathname}`)
-      );
-      return (
-        <UserDatasetDetailController
-          {...props.match.params}
-          rootUrl={rootUrl}
-        />
-      );
-    }
   },
 
   {
