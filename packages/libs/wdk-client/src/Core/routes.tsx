@@ -30,7 +30,6 @@ import BasketController from 'wdk-client/Controllers/BasketController';
 import { Loading, PermissionDenied } from 'wdk-client/Components';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
 import Error from 'wdk-client/Components/PageStatus/Error';
-import UserDatasetsWorkspace from 'wdk-client/Views/UserDatasets/UserDatasetsWorkspace';
 
 const routes: RouteEntry[] = [
   {
@@ -222,13 +221,6 @@ const routes: RouteEntry[] = [
         />
       );
     }
-  },
-
-  {
-    path: '/workspace/datasets',
-    exact: false,
-    requiresLogin: false, // uses custom guest views
-    component: (props: RouteComponentProps<{}>) => < UserDatasetsWorkspace rootPath={props.match.path} urlParams={parseQueryString(props)}/>
   },
 
   {
