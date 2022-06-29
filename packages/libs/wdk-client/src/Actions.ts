@@ -13,7 +13,6 @@ import * as UserActions from 'wdk-client/Actions/UserActions';
 import * as RecordActions from 'wdk-client/Actions/RecordActions';
 import * as StaticDataActions from 'wdk-client/Actions/StaticDataActions';
 import * as SiteMapActions from 'wdk-client/Actions/SiteMapActions';
-import * as UserDatasetsActions from 'wdk-client/Actions/UserDatasetsActions';
 import * as ResultTableSummaryViewActions from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
 import * as ImportStrategyActions from 'wdk-client/Actions/ImportStrategyActions';
 import * as StrategyPanelActions from 'wdk-client/Actions/StrategyPanelActions';
@@ -27,7 +26,6 @@ import * as MatchedTranscriptsFilterActions from 'wdk-client/Actions/MatchedTran
 import * as ResultPanelActions from 'wdk-client/Actions/ResultPanelActions';
 import * as UnhandledErrorActions from 'wdk-client/Actions/UnhandledErrorActions';
 import * as UserSessionActions from 'wdk-client/Actions/UserSessionActions';
-import * as UserDatasetUploadActions from 'wdk-client/Actions/UserDatasetUploadActions';
 import { StepAnalysisAction } from 'wdk-client/Actions/StepAnalysis/StepAnalysisActions';
 import * as NotificationActions from 'wdk-client/Actions/NotificationActions';
 
@@ -53,14 +51,12 @@ export {
   StrategyWorkspaceActions,
   StrategyListActions,
   PublicStrategyActions,
-  UserDatasetsActions,
   ResultTableSummaryViewActions,
   WordCloudAnalysisActions,
   HistogramAnalysisActions,
   MatchedTranscriptsFilterActions,
   ResultPanelActions,
   UserSessionActions,
-  UserDatasetUploadActions,
 };
 
 export type Action =
@@ -85,7 +81,6 @@ export type Action =
   | StrategyPanelActions.Action
   | StrategyListActions.Action
   | PublicStrategyActions.Action
-  | UserDatasetsActions.Action
   | ResultTableSummaryViewActions.Action
   | WordCloudAnalysisActions.Action
   | HistogramAnalysisActions.Action
@@ -94,6 +89,5 @@ export type Action =
   | UnhandledErrorActions.Action
   | MatchedTranscriptsFilterActions.Action
   | UserSessionActions.Action
-  | UserDatasetUploadActions.Action
   | StepAnalysisAction
   | NotificationActions.Action
