@@ -62,7 +62,7 @@ class RecordUI extends Component {
     .filter(el => el != null)
     .find(el => {
       let rect = el.getBoundingClientRect();
-      return rect.top <= 50 && rect.bottom > 50;
+      return rect.top <= 50 && rect.bottom > 100;
     });
     let activeSection = get(activeElement, 'id');
     console.debug(Date.now(), 'updated activeSection', activeSection);
