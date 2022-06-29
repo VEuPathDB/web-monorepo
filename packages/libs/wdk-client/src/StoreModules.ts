@@ -9,8 +9,6 @@ import * as question from 'wdk-client/StoreModules/QuestionStoreModule';
 import * as questionsWithParameters from 'wdk-client/StoreModules/QuestionsWithParametersStoreModule';
 import * as record from 'wdk-client/StoreModules/RecordStoreModule';
 import * as siteMap from 'wdk-client/StoreModules/SiteMapStoreModule';
-import * as userDatasetDetail from 'wdk-client/StoreModules/UserDatasetDetailStoreModule';
-import * as userDatasetList from 'wdk-client/StoreModules/UserDatasetListStoreModule';
 import * as userProfile from 'wdk-client/StoreModules/UserProfileStoreModule';
 import * as userRegistration from 'wdk-client/StoreModules/UserRegistrationStoreModule';
 import * as resultTableSummaryView from 'wdk-client/StoreModules/ResultTableSummaryViewStoreModule';
@@ -29,7 +27,6 @@ import * as unhandledErrors from 'wdk-client/StoreModules/UnhandledErrorStoreMod
 import * as matchedTranscriptsFilter from 'wdk-client/StoreModules/MatchedTranscriptsFilterStoreModule';
 import * as router from 'wdk-client/StoreModules/RouterStoreModule';
 import * as userSession from 'wdk-client/StoreModules/UserSessionStoreModule';
-import * as userDatasetUpload from 'wdk-client/StoreModules/UserDatasetUploadStoreModule';
 import * as notification from 'wdk-client/StoreModules/NotificationStoreModule';
 
 export default {
@@ -53,8 +50,6 @@ export default {
   strategyList,
   publicStrategies,
   router,
-  userDatasetDetail,
-  userDatasetList,
   userProfile,
   userRegistration,
   wordCloudAnalysis,
@@ -64,6 +59,5 @@ export default {
   unhandledErrors,
   matchedTranscriptsFilter,
   userSession,
-  userDatasetUpload,
   notification,
 };
