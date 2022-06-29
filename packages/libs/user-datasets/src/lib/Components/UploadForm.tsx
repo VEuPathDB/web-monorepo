@@ -103,6 +103,9 @@ function UploadForm({
     [useFixedUploadMethodStr]
   );
 
+  const displayUrlUploadMethod =
+    datasetUploadType.formConfig.uploadMethodConfig.url?.offer !== false;
+
   const displayStrategyUploadMethod =
     datasetUploadType.formConfig.uploadMethodConfig.result?.offerStrategyUpload;
 
@@ -120,7 +123,7 @@ function UploadForm({
       ? 'step'
       : urlParams.datasetStrategyRootStepId && enableStrategyUploadMethod
       ? 'strategy'
-      : urlParams.datasetUrl
+      : urlParams.datasetUrl && displayUrlUploadMethod
       ? 'url'
       : 'file'
   );
@@ -317,69 +320,77 @@ function UploadForm({
                     </React.Fragment>
                   ),
                 },
-                {
-                  value: 'url',
-                  disabled: useFixedUploadMethod,
-                  display: (
-                    <React.Fragment>
-                      <label htmlFor="data-set-url">Upload URL:</label>
-                      <TextBox
-                        type="input"
-                        className={cx(
-                          '--UploadMethodField',
-                          dataUploadMode !== 'url' && 'disabled'
-                        )}
-                        id="data-set-url"
-                        placeholder="Address of a data file from the Web"
-                        value={url}
-                        required={dataUploadMode === 'url'}
-                        disabled={
-                          dataUploadMode !== 'url' || useFixedUploadMethod
-                        }
-                        onChange={setUrl}
-                      />
-                    </React.Fragment>
-                  ),
-                },
-              ].concat(
-                !displayStrategyUploadMethod
-                  ? []
-                  : [
-                      {
-                        value: 'strategy',
-                        disabled:
-                          !enableStrategyUploadMethod || useFixedUploadMethod,
-                        display: (
-                          <React.Fragment>
-                            <label htmlFor="data-set-strategy">
-                              Upload Strategy:
-                            </label>
-                            <div
-                              id="data-set-strategy"
-                              className={cx(
-                                '--UploadMethodField',
-                                dataUploadMode !== 'strategy' && 'disabled'
-                              )}
-                            >
-                              <SingleSelect
-                                value={`${stepId}`}
-                                items={strategyOptions.map((option) => ({
-                                  value: `${option.rootStepId}`,
-                                  display: `${option.name}${
-                                    !option.isSaved ? '*' : ''
-                                  }`,
-                                }))}
-                                required={dataUploadMode === 'strategy'}
-                                onChange={(value) => {
-                                  setStepId(Number(value));
-                                }}
+              ]
+                .concat(
+                  !displayUrlUploadMethod
+                    ? []
+                    : [
+                        {
+                          value: 'url',
+                          disabled: useFixedUploadMethod,
+                          display: (
+                            <React.Fragment>
+                              <label htmlFor="data-set-url">Upload URL:</label>
+                              <TextBox
+                                type="input"
+                                className={cx(
+                                  '--UploadMethodField',
+                                  dataUploadMode !== 'url' && 'disabled'
+                                )}
+                                id="data-set-url"
+                                placeholder="Address of a data file from the Web"
+                                value={url}
+                                required={dataUploadMode === 'url'}
+                                disabled={
+                                  dataUploadMode !== 'url' ||
+                                  useFixedUploadMethod
+                                }
+                                onChange={setUrl}
                               />
-                            </div>
-                          </React.Fragment>
-                        ),
-                      },
-                    ]
-              )}
+                            </React.Fragment>
+                          ),
+                        },
+                      ]
+                )
+                .concat(
+                  !displayStrategyUploadMethod
+                    ? []
+                    : [
+                        {
+                          value: 'strategy',
+                          disabled:
+                            !enableStrategyUploadMethod || useFixedUploadMethod,
+                          display: (
+                            <React.Fragment>
+                              <label htmlFor="data-set-strategy">
+                                Upload Strategy:
+                              </label>
+                              <div
+                                id="data-set-strategy"
+                                className={cx(
+                                  '--UploadMethodField',
+                                  dataUploadMode !== 'strategy' && 'disabled'
+                                )}
+                              >
+                                <SingleSelect
+                                  value={`${stepId}`}
+                                  items={strategyOptions.map((option) => ({
+                                    value: `${option.rootStepId}`,
+                                    display: `${option.name}${
+                                      !option.isSaved ? '*' : ''
+                                    }`,
+                                  }))}
+                                  required={dataUploadMode === 'strategy'}
+                                  onChange={(value) => {
+                                    setStepId(Number(value));
+                                  }}
+                                />
+                              </div>
+                            </React.Fragment>
+                          ),
+                        },
+                      ]
+                )}
             />
           </div>
         }
