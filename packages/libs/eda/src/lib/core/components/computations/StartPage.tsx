@@ -76,16 +76,13 @@ export function StartPage(props: Props) {
                 >
                   {app.visualizations?.map((vizType, index) => {
                     const plugin = plugins[app.name];
-                    if (!plugin) {
-                      throw new Error(
-                        `No plugin corresponding to '${app.name}' was found.`
-                      );
-                    }
-                    const disabled = !plugin.visualizationTypes[vizType.name];
-                    const VizSelector = plugin.visualizationTypes[vizType.name]
-                      ? plugin.visualizationTypes[vizType.name]
-                          .selectorComponent
-                      : undefined;
+                    const disabled =
+                      !plugin || !plugin.visualizationTypes[vizType.name];
+                    const VizSelector =
+                      plugin && plugin.visualizationTypes[vizType.name]
+                        ? plugin.visualizationTypes[vizType.name]
+                            .selectorComponent
+                        : undefined;
 
                     return (
                       <div
@@ -106,6 +103,7 @@ export function StartPage(props: Props) {
                               const computations =
                                 analysisState.analysis.descriptor.computations;
                               const defaultComputationSpec =
+                                plugin &&
                                 plugin.createDefaultComputationSpec != null
                                   ? plugin.createDefaultComputationSpec(
                                       studyMetadata.rootEntity
