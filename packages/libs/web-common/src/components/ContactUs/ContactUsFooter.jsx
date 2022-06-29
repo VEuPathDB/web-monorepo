@@ -1,20 +1,27 @@
 import React from 'react';
-import ContactUsInstructions from './ContactUsInstructions';
 import ContactUsError from './ContactUsError';
 
 const ContactUsFooter = ({
   submitDisabled,
   submissionFailed,
-  responseMessage
+  responseMessage,
+  reporterEmailValue
 }) => (
   <tr>
-    <td align="center" colSpan={2}>
-    {/*  <ContactUsInstructions /> */}
+    <td></td>
+    <td align="center">
       <input 
         type="submit"
         disabled={submitDisabled}
         value="Submit message" 
       />
+      {
+        !reporterEmailValue ? 
+          <p style={{color: 'darkred', margin: '0.5em 0 0 0', fontSize: '100%'}}>
+            <strong>Note</strong>: Please provide your email if you would like to hear back from us.
+          </p> :
+          null
+      }
       {
         submissionFailed &&
         <ContactUsError 
