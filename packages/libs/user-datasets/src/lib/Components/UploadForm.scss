@@ -49,6 +49,15 @@
       }
     }
   }
+  & &--UploadMethodSelector &--FixedUploadItem {
+    display: grid;
+    grid-template-columns: 10em 1fr;
+
+    label {
+      font-size: medium;
+      margin-left: 0.25em;
+    }
+  }
   & &--UploadMethodField {
     &__disabled {
       opacity: 0.3;

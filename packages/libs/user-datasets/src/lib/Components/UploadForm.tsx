@@ -230,6 +230,95 @@ function UploadForm({
     };
   }, [clearBadUpload]);
 
+  const uploadMethodItems = [
+    {
+      value: 'file',
+      disabled: useFixedUploadMethod,
+      display: (
+        <React.Fragment>
+          <label htmlFor="data-set-file">Upload File:</label>
+          <div
+            id="data-set-file"
+            className={cx(
+              '--UploadMethodField',
+              dataUploadMode !== 'file' && 'disabled'
+            )}
+          >
+            <FileInput
+              required={dataUploadMode === 'file'}
+              disabled={dataUploadMode !== 'file' || useFixedUploadMethod}
+              onChange={(file) => {
+                setFile(file ?? undefined);
+              }}
+            />
+          </div>
+        </React.Fragment>
+      ),
+    },
+  ]
+    .concat(
+      !displayUrlUploadMethod
+        ? []
+        : [
+            {
+              value: 'url',
+              disabled: useFixedUploadMethod,
+              display: (
+                <React.Fragment>
+                  <label htmlFor="data-set-url">Upload URL:</label>
+                  <TextBox
+                    type="input"
+                    className={cx(
+                      '--UploadMethodField',
+                      dataUploadMode !== 'url' && 'disabled'
+                    )}
+                    id="data-set-url"
+                    placeholder="Address of a data file from the Web"
+                    value={url}
+                    required={dataUploadMode === 'url'}
+                    disabled={dataUploadMode !== 'url' || useFixedUploadMethod}
+                    onChange={setUrl}
+                  />
+                </React.Fragment>
+              ),
+            },
+          ]
+    )
+    .concat(
+      !displayStrategyUploadMethod
+        ? []
+        : [
+            {
+              value: 'strategy',
+              disabled: !enableStrategyUploadMethod || useFixedUploadMethod,
+              display: (
+                <React.Fragment>
+                  <label htmlFor="data-set-strategy">Upload Strategy:</label>
+                  <div
+                    id="data-set-strategy"
+                    className={cx(
+                      '--UploadMethodField',
+                      dataUploadMode !== 'strategy' && 'disabled'
+                    )}
+                  >
+                    <SingleSelect
+                      value={`${stepId}`}
+                      items={strategyOptions.map((option) => ({
+                        value: `${option.rootStepId}`,
+                        display: `${option.name}${!option.isSaved ? '*' : ''}`,
+                      }))}
+                      required={dataUploadMode === 'strategy'}
+                      onChange={(value) => {
+                        setStepId(Number(value));
+                      }}
+                    />
+                  </div>
+                </React.Fragment>
+              ),
+            },
+          ]
+    );
+
   return (
     <form
       className={cx()}
@@ -276,122 +365,33 @@ function UploadForm({
         </div>
         {
           <div className="formSection" style={{ minHeight: '8em' }}>
-            <RadioList
-              name="data-set-radio"
-              className={cx('--UploadMethodSelector')}
-              value={dataUploadMode}
-              onChange={(value) => {
-                if (
-                  value !== 'url' &&
-                  value !== 'file' &&
-                  value !== 'strategy'
-                ) {
-                  throw new Error(
-                    `Unrecognized upload method '${value}' encountered.`
-                  );
-                }
+            {uploadMethodItems.length === 1 ? (
+              <div className={cx('--UploadMethodSelector')}>
+                <div className={cx('--FixedUploadItem')}>
+                  {uploadMethodItems[0].display}
+                </div>
+              </div>
+            ) : (
+              <RadioList
+                name="data-set-radio"
+                className={cx('--UploadMethodSelector')}
+                value={dataUploadMode}
+                onChange={(value) => {
+                  if (
+                    value !== 'url' &&
+                    value !== 'file' &&
+                    value !== 'strategy'
+                  ) {
+                    throw new Error(
+                      `Unrecognized upload method '${value}' encountered.`
+                    );
+                  }
 
-                setDataUploadMode(value);
-              }}
-              items={[
-                {
-                  value: 'file',
-                  disabled: useFixedUploadMethod,
-                  display: (
-                    <React.Fragment>
-                      <label htmlFor="data-set-file">Upload File:</label>
-                      <div
-                        id="data-set-file"
-                        className={cx(
-                          '--UploadMethodField',
-                          dataUploadMode !== 'file' && 'disabled'
-                        )}
-                      >
-                        <FileInput
-                          required={dataUploadMode === 'file'}
-                          disabled={
-                            dataUploadMode !== 'file' || useFixedUploadMethod
-                          }
-                          onChange={(file) => {
-                            setFile(file ?? undefined);
-                          }}
-                        />
-                      </div>
-                    </React.Fragment>
-                  ),
-                },
-              ]
-                .concat(
-                  !displayUrlUploadMethod
-                    ? []
-                    : [
-                        {
-                          value: 'url',
-                          disabled: useFixedUploadMethod,
-                          display: (
-                            <React.Fragment>
-                              <label htmlFor="data-set-url">Upload URL:</label>
-                              <TextBox
-                                type="input"
-                                className={cx(
-                                  '--UploadMethodField',
-                                  dataUploadMode !== 'url' && 'disabled'
-                                )}
-                                id="data-set-url"
-                                placeholder="Address of a data file from the Web"
-                                value={url}
-                                required={dataUploadMode === 'url'}
-                                disabled={
-                                  dataUploadMode !== 'url' ||
-                                  useFixedUploadMethod
-                                }
-                                onChange={setUrl}
-                              />
-                            </React.Fragment>
-                          ),
-                        },
-                      ]
-                )
-                .concat(
-                  !displayStrategyUploadMethod
-                    ? []
-                    : [
-                        {
-                          value: 'strategy',
-                          disabled:
-                            !enableStrategyUploadMethod || useFixedUploadMethod,
-                          display: (
-                            <React.Fragment>
-                              <label htmlFor="data-set-strategy">
-                                Upload Strategy:
-                              </label>
-                              <div
-                                id="data-set-strategy"
-                                className={cx(
-                                  '--UploadMethodField',
-                                  dataUploadMode !== 'strategy' && 'disabled'
-                                )}
-                              >
-                                <SingleSelect
-                                  value={`${stepId}`}
-                                  items={strategyOptions.map((option) => ({
-                                    value: `${option.rootStepId}`,
-                                    display: `${option.name}${
-                                      !option.isSaved ? '*' : ''
-                                    }`,
-                                  }))}
-                                  required={dataUploadMode === 'strategy'}
-                                  onChange={(value) => {
-                                    setStepId(Number(value));
-                                  }}
-                                />
-                              </div>
-                            </React.Fragment>
-                          ),
-                        },
-                      ]
-                )}
-            />
+                  setDataUploadMode(value);
+                }}
+                items={uploadMethodItems}
+              />
+            )}
           </div>
         }
       </div>
