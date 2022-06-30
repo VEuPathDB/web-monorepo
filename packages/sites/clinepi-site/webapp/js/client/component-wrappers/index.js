@@ -2,9 +2,13 @@ import { compose } from 'lodash/fp';
 import { connect, useSelector } from 'react-redux';
 import React from 'react';
 
+import * as ServerSideAttributeFilter from '@veupathdb/wdk-client/lib/Components/AttributeFilter/ServerSideAttributeFilter';
 import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+
+import { useEda } from '@veupathdb/web-common/lib/config';
+import { fetchStudies } from '@veupathdb/web-common/lib/App/Studies/StudyActionCreators';
 
 import {
   getIdFromRecordClassName,
@@ -14,7 +18,9 @@ import {
   Action
 } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUiActions';
 import { attemptAction } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionActionCreators';
-import { fetchStudies } from '@veupathdb/web-common/lib/App/Studies/StudyActionCreators';
+import { withPermissions } from '@veupathdb/study-data-access/lib/data-restriction/Permissions';
+import { RestrictedPage } from '@veupathdb/study-data-access/lib/data-restriction/RestrictedPage';
+import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
 
 import RelativeVisitsGroup from '../components/RelativeVisitsGroup';
 
@@ -31,9 +37,6 @@ import AnswerController from './AnswerController';
 import ReporterSortMessage from './ReporterSortMessage';
 //import { SpecialContactUsInstructions } from './SpecialContactUsInstructions';
 import { Page } from './Page';
-
-import { withPermissions } from '@veupathdb/study-data-access/lib/data-restriction/Permissions';
-import * as ServerSideAttributeFilter from '@veupathdb/wdk-client/lib/Components/AttributeFilter/ServerSideAttributeFilter';
 
 export default {
   ReporterSortMessage,
@@ -83,21 +86,34 @@ export default {
       StudyNotFoundPage
     )
   ),
-  RecordController: compose(
-    withRestrictionHandler(Action.recordPage, state => state.record.recordClass),
-    availableStudyGuard(
-      recordPageIsLoading,
-      (state, props) => {
-        const recordClass = state.record.recordClass;
-        const primaryKey = props.ownProps.primaryKey;
+  RecordController: useEda
+    ? DefaultComponent => function ClinEpiRecordContoller(props) {
+        if (props.ownProps.recordClass === 'dataset') {
+          return (
+            <EdaStudyRecordController
+              {...props}
+              DefaultComponent={DefaultComponent}
+            />
+          )
+        }
 
-        return getStudyIdFromRecordClassAndPrimaryKey(
-          recordClass,
-          primaryKey
-        );
-      },
-      StudyNotFoundPage
-    )
+        return <DefaultComponent {...props} />;
+      }
+    : compose(
+        withRestrictionHandler(Action.recordPage, state => state.record.recordClass),
+        availableStudyGuard(
+          recordPageIsLoading,
+          (state, props) => {
+            const recordClass = state.record.recordClass;
+            const primaryKey = props.ownProps.primaryKey;
+
+            return getStudyIdFromRecordClassAndPrimaryKey(
+              recordClass,
+              primaryKey
+            );
+          },
+          StudyNotFoundPage
+      )
   ),
   // FIXME Add restricted results panel
   RecordHeading,
@@ -270,4 +286,25 @@ function recordPageIsLoading(state) {
 // FIXME: when an error occurs
 function downloadFormIsLoading(state) {
   return state.downloadForm.isLoading && state.downloadForm.error;
+}
+
+function EdaStudyRecordController(props) {
+  const permissionsValue = usePermissions();
+
+  const datasetId = props.ownProps.primaryKey;
+
+  const approvalStatus = permissionsValue.loading
+    ? 'loading'
+    : permissionsValue.permissions.perDataset[datasetId] == null
+    ? 'study-not-found'
+    : permissionsValue.permissions.perDataset[datasetId]?.actionAuthorization
+        .studyMetadata
+    ? 'approved'
+    : 'not-approved';
+
+  return (
+    <RestrictedPage approvalStatus={approvalStatus}>
+      <props.DefaultComponent {...props} />
+    </RestrictedPage>
+  );
 }
