@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { connect, useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import { parsePath } from 'history';
@@ -26,11 +26,24 @@ function StudyRecordHeading({
   showAnalyzeLink = false,
   entries,
   loading,
-  study,
   attemptAction,
   permissions,
   ...props
 }) {
+  const study = useMemo(() => ({
+    id: props.record.attributes.dataset_id,
+    downloadUrl: props.record.attributes.bulk_download_url,
+    access: props.record.attributes.study_access?.toLowerCase(),
+    searches: JSON.parse(
+      props.record.attributes.card_questions ?? '[]'
+    ),
+  }), [
+    props.record.attributes.dataset_id,
+    props.record.attributes.download_url,
+    props.record.attributes.study_access,
+    props.record.attributes.card_questions,
+  ]);
+
   const user = useSelector(state => state.globalData.user);
   const location = useLocation();
   const requestAccessPath = `/request-access/${study.id}?redirectUrl=${encodeURIComponent(window.location.href + '/new')}`;
@@ -94,27 +107,11 @@ function StudyRecordHeading({
   );
 }
 
-function mapStateToProps(state) {
-  const { record, studies } = state;
-
-  if (studies.loading) {
-    return { loading: true };
-  }
-
-  const studyId = record.record.id
-    .filter(part => part.name === 'dataset_id')
-    .map(part => part.value)[0];
-
-  const study = get(studies, 'entities', [])
-    .find(study => study.id === studyId);
-  return { study };
-}
-
 const mapDispatchToProps = {
   attemptAction,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(StudyRecordHeading);
+export default connect(null, mapDispatchToProps)(StudyRecordHeading);
 
 function isPrivateStudy(access, studyId, permissions) {
   return access === 'private' && !isUserFullyApprovedForStudy(permissions, studyId);
