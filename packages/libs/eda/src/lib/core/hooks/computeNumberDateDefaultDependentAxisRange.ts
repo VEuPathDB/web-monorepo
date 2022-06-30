@@ -9,6 +9,7 @@ import { NumberOrDateRange } from '../types/general';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
 import { ComputedVariableMetadata } from '../api/DataClient/types';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
+import { numberDecimalPoint } from '../utils/number-decimal-point';
 
 /**
  * A custom hook to compute default dependent axis range
@@ -18,7 +19,8 @@ export function useDefaultDependentAxisRange(
   data: PromiseHookState<ScatterPlotDataWithCoverage | undefined>,
   yAxisVariable?: Variable,
   // use computedVariableMetadata for axis range of computation apps
-  computedVariableMetadata?: ComputedVariableMetadata
+  computedVariableMetadata?: ComputedVariableMetadata,
+  dependentAxisLogScale?: boolean
 ): NumberOrDateRange | undefined {
   // find max of stacked array, especially with overlayVariable
   const defaultDependentAxisRange = useMemo(() => {
@@ -54,14 +56,27 @@ export function useDefaultDependentAxisRange(
         'scatterplot',
         yMinMaxRange,
         // pass computedVariableMetadata
-        computedVariableMetadata
+        computedVariableMetadata,
+        dependentAxisLogScale,
+        data
       );
 
-      return defaultDependentRange;
+      // 4 decimal points
+      if (
+        (yAxisVariable?.type === 'number' ||
+          yAxisVariable?.type === 'integer') &&
+        typeof defaultDependentRange?.min === 'number' &&
+        typeof defaultDependentRange?.max === 'number'
+      )
+        return {
+          min: numberDecimalPoint(defaultDependentRange.min, 4),
+          max: numberDecimalPoint(defaultDependentRange.max, 4),
+        };
+      else return defaultDependentRange;
     } else {
       return undefined;
     }
-  }, [data, yAxisVariable, computedVariableMetadata]);
+  }, [data, yAxisVariable, computedVariableMetadata, dependentAxisLogScale]);
 
   return defaultDependentAxisRange;
 }

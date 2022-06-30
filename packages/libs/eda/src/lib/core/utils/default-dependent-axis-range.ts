@@ -4,6 +4,10 @@ import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
 import { ComputedVariableMetadata } from '../api/DataClient/types';
 import { min, max } from 'lodash';
 
+import { PromiseHookState } from '../hooks/promise';
+import { ScatterPlotDataWithCoverage } from '../components/visualizations/implementations/ScatterplotVisualization';
+import { isFaceted } from '@veupathdb/components/lib/types/guards';
+
 export function numberDateDefaultDependentAxisRange(
   variable: Variable | undefined,
   plotName: string,
@@ -11,7 +15,9 @@ export function numberDateDefaultDependentAxisRange(
     | { min: number | string | undefined; max: number | string | undefined }
     | undefined,
   // pass computedVariableMetadata
-  computedVariableMetadata?: ComputedVariableMetadata
+  computedVariableMetadata?: ComputedVariableMetadata,
+  dependentAxisLogScale?: boolean,
+  data?: PromiseHookState<ScatterPlotDataWithCoverage | undefined>
 ): NumberOrDateRange | undefined {
   // make universal range variable
   if (
@@ -21,11 +27,32 @@ export function numberDateDefaultDependentAxisRange(
     // this should check integer as well
     if (variable.type === 'number' || variable.type === 'integer') {
       const defaults = variable.distributionDefaults;
+      // find the smallest positive value of dependent axis
+      const smallestPositiveDependentAxisValue = !isFaceted(
+        data?.value?.dataSetProcess
+      )
+        ? min(
+            data?.value?.dataSetProcess.series.map((series) =>
+              min((series.y as number[]).filter((value: number) => value > 0))
+            )
+          )
+        : min(
+            data?.value?.dataSetProcess.facets.flatMap((facet) =>
+              facet?.data?.series.flatMap((series) =>
+                min((series.y as number[]).filter((y) => y > 0))
+              )
+            )
+          );
+
       return defaults.displayRangeMin != null &&
         defaults.displayRangeMax != null
         ? {
             min:
-              yMinMaxRange != null
+              dependentAxisLogScale &&
+              yMinMaxRange?.min != null &&
+              yMinMaxRange.min <= 0
+                ? (smallestPositiveDependentAxisValue as number)
+                : yMinMaxRange != null
                 ? Math.min(
                     defaults.displayRangeMin,
                     defaults.rangeMin,
@@ -42,10 +69,11 @@ export function numberDateDefaultDependentAxisRange(
                 : Math.max(defaults.displayRangeMax, defaults.rangeMax),
           }
         : {
-            min:
-              yMinMaxRange != null
-                ? Math.min(defaults.rangeMin, yMinMaxRange.min as number)
-                : defaults.rangeMin,
+            min: dependentAxisLogScale
+              ? (smallestPositiveDependentAxisValue as number)
+              : yMinMaxRange != null
+              ? Math.min(defaults.rangeMin, yMinMaxRange.min as number)
+              : defaults.rangeMin,
             max:
               yMinMaxRange != null
                 ? Math.max(defaults.rangeMax, yMinMaxRange.max as number)

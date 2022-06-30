@@ -542,7 +542,17 @@ function ScatterplotViz(props: VisualizationProps) {
     data,
     yAxisVariable,
     // pass computedVariableMetadata
-    data?.value?.computedVariableMetadata
+    data?.value?.computedVariableMetadata,
+    vizConfig.dependentAxisLogScale
+  );
+
+  // yMinMaxDataRange will be used for truncation to judge whether data has negative value
+  const yMinMaxDataRange = useMemo(
+    () =>
+      data.value != null
+        ? { min: data.value.yMin, max: data.value?.yMax }
+        : undefined,
+    [data]
   );
 
   const { url } = useRouteMatch();
@@ -917,6 +927,7 @@ function ScatterplotViz(props: VisualizationProps) {
       setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
       onIndependentAxisLogScaleChange={onIndependentAxisLogScaleChange}
       onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
+      yMinMaxDataRange={yMinMaxDataRange}
     />
   );
 
@@ -1164,6 +1175,9 @@ type ScatterplotWithControlsProps = Omit<ScatterPlotProps, 'data'> & {
   ) => void;
   onIndependentAxisLogScaleChange: (value: boolean) => void;
   onDependentAxisLogScaleChange: (value: boolean) => void;
+  yMinMaxDataRange:
+    | { min: string | number | undefined; max: string | number | undefined }
+    | undefined;
 };
 
 function ScatterplotWithControls({
@@ -1195,6 +1209,7 @@ function ScatterplotWithControls({
   setTruncatedDependentAxisWarning,
   onIndependentAxisLogScaleChange,
   onDependentAxisLogScaleChange,
+  yMinMaxDataRange,
   ...scatterplotProps
 }: ScatterplotWithControlsProps) {
   // TODO Use UIState
@@ -1287,13 +1302,21 @@ function ScatterplotWithControls({
     truncationConfigDependentAxisMax,
   } = useMemo(
     () =>
-      truncationConfig(defaultUIState, vizConfig, defaultDependentAxisRange),
+      truncationConfig(
+        defaultUIState,
+        vizConfig,
+        defaultDependentAxisRange,
+        vizConfig.dependentAxisLogScale,
+        yMinMaxDataRange
+      ),
     [
       defaultUIState,
       vizConfig.xAxisVariable,
       vizConfig.independentAxisRange,
       vizConfig.dependentAxisRange,
       defaultDependentAxisRange,
+      vizConfig.dependentAxisLogScale,
+      yMinMaxDataRange,
     ]
   );
 

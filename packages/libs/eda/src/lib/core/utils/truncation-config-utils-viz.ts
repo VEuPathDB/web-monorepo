@@ -13,7 +13,11 @@ export function truncationConfig(
     'dependentAxisRange'
   > &
     Pick<HistogramConfig, 'independentAxisRange'>,
-  defaultDependentAxisRange: NumberRange | NumberOrDateRange | undefined
+  defaultDependentAxisRange: NumberRange | NumberOrDateRange | undefined,
+  dependentAxisLogScale: boolean = false,
+  yMinMaxDataRange?:
+    | { min: string | number | undefined; max: string | number | undefined }
+    | undefined
 ) {
   const truncationConfigIndependentAxisMin =
     defaultUIState == null
@@ -40,7 +44,12 @@ export function truncationConfig(
 
   // set a hard-corded condition for histogram and barplot for dependentAxisRange.min for now
   const truncationConfigDependentAxisMin =
-    defaultDependentAxisRange?.min == null
+    defaultDependentAxisRange?.min != null &&
+    yMinMaxDataRange?.min != null &&
+    yMinMaxDataRange?.min <= 0 &&
+    dependentAxisLogScale
+      ? true
+      : defaultDependentAxisRange?.min == null
       ? false
       : vizConfig?.dependentAxisRange?.min == null
       ? false
@@ -50,7 +59,11 @@ export function truncationConfig(
       : defaultDependentAxisRange.min !== vizConfig.dependentAxisRange.min &&
         defaultDependentAxisRange.min < vizConfig.dependentAxisRange.min
       ? true
+      : // : false;
+      defaultDependentAxisRange?.min <= 0 && dependentAxisLogScale
+      ? true
       : false;
+
   const truncationConfigDependentAxisMax =
     defaultDependentAxisRange?.max == null
       ? false

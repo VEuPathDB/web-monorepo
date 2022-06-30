@@ -600,20 +600,63 @@ function LineplotViz(props: VisualizationProps) {
         extendedIndependentRange;
   }, [xAxisVariable, data.value]);
 
+  // yMinMaxDataRange will be used for truncation to judge whether data has negative value
+  const yMinMaxDataRange = useMemo(
+    () =>
+      data.value != null
+        ? { min: data.value.yMin, max: data.value?.yMax }
+        : undefined,
+    [data]
+  );
+
+  // find the smallest positive value of dependent axis
+  const smallestPositiveDependentAxisValue = useMemo(() => {
+    return data.value != null &&
+      (yAxisVariable?.type === 'number' ||
+        yAxisVariable?.type === 'integer' ||
+        categoricalMode)
+      ? !isFaceted(data.value?.dataSetProcess)
+        ? min(
+            data.value?.dataSetProcess.series.map((series) =>
+              min((series.y as number[]).filter((value: number) => value > 0))
+            )
+          )
+        : min(
+            data.value?.dataSetProcess.facets.flatMap((facet) =>
+              facet?.data?.series.flatMap((series) =>
+                min((series.y as number[]).filter((y) => y > 0))
+              )
+            )
+          )
+      : undefined;
+  }, [data]);
+
   // find deependent axis range and its margin
   const defaultDependentRangeMargin = useMemo(() => {
     const yMinMaxRange = categoricalMode
-      ? { min: 0, max: 1 }
+      ? vizConfig.dependentAxisLogScale
+        ? { min: smallestPositiveDependentAxisValue as number, max: 1 }
+        : { min: 0, max: 1 }
       : data.value?.yMin != null && data.value?.yMax != null
-      ? ({
-          // make sure axis range includes a zero (except for dates, see below)
-          min: min([data.value.yMin, 0]), // lodash min/max handles strings
-          max: max([data.value.yMax, 0]), // or numbers appropriately
-          // and with strings/dates, if you put the zero as the second value, min or max always returns the string
-          // so min(["foo", 0]) is "foo" and min([0, "foo"]) is 0 **
-          // which is our desired behaviour (no need to anchor date axes at 1970 or whatever)
-          // (** TO DO: is this documented lodash behaviour, or likely to change?)
-        } as NumberOrDateRange)
+      ? yAxisVariable?.type === 'date'
+        ? ({
+            // make sure axis range includes a zero (except for dates, see below)
+            min: min([data.value.yMin, 0]), // lodash min/max handles strings
+            max: max([data.value.yMax, 0]), // or numbers appropriately
+            // and with strings/dates, if you put the zero as the second value, min or max always returns the string
+            // so min(["foo", 0]) is "foo" and min([0, "foo"]) is 0 **
+            // which is our desired behaviour (no need to anchor date axes at 1970 or whatever)
+            // (** TO DO: is this documented lodash behaviour, or likely to change?)
+          } as NumberOrDateRange)
+        : vizConfig.dependentAxisLogScale
+        ? {
+            min: smallestPositiveDependentAxisValue as number,
+            max: data.value.yMax as number,
+          }
+        : {
+            min: min([data.value.yMin, 0]) as number,
+            max: max([data.value.yMax, 0]) as number,
+          }
       : undefined;
 
     return ((yAxisVariable?.type === 'number' ||
@@ -627,7 +670,12 @@ function LineplotViz(props: VisualizationProps) {
       ? // no padding is made here
         yMinMaxRange
       : undefined;
-  }, [data.value, yAxisVariable, categoricalMode]);
+  }, [
+    data.value,
+    yAxisVariable,
+    categoricalMode,
+    vizConfig.dependentAxisLogScale,
+  ]);
 
   // custom legend list
   const legendItems: LegendItemsProps[] = useMemo(() => {
@@ -753,6 +801,7 @@ function LineplotViz(props: VisualizationProps) {
       setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
       onIndependentAxisLogScaleChange={onIndependentAxisLogScaleChange}
       onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
+      yMinMaxDataRange={yMinMaxDataRange}
     />
   );
 
@@ -1041,6 +1090,9 @@ type LineplotWithControlsProps = Omit<LinePlotProps, 'data'> & {
   ) => void;
   onIndependentAxisLogScaleChange: (value: boolean) => void;
   onDependentAxisLogScaleChange: (value: boolean) => void;
+  yMinMaxDataRange:
+    | { min: string | number | undefined; max: string | number | undefined }
+    | undefined;
 };
 
 function LineplotWithControls({
@@ -1070,6 +1122,7 @@ function LineplotWithControls({
   setTruncatedDependentAxisWarning,
   onIndependentAxisLogScaleChange,
   onDependentAxisLogScaleChange,
+  yMinMaxDataRange,
   ...lineplotProps
 }: LineplotWithControlsProps) {
   const plotRef = useUpdateThumbnailEffect(
@@ -1165,7 +1218,13 @@ function LineplotWithControls({
     truncationConfigDependentAxisMax,
   } = useMemo(
     () =>
-      truncationConfig(defaultUIState, vizConfig, defaultDependentAxisRange),
+      truncationConfig(
+        defaultUIState,
+        vizConfig,
+        defaultDependentAxisRange,
+        vizConfig.dependentAxisLogScale,
+        yMinMaxDataRange
+      ),
     [
       defaultUIState,
       vizConfig.independentAxisRange,
