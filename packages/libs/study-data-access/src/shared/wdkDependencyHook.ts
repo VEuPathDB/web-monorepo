@@ -1,5 +1,5 @@
 import { makeUseRefinedContext } from '@veupathdb/wdk-client/lib/Hooks/RefinedContext';
-import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 
 import { areCompatibleWdkDependencies } from './wrapWdkDependencies';
 
@@ -12,5 +12,5 @@ const useRefinedWdkDependenciesContext = makeUseRefinedContext(
 );
 
 export function useWdkDependenciesWithStudyAccessApi() {
-  return useRefinedWdkDependenciesContext(WdkDepdendenciesContext);
+  return useRefinedWdkDependenciesContext(WdkDependenciesContext);
 }
