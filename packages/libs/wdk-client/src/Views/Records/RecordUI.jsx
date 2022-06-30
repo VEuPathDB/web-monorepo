@@ -21,7 +21,7 @@ class RecordUI extends Component {
     // bind event handlers
     this._updateActiveSection = debounce(this._updateActiveSection.bind(this), 100);
     this.monitorActiveSection = debounce(this.monitorActiveSection.bind(this), 100);
-
+    
     this.recordMainSectionNode = null;
     this.activeSectionTop = null;
   }
@@ -56,19 +56,25 @@ class RecordUI extends Component {
     window.removeEventListener('scroll', this._updateActiveSection, { passive: true });
   }
 
-  _updateActiveSection() {
+  _updateActiveSection(e) {
+    const scrollingElement = e.target.scrollingElement
     let activeElement = postorderSeq(this.props.categoryTree)
     .map(node => document.getElementById(getId(node)))
     .filter(el => el != null)
     .find(el => {
       let rect = el.getBoundingClientRect();
-      return rect.top <= 50 && rect.bottom > 100;
+      const bottomBounds = this.props.globalData ? 100 : 50;
+      if (scrollingElement.scrollTop !== scrollingElement.scrollTopMax) {
+        return rect.top <= 50 && rect.bottom > bottomBounds;
+      }
     });
-    let activeSection = get(activeElement, 'id');
-    console.debug(Date.now(), 'updated activeSection', activeSection);
-    let newUrl = location.pathname + location.search + (activeSection ? '#' + activeSection : '');
-    history.replaceState(null, null, newUrl);
-    this.activeSectionTop = activeElement && activeElement.getBoundingClientRect().top;
+    if (activeElement) {
+      let activeSection = get(activeElement, 'id');
+      console.debug(Date.now(), 'updated activeSection', activeSection);
+      let newUrl = location.pathname + location.search + (activeSection ? '#' + activeSection : '');
+      history.replaceState(null, null, newUrl);
+      this.activeSectionTop = activeElement && activeElement.getBoundingClientRect().top;
+    }
   }
 
   _scrollToActiveSection() {
