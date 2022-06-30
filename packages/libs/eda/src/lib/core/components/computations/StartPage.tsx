@@ -17,7 +17,7 @@ interface Props {
   analysisState: AnalysisState;
   baseUrl: string;
   apps: ComputationAppOverview[];
-  plugins: Record<string, ComputationPlugin>;
+  plugins: Partial<Record<string, ComputationPlugin>>;
 }
 
 export function StartPage(props: Props) {
@@ -76,17 +76,11 @@ export function StartPage(props: Props) {
                 >
                   {app.visualizations?.map((vizType, index) => {
                     const plugin = plugins[app.name];
-                    if (!plugin) {
-                      throw new Error(
-                        `No plugin corresponding to '${app.name}' was found.`
-                      );
-                    }
-                    const disabled = !plugin.visualizationTypes[vizType.name];
-                    const VizSelector = plugin.visualizationTypes[vizType.name]
-                      ? plugin.visualizationTypes[vizType.name]
-                          .selectorComponent
-                      : undefined;
-
+                    const vizPlugin =
+                      plugin && plugin.visualizationTypes[vizType.name];
+                    const disabled =
+                      !plugin || !plugin.visualizationTypes[vizType.name];
+                    const VizSelector = vizPlugin?.selectorComponent;
                     return (
                       <div
                         className={cx('-PickerEntry', disabled && 'disabled')}
@@ -102,10 +96,16 @@ export function StartPage(props: Props) {
                             }}
                             disabled={disabled}
                             onClick={async () => {
-                              if (analysisState.analysis == null) return;
+                              if (
+                                analysisState.analysis == null ||
+                                plugin == null ||
+                                vizPlugin == null
+                              )
+                                return;
                               const computations =
                                 analysisState.analysis.descriptor.computations;
                               const defaultComputationSpec =
+                                plugin &&
                                 plugin.createDefaultComputationSpec != null
                                   ? plugin.createDefaultComputationSpec(
                                       studyMetadata.rootEntity
@@ -133,9 +133,7 @@ export function StartPage(props: Props) {
                                 displayName: 'Unnamed visualization',
                                 descriptor: {
                                   type: vizType.name!,
-                                  configuration: plugin.visualizationTypes[
-                                    vizType.name
-                                  ].createDefaultConfig(),
+                                  configuration: vizPlugin.createDefaultConfig(),
                                 },
                               };
                               if (!existingComputation) {

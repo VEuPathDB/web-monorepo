@@ -9,7 +9,7 @@ import { plugins } from './plugins';
 
 export interface Props extends ComputationProps {
   computationId: string;
-  visualizationTypes: Record<string, VisualizationType>;
+  visualizationTypes: Partial<Record<string, VisualizationType>>;
   baseUrl?: string; // right now only defined when *not* using single app mode
   isSingleAppMode: boolean;
 }
