@@ -76,7 +76,9 @@ export function extendAxisRangeForTruncations(
       // consider padding
       const diff = (axisRange.max as number) - (axisRange.min as number);
       const axisLowerExtensionStart = config?.min
-        ? (axisRange.min as number) - 0.05 * diff
+        ? logScale && (axisRange.min as number) - 0.05 * diff <= 0
+          ? (axisRange.min as number) - (axisRange.min as number) / 2.5
+          : (axisRange.min as number) - 0.05 * diff
         : // set exceptions: no need to have min padding for histogram & barplot (boxplot?)
         plotType === 'histogram' || plotType === 'barplot'
         ? (axisRange.min as number)

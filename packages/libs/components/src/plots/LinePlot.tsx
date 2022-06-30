@@ -159,9 +159,7 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
             extendedDependentAxisRange?.max,
           ].map((val) =>
             dependentAxisLogScale && val != null
-              ? val <= 0
-                ? -0.1 // for count's logscale
-                : Math.log10(val as number)
+              ? Math.log10(val as number)
               : val
           )
         : undefined,

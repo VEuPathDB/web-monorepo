@@ -158,12 +158,11 @@ const ScatterPlot = makePlotlyPlotComponent(
               extendedDependentAxisRange?.max,
             ].map((val) =>
               dependentAxisLogScale && val != null
-                ? val <= 0
-                  ? -0.1
-                  : Math.log10(val as number)
+                ? Math.log10(val as number)
                 : val
             )
           : undefined,
+        // range: undefined,
         zeroline: false, // disable xaxis line
         // make plot border
         mirror: true,
