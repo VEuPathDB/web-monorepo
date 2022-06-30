@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from 'react';
 
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
-import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import {
   RecordInstance,
   getSingleRecordAnswerSpec
@@ -17,7 +17,7 @@ export function RecordTableSection(DefaultComponent: React.ComponentType<Wrapped
   return function OrthoRecordTableSection(props: Props) {
     const { table, record, ontologyProperties } = props;
 
-    const wdkDependencies = useContext(WdkDepdendenciesContext);
+    const wdkDependencies = useContext(WdkDependenciesContext);
     const wdkService = wdkDependencies?.wdkService;
 
     const downloadRecordTable = useMemo(
