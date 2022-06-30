@@ -51,7 +51,11 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
     type: 'isasimple',
     uploadTitle: 'Upload My Study',
     formConfig: {
-      uploadMethodConfig: {},
+      uploadMethodConfig: {
+        url: {
+          offer: false,
+        },
+      },
     },
   },
 };

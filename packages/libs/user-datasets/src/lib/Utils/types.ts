@@ -71,10 +71,15 @@ export interface DatasetUploadTypeConfigEntry<T extends string> {
   uploadTitle: string;
   formConfig: {
     uploadMethodConfig: {
+      url?: UrlUploadConfig;
       result?: ResultUploadConfig;
     };
     renderInfo?: () => ReactNode;
   };
+}
+
+export interface UrlUploadConfig {
+  offer: boolean;
 }
 
 export interface ResultUploadConfig {

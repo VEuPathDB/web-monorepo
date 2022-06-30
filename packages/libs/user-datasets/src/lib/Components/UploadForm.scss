@@ -38,6 +38,7 @@
   }
   & &--UploadMethodSelector {
     margin-top: 2em;
+    margin-bottom: 3.5em;
 
     li > label {
       display: grid;
@@ -47,6 +48,15 @@
         font-size: medium;
         margin-left: 0.25em;
       }
+    }
+  }
+  & &--UploadMethodSelector &--FixedUploadItem {
+    display: grid;
+    grid-template-columns: 10em 1fr;
+
+    label {
+      font-size: medium;
+      margin-left: 0.25em;
     }
   }
   & &--UploadMethodField {
