@@ -122,12 +122,22 @@ export default function DownloadTab({
   ] = useState<Array<string>>([]);
   const WDKStudyReleases = useWdkStudyReleases();
 
+  // Only fetch study releases if they are expected to be available
+  const shouldFetchStudyReleases = Boolean(
+    !permission.loading &&
+      permission.permissions.perDataset[datasetId]?.sha1Hash
+  );
+
   // Get a list of all available study releases according to the Download Service.
   useEffect(() => {
+    if (!shouldFetchStudyReleases) {
+      return;
+    }
+
     downloadClient.getStudyReleases(studyMetadata.id).then((result) => {
       setDownloadServiceStudyReleases(result);
     });
-  }, [downloadClient, studyMetadata]);
+  }, [shouldFetchStudyReleases, downloadClient, studyMetadata]);
 
   /**
    * One we have information from both services on available releases
