@@ -57,7 +57,7 @@ class RecordUI extends Component {
   }
 
   _updateActiveSection(e) {
-    const scrollingElement = e.target.scrollingElement
+    const scrollingElement = e.target.scrollingElement;
     let activeElement = postorderSeq(this.props.categoryTree)
     .map(node => document.getElementById(getId(node)))
     .filter(el => el != null)
