@@ -56,25 +56,20 @@ class RecordUI extends Component {
     window.removeEventListener('scroll', this._updateActiveSection, { passive: true });
   }
 
-  _updateActiveSection(e) {
-    const scrollingElement = e.target.scrollingElement;
+  _updateActiveSection() {
     let activeElement = postorderSeq(this.props.categoryTree)
     .map(node => document.getElementById(getId(node)))
     .filter(el => el != null)
     .find(el => {
       let rect = el.getBoundingClientRect();
       const bottomOffset = this.props.bottomOffset ?? 50;
-      if (scrollingElement.scrollTop !== scrollingElement.scrollTopMax) {
         return rect.top <= 50 && rect.bottom > bottomOffset;
-      }
     });
-    if (activeElement) {
-      let activeSection = get(activeElement, 'id');
-      console.debug(Date.now(), 'updated activeSection', activeSection);
-      let newUrl = location.pathname + location.search + (activeSection ? '#' + activeSection : '');
-      history.replaceState(null, null, newUrl);
-      this.activeSectionTop = activeElement && activeElement.getBoundingClientRect().top;
-    }
+    let activeSection = get(activeElement, 'id');
+    console.debug(Date.now(), 'updated activeSection', activeSection);
+    let newUrl = location.pathname + location.search + (activeSection ? '#' + activeSection : '');
+    history.replaceState(null, null, newUrl);
+    this.activeSectionTop = activeElement && activeElement.getBoundingClientRect().top;
   }
 
   _scrollToActiveSection() {
