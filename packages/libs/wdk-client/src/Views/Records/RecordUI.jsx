@@ -63,9 +63,9 @@ class RecordUI extends Component {
     .filter(el => el != null)
     .find(el => {
       let rect = el.getBoundingClientRect();
-      const bottomBounds = this.props.globalData ? 100 : 50;
+      const bottomOffset = this.props.bottomOffset ?? 50;
       if (scrollingElement.scrollTop !== scrollingElement.scrollTopMax) {
-        return rect.top <= 50 && rect.bottom > bottomBounds;
+        return rect.top <= 50 && rect.bottom > bottomOffset;
       }
     });
     if (activeElement) {
