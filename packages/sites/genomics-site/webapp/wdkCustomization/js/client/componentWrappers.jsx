@@ -1,5 +1,5 @@
 import { isEqual } from 'lodash';
-import React from 'react';
+import React, { cloneElement } from 'react';
 import { connect } from 'react-redux';
 import { useLocation } from 'react-router';
 import { RecoilRoot } from 'recoil';
@@ -98,8 +98,14 @@ export function RecordController(WdkRecordController) {
   return enhance(ApiRecordController);
 }
 
+function EnhancedRecordUIContainer(props) {
+  return (
+    cloneElement(props.children, { bottomOffset: 100 })
+  )
+}
+
 export const RecordHeading = makeDynamicWrapper('RecordHeading');
-export const RecordUI = makeDynamicWrapper('RecordUI');
+export const RecordUI = makeDynamicWrapper('RecordUI', EnhancedRecordUIContainer )
 export const RecordMainSection = makeDynamicWrapper('RecordMainSection');
 export const RecordTable = makeDynamicWrapper('RecordTable', RecordTableContainer);
 export const RecordTableDescription = makeDynamicWrapper('RecordTableDescription');
