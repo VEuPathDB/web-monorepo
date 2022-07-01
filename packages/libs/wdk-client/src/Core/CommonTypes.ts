@@ -4,7 +4,6 @@ import {
   ActionCreatorResult,
   ActionCreatorServices
 } from 'wdk-client/Core/WdkMiddleware';
-import { UserDataset } from 'wdk-client/Utils/WdkModel';
 
 // https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html
 export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
@@ -30,14 +29,6 @@ export interface MesaColumn<K extends string = string> {
   renderCell?: any;
   renderHeading?: any;
   wrapCustomHeadings?: any;
-}
-
-export interface MesaDataCellProps {
-  row: UserDataset;
-  column: MesaColumn;
-  rowIndex: number;
-  columnIndex: number;
-  inline?: boolean;
 }
 
 
