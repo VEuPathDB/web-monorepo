@@ -15,10 +15,8 @@ import StepsService from 'wdk-client/Service/Mixins/StepsService';
 import StrategiesService from 'wdk-client/Service/Mixins/StrategiesService';
 import StrategyListsService from 'wdk-client/Service/Mixins/StrategyListsService';
 import TemporaryFilesService from 'wdk-client/Service/Mixins/TemporaryFilesService';
-import UserDatasetsService from 'wdk-client/Service/Mixins/UserDatasetsService';
 import UserPreferencesService from 'wdk-client/Service/Mixins/UserPreferencesService';
 import UsersService from 'wdk-client/Service/Mixins/UsersService';
-import UserUploadService from 'wdk-client/Service/Mixins/UserUploadService';
 import XmlAnswerService from 'wdk-client/Service/Mixins/XmlAnswerService';
 import { ServiceBase } from 'wdk-client/Service/ServiceBase';
 
@@ -42,10 +40,8 @@ export function composeMixins(baseUrl: string) {
     ...StrategiesService(base),
     ...StrategyListsService(base),
     ...TemporaryFilesService(base),
-    ...UserDatasetsService(base),
     ...UserPreferencesService(base),
     ...UsersService(base),
-    ...UserUploadService(base),
     ...XmlAnswerService(base),
     ...base,
   }

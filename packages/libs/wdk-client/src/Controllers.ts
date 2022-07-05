@@ -17,14 +17,10 @@ import UserPasswordResetController from 'wdk-client/Controllers/UserPasswordRese
 import UserProfileController from 'wdk-client/Controllers/UserProfileController';
 import UserRegistrationController from 'wdk-client/Controllers/UserRegistrationController';
 import UserMessageController from 'wdk-client/Controllers/UserMessageController';
-import UserDatasetDetailController from 'wdk-client/Controllers/UserDatasetDetailController';
-import UserDatasetListController from 'wdk-client/Controllers/UserDatasetListController';
 import ResultPanelController from 'wdk-client/Controllers/ResultPanelController';
 import ResultTableSummaryViewController from 'wdk-client/Controllers/ResultTableSummaryViewController';
 import StepFiltersController from 'wdk-client/Controllers/StepFiltersController';
 import MatchedTranscriptsFilterController from 'wdk-client/Controllers/MatchedTranscriptsFilterController';
-import UserDatasetNewUploadController from 'wdk-client/Controllers/UserDatasetNewUploadController';
-import UserDatasetAllUploadsController from 'wdk-client/Controllers/UserDatasetAllUploadsController';
 
 export {
   PageController,
@@ -42,8 +38,6 @@ export {
   RecordController,
   ResultPanelController,
   SiteMapController,
-  UserDatasetDetailController,
-  UserDatasetListController,
   UserMessageController,
   UserPasswordChangeController,
   UserPasswordResetController,
@@ -52,6 +46,4 @@ export {
   ResultTableSummaryViewController,
   StepFiltersController,
   MatchedTranscriptsFilterController,
-  UserDatasetNewUploadController,
-  UserDatasetAllUploadsController,
 };
