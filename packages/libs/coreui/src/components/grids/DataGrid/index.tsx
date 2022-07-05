@@ -7,10 +7,9 @@ import {
   useRowSelect,
   Cell,
   Row,
-  Hooks,
   Column,
 } from 'react-table';
-import { pickBy, ceil, merge } from 'lodash';
+import { ceil, merge } from 'lodash';
 
 // Definitions
 import stylePresets, { DataGridStyleSpec } from './stylePresets';
@@ -22,6 +21,8 @@ import DataCell from './DataCell';
 import HeaderCell from './HeaderCell';
 import PaginationControls from './PaginationControls';
 import { UITheme } from '../../theming/types';
+
+type SortBy = Array<{id: string, desc: boolean}>;
 
 export type DataGridProps = {
   /**
@@ -69,9 +70,11 @@ export type DataGridProps = {
       fetchPaginatedData: ({
         pageSize,
         pageIndex,
+        sortBy,
       }: {
         pageSize: number;
         pageIndex: number;
+        sortBy: SortBy;
       }) => void;
       /** Total available pages of data. */
       pageCount: number;
@@ -129,7 +132,8 @@ export default function DataGrid({
     nextPage,
     previousPage,
     setPageSize,
-    state: { pageIndex, pageSize, selectedRowIds },
+    state: { pageIndex, pageSize },
+    allColumns,
     rows,
     toggleRowSelected,
   } = useTable(
@@ -149,6 +153,7 @@ export default function DataGrid({
       ...(pagination && pagination.serverSidePagination
         ? {
             manualPagination: true,
+            manualSortBy: true,
             pageCount: ceil(pagination.serverSidePagination.pageCount),
             autoResetSortBy: false,
           }
@@ -171,7 +176,7 @@ export default function DataGrid({
             id: 'selection',
             // The header can use the table's getToggleAllRowsSelectedProps method
             // to render a checkbox
-            Header: ({ getToggleAllPageRowsSelectedProps }) => (
+            Header: ({ getToggleAllPageRowsSelectedProps }: any) => (
               <div>
                 <IndeterminateCheckbox
                   {...getToggleAllPageRowsSelectedProps()}
@@ -181,14 +186,14 @@ export default function DataGrid({
             ),
             // The cell can use the individual row's getToggleRowSelectedProps method
             // to the render a checkbox.
-	    // The `checked` prop returned by getToggleRowSelectedProps is not fit for purpose
-	    // because it only considers initial pre-selected/checked state (originalData[].isSelected).
-	    // Luckily `row.isSelected` has the correct "live" state.
-            Cell: ({ row }) => (
+            // The `checked` prop returned by getToggleRowSelectedProps is not fit for purpose
+            // because it only considers initial pre-selected/checked state (originalData[].isSelected).
+            // Luckily `row.isSelected` has the correct "live" state.
+            Cell: ({ row }: any) => (
               <div>
                 <IndeterminateCheckbox
                   {...row.getToggleRowSelectedProps()}
-	          checked={row.isSelected}
+                  checked={row.isSelected}
                   themeRole={themeRole}
                 />
               </div>
@@ -200,6 +205,19 @@ export default function DataGrid({
     }
   );
 
+  const sortBy = useMemo(() => {
+    return allColumns.reduce((sortByArr, column) => {
+      if (column.isSorted) {
+        sortByArr[column.sortedIndex] = {
+          id: column.id,
+          desc: column.isSortedDesc as boolean,
+        }
+      }
+
+      return sortByArr;
+    }, [] as SortBy)
+  }, [allColumns]);
+
   /**
    * Listen for changes in pagination and fetch
    * new data as long as another request isn't pending.
@@ -209,9 +227,10 @@ export default function DataGrid({
       pagination.serverSidePagination.fetchPaginatedData({
         pageIndex,
         pageSize,
+        sortBy,
       });
     }
-  }, [pageIndex, pageSize]);
+  }, [pageIndex, pageSize, sortBy]);
 
   // Listen for changes to row selection, if applicable.
   useEffect(() => {
@@ -263,7 +282,7 @@ export default function DataGrid({
           {/* Render Table Header */}
           <thead>
             {headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
+              <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
                 {headerGroup.headers.map((header, index) => (
                   <HeaderCell
                     key={index}
@@ -285,6 +304,7 @@ export default function DataGrid({
               return (
                 <tr
                   {...row.getRowProps()}
+                  key={row.id}
                   css={{
                     backgroundColor:
                       index % 2 === 0
