@@ -111,15 +111,7 @@ export function BirdsEyeView(props: Props) {
   );
 
   return birdsEyeData ? (
-    <Tooltip
-      content={tooltipContent}
-      position={{
-        my: 'middle middle',
-        at: 'middle middle',
-      }}
-      showDelay={50}
-      showTip={false}
-    >
+    <div style={{ display: 'flex' }}>
       <BirdsEyePlot
         data={birdsEyeData}
         containerClass="birds-eye-plot"
@@ -137,7 +129,30 @@ export function BirdsEyeView(props: Props) {
         dependentAxisLabel={entityPluralString}
         showSpinner={enableSpinner && !birdsEyeData}
       />
-    </Tooltip>
+      <Tooltip
+        content={tooltipContent}
+        position={{
+          my: 'middle middle',
+          at: 'middle middle',
+        }}
+        showDelay={250}
+        showTip={false}
+      >
+        <i
+          style={{
+            position: 'relative',
+            right: '18px',
+            top: '7px',
+            height: '1rem',
+            width: '1rem',
+            fontSize: '0.95rem',
+            cursor: 'default',
+          }}
+          className="fa fa-question-circle"
+          aria-hidden="true"
+        ></i>
+      </Tooltip>
+    </div>
   ) : (
     <div style={{ width: '400px', height: '110px' }}></div>
   );
