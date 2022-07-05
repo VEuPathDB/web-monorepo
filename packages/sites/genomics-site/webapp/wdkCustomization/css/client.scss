@@ -398,6 +398,15 @@
   margin: 1em 0;
 }
 
+/*  
+  creates enough whitespace to allow all sections to scroll into
+  the range of the activeSection logic (which is used to render the
+  blue selection indicator next to the link in the sidebar navigation)
+*/
+.wdk-RecordMain {
+  padding-bottom: 100vh;
+}
+
 /** record table cell overrides */
 
 /** content in these cells should not wrap */
