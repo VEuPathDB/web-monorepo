@@ -257,7 +257,7 @@ export const mutedPurple: ColorHue = {
   900: '#2D1339',
 };
 
-// Theme-agnostic colors
+// Alert colors
 export const warning: ColorHue = {
   100: '#FDF7E7',
   200: '#F9E7B8',
