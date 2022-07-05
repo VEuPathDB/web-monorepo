@@ -21,7 +21,7 @@ class RecordUI extends Component {
     // bind event handlers
     this._updateActiveSection = debounce(this._updateActiveSection.bind(this), 100);
     this.monitorActiveSection = debounce(this.monitorActiveSection.bind(this), 100);
-
+    
     this.recordMainSectionNode = null;
     this.activeSectionTop = null;
   }
@@ -62,7 +62,8 @@ class RecordUI extends Component {
     .filter(el => el != null)
     .find(el => {
       let rect = el.getBoundingClientRect();
-      return rect.top <= 50 && rect.bottom > 50;
+      const bottomOffset = this.props.bottomOffset ?? 50;
+        return rect.top <= 50 && rect.bottom > bottomOffset;
     });
     let activeSection = get(activeElement, 'id');
     console.debug(Date.now(), 'updated activeSection', activeSection);

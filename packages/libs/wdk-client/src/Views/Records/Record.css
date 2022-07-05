@@ -121,8 +121,8 @@
 }
 
 .wdk-RecordNavigationSection .wdk-CheckboxTree > .wdk-CheckboxTreeList {
-  max-height: calc(100vh - 175px);
-  overflow-y: auto;
+  max-height: 70vh;
+  overflow-y: scroll;
   position: relative;
 }
 
