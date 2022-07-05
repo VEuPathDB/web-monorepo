@@ -2263,10 +2263,10 @@
     lodash "^4.17.21"
     moment "^2.21.0"
 
-"@veupathdb/wdk-client@^0.8.3":
-  version "0.8.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.8.3.tgz#dd123d975012bddcb9c43418336f57101c98695a"
-  integrity sha512-cDpJRivi+gu28g7NECgdWKVc5y0+g6B++kMH1wTudMkFzi5D0KP4Kubw1u08KlxfM5D3i6sj3erB2dcTtUDIWg==
+"@veupathdb/wdk-client@^0.9.1":
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.1.tgz#666b6fcc888154faa2070a6a86cc7063f2db202b"
+  integrity sha512-q+li7dElMkrrj878nBB49DPDgBtqwg1vtXg9eTvhR5duKQJaQkvCbIZQMOxnalmiHFozjcbuT0QaG8FFO1H73A==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
@@ -2274,7 +2274,6 @@
     localforage "^1.5.0"
     lodash "^4.17.5"
     mansion-ui "2.5"
-    moment "^2.21.0"
     natural-sort "^1.0.0"
     prop-types "^15.7.2"
     react-autocomplete "^1.8.1"
