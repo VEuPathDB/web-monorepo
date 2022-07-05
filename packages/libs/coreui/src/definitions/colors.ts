@@ -257,6 +257,43 @@ export const mutedPurple: ColorHue = {
   900: '#2D1339',
 };
 
+// Theme-agnostic colors
+export const warning: ColorHue = {
+  100: '#FDF7E7',
+  200: '#F9E7B8',
+  300: '#F5D78A',
+  400: '#FFCC4D',
+  500: '#ECAE13',
+  600: '#BD8C0F',
+  700: '#8E690B',
+  800: '#5E4608',
+  900: '#473406',
+};
+
+export const error: ColorHue = {
+  100: '#FFE7E5',
+  200: '#FFB8B2',
+  300: '#FF8880',
+  400: '#FF584D',
+  500: '#FF1100',
+  600: '#CC0E00',
+  700: '#990A00',
+  800: '#660700',
+  900: '#4D0500',
+};
+
+export const success: ColorHue = {
+  100: '#EBFAEB',
+  200: '#C3EFC3',
+  300: '#9BE49B',
+  400: '#73D973',
+  500: '#37C837',
+  600: '#2CA02C',
+  700: '#217821',
+  800: '#165016',
+  900: '#103C10',
+};
+
 export default {
   white,
   black,
@@ -280,4 +317,7 @@ export default {
   mutedMagenta,
   purple,
   mutedPurple,
+  warning,
+  error,
+  success
 };

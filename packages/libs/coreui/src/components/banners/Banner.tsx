@@ -8,7 +8,7 @@ import InfoIcon from '@material-ui/icons/Info';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import CloseIcon from '@material-ui/icons/Close';
 
-import { gray, mutedGreen, orange, red, blue, ColorHue } from '../../definitions/colors';
+import { gray, warning, error, success, blue, ColorHue } from '../../definitions/colors';
 
 export type BannerProps = {
   type: 'warning' | 'danger' | 'error' | 'success' | 'info' | 'normal';
@@ -42,13 +42,13 @@ function getIconComponentFromType(type: BannerProps['type']) {
 function getColorTheme(type: BannerProps['type'], weight: keyof ColorHue) {
   switch (type) {
     case 'warning':
-      return orange[weight];
+      return warning[weight];
     case 'danger':
-      return red[weight];
+      return error[weight];
     case 'error':
-      return gray[weight];
+      return error[weight];
     case 'success':
-      return mutedGreen[weight];
+      return success[weight];
     case 'info':
       return blue[weight];
     case 'normal':
