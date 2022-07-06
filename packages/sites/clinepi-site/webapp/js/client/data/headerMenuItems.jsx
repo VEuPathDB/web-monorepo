@@ -31,13 +31,13 @@ export default function makeHeaderMenuItemsFactory(permissionsValue, diyDatasets
         : []
     )?.filter(
       study => (
-        study.name.toLowerCase().includes(searchTerm.toLowerCase())
+        study.name.toLowerCase().replace(/(<([^>]+)>)/ig, '').includes(searchTerm.toLowerCase())
       )
     );
 
     const filteredCuratedStudies = studies.entities?.filter(
       study => (
-        study.name.toLowerCase().includes(searchTerm.toLowerCase())
+        study.name.toLowerCase().replace(/(<([^>]+)>)/ig, '').includes(searchTerm.toLowerCase())
       )
     );
 
