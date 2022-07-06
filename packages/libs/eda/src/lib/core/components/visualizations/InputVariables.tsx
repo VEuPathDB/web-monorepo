@@ -238,6 +238,18 @@ export function InputVariables(props: Props) {
                   <div key={input.name} className={classes.input}>
                     <div className={classes.label}>
                       {input.label + (input.readonlyValue ? ' (fixed)' : '')}
+                      <span
+                        style={{
+                          position: 'relative',
+                          top: '-2px',
+                          paddingLeft: '1px',
+                        }}
+                      >
+                        {flattenedConstraints &&
+                        flattenedConstraints[input.name].isRequired
+                          ? '*'
+                          : ''}
+                      </span>
                     </div>
                     {!input.readonlyValue ? (
                       <VariableTreeDropdown
