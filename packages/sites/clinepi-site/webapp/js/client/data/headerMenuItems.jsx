@@ -5,6 +5,7 @@ import { menuItemsFromSocials, iconMenuItemsFromSocials } from '@veupathdb/web-c
 import { getStaticSiteData } from '../selectors/siteData';
 import { useEda, useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
 import { STATIC_ROUTE_PATH, makeEdaRoute } from '@veupathdb/web-common/lib/routes';
+import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 
 export default function makeHeaderMenuItemsFactory(permissionsValue, diyDatasets, reloadDiyDatasets) {
   return function makeHeaderMenuItems(state, props) {
@@ -31,13 +32,13 @@ export default function makeHeaderMenuItemsFactory(permissionsValue, diyDatasets
         : []
     )?.filter(
       study => (
-        study.name.toLowerCase().replace(/(<([^>]+)>)/ig, '').includes(searchTerm.toLowerCase())
+        stripHTML(study.name.toLowerCase()).includes(searchTerm.toLowerCase())
       )
     );
 
     const filteredCuratedStudies = studies.entities?.filter(
       study => (
-        study.name.toLowerCase().replace(/(<([^>]+)>)/ig, '').includes(searchTerm.toLowerCase())
+        stripHTML(study.name.toLowerCase()).includes(searchTerm.toLowerCase())
       )
     );
 
