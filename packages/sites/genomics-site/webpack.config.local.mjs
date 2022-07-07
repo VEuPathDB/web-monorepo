@@ -22,6 +22,7 @@ export default configure({
       [process.env.USER_DATASETS_WORKSPACE_IMPORT_SERVICE_ENDPOINT]: process.env.USER_DATASETS_WORKSPACE_IMPORT_SERVICE_URL,
       [process.env.DOCUMENTS_ENDPOINT]: process.env.DOCUMENTS_URL,
       [process.env.ASSETS_ENDPOINT]: process.env.ASSETS_URL,
+      [process.env.CGI_BIN_ENDPOINT]: process.env.CGI_BIN_URL,
     },
     legacyWebAppEndpoint: process.env.LEGACY_WEB_APP_ENDPOINT,
     legacyWebAppUrl: process.env.LEGACY_WEB_APP_URL,
