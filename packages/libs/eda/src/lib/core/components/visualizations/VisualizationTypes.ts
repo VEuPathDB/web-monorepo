@@ -14,7 +14,8 @@ import {
 /**
  * Props passed to viz components
  */
-export interface VisualizationProps {
+export interface VisualizationProps<Options = undefined> {
+  options?: Options;
   visualization: Visualization;
   dataElementConstraints?: Record<string, DataElementConstraint>[];
   dataElementDependencyOrder?: string[];
@@ -36,11 +37,4 @@ export interface IsEnabledInPickerParams {
   geoConfigs?: GeoConfig[];
   studyMetadata?: StudyMetadata; // not used yet, but you could imagine it being used to determine
   // if a viz tool should be enabled
-}
-
-export interface VisualizationType {
-  fullscreenComponent: React.ComponentType<VisualizationProps>;
-  selectorComponent: React.ComponentType<SelectorProps>;
-  createDefaultConfig: () => unknown;
-  isEnabledInPicker?: (props: IsEnabledInPickerParams) => boolean;
 }

@@ -20,7 +20,6 @@ import {
   VisualizationDescriptor,
 } from '../../types/visualization';
 import { Grid } from '../Grid';
-import { VisualizationType } from './VisualizationTypes';
 
 import './Visualizations.scss';
 import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
@@ -38,6 +37,7 @@ import AddIcon from '@material-ui/icons/Add';
 import { plugins } from '../computations/plugins';
 import { AnalysisState } from '../../hooks/analysis';
 import { ComputationAppOverview } from '../../types/visualization';
+import { VisualizationPlugin } from './VisualizationPlugin';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -50,7 +50,7 @@ interface Props {
       | Visualization[]
       | ((visualizations: Visualization[]) => Visualization[])
   ) => void;
-  visualizationTypes: Partial<Record<string, VisualizationType>>;
+  visualizationTypes: Partial<Record<string, VisualizationPlugin>>;
   visualizationsOverview: VisualizationOverview[];
   filters: Filter[];
   starredVariables: VariableDescriptor[];
@@ -560,6 +560,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
             />
           )}
           <vizType.fullscreenComponent
+            options={vizType.options}
             dataElementConstraints={constraints}
             dataElementDependencyOrder={dataElementDependencyOrder}
             visualization={viz}

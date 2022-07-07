@@ -3,13 +3,13 @@ import { useRouteMatch } from 'react-router-dom';
 import { useToggleStarredVariable } from '../../hooks/starredVariables';
 import { Computation, Visualization } from '../../types/visualization';
 import { VisualizationsContainer } from '../visualizations/VisualizationsContainer';
-import { VisualizationType } from '../visualizations/VisualizationTypes';
 import { ComputationProps } from './Types';
 import { plugins } from './plugins';
+import { VisualizationPlugin } from '../visualizations/VisualizationPlugin';
 
 export interface Props extends ComputationProps {
   computationId: string;
-  visualizationTypes: Partial<Record<string, VisualizationType>>;
+  visualizationTypes: Partial<Record<string, VisualizationPlugin>>;
   baseUrl?: string; // right now only defined when *not* using single app mode
   isSingleAppMode: boolean;
 }
