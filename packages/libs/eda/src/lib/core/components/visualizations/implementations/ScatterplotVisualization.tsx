@@ -25,11 +25,7 @@ import { PlotLayout } from '../../layouts/PlotLayout';
 
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
-import {
-  SelectorProps,
-  VisualizationProps,
-  VisualizationType,
-} from '../VisualizationTypes';
+import { SelectorProps, VisualizationProps } from '../VisualizationTypes';
 
 import scatter from './selectorIcons/scatter.svg';
 
@@ -119,6 +115,7 @@ import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from
 import { ComputedVariableMetadata } from '../../../api/DataClient/types';
 // use Banner from CoreUI for showing message for no smoothing
 import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
+import { createVisualizationPlugin } from '../VisualizationPlugin';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -157,11 +154,11 @@ export interface ScatterPlotDataWithCoverage extends CoverageStatistics {
 // define ScatterPlotDataResponse
 type ScatterPlotDataResponse = ScatterplotResponse;
 
-export const scatterplotVisualization: VisualizationType = {
+export const scatterplotVisualization = createVisualizationPlugin({
   selectorComponent: SelectorComponent,
   fullscreenComponent: ScatterplotViz,
   createDefaultConfig: createDefaultConfig,
-};
+});
 
 function SelectorComponent({ name }: SelectorProps) {
   const src = scatter;

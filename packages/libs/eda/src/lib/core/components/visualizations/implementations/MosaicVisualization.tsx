@@ -30,7 +30,7 @@ import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { PlotLayout } from '../../layouts/PlotLayout';
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
-import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
+import { VisualizationProps } from '../VisualizationTypes';
 import rxc from './selectorIcons/RxC.svg';
 import twoxtwo from './selectorIcons/2x2.svg';
 import { TabbedDisplay } from '@veupathdb/coreui';
@@ -51,6 +51,7 @@ import PluginError from '../PluginError';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import FacetedMosaicPlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedMosaicPlot';
 import { useVizConfig } from '../../../hooks/visualizations';
+import { createVisualizationPlugin } from '../VisualizationPlugin';
 
 const plotContainerStyles = {
   width: 750,
@@ -105,17 +106,17 @@ type ContTableDataWithCoverage = (ContTableData | FacetedData<ContTableData>) &
 type TwoByTwoDataWithCoverage = (TwoByTwoData | FacetedData<TwoByTwoData>) &
   CoverageStatistics;
 
-export const contTableVisualization: VisualizationType = {
+export const contTableVisualization = createVisualizationPlugin({
   selectorComponent: ContTableSelectorComponent,
   fullscreenComponent: ContTableFullscreenComponent,
   createDefaultConfig: createDefaultConfig,
-};
+});
 
-export const twoByTwoVisualization: VisualizationType = {
+export const twoByTwoVisualization = createVisualizationPlugin({
   selectorComponent: TwoByTwoSelectorComponent,
   fullscreenComponent: TwoByTwoFullscreenComponent,
   createDefaultConfig: createDefaultConfig,
-};
+});
 
 function ContTableSelectorComponent() {
   return (

@@ -25,7 +25,30 @@ export const plugin: ComputationPlugin = {
   configurationComponent: AbundanceConfiguration,
   configurationDescriptionComponent: AbundanceConfigDescriptionComponent,
   visualizationTypes: {
-    boxplot: boxplotVisualization,
+    boxplot: boxplotVisualization.withOptions({
+      getXAxisVariable(config) {
+        if (AbundanceConfig.is(config)) {
+          return config.collectionVariable;
+        }
+      },
+      getYAxisVariable(config) {
+        if (AbundanceConfig.is(config)) {
+          return {
+            entityId: config.collectionVariable.entityId,
+            variableId: 'abundance',
+          };
+        }
+      },
+      getPlotSubtitle(config) {
+        if (AbundanceConfig.is(config)) {
+          return `Ranked abundance: Variables with ${config.rankingMethod} = 0 removed. Showing up to the top ten variables.`;
+        }
+      },
+      getYAxisLabel() {
+        return 'Relative abundance';
+      },
+      disableShowMissingness: true,
+    }),
     scatterplot: scatterplotVisualization,
   },
   createDefaultComputationSpec: createDefaultComputationSpec,

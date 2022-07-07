@@ -36,7 +36,7 @@ import { PlotLayout } from '../../layouts/PlotLayout';
 
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
-import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
+import { VisualizationProps } from '../VisualizationTypes';
 
 import bar from './selectorIcons/bar.svg';
 // import axis label unit util
@@ -73,6 +73,7 @@ import Notification from '@veupathdb/components/lib/components/widgets//Notifica
 import Button from '@veupathdb/components/lib/components/widgets/Button';
 import { useDefaultDependentAxisRange } from '../../../hooks/computeDefaultDependentAxisRange';
 import { useVizConfig } from '../../../hooks/visualizations';
+import { createVisualizationPlugin } from '../VisualizationPlugin';
 
 // export
 export type BarplotDataWithStatistics = (
@@ -97,11 +98,11 @@ const modalPlotContainerStyles = {
   margin: 'auto',
 };
 
-export const barplotVisualization: VisualizationType = {
+export const barplotVisualization = createVisualizationPlugin({
   selectorComponent: SelectorComponent,
   fullscreenComponent: FullscreenComponent,
   createDefaultConfig: createDefaultConfig,
-};
+});
 
 function SelectorComponent() {
   return (

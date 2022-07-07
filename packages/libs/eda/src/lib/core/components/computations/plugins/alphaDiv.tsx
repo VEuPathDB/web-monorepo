@@ -25,7 +25,21 @@ export const plugin: ComputationPlugin = {
   configurationComponent: AlphaDivConfiguration,
   configurationDescriptionComponent: AlphaDivConfigDescriptionComponent,
   visualizationTypes: {
-    boxplot: boxplotVisualization,
+    boxplot: boxplotVisualization.withOptions({
+      getYAxisVariable(config) {
+        if (AlphaDivConfig.is(config)) {
+          return {
+            entityId: config.collectionVariable.entityId,
+            variableId: 'alphadiv',
+          };
+        }
+      },
+      getYAxisLabel(config) {
+        if (AlphaDivConfig.is(config)) {
+          return 'Alphadiv';
+        }
+      },
+    }),
     scatterplot: scatterplotVisualization,
   },
   createDefaultComputationSpec: createDefaultComputationSpec,

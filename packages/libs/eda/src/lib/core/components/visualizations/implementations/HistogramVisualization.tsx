@@ -53,7 +53,7 @@ import { BirdsEyeView } from '../../BirdsEyeView';
 import { PlotLayout } from '../../layouts/PlotLayout';
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
-import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
+import { VisualizationProps } from '../VisualizationTypes';
 import histogram from './selectorIcons/histogram.svg';
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
@@ -99,6 +99,7 @@ import { UIState } from '../../filter/HistogramFilter';
 import { useDefaultIndependentAxisRange } from '../../../hooks/computeDefaultIndependentAxisRange';
 import { useDefaultDependentAxisRange } from '../../../hooks/computeDefaultDependentAxisRange';
 import { useVizConfig } from '../../../hooks/visualizations';
+import { createVisualizationPlugin } from '../VisualizationPlugin';
 
 export type HistogramDataWithCoverageStatistics = (
   | HistogramData
@@ -124,11 +125,11 @@ const modalPlotContainerStyles = {
   margin: 'auto',
 };
 
-export const histogramVisualization: VisualizationType = {
+export const histogramVisualization = createVisualizationPlugin({
   selectorComponent: SelectorComponent,
   fullscreenComponent: HistogramViz,
   createDefaultConfig: createDefaultConfig,
-};
+});
 
 function SelectorComponent() {
   return (

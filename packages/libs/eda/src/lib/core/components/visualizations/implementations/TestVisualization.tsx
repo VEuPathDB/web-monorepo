@@ -1,10 +1,11 @@
-import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
+import { createVisualizationPlugin } from '../VisualizationPlugin';
+import { VisualizationProps } from '../VisualizationTypes';
 
-export const testVisualization: VisualizationType = {
+export const testVisualization = createVisualizationPlugin({
   selectorComponent: SelectorComponent,
   fullscreenComponent: FullscreenComponent,
   createDefaultConfig: () => undefined,
-};
+});
 
 function SelectorComponent() {
   return <div>Test in selector</div>;

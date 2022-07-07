@@ -1,7 +1,6 @@
 import {
   IsEnabledInPickerParams,
   VisualizationProps,
-  VisualizationType,
 } from '../VisualizationTypes';
 import map from './selectorIcons/map.svg';
 import * as t from 'io-ts';
@@ -65,15 +64,16 @@ import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { NumberVariable } from '../../../types/study';
 import { BinSpec, NumberRange } from '../../../types/general';
 import { useDefaultIndependentAxisRange } from '../../../hooks/computeDefaultIndependentAxisRange';
+import { createVisualizationPlugin } from '../VisualizationPlugin';
 
 const numContinuousBins = 8;
 
-export const mapVisualization: VisualizationType = {
+export const mapVisualization = createVisualizationPlugin({
   selectorComponent: SelectorComponent,
   fullscreenComponent: MapViz,
   createDefaultConfig: createDefaultConfig,
   isEnabledInPicker: isEnabledInPicker,
-};
+});
 
 function SelectorComponent() {
   return (

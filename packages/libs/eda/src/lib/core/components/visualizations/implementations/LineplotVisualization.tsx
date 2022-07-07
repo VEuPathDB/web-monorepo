@@ -27,7 +27,7 @@ import { PlotLayout } from '../../layouts/PlotLayout';
 
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
-import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
+import { VisualizationProps } from '../VisualizationTypes';
 
 import Switch from '@veupathdb/components/lib/components/widgets/Switch';
 import line from './selectorIcons/line.svg';
@@ -107,6 +107,7 @@ import Notification from '@veupathdb/components/lib/components/widgets//Notifica
 import Button from '@veupathdb/components/lib/components/widgets/Button';
 import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
 import { UIState } from '../../filter/HistogramFilter';
+import { createVisualizationPlugin } from '../VisualizationPlugin';
 
 const plotContainerStyles = {
   width: 750,
@@ -137,11 +138,11 @@ interface LinePlotDataWithCoverage extends CoverageStatistics {
 // define LinePlotDataResponse
 type LinePlotDataResponse = LineplotResponse;
 
-export const lineplotVisualization: VisualizationType = {
+export const lineplotVisualization = createVisualizationPlugin({
   selectorComponent: SelectorComponent,
   fullscreenComponent: LineplotViz,
   createDefaultConfig: createDefaultConfig,
-};
+});
 
 // this needs a handling of text/image for scatter, line, and density plots
 function SelectorComponent() {
