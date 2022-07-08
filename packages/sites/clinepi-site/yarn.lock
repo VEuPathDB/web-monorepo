@@ -2099,10 +2099,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.1.0.tgz#5c7eecc048a91195404411d8729393197af0128c"
   integrity sha512-TQ58MbCy7UZN/h11HZ31CSJfywG17oDNHQzQJysj65Fvv2gAM1w7CjwCvV0bG3sRESKUDORSA7sJrVVv27GHBw==
 
-"@veupathdb/components@^0.16.7":
-  version "0.16.7"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.16.7.tgz#b62b69e85101a73025147ebef387434db3d26cd6"
-  integrity sha512-9bnn8eBQB2RdNGM9c4uulIrriwo3iWv9b2HLFMcwXmEXBqb20i2eY6ZBjysP6gTmXCHr3wrwztxtbGXXvC9+fg==
+"@veupathdb/components@^0.16.8":
+  version "0.16.8"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.16.8.tgz#de9f3c15d119c5db0ef36cd84e7c26bd1e8b9ae9"
+  integrity sha512-fzW7h1Sc/nBXzOKUXQSgpzt71QlmhqS15JU8ISK9/E6llhDtj74hoAzI+kqqGbelq4DhLmhNBPVNcBuxdeF4LQ==
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
@@ -2194,10 +2194,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/site-webpack-config/-/site-webpack-config-0.1.0.tgz#b63464c5ce70297102aecd700069f1059f371fe9"
   integrity sha512-J8sPtD8+Zp1ZBhgU+mX7O737zaZ28s7P/9RJjbh5nXYB5IgP6yRm+bvj0ewmW7W9NBAPUHJzeEDxMbYDExb85g==
 
-"@veupathdb/study-data-access@^0.3.3":
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.3.3.tgz#41bfd0b37cdd6200be46f8d14b0eb10d61829e08"
-  integrity sha512-K3jmHICU9kqym56q/Cnl6vKJ1JrDSGB/ONw3VNJA1sROivBdEOgbO41YqXVih6975B3fPFM7TQfl5N5SV6rOrQ==
+"@veupathdb/study-data-access@^0.3.4":
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.3.4.tgz#272f0fde72eafe5eb07675f918612e8fa8a1d14f"
+  integrity sha512-63LP0AYcy0FvllBlAkytpf6QYIfOpUu55Apg1dIfYLu9fAPg+QPi5Vrvyndtb7SyBTDorgEaEj9WRxw19oVWDA==
   dependencies:
     fp-ts "^2.11.5"
     io-ts "^2.2.16"
@@ -2211,10 +2211,10 @@
     lodash "^4.17.21"
     moment "^2.21.0"
 
-"@veupathdb/wdk-client@^0.8.3":
-  version "0.8.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.8.3.tgz#dd123d975012bddcb9c43418336f57101c98695a"
-  integrity sha512-cDpJRivi+gu28g7NECgdWKVc5y0+g6B++kMH1wTudMkFzi5D0KP4Kubw1u08KlxfM5D3i6sj3erB2dcTtUDIWg==
+"@veupathdb/wdk-client@^0.9.1":
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.1.tgz#666b6fcc888154faa2070a6a86cc7063f2db202b"
+  integrity sha512-q+li7dElMkrrj878nBB49DPDgBtqwg1vtXg9eTvhR5duKQJaQkvCbIZQMOxnalmiHFozjcbuT0QaG8FFO1H73A==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
@@ -2222,7 +2222,6 @@
     localforage "^1.5.0"
     lodash "^4.17.5"
     mansion-ui "2.5"
-    moment "^2.21.0"
     natural-sort "^1.0.0"
     prop-types "^15.7.2"
     react-autocomplete "^1.8.1"
