@@ -19,8 +19,8 @@ export function extendAxisRangeForTruncations(
   // set this to avoid error
   if (axisRange == null) return undefined;
 
-  // adjust margin per log scale
-  const noTruncationMargin = logScale ? 0.3 : 0.02;
+  const truncationMarginFactor = 0.05; // how much padding needed for the yellow truncation warning
+  const noTruncationMarginFactor = 0.02; // how much padding needed for, e.g. scatter plot points, even when not truncated
 
   // compute truncated axis with 5 % area from the range of min and max
   if (valueType != null) {
@@ -31,7 +31,7 @@ export function extendAxisRangeForTruncations(
           new Date(axisRange?.min as string),
           new Date(axisRange?.max as string),
           'hours'
-        ) * 0.05
+        ) * truncationMarginFactor
       ); // unit in hours
 
       // padding: used for no truncation
@@ -75,20 +75,31 @@ export function extendAxisRangeForTruncations(
     } else {
       // consider padding
       const diff = (axisRange.max as number) - (axisRange.min as number);
+      const ratio = (axisRange.max as number) / (axisRange.min as number);
       const axisLowerExtensionStart = config?.min
-        ? logScale && (axisRange.min as number) - 0.05 * diff <= 0
-          ? (axisRange.min as number) - (axisRange.min as number) / 2.5
-          : (axisRange.min as number) - 0.05 * diff
+        ? logScale && isFinite(ratio) && ratio > 0
+          ? (axisRange.min as number) /
+            10 ** (truncationMarginFactor * Math.log10(ratio))
+          : (axisRange.min as number) - truncationMarginFactor * diff
         : // set exceptions: no need to have min padding for histogram & barplot (boxplot?)
         plotType === 'histogram' || plotType === 'barplot'
         ? (axisRange.min as number)
-        : (axisRange.min as number) - 0.02 * diff;
+        : logScale && isFinite(ratio) && ratio > 0
+        ? (axisRange.min as number) /
+          10 ** (noTruncationMarginFactor * Math.log10(ratio))
+        : (axisRange.min as number) - noTruncationMarginFactor * diff;
       const axisUpperExtensionEnd = config?.max
-        ? (axisRange.max as number) + 0.05 * diff
+        ? logScale && isFinite(ratio) && ratio > 0
+          ? (axisRange.max as number) *
+            10 ** (truncationMarginFactor * Math.log10(ratio))
+          : (axisRange.max as number) + truncationMarginFactor * diff
         : // set exceptions: no need to have max padding for histogram
         plotType === 'histogram'
         ? (axisRange.max as number)
-        : (axisRange.max as number) + noTruncationMargin * diff;
+        : logScale && isFinite(ratio) && ratio > 0
+        ? (axisRange.max as number) *
+          10 ** (noTruncationMarginFactor * Math.log10(ratio))
+        : (axisRange.max as number) + noTruncationMarginFactor * diff;
 
       return {
         min: axisLowerExtensionStart,
