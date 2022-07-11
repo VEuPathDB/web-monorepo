@@ -313,12 +313,11 @@ function ScatterplotViz(props: VisualizationProps) {
   // prettier-ignore
   // allow 2nd parameter of resetCheckedLegendItems for checking legend status
   const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof ScatterplotConfig, resetCheckedLegendItems?: boolean, resetAxisRanges?: boolean, resetValueSpecConfig?: boolean) => (newValue?: ValueType) => {
+    < ValueType,>(key: keyof ScatterplotConfig, resetCheckedLegendItems?: boolean, resetAxisRanges?: boolean) => (newValue?: ValueType) => {
       const newPartialConfig = {
         [key]: newValue,
         ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
       	...(resetAxisRanges ? { independentAxisRange: undefined, dependentAxisRange: undefined } : {}),
-        ...(resetValueSpecConfig ? { valueSpecConfig: 'Raw' } : {}),
       };
       updateVizConfig(newPartialConfig);
       if (resetAxisRanges) {
@@ -349,13 +348,11 @@ function ScatterplotViz(props: VisualizationProps) {
   const onIndependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
     'independentAxisLogScale',
     true,
-    true,
     true
   );
 
   const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
     'dependentAxisLogScale',
-    true,
     true,
     true
   );
@@ -1470,7 +1467,7 @@ function ScatterplotWithControls({
               state={vizConfig.independentAxisLogScale}
               onStateChange={onIndependentAxisLogScaleChange}
               // disable log scale for date variable
-              disabled={independentValueType === 'date'}
+              disabled={independentValueType === 'date' || valueSpec != 'Raw'}
             />
           </div>
           <AxisRangeControl
@@ -1545,7 +1542,7 @@ function ScatterplotWithControls({
               state={vizConfig.dependentAxisLogScale}
               onStateChange={onDependentAxisLogScaleChange}
               // disable log scale for date variable
-              disabled={dependentValueType === 'date'}
+              disabled={dependentValueType === 'date' || valueSpec != 'Raw'}
             />
           </div>
           <AxisRangeControl
