@@ -162,6 +162,10 @@ export default function Modal({
     ? 7
     : 5;
 
+  const headerHeight = title
+    ? titleHeight + (styleOverrides?.header?.compact ? 20 : 40)
+    : 0;
+
   return (
     <ResponsiveModal
       ref={observeModalContent}
@@ -218,7 +222,7 @@ export default function Modal({
       {title && (
         <div
           css={{
-            height: titleHeight + (styleOverrides?.header?.compact ? 20 : 40),
+            height: headerHeight,
             display: 'flex',
             flexDirection: 'column',
           }}
@@ -287,7 +291,7 @@ export default function Modal({
       )}
       <div
         css={{
-          height: modalContentHeight - (title ? titleHeight + 39 : 0),
+          height: modalContentHeight - headerHeight,
           overflowX: componentStyle.content.overflow.x,
           overflowY: componentStyle.content.overflow.y,
         }}
