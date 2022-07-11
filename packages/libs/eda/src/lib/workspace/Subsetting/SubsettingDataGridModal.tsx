@@ -32,6 +32,7 @@ import {
   useStudyRecord,
   useSubsettingClient,
 } from '../../core';
+import useDimensions from 'react-cool-dimensions';
 
 import { useFeaturedFields } from '../../core/components/variableTrees/hooks';
 import { useProcessedGridData, processGridData } from './hooks';
@@ -652,9 +653,33 @@ export default function SubsettingDataGridModal({
     }
   };
 
+  const {
+    observe: observeModalHeader,
+    width: modalHeaderWidth,
+  } = useDimensions();
+
+  // ~18px (round to 20px) per character for medium title size
+  const maxTextLength = Math.floor(modalHeaderWidth / 20);
+  const studyName =
+    studyRecord.displayName.length > maxTextLength ? (
+      <span title={studyRecord.displayName}>
+        {safeHtml(
+          studyRecord.displayName.substring(0, maxTextLength - 2) + '...'
+        )}
+      </span>
+    ) : (
+      safeHtml(studyRecord.displayName)
+    );
+
   return (
     <Modal
-      title={safeHtml(studyRecord.displayName)}
+      title={
+        <div style={{ width: '100%' }} ref={observeModalHeader}>
+          <div>{studyName}</div>
+        </div>
+      }
+      subtitle={<i>{analysisState.analysis?.displayName}</i>}
+      titleSize="medium"
       includeCloseButton={true}
       visible={displayModal}
       toggleVisible={toggleDisplay}
@@ -669,6 +694,9 @@ export default function SubsettingDataGridModal({
             left: 25,
           },
         },
+        header: {
+          compact: true,
+        },
       }}
     >
       <div css={{ display: 'flex', flexDirection: 'column' }}>
@@ -681,16 +709,7 @@ export default function SubsettingDataGridModal({
             height: '100%',
           }}
         >
-          <H5
-            additionalStyles={{
-              marginBottom: 5,
-              fontStyle: 'italic',
-            }}
-            color={gray[700]}
-          >
-            {analysisState.analysis?.displayName}
-          </H5>
-          <div style={{ textAlign: 'right' }}>
+          <div>
             <span
               style={{
                 fontSize: 18,
