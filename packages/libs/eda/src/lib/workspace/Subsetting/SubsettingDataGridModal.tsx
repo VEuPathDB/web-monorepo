@@ -12,7 +12,7 @@ import {
   HelpIcon,
 } from '@veupathdb/wdk-client/lib/Components';
 import MultiSelectVariableTree from '../../core/components/variableTrees/MultiSelectVariableTree';
-import { Modal, H5, DataGrid, MesaButton, Download } from '@veupathdb/coreui';
+import { Modal, DataGrid, MesaButton, Download } from '@veupathdb/coreui';
 
 // Definitions
 import { AnalysisState } from '../../core/hooks/analysis';
@@ -20,7 +20,6 @@ import { TabularDataResponse, usePromise } from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
 import { APIError } from '../../core/api/types';
 import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
-import { gray } from '@veupathdb/coreui/dist/definitions/colors';
 import {
   EnhancedEntityData,
   EnhancedEntityDatum,
@@ -659,26 +658,39 @@ export default function SubsettingDataGridModal({
   } = useDimensions();
 
   // ~18px (round to 20px) per character for medium title size
-  const maxTextLength = Math.floor(modalHeaderWidth / 20);
+  const maxStudyNameLength = Math.floor(modalHeaderWidth / 20);
   const studyName =
-    studyRecord.displayName.length > maxTextLength ? (
+    studyRecord.displayName.length > maxStudyNameLength ? (
       <span title={studyRecord.displayName}>
         {safeHtml(
-          studyRecord.displayName.substring(0, maxTextLength - 2) + '...'
+          studyRecord.displayName.substring(0, maxStudyNameLength - 2) + '...'
         )}
       </span>
     ) : (
       safeHtml(studyRecord.displayName)
     );
 
+  // 14px for subtitle at medium title size
+  const analysisName = analysisState.analysis?.displayName;
+  const maxAnalysisNameLength = Math.floor(modalHeaderWidth / 14);
+  const analysisNameTrunc =
+    analysisName &&
+    (analysisName.length > maxAnalysisNameLength ? (
+      <span title={analysisName}>
+        {analysisName.substring(0, maxAnalysisNameLength - 2) + '...'}
+      </span>
+    ) : (
+      analysisName
+    ));
+
   return (
     <Modal
       title={
         <div style={{ width: '100%' }} ref={observeModalHeader}>
-          <div>{studyName}</div>
+          {studyName}
         </div>
       }
-      subtitle={<i>{analysisState.analysis?.displayName}</i>}
+      subtitle={analysisNameTrunc && <i>{analysisNameTrunc}</i>}
       titleSize="medium"
       includeCloseButton={true}
       visible={displayModal}
