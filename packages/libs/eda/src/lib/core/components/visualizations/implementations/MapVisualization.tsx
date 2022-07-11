@@ -725,7 +725,7 @@ function MapViz(props: VisualizationProps) {
         <LabelledGroup label="Y-axis controls">
           <div style={{ display: 'flex' }}>
             <Switch
-              label="Log Scale:"
+              label="Log scale:"
               state={vizConfig.dependentAxisLogScale}
               onStateChange={onDependentAxisLogScaleChange}
               disabled={

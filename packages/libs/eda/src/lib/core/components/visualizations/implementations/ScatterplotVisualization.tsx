@@ -1463,7 +1463,7 @@ function ScatterplotWithControls({
             }}
           >
             <Switch
-              label="Log Scale:"
+              label="Log scale:"
               state={vizConfig.independentAxisLogScale}
               onStateChange={onIndependentAxisLogScaleChange}
               // disable log scale for date variable
@@ -1538,7 +1538,7 @@ function ScatterplotWithControls({
             }}
           >
             <Switch
-              label="Log Scale:"
+              label="Log scale:"
               state={vizConfig.dependentAxisLogScale}
               onStateChange={onDependentAxisLogScaleChange}
               // disable log scale for date variable

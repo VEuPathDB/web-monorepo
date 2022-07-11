@@ -1361,7 +1361,7 @@ function LineplotWithControls({
             }}
           >
             <Switch
-              label="Log Scale:"
+              label="Log scale:"
               state={vizConfig.independentAxisLogScale}
               onStateChange={onIndependentAxisLogScaleChange}
               disabled={independentValueType === 'date' || useBinning}
@@ -1474,7 +1474,7 @@ function LineplotWithControls({
             }}
           >
             <Switch
-              label="Log Scale:"
+              label="Log scale:"
               state={vizConfig.dependentAxisLogScale}
               onStateChange={onDependentAxisLogScaleChange}
               disabled={dependentValueType === 'date'}
