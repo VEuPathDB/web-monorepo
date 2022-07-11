@@ -497,6 +497,7 @@ export default function SubsettingDataGridModal({
                   </>
                 )}
               </button>
+              {dataLoading && <LoadingOverlay />}
             </div>
           ) : (
             <div
@@ -518,7 +519,6 @@ export default function SubsettingDataGridModal({
         ) : dataLoading ? (
           <Loading />
         ) : null}
-        {dataLoading && gridData ? <LoadingOverlay /> : null}
       </div>
     );
   };
