@@ -364,7 +364,9 @@ function LineplotViz(props: VisualizationProps) {
   // allow 2nd parameter of resetCheckedLegendItems for checking legend status
   // considering axis range control
   const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof LineplotConfig, resetCheckedLegendItems?: boolean, resetAxisRanges?: boolean) => (newValue?: ValueType) => {
+    < ValueType,>(key: keyof LineplotConfig,
+		  resetCheckedLegendItems?: boolean,
+		  resetAxisRanges?: boolean) => (newValue?: ValueType) => {
       const newPartialConfig = {
         [key]: newValue,
         ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
@@ -1362,14 +1364,14 @@ function LineplotWithControls({
               label="Log Scale:"
               state={vizConfig.independentAxisLogScale}
               onStateChange={onIndependentAxisLogScaleChange}
-              disabled={independentValueType === 'date'}
+              disabled={independentValueType === 'date' || useBinning}
             />
           </div>
           <Switch
             label={`Binning ${useBinning ? 'on' : 'off'}`}
             state={useBinning}
             onStateChange={onUseBinningChange}
-            disabled={neverUseBinning}
+            disabled={neverUseBinning || vizConfig.independentAxisLogScale}
           />
           <BinWidthControl
             binWidth={data0?.binWidthSlider?.binWidth}
