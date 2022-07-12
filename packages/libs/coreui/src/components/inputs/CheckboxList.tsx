@@ -1,5 +1,4 @@
-import { FormEvent, ReactNode } from 'react';
-import { uniqueId } from 'lodash';
+import { ReactNode } from 'react';
 
 enum LinksPosition {
   None,
@@ -23,9 +22,7 @@ export type CheckboxListProps = {
   /** An array of item values currently selected */
   value: string[];
 
-  onChange: (e: FormEvent<HTMLInputElement>) => void;
-  onSelectAll: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  onClearAll: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  onChange: (value: string[]) => void;
   
   /**  Controls location of the "select all" and "clear all" buttons */
   linksPosition?: LinksPosition;
@@ -36,8 +33,6 @@ export default function CheckboxList({
     items,
     value,
     onChange,
-    onSelectAll,
-    onClearAll,
     linksPosition = LinksPosition.Bottom
 }: CheckboxListProps) {
 
@@ -49,22 +44,39 @@ export default function CheckboxList({
     </div>
   );
 
+  const onChangehandler = (valueChanged: string) => {
+    const availableSelections = items.map(item => item.value);
+    onChange(
+      value.indexOf(valueChanged) == -1 ?
+      value.concat(valueChanged).sort((a,b) => availableSelections.indexOf(a) - availableSelections.indexOf(b)) :
+      value.filter(elem => elem != valueChanged)
+    );
+}
+
+const onSelectAll = (e: React.MouseEvent<HTMLButtonElement>) => {
+  onChange(items.map(item => item.value));
+  e.preventDefault();
+};
+
+const onClearAll = (e: React.MouseEvent<HTMLButtonElement>) => {
+  onChange([]);
+  e.preventDefault();
+};
+
   return (
     <div>
       {linksPosition & LinksPosition.Top ? links : null}
       <div>
         {items.map(item => {
-          // let id = `${uniqueId()}.${item.value}`;
           return (
             <div key={item.value}>
               <label>
                 <input
-                  // id={id}
                   type="checkbox"
                   name={name}
                   value={item.value}
                   checked={value.includes(item.value)}
-                  onChange={e => onChange(e)}
+                  onChange={() => onChangehandler(item.value)}
                 />
                 {' '}{item.display}
               </label>
