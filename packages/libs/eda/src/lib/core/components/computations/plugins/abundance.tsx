@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { useStudyMetadata } from '../../..';
-import { useCollectionVariables } from '../../../hooks/study';
+import { useCollectionVariables } from '../../../hooks/workspace';
 import { VariableDescriptor } from '../../../types/variable';
 import { StudyEntity } from '../../../types/study';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
@@ -24,6 +24,7 @@ export const AbundanceConfig = t.type({
 export const plugin: ComputationPlugin = {
   configurationComponent: AbundanceConfiguration,
   configurationDescriptionComponent: AbundanceConfigDescriptionComponent,
+  createDefaultComputationSpec: createDefaultComputationSpec,
   visualizationTypes: {
     boxplot: boxplotVisualization.withOptions({
       getXAxisVariable(config) {
@@ -49,9 +50,31 @@ export const plugin: ComputationPlugin = {
       },
       disableShowMissingness: true,
     }),
-    scatterplot: scatterplotVisualization,
+    scatterplot: scatterplotVisualization.withOptions({
+      getYAxisVariable(config) {
+        if (AbundanceConfig.is(config)) {
+          return {
+            entityId: config.collectionVariable.entityId,
+            variableId: 'abundance',
+          };
+        }
+      },
+      getOverlayVariable(config) {
+        if (AbundanceConfig.is(config)) {
+          return config.collectionVariable;
+        }
+      },
+      getPlotSubtitle(config) {
+        if (AbundanceConfig.is(config)) {
+          return `Ranked abundance: Variables with ${config.rankingMethod} = 0 removed. Showing up to the top ten variables.`;
+        }
+      },
+      getYAxisLabel() {
+        return 'Relative abundance';
+      },
+      hideShowMissingnessToggle: true,
+    }),
   },
-  createDefaultComputationSpec: createDefaultComputationSpec,
 };
 
 function AbundanceConfigDescriptionComponent({
