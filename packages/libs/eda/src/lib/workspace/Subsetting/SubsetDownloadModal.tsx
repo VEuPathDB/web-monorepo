@@ -38,7 +38,7 @@ import { useProcessedGridData, processGridData } from './hooks';
 import tableSVG from './cartoon_table.svg';
 import './SubsetDownloadModal.scss';
 
-type SubsettingDataGridProps = {
+type SubsetDownloadModalProps = {
   /** Should the modal currently be visible? */
   displayModal: boolean;
   /** Toggle the display of the modal. */
@@ -102,7 +102,7 @@ const NumberedHeader = (props: {
  * 1. Select entity/variable data for display in a tabular format.
  * 2. Request a CSV of the selected data for download.
  */
-export default function SubsettingDataGridModal({
+export default function SubsetDownloadModal({
   displayModal,
   toggleDisplay,
   analysisState,
@@ -110,7 +110,7 @@ export default function SubsettingDataGridModal({
   currentEntity,
   starredVariables,
   toggleStarredVariable,
-}: SubsettingDataGridProps) {
+}: SubsetDownloadModalProps) {
   const theme = useUITheme();
   const primaryColor = theme?.palette.primary.hue[theme.palette.primary.level];
 

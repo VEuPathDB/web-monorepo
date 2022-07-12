@@ -1,16 +1,8 @@
 .SubsetDownloadModal {
-  .css-ro2cao-Modal {
-    overflow: hidden;
-  }
-
-  .css-ob34sg-Modal {
+  .modal-content {
     display: flex;
     flex-direction: column;
     height: 100%;
-  }
-
-  .css-1s830cx-Modal {
-    overflow: hidden;
   }
 
   .EDAWorkspace-VariableList {
@@ -24,20 +16,16 @@
     flex-direction: column;
   }
 
-  .css-1723gmh-DataGrid {
+  .data-grid-table-wrapper {
     height: 100%;
   }
 
-  .css-1xfyas5-DataGrid {
+  .data-grid-table {
     height: 100%;
     margin-bottom: 0;
   }
 
-  // .css-1nxo5ei-HeaderCell {
-  //   height: auto;
-  // }
-
-  .css-1pxh26w-PaginationControls {
+  .pagination-controls {
     margin-bottom: 0;
   }
 }
