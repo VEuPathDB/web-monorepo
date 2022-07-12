@@ -303,6 +303,7 @@ export default function Modal({
             paddingBottom: componentStyle.content.padding.bottom,
             paddingLeft: componentStyle.content.padding.left,
           }}
+          className="modal-content"
         >
           {children}
         </div>

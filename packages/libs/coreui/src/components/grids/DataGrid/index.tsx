@@ -247,7 +247,7 @@ export default function DataGrid({
           pagination={pagination}
         />
       )}
-      <div css={{overflow: finalStyle.table.overflow}}>
+      <div css={{overflow: finalStyle.table.overflow}} className="data-grid-table-wrapper">
         <table
           {...getTableProps()}
           css={{
@@ -259,6 +259,7 @@ export default function DataGrid({
             width: finalStyle.table.width,
             height: finalStyle.table.height,
           }}
+          className="data-grid-table"
         >
           {/* Render Table Header */}
           <thead>

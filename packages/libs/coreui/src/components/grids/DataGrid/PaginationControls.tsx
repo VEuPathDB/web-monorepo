@@ -57,7 +57,7 @@ export default function PaginationControls({
         loading && { opacity: 0.5, pointerEvents: 'none' },
       ]}
     >
-      <div css={{ marginBottom: 10, display: 'flex', alignItems: 'center' }}>
+      <div css={{ marginBottom: 10, display: 'flex', alignItems: 'center' }} className="pagination-controls">
         <button
           css={{ marginRight: 5, ...commonButtonCSS }}
           onClick={() => gotoPage(0)}
