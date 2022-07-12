@@ -1,4 +1,4 @@
-import { ReactNode, SetStateAction, useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { Button, Icon, Popover } from '@material-ui/core';
 
 export interface PopoverButtonProps {
@@ -6,7 +6,7 @@ export interface PopoverButtonProps {
   children: ReactNode;
   /** Contents of button */
   buttonDisplayContent: ReactNode;
-  onClose?: unknown;
+  onClose: () => void;
 }
 
 /**
@@ -18,9 +18,7 @@ export default function PopoverButton(props: PopoverButtonProps) {
 
   const onCloseHandler = () => {
     setAnchorEl(null);
-    onClose && typeof onClose === 'function' ?
-        onClose() :
-        null
+    onClose();
   }
 
   const menu = (

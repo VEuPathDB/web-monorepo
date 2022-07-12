@@ -1,7 +1,7 @@
 import { FormEvent, ReactNode } from 'react';
 import { uniqueId } from 'lodash';
 
-export enum LinksPosition {
+enum LinksPosition {
   None,
   Top = 1 << 1,
   Bottom = 1 << 2,
@@ -10,14 +10,24 @@ export enum LinksPosition {
 
 type Item = {
   display: ReactNode
-  value: any
+  value: string
 }
 
-type Props = {
-  name?: string
-  items: Item[]
-  value: string[]
-  onChange: (value: string[]) => void,
+export type CheckboxListProps = {
+  /** Optional name attribute for the native input element */
+  name?: string;
+
+  /** The items available for selection in the checkbox list */
+  items: Item[];
+
+  /** An array of item values currently selected */
+  value: string[];
+
+  onChange: (e: FormEvent<HTMLInputElement>) => void;
+  onSelectAll: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  onClearAll: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  
+  /**  Controls location of the "select all" and "clear all" buttons */
   linksPosition?: LinksPosition;
 }
 
@@ -26,28 +36,10 @@ export default function CheckboxList({
     items,
     value,
     onChange,
+    onSelectAll,
+    onClearAll,
     linksPosition = LinksPosition.Bottom
-}: Props) {
-
-  const onChangeHandler = (e: FormEvent<HTMLInputElement>) => {
-    const valueChanged = e.currentTarget.value;
-    const availableSelections = items.map(item => item.value);
-    onChange(
-      value.indexOf(valueChanged) == -1 ?
-        value.concat(valueChanged).sort((a,b) => availableSelections.indexOf(a) - availableSelections.indexOf(b)) :
-        value.filter(elem => elem != valueChanged)
-    );
-  };
-
-  const onSelectAll = (e: React.MouseEvent<HTMLButtonElement>) => {
-    onChange(items.map(item => item.value));
-    e.preventDefault();
-  };
-  
-  const onClearAll = (e: React.MouseEvent<HTMLButtonElement>) => {
-    onChange([]);
-    e.preventDefault();
-  };
+}: CheckboxListProps) {
 
   let links = (
     <div>
@@ -56,6 +48,7 @@ export default function CheckboxList({
       <button type="button" className="wdk-Link" onClick={e => onClearAll(e)}>clear all</button>
     </div>
   );
+
   return (
     <div>
       {linksPosition & LinksPosition.Top ? links : null}
@@ -71,7 +64,7 @@ export default function CheckboxList({
                   name={name}
                   value={item.value}
                   checked={value.includes(item.value)}
-                  onChange={e => onChangeHandler(e)}
+                  onChange={e => onChange(e)}
                 />
                 {' '}{item.display}
               </label>
