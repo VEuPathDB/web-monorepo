@@ -18,6 +18,7 @@ import { NumberOrDateRange } from '../types/general';
 // import truncation util functions
 import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations';
 import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
+import { logScaleDtick } from '../utils/logscale-dtick';
 
 export interface ScatterPlotProps
   extends PlotProps<ScatterPlotData>,
@@ -147,7 +148,9 @@ const ScatterPlot = makePlotlyPlotComponent(
             ? 'log'
             : undefined,
         tickfont: data.series.length ? {} : { color: 'transparent' },
-        dtick: independentAxisLogScale ? 1 : undefined,
+        dtick: independentAxisLogScale
+          ? logScaleDtick(extendedIndependentAxisRange)
+          : undefined,
       },
       yaxis: {
         title: dependentAxisLabel,
@@ -174,7 +177,9 @@ const ScatterPlot = makePlotlyPlotComponent(
             ? 'log'
             : undefined,
         tickfont: data.series.length ? {} : { color: 'transparent' },
-        dtick: dependentAxisLogScale ? 1 : undefined,
+        dtick: dependentAxisLogScale
+          ? logScaleDtick(extendedDependentAxisRange)
+          : undefined,
       },
       // add truncatedAxisHighlighting for layout.shapes
       shapes: truncatedAxisHighlighting,

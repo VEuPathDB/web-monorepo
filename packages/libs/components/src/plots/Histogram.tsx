@@ -34,6 +34,7 @@ import { Layout, Shape } from 'plotly.js';
 // import truncation util functions
 import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations';
 import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
+import { logScaleDtick } from '../utils/logscale-dtick';
 
 // bin middles needed for highlighting
 interface BinSummary {
@@ -474,7 +475,9 @@ const Histogram = makePlotlyPlotComponent(
               : val
           )
         : [0, 10],
-      dtick: dependentAxisLogScale ? 1 : undefined,
+      dtick: dependentAxisLogScale
+        ? logScaleDtick(extendedDependentAxisRange)
+        : undefined,
       tickfont: data.series.length ? {} : { color: 'transparent' },
       showline: !axisTruncationConfig?.independentAxis?.min,
       linecolor: '#dddddd',
