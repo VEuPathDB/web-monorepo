@@ -533,6 +533,7 @@ export default function SubsetDownloadModal({
         justifyContent: 'center',
         margin: '1px 4px 1px 0',
       }}
+      onClick={(event) => event.preventDefault()}
     >
       <i className="fa fa-lock" title="This variable is required" />
     </div>
