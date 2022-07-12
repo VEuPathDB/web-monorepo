@@ -2,7 +2,6 @@
 import Boxplot, { BoxplotProps } from '@veupathdb/components/lib/plots/Boxplot';
 import FacetedBoxplot from '@veupathdb/components/lib/plots/facetedPlots/FacetedBoxplot';
 
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import * as t from 'io-ts';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 
@@ -10,7 +9,10 @@ import { useCallback, useMemo, useState, useEffect } from 'react';
 import DataClient, { BoxplotResponse } from '../../../api/DataClient';
 
 import { usePromise } from '../../../hooks/promise';
-import { useFindEntityAndVariable } from '../../../hooks/study';
+import {
+  useFindEntityAndVariable,
+  useStudyEntities,
+} from '../../../hooks/workspace';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { VariableDescriptor } from '../../../types/variable';
@@ -159,11 +161,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
-  const entities = useMemo(
-    () =>
-      Array.from(preorder(studyMetadata.rootEntity, (e) => e.children || [])),
-    [studyMetadata]
-  );
+  const entities = useStudyEntities();
   const dataClient: DataClient = useDataClient();
 
   const [vizConfig, updateVizConfig] = useVizConfig(
@@ -203,7 +201,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     [updateVizConfig]
   );
 
-  const findEntityAndVariable = useFindEntityAndVariable(entities);
+  const findEntityAndVariable = useFindEntityAndVariable();
 
   const providedXAxisVariable = options?.getXAxisVariable?.(
     computation.descriptor.configuration

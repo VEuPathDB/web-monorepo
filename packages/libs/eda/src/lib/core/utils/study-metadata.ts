@@ -8,6 +8,10 @@ import {
 import { VariableDescriptor } from '../types/variable';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
+export function entityTreeToArray(rootEntity: StudyEntity) {
+  return Array.from(preorder(rootEntity, (e) => e.children ?? []));
+}
+
 export interface EntityAndVariable {
   entity: StudyEntity;
   variable: VariableTreeNode;

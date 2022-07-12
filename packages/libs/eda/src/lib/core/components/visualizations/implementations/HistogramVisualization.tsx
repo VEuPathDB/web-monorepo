@@ -38,7 +38,12 @@ import {
 } from '../../../api/DataClient';
 import DataClient from '../../../api/DataClient';
 import { PromiseHookState, usePromise } from '../../../hooks/promise';
-import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
+import {
+  useDataClient,
+  useStudyMetadata,
+  useFindEntityAndVariable,
+  useStudyEntities,
+} from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import {
   DateVariable,
@@ -66,7 +71,6 @@ import {
   variablesAreUnique,
   nonUniqueWarning,
 } from '../../../utils/visualization';
-import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 // import variable's metadata-based independent axis range utils
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
@@ -190,11 +194,7 @@ function HistogramViz(props: VisualizationProps) {
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
-  const entities = useMemo(
-    () =>
-      Array.from(preorder(studyMetadata.rootEntity, (e) => e.children || [])),
-    [studyMetadata]
-  );
+  const entities = useStudyEntities();
   const dataClient: DataClient = useDataClient();
 
   const [vizConfig, updateVizConfig] = useVizConfig(
@@ -295,7 +295,7 @@ function HistogramViz(props: VisualizationProps) {
     'checkedLegendItems'
   );
 
-  const findEntityAndVariable = useFindEntityAndVariable(entities);
+  const findEntityAndVariable = useFindEntityAndVariable();
 
   const { xAxisVariable, outputEntity, valueType } = useMemo(() => {
     const { entity, variable } =

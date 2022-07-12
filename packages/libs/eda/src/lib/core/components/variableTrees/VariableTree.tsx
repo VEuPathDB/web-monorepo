@@ -1,10 +1,10 @@
 import { useCallback, useMemo } from 'react';
 
-import { StudyEntity, VariableScope } from '../../types/study';
+import { VariableScope } from '../../types/study';
 import { VariableDescriptor } from '../../types/variable';
 import VariableList from './VariableList';
 import './VariableTree.scss';
-import { useStudyEntities } from '../../hooks/study';
+import { useStudyEntities } from '../../hooks/workspace';
 import {
   useValuesMap,
   useFlattenedFields,
@@ -14,7 +14,6 @@ import {
 } from './hooks';
 
 export interface VariableTreeProps {
-  rootEntity: StudyEntity;
   starredVariables?: VariableDescriptor[];
   toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
   entityId?: string;
@@ -31,7 +30,6 @@ export interface VariableTreeProps {
 
 export default function VariableTree({
   customDisabledVariableMessage,
-  rootEntity,
   disabledVariables,
   starredVariables,
   toggleStarredVariable,
@@ -41,7 +39,7 @@ export default function VariableTree({
   showMultiFilterDescendants = false,
   scope,
 }: VariableTreeProps) {
-  const entities = useStudyEntities(rootEntity);
+  const entities = useStudyEntities();
   const valuesMap = useValuesMap(entities);
   const flattenedFields = useFlattenedFields(entities, scope);
   const fieldsByTerm = useFlattenFieldsByTerm(flattenedFields);

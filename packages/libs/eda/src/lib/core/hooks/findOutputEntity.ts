@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { VariableDescriptor } from '../types/variable';
-import { StudyEntity } from '../types/study';
-import { useFindEntityAndVariable } from './study';
+import { useFindEntityAndVariable } from './workspace';
 // add NumberRange
 import { NumberOrDateRange } from '../types/general';
 
@@ -19,10 +18,9 @@ export function useFindOutputEntity(
     | NumberOrDateRange
     | undefined
   >,
-  defaultVariableName: string,
-  entities: StudyEntity[]
+  defaultVariableName: string
 ) {
-  const findEntityAndVariable = useFindEntityAndVariable(entities);
+  const findEntityAndVariable = useFindEntityAndVariable();
   return useMemo(() => {
     const variableName =
       dataElementDependencyOrder == null ||

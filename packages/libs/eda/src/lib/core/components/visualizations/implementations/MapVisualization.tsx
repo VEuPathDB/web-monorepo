@@ -31,9 +31,13 @@ import { FormControl, Select, MenuItem, InputLabel } from '@material-ui/core';
 
 // viz-related imports
 import { PlotLayout } from '../../layouts/PlotLayout';
-import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
+import {
+  useDataClient,
+  useFindEntityAndVariable,
+  useStudyEntities,
+  useStudyMetadata,
+} from '../../../hooks/workspace';
 import { useMemo, useCallback, useState, useEffect } from 'react';
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import DataClient, {
   MapMarkersRequestParams,
   MapMarkersOverlayRequestParams,
@@ -51,7 +55,6 @@ import PluginError from '../PluginError';
 import { VariableDescriptor } from '../../../types/variable';
 import { InputVariables } from '../InputVariables';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
-import { useFindEntityAndVariable } from '../../../hooks/study';
 import PlotLegend, {
   LegendItemsProps,
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
@@ -162,11 +165,7 @@ function MapViz(props: VisualizationProps) {
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
-  const entities = useMemo(
-    () =>
-      Array.from(preorder(studyMetadata.rootEntity, (e) => e.children || [])),
-    [studyMetadata]
-  );
+  const entities = useStudyEntities();
   const dataClient: DataClient = useDataClient();
 
   const [vizConfig, updateVizConfig] = useVizConfig(
@@ -215,7 +214,7 @@ function MapViz(props: VisualizationProps) {
     );
   }, [vizConfig.geoEntityId, geoConfigs]);
 
-  const findEntityAndVariable = useFindEntityAndVariable(entities);
+  const findEntityAndVariable = useFindEntityAndVariable();
   const [outputEntity, xAxisVariable] = useMemo(() => {
     const geoEntity =
       vizConfig.geoEntityId !== null

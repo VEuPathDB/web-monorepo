@@ -10,7 +10,6 @@ import LabelledGroup from '@veupathdb/components/lib/components/widgets/Labelled
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import Switch from '@veupathdb/components/lib/components/widgets/Switch';
 
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import * as t from 'io-ts';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import PluginError from '../PluginError';
@@ -22,9 +21,13 @@ import DataClient, {
 } from '../../../api/DataClient';
 
 import { usePromise } from '../../../hooks/promise';
-import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
-import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
+import {
+  useDataClient,
+  useStudyMetadata,
+  useFindEntityAndVariable,
+  useStudyEntities,
+} from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { Variable } from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
@@ -161,11 +164,7 @@ function BarplotViz(props: VisualizationProps) {
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
-  const entities = useMemo(
-    () =>
-      Array.from(preorder(studyMetadata.rootEntity, (e) => e.children || [])),
-    [studyMetadata]
-  );
+  const entities = useStudyEntities();
   const dataClient: DataClient = useDataClient();
 
   // use useVizConfig hook
@@ -240,7 +239,7 @@ function BarplotViz(props: VisualizationProps) {
     'checkedLegendItems'
   );
 
-  const findEntityAndVariable = useFindEntityAndVariable(entities);
+  const findEntityAndVariable = useFindEntityAndVariable();
   const {
     variable,
     entity,

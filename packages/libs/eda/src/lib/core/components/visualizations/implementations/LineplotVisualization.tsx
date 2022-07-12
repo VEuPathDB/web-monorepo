@@ -3,7 +3,6 @@ import LinePlot, {
   LinePlotProps,
 } from '@veupathdb/components/lib/plots/LinePlot';
 
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import * as t from 'io-ts';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 
@@ -13,9 +12,13 @@ import DataClient, {
 } from '../../../api/DataClient';
 
 import { usePromise } from '../../../hooks/promise';
-import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
-import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
+import {
+  useDataClient,
+  useStudyMetadata,
+  useFindEntityAndVariable,
+  useStudyEntities,
+} from '../../../hooks/workspace';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { Filter } from '../../../types/filter';
 
@@ -82,7 +85,6 @@ import { gray } from '../colors';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 // import variable's metadata-based independent axis range utils
 import { defaultIndependentAxisRange } from '../../../utils/default-independent-axis-range';
-import { axisRangeMargin } from '../../../utils/axis-range-margin';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import PluginError from '../PluginError';
 import PlotLegend, {
@@ -219,11 +221,7 @@ function LineplotViz(props: VisualizationProps) {
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
-  const entities = useMemo(
-    () =>
-      Array.from(preorder(studyMetadata.rootEntity, (e) => e.children || [])),
-    [studyMetadata]
-  );
+  const entities = useStudyEntities();
   const dataClient: DataClient = useDataClient();
 
   const [vizConfig, updateVizConfig] = useVizConfig(
@@ -234,7 +232,7 @@ function LineplotViz(props: VisualizationProps) {
   );
 
   // moved the location of this findEntityAndVariable
-  const findEntityAndVariable = useFindEntityAndVariable(entities);
+  const findEntityAndVariable = useFindEntityAndVariable();
 
   const {
     xAxisVariable,
@@ -410,8 +408,7 @@ function LineplotViz(props: VisualizationProps) {
   const outputEntity = useFindOutputEntity(
     dataElementDependencyOrder,
     vizConfig,
-    'yAxisVariable',
-    entities
+    'yAxisVariable'
   );
 
   const data = usePromise(
