@@ -10,7 +10,6 @@ import { isNumber } from '../types/guards';
  *
  */
 export function logScaleDtick(range: NumberOrDateRange | undefined): number {
-  console.log(`incoming range ${range?.min} to ${range?.max}`);
   if (
     range != null &&
     range.min > 0 &&
