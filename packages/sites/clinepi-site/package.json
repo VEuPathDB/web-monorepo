@@ -21,7 +21,7 @@
     "@material-ui/lab": "^4.0.0-alpha.58",
     "@veupathdb/components": "^0.16.8",
     "@veupathdb/coreui": "^0.17.2",
-    "@veupathdb/eda": "^3.6.18",
+    "@veupathdb/eda": "^3.6.19",
     "@veupathdb/http-utils": "^1.1.0",
     "@veupathdb/study-data-access": "^0.3.4",
     "@veupathdb/user-datasets": "^0.1.5",
