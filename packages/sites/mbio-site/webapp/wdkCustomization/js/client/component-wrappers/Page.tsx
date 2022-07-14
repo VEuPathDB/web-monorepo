@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { Props } from '@veupathdb/wdk-client/lib/Components/Layout/Page';
 
@@ -31,7 +31,7 @@ export function Page(DefaultComponent: React.ComponentType<Props>) {
                 <ReduxNotificationHandler>
                   <DefaultComponent {...props} />
                 </ReduxNotificationHandler>
-              </VEuPathDBSnackbarProvider>
+              </MicrobiomeSnackbarProvider>
             </UIThemeProvider>
     );
   };
