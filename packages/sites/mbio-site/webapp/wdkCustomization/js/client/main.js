@@ -11,6 +11,7 @@ import wrapWdkService from './wrapWdkService';
 import { wrapRoutes } from './routes';
 import { wrapWdkDependencies } from '@veupathdb/study-data-access/lib/shared/wrapWdkDependencies';
 import 'site/css/MicrobiomeSite.css';
+import { useEda } from '@veupathdb/web-common/lib/config';
 
 // Initialize the application.
 initialize({
