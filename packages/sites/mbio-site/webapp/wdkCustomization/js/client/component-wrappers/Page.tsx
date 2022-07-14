@@ -27,7 +27,7 @@ export function Page(DefaultComponent: React.ComponentType<Props>) {
                 },
               }}
             >
-              <VEuPathDBSnackbarProvider styleProps={snackbarStyleProps}>
+              <MicrobiomeSnackbarProvider styleProps={snackbarStyleProps}>
                 <ReduxNotificationHandler>
                   <DefaultComponent {...props} />
                 </ReduxNotificationHandler>
@@ -44,7 +44,7 @@ function translateNotificationsOnTop() {
   };
 }
 
-const VEuPathDBSnackbarProvider = makeSnackbarProvider(
+const MicrobiomeSnackbarProvider = makeSnackbarProvider(
   {
     containerRoot: {
       zIndex: 99
