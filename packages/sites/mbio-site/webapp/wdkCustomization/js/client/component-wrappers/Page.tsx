@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { Props } from '@veupathdb/wdk-client/lib/Components/Layout/Page';
 
 // import { useAttemptActionClickHandler } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
+
+import { ReduxNotificationHandler } from '@veupathdb/wdk-client/lib/Components/Notifications';
+import makeSnackbarProvider, { SnackbarStyleProps } from '@veupathdb/coreui/dist/components/notifications/SnackbarProvider';
 
 import UIThemeProvider from '@veupathdb/coreui/dist/components/theming/UIThemeProvider';
 import { colors } from '@veupathdb/coreui';
@@ -12,6 +15,8 @@ export function Page(DefaultComponent: React.ComponentType<Props>) {
   return function MicrobiomePage(props: Props) {
     // useAttemptActionClickHandler();
     useCoreUIFonts();
+    
+    const snackbarStyleProps = {};
 
     return (
            <UIThemeProvider
@@ -22,8 +27,31 @@ export function Page(DefaultComponent: React.ComponentType<Props>) {
                 },
               }}
             >
-              <DefaultComponent {...props} />
+              <VEuPathDBSnackbarProvider styleProps={snackbarStyleProps}>
+                <ReduxNotificationHandler>
+                  <DefaultComponent {...props} />
+                </ReduxNotificationHandler>
+              </VEuPathDBSnackbarProvider>
             </UIThemeProvider>
     );
   };
 }
+
+
+function translateNotificationsOnTop() {
+  return {
+    transform: 'translateY(84px)'
+  };
+}
+
+const VEuPathDBSnackbarProvider = makeSnackbarProvider(
+  {
+    containerRoot: {
+      zIndex: 99
+    },
+    anchorOriginTopLeft: translateNotificationsOnTop,
+    anchorOriginTopCenter: translateNotificationsOnTop,
+    anchorOriginTopRight: translateNotificationsOnTop,
+  },
+  'VEuPathDBSnackbarProvider',
+);
