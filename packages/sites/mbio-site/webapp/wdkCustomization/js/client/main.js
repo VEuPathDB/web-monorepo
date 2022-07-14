@@ -15,7 +15,12 @@ import 'site/css/MicrobiomeSite.css';
 // Initialize the application.
 initialize({
   componentWrappers,
-  wrapWdkDependencies: partial(wrapWdkDependencies, edaServiceUrl),
+  wrapWdkDependencies: partial(
+    wrapWdkDependencies,
+    useEda
+      ? edaServiceUrl 
+      : undefined
+  ),
   wrapStoreModules,
   wrapWdkService,
   wrapRoutes,
