@@ -706,58 +706,63 @@ export default function SubsetDownloadModal({
             bottom: 25,
             left: 25,
           },
+          size: {
+            height: '100%',
+          },
         },
         header: {
           compact: true,
         },
       }}
     >
-      <div css={{ display: 'flex', flexDirection: 'column' }}>
-        <div
-          css={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            marginTop: 10,
-            marginBottom: 15,
-            height: '100%',
-          }}
-        >
-          <div>
-            <span
-              style={{
-                fontSize: 18,
-                fontWeight: 500,
-                color: '#646464',
-              }}
-            >
-              {currentEntity?.displayNamePlural}
-            </span>
-            {currentEntity.filteredCount && currentEntity.totalCount && (
-              <p
+      <div css={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <div css={{ display: 'flex', flexDirection: 'column' }}>
+          <div
+            css={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              marginTop: 10,
+              marginBottom: 15,
+              height: '100%',
+            }}
+          >
+            <div>
+              <span
                 style={{
-                  marginTop: 0,
-                  marginBottom: 0,
-                  color: 'gray',
+                  fontSize: 18,
+                  fontWeight: 500,
+                  color: '#646464',
                 }}
               >
-                {`${currentEntity.filteredCount.toLocaleString()} of ${currentEntity.totalCount.toLocaleString()} records selected`}
-              </p>
-            )}
+                {currentEntity?.displayNamePlural}
+              </span>
+              {currentEntity.filteredCount && currentEntity.totalCount && (
+                <p
+                  style={{
+                    marginTop: 0,
+                    marginBottom: 0,
+                    color: 'gray',
+                  }}
+                >
+                  {`${currentEntity.filteredCount.toLocaleString()} of ${currentEntity.totalCount.toLocaleString()} records selected`}
+                </p>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-      <div
-        style={{
-          position: 'relative',
-          display: 'flex',
-          flexDirection: 'row',
-          gap: 50,
-          minHeight: 0,
-          flex: '0 1 auto',
-        }}
-      >
-        {renderVariableSelectionArea()}
-        {renderDataGridArea()}
+        <div
+          style={{
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'row',
+            gap: 50,
+            minHeight: 0,
+            flex: '0 1 auto',
+          }}
+        >
+          {renderVariableSelectionArea()}
+          {renderDataGridArea()}
+        </div>
       </div>
     </Modal>
   );
