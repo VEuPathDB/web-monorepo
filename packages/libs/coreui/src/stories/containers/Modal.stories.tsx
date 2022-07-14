@@ -97,7 +97,6 @@ export const WithTitle = Template.bind({});
 WithTitle.args = {
   ...Basic.args,
   title: 'Share Large Analysis',
-  subtitle: '',
 } as ModalProps;
 
 export const WithReactNodeTitle = Template.bind({});
@@ -108,14 +107,19 @@ WithReactNodeTitle.args = {
       <i>Span</i> element used as a title
     </span>
   ),
-  subtitle: '',
+} as ModalProps;
+
+export const WithSubtitle = Template.bind({});
+WithSubtitle.args = {
+  ...Basic.args,
+  title: 'Share Large Analysis',
+  subtitle: 'The subtitle is under the main title!',
 } as ModalProps;
 
 export const IncludeCloseButton = Template.bind({});
 IncludeCloseButton.args = {
   ...Basic.args,
   title: 'Modal With Close Button',
-  subtitle: '',
   includeCloseButton: true,
 } as ModalProps;
 
@@ -139,10 +143,12 @@ SpecificSize.args = {
       height: 500,
     },
     content: {
-      paddingTop: 0,
-      paddingRight: 50,
-      paddingBottom: 25,
-      paddingLeft: 25,
+      padding: {
+        top: 0,
+        right: 50,
+        bottom: 25,
+        left: 25,
+      },
     },
   },
 } as ModalProps;
@@ -160,10 +166,12 @@ CustomContentPadding.args = {
   title: 'Customized Content Padding',
   styleOverrides: {
     content: {
-      paddingBottom: 100,
-      paddingLeft: 50,
-      paddingRight: 50,
-      paddingTop: 100,
+      padding: {
+        bottom: 100,
+        left: 50,
+        right: 50,
+        top: 100,
+      },
     },
   },
 } as ModalProps;

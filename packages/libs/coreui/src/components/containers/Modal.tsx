@@ -28,6 +28,10 @@ type ModalStyleSpec = {
     compact?: boolean;
   };
   content: {
+    size: {
+      width: CSSProperties['width'];
+      height: CSSProperties['height'];
+    };
     padding: {
       // TODO: It would be better to fully support all valid values.
       top: number;
@@ -118,6 +122,10 @@ export default function Modal({
         overflow: {
           x: 'auto',
           y: 'auto',
+        },
+        size: {
+          height: 'auto',
+          width: 'auto',
         },
       },
       header: {
@@ -298,12 +306,14 @@ export default function Modal({
       >
         <div
           css={{
+            boxSizing: 'border-box',
+            height: componentStyle.content.size.height,
+            width: componentStyle.content.size.width,
             paddingTop: componentStyle.content.padding.top,
             paddingRight: componentStyle.content.padding.right,
             paddingBottom: componentStyle.content.padding.bottom,
             paddingLeft: componentStyle.content.padding.left,
           }}
-          className="modal-content"
         >
           {children}
         </div>
