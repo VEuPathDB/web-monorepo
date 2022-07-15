@@ -28,7 +28,11 @@ import { PlotLayout } from '../../layouts/PlotLayout';
 
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
-import { SelectorProps, VisualizationProps } from '../VisualizationTypes';
+import {
+  ComputedVariableDetails,
+  SelectorProps,
+  VisualizationProps,
+} from '../VisualizationTypes';
 
 import scatter from './selectorIcons/scatter.svg';
 
@@ -196,8 +200,9 @@ export const ScatterplotConfig = t.partial({
 });
 
 interface Options {
-  getYAxisVariable?(config: unknown): VariableDescriptor | undefined;
-  getYAxisLabel?(config: unknown): string | undefined;
+  getComputedYAxisDetails?(
+    config: unknown
+  ): ComputedVariableDetails | undefined;
   getOverlayVariable?(config: unknown): VariableDescriptor | undefined;
   getPlotSubtitle?(config: unknown): string | undefined;
   hideShowMissingnessToggle?: boolean;
@@ -234,7 +239,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     updateConfiguration
   );
 
-  const providedYAxisVariableDescriptor = options?.getYAxisVariable?.(
+  const computedYAxisDetails = options?.getComputedYAxisDetails?.(
     computation.descriptor.configuration
   );
   const providedOverlayVariableDescriptor = options?.getOverlayVariable?.(
@@ -364,8 +369,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
   const outputEntityId =
-    providedYAxisVariableDescriptor?.entityId ||
-    vizConfig.yAxisVariable?.entityId;
+    computedYAxisDetails?.entityId || vizConfig.yAxisVariable?.entityId;
   const outputEntity = entities.find((e) => e.id === outputEntityId);
 
   const data = usePromise(
@@ -397,7 +401,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
         return undefined;
       else if (
-        providedYAxisVariableDescriptor == null &&
+        computedYAxisDetails == null &&
         (vizConfig.yAxisVariable == null || yAxisVariable == null)
       )
         return undefined;
@@ -801,7 +805,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   const dependentAxisLabel =
     data?.value?.computedVariableMetadata?.displayName?.[0] ??
-    options?.getYAxisLabel?.(computation.descriptor.configuration) ??
+    computedYAxisDetails?.placeholderDisplayName ??
     variableDisplayWithUnit(yAxisVariable) ??
     'Y-axis';
 
@@ -992,7 +996,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
               name: 'yAxisVariable',
               label: 'Y-axis',
               role: 'axis',
-              readonlyValue: providedYAxisVariableDescriptor
+              readonlyValue: computedYAxisDetails
                 ? dependentAxisLabel
                 : undefined,
             },

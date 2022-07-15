@@ -32,11 +32,11 @@ export const plugin: ComputationPlugin = {
           return config.collectionVariable;
         }
       },
-      getYAxisVariable(config) {
+      getComputedYAxisDetails(config) {
         if (AbundanceConfig.is(config)) {
           return {
             entityId: config.collectionVariable.entityId,
-            variableId: 'abundance',
+            placeholderDisplayName: 'Relative abundance',
           };
         }
       },
@@ -45,17 +45,14 @@ export const plugin: ComputationPlugin = {
           return `Ranked abundance: Variables with ${config.rankingMethod} = 0 removed. Showing up to the top ten variables.`;
         }
       },
-      getYAxisLabel() {
-        return 'Relative abundance';
-      },
-      disableShowMissingness: true,
+      hideShowMissingnessToggle: true,
     }),
     scatterplot: scatterplotVisualization.withOptions({
-      getYAxisVariable(config) {
+      getComputedYAxisDetails(config) {
         if (AbundanceConfig.is(config)) {
           return {
             entityId: config.collectionVariable.entityId,
-            variableId: 'abundance',
+            placeholderDisplayName: 'Relative abundance',
           };
         }
       },
@@ -68,9 +65,6 @@ export const plugin: ComputationPlugin = {
         if (AbundanceConfig.is(config)) {
           return `Ranked abundance: Variables with ${config.rankingMethod} = 0 removed. Showing up to the top ten variables.`;
         }
-      },
-      getYAxisLabel() {
-        return 'Relative abundance';
       },
       hideShowMissingnessToggle: true,
     }),

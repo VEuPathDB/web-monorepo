@@ -26,33 +26,23 @@ export const plugin: ComputationPlugin = {
   createDefaultComputationSpec: createDefaultComputationSpec,
   visualizationTypes: {
     boxplot: boxplotVisualization.withOptions({
-      getYAxisVariable(config) {
+      getComputedYAxisDetails(config) {
         if (AlphaDivConfig.is(config)) {
           return {
             entityId: config.collectionVariable.entityId,
-            variableId: 'alphadiv',
+            placeholderDisplayName: 'Alphadiv',
           };
         }
       },
-      getYAxisLabel(config) {
-        if (AlphaDivConfig.is(config)) {
-          return 'Alphadiv';
-        }
-      },
-      disableShowMissingness: true,
+      hideShowMissingnessToggle: true,
     }),
     scatterplot: scatterplotVisualization.withOptions({
-      getYAxisVariable(config) {
+      getComputedYAxisDetails(config) {
         if (AlphaDivConfig.is(config)) {
           return {
             entityId: config.collectionVariable.entityId,
-            variableId: 'alphadiv',
+            placeholderDisplayName: 'Alphadiv',
           };
-        }
-      },
-      getYAxisLabel(config) {
-        if (AlphaDivConfig.is(config)) {
-          return 'Alphadiv';
         }
       },
       hideShowMissingnessToggle: true,

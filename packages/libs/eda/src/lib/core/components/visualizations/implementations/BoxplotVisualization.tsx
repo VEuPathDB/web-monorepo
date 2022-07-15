@@ -21,7 +21,10 @@ import { VariableCoverageTable } from '../../VariableCoverageTable';
 
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
-import { VisualizationProps } from '../VisualizationTypes';
+import {
+  ComputedVariableDetails,
+  VisualizationProps,
+} from '../VisualizationTypes';
 import box from './selectorIcons/box.svg';
 import {
   BoxplotData as BoxplotSeries,
@@ -103,10 +106,11 @@ const modalPlotContainerStyles = {
 
 interface Options {
   getXAxisVariable?: (computeConfig: unknown) => VariableDescriptor | undefined;
-  getYAxisVariable?: (computeConfig: unknown) => VariableDescriptor | undefined;
-  getYAxisLabel?: (computeConfig: unknown) => string | undefined;
+  getComputedYAxisDetails?: (
+    computeConfig: unknown
+  ) => ComputedVariableDetails | undefined;
   getPlotSubtitle?: (computeConfig: unknown) => string | undefined;
-  disableShowMissingness?: boolean;
+  hideShowMissingnessToggle?: boolean;
 }
 
 export const boxplotVisualization = createVisualizationPlugin({
@@ -206,7 +210,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   const providedXAxisVariable = options?.getXAxisVariable?.(
     computation.descriptor.configuration
   );
-  const providedYAxisVariable = options?.getYAxisVariable?.(
+  const computedYAxisDetails = options?.getComputedYAxisDetails?.(
     computation.descriptor.configuration
   );
 
@@ -274,7 +278,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   // Abundance boxplots already know their entity, x, and y vars. If we're in the abundance app, set
   // the output entity here so that the boxplot can appear on load.
   const outputEntityId =
-    providedYAxisVariable?.entityId ?? vizConfig.yAxisVariable?.entityId;
+    computedYAxisDetails?.entityId ?? vizConfig.yAxisVariable?.entityId;
   const outputEntity = entities.find((e) => e.id === outputEntityId);
 
   // add to support both alphadiv and abundance
@@ -284,7 +288,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         // check for vizConfig variables only if provided variables are not defined.
         (providedXAxisVariable == null &&
           (vizConfig.xAxisVariable == null || xAxisVariable == null)) ||
-        (providedYAxisVariable == null &&
+        (computedYAxisDetails == null &&
           (vizConfig.yAxisVariable == null || yAxisVariable == null)) ||
         outputEntity == null ||
         filteredCounts.pending ||
@@ -368,7 +372,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
             xAxisVariable,
             overlayVariable,
             facetVariable,
-            computation,
+            computedYAxisDetails,
             entities
           ),
           vocabulary,
@@ -478,11 +482,10 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     variableDisplayWithUnit(xAxisVariable) ??
     'X-axis';
 
-  const dependentAxisLabel = data.value?.computedVariableMetadata?.displayName
-    ? data.value.computedVariableMetadata.displayName[0]
-    : options?.getYAxisLabel?.(computation.descriptor.configuration) ??
-      variableDisplayWithUnit(yAxisVariable) ??
-      'Y-axis';
+  const dependentAxisLabel = computedYAxisDetails
+    ? data.value?.computedVariableMetadata?.displayName?.[0] ??
+      computedYAxisDetails?.placeholderDisplayName
+    : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis';
 
   const plotNode = (
     <BoxplotWithControls
@@ -605,7 +608,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
               name: 'yAxisVariable',
               label: 'Y-axis',
               role: 'axis',
-              readonlyValue: providedYAxisVariable && dependentAxisLabel,
+              readonlyValue: computedYAxisDetails && dependentAxisLabel,
             },
             {
               name: 'overlayVariable',
@@ -638,7 +641,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
           showMissingness={vizConfig.showMissingness}
           // this can be used to show and hide no data control
           onShowMissingnessChange={
-            options?.disableShowMissingness
+            options?.hideShowMissingnessToggle
               ? undefined
               : onShowMissingnessChange
           }
@@ -874,7 +877,7 @@ export function boxplotResponseToData(
   variable?: Variable,
   overlayVariable?: Variable,
   facetVariable?: Variable,
-  computation?: Computation,
+  computedVariableDetails?: ComputedVariableDetails,
   entities?: StudyEntity[]
 ): BoxplotDataWithCoverage {
   // group by facet variable value (if only one facet variable in response - there may be up to two in future)
@@ -920,7 +923,7 @@ export function boxplotResponseToData(
                   )
                 : '',
             label:
-              computation?.descriptor.type === 'abundance' &&
+              computedVariableDetails &&
               entities &&
               response.boxplot.config.computedVariableMetadata
                 ?.collectionVariable?.collectionVariableDetails

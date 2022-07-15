@@ -38,3 +38,8 @@ export interface IsEnabledInPickerParams {
   studyMetadata?: StudyMetadata; // not used yet, but you could imagine it being used to determine
   // if a viz tool should be enabled
 }
+
+export interface ComputedVariableDetails {
+  entityId: string;
+  placeholderDisplayName: string;
+}
