@@ -466,14 +466,14 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           response.completeCasesTable
         );
 
-      const overlayVocabulary =
-        response.scatterplot.config.computedVariableMetadata?.collectionVariable?.collectionVariableDetails?.map(
-          (variableDetails) => variableDetails.variableId
-        ) ??
-        fixLabelsForNumberVariables(
-          overlayVariable?.vocabulary,
-          overlayVariable
-        );
+      const overlayVocabulary = providedOverlayVariableDescriptor
+        ? response.scatterplot.config.computedVariableMetadata?.collectionVariable?.collectionVariableDetails?.map(
+            (variableDetails) => variableDetails.variableId
+          )
+        : fixLabelsForNumberVariables(
+            overlayVariable?.vocabulary,
+            overlayVariable
+          );
 
       const facetVocabulary = fixLabelsForNumberVariables(
         facetVariable?.vocabulary,
