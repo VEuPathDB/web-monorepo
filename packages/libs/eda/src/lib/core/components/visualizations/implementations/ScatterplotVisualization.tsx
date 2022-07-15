@@ -39,6 +39,7 @@ import {
   max,
   lte,
   gte,
+  gt,
   groupBy,
   size,
   head,
@@ -47,6 +48,7 @@ import {
   map,
   keys,
   uniqBy,
+  filter,
 } from 'lodash';
 // directly use RadioButtonGroup instead of ScatterPlotControls
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
@@ -110,7 +112,7 @@ import { UIState } from '../../filter/HistogramFilter';
 // change defaultIndependentAxisRange to hook
 import { useDefaultIndependentAxisRange } from '../../../hooks/computeDefaultIndependentAxisRange';
 // for scatter plot, use another custom hook different from other Vizs
-import { useDefaultDependentAxisRange } from '../../../hooks/computeNumberDateDefaultDependentAxisRange';
+import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import { useVizConfig } from '../../../hooks/visualizations';
 // alphadiv abundance: this should be used for collection variable
@@ -148,7 +150,11 @@ const modalPlotContainerStyles = {
 export interface ScatterPlotDataWithCoverage extends CoverageStatistics {
   dataSetProcess: ScatterPlotData | FacetedData<ScatterPlotData>;
   // change these types to be compatible with new axis range
+  xMin: number | string | undefined;
+  xMinPos: number | string | undefined;
+  xMax: number | string | undefined;
   yMin: number | string | undefined;
+  yMinPos: number | string | undefined;
   yMax: number | string | undefined;
   // add computedVariableMetadata for computation apps such as alphadiv and abundance
   computedVariableMetadata?: ComputedVariableMetadata;
@@ -484,7 +490,6 @@ function ScatterplotViz(props: VisualizationProps) {
       );
       return scatterplotResponseToData(
         response,
-        visualization.descriptor.type,
         independentValueType,
         dependentValueType,
         showMissingOverlay,
@@ -529,17 +534,20 @@ function ScatterplotViz(props: VisualizationProps) {
       : data.value?.completeCasesAxesVars;
 
   // use hook
-  const defaultIndependentRange = useDefaultIndependentAxisRange(
+  const defaultIndependentRange = useDefaultAxisRange(
     xAxisVariable,
-    'scatterplot'
+    data.value?.xMin,
+    data.value?.xMinPos,
+    data.value?.xMax,
+    vizConfig.independentAxisLogScale
   );
 
   // use custom hook
-  const defaultDependentAxisRange = useDefaultDependentAxisRange(
-    data,
-    yAxisVariable,
-    // pass computedVariableMetadata
-    data?.value?.computedVariableMetadata,
+  const defaultDependentAxisRange = useDefaultAxisRange(
+    yAxisVariable ?? data?.value?.computedVariableMetadata,
+    data.value?.yMin,
+    data.value?.yMinPos,
+    data.value?.yMax,
     vizConfig.dependentAxisLogScale
   );
 
@@ -1596,7 +1604,6 @@ function ScatterplotWithControls({
  */
 export function scatterplotResponseToData(
   response: ScatterPlotDataResponse,
-  vizType: string,
   independentValueType: string,
   dependentValueType: string,
   showMissingOverlay: boolean = false,
@@ -1628,14 +1635,21 @@ export function scatterplotResponseToData(
   const fallbackFacetVocabulary = keys(facetGroupedResponseData);
 
   const processedData = mapValues(facetGroupedResponseData, (group) => {
-    const { dataSetProcess, yMin, yMax } = processInputData(
+    const {
+      dataSetProcess,
+      xMin,
+      xMinPos,
+      xMax,
+      yMin,
+      yMinPos,
+      yMax,
+    } = processInputData(
       reorderResponseScatterplotData(
         // reorder by overlay var within each facet
         group,
         vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
         overlayVariable
       ),
-      vizType,
       modeValue,
       independentValueType,
       dependentValueType,
@@ -1652,12 +1666,17 @@ export function scatterplotResponseToData(
 
     return {
       dataSetProcess: dataSetProcess,
-      yMin: yMin,
-      yMax: yMax,
+      xMin,
+      xMinPos,
+      xMax,
+      yMin,
+      yMinPos,
+      yMax,
     };
   });
 
   const yMin = min(map(processedData, ({ yMin }) => yMin));
+  const yMinPos = minPos(map(processedData, ({ yMinPos }) => yMinPos));
   const yMax = max(map(processedData, ({ yMax }) => yMax));
 
   const dataSetProcess =
@@ -1679,6 +1698,7 @@ export function scatterplotResponseToData(
     dataSetProcess,
     // calculated y axis limits
     yMin,
+    yMinPos,
     yMax,
     // CoverageStatistics
     completeCases: response.completeCasesTable,
@@ -1693,7 +1713,6 @@ export function scatterplotResponseToData(
 // making plotly input data
 function processInputData<T extends number | string>(
   responseScatterplotData: ScatterplotResponse['scatterplot']['data'],
-  vizType: string,
   // line, marker,
   modeValue: string,
   // use independentValueType & dependentValueType to distinguish btw number and date string
@@ -1709,7 +1728,12 @@ function processInputData<T extends number | string>(
   entities?: StudyEntity[]
 ) {
   // set variables for x- and yaxis ranges: no default values are set
+  let xMin: number | string | undefined;
+  let xMinPos: number | string | undefined;
+  let xMax: number | string | undefined;
+
   let yMin: number | string | undefined;
+  let yMinPos: number | string | undefined;
   let yMax: number | string | undefined;
 
   // catch the case when the back end has returned valid but completely empty data
@@ -1721,7 +1745,11 @@ function processInputData<T extends number | string>(
     return {
       dataSetProcess: { series: [] }, // BM doesn't think this should be `undefined` for empty facets - the back end doesn't return *any* data for empty facets.
       yMin,
+      yMinPos,
       yMax,
+      xMin: null,
+      xMinPos: null,
+      xMax: null,
     };
   }
 
@@ -1816,7 +1844,28 @@ function processInputData<T extends number | string>(
         seriesY = el.seriesY.map(Number);
       }
 
-      // compute yMin/yMax
+      // compute x/y min/minPos/max
+      if (seriesX.length) {
+        xMin =
+          xMin != null
+            ? lte(xMin, min(seriesX))
+              ? xMin
+              : min(seriesX)
+            : min(seriesX);
+        xMinPos =
+          xMinPos != null
+            ? lte(xMinPos, minPos(seriesX))
+              ? xMinPos
+              : minPos(seriesX)
+            : minPos(seriesX);
+        xMax =
+          xMax != null
+            ? gte(xMax, max(seriesX))
+              ? xMax
+              : max(seriesX)
+            : max(seriesX);
+      }
+
       if (seriesY.length) {
         yMin =
           yMin != null
@@ -1824,6 +1873,12 @@ function processInputData<T extends number | string>(
               ? yMin
               : min(seriesY)
             : min(seriesY);
+        yMinPos =
+          yMinPos != null
+            ? lte(yMinPos, minPos(seriesY))
+              ? yMinPos
+              : minPos(seriesY)
+            : minPos(seriesY);
         yMax =
           yMax != null
             ? gte(yMax, max(seriesY))
@@ -1932,6 +1987,11 @@ function processInputData<T extends number | string>(
             ? yMin
             : min(yIntervalLineValue)
           : min(yIntervalLineValue);
+        yMinPos = el.seriesY.length
+          ? lte(yMin, minPos(yIntervalLineValue))
+            ? yMin
+            : minPos(yIntervalLineValue)
+          : minPos(yIntervalLineValue);
         yMax = el.seriesY.length
           ? gte(yMax, max(yIntervalLineValue))
             ? yMax
@@ -1981,6 +2041,7 @@ function processInputData<T extends number | string>(
       // set variables for y-axes ranges including CI/bounds
       if (yLowerValues.length) {
         yMin = lte(yMin, min(yLowerValues)) ? yMin : min(yLowerValues);
+        yMinPos = lte(yMin, minPos(yLowerValues)) ? yMin : minPos(yLowerValues);
         yMax = gte(yMax, max(yUpperValues)) ? yMax : max(yUpperValues);
       }
 
@@ -2032,6 +2093,11 @@ function processInputData<T extends number | string>(
             ? yMin
             : min(el.bestFitLineY)
           : min(el.bestFitLineY);
+        yMinPos = el.seriesY
+          ? lte(yMin, minPos(el.bestFitLineY))
+            ? yMin
+            : minPos(el.bestFitLineY)
+          : minPos(el.bestFitLineY);
         yMax = el.seriesY
           ? gte(yMax, max(el.bestFitLineY))
             ? yMax
@@ -2070,7 +2136,15 @@ function processInputData<T extends number | string>(
     return breakAfterThisSeries(index);
   });
 
-  return { dataSetProcess: { series: dataSetProcess }, yMin, yMax };
+  return {
+    dataSetProcess: { series: dataSetProcess },
+    xMin,
+    xMinPos,
+    xMax,
+    yMin,
+    yMinPos,
+    yMax,
+  };
 }
 
 /*
@@ -2125,4 +2199,8 @@ function reorderResponseScatterplotData(
   } else {
     return data;
   }
+}
+
+function minPos(array: (number | string | undefined)[]) {
+  return min(filter(array, (x) => gt(x, 0)));
 }
