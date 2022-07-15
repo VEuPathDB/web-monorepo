@@ -36,7 +36,17 @@ import { BirdsEyeView } from '../../BirdsEyeView';
 import { PlotLayout } from '../../layouts/PlotLayout';
 import PluginError from '../PluginError';
 
-import { at, groupBy, mapValues, size, head, map, values, keys } from 'lodash';
+import {
+  at,
+  groupBy,
+  mapValues,
+  size,
+  head,
+  map,
+  values,
+  keys,
+  pick,
+} from 'lodash';
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import {
@@ -76,6 +86,7 @@ import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
 import { ComputedVariableMetadata } from '../../../api/DataClient/types';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
+import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 
 type BoxplotData = { series: BoxplotSeries };
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
@@ -277,9 +288,12 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
   // Abundance boxplots already know their entity, x, and y vars. If we're in the abundance app, set
   // the output entity here so that the boxplot can appear on load.
-  const outputEntityId =
-    computedYAxisDetails?.entityId ?? vizConfig.yAxisVariable?.entityId;
-  const outputEntity = entities.find((e) => e.id === outputEntityId);
+  const outputEntity = useFindOutputEntity(
+    dataElementDependencyOrder,
+    vizConfig,
+    'yAxisVariable',
+    computedYAxisDetails?.entityId
+  );
 
   // add to support both alphadiv and abundance
   const data = usePromise(
@@ -311,7 +325,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         studyId,
         filters,
         config: {
-          outputEntityId,
+          outputEntityId: outputEntity.id,
           // post options: 'all', 'outliers'
           points: 'outliers',
           mean: 'TRUE',

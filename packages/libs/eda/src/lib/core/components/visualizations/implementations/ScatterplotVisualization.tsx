@@ -50,6 +50,7 @@ import {
   map,
   keys,
   uniqBy,
+  pick,
 } from 'lodash';
 // directly use RadioButtonGroup instead of ScatterPlotControls
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
@@ -117,6 +118,7 @@ import { ComputedVariableMetadata } from '../../../api/DataClient/types';
 // use Banner from CoreUI for showing message for no smoothing
 import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
+import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -368,9 +370,12 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   );
 
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
-  const outputEntityId =
-    computedYAxisDetails?.entityId || vizConfig.yAxisVariable?.entityId;
-  const outputEntity = entities.find((e) => e.id === outputEntityId);
+  const outputEntity = useFindOutputEntity(
+    dataElementDependencyOrder,
+    vizConfig,
+    'yAxisVariable',
+    computedYAxisDetails?.entityId
+  );
 
   const data = usePromise(
     useCallback(async (): Promise<ScatterPlotDataWithCoverage | undefined> => {
