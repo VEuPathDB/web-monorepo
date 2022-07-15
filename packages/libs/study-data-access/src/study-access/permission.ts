@@ -82,9 +82,13 @@ export function canAccessDashboard(userPermissions: UserPermissions, datasetId: 
   );
 }
 
-export function shouldOfferLinkToDashboard(userPermissions: UserPermissions) {
+export function shouldOfferLinkToDashboard(userPermissions: UserPermissions, datasetId?: string) {
   return (
-    isOwner(userPermissions) 
+    isOwner(userPermissions) ||
+    (
+      datasetId != null &&
+      isManager(userPermissions, datasetId)
+    )
   );
 }
 
