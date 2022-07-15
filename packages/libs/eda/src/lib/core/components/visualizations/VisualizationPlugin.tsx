@@ -14,7 +14,7 @@ export interface VisualizationPlugin<Options = undefined> {
 }
 
 export function createVisualizationPlugin<Options>(
-  config: Omit<VisualizationPlugin<Options>, 'withOptions' | 'optoins'>
+  config: Omit<VisualizationPlugin<Options>, 'withOptions' | 'options'>
 ): VisualizationPlugin<Options> {
   function withOptions(options: Options): VisualizationPlugin<Options> {
     return {
