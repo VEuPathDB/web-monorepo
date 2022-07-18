@@ -208,6 +208,7 @@ interface Options {
   getOverlayVariable?(config: unknown): VariableDescriptor | undefined;
   getPlotSubtitle?(config: unknown): string | undefined;
   hideShowMissingnessToggle?: boolean;
+  hideTrendlines?: boolean;
 }
 
 function ScatterplotViz(props: VisualizationProps<Options>) {
@@ -852,8 +853,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         yAxisVariable?.type === 'date' ? 'Raw' : vizConfig.valueSpecConfig
       }
       onValueSpecChange={onValueSpecChange}
-      // send visualization.type here
-      vizType={visualization.descriptor.type}
       interactive={!isFaceted(data.value) ? true : false}
       showSpinner={filteredCounts.pending || data.pending}
       // add plotOptions to control the list of plot options
@@ -896,6 +895,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
       onIndependentAxisLogScaleChange={onIndependentAxisLogScaleChange}
       onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
+      allowTrendlines={!options?.hideTrendlines}
     />
   );
 
@@ -1103,7 +1103,6 @@ type ScatterplotWithControlsProps = Omit<ScatterPlotProps, 'data'> & {
   valueSpec: string | undefined;
   onValueSpecChange: (value: string) => void;
   updateThumbnail: (src: string) => void;
-  vizType: string;
   plotOptions: string[];
   // add disabledList
   disabledList: string[];
@@ -1127,6 +1126,7 @@ type ScatterplotWithControlsProps = Omit<ScatterPlotProps, 'data'> & {
   ) => void;
   onIndependentAxisLogScaleChange: (value: boolean) => void;
   onDependentAxisLogScaleChange: (value: boolean) => void;
+  allowTrendlines: boolean;
 };
 
 function ScatterplotWithControls({
@@ -1134,7 +1134,7 @@ function ScatterplotWithControls({
   // ScatterPlotControls: set initial value as 'raw' ('Raw')
   valueSpec = 'Raw',
   onValueSpecChange,
-  vizType,
+  allowTrendlines,
   // add plotOptions
   plotOptions,
   // add disabledList
@@ -1360,7 +1360,7 @@ function ScatterplotWithControls({
         />
       )}
       {/*  ScatterPlotControls: check vizType (only for scatterplot for now) */}
-      {vizType === 'scatterplot' && (
+      {allowTrendlines && (
         // use RadioButtonGroup directly instead of ScatterPlotControls
         <RadioButtonGroup
           label="Plot mode"
