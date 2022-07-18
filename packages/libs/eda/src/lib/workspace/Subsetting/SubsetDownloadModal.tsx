@@ -409,6 +409,17 @@ export default function SubsetDownloadModal({
                     primaryRowColor: undefined,
                     secondaryRowColor: undefined,
                   },
+                  size: {
+                    height: '100%',
+                  },
+                  paginationControls: {
+                    bottom: {
+                      margin: {
+                        top: 10,
+                        bottom: 0,
+                      },
+                    },
+                  },
                 }}
                 pagination={{
                   recordsPerPage: 10,
@@ -575,19 +586,23 @@ export default function SubsetDownloadModal({
           </div>
           <div
             className="Variables"
-            style={{
+            css={{
               width: '100%',
               height: '100%',
               backgroundColor: 'rgba(255, 255, 255, 1)',
               overflow: 'auto',
               minHeight: 0,
               flex: '0 1 auto',
+              '& .EDAWorkspace-VariableList': {
+                height: 'auto',
+                display: 'block',
+              },
             }}
           >
             {!requiredColumns.pending && requiredColumns.value && (
               <div
                 className="EDAWorkspace-VariableList"
-                style={{ marginBottom: 10, height: 'auto', display: 'block' }}
+                style={{ marginBottom: 10 }}
               >
                 <details
                   className="FeaturedVariables"

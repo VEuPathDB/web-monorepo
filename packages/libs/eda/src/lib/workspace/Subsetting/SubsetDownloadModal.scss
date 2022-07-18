@@ -1,26 +1,6 @@
-.SubsetDownloadModal {
-  .EDAWorkspace-VariableList {
-    height: auto;
-    display: block;
-  }
-
-  // see if these can be added to the style spec for the data grid
-  .DataGrid-Wrapper > :nth-child(1) {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .data-grid-table-wrapper {
-    height: 100%;
-  }
-
-  .data-grid-table {
-    height: 100%;
-    margin-bottom: 0;
-  }
-
-  .pagination-controls {
-    margin-bottom: 0;
-  }
-}
+// .SubsetDownloadModal {
+//   .EDAWorkspace-VariableList {
+//     height: auto;
+//     display: block;
+//   }
+// }
