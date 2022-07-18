@@ -299,11 +299,11 @@ function NewVisualizationPicker(props: Props) {
           [(viz) => (viz.name && visualizationPlugins[viz.name] ? 1 : 0)],
           ['desc']
         ).map((vizOverview, index) => {
-          const vizType = visualizationPlugins[vizOverview.name!];
+          const vizPlugin = visualizationPlugins[vizOverview.name!];
           const disabled =
-            vizType == null ||
-            (vizType.isEnabledInPicker != null &&
-              vizType.isEnabledInPicker({ geoConfigs }) === false);
+            vizPlugin == null ||
+            (vizPlugin.isEnabledInPicker != null &&
+              vizPlugin.isEnabledInPicker({ geoConfigs }) === false);
           // we could in future pass other study metadata, variable constraints, etc to isEnabledInPicker()
           return (
             <div
@@ -327,18 +327,18 @@ function NewVisualizationPicker(props: Props) {
                           displayName: 'Unnamed visualization',
                           descriptor: {
                             type: vizOverview.name!,
-                            configuration: vizType?.createDefaultConfig(),
+                            configuration: vizPlugin?.createDefaultConfig(),
                           },
                         })
                       );
                       history.replace(`../${computationId}/${visualizationId}`);
                     }}
                   >
-                    {vizType ? (
+                    {vizPlugin ? (
                       <img
                         alt="Histogram"
                         style={{ height: '100%', width: '100%' }}
-                        src={vizType.selectorIcon}
+                        src={vizPlugin.selectorIcon}
                       />
                     ) : (
                       <PlaceholderIcon name={vizOverview.name} />
@@ -352,8 +352,8 @@ function NewVisualizationPicker(props: Props) {
                     ?.split(/(, )/g)
                     .map((str) => (str === ', ' ? <br /> : str))}
                 </div>
-                {vizType == null && <i>(Coming soon!)</i>}
-                {vizType != null && disabled && (
+                {vizPlugin == null && <i>(Coming soon!)</i>}
+                {vizPlugin != null && disabled && (
                   <i>(Not applicable to this study)</i>
                 )}
               </div>
