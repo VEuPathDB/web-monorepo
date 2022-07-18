@@ -561,10 +561,14 @@ function HistogramPlotWithControls({
     truncationConfigIndependentAxisMax,
     truncationConfigDependentAxisMin,
     truncationConfigDependentAxisMax,
-  } = useMemo(() => truncationConfig(defaultUIState, uiState), [
-    defaultUIState,
-    uiState,
-  ]);
+  } = useMemo(
+    () =>
+      truncationConfig(
+        { ...defaultUIState, dependentAxisRange: defaultDependentAxisRange },
+        uiState
+      ),
+    [defaultUIState, defaultDependentAxisRange, uiState]
+  );
 
   // set useEffect for changing truncation warning message
   useEffect(() => {

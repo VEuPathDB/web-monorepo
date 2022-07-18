@@ -1,9 +1,13 @@
 import { UIState } from '../components/filter/HistogramFilter';
 
-// function to compute truncation flags for Histogram-like
-// visualizations (continuous x-axis with known bounds, y-axis showing non-negative counts)
+// compute truncation flags for both axes, min and max
+// assumes default ranges are provided for both axes in the poorly named `defaultUIState`
+// (poorly named because it often contains client-calculated ranges: e.g. barplot and histogram dependent axes)
+// We should probably rename them "full ranges" or similar
 export function truncationConfig(defaultUIState: UIState, uiState: UIState) {
   // check whether truncated axis is required
+  console.log(defaultUIState);
+
   const truncationConfigIndependentAxisMin =
     defaultUIState.independentAxisRange.min !==
       uiState.independentAxisRange.min &&
@@ -17,12 +21,17 @@ export function truncationConfig(defaultUIState: UIState, uiState: UIState) {
       ? true
       : false;
   const truncationConfigDependentAxisMin =
+    defaultUIState.dependentAxisRange?.min != null &&
     uiState.dependentAxisRange?.min != null &&
-    uiState.dependentAxisRange.min > 0
+    defaultUIState.dependentAxisRange.min < uiState.dependentAxisRange.min
       ? true
       : false;
   const truncationConfigDependentAxisMax =
-    uiState.dependentAxisRange?.max != null ? true : false;
+    defaultUIState.dependentAxisRange?.max != null &&
+    uiState.dependentAxisRange?.max != null &&
+    defaultUIState.dependentAxisRange.max > uiState.dependentAxisRange.max
+      ? true
+      : false;
 
   return {
     truncationConfigIndependentAxisMin,
