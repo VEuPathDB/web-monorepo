@@ -1,5 +1,6 @@
 import React, {
   FormEvent,
+  ReactNode,
   useCallback,
   useEffect,
   useMemo,
@@ -236,7 +237,12 @@ function UploadForm({
       disabled: useFixedUploadMethod,
       display: (
         <React.Fragment>
-          <label htmlFor="data-set-file">Upload File:</label>
+          <FieldLabel
+            htmlFor="data-set-file"
+            required={dataUploadMode === 'file'}
+          >
+            Upload File
+          </FieldLabel>
           <div
             id="data-set-file"
             className={cx(
@@ -265,7 +271,12 @@ function UploadForm({
               disabled: useFixedUploadMethod,
               display: (
                 <React.Fragment>
-                  <label htmlFor="data-set-url">Upload URL:</label>
+                  <FieldLabel
+                    htmlFor="data-set-url"
+                    required={dataUploadMode === 'url'}
+                  >
+                    Upload URL
+                  </FieldLabel>
                   <TextBox
                     type="input"
                     className={cx(
@@ -293,7 +304,12 @@ function UploadForm({
               disabled: !enableStrategyUploadMethod || useFixedUploadMethod,
               display: (
                 <React.Fragment>
-                  <label htmlFor="data-set-strategy">Upload Strategy:</label>
+                  <FieldLabel
+                    htmlFor="data-set-strategy"
+                    required={dataUploadMode === 'strategy'}
+                  >
+                    Upload Strategy
+                  </FieldLabel>
                   <div
                     id="data-set-strategy"
                     className={cx(
@@ -319,6 +335,10 @@ function UploadForm({
           ]
     );
 
+  const summaryRequired = datasetUploadType.formConfig.summary?.required;
+  const descriptionRequired =
+    datasetUploadType.formConfig.description?.required;
+
   return (
     <form
       className={cx()}
@@ -329,35 +349,40 @@ function UploadForm({
       <div>
         <h2>{datasetUploadType.uploadTitle}</h2>
         <div className="formSection">
-          <label htmlFor="data-set-name">
-            Name:
-            <br />
-          </label>
+          <FieldLabel htmlFor="data-set-name">Name</FieldLabel>
+          <br />
           <TextBox
             type="input"
             id="data-set-name"
-            required={true}
+            required
             placeholder="name of the data set"
             value={name}
             onChange={setName}
           />
         </div>
         <div className="formSection">
-          <label htmlFor="data-set-summary">Summary:</label>
+          <FieldLabel htmlFor="data-set-summary" required={summaryRequired}>
+            Summary
+          </FieldLabel>
           <TextBox
             type="input"
             id="data-set-summary"
-            required={true}
+            required={summaryRequired}
             placeholder="brief summary of the data set contents"
             value={summary}
             onChange={setSummary}
           />
         </div>
         <div className="formSection">
-          <label htmlFor="data-set-description">Description:</label>
+          <FieldLabel
+            htmlFor="data-set-description"
+            required={descriptionRequired}
+          >
+            Description
+          </FieldLabel>
           <TextArea
             id="data-set-description"
-            required={true}
+            required={descriptionRequired}
             placeholder="brief description of the data set contents"
             value={description}
             onChange={setDescription}
@@ -400,6 +425,28 @@ function UploadForm({
       </button>
       {datasetUploadType.formConfig?.renderInfo?.()}
     </form>
+  );
+}
+
+interface FieldLabelProps
+  extends React.DetailedHTMLProps<
+    React.LabelHTMLAttributes<HTMLLabelElement>,
+    HTMLLabelElement
+  > {
+  children: ReactNode;
+  required?: boolean;
+}
+
+function FieldLabel({
+  children,
+  required = true,
+  ...labelProps
+}: FieldLabelProps) {
+  return (
+    <label {...labelProps}>
+      {children}
+      {required ? '*' : null}
+    </label>
   );
 }
 

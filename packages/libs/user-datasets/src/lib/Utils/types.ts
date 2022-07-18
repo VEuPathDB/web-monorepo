@@ -49,7 +49,8 @@ export interface UserDatasetUpload {
   id: string;
   datasetId?: number;
   datasetName: string;
-  summary: string;
+  summary?: string;
+  description?: string;
   projects: string[];
   status: string;
   errors: string[];
@@ -70,6 +71,12 @@ export interface DatasetUploadTypeConfigEntry<T extends string> {
   type: T;
   uploadTitle: string;
   formConfig: {
+    summary?: {
+      required: boolean;
+    };
+    description?: {
+      required: boolean;
+    };
     uploadMethodConfig: {
       url?: UrlUploadConfig;
       result?: ResultUploadConfig;
