@@ -335,7 +335,11 @@ function NewVisualizationPicker(props: Props) {
                     }}
                   >
                     {vizType ? (
-                      <vizType.selectorComponent {...vizOverview} />
+                      <img
+                        alt="Histogram"
+                        style={{ height: '100%', width: '100%' }}
+                        src={vizType.selectorIcon}
+                      />
                     ) : (
                       <PlaceholderIcon name={vizOverview.name} />
                     )}

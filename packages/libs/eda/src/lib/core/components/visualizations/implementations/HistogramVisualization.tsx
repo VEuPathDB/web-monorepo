@@ -130,20 +130,10 @@ const modalPlotContainerStyles = {
 };
 
 export const histogramVisualization = createVisualizationPlugin({
-  selectorComponent: SelectorComponent,
+  selectorIcon: histogram,
   fullscreenComponent: HistogramViz,
   createDefaultConfig: createDefaultConfig,
 });
-
-function SelectorComponent() {
-  return (
-    <img
-      alt="Histogram"
-      style={{ height: '100%', width: '100%' }}
-      src={histogram}
-    />
-  );
-}
 
 function createDefaultConfig(): HistogramConfig {
   return {

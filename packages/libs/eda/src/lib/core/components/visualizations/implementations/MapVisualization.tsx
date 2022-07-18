@@ -72,21 +72,11 @@ import { createVisualizationPlugin } from '../VisualizationPlugin';
 const numContinuousBins = 8;
 
 export const mapVisualization = createVisualizationPlugin({
-  selectorComponent: SelectorComponent,
+  selectorIcon: map,
   fullscreenComponent: MapViz,
   createDefaultConfig: createDefaultConfig,
   isEnabledInPicker: isEnabledInPicker,
 });
-
-function SelectorComponent() {
-  return (
-    <img
-      alt="Geographic map"
-      style={{ height: '100%', width: '100%' }}
-      src={map}
-    />
-  );
-}
 
 function createDefaultConfig(): MapConfig {
   return {

@@ -80,7 +80,6 @@ export function StartPage(props: Props) {
                       plugin && plugin.visualizationPlugins[viz.name];
                     const disabled =
                       !plugin || !plugin.visualizationPlugins[viz.name];
-                    const VizSelector = vizPlugin?.selectorComponent;
                     return (
                       <div
                         className={cx('-PickerEntry', disabled && 'disabled')}
@@ -178,8 +177,12 @@ export function StartPage(props: Props) {
                               }
                             }}
                           >
-                            {VizSelector ? (
-                              <VizSelector {...app} />
+                            {vizPlugin ? (
+                              <img
+                                src={vizPlugin.selectorIcon}
+                                alt={viz.displayName}
+                                style={{ height: '100%', width: '100%' }}
+                              />
                             ) : (
                               <PlaceholderIcon name={viz.name} />
                             )}

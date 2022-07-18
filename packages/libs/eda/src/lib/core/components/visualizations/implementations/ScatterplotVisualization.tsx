@@ -30,7 +30,6 @@ import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import {
   ComputedVariableDetails,
-  SelectorProps,
   VisualizationProps,
 } from '../VisualizationTypes';
 
@@ -158,22 +157,10 @@ export interface ScatterPlotDataWithCoverage extends CoverageStatistics {
 type ScatterPlotDataResponse = ScatterplotResponse;
 
 export const scatterplotVisualization = createVisualizationPlugin({
-  selectorComponent: SelectorComponent,
+  selectorIcon: scatter,
   fullscreenComponent: ScatterplotViz,
   createDefaultConfig: createDefaultConfig,
 });
-
-function SelectorComponent({ name }: SelectorProps) {
-  const src = scatter;
-
-  return (
-    <img
-      alt="Scatter plot"
-      style={{ height: '100%', width: '100%' }}
-      src={src}
-    />
-  );
-}
 
 function createDefaultConfig(): ScatterplotConfig {
   return {

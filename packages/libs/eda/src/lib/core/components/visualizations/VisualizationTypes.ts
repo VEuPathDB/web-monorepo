@@ -30,9 +30,6 @@ export interface VisualizationProps<Options = undefined> {
   geoConfigs: GeoConfig[];
   otherVizOverviews: VisualizationOverview[];
 }
-
-export type SelectorProps = VisualizationOverview;
-
 export interface IsEnabledInPickerParams {
   geoConfigs?: GeoConfig[];
   studyMetadata?: StudyMetadata; // not used yet, but you could imagine it being used to determine

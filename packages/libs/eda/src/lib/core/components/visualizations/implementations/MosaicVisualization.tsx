@@ -109,39 +109,19 @@ type TwoByTwoDataWithCoverage = (TwoByTwoData | FacetedData<TwoByTwoData>) &
   CoverageStatistics;
 
 export const contTableVisualization = createVisualizationPlugin({
-  selectorComponent: ContTableSelectorComponent,
+  selectorIcon: rxc,
   fullscreenComponent: ContTableFullscreenComponent,
   createDefaultConfig: createDefaultConfig,
 });
 
 export const twoByTwoVisualization = createVisualizationPlugin({
-  selectorComponent: TwoByTwoSelectorComponent,
+  selectorIcon: twoxtwo,
   fullscreenComponent: TwoByTwoFullscreenComponent,
   createDefaultConfig: createDefaultConfig,
 });
 
-function ContTableSelectorComponent() {
-  return (
-    <img
-      alt="RxC contingency table"
-      style={{ height: '100%', width: '100%' }}
-      src={rxc}
-    />
-  );
-}
-
 function ContTableFullscreenComponent(props: VisualizationProps) {
   return <MosaicViz {...props} />;
-}
-
-function TwoByTwoSelectorComponent() {
-  return (
-    <img
-      alt="2x2 contingency table"
-      style={{ height: '100%', width: '100%' }}
-      src={twoxtwo}
-    />
-  );
 }
 
 function TwoByTwoFullscreenComponent(props: VisualizationProps) {

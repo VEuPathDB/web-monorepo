@@ -125,16 +125,10 @@ interface Options {
 }
 
 export const boxplotVisualization = createVisualizationPlugin({
-  selectorComponent: SelectorComponent,
+  selectorIcon: box,
   fullscreenComponent: FullscreenComponent,
   createDefaultConfig: createDefaultConfig,
 });
-
-function SelectorComponent() {
-  return (
-    <img alt="Box plot" style={{ height: '100%', width: '100%' }} src={box} />
-  );
-}
 
 function FullscreenComponent(props: VisualizationProps<Options>) {
   return <BoxplotViz {...props} />;

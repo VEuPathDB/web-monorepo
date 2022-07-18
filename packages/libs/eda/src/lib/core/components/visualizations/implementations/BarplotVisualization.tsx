@@ -102,16 +102,10 @@ const modalPlotContainerStyles = {
 };
 
 export const barplotVisualization = createVisualizationPlugin({
-  selectorComponent: SelectorComponent,
+  selectorIcon: bar,
   fullscreenComponent: FullscreenComponent,
   createDefaultConfig: createDefaultConfig,
 });
-
-function SelectorComponent() {
-  return (
-    <img alt="Bar plot" style={{ height: '100%', width: '100%' }} src={bar} />
-  );
-}
 
 function FullscreenComponent(props: VisualizationProps) {
   return <BarplotViz {...props} />;

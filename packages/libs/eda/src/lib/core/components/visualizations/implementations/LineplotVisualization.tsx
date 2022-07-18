@@ -141,19 +141,10 @@ interface LinePlotDataWithCoverage extends CoverageStatistics {
 type LinePlotDataResponse = LineplotResponse;
 
 export const lineplotVisualization = createVisualizationPlugin({
-  selectorComponent: SelectorComponent,
+  selectorIcon: line,
   fullscreenComponent: LineplotViz,
   createDefaultConfig: createDefaultConfig,
 });
-
-// this needs a handling of text/image for scatter, line, and density plots
-function SelectorComponent() {
-  const src = line;
-
-  return (
-    <img alt="Line plot" style={{ height: '100%', width: '100%' }} src={src} />
-  );
-}
 
 // Display names to internal names
 const valueSpecLookup: Record<
