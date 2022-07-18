@@ -9,7 +9,7 @@ import { VisualizationPlugin } from '../visualizations/VisualizationPlugin';
 
 export interface Props extends ComputationProps {
   computationId: string;
-  visualizationTypes: Partial<Record<string, VisualizationPlugin>>;
+  visualizationPlugins: Partial<Record<string, VisualizationPlugin>>;
   baseUrl?: string; // right now only defined when *not* using single app mode
   isSingleAppMode: boolean;
 }
@@ -22,7 +22,7 @@ export function ComputationInstance(props: Props) {
     totalCounts,
     filteredCounts,
     geoConfigs,
-    visualizationTypes,
+    visualizationPlugins,
     baseUrl,
     isSingleAppMode,
   } = props;
@@ -86,7 +86,7 @@ export function ComputationInstance(props: Props) {
         geoConfigs={geoConfigs}
         computation={computation}
         visualizationsOverview={computationAppOverview.visualizations}
-        visualizationTypes={visualizationTypes}
+        visualizationPlugins={visualizationPlugins}
         updateVisualizations={updateVisualizations}
         filters={analysis.descriptor.subset.descriptor}
         starredVariables={analysis?.descriptor.starredVariables}

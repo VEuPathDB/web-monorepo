@@ -24,7 +24,7 @@ export const plugin: ComputationPlugin = {
   configurationComponent: AlphaDivConfiguration,
   configurationDescriptionComponent: AlphaDivConfigDescriptionComponent,
   createDefaultComputationSpec: createDefaultComputationSpec,
-  visualizationTypes: {
+  visualizationPlugins: {
     boxplot: boxplotVisualization.withOptions({
       getComputedYAxisDetails(config) {
         if (AlphaDivConfig.is(config)) {

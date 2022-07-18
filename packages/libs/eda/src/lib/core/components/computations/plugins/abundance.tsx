@@ -25,7 +25,7 @@ export const plugin: ComputationPlugin = {
   configurationComponent: AbundanceConfiguration,
   configurationDescriptionComponent: AbundanceConfigDescriptionComponent,
   createDefaultComputationSpec: createDefaultComputationSpec,
-  visualizationTypes: {
+  visualizationPlugins: {
     boxplot: boxplotVisualization.withOptions({
       getXAxisVariable(config) {
         if (AbundanceConfig.is(config)) {

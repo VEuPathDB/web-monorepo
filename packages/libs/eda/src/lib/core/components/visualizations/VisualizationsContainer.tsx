@@ -50,7 +50,7 @@ interface Props {
       | Visualization[]
       | ((visualizations: Visualization[]) => Visualization[])
   ) => void;
-  visualizationTypes: Partial<Record<string, VisualizationPlugin>>;
+  visualizationPlugins: Partial<Record<string, VisualizationPlugin>>;
   visualizationsOverview: VisualizationOverview[];
   filters: Filter[];
   starredVariables: VariableDescriptor[];
@@ -276,7 +276,7 @@ function ConfiguredVisualizations(props: Props) {
 
 function NewVisualizationPicker(props: Props) {
   const {
-    visualizationTypes,
+    visualizationPlugins,
     visualizationsOverview,
     updateVisualizations,
     computation,
@@ -296,10 +296,10 @@ function NewVisualizationPicker(props: Props) {
         {/* orderBy ensures that available visualizations render ahead of those in development */}
         {orderBy(
           visualizationsOverview,
-          [(viz) => (viz.name && visualizationTypes[viz.name] ? 1 : 0)],
+          [(viz) => (viz.name && visualizationPlugins[viz.name] ? 1 : 0)],
           ['desc']
         ).map((vizOverview, index) => {
-          const vizType = visualizationTypes[vizOverview.name!];
+          const vizType = visualizationPlugins[vizOverview.name!];
           const disabled =
             vizType == null ||
             (vizType.isEnabledInPicker != null &&
@@ -365,7 +365,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
   const {
     analysisState,
     computationAppOverview,
-    visualizationTypes,
+    visualizationPlugins,
     visualizationsOverview,
     id,
     updateVisualizations,
@@ -381,7 +381,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
   } = props;
   const history = useHistory();
   const viz = computation.visualizations.find((v) => v.visualizationId === id);
-  const vizType = viz && visualizationTypes[viz.descriptor.type];
+  const vizPugin = viz && visualizationPlugins[viz.descriptor.type];
   const overviews = useMemo(
     () =>
       groupBy(visualizationsOverview, (v) =>
@@ -441,7 +441,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
     [updateVisualizations, id]
   );
   if (viz == null) return <div>Visualization not found.</div>;
-  if (vizType == null) return <div>Visualization type not implemented.</div>;
+  if (vizPugin == null) return <div>Visualization type not implemented.</div>;
 
   const { computationId } = computation;
   const plugin = plugins[computation.descriptor.type] ?? undefined;
@@ -524,7 +524,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
         <ContentError>Visualization not found.</ContentError>
       ) : computation == null ? (
         <ContentError>Computation not found.</ContentError>
-      ) : vizType == null ? (
+      ) : vizPugin == null ? (
         <ContentError>
           <>Visualization type not implemented: {viz.descriptor.type}</>
         </ContentError>
@@ -559,8 +559,8 @@ function FullScreenVisualization(props: Props & { id: string }) {
               addNewComputation={() => null}
             />
           )}
-          <vizType.fullscreenComponent
-            options={vizType.options}
+          <vizPugin.fullscreenComponent
+            options={vizPugin.options}
             dataElementConstraints={constraints}
             dataElementDependencyOrder={dataElementDependencyOrder}
             visualization={viz}

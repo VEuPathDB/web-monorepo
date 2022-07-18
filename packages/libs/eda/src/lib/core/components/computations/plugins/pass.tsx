@@ -14,7 +14,7 @@ import { ZeroConfigWithButton } from '../ZeroConfiguration';
 
 export const plugin: ComputationPlugin = {
   configurationComponent: ZeroConfigWithButton,
-  visualizationTypes: {
+  visualizationPlugins: {
     testVisualization,
     histogram: histogramVisualization,
     twobytwo: twoByTwoVisualization,
