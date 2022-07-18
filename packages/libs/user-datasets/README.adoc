@@ -1,6 +1,6 @@
 # Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [`@veupathdb` template](https://github.com/VEuPathDB/web-dev/packages/cra-template).
+This project was bootstrapped with https://github.com/facebook/create-react-app[Create React App], using the https://github.com/VEuPathDB/web-dev/packages/cra-template[`@veupathdb` template].
 
 ## Available Scripts
 
@@ -8,10 +8,10 @@ In the project directory, you can run:
 
 ### `yarn start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Runs the app in the development mode.
+Open http://localhost:3000[http://localhost:3000] to view it in the browser.
 
-The page will reload if you make edits.\
+The page will reload if you make edits.
 You will also see any lint errors in the console.
 
 You will be prompted to enter the VEuPathDB BRC Pre-Release Login credentials.
@@ -26,18 +26,18 @@ You will be prompted to enter the VEuPathDB BRC Pre-Release Login credentials.
 
 ### `yarn test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Launches the test runner in the interactive watch mode.
+See the section about https://facebook.github.io/create-react-app/docs/running-tests[running tests] for more information.
 
 ### `yarn build`
 
-Builds the app for production to the `build` folder.\
+Builds the app for production to the `build` folder.
 It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
+The build is minified and the filenames include the hashes.
 Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+See the section about https://facebook.github.io/create-react-app/docs/deployment[deployment] for more information.
 
 ### `yarn eject`
 
@@ -51,6 +51,6 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 
 ## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+You can learn more in the https://facebook.github.io/create-react-app/docs/getting-started[Create React App documentation].
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+To learn React, check out the https://reactjs.org/[React documentation].
