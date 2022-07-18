@@ -21,6 +21,7 @@ export function useDefaultAxisRange(
   /** are we using a log scale */
   logScale?: boolean
 ): NumberOrDateRange | undefined {
+  //  console.log(`useDefaultAxisRange: min ${min} minPos ${minPos} max ${max} logScale ${logScale}`);
   const defaultAxisRange = useMemo(() => {
     // explicitly check empty data
     if (min == null && max == null) {

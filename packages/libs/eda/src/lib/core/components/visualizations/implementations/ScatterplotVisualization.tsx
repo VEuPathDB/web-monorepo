@@ -103,7 +103,7 @@ import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsSt
 import { NumberOrDateRange } from '../../../types/general';
 import { padISODateTime } from '../../../utils/date-conversion';
 // reusable util for computing truncationConfig
-import { truncationConfig } from '../../../utils/truncation-config-utils-viz';
+import { truncationConfig } from '../../../utils/truncation-config-utils';
 // use Notification for truncation warning message
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 import Button from '@veupathdb/components/lib/components/widgets/Button';
@@ -121,6 +121,7 @@ import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from
 import { ComputedVariableMetadata } from '../../../api/DataClient/types';
 // use Banner from CoreUI for showing message for no smoothing
 import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
+import { Typography } from '@material-ui/core';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -541,6 +542,12 @@ function ScatterplotViz(props: VisualizationProps) {
     data.value?.xMax,
     vizConfig.independentAxisLogScale
   );
+  const independentAxisIsLogTruncated =
+    vizConfig.independentAxisLogScale &&
+    data.value?.xMin != null &&
+    data.value.xMin <= 0
+      ? true
+      : false;
 
   // use custom hook
   const defaultDependentAxisRange = useDefaultAxisRange(
@@ -550,6 +557,12 @@ function ScatterplotViz(props: VisualizationProps) {
     data.value?.yMax,
     vizConfig.dependentAxisLogScale
   );
+  const dependentAxisIsLogTruncated =
+    vizConfig.dependentAxisLogScale &&
+    data.value?.yMin != null &&
+    data.value.yMin <= 0
+      ? true
+      : false;
 
   // yMinMaxDataRange will be used for truncation to judge whether data has negative value
   const yMinMaxDataRange = useMemo(
@@ -933,6 +946,8 @@ function ScatterplotViz(props: VisualizationProps) {
       onIndependentAxisLogScaleChange={onIndependentAxisLogScaleChange}
       onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
       yMinMaxDataRange={yMinMaxDataRange}
+      independentAxisIsLogTruncated={independentAxisIsLogTruncated}
+      dependentAxisIsLogTruncated={dependentAxisIsLogTruncated}
     />
   );
 
@@ -1183,6 +1198,8 @@ type ScatterplotWithControlsProps = Omit<ScatterPlotProps, 'data'> & {
   yMinMaxDataRange:
     | { min: string | number | undefined; max: string | number | undefined }
     | undefined;
+  independentAxisIsLogTruncated: boolean;
+  dependentAxisIsLogTruncated: boolean;
 };
 
 function ScatterplotWithControls({
@@ -1215,6 +1232,8 @@ function ScatterplotWithControls({
   onIndependentAxisLogScaleChange,
   onDependentAxisLogScaleChange,
   yMinMaxDataRange,
+  independentAxisIsLogTruncated,
+  dependentAxisIsLogTruncated,
   ...scatterplotProps
 }: ScatterplotWithControlsProps) {
   // TODO Use UIState
@@ -1308,20 +1327,26 @@ function ScatterplotWithControls({
   } = useMemo(
     () =>
       truncationConfig(
-        defaultUIState,
+        { ...defaultUIState, dependentAxisRange: defaultDependentAxisRange },
         vizConfig,
-        defaultDependentAxisRange,
-        vizConfig.dependentAxisLogScale,
-        yMinMaxDataRange
+        {
+          // truncation overrides for the axis minima for log scale
+          // only pass values that you want to take effect!
+          ...(independentAxisIsLogTruncated
+            ? { truncationConfigIndependentAxisMin: true }
+            : {}),
+          ...(dependentAxisIsLogTruncated
+            ? { truncationConfigDependentAxisMin: true }
+            : {}),
+        }
       ),
     [
       defaultUIState,
-      vizConfig.xAxisVariable,
       vizConfig.independentAxisRange,
       vizConfig.dependentAxisRange,
       defaultDependentAxisRange,
-      vizConfig.dependentAxisLogScale,
-      yMinMaxDataRange,
+      independentAxisIsLogTruncated,
+      dependentAxisIsLogTruncated,
     ]
   );
 
@@ -1468,6 +1493,7 @@ function ScatterplotWithControls({
               display: 'flex',
               marginTop: '0.8em',
               marginBottom: '0.8em',
+              alignItems: 'baseline',
             }}
           >
             <Switch
@@ -1477,6 +1503,9 @@ function ScatterplotWithControls({
               // disable log scale for date variable
               disabled={independentValueType === 'date' || valueSpec != 'Raw'}
             />
+            <Typography style={{ fontSize: '80%', lineHeight: '100%' }}>
+              (values &le; 0 will not be shown)
+            </Typography>
           </div>
           <AxisRangeControl
             label="Range"
@@ -1485,6 +1514,7 @@ function ScatterplotWithControls({
             valueType={independentValueType === 'date' ? 'date' : 'number'}
             // set maxWidth
             containerStyles={{ maxWidth: '350px' }}
+            logScale={vizConfig.independentAxisLogScale}
           />
           {/* truncation notification */}
           {truncatedIndependentAxisWarning ? (
@@ -1543,6 +1573,7 @@ function ScatterplotWithControls({
               display: 'flex',
               marginTop: '0.8em',
               marginBottom: '0.8em',
+              alignItems: 'baseline',
             }}
           >
             <Switch
@@ -1552,6 +1583,9 @@ function ScatterplotWithControls({
               // disable log scale for date variable
               disabled={dependentValueType === 'date' || valueSpec != 'Raw'}
             />
+            <Typography style={{ fontSize: '80%', lineHeight: '100%' }}>
+              (values &le; 0 will not be shown)
+            </Typography>
           </div>
           <AxisRangeControl
             label="Range"
@@ -1562,6 +1596,7 @@ function ScatterplotWithControls({
             }}
             // set maxWidth
             containerStyles={{ maxWidth: '350px' }}
+            logScale={vizConfig.dependentAxisLogScale}
           />
           {/* truncation notification */}
           {truncatedDependentAxisWarning ? (
@@ -1675,6 +1710,9 @@ export function scatterplotResponseToData(
     };
   });
 
+  const xMin = min(map(processedData, ({ xMin }) => xMin));
+  const xMinPos = minPos(map(processedData, ({ xMinPos }) => xMinPos));
+  const xMax = max(map(processedData, ({ xMax }) => xMax));
   const yMin = min(map(processedData, ({ yMin }) => yMin));
   const yMinPos = minPos(map(processedData, ({ yMinPos }) => yMinPos));
   const yMax = max(map(processedData, ({ yMax }) => yMax));
@@ -1697,6 +1735,9 @@ export function scatterplotResponseToData(
   return {
     dataSetProcess,
     // calculated y axis limits
+    xMin,
+    xMinPos,
+    xMax,
     yMin,
     yMinPos,
     yMax,
@@ -1744,12 +1785,12 @@ function processInputData<T extends number | string>(
   ) {
     return {
       dataSetProcess: { series: [] }, // BM doesn't think this should be `undefined` for empty facets - the back end doesn't return *any* data for empty facets.
-      yMin,
-      yMinPos,
-      yMax,
-      xMin: null,
-      xMinPos: null,
-      xMax: null,
+      yMin: undefined,
+      yMinPos: undefined,
+      yMax: undefined,
+      xMin: undefined,
+      xMinPos: undefined,
+      xMax: undefined,
     };
   }
 
