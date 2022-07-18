@@ -1,7 +1,24 @@
-/** from TreeUtils */
+/** From TreeUtils */
 
 export interface ChildrenGetter<T> {
     (t: T): T[];
+  }
+
+/**
+ * Convert a tree into a new tree-like structure. The tree is traversed bottom-
+ * up, and for each node, its mapped children are passed to the mapping
+ * function. This allows the mapping function to integrate the mapped children
+ * however it needs to.
+ *
+ * @param {mapFn} mapFn Mapping function to apply to each node.
+ * @param {Function} getChildren A function that returns an iterable object over a node's children.
+ * @param {any} root The root node of the tree whose structure is being mapped.
+ */
+ export function mapStructure<T, U>(mapFn: (node: T, mappedChildren: U[]) => U, getChildren: ChildrenGetter<T>, root: T): U {
+    let mappedChildren = Seq.from(getChildren(root))
+    .map(child => mapStructure(mapFn, getChildren, child))
+    .toArray();
+    return mapFn(root, mappedChildren);
   }
 
 /**
@@ -13,8 +30,48 @@ export interface ChildrenGetter<T> {
     return getNodeChildren(node).length === 0;
  }
 
+/**
+ * Determine if a node is a branch
+ * @param node
+ * @param getNodeChildren
+ */
+ export function isBranch<T>(node: T, getNodeChildren: ChildrenGetter<T>) {
+    return !isLeaf(node, getNodeChildren);
+  }
+
+ /**
+ * Using recursion to return all the leaf nodes for the given node.
+ * @param {Object} node representing root of subtree
+ * @param {Array} initial list of leaf nodes (optional)
+ * @return {Array} updated list of leaf nodes
+ */
+export function getLeaves <T>(node: T, getNodeChildren: ChildrenGetter<T>) {
+    return Seq.from(preorder(node, getNodeChildren)).filter(node => isLeaf(node, getNodeChildren)).toArray();
+  }
+  
+  /**
+   * Using recursion to return all the branch nodes for a given node
+   * @param {Object} node representing root of subtree
+   * @param {Array} initial list of branch nodes (optional)
+   * @return {Array} updated list of branch nodes
+   */
+  export function getBranches <T>(node: T, getNodeChildren: ChildrenGetter<T>, branches: T[] = []) {
+    return Seq.from(preorder(node, getNodeChildren)).filter(node => isBranch(node, getNodeChildren)).toArray();
+  }
+
+  /** top-down tree node iterator */
+export function* preorder<T>(root: T, getChildren: ChildrenGetter<T>): Iterable<T> {
+    yield root;
+    let children = getChildren(root);
+    let length = children.length;
+    for (let i = 0; i < length; i++) {
+      yield* preorder(children[i], getChildren);
+    }
+  }
+  
+
  /** From IterableUtils */
- 
+
 // Type definitions
 interface Mapper<T, U> {
     (x: T): U;
@@ -34,6 +91,9 @@ interface Mapper<T, U> {
   interface Collector<T, U> {
     from: (i: Iterable<T>) => U;
   };
+  interface Iterable<T> {
+    [Symbol.iterator](): Iterator<T>;
+}
   
   /**
    * Useful operators for Iterables.
@@ -466,4 +526,79 @@ interface Mapper<T, U> {
     return Array.from(iterable).join(separator);
   }
   
-  
+  /** From ComponentUtils */
+
+  /** Create a React Element using preformatted HTML */
+export function safeHtml<P>(str: string, props?: P, Component?: React.ComponentClass<P>): JSX.Element;
+export function safeHtml<P>(str: string, props?: P, Component?: React.StatelessComponent<P>): JSX.Element;
+export function safeHtml<P>(str: string, props?: P, Component?: string): JSX.Element;
+export function safeHtml<P>(str = '', props?: P, Component: any = 'span'): JSX.Element {
+  // Use innerHTML to auto close tags
+  let container = document.createElement('div');
+  container.innerHTML = str;
+  return <Component {...props} dangerouslySetInnerHTML={{ __html: container.innerHTML }}/>;
+}
+
+/**
+ * Makes a copy of current, adds value if not present, removes if present, and
+ * returns the copy.
+ * @param {Array<T>} array array to modify
+ * @param {<T>} value to check against
+ * @return {Array<T>} modified copy of original array
+ */
+ export function addOrRemove<T>(array: T[], value: T) : T[] {
+    return (array.indexOf(value) == -1 ?
+      // not currently present; add
+      array.concat(value) :
+      // already there; remove
+      array.filter(elem => elem != value));
+  }
+
+/**
+ * React Component utils
+ */
+
+ interface AnyObject {
+    [key: string]: any;
+  }
+
+  /**
+ * For each property in propertyNameList, examines each property in both
+ * oldProps and newProps to check for referential equality.  If any prop differs
+ * returns true, else returns false.
+ *
+ * @param {Object} oldProps props object
+ * @param {Object} newProps another props object
+ * @param {Array<String>} propertyNameList list of properties to examine
+ * @return {boolean} false if all properties are referentially identical, else true
+ */
+export function propsDiffer<P extends AnyObject>(oldProps: P, newProps: P, propertyNameList: string[]) {
+    for (let i = 0; i < propertyNameList.length; i++) {
+      if (oldProps[propertyNameList[i]] !== newProps[propertyNameList[i]]) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+
+  /** From SearchUtils */
+
+  /**
+ * Split search query string on whitespace, unless wrapped in quotes
+ * @param {string} searchQueryString A string representing the search query
+ * @returns {Array<String>} A set of query terms parsed from searchQueryString
+ */
+export function parseSearchQueryString(searchQueryString: string) {
+    let match = searchQueryString.match(/[^\s"]+|"[^"]*"/g);
+    if (match == null) return [];
+    return match.map(function (queryTerm) {
+      if (queryTerm.startsWith('"')) {
+        // remove wrapping quotes and asterisks from phrases
+        return queryTerm.replace(/(^")|("$)|\*/g, '');
+      } else {
+        // remove stray quotes
+        return queryTerm.replace(/(^")|("$)/g, '');
+      }
+    });
+  }

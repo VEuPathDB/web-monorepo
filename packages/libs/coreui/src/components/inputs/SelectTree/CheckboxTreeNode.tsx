@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { isLeaf } from './Utils';
 import IndeterminateCheckbox, { IndeterminateCheckboxProps } from './IndeterminateCheckbox';
 
