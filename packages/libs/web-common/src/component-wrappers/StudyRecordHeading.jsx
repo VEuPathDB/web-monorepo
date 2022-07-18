@@ -66,7 +66,7 @@ function StudyRecordHeading({
         </div>
       )}
       <props.DefaultComponent {...props}/>
-      {study != null && permissions != null && shouldOfferLinkToDashboard(permissions) && (
+      {study != null && permissions != null && shouldOfferLinkToDashboard(permissions, study.id) && (
         <div className={cx('DashboardLink')}><Link className={'btn ' + cx('DashboardLink')} to={`/study-access/${study.id}`}>Data Access Dashboard</Link></div>
       )}
       {study != null &&  showSearches && (!isPrereleaseStudy(study.access, study.id, permissions)) && (
