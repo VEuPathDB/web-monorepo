@@ -6,6 +6,18 @@ import DoubleArrow from '../../../assets/icons/DoubleArrow';
 import { DataGridProps } from '.';
 import typography from '../../../styleDefinitions/typography';
 import { gray } from '../../../definitions/colors';
+import { Subset } from '../../../definitions/types';
+import { useMemo } from 'react';
+import { merge } from 'lodash';
+
+export type PaginationControlsStyleSpec = {
+  margin: {
+    top?: number;
+    bottom?: number;
+    left?: number;
+    right?: number;
+  };
+};
 
 type PaginationControlsType = {
   loading: boolean;
@@ -20,6 +32,7 @@ type PaginationControlsType = {
   setPageSize: (size: number) => void;
   pageOptions: Array<number>;
   pagination: DataGridProps['pagination'];
+  styleOverrides?: Subset<PaginationControlsStyleSpec>;
 };
 
 /** Pagination controls are rendered when requested by the user. */
@@ -36,7 +49,20 @@ export default function PaginationControls({
   setPageSize,
   pageOptions,
   pagination,
+  styleOverrides,
 }: PaginationControlsType) {
+  const componentStyle: PaginationControlsStyleSpec = useMemo(() => {
+    const defaultStyle: PaginationControlsStyleSpec = {
+      margin: {
+        top: 20,
+        bottom: 10,
+        left: 0,
+        right: 0,
+      }
+    }
+    return merge({}, defaultStyle, styleOverrides);
+  }, [styleOverrides]);
+
   const commonButtonCSS = {
     height: 25,
     width: 25,
@@ -53,11 +79,16 @@ export default function PaginationControls({
   return (
     <div
       css={[
-        { marginTop: 10 },
+        {
+          marginTop: componentStyle.margin.top,
+          marginBottom: componentStyle.margin.bottom,
+          marginLeft: componentStyle.margin.left,
+          marginRight: componentStyle.margin.right,
+        },
         loading && { opacity: 0.5, pointerEvents: 'none' },
       ]}
     >
-      <div css={{ marginBottom: 10, display: 'flex', alignItems: 'center' }} className="pagination-controls">
+      <div css={{ display: 'flex', alignItems: 'center' }}>
         <button
           css={{ marginRight: 5, ...commonButtonCSS }}
           onClick={() => gotoPage(0)}
