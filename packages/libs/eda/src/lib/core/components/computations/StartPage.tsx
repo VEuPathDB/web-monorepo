@@ -74,13 +74,12 @@ export function StartPage(props: Props) {
                     rowGap: '2em',
                   }}
                 >
-                  {app.visualizations?.map((vizType, index) => {
+                  {app.visualizations?.map((viz, index) => {
                     const plugin = plugins[app.name];
                     const vizPlugin =
-                      plugin && plugin.visualizationTypes[vizType.name];
+                      plugin && plugin.visualizationPlugins[viz.name];
                     const disabled =
-                      !plugin || !plugin.visualizationTypes[vizType.name];
-                    const VizSelector = vizPlugin?.selectorComponent;
+                      !plugin || !plugin.visualizationPlugins[viz.name];
                     return (
                       <div
                         className={cx('-PickerEntry', disabled && 'disabled')}
@@ -89,7 +88,7 @@ export function StartPage(props: Props) {
                           margin: '0 3em',
                         }}
                       >
-                        <Tooltip title={<>{vizType.description}</>}>
+                        <Tooltip title={<>{viz.description}</>}>
                           <button
                             style={{
                               cursor: disabled ? 'not-allowed' : 'cursor',
@@ -132,7 +131,7 @@ export function StartPage(props: Props) {
                                 visualizationId,
                                 displayName: 'Unnamed visualization',
                                 descriptor: {
-                                  type: vizType.name!,
+                                  type: viz.name!,
                                   configuration: vizPlugin.createDefaultConfig(),
                                 },
                               };
@@ -178,16 +177,20 @@ export function StartPage(props: Props) {
                               }
                             }}
                           >
-                            {VizSelector ? (
-                              <VizSelector {...app} />
+                            {vizPlugin ? (
+                              <img
+                                src={vizPlugin.selectorIcon}
+                                alt={viz.displayName}
+                                style={{ height: '100%', width: '100%' }}
+                              />
                             ) : (
-                              <PlaceholderIcon name={vizType.name} />
+                              <PlaceholderIcon name={viz.name} />
                             )}
                           </button>
                         </Tooltip>
                         <div className={cx('-PickerEntryName')}>
                           <div>
-                            {vizType.displayName
+                            {viz.displayName
                               ?.split(/(, )/g)
                               .map((str) => (str === ', ' ? <br /> : str))}
                           </div>

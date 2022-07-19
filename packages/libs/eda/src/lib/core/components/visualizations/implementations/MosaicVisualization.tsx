@@ -7,8 +7,6 @@ import {
   MosaicPlotData,
 } from '@veupathdb/components/lib/types/plots';
 import { ContingencyTable } from '@veupathdb/components/lib/components/ContingencyTable';
-// import { ErrorManagement } from '@veupathdb/components/lib/types/general';
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import * as t from 'io-ts';
 import _ from 'lodash';
 import DataClient, {
@@ -18,9 +16,13 @@ import DataClient, {
 } from '../../../api/DataClient';
 import { useCallback, useMemo, useState } from 'react';
 import { usePromise } from '../../../hooks/promise';
-import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
-import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
+import {
+  useDataClient,
+  useStudyMetadata,
+  useFindEntityAndVariable,
+  useStudyEntities,
+} from '../../../hooks/workspace';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { Filter } from '../../../types/filter';
 import { VariableDescriptor } from '../../../types/variable';
@@ -30,7 +32,7 @@ import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { PlotLayout } from '../../layouts/PlotLayout';
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
-import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
+import { VisualizationProps } from '../VisualizationTypes';
 import rxc from './selectorIcons/RxC.svg';
 import twoxtwo from './selectorIcons/2x2.svg';
 import { TabbedDisplay } from '@veupathdb/coreui';
@@ -51,6 +53,7 @@ import PluginError from '../PluginError';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import FacetedMosaicPlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedMosaicPlot';
 import { useVizConfig } from '../../../hooks/visualizations';
+import { createVisualizationPlugin } from '../VisualizationPlugin';
 
 const plotContainerStyles = {
   width: 750,
@@ -105,40 +108,20 @@ type ContTableDataWithCoverage = (ContTableData | FacetedData<ContTableData>) &
 type TwoByTwoDataWithCoverage = (TwoByTwoData | FacetedData<TwoByTwoData>) &
   CoverageStatistics;
 
-export const contTableVisualization: VisualizationType = {
-  selectorComponent: ContTableSelectorComponent,
+export const contTableVisualization = createVisualizationPlugin({
+  selectorIcon: rxc,
   fullscreenComponent: ContTableFullscreenComponent,
   createDefaultConfig: createDefaultConfig,
-};
+});
 
-export const twoByTwoVisualization: VisualizationType = {
-  selectorComponent: TwoByTwoSelectorComponent,
+export const twoByTwoVisualization = createVisualizationPlugin({
+  selectorIcon: twoxtwo,
   fullscreenComponent: TwoByTwoFullscreenComponent,
   createDefaultConfig: createDefaultConfig,
-};
-
-function ContTableSelectorComponent() {
-  return (
-    <img
-      alt="RxC contingency table"
-      style={{ height: '100%', width: '100%' }}
-      src={rxc}
-    />
-  );
-}
+});
 
 function ContTableFullscreenComponent(props: VisualizationProps) {
   return <MosaicViz {...props} />;
-}
-
-function TwoByTwoSelectorComponent() {
-  return (
-    <img
-      alt="2x2 contingency table"
-      style={{ height: '100%', width: '100%' }}
-      src={twoxtwo}
-    />
-  );
 }
 
 function TwoByTwoFullscreenComponent(props: VisualizationProps) {
@@ -179,11 +162,7 @@ function MosaicViz(props: Props) {
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
-  const entities = useMemo(
-    () =>
-      Array.from(preorder(studyMetadata.rootEntity, (e) => e.children || [])),
-    [studyMetadata]
-  );
+  const entities = useStudyEntities();
   const dataClient: DataClient = useDataClient();
 
   // set default tab to Mosaic in TabbedDisplay component
@@ -230,7 +209,7 @@ function MosaicViz(props: Props) {
     'showMissingness'
   );
 
-  const findEntityAndVariable = useFindEntityAndVariable(entities);
+  const findEntityAndVariable = useFindEntityAndVariable();
 
   const { xAxisVariable, yAxisVariable, facetVariable } = useMemo(() => {
     const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
@@ -253,8 +232,7 @@ function MosaicViz(props: Props) {
   const outputEntity = useFindOutputEntity(
     dataElementDependencyOrder,
     vizConfig,
-    'xAxisVariable',
-    entities
+    'xAxisVariable'
   );
 
   const data = usePromise(

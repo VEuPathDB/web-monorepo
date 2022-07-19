@@ -1,4 +1,3 @@
-import { useStudyMetadata } from '../core';
 import { Redirect, useRouteMatch } from 'react-router';
 import { findFirstVariable } from './Utils';
 import {
@@ -6,7 +5,7 @@ import {
   useFieldTree,
   useFlattenedFields,
 } from '../core/components/variableTrees/hooks';
-import { useStudyEntities } from '../core/hooks/study';
+import { useStudyEntities } from '../core/hooks/workspace';
 
 interface Props {
   entityId?: string;
@@ -15,8 +14,7 @@ interface Props {
 export function DefaultVariableRedirect(props: Props) {
   const { entityId } = props;
   const { url } = useRouteMatch();
-  const studyMetadata = useStudyMetadata();
-  const entities = useStudyEntities(studyMetadata.rootEntity);
+  const entities = useStudyEntities();
   const flattenedFields = useFlattenedFields(entities, 'variableTree');
   const fieldTree = useFieldTree(flattenedFields);
   const featuredFields = useFeaturedFieldsFromTree(fieldTree);
