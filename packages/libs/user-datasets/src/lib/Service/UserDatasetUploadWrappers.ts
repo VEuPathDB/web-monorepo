@@ -277,6 +277,29 @@ export const makeUserDatasetUploadServiceWrappers = ({
       jobIds.map(partial(issueDeleteCommand, datasetImportUrl))
     ).then((x) => {});
   },
+  getSupportedDatasetTypes: () => (projectId: string) => {
+    return fetchDecodedJsonOrThrowMessage(
+      datasetImportUrl,
+      Decode.arrayOf(Decode.string),
+      {
+        path: `/projects/${projectId}/datasetTypes`,
+        method: 'GET',
+      }
+    );
+  },
+  getSupportedFileUploadTypes: () => (
+    projectId: string,
+    datasetType: string
+  ) => {
+    return fetchDecodedJsonOrThrowMessage(
+      datasetImportUrl,
+      Decode.arrayOf(Decode.string),
+      {
+        path: `/projects/${projectId}/datasetTypes/${datasetType}/fileTypes`,
+        method: 'GET',
+      }
+    );
+  },
 });
 
 export function isUserDatasetUploadCompatibleWdkService(
