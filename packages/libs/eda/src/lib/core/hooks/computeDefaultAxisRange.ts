@@ -16,18 +16,22 @@ export function useDefaultAxisRange(
   /** the variable (or computed variable) or null/undefined if no variable (e.g. histogram/barplot y) */
   variable: Variable | ComputedVariableMetadata | undefined | null,
   /** the min/minPos/max values observed in the data response */
-  min: number | string | undefined,
+  min?: number | string,
   minPos?: number | string,
   max?: number | string,
   /** are we using a log scale */
   logScale?: boolean
 ): NumberOrDateRange | undefined {
   const defaultAxisRange = useMemo(() => {
-    // check whether variable type (number or date) matches the types of the min/max data extracted from the data
+    // Check here to make sure number ranges (min, minPos, max) came with number variables
+    // (and date ranges came with date variables)
+    // Originally from https://github.com/VEuPathDB/web-eda/pull/1004
+    // Only checking min for brevity.
     if (
       (Variable.is(variable) &&
-        (((variable.type === 'number' || variable.type === 'integer') &&
-          typeof min === 'number') ||
+        (min == null ||
+          ((variable.type === 'number' || variable.type === 'integer') &&
+            typeof min === 'number') ||
           (variable.type === 'date' && typeof min === 'string'))) ||
       ComputedVariableMetadata.is(variable)
     ) {
@@ -52,7 +56,7 @@ export function useDefaultAxisRange(
         };
       else return defaultRange;
     } else if (
-      typeof min === 'number' &&
+      variable == null &&
       typeof max === 'number' &&
       typeof minPos === 'number'
     ) {
@@ -70,6 +74,5 @@ export function useDefaultAxisRange(
       return undefined;
     }
   }, [variable, min, minPos, max, logScale]);
-
   return defaultAxisRange;
 }

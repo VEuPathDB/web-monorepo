@@ -82,10 +82,7 @@ export function HistogramFilter(props: Props) {
   const uiStateKey = `${entity.id}/${variable.id}`;
 
   // compute default independent range from meta-data based util
-  const defaultIndependentRange = useDefaultAxisRange(
-    variable,
-    0 // histogram x-axis always starts at zero (or below)
-  );
+  const defaultIndependentRange = useDefaultAxisRange(variable);
 
   // get as much default UI state from variable annotations as possible
   const defaultUIState: UIState = useMemo(() => {
