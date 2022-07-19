@@ -51,6 +51,11 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
     type: 'isasimple',
     uploadTitle: 'Upload My Study',
     formConfig: {
+      renderInfo: () => (
+        <p className="formInfo">
+          File must be a .csv, .tsv, or tab-delimited .txt file
+        </p>
+      ),
       summary: {
         inputProps: {
           placeholder: 'brief summary of the data set in 1-2 sentences',
