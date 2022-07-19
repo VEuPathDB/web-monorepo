@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/web-common",
-  "version": "0.6.14",
+  "version": "0.6.15",
   "repository": {
     "url": "https://github.com/VEuPathDB/EbrcWebsiteCommon",
     "directory": "Client"
