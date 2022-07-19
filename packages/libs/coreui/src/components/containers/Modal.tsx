@@ -25,7 +25,6 @@ type ModalStyleSpec = {
   header: {
     primaryBackgroundColor: CSSProperties['backgroundColor'];
     secondaryBackgroundColor: CSSProperties['backgroundColor'];
-    compact?: boolean;
   };
   content: {
     size: {
@@ -57,6 +56,8 @@ export type ModalProps = {
   subtitle?: ReactNode;
   /** Optional. Size control for the title text. */
   titleSize?: "small" | "medium" | "large";
+  /** Optional. Reduces the amount of vertical blank space in the title. */
+  compactTitle?: boolean;
   /** Indicates which theme role to use for style augmentation. */
   themeRole?: keyof UITheme['palette'];
   /**
@@ -86,6 +87,7 @@ export default function Modal({
   title,
   subtitle,
   titleSize = "large",
+  compactTitle,
   visible,
   zIndex = 1000,
   toggleVisible,
@@ -171,7 +173,7 @@ export default function Modal({
     : 5;
 
   const headerHeight = title
-    ? titleHeight + (styleOverrides?.header?.compact ? 20 : 40)
+    ? titleHeight + (compactTitle ? 20 : 40)
     : 0;
 
   return (
