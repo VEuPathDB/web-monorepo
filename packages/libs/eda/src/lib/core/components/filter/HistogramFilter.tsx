@@ -43,7 +43,6 @@ import Notification from '@veupathdb/components/lib/components/widgets//Notifica
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../utils/variable-display';
 // import variable's metadata-based independent axis range utils
-import { defaultIndependentAxisRange } from '../../utils/default-independent-axis-range';
 import { min, max } from 'lodash';
 import { useDefaultAxisRange } from '../../hooks/computeDefaultAxisRange';
 
@@ -83,9 +82,9 @@ export function HistogramFilter(props: Props) {
   const uiStateKey = `${entity.id}/${variable.id}`;
 
   // compute default independent range from meta-data based util
-  const defaultIndependentRange: NumberOrDateRange | undefined = useMemo(
-    () => defaultIndependentAxisRange(variable, 'histogram'),
-    [variable]
+  const defaultIndependentRange = useDefaultAxisRange(
+    variable,
+    0 // histogram x-axis always starts at zero (or below)
   );
 
   // get as much default UI state from variable annotations as possible

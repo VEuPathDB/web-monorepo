@@ -17,26 +17,18 @@ export function useDefaultAxisRange(
   variable: Variable | ComputedVariableMetadata | undefined | null,
   /** the min/minPos/max values observed in the data response */
   min: number | string | undefined,
-  minPos: number | string | undefined,
-  max: number | string | undefined,
+  minPos?: number | string,
+  max?: number | string,
   /** are we using a log scale */
   logScale?: boolean
 ): NumberOrDateRange | undefined {
   const defaultAxisRange = useMemo(() => {
-    // explicitly check empty data
-    if (min == null && max == null) {
-      return undefined;
-    }
-
     // check whether variable type (number or date) matches the types of the min/max data extracted from the data
     if (
       (Variable.is(variable) &&
         (((variable.type === 'number' || variable.type === 'integer') &&
-          typeof min === 'number' &&
-          typeof max === 'number') ||
-          (variable.type === 'date' &&
-            typeof min === 'string' &&
-            typeof max === 'string'))) ||
+          typeof min === 'number') ||
+          (variable.type === 'date' && typeof min === 'string'))) ||
       ComputedVariableMetadata.is(variable)
     ) {
       const defaultRange = numberDateDefaultAxisRange(

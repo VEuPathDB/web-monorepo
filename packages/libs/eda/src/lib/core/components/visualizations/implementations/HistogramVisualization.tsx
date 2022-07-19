@@ -96,8 +96,7 @@ import Button from '@veupathdb/components/lib/components/widgets/Button';
 import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
 import { UIState } from '../../filter/HistogramFilter';
 // change defaultIndependentAxisRange to hook
-import { useDefaultIndependentAxisRange } from '../../../hooks/computeDefaultIndependentAxisRange';
-import { useDefaultDependentAxisRange } from '../../../hooks/computeDefaultDependentAxisRange';
+import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 import { useVizConfig } from '../../../hooks/visualizations';
 
 export type HistogramDataWithCoverageStatistics = (
@@ -426,17 +425,16 @@ function HistogramViz(props: VisualizationProps) {
   );
 
   // use custom hook
-  const defaultIndependentRange = useDefaultIndependentAxisRange(
-    xAxisVariable,
-    'histogram'
-  );
+  const defaultIndependentRange = useDefaultAxisRange(xAxisVariable, 0);
 
   // use custom hook
-  const defaultDependentAxisRange = useDefaultDependentAxisRange(
-    data,
-    vizConfig,
-    'Histogram'
-  );
+  const defaultDependentAxisRange = useDefaultAxisRange(
+    null,
+    0,
+    1,
+    100,
+    vizConfig.dependentAxisLogScale
+  ) as NumberRange;
 
   // custom legend items for checkbox
   const legendItems: LegendItemsProps[] = useMemo(() => {

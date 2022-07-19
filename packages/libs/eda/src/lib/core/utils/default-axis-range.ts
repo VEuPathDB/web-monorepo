@@ -22,7 +22,6 @@ export function numberDateDefaultAxisRange(
     if (variable.type === 'number' || variable.type === 'integer') {
       const defaults = variable.distributionDefaults;
       // find the smallest positive value of dependent axis
-
       return defaults.displayRangeMin != null &&
         defaults.displayRangeMax != null
         ? {
