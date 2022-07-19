@@ -67,12 +67,16 @@ import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsSt
 import { NumberOrDateRange, NumberRange } from '../../../types/general';
 import { NumberRangeInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateRangeInputs';
 // reusable util for computing truncationConfig
-import { truncationConfig } from '../../../utils/truncation-config-utils-viz';
+import { truncationConfig } from '../../../utils/truncation-config-utils';
 // use Notification for truncation warning message
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 import Button from '@veupathdb/components/lib/components/widgets/Button';
-import { useDefaultDependentAxisRange } from '../../../hooks/computeDefaultDependentAxisRange';
+import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 import { useVizConfig } from '../../../hooks/visualizations';
+import {
+  barplotDefaultDependentAxisMax,
+  barplotDefaultDependentAxisMinPos,
+} from '../../../hooks/computeDefaultDependentAxisRange';
 
 // export
 export type BarplotDataWithStatistics = (
@@ -409,12 +413,16 @@ function BarplotViz(props: VisualizationProps) {
     vizConfig.checkedLegendItems
   );
 
+  const minPos = useMemo(() => barplotDefaultDependentAxisMinPos(data), [data]);
+  const max = useMemo(() => barplotDefaultDependentAxisMax(data), [data]);
   // using custom hook
-  const defaultDependentAxisRange = useDefaultDependentAxisRange(
-    data,
-    vizConfig,
-    'Barplot'
-  );
+  const defaultDependentAxisRange = useDefaultAxisRange(
+    null,
+    0,
+    minPos,
+    max,
+    vizConfig.dependentAxisLogScale
+  ) as NumberRange;
 
   // axis range control
   const handleDependentAxisRangeChange = onChangeHandlerFactory<NumberRange>(
@@ -439,12 +447,17 @@ function BarplotViz(props: VisualizationProps) {
   } = useMemo(
     () =>
       // barplot does not have independent axis range control so send undefined for defaultUIState
-      truncationConfig(undefined, vizConfig, defaultDependentAxisRange),
-    [
-      vizConfig.xAxisVariable,
-      vizConfig.dependentAxisRange,
-      defaultDependentAxisRange,
-    ]
+      truncationConfig(
+        {
+          ...(minPos != null && max != null
+            ? {
+                dependentAxisRange: { min: minPos, max: max },
+              }
+            : {}),
+        },
+        vizConfig
+      ),
+    [vizConfig.dependentAxisRange, minPos, max]
   );
 
   useEffect(() => {
@@ -524,17 +537,6 @@ function BarplotViz(props: VisualizationProps) {
           checkedLegendItems={checkedLegendItems}
           // axis range control
           dependentAxisRange={vizConfig.dependentAxisRange}
-          // pass axisTruncationConfig
-          axisTruncationConfig={{
-            independentAxis: {
-              min: truncationConfigIndependentAxisMin,
-              max: truncationConfigIndependentAxisMax,
-            },
-            dependentAxis: {
-              min: truncationConfigDependentAxisMin,
-              max: truncationConfigDependentAxisMax,
-            },
-          }}
           {...plotProps}
         />
       )}

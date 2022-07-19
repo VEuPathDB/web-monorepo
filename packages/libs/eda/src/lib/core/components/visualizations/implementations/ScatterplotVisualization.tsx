@@ -109,9 +109,6 @@ import Notification from '@veupathdb/components/lib/components/widgets//Notifica
 import Button from '@veupathdb/components/lib/components/widgets/Button';
 import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
 import { UIState } from '../../filter/HistogramFilter';
-// change defaultIndependentAxisRange to hook
-import { useDefaultIndependentAxisRange } from '../../../hooks/computeDefaultIndependentAxisRange';
-// for scatter plot, use another custom hook different from other Vizs
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import { useVizConfig } from '../../../hooks/visualizations';

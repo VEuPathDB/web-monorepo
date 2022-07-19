@@ -22,9 +22,6 @@ export function truncationConfig(
   overrides: Overrides = {}
 ) {
   // check whether truncated axis is required
-  console.log(defaultUIState);
-  console.log(uiState);
-
   const truncationConfigIndependentAxisMin =
     defaultUIState.independentAxisRange?.min != null &&
     uiState.independentAxisRange?.min != null &&

@@ -33,6 +33,7 @@ type defaultDependentAxisRangeProps =
     }
   | undefined;
 
+// TO BE DEPRECATED in favour of universal useDefaultAxisRange
 export function useDefaultDependentAxisRange(
   data: PromiseHookState<
     | HistogramDataWithCoverageStatistics
@@ -139,8 +140,7 @@ function histogramDefaultDependentAxisMinMax(
   }
 }
 
-// compute max only
-function barplotDefaultDependentAxisMax(
+export function barplotDefaultDependentAxisMax(
   data: PromiseHookState<BarplotDataWithStatistics | undefined>
 ) {
   if (isFaceted(data?.value)) {
@@ -154,6 +154,27 @@ function barplotDefaultDependentAxisMax(
   } else {
     return data?.value?.series != null
       ? max(data.value.series.flatMap((o) => o.value))
+      : undefined;
+  }
+}
+
+export function barplotDefaultDependentAxisMinPos(
+  data: PromiseHookState<BarplotDataWithStatistics | undefined>
+) {
+  if (isFaceted(data?.value)) {
+    return data?.value?.facets != null
+      ? min(
+          data.value.facets
+            .filter((facet) => facet.data != null)
+            .flatMap((facet) => facet.data?.series.flatMap((o) => o.value))
+            .filter((value) => value != null && value > 0)
+        )
+      : undefined;
+  } else {
+    return data?.value?.series != null
+      ? min(
+          data.value.series.flatMap((o) => o.value).filter((value) => value > 0)
+        )
       : undefined;
   }
 }
