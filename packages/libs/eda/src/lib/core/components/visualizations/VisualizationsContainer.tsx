@@ -336,7 +336,7 @@ function NewVisualizationPicker(props: Props) {
                   >
                     {vizPlugin ? (
                       <img
-                        alt="Histogram"
+                        alt={vizOverview.displayName}
                         style={{ height: '100%', width: '100%' }}
                         src={vizPlugin.selectorIcon}
                       />
@@ -385,7 +385,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
   } = props;
   const history = useHistory();
   const viz = computation.visualizations.find((v) => v.visualizationId === id);
-  const vizPugin = viz && visualizationPlugins[viz.descriptor.type];
+  const vizPlugin = viz && visualizationPlugins[viz.descriptor.type];
   const overviews = useMemo(
     () =>
       groupBy(visualizationsOverview, (v) =>
@@ -445,7 +445,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
     [updateVisualizations, id]
   );
   if (viz == null) return <div>Visualization not found.</div>;
-  if (vizPugin == null) return <div>Visualization type not implemented.</div>;
+  if (vizPlugin == null) return <div>Visualization type not implemented.</div>;
 
   const { computationId } = computation;
   const plugin = plugins[computation.descriptor.type] ?? undefined;
@@ -528,7 +528,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
         <ContentError>Visualization not found.</ContentError>
       ) : computation == null ? (
         <ContentError>Computation not found.</ContentError>
-      ) : vizPugin == null ? (
+      ) : vizPlugin == null ? (
         <ContentError>
           <>Visualization type not implemented: {viz.descriptor.type}</>
         </ContentError>
@@ -563,8 +563,8 @@ function FullScreenVisualization(props: Props & { id: string }) {
               addNewComputation={() => null}
             />
           )}
-          <vizPugin.fullscreenComponent
-            options={vizPugin.options}
+          <vizPlugin.fullscreenComponent
+            options={vizPlugin.options}
             dataElementConstraints={constraints}
             dataElementDependencyOrder={dataElementDependencyOrder}
             visualization={viz}
