@@ -267,7 +267,6 @@ export default function DataGrid({
             width: finalStyle.table.width,
             height: finalStyle.table.height,
           }}
-          className="data-grid-table"
         >
           {/* Render Table Header */}
           <thead>
