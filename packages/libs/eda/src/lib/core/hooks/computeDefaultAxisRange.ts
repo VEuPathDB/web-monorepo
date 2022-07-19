@@ -67,7 +67,7 @@ export function useDefaultAxisRange(
       // if there's no variable, it's a count or proportion axis (barplot/histogram)
       return logScale
         ? {
-            min: numberSignificantFigures(Math.min(minPos / 10, 0.001), 4), // ensure the minimum-height bars will be visible
+            min: numberSignificantFigures(Math.min(minPos / 10, 0.1), 4), // ensure the minimum-height bars will be visible
             max: numberSignificantFigures(max, 4),
           }
         : {

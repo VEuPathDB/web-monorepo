@@ -455,7 +455,9 @@ function BarplotViz(props: VisualizationProps) {
               }
             : {}),
         },
-        vizConfig
+        vizConfig,
+        {}, // no overrides
+        true // use inclusive less than equal for the range min
       ),
     [vizConfig.dependentAxisRange, minPos, max]
   );

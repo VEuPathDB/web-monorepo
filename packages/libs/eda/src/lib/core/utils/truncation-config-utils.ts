@@ -1,4 +1,5 @@
 import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
+import { lt, lte } from 'lodash';
 
 type UIState = {
   independentAxisRange?: NumberOrDateRange;
@@ -19,9 +20,15 @@ type Overrides = {
 export function truncationConfig(
   defaultUIState: UIState,
   uiState: UIState,
-  overrides: Overrides = {}
+  overrides: Overrides = {},
+  /** for the lower bound, is the truncation flag raised if
+   * the user-range is less than OR EQUAL TO the 'defaultUIState' range min
+   * which is what we want for bar plot and histogram bars
+   */
+  inclusiveDependentMin: boolean = false
 ) {
-  // check whether truncated axis is required
+  const lessThan = inclusiveDependentMin ? lte : lt;
+
   const truncationConfigIndependentAxisMin =
     defaultUIState.independentAxisRange?.min != null &&
     uiState.independentAxisRange?.min != null &&
@@ -37,7 +44,10 @@ export function truncationConfig(
   const truncationConfigDependentAxisMin =
     defaultUIState.dependentAxisRange?.min != null &&
     uiState.dependentAxisRange?.min != null &&
-    defaultUIState.dependentAxisRange.min < uiState.dependentAxisRange.min
+    lessThan(
+      defaultUIState.dependentAxisRange.min,
+      uiState.dependentAxisRange.min
+    )
       ? true
       : false;
   const truncationConfigDependentAxisMax =

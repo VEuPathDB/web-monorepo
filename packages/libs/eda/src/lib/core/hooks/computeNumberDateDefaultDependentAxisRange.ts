@@ -4,7 +4,6 @@ import { ScatterPlotDataWithCoverage } from '../components/visualizations/implem
 import { Variable } from '../types/study';
 // for scatter plot
 import { numberDateDefaultDependentAxisRange } from '../utils/default-dependent-axis-range';
-import { axisRangeMargin } from '../utils/axis-range-margin';
 import { NumberOrDateRange } from '../types/general';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
 import { ComputedVariableMetadata } from '../api/DataClient/types';
