@@ -14,8 +14,7 @@ export interface VisualizationPluginSpec<Options = undefined> {
   isEnabledInPicker?: (props: IsEnabledInPickerParams) => boolean;
 }
 
-export interface VisualizationPlugin<Options = undefined>
-  extends VisualizationPluginSpec<Options> {
+interface VisualizationPluginWithExtensions<Options> {
   /** Options that have been set for the plugin instance */
   options?: Options;
   /** Factory function to create a new plugin instance with options applied */
@@ -24,30 +23,31 @@ export interface VisualizationPlugin<Options = undefined>
   withSelectorIcon: (icon: string) => VisualizationPlugin<Options>;
 }
 
+export interface VisualizationPlugin<Options = undefined>
+  extends VisualizationPluginSpec<Options>,
+    VisualizationPluginWithExtensions<Options> {}
+
 export function createVisualizationPlugin<Options>(
   pluginSpec: VisualizationPluginSpec<Options>
 ): VisualizationPlugin<Options> {
-  function withOptions(options: Options): VisualizationPlugin<Options> {
-    return {
-      ...pluginSpec,
-      options,
-      withOptions,
-      withSelectorIcon,
-    };
-  }
-  function withSelectorIcon(
-    selectorIcon: string
-  ): VisualizationPlugin<Options> {
-    return {
-      ...pluginSpec,
-      selectorIcon,
-      withOptions,
-      withSelectorIcon,
-    };
-  }
+  return createExtendedVisualizationPlugin(pluginSpec);
+}
+
+function createExtendedVisualizationPlugin<Options>(
+  plugin: VisualizationPluginSpec<Options> &
+    Partial<VisualizationPluginWithExtensions<Options>>
+): VisualizationPlugin<Options> {
   return {
-    ...pluginSpec,
-    withOptions,
-    withSelectorIcon,
+    ...plugin,
+    withOptions: (options: Options) =>
+      createExtendedVisualizationPlugin({
+        ...plugin,
+        options,
+      }),
+    withSelectorIcon: (selectorIcon: string) =>
+      createExtendedVisualizationPlugin({
+        ...plugin,
+        selectorIcon,
+      }),
   };
 }
