@@ -43,6 +43,7 @@ interface Props<T extends string = string> {
   resultUploadConfig?: ResultUploadConfig;
   clearBadUpload: () => void;
   submitForm: (newUserDataset: FormSubmission, redirectTo?: string) => void;
+  supportedFileUploadTypes: string[];
 }
 
 type DataUploadMode = 'file' | 'url' | 'strategy' | 'step';
@@ -91,6 +92,7 @@ function UploadForm({
   resultUploadConfig,
   clearBadUpload,
   submitForm,
+  supportedFileUploadTypes,
 }: Props) {
   const strategyOptionsByStrategyId = useMemo(
     () => keyBy(strategyOptions, (option) => option.strategyId),
@@ -259,6 +261,9 @@ function UploadForm({
             )}
           >
             <FileInput
+              accept={supportedFileUploadTypes
+                .map((fileUploadType) => `.${fileUploadType}`)
+                .join(',')}
               required={dataUploadMode === 'file'}
               disabled={dataUploadMode !== 'file' || useFixedUploadMethod}
               onChange={(file) => {
