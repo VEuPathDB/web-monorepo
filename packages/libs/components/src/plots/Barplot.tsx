@@ -172,9 +172,9 @@ const Barplot = makePlotlyPlotComponent(
       axisTruncationConfig?.dependentAxis,
       'number',
       // set plot type not to have padding/margin on the min
-      'barplot'
+      'barplot',
+      dependentAxisLogScale
     ) as NumberRange | undefined;
-
     // make rectangular layout shapes for truncated axis/missing data
     const truncatedAxisHighlighting:
       | Partial<Shape>[]
@@ -221,9 +221,7 @@ const Barplot = makePlotlyPlotComponent(
             extendedDependentAxisRange?.max,
           ].map((val) =>
             dependentAxisLogScale && val != null
-              ? val <= 0
-                ? -0.1 // for count's logscale
-                : Math.log10(val as number)
+              ? Math.log10(val as number)
               : val
           )
         : [0, 10],

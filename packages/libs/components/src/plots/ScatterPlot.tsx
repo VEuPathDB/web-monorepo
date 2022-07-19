@@ -80,7 +80,9 @@ const ScatterPlot = makePlotlyPlotComponent(
     const extendedIndependentAxisRange = extendAxisRangeForTruncations(
       standardIndependentAxisRange,
       axisTruncationConfig?.independentAxis,
-      independentValueType === 'date' ? 'date' : 'number'
+      independentValueType === 'date' ? 'date' : 'number',
+      'scatterplot',
+      independentAxisLogScale
     );
 
     // truncation
@@ -131,9 +133,7 @@ const ScatterPlot = makePlotlyPlotComponent(
               extendedIndependentAxisRange?.max,
             ].map((val) =>
               independentAxisLogScale && val != null
-                ? val <= 0
-                  ? -0.1
-                  : Math.log10(val as number)
+                ? Math.log10(val as number)
                 : val
             )
           : undefined,

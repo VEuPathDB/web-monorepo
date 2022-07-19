@@ -17,10 +17,8 @@ export function logScaleDtick(range: NumberOrDateRange | undefined): number {
     isNumber(range.min)
   ) {
     const ratio = range.max / range.min;
-    console.log(ratio);
     if (ratio < 10) {
       if (ratio >= 2) return Math.log10(2);
-
       // for extreme low-range cases like body temperature
       // unfortunately does not give integer tick marks
       return Math.log10(1.1);
