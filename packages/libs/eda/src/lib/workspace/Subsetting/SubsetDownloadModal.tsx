@@ -36,7 +36,6 @@ import useDimensions from 'react-cool-dimensions';
 import { useFeaturedFields } from '../../core/components/variableTrees/hooks';
 import { useProcessedGridData, processGridData } from './hooks';
 import tableSVG from './cartoon_table.svg';
-import './SubsetDownloadModal.scss';
 
 type SubsetDownloadModalProps = {
   /** Should the modal currently be visible? */
@@ -708,6 +707,7 @@ export default function SubsetDownloadModal({
       }
       subtitle={analysisNameTrunc && <i>{analysisNameTrunc}</i>}
       titleSize="medium"
+      compactTitle
       includeCloseButton={true}
       visible={displayModal}
       toggleVisible={toggleDisplay}
@@ -724,9 +724,6 @@ export default function SubsetDownloadModal({
           size: {
             height: '100%',
           },
-        },
-        header: {
-          compact: true,
         },
       }}
     >
