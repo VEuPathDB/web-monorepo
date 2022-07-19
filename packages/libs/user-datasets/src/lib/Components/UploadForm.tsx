@@ -231,6 +231,14 @@ function UploadForm({
     };
   }, [clearBadUpload]);
 
+  const nameInputProps = datasetUploadType.formConfig.name?.inputProps;
+  const summaryInputProps = datasetUploadType.formConfig.summary?.inputProps;
+  const descriptionInputProps =
+    datasetUploadType.formConfig.description?.inputProps;
+
+  const summaryRequired = summaryInputProps?.required ?? true;
+  const descriptionRequired = descriptionInputProps?.required ?? true;
+
   const uploadMethodItems = [
     {
       value: 'file',
@@ -335,10 +343,6 @@ function UploadForm({
           ]
     );
 
-  const summaryRequired = datasetUploadType.formConfig.summary?.required;
-  const descriptionRequired =
-    datasetUploadType.formConfig.description?.required;
-
   return (
     <form
       className={cx()}
@@ -349,13 +353,16 @@ function UploadForm({
       <div>
         <h2>{datasetUploadType.uploadTitle}</h2>
         <div className="formSection">
-          <FieldLabel htmlFor="data-set-name">Name</FieldLabel>
+          <FieldLabel required htmlFor="data-set-name">
+            Name
+          </FieldLabel>
           <br />
           <TextBox
             type="input"
             id="data-set-name"
-            required
             placeholder="name of the data set"
+            {...nameInputProps}
+            required
             value={name}
             onChange={setName}
           />
@@ -367,8 +374,9 @@ function UploadForm({
           <TextBox
             type="input"
             id="data-set-summary"
-            required={summaryRequired}
             placeholder="brief summary of the data set contents"
+            required={summaryRequired}
+            {...summaryInputProps}
             value={summary}
             onChange={setSummary}
           />
@@ -382,8 +390,9 @@ function UploadForm({
           </FieldLabel>
           <TextArea
             id="data-set-description"
-            required={descriptionRequired}
             placeholder="brief description of the data set contents"
+            required={descriptionRequired}
+            {...descriptionInputProps}
             value={description}
             onChange={setDescription}
           />
@@ -434,14 +443,10 @@ interface FieldLabelProps
     HTMLLabelElement
   > {
   children: ReactNode;
-  required?: boolean;
+  required: boolean;
 }
 
-function FieldLabel({
-  children,
-  required = true,
-  ...labelProps
-}: FieldLabelProps) {
+function FieldLabel({ children, required, ...labelProps }: FieldLabelProps) {
   return (
     <label {...labelProps}>
       {children}

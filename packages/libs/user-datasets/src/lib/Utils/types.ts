@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 
 export interface UserDatasetMeta {
   description: string;
@@ -71,11 +71,14 @@ export interface DatasetUploadTypeConfigEntry<T extends string> {
   type: T;
   uploadTitle: string;
   formConfig: {
+    name?: {
+      inputProps: Partial<React.InputHTMLAttributes<HTMLInputElement>>;
+    };
     summary?: {
-      required: boolean;
+      inputProps: Partial<React.InputHTMLAttributes<HTMLInputElement>>;
     };
     description?: {
-      required: boolean;
+      inputProps: Partial<React.TextareaHTMLAttributes<HTMLTextAreaElement>>;
     };
     uploadMethodConfig: {
       url?: UrlUploadConfig;

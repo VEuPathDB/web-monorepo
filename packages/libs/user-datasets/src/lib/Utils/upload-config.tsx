@@ -51,8 +51,17 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
     type: 'isasimple',
     uploadTitle: 'Upload My Study',
     formConfig: {
+      summary: {
+        inputProps: {
+          placeholder: 'brief summary of the data set in 1-2 sentences',
+        },
+      },
       description: {
-        required: false,
+        inputProps: {
+          required: false,
+          placeholder:
+            'optional longer description of the data set including background, study objectives, methodology, etc.',
+        },
       },
       uploadMethodConfig: {
         url: {
