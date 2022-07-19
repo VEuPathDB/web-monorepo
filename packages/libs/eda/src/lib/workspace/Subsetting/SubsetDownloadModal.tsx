@@ -24,6 +24,7 @@ import {
   EnhancedEntityData,
   EnhancedEntityDatum,
 } from '../DownloadTab/hooks/useEnhancedEntityData';
+import { gray } from '@veupathdb/coreui/dist/definitions/colors';
 
 // Hooks
 import {
@@ -743,7 +744,7 @@ export default function SubsetDownloadModal({
                 style={{
                   fontSize: 18,
                   fontWeight: 500,
-                  color: '#646464',
+                  color: gray[600],
                 }}
               >
                 {currentEntity?.displayNamePlural}
