@@ -46,7 +46,6 @@ export const plugin: ComputationPlugin = {
         }
       },
       hideShowMissingnessToggle: true,
-      hideTrendlines: true,
     }),
   },
 };
