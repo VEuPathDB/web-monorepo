@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 
 export interface UserDatasetMeta {
   description: string;
@@ -49,7 +49,8 @@ export interface UserDatasetUpload {
   id: string;
   datasetId?: number;
   datasetName: string;
-  summary: string;
+  summary?: string;
+  description?: string;
   projects: string[];
   status: string;
   errors: string[];
@@ -70,6 +71,15 @@ export interface DatasetUploadTypeConfigEntry<T extends string> {
   type: T;
   uploadTitle: string;
   formConfig: {
+    name?: {
+      inputProps: Partial<React.InputHTMLAttributes<HTMLInputElement>>;
+    };
+    summary?: {
+      inputProps: Partial<React.InputHTMLAttributes<HTMLInputElement>>;
+    };
+    description?: {
+      inputProps: Partial<React.TextareaHTMLAttributes<HTMLTextAreaElement>>;
+    };
     uploadMethodConfig: {
       url?: UrlUploadConfig;
       result?: ResultUploadConfig;

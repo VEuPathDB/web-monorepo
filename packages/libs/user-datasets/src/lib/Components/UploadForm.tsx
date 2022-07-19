@@ -1,5 +1,6 @@
 import React, {
   FormEvent,
+  ReactNode,
   useCallback,
   useEffect,
   useMemo,
@@ -42,6 +43,7 @@ interface Props<T extends string = string> {
   resultUploadConfig?: ResultUploadConfig;
   clearBadUpload: () => void;
   submitForm: (newUserDataset: FormSubmission, redirectTo?: string) => void;
+  supportedFileUploadTypes: string[];
 }
 
 type DataUploadMode = 'file' | 'url' | 'strategy' | 'step';
@@ -90,6 +92,7 @@ function UploadForm({
   resultUploadConfig,
   clearBadUpload,
   submitForm,
+  supportedFileUploadTypes,
 }: Props) {
   const strategyOptionsByStrategyId = useMemo(
     () => keyBy(strategyOptions, (option) => option.strategyId),
@@ -230,13 +233,26 @@ function UploadForm({
     };
   }, [clearBadUpload]);
 
+  const nameInputProps = datasetUploadType.formConfig.name?.inputProps;
+  const summaryInputProps = datasetUploadType.formConfig.summary?.inputProps;
+  const descriptionInputProps =
+    datasetUploadType.formConfig.description?.inputProps;
+
+  const summaryRequired = summaryInputProps?.required ?? true;
+  const descriptionRequired = descriptionInputProps?.required ?? true;
+
   const uploadMethodItems = [
     {
       value: 'file',
       disabled: useFixedUploadMethod,
       display: (
         <React.Fragment>
-          <label htmlFor="data-set-file">Upload File:</label>
+          <FieldLabel
+            htmlFor="data-set-file"
+            required={dataUploadMode === 'file'}
+          >
+            Upload File
+          </FieldLabel>
           <div
             id="data-set-file"
             className={cx(
@@ -245,6 +261,9 @@ function UploadForm({
             )}
           >
             <FileInput
+              accept={supportedFileUploadTypes
+                .map((fileUploadType) => `.${fileUploadType}`)
+                .join(',')}
               required={dataUploadMode === 'file'}
               disabled={dataUploadMode !== 'file' || useFixedUploadMethod}
               onChange={(file) => {
@@ -265,7 +284,12 @@ function UploadForm({
               disabled: useFixedUploadMethod,
               display: (
                 <React.Fragment>
-                  <label htmlFor="data-set-url">Upload URL:</label>
+                  <FieldLabel
+                    htmlFor="data-set-url"
+                    required={dataUploadMode === 'url'}
+                  >
+                    Upload URL
+                  </FieldLabel>
                   <TextBox
                     type="input"
                     className={cx(
@@ -293,7 +317,12 @@ function UploadForm({
               disabled: !enableStrategyUploadMethod || useFixedUploadMethod,
               display: (
                 <React.Fragment>
-                  <label htmlFor="data-set-strategy">Upload Strategy:</label>
+                  <FieldLabel
+                    htmlFor="data-set-strategy"
+                    required={dataUploadMode === 'strategy'}
+                  >
+                    Upload Strategy
+                  </FieldLabel>
                   <div
                     id="data-set-strategy"
                     className={cx(
@@ -329,36 +358,46 @@ function UploadForm({
       <div>
         <h2>{datasetUploadType.uploadTitle}</h2>
         <div className="formSection">
-          <label htmlFor="data-set-name">
-            Name:
-            <br />
-          </label>
+          <FieldLabel required htmlFor="data-set-name">
+            Name
+          </FieldLabel>
+          <br />
           <TextBox
             type="input"
             id="data-set-name"
-            required={true}
             placeholder="name of the data set"
+            {...nameInputProps}
+            required
             value={name}
             onChange={setName}
           />
         </div>
         <div className="formSection">
-          <label htmlFor="data-set-summary">Summary:</label>
+          <FieldLabel htmlFor="data-set-summary" required={summaryRequired}>
+            Summary
+          </FieldLabel>
           <TextBox
             type="input"
             id="data-set-summary"
-            required={true}
             placeholder="brief summary of the data set contents"
+            required={summaryRequired}
+            {...summaryInputProps}
             value={summary}
             onChange={setSummary}
           />
         </div>
         <div className="formSection">
-          <label htmlFor="data-set-description">Description:</label>
+          <FieldLabel
+            htmlFor="data-set-description"
+            required={descriptionRequired}
+          >
+            Description
+          </FieldLabel>
           <TextArea
             id="data-set-description"
-            required={true}
             placeholder="brief description of the data set contents"
+            required={descriptionRequired}
+            {...descriptionInputProps}
             value={description}
             onChange={setDescription}
           />
@@ -400,6 +439,24 @@ function UploadForm({
       </button>
       {datasetUploadType.formConfig?.renderInfo?.()}
     </form>
+  );
+}
+
+interface FieldLabelProps
+  extends React.DetailedHTMLProps<
+    React.LabelHTMLAttributes<HTMLLabelElement>,
+    HTMLLabelElement
+  > {
+  children: ReactNode;
+  required: boolean;
+}
+
+function FieldLabel({ children, required, ...labelProps }: FieldLabelProps) {
+  return (
+    <label {...labelProps}>
+      {children}
+      {required ? '*' : null}
+    </label>
   );
 }
 
