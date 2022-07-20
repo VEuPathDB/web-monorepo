@@ -111,13 +111,21 @@ export function BirdsEyeView(props: Props) {
   );
 
   return birdsEyeData ? (
-    <div style={{ display: 'flex' }}>
+    <div
+      style={{
+        display: 'flex',
+      }}
+    >
       <BirdsEyePlot
         data={birdsEyeData}
         containerClass="birds-eye-plot"
         containerStyles={{
           width: '400px',
-          height: '110px',
+          height: '115px',
+          border: '1px solid #bfbfbf',
+          backgroundColor: 'rgb(250, 250, 250)',
+          paddingBottom: 5,
+          paddingRight: 5,
         }}
         spacingOptions={{
           marginTop: 5,
@@ -132,8 +140,8 @@ export function BirdsEyeView(props: Props) {
       <Tooltip
         content={tooltipContent}
         position={{
-          my: 'middle middle',
-          at: 'middle middle',
+          my: 'right middle',
+          at: 'right middle',
         }}
         showDelay={250}
         showTip={false}
@@ -142,7 +150,7 @@ export function BirdsEyeView(props: Props) {
           style={{
             position: 'relative',
             right: '18px',
-            top: '7px',
+            top: '6px',
             height: '1rem',
             width: '1rem',
             fontSize: '0.95rem',
@@ -153,7 +161,5 @@ export function BirdsEyeView(props: Props) {
         ></i>
       </Tooltip>
     </div>
-  ) : (
-    <div style={{ width: '400px', height: '110px' }}></div>
-  );
+  ) : null;
 }

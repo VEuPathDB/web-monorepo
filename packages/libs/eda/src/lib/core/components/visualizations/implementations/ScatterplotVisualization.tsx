@@ -911,6 +911,13 @@ function ScatterplotViz(props: VisualizationProps) {
     />
   );
 
+  const showOverlayLegend =
+    ((computation?.descriptor.type === 'pass' ||
+      computation?.descriptor.type === 'alphadiv' ||
+      computation?.descriptor.type === 'xyrelationships') &&
+      vizConfig.overlayVariable != null &&
+      legendItems.length > 0) || // pass-through & alphadiv & X-Y relationships
+    (computation?.descriptor.type === 'abundance' && legendItems.length === 1); // show legend for single overlay
   const legendNode = !data.pending && data.value != null && (
     <PlotLegend
       legendItems={legendItems}
@@ -924,15 +931,7 @@ function ScatterplotViz(props: VisualizationProps) {
       }
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
       // add a condition to show legend even for single overlay data
-      showOverlayLegend={
-        ((computation?.descriptor.type === 'pass' ||
-          computation?.descriptor.type === 'alphadiv' ||
-          computation?.descriptor.type === 'xyrelationships') &&
-          vizConfig.overlayVariable != null &&
-          legendItems.length > 0) || // pass-through & alphadiv & X-Y relationships
-        (computation?.descriptor.type === 'abundance' &&
-          legendItems.length === 1) // show legend for single overlay
-      }
+      showOverlayLegend={showOverlayLegend}
     />
   );
 
@@ -1118,7 +1117,7 @@ function ScatterplotViz(props: VisualizationProps) {
       />
       <PlotLayout
         isFaceted={isFaceted(data.value?.dataSetProcess)}
-        legendNode={legendNode}
+        legendNode={showOverlayLegend ? legendNode : null}
         plotNode={plotNode}
         tableGroupNode={tableGroupNode}
       />

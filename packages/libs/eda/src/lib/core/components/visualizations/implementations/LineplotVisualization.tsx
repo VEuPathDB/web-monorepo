@@ -740,6 +740,8 @@ function LineplotViz(props: VisualizationProps) {
     />
   );
 
+  const showOverlayLegend =
+    vizConfig.overlayVariable != null && legendItems.length > 0;
   const legendNode = !data.pending && data.value != null && (
     <PlotLegend
       legendItems={legendItems}
@@ -747,9 +749,7 @@ function LineplotViz(props: VisualizationProps) {
       legendTitle={variableDisplayWithUnit(overlayVariable)}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
       // add a condition to show legend even for single overlay data and check legendItems exist
-      showOverlayLegend={
-        vizConfig.overlayVariable != null && legendItems.length > 0
-      }
+      showOverlayLegend={showOverlayLegend}
     />
   );
 
@@ -988,7 +988,7 @@ function LineplotViz(props: VisualizationProps) {
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
       <PlotLayout
         isFaceted={isFaceted(data.value?.dataSetProcess)}
-        legendNode={legendNode}
+        legendNode={showOverlayLegend ? legendNode : null}
         plotNode={plotNode}
         tableGroupNode={tableGroupNode}
       />

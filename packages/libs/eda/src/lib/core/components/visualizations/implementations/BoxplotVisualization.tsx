@@ -541,6 +541,8 @@ function BoxplotViz(props: VisualizationProps) {
     />
   );
 
+  const showOverlayLegend =
+    vizConfig.overlayVariable != null && legendItems.length > 0;
   const legendNode = legendItems != null && !data.pending && data != null && (
     <PlotLegend
       legendItems={legendItems}
@@ -548,9 +550,7 @@ function BoxplotViz(props: VisualizationProps) {
       legendTitle={variableDisplayWithUnit(overlayVariable)}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
       // add a condition to show legend even for single overlay data and check legendItems exist
-      showOverlayLegend={
-        vizConfig.overlayVariable != null && legendItems.length > 0
-      }
+      showOverlayLegend={showOverlayLegend}
     />
   );
 
@@ -685,7 +685,7 @@ function BoxplotViz(props: VisualizationProps) {
       />
       <PlotLayout
         isFaceted={isFaceted(data.value)}
-        legendNode={legendNode}
+        legendNode={showOverlayLegend ? legendNode : null}
         plotNode={plotNode}
         tableGroupNode={tableGroupNode}
       />
