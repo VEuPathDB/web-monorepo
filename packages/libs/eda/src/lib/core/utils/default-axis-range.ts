@@ -13,20 +13,18 @@ export function numberDateDefaultAxisRange(
   /** are we using a log scale */
   logScale?: boolean
 ): NumberOrDateRange | undefined {
-  // make universal range variable
-  if (
-    Variable.is(variable)
-    // && (plotName === 'scatterplot' || plotName === 'lineplot')
-  ) {
-    // this should check integer as well
+  if (Variable.is(variable)) {
     if (variable.type === 'number' || variable.type === 'integer') {
       const defaults = variable.distributionDefaults;
-      // find the smallest positive value of dependent axis
       return defaults.displayRangeMin != null &&
         defaults.displayRangeMax != null
         ? {
             min:
-              logScale && observedMin != null && observedMin <= 0
+              logScale &&
+              observedMin != null &&
+              (observedMin <= 0 ||
+                defaults.displayRangeMin <= 0 ||
+                defaults.rangeMin <= 0)
                 ? (observedMinPos as number)
                 : observedMin != null
                 ? Math.min(

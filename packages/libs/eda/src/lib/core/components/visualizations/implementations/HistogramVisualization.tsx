@@ -815,7 +815,7 @@ function HistogramPlotWithControls({
     () =>
       truncationConfig(
         {
-          ...defaultUIState,
+          ...defaultUIState, // using annotated range, NOT the actual data
           ...(dependentMinPosMax != null
             ? { dependentAxisRange: dependentMinPosMax }
             : {}),

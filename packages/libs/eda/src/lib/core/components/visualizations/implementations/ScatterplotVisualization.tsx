@@ -534,12 +534,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     data.value?.xMax,
     vizConfig.independentAxisLogScale
   );
-  const independentAxisIsLogTruncated =
-    vizConfig.independentAxisLogScale &&
-    data.value?.xMin != null &&
-    data.value.xMin <= 0
-      ? true
-      : false;
 
   // use custom hook
   const defaultDependentAxisRange = useDefaultAxisRange(
@@ -549,12 +543,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     data.value?.yMax,
     vizConfig.dependentAxisLogScale
   );
-  const dependentAxisIsLogTruncated =
-    vizConfig.dependentAxisLogScale &&
-    data.value?.yMin != null &&
-    data.value.yMin <= 0
-      ? true
-      : false;
 
   // yMinMaxDataRange will be used for truncation to judge whether data has negative value
   const xMinMaxDataRange = useMemo(
@@ -926,8 +914,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
       xMinMaxDataRange={xMinMaxDataRange}
       yMinMaxDataRange={yMinMaxDataRange}
-      independentAxisIsLogTruncated={independentAxisIsLogTruncated}
-      dependentAxisIsLogTruncated={dependentAxisIsLogTruncated}
       allowTrendlines={!options?.hideTrendlines}
     />
   );
@@ -1161,8 +1147,6 @@ type ScatterplotWithControlsProps = Omit<ScatterPlotProps, 'data'> & {
   onDependentAxisLogScaleChange: (value: boolean) => void;
   xMinMaxDataRange: NumberOrDateRange | undefined;
   yMinMaxDataRange: NumberOrDateRange | undefined;
-  independentAxisIsLogTruncated: boolean;
-  dependentAxisIsLogTruncated: boolean;
   allowTrendlines: boolean;
 };
 
@@ -1197,8 +1181,6 @@ function ScatterplotWithControls({
   onDependentAxisLogScaleChange,
   xMinMaxDataRange,
   yMinMaxDataRange,
-  independentAxisIsLogTruncated,
-  dependentAxisIsLogTruncated,
   ...scatterplotProps
 }: ScatterplotWithControlsProps) {
   const plotRef = useUpdateThumbnailEffect(
@@ -1290,22 +1272,25 @@ function ScatterplotWithControls({
         {
           // truncation overrides for the axis minima for log scale
           // only pass values that you want to take effect!
-          ...(independentAxisIsLogTruncated
+          ...(vizConfig.independentAxisLogScale &&
+          xMinMaxDataRange?.min != null &&
+          xMinMaxDataRange.min <= 0
             ? { truncationConfigIndependentAxisMin: true }
             : {}),
-          ...(dependentAxisIsLogTruncated
+          ...(vizConfig.dependentAxisLogScale &&
+          yMinMaxDataRange?.min != null &&
+          yMinMaxDataRange.min <= 0
             ? { truncationConfigDependentAxisMin: true }
             : {}),
         }
       ),
     [
-      defaultUIState,
       vizConfig.independentAxisRange,
       vizConfig.dependentAxisRange,
       xMinMaxDataRange,
       yMinMaxDataRange,
-      independentAxisIsLogTruncated,
-      dependentAxisIsLogTruncated,
+      vizConfig.independentAxisLogScale,
+      vizConfig.dependentAxisLogScale,
     ]
   );
 

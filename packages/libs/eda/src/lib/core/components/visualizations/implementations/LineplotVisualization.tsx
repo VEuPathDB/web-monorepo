@@ -84,7 +84,6 @@ import {
 import { gray } from '../colors';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 // import variable's metadata-based independent axis range utils
-import { defaultIndependentAxisRange } from '../../../utils/default-independent-axis-range';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import PluginError from '../PluginError';
 import PlotLegend, {
@@ -103,13 +102,14 @@ import Tooltip from '@veupathdb/wdk-client/lib/Components/Overlays/Tooltip';
 import { NumberOrDateRange as NumberOrDateRangeT } from '../../../types/general';
 import { padISODateTime } from '../../../utils/date-conversion';
 // reusable util for computing truncationConfig
-import { truncationConfig } from '../../../utils/truncation-config-utils-viz';
+import { truncationConfig } from '../../../utils/truncation-config-utils';
 // use Notification for truncation warning message
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 import Button from '@veupathdb/components/lib/components/widgets/Button';
 import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
 import { UIState } from '../../filter/HistogramFilter';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
+import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 
 const plotContainerStyles = {
   width: 750,
@@ -132,8 +132,10 @@ interface LinePlotDataWithCoverage extends CoverageStatistics {
   dataSetProcess: LinePlotData | FacetedData<LinePlotData>;
   // change these types to be compatible with new axis range
   xMin: number | string | undefined;
+  xMinPos: number | string | undefined;
   xMax: number | string | undefined;
   yMin: number | string | undefined;
+  yMinPos: number | string | undefined;
   yMax: number | string | undefined;
 }
 
@@ -549,7 +551,10 @@ function LineplotViz(props: VisualizationProps) {
       outputEntity,
       filteredCounts,
       categoricalMode,
-      vizConfig.independentAxisRange,
+      // the following looks nasty but it seems to work
+      // the back end only makes use of the x-axis viewport (aka independentAxisRange)
+      // when binning is in force, so no need to trigger a new request unless binning
+      vizConfig.useBinning ? vizConfig.independentAxisRange : undefined,
       valuesAreSpecified,
     ])
   );
@@ -559,114 +564,51 @@ function LineplotViz(props: VisualizationProps) {
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
 
-  // variable's metadata-based independent axis range with margin
-  const defaultIndependentRangeMargin = useMemo(() => {
-    const defaultIndependentRange = defaultIndependentAxisRange(
-      xAxisVariable,
-      'lineplot'
-    );
-    // extend range due to potential binStart/Ends being outside provided range
-    const extendedIndependentRange =
-      data.value?.xMin != null &&
-      data.value?.xMax != null &&
-      defaultIndependentRange != null
-        ? ({
-            min:
-              data.value.xMin < defaultIndependentRange.min
-                ? data.value.xMin
-                : defaultIndependentRange.min,
-            max:
-              data.value.xMax > defaultIndependentRange.max
-                ? data.value.xMax
-                : defaultIndependentRange.max,
-          } as NumberOrDateRange)
-        : defaultIndependentRange;
-    // need to check date type for the case switching from string to date variable
-    // it is because date value is also string which causes issue at axisRangeMargin
-    return xAxisVariable?.type === 'date' &&
-      (isNaN(Date.parse(extendedIndependentRange?.min as string)) ||
-        isNaN(Date.parse(extendedIndependentRange?.max as string)))
-      ? undefined
-      : // no padding is made here
-        extendedIndependentRange;
-  }, [xAxisVariable, data.value]);
+  // TO DO: rename this defaultIndependentAxisRange
+  const defaultIndependentRangeMargin = useDefaultAxisRange(
+    xAxisVariable,
+    data.value?.xMin,
+    data.value?.xMinPos,
+    data.value?.xMax,
+    vizConfig.independentAxisLogScale
+  );
+  console.log(defaultIndependentRangeMargin);
 
-  // yMinMaxDataRange will be used for truncation to judge whether data has negative value
+  const xMinMaxDataRange = useMemo(
+    () =>
+      // This useBinning edge case handling is a bit of kludge.
+      // The same situation affects the histogram independent axis (all the time).
+      // The problem is if you make a data request for an x-axis viewport (aka zoom to range), then
+      // the xMin and xMax are calculated from the response, which is just for the requested
+      // viewport.  Using the data-derived xMin and xMax works great for client-side zooming,
+      // because the data doesn't change. But for server-side zooming we can't use xMin and xMax from
+      // the response.
+      // Two possible solutions I can think of:
+      // 1. Client makes a request for unzoomed data to get the xMin and xMax, and remembers this.
+      // 2. Server returns the truncation flags for us, somehow.
+      vizConfig.useBinning
+        ? defaultIndependentRangeMargin
+        : data.value != null
+        ? ({ min: data.value.xMin, max: data.value?.xMax } as NumberOrDateRange)
+        : undefined,
+    [data, vizConfig.useBinning]
+  );
   const yMinMaxDataRange = useMemo(
     () =>
       data.value != null
-        ? { min: data.value.yMin, max: data.value?.yMax }
+        ? ({ min: data.value.yMin, max: data.value?.yMax } as NumberOrDateRange)
         : undefined,
     [data]
   );
 
-  // find the smallest positive value of dependent axis
-  const smallestPositiveDependentAxisValue = useMemo(() => {
-    return data.value != null &&
-      (yAxisVariable?.type === 'number' ||
-        yAxisVariable?.type === 'integer' ||
-        categoricalMode)
-      ? !isFaceted(data.value?.dataSetProcess)
-        ? min(
-            data.value?.dataSetProcess.series.map((series) =>
-              min((series.y as number[]).filter((value: number) => value > 0))
-            )
-          )
-        : min(
-            data.value?.dataSetProcess.facets.flatMap((facet) =>
-              facet?.data?.series.flatMap((series) =>
-                min((series.y as number[]).filter((y) => y > 0))
-              )
-            )
-          )
-      : undefined;
-  }, [data]);
-
   // find deependent axis range and its margin
-  const defaultDependentRangeMargin = useMemo(() => {
-    const yMinMaxRange = categoricalMode
-      ? vizConfig.dependentAxisLogScale
-        ? { min: smallestPositiveDependentAxisValue as number, max: 1 }
-        : { min: 0, max: 1 }
-      : data.value?.yMin != null && data.value?.yMax != null
-      ? yAxisVariable?.type === 'date'
-        ? ({
-            // make sure axis range includes a zero (except for dates, see below)
-            min: min([data.value.yMin, 0]), // lodash min/max handles strings
-            max: max([data.value.yMax, 0]), // or numbers appropriately
-            // and with strings/dates, if you put the zero as the second value, min or max always returns the string
-            // so min(["foo", 0]) is "foo" and min([0, "foo"]) is 0 **
-            // which is our desired behaviour (no need to anchor date axes at 1970 or whatever)
-            // (** TO DO: is this documented lodash behaviour, or likely to change?)
-          } as NumberOrDateRange)
-        : vizConfig.dependentAxisLogScale
-        ? {
-            min: smallestPositiveDependentAxisValue as number,
-            max: data.value.yMax as number,
-          }
-        : {
-            min: min([data.value.yMin, 0]) as number,
-            max: max([data.value.yMax, 0]) as number,
-          }
-      : undefined;
-
-    return ((yAxisVariable?.type === 'number' ||
-      yAxisVariable?.type === 'integer' ||
-      (yAxisVariable?.type === 'string' && categoricalMode)) &&
-      typeof yMinMaxRange?.min === 'number' &&
-      typeof yMinMaxRange?.max === 'number') ||
-      (yAxisVariable?.type === 'date' &&
-        typeof yMinMaxRange?.min === 'string' &&
-        typeof yMinMaxRange?.max === 'string')
-      ? // no padding is made here
-        yMinMaxRange
-      : undefined;
-  }, [
-    data.value,
+  const defaultDependentRangeMargin = useDefaultAxisRange(
     yAxisVariable,
-    categoricalMode,
-    vizConfig.dependentAxisLogScale,
-  ]);
+    data.value?.yMin,
+    data.value?.yMinPos,
+    data.value?.yMax,
+    vizConfig.dependentAxisLogScale
+  );
 
   // custom legend list
   const legendItems: LegendItemsProps[] = useMemo(() => {
@@ -792,6 +734,7 @@ function LineplotViz(props: VisualizationProps) {
       setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
       onIndependentAxisLogScaleChange={onIndependentAxisLogScaleChange}
       onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
+      xMinMaxDataRange={xMinMaxDataRange}
       yMinMaxDataRange={yMinMaxDataRange}
     />
   );
@@ -1081,9 +1024,8 @@ type LineplotWithControlsProps = Omit<LinePlotProps, 'data'> & {
   ) => void;
   onIndependentAxisLogScaleChange: (value: boolean) => void;
   onDependentAxisLogScaleChange: (value: boolean) => void;
-  yMinMaxDataRange:
-    | { min: string | number | undefined; max: string | number | undefined }
-    | undefined;
+  xMinMaxDataRange: NumberOrDateRange | undefined;
+  yMinMaxDataRange: NumberOrDateRange | undefined;
 };
 
 function LineplotWithControls({
@@ -1113,6 +1055,7 @@ function LineplotWithControls({
   setTruncatedDependentAxisWarning,
   onIndependentAxisLogScaleChange,
   onDependentAxisLogScaleChange,
+  xMinMaxDataRange,
   yMinMaxDataRange,
   ...lineplotProps
 }: LineplotWithControlsProps) {
@@ -1210,17 +1153,32 @@ function LineplotWithControls({
   } = useMemo(
     () =>
       truncationConfig(
-        defaultUIState,
+        {
+          independentAxisRange: xMinMaxDataRange,
+          dependentAxisRange: yMinMaxDataRange,
+        },
         vizConfig,
-        defaultDependentAxisRange,
-        vizConfig.dependentAxisLogScale,
-        yMinMaxDataRange
+        {
+          // overrides for logscale when values go zero or negative
+          ...(vizConfig.independentAxisLogScale &&
+          xMinMaxDataRange?.min != null &&
+          xMinMaxDataRange.min <= 0
+            ? { truncationConfigIndependentAxisMin: true }
+            : {}),
+          ...(vizConfig.dependentAxisLogScale &&
+          yMinMaxDataRange?.min != null &&
+          yMinMaxDataRange.min <= 0
+            ? { truncationConfigDependentAxisMin: true }
+            : {}),
+        }
       ),
     [
-      defaultUIState,
+      xMinMaxDataRange,
+      yMinMaxDataRange,
       vizConfig.independentAxisRange,
       vizConfig.dependentAxisRange,
-      defaultDependentAxisRange,
+      vizConfig.independentAxisLogScale,
+      vizConfig.dependentAxisLogScale,
     ]
   );
 
@@ -1257,7 +1215,6 @@ function LineplotWithControls({
     setTruncatedDependentAxisWarning,
   ]);
 
-  // send histogramProps with additional props
   const lineplotPlotProps = {
     ...lineplotProps,
     // axis range control
@@ -1558,7 +1515,15 @@ export function lineplotResponseToData(
   );
 
   const processedData = mapValues(facetGroupedResponseData, (group) => {
-    const { dataSetProcess, yMin, yMax, xMin, xMax } = processInputData(
+    const {
+      dataSetProcess,
+      yMin,
+      yMinPos,
+      yMax,
+      xMin,
+      xMinPos,
+      xMax,
+    } = processInputData(
       reorderResponseLineplotData(
         // reorder by overlay var within each facet
         group,
@@ -1582,15 +1547,19 @@ export function lineplotResponseToData(
     return {
       dataSetProcess: dataSetProcess,
       yMin,
+      yMinPos,
       yMax,
       xMin,
+      xMinPos,
       xMax,
     };
   });
 
   const xMin = min(map(processedData, ({ xMin }) => xMin));
+  const xMinPos = min(map(processedData, ({ xMinPos }) => xMinPos));
   const xMax = max(map(processedData, ({ xMax }) => xMax));
   const yMin = min(map(processedData, ({ yMin }) => yMin));
+  const yMinPos = min(map(processedData, ({ yMinPos }) => yMin));
   const yMax = max(map(processedData, ({ yMax }) => yMax));
 
   const dataSetProcess =
@@ -1611,8 +1580,10 @@ export function lineplotResponseToData(
     dataSetProcess,
     // calculated y axis limits
     xMin,
+    xMinPos,
     xMax,
     yMin,
+    yMinPos,
     yMax,
     // CoverageStatistics
     completeCases: response.completeCasesTable,
@@ -1991,8 +1962,10 @@ function processInputData(
       ...binWidthSliderData,
     },
     xMin: min(xValues),
+    xMinPos: min(xValues.filter((value) => value != null && value > 0)),
     xMax: max(xValues),
     yMin: min(yValues),
+    yMinPos: min(yValues.filter((value) => value != null && value > 0)),
     yMax: max(yValues),
   };
 }
