@@ -12,9 +12,9 @@ import {
 import {
   ColorHue,
   mutedBlue,
-  mutedGreen,
-  mutedRed,
-  mutedYellow
+  success,
+  error,
+  warning
 } from '../../definitions/colors';
 import { UITheme, useUITheme } from '../theming';
 
@@ -42,9 +42,9 @@ export default function makeSnackbarProvider<
   displayName: string = 'SnackbarProvider'
 ) {
   const useStyles = makeStyles({
-    variantSuccess: makeSnackbarVariantStyles(mutedGreen),
-    variantError: makeSnackbarVariantStyles(mutedRed),
-    variantWarning: makeSnackbarVariantStyles(mutedYellow),
+    variantSuccess: makeSnackbarVariantStyles(success),
+    variantError: makeSnackbarVariantStyles(error),
+    variantWarning: makeSnackbarVariantStyles(warning),
     variantInfo({ theme }) {
       return makeSnackbarVariantStyles(
         theme?.palette.primary.hue ?? mutedBlue

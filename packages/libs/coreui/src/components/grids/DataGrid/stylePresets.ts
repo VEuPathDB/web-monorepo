@@ -1,5 +1,6 @@
 import React from 'react';
 import { gray } from '../../../definitions/colors';
+import { PaginationControlsStyleSpec } from './PaginationControls';
 
 export type DataGridStyleSpec = {
   /** Styles for the table element. */
@@ -22,6 +23,14 @@ export type DataGridStyleSpec = {
     inactiveColor: NonNullable<React.CSSProperties['color']>;
     activeColor: NonNullable<React.CSSProperties['color']>;
   };
+  size?: {
+    width?: React.CSSProperties['width'];
+    height?: React.CSSProperties['height'];
+  };
+  paginationControls?: {
+    top?: PaginationControlsStyleSpec;
+    bottom?: PaginationControlsStyleSpec;
+  }
 };
 
 const mesa: DataGridStyleSpec = {
@@ -90,6 +99,10 @@ const stylePresets: {
       inactiveColor: gray[200],
       activeColor: gray[400],
     },
+    size: {
+      width: 'auto',
+      height: 'auto',
+    }
   },
   mesa,
 };

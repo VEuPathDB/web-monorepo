@@ -248,7 +248,12 @@ export default function DataGrid({
   }, [rows, toggleRowSelected]);
   
   return (
-    <div>
+    <div css={{
+      display: 'flex',
+      flexDirection: 'column',
+      height: finalStyle.size?.height,
+      width: finalStyle.size?.width,
+    }}>
       {title && <H3 text={title} additionalStyles={{ marginBottom: 20 }} />}
       {['top', 'both'].includes(pagination?.controlsLocation ?? '') && (
         <PaginationControls
@@ -264,14 +269,17 @@ export default function DataGrid({
           setPageSize={setPageSize}
           pageOptions={pageOptions}
           pagination={pagination}
+          styleOverrides={finalStyle.paginationControls?.top}
         />
       )}
-      <div css={{overflow: finalStyle.table.overflow}}>
+      <div css={{
+        height: '100%',
+        overflow: finalStyle.table.overflow,
+      }}>
         <table
           {...getTableProps()}
           css={{
             borderCollapse: 'collapse',
-            marginBottom: 10,
             borderWidth: finalStyle.table.borderWidth,
             borderStyle: finalStyle.table.borderStyle,
             borderColor: finalStyle.table.borderColor,
@@ -335,6 +343,7 @@ export default function DataGrid({
           setPageSize={setPageSize}
           pageOptions={pageOptions}
           pagination={pagination}
+          styleOverrides={finalStyle.paginationControls?.bottom}
         />
       )}
     </div>
