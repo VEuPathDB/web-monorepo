@@ -185,7 +185,7 @@ export function barplotDefaultDependentAxisMinPos(
   }
 }
 
-function boxplotDefaultDependentAxisMinMax(
+export function boxplotDefaultDependentAxisMinMax(
   data: PromiseHookState<BoxplotDataWithCoverage | undefined>,
   yAxisVariable: Variable | undefined,
   // use computedVariableMetadata for computation apps
@@ -242,7 +242,8 @@ function boxplotDefaultDependentAxisMinMax(
         computedVariableMetadata != null)
       ? {
           min: min([
-            0,
+            // 0, // annotated ranges for variables take care of this for us
+            // if we reinstate the zero, then the lower truncation warnings will trigger unnecessarily
             min(
               data.value.series.flatMap((o) => o.outliers as number[][]).flat()
             ),
