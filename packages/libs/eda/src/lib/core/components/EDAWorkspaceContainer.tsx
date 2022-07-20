@@ -12,15 +12,15 @@ import {
 } from '../context/WorkspaceContext';
 import {
   HookValue as WdkStudyRecord,
-  useStudyEntities,
   useStudyMetadata,
   useWdkStudyRecord,
 } from '../hooks/study';
 
-import { FieldWithMetadata, StudyMetadata } from '..';
+import { FieldWithMetadata, StudyMetadata, useStudyEntities } from '..';
 
 import { useFieldTree, useFlattenedFields } from './variableTrees/hooks';
 import { DownloadClient } from '../api/DownloadClient';
+import { entityTreeToArray } from '../utils/study-metadata';
 
 export interface Props {
   studyId: string;
@@ -67,7 +67,9 @@ function EDAWorkspaceContainerWithLoadedData({
   wdkStudyRecord,
   studyMetadata,
 }: LoadedDataProps) {
-  const entities = useStudyEntities(studyMetadata.rootEntity);
+  const entities = useMemo(() => entityTreeToArray(studyMetadata.rootEntity), [
+    studyMetadata.rootEntity,
+  ]);
   const variableTreeFields = useFlattenedFields(entities, 'variableTree');
   const variableTree = useFieldTree(variableTreeFields);
 

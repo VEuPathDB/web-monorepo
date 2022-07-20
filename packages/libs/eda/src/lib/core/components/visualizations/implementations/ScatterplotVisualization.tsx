@@ -12,10 +12,13 @@ import { useCallback, useMemo, useState, useEffect } from 'react';
 import DataClient, { ScatterplotResponse } from '../../../api/DataClient';
 
 import { usePromise } from '../../../hooks/promise';
-import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
-import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
-import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
+import {
+  useDataClient,
+  useFindEntityAndVariable,
+  useStudyMetadata,
+} from '../../../hooks/workspace';
+import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from '../../../utils/study-metadata';
 
 import { VariableDescriptor } from '../../../types/variable';
 
@@ -26,9 +29,8 @@ import { PlotLayout } from '../../layouts/PlotLayout';
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import {
-  SelectorProps,
+  ComputedVariableDetails,
   VisualizationProps,
-  VisualizationType,
 } from '../VisualizationTypes';
 
 import scatter from './selectorIcons/scatter.svg';
@@ -47,6 +49,7 @@ import {
   map,
   keys,
   uniqBy,
+  pick,
 } from 'lodash';
 // directly use RadioButtonGroup instead of ScatterPlotControls
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
@@ -58,11 +61,7 @@ import {
   FacetedData,
 } from '@veupathdb/components/lib/types/plots';
 // import Computation ts
-import {
-  CoverageStatistics,
-  Computation,
-  ComputationConfiguration,
-} from '../../../types/visualization';
+import { CoverageStatistics, Computation } from '../../../types/visualization';
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import { NumberVariable, Variable, StudyEntity } from '../../../types/study';
@@ -113,12 +112,12 @@ import { useDefaultIndependentAxisRange } from '../../../hooks/computeDefaultInd
 import { useDefaultDependentAxisRange } from '../../../hooks/computeNumberDateDefaultDependentAxisRange';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import { useVizConfig } from '../../../hooks/visualizations';
-// alphadiv abundance: this should be used for collection variable
-import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from '../../../utils/study-metadata';
 // typing computedVariableMetadata for computation apps such as alphadiv and abundance
 import { ComputedVariableMetadata } from '../../../api/DataClient/types';
 // use Banner from CoreUI for showing message for no smoothing
 import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
+import { createVisualizationPlugin } from '../VisualizationPlugin';
+import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -157,23 +156,11 @@ export interface ScatterPlotDataWithCoverage extends CoverageStatistics {
 // define ScatterPlotDataResponse
 type ScatterPlotDataResponse = ScatterplotResponse;
 
-export const scatterplotVisualization: VisualizationType = {
-  selectorComponent: SelectorComponent,
+export const scatterplotVisualization = createVisualizationPlugin({
+  selectorIcon: scatter,
   fullscreenComponent: ScatterplotViz,
   createDefaultConfig: createDefaultConfig,
-};
-
-function SelectorComponent({ name }: SelectorProps) {
-  const src = scatter;
-
-  return (
-    <img
-      alt="Scatter plot"
-      style={{ height: '100%', width: '100%' }}
-      src={src}
-    />
-  );
-}
+});
 
 function createDefaultConfig(): ScatterplotConfig {
   return {
@@ -201,8 +188,19 @@ export const ScatterplotConfig = t.partial({
   dependentAxisLogScale: t.boolean,
 });
 
-function ScatterplotViz(props: VisualizationProps) {
+interface Options {
+  getComputedYAxisDetails?(
+    config: unknown
+  ): ComputedVariableDetails | undefined;
+  getOverlayVariable?(config: unknown): VariableDescriptor | undefined;
+  getPlotSubtitle?(config: unknown): string | undefined;
+  hideShowMissingnessToggle?: boolean;
+  hideTrendlines?: boolean;
+}
+
+function ScatterplotViz(props: VisualizationProps<Options>) {
   const {
+    options,
     computation,
     visualization,
     updateConfiguration,
@@ -231,8 +229,15 @@ function ScatterplotViz(props: VisualizationProps) {
     updateConfiguration
   );
 
+  const computedYAxisDetails = options?.getComputedYAxisDetails?.(
+    computation.descriptor.configuration
+  );
+  const providedOverlayVariableDescriptor = options?.getOverlayVariable?.(
+    computation.descriptor.configuration
+  );
+
   // moved the location of this findEntityAndVariable
-  const findEntityAndVariable = useFindEntityAndVariable(entities);
+  const findEntityAndVariable = useFindEntityAndVariable();
 
   const {
     xAxisVariable,
@@ -276,7 +281,6 @@ function ScatterplotViz(props: VisualizationProps) {
     setTruncatedDependentAxisWarning,
   ] = useState<string>('');
 
-  // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
       const {
@@ -357,8 +361,8 @@ function ScatterplotViz(props: VisualizationProps) {
   const outputEntity = useFindOutputEntity(
     dataElementDependencyOrder,
     vizConfig,
-    'xAxisVariable',
-    entities
+    'yAxisVariable',
+    computedYAxisDetails?.entityId
   );
 
   const data = usePromise(
@@ -390,7 +394,7 @@ function ScatterplotViz(props: VisualizationProps) {
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
         return undefined;
       else if (
-        computation.descriptor.configuration == null &&
+        computedYAxisDetails == null &&
         (vizConfig.yAxisVariable == null || yAxisVariable == null)
       )
         return undefined;
@@ -416,12 +420,7 @@ function ScatterplotViz(props: VisualizationProps) {
         studyId,
         filters,
         config: {
-          // add outputEntityId per dataElementDependencyOrder
-          outputEntityId: computation.descriptor.configuration
-            ? // alphadiv abundance: remove any as configuration is defined instead of unknown
-              (computation.descriptor.configuration as any).collectionVariable
-                .entityId
-            : outputEntity.id,
+          outputEntityId: outputEntity.id,
           valueSpec: valueSpecValue,
           xAxisVariable: vizConfig.xAxisVariable,
           yAxisVariable: vizConfig.yAxisVariable,
@@ -431,7 +430,7 @@ function ScatterplotViz(props: VisualizationProps) {
             : [],
           showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
         },
-        computeConfig: computation.descriptor.configuration ?? undefined,
+        computeConfig: computation.descriptor.configuration,
       };
 
       const response = await dataClient.getVisualizationData(
@@ -460,19 +459,14 @@ function ScatterplotViz(props: VisualizationProps) {
           response.completeCasesTable
         );
 
-      // For the abundance app, the overlay vocabulary is within the comptuedVariableMetadata.
-      const overlayVocabulary =
-        computation?.descriptor.type === 'abundance' &&
-        entities &&
-        response.scatterplot.config.computedVariableMetadata?.collectionVariable
-          ?.collectionVariableDetails
-          ? response.scatterplot.config.computedVariableMetadata?.collectionVariable?.collectionVariableDetails.map(
-              (variableDetails) => variableDetails.variableId
-            )
-          : fixLabelsForNumberVariables(
-              overlayVariable?.vocabulary,
-              overlayVariable
-            );
+      const overlayVocabulary = providedOverlayVariableDescriptor
+        ? response.scatterplot.config.computedVariableMetadata?.collectionVariable?.collectionVariableDetails?.map(
+            (variableDetails) => variableDetails.variableId
+          )
+        : fixLabelsForNumberVariables(
+            overlayVariable?.vocabulary,
+            overlayVariable
+          );
 
       const facetVocabulary = fixLabelsForNumberVariables(
         facetVariable?.vocabulary,
@@ -722,11 +716,8 @@ function ScatterplotViz(props: VisualizationProps) {
                   ? '#A6A6A6'
                   : // if there is no overlay variable, then marker colors should be the same for Data, Smoothed mean, 95% CI, and Best fit
                   // with another apps like alphadiv, abundance, etc., this condition needs to be changed: check with data more
-                  ((computation.descriptor.type === 'pass' ||
-                      computation.descriptor.type === 'alphadiv' ||
-                      computation.descriptor.type === 'xyrelationships') &&
-                      vizConfig.overlayVariable != null) || // pass-through & alphadiv & // X-Y relationships
-                    computation.descriptor.type === 'abundance' // abundance
+                  providedOverlayVariableDescriptor != null ||
+                    vizConfig.overlayVariable != null
                   ? dataItem.name != null
                     ? legendLabelColor
                         ?.map((legend) => {
@@ -775,7 +766,6 @@ function ScatterplotViz(props: VisualizationProps) {
     vizConfig.overlayVariable,
     vizConfig.showMissingness,
     vizConfig.valueSpecConfig,
-    computation.descriptor.type,
   ]);
 
   // set checkedLegendItems
@@ -796,30 +786,21 @@ function ScatterplotViz(props: VisualizationProps) {
       };
   }, [xAxisVariable, defaultIndependentRange]);
 
-  // alphadiv abundance: legend title for abundance?
-  const legendTitle = useMemo(
-    () =>
-      computation.descriptor.configuration != null &&
-      computation.descriptor.type === 'abundance'
-        ? findCollectionVariableEntityAndVariable(
-            entities,
-            (computation.descriptor.configuration as any).collectionVariable
-          )
-        : undefined,
-    [entities, computation]
-  );
+  const legendTitle = useMemo(() => {
+    if (providedOverlayVariableDescriptor) {
+      return findCollectionVariableEntityAndVariable(
+        entities,
+        providedOverlayVariableDescriptor
+      )?.variable.displayName;
+    }
+    return variableDisplayWithUnit(overlayVariable);
+  }, [entities, overlayVariable, providedOverlayVariableDescriptor]);
 
   const dependentAxisLabel =
-    computation.descriptor.configuration != null
-      ? computation.descriptor.type === 'alphadiv'
-        ? // considering computedVariableMetadata.displayName for alphadiv
-          data?.value?.computedVariableMetadata?.displayName != null
-          ? data?.value?.computedVariableMetadata?.displayName[0]
-          : computation.descriptor.type
-        : computation.descriptor.type === 'abundance'
-        ? 'Relative Abundance'
-        : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'
-      : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis';
+    data?.value?.computedVariableMetadata?.displayName?.[0] ??
+    computedYAxisDetails?.placeholderDisplayName ??
+    variableDisplayWithUnit(yAxisVariable) ??
+    'Y-axis';
 
   // dataWithoutSmoothedMean returns array of data that does not have smoothed mean
   // Thus, if dataWithoutSmoothedMean.length > 0, then there is at least one data without smoothed mean
@@ -859,8 +840,6 @@ function ScatterplotViz(props: VisualizationProps) {
         yAxisVariable?.type === 'date' ? 'Raw' : vizConfig.valueSpecConfig
       }
       onValueSpecChange={onValueSpecChange}
-      // send visualization.type here
-      vizType={visualization.descriptor.type}
       interactive={!isFaceted(data.value) ? true : false}
       showSpinner={filteredCounts.pending || data.pending}
       // add plotOptions to control the list of plot options
@@ -884,12 +863,7 @@ function ScatterplotViz(props: VisualizationProps) {
           : 'date'
       }
       // alphadiv abundance: legend title for abundance?
-      legendTitle={
-        computation.descriptor.configuration != null &&
-        computation.descriptor.type === 'abundance'
-          ? legendTitle?.variable.displayName
-          : variableDisplayWithUnit(overlayVariable)
-      }
+      legendTitle={legendTitle}
       // pass checked state of legend checkbox to PlotlyPlot
       checkedLegendItems={checkedLegendItems}
       // for vizconfig.checkedLegendItems
@@ -908,29 +882,20 @@ function ScatterplotViz(props: VisualizationProps) {
       setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
       onIndependentAxisLogScaleChange={onIndependentAxisLogScaleChange}
       onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
+      allowTrendlines={!options?.hideTrendlines}
     />
   );
 
   const showOverlayLegend =
-    ((computation?.descriptor.type === 'pass' ||
-      computation?.descriptor.type === 'alphadiv' ||
-      computation?.descriptor.type === 'xyrelationships') &&
-      vizConfig.overlayVariable != null &&
-      legendItems.length > 0) || // pass-through & alphadiv & X-Y relationships
-    (computation?.descriptor.type === 'abundance' && legendItems.length === 1); // show legend for single overlay
+    (providedOverlayVariableDescriptor != null ||
+      vizConfig.overlayVariable != null) &&
+    legendItems.length > 0;
   const legendNode = !data.pending && data.value != null && (
     <PlotLegend
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
-      // alphadiv abundance: legend title for abundance?
-      legendTitle={
-        computation.descriptor.configuration != null &&
-        computation.descriptor.type === 'abundance'
-          ? legendTitle?.variable.displayName
-          : variableDisplayWithUnit(overlayVariable)
-      }
+      legendTitle={legendTitle}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
-      // add a condition to show legend even for single overlay data
       showOverlayLegend={showOverlayLegend}
     />
   );
@@ -1004,11 +969,8 @@ function ScatterplotViz(props: VisualizationProps) {
 
   // plot subtitle
   const plotSubtitle =
-    computation.descriptor.type === 'abundance' && outputSize != null
-      ? `Ranked abundance: Variables with ${
-          (computation.descriptor.configuration as ComputationConfiguration)
-            ?.rankingMethod
-        } = 0 removed. Showing up to the top eight variables.`
+    outputSize != null
+      ? options?.getPlotSubtitle?.(computation.descriptor.configuration)
       : undefined;
 
   // alphadiv abundance: y-axis and overlayVariable
@@ -1026,12 +988,11 @@ function ScatterplotViz(props: VisualizationProps) {
               name: 'yAxisVariable',
               label: 'Y-axis',
               role: 'axis',
-              readonlyValue: computation.descriptor.configuration
+              readonlyValue: computedYAxisDetails
                 ? dependentAxisLabel
                 : undefined,
             },
-            ...(computation.descriptor.configuration != null &&
-            computation.descriptor.type === 'abundance'
+            ...(providedOverlayVariableDescriptor
               ? []
               : [
                   {
@@ -1064,11 +1025,10 @@ function ScatterplotViz(props: VisualizationProps) {
               data.value?.completeCasesAxesVars
           }
           showMissingness={vizConfig.showMissingness}
-          // this can be used to show and hide no data control
           onShowMissingnessChange={
-            computation.descriptor.type === 'pass'
-              ? onShowMissingnessChange
-              : undefined
+            options?.hideShowMissingnessToggle
+              ? undefined
+              : onShowMissingnessChange
           }
           outputEntity={outputEntity}
         />
@@ -1130,7 +1090,6 @@ type ScatterplotWithControlsProps = Omit<ScatterPlotProps, 'data'> & {
   valueSpec: string | undefined;
   onValueSpecChange: (value: string) => void;
   updateThumbnail: (src: string) => void;
-  vizType: string;
   plotOptions: string[];
   // add disabledList
   disabledList: string[];
@@ -1154,6 +1113,7 @@ type ScatterplotWithControlsProps = Omit<ScatterPlotProps, 'data'> & {
   ) => void;
   onIndependentAxisLogScaleChange: (value: boolean) => void;
   onDependentAxisLogScaleChange: (value: boolean) => void;
+  allowTrendlines: boolean;
 };
 
 function ScatterplotWithControls({
@@ -1161,7 +1121,7 @@ function ScatterplotWithControls({
   // ScatterPlotControls: set initial value as 'raw' ('Raw')
   valueSpec = 'Raw',
   onValueSpecChange,
-  vizType,
+  allowTrendlines,
   // add plotOptions
   plotOptions,
   // add disabledList
@@ -1187,16 +1147,6 @@ function ScatterplotWithControls({
   onDependentAxisLogScaleChange,
   ...scatterplotProps
 }: ScatterplotWithControlsProps) {
-  // TODO Use UIState
-  // const errorManagement = useMemo((): ErrorManagement => {
-  //   return {
-  //     errors: [],
-  //     addError: (_: Error) => {},
-  //     removeError: (_: Error) => {},
-  //     clearAllErrors: () => {},
-  //   };
-  // }, []);
-
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
     plotContainerStyles,
@@ -1397,7 +1347,7 @@ function ScatterplotWithControls({
         />
       )}
       {/*  ScatterPlotControls: check vizType (only for scatterplot for now) */}
-      {vizType === 'scatterplot' && (
+      {allowTrendlines && (
         // use RadioButtonGroup directly instead of ScatterPlotControls
         <RadioButtonGroup
           label="Plot mode"
