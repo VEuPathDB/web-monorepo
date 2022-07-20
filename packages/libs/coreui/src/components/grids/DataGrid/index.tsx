@@ -74,7 +74,7 @@ export type DataGridProps = {
       }: {
         pageSize: number;
         pageIndex: number;
-        sortBy: SortBy;
+        sortBy?: SortBy;
       }) => void;
       /** Total available pages of data. */
       pageCount: number;
@@ -132,7 +132,7 @@ export default function DataGrid({
     nextPage,
     previousPage,
     setPageSize,
-    state: { pageIndex, pageSize },
+    state,
     allColumns,
     rows,
     toggleRowSelected,
@@ -205,32 +205,28 @@ export default function DataGrid({
     }
   );
 
-  const sortBy = useMemo(() => {
-    return allColumns.reduce((sortByArr, column) => {
-      if (column.isSorted) {
-        sortByArr[column.sortedIndex] = {
-          id: column.id,
-          desc: column.isSortedDesc as boolean,
-        }
-      }
+  console.log({state});
+  const { pageIndex, pageSize, sortBy } = state;
 
-      return sortByArr;
-    }, [] as SortBy)
-  }, [allColumns]);
+  const finalSortBy = useMemo(() => sortBy.filter((column) => column.desc !== undefined), [sortBy]) as SortBy;
+  console.log({finalSortBy});
 
   /**
    * Listen for changes in pagination and fetch
    * new data as long as another request isn't pending.
    *  */
   useEffect(() => {
+    console.log('calling fetchPaginatedData in CoreUI useEffect')
     if (pagination?.serverSidePagination?.fetchPaginatedData && !loading) {
       pagination.serverSidePagination.fetchPaginatedData({
         pageIndex,
         pageSize,
-        sortBy,
+        sortBy: finalSortBy,
       });
     }
-  }, [pageIndex, pageSize, sortBy]);
+  }, [pageIndex, pageSize, finalSortBy]);
+  // }, [pageIndex, pageSize]);
+
 
   // Listen for changes to row selection, if applicable.
   useEffect(() => {
