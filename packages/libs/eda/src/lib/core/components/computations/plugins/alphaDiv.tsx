@@ -1,7 +1,6 @@
 /** @jsxImportSource @emotion/react */
-import { useStudyMetadata } from '../../..';
+import { useCollectionVariables, useStudyMetadata } from '../../..';
 import { StudyEntity } from '../../../types/study';
-import { useCollectionVariables } from '../../../hooks/study';
 import { VariableDescriptor } from '../../../types/variable';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
@@ -24,11 +23,31 @@ export const AlphaDivConfig = t.type({
 export const plugin: ComputationPlugin = {
   configurationComponent: AlphaDivConfiguration,
   configurationDescriptionComponent: AlphaDivConfigDescriptionComponent,
-  visualizationTypes: {
-    boxplot: boxplotVisualization,
-    scatterplot: scatterplotVisualization,
-  },
   createDefaultComputationSpec: createDefaultComputationSpec,
+  visualizationPlugins: {
+    boxplot: boxplotVisualization.withOptions({
+      getComputedYAxisDetails(config) {
+        if (AlphaDivConfig.is(config)) {
+          return {
+            entityId: config.collectionVariable.entityId,
+            placeholderDisplayName: 'Alphadiv',
+          };
+        }
+      },
+      hideShowMissingnessToggle: true,
+    }),
+    scatterplot: scatterplotVisualization.withOptions({
+      getComputedYAxisDetails(config) {
+        if (AlphaDivConfig.is(config)) {
+          return {
+            entityId: config.collectionVariable.entityId,
+            placeholderDisplayName: 'Alphadiv',
+          };
+        }
+      },
+      hideShowMissingnessToggle: true,
+    }),
+  },
 };
 
 function AlphaDivConfigDescriptionComponent({

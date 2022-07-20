@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { useStudyMetadata } from '../../..';
-import { useCollectionVariables } from '../../../hooks/study';
+import { useCollectionVariables } from '../../../hooks/workspace';
 import { VariableDescriptor } from '../../../types/variable';
 import { StudyEntity } from '../../../types/study';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
@@ -24,11 +24,51 @@ export const AbundanceConfig = t.type({
 export const plugin: ComputationPlugin = {
   configurationComponent: AbundanceConfiguration,
   configurationDescriptionComponent: AbundanceConfigDescriptionComponent,
-  visualizationTypes: {
-    boxplot: boxplotVisualization,
-    scatterplot: scatterplotVisualization,
-  },
   createDefaultComputationSpec: createDefaultComputationSpec,
+  visualizationPlugins: {
+    boxplot: boxplotVisualization.withOptions({
+      getXAxisVariable(config) {
+        if (AbundanceConfig.is(config)) {
+          return config.collectionVariable;
+        }
+      },
+      getComputedYAxisDetails(config) {
+        if (AbundanceConfig.is(config)) {
+          return {
+            entityId: config.collectionVariable.entityId,
+            placeholderDisplayName: 'Relative abundance',
+          };
+        }
+      },
+      getPlotSubtitle(config) {
+        if (AbundanceConfig.is(config)) {
+          return `Ranked abundance: Variables with ${config.rankingMethod} = 0 removed. Showing up to the top ten variables.`;
+        }
+      },
+      hideShowMissingnessToggle: true,
+    }),
+    scatterplot: scatterplotVisualization.withOptions({
+      getComputedYAxisDetails(config) {
+        if (AbundanceConfig.is(config)) {
+          return {
+            entityId: config.collectionVariable.entityId,
+            placeholderDisplayName: 'Relative abundance',
+          };
+        }
+      },
+      getOverlayVariable(config) {
+        if (AbundanceConfig.is(config)) {
+          return config.collectionVariable;
+        }
+      },
+      getPlotSubtitle(config) {
+        if (AbundanceConfig.is(config)) {
+          return `Ranked abundance: Variables with ${config.rankingMethod} = 0 removed. Showing up to the top ten variables.`;
+        }
+      },
+      hideShowMissingnessToggle: true,
+    }),
+  },
 };
 
 function AbundanceConfigDescriptionComponent({

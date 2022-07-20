@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 
-import { AnalysisState, useStudyMetadata, useStudyRecord } from '../../core';
+import {
+  AnalysisState,
+  useStudyEntities,
+  useStudyMetadata,
+  useStudyRecord,
+} from '../../core';
 
 // Definitions
 import { EntityCounts } from '../../core/hooks/entityCounts';
@@ -11,7 +16,7 @@ import MySubset from './MySubset';
 import CurrentRelease from './CurrentRelease';
 
 // Hooks
-import { useStudyEntities, useWdkStudyReleases } from '../../core/hooks/study';
+import { useWdkStudyReleases } from '../../core/hooks/study';
 import { useEnhancedEntityData } from './hooks/useEnhancedEntityData';
 import { DownloadTabStudyReleases } from './types';
 import PastRelease from './PastRelease';
@@ -36,7 +41,7 @@ export default function DownloadTab({
 }: DownloadsTabProps) {
   const studyMetadata = useStudyMetadata();
   const studyRecord = useStudyRecord();
-  const entities = useStudyEntities(studyMetadata.rootEntity);
+  const entities = useStudyEntities();
   const enhancedEntityData = useEnhancedEntityData(
     entities,
     totalCounts,

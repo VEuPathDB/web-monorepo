@@ -1,7 +1,6 @@
 import {
   IsEnabledInPickerParams,
   VisualizationProps,
-  VisualizationType,
 } from '../VisualizationTypes';
 import map from './selectorIcons/map.svg';
 import * as t from 'io-ts';
@@ -32,9 +31,13 @@ import { FormControl, Select, MenuItem, InputLabel } from '@material-ui/core';
 
 // viz-related imports
 import { PlotLayout } from '../../layouts/PlotLayout';
-import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
+import {
+  useDataClient,
+  useFindEntityAndVariable,
+  useStudyEntities,
+  useStudyMetadata,
+} from '../../../hooks/workspace';
 import { useMemo, useCallback, useState, useEffect } from 'react';
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import DataClient, {
   MapMarkersRequestParams,
   MapMarkersOverlayRequestParams,
@@ -52,7 +55,6 @@ import PluginError from '../PluginError';
 import { VariableDescriptor } from '../../../types/variable';
 import { InputVariables } from '../InputVariables';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
-import { useFindEntityAndVariable } from '../../../hooks/study';
 import PlotLegend, {
   LegendItemsProps,
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
@@ -65,28 +67,19 @@ import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { NumberVariable } from '../../../types/study';
 import { BinSpec, NumberRange } from '../../../types/general';
 import { useDefaultIndependentAxisRange } from '../../../hooks/computeDefaultIndependentAxisRange';
+import { createVisualizationPlugin } from '../VisualizationPlugin';
 
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import Switch from '@veupathdb/components/lib/components/widgets/Switch';
 
 const numContinuousBins = 8;
 
-export const mapVisualization: VisualizationType = {
-  selectorComponent: SelectorComponent,
+export const mapVisualization = createVisualizationPlugin({
+  selectorIcon: map,
   fullscreenComponent: MapViz,
   createDefaultConfig: createDefaultConfig,
   isEnabledInPicker: isEnabledInPicker,
-};
-
-function SelectorComponent() {
-  return (
-    <img
-      alt="Geographic map"
-      style={{ height: '100%', width: '100%' }}
-      src={map}
-    />
-  );
-}
+});
 
 function createDefaultConfig(): MapConfig {
   return {
@@ -167,11 +160,7 @@ function MapViz(props: VisualizationProps) {
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
-  const entities = useMemo(
-    () =>
-      Array.from(preorder(studyMetadata.rootEntity, (e) => e.children || [])),
-    [studyMetadata]
-  );
+  const entities = useStudyEntities();
   const dataClient: DataClient = useDataClient();
 
   const [vizConfig, updateVizConfig] = useVizConfig(
@@ -224,7 +213,7 @@ function MapViz(props: VisualizationProps) {
     );
   }, [vizConfig.geoEntityId, geoConfigs]);
 
-  const findEntityAndVariable = useFindEntityAndVariable(entities);
+  const findEntityAndVariable = useFindEntityAndVariable();
   const [outputEntity, xAxisVariable] = useMemo(() => {
     const geoEntity =
       vizConfig.geoEntityId !== null

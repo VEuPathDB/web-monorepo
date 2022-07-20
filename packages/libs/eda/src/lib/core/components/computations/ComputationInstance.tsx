@@ -3,13 +3,13 @@ import { useRouteMatch } from 'react-router-dom';
 import { useToggleStarredVariable } from '../../hooks/starredVariables';
 import { Computation, Visualization } from '../../types/visualization';
 import { VisualizationsContainer } from '../visualizations/VisualizationsContainer';
-import { VisualizationType } from '../visualizations/VisualizationTypes';
 import { ComputationProps } from './Types';
 import { plugins } from './plugins';
+import { VisualizationPlugin } from '../visualizations/VisualizationPlugin';
 
 export interface Props extends ComputationProps {
   computationId: string;
-  visualizationTypes: Partial<Record<string, VisualizationType>>;
+  visualizationPlugins: Partial<Record<string, VisualizationPlugin>>;
   baseUrl?: string; // right now only defined when *not* using single app mode
   isSingleAppMode: boolean;
 }
@@ -22,7 +22,7 @@ export function ComputationInstance(props: Props) {
     totalCounts,
     filteredCounts,
     geoConfigs,
-    visualizationTypes,
+    visualizationPlugins,
     baseUrl,
     isSingleAppMode,
   } = props;
@@ -86,7 +86,7 @@ export function ComputationInstance(props: Props) {
         geoConfigs={geoConfigs}
         computation={computation}
         visualizationsOverview={computationAppOverview.visualizations}
-        visualizationTypes={visualizationTypes}
+        visualizationPlugins={visualizationPlugins}
         updateVisualizations={updateVisualizations}
         filters={analysis.descriptor.subset.descriptor}
         starredVariables={analysis?.descriptor.starredVariables}

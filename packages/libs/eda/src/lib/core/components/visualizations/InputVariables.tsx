@@ -243,7 +243,6 @@ export function InputVariables(props: Props) {
                       <VariableTreeDropdown
                         scope="variableTree"
                         showMultiFilterDescendants
-                        rootEntity={entities[0]}
                         disabledVariables={
                           disabledVariablesByInputName[input.name]
                         }
