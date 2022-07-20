@@ -424,7 +424,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
 
-  const yMinMax = boxplotDefaultDependentAxisMinMax(
+  const dependentAxisMinMax = boxplotDefaultDependentAxisMinMax(
     data,
     yAxisVariable,
     data?.value?.computedVariableMetadata
@@ -432,9 +432,9 @@ function BoxplotViz(props: VisualizationProps<Options>) {
 
   const defaultDependentAxisRange = useDefaultAxisRange(
     yAxisVariable ?? data?.value?.computedVariableMetadata,
-    yMinMax?.min,
+    dependentAxisMinMax?.min,
     undefined, // no minPos needed if no logscale option offered
-    yMinMax?.max,
+    dependentAxisMinMax?.max,
     false // never logscale
   ) as NumberRange;
 
@@ -535,7 +535,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       // pass useState of truncation warnings
       truncatedDependentAxisWarning={truncatedDependentAxisWarning}
       setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
-      yMinMax={yMinMax}
+      dependentAxisMinMax={dependentAxisMinMax}
     />
   );
 
@@ -697,7 +697,7 @@ type BoxplotWithControlsProps = Omit<BoxplotProps, 'data'> & {
   setTruncatedDependentAxisWarning: (
     truncatedDependentAxisWarning: string
   ) => void;
-  yMinMax: NumberRange | undefined;
+  dependentAxisMinMax: NumberRange | undefined;
 };
 
 function BoxplotWithControls({
@@ -714,7 +714,7 @@ function BoxplotWithControls({
   // pass useState of truncation warnings
   truncatedDependentAxisWarning,
   setTruncatedDependentAxisWarning,
-  yMinMax,
+  dependentAxisMinMax,
   ...boxplotComponentProps
 }: BoxplotWithControlsProps) {
   const plotRef = useUpdateThumbnailEffect(
@@ -748,10 +748,11 @@ function BoxplotWithControls({
     truncationConfigDependentAxisMin,
     truncationConfigDependentAxisMax,
   } = useMemo(
-    () => truncationConfig({ dependentAxisRange: yMinMax }, vizConfig),
-    [yMinMax, vizConfig.dependentAxisRange]
+    () =>
+      truncationConfig({ dependentAxisRange: dependentAxisMinMax }, vizConfig),
+    [dependentAxisMinMax, vizConfig.dependentAxisRange]
   );
-  console.log(yMinMax);
+
   useEffect(() => {
     if (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) {
       setTruncatedDependentAxisWarning(
