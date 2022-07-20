@@ -331,7 +331,9 @@ function BoxplotViz(props: VisualizationProps<Options>) {
             : [],
           showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
         },
-        computeConfig: computation.descriptor.configuration,
+        ...(computation.descriptor.configuration
+          ? { computeConfig: computation.descriptor.configuration }
+          : {}),
       };
 
       // boxplot
