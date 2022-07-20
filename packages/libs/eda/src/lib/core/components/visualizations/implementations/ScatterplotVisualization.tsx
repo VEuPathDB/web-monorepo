@@ -51,7 +51,6 @@ import {
   keys,
   uniqBy,
   filter,
-  pick,
 } from 'lodash';
 // directly use RadioButtonGroup instead of ScatterPlotControls
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
@@ -558,10 +557,17 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       : false;
 
   // yMinMaxDataRange will be used for truncation to judge whether data has negative value
+  const xMinMaxDataRange = useMemo(
+    () =>
+      data.value != null
+        ? ({ min: data.value.xMin, max: data.value?.xMax } as NumberOrDateRange)
+        : undefined,
+    [data]
+  );
   const yMinMaxDataRange = useMemo(
     () =>
       data.value != null
-        ? { min: data.value.yMin, max: data.value?.yMax }
+        ? ({ min: data.value.yMin, max: data.value?.yMax } as NumberOrDateRange)
         : undefined,
     [data]
   );
@@ -918,6 +924,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
       onIndependentAxisLogScaleChange={onIndependentAxisLogScaleChange}
       onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
+      xMinMaxDataRange={xMinMaxDataRange}
       yMinMaxDataRange={yMinMaxDataRange}
       independentAxisIsLogTruncated={independentAxisIsLogTruncated}
       dependentAxisIsLogTruncated={dependentAxisIsLogTruncated}
@@ -1152,9 +1159,8 @@ type ScatterplotWithControlsProps = Omit<ScatterPlotProps, 'data'> & {
   ) => void;
   onIndependentAxisLogScaleChange: (value: boolean) => void;
   onDependentAxisLogScaleChange: (value: boolean) => void;
-  yMinMaxDataRange:
-    | { min: string | number | undefined; max: string | number | undefined }
-    | undefined;
+  xMinMaxDataRange: NumberOrDateRange | undefined;
+  yMinMaxDataRange: NumberOrDateRange | undefined;
   independentAxisIsLogTruncated: boolean;
   dependentAxisIsLogTruncated: boolean;
   allowTrendlines: boolean;
@@ -1189,6 +1195,7 @@ function ScatterplotWithControls({
   setTruncatedDependentAxisWarning,
   onIndependentAxisLogScaleChange,
   onDependentAxisLogScaleChange,
+  xMinMaxDataRange,
   yMinMaxDataRange,
   independentAxisIsLogTruncated,
   dependentAxisIsLogTruncated,
@@ -1275,7 +1282,10 @@ function ScatterplotWithControls({
   } = useMemo(
     () =>
       truncationConfig(
-        { ...defaultUIState, dependentAxisRange: defaultDependentAxisRange },
+        {
+          independentAxisRange: xMinMaxDataRange,
+          dependentAxisRange: yMinMaxDataRange,
+        },
         vizConfig,
         {
           // truncation overrides for the axis minima for log scale
@@ -1292,7 +1302,8 @@ function ScatterplotWithControls({
       defaultUIState,
       vizConfig.independentAxisRange,
       vizConfig.dependentAxisRange,
-      defaultDependentAxisRange,
+      xMinMaxDataRange,
+      yMinMaxDataRange,
       independentAxisIsLogTruncated,
       dependentAxisIsLogTruncated,
     ]
