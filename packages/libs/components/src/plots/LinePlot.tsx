@@ -81,7 +81,9 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
   const extendedIndependentAxisRange = extendAxisRangeForTruncations(
     standardIndependentAxisRange,
     axisTruncationConfig?.independentAxis,
-    independentValueType === 'date' ? 'date' : 'number'
+    independentValueType === 'date' ? 'date' : 'number',
+    'lineplot',
+    independentAxisLogScale
   );
 
   // truncation
@@ -132,9 +134,7 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
             extendedIndependentAxisRange?.max,
           ].map((val) =>
             independentAxisLogScale && val != null
-              ? val <= 0
-                ? -0.1 // for count's logscale
-                : Math.log10(val as number)
+              ? Math.log10(val as number)
               : val
           )
         : undefined,
