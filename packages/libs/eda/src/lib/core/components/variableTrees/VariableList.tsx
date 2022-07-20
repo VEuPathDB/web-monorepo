@@ -537,30 +537,39 @@ export default function VariableList({
               const isActive = field.term === activeField?.term;
               const isDisabled = disabledFields.has(field.term);
               const [entityId, variableId] = field.term.split('/');
+              const CustomCheckbox =
+                customCheckboxes && field.term in customCheckboxes
+                  ? customCheckboxes[field.term]
+                  : undefined;
+              const checked = selectedFields.some((f) => f.term === field.term);
+              const onChange = (node: any, checked: boolean) => {
+                if (onSelectedFieldsChange == null) return;
+                const nextSelectedFields = (checked
+                  ? selectedFields.concat(field)
+                  : selectedFields.filter((f) => f.term !== field.term)
+                ).map((field) => field.term);
+                onSelectedFieldsChange(nextSelectedFields);
+              };
+
               return (
                 <li
                   key={field.term}
                   className="wdk-CheckboxTreeItem wdk-CheckboxTreeItem__leaf"
                 >
                   <div className="wdk-CheckboxTreeNodeContent">
-                    {isMultiPick && (
-                      <input
-                        type="checkbox"
-                        checked={selectedFields.some(
-                          (f) => f.term === field.term
-                        )}
-                        onChange={(e) => {
-                          if (onSelectedFieldsChange == null) return;
-                          const nextSelectedFields = (e.target.checked
-                            ? selectedFields.concat(field)
-                            : selectedFields.filter(
-                                (f) => f.term !== field.term
-                              )
-                          ).map((field) => field.term);
-                          onSelectedFieldsChange(nextSelectedFields);
-                        }}
-                      />
-                    )}
+                    {isMultiPick &&
+                      (CustomCheckbox ? (
+                        <CustomCheckbox
+                          checked={checked}
+                          toggleCheckbox={onChange}
+                        />
+                      ) : (
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={(e) => onChange(null, e.target.checked)}
+                        />
+                      ))}
                     <FieldNode
                       isMultiPick={isMultiPick}
                       isMultiFilterDescendant={false}
