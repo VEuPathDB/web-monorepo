@@ -4,9 +4,11 @@ import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import {
   HistogramDataWithCoverageStatistics,
   HistogramConfig,
-  findMinMaxOfStackedArray,
 } from '../components/visualizations/implementations/HistogramVisualization';
-import { HistogramData } from '@veupathdb/components/lib/types/plots';
+import {
+  HistogramData,
+  HistogramDataSeries,
+} from '@veupathdb/components/lib/types/plots';
 import {
   BarplotDataWithStatistics,
   BarplotConfig,
@@ -113,7 +115,11 @@ export function useDefaultDependentAxisRange(
   return defaultDependentAxisRange;
 }
 
-function histogramDefaultDependentAxisMinMax(
+/**
+ * Calculate min (actually minPos, nonzero) and max of histogram counts,
+ * taking into account that they may be stacked (when there's an overlay)
+ */
+export function histogramDefaultDependentAxisMinMax(
   data: PromiseHookState<HistogramDataWithCoverageStatistics | undefined>
 ) {
   if (isFaceted(data.value)) {
@@ -129,8 +135,8 @@ function histogramDefaultDependentAxisMinMax(
         : undefined;
     return (
       facetMinMaxes && {
-        min: min(map(facetMinMaxes, 'min')),
-        max: max(map(facetMinMaxes, 'max')),
+        min: min(map(facetMinMaxes, 'min')) as number,
+        max: max(map(facetMinMaxes, 'max')) as number,
       }
     );
   } else {
@@ -255,4 +261,51 @@ function boxplotDefaultDependentAxisMinMax(
         }
       : undefined;
   }
+}
+
+/**
+ * find min and max of the sum of multiple arrays
+ * it is because histogram viz uses "stack" option for display
+ * Also, each data with overlayVariable has different bins
+ * For this purpose, binStart is used as array index to map corresponding count
+ * Need to make stacked count array and then max
+ */
+
+function findMinMaxOfStackedArray(data: HistogramDataSeries[]) {
+  // calculate the sum of all the counts from bins with the same label
+  const sumsByLabel = data
+    .flatMap(
+      // make an array of [ [ label, count ], [ label, count ], ... ] from all series
+      (series) => series.bins.map((bin) => [bin.binLabel, bin.value])
+    )
+    // then do a sum of counts per label
+    .reduce<Record<string, number>>(
+      (map, [label, count]) => {
+        if (map[label] == null) map[label] = 0;
+        map[label] = map[label] + (count as number);
+        return map;
+      },
+      // empty map for reduce to start with
+      {}
+    );
+
+  const firstCountByLabel = data
+    .flatMap(
+      // make an array of [ [ label, count ], [ label, count ], ... ] from all series
+      (series) => series.bins.map((bin) => [bin.binLabel, bin.value])
+    )
+    // then capture the first-seen count per label
+    .reduce<Record<string, number>>(
+      (map, [label, count]) => {
+        if (map[label] == null) map[label] = count as number;
+        return map;
+      },
+      // empty map for reduce to start with
+      {}
+    );
+
+  return {
+    min: min(Object.values(firstCountByLabel)) as number,
+    max: max(Object.values(sumsByLabel)) as number,
+  };
 }
