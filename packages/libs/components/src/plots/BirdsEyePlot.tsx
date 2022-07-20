@@ -169,6 +169,8 @@ export default function BirdsEyePlot({
         size: 13, // for some reason, size: 14 causes some intermittent placement problems...
       },
     },
+    paper_bgcolor: 'rgb(250,250,250)',
+    plot_bgcolor: 'rgb(250,250,250)',
   };
 
   const barLabels = data.bars.map((bar) => bar.label);
