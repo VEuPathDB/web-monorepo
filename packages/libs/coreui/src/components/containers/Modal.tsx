@@ -4,7 +4,7 @@ import useDimensions from 'react-cool-dimensions';
 import { Modal as ResponsiveModal } from 'react-responsive-modal';
 
 // Components
-import { H3 } from '../typography';
+import { H3, H4, H5, H6 } from "../typography/headers";
 import { CloseCircle } from '../icons';
 
 // Definitions
@@ -27,6 +27,10 @@ type ModalStyleSpec = {
     secondaryBackgroundColor: CSSProperties['backgroundColor'];
   };
   content: {
+    size: {
+      width: CSSProperties['width'];
+      height: CSSProperties['height'];
+    };
     padding: {
       // TODO: It would be better to fully support all valid values.
       top: number;
@@ -48,6 +52,12 @@ type ModalStyleSpec = {
 export type ModalProps = {
   /** Adds a title to the modal. */
   title?: ReactNode;
+  /** Adds a subtitle under the title. No effect if there is no title. */
+  subtitle?: ReactNode;
+  /** Optional. Size control for the title text. */
+  titleSize?: "small" | "medium" | "large";
+  /** Optional. Reduces the amount of vertical blank space in the title. */
+  compactTitle?: boolean;
   /** Indicates which theme role to use for style augmentation. */
   themeRole?: keyof UITheme['palette'];
   /**
@@ -75,6 +85,9 @@ export type ModalProps = {
 
 export default function Modal({
   title,
+  subtitle,
+  titleSize = "large",
+  compactTitle,
   visible,
   zIndex = 1000,
   toggleVisible,
@@ -112,6 +125,10 @@ export default function Modal({
           x: 'auto',
           y: 'auto',
         },
+        size: {
+          height: 'auto',
+          width: 'auto',
+        },
       },
       header: {
         primaryBackgroundColor: blue[500],
@@ -138,6 +155,26 @@ export default function Modal({
 
     return merge({}, defaultStyle, themeStyle, styleOverrides);
   }, [themeRole, styleOverrides, theme]);
+
+  const TitleComponent =
+    titleSize === "large" ? H3 : titleSize === "medium" ? H4 : H5;
+  const SubtitleComponent =
+    titleSize === "large" ? H4 : titleSize === "medium" ? H5 : H6;
+  const titleTopOffset = subtitle
+    ? titleSize === "large"
+      ? 7
+      : titleSize === "medium"
+      ? 5
+      : 4
+    : titleSize === "large"
+    ? 9
+    : titleSize === "medium"
+    ? 7
+    : 5;
+
+  const headerHeight = title
+    ? titleHeight + (compactTitle ? 20 : 40)
+    : 0;
 
   return (
     <ResponsiveModal
@@ -195,7 +232,7 @@ export default function Modal({
       {title && (
         <div
           css={{
-            height: titleHeight + 40,
+            height: headerHeight,
             display: 'flex',
             flexDirection: 'column',
           }}
@@ -205,23 +242,43 @@ export default function Modal({
               flex: 1,
               backgroundColor: componentStyle.header.primaryBackgroundColor,
               transition: 'all ease .25s',
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-end",
             }}
           >
-            <H3
+            <div
               ref={observe}
-              color='white'
-              additionalStyles={{
-                margin: 0,
-                padding: 0,
+              style={{
                 paddingRight: 25,
                 paddingLeft: 25,
-                top: 35,
-                position: 'relative',
+                top: titleTopOffset,
+                position: "relative",
               }}
-              useTheme={false}
             >
-              {title}
-            </H3>
+              <TitleComponent
+                useTheme={false}
+                additionalStyles={{
+                  margin: 0,
+                  padding: 0,
+                }}
+                color="white"
+              >
+                {title}
+              </TitleComponent>
+              {subtitle && (
+                <SubtitleComponent
+                  useTheme={false}
+                  additionalStyles={{
+                    margin: 0,
+                    padding: 0,
+                  }}
+                  color="white"
+                >
+                  {subtitle}
+                </SubtitleComponent>
+              )}
+            </div>
           </div>
           <div
             css={{
@@ -244,13 +301,16 @@ export default function Modal({
       )}
       <div
         css={{
-          height: modalContentHeight - (title ? titleHeight + 39 : 0),
+          height: modalContentHeight - headerHeight,
           overflowX: componentStyle.content.overflow.x,
           overflowY: componentStyle.content.overflow.y,
         }}
       >
         <div
           css={{
+            boxSizing: 'border-box',
+            height: componentStyle.content.size.height,
+            width: componentStyle.content.size.width,
             paddingTop: componentStyle.content.padding.top,
             paddingRight: componentStyle.content.padding.right,
             paddingBottom: componentStyle.content.padding.bottom,
