@@ -4,12 +4,12 @@ import PopoverButton from '@veupathdb/components/lib/components/widgets/PopoverB
 
 import { cx } from '../../../workspace/Utils';
 import './VariableTree.scss';
-import { useStudyEntities } from '../../hooks/study';
+import { useStudyEntities } from '../../hooks/workspace';
 import VariableTree, { VariableTreeProps } from './VariableTree';
 
 export default function VariableTreeDropdown(props: VariableTreeProps) {
-  const { rootEntity, entityId, variableId, onChange } = props;
-  const entities = useStudyEntities(rootEntity);
+  const { entityId, variableId, onChange } = props;
+  const entities = useStudyEntities();
   const variable = entities
     .find((e) => e.id === entityId)
     ?.variables.find((v) => v.id === variableId);

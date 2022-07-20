@@ -650,7 +650,7 @@ export default function SubsetDownloadModal({
               // NOTE: We are purposely removing all child entities here because
               // we only want a user to be able to select variables from a single
               // entity at a time.
-              rootEntity={{ ...currentEntity, children: [] }}
+              filterEntity={(e) => e.id === currentEntity.id}
               scope="download"
               selectedVariableDescriptors={
                 selectedVariableDescriptorsWithMergeKeys

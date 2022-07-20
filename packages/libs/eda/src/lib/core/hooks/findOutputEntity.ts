@@ -1,41 +1,41 @@
 import { useMemo } from 'react';
 import { VariableDescriptor } from '../types/variable';
-import { StudyEntity } from '../types/study';
-import { useFindEntityAndVariable } from './study';
-// add NumberRange
-import { NumberOrDateRange } from '../types/general';
+import { useFindEntityAndVariable, useStudyEntities } from './workspace';
 
+/**
+ * Find the output entity, given variable details of a visualization.
+ *
+ * @param dataElementDependencyOrder Describes the dependency order of variable selections.
+ * @param vizConfig Visualization configuration.
+ * @param fallbackVariableName Fallback variable name, if `dataElementDependencyOrder` is empty.
+ * @param providedEntityId Provided entity id, in cases where an app provides the output entity.
+ * @returns
+ */
 export function useFindOutputEntity(
   dataElementDependencyOrder: string[] | undefined,
-  // need to add string at Record's Type due to valueSpecConfig
-  dataElementVariables: Record<
-    string,
-    // add NumberRange
-    | VariableDescriptor
-    | string
-    | number // for binWidth at LineplotViz
-    | boolean
-    | string[]
-    | NumberOrDateRange
-    | undefined
-  >,
-  defaultVariableName: string,
-  entities: StudyEntity[]
+  vizConfig: Record<string, unknown>,
+  fallbackVariableName: string,
+  providedEntityId?: string
 ) {
-  const findEntityAndVariable = useFindEntityAndVariable(entities);
+  const findEntityAndVariable = useFindEntityAndVariable();
+  const entities = useStudyEntities();
   return useMemo(() => {
+    if (providedEntityId)
+      return entities.find((e) => e.id === providedEntityId);
     const variableName =
-      dataElementDependencyOrder == null ||
-      dataElementDependencyOrder.length === 0
-        ? defaultVariableName
-        : dataElementDependencyOrder[0];
-    const variable = dataElementVariables[variableName];
-    // need to clarify 'as VariableDescriptor' due to Record Type's string (valueSpecConfig)
-    return findEntityAndVariable(variable as VariableDescriptor)?.entity;
+      dataElementDependencyOrder?.[0] ?? fallbackVariableName;
+    const variable = vizConfig[variableName];
+    // This could be more defensive and throw an error if variable is defined
+    // but is not a VariableDescriptor.
+    return VariableDescriptor.is(variable)
+      ? findEntityAndVariable(variable)?.entity
+      : undefined;
   }, [
+    providedEntityId,
+    entities,
     dataElementDependencyOrder,
-    dataElementVariables,
-    defaultVariableName,
+    fallbackVariableName,
+    vizConfig,
     findEntityAndVariable,
   ]);
 }

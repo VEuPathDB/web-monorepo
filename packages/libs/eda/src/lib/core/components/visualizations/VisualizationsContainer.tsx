@@ -20,7 +20,6 @@ import {
   VisualizationDescriptor,
 } from '../../types/visualization';
 import { Grid } from '../Grid';
-import { VisualizationType } from './VisualizationTypes';
 
 import './Visualizations.scss';
 import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
@@ -38,6 +37,7 @@ import AddIcon from '@material-ui/icons/Add';
 import { plugins } from '../computations/plugins';
 import { AnalysisState } from '../../hooks/analysis';
 import { ComputationAppOverview } from '../../types/visualization';
+import { VisualizationPlugin } from './VisualizationPlugin';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -50,7 +50,7 @@ interface Props {
       | Visualization[]
       | ((visualizations: Visualization[]) => Visualization[])
   ) => void;
-  visualizationTypes: Partial<Record<string, VisualizationType>>;
+  visualizationPlugins: Partial<Record<string, VisualizationPlugin>>;
   visualizationsOverview: VisualizationOverview[];
   filters: Filter[];
   starredVariables: VariableDescriptor[];
@@ -276,7 +276,7 @@ function ConfiguredVisualizations(props: Props) {
 
 function NewVisualizationPicker(props: Props) {
   const {
-    visualizationTypes,
+    visualizationPlugins,
     visualizationsOverview,
     updateVisualizations,
     computation,
@@ -296,14 +296,14 @@ function NewVisualizationPicker(props: Props) {
         {/* orderBy ensures that available visualizations render ahead of those in development */}
         {orderBy(
           visualizationsOverview,
-          [(viz) => (viz.name && visualizationTypes[viz.name] ? 1 : 0)],
+          [(viz) => (viz.name && visualizationPlugins[viz.name] ? 1 : 0)],
           ['desc']
         ).map((vizOverview, index) => {
-          const vizType = visualizationTypes[vizOverview.name!];
+          const vizPlugin = visualizationPlugins[vizOverview.name!];
           const disabled =
-            vizType == null ||
-            (vizType.isEnabledInPicker != null &&
-              vizType.isEnabledInPicker({ geoConfigs }) === false);
+            vizPlugin == null ||
+            (vizPlugin.isEnabledInPicker != null &&
+              vizPlugin.isEnabledInPicker({ geoConfigs }) === false);
           // we could in future pass other study metadata, variable constraints, etc to isEnabledInPicker()
           return (
             <div
@@ -327,15 +327,19 @@ function NewVisualizationPicker(props: Props) {
                           displayName: 'Unnamed visualization',
                           descriptor: {
                             type: vizOverview.name!,
-                            configuration: vizType?.createDefaultConfig(),
+                            configuration: vizPlugin?.createDefaultConfig(),
                           },
                         })
                       );
                       history.replace(`../${computationId}/${visualizationId}`);
                     }}
                   >
-                    {vizType ? (
-                      <vizType.selectorComponent {...vizOverview} />
+                    {vizPlugin ? (
+                      <img
+                        alt={vizOverview.displayName}
+                        style={{ height: '100%', width: '100%' }}
+                        src={vizPlugin.selectorIcon}
+                      />
                     ) : (
                       <PlaceholderIcon name={vizOverview.name} />
                     )}
@@ -348,8 +352,8 @@ function NewVisualizationPicker(props: Props) {
                     ?.split(/(, )/g)
                     .map((str) => (str === ', ' ? <br /> : str))}
                 </div>
-                {vizType == null && <i>(Coming soon!)</i>}
-                {vizType != null && disabled && (
+                {vizPlugin == null && <i>(Coming soon!)</i>}
+                {vizPlugin != null && disabled && (
                   <i>(Not applicable to this study)</i>
                 )}
               </div>
@@ -365,7 +369,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
   const {
     analysisState,
     computationAppOverview,
-    visualizationTypes,
+    visualizationPlugins,
     visualizationsOverview,
     id,
     updateVisualizations,
@@ -381,7 +385,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
   } = props;
   const history = useHistory();
   const viz = computation.visualizations.find((v) => v.visualizationId === id);
-  const vizType = viz && visualizationTypes[viz.descriptor.type];
+  const vizPlugin = viz && visualizationPlugins[viz.descriptor.type];
   const overviews = useMemo(
     () =>
       groupBy(visualizationsOverview, (v) =>
@@ -441,7 +445,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
     [updateVisualizations, id]
   );
   if (viz == null) return <div>Visualization not found.</div>;
-  if (vizType == null) return <div>Visualization type not implemented.</div>;
+  if (vizPlugin == null) return <div>Visualization type not implemented.</div>;
 
   const { computationId } = computation;
   const plugin = plugins[computation.descriptor.type] ?? undefined;
@@ -524,7 +528,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
         <ContentError>Visualization not found.</ContentError>
       ) : computation == null ? (
         <ContentError>Computation not found.</ContentError>
-      ) : vizType == null ? (
+      ) : vizPlugin == null ? (
         <ContentError>
           <>Visualization type not implemented: {viz.descriptor.type}</>
         </ContentError>
@@ -559,7 +563,8 @@ function FullScreenVisualization(props: Props & { id: string }) {
               addNewComputation={() => null}
             />
           )}
-          <vizType.fullscreenComponent
+          <vizPlugin.fullscreenComponent
+            options={vizPlugin.options}
             dataElementConstraints={constraints}
             dataElementDependencyOrder={dataElementDependencyOrder}
             visualization={viz}

@@ -3,7 +3,6 @@ import LinePlot, {
   LinePlotProps,
 } from '@veupathdb/components/lib/plots/LinePlot';
 
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import * as t from 'io-ts';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 
@@ -13,9 +12,13 @@ import DataClient, {
 } from '../../../api/DataClient';
 
 import { usePromise } from '../../../hooks/promise';
-import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
-import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
+import {
+  useDataClient,
+  useStudyMetadata,
+  useFindEntityAndVariable,
+  useStudyEntities,
+} from '../../../hooks/workspace';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { Filter } from '../../../types/filter';
 
@@ -27,7 +30,7 @@ import { PlotLayout } from '../../layouts/PlotLayout';
 
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
-import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
+import { VisualizationProps } from '../VisualizationTypes';
 
 import Switch from '@veupathdb/components/lib/components/widgets/Switch';
 import line from './selectorIcons/line.svg';
@@ -82,7 +85,6 @@ import { gray } from '../colors';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 // import variable's metadata-based independent axis range utils
 import { defaultIndependentAxisRange } from '../../../utils/default-independent-axis-range';
-import { axisRangeMargin } from '../../../utils/axis-range-margin';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import PluginError from '../PluginError';
 import PlotLegend, {
@@ -107,6 +109,7 @@ import Notification from '@veupathdb/components/lib/components/widgets//Notifica
 import Button from '@veupathdb/components/lib/components/widgets/Button';
 import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
 import { UIState } from '../../filter/HistogramFilter';
+import { createVisualizationPlugin } from '../VisualizationPlugin';
 
 const plotContainerStyles = {
   width: 750,
@@ -137,20 +140,11 @@ interface LinePlotDataWithCoverage extends CoverageStatistics {
 // define LinePlotDataResponse
 type LinePlotDataResponse = LineplotResponse;
 
-export const lineplotVisualization: VisualizationType = {
-  selectorComponent: SelectorComponent,
+export const lineplotVisualization = createVisualizationPlugin({
+  selectorIcon: line,
   fullscreenComponent: LineplotViz,
   createDefaultConfig: createDefaultConfig,
-};
-
-// this needs a handling of text/image for scatter, line, and density plots
-function SelectorComponent() {
-  const src = line;
-
-  return (
-    <img alt="Line plot" style={{ height: '100%', width: '100%' }} src={src} />
-  );
-}
+});
 
 // Display names to internal names
 const valueSpecLookup: Record<
@@ -218,11 +212,7 @@ function LineplotViz(props: VisualizationProps) {
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
-  const entities = useMemo(
-    () =>
-      Array.from(preorder(studyMetadata.rootEntity, (e) => e.children || [])),
-    [studyMetadata]
-  );
+  const entities = useStudyEntities();
   const dataClient: DataClient = useDataClient();
 
   const [vizConfig, updateVizConfig] = useVizConfig(
@@ -233,7 +223,7 @@ function LineplotViz(props: VisualizationProps) {
   );
 
   // moved the location of this findEntityAndVariable
-  const findEntityAndVariable = useFindEntityAndVariable(entities);
+  const findEntityAndVariable = useFindEntityAndVariable();
 
   const {
     xAxisVariable,
@@ -409,8 +399,7 @@ function LineplotViz(props: VisualizationProps) {
   const outputEntity = useFindOutputEntity(
     dataElementDependencyOrder,
     vizConfig,
-    'yAxisVariable',
-    entities
+    'yAxisVariable'
   );
 
   const data = usePromise(
