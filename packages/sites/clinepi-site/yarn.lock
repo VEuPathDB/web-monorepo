@@ -2194,19 +2194,19 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/site-webpack-config/-/site-webpack-config-0.1.0.tgz#b63464c5ce70297102aecd700069f1059f371fe9"
   integrity sha512-J8sPtD8+Zp1ZBhgU+mX7O737zaZ28s7P/9RJjbh5nXYB5IgP6yRm+bvj0ewmW7W9NBAPUHJzeEDxMbYDExb85g==
 
-"@veupathdb/study-data-access@^0.3.4":
-  version "0.3.4"
-  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.3.4.tgz#272f0fde72eafe5eb07675f918612e8fa8a1d14f"
-  integrity sha512-63LP0AYcy0FvllBlAkytpf6QYIfOpUu55Apg1dIfYLu9fAPg+QPi5Vrvyndtb7SyBTDorgEaEj9WRxw19oVWDA==
+"@veupathdb/study-data-access@^0.3.5":
+  version "0.3.5"
+  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.3.5.tgz#753eff861b8ce72238fde30a7d96d7460b5cc0ac"
+  integrity sha512-mtJO3glTHn7AnaL25c2HGoKSpZ0hqWfHX63cp7IfTIGkpzedeXwriJL1PmQwEUEqb5+jZGyQuKAN2S07L5XxQA==
   dependencies:
     fp-ts "^2.11.5"
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/user-datasets@^0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@veupathdb/user-datasets/-/user-datasets-0.1.5.tgz#aa8e6f1456d716451dcfbb8fed1972ad37642f38"
-  integrity sha512-TFCgE4T98kaV56yrzf3MJ6Uf2VHMBpWEuEr3HYIUaxNd5lb/7Ak3kq7tMCridQo8XjtpSGh69ST/tBrRmLEzQA==
+"@veupathdb/user-datasets@^0.1.6":
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@veupathdb/user-datasets/-/user-datasets-0.1.6.tgz#41af37aabe2a61c23d54feaef85d7092503163f6"
+  integrity sha512-6RNnjc38e1E0VidK+ejISnpOgn+RKd2Cyq+OGtcwdheQu5UhrMjLItYxrLIktz921M0zdZojEblgqrqAIEb4nQ==
   dependencies:
     lodash "^4.17.21"
     moment "^2.21.0"
@@ -2235,10 +2235,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.6.14":
-  version "0.6.14"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.6.14.tgz#adf0ac3a847764934d2b7071816d8f60a5c006c8"
-  integrity sha512-iNof9MyquujrmevD7eM9amdObkYSZa8eByRLmtHkjk91Mc0qqGJ4lkbGRwYxFJTdKWiJ6R6Fm0JrDk4qPyq9oA==
+"@veupathdb/web-common@^0.6.15":
+  version "0.6.15"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.6.15.tgz#00e0a8b0422f11cae8eb5326c674eaf24494c3e1"
+  integrity sha512-NiPplv/UIikBCdpED8sQAOKkRxAezcJqbBB/a26/bAWCodwlMIr9EZzYpyAS0bp8CpxF2GhY0+DNpdeisOVzuw==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
