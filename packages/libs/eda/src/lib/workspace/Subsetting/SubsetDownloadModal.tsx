@@ -37,6 +37,7 @@ import useDimensions from 'react-cool-dimensions';
 import { useFeaturedFields } from '../../core/components/variableTrees/hooks';
 import { useProcessedGridData, processGridData } from './hooks';
 import tableSVG from './cartoon_table.svg';
+import { DataGridProps } from '@veupathdb/coreui/dist/components/grids/DataGrid';
 
 type SubsetDownloadModalProps = {
   /** Should the modal currently be visible? */
@@ -213,10 +214,13 @@ export default function SubsetDownloadModal({
       .concat(selectedVariableDescriptors);
   }, [mergeKeys, selectedVariableDescriptors, currentEntity]);
 
-  const fetchPaginatedData = useCallback(
-    ({ pageSize, pageIndex }) => {
+  const fetchPaginatedData: Required<
+    Required<DataGridProps>['pagination']
+  >['serverSidePagination']['fetchPaginatedData'] = useCallback(
+    ({ pageSize, pageIndex, sortBy }) => {
       if (!currentEntity) return;
       setDataLoading(true);
+      console.log({ sortBy });
 
       subsettingClient
         .getTabularData(studyMetadata.id, currentEntity.id, {
@@ -232,10 +236,15 @@ export default function SubsetDownloadModal({
             headerFormat: 'standard',
             trimTimeFromDateVars: true,
             paging: { numRows: pageSize, offset: pageSize * pageIndex },
+            sorting: sortBy?.map(({ id, desc }) => ({
+              key: id.split('/')[1],
+              direction: desc ? 'desc' : 'asc',
+            })),
           },
         })
         .then((data) => {
           setGridData(data);
+          console.log({ data });
           setPageCount(ceil(currentEntity.filteredCount! / pageSize));
         })
         .catch((error: Error) => {
@@ -421,6 +430,7 @@ export default function SubsetDownloadModal({
                     },
                   },
                 }}
+                sortable
                 pagination={{
                   recordsPerPage: 10,
                   controlsLocation: 'bottom',
