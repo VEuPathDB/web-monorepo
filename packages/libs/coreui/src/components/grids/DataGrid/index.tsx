@@ -132,8 +132,7 @@ export default function DataGrid({
     nextPage,
     previousPage,
     setPageSize,
-    state,
-    allColumns,
+    state: { pageIndex, pageSize, sortBy },
     rows,
     toggleRowSelected,
   } = useTable(
@@ -205,18 +204,13 @@ export default function DataGrid({
     }
   );
 
-  console.log({state});
-  const { pageIndex, pageSize, sortBy } = state;
-
   const finalSortBy = useMemo(() => sortBy.filter((column) => column.desc !== undefined), [sortBy]) as SortBy;
-  console.log({finalSortBy});
 
   /**
    * Listen for changes in pagination and fetch
    * new data as long as another request isn't pending.
    *  */
   useEffect(() => {
-    console.log('calling fetchPaginatedData in CoreUI useEffect')
     if (pagination?.serverSidePagination?.fetchPaginatedData && !loading) {
       pagination.serverSidePagination.fetchPaginatedData({
         pageIndex,
@@ -225,8 +219,6 @@ export default function DataGrid({
       });
     }
   }, [pageIndex, pageSize, finalSortBy]);
-  // }, [pageIndex, pageSize]);
-
 
   // Listen for changes to row selection, if applicable.
   useEffect(() => {
@@ -292,7 +284,7 @@ export default function DataGrid({
                     key={index}
                     headerGroup={header}
                     styleSpec={finalStyle}
-                    sortable={sortable}
+                    sortable={sortable && header.canSort}
                     extraHeaderControls={extraHeaderControls}
                   />
                 ))}
