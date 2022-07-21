@@ -1,19 +1,19 @@
 import { ReactNode } from "react";
 import PopoverButton from "../../buttons/PopoverButton";
-import CheckboxTree, { CheckboxTreeProps } from "./CheckboxTree";
+import CheckboxTree, { CheckboxTreeProps, LinksPosition } from "./CheckboxTree";
   
-interface SelectTreeProps extends CheckboxTreeProps<unknown> {
+interface SelectTreeProps<T> extends CheckboxTreeProps<T> {
     /** A button's content if/when no values are currently selected */
     defaultButtonDisplayContent: ReactNode;
 }
 
-export default function SelectTree(props: SelectTreeProps) {
+function SelectTree<T>(props: SelectTreeProps<T>) {
     return (
         <PopoverButton
             buttonDisplayContent={props.defaultButtonDisplayContent}
             onClose={() => null}
         >
-            <CheckboxTree 
+            <CheckboxTree
                   tree={props.tree}
                   getNodeId={props.getNodeId}
                   getNodeChildren={props.getNodeChildren}
@@ -50,3 +50,25 @@ export default function SelectTree(props: SelectTreeProps) {
         </PopoverButton>
     )
 }
+
+const defaultProps = {
+    showRoot: false,
+    expandedList: null,
+    isSelectable: false,
+    selectedList: [],
+    customCheckboxes: {},
+    isMultiPick: true,
+    onSelectionChange: () => {},
+    isSearchable: false,
+    showSearchBox: true,
+    searchBoxPlaceholder: "Search...",
+    searchBoxHelp: '',
+    searchTerm: '',
+    onSearchTermChange: () => {},
+    searchPredicate: () => true,
+    linksPosition: LinksPosition.Both
+  };
+
+SelectTree.defaultProps = defaultProps;
+SelectTree.LinkPlacement = LinksPosition;
+export default SelectTree;

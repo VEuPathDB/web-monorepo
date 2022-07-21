@@ -12,7 +12,7 @@ import { Seq } from './Utils';
 const NODE_STATE_PROPERTY = '__expandableTreeState';
 const NODE_CHILDREN_PROPERTY = '__expandableTreeChildren';
 
-enum LinksPosition {
+export enum LinksPosition {
   None,
   Top = 1 << 1,
   Bottom = 1 << 2,
@@ -496,7 +496,8 @@ type State<T> = {
 /**
  * Expandable tree component
  */
-function CheckboxTreeComponent<T> (props: CheckboxTreeProps<T>) {
+// function CheckboxTreeComponent<T> (props: CheckboxTreeProps<T>) {
+function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
     const { 
         tree, getNodeId, getNodeChildren, 
         searchTerm, searchPredicate, selectedList, 
@@ -545,34 +546,34 @@ function CheckboxTreeComponent<T> (props: CheckboxTreeProps<T>) {
               };
     }, []);
   
-//     /**
-//      * Creates a function that will handle expansion-related tree link clicks
-//      */
+    /**
+     * Creates a function that will handle expansion-related tree link clicks
+     */
     const createExpander = useCallback(
         (listFetcher: ListFetcher) => createLinkHandler(listFetcher, 'onExpansionChange'),
     []);
   
-//     /**
-//      * Creates a function that will handle selection-related tree link clicks
-//      */
+    /**
+     * Creates a function that will handle selection-related tree link clicks
+     */
     const createSelector = useCallback(
         (listFetcher: ListFetcher) => createLinkHandler(listFetcher, 'onSelectionChange'),
     []);
 
-//     // define event handlers related to expansion
+    // define event handlers related to expansion
     const expandAll = createExpander(() => getBranches(tree, getNodeChildren).map(node => getNodeId(node)));
     const expandNone = createExpander(() => []);
 
-//     // define event handlers related to selection
+    // define event handlers related to selection
 
-//     // add all nodes to selectedList
+    // add all nodes to selectedList
     const selectAll = createSelector(() =>
       getLeaves(tree, getNodeChildren).map(getNodeId));
 
-//     // remove all nodes from selectedList
+    // remove all nodes from selectedList
     const selectNone = createSelector(() => []);
 
-//     // add visible nodes to selectedList
+    // add visible nodes to selectedList
     const addVisible = createSelector(() =>
       Seq.from(selectedList)
         .concat(getLeaves(tree, getNodeChildren)
@@ -581,13 +582,13 @@ function CheckboxTreeComponent<T> (props: CheckboxTreeProps<T>) {
         .uniq()
         .toArray());
 
-//     // set selected list to only visible nodes
+    // set selected list to only visible nodes
     const selectOnlyVisible = createSelector(() =>
       getLeaves(tree, getNodeChildren)
       .map(getNodeId)
       .filter(treeState.isLeafVisible));
 
-//     // remove visible nodes from selectedList
+    // remove visible nodes from selectedList
     const removeVisible = createSelector(() =>
       selectedList
         .filter(nodeId => !treeState.isLeafVisible(nodeId)));
@@ -596,9 +597,9 @@ function CheckboxTreeComponent<T> (props: CheckboxTreeProps<T>) {
     const selectCurrentList = createSelector(() => currentList);
     const selectDefaultList = createSelector(() => defaultList);
 
-//     /**
-//     * Toggle expansion of the given node.  If node is a leaf, does nothing.
-//     */
+    /**
+    * Toggle expansion of the given node.  If node is a leaf, does nothing.
+    */
     function toggleExpansion(node: T) {
         if (!isActiveSearch(props) && !isLeaf(node, getNodeChildren)) {
             if (!shouldExpandDescendantsWithOneChild || treeState.generated.expandedList.includes(getNodeId(node))) {
@@ -629,13 +630,13 @@ function CheckboxTreeComponent<T> (props: CheckboxTreeProps<T>) {
     }
 
 
-//     /**
-//    * Toggle selection of the given node.
-//    * If toggled checkbox is a selected leaf - add the leaf to the select list to be returned
-//    * If toggled checkbox is an unselected leaf - remove the leaf from the select list to be returned
-//    * If toggled checkbox is a selected non-leaf - identify the node's leaves and add them to the select list to be returned
-//    * If toggled checkbox is an unselected non-leaf - identify the node's leaves and remove them from the select list to be returned
-//    */
+    /**
+   * Toggle selection of the given node.
+   * If toggled checkbox is a selected leaf - add the leaf to the select list to be returned
+   * If toggled checkbox is an unselected leaf - remove the leaf from the select list to be returned
+   * If toggled checkbox is a selected non-leaf - identify the node's leaves and add them to the select list to be returned
+   * If toggled checkbox is an unselected non-leaf - identify the node's leaves and remove them from the select list to be returned
+   */
     function toggleSelection(node: T, selected: boolean) {
         if (!isSelectable) return;
         if (isLeaf(node, getNodeChildren)) {
@@ -776,5 +777,6 @@ const defaultProps = {
   linksPosition: LinksPosition.Both
 };
 
-const CheckboxTree = Object.assign(CheckboxTreeComponent, {LinkPlacement: LinksPosition, defaultProps});
+CheckboxTree.defaultProps = defaultProps;
+CheckboxTree.LinkPlacement = LinksPosition;
 export default CheckboxTree;
