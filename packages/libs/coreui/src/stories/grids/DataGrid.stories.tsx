@@ -93,10 +93,10 @@ export const WithServerControlledPagination: Story<DataGridProps> = (args) => {
   const [isLoading, setIsLoading] = useState(false);
   const [pageCount, setPageCount] = useState(0);
 
-  const fetchPaginatedData = useCallback(({ pageSize, pageIndex }) => {
+  const fetchPaginatedData = useCallback(({ pageSize, pageIndex, sortBy }) => {
     setIsLoading(true);
     setTimeout(() => {
-      setGridData(fetchGridData({ pageSize, pageIndex }));
+      setGridData(fetchGridData({ pageSize, pageIndex, sortBy }));
       setPageCount(20 / pageSize);
       setIsLoading(false);
     }, 1000);

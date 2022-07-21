@@ -22,7 +22,7 @@ import HeaderCell from './HeaderCell';
 import PaginationControls from './PaginationControls';
 import { UITheme } from '../../theming/types';
 
-type SortBy = Array<{id: string, desc: boolean}>;
+export type SortBy = Array<{id: string, desc: boolean}>;
 
 export type DataGridProps = {
   /**
