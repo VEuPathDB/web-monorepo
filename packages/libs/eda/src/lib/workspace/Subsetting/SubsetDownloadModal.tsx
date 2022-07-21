@@ -220,7 +220,6 @@ export default function SubsetDownloadModal({
     ({ pageSize, pageIndex, sortBy }) => {
       if (!currentEntity) return;
       setDataLoading(true);
-      console.log({ sortBy });
 
       subsettingClient
         .getTabularData(studyMetadata.id, currentEntity.id, {
@@ -244,7 +243,6 @@ export default function SubsetDownloadModal({
         })
         .then((data) => {
           setGridData(data);
-          console.log({ data });
           setPageCount(ceil(currentEntity.filteredCount! / pageSize));
         })
         .catch((error: Error) => {
@@ -429,6 +427,10 @@ export default function SubsetDownloadModal({
                       },
                     },
                   },
+                  icons: {
+                    inactiveColor: gray[300],
+                    activeColor: gray[500],
+                  },
                 }}
                 sortable
                 pagination={{
@@ -461,9 +463,12 @@ export default function SubsetDownloadModal({
                           />
                         ) : (
                           <button
-                            onClick={() => {
+                            onClick={(event) => {
+                              event.stopPropagation();
+
                               if (selectedVariableDescriptors.length === 1)
                                 setTableIsExpanded(false);
+
                               handleSelectedVariablesChange(
                                 selectedVariableDescriptors.filter(
                                   (descriptor) =>
