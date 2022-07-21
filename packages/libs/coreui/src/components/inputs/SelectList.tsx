@@ -2,7 +2,7 @@ import { ReactNode, useState, FormEvent } from "react";
 import PopoverButton from "../buttons/PopoverButton";
 import CheckboxList, { CheckboxListProps } from "./CheckboxList";
   
-interface SelectListProps extends Omit<CheckboxListProps, 'onChange' | 'onSelectAll' | 'onClearAll'> {
+export interface SelectListProps extends Omit<CheckboxListProps, 'onChange' | 'onSelectAll' | 'onClearAll'> {
     onChange: (value: string[]) => void;
     children?: ReactNode;
 
