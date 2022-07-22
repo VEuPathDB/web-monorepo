@@ -23,7 +23,8 @@ export const AlphaDivConfig = t.type({
 export const plugin: ComputationPlugin = {
   configurationComponent: AlphaDivConfiguration,
   configurationDescriptionComponent: AlphaDivConfigDescriptionComponent,
-  createDefaultComputationSpec: createDefaultComputationSpec,
+  createDefaultConfiguration,
+  isConfigurationValid: AlphaDivConfig.is,
   visualizationPlugins: {
     boxplot: boxplotVisualization.withOptions({
       getComputedYAxisDetails(config) {
@@ -87,9 +88,9 @@ function AlphaDivConfigDescriptionComponent({
   );
 }
 
-function createDefaultComputationSpec(rootEntity: StudyEntity) {
+function createDefaultConfiguration(rootEntity: StudyEntity): AlphaDivConfig {
   const collections = findCollections(rootEntity);
-  const configuration: AlphaDivConfig = {
+  return {
     name: 'AlphaDivComputation',
     collectionVariable: {
       variableId: collections[0].id,
@@ -97,7 +98,6 @@ function createDefaultComputationSpec(rootEntity: StudyEntity) {
     },
     alphaDivMethod: 'shannon',
   };
-  return { configuration };
 }
 
 // Include available methods in this array.

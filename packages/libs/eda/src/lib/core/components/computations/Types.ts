@@ -45,7 +45,6 @@ export interface ComputationPlugin {
     computation: Computation;
   }>;
   visualizationPlugins: Partial<Record<string, VisualizationPlugin<any>>>;
-  createDefaultComputationSpec?: (
-    rootEntity: StudyEntity
-  ) => { configuration: unknown };
+  createDefaultConfiguration: (rootEntity: StudyEntity) => unknown;
+  isConfigurationValid: (configuration: unknown) => boolean;
 }

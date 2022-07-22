@@ -63,6 +63,7 @@ export const ComputationDescriptor = type({
  */
 export interface Computation<ConfigType = unknown> {
   computationId: string;
+  displayName: string;
   descriptor: {
     type: string;
     configuration: ConfigType;
@@ -71,6 +72,7 @@ export interface Computation<ConfigType = unknown> {
 }
 export const Computation: t.Type<Computation> = t.interface({
   computationId: string,
+  displayName: string,
   descriptor: type({
     type: string,
     configuration: unknown,
