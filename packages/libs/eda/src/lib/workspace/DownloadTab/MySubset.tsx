@@ -75,9 +75,11 @@ export default function MySubset({
       {Object.values(entities).map((data, index) => (
         <FloatingButton
           key={index}
-          text={`${data.filteredCount?.toLocaleString()} of ${data.totalCount?.toLocaleString()} ${startCase(
-            data.displayNamePlural
-          )}`}
+          text={`${data.filteredCount?.toLocaleString()} of ${data.totalCount?.toLocaleString()} ${
+            data.displayNamePlural?.includes('rRNA')
+              ? data.displayNamePlural
+              : startCase(data.displayNamePlural)
+          }`}
           onPress={() => {
             attemptAction(Action.download, {
               studyId: datasetId,
