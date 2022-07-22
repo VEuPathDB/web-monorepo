@@ -15,9 +15,13 @@ export interface ChildrenGetter<T> {
  * @param {any} root The root node of the tree whose structure is being mapped.
  */
  export function mapStructure<T, U>(mapFn: (node: T, mappedChildren: U[]) => U, getChildren: ChildrenGetter<T>, root: T): U {
-    let mappedChildren = Seq.from(getChildren(root))
+   const logChildren = getChildren(root);
+   console.log({logChildren, root})
+    // let mappedChildren = Seq.from(getChildren(root))
+    let mappedChildren = Seq.from(logChildren)
     .map(child => mapStructure(mapFn, getChildren, child))
     .toArray();
+    console.log({mappedChildren})
     return mapFn(root, mappedChildren);
   }
 
@@ -142,6 +146,7 @@ interface Mapper<T, U> {
     }
   
     static from<T>(iterable: Iterable<T>) {
+      console.log({from: iterable});
       return new Seq(iterable);
     }
   
@@ -152,7 +157,9 @@ interface Mapper<T, U> {
     private _iterator?: Iterator<T>;
     private readonly _cache: T[] = [];
   
-    private constructor(private _iterable: Iterable<T>) { }
+    private constructor(private _iterable: Iterable<T>) { 
+      // console.trace({Seq_constructor: this._iterable}) 
+    }
   
     *[Symbol.iterator]() {
   
@@ -180,6 +187,7 @@ interface Mapper<T, U> {
     }
   
     map<U>(fn: Mapper<T, U>) {
+      console.log({map: fn, instance: this})
       return new Seq(map(fn, this));
     }
   
@@ -273,6 +281,7 @@ interface Mapper<T, U> {
     }
   
     toArray() {
+      console.log('am i called')
       return this.reduce((arr: T[], item: T) => (arr.push(item), arr), []);
     }
   

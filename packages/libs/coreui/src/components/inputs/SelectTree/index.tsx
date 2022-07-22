@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 import PopoverButton from "../../buttons/PopoverButton";
 import CheckboxTree, { CheckboxTreeProps, LinksPosition } from "./CheckboxTree";
   

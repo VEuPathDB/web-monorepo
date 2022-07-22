@@ -1,4 +1,4 @@
-import { FormEvent, ReactNode } from 'react';
+import React, { FormEvent, ReactNode } from 'react';
 import { uniqueId } from 'lodash';
 
 enum LinksPosition {

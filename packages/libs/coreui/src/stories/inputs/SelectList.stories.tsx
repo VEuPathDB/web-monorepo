@@ -1,6 +1,4 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
-import UIThemeProvider from '../../components/theming/UIThemeProvider';
-import { gray } from '../../definitions/colors';
 
 import SelectList, { SelectListProps } from '../../components/inputs/SelectList';
 
@@ -11,16 +9,7 @@ export default {
 
 const Template: Story<SelectListProps> = (args) => {
     return (
-        // <UIThemeProvider
-        // theme={{
-        //     palette: {
-        //         primary: { hue: gray, level: 200 },
-        //         secondary: { hue: gray, level: 500 }
-        //     }
-        // }}
-        // >
-            <SelectList {...args} />
-        // {/* </ UIThemeProvider> */}
+        <SelectList {...args} />
     )
 }
 
