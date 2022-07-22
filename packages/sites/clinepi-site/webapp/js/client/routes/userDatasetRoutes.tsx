@@ -1,5 +1,7 @@
 import React, { Suspense, useMemo } from 'react';
 
+import { useLocation } from 'react-router-dom';
+
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 
@@ -14,6 +16,10 @@ import {
   uploadTypeConfig
 } from '@veupathdb/user-datasets/lib/Utils/upload-config';
 
+import { communitySite, projectId } from '@veupathdb/web-common/lib/config';
+
+import ExternalContentController from '@veupathdb/web-common/lib/controllers/ExternalContentController';
+
 const IsaDatasetDetail = React.lazy(
   () => import('@veupathdb/user-datasets/lib/Components/Detail/IsaDatasetDetail')
 );
@@ -22,11 +28,25 @@ const UserDatasetRouter = React.lazy(() => import('../controllers/UserDatasetRou
 
 const availableUploadTypes = ['isasimple'];
 
+const USER_DATASETS_HELP_PAGE = `${projectId}/user_datasets_help.html`;
+
 export const userDatasetRoutes: RouteEntry[] = [
   {
     path: '/workspace/datasets',
     exact: false,
     component: function ClinEpiUserDatasetRouter() {
+      const location = useLocation();
+
+      const helpTabContentUrl = useMemo(
+        () => [
+          communitySite,
+          USER_DATASETS_HELP_PAGE,
+          location.search,
+          location.hash
+        ].join(''),
+        [location.search, location.hash]
+      );
+
       const detailComponentsByTypeName = useMemo(() => ({
         ISA: function ClinEpiIsaDatasetDetail(props: UserDatasetDetailProps) {
           const wdkDatasetId = diyUserDatasetIdToWdkRecordId(props.userDataset.id);
@@ -49,6 +69,11 @@ export const userDatasetRoutes: RouteEntry[] = [
             workspaceTitle="My User Studies"
             uploadTypeConfig={uploadTypeConfig}
             detailComponentsByTypeName={detailComponentsByTypeName}
+            helpTabContents={
+              <ExternalContentController
+                url={helpTabContentUrl}
+              />
+            }
           />
         </Suspense>
       );
