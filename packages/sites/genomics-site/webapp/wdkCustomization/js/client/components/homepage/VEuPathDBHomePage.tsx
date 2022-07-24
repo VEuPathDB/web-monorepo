@@ -474,6 +474,17 @@ const useHeaderMenuItems = (
             include: [ VectorBase ]
          }
         },
+        { 
+          key: 'mapveu',
+          display: 'MapVEu',
+          tooltip: 'Population Biology map',
+          type: 'externalLink',
+          url: 'https://vectorbase.org/popbio-map/web/',
+          target: '_blank',
+          metadata: {
+            include: [ EuPathDB,UniDB ]
+         }
+        },
         {
           key: 'pubcrawler',
           display: 'PubMed and Entrez',
@@ -888,7 +899,20 @@ const useHeaderMenuItems = (
               display: 'Website usage statistics',
               type: 'externalLink',
               url: '/awstats/awstats.pl',
-              target: '_blank'
+              target: '_blank',
+              metadata: {
+                exclude: [ EuPathDB ]
+              }
+            },
+            { 
+              key: 'usage-statistics-portal',
+              display: 'All websites usage statistics',
+              type: 'externalLink',
+              url: '/awstats/awstats.pl?config=All_EBRC_Combined',
+              target: '_blank',
+              metadata: {
+                include: [ EuPathDB ]
+              }
             }
           ]
         }
