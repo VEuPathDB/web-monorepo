@@ -76,9 +76,7 @@ export default function MySubset({
         <FloatingButton
           key={index}
           text={`${data.filteredCount?.toLocaleString()} of ${data.totalCount?.toLocaleString()} ${
-            data.displayNamePlural?.includes('rRNA')
-              ? data.displayNamePlural
-              : startCase(data.displayNamePlural)
+            data.displayNamePlural
           }`}
           onPress={() => {
             attemptAction(Action.download, {
