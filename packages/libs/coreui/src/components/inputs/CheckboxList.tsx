@@ -1,4 +1,40 @@
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
+import { css } from '@emotion/react';
+import { CSSProperties } from '@emotion/serialize';
+import { merge } from 'lodash';
+import { useMemo } from 'react';
+import { blue, gray, green } from '../../definitions/colors';
+import { UITheme } from '../theming/types';
+import useUITheme from '../theming/useUITheme';
+
+export type CheckboxListStyleSpec = {
+  container: {
+    background: CSSProperties['background'],
+    padding: CSSProperties['padding'],
+    margin: CSSProperties['margin'],
+  },
+  options: {
+    // selectedColor: CSSProperties['color'],
+    color: CSSProperties['color'],
+    fontSize: number,
+    fontWeight: CSSProperties['fontWeight'],
+    textTransform: CSSProperties['textTransform'],
+    padding: CSSProperties['padding'],
+    margin: CSSProperties['margin'],
+  },
+  links: {
+    fontSize: number,
+    background: CSSProperties['background'],
+    border: CSSProperties['border'],
+    color: CSSProperties['color'],
+    textDecoration: CSSProperties['textDecoration'],
+  },
+  border: {
+    width: CSSProperties['borderWidth'],
+    color: CSSProperties['borderColor'],
+    radius: CSSProperties['borderRadius'],
+  },
+};
 
 enum LinksPosition {
   None,
@@ -26,6 +62,9 @@ export type CheckboxListProps = {
   
   /**  Controls location of the "select all" and "clear all" buttons */
   linksPosition?: LinksPosition;
+
+  themeRole?: keyof UITheme['palette'];
+  styleOverrides?: Partial<CheckboxListStyleSpec>;
 }
 
 export default function CheckboxList({
@@ -33,14 +72,74 @@ export default function CheckboxList({
     items,
     value,
     onChange,
-    linksPosition = LinksPosition.Bottom
+    linksPosition = LinksPosition.Bottom,
+    themeRole,
+    styleOverrides
 }: CheckboxListProps) {
 
-  let links = (
+  const defaultStyle: CheckboxListStyleSpec = {
+    container: {
+      background: 'none',
+      padding: 0,
+      margin: 0,
+    },
+    options: {
+      color: 'black',
+      fontSize: 13,
+      fontWeight: 'normal',
+      textTransform: 'none',
+      padding: 0,
+      margin: '0.25em 0.5em',
+    },
+    links: {
+      fontSize: 12,
+      background: 0,
+      border: 0,
+      color: '#069',
+      textDecoration: 'default',
+    },
+    border: {
+      width: 0,
+      color: 'none',
+      radius: '0',
+    }
+  };
+
+  const theme = useUITheme();
+  const themeStyle = useMemo<Partial<CheckboxListStyleSpec>>(
+    () =>
+      theme && themeRole
+        ? {
+            // selectedColor:
+              // theme.palette[themeRole].hue[theme.palette[themeRole].level],
+          }
+        : {},
+    [theme, themeRole]
+  );
+
+  const finalStyle = useMemo(
+    () => merge({}, defaultStyle, themeStyle, styleOverrides),
+    [themeStyle]
+  );
+
+  const linksHoverDecoration = css({
+    textDecoration: 'underline',
+  })
+
+  const linksStyles = {
+    fontSize: finalStyle.links.fontSize,
+    background: finalStyle.links.background,
+    border: finalStyle.links.border,
+    color: finalStyle.links.color,
+    textDecoration: finalStyle.links.textDecoration,
+    '&:hover': linksHoverDecoration
+  }
+
+  const links = (
     <div>
-      <button type="button" className="wdk-Link" onClick={e => onSelectAll(e)}>select all</button>
+      <button css={linksStyles} type="button" onClick={e => onSelectAll(e)}>select all</button>
       {' | '}
-      <button type="button" className="wdk-Link" onClick={e => onClearAll(e)}>clear all</button>
+      <button css={linksStyles} type="button" onClick={e => onClearAll(e)}>clear all</button>
     </div>
   );
 
@@ -69,7 +168,14 @@ const onClearAll = (e: React.MouseEvent<HTMLButtonElement>) => {
       <div>
         {items.map(item => {
           return (
-            <div key={item.value}>
+            <div 
+              key={item.value}
+              css={{
+                margin: finalStyle.options.margin,
+                color: finalStyle.options.color,
+                fontSize: finalStyle.options.fontSize,
+              }}  
+            >
               <label>
                 <input
                   type="checkbox"
