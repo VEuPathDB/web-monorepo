@@ -27,7 +27,8 @@ export type SortBy = Array<{id: string, desc: boolean}>;
 export type DataGridProps = {
   /**
    * Column definitions. The header attribute is displayed to the user.
-   * The accessor attribute is used as a key to the column.
+   * The accessor attribute is used as a key to the column. See react-table
+   * docs for more available attributes: https://react-table-v7.tanstack.com/
    */
   columns: Array<Column>;
   /** Data for rows. */
