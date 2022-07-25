@@ -38,7 +38,13 @@ export function useWorkspaceAnalysis(
   // If using singleAppMode, create a computation object that will be used in our default analysis.
   const computation = useMemo(() => {
     return singleAppMode
-      ? createComputation(singleAppMode, null, [], [], singleAppComputationId)
+      ? createComputation(
+          singleAppMode,
+          undefined,
+          [],
+          [],
+          singleAppComputationId
+        )
       : undefined;
   }, [singleAppMode, singleAppComputationId]);
 

@@ -103,16 +103,9 @@ export function StartPage(props: Props) {
                                 return;
                               const computations =
                                 analysisState.analysis.descriptor.computations;
-                              const defaultComputationSpec =
-                                plugin &&
-                                plugin.createDefaultComputationSpec != null
-                                  ? plugin.createDefaultComputationSpec(
-                                      studyMetadata.rootEntity
-                                    )
-                                  : {
-                                      configuration: undefined,
-                                      displayName: '',
-                                    };
+                              const defaultComputationConfig = plugin.createDefaultConfiguration(
+                                studyMetadata.rootEntity
+                              );
                               /*
                                 The first instance of a configurable app will be derived by a default configuration.
                                 Here we're checking if a computation with a defaultConfig already exists.
@@ -121,9 +114,7 @@ export function StartPage(props: Props) {
                                 (c) =>
                                   isEqual(
                                     c.descriptor.configuration,
-                                    'configuration' in defaultComputationSpec
-                                      ? defaultComputationSpec.configuration
-                                      : {}
+                                    defaultComputationConfig
                                   ) && app.name === c.descriptor.type
                               );
                               const visualizationId = uuid();
@@ -138,7 +129,7 @@ export function StartPage(props: Props) {
                               if (!existingComputation) {
                                 const computation = createComputation(
                                   app.name,
-                                  defaultComputationSpec.configuration,
+                                  defaultComputationConfig,
                                   computations,
                                   [newVisualization]
                                 );

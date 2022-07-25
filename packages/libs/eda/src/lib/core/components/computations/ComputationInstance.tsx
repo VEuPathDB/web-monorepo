@@ -6,6 +6,8 @@ import { VisualizationsContainer } from '../visualizations/VisualizationsContain
 import { ComputationProps } from './Types';
 import { plugins } from './plugins';
 import { VisualizationPlugin } from '../visualizations/VisualizationPlugin';
+import { useStudyMetadata } from '../../hooks/workspace';
+import { AnalysisState } from '../../hooks/analysis';
 
 export interface Props extends ComputationProps {
   computationId: string;
@@ -29,11 +31,7 @@ export function ComputationInstance(props: Props) {
 
   const { analysis, setComputations } = analysisState;
 
-  const computation = useMemo(() => {
-    return analysis?.descriptor.computations.find(
-      (computation) => computation.computationId === computationId
-    );
-  }, [computationId, analysis]);
+  const computation = useComputation(analysis, computationId);
 
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
 
@@ -121,4 +119,42 @@ function AppTitle(props: AppTitleProps) {
         : null}
     </div>
   ) : null;
+}
+
+function useComputation(
+  analysis: AnalysisState['analysis'],
+  computationId: string
+) {
+  const studyMetadata = useStudyMetadata();
+  return useMemo(() => {
+    const computation = analysis?.descriptor.computations.find(
+      (computation) => computation.computationId === computationId
+    );
+    if (computation == null) return;
+    const computePlugin = plugins[computation.descriptor.type];
+    if (computePlugin == null) {
+      throw new Error(
+        `Unknown computation type: ${computation.descriptor.type}.`
+      );
+    }
+
+    if (
+      !computePlugin.isConfigurationValid(computation.descriptor.configuration)
+    ) {
+      return {
+        ...computation,
+        descriptor: {
+          ...computation.descriptor,
+          configuration: computePlugin.createDefaultConfiguration(
+            studyMetadata.rootEntity
+          ),
+        },
+      };
+    }
+    return computation;
+  }, [
+    analysis?.descriptor.computations,
+    computationId,
+    studyMetadata.rootEntity,
+  ]);
 }
