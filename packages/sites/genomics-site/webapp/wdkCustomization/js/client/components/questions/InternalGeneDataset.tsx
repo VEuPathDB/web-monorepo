@@ -390,6 +390,16 @@ function InternalGeneDatasetContent(props: Props) {
             {
               selectedDataSetRecord && (
               <TabbedDisplay
+                styleOverrides={{
+                  container: {
+                    margin: '3rem 0 0 0'
+                  },
+                  active: {
+                    indicatorColor: '#2F96B4',
+                    backgroundColor: '#E8F3F7',
+                  },
+                  tabFontSize: '1.5em'
+                }}
                 tabs={displayCategoryOrder
                   .filter(
                     categoryName => getCategorySearchName(
