@@ -19,7 +19,7 @@ export type TabbedDisplayStyleSpec = {
   inactive: TabStyle;
   active: TabStyle;
   hover: TabStyle;
-  tabLabel: CSSProperties;
+  tabFontSize: CSSProperties['fontSize'];
 };
 
 const DEFAULT_STYLE: TabbedDisplayStyleSpec = {
@@ -44,10 +44,7 @@ const DEFAULT_STYLE: TabbedDisplayStyleSpec = {
     textColor: gray[400],
     indicatorColor: tan[300],
   },
-  tabLabel: {
-    fontSize: '1em',
-    margin: 0,
-  }
+  tabFontSize: '1em',
 };
 
 export type TabbedDisplayProps<TabKey extends string> = {
@@ -158,15 +155,15 @@ export default function TabbedDisplay<T extends string = string>({
                 }
               }}
             >
-              <span
+              <div
                 css={{
-                  ...finalStyle.tabLabel,
+                  fontSize: finalStyle.tabFontSize,
                   color: finalStyle[tabState].textColor,
                   fontWeight: tab.key === activeTab ? 'bold' : 'normal',
                 }}
               >
                 {tab.displayName}
-              </span>
+              </div>
             </div>
           );
         })}
