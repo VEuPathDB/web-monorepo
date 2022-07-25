@@ -10,13 +10,14 @@ import logoUrl from 'site/images/18170.png';
 import heroImageUrl from 'site/images/mbio_hero.png';
 import vizData from '../visualizations.json';
 import { STATIC_ROUTE_PATH } from '@veupathdb/web-common/lib/routes';
-
+import { AnalysisCard } from '@veupathdb/web-common/lib/App/Analyses';
 import { StudyCard } from '@veupathdb/web-common/lib/App/Studies';
 import { SearchCard } from '@veupathdb/web-common/lib/App/Searches';
 import { ImageCard } from '@veupathdb/web-common/lib/App/ImageCard';
 
 import { studyMatchPredicate, studyFilters } from '@veupathdb/web-common/lib/util/homeContent';
 import { useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
+import { useEda } from '@veupathdb/web-common/lib/config';
 
 import { Page } from './Page';
 
@@ -77,46 +78,83 @@ function getSiteData(state) {
 }
 
 function getHomeContent({ studies, searches, visualizations }) {
-  return [
-    {
-      title: 'Explore the Studies',
-      contentType: 'StudyCardList',
-      contentNamePlural: 'studies',
-      filters: studyFilters(studies),
-      items: studies.entities,
-      isLoading: studies.loading,
-      isExpandable: true,
-      tableViewLink: '/search/dataset/Studies/result',
-      tableViewLinkText: 'Study summaries table',
-      cardComponent: StudyCard,
-      getSearchStringForItem: item => 
-        item.searchString,
-      matchPredicate: studyMatchPredicate
-    },
-    {
-      title: 'Explore Example Searches',
-      description: 'MicrobiomeDB can be used to employ a sophisticated search strategy system to explore study data. Use the example searches below to jump to saved strategies, view their results and get acquainted with MicrobiomeDB capabilities.',
-      viewAllAppUrl: '/app/workspace/strategies/public',
-      contentType: 'SearchCardList',
-      contentNamePlural: 'searches',
-      items: searches.entities,
-      isLoading: searches.loading,
-      cardComponent: SearchCard,
-      getSearchStringForItem: item =>
-        item.name + ' ' + item.description
-    },
-    {
-      title: 'Explore Visualization Tools',
-      description: 'Gain clear insights into your data and illustrate powerful connections using our visualization and analysis tools. Use the brief tutorials below to get learn how to get started exploring data with these resources.',
-      contentType: 'ImageCardList',
-      contentNamePlural: 'visualizations',
-      items: visualizations.entities,
-      isLoading: visualizations.loading,
-      cardComponent: ImageCard,
-      getSearchStringForItem: item =>
-        item.title + ' ' + item.description
-    }
-  ];
+  console.log(useEda);
+  console.log(studies);
+  return useEda ? 
+    [
+      {
+        title: 'Explore the Studies',
+        description: 'Analyze data from the publicly available studies below.',
+        contentType: 'StudyCardList',
+        contentNamePlural: 'studies',
+        filters: studyFilters(studies),
+        filtersLabel: 'disease',
+        items: studies.entities,
+        isLoading: studies.loading,
+        isExpandable: true,
+        // uncomment the next line to disable the cards search
+        // isSearchable: !siteSearchServiceUrl,
+        tableViewLink: '/search/dataset/Studies/result',
+        tableViewLinkText: 'Study summaries table',
+        cardComponent: StudyCard,
+        getSearchStringForItem: item => 
+          item.searchString,
+        matchPredicate: studyMatchPredicate
+      },
+      {
+        title: 'Explore Example Analyses',
+        description: 'Learn how to use MicrobiomeDB analyses to investigate and visualize data.',
+        viewAllAppUrl: '/app/workspace/analyses/public',
+        contentType: 'AnalysisCardList',
+        contentNamePlural: 'analyses',
+        items: searches.entities,
+        isLoading: searches.loading,
+        cardComponent: AnalysisCard,
+        getSearchStringForItem: item =>
+          item.name + ' ' + item.description,
+        loadItems,
+      }
+    ]
+  : [
+      {
+        title: 'Explore the Studies',
+        contentType: 'StudyCardList',
+        contentNamePlural: 'studies',
+        filters: studyFilters(studies),
+        items: studies.entities,
+        isLoading: studies.loading,
+        isExpandable: true,
+        tableViewLink: '/search/dataset/Studies/result',
+        tableViewLinkText: 'Study summaries table',
+        cardComponent: StudyCard,
+        getSearchStringForItem: item => 
+          item.searchString,
+        matchPredicate: studyMatchPredicate
+      },
+      {
+        title: 'Explore Example Searches',
+        description: 'MicrobiomeDB can be used to employ a sophisticated search strategy system to explore study data. Use the example searches below to jump to saved strategies, view their results and get acquainted with MicrobiomeDB capabilities.',
+        viewAllAppUrl: '/app/workspace/strategies/public',
+        contentType: 'SearchCardList',
+        contentNamePlural: 'searches',
+        items: searches.entities,
+        isLoading: searches.loading,
+        cardComponent: SearchCard,
+        getSearchStringForItem: item =>
+          item.name + ' ' + item.description
+      },
+      {
+        title: 'Explore Visualization Tools',
+        description: 'Gain clear insights into your data and illustrate powerful connections using our visualization and analysis tools. Use the brief tutorials below to get learn how to get started exploring data with these resources.',
+        contentType: 'ImageCardList',
+        contentNamePlural: 'visualizations',
+        items: visualizations.entities,
+        isLoading: visualizations.loading,
+        cardComponent: ImageCard,
+        getSearchStringForItem: item =>
+          item.title + ' ' + item.description
+      }
+    ];
 }
 
 function makeHeaderMenuItems(state) {
@@ -205,3 +243,18 @@ function makeHeaderMenuItems(state) {
   }
 }
 
+async function loadItems({ analysisClient, wdkService }) {
+  const overviews = await analysisClient.getPublicAnalyses();
+  const studies = await wdkService.getStudies();
+  return overviews.flatMap(overview => {
+    const study = studies.records.find(study => study.attributes.dataset_id === overview.studyId);
+    if (study == null) return [];
+    return [{
+      displayName: overview.displayName,
+      studyDisplayName: study.displayName,
+      description: overview.description,
+      studyId: overview.studyId,
+      analysisId: overview.analysisId,
+    }];
+  });
+}
