@@ -204,7 +204,12 @@ export default function DataGrid({
     }
   );
 
-  const finalSortBy = useMemo(() => sortBy.filter((column) => column.desc !== undefined), [sortBy]) as SortBy;
+  // react-table's sortBy allows undefined column.desc, but it doesn't explain
+  // when that would be the case and I couldn't force an example. Filter out
+  // undefined values to conform with our better-defined SortBy type
+  const filteredSortBy = useMemo(
+    () => sortBy.filter((column) => column.desc !== undefined), [sortBy]
+  ) as SortBy;
 
   /**
    * Listen for changes in pagination and fetch
@@ -215,10 +220,10 @@ export default function DataGrid({
       pagination.serverSidePagination.fetchPaginatedData({
         pageIndex,
         pageSize,
-        sortBy: finalSortBy,
+        sortBy: filteredSortBy,
       });
     }
-  }, [pageIndex, pageSize, finalSortBy]);
+  }, [pageIndex, pageSize, filteredSortBy]);
 
   // Listen for changes to row selection, if applicable.
   useEffect(() => {
