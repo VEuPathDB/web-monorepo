@@ -17,7 +17,10 @@ import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { VariableDescriptor } from '../../../types/variable';
 
-import { VariableCoverageTable } from '../../VariableCoverageTable';
+import {
+  VariableCoverageTable,
+  VariableSpec,
+} from '../../VariableCoverageTable';
 
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
@@ -58,6 +61,7 @@ import {
   variablesAreUnique,
   vocabularyWithMissingData,
   fixVarIdLabels,
+  fixVarIdLabel,
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { StudyEntity, Variable } from '../../../types/study';
@@ -544,6 +548,34 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     />
   );
 
+  console.log(vizConfig.xAxisVariable);
+  console.log(xAxisVariable);
+  console.log(providedXAxisVariable);
+  console.log(computedYAxisDetails);
+  console.log(yAxisVariable);
+  console.log(data.value?.computedVariableMetadata);
+  console.log(variableDisplayWithUnit(xAxisVariable));
+  const computedYAxisDescriptor = !providedXAxisVariable
+    ? ({
+        entityId: computedYAxisDetails?.entityId,
+        variableId: computedYAxisDetails?.variableId,
+        displayName: data.value?.computedVariableMetadata?.displayName?.[0],
+      } as VariableDescriptor)
+    : null;
+
+  const additionalVariableCoverageTableRows = data.value
+    ?.computedVariableMetadata?.collectionVariable?.collectionVariableDetails
+    ? data.value?.computedVariableMetadata?.collectionVariable?.collectionVariableDetails.map(
+        (varDetails) => ({
+          role: '',
+          required: true,
+          display: varDetails.variableId,
+          variable: varDetails,
+        })
+      )
+    : [];
+  console.log(...[additionalVariableCoverageTableRows]);
+
   const tableGroupNode = (
     <>
       <BirdsEyeView
@@ -571,14 +603,15 @@ function BoxplotViz(props: VisualizationProps<Options>) {
           {
             role: 'X-axis',
             required: true,
-            display: variableDisplayWithUnit(xAxisVariable),
+            display: independentAxisLabel,
             variable: vizConfig.xAxisVariable,
           },
+          ...additionalVariableCoverageTableRows,
           {
             role: 'Y-axis',
-            required: true,
-            display: variableDisplayWithUnit(yAxisVariable),
-            variable: vizConfig.yAxisVariable,
+            required: !providedXAxisVariable,
+            display: dependentAxisLabel,
+            variable: computedYAxisDescriptor ?? vizConfig.yAxisVariable,
           },
           {
             role: 'Overlay',
