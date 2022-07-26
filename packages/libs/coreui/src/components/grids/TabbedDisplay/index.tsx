@@ -1,8 +1,5 @@
-import { useMemo, useState, CSSProperties, useEffect } from 'react';
+import { useMemo, useState, CSSProperties } from 'react';
 import { merge } from 'lodash';
-
-// Components
-import { H6 } from '../../typography';
 
 // Definitions
 import { blue, gray, tan } from '../../../definitions/colors';
@@ -22,6 +19,7 @@ export type TabbedDisplayStyleSpec = {
   inactive: TabStyle;
   active: TabStyle;
   hover: TabStyle;
+  tabFontSize: CSSProperties['fontSize'];
 };
 
 const DEFAULT_STYLE: TabbedDisplayStyleSpec = {
@@ -29,6 +27,7 @@ const DEFAULT_STYLE: TabbedDisplayStyleSpec = {
     display: 'flex',
     flexDirection: 'column',
     boxSizing: 'border-box',
+    margin: 0,
   },
   active: {
     backgroundColor: blue[100],
@@ -45,6 +44,7 @@ const DEFAULT_STYLE: TabbedDisplayStyleSpec = {
     textColor: gray[400],
     indicatorColor: tan[300],
   },
+  tabFontSize: '1em',
 };
 
 export type TabbedDisplayProps<TabKey extends string> = {
@@ -155,11 +155,15 @@ export default function TabbedDisplay<T extends string = string>({
                 }
               }}
             >
-              <H6
-                children={tab.displayName}
-                additionalStyles={{ margin: 0 }}
-                color={finalStyle[tabState].textColor}
-              />
+              <div
+                css={{
+                  fontSize: finalStyle.tabFontSize,
+                  color: finalStyle[tabState].textColor,
+                  fontWeight: tab.key === activeTab ? 'bold' : 'normal',
+                }}
+              >
+                {tab.displayName}
+              </div>
             </div>
           );
         })}
