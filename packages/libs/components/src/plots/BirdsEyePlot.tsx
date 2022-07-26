@@ -3,6 +3,7 @@ import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { BirdsEyePlotData } from '../types/plots';
 import { PlotParams } from 'react-plotly.js';
 import { Layout, Shape, PlotData } from 'plotly.js';
+import { CSSProperties } from '@emotion/react/node_modules/@emotion/serialize';
 
 // in this example, the main variable is 'country'
 export interface BirdsEyePlotProps extends PlotProps<BirdsEyePlotData> {
@@ -12,6 +13,12 @@ export interface BirdsEyePlotProps extends PlotProps<BirdsEyePlotData> {
   bracketLineWidth?: number;
   /** bracket head size, default is 0.15 */
   bracketHeadSize?: number;
+  /** specifies the background color of the actual graph/plot, default is white */
+  plotBgColor?: CSSProperties['backgroundColor'];
+  /** specifies the background color of the container for all parts of the graph/plot, including the axes and labels;
+   *  defaults to white
+   */
+  paperBgColor?: CSSProperties['backgroundColor'];
 }
 
 const EmptyBirdsEyePlotData: BirdsEyePlotData = { brackets: [], bars: [] };
@@ -22,6 +29,8 @@ export default function BirdsEyePlot({
   dependentAxisLabel = '',
   bracketLineWidth = 2,
   bracketHeadSize = 0.15,
+  plotBgColor = 'white',
+  paperBgColor = 'white',
   ...restProps
 }: BirdsEyePlotProps) {
   // Transform `data.bars` into a Plot.ly friendly format.
@@ -169,8 +178,8 @@ export default function BirdsEyePlot({
         size: 13, // for some reason, size: 14 causes some intermittent placement problems...
       },
     },
-    paper_bgcolor: 'rgb(250,250,250)',
-    plot_bgcolor: 'rgb(250,250,250)',
+    paper_bgcolor: paperBgColor,
+    plot_bgcolor: plotBgColor,
   };
 
   const barLabels = data.bars.map((bar) => bar.label);
