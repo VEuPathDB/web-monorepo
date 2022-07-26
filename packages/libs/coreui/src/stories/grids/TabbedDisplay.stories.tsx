@@ -1,9 +1,9 @@
+import { useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 
 import TabbedDisplay, {
   TabbedDisplayProps,
 } from '../../components/grids/TabbedDisplay';
-import { H6 } from '../../components/headers';
 import UIThemeProvider from '../../components/theming/UIThemeProvider';
 import { green, purple } from '../../definitions/colors';
 
@@ -16,6 +16,7 @@ export default {
 
 const tabs = [
   {
+    key: 'tab1',
     displayName: 'View Study Details',
     content: (
       <div css={{ padding: 15 }}>
@@ -26,7 +27,7 @@ const tabs = [
           <li>Theming Support</li>
           <li>Distinct Visual States for Selected/Unselected/Focus States</li>
           <li>Subtle animation effects to highlight state changes.</li>
-          <li>Tab can be controlled programmatically. </li>
+          <li>Tab is controlled programmatically. </li>
           <li>Support for both mouse/touch and keyboard based navigation.</li>
           <li>
             Proper accessibility attributes to aid assistive technologies.
@@ -38,6 +39,7 @@ const tabs = [
     onSelect: () => console.log('View Study Details has been selected.'),
   },
   {
+    key: 'tab2',
     displayName: 'Browse and Subset',
     content: (
       <div css={[typography.p, { padding: 15 }]}>
@@ -46,6 +48,7 @@ const tabs = [
     ),
   },
   {
+    key: 'tab3',
     displayName: 'Visualize',
     content: (
       <div css={[typography.p, { padding: 15 }]}>
@@ -54,6 +57,7 @@ const tabs = [
     ),
   },
   {
+    key: 'tab4',
     displayName: 'Notes',
     content: (
       <div css={[typography.p, { padding: 15 }]}>
@@ -62,6 +66,7 @@ const tabs = [
     ),
   },
   {
+    key: 'tab5',
     displayName: 'Downloads',
     content: (
       <div css={[typography.p, { padding: 15 }]}>
@@ -71,7 +76,9 @@ const tabs = [
   },
 ];
 
-const Template: Story<TabbedDisplayProps> = (args) => (
+const Template: Story<TabbedDisplayProps<string>> = (args) => {
+  const [ selectedTab, setSelectedTab ] = useState(tabs[0].key);
+  return (
   <UIThemeProvider
     theme={{
       palette: {
@@ -80,17 +87,14 @@ const Template: Story<TabbedDisplayProps> = (args) => (
       },
     }}
   >
-    <TabbedDisplay {...args} />
+    <TabbedDisplay {...args} activeTab={selectedTab} onTabSelected={setSelectedTab} />
   </UIThemeProvider>
-);
+  )
+}
 
 export const Basic = Template.bind({});
 Basic.args = {
   tabs,
-} as TabbedDisplayProps;
-
-export const ControlledTab = Template.bind({});
-ControlledTab.args = {
-  activeTab: 'Visualize',
-  tabs: tabs,
-} as TabbedDisplayProps;
+  activeTab: 'tab1',
+  onTabSelected: (key: string) => null
+} as TabbedDisplayProps<string>;
