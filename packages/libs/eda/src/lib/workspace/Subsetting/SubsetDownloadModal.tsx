@@ -37,7 +37,10 @@ import useDimensions from 'react-cool-dimensions';
 import { useFeaturedFields } from '../../core/components/variableTrees/hooks';
 import { useProcessedGridData, processGridData } from './hooks';
 import tableSVG from './cartoon_table.svg';
-import { DataGridProps } from '@veupathdb/coreui/dist/components/grids/DataGrid';
+import {
+  DataGridProps,
+  SortBy,
+} from '@veupathdb/coreui/dist/components/grids/DataGrid';
 
 type SubsetDownloadModalProps = {
   /** Should the modal currently be visible? */
@@ -182,6 +185,8 @@ export default function SubsetDownloadModal({
       .map((mergeKey) => mergeKey.id);
   }, [currentEntity]);
 
+  const [sortBy, setSortBy] = useState<SortBy>([]);
+
   // Required columns
   const requiredColumns = usePromise(
     useCallback(async () => {
@@ -220,6 +225,7 @@ export default function SubsetDownloadModal({
     ({ pageSize, pageIndex, sortBy }) => {
       if (!currentEntity) return;
       setDataLoading(true);
+      setSortBy(sortBy ?? []);
 
       subsettingClient
         .getTabularData(studyMetadata.id, currentEntity.id, {
@@ -299,8 +305,8 @@ export default function SubsetDownloadModal({
   useEffect(() => {
     if (!displayModal) return;
     setApiError(null);
-    fetchPaginatedData({ pageSize: 10, pageIndex: 0 });
-  }, [fetchPaginatedData, displayModal]);
+    fetchPaginatedData({ pageSize: 10, pageIndex: 0, sortBy });
+  }, [fetchPaginatedData, displayModal, sortBy]);
 
   const dataGridWrapperRef = useRef<HTMLDivElement>(null);
 
