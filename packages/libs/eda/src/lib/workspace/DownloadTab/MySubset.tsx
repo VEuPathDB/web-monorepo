@@ -75,9 +75,9 @@ export default function MySubset({
       {Object.values(entities).map((data, index) => (
         <FloatingButton
           key={index}
-          text={`${data.filteredCount?.toLocaleString()} of ${data.totalCount?.toLocaleString()} ${startCase(
+          text={`${data.filteredCount?.toLocaleString()} of ${data.totalCount?.toLocaleString()} ${
             data.displayNamePlural
-          )}`}
+          }`}
           onPress={() => {
             attemptAction(Action.download, {
               studyId: datasetId,
