@@ -227,6 +227,13 @@ export default function SubsetDownloadModal({
       setDataLoading(true);
       setSortBy(sortBy ?? []);
 
+      const selectedVariableIds = selectedVariableDescriptorsWithMergeKeys.map(
+        (descriptor) => descriptor.variableId
+      );
+      const filteredSortBy = sortBy?.filter((column) =>
+        selectedVariableIds.includes(column.id.split('/')[1])
+      );
+
       subsettingClient
         .getTabularData(studyMetadata.id, currentEntity.id, {
           filters: analysisState.analysis?.descriptor.subset.descriptor ?? [],
@@ -241,7 +248,7 @@ export default function SubsetDownloadModal({
             headerFormat: 'standard',
             trimTimeFromDateVars: true,
             paging: { numRows: pageSize, offset: pageSize * pageIndex },
-            sorting: sortBy?.map(({ id, desc }) => ({
+            sorting: filteredSortBy?.map(({ id, desc }) => ({
               key: id.split('/')[1],
               direction: desc ? 'desc' : 'asc',
             })),
@@ -260,6 +267,7 @@ export default function SubsetDownloadModal({
     },
     [
       selectedVariableDescriptors,
+      selectedVariableDescriptorsWithMergeKeys,
       studyMetadata.id,
       subsettingClient,
       analysisState.analysis?.descriptor.subset.descriptor,
