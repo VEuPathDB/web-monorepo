@@ -3,7 +3,7 @@ import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { BirdsEyePlotData } from '../types/plots';
 import { PlotParams } from 'react-plotly.js';
 import { Layout, Shape, PlotData } from 'plotly.js';
-import { CSSProperties } from '@emotion/react/node_modules/@emotion/serialize';
+import { CSSProperties } from '@emotion/serialize';
 
 // in this example, the main variable is 'country'
 export interface BirdsEyePlotProps extends PlotProps<BirdsEyePlotData> {
