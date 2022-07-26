@@ -136,6 +136,8 @@ export function BirdsEyeView(props: Props) {
         interactive={true}
         dependentAxisLabel={entityPluralString}
         showSpinner={enableSpinner && !birdsEyeData}
+        plotBgColor={'rgb(250,250,250)'}
+        paperBgColor={'rgb(250,250,250)'}
       />
       <Tooltip
         content={tooltipContent}
