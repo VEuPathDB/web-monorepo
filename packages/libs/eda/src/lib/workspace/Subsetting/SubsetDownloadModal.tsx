@@ -428,8 +428,8 @@ export default function SubsetDownloadModal({
                     },
                   },
                   icons: {
-                    inactiveColor: gray[300],
-                    activeColor: gray[500],
+                    inactiveColor: gray[400],
+                    activeColor: gray[900],
                   },
                 }}
                 sortable
