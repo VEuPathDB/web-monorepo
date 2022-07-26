@@ -1,8 +1,142 @@
+import { escapeRegExp, deburr } from 'lodash';
+
+/**
+ * Return a boolean indicating if all the queryTerms are found in the searchableString
+ * @param queryTerms An array of queryTerms to search with
+ * @param searchableString The string to search.
+ * @returns boolean
+ */
+ export function areTermsInString(queryTerms: Array<string>, searchableString: string) {
+  const re = new RegExp(areTermsInStringRegexString(queryTerms), "i");
+  return re.test(searchableString);
+}
+
+/**
+ * Return a regex string which can be used to determine if all queryTerms
+ * are found in the searchableString
+ * @param queryTerms An array of queryTerms to search with
+ * @param searchableString The string to search.
+ * @returns boolean
+ */
+export function areTermsInStringRegexString(queryTerms: Array<string>) {
+  const queryTermRegexStrs = queryTerms.map(isTermInStringRegexString);
+  return combineQueryTermRegexStrs(queryTermRegexStrs);
+}
+
+function combineQueryTermRegexStrs(queryTermRegexStrs: Array<string>) {
+  return (
+    '^(?=[\\\s\\\S]*?' +
+    queryTermRegexStrs.join( ')(?=[\\\s\\\S]*?' ) +
+    ')[\\\s\\\S]*$'
+  );
+}
+
+function isTermInStringRegexString(queryTerm: string) {
+  if (!queryTerm) {
+    return "";
+  }
+
+  const deburredQueryTerm = deburr(queryTerm);
+  const escapedQueryTerm = escapeRegExp(deburredQueryTerm);
+  const queryTermRegexWithWildcards = escapedQueryTerm.replace(/\\\*/g, '[\\w]*');
+
+  return "\\b" + queryTermRegexWithWildcards;
+}
+
+
+// Field types
+// -----------
+
+interface BaseField {
+  type?: string;
+  term: string;
+  display: string;
+  parent?: string;
+  isRange?: boolean;
+}
+
+export interface StringMemberField extends BaseField {
+  type: 'string';
+  isRange: false;
+}
+
+export interface NumberMemberField extends BaseField {
+  type: 'number';
+  isRange: false
+}
+
+export interface DateMemberField extends BaseField {
+  type: 'date';
+  isRange: false;
+}
+
+export interface NumberRangeField extends BaseField {
+  type: 'number';
+  isRange: true;
+}
+
+export interface DateRangeField extends BaseField {
+  type: 'date';
+  isRange: true;
+}
+
+export interface MultiField extends BaseField {
+  type: 'multiFilter';
+}
+
+export type MemberField = StringMemberField | NumberMemberField | DateMemberField;
+export type RangeField = NumberRangeField | DateRangeField;
+export type FilterField = MemberField | RangeField | MultiField;
+export type Field = FilterField | BaseField;
+
+export type TreeNode<T extends Field> = {
+  field: T;
+  children: TreeNode<T>[];
+};
+export type FieldTreeNode = TreeNode<Field>;
+
+/**
+ * Create an array of ancestor nodes for a given node predicate.
+ */
+ export function findAncestorFields(tree: FieldTreeNode, term: string): Seq<Field> {
+  if (tree.field.term === term) return Seq.of(tree.field);
+  const ancestors = Seq.from(tree.children)
+    .flatMap(child => findAncestorFields(child, term));
+  if (ancestors.isEmpty()) return Seq.empty();
+  return Seq.of(tree.field).concat(ancestors);
+}
+
 /** From TreeUtils */
 
 export interface ChildrenGetter<T> {
     (t: T): T[];
   }
+
+export type Node<T> = T & {
+  children: Array<Node<T>>;
+}
+
+/**
+ * Create a Seq of tree nodes in preorder sequence.
+ *
+ *              1
+ *             / \
+ *            /   \
+ *           /     \
+ *          2       3
+ *         / \     /
+ *        4   5   6
+ *       /       / \
+ *      7       8   9
+ *
+ *     preorder:    1 2 4 7 5 3 6 8 9
+ *
+ * @param {Object} root
+ * @return {Seq}
+ */
+ export function preorderSeq<T>(root: Node<T>) {
+  return Seq.from(preorder(root, n => n.children));
+}
 
 /**
  * Convert a tree into a new tree-like structure. The tree is traversed bottom-
@@ -16,12 +150,10 @@ export interface ChildrenGetter<T> {
  */
  export function mapStructure<T, U>(mapFn: (node: T, mappedChildren: U[]) => U, getChildren: ChildrenGetter<T>, root: T): U {
    const logChildren = getChildren(root);
-   console.log({logChildren, root})
     // let mappedChildren = Seq.from(getChildren(root))
     let mappedChildren = Seq.from(logChildren)
     .map(child => mapStructure(mapFn, getChildren, child))
     .toArray();
-    console.log({mappedChildren})
     return mapFn(root, mappedChildren);
   }
 
@@ -146,7 +278,6 @@ interface Mapper<T, U> {
     }
   
     static from<T>(iterable: Iterable<T>) {
-      console.log({from: iterable});
       return new Seq(iterable);
     }
   
@@ -157,9 +288,7 @@ interface Mapper<T, U> {
     private _iterator?: Iterator<T>;
     private readonly _cache: T[] = [];
   
-    private constructor(private _iterable: Iterable<T>) { 
-      // console.trace({Seq_constructor: this._iterable}) 
-    }
+    private constructor(private _iterable: Iterable<T>) { }
   
     *[Symbol.iterator]() {
   
@@ -187,7 +316,6 @@ interface Mapper<T, U> {
     }
   
     map<U>(fn: Mapper<T, U>) {
-      console.log({map: fn, instance: this})
       return new Seq(map(fn, this));
     }
   
@@ -281,7 +409,6 @@ interface Mapper<T, U> {
     }
   
     toArray() {
-      console.log('am i called')
       return this.reduce((arr: T[], item: T) => (arr.push(item), arr), []);
     }
   

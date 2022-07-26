@@ -3,6 +3,9 @@ import { debounce } from 'lodash';
 import React, { Component } from 'react';
 // use safeHtml for enabling html (e.g., italic) at helpText
 import { safeHtml } from '../SelectTree/Utils';
+import { Close } from '../../icons';
+import { Help } from '@material-ui/icons';
+import { Tooltip } from '@material-ui/core';
 
 type Props = {
 
@@ -128,14 +131,20 @@ export default class RealTimeSearchBox extends Component<Props, State> {
             placeholder={placeholderText}
             value={searchTerm}
           />
-          {/* <i className={`fa fa-${iconName} ${searchIconClassName}`}/> */}
+          <i className={`fa fa-search`}/>
           <button
             type="button" onClick={this.handleResetClick}>
-            {/* <i className={"fa fa-close " + cancelIconClassName}/> */}
+            <Close />
           </button>
         </label>
         {/* use safeHtml for helpText to allow italic */}
-        {/* {!helpText ? null : <HelpIcon>{safeHtml(helpText)}</HelpIcon>} */}
+        {!helpText ? 
+          null : 
+          <Tooltip
+            title={safeHtml(helpText)}
+          >
+            <Help />  
+          </Tooltip>}
       </div>
     );
   }

@@ -52,6 +52,9 @@ export default function PopoverButton(props: PopoverButtonProps) {
         setAnchorEl(event.currentTarget);
       }}
       endIcon={<Icon className="fa fa-caret-down" />}
+      style={{
+        textTransform: 'none',
+      }}
     >
       {buttonDisplayContent}
     </Button>

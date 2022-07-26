@@ -124,6 +124,7 @@ export default function CheckboxList({
 
   const linksHoverDecoration = css({
     textDecoration: 'underline',
+    cursor: 'pointer',
   })
 
   const linksStyles = {

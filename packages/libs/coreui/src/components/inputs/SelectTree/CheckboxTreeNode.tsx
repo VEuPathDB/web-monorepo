@@ -1,6 +1,17 @@
 import React from 'react';
 import { isLeaf } from './Utils';
 import IndeterminateCheckbox, { IndeterminateCheckboxProps } from './IndeterminateCheckbox';
+import { ArrowRight, ArrowDropDown } from '@material-ui/icons';
+import { css } from '@emotion/react';
+import { CSSProperties } from '@emotion/serialize';
+
+export type CheckboxListStyleSpec = {
+  listStyle: CSSProperties['listStyle'],
+};
+
+const defaultStyle = {
+  listStyle: 'none',
+}
 
 const visibleElement = { display: '' };
 const hiddenElement = { display: 'none' };
@@ -106,14 +117,18 @@ export default function CheckboxTreeNode<T>({
     const CustomCheckbox = (customCheckboxes && (nodeId in customCheckboxes)) ? customCheckboxes[nodeId] : undefined;
 
     return (
-      <li style={nodeVisibilityCss}>
-        <div>
+      <li css={{
+        nodeVisibilityCss, 
+        listStyle: defaultStyle.listStyle
+      }}>
+        <div css={{
+          display: 'flex',
+        }}>
           {isLeafNode || isActiveSearch ? (
-            <i />
+            <></>
           ) : (
-            <i
-              onClick={() => toggleExpansion(node)}
-            />
+            isExpanded ? <ArrowDropDown onClick={() => toggleExpansion(node)}/> :
+              <ArrowRight onClick={() => toggleExpansion(node)}/>
           )}
           {!isSelectable || (!isMultiPick && !isLeafNode) ? (
             <div
