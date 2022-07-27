@@ -24,7 +24,8 @@ export const AbundanceConfig = t.type({
 export const plugin: ComputationPlugin = {
   configurationComponent: AbundanceConfiguration,
   configurationDescriptionComponent: AbundanceConfigDescriptionComponent,
-  createDefaultComputationSpec: createDefaultComputationSpec,
+  createDefaultConfiguration,
+  isConfigurationValid: AbundanceConfig.is,
   visualizationPlugins: {
     boxplot: boxplotVisualization.withOptions({
       getXAxisVariable(config) {
@@ -108,9 +109,9 @@ function AbundanceConfigDescriptionComponent({
   );
 }
 
-function createDefaultComputationSpec(rootEntity: StudyEntity) {
+function createDefaultConfiguration(rootEntity: StudyEntity): AbundanceConfig {
   const collections = findCollections(rootEntity);
-  const configuration: AbundanceConfig = {
+  return {
     name: 'RankedAbundanceComputation',
     collectionVariable: {
       variableId: collections[0].id,
@@ -118,7 +119,6 @@ function createDefaultComputationSpec(rootEntity: StudyEntity) {
     },
     rankingMethod: 'median',
   };
-  return { configuration };
 }
 
 // Include available methods in this array.

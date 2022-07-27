@@ -30,6 +30,7 @@ export function createComputation(
       configuration,
     },
     visualizations,
+    displayName: '',
   };
 }
 

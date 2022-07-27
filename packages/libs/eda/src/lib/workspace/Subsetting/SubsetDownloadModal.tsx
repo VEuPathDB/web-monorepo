@@ -280,15 +280,19 @@ export default function SubsetDownloadModal({
   const downloadData = useCallback(() => {
     subsettingClient.tabularDataDownload(studyMetadata.id, currentEntity.id, {
       filters: analysisState.analysis?.descriptor.subset.descriptor ?? [],
-      outputVariableIds: selectedVariableDescriptors.map(
-        (descriptor) => descriptor.variableId
-      ),
+      outputVariableIds: [
+        ...mergeKeys,
+        ...selectedVariableDescriptors.map(
+          (descriptor) => descriptor.variableId
+        ),
+      ],
       reportConfig: {
         headerFormat: 'display',
         trimTimeFromDateVars: true,
       },
     });
   }, [
+    mergeKeys,
     subsettingClient,
     selectedVariableDescriptors,
     currentEntity,
@@ -681,9 +685,7 @@ export default function SubsetDownloadModal({
               // entity at a time.
               filterEntity={(e) => e.id === currentEntity.id}
               scope="download"
-              selectedVariableDescriptors={
-                selectedVariableDescriptorsWithMergeKeys
-              }
+              selectedVariableDescriptors={selectedVariableDescriptors}
               starredVariableDescriptors={scopedStarredVariables}
               featuredFields={scopedFeaturedFields}
               onSelectedVariablesChange={handleSelectedVariablesChange}
