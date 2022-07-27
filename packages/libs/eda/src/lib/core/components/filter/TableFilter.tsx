@@ -17,6 +17,7 @@ import { DistributionResponse } from '../../api/SubsettingClient';
 import { gray, red } from './colors';
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../utils/variable-display';
+import { useImmutableState } from '../../hooks/immutability';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -74,13 +75,18 @@ export function TableFilter({
 }: Props) {
   const subsettingClient = useSubsettingClient();
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
+  const otherFilters = useImmutableState(
+    filters?.filter(
+      (f) => f.entityId !== entity.id || f.variableId !== variable.id
+    )
+  );
   const tableSummary = usePromise(
     useCallback(async () => {
       const distribution = await getDistribution<DistributionResponse>(
         {
           entityId: entity.id,
           variableId: variable.id,
-          filters,
+          filters: otherFilters,
         },
         (filters) => {
           return subsettingClient.getDistribution(
@@ -121,7 +127,7 @@ export function TableFilter({
         filteredEntitiesCount:
           distribution.foreground.statistics.numDistinctEntityRecords,
       };
-    }, [entity.id, variable, filters, subsettingClient, studyMetadata.id])
+    }, [entity.id, variable, otherFilters, subsettingClient, studyMetadata.id])
   );
   const activeField = useMemo(
     () => ({
