@@ -37,6 +37,10 @@ import useDimensions from 'react-cool-dimensions';
 import { useFeaturedFields } from '../../core/components/variableTrees/hooks';
 import { useProcessedGridData, processGridData } from './hooks';
 import tableSVG from './cartoon_table.svg';
+import {
+  DataGridProps,
+  SortBy,
+} from '@veupathdb/coreui/dist/components/grids/DataGrid';
 
 type SubsetDownloadModalProps = {
   /** Should the modal currently be visible? */
@@ -181,6 +185,8 @@ export default function SubsetDownloadModal({
       .map((mergeKey) => mergeKey.id);
   }, [currentEntity]);
 
+  const [sortBy, setSortBy] = useState<SortBy>([]);
+
   // Required columns
   const requiredColumns = usePromise(
     useCallback(async () => {
@@ -204,10 +210,29 @@ export default function SubsetDownloadModal({
     (column) => column.accessor
   );
 
-  const fetchPaginatedData = useCallback(
-    ({ pageSize, pageIndex }) => {
+  const selectedVariableDescriptorsWithMergeKeys = useMemo(() => {
+    if (!currentEntity) return [];
+    return mergeKeys
+      .map((key) => {
+        return { entityId: currentEntity?.id, variableId: key };
+      })
+      .concat(selectedVariableDescriptors);
+  }, [mergeKeys, selectedVariableDescriptors, currentEntity]);
+
+  const fetchPaginatedData: Required<
+    Required<DataGridProps>['pagination']
+  >['serverSidePagination']['fetchPaginatedData'] = useCallback(
+    ({ pageSize, pageIndex, sortBy }) => {
       if (!currentEntity) return;
       setDataLoading(true);
+      setSortBy(sortBy ?? []);
+
+      const selectedVariableIds = selectedVariableDescriptorsWithMergeKeys.map(
+        (descriptor) => descriptor.variableId
+      );
+      const filteredSortBy = sortBy?.filter((column) =>
+        selectedVariableIds.includes(column.id.split('/')[1])
+      );
 
       subsettingClient
         .getTabularData(studyMetadata.id, currentEntity.id, {
@@ -223,6 +248,10 @@ export default function SubsetDownloadModal({
             headerFormat: 'standard',
             trimTimeFromDateVars: true,
             paging: { numRows: pageSize, offset: pageSize * pageIndex },
+            sorting: filteredSortBy?.map(({ id, desc }) => ({
+              key: id.split('/')[1],
+              direction: desc ? 'desc' : 'asc',
+            })),
           },
         })
         .then((data) => {
@@ -238,6 +267,7 @@ export default function SubsetDownloadModal({
     },
     [
       selectedVariableDescriptors,
+      selectedVariableDescriptorsWithMergeKeys,
       studyMetadata.id,
       subsettingClient,
       analysisState.analysis?.descriptor.subset.descriptor,
@@ -287,8 +317,8 @@ export default function SubsetDownloadModal({
   useEffect(() => {
     if (!displayModal) return;
     setApiError(null);
-    fetchPaginatedData({ pageSize: 10, pageIndex: 0 });
-  }, [fetchPaginatedData, displayModal]);
+    fetchPaginatedData({ pageSize: 10, pageIndex: 0, sortBy });
+  }, [fetchPaginatedData, displayModal, sortBy]);
 
   const dataGridWrapperRef = useRef<HTMLDivElement>(null);
 
@@ -415,7 +445,12 @@ export default function SubsetDownloadModal({
                       },
                     },
                   },
+                  icons: {
+                    inactiveColor: gray[400],
+                    activeColor: gray[900],
+                  },
                 }}
+                sortable
                 pagination={{
                   recordsPerPage: 10,
                   controlsLocation: 'bottom',
@@ -446,9 +481,12 @@ export default function SubsetDownloadModal({
                           />
                         ) : (
                           <button
-                            onClick={() => {
+                            onClick={(event) => {
+                              event.stopPropagation();
+
                               if (selectedVariableDescriptors.length === 1)
                                 setTableIsExpanded(false);
+
                               handleSelectedVariablesChange(
                                 selectedVariableDescriptors.filter(
                                   (descriptor) =>
