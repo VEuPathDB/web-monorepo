@@ -64,8 +64,12 @@ export default function HeaderCell({
   return (
     <th
       {...headerGroup.getHeaderProps()}
-      {...(sortable && headerGroup.getSortByToggleProps())}
-      css={{ padding: 0, verticalAlign: 'bottom', height: '100%', ...borderCSSOverrides }}
+      {...(sortable && headerGroup.getSortByToggleProps({
+        title: 'Click to toggle sorting and Shift-Click to multi-sort'
+      }))}
+      css={{
+        padding: 0, verticalAlign: 'bottom', height: '100%', ...borderCSSOverrides
+      }}
     >
       <div
         css={[
@@ -75,6 +79,7 @@ export default function HeaderCell({
             flexDirection: 'row',
             alignItems: 'flex-end',
             textAlign: 'left',
+            userSelect: 'none',
           },
           otherCSSOverrides,
           (headerGroup.id === 'selection' || extraHeaderControls.length) && {

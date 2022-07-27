@@ -1,7 +1,7 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
 import CancelIcon from '@material-ui/icons/Cancel';
 
-import { useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import {
   gray,
@@ -93,10 +93,10 @@ export const WithServerControlledPagination: Story<DataGridProps> = (args) => {
   const [isLoading, setIsLoading] = useState(false);
   const [pageCount, setPageCount] = useState(0);
 
-  const fetchPaginatedData = useCallback(({ pageSize, pageIndex }) => {
+  const fetchPaginatedData = useCallback(({ pageSize, pageIndex, sortBy }) => {
     setIsLoading(true);
     setTimeout(() => {
-      setGridData(fetchGridData({ pageSize, pageIndex }));
+      setGridData(fetchGridData({ pageSize, pageIndex, sortBy }));
       setPageCount(20 / pageSize);
       setIsLoading(false);
     }, 1000);
@@ -130,6 +130,13 @@ export const WithServerControlledPagination: Story<DataGridProps> = (args) => {
 };
 WithServerControlledPagination.args = {
   title: 'Data Grid w/ Server Pagination',
+};
+
+export const WithServerControlledPaginationAndSorting: Story<DataGridProps> =
+  (args) => <WithServerControlledPagination {...args} />;
+WithServerControlledPaginationAndSorting.args = {
+  title: 'Data Grid w/ Server Pagination and Sorting',
+  sortable: true,
 };
 
 export const StylePreset = Template.bind({});
