@@ -886,17 +886,17 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     />
   );
 
+  const showOverlayLegend =
+    (providedOverlayVariableDescriptor != null ||
+      vizConfig.overlayVariable != null) &&
+    legendItems.length > 0;
   const legendNode = !data.pending && data.value != null && (
     <PlotLegend
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
       legendTitle={legendTitle}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
-      showOverlayLegend={
-        (providedOverlayVariableDescriptor != null ||
-          vizConfig.overlayVariable != null) &&
-        legendItems.length > 0
-      }
+      showOverlayLegend={showOverlayLegend}
     />
   );
 
@@ -1077,7 +1077,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       />
       <PlotLayout
         isFaceted={isFaceted(data.value?.dataSetProcess)}
-        legendNode={legendNode}
+        legendNode={showOverlayLegend ? legendNode : null}
         plotNode={plotNode}
         tableGroupNode={tableGroupNode}
       />
