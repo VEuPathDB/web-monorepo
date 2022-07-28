@@ -548,21 +548,20 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     />
   );
 
-  console.log(vizConfig.xAxisVariable);
-  console.log(xAxisVariable);
-  console.log(providedXAxisVariable);
-  console.log(computedYAxisDetails);
-  console.log(yAxisVariable);
-  console.log(data.value?.computedVariableMetadata);
-  console.log(variableDisplayWithUnit(xAxisVariable));
-  const computedYAxisDescriptor = !providedXAxisVariable
-    ? ({
-        entityId: computedYAxisDetails?.entityId,
-        variableId: computedYAxisDetails?.variableId,
-        displayName: data.value?.computedVariableMetadata?.displayName?.[0],
-      } as VariableDescriptor)
-    : null;
+  // When we only have a computed y axis (and no provided x axis) then the y axis var
+  // can have a "normal" variable descriptor. In this case we want the computed y var to act just
+  // like any other continuous variable.
+  const computedYAxisDescriptor =
+    !providedXAxisVariable && computedYAxisDetails
+      ? ({
+          entityId: computedYAxisDetails?.entityId,
+          variableId: computedYAxisDetails?.variableId,
+          displayName: data.value?.computedVariableMetadata?.displayName?.[0],
+        } as VariableDescriptor)
+      : null;
 
+  // List variables in a collection one by one in the variable coverage table. Create these extra rows
+  // here and then append to the variable coverage table rows array.
   const additionalVariableCoverageTableRows = data.value
     ?.computedVariableMetadata?.collectionVariable?.collectionVariableDetails
     ? data.value?.computedVariableMetadata?.collectionVariable?.collectionVariableDetails.map(
@@ -574,7 +573,6 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         })
       )
     : [];
-  console.log(...[additionalVariableCoverageTableRows]);
 
   const tableGroupNode = (
     <>

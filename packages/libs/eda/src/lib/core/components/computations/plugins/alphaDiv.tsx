@@ -43,7 +43,8 @@ export const plugin: ComputationPlugin = {
         if (AlphaDivConfig.is(config)) {
           return {
             entityId: config.collectionVariable.entityId,
-            placeholderDisplayName: 'Alphadiv',
+            placeholderDisplayName: 'Alpha Diversity',
+            variableId: 'alphaDiversity',
           };
         }
       },
