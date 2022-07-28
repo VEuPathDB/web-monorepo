@@ -14,10 +14,8 @@ import { isSavedAnalysis } from '../utils/analysis';
 
 import { useAnalysisClient } from './workspace';
 
-/** Type definition for function that will set an attribute of an Analysis.
- * If setting the value causes a new analysis to become saved, the promise
- * will resolve returning the new analysis ID as a string. If the analysis
- * was already saved, undefined is returned.
+/**
+ * Type definition for function that will set an attribute of an Analysis.
  */
 type Setter<T> = (value: T | ((value: T) => T)) => void;
 
