@@ -146,16 +146,21 @@ export function useAnalysis(
   }, [analysisClient, analysis]);
 
   // Helper function to create stable callbacks
-  const useSetter = <T>(nestedValueLens: Lens<Analysis | NewAnalysis, T>) =>
-    useCallback(
+  const useSetter = <T>(
+    nestedValueLens: Lens<Analysis | NewAnalysis, T>,
+    createIfUnsaved = true
+  ) => {
+    const _hasUnsavedChanges = analysisId != null || createIfUnsaved;
+    return useCallback(
       (nestedValue: T | ((nestedValue: T) => T)) => {
         setCurrent((analysis) =>
           updateAnalysis(analysis, nestedValueLens, nestedValue)
         );
-        setHasUnsavedChanges(true);
+        setHasUnsavedChanges(_hasUnsavedChanges);
       },
-      [nestedValueLens]
+      [nestedValueLens, _hasUnsavedChanges]
     );
+  };
 
   // Setters
   const setName = useSetter(analysisToNameLens);
@@ -166,7 +171,10 @@ export function useAnalysis(
   const setComputations = useSetter(analysisToComputationsLens);
   const setDerivedVariables = useSetter(analysisToDerivedVariablesLens);
   const setStarredVariables = useSetter(analysisToStarredVariablesLens);
-  const setVariableUISettings = useSetter(analysisToVariableUISettingsLens);
+  const setVariableUISettings = useSetter(
+    analysisToVariableUISettingsLens,
+    false
+  );
   const setDataTableConfig = useSetter(analysisToDataTableConfig);
 
   // Retrieve an Analysis from the data store whenever `analysisID` updates.
