@@ -706,21 +706,32 @@ export default function SubsetDownloadModal({
 
   // ~18px (round to 20px) per character for medium title size
   const maxStudyNameLength = Math.floor(modalHeaderWidth / 20);
-  const studyName =
-    studyRecord.displayName.length > maxStudyNameLength ? (
-      <span title={studyRecord.displayName}>
-        {safeHtml(
-          studyRecord.displayName.substring(0, maxStudyNameLength - 2) + '...'
-        )}
-      </span>
-    ) : (
-      safeHtml(studyRecord.displayName)
+  const regexAllTags = /<.*?>/g;
+  const studyNameNoTags = studyRecord.displayName.replaceAll(regexAllTags, '');
+  let studyNameElement: JSX.Element;
+
+  if (studyNameNoTags.length > maxStudyNameLength) {
+    const tagCharCount =
+      studyRecord.displayName.length - studyNameNoTags.length;
+    const studyNameTrunc = studyRecord.displayName.substring(
+      0,
+      maxStudyNameLength + tagCharCount - 2
     );
+    const regexUnclosedTag = /<(?!.*>).*/;
+    const studyNameNoUnclosedTag = studyNameTrunc.replace(regexUnclosedTag, '');
+    studyNameElement = (
+      <span title={studyNameNoTags}>
+        {safeHtml(studyNameNoUnclosedTag + '...')}
+      </span>
+    );
+  } else {
+    studyNameElement = safeHtml(studyRecord.displayName);
+  }
 
   // 14px for subtitle at medium title size
   const analysisName = analysisState.analysis?.displayName;
   const maxAnalysisNameLength = Math.floor(modalHeaderWidth / 14);
-  const analysisNameTrunc =
+  const analysisNameElement =
     analysisName &&
     (analysisName.length > maxAnalysisNameLength ? (
       <span title={analysisName}>
@@ -734,10 +745,10 @@ export default function SubsetDownloadModal({
     <Modal
       title={
         <div style={{ width: '100%' }} ref={observeModalHeader}>
-          {studyName}
+          {studyNameElement}
         </div>
       }
-      subtitle={analysisNameTrunc && <i>{analysisNameTrunc}</i>}
+      subtitle={analysisNameElement && <i>{analysisNameElement}</i>}
       titleSize="medium"
       compactTitle
       includeCloseButton={true}
