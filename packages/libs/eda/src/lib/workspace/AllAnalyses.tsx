@@ -16,6 +16,7 @@ import {
   Tooltip,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
+import InfoIcon from '@material-ui/icons/Info';
 import {
   Loading,
   Mesa,
@@ -49,7 +50,7 @@ import {
 } from '../core/utils/analysis';
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
 import ShareFromAnalysesList from './sharing/ShareFromAnalysesList';
-import { Checkbox } from '@veupathdb/coreui';
+import { Checkbox, colors } from '@veupathdb/coreui';
 
 interface AnalysisAndDataset {
   analysis: AnalysisSummary & {
@@ -85,6 +86,7 @@ const useStyles = makeStyles({
 });
 
 const UNKNOWN_DATASET_NAME = 'Unknown study';
+const WDK_STUDY_RECORD_ATTRIBUTES = ['study_access'];
 
 export function AllAnalyses(props: Props) {
   const { analysisClient, exampleAnalysesAuthor, showLoginForm } = props;
@@ -140,7 +142,7 @@ export function AllAnalyses(props: Props) {
     removePinnedAnalysis,
   } = usePinnedAnalyses(analysisClient);
 
-  const datasets = useWdkStudyRecords();
+  const datasets = useWdkStudyRecords(WDK_STUDY_RECORD_ATTRIBUTES);
 
   const {
     analyses,
@@ -519,31 +521,48 @@ export function AllAnalyses(props: Props) {
           sortable: true,
           renderCell: (data: { row: AnalysisAndDataset }) => {
             const isPublic = data.row.analysis.isPublic;
+            const studyAccessAttribute =
+              data.row.dataset?.attributes['study_access'];
+            const studyAccessLevel =
+              typeof studyAccessAttribute === 'string'
+                ? studyAccessAttribute.toLowerCase()
+                : null;
+            const offerPublicityToggle =
+              studyAccessLevel === 'public' ||
+              studyAccessLevel === 'protected' ||
+              studyAccessLevel === 'controlled';
+
             return (
               <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <Tooltip
                   title={
-                    isPublic
+                    !offerPublicityToggle
+                      ? 'This study cannot be added to Public Analyses'
+                      : isPublic
                       ? 'Remove this analysis from Public Analyses'
                       : 'Add this analysis to Public Analyses'
                   }
                 >
                   <span>
-                    <Checkbox
-                      selected={isPublic}
-                      themeRole="primary"
-                      onToggle={(selected) => {
-                        if (selected) {
-                          setSelectedAnalysisId(data.row.analysis.analysisId);
-                          setSharingModalVisible(true);
-                        } else {
-                          updateAnalysis(data.row.analysis.analysisId, {
-                            isPublic: false,
-                          });
-                        }
-                      }}
-                      styleOverrides={{ size: 16 }}
-                    />
+                    {!offerPublicityToggle ? (
+                      <InfoIcon htmlColor={colors.gray['300']} />
+                    ) : (
+                      <Checkbox
+                        selected={isPublic}
+                        themeRole="primary"
+                        onToggle={(selected) => {
+                          if (selected) {
+                            setSelectedAnalysisId(data.row.analysis.analysisId);
+                            setSharingModalVisible(true);
+                          } else {
+                            updateAnalysis(data.row.analysis.analysisId, {
+                              isPublic: false,
+                            });
+                          }
+                        }}
+                        styleOverrides={{ size: 16 }}
+                      />
+                    )}
                   </span>
                 </Tooltip>
               </div>
