@@ -241,6 +241,25 @@ function UploadForm({
   const summaryRequired = summaryInputProps?.required ?? true;
   const descriptionRequired = descriptionInputProps?.required ?? true;
 
+  const defaultFileInputField = (
+    <FileInput
+      accept={supportedFileUploadTypes
+        .map((fileUploadType) => `.${fileUploadType}`)
+        .join(',')}
+      required={dataUploadMode === 'file'}
+      disabled={dataUploadMode !== 'file' || useFixedUploadMethod}
+      onChange={(file) => {
+        setFile(file ?? undefined);
+      }}
+    />
+  );
+  const renderFileInput =
+    datasetUploadType.formConfig.uploadMethodConfig.file?.render;
+  const fileInputField =
+    renderFileInput == null
+      ? defaultFileInputField
+      : renderFileInput({ fieldNode: defaultFileInputField });
+
   const uploadMethodItems = [
     {
       value: 'file',
@@ -260,16 +279,7 @@ function UploadForm({
               dataUploadMode !== 'file' && 'disabled'
             )}
           >
-            <FileInput
-              accept={supportedFileUploadTypes
-                .map((fileUploadType) => `.${fileUploadType}`)
-                .join(',')}
-              required={dataUploadMode === 'file'}
-              disabled={dataUploadMode !== 'file' || useFixedUploadMethod}
-              onChange={(file) => {
-                setFile(file ?? undefined);
-              }}
-            />
+            {fileInputField}
           </div>
         </React.Fragment>
       ),

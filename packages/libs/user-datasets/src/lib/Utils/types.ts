@@ -81,11 +81,16 @@ export interface DatasetUploadTypeConfigEntry<T extends string> {
       inputProps: Partial<React.TextareaHTMLAttributes<HTMLTextAreaElement>>;
     };
     uploadMethodConfig: {
+      file?: FileUploadConfig;
       url?: UrlUploadConfig;
       result?: ResultUploadConfig;
     };
     renderInfo?: () => ReactNode;
   };
+}
+
+export interface FileUploadConfig {
+  render?: (props: { fieldNode: ReactNode }) => ReactNode;
 }
 
 export interface UrlUploadConfig {
