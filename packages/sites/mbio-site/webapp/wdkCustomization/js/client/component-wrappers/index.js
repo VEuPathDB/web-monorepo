@@ -78,8 +78,6 @@ function getSiteData(state) {
 }
 
 function getHomeContent({ studies, searches, visualizations }) {
-  console.log(useEda);
-  console.log(studies);
   return useEda ? 
     [
       {
