@@ -68,7 +68,6 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
           render: ({ fieldNode }) => (
             <>
               {fieldNode}
-              <br />
               <div style={{ marginTop: '0.25em' }}>
                 File must be a .csv, .tsv, or tab-delimited .txt file
               </div>
