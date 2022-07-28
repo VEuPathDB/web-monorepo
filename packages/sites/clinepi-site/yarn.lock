@@ -2121,10 +2121,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.1.0.tgz#5c7eecc048a91195404411d8729393197af0128c"
   integrity sha512-TQ58MbCy7UZN/h11HZ31CSJfywG17oDNHQzQJysj65Fvv2gAM1w7CjwCvV0bG3sRESKUDORSA7sJrVVv27GHBw==
 
-"@veupathdb/components@^0.16.8":
-  version "0.16.8"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.16.8.tgz#de9f3c15d119c5db0ef36cd84e7c26bd1e8b9ae9"
-  integrity sha512-fzW7h1Sc/nBXzOKUXQSgpzt71QlmhqS15JU8ISK9/E6llhDtj74hoAzI+kqqGbelq4DhLmhNBPVNcBuxdeF4LQ==
+"@veupathdb/components@^0.16.9":
+  version "0.16.9"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.16.9.tgz#2865707131e88c36facc02af94bfb660f3a6d1ac"
+  integrity sha512-tY4X77bvz0t2MvMldF6HBTE4HYP7I3/GFVVnpfHkZbyd/GaK5+2MndpBiqyvvLy2jf/mXbjqjGQndhb1S1HCjA==
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
@@ -2153,10 +2153,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/coreui@^0.17.4":
-  version "0.17.4"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.17.4.tgz#82935b24d018b723751e7401324b12a7b76d75ed"
-  integrity sha512-Z8T9moK3SJK5tvi5O/4XfOo+ls6cIUMqExabPt0I7eyzoGKno3W3c2z27suKxKcOpg1p2sOIeu6OiIzanx50AQ==
+"@veupathdb/coreui@^0.17.7":
+  version "0.17.7"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.17.7.tgz#c361178bcb536aa5befe52ede1d951524440c05f"
+  integrity sha512-6VvvYFS/m3HWhMhULbpdD3LIhDoncqyVGWbISFWcyhWvTawuq1eq7ZIEiL44GzfFY9sQKd6GdyBIHzXzpmvYMg==
   dependencies:
     "@react-hook/size" "^2.1.2"
     lodash "^4.17.21"
@@ -2164,10 +2164,10 @@
     react-responsive-modal "^6.2.0"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^3.7.4":
-  version "3.7.4"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.7.4.tgz#80d41420fec2658388eb7625c6e54ba604d9e58f"
-  integrity sha512-OxXjeUWQb3Dnr0RzkvrhA5NAfcVNE/mh16ogxNm5fxLratDzONVJmsPfDZrVWZgBAEHUkKNiIHaRtPwXU5qH/Q==
+"@veupathdb/eda@^3.7.6":
+  version "3.7.6"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.7.6.tgz#ce7c3050cab6a9cfedd59e6dc92f1f2fc32af7ca"
+  integrity sha512-gMcAiFj8HbBFB0lbJhs+iWGsmzbgwG/6VllTbdio0OPVYwbcxHeNPIgRO2gZGShAQ9jlFqanxiQ+WakE1M0lhA==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
