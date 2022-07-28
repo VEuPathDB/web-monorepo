@@ -718,9 +718,9 @@ export default function SubsetDownloadModal({
       maxStudyNameLength + tagCharCount - 2
     );
     // This regex works as long as every < or > in the study name is part of an HTML tag
-    const regexUnclosedTag = /<(?!.*>).*/;
-    const studyNameNoUnclosedTag = studyNameTrunc.replace(regexUnclosedTag, '');
-    studyNameElement = safeHtml(studyNameNoUnclosedTag + '...', {
+    const regexSplitTag = /<(?!.*>).*/;
+    const studyNameNoSplitTag = studyNameTrunc.replace(regexSplitTag, '');
+    studyNameElement = safeHtml(studyNameNoSplitTag + '...', {
       title: studyNameNoTags,
     });
   } else {
