@@ -34,7 +34,10 @@ const ContactUsForm = ({
     event.preventDefault();
     submitDetails();
   }}>
-    <table>
+    <table style={{
+      borderCollapse: 'separate',
+      borderSpacing: '0 0.5em',
+    }}>
       <tbody>
           <SupportFormField
             label="Subject:"
@@ -43,20 +46,25 @@ const ContactUsForm = ({
                 type="text"
                 value={subjectValue}
                 onChange={updateSubject} 
-                size={82}
+                size={80}
               />
             }
           />
           <SupportFormField
             label="Your email address:"
             inputElement={
+              <>
               <ValidatedInput
                 type="text"
                 value={reporterEmailValue}
                 validity={reporterEmailValidity}
                 onChange={updateReporterEmail} 
-                size={82}
+                size={80}
               />
+              <p style={{margin: '3px 0 0 0', fontSize: '0.85em'}}>
+                <em>An email address is required if you would like to hear back from us.</em>
+              </p>
+              </>
             }
           />
           <SupportFormField
@@ -67,7 +75,7 @@ const ContactUsForm = ({
                 value={ccEmailsValue}
                 validity={ccEmailsValidity}
                 onChange={updateCcEmails} 
-                size={82}
+                size={80}
               />
             }
           />
@@ -89,7 +97,7 @@ const ContactUsForm = ({
                 addFile={addFile}
                 removeFile={removeFile}
                 validatedAttachmentMetadata={validatedAttachmentMetadata}
-              />
+                />
             }
           />
           <SupportFormField
@@ -108,7 +116,6 @@ const ContactUsForm = ({
             submitDisabled={submitDisabled}
             submissionFailed={submissionFailed}
             responseMessage={responseMessage}
-            reporterEmailValue={reporterEmailValue}
           />
       </tbody>
     </table>
