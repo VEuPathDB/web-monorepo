@@ -41,6 +41,7 @@ import {
   DataGridProps,
   SortBy,
 } from '@veupathdb/coreui/dist/components/grids/DataGrid';
+import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 
 type SubsetDownloadModalProps = {
   /** Should the modal currently be visible? */
@@ -706,8 +707,7 @@ export default function SubsetDownloadModal({
 
   // ~18px (round to 20px) per character for medium title size
   const maxStudyNameLength = Math.floor(modalHeaderWidth / 20);
-  const regexAllTags = /<.*?>/g;
-  const studyNameNoTags = studyRecord.displayName.replaceAll(regexAllTags, '');
+  const studyNameNoTags = stripHTML(studyRecord.displayName);
   let studyNameElement: JSX.Element;
 
   if (studyNameNoTags.length > maxStudyNameLength) {
@@ -719,11 +719,9 @@ export default function SubsetDownloadModal({
     );
     const regexUnclosedTag = /<(?!.*>).*/;
     const studyNameNoUnclosedTag = studyNameTrunc.replace(regexUnclosedTag, '');
-    studyNameElement = (
-      <span title={studyNameNoTags}>
-        {safeHtml(studyNameNoUnclosedTag + '...')}
-      </span>
-    );
+    studyNameElement = safeHtml(studyNameNoUnclosedTag + '...', {
+      title: studyNameNoTags,
+    });
   } else {
     studyNameElement = safeHtml(studyRecord.displayName);
   }
