@@ -10,7 +10,7 @@ import {
   SingleAnalysisPatchRequest,
 } from '../api/analysis-api';
 import { Analysis, AnalysisSummary, NewAnalysis } from '../types/analysis';
-import { isNewAnalysis, isSavedAnalysis } from '../utils/analysis';
+import { isSavedAnalysis } from '../utils/analysis';
 
 import { useAnalysisClient } from './workspace';
 
@@ -19,7 +19,7 @@ import { useAnalysisClient } from './workspace';
  * will resolve returning the new analysis ID as a string. If the analysis
  * was already saved, undefined is returned.
  */
-type Setter<T> = (value: T | ((value: T) => T)) => Promise<string | undefined>;
+type Setter<T> = (value: T | ((value: T) => T)) => void;
 
 /** Status options for an analysis. */
 export enum Status {
@@ -80,16 +80,13 @@ export function usePreloadAnalysis() {
  * */
 export function useAnalysis(
   defaultAnalysis: NewAnalysis,
-  createAnalysis: (analysis: NewAnalysis) => Promise<string | undefined>,
+  createAnalysis: (analysis: NewAnalysis) => Promise<void>,
   analysisId?: string
 ): AnalysisState {
   const analysisClient = useAnalysisClient();
 
-  // Does the analysis have changes that have not
-  // been permanently stored?
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-
-  // TOOD: Not sure yet how this is being used.
+  // Allow undo/redo operations. This isn't really used yet.
+  // Might consider converting to plain `useState`.
   const {
     current: analysis,
     setCurrent,
@@ -99,24 +96,85 @@ export function useAnalysis(
     undo,
   } = useStateWithHistory<NewAnalysis | Analysis>({
     size: 10,
-    onUndo: useCallback(() => setHasUnsavedChanges(true), [
-      setHasUnsavedChanges,
-    ]),
-    onRedo: useCallback(() => setHasUnsavedChanges(true), [
-      setHasUnsavedChanges,
-    ]),
   });
 
-  const [savedAnalysis, setSavedAnalysis] = useState(
-    analysisId == null ? undefined : analysisCache[analysisId]
-  );
+  // Analysis status
   const [status, setStatus] = useState<Status>(Status.InProgress);
+
+  // Error message related to Status.Error
   const [error, setError] = useState<unknown>();
 
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+  const saveAnalysis = useCallback(async () => {
+    if (analysis == null)
+      throw new Error("Attempt to save an analysis that hasn't been loaded.");
+
+    if (!isSavedAnalysis(analysis)) {
+      createAnalysis(analysis);
+    } else {
+      await analysisClient.updateAnalysis(analysis.analysisId, analysis);
+      analysisCache[analysis.analysisId] = analysis;
+    }
+  }, [analysisClient, analysis, createAnalysis]);
+
+  const copyAnalysis = useCallback(async () => {
+    if (analysis == null)
+      throw new Error("Attempt to copy an analysis that hasn't been loaded.");
+
+    if (!isSavedAnalysis(analysis))
+      throw new Error('Cannot copy an unsaved analysis.');
+
+    await saveAnalysis();
+
+    const copyResponse = await analysisClient.copyAnalysis(analysis.analysisId);
+
+    await analysisClient.updateAnalysis(copyResponse.analysisId, {
+      displayName: `Copy of ${analysis.displayName}`,
+    });
+
+    return copyResponse;
+  }, [analysisClient, analysis, saveAnalysis]);
+
+  const deleteAnalysis = useCallback(async () => {
+    if (!isSavedAnalysis(analysis))
+      throw new Error('Cannot delete an unsaved analysis.');
+
+    return analysisClient.deleteAnalysis(analysis.analysisId).then(() => {
+      delete analysisCache[analysis.analysisId];
+    });
+  }, [analysisClient, analysis]);
+
+  // Helper function to create stable callbacks
+  const useSetter = <T>(nestedValueLens: Lens<Analysis | NewAnalysis, T>) =>
+    useCallback(
+      (nestedValue: T | ((nestedValue: T) => T)) => {
+        setCurrent((analysis) =>
+          updateAnalysis(analysis, nestedValueLens, nestedValue)
+        );
+        setHasUnsavedChanges(true);
+      },
+      [nestedValueLens]
+    );
+
+  // Setters
+  const setName = useSetter(analysisToNameLens);
+  const setDescription = useSetter(analysisToDescriptionLens);
+  const setNotes = useSetter(analysisToNotesLens);
+  const setIsPublic = useSetter(analysisToIsPublicLens);
+  const setFilters = useSetter(analysisToFiltersLens);
+  const setComputations = useSetter(analysisToComputationsLens);
+  const setDerivedVariables = useSetter(analysisToDerivedVariablesLens);
+  const setStarredVariables = useSetter(analysisToStarredVariablesLens);
+  const setVariableUISettings = useSetter(analysisToVariableUISettingsLens);
+  const setDataTableConfig = useSetter(analysisToDataTableConfig);
+
   // Retrieve an Analysis from the data store whenever `analysisID` updates.
+  // FIXME This will run with any deps change.
   useEffect(() => {
+    setHasUnsavedChanges(false);
+
     if (analysisId == null) {
-      setSavedAnalysis(undefined);
       setStatus(Status.Loaded);
       setError(undefined);
 
@@ -127,16 +185,14 @@ export function useAnalysis(
       const analysisCacheEntry = analysisCache[analysisId];
 
       if (analysisCacheEntry != null) {
-        setSavedAnalysis(analysisCacheEntry);
-        setStatus(
-          analysisCacheEntry == null ? Status.InProgress : Status.Loaded
-        );
+        setCurrent(analysisCacheEntry);
+        setStatus(Status.Loaded);
         setError(undefined);
       } else {
         setStatus(Status.InProgress);
         analysisClient.getAnalysis(analysisId).then(
           (analysis) => {
-            setSavedAnalysis(analysis);
+            setCurrent(analysis);
             setStatus(Status.Loaded);
             analysisCache[analysis.analysisId] = analysis;
           },
@@ -149,131 +205,13 @@ export function useAnalysis(
     }
   }, [defaultAnalysis, analysisId, setCurrent, analysisClient]);
 
-  // Whenever `savedAnalysis` updates, set `current` to be the same object.
+  // Reactively save analysis when it has been modified
   useEffect(() => {
-    // FIXME: Should not just set the "current" state,
-    // but also clear the state's history
-    if (savedAnalysis) {
-      setCurrent(savedAnalysis);
+    if (hasUnsavedChanges) {
+      saveAnalysis();
+      setHasUnsavedChanges(false);
     }
-  }, [savedAnalysis, setCurrent]);
-
-  const useSetter = <T>(
-    nestedValueLens: Lens<Analysis | NewAnalysis, T>,
-    analysis: NewAnalysis | Analysis | undefined,
-    createAnalysis: (newAnalysis: NewAnalysis) => Promise<string | undefined>,
-    createAnalysisOnChange = true
-  ) =>
-    useCallback(
-      async (nestedValue: T | ((nestedValue: T) => T)) => {
-        if (analysis == null)
-          throw new Error(
-            "Attempt to update an analysis that hasn't been loaded."
-          );
-
-        if (isNewAnalysis(analysis) && createAnalysisOnChange) {
-          return await createAnalysis(
-            updateAnalysis(analysis, nestedValueLens, nestedValue)
-          );
-        }
-
-        setCurrent((_a) => {
-          const newNestedValue =
-            typeof nestedValue === 'function'
-              ? (nestedValue as (nestedValue: T) => T)(nestedValueLens.get(_a))
-              : nestedValue;
-
-          return nestedValueLens.set(newNestedValue)(_a);
-        });
-        setHasUnsavedChanges(true);
-      },
-      [analysis, createAnalysis, nestedValueLens, createAnalysisOnChange]
-    );
-
-  const setName = useSetter(analysisToNameLens, analysis, createAnalysis);
-  const setDescription = useSetter(
-    analysisToDescriptionLens,
-    analysis,
-    createAnalysis
-  );
-  const setNotes = useSetter(analysisToNotesLens, analysis, createAnalysis);
-  const setIsPublic = useSetter(
-    analysisToIsPublicLens,
-    analysis,
-    createAnalysis
-  );
-  const setFilters = useSetter(analysisToFiltersLens, analysis, createAnalysis);
-  const setComputations = useSetter(
-    analysisToComputationsLens,
-    analysis,
-    createAnalysis
-  );
-  const setDerivedVariables = useSetter(
-    analysisToDerivedVariablesLens,
-    analysis,
-    createAnalysis
-  );
-  const setStarredVariables = useSetter(
-    analysisToStarredVariablesLens,
-    analysis,
-    createAnalysis
-  );
-  const setVariableUISettings = useSetter(
-    analysisToVariableUISettingsLens,
-    analysis,
-    createAnalysis
-  );
-
-  const setDataTableConfig = useSetter(
-    analysisToDataTableConfig,
-    analysis,
-    createAnalysis
-  );
-
-  const saveAnalysis = useCallback(async () => {
-    if (analysis == null)
-      throw new Error("Attempt to save an analysis that hasn't been loaded.");
-
-    if (!isSavedAnalysis(analysis)) {
-      createAnalysis(analysis);
-      return;
-    }
-
-    await analysisClient.updateAnalysis(analysis.analysisId, analysis);
-    analysisCache[analysis.analysisId] = analysis;
-    setHasUnsavedChanges(false);
-  }, [analysisClient, analysis, createAnalysis]);
-
-  const copyAnalysis = useCallback(async () => {
-    if (analysis == null)
-      throw new Error("Attempt to copy an analysis that hasn't been loaded.");
-
-    if (!isSavedAnalysis(analysis))
-      throw new Error('Cannot copy an unsaved analysis.');
-
-    if (hasUnsavedChanges) await saveAnalysis();
-
-    const copyResponse = await analysisClient.copyAnalysis(analysis.analysisId);
-
-    await analysisClient.updateAnalysis(copyResponse.analysisId, {
-      displayName: `Copy of ${analysis.displayName}`,
-    });
-
-    return copyResponse;
-  }, [analysisClient, analysis, saveAnalysis, hasUnsavedChanges]);
-
-  const deleteAnalysis = useCallback(async () => {
-    if (!isSavedAnalysis(analysis))
-      throw new Error('Cannot delete an unsaved analysis.');
-
-    return analysisClient.deleteAnalysis(analysis.analysisId).then(() => {
-      delete analysisCache[analysis.analysisId];
-    });
-  }, [analysisClient, analysis]);
-
-  useEffect(() => {
-    if (isSavedAnalysis(analysis) && hasUnsavedChanges) saveAnalysis();
-  }, [saveAnalysis, analysis, hasUnsavedChanges]);
+  }, [saveAnalysis, hasUnsavedChanges]);
 
   return {
     status,

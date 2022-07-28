@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef } from 'react';
-import { useHistory, useLocation, useRouteMatch } from 'react-router';
+import { useHistory, useRouteMatch } from 'react-router';
 
 import { Location } from 'history';
 
@@ -24,7 +24,7 @@ export function useWorkspaceAnalysis(
   const analysisClient = useAnalysisClient();
 
   const history = useHistory();
-  const location = useLocation();
+
   const { url } = useRouteMatch();
 
   const preloadAnalysis = usePreloadAnalysis();
@@ -69,17 +69,15 @@ export function useWorkspaceAnalysis(
         await preloadAnalysis(analysisId, analysis);
         creatingAnalysis.current = false;
 
-        const subPath = findSubPath(newAnalysis, location, url);
+        const subPath = findSubPath(newAnalysis, history.location, url);
         const newLocation = {
-          ...location,
+          ...history.location,
           pathname: Path.resolve(url, '..', analysisId + subPath),
         };
-
         history.replace(newLocation);
-        return analysisId;
       }
     },
-    [analysisClient, history, location, preloadAnalysis, url]
+    [analysisClient, history, preloadAnalysis, url]
   );
 
   return useAnalysis(defaultAnalysis, createAnalysis, analysisId);

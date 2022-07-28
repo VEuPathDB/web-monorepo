@@ -133,14 +133,12 @@ export function StartPage(props: Props) {
                                   computations,
                                   [newVisualization]
                                 );
-                                const newAnalysisId = await analysisState.setComputations(
-                                  [computation, ...computations]
-                                );
-                                const urlBase = newAnalysisId
-                                  ? url.replace('new', newAnalysisId)
-                                  : url;
+                                analysisState.setComputations([
+                                  computation,
+                                  ...computations,
+                                ]);
                                 history.push(
-                                  urlBase.replace(
+                                  url.replace(
                                     'new',
                                     `${computation.computationId}/${visualizationId}`
                                   )
