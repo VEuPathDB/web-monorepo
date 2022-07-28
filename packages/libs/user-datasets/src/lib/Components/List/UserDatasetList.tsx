@@ -263,17 +263,12 @@ class UserDatasetList extends React.Component<Props, State> {
         sortable: true,
         renderCell: this.renderOwnerCell,
       },
-      !userDatasets.some(
-        (userDataset) =>
-          !!(userDataset.sharedWith && userDataset.sharedWith.length)
-      )
-        ? null
-        : {
-            key: 'sharedWith',
-            name: 'Shared With',
-            sortable: true,
-            renderCell: this.renderSharedWithCell,
-          },
+      {
+        key: 'sharedWith',
+        name: 'Shared With',
+        sortable: true,
+        renderCell: this.renderSharedWithCell,
+      },
       {
         key: 'created',
         name: 'Created',
