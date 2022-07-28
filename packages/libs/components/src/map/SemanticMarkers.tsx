@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState, cloneElement } from 'react';
+import { ReactElement, useEffect, useState, cloneElement } from 'react';
 import {
   MarkerProps,
   BoundsViewport,
@@ -63,14 +63,18 @@ export default function SemanticMarkers({
       }
     }
 
-    updateBounds();
-
     // debounce needed to avoid cyclic in/out zooming behaviour
     const debouncedUpdateBounds = debounce(updateBounds, 1000);
+    // call it at least once at the beginning of the life cycle
+    debouncedUpdateBounds();
+
+    // attach to leaflet events handler
     map.on('resize dragend zoomend', debouncedUpdateBounds); // resize is there hopefully when we have full screen mode
 
     return () => {
+      // detach from leaflet events handler
       map.off('resize dragend zoomend', debouncedUpdateBounds);
+      debouncedUpdateBounds.cancel();
     };
   }, [map, onBoundsChanged]);
 
@@ -203,6 +207,12 @@ function constrainLongitudeToMainWorld({
   while (newWest > 180) {
     newWest -= 360;
   }
+
+  // fully zoomed out, the longitude bounds are often the same
+  // but we need to make sure that west is slightly greater than east
+  // so that they "wrap around" the whole globe
+  // (if west was slightly less than east, it would represent a very tiny sliver)
+  if (newWest === newEast) newWest = newWest + 1e-8;
 
   return {
     southWest: { lat: south, lng: newWest },

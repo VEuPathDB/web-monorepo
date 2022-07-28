@@ -15,6 +15,8 @@ export interface DonutMarkerProps extends BoundsDriftMarkerProps {
   // isAtomic: add a special thumbtack icon if this is true
   isAtomic?: boolean;
   onClick?: (event: L.LeafletMouseEvent) => void | undefined;
+  /** center title/number for marker (defaults to sum of data[].value) */
+  markerLabel?: string;
 }
 
 // convert to Cartesian coord. toCartesian(centerX, centerY, Radius for arc to draw, arc (radian))
@@ -86,14 +88,6 @@ function makeArc(
   }
 }
 
-// making k over 9999, e.g., 223832 -> 234k
-function kFormatter(num: number) {
-  // fixed type error regarding toFixed() that returns string
-  return Math.abs(num) > 9999
-    ? (Math.sign(num) * (Math.abs(num) / 1000)).toFixed(0) + 'k'
-    : Math.sign(num) * Math.abs(num);
-}
-
 /**
  * this is a SVG donut marker icon
  */
@@ -122,8 +116,9 @@ export default function DonutMarker(props: DonutMarkerProps) {
     .reduce((a, c) => {
       return a + c;
     });
-  // convert large value with k (e.g., 12345 -> 12k): return original value if less than a criterion
-  const sumLabel: number | string = kFormatter(sumValues);
+
+  // for display, convert large value with k (e.g., 12345 -> 12k): return original value if less than a criterion
+  const sumLabel = props.markerLabel ?? String(sumValues);
 
   // draw white circle
   svgHTML +=
@@ -199,7 +194,7 @@ export default function DonutMarker(props: DonutMarkerProps) {
       data={fullStat}
       donutOptions={{
         size: 0.5,
-        text: sumLabel as string,
+        text: String(sumLabel),
         fontSize: 18,
       }}
       containerStyles={{
