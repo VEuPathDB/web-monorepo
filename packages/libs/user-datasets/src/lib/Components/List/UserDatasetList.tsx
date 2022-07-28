@@ -172,7 +172,7 @@ class UserDatasetList extends React.Component<Props, State> {
   }
 
   getColumns(): any[] {
-    const { baseUrl, userDatasets, user } = this.props;
+    const { baseUrl, user } = this.props;
     function isOwner(ownerId: number): boolean {
       return user.id === ownerId;
     }
@@ -263,17 +263,12 @@ class UserDatasetList extends React.Component<Props, State> {
         sortable: true,
         renderCell: this.renderOwnerCell,
       },
-      !userDatasets.some(
-        (userDataset) =>
-          !!(userDataset.sharedWith && userDataset.sharedWith.length)
-      )
-        ? null
-        : {
-            key: 'sharedWith',
-            name: 'Shared With',
-            sortable: true,
-            renderCell: this.renderSharedWithCell,
-          },
+      {
+        key: 'sharedWith',
+        name: 'Shared With',
+        sortable: true,
+        renderCell: this.renderSharedWithCell,
+      },
       {
         key: 'created',
         name: 'Created',
