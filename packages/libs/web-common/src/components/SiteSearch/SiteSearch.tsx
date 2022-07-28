@@ -787,7 +787,7 @@ function VariableStudyTable(props: { document: SiteSearchDocument, summaryField:
         { accessor: "studyId" },
         {
           accessor: "studyName",
-          header: "Study",
+          header: "Study name",
           render: HtmlString
         },
         { accessor: "entityId" },
@@ -850,7 +850,7 @@ function VariableValueStudyTable(props: { document: SiteSearchDocument, summaryF
         { accessor: 'entityId' },
         {
           accessor: 'studyName',
-          header: 'Study',
+          header: 'Study name',
           render: HtmlString,
         },
         {
