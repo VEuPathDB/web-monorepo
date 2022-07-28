@@ -172,7 +172,7 @@ class UserDatasetList extends React.Component<Props, State> {
   }
 
   getColumns(): any[] {
-    const { baseUrl, userDatasets, user } = this.props;
+    const { baseUrl, user } = this.props;
     function isOwner(ownerId: number): boolean {
       return user.id === ownerId;
     }
