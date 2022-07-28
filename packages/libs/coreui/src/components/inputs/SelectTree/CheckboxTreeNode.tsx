@@ -6,11 +6,27 @@ import { css } from '@emotion/react';
 import { CSSProperties } from '@emotion/serialize';
 
 export type CheckboxListStyleSpec = {
-  listStyle: CSSProperties['listStyle'],
+  list: {
+    listStyle: CSSProperties['listStyle'],
+    cursor: CSSProperties['cursor'],
+  },
+  options: {
+    textHoverEffect: CSSProperties['textDecoration']
+  }
 };
 
+const optionsHoverDecoration = css({
+  textDecoration: 'underline',
+})
+
 const defaultStyle = {
-  listStyle: 'none',
+  list: {
+    listStyle: 'none',
+    cursor: 'pointer',
+  },
+  options: {
+    '&:hover': optionsHoverDecoration,
+  },
 }
 
 const visibleElement = { display: '' };
@@ -119,10 +135,11 @@ export default function CheckboxTreeNode<T>({
     return (
       <li css={{
         nodeVisibilityCss, 
-        listStyle: defaultStyle.listStyle
+        ...defaultStyle.list
       }}>
         <div css={{
           display: 'flex',
+          ...defaultStyle.options
         }}>
           {isLeafNode || isActiveSearch ? (
             <></>

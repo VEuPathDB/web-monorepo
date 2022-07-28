@@ -1,10 +1,9 @@
-// import HelpIcon from 'wdk-client/Components/Icon/HelpIcon';
 import { debounce } from 'lodash';
-import React, { Component } from 'react';
+import React, { useRef } from 'react';
 // use safeHtml for enabling html (e.g., italic) at helpText
 import { safeHtml } from '../SelectTree/Utils';
 import { Close } from '../../icons';
-import { Help } from '@material-ui/icons';
+import { Help, Search } from '@material-ui/icons';
 import { Tooltip } from '@material-ui/core';
 
 type Props = {
@@ -32,10 +31,26 @@ type Props = {
 
 }
 
-type State = {
+// type State = {
+//   /** local reference to search term for rendering */
+//   searchTerm: string;
+// }
 
-  /** local reference to search term for rendering */
-  searchTerm: string;
+const defaultStyle = {
+  helpIcon: {
+    width: '0.7em',
+    height: '0.7em',
+  },
+  searchIcon: {
+    width: '0.7em',
+    height: '0.7em',
+    color: '#999999',
+  },
+  clearSearchIcon: {
+    width: '1em',
+    height: '1em',
+    fill: '#999999',
+  }
 }
 
 /**
@@ -44,63 +59,38 @@ type State = {
  * when expensive operations are performed (e.g. search) in real time as the
  * user types in the box.  Also provides reset button to clear the box.
  */
-export default class RealTimeSearchBox extends Component<Props, State> {
+// export default class RealTimeSearchBox extends Component<Props, State> {
+export default function RealTimeSearchBox({
+  autoFocus = false,
+  searchTerm = '',
+  onSearchTermChange = () => {},
+  placeholderText = '',
+  helpText = '',
+  delayMs = 250,
+  iconName = 'search',
+}: Props) {
 
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  static defaultProps = {
-    autoFocus: false,
-    searchTerm: '',
-    onSearchTermChange: () => {},
-    placeholderText: '',
-    helpText: '',
-    delayMs: 250,
-    iconName: 'search'
-  };
+  const emitSearchTermChange = debounce((searchTerm: string) => onSearchTermChange!(searchTerm));
 
-  emitSearchTermChange = debounce((searchTerm: string) => this.props.onSearchTermChange!(searchTerm));
-
-  input: HTMLInputElement | null = null;
-
-  constructor(props: Props) {
-    super(props);
-    this.handleSearchTermChange = this.handleSearchTermChange.bind(this);
-    this.handleResetClick = this.handleResetClick.bind(this);
-    this.handleKeyDown = this.handleKeyDown.bind(this);
-    this.state = { searchTerm: this.props.searchTerm! };
-  }
-
-  componentDidMount() {
-    if (this.props.autoFocus && this.input != null) this.input.autofocus = true;
-  }
-
-  componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.searchTerm !== this.state.searchTerm) {
-      this.setState({ searchTerm: nextProps.searchTerm! },
-        () => this.emitSearchTermChange(nextProps.searchTerm!));
-    }
-  }
-
-  componentWillUnmount() {
-    this.emitSearchTermChange.cancel();
-  }
+  let input: HTMLInputElement | null = null;
 
   /**
    * Update the state of this Component, and call debounced onSearchTermSet
    * callback.
    */
-  handleSearchTermChange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleSearchTermChange(e: React.ChangeEvent<HTMLInputElement>) {
     let searchTerm = e.currentTarget.value;
-    this.setState({ searchTerm });
-    this.emitSearchTermChange(searchTerm);
+    emitSearchTermChange(searchTerm);
   }
 
   /**
    * Reset input if Escape is pressed.
    */
-  handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Escape') {
-      this.setState({ searchTerm: '' });
-      this.props.onSearchTermChange!('');
+      onSearchTermChange!('');
       e.stopPropagation();
     }
   }
@@ -109,33 +99,51 @@ export default class RealTimeSearchBox extends Component<Props, State> {
    * Update the state of this Component, and call onSearchTermSet callback
    * immediately.
    */
-  handleResetClick() {
-    this.setState({ searchTerm: '' });
-    this.props.onSearchTermChange!('');
+  function handleResetClick() {
+    onSearchTermChange!('');
   }
 
-  render() {
-    let { helpText, placeholderText, autoFocus, iconName } = this.props;
-    let searchTerm = this.state.searchTerm;
-    let isActiveSearch = searchTerm.length > 0;
-    let activeModifier = isActiveSearch ? 'active' : 'inactive';
-    let helpModifier = helpText ? 'withHelp' : '';
+  let isActiveSearch = searchTerm.length > 0;
+  let activeModifier = isActiveSearch ? 'active' : 'inactive';
+  let helpModifier = helpText ? 'withHelp' : '';
     return (
-      <div>
+      <div css={{
+        display: 'flex',
+        alignItems: 'center',
+      }}>
         <label>
           <input type="search"
             autoFocus={autoFocus}
-            ref={node => this.input = node}
-            onChange={this.handleSearchTermChange}
-            onKeyDown={this.handleKeyDown}
+            ref={node => input = node}
+            onChange={handleSearchTermChange}
+            onKeyDown={handleKeyDown}
             placeholder={placeholderText}
             value={searchTerm}
           />
-          <i className={`fa fa-search`}/>
-          <button
-            type="button" onClick={this.handleResetClick}>
-            <Close />
-          </button>
+          {searchTerm ?
+            <button
+              css={{
+                background: 'none',
+                border: 0,
+                position: 'relative',
+                margin: 0,
+                padding: 0,
+                right: '18px',
+                top: '2px',
+              }}
+              type="button" 
+              onClick={handleResetClick}
+            >
+              <Close style={defaultStyle.clearSearchIcon} />
+            </button> :
+            <span css={{
+              position: 'relative',
+              right: '20px',
+              top: '4px'
+            }}>
+              <Search style={defaultStyle.searchIcon} />
+            </span>
+          }
         </label>
         {/* use safeHtml for helpText to allow italic */}
         {!helpText ? 
@@ -143,9 +151,9 @@ export default class RealTimeSearchBox extends Component<Props, State> {
           <Tooltip
             title={safeHtml(helpText)}
           >
-            <Help />  
+            <Help style={defaultStyle.helpIcon}/>  
           </Tooltip>}
       </div>
     );
   }
-}
+

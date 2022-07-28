@@ -2,7 +2,7 @@ import { ReactNode, useState } from "react";
 import PopoverButton from "../buttons/PopoverButton";
 import CheckboxList, { CheckboxListProps } from "./CheckboxList";
   
-interface SelectListProps extends CheckboxListProps {
+export interface SelectListProps extends CheckboxListProps {
     children?: ReactNode;
     /** A button's content if/when no values are currently selected */
     defaultButtonDisplayContent: ReactNode;
