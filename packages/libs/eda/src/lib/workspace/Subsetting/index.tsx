@@ -1,11 +1,7 @@
-import { useHistory } from 'react-router';
+import { useMemo } from 'react';
+import { Redirect, useHistory } from 'react-router';
 
-import {
-  MultiFilterVariable,
-  useMakeVariableLink,
-  useStudyMetadata,
-  Variable,
-} from '../../core';
+import { MultiFilterVariable, useMakeVariableLink, Variable } from '../../core';
 
 // Components
 import { VariableDetails } from '../Variable';
@@ -15,13 +11,14 @@ import FilterChipList from '../../core/components/FilterChipList';
 // Hooks
 import { EntityCounts } from '../../core/hooks/entityCounts';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
-import { useStudyEntities } from '../../core/hooks/study';
+import { useStudyEntities } from '../../core/hooks/workspace';
 
 // Definitions
 import { AnalysisState } from '../../core/hooks/analysis';
 
 // Functions
 import { cx } from '../Utils';
+import { findMultiFilterParent } from '../../core/utils/study-metadata';
 
 interface SubsettingProps {
   analysisState: AnalysisState;
@@ -44,10 +41,8 @@ export default function Subsetting({
   totalCounts,
   filteredCounts,
 }: SubsettingProps) {
-  const studyMetadata = useStudyMetadata();
-
   // Obtain all entities and associated variables.
-  const entities = useStudyEntities(studyMetadata.rootEntity);
+  const entities = useStudyEntities();
 
   // What is the current entity?
   const entity = entities.find((e) => e.id === entityId);
@@ -61,11 +56,22 @@ export default function Subsetting({
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
+  // Find multifilter parent. We will redirect to it later, if one is found.
+  const multiFilterParent = useMemo(
+    () => entity && variable && findMultiFilterParent(entity, variable),
+    [entity, variable]
+  );
+
   if (
     entity == null ||
     (!Variable.is(variable) && !MultiFilterVariable.is(variable))
-  )
+  ) {
     return <div>Could not find specified variable.</div>;
+  }
+
+  if (multiFilterParent) {
+    return <Redirect to={multiFilterParent.id} />;
+  }
 
   const totalEntityCount = totalCounts && totalCounts[entity.id];
 
@@ -79,7 +85,6 @@ export default function Subsetting({
       <div className="Variables">
         <VariableTree
           scope="variableTree"
-          rootEntity={entities[0]}
           entityId={entity.id}
           starredVariables={starredVariables}
           toggleStarredVariable={toggleStarredVariable}

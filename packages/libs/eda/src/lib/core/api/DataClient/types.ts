@@ -19,6 +19,7 @@ import {
   BinWidthSlider,
   TimeUnit,
   NumberOrNull,
+  NumberOrDateRange,
 } from '../../types/general';
 import { VariableDescriptor, StringVariableValue } from '../../types/variable';
 import { ComputationAppOverview } from '../../types/visualization';
@@ -35,15 +36,24 @@ type ZeroToTwoVariables =
 // define sampleSizeTableArray
 export type SampleSizeTableArray = TypeOf<typeof sampleSizeTableArray>;
 const sampleSizeTableArray = array(
-  partial({
-    // set union for size as it depends on the presence of overlay variable
-    size: union([number, array(number)]),
-    overlayVariableDetails: type({
-      entityId: string,
-      variableId: string,
-      value: string,
+  intersection([
+    type({
+      size: array(number),
     }),
-  })
+    partial({
+      facetVariableDetails: union([
+        tuple([StringVariableValue]),
+        tuple([StringVariableValue, StringVariableValue]),
+      ]),
+      geoAggregateVariableDetails: StringVariableValue,
+      overlayVariableDetails: StringVariableValue,
+      xVariableDetails: type({
+        entityId: string,
+        variableId: string,
+        value: union([string, array(string)]),
+      }),
+    }),
+  ])
 );
 
 // define completeCases
@@ -588,7 +598,7 @@ export const MapMarkersResponse = type({
   }),
 });
 
-export interface PieplotRequestParams {
+export interface MapMarkersOverlayRequestParams {
   studyId: string;
   filters: Filter[];
   config: {
@@ -600,34 +610,67 @@ export interface PieplotRequestParams {
       | 'allVariables'
       | 'strataVariables';
     xAxisVariable: VariableDescriptor;
-    facetVariable?: ZeroToTwoVariables;
+    latitudeVariable: VariableDescriptor;
+    longitudeVariable: VariableDescriptor;
+    geoAggregateVariable: VariableDescriptor;
     valueSpec: 'count' | 'proportion';
+    binSpec: {
+      type?: 'binWidth' | 'numBins';
+      value?: NumberOrNull;
+      units?: TimeUnit;
+      range?: NumberOrDateRange;
+    };
+    viewport: {
+      latitude: {
+        xMin: number;
+        xMax: number;
+      };
+      longitude: {
+        left: number;
+        right: number;
+      };
+    };
   };
 }
 
-export type PieplotResponse = TypeOf<typeof PieplotResponse>;
-export const PieplotResponse = type({
-  pieplot: type({
+export type MapMarkersOverlayResponse = TypeOf<
+  typeof MapMarkersOverlayResponse
+>;
+export const MapMarkersOverlayResponse = type({
+  mapMarkers: type({
     data: array(
-      intersection([
-        type({
-          label: array(string),
-          value: array(number),
-        }),
-        partial({
-          facetVariableDetails: union([
-            tuple([StringVariableValue]),
-            tuple([StringVariableValue, StringVariableValue]),
-          ]),
-        }),
-      ])
+      type({
+        label: array(string),
+        value: array(number),
+        geoAggregateVariableDetails: StringVariableValue,
+      })
     ),
-    config: type({
-      xVariableDetails: type({
-        variableId: string,
-        entityId: string,
+    config: intersection([
+      type({
+        completeCasesAllVars: number,
+        completeCasesAxesVars: number,
+        rankedValues: array(string),
+        overlayValues: array(string),
+        viewport: type({
+          latitude: type({
+            xMin: number,
+            xMax: number,
+          }),
+          longitude: type({
+            left: number,
+            right: number,
+          }),
+        }),
+        xVariableDetails: type({
+          variableId: string,
+          entityId: string,
+        }),
       }),
-    }),
+      partial({
+        binSpec: BinSpec,
+        binSlider: BinWidthSlider,
+      }),
+    ]),
   }),
   sampleSizeTable: sampleSizeTableArray,
   completeCasesTable: completeCasesTableArray,

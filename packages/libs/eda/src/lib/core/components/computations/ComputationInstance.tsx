@@ -1,38 +1,37 @@
-import React, { useCallback, useMemo } from 'react';
-import { useToggleStarredVariable } from '../../hooks/starredVariables';
-import {
-  Computation,
-  ComputationAppOverview,
-  Visualization,
-} from '../../types/visualization';
-import { VisualizationsContainer } from '../visualizations/VisualizationsContainer';
-import { VisualizationType } from '../visualizations/VisualizationTypes';
-import { ComputationProps } from './Types';
+import { useCallback, useMemo } from 'react';
 import { useRouteMatch } from 'react-router-dom';
+import { useToggleStarredVariable } from '../../hooks/starredVariables';
+import { Computation, Visualization } from '../../types/visualization';
+import { VisualizationsContainer } from '../visualizations/VisualizationsContainer';
+import { ComputationProps } from './Types';
+import { plugins } from './plugins';
+import { VisualizationPlugin } from '../visualizations/VisualizationPlugin';
+import { useStudyMetadata } from '../../hooks/workspace';
+import { AnalysisState } from '../../hooks/analysis';
 
 export interface Props extends ComputationProps {
   computationId: string;
-  visualizationTypes: Record<string, VisualizationType>;
+  visualizationPlugins: Partial<Record<string, VisualizationPlugin>>;
   baseUrl?: string; // right now only defined when *not* using single app mode
+  isSingleAppMode: boolean;
 }
 
 export function ComputationInstance(props: Props) {
   const {
     computationAppOverview,
     computationId,
-    analysisState: { analysis, setComputations },
+    analysisState,
     totalCounts,
     filteredCounts,
     geoConfigs,
-    visualizationTypes,
+    visualizationPlugins,
     baseUrl,
+    isSingleAppMode,
   } = props;
 
-  const computation = useMemo(() => {
-    return analysis?.descriptor.computations.find(
-      (computation) => computation.computationId === computationId
-    );
-  }, [computationId, analysis]);
+  const { analysis, setComputations } = analysisState;
+
+  const computation = useComputation(analysis, computationId);
 
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
 
@@ -74,17 +73,18 @@ export function ComputationInstance(props: Props) {
       {baseUrl && (
         <AppTitle
           computation={computation}
-          computationAppOverview={computationAppOverview}
           condensed={
             url.replace(/\/+$/, '').split('/').pop() === 'visualizations'
           }
         />
       )}
       <VisualizationsContainer
+        analysisState={analysisState}
+        computationAppOverview={computationAppOverview}
         geoConfigs={geoConfigs}
         computation={computation}
         visualizationsOverview={computationAppOverview.visualizations}
-        visualizationTypes={visualizationTypes}
+        visualizationPlugins={visualizationPlugins}
         updateVisualizations={updateVisualizations}
         filters={analysis.descriptor.subset.descriptor}
         starredVariables={analysis?.descriptor.starredVariables}
@@ -92,6 +92,7 @@ export function ComputationInstance(props: Props) {
         totalCounts={totalCounts}
         filteredCounts={filteredCounts}
         baseUrl={baseUrl}
+        isSingleAppMode={isSingleAppMode}
       />
     </div>
   );
@@ -100,43 +101,60 @@ export function ComputationInstance(props: Props) {
 // Title above each app in /visualizations
 interface AppTitleProps {
   computation: Computation;
-  computationAppOverview: ComputationAppOverview;
   condensed: boolean;
 }
 
-// We expect two different types of app titles: one in /visualizations that labels each app's row
-// and one just below the navigation when we're working on a viz within an app. The former
-// is the "condensed" version. May make sense to break into two components when
-// further styling is applied?
 function AppTitle(props: AppTitleProps) {
-  const { computation, computationAppOverview, condensed } = props;
-  const expandedStyle = {
-    borderRadius: 5,
-    paddingTop: 10,
-    paddingRight: 35,
-    paddingBottom: 10,
-    paddingLeft: 20,
-    backgroundColor: 'lightblue',
-    margin: 'auto',
-    marginTop: 10,
-  };
+  const { computation, condensed } = props;
+  const plugin = plugins[computation.descriptor?.type];
+  const ConfigDescription = plugin
+    ? plugin.configurationDescriptionComponent
+    : undefined;
+  const { configuration } = computation.descriptor;
+
   return condensed ? (
-    <div>
-      <h3>
-        {computation.displayName} <i className="fa fa-cog"></i>{' '}
-        <i className="fa fa-clone"></i> <i className="fa fa-trash"></i>
-      </h3>
-      <h4>
-        <i>{computationAppOverview.displayName}</i>
-      </h4>
+    <div style={{ lineHeight: 1.5 }}>
+      {plugin && configuration
+        ? ConfigDescription && <ConfigDescription computation={computation} />
+        : null}
     </div>
-  ) : (
-    <div style={expandedStyle}>
-      <h3>
-        {computation.displayName} <i className="fa fa-cog"></i>{' '}
-        <i className="fa fa-clone"></i> <i className="fa fa-trash"></i>
-      </h3>
-      <h4>{computationAppOverview.displayName}</h4>
-    </div>
-  );
+  ) : null;
+}
+
+function useComputation(
+  analysis: AnalysisState['analysis'],
+  computationId: string
+) {
+  const studyMetadata = useStudyMetadata();
+  return useMemo(() => {
+    const computation = analysis?.descriptor.computations.find(
+      (computation) => computation.computationId === computationId
+    );
+    if (computation == null) return;
+    const computePlugin = plugins[computation.descriptor.type];
+    if (computePlugin == null) {
+      throw new Error(
+        `Unknown computation type: ${computation.descriptor.type}.`
+      );
+    }
+
+    if (
+      !computePlugin.isConfigurationValid(computation.descriptor.configuration)
+    ) {
+      return {
+        ...computation,
+        descriptor: {
+          ...computation.descriptor,
+          configuration: computePlugin.createDefaultConfiguration(
+            studyMetadata.rootEntity
+          ),
+        },
+      };
+    }
+    return computation;
+  }, [
+    analysis?.descriptor.computations,
+    computationId,
+    studyMetadata.rootEntity,
+  ]);
 }

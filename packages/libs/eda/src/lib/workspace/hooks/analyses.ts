@@ -40,8 +40,8 @@ export function useWorkspaceAnalysis(
     return singleAppMode
       ? createComputation(
           singleAppMode,
-          singleAppMode,
-          null,
+          undefined,
+          [],
           [],
           singleAppComputationId
         )

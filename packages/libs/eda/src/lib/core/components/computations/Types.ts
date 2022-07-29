@@ -4,9 +4,8 @@ import { EntityCounts } from '../../hooks/entityCounts';
 import { PromiseHookState } from '../../hooks/promise';
 import { GeoConfig } from '../../types/geoConfig';
 import { Computation, ComputationAppOverview } from '../../types/visualization';
-import { VisualizationType } from '../visualizations/VisualizationTypes';
-// alphadiv abundance
-import { ComputationConfiguration } from '../../types/visualization';
+import { StudyEntity } from '../..';
+import { VisualizationPlugin } from '../visualizations/VisualizationPlugin';
 
 export interface ComputationProps {
   analysisState: AnalysisState;
@@ -18,10 +17,9 @@ export interface ComputationProps {
 
 export interface ComputationConfigProps extends ComputationProps {
   // alphadiv abundance
-  addNewComputation: (
-    name: string,
-    configuration: ComputationConfiguration
-  ) => void;
+  computation: Computation;
+  visualizationId: string;
+  addNewComputation: (name: string, configuration: unknown) => void;
 }
 
 export interface ComputationOverviewProps extends ComputationProps {}
@@ -43,5 +41,10 @@ export interface ComputationComponents {
 
 export interface ComputationPlugin {
   configurationComponent: React.ComponentType<ComputationConfigProps>;
-  visualizationTypes: Record<string, VisualizationType>;
+  configurationDescriptionComponent?: React.ComponentType<{
+    computation: Computation;
+  }>;
+  visualizationPlugins: Partial<Record<string, VisualizationPlugin<any>>>;
+  createDefaultConfiguration: (rootEntity: StudyEntity) => unknown;
+  isConfigurationValid: (configuration: unknown) => boolean;
 }

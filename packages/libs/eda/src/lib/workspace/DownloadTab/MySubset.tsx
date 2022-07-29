@@ -17,11 +17,10 @@ import {
   EnhancedEntityData,
   EnhancedEntityDatum,
 } from './hooks/useEnhancedEntityData';
-import { useMemo, useState } from 'react';
-import SubsettingDataGridModal from '../Subsetting/SubsettingDataGridModal';
+import { useState } from 'react';
+import SubsetDownloadModal from '../Subsetting/SubsetDownloadModal';
 import { AnalysisState } from '../../core';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
-import { EntityCounts } from '../../core/hooks/entityCounts';
 import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 import { Action } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUiActions';
 
@@ -29,16 +28,12 @@ type MySubsetProps = {
   datasetId: string;
   entities: EnhancedEntityData;
   analysisState: AnalysisState;
-  totalEntityCounts: EntityCounts | undefined;
-  filteredEntityCounts: EntityCounts | undefined;
 };
 
 export default function MySubset({
   datasetId,
   entities,
   analysisState,
-  totalEntityCounts,
-  filteredEntityCounts,
 }: MySubsetProps) {
   const theme = useUITheme();
 
@@ -52,21 +47,10 @@ export default function MySubset({
   const starredVariables = analysisState.analysis?.descriptor.starredVariables;
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
-  const [totalEntityCount, filteredEntityCount] = useMemo(() => {
-    if (currentEntity && totalEntityCounts && filteredEntityCounts) {
-      return [
-        totalEntityCounts[currentEntity.id],
-        filteredEntityCounts[currentEntity.id],
-      ];
-    } else {
-      return [undefined, undefined];
-    }
-  }, [currentEntity, totalEntityCounts, filteredEntityCounts]);
-
   return (
-    <div key="My Subset" style={{ marginBottom: 35 }}>
+    <div key="My Subset" style={{ marginTop: 10, marginBottom: 35 }}>
       {currentEntity ? (
-        <SubsettingDataGridModal
+        <SubsetDownloadModal
           displayModal={mySubsetModalOpen}
           toggleDisplay={() => {
             setMySubsetModalOpen(false);
@@ -74,11 +58,7 @@ export default function MySubset({
           }}
           analysisState={analysisState}
           entities={entities}
-          currentEntityID={currentEntity.id}
-          currentEntityRecordCounts={{
-            total: totalEntityCount,
-            filtered: filteredEntityCount,
-          }}
+          currentEntity={currentEntity}
           starredVariables={starredVariables}
           toggleStarredVariable={toggleStarredVariable}
         />
@@ -95,9 +75,9 @@ export default function MySubset({
       {Object.values(entities).map((data, index) => (
         <FloatingButton
           key={index}
-          text={`${data.filteredCount?.toLocaleString()} of ${data.totalCount?.toLocaleString()} ${startCase(
+          text={`${data.filteredCount?.toLocaleString()} of ${data.totalCount?.toLocaleString()} ${
             data.displayNamePlural
-          )}`}
+          }`}
           onPress={() => {
             attemptAction(Action.download, {
               studyId: datasetId,

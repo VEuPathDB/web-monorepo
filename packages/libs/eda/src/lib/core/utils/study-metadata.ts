@@ -1,7 +1,16 @@
+import { keyBy } from 'lodash';
 import { find } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
-import { StudyEntity, VariableTreeNode } from '../types/study';
+import {
+  MultiFilterVariable,
+  StudyEntity,
+  VariableTreeNode,
+} from '../types/study';
 import { VariableDescriptor } from '../types/variable';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+
+export function entityTreeToArray(rootEntity: StudyEntity) {
+  return Array.from(preorder(rootEntity, (e) => e.children ?? []));
+}
 
 export interface EntityAndVariable {
   entity: StudyEntity;
@@ -51,4 +60,20 @@ export function findCollections(entity: StudyEntity) {
   });
 
   return collections;
+}
+
+export function findMultiFilterParent(
+  entity: StudyEntity,
+  variable: VariableTreeNode
+) {
+  const variablesById = keyBy<VariableTreeNode | undefined>(
+    entity.variables,
+    'id'
+  );
+  let parent: VariableTreeNode | undefined = variable;
+  while (parent?.parentId) {
+    parent = variablesById[parent.parentId];
+    if (MultiFilterVariable.is(parent)) return parent;
+  }
+  return;
 }

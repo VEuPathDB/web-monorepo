@@ -13,12 +13,12 @@ import {
 import { cx } from './Utils';
 
 // Definitions
-import { Status } from '../core';
+import { Status, useStudyEntities } from '../core';
 
 // Hooks
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { usePrevious } from '../core/hooks/previousValue';
-import { isStubEntity, useStudyEntities } from '../core/hooks/study';
+import { isStubEntity } from '../core/hooks/study';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { useStudyMetadata, useStudyRecord } from '../core';
 import { useGeoConfig } from '../core/hooks/geoConfig';
@@ -128,7 +128,7 @@ export function AnalysisPanel({
   const filters = analysis?.descriptor.subset.descriptor;
   const filteredCounts = useEntityCounts(filters);
   const studyMetadata = useStudyMetadata();
-  const entities = useStudyEntities(studyMetadata.rootEntity);
+  const entities = useStudyEntities();
   const filteredEntities = uniq(filters?.map((f) => f.entityId));
   const geoConfigs = useGeoConfig(entities);
   const location = useLocation();

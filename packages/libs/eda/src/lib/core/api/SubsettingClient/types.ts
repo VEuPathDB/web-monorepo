@@ -71,6 +71,10 @@ export interface TabularDataRequestParams {
       numRows: number;
       offset: number;
     };
+    sorting?: Array<{
+      key: string;
+      direction: 'asc' | 'desc';
+    }>;
   };
 }
 

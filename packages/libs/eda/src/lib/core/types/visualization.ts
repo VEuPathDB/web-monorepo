@@ -12,6 +12,7 @@ import {
   record,
   NullType,
 } from 'io-ts';
+import * as t from 'io-ts';
 import { VariableDataShape, VariableType } from './study';
 
 import { CompleteCasesTable } from '../api/DataClient';
@@ -48,24 +49,6 @@ export const Visualization = intersection([
   }),
 ]);
 
-/**
- * Type and configuration of the app object stored in user's analysis
- */
-// alphadiv abundance: add NullType here to remove "null as any" at ZeroConfiguration
-export type ComputationConfiguration = TypeOf<
-  typeof ComputationConfiguration | NullType
->;
-export const ComputationConfiguration = intersection([
-  type({
-    name: string,
-    collectionVariable: VariableDescriptor,
-  }),
-  partial({
-    alphaDivMethod: string,
-    rankingMethod: string,
-  }),
-]);
-
 // alphadiv abundance
 export type ComputationDescriptor = TypeOf<typeof ComputationDescriptor>;
 export const ComputationDescriptor = type({
@@ -78,17 +61,24 @@ export const ComputationDescriptor = type({
 /**
  * App object stored in user's analysis
  */
-export type Computation = TypeOf<typeof Computation>;
-export const Computation = intersection([
-  type({
-    computationId: string,
-    descriptor: ComputationDescriptor,
-    visualizations: array(Visualization),
+export interface Computation<ConfigType = unknown> {
+  computationId: string;
+  displayName: string;
+  descriptor: {
+    type: string;
+    configuration: ConfigType;
+  };
+  visualizations: Visualization[];
+}
+export const Computation: t.Type<Computation> = t.interface({
+  computationId: string,
+  displayName: string,
+  descriptor: type({
+    type: string,
+    configuration: unknown,
   }),
-  partial({
-    displayName: string,
-  }),
-]);
+  visualizations: array(Visualization),
+});
 
 const Thing = intersection([
   type({

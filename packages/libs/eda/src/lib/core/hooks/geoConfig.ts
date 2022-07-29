@@ -7,8 +7,8 @@ import { GeoConfig } from '../types/geoConfig';
 /**
  * GeoConfig is a list that corresponds to (only) entities that have geo-variables
  *
- * Temporary implementation that looks for a specific combination of variables underneath a single variable tree node.
- * Assumes that aggregationVariables are in ID order (e.g. geohash_1 has the lowest ID and geohash_6 the highest)
+ * Here we inspect the study metadata to see which entities have the required variables
+ * (latitude, longitude and geoaggregators)
  *
  */
 

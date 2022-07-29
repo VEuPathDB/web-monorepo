@@ -1,6 +1,11 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 
-import { AnalysisState, useStudyMetadata, useStudyRecord } from '../../core';
+import {
+  AnalysisState,
+  useStudyEntities,
+  useStudyMetadata,
+  useStudyRecord,
+} from '../../core';
 
 // Definitions
 import { EntityCounts } from '../../core/hooks/entityCounts';
@@ -11,10 +16,15 @@ import MySubset from './MySubset';
 import CurrentRelease from './CurrentRelease';
 
 // Hooks
-import { useStudyEntities, useWdkStudyReleases } from '../../core/hooks/study';
+import { useWdkStudyReleases } from '../../core/hooks/study';
 import { useEnhancedEntityData } from './hooks/useEnhancedEntityData';
 import { DownloadTabStudyReleases } from './types';
 import PastRelease from './PastRelease';
+import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
+import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { Action } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUiActions';
+import { getStudyRequestNeedsApproval } from '@veupathdb/study-data-access/lib/shared/studies';
 
 type DownloadsTabProps = {
   downloadClient: DownloadClient;
@@ -31,14 +41,72 @@ export default function DownloadTab({
 }: DownloadsTabProps) {
   const studyMetadata = useStudyMetadata();
   const studyRecord = useStudyRecord();
-  const entities = useStudyEntities(studyMetadata.rootEntity);
+  const entities = useStudyEntities();
   const enhancedEntityData = useEnhancedEntityData(
     entities,
     totalCounts,
     filteredCounts
   );
-
   const datasetId = studyRecord.id[0].value;
+  const permission = usePermissions();
+  const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
+  const attemptAction = useAttemptActionCallback();
+
+  const handleClick = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+      attemptAction(Action.download, {
+        studyId: datasetId,
+      });
+    },
+    [datasetId, attemptAction]
+  );
+
+  const dataAccessDeclaration = useMemo(() => {
+    if (
+      !user ||
+      !permission ||
+      !studyRecord ||
+      permission.loading ||
+      !datasetId
+    )
+      return;
+    const studyAccess =
+      typeof studyRecord.attributes['study_access'] === 'string'
+        ? studyRecord.attributes['study_access']
+        : '<status not found>';
+    const requestNeedsApproval =
+      getStudyRequestNeedsApproval(studyRecord) !== '0';
+    const hasPermission =
+      permission.permissions.perDataset[studyRecord.id[0].value]
+        ?.actionAuthorization['resultsAll'];
+    const requestElement = (
+      <button className="link" style={{ padding: 0 }} onClick={handleClick}>
+        Click here to request access.
+      </button>
+    );
+    return (
+      <span
+        style={{
+          lineHeight: '150%',
+          fontWeight: 300,
+          fontSize: '1.4em',
+        }}
+      >
+        <em>
+          {getDataAccessDeclaration(
+            studyAccess,
+            requestNeedsApproval,
+            user.isGuest,
+            hasPermission ?? false
+          )}
+          {studyAccess !== 'Public' &&
+            (user.isGuest || !hasPermission) &&
+            requestElement}
+        </em>
+      </span>
+    );
+  }, [user, permission, studyRecord, handleClick, datasetId]);
 
   /**
    * Ok, this is confusing, but there are two places where we need
@@ -59,12 +127,22 @@ export default function DownloadTab({
   ] = useState<Array<string>>([]);
   const WDKStudyReleases = useWdkStudyReleases();
 
+  // Only fetch study releases if they are expected to be available
+  const shouldFetchStudyReleases = Boolean(
+    !permission.loading &&
+      permission.permissions.perDataset[datasetId]?.sha1Hash
+  );
+
   // Get a list of all available study releases according to the Download Service.
   useEffect(() => {
+    if (!shouldFetchStudyReleases) {
+      return;
+    }
+
     downloadClient.getStudyReleases(studyMetadata.id).then((result) => {
       setDownloadServiceStudyReleases(result);
     });
-  }, [downloadClient, studyMetadata]);
+  }, [shouldFetchStudyReleases, downloadClient, studyMetadata]);
 
   /**
    * One we have information from both services on available releases
@@ -104,14 +182,13 @@ export default function DownloadTab({
   }, [WDKStudyReleases, downloadServiceStudyReleases]);
 
   return (
-    <div style={{ display: 'flex', paddingTop: 20 }}>
+    <div style={{ display: 'flex', paddingTop: 10 }}>
       <div key="Column One" style={{ marginRight: 75 }}>
+        {dataAccessDeclaration ?? ''}
         <MySubset
           datasetId={datasetId}
           entities={enhancedEntityData}
           analysisState={analysisState}
-          totalEntityCounts={totalCounts}
-          filteredEntityCounts={filteredCounts}
         />
         {mergedReleaseData.map((release, index) =>
           index === 0 ? (
@@ -139,4 +216,38 @@ export default function DownloadTab({
       </div>
     </div>
   );
+}
+
+function getDataAccessDeclaration(
+  studyAccess: string,
+  requestNeedsApproval: boolean,
+  isGuest: boolean,
+  hasPermission: boolean = false
+): string {
+  const DATA_ACCESS_STUB = `Data downloads for this study are ${studyAccess.toLowerCase()}. `;
+  const PUBLIC_ACCESS_STUB = 'You can download the data without logging in.';
+  const LOGIN_REQUEST_STUB =
+    'You must register or log in and request access to download data;';
+  const CONTROLLED_ACCESS_STUB =
+    ' data can be downloaded immediately following request submission. ';
+  const PROTECTED_ACCESS_STUB =
+    ' data can be downloaded after the study team reviews your request and grants you access. ';
+  const ACCESS_GRANTED_STUB =
+    'You have been granted access to download the data.';
+  // const ACCESS_PENDING_STUB = 'Your data access request is pending.';
+
+  let dataAccessDeclaration = DATA_ACCESS_STUB;
+  if (studyAccess === 'Public') {
+    return (dataAccessDeclaration += PUBLIC_ACCESS_STUB);
+  } else if (isGuest || !hasPermission) {
+    dataAccessDeclaration += LOGIN_REQUEST_STUB;
+    return (dataAccessDeclaration += !requestNeedsApproval
+      ? CONTROLLED_ACCESS_STUB
+      : PROTECTED_ACCESS_STUB);
+  } else if (!isGuest && hasPermission) {
+    return (dataAccessDeclaration += ACCESS_GRANTED_STUB);
+  } else {
+    // dataAccessDeclaration += ACCESS_PENDING_STUB;
+    return dataAccessDeclaration;
+  }
 }
