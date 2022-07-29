@@ -1353,6 +1353,24 @@ function ScatterplotWithControls({
     dependentAxisLogScale: vizConfig.dependentAxisLogScale,
   };
 
+  const [
+    dismissedIndependentAllNegativeWarning,
+    setDismissedIndependentAllNegativeWarning,
+  ] = useState<boolean>(false);
+  const independentAllNegative =
+    vizConfig.independentAxisLogScale &&
+    xMinMaxDataRange?.max != null &&
+    xMinMaxDataRange.max < 0;
+
+  const [
+    dismissedDependentAllNegativeWarning,
+    setDismissedDependentAllNegativeWarning,
+  ] = useState<boolean>(false);
+  const dependentAllNegative =
+    vizConfig.dependentAxisLogScale &&
+    yMinMaxDataRange?.max != null &&
+    yMinMaxDataRange.max < 0;
+
   return (
     <>
       {isFaceted(data) ? (
@@ -1443,7 +1461,10 @@ function ScatterplotWithControls({
             <Switch
               label="Log scale:"
               state={vizConfig.independentAxisLogScale}
-              onStateChange={onIndependentAxisLogScaleChange}
+              onStateChange={(newValue: boolean) => {
+                setDismissedIndependentAllNegativeWarning(false);
+                onIndependentAxisLogScaleChange(newValue);
+              }}
               // disable log scale for date variable
               disabled={independentValueType === 'date' || valueSpec != 'Raw'}
             />
@@ -1451,6 +1472,20 @@ function ScatterplotWithControls({
               (values &le; 0 will not be shown)
             </Typography>
           </div>
+          {independentAllNegative && !dismissedIndependentAllNegativeWarning ? (
+            <Notification
+              title={''}
+              text={
+                'Nothing can be plotted with log scale because all values are negative or zero'
+              }
+              color={'#5586BE'}
+              onAcknowledgement={() =>
+                setDismissedIndependentAllNegativeWarning(true)
+              }
+              showWarningIcon={true}
+              containerStyles={{ maxWidth: '350px' }}
+            />
+          ) : null}
           <AxisRangeControl
             label="Range"
             range={vizConfig.independentAxisRange ?? defaultIndependentRange}
@@ -1461,7 +1496,7 @@ function ScatterplotWithControls({
             logScale={vizConfig.independentAxisLogScale}
           />
           {/* truncation notification */}
-          {truncatedIndependentAxisWarning ? (
+          {truncatedIndependentAxisWarning && !independentAllNegative ? (
             <Notification
               title={''}
               text={truncatedIndependentAxisWarning}
@@ -1523,7 +1558,10 @@ function ScatterplotWithControls({
             <Switch
               label="Log scale:"
               state={vizConfig.dependentAxisLogScale}
-              onStateChange={onDependentAxisLogScaleChange}
+              onStateChange={(newValue: boolean) => {
+                setDismissedDependentAllNegativeWarning(false);
+                onDependentAxisLogScaleChange(newValue);
+              }}
               // disable log scale for date variable
               disabled={dependentValueType === 'date' || valueSpec != 'Raw'}
             />
@@ -1531,6 +1569,20 @@ function ScatterplotWithControls({
               (values &le; 0 will not be shown)
             </Typography>
           </div>
+          {dependentAllNegative && !dismissedDependentAllNegativeWarning ? (
+            <Notification
+              title={''}
+              text={
+                'Nothing can be plotted with log scale because all values are negative or zero'
+              }
+              color={'#5586BE'}
+              onAcknowledgement={() =>
+                setDismissedDependentAllNegativeWarning(true)
+              }
+              showWarningIcon={true}
+              containerStyles={{ maxWidth: '350px' }}
+            />
+          ) : null}
           <AxisRangeControl
             label="Range"
             range={vizConfig.dependentAxisRange ?? defaultDependentAxisRange}
@@ -1543,7 +1595,7 @@ function ScatterplotWithControls({
             logScale={vizConfig.dependentAxisLogScale}
           />
           {/* truncation notification */}
-          {truncatedDependentAxisWarning ? (
+          {truncatedDependentAxisWarning && !dependentAllNegative ? (
             <Notification
               title={''}
               text={truncatedDependentAxisWarning}
