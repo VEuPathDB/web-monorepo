@@ -568,8 +568,7 @@ function LineplotViz(props: VisualizationProps) {
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
 
-  // TO DO: rename this defaultIndependentAxisRange
-  const defaultIndependentRangeMargin = useDefaultAxisRange(
+  const defaultIndependentAxisRange = useDefaultAxisRange(
     xAxisVariable,
     data.value?.xMin,
     data.value?.xMinPos,
@@ -590,7 +589,7 @@ function LineplotViz(props: VisualizationProps) {
       // 1. Client makes a request for unzoomed data to get the xMin and xMax, and remembers this.
       // 2. Server returns the truncation flags for us, somehow.
       vizConfig.useBinning
-        ? defaultIndependentRangeMargin
+        ? defaultIndependentAxisRange
         : data.value != null
         ? ({ min: data.value.xMin, max: data.value?.xMax } as NumberOrDateRange)
         : undefined,
@@ -604,7 +603,7 @@ function LineplotViz(props: VisualizationProps) {
     [data]
   );
 
-  const defaultDependentRangeMargin = useDefaultAxisRange(
+  const defaultDependentAxisRange = useDefaultAxisRange(
     yAxisVariable,
     data.value?.yMin,
     data.value?.yMinPos,
@@ -668,13 +667,13 @@ function LineplotViz(props: VisualizationProps) {
   const defaultUIState = useMemo(() => {
     if (xAxisVariable != null)
       return {
-        independentAxisRange: defaultIndependentRangeMargin,
+        independentAxisRange: defaultIndependentAxisRange,
       };
     else
       return {
         independentAxisRange: undefined,
       };
-  }, [xAxisVariable, defaultIndependentRangeMargin]);
+  }, [xAxisVariable, defaultIndependentAxisRange]);
 
   const plotNode = (
     <LineplotWithControls
@@ -726,9 +725,9 @@ function LineplotViz(props: VisualizationProps) {
       vizConfig={vizConfig}
       updateVizConfig={updateVizConfig}
       defaultUIState={defaultUIState}
-      defaultIndependentRange={defaultIndependentRangeMargin}
+      defaultIndependentRange={defaultIndependentAxisRange}
       // add dependent axis range for better displaying tick labels in log-scale
-      defaultDependentAxisRange={defaultDependentRangeMargin}
+      defaultDependentAxisRange={defaultDependentAxisRange}
       // pass useState of truncation warnings
       truncatedIndependentAxisWarning={truncatedIndependentAxisWarning}
       setTruncatedIndependentAxisWarning={setTruncatedIndependentAxisWarning}

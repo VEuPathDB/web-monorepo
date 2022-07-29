@@ -1,119 +1,16 @@
-import { useMemo } from 'react';
 import { PromiseHookState } from './promise';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
-import {
-  HistogramDataWithCoverageStatistics,
-  HistogramConfig,
-} from '../components/visualizations/implementations/HistogramVisualization';
+import { HistogramDataWithCoverageStatistics } from '../components/visualizations/implementations/HistogramVisualization';
 import {
   HistogramData,
   HistogramDataSeries,
 } from '@veupathdb/components/lib/types/plots';
-import {
-  BarplotDataWithStatistics,
-  BarplotConfig,
-} from '../components/visualizations/implementations/BarplotVisualization';
-import {
-  BoxplotDataWithCoverage,
-  BoxplotConfig,
-} from '../components/visualizations/implementations/BoxplotVisualization';
+import { BarplotDataWithStatistics } from '../components/visualizations/implementations/BarplotVisualization';
+import { BoxplotDataWithCoverage } from '../components/visualizations/implementations/BoxplotVisualization';
 import { min, max, map } from 'lodash';
 import { Variable } from '../types/study';
-// util to get specific decimal points as a number, not string
-import { numberDecimalPoint } from '../utils/number-decimal-point';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
 import { ComputedVariableMetadata } from '../api/DataClient/types';
-
-/**
- * A custom hook to compute default dependent axis range
- */
-
-type defaultDependentAxisRangeProps =
-  | {
-      min: number;
-      max: number;
-    }
-  | undefined;
-
-// TO BE DEPRECATED in favour of universal useDefaultAxisRange
-export function useDefaultDependentAxisRange(
-  data: PromiseHookState<
-    | HistogramDataWithCoverageStatistics
-    | BarplotDataWithStatistics
-    | BoxplotDataWithCoverage
-    | undefined
-  >,
-  vizConfig: HistogramConfig | BarplotConfig | BoxplotConfig,
-  plotType?: 'Histogram' | 'Barplot' | 'Boxplot' | undefined,
-  yAxisVariable?: Variable,
-  // pass computedVariableMetadata for axis range of computation apps
-  computedVariableMetadata?: ComputedVariableMetadata
-): defaultDependentAxisRangeProps {
-  // find max of stacked array, especially with overlayVariable
-  const defaultDependentAxisMinMax = useMemo(() => {
-    if (plotType == null || plotType === 'Histogram')
-      return histogramDefaultDependentAxisMinMax(
-        data as PromiseHookState<
-          HistogramDataWithCoverageStatistics | undefined
-        >
-      );
-    else if (plotType === 'Barplot')
-      // barplot only computes max value
-      return {
-        min: 0,
-        max: barplotDefaultDependentAxisMax(
-          data as PromiseHookState<BarplotDataWithStatistics | undefined>
-        ),
-      };
-    // boxplot
-    else if (plotType === 'Boxplot')
-      return boxplotDefaultDependentAxisMinMax(
-        data as PromiseHookState<BoxplotDataWithCoverage | undefined>,
-        yAxisVariable,
-        // pass computedVariableMetadata
-        computedVariableMetadata
-      );
-  }, [data, plotType, yAxisVariable, computedVariableMetadata]);
-
-  // set useMemo to avoid infinite loop
-  // set default dependent axis range for better displaying tick labels in log-scale
-  const valueSpec = (vizConfig as HistogramConfig | BarplotConfig).valueSpec;
-  const dependentAxisLogScale = (vizConfig as HistogramConfig | BarplotConfig)
-    .dependentAxisLogScale;
-
-  const defaultDependentAxisRange = useMemo(() => {
-    if (plotType === 'Histogram' || plotType === 'Barplot')
-      return defaultDependentAxisMinMax?.min != null &&
-        defaultDependentAxisMinMax?.max != null
-        ? {
-            // set min as 0 (count, proportion) for non-logscale for histogram/barplot
-            min:
-              valueSpec === 'count'
-                ? 0
-                : dependentAxisLogScale
-                ? // determine min based on data for log-scale at proportion
-                  // need to check defaultDependentAxisMinMax.min !== 0
-                  defaultDependentAxisMinMax.min !== 0 &&
-                  defaultDependentAxisMinMax.min < 0.001
-                  ? numberDecimalPoint(defaultDependentAxisMinMax.min * 0.8, 4)
-                  : 0.001
-                : 0,
-            max: numberDecimalPoint(defaultDependentAxisMinMax.max, 4),
-          }
-        : undefined;
-    // boxplot
-    else if (plotType === 'Boxplot')
-      return defaultDependentAxisMinMax?.min != null &&
-        defaultDependentAxisMinMax?.max != null
-        ? {
-            min: numberDecimalPoint(defaultDependentAxisMinMax.min, 4),
-            max: numberDecimalPoint(defaultDependentAxisMinMax.max, 4),
-          }
-        : undefined;
-  }, [defaultDependentAxisMinMax, plotType, valueSpec, dependentAxisLogScale]);
-
-  return defaultDependentAxisRange;
-}
 
 /**
  * Calculate min (actually minPos, nonzero) and max of histogram counts,
