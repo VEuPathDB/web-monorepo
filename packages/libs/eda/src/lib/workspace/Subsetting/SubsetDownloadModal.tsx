@@ -41,6 +41,7 @@ import {
   DataGridProps,
   SortBy,
 } from '@veupathdb/coreui/dist/components/grids/DataGrid';
+import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 
 type SubsetDownloadModalProps = {
   /** Should the modal currently be visible? */
@@ -706,21 +707,30 @@ export default function SubsetDownloadModal({
 
   // ~18px (round to 20px) per character for medium title size
   const maxStudyNameLength = Math.floor(modalHeaderWidth / 20);
-  const studyName =
-    studyRecord.displayName.length > maxStudyNameLength ? (
-      <span title={studyRecord.displayName}>
-        {safeHtml(
-          studyRecord.displayName.substring(0, maxStudyNameLength - 2) + '...'
-        )}
-      </span>
-    ) : (
-      safeHtml(studyRecord.displayName)
+  const studyNameNoTags = stripHTML(studyRecord.displayName);
+  let studyNameElement: JSX.Element;
+
+  if (studyNameNoTags.length > maxStudyNameLength) {
+    const tagCharCount =
+      studyRecord.displayName.length - studyNameNoTags.length;
+    const studyNameTrunc = studyRecord.displayName.substring(
+      0,
+      maxStudyNameLength + tagCharCount - 2
     );
+    // This regex works as long as every < or > in the study name is part of an HTML tag
+    const regexSplitTag = /<(?!.*>).*/;
+    const studyNameNoSplitTag = studyNameTrunc.replace(regexSplitTag, '');
+    studyNameElement = safeHtml(studyNameNoSplitTag + '...', {
+      title: studyNameNoTags,
+    });
+  } else {
+    studyNameElement = safeHtml(studyRecord.displayName);
+  }
 
   // 14px for subtitle at medium title size
   const analysisName = analysisState.analysis?.displayName;
   const maxAnalysisNameLength = Math.floor(modalHeaderWidth / 14);
-  const analysisNameTrunc =
+  const analysisNameElement =
     analysisName &&
     (analysisName.length > maxAnalysisNameLength ? (
       <span title={analysisName}>
@@ -734,10 +744,10 @@ export default function SubsetDownloadModal({
     <Modal
       title={
         <div style={{ width: '100%' }} ref={observeModalHeader}>
-          {studyName}
+          {studyNameElement}
         </div>
       }
-      subtitle={analysisNameTrunc && <i>{analysisNameTrunc}</i>}
+      subtitle={analysisNameElement && <i>{analysisNameElement}</i>}
       titleSize="medium"
       compactTitle
       includeCloseButton={true}
