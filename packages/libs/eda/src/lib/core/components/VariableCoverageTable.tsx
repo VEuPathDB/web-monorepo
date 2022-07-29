@@ -53,7 +53,6 @@ export function VariableCoverageTable({
     completeCases,
     outputEntityId
   );
-  console.log(rows);
 
   const className =
     containerClassName == null

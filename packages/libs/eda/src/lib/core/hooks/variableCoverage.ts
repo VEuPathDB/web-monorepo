@@ -30,7 +30,6 @@ export function useVariableCoverageTableRows(
   return useMemo(
     () =>
       variableSpecs.map((spec) => {
-        console.log(completeCasesMap);
         if (spec.variable == null) {
           return {
             role: spec.role,
