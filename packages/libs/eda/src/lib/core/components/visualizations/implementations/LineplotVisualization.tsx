@@ -1427,14 +1427,14 @@ function LineplotWithControls({
               label="Log scale:"
               state={vizConfig.dependentAxisLogScale}
               onStateChange={onDependentAxisLogScaleChange}
-              disabled={dependentValueType === 'date'}
+              disabled={dependentValueType === 'date' || showErrorBars}
             />
           </div>
           <Switch
             label="Show error bars (95% C.I.)"
             state={showErrorBars}
             onStateChange={onShowErrorBarsChange}
-            disabled={neverShowErrorBars}
+            disabled={neverShowErrorBars || vizConfig.dependentAxisLogScale}
           />
           {/* Y-axis range control */}
           {/* make some space to match with X-axis range control */}
