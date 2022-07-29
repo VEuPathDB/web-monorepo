@@ -69,9 +69,8 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
       <h2>{componentProps.title}</h2>
       <div
         style={{
-          display: 'grid',
-          gridAutoFlow: 'column',
-          width: '100%',
+          display: 'flex',
+          columnGap: '2.5em',
           overflow: 'auto',
         }}
       >
@@ -106,7 +105,6 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
               {...divModalProps}
               key={index}
               style={{
-                marginRight: 15,
                 cursor: modalComponentProps && 'pointer',
               }}
             >
@@ -127,7 +125,7 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
           );
         })}
       </div>
-      {modalComponentProps && (
+      {modalComponentProps && modalIsOpen && (
         <Modal
           visible={modalIsOpen}
           includeCloseButton
