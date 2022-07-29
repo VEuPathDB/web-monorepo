@@ -602,7 +602,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
             role: 'X-axis',
             required: true,
             display: independentAxisLabel,
-            variable: vizConfig.xAxisVariable,
+            variable: providedXAxisVariable ?? vizConfig.xAxisVariable,
           },
           ...additionalVariableCoverageTableRows,
           {

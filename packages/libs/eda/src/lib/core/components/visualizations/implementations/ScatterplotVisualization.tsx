@@ -967,8 +967,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           {
             role: 'Overlay',
             required: !!providedOverlayVariableDescriptor,
-            display: variableDisplayWithUnit(overlayVariable),
-            variable: vizConfig.overlayVariable,
+            display: legendTitle,
+            variable:
+              providedOverlayVariableDescriptor ?? vizConfig.overlayVariable,
           },
           ...additionalVariableCoverageTableRows,
           {
