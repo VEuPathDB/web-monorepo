@@ -1,4 +1,4 @@
-import { PromiseHookState } from './promise';
+import { PromiseHookState } from '../hooks/promise';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import { HistogramDataWithCoverageStatistics } from '../components/visualizations/implementations/HistogramVisualization';
 import {
