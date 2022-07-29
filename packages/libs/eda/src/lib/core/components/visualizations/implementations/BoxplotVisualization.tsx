@@ -17,10 +17,7 @@ import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { VariableDescriptor } from '../../../types/variable';
 
-import {
-  VariableCoverageTable,
-  VariableSpec,
-} from '../../VariableCoverageTable';
+import { VariableCoverageTable } from '../../VariableCoverageTable';
 
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
@@ -34,7 +31,7 @@ import {
   FacetedData,
   BoxplotDataObject,
 } from '@veupathdb/components/lib/types/plots';
-import { Computation, CoverageStatistics } from '../../../types/visualization';
+import { CoverageStatistics } from '../../../types/visualization';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import { PlotLayout } from '../../layouts/PlotLayout';
 import PluginError from '../PluginError';
@@ -61,7 +58,6 @@ import {
   variablesAreUnique,
   vocabularyWithMissingData,
   fixVarIdLabels,
-  fixVarIdLabel,
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { StudyEntity, Variable } from '../../../types/study';

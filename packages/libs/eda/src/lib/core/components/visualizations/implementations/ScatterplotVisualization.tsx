@@ -925,9 +925,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     />
   );
 
-  console.log(!providedOverlayVariableDescriptor);
-  console.log(computedYAxisDescriptor);
-
   const tableGroupNode = (
     <>
       <BirdsEyeView
