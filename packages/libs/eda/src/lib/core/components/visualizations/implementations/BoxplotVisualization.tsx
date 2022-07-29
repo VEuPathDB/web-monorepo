@@ -568,7 +568,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         (varDetails) => ({
           role: '',
           required: true,
-          display: varDetails.variableId,
+          display: findEntityAndVariable(varDetails)?.variable.displayName,
           variable: varDetails,
         })
       )
