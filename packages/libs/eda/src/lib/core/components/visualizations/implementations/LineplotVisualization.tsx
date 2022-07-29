@@ -576,7 +576,6 @@ function LineplotViz(props: VisualizationProps) {
     data.value?.xMax,
     vizConfig.independentAxisLogScale
   );
-  console.log(defaultIndependentRangeMargin);
 
   const xMinMaxDataRange = useMemo(
     () =>
@@ -605,7 +604,6 @@ function LineplotViz(props: VisualizationProps) {
     [data]
   );
 
-  // find deependent axis range and its margin
   const defaultDependentRangeMargin = useDefaultAxisRange(
     yAxisVariable,
     data.value?.yMin,
@@ -1244,6 +1242,15 @@ function LineplotWithControls({
     dependentAxisLogScale: vizConfig.dependentAxisLogScale,
   };
 
+  const [
+    dismissedDependentAllNegativeWarning,
+    setDismissedDependentAllNegativeWarning,
+  ] = useState<boolean>(false);
+  const dependentAllNegative =
+    vizConfig.dependentAxisLogScale &&
+    yMinMaxDataRange?.max != null &&
+    yMinMaxDataRange.max < 0;
+
   return (
     <>
       {isFaceted(data) ? (
@@ -1262,36 +1269,13 @@ function LineplotWithControls({
         />
       ) : (
         <LinePlot
-          {...lineplotProps}
+          {...lineplotPlotProps}
           ref={plotRef}
           data={data}
           // add controls
           displayLibraryControls={false}
           // custom legend: pass checkedLegendItems to PlotlyPlot
           checkedLegendItems={checkedLegendItems}
-          // pass axis range control
-          independentAxisRange={
-            vizConfig.independentAxisRange ?? defaultIndependentRange
-          }
-          dependentAxisRange={
-            vizConfig.dependentAxisRange ?? defaultDependentAxisRange
-          }
-          // pass valueTypes
-          independentValueType={independentValueType}
-          dependentValueType={dependentValueType}
-          // pass axisTruncationConfig
-          axisTruncationConfig={{
-            independentAxis: {
-              min: truncationConfigIndependentAxisMin,
-              max: truncationConfigIndependentAxisMax,
-            },
-            dependentAxis: {
-              min: truncationConfigDependentAxisMin,
-              max: truncationConfigDependentAxisMax,
-            },
-          }}
-          independentAxisLogScale={vizConfig.independentAxisLogScale}
-          dependentAxisLogScale={vizConfig.dependentAxisLogScale}
         />
       )}
 
@@ -1426,10 +1410,27 @@ function LineplotWithControls({
             <Switch
               label="Log scale:"
               state={vizConfig.dependentAxisLogScale}
-              onStateChange={onDependentAxisLogScaleChange}
+              onStateChange={(newValue: boolean) => {
+                setDismissedDependentAllNegativeWarning(false);
+                onDependentAxisLogScaleChange(newValue);
+              }}
               disabled={dependentValueType === 'date' || showErrorBars}
             />
           </div>
+          {dependentAllNegative && !dismissedDependentAllNegativeWarning ? (
+            <Notification
+              title={''}
+              text={
+                'Nothing can be plotted with log scale because all values are negative or zero'
+              }
+              color={'#5586BE'}
+              onAcknowledgement={() =>
+                setDismissedDependentAllNegativeWarning(true)
+              }
+              showWarningIcon={true}
+              containerStyles={{ maxWidth: '350px' }}
+            />
+          ) : null}
           <Switch
             label="Show error bars (95% C.I.)"
             state={showErrorBars}
@@ -1450,7 +1451,7 @@ function LineplotWithControls({
             containerStyles={{ maxWidth: '350px' }}
           />
           {/* truncation notification */}
-          {truncatedDependentAxisWarning ? (
+          {truncatedDependentAxisWarning && !dependentAllNegative ? (
             <Notification
               title={''}
               text={truncatedDependentAxisWarning}
@@ -1563,7 +1564,7 @@ export function lineplotResponseToData(
   const xMinPos = min(map(processedData, ({ xMinPos }) => xMinPos));
   const xMax = max(map(processedData, ({ xMax }) => xMax));
   const yMin = min(map(processedData, ({ yMin }) => yMin));
-  const yMinPos = min(map(processedData, ({ yMinPos }) => yMin));
+  const yMinPos = min(map(processedData, ({ yMinPos }) => yMinPos));
   const yMax = max(map(processedData, ({ yMax }) => yMax));
 
   const dataSetProcess =

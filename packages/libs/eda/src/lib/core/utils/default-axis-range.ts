@@ -16,6 +16,7 @@ export function numberDateDefaultAxisRange(
   if (Variable.is(variable)) {
     if (variable.type === 'number' || variable.type === 'integer') {
       const defaults = variable.distributionDefaults;
+      if (logScale && observedMinPos == null) return undefined; // return nothing - there will be no plottable data anyway
       return defaults.displayRangeMin != null &&
         defaults.displayRangeMax != null
         ? {
