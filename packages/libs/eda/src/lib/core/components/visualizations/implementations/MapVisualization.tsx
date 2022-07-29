@@ -486,6 +486,45 @@ function MapViz(props: VisualizationProps) {
       : undefined;
   }, [overlayResponse]);
 
+  const valueMax = useMemo(
+    () =>
+      overlayData
+        ? values(overlayData) // it's a Record 'object'
+            .map((record) => record.data)
+            .flat() // flatten all the arrays into one
+            .reduce(
+              (accum, elem) => (elem.value > accum ? elem.value : accum),
+              0
+            ) // find max value
+        : 0,
+    [overlayData]
+  );
+
+  const valueMinPos = useMemo(
+    () =>
+      overlayData
+        ? values(overlayData)
+            .map((record) => record.data)
+            .flat()
+            .reduce<number | undefined>(
+              (accum, elem) =>
+                elem.value > 0 && (accum == null || elem.value < accum)
+                  ? elem.value
+                  : accum,
+              undefined
+            )
+        : undefined,
+    [overlayData]
+  );
+
+  const defaultDependentAxisRange = useDefaultAxisRange(
+    null,
+    0,
+    valueMinPos,
+    valueMax,
+    vizConfig.dependentAxisLogScale
+  ) as NumberRange;
+
   // If it's a string variable and a small vocabulary, use it as-is from the study metadata.
   // This ensures that for low cardinality categoricals, the colours are always the same.
   // Otherwise use the overlayValues from the back end (which are either bins or a Top7+Other)
@@ -521,13 +560,6 @@ function MapViz(props: VisualizationProps) {
    */
   const markers = useMemo(() => {
     if (vocabulary == null) return undefined;
-
-    const pieValueMax = overlayData
-      ? values(overlayData) // it's a Record 'object'
-          .map((record) => record.data)
-          .flat() // flatten all the arrays into one
-          .reduce((accum, elem) => (elem.value > accum ? elem.value : accum), 0) // find max value
-      : 0;
 
     return basicMarkerData.value?.markerData.map(
       ({ geoAggregateValue, entityCount, bounds, position }) => {
@@ -577,11 +609,6 @@ function MapViz(props: VisualizationProps) {
                 },
               ];
 
-        const yRange = {
-          min: 0,
-          max: vizConfig.markerType === 'count' ? pieValueMax : 1,
-        };
-
         // TO DO: find out if MarkerProps.id is obsolete
         const MarkerComponent =
           vizConfig.markerType == null || vizConfig.markerType === 'pie'
@@ -614,9 +641,7 @@ function MapViz(props: VisualizationProps) {
             markerLabel={formattedCount}
             {...(vizConfig.markerType !== 'pie'
               ? {
-                  dependentAxisRange: !vizConfig.dependentAxisLogScale
-                    ? yRange
-                    : undefined,
+                  dependentAxisRange: defaultDependentAxisRange,
                   independentAxisLabel: `${formattedCount} ${
                     outputEntity?.displayNamePlural ?? outputEntity?.displayName
                   }`,
