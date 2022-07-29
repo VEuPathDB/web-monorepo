@@ -66,11 +66,11 @@ import { kFormatter, mFormatter } from '../../../utils/big-number-formatters';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { NumberVariable } from '../../../types/study';
 import { BinSpec, NumberRange } from '../../../types/general';
-import { useDefaultIndependentAxisRange } from '../../../hooks/computeDefaultIndependentAxisRange';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import Switch from '@veupathdb/components/lib/components/widgets/Switch';
+import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 
 const numContinuousBins = 8;
 
@@ -371,10 +371,7 @@ function MapViz(props: VisualizationProps) {
     ])
   );
 
-  const defaultOverlayRange = useDefaultIndependentAxisRange(
-    xAxisVariable,
-    'histogram'
-  );
+  const defaultOverlayRange = useDefaultAxisRange(xAxisVariable);
 
   /**
    * Now we deal with the optional second request to map-markers-overlay

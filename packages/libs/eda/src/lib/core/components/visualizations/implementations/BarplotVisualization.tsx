@@ -533,8 +533,6 @@ function BarplotViz(props: VisualizationProps) {
           ref={plotRef}
           // for custom legend: pass checkedLegendItems to PlotlyPlot
           checkedLegendItems={checkedLegendItems}
-          // axis range control
-          dependentAxisRange={vizConfig.dependentAxisRange}
           {...plotProps}
         />
       )}
