@@ -35,6 +35,8 @@ import Spinner from '../components/Spinner';
 import NoDataOverlay from '../components/NoDataOverlay';
 import { LatLngBounds } from 'leaflet';
 import domToImage from 'dom-to-image';
+//DKDK
+import { makeSharedPromise } from '../utils/promise-utils';
 
 // define Viewport type
 export type Viewport = {
@@ -200,6 +202,20 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
   // set useSatate to handle map instance instead of useRef using 'whenCreated' prop at MapContainer
   const [mapRef, setMapRef] = useState<any>(null);
 
+  /**DKDK This is used to ensure toImage is called after the plot has been created */
+  const sharedPlotCreation = useMemo(
+    () => makeSharedPromise(async () => {}),
+    []
+  );
+
+  //DKDK
+  const onInitialized = useCallback(() => {
+    // setMapRef();
+    sharedPlotCreation.run();
+  }, [sharedPlotCreation.run]);
+
+  console.log('map outside =', mapRef);
+
   useImperativeHandle<PlotRef, PlotRef>(
     ref,
     () => ({
@@ -207,9 +223,18 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       toImage: async (imageOpts: ToImgopts) => {
         // Wait to allow map to finish rendering
         // await new Promise((resolve) => setTimeout(resolve, 1000));
-        if (!mapRef) throw new Error('Map not ready');
-        // return await domToImage.toPng(mapRef.getContainer(), imageOpts);
-        return await domToImage.toPng(mapRef._container, imageOpts);
+        //DKDK
+        try {
+          await sharedPlotCreation.promise;
+          // if (!mapRef) throw new Error('Map not ready');
+          console.log('map inside =', mapRef);
+          return await domToImage.toPng(mapRef.getContainer(), imageOpts);
+          // return await domToImage.toPng(mapRef._container, imageOpts);
+        } catch (error) {
+          // throw new Error('Map not ready');
+          throw new Error('Could not create image for plot');
+          // console.error('Could not create image for plot:', error);
+        }
       },
     }),
     [domToImage, mapRef]
@@ -232,8 +257,11 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       // ondragstart and ondragend work?
       ondragstart={() => setIsDragging(true)}
       ondragend={() => setIsDragging(false)}
+      DKDK
       // this prop is used to use map instance
       whenCreated={setMapRef}
+      //DKDK
+      whenReady={onInitialized}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
