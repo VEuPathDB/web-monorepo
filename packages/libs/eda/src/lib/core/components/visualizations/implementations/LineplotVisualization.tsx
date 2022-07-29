@@ -1243,6 +1243,15 @@ function LineplotWithControls({
   };
 
   const [
+    dismissedIndependentAllNegativeWarning,
+    setDismissedIndependentAllNegativeWarning,
+  ] = useState<boolean>(false);
+  const independentAllNegative =
+    vizConfig.independentAxisLogScale &&
+    xMinMaxDataRange?.max != null &&
+    xMinMaxDataRange.max < 0;
+
+  const [
     dismissedDependentAllNegativeWarning,
     setDismissedDependentAllNegativeWarning,
   ] = useState<boolean>(false);
@@ -1297,10 +1306,27 @@ function LineplotWithControls({
             <Switch
               label="Log scale:"
               state={vizConfig.independentAxisLogScale}
-              onStateChange={onIndependentAxisLogScaleChange}
+              onStateChange={(newValue: boolean) => {
+                setDismissedIndependentAllNegativeWarning(false);
+                onIndependentAxisLogScaleChange(newValue);
+              }}
               disabled={independentValueType === 'date' || useBinning}
             />
           </div>
+          {independentAllNegative && !dismissedIndependentAllNegativeWarning ? (
+            <Notification
+              title={''}
+              text={
+                'Nothing can be plotted with log scale because all values are negative or zero'
+              }
+              color={'#5586BE'}
+              onAcknowledgement={() =>
+                setDismissedIndependentAllNegativeWarning(true)
+              }
+              showWarningIcon={true}
+              containerStyles={{ maxWidth: '350px' }}
+            />
+          ) : null}
           <Switch
             label={`Binning ${useBinning ? 'on' : 'off'}`}
             state={useBinning}
@@ -1349,7 +1375,7 @@ function LineplotWithControls({
             disabled={independentValueType === 'string'}
           />
           {/* truncation notification */}
-          {truncatedIndependentAxisWarning ? (
+          {truncatedIndependentAxisWarning && !independentAllNegative ? (
             <Notification
               title={''}
               text={truncatedIndependentAxisWarning}
