@@ -26,6 +26,7 @@ export const processGridData = (
   Array<{
     Header: string;
     accessor: string;
+    disableSortBy?: boolean;
   }>,
   Array<{ [key: string]: any }>
 ] => {
@@ -58,6 +59,7 @@ export const processGridData = (
       return {
         Header: `${entity.displayName} ID`,
         accessor: `${entity.id}/${columnID}`,
+        disableSortBy: true,
       };
     } else {
       throw Error(

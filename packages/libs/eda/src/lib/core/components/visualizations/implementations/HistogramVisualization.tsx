@@ -1089,6 +1089,8 @@ function HistogramPlotWithControls({
     </>
   );
 
+  const showOverlayLegend =
+    vizConfig.overlayVariable != null && legendItems.length > 0;
   const legendNode = legendItems != null &&
     !histogramProps.showSpinner &&
     data != null && (
@@ -1098,9 +1100,7 @@ function HistogramPlotWithControls({
         legendTitle={histogramProps.legendTitle}
         onCheckedLegendItemsChange={onCheckedLegendItemsChange}
         // add a condition to show legend even for single overlay data and check legendItems exist
-        showOverlayLegend={
-          vizConfig.overlayVariable != null && legendItems.length > 0
-        }
+        showOverlayLegend={showOverlayLegend}
       />
     );
 
@@ -1149,7 +1149,7 @@ function HistogramPlotWithControls({
       <PlotLayout
         isFaceted={isFaceted(data)}
         plotNode={plotNode}
-        legendNode={legendNode}
+        legendNode={showOverlayLegend ? legendNode : null}
         tableGroupNode={tableGroupNode}
       />
     </div>

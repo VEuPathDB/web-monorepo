@@ -1,3 +1,4 @@
+import * as t from 'io-ts';
 import { barplotVisualization } from '../../visualizations/implementations/BarplotVisualization';
 import {
   contTableVisualization,
@@ -9,6 +10,8 @@ import { ZeroConfigWithButton } from '../ZeroConfiguration';
 
 export const plugin: ComputationPlugin = {
   configurationComponent: ZeroConfigWithButton,
+  isConfigurationValid: t.undefined.is,
+  createDefaultConfiguration: () => undefined,
   visualizationPlugins: {
     testVisualization,
     twobytwo: twoByTwoVisualization,
