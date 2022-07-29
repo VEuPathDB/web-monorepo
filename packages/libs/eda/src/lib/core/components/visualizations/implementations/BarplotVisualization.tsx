@@ -218,7 +218,9 @@ function BarplotViz(props: VisualizationProps) {
   );
 
   const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
-    'dependentAxisLogScale'
+    'dependentAxisLogScale',
+    false,
+    true
   );
   const onValueSpecChange = onChangeHandlerFactory<ValueSpec>(
     'valueSpec',

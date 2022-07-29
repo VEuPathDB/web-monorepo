@@ -20,8 +20,6 @@ import {
 import * as t from 'io-ts';
 import {
   isEqual,
-  min,
-  max,
   groupBy,
   mapValues,
   size,
@@ -264,7 +262,9 @@ function HistogramViz(props: VisualizationProps) {
   );
 
   const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
-    'dependentAxisLogScale'
+    'dependentAxisLogScale',
+    false,
+    true
   );
 
   const onValueSpecChange = onChangeHandlerFactory<ValueSpec>(

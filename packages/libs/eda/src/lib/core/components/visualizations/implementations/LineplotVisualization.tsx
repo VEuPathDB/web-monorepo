@@ -407,11 +407,15 @@ function LineplotViz(props: VisualizationProps) {
   );
 
   const onIndependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
-    'independentAxisLogScale'
+    'independentAxisLogScale',
+    false,
+    true
   );
 
   const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
-    'dependentAxisLogScale'
+    'dependentAxisLogScale',
+    false,
+    true
   );
 
   const outputEntity = useFindOutputEntity(
