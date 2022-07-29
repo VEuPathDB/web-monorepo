@@ -1027,7 +1027,7 @@ function HistogramPlotWithControls({
         >
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <Switch
-              label="Log scale"
+              label="Log scale:"
               state={histogramProps.dependentAxisLogScale}
               onStateChange={onDependentAxisLogScaleChange}
               containerStyles={{

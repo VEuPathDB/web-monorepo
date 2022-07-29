@@ -110,7 +110,6 @@ import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/
 import { UIState } from '../../filter/HistogramFilter';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
-import { Typography } from '@material-ui/core';
 
 const plotContainerStyles = {
   width: 750,
@@ -1302,11 +1301,10 @@ function LineplotWithControls({
               display: 'flex',
               marginTop: '0.8em',
               marginBottom: '0.8em',
-              alignItems: 'baseline',
             }}
           >
             <Switch
-              label="Log scale:"
+              label="Log scale (will exclude values &le; 0):"
               state={vizConfig.independentAxisLogScale}
               onStateChange={(newValue: boolean) => {
                 setDismissedIndependentAllNegativeWarning(false);
@@ -1314,9 +1312,6 @@ function LineplotWithControls({
               }}
               disabled={independentValueType === 'date' || useBinning}
             />
-            <Typography style={{ fontSize: '80%', lineHeight: '100%' }}>
-              (values &le; 0 will not be shown)
-            </Typography>
           </div>
           {independentAllNegative && !dismissedIndependentAllNegativeWarning ? (
             <Notification
@@ -1436,11 +1431,10 @@ function LineplotWithControls({
               display: 'flex',
               marginTop: '0.8em',
               marginBottom: '0.8em',
-              alignItems: 'baseline',
             }}
           >
             <Switch
-              label="Log scale:"
+              label="Log scale (will exclude values &le; 0):"
               state={vizConfig.dependentAxisLogScale}
               onStateChange={(newValue: boolean) => {
                 setDismissedDependentAllNegativeWarning(false);
@@ -1448,9 +1442,6 @@ function LineplotWithControls({
               }}
               disabled={dependentValueType === 'date' || showErrorBars}
             />
-            <Typography style={{ fontSize: '80%', lineHeight: '100%' }}>
-              (values &le; 0 will not be shown)
-            </Typography>
           </div>
           {dependentAllNegative && !dismissedDependentAllNegativeWarning ? (
             <Notification

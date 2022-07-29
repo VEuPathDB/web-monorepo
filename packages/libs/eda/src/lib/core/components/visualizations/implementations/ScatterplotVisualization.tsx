@@ -114,7 +114,6 @@ import { useVizConfig } from '../../../hooks/visualizations';
 import { ComputedVariableMetadata } from '../../../api/DataClient/types';
 // use Banner from CoreUI for showing message for no smoothing
 import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
-import { Typography } from '@material-ui/core';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 
@@ -1455,11 +1454,10 @@ function ScatterplotWithControls({
               display: 'flex',
               marginTop: '0.8em',
               marginBottom: '0.8em',
-              alignItems: 'baseline',
             }}
           >
             <Switch
-              label="Log scale:"
+              label="Log scale (will exclude values &le; 0):"
               state={vizConfig.independentAxisLogScale}
               onStateChange={(newValue: boolean) => {
                 setDismissedIndependentAllNegativeWarning(false);
@@ -1468,9 +1466,6 @@ function ScatterplotWithControls({
               // disable log scale for date variable
               disabled={independentValueType === 'date' || valueSpec != 'Raw'}
             />
-            <Typography style={{ fontSize: '80%', lineHeight: '100%' }}>
-              (values &le; 0 will not be shown)
-            </Typography>
           </div>
           {independentAllNegative && !dismissedIndependentAllNegativeWarning ? (
             <Notification
@@ -1552,11 +1547,10 @@ function ScatterplotWithControls({
               display: 'flex',
               marginTop: '0.8em',
               marginBottom: '0.8em',
-              alignItems: 'baseline',
             }}
           >
             <Switch
-              label="Log scale:"
+              label="Log scale (will exclude values &le; 0):"
               state={vizConfig.dependentAxisLogScale}
               onStateChange={(newValue: boolean) => {
                 setDismissedDependentAllNegativeWarning(false);
@@ -1565,9 +1559,6 @@ function ScatterplotWithControls({
               // disable log scale for date variable
               disabled={dependentValueType === 'date' || valueSpec != 'Raw'}
             />
-            <Typography style={{ fontSize: '80%', lineHeight: '100%' }}>
-              (values &le; 0 will not be shown)
-            </Typography>
           </div>
           {dependentAllNegative && !dismissedDependentAllNegativeWarning ? (
             <Notification
