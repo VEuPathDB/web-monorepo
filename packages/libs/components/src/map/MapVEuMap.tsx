@@ -257,7 +257,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       // ondragstart and ondragend work?
       ondragstart={() => setIsDragging(true)}
       ondragend={() => setIsDragging(false)}
-      DKDK
+      // DKDK
       // this prop is used to use map instance
       whenCreated={setMapRef}
       //DKDK
