@@ -87,7 +87,7 @@ import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from
 import { ComputedVariableMetadata } from '../../../api/DataClient/types';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
-import { boxplotDefaultDependentAxisMinMax } from '../../../hooks/computeDefaultDependentAxisRange';
+import { boxplotDefaultDependentAxisMinMax } from '../../../utils/axis-range-calculations.ts';
 
 type BoxplotData = { series: BoxplotSeries };
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance

@@ -79,7 +79,7 @@ import { useVizConfig } from '../../../hooks/visualizations';
 import {
   barplotDefaultDependentAxisMax,
   barplotDefaultDependentAxisMinPos,
-} from '../../../hooks/computeDefaultDependentAxisRange';
+} from '../../../utils/axis-range-calculations.ts';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 
 // export

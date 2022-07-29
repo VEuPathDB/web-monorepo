@@ -100,7 +100,7 @@ import { UIState } from '../../filter/HistogramFilter';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
-import { histogramDefaultDependentAxisMinMax } from '../../../hooks/computeDefaultDependentAxisRange';
+import { histogramDefaultDependentAxisMinMax } from '../../../utils/axis-range-calculations.ts';
 
 export type HistogramDataWithCoverageStatistics = (
   | HistogramData
