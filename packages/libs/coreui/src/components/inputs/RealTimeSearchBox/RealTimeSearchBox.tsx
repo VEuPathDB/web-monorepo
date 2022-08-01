@@ -31,11 +31,6 @@ type Props = {
 
 }
 
-// type State = {
-//   /** local reference to search term for rendering */
-//   searchTerm: string;
-// }
-
 const defaultStyle = {
   helpIcon: {
     width: '0.7em',
@@ -50,6 +45,12 @@ const defaultStyle = {
     width: '1em',
     height: '1em',
     fill: '#999999',
+  },
+  searchBox: {
+    // width: 'calc(100% - 2em)',
+    border: '1px solid #888',
+    borderRadius: '16px',
+    padding: '0.2em 1.5em 0.2em 1em',
   }
 }
 
@@ -112,7 +113,9 @@ export default function RealTimeSearchBox({
         alignItems: 'center',
       }}>
         <label>
-          <input type="search"
+          <input 
+            css={defaultStyle.searchBox}
+            type="search"
             autoFocus={autoFocus}
             ref={node => input = node}
             onChange={handleSearchTermChange}
@@ -128,7 +131,7 @@ export default function RealTimeSearchBox({
                 position: 'relative',
                 margin: 0,
                 padding: 0,
-                right: '18px',
+                right: '23px',
                 top: '2px',
               }}
               type="button" 
@@ -138,7 +141,7 @@ export default function RealTimeSearchBox({
             </button> :
             <span css={{
               position: 'relative',
-              right: '20px',
+              right: '25px',
               top: '4px'
             }}>
               <Search style={defaultStyle.searchIcon} />

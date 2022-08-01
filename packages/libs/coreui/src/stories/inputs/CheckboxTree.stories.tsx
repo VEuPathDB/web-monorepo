@@ -10,7 +10,7 @@ import {
     FieldTreeNode, 
 } from '../../components/inputs/SelectTree/Utils';
 import { uniq } from 'lodash';
-
+ 
 export default {
     title: 'Inputs/CheckboxTree',
     component: CheckboxTree
@@ -20,9 +20,9 @@ const Template: Story<CheckboxTreeProps<unknown>> = (args) => {
     const fieldSequence = useMemo(() => preorderSeq(tree), [tree]);
     const startExpanded = false;
     const mode = 'singleSelection';
-    const selectedFields = [];
+    const [ selectedFields, setSelectedFields ] = useState([]);
     const activeField = null;
-    const [searchTerm, setSearchTerm] = useState<string>('');
+    const [ searchTerm, setSearchTerm ] = useState<string>('');
 
     const getPathToField = useCallback(
         (field?: Field) => {
@@ -38,7 +38,7 @@ const Template: Story<CheckboxTreeProps<unknown>> = (args) => {
     const [expandedNodes, setExpandedNodes] = useState(() =>
       startExpanded
         ? fieldSequence.map((node) => node.field.term).toArray()
-        : mode === 'singleSelection'
+        : mode == 'singleSelection'
         ? getPathToField(activeField)
         : uniq(selectedFields.flatMap(getPathToField))
     );
@@ -58,15 +58,20 @@ const Template: Story<CheckboxTreeProps<unknown>> = (args) => {
       );
     
     return (
+      <>
         <CheckboxTree 
             {...args} 
             expandedList={expandedNodes} 
             onExpansionChange={setExpandedNodes}
             searchTerm={searchTerm}
             onSearchTermChange={setSearchTerm}
+            selectedList={selectedFields}
+            onSelectionChange={setSelectedFields}
             // @ts-ignore
             searchPredicate={searchPredicate}
-        />
+            />
+        <h2>You've selected: {selectedFields}</h2>
+      </>
     )
 }
 

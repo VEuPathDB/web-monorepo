@@ -36,6 +36,34 @@ export type CheckboxListStyleSpec = {
   },
 };
 
+const defaultStyle: CheckboxListStyleSpec = {
+  container: {
+    background: 'none',
+    padding: 0,
+    margin: 0,
+  },
+  options: {
+    color: 'black',
+    fontSize: 13,
+    fontWeight: 'normal',
+    textTransform: 'none',
+    padding: 0,
+    margin: '0.25em 0.5em',
+  },
+  links: {
+    fontSize: 12,
+    background: 0,
+    border: 0,
+    color: '#069',
+    textDecoration: 'default',
+  },
+  border: {
+    width: 0,
+    color: 'none',
+    radius: '0',
+  }
+};
+
 enum LinksPosition {
   None,
   Top = 1 << 1,
@@ -76,34 +104,6 @@ export default function CheckboxList({
     themeRole,
     styleOverrides
 }: CheckboxListProps) {
-
-  const defaultStyle: CheckboxListStyleSpec = {
-    container: {
-      background: 'none',
-      padding: 0,
-      margin: 0,
-    },
-    options: {
-      color: 'black',
-      fontSize: 13,
-      fontWeight: 'normal',
-      textTransform: 'none',
-      padding: 0,
-      margin: '0.25em 0.5em',
-    },
-    links: {
-      fontSize: 12,
-      background: 0,
-      border: 0,
-      color: '#069',
-      textDecoration: 'default',
-    },
-    border: {
-      width: 0,
-      color: 'none',
-      radius: '0',
-    }
-  };
 
   const theme = useUITheme();
   const themeStyle = useMemo<Partial<CheckboxListStyleSpec>>(

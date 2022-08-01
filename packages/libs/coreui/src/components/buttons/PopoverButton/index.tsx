@@ -1,5 +1,6 @@
 import React, { ReactNode, useState } from 'react';
-import { Button, Icon, Popover } from '@material-ui/core';
+import { Button, Popover } from '@material-ui/core';
+import { ArrowDropDown } from '@material-ui/icons';
 
 export interface PopoverButtonProps {
   /** Contents of the menu when opened */
@@ -51,7 +52,7 @@ export default function PopoverButton(props: PopoverButtonProps) {
       onClick={(event) => {
         setAnchorEl(event.currentTarget);
       }}
-      endIcon={<Icon className="fa fa-caret-down" />}
+      endIcon={<ArrowDropDown style={{height: '1.5em', width: '1.5em'}}/>}
       style={{
         textTransform: 'none',
       }}

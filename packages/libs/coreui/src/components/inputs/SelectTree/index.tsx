@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 import PopoverButton from "../../buttons/PopoverButton";
 import CheckboxTree, { CheckboxTreeProps, LinksPosition } from "./CheckboxTree";
   
-interface SelectTreeProps<T> extends CheckboxTreeProps<T> {
+export interface SelectTreeProps<T> extends CheckboxTreeProps<T> {
     /** A button's content if/when no values are currently selected */
     defaultButtonDisplayContent: ReactNode;
 }

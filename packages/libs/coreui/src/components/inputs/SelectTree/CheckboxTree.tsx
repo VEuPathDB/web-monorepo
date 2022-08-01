@@ -1,4 +1,6 @@
 import React, { useCallback, MouseEventHandler, useMemo } from 'react';
+import { css } from '@emotion/react';
+import { CSSProperties } from '@emotion/serialize';
 
 // // import Icon from 'wdk-client/Components/Icon/Icon';
 import CheckboxTreeNode, { CustomCheckboxes } from './CheckboxTreeNode';
@@ -18,6 +20,33 @@ export enum LinksPosition {
   Bottom = 1 << 2,
   Both = Top | Bottom
 }
+
+export type CheckboxTreeStyleSpec = {
+  links: {
+    containerHeight: CSSProperties['height'],
+    fontSize: number,
+    background: CSSProperties['background'],
+    border: CSSProperties['border'],
+    color: CSSProperties['color'],
+    textDecoration: CSSProperties['textDecoration'],
+  },
+};
+
+const defaultStyle: CheckboxTreeStyleSpec = {
+  links: {
+    containerHeight: '1.5em',
+    fontSize: 12,
+    background: 0,
+    border: 0,
+    color: '#069',
+    textDecoration: 'default',
+  },
+};
+
+const linksHoverDecoration = css({
+  textDecoration: 'underline',
+  cursor: 'pointer',
+})
 
 type StatefulNode<T> = T & {
   __expandableTreeState: {
@@ -169,46 +198,51 @@ function TreeLinks({
     addVisible, removeVisible, selectOnlyVisible, isFiltered, additionalActions
 }: TreeLinksProps) {
 
+  const linkStyles = {
+    ...defaultStyle.links,
+    '&:hover': linksHoverDecoration,
+  }
+
   return (
-    <div>
+    <div css={{height: defaultStyle.links.containerHeight}}>
 
       { isFiltered && showSelectionLinks &&
         <div>
-          <button type="button" onClick={selectOnlyVisible}>select only these</button>
+          <button css={linkStyles} type="button" onClick={selectOnlyVisible}>select only these</button>
           <Bar/>
-          <button type="button" onClick={addVisible}>add these</button>
+          <button css={linkStyles} type="button" onClick={addVisible}>add these</button>
           <Bar/>
-          <button type="button" onClick={removeVisible}>clear these</button>
+          <button css={linkStyles} type="button" onClick={removeVisible}>clear these</button>
         </div>
       }
 
       <div>
         { !isFiltered && showSelectionLinks &&
           <span>
-            <button type="button" onClick={selectAll}>select all</button>
+            <button css={linkStyles} type="button" onClick={selectAll}>select all</button>
             <Bar/>
-            <button type="button" onClick={selectNone}>clear all</button>
+            <button css={linkStyles} type="button" onClick={selectNone}>clear all</button>
           </span> }
 
         { showExpansionLinks &&
           <span>
             { showSelectionLinks && <Bar/> }
-            <button type="button" onClick={expandAll}>expand all</button>
+            <button css={linkStyles} type="button" onClick={expandAll}>expand all</button>
             <Bar/>
-            <button type="button" onClick={expandNone}>collapse all</button>
+            <button css={linkStyles} type="button" onClick={expandNone}>collapse all</button>
           </span> }
 
         { showSelectionLinks && showCurrentLink &&
           <span>
             <Bar/>
-            <button type="button" onClick={selectCurrentList}>reset to current</button>
+            <button css={linkStyles} type="button" onClick={selectCurrentList}>reset to current</button>
           </span>
         }
 
         { showSelectionLinks && showDefaultLink &&
           <span>
             <Bar/>
-            <button type="button" onClick={selectDefaultList}>reset to default</button>
+            <button css={linkStyles} type="button" onClick={selectDefaultList}>reset to default</button>
           </span>
         }
 
@@ -700,7 +734,7 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
     );
 
     let treeSection = (
-      <ul>
+      <ul css={{margin: '0.5em 0', padding: 0, alignSelf: 'flex-start'}}>
       {topLevelNodes.map((node, index) => {
         const nodeId = getNodeId(node);
 
@@ -726,7 +760,7 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
     )
 
     return (
-      <div>
+      <div css={{display: 'flex', flexDirection: 'column', alignItems: 'center', width: 'fit-content'}}>
         {linksPosition && linksPosition == LinksPosition.Top ? treeLinks : null}
         {!isSearchable || !showSearchBox ? "" : (
           <div>
