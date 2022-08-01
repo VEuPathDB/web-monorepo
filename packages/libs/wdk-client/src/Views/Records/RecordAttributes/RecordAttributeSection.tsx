@@ -41,7 +41,7 @@ function RecordAttributeSection(props: Props) {
 export default wrappable(RecordAttributeSection);
 
 /** Display attribute name and value on a single line */
-function InlineRecordAttributeSection(props: Props) {
+export function InlineRecordAttributeSection(props: Props) {
   let { attribute, record, recordClass, title } = props;
   let { displayName, help, name } = attribute;
   return (
@@ -71,7 +71,7 @@ function InlineRecordAttributeSection(props: Props) {
 }
 
 /** Display attribute name and value in a collapsible section */
-function BlockRecordAttributeSection(props: Props) {
+export function BlockRecordAttributeSection(props: Props) {
   const { attribute, record, recordClass, isCollapsed, onCollapsedChange, title } = props;
   const { displayName, help, name } = attribute;
 
