@@ -22,6 +22,7 @@ import {SnpsAlignmentForm} from '../common/Snps';
 import { addCommentLink } from '../common/UserComments';
 import { withRequestFields } from './utils';
 import { usePreferredOrganismsEnabledState, usePreferredOrganismsState } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
+import { BlockRecordAttributeSection } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
 
 /**
  * Render thumbnails at eupathdb-GeneThumbnailsContainer
@@ -169,6 +170,16 @@ export const RecordMainSection = connect(null)(({ DefaultComponent, dispatch, ..
     </React.Fragment>
   );
   });
+
+export function RecordAttributeSection(props) {
+  const { DefaultComponent, ...restProps } = props;
+  switch(restProps.attribute.name) {
+    case 'alphafold_url':
+      return <BlockRecordAttributeSection {...restProps} />;
+    default:
+      return <DefaultComponent {...restProps} />;
+  }
+}
 
 function FungiVBOrgLinkoutsTable(props) {
   if (props.value == null || props.value.length === 0) return null;
