@@ -140,6 +140,10 @@ export interface MapVEuMapProps {
    * Should the mouse-mode (regular/magnifying glass) icons be shown and active?
    **/
   showMouseToolbar?: boolean;
+  /** mouseMode control */
+  mouseMode: MouseMode;
+  /** a function for changing mouseMode */
+  onMouseModeChange: (value: MouseMode) => void;
   /**
    * The name of the tile layer to use. If omitted, defaults to Street.
    */
@@ -156,10 +160,6 @@ export interface MapVEuMapProps {
   showNoDataOverlay?: boolean;
   /** Whether to show the Scale in the map */
   showScale?: boolean;
-  /** mouseMode control */
-  mouseMode: 'default' | 'magnification';
-  /** a function for changing mouseMode */
-  onMouseModeChange: (value: 'default' | 'magnification') => void;
 }
 
 function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
