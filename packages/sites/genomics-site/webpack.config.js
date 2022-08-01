@@ -3,8 +3,9 @@ var configure = require('@veupathdb/site-webpack-config');
 const additionalConfig = {
   entry: {
     'site-client': [
-      './vendored/pdbe-molstar-light-1.2.0.css',
-      './vendored/pdbe-molstar-component-1.2.0',
+      // suuport for <pdbe-molstar> custom element
+      './vendored/pdbe-molstar-light-3.0.0.css',
+      './vendored/pdbe-molstar-component-3.0.0',
       __dirname + '/webapp/wdkCustomization/js/client/main.js',
     ],
   },
