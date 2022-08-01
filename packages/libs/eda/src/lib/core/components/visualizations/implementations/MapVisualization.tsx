@@ -79,7 +79,7 @@ export const mapVisualization = createVisualizationPlugin({
   isEnabledInPicker: isEnabledInPicker,
 });
 
-function createDefaultConfig(): MapConfig {
+function createDefaultConfig() {
   return {
     mapCenterAndZoom: {
       latitude: 0,
@@ -88,7 +88,7 @@ function createDefaultConfig(): MapConfig {
     },
     baseLayer: 'Street',
     mouseMode: 'default',
-  };
+  } as const;
 }
 
 function isEnabledInPicker({ geoConfigs }: IsEnabledInPickerParams): boolean {
@@ -111,10 +111,6 @@ const MapConfig = t.intersection([
       zoomLevel: t.number,
     }),
     baseLayer: t.keyof(baseLayers),
-    mouseMode: t.keyof({
-      default: null,
-      magnification: null,
-    }),
   }),
   t.partial({
     geoEntityId: t.string,
@@ -125,6 +121,10 @@ const MapConfig = t.intersection([
       count: null,
       proportion: null,
       pie: null,
+    }),
+    mouseMode: t.keyof({
+      default: null,
+      magnification: null,
     }),
   }),
 ]);
@@ -691,7 +691,7 @@ function MapViz(props: VisualizationProps) {
         showScale={zoomLevel != null && zoomLevel > 4 ? true : false}
         // show mouse tool
         showMouseToolbar={true}
-        mouseMode={vizConfig.mouseMode}
+        mouseMode={vizConfig.mouseMode ?? createDefaultConfig().mouseMode}
         onMouseModeChange={onMouseModeChange}
       />
       <RadioButtonGroup
