@@ -145,6 +145,10 @@ export interface MapVEuMapProps {
    * Should the mouse-mode (regular/magnifying glass) icons be shown and active?
    **/
   showMouseToolbar?: boolean;
+  /** mouseMode control */
+  mouseMode: MouseMode;
+  /** a function for changing mouseMode */
+  onMouseModeChange: (value: MouseMode) => void;
   /**
    * The name of the tile layer to use. If omitted, defaults to Street.
    */
@@ -184,16 +188,10 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     showSpinner,
     showNoDataOverlay,
     showScale = true,
+    mouseMode,
+    onMouseModeChange,
   } = props;
 
-  // this is the React Map component's onViewPortChanged handler
-  // we may not need to use it.
-  // onViewportchanged in SemanticMarkers is more relevant
-  // because it can access the map's bounding box (aka bounds)
-  // which is useful for fetching data to show on the map.
-  // The Viewport info (center and zoom) handled here would be useful for saving a
-  // 'bookmarkable' state of the map.
-  const [mouseMode, setMouseMode] = useState<MouseMode>('default');
   // Whether the user is currently dragging the map
   const [isDragging, setIsDragging] = useState<boolean>(false);
 
@@ -248,7 +246,10 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       />
 
       {showMouseToolbar && (
-        <MouseTools mouseMode={mouseMode} setMouseMode={setMouseMode} />
+        <MouseTools
+          mouseMode={mouseMode}
+          onMouseModeChange={onMouseModeChange}
+        />
       )}
 
       {showGrid && zoomLevelToGeohashLevel ? (
