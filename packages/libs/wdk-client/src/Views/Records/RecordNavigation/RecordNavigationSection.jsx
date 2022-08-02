@@ -1,4 +1,4 @@
-import { includes, memoize, throttle } from 'lodash';
+import { includes, memoize, throttle, stubTrue } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import CategoriesCheckboxTree from 'wdk-client/Components/CheckboxTree/CategoriesCheckboxTree';
@@ -69,7 +69,7 @@ class RecordNavigationSection extends React.PureComponent {
       navigationCategoriesExpanded,
       onNavigationCategoryExpansionChange,
       onSectionToggle,
-      visibilityFilter = isNotAttribute
+      visibilityFilter = stubTrue
     } = this.props;
 
     return (
@@ -118,7 +118,3 @@ export default wrappable(RecordNavigationSection);
 
 const removeFields = memoize(root =>
   pruneDescendantNodes(node => !isIndividual(node), root));
-
-function isNotAttribute(node) {
-  return getTargetType(node) !== 'attribute';
-}
