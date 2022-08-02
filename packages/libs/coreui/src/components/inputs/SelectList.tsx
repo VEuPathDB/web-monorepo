@@ -19,6 +19,8 @@ export default function SelectList({
 }: SelectListProps) {
     const [selected, setSelected] = useState<SelectListProps['value']>(value);
     const [ buttonDisplayContent, setButtonDisplayContent] = useState<ReactNode>(value.length ? value.join(', ') : defaultButtonDisplayContent);
+    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+
 
     const onClose = () => {
         onChange(selected)
@@ -29,6 +31,8 @@ export default function SelectList({
         <PopoverButton
             buttonDisplayContent={buttonDisplayContent}
             onClose={onClose}
+            anchorEl={anchorEl}
+            setAnchorEl={setAnchorEl}
         >
             <CheckboxList 
                 name={name}

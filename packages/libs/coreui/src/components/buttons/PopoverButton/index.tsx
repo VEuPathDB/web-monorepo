@@ -8,14 +8,15 @@ export interface PopoverButtonProps {
   /** Contents of button */
   buttonDisplayContent: ReactNode;
   onClose: () => void;
+  anchorEl: HTMLElement | null;
+  setAnchorEl: React.SetStateAction<any>;
 }
 
 /**
  * Renders a button that display `children` in a popover widget.
  */
 export default function PopoverButton(props: PopoverButtonProps) {
-  const { children, buttonDisplayContent, onClose } = props;
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const { children, buttonDisplayContent, onClose, anchorEl, setAnchorEl } = props;
 
   const onCloseHandler = () => {
     setAnchorEl(null);
