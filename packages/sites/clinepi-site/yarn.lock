@@ -2121,10 +2121,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.1.0.tgz#5c7eecc048a91195404411d8729393197af0128c"
   integrity sha512-TQ58MbCy7UZN/h11HZ31CSJfywG17oDNHQzQJysj65Fvv2gAM1w7CjwCvV0bG3sRESKUDORSA7sJrVVv27GHBw==
 
-"@veupathdb/components@^0.16.9":
-  version "0.16.9"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.16.9.tgz#2865707131e88c36facc02af94bfb660f3a6d1ac"
-  integrity sha512-tY4X77bvz0t2MvMldF6HBTE4HYP7I3/GFVVnpfHkZbyd/GaK5+2MndpBiqyvvLy2jf/mXbjqjGQndhb1S1HCjA==
+"@veupathdb/components@^0.16.10":
+  version "0.16.10"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.16.10.tgz#bf6bec497cfa96570ffa36b181f6a74f3f96e173"
+  integrity sha512-1PLQJ9nU4OtqC4ntaPxeBQYBMjj28lT8BHjAveXiM6ttsj57N1G5qo0NrI4iT4eRmzOERjfkb3ASj38RZWjrWQ==
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
@@ -2164,10 +2164,10 @@
     react-responsive-modal "^6.2.0"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^3.7.7":
-  version "3.7.7"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.7.7.tgz#f830d421f6f1f152289dad6988549d496b22759f"
-  integrity sha512-OoWlgWFwinOOTM8hcjtoazkJuqOP+H2avVUApX4dIzA3b2P2BRqSE5OkZvTTTk6IjJg4Dw8+MvU4vi3rdrbF5A==
+"@veupathdb/eda@^3.7.9":
+  version "3.7.9"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.7.9.tgz#b81db04b6790e8821299795f32318a8440429332"
+  integrity sha512-NBoh0lNAOfjHUkR7OmfVGVeb+Y+sknvHiImWYFRb9hutu4BiGyv1T5y9ae9MbU7f+zEdk5TYNYr4QmmIXHwHag==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -2233,10 +2233,10 @@
     lodash "^4.17.21"
     moment "^2.21.0"
 
-"@veupathdb/wdk-client@^0.9.1":
-  version "0.9.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.1.tgz#666b6fcc888154faa2070a6a86cc7063f2db202b"
-  integrity sha512-q+li7dElMkrrj878nBB49DPDgBtqwg1vtXg9eTvhR5duKQJaQkvCbIZQMOxnalmiHFozjcbuT0QaG8FFO1H73A==
+"@veupathdb/wdk-client@^0.9.2":
+  version "0.9.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.2.tgz#4364f85cb85fbf0add0860b771c515c124178cd6"
+  integrity sha512-3aVqEPEQuXq+jMe8lV/ESE8w2tLkW+qPvNpLN+rd6YyWABZtTSrYaTwGOCZtxpTIsYtlgxupB9g5pqUhNPDp1g==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
