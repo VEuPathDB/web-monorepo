@@ -760,7 +760,7 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
     )
 
     return (
-      <div css={{display: 'flex', flexDirection: 'column', alignItems: 'center', width: 'fit-content'}}>
+      <div css={{display: 'flex', flexDirection: 'column', alignItems: 'center', width: '400px'}}>
         {linksPosition && linksPosition == LinksPosition.Top ? treeLinks : null}
         {!isSearchable || !showSearchBox ? "" : (
           <div>

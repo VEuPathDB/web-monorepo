@@ -7,7 +7,8 @@ import {
     preorderSeq, 
     findAncestorFields, 
     Field, 
-    FieldTreeNode, 
+    FieldTreeNode,
+    isLeaf,
 } from '../../components/inputs/SelectTree/Utils';
 import { uniq } from 'lodash';
  
@@ -56,9 +57,37 @@ const Template: Story<CheckboxTreeProps<unknown>> = (args) => {
         },
         []
       );
+
+    const getNodeChildren =  (node: FieldTreeNode) => {
+        const showMultiFilterDescendants = true;
+        return 'type' in node.field && node.field.type === 'multiFilter' && !showMultiFilterDescendants
+          ? []
+          : node.children ?? [];
+      }
+
+    const nonCheckboxClickEvent = (node: FieldTreeNode) => {
+      if (args.isSelectable || !isLeaf(node, getNodeChildren)) return;
+      setSelectedFields([ node.field.term ]);
+    }
+    
+    const renderNode = (node: FieldTreeNode) => {
+      return (
+        <span
+          css={{
+            backgroundColor: !args.isSelectable && selectedFields.includes(node.field.term) ? '#e6e6e6' : '',
+            padding: '0.125em 0.25em',
+            borderRadius: '0.25em',
+          }}
+          onClick={() => nonCheckboxClickEvent(node)}
+        >
+          {node.field.display}
+        </span>
+      )
+    }
     
     return (
       <>
+        <h2>You've selected: {args.isSelectable ? selectedFields.length + ' variables' : selectedFields}</h2>
         <CheckboxTree 
             {...args} 
             expandedList={expandedNodes} 
@@ -66,17 +95,19 @@ const Template: Story<CheckboxTreeProps<unknown>> = (args) => {
             searchTerm={searchTerm}
             onSearchTermChange={setSearchTerm}
             selectedList={selectedFields}
+            currentList={selectedFields}
             onSelectionChange={setSelectedFields}
+            // @ts-ignore
+            renderNode={renderNode}
             // @ts-ignore
             searchPredicate={searchPredicate}
             />
-        <h2>You've selected: {selectedFields}</h2>
       </>
     )
 }
 
-export const Default = Template.bind({});
-Default.args = {
+export const AsSingleSelectLinks = Template.bind({});
+AsSingleSelectLinks.args = {
     tree,
     expandedList: [],
     additionalFilters: [],
@@ -105,4 +136,10 @@ Default.args = {
     selectedList: [],
     showRoot: false,
     showSearchBox: true,
+} as CheckboxTreeProps<unknown>;
+
+export const AsMultiSelect = Template.bind({});
+AsMultiSelect.args = {
+    ...AsSingleSelectLinks.args,
+    isSelectable: true,
 } as CheckboxTreeProps<unknown>;
