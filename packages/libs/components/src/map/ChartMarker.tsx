@@ -27,6 +27,8 @@ interface ChartMarkerProps
   markerLabel?: string;
   /** x-axis title for enlarged mouse-over marker (defaults to "Total: sum(data[].value)") */
   independentAxisLabel?: string;
+  /** pass proportion mode from MapViz */
+  proportionMode?: boolean;
 }
 
 /**
@@ -89,7 +91,7 @@ export default function ChartMarker(props: ChartMarkerProps) {
           maximumFractionDigits: 0,
         });
 
-  var maxValues: number = Math.max(...fullStat.map((o) => o.value)); // max of fullStat.value per marker icon
+  let maxValues: number = Math.max(...fullStat.map((o) => o.value)); // max of fullStat.value per marker icon
   // for local max, need to check the case wherer all values are zeros that lead to maxValues equals to 0 -> "divided by 0" can happen
   if (maxValues == 0) {
     maxValues = 1; // this doesn't matter as all values are zeros
@@ -149,7 +151,16 @@ export default function ChartMarker(props: ChartMarkerProps) {
       // for the case of y-axis range input: a global approach that take global max = icon height
       barWidth = (xSize - 2 * marginX) / count; // bar width
       startingX = marginX + borderWidth + barWidth * index; // x in <react> tag: note that (0,0) is top left of the marker icon
-      barHeight = (el.value / globalMaxValue) * (size - 2 * marginY); // bar height: used 2*marginY to have margins at both top and bottom
+      // temporary solution for svg log scale
+      barHeight = props.dependentAxisLogScale
+        ? el.value === 0 || el.value < 0
+          ? 0
+          : props.proportionMode
+          ? // temporarily use no log scale one
+            (el.value / globalMaxValue) * (size - 2 * marginY)
+          : (Math.log10(el.value) / Math.log10(globalMaxValue)) *
+            (size - 2 * marginY)
+        : (el.value / globalMaxValue) * (size - 2 * marginY); // bar height: used 2*marginY to have margins at both top and bottom
       startingY = size - marginY - barHeight + borderWidth; // y in <react> tag: note that (0,0) is top left of the marker icon
       // making the last bar, noData
       svgHTML +=
@@ -174,7 +185,15 @@ export default function ChartMarker(props: ChartMarkerProps) {
       // for the case of auto-scale y-axis: a local approach that take local max = icon height
       barWidth = (xSize - 2 * marginX) / count; // bar width
       startingX = marginX + borderWidth + barWidth * index; // x in <react> tag: note that (0,0) is top left of the marker icon
-      barHeight = (el.value / maxValues) * (size - 2 * marginY); // bar height: used 2*marginY to have margins at both top and bottom
+      barHeight = props.dependentAxisLogScale
+        ? el.value === 0 || el.value < 0
+          ? 0
+          : props.proportionMode
+          ? (el.value / maxValues) * (size - 2 * marginY) // bar height: used 2*marginY to have margins at both top and bottom
+          : (Math.log10(el.value) / Math.log10(maxValues)) *
+            (size - 2 * marginY)
+        : // ? Math.abs(Math.log10((el.value / maxValues))) * (size - 2 * marginY)
+          (el.value / maxValues) * (size - 2 * marginY); // bar height: used 2*marginY to have margins at both top and bottom
       startingY = size - marginY - barHeight + borderWidth; // y in <react> tag: note that (0,0) is top left of the marker icon
       // making the last bar, noData
       svgHTML +=
