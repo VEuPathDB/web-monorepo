@@ -46,6 +46,7 @@ export default function OutlinedSwitch<T extends boolean | string | number>({
         backgroundColor: undefined,
         labelColor: gray[600],
       },
+      size: 'medium',
     };
 
     const themeStyles: SwitchStyleSpecSubset | undefined = theme &&

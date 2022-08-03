@@ -46,6 +46,7 @@ export default function FilledSwitch<T extends boolean | string | number>({
         borderColor: undefined,
         labelColor: gray[600],
       },
+      size: 'medium',
     };
 
     const themeStyles: SwitchStyleSpecSubset | undefined = theme &&

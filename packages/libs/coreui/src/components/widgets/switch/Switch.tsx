@@ -33,6 +33,8 @@ export default function Switch<T extends boolean | string | number>({
       : styleSpec[switchState][0];
   }, [switchState, options, selectedOption, styleSpec, disabled]);
 
+  const { size } = styleSpec;
+
   const ariaLabel = useMemo(() => {
     if (!labels) return 'Switch';
 
@@ -52,6 +54,7 @@ export default function Switch<T extends boolean | string | number>({
         alignItems: 'center',
         pointerEvents: disabled ? 'none' : 'auto',
         fontFamily: primaryFont,
+        // here
         fontSize: 13,
         fontWeight: 400,
         ...styleSpec.container,
@@ -60,6 +63,7 @@ export default function Switch<T extends boolean | string | number>({
       {labels?.left && (
         <span
           css={{
+            // here
             marginRight: 10,
             color: currentStyles.labelColor,
           }}
@@ -75,13 +79,15 @@ export default function Switch<T extends boolean | string | number>({
           display: 'flex',
           transition: 'all ease .33s',
           alignItems: 'center',
-          width: 40,
-          height: 20,
+          // here
+          width: size === 'medium' ? 40 : 17,
+          height: size === 'medium' ? 20 : 10,
           borderRadius: 5,
           backgroundColor: currentStyles.backgroundColor,
           ...(currentStyles.borderColor
             ? {
                 outlineColor: currentStyles.borderColor,
+                // here
                 outlineWidth: 2,
                 outlineStyle: 'solid',
                 outlineOffset: -2,
@@ -111,25 +117,27 @@ export default function Switch<T extends boolean | string | number>({
         <div
           css={{
             position: 'relative',
-            width: 10,
-            height: 10,
+            // here
+            width: size === 'medium' ? 10 : 8,
+            height: size === 'medium' ? 10 : 8,
             ...(switchState === 'hover'
               ? selectedOption === options[0]
                 ? {
+                    // here
                     borderTopRightRadius: 10,
                     borderBottomRightRadius: 10,
-                    borderTopLeftRadius: 5,
-                    borderBottomLeftRadius: 5,
+                    borderTopLeftRadius: size === 'medium' ? 5 : 7,
+                    borderBottomLeftRadius: size === 'medium' ? 5 : 7,
                   }
                 : {
-                    borderTopRightRadius: 5,
-                    borderBottomRightRadius: 5,
+                    borderTopRightRadius: size === 'medium' ? 5 : 7,
+                    borderBottomRightRadius: size === 'medium' ? 5 : 7,
                     borderTopLeftRadius: 10,
                     borderBottomLeftRadius: 10,
                   }
               : { borderRadius: 10 }),
 
-            left: selectedOption === options[0] ? 7 : 24,
+            left: selectedOption === options[0] ? size === 'medium' ? 7 : 1 : size === 'medium' ? 24 : 8,
             transition: 'ease all .33s',
             backgroundColor: currentStyles.knobColor,
           }}
@@ -138,6 +146,7 @@ export default function Switch<T extends boolean | string | number>({
       {labels?.right && (
         <span
           css={{
+            // here
             marginLeft: 10,
             color: currentStyles.labelColor,
           }}
