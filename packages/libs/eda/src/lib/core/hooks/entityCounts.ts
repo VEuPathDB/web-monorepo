@@ -12,7 +12,6 @@ export function useEntityCounts(filters?: Filter[]) {
   const { id, rootEntity } = useStudyMetadata();
   const subsettingClient = useSubsettingClient();
 
-  // use JSON version in dependencies to prevent unnecessary recalculations
   // debounce to prevent a back end call for each click on a filter checkbox
   const debouncedFilters = useDebounce(filters, 2000);
 
