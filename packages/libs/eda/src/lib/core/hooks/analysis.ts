@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Lens } from 'monocle-ts';
 import { differenceWith } from 'lodash';
 
@@ -9,10 +9,17 @@ import {
   AnalysisClient,
   SingleAnalysisPatchRequest,
 } from '../api/analysis-api';
-import { Analysis, AnalysisSummary, NewAnalysis } from '../types/analysis';
+import {
+  Analysis,
+  AnalysisSummary,
+  makeNewAnalysis,
+  NewAnalysis,
+} from '../types/analysis';
 import { isSavedAnalysis } from '../utils/analysis';
 
-import { useAnalysisClient } from './workspace';
+import { useAnalysisClient, useStudyMetadata } from './workspace';
+import { createComputation } from '../components/computations/Utils';
+import { useHistory } from 'react-router-dom';
 
 /**
  * Type definition for function that will set an attribute of an Analysis.
@@ -77,11 +84,61 @@ export function usePreloadAnalysis() {
  * interacted with a segment of a given study's data.
  * */
 export function useAnalysis(
-  defaultAnalysis: NewAnalysis,
-  createAnalysis: (analysis: NewAnalysis) => Promise<void>,
-  analysisId?: string
+  analysisId: string | undefined,
+  singleAppMode?: string
 ): AnalysisState {
   const analysisClient = useAnalysisClient();
+  const { id: studyId } = useStudyMetadata();
+  const history = useHistory();
+  const preloadAnalysis = usePreloadAnalysis();
+  const creatingAnalysis = useRef(false);
+
+  // Used when `analysisId` is undefined.
+  const defaultAnalysis = useMemo(() => {
+    // When we only want to use a single app, extract the computation and pass it to
+    // makeNewAnalysis so that by default we will only use this single computation.
+    const singleAppComputationId =
+      singleAppMode === 'pass' ? 'pass-through' : singleAppMode; // for backwards compatibility
+
+    // If using singleAppMode, create a computation object that will be used in our default analysis.
+    const computation = singleAppMode
+      ? createComputation(
+          singleAppMode,
+          undefined,
+          [],
+          [],
+          singleAppComputationId
+        )
+      : undefined;
+    return makeNewAnalysis(studyId, computation);
+  }, [singleAppMode, studyId]);
+
+  // Used to convert an unsaved analysis to a saved analysis.
+  // This will also change the current url to that of the saved analysis.
+  const createAnalysis = useCallback(
+    async (newAnalysis: NewAnalysis) => {
+      if (!creatingAnalysis.current) {
+        creatingAnalysis.current = true;
+
+        const { analysisId } = await analysisClient.createAnalysis(newAnalysis);
+        const savedAnalysis = await analysisClient.getAnalysis(analysisId);
+        // Reuse the savedAnalysis.descriptor to preserve referential equality.
+        const analysis: Analysis = {
+          ...savedAnalysis,
+          descriptor: newAnalysis.descriptor,
+        };
+        await preloadAnalysis(analysisId, analysis);
+        creatingAnalysis.current = false;
+
+        const newLocation = {
+          ...history.location,
+          pathname: history.location.pathname.replace(/new/, analysisId),
+        };
+        history.replace(newLocation);
+      }
+    },
+    [analysisClient, history, preloadAnalysis]
+  );
 
   // Allow undo/redo operations. This isn't really used yet.
   // Might consider converting to plain `useState`.
@@ -102,8 +159,10 @@ export function useAnalysis(
   // Error message related to Status.Error
   const [error, setError] = useState<unknown>();
 
+  // Used to track if an analysis has unsaved changes.
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
+  // Persist the state of the analysis to the backend.
   const saveAnalysis = useCallback(async () => {
     if (analysis == null)
       throw new Error("Attempt to save an analysis that hasn't been loaded.");
@@ -116,6 +175,7 @@ export function useAnalysis(
     }
   }, [analysisClient, analysis, createAnalysis]);
 
+  // Create a copy of a saved analysis.
   const copyAnalysis = useCallback(async () => {
     if (analysis == null)
       throw new Error("Attempt to copy an analysis that hasn't been loaded.");
@@ -134,6 +194,7 @@ export function useAnalysis(
     return copyResponse;
   }, [analysisClient, analysis, saveAnalysis]);
 
+  // Delete an analysis from the backend.
   const deleteAnalysis = useCallback(async () => {
     if (!isSavedAnalysis(analysis))
       throw new Error('Cannot delete an unsaved analysis.');
