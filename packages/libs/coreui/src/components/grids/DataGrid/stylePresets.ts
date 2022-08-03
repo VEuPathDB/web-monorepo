@@ -54,7 +54,6 @@ const mesa: DataGridStyleSpec = {
     alignContent: 'center',
     backgroundColor: gray[100],
     fontSize: 13,
-    textTransform: 'capitalize',
   },
   dataCells: {
     padding: '10px',

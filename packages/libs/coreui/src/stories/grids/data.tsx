@@ -1,4 +1,6 @@
+import React from 'react';
 import { Column } from 'react-table';
+import { SortBy } from '../../components/grids/DataGrid';
 import Checkbox from '../../components/widgets/Checkbox';
 
 export const columns = ({
@@ -18,7 +20,7 @@ export const columns = ({
     {
       Header: 'Active',
       accessor: 'isPublic',
-      Cell: ({ value }) => (
+      Cell: ({ value }: any) => (
         <div css={{ display: 'flex', justifyContent: 'center' }}>
           <Checkbox
             selected={value}
@@ -185,12 +187,27 @@ export const ROWS = [
 export function fetchGridData({
   pageSize,
   pageIndex,
+  sortBy,
 }: {
   pageSize: number;
   pageIndex: number;
+  sortBy?: SortBy;
 }) {
   const startRow = pageSize * pageIndex;
   const endRow = startRow + pageSize;
 
-  return ROWS.slice(startRow, endRow);
+  const sortedRows = sortBy ? [...ROWS].sort((rowA, rowB) => {
+    for (const column of sortBy) {
+      const [valA, valB] = [rowA[column.id], rowB[column.id]];
+
+      if (valA !== valB) {
+        if (column.desc) return valA > valB ? -1 : 1;
+        else return valA < valB ? -1 : 1;
+      }
+    }
+
+    return 0;
+  }) : ROWS;
+
+  return sortedRows.slice(startRow, endRow);
 }
