@@ -117,9 +117,6 @@ export default function CheckboxTreeNode<T>({
     let isLeafNode = isLeaf(node, getNodeChildren);
     let nodeVisibilityCss = isVisible ? visibleElement : hiddenElement;
     let childrenVisibilityCss = isExpanded ? visibleElement : hiddenElement;
-    let nodeType = isLeafNode ? "leaf"
-                 : isExpanded ? "expanded"
-                 : "collapsed";
     let inputName = isLeafNode ? name : '';
     let nodeId = getNodeId(node);
     const nodeElement = renderNode(node, path);

@@ -2,9 +2,9 @@ import React, { useCallback, MouseEventHandler, useMemo } from 'react';
 import { css } from '@emotion/react';
 import { CSSProperties } from '@emotion/serialize';
 
-// // import Icon from 'wdk-client/Components/Icon/Icon';
 import CheckboxTreeNode, { CustomCheckboxes } from './CheckboxTreeNode';
 import RealTimeSearchBox from '../RealTimeSearchBox/RealTimeSearchBox';
+import { Warning } from '../../icons';
 
 import { addOrRemove } from './Utils';
 import { isLeaf, getLeaves, getBranches, mapStructure } from './Utils';
@@ -72,7 +72,7 @@ export type CheckboxTreeProps<T> = {
   /** Takes a node, returns unique ID for this node; ID is used as input value of the nodes checkbox if using selectability */
   getNodeId: (node: T) => string;
 
-  /** Takes a node, Called during rendering to provide the children for the current node */
+  /** Takes a node, called during rendering to provide the children for the current node */
   getNodeChildren:  (node: T) => T[];
 
   /** Called when the set of expanded (branch) nodes changes.  The function will be called with the array of the expanded node ids.  If omitted, no handler is called. */
@@ -193,9 +193,21 @@ type TreeLinksProps = {
  * Renders tree links to select, clear, expand, collapse all nodes, or reset to current or default
  */
 function TreeLinks({
-    showSelectionLinks, showExpansionLinks, showCurrentLink, showDefaultLink,
-    selectAll, selectNone, expandAll, expandNone, selectCurrentList, selectDefaultList,
-    addVisible, removeVisible, selectOnlyVisible, isFiltered, additionalActions
+    showSelectionLinks,
+    showExpansionLinks,
+    showCurrentLink,
+    showDefaultLink,
+    selectAll,
+    selectNone,
+    expandAll,
+    expandNone,
+    selectCurrentList,
+    selectDefaultList,
+    addVisible,
+    removeVisible,
+    selectOnlyVisible,
+    isFiltered,
+    additionalActions
 }: TreeLinksProps) {
 
   const linkStyles = {
@@ -519,32 +531,42 @@ function getNodeState<T>(node: StatefulNode<T>) {
   return node.__expandableTreeState;
 }
 
-type State<T> = {
-  isLeafVisible: (id: string) => boolean;
-  generated: {
-    statefulTree: StatefulNode<T>,
-    expandedList: string[]
-  };
-};
-
 /**
  * Expandable tree component
  */
-// function CheckboxTreeComponent<T> (props: CheckboxTreeProps<T>) {
 function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
-    const { 
-        tree, getNodeId, getNodeChildren, 
-        searchTerm, searchPredicate, selectedList, 
-        currentList, defaultList, isSearchable, 
-        isAdditionalFilterApplied, name, shouldExpandDescendantsWithOneChild, 
-        onExpansionChange, isSelectable, isMultiPick, 
-        onSelectionChange, showRoot,
-        additionalActions, linksPosition = LinksPosition.Both, showSearchBox, 
-        autoFocusSearchBox, onSearchTermChange, searchBoxPlaceholder, 
-        searchIconName, searchBoxHelp, additionalFilters, 
-        wrapTreeSection, shouldExpandOnClick = true, customCheckboxes,
-        expandedList
-        // renderNoResults
+    const {
+        tree,
+        getNodeId,
+        getNodeChildren,
+        searchTerm,
+        searchPredicate,
+        selectedList,
+        currentList,
+        defaultList,
+        isSearchable,
+        isAdditionalFilterApplied,
+        name,
+        shouldExpandDescendantsWithOneChild,
+        onExpansionChange,
+        isSelectable,
+        isMultiPick,
+        onSelectionChange,
+        showRoot,
+        additionalActions,
+        linksPosition = LinksPosition.Both,
+        showSearchBox,
+        autoFocusSearchBox,
+        onSearchTermChange,
+        searchBoxPlaceholder,
+        searchIconName,
+        searchBoxHelp,
+        additionalFilters,
+        wrapTreeSection,
+        shouldExpandOnClick = true,
+        customCheckboxes,
+        expandedList,
+        renderNoResults
     } = props;
 
     // initialize stateful tree; this immutable tree structure will be replaced with each state change
@@ -710,8 +732,8 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
       getStatefulChildren(treeState.generated.statefulTree));
 
     let isTreeVisible = treeState.generated ?? getNodeState(treeState.generated).isVisible;
-    let renderNoResults = props.renderNoResults || defaultRenderNoResults;
-    let noResultsMessage = isTreeVisible ? null : renderNoResults(searchTerm, tree);
+    let noResultsRenderFunction = renderNoResults || defaultRenderNoResults;
+    let noResultsMessage = isTreeVisible ? null : noResultsRenderFunction(searchTerm, tree);
 
     let treeLinks = (
       <TreeLinks
@@ -787,7 +809,7 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
 function defaultRenderNoResults() {
   return (
     <p>
-      {/* <Icon type="warning"/>  */}
+      <Warning />
       The search term you entered did not yield any results.
     </p>
   );

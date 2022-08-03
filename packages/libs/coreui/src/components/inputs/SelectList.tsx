@@ -18,7 +18,14 @@ export default function SelectList({
     defaultButtonDisplayContent,
 }: SelectListProps) {
     const [selected, setSelected] = useState<SelectListProps['value']>(value);
+    /** 
+     * this is essentially how Bob M. is handling this in his ad hoc ValuePicker for proportion controls
+     * if we desire to concat the values, we'll need to add ellipsis at a calculated length/width
+     * */ 
     const [ buttonDisplayContent, setButtonDisplayContent] = useState<ReactNode>(value.length ? value.join(', ') : defaultButtonDisplayContent);
+    /**
+     * this state was lifted from PopoverButton to be able to auto close the popover in the SelectTree component when only a single value can be selected
+     */
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
 

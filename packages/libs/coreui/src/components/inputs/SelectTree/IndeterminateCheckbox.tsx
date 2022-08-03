@@ -1,4 +1,4 @@
-import React, { useRef, FormEvent, useEffect, ChangeEvent } from 'react';
+import { useRef, FormEvent, useEffect, ChangeEvent } from 'react';
 
 export type IndeterminateCheckboxProps<T> = {
   checked: boolean;

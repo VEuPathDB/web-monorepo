@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import PopoverButton from "../../buttons/PopoverButton";
 import CheckboxTree, { CheckboxTreeProps, LinksPosition } from "./CheckboxTree";
   
@@ -8,7 +8,7 @@ export interface SelectTreeProps<T> extends CheckboxTreeProps<T> {
 
 function SelectTree<T>(props: SelectTreeProps<T>) {
     const { isSelectable, isMultiPick, selectedList } = props;
-    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+    const [ anchorEl, setAnchorEl ] = useState<HTMLElement | null>(null);
 
     useEffect(() => {
         if (isSelectable || isMultiPick) return;
@@ -31,10 +31,10 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
                   showRoot={props.showRoot}
                   renderNode={props.renderNode}
                   expandedList={props.expandedList}
-                  isSelectable={props.isSelectable}
-                  selectedList={props.selectedList}
+                  isSelectable={isSelectable}
+                  selectedList={selectedList}
                   customCheckboxes={props.customCheckboxes}
-                  isMultiPick={props.isMultiPick}
+                  isMultiPick={isMultiPick}
                   name={props.name}
                   onSelectionChange={props.onSelectionChange}
                   currentList={props.currentList}

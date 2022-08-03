@@ -3,7 +3,6 @@ import { css } from '@emotion/react';
 import { CSSProperties } from '@emotion/serialize';
 import { merge } from 'lodash';
 import { useMemo } from 'react';
-import { blue, gray, green } from '../../definitions/colors';
 import { UITheme } from '../theming/types';
 import useUITheme from '../theming/useUITheme';
 
@@ -14,7 +13,6 @@ export type CheckboxListStyleSpec = {
     margin: CSSProperties['margin'],
   },
   options: {
-    // selectedColor: CSSProperties['color'],
     color: CSSProperties['color'],
     fontSize: number,
     fontWeight: CSSProperties['fontWeight'],
