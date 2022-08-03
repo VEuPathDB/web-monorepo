@@ -1,12 +1,15 @@
-import React, { useRef, FormEvent, useEffect } from 'react';
+import React, { useRef, FormEvent, useEffect, ChangeEvent } from 'react';
 
 export type IndeterminateCheckboxProps<T> = {
   checked: boolean;
   indeterminate: boolean;
   name: string;
-  node: T;
-  toggleCheckbox: (node: T, selected: boolean) => void;
   value: string;
+  /** node and toggleCheckbox are expected for the CheckboxTree implementation */
+  node?: T;
+  toggleCheckbox?: (node: T, selected: boolean) => void;
+  /** onChange is used in conjunction with the DataGrid implementation and is derived from react-table */
+  onChange?: (event: ChangeEvent) => void;
 }
 
 /**
@@ -18,6 +21,7 @@ export default function IndeterminateCheckbox<T>({
     name,
     node,
     toggleCheckbox,
+    onChange,
     value
 }: IndeterminateCheckboxProps<T>) {
     const nameProp = name ? { name } : {};
@@ -30,11 +34,11 @@ export default function IndeterminateCheckbox<T>({
 
     const handleChange = (e: FormEvent<HTMLInputElement>) => {
         const selected = e.currentTarget.checked;
-        toggleCheckbox(node, selected);
+        if (toggleCheckbox && node) toggleCheckbox(node, selected);
     };
 
     return (
         <input ref={nodeRef} type="checkbox" {...nameProp} value={value}
-            checked={checked} onChange={handleChange} />
+            checked={checked} onChange={onChange ?? handleChange} />
     )
 }
