@@ -3,8 +3,7 @@ import PopoverButton from "../../buttons/PopoverButton";
 import CheckboxTree, { CheckboxTreeProps, LinksPosition } from "./CheckboxTree";
   
 export interface SelectTreeProps<T> extends CheckboxTreeProps<T> {
-    /** A button's content if/when no values are currently selected */
-    defaultButtonDisplayContent: ReactNode;
+    buttonDisplayContent: ReactNode;
 }
 
 function SelectTree<T>(props: SelectTreeProps<T>) {
@@ -18,8 +17,7 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
 
     return (
         <PopoverButton
-            buttonDisplayContent={props.defaultButtonDisplayContent}
-            onClose={() => null}
+            buttonDisplayContent={props.buttonDisplayContent}
             anchorEl={anchorEl}
             setAnchorEl={setAnchorEl}
         >

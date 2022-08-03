@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, ReactNode } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import { tree } from './mockTreeData';
 import { 
@@ -24,7 +24,7 @@ const Template: Story<SelectTreeProps<unknown>> = (args) => {
     const [ selectedFields, setSelectedFields ] = useState([]);
     const activeField = null;
     const [ searchTerm, setSearchTerm ] = useState<string>('');
-    const [ selectedVarName, setSelectedVarName ] = useState<string>('Select a variable');
+    const [ selectedVarName, setSelectedVarName ] = useState<ReactNode>(args.buttonDisplayContent);
 
     const getPathToField = useCallback(
         (field?: Field) => {
@@ -90,7 +90,7 @@ const Template: Story<SelectTreeProps<unknown>> = (args) => {
     return (
         <SelectTree 
             {...args}
-            defaultButtonDisplayContent={selectedVarName}
+            buttonDisplayContent={selectedVarName}
             expandedList={expandedNodes} 
             onExpansionChange={setExpandedNodes}
             searchTerm={searchTerm}
@@ -108,7 +108,7 @@ const Template: Story<SelectTreeProps<unknown>> = (args) => {
 
 export const Standard = Template.bind({});
 Standard.args = {
-    defaultButtonDisplayContent: 'Click me',
+    buttonDisplayContent: 'Select a variable',
     tree,
     expandedList: [],
     additionalFilters: [],

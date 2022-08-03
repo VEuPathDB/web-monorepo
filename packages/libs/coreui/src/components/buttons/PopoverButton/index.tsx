@@ -1,13 +1,18 @@
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode } from 'react';
 import { Button, Popover } from '@material-ui/core';
 import { ArrowDropDown } from '@material-ui/icons';
 
 export interface PopoverButtonProps {
   /** Contents of the menu when opened */
   children: ReactNode;
+
   /** Contents of button */
   buttonDisplayContent: ReactNode;
-  onClose: () => void;
+
+  /** Allows for additional cleanup when popover closes */
+  onClose?: () => void;
+
+  /** Lifted and passed into this component to allow for auto closing popover with single selections  */
   anchorEl: HTMLElement | null;
   setAnchorEl: React.SetStateAction<any>;
 }
@@ -20,7 +25,7 @@ export default function PopoverButton(props: PopoverButtonProps) {
 
   const onCloseHandler = () => {
     setAnchorEl(null);
-    onClose();
+    onClose && onClose();
   }
 
   const menu = (
