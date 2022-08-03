@@ -1,5 +1,5 @@
 import { debounce } from 'lodash';
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 // use safeHtml for enabling html (e.g., italic) at helpText
 import { safeHtml } from '../SelectTree/Utils';
 import { Close } from '../../icons';
@@ -47,7 +47,6 @@ const defaultStyle = {
     fill: '#999999',
   },
   searchBox: {
-    // width: 'calc(100% - 2em)',
     border: '1px solid #888',
     borderRadius: '16px',
     padding: '0.2em 1.5em 0.2em 1em',
@@ -60,22 +59,19 @@ const defaultStyle = {
  * when expensive operations are performed (e.g. search) in real time as the
  * user types in the box.  Also provides reset button to clear the box.
  */
-// export default class RealTimeSearchBox extends Component<Props, State> {
 export default function RealTimeSearchBox({
   autoFocus = false,
   searchTerm = '',
   onSearchTermChange = () => {},
   placeholderText = '',
   helpText = '',
-  delayMs = 250,
-  iconName = 'search',
+  /** Reduced default delay from 250ms to 50ms due to an annoying lag when searching something simple like 'age' */
+  delayMs = 50,
 }: Props) {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const emitSearchTermChange = debounce((searchTerm: string) => onSearchTermChange!(searchTerm));
-
-  let input: HTMLInputElement | null = null;
+  const emitSearchTermChange = debounce((searchTerm: string) => onSearchTermChange!(searchTerm), delayMs);
 
   /**
    * Update the state of this Component, and call debounced onSearchTermSet
@@ -104,59 +100,60 @@ export default function RealTimeSearchBox({
     onSearchTermChange!('');
   }
 
-  let isActiveSearch = searchTerm.length > 0;
-  let activeModifier = isActiveSearch ? 'active' : 'inactive';
-  let helpModifier = helpText ? 'withHelp' : '';
-    return (
-      <div css={{
-        display: 'flex',
-        alignItems: 'center',
-      }}>
-        <label>
-          <input 
-            css={defaultStyle.searchBox}
-            type="search"
-            autoFocus={autoFocus}
-            ref={node => input = node}
-            onChange={handleSearchTermChange}
-            onKeyDown={handleKeyDown}
-            placeholder={placeholderText}
-            value={searchTerm}
-          />
-          {searchTerm ?
-            <button
-              css={{
-                background: 'none',
-                border: 0,
-                position: 'relative',
-                margin: 0,
-                padding: 0,
-                right: '23px',
-                top: '2px',
-              }}
-              type="button" 
-              onClick={handleResetClick}
-            >
-              <Close style={defaultStyle.clearSearchIcon} />
-            </button> :
-            <span css={{
+  useEffect(() => {
+    return () => emitSearchTermChange.cancel()
+  }, [])
+
+  return (
+    <div css={{
+      display: 'flex',
+      alignItems: 'center',
+    }}>
+      <label>
+        <input 
+          ref={inputRef}
+          css={defaultStyle.searchBox}
+          type="search"
+          autoFocus={autoFocus}
+          onChange={handleSearchTermChange}
+          onKeyDown={handleKeyDown}
+          placeholder={placeholderText}
+          value={searchTerm}
+        />
+        {searchTerm ?
+          <button
+            css={{
+              background: 'none',
+              border: 0,
               position: 'relative',
-              right: '25px',
-              top: '4px'
-            }}>
-              <Search style={defaultStyle.searchIcon} />
-            </span>
-          }
-        </label>
-        {/* use safeHtml for helpText to allow italic */}
-        {!helpText ? 
-          null : 
-          <Tooltip
-            title={safeHtml(helpText)}
+              margin: 0,
+              padding: 0,
+              right: '23px',
+              top: '2px',
+            }}
+            type="button" 
+            onClick={handleResetClick}
           >
-            <Help style={defaultStyle.helpIcon}/>  
-          </Tooltip>}
-      </div>
-    );
-  }
+            <Close style={defaultStyle.clearSearchIcon} />
+          </button> :
+          <span css={{
+            position: 'relative',
+            right: '25px',
+            top: '4px'
+          }}>
+            <Search style={defaultStyle.searchIcon} />
+          </span>
+        }
+      </label>
+      {/* use safeHtml for helpText to allow italic */}
+      {!helpText ? 
+        null : 
+        <Tooltip
+          title={safeHtml(helpText)}
+        >
+          <Help style={defaultStyle.helpIcon}/>  
+        </Tooltip>}
+    </div>
+  );
+}
 
