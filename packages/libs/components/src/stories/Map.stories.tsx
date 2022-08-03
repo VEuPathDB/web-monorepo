@@ -20,7 +20,7 @@ import MapVEuLegendSampleList, {
 
 import geohashAnimation from '../map/animation_functions/geohash';
 import { MouseMode } from '../map/MouseTools';
-import { PlotRef } from '../../lib/types/plots';
+import { PlotRef } from '../types/plots';
 
 export default {
   title: 'Map/General',
@@ -223,8 +223,8 @@ export const Windowed: Story<MapVEuMapProps> = (args) => {
         dropdownHref={dropdownHref}
         dropdownItemText={dropdownItemText}
         legendInfoNumberText={legendInfoNumberText}
-        />
-        </>
+      />
+    </>
   );
 };
 

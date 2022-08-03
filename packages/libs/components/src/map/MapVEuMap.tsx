@@ -36,7 +36,6 @@ import Spinner from '../components/Spinner';
 import NoDataOverlay from '../components/NoDataOverlay';
 import { LatLngBounds, Map } from 'leaflet';
 import domToImage from 'dom-to-image';
-//DKDK
 import { makeSharedPromise } from '../utils/promise-utils';
 
 // define Viewport type
@@ -201,13 +200,12 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
   // use a ref to avoid unneeded renders
   const mapRef = useRef<Map>();
 
-  /**DKDK This is used to ensure toImage is called after the plot has been created */
+  // This is used to ensure toImage is called after the plot has been created
   const sharedPlotCreation = useMemo(
     () => makeSharedPromise(() => Promise.resolve()),
     []
   );
 
-  //DKDK
   const onCreated = useCallback(
     (map: Map) => {
       mapRef.current = map;
@@ -215,8 +213,6 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     },
     [sharedPlotCreation.run]
   );
-
-  console.log('map outside =', mapRef);
 
   useImperativeHandle<PlotRef, PlotRef>(
     ref,
@@ -228,7 +224,6 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
         await sharedPlotCreation.promise;
 
         if (!mapRef.current) throw new Error('Map not ready');
-        console.log('map inside =', mapRef);
         return domToImage.toPng(mapRef.current.getContainer(), imageOpts);
       },
     }),
