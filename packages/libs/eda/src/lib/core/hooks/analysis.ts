@@ -122,7 +122,7 @@ export function useAnalysis(
 
         const { analysisId } = await analysisClient.createAnalysis(newAnalysis);
         const savedAnalysis = await analysisClient.getAnalysis(analysisId);
-        // Reuse the savedAnalysis.descriptor to preserve referential equality.
+        // Reuse the newAnalysis.descriptor to preserve referential equality.
         const analysis: Analysis = {
           ...savedAnalysis,
           descriptor: newAnalysis.descriptor,
