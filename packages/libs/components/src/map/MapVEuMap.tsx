@@ -9,6 +9,7 @@ import React, {
   useImperativeHandle,
   forwardRef,
   useCallback,
+  useRef,
 } from 'react';
 import {
   BoundsViewport,
@@ -33,7 +34,7 @@ import { PlotRef } from '../types/plots';
 import { ToImgopts } from 'plotly.js';
 import Spinner from '../components/Spinner';
 import NoDataOverlay from '../components/NoDataOverlay';
-import { LatLngBounds } from 'leaflet';
+import { LatLngBounds, Map } from 'leaflet';
 import domToImage from 'dom-to-image';
 //DKDK
 import { makeSharedPromise } from '../utils/promise-utils';
@@ -197,20 +198,23 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
   // Whether the user is currently dragging the map
   const [isDragging, setIsDragging] = useState<boolean>(false);
 
-  // set useSatate to handle map instance instead of useRef using 'whenCreated' prop at MapContainer
-  const [mapRef, setMapRef] = useState<any>(null);
+  // use a ref to avoid unneeded renders
+  const mapRef = useRef<Map>();
 
   /**DKDK This is used to ensure toImage is called after the plot has been created */
   const sharedPlotCreation = useMemo(
-    () => makeSharedPromise(async () => {}),
+    () => makeSharedPromise(() => Promise.resolve()),
     []
   );
 
   //DKDK
-  const onInitialized = useCallback(() => {
-    // setMapRef();
-    sharedPlotCreation.run();
-  }, [sharedPlotCreation.run]);
+  const onCreated = useCallback(
+    (map: Map) => {
+      mapRef.current = map;
+      sharedPlotCreation.run();
+    },
+    [sharedPlotCreation.run]
+  );
 
   console.log('map outside =', mapRef);
 
@@ -220,19 +224,12 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       // Set the ref's toImage function that will be called in web-eda
       toImage: async (imageOpts: ToImgopts) => {
         // Wait to allow map to finish rendering
-        // await new Promise((resolve) => setTimeout(resolve, 1000));
-        //DKDK
-        try {
-          await sharedPlotCreation.promise;
-          // if (!mapRef) throw new Error('Map not ready');
-          console.log('map inside =', mapRef);
-          return await domToImage.toPng(mapRef.getContainer(), imageOpts);
-          // return await domToImage.toPng(mapRef._container, imageOpts);
-        } catch (error) {
-          // throw new Error('Map not ready');
-          throw new Error('Could not create image for plot');
-          // console.error('Could not create image for plot:', error);
-        }
+        await new Promise((res) => setTimeout(res, 1000));
+        await sharedPlotCreation.promise;
+
+        if (!mapRef.current) throw new Error('Map not ready');
+        console.log('map inside =', mapRef);
+        return domToImage.toPng(mapRef.current.getContainer(), imageOpts);
       },
     }),
     [domToImage, mapRef]
@@ -252,14 +249,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       className={mouseMode === 'magnification' ? 'cursor-zoom-in' : ''}
       minZoom={1}
       worldCopyJump={false}
-      // ondragstart and ondragend work?
-      ondragstart={() => setIsDragging(true)}
-      ondragend={() => setIsDragging(false)}
-      // DKDK
-      // this prop is used to use map instance
-      whenCreated={setMapRef}
-      //DKDK
-      whenReady={onInitialized}
+      whenCreated={onCreated}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

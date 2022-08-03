@@ -1,4 +1,4 @@
-import { ReactElement, useState, useCallback } from 'react';
+import { ReactElement, useState, useCallback, useRef, useEffect } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 // import { action } from '@storybook/addon-actions';
 import { BoundsViewport } from '../map/Types';
@@ -20,6 +20,7 @@ import MapVEuLegendSampleList, {
 
 import geohashAnimation from '../map/animation_functions/geohash';
 import { MouseMode } from '../map/MouseTools';
+import { PlotRef } from '../../lib/types/plots';
 
 export default {
   title: 'Map/General',
@@ -222,8 +223,8 @@ export const Windowed: Story<MapVEuMapProps> = (args) => {
         dropdownHref={dropdownHref}
         dropdownItemText={dropdownItemText}
         legendInfoNumberText={legendInfoNumberText}
-      />
-    </>
+        />
+        </>
   );
 };
 
@@ -237,4 +238,47 @@ Windowed.args = {
   },
   showGrid: true,
   showMouseToolbar: true,
+};
+
+export const ScreenshotOnLoad: Story<MapVEuMapProps> = function ScreenhotOnLoad(
+  args
+) {
+  const mapRef = useRef<PlotRef>(null);
+  const [image, setImage] = useState('');
+  useEffect(() => {
+    // We're converting the base64 encoding of the image to an object url
+    // because the size of the base64 encoding causes "too much recursion".
+    mapRef.current
+      ?.toImage({
+        height: args.height as number,
+        width: args.width as number,
+        format: 'png',
+      })
+      .then(fetch)
+      .then((res) => res.blob())
+      .then(URL.createObjectURL)
+      .then(setImage);
+  }, []);
+
+  return (
+    <div style={{ display: 'flex' }}>
+      <MapVEuMap
+        {...args}
+        ref={mapRef}
+        animation={defaultAnimation}
+        zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+      />
+      <img src={image} />
+    </div>
+  );
+};
+
+ScreenshotOnLoad.args = {
+  height: 500,
+  width: 700,
+  showGrid: true,
+  showMouseToolbar: true,
+  markers: [],
+  viewport: { center: [13, 16], zoom: 4 },
+  onBoundsChanged: () => {},
 };
