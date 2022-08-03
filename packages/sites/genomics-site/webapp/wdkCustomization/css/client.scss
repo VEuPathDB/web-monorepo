@@ -1,3 +1,10 @@
+/* pdbe molstar plugin */
+.msp-plugin .msp-layout-expanded {
+  /* Deal with fixed header */
+  top: 168px;
+  z-index: 1;
+}
+
 /* Hide default record ID printed by WDK for genes */
 .wdk-RecordContainer__GeneRecordClasses\.GeneRecordClass .wdk-RecordHeading {
   display: none;

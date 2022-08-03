@@ -84,6 +84,7 @@
     "webpack-merge": "^4.2.1"
   },
   "relativeDependencies": {
+    "@veupathdb/wdk-client": "../../WDKClient/Client",
     "@veupathdb/web-common": "../../EbrcWebsiteCommon/Client"
   }
 }

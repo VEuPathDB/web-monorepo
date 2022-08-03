@@ -2,7 +2,7 @@ import { empty, of, merge } from 'rxjs';
 import { filter, map, mergeMap, mergeMapTo, switchMap, tap } from 'rxjs/operators';
 import * as RecordStoreModule from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
 import { QuestionActions, RecordActions } from '@veupathdb/wdk-client/lib/Actions';
-import { difference, get, uniq } from 'lodash';
+import { difference, get, uniq, flow, partialRight } from 'lodash';
 import * as tree from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import * as cat from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import * as persistence from '@veupathdb/web-common/lib/util/persistence';
@@ -123,7 +123,12 @@ function handleEuPathDBAction(state = { tables: {} }, { type, payload }) {
 function pruneCategories(nextState) {
   let { record, categoryTree } = nextState;
   if (isGeneRecord(record)) {
-    categoryTree = pruneCategoryBasedOnShowStrains(pruneCategoriesByMetaTable(removeProteinCategories(categoryTree, record), record), record);
+    categoryTree = flow(
+      partialRight(pruneCategoryBasedOnShowStrains, record),
+      partialRight(pruneCategoryBasedOnHasAlphaFold, record),
+      partialRight(pruneCategoriesByMetaTable, record),
+      partialRight(removeProteinCategories, record)
+    )(categoryTree);
     nextState = Object.assign({}, nextState, { categoryTree });
   }
   if (isDatasetRecord(record)) {
@@ -168,6 +173,22 @@ function pruneCategoryBasedOnShowStrains(categoryTree, record) {
  }, categoryTree);
 }
 
+/** Remove alphafold_url based on value of hasAlphaFold attribute */
+function pruneCategoryBasedOnHasAlphaFold(categoryTree, record) {
+  // Fields to remove if hasAlphaFold is "0"
+  const alphaFoldFields = new Set([
+    'AlphaFoldLinkouts',
+    'hasAlphaFold',
+    'alphafold_url'
+  ]);
+  // Keep tree as-is if hasAlphaFold is "1"
+  return record.attributes.hasAlphaFold === '1' ? categoryTree
+    // Remove alphaFoldFields from categoryTree
+    : tree.pruneDescendantNodes(
+      individual => !alphaFoldFields.has(cat.getRefName(individual)),
+      categoryTree
+    );
+}
 
 /** Use MetaTable to determine if a leaf is appropriate for record instance */
 function pruneCategoriesByMetaTable(categoryTree, record) {

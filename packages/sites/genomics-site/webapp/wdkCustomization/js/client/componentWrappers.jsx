@@ -26,6 +26,7 @@ import { StepDetailsActionContext } from '@veupathdb/wdk-client/lib/Views/Strate
 import { apiActions } from './components/strategies/ApiStepDetailsActions';
 
 import { VEuPathDBHomePage } from './components/homepage/VEuPathDBHomePage';
+import { BlockRecordAttributeSection } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
 
 export const SiteHeader = () => ApiSiteHeader;
 
@@ -275,9 +276,21 @@ export function RecordTableSection(DefaultComponent) {
   });
 }
 
+function getGbrowseContext(attributeName) {
+  return Gbrowse.contexts.find(context => context.gbrowse_url === attributeName);
+}
+
 export const RecordAttribute = makeDynamicWrapper('RecordAttribute',
   function MaybeDyamicWrapper(props) {
-    let { attribute, record } = props;
+    const { attribute, record } = props;
+
+    const context = getGbrowseContext(attribute.name);
+
+    if (context) {
+      return (
+        <Gbrowse.GbrowseContext {...props} context={context} />
+      );
+    }
 
     // Render attribute as a Sequence if attribute name ends with "sequence".
     let sequenceRE = /sequence$/;
@@ -291,22 +304,12 @@ export const RecordAttribute = makeDynamicWrapper('RecordAttribute',
 
 export function RecordAttributeSection(DefaultComponent) {
   return function ApiRecordAttributeSection(props) {
-    let { attribute, record } = props;
+    const { attribute, record } = props;
+    const context = getGbrowseContext(attribute.name);
 
-    // render attribute as a GbrowseContext if attribute name is in Gbrowse.contextx
-    let context = Gbrowse.contexts.find(context => context.gbrowse_url === attribute.name);
-    if (context != null) {
+    if (context) {
       return (
-        <CollapsibleSection
-          id={attribute.name}
-          className="wdk-RecordAttributeSectionItem"
-          style={{display: 'block', width: '100%' }}
-          headerContent={attribute.displayName}
-          isCollapsed={props.isCollapsed}
-          onCollapsedChange={props.onCollapsedChange}
-        >
-          <Gbrowse.GbrowseContext {...props} context={context} />
-        </CollapsibleSection>
+        <BlockRecordAttributeSection {...props} />
       );
     }
 

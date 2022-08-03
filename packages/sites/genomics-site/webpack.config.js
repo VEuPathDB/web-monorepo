@@ -2,7 +2,12 @@ var configure = require('@veupathdb/site-webpack-config');
 
 const additionalConfig = {
   entry: {
-    'site-client': __dirname + '/webapp/wdkCustomization/js/client/main.js'
+    'site-client': [
+      // suuport for <pdbe-molstar> custom element
+      './vendored/pdbe-molstar-light-3.0.0.css',
+      './vendored/pdbe-molstar-component-3.0.0',
+      __dirname + '/webapp/wdkCustomization/js/client/main.js',
+    ],
   },
   resolve: {
     // alias 'ciena-*' entries to '/lib' directory since the default
