@@ -115,7 +115,7 @@ div#ce-static-content h1#news ~ h2 {
   list-style: disc;
 }
 
-
-
-
-
+/* for now, don't offer closeable banners in MicrobiomeDB */
+.eupathdb-Announcement button.link {
+  display: none
+}
