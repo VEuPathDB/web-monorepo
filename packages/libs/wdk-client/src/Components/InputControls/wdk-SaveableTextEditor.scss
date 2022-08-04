@@ -70,7 +70,10 @@
       &.edit {
         background-color: transparent;
         color: $blue;
-        font-size: .8em
+        font-size: .8em;
+        line-height: inherit;
+        width: fit-content;
+        height: fit-content;
       }
       &.cancel { background-color: $red; font-size: 12px; }
       &.save { background-color: $green; font-size: 12px; }
