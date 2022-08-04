@@ -1,5 +1,5 @@
-import { useRouteMatch } from 'react-router-dom';
-import { useHistory } from 'react-router';
+import Path from 'path';
+import { useHistory } from 'react-router-dom';
 import { ComputationAppOverview } from '../../types/visualization';
 import { ComputationPlugin } from './Types';
 import { orderBy, isEqual } from 'lodash';
@@ -25,7 +25,6 @@ export function StartPage(props: Props) {
   const cx = makeClassNameHelper('VisualizationsContainer');
   const studyMetadata = useStudyMetadata();
   const history = useHistory();
-  const { url } = useRouteMatch();
 
   return (
     apps &&
@@ -138,9 +137,11 @@ export function StartPage(props: Props) {
                                   ...computations,
                                 ]);
                                 history.push(
-                                  url.replace(
-                                    'new',
-                                    `${computation.computationId}/${visualizationId}`
+                                  Path.resolve(
+                                    history.location.pathname,
+                                    '..',
+                                    computation.computationId,
+                                    visualizationId
                                   )
                                 );
                               } else {
@@ -158,11 +159,14 @@ export function StartPage(props: Props) {
                                       updatedComputation.computationId
                                   ),
                                 ]);
-                                const urlBase = url.replace(
-                                  'new',
-                                  existingComputation.computationId
+                                history.push(
+                                  Path.resolve(
+                                    history.location.pathname,
+                                    '..',
+                                    existingComputation.computationId,
+                                    visualizationId
+                                  )
                                 );
-                                history.push(`${urlBase}/${visualizationId}`);
                               }
                             }}
                           >
