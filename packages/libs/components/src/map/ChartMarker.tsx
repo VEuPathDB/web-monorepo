@@ -27,8 +27,6 @@ interface ChartMarkerProps
   markerLabel?: string;
   /** x-axis title for enlarged mouse-over marker (defaults to "Total: sum(data[].value)") */
   independentAxisLabel?: string;
-  /** pass proportion mode from MapViz */
-  proportionMode?: boolean;
 }
 
 /**
@@ -91,11 +89,13 @@ export default function ChartMarker(props: ChartMarkerProps) {
           maximumFractionDigits: 0,
         });
 
-  let maxValues: number = Math.max(...fullStat.map((o) => o.value)); // max of fullStat.value per marker icon
-  // for local max, need to check the case wherer all values are zeros that lead to maxValues equals to 0 -> "divided by 0" can happen
-  if (maxValues == 0) {
-    maxValues = 1; // this doesn't matter as all values are zeros
-  }
+  // find local min/max (one marker)
+  const localMinValue: number = Math.min(
+    ...fullStat.map((o) => o.value).filter((a) => a > 0)
+  ); // max of fullStat.value per marker icon
+  const localMaxValue: number = Math.max(
+    ...fullStat.map((o) => o.value).filter((a) => a > 0)
+  ); // max of fullStat.value per marker icon
 
   const roundX = 10; // round corner in pixel: 0 = right angle
   const roundY = 10; // round corner in pixel: 0 = right angle
@@ -132,85 +132,52 @@ export default function ChartMarker(props: ChartMarkerProps) {
     borderWidth +
     '"/>';
 
-  // set globalMaxValue non-zero if props.yAxisRange exists
-  let globalMaxValue: number = 0;
-  // dependentAxisRange is an object with {min,max} (NumberRange)
-  if (props.dependentAxisRange) {
-    globalMaxValue =
-      props.dependentAxisRange.max - props.dependentAxisRange.min;
-  }
-
   // initialize variables for using at following if-else
   let barWidth: number, startingX: number, barHeight: number, startingY: number;
 
-  if (globalMaxValue) {
-    fullStat.forEach(function (
-      el: { color: string; label: string; value: number },
-      index
-    ) {
-      // for the case of y-axis range input: a global approach that take global max = icon height
-      barWidth = (xSize - 2 * marginX) / count; // bar width
-      startingX = marginX + borderWidth + barWidth * index; // x in <react> tag: note that (0,0) is top left of the marker icon
-      // temporary solution for svg log scale
-      barHeight = props.dependentAxisLogScale
-        ? el.value === 0 || el.value < 0
-          ? 0
-          : props.proportionMode
-          ? // temporarily use no log scale one
-            (el.value / globalMaxValue) * (size - 2 * marginY)
-          : (Math.log10(el.value) / Math.log10(globalMaxValue)) *
-            (size - 2 * marginY)
-        : (el.value / globalMaxValue) * (size - 2 * marginY); // bar height: used 2*marginY to have margins at both top and bottom
-      startingY = size - marginY - barHeight + borderWidth; // y in <react> tag: note that (0,0) is top left of the marker icon
-      // making the last bar, noData
-      svgHTML +=
-        '<rect x=' +
-        startingX +
-        ' y=' +
-        startingY +
-        ' width=' +
-        barWidth +
-        ' height=' +
-        barHeight +
-        ' fill=' +
-        // rgb strings with spaces in them don't work in SVG?
-        el.color.replace(/\s/g, '') +
-        ' />';
-    });
-  } else {
-    fullStat.forEach(function (
-      el: { color: string; label: string; value: number },
-      index
-    ) {
-      // for the case of auto-scale y-axis: a local approach that take local max = icon height
-      barWidth = (xSize - 2 * marginX) / count; // bar width
-      startingX = marginX + borderWidth + barWidth * index; // x in <react> tag: note that (0,0) is top left of the marker icon
-      barHeight = props.dependentAxisLogScale
-        ? el.value === 0 || el.value < 0
-          ? 0
-          : props.proportionMode
-          ? (el.value / maxValues) * (size - 2 * marginY) // bar height: used 2*marginY to have margins at both top and bottom
-          : (Math.log10(el.value) / Math.log10(maxValues)) *
-            (size - 2 * marginY)
-        : // ? Math.abs(Math.log10((el.value / maxValues))) * (size - 2 * marginY)
-          (el.value / maxValues) * (size - 2 * marginY); // bar height: used 2*marginY to have margins at both top and bottom
-      startingY = size - marginY - barHeight + borderWidth; // y in <react> tag: note that (0,0) is top left of the marker icon
-      // making the last bar, noData
-      svgHTML +=
-        '<rect x=' +
-        startingX +
-        ' y=' +
-        startingY +
-        ' width=' +
-        barWidth +
-        ' height=' +
-        barHeight +
-        ' fill=' +
-        // rgb strings with spaces in them don't work in SVG?
-        el.color.replace(/\s/g, '') +
-        ' />';
-    });
-  }
+  // drawing bars per marker
+  fullStat.forEach(function (
+    el: { color: string; label: string; value: number },
+    index
+  ) {
+    // for the case of y-axis range input: a global approach that take global max = icon height
+    barWidth = (xSize - 2 * marginX) / count; // bar width
+    startingX = marginX + borderWidth + barWidth * index; // x in <react> tag: note that (0,0) is top left of the marker icon
+    barHeight = props.dependentAxisLogScale // log scale
+      ? el.value === 0 || el.value < 0
+        ? 0
+        : // if dependentAxisRange != null, plot with global max
+        props.dependentAxisRange
+        ? (Math.log10(el.value / props.dependentAxisRange.min) /
+            Math.log10(
+              props.dependentAxisRange.max / props.dependentAxisRange.min
+            )) *
+          (size - 2 * marginY)
+        : (Math.log10(el.value / localMinValue) /
+            Math.log10(localMaxValue / localMinValue)) *
+          (size - 2 * marginY)
+      : props.dependentAxisRange // no log scale
+      ? ((el.value - props.dependentAxisRange.min) /
+          (props.dependentAxisRange.max - props.dependentAxisRange.min)) *
+        (size - 2 * marginY) // bar height: used 2*marginY to have margins at both top and bottom
+      : (el.value / localMaxValue) * (size - 2 * marginY); // bar height: used 2*marginY to have margins at both top and bottom
+
+    startingY = size - marginY - barHeight + borderWidth; // y in <react> tag: note that (0,0) is top left of the marker icon
+    // making the last bar, noData
+    svgHTML +=
+      '<rect x=' +
+      startingX +
+      ' y=' +
+      startingY +
+      ' width=' +
+      barWidth +
+      ' height=' +
+      barHeight +
+      ' fill=' +
+      // rgb strings with spaces in them don't work in SVG?
+      el.color.replace(/\s/g, '') +
+      ' />';
+  });
 
   // add horizontal line: when using inner border (adjust x1)
   svgHTML +=
