@@ -62,20 +62,7 @@ export type AnalysisState = {
 };
 
 // Used to store loaded analyses. Looks to be a performance enhancement.
-const analysisCache: Record<string, Analysis | undefined> = {};
-
-export function usePreloadAnalysis() {
-  const analysisClient = useAnalysisClient();
-  /**
-   * @param id Identifier of saved analysis.
-   * @param analysis Optional analysis object to use for the cache. This can be
-   * used if an analysis object was already fetched from the service. This
-   * should be used sparingly.
-   */
-  return async function preloadAnalysis(id: string, analysis?: Analysis) {
-    analysisCache[id] = analysis ?? (await analysisClient.getAnalysis(id));
-  };
-}
+const analysisCache = new Map<string, Analysis>();
 
 /**
  * Provide access to a user created analysis and associated functionality.
@@ -90,7 +77,6 @@ export function useAnalysis(
   const analysisClient = useAnalysisClient();
   const { id: studyId } = useStudyMetadata();
   const history = useHistory();
-  const preloadAnalysis = usePreloadAnalysis();
   const creatingAnalysis = useRef(false);
 
   // Used when `analysisId` is undefined.
@@ -127,7 +113,7 @@ export function useAnalysis(
           ...savedAnalysis,
           descriptor: newAnalysis.descriptor,
         };
-        await preloadAnalysis(analysisId, analysis);
+        analysisCache.set(analysisId, analysis);
         creatingAnalysis.current = false;
 
         const newLocation = {
@@ -137,7 +123,7 @@ export function useAnalysis(
         history.replace(newLocation);
       }
     },
-    [analysisClient, history, preloadAnalysis]
+    [analysisClient, history]
   );
 
   // Allow undo/redo operations. This isn't really used yet.
@@ -171,7 +157,7 @@ export function useAnalysis(
       createAnalysis(analysis);
     } else {
       await analysisClient.updateAnalysis(analysis.analysisId, analysis);
-      analysisCache[analysis.analysisId] = analysis;
+      analysisCache.set(analysis.analysisId, analysis);
     }
   }, [analysisClient, analysis, createAnalysis]);
 
@@ -200,7 +186,7 @@ export function useAnalysis(
       throw new Error('Cannot delete an unsaved analysis.');
 
     return analysisClient.deleteAnalysis(analysis.analysisId).then(() => {
-      delete analysisCache[analysis.analysisId];
+      analysisCache.delete(analysis.analysisId);
     });
   }, [analysisClient, analysis]);
 
@@ -249,7 +235,7 @@ export function useAnalysis(
       // but also clear the state's history
       setCurrent(defaultAnalysis);
     } else {
-      const analysisCacheEntry = analysisCache[analysisId];
+      const analysisCacheEntry = analysisCache.get(analysisId);
 
       if (analysisCacheEntry != null) {
         setCurrent(analysisCacheEntry);
@@ -261,7 +247,7 @@ export function useAnalysis(
           (analysis) => {
             setCurrent(analysis);
             setStatus(Status.Loaded);
-            analysisCache[analysis.analysisId] = analysis;
+            analysisCache.set(analysis.analysisId, analysis);
           },
           (error) => {
             setError(error);
@@ -329,7 +315,7 @@ export function useAnalysisList(analysisClient: AnalysisClient) {
       setLoading(true);
       try {
         await analysisClient.deleteAnalysis(id);
-        delete analysisCache[id];
+        analysisCache.delete(id);
         setAnalyses((analyses) =>
           analyses?.filter((analysis) => analysis.analysisId !== id)
         );
@@ -348,7 +334,7 @@ export function useAnalysisList(analysisClient: AnalysisClient) {
       try {
         await analysisClient.deleteAnalyses(ids);
         for (const id of ids) {
-          delete analysisCache[id];
+          analysisCache.delete(id);
         }
         setAnalyses(
           (analyses) =>
