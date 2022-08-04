@@ -74,8 +74,10 @@ class RecordUI extends Component {
 
   _scrollToActiveSection() {
     this.unmonitorActiveSection();
-    let domNode = document.getElementById(location.hash.slice(1));
+    let sectionId = location.hash.slice(1);
+    let domNode = document.getElementById(sectionId);
     if (domNode != null) {
+      this.props.updateSectionVisibility(sectionId, true);
       const rect = domNode.getBoundingClientRect();
       if (rect.top !== this.activeSectionTop) domNode.scrollIntoView(true);
       console.debug(Date.now(), 'scrolled to active section', domNode, domNode.getBoundingClientRect().top);
