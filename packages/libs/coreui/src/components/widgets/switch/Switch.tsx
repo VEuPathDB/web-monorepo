@@ -47,6 +47,10 @@ export default function Switch<T extends boolean | string | number>({
     }
   }, [labels]);
 
+  const width = size === 'medium' ? 40 : 20;
+  const height = width / 2;
+  const knobSize = height / 2;
+
   return (
     <div
       css={{
@@ -64,7 +68,7 @@ export default function Switch<T extends boolean | string | number>({
         <span
           css={{
             // here
-            marginRight: 10,
+            marginRight: size === 'medium' ? 10 : 5,
             color: currentStyles.labelColor,
           }}
         >
@@ -80,9 +84,9 @@ export default function Switch<T extends boolean | string | number>({
           transition: 'all ease .33s',
           alignItems: 'center',
           // here
-          width: size === 'medium' ? 40 : 17,
-          height: size === 'medium' ? 20 : 10,
-          borderRadius: 5,
+          width,
+          height,
+          borderRadius: height / 4,
           backgroundColor: currentStyles.backgroundColor,
           ...(currentStyles.borderColor
             ? {
@@ -118,26 +122,27 @@ export default function Switch<T extends boolean | string | number>({
           css={{
             position: 'relative',
             // here
-            width: size === 'medium' ? 10 : 8,
-            height: size === 'medium' ? 10 : 8,
+            width: knobSize,
+            height: knobSize,
             ...(switchState === 'hover'
               ? selectedOption === options[0]
                 ? {
                     // here
                     borderTopRightRadius: 10,
                     borderBottomRightRadius: 10,
-                    borderTopLeftRadius: size === 'medium' ? 5 : 7,
-                    borderBottomLeftRadius: size === 'medium' ? 5 : 7,
+                    borderTopLeftRadius: height / 4,
+                    borderBottomLeftRadius: height / 4,
                   }
                 : {
-                    borderTopRightRadius: size === 'medium' ? 5 : 7,
-                    borderBottomRightRadius: size === 'medium' ? 5 : 7,
+                    borderTopRightRadius: height / 4,
+                    borderBottomRightRadius: height / 4,
                     borderTopLeftRadius: 10,
                     borderBottomLeftRadius: 10,
                   }
               : { borderRadius: 10 }),
 
-            left: selectedOption === options[0] ? size === 'medium' ? 7 : 1 : size === 'medium' ? 24 : 8,
+            // left: selectedOption === options[0] ? size === 'medium' ? 7 : 1 : size === 'medium' ? 24 : 8,
+            left: selectedOption === options[0] ? width / 5 : width - knobSize - width / 5,
             transition: 'ease all .33s',
             backgroundColor: currentStyles.knobColor,
           }}
@@ -147,7 +152,7 @@ export default function Switch<T extends boolean | string | number>({
         <span
           css={{
             // here
-            marginLeft: 10,
+            marginLeft: size === 'medium' ? 10 : 5,
             color: currentStyles.labelColor,
           }}
         >
