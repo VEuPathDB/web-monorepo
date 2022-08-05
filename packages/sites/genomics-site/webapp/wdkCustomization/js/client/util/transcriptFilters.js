@@ -18,11 +18,17 @@ export function isTranscripFilterEnabled(state, props) {
 
 // Add/remove representativeTranscriptOnly from global filters for record class
 export function requestTranscriptFilterUpdate(viewId, currentViewFilters, enable) {
-  return ResultTableSummaryViewActions.updateGlobalViewFilters(
-    viewId,
-    TRANSCRIPT_RECORD_CLASS_NAME,
-    updateTranscriptFilterValue(currentViewFilters, enable)
-  );
+  return [
+    ResultTableSummaryViewActions.updateGlobalViewFilters(
+      viewId,
+      TRANSCRIPT_RECORD_CLASS_NAME,
+      updateTranscriptFilterValue(currentViewFilters, enable)
+    ),
+    ResultTableSummaryViewActions.viewPageNumber(
+      viewId,
+      1
+    ),
+  ];
 }
 
 export function updateTranscriptFilterValue(currentViewFilters = [], enable) {
