@@ -17,6 +17,7 @@ import { ByGenotypeNumber } from './components/questions/ByGenotypeNumber';
 import { ByLocationForm, ByLocationStepDetails } from './components/questions/ByLocation';
 import { DynSpansBySourceId } from './components/questions/DynSpansBySourceId';
 import { GenesByBindingSiteFeature } from './components/questions/GenesByBindingSiteFeature';
+import { GenesByWGCNAModules } from './components/questions/GenesByWGCNAModules';
 import { GenesByOrthologPattern } from './components/questions/GenesByOrthologPattern';
 import { InternalGeneDataset } from './components/questions/InternalGeneDataset';
 import { hasChromosomeAndSequenceIDXorGroup } from './components/questions/MutuallyExclusiveParams/utils';
@@ -158,6 +159,12 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
     name: 'tfbs_name',
     searchName: 'GenesByBindingSiteFeature',
     component: GenesByBindingSiteFeature
+  },
+  {
+    type: 'questionFormParameter',
+    name: 'wgcnaParam',
+    searchName: 'GenesByWGCNAModules',
+    component: GenesByWGCNAModules
   },
   {
     type: 'questionForm',
