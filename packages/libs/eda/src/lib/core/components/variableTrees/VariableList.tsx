@@ -22,7 +22,6 @@ import {
 } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import CheckboxTree from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTree';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
-import Toggle from '@veupathdb/wdk-client/lib/Components/Icon/Toggle';
 import {
   isFilterField,
   isMulti,
@@ -48,6 +47,8 @@ import { pruneEmptyFields } from '../../utils/wdk-filter-param-adapter';
 import { Tooltip as VarTooltip } from '../docs/variable-constraints';
 import { useActiveDocument } from '../docs/DocumentationContainer';
 import { CustomCheckboxes } from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTreeNode';
+import { FilledSwitch } from '@veupathdb/coreui';
+import { blue, grey } from '@material-ui/core/colors';
 
 interface VariableField {
   type?: string;
@@ -387,7 +388,23 @@ export default function VariableList({
             onClick={toggleShowOnlyStarredVariables}
             disabled={starredVariableToggleDisabled}
           >
-            <Toggle on={showOnlyStarredVariables} />
+            <FilledSwitch
+              options={[false, true]}
+              selectedOption={showOnlyStarredVariables}
+              disabled={starredVariableToggleDisabled}
+              onOptionChange={() => {}}
+              styleOverrides={{
+                default: [
+                  { backgroundColor: grey[500] },
+                  { backgroundColor: blue[800], knobColor: 'white' },
+                ],
+                hover: [
+                  { backgroundColor: grey[500] },
+                  { backgroundColor: blue[800], knobColor: 'white' },
+                ],
+                size: 'small',
+              }}
+            />
             <Icon fa="star" />
           </button>
         </div>
@@ -510,8 +527,23 @@ export default function VariableList({
               );
             }}
           >
-            <Toggle on={showOnlyCompatibleVariables} /> Only show compatible
-            variables
+            <FilledSwitch
+              options={[false, true]}
+              labels={{ right: 'Only show compatible variables' }}
+              selectedOption={showOnlyCompatibleVariables}
+              onOptionChange={() => {}}
+              styleOverrides={{
+                default: [
+                  { backgroundColor: grey[500] },
+                  { backgroundColor: blue[800], knobColor: 'white' },
+                ],
+                hover: [
+                  { backgroundColor: grey[500] },
+                  { backgroundColor: blue[800], knobColor: 'white' },
+                ],
+                size: 'small',
+              }}
+            />
           </button>
         </HtmlTooltip>
       </div>

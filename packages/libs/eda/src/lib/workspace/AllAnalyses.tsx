@@ -11,7 +11,6 @@ import {
   IconButton,
   InputAdornment,
   makeStyles,
-  Switch,
   TextField,
   Tooltip,
 } from '@material-ui/core';
@@ -50,7 +49,7 @@ import {
 } from '../core/utils/analysis';
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
 import ShareFromAnalysesList from './sharing/ShareFromAnalysesList';
-import { Checkbox, colors } from '@veupathdb/coreui';
+import { Checkbox, FilledSwitch, colors } from '@veupathdb/coreui';
 
 interface AnalysisAndDataset {
   analysis: AnalysisSummary & {
@@ -336,20 +335,24 @@ export function AllAnalyses(props: Props) {
         },
         {
           element: (
-            <FormControlLabel
-              control={
-                <Switch
-                  color="primary"
-                  size="small"
-                  checked={sortPinned}
-                  onChange={(e) => setSortPinned(e.target.checked)}
-                />
-              }
-              label="Sort pinned to top"
-              style={{
-                padding: '1em',
-              }}
+            <FilledSwitch
+              options={[false, true]}
+              labels={{ right: 'Sort pinned to top' }}
+              selectedOption={sortPinned}
+              onOptionChange={setSortPinned}
               disabled={pinnedAnalyses.length === 0}
+              styleOverrides={{
+                default: [
+                  { backgroundColor: colors.gray[400] },
+                  { backgroundColor: colors.blue[800], knobColor: 'white' },
+                ],
+                hover: [
+                  { backgroundColor: colors.gray[500] },
+                  { backgroundColor: colors.blue[800], knobColor: 'white' },
+                ],
+                disabled: { backgroundColor: colors.gray[300] },
+                container: { marginLeft: '1em' },
+              }}
             />
           ),
         },
