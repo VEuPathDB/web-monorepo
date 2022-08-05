@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+// import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
-import MaterialSwitch from '@material-ui/core/Switch';
+// import MaterialSwitch from '@material-ui/core/Switch';
 
 import { LIGHT_BLUE, MEDIUM_GRAY } from '../../constants/colors';
+import { FilledSwitch } from '@veupathdb/coreui';
+import { grey } from '@material-ui/core/colors';
 
 export type SwitchProps = {
   /** Optional label for widget. */
@@ -37,15 +39,15 @@ export default function Switch({
   disabled = false,
   labelPosition = 'before',
 }: SwitchProps) {
-  const [focused, setFocused] = useState(false);
+  // const [focused, setFocused] = useState(false);
 
-  const theme = createMuiTheme({
-    palette: {
-      primary: {
-        main: color,
-      },
-    },
-  });
+  // const theme = createMuiTheme({
+  //   palette: {
+  //     primary: {
+  //       main: color,
+  //     },
+  //   },
+  // });
 
   return (
     <div
@@ -55,8 +57,8 @@ export default function Switch({
         alignItems: 'center',
         ...containerStyles,
       }}
-      onMouseOver={() => setFocused(true && !disabled)}
-      onMouseOut={() => setFocused(false)}
+      // onMouseOver={() => setFocused(true && !disabled)}
+      // onMouseOut={() => setFocused(false)}
     >
       {label && (
         <Typography
@@ -71,7 +73,7 @@ export default function Switch({
           {label}
         </Typography>
       )}
-      <ThemeProvider theme={theme}>
+      {/* <ThemeProvider theme={theme}>
         <MaterialSwitch
           checked={state}
           // The stinky use of `any` here comes from
@@ -82,7 +84,24 @@ export default function Switch({
           color="primary"
           disabled={disabled}
         />
-      </ThemeProvider>
+      </ThemeProvider> */}
+      <FilledSwitch
+        options={[false, true]}
+        selectedOption={state ?? false}
+        onOptionChange={onStateChange}
+        disabled={disabled}
+        styleOverrides={{
+          default: [
+            { backgroundColor: grey[400] },
+            { backgroundColor: color, knobColor: 'white' },
+          ],
+          hover: [
+            { backgroundColor: grey[500] },
+            { backgroundColor: color, knobColor: 'white' },
+          ],
+          disabled: { backgroundColor: grey[300] },
+        }}
+      />
     </div>
   );
 }
