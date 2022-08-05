@@ -76,7 +76,7 @@ function ResultTable(props: Props) {
     pagination: {
       currentPage: Math.ceil((answer.meta.pagination.offset + 1) / answer.meta.pagination.numRecords),
       rowsPerPage: answer.meta.pagination.numRecords,
-      totalRows: answer.meta.totalCount
+      totalRows: answer.meta.viewTotalCount
     }
   };
   const selectedIdsSet = new Set(selectedIds);
