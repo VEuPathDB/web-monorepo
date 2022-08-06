@@ -61,8 +61,14 @@ const analysisCache: Record<string, Analysis | undefined> = {};
 
 export function usePreloadAnalysis() {
   const analysisClient = useAnalysisClient();
-  return async function preloadAnalysis(id: string) {
-    analysisCache[id] = await analysisClient.getAnalysis(id);
+  /**
+   * @param id Identifier of saved analysis.
+   * @param analysis Optional analysis object to use for the cache. This can be
+   * used if an analysis object was already fetched from the service. This
+   * should be used sparingly.
+   */
+  return async function preloadAnalysis(id: string, analysis?: Analysis) {
+    analysisCache[id] = analysis ?? (await analysisClient.getAnalysis(id));
   };
 }
 
@@ -120,27 +126,28 @@ export function useAnalysis(
     } else {
       const analysisCacheEntry = analysisCache[analysisId];
 
-      setSavedAnalysis(analysisCacheEntry);
-      setStatus(analysisCacheEntry == null ? Status.InProgress : Status.Loaded);
-      setError(undefined);
-    }
-  }, [defaultAnalysis, analysisId, setCurrent]);
-
-  useEffect(() => {
-    if (savedAnalysis || analysisId == null) return;
-    setStatus(Status.InProgress);
-    analysisClient.getAnalysis(analysisId).then(
-      (analysis) => {
-        setSavedAnalysis(analysis);
-        setStatus(Status.Loaded);
-        analysisCache[analysis.analysisId] = analysis;
-      },
-      (error) => {
-        setError(error);
-        setStatus(Status.Error);
+      if (analysisCacheEntry != null) {
+        setSavedAnalysis(analysisCacheEntry);
+        setStatus(
+          analysisCacheEntry == null ? Status.InProgress : Status.Loaded
+        );
+        setError(undefined);
+      } else {
+        setStatus(Status.InProgress);
+        analysisClient.getAnalysis(analysisId).then(
+          (analysis) => {
+            setSavedAnalysis(analysis);
+            setStatus(Status.Loaded);
+            analysisCache[analysis.analysisId] = analysis;
+          },
+          (error) => {
+            setError(error);
+            setStatus(Status.Error);
+          }
+        );
       }
-    );
-  }, [analysisClient, analysisId, savedAnalysis]);
+    }
+  }, [defaultAnalysis, analysisId, setCurrent, analysisClient]);
 
   // Whenever `savedAnalysis` updates, set `current` to be the same object.
   useEffect(() => {
