@@ -46,7 +46,7 @@ import { variableDisplayWithUnit } from '../../utils/variable-display';
 import { defaultIndependentAxisRange } from '../../utils/default-independent-axis-range';
 import { max } from 'lodash';
 import { useDebounce } from '../../hooks/debouncing';
-import { useImmutableState } from '../../hooks/immutability';
+import { useDeepValue } from '../../hooks/immutability';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -81,7 +81,7 @@ export function HistogramFilter(props: Props) {
   } = props;
   const { setFilters } = analysisState;
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
-  const otherFilters = useImmutableState(
+  const otherFilters = useDeepValue(
     filters?.filter(
       (f) => f.entityId !== entity.id || f.variableId !== variable.id
     )

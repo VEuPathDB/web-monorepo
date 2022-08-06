@@ -32,7 +32,7 @@ import {
 import { gray, red } from './colors';
 import { debounce } from 'lodash';
 import { isTableVariable } from './guards';
-import { useImmutableState } from '../../hooks/immutability';
+import { useDeepValue } from '../../hooks/immutability';
 
 export interface Props {
   analysisState: AnalysisState;
@@ -170,7 +170,7 @@ export function MultiFilter(props: Props) {
   ]);
 
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
-  const otherFilters = useImmutableState(
+  const otherFilters = useDeepValue(
     filters?.filter(
       (f) => f.entityId !== entity.id || f.variableId !== variable.id
     )

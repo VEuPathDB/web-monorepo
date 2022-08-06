@@ -8,7 +8,7 @@ import { useState } from 'react';
  * @param value Some value
  * @returns Referentially stable value
  */
-export function useImmutableState<T>(value: T) {
+export function useDeepValue<T>(value: T) {
   const [state, setState] = useState(value);
   if (!isEqual(value, state)) setState(value);
   return state;

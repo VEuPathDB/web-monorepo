@@ -17,7 +17,7 @@ import { DistributionResponse } from '../../api/SubsettingClient';
 import { gray, red } from './colors';
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../utils/variable-display';
-import { useImmutableState } from '../../hooks/immutability';
+import { useDeepValue } from '../../hooks/immutability';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -75,7 +75,7 @@ export function TableFilter({
 }: Props) {
   const subsettingClient = useSubsettingClient();
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
-  const otherFilters = useImmutableState(
+  const otherFilters = useDeepValue(
     filters?.filter(
       (f) => f.entityId !== entity.id || f.variableId !== variable.id
     )
