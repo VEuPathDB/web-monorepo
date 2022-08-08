@@ -82,7 +82,7 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
     standardIndependentAxisRange,
     axisTruncationConfig?.independentAxis,
     independentValueType === 'date' ? 'date' : 'number',
-    'lineplot',
+    true, // addPadding
     independentAxisLogScale
   );
 
@@ -92,8 +92,7 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
     standardDependentAxisRange,
     axisTruncationConfig?.dependentAxis,
     dependentValueType === 'date' ? 'date' : 'number',
-    // adjust range for log scale
-    'lineplot',
+    true, // addPadding
     dependentAxisLogScale
   );
 

@@ -13,8 +13,8 @@ export function extendAxisRangeForTruncations(
   valueType?: 'number' | 'date',
   // set plot type to adjust padding/margin
   // histogram: no padding for X and Y; barplot: no min padding for Y
-  plotType?: string,
-  logScale?: boolean
+  addPadding: boolean = false,
+  logScale: boolean = false
 ): NumberOrDateRange | undefined {
   // set this to avoid error
   if (axisRange == null) return undefined;
@@ -48,10 +48,9 @@ export function extendAxisRangeForTruncations(
         // padding: check truncation or not
         config?.min
           ? dateRangeDiff
-          : plotType === 'histogram'
-          ? // no padding/margin
-            0
-          : dateRangeDiffNoTruncation,
+          : addPadding
+          ? dateRangeDiffNoTruncation
+          : 0,
         'hours'
       ).toISOString();
 
@@ -61,10 +60,9 @@ export function extendAxisRangeForTruncations(
         // padding: check truncation or not
         config?.max
           ? dateRangeDiff
-          : plotType === 'histogram'
-          ? // no padding/margin
-            0
-          : dateRangeDiffNoTruncation,
+          : addPadding
+          ? dateRangeDiffNoTruncation
+          : 0,
         'hours'
       ).toISOString();
 
@@ -81,8 +79,7 @@ export function extendAxisRangeForTruncations(
           ? (axisRange.min as number) /
             10 ** (truncationMarginFactor * Math.log10(ratio))
           : (axisRange.min as number) - truncationMarginFactor * diff
-        : // set exceptions: no need to have min padding for histogram & barplot (boxplot?)
-        plotType === 'histogram' || plotType === 'barplot'
+        : !addPadding
         ? (axisRange.min as number)
         : logScale && isFinite(ratio) && ratio > 0
         ? (axisRange.min as number) /
@@ -93,8 +90,7 @@ export function extendAxisRangeForTruncations(
           ? (axisRange.max as number) *
             10 ** (truncationMarginFactor * Math.log10(ratio))
           : (axisRange.max as number) + truncationMarginFactor * diff
-        : // set exceptions: no need to have max padding for histogram
-        plotType === 'histogram'
+        : !addPadding
         ? (axisRange.max as number)
         : logScale && isFinite(ratio) && ratio > 0
         ? (axisRange.max as number) *
