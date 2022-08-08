@@ -1268,7 +1268,8 @@ function ScatterplotWithControls({
         vizConfig,
         {
           // truncation overrides for the axis minima for log scale
-          // only pass values that you want to take effect!
+          // only pass key/values that you want overridden
+          // (e.g. false values will override just as much as true)
           ...(vizConfig.independentAxisLogScale &&
           xMinMaxDataRange?.min != null &&
           xMinMaxDataRange.min <= 0
