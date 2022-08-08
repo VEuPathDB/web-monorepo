@@ -3,7 +3,6 @@ import { Lens } from 'monocle-ts';
 import { differenceWith } from 'lodash';
 
 import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
-import { useStateWithHistory } from '@veupathdb/wdk-client/lib/Hooks/StateWithHistory';
 
 import {
   AnalysisClient,
@@ -41,10 +40,6 @@ export type AnalysisState = {
   /** Optional. Previously saved analysis or analysis in construction. */
   analysis?: Analysis | NewAnalysis;
   error?: unknown;
-  canUndo: boolean;
-  canRedo: boolean;
-  undo: () => void;
-  redo: () => void;
   setName: Setter<Analysis['displayName']>;
   setDescription: Setter<Analysis['description']>;
   setNotes: Setter<Analysis['notes']>;
@@ -79,6 +74,14 @@ export function useAnalysis(
   const history = useHistory();
   const creatingAnalysis = useRef(false);
 
+  const [analysis, setAnalysis] = useState<NewAnalysis | Analysis>();
+
+  // Ref used for saving (see the save() function below)
+  const analysisRef = useRef<Analysis | NewAnalysis>();
+  useEffect(() => {
+    analysisRef.current = analysis;
+  }, [analysis]);
+
   // Used when `analysisId` is undefined.
   const defaultAnalysis = useMemo(() => {
     // When we only want to use a single app, extract the computation and pass it to
@@ -105,13 +108,12 @@ export function useAnalysis(
     async (newAnalysis: NewAnalysis) => {
       if (!creatingAnalysis.current) {
         creatingAnalysis.current = true;
-
         const { analysisId } = await analysisClient.createAnalysis(newAnalysis);
         const savedAnalysis = await analysisClient.getAnalysis(analysisId);
         // Reuse the newAnalysis.descriptor to preserve referential equality.
         const analysis: Analysis = {
           ...savedAnalysis,
-          descriptor: newAnalysis.descriptor,
+          descriptor: analysisRef.current?.descriptor ?? newAnalysis.descriptor,
         };
         analysisCache.set(analysisId, analysis);
         creatingAnalysis.current = false;
@@ -126,19 +128,6 @@ export function useAnalysis(
     [analysisClient, history]
   );
 
-  // Allow undo/redo operations. This isn't really used yet.
-  // Might consider converting to plain `useState`.
-  const {
-    current: analysis,
-    setCurrent,
-    canRedo,
-    canUndo,
-    redo,
-    undo,
-  } = useStateWithHistory<NewAnalysis | Analysis>({
-    size: 10,
-  });
-
   // Analysis status
   const [status, setStatus] = useState<Status>(Status.InProgress);
 
@@ -146,10 +135,11 @@ export function useAnalysis(
   const [error, setError] = useState<unknown>();
 
   // Used to track if an analysis has unsaved changes.
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [updateScheduled, setUpdateScheduled] = useState(false);
 
   // Persist the state of the analysis to the backend.
   const saveAnalysis = useCallback(async () => {
+    const analysis = analysisRef.current;
     if (analysis == null)
       throw new Error("Attempt to save an analysis that hasn't been loaded.");
 
@@ -159,10 +149,11 @@ export function useAnalysis(
       await analysisClient.updateAnalysis(analysis.analysisId, analysis);
       analysisCache.set(analysis.analysisId, analysis);
     }
-  }, [analysisClient, analysis, createAnalysis]);
+  }, [analysisClient, createAnalysis]);
 
   // Create a copy of a saved analysis.
   const copyAnalysis = useCallback(async () => {
+    const analysis = analysisRef.current;
     if (analysis == null)
       throw new Error("Attempt to copy an analysis that hasn't been loaded.");
 
@@ -178,32 +169,39 @@ export function useAnalysis(
     });
 
     return copyResponse;
-  }, [analysisClient, analysis, saveAnalysis]);
+  }, [analysisClient, saveAnalysis]);
 
   // Delete an analysis from the backend.
   const deleteAnalysis = useCallback(async () => {
+    const analysis = analysisRef.current;
     if (!isSavedAnalysis(analysis))
       throw new Error('Cannot delete an unsaved analysis.');
 
     return analysisClient.deleteAnalysis(analysis.analysisId).then(() => {
       analysisCache.delete(analysis.analysisId);
     });
-  }, [analysisClient, analysis]);
+  }, [analysisClient]);
 
   // Helper function to create stable callbacks
   const useSetter = <T>(
     nestedValueLens: Lens<Analysis | NewAnalysis, T>,
     createIfUnsaved = true
   ) => {
-    const _hasUnsavedChanges = analysisId != null || createIfUnsaved;
+    // Always schedule a save, unless it's a "new" analysis and we're being
+    // told to not schedule a save.
+    const scheduleUpdate = analysisId != null || createIfUnsaved;
     return useCallback(
       (nestedValue: T | ((nestedValue: T) => T)) => {
-        setCurrent((analysis) =>
-          updateAnalysis(analysis, nestedValueLens, nestedValue)
-        );
-        setHasUnsavedChanges(_hasUnsavedChanges);
+        setAnalysis((analysis) => {
+          if (analysis == null)
+            throw new Error(
+              "Cannot update an analysis before it's been loaded."
+            );
+          return updateAnalysis(analysis, nestedValueLens, nestedValue);
+        });
+        setUpdateScheduled(scheduleUpdate);
       },
-      [nestedValueLens, _hasUnsavedChanges]
+      [nestedValueLens, scheduleUpdate]
     );
   };
 
@@ -223,29 +221,23 @@ export function useAnalysis(
   const setDataTableConfig = useSetter(analysisToDataTableConfig);
 
   // Retrieve an Analysis from the data store whenever `analysisID` updates.
-  // FIXME This will run with any deps change.
   useEffect(() => {
-    setHasUnsavedChanges(false);
-
+    setUpdateScheduled(false);
     if (analysisId == null) {
       setStatus(Status.Loaded);
       setError(undefined);
-
-      // FIXME: Should not just set the "current" state,
-      // but also clear the state's history
-      setCurrent(defaultAnalysis);
+      setAnalysis(defaultAnalysis);
     } else {
       const analysisCacheEntry = analysisCache.get(analysisId);
-
       if (analysisCacheEntry != null) {
-        setCurrent(analysisCacheEntry);
+        setAnalysis(analysisCacheEntry);
         setStatus(Status.Loaded);
         setError(undefined);
       } else {
         setStatus(Status.InProgress);
         analysisClient.getAnalysis(analysisId).then(
           (analysis) => {
-            setCurrent(analysis);
+            setAnalysis(analysis);
             setStatus(Status.Loaded);
             analysisCache.set(analysis.analysisId, analysis);
           },
@@ -256,25 +248,26 @@ export function useAnalysis(
         );
       }
     }
-  }, [defaultAnalysis, analysisId, setCurrent, analysisClient]);
+  }, [defaultAnalysis, analysisId, analysisClient]);
 
   // Reactively save analysis when it has been modified
   useEffect(() => {
-    if (hasUnsavedChanges) {
-      saveAnalysis();
-      setHasUnsavedChanges(false);
-    }
-  }, [saveAnalysis, hasUnsavedChanges]);
+    const id = setTimeout(function deferredSave() {
+      if (updateScheduled) {
+        saveAnalysis();
+        setUpdateScheduled(false);
+      }
+    }, 1000);
+    return function cleanup() {
+      clearTimeout(id);
+    };
+  }, [saveAnalysis, updateScheduled]);
 
   return {
     status,
     analysis,
     error,
-    canRedo,
-    canUndo,
-    hasUnsavedChanges,
-    redo,
-    undo,
+    hasUnsavedChanges: updateScheduled,
     setName,
     setDescription,
     setNotes,
