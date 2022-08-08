@@ -436,9 +436,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             : [],
           showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
         },
-        ...(computation.descriptor.configuration
-          ? { computeConfig: computation.descriptor.configuration }
-          : {}),
+        computeConfig: computation.descriptor.configuration,
       };
 
       const response = await dataClient.getVisualizationData(
