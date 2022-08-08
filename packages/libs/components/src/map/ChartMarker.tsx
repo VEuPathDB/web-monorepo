@@ -7,7 +7,11 @@ import Barplot from '../plots/Barplot';
 // import NumberRange type def
 import { NumberRange } from '../types/general';
 
-interface ChartMarkerProps extends BoundsDriftMarkerProps {
+import { DependentAxisLogScaleAddon } from '../types/plots';
+
+interface ChartMarkerProps
+  extends BoundsDriftMarkerProps,
+    DependentAxisLogScaleAddon {
   borderColor?: string;
   borderWidth?: number;
   data: {
@@ -275,6 +279,7 @@ export default function ChartMarker(props: ChartMarkerProps) {
       dependentAxisRange={props.dependentAxisRange ?? undefined}
       showValues={true}
       showIndependentAxisTickLabel={false}
+      dependentAxisLogScale={props.dependentAxisLogScale}
     />
   );
 
