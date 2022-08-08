@@ -11,6 +11,7 @@ import {
   LoadingOverlay,
   HelpIcon,
 } from '@veupathdb/wdk-client/lib/Components';
+import { Tooltip } from '@material-ui/core';
 import MultiSelectVariableTree from '../../core/components/variableTrees/MultiSelectVariableTree';
 import { Modal, DataGrid, MesaButton, Download } from '@veupathdb/coreui';
 
@@ -465,11 +466,12 @@ export default function SubsetDownloadModal({
                       }}
                     >
                       {requiredColumnAccessors?.includes(headerGroup.id) ? (
-                        <i
-                          className="fa fa-lock"
-                          title="This column is required"
-                          style={{ padding: '2px 6px' }}
-                        />
+                        <Tooltip title="This column is required">
+                          <i
+                            className="fa fa-lock"
+                            style={{ padding: '2px 6px' }}
+                          />
+                        </Tooltip>
                       ) : (
                         <button
                           onClick={(event) => {
@@ -543,12 +545,13 @@ export default function SubsetDownloadModal({
               paddingTop: 25,
             }}
           >
-            <img
-              src={tableSVG}
-              title="Choose a variable to see the table"
-              alt="Choose a variable to see the table"
-              width={400}
-            />
+            <Tooltip title="Choose a variable to see the table">
+              <img
+                src={tableSVG}
+                alt="Choose a variable to see the table"
+                width={400}
+              />
+            </Tooltip>
           </div>
         ) : dataLoading ? (
           <Loading />
@@ -569,7 +572,9 @@ export default function SubsetDownloadModal({
       }}
       onClick={(event) => event.preventDefault()}
     >
-      <i className="fa fa-lock" title="This variable is required" />
+      <Tooltip title="This variable is required">
+        <i className="fa fa-lock" />
+      </Tooltip>
     </div>
   );
   const customCheckboxes = mergeKeys.reduce(
@@ -709,9 +714,11 @@ export default function SubsetDownloadModal({
     // This regex works as long as every < or > in the study name is part of an HTML tag
     const regexSplitTag = /<(?!.*>).*/;
     const studyNameNoSplitTag = studyNameTrunc.replace(regexSplitTag, '');
-    studyNameElement = safeHtml(studyNameNoSplitTag + '...', {
-      title: studyNameNoTags,
-    });
+    studyNameElement = (
+      <Tooltip title={studyNameNoTags}>
+        {safeHtml(studyNameNoSplitTag + '...')}
+      </Tooltip>
+    );
   } else {
     studyNameElement = safeHtml(studyRecord.displayName);
   }
@@ -722,9 +729,11 @@ export default function SubsetDownloadModal({
   const analysisNameElement =
     analysisName &&
     (analysisName.length > maxAnalysisNameLength ? (
-      <span title={analysisName}>
-        {analysisName.substring(0, maxAnalysisNameLength - 2) + '...'}
-      </span>
+      <Tooltip title={analysisName}>
+        <span>
+          {analysisName.substring(0, maxAnalysisNameLength - 2) + '...'}
+        </span>
+      </Tooltip>
     ) : (
       analysisName
     ));
