@@ -17,12 +17,9 @@ import {
   HistogramData,
   HistogramDataSeries,
 } from '@veupathdb/components/lib/types/plots';
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import * as t from 'io-ts';
 import {
   isEqual,
-  min,
-  max,
   groupBy,
   mapValues,
   size,
@@ -93,17 +90,17 @@ import {
 import { padISODateTime } from '../../../utils/date-conversion';
 import { NumberRangeInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateRangeInputs';
 // use variant
-import { truncationConfig } from '../../../utils/truncation-config-utils-viz';
+import { truncationConfig } from '../../../utils/truncation-config-utils';
 // use Notification for truncation warning message
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 import Button from '@veupathdb/components/lib/components/widgets/Button';
 import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
 import { UIState } from '../../filter/HistogramFilter';
 // change defaultIndependentAxisRange to hook
-import { useDefaultIndependentAxisRange } from '../../../hooks/computeDefaultIndependentAxisRange';
-import { useDefaultDependentAxisRange } from '../../../hooks/computeDefaultDependentAxisRange';
+import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
+import { histogramDefaultDependentAxisMinMax } from '../../../utils/axis-range-calculations';
 
 export type HistogramDataWithCoverageStatistics = (
   | HistogramData
@@ -224,6 +221,7 @@ function HistogramViz(props: VisualizationProps) {
         // set independentAxisRange undefined
         independentAxisRange: undefined,
         dependentAxisRange: undefined,
+        dependentAxisLogScale: false,
       });
       // close truncation warnings if exists
       setTruncatedIndependentAxisWarning('');
@@ -264,7 +262,9 @@ function HistogramViz(props: VisualizationProps) {
   );
 
   const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
-    'dependentAxisLogScale'
+    'dependentAxisLogScale',
+    false,
+    true
   );
 
   const onValueSpecChange = onChangeHandlerFactory<ValueSpec>(
@@ -415,18 +415,26 @@ function HistogramViz(props: VisualizationProps) {
     ])
   );
 
-  // use custom hook
-  const defaultIndependentRange = useDefaultIndependentAxisRange(
-    xAxisVariable,
-    'histogram'
-  );
+  const defaultIndependentRange = useDefaultAxisRange(xAxisVariable);
 
-  // use custom hook
-  const defaultDependentAxisRange = useDefaultDependentAxisRange(
-    data,
-    vizConfig,
-    'Histogram'
-  );
+  const dependentMinPosMax = useMemo(() => {
+    const minPosMax = histogramDefaultDependentAxisMinMax(data);
+    return minPosMax != null
+      ? {
+          min: minPosMax.min,
+          // override max to be exactly 1 in proportion mode (rounding errors can make it slightly greater than 1)
+          max: vizConfig.valueSpec === 'proportion' ? 1 : minPosMax.max,
+        }
+      : undefined;
+  }, [data, vizConfig.valueSpec]);
+
+  const defaultDependentAxisRange = useDefaultAxisRange(
+    null,
+    0,
+    dependentMinPosMax?.min,
+    dependentMinPosMax?.max,
+    vizConfig.dependentAxisLogScale
+  ) as NumberRange;
 
   // custom legend items for checkbox
   const legendItems: LegendItemsProps[] = useMemo(() => {
@@ -632,6 +640,7 @@ function HistogramViz(props: VisualizationProps) {
         setTruncatedIndependentAxisWarning={setTruncatedIndependentAxisWarning}
         truncatedDependentAxisWarning={truncatedDependentAxisWarning}
         setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
+        dependentMinPosMax={dependentMinPosMax}
       />
     </div>
   );
@@ -676,6 +685,7 @@ type HistogramPlotWithControlsProps = Omit<HistogramProps, 'data'> & {
     truncatedDependentAxisWarning: string
   ) => void;
   outputSize?: number;
+  dependentMinPosMax: NumberRange | undefined;
 } & Partial<CoverageStatistics>;
 
 function HistogramPlotWithControls({
@@ -716,6 +726,7 @@ function HistogramPlotWithControls({
   truncatedDependentAxisWarning,
   setTruncatedDependentAxisWarning,
   outputSize,
+  dependentMinPosMax,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   const displayLibraryControls = false;
@@ -802,12 +813,22 @@ function HistogramPlotWithControls({
     truncationConfigDependentAxisMax,
   } = useMemo(
     () =>
-      truncationConfig(defaultUIState, vizConfig, defaultDependentAxisRange),
+      truncationConfig(
+        {
+          ...defaultUIState, // using annotated range, NOT the actual data
+          ...(dependentMinPosMax != null
+            ? { dependentAxisRange: dependentMinPosMax }
+            : {}),
+        },
+        vizConfig,
+        {}, // no overrides
+        true // use inclusive less than equal for the range min
+      ),
     [
       defaultUIState,
+      dependentMinPosMax,
       vizConfig.independentAxisRange,
       vizConfig.dependentAxisRange,
-      defaultDependentAxisRange,
     ]
   );
 
@@ -1006,7 +1027,7 @@ function HistogramPlotWithControls({
         >
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <Switch
-              label="Log scale"
+              label="Log scale:"
               state={histogramProps.dependentAxisLogScale}
               onStateChange={onDependentAxisLogScaleChange}
               containerStyles={{
@@ -1348,36 +1369,4 @@ function reorderData(
   } else {
     return data;
   }
-}
-
-/**
- * find min and max of the sum of multiple arrays
- * it is because histogram viz uses "stack" option for display
- * Also, each data with overlayVariable has different bins
- * For this purpose, binStart is used as array index to map corresponding count
- * Need to make stacked count array and then max
- */
-
-export function findMinMaxOfStackedArray(data: HistogramDataSeries[]) {
-  // calculate the sum of all the counts from bins with the same label
-  const sumsByLabel = data
-    .flatMap(
-      // make an array of [ [ label, count ], [ label, count ], ... ] from all series
-      (series) => series.bins.map((bin) => [bin.binLabel, bin.value])
-    )
-    // then do a sum of counts per label
-    .reduce<Record<string, number>>(
-      (map, [label, count]) => {
-        if (map[label] == null) map[label] = 0;
-        map[label] = map[label] + (count as number);
-        return map;
-      },
-      // empty map for reduce to start with
-      {}
-    );
-
-  return {
-    min: min(Object.values(sumsByLabel)),
-    max: max(Object.values(sumsByLabel)),
-  };
 }
