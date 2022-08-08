@@ -42,9 +42,10 @@ import { truncationConfig } from '../../utils/truncation-config-utils';
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../utils/variable-display';
-// import variable's metadata-based independent axis range utils
-import { min, max } from 'lodash';
 import { useDefaultAxisRange } from '../../hooks/computeDefaultAxisRange';
+import { min, max } from 'lodash';
+import { useDebounce } from '../../hooks/debouncing';
+import { useDeepValue } from '../../hooks/immutability';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -79,6 +80,11 @@ export function HistogramFilter(props: Props) {
   } = props;
   const { setFilters } = analysisState;
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
+  const otherFilters = useDeepValue(
+    filters?.filter(
+      (f) => f.entityId !== entity.id || f.variableId !== variable.id
+    )
+  );
   const uiStateKey = `${entity.id}/${variable.id}`;
 
   // compute default independent range from meta-data based util
@@ -124,6 +130,7 @@ export function HistogramFilter(props: Props) {
       getOrElse((): UIState => defaultUIState)
     );
   }, [variableUISettings, uiStateKey, defaultUIState]);
+  const uiStateForData = useDebounce(uiState, 1000);
   const subsettingClient = useSubsettingClient();
   const getData = useCallback(
     async (
@@ -139,7 +146,7 @@ export function HistogramFilter(props: Props) {
         {
           entityId: entity.id,
           variableId: variable.id,
-          filters,
+          filters: otherFilters,
         },
         (filters) => {
           return subsettingClient.getDistribution(
@@ -213,7 +220,7 @@ export function HistogramFilter(props: Props) {
       };
     },
     [
-      filters,
+      otherFilters,
       entity.displayName,
       entity.displayNamePlural,
       entity.id,
@@ -223,18 +230,7 @@ export function HistogramFilter(props: Props) {
     ]
   );
   const data = usePromise(
-    // We're tracking specific properties of `uiState`. We should eventually be
-    // more explicit about the dependencies. This will require a change to the
-    // interface of `getRequestParams`.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useCallback(() => getData(uiState), [
-      getData,
-      uiState.binWidth,
-      uiState.binWidthTimeUnit,
-      uiState.independentAxisRange,
-    ])
-    // is there some more concise utility to remove a key or keys from an object?
-    // I tried lodash.omit and it created an endless loop of API calls...!
+    useCallback(() => getData(uiStateForData), [getData, uiStateForData])
   );
 
   const filter = filters?.find(

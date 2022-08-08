@@ -62,6 +62,7 @@ import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsSt
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
+import { MouseMode } from '@veupathdb/components/lib/map/MouseTools';
 import { kFormatter, mFormatter } from '../../../utils/big-number-formatters';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { NumberVariable } from '../../../types/study';
@@ -81,7 +82,7 @@ export const mapVisualization = createVisualizationPlugin({
   isEnabledInPicker: isEnabledInPicker,
 });
 
-function createDefaultConfig(): MapConfig {
+function createDefaultConfig() {
   return {
     mapCenterAndZoom: {
       latitude: 0,
@@ -90,7 +91,8 @@ function createDefaultConfig(): MapConfig {
     },
     baseLayer: 'Street',
     dependentAxisLogScale: false,
-  };
+    mouseMode: 'default',
+  } as const;
 }
 
 function isEnabledInPicker({ geoConfigs }: IsEnabledInPickerParams): boolean {
@@ -125,6 +127,10 @@ const MapConfig = t.intersection([
       pie: null,
     }),
     dependentAxisLogScale: t.boolean,
+    mouseMode: t.keyof({
+      default: null,
+      magnification: null,
+    }),
   }),
 ]);
 
@@ -203,6 +209,8 @@ function MapViz(props: VisualizationProps) {
   const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
     'dependentAxisLogScale'
   );
+
+  const onMouseModeChange = onChangeHandlerFactory<MouseMode>('mouseMode');
 
   const [boundsZoomLevel, setBoundsZoomLevel] = useState<BoundsViewport>();
 
@@ -684,6 +692,7 @@ function MapViz(props: VisualizationProps) {
       zoomLevel,
       vizConfig.baseLayer,
       vizConfig.checkedLegendItems,
+      vizConfig.mouseMode,
     ]
   );
 
@@ -718,6 +727,8 @@ function MapViz(props: VisualizationProps) {
         showScale={zoomLevel != null && zoomLevel > 4 ? true : false}
         // show mouse tool
         showMouseToolbar={true}
+        mouseMode={vizConfig.mouseMode ?? createDefaultConfig().mouseMode}
+        onMouseModeChange={onMouseModeChange}
       />
       <RadioButtonGroup
         label="Plot mode"

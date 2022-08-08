@@ -11,6 +11,7 @@ import {
   useAnalysis,
   useAnalysisClient,
   usePreloadAnalysis,
+  Analysis,
 } from '../../core';
 
 import { createComputation } from '../../core/components/computations/Utils';
@@ -59,7 +60,13 @@ export function useWorkspaceAnalysis(
         creatingAnalysis.current = true;
 
         const { analysisId } = await analysisClient.createAnalysis(newAnalysis);
-        await preloadAnalysis(analysisId);
+        const savedAnalysis = await analysisClient.getAnalysis(analysisId);
+        // Reuse the newAnalysis.descriptor to preserve referential equality.
+        const analysis: Analysis = {
+          ...savedAnalysis,
+          descriptor: newAnalysis.descriptor,
+        };
+        await preloadAnalysis(analysisId, analysis);
         creatingAnalysis.current = false;
 
         const subPath = findSubPath(newAnalysis, location, url);
