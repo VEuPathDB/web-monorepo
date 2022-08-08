@@ -929,6 +929,22 @@ function HistogramPlotWithControls({
         />
       )}
 
+      {/* Plot mode */}
+      <RadioButtonGroup
+        label="Plot mode"
+        selectedOption={valueSpec}
+        options={['count', 'proportion']}
+        buttonColor={'primary'}
+        margins={['1em', '0', '0', '1em']}
+        onOptionSelected={(newOption) => {
+          if (newOption === 'proportion') {
+            onValueSpecChange('proportion');
+          } else {
+            onValueSpecChange('count');
+          }
+        }}
+      />
+
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         {/* make switch and radiobutton single line with space
                  also marginRight at LabelledGroup is set to 0.5625em: default - 1.5625em*/}
@@ -1032,19 +1048,6 @@ function HistogramPlotWithControls({
               onStateChange={onDependentAxisLogScaleChange}
               containerStyles={{
                 minHeight: widgetHeight,
-              }}
-            />
-            <div style={{ width: '4em' }}>{''}</div>
-            <RadioButtonGroup
-              selectedOption={valueSpec}
-              options={['count', 'proportion']}
-              buttonColor={'primary'}
-              onOptionSelected={(newOption) => {
-                if (newOption === 'proportion') {
-                  onValueSpecChange('proportion');
-                } else {
-                  onValueSpecChange('count');
-                }
               }}
             />
           </div>

@@ -536,6 +536,23 @@ function BarplotViz(props: VisualizationProps) {
           {...plotProps}
         />
       )}
+
+      {/* Plot mode */}
+      <RadioButtonGroup
+        label="Plot mode"
+        selectedOption={vizConfig.valueSpec}
+        options={['count', 'proportion']}
+        buttonColor={'primary'}
+        margins={['1em', '0', '0', '1em']}
+        onOptionSelected={(newOption) => {
+          if (newOption === 'proportion') {
+            onValueSpecChange('proportion');
+          } else {
+            onValueSpecChange('count');
+          }
+        }}
+      />
+
       {/* Y-axis range control */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <LabelledGroup label="Y-axis controls">
@@ -544,19 +561,6 @@ function BarplotViz(props: VisualizationProps) {
               label="Log scale:"
               state={vizConfig.dependentAxisLogScale}
               onStateChange={onDependentAxisLogScaleChange}
-            />
-            <div style={{ width: '4em' }}>{''}</div>
-            <RadioButtonGroup
-              selectedOption={vizConfig.valueSpec}
-              options={['count', 'proportion']}
-              buttonColor={'primary'}
-              onOptionSelected={(newOption) => {
-                if (newOption === 'proportion') {
-                  onValueSpecChange('proportion');
-                } else {
-                  onValueSpecChange('count');
-                }
-              }}
             />
           </div>
           {/* Y-axis range control */}
