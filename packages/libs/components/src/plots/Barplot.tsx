@@ -23,6 +23,7 @@ import { NumberRange } from '../types/general';
 // import truncation util functions
 import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations';
 import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
+import { logScaleDtick } from '../utils/logscale-dtick';
 
 // in this example, the main variable is 'country'
 export interface BarplotProps
@@ -171,9 +172,9 @@ const Barplot = makePlotlyPlotComponent(
       axisTruncationConfig?.dependentAxis,
       'number',
       // set plot type not to have padding/margin on the min
-      'barplot'
+      false,
+      dependentAxisLogScale
     ) as NumberRange | undefined;
-
     // make rectangular layout shapes for truncated axis/missing data
     const truncatedAxisHighlighting:
       | Partial<Shape>[]
@@ -220,13 +221,13 @@ const Barplot = makePlotlyPlotComponent(
             extendedDependentAxisRange?.max,
           ].map((val) =>
             dependentAxisLogScale && val != null
-              ? val <= 0
-                ? -0.1 // for count's logscale
-                : Math.log10(val as number)
+              ? Math.log10(val as number)
               : val
           )
         : [0, 10],
-      dtick: dependentAxisLogScale ? 1 : undefined,
+      dtick: dependentAxisLogScale
+        ? logScaleDtick(extendedDependentAxisRange)
+        : undefined,
       showticklabels: showDependentAxisTickLabel,
     };
 

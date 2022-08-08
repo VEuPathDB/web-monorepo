@@ -69,28 +69,6 @@ export function truncationLayoutShapes(
     ];
   }
 
-  // dependent axis max
-  if (axisTruncationConfig?.dependentAxis?.max) {
-    truncationLayoutShapes = [
-      ...truncationLayoutShapes,
-      {
-        type: 'rect',
-        line: {
-          width: 0,
-          dash: 'dash',
-        },
-        fillcolor: filledColor,
-        opacity: 1,
-        xref: orientation === 'vertical' ? 'paper' : 'x',
-        yref: orientation === 'vertical' ? 'y' : 'paper',
-        x0: orientation === 'vertical' ? 0 : standardDependentAxisRange?.max,
-        x1: orientation === 'vertical' ? 1 : extendedDependentAxisRange?.max,
-        y0: orientation === 'vertical' ? standardDependentAxisRange?.max : 0,
-        y1: orientation === 'vertical' ? extendedDependentAxisRange?.max : 1,
-      },
-    ];
-  }
-
   // dependent axis min
   if (axisTruncationConfig?.dependentAxis?.min) {
     truncationLayoutShapes = [
@@ -109,6 +87,28 @@ export function truncationLayoutShapes(
         x1: orientation === 'vertical' ? 1 : extendedDependentAxisRange?.min,
         y0: orientation === 'vertical' ? standardDependentAxisRange?.min : 0,
         y1: orientation === 'vertical' ? extendedDependentAxisRange?.min : 1,
+      },
+    ];
+  }
+
+  // dependent axis max
+  if (axisTruncationConfig?.dependentAxis?.max) {
+    truncationLayoutShapes = [
+      ...truncationLayoutShapes,
+      {
+        type: 'rect',
+        line: {
+          width: 0,
+          dash: 'dash',
+        },
+        fillcolor: filledColor,
+        opacity: 1,
+        xref: orientation === 'vertical' ? 'paper' : 'x',
+        yref: orientation === 'vertical' ? 'y' : 'paper',
+        x0: orientation === 'vertical' ? 0 : standardDependentAxisRange?.max,
+        x1: orientation === 'vertical' ? 1 : extendedDependentAxisRange?.max,
+        y0: orientation === 'vertical' ? standardDependentAxisRange?.max : 0,
+        y1: orientation === 'vertical' ? extendedDependentAxisRange?.max : 1,
       },
     ];
   }

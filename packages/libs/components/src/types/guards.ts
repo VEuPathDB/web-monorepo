@@ -55,9 +55,16 @@ export function isLinePlotData(
     : false;
 }
 
+/** WARNING - THIS IS NOT A GOOD TEST. Date("22") is a valid date
+ * luckily it's not used in any production code
+ */
 /** Determine if a NumberOrDate variable is a string that can be converted to a date */
 export function isDate(date: NumberOrDate): date is string {
   return new Date(date as string).toString() !== 'Invalid Date';
+}
+
+export function isNumber(x: any): x is number {
+  return typeof x === 'number';
 }
 
 /** Determine if a date/time quantity is a TimeUnit */
