@@ -1471,7 +1471,7 @@ function ScatterplotWithControls({
             <Notification
               title={''}
               text={
-                'Nothing can be plotted with log scale because all values are negative or zero'
+                'Nothing can be plotted with log scale because all values are zero or negative'
               }
               color={'#5586BE'}
               onAcknowledgement={() =>
@@ -1564,7 +1564,7 @@ function ScatterplotWithControls({
             <Notification
               title={''}
               text={
-                'Nothing can be plotted with log scale because all values are negative or zero'
+                'Nothing can be plotted with log scale because all values are zero or negative'
               }
               color={'#5586BE'}
               onAcknowledgement={() =>
