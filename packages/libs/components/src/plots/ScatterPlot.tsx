@@ -81,7 +81,7 @@ const ScatterPlot = makePlotlyPlotComponent(
       standardIndependentAxisRange,
       axisTruncationConfig?.independentAxis,
       independentValueType === 'date' ? 'date' : 'number',
-      'scatterplot',
+      true, // addPadding
       independentAxisLogScale
     );
 
@@ -91,8 +91,7 @@ const ScatterPlot = makePlotlyPlotComponent(
       standardDependentAxisRange,
       axisTruncationConfig?.dependentAxis,
       dependentValueType === 'date' ? 'date' : 'number',
-      // adjust range for log scale
-      'scatterplot',
+      true, // addPadding
       dependentAxisLogScale
     );
 
