@@ -42,9 +42,8 @@ import { truncationConfig } from '../../utils/truncation-config-utils';
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../utils/variable-display';
-// import variable's metadata-based independent axis range utils
-import { defaultIndependentAxisRange } from '../../utils/default-independent-axis-range';
-import { max } from 'lodash';
+import { useDefaultAxisRange } from '../../hooks/computeDefaultAxisRange';
+import { min, max } from 'lodash';
 import { useDebounce } from '../../hooks/debouncing';
 import { useDeepValue } from '../../hooks/immutability';
 
@@ -89,10 +88,7 @@ export function HistogramFilter(props: Props) {
   const uiStateKey = `${entity.id}/${variable.id}`;
 
   // compute default independent range from meta-data based util
-  const defaultIndependentRange: NumberOrDateRange | undefined = useMemo(
-    () => defaultIndependentAxisRange(variable, 'histogram'),
-    [variable]
-  );
+  const defaultIndependentRange = useDefaultAxisRange(variable);
 
   // get as much default UI state from variable annotations as possible
   const defaultUIState: UIState = useMemo(() => {
@@ -295,21 +291,35 @@ export function HistogramFilter(props: Props) {
   // stats from foreground
   const fgSummaryStats = data?.value?.series[1].summary;
 
+  const minPosVal = useMemo(
+    () =>
+      min(
+        data.value?.series
+          .flatMap((data) => data.bins)
+          .map((data) => data.value)
+          .filter((value) => value > 0)
+      ) as number,
+    [data]
+  );
+
+  const maxVal = useMemo(
+    () =>
+      max(
+        data.value?.series
+          .flatMap((data) => data.bins)
+          .map((data) => data.value)
+      ) as number,
+    [data]
+  );
+
   // set defaultDependentAxisRange
-  const defaultDependentAxisRange = useMemo(() => {
-    const defaultDependentAxisMinMax =
-      !data.pending && data.value != null
-        ? {
-            min: 0,
-            max: max(
-              data.value.series
-                .flatMap((data) => data.bins)
-                .map((data) => data.value)
-            ) as number,
-          }
-        : undefined;
-    return defaultDependentAxisMinMax;
-  }, [data]);
+  const defaultDependentAxisRange = useDefaultAxisRange(
+    null,
+    0,
+    minPosVal,
+    maxVal,
+    uiState.dependentAxisLogScale
+  ) as NumberRange;
 
   // Note use of `key` used with HistogramPlotWithControls. This is a little hack to force
   // the range to be reset if the filter is removed.
@@ -388,6 +398,7 @@ export function HistogramFilter(props: Props) {
           showSpinner={data.pending}
           variable={variable}
           defaultDependentAxisRange={defaultDependentAxisRange}
+          dependentAxisMinPosMaxRange={{ min: minPosVal, max: maxVal }}
         />
       </div>
     </div>
@@ -402,6 +413,8 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   filter?: DateRangeFilter | NumberRangeFilter;
   variable?: HistogramVariable;
   defaultDependentAxisRange?: NumberRange | undefined;
+  /** truncation detection requires the minPos to max range */
+  dependentAxisMinPosMaxRange?: NumberRange | undefined;
 };
 
 function HistogramPlotWithControls({
@@ -413,6 +426,7 @@ function HistogramPlotWithControls({
   filter,
   variable,
   defaultDependentAxisRange,
+  dependentAxisMinPosMaxRange,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   // set the state of truncation warning message
@@ -558,10 +572,23 @@ function HistogramPlotWithControls({
     truncationConfigIndependentAxisMax,
     truncationConfigDependentAxisMin,
     truncationConfigDependentAxisMax,
-  } = useMemo(() => truncationConfig(defaultUIState, uiState), [
-    defaultUIState,
-    uiState,
-  ]);
+  } = useMemo(
+    () =>
+      truncationConfig(
+        {
+          independentAxisRange: defaultUIState.independentAxisRange,
+          dependentAxisRange: dependentAxisMinPosMaxRange,
+        },
+        uiState,
+        {}, // no overrides
+        true // use inclusive less than or equal to for min
+      ),
+    [
+      defaultUIState.independentAxisRange,
+      defaultDependentAxisRange,
+      uiState.dependentAxisRange,
+    ]
+  );
 
   // set useEffect for changing truncation warning message
   useEffect(() => {
@@ -715,7 +742,7 @@ function HistogramPlotWithControls({
 
           <NumberRangeInput
             label="Range"
-            range={uiState.dependentAxisRange}
+            range={uiState.dependentAxisRange ?? defaultDependentAxisRange}
             onRangeChange={(newRange?: NumberOrDateRange) => {
               handleDependentAxisRangeChange(newRange as NumberRange);
             }}
