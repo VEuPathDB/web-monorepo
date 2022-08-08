@@ -11,7 +11,7 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
     const [ anchorEl, setAnchorEl ] = useState<HTMLElement | null>(null);
 
     useEffect(() => {
-        if (isSelectable || isMultiPick) return;
+        if (!isSelectable || isMultiPick) return;
         setAnchorEl(null);
     }, [isSelectable, isMultiPick, selectedList])
 

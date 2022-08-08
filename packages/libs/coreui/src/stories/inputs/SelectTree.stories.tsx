@@ -67,7 +67,7 @@ const Template: Story<SelectTreeProps<unknown>> = (args) => {
       }
 
     const nonCheckboxClickEvent = (node: FieldTreeNode) => {
-      if (args.isSelectable || !isLeaf(node, getNodeChildren)) return;
+      if (!args.isSelectable || !isLeaf(node, getNodeChildren)) return;
       setSelectedFields([ node.field.term ]);
       setSelectedVarName(node.field.display);
     }
@@ -76,7 +76,7 @@ const Template: Story<SelectTreeProps<unknown>> = (args) => {
       return (
         <span
           css={{
-            backgroundColor: !args.isSelectable && selectedFields.includes(node.field.term) ? '#e6e6e6' : '',
+            // backgroundColor: !args.isSelectable && selectedFields.includes(node.field.term) ? '#e6e6e6' : '',
             padding: '0.125em 0.25em',
             borderRadius: '0.25em',
           }}
@@ -124,7 +124,7 @@ Standard.args = {
     isAdditionalFilterApplied: false,
     isMultiPick: false,
     isSearchable: true,
-    isSelectable: false,
+    isSelectable: true,
     linksPosition: 2,
     onExpansionChange: () => null,
     onSearchTermChange: () => {},

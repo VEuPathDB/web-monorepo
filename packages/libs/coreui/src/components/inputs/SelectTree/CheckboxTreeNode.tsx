@@ -10,22 +10,19 @@ export type CheckboxListStyleSpec = {
     listStyle: CSSProperties['listStyle'],
     cursor: CSSProperties['cursor'],
   },
-  options: {
-    textHoverEffect: CSSProperties['textDecoration']
-  }
+  children: {
+    cursor: CSSProperties['cursor'],
+    padding: CSSProperties['padding']
+  },
 };
-
-const optionsHoverDecoration = css({
-  textDecoration: 'underline',
-})
 
 const defaultStyle = {
   list: {
     listStyle: 'none',
     cursor: 'pointer',
   },
-  options: {
-    '&:hover': optionsHoverDecoration,
+  children: {
+    padding: '0 0 0 1.5em',
   },
 }
 
@@ -132,11 +129,10 @@ export default function CheckboxTreeNode<T>({
     return (
       <li css={{
         nodeVisibilityCss, 
-        ...defaultStyle.list
+        ...defaultStyle.list,
       }}>
         <div css={{
           display: 'flex',
-          ...defaultStyle.options
         }}>
           {isLeafNode || isActiveSearch ? (
             <></>
@@ -146,6 +142,9 @@ export default function CheckboxTreeNode<T>({
           )}
           {!isSelectable || (!isMultiPick && !isLeafNode) ? (
             <div
+              css={{
+                cursor: isLeafNode ? 'default' : 'cursor',
+              }}
               onClick={shouldExpandOnClick ? () => toggleExpansion(node) : undefined}
             >
               {nodeElement}
@@ -163,7 +162,7 @@ export default function CheckboxTreeNode<T>({
           )}
         </div>
         { !isLeafNode && isVisible && isExpanded &&
-          <ul css={{childrenVisibilityCss, padding: 0, paddingLeft: '1.5em'}}>
+          <ul css={{childrenVisibilityCss, ...defaultStyle.children}}>
             {getNodeChildren(node).map((child, index) =>
               <CheckboxTreeNode
                 key={"node_" + getNodeId(child)}

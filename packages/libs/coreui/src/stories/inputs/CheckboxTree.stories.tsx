@@ -19,7 +19,7 @@ export default {
 
 const Template: Story<CheckboxTreeProps<unknown>> = (args) => {
     const fieldSequence = useMemo(() => preorderSeq(tree), [tree]);
-    const startExpanded = false;
+    const startExpanded = !args.isSelectable;
     const mode = 'singleSelection';
     const [ selectedFields, setSelectedFields ] = useState([]);
     const activeField = null;
@@ -74,7 +74,7 @@ const Template: Story<CheckboxTreeProps<unknown>> = (args) => {
       return (
         <span
           css={{
-            backgroundColor: !args.isSelectable && selectedFields.includes(node.field.term) ? '#e6e6e6' : '',
+            // backgroundColor: args.isSelectable && !args.isMultiPick && selectedFields.includes(node.field.term) ? '#e6e6e6' : '',
             padding: '0.125em 0.25em',
             borderRadius: '0.25em',
           }}
@@ -87,7 +87,13 @@ const Template: Story<CheckboxTreeProps<unknown>> = (args) => {
     
     return (
       <>
-        <h2>You've selected: {args.isSelectable ? selectedFields.length + ' variables' : selectedFields}</h2>
+        {args.isSelectable ? 
+          <h2>You've selected: {args.isMultiPick ? selectedFields.length + ' variables': selectedFields}</h2> : 
+          <h3>
+            This implementation is not selectable <br />
+            Uses the "My Organism Preferences" in genomics as a reference
+          </h3>
+        }
         <CheckboxTree 
             {...args} 
             expandedList={expandedNodes} 
@@ -106,8 +112,8 @@ const Template: Story<CheckboxTreeProps<unknown>> = (args) => {
     )
 }
 
-export const AsSingleSelectLinks = Template.bind({});
-AsSingleSelectLinks.args = {
+export const AsSingleSelect = Template.bind({});
+AsSingleSelect.args = {
     tree,
     expandedList: [],
     additionalFilters: [],
@@ -121,9 +127,9 @@ AsSingleSelectLinks.args = {
       },
     getNodeId: (node: FieldTreeNode) => node.field.term,
     isAdditionalFilterApplied: false,
-    isMultiPick: true,
+    isMultiPick: false,
     isSearchable: true,
-    isSelectable: false,
+    isSelectable: true,
     linksPosition: 2,
     onExpansionChange: () => null,
     onSearchTermChange: () => {},
@@ -140,6 +146,20 @@ AsSingleSelectLinks.args = {
 
 export const AsMultiSelect = Template.bind({});
 AsMultiSelect.args = {
-    ...AsSingleSelectLinks.args,
+    ...AsSingleSelect.args,
+    isMultiPick: true,
     isSelectable: true,
+} as CheckboxTreeProps<unknown>;
+
+export const IsNotSelectable = Template.bind({});
+IsNotSelectable.args = {
+    ...AsSingleSelect.args,
+    tree: {
+      ...tree,
+      children: [
+        {...tree.children[0]},
+        {...tree.children[4]},
+      ]},
+    isSelectable: false,
+    isSearchable: false,
 } as CheckboxTreeProps<unknown>;
