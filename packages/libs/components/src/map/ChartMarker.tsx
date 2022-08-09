@@ -90,12 +90,12 @@ export default function ChartMarker(props: ChartMarkerProps) {
         });
 
   // find local min/max (one marker)
-  const localMinValue: number = Math.min(
-    ...fullStat.map((o) => o.value).filter((a) => a > 0)
-  ); // max of fullStat.value per marker icon
-  const localMaxValue: number = Math.max(
-    ...fullStat.map((o) => o.value).filter((a) => a > 0)
-  ); // max of fullStat.value per marker icon
+  const localMinMaxPosRange: any = props.dependentAxisRange
+    ? props.dependentAxisRange
+    : {
+        min: Math.min(...fullStat.map((o) => o.value).filter((a) => a > 0)),
+        max: Math.max(...fullStat.map((o) => o.value).filter((a) => a > 0)),
+      };
 
   const roundX = 10; // round corner in pixel: 0 = right angle
   const roundY = 10; // round corner in pixel: 0 = right angle
@@ -153,14 +153,14 @@ export default function ChartMarker(props: ChartMarkerProps) {
               props.dependentAxisRange.max / props.dependentAxisRange.min
             )) *
           (size - 2 * marginY)
-        : (Math.log10(el.value / localMinValue) /
-            Math.log10(localMaxValue / localMinValue)) *
+        : (Math.log10(el.value / localMinMaxPosRange.min) /
+            Math.log10(localMinMaxPosRange.max / localMinMaxPosRange.min)) *
           (size - 2 * marginY)
       : props.dependentAxisRange // no log scale
       ? ((el.value - props.dependentAxisRange.min) /
           (props.dependentAxisRange.max - props.dependentAxisRange.min)) *
         (size - 2 * marginY) // bar height: used 2*marginY to have margins at both top and bottom
-      : (el.value / localMaxValue) * (size - 2 * marginY); // bar height: used 2*marginY to have margins at both top and bottom
+      : (el.value / localMinMaxPosRange.max) * (size - 2 * marginY); // bar height: used 2*marginY to have margins at both top and bottom
 
     startingY = size - marginY - barHeight + borderWidth; // y in <react> tag: note that (0,0) is top left of the marker icon
     // making the last bar, noData
