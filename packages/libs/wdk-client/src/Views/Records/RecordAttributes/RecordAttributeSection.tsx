@@ -29,8 +29,7 @@ function RecordAttributeSection(props: Props) {
       : value.displayText != null ? stripHTML(value.displayText).length
       : value.url.length;
   }, [value])
-  if (value == null) return null;
-  if (textLength !== -1 && textLength < 150) return (
+  if (textLength < 150) return (
     <InlineRecordAttributeSection {...props} />
   )
   else return (
