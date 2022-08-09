@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-// import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
-// import MaterialSwitch from '@material-ui/core/Switch';
 
 import { LIGHT_BLUE, MEDIUM_GRAY } from '../../constants/colors';
 import { FilledSwitch } from '@veupathdb/coreui';
@@ -39,16 +37,6 @@ export default function Switch({
   disabled = false,
   labelPosition = 'before',
 }: SwitchProps) {
-  // const [focused, setFocused] = useState(false);
-
-  // const theme = createMuiTheme({
-  //   palette: {
-  //     primary: {
-  //       main: color,
-  //     },
-  //   },
-  // });
-
   return (
     <div
       style={{
@@ -57,8 +45,6 @@ export default function Switch({
         alignItems: 'center',
         ...containerStyles,
       }}
-      // onMouseOver={() => setFocused(true && !disabled)}
-      // onMouseOut={() => setFocused(false)}
     >
       {label && (
         <Typography
@@ -73,18 +59,6 @@ export default function Switch({
           {label}
         </Typography>
       )}
-      {/* <ThemeProvider theme={theme}>
-        <MaterialSwitch
-          checked={state}
-          // The stinky use of `any` here comes from
-          // an incomplete type definition in the
-          // material UI library. (Comment author unknown - possibly MD)
-          onChange={(event: any) => onStateChange(event.target.checked)}
-          size="small"
-          color="primary"
-          disabled={disabled}
-        />
-      </ThemeProvider> */}
       <FilledSwitch
         options={[false, true]}
         selectedOption={state ?? false}
