@@ -1,9 +1,14 @@
+import React from 'react';
 import PropTypes from 'prop-types';
 import { renderAttributeValue, wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 /** Attribute value */
 function RecordAttribute(props) {
-  let { record, attribute } = props;
+  const { record, attribute } = props;
+  const value = record.attributes[attribute.name];
+  if (value == null) return (
+    <p><em>No data available</em></p>
+  );
   return renderAttributeValue(record.attributes[attribute.name], null, 'div');
 }
 
