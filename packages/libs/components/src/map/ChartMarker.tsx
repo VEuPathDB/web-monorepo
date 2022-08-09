@@ -89,11 +89,13 @@ export default function ChartMarker(props: ChartMarkerProps) {
           maximumFractionDigits: 0,
         });
 
-  // find local min/max (one marker)
-  const localMinMaxPosRange: any = props.dependentAxisRange
+  // determine min/max (one marker)
+  const minMaxPosRange: NumberRange = props.dependentAxisRange
     ? props.dependentAxisRange
     : {
-        min: Math.min(...fullStat.map((o) => o.value).filter((a) => a > 0)),
+        min: props.dependentAxisLogScale
+          ? Math.min(...fullStat.map((o) => o.value).filter((a) => a > 0))
+          : 0,
         max: Math.max(...fullStat.map((o) => o.value).filter((a) => a > 0)),
       };
 
@@ -144,23 +146,15 @@ export default function ChartMarker(props: ChartMarkerProps) {
     barWidth = (xSize - 2 * marginX) / count; // bar width
     startingX = marginX + borderWidth + barWidth * index; // x in <react> tag: note that (0,0) is top left of the marker icon
     barHeight = props.dependentAxisLogScale // log scale
-      ? el.value === 0 || el.value < 0
+      ? el.value <= 0
         ? 0
         : // if dependentAxisRange != null, plot with global max
-        props.dependentAxisRange
-        ? (Math.log10(el.value / props.dependentAxisRange.min) /
-            Math.log10(
-              props.dependentAxisRange.max / props.dependentAxisRange.min
-            )) *
+          (Math.log10(el.value / minMaxPosRange.min) /
+            Math.log10(minMaxPosRange.max / minMaxPosRange.min)) *
           (size - 2 * marginY)
-        : (Math.log10(el.value / localMinMaxPosRange.min) /
-            Math.log10(localMinMaxPosRange.max / localMinMaxPosRange.min)) *
-          (size - 2 * marginY)
-      : props.dependentAxisRange // no log scale
-      ? ((el.value - props.dependentAxisRange.min) /
-          (props.dependentAxisRange.max - props.dependentAxisRange.min)) *
-        (size - 2 * marginY) // bar height: used 2*marginY to have margins at both top and bottom
-      : (el.value / localMinMaxPosRange.max) * (size - 2 * marginY); // bar height: used 2*marginY to have margins at both top and bottom
+      : ((el.value - minMaxPosRange.min) /
+          (minMaxPosRange.max - minMaxPosRange.min)) *
+        (size - 2 * marginY); // bar height: used 2*marginY to have margins at both top and bottom
 
     startingY = size - marginY - barHeight + borderWidth; // y in <react> tag: note that (0,0) is top left of the marker icon
     // making the last bar, noData
