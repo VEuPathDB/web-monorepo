@@ -49,7 +49,8 @@ import {
 } from '../core/utils/analysis';
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
 import ShareFromAnalysesList from './sharing/ShareFromAnalysesList';
-import { Checkbox, FilledSwitch, colors } from '@veupathdb/coreui';
+import { Checkbox, colors } from '@veupathdb/coreui';
+import { Switch } from '../core/components/Switch';
 
 interface AnalysisAndDataset {
   analysis: AnalysisSummary & {
@@ -335,24 +336,12 @@ export function AllAnalyses(props: Props) {
         },
         {
           element: (
-            <FilledSwitch
-              options={[false, true]}
+            <Switch
               labels={{ right: 'Sort pinned to top' }}
               selectedOption={sortPinned}
               onOptionChange={setSortPinned}
               disabled={pinnedAnalyses.length === 0}
-              styleOverrides={{
-                default: [
-                  { backgroundColor: colors.gray[400] },
-                  { backgroundColor: colors.blue[800], knobColor: 'white' },
-                ],
-                hover: [
-                  { backgroundColor: colors.gray[500] },
-                  { backgroundColor: colors.blue[800], knobColor: 'white' },
-                ],
-                disabled: { backgroundColor: colors.gray[300] },
-                container: { marginLeft: '1em' },
-              }}
+              styleOverrides={{ container: { marginLeft: '1em' } }}
             />
           ),
         },

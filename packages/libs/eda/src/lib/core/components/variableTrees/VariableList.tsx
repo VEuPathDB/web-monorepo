@@ -47,8 +47,7 @@ import { pruneEmptyFields } from '../../utils/wdk-filter-param-adapter';
 import { Tooltip as VarTooltip } from '../docs/variable-constraints';
 import { useActiveDocument } from '../docs/DocumentationContainer';
 import { CustomCheckboxes } from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTreeNode';
-import { FilledSwitch } from '@veupathdb/coreui';
-import { blue, grey } from '@material-ui/core/colors';
+import { Switch } from '../Switch';
 
 interface VariableField {
   type?: string;
@@ -388,22 +387,10 @@ export default function VariableList({
             onClick={toggleShowOnlyStarredVariables}
             disabled={starredVariableToggleDisabled}
           >
-            <FilledSwitch
-              options={[false, true]}
+            <Switch
               selectedOption={showOnlyStarredVariables}
               disabled={starredVariableToggleDisabled}
-              onOptionChange={() => {}}
-              styleOverrides={{
-                default: [
-                  { backgroundColor: grey[500] },
-                  { backgroundColor: blue[800], knobColor: 'white' },
-                ],
-                hover: [
-                  { backgroundColor: grey[500] },
-                  { backgroundColor: blue[800], knobColor: 'white' },
-                ],
-                size: 'small',
-              }}
+              size="small"
             />
             <Icon fa="star" />
           </button>
@@ -527,22 +514,10 @@ export default function VariableList({
               );
             }}
           >
-            <FilledSwitch
-              options={[false, true]}
+            <Switch
               labels={{ right: 'Only show compatible variables' }}
               selectedOption={showOnlyCompatibleVariables}
-              onOptionChange={() => {}}
-              styleOverrides={{
-                default: [
-                  { backgroundColor: grey[500] },
-                  { backgroundColor: blue[800], knobColor: 'white' },
-                ],
-                hover: [
-                  { backgroundColor: grey[500] },
-                  { backgroundColor: blue[800], knobColor: 'white' },
-                ],
-                size: 'small',
-              }}
+              size="small"
             />
           </button>
         </HtmlTooltip>
