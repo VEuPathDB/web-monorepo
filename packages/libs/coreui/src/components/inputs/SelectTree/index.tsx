@@ -4,22 +4,30 @@ import CheckboxTree, { CheckboxTreeProps, LinksPosition } from "./CheckboxTree";
   
 export interface SelectTreeProps<T> extends CheckboxTreeProps<T> {
     buttonDisplayContent: ReactNode;
+    closeOnSelection?: boolean;
 }
 
 function SelectTree<T>(props: SelectTreeProps<T>) {
-    const { isSelectable, isMultiPick, selectedList } = props;
+    const [ buttonDisplayContent, setButtonDisplayContent] = useState<ReactNode>(props.currentList && props.currentList.length ? props.currentList.join(', ') : props.buttonDisplayContent);
+    const { selectedList, closeOnSelection, tree } = props;
     const [ anchorEl, setAnchorEl ] = useState<HTMLElement | null>(null);
 
     useEffect(() => {
-        if (!isSelectable || isMultiPick) return;
+        if (!closeOnSelection) return;
         setAnchorEl(null);
-    }, [isSelectable, isMultiPick, selectedList])
+        setButtonDisplayContent(selectedList.length ? selectedList.join(', ') : props.buttonDisplayContent);
+    }, [closeOnSelection, selectedList])
+
+    const onClose = () => {
+        setButtonDisplayContent(selectedList.length ? selectedList.join(', ') : props.buttonDisplayContent);
+    }
 
     return (
         <PopoverButton
-            buttonDisplayContent={props.buttonDisplayContent}
+            buttonDisplayContent={buttonDisplayContent}
             anchorEl={anchorEl}
             setAnchorEl={setAnchorEl}
+            onClose={onClose}
         >
             <CheckboxTree
                   tree={props.tree}
@@ -31,10 +39,10 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
                   showRoot={props.showRoot}
                   renderNode={props.renderNode}
                   expandedList={props.expandedList}
-                  isSelectable={isSelectable}
+                  isSelectable={props.isSelectable}
                   selectedList={selectedList}
                   customCheckboxes={props.customCheckboxes}
-                  isMultiPick={isMultiPick}
+                  isMultiPick={props.isMultiPick}
                   name={props.name}
                   onSelectionChange={props.onSelectionChange}
                   currentList={props.currentList}

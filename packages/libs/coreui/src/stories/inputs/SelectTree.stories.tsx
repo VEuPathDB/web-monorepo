@@ -24,7 +24,7 @@ const Template: Story<SelectTreeProps<unknown>> = (args) => {
     const [ selectedFields, setSelectedFields ] = useState([]);
     const activeField = null;
     const [ searchTerm, setSearchTerm ] = useState<string>('');
-    const [ selectedVarName, setSelectedVarName ] = useState<ReactNode>(args.buttonDisplayContent);
+    // const [ selectedVarName, setSelectedVarName ] = useState<ReactNode>(args.buttonDisplayContent);
 
     const getPathToField = useCallback(
         (field?: Field) => {
@@ -59,28 +59,27 @@ const Template: Story<SelectTreeProps<unknown>> = (args) => {
         []
       );
 
-    const getNodeChildren =  (node: FieldTreeNode) => {
-        const showMultiFilterDescendants = true;
-        return 'type' in node.field && node.field.type === 'multiFilter' && !showMultiFilterDescendants
-          ? []
-          : node.children ?? [];
-      }
+    // const getNodeChildren =  (node: FieldTreeNode) => {
+    //     const showMultiFilterDescendants = true;
+    //     return 'type' in node.field && node.field.type === 'multiFilter' && !showMultiFilterDescendants
+    //       ? []
+    //       : node.children ?? [];
+    //   }
 
-    const nonCheckboxClickEvent = (node: FieldTreeNode) => {
-      if (!args.isSelectable || !isLeaf(node, getNodeChildren)) return;
-      setSelectedFields([ node.field.term ]);
-      setSelectedVarName(node.field.display);
-    }
+    // const nonCheckboxClickEvent = (node: FieldTreeNode) => {
+    //   if (!args.isSelectable || !isLeaf(node, getNodeChildren)) return;
+    //   setSelectedFields([ node.field.term ]);
+    //   // setSelectedVarName(node.field.display);
+    // }
     
     const renderNode = (node: FieldTreeNode) => {
       return (
         <span
           css={{
-            // backgroundColor: !args.isSelectable && selectedFields.includes(node.field.term) ? '#e6e6e6' : '',
             padding: '0.125em 0.25em',
             borderRadius: '0.25em',
           }}
-          onClick={() => nonCheckboxClickEvent(node)}
+          // onClick={() => nonCheckboxClickEvent(node)}
         >
           {node.field.display}
         </span>
@@ -90,13 +89,12 @@ const Template: Story<SelectTreeProps<unknown>> = (args) => {
     return (
         <SelectTree 
             {...args}
-            buttonDisplayContent={selectedVarName}
+            // buttonDisplayContent={selectedVarName}
             expandedList={expandedNodes} 
             onExpansionChange={setExpandedNodes}
             searchTerm={searchTerm}
             onSearchTermChange={setSearchTerm}
             selectedList={selectedFields}
-            currentList={selectedFields}
             onSelectionChange={setSelectedFields}
             // @ts-ignore
             renderNode={renderNode}
@@ -106,8 +104,8 @@ const Template: Story<SelectTreeProps<unknown>> = (args) => {
     )
 }
 
-export const Standard = Template.bind({});
-Standard.args = {
+export const AsSingleSelect = Template.bind({});
+AsSingleSelect.args = {
     buttonDisplayContent: 'Select a variable',
     tree,
     expandedList: [],
@@ -137,4 +135,17 @@ Standard.args = {
     selectedList: [],
     showRoot: false,
     showSearchBox: true,
+} as SelectTreeProps<unknown>;
+
+export const AsMultiSelect = Template.bind({});
+AsMultiSelect.args = {
+    ...AsSingleSelect.args,
+    buttonDisplayContent: 'Select your variable(s)',
+    isMultiPick: true,
+} as SelectTreeProps<unknown>;
+
+export const ClosesOnSelection = Template.bind({});
+ClosesOnSelection.args = {
+    ...AsSingleSelect.args,
+    closeOnSelection: true
 } as SelectTreeProps<unknown>;

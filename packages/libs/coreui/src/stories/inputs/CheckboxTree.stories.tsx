@@ -57,28 +57,14 @@ const Template: Story<CheckboxTreeProps<unknown>> = (args) => {
         },
         []
       );
-
-    const getNodeChildren =  (node: FieldTreeNode) => {
-        const showMultiFilterDescendants = true;
-        return 'type' in node.field && node.field.type === 'multiFilter' && !showMultiFilterDescendants
-          ? []
-          : node.children ?? [];
-      }
-
-    const nonCheckboxClickEvent = (node: FieldTreeNode) => {
-      if (args.isSelectable || !isLeaf(node, getNodeChildren)) return;
-      setSelectedFields([ node.field.term ]);
-    }
     
     const renderNode = (node: FieldTreeNode) => {
       return (
         <span
           css={{
-            // backgroundColor: args.isSelectable && !args.isMultiPick && selectedFields.includes(node.field.term) ? '#e6e6e6' : '',
             padding: '0.125em 0.25em',
             borderRadius: '0.25em',
           }}
-          onClick={() => nonCheckboxClickEvent(node)}
         >
           {node.field.display}
         </span>
@@ -101,7 +87,6 @@ const Template: Story<CheckboxTreeProps<unknown>> = (args) => {
             searchTerm={searchTerm}
             onSearchTermChange={setSearchTerm}
             selectedList={selectedFields}
-            currentList={selectedFields}
             onSelectionChange={setSelectedFields}
             // @ts-ignore
             renderNode={renderNode}
