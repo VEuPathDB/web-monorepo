@@ -1,18 +1,18 @@
-import { CSSProperties } from "react";
-import { Subset } from "../../../definitions/types";
+import { CSSProperties } from 'react';
+import { Subset } from '../../../definitions/types';
 
-export { default as FloatingSwitch } from "./FloatingSwitch";
-export { default as FilledSwitch } from "./FilledSwitch";
-export { default as OutlinedSwitch } from "./OutlinedSwitch";
+export { default as FloatingSwitch } from './FloatingSwitch';
+export { default as FilledSwitch } from './FilledSwitch';
+export { default as OutlinedSwitch } from './OutlinedSwitch';
 
-import { ThemeRole } from "../../theming/types";
+import { ThemeRole } from '../../theming/types';
 
 // Type definitions for working with styles.
 type SwitchStateStyleSpec = {
-  backgroundColor: CSSProperties["color"];
-  labelColor: CSSProperties["color"];
-  knobColor: CSSProperties["color"];
-  borderColor: CSSProperties["color"];
+  backgroundColor: CSSProperties['color'];
+  labelColor: CSSProperties['color'];
+  knobColor: CSSProperties['color'];
+  borderColor: CSSProperties['color'];
 };
 
 export type SwitchStyleSpec = {
@@ -20,7 +20,7 @@ export type SwitchStyleSpec = {
   default: SwitchStateStyleSpec[];
   hover: SwitchStateStyleSpec[];
   disabled: SwitchStateStyleSpec;
-  size: "small" | "medium";
+  size: 'small' | 'medium';
 };
 
 export type SwitchStyleSpecSubset = Subset<SwitchStyleSpec>;
@@ -44,7 +44,7 @@ export type SwitchProps<T extends boolean | string | number> = {
 
 export type SwitchVariantProps<T extends boolean | string | number> = Omit<
   SwitchProps<T>,
-  "styleSpec"
+  'styleSpec'
 > & {
   themeRole?: ThemeRole;
   styleOverrides?: SwitchStyleSpecSubset;

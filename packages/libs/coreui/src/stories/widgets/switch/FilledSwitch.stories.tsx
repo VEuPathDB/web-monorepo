@@ -1,15 +1,15 @@
-import { Story, Meta } from "@storybook/react/types-6-0";
+import { Story, Meta } from '@storybook/react/types-6-0';
 
 import {
   FilledSwitch,
   SwitchVariantProps,
-} from "../../../components/widgets/switch";
-import UIThemeProvider from "../../../components/theming/UIThemeProvider";
-import { green, magenta, orange, purple } from "../../../definitions/colors";
-import { useState } from "react";
+} from '../../../components/widgets/switch';
+import UIThemeProvider from '../../../components/theming/UIThemeProvider';
+import { green, magenta, orange, purple } from '../../../definitions/colors';
+import { useState } from 'react';
 
 export default {
-  title: "Controls/Widgets/Switch/FilledSwitch",
+  title: 'Controls/Widgets/Switch/FilledSwitch',
   component: FilledSwitch,
 } as Meta;
 
@@ -45,7 +45,7 @@ export const LeftLabel = Template.bind({});
 LeftLabel.args = {
   ...Default.args,
   labels: {
-    left: "Barbarian Hordes",
+    left: 'Barbarian Hordes',
   },
 } as SwitchVariantProps<boolean>;
 
@@ -53,7 +53,7 @@ export const RightLabel = Template.bind({});
 RightLabel.args = {
   ...Default.args,
   labels: {
-    right: "Zombie Hordes",
+    right: 'Zombie Hordes',
   },
 } as SwitchVariantProps<boolean>;
 
@@ -61,8 +61,8 @@ export const BothLabels = Template.bind({});
 BothLabels.args = {
   ...Default.args,
   labels: {
-    left: "Barbarian Hordes",
-    right: "Zombie Hordes",
+    left: 'Barbarian Hordes',
+    right: 'Zombie Hordes',
   },
 } as SwitchVariantProps<boolean>;
 
@@ -70,11 +70,11 @@ export const Small = Template.bind({});
 Small.args = {
   ...Default.args,
   labels: {
-    left: "Barbarian Hordes",
-    right: "Zombie Hordes",
+    left: 'Barbarian Hordes',
+    right: 'Zombie Hordes',
   },
   styleOverrides: {
-    size: "small",
+    size: 'small',
   },
 } as SwitchVariantProps<boolean>;
 
@@ -82,8 +82,8 @@ export const Disabled = Template.bind({});
 Disabled.args = {
   ...Default.args,
   labels: {
-    left: "Barbarian Hordes",
-    right: "Zombie Hordes",
+    left: 'Barbarian Hordes',
+    right: 'Zombie Hordes',
   },
   disabled: true,
 } as SwitchVariantProps<boolean>;
@@ -92,38 +92,38 @@ export const ThemeApplied = Template.bind({});
 ThemeApplied.args = {
   ...Default.args,
   labels: {
-    left: "Barbarian Hordes",
-    right: "Zombie Hordes",
+    left: 'Barbarian Hordes',
+    right: 'Zombie Hordes',
   },
-  themeRole: "primary",
+  themeRole: 'primary',
 } as SwitchVariantProps<boolean>;
 
 export const StyleOverrides = Template.bind({});
 StyleOverrides.args = {
   ...Default.args,
   labels: {
-    left: "Barbarian Hordes",
-    right: "Zombie Hordes",
+    left: 'Barbarian Hordes',
+    right: 'Zombie Hordes',
   },
   styleOverrides: {
     default: [
       {
         backgroundColor: magenta[500],
-        knobColor: "white",
+        knobColor: 'white',
       },
       {
         backgroundColor: green[600],
-        knobColor: "white",
+        knobColor: 'white',
       },
     ],
     hover: [
       {
         backgroundColor: magenta[600],
-        knobColor: "white",
+        knobColor: 'white',
       },
       {
         backgroundColor: green[700],
-        knobColor: "white",
+        knobColor: 'white',
       },
     ],
   },

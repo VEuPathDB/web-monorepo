@@ -58,7 +58,6 @@ export default function Switch<T extends boolean | string | number>({
         alignItems: 'center',
         pointerEvents: disabled ? 'none' : 'auto',
         fontFamily: primaryFont,
-        // here
         fontSize: 13,
         fontWeight: 400,
         ...styleSpec.container,
@@ -67,7 +66,6 @@ export default function Switch<T extends boolean | string | number>({
       {labels?.left && (
         <span
           css={{
-            // here
             marginRight: size === 'medium' ? 10 : 5,
             color: currentStyles.labelColor,
           }}
@@ -83,7 +81,6 @@ export default function Switch<T extends boolean | string | number>({
           display: 'flex',
           transition: 'all ease .33s',
           alignItems: 'center',
-          // here
           width,
           height,
           borderRadius: height / 4,
@@ -91,7 +88,6 @@ export default function Switch<T extends boolean | string | number>({
           ...(currentStyles.borderColor
             ? {
                 outlineColor: currentStyles.borderColor,
-                // here
                 outlineWidth: 2,
                 outlineStyle: 'solid',
                 outlineOffset: -2,
@@ -121,13 +117,11 @@ export default function Switch<T extends boolean | string | number>({
         <div
           css={{
             position: 'relative',
-            // here
             width: knobSize,
             height: knobSize,
             ...(switchState === 'hover'
               ? selectedOption === options[0]
                 ? {
-                    // here
                     borderTopRightRadius: 10,
                     borderBottomRightRadius: 10,
                     borderTopLeftRadius: height / 4,
@@ -140,8 +134,6 @@ export default function Switch<T extends boolean | string | number>({
                     borderBottomLeftRadius: 10,
                   }
               : { borderRadius: 10 }),
-
-            // left: selectedOption === options[0] ? size === 'medium' ? 7 : 1 : size === 'medium' ? 24 : 8,
             left: selectedOption === options[0] ? width / 5 : width - knobSize - width / 5,
             transition: 'ease all .33s',
             backgroundColor: currentStyles.knobColor,
@@ -151,7 +143,6 @@ export default function Switch<T extends boolean | string | number>({
       {labels?.right && (
         <span
           css={{
-            // here
             marginLeft: size === 'medium' ? 10 : 5,
             color: currentStyles.labelColor,
           }}
