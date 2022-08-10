@@ -2,16 +2,13 @@ import React from 'react';
 import { isLeaf } from './Utils';
 import IndeterminateCheckbox, { IndeterminateCheckboxProps } from './IndeterminateCheckbox';
 import { ArrowRight, ArrowDropDown } from '@material-ui/icons';
-import { css } from '@emotion/react';
 import { CSSProperties } from '@emotion/serialize';
 
 export type CheckboxListStyleSpec = {
   list: {
     listStyle: CSSProperties['listStyle'],
-    cursor: CSSProperties['cursor'],
   },
   children: {
-    cursor: CSSProperties['cursor'],
     padding: CSSProperties['padding']
   },
 };
@@ -19,7 +16,6 @@ export type CheckboxListStyleSpec = {
 const defaultStyle = {
   list: {
     listStyle: 'none',
-    cursor: 'pointer',
   },
   children: {
     padding: '0 0 0 1.5em',
@@ -135,18 +131,15 @@ export default function CheckboxTreeNode<T>({
           display: 'flex',
         }}>
           {isLeafNode || isActiveSearch ? (
-            <></>
+            null
           ) : (
             isExpanded ? <ArrowDropDown onClick={() => toggleExpansion(node)}/> :
               <ArrowRight onClick={() => toggleExpansion(node)}/>
           )}
           {!isSelectable || (!isMultiPick && !isLeafNode) ? (
             <div
-              css={{
-                cursor: isLeafNode ? 'default' : 'cursor',
-              }}
               onClick={shouldExpandOnClick ? () => toggleExpansion(node) : undefined}
-            >
+              >
               {nodeElement}
             </div>
           ) : (

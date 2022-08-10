@@ -14,14 +14,14 @@ export type CheckboxListStyleSpec = {
   },
   options: {
     color: CSSProperties['color'],
-    fontSize: number,
+    fontSize: CSSProperties['fontSize'],
     fontWeight: CSSProperties['fontWeight'],
     textTransform: CSSProperties['textTransform'],
     padding: CSSProperties['padding'],
     margin: CSSProperties['margin'],
   },
   links: {
-    fontSize: number,
+    fontSize: CSSProperties['fontSize'],
     background: CSSProperties['background'],
     border: CSSProperties['border'],
     color: CSSProperties['color'],

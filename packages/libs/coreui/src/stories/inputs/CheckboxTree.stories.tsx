@@ -8,7 +8,6 @@ import {
     findAncestorFields, 
     Field, 
     FieldTreeNode,
-    isLeaf,
 } from '../../components/inputs/SelectTree/Utils';
 import { uniq } from 'lodash';
  
@@ -64,6 +63,7 @@ const Template: Story<CheckboxTreeProps<unknown>> = (args) => {
           css={{
             padding: '0.125em 0.25em',
             borderRadius: '0.25em',
+            cursor: node.children.length ? 'pointer' : 'default',
           }}
         >
           {node.field.display}
