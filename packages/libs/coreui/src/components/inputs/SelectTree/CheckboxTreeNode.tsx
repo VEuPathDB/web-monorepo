@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import { isLeaf } from './Utils';
 import IndeterminateCheckbox, { IndeterminateCheckboxProps } from './IndeterminateCheckbox';
 import { ArrowRight, ArrowDropDown } from '@material-ui/icons';
@@ -119,7 +119,7 @@ export default function CheckboxTreeNode<T>({
       node,
       value: nodeId,
     };
-    const checkboxProps: IndeterminateCheckboxProps<T> = {...commonInputProps, indeterminate: !!isIndeterminate, toggleCheckbox: toggleSelection};
+    const checkboxProps: IndeterminateCheckboxProps<T> = {...commonInputProps, indeterminate: !!isIndeterminate, onChange: (e: ChangeEvent<HTMLInputElement>) => toggleSelection(node, e.target.checked) };
     const CustomCheckbox = (customCheckboxes && (nodeId in customCheckboxes)) ? customCheckboxes[nodeId] : undefined;
 
     return (
