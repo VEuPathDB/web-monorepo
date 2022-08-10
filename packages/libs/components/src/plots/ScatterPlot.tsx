@@ -12,7 +12,7 @@ import {
   DependentAxisLogScaleDefault,
 } from '../types/plots';
 // add Shape for truncation
-import { Layout, Shape } from 'plotly.js';
+import { Layout, Shape, Axis, LayoutAxis } from 'plotly.js';
 import { NumberOrDateRange } from '../types/general';
 
 // import truncation util functions
@@ -150,6 +150,10 @@ const ScatterPlot = makePlotlyPlotComponent(
         dtick: independentAxisLogScale
           ? logScaleDtick(extendedIndependentAxisRange)
           : undefined,
+        showexponent: 'all',
+        exponentformat: independentValueType === 'date' ? 'none' : 'power',
+        // type minexponent is not defined at @types/plotly.js but 3 is default so not used here
+        // minexponent: 3,
       },
       yaxis: {
         title: dependentAxisLabel,
@@ -179,6 +183,10 @@ const ScatterPlot = makePlotlyPlotComponent(
         dtick: dependentAxisLogScale
           ? logScaleDtick(extendedDependentAxisRange)
           : undefined,
+        showexponent: 'all',
+        exponentformat: dependentValueType === 'date' ? 'none' : 'power',
+        // type minexponent is not defined at @types/plotly.js but 3 is default so not used here
+        // minexponent: 3,
       },
       // add truncatedAxisHighlighting for layout.shapes
       shapes: truncatedAxisHighlighting,

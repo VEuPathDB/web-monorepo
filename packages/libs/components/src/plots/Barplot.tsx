@@ -203,7 +203,6 @@ const Barplot = makePlotlyPlotComponent(
 
     const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
       automargin: true,
-      tickformat: dependentAxisLogScale ? ',.1r' : undefined, // comma-separated thousands, rounded to 1 significant digit
       hoverformat: dependentAxisLogScale
         ? dataLooksFractional
           ? ',.4f'
@@ -229,6 +228,8 @@ const Barplot = makePlotlyPlotComponent(
         ? logScaleDtick(extendedDependentAxisRange)
         : undefined,
       showticklabels: showDependentAxisTickLabel,
+      showexponent: 'all',
+      exponentformat: 'power',
     };
 
     const layout: Partial<Layout> = {

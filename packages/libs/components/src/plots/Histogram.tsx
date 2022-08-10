@@ -450,7 +450,6 @@ const Histogram = makePlotlyPlotComponent(
 
     const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
       type: dependentAxisLogScale ? 'log' : 'linear',
-      tickformat: dependentAxisLogScale ? ',.1r' : undefined, // comma-separated thousands, rounded to 1 significant digit
       hoverformat: dependentAxisLogScale
         ? dataLooksFractional
           ? ',.4f'
@@ -481,6 +480,9 @@ const Histogram = makePlotlyPlotComponent(
       showline: !axisTruncationConfig?.independentAxis?.min,
       linecolor: '#dddddd',
       zeroline: false,
+      showexponent: 'all',
+      exponentformat:
+        data?.binWidthSlider?.valueType === 'date' ? 'none' : 'power',
     };
 
     return {
