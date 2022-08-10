@@ -72,7 +72,7 @@ export default function ConfirmPublicAnalysis({
                 target="_blank"
                 style={{ color: theme?.palette.primary.hue[600] }}
               >
-                ClinEpiDB Public analyses page.
+                Public analyses page.
               </Link>
             </p>
             <p
