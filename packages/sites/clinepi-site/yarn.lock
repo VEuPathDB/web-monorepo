@@ -2164,10 +2164,10 @@
     react-responsive-modal "^6.2.0"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^3.8.3":
-  version "3.8.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.8.3.tgz#9ec50785873c6dd409b00bd05482e490fb6206c3"
-  integrity sha512-QZLwdRQxE2x+1h1W9jcBkcG08Ibg7JqFku3Aw2wS6zPF0q4/ItxQ4j8wv9amaFPHNiLPoIAKLjsV8SpzBYLi6Q==
+"@veupathdb/eda@^3.8.4":
+  version "3.8.4"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.8.4.tgz#1e62f25a2bb04ae50217ac6eab04e678e896ea36"
+  integrity sha512-rMi0wsF7tsOhj3bFCVsDkZ/eZ4X9I10vF4eugddKYj8bjPLc/YyxjcgNj9t4dK8cpQyhyoPNt6ca9GV0uPNe3g==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
