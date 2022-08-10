@@ -145,18 +145,32 @@ export const ColorPaletteDark: string[] = [
 
 /** Sequential gradient colorscale. Useful for coloring based on a continuous variable that is always positive, for example. */
 /** Using oslo from https://www.fabiocrameri.ch/colourmaps/, copied from https://github.com/empet/scientific-colorscales/blob/master/scicolorscales.py */
+//DKDK test
+// export const SequentialGradientColorscale: string[] = [
+//   'rgb(0, 1, 0)',
+//   'rgb(11, 25, 39)',
+//   'rgb(17, 48, 77)',
+//   'rgb(27, 73, 117)',
+//   'rgb(46, 98, 160)',
+//   'rgb(78, 125, 199)',
+//   'rgb(111, 146, 202)',
+//   'rgb(144, 166, 201)',
+//   'rgb(176, 185, 200)',
+//   'rgb(215, 215, 216)',
+//   // 'rgb(255, 255, 255)',  Removing final, lightest, color for best visibility
+// ];
 export const SequentialGradientColorscale: string[] = [
-  'rgb(0, 1, 0)',
-  'rgb(11, 25, 39)',
-  'rgb(17, 48, 77)',
-  'rgb(27, 73, 117)',
-  'rgb(46, 98, 160)',
-  'rgb(78, 125, 199)',
-  'rgb(111, 146, 202)',
-  'rgb(144, 166, 201)',
-  'rgb(176, 185, 200)',
-  'rgb(215, 215, 216)',
   // 'rgb(255, 255, 255)',  Removing final, lightest, color for best visibility
+  'rgb(215, 215, 216)',
+  'rgb(176, 185, 200)',
+  'rgb(144, 166, 201)',
+  'rgb(111, 146, 202)',
+  'rgb(78, 125, 199)',
+  'rgb(46, 98, 160)',
+  'rgb(27, 73, 117)',
+  'rgb(17, 48, 77)',
+  'rgb(11, 25, 39)',
+  'rgb(0, 1, 0)',
 ];
 
 /** Diverging gradient colorscale. Useful for coloring a continuous variable that has values above and below a midpoint (usually 0) */
