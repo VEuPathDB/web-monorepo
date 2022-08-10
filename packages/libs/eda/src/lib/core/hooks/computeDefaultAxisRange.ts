@@ -5,7 +5,10 @@ import { numberDateDefaultAxisRange } from '../utils/default-axis-range';
 import { NumberOrDateRange } from '../types/general';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
 import { ComputedVariableMetadata } from '../api/DataClient/types';
-import { numberSignificantFigures } from '../utils/number-significant-figures';
+import {
+  numberSignificantFiguresRoundUp,
+  numberSignificantFiguresRoundDown,
+} from '../utils/number-significant-figures';
 
 /**
  * A custom hook to compute default axis range from annotated and observed min/max values
@@ -43,7 +46,7 @@ export function useDefaultAxisRange(
         logScale
       );
 
-      // 4 decimal points
+      // 4 significant figures
       if (
         Variable.is(variable) &&
         (variable.type === 'number' || variable.type === 'integer') &&
@@ -51,8 +54,8 @@ export function useDefaultAxisRange(
         typeof defaultRange?.max === 'number'
       )
         return {
-          min: numberSignificantFigures(defaultRange.min, 4),
-          max: numberSignificantFigures(defaultRange.max, 4),
+          min: numberSignificantFiguresRoundDown(defaultRange.min, 4),
+          max: numberSignificantFiguresRoundUp(defaultRange.max, 4),
         };
       else return defaultRange;
     } else if (
@@ -63,12 +66,15 @@ export function useDefaultAxisRange(
       // if there's no variable, it's a count or proportion axis (barplot/histogram)
       return logScale
         ? {
-            min: numberSignificantFigures(Math.min(minPos / 10, 0.1), 4), // ensure the minimum-height bars will be visible
-            max: numberSignificantFigures(max, 4),
+            min: numberSignificantFiguresRoundDown(
+              Math.min(minPos / 10, 0.1),
+              4
+            ), // ensure the minimum-height bars will be visible
+            max: numberSignificantFiguresRoundUp(max, 4),
           }
         : {
             min: 0,
-            max: numberSignificantFigures(max, 4),
+            max: numberSignificantFiguresRoundUp(max, 4),
           };
     } else {
       return undefined;

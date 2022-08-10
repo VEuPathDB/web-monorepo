@@ -837,6 +837,11 @@ function tidyBinLabel(
 }
 
 // TODO [2021-07-10] - Use variable.precision when avaiable
+// UPDATE [2022-08-10] - precision is available but can be 11 for
+// 'School-age children in village count' from SCORE Mozambique for example.
+//
+// TODO [2022-08-10] - Consider using numberSignificantFiguresRoundUp/Down
+//                     (but the date exception thing is useful)
 function formatStatValue(
   value: string | number | undefined,
   type: HistogramVariable['type']
