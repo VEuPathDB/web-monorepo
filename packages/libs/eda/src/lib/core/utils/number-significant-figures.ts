@@ -1,50 +1,40 @@
-// util to return a number with specific decimal points
+// util to return a number rounded to `precision` number of significant digits
+// if `adjustDirection` us 'up', ensure that rounded value is >= original value
+// likewise if `adjustDirection` is 'down', ensure it is <= original value
 export function numberSignificantFigures(
   value: number,
-  precision: number
+  precision: number,
+  adjustDirection?: 'up' | 'down'
 ): number {
-  return Number.isInteger(value) ? value : Number(value.toPrecision(precision));
+  if (Number.isInteger(value)) return value;
+
+  const newValue = Number(value.toPrecision(precision));
+
+  if (adjustDirection === 'up') return adjustUp(value, newValue, precision);
+  else if (adjustDirection === 'down')
+    return adjustDown(value, newValue, precision);
+  else return newValue;
 }
 
-// Round to specified significant digits
-// but if the result is less than the input number, round up towards infinity
-//
-// Note that this DOES NOT return the unchanged integer input like numberSignificantFigures does.
-// Not sure why we did that!
-export function numberSignificantFiguresRoundUp(
-  value: number,
-  precision: number
-): number {
-  const newValue = Number(value.toPrecision(precision));
+function adjustUp(value: number, newValue: number, precision: number): number {
   if (newValue < value) {
     const epsilon = signifDigitEpsilon(value, precision);
     const adjusted = newValue + epsilon;
-    // round again just in case
-    console.log(
-      `input ${value} output1 ${Number(
-        adjusted.toPrecision(precision)
-      )} epsilon ${epsilon}`
-    );
     return Number(adjusted.toPrecision(precision));
   }
-  console.log(`input ${value} output2 ${newValue}`);
   return newValue;
 }
 
 // Round to specified significant digits
 // but if the result is greater than the input number, round down towards negative infinity
-//
-// Note that this DOES NOT return the unchanged integer input like numberSignificantFigures does.
-// Not sure why we did that!
-export function numberSignificantFiguresRoundDown(
+function adjustDown(
   value: number,
+  newValue: number,
   precision: number
 ): number {
-  const newValue = Number(value.toPrecision(precision));
   if (newValue > value) {
     const epsilon = signifDigitEpsilon(value, precision);
     const adjusted = newValue - epsilon;
-    // round again just in case
     return Number(adjusted.toPrecision(precision));
   }
   return newValue;

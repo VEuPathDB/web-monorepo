@@ -5,10 +5,7 @@ import { numberDateDefaultAxisRange } from '../utils/default-axis-range';
 import { NumberOrDateRange } from '../types/general';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
 import { ComputedVariableMetadata } from '../api/DataClient/types';
-import {
-  numberSignificantFiguresRoundUp,
-  numberSignificantFiguresRoundDown,
-} from '../utils/number-significant-figures';
+import { numberSignificantFigures } from '../utils/number-significant-figures';
 
 /**
  * A custom hook to compute default axis range from annotated and observed min/max values
@@ -54,8 +51,8 @@ export function useDefaultAxisRange(
         typeof defaultRange?.max === 'number'
       )
         return {
-          min: numberSignificantFiguresRoundDown(defaultRange.min, 4),
-          max: numberSignificantFiguresRoundUp(defaultRange.max, 4),
+          min: numberSignificantFigures(defaultRange.min, 4, 'down'),
+          max: numberSignificantFigures(defaultRange.max, 4, 'up'),
         };
       else return defaultRange;
     } else if (
@@ -66,15 +63,16 @@ export function useDefaultAxisRange(
       // if there's no variable, it's a count or proportion axis (barplot/histogram)
       return logScale
         ? {
-            min: numberSignificantFiguresRoundDown(
+            min: numberSignificantFigures(
               Math.min(minPos / 10, 0.1),
-              4
+              4,
+              'down'
             ), // ensure the minimum-height bars will be visible
-            max: numberSignificantFiguresRoundUp(max, 4),
+            max: numberSignificantFigures(max, 4, 'up'),
           }
         : {
             min: 0,
-            max: numberSignificantFiguresRoundUp(max, 4),
+            max: numberSignificantFigures(max, 4, 'up'),
           };
     } else {
       return undefined;
