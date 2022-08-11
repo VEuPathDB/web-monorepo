@@ -43,7 +43,7 @@ export function useDefaultAxisRange(
         logScale
       );
 
-      // 4 decimal points
+      // 4 significant figures
       if (
         Variable.is(variable) &&
         (variable.type === 'number' || variable.type === 'integer') &&
@@ -51,8 +51,8 @@ export function useDefaultAxisRange(
         typeof defaultRange?.max === 'number'
       )
         return {
-          min: numberSignificantFigures(defaultRange.min, 4),
-          max: numberSignificantFigures(defaultRange.max, 4),
+          min: numberSignificantFigures(defaultRange.min, 4, 'down'),
+          max: numberSignificantFigures(defaultRange.max, 4, 'up'),
         };
       else return defaultRange;
     } else if (
@@ -63,12 +63,16 @@ export function useDefaultAxisRange(
       // if there's no variable, it's a count or proportion axis (barplot/histogram)
       return logScale
         ? {
-            min: numberSignificantFigures(Math.min(minPos / 10, 0.1), 4), // ensure the minimum-height bars will be visible
-            max: numberSignificantFigures(max, 4),
+            min: numberSignificantFigures(
+              Math.min(minPos / 10, 0.1),
+              4,
+              'down'
+            ), // ensure the minimum-height bars will be visible
+            max: numberSignificantFigures(max, 4, 'up'),
           }
         : {
             min: 0,
-            max: numberSignificantFigures(max, 4),
+            max: numberSignificantFigures(max, 4, 'up'),
           };
     } else {
       return undefined;
