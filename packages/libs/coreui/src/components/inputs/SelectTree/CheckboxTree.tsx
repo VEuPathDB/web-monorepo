@@ -3,7 +3,7 @@ import { css } from '@emotion/react';
 import { CSSProperties } from '@emotion/serialize';
 
 import CheckboxTreeNode, { CustomCheckboxes } from './CheckboxTreeNode';
-import RealTimeSearchBox from '../RealTimeSearchBox/RealTimeSearchBox';
+import SearchBox from '../SearchBox/SearchBox';
 import { Warning } from '../../icons';
 
 import { addOrRemove } from './Utils';
@@ -786,7 +786,7 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
         {linksPosition && linksPosition == LinksPosition.Top ? treeLinks : null}
         {!isSearchable || !showSearchBox ? "" : (
           <div>
-            <RealTimeSearchBox
+            <SearchBox
               autoFocus={autoFocusSearchBox}
               searchTerm={searchTerm}
               onSearchTermChange={onSearchTermChange}

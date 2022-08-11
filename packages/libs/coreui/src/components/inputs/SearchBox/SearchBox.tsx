@@ -1,5 +1,4 @@
-import { debounce } from 'lodash';
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 // use safeHtml for enabling html (e.g., italic) at helpText
 import { safeHtml } from '../SelectTree/Utils';
 import { Close } from '../../icons';
@@ -25,10 +24,6 @@ type Props = {
 
   /** Text to appear as tooltip of help icon, should describe how the search is performed. Defaults to empty (no icon) */
   helpText?: string;
-
-  /** Delay in milliseconds after last character typed until onSearchTermChange is called.  Defaults to 250. */
-  delayMs?: number;
-
 }
 
 const defaultStyle = {
@@ -54,37 +49,23 @@ const defaultStyle = {
 }
 
 /**
- * A 'real time' search box.  Changes are throttled by 'debounce' so text
- * change events are delayed to prevent repetitive costly searching.  Useful
- * when expensive operations are performed (e.g. search) in real time as the
- * user types in the box.  Also provides reset button to clear the box.
+ * Consider using 'debounce' to throttle changes in parent component if 
+ * expensive operations are performed (e.g. search) in real time as the
+ * user types in the box.
  */
-export default function RealTimeSearchBox({
+export default function SearchBox({
   autoFocus = false,
   searchTerm = '',
   onSearchTermChange = () => {},
   placeholderText = '',
   helpText = '',
-  /** Reduced default delay from 250ms to 50ms due to an annoying lag when searching something simple like 'age' */
-  delayMs = 50,
 }: Props) {
 
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const emitSearchTermChange = debounce((searchTerm: string) => onSearchTermChange!(searchTerm), delayMs);
-
-  /**
-   * Update the state of this Component, and call debounced onSearchTermSet
-   * callback.
-   */
   function handleSearchTermChange(e: React.ChangeEvent<HTMLInputElement>) {
     let searchTerm = e.currentTarget.value;
-    emitSearchTermChange(searchTerm);
+    onSearchTermChange(searchTerm);
   }
 
-  /**
-   * Reset input if Escape is pressed.
-   */
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Escape') {
       onSearchTermChange!('');
@@ -92,17 +73,9 @@ export default function RealTimeSearchBox({
     }
   }
 
-  /**
-   * Update the state of this Component, and call onSearchTermSet callback
-   * immediately.
-   */
   function handleResetClick() {
     onSearchTermChange!('');
   }
-
-  useEffect(() => {
-    return () => emitSearchTermChange.cancel()
-  }, [])
 
   return (
     <div css={{
@@ -111,7 +84,6 @@ export default function RealTimeSearchBox({
     }}>
       <label>
         <input 
-          ref={inputRef}
           css={defaultStyle.searchBox}
           type="search"
           autoFocus={autoFocus}
