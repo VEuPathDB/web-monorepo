@@ -10,7 +10,6 @@ import LabelledGroup from '@veupathdb/components/lib/components/widgets/Labelled
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import Switch from '@veupathdb/components/lib/components/widgets/Switch';
 
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import * as t from 'io-ts';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import PluginError from '../PluginError';
@@ -22,9 +21,13 @@ import DataClient, {
 } from '../../../api/DataClient';
 
 import { usePromise } from '../../../hooks/promise';
-import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
-import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
+import {
+  useDataClient,
+  useStudyMetadata,
+  useFindEntityAndVariable,
+  useStudyEntities,
+} from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { Variable } from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
@@ -36,7 +39,7 @@ import { PlotLayout } from '../../layouts/PlotLayout';
 
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
-import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
+import { VisualizationProps } from '../VisualizationTypes';
 
 import bar from './selectorIcons/bar.svg';
 // import axis label unit util
@@ -67,12 +70,17 @@ import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsSt
 import { NumberOrDateRange, NumberRange } from '../../../types/general';
 import { NumberRangeInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateRangeInputs';
 // reusable util for computing truncationConfig
-import { truncationConfig } from '../../../utils/truncation-config-utils-viz';
+import { truncationConfig } from '../../../utils/truncation-config-utils';
 // use Notification for truncation warning message
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 import Button from '@veupathdb/components/lib/components/widgets/Button';
-import { useDefaultDependentAxisRange } from '../../../hooks/computeDefaultDependentAxisRange';
+import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 import { useVizConfig } from '../../../hooks/visualizations';
+import {
+  barplotDefaultDependentAxisMax,
+  barplotDefaultDependentAxisMinPos,
+} from '../../../utils/axis-range-calculations';
+import { createVisualizationPlugin } from '../VisualizationPlugin';
 
 // export
 export type BarplotDataWithStatistics = (
@@ -97,17 +105,11 @@ const modalPlotContainerStyles = {
   margin: 'auto',
 };
 
-export const barplotVisualization: VisualizationType = {
-  selectorComponent: SelectorComponent,
+export const barplotVisualization = createVisualizationPlugin({
+  selectorIcon: bar,
   fullscreenComponent: FullscreenComponent,
   createDefaultConfig: createDefaultConfig,
-};
-
-function SelectorComponent() {
-  return (
-    <img alt="Bar plot" style={{ height: '100%', width: '100%' }} src={bar} />
-  );
-}
+});
 
 function FullscreenComponent(props: VisualizationProps) {
   return <BarplotViz {...props} />;
@@ -160,11 +162,7 @@ function BarplotViz(props: VisualizationProps) {
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
-  const entities = useMemo(
-    () =>
-      Array.from(preorder(studyMetadata.rootEntity, (e) => e.children || [])),
-    [studyMetadata]
-  );
+  const entities = useStudyEntities();
   const dataClient: DataClient = useDataClient();
 
   // use useVizConfig hook
@@ -196,6 +194,7 @@ function BarplotViz(props: VisualizationProps) {
         // set undefined for variable change
         checkedLegendItems: undefined,
         dependentAxisRange: undefined,
+        dependentAxisLogScale: false,
       });
       // close truncation warnings
       setTruncatedDependentAxisWarning('');
@@ -219,7 +218,9 @@ function BarplotViz(props: VisualizationProps) {
   );
 
   const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
-    'dependentAxisLogScale'
+    'dependentAxisLogScale',
+    false,
+    true
   );
   const onValueSpecChange = onChangeHandlerFactory<ValueSpec>(
     'valueSpec',
@@ -239,7 +240,7 @@ function BarplotViz(props: VisualizationProps) {
     'checkedLegendItems'
   );
 
-  const findEntityAndVariable = useFindEntityAndVariable(entities);
+  const findEntityAndVariable = useFindEntityAndVariable();
   const {
     variable,
     entity,
@@ -408,12 +409,16 @@ function BarplotViz(props: VisualizationProps) {
     vizConfig.checkedLegendItems
   );
 
+  const minPos = useMemo(() => barplotDefaultDependentAxisMinPos(data), [data]);
+  const max = useMemo(() => barplotDefaultDependentAxisMax(data), [data]);
   // using custom hook
-  const defaultDependentAxisRange = useDefaultDependentAxisRange(
-    data,
-    vizConfig,
-    'Barplot'
-  );
+  const defaultDependentAxisRange = useDefaultAxisRange(
+    null,
+    0,
+    minPos,
+    max,
+    vizConfig.dependentAxisLogScale
+  ) as NumberRange;
 
   // axis range control
   const handleDependentAxisRangeChange = onChangeHandlerFactory<NumberRange>(
@@ -438,12 +443,19 @@ function BarplotViz(props: VisualizationProps) {
   } = useMemo(
     () =>
       // barplot does not have independent axis range control so send undefined for defaultUIState
-      truncationConfig(undefined, vizConfig, defaultDependentAxisRange),
-    [
-      vizConfig.xAxisVariable,
-      vizConfig.dependentAxisRange,
-      defaultDependentAxisRange,
-    ]
+      truncationConfig(
+        {
+          ...(minPos != null && max != null
+            ? {
+                dependentAxisRange: { min: minPos, max: max },
+              }
+            : {}),
+        },
+        vizConfig,
+        {}, // no overrides
+        true // use inclusive less than equal for the range min
+      ),
+    [vizConfig.dependentAxisRange, minPos, max]
   );
 
   useEffect(() => {
@@ -521,43 +533,34 @@ function BarplotViz(props: VisualizationProps) {
           ref={plotRef}
           // for custom legend: pass checkedLegendItems to PlotlyPlot
           checkedLegendItems={checkedLegendItems}
-          // axis range control
-          dependentAxisRange={vizConfig.dependentAxisRange}
-          // pass axisTruncationConfig
-          axisTruncationConfig={{
-            independentAxis: {
-              min: truncationConfigIndependentAxisMin,
-              max: truncationConfigIndependentAxisMax,
-            },
-            dependentAxis: {
-              min: truncationConfigDependentAxisMin,
-              max: truncationConfigDependentAxisMax,
-            },
-          }}
           {...plotProps}
         />
       )}
+
+      {/* Plot mode */}
+      <RadioButtonGroup
+        label="Plot mode"
+        selectedOption={vizConfig.valueSpec}
+        options={['count', 'proportion']}
+        buttonColor={'primary'}
+        margins={['1em', '0', '0', '1em']}
+        onOptionSelected={(newOption) => {
+          if (newOption === 'proportion') {
+            onValueSpecChange('proportion');
+          } else {
+            onValueSpecChange('count');
+          }
+        }}
+      />
+
       {/* Y-axis range control */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <LabelledGroup label="Y-axis controls">
           <div style={{ display: 'flex' }}>
             <Switch
-              label="Log Scale:"
+              label="Log scale:"
               state={vizConfig.dependentAxisLogScale}
               onStateChange={onDependentAxisLogScaleChange}
-            />
-            <div style={{ width: '4em' }}>{''}</div>
-            <RadioButtonGroup
-              selectedOption={vizConfig.valueSpec}
-              options={['count', 'proportion']}
-              buttonColor={'primary'}
-              onOptionSelected={(newOption) => {
-                if (newOption === 'proportion') {
-                  onValueSpecChange('proportion');
-                } else {
-                  onValueSpecChange('count');
-                }
-              }}
             />
           </div>
           {/* Y-axis range control */}
@@ -602,6 +605,8 @@ function BarplotViz(props: VisualizationProps) {
     </>
   );
 
+  const showOverlayLegend =
+    vizConfig.overlayVariable != null && legendItems.length > 0;
   const legendNode = legendItems != null && !data.pending && data != null && (
     <PlotLegend
       legendItems={legendItems}
@@ -609,9 +614,7 @@ function BarplotViz(props: VisualizationProps) {
       legendTitle={variableDisplayWithUnit(overlayVariable)}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
       // add a condition to show legend even for single overlay data and check legendItems exist
-      showOverlayLegend={
-        vizConfig.overlayVariable != null && legendItems.length > 0
-      }
+      showOverlayLegend={showOverlayLegend}
     />
   );
 
@@ -709,7 +712,7 @@ function BarplotViz(props: VisualizationProps) {
       <PlotLayout
         isFaceted={isFaceted(data.value)}
         plotNode={plotNode}
-        legendNode={legendNode}
+        legendNode={showOverlayLegend ? legendNode : null}
         tableGroupNode={tableGroupNode}
       />
     </div>

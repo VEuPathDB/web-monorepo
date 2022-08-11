@@ -1,5 +1,5 @@
-import { useRouteMatch } from 'react-router-dom';
-import { useHistory } from 'react-router';
+import Path from 'path';
+import { useHistory } from 'react-router-dom';
 import { ComputationAppOverview } from '../../types/visualization';
 import { ComputationPlugin } from './Types';
 import { orderBy, isEqual } from 'lodash';
@@ -25,7 +25,6 @@ export function StartPage(props: Props) {
   const cx = makeClassNameHelper('VisualizationsContainer');
   const studyMetadata = useStudyMetadata();
   const history = useHistory();
-  const { url } = useRouteMatch();
 
   return (
     apps &&
@@ -74,13 +73,12 @@ export function StartPage(props: Props) {
                     rowGap: '2em',
                   }}
                 >
-                  {app.visualizations?.map((vizType, index) => {
+                  {app.visualizations?.map((viz, index) => {
                     const plugin = plugins[app.name];
                     const vizPlugin =
-                      plugin && plugin.visualizationTypes[vizType.name];
+                      plugin && plugin.visualizationPlugins[viz.name];
                     const disabled =
-                      !plugin || !plugin.visualizationTypes[vizType.name];
-                    const VizSelector = vizPlugin?.selectorComponent;
+                      !plugin || !plugin.visualizationPlugins[viz.name];
                     return (
                       <div
                         className={cx('-PickerEntry', disabled && 'disabled')}
@@ -89,7 +87,7 @@ export function StartPage(props: Props) {
                           margin: '0 3em',
                         }}
                       >
-                        <Tooltip title={<>{vizType.description}</>}>
+                        <Tooltip title={<>{viz.description}</>}>
                           <button
                             style={{
                               cursor: disabled ? 'not-allowed' : 'cursor',
@@ -104,16 +102,9 @@ export function StartPage(props: Props) {
                                 return;
                               const computations =
                                 analysisState.analysis.descriptor.computations;
-                              const defaultComputationSpec =
-                                plugin &&
-                                plugin.createDefaultComputationSpec != null
-                                  ? plugin.createDefaultComputationSpec(
-                                      studyMetadata.rootEntity
-                                    )
-                                  : {
-                                      configuration: undefined,
-                                      displayName: '',
-                                    };
+                              const defaultComputationConfig = plugin.createDefaultConfiguration(
+                                studyMetadata.rootEntity
+                              );
                               /*
                                 The first instance of a configurable app will be derived by a default configuration.
                                 Here we're checking if a computation with a defaultConfig already exists.
@@ -122,9 +113,7 @@ export function StartPage(props: Props) {
                                 (c) =>
                                   isEqual(
                                     c.descriptor.configuration,
-                                    'configuration' in defaultComputationSpec
-                                      ? defaultComputationSpec.configuration
-                                      : {}
+                                    defaultComputationConfig
                                   ) && app.name === c.descriptor.type
                               );
                               const visualizationId = uuid();
@@ -132,27 +121,27 @@ export function StartPage(props: Props) {
                                 visualizationId,
                                 displayName: 'Unnamed visualization',
                                 descriptor: {
-                                  type: vizType.name!,
+                                  type: viz.name!,
                                   configuration: vizPlugin.createDefaultConfig(),
                                 },
                               };
                               if (!existingComputation) {
                                 const computation = createComputation(
                                   app.name,
-                                  defaultComputationSpec.configuration,
+                                  defaultComputationConfig,
                                   computations,
                                   [newVisualization]
                                 );
-                                const newAnalysisId = await analysisState.setComputations(
-                                  [computation, ...computations]
-                                );
-                                const urlBase = newAnalysisId
-                                  ? url.replace('new', newAnalysisId)
-                                  : url;
+                                analysisState.setComputations([
+                                  computation,
+                                  ...computations,
+                                ]);
                                 history.push(
-                                  urlBase.replace(
-                                    'new',
-                                    `${computation.computationId}/${visualizationId}`
+                                  Path.resolve(
+                                    history.location.pathname,
+                                    '..',
+                                    computation.computationId,
+                                    visualizationId
                                   )
                                 );
                               } else {
@@ -170,24 +159,31 @@ export function StartPage(props: Props) {
                                       updatedComputation.computationId
                                   ),
                                 ]);
-                                const urlBase = url.replace(
-                                  'new',
-                                  existingComputation.computationId
+                                history.push(
+                                  Path.resolve(
+                                    history.location.pathname,
+                                    '..',
+                                    existingComputation.computationId,
+                                    visualizationId
+                                  )
                                 );
-                                history.push(`${urlBase}/${visualizationId}`);
                               }
                             }}
                           >
-                            {VizSelector ? (
-                              <VizSelector {...app} />
+                            {vizPlugin ? (
+                              <img
+                                src={vizPlugin.selectorIcon}
+                                alt={viz.displayName}
+                                style={{ height: '100%', width: '100%' }}
+                              />
                             ) : (
-                              <PlaceholderIcon name={vizType.name} />
+                              <PlaceholderIcon name={viz.name} />
                             )}
                           </button>
                         </Tooltip>
                         <div className={cx('-PickerEntryName')}>
                           <div>
-                            {vizType.displayName
+                            {viz.displayName
                               ?.split(/(, )/g)
                               .map((str) => (str === ', ' ? <br /> : str))}
                           </div>

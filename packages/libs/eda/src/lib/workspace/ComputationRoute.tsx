@@ -106,7 +106,7 @@ export function ComputationRoute(props: Props) {
                       {...props}
                       computationId={singleAppComputationId}
                       computationAppOverview={apps[0]}
-                      visualizationTypes={plugin.visualizationTypes}
+                      visualizationPlugins={plugin.visualizationPlugins}
                       isSingleAppMode={!!singleAppMode}
                     />
                   );
@@ -154,7 +154,9 @@ export function ComputationRoute(props: Props) {
                                   {...props}
                                   computationId={c.computationId}
                                   computationAppOverview={app}
-                                  visualizationTypes={plugin.visualizationTypes}
+                                  visualizationPlugins={
+                                    plugin.visualizationPlugins
+                                  }
                                   baseUrl={`${url}/${c.computationId}`}
                                   isSingleAppMode={!!singleAppMode}
                                 />
@@ -193,7 +195,7 @@ export function ComputationRoute(props: Props) {
                       {...props}
                       computationId={routeProps.match.params.id}
                       computationAppOverview={app}
-                      visualizationTypes={plugin.visualizationTypes}
+                      visualizationPlugins={plugin.visualizationPlugins}
                       baseUrl={`${url}/${computation?.computationId}`}
                       isSingleAppMode={!!singleAppMode}
                     />

@@ -49,24 +49,6 @@ export const Visualization = intersection([
   }),
 ]);
 
-/**
- * Type and configuration of the app object stored in user's analysis
- */
-// alphadiv abundance: add NullType here to remove "null as any" at ZeroConfiguration
-export type ComputationConfiguration = TypeOf<
-  typeof ComputationConfiguration | NullType
->;
-export const ComputationConfiguration = intersection([
-  type({
-    name: string,
-    collectionVariable: VariableDescriptor,
-  }),
-  partial({
-    alphaDivMethod: string,
-    rankingMethod: string,
-  }),
-]);
-
 // alphadiv abundance
 export type ComputationDescriptor = TypeOf<typeof ComputationDescriptor>;
 export const ComputationDescriptor = type({
@@ -81,6 +63,7 @@ export const ComputationDescriptor = type({
  */
 export interface Computation<ConfigType = unknown> {
   computationId: string;
+  displayName?: string;
   descriptor: {
     type: string;
     configuration: ConfigType;

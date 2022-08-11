@@ -111,7 +111,9 @@ export function EDAWorkspaceHeading({
             setIsOpen={setDialogIsOpen}
             initialAnalysisName={analysis.displayName}
             setAnalysisName={(newName) =>
-              newName && analysisState.setName(newName)
+              newName &&
+              analysis.displayName !== newName &&
+              analysisState.setName(newName)
             }
             redirectToNewAnalysis={redirectToNewAnalysis}
           />

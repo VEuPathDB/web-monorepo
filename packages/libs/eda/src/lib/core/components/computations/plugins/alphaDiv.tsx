@@ -1,7 +1,6 @@
 /** @jsxImportSource @emotion/react */
-import { useStudyMetadata } from '../../..';
+import { useCollectionVariables, useStudyMetadata } from '../../..';
 import { StudyEntity } from '../../../types/study';
-import { useCollectionVariables } from '../../../hooks/study';
 import { VariableDescriptor } from '../../../types/variable';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
@@ -24,11 +23,32 @@ export const AlphaDivConfig = t.type({
 export const plugin: ComputationPlugin = {
   configurationComponent: AlphaDivConfiguration,
   configurationDescriptionComponent: AlphaDivConfigDescriptionComponent,
-  visualizationTypes: {
-    boxplot: boxplotVisualization,
-    scatterplot: scatterplotVisualization,
+  createDefaultConfiguration,
+  isConfigurationValid: AlphaDivConfig.is,
+  visualizationPlugins: {
+    boxplot: boxplotVisualization.withOptions({
+      getComputedYAxisDetails(config) {
+        if (AlphaDivConfig.is(config)) {
+          return {
+            entityId: config.collectionVariable.entityId,
+            placeholderDisplayName: 'Alphadiv',
+          };
+        }
+      },
+      hideShowMissingnessToggle: true,
+    }),
+    scatterplot: scatterplotVisualization.withOptions({
+      getComputedYAxisDetails(config) {
+        if (AlphaDivConfig.is(config)) {
+          return {
+            entityId: config.collectionVariable.entityId,
+            placeholderDisplayName: 'Alphadiv',
+          };
+        }
+      },
+      hideShowMissingnessToggle: true,
+    }),
   },
-  createDefaultComputationSpec: createDefaultComputationSpec,
 };
 
 function AlphaDivConfigDescriptionComponent({
@@ -68,9 +88,9 @@ function AlphaDivConfigDescriptionComponent({
   );
 }
 
-function createDefaultComputationSpec(rootEntity: StudyEntity) {
+function createDefaultConfiguration(rootEntity: StudyEntity): AlphaDivConfig {
   const collections = findCollections(rootEntity);
-  const configuration: AlphaDivConfig = {
+  return {
     name: 'AlphaDivComputation',
     collectionVariable: {
       variableId: collections[0].id,
@@ -78,7 +98,6 @@ function createDefaultComputationSpec(rootEntity: StudyEntity) {
     },
     alphaDivMethod: 'shannon',
   };
-  return { configuration };
 }
 
 // Include available methods in this array.

@@ -13,7 +13,7 @@ export interface Props extends ComputationConfigProps {
 function ZeroConfig(props: Props) {
   const { autoCreate = false, addNewComputation } = props;
   useEffect(() => {
-    if (autoCreate) addNewComputation('Unnamed computation', null);
+    if (autoCreate) addNewComputation('Unnamed computation', undefined);
   }, [addNewComputation, autoCreate]);
 
   return null;

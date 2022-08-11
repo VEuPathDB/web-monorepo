@@ -3,7 +3,6 @@ import LinePlot, {
   LinePlotProps,
 } from '@veupathdb/components/lib/plots/LinePlot';
 
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import * as t from 'io-ts';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 
@@ -13,9 +12,13 @@ import DataClient, {
 } from '../../../api/DataClient';
 
 import { usePromise } from '../../../hooks/promise';
-import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
-import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
+import {
+  useDataClient,
+  useStudyMetadata,
+  useFindEntityAndVariable,
+  useStudyEntities,
+} from '../../../hooks/workspace';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { Filter } from '../../../types/filter';
 
@@ -27,7 +30,7 @@ import { PlotLayout } from '../../layouts/PlotLayout';
 
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
-import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
+import { VisualizationProps } from '../VisualizationTypes';
 
 import Switch from '@veupathdb/components/lib/components/widgets/Switch';
 import line from './selectorIcons/line.svg';
@@ -81,8 +84,6 @@ import {
 import { gray } from '../colors';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 // import variable's metadata-based independent axis range utils
-import { defaultIndependentAxisRange } from '../../../utils/default-independent-axis-range';
-import { axisRangeMargin } from '../../../utils/axis-range-margin';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import PluginError from '../PluginError';
 import PlotLegend, {
@@ -101,12 +102,14 @@ import Tooltip from '@veupathdb/wdk-client/lib/Components/Overlays/Tooltip';
 import { NumberOrDateRange as NumberOrDateRangeT } from '../../../types/general';
 import { padISODateTime } from '../../../utils/date-conversion';
 // reusable util for computing truncationConfig
-import { truncationConfig } from '../../../utils/truncation-config-utils-viz';
+import { truncationConfig } from '../../../utils/truncation-config-utils';
 // use Notification for truncation warning message
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 import Button from '@veupathdb/components/lib/components/widgets/Button';
 import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
 import { UIState } from '../../filter/HistogramFilter';
+import { createVisualizationPlugin } from '../VisualizationPlugin';
+import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 
 const plotContainerStyles = {
   width: 750,
@@ -129,28 +132,21 @@ interface LinePlotDataWithCoverage extends CoverageStatistics {
   dataSetProcess: LinePlotData | FacetedData<LinePlotData>;
   // change these types to be compatible with new axis range
   xMin: number | string | undefined;
+  xMinPos: number | string | undefined;
   xMax: number | string | undefined;
   yMin: number | string | undefined;
+  yMinPos: number | string | undefined;
   yMax: number | string | undefined;
 }
 
 // define LinePlotDataResponse
 type LinePlotDataResponse = LineplotResponse;
 
-export const lineplotVisualization: VisualizationType = {
-  selectorComponent: SelectorComponent,
+export const lineplotVisualization = createVisualizationPlugin({
+  selectorIcon: line,
   fullscreenComponent: LineplotViz,
   createDefaultConfig: createDefaultConfig,
-};
-
-// this needs a handling of text/image for scatter, line, and density plots
-function SelectorComponent() {
-  const src = line;
-
-  return (
-    <img alt="Line plot" style={{ height: '100%', width: '100%' }} src={src} />
-  );
-}
+});
 
 // Display names to internal names
 const valueSpecLookup: Record<
@@ -174,6 +170,8 @@ function createDefaultConfig(): LineplotConfig {
     valueSpecConfig: 'Mean',
     useBinning: false,
     showErrorBars: true,
+    independentAxisLogScale: false,
+    dependentAxisLogScale: false,
   };
 }
 
@@ -199,6 +197,8 @@ export const LineplotConfig = t.intersection([
     // axis range control
     independentAxisRange: NumberOrDateRangeT,
     dependentAxisRange: NumberOrDateRangeT,
+    independentAxisLogScale: t.boolean,
+    dependentAxisLogScale: t.boolean,
   }),
 ]);
 
@@ -218,11 +218,7 @@ function LineplotViz(props: VisualizationProps) {
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
-  const entities = useMemo(
-    () =>
-      Array.from(preorder(studyMetadata.rootEntity, (e) => e.children || [])),
-    [studyMetadata]
-  );
+  const entities = useStudyEntities();
   const dataClient: DataClient = useDataClient();
 
   const [vizConfig, updateVizConfig] = useVizConfig(
@@ -233,7 +229,7 @@ function LineplotViz(props: VisualizationProps) {
   );
 
   // moved the location of this findEntityAndVariable
-  const findEntityAndVariable = useFindEntityAndVariable(entities);
+  const findEntityAndVariable = useFindEntityAndVariable();
 
   const {
     xAxisVariable,
@@ -324,6 +320,8 @@ function LineplotViz(props: VisualizationProps) {
               denominatorValues:
                 yAxisVar != null ? yAxisVar.vocabulary : undefined,
             }),
+        independentAxisLogScale: false,
+        dependentAxisLogScale: false,
       });
       // axis range control: close truncation warnings here
       setTruncatedIndependentAxisWarning('');
@@ -358,7 +356,9 @@ function LineplotViz(props: VisualizationProps) {
   // allow 2nd parameter of resetCheckedLegendItems for checking legend status
   // considering axis range control
   const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof LineplotConfig, resetCheckedLegendItems?: boolean, resetAxisRanges?: boolean) => (newValue?: ValueType) => {
+    < ValueType,>(key: keyof LineplotConfig,
+		  resetCheckedLegendItems?: boolean,
+		  resetAxisRanges?: boolean) => (newValue?: ValueType) => {
       const newPartialConfig = {
         [key]: newValue,
         ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
@@ -406,11 +406,22 @@ function LineplotViz(props: VisualizationProps) {
     'denominatorValues'
   );
 
+  const onIndependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
+    'independentAxisLogScale',
+    false,
+    true
+  );
+
+  const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
+    'dependentAxisLogScale',
+    false,
+    true
+  );
+
   const outputEntity = useFindOutputEntity(
     dataElementDependencyOrder,
     vizConfig,
-    'yAxisVariable',
-    entities
+    'yAxisVariable'
   );
 
   const data = usePromise(
@@ -544,7 +555,10 @@ function LineplotViz(props: VisualizationProps) {
       outputEntity,
       filteredCounts,
       categoricalMode,
-      vizConfig.independentAxisRange,
+      // the following looks nasty but it seems to work
+      // the back end only makes use of the x-axis viewport (aka independentAxisRange)
+      // when binning is in force, so no need to trigger a new request unless binning
+      vizConfig.useBinning ? vizConfig.independentAxisRange : undefined,
       valuesAreSpecified,
     ])
   );
@@ -554,66 +568,48 @@ function LineplotViz(props: VisualizationProps) {
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
 
-  // variable's metadata-based independent axis range with margin
-  const defaultIndependentRangeMargin = useMemo(() => {
-    const defaultIndependentRange = defaultIndependentAxisRange(
-      xAxisVariable,
-      'lineplot'
-    );
-    // extend range due to potential binStart/Ends being outside provided range
-    const extendedIndependentRange =
-      data.value?.xMin != null &&
-      data.value?.xMax != null &&
-      defaultIndependentRange != null
-        ? ({
-            min:
-              data.value.xMin < defaultIndependentRange.min
-                ? data.value.xMin
-                : defaultIndependentRange.min,
-            max:
-              data.value.xMax > defaultIndependentRange.max
-                ? data.value.xMax
-                : defaultIndependentRange.max,
-          } as NumberOrDateRange)
-        : defaultIndependentRange;
-    // need to check date type for the case switching from string to date variable
-    // it is because date value is also string which causes issue at axisRangeMargin
-    return xAxisVariable?.type === 'date' &&
-      (isNaN(Date.parse(extendedIndependentRange?.min as string)) ||
-        isNaN(Date.parse(extendedIndependentRange?.max as string)))
-      ? undefined
-      : // no padding is made here
-        extendedIndependentRange;
-  }, [xAxisVariable, data.value]);
+  const defaultIndependentAxisRange = useDefaultAxisRange(
+    xAxisVariable,
+    data.value?.xMin,
+    data.value?.xMinPos,
+    data.value?.xMax,
+    vizConfig.independentAxisLogScale
+  );
 
-  // find deependent axis range and its margin
-  const defaultDependentRangeMargin = useMemo(() => {
-    const yMinMaxRange = categoricalMode
-      ? { min: 0, max: 1 }
-      : data.value?.yMin != null && data.value?.yMax != null
-      ? ({
-          // make sure axis range includes a zero (except for dates, see below)
-          min: min([data.value.yMin, 0]), // lodash min/max handles strings
-          max: max([data.value.yMax, 0]), // or numbers appropriately
-          // and with strings/dates, if you put the zero as the second value, min or max always returns the string
-          // so min(["foo", 0]) is "foo" and min([0, "foo"]) is 0 **
-          // which is our desired behaviour (no need to anchor date axes at 1970 or whatever)
-          // (** TO DO: is this documented lodash behaviour, or likely to change?)
-        } as NumberOrDateRange)
-      : undefined;
+  const xMinMaxDataRange = useMemo(
+    () =>
+      // This useBinning edge case handling is a bit of kludge.
+      // The same situation affects the histogram independent axis (all the time).
+      // The problem is if you make a data request for an x-axis viewport (aka zoom to range), then
+      // the xMin and xMax are calculated from the response, which is just for the requested
+      // viewport.  Using the data-derived xMin and xMax works great for client-side zooming,
+      // because the data doesn't change. But for server-side zooming we can't use xMin and xMax from
+      // the response.
+      // Two possible solutions I can think of:
+      // 1. Client makes a request for unzoomed data to get the xMin and xMax, and remembers this.
+      // 2. Server returns the truncation flags for us, somehow.
+      vizConfig.useBinning
+        ? defaultIndependentAxisRange
+        : data.value != null
+        ? ({ min: data.value.xMin, max: data.value?.xMax } as NumberOrDateRange)
+        : undefined,
+    [data, vizConfig.useBinning]
+  );
+  const yMinMaxDataRange = useMemo(
+    () =>
+      data.value != null
+        ? ({ min: data.value.yMin, max: data.value?.yMax } as NumberOrDateRange)
+        : undefined,
+    [data]
+  );
 
-    return ((yAxisVariable?.type === 'number' ||
-      yAxisVariable?.type === 'integer' ||
-      (yAxisVariable?.type === 'string' && categoricalMode)) &&
-      typeof yMinMaxRange?.min === 'number' &&
-      typeof yMinMaxRange?.max === 'number') ||
-      (yAxisVariable?.type === 'date' &&
-        typeof yMinMaxRange?.min === 'string' &&
-        typeof yMinMaxRange?.max === 'string')
-      ? // no padding is made here
-        yMinMaxRange
-      : undefined;
-  }, [data.value, yAxisVariable, categoricalMode]);
+  const defaultDependentAxisRange = useDefaultAxisRange(
+    yAxisVariable,
+    data.value?.yMin,
+    data.value?.yMinPos,
+    data.value?.yMax,
+    vizConfig.dependentAxisLogScale
+  );
 
   // custom legend list
   const legendItems: LegendItemsProps[] = useMemo(() => {
@@ -671,13 +667,13 @@ function LineplotViz(props: VisualizationProps) {
   const defaultUIState = useMemo(() => {
     if (xAxisVariable != null)
       return {
-        independentAxisRange: defaultIndependentRangeMargin,
+        independentAxisRange: defaultIndependentAxisRange,
       };
     else
       return {
         independentAxisRange: undefined,
       };
-  }, [xAxisVariable, defaultIndependentRangeMargin]);
+  }, [xAxisVariable, defaultIndependentAxisRange]);
 
   const plotNode = (
     <LineplotWithControls
@@ -729,17 +725,23 @@ function LineplotViz(props: VisualizationProps) {
       vizConfig={vizConfig}
       updateVizConfig={updateVizConfig}
       defaultUIState={defaultUIState}
-      defaultIndependentRange={defaultIndependentRangeMargin}
+      defaultIndependentRange={defaultIndependentAxisRange}
       // add dependent axis range for better displaying tick labels in log-scale
-      defaultDependentAxisRange={defaultDependentRangeMargin}
+      defaultDependentAxisRange={defaultDependentAxisRange}
       // pass useState of truncation warnings
       truncatedIndependentAxisWarning={truncatedIndependentAxisWarning}
       setTruncatedIndependentAxisWarning={setTruncatedIndependentAxisWarning}
       truncatedDependentAxisWarning={truncatedDependentAxisWarning}
       setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
+      onIndependentAxisLogScaleChange={onIndependentAxisLogScaleChange}
+      onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
+      xMinMaxDataRange={xMinMaxDataRange}
+      yMinMaxDataRange={yMinMaxDataRange}
     />
   );
 
+  const showOverlayLegend =
+    vizConfig.overlayVariable != null && legendItems.length > 0;
   const legendNode = !data.pending && data.value != null && (
     <PlotLegend
       legendItems={legendItems}
@@ -747,9 +749,7 @@ function LineplotViz(props: VisualizationProps) {
       legendTitle={variableDisplayWithUnit(overlayVariable)}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
       // add a condition to show legend even for single overlay data and check legendItems exist
-      showOverlayLegend={
-        vizConfig.overlayVariable != null && legendItems.length > 0
-      }
+      showOverlayLegend={showOverlayLegend}
     />
   );
 
@@ -988,7 +988,7 @@ function LineplotViz(props: VisualizationProps) {
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
       <PlotLayout
         isFaceted={isFaceted(data.value?.dataSetProcess)}
-        legendNode={legendNode}
+        legendNode={showOverlayLegend ? legendNode : null}
         plotNode={plotNode}
         tableGroupNode={tableGroupNode}
       />
@@ -1023,6 +1023,10 @@ type LineplotWithControlsProps = Omit<LinePlotProps, 'data'> & {
   setTruncatedDependentAxisWarning: (
     truncatedDependentAxisWarning: string
   ) => void;
+  onIndependentAxisLogScaleChange: (value: boolean) => void;
+  onDependentAxisLogScaleChange: (value: boolean) => void;
+  xMinMaxDataRange: NumberOrDateRange | undefined;
+  yMinMaxDataRange: NumberOrDateRange | undefined;
 };
 
 function LineplotWithControls({
@@ -1050,6 +1054,10 @@ function LineplotWithControls({
   setTruncatedIndependentAxisWarning,
   truncatedDependentAxisWarning,
   setTruncatedDependentAxisWarning,
+  onIndependentAxisLogScaleChange,
+  onDependentAxisLogScaleChange,
+  xMinMaxDataRange,
+  yMinMaxDataRange,
   ...lineplotProps
 }: LineplotWithControlsProps) {
   const plotRef = useUpdateThumbnailEffect(
@@ -1061,6 +1069,8 @@ function LineplotWithControls({
       // considering axis range control too
       vizConfig.independentAxisRange,
       vizConfig.dependentAxisRange,
+      vizConfig.independentAxisLogScale,
+      vizConfig.dependentAxisLogScale,
     ]
   );
 
@@ -1100,6 +1110,7 @@ function LineplotWithControls({
   const handleIndependentAxisSettingsReset = useCallback(() => {
     updateVizConfig({
       independentAxisRange: undefined,
+      independentAxisLogScale: false,
     });
     // add reset for truncation message: including dependent axis warning as well
     setTruncatedIndependentAxisWarning('');
@@ -1128,6 +1139,7 @@ function LineplotWithControls({
   const handleDependentAxisSettingsReset = useCallback(() => {
     updateVizConfig({
       dependentAxisRange: undefined,
+      dependentAxisLogScale: false,
     });
     // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
@@ -1141,12 +1153,33 @@ function LineplotWithControls({
     truncationConfigDependentAxisMax,
   } = useMemo(
     () =>
-      truncationConfig(defaultUIState, vizConfig, defaultDependentAxisRange),
+      truncationConfig(
+        {
+          independentAxisRange: xMinMaxDataRange,
+          dependentAxisRange: yMinMaxDataRange,
+        },
+        vizConfig,
+        {
+          // overrides for logscale when values go zero or negative
+          ...(vizConfig.independentAxisLogScale &&
+          xMinMaxDataRange?.min != null &&
+          xMinMaxDataRange.min <= 0
+            ? { truncationConfigIndependentAxisMin: true }
+            : {}),
+          ...(vizConfig.dependentAxisLogScale &&
+          yMinMaxDataRange?.min != null &&
+          yMinMaxDataRange.min <= 0
+            ? { truncationConfigDependentAxisMin: true }
+            : {}),
+        }
+      ),
     [
-      defaultUIState,
+      xMinMaxDataRange,
+      yMinMaxDataRange,
       vizConfig.independentAxisRange,
       vizConfig.dependentAxisRange,
-      defaultDependentAxisRange,
+      vizConfig.independentAxisLogScale,
+      vizConfig.dependentAxisLogScale,
     ]
   );
 
@@ -1183,7 +1216,6 @@ function LineplotWithControls({
     setTruncatedDependentAxisWarning,
   ]);
 
-  // send histogramProps with additional props
   const lineplotPlotProps = {
     ...lineplotProps,
     // axis range control
@@ -1205,7 +1237,27 @@ function LineplotWithControls({
         max: truncationConfigDependentAxisMax,
       },
     },
+    independentAxisLogScale: vizConfig.independentAxisLogScale,
+    dependentAxisLogScale: vizConfig.dependentAxisLogScale,
   };
+
+  const [
+    dismissedIndependentAllNegativeWarning,
+    setDismissedIndependentAllNegativeWarning,
+  ] = useState<boolean>(false);
+  const independentAllNegative = // or zero
+    vizConfig.independentAxisLogScale &&
+    xMinMaxDataRange?.max != null &&
+    xMinMaxDataRange.max <= 0;
+
+  const [
+    dismissedDependentAllNegativeWarning,
+    setDismissedDependentAllNegativeWarning,
+  ] = useState<boolean>(false);
+  const dependentAllNegative = // or zero
+    vizConfig.dependentAxisLogScale &&
+    yMinMaxDataRange?.max != null &&
+    yMinMaxDataRange.max <= 0;
 
   return (
     <>
@@ -1225,34 +1277,13 @@ function LineplotWithControls({
         />
       ) : (
         <LinePlot
-          {...lineplotProps}
+          {...lineplotPlotProps}
           ref={plotRef}
           data={data}
           // add controls
           displayLibraryControls={false}
           // custom legend: pass checkedLegendItems to PlotlyPlot
           checkedLegendItems={checkedLegendItems}
-          // pass axis range control
-          independentAxisRange={
-            vizConfig.independentAxisRange ?? defaultIndependentRange
-          }
-          dependentAxisRange={
-            vizConfig.dependentAxisRange ?? defaultDependentAxisRange
-          }
-          // pass valueTypes
-          independentValueType={independentValueType}
-          dependentValueType={dependentValueType}
-          // pass axisTruncationConfig
-          axisTruncationConfig={{
-            independentAxis: {
-              min: truncationConfigIndependentAxisMin,
-              max: truncationConfigIndependentAxisMax,
-            },
-            dependentAxis: {
-              min: truncationConfigDependentAxisMin,
-              max: truncationConfigDependentAxisMax,
-            },
-          }}
         />
       )}
 
@@ -1264,11 +1295,42 @@ function LineplotWithControls({
             marginRight: '1em',
           }}
         >
+          <div
+            style={{
+              display: 'flex',
+              marginTop: '0.8em',
+              marginBottom: '0.8em',
+            }}
+          >
+            <Switch
+              label="Log scale (will exclude values &le; 0):"
+              state={vizConfig.independentAxisLogScale}
+              onStateChange={(newValue: boolean) => {
+                setDismissedIndependentAllNegativeWarning(false);
+                onIndependentAxisLogScaleChange(newValue);
+              }}
+              disabled={independentValueType === 'date' || useBinning}
+            />
+          </div>
+          {independentAllNegative && !dismissedIndependentAllNegativeWarning ? (
+            <Notification
+              title={''}
+              text={
+                'Nothing can be plotted with log scale because all values are zero or negative'
+              }
+              color={'#5586BE'}
+              onAcknowledgement={() =>
+                setDismissedIndependentAllNegativeWarning(true)
+              }
+              showWarningIcon={true}
+              containerStyles={{ maxWidth: '350px' }}
+            />
+          ) : null}
           <Switch
             label={`Binning ${useBinning ? 'on' : 'off'}`}
             state={useBinning}
             onStateChange={onUseBinningChange}
-            disabled={neverUseBinning}
+            disabled={neverUseBinning || vizConfig.independentAxisLogScale}
           />
           <BinWidthControl
             binWidth={data0?.binWidthSlider?.binWidth}
@@ -1312,7 +1374,7 @@ function LineplotWithControls({
             disabled={independentValueType === 'string'}
           />
           {/* truncation notification */}
-          {truncatedIndependentAxisWarning ? (
+          {truncatedIndependentAxisWarning && !independentAllNegative ? (
             <Notification
               title={''}
               text={truncatedIndependentAxisWarning}
@@ -1349,7 +1411,7 @@ function LineplotWithControls({
           style={{
             display: 'inline-flex',
             borderLeft: '2px solid lightgray',
-            height: '15.5em',
+            height: '19.3em',
             position: 'relative',
             marginLeft: '-1px',
             top: '1.5em',
@@ -1363,11 +1425,42 @@ function LineplotWithControls({
             marginRight: '0em',
           }}
         >
+          <div
+            style={{
+              display: 'flex',
+              marginTop: '0.8em',
+              marginBottom: '0.8em',
+            }}
+          >
+            <Switch
+              label="Log scale (will exclude values &le; 0):"
+              state={vizConfig.dependentAxisLogScale}
+              onStateChange={(newValue: boolean) => {
+                setDismissedDependentAllNegativeWarning(false);
+                onDependentAxisLogScaleChange(newValue);
+              }}
+              disabled={dependentValueType === 'date' || showErrorBars}
+            />
+          </div>
+          {dependentAllNegative && !dismissedDependentAllNegativeWarning ? (
+            <Notification
+              title={''}
+              text={
+                'Nothing can be plotted with log scale because all values are zero or negative'
+              }
+              color={'#5586BE'}
+              onAcknowledgement={() =>
+                setDismissedDependentAllNegativeWarning(true)
+              }
+              showWarningIcon={true}
+              containerStyles={{ maxWidth: '350px' }}
+            />
+          ) : null}
           <Switch
             label="Show error bars (95% C.I.)"
             state={showErrorBars}
             onStateChange={onShowErrorBarsChange}
-            disabled={neverShowErrorBars}
+            disabled={neverShowErrorBars || vizConfig.dependentAxisLogScale}
           />
           {/* Y-axis range control */}
           {/* make some space to match with X-axis range control */}
@@ -1383,7 +1476,7 @@ function LineplotWithControls({
             containerStyles={{ maxWidth: '350px' }}
           />
           {/* truncation notification */}
-          {truncatedDependentAxisWarning ? (
+          {truncatedDependentAxisWarning && !dependentAllNegative ? (
             <Notification
               title={''}
               text={truncatedDependentAxisWarning}
@@ -1452,7 +1545,15 @@ export function lineplotResponseToData(
   );
 
   const processedData = mapValues(facetGroupedResponseData, (group) => {
-    const { dataSetProcess, yMin, yMax, xMin, xMax } = processInputData(
+    const {
+      dataSetProcess,
+      yMin,
+      yMinPos,
+      yMax,
+      xMin,
+      xMinPos,
+      xMax,
+    } = processInputData(
       reorderResponseLineplotData(
         // reorder by overlay var within each facet
         group,
@@ -1476,15 +1577,19 @@ export function lineplotResponseToData(
     return {
       dataSetProcess: dataSetProcess,
       yMin,
+      yMinPos,
       yMax,
       xMin,
+      xMinPos,
       xMax,
     };
   });
 
   const xMin = min(map(processedData, ({ xMin }) => xMin));
+  const xMinPos = min(map(processedData, ({ xMinPos }) => xMinPos));
   const xMax = max(map(processedData, ({ xMax }) => xMax));
   const yMin = min(map(processedData, ({ yMin }) => yMin));
+  const yMinPos = min(map(processedData, ({ yMinPos }) => yMinPos));
   const yMax = max(map(processedData, ({ yMax }) => yMax));
 
   const dataSetProcess =
@@ -1505,8 +1610,10 @@ export function lineplotResponseToData(
     dataSetProcess,
     // calculated y axis limits
     xMin,
+    xMinPos,
     xMax,
     yMin,
+    yMinPos,
     yMax,
     // CoverageStatistics
     completeCases: response.completeCasesTable,
@@ -1885,8 +1992,10 @@ function processInputData(
       ...binWidthSliderData,
     },
     xMin: min(xValues),
+    xMinPos: min(xValues.filter((value) => value != null && value > 0)),
     xMax: max(xValues),
     yMin: min(yValues),
+    yMinPos: min(yValues.filter((value) => value != null && value > 0)),
     yMax: max(yValues),
   };
 }

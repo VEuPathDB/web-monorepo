@@ -18,7 +18,7 @@ import {
   EnhancedEntityDatum,
 } from './hooks/useEnhancedEntityData';
 import { useState } from 'react';
-import SubsettingDataGridModal from '../Subsetting/SubsettingDataGridModal';
+import SubsetDownloadModal from '../Subsetting/SubsetDownloadModal';
 import { AnalysisState } from '../../core';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
@@ -50,7 +50,7 @@ export default function MySubset({
   return (
     <div key="My Subset" style={{ marginTop: 10, marginBottom: 35 }}>
       {currentEntity ? (
-        <SubsettingDataGridModal
+        <SubsetDownloadModal
           displayModal={mySubsetModalOpen}
           toggleDisplay={() => {
             setMySubsetModalOpen(false);
@@ -75,9 +75,9 @@ export default function MySubset({
       {Object.values(entities).map((data, index) => (
         <FloatingButton
           key={index}
-          text={`${data.filteredCount?.toLocaleString()} of ${data.totalCount?.toLocaleString()} ${startCase(
+          text={`${data.filteredCount?.toLocaleString()} of ${data.totalCount?.toLocaleString()} ${
             data.displayNamePlural
-          )}`}
+          }`}
           onPress={() => {
             attemptAction(Action.download, {
               studyId: datasetId,

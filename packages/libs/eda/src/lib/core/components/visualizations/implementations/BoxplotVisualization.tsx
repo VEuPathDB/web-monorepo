@@ -2,7 +2,6 @@
 import Boxplot, { BoxplotProps } from '@veupathdb/components/lib/plots/Boxplot';
 import FacetedBoxplot from '@veupathdb/components/lib/plots/facetedPlots/FacetedBoxplot';
 
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import * as t from 'io-ts';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 
@@ -10,33 +9,44 @@ import { useCallback, useMemo, useState, useEffect } from 'react';
 import DataClient, { BoxplotResponse } from '../../../api/DataClient';
 
 import { usePromise } from '../../../hooks/promise';
-import { useFindEntityAndVariable } from '../../../hooks/study';
+import {
+  useFindEntityAndVariable,
+  useStudyEntities,
+} from '../../../hooks/workspace';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
-import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { VariableDescriptor } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
-import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
+import {
+  ComputedVariableDetails,
+  VisualizationProps,
+} from '../VisualizationTypes';
 import box from './selectorIcons/box.svg';
 import {
   BoxplotData as BoxplotSeries,
   FacetedData,
   BoxplotDataObject,
 } from '@veupathdb/components/lib/types/plots';
-import {
-  Computation,
-  ComputationConfiguration,
-  CoverageStatistics,
-} from '../../../types/visualization';
+import { CoverageStatistics } from '../../../types/visualization';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import { PlotLayout } from '../../layouts/PlotLayout';
 import PluginError from '../PluginError';
 
-import { at, groupBy, mapValues, size, head, map, values, keys } from 'lodash';
+import {
+  at,
+  groupBy,
+  mapValues,
+  size,
+  head,
+  map,
+  values,
+  keys,
+  pick,
+} from 'lodash';
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import {
@@ -66,15 +76,18 @@ import LabelledGroup from '@veupathdb/components/lib/components/widgets/Labelled
 import { NumberOrDateRange, NumberRange } from '../../../types/general';
 import { NumberRangeInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateRangeInputs';
 // reusable util for computing truncationConfig
-import { truncationConfig } from '../../../utils/truncation-config-utils-viz';
+import { truncationConfig } from '../../../utils/truncation-config-utils';
 // use Notification for truncation warning message
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 import Button from '@veupathdb/components/lib/components/widgets/Button';
-import { useDefaultDependentAxisRange } from '../../../hooks/computeDefaultDependentAxisRange';
+import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 // alphadiv abundance this should be used for collection variable
 import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from '../../../utils/study-metadata';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
 import { ComputedVariableMetadata } from '../../../api/DataClient/types';
+import { createVisualizationPlugin } from '../VisualizationPlugin';
+import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
+import { boxplotDefaultDependentAxisMinMax } from '../../../utils/axis-range-calculations';
 
 type BoxplotData = { series: BoxplotSeries };
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
@@ -103,19 +116,22 @@ const modalPlotContainerStyles = {
   margin: 'auto',
 };
 
-export const boxplotVisualization: VisualizationType = {
-  selectorComponent: SelectorComponent,
-  fullscreenComponent: FullscreenComponent,
-  createDefaultConfig: createDefaultConfig,
-};
-
-function SelectorComponent() {
-  return (
-    <img alt="Box plot" style={{ height: '100%', width: '100%' }} src={box} />
-  );
+interface Options {
+  getXAxisVariable?: (computeConfig: unknown) => VariableDescriptor | undefined;
+  getComputedYAxisDetails?: (
+    computeConfig: unknown
+  ) => ComputedVariableDetails | undefined;
+  getPlotSubtitle?: (computeConfig: unknown) => string | undefined;
+  hideShowMissingnessToggle?: boolean;
 }
 
-function FullscreenComponent(props: VisualizationProps) {
+export const boxplotVisualization = createVisualizationPlugin({
+  selectorIcon: box,
+  fullscreenComponent: FullscreenComponent,
+  createDefaultConfig: createDefaultConfig,
+});
+
+function FullscreenComponent(props: VisualizationProps<Options>) {
   return <BoxplotViz {...props} />;
 }
 
@@ -138,9 +154,10 @@ export const BoxplotConfig = t.partial({
   dependentAxisRange: NumberOrDateRange,
 });
 
-function BoxplotViz(props: VisualizationProps) {
+function BoxplotViz(props: VisualizationProps<Options>) {
   const {
     computation,
+    options,
     visualization,
     updateConfiguration,
     updateThumbnail,
@@ -154,11 +171,7 @@ function BoxplotViz(props: VisualizationProps) {
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
-  const entities = useMemo(
-    () =>
-      Array.from(preorder(studyMetadata.rootEntity, (e) => e.children || [])),
-    [studyMetadata]
-  );
+  const entities = useStudyEntities();
   const dataClient: DataClient = useDataClient();
 
   const [vizConfig, updateVizConfig] = useVizConfig(
@@ -198,7 +211,14 @@ function BoxplotViz(props: VisualizationProps) {
     [updateVizConfig]
   );
 
-  const findEntityAndVariable = useFindEntityAndVariable(entities);
+  const findEntityAndVariable = useFindEntityAndVariable();
+
+  const providedXAxisVariable = options?.getXAxisVariable?.(
+    computation.descriptor.configuration
+  );
+  const computedYAxisDetails = options?.getComputedYAxisDetails?.(
+    computation.descriptor.configuration
+  );
 
   const {
     xAxisVariable,
@@ -263,30 +283,21 @@ function BoxplotViz(props: VisualizationProps) {
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
   // Abundance boxplots already know their entity, x, and y vars. If we're in the abundance app, set
   // the output entity here so that the boxplot can appear on load.
-  const outputEntity =
-    useFindOutputEntity(
-      dataElementDependencyOrder,
-      vizConfig,
-      'xAxisVariable',
-      entities
-    ) ??
-    (computation.descriptor.type === 'abundance'
-      ? entities.find(
-          (e) =>
-            e.id ===
-            (computation.descriptor.configuration as ComputationConfiguration)
-              ?.collectionVariable.entityId
-        )
-      : undefined);
+  const outputEntity = useFindOutputEntity(
+    dataElementDependencyOrder,
+    vizConfig,
+    'yAxisVariable',
+    computedYAxisDetails?.entityId
+  );
 
   // add to support both alphadiv and abundance
   const data = usePromise(
     useCallback(async (): Promise<BoxplotDataWithCoverage | undefined> => {
       if (
-        // abundance case for xAxisVariable
-        (computation.descriptor.configuration == null &&
+        // check for vizConfig variables only if provided variables are not defined.
+        (providedXAxisVariable == null &&
           (vizConfig.xAxisVariable == null || xAxisVariable == null)) ||
-        (computation.descriptor.configuration == null &&
+        (computedYAxisDetails == null &&
           (vizConfig.yAxisVariable == null || yAxisVariable == null)) ||
         outputEntity == null ||
         filteredCounts.pending ||
@@ -309,12 +320,7 @@ function BoxplotViz(props: VisualizationProps) {
         studyId,
         filters,
         config: {
-          // add outputEntityId per dataElementDependencyOrder
-          outputEntityId: computation.descriptor.configuration
-            ? // alphadiv abundance remove any as configuration is defined instead of unknown
-              (computation.descriptor.configuration as any).collectionVariable
-                .entityId
-            : outputEntity.id,
+          outputEntityId: outputEntity.id,
           // post options: 'all', 'outliers'
           points: 'outliers',
           mean: 'TRUE',
@@ -326,7 +332,7 @@ function BoxplotViz(props: VisualizationProps) {
             : [],
           showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
         },
-        computeConfig: computation.descriptor.configuration ?? undefined,
+        computeConfig: computation.descriptor.configuration,
       };
 
       // boxplot
@@ -375,7 +381,7 @@ function BoxplotViz(props: VisualizationProps) {
             xAxisVariable,
             overlayVariable,
             facetVariable,
-            computation,
+            computedYAxisDetails,
             entities
           ),
           vocabulary,
@@ -416,15 +422,19 @@ function BoxplotViz(props: VisualizationProps) {
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
 
-  // use custom hook
-  const defaultDependentAxisRange = useDefaultDependentAxisRange(
+  const dependentAxisMinMax = boxplotDefaultDependentAxisMinMax(
     data,
-    vizConfig,
-    'Boxplot',
     yAxisVariable,
-    // pass computedVariableMetadata
     data?.value?.computedVariableMetadata
   );
+
+  const defaultDependentAxisRange = useDefaultAxisRange(
+    yAxisVariable ?? data?.value?.computedVariableMetadata,
+    dependentAxisMinMax?.min,
+    undefined, // no minPos needed if no logscale option offered
+    dependentAxisMinMax?.max,
+    false // never logscale
+  ) as NumberRange;
 
   // custom legend items for checkbox
   const legendItems: LegendItemsProps[] = useMemo(() => {
@@ -477,33 +487,18 @@ function BoxplotViz(props: VisualizationProps) {
   // alphadiv abundance findEntityAndVariable does not work properly for collection variable
   const independentAxisEntityAndVariable = useMemo(
     () =>
-      computation.descriptor.configuration != null &&
-      computation.descriptor.type === 'abundance'
-        ? findCollectionVariableEntityAndVariable(
-            entities,
-            (computation.descriptor.configuration as any).collectionVariable
-          )
-        : undefined,
-    [entities, computation]
+      findCollectionVariableEntityAndVariable(entities, providedXAxisVariable),
+    [entities, providedXAxisVariable]
   );
   const independentAxisLabel =
-    computation.descriptor.configuration != null &&
-    computation.descriptor.type === 'abundance' &&
-    independentAxisEntityAndVariable != null
-      ? independentAxisEntityAndVariable?.variable.displayName
-      : variableDisplayWithUnit(xAxisVariable) ?? 'X-axis';
+    independentAxisEntityAndVariable?.variable.displayName ??
+    variableDisplayWithUnit(xAxisVariable) ??
+    'X-axis';
 
-  const dependentAxisLabel =
-    computation.descriptor.configuration != null
-      ? computation.descriptor.type === 'alphadiv'
-        ? // considering computedVariableMetadata.displayName for alphadiv
-          data?.value?.computedVariableMetadata?.displayName != null
-          ? data?.value?.computedVariableMetadata?.displayName[0]
-          : computation.descriptor.type
-        : computation.descriptor.type === 'abundance'
-        ? 'Relative Abundance'
-        : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis'
-      : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis';
+  const dependentAxisLabel = computedYAxisDetails
+    ? data.value?.computedVariableMetadata?.displayName?.[0] ??
+      computedYAxisDetails?.placeholderDisplayName
+    : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis';
 
   const plotNode = (
     <BoxplotWithControls
@@ -538,9 +533,12 @@ function BoxplotViz(props: VisualizationProps) {
       // pass useState of truncation warnings
       truncatedDependentAxisWarning={truncatedDependentAxisWarning}
       setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
+      dependentAxisMinMax={dependentAxisMinMax}
     />
   );
 
+  const showOverlayLegend =
+    vizConfig.overlayVariable != null && legendItems.length > 0;
   const legendNode = legendItems != null && !data.pending && data != null && (
     <PlotLegend
       legendItems={legendItems}
@@ -548,9 +546,7 @@ function BoxplotViz(props: VisualizationProps) {
       legendTitle={variableDisplayWithUnit(overlayVariable)}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
       // add a condition to show legend even for single overlay data and check legendItems exist
-      showOverlayLegend={
-        vizConfig.overlayVariable != null && legendItems.length > 0
-      }
+      showOverlayLegend={showOverlayLegend}
     />
   );
 
@@ -606,13 +602,9 @@ function BoxplotViz(props: VisualizationProps) {
   );
 
   // plot subtitle
-  const plotSubtitle =
-    computation.descriptor.type === 'abundance' && outputSize != null
-      ? `Ranked abundance: Variables with ${
-          (computation.descriptor.configuration as ComputationConfiguration)
-            ?.rankingMethod
-        } = 0 removed. Showing up to the top ten variables.`
-      : undefined;
+  const plotSubtitle = options?.getPlotSubtitle?.(
+    computation.descriptor.configuration
+  );
 
   // for handling alphadiv abundance
   return (
@@ -624,19 +616,13 @@ function BoxplotViz(props: VisualizationProps) {
               name: 'xAxisVariable',
               label: 'X-axis',
               role: 'axis',
-              readonlyValue:
-                computation.descriptor.configuration != null &&
-                computation.descriptor.type === 'abundance'
-                  ? independentAxisLabel
-                  : undefined,
+              readonlyValue: providedXAxisVariable && independentAxisLabel,
             },
             {
               name: 'yAxisVariable',
               label: 'Y-axis',
               role: 'axis',
-              readonlyValue: computation.descriptor.configuration
-                ? dependentAxisLabel
-                : undefined,
+              readonlyValue: computedYAxisDetails && dependentAxisLabel,
             },
             {
               name: 'overlayVariable',
@@ -669,9 +655,9 @@ function BoxplotViz(props: VisualizationProps) {
           showMissingness={vizConfig.showMissingness}
           // this can be used to show and hide no data control
           onShowMissingnessChange={
-            computation.descriptor.type === 'pass'
-              ? onShowMissingnessChange
-              : undefined
+            options?.hideShowMissingnessToggle
+              ? undefined
+              : onShowMissingnessChange
           }
           outputEntity={outputEntity}
         />
@@ -685,7 +671,7 @@ function BoxplotViz(props: VisualizationProps) {
       />
       <PlotLayout
         isFaceted={isFaceted(data.value)}
-        legendNode={legendNode}
+        legendNode={showOverlayLegend ? legendNode : null}
         plotNode={plotNode}
         tableGroupNode={tableGroupNode}
       />
@@ -709,6 +695,7 @@ type BoxplotWithControlsProps = Omit<BoxplotProps, 'data'> & {
   setTruncatedDependentAxisWarning: (
     truncatedDependentAxisWarning: string
   ) => void;
+  dependentAxisMinMax: NumberRange | undefined;
 };
 
 function BoxplotWithControls({
@@ -725,6 +712,7 @@ function BoxplotWithControls({
   // pass useState of truncation warnings
   truncatedDependentAxisWarning,
   setTruncatedDependentAxisWarning,
+  dependentAxisMinMax,
   ...boxplotComponentProps
 }: BoxplotWithControlsProps) {
   const plotRef = useUpdateThumbnailEffect(
@@ -759,13 +747,8 @@ function BoxplotWithControls({
     truncationConfigDependentAxisMax,
   } = useMemo(
     () =>
-      // boxplot does not have independent axis range control so send undefined for defaultUIState
-      truncationConfig(undefined, vizConfig, defaultDependentAxisRange),
-    [
-      vizConfig.xAxisVariable,
-      vizConfig.dependentAxisRange,
-      defaultDependentAxisRange,
-    ]
+      truncationConfig({ dependentAxisRange: dependentAxisMinMax }, vizConfig),
+    [dependentAxisMinMax, vizConfig.dependentAxisRange]
   );
 
   useEffect(() => {
@@ -905,7 +888,7 @@ export function boxplotResponseToData(
   variable?: Variable,
   overlayVariable?: Variable,
   facetVariable?: Variable,
-  computation?: Computation,
+  computedVariableDetails?: ComputedVariableDetails,
   entities?: StudyEntity[]
 ): BoxplotDataWithCoverage {
   // group by facet variable value (if only one facet variable in response - there may be up to two in future)
@@ -951,7 +934,7 @@ export function boxplotResponseToData(
                   )
                 : '',
             label:
-              computation?.descriptor.type === 'abundance' &&
+              computedVariableDetails &&
               entities &&
               response.boxplot.config.computedVariableMetadata
                 ?.collectionVariable?.collectionVariableDetails

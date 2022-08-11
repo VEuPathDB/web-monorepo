@@ -13,12 +13,12 @@ import {
 import { cx } from './Utils';
 
 // Definitions
-import { Status } from '../core';
+import { Status, useStudyEntities } from '../core';
 
 // Hooks
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { usePrevious } from '../core/hooks/previousValue';
-import { isStubEntity, useStudyEntities } from '../core/hooks/study';
+import { isStubEntity } from '../core/hooks/study';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { useStudyMetadata, useStudyRecord } from '../core';
 import { useGeoConfig } from '../core/hooks/geoConfig';
@@ -41,7 +41,7 @@ import NotesTab from './NotesTab';
 import DownloadTab from './DownloadTab';
 import { Alert } from '@material-ui/lab';
 import ShareFromAnalysis from './sharing/ShareFromAnalysis';
-import { useWorkspaceAnalysis } from './hooks/analyses';
+import { useAnalysis } from '../core/hooks/analysis';
 import { ApprovalStatus } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 import { RestrictedPage } from '@veupathdb/study-data-access/lib/data-restriction/RestrictedPage';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
@@ -107,11 +107,7 @@ export function AnalysisPanel({
   singleAppMode,
 }: Props) {
   const studyRecord = useStudyRecord();
-  const analysisState = useWorkspaceAnalysis(
-    studyId,
-    analysisId,
-    singleAppMode
-  );
+  const analysisState = useAnalysis(analysisId, singleAppMode);
 
   const {
     status,
@@ -128,7 +124,7 @@ export function AnalysisPanel({
   const filters = analysis?.descriptor.subset.descriptor;
   const filteredCounts = useEntityCounts(filters);
   const studyMetadata = useStudyMetadata();
-  const entities = useStudyEntities(studyMetadata.rootEntity);
+  const entities = useStudyEntities();
   const filteredEntities = uniq(filters?.map((f) => f.entityId));
   const geoConfigs = useGeoConfig(entities);
   const location = useLocation();
