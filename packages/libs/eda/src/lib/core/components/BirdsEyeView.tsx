@@ -3,7 +3,7 @@ import { CoverageStatistics } from '../types/visualization';
 import BirdsEyePlot from '@veupathdb/components/lib/plots/BirdsEyePlot';
 import { red, gray } from './filter/colors';
 import { StudyEntity } from '../types/study';
-import Tooltip from '@veupathdb/wdk-client/lib/Components/Overlays/Tooltip';
+import HelpIcon from '@veupathdb/wdk-client/lib/Components/Icon/HelpIcon';
 
 interface Props extends Partial<CoverageStatistics> {
   /** The output entity */
@@ -139,29 +139,15 @@ export function BirdsEyeView(props: Props) {
         plotBgColor={'rgb(250,250,250)'}
         paperBgColor={'rgb(250,250,250)'}
       />
-      <Tooltip
-        content={tooltipContent}
-        position={{
-          my: 'right middle',
-          at: 'right middle',
+      <span
+        style={{
+          position: 'relative',
+          right: '1.75em',
+          top: '0.25em',
         }}
-        showDelay={250}
-        showTip={false}
       >
-        <i
-          style={{
-            position: 'relative',
-            right: '18px',
-            top: '6px',
-            height: '1rem',
-            width: '1rem',
-            fontSize: '0.95rem',
-            cursor: 'default',
-          }}
-          className="fa fa-question-circle"
-          aria-hidden="true"
-        ></i>
-      </Tooltip>
+        <HelpIcon children={tooltipContent} />
+      </span>
     </div>
   ) : null;
 }

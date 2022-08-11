@@ -96,7 +96,7 @@ import { BinSpec, BinWidthSlider, TimeUnit } from '../../../types/general';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { useInputStyles } from '../inputStyles';
 import { ValuePicker } from './ValuePicker';
-import Tooltip from '@veupathdb/wdk-client/lib/Components/Overlays/Tooltip';
+import HelpIcon from '@veupathdb/wdk-client/lib/Components/Icon/HelpIcon';
 
 // concerning axis range control
 import { NumberOrDateRange as NumberOrDateRangeT } from '../../../types/general';
@@ -271,14 +271,10 @@ function LineplotViz(props: VisualizationProps) {
     vizConfig.denominatorValues.length > 0;
 
   // axis range control: set the state of truncation warning message
-  const [
-    truncatedIndependentAxisWarning,
-    setTruncatedIndependentAxisWarning,
-  ] = useState<string>('');
-  const [
-    truncatedDependentAxisWarning,
-    setTruncatedDependentAxisWarning,
-  ] = useState<string>('');
+  const [truncatedIndependentAxisWarning, setTruncatedIndependentAxisWarning] =
+    useState<string>('');
+  const [truncatedDependentAxisWarning, setTruncatedDependentAxisWarning] =
+    useState<string>('');
 
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
@@ -388,9 +384,8 @@ function LineplotViz(props: VisualizationProps) {
   );
 
   // for vizconfig.checkedLegendItems
-  const onCheckedLegendItemsChange = onChangeHandlerFactory<string[]>(
-    'checkedLegendItems'
-  );
+  const onCheckedLegendItemsChange =
+    onChangeHandlerFactory<string[]>('checkedLegendItems');
 
   const onShowErrorBarsChange = onChangeHandlerFactory<boolean>(
     'showErrorBars',
@@ -399,12 +394,10 @@ function LineplotViz(props: VisualizationProps) {
   );
 
   const onUseBinningChange = onChangeHandlerFactory<boolean>('useBinning');
-  const onNumeratorValuesChange = onChangeHandlerFactory<string[]>(
-    'numeratorValues'
-  );
-  const onDenominatorValuesChange = onChangeHandlerFactory<string[]>(
-    'denominatorValues'
-  );
+  const onNumeratorValuesChange =
+    onChangeHandlerFactory<string[]>('numeratorValues');
+  const onDenominatorValuesChange =
+    onChangeHandlerFactory<string[]>('denominatorValues');
 
   const onIndependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
     'independentAxisLogScale',
@@ -942,14 +935,10 @@ function LineplotViz(props: VisualizationProps) {
             {
               title: (
                 <>
-                  Y-axis aggregation
-                  <Tooltip content={aggregationHelp}>
-                    <i
-                      style={{ marginLeft: '5px' }}
-                      className="fa fa-question-circle"
-                      aria-hidden="true"
-                    ></i>
-                  </Tooltip>
+                  <span style={{ marginRight: '0.25em' }}>
+                    Y-axis aggregation
+                  </span>
+                  <HelpIcon children={aggregationHelp} />
                 </>
               ),
               order: 75,
@@ -1545,34 +1534,27 @@ export function lineplotResponseToData(
   );
 
   const processedData = mapValues(facetGroupedResponseData, (group) => {
-    const {
-      dataSetProcess,
-      yMin,
-      yMinPos,
-      yMax,
-      xMin,
-      xMinPos,
-      xMax,
-    } = processInputData(
-      reorderResponseLineplotData(
-        // reorder by overlay var within each facet
-        group,
+    const { dataSetProcess, yMin, yMinPos, yMax, xMin, xMinPos, xMax } =
+      processInputData(
+        reorderResponseLineplotData(
+          // reorder by overlay var within each facet
+          group,
+          categoricalMode,
+          xAxisVocabulary,
+          vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
+          overlayVariable
+        ),
         categoricalMode,
-        xAxisVocabulary,
-        vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
+        vizType,
+        modeValue,
+        independentValueType,
+        dependentValueType,
+        showMissingOverlay,
+        hasMissingData,
+        response.lineplot.config.binSpec,
+        response.lineplot.config.binSlider,
         overlayVariable
-      ),
-      categoricalMode,
-      vizType,
-      modeValue,
-      independentValueType,
-      dependentValueType,
-      showMissingOverlay,
-      hasMissingData,
-      response.lineplot.config.binSpec,
-      response.lineplot.config.binSlider,
-      overlayVariable
-    );
+      );
 
     return {
       dataSetProcess: dataSetProcess,
