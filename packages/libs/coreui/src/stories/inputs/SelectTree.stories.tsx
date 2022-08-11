@@ -10,7 +10,7 @@ import {
 } from '../../components/inputs/SelectTree/Utils';
 import { uniq } from 'lodash';
 
-import SelectTree, { SelectTreeProps } from '../../components/inputs/SelectTree';
+import SelectTree, { SelectTreeProps } from '../../components/inputs/SelectTree/SelectTree';
 
 export default {
     title: 'Inputs/SelectTree',
@@ -78,6 +78,7 @@ const Template: Story<SelectTreeProps<unknown>> = (args) => {
           css={{
             padding: '0.125em 0.25em',
             borderRadius: '0.25em',
+            cursor: node.children.length ? 'pointer' : 'default',
           }}
           // onClick={() => nonCheckboxClickEvent(node)}
         >
@@ -147,5 +148,5 @@ AsMultiSelect.args = {
 export const ClosesOnSelection = Template.bind({});
 ClosesOnSelection.args = {
     ...AsSingleSelect.args,
-    closeOnSelection: true
+    shouldCloseOnSelection: true
 } as SelectTreeProps<unknown>;

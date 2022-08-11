@@ -1,5 +1,5 @@
 import { ReactNode, useState } from "react";
-import PopoverButton from "../buttons/PopoverButton";
+import PopoverButton from "../buttons/PopoverButton/PopoverButton";
 import CheckboxList, { CheckboxListProps } from "./CheckboxList";
   
 export interface SelectListProps extends CheckboxListProps {
@@ -23,11 +23,6 @@ export default function SelectList({
      * if we desire to concat the values, we'll need to add ellipsis at a calculated length/width
      * */ 
     const [ buttonDisplayContent, setButtonDisplayContent] = useState<ReactNode>(value.length ? value.join(', ') : defaultButtonDisplayContent);
-    /**
-     * this state was lifted from PopoverButton to be able to auto close the popover in the SelectTree component when only a single value can be selected
-     */
-    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-
 
     const onClose = () => {
         onChange(selected)
@@ -38,8 +33,6 @@ export default function SelectList({
         <PopoverButton
             buttonDisplayContent={buttonDisplayContent}
             onClose={onClose}
-            anchorEl={anchorEl}
-            setAnchorEl={setAnchorEl}
         >
             <CheckboxList 
                 name={name}

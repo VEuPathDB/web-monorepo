@@ -1,22 +1,24 @@
 import { ReactNode, useEffect, useState } from "react";
-import PopoverButton from "../../buttons/PopoverButton";
+import PopoverButton from "../../buttons/PopoverButton/PopoverButton";
 import CheckboxTree, { CheckboxTreeProps, LinksPosition } from "./CheckboxTree";
   
 export interface SelectTreeProps<T> extends CheckboxTreeProps<T> {
     buttonDisplayContent: ReactNode;
-    closeOnSelection?: boolean;
+    shouldCloseOnSelection?: boolean;
 }
 
 function SelectTree<T>(props: SelectTreeProps<T>) {
     const [ buttonDisplayContent, setButtonDisplayContent] = useState<ReactNode>(props.currentList && props.currentList.length ? props.currentList.join(', ') : props.buttonDisplayContent);
-    const { selectedList, closeOnSelection, tree } = props;
-    const [ anchorEl, setAnchorEl ] = useState<HTMLElement | null>(null);
+    const { selectedList, shouldCloseOnSelection } = props;
+    
+    /** Used as a hack to "auto close" the popover when shouldCloseOnSelection is true */
+    const [ key, setKey ] = useState('')
 
     useEffect(() => {
-        if (!closeOnSelection) return;
-        setAnchorEl(null);
-        setButtonDisplayContent(selectedList.length ? selectedList.join(', ') : props.buttonDisplayContent);
-    }, [closeOnSelection, selectedList])
+        if (!shouldCloseOnSelection) return;
+        setKey(selectedList.join(', '));
+        onClose();
+    }, [shouldCloseOnSelection, selectedList])
 
     const onClose = () => {
         setButtonDisplayContent(selectedList.length ? selectedList.join(', ') : props.buttonDisplayContent);
@@ -24,9 +26,8 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
 
     return (
         <PopoverButton
+            key={shouldCloseOnSelection ? key : ''}
             buttonDisplayContent={buttonDisplayContent}
-            anchorEl={anchorEl}
-            setAnchorEl={setAnchorEl}
             onClose={onClose}
         >
             <CheckboxTree
