@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
 import { getId } from 'wdk-client/Utils/CategoryUtils';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import { addScrollAnchor } from 'wdk-client/Utils/DomUtils';
+import { addScrollAnchor, findAncestorNode } from 'wdk-client/Utils/DomUtils';
 import { postorderSeq } from 'wdk-client/Utils/TreeUtils';
 import 'wdk-client/Views/Records/Record.css';
 import RecordHeading from 'wdk-client/Views/Records/RecordHeading';
@@ -74,13 +74,29 @@ class RecordUI extends Component {
 
   _scrollToActiveSection() {
     this.unmonitorActiveSection();
-    let sectionId = location.hash.slice(1);
-    let domNode = document.getElementById(sectionId);
-    if (domNode != null) {
-      this.props.updateSectionVisibility(sectionId, true);
-      const rect = domNode.getBoundingClientRect();
-      if (rect.top !== this.activeSectionTop) domNode.scrollIntoView(true);
-      console.debug(Date.now(), 'scrolled to active section', domNode, domNode.getBoundingClientRect().top);
+
+    const targetId = location.hash.slice(1);
+    const targetNode = document.getElementById(targetId);
+
+    // Find the "closest" section containing the targetNode
+    const categoryIdSeq = postorderSeq(this.props.categoryTree).map(getId);
+    const categoryIdSet = new Set(categoryIdSeq);
+    const sectionNode = findAncestorNode(
+      targetNode,
+      node => (
+        node instanceof HTMLElement &&
+        categoryIdSet.has(node.id)
+      )
+    );
+
+    if (
+      targetNode != null &&
+      sectionNode != null
+    ) {
+      this.props.updateSectionVisibility(sectionNode.id, true);
+
+      const rect = targetNode.getBoundingClientRect();
+      if (rect.top !== this.activeSectionTop) targetNode.scrollIntoView(true);
     }
     this.monitorActiveSection();
   }
