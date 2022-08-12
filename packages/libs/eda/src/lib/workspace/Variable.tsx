@@ -84,7 +84,7 @@ export function VariableDetails(props: Props) {
               {showMore && providerLabelLeftover}
               &nbsp;
               <HelpIcon>
-                The name of this variable in the orignal data files
+                The name of this variable in the original data files
               </HelpIcon>
               &nbsp;&nbsp;
               <button
