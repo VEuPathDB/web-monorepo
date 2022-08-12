@@ -45,10 +45,21 @@ export default function ExternalResource(props) {
   });
 
   return (
-    <div style={containerStyle}>
+    <ExternalResourceContainer
+      isLoading={isLoading}
+      isError={isError}
+    >
       {child}
-      {isLoading ? <Loading style={loadingStyle} /> : null}
-      {isError ? <em>Could not load resource.</em> : null}
+    </ExternalResourceContainer>
+  );
+}
+
+export function ExternalResourceContainer(props) {
+  return (
+    <div style={containerStyle}>
+      {props.children}
+      {props.isLoading ? <Loading style={loadingStyle} /> : null}
+      {props.isError ? <em>Could not load resource.</em> : null}
     </div>
   );
 }
