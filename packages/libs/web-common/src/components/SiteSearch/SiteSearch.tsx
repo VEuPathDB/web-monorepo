@@ -667,7 +667,7 @@ function resultDetails(document: SiteSearchDocument, documentType: SiteSearchDoc
     return {
       display: {
         route: `${makeEdaRoute(datasetId)}/new`,
-        text: document.hyperlinkName
+        text: <HtmlString value={document.hyperlinkName || document.primaryKey.join(' - ')} />
       },
       summary: makeGenericSummary(document, documentType)
     }
@@ -679,7 +679,7 @@ function resultDetails(document: SiteSearchDocument, documentType: SiteSearchDoc
     const summaryField = findSummaryField(studyInfoField, documentType);
     return {
       display: {
-        text: document.hyperlinkName
+        text: <HtmlString value={document.hyperlinkName || document.primaryKey.join(' - ')} />
       },
       summary: (
         <>
@@ -696,7 +696,7 @@ function resultDetails(document: SiteSearchDocument, documentType: SiteSearchDoc
     const summaryField = findSummaryField(studyInfoField, documentType);
     return {
       display: {
-        text: document.hyperlinkName,
+        text: <HtmlString value={document.hyperlinkName || document.primaryKey.join(' - ')} />
       },
       summary: (
         <>
@@ -713,7 +713,7 @@ function resultDetails(document: SiteSearchDocument, documentType: SiteSearchDoc
     return {
       display: {
         route: `/search/${recordName}/${searchName}`,
-        text: document.hyperlinkName || document.primaryKey.join(' - ')
+        text: <HtmlString value={document.hyperlinkName || document.primaryKey.join(' - ')} />
       },
       summary: makeGenericSummary(document, documentType)
     }
@@ -724,7 +724,7 @@ function resultDetails(document: SiteSearchDocument, documentType: SiteSearchDoc
     return {
       display: {
         url: `/popbio-map/web/?sampleID=${document.primaryKey[0]}`,
-        text: document.hyperlinkName || document.primaryKey.join(' - '),
+        text: <HtmlString value={document.hyperlinkName || document.primaryKey.join(' - ')} />,
         target: '_blank'
       },
       summary: makeGenericSummary(document, documentType)
@@ -746,7 +746,7 @@ function resultDetails(document: SiteSearchDocument, documentType: SiteSearchDoc
     return {
       display: {
         route,
-        text: document.hyperlinkName || document.primaryKey.join(' - ')
+        text: <HtmlString value={document.hyperlinkName || document.primaryKey.join(' - ')} />
       },
       summary: makeGenericSummary(document, documentType)
     };
@@ -755,7 +755,7 @@ function resultDetails(document: SiteSearchDocument, documentType: SiteSearchDoc
   return {
     display: {
       route: '',
-      text: document.hyperlinkName || document.primaryKey.join('/')
+      text: <HtmlString value={document.hyperlinkName || document.primaryKey.join(' - ')} />
     },
     summary: makeGenericSummary(document, documentType)
   }
