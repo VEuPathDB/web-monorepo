@@ -1,6 +1,6 @@
 import { ReactNode, useState } from "react";
 import PopoverButton from "../buttons/PopoverButton/PopoverButton";
-import CheckboxList, { CheckboxListProps } from "./CheckboxList";
+import CheckboxList, { CheckboxListProps } from "./checkboxes/CheckboxList";
   
 export interface SelectListProps extends CheckboxListProps {
     children?: ReactNode;

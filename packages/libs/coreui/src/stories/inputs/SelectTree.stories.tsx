@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback, ReactNode } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import { tree } from './mockTreeData';
 import { 
@@ -6,7 +6,6 @@ import {
     findAncestorFields, 
     Field, 
     FieldTreeNode,
-    isLeaf
 } from '../../components/inputs/SelectTree/Utils';
 import { uniq } from 'lodash';
 
@@ -24,7 +23,6 @@ const Template: Story<SelectTreeProps<unknown>> = (args) => {
     const [ selectedFields, setSelectedFields ] = useState([]);
     const activeField = null;
     const [ searchTerm, setSearchTerm ] = useState<string>('');
-    // const [ selectedVarName, setSelectedVarName ] = useState<ReactNode>(args.buttonDisplayContent);
 
     const getPathToField = useCallback(
         (field?: Field) => {
@@ -58,19 +56,6 @@ const Template: Story<SelectTreeProps<unknown>> = (args) => {
         },
         []
       );
-
-    // const getNodeChildren =  (node: FieldTreeNode) => {
-    //     const showMultiFilterDescendants = true;
-    //     return 'type' in node.field && node.field.type === 'multiFilter' && !showMultiFilterDescendants
-    //       ? []
-    //       : node.children ?? [];
-    //   }
-
-    // const nonCheckboxClickEvent = (node: FieldTreeNode) => {
-    //   if (!args.isSelectable || !isLeaf(node, getNodeChildren)) return;
-    //   setSelectedFields([ node.field.term ]);
-    //   // setSelectedVarName(node.field.display);
-    // }
     
     const renderNode = (node: FieldTreeNode) => {
       return (
@@ -80,7 +65,6 @@ const Template: Story<SelectTreeProps<unknown>> = (args) => {
             borderRadius: '0.25em',
             cursor: node.children.length ? 'pointer' : 'default',
           }}
-          // onClick={() => nonCheckboxClickEvent(node)}
         >
           {node.field.display}
         </span>
@@ -90,7 +74,6 @@ const Template: Story<SelectTreeProps<unknown>> = (args) => {
     return (
         <SelectTree 
             {...args}
-            // buttonDisplayContent={selectedVarName}
             expandedList={expandedNodes} 
             onExpansionChange={setExpandedNodes}
             searchTerm={searchTerm}

@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from 'react';
-import { isLeaf } from './Utils';
-import IndeterminateCheckbox, { IndeterminateCheckboxProps } from './IndeterminateCheckbox';
+import { isLeaf } from '../../SelectTree/Utils';
+import IndeterminateCheckbox, { IndeterminateCheckboxProps } from '../IndeterminateCheckbox';
 import { ArrowRight, ArrowDropDown } from '@material-ui/icons';
 import { CSSProperties } from '@emotion/serialize';
 

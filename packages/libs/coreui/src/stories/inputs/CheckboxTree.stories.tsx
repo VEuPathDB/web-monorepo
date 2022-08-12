@@ -1,7 +1,7 @@
 import { useMemo, useState, useCallback } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 
-import CheckboxTree, { CheckboxTreeProps } from '../../components/inputs/SelectTree/CheckboxTree';
+import CheckboxTree, { CheckboxTreeProps } from '../../components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { tree } from './mockTreeData';
 import { 
     preorderSeq, 

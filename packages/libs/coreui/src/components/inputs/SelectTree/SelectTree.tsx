@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useState } from "react";
 import PopoverButton from "../../buttons/PopoverButton/PopoverButton";
-import CheckboxTree, { CheckboxTreeProps, LinksPosition } from "./CheckboxTree";
+import CheckboxTree, { CheckboxTreeProps, LinksPosition } from "../checkboxes/CheckboxTree/CheckboxTree";
   
 export interface SelectTreeProps<T> extends CheckboxTreeProps<T> {
     buttonDisplayContent: ReactNode;

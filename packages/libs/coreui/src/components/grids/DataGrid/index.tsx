@@ -16,7 +16,7 @@ import stylePresets, { DataGridStyleSpec } from './stylePresets';
 
 // Components
 import { H3 } from '../../typography';
-import IndeterminateCheckbox from '../../inputs/SelectTree/IndeterminateCheckbox';
+import IndeterminateCheckbox from '../../inputs/checkboxes/IndeterminateCheckbox';
 import DataCell from './DataCell';
 import HeaderCell from './HeaderCell';
 import PaginationControls from './PaginationControls';

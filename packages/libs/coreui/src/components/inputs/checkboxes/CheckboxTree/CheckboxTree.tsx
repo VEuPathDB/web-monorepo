@@ -3,13 +3,13 @@ import { css } from '@emotion/react';
 import { CSSProperties } from '@emotion/serialize';
 
 import CheckboxTreeNode, { CustomCheckboxes } from './CheckboxTreeNode';
-import SearchBox from '../SearchBox/SearchBox';
-import { Warning } from '../../icons';
+import SearchBox from '../../SearchBox/SearchBox';
+import { Warning } from '../../../icons';
 
-import { addOrRemove } from './Utils';
-import { isLeaf, getLeaves, getBranches, mapStructure } from './Utils';
-import { parseSearchQueryString } from './Utils';
-import { Seq } from './Utils';
+import { addOrRemove } from '../../SelectTree/Utils';
+import { isLeaf, getLeaves, getBranches, mapStructure } from '../../SelectTree/Utils';
+import { parseSearchQueryString } from '../../SelectTree/Utils';
+import { Seq } from '../../SelectTree/Utils';
 
 const NODE_STATE_PROPERTY = '__expandableTreeState';
 const NODE_CHILDREN_PROPERTY = '__expandableTreeChildren';

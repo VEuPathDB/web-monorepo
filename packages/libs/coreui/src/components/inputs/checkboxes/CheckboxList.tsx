@@ -3,8 +3,8 @@ import { css } from '@emotion/react';
 import { CSSProperties } from '@emotion/serialize';
 import { merge } from 'lodash';
 import { useMemo } from 'react';
-import { UITheme } from '../theming/types';
-import useUITheme from '../theming/useUITheme';
+import { UITheme } from '../../theming/types';
+import useUITheme from '../../theming/useUITheme';
 
 export type CheckboxListStyleSpec = {
   container: {
