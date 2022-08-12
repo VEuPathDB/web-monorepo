@@ -11,12 +11,14 @@ let RecordNavigationItem = ({node: category, path, activeCategory, checked, onSe
     ? null
     : path.map(n => n + 1).join('.');
 
+  let offerCheckbox = path.length === 1;
+
   return (
     <div className="wdk-RecordNavigationItem">
       {activeId === id ? (
         <i className="fa fa-circle wdk-Link wdk-RecordNavigationIndicator"/>
       ) : null}
-      {path.length == 1 &&
+      {offerCheckbox &&
         <input
           className="wdk-Record-sidebar-checkbox"
           type="checkbox"
@@ -28,7 +30,10 @@ let RecordNavigationItem = ({node: category, path, activeCategory, checked, onSe
         href={'#' + id}
         className="wdk-Record-sidebar-title"
         onClick={event => {
-          if (checked) onSectionToggle(id, true);
+          if (
+            !offerCheckbox ||
+            checked
+          ) onSectionToggle(id, true);
           event.stopPropagation();
         }}
       > {enumeration} {displayName} </a>
