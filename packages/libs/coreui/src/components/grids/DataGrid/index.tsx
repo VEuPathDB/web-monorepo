@@ -16,7 +16,7 @@ import stylePresets, { DataGridStyleSpec } from './stylePresets';
 
 // Components
 import { H3 } from '../../typography';
-import IndeterminateCheckbox from './IndeterminateCheckbox';
+import IndeterminateCheckbox from '../../inputs/checkboxes/IndeterminateCheckbox';
 import DataCell from './DataCell';
 import HeaderCell from './HeaderCell';
 import PaginationControls from './PaginationControls';
@@ -176,28 +176,39 @@ export default function DataGrid({
             id: 'selection',
             // The header can use the table's getToggleAllRowsSelectedProps method
             // to render a checkbox
-            Header: ({ getToggleAllPageRowsSelectedProps }: any) => (
+            Header: ({ getToggleAllPageRowsSelectedProps }: any) => {
+              const props = getToggleAllPageRowsSelectedProps();
+              return (
               <div>
                 <IndeterminateCheckbox
-                  {...getToggleAllPageRowsSelectedProps()}
-                  themeRole={themeRole}
+                  checked={props.checked ?? false}
+                  indeterminate={props.indeterminate ?? false}
+                  onChange={props.onChange}
+                  value={''}
+                  name={''}
+                  // themeRole={themeRole}
                 />
               </div>
-            ),
+            )},
             // The cell can use the individual row's getToggleRowSelectedProps method
             // to the render a checkbox.
             // The `checked` prop returned by getToggleRowSelectedProps is not fit for purpose
             // because it only considers initial pre-selected/checked state (originalData[].isSelected).
             // Luckily `row.isSelected` has the correct "live" state.
-            Cell: ({ row }: any) => (
+            Cell: ({ row }: any) => {
+              const props = row.getToggleRowSelectedProps();
+              return (
               <div>
                 <IndeterminateCheckbox
-                  {...row.getToggleRowSelectedProps()}
-                  checked={row.isSelected}
-                  themeRole={themeRole}
+	                checked={row.isSelected}
+                  indeterminate={props.indeterminate ?? false}
+                  onChange={props.onChange}
+                  name={''}
+                  value={row.id}
+                  // themeRole={themeRole}
                 />
               </div>
-            ),
+            )},
           },
           ...columns,
         ]);
