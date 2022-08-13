@@ -2164,10 +2164,10 @@
     react-responsive-modal "^6.2.0"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^3.8.5":
-  version "3.8.5"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.8.5.tgz#b0a708d12fd4f7735d8bfcdb068d9cc024cfdba7"
-  integrity sha512-V9mRlczcRJne6cqNpXkTg4OF1j0ZkrV6H8RIadVpAMbQyQO6X5ivemipj9RS9ZfLqPPZmzfLzjfx/ixY5p6fmA==
+"@veupathdb/eda@^3.8.7":
+  version "3.8.7"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.8.7.tgz#34b9e4c96f5f4015eea3a3668d32c700cb0b76cb"
+  integrity sha512-6tsjKynhFHvdbOyNpfPhP6drmXv3LdGwl5Oiifhi+VkIr3pAHMyAa+TEd0avYDA4CowoWqSUivJAvuUJHSx5gA==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -2177,7 +2177,6 @@
     react-cool-dimensions "^2.0.7"
     react-draggable "^4.4.3"
     react-resizable "^3.0.4"
-    react-table "^7.7.0"
     uuid "^8.3.2"
 
 "@veupathdb/http-utils@^1.1.0":
@@ -2233,10 +2232,10 @@
     lodash "^4.17.21"
     moment "^2.21.0"
 
-"@veupathdb/wdk-client@^0.9.6":
-  version "0.9.6"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.6.tgz#fe292b3ebef8e0dcc1539af181e77ac2dfe69571"
-  integrity sha512-3P/+zAC1jYuv80yP1oUiaLZ7p7ATKlzkIq59yjUfF9XDB1cdIj03D1nCSdCmRiUVgUEjOGi0vaQttjr4wB8WpQ==
+"@veupathdb/wdk-client@^0.9.7":
+  version "0.9.7"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.7.tgz#b9b2e2791a46897c7708df083f335f19a708f3b3"
+  integrity sha512-QusgVwXMzukN+ECei+xjqCIfYx65S7ehAf/e9cWxgwEEwhEqfVd1VKe5wMhB8j1cnUiRlt8S+iJsQQTI/7Yqkw==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
@@ -2257,10 +2256,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.6.17":
-  version "0.6.17"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.6.17.tgz#728fd6d46bf964fc9c035f60de3febe7d4167479"
-  integrity sha512-x9y14BPdPRRVOfroJyY6MmCCQ/+UBcQu6+iNWA2A++kFanTpUdizGGA0tT5qMjpXOIvRuF9z2F95zePZbD9BZQ==
+"@veupathdb/web-common@^0.6.19":
+  version "0.6.19"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.6.19.tgz#ab9711584cab98f5ab541c9f9c4d8bb518a3f94d"
+  integrity sha512-+xfQT+jyLhEzpZJdQ4muoH/OrLIFY278QW1YP0uJ8DBS1dhaQbfbaaeYnrrojiSBvQAkYRptMqPZANJQyJu1Zw==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
