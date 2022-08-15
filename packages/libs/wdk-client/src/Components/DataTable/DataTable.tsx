@@ -92,6 +92,15 @@ type Props = {
 
   /** Called when the underlying DataTable has been drawn */
   onDraw: (table: HTMLTableElement) => void;
+
+  /**
+   * If this prop is not provided, the search term
+   * will be maintained "internally" by this component.
+   */
+  searchTerm?: string;
+
+  /** Called when the search term has changed */
+  onSearchTermChange?: (newSearchTerm: string) => void;
 }
 
 interface State {
@@ -204,6 +213,8 @@ class DataTable extends PureComponent<Props, State> {
       height,
       width
     } = this.props;
+
+    let initialSearchTerm = this.props.searchTerm ?? this._searchTerm;
 
     let columns = this.columns = childRow != null
       ? [ expandColumn, ...formatColumns(this.props.columns) ]
@@ -335,10 +346,20 @@ class DataTable extends PureComponent<Props, State> {
     })
     .DataTable(tableOpts as any);
 
+    if (searchable && initialSearchTerm) {
+      this._updateSearch(dataTable, initialSearchTerm);
+    }
+
     if (childRow != null) {
       this._dataTable.draw();
       this._updateExpandedRows(dataTable);
     }
+  }
+
+  _updateSearch(dataTable: DataTables.Api, searchTerm: string) {
+    const queryTerms = parseSearchQueryString(searchTerm);
+    const searchTermRegex = areTermsInStringRegexString(queryTerms);
+    dataTable.search(searchTermRegex, true, false, true).draw();
   }
 
   _updateSorting(dataTable: DataTables.Api) {
@@ -449,14 +470,22 @@ class DataTable extends PureComponent<Props, State> {
       <div className="MesaComponent">
         {searchable && (
           <RealTimeSearchBox
-            searchTerm={this._searchTerm}
+            searchTerm={
+              this.props.searchTerm ??
+              this._searchTerm
+            }
             className="wdk-DataTableSearchBox"
             placeholderText="Search this table..."
             onSearchTermChange={(searchTerm: string) => {
-              this._searchTerm = searchTerm;
-              const queryTerms = parseSearchQueryString(searchTerm);
-              const searchTermRegex = areTermsInStringRegexString(queryTerms);
-              this._dataTable && this._dataTable.search(searchTermRegex, true, false, true).draw();
+              this.props.onSearchTermChange?.(searchTerm);
+
+              if (this.props.searchTerm != null) {
+                this._searchTerm = '';
+              } else {
+                this._searchTerm = searchTerm;
+              }
+
+              this._dataTable && this._updateSearch(this._dataTable, searchTerm);
             }}
             delayMs={0}
           />
