@@ -179,7 +179,16 @@ function makeHeaderMenuItems(state) {
       {
         id: 'workspace',
         text: 'Workspace',
-        children: [
+        children: useEda ? [
+          {
+            text: 'My analyses',
+            route: '/workspace/analyses',
+          },
+          {
+            text: 'Public analyses',
+            route: '/workspace/analyses/public',
+          },
+        ] : [
           {
             text: 'My Search Strategies',
             route: '/workspace/strategies'
