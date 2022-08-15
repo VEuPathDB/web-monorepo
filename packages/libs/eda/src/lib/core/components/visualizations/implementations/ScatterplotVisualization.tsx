@@ -917,7 +917,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   const showOverlayLegend =
     (providedOverlayVariableDescriptor != null ||
-      vizConfig.overlayVariable != null) &&
+      vizConfig.overlayVariable != null ||
+      vizConfig.valueSpecConfig !== 'Raw') &&
     legendItems.length > 0;
   const legendNode = !data.pending && data.value != null && (
     <PlotLegend
