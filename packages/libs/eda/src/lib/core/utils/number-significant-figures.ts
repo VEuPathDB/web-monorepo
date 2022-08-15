@@ -63,17 +63,16 @@ function adjustDown(
  **/
 function signifDigitEpsilon(x: number, digits: number): number {
   // JavaScript adds trailing zeroes by default
-  const rounded = x.toPrecision(digits);
+  const rounded = Math.abs(x).toPrecision(digits);
 
   // split into vector of single characters
   const characters = rounded.split('');
-
   const result: string[] = [];
 
   let seenSignificant = false;
   let significantCount = 0;
   // walk through string, looking for first non-zero, non decimal point character
-  for (const c in characters) {
+  for (const c of characters) {
     if (c !== '0' && c !== '.') {
       seenSignificant = true;
     }
@@ -81,7 +80,6 @@ function signifDigitEpsilon(x: number, digits: number): number {
       result.push(c);
     } else if (seenSignificant) {
       significantCount++;
-      console.log(significantCount);
       if (significantCount < digits - 1) {
         result.push('0');
       } else if (significantCount === digits - 1) {
@@ -97,6 +95,5 @@ function signifDigitEpsilon(x: number, digits: number): number {
       result.push('0');
     }
   }
-  console.log(result);
   return Number(result.join(''));
 }
