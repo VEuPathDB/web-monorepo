@@ -89,6 +89,9 @@ type Props = {
   onExpandedRowsChange?: (indexes: number[]) => void;
 
   getRowId: (row: Row) => number;
+
+  /** Called when the underlying DataTable has been drawn */
+  onDraw: (table: HTMLTableElement) => void;
 }
 
 interface State {
@@ -326,6 +329,9 @@ class DataTable extends PureComponent<Props, State> {
         direction: (entry[1] as string).toUpperCase() as 'ASC' | 'DESC'
       }));
       this.props.onSortingChange(sorting);
+    })
+    .on('draw.dt', (e) => {
+      this.props.onDraw?.(e.target as HTMLTableElement);
     })
     .DataTable(tableOpts as any);
 
