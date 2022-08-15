@@ -11,10 +11,11 @@ import {Seq} from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import {preorderSeq} from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 import DatasetGraph from '@veupathdb/web-common/lib/components/DatasetGraph';
-import ExternalResource from '@veupathdb/web-common/lib/components/ExternalResource';
+import { ExternalResourceContainer } from '@veupathdb/web-common/lib/components/ExternalResource';
 import Sequence from '@veupathdb/web-common/lib/components/records/Sequence';
 import {findChildren, isNodeOverflowing} from '@veupathdb/web-common/lib/util/domUtils';
 
+import { updateTableState } from '../../actioncreators/RecordViewActionCreators';
 import { projectId, webAppUrl } from '../../config';
 import * as Gbrowse from '../common/Gbrowse';
 import {OverviewThumbnails} from '../common/OverviewThumbnails';
@@ -1042,29 +1043,169 @@ class OrthologsForm extends SortKeyTable {
   }
 }
 
-class TranscriptionSummaryForm extends SortKeyTable {
-  render() {
-      let { source_id } = this.props.record.attributes;
-
-	var height = 700;
-        if (this.props.value.length === 0) {
-          return (
-            <p><em>No data available</em></p>
-          );
-        } else {
-	  if (((this.props.value.length + 1) * 40) > 700) {
-	    height = (this.props.value.length + 1) * 40;
-	  } 
-	}
-
-        return (
-          <div id="transcriptionSummary">
-            <ExternalResource>
-              <iframe src={"/cgi-bin/dataPlotter.pl?project_id=" + projectId + "&id=" + source_id + "&type=RNASeqTranscriptionSummary&template=1&datasetId=All&wl=0&facet=na&contXAxis=na&fmt=html"} height={height} width="1100" frameBorder="0"></iframe>
-            </ExternalResource>
-          </div>
-        );
+const TranscriptionSummaryForm = connect(
+  ({ record }) => ({
+    expressionGraphsTableState: record.eupathdb.tables?.ExpressionGraphs
+  }),
+  {
+    updateSectionVisibility: RecordActions.updateSectionVisibility,
+    updateTableState
   }
-}
+)(class TranscriptionSummaryFormPres extends SortKeyTable {
+  constructor(props) {
+    super(props);
+    this.state = {
+      summaryIframeState: {
+        isLoading: true,
+        isError: false,
+      },
+    };
+
+    this._makeIframeUrl = this._makeIframeUrl.bind(this);
+    this._handleIframeLoad = this._handleIframeLoad.bind(this);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      this._makeIframeUrl(projectId, prevProps.record.attributes.source_id) !==
+      this._makeIframeUrl(projectId, this.props.record.attributes.source_id)
+    ) {
+      this.setState({
+        summaryIframeState: {
+          isLoading: true,
+          isError: false,
+        },
+      });
+    }
+  }
+
+  _makeIframeUrl(projectId, sourceId) {
+    return (
+      "/cgi-bin/dataPlotter.pl?project_id=" +
+      projectId +
+      "&id=" +
+      sourceId +
+      "&type=RNASeqTranscriptionSummary&template=1&datasetId=All&wl=0&facet=na&contXAxis=na&fmt=html"
+    );
+  }
+
+  _handleIframeLoad(loadEvent) {
+    loadEvent.target.contentDocument?.body.addEventListener('click', (e) => {
+      const { ExpressionGraphs } = this.props.record.tables;
+
+      if (ExpressionGraphs == null) {
+        return;
+      }
+
+      if (
+        e.target.classList.contains('annotation-text') &&
+        e.target.dataset.unformatted
+      ) {
+        const expressionGraphIndex = ExpressionGraphs.findIndex(
+          ({ display_name }) => e.target.dataset.unformatted.startsWith(display_name)
+        );
+
+        const expressionGraphTableElement = document.getElementById('ExpressionGraphs');
+
+        if (
+          expressionGraphIndex !== -1 &&
+          expressionGraphTableElement != null
+        ) {
+          this.props.updateSectionVisibility('ExpressionGraphs', true);
+          const position = expressionGraphTableElement.getBoundingClientRect();
+
+          scrollTo(
+            position.top + window.scrollY,
+            () => {
+              this.props.updateTableState(
+                'ExpressionGraphs',
+                {
+                  ...this.props.expressionGraphsTableState,
+                  searchTerm: '',
+                  selectedRow: {
+                    index: expressionGraphIndex,
+                    id: `ExpressionGraphs__${ExpressionGraphs[expressionGraphIndex].dataset_id}`
+                  }
+                }
+              );
+            }
+          );
+        }
+      }
+    });
+
+    this.setState({
+      summaryIframeState: {
+        isLoading: false,
+        isError: false,
+      },
+    });
+  }
+
+  render() {
+    let { source_id } = this.props.record.attributes;
+
+    let height = 700;
+    if (this.props.value.length === 0) {
+      return (
+        <p><em>No data available</em></p>
+      );
+    } else {
+      if (((this.props.value.length + 1) * 40) > 700) {
+        height = (this.props.value.length + 1) * 40;
+      }
+    }
+
+    return (
+      <div id="transcriptionSummary">
+        <ExternalResourceContainer
+          isLoading={this.state.summaryIframeState.isLoading}
+          isError={this.state.summaryIframeState.isError}
+        >
+          <iframe
+            onError={() => {
+              this.setState({
+                summaryIframeState: {
+                  isLoading: false,
+                  isError: true,
+                },
+              });
+            }}
+            onLoad={this._handleIframeLoad}
+            src={this._makeIframeUrl(projectId, source_id)}
+            height={height}
+            width="1100"
+            frameBorder="0"
+          ></iframe>
+        </ExternalResourceContainer>
+      </div>
+    );
+  }
+});
 
 const UserCommentsTable = addCommentLink(props => props.record.attributes.user_comment_link_url);
+
+/**
+ * Adaptation of https://stackoverflow.com/a/55686711
+ *
+ * Native scrollTo with callback
+ * @param yOffset - vertical offset to scroll to
+ * @param callback - callback function
+ */
+ function scrollTo(yOffset, callback) {
+  const fixedYOffset = yOffset.toFixed();
+  const onScroll = function() {
+    if (
+      window.pageYOffset.toFixed() === fixedYOffset
+    ) {
+      window.removeEventListener('scroll', onScroll);
+      callback();
+    }
+  }
+
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+  window.scrollTo({
+    top: yOffset,
+  });
+}
