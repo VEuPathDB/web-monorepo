@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/eda",
-  "version": "3.8.6",
+  "version": "3.8.7",
   "dependencies": {
     "debounce-promise": "^3.1.2",
     "fp-ts": "^2.9.3",
@@ -97,6 +97,7 @@
     "path-browserify": "^1.0.1",
     "postcss-normalize": "^10.0.1",
     "prettier": "2.2.1",
+    "process": "^0.11.10",
     "querystring-es3": "^0.2.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",

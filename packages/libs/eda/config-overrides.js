@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const path = require('path');
 
 /*
@@ -19,6 +20,13 @@ module.exports = function override(config, env) {
         fs: false,
       },
     },
+    plugins: [
+      ...config.plugins,
+      new webpack.ProvidePlugin({
+        // This is needed by shape2geohash, used by MapVEuMap
+        process: 'process/browser',
+      }),
+    ],
     externals: [{ jquery: 'jQuery' }],
     module: {
       ...config.module,
