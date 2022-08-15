@@ -19,6 +19,7 @@ import {
   validateUserDatasetCompatibleThunk,
 } from '../Service/UserDatasetWrappers';
 
+import { FILTER_BY_PROJECT_PREF } from '../Utils/project-filter';
 import { UserDataset, UserDatasetMeta } from '../Utils/types';
 
 export type Action =
@@ -390,8 +391,6 @@ type SharingAction =
   | SharingDatasetAction
   | SharingSuccessAction
   | SharingErrorAction;
-
-const FILTER_BY_PROJECT_PREF = 'userDatasets.filterByProject';
 
 export function loadUserDatasetList() {
   return validateUserDatasetCompatibleThunk<ListAction>(({ wdkService }) => [
