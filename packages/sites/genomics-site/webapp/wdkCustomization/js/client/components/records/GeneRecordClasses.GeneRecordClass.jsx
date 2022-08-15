@@ -1097,25 +1097,34 @@ const TranscriptionSummaryForm = connect(
         return;
       }
 
+      // If a dataset entry was clicked...
       if (
         e.target.classList.contains('annotation-text') &&
         e.target.dataset.unformatted
       ) {
+        // Find the associated expression graph row data
+        // FIXME: Look up the expression graph entry by dataset_id instead of display_name
+        // This will require adding the dataset_id as a data attribute
         const expressionGraphIndex = ExpressionGraphs.findIndex(
           ({ display_name }) => e.target.dataset.unformatted.startsWith(display_name)
         );
 
         const expressionGraphTableElement = document.getElementById('ExpressionGraphs');
 
+        // If the expression graph table is available...
         if (
           expressionGraphIndex !== -1 &&
           expressionGraphTableElement != null
         ) {
+          // Open the ExpressionGraphs record section
           this.props.updateSectionVisibility('ExpressionGraphs', true);
-          const position = expressionGraphTableElement.getBoundingClientRect();
 
+          // Scroll to the ExpressionGraphs record section
+          const position = expressionGraphTableElement.getBoundingClientRect();
           scrollTo(
             position.top + window.scrollY,
+            // When the scroll is complete, clear the table's search term
+            // and "select" the expresion graph row
             () => {
               this.props.updateTableState(
                 'ExpressionGraphs',

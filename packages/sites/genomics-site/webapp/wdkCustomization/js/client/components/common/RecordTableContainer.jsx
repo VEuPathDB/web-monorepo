@@ -54,13 +54,17 @@ class RecordTableContainer extends Component {
       id: selectedRowId,
     } = selectedRow ?? {};
 
+    // If the table has been initialized and a row has been selected...
     if (
       this._table != null &&
       selectedRowId != null
     ) {
+      // Find the table row in the DOM
       const tableRow = this._table.querySelector(`#${selectedRowId}`)?.closest('tr');
 
+      // If the table row was found...
       if (tableRow != null) {
+        // Expand the selected row and clear the row selection
         this.props.updateTableState(
           this.props.table.name,
           {
@@ -73,6 +77,11 @@ class RecordTableContainer extends Component {
           }
         );
 
+        // Scroll to the selected row
+        // FIXME: Resolve the race condition necessitating this "setTimeout".
+        // Without the "setTimeout", the scroll is not triggered if the
+        // section has never been opened. Perhaps we need to wait for
+        // some DataTables event to complete before triggering the scroll?
         setTimeout(() => {
           const position = tableRow.getBoundingClientRect();
           window.scrollTo(
