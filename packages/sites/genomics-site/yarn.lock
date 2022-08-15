@@ -2263,10 +2263,10 @@
     lodash "^4.17.21"
     moment "^2.21.0"
 
-"@veupathdb/wdk-client@^0.9.7":
-  version "0.9.7"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.7.tgz#b9b2e2791a46897c7708df083f335f19a708f3b3"
-  integrity sha512-QusgVwXMzukN+ECei+xjqCIfYx65S7ehAf/e9cWxgwEEwhEqfVd1VKe5wMhB8j1cnUiRlt8S+iJsQQTI/7Yqkw==
+"@veupathdb/wdk-client@^0.9.8":
+  version "0.9.8"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.8.tgz#35405ff547308d1fa9e596a9e5e65524e9f02e3d"
+  integrity sha512-lx1Sk7Kl1Amo23bvQ6me8owZ4KGUiZ/2m2ZswQCIt1uA7lM2CM3ci8qJBItSSjnChfvUEq1CRLazjC8EJuyK0A==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
