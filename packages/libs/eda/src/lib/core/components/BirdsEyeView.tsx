@@ -59,7 +59,7 @@ export function BirdsEyeView(props: Props) {
           bars: [
             // total comes first, or the subset is hidden
             {
-              label: 'Total',
+              label: 'All',
               value: totalSize,
               color: gray,
             },
