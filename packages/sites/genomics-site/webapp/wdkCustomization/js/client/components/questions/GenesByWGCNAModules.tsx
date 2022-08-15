@@ -6,11 +6,12 @@ import { Props } from '@veupathdb/wdk-client/lib/Views/Question/Params/Utils';
 
 export const GenesByWGCNAModules = (props: Props<Parameter>) => {
   useEffect(() => {
-    // const bindingSiteImage = document.getElementById('tfbs_image') as HTMLImageElement;
+    const eigengeneImage = document.getElementById('tfbs_image') as HTMLImageElement;
+    console.log(props.value);
 
-    // if (bindingSiteImage) {
-    //   bindingSiteImage.src = `/a/images/pf_tfbs/${props.value}.png`;
-    // }
+    if (eigengeneImage) {
+      eigengeneImage.src = `/a/images/pf_tfbs/${props.value}.png`;
+    }
     console.log("hi ann!!");
   }, [ props.value ]);
 

@@ -162,8 +162,9 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   },
   {
     type: 'questionFormParameter',
-    name: 'wgcnaParam',
-    searchName: 'GenesByWGCNAModules',
+    test: ({ question }) => (
+      question?.queryName === 'GenesByWGCNAModule'
+    ),
     component: GenesByWGCNAModules
   },
   {
