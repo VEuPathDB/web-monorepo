@@ -64,7 +64,16 @@ class RecordTable extends Component {
   }
 
   render() {
-    const { value, childRow, expandedRows, onExpandedRowsChange, className } = this.props;
+    const {
+      value,
+      childRow,
+      expandedRows,
+      onExpandedRowsChange,
+      className,
+      onDraw,
+      searchTerm,
+      onSearchTermChange,
+    } = this.props;
     const displayableAttributes = this.getDisplayableAttributes(this.props);
     const columns = this.getColumns(this.props);
     const data = this.getOrderedData(this.props);
@@ -94,6 +103,8 @@ class RecordTable extends Component {
     return (
       <div className={className}>
         <DataTable
+          searchTerm={searchTerm}
+          onSearchTermChange={onSearchTermChange}
           getRowId={getSortIndex}
           expandedRows={expandedRows}
           onExpandedRowsChange={onExpandedRowsChange}
@@ -101,6 +112,7 @@ class RecordTable extends Component {
           data={data}
           childRow={childRow}
           searchable={value.length > 1}
+          onDraw={onDraw}
         />
       </div>
     );
@@ -116,7 +128,10 @@ RecordTable.propTypes = {
   ]),
   expandedRows: PropTypes.arrayOf(PropTypes.number),
   onExpandedRowsChange: PropTypes.func,
-  className: PropTypes.string
+  className: PropTypes.string,
+  onDraw: PropTypes.func,
+  searchTerm: PropTypes.string,
+  onSearchTermChange: PropTypes.func,
 };
 
 export default wrappable(pure(RecordTable));
