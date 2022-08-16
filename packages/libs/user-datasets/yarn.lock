@@ -2915,15 +2915,15 @@
     "@typescript-eslint/types" "5.13.0"
     eslint-visitor-keys "^3.0.0"
 
-"@veupathdb/browserslist-config@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.0.0.tgz#90ca79640ffbb195a87d4d65cd4b2f92342f8b76"
-  integrity sha512-qfKu1z9gaaHdMgRGaZBiayuIh92ishsf14lR+Rj61CJF131XWq3+5e2VyLyOdKsYJ1EreAxgyC/0upIBEzwQJw==
+"@veupathdb/browserslist-config@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.1.0.tgz#5c7eecc048a91195404411d8729393197af0128c"
+  integrity sha512-TQ58MbCy7UZN/h11HZ31CSJfywG17oDNHQzQJysj65Fvv2gAM1w7CjwCvV0bG3sRESKUDORSA7sJrVVv27GHBw==
 
-"@veupathdb/components@^0.15.1":
-  version "0.15.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.15.1.tgz#7990e974228d74bcf19f985c84d328588b0b0a06"
-  integrity sha512-heZV1L//lIdPAdSfhmpfi34f6+8WihH1UXJO05x1D7p4FTIyz6c8jBv1Sja2pKW7nyADUCWLb+oNJVzguQCp4A==
+"@veupathdb/components@^0.17.2":
+  version "0.17.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.17.2.tgz#6d699c2f549d17b97982cfec5e093a8079c439d0"
+  integrity sha512-5ffx8z4DYlGZFaij7yI8u2FLNS2HkJmKCksBkAq2AXfD4usfdzIQnNbfgAUsJeQFNbc3g4HIZQr7XJCTfPrU/A==
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
@@ -2937,10 +2937,10 @@
     d3 "^7.1.1"
     date-arithmetic "^4.1.0"
     debounce-promise "^3.1.2"
+    dom-to-image "^2.6.0"
     latlon-geohash "^2.0.0"
     leaflet "^1.6.0"
     leaflet-drift-marker "^1.0.3"
-    leaflet-simple-map-screenshoter "^0.4.5"
     luxon "^1.25.0"
     plotly.js "^2.6.0"
     re-resizable "^6.9.0"
@@ -2952,10 +2952,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/coreui@^0.16.0":
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.16.0.tgz#bb0e549d854f57a2dd784f1a3f8532d9685196ef"
-  integrity sha512-B6twkOliirk980Fau1a7r5F6yPMvKltkrqLMCnGHw6VRnw0TCtU+O334z1gznprPcn17rU0TiVPOB2SgJYTgjg==
+"@veupathdb/coreui@^0.17.10":
+  version "0.17.10"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.17.10.tgz#b8acab55972770a5ae3eaea2fa1a44ad5c56b390"
+  integrity sha512-Z7/d0ZLXlQ+1T4CpsBT9lpXpgaVaUhKehEPYWo5c+I4hKK4S+QixfXsonMbOV3mCR7vy+o2W9ICW5d4zg8ZL7w==
   dependencies:
     "@react-hook/size" "^2.1.2"
     lodash "^4.17.21"
@@ -2963,10 +2963,10 @@
     react-responsive-modal "^6.2.0"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^3.2.0":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.2.0.tgz#5fdbf3a50539b34cd67f18aea830b66163b172ff"
-  integrity sha512-ymDM7Rd7G8zQQAa9cSpQuY/G7/PvKZmKY2oDk6trJwdgw05p8skJX1iipoAY1dUxTBI+8JjDnnglMMufOrJB8g==
+"@veupathdb/eda@^3.8.10":
+  version "3.8.10"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.8.10.tgz#5050a3dab9d9c91abe83be8d9a955ada450821c7"
+  integrity sha512-j3qE834ehf5VA6ZvGNCr0gRfHjhUtxDit4Vb2NyVeEjYFN0QOIb9F1s+jHmagXkc9GfM7aiDsEAl7J4ffq6KCQ==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -2976,7 +2976,6 @@
     react-cool-dimensions "^2.0.7"
     react-draggable "^4.4.3"
     react-resizable "^3.0.4"
-    react-table "^7.7.0"
     uuid "^8.3.2"
 
 "@veupathdb/eslint-config@^2.0.0":
@@ -3010,24 +3009,24 @@
     read "^1.0.7"
     set-cookie-parser "^2.4.6"
 
-"@veupathdb/study-data-access@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.3.0.tgz#c9276947f5ec4387daee2db465bdb1b61c0fbbd0"
-  integrity sha512-fXr9BdwmMkgho3aDD7D+j9gXY1hzZPjajiY8JkmPv+/rPjkU3cdD6aethF8bPZyV9IQrAQRInXivh2i481R17Q==
+"@veupathdb/study-data-access@^0.3.5":
+  version "0.3.5"
+  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.3.5.tgz#753eff861b8ce72238fde30a7d96d7460b5cc0ac"
+  integrity sha512-mtJO3glTHn7AnaL25c2HGoKSpZ0hqWfHX63cp7IfTIGkpzedeXwriJL1PmQwEUEqb5+jZGyQuKAN2S07L5XxQA==
   dependencies:
     fp-ts "^2.11.5"
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/tsconfig@^1.0.0":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/tsconfig/-/tsconfig-1.0.1.tgz#a2b748b46838af1337ca9f23d969993fb952def4"
-  integrity sha512-i6gq7mgnyEN8/xW5EaI9RiWCwS1oB8cgWqx9h5w4vZtnb10oiyyepD640l9x/gZf6IWecjynRs7weDgSRs7l0Q==
+"@veupathdb/tsconfig@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/tsconfig/-/tsconfig-2.0.0.tgz#bfbf9cd60a5e284d14728412a625d3df2f55a91e"
+  integrity sha512-NiGLeoxOZQEIUsgyQ5Lxj0r7C+rfad6mF394wBL95r9BzpLjFEoEfVhLf6Owv2ybPrK+AaUjG4QN5QD0/55MPw==
 
-"@veupathdb/wdk-client@^0.7.2":
-  version "0.7.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.7.2.tgz#ada394b72db5dc0fe81bffb906a2a912d3723a86"
-  integrity sha512-0PeGaHYu2+a9A2fVzPl5PsgKLNVLHRpLRpSvypy7JtVVtXncy8rC90v1wH3IXCzVMOLSj3/DPFT+QU7KQlLkFw==
+"@veupathdb/wdk-client@^0.9.9":
+  version "0.9.9"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.9.tgz#bed95d1a1d57327eccd32f20c7bde562a476243d"
+  integrity sha512-fv/uJs5Ar5+t7mVIHjEoX9wEU09TWGmkGDwm61+ghF6pqJox5bk2CkaXwPWqHt8DDnYwwiNIZ5UnnW3NmWr7ng==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
@@ -3035,10 +3034,8 @@
     localforage "^1.5.0"
     lodash "^4.17.5"
     mansion-ui "2.5"
-    moment "^2.21.0"
     natural-sort "^1.0.0"
     prop-types "^15.7.2"
-    react-autocomplete "^1.8.1"
     react-redux "^7.1.3"
     react-select "^3.0.4"
     react-transition-group "^2.2.1"
@@ -3049,10 +3046,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.5.2":
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.5.2.tgz#852c3c6345cc7b5e4d95901c3af2f6240f6edcf7"
-  integrity sha512-MgVuCEaWoPNSnXCVQyRghgIkRXN9GMtToS6jVvL71gdhSsm9PfbGI3QcGiDfKH6ODX5mWOdloC24k7uUMkj0qQ==
+"@veupathdb/web-common@^0.6.19":
+  version "0.6.19"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.6.19.tgz#ab9711584cab98f5ab541c9f9c4d8bb518a3f94d"
+  integrity sha512-+xfQT+jyLhEzpZJdQ4muoH/OrLIFY278QW1YP0uJ8DBS1dhaQbfbaaeYnrrojiSBvQAkYRptMqPZANJQyJu1Zw==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
@@ -4546,6 +4543,11 @@ clsx@^1.0.4, clsx@^1.1.1:
   resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.1.1.tgz#98b3134f9abbdf23b2663491ace13c5c03a73188"
   integrity sha512-6/bPho624p3S2pMyvP5kKBPXnI3ufHLObBFCfgx+LkeR5lg2XYy2hqZqUf45ypD8COn2bhgGJSUE+l5dhNBieA==
 
+clsx@^1.1.0:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.2.1.tgz#0ddc4a20a549b59c93a4116bb26f5294ca17dc12"
+  integrity sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==
+
 co@^4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/co/-/co-4.6.0.tgz#6ea6bdf3d853ae54ccb8e47bfa0bf3f9031fb184"
@@ -5884,11 +5886,6 @@ dom-helpers@^5.0.1, dom-helpers@^5.2.0, dom-helpers@^5.2.1:
     "@babel/runtime" "^7.8.7"
     csstype "^3.0.2"
 
-dom-scroll-into-view@1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/dom-scroll-into-view/-/dom-scroll-into-view-1.0.1.tgz#32abb92f0d8feca6215162aef43e4b449ab8d99c"
-  integrity sha1-Mqu5Lw2P7KYhUWKu9D5LRJq42Zw=
-
 dom-serializer@0:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/dom-serializer/-/dom-serializer-0.2.2.tgz#1afb81f533717175d478655debc5e332d9f9bb51"
@@ -5906,10 +5903,10 @@ dom-serializer@^1.0.1:
     domhandler "^4.2.0"
     entities "^2.0.0"
 
-dom-to-image-more@^2.8.0:
-  version "2.9.5"
-  resolved "https://registry.yarnpkg.com/dom-to-image-more/-/dom-to-image-more-2.9.5.tgz#a5dd5a30480e01b795fde9e99278096143b3ece7"
-  integrity sha512-7pr43ZY/Nk0k2z3NXDKN4GvnZqP/3iZvddLeIuGfNTyFJuzzr0UeLl+poZ1ewYt3YIK+WHCEZUkz+RNuocN3/Q==
+dom-to-image@^2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/dom-to-image/-/dom-to-image-2.6.0.tgz#8a503608088c87b1c22f9034ae032e1898955867"
+  integrity sha512-Dt0QdaHmLpjURjU7Tnu3AgYSF2LuOmksSGsUcE6ItvJoCWTBEmiMXcqBdNSAm9+QbbwD7JMoVsuuKX6ZVQv1qA==
 
 domelementtype@1, domelementtype@^1.3.1:
   version "1.3.1"
@@ -6674,11 +6671,6 @@ file-loader@^6.2.0:
   dependencies:
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
-
-file-saver@^2.0.2:
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/file-saver/-/file-saver-2.0.5.tgz#d61cfe2ce059f414d899e9dd6d4107ee25670c38"
-  integrity sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==
 
 filelist@^1.0.1:
   version "1.0.2"
@@ -8751,14 +8743,6 @@ leaflet-drift-marker@^1.0.3:
   resolved "https://registry.yarnpkg.com/leaflet-drift-marker/-/leaflet-drift-marker-1.0.3.tgz#4b178dc22b918b4713570302461ca636241fac3f"
   integrity sha512-2b5EqL11+reMqS+RTZAwW9oglWk05V02LQzMSe3D8cPPSvz42RpoqjRI8aGvD8Yjsc31ZwLZMeJ0s3waaj3VEQ==
 
-leaflet-simple-map-screenshoter@^0.4.5:
-  version "0.4.5"
-  resolved "https://registry.yarnpkg.com/leaflet-simple-map-screenshoter/-/leaflet-simple-map-screenshoter-0.4.5.tgz#d4f093077663577e7879c0488ebc54292c34314d"
-  integrity sha512-bvd++mQstpgb7F7c2v5jCLlUitQ6CcYLZ56do7PVyyVpGvnlhIEk5S6dLXqpe3itSr2D/re5yUAOf8zBt95ViQ==
-  dependencies:
-    dom-to-image-more "^2.8.0"
-    file-saver "^2.0.2"
-
 leaflet@^1.6.0:
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-1.7.1.tgz#10d684916edfe1bf41d688a3b97127c0322a2a19"
@@ -9195,11 +9179,6 @@ mkdirp@^0.5.5, mkdirp@~0.5.1:
   dependencies:
     minimist "^1.2.5"
 
-moment@^2.21.0:
-  version "2.29.1"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
-  integrity sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==
-
 monocle-ts@^2.3.11:
   version "2.3.12"
   resolved "https://registry.yarnpkg.com/monocle-ts/-/monocle-ts-2.3.12.tgz#73e7d59841b3843bf76eb840735a9641fdd3bd93"
@@ -9391,6 +9370,14 @@ normalize-url@^6.0.1:
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/normalize-url/-/normalize-url-6.1.0.tgz#40d0885b535deffe3f3147bec877d05fe4c5668a"
   integrity sha512-DlL+XwOy3NxAQ8xuC0okPgK46iuVNAK01YN7RueYBqqFeGsBjV9XmCAzAdgt+667bCl5kPh9EqKKDwnaPG1I7A==
+
+notistack@^1.0.10:
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/notistack/-/notistack-1.0.10.tgz#8db90830034383467a04184f1fa8ff77f4fc58a5"
+  integrity sha512-z0y4jJaVtOoH3kc3GtNUlhNTY+5LE04QDeLVujX3VPhhzg67zw055mZjrBF+nzpv3V9aiPNph1EgRU4+t8kQTQ==
+  dependencies:
+    clsx "^1.1.0"
+    hoist-non-react-statics "^3.3.0"
 
 npm-normalize-package-bin@^1.0.0:
   version "1.0.1"
@@ -10672,14 +10659,6 @@ react-app-rewired@^2.1.8:
   integrity sha512-uFQWTErXeLDrMzOJHKp0h8P1z0LV9HzPGsJ6adOtGlA/B9WfT6Shh4j2tLTTGlXOfiVx6w6iWpp7SOC5pvk+gA==
   dependencies:
     semver "^5.6.0"
-
-react-autocomplete@^1.8.1:
-  version "1.8.1"
-  resolved "https://registry.yarnpkg.com/react-autocomplete/-/react-autocomplete-1.8.1.tgz#ebbbc400006aa91ad538b2d14727b9e7e5d06310"
-  integrity sha1-67vEAABqqRrVOLLRRye55+XQYxA=
-  dependencies:
-    dom-scroll-into-view "1.0.1"
-    prop-types "^15.5.10"
 
 react-bootstrap@^1.3.0:
   version "1.6.4"
