@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/user-datasets",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "sideEffects": [
     "src/globals.js",
     "*.scss"
