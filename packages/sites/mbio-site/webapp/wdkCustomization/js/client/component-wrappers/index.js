@@ -85,8 +85,8 @@ function getHomeContent({ studies, searches, visualizations }) {
         description: 'Analyze data from the publicly available studies below.',
         contentType: 'StudyCardList',
         contentNamePlural: 'studies',
-        filters: studyFilters(studies),
-        filtersLabel: 'disease',
+        // filters: studyFilters(studies),
+        // filtersLabel: 'disease',
         items: studies.entities,
         isLoading: studies.loading,
         isExpandable: true,
@@ -179,7 +179,16 @@ function makeHeaderMenuItems(state) {
       {
         id: 'workspace',
         text: 'Workspace',
-        children: [
+        children: useEda ? [
+          {
+            text: 'My analyses',
+            route: '/workspace/analyses',
+          },
+          {
+            text: 'Public analyses',
+            route: '/workspace/analyses/public',
+          },
+        ] : [
           {
             text: 'My Search Strategies',
             route: '/workspace/strategies'
