@@ -178,9 +178,10 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
           ? 'log'
           : undefined,
       tickfont: data.series.length ? {} : { color: 'transparent' },
-      dtick: dependentAxisLogScale
-        ? logScaleDtick(extendedDependentAxisRange)
-        : undefined,
+      //DKDK this dtick is conflicted with power format of axis tick label
+      // dtick: dependentAxisLogScale
+      //   ? logScaleDtick(extendedDependentAxisRange)
+      //   : undefined,
       showexponent: 'all',
       exponentformat: dependentValueType === 'date' ? 'none' : 'power',
     },
