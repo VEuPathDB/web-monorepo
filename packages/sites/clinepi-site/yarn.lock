@@ -2153,10 +2153,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/coreui@^0.17.8":
-  version "0.17.8"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.17.8.tgz#f138feb8a7dcec8870656aa63caf547346ed060f"
-  integrity sha512-rO19T05tA9V3xmuKW3a1/KvXCG6mlx7Baiwz/yBCGON5Qw2268Ow7JqFLVjKfYUqG5QJiJjumyOtxSS9PZPG0w==
+"@veupathdb/coreui@^0.17.10":
+  version "0.17.10"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.17.10.tgz#b8acab55972770a5ae3eaea2fa1a44ad5c56b390"
+  integrity sha512-Z7/d0ZLXlQ+1T4CpsBT9lpXpgaVaUhKehEPYWo5c+I4hKK4S+QixfXsonMbOV3mCR7vy+o2W9ICW5d4zg8ZL7w==
   dependencies:
     "@react-hook/size" "^2.1.2"
     lodash "^4.17.21"
@@ -2164,10 +2164,10 @@
     react-responsive-modal "^6.2.0"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^3.8.7":
-  version "3.8.7"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.8.7.tgz#34b9e4c96f5f4015eea3a3668d32c700cb0b76cb"
-  integrity sha512-6tsjKynhFHvdbOyNpfPhP6drmXv3LdGwl5Oiifhi+VkIr3pAHMyAa+TEd0avYDA4CowoWqSUivJAvuUJHSx5gA==
+"@veupathdb/eda@^3.8.10":
+  version "3.8.10"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.8.10.tgz#5050a3dab9d9c91abe83be8d9a955ada450821c7"
+  integrity sha512-j3qE834ehf5VA6ZvGNCr0gRfHjhUtxDit4Vb2NyVeEjYFN0QOIb9F1s+jHmagXkc9GfM7aiDsEAl7J4ffq6KCQ==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -2232,10 +2232,10 @@
     lodash "^4.17.21"
     moment "^2.21.0"
 
-"@veupathdb/wdk-client@^0.9.7":
-  version "0.9.7"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.7.tgz#b9b2e2791a46897c7708df083f335f19a708f3b3"
-  integrity sha512-QusgVwXMzukN+ECei+xjqCIfYx65S7ehAf/e9cWxgwEEwhEqfVd1VKe5wMhB8j1cnUiRlt8S+iJsQQTI/7Yqkw==
+"@veupathdb/wdk-client@^0.9.8":
+  version "0.9.8"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.8.tgz#35405ff547308d1fa9e596a9e5e65524e9f02e3d"
+  integrity sha512-lx1Sk7Kl1Amo23bvQ6me8owZ4KGUiZ/2m2ZswQCIt1uA7lM2CM3ci8qJBItSSjnChfvUEq1CRLazjC8EJuyK0A==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
