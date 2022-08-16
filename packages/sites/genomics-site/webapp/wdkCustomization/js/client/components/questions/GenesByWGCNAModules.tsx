@@ -10,8 +10,9 @@ export const GenesByWGCNAModules = (props: Props<Parameter>) => {
     console.log(props.value);
 
     if (eigengeneImage) {
-      // eigengeneImage.src = `/a/images/pf_tfbs/${props.value}.png`;
-      eigengeneImage.src = `/a/images/cgi-bin/dataPlotter.pl?project_id=PlasmoDB&id=P2_I5_M9&type=WGCNA::Eigengene&model=plasmo&fmt=png&datasetId=DS_b1ac1e329c`;
+      const cleanPropValue = props.value.split(" [")[0];
+      console.log(cleanPropValue);
+      eigengeneImage.src = `/cgi-bin/dataPlotter.pl?project_id=PlasmoDB&id=${cleanPropValue}&type=WGCNA::Eigengene&model=plasmo&fmt=png&datasetId=DS_b1ac1e329c`;
 
       console.log(eigengeneImage.src);
     }
