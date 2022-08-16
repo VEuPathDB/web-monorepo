@@ -1,7 +1,5 @@
 import React from 'react';
 
-import moment from 'moment';
-
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import SaveableTextEditor from '@veupathdb/wdk-client/lib/Components/InputControls/SaveableTextEditor';
 import Link from '@veupathdb/wdk-client/lib/Components/Link';
@@ -19,7 +17,12 @@ import { isUserDatasetsCompatibleWdkService } from '../../Service/UserDatasetWra
 
 import SharingModal from '../Sharing/UserDatasetSharingModal';
 import UserDatasetStatus from '../UserDatasetStatus';
-import { makeClassifier, normalizePercentage } from '../UserDatasetUtils';
+import {
+  formatDate,
+  makeClassifier,
+  normalizePercentage,
+  timeFromNow,
+} from '../UserDatasetUtils';
 
 import './UserDatasetDetail.scss';
 
@@ -201,8 +204,8 @@ class UserDatasetDetail extends React.Component {
       {
         attribute: 'Created',
         value: (
-          <AnchoredTooltip content={moment(created).format()}>
-            {moment(created).fromNow()}
+          <AnchoredTooltip content={formatDate(created)}>
+            {timeFromNow(created)}
           </AnchoredTooltip>
         ),
       },
@@ -224,7 +227,7 @@ class UserDatasetDetail extends React.Component {
                 {sharedWith.map((share) => (
                   <li key={share.email}>
                     {share.userDisplayName} &lt;{share.email}&gt;{' '}
-                    {moment(share.time).fromNow()}
+                    {timeFromNow(share.time)}
                   </li>
                 ))}
               </ul>
