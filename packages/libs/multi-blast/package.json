@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/multi-blast",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -22,6 +22,7 @@
     "react-select": "^3.0.4"
   },
   "peerDependencies": {
+    "@veupathdb/coreui": "^0.17.10",
     "@veupathdb/http-utils": "^1.1.0",
     "@veupathdb/preferred-organisms": ">=1.1.6",
     "@veupathdb/wdk-client": ">=0.6.8",
@@ -33,7 +34,7 @@
   },
   "scripts": {
     "start": "veupathdb-react-scripts start",
-    "build": "veupathdb-react-scripts build",
+    "build": "veupathdb-react-scripts prepare",
     "test": "veupathdb-react-scripts test",
     "eject": "veupathdb-react-scripts eject",
     "compile": "veupathdb-react-scripts compile",
@@ -74,7 +75,7 @@
     "@typescript-eslint/parser": "^4.0.0",
     "@veupathdb/browserslist-config": "^1.0.0",
     "@veupathdb/components": "^0.13.0",
-    "@veupathdb/coreui": "^0.16.0",
+    "@veupathdb/coreui": "^0.17.10",
     "@veupathdb/eda": "^2.0.0",
     "@veupathdb/eslint-config": "^1.0.0",
     "@veupathdb/http-utils": "^1.1.0",
