@@ -203,23 +203,25 @@ function getConfigHandlerObjects<ConfigType>(
   };
 }
 
-async function updateAnalysisWithAmendedComputations(
+function updateAnalysisWithAmendedComputations(
   newOrExistingComputation: Computation,
   computationAfterVizRemoval: Computation,
   analysisState: AnalysisState,
   computations: Computation[],
   filteringCallback: (c: Computation) => void
 ) {
-  computationAfterVizRemoval.visualizations.length
-    ? await analysisState.setComputations([
-        newOrExistingComputation,
-        computationAfterVizRemoval,
-        ...computations.filter(filteringCallback),
-      ])
-    : await analysisState.setComputations([
-        newOrExistingComputation,
-        ...computations.filter(filteringCallback),
-      ]);
+  if (computationAfterVizRemoval.visualizations.length) {
+    analysisState.setComputations([
+      newOrExistingComputation,
+      computationAfterVizRemoval,
+      ...computations.filter(filteringCallback),
+    ]);
+  } else {
+    analysisState.setComputations([
+      newOrExistingComputation,
+      ...computations.filter(filteringCallback),
+    ]);
+  }
 }
 
 function handleRouting(

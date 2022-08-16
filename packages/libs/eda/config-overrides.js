@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const path = require('path');
 
 /*
@@ -10,18 +11,22 @@ module.exports = function override(config, env) {
     ...config,
     resolve: {
       ...config.resolve,
-      modules: [
-        path.join(__dirname, 'node_modules'),
-        ...(config.resolve.modules || ['node_modules']),
-      ],
+      fallback: {
+        path: 'path-browserify',
+        stream: 'stream-browserify',
+        querystring: 'querystring-es3',
+        assert: 'assert',
+        buffer: 'buffer',
+        fs: false,
+      },
     },
-    resolveLoader: {
-      ...config.resolveLoader,
-      modules: [
-        path.join(__dirname, 'node_modules'),
-        ...(config.resolveLoader.modules || ['node_modules']),
-      ],
-    },
+    plugins: [
+      ...config.plugins,
+      new webpack.ProvidePlugin({
+        // This is needed by shape2geohash, used by MapVEuMap
+        process: 'process/browser',
+      }),
+    ],
     externals: [{ jquery: 'jQuery' }],
     module: {
       ...config.module,

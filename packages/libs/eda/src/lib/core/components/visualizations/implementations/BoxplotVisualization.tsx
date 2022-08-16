@@ -76,17 +76,18 @@ import LabelledGroup from '@veupathdb/components/lib/components/widgets/Labelled
 import { NumberOrDateRange, NumberRange } from '../../../types/general';
 import { NumberRangeInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateRangeInputs';
 // reusable util for computing truncationConfig
-import { truncationConfig } from '../../../utils/truncation-config-utils-viz';
+import { truncationConfig } from '../../../utils/truncation-config-utils';
 // use Notification for truncation warning message
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 import Button from '@veupathdb/components/lib/components/widgets/Button';
-import { useDefaultDependentAxisRange } from '../../../hooks/computeDefaultDependentAxisRange';
+import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 // alphadiv abundance this should be used for collection variable
 import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from '../../../utils/study-metadata';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
 import { ComputedVariableMetadata } from '../../../api/DataClient/types';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
+import { boxplotDefaultDependentAxisMinMax } from '../../../utils/axis-range-calculations';
 
 type BoxplotData = { series: BoxplotSeries };
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
@@ -421,15 +422,19 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
 
-  // use custom hook
-  const defaultDependentAxisRange = useDefaultDependentAxisRange(
+  const dependentAxisMinMax = boxplotDefaultDependentAxisMinMax(
     data,
-    vizConfig,
-    'Boxplot',
     yAxisVariable,
-    // pass computedVariableMetadata
     data?.value?.computedVariableMetadata
   );
+
+  const defaultDependentAxisRange = useDefaultAxisRange(
+    yAxisVariable ?? data?.value?.computedVariableMetadata,
+    dependentAxisMinMax?.min,
+    undefined, // no minPos needed if no logscale option offered
+    dependentAxisMinMax?.max,
+    false // never logscale
+  ) as NumberRange;
 
   // custom legend items for checkbox
   const legendItems: LegendItemsProps[] = useMemo(() => {
@@ -528,9 +533,12 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       // pass useState of truncation warnings
       truncatedDependentAxisWarning={truncatedDependentAxisWarning}
       setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
+      dependentAxisMinMax={dependentAxisMinMax}
     />
   );
 
+  const showOverlayLegend =
+    vizConfig.overlayVariable != null && legendItems.length > 0;
   const legendNode = legendItems != null && !data.pending && data != null && (
     <PlotLegend
       legendItems={legendItems}
@@ -538,9 +546,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       legendTitle={variableDisplayWithUnit(overlayVariable)}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
       // add a condition to show legend even for single overlay data and check legendItems exist
-      showOverlayLegend={
-        vizConfig.overlayVariable != null && legendItems.length > 0
-      }
+      showOverlayLegend={showOverlayLegend}
     />
   );
 
@@ -692,7 +698,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       />
       <PlotLayout
         isFaceted={isFaceted(data.value)}
-        legendNode={legendNode}
+        legendNode={showOverlayLegend ? legendNode : null}
         plotNode={plotNode}
         tableGroupNode={tableGroupNode}
       />
@@ -716,6 +722,7 @@ type BoxplotWithControlsProps = Omit<BoxplotProps, 'data'> & {
   setTruncatedDependentAxisWarning: (
     truncatedDependentAxisWarning: string
   ) => void;
+  dependentAxisMinMax: NumberRange | undefined;
 };
 
 function BoxplotWithControls({
@@ -732,6 +739,7 @@ function BoxplotWithControls({
   // pass useState of truncation warnings
   truncatedDependentAxisWarning,
   setTruncatedDependentAxisWarning,
+  dependentAxisMinMax,
   ...boxplotComponentProps
 }: BoxplotWithControlsProps) {
   const plotRef = useUpdateThumbnailEffect(
@@ -766,13 +774,8 @@ function BoxplotWithControls({
     truncationConfigDependentAxisMax,
   } = useMemo(
     () =>
-      // boxplot does not have independent axis range control so send undefined for defaultUIState
-      truncationConfig(undefined, vizConfig, defaultDependentAxisRange),
-    [
-      vizConfig.xAxisVariable,
-      vizConfig.dependentAxisRange,
-      defaultDependentAxisRange,
-    ]
+      truncationConfig({ dependentAxisRange: dependentAxisMinMax }, vizConfig),
+    [dependentAxisMinMax, vizConfig.dependentAxisRange]
   );
 
   useEffect(() => {

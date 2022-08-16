@@ -62,12 +62,16 @@ import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsSt
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
+import { MouseMode } from '@veupathdb/components/lib/map/MouseTools';
 import { kFormatter, mFormatter } from '../../../utils/big-number-formatters';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { NumberVariable } from '../../../types/study';
 import { BinSpec, NumberRange } from '../../../types/general';
-import { useDefaultIndependentAxisRange } from '../../../hooks/computeDefaultIndependentAxisRange';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
+
+import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
+import Switch from '@veupathdb/components/lib/components/widgets/Switch';
+import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 
 const numContinuousBins = 8;
 
@@ -78,7 +82,7 @@ export const mapVisualization = createVisualizationPlugin({
   isEnabledInPicker: isEnabledInPicker,
 });
 
-function createDefaultConfig(): MapConfig {
+function createDefaultConfig() {
   return {
     mapCenterAndZoom: {
       latitude: 0,
@@ -86,7 +90,9 @@ function createDefaultConfig(): MapConfig {
       zoomLevel: 2,
     },
     baseLayer: 'Street',
-  };
+    dependentAxisLogScale: false,
+    mouseMode: 'default',
+  } as const;
 }
 
 function isEnabledInPicker({ geoConfigs }: IsEnabledInPickerParams): boolean {
@@ -119,6 +125,11 @@ const MapConfig = t.intersection([
       count: null,
       proportion: null,
       pie: null,
+    }),
+    dependentAxisLogScale: t.boolean,
+    mouseMode: t.keyof({
+      default: null,
+      magnification: null,
     }),
   }),
 ]);
@@ -187,13 +198,19 @@ function MapViz(props: VisualizationProps) {
   const onChangeHandlerFactory = useCallback(
     < ValueType,>(key: keyof MapConfig) => (newValue?: ValueType) => {
       updateVizConfig({
-	[key] : newValue
+	      [key] : newValue,
       });
     },
     [updateVizConfig]
   );
 
   const onMarkerTypeChange = onChangeHandlerFactory('markerType');
+
+  const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
+    'dependentAxisLogScale'
+  );
+
+  const onMouseModeChange = onChangeHandlerFactory<MouseMode>('mouseMode');
 
   const [boundsZoomLevel, setBoundsZoomLevel] = useState<BoundsViewport>();
 
@@ -362,10 +379,7 @@ function MapViz(props: VisualizationProps) {
     ])
   );
 
-  const defaultOverlayRange = useDefaultIndependentAxisRange(
-    xAxisVariable,
-    'histogram'
-  );
+  const defaultOverlayRange = useDefaultAxisRange(xAxisVariable);
 
   /**
    * Now we deal with the optional second request to map-markers-overlay
@@ -480,6 +494,45 @@ function MapViz(props: VisualizationProps) {
       : undefined;
   }, [overlayResponse]);
 
+  const valueMax = useMemo(
+    () =>
+      overlayData
+        ? values(overlayData) // it's a Record 'object'
+            .map((record) => record.data)
+            .flat() // flatten all the arrays into one
+            .reduce(
+              (accum, elem) => (elem.value > accum ? elem.value : accum),
+              0
+            ) // find max value
+        : 0,
+    [overlayData]
+  );
+
+  const valueMinPos = useMemo(
+    () =>
+      overlayData
+        ? values(overlayData)
+            .map((record) => record.data)
+            .flat()
+            .reduce<number | undefined>(
+              (accum, elem) =>
+                elem.value > 0 && (accum == null || elem.value < accum)
+                  ? elem.value
+                  : accum,
+              undefined
+            )
+        : undefined,
+    [overlayData]
+  );
+
+  const defaultDependentAxisRange = useDefaultAxisRange(
+    null,
+    0,
+    valueMinPos,
+    valueMax,
+    vizConfig.dependentAxisLogScale
+  ) as NumberRange;
+
   // If it's a string variable and a small vocabulary, use it as-is from the study metadata.
   // This ensures that for low cardinality categoricals, the colours are always the same.
   // Otherwise use the overlayValues from the back end (which are either bins or a Top7+Other)
@@ -515,13 +568,6 @@ function MapViz(props: VisualizationProps) {
    */
   const markers = useMemo(() => {
     if (vocabulary == null) return undefined;
-
-    const pieValueMax = overlayData
-      ? values(overlayData) // it's a Record 'object'
-          .map((record) => record.data)
-          .flat() // flatten all the arrays into one
-          .reduce((accum, elem) => (elem.value > accum ? elem.value : accum), 0) // find max value
-      : 0;
 
     return basicMarkerData.value?.markerData.map(
       ({ geoAggregateValue, entityCount, bounds, position }) => {
@@ -571,11 +617,6 @@ function MapViz(props: VisualizationProps) {
                 },
               ];
 
-        const yRange = {
-          min: 0,
-          max: vizConfig.markerType === 'count' ? pieValueMax : 1,
-        };
-
         // TO DO: find out if MarkerProps.id is obsolete
         const MarkerComponent =
           vizConfig.markerType == null || vizConfig.markerType === 'pie'
@@ -608,10 +649,11 @@ function MapViz(props: VisualizationProps) {
             markerLabel={formattedCount}
             {...(vizConfig.markerType !== 'pie'
               ? {
-                  dependentAxisRange: yRange,
+                  dependentAxisRange: defaultDependentAxisRange,
                   independentAxisLabel: `${formattedCount} ${
                     outputEntity?.displayNamePlural ?? outputEntity?.displayName
                   }`,
+                  dependentAxisLogScale: vizConfig.dependentAxisLogScale,
                 }
               : {})}
           />
@@ -626,6 +668,8 @@ function MapViz(props: VisualizationProps) {
     vizConfig.markerType,
     xAxisVariable,
     outputEntity,
+    // add vizConfig.dependentAxisLogScale to reflect its state change
+    vizConfig.dependentAxisLogScale,
   ]);
 
   const totalEntityCount = basicMarkerData.value?.completeCasesGeoVar;
@@ -648,6 +692,7 @@ function MapViz(props: VisualizationProps) {
       zoomLevel,
       vizConfig.baseLayer,
       vizConfig.checkedLegendItems,
+      vizConfig.mouseMode,
     ]
   );
 
@@ -682,6 +727,8 @@ function MapViz(props: VisualizationProps) {
         showScale={zoomLevel != null && zoomLevel > 4 ? true : false}
         // show mouse tool
         showMouseToolbar={true}
+        mouseMode={vizConfig.mouseMode ?? createDefaultConfig().mouseMode}
+        onMouseModeChange={onMouseModeChange}
       />
       <RadioButtonGroup
         label="Plot mode"
@@ -693,6 +740,23 @@ function MapViz(props: VisualizationProps) {
         margins={['1em', '0', '1em', '1.5em']}
         itemMarginRight={40}
       />
+      {/* Y-axis range control */}
+      <div
+        style={{ display: 'flex', flexDirection: 'row', marginLeft: '0.5em' }}
+      >
+        <LabelledGroup label="Y-axis controls">
+          <div style={{ display: 'flex' }}>
+            <Switch
+              label="Log scale:"
+              state={vizConfig.dependentAxisLogScale}
+              onStateChange={onDependentAxisLogScaleChange}
+              disabled={
+                vizConfig.markerType == null || vizConfig.markerType === 'pie'
+              }
+            />
+          </div>
+        </LabelledGroup>
+      </div>
     </>
   );
 
@@ -709,7 +773,11 @@ function MapViz(props: VisualizationProps) {
 
   const handleInputVariableChange = useCallback(
     ({ xAxisVariable }: VariablesByInputName) => {
-      updateVizConfig({ xAxisVariable, checkedLegendItems: undefined });
+      updateVizConfig({
+        xAxisVariable,
+        checkedLegendItems: undefined,
+        dependentAxisLogScale: false,
+      });
     },
     [updateVizConfig]
   );

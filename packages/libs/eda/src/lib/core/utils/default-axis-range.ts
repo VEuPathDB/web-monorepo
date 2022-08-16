@@ -4,51 +4,54 @@ import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
 import { ComputedVariableMetadata } from '../api/DataClient/types';
 import { min, max } from 'lodash';
 
-export function numberDateDefaultDependentAxisRange(
-  variable: Variable | undefined,
-  plotName: string,
-  yMinMaxRange:
-    | { min: number | string | undefined; max: number | string | undefined }
-    | undefined,
-  // pass computedVariableMetadata
-  computedVariableMetadata?: ComputedVariableMetadata
+export function numberDateDefaultAxisRange(
+  variable: Variable | ComputedVariableMetadata,
+  /** the min/minPos/max values observed in the data response */
+  observedMin: number | string | undefined,
+  observedMinPos: number | string | undefined,
+  observedMax: number | string | undefined,
+  /** are we using a log scale */
+  logScale?: boolean
 ): NumberOrDateRange | undefined {
-  // make universal range variable
-  if (
-    variable != null &&
-    (plotName === 'scatterplot' || plotName === 'lineplot')
-  ) {
-    // this should check integer as well
+  if (Variable.is(variable)) {
     if (variable.type === 'number' || variable.type === 'integer') {
       const defaults = variable.distributionDefaults;
+      if (logScale && observedMinPos == null) return undefined; // return nothing - there will be no plottable data anyway
       return defaults.displayRangeMin != null &&
         defaults.displayRangeMax != null
         ? {
             min:
-              yMinMaxRange != null
+              logScale &&
+              observedMin != null &&
+              (observedMin <= 0 ||
+                defaults.displayRangeMin <= 0 ||
+                defaults.rangeMin <= 0)
+                ? (observedMinPos as number)
+                : observedMin != null
                 ? Math.min(
                     defaults.displayRangeMin,
                     defaults.rangeMin,
-                    yMinMaxRange.min as number
+                    observedMin as number
                   )
                 : Math.min(defaults.displayRangeMin, defaults.rangeMin),
             max:
-              yMinMaxRange != null
+              observedMax != null
                 ? Math.max(
                     defaults.displayRangeMax,
                     defaults.rangeMax,
-                    yMinMaxRange.max as number
+                    observedMax as number
                   )
                 : Math.max(defaults.displayRangeMax, defaults.rangeMax),
           }
         : {
-            min:
-              yMinMaxRange != null
-                ? Math.min(defaults.rangeMin, yMinMaxRange.min as number)
-                : defaults.rangeMin,
+            min: logScale
+              ? (observedMinPos as number)
+              : observedMin != null
+              ? Math.min(defaults.rangeMin, observedMin as number)
+              : defaults.rangeMin,
             max:
-              yMinMaxRange != null
-                ? Math.max(defaults.rangeMax, yMinMaxRange.max as number)
+              observedMax != null
+                ? Math.max(defaults.rangeMax, observedMax as number)
                 : defaults.rangeMax,
           };
     } else if (variable.type === 'date') {
@@ -57,11 +60,11 @@ export function numberDateDefaultDependentAxisRange(
         defaults.displayRangeMax != null
         ? {
             min:
-              yMinMaxRange != null
+              observedMin != null
                 ? [
                     defaults.displayRangeMin,
                     defaults.rangeMin,
-                    yMinMaxRange.min as string,
+                    observedMin as string,
                   ].reduce(function (a, b) {
                     return a < b ? a : b;
                   }) + 'T00:00:00Z'
@@ -71,11 +74,11 @@ export function numberDateDefaultDependentAxisRange(
                     }
                   ) + 'T00:00:00Z',
             max:
-              yMinMaxRange != null
+              observedMax != null
                 ? [
                     defaults.displayRangeMax,
                     defaults.rangeMax,
-                    yMinMaxRange.max as string,
+                    observedMax as string,
                   ].reduce(function (a, b) {
                     return a > b ? a : b;
                   }) + 'T00:00:00Z'
@@ -87,34 +90,41 @@ export function numberDateDefaultDependentAxisRange(
           }
         : {
             min:
-              yMinMaxRange != null
-                ? [defaults.rangeMin, yMinMaxRange.min as string].reduce(
-                    function (a, b) {
-                      return a < b ? a : b;
-                    }
-                  ) + 'T00:00:00Z'
+              observedMin != null
+                ? [defaults.rangeMin, observedMin as string].reduce(function (
+                    a,
+                    b
+                  ) {
+                    return a < b ? a : b;
+                  }) + 'T00:00:00Z'
                 : defaults.rangeMin + 'T00:00:00Z',
             max:
-              yMinMaxRange != null
-                ? [defaults.rangeMax, yMinMaxRange.max as string].reduce(
-                    function (a, b) {
-                      return a > b ? a : b;
-                    }
-                  ) + 'T00:00:00Z'
+              observedMax != null
+                ? [defaults.rangeMax, observedMax as string].reduce(function (
+                    a,
+                    b
+                  ) {
+                    return a > b ? a : b;
+                  }) + 'T00:00:00Z'
                 : defaults.rangeMax + 'T00:00:00Z',
           };
     }
     // for the case of computation apps such as alphadiv and abundance
-  } else if (computedVariableMetadata != null && plotName === 'scatterplot') {
+  } else if (
+    ComputedVariableMetadata.is(variable) &&
+    variable.displayRangeMin != null &&
+    variable.displayRangeMax != null
+  ) {
+    // TO DO: checked for plotName=='scatterplot' previously - do we need to do this still?
     return {
       min: min([
         // computedVariableMetadata.displayRangeMin/Max are strings
-        Number(computedVariableMetadata.displayRangeMin),
-        yMinMaxRange?.min as number,
+        Number(variable.displayRangeMin),
+        Number(observedMin),
       ]) as number,
       max: max([
-        Number(computedVariableMetadata.displayRangeMax),
-        yMinMaxRange?.max as number,
+        Number(variable.displayRangeMax),
+        Number(observedMax),
       ]) as number,
     };
   } else return undefined;
