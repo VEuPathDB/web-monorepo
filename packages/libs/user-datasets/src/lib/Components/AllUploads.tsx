@@ -1,7 +1,11 @@
-import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
-import { Link } from '@veupathdb/wdk-client/lib/Components';
-import UserDatasetEmptyState from '../Components/EmptyState';
+import { ReactNode, useCallback, useMemo } from 'react';
 
+import { Checkbox, Link } from '@veupathdb/wdk-client/lib/Components';
+import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+
+import UserDatasetEmptyState from '../Components/EmptyState';
+import { useProjectFilter } from '../Hooks/project-filter';
 import { UserDatasetUpload } from '../Utils/types';
 
 interface Props {
@@ -14,9 +18,12 @@ interface Props {
   };
 }
 
-const ClearAllMessagesButton = (onClickCallback: () => void) => (
+const ClearAllMessagesButton = (
+  onClickCallback: () => void,
+  buttonContent: ReactNode
+) => (
   <button type="submit" className="btn" onClick={onClickCallback}>
-    Clear All Messages
+    {buttonContent}
   </button>
 );
 
@@ -172,30 +179,98 @@ const ErrorMessage = (message: string) => (
   </div>
 );
 const AllUploads = (props: Props) => {
-  const uploads = props.uploadList || [];
-  const ongoingUploads = uploads.filter((u) => u.isOngoing);
-  const finishedUploads = uploads.filter((u) => !u.isOngoing);
+  const uploads = useMemo(() => props.uploadList ?? [], [props.uploadList]);
+  const ongoingUploads = useMemo(() => uploads.filter((u) => u.isOngoing), [
+    uploads,
+  ]);
+  const finishedUploads = useMemo(() => uploads.filter((u) => !u.isOngoing), [
+    uploads,
+  ]);
+
+  const projectInfo = useWdkService(async (wdkService) => {
+    const config = await wdkService.getConfig();
+
+    return {
+      id: config.projectId,
+      name: config.displayName,
+    };
+  }, []);
+
+  const [projectFilter, setProjectFilter] = useProjectFilter();
+
+  const hasUploadFromAnotherProject = useMemo(
+    () =>
+      uploads.some((upload) =>
+        upload.projects.some((project) => project !== projectInfo?.id)
+      ),
+    [projectInfo, uploads]
+  );
+
+  const projectFilterApplied = projectFilter !== false;
+
+  const uploadFilterPredicate = useCallback(
+    (upload: UserDatasetUpload) =>
+      projectInfo == null ||
+      !projectFilterApplied ||
+      upload.projects.includes(projectInfo.id),
+    [projectInfo, projectFilterApplied]
+  );
+
+  const filteredUploads = useMemo(
+    () => uploads.filter(uploadFilterPredicate),
+    [uploads, uploadFilterPredicate]
+  );
+  const filteredFinishedUploads = useMemo(
+    () => finishedUploads.filter(uploadFilterPredicate),
+    [finishedUploads, uploadFilterPredicate]
+  );
 
   return (
     <div>
       {props.errorMessage != null && ErrorMessage(props.errorMessage)}
       {ongoingUploads.length > 0 && RefreshButton()}
-      {uploads.length > 0 && (
+      {projectInfo != null && hasUploadFromAnotherProject && (
+        <div style={{ display: 'flex', gap: '0.25em', margin: '0.5em' }}>
+          <Checkbox
+            id="recent-uploads-project-filter"
+            value={projectFilterApplied}
+            onChange={() => {
+              setProjectFilter((projectFilter) => !projectFilter);
+            }}
+          />
+          <label htmlFor="recent-uploads-project-filter">
+            Only show uploads to {projectInfo.name}
+          </label>
+        </div>
+      )}
+      {filteredUploads.length > 0 && (
         <UploadsTable
           baseUrl={props.baseUrl}
-          uploads={uploads}
+          uploads={filteredUploads}
           cancelCurrentUpload={props.actions.cancelCurrentUpload}
         />
       )}
-      {finishedUploads.length > 0 &&
-        ClearAllMessagesButton(() =>
-          props.actions.clearMessages(finishedUploads.map((u) => u.id))
+      {filteredFinishedUploads.length > 0 &&
+        ClearAllMessagesButton(
+          () =>
+            props.actions.clearMessages(
+              filteredFinishedUploads.map((u) => u.id)
+            ),
+          projectFilterApplied && hasUploadFromAnotherProject
+            ? 'Clear These Messages'
+            : 'Clear All Messages'
         )}
-      {props.errorMessage == null && uploads.length === 0 && (
-        <UserDatasetEmptyState
-          message={'There are no recent uploads to be displayed.'}
-        />
-      )}
+      {props.errorMessage == null &&
+        projectInfo != null &&
+        filteredUploads.length === 0 && (
+          <UserDatasetEmptyState
+            message={
+              uploads.length === 0
+                ? 'There are no recent uploads to be displayed.'
+                : `There are no recent ${projectInfo.name} uploads to be displayed. Uncheck "Only show uploads to ${projectInfo.name}" to see all your recent uploads.`
+            }
+          />
+        )}
     </div>
   );
 };
