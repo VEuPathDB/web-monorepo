@@ -74,6 +74,7 @@ export function RecordController(WdkRecordController) {
           tables: requestOptions[0].tables
             .concat(['MetaTable'])
             .concat('TranscriptionSummary' in recordClass.tablesMap ? ['TranscriptionSummary'] : [])
+            .concat('ExpressionGraphs' in recordClass.tablesMap ? ['ExpressionGraphs'] : [])
             .concat('PhenotypeGraphs' in recordClass.tablesMap ? ['PhenotypeGraphs'] : [])
             .concat('CrisprPhenotypeGraphs' in recordClass.tablesMap ? ['CrisprPhenotypeGraphs'] : [])
             .concat('FungiVBOrgLinkoutsTable' in recordClass.tablesMap ? ['FungiVBOrgLinkoutsTable'] : [])
