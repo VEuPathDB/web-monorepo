@@ -2224,18 +2224,18 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/user-datasets@^0.1.8":
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/@veupathdb/user-datasets/-/user-datasets-0.1.8.tgz#3f762e9fefe43eda7b17ebccbe6610e4331fe0ff"
-  integrity sha512-DaORj5KeA34Hw0GMoO3cndn+ObZrvIpNDQRJAiU7CNJ2X2+JB8+VjCzyMEO8T8KULEuhQdsQOWhE/Urh9Zs/fA==
+"@veupathdb/user-datasets@^0.1.9":
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/@veupathdb/user-datasets/-/user-datasets-0.1.9.tgz#287048f79c42c826cc193177be2af8d38cf4a86c"
+  integrity sha512-Bnm7xJEClTvwEV7ai3ndWmYcPh998DGRvov9hLkxxPLMctrK0bjeE5BqpJJPUMjdWVS5wo78CBOOq23Ysjvt1A==
   dependencies:
     lodash "^4.17.21"
     moment "^2.21.0"
 
-"@veupathdb/wdk-client@^0.9.8":
-  version "0.9.8"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.8.tgz#35405ff547308d1fa9e596a9e5e65524e9f02e3d"
-  integrity sha512-lx1Sk7Kl1Amo23bvQ6me8owZ4KGUiZ/2m2ZswQCIt1uA7lM2CM3ci8qJBItSSjnChfvUEq1CRLazjC8EJuyK0A==
+"@veupathdb/wdk-client@^0.9.9":
+  version "0.9.9"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.9.tgz#bed95d1a1d57327eccd32f20c7bde562a476243d"
+  integrity sha512-fv/uJs5Ar5+t7mVIHjEoX9wEU09TWGmkGDwm61+ghF6pqJox5bk2CkaXwPWqHt8DDnYwwiNIZ5UnnW3NmWr7ng==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
@@ -2245,7 +2245,6 @@
     mansion-ui "2.5"
     natural-sort "^1.0.0"
     prop-types "^15.7.2"
-    react-autocomplete "^1.8.1"
     react-redux "^7.1.3"
     react-select "^3.0.4"
     react-transition-group "^2.2.1"
@@ -4850,11 +4849,6 @@ dom-helpers@^5.0.1, dom-helpers@^5.2.0, dom-helpers@^5.2.1:
   dependencies:
     "@babel/runtime" "^7.8.7"
     csstype "^3.0.2"
-
-dom-scroll-into-view@1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/dom-scroll-into-view/-/dom-scroll-into-view-1.0.1.tgz#32abb92f0d8feca6215162aef43e4b449ab8d99c"
-  integrity sha1-Mqu5Lw2P7KYhUWKu9D5LRJq42Zw=
 
 dom-serializer@0:
   version "0.2.2"
@@ -8485,14 +8479,6 @@ react-app-rewired@^2.1.8:
   integrity sha512-uFQWTErXeLDrMzOJHKp0h8P1z0LV9HzPGsJ6adOtGlA/B9WfT6Shh4j2tLTTGlXOfiVx6w6iWpp7SOC5pvk+gA==
   dependencies:
     semver "^5.6.0"
-
-react-autocomplete@^1.8.1:
-  version "1.8.1"
-  resolved "https://registry.yarnpkg.com/react-autocomplete/-/react-autocomplete-1.8.1.tgz#ebbbc400006aa91ad538b2d14727b9e7e5d06310"
-  integrity sha1-67vEAABqqRrVOLLRRye55+XQYxA=
-  dependencies:
-    dom-scroll-into-view "1.0.1"
-    prop-types "^15.5.10"
 
 react-bootstrap@^1.3.0:
   version "1.6.4"
