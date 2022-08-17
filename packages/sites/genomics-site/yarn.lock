@@ -2263,10 +2263,10 @@
     lodash "^4.17.21"
     moment "^2.21.0"
 
-"@veupathdb/wdk-client@^0.9.6":
-  version "0.9.6"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.6.tgz#fe292b3ebef8e0dcc1539af181e77ac2dfe69571"
-  integrity sha512-3P/+zAC1jYuv80yP1oUiaLZ7p7ATKlzkIq59yjUfF9XDB1cdIj03D1nCSdCmRiUVgUEjOGi0vaQttjr4wB8WpQ==
+"@veupathdb/wdk-client@^0.9.8":
+  version "0.9.8"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.8.tgz#35405ff547308d1fa9e596a9e5e65524e9f02e3d"
+  integrity sha512-lx1Sk7Kl1Amo23bvQ6me8owZ4KGUiZ/2m2ZswQCIt1uA7lM2CM3ci8qJBItSSjnChfvUEq1CRLazjC8EJuyK0A==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
@@ -2287,10 +2287,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.6.17":
-  version "0.6.17"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.6.17.tgz#728fd6d46bf964fc9c035f60de3febe7d4167479"
-  integrity sha512-x9y14BPdPRRVOfroJyY6MmCCQ/+UBcQu6+iNWA2A++kFanTpUdizGGA0tT5qMjpXOIvRuF9z2F95zePZbD9BZQ==
+"@veupathdb/web-common@^0.6.19":
+  version "0.6.19"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.6.19.tgz#ab9711584cab98f5ab541c9f9c4d8bb518a3f94d"
+  integrity sha512-+xfQT+jyLhEzpZJdQ4muoH/OrLIFY278QW1YP0uJ8DBS1dhaQbfbaaeYnrrojiSBvQAkYRptMqPZANJQyJu1Zw==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
