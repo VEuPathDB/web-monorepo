@@ -2056,6 +2056,7 @@ function reorderResponseLineplotData(
           },
           seriesX: [],
           seriesY: [],
+          binStart: [],
         }
     );
   } else {

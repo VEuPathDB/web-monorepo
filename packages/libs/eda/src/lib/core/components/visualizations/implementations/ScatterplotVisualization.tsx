@@ -846,6 +846,31 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     [data]
   );
 
+  // When we only have a computed y axis (and no provided x axis) then the y axis var
+  // can have a "normal" variable descriptor. In this case we want the computed y var to act just
+  // like any other continuous variable.
+  const computedYAxisDescriptor =
+    !providedOverlayVariableDescriptor && computedYAxisDetails
+      ? ({
+          entityId: computedYAxisDetails?.entityId,
+          variableId: computedYAxisDetails?.variableId,
+          displayName: data.value?.computedVariableMetadata?.displayName?.[0],
+        } as VariableDescriptor)
+      : null;
+
+  // List variables in a collection one by one in the variable coverage table. Create these extra rows
+  // here and then append to the variable coverage table rows array.
+  const additionalVariableCoverageTableRows = data.value
+    ?.computedVariableMetadata?.collectionVariable?.collectionVariableDetails
+    ? data.value?.computedVariableMetadata?.collectionVariable?.collectionVariableDetails.map(
+        (varDetails) => ({
+          role: '',
+          display: findEntityAndVariable(varDetails)?.variable.displayName,
+          variable: varDetails,
+        })
+      )
+    : [];
+
   const plotNode = (
     <ScatterplotWithControls
       // data.value
@@ -961,15 +986,18 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           },
           {
             role: 'Y-axis',
-            required: true,
-            display: variableDisplayWithUnit(yAxisVariable),
-            variable: vizConfig.yAxisVariable,
+            required: !providedOverlayVariableDescriptor?.variableId,
+            display: dependentAxisLabel,
+            variable: computedYAxisDescriptor ?? vizConfig.yAxisVariable,
           },
           {
             role: 'Overlay',
-            display: variableDisplayWithUnit(overlayVariable),
-            variable: vizConfig.overlayVariable,
+            required: !!providedOverlayVariableDescriptor,
+            display: legendTitle,
+            variable:
+              providedOverlayVariableDescriptor ?? vizConfig.overlayVariable,
           },
+          ...additionalVariableCoverageTableRows,
           {
             role: 'Facet',
             display: variableDisplayWithUnit(facetVariable),
@@ -1002,7 +1030,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       ? options?.getPlotSubtitle?.(computation.descriptor.configuration)
       : undefined;
 
-  // alphadiv abundance: y-axis and overlayVariable
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
