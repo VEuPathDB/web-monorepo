@@ -1,24 +1,25 @@
-import { useMemo } from 'react';
-import { merge } from 'lodash';
+import { useMemo } from "react";
+import { merge } from "lodash";
 
 // Definitions
-import { SwitchStyleSpec, SwitchStyleSpecSubset, SwitchVariantProps } from '.';
-import { blue, gray } from '../../../definitions/colors';
+import { SwitchStyleSpec, SwitchStyleSpecSubset, SwitchVariantProps } from ".";
+import { blue, gray } from "../../../definitions/colors";
 
 // Components
-import Switch from './Switch';
-import { useUITheme } from '../../theming';
+import Switch from "./Switch";
+import { useUITheme } from "../../theming";
 
 /** "Filled" style Switch component. */
-export default function FilledSwitch<T extends boolean | string | number>({
-  labels,
+export default function Toggle({
+  label,
+  labelPosition,
   themeRole,
   styleOverrides,
-  options,
-  selectedOption,
-  onOptionChange,
+  state,
+  onToggle,
   disabled,
-}: SwitchVariantProps<T>) {
+  size,
+}: SwitchVariantProps) {
   const theme = useUITheme();
 
   const styleSpec: SwitchStyleSpec = useMemo(() => {
@@ -27,7 +28,7 @@ export default function FilledSwitch<T extends boolean | string | number>({
       default: [
         {
           backgroundColor: blue[500],
-          knobColor: 'white',
+          knobColor: "white",
           borderColor: undefined,
           labelColor: gray[600],
         },
@@ -35,18 +36,17 @@ export default function FilledSwitch<T extends boolean | string | number>({
       hover: [
         {
           backgroundColor: blue[600],
-          knobColor: 'white',
+          knobColor: "white",
           borderColor: undefined,
           labelColor: gray[600],
         },
       ],
       disabled: {
         backgroundColor: gray[500],
-        knobColor: 'white',
+        knobColor: "white",
         borderColor: undefined,
         labelColor: gray[600],
       },
-      size: 'medium',
     };
 
     const themeStyles: SwitchStyleSpecSubset | undefined = theme &&
@@ -71,11 +71,12 @@ export default function FilledSwitch<T extends boolean | string | number>({
   return (
     <Switch
       styleSpec={styleSpec}
-      labels={labels}
-      options={options}
-      onOptionChange={onOptionChange}
-      selectedOption={selectedOption}
+      label={label}
+      labelPosition={labelPosition}
+      onToggle={onToggle}
+      state={state}
       disabled={disabled}
+      size={size}
     />
   );
 }

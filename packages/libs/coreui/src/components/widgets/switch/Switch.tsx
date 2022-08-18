@@ -5,14 +5,15 @@ import { SwitchProps } from '.';
 import { primaryFont } from '../../../styleDefinitions/typography';
 
 /** Fully controlled Switch component. */
-export default function Switch<T extends boolean | string | number>({
-  labels,
+export default function Switch({
+  label,
+  labelPosition,
   styleSpec,
-  options,
-  selectedOption,
-  onOptionChange,
+  state,
+  onToggle,
   disabled,
-}: SwitchProps<T>) {
+  size,
+}: SwitchProps) {
   const [switchState, setSwitchState] =
     useState<'default' | 'hover'>('default');
 
@@ -24,28 +25,17 @@ export default function Switch<T extends boolean | string | number>({
   const currentStyles = useMemo(() => {
     if (disabled) return styleSpec.disabled;
 
-    const selectedOptionIndex = options.findIndex(
-      (option) => option === selectedOption
-    );
+    const selectedOptionIndex = state ? 1 : 0;
 
     return styleSpec[switchState][selectedOptionIndex]
       ? styleSpec[switchState][selectedOptionIndex]
       : styleSpec[switchState][0];
-  }, [switchState, options, selectedOption, styleSpec, disabled]);
-
-  const { size } = styleSpec;
+  }, [switchState, state, styleSpec, disabled]);
 
   const ariaLabel = useMemo(() => {
-    if (!labels) return 'Switch';
-
-    if (labels.left && labels.right) {
-      return `${labels.left}/${labels.right} Switch`;
-    } else if (labels.left) {
-      return `${labels.left} Switch`;
-    } else {
-      return `${labels.right} Switch`;
-    }
-  }, [labels]);
+    if (label) return label + ' Switch';
+    else return 'Switch';
+  }, [label]);
 
   const width = size === 'medium' ? 40 : 20;
   const height = width / 2;
@@ -63,20 +53,20 @@ export default function Switch<T extends boolean | string | number>({
         ...styleSpec.container,
       }}
     >
-      {labels?.left && (
+      {label && labelPosition === 'left' && (
         <span
           css={{
             marginRight: size === 'medium' ? 10 : 5,
             color: currentStyles.labelColor,
           }}
         >
-          {labels.left}
+          {label}
         </span>
       )}
       <div
         role='switch'
         aria-label={ariaLabel}
-        aria-checked={selectedOption === options[0] ? false : true}
+        aria-checked={state}
         css={{
           display: 'flex',
           transition: 'all ease .33s',
@@ -98,9 +88,7 @@ export default function Switch<T extends boolean | string | number>({
         }}
         onKeyDown={(event) => {
           if (['Space', 'Enter'].includes(event.code)) {
-            onOptionChange(
-              selectedOption === options[0] ? options[1] : options[0]
-            );
+            onToggle(!state);
           }
         }}
         onFocus={() => setSwitchState('hover')}
@@ -108,9 +96,7 @@ export default function Switch<T extends boolean | string | number>({
         onMouseEnter={() => setSwitchState('hover')}
         onMouseLeave={() => setSwitchState('default')}
         onClick={() =>
-          onOptionChange(
-            selectedOption === options[0] ? options[1] : options[0]
-          )
+          onToggle(!state)
         }
         tabIndex={0}
       >
@@ -119,35 +105,21 @@ export default function Switch<T extends boolean | string | number>({
             position: 'relative',
             width: knobSize,
             height: knobSize,
-            ...(switchState === 'hover'
-              ? selectedOption === options[0]
-                ? {
-                    borderTopRightRadius: 10,
-                    borderBottomRightRadius: 10,
-                    borderTopLeftRadius: height / 4,
-                    borderBottomLeftRadius: height / 4,
-                  }
-                : {
-                    borderTopRightRadius: height / 4,
-                    borderBottomRightRadius: height / 4,
-                    borderTopLeftRadius: 10,
-                    borderBottomLeftRadius: 10,
-                  }
-              : { borderRadius: 10 }),
-            left: selectedOption === options[0] ? width / 5 : width - knobSize - width / 5,
+            borderRadius: 10,
+            left: !state ? width / 5 : width - knobSize - width / 5,
             transition: 'ease all .33s',
             backgroundColor: currentStyles.knobColor,
           }}
         />
       </div>
-      {labels?.right && (
+      {label && labelPosition === 'right' && (
         <span
           css={{
             marginLeft: size === 'medium' ? 10 : 5,
             color: currentStyles.labelColor,
           }}
         >
-          {labels.right}
+          {label}
         </span>
       )}
     </div>

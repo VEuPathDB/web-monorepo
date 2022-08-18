@@ -1,9 +1,7 @@
 import { CSSProperties } from 'react';
 import { Subset } from '../../../definitions/types';
 
-export { default as FloatingSwitch } from './FloatingSwitch';
-export { default as FilledSwitch } from './FilledSwitch';
-export { default as OutlinedSwitch } from './OutlinedSwitch';
+export { default as Toggle } from './Toggle';
 
 import { ThemeRole } from '../../theming/types';
 
@@ -20,30 +18,30 @@ export type SwitchStyleSpec = {
   default: SwitchStateStyleSpec[];
   hover: SwitchStateStyleSpec[];
   disabled: SwitchStateStyleSpec;
-  size: 'small' | 'medium';
 };
 
 export type SwitchStyleSpecSubset = Subset<SwitchStyleSpec>;
 
 // Prop definitions.
-export type SwitchProps<T extends boolean | string | number> = {
-  labels?: {
-    left?: string;
-    right?: string;
-  };
-  options: [T, T];
+export type SwitchProps = {
   /** Currently selected option. */
-  selectedOption: T;
+  state: boolean;
   /** Callback to invoke when the switch is flipped. */
-  onOptionChange: (selection: T) => void;
+  onToggle: (state: boolean) => void;
+  /** Text to render beside the toggle. Optional. */
+  label?: string;
+  /** Position of label. Optional, defaults to left. */
+  labelPosition?: 'left' | 'right';
   /** Specification on how switch should be styled. */
   styleSpec: SwitchStyleSpec;
   /** Whether the component is currently disabled for user interactions. */
   disabled?: boolean;
+  /** Size of toggle. Optional, defaults to medium. */
+  size?: 'medium' | 'small';
 };
 
-export type SwitchVariantProps<T extends boolean | string | number> = Omit<
-  SwitchProps<T>,
+export type SwitchVariantProps = Omit<
+  SwitchProps,
   'styleSpec'
 > & {
   themeRole?: ThemeRole;
