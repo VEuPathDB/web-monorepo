@@ -18,7 +18,7 @@ export default function Toggle({
   state,
   onToggle,
   disabled,
-  size,
+  size = 'medium',
 }: SwitchVariantProps) {
   const theme = useUITheme();
 
