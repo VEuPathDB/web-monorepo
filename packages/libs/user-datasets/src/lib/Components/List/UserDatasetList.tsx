@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { add } from 'lodash';
-import moment from 'moment';
 
 import {
   Checkbox,
@@ -32,7 +31,11 @@ import {
 import UserDatasetEmptyState from '../EmptyState';
 import SharingModal from '../Sharing/UserDatasetSharingModal';
 import UserDatasetStatus from '../UserDatasetStatus';
-import { normalizePercentage, textCell } from '../UserDatasetUtils';
+import {
+  normalizePercentage,
+  textCell,
+  timeFromNow,
+} from '../UserDatasetUtils';
 
 import './UserDatasetList.scss';
 
@@ -274,7 +277,7 @@ class UserDatasetList extends React.Component<Props, State> {
         name: 'Created',
         sortable: true,
         renderCell: textCell('created', (created: number) =>
-          moment(created).fromNow()
+          timeFromNow(created)
         ),
       },
       {
