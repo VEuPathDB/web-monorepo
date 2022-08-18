@@ -15,9 +15,8 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 14
-      - run: npm install
-      - run: npm run build
-      - run: npm run tsc
+      - run: yarn install
+      - run: yarn build-npm-modules
       - name: Store Dist Folder
         uses: actions/upload-artifact@v2
         with:
