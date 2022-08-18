@@ -25,8 +25,6 @@ interface ChartMarkerProps
   onClick?: (event: L.LeafletMouseEvent) => void | undefined;
   /** x-axis title for marker (defaults to sum of data[].value) */
   markerLabel?: string;
-  /** x-axis title for enlarged mouse-over marker (defaults to "Total: sum(data[].value)") */
-  independentAxisLabel?: string;
 }
 
 /**
