@@ -284,6 +284,10 @@ export function RecordTable(props) {
     case 'TranscriptionSummary':
       return <TranscriptionSummaryForm {...props}/>
 
+    case 'Cellxgene':
+      return <props.DefaultComponent {...props} childRow={CellxgeneTableChildRow} />
+
+
     default:
       return <props.DefaultComponent {...props} />
   }
@@ -342,6 +346,23 @@ const RodMalPhenotypeTableChildRow = pure(function RodMalPhenotypeTableChildRow(
     </div>
   )
 });
+
+
+const CellxgeneTableChildRow = pure(function CellxgeneTableChildRow(props) {
+  let {
+    source_id,source_ids,dataset_name,project_id
+  } = props.rowData;
+
+  return (
+    <CellxgeneIframe
+      source_id={source_id}
+      project_id={project_id}
+      source_ids={source_ids}
+      dataset_name={dataset_name}
+      />
+  )
+});
+
 
 function makeDatasetGraphChildRow(dataTableName, facetMetadataTableName, contXAxisMetadataTableName) {
   let DefaultComponent = WdkRecordTable;
@@ -1217,4 +1238,120 @@ const UserCommentsTable = addCommentLink(props => props.record.attributes.user_c
   window.scrollTo({
     top: yOffset,
   });
+}
+
+
+class CellxgeneIframe extends SortKeyTable {
+  constructor(props) {
+    super(props);
+    this.state = {
+      CellxgeneIframeState: {
+        isLoading: true,
+        isError: false,
+      },
+    };
+
+    this._makeIframeUrl = this._makeIframeUrl.bind(this);
+    this._makeAppUrl = this._makeAppUrl.bind(this);
+    this._makeGeneAppUrl = this._makeGeneAppUrl.bind(this);
+    this._handleIframeLoad = this._handleIframeLoad.bind(this);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      this._makeIframeUrl(prevProps.dataset_name, prevProps.source_ids) !==
+      this._makeIframeUrl(this.props.dataset_name, this.props.source_ids)
+    ) {
+      this.setState({
+        CellxgeneIframeState: {
+          isLoading: true,
+          isError: false,
+        },
+      });
+    }
+  }
+
+  _makeIframeUrl(dataset_name, sourceIds) {
+    const appUrl = this._makeGeneAppUrl(dataset_name, sourceIds);
+    return (
+        appUrl +
+        "&compact=1"
+    );
+  }
+
+  _makeAppUrl(dataset_name) {
+    return (
+        "/cellxgene/view/" + 
+        dataset_name + 
+        ".h5ad/"
+    );
+  }
+
+  _makeGeneAppUrl(dataset_name, sourceIds) {
+    const sourceIdAr = sourceIds.split(";");
+    const appUrl = this._makeAppUrl(dataset_name);
+    return (
+        appUrl +
+        "?gene=" + 
+        sourceIdAr[0]
+    );
+  }
+
+
+  _handleIframeLoad(loadEvent) {
+
+    this.setState({
+      CellxgeneIframeState: {
+        isLoading: false,
+        isError: false,
+      },
+    });
+  }
+
+  render() {
+    let { source_id, source_ids, dataset_name } = this.props;
+
+    let height = 350;
+    let width = 800;
+    console.log(this.props);
+    const sourceIdAr = source_ids.split(";");
+
+      /* if (this.props.value.length === 0) {
+         return (
+         <p><em>No data available</em></p>
+         );
+         }  */
+    return (
+      <div id="cellxgene">
+        <ExternalResourceContainer
+          isLoading={this.state.CellxgeneIframeState.isLoading}
+          isError={this.state.CellxgeneIframeState.isError}
+        >
+          <iframe
+            onError={() => {
+              this.setState({
+                CellxgeneIframeState: {
+                  isLoading: false,
+                  isError: true,
+                },
+              });
+            }}
+            onLoad={this._handleIframeLoad}
+            src={this._makeIframeUrl(dataset_name, sourceIdAr[0])}
+            height={height}
+            width={width}
+            frameBorder="0"
+          ></iframe>
+        </ExternalResourceContainer>
+        <div id="cellxgene_text">
+            The full dataset is availble in cellxgene <a target="_blank" href={this._makeAppUrl(dataset_name)}>here</a>.  The following identifiers are mapped to {source_id}:
+            <ul>
+            {sourceIdAr.map((id, i) => {     
+               return (<li><a target="_blank" href={this._makeGeneAppUrl(dataset_name, source_ids)}>{id}</a></li>)
+             })}
+            </ul>
+        </div>      
+      </div>
+    );
+  }
 }
