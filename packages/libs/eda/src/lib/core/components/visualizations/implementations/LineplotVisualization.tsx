@@ -912,12 +912,16 @@ function LineplotViz(props: VisualizationProps) {
     </div>
   );
 
-  const areRequiredInputsSelected =
-    dataElementConstraints &&
-    Object.entries(dataElementConstraints[0])
+  const areRequiredInputsSelected = useMemo(() => {
+    if (!dataElementConstraints) return false;
+    return Object.entries(dataElementConstraints[0])
       .filter((variable) => variable[1].isRequired)
-      // @ts-ignore
-      .every((reqdVar) => !!vizConfig[reqdVar[0]]);
+      .every((reqdVar) => !!(vizConfig as any)[reqdVar[0]]);
+  }, [
+    dataElementConstraints,
+    vizConfig.xAxisVariable,
+    vizConfig.yAxisVariable,
+  ]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>

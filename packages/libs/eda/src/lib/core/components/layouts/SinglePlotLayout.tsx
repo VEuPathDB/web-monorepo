@@ -4,6 +4,7 @@ import { LayoutProps } from './types';
 
 export interface Props extends LayoutProps {
   showRequiredInputsPrompt?: boolean;
+  isMosaicPlot?: boolean;
 }
 
 const defaultContainerStyles: CSSProperties = {
@@ -24,7 +25,7 @@ const defaultTableGroupStyles: CSSProperties = {
   gap: '1.5em',
 };
 
-const pseudoRelativeContainerStyles: CSSProperties = {
+const requiredInputsContainerStyles: CSSProperties = {
   position: 'relative',
   height: '0',
   width: '0',
@@ -33,11 +34,12 @@ const pseudoRelativeContainerStyles: CSSProperties = {
 const requiredInputsHeaderStyles: CSSProperties = {
   position: 'absolute',
   width: 'max-content',
-  top: '1.75em',
-  left: '1.75em',
-  zIndex: '10',
+  left: '4.25em',
+  zIndex: '1000',
   fontWeight: '500',
   fontStyle: 'normal',
+  backgroundColor: '#fff',
+  padding: '0.5em',
 };
 
 const requiredTextStyles: CSSProperties = {
@@ -56,21 +58,13 @@ export function SinglePlotLayout({
   tableGroupNode,
   tableGroupStyles,
   showRequiredInputsPrompt,
+  isMosaicPlot,
 }: Props) {
   return (
     <div style={{ ...defaultContainerStyles, ...containerStyles }}>
       <div style={{ ...defaultPlotStyles, ...plotStyles }}>
         {showRequiredInputsPrompt && (
-          <div style={pseudoRelativeContainerStyles}>
-            <h3 style={requiredInputsHeaderStyles}>
-              Please select all{' '}
-              <span style={{ color: requiredTextStyles.color }}>
-                required
-                <span style={requiredTextStyles}>*</span>
-              </span>{' '}
-              parameters.
-            </h3>
-          </div>
+          <RequiredInputsPrompt isMosaicPlot={isMosaicPlot} />
         )}
         {plotNode}
       </div>
@@ -78,6 +72,30 @@ export function SinglePlotLayout({
         {legendNode && <div style={{ ...legendStyles }}>{legendNode}</div>}
         {tableGroupNode}
       </div>
+    </div>
+  );
+}
+
+interface RequiredPromptProps {
+  isMosaicPlot: boolean | undefined;
+}
+
+function RequiredInputsPrompt({ isMosaicPlot }: RequiredPromptProps) {
+  return (
+    <div style={requiredInputsContainerStyles}>
+      <h3
+        style={{
+          ...requiredInputsHeaderStyles,
+          top: isMosaicPlot ? '4em' : '0.5em',
+        }}
+      >
+        Please select all{' '}
+        <span style={{ color: requiredTextStyles.color }}>
+          required
+          <span style={requiredTextStyles}>*</span>
+        </span>{' '}
+        parameters.
+      </h3>
     </div>
   );
 }

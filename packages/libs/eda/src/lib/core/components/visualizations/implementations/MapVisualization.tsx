@@ -947,6 +947,11 @@ function MapViz(props: VisualizationProps) {
         legendNode={legendNode}
         plotNode={plotNode}
         tableGroupNode={tableGroupNode}
+        /**
+         * unlike all other visualizations, dataElementsContraints does not include xAxisVariable as a required variable;
+         * thus, we're directly coercing a boolean as to whether or not the required variable has been chosen
+         */
+        showRequiredInputsPrompt={!vizConfig.xAxisVariable}
       />
     </div>
   );
