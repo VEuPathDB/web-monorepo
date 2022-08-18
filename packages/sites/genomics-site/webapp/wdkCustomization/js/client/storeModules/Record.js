@@ -333,7 +333,14 @@ function observeUserSettings(action$, state$) {
                 setStateInStorage(storageItems.navigationVisible, state$.value[key]);
                 break;
               case TABLE_STATE_UPDATED:
-                setStateInStorage(storageItems.tables, state$.value[key]);
+                // Do not store the expanded rows for scrnaseq tables because the
+                // iframe content is expensive to load.
+                if (action.payload.tableName === 'Cellxgene') {
+                  console.info('Table state for', action.payload.tableName, 'is not being stored.')
+                }
+                else {
+                  setStateInStorage(storageItems.tables, state$.value[key]);
+                }
                 break;
             }
             return empty();
