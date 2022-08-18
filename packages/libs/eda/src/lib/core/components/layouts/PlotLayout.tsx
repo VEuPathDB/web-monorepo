@@ -18,6 +18,7 @@ interface Props {
   tableGroupNode: ReactNode;
   singlePlotStyles?: StyleProps<SinglePlotLayoutProps>;
   facetedPlotStyles?: StyleProps<FacetedPlotLayoutProps>;
+  showRequiredInputsPrompt?: boolean;
 }
 
 export function PlotLayout({
@@ -27,6 +28,7 @@ export function PlotLayout({
   tableGroupNode,
   singlePlotStyles,
   facetedPlotStyles,
+  showRequiredInputsPrompt,
 }: Props) {
   return isFaceted ? (
     <FacetedPlotLayout
@@ -40,6 +42,7 @@ export function PlotLayout({
       legendNode={legendNode}
       plotNode={plotNode}
       tableGroupNode={tableGroupNode}
+      showRequiredInputsPrompt={showRequiredInputsPrompt}
       {...singlePlotStyles}
     />
   );

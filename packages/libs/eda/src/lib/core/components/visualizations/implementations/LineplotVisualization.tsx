@@ -271,10 +271,14 @@ function LineplotViz(props: VisualizationProps) {
     vizConfig.denominatorValues.length > 0;
 
   // axis range control: set the state of truncation warning message
-  const [truncatedIndependentAxisWarning, setTruncatedIndependentAxisWarning] =
-    useState<string>('');
-  const [truncatedDependentAxisWarning, setTruncatedDependentAxisWarning] =
-    useState<string>('');
+  const [
+    truncatedIndependentAxisWarning,
+    setTruncatedIndependentAxisWarning,
+  ] = useState<string>('');
+  const [
+    truncatedDependentAxisWarning,
+    setTruncatedDependentAxisWarning,
+  ] = useState<string>('');
 
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
@@ -384,8 +388,9 @@ function LineplotViz(props: VisualizationProps) {
   );
 
   // for vizconfig.checkedLegendItems
-  const onCheckedLegendItemsChange =
-    onChangeHandlerFactory<string[]>('checkedLegendItems');
+  const onCheckedLegendItemsChange = onChangeHandlerFactory<string[]>(
+    'checkedLegendItems'
+  );
 
   const onShowErrorBarsChange = onChangeHandlerFactory<boolean>(
     'showErrorBars',
@@ -394,10 +399,12 @@ function LineplotViz(props: VisualizationProps) {
   );
 
   const onUseBinningChange = onChangeHandlerFactory<boolean>('useBinning');
-  const onNumeratorValuesChange =
-    onChangeHandlerFactory<string[]>('numeratorValues');
-  const onDenominatorValuesChange =
-    onChangeHandlerFactory<string[]>('denominatorValues');
+  const onNumeratorValuesChange = onChangeHandlerFactory<string[]>(
+    'numeratorValues'
+  );
+  const onDenominatorValuesChange = onChangeHandlerFactory<string[]>(
+    'denominatorValues'
+  );
 
   const onIndependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
     'independentAxisLogScale',
@@ -905,6 +912,13 @@ function LineplotViz(props: VisualizationProps) {
     </div>
   );
 
+  const areRequiredInputsSelected =
+    dataElementConstraints &&
+    Object.entries(dataElementConstraints[0])
+      .filter((variable) => variable[1].isRequired)
+      // @ts-ignore
+      .every((reqdVar) => !!vizConfig[reqdVar[0]]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -980,6 +994,7 @@ function LineplotViz(props: VisualizationProps) {
         legendNode={showOverlayLegend ? legendNode : null}
         plotNode={plotNode}
         tableGroupNode={tableGroupNode}
+        showRequiredInputsPrompt={!areRequiredInputsSelected}
       />
     </div>
   );
@@ -1534,27 +1549,34 @@ export function lineplotResponseToData(
   );
 
   const processedData = mapValues(facetGroupedResponseData, (group) => {
-    const { dataSetProcess, yMin, yMinPos, yMax, xMin, xMinPos, xMax } =
-      processInputData(
-        reorderResponseLineplotData(
-          // reorder by overlay var within each facet
-          group,
-          categoricalMode,
-          xAxisVocabulary,
-          vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
-          overlayVariable
-        ),
+    const {
+      dataSetProcess,
+      yMin,
+      yMinPos,
+      yMax,
+      xMin,
+      xMinPos,
+      xMax,
+    } = processInputData(
+      reorderResponseLineplotData(
+        // reorder by overlay var within each facet
+        group,
         categoricalMode,
-        vizType,
-        modeValue,
-        independentValueType,
-        dependentValueType,
-        showMissingOverlay,
-        hasMissingData,
-        response.lineplot.config.binSpec,
-        response.lineplot.config.binSlider,
+        xAxisVocabulary,
+        vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
         overlayVariable
-      );
+      ),
+      categoricalMode,
+      vizType,
+      modeValue,
+      independentValueType,
+      dependentValueType,
+      showMissingOverlay,
+      hasMissingData,
+      response.lineplot.config.binSpec,
+      response.lineplot.config.binSlider,
+      overlayVariable
+    );
 
     return {
       dataSetProcess: dataSetProcess,
