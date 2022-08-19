@@ -2121,10 +2121,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.1.0.tgz#5c7eecc048a91195404411d8729393197af0128c"
   integrity sha512-TQ58MbCy7UZN/h11HZ31CSJfywG17oDNHQzQJysj65Fvv2gAM1w7CjwCvV0bG3sRESKUDORSA7sJrVVv27GHBw==
 
-"@veupathdb/components@^0.17.2":
-  version "0.17.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.17.2.tgz#6d699c2f549d17b97982cfec5e093a8079c439d0"
-  integrity sha512-5ffx8z4DYlGZFaij7yI8u2FLNS2HkJmKCksBkAq2AXfD4usfdzIQnNbfgAUsJeQFNbc3g4HIZQr7XJCTfPrU/A==
+"@veupathdb/components@^0.17.3":
+  version "0.17.3"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.17.3.tgz#4e7e991aaf0e19810591eeade5f21fd2b5096b22"
+  integrity sha512-w9M+3YxzLYU8E/O2LqkckhRMAuvQLq1r2kzH/qamfyuQdE91IFdnZ7z17ds44y4Xl/sisRouYk5yGLTc8ZUEuA==
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
@@ -2164,10 +2164,10 @@
     react-responsive-modal "^6.2.0"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^3.8.12":
-  version "3.8.12"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.8.12.tgz#70a473abb2bdcb1ab4d6107aa4053b753d95c4a7"
-  integrity sha512-lzlymCfdUEtignN48kt4fRAktqO1nfKjnNcdiqEyTDq5/3JHMRA3QtoPlLUG52r/HeLjckHTxSEvlxTHJjU+ZQ==
+"@veupathdb/eda@^3.8.13":
+  version "3.8.13"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.8.13.tgz#fe3481c0701d46e457ddb652afa4bdf01a3d8606"
+  integrity sha512-hKlS2Wrgy3S/dGQrRC0/+mPAT4SavTfkrq6pECVYV+yT01kNdeaoYFnI/2PsDJWmiiQE0g3qoPxg2Jhtk1B/dg==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -2224,13 +2224,13 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/user-datasets@^0.1.9":
-  version "0.1.9"
-  resolved "https://registry.yarnpkg.com/@veupathdb/user-datasets/-/user-datasets-0.1.9.tgz#287048f79c42c826cc193177be2af8d38cf4a86c"
-  integrity sha512-Bnm7xJEClTvwEV7ai3ndWmYcPh998DGRvov9hLkxxPLMctrK0bjeE5BqpJJPUMjdWVS5wo78CBOOq23Ysjvt1A==
+"@veupathdb/user-datasets@^0.1.10":
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/@veupathdb/user-datasets/-/user-datasets-0.1.10.tgz#d2076c87d96950805a07fd1c961ddbb69392355f"
+  integrity sha512-l/uU0cTufjDT8zUF7uUonjhnKDQi8sbdaFcmLLJyDzBIjb2AEQvUshRpk2gIXw6Hzfj3tvKQabQ2ll7dnXw3Lw==
   dependencies:
+    date-fns "^2.29.1"
     lodash "^4.17.21"
-    moment "^2.21.0"
 
 "@veupathdb/wdk-client@^0.9.9":
   version "0.9.9"
@@ -4619,6 +4619,11 @@ date-arithmetic@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/date-arithmetic/-/date-arithmetic-4.1.0.tgz#e5d6434e9deb71f79760a37b729e4a515e730ddf"
   integrity sha512-QWxYLR5P/6GStZcdem+V1xoto6DMadYWpMXU82ES3/RfR3Wdwr3D0+be7mgOJ+Ov0G9D5Dmb9T17sNLQYj9XOg==
+
+date-fns@^2.29.1:
+  version "2.29.2"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.29.2.tgz#0d4b3d0f3dff0f920820a070920f0d9662c51931"
+  integrity sha512-0VNbwmWJDS/G3ySwFSJA3ayhbURMTJLtwM2DTxf9CWondCnh6DTNlO9JgRSq6ibf4eD0lfMJNBxUdEAHHix+bA==
 
 debounce-promise@^3.1.2:
   version "3.1.2"
@@ -7399,11 +7404,6 @@ mkdirp@^1.0.3:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-1.0.4.tgz#3eb5ed62622756d79a5f0e2a221dfebad75c2f7e"
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
-
-moment@^2.21.0:
-  version "2.29.3"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.3.tgz#edd47411c322413999f7a5940d526de183c031f3"
-  integrity sha512-c6YRvhEo//6T2Jz/vVtYzqBzwvPT95JBQ+smCytzf7c50oMZRsR/a4w88aD34I+/QVSfnoAnSBFPJHItlOMJVw==
 
 monocle-ts@^2.3.11:
   version "2.3.13"
