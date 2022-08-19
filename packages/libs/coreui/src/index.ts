@@ -9,7 +9,7 @@ export { default as OutlinedButton } from "./components/buttons/OutlinedButton";
 
 // Widgets
 export { Checkbox, Chip } from "./components/widgets";
-export { Toggle } from "./components/widgets/switch";
+export { default as Toggle } from "./components/widgets/Toggle";
 
 // Containers
 export { Card, Modal } from "./components/containers";

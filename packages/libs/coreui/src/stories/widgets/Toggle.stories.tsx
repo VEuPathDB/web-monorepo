@@ -1,17 +1,20 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
 
-import { Toggle, SwitchVariantProps } from "../../components/widgets/switch";
+import {
+  default as Toggle,
+  ToggleProps,
+} from "../../components/widgets/Toggle";
 import UIThemeProvider from "../../components/theming/UIThemeProvider";
 import { green, magenta, orange, purple } from "../../definitions/colors";
 import { useState } from "react";
 
 export default {
-  title: "Controls/Widgets/Switch/FilledSwitch",
+  title: "Controls/Widgets/Toggle",
   component: Toggle,
 } as Meta;
 
-const Template: Story<SwitchVariantProps> = (args) => {
+const Template: Story<ToggleProps> = (args) => {
   const [state, setState] = useState(args.state);
 
   return (
@@ -23,11 +26,7 @@ const Template: Story<SwitchVariantProps> = (args) => {
         },
       }}
     >
-      <Toggle
-        {...args}
-        state={state}
-        onToggle={(state) => setState(state)}
-      />
+      <Toggle {...args} state={state} onToggle={(state) => setState(state)} />
     </UIThemeProvider>
   );
 };
@@ -35,47 +34,47 @@ const Template: Story<SwitchVariantProps> = (args) => {
 export const Default = Template.bind({});
 Default.args = {
   state: true,
-} as SwitchVariantProps;
+} as ToggleProps;
 
 export const LeftLabel = Template.bind({});
 LeftLabel.args = {
   ...Default.args,
   label: "Barbarian Hordes",
-  labelPosition: 'left',
-} as SwitchVariantProps;
+  labelPosition: "left",
+} as ToggleProps;
 
 export const RightLabel = Template.bind({});
 RightLabel.args = {
   ...Default.args,
   label: "Zombie Hordes",
-  labelPosition: 'right',
-} as SwitchVariantProps;
+  labelPosition: "right",
+} as ToggleProps;
 
 export const Small = Template.bind({});
 Small.args = {
   ...Default.args,
-  labels: "Barbarian Hordes",
-  size: 'small',
-} as SwitchVariantProps;
+  label: "Barbarian Hordes",
+  size: "small",
+} as ToggleProps;
 
 export const Disabled = Template.bind({});
 Disabled.args = {
   ...Default.args,
-  labels: "Barbarian Hordes",
+  label: "Barbarian Hordes",
   disabled: true,
-} as SwitchVariantProps;
+} as ToggleProps;
 
 export const ThemeApplied = Template.bind({});
 ThemeApplied.args = {
   ...Default.args,
-  labels: "Barbarian Hordes",
+  label: "Barbarian Hordes",
   themeRole: "primary",
-} as SwitchVariantProps;
+} as ToggleProps;
 
 export const StyleOverrides = Template.bind({});
 StyleOverrides.args = {
   ...Default.args,
-  labels: "Barbarian Hordes",
+  label: "Barbarian Hordes",
   styleOverrides: {
     default: [
       {
@@ -98,4 +97,4 @@ StyleOverrides.args = {
       },
     ],
   },
-} as SwitchVariantProps;
+} as ToggleProps;
