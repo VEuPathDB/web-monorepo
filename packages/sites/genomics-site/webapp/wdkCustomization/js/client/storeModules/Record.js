@@ -8,6 +8,7 @@ import * as cat from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import * as persistence from '@veupathdb/web-common/lib/util/persistence';
 import { TABLE_STATE_UPDATED, PATHWAY_DYN_COLS_LOADED } from '../actioncreators/RecordViewActionCreators';
 import { isGenomicsService } from '../wrapWdkService';
+import { fullyCollapsedOnLoad } from '../components/common/RecordTableContainer';
 
 export const key = 'record';
 
@@ -333,9 +334,8 @@ function observeUserSettings(action$, state$) {
                 setStateInStorage(storageItems.navigationVisible, state$.value[key]);
                 break;
               case TABLE_STATE_UPDATED:
-                // Do not store the expanded rows for scrnaseq tables because the
-                // iframe content is expensive to load.
-                if (action.payload.tableName === 'Cellxgene') {
+                // Do not store the expanded rows for these tables.
+                if (fullyCollapsedOnLoad.has(action.payload.tableName)) {
                   console.info('Table state for', action.payload.tableName, 'is not being stored.')
                 }
                 else {

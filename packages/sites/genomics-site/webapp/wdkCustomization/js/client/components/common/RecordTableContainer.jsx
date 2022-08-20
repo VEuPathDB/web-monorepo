@@ -4,6 +4,14 @@ import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import { updateTableState } from '../../actioncreators/RecordViewActionCreators';
 
+/**
+ * Tables that are fully collapsed on load.
+ * 
+ * Expanded rows should not be stored in local storage, and we should
+ * not default to expandind the first row.
+ */
+export const fullyCollapsedOnLoad = new Set(['Cellxgene']);
+
 // always open the first row
 const defaultExpandedRows = [ 0 ];
 
@@ -99,7 +107,8 @@ class RecordTableContainer extends Component {
         this._table = table;
         this.tryToJumpToSelectedRow(this.props.tableState?.selectedRow);
       },
-      expandedRows: get(this.props, 'tableState.expandedRows', defaultExpandedRows),
+      expandedRows: get(this.props, 'tableState.expandedRows',
+        fullyCollapsedOnLoad.has(this.props.table.name) ? [] : defaultExpandedRows),
       searchTerm: get(this.props, 'tableState.searchTerm', defaultSearchTerm),
       onExpandedRowsChange: this.updateExpandedRows,
       onSearchTermChange: this.updateSearchTerm,
