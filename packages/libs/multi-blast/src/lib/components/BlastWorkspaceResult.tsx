@@ -127,7 +127,13 @@ export function BlastWorkspaceResult(props: Props) {
     jobResult.value.status === 'request-error' ? (
     <BlastRequestError errorDetails={jobResult.value.details} />
   ) : jobResult.value != null && jobResult.value.status === 'queueing-error' ? (
-    <ErrorPage message="We were unable to queue your job." />
+    <ErrorPage
+      message={
+        <code>
+          {jobResult.value.errorMessage ?? 'We were unable to queue your job.'}
+        </code>
+      }
+    />
   ) : queryResult.value != null && queryResult.value.status === 'error' ? (
     <BlastRequestError errorDetails={queryResult.value.details} />
   ) : reportResult.value != null &&
@@ -393,14 +399,23 @@ function BlastSummary({
   );
 }
 
-type JobPollingResult = JobPollingSuccess | JobPollingError;
+type JobPollingResult =
+  | JobPollingSuccess
+  | JobPollingQueueingError
+  | JobPollingRequestError;
 
 interface JobPollingSuccess {
-  status: 'job-completed' | 'queueing-error';
+  status: 'job-completed';
   job: LongJobResponse;
 }
 
-interface JobPollingError {
+interface JobPollingQueueingError {
+  status: 'queueing-error';
+  job: LongJobResponse;
+  errorMessage?: string;
+}
+
+interface JobPollingRequestError {
   status: 'request-error';
   details: ErrorDetails;
 }
@@ -414,10 +429,25 @@ async function makeJobPollingPromise(
   if (jobRequest.status === 'ok') {
     const job = jobRequest.value;
 
-    if (job.status === 'completed' || job.status === 'errored') {
+    if (job.status === 'completed') {
       return {
-        status: job.status === 'completed' ? 'job-completed' : 'queueing-error',
+        status: 'job-completed',
         job,
+      };
+    }
+
+    if (job.status === 'errored') {
+      const queueingErrorMessageRequest = await blastApi.fetchJobQueueError(
+        job.id
+      );
+
+      return {
+        status: 'queueing-error',
+        job,
+        errorMessage:
+          queueingErrorMessageRequest.status === 'ok'
+            ? queueingErrorMessageRequest.value
+            : undefined,
       };
     }
 

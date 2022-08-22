@@ -244,6 +244,14 @@ export class BlastApi extends FetchClientWithCredentials {
       transformResponse: ioTransformer(string),
     });
   }
+
+  fetchJobQueueError(jobId: string) {
+    return this.taggedFetch({
+      path: `${JOBS_PATH}/${jobId}/error`,
+      method: 'GET',
+      transformResponse: ioTransformer(string),
+    });
+  }
 }
 
 function transformTooLargeError(errorDetails: ErrorDetails): ErrorDetails {
