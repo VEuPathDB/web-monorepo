@@ -8,7 +8,6 @@ import {
 } from '@veupathdb/wdk-client/lib/Components';
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
-import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 
@@ -112,48 +111,57 @@ export function BlastWorkspaceResult(props: Props) {
     [blastApi, reportResultState]
   );
 
-  const individualQueriesResult = usePromise(async () => {
-    if (jobResultState.status !== 'job-completed') {
-      return undefined;
-    }
+  const [
+    individualQueriesResultState,
+    setIndividualQueriesResultState,
+  ] = useState<ApiResult<IndividualQuery[], ErrorDetails>>();
 
-    const childJobIds = jobResultState.job?.childJobs?.map(({ id }) => id);
+  useEffect(
+    () =>
+      Task.fromPromise(async () => {
+        if (jobResultState.status !== 'job-completed') {
+          return undefined;
+        }
 
-    const subJobIds =
-      childJobIds == null || childJobIds.length === 0
-        ? [jobResultState.job.id]
-        : childJobIds;
+        const childJobIds = jobResultState.job?.childJobs?.map(({ id }) => id);
 
-    const queryResults = await Promise.all(
-      subJobIds.map((id) =>
-        blastApi.fetchQuery(id).then((queryResult) =>
-          queryResult.status === 'error'
-            ? queryResult
-            : {
-                status: 'ok',
-                value: {
-                  jobId: id,
-                  query: queryResult.value,
-                },
-              }
-        )
-      )
-    );
+        const subJobIds =
+          childJobIds == null || childJobIds.length === 0
+            ? [jobResultState.job.id]
+            : childJobIds;
 
-    const invalidQueryResult = queryResults.find(
-      ({ status }) => status === 'error'
-    );
+        const queryResults = await Promise.all(
+          subJobIds.map((id) =>
+            blastApi.fetchQuery(id).then((queryResult) =>
+              queryResult.status === 'error'
+                ? queryResult
+                : {
+                    status: 'ok',
+                    value: {
+                      jobId: id,
+                      query: queryResult.value,
+                    },
+                  }
+            )
+          )
+        );
 
-    return invalidQueryResult != null
-      ? (invalidQueryResult as ApiResultError<ErrorDetails>)
-      : ({
-          status: 'ok',
-          value: (queryResults as {
-            status: 'ok';
-            value: IndividualQuery;
-          }[]).map((queryResult) => queryResult.value),
-        } as ApiResultSuccess<IndividualQuery[]>);
-  }, [jobResultState]);
+        const invalidQueryResult = queryResults.find(
+          ({ status }) => status === 'error'
+        );
+
+        return invalidQueryResult != null
+          ? (invalidQueryResult as ApiResultError<ErrorDetails>)
+          : ({
+              status: 'ok',
+              value: (queryResults as {
+                status: 'ok';
+                value: IndividualQuery;
+              }[]).map((queryResult) => queryResult.value),
+            } as ApiResultSuccess<IndividualQuery[]>);
+      }).run(setIndividualQueriesResultState),
+    [blastApi, jobResultState]
+  );
 
   return jobResultState.status === 'request-error' ? (
     <BlastRequestError errorDetails={jobResultState.details} />
@@ -173,19 +181,19 @@ export function BlastWorkspaceResult(props: Props) {
   ) : reportResultState != null &&
     reportResultState.status === 'queueing-error' ? (
     <ErrorPage message="We were unable to queue your combined results report." />
-  ) : individualQueriesResult.value != null &&
-    individualQueriesResult.value.status === 'error' ? (
-    <BlastRequestError errorDetails={individualQueriesResult.value.details} />
+  ) : individualQueriesResultState != null &&
+    individualQueriesResultState.status === 'error' ? (
+    <BlastRequestError errorDetails={individualQueriesResultState.details} />
   ) : queryResultState == null ||
     jobResultState.status === 'job-running' ||
     reportResultState == null ||
     reportResultState.status === 'report-running' ||
-    individualQueriesResult.value == null ? (
+    individualQueriesResultState == null ? (
     <LoadingBlastResult {...props} />
   ) : (
     <CompleteBlastResult
       {...props}
-      individualQueries={individualQueriesResult.value.value}
+      individualQueries={individualQueriesResultState.value}
       jobDetails={jobResultState.job}
       query={queryResultState.value}
       multiQueryReportResult={multiQueryReportState}
