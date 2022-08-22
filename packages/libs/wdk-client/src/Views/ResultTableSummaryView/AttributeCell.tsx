@@ -1,7 +1,7 @@
 import React from 'react';
 import { truncate } from 'lodash';
 import { RecordInstance, AttributeField } from 'wdk-client/Utils/WdkModel';
-import {wrappable} from 'wdk-client/Utils/ComponentUtils';
+import {safeHtml, wrappable} from 'wdk-client/Utils/ComponentUtils';
 
 interface AttributeCellProps {
   attribute: AttributeField;
@@ -17,15 +17,14 @@ function AttributeCell({
   if (value == null) return null;
 
   if (typeof value === 'string') {
-    const truncatedValue = truncateValue(value, attribute.truncateTo);
-    return (
-      <div
-        title={truncatedValue !== value ? value : undefined}
-        dangerouslySetInnerHTML={{
-          __html: truncatedValue
-        }}
-      />
-    );
+    return safeHtml(value, {
+      style: {
+        maxWidth: `${attribute.truncateTo}ch`,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+      }
+    }, 'div')
   }
 
   const { url, displayText } = value;
