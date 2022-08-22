@@ -650,9 +650,6 @@ function MapViz(props: VisualizationProps) {
             {...(vizConfig.markerType !== 'pie'
               ? {
                   dependentAxisRange: defaultDependentAxisRange,
-                  independentAxisLabel: `${formattedCount} ${
-                    outputEntity?.displayNamePlural ?? outputEntity?.displayName
-                  }`,
                   dependentAxisLogScale: vizConfig.dependentAxisLogScale,
                 }
               : {})}
