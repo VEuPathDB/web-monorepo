@@ -44,9 +44,6 @@ const requiredInputsHeaderStyles: CSSProperties = {
 
 const requiredTextStyles: CSSProperties = {
   color: '#dd314e',
-  position: 'relative',
-  top: '-2px',
-  paddingLeft: '1px',
 };
 
 export function SinglePlotLayout({
@@ -90,9 +87,8 @@ function RequiredInputsPrompt({ isMosaicPlot }: RequiredPromptProps) {
         }}
       >
         Please select all{' '}
-        <span style={{ color: requiredTextStyles.color }}>
-          required
-          <span style={requiredTextStyles}>*</span>
+        <span style={requiredTextStyles}>
+          required<sup>*</sup>
         </span>{' '}
         parameters.
       </h3>

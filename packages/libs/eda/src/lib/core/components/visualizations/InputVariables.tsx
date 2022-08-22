@@ -265,18 +265,12 @@ export function InputVariables(props: Props) {
                         style={{ cursor: 'default' }}
                       >
                         {input.label + (input.readonlyValue ? ' (fixed)' : '')}
-                        <span
-                          style={{
-                            position: 'relative',
-                            top: '-2px',
-                            paddingLeft: '1px',
-                          }}
-                        >
-                          {flattenedConstraints &&
-                          flattenedConstraints[input.name].isRequired
-                            ? '*'
-                            : ''}
-                        </span>
+                        {flattenedConstraints &&
+                        flattenedConstraints[input.name].isRequired ? (
+                          <sup>*</sup>
+                        ) : (
+                          ''
+                        )}
                       </div>
                     </Tooltip>
                     {!input.readonlyValue ? (
