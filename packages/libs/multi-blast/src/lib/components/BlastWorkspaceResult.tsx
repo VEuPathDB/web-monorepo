@@ -77,26 +77,31 @@ export function BlastWorkspaceResult(props: Props) {
     [blastApi, props.jobId]
   );
 
-  const reportResult = usePromise(
-    async () =>
-      jobResultState.status !== 'job-completed'
-        ? undefined
-        : makeReportPollingPromise(
-            blastApi,
-            jobResultState.job.id,
-            'single-file-json'
-          ),
+  const [
+    reportResultState,
+    setReportResultState,
+  ] = useState<ReportPollingState>();
+
+  useEffect(
+    () =>
+      Task.fromPromise(async () =>
+        jobResultState.status !== 'job-completed'
+          ? undefined
+          : makeReportPollingPromise(
+              blastApi,
+              jobResultState.job.id,
+              'single-file-json'
+            )
+      ).run(setReportResultState),
     [blastApi, jobResultState]
   );
 
   const multiQueryReportResult = usePromise(
     async () =>
-      reportResult.value?.status !== 'report-completed'
+      reportResultState?.status !== 'report-completed'
         ? undefined
-        : blastApi.fetchSingleFileJsonReport(
-            reportResult.value.report.reportID
-          ),
-    [blastApi, reportResult.value]
+        : blastApi.fetchSingleFileJsonReport(reportResultState.report.reportID),
+    [blastApi, reportResultState]
   );
 
   const individualQueriesResult = usePromise(async () => {
@@ -154,18 +159,18 @@ export function BlastWorkspaceResult(props: Props) {
     />
   ) : queryResultState != null && queryResultState.status === 'error' ? (
     <BlastRequestError errorDetails={queryResultState.details} />
-  ) : reportResult.value != null &&
-    reportResult.value.status === 'request-error' ? (
-    <BlastRequestError errorDetails={reportResult.value.details} />
-  ) : reportResult.value != null &&
-    reportResult.value.status === 'queueing-error' ? (
+  ) : reportResultState != null &&
+    reportResultState.status === 'request-error' ? (
+    <BlastRequestError errorDetails={reportResultState.details} />
+  ) : reportResultState != null &&
+    reportResultState.status === 'queueing-error' ? (
     <ErrorPage message="We were unable to queue your combined results report." />
   ) : individualQueriesResult.value != null &&
     individualQueriesResult.value.status === 'error' ? (
     <BlastRequestError errorDetails={individualQueriesResult.value.details} />
   ) : queryResultState == null ||
     jobResultState.status === 'job-running' ||
-    reportResult.value == null ||
+    reportResultState == null ||
     individualQueriesResult.value == null ? (
     <LoadingBlastResult {...props} />
   ) : (
@@ -489,7 +494,14 @@ async function makeJobPollingPromise(
   }
 }
 
-type ReportPollingResult = ReportPollingSuccess | ReportPollingError;
+type ReportPollingState =
+  | ReportPollingInProgress
+  | ReportPollingSuccess
+  | ReportPollingError;
+
+interface ReportPollingInProgress {
+  status: 'report-running';
+}
 
 interface ReportPollingSuccess {
   status: 'report-completed' | 'queueing-error';
@@ -506,7 +518,7 @@ export async function makeReportPollingPromise(
   jobId: string,
   format: IoBlastFormat,
   reportId?: string
-): Promise<ReportPollingResult> {
+): Promise<ReportPollingState> {
   if (reportId == null) {
     const reportRequest = await blastApi.createReport(jobId, {
       format,

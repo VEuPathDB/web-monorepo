@@ -275,12 +275,16 @@ export function createJobContentDownloader(
     format: IoBlastFormat,
     shouldZip: boolean,
     filename: string
-  ) {
+  ): Promise<void> {
     const reportResponse = await makeReportPollingPromise(
       blastApi,
       jobId,
       format
     );
+
+    if (reportResponse.status === 'report-running') {
+      return downloadJobContent(format, shouldZip, filename);
+    }
 
     if (reportResponse.status === 'queueing-error') {
       throw new Error('We were unable to queue your report.');
