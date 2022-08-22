@@ -179,6 +179,7 @@ export function BlastWorkspaceResult(props: Props) {
   ) : queryResultState == null ||
     jobResultState.status === 'job-running' ||
     reportResultState == null ||
+    reportResultState.status === 'report-running' ||
     individualQueriesResult.value == null ? (
     <LoadingBlastResult {...props} />
   ) : (
