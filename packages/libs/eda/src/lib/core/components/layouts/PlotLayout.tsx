@@ -18,6 +18,13 @@ interface Props {
   tableGroupNode: ReactNode;
   singlePlotStyles?: StyleProps<SinglePlotLayoutProps>;
   facetedPlotStyles?: StyleProps<FacetedPlotLayoutProps>;
+  showRequiredInputsPrompt?: boolean;
+  /**
+   * the mosaic plot's layout uses the TabbedDisplay component, which affects how
+   * the requiredInputsPrompt displays on the plot; this prop allows for conditionally
+   * setting the top offset accordingly
+   */
+  isMosaicPlot?: boolean;
 }
 
 export function PlotLayout({
@@ -27,6 +34,8 @@ export function PlotLayout({
   tableGroupNode,
   singlePlotStyles,
   facetedPlotStyles,
+  showRequiredInputsPrompt,
+  isMosaicPlot,
 }: Props) {
   return isFaceted ? (
     <FacetedPlotLayout
@@ -40,6 +49,8 @@ export function PlotLayout({
       legendNode={legendNode}
       plotNode={plotNode}
       tableGroupNode={tableGroupNode}
+      showRequiredInputsPrompt={showRequiredInputsPrompt}
+      isMosaicPlot={isMosaicPlot}
       {...singlePlotStyles}
     />
   );

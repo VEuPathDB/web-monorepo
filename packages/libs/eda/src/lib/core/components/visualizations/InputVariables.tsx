@@ -13,6 +13,7 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import Switch from '@veupathdb/components/lib/components/widgets/Switch';
 import { makeEntityDisplayName } from '../../utils/study-metadata';
 import { useInputStyles } from './inputStyles';
+import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 
 export interface InputSpec {
   name: string;
@@ -43,8 +44,12 @@ const sectionInfo: Record<string, SectionSpec> = {
   },
   stratification: {
     order: 100,
-    title: 'Stratification variables (optional)',
+    title: 'Stratification variables',
   },
+};
+
+const requiredInputStyle = {
+  color: '#dd314e',
 };
 
 interface CustomSectionSpec extends SectionSpec {
@@ -235,10 +240,39 @@ export function InputVariables(props: Props) {
               {inputs
                 .filter((input) => input.role === inputRole)
                 .map((input) => (
-                  <div key={input.name} className={classes.input}>
-                    <div className={classes.label}>
-                      {input.label + (input.readonlyValue ? ' (fixed)' : '')}
-                    </div>
+                  <div
+                    key={input.name}
+                    className={classes.input}
+                    style={
+                      flattenedConstraints &&
+                      !selectedVariables[input.name] &&
+                      flattenedConstraints[input.name].isRequired
+                        ? requiredInputStyle
+                        : {}
+                    }
+                  >
+                    <Tooltip
+                      css={{}}
+                      title={
+                        flattenedConstraints &&
+                        flattenedConstraints[input.name].isRequired
+                          ? 'Required parameter'
+                          : ''
+                      }
+                    >
+                      <div
+                        className={classes.label}
+                        style={{ cursor: 'default' }}
+                      >
+                        {input.label + (input.readonlyValue ? ' (fixed)' : '')}
+                        {flattenedConstraints &&
+                        flattenedConstraints[input.name].isRequired ? (
+                          <sup>*</sup>
+                        ) : (
+                          ''
+                        )}
+                      </div>
+                    </Tooltip>
                     {!input.readonlyValue ? (
                       <VariableTreeDropdown
                         scope="variableTree"
