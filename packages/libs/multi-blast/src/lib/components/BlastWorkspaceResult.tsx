@@ -53,10 +53,17 @@ export function BlastWorkspaceResult(props: Props) {
 
   const blastApi = useBlastApi();
 
-  const queryResult = usePromise(() => blastApi.fetchQuery(props.jobId), [
-    blastApi,
-    props.jobId,
-  ]);
+  const [queryResultState, setQueryResultState] = useState<
+    ApiResult<string, ErrorDetails>
+  >();
+
+  useEffect(
+    () =>
+      Task.fromPromise(() => blastApi.fetchQuery(props.jobId)).run(
+        setQueryResultState
+      ),
+    [blastApi, props.jobId]
+  );
 
   const [jobResultState, setJobResultState] = useState<JobPollingState>({
     status: 'job-running',
@@ -145,8 +152,8 @@ export function BlastWorkspaceResult(props: Props) {
         </code>
       }
     />
-  ) : queryResult.value != null && queryResult.value.status === 'error' ? (
-    <BlastRequestError errorDetails={queryResult.value.details} />
+  ) : queryResultState != null && queryResultState.status === 'error' ? (
+    <BlastRequestError errorDetails={queryResultState.details} />
   ) : reportResult.value != null &&
     reportResult.value.status === 'request-error' ? (
     <BlastRequestError errorDetails={reportResult.value.details} />
@@ -156,7 +163,7 @@ export function BlastWorkspaceResult(props: Props) {
   ) : individualQueriesResult.value != null &&
     individualQueriesResult.value.status === 'error' ? (
     <BlastRequestError errorDetails={individualQueriesResult.value.details} />
-  ) : queryResult.value == null ||
+  ) : queryResultState == null ||
     jobResultState.status === 'job-running' ||
     reportResult.value == null ||
     individualQueriesResult.value == null ? (
@@ -166,7 +173,7 @@ export function BlastWorkspaceResult(props: Props) {
       {...props}
       individualQueries={individualQueriesResult.value.value}
       jobDetails={jobResultState.job}
-      query={queryResult.value.value}
+      query={queryResultState.value}
       multiQueryReportResult={multiQueryReportResult}
     />
   );
