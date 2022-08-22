@@ -675,6 +675,29 @@ function LineplotViz(props: VisualizationProps) {
       };
   }, [xAxisVariable, defaultIndependentAxisRange]);
 
+  const areRequiredInputsSelected = useMemo(() => {
+    if (!dataElementConstraints) return false;
+    if (
+      vizConfig.valueSpecConfig === 'Proportion' &&
+      (!vizConfig.numeratorValues ||
+        !vizConfig.numeratorValues.length ||
+        !vizConfig.denominatorValues ||
+        !vizConfig.denominatorValues.length)
+    ) {
+      return false;
+    }
+    return Object.entries(dataElementConstraints[0])
+      .filter((variable) => variable[1].isRequired)
+      .every((reqdVar) => !!(vizConfig as any)[reqdVar[0]]);
+  }, [
+    dataElementConstraints,
+    vizConfig.xAxisVariable,
+    vizConfig.yAxisVariable,
+    vizConfig.valueSpecConfig,
+    vizConfig.denominatorValues,
+    vizConfig.numeratorValues,
+  ]);
+
   const plotNode = (
     <LineplotWithControls
       // data.value
@@ -870,8 +893,15 @@ function LineplotViz(props: VisualizationProps) {
             gridTemplateRows: 'repeat(3, auto)',
           }}
         >
-          <div className={classes.label} style={{ gridColumn: 1, gridRow: 2 }}>
-            Proportion&nbsp;=
+          <div
+            className={classes.label}
+            style={{
+              gridColumn: 1,
+              gridRow: 2,
+              color: !areRequiredInputsSelected ? '#dd314e' : '',
+            }}
+          >
+            Proportion<sup>*</sup>&nbsp;=
           </div>
           <div
             className={classes.input}
@@ -911,17 +941,6 @@ function LineplotViz(props: VisualizationProps) {
       )}
     </div>
   );
-
-  const areRequiredInputsSelected = useMemo(() => {
-    if (!dataElementConstraints) return false;
-    return Object.entries(dataElementConstraints[0])
-      .filter((variable) => variable[1].isRequired)
-      .every((reqdVar) => !!(vizConfig as any)[reqdVar[0]]);
-  }, [
-    dataElementConstraints,
-    vizConfig.xAxisVariable,
-    vizConfig.yAxisVariable,
-  ]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
