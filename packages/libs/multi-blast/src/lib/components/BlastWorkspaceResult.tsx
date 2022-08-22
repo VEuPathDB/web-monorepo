@@ -96,11 +96,19 @@ export function BlastWorkspaceResult(props: Props) {
     [blastApi, jobResultState]
   );
 
-  const multiQueryReportResult = usePromise(
-    async () =>
-      reportResultState?.status !== 'report-completed'
-        ? undefined
-        : blastApi.fetchSingleFileJsonReport(reportResultState.report.reportID),
+  const [multiQueryReportState, setMultiQueryReportState] = useState<
+    ApiResult<MultiQueryReportJson, ErrorDetails>
+  >();
+
+  useEffect(
+    () =>
+      Task.fromPromise(async () =>
+        reportResultState?.status !== 'report-completed'
+          ? undefined
+          : blastApi.fetchSingleFileJsonReport(
+              reportResultState.report.reportID
+            )
+      ).run(setMultiQueryReportState),
     [blastApi, reportResultState]
   );
 
@@ -179,7 +187,7 @@ export function BlastWorkspaceResult(props: Props) {
       individualQueries={individualQueriesResult.value.value}
       jobDetails={jobResultState.job}
       query={queryResultState.value}
-      multiQueryReportResult={multiQueryReportResult}
+      multiQueryReportResult={multiQueryReportState}
     />
   );
 }
@@ -209,10 +217,9 @@ function LoadingBlastResult(props: Props) {
   );
 }
 
-export interface MultiQueryReportResult {
-  value?: ApiResult<MultiQueryReportJson, ErrorDetails>;
-  loading: boolean;
-}
+export type MultiQueryReportResult =
+  | ApiResult<MultiQueryReportJson, ErrorDetails>
+  | undefined;
 
 interface CompleteBlastResultProps extends Props {
   individualQueries: IndividualQuery[];
