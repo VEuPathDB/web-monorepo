@@ -63,77 +63,58 @@ export default function Toggle({
   const [hoverState, setHoverState] = useState<"default" | "hover">("default");
 
   const styleSpec: ToggleStyleSpec = useMemo(() => {
+    const mainColor = theme ? theme.palette[themeRole].hue : blue;
+    const mainLevel = 400;
+    const labelColor = gray[600];
+    const disabledColor = gray[300];
+
     const defaultStyleSpec: ToggleStyleSpec = {
       container: {},
       default: [
         {
           backgroundColor: "none",
-          knobColor: blue[400],
-          borderColor: blue[400],
-          labelColor: gray[600],
+          knobColor: mainColor[mainLevel],
+          borderColor: mainColor[mainLevel],
+          labelColor,
         },
         {
-          backgroundColor: blue[400],
+          backgroundColor: mainColor[mainLevel],
           knobColor: "white",
-          borderColor: blue[400],
-          labelColor: gray[600],
+          borderColor: mainColor[mainLevel],
+          labelColor,
         },
       ],
       hover: [
         {
-          backgroundColor: blue[100],
-          knobColor: blue[400],
-          borderColor: blue[400],
-          labelColor: gray[600],
+          backgroundColor: mainColor[100],
+          knobColor: mainColor[mainLevel],
+          borderColor: mainColor[mainLevel],
+          labelColor,
         },
         {
-          backgroundColor: blue[500],
+          backgroundColor: mainColor[mainLevel + 100],
           knobColor: "white",
-          borderColor: blue[500],
-          labelColor: gray[600],
+          borderColor: mainColor[mainLevel + 100],
+          labelColor,
         },
       ],
       disabled: [
         {
           backgroundColor: "none",
-          knobColor: gray[300],
-          borderColor: gray[300],
-          labelColor: gray[600],
+          knobColor: disabledColor,
+          borderColor: disabledColor,
+          labelColor,
         },
         {
-          backgroundColor: gray[300],
+          backgroundColor: disabledColor,
           knobColor: "white",
-          borderColor: gray[300],
-          labelColor: gray[600],
+          borderColor: disabledColor,
+          labelColor,
         },
       ],
     };
 
-    const themeStyles: ToggleStyleSpecSubset | undefined = theme && {
-      default: [
-        {
-          knobColor: theme.palette[themeRole].hue[400],
-          borderColor: theme.palette[themeRole].hue[400],
-        },
-        {
-          backgroundColor: theme.palette[themeRole].hue[400],
-          borderColor: theme.palette[themeRole].hue[400],
-        },
-      ],
-      hover: [
-        {
-          backgroundColor: theme.palette[themeRole].hue[100],
-          knobColor: theme.palette[themeRole].hue[400],
-          borderColor: theme.palette[themeRole].hue[400],
-        },
-        {
-          backgroundColor: theme.palette[themeRole].hue[500],
-          borderColor: theme.palette[themeRole].hue[500],
-        },
-      ],
-    };
-
-    return merge({}, defaultStyleSpec, themeStyles, styleOverrides);
+    return merge({}, defaultStyleSpec, styleOverrides);
   }, [styleOverrides, theme, themeRole]);
 
   /**
@@ -159,7 +140,9 @@ export default function Toggle({
 
   const width = size === "medium" ? 40 : 20;
   const height = width / 2;
-  const knobSize = height / 2;
+  const borderWidth = 2;
+  const knobSize = size === "medium" ? 12 : 5;
+  const knobOffset = size === "medium" ? 2 : 1;
 
   return (
     <div
@@ -189,21 +172,22 @@ export default function Toggle({
         aria-checked={state}
         css={{
           display: "flex",
+          position: "relative",
+          boxSizing: "border-box",
           transition: "all ease .33s",
           alignItems: "center",
           width,
           height,
-          borderRadius: height / 4,
+          borderRadius: height / 2,
           backgroundColor: currentStyles.backgroundColor,
           ...(currentStyles.borderColor
             ? {
-                outlineColor: currentStyles.borderColor,
-                outlineWidth: 2,
-                outlineStyle: "solid",
-                outlineOffset: -2,
+                borderColor: currentStyles.borderColor,
+                borderWidth,
+                borderStyle: "solid",
               }
             : {
-                outline: "none",
+                border: "none",
               }),
         }}
         onKeyDown={(event) => {
@@ -220,11 +204,13 @@ export default function Toggle({
       >
         <div
           css={{
-            position: "relative",
+            position: "absolute",
             width: knobSize,
             height: knobSize,
-            borderRadius: 10,
-            left: !state ? width / 5 : width - knobSize - width / 5,
+            borderRadius: knobSize / 2,
+            left: !state
+              ? knobOffset
+              : width - knobSize - 2 * borderWidth - knobOffset,
             transition: "ease all .33s",
             backgroundColor: currentStyles.knobColor,
           }}
