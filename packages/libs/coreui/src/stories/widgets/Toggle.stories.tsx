@@ -33,7 +33,7 @@ const Template: Story<ToggleProps> = (args) => {
 
 export const Default = Template.bind({});
 Default.args = {
-  state: true,
+  state: false,
 } as ToggleProps;
 
 export const LeftLabel = Template.bind({});

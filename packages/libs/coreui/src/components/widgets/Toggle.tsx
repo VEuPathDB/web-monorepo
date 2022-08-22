@@ -23,7 +23,7 @@ type ToggleStyleSpec = {
   container: React.CSSProperties;
   default: ToggleStateStyleSpec[];
   hover: ToggleStateStyleSpec[];
-  disabled: ToggleStateStyleSpec;
+  disabled: ToggleStateStyleSpec[];
 };
 
 type ToggleStyleSpecSubset = Subset<ToggleStyleSpec>;
@@ -40,6 +40,7 @@ export type ToggleProps = {
   labelPosition?: "left" | "right";
   /** Specification on how toggle should be styled. */
   styleOverrides: ToggleStyleSpecSubset;
+  /** Primary or secondary. */
   themeRole?: ThemeRole;
   /** Whether the component is currently disabled for user interactions. */
   disabled?: boolean;
@@ -52,58 +53,85 @@ export default function Toggle({
   label,
   labelPosition,
   styleOverrides,
-  themeRole,
+  themeRole = "primary",
   state,
   onToggle,
   disabled,
   size = "medium",
 }: ToggleProps) {
   const theme = useUITheme();
-  const [toggleState, setToggleState] =
-    useState<"default" | "hover">("default");
+  const [hoverState, setHoverState] = useState<"default" | "hover">("default");
 
   const styleSpec: ToggleStyleSpec = useMemo(() => {
     const defaultStyleSpec: ToggleStyleSpec = {
       container: {},
       default: [
         {
-          backgroundColor: blue[500],
+          backgroundColor: "none",
+          knobColor: blue[400],
+          borderColor: blue[400],
+          labelColor: gray[600],
+        },
+        {
+          backgroundColor: blue[400],
           knobColor: "white",
-          borderColor: undefined,
+          borderColor: blue[400],
           labelColor: gray[600],
         },
       ],
       hover: [
         {
-          backgroundColor: blue[600],
+          backgroundColor: blue[100],
+          knobColor: blue[400],
+          borderColor: blue[400],
+          labelColor: gray[600],
+        },
+        {
+          backgroundColor: blue[500],
           knobColor: "white",
-          borderColor: undefined,
+          borderColor: blue[500],
           labelColor: gray[600],
         },
       ],
-      disabled: {
-        backgroundColor: gray[500],
-        knobColor: "white",
-        borderColor: undefined,
-        labelColor: gray[600],
-      },
+      disabled: [
+        {
+          backgroundColor: "none",
+          knobColor: gray[300],
+          borderColor: gray[300],
+          labelColor: gray[600],
+        },
+        {
+          backgroundColor: gray[300],
+          knobColor: "white",
+          borderColor: gray[300],
+          labelColor: gray[600],
+        },
+      ],
     };
 
-    const themeStyles: ToggleStyleSpecSubset | undefined = theme &&
-      themeRole && {
-        default: [
-          {
-            backgroundColor: theme?.palette[themeRole].hue[500],
-            knobColor: theme?.palette[themeRole].hue[100],
-          },
-        ],
-        hover: [
-          {
-            backgroundColor: theme?.palette[themeRole].hue[600],
-            knobColor: theme?.palette[themeRole].hue[100],
-          },
-        ],
-      };
+    const themeStyles: ToggleStyleSpecSubset | undefined = theme && {
+      default: [
+        {
+          knobColor: theme.palette[themeRole].hue[400],
+          borderColor: theme.palette[themeRole].hue[400],
+        },
+        {
+          backgroundColor: theme.palette[themeRole].hue[400],
+          borderColor: theme.palette[themeRole].hue[400],
+        },
+      ],
+      hover: [
+        {
+          backgroundColor: theme.palette[themeRole].hue[100],
+          knobColor: theme.palette[themeRole].hue[400],
+          borderColor: theme.palette[themeRole].hue[400],
+        },
+        {
+          backgroundColor: theme.palette[themeRole].hue[500],
+          borderColor: theme.palette[themeRole].hue[500],
+        },
+      ],
+    };
 
     return merge({}, defaultStyleSpec, themeStyles, styleOverrides);
   }, [styleOverrides, theme, themeRole]);
@@ -111,17 +139,18 @@ export default function Toggle({
   /**
    * The CSS styles that should be applied can depend
    * on (1) whether or not the component is
-   * focused/hovered and (2) which option is selected.
+   * focused/hovered, (2) which option is selected,
+   * and (3) whether the toggle is disabled.
    */
   const currentStyles = useMemo(() => {
-    if (disabled) return styleSpec.disabled;
-
     const selectedOptionIndex = state ? 1 : 0;
 
-    return styleSpec[toggleState][selectedOptionIndex]
-      ? styleSpec[toggleState][selectedOptionIndex]
-      : styleSpec[toggleState][0];
-  }, [toggleState, state, styleSpec, disabled]);
+    return disabled
+      ? styleSpec.disabled[selectedOptionIndex]
+      : styleSpec[hoverState][selectedOptionIndex]
+      ? styleSpec[hoverState][selectedOptionIndex]
+      : styleSpec[hoverState][0];
+  }, [hoverState, state, styleSpec, disabled]);
 
   const ariaLabel = useMemo(() => {
     if (label) return label + " Toggle";
@@ -182,10 +211,10 @@ export default function Toggle({
             onToggle(!state);
           }
         }}
-        onFocus={() => setToggleState("hover")}
-        onBlur={() => setToggleState("default")}
-        onMouseEnter={() => setToggleState("hover")}
-        onMouseLeave={() => setToggleState("default")}
+        onFocus={() => setHoverState("hover")}
+        onBlur={() => setHoverState("default")}
+        onMouseEnter={() => setHoverState("hover")}
+        onMouseLeave={() => setHoverState("default")}
         onClick={() => onToggle(!state)}
         tabIndex={0}
       >
