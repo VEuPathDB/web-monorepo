@@ -476,6 +476,17 @@ function MosaicViz(props: Props) {
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
 
+  const areRequiredInputsSelected = useMemo(() => {
+    if (!dataElementConstraints) return false;
+    return Object.entries(dataElementConstraints[0])
+      .filter((variable) => variable[1].isRequired)
+      .every((reqdVar) => !!(vizConfig as any)[reqdVar[0]]);
+  }, [
+    dataElementConstraints,
+    vizConfig.xAxisVariable,
+    vizConfig.yAxisVariable,
+  ]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -530,6 +541,8 @@ function MosaicViz(props: Props) {
         isFaceted={isFaceted(data.value)}
         plotNode={plotNode}
         tableGroupNode={tableGroupNode}
+        showRequiredInputsPrompt={!areRequiredInputsSelected}
+        isMosaicPlot={true}
       />
     </div>
   );

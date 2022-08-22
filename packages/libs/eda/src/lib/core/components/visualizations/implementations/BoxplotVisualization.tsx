@@ -633,6 +633,17 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     computation.descriptor.configuration
   );
 
+  const areRequiredInputsSelected = useMemo(() => {
+    if (!dataElementConstraints) return false;
+    return Object.entries(dataElementConstraints[0])
+      .filter((variable) => variable[1].isRequired)
+      .every((reqdVar) => !!(vizConfig as any)[reqdVar[0]]);
+  }, [
+    dataElementConstraints,
+    vizConfig.xAxisVariable,
+    vizConfig.yAxisVariable,
+  ]);
+
   // for handling alphadiv abundance
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -701,6 +712,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         legendNode={showOverlayLegend ? legendNode : null}
         plotNode={plotNode}
         tableGroupNode={tableGroupNode}
+        showRequiredInputsPrompt={!areRequiredInputsSelected}
       />
     </div>
   );
