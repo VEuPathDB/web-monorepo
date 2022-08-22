@@ -153,8 +153,9 @@ const valueSpecLookup: Record<
   string,
   LineplotRequestParams['config']['valueSpec']
 > = {
-  Mean: 'mean',
+  'Arithmetic mean': 'mean',
   Median: 'median',
+  'Geometric mean': 'geometricMean',
   Proportion: 'proportion', // used to be 'Ratio or proportion' hence the lookup rather than simple lowercasing
 };
 
@@ -167,7 +168,7 @@ const timeUnitLookup: Record<string, TimeUnit> = {
 
 function createDefaultConfig(): LineplotConfig {
   return {
-    valueSpecConfig: 'Mean',
+    valueSpecConfig: 'Arithmetic mean',
     useBinning: false,
     showErrorBars: true,
     independentAxisLogScale: false,
@@ -693,10 +694,12 @@ function LineplotViz(props: VisualizationProps) {
         vizConfig.valueSpecConfig === 'Proportion'
           ? 'Proportion'
           : variableDisplayWithUnit(yAxisVariable)
-          ? vizConfig.valueSpecConfig === 'Mean'
-            ? 'Mean: ' + variableDisplayWithUnit(yAxisVariable)
+          ? vizConfig.valueSpecConfig === 'Arithmetic mean'
+            ? 'Arithmetic mean: ' + variableDisplayWithUnit(yAxisVariable)
             : vizConfig.valueSpecConfig === 'Median'
             ? 'Median: ' + variableDisplayWithUnit(yAxisVariable)
+            : vizConfig.valueSpecConfig === 'Geometric mean'
+            ? 'Geometric mean: ' + variableDisplayWithUnit(yAxisVariable)
             : 'Y-axis'
           : 'Y-axis'
       }
@@ -851,18 +854,30 @@ function LineplotViz(props: VisualizationProps) {
 
   const proportionInputs = (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <RadioButtonGroup
-        options={keys(valueSpecLookup)}
-        selectedOption={vizConfig.valueSpecConfig}
-        onOptionSelected={onValueSpecChange}
-        disabledList={disabledValueSpecs}
-        orientation={'horizontal'}
-        labelPlacement={'end'}
-        buttonColor={'primary'}
-        itemMarginRight={20}
-      />
-
-      {vizConfig.valueSpecConfig === 'Proportion' && (
+      {vizConfig.valueSpecConfig !== 'Proportion' ? (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <div className={classes.label}>
+            Function<sup>*</sup>
+          </div>
+          <select onChange={(e) => onValueSpecChange(e.target.value)}>
+            {keys(valueSpecLookup)
+              .filter((option) => option !== 'Proportion')
+              .map((option) => (
+                <option
+                  value={option}
+                  selected={option === vizConfig.valueSpecConfig}
+                >
+                  {option}
+                </option>
+              ))}
+          </select>
+        </div>
+      ) : (
         <div
           style={{
             display: 'grid',
@@ -887,9 +902,6 @@ function LineplotViz(props: VisualizationProps) {
               selectedValues={vizConfig.numeratorValues}
               onSelectedValuesChange={onNumeratorValuesChange}
             />
-            {/*<div className={classes.label} style={valuesOfInterestLabelStyle}>
-              (numerator)
-            </div>*/}
           </div>
           <div style={{ gridColumn: 2, gridRow: 2, marginRight: '2em' }}>
             <hr style={{ marginTop: '0.6em' }} />
@@ -903,9 +915,6 @@ function LineplotViz(props: VisualizationProps) {
               selectedValues={vizConfig.denominatorValues}
               onSelectedValuesChange={onDenominatorValuesChange}
             />
-            {/*<div className={classes.label} style={valuesOfInterestLabelStyle}>
-              (denominator)
-            </div>*/}
           </div>
         </div>
       )}
@@ -942,7 +951,12 @@ function LineplotViz(props: VisualizationProps) {
             {
               title: (
                 <>
-                  Y-axis aggregation
+                  Y-axis aggregation{' '}
+                  {vizConfig.yAxisVariable
+                    ? categoricalMode
+                      ? '(categorical Y)'
+                      : '(continuous Y)'
+                    : ''}
                   <Tooltip content={aggregationHelp}>
                     <i
                       style={{ marginLeft: '5px' }}
@@ -953,7 +967,13 @@ function LineplotViz(props: VisualizationProps) {
                 </>
               ),
               order: 75,
-              content: proportionInputs,
+              content: vizConfig.yAxisVariable ? (
+                proportionInputs
+              ) : (
+                <span style={{ color: '#969696', fontWeight: 500 }}>
+                  First choose a Y-axis variable.
+                </span>
+              ),
             },
           ]}
           entities={entities}
