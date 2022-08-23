@@ -6,7 +6,7 @@ import { RecoilRoot } from 'recoil';
 import QueryString from 'querystring';
 import { emptyAction } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
 import { projectId } from '@veupathdb/web-common/lib/config';
-import { CollapsibleSection, Link } from '@veupathdb/wdk-client/lib/Components';
+import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { useProjectUrls } from '@veupathdb/web-common/lib/hooks/projectUrls';
 import { submitAsForm } from '@veupathdb/wdk-client/lib/Utils/FormSubmitter';
 import { makeDynamicWrapper, findComponent } from './components/records';
@@ -16,7 +16,6 @@ import RecordTableContainer from './components/common/RecordTableContainer';
 import { loadPathwayGeneDynamicCols } from './actioncreators/RecordViewActionCreators';
 import ApiSiteHeader from './components/SiteHeader';
 import OrganismFilter from './components/OrganismFilter';
-import newFeatureImage from '@veupathdb/wdk-client/lib/Core/Style/images/new-feature.png';
 import { useScrollUpOnRouteChange } from '@veupathdb/wdk-client/lib/Hooks/Page';
 import { getSingleRecordAnswerSpec } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
@@ -27,6 +26,8 @@ import { apiActions } from './components/strategies/ApiStepDetailsActions';
 
 import { VEuPathDBHomePage } from './components/homepage/VEuPathDBHomePage';
 import { BlockRecordAttributeSection } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
+
+import './record-page-new-feature.scss';
 
 export const SiteHeader = () => ApiSiteHeader;
 
@@ -192,11 +193,6 @@ export function RecordTableSection(DefaultComponent) {
             table.properties.hideDatasetLink[0].toLowerCase() == 'true'
         );
 
-      let showNewFeature = (
-	record.tables[table.name] &&
-	(table.name == 'Cellxgene' || table.name == 'AlphaFoldLinkouts')
-      );
-
       let showDatasetsLink = (
         record.tables[table.name] &&
         !table.name.startsWith("UserDatasets") &&
@@ -215,9 +211,6 @@ export function RecordTableSection(DefaultComponent) {
       const title = (
         <span>
           {table.displayName}
-          {showNewFeature &&
-            <img src={newFeatureImage}/>
-          }
           {' '}
           {showDownload &&
             <span
