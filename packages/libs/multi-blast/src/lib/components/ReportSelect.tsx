@@ -4,6 +4,7 @@ import Select, { ActionMeta, OptionsType, ValueType } from 'react-select';
 
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 
 import { Props as CombinedResultProps } from '../components/CombinedResult';
 import { BlastServiceUrl, useBlastApi } from '../hooks/api';
@@ -93,12 +94,10 @@ export function ReportSelect({
     []
   );
 
-  useEffect(() => {
-    let canceled = false;
-
-    (async () => {
-      if (selectedReportOption != null) {
-        try {
+  useEffect(
+    () =>
+      Task.fromPromise(async () => {
+        if (selectedReportOption != null) {
           if (selectedReportOption.value === 'combined-result-table') {
             if (combinedResultTableDownloadConfig?.offer) {
               await combinedResultTableDownloadConfig.onClickDownloadTable();
@@ -116,25 +115,20 @@ export function ReportSelect({
               `${jobId}-${format}-report`
             );
           }
-        } finally {
-          if (!canceled) {
-            setSelectedReportOption(undefined);
-          }
         }
-      }
-    })();
-
-    return () => {
-      canceled = true;
-    };
-  }, [
-    blastApi,
-    blastServiceUrl,
-    wdkService,
-    combinedResultTableDownloadConfig,
-    jobId,
-    selectedReportOption,
-  ]);
+      }).run(
+        () => setSelectedReportOption(undefined),
+        () => setSelectedReportOption(undefined)
+      ),
+    [
+      blastApi,
+      blastServiceUrl,
+      wdkService,
+      combinedResultTableDownloadConfig,
+      jobId,
+      selectedReportOption,
+    ]
+  );
 
   const options = useMemo(
     () =>
