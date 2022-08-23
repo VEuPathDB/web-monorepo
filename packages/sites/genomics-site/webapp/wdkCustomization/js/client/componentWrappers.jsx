@@ -194,7 +194,7 @@ export function RecordTableSection(DefaultComponent) {
 
       let showNewFeature = (
 	record.tables[table.name] &&
-	table.name == 'TranscriptionSummary'
+	(table.name == 'Cellxgene' || table.name == 'AlphaFoldLinkouts')
       );
 
       let showDatasetsLink = (
