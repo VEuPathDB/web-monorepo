@@ -271,7 +271,7 @@ export async function downloadJobContent(
   shouldZip: boolean,
   filename: string
 ): Promise<void> {
-  if (reportResponse.status === 'report-running') {
+  if (reportResponse.status === 'report-pending') {
     throw new Error('Tried to download a report which has not yet finished.');
   }
 

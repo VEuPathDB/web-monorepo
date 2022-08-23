@@ -86,7 +86,10 @@ export function ReportSelect({
   const [selectedReportOption, setSelectedReportOption] = useState<
     ReportOption | undefined
   >(undefined);
-  const [reportState, setReportState] = useState<ReportPollingState>();
+  const [reportState, setReportState] = useState<ReportPollingState>({
+    status: 'report-pending',
+    jobId,
+  });
 
   const onChangeReport = useCallback(
     (
@@ -104,7 +107,7 @@ export function ReportSelect({
     if (
       selectedReportOption == null ||
       selectedReportOption.value === 'combined-result-table' ||
-      (reportState != null && reportState.status !== 'report-running')
+      (reportState.status !== 'report-pending' && reportState.jobId === jobId)
     ) {
       return;
     }
@@ -120,8 +123,7 @@ export function ReportSelect({
     if (
       selectedReportOption == null ||
       selectedReportOption.value === 'combined-result-table' ||
-      reportState == null ||
-      reportState.status === 'report-running'
+      reportState.status === 'report-pending'
     ) {
       return;
     }
@@ -139,11 +141,11 @@ export function ReportSelect({
     ).run(
       () => {
         setSelectedReportOption(undefined);
-        setReportState(undefined);
+        setReportState({ status: 'report-pending', jobId });
       },
       () => {
         setSelectedReportOption(undefined);
-        setReportState(undefined);
+        setReportState({ status: 'report-pending', jobId });
       }
     );
   }, [blastServiceUrl, wdkService, reportState, jobId, selectedReportOption]);
@@ -161,14 +163,14 @@ export function ReportSelect({
     ).run(
       () => {
         setSelectedReportOption(undefined);
-        setReportState(undefined);
+        setReportState({ status: 'report-pending', jobId });
       },
       () => {
         setSelectedReportOption(undefined);
-        setReportState(undefined);
+        setReportState({ status: 'report-pending', jobId });
       }
     );
-  }, [combinedResultTableDownloadConfig, selectedReportOption]);
+  }, [jobId, combinedResultTableDownloadConfig, selectedReportOption]);
 
   const options = useMemo(
     () =>

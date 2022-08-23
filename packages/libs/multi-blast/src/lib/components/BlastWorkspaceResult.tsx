@@ -65,11 +65,15 @@ export function BlastWorkspaceResult(props: Props) {
   );
 
   const [jobResultState, setJobResultState] = useState<JobPollingState>({
-    status: 'job-running',
+    status: 'job-pending',
+    jobId: props.jobId,
   });
 
   useEffect(() => {
-    if (jobResultState.status !== 'job-running') {
+    if (
+      jobResultState.status !== 'job-pending' &&
+      jobResultState.jobId === props.jobId
+    ) {
       return;
     }
 
@@ -81,26 +85,24 @@ export function BlastWorkspaceResult(props: Props) {
   const [
     reportResultState,
     setReportResultState,
-  ] = useState<ReportPollingState>();
+  ] = useState<ReportPollingState>({
+    status: 'report-pending',
+    jobId: props.jobId,
+  });
 
   useEffect(() => {
     if (
-      reportResultState != null &&
-      reportResultState.status !== 'report-running'
+      jobResultState.status !== 'job-completed' ||
+      (reportResultState.status !== 'report-pending' &&
+        reportResultState.jobId === props.jobId)
     ) {
       return;
     }
 
-    return Task.fromPromise(async () =>
-      jobResultState.status !== 'job-completed'
-        ? undefined
-        : makeReportPollingPromise(
-            blastApi,
-            jobResultState.job.id,
-            'single-file-json'
-          )
+    return Task.fromPromise(() =>
+      makeReportPollingPromise(blastApi, props.jobId, 'single-file-json')
     ).run(setReportResultState);
-  }, [blastApi, jobResultState, reportResultState]);
+  }, [blastApi, props.jobId, jobResultState, reportResultState]);
 
   const [multiQueryReportState, setMultiQueryReportState] = useState<
     ApiResult<MultiQueryReportJson, ErrorDetails>
@@ -192,9 +194,8 @@ export function BlastWorkspaceResult(props: Props) {
     individualQueriesResultState.status === 'error' ? (
     <BlastRequestError errorDetails={individualQueriesResultState.details} />
   ) : queryResultState == null ||
-    jobResultState.status === 'job-running' ||
-    reportResultState == null ||
-    reportResultState.status === 'report-running' ||
+    jobResultState.status === 'job-pending' ||
+    reportResultState.status === 'report-pending' ||
     individualQueriesResultState == null ? (
     <LoadingBlastResult {...props} />
   ) : (
@@ -233,9 +234,10 @@ function LoadingBlastResult(props: Props) {
   );
 }
 
-export type MultiQueryReportResult =
-  | ApiResult<MultiQueryReportJson, ErrorDetails>
-  | undefined;
+export type MultiQueryReportResult = ApiResult<
+  MultiQueryReportJson,
+  ErrorDetails
+>;
 
 interface CompleteBlastResultProps extends Props {
   individualQueries: IndividualQuery[];
@@ -451,22 +453,26 @@ type JobPollingState =
   | JobPollingQueueingError
   | JobPollingRequestError;
 
-interface JobPollingInProgress {
-  status: 'job-running';
+interface JobPollingBase {
+  jobId: string;
 }
 
-interface JobPollingSuccess {
+interface JobPollingInProgress extends JobPollingBase {
+  status: 'job-pending';
+}
+
+interface JobPollingSuccess extends JobPollingBase {
   status: 'job-completed';
   job: LongJobResponse;
 }
 
-interface JobPollingQueueingError {
+interface JobPollingQueueingError extends JobPollingBase {
   status: 'queueing-error';
   job: LongJobResponse;
   errorMessage?: string;
 }
 
-interface JobPollingRequestError {
+interface JobPollingRequestError extends JobPollingBase {
   status: 'request-error';
   details: ErrorDetails;
 }
@@ -483,6 +489,7 @@ async function makeJobPollingPromise(
     if (job.status === 'completed') {
       return {
         status: 'job-completed',
+        jobId,
         job,
       };
     }
@@ -494,6 +501,7 @@ async function makeJobPollingPromise(
 
       return {
         status: 'queueing-error',
+        jobId,
         job,
         errorMessage:
           queueingErrorMessageRequest.status === 'ok'
@@ -509,11 +517,13 @@ async function makeJobPollingPromise(
     await waitForNextPoll();
 
     return {
-      status: 'job-running',
+      status: 'job-pending',
+      jobId: job.id,
     };
   } else {
     return {
       ...jobRequest,
+      jobId,
       status: 'request-error',
     };
   }
@@ -524,16 +534,21 @@ export type ReportPollingState =
   | ReportPollingSuccess
   | ReportPollingError;
 
-interface ReportPollingInProgress {
-  status: 'report-running';
+interface ReportPollingBase {
+  jobId: string;
+  reportId?: string;
 }
 
-interface ReportPollingSuccess {
+interface ReportPollingInProgress extends ReportPollingBase {
+  status: 'report-pending';
+}
+
+interface ReportPollingSuccess extends ReportPollingBase {
   status: 'report-completed' | 'queueing-error';
   report: LongReportResponse;
 }
 
-interface ReportPollingError {
+interface ReportPollingError extends ReportPollingBase {
   status: 'request-error';
   details: ErrorDetails;
 }
@@ -559,6 +574,7 @@ export async function makeReportPollingPromise(
     } else {
       return {
         ...reportRequest,
+        jobId,
         status: 'request-error',
       };
     }
@@ -573,6 +589,7 @@ export async function makeReportPollingPromise(
       return {
         status:
           report.status === 'completed' ? 'report-completed' : 'queueing-error',
+        jobId,
         report,
       };
     }
@@ -584,11 +601,15 @@ export async function makeReportPollingPromise(
     await waitForNextPoll();
 
     return {
-      status: 'report-running',
+      status: 'report-pending',
+      jobId,
+      reportId,
     };
   } else {
     return {
       ...reportRequest,
+      jobId,
+      reportId,
       status: 'request-error',
     };
   }
