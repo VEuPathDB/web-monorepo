@@ -103,7 +103,8 @@ export function ReportSelect({
   useEffect(() => {
     if (
       selectedReportOption == null ||
-      selectedReportOption.value === 'combined-result-table'
+      selectedReportOption.value === 'combined-result-table' ||
+      (reportState != null && reportState.status !== 'report-running')
     ) {
       return;
     }
@@ -113,7 +114,7 @@ export function ReportSelect({
     return Task.fromPromise(() =>
       makeReportPollingPromise(blastApi, jobId, format)
     ).run(setReportState);
-  }, [blastApi, jobId, selectedReportOption]);
+  }, [blastApi, jobId, selectedReportOption, reportState]);
 
   useEffect(() => {
     if (

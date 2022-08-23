@@ -68,32 +68,39 @@ export function BlastWorkspaceResult(props: Props) {
     status: 'job-running',
   });
 
-  useEffect(
-    () =>
-      Task.fromPromise(() => makeJobPollingPromise(blastApi, props.jobId)).run(
-        setJobResultState
-      ),
-    [blastApi, props.jobId]
-  );
+  useEffect(() => {
+    if (jobResultState.status !== 'job-running') {
+      return;
+    }
+
+    return Task.fromPromise(() =>
+      makeJobPollingPromise(blastApi, props.jobId)
+    ).run(setJobResultState);
+  }, [blastApi, props.jobId, jobResultState]);
 
   const [
     reportResultState,
     setReportResultState,
   ] = useState<ReportPollingState>();
 
-  useEffect(
-    () =>
-      Task.fromPromise(async () =>
-        jobResultState.status !== 'job-completed'
-          ? undefined
-          : makeReportPollingPromise(
-              blastApi,
-              jobResultState.job.id,
-              'single-file-json'
-            )
-      ).run(setReportResultState),
-    [blastApi, jobResultState]
-  );
+  useEffect(() => {
+    if (
+      reportResultState != null &&
+      reportResultState.status !== 'report-running'
+    ) {
+      return;
+    }
+
+    return Task.fromPromise(async () =>
+      jobResultState.status !== 'job-completed'
+        ? undefined
+        : makeReportPollingPromise(
+            blastApi,
+            jobResultState.job.id,
+            'single-file-json'
+          )
+    ).run(setReportResultState);
+  }, [blastApi, jobResultState, reportResultState]);
 
   const [multiQueryReportState, setMultiQueryReportState] = useState<
     ApiResult<MultiQueryReportJson, ErrorDetails>
@@ -501,7 +508,9 @@ async function makeJobPollingPromise(
 
     await waitForNextPoll();
 
-    return makeJobPollingPromise(blastApi, jobId);
+    return {
+      status: 'job-running',
+    };
   } else {
     return {
       ...jobRequest,
@@ -544,7 +553,7 @@ export async function makeReportPollingPromise(
       return makeReportPollingPromise(
         blastApi,
         jobId,
-        'single-file-json',
+        format,
         reportRequest.value.reportID
       );
     } else {
@@ -574,12 +583,9 @@ export async function makeReportPollingPromise(
 
     await waitForNextPoll();
 
-    return makeReportPollingPromise(
-      blastApi,
-      jobId,
-      'single-file-json',
-      report.reportID
-    );
+    return {
+      status: 'report-running',
+    };
   } else {
     return {
       ...reportRequest,
