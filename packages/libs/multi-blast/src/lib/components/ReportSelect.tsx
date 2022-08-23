@@ -91,6 +91,11 @@ export function ReportSelect({
     jobId,
   });
 
+  const resetSelectedReport = useCallback(() => {
+    setSelectedReportOption(undefined);
+    setReportState({ status: 'report-pending', jobId });
+  }, [jobId]);
+
   const onChangeReport = useCallback(
     (
       option: ValueType<ReportOption, false>,
@@ -138,17 +143,15 @@ export function ReportSelect({
         shouldZip,
         `${jobId}-${format}-report`
       )
-    ).run(
-      () => {
-        setSelectedReportOption(undefined);
-        setReportState({ status: 'report-pending', jobId });
-      },
-      () => {
-        setSelectedReportOption(undefined);
-        setReportState({ status: 'report-pending', jobId });
-      }
-    );
-  }, [blastServiceUrl, wdkService, reportState, jobId, selectedReportOption]);
+    ).run(resetSelectedReport, resetSelectedReport);
+  }, [
+    blastServiceUrl,
+    wdkService,
+    resetSelectedReport,
+    reportState,
+    jobId,
+    selectedReportOption,
+  ]);
 
   useEffect(() => {
     if (
@@ -160,17 +163,13 @@ export function ReportSelect({
 
     return Task.fromPromise(async () =>
       combinedResultTableDownloadConfig.onClickDownloadTable()
-    ).run(
-      () => {
-        setSelectedReportOption(undefined);
-        setReportState({ status: 'report-pending', jobId });
-      },
-      () => {
-        setSelectedReportOption(undefined);
-        setReportState({ status: 'report-pending', jobId });
-      }
-    );
-  }, [jobId, combinedResultTableDownloadConfig, selectedReportOption]);
+    ).run(resetSelectedReport, resetSelectedReport);
+  }, [
+    resetSelectedReport,
+    jobId,
+    combinedResultTableDownloadConfig,
+    selectedReportOption,
+  ]);
 
   const options = useMemo(
     () =>
