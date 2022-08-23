@@ -1,10 +1,14 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import Select, { ActionMeta, OptionsType, ValueType } from 'react-select';
 
+import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+
 import { Props as CombinedResultProps } from '../components/CombinedResult';
-import { useDownloadReportCallback } from '../hooks/api';
+import { BlastServiceUrl, useBlastApi } from '../hooks/api';
 import { IoBlastFormat } from '../utils/ServiceTypes';
+import { downloadJobContent } from '../utils/api';
 
 import './ReportSelect.scss';
 
@@ -69,6 +73,10 @@ export function ReportSelect({
   jobId,
   placeholder,
 }: Props) {
+  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
+  const blastServiceUrl = useContext(BlastServiceUrl);
+  const blastApi = useBlastApi();
+
   const [selectedReportOption, setSelectedReportOption] = useState<
     ReportOption | undefined
   >(undefined);
@@ -85,23 +93,27 @@ export function ReportSelect({
     []
   );
 
-  const downloadReportCallback = useDownloadReportCallback(jobId);
-
   useEffect(() => {
     let canceled = false;
 
     (async () => {
-      if (downloadReportCallback != null && selectedReportOption != null) {
+      if (selectedReportOption != null) {
         try {
           if (selectedReportOption.value === 'combined-result-table') {
             if (combinedResultTableDownloadConfig?.offer) {
               await combinedResultTableDownloadConfig.onClickDownloadTable();
             }
           } else {
-            await downloadReportCallback(
+            const { format, shouldZip } = selectedReportOption.value;
+
+            await downloadJobContent(
+              blastApi,
+              blastServiceUrl,
+              await wdkService.getCurrentUser(),
               jobId,
-              selectedReportOption.value.format,
-              selectedReportOption.value.shouldZip
+              format,
+              shouldZip,
+              `${jobId}-${format}-report`
             );
           }
         } finally {
@@ -116,8 +128,10 @@ export function ReportSelect({
       canceled = true;
     };
   }, [
+    blastApi,
+    blastServiceUrl,
+    wdkService,
     combinedResultTableDownloadConfig,
-    downloadReportCallback,
     jobId,
     selectedReportOption,
   ]);
