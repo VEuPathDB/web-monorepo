@@ -13,13 +13,12 @@ import {
 
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
-import { makeReportPollingPromise } from '../components/BlastWorkspaceResult';
+import { ReportPollingState } from '../components/BlastWorkspaceResult';
 
 import {
   ApiResult,
   ErrorDetails,
   IoBlastConfig,
-  IoBlastFormat,
   ReportConfig,
   createJobResponse,
   createReportResponse,
@@ -266,20 +265,12 @@ function transformTooLargeError(errorDetails: ErrorDetails): ErrorDetails {
 // FIXME: Update FetchClientWithCredentials to accommodate responses
 // with "attachment" Content-Disposition
 export async function downloadJobContent(
-  blastApi: BlastApi,
   blastServiceUrl: string,
   user: User,
-  jobId: string,
-  format: IoBlastFormat,
+  reportResponse: ReportPollingState,
   shouldZip: boolean,
   filename: string
 ): Promise<void> {
-  const reportResponse = await makeReportPollingPromise(
-    blastApi,
-    jobId,
-    format
-  );
-
   if (reportResponse.status === 'report-running') {
     throw new Error('Tried to download a report which has not yet finished.');
   }

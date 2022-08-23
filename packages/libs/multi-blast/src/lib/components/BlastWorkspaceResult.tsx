@@ -510,7 +510,7 @@ async function makeJobPollingPromise(
   }
 }
 
-type ReportPollingState =
+export type ReportPollingState =
   | ReportPollingInProgress
   | ReportPollingSuccess
   | ReportPollingError;

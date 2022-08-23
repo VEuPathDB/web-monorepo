@@ -11,6 +11,11 @@ import { BlastServiceUrl, useBlastApi } from '../hooks/api';
 import { IoBlastFormat } from '../utils/ServiceTypes';
 import { downloadJobContent } from '../utils/api';
 
+import {
+  ReportPollingState,
+  makeReportPollingPromise,
+} from './BlastWorkspaceResult';
+
 import './ReportSelect.scss';
 
 interface Props {
@@ -81,6 +86,7 @@ export function ReportSelect({
   const [selectedReportOption, setSelectedReportOption] = useState<
     ReportOption | undefined
   >(undefined);
+  const [reportState, setReportState] = useState<ReportPollingState>();
 
   const onChangeReport = useCallback(
     (
@@ -94,41 +100,74 @@ export function ReportSelect({
     []
   );
 
-  useEffect(
-    () =>
-      Task.fromPromise(async () => {
-        if (selectedReportOption != null) {
-          if (selectedReportOption.value === 'combined-result-table') {
-            if (combinedResultTableDownloadConfig?.offer) {
-              await combinedResultTableDownloadConfig.onClickDownloadTable();
-            }
-          } else {
-            const { format, shouldZip } = selectedReportOption.value;
+  useEffect(() => {
+    if (
+      selectedReportOption == null ||
+      selectedReportOption.value === 'combined-result-table'
+    ) {
+      return;
+    }
 
-            await downloadJobContent(
-              blastApi,
-              blastServiceUrl,
-              await wdkService.getCurrentUser(),
-              jobId,
-              format,
-              shouldZip,
-              `${jobId}-${format}-report`
-            );
-          }
-        }
-      }).run(
-        () => setSelectedReportOption(undefined),
-        () => setSelectedReportOption(undefined)
-      ),
-    [
-      blastApi,
-      blastServiceUrl,
-      wdkService,
-      combinedResultTableDownloadConfig,
-      jobId,
-      selectedReportOption,
-    ]
-  );
+    const format = selectedReportOption.value.format;
+
+    return Task.fromPromise(() =>
+      makeReportPollingPromise(blastApi, jobId, format)
+    ).run(setReportState);
+  }, [blastApi, jobId, selectedReportOption]);
+
+  useEffect(() => {
+    if (
+      selectedReportOption == null ||
+      selectedReportOption.value === 'combined-result-table' ||
+      reportState == null ||
+      reportState.status === 'report-running'
+    ) {
+      return;
+    }
+
+    const { format, shouldZip } = selectedReportOption.value;
+
+    return Task.fromPromise(async () =>
+      downloadJobContent(
+        blastServiceUrl,
+        await wdkService.getCurrentUser(),
+        reportState,
+        shouldZip,
+        `${jobId}-${format}-report`
+      )
+    ).run(
+      () => {
+        setSelectedReportOption(undefined);
+        setReportState(undefined);
+      },
+      () => {
+        setSelectedReportOption(undefined);
+        setReportState(undefined);
+      }
+    );
+  }, [blastServiceUrl, wdkService, reportState, jobId, selectedReportOption]);
+
+  useEffect(() => {
+    if (
+      selectedReportOption?.value !== 'combined-result-table' ||
+      combinedResultTableDownloadConfig?.offer !== true
+    ) {
+      return;
+    }
+
+    return Task.fromPromise(async () =>
+      combinedResultTableDownloadConfig.onClickDownloadTable()
+    ).run(
+      () => {
+        setSelectedReportOption(undefined);
+        setReportState(undefined);
+      },
+      () => {
+        setSelectedReportOption(undefined);
+        setReportState(undefined);
+      }
+    );
+  }, [combinedResultTableDownloadConfig, selectedReportOption]);
 
   const options = useMemo(
     () =>
