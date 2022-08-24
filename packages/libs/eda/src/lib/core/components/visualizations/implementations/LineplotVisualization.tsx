@@ -363,24 +363,6 @@ function LineplotViz(props: VisualizationProps) {
   // prettier-ignore
   // allow 2nd parameter of resetCheckedLegendItems for checking legend status
   // considering axis range control
-  // const onChangeHandlerFactory = useCallback(
-  //   < ValueType,>(key: keyof LineplotConfig,
-  // 	  resetCheckedLegendItems?: boolean,
-  // 	  resetAxisRanges?: boolean) => (newValue?: ValueType) => {
-  //     const newPartialConfig = {
-  //       [key]: newValue,
-  //       ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
-  //     	...(resetAxisRanges ? { independentAxisRange: undefined, dependentAxisRange: undefined } : {}),
-  //     };
-  //     updateVizConfig(newPartialConfig);
-  //     if (resetAxisRanges) {
-  //       setTruncatedIndependentAxisWarning('');
-  //       setTruncatedDependentAxisWarning('');
-  //     }
-  //   },
-  //   [updateVizConfig]
-  // );
-
   const onChangeHandlerFactory = useCallback(
     < ValueType,>(key: keyof LineplotConfig,
 		  resetCheckedLegendItems?: boolean,
@@ -1395,7 +1377,9 @@ function LineplotWithControls({
                 setDismissedIndependentAllNegativeWarning(false);
                 onIndependentAxisLogScaleChange(newValue);
                 if (newValue && useBinning)
-                  enqueueSnackbar('Bin control is disabled');
+                  enqueueSnackbar(
+                    'Binning is no longer appropriate and has been disabled'
+                  );
               }}
               disabled={independentValueType === 'date'}
             />
@@ -1420,7 +1404,9 @@ function LineplotWithControls({
             onStateChange={(newValue: boolean) => {
               onUseBinningChange(newValue);
               if (newValue && vizConfig.independentAxisLogScale)
-                enqueueSnackbar('Log scale control is disabled');
+                enqueueSnackbar(
+                  'Log scale is no longer appropriate and has been disabled'
+                );
             }}
             disabled={neverUseBinning}
           />
@@ -1531,7 +1517,9 @@ function LineplotWithControls({
                 setDismissedDependentAllNegativeWarning(false);
                 onDependentAxisLogScaleChange(newValue);
                 if (newValue && showErrorBars)
-                  enqueueSnackbar('Error bar control is disabled');
+                  enqueueSnackbar(
+                    'Error bars are no longer appropriate and have been disabled'
+                  );
               }}
               disabled={dependentValueType === 'date'}
             />
@@ -1556,7 +1544,9 @@ function LineplotWithControls({
             onStateChange={(newValue: boolean) => {
               onShowErrorBarsChange(newValue);
               if (newValue && vizConfig.dependentAxisLogScale)
-                enqueueSnackbar('Log scale control is disabled');
+                enqueueSnackbar(
+                  'Log scale is no longer appropriate and has been disabled'
+                );
             }}
             disabled={neverShowErrorBars}
           />
