@@ -1344,7 +1344,7 @@ class CellxgeneIframe extends SortKeyTable {
           ></iframe>
         </ExternalResourceContainer>
         <div id="cellxgene_text">
-            The full dataset is available in cellxgene <a target="_blank" href={this._makeAppUrl(dataset_name)}>here.</a><br/><br/>  The following identifiers are mapped to {source_id}:
+            The full dataset is available to explore in cellxgene <a target="_blank" href={this._makeAppUrl(dataset_name)}>here.</a><br/><br/>  The following identifiers in this dataset are mapped to {source_id}. Click the link(s) to view these identifiers in cellxgene:
             <ul>
             {sourceIdAr.map((id, i) => {     
                return (<li><a target="_blank" href={this._makeGeneAppUrl(dataset_name, source_ids)}>{id}</a></li>)
