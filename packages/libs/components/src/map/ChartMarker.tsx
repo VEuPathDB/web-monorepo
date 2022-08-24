@@ -25,8 +25,6 @@ interface ChartMarkerProps
   onClick?: (event: L.LeafletMouseEvent) => void | undefined;
   /** x-axis title for marker (defaults to sum of data[].value) */
   markerLabel?: string;
-  /** x-axis title for enlarged mouse-over marker (defaults to "Total: sum(data[].value)") */
-  independentAxisLabel?: string;
 }
 
 /**
@@ -219,7 +217,6 @@ export default function ChartMarker(props: ChartMarkerProps) {
 
   // anim check duration exists or not
   let duration: number = props.duration ? props.duration : 300;
-  // let duration: number = (props.duration) ? 300 : 300
 
   const plotSize = 200;
   const marginSize = 5;
@@ -252,9 +249,7 @@ export default function ChartMarker(props: ChartMarkerProps) {
       displayLibraryControls={false}
       interactive={false}
       dependentAxisLabel=""
-      independentAxisLabel={
-        props.independentAxisLabel ?? `Total: ${sumValuesString}`
-      }
+      independentAxisLabel={`Total: ${sumValuesString}`}
       // dependentAxisRange is an object with {min, max} (NumberRange)
       dependentAxisRange={props.dependentAxisRange ?? undefined}
       showValues={true}
