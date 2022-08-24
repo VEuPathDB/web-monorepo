@@ -4,7 +4,13 @@ import LinePlot, {
 } from '@veupathdb/components/lib/plots/LinePlot';
 
 import * as t from 'io-ts';
-import { useCallback, useMemo, useState, useEffect } from 'react';
+import {
+  useCallback,
+  useMemo,
+  useState,
+  useEffect,
+  useDebugValue,
+} from 'react';
 
 import DataClient, {
   LineplotRequestParams,
@@ -111,6 +117,8 @@ import { UIState } from '../../filter/HistogramFilter';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 
+import useSnackbar from '@veupathdb/coreui/dist/components/notifications/useSnackbar';
+
 const plotContainerStyles = {
   width: 750,
   height: 450,
@@ -169,7 +177,7 @@ function createDefaultConfig(): LineplotConfig {
   return {
     valueSpecConfig: 'Mean',
     useBinning: false,
-    showErrorBars: true,
+    showErrorBars: false,
     independentAxisLogScale: false,
     dependentAxisLogScale: false,
   };
@@ -355,14 +363,40 @@ function LineplotViz(props: VisualizationProps) {
   // prettier-ignore
   // allow 2nd parameter of resetCheckedLegendItems for checking legend status
   // considering axis range control
+  // const onChangeHandlerFactory = useCallback(
+  //   < ValueType,>(key: keyof LineplotConfig,
+  // 	  resetCheckedLegendItems?: boolean,
+  // 	  resetAxisRanges?: boolean) => (newValue?: ValueType) => {
+  //     const newPartialConfig = {
+  //       [key]: newValue,
+  //       ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
+  //     	...(resetAxisRanges ? { independentAxisRange: undefined, dependentAxisRange: undefined } : {}),
+  //     };
+  //     updateVizConfig(newPartialConfig);
+  //     if (resetAxisRanges) {
+  //       setTruncatedIndependentAxisWarning('');
+  //       setTruncatedDependentAxisWarning('');
+  //     }
+  //   },
+  //   [updateVizConfig]
+  // );
+
   const onChangeHandlerFactory = useCallback(
     < ValueType,>(key: keyof LineplotConfig,
 		  resetCheckedLegendItems?: boolean,
-		  resetAxisRanges?: boolean) => (newValue?: ValueType) => {
+		  resetAxisRanges?: boolean,
+      resetIndependentAxisLogScale?: boolean,
+      resetDependentAxisLogScale?: boolean,
+      resetBinningControl?: boolean,
+      resetErrorBarControl?: boolean) => (newValue?: ValueType) => {
       const newPartialConfig = {
         [key]: newValue,
         ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
       	...(resetAxisRanges ? { independentAxisRange: undefined, dependentAxisRange: undefined } : {}),
+        ...(resetIndependentAxisLogScale ? { independentAxisLogScale: false } : {}),
+        ...(resetDependentAxisLogScale ? { dependentAxisLogScale: false } : {}),
+        ...(resetBinningControl ? { useBinning: false } : {}),
+        ...(resetErrorBarControl ? { showErrorBars: false } : {}),
       };
       updateVizConfig(newPartialConfig);
       if (resetAxisRanges) {
@@ -394,11 +428,25 @@ function LineplotViz(props: VisualizationProps) {
 
   const onShowErrorBarsChange = onChangeHandlerFactory<boolean>(
     'showErrorBars',
-    true
+    true,
     // need to consider axis range control: resetAxisRange? seems not
+    false,
+    false,
+    true, // reset dependentAxisLogScale
+    false,
+    false
   );
 
-  const onUseBinningChange = onChangeHandlerFactory<boolean>('useBinning');
+  const onUseBinningChange = onChangeHandlerFactory<boolean>(
+    'useBinning',
+    false,
+    false,
+    true, // reset independentAxisLogScale
+    false,
+    false,
+    false
+  );
+
   const onNumeratorValuesChange = onChangeHandlerFactory<string[]>(
     'numeratorValues'
   );
@@ -409,13 +457,21 @@ function LineplotViz(props: VisualizationProps) {
   const onIndependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
     'independentAxisLogScale',
     false,
-    true
+    true,
+    false,
+    false,
+    true, // reset useBinning
+    false
   );
 
   const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
     'dependentAxisLogScale',
     false,
-    true
+    true,
+    false,
+    false,
+    false,
+    true // reset showErrorBars
   );
 
   const outputEntity = useFindOutputEntity(
@@ -1259,6 +1315,9 @@ function LineplotWithControls({
     yMinMaxDataRange?.max != null &&
     yMinMaxDataRange.max <= 0;
 
+  // snackbar
+  const { enqueueSnackbar } = useSnackbar();
+
   return (
     <>
       {isFaceted(data) ? (
@@ -1308,8 +1367,10 @@ function LineplotWithControls({
               onStateChange={(newValue: boolean) => {
                 setDismissedIndependentAllNegativeWarning(false);
                 onIndependentAxisLogScaleChange(newValue);
+                if (newValue && useBinning)
+                  enqueueSnackbar('Bin control is disabled');
               }}
-              disabled={independentValueType === 'date' || useBinning}
+              disabled={independentValueType === 'date'}
             />
           </div>
           {independentAllNegative && !dismissedIndependentAllNegativeWarning ? (
@@ -1329,8 +1390,12 @@ function LineplotWithControls({
           <Switch
             label={`Binning ${useBinning ? 'on' : 'off'}`}
             state={useBinning}
-            onStateChange={onUseBinningChange}
-            disabled={neverUseBinning || vizConfig.independentAxisLogScale}
+            onStateChange={(newValue: boolean) => {
+              onUseBinningChange(newValue);
+              if (newValue && vizConfig.independentAxisLogScale)
+                enqueueSnackbar('Log scale control is disabled');
+            }}
+            disabled={neverUseBinning}
           />
           <BinWidthControl
             binWidth={data0?.binWidthSlider?.binWidth}
@@ -1438,8 +1503,10 @@ function LineplotWithControls({
               onStateChange={(newValue: boolean) => {
                 setDismissedDependentAllNegativeWarning(false);
                 onDependentAxisLogScaleChange(newValue);
+                if (newValue && showErrorBars)
+                  enqueueSnackbar('Error bar control is disabled');
               }}
-              disabled={dependentValueType === 'date' || showErrorBars}
+              disabled={dependentValueType === 'date'}
             />
           </div>
           {dependentAllNegative && !dismissedDependentAllNegativeWarning ? (
@@ -1459,8 +1526,12 @@ function LineplotWithControls({
           <Switch
             label="Show error bars (95% C.I.)"
             state={showErrorBars}
-            onStateChange={onShowErrorBarsChange}
-            disabled={neverShowErrorBars || vizConfig.dependentAxisLogScale}
+            onStateChange={(newValue: boolean) => {
+              onShowErrorBarsChange(newValue);
+              if (newValue && vizConfig.dependentAxisLogScale)
+                enqueueSnackbar('Log scale control is disabled');
+            }}
+            disabled={neverShowErrorBars}
           />
           {/* Y-axis range control */}
           {/* make some space to match with X-axis range control */}
