@@ -314,6 +314,9 @@ export function RecordTableDescription(props) {
     case 'CompoundsMetabolicPathways':
       return typeof props.record.tables.CompoundsMetabolicPathways != "undefined" && props.record.tables.CompoundsMetabolicPathways.length > 0 && renderAttributeValue(props.record.attributes.ec_num_warn, null, 'p');
 
+    case 'AlphaFoldLinkouts':
+      return typeof props.record.tables.AlphaFoldLinkouts != "undefined" && props.record.tables.AlphaFoldLinkouts.length > 0 && renderAttributeValue(props.record.attributes.alphafold_table_help, null, 'p');
+
 
     case 'LOPITResult':
       return typeof props.record.tables.LOPITResult != "undefined" && props.record.tables.LOPITResult.length > 0 && renderAttributeValue(props.record.attributes.LOPITGraphSVG, null, 'p');
