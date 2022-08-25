@@ -1348,7 +1348,7 @@ class CellxgeneIframe extends SortKeyTable {
           ></iframe>
         </ExternalResourceContainer>
         <div id="cellxgene_text">
-            <b>Left:</b> A UMAP where each point is a cell colored by the normalised expression value for this gene. <b>Right:</b> A histogram showing the distribution of normalised expression values for this gene over all cells.<br/><br/>Explore source identifiers mapped to {source_id} in cellxgene.<img src={betaImage}/>
+            <b>Left:</b> A UMAP where each point is a cell colored by the normalized expression value for this gene. <b>Right:</b> A histogram showing the distribution of normalized expression values for this gene over all cells.<br/><br/>Explore source identifiers mapped to {source_id} in cellxgene.<img src={betaImage}/>
             <ul>
             {sourceIdAr.map((id, i) => {     
                return (<li><a target="_blank" href={this._makeGeneAppUrl(dataset_name, source_ids)}>{id}</a></li>)
