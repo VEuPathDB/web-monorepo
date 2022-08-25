@@ -55,6 +55,9 @@ import { colors, H3 } from '@veupathdb/coreui';
 import './index.css';
 import { StoreModule } from '@veupathdb/wdk-client/lib/Core/Store';
 
+// snackbar
+import makeSnackbarProvider from '@veupathdb/coreui/dist/components/notifications/SnackbarProvider';
+
 const subsettingServiceUrl = '/eda-subsetting-service';
 const dataServiceUrl = '/eda-data-service';
 const userServiceUrl = '/eda-user-service';
@@ -77,6 +80,9 @@ export const DevLoginFormContext = createContext<DevLoginFormState>({
   loginFormVisible: false,
   setLoginFormVisible: () => {},
 });
+
+// snackbar
+const SnackbarProvider = makeSnackbarProvider();
 
 wrapComponents({
   Header: () => Header,
@@ -116,7 +122,9 @@ wrapComponents({
               },
             }}
           >
-            <DefaultComponent {...props} />
+            <SnackbarProvider styleProps={{}}>
+              <DefaultComponent {...props} />
+            </SnackbarProvider>
           </UIThemeProvider>
         </DevLoginFormContext.Provider>
       );
