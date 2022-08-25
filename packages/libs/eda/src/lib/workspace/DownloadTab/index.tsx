@@ -76,7 +76,7 @@ export default function DownloadTab({
     (boolean) => String(boolean),
     (string) => string !== 'false'
   );
-  const studiesForDownalodWarning = [
+  const studiesForDownloadWarning = [
     'DS_b3b3ae9838', // BONUS
     'DS_1102462e80', // Bangladesh
     'DS_a2f8877e68', // DIABIMMUNE
@@ -94,6 +94,11 @@ export default function DownloadTab({
   const handleCloseWarning = () => {
     setShouldShowWarning(false);
   };
+  const downloadWarningMessage = [
+    'Download files for this dataset may be formatted improperly. Instead, please download files for this study from ',
+    <a href="https://microbiomedb.org">https://microbiomedb.org</a>,
+    '. We appreciate your patience as we transfer to the new system.',
+  ];
   // End of this section of the temporary solution for funky download files
 
   const dataAccessDeclaration = useMemo(() => {
@@ -129,12 +134,11 @@ export default function DownloadTab({
         }}
       >
         {/* The following is part of the temporary solution for funky mbio download files */}
-        {studiesForDownalodWarning.includes(datasetId) && shouldShowWarning && (
+        {studiesForDownloadWarning.includes(datasetId) && shouldShowWarning && (
           <Banner
             banner={{
               type: 'warning',
-              message:
-                'Some download files below are formatted improperly. Instead, please download files for this study from the main microbiomedb.org site. We appreciate your patience as we transfer to the new system.',
+              message: downloadWarningMessage,
               pinned: false,
               intense: false,
             }}
