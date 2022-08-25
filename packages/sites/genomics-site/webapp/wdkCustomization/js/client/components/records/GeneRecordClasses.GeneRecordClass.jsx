@@ -24,6 +24,7 @@ import { addCommentLink } from '../common/UserComments';
 import { withRequestFields } from './utils';
 import { usePreferredOrganismsEnabledState, usePreferredOrganismsState } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
 import { BlockRecordAttributeSection } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
+import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
 
 /**
  * Render thumbnails at eupathdb-GeneThumbnailsContainer
@@ -1347,12 +1348,15 @@ class CellxgeneIframe extends SortKeyTable {
           ></iframe>
         </ExternalResourceContainer>
         <div id="cellxgene_text">
-            The full dataset is available to explore in cellxgene <a target="_blank" href={this._makeAppUrl(dataset_name)}>here.</a><br/><br/>  The following identifiers in this dataset are mapped to {source_id}. Click the link(s) to view these identifiers in cellxgene:
+            <b>Left:</b> A UMAP where each point is a cell colored by the normalised expression value for this gene. <b>Right:</b> A histogram showing the distribution of normalised expression values for this gene over all cells.<br/><br/>Explore source identifiers mapped to {source_id} in cellxgene.<img src={betaImage}/>
             <ul>
             {sourceIdAr.map((id, i) => {     
                return (<li><a target="_blank" href={this._makeGeneAppUrl(dataset_name, source_ids)}>{id}</a></li>)
              })}
             </ul>
+            <br/><br/>
+            <a target="_blank" href={this._makeAppUrl(dataset_name)}>Explore the full dataset in cellxgene</a>.<img src={betaImage}/><br/><br/>
+            For help using cellxgene see <a target="_blank" href="https://icbi-lab.github.io/cellxgene-user-guide/">this tutorial</a> or <a target="_blank" href="https://youtu.be/5Fg5admFe9M">this YouTube video</a>.<br/><br/>
         </div>      
       </div>
     );
