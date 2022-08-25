@@ -198,7 +198,7 @@ function References(props) {
     } else {
       return (
         <li key={index}>
-          <a href={row.url}>
+          <a target="_blank" href={row.url}>
             {row.text}
           </a>
         </li>
