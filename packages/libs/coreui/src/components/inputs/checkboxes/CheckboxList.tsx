@@ -69,7 +69,7 @@ enum LinksPosition {
   Both = Top | Bottom
 }
 
-type Item = {
+export type Item = {
   display: ReactNode
   value: string
 }
@@ -149,17 +149,17 @@ export default function CheckboxList({
       value.concat(valueChanged).sort((a,b) => availableSelections.indexOf(a) - availableSelections.indexOf(b)) :
       value.filter(elem => elem != valueChanged)
     );
-}
+  }
 
-const onSelectAll = (e: React.MouseEvent<HTMLButtonElement>) => {
-  onChange(items.map(item => item.value));
-  e.preventDefault();
-};
+  const onSelectAll = (e: React.MouseEvent<HTMLButtonElement>) => {
+    onChange(items.map(item => item.value));
+    e.preventDefault();
+  };
 
-const onClearAll = (e: React.MouseEvent<HTMLButtonElement>) => {
-  onChange([]);
-  e.preventDefault();
-};
+  const onClearAll = (e: React.MouseEvent<HTMLButtonElement>) => {
+    onChange([]);
+    e.preventDefault();
+  };
 
   return (
     <div>
@@ -182,6 +182,7 @@ const onClearAll = (e: React.MouseEvent<HTMLButtonElement>) => {
                   value={item.value}
                   checked={value.includes(item.value)}
                   onChange={() => onChangehandler(item.value)}
+                  onKeyDown={(e) => e.key === 'Enter' ? onChangehandler(item.value) : null}
                 />
                 {' '}{item.display}
               </label>

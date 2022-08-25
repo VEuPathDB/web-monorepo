@@ -54,6 +54,7 @@ function TreeRadio<T>({
             value={value}
             checked={checked}
             onChange={handleClick}
+            onKeyDown={(e) => e.key === 'Enter' ? handleClick() : null}
         />
     )
 }

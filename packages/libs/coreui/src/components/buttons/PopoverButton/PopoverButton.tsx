@@ -1,5 +1,5 @@
-import { ReactNode, useState } from 'react';
-import { Button, Popover } from '@material-ui/core';
+import { ReactNode, useState, useRef } from 'react';
+import { Button, Popover, makeStyles } from '@material-ui/core';
 import { ArrowDropDown } from '@material-ui/icons';
 
 export interface PopoverButtonProps {
@@ -13,12 +13,19 @@ export interface PopoverButtonProps {
   onClose?: () => void;
 }
 
+const useStyles = makeStyles({
+  focusVisible: {
+    outline: '1px dotted gray',
+  },
+});
+
 /**
  * Renders a button that display `children` in a popover widget.
  */
 export default function PopoverButton(props: PopoverButtonProps) {
   const { children, buttonDisplayContent, onClose } = props;
   const [ anchorEl, setAnchorEl ] = useState<HTMLElement | null>(null);
+  const classes = useStyles();
 
   const onCloseHandler = () => {
     setAnchorEl(null);
@@ -47,6 +54,9 @@ export default function PopoverButton(props: PopoverButtonProps) {
 
   const button = (
     <Button
+      classes={{
+        focusVisible: classes.focusVisible
+      }}
       disableRipple
       aria-controls="dropdown"
       aria-haspopup="true"
