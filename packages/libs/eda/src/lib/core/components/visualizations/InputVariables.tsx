@@ -244,9 +244,11 @@ export function InputVariables(props: Props) {
                     key={input.name}
                     className={classes.input}
                     style={
-                      flattenedConstraints &&
-                      !selectedVariables[input.name] &&
-                      flattenedConstraints[input.name].isRequired
+                      input.readonlyValue
+                        ? {}
+                        : flattenedConstraints &&
+                          !selectedVariables[input.name] &&
+                          flattenedConstraints[input.name].isRequired
                         ? requiredInputStyle
                         : {}
                     }
@@ -254,6 +256,7 @@ export function InputVariables(props: Props) {
                     <Tooltip
                       css={{}}
                       title={
+                        !input.readonlyValue &&
                         flattenedConstraints &&
                         flattenedConstraints[input.name].isRequired
                           ? 'Required parameter'
@@ -265,7 +268,8 @@ export function InputVariables(props: Props) {
                         style={{ cursor: 'default' }}
                       >
                         {input.label + (input.readonlyValue ? ' (fixed)' : '')}
-                        {flattenedConstraints &&
+                        {!input.readonlyValue &&
+                        flattenedConstraints &&
                         flattenedConstraints[input.name].isRequired ? (
                           <sup>*</sup>
                         ) : (
