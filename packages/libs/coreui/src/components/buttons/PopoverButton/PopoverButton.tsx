@@ -1,6 +1,7 @@
-import { ReactNode, useState, useRef } from 'react';
+import { ReactNode, useState, SetStateAction } from 'react';
 import { Button, Popover, makeStyles } from '@material-ui/core';
 import { ArrowDropDown } from '@material-ui/icons';
+import { useEffect } from 'react';
 
 export interface PopoverButtonProps {
   /** Contents of the menu when opened */
@@ -11,6 +12,9 @@ export interface PopoverButtonProps {
 
   /** Allows for additional cleanup when popover closes */
   onClose?: () => void;
+
+  /** State setter used in Select component to set focus when popover opens */
+  setIsPopoverOpen?: SetStateAction<any>;
 }
 
 const useStyles = makeStyles({
@@ -23,7 +27,7 @@ const useStyles = makeStyles({
  * Renders a button that display `children` in a popover widget.
  */
 export default function PopoverButton(props: PopoverButtonProps) {
-  const { children, buttonDisplayContent, onClose } = props;
+  const { children, buttonDisplayContent, onClose, setIsPopoverOpen } = props;
   const [ anchorEl, setAnchorEl ] = useState<HTMLElement | null>(null);
   const classes = useStyles();
 
@@ -31,6 +35,15 @@ export default function PopoverButton(props: PopoverButtonProps) {
     setAnchorEl(null);
     onClose && onClose();
   }
+
+  useEffect(() => {
+    if (!setIsPopoverOpen) return;
+    if (anchorEl) {
+      setIsPopoverOpen(true);
+    } else {
+      setIsPopoverOpen(false);
+    }
+  }, [anchorEl])
 
   const menu = (
     <Popover

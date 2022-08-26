@@ -22,31 +22,46 @@ export default function Select({
     const [ selected, setSelected ] = useState<SelectProps['value']>(value);
     const [ buttonDisplayContent, setButtonDisplayContent ] = useState<ReactNode>(value.length ? value : defaultButtonDisplayContent);
     const [ key, setKey ] = useState('');
+    const [ isPopoverOpen, setIsPopoverOpen ] = useState<boolean>(false);
     const optionsRef = useRef<HTMLUListElement>(null);
-    console.log(optionsRef);
 
     const onSelect = (value: string) => {
-        onChange(selected)
-        setSelected(value)
-        setKey(Math.random().toString())
+        onChange(selected);
+        setSelected(value);
+        /** Creates a new key which will close the popover menu */
+        setKey(Math.random().toString());
     }
     
     useEffect(() => {
         setButtonDisplayContent(selected.length ? selected : defaultButtonDisplayContent);
     }, [selected])
+    
+    useEffect(() => {
+        if (optionsRef && optionsRef.current) {
+            const childIndex = items.findIndex(item => selected === item.value);
+            // @ts-ignore
+            childIndex !== -1 ? optionsRef.current.children[childIndex].focus() : optionsRef.current.firstChild.focus()
+        }
+    }, [isPopoverOpen, optionsRef])
 
-    // useEffect(() => {
-    //     if (optionsRef && optionsRef.current) {
-    //         console.log(optionsRef.current.children[0])
-    //     }
-    // }, [optionsRef])
-
-    // if (optionsRef && optionsRef.current) optionsRef.current;
+    const onKeyDown = (key: string, value: string) => {
+        const activeElement = document.activeElement;
+        if (key === 'Enter') {
+            onSelect(value);
+        } else if (key === 'ArrowUp') {
+            // @ts-ignore
+            activeElement?.previousSibling ? activeElement.previousSibling.focus() : null;
+        } else if (key === 'ArrowDown') {
+            // @ts-ignore
+            activeElement?.nextSibling ? activeElement.nextSibling.focus() : null;
+        }
+    }
 
     return (
         <PopoverButton
             key={key}
             buttonDisplayContent={buttonDisplayContent}
+            setIsPopoverOpen={setIsPopoverOpen}
         >
             <ul
                 ref={optionsRef}
@@ -57,8 +72,9 @@ export default function Select({
                     listStyle: 'none',
                 }}
             >
-                {items.map((item, index) => (
+                {items.map((item) => (
                     <li
+                        key={item.value}
                         css={css`
                             padding: 0.5em;
                             line-height: 1.25;
@@ -74,7 +90,7 @@ export default function Select({
                         `}
                         tabIndex={0}
                         onClick={() => onSelect(item.value)} 
-                        onKeyDown={(e) => e.key === 'Enter' ? onSelect(item.value) : null}
+                        onKeyDown={(e) => onKeyDown(e.key, item.value)}
                     >
                         {item.display}
                     </li>
