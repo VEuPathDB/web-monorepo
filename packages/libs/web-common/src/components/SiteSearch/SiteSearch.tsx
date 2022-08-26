@@ -596,15 +596,22 @@ function WdkRecordFields(props: Props & { onlyShowMatches: boolean }) {
       <CheckboxList
         items={docType.searchFields
           .filter(field => filters.includes(field.name) || ( onlyShowMatches ? response.fieldCounts && response.fieldCounts[field.name] > 0 : true ))
-          .map(field => ({
-            display: (
+          .map(field => {
+            const display = (
               <div className={cx('--ResultTypeWidgetItem')}>
                 <div>{field.displayName}</div>
                 {response.fieldCounts && <div>{(response.fieldCounts[field.name]).toLocaleString()}</div> }
               </div>
-            ),
-            value: field.name
-          }))
+            );
+            return {
+              display: documentType === 'variable' && field.name === 'MULTITEXT__variable_StudyInfo' ? (
+                <Tooltip title="Searches the study name, entity, original variable name, and definition of the variable." interactive css={{}}>
+                  {display}
+                </Tooltip>
+              ) : display,
+              value: field.name
+            };
+          })
         }
         value={selection}
         onChange={setSelection}
