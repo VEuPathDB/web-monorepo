@@ -120,7 +120,7 @@ export default function CheckboxTreeNode<T>({
       node,
       value: nodeId,
     };
-    const checkboxProps: IndeterminateCheckboxProps<T> = {...commonInputProps, indeterminate: !!isIndeterminate, onChange: (e: ChangeEvent<HTMLInputElement>) => toggleSelection(node, e.target.checked) };
+    const checkboxProps: IndeterminateCheckboxProps<T> = {...commonInputProps, indeterminate: !!isIndeterminate, onChange: (isChecked: boolean) => toggleSelection(node, isChecked) };
     const CustomCheckbox = (customCheckboxes && (nodeId in customCheckboxes)) ? customCheckboxes[nodeId] : undefined;
 
     return (

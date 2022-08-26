@@ -142,7 +142,7 @@ export default function CheckboxList({
     </div>
   );
 
-  const onChangehandler = (valueChanged: string) => {
+  const onChangeHandler = (valueChanged: string) => {
     const availableSelections = items.map(item => item.value);
     onChange(
       value.indexOf(valueChanged) == -1 ?
@@ -181,8 +181,8 @@ export default function CheckboxList({
                   name={name}
                   value={item.value}
                   checked={value.includes(item.value)}
-                  onChange={() => onChangehandler(item.value)}
-                  onKeyDown={(e) => e.key === 'Enter' ? onChangehandler(item.value) : null}
+                  onChange={() => onChangeHandler(item.value)}
+                  onKeyDown={(e) => e.key === 'Enter' ? onChangeHandler(item.value) : null}
                 />
                 {' '}{item.display}
               </label>

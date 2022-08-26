@@ -1,11 +1,11 @@
-import { useRef, useEffect, ChangeEvent } from 'react';
+import { useRef, useEffect } from 'react';
 
 export type IndeterminateCheckboxProps<T> = {
   checked: boolean;
   indeterminate: boolean;
   name: string;
   value: string;
-  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  onChange: (isChecked: boolean) => void;
 }
 
 /**
@@ -27,7 +27,17 @@ export default function IndeterminateCheckbox<T>({
     }, [indeterminate])
 
     return (
-        <input ref={nodeRef} type="checkbox" {...nameProp} value={value}
-            checked={checked} onChange={onChange} />
+        <input 
+            ref={nodeRef} 
+            type="checkbox" 
+            {...nameProp} 
+            value={value}
+            checked={checked} 
+            onChange={(e) => onChange(e.target.checked)}
+            onKeyDown={(e) => {
+                // @ts-ignore
+                e.key === 'Enter' ? onChange(!e.target.checked) : null
+            }}
+        />
     )
 }
