@@ -8,8 +8,11 @@ import XmlReporterForm from '../components/reporters/XmlReporterForm';
 import JsonReporterForm from '../components/reporters/JsonReporterForm';
 import Gff3ReporterForm from '../components/reporters/Gff3ReporterForm';
 import FastaGeneReporterForm from '../components/reporters/FastaGeneReporterForm';
+import BedGeneReporterForm from '../components/reporters/BedGeneReporterForm';
+import BedDynSpanReporterForm from '../components/reporters/BedDynSpanReporterForm';
+import BedGenomicSequenceReporterForm from '../components/reporters/BedGenomicSequenceReporterForm';
+import BedSequenceReporterForm from '../components/reporters/BedSequenceReporterForm';
 import FastaGenomicSequenceReporterForm from '../components/reporters/FastaGenomicSequenceReporterForm';
-import FastaOrfReporterForm from '../components/reporters/FastaOrfReporterForm';
 import FastaOrthoSequenceReporterForm from '../components/reporters/FastaOrthoSequenceReporterForm';
 import TableReporterForm from '../components/reporters/TableReporterForm';
 import TranscriptTableReporterForm from '../components/reporters/TranscriptTableReporterForm';
@@ -45,10 +48,26 @@ export function selectReporterComponent(reporterName, recordClassFullName) {
           return FastaGeneReporterForm;
         case 'SequenceRecordClasses.SequenceRecordClass':
           return FastaGenomicSequenceReporterForm;
-        case 'OrfRecordClasses.OrfRecordClass':
-          return FastaOrfReporterForm;
         default:
-          console.error("Unsupported FASTA recordClass: " + recordClassName);
+          console.error("Unsupported FASTA recordClass: " + recordClassFullName);
+          return EmptyReporter;
+      }
+    case 'bed':
+    case 'sequence':
+      switch (recordClassFullName) {
+        // both gene and transcript use the same reporter
+        case 'GeneRecordClasses.GeneRecordClass':
+        case 'TranscriptRecordClasses.TranscriptRecordClass':
+          return BedGeneReporterForm;
+        case 'SequenceRecordClasses.SequenceRecordClass':
+          return BedGenomicSequenceReporterForm;
+        case 'DynSpanRecordClasses.DynSpanRecordClass':
+          return BedDynSpanReporterForm;
+        case 'PopsetRecordClasses.PopsetRecordClass':
+        case 'EstRecordClasses.EstRecordClass':
+          return BedSequenceReporterForm;
+        default:
+          console.error("Unsupported BED recordClass: " + recordClassFullName);
           return EmptyReporter;
       }
     case 'fasta':

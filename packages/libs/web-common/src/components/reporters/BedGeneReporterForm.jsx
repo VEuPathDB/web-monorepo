@@ -1,33 +1,21 @@
 import React from 'react';
-import { RadioList, SingleSelect, TextBox } from '@veupathdb/wdk-client/lib/Components';
+import { RadioList, SingleSelect, TextBox, Checkbox } from '@veupathdb/wdk-client/lib/Components';
 import * as ComponentUtils from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import * as ReporterUtils from '@veupathdb/wdk-client/lib/Views/ReporterForm/reporterUtils';
 import SrtHelp from '../SrtHelp';
 
 let util = Object.assign({}, ComponentUtils, ReporterUtils);
 
-let sequenceTypes = [
-  { value: 'genomic', display: 'Genomic' },
-  { value: 'protein', display: 'Protein' },
-  { value: 'CDS', display: 'CDS' },
-  { value: 'processed_transcript', display: 'Transcript' }
+let deflineTypes = [
+  {  value: "short", display: 'ID Only' },
+  {  value: "full", display: 'Full Fasta Header' }
 ];
 
-let defLineOptions = [
-  {  value: '1', display: 'Only Gene ID' },
-  {  value: '0', display: 'Full Fasta Header' }
-];
-
-let singleLineOption = [
-  {  value: '1', display: 'Single line' },
-  {  value: '0', display: 'Default (60 chars on a line)' }
-];
-
-let defaultSourceIdFilterValue = 'genesOnly';
-
-let sourceIdFilterTypes = [
-  { value: 'genesOnly', display: 'One sequence per gene in your result' },
-  { value: 'transcriptsOnly', display: 'One sequence per transcript in your result' }
+let proteinFeatureOptions = [
+  { value: 'interpro', display: 'InterPro' },
+  { value: 'signalp', display: 'SignalP' },
+  { value: 'tmhmm', display: 'Transmembrane Domains' },
+  { value: 'low_complexity', display: 'Low Complexity Regions' }
 ];
 
 let genomicAnchorValues = [
@@ -77,80 +65,91 @@ let ProteinRegionRange = props => {
   );
 };
 
-let SequenceRegionInputs = props => {
+let GenomicSequenceRegionInputs = props => {
   let { formState, getUpdateHandler } = props;
-  switch (formState.type) {
-    case 'genomic':
-      return (
-        <div>
-          <h3>Choose the region of the sequence(s):</h3>
-          <div
-            style={{
-              display: 'inline-grid',
-              gridTemplateColumns: 'repeat(5, auto)',
-              alignItems: 'center',
-              gridGap: '0.5em',
-              marginLeft: '2em'
-            }}
-          >
-            <SequenceRegionRange label="Begin at" anchor="upstreamAnchor" sign="upstreamSign"
-              offset="upstreamOffset" formState={formState} getUpdateHandler={getUpdateHandler}/>
-            <SequenceRegionRange label="End at" anchor="downstreamAnchor" sign="downstreamSign"
-              offset="downstreamOffset" formState={formState} getUpdateHandler={getUpdateHandler}/>
-          </div>
-        </div>
-      );
-    case 'protein':
-      return (
-        <div>
-          <h3>Choose the region of the protein sequence(s):</h3>
-          <div
-            style={{
-              display: 'inline-grid',
-              gridTemplateColumns: 'repeat(4, auto)',
-              alignItems: 'center',
-              gridGap: '0.5em',
-              marginLeft: '2em'
-            }}
-          >
-            <ProteinRegionRange label="Begin at" anchor="startAnchor3" offset="startOffset3"
-              formState={formState} getUpdateHandler={getUpdateHandler}/>
-            <ProteinRegionRange label="End at" anchor="endAnchor3" offset="endOffset3"
-              formState={formState} getUpdateHandler={getUpdateHandler}/>
-          </div>
-        </div>
-      );
-    default:
-      return ( <noscript/> );
-  }
+  return (
+    <div>
+      <div style={{marginLeft:"0.75em"}}>
+        <Checkbox name="reverseAndComplement" value={formState.reverseAndComplement} onChange={getUpdateHandler('reverseAndComplement')}/> Reverse & Complement
+      </div>
+      <div
+        style={{
+          display: 'inline-grid',
+          gridTemplateColumns: 'repeat(5, auto)',
+          alignItems: 'center',
+          gridRowGap: '0.25em',
+          gridColumnGap: '0.5em',
+          marginLeft: '0.75em'
+        }}
+      >
+        <SequenceRegionRange label="Begin at" anchor="upstreamAnchor" sign="upstreamSign"
+          offset="upstreamOffset" formState={formState} getUpdateHandler={getUpdateHandler}/>
+        <SequenceRegionRange label="End at" anchor="downstreamAnchor" sign="downstreamSign"
+          offset="downstreamOffset" formState={formState} getUpdateHandler={getUpdateHandler}/>
+      </div>
+    </div>
+  );
+}
+let ProteinSequenceRegionInputs = props => {
+  let { formState, getUpdateHandler } = props;
+  return (
+    <div>
+      <div
+        style={{
+          display: 'inline-grid',
+          gridTemplateColumns: 'repeat(4, auto)',
+          alignItems: 'center',
+          gridRowGap: '0.25em',
+          gridColumnGap: '0.5em',
+          marginLeft: '0.75em'
+        }}
+      >
+        <ProteinRegionRange label="Begin at" anchor="startAnchor3" offset="startOffset3"
+          formState={formState} getUpdateHandler={getUpdateHandler}/>
+        <ProteinRegionRange label="End at" anchor="endAnchor3" offset="endOffset3"
+          formState={formState} getUpdateHandler={getUpdateHandler}/>
+      </div>
+    </div>
+  );
 };
+
+let FeaturesList = props => {
+  let { features, field, formState, getUpdateHandler} = props;
+  return (
+    <div>
+      <div
+        style={{
+          marginLeft: '0.75em'
+        }}>
+        <RadioList name={field} value={formState[field]} onChange={getUpdateHandler(field)} items={features}/>
+      </div>
+    </div>
+  );
+}
 
 /** @type import('./Types').ReporterFormComponent */
 let FastaGeneReporterForm = props => {
   let { formState, updateFormState, onSubmit, includeSubmit } = props;
   let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormState, formState);
   let typeUpdateHandler = function(newTypeValue) {
-    // any time type changes, revert sourceIdFilter back to default value
-    updateFormState(Object.assign({}, formState, { type: newTypeValue, sourceIdFilter: defaultSourceIdFilterValue }));
+    updateFormState(Object.assign({}, formState, { type: newTypeValue }));
   };
   return (
     <div>
-      <h3>Choose the type of sequence:</h3>
+      <h3>Choose the type of result:</h3>
       <div style={{marginLeft:"2em"}}>
         <RadioList name="type" value={formState.type}
-            onChange={typeUpdateHandler} items={sequenceTypes}/>
+          onChange={typeUpdateHandler} items={
+          [
+            { value: 'genomic', display: 'Genomic Sequence', body:  (<GenomicSequenceRegionInputs formState={formState} getUpdateHandler={getUpdateHandler}/>)},
+            { value: 'protein', display: 'Protein Sequence', body: (<ProteinSequenceRegionInputs formState={formState} getUpdateHandler={getUpdateHandler}/>)},
+            { value: 'protein_features', display: 'Protein Features', body: (<FeaturesList field="proteinFeature" features={proteinFeatureOptions} formState={formState} getUpdateHandler={getUpdateHandler} />) },
+            { value: 'cds', display: 'CDS'},
+            { value: 'transcript', display: 'Transcript'},
+          ]  
+          
+          }/>
       </div>
-      { /* show filter if type not genomic */
-        formState.type === 'genomic' ? '' :
-        <div>
-          <h3>Choose Genes or Transcripts:</h3>
-          <div style={{marginLeft:"2em"}}>
-            <RadioList name="sourceIdFilter" value={formState.sourceIdFilter}
-                onChange={getUpdateHandler('sourceIdFilter')} items={sourceIdFilterTypes}/>
-          </div>
-        </div>
-      }
-      <SequenceRegionInputs formState={formState} getUpdateHandler={getUpdateHandler}/>
       <h3>Download Type:</h3>
       <div style={{marginLeft:"2em"}}>
         <RadioList name="attachmentType" value={formState.attachmentType}
@@ -158,15 +157,9 @@ let FastaGeneReporterForm = props => {
       </div>
       <h3>Fasta defline:</h3>
       <div style={{marginLeft:"2em"}}>
-        <RadioList name="onlyIdDefLine" value={formState.onlyIdDefLine}
-          onChange={getUpdateHandler('onlyIdDefLine')} items={defLineOptions}/>
+        <RadioList name="deflineType" value={formState.deflineType}
+          onChange={getUpdateHandler('deflineType')} items={deflineTypes}/>
       </div>
-      <h3>Sequence format:</h3>
-      <div style={{marginLeft:"2em"}}>
-        <RadioList name="noLineBreaks" value={formState.noLineBreaks}
-          onChange={getUpdateHandler('noLineBreaks')} items={singleLineOption}/>
-      </div>
-
       { includeSubmit &&
         <div style={{margin:'0.8em'}}>
           <button className="btn" type="submit" onClick={onSubmit}>Get Sequences</button>
@@ -192,7 +185,8 @@ FastaGeneReporterForm.getInitialState = () => ({
   formState: {
     attachmentType: 'plain',
     type: 'genomic',
-    sourceIdFilter: defaultSourceIdFilterValue,
+    reverseAndComplement: false,
+    deflineType: deflineTypes[0].value,
 
     // sequence region inputs for 'genomic'
     upstreamAnchor: 'Start',
@@ -201,15 +195,14 @@ FastaGeneReporterForm.getInitialState = () => ({
     downstreamAnchor: 'End',
     downstreamSign: 'plus',
     downstreamOffset: 0,
-    onlyIdDefLine: '0',
-    noLineBreaks: '0',
-
 
     // sequence region inputs for 'protein'
     startAnchor3: 'Start',
     startOffset3: 0,
     endAnchor3: 'End',
-    endOffset3: 0
+    endOffset3: 0,
+
+    proteinFeature: proteinFeatureOptions[0].value,
   },
   formUiState: {}
 });
