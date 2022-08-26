@@ -134,8 +134,9 @@ export default function CheckboxTreeNode<T>({
           {isLeafNode || isActiveSearch ? (
             null
           ) : (
-            isExpanded ? <ArrowDropDown onClick={() => toggleExpansion(node)}/> :
-              <ArrowRight onClick={() => toggleExpansion(node)}/>
+            isExpanded ? 
+              <ArrowDropDown tabIndex={0} onClick={() => toggleExpansion(node)} onKeyDown={(e) => e.key === 'Enter' ? toggleExpansion(node) : null} /> :
+              <ArrowRight tabIndex={0} onClick={() => toggleExpansion(node)} onKeyDown={(e) => e.key === 'Enter' ? toggleExpansion(node) : null} />
           )}
           {!isSelectable || (!isMultiPick && !isLeafNode) ? (
             <div
