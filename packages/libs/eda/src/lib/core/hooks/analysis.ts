@@ -16,9 +16,10 @@ import {
 } from '../types/analysis';
 import { isSavedAnalysis } from '../utils/analysis';
 
-import { useAnalysisClient, useStudyMetadata } from './workspace';
+import { useAnalysisClient, useStudyRecord } from './workspace';
 import { createComputation } from '../components/computations/Utils';
 import { useHistory } from 'react-router-dom';
+import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 
 /**
  * Type definition for function that will set an attribute of an Analysis.
@@ -70,7 +71,13 @@ export function useAnalysis(
   singleAppMode?: string
 ): AnalysisState {
   const analysisClient = useAnalysisClient();
-  const { id: studyId } = useStudyMetadata();
+  const datasetRecord = useStudyRecord();
+  const studyId = getStudyId(datasetRecord);
+  if (studyId == null)
+    throw new Error(
+      'Dataset record does not include a dataset id: ' +
+        datasetRecord.id.toString()
+    );
   const history = useHistory();
   const creatingAnalysis = useRef(false);
 
