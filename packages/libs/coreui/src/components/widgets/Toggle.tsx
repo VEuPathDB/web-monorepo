@@ -30,22 +30,22 @@ type ToggleStyleSpecSubset = Subset<ToggleStyleSpec>;
 
 // Prop definitions.
 export type ToggleProps = {
-  /** Currently selected option. */
+  /** Whether the toggle is off or on. */
   state: boolean;
   /** Callback to invoke when the toggle is flipped. */
   onToggle: (state: boolean) => void;
+  /** Whether the component is currently disabled for user interactions. Optional. */
+  disabled?: boolean;
   /** Text to render beside the toggle. Optional. */
   label?: string;
   /** Position of label. Optional, defaults to left. */
   labelPosition?: "left" | "right";
-  /** Specification on how toggle should be styled. */
-  styleOverrides: ToggleStyleSpecSubset;
-  /** Primary or secondary. */
+  /** Primary or secondary. Optional. */
   themeRole?: ThemeRole;
-  /** Whether the component is currently disabled for user interactions. */
-  disabled?: boolean;
   /** Size of toggle. Optional, defaults to medium. */
   size?: "medium" | "small";
+  /** Specification on how toggle should be styled. Optional. */
+  styleOverrides?: ToggleStyleSpecSubset;
 };
 
 /** Fully controlled Toggle component. */
