@@ -38,7 +38,7 @@ export default class TwitterTimeline extends React.Component {
   }
 
   render() {
-    const { profileId, height = null, width = null, theme = null, linkColor = null } = this.props;
+    const { profileId, height = null, width = "100%", theme = null, linkColor = null } = this.props;
     return (
       <a
         ref={this.timelineRef}
