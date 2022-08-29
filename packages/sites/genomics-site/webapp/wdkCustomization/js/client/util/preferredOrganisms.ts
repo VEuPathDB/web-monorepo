@@ -38,6 +38,12 @@ export function isPreferredDataset(
     return false;
   }
 
+  // Treat datasets with an empty Version table as being "preferred,"
+  // as they are presumed to be applicable to all organisms
+  if (versionTable.length === 0) {
+    return true;
+  }
+
   return versionTable.some(
     ({ [ORGANISM_COLUMN]: organism }) => {
       if (typeof organism !== 'string') {
