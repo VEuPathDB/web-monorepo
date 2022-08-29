@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Typography } from '@material-ui/core';
 
 import { LIGHT_BLUE, MEDIUM_GRAY } from '../../constants/colors';
-import { FilledSwitch } from '@veupathdb/coreui';
+import { Toggle } from '@veupathdb/coreui';
 import { grey } from '@material-ui/core/colors';
 
 export type SwitchProps = {
@@ -59,22 +59,10 @@ export default function Switch({
           {label}
         </Typography>
       )}
-      <FilledSwitch
-        options={[false, true]}
-        selectedOption={state ?? false}
-        onOptionChange={onStateChange}
+      <Toggle
+        state={state ?? false}
+        onToggle={onStateChange}
         disabled={disabled}
-        styleOverrides={{
-          default: [
-            { backgroundColor: grey[400] },
-            { backgroundColor: color, knobColor: 'white' },
-          ],
-          hover: [
-            { backgroundColor: grey[500] },
-            { backgroundColor: color, knobColor: 'white' },
-          ],
-          disabled: { backgroundColor: grey[300] },
-        }}
       />
     </div>
   );
