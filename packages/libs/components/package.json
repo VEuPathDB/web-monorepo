@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/components",
-  "version": "0.16.10",
+  "version": "0.17.4",
   "license": "Apache-2.0",
   "description": "React Components for VEuPathDB Websites",
   "repository": {
@@ -95,7 +95,7 @@
     "@types/react-plotly.js": "^2.2.4",
     "@types/stats-lite": "^2.2.0",
     "@veupathdb/browserslist-config": "^1.0.0",
-    "@veupathdb/coreui": "^0.16.0",
+    "@veupathdb/coreui": "^0.17.8",
     "@veupathdb/eslint-config": "^1.0.0",
     "@veupathdb/prettier-config": "^1.0.0",
     "@veupathdb/tsconfig": "^1.0.1",
@@ -115,7 +115,7 @@
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
-    "@veupathdb/coreui": "^0.16.0",
+    "@veupathdb/coreui": "^0.17.8",
     "react": ">=16.14"
   },
   "volta": {
