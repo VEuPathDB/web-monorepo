@@ -7,6 +7,7 @@ import { useAttemptActionClickHandler } from '@veupathdb/study-data-access/lib/d
 import UIThemeProvider from '@veupathdb/coreui/dist/components/theming/UIThemeProvider';
 import { colors } from '@veupathdb/coreui';
 import { useCoreUIFonts } from '@veupathdb/coreui/dist/hooks';
+import makeSnackbarProvider from '@veupathdb/coreui/dist/components/notifications/SnackbarProvider';
 
 export function Page(DefaultComponent: React.ComponentType<Props>) {
   return function ClinEpiPage(props: Props) {
@@ -22,8 +23,28 @@ export function Page(DefaultComponent: React.ComponentType<Props>) {
                 },
               }}
             >
-              <DefaultComponent {...props} />
+              <ClinEpiSnackbarProvider styleProps={{}}>
+                <DefaultComponent {...props} />
+              </ClinEpiSnackbarProvider>
             </UIThemeProvider>
     );
   };
 }
+
+function translateNotificationsOnTop() {
+  return {
+    transform: 'translateY(158px)'
+  };
+}
+
+const ClinEpiSnackbarProvider = makeSnackbarProvider(
+  {
+    containerRoot: {
+      zIndex: 10001,
+    },
+    anchorOriginTopLeft: translateNotificationsOnTop,
+    anchorOriginTopCenter: translateNotificationsOnTop,
+    anchorOriginTopRight: translateNotificationsOnTop,
+  },
+  'ClinEpiSnackbarProvider',
+);
