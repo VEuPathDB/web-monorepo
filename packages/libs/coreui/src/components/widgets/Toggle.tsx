@@ -12,18 +12,23 @@ import { useUITheme } from "../theming";
 import { merge } from "lodash";
 
 // Type definitions for working with styles.
-type ToggleStateStyleSpec = {
+type ToggleColorStyleSpec = {
   backgroundColor: CSSProperties["color"];
   labelColor: CSSProperties["color"];
   knobColor: CSSProperties["color"];
   borderColor: CSSProperties["color"];
 };
 
+type ToggleStateStyleSpec = {
+  off: ToggleColorStyleSpec;
+  on: ToggleColorStyleSpec;
+};
+
 type ToggleStyleSpec = {
   container: React.CSSProperties;
-  default: ToggleStateStyleSpec[];
-  hover: ToggleStateStyleSpec[];
-  disabled: ToggleStateStyleSpec[];
+  default: ToggleStateStyleSpec;
+  hover: ToggleStateStyleSpec;
+  disabled: ToggleStateStyleSpec;
 };
 
 type ToggleStyleSpecSubset = Subset<ToggleStyleSpec>;
@@ -70,48 +75,48 @@ export default function Toggle({
 
     const defaultStyleSpec: ToggleStyleSpec = {
       container: {},
-      default: [
-        {
+      default: {
+        off: {
           backgroundColor: "none",
           knobColor: mainColor[mainLevel],
           borderColor: mainColor[mainLevel],
           labelColor,
         },
-        {
+        on: {
           backgroundColor: mainColor[mainLevel],
           knobColor: "white",
           borderColor: mainColor[mainLevel],
           labelColor,
         },
-      ],
-      hover: [
-        {
+      },
+      hover: {
+        off: {
           backgroundColor: mainColor[100],
           knobColor: mainColor[mainLevel],
           borderColor: mainColor[mainLevel],
           labelColor,
         },
-        {
+        on: {
           backgroundColor: mainColor[mainLevel + 200],
           knobColor: "white",
           borderColor: mainColor[mainLevel + 200],
           labelColor,
         },
-      ],
-      disabled: [
-        {
+      },
+      disabled: {
+        off: {
           backgroundColor: "none",
           knobColor: disabledColor,
           borderColor: disabledColor,
           labelColor,
         },
-        {
+        on: {
           backgroundColor: disabledColor,
           knobColor: "white",
           borderColor: disabledColor,
           labelColor,
         },
-      ],
+      },
     };
 
     return merge({}, defaultStyleSpec, styleOverrides);
@@ -124,13 +129,11 @@ export default function Toggle({
    * and (3) whether the toggle is disabled.
    */
   const currentStyles = useMemo(() => {
-    const selectedOptionIndex = state ? 1 : 0;
+    const selectedOption = state ? "on" : "off";
 
     return disabled
-      ? styleSpec.disabled[selectedOptionIndex]
-      : styleSpec[hoverState][selectedOptionIndex]
-      ? styleSpec[hoverState][selectedOptionIndex]
-      : styleSpec[hoverState][0];
+      ? styleSpec.disabled[selectedOption]
+      : styleSpec[hoverState][selectedOption];
   }, [hoverState, state, styleSpec, disabled]);
 
   const ariaLabel = useMemo(() => {
