@@ -3,7 +3,6 @@ import { Typography } from '@material-ui/core';
 
 import { LIGHT_BLUE, MEDIUM_GRAY } from '../../constants/colors';
 import { Toggle } from '@veupathdb/coreui';
-import { grey } from '@material-ui/core/colors';
 
 export type SwitchProps = {
   /** Optional label for widget. */
