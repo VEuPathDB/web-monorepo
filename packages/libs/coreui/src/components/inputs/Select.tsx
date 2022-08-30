@@ -24,6 +24,7 @@ export default function Select({
     const [ key, setKey ] = useState('');
     const [ isPopoverOpen, setIsPopoverOpen ] = useState<boolean>(false);
     const optionsRef = useRef<HTMLUListElement>(null);
+    const [ focusedElement, setFocusedElement ] = useState(0);
 
     const onSelect = (value: string) => {
         onChange(selected);
@@ -34,26 +35,16 @@ export default function Select({
     
     useEffect(() => {
         setButtonDisplayContent(selected.length ? selected : defaultButtonDisplayContent);
+        setFocusedElement(items.findIndex(item => selected === item.value) !== -1 ? items.findIndex(item => selected === item.value) : 0)
     }, [selected])
-    
-    useEffect(() => {
-        if (optionsRef && optionsRef.current) {
-            const childIndex = items.findIndex(item => selected === item.value);
-            // @ts-ignore
-            childIndex !== -1 ? optionsRef.current.children[childIndex].focus() : optionsRef.current.firstChild.focus()
-        }
-    }, [isPopoverOpen, optionsRef])
 
     const onKeyDown = (key: string, value: string) => {
-        const activeElement = document.activeElement;
         if (key === 'Enter') {
             onSelect(value);
         } else if (key === 'ArrowUp') {
-            // @ts-ignore
-            activeElement?.previousSibling ? activeElement.previousSibling.focus() : null;
+            focusedElement !== 0 ? setFocusedElement(prev => prev - 1) : null;
         } else if (key === 'ArrowDown') {
-            // @ts-ignore
-            activeElement?.nextSibling ? activeElement.nextSibling.focus() : null;
+            focusedElement !== items.length - 1 ? setFocusedElement(prev => prev + 1) : null;
         }
     }
 
@@ -72,30 +63,63 @@ export default function Select({
                     listStyle: 'none',
                 }}
             >
-                {items.map((item) => (
-                    <li
-                        key={item.value}
-                        css={css`
-                            padding: 0.5em;
-                            line-height: 1.25;
-                            cursor: pointer;
-                            &:focus {
-                                background-color: #3375E1;
-                                color: white;
-                            }
-                            &:hover {
-                                background-color: #3375E1;
-                                color: white;
-                            }
-                        `}
-                        tabIndex={0}
-                        onClick={() => onSelect(item.value)} 
-                        onKeyDown={(e) => onKeyDown(e.key, item.value)}
-                    >
-                        {item.display}
-                    </li>
+                {items.map((item, index) => (
+                    <Option 
+                        key={item.value} 
+                        item={item} 
+                        onSelect={onSelect} 
+                        onKeyDown={onKeyDown} 
+                        shouldFocus={
+                            index === focusedElement
+                        } 
+                    />
                 ))}
             </ul>
         </PopoverButton>
+    )
+}
+
+interface OptionProps {
+    item: Item;
+    onSelect: (value: string) => void;
+    onKeyDown: (key: string, value: string) => void;
+    shouldFocus: boolean;
+}
+
+function Option({
+    item, 
+    onSelect, 
+    onKeyDown,
+    shouldFocus
+}: OptionProps) {
+    const optionRef = useRef<HTMLLIElement>(null);
+
+    if (shouldFocus && optionRef.current) {
+        optionRef.current.focus();
+    }
+
+    return (
+        <li
+            ref={optionRef}
+            key={item.value}
+            css={css`
+                padding: 0.5em;
+                line-height: 1.25;
+                cursor: pointer;
+                &:focus {
+                    background-color: #3375E1;
+                    color: white;
+                }
+                &:hover {
+                    background-color: #3375E1;
+                    color: white;
+                }
+            `}
+            tabIndex={0}
+            onClick={() => onSelect(item.value)} 
+            onKeyDown={(e) => onKeyDown(e.key, item.value)}
+        >
+            {item.display}
+        </li>
     )
 }
