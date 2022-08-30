@@ -63,6 +63,7 @@ export default function Switch({
         state={state ?? false}
         onToggle={onStateChange}
         disabled={disabled}
+        themeRole="primary"
       />
     </div>
   );
