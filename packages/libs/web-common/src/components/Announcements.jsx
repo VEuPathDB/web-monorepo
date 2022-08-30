@@ -75,6 +75,22 @@ const siteAnnouncements = [
   },
 */
 
+
+{   
+    id: 'mbio-beta',
+    renderDisplay: (props) => {
+    if ( (props.projectId == 'MicrobiomeDB') && (props.location.pathname === '/') ) {
+        return (
+          <div>
+           Welcome to MicrobiomeDB’s new and improved <span style={{fontWeight: 'bold', fontStyle: 'italic'}}>data exploration platform!</span>
+           &nbsp;&nbsp;Access the original version of our website, including your saved strategies, at <a href="https://microbiomedb.org">microbiomedbdb.org</a>.
+          </div>
+        );
+      }
+      return null;
+    }
+  },
+
 {  
     id: 'clinepi-beta',
     renderDisplay: (props) => {
