@@ -2,9 +2,11 @@ import { ReactNode, useEffect, useState, useRef } from "react";
 import PopoverButton from "../buttons/PopoverButton/PopoverButton";
 import { Item } from "./checkboxes/CheckboxList";
 import { css } from '@emotion/react';
+import { uniqueId } from "lodash";
   
 export interface SelectProps {
-    name?: string;
+    /** Used for ARIA considerations */
+    name: string;
     items: Item[];
     value: string;
     onChange: (value: string) => void;
@@ -23,20 +25,19 @@ export default function Select({
     const [ buttonDisplayContent, setButtonDisplayContent ] = useState<ReactNode>(value.length ? value : defaultButtonDisplayContent);
     const [ key, setKey ] = useState('');
     const [ isPopoverOpen, setIsPopoverOpen ] = useState<boolean>(false);
-    const optionsRef = useRef<HTMLUListElement>(null);
     const [ focusedElement, setFocusedElement ] = useState(0);
 
     const onSelect = (value: string) => {
         onChange(selected);
         setSelected(value);
         /** Creates a new key which will close the popover menu */
-        setKey(Math.random().toString());
+        setKey(uniqueId());
     }
     
     useEffect(() => {
         setButtonDisplayContent(selected.length ? selected : defaultButtonDisplayContent);
         setFocusedElement(items.findIndex(item => selected === item.value) !== -1 ? items.findIndex(item => selected === item.value) : 0)
-    }, [selected])
+    }, [selected, isPopoverOpen])
 
     const onKeyDown = (key: string, value: string) => {
         if (key === 'Enter') {
@@ -55,7 +56,7 @@ export default function Select({
             setIsPopoverOpen={setIsPopoverOpen}
         >
             <ul
-                ref={optionsRef}
+                aria-label={'Menu of selectable options'}
                 css={{
                     padding: 0,
                     margin: 0,
@@ -100,6 +101,7 @@ function Option({
 
     return (
         <li
+            aria-label={`Selectable option: ${item.display}`}
             ref={optionRef}
             key={item.value}
             css={css`
