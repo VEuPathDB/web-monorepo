@@ -41,7 +41,7 @@ import NotesTab from './NotesTab';
 import DownloadTab from './DownloadTab';
 import { Alert } from '@material-ui/lab';
 import ShareFromAnalysis from './sharing/ShareFromAnalysis';
-import { useWorkspaceAnalysis } from './hooks/analyses';
+import { useAnalysis } from '../core/hooks/analysis';
 import { ApprovalStatus } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 import { RestrictedPage } from '@veupathdb/study-data-access/lib/data-restriction/RestrictedPage';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
@@ -107,11 +107,7 @@ export function AnalysisPanel({
   singleAppMode,
 }: Props) {
   const studyRecord = useStudyRecord();
-  const analysisState = useWorkspaceAnalysis(
-    studyId,
-    analysisId,
-    singleAppMode
-  );
+  const analysisState = useAnalysis(analysisId, singleAppMode);
 
   const {
     status,

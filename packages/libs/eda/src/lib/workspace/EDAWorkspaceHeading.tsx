@@ -17,6 +17,7 @@ import { cx } from './Utils';
 import { AnalysisState, DEFAULT_ANALYSIS_NAME } from '../core';
 import { getAnalysisId, isSavedAnalysis } from '../core/utils/analysis';
 import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
+import { getStudyAccess } from '@veupathdb/study-data-access/lib/shared/studies';
 import { isStubEntity } from '../core/hooks/study';
 import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
 
@@ -111,20 +112,23 @@ export function EDAWorkspaceHeading({
             setIsOpen={setDialogIsOpen}
             initialAnalysisName={analysis.displayName}
             setAnalysisName={(newName) =>
-              newName && analysisState.setName(newName)
+              newName &&
+              analysis.displayName !== newName &&
+              analysisState.setName(newName)
             }
             redirectToNewAnalysis={redirectToNewAnalysis}
           />
         )}
       </div>
-      {isStubEntity(studyMetadata.rootEntity) && (
-        <Banner
-          banner={{
-            type: 'info',
-            message: 'Data for this study is not currently available.',
-          }}
-        />
-      )}
+      {getStudyAccess(studyRecord) !== 'prerelease' &&
+        isStubEntity(studyMetadata.rootEntity) && (
+          <Banner
+            banner={{
+              type: 'error',
+              message: 'Data for this study is not currently available.',
+            }}
+          />
+        )}
     </>
   );
 }

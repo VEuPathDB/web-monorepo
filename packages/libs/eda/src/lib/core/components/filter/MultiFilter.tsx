@@ -32,6 +32,7 @@ import {
 import { gray, red } from './colors';
 import { debounce } from 'lodash';
 import { isTableVariable } from './guards';
+import { useDeepValue } from '../../hooks/immutability';
 
 export interface Props {
   analysisState: AnalysisState;
@@ -169,21 +170,10 @@ export function MultiFilter(props: Props) {
   ]);
 
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
-
-  // Use a JSON string here so that we don't udpate counts for every render.
-  // array.filter will always return a _new_ array, but strings are immutable,
-  // so this trick will cause same-valued arrays to be referentially equal.
-  const otherFiltersJson = useMemo(
-    () =>
-      JSON.stringify(
-        filters?.filter(
-          (filter) =>
-            !(
-              filter.entityId === entity.id && filter.variableId === variable.id
-            )
-        )
-      ),
-    [filters, entity.id, variable.id]
+  const otherFilters = useDeepValue(
+    filters?.filter(
+      (f) => f.entityId !== entity.id || f.variableId !== variable.id
+    )
   );
 
   // State used to control if the "Update counts" button is disabled.
@@ -196,7 +186,6 @@ export function MultiFilter(props: Props) {
   // Counts retrieved from the backend, used for the table display.
   const leafSummariesPromise = usePromise(
     useCallback(() => {
-      const otherFilters = JSON.parse(otherFiltersJson);
       return Promise.all(
         leaves.map((leaf) => {
           const thisFilterWithoutLeaf = thisFilter && {
@@ -262,7 +251,7 @@ export function MultiFilter(props: Props) {
       );
     }, [
       thisFilter,
-      otherFiltersJson,
+      otherFilters,
       leaves,
       entity.id,
       subsettingClient,

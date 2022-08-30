@@ -17,9 +17,9 @@ import {
 import SubsettingClient from '../../api/SubsettingClient';
 import { DownloadClient } from '../../api/DownloadClient';
 
-const key = '123';
+const analysisId = '123';
 
-const stubAnalysis: NewAnalysis = makeNewAnalysis(key);
+const stubAnalysis: NewAnalysis = makeNewAnalysis(analysisId);
 
 let records: Record<string, Analysis>;
 let nextId: number;
@@ -91,7 +91,7 @@ beforeEach(() => {
     123: {
       ...stubAnalysis,
       ...computeSummaryCounts(stubAnalysis.descriptor),
-      analysisId: key,
+      analysisId,
       creationTime: now,
       modificationTime: now,
     },
@@ -100,7 +100,7 @@ beforeEach(() => {
 });
 
 const render = () =>
-  renderHook(() => useAnalysis(stubAnalysis, async () => undefined, key), {
+  renderHook(() => useAnalysis(analysisId), {
     wrapper,
   });
 
@@ -144,7 +144,9 @@ describe('useAnalysis', () => {
     expect(result.current.hasUnsavedChanges).toBeTruthy();
     await act(() => result.current.saveAnalysis());
     const analyses = await analysisClient.getAnalyses();
-    const analysis = analyses.find((analysis) => analysis.analysisId === key);
+    const analysis = analyses.find(
+      (analysis) => analysis.analysisId === analysisId
+    );
     expect(analysis?.displayName).toBe('New Name');
     expect(result.current.hasUnsavedChanges).toBeFalsy();
   });
@@ -168,7 +170,9 @@ describe('useAnalysis', () => {
     await waitFor(() => result.current.status === Status.Loaded);
     await result.current.deleteAnalysis();
     const analyses = await analysisClient.getAnalyses();
-    const analysis = analyses.find((analysis) => analysis.analysisId === key);
+    const analysis = analyses.find(
+      (analysis) => analysis.analysisId === analysisId
+    );
     expect(analysis).toBeUndefined();
   });
 });
