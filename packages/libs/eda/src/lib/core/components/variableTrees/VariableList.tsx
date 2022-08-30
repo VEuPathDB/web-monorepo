@@ -47,7 +47,7 @@ import { pruneEmptyFields } from '../../utils/wdk-filter-param-adapter';
 import { Tooltip as VarTooltip } from '../docs/variable-constraints';
 import { useActiveDocument } from '../docs/DocumentationContainer';
 import { CustomCheckboxes } from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTreeNode';
-import { Switch } from '../Switch';
+import { Toggle } from '@veupathdb/coreui';
 
 interface VariableField {
   type?: string;
@@ -387,10 +387,12 @@ export default function VariableList({
             onClick={toggleShowOnlyStarredVariables}
             disabled={starredVariableToggleDisabled}
           >
-            <Switch
-              selectedOption={showOnlyStarredVariables}
+            <Toggle
+              state={showOnlyStarredVariables}
+              onToggle={() => {}}
               disabled={starredVariableToggleDisabled}
               size="small"
+              themeRole="primary"
             />
             <Icon fa="star" />
           </button>
@@ -514,10 +516,13 @@ export default function VariableList({
               );
             }}
           >
-            <Switch
-              labels={{ right: 'Only show compatible variables' }}
-              selectedOption={showOnlyCompatibleVariables}
+            <Toggle
+              label="Only show compatible variables"
+              labelPosition="right"
+              state={showOnlyCompatibleVariables}
+              onToggle={() => {}}
               size="small"
+              themeRole="primary"
             />
           </button>
         </HtmlTooltip>
