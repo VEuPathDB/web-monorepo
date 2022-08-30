@@ -68,8 +68,9 @@ export default function Toggle({
   const [hoverState, setHoverState] = useState<"default" | "hover">("default");
 
   const styleSpec: ToggleStyleSpec = useMemo(() => {
-    const mainColor = theme && themeRole ? theme.palette[themeRole].hue : blue;
-    const mainLevel = 400;
+    const themeColor = theme && themeRole && theme.palette[themeRole];
+    const mainColor = themeColor?.hue ?? blue;
+    const mainLevel = themeColor?.level ?? 400;
     const labelColor = gray[600];
     const disabledColor = gray[300];
 
@@ -97,9 +98,9 @@ export default function Toggle({
           labelColor,
         },
         on: {
-          backgroundColor: mainColor[mainLevel + 200],
+          backgroundColor: mainColor[Math.min(mainLevel + 200, 900)],
           knobColor: "white",
-          borderColor: mainColor[mainLevel + 200],
+          borderColor: mainColor[Math.min(mainLevel + 200, 900)],
           labelColor,
         },
       },
