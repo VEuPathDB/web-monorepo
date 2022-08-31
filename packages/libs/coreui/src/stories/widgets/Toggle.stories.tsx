@@ -76,25 +76,25 @@ StyleOverrides.args = {
   ...Default.args,
   label: "Barbarian Hordes",
   styleOverrides: {
-    default: [
-      {
+    default: {
+      off: {
         backgroundColor: magenta[500],
         knobColor: "white",
       },
-      {
+      on: {
         backgroundColor: green[600],
         knobColor: "white",
       },
-    ],
-    hover: [
-      {
+    },
+    hover: {
+      off: {
         backgroundColor: magenta[600],
         knobColor: "white",
       },
-      {
+      on: {
         backgroundColor: green[700],
         knobColor: "white",
       },
-    ],
+    },
   },
 } as ToggleProps;
