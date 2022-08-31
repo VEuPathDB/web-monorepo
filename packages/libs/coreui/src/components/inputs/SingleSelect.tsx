@@ -4,7 +4,7 @@ import { Item } from "./checkboxes/CheckboxList";
 import { css } from '@emotion/react';
 import { uniqueId } from "lodash";
   
-export interface SelectProps {
+export interface SingleSelectProps {
     /** Used for ARIA considerations */
     name: string;
     items: Item[];
@@ -14,14 +14,14 @@ export interface SelectProps {
     defaultButtonDisplayContent: ReactNode;
 }
 
-export default function Select({
+export default function SingleSelect({
     name,
     items,
     value,
     onChange,
     defaultButtonDisplayContent,
-}: SelectProps) {
-    const [ selected, setSelected ] = useState<SelectProps['value']>(value);
+}: SingleSelectProps) {
+    const [ selected, setSelected ] = useState<SingleSelectProps['value']>(value);
     const [ buttonDisplayContent, setButtonDisplayContent ] = useState<ReactNode>(value.length ? value : defaultButtonDisplayContent);
     const [ key, setKey ] = useState('');
     const [ isPopoverOpen, setIsPopoverOpen ] = useState<boolean>(false);

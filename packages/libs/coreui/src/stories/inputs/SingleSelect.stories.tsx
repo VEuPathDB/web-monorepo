@@ -1,15 +1,15 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
 
-import Select, { SelectProps } from '../../components/inputs/Select';
+import SingleSelect, { SingleSelectProps } from '../../components/inputs/SingleSelect';
 
 export default {
-    title: 'Inputs/Select',
-    component: Select
+    title: 'Inputs/SingleSelect',
+    component: SingleSelect
 } as Meta;
 
-const Template: Story<SelectProps> = (args) => {
+const Template: Story<SingleSelectProps> = (args) => {
     return (
-        <Select {...args} />
+        <SingleSelect {...args} />
     )
 }
 
@@ -23,4 +23,4 @@ Standard.args = {
     value: '',
     onChange: (value: string) => null,
     defaultButtonDisplayContent: 'Select a letter'
-} as SelectProps;
+} as SingleSelectProps;
