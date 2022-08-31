@@ -41,8 +41,8 @@ export type ToggleProps = {
   onToggle: (state: boolean) => void;
   /** Whether the component is currently disabled for user interactions. Optional. */
   disabled?: boolean;
-  /** Text to render beside the toggle. Optional. */
-  label?: string;
+  /** Node to render beside the toggle. Optional. */
+  label?: React.ReactNode;
   /** Position of label. Optional, defaults to left. */
   labelPosition?: "left" | "right";
   /** Primary or secondary. Optional. */
@@ -59,7 +59,7 @@ export default function Toggle({
   onToggle,
   disabled,
   label,
-  labelPosition,
+  labelPosition = "left",
   themeRole,
   size = "medium",
   styleOverrides,
