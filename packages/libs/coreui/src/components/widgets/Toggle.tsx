@@ -9,7 +9,7 @@ import { primaryFont } from "../../styleDefinitions/typography";
 import { blue } from "@material-ui/core/colors";
 import { gray } from "../../definitions/colors";
 import { useUITheme } from "../theming";
-import { merge } from "lodash";
+import { merge, uniqueId } from "lodash";
 
 // Type definitions for working with styles.
 type ToggleColorStyleSpec = {
@@ -41,10 +41,13 @@ export type ToggleProps = {
   onToggle: (state: boolean) => void;
   /** Whether the component is currently disabled for user interactions. Optional. */
   disabled?: boolean;
-  /** Node to render beside the toggle. Optional. */
+  /** Node to render beside the toggle. If this is a string, it's also used as
+   * the ARIA label unless the ariaLabel prop is also defined. Optional. */
   label?: React.ReactNode;
   /** Position of label. Optional, defaults to left. */
   labelPosition?: "left" | "right";
+  /** ARIA label to apply. Optional but highly recommended. */
+  ariaLabel?: string;
   /** Primary or secondary. Optional. */
   themeRole?: ThemeRole;
   /** Size of toggle. Optional, defaults to medium. */
@@ -60,6 +63,7 @@ export default function Toggle({
   disabled,
   label,
   labelPosition = "left",
+  ariaLabel,
   themeRole,
   size = "medium",
   styleOverrides,
@@ -137,10 +141,15 @@ export default function Toggle({
       : styleSpec[hoverState][selectedOption];
   }, [hoverState, value, styleSpec, disabled]);
 
-  const ariaLabel = useMemo(() => {
-    if (label) return label + " Toggle";
-    else return "Toggle";
-  }, [label]);
+  const finalAriaLabel =
+    ariaLabel ?? (typeof label === "string" ? undefined : "Toggle");
+  const labelId = useMemo(
+    () =>
+      ariaLabel === undefined && typeof label === "string"
+        ? uniqueId("toggle-label-")
+        : undefined,
+    [label, ariaLabel]
+  );
 
   const width = size === "medium" ? 40 : 20;
   const height = width / 2;
@@ -166,13 +175,15 @@ export default function Toggle({
             marginRight: size === "medium" ? 10 : 5,
             color: currentStyles.labelColor,
           }}
+          id={labelId}
         >
           {label}
         </span>
       )}
       <div
         role="switch"
-        aria-label={ariaLabel}
+        aria-label={finalAriaLabel}
+        aria-labelledby={labelId}
         aria-checked={value}
         css={{
           display: "flex",
@@ -226,6 +237,7 @@ export default function Toggle({
             marginLeft: size === "medium" ? 10 : 5,
             color: currentStyles.labelColor,
           }}
+          id={labelId}
         >
           {label}
         </span>
