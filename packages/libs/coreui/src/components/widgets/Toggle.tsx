@@ -35,8 +35,8 @@ type ToggleStyleSpecSubset = Subset<ToggleStyleSpec>;
 
 // Prop definitions.
 export type ToggleProps = {
-  /** Whether the toggle is off or on. */
-  state: boolean;
+  /** Whether the toggle is off (false) or on (true). */
+  value: boolean;
   /** Callback to invoke when the toggle is flipped. */
   onToggle: (state: boolean) => void;
   /** Whether the component is currently disabled for user interactions. Optional. */
@@ -55,14 +55,14 @@ export type ToggleProps = {
 
 /** Fully controlled Toggle component. */
 export default function Toggle({
-  label,
-  labelPosition,
-  styleOverrides,
-  themeRole,
-  state,
+  value,
   onToggle,
   disabled,
+  label,
+  labelPosition,
+  themeRole,
   size = "medium",
+  styleOverrides,
 }: ToggleProps) {
   const theme = useUITheme();
   const [hoverState, setHoverState] = useState<"default" | "hover">("default");
@@ -130,12 +130,12 @@ export default function Toggle({
    * and (3) whether the toggle is disabled.
    */
   const currentStyles = useMemo(() => {
-    const selectedOption = state ? "on" : "off";
+    const selectedOption = value ? "on" : "off";
 
     return disabled
       ? styleSpec.disabled[selectedOption]
       : styleSpec[hoverState][selectedOption];
-  }, [hoverState, state, styleSpec, disabled]);
+  }, [hoverState, value, styleSpec, disabled]);
 
   const ariaLabel = useMemo(() => {
     if (label) return label + " Toggle";
@@ -173,7 +173,7 @@ export default function Toggle({
       <div
         role="switch"
         aria-label={ariaLabel}
-        aria-checked={state}
+        aria-checked={value}
         css={{
           display: "flex",
           position: "relative",
@@ -196,14 +196,14 @@ export default function Toggle({
         }}
         onKeyDown={(event) => {
           if (["Space", "Enter"].includes(event.code)) {
-            onToggle(!state);
+            onToggle(!value);
           }
         }}
         onFocus={() => setHoverState("hover")}
         onBlur={() => setHoverState("default")}
         onMouseEnter={() => setHoverState("hover")}
         onMouseLeave={() => setHoverState("default")}
-        onClick={() => onToggle(!state)}
+        onClick={() => onToggle(!value)}
         tabIndex={0}
       >
         <div
@@ -212,7 +212,7 @@ export default function Toggle({
             width: knobSize,
             height: knobSize,
             borderRadius: knobSize / 2,
-            left: !state
+            left: !value
               ? knobOffset
               : width - knobSize - 2 * borderWidth - knobOffset,
             transition: "ease all .33s",

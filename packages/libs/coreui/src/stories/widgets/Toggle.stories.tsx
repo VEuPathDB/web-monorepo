@@ -15,7 +15,7 @@ export default {
 } as Meta;
 
 const Template: Story<ToggleProps> = (args) => {
-  const [state, setState] = useState(args.state);
+  const [state, setState] = useState(args.value);
 
   return (
     <UIThemeProvider
@@ -26,14 +26,14 @@ const Template: Story<ToggleProps> = (args) => {
         },
       }}
     >
-      <Toggle {...args} state={state} onToggle={(state) => setState(state)} />
+      <Toggle {...args} value={state} onToggle={(state) => setState(state)} />
     </UIThemeProvider>
   );
 };
 
 export const Default = Template.bind({});
 Default.args = {
-  state: false,
+  value: false,
 } as ToggleProps;
 
 export const LeftLabel = Template.bind({});
