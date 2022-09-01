@@ -5,6 +5,7 @@ export interface LayoutProps {
   legendNode?: ReactNode;
   legendStyles?: CSSProperties;
   plotNode: ReactNode;
+  controlsNode?: ReactNode;
   plotStyles?: CSSProperties;
   tableGroupNode: ReactNode;
   tableGroupStyles?: CSSProperties;

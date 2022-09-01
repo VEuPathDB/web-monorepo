@@ -31,6 +31,7 @@ export function SinglePlotLayout({
   legendNode,
   legendStyles,
   plotNode,
+  controlsNode,
   plotStyles,
   tableGroupNode,
   tableGroupStyles,
@@ -44,6 +45,7 @@ export function SinglePlotLayout({
           <RequiredInputsPrompt isMosaicPlot={isMosaicPlot} />
         )}
         {plotNode}
+        {controlsNode}
       </div>
       <div style={{ ...defaultTableGroupStyles, ...tableGroupStyles }}>
         {legendNode && <div style={{ ...legendStyles }}>{legendNode}</div>}

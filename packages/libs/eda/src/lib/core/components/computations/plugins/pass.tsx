@@ -29,8 +29,10 @@ export const plugin: ComputationPlugin = {
     // placeholder for densityplot
     // densityplot: scatterplotVisualization,
     barplot: barplotVisualization,
-    boxplot: boxplotVisualization.withOptions({
-      layoutComponent: FloatingLayout,
-    }), /// TEMPORARY ONLY!!! ///
+    boxplot: boxplotVisualization,
+    // or...
+    // boxplotVisualization.withOptions({
+    //   layoutComponent: FloatingLayout,
+    //}), /// TEMPORARY ONLY!!! ///
   },
 };

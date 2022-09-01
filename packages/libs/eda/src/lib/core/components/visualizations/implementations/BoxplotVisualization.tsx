@@ -37,17 +37,7 @@ import { BirdsEyeView } from '../../BirdsEyeView';
 import { PlotLayout } from '../../layouts/PlotLayout';
 import PluginError from '../PluginError';
 
-import {
-  at,
-  groupBy,
-  mapValues,
-  size,
-  head,
-  map,
-  values,
-  keys,
-  pick,
-} from 'lodash';
+import { at, groupBy, mapValues, size, head, map, values, keys } from 'lodash';
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import {
@@ -502,7 +492,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis';
 
   const plotNode = (
-    <BoxplotWithControls
+    <Plot
       // data.value
       data={data.value}
       updateThumbnail={updateThumbnail}
@@ -522,9 +512,21 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       showRawData={true}
       legendTitle={variableDisplayWithUnit(overlayVariable)}
       // for custom legend passing checked state in the  checkbox to PlotlyPlot
-      legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
-      onCheckedLegendItemsChange={onCheckedLegendItemsChange}
+      // axis range control
+      vizConfig={vizConfig}
+      // add dependent axis range for better displaying tick labels in log-scale
+      defaultDependentAxisRange={defaultDependentAxisRange}
+      // no need to pass dependentAxisRange
+      // pass useState of truncation warnings
+      truncatedDependentAxisWarning={truncatedDependentAxisWarning}
+      setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
+      dependentAxisMinMax={dependentAxisMinMax}
+    />
+  );
+
+  const controlsNode = (
+    <Controls
       // axis range control
       vizConfig={vizConfig}
       updateVizConfig={updateVizConfig}
@@ -534,7 +536,6 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       // pass useState of truncation warnings
       truncatedDependentAxisWarning={truncatedDependentAxisWarning}
       setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
-      dependentAxisMinMax={dependentAxisMinMax}
     />
   );
 
@@ -714,6 +715,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         isFaceted={isFaceted(data.value)}
         legendNode={showOverlayLegend ? legendNode : null}
         plotNode={plotNode}
+        controlsNode={controlsNode}
         tableGroupNode={tableGroupNode}
         showRequiredInputsPrompt={!areRequiredInputsSelected}
       />
@@ -721,65 +723,37 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   );
 }
 
-type BoxplotWithControlsProps = Omit<BoxplotProps, 'data'> & {
+type PlotProps = Omit<BoxplotProps, 'data'> & {
   data?: BoxplotDataWithCoverage;
-  updateThumbnail: (src: string) => void;
-  // add props for custom legend
-  legendItems: LegendItemsProps[];
-  checkedLegendItems: string[] | undefined;
-  onCheckedLegendItemsChange: (checkedLegendItems: string[]) => void;
-  // define types for axis range control
   vizConfig: BoxplotConfig;
-  updateVizConfig: (newConfig: Partial<BoxplotConfig>) => void;
+  updateThumbnail: (src: string) => void;
+  checkedLegendItems: string[] | undefined;
+  dependentAxisMinMax: NumberRange | undefined;
   defaultDependentAxisRange: NumberRange | undefined;
-  // pass useState of truncation warnings
   truncatedDependentAxisWarning: string;
   setTruncatedDependentAxisWarning: (
     truncatedDependentAxisWarning: string
   ) => void;
-  dependentAxisMinMax: NumberRange | undefined;
 };
 
-function BoxplotWithControls({
+function Plot({
   data,
   updateThumbnail,
-  // add props for custom legend
-  legendItems,
   checkedLegendItems,
-  onCheckedLegendItemsChange,
   // for axis range control
   vizConfig,
-  updateVizConfig,
   defaultDependentAxisRange,
   // pass useState of truncation warnings
   truncatedDependentAxisWarning,
   setTruncatedDependentAxisWarning,
   dependentAxisMinMax,
   ...boxplotComponentProps
-}: BoxplotWithControlsProps) {
+}: PlotProps) {
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
     plotContainerStyles,
     [data, checkedLegendItems, vizConfig.dependentAxisRange]
   );
-
-  // axis range control
-  const handleDependentAxisRangeChange = useCallback(
-    (newRange?: NumberRange) => {
-      updateVizConfig({
-        dependentAxisRange: newRange,
-      });
-    },
-    [updateVizConfig]
-  );
-
-  const handleDependentAxisSettingsReset = useCallback(() => {
-    updateVizConfig({
-      dependentAxisRange: undefined,
-    });
-    // add reset for truncation message as well
-    setTruncatedDependentAxisWarning('');
-  }, [updateVizConfig, setTruncatedDependentAxisWarning]);
 
   // set truncation flags: will see if this is reusable with other application
   const {
@@ -870,6 +844,48 @@ function BoxplotWithControls({
           {...boxplotComponentProps}
         />
       )}
+    </>
+  );
+}
+
+type ControlsProps = {
+  vizConfig: BoxplotConfig;
+  updateVizConfig: (newConfig: Partial<BoxplotConfig>) => void;
+  defaultDependentAxisRange: NumberRange | undefined;
+  truncatedDependentAxisWarning: string;
+  setTruncatedDependentAxisWarning: (
+    truncatedDependentAxisWarning: string
+  ) => void;
+};
+
+function Controls({
+  vizConfig,
+  updateVizConfig,
+  defaultDependentAxisRange,
+  truncatedDependentAxisWarning,
+  setTruncatedDependentAxisWarning,
+}: ControlsProps) {
+  // axis range control
+  const handleDependentAxisRangeChange = useCallback(
+    (newRange?: NumberRange) => {
+      updateVizConfig({
+        dependentAxisRange: newRange,
+      });
+    },
+    [updateVizConfig]
+  );
+
+  const handleDependentAxisSettingsReset = useCallback(() => {
+    updateVizConfig({
+      dependentAxisRange: undefined,
+    });
+    // add reset for truncation message as well
+    setTruncatedDependentAxisWarning('');
+  }, [updateVizConfig, setTruncatedDependentAxisWarning]);
+
+  // TO DO: standardise web-components/BoxplotData to have `series` key
+  return (
+    <>
       {/* Y-axis range control */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <LabelledGroup label="Y-axis controls">
