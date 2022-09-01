@@ -1,4 +1,3 @@
-import { ReactNode } from 'react';
 import { EntityCounts } from '../../hooks/entityCounts';
 import { PromiseHookState } from '../../hooks/promise';
 import { Filter } from '../../types/filter';
