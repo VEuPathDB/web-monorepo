@@ -550,6 +550,32 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     />
   );
 
+  // When we only have a computed y axis (and no provided x axis) then the y axis var
+  // can have a "normal" variable descriptor. In this case we want the computed y var to act just
+  // like any other continuous variable.
+  const computedYAxisDescriptor =
+    !providedXAxisVariable && computedYAxisDetails
+      ? ({
+          entityId: computedYAxisDetails?.entityId,
+          variableId: computedYAxisDetails?.variableId,
+          displayName: data.value?.computedVariableMetadata?.displayName?.[0],
+        } as VariableDescriptor)
+      : null;
+
+  // List variables in a collection one by one in the variable coverage table. Create these extra rows
+  // here and then append to the variable coverage table rows array.
+  const additionalVariableCoverageTableRows = data.value
+    ?.computedVariableMetadata?.collectionVariable?.collectionVariableDetails
+    ? data.value?.computedVariableMetadata?.collectionVariable?.collectionVariableDetails.map(
+        (varDetails) => ({
+          role: '',
+          required: true,
+          display: findEntityAndVariable(varDetails)?.variable.displayName,
+          variable: varDetails,
+        })
+      )
+    : [];
+
   const tableGroupNode = (
     <>
       <BirdsEyeView
@@ -577,14 +603,15 @@ function BoxplotViz(props: VisualizationProps<Options>) {
           {
             role: 'X-axis',
             required: true,
-            display: variableDisplayWithUnit(xAxisVariable),
-            variable: vizConfig.xAxisVariable,
+            display: independentAxisLabel,
+            variable: providedXAxisVariable ?? vizConfig.xAxisVariable,
           },
+          ...additionalVariableCoverageTableRows,
           {
             role: 'Y-axis',
-            required: true,
-            display: variableDisplayWithUnit(yAxisVariable),
-            variable: vizConfig.yAxisVariable,
+            required: !providedXAxisVariable,
+            display: dependentAxisLabel,
+            variable: computedYAxisDescriptor ?? vizConfig.yAxisVariable,
           },
           {
             role: 'Overlay',
@@ -605,6 +632,17 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   const plotSubtitle = options?.getPlotSubtitle?.(
     computation.descriptor.configuration
   );
+
+  const areRequiredInputsSelected = useMemo(() => {
+    if (!dataElementConstraints) return false;
+    return Object.entries(dataElementConstraints[0])
+      .filter((variable) => variable[1].isRequired)
+      .every((reqdVar) => !!(vizConfig as any)[reqdVar[0]]);
+  }, [
+    dataElementConstraints,
+    vizConfig.xAxisVariable,
+    vizConfig.yAxisVariable,
+  ]);
 
   // for handling alphadiv abundance
   return (
@@ -674,6 +712,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         legendNode={showOverlayLegend ? legendNode : null}
         plotNode={plotNode}
         tableGroupNode={tableGroupNode}
+        showRequiredInputsPrompt={!areRequiredInputsSelected}
       />
     </div>
   );

@@ -38,7 +38,6 @@ export function useVariableCoverageTableRows(
         }
 
         const { entityId, variableId } = spec.variable;
-
         const variableCompleteCases =
           completeCasesMap[`${entityId}.${variableId}`];
 

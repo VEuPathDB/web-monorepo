@@ -1,3 +1,4 @@
+import { string } from 'fp-ts';
 import { EntityCounts } from '../../hooks/entityCounts';
 import { PromiseHookState } from '../../hooks/promise';
 import { Filter } from '../../types/filter';
@@ -39,4 +40,5 @@ export interface IsEnabledInPickerParams {
 export interface ComputedVariableDetails {
   entityId: string;
   placeholderDisplayName: string;
+  variableId?: string;
 }

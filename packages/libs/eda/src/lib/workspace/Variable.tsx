@@ -84,8 +84,7 @@ export function VariableDetails(props: Props) {
               {showMore && providerLabelLeftover}
               &nbsp;
               <HelpIcon>
-                The name of this variable in the data files that were integrated
-                into ClinEpiDB
+                The name of this variable in the original data files
               </HelpIcon>
               &nbsp;&nbsp;
               <button
@@ -101,8 +100,7 @@ export function VariableDetails(props: Props) {
             <>
               &nbsp;
               <HelpIcon>
-                The name of this variable in the data files that were integrated
-                into ClinEpiDB
+                The name of this variable in the original data files
               </HelpIcon>
             </>
           )}

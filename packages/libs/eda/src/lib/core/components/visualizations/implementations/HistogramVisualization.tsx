@@ -533,6 +533,13 @@ function HistogramViz(props: VisualizationProps) {
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
 
+  const areRequiredInputsSelected = useMemo(() => {
+    if (!dataElementConstraints) return false;
+    return Object.entries(dataElementConstraints[0])
+      .filter((variable) => variable[1].isRequired)
+      .every((reqdVar) => !!(vizConfig as any)[reqdVar[0]]);
+  }, [dataElementConstraints, vizConfig.xAxisVariable]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -641,6 +648,7 @@ function HistogramViz(props: VisualizationProps) {
         truncatedDependentAxisWarning={truncatedDependentAxisWarning}
         setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
         dependentMinPosMax={dependentMinPosMax}
+        areRequiredInputsSelected={areRequiredInputsSelected}
       />
     </div>
   );
@@ -686,6 +694,7 @@ type HistogramPlotWithControlsProps = Omit<HistogramProps, 'data'> & {
   ) => void;
   outputSize?: number;
   dependentMinPosMax: NumberRange | undefined;
+  areRequiredInputsSelected: boolean;
 } & Partial<CoverageStatistics>;
 
 function HistogramPlotWithControls({
@@ -727,6 +736,7 @@ function HistogramPlotWithControls({
   setTruncatedDependentAxisWarning,
   outputSize,
   dependentMinPosMax,
+  areRequiredInputsSelected,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   const displayLibraryControls = false;
@@ -1154,6 +1164,7 @@ function HistogramPlotWithControls({
         plotNode={plotNode}
         legendNode={showOverlayLegend ? legendNode : null}
         tableGroupNode={tableGroupNode}
+        showRequiredInputsPrompt={!areRequiredInputsSelected}
       />
     </div>
   );
