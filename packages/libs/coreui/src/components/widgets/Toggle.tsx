@@ -38,7 +38,7 @@ export type ToggleProps = {
   /** Whether the toggle is off (false) or on (true). */
   value: boolean;
   /** Callback to invoke when the toggle is flipped. */
-  onToggle: (state: boolean) => void;
+  onChange: (state: boolean) => void;
   /** Whether the component is currently disabled for user interactions. Optional. */
   disabled?: boolean;
   /** Node to render beside the toggle. If this is a string, it's also used as
@@ -59,7 +59,7 @@ export type ToggleProps = {
 /** Fully controlled Toggle component. */
 export default function Toggle({
   value,
-  onToggle,
+  onChange,
   disabled,
   label,
   labelPosition = "left",
@@ -207,14 +207,14 @@ export default function Toggle({
         }}
         onKeyDown={(event) => {
           if (["Space", "Enter"].includes(event.code)) {
-            onToggle(!value);
+            onChange(!value);
           }
         }}
         onFocus={() => setHoverState("hover")}
         onBlur={() => setHoverState("default")}
         onMouseEnter={() => setHoverState("hover")}
         onMouseLeave={() => setHoverState("default")}
-        onClick={() => onToggle(!value)}
+        onClick={() => onChange(!value)}
         tabIndex={0}
       >
         <div

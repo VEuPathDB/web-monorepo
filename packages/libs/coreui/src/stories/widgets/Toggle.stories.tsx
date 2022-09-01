@@ -26,7 +26,7 @@ const Template: Story<ToggleProps> = (args) => {
         },
       }}
     >
-      <Toggle {...args} value={state} onToggle={(state) => setState(state)} />
+      <Toggle {...args} value={state} onChange={(state) => setState(state)} />
     </UIThemeProvider>
   );
 };
