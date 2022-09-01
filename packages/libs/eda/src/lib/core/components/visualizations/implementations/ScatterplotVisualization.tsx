@@ -1054,6 +1054,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     vizConfig.yAxisVariable,
   ]);
 
+  const LayoutComponent = options?.layoutComponent ?? PlotLayout;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -1155,7 +1157,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         outputSize={outputSize}
         subtitle={plotSubtitle}
       />
-      <PlotLayout
+      <LayoutComponent
         isFaceted={isFaceted(data.value?.dataSetProcess)}
         legendNode={showOverlayLegend ? legendNode : null}
         plotNode={plotNode}
