@@ -30,6 +30,7 @@ import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import {
   ComputedVariableDetails,
+  GlobalVisualizationOptions,
   VisualizationProps,
 } from '../VisualizationTypes';
 
@@ -192,7 +193,7 @@ export const ScatterplotConfig = t.partial({
   dependentAxisLogScale: t.boolean,
 });
 
-interface Options {
+interface Options extends GlobalVisualizationOptions {
   getComputedYAxisDetails?(
     config: unknown
   ): ComputedVariableDetails | undefined;

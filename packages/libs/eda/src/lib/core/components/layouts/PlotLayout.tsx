@@ -11,7 +11,7 @@ import {
 
 import { StyleProps } from './types';
 
-interface Props {
+export interface PlotLayoutProps {
   isFaceted: boolean;
   legendNode?: ReactNode;
   plotNode: ReactNode;
@@ -36,7 +36,7 @@ export function PlotLayout({
   facetedPlotStyles,
   showRequiredInputsPrompt,
   isMosaicPlot,
-}: Props) {
+}: PlotLayoutProps) {
   return isFaceted ? (
     <FacetedPlotLayout
       legendNode={legendNode}

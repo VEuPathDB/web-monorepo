@@ -1,4 +1,4 @@
-import { string } from 'fp-ts';
+import { ReactNode } from 'react';
 import { EntityCounts } from '../../hooks/entityCounts';
 import { PromiseHookState } from '../../hooks/promise';
 import { Filter } from '../../types/filter';
@@ -11,6 +11,7 @@ import {
   Visualization,
   VisualizationOverview,
 } from '../../types/visualization';
+import { PlotLayoutProps } from '../layouts/PlotLayout';
 
 /**
  * Props passed to viz components
@@ -31,6 +32,11 @@ export interface VisualizationProps<Options = undefined> {
   geoConfigs: GeoConfig[];
   otherVizOverviews: VisualizationOverview[];
 }
+
+export interface GlobalVisualizationOptions {
+  layoutComponent?: (props: PlotLayoutProps) => JSX.Element;
+}
+
 export interface IsEnabledInPickerParams {
   geoConfigs?: GeoConfig[];
   studyMetadata?: StudyMetadata; // not used yet, but you could imagine it being used to determine

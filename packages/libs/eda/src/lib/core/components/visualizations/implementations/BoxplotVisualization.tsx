@@ -23,6 +23,7 @@ import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import {
   ComputedVariableDetails,
+  GlobalVisualizationOptions,
   VisualizationProps,
 } from '../VisualizationTypes';
 import box from './selectorIcons/box.svg';
@@ -116,7 +117,7 @@ const modalPlotContainerStyles = {
   margin: 'auto',
 };
 
-interface Options {
+interface Options extends GlobalVisualizationOptions {
   getXAxisVariable?: (computeConfig: unknown) => VariableDescriptor | undefined;
   getComputedYAxisDetails?: (
     computeConfig: unknown
@@ -644,6 +645,8 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     vizConfig.yAxisVariable,
   ]);
 
+  const LayoutComponent = options?.layoutComponent ?? PlotLayout;
+
   // for handling alphadiv abundance
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -707,7 +710,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         outputSize={outputSize}
         subtitle={plotSubtitle}
       />
-      <PlotLayout
+      <LayoutComponent
         isFaceted={isFaceted(data.value)}
         legendNode={showOverlayLegend ? legendNode : null}
         plotNode={plotNode}
