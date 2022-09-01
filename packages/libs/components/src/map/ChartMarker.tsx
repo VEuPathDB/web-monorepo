@@ -126,42 +126,40 @@ export default function ChartMarker(props: ChartMarkerProps) {
   let barWidth: number, startingX: number, barHeight: number, startingY: number;
 
   // drawing bars per marker
-  fullStat.map(
-    (
-      el: { color: string | undefined; label: string; value: number },
-      index: number
-    ) => {
-      // for the case of y-axis range input: a global approach that take global max = icon height
-      barWidth = (xSize - 2 * marginX) / count; // bar width
-      startingX = marginX + borderWidth + barWidth * index; // x in <react> tag: note that (0,0) is top left of the marker icon
-      barHeight = props.dependentAxisLogScale // log scale
-        ? el.value <= 0
-          ? 0
-          : // if dependentAxisRange != null, plot with global max
-            (Math.log10(el.value / minMaxPosRange.min) /
-              Math.log10(minMaxPosRange.max / minMaxPosRange.min)) *
-            (size - 2 * marginY)
-        : ((el.value - minMaxPosRange.min) /
-            (minMaxPosRange.max - minMaxPosRange.min)) *
-          (size - 2 * marginY); // bar height: used 2*marginY to have margins at both top and bottom
+  fullStat.forEach(function (
+    el: { color: string | undefined; label: string; value: number },
+    index: number
+  ) {
+    // for the case of y-axis range input: a global approach that take global max = icon height
+    barWidth = (xSize - 2 * marginX) / count; // bar width
+    startingX = marginX + borderWidth + barWidth * index; // x in <react> tag: note that (0,0) is top left of the marker icon
+    barHeight = props.dependentAxisLogScale // log scale
+      ? el.value <= 0
+        ? 0
+        : // if dependentAxisRange != null, plot with global max
+          (Math.log10(el.value / minMaxPosRange.min) /
+            Math.log10(minMaxPosRange.max / minMaxPosRange.min)) *
+          (size - 2 * marginY)
+      : ((el.value - minMaxPosRange.min) /
+          (minMaxPosRange.max - minMaxPosRange.min)) *
+        (size - 2 * marginY); // bar height: used 2*marginY to have margins at both top and bottom
 
-      startingY = size - marginY - barHeight + borderWidth; // y in <react> tag: note that (0,0) is top left of the marker icon
-      // making the last bar, noData
-      svgHTML +=
-        '<rect x=' +
-        startingX +
-        ' y=' +
-        startingY +
-        ' width=' +
-        barWidth +
-        ' height=' +
-        barHeight +
-        ' fill=' +
-        // rgb strings with spaces in them don't work in SVG?
-        el.color?.replace(/\s/g, '') +
-        ' />';
-    }
-  );
+    startingY = size - marginY - barHeight + borderWidth; // y in <react> tag: note that (0,0) is top left of the marker icon
+    // making the last bar, noData
+    svgHTML +=
+      '<rect x=' +
+      startingX +
+      ' y=' +
+      startingY +
+      ' width=' +
+      barWidth +
+      ' height=' +
+      barHeight +
+      ' fill=' +
+      // rgb strings with spaces in them don't work in SVG?
+      el.color?.replace(/\s/g, '') +
+      ' />';
+  });
 
   // add horizontal line: when using inner border (adjust x1)
   svgHTML +=
