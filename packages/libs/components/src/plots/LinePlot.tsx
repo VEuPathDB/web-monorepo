@@ -18,7 +18,6 @@ import {
 // import truncation util functions
 import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations';
 import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
-import { logScaleDtick } from '../utils/logscale-dtick';
 import { tickSettings } from '../utils/tick-settings';
 
 // is it possible to have this interface extend ScatterPlotProps?

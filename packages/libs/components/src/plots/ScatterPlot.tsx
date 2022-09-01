@@ -19,6 +19,7 @@ import { NumberOrDateRange } from '../types/general';
 import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations';
 import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
 import { logScaleDtick } from '../utils/logscale-dtick';
+import { tickSettings } from '../utils/tick-settings';
 
 export interface ScatterPlotProps
   extends PlotProps<ScatterPlotData>,
@@ -147,13 +148,11 @@ const ScatterPlot = makePlotlyPlotComponent(
             ? 'log'
             : undefined,
         tickfont: data.series.length ? {} : { color: 'transparent' },
-        dtick: independentAxisLogScale
-          ? logScaleDtick(extendedIndependentAxisRange)
-          : undefined,
-        showexponent: 'all',
-        exponentformat: independentValueType === 'date' ? 'none' : 'power',
-        // type minexponent is not defined at @types/plotly.js but 3 is default so not used here
-        // minexponent: 3,
+        ...tickSettings(
+          independentAxisLogScale,
+          extendedIndependentAxisRange,
+          independentValueType
+        ),
       },
       yaxis: {
         title: dependentAxisLabel,
@@ -180,13 +179,11 @@ const ScatterPlot = makePlotlyPlotComponent(
             ? 'log'
             : undefined,
         tickfont: data.series.length ? {} : { color: 'transparent' },
-        dtick: dependentAxisLogScale
-          ? logScaleDtick(extendedDependentAxisRange)
-          : undefined,
-        showexponent: 'all',
-        exponentformat: dependentValueType === 'date' ? 'none' : 'power',
-        // type minexponent is not defined at @types/plotly.js but 3 is default so not used here
-        // minexponent: 3,
+        ...tickSettings(
+          dependentAxisLogScale,
+          extendedDependentAxisRange,
+          dependentValueType
+        ),
       },
       // add truncatedAxisHighlighting for layout.shapes
       shapes: truncatedAxisHighlighting,
