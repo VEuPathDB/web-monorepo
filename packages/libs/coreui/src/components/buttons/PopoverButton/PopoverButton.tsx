@@ -48,6 +48,7 @@ export default function PopoverButton(props: PopoverButtonProps) {
   const menu = (
     <Popover
       id="dropdown"
+      aria-expanded={!!anchorEl}
       open={Boolean(anchorEl)}
       onClose={onCloseHandler}
       anchorEl={anchorEl}

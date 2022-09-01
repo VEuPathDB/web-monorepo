@@ -57,6 +57,7 @@ export default function SingleSelect({
         >
             <ul
                 aria-label={'Menu of selectable options'}
+                role="listbox"
                 css={{
                     padding: 0,
                     margin: 0,
@@ -72,7 +73,8 @@ export default function SingleSelect({
                         onKeyDown={onKeyDown} 
                         shouldFocus={
                             index === focusedElement
-                        } 
+                        }
+                        isSelected={selected === item.value}
                     />
                 ))}
             </ul>
@@ -85,13 +87,15 @@ interface OptionProps {
     onSelect: (value: string) => void;
     onKeyDown: (key: string, value: string) => void;
     shouldFocus: boolean;
+    isSelected: boolean;
 }
 
 function Option({
     item, 
     onSelect, 
     onKeyDown,
-    shouldFocus
+    shouldFocus,
+    isSelected
 }: OptionProps) {
     const optionRef = useRef<HTMLLIElement>(null);
 
@@ -101,7 +105,8 @@ function Option({
 
     return (
         <li
-            aria-label={`Selectable option: ${item.display}`}
+            role="option"
+            aria-selected={isSelected}
             ref={optionRef}
             key={item.value}
             css={css`
