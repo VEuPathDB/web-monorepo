@@ -151,11 +151,11 @@ export default function Toggle({
     [label, ariaLabel]
   );
 
-  const width = size === "medium" ? 40 : 20;
-  const height = width / 2;
-  const borderWidth = 2;
-  const knobSize = size === "medium" ? 12 : 5;
-  const knobOffset = size === "medium" ? 2 : 1;
+  const width = size === "medium" ? 35 : 20;
+  const height = width / 1.8;
+  const borderWidth = size === "medium" ? 2 : 1;
+  const knobSize = size === "medium" ? 12 : 6;
+  const knobOffset = 2;
 
   return (
     <div
