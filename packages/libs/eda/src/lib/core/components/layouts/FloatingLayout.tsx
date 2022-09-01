@@ -19,21 +19,10 @@ const defaultPlotStyles: CSSProperties = {
   flexDirection: 'column',
 };
 
-const defaultTableGroupStyles: CSSProperties = {
-  margin: '0em 1.5em',
-  display: 'grid',
-  gridAutoFlow: 'row',
-  gap: '1.5em',
-};
-
-export function SinglePlotLayout({
+export function FloatingLayout({
   containerStyles,
-  legendNode,
-  legendStyles,
   plotNode,
   plotStyles,
-  tableGroupNode,
-  tableGroupStyles,
   showRequiredInputsPrompt,
   isMosaicPlot,
 }: Props) {
@@ -44,10 +33,6 @@ export function SinglePlotLayout({
           <RequiredInputsPrompt isMosaicPlot={isMosaicPlot} />
         )}
         {plotNode}
-      </div>
-      <div style={{ ...defaultTableGroupStyles, ...tableGroupStyles }}>
-        {legendNode && <div style={{ ...legendStyles }}>{legendNode}</div>}
-        {tableGroupNode}
       </div>
     </div>
   );

@@ -12,6 +12,7 @@ import { testVisualization } from '../../visualizations/implementations/TestVisu
 import { ComputationPlugin } from '../Types';
 import { ZeroConfigWithButton } from '../ZeroConfiguration';
 import * as t from 'io-ts';
+import { FloatingLayout } from '../../layouts/FloatingLayout';
 
 export const plugin: ComputationPlugin = {
   configurationComponent: ZeroConfigWithButton,
@@ -28,6 +29,8 @@ export const plugin: ComputationPlugin = {
     // placeholder for densityplot
     // densityplot: scatterplotVisualization,
     barplot: barplotVisualization,
-    boxplot: boxplotVisualization,
+    boxplot: boxplotVisualization.withOptions({
+      layoutComponent: FloatingLayout,
+    }), /// TEMPORARY ONLY!!! ///
   },
 };
