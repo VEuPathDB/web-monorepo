@@ -782,10 +782,12 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
     )
 
     return (
-      <div css={{display: 'flex', flexDirection: 'column', alignItems: 'center', width: '400px'}}>
+      <div css={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
         {linksPosition && linksPosition == LinksPosition.Top ? treeLinks : null}
         {!isSearchable || !showSearchBox ? "" : (
-          <div>
+          <div css={{
+            display: 'flex',
+          }}>
             <SearchBox
               autoFocus={autoFocusSearchBox}
               searchTerm={searchTerm}
