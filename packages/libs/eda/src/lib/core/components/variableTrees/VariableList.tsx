@@ -7,6 +7,7 @@ import React, {
   useRef,
   useState,
   useContext,
+  ReactNode,
 } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -20,7 +21,8 @@ import {
   preorderSeq,
   pruneDescendantNodes,
 } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import CheckboxTree from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTree';
+import SelectTree from '@veupathdb/coreui/dist/components/inputs/SelectTree/SelectTree';
+import CheckboxTree from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import Toggle from '@veupathdb/wdk-client/lib/Components/Icon/Toggle';
 import {
@@ -129,6 +131,9 @@ interface VariableListProps {
   singleChildPromotionEntityIds?: string[];
   customCheckboxes?: CustomCheckboxes<VariableFieldTreeNode>;
   startExpanded?: boolean;
+  asDropdown?: boolean;
+  clearSelectionButton?: ReactNode;
+  dropdownLabel?: string;
 }
 
 // TODO: Needs documentation of general component purpose.
@@ -153,6 +158,9 @@ export default function VariableList({
   singleChildPromotionEntityIds,
   customCheckboxes,
   startExpanded,
+  asDropdown,
+  clearSelectionButton,
+  dropdownLabel,
 }: VariableListProps) {
   // useContext is used here with ShowHideVariableContext
   const {
@@ -483,7 +491,11 @@ export default function VariableList({
   /** Render info on disabled fields, if appropriate. */
   const renderDisabledFields = () =>
     disabledFields.size > 0 && (
-      <div className={cx('-DisabledVariablesToggle')}>
+      <div
+        style={{
+          margin: '0.75em',
+        }}
+      >
         <HtmlTooltip
           css={{
             zIndex: 1,
@@ -502,6 +514,9 @@ export default function VariableList({
         >
           <button
             className="link"
+            style={{
+              color: '#666',
+            }}
             type="button"
             onClick={() => {
               // useContext
@@ -522,17 +537,47 @@ export default function VariableList({
    */
   const renderFeaturedFields = () => {
     return featuredFields.length && allowedFeaturedFields.length ? (
-      <div className="FeaturedVariables">
+      // <div className="FeaturedVariables">
+      <div
+        style={{
+          padding: '0.5em 1em',
+          border: 'none',
+          borderTop: '1px solid #ccc',
+          borderBottom: '1px solid #ccc',
+        }}
+      >
         <details
           open={Options.featuredVariablesOpen}
           onToggle={(event: React.SyntheticEvent<HTMLDetailsElement>) => {
             Options.featuredVariablesOpen = event.currentTarget.open;
           }}
         >
-          <summary>
-            <h3>Featured variables</h3>
+          <summary
+            style={{
+              cursor: 'pointer',
+            }}
+          >
+            <h3
+              style={{
+                fontSize: '1.05em',
+                display: 'inline-block',
+                padding: '0.25em',
+                margin: 0,
+                color: '#222',
+                fontWeight: 500,
+              }}
+            >
+              Featured variables
+            </h3>
           </summary>
-          <ul>
+          <ul
+            style={{
+              listStyle: 'none',
+              margin: 0,
+              marginTop: '0.25em',
+              padding: 0,
+            }}
+          >
             {allowedFeaturedFields.map((field) => {
               const isActive = field.term === activeField?.term;
               const isDisabled = disabledFields.has(field.term);
@@ -554,9 +599,20 @@ export default function VariableList({
               return (
                 <li
                   key={field.term}
-                  className="wdk-CheckboxTreeItem wdk-CheckboxTreeItem__leaf"
+                  style={{
+                    paddingLeft: '1.5em',
+                    lineHeight: '15px',
+                  }}
                 >
-                  <div className="wdk-CheckboxTreeNodeContent">
+                  <div
+                    style={{
+                      position: 'relative',
+                      display: 'flex',
+                      alignItems: 'center',
+                      marginLeft: '1em',
+                    }}
+                  >
+                    {/* <div className="wdk-CheckboxTreeNodeContent"> */}
                     {isMultiPick &&
                       (CustomCheckbox ? (
                         <CustomCheckbox
@@ -599,7 +655,45 @@ export default function VariableList({
     ) : null;
   };
 
-  return (
+  return asDropdown ? (
+    <SelectTree
+      key={dropdownLabel}
+      {...(isMultiPick && {
+        selectedList: selectedFields.map((field) => field.term),
+        isSelectable: true,
+        isMultiPick: true,
+        onSelectionChange: onSelectedFieldsChange,
+      })}
+      linksPosition={CheckboxTree.LinkPlacement.Top}
+      autoFocusSearchBox={autoFocus}
+      tree={tree}
+      expandedList={expandedNodes}
+      getNodeId={getNodeId}
+      getNodeChildren={getNodeChildren}
+      onExpansionChange={setExpandedNodes}
+      isSearchable={true}
+      searchBoxPlaceholder="Find a variable"
+      searchBoxHelp={makeSearchHelpText(
+        'variables by name, description, or values'
+      )}
+      searchTerm={searchTerm}
+      onSearchTermChange={setSearchTerm}
+      searchPredicate={searchPredicate}
+      renderNode={renderNode}
+      customCheckboxes={customCheckboxes}
+      additionalFilters={additionalFilters}
+      isAdditionalFilterApplied={isAdditionalFilterApplied}
+      buttonDisplayContent={dropdownLabel}
+      wrapPopover={(treeSection) => (
+        <>
+          {clearSelectionButton}
+          {renderDisabledFields()}
+          {renderFeaturedFields()}
+          {treeSection}
+        </>
+      )}
+    />
+  ) : (
     <div className={cx('-VariableList')}>
       {renderDisabledFields()}
       {renderFeaturedFields()}

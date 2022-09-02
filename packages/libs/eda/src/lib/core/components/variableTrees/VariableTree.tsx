@@ -13,6 +13,8 @@ import {
   useFeaturedFieldsFromTree,
 } from './hooks';
 
+import { Button } from '@material-ui/core';
+
 export interface VariableTreeProps {
   starredVariables?: VariableDescriptor[];
   toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
@@ -26,6 +28,7 @@ export interface VariableTreeProps {
   showMultiFilterDescendants?: boolean;
   /** The "scope" of variables which should be offered. */
   scope: VariableScope;
+  asDropdown?: boolean;
 }
 
 export default function VariableTree({
@@ -38,6 +41,7 @@ export default function VariableTree({
   onChange,
   showMultiFilterDescendants = false,
   scope,
+  asDropdown,
 }: VariableTreeProps) {
   const entities = useStudyEntities();
   const valuesMap = useValuesMap(entities);
@@ -69,6 +73,26 @@ export default function VariableTree({
       ? fieldsByTerm[`${entityId}/${variableId}`]
       : undefined;
 
+  const variable = entities
+    .find((e) => e.id === entityId)
+    ?.variables.find((v) => v.id === variableId);
+  const label = variable?.displayName ?? 'Select a variable';
+
+  const clearSelectionButton = variable && (
+    <div style={{ textAlign: 'center', padding: '.75em 0.25em 0.25em' }}>
+      <Button
+        type="button"
+        style={{ width: '90%' }}
+        variant="contained"
+        color="default"
+        size="small"
+        onClick={() => onChange()}
+      >
+        Clear selection
+      </Button>
+    </div>
+  );
+
   return (
     <VariableList
       mode="singleSelection"
@@ -83,6 +107,9 @@ export default function VariableTree({
       autoFocus={false}
       starredVariables={starredVariables}
       toggleStarredVariable={toggleStarredVariable}
+      asDropdown={asDropdown}
+      clearSelectionButton={clearSelectionButton}
+      dropdownLabel={label}
     />
   );
 }
