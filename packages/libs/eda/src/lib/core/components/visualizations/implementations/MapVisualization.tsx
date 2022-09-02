@@ -72,6 +72,7 @@ import { createVisualizationPlugin } from '../VisualizationPlugin';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import Switch from '@veupathdb/components/lib/components/widgets/Switch';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
+import { LayoutOptions } from '../../layouts/types';
 
 const numContinuousBins = 8;
 
@@ -150,8 +151,11 @@ type MapMarkersOverlayData = Record<
   { entityCount: number; data: { label: string; value: number }[] }
 >;
 
-function MapViz(props: VisualizationProps) {
+interface Options extends LayoutOptions {}
+
+function MapViz(props: VisualizationProps<Options>) {
   const {
+    options,
     computation,
     visualization,
     updateConfiguration,
@@ -727,6 +731,11 @@ function MapViz(props: VisualizationProps) {
         mouseMode={vizConfig.mouseMode ?? createDefaultConfig().mouseMode}
         onMouseModeChange={onMouseModeChange}
       />
+    </>
+  );
+
+  const controlsNode = (
+    <>
       <RadioButtonGroup
         label="Plot mode"
         selectedOption={vizConfig.markerType || 'pie'}
@@ -883,6 +892,8 @@ function MapViz(props: VisualizationProps) {
     </>
   );
 
+  const LayoutComponent = options?.layoutComponent ?? PlotLayout;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div
@@ -939,10 +950,11 @@ function MapViz(props: VisualizationProps) {
         outputSize={totalEntityCount}
       />
       <OutputEntityTitle entity={outputEntity} outputSize={totalEntityCount} />
-      <PlotLayout
+      <LayoutComponent
         isFaceted={false}
         legendNode={legendNode}
         plotNode={plotNode}
+        controlsNode={controlsNode}
         tableGroupNode={tableGroupNode}
         /**
          * unlike all other visualizations, dataElementsContraints does not include xAxisVariable as a required variable;
