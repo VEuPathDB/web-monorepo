@@ -39,6 +39,7 @@ export function PlotLayout({
     <FacetedPlotLayout
       legendNode={legendNode}
       plotNode={plotNode}
+      controlsNode={controlsNode}
       tableGroupNode={tableGroupNode}
       {...facetedPlotStyles}
     />
