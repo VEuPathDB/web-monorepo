@@ -41,12 +41,15 @@ export type ToggleProps = {
   onChange: (state: boolean) => void;
   /** Whether the component is currently disabled for user interactions. Optional. */
   disabled?: boolean;
-  /** Node to render beside the toggle. If this is a string, it's also used as
-   * the ARIA label unless the ariaLabel prop is also defined. Optional. */
+  /** Node to render beside the toggle. If label is provided, aria-labelledby
+   * will be used to connect the label's text to the toggle. If the label does
+   * not include descriptive text, an ariaLabel prop should be included to
+   * override this behavior. */
   label?: React.ReactNode;
   /** Position of label. Optional, defaults to left. */
   labelPosition?: "left" | "right";
-  /** ARIA label to apply. Optional but highly recommended. */
+  /** ARIA label to apply. Not needed if a label prop with descriptive text is
+   * provided. Optional. */
   ariaLabel?: string;
   /** Primary or secondary. Optional. */
   themeRole?: ThemeRole;
@@ -142,10 +145,10 @@ export default function Toggle({
   }, [hoverState, value, styleSpec, disabled]);
 
   const finalAriaLabel =
-    ariaLabel ?? (typeof label === "string" ? undefined : "Toggle");
+    ariaLabel ?? (label !== undefined ? undefined : "Toggle");
   const labelId = useMemo(
     () =>
-      ariaLabel === undefined && typeof label === "string"
+      ariaLabel === undefined && label !== undefined
         ? uniqueId("toggle-label-")
         : undefined,
     [label, ariaLabel]
