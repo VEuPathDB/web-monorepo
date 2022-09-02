@@ -12,3 +12,12 @@ export interface LayoutProps {
 }
 
 export type StyleProps<P> = Pick<P, keyof P & `${string}Styles`>;
+
+export interface LayoutOptions {
+  layoutComponent?: (props: LayoutProps) => JSX.Element;
+  hideShowMissingnessToggle?: boolean;
+}
+
+export interface TitleOptions {
+  getPlotSubtitle?(config: unknown): string | undefined;
+}

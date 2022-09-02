@@ -23,7 +23,6 @@ import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import {
   ComputedVariableDetails,
-  GlobalVisualizationOptions,
   VisualizationProps,
 } from '../VisualizationTypes';
 import box from './selectorIcons/box.svg';
@@ -79,6 +78,7 @@ import { ComputedVariableMetadata } from '../../../api/DataClient/types';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { boxplotDefaultDependentAxisMinMax } from '../../../utils/axis-range-calculations';
+import { LayoutOptions, TitleOptions } from '../../layouts/types';
 
 type BoxplotData = { series: BoxplotSeries };
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
@@ -107,13 +107,11 @@ const modalPlotContainerStyles = {
   margin: 'auto',
 };
 
-interface Options extends GlobalVisualizationOptions {
+interface Options extends LayoutOptions, TitleOptions {
   getXAxisVariable?: (computeConfig: unknown) => VariableDescriptor | undefined;
   getComputedYAxisDetails?: (
     computeConfig: unknown
   ) => ComputedVariableDetails | undefined;
-  getPlotSubtitle?: (computeConfig: unknown) => string | undefined;
-  hideShowMissingnessToggle?: boolean;
 }
 
 export const boxplotVisualization = createVisualizationPlugin({

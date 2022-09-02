@@ -10,7 +10,6 @@ import {
   Visualization,
   VisualizationOverview,
 } from '../../types/visualization';
-import { PlotLayoutProps } from '../layouts/PlotLayout';
 
 /**
  * Props passed to viz components
@@ -30,10 +29,6 @@ export interface VisualizationProps<Options = undefined> {
   filteredCounts: PromiseHookState<EntityCounts>;
   geoConfigs: GeoConfig[];
   otherVizOverviews: VisualizationOverview[];
-}
-
-export interface GlobalVisualizationOptions {
-  layoutComponent?: (props: PlotLayoutProps) => JSX.Element;
 }
 
 export interface IsEnabledInPickerParams {

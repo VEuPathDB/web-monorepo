@@ -30,7 +30,6 @@ import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import {
   ComputedVariableDetails,
-  GlobalVisualizationOptions,
   VisualizationProps,
 } from '../VisualizationTypes';
 
@@ -119,6 +118,7 @@ import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 
 import useSnackbar from '@veupathdb/coreui/dist/components/notifications/useSnackbar';
+import { LayoutOptions, TitleOptions } from '../../layouts/types';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -193,13 +193,11 @@ export const ScatterplotConfig = t.partial({
   dependentAxisLogScale: t.boolean,
 });
 
-interface Options extends GlobalVisualizationOptions {
+interface Options extends LayoutOptions, TitleOptions {
   getComputedYAxisDetails?(
     config: unknown
   ): ComputedVariableDetails | undefined;
   getOverlayVariable?(config: unknown): VariableDescriptor | undefined;
-  getPlotSubtitle?(config: unknown): string | undefined;
-  hideShowMissingnessToggle?: boolean;
   hideTrendlines?: boolean;
 }
 
