@@ -95,6 +95,11 @@ function useAppState(analysisId: string | undefined, appName: string) {
   useEffect(() => {
     if (key == null) return;
     setLoading(true);
+    // We are returning the "cancel" function that is returned by
+    // `Task.prototype.run`. The "cancel" function has the effect of
+    // preventing the invocation of the callback passed to
+    // `Task.prototype.run`, if the Promise returned by the callback passed to
+    // `Task.fromPromise` has not yet been settled.
     return Task.fromPromise(() => analysisClient.getPreferences())
       .map((preferences) => preferences[key])
       .run((appState) => {
