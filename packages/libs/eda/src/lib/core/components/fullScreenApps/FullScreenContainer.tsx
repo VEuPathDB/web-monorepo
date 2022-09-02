@@ -1,13 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
+import { fullScreenAppPlugins } from '.';
+import { AnalysisState } from '../../hooks/analysis';
+import { useAnalysisClient } from '../../hooks/workspace';
+import { isSavedAnalysis } from '../../utils/analysis';
 
 interface Props {
-  children: React.ReactNode;
+  analysisState: AnalysisState;
+  appName: string;
   onClose: () => void;
 }
 export default function FullScreenContainer(props: Props) {
+  const plugin = fullScreenAppPlugins[props.appName];
   const [nodeRef, setNodeRef] = useState<HTMLDivElement>();
   useEffect(() => {
+    if (plugin == null) return;
     const div = document.createElement('div');
     document.body.appendChild(div);
     const currentStyle = document.body.style.overflow;
@@ -17,7 +25,15 @@ export default function FullScreenContainer(props: Props) {
       document.body.removeChild(div);
       document.body.style.overflow = currentStyle;
     };
-  }, []);
+  }, [plugin]);
+  const { loading, appState, updateAppState } = useAppState(
+    isSavedAnalysis(props.analysisState.analysis)
+      ? props.analysisState.analysis.analysisId
+      : undefined,
+    props.appName
+  );
+  if (plugin == null) return <div>Unknown plugin</div>;
+  // TODO Track if app state is being loaded and show a spinner if it is to prevent rendering with default app state at first
   return nodeRef
     ? createPortal(
         <div
@@ -54,10 +70,49 @@ export default function FullScreenContainer(props: Props) {
               width: '100%',
             }}
           >
-            {props.children}
+            {loading ? null : (
+              <plugin.fullScreenComponent
+                appState={appState}
+                persistAppState={updateAppState}
+                analysisState={props.analysisState}
+              />
+            )}
           </div>
         </div>,
         nodeRef
       )
     : null;
+}
+
+function useAppState(analysisId: string | undefined, appName: string) {
+  // This code is a little naive and lacks safeguards against
+  // race conditions, throttling requests, etc.
+  const analysisClient = useAnalysisClient();
+  const [appState, setAppState] = useState<unknown>();
+  const [loading, setLoading] = useState(false);
+  const key = analysisId && `fullScreenApp/${analysisId}/${appName}`;
+
+  useEffect(() => {
+    if (key == null) return;
+    setLoading(true);
+    return Task.fromPromise(() => analysisClient.getPreferences())
+      .map((preferences) => preferences[key])
+      .run((appState) => {
+        setAppState(appState);
+        setLoading(false);
+      });
+  }, [analysisClient, key]);
+
+  const updateAppState = useCallback(
+    (state: unknown) => {
+      setAppState(state);
+      if (key == null) return;
+      analysisClient.setPreferences({
+        [key]: state,
+      });
+    },
+    [analysisClient, key]
+  );
+
+  return { loading, appState, updateAppState };
 }

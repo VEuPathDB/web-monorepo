@@ -1,10 +1,12 @@
+import * as t from 'io-ts';
+import { useCallback, useMemo } from 'react';
+
 import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
 import { MouseMode } from '@veupathdb/components/lib/map/MouseTools';
 import { Viewport } from '@veupathdb/components/lib/map/Types';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { useCallback } from 'react';
-import { useMemo } from 'react';
-import { useState } from 'react';
+
+import { useVizConfig } from '../../hooks/visualizations';
 import {
   FullScreenAppPlugin,
   FullScreenComponentProps,
@@ -13,25 +15,65 @@ import { StudyMetadata } from '../../types/study';
 import { entityToGeoConfig } from '../../utils/geoVariables';
 import { leafletZoomLevelToGeohashLevel } from '../../utils/visualization';
 
-function FullScreenMap(props: FullScreenComponentProps) {
-  const [viewport, setViewport] = useState<Viewport>({
+const MapState = t.type({
+  viewport: t.type({
+    center: t.tuple([t.number, t.number]),
+    zoom: t.number,
+  }),
+  mouseMode: t.keyof({
+    default: null,
+    magnification: null,
+  }),
+});
+
+const defaultMapState: t.TypeOf<typeof MapState> = {
+  viewport: {
     center: [0, 0],
     zoom: 4,
-  });
+  },
+  mouseMode: 'default',
+};
+
+function FullScreenMap(props: FullScreenComponentProps) {
+  const [appState, setAppState] = useVizConfig(
+    props.appState,
+    MapState,
+    () => defaultMapState,
+    props.persistAppState
+  );
+  const { viewport, mouseMode } = appState;
+
+  // TODO Load from backend
   const markers = useMemo(() => [], []);
-  const [mouseMode, setMouseMode] = useState<MouseMode>('default');
+
+  // XXX What is this used for?
   const onBoundsChanged = useCallback(() => {}, []);
+
+  const onViewportChanged = useCallback(
+    (viewport: Viewport) => {
+      setAppState({ viewport });
+    },
+    [setAppState]
+  );
+
+  const onMouseModeChange = useCallback(
+    (mouseMode: MouseMode) => {
+      setAppState({ mouseMode });
+    },
+    [setAppState]
+  );
+
   return (
     <MapVEuMap
       height="100%"
       width="100%"
       viewport={viewport}
       onBoundsChanged={onBoundsChanged}
-      onViewportChanged={setViewport}
+      onViewportChanged={onViewportChanged}
       markers={markers}
       animation={null}
       mouseMode={mouseMode}
-      onMouseModeChange={setMouseMode}
+      onMouseModeChange={onMouseModeChange}
     />
   );
 }

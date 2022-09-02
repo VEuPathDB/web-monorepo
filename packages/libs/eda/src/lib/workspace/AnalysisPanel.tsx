@@ -255,7 +255,7 @@ export function AnalysisPanel({
               <div className="Entities">
                 {Object.entries(fullScreenAppPlugins).map(
                   ([key, plugin]) =>
-                    plugin.isCompatibleWithStudy(studyMetadata) && (
+                    plugin?.isCompatibleWithStudy(studyMetadata) && (
                       <Link key={key} to={`${routeBase}/fullscreen/${key}`}>
                         <plugin.triggerComponent />
                       </Link>
@@ -389,12 +389,12 @@ export function AnalysisPanel({
             )}
           />
           <Route
-            path={`${routeBase}/fullscreen/:pluginName`}
+            path={`${routeBase}/fullscreen/:appName`}
             render={(props) => {
               const plugin = (fullScreenAppPlugins as Record<
                 string,
                 FullScreenAppPlugin
-              >)[props.match.params.pluginName];
+              >)[props.match.params.appName];
               if (plugin == null) return <div>No full screen app found</div>;
               return (
                 <FullScreenContainer
@@ -403,13 +403,9 @@ export function AnalysisPanel({
                       ? history.goBack()
                       : history.replace(routeBase)
                   }
-                >
-                  <plugin.fullScreenComponent
-                    persistAppState={() => {}}
-                    appState={{}}
-                    analysisState={analysisState}
-                  />
-                </FullScreenContainer>
+                  appName={props.match.params.appName}
+                  analysisState={analysisState}
+                />
               );
             }}
           />
