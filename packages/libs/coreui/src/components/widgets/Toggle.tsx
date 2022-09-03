@@ -19,16 +19,16 @@ type ToggleColorStyleSpec = {
   borderColor: CSSProperties["color"];
 };
 
-type ToggleStateStyleSpec = {
+type ToggleValueStyleSpec = {
   off: ToggleColorStyleSpec;
   on: ToggleColorStyleSpec;
 };
 
 type ToggleStyleSpec = {
   container: React.CSSProperties;
-  default: ToggleStateStyleSpec;
-  hover: ToggleStateStyleSpec;
-  disabled: ToggleStateStyleSpec;
+  default: ToggleValueStyleSpec;
+  hover: ToggleValueStyleSpec;
+  disabled: ToggleValueStyleSpec;
 };
 
 type ToggleStyleSpecSubset = Subset<ToggleStyleSpec>;
@@ -76,7 +76,7 @@ export default function Toggle({
 
   const styleSpec: ToggleStyleSpec = useMemo(() => {
     const themeColor = theme && themeRole && theme.palette[themeRole];
-    const mainColor = themeColor?.hue ?? blue;
+    const mainHue = themeColor?.hue ?? blue;
     const mainLevel = themeColor?.level ?? 400;
     const labelColor = gray[600];
     const disabledColor = gray[300];
@@ -86,28 +86,28 @@ export default function Toggle({
       default: {
         off: {
           backgroundColor: "none",
-          knobColor: mainColor[mainLevel],
-          borderColor: mainColor[mainLevel],
+          knobColor: mainHue[mainLevel],
+          borderColor: mainHue[mainLevel],
           labelColor,
         },
         on: {
-          backgroundColor: mainColor[mainLevel],
+          backgroundColor: mainHue[mainLevel],
           knobColor: "white",
-          borderColor: mainColor[mainLevel],
+          borderColor: mainHue[mainLevel],
           labelColor,
         },
       },
       hover: {
         off: {
-          backgroundColor: mainColor[100],
-          knobColor: mainColor[mainLevel],
-          borderColor: mainColor[mainLevel],
+          backgroundColor: mainHue[100],
+          knobColor: mainHue[mainLevel],
+          borderColor: mainHue[mainLevel],
           labelColor,
         },
         on: {
-          backgroundColor: mainColor[Math.min(mainLevel + 200, 900)],
+          backgroundColor: mainHue[Math.min(mainLevel + 200, 900)],
           knobColor: "white",
-          borderColor: mainColor[Math.min(mainLevel + 200, 900)],
+          borderColor: mainHue[Math.min(mainLevel + 200, 900)],
           labelColor,
         },
       },
