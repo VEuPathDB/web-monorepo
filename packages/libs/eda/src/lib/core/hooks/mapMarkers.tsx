@@ -238,6 +238,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
       boundsZoomLevel,
       computation.descriptor.type,
       geoConfig,
+      requireOverlay,
     ])
   );
 
