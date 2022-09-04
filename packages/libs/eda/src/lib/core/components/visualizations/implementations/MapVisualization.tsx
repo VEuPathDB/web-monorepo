@@ -218,7 +218,7 @@ function MapViz(props: VisualizationProps<Options>) {
     basicMarkerError,
     overlayError,
   } = useMapMarkers({
-    requireOverlay: false,
+    requireOverlay: true,
     boundsZoomLevel,
     vizConfig,
     geoConfig,
