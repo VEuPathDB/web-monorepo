@@ -37,6 +37,9 @@ const numContinuousBins = 8;
 /**
  * Provides markers for use in the MapVEuMap component
  * Also provides associated data (stats, legend items), pending status and back end errors.
+ *
+ * The "overlay variable" is actually the "xAxisVariable" and the two terms are used
+ * interchangably.
  */
 
 type BasicMarkerData = {
@@ -56,6 +59,12 @@ type MapMarkersOverlayData = Record<
 >;
 
 export interface MapMarkersProps {
+  /**
+   * if requireOverlay is true, only return markers when an overlay variable (xAxisVariable)
+   * has been provided (as is behaviour desired for the map viz),
+   * otherwise, basic "count only" markers will be shown (full screen behaviour)
+   */
+  requireOverlay: boolean;
   boundsZoomLevel: BoundsViewport | undefined;
   vizConfig: MapConfig;
   geoConfig: GeoConfig | undefined;
@@ -88,6 +97,7 @@ interface MapMarkers {
 
 export function useMapMarkers(props: MapMarkersProps): MapMarkers {
   const {
+    requireOverlay,
     boundsZoomLevel,
     vizConfig,
     geoConfig,
@@ -148,7 +158,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
         longitudeVariable == null ||
         geoAggregateVariable == null ||
         outputEntity == null ||
-        vizConfig.xAxisVariable == null
+        (requireOverlay && vizConfig.xAxisVariable == null)
       )
         return undefined;
 
@@ -409,12 +419,10 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
    * and create markers.
    */
   const markers = useMemo(() => {
-    if (vocabulary == null) return undefined;
-
     return basicMarkerData.value?.markerData.map(
       ({ geoAggregateValue, entityCount, bounds, position }) => {
         const donutData =
-          overlayData?.[geoAggregateValue] != null
+          vocabulary != null && overlayData?.[geoAggregateValue] != null
             ? overlayData[geoAggregateValue].data
                 .map(({ label, value }) => ({
                   label,
@@ -436,30 +444,27 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
             : [];
 
         // now reorder the data, adding zeroes if necessary.
-        const reorderedData = vocabulary.map(
-          (
-            overlayLabel // overlay label can be 'female' or a bin label '(0,100]'
-          ) =>
-            donutData.find(({ label }) => label === overlayLabel) ?? {
-              label: overlayLabel,
-              value: 0,
-            }
-        );
-
-        // provide the 'plain white' donut data if all legend items unchecked
-        // or if there is no overlay data
-        const safeDonutData =
-          reorderedData.length > 0
-            ? reorderedData
-            : [
+        const reorderedData =
+          vocabulary != null
+            ? vocabulary.map(
+                (
+                  overlayLabel // overlay label can be 'female' or a bin label '(0,100]'
+                ) =>
+                  donutData.find(({ label }) => label === overlayLabel) ?? {
+                    label: overlayLabel,
+                    value: 0,
+                  }
+              )
+            : // however, if there is no overlay data
+              // provide a simple entity count marker in the palette's first colour
+              [
                 {
                   label: 'unknown',
                   value: entityCount,
-                  color: 'white',
+                  color: ColorPaletteDefault[0],
                 },
               ];
 
-        // TO DO: find out if MarkerProps.id is obsolete
         const MarkerComponent =
           vizConfig.markerType == null || vizConfig.markerType === 'pie'
             ? DonutMarker
@@ -486,7 +491,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
             key={geoAggregateValue}
             bounds={bounds}
             position={position}
-            data={safeDonutData}
+            data={reorderedData}
             duration={defaultAnimationDuration}
             markerLabel={formattedCount}
             {...(vizConfig.markerType !== 'pie'
