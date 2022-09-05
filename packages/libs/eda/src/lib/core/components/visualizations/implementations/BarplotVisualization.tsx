@@ -81,6 +81,7 @@ import {
   barplotDefaultDependentAxisMinPos,
 } from '../../../utils/axis-range-calculations';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
+import { LayoutOptions } from '../../layouts/types';
 
 // export
 export type BarplotDataWithStatistics = (
@@ -111,7 +112,9 @@ export const barplotVisualization = createVisualizationPlugin({
   createDefaultConfig: createDefaultConfig,
 });
 
-function FullscreenComponent(props: VisualizationProps) {
+interface Options extends LayoutOptions {}
+
+function FullscreenComponent(props: VisualizationProps<Options>) {
   return <BarplotViz {...props} />;
 }
 
@@ -146,8 +149,9 @@ export const BarplotConfig = t.intersection([
   }),
 ]);
 
-function BarplotViz(props: VisualizationProps) {
+function BarplotViz(props: VisualizationProps<Options>) {
   const {
+    options,
     computation,
     visualization,
     updateConfiguration,
@@ -536,7 +540,11 @@ function BarplotViz(props: VisualizationProps) {
           {...plotProps}
         />
       )}
+    </>
+  );
 
+  const controlsNode = (
+    <>
       {/* Plot mode */}
       <RadioButtonGroup
         label="Plot mode"
@@ -666,6 +674,8 @@ function BarplotViz(props: VisualizationProps) {
       .every((reqdVar) => !!(vizConfig as any)[reqdVar[0]]);
   }, [dataElementConstraints, vizConfig.xAxisVariable]);
 
+  const LayoutComponent = options?.layoutComponent ?? PlotLayout;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -716,9 +726,10 @@ function BarplotViz(props: VisualizationProps) {
 
       <PluginError error={data.error} outputSize={outputSize} />
       <OutputEntityTitle entity={entity} outputSize={outputSize} />
-      <PlotLayout
+      <LayoutComponent
         isFaceted={isFaceted(data.value)}
         plotNode={plotNode}
+        controlsNode={controlsNode}
         legendNode={showOverlayLegend ? legendNode : null}
         tableGroupNode={tableGroupNode}
         showRequiredInputsPrompt={!areRequiredInputsSelected}
