@@ -317,7 +317,7 @@ export interface LineplotRequestParams {
       xMax: string;
     };
     showMissingness?: 'TRUE' | 'FALSE';
-    valueSpec: 'mean' | 'median' | 'proportion';
+    valueSpec: 'mean' | 'median' | 'geometricMean' | 'proportion';
     errorBars: 'TRUE' | 'FALSE';
     yAxisNumeratorValues?: string[];
     yAxisDenominatorValues?: string[];
