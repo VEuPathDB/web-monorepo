@@ -10,6 +10,7 @@ import { blue } from "@material-ui/core/colors";
 import { gray } from "../../definitions/colors";
 import { useUITheme } from "../theming";
 import { merge, uniqueId } from "lodash";
+import { ParagraphStyleSpec } from "../typography/Paragraph";
 
 // Type definitions for working with styles.
 type ToggleColorStyleSpec = {
@@ -29,6 +30,7 @@ type ToggleStyleSpec = {
   default: ToggleValueStyleSpec;
   hover: ToggleValueStyleSpec;
   disabled: ToggleValueStyleSpec;
+  label?: ParagraphStyleSpec;
 };
 
 type ToggleStyleSpecSubset = Subset<ToggleStyleSpec>;
@@ -177,6 +179,7 @@ export default function Toggle({
           css={{
             marginRight: size === "medium" ? 10 : 5,
             color: currentStyles.labelColor,
+            ...styleOverrides?.label,
           }}
           id={labelId}
         >
@@ -239,6 +242,7 @@ export default function Toggle({
           css={{
             marginLeft: size === "medium" ? 10 : 5,
             color: currentStyles.labelColor,
+            ...styleOverrides?.label,
           }}
           id={labelId}
         >
