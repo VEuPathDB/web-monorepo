@@ -1,7 +1,16 @@
+import React, { useEffect, useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import LinePlot, { LinePlotProps } from '../../plots/LinePlot';
 import { FacetedData, LinePlotData } from '../../types/plots';
 import FacetedLinePlot from '../../plots/facetedPlots/FacetedLinePlot';
+import AxisRangeControl from '../../components/plotControls/AxisRangeControl';
+import {
+  NumberRange,
+  NumberOrDateRange,
+  NumberOrTimeDelta,
+  TimeDelta,
+} from '../../types/general';
+import Switch from '../../components/widgets/Switch';
 
 export default {
   title: 'Plots/LinePlot',
@@ -152,5 +161,71 @@ Faceted.args = {
       height: '100%',
       margin: 'auto',
     },
+  },
+};
+
+//DKDK testing log scale
+const dataSetLog = {
+  series: [
+    {
+      x: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      y: [33, 36, 35, 37, 35, 34, 35, 36, 33, 37, 35],
+      name: 'data',
+    },
+  ],
+};
+
+const TemplateWithSelectedRangeControls: Story<Omit<LinePlotProps, 'data'>> = (
+  args
+) => {
+  const [dependentAxisRange, setDependentAxisRange] = useState<
+    NumberOrDateRange | undefined
+  >({ min: 1, max: 80 });
+  const [dependentAxisLogScale, setDependentAxisLogScale] = useState<
+    boolean | undefined
+  >(false);
+
+  const handleDependentAxisRangeChange = async (
+    newRange?: NumberOrDateRange
+  ) => {
+    setDependentAxisRange(newRange);
+  };
+
+  const onDependentAxisLogScaleChange = async (value?: boolean) => {
+    setDependentAxisLogScale(value);
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <LinePlot
+        data={dataSetLog}
+        {...args}
+        dependentAxisRange={dependentAxisRange}
+        dependentAxisLogScale={dependentAxisLogScale}
+      />
+      <Switch
+        label="Log scale (will exclude values &le; 0):"
+        state={dependentAxisLogScale}
+        onStateChange={(newValue: boolean) => {
+          onDependentAxisLogScaleChange(newValue);
+        }}
+        containerStyles={{ marginLeft: '5em' }}
+      />
+      <div style={{ height: 25 }} />
+      <AxisRangeControl
+        label="Y-axis range control"
+        range={dependentAxisRange}
+        onRangeChange={handleDependentAxisRangeChange}
+        containerStyles={{ marginLeft: '5em' }}
+      />
+    </div>
+  );
+};
+
+export const LogScale = TemplateWithSelectedRangeControls.bind({});
+LogScale.args = {
+  containerStyles: {
+    height: '450px',
+    width: '750px',
   },
 };
