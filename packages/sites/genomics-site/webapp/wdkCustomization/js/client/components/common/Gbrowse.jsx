@@ -9,6 +9,14 @@ import newFeatureImage from '@veupathdb/wdk-client/lib/Core/Style/images/new-fea
 
 import './Gbrowse.scss';
 
+const JBrowseLinkContainerStyle = {
+  display: 'flex',
+  justifyContent: 'center',
+  flexWrap: 'wrap',
+  margin: '25px',
+  textAlign: 'center',
+};
+
 /**
  * Each entry below is used in two scenarios:
  *
@@ -117,19 +125,18 @@ export let contexts = [
 ];
 
 const JbrowseLink = ({ url }) =>
-    <div style={{ textAlign: 'center', margin: 25 }}>
+    <div style={JBrowseLinkContainerStyle}>
 <a href={url} className="eupathdb-BigButton" target="_blank">View in JBrowse genome browser</a>
 </div>
 
 const ApolloJbrowseLink = ({ url, urlApollo }) =>
-    <div style={{ textAlign: 'center', margin: 25 }}>
+    <div style={JBrowseLinkContainerStyle}>
 <a href={url} className="eupathdb-BigButton" target="_blank">View in JBrowse genome browser</a>
 <a href={urlApollo} className="eupathdb-BigButton" target="_blank">&emsp;&emsp;&emsp;&emsp;Annotate in Apollo&emsp;&emsp;&emsp;&emsp;</a>
 </div>
 
-
 const PbrowseJbrowseLink = ({ url }) =>
-    <div style={{ textAlign: 'center', margin: 25 }}>
+    <div style={JBrowseLinkContainerStyle}>
 <a href={url} className="eupathdb-BigButton">View in protein browser</a>
 </div>
 
