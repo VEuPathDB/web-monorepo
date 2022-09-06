@@ -14,6 +14,7 @@ import { DownloadClient } from '../../core/api/DownloadClient';
 // Components
 import MySubset from './MySubset';
 import CurrentRelease from './CurrentRelease';
+import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
 
 // Hooks
 import { useWdkStudyReleases } from '../../core/hooks/study';
@@ -25,6 +26,7 @@ import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { Action } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUiActions';
 import { getStudyRequestNeedsApproval } from '@veupathdb/study-data-access/lib/shared/studies';
+import { useLocalBackedState } from '@veupathdb/wdk-client/lib/Hooks/LocalBackedState';
 
 type DownloadsTabProps = {
   downloadClient: DownloadClient;
@@ -62,6 +64,43 @@ export default function DownloadTab({
     [datasetId, attemptAction]
   );
 
+  // Longitudinal studies on beta.microbiome are not formatted correctly (missing repeated measures) which affects the download files. This will be fixed for b60.
+  // For now, warn the user about improperly formatted download files.
+  const SHOULD_SHOW_DOWNLOAD_WARNING_KEY = `shouldShowDownloadWarning-${datasetId}`;
+  const [
+    shouldShowWarning,
+    setShouldShowWarning,
+  ] = useLocalBackedState<boolean>(
+    true,
+    SHOULD_SHOW_DOWNLOAD_WARNING_KEY,
+    (boolean) => String(boolean),
+    (string) => string !== 'false'
+  );
+  const studiesForDownloadWarning = [
+    'DS_b3b3ae9838', // BONUS
+    'DS_1102462e80', // Bangladesh
+    'DS_a2f8877e68', // DIABIMMUNE
+    'DS_5a4f8a1791', // DailyBaby
+    'DS_accd1b80f6', // ECAM
+    'DS_d20b9c4094', // Eco-CF
+    'DS_570856e10e', // HMP V1-V3
+    'DS_ca4404e155', // HMP V3-V5
+    'DS_72c94486c6', // MAL-ED 2yr
+    'DS_2e56313a65', // MAL-ED diarrhea
+    'DS_84fcb69f4e', // NICU NEC
+    'DS_d1b9f788dc', // Preterm Resistome I
+    'DS_b9dc726b20', // Preterm Resistome II
+  ];
+  const handleCloseWarning = () => {
+    setShouldShowWarning(false);
+  };
+  const downloadWarningMessage = [
+    'Download files for this dataset may be formatted improperly. Instead, please download files for this study from ',
+    <a href="https://microbiomedb.org">https://microbiomedb.org</a>,
+    '. We appreciate your patience as we transfer to the new system.',
+  ];
+  // End of this section of the temporary solution for funky download files
+
   const dataAccessDeclaration = useMemo(() => {
     if (
       !user ||
@@ -85,6 +124,7 @@ export default function DownloadTab({
         Click here to request access.
       </button>
     );
+
     return (
       <span
         style={{
@@ -93,6 +133,19 @@ export default function DownloadTab({
           fontSize: '1.4em',
         }}
       >
+        {/* The following is part of the temporary solution for funky mbio download files */}
+        {studiesForDownloadWarning.includes(datasetId) && shouldShowWarning && (
+          <Banner
+            banner={{
+              type: 'warning',
+              message: downloadWarningMessage,
+              pinned: false,
+              intense: false,
+            }}
+            onClose={handleCloseWarning}
+          ></Banner>
+        )}
+        {/* End temporary solution section */}
         <em>
           {getDataAccessDeclaration(
             studyAccess,
@@ -106,7 +159,14 @@ export default function DownloadTab({
         </em>
       </span>
     );
-  }, [user, permission, studyRecord, handleClick, datasetId]);
+  }, [
+    user,
+    permission,
+    studyRecord,
+    handleClick,
+    datasetId,
+    shouldShowWarning,
+  ]);
 
   /**
    * Ok, this is confusing, but there are two places where we need

@@ -117,6 +117,8 @@ import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 
+import useSnackbar from '@veupathdb/coreui/dist/components/notifications/useSnackbar';
+
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
 const SMOOTHEDMEANSUFFIX = `, ${SMOOTHEDMEANTEXT}`;
@@ -319,11 +321,17 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   // prettier-ignore
   // allow 2nd parameter of resetCheckedLegendItems for checking legend status
   const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof ScatterplotConfig, resetCheckedLegendItems?: boolean, resetAxisRanges?: boolean) => (newValue?: ValueType) => {
+    < ValueType,>(key: keyof ScatterplotConfig,
+      resetCheckedLegendItems?: boolean,
+      resetAxisRanges?: boolean,
+      resetAxisLogScale?: boolean,
+      resetValueSpecConfig?: boolean) => (newValue?: ValueType) => {
       const newPartialConfig = {
         [key]: newValue,
         ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
       	...(resetAxisRanges ? { independentAxisRange: undefined, dependentAxisRange: undefined } : {}),
+        ...(resetAxisLogScale ? { independentAxisLogScale: false, dependentAxisLogScale: false } : {}),
+        ...(resetValueSpecConfig ? { valueSpecConfig: 'Raw' } : {}),
       };
       updateVizConfig(newPartialConfig);
       if (resetAxisRanges) {
@@ -338,7 +346,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const onValueSpecChange = onChangeHandlerFactory<string>(
     'valueSpecConfig',
     true,
-    true
+    true,
+    true, // reset both axisLogScale to false
+    false
   );
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
     'showMissingness',
@@ -354,13 +364,17 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const onIndependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
     'independentAxisLogScale',
     true,
-    true
+    true,
+    false,
+    true // reset valueSpec to Raw
   );
 
   const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
     'dependentAxisLogScale',
     true,
-    true
+    true,
+    false,
+    true // reset valueSpec to Raw
   );
 
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
@@ -896,9 +910,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       plotOptions={['Raw', 'Smoothed mean with raw', 'Best fit line with raw']}
       // disabledList prop is used to disable radio options (grayed out)
       disabledList={
-        yAxisVariable?.type === 'date' ||
-        vizConfig.independentAxisLogScale ||
-        vizConfig.dependentAxisLogScale
+        yAxisVariable?.type === 'date'
           ? ['Smoothed mean with raw', 'Best fit line with raw']
           : []
       }
@@ -942,7 +954,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   const showOverlayLegend =
     (providedOverlayVariableDescriptor != null ||
-      vizConfig.overlayVariable != null) &&
+      vizConfig.overlayVariable != null ||
+      vizConfig.valueSpecConfig !== 'Raw') &&
     legendItems.length > 0;
   const legendNode = !data.pending && data.value != null && (
     <PlotLegend
@@ -1408,6 +1421,9 @@ function ScatterplotWithControls({
     yMinMaxDataRange?.max != null &&
     yMinMaxDataRange.max < 0;
 
+  // snackbar
+  const { enqueueSnackbar } = useSnackbar();
+
   return (
     <>
       {isFaceted(data) ? (
@@ -1465,7 +1481,15 @@ function ScatterplotWithControls({
           label="Plot mode"
           options={plotOptions}
           selectedOption={valueSpec}
-          onOptionSelected={onValueSpecChange}
+          onOptionSelected={(newValue: string) => {
+            onValueSpecChange(newValue);
+            if (
+              newValue !== 'Raw' &&
+              (vizConfig.independentAxisLogScale ||
+                vizConfig.dependentAxisLogScale)
+            )
+              enqueueSnackbar('Log scale is not available for this plot mode');
+          }}
           // disabledList prop is used to disable radio options (grayed out)
           disabledList={disabledList}
           orientation={'horizontal'}
@@ -1500,9 +1524,13 @@ function ScatterplotWithControls({
               onStateChange={(newValue: boolean) => {
                 setDismissedIndependentAllNegativeWarning(false);
                 onIndependentAxisLogScaleChange(newValue);
+                if (newValue && vizConfig.valueSpecConfig !== 'Raw')
+                  enqueueSnackbar(
+                    'Log scale is only available for Raw plot mode'
+                  );
               }}
               // disable log scale for date variable
-              disabled={independentValueType === 'date' || valueSpec != 'Raw'}
+              disabled={independentValueType === 'date'}
             />
           </div>
           {independentAllNegative && !dismissedIndependentAllNegativeWarning ? (
@@ -1593,9 +1621,13 @@ function ScatterplotWithControls({
               onStateChange={(newValue: boolean) => {
                 setDismissedDependentAllNegativeWarning(false);
                 onDependentAxisLogScaleChange(newValue);
+                if (newValue && vizConfig.valueSpecConfig !== 'Raw')
+                  enqueueSnackbar(
+                    'Log scale is only available for Raw plot mode'
+                  );
               }}
               // disable log scale for date variable
-              disabled={dependentValueType === 'date' || valueSpec != 'Raw'}
+              disabled={dependentValueType === 'date'}
             />
           </div>
           {dependentAllNegative && !dismissedDependentAllNegativeWarning ? (
