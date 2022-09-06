@@ -71,7 +71,7 @@ function isEnabledInPicker({ geoConfigs }: IsEnabledInPickerParams): boolean {
   return geoConfigs != null && geoConfigs.length > 0;
 }
 
-const defaultAnimation = {
+export const defaultAnimation = {
   method: 'geohash',
   animationFunction: geohashAnimation,
   duration: defaultAnimationDuration,
@@ -225,7 +225,7 @@ function MapViz(props: VisualizationProps<Options>) {
     outputEntity,
     studyId,
     filters,
-    computation,
+    computationType: computation.descriptor.type,
     xAxisVariable,
   });
 
