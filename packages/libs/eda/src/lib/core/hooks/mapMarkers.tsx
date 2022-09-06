@@ -17,7 +17,6 @@ import DataClient, {
 } from '../api/DataClient';
 import { Filter } from '../types/filter';
 import { useDataClient } from './workspace';
-import { Computation } from '../types/visualization';
 import { BinSpec, NumberRange } from '../types/general';
 import { useDefaultAxisRange } from './computeDefaultAxisRange';
 import { zip, sum, values, some } from 'lodash';
@@ -71,7 +70,7 @@ export interface MapMarkersProps {
   outputEntity: StudyEntity | undefined;
   studyId: string;
   filters: Filter[] | undefined;
-  computation: Computation;
+  computationType: string;
   xAxisVariable: Variable | undefined;
 }
 
@@ -104,7 +103,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
     outputEntity,
     studyId,
     filters,
-    computation,
+    computationType,
     xAxisVariable,
   } = props;
 
@@ -191,7 +190,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
 
       // now get the data
       const response = await dataClient.getMapMarkers(
-        computation.descriptor.type,
+        computationType,
         requestParams
       );
 
@@ -236,7 +235,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
       longitudeVariable,
       outputEntity,
       boundsZoomLevel,
-      computation.descriptor.type,
+      computationType,
       geoConfig,
       requireOverlay,
     ])
@@ -314,7 +313,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
 
       // send request
       return await dataClient.getMapMarkersOverlay(
-        computation.descriptor.type,
+        computationType,
         requestParams
       );
     }, [
@@ -324,7 +323,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
       vizConfig.xAxisVariable,
       proportionMode,
       boundsZoomLevel,
-      computation.descriptor.type,
+      computationType,
       geoAggregateVariable,
       outputEntity,
       filters,
