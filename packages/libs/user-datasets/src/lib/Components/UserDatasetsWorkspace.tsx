@@ -130,7 +130,7 @@ function UserDatasetsWorkspace(props: Props) {
         )}
         {helpTabContents != null && (
           <WdkRoute
-            requiresLogin
+            requiresLogin={false}
             exact
             path={`${baseUrl}/help`}
             component={() => <>{helpTabContents}</>}
