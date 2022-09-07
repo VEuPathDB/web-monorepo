@@ -182,7 +182,6 @@ export default function CheckboxList({
                   value={item.value}
                   checked={value.includes(item.value)}
                   onChange={() => onChangeHandler(item.value)}
-                  onKeyDown={(e) => e.key === 'Enter' ? onChangeHandler(item.value) : null}
                 />
                 {' '}{item.display}
               </label>

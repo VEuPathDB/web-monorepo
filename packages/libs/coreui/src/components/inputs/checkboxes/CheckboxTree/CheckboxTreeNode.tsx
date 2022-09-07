@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from 'react';
+import React from 'react';
 import { isLeaf } from '../../SelectTree/Utils';
 import IndeterminateCheckbox, { IndeterminateCheckboxProps } from '../IndeterminateCheckbox';
 import { ArrowRight, ArrowDropDown } from '@material-ui/icons';
@@ -54,7 +54,6 @@ function TreeRadio<T>({
             value={value}
             checked={checked}
             onChange={handleClick}
-            onKeyDown={(e) => e.key === 'Enter' ? handleClick() : null}
         />
     )
 }
