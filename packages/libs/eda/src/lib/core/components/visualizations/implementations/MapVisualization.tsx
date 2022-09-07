@@ -90,7 +90,7 @@ const MapConfig = t.intersection([
   }),
   t.partial({
     geoEntityId: t.string,
-    outputEntityId: t.string,
+    outputEntityId: t.string, // UNUSED/DEPRECATED
     xAxisVariable: VariableDescriptor,
     checkedLegendItems: t.array(t.string),
     markerType: t.keyof({
@@ -179,34 +179,6 @@ function MapViz(props: VisualizationProps<Options>) {
     );
   }, [vizConfig.geoEntityId, geoConfigs]);
 
-  const findEntityAndVariable = useFindEntityAndVariable();
-  const [outputEntity, xAxisVariable] = useMemo(() => {
-    const geoEntity =
-      vizConfig.geoEntityId !== null
-        ? entities.find((entity) => entity.id === vizConfig.geoEntityId)
-        : undefined;
-
-    const outputEntityId =
-      vizConfig.xAxisVariable?.entityId ??
-      vizConfig.outputEntityId ??
-      vizConfig.geoEntityId;
-    const outputEntity =
-      outputEntityId !== null
-        ? entities.find((entity) => entity.id === outputEntityId)
-        : undefined;
-
-    const { variable: xAxisVariable } =
-      findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
-
-    return [outputEntity ?? geoEntity, xAxisVariable];
-  }, [
-    entities,
-    vizConfig.outputEntityId,
-    vizConfig.geoEntityId,
-    vizConfig.xAxisVariable,
-    findEntityAndVariable,
-  ]);
-
   const {
     markers,
     totalEntityCount,
@@ -217,16 +189,19 @@ function MapViz(props: VisualizationProps<Options>) {
     pending,
     basicMarkerError,
     overlayError,
+    outputEntity,
+    xAxisVariable,
   } = useMapMarkers({
     requireOverlay: true,
     boundsZoomLevel,
-    vizConfig,
     geoConfig,
-    outputEntity,
     studyId,
     filters,
     computationType: computation.descriptor.type,
-    xAxisVariable,
+    xAxisVariable: vizConfig.xAxisVariable,
+    markerType: vizConfig.markerType,
+    dependentAxisLogScale: vizConfig.dependentAxisLogScale,
+    checkedLegendItems: vizConfig.checkedLegendItems,
   });
 
   /**

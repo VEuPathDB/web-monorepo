@@ -86,33 +86,17 @@ function FullScreenMap(props: FullScreenComponentProps) {
   const geoConfig = useGeoConfig(studyEntities)[0];
   if (geoConfig == null)
     throw new Error('Something is wrong with the geo config');
-  const findEntityAndVariable = useFindEntityAndVariable();
-  const xAxisVariableAndEntity = findEntityAndVariable(
-    appState.overlayVariable
-  );
 
   const { markers = [], pending } = useMapMarkers({
     requireOverlay: false,
     boundsZoomLevel,
-    vizConfig: {
-      mapCenterAndZoom: {
-        latitude: appState.viewport.center[0],
-        longitude: appState.viewport.center[1],
-        zoomLevel: appState.viewport.zoom,
-      },
-      baseLayer: 'OSM',
-      geoEntityId: geoConfig.entity.id,
-      outputEntityId: xAxisVariableAndEntity?.entity.id,
-      xAxisVariable: appState.overlayVariable,
-      mouseMode: appState.mouseMode,
-      markerType: appState.overlayVariable && appState.markerType,
-    },
     geoConfig: geoConfig,
-    outputEntity: xAxisVariableAndEntity?.entity ?? geoConfig.entity,
     studyId: studyMetadata.id,
     filters: props.analysisState.analysis?.descriptor.subset.descriptor,
-    xAxisVariable: xAxisVariableAndEntity?.variable,
+    xAxisVariable: appState.overlayVariable,
     computationType: 'pass',
+    markerType: appState.markerType,
+    //TO DO: checkedLegendItems and maybe dependentAxisLogScale
   });
 
   const selectedVariables = {

@@ -16,7 +16,7 @@ import DataClient, {
   MapMarkersRequestParams,
 } from '../api/DataClient';
 import { Filter } from '../types/filter';
-import { useDataClient } from './workspace';
+import { useDataClient, useFindEntityAndVariable } from './workspace';
 import { BinSpec, NumberRange } from '../types/general';
 import { useDefaultAxisRange } from './computeDefaultAxisRange';
 import { zip, sum, values, some } from 'lodash';
@@ -29,6 +29,7 @@ import ChartMarker from '@veupathdb/components/lib/map/ChartMarker';
 import { kFormatter, mFormatter } from '../utils/big-number-formatters';
 import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
 import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import { VariableDescriptor } from '../types/variable';
 
 // TO DO: move to configuration somewhere?
 const numContinuousBins = 8;
@@ -65,19 +66,26 @@ export interface MapMarkersProps {
    */
   requireOverlay: boolean;
   boundsZoomLevel: BoundsViewport | undefined;
-  vizConfig: MapConfig;
+  //vizConfig: MapConfig;
   geoConfig: GeoConfig | undefined;
-  outputEntity: StudyEntity | undefined;
   studyId: string;
   filters: Filter[] | undefined;
   computationType: string;
-  xAxisVariable: Variable | undefined;
+  xAxisVariable: VariableDescriptor | undefined;
+  markerType: MapConfig['markerType'];
+  dependentAxisLogScale?: boolean;
+  /** checked legend items - or undefined if not known */
+  checkedLegendItems?: string[];
 }
 
 // what this hook returns
 interface MapMarkers {
   /** the markers */
   markers: ReactElement<BoundsDriftMarkerProps>[] | undefined;
+  /** what the output entity is */
+  outputEntity: StudyEntity | undefined;
+  /** the full xAxisVariable object */
+  xAxisVariable: Variable | undefined;
   /** various stats for birds eye etc */
   totalEntityCount: number | undefined;
   completeCasesAllVars: number | undefined;
@@ -98,52 +106,63 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
   const {
     requireOverlay,
     boundsZoomLevel,
-    vizConfig,
     geoConfig,
-    outputEntity,
     studyId,
     filters,
     computationType,
     xAxisVariable,
+    markerType,
+    dependentAxisLogScale = false,
+    checkedLegendItems = undefined,
   } = props;
 
   const dataClient: DataClient = useDataClient();
+
+  const findEntityAndVariable = useFindEntityAndVariable();
 
   // prepare some info that the map-markers and overlay requests both need
   const {
     latitudeVariable,
     longitudeVariable,
     geoAggregateVariable,
+    outputEntity,
+    xAxisVariableAndEntity,
   } = useMemo(() => {
     if (
       boundsZoomLevel == null ||
       geoConfig == null ||
-      vizConfig.geoEntityId == null
+      geoConfig.entity.id == null
     )
       return {};
 
     const latitudeVariable = {
-      entityId: vizConfig.geoEntityId,
+      entityId: geoConfig.entity.id,
       variableId: geoConfig.latitudeVariableId,
     };
     const longitudeVariable = {
-      entityId: vizConfig.geoEntityId,
+      entityId: geoConfig.entity.id,
       variableId: geoConfig.longitudeVariableId,
     };
     const geoAggregateVariable = {
-      entityId: vizConfig.geoEntityId,
+      entityId: geoConfig.entity.id,
       variableId:
         geoConfig.aggregationVariableIds[
           geoConfig.zoomLevelToAggregationLevel(boundsZoomLevel.zoomLevel) - 1
         ],
     };
 
+    const xAxisVariableAndEntity = findEntityAndVariable(xAxisVariable);
+    const outputEntity = xAxisVariableAndEntity?.entity ?? geoConfig.entity;
+
     return {
       latitudeVariable,
       longitudeVariable,
       geoAggregateVariable,
+      outputEntity,
+      xAxisVariableAndEntity,
+      findEntityAndVariable,
     };
-  }, [boundsZoomLevel, vizConfig.geoEntityId, geoConfig]);
+  }, [boundsZoomLevel, geoConfig, xAxisVariable]);
 
   // now do the first request
   const basicMarkerData = usePromise<BasicMarkerData | undefined>(
@@ -151,13 +170,12 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
       // check all required vizConfigs are provided
       if (
         boundsZoomLevel == null ||
-        vizConfig.geoEntityId == null ||
         geoConfig == null ||
         latitudeVariable == null ||
         longitudeVariable == null ||
         geoAggregateVariable == null ||
         outputEntity == null ||
-        (requireOverlay && vizConfig.xAxisVariable == null)
+        (requireOverlay && xAxisVariable == null)
       )
         return undefined;
 
@@ -228,8 +246,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
       // we don't want to allow vizConfig.mapCenterAndZoom to trigger an update,
       // because boundsZoomLevel does the same thing, but they can trigger two separate updates
       // (baseLayer doesn't matter either) - so we cherry pick properties of vizConfig
-      vizConfig.geoEntityId,
-      vizConfig.xAxisVariable,
+      xAxisVariable,
       geoAggregateVariable,
       latitudeVariable,
       longitudeVariable,
@@ -247,15 +264,17 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
    * Now get the overlay data
    */
 
-  const defaultOverlayRange = useDefaultAxisRange(xAxisVariable);
-  const proportionMode = vizConfig.markerType === 'proportion';
+  const defaultOverlayRange = useDefaultAxisRange(
+    xAxisVariableAndEntity?.variable
+  );
+  const proportionMode = markerType === 'proportion';
 
   const overlayResponse = usePromise<MapMarkersOverlayResponse | undefined>(
     useCallback(async () => {
       // check all required vizConfigs are provided
       if (
         boundsZoomLevel == null ||
-        vizConfig.xAxisVariable == null ||
+        xAxisVariable == null ||
         geoAggregateVariable == null ||
         outputEntity == null ||
         latitudeVariable == undefined ||
@@ -291,7 +310,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
         filters: filters || [],
         config: {
           outputEntityId: outputEntity.id,
-          xAxisVariable: vizConfig.xAxisVariable,
+          xAxisVariable: xAxisVariable,
           latitudeVariable: latitudeVariable,
           longitudeVariable: longitudeVariable,
           geoAggregateVariable: geoAggregateVariable,
@@ -320,7 +339,6 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
       studyId,
       dataClient,
       xAxisVariable,
-      vizConfig.xAxisVariable,
       proportionMode,
       boundsZoomLevel,
       computationType,
@@ -333,11 +351,12 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
   // If it's a string variable and a small vocabulary, use it as-is from the study metadata.
   // This ensures that for low cardinality categoricals, the colours are always the same.
   // Otherwise use the overlayValues from the back end (which are either bins or a Top7+Other)
+  const xAxisVariableType = xAxisVariableAndEntity?.variable.type;
   const vocabulary =
-    xAxisVariable?.type === 'string' &&
-    xAxisVariable?.vocabulary != null &&
-    xAxisVariable.vocabulary.length <= 8
-      ? xAxisVariable.vocabulary
+    xAxisVariableType === 'string' &&
+    xAxisVariableAndEntity?.variable.vocabulary != null &&
+    xAxisVariableAndEntity?.variable.vocabulary.length <= 8
+      ? xAxisVariableAndEntity?.variable.vocabulary
       : overlayResponse.value?.mapMarkers.config.overlayValues;
 
   const completeCasesAllVars =
@@ -411,7 +430,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
     0,
     valueMinPos,
     valueMax,
-    vizConfig.dependentAxisLogScale
+    dependentAxisLogScale
   ) as NumberRange;
 
   /**
@@ -428,7 +447,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
                   label,
                   value,
                   color:
-                    xAxisVariable?.type === 'string'
+                    xAxisVariableType === 'string'
                       ? ColorPaletteDefault[vocabulary.indexOf(label!)]
                       : gradientSequentialColorscaleMap(
                           vocabulary.indexOf(label!) / (vocabulary.length - 1)
@@ -438,8 +457,8 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
                 // regular PlotlyPlot components, so we do the filtering here
                 .filter(
                   ({ label }) =>
-                    vizConfig.checkedLegendItems == null ||
-                    vizConfig.checkedLegendItems.indexOf(label) > -1
+                    checkedLegendItems == null ||
+                    checkedLegendItems.indexOf(label) > -1
                 )
             : [];
 
@@ -466,13 +485,13 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
               ];
 
         const MarkerComponent =
-          vizConfig.markerType == null || vizConfig.markerType === 'pie'
+          markerType == null || markerType === 'pie'
             ? DonutMarker
             : ChartMarker;
 
         const count =
           overlayData != null
-            ? vizConfig.markerType == null || vizConfig.markerType === 'pie'
+            ? markerType == null || markerType === 'pie'
               ? // pies always show sum of legend checked items (donutData is already filtered on checkboxes)
                 donutData.reduce((sum, item) => (sum = sum + item.value), 0)
               : // the bar/histogram charts always show the constant entity count
@@ -494,10 +513,10 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
             data={reorderedData}
             duration={defaultAnimationDuration}
             markerLabel={formattedCount}
-            {...(vizConfig.markerType !== 'pie'
+            {...(markerType !== 'pie'
               ? {
                   dependentAxisRange: defaultDependentAxisRange,
-                  dependentAxisLogScale: vizConfig.dependentAxisLogScale,
+                  dependentAxisLogScale: dependentAxisLogScale,
                 }
               : {})}
           />
@@ -508,12 +527,11 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
     basicMarkerData.value,
     vocabulary,
     overlayData,
-    vizConfig.checkedLegendItems,
-    vizConfig.markerType,
+    checkedLegendItems,
+    markerType,
     xAxisVariable,
     outputEntity,
-    // add vizConfig.dependentAxisLogScale to reflect its state change
-    vizConfig.dependentAxisLogScale,
+    dependentAxisLogScale,
   ]);
 
   /**
@@ -527,7 +545,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
       label,
       marker: 'square',
       markerColor:
-        xAxisVariable?.type === 'string'
+        xAxisVariableType === 'string'
           ? ColorPaletteDefault[vocabulary.indexOf(label)]
           : gradientSequentialColorscaleMap(
               vocabulary.indexOf(label) / (vocabulary.length - 1)
@@ -549,6 +567,8 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
 
   return {
     markers,
+    xAxisVariable: xAxisVariableAndEntity?.variable,
+    outputEntity,
     totalEntityCount,
     completeCasesAllVars,
     completeCases,
