@@ -16,6 +16,7 @@ export type StyleProps<P> = Pick<P, keyof P & `${string}Styles`>;
 export interface LayoutOptions {
   layoutComponent?: (props: LayoutProps) => JSX.Element;
   hideShowMissingnessToggle?: boolean;
+  hideFacetInputs?: boolean;
 }
 
 export interface TitleOptions {

@@ -19,7 +19,7 @@ import { VariableDescriptor } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 
-import { InputVariables } from '../InputVariables';
+import { InputSpec, InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import {
   ComputedVariableDetails,
@@ -79,6 +79,7 @@ import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { boxplotDefaultDependentAxisMinMax } from '../../../utils/axis-range-calculations';
 import { LayoutOptions, TitleOptions } from '../../layouts/types';
+import { OverlayOptions, XAxisOptions } from '../options/types';
 
 type BoxplotData = { series: BoxplotSeries };
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
@@ -107,8 +108,11 @@ const modalPlotContainerStyles = {
   margin: 'auto',
 };
 
-interface Options extends LayoutOptions, TitleOptions {
-  getXAxisVariable?: (computeConfig: unknown) => VariableDescriptor | undefined;
+interface Options
+  extends LayoutOptions,
+    TitleOptions,
+    OverlayOptions,
+    XAxisOptions {
   getComputedYAxisDetails?: (
     computeConfig: unknown
   ) => ComputedVariableDetails | undefined;
@@ -208,6 +212,9 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   const computedYAxisDetails = options?.getComputedYAxisDetails?.(
     computation.descriptor.configuration
   );
+  const providedOverlayVariable = options?.getOverlayVariable?.(
+    computation.descriptor.configuration
+  );
 
   const {
     xAxisVariable,
@@ -222,7 +229,9 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     const { variable: yAxisVariable } =
       findEntityAndVariable(vizConfig.yAxisVariable) ?? {};
     const { variable: overlayVariable, entity: overlayEntity } =
-      findEntityAndVariable(vizConfig.overlayVariable) ?? {};
+      findEntityAndVariable(
+        providedOverlayVariable ?? vizConfig.overlayVariable
+      ) ?? {};
     const { variable: facetVariable, entity: facetEntity } =
       findEntityAndVariable(vizConfig.facetVariable) ?? {};
     return {
@@ -239,6 +248,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     vizConfig.yAxisVariable,
     vizConfig.overlayVariable,
     vizConfig.facetVariable,
+    providedOverlayVariable,
   ]);
 
   // prettier-ignore
@@ -315,7 +325,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
           mean: 'TRUE',
           xAxisVariable: vizConfig.xAxisVariable,
           yAxisVariable: vizConfig.yAxisVariable,
-          overlayVariable: vizConfig.overlayVariable,
+          overlayVariable: providedOverlayVariable ?? vizConfig.overlayVariable,
           facetVariable: vizConfig.facetVariable
             ? [vizConfig.facetVariable]
             : [],
@@ -489,6 +499,8 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       computedYAxisDetails?.placeholderDisplayName
     : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis';
 
+  const overlayLabel = variableDisplayWithUnit(overlayVariable);
+
   const plotNode = (
     <Plot
       // data.value
@@ -508,7 +520,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       interactive={!isFaceted(data.value) ? true : false}
       showSpinner={data.pending || filteredCounts.pending}
       showRawData={true}
-      legendTitle={variableDisplayWithUnit(overlayVariable)}
+      legendTitle={overlayLabel}
       // for custom legend passing checked state in the  checkbox to PlotlyPlot
       checkedLegendItems={checkedLegendItems}
       // axis range control
@@ -668,12 +680,21 @@ function BoxplotViz(props: VisualizationProps<Options>) {
               name: 'overlayVariable',
               label: 'Overlay',
               role: 'stratification',
+              readonlyValue:
+                options?.getOverlayVariable != null && providedOverlayVariable
+                  ? overlayLabel
+                  : 'none',
+              // TO DO: verbiage for 'none'
             },
-            {
-              name: 'facetVariable',
-              label: 'Facet',
-              role: 'stratification',
-            },
+            ...(options?.hideFacetInputs
+              ? []
+              : [
+                  {
+                    name: 'facetVariable',
+                    label: 'Facet',
+                    role: 'stratification',
+                  } as InputSpec, // compiler flummoxed by ...()?
+                ]),
           ]}
           entities={entities}
           selectedVariables={{
