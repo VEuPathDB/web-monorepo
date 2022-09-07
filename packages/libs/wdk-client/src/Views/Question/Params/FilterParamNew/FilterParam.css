@@ -103,6 +103,7 @@
 .filter-param .chart {
   height: 200px;
   margin-left: 2em;
+  width: 100%;
 }
 .filter-param .chart-title {
   font-weight: 500;
@@ -141,6 +142,7 @@
   display: flex;
   align-items: stretch;
   flex-wrap: wrap;
+  overflow-x: auto;
 }
 .filter-param .chart-controls .chart-controlsContent em {
   color: #444444;
