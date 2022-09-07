@@ -23,7 +23,7 @@ import { NumberRange } from '../types/general';
 // import truncation util functions
 import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations';
 import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
-import { logScaleDtick } from '../utils/logscale-dtick';
+import { tickSettings } from '../utils/tick-settings';
 
 // in this example, the main variable is 'country'
 export interface BarplotProps
@@ -203,7 +203,6 @@ const Barplot = makePlotlyPlotComponent(
 
     const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
       automargin: true,
-      tickformat: dependentAxisLogScale ? ',.1r' : undefined, // comma-separated thousands, rounded to 1 significant digit
       hoverformat: dependentAxisLogScale
         ? dataLooksFractional
           ? ',.4f'
@@ -225,10 +224,12 @@ const Barplot = makePlotlyPlotComponent(
               : val
           )
         : [0, 10],
-      dtick: dependentAxisLogScale
-        ? logScaleDtick(extendedDependentAxisRange)
-        : undefined,
       showticklabels: showDependentAxisTickLabel,
+      ...tickSettings(
+        dependentAxisLogScale,
+        extendedDependentAxisRange,
+        'number'
+      ),
     };
 
     const layout: Partial<Layout> = {
