@@ -5,43 +5,38 @@ import { css } from '@emotion/react';
 import { uniqueId } from "lodash";
   
 export interface SingleSelectProps {
-    /** Used for ARIA considerations */
-    name: string;
     items: Item[];
     value: string;
-    onChange: (value: string) => void;
-    /** A button's content if/when no values are currently selected */
-    defaultButtonDisplayContent: ReactNode;
+    onSelect: (value: string) => void;
+    buttonDisplayContent: ReactNode;
 }
 
 export default function SingleSelect({
-    name,
     items,
     value,
-    onChange,
-    defaultButtonDisplayContent,
+    onSelect,
+    buttonDisplayContent,
 }: SingleSelectProps) {
-    const [ selected, setSelected ] = useState<SingleSelectProps['value']>(value);
-    const [ buttonDisplayContent, setButtonDisplayContent ] = useState<ReactNode>(value.length ? value : defaultButtonDisplayContent);
-    const [ key, setKey ] = useState('');
     const [ isPopoverOpen, setIsPopoverOpen ] = useState<boolean>(false);
-    const [ focusedElement, setFocusedElement ] = useState(0);
+    const [ focusedElement, setFocusedElement ] = useState(
+        items.findIndex(item => value === item.value) !== -1 ? items.findIndex(item => value === item.value) : 0
+    );
+    const [ key, setKey ] = useState<string>('');
 
-    const onSelect = (value: string) => {
-        onChange(selected);
-        setSelected(value);
-        /** Creates a new key which will close the popover menu */
+    const handleSelection = (newValue: string) => {
+        onSelect(newValue);
         setKey(uniqueId());
     }
-    
-    useEffect(() => {
-        setButtonDisplayContent(selected.length ? selected : defaultButtonDisplayContent);
-        setFocusedElement(items.findIndex(item => selected === item.value) !== -1 ? items.findIndex(item => selected === item.value) : 0)
-    }, [selected, isPopoverOpen])
 
-    const onKeyDown = (key: string, value: string) => {
+    useEffect(() => {
+        setFocusedElement(
+            items.findIndex(item => value === item.value) !== -1 ? items.findIndex(item => value === item.value) : 0
+            )
+    }, [value])
+
+    const onKeyDown = (key: string, newValue: string) => {
         if (key === 'Enter') {
-            onSelect(value);
+            handleSelection(newValue)
         } else if (key === 'ArrowUp') {
             focusedElement !== 0 ? setFocusedElement(prev => prev - 1) : null;
         } else if (key === 'ArrowDown') {
@@ -67,14 +62,14 @@ export default function SingleSelect({
             >
                 {items.map((item, index) => (
                     <Option 
-                        key={item.value} 
+                        key={item.value}
                         item={item} 
-                        onSelect={onSelect} 
+                        onSelect={handleSelection} 
                         onKeyDown={onKeyDown} 
                         shouldFocus={
                             index === focusedElement
                         }
-                        isSelected={selected === item.value}
+                        isSelected={value === item.value}
                     />
                 ))}
             </ul>
