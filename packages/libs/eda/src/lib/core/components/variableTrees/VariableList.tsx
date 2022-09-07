@@ -388,8 +388,8 @@ export default function VariableList({
             disabled={starredVariableToggleDisabled}
           >
             <Toggle
-              state={showOnlyStarredVariables}
-              onToggle={() => {}}
+              value={showOnlyStarredVariables}
+              onChange={() => {}}
               disabled={starredVariableToggleDisabled}
               size="small"
               themeRole="primary"
@@ -519,8 +519,8 @@ export default function VariableList({
             <Toggle
               label="Only show compatible variables"
               labelPosition="right"
-              state={showOnlyCompatibleVariables}
-              onToggle={() => {}}
+              value={showOnlyCompatibleVariables}
+              onChange={() => {}}
               size="small"
               themeRole="primary"
             />

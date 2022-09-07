@@ -50,6 +50,7 @@ import {
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
 import ShareFromAnalysesList from './sharing/ShareFromAnalysesList';
 import { Checkbox, Toggle, colors } from '@veupathdb/coreui';
+import { red } from '@veupathdb/coreui/dist/definitions/colors';
 
 interface AnalysisAndDataset {
   analysis: AnalysisSummary & {
@@ -338,11 +339,15 @@ export function AllAnalyses(props: Props) {
             <Toggle
               label="Sort pinned to top"
               labelPosition="right"
-              state={sortPinned}
-              onToggle={setSortPinned}
+              value={sortPinned}
+              onChange={setSortPinned}
               disabled={pinnedAnalyses.length === 0}
-              styleOverrides={{ container: { marginLeft: '1em' } }}
-              themeRole="primary"
+              styleOverrides={{
+                container: { marginLeft: '1em' },
+                mainColor: { hue: red, level: 500 },
+                label: { color: 'red' },
+              }}
+              // themeRole="primary"
             />
           ),
         },
