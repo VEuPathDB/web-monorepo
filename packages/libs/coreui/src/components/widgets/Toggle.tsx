@@ -1,7 +1,7 @@
 import { CSSProperties } from "react";
 import { Subset } from "../../definitions/types";
 
-import { ThemeRole } from "../theming/types";
+import { ColorDescriptor, ThemeRole } from "../theming/types";
 import { useMemo, useState } from "react";
 
 // Definitions
@@ -30,7 +30,8 @@ type ToggleStyleSpec = {
   default: ToggleValueStyleSpec;
   hover: ToggleValueStyleSpec;
   disabled: ToggleValueStyleSpec;
-  label?: ParagraphStyleSpec;
+  label?: Partial<ParagraphStyleSpec>;
+  mainColor?: ColorDescriptor;
 };
 
 type ToggleStyleSpecSubset = Subset<ToggleStyleSpec>;
@@ -77,9 +78,13 @@ export default function Toggle({
   const [hoverState, setHoverState] = useState<"default" | "hover">("default");
 
   const styleSpec: ToggleStyleSpec = useMemo(() => {
-    const themeColor = theme && themeRole && theme.palette[themeRole];
-    const mainHue = themeColor?.hue ?? blue;
-    const mainLevel = themeColor?.level ?? 400;
+    const mainColor =
+      styleOverrides?.mainColor ??
+      (theme && themeRole
+        ? theme.palette[themeRole]
+        : { hue: blue, level: 400 });
+    const mainHue = mainColor.hue;
+    const mainLevel = mainColor.level;
     const labelColor = gray[600];
     const disabledColor = gray[300];
 
