@@ -9,7 +9,9 @@ import ControlsHeader from '../typography/ControlsHeader';
 import ButtonGroup from '../widgets/ButtonGroup';
 import Notification from '../widgets/Notification';
 import OpacitySlider from '../widgets/OpacitySlider';
-import Switch from '../widgets/Switch';
+import { Toggle } from '@veupathdb/coreui';
+import { ColorDescriptor } from '@veupathdb/coreui/dist/components/theming/types';
+import { blue } from '@material-ui/core/colors';
 
 export type PieControlsProps = {
   /** Label for control panel. Optional. */
@@ -35,9 +37,8 @@ export type PieControlsProps = {
   /** Function to invoke when the selected bin unit changes. */
   onSelectedUnitChange?: (unit: string) => void;
   containerStyles?: React.CSSProperties;
-  /** Color to use as an accent in the control panel. Will accept any
-   * valid CSS color definition. Defaults to LIGHT_BLUE */
-  accentColor?: string;
+  /** Color to use as an accent in the control panel. */
+  accentColor?: ColorDescriptor;
   /** Attributes and methdods for error management. */
   errorManagement: ErrorManagement;
 };
@@ -55,9 +56,11 @@ export default function PieControls({
   selectedUnit,
   onSelectedUnitChange,
   containerStyles = {},
-  accentColor = LIGHT_BLUE,
+  accentColor = { hue: blue, level: 400 },
   errorManagement,
 }: PieControlsProps) {
+  const accentColorStr = accentColor.hue[accentColor.level];
+
   const errorStacks = useMemo(() => {
     return errorManagement.errors.reduce<
       Array<{ error: Error; occurences: number }>
@@ -113,27 +116,27 @@ export default function PieControls({
           <OpacitySlider
             value={opacity}
             onValueChange={onOpacityChange}
-            color={accentColor}
+            color={accentColorStr}
             containerStyles={{
               minWidth: 250,
               paddingRight: 25,
               paddingBottom: 10,
             }}
           />
-          <Switch
+          <Toggle
             label="Legend"
-            color={accentColor}
-            state={displayLegend}
-            onStateChange={toggleDisplayLegend}
-            containerStyles={{ paddingRight: 25, paddingBottom: 10 }}
+            value={displayLegend}
+            onChange={toggleDisplayLegend}
+            styleOverrides={{
+              container: { paddingRight: 25, paddingBottom: 10 },
+              mainColor: accentColor,
+            }}
           />
-          <Switch
+          <Toggle
             label="Plot.ly Controls"
-            color={accentColor}
-            state={displayLibraryControls}
-            onStateChange={(event: any) =>
-              toggleLibraryControls(event.target.checked)
-            }
+            // color={accentColor}
+            value={displayLibraryControls}
+            onChange={toggleLibraryControls}
           />
         </div>
       </div>
@@ -143,7 +146,7 @@ export default function PieControls({
           title="Error"
           key={index}
           text={error.message}
-          color={accentColor}
+          color={accentColorStr}
           occurences={occurences}
           containerStyles={{ marginTop: 10 }}
           onAcknowledgement={() => errorManagement.removeError(error)}
