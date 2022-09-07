@@ -30,14 +30,14 @@ export const plugin: ComputationPlugin = {
     // densityplot: scatterplotVisualization,
     barplot: barplotVisualization,
     boxplot: boxplotVisualization,
-    //     or...
+    // or...
     //    boxplot: boxplotVisualization.withOptions({
     //      hideFacetInputs: true,
     //      getOverlayVariable(_) {
-    //	return {
-    //	  "entityId": "PCO_0000024",
-    //	  "variableId": "EUPATH_0015019" // charcoal
-    //	};
+    //	      return {
+    //	        "entityId": "PCO_0000024",
+    //	        "variableId": "EUPATH_0015019" // charcoal
+    //	      };
     //      },
     //      layoutComponent: FloatingLayout,
     //    }), /// TEMPORARY ONLY!!! ///
