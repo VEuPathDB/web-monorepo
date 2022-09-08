@@ -695,7 +695,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
                     name: 'facetVariable',
                     label: 'Facet',
                     role: 'stratification',
-                  } as InputSpec, // compiler flummoxed by ...()?
+                  } as const,
                 ]),
           ]}
           entities={entities}
