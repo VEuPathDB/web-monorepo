@@ -10,7 +10,7 @@ import {
   NumberOrTimeDelta,
   TimeDelta,
 } from '../../types/general';
-import Switch from '../../components/widgets/Switch';
+import { Toggle } from '@veupathdb/coreui';
 
 export default {
   title: 'Plots/LinePlot',
@@ -203,13 +203,11 @@ const TemplateWithSelectedRangeControls: Story<Omit<LinePlotProps, 'data'>> = (
         dependentAxisRange={dependentAxisRange}
         dependentAxisLogScale={dependentAxisLogScale}
       />
-      <Switch
+      <Toggle
         label="Log scale (will exclude values &le; 0):"
-        state={dependentAxisLogScale}
-        onStateChange={(newValue: boolean) => {
-          onDependentAxisLogScaleChange(newValue);
-        }}
-        containerStyles={{ marginLeft: '5em' }}
+        value={dependentAxisLogScale ?? false}
+        onChange={onDependentAxisLogScaleChange}
+        styleOverrides={{ container: { marginLeft: '5em' } }}
       />
       <div style={{ height: 25 }} />
       <AxisRangeControl

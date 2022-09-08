@@ -22,7 +22,7 @@ import geohashAnimation from '../map/animation_functions/geohash';
 import { MouseMode } from '../map/MouseTools';
 
 import LabelledGroup from '../components/widgets/LabelledGroup';
-import Switch from '../components/widgets/Switch';
+import { Toggle } from '@veupathdb/coreui';
 
 export default {
   title: 'Map/Chart Markers',
@@ -286,10 +286,10 @@ export const LogScale: Story<MapVEuMapProps> = (args) => {
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <LabelledGroup label="Y-axis controls">
           <div style={{ display: 'flex' }}>
-            <Switch
+            <Toggle
               label="Log Scale:"
-              state={dependentAxisLogScale}
-              onStateChange={setDependentAxisLogScale}
+              value={dependentAxisLogScale}
+              onChange={setDependentAxisLogScale}
             />
           </div>
         </LabelledGroup>
