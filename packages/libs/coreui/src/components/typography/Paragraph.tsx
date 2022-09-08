@@ -9,7 +9,7 @@ import { secondaryFont } from '../../styleDefinitions/typography';
 // Hooks
 import { useUITheme } from '../theming';
 
-type ParagraphStyleSpec = {
+export type ParagraphStyleSpec = {
   margin?: CSSProperties['margin'];
   padding?: CSSProperties['padding'];
   color: CSSProperties['color'];
