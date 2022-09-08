@@ -48,7 +48,7 @@ import { CoverageStatistics } from '../../../types/visualization';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import { PlotLayout } from '../../layouts/PlotLayout';
-import { InputSpec, InputVariables } from '../InputVariables';
+import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps } from '../VisualizationTypes';
 import histogram from './selectorIcons/histogram.svg';
@@ -974,9 +974,11 @@ function HistogramViz(props: VisualizationProps<Options>) {
               label: 'Overlay',
               role: 'stratification',
               readonlyValue:
-                options?.getOverlayVariable != null && providedOverlayVariable
-                  ? overlayLabel
-                  : 'none',
+                options?.getOverlayVariable != null
+                  ? providedOverlayVariable
+                    ? overlayLabel
+                    : 'none'
+                  : undefined,
               // TO DO: verbiage for 'none'
             },
             ...(options?.hideFacetInputs
@@ -986,7 +988,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
                     name: 'facetVariable',
                     label: 'Facet',
                     role: 'stratification',
-                  } as InputSpec,
+                  } as const,
                 ]),
           ]}
           entities={entities}

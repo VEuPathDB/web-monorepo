@@ -1468,10 +1468,11 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
                     label: 'Overlay',
                     role: 'stratification',
                     readonlyValue:
-                      options?.getOverlayVariable != null &&
-                      providedOverlayVariable
-                        ? legendTitle
-                        : 'none',
+                      options?.getOverlayVariable != null
+                        ? providedOverlayVariable
+                          ? legendTitle
+                          : 'none'
+                        : undefined,
                     // TO DO: verbiage for 'none'
                   } as const,
                 ]),

@@ -681,9 +681,11 @@ function BoxplotViz(props: VisualizationProps<Options>) {
               label: 'Overlay',
               role: 'stratification',
               readonlyValue:
-                options?.getOverlayVariable != null && providedOverlayVariable
-                  ? overlayLabel
-                  : 'none',
+                options?.getOverlayVariable != null
+                  ? providedOverlayVariable
+                    ? overlayLabel
+                    : 'none'
+                  : undefined,
               // TO DO: verbiage for 'none'
             },
             ...(options?.hideFacetInputs
