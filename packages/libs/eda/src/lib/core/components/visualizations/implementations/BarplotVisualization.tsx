@@ -82,6 +82,7 @@ import {
 } from '../../../utils/axis-range-calculations';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { LayoutOptions } from '../../layouts/types';
+import { OverlayOptions } from '../options/types';
 
 // export
 export type BarplotDataWithStatistics = (
@@ -112,7 +113,7 @@ export const barplotVisualization = createVisualizationPlugin({
   createDefaultConfig: createDefaultConfig,
 });
 
-interface Options extends LayoutOptions {}
+interface Options extends LayoutOptions, OverlayOptions {}
 
 function FullscreenComponent(props: VisualizationProps<Options>) {
   return <BarplotViz {...props} />;
@@ -244,6 +245,10 @@ function BarplotViz(props: VisualizationProps<Options>) {
     'checkedLegendItems'
   );
 
+  const providedOverlayVariable = options?.getOverlayVariable?.(
+    computation.descriptor.configuration
+  );
+
   const findEntityAndVariable = useFindEntityAndVariable();
   const {
     variable,
@@ -254,7 +259,9 @@ function BarplotViz(props: VisualizationProps<Options>) {
     facetEntity,
   } = useMemo(() => {
     const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
-    const overlayVariable = findEntityAndVariable(vizConfig.overlayVariable);
+    const overlayVariable = findEntityAndVariable(
+      providedOverlayVariable ?? vizConfig.overlayVariable
+    );
     const facetVariable = findEntityAndVariable(vizConfig.facetVariable);
     return {
       variable: xAxisVariable?.variable,
@@ -269,6 +276,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
     vizConfig.xAxisVariable,
     vizConfig.overlayVariable,
     vizConfig.facetVariable,
+    providedOverlayVariable,
   ]);
 
   const data = usePromise(
@@ -284,7 +292,12 @@ function BarplotViz(props: VisualizationProps<Options>) {
       if (!variablesAreUnique([variable, overlayVariable, facetVariable]))
         throw new Error(nonUniqueWarning);
 
-      const params = getRequestParams(studyId, filters ?? [], vizConfig);
+      const params = getRequestParams(
+        studyId,
+        filters ?? [],
+        vizConfig,
+        providedOverlayVariable
+      );
 
       const response = await dataClient.getBarplot(
         computation.descriptor.type,
@@ -357,6 +370,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
       facetVariable,
       computation.descriptor.type,
       facetEntity,
+      providedOverlayVariable,
     ])
   );
 
@@ -482,6 +496,8 @@ function BarplotViz(props: VisualizationProps<Options>) {
     ]
   );
 
+  const overlayLabel = variableDisplayWithUnit(overlayVariable);
+
   // these props are passed to either a single plot
   // or by FacetedPlot to each individual facet plot (where some will be overridden)
   const plotProps: BarplotProps = {
@@ -493,7 +509,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
     independentAxisLabel: variableDisplayWithUnit(variable) ?? 'Main',
     dependentAxisLabel:
       vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion',
-    legendTitle: overlayVariable?.displayName,
+    legendTitle: overlayLabel,
     interactive: !isFaceted(data.value) ? true : false,
     showSpinner: data.pending || filteredCounts.pending,
     dependentAxisLogScale: vizConfig.dependentAxisLogScale,
@@ -619,7 +635,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
     <PlotLegend
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
-      legendTitle={variableDisplayWithUnit(overlayVariable)}
+      legendTitle={overlayLabel}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
       // add a condition to show legend even for single overlay data and check legendItems exist
       showOverlayLegend={showOverlayLegend}
@@ -654,7 +670,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
           },
           {
             role: 'Overlay',
-            display: variableDisplayWithUnit(overlayVariable),
+            display: overlayLabel,
             variable: vizConfig.overlayVariable,
           },
           {
@@ -690,12 +706,21 @@ function BarplotViz(props: VisualizationProps<Options>) {
               name: 'overlayVariable',
               label: 'Overlay',
               role: 'stratification',
+              readonlyValue:
+                options?.getOverlayVariable != null && providedOverlayVariable
+                  ? overlayLabel
+                  : 'none',
+              // TO DO: verbiage for 'none'
             },
-            {
-              name: 'facetVariable',
-              label: 'Facet',
-              role: 'stratification',
-            },
+            ...(options?.hideFacetInputs
+              ? []
+              : [
+                  {
+                    name: 'facetVariable',
+                    label: 'Facet',
+                    role: 'stratification',
+                  },
+                ]),
           ]}
           entities={entities}
           selectedVariables={{
@@ -807,7 +832,8 @@ export function barplotResponseToData(
 function getRequestParams(
   studyId: string,
   filters: Filter[],
-  vizConfig: BarplotConfig
+  vizConfig: BarplotConfig,
+  providedOverlayVariable: VariableDescriptor | undefined
 ): BarplotRequestParams {
   return {
     studyId,
@@ -816,7 +842,7 @@ function getRequestParams(
       // is outputEntityId correct?
       outputEntityId: vizConfig.xAxisVariable!.entityId,
       xAxisVariable: vizConfig.xAxisVariable!,
-      overlayVariable: vizConfig.overlayVariable,
+      overlayVariable: providedOverlayVariable ?? vizConfig.overlayVariable,
       facetVariable: vizConfig.facetVariable ? [vizConfig.facetVariable] : [],
       // valueSpec: manually inputted for now
       valueSpec: vizConfig.valueSpec,
