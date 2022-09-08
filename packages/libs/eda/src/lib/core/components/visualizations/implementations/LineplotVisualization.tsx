@@ -112,6 +112,7 @@ import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 
 import useSnackbar from '@veupathdb/coreui/dist/components/notifications/useSnackbar';
 import { LayoutOptions } from '../../layouts/types';
+import { OverlayOptions } from '../options/types';
 
 const plotContainerStyles = {
   width: 750,
@@ -204,7 +205,7 @@ export const LineplotConfig = t.intersection([
   }),
 ]);
 
-interface Options extends LayoutOptions {}
+interface Options extends LayoutOptions, OverlayOptions {}
 
 function LineplotViz(props: VisualizationProps<Options>) {
   const {
@@ -233,6 +234,10 @@ function LineplotViz(props: VisualizationProps<Options>) {
     updateConfiguration
   );
 
+  const providedOverlayVariable = options?.getOverlayVariable?.(
+    computation.descriptor.configuration
+  );
+
   // moved the location of this findEntityAndVariable
   const findEntityAndVariable = useFindEntityAndVariable();
 
@@ -249,7 +254,9 @@ function LineplotViz(props: VisualizationProps<Options>) {
     const { variable: yAxisVariable } =
       findEntityAndVariable(vizConfig.yAxisVariable) ?? {};
     const { variable: overlayVariable, entity: overlayEntity } =
-      findEntityAndVariable(vizConfig.overlayVariable) ?? {};
+      findEntityAndVariable(
+        providedOverlayVariable ?? vizConfig.overlayVariable
+      ) ?? {};
     const { variable: facetVariable, entity: facetEntity } =
       findEntityAndVariable(vizConfig.facetVariable) ?? {};
     return {
@@ -266,6 +273,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     vizConfig.yAxisVariable,
     vizConfig.overlayVariable,
     vizConfig.facetVariable,
+    providedOverlayVariable,
   ]);
 
   const categoricalMode = isSuitableCategoricalVariable(yAxisVariable);
@@ -507,7 +515,8 @@ function LineplotViz(props: VisualizationProps<Options>) {
         vizConfig,
         xAxisVariable,
         yAxisVariable,
-        outputEntity
+        outputEntity,
+        providedOverlayVariable
       );
 
       const response = await dataClient.getLineplot(
@@ -595,6 +604,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
       // when binning is in force, so no need to trigger a new request unless binning
       vizConfig.useBinning ? vizConfig.independentAxisRange : undefined,
       valuesAreSpecified,
+      providedOverlayVariable,
     ])
   );
 
@@ -1229,13 +1239,14 @@ function LineplotViz(props: VisualizationProps<Options>) {
     </>
   );
 
+  const legendTitle = variableDisplayWithUnit(overlayVariable);
   const showOverlayLegend =
     vizConfig.overlayVariable != null && legendItems.length > 0;
   const legendNode = !data.pending && data.value != null && (
     <PlotLegend
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
-      legendTitle={variableDisplayWithUnit(overlayVariable)}
+      legendTitle={legendTitle}
       onCheckedLegendItemsChange={onCheckedLegendItemsChange}
       // add a condition to show legend even for single overlay data and check legendItems exist
       showOverlayLegend={showOverlayLegend}
@@ -1283,7 +1294,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
           },
           {
             role: 'Overlay',
-            display: variableDisplayWithUnit(overlayVariable),
+            display: legendTitle,
             variable: vizConfig.overlayVariable,
           },
           {
@@ -1429,12 +1440,23 @@ function LineplotViz(props: VisualizationProps<Options>) {
               name: 'overlayVariable',
               label: 'Overlay',
               role: 'stratification',
+              readonlyValue:
+                options?.getOverlayVariable != null
+                  ? providedOverlayVariable
+                    ? legendTitle
+                    : 'none'
+                  : undefined,
+              // TO DO: verbiage for 'none'
             },
-            {
-              name: 'facetVariable',
-              label: 'Facet',
-              role: 'stratification',
-            },
+            ...(options?.hideFacetInputs
+              ? []
+              : [
+                  {
+                    name: 'facetVariable',
+                    label: 'Facet',
+                    role: 'stratification',
+                  } as const,
+                ]),
           ]}
           customSections={[
             {
@@ -1702,7 +1724,8 @@ function getRequestParams(
   vizConfig: Omit<LineplotConfig, 'dependentAxisRange' | 'checkedLegendItems'>,
   xAxisVariableMetadata: Variable,
   yAxisVariableMetadata: Variable,
-  outputEntity: StudyEntity
+  outputEntity: StudyEntity,
+  providedOverlayVariable: VariableDescriptor | undefined
 ): LineplotRequestParams {
   const {
     xAxisVariable,
@@ -1763,7 +1786,7 @@ function getRequestParams(
       xAxisVariable: xAxisVariable!, // these will never be undefined because
       yAxisVariable: yAxisVariable!, // data requests are only made when they have been chosen by user
       ...binSpec,
-      overlayVariable,
+      overlayVariable: providedOverlayVariable ?? overlayVariable,
       facetVariable: facetVariable ? [facetVariable] : [],
       showMissingness: showMissingness ? 'TRUE' : 'FALSE',
       // no error bars for date variables (error bar toggle switch is also disabled)
