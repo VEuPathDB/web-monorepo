@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/components",
-  "version": "0.17.5",
+  "version": "0.18.0",
   "license": "Apache-2.0",
   "description": "React Components for VEuPathDB Websites",
   "repository": {
@@ -95,7 +95,7 @@
     "@types/react-plotly.js": "^2.2.4",
     "@types/stats-lite": "^2.2.0",
     "@veupathdb/browserslist-config": "^1.0.0",
-    "@veupathdb/coreui": "^0.17.8",
+    "@veupathdb/coreui": "^0.18.0",
     "@veupathdb/eslint-config": "^1.0.0",
     "@veupathdb/prettier-config": "^1.0.0",
     "@veupathdb/tsconfig": "^1.0.1",
