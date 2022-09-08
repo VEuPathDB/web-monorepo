@@ -38,6 +38,7 @@ import { plugins } from '../computations/plugins';
 import { AnalysisState } from '../../hooks/analysis';
 import { ComputationAppOverview } from '../../types/visualization';
 import { VisualizationPlugin } from './VisualizationPlugin';
+import { Modal } from '@veupathdb/coreui';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -274,24 +275,48 @@ function ConfiguredVisualizations(props: Props) {
   );
 }
 
-function NewVisualizationPicker(props: Props) {
+type NewVisualizationPickerPropKeys =
+  | 'visualizationPlugins'
+  | 'visualizationsOverview'
+  | 'updateVisualizations'
+  | 'computation'
+  | 'geoConfigs';
+
+interface NewVisualizationPickerProps
+  extends Pick<Props, NewVisualizationPickerPropKeys> {
+  onVisualizationCreated?: (
+    VisualizationId: string,
+    computationId: string
+  ) => void;
+  includeHeader?: boolean;
+}
+
+export function NewVisualizationPicker(props: NewVisualizationPickerProps) {
   const {
     visualizationPlugins,
     visualizationsOverview,
     updateVisualizations,
     computation,
     geoConfigs,
+    onVisualizationCreated = function (visualizationId, computationId) {
+      history.replace(`../${computationId}/${visualizationId}`);
+    },
+    includeHeader = true,
   } = props;
   const history = useHistory();
   const { computationId } = computation;
   return (
     <div className={cx('-PickerContainer')}>
-      <div className={cx('-PickerActions')}>
-        <Link replace to={`../${computationId}`}>
-          <i className="fa fa-close"></i>
-        </Link>
-      </div>
-      <h3>Select a visualization</h3>
+      {includeHeader && (
+        <>
+          <div className={cx('-PickerActions')}>
+            <Link replace to={`../${computationId}`}>
+              <i className="fa fa-close"></i>
+            </Link>
+          </div>
+          <h3>Select a visualization</h3>
+        </>
+      )}
       <Grid>
         {/* orderBy ensures that available visualizations render ahead of those in development */}
         {orderBy(
@@ -331,7 +356,7 @@ function NewVisualizationPicker(props: Props) {
                           },
                         })
                       );
-                      history.replace(`../${computationId}/${visualizationId}`);
+                      onVisualizationCreated(visualizationId, computationId);
                     }}
                   >
                     {vizPlugin ? (
@@ -362,6 +387,30 @@ function NewVisualizationPicker(props: Props) {
         })}
       </Grid>
     </div>
+  );
+}
+
+interface NewVisualizationPickerModalProps extends NewVisualizationPickerProps {
+  visible: boolean;
+  onVisibleChange: (visible: boolean) => void;
+}
+
+export function NewVisualizationPickerModal(
+  props: NewVisualizationPickerModalProps
+) {
+  const { visible, onVisibleChange, ...pickerProps } = props;
+  return (
+    <Modal
+      includeCloseButton
+      toggleVisible={onVisibleChange}
+      visible={visible}
+      title="Select a visualization"
+      themeRole="primary"
+    >
+      <div style={{ fontSize: '80%' }}>
+        <NewVisualizationPicker {...pickerProps} includeHeader={false} />
+      </div>
+    </Modal>
   );
 }
 
