@@ -17,7 +17,6 @@ import { leafletZoomLevelToGeohashLevel } from '../../utils/visualization';
 import { useMapMarkers } from '../../hooks/mapMarkers';
 import {
   useDataClient,
-  useFindEntityAndVariable,
   useStudyEntities,
   useStudyMetadata,
 } from '../../hooks/workspace';
