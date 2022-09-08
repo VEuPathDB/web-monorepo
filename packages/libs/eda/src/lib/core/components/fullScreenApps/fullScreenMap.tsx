@@ -16,6 +16,7 @@ import { entityToGeoConfig } from '../../utils/geoVariables';
 import { leafletZoomLevelToGeohashLevel } from '../../utils/visualization';
 import { useMapMarkers } from '../../hooks/mapMarkers';
 import {
+  useDataClient,
   useFindEntityAndVariable,
   useStudyEntities,
   useStudyMetadata,
@@ -27,6 +28,13 @@ import { InputVariables } from '../visualizations/InputVariables';
 import { VariablesByInputName } from '../../utils/data-element-constraints';
 import { VariableDescriptor } from '../../types/variable';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
+import { FilledButton } from '@veupathdb/coreui';
+import AddIcon from '@material-ui/icons/Add';
+import { NewVisualizationPickerModal } from '../visualizations/VisualizationsContainer';
+import { usePromise } from '../../hooks/promise';
+import { PromiseResult } from '../..';
+import { Computation, Visualization } from '../../types/visualization';
+import { plugin } from '../computations/plugins/pass';
 
 const MapState = t.type({
   viewport: t.type({
@@ -43,6 +51,7 @@ const MapState = t.type({
     count: null,
     proportion: null,
   }),
+  computation: Computation,
 });
 
 const defaultMapState: t.TypeOf<typeof MapState> = {
@@ -53,6 +62,14 @@ const defaultMapState: t.TypeOf<typeof MapState> = {
   mouseMode: 'default',
   overlayVariable: undefined,
   markerType: 'pie',
+  computation: {
+    computationId: 'fsm',
+    descriptor: {
+      type: 'pass',
+      configuration: undefined,
+    },
+    visualizations: [],
+  },
 };
 
 function FullScreenMap(props: FullScreenComponentProps) {
@@ -110,8 +127,59 @@ function FullScreenMap(props: FullScreenComponentProps) {
     [setAppState]
   );
 
+  const [isSelectorModalOpen, setIsSelectorModalOpen] = useState(false);
+
+  const dataClient = useDataClient();
+  const appsResponsePromise = usePromise(
+    useCallback(() => dataClient.getApps(), [dataClient])
+  );
+
+  const [activeVizId, setActiveVizId] = useState<string>();
+
+  const onVisualizationCreated = useCallback((visualizationId: string) => {
+    setActiveVizId(visualizationId);
+    setIsSelectorModalOpen(false);
+  }, []);
+
+  const updateVisualizations = useCallback(
+    (
+      visualizations:
+        | Visualization[]
+        | ((visualizations: Visualization[]) => Visualization[])
+    ) => {
+      setAppState({
+        computation: {
+          ...appState.computation,
+          visualizations:
+            typeof visualizations === 'function'
+              ? visualizations(appState.computation.visualizations)
+              : visualizations,
+        },
+      });
+    },
+    [appState.computation, setAppState]
+  );
+
   return (
     <>
+      <PromiseResult state={appsResponsePromise}>
+        {(appsResponse) => {
+          const app = appsResponse.apps.find((a) => a.name === 'pass');
+          if (app == null) throw new Error('Oops');
+          return (
+            <NewVisualizationPickerModal
+              visible={isSelectorModalOpen}
+              onVisibleChange={setIsSelectorModalOpen}
+              computation={appState.computation}
+              updateVisualizations={updateVisualizations}
+              visualizationPlugins={plugin.visualizationPlugins}
+              visualizationsOverview={app.visualizations!}
+              geoConfigs={[geoConfig]}
+              onVisualizationCreated={onVisualizationCreated}
+            />
+          );
+        }}
+      </PromiseResult>
       {/* <div style={{ position: 'relative', zIndex: 1 }}> */}
       <MapVEuMap
         height="100%"
@@ -162,6 +230,22 @@ function FullScreenMap(props: FullScreenComponentProps) {
           selectedOption={appState.markerType}
           onOptionSelected={(markerType: any) => setAppState({ markerType })}
         />
+        <div>
+          <FilledButton
+            onPress={() => setIsSelectorModalOpen(true)}
+            text="New visualization"
+            textTransform="none"
+            icon={AddIcon}
+            themeRole="primary"
+          />
+        </div>
+        <div>
+          {appState.computation.visualizations.map((viz) => (
+            <div>
+              {viz.displayName} ({viz.descriptor.type})
+            </div>
+          ))}
+        </div>
       </div>
     </>
   );
