@@ -124,7 +124,7 @@ export default function CheckboxTreeNode<T>({
 
     return (
       <li css={{
-        nodeVisibilityCss, 
+        ...nodeVisibilityCss, 
         ...defaultStyle.list,
       }}>
         <div css={{
@@ -155,7 +155,7 @@ export default function CheckboxTreeNode<T>({
           )}
         </div>
         { !isLeafNode && isVisible && isExpanded &&
-          <ul css={{childrenVisibilityCss, ...defaultStyle.children}}>
+          <ul css={{...childrenVisibilityCss, ...defaultStyle.children}}>
             {getNodeChildren(node).map((child, index) =>
               <CheckboxTreeNode
                 key={"node_" + getNodeId(child)}
