@@ -37,7 +37,7 @@ import { CoverageStatistics } from '../../../types/visualization';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import { PlotLayout } from '../../layouts/PlotLayout';
 
-import { InputVariables } from '../InputVariables';
+import { InputSpec, InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps } from '../VisualizationTypes';
 
@@ -719,7 +719,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
                     name: 'facetVariable',
                     label: 'Facet',
                     role: 'stratification',
-                  },
+                  } as InputSpec,
                 ]),
           ]}
           entities={entities}

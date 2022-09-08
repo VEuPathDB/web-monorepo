@@ -34,7 +34,7 @@ import {
   HistogramResponse,
 } from '../../../api/DataClient';
 import DataClient from '../../../api/DataClient';
-import { PromiseHookState, usePromise } from '../../../hooks/promise';
+import { usePromise } from '../../../hooks/promise';
 import {
   useDataClient,
   useStudyMetadata,
@@ -42,18 +42,13 @@ import {
   useStudyEntities,
 } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
-import {
-  DateVariable,
-  NumberVariable,
-  StudyEntity,
-  Variable,
-} from '../../../types/study';
+import { DateVariable, NumberVariable, Variable } from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
 import { CoverageStatistics } from '../../../types/visualization';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import { PlotLayout } from '../../layouts/PlotLayout';
-import { InputVariables } from '../InputVariables';
+import { InputSpec, InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps } from '../VisualizationTypes';
 import histogram from './selectorIcons/histogram.svg';
@@ -77,7 +72,6 @@ import PlotLegend, {
   LegendItemsProps,
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
-import { EntityCounts } from '../../../hooks/entityCounts';
 // a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
 
@@ -102,6 +96,7 @@ import { useVizConfig } from '../../../hooks/visualizations';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { histogramDefaultDependentAxisMinMax } from '../../../utils/axis-range-calculations';
 import { LayoutOptions } from '../../layouts/types';
+import { OverlayOptions } from '../options/types';
 
 export type HistogramDataWithCoverageStatistics = (
   | HistogramData
@@ -166,7 +161,7 @@ export const HistogramConfig = t.intersection([
   }),
 ]);
 
-interface Options extends LayoutOptions {}
+interface Options extends LayoutOptions, OverlayOptions {}
 
 function HistogramViz(props: VisualizationProps<Options>) {
   const {
@@ -303,6 +298,10 @@ function HistogramViz(props: VisualizationProps<Options>) {
     };
   }, [findEntityAndVariable, vizConfig.xAxisVariable]);
 
+  const providedOverlayVariable = options?.getOverlayVariable?.(
+    computation.descriptor.configuration
+  );
+
   const {
     overlayVariable,
     overlayEntity,
@@ -310,7 +309,9 @@ function HistogramViz(props: VisualizationProps<Options>) {
     facetEntity,
   } = useMemo(() => {
     const { variable: overlayVariable, entity: overlayEntity } =
-      findEntityAndVariable(vizConfig.overlayVariable) ?? {};
+      findEntityAndVariable(
+        providedOverlayVariable ?? vizConfig.overlayVariable
+      ) ?? {};
     const { variable: facetVariable, entity: facetEntity } =
       findEntityAndVariable(vizConfig.facetVariable) ?? {};
     return {
@@ -323,6 +324,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
     findEntityAndVariable,
     vizConfig.overlayVariable,
     vizConfig.facetVariable,
+    providedOverlayVariable,
   ]);
 
   const data = usePromise(
@@ -346,7 +348,8 @@ function HistogramViz(props: VisualizationProps<Options>) {
         filters ?? [],
         valueType,
         vizConfig,
-        xAxisVariable
+        xAxisVariable,
+        providedOverlayVariable
       );
       const response = await dataClient.getHistogram(
         computation.descriptor.type,
@@ -416,6 +419,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
       valueType,
       // get data when changing independentAxisRange
       vizConfig.independentAxisRange,
+      providedOverlayVariable,
     ])
   );
 
@@ -673,6 +677,8 @@ function HistogramViz(props: VisualizationProps<Options>) {
     ]
   );
 
+  const overlayLabel = variableDisplayWithUnit(overlayVariable);
+
   const histogramProps: HistogramProps = {
     dependentAxisLogScale: vizConfig.dependentAxisLogScale,
     independentAxisLabel: variableDisplayWithUnit(xAxisVariable) ?? 'Main',
@@ -681,7 +687,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
     showSpinner: data.pending || filteredCounts.pending,
     displayLegend: false,
     displayLibraryControls: false,
-    legendTitle: variableDisplayWithUnit(overlayVariable),
+    legendTitle: overlayLabel,
     spacingOptions: !isFaceted(data.value) ? spacingOptions : undefined,
     interactive: !isFaceted(data.value) ? true : false,
     opacity: 100,
@@ -938,7 +944,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
           },
           {
             role: 'Overlay',
-            display: variableDisplayWithUnit(overlayVariable),
+            display: overlayLabel,
             variable: vizConfig.overlayVariable,
           },
           {
@@ -967,12 +973,21 @@ function HistogramViz(props: VisualizationProps<Options>) {
               name: 'overlayVariable',
               label: 'Overlay',
               role: 'stratification',
+              readonlyValue:
+                options?.getOverlayVariable != null && providedOverlayVariable
+                  ? overlayLabel
+                  : 'none',
+              // TO DO: verbiage for 'none'
             },
-            {
-              name: 'facetVariable',
-              label: 'Facet',
-              role: 'stratification',
-            },
+            ...(options?.hideFacetInputs
+              ? []
+              : [
+                  {
+                    name: 'facetVariable',
+                    label: 'Facet',
+                    role: 'stratification',
+                  } as InputSpec,
+                ]),
           ]}
           entities={entities}
           selectedVariables={{
@@ -1124,7 +1139,8 @@ function getRequestParams(
   filters: Filter[],
   valueType: 'number' | 'date',
   vizConfig: HistogramConfig,
-  variable?: Variable
+  variable?: Variable,
+  providedOverlayVariable?: VariableDescriptor
 ): HistogramRequestParams {
   const {
     binWidth = NumberVariable.is(variable) || DateVariable.is(variable)
@@ -1167,7 +1183,7 @@ function getRequestParams(
       outputEntityId: xAxisVariable!.entityId,
       xAxisVariable,
       barMode: 'stack',
-      overlayVariable,
+      overlayVariable: providedOverlayVariable ?? overlayVariable,
       facetVariable: facetVariable ? [facetVariable] : [],
       valueSpec,
       ...binSpec,
