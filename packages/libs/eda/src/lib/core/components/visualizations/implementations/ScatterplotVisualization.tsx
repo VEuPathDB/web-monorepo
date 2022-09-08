@@ -118,6 +118,7 @@ import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 
 import useSnackbar from '@veupathdb/coreui/dist/components/notifications/useSnackbar';
 import { LayoutOptions, TitleOptions } from '../../layouts/types';
+import { OverlayOptions } from '../options/types';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -192,11 +193,11 @@ export const ScatterplotConfig = t.partial({
   dependentAxisLogScale: t.boolean,
 });
 
-interface Options extends LayoutOptions, TitleOptions {
+interface Options extends LayoutOptions, TitleOptions, OverlayOptions {
   getComputedYAxisDetails?(
     config: unknown
   ): ComputedVariableDetails | undefined;
-  getOverlayVariable?(config: unknown): VariableDescriptor | undefined;
+  getComputedOverlayVariable?(config: unknown): VariableDescriptor | undefined;
   hideTrendlines?: boolean;
 }
 
@@ -234,10 +235,13 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const computedYAxisDetails = options?.getComputedYAxisDetails?.(
     computation.descriptor.configuration
   );
-  const providedOverlayVariableDescriptor = options?.getOverlayVariable?.(
+  const computedOverlayVariableDescriptor = options?.getComputedOverlayVariable?.(
     computation.descriptor.configuration
   );
 
+  const providedOverlayVariable = options?.getOverlayVariable?.(
+    computation.descriptor.configuration
+  );
   // moved the location of this findEntityAndVariable
   const findEntityAndVariable = useFindEntityAndVariable();
 
@@ -254,7 +258,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     const { variable: yAxisVariable } =
       findEntityAndVariable(vizConfig.yAxisVariable) ?? {};
     const { variable: overlayVariable, entity: overlayEntity } =
-      findEntityAndVariable(vizConfig.overlayVariable) ?? {};
+      findEntityAndVariable(
+        providedOverlayVariable ?? vizConfig.overlayVariable
+      ) ?? {};
     const { variable: facetVariable, entity: facetEntity } =
       findEntityAndVariable(vizConfig.facetVariable) ?? {};
     return {
@@ -271,6 +277,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     vizConfig.yAxisVariable,
     vizConfig.overlayVariable,
     vizConfig.facetVariable,
+    providedOverlayVariable,
   ]);
 
   // set the state of truncation warning message
@@ -434,6 +441,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         valueSpecValue = 'bestFitLineWithRaw';
       }
 
+      // request params
       const params = {
         studyId,
         filters,
@@ -442,7 +450,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           valueSpec: valueSpecValue,
           xAxisVariable: vizConfig.xAxisVariable,
           yAxisVariable: vizConfig.yAxisVariable,
-          overlayVariable: vizConfig.overlayVariable,
+          overlayVariable: providedOverlayVariable ?? vizConfig.overlayVariable,
           facetVariable: vizConfig.facetVariable
             ? [vizConfig.facetVariable]
             : [],
@@ -477,7 +485,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           response.completeCasesTable
         );
 
-      const overlayVocabulary = providedOverlayVariableDescriptor
+      const overlayVocabulary = computedOverlayVariableDescriptor
         ? response.scatterplot.config.computedVariableMetadata?.collectionVariable?.collectionVariableDetails?.map(
             (variableDetails) => variableDetails.variableId
           )
@@ -525,6 +533,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       filteredCounts,
       computation.descriptor.configuration,
       computation.descriptor.type,
+      providedOverlayVariable,
       // // get data when changing independentAxisRange
       // vizConfig.independentAxisRange,
     ])
@@ -753,7 +762,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
                   ? '#A6A6A6'
                   : // if there is no overlay variable, then marker colors should be the same for Data, Smoothed mean, 95% CI, and Best fit
                   // with another apps like alphadiv, abundance, etc., this condition needs to be changed: check with data more
-                  providedOverlayVariableDescriptor != null ||
+                  computedOverlayVariableDescriptor != null ||
                     vizConfig.overlayVariable != null
                   ? dataItem.name != null
                     ? legendLabelColor
@@ -811,14 +820,14 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   );
 
   const legendTitle = useMemo(() => {
-    if (providedOverlayVariableDescriptor) {
+    if (computedOverlayVariableDescriptor) {
       return findCollectionVariableEntityAndVariable(
         entities,
-        providedOverlayVariableDescriptor
+        computedOverlayVariableDescriptor
       )?.variable.displayName;
     }
     return variableDisplayWithUnit(overlayVariable);
-  }, [entities, overlayVariable, providedOverlayVariableDescriptor]);
+  }, [entities, overlayVariable, computedOverlayVariableDescriptor]);
 
   const dependentAxisLabel =
     data?.value?.computedVariableMetadata?.displayName?.[0] ??
@@ -849,7 +858,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   // can have a "normal" variable descriptor. In this case we want the computed y var to act just
   // like any other continuous variable.
   const computedYAxisDescriptor =
-    !providedOverlayVariableDescriptor && computedYAxisDetails
+    !computedOverlayVariableDescriptor && computedYAxisDetails
       ? ({
           entityId: computedYAxisDetails?.entityId,
           variableId: computedYAxisDetails?.variableId,
@@ -1331,7 +1340,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   );
 
   const showOverlayLegend =
-    (providedOverlayVariableDescriptor != null ||
+    (computedOverlayVariableDescriptor != null ||
       vizConfig.overlayVariable != null) &&
     legendItems.length > 0;
   const legendNode = !data.pending && data.value != null && (
@@ -1376,16 +1385,16 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           },
           {
             role: 'Y-axis',
-            required: !providedOverlayVariableDescriptor?.variableId,
+            required: !computedOverlayVariableDescriptor?.variableId,
             display: dependentAxisLabel,
             variable: computedYAxisDescriptor ?? vizConfig.yAxisVariable,
           },
           {
             role: 'Overlay',
-            required: !!providedOverlayVariableDescriptor,
+            required: !!computedOverlayVariableDescriptor,
             display: legendTitle,
             variable:
-              providedOverlayVariableDescriptor ?? vizConfig.overlayVariable,
+              computedOverlayVariableDescriptor ?? vizConfig.overlayVariable,
           },
           ...additionalVariableCoverageTableRows,
           {
@@ -1451,20 +1460,30 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
                 ? dependentAxisLabel
                 : undefined,
             },
-            ...(providedOverlayVariableDescriptor
+            ...(computedOverlayVariableDescriptor
               ? []
               : [
                   {
                     name: 'overlayVariable',
                     label: 'Overlay',
                     role: 'stratification',
+                    readonlyValue:
+                      options?.getOverlayVariable != null &&
+                      providedOverlayVariable
+                        ? legendTitle
+                        : 'none',
+                    // TO DO: verbiage for 'none'
                   } as const,
                 ]),
-            {
-              name: 'facetVariable',
-              label: 'Facet',
-              role: 'stratification',
-            },
+            ...(options?.hideFacetInputs
+              ? []
+              : [
+                  {
+                    name: 'facetVariable',
+                    label: 'Facet',
+                    role: 'stratification',
+                  } as const,
+                ]),
           ]}
           entities={entities}
           selectedVariables={{

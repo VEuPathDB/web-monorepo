@@ -57,7 +57,7 @@ export const plugin: ComputationPlugin = {
           };
         }
       },
-      getOverlayVariable(config) {
+      getComputedOverlayVariable(config) {
         if (AbundanceConfig.is(config)) {
           return config.collectionVariable;
         }
