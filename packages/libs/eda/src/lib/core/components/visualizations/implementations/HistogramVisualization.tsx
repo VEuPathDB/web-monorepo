@@ -417,9 +417,13 @@ function HistogramViz(props: VisualizationProps) {
 
   const defaultIndependentRange = useDefaultAxisRange(xAxisVariable);
 
+  // separate minPosMax from dependentMinPosMax
+  const minPosMax = useMemo(() => histogramDefaultDependentAxisMinMax(data), [
+    data,
+    vizConfig.valueSpec,
+  ]);
   const dependentMinPosMax = useMemo(() => {
-    const minPosMax = histogramDefaultDependentAxisMinMax(data);
-    return minPosMax != null
+    return minPosMax != null && minPosMax.max != null && minPosMax.max != null
       ? {
           min: minPosMax.min,
           // override max to be exactly 1 in proportion mode (rounding errors can make it slightly greater than 1)
@@ -649,6 +653,7 @@ function HistogramViz(props: VisualizationProps) {
         setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
         dependentMinPosMax={dependentMinPosMax}
         areRequiredInputsSelected={areRequiredInputsSelected}
+        minPosMax={minPosMax}
       />
     </div>
   );
@@ -695,6 +700,7 @@ type HistogramPlotWithControlsProps = Omit<HistogramProps, 'data'> & {
   outputSize?: number;
   dependentMinPosMax: NumberRange | undefined;
   areRequiredInputsSelected: boolean;
+  minPosMax: NumberRange | undefined;
 } & Partial<CoverageStatistics>;
 
 function HistogramPlotWithControls({
@@ -737,6 +743,7 @@ function HistogramPlotWithControls({
   outputSize,
   dependentMinPosMax,
   areRequiredInputsSelected,
+  minPosMax,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   const displayLibraryControls = false;
@@ -826,13 +833,17 @@ function HistogramPlotWithControls({
       truncationConfig(
         {
           ...defaultUIState, // using annotated range, NOT the actual data
-          ...(dependentMinPosMax != null
+          ...(dependentMinPosMax != null &&
+          dependentMinPosMax.min != null &&
+          dependentMinPosMax.max != null
             ? { dependentAxisRange: dependentMinPosMax }
             : {}),
         },
         vizConfig,
         {}, // no overrides
-        true // use inclusive less than equal for the range min
+        true, // use inclusive less than equal for the range min
+        vizConfig?.valueSpec,
+        minPosMax
       ),
     [
       defaultUIState,
