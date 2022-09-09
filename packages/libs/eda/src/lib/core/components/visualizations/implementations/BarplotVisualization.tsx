@@ -561,6 +561,7 @@ function BarplotViz(props: VisualizationProps) {
               label="Log scale:"
               value={vizConfig.dependentAxisLogScale}
               onChange={onDependentAxisLogScaleChange}
+              themeRole="primary"
             />
           </div>
           {/* Y-axis range control */}

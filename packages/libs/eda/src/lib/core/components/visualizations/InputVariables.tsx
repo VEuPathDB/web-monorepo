@@ -317,6 +317,7 @@ export function InputVariables(props: Props) {
                       onChange={onShowMissingnessChange}
                       disabled={!enableShowMissingnessToggle}
                       labelPosition="right"
+                      themeRole="primary"
                     />
                   </div>
                 )

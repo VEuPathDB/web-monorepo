@@ -1061,6 +1061,7 @@ function HistogramPlotWithControls({
                   minHeight: widgetHeight,
                 },
               }}
+              themeRole="primary"
             />
           </div>
           {/* Y-axis range control */}

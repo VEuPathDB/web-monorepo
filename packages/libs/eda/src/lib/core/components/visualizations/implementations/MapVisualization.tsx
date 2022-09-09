@@ -751,6 +751,7 @@ function MapViz(props: VisualizationProps) {
               disabled={
                 vizConfig.markerType == null || vizConfig.markerType === 'pie'
               }
+              themeRole="primary"
             />
           </div>
         </LabelledGroup>

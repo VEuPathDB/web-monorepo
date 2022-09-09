@@ -1531,6 +1531,7 @@ function ScatterplotWithControls({
               }}
               // disable log scale for date variable
               disabled={independentValueType === 'date'}
+              themeRole="primary"
             />
           </div>
           {independentAllNegative && !dismissedIndependentAllNegativeWarning ? (
@@ -1628,6 +1629,7 @@ function ScatterplotWithControls({
               }}
               // disable log scale for date variable
               disabled={dependentValueType === 'date'}
+              themeRole="primary"
             />
           </div>
           {dependentAllNegative && !dismissedDependentAllNegativeWarning ? (

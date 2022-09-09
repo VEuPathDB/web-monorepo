@@ -1426,6 +1426,7 @@ function LineplotWithControls({
                   );
               }}
               disabled={independentValueType === 'date'}
+              themeRole="primary"
             />
           </div>
           {independentAllNegative && !dismissedIndependentAllNegativeWarning ? (
@@ -1453,6 +1454,7 @@ function LineplotWithControls({
                 );
             }}
             disabled={neverUseBinning}
+            themeRole="primary"
           />
           <BinWidthControl
             binWidth={data0?.binWidthSlider?.binWidth}
@@ -1566,6 +1568,7 @@ function LineplotWithControls({
                   );
               }}
               disabled={dependentValueType === 'date'}
+              themeRole="primary"
             />
           </div>
           {dependentAllNegative && !dismissedDependentAllNegativeWarning ? (
@@ -1593,6 +1596,7 @@ function LineplotWithControls({
                 );
             }}
             disabled={neverShowErrorBars}
+            themeRole="primary"
           />
           {/* Y-axis range control */}
           {/* make some space to match with X-axis range control */}

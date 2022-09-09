@@ -740,6 +740,7 @@ function HistogramPlotWithControls({
                 minHeight: widgetHeight,
               },
             }}
+            themeRole="primary"
           />
 
           <NumberRangeInput
