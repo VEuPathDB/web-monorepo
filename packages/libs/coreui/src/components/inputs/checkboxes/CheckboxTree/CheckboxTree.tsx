@@ -756,7 +756,7 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
     );
 
     let treeSection = (
-      <ul css={{margin: '0.5em 0', padding: 0, alignSelf: 'flex-start'}}>
+      <ul css={{width: '100%', margin: '0.5em 0', padding: '0 1em', alignSelf: 'flex-start'}}>
       {topLevelNodes.map((node, index) => {
         const nodeId = getNodeId(node);
 
