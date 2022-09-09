@@ -1,5 +1,5 @@
 import * as t from 'io-ts';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
 import { MouseMode } from '@veupathdb/components/lib/map/MouseTools';
@@ -13,7 +13,10 @@ import {
 } from '../../types/fullScreenApp';
 import { StudyMetadata } from '../../types/study';
 import { entityToGeoConfig } from '../../utils/geoVariables';
-import { leafletZoomLevelToGeohashLevel } from '../../utils/visualization';
+import {
+  filtersFromBoundingBox,
+  leafletZoomLevelToGeohashLevel,
+} from '../../utils/visualization';
 import { useMapMarkers } from '../../hooks/mapMarkers';
 import {
   useDataClient,
@@ -21,19 +24,73 @@ import {
   useStudyMetadata,
 } from '../../hooks/workspace';
 import { useGeoConfig } from '../../hooks/geoConfig';
-import { defaultAnimation } from '../visualizations/implementations/MapVisualization';
+import {
+  defaultAnimation,
+  mapVisualization,
+} from '../visualizations/implementations/MapVisualization';
 import { isEqual } from 'lodash';
 import { InputVariables } from '../visualizations/InputVariables';
 import { VariablesByInputName } from '../../utils/data-element-constraints';
 import { VariableDescriptor } from '../../types/variable';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-import { FilledButton } from '@veupathdb/coreui';
+import { FilledButton, FloatingButton } from '@veupathdb/coreui';
 import AddIcon from '@material-ui/icons/Add';
-import { NewVisualizationPickerModal } from '../visualizations/VisualizationsContainer';
+import {
+  FullScreenVisualization,
+  NewVisualizationPickerModal,
+} from '../visualizations/VisualizationsContainer';
 import { usePromise } from '../../hooks/promise';
 import { PromiseResult } from '../..';
 import { Computation, Visualization } from '../../types/visualization';
-import { plugin } from '../computations/plugins/pass';
+import { ComputationPlugin } from '../computations/Types';
+import { ZeroConfigWithButton } from '../computations/ZeroConfiguration';
+import { histogramVisualization } from '../visualizations/implementations/HistogramVisualization';
+import {
+  contTableVisualization,
+  twoByTwoVisualization,
+} from '../visualizations/implementations/MosaicVisualization';
+import { scatterplotVisualization } from '../visualizations/implementations/ScatterplotVisualization';
+import { lineplotVisualization } from '../visualizations/implementations/LineplotVisualization';
+import { barplotVisualization } from '../visualizations/implementations/BarplotVisualization';
+import { boxplotVisualization } from '../visualizations/implementations/BoxplotVisualization';
+import { FloatingLayout } from '../layouts/FloatingLayout';
+import { VisualizationPlugin } from '../visualizations/VisualizationPlugin';
+import { LayoutOptions } from '../layouts/types';
+import { useEntityCounts } from '../../hooks/entityCounts';
+
+function vizWithOptions(visualization: VisualizationPlugin<LayoutOptions>) {
+  return visualization.withOptions({
+    hideFacetInputs: true,
+    layoutComponent: FloatingLayout,
+  });
+}
+
+const plugin: ComputationPlugin = {
+  configurationComponent: ZeroConfigWithButton,
+  isConfigurationValid: t.undefined.is,
+  createDefaultConfiguration: () => undefined,
+  visualizationPlugins: {
+    histogram: vizWithOptions(histogramVisualization),
+    twobytwo: vizWithOptions(twoByTwoVisualization),
+    conttable: vizWithOptions(contTableVisualization),
+    scatterplot: vizWithOptions(scatterplotVisualization),
+    lineplot: vizWithOptions(lineplotVisualization),
+    'map-markers': vizWithOptions(mapVisualization),
+    barplot: vizWithOptions(barplotVisualization),
+    boxplot: vizWithOptions(boxplotVisualization),
+    // or...
+    //    boxplot: boxplotVisualization.withOptions({
+    //      hideFacetInputs: true,
+    //      getOverlayVariable(_) {
+    //	      return {
+    //	        "entityId": "PCO_0000024",
+    //	        "variableId": "EUPATH_0015019" // charcoal
+    //	      };
+    //      },
+    //      layoutComponent: FloatingLayout,
+    //    }), /// TEMPORARY ONLY!!! ///
+  },
+};
 
 const MapState = t.type({
   viewport: t.type({
@@ -129,11 +186,20 @@ function FullScreenMap(props: FullScreenComponentProps) {
   const [isSelectorModalOpen, setIsSelectorModalOpen] = useState(false);
 
   const dataClient = useDataClient();
-  const appsResponsePromise = usePromise(
-    useCallback(() => dataClient.getApps(), [dataClient])
+  const appPromiseState = usePromise(
+    useCallback(async () => {
+      const { apps } = await dataClient.getApps();
+      const app = apps.find((a) => a.name === 'pass');
+      if (app == null) throw new Error('Could not find pass app.');
+      return app;
+    }, [dataClient])
   );
 
   const [activeVizId, setActiveVizId] = useState<string>();
+
+  const activeViz = appState.computation.visualizations.find(
+    (viz) => viz.visualizationId === activeVizId
+  );
 
   const onVisualizationCreated = useCallback((visualizationId: string) => {
     setActiveVizId(visualizationId);
@@ -159,12 +225,39 @@ function FullScreenMap(props: FullScreenComponentProps) {
     [appState.computation, setAppState]
   );
 
+  const filters = useMemo(() => {
+    const viewportFilters = boundsZoomLevel
+      ? filtersFromBoundingBox(
+          boundsZoomLevel.bounds,
+          {
+            variableId: geoConfig.latitudeVariableId,
+            entityId: geoConfig.entity.id,
+          },
+          {
+            variableId: geoConfig.longitudeVariableId,
+            entityId: geoConfig.entity.id,
+          }
+        )
+      : [];
+    return [
+      ...(props.analysisState.analysis?.descriptor.subset.descriptor ?? []),
+      ...viewportFilters,
+    ];
+  }, [
+    boundsZoomLevel,
+    geoConfig.entity.id,
+    geoConfig.latitudeVariableId,
+    geoConfig.longitudeVariableId,
+    props.analysisState.analysis?.descriptor.subset.descriptor,
+  ]);
+
+  const totalCounts = useEntityCounts([]);
+  const filteredCounts = useEntityCounts(filters);
+
   return (
     <>
-      <PromiseResult state={appsResponsePromise}>
-        {(appsResponse) => {
-          const app = appsResponse.apps.find((a) => a.name === 'pass');
-          if (app == null) throw new Error('Oops');
+      <PromiseResult state={appPromiseState}>
+        {(app) => {
           return (
             <NewVisualizationPickerModal
               visible={isSelectorModalOpen}
@@ -204,7 +297,8 @@ function FullScreenMap(props: FullScreenComponentProps) {
           position: 'fixed',
           top: 70,
           right: 12,
-          height: '20em',
+          minHeight: '20em',
+
           width: '23em',
           zIndex: 2000,
           background: 'white',
@@ -240,12 +334,58 @@ function FullScreenMap(props: FullScreenComponentProps) {
         </div>
         <div>
           {appState.computation.visualizations.map((viz) => (
-            <div>
-              {viz.displayName} ({viz.descriptor.type})
+            <div
+              style={{
+                background:
+                  viz.visualizationId === activeVizId ? 'yellow' : 'none',
+              }}
+            >
+              <FloatingButton
+                onPress={() => setActiveVizId(viz.visualizationId)}
+                themeRole="primary"
+                text={`${viz.displayName} (${viz.descriptor.type})`}
+              />
             </div>
           ))}
         </div>
       </div>
+      {activeViz && (
+        <div
+          style={{
+            transform: 'scale(0.9)',
+            background: 'white',
+            minHeight: '10em',
+            minWidth: '12em',
+            width: '65em',
+            position: 'fixed',
+            left: 0,
+            bottom: 0,
+            zIndex: 2000,
+            padding: '0 1em',
+          }}
+        >
+          <PromiseResult state={appPromiseState}>
+            {(app) => (
+              <FullScreenVisualization
+                analysisState={props.analysisState}
+                computation={appState.computation}
+                updateVisualizations={updateVisualizations}
+                visualizationPlugins={plugin.visualizationPlugins}
+                visualizationsOverview={app.visualizations!}
+                geoConfigs={[geoConfig]}
+                computationAppOverview={app}
+                filters={filters}
+                starredVariables={[]}
+                toggleStarredVariable={() => {}}
+                totalCounts={totalCounts}
+                filteredCounts={filteredCounts}
+                isSingleAppMode
+                id={activeViz.visualizationId}
+              />
+            )}
+          </PromiseResult>
+        </div>
+      )}
     </>
   );
 }
