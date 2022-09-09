@@ -10,7 +10,7 @@ import {
 
 import VariableTreeDropdown from '../variableTrees/VariableTreeDropdown';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import Switch from '@veupathdb/components/lib/components/widgets/Switch';
+import { Toggle } from '@veupathdb/coreui';
 import { makeEntityDisplayName } from '../../utils/study-metadata';
 import { useInputStyles } from './inputStyles';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
@@ -307,16 +307,16 @@ export function InputVariables(props: Props) {
                 // it could possibly be done using a custom section?
                 inputRole === 'stratification' && onShowMissingnessChange && (
                   <div className={classes.showMissingness}>
-                    <Switch
+                    <Toggle
                       label={`Include ${
                         outputEntity
                           ? makeEntityDisplayName(outputEntity, true)
                           : 'points'
                       } with no data for selected stratification variable(s)`}
-                      state={showMissingness}
-                      onStateChange={onShowMissingnessChange}
+                      value={showMissingness ?? false}
+                      onChange={onShowMissingnessChange}
                       disabled={!enableShowMissingnessToggle}
-                      labelPosition="after"
+                      labelPosition="right"
                     />
                   </div>
                 )

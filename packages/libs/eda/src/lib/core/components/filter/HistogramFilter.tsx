@@ -1,7 +1,7 @@
 import SelectedRangeControl from '@veupathdb/components/lib/components/plotControls/SelectedRangeControl';
 import BinWidthControl from '@veupathdb/components/lib/components/plotControls/BinWidthControl';
 import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
-import Switch from '@veupathdb/components/lib/components/widgets/Switch';
+import { Toggle } from '@veupathdb/coreui';
 import Button from '@veupathdb/components/lib/components/widgets/Button';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import { NumberRangeInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateRangeInputs';
@@ -730,13 +730,15 @@ function HistogramPlotWithControls({
         </div>
 
         <LabelledGroup label="Y-axis controls">
-          <Switch
+          <Toggle
             label="Log scale"
-            state={uiState.dependentAxisLogScale}
-            onStateChange={handleDependentAxisLogScale}
-            containerStyles={{
-              paddingBottom: '0.3125em',
-              minHeight: widgetHeight,
+            value={uiState.dependentAxisLogScale}
+            onChange={handleDependentAxisLogScale}
+            styleOverrides={{
+              container: {
+                paddingBottom: '0.3125em',
+                minHeight: widgetHeight,
+              },
             }}
           />
 
