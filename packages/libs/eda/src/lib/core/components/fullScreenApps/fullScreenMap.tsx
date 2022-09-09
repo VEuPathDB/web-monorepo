@@ -251,7 +251,7 @@ function FullScreenMap(props: FullScreenComponentProps) {
     props.analysisState.analysis?.descriptor.subset.descriptor,
   ]);
 
-  const totalCounts = useEntityCounts([]);
+  const totalCounts = useEntityCounts();
   const filteredCounts = useEntityCounts(filters);
 
   return (
