@@ -467,7 +467,7 @@ function BarplotViz(props: VisualizationProps) {
         {}, // no overrides
         true // use inclusive less than equal for the range min
       ),
-    [vizConfig.dependentAxisRange, dependentMinPosMax]
+    [vizConfig.dependentAxisRange, minPosMax]
   );
 
   useEffect(() => {

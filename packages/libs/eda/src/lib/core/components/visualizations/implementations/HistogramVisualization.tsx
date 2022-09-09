@@ -844,7 +844,7 @@ function HistogramPlotWithControls({
       ),
     [
       defaultUIState,
-      dependentMinPosMax,
+      minPosMax,
       vizConfig.independentAxisRange,
       vizConfig.dependentAxisRange,
     ]
