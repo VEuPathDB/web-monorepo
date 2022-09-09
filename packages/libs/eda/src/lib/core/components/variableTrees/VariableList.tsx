@@ -390,7 +390,16 @@ export default function VariableList({
       >
         <div>
           <button
-            className={`${cx('-StarredVariablesFilter')} btn`}
+            className={`btn`}
+            style={{
+              display: 'grid',
+              padding: '0.5em',
+              gridAutoFlow: 'column',
+              gap: '0.4em',
+              cursor: starredVariableToggleDisabled ? 'not-allowed' : 'default',
+              opacity: starredVariableToggleDisabled ? '0.5' : '1',
+              color: '#f8cb6a',
+            }}
             type="button"
             onClick={toggleShowOnlyStarredVariables}
             disabled={starredVariableToggleDisabled}
@@ -537,7 +546,6 @@ export default function VariableList({
    */
   const renderFeaturedFields = () => {
     return featuredFields.length && allowedFeaturedFields.length ? (
-      // <div className="FeaturedVariables">
       <div
         style={{
           padding: '0.5em 1em',
@@ -612,7 +620,6 @@ export default function VariableList({
                       marginLeft: '1em',
                     }}
                   >
-                    {/* <div className="wdk-CheckboxTreeNodeContent"> */}
                     {isMultiPick &&
                       (CustomCheckbox ? (
                         <CustomCheckbox
@@ -742,6 +749,33 @@ const getNodeSearchString = (valuesMap: ValuesMap) => {
   };
 };
 
+const baseFieldNodeLinkStyle = {
+  color: '#2f2f2f',
+  padding: '0.25em 0.5em',
+  borderRadius: '0.5em',
+  display: 'inline-block',
+  cursor: 'pointer',
+};
+
+const activeFieldNodeLinkStyle = {
+  background: '#e6e6e6',
+};
+
+const disabledFieldNodeLinkStyle = {
+  cursor: 'not-allowed',
+  opacity: '0.5',
+};
+
+const starStyleOff = {
+  color: '#767676',
+  fontSize: '1.1em',
+};
+
+const starStyleOn = {
+  color: '#f8cb6a',
+  fontSize: '1.2em',
+};
+
 const FieldNode = ({
   field,
   searchTerm,
@@ -790,10 +824,12 @@ const FieldNode = ({
     >
       <a
         ref={nodeRef}
-        className={
-          'wdk-AttributeFilterFieldItem' +
-          (isActive ? ' wdk-AttributeFilterFieldItem__active' : '') +
-          (isDisabled ? ' wdk-AttributeFilterFieldItem__disabled' : '')
+        style={
+          isActive
+            ? { ...baseFieldNodeLinkStyle, ...activeFieldNodeLinkStyle }
+            : isDisabled
+            ? { ...baseFieldNodeLinkStyle, ...disabledFieldNodeLinkStyle }
+            : { ...baseFieldNodeLinkStyle }
         }
         href={'#' + field.term}
         onClick={(e) => {
@@ -808,15 +844,10 @@ const FieldNode = ({
   ) : (
     //add condition for identifying entity parent and entity parent of activeField
     <div
-      className={
-        'wdk-Link wdk-AttributeFilterFieldParent' +
-        (field.term.includes('entity:')
-          ? ' wdk-AttributeFilterFieldEntityParent'
-          : '') +
-        (activeFieldEntity != null &&
-        field.term.split(':')[1] === activeFieldEntity
-          ? ' wdk-AttributeFilterFieldParent__active'
-          : '')
+      style={
+        field.term.includes('entity')
+          ? { fontWeight: 'bold', fontSize: '1.05em', cursor: 'pointer' }
+          : { ...baseFieldNodeLinkStyle }
       }
     >
       {safeHtml(field.display)}
@@ -826,11 +857,19 @@ const FieldNode = ({
   const canBeStarred = isFilterField(field) && !isMultiFilterDescendant;
 
   return (
-    <div className={canBeStarred ? cx('-StarContainer') : ''}>
+    <div
+      style={
+        canBeStarred
+          ? { display: 'flex', justifyContent: 'space-between', width: '100%' }
+          : {}
+      }
+    >
+      {fieldContents}
       {isFilterField(field) && !isMultiFilterDescendant && (
         <Tooltip title={makeStarButtonTooltipContent(field, isStarred)}>
           <button
-            className={`${cx('-StarButton')} link`}
+            className={`link`}
+            style={isStarred ? { ...starStyleOn } : { ...starStyleOff }}
             onClick={(e) => {
               // prevent click from toggling expansion state
               e.stopPropagation();
@@ -842,7 +881,6 @@ const FieldNode = ({
           </button>
         </Tooltip>
       )}
-      {fieldContents}
     </div>
   );
 };
