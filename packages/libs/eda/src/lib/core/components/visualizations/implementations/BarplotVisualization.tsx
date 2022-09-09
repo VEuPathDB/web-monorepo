@@ -457,9 +457,9 @@ function BarplotViz(props: VisualizationProps) {
       // barplot does not have independent axis range control so send undefined for defaultUIState
       truncationConfig(
         {
-          ...(dependentMinPosMax != null &&
-          dependentMinPosMax.min != null &&
-          dependentMinPosMax.max != null
+          ...(minPosMax != null &&
+          minPosMax.min != null &&
+          minPosMax.max != null
             ? { dependentAxisRange: minPosMax }
             : {}),
         },
