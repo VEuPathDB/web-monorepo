@@ -420,10 +420,9 @@ function HistogramViz(props: VisualizationProps) {
   // separate minPosMax from dependentMinPosMax
   const minPosMax = useMemo(() => histogramDefaultDependentAxisMinMax(data), [
     data,
-    vizConfig.valueSpec,
   ]);
   const dependentMinPosMax = useMemo(() => {
-    return minPosMax != null && minPosMax.max != null && minPosMax.max != null
+    return minPosMax != null && minPosMax.min != null && minPosMax.max != null
       ? {
           min: minPosMax.min,
           // override max to be exactly 1 in proportion mode (rounding errors can make it slightly greater than 1)
@@ -836,14 +835,12 @@ function HistogramPlotWithControls({
           ...(dependentMinPosMax != null &&
           dependentMinPosMax.min != null &&
           dependentMinPosMax.max != null
-            ? { dependentAxisRange: dependentMinPosMax }
+            ? { dependentAxisRange: minPosMax }
             : {}),
         },
         vizConfig,
         {}, // no overrides
-        true, // use inclusive less than equal for the range min
-        vizConfig?.valueSpec,
-        minPosMax
+        true // use inclusive less than equal for the range min
       ),
     [
       defaultUIState,

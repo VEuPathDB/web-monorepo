@@ -409,18 +409,12 @@ function BarplotViz(props: VisualizationProps) {
     vizConfig.checkedLegendItems
   );
 
-  const minPos = useMemo(() => barplotDefaultDependentAxisMinPos(data), [
-    data,
-    vizConfig.valueSpec,
-  ]);
-  const max = useMemo(() => barplotDefaultDependentAxisMax(data), [
-    data,
-    vizConfig.valueSpec,
-  ]);
+  const minPos = useMemo(() => barplotDefaultDependentAxisMinPos(data), [data]);
+  const max = useMemo(() => barplotDefaultDependentAxisMax(data), [data]);
   const minPosMax =
     minPos != null && max != null ? { min: minPos, max: max } : undefined;
   const dependentMinPosMax = useMemo(() => {
-    return minPosMax != null && minPosMax.max != null && minPosMax.max != null
+    return minPosMax != null && minPosMax.min != null && minPosMax.max != null
       ? {
           min: minPosMax.min,
           // override max to be exactly 1 in proportion mode (rounding errors can make it slightly greater than 1)
@@ -428,6 +422,7 @@ function BarplotViz(props: VisualizationProps) {
         }
       : undefined;
   }, [data, vizConfig.valueSpec]);
+
   // using custom hook
   const defaultDependentAxisRange = useDefaultAxisRange(
     null,
@@ -436,25 +431,6 @@ function BarplotViz(props: VisualizationProps) {
     dependentMinPosMax?.max,
     vizConfig.dependentAxisLogScale
   ) as NumberRange;
-  // const dependentMinPosMax = useMemo(() => {
-  //   const minPos = barplotDefaultDependentAxisMinPos(data);
-  //   const max = barplotDefaultDependentAxisMax(data);
-  //   return minPos != null && max != null
-  //     ? {
-  //         min: minPos,
-  //         // override max to be exactly 1 in proportion mode (rounding errors can make it slightly greater than 1)
-  //         max: vizConfig.valueSpec === 'proportion' ? 1 : max,
-  //       }
-  //     : undefined;
-  // }, [data, vizConfig.valueSpec]);
-  // // using custom hook
-  // const defaultDependentAxisRange = useDefaultAxisRange(
-  //   null,
-  //   0,
-  //   dependentMinPosMax?.min,
-  //   dependentMinPosMax?.max,
-  //   vizConfig.dependentAxisLogScale
-  // ) as NumberRange;
 
   // axis range control
   const handleDependentAxisRangeChange = onChangeHandlerFactory<NumberRange>(
@@ -484,14 +460,12 @@ function BarplotViz(props: VisualizationProps) {
           ...(dependentMinPosMax != null &&
           dependentMinPosMax.min != null &&
           dependentMinPosMax.max != null
-            ? { dependentAxisRange: dependentMinPosMax }
+            ? { dependentAxisRange: minPosMax }
             : {}),
         },
         vizConfig,
         {}, // no overrides
-        true, // use inclusive less than equal for the range min
-        vizConfig?.valueSpec,
-        minPosMax
+        true // use inclusive less than equal for the range min
       ),
     [vizConfig.dependentAxisRange, dependentMinPosMax]
   );

@@ -1,7 +1,4 @@
-import {
-  NumberOrDateRange,
-  NumberRange,
-} from '@veupathdb/components/lib/types/general';
+import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
 import { lt, lte } from 'lodash';
 
 type UIState = {
@@ -28,10 +25,7 @@ export function truncationConfig(
    * the user-range is less than OR EQUAL TO the 'defaultUIState' range min
    * which is what we want for bar plot and histogram bars
    */
-  inclusiveDependentMin: boolean = false,
-  // valueSpec for making a case of histrogram and barplot Vizs' proportion
-  valueSpec: 'count' | 'proportion' = 'count',
-  minPosMax: NumberRange | undefined = undefined
+  inclusiveDependentMin: boolean = false
 ) {
   const lessThan = inclusiveDependentMin ? lte : lt;
 
@@ -58,15 +52,9 @@ export function truncationConfig(
       : false;
   const truncationConfigDependentAxisMax =
     defaultUIState.dependentAxisRange?.max != null &&
-    uiState.dependentAxisRange?.max != null
-      ? valueSpec === 'proportion'
-        ? minPosMax?.max != null &&
-          minPosMax?.max > uiState.dependentAxisRange.max
-          ? true
-          : false
-        : defaultUIState.dependentAxisRange.max > uiState.dependentAxisRange.max
-        ? true
-        : false
+    uiState.dependentAxisRange?.max != null &&
+    defaultUIState.dependentAxisRange.max > uiState.dependentAxisRange.max
+      ? true
       : false;
 
   return {
