@@ -30,6 +30,7 @@ const defaultStyle = {
   helpIcon: {
     width: '0.7em',
     height: '0.7em',
+    marginLeft: '0.5em',
   },
   searchIcon: {
     width: '0.7em',
