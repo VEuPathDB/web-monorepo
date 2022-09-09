@@ -34,7 +34,6 @@ export default function FullScreenContainer(props: Props) {
     props.appName
   );
   if (plugin == null) return <div>Unknown plugin</div>;
-  // TODO Track if app state is being loaded and show a spinner if it is to prevent rendering with default app state at first
   return nodeRef
     ? createPortal(
         <div
