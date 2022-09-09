@@ -414,7 +414,7 @@ export function NewVisualizationPickerModal(
   );
 }
 
-function FullScreenVisualization(props: Props & { id: string }) {
+export function FullScreenVisualization(props: Props & { id: string }) {
   const {
     analysisState,
     computationAppOverview,
