@@ -350,6 +350,17 @@ function MapViz(props: VisualizationProps<Options>) {
     vizConfig.checkedLegendItems
   );
 
+  // WIP hook--see checkedLegendItemsStatus.ts
+  // const [
+  //   checkedLegendItems,
+  //   setCheckedLegendItems,
+  // ] = useCheckedLegendItemsStatus(
+  //   legendItems,
+  //   vizConfig.checkedLegendItems,
+  //   vocabulary,
+  //   updateVizConfig
+  // );
+
   const legendNode = legendItems != null && xAxisVariable != null && (
     <PlotLegend
       legendItems={legendItems}

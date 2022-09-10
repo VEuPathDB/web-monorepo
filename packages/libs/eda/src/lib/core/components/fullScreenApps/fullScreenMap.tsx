@@ -1,5 +1,5 @@
 import * as t from 'io-ts';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
 import { MouseMode } from '@veupathdb/components/lib/map/MouseTools';
@@ -24,6 +24,7 @@ import {
   useStudyMetadata,
 } from '../../hooks/workspace';
 import { useGeoConfig } from '../../hooks/geoConfig';
+import { useCheckedLegendItemsStatus } from '../../hooks/checkedLegendItemsStatus';
 import {
   defaultAnimation,
   mapVisualization,
@@ -32,6 +33,7 @@ import { isEqual } from 'lodash';
 import { InputVariables } from '../visualizations/InputVariables';
 import { VariablesByInputName } from '../../utils/data-element-constraints';
 import { VariableDescriptor } from '../../types/variable';
+import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { FilledButton, FloatingButton } from '@veupathdb/coreui';
 import AddIcon from '@material-ui/icons/Add';
@@ -108,6 +110,7 @@ const MapState = t.type({
     proportion: null,
   }),
   computation: Computation,
+  checkedLegendItems: t.union([t.undefined, t.array(t.string)]),
 });
 
 const defaultMapState: t.TypeOf<typeof MapState> = {
@@ -126,6 +129,7 @@ const defaultMapState: t.TypeOf<typeof MapState> = {
     },
     visualizations: [],
   },
+  checkedLegendItems: undefined,
 };
 
 function FullScreenMap(props: FullScreenComponentProps) {
@@ -160,7 +164,7 @@ function FullScreenMap(props: FullScreenComponentProps) {
   if (geoConfig == null)
     throw new Error('Something is wrong with the geo config');
 
-  const { markers = [], pending } = useMapMarkers({
+  const { markers = [], pending, legendItems, vocabulary } = useMapMarkers({
     requireOverlay: false,
     boundsZoomLevel,
     geoConfig: geoConfig,
@@ -169,7 +173,9 @@ function FullScreenMap(props: FullScreenComponentProps) {
     xAxisVariable: appState.overlayVariable,
     computationType: 'pass',
     markerType: appState.markerType,
-    //TO DO: checkedLegendItems and maybe dependentAxisLogScale
+    // Endpoint can't currently handle checkedLegendItems
+    // checkedLegendItems: appState.checkedLegendItems,
+    //TO DO: maybe dependentAxisLogScale
   });
 
   const selectedVariables = {
@@ -225,6 +231,33 @@ function FullScreenMap(props: FullScreenComponentProps) {
     [appState.computation, setAppState]
   );
 
+  /**
+   * Reset checkedLegendItems to all-checked (actually none checked)
+   * if ANY of the checked items are NOT in the vocabulary
+   * OR if ALL of the checked items ARE in the vocabulary
+   *
+   * TO DO: generalise this for use in other visualizations
+   */
+  useEffect(() => {
+    if (appState.checkedLegendItems == null || vocabulary == null) return;
+
+    if (
+      appState.checkedLegendItems.some(
+        (label) => vocabulary.findIndex((vocab) => vocab === label) === -1
+      ) ||
+      appState.checkedLegendItems.length === vocabulary.length
+    )
+      setAppState({ checkedLegendItems: undefined });
+  }, [vocabulary, appState.checkedLegendItems, setAppState]);
+
+  const handleCheckedLegendItemsChange = useCallback(
+    (newCheckedItems) => {
+      if (newCheckedItems != null)
+        setAppState({ checkedLegendItems: newCheckedItems });
+    },
+    [setAppState]
+  );
+
   const filters = useMemo(() => {
     const viewportFilters = boundsZoomLevel
       ? filtersFromBoundingBox(
@@ -253,6 +286,23 @@ function FullScreenMap(props: FullScreenComponentProps) {
 
   const totalCounts = useEntityCounts();
   const filteredCounts = useEntityCounts(filters);
+
+  // set checkedLegendItems
+  const checkedLegendItems = useCheckedLegendItemsStatus(
+    legendItems,
+    appState.checkedLegendItems
+  );
+
+  // WIP hook--see checkedLegendItemsStatus.ts
+  // const [
+  //   checkedLegendItems,
+  //   setCheckedLegendItems,
+  // ] = useCheckedLegendItemsStatus(
+  //   legendItems,
+  //   appState.checkedLegendItems,
+  //   vocabulary,
+  //   setAppState
+  // );
 
   return (
     <>
@@ -313,6 +363,19 @@ function FullScreenMap(props: FullScreenComponentProps) {
           starredVariables={[]}
           toggleStarredVariable={() => {}}
         />
+        {legendItems.length > 0 && appState.overlayVariable && (
+          <PlotLegend
+            legendItems={legendItems}
+            checkedLegendItems={checkedLegendItems}
+            onCheckedLegendItemsChange={handleCheckedLegendItemsChange}
+            showOverlayLegend={true}
+            containerStyles={{
+              border: 'none',
+              boxShadow: 'none',
+              padding: '0 0 0 5px',
+            }}
+          />
+        )}
         <RadioButtonGroup
           disabledList={
             appState.overlayVariable ? [] : ['pie', 'count', 'proportion']
