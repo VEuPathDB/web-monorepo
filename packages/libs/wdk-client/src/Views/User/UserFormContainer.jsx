@@ -73,9 +73,7 @@ function OutroComponent(props) {
         that enable  collecting, archiving, updating, and integrating a variety of genomics and related&nbsp;
         research data relevant to infectious diseases, and pathogens and their interaction with hosts.
       </p>
-      <p>
-        <VisitOtherBrc {...props}/>
-      </p>
+      <VisitOtherBrc {...props}/>
       <p>
         Sign up for cross-BRC email alerts <a target="_blank" href="https://lists.brcgateway.org/mailman/listinfo/brc-all">here</a>.
       </p>
@@ -96,12 +94,12 @@ export function VisitOtherBrc({user}) {
     "&affiliation=" + clean(user.properties.organization) +
     "&interests=" + clean(user.properties.interests);
   return (
-    <div style={{margin:"1.5em 0"}}>
+    <p style={{margin:"1.5em 0"}}>
       Visit our partner Bioinformatics Resource Center,&nbsp;
       <a target="_blank" href="https://www.bv-brc.org">BV-BRC</a>, and&nbsp;
       <a target="_blank" href="https://www.bv-brc.org/login">log in</a> there or&nbsp;
       <a target="_blank" href={'https://www.bv-brc.org/register' + userDataQueryString}>register</a>.
-    </div>
+    </p>
   );
 }
 

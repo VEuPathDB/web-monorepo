@@ -19,7 +19,8 @@ export default (base: ServiceBase) => {
   function updateCurrentUser(user: User) {
     let url = '/users/current';
     let data = JSON.stringify(user);
-    return currentUserPromise = base._fetchJson<void>('put', url, data).then(() => user);
+    return base._fetchJson<void>('put', url, data)
+      .then(() => currentUserPromise = Promise.resolve(user));
   }
 
   function updateCurrentUserPassword(oldPassword: string, newPassword: string) {
