@@ -141,9 +141,9 @@ export interface MapVEuMapProps {
    **/
   showMouseToolbar?: boolean;
   /** mouseMode control */
-  mouseMode: MouseMode;
+  mouseMode?: MouseMode;
   /** a function for changing mouseMode */
-  onMouseModeChange: (value: MouseMode) => void;
+  onMouseModeChange?: (value: MouseMode) => void;
   /**
    * The name of the tile layer to use. If omitted, defaults to Street.
    */
@@ -304,7 +304,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
         recenterMarkers={recenterMarkers}
       />
 
-      {showMouseToolbar && (
+      {showMouseToolbar && mouseMode && onMouseModeChange && (
         <MouseTools
           mouseMode={mouseMode}
           onMouseModeChange={onMouseModeChange}
