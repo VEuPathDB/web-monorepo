@@ -18,6 +18,7 @@ import { NumberOrDateRange } from '../types/general';
 // import truncation util functions
 import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations';
 import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
+import { logScaleDtick } from '../utils/logscale-dtick';
 
 export interface ScatterPlotProps
   extends PlotProps<ScatterPlotData>,
@@ -79,7 +80,9 @@ const ScatterPlot = makePlotlyPlotComponent(
     const extendedIndependentAxisRange = extendAxisRangeForTruncations(
       standardIndependentAxisRange,
       axisTruncationConfig?.independentAxis,
-      independentValueType === 'date' ? 'date' : 'number'
+      independentValueType === 'date' ? 'date' : 'number',
+      true, // addPadding
+      independentAxisLogScale
     );
 
     // truncation
@@ -88,8 +91,7 @@ const ScatterPlot = makePlotlyPlotComponent(
       standardDependentAxisRange,
       axisTruncationConfig?.dependentAxis,
       dependentValueType === 'date' ? 'date' : 'number',
-      // adjust range for log scale
-      'scatterplot',
+      true, // addPadding
       dependentAxisLogScale
     );
 
@@ -130,9 +132,7 @@ const ScatterPlot = makePlotlyPlotComponent(
               extendedIndependentAxisRange?.max,
             ].map((val) =>
               independentAxisLogScale && val != null
-                ? val <= 0
-                  ? -0.1
-                  : Math.log10(val as number)
+                ? Math.log10(val as number)
                 : val
             )
           : undefined,
@@ -147,7 +147,9 @@ const ScatterPlot = makePlotlyPlotComponent(
             ? 'log'
             : undefined,
         tickfont: data.series.length ? {} : { color: 'transparent' },
-        dtick: independentAxisLogScale ? 1 : undefined,
+        dtick: independentAxisLogScale
+          ? logScaleDtick(extendedIndependentAxisRange)
+          : undefined,
       },
       yaxis: {
         title: dependentAxisLabel,
@@ -158,12 +160,11 @@ const ScatterPlot = makePlotlyPlotComponent(
               extendedDependentAxisRange?.max,
             ].map((val) =>
               dependentAxisLogScale && val != null
-                ? val <= 0
-                  ? -0.1
-                  : Math.log10(val as number)
+                ? Math.log10(val as number)
                 : val
             )
           : undefined,
+        // range: undefined,
         zeroline: false, // disable xaxis line
         // make plot border
         mirror: true,
@@ -175,7 +176,9 @@ const ScatterPlot = makePlotlyPlotComponent(
             ? 'log'
             : undefined,
         tickfont: data.series.length ? {} : { color: 'transparent' },
-        dtick: dependentAxisLogScale ? 1 : undefined,
+        dtick: dependentAxisLogScale
+          ? logScaleDtick(extendedDependentAxisRange)
+          : undefined,
       },
       // add truncatedAxisHighlighting for layout.shapes
       shapes: truncatedAxisHighlighting,

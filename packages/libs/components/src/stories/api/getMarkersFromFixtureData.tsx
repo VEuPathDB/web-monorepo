@@ -236,7 +236,8 @@ export const getCollectionDateChartMarkers = async (
   handleMarkerClick: (e: LeafletMouseEvent) => void,
   legendRadioValue: string,
   setDependentAxisRange: (dependentAxisRange: number[]) => void,
-  delay: number = 0
+  delay: number = 0,
+  dependentAxisLogScale?: boolean
 ) => {
   const geohash_level = leafletZoomLevelToGeohashLevel(zoomLevel);
   delay && (await sleep(delay));
@@ -371,6 +372,7 @@ export const getCollectionDateChartMarkers = async (
         }
         duration={duration}
         onClick={handleMarkerClick}
+        dependentAxisLogScale={dependentAxisLogScale}
       />
     );
   });

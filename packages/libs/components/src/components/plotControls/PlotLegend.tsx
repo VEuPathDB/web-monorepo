@@ -17,7 +17,6 @@ interface PlotLegendProps {
   legendItems: LegendItemsProps[];
   checkedLegendItems: string[] | undefined;
   legendTitle?: string;
-  // use onCheckedLegendItemsChange
   onCheckedLegendItemsChange?: (checkedLegendItems: string[]) => void;
   // add a condition to show legend for single overlay data
   showOverlayLegend?: boolean;
@@ -26,7 +25,6 @@ export default function PlotLegend({
   legendItems,
   checkedLegendItems,
   legendTitle,
-  // use onCheckedLegendItemsChange
   onCheckedLegendItemsChange,
   showOverlayLegend = false,
 }: PlotLegendProps) {
@@ -65,18 +63,23 @@ export default function PlotLegend({
             padding: '1em',
             // implementing scrolling for vertical direction
             maxHeight: 250, // same height with Scatterplot R-square table
-            minWidth: 250, // for firefox
+            width: 400,
             overflowX: 'hidden',
             overflowY: 'auto',
           }}
         >
           <div
             title={legendTitle}
-            style={{ cursor: 'pointer', fontSize: legendTextSize }}
+            // style={{ cursor: 'pointer', fontSize: legendTextSize, fontWeight: 'bold', margin: '0 0 0 0.15em' }}
+            style={{
+              cursor: 'pointer',
+              fontSize: legendTextSize,
+              fontWeight: 'bold',
+              marginLeft: '0.15em',
+              marginBottom: '0.5em',
+            }}
           >
-            {legendTitle != null
-              ? legendEllipsis(legendTitle, 23)
-              : legendTitle}
+            {legendTitle}
           </div>
           <div className="plotLegendCheckbox">
             {legendItems.map((item: LegendItemsProps, index: number) => (
@@ -232,14 +235,20 @@ export default function PlotLegend({
                       </div>
                     )}
                   </div>
-                  {/* below is label text */}
+                  {/* below is legend label */}
                   &nbsp;&nbsp;
-                  <div>
+                  <div
+                    style={{
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                  >
                     {item.label === 'No data' ||
                     item.label.includes('No data,') ? (
-                      <i>{legendEllipsis(item.label, 20)}</i>
+                      <i>{item.label}</i>
                     ) : (
-                      legendEllipsis(item.label, 20)
+                      item.label
                     )}
                   </div>
                 </label>
@@ -251,10 +260,3 @@ export default function PlotLegend({
     </>
   );
 }
-
-// legend ellipsis function for legend title (23) and legend items (20)
-const legendEllipsis = (label: string, ellipsisLength: number) => {
-  return (label || '').length > ellipsisLength
-    ? (label || '').substring(0, ellipsisLength) + '...'
-    : label;
-};
