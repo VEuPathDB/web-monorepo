@@ -1,5 +1,6 @@
 import React from 'react';
 import { AnalysisState } from '../hooks/analysis';
+import { Analysis, NewAnalysis } from './analysis';
 import { StudyMetadata } from './study';
 
 /*
@@ -16,8 +17,12 @@ export interface FullScreenComponentProps<T = unknown> {
   analysisState: AnalysisState;
 }
 
+export interface TriggerComponentTypes {
+  analysis: Analysis | NewAnalysis;
+}
+
 export interface FullScreenAppPlugin<T = unknown> {
-  triggerComponent: React.ComponentType;
+  triggerComponent: React.ComponentType<TriggerComponentTypes>;
   fullScreenComponent: React.ComponentType<FullScreenComponentProps<T>>;
   isCompatibleWithStudy: (study: StudyMetadata) => boolean;
 }
