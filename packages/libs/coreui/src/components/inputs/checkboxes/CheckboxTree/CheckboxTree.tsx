@@ -731,7 +731,7 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
     let topLevelNodes = (showRoot ? [ treeState.generated.statefulTree ] :
       getStatefulChildren(treeState.generated.statefulTree));
 
-    let isTreeVisible = treeState.generated ?? getNodeState(treeState.generated).isVisible;
+    let isTreeVisible = treeState.generated && getNodeState(treeState.generated.statefulTree).isVisible;
     let noResultsRenderFunction = renderNoResults || defaultRenderNoResults;
     let noResultsMessage = isTreeVisible ? null : noResultsRenderFunction(searchTerm, tree);
 
@@ -810,10 +810,15 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
 
 function defaultRenderNoResults() {
   return (
-    <p>
-      <Warning />
-      The search term you entered did not yield any results.
-    </p>
+    <div css={{
+      display: 'flex',
+      marginTop: '1em',
+    }}>
+      <Warning css={{height: '1.5em', width: '1.5em', paddingRight: '0.25em'}} />
+      <span css={{margin: 'auto 0'}}>
+        The search term you entered did not yield any results.
+      </span>
+    </div>
   );
 }
 
