@@ -7,10 +7,17 @@ import L from 'leaflet';
 import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 
 import PiePlot from '../plots/PiePlot';
-import { PiePlotData, PiePlotDatum } from '../types/plots';
+import {
+  MarkerScaleAddon,
+  MarkerScaleDefault,
+  PiePlotData,
+  PiePlotDatum,
+} from '../types/plots';
 
 //DKDK ts definition for HistogramMarkerSVGProps: need some adjustment but for now, just use Donut marker one
-export interface DonutMarkerProps extends BoundsDriftMarkerProps {
+export interface DonutMarkerProps
+  extends BoundsDriftMarkerProps,
+    MarkerScaleAddon {
   data: {
     value: number;
     label: string;
@@ -115,7 +122,8 @@ export default function DonutMarker(props: DonutMarkerProps) {
   }
 
   //DKDK construct histogram marker icon
-  const size = 40; //DKDK SVG donut marker icon size: note that popbio/mapveu donut marker icons = 40
+  const scale = props.markerScale ?? MarkerScaleDefault;
+  const size = 40 * scale;
   let svgHTML: string = ''; //DKDK divIcon HTML contents
 
   //DKDK set drawing area
