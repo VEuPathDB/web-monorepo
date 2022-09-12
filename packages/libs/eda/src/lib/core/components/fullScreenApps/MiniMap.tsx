@@ -68,7 +68,7 @@ export function MiniMap(props: TriggerComponentTypes) {
         filters.length > 0 ? "current subset's " : ''
       }${entityDisplayName}`}
     >
-      <div className="MinimapContainer">
+      <div className="MiniMapContainer">
         <MapVEuMap
           height={110}
           width={220}
