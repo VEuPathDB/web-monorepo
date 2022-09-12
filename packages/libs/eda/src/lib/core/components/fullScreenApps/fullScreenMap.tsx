@@ -57,6 +57,7 @@ import { FloatingLayout } from '../layouts/FloatingLayout';
 import { VisualizationPlugin } from '../visualizations/VisualizationPlugin';
 import { LayoutOptions } from '../layouts/types';
 import { useEntityCounts } from '../../hooks/entityCounts';
+import { MiniMap } from './MiniMap';
 
 function vizWithOptions(visualization: VisualizationPlugin<LayoutOptions>) {
   return visualization.withOptions({
@@ -390,10 +391,6 @@ function FullScreenMap(props: FullScreenComponentProps) {
   );
 }
 
-function MapButton() {
-  return <div>Open the map!</div>;
-}
-
 function isCompatibleWithStudy(study: StudyMetadata) {
   const geoConfigs = Array.from(
     preorder(study.rootEntity, (e) => e.children ?? [])
@@ -405,6 +402,6 @@ function isCompatibleWithStudy(study: StudyMetadata) {
 
 export const fullScreenMapPlugin: FullScreenAppPlugin = {
   fullScreenComponent: FullScreenMap,
-  triggerComponent: MapButton,
+  triggerComponent: MiniMap,
   isCompatibleWithStudy,
 };

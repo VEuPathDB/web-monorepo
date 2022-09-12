@@ -77,7 +77,7 @@
     "@types/react-table": "^7.7.12",
     "@types/uuid": "^8.3.4",
     "@veupathdb/browserslist-config": "^1.1.0",
-    "@veupathdb/components": "^0.17.4",
+    "@veupathdb/components": "^0.19.0",
     "@veupathdb/coreui": "^0.17.8",
     "@veupathdb/eslint-config": "^2.0.0",
     "@veupathdb/http-utils": "^1.1.0",
