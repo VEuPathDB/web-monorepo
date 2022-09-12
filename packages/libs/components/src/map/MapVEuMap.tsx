@@ -136,6 +136,8 @@ export interface MapVEuMapProps {
    * Optional, but required for grid functionality if showGrid is true
    **/
   zoomLevelToGeohashLevel?: (leafletZoomLevel: number) => number;
+  /** What's the minimum leaflet zoom level allowed? Default = 1 */
+  minZoom?: number;
   /**
    * Should the mouse-mode (regular/magnifying glass) icons be shown and active?
    **/
@@ -182,6 +184,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     recenterMarkers = true,
     showGrid,
     zoomLevelToGeohashLevel,
+    minZoom = 1,
     showMouseToolbar,
     baseLayer,
     onBaseLayerChanged,
@@ -281,7 +284,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       style={{ height, width, ...style }}
       onViewportChanged={onViewportChanged}
       className={mouseMode === 'magnification' ? 'cursor-zoom-in' : ''}
-      minZoom={1}
+      minZoom={minZoom}
       worldCopyJump={false}
       ondragstart={() => setIsDragging(true)}
       ondragend={() => setIsDragging(false)}

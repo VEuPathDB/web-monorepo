@@ -124,7 +124,7 @@ export const getSpeciesDonuts = async (
         isAtomic={atomicValue}
         onClick={handleMarkerClick}
         duration={duration}
-        size={donutSize}
+        markerScale={donutSize / 40}
         markerLabel={donutSize < 40 ? '' : undefined}
       />
     );

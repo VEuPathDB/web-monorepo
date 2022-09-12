@@ -34,10 +34,12 @@ export function tinyLeafletZoomLevelToGeohashLevel(
   leafletZoomLevel: number
 ): number {
   switch (leafletZoomLevel) {
+    case 0:
     case 1:
+      return 1;
     case 2:
-      return 2;
     case 3:
+      return 2;
     case 4:
     case 5:
       return 3;
@@ -52,10 +54,6 @@ export function tinyLeafletZoomLevelToGeohashLevel(
     case 12:
     case 13:
     case 14:
-      return 6;
-    case 15:
-    case 16:
-    case 17:
       return 6;
     default:
       return 6;

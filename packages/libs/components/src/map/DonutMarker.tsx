@@ -7,10 +7,17 @@ import L from 'leaflet';
 import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 
 import PiePlot from '../plots/PiePlot';
-import { PiePlotData, PiePlotDatum } from '../types/plots';
+import {
+  MarkerScaleAddon,
+  MarkerScaleDefault,
+  PiePlotData,
+  PiePlotDatum,
+} from '../types/plots';
 
 //DKDK ts definition for HistogramMarkerSVGProps: need some adjustment but for now, just use Donut marker one
-export interface DonutMarkerProps extends BoundsDriftMarkerProps {
+export interface DonutMarkerProps
+  extends BoundsDriftMarkerProps,
+    MarkerScaleAddon {
   data: {
     value: number;
     label: string;
@@ -20,8 +27,6 @@ export interface DonutMarkerProps extends BoundsDriftMarkerProps {
   onClick?: (event: L.LeafletMouseEvent) => void | undefined;
   /** center title/number for marker (defaults to sum of data[].value) */
   markerLabel?: string;
-  /** size of donut (default = 40) */
-  size?: number;
 }
 
 // DKDK convert to Cartesian coord. toCartesian(centerX, centerY, Radius for arc to draw, arc (radian))
@@ -117,7 +122,8 @@ export default function DonutMarker(props: DonutMarkerProps) {
   }
 
   //DKDK construct histogram marker icon
-  const size = props.size ?? 40;
+  const scale = props.markerScale ?? MarkerScaleDefault;
+  const size = 40 * scale;
   let svgHTML: string = ''; //DKDK divIcon HTML contents
 
   //DKDK set drawing area

@@ -251,7 +251,7 @@ export const Tiny: Story<MapVEuMapProps> = (args) => {
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
   const [legendData, setLegendData] = useState<LegendProps['data']>([]);
-  const [viewport] = useState<Viewport>({ center: [8, 10], zoom: 2 });
+  const [viewport] = useState<Viewport>({ center: [8, 10], zoom: 0 });
   const handleViewportChanged = useCallback(
     async (bvp: BoundsViewport) => {
       const markers = await getSpeciesDonuts(
@@ -277,6 +277,7 @@ export const Tiny: Story<MapVEuMapProps> = (args) => {
         markers={markerElements}
         animation={defaultAnimation}
         zoomLevelToGeohashLevel={tinyLeafletZoomLevelToGeohashLevel}
+        minZoom={0}
       />
     </>
   );
