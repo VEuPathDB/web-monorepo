@@ -32,7 +32,7 @@ import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps } from '../VisualizationTypes';
 
-import Switch from '@veupathdb/components/lib/components/widgets/Switch';
+import Toggle from '@veupathdb/coreui/dist/components/widgets/Toggle';
 import line from './selectorIcons/line.svg';
 
 // use lodash instead of Math.min/max
@@ -999,10 +999,10 @@ function LineplotViz(props: VisualizationProps<Options>) {
               marginBottom: '0.8em',
             }}
           >
-            <Switch
+            <Toggle
               label="Log scale (will exclude values &le; 0):"
-              state={vizConfig.independentAxisLogScale}
-              onStateChange={(newValue: boolean) => {
+              value={vizConfig.independentAxisLogScale ?? false}
+              onChange={(newValue: boolean) => {
                 setDismissedIndependentAllNegativeWarning(false);
                 onIndependentAxisLogScaleChange(newValue);
                 if (newValue && vizConfig.useBinning)
@@ -1027,10 +1027,10 @@ function LineplotViz(props: VisualizationProps<Options>) {
               containerStyles={{ maxWidth: '350px' }}
             />
           ) : null}
-          <Switch
+          <Toggle
             label={`Binning ${vizConfig.useBinning ? 'on' : 'off'}`}
-            state={vizConfig.useBinning}
-            onStateChange={(newValue: boolean) => {
+            value={vizConfig.useBinning}
+            onChange={(newValue: boolean) => {
               onUseBinningChange(newValue);
               if (newValue && vizConfig.independentAxisLogScale)
                 enqueueSnackbar(
@@ -1150,10 +1150,10 @@ function LineplotViz(props: VisualizationProps<Options>) {
               marginBottom: '0.8em',
             }}
           >
-            <Switch
+            <Toggle
               label="Log scale (will exclude values &le; 0):"
-              state={vizConfig.dependentAxisLogScale}
-              onStateChange={(newValue: boolean) => {
+              value={vizConfig.dependentAxisLogScale ?? false}
+              onChange={(newValue: boolean) => {
                 setDismissedDependentAllNegativeWarning(false);
                 onDependentAxisLogScaleChange(newValue);
                 if (newValue && vizConfig.showErrorBars)
@@ -1178,10 +1178,10 @@ function LineplotViz(props: VisualizationProps<Options>) {
               containerStyles={{ maxWidth: '350px' }}
             />
           ) : null}
-          <Switch
+          <Toggle
             label="Show error bars (95% C.I.)"
-            state={vizConfig.showErrorBars}
-            onStateChange={(newValue: boolean) => {
+            value={vizConfig.showErrorBars ?? false}
+            onChange={(newValue: boolean) => {
               onShowErrorBarsChange(newValue);
               if (newValue && vizConfig.dependentAxisLogScale)
                 enqueueSnackbar(

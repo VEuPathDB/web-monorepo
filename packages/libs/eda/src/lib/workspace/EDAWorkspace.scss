@@ -160,10 +160,14 @@
     overflow-x: auto;
     max-width: 97vw;
     align-items: center;
+    justify-content: space-evenly;
   }
 
   .expanded-diagram {
-    margin: auto;
+  }
+
+  .MiniMapContainer {
+    box-shadow: 2px 2px 7px #00000050;
   }
 
   &-Variables {

@@ -76,6 +76,8 @@ export interface MapMarkersProps {
   dependentAxisLogScale?: boolean;
   /** checked legend items - or undefined if not known */
   checkedLegendItems?: string[];
+  /** mini markers - default = false */
+  miniMarkers?: boolean;
 }
 
 // what this hook returns
@@ -114,6 +116,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
     markerType,
     dependentAxisLogScale = false,
     checkedLegendItems = undefined,
+    miniMarkers = false,
   } = props;
 
   const dataClient: DataClient = useDataClient();
@@ -512,13 +515,14 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
             position={position}
             data={reorderedData}
             duration={defaultAnimationDuration}
-            markerLabel={formattedCount}
+            markerLabel={miniMarkers ? '' : formattedCount}
             {...(markerType !== 'pie'
               ? {
                   dependentAxisRange: defaultDependentAxisRange,
                   dependentAxisLogScale: dependentAxisLogScale,
                 }
               : {})}
+            {...(miniMarkers ? { markerScale: 0.5 } : {})}
           />
         );
       }

@@ -1,5 +1,6 @@
 import * as t from 'io-ts';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { v4 as uuid } from 'uuid';
 
 import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
 import { MouseMode } from '@veupathdb/components/lib/map/MouseTools';
@@ -59,6 +60,9 @@ import { FloatingLayout } from '../layouts/FloatingLayout';
 import { VisualizationPlugin } from '../visualizations/VisualizationPlugin';
 import { LayoutOptions } from '../layouts/types';
 import { useEntityCounts } from '../../hooks/entityCounts';
+import { MiniMap } from './MiniMap';
+import { Tooltip } from '@material-ui/core';
+import { Link } from 'react-router-dom';
 
 function vizWithOptions(visualization: VisualizationPlugin<LayoutOptions>) {
   return visualization.withOptions({
@@ -173,8 +177,7 @@ function FullScreenMap(props: FullScreenComponentProps) {
     xAxisVariable: appState.overlayVariable,
     computationType: 'pass',
     markerType: appState.markerType,
-    // Endpoint can't currently handle checkedLegendItems
-    // checkedLegendItems: appState.checkedLegendItems,
+    checkedLegendItems: appState.checkedLegendItems,
     //TO DO: maybe dependentAxisLogScale
   });
 
@@ -304,6 +307,63 @@ function FullScreenMap(props: FullScreenComponentProps) {
   //   setAppState
   // );
 
+  const fullScreenActions = (
+    <>
+      <div>
+        <Tooltip title="Delete visualization">
+          <button
+            type="button"
+            className="link"
+            onClick={() => {
+              if (activeViz == null) return;
+              updateVisualizations((visualizations) =>
+                visualizations.filter((v) => v.visualizationId !== activeVizId)
+              );
+              setActiveVizId(undefined);
+            }}
+          >
+            <i className="fa fa-trash"></i>
+          </button>
+        </Tooltip>
+      </div>
+      <div>
+        <Tooltip title="Copy visualization">
+          <button
+            type="button"
+            className="link"
+            onClick={() => {
+              if (activeViz == null) return;
+              const vizCopyId = uuid();
+              updateVisualizations((visualizations) =>
+                visualizations.concat({
+                  ...activeViz,
+                  visualizationId: vizCopyId,
+                  displayName:
+                    'Copy of ' +
+                    (activeViz.displayName || 'unnamed visualization'),
+                })
+              );
+              setActiveVizId(vizCopyId);
+            }}
+          >
+            <i className="fa fa-clone"></i>
+          </button>
+        </Tooltip>
+      </div>
+      <Tooltip title="Minimize visualization">
+        <Link
+          to=""
+          onClick={(e) => {
+            e.preventDefault();
+            setActiveVizId(undefined);
+          }}
+        >
+          <i className="fa fa-window-minimize" />
+        </Link>
+      </Tooltip>
+    </>
+  );
+
   return (
     <>
       <PromiseResult state={appPromiseState}>
@@ -326,6 +386,7 @@ function FullScreenMap(props: FullScreenComponentProps) {
       <MapVEuMap
         height="100%"
         width="100%"
+        showMouseToolbar
         showSpinner={pending}
         animation={defaultAnimation}
         viewport={viewport}
@@ -407,6 +468,17 @@ function FullScreenMap(props: FullScreenComponentProps) {
                 onPress={() => setActiveVizId(viz.visualizationId)}
                 themeRole="primary"
                 text={`${viz.displayName} (${viz.descriptor.type})`}
+                textTransform="none"
+                styleOverrides={{
+                  container: {
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    width: '100%',
+                    display: 'block',
+                    textAlign: 'left',
+                  },
+                }}
               />
             </div>
           ))}
@@ -444,6 +516,7 @@ function FullScreenMap(props: FullScreenComponentProps) {
                 filteredCounts={filteredCounts}
                 isSingleAppMode
                 id={activeViz.visualizationId}
+                actions={fullScreenActions}
               />
             )}
           </PromiseResult>
@@ -451,10 +524,6 @@ function FullScreenMap(props: FullScreenComponentProps) {
       )}
     </>
   );
-}
-
-function MapButton() {
-  return <div>Open the map!</div>;
 }
 
 function isCompatibleWithStudy(study: StudyMetadata) {
@@ -468,6 +537,6 @@ function isCompatibleWithStudy(study: StudyMetadata) {
 
 export const fullScreenMapPlugin: FullScreenAppPlugin = {
   fullScreenComponent: FullScreenMap,
-  triggerComponent: MapButton,
+  triggerComponent: MiniMap,
   isCompatibleWithStudy,
 };

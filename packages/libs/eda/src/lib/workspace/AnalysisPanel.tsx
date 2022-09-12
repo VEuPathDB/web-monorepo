@@ -257,7 +257,7 @@ export function AnalysisPanel({
                   ([key, plugin]) =>
                     plugin?.isCompatibleWithStudy(studyMetadata) && (
                       <Link key={key} to={`${routeBase}/fullscreen/${key}`}>
-                        <plugin.triggerComponent />
+                        <plugin.triggerComponent analysis={analysis} />
                       </Link>
                     )
                 )}
