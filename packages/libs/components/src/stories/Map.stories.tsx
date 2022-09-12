@@ -4,7 +4,10 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 import { BoundsViewport } from '../map/Types';
 import { BoundsDriftMarkerProps } from '../map/BoundsDriftMarker';
 import { defaultAnimationDuration } from '../map/config/map';
-import { leafletZoomLevelToGeohashLevel } from '../map/utils/leaflet-geohash';
+import {
+  leafletZoomLevelToGeohashLevel,
+  tinyLeafletZoomLevelToGeohashLevel,
+} from '../map/utils/leaflet-geohash';
 import { getSpeciesDonuts } from './api/getMarkersFromFixtureData';
 
 import { LeafletMouseEvent } from 'leaflet';
@@ -17,6 +20,7 @@ import MapVEuMapSidebar from '../map/MapVEuMapSidebar';
 import MapVEuLegendSampleList, {
   LegendProps,
 } from '../map/MapVEuLegendSampleList';
+import { Checkbox } from '@material-ui/core';
 
 import geohashAnimation from '../map/animation_functions/geohash';
 import { MouseMode } from '../map/MouseTools';
@@ -66,16 +70,15 @@ function removeClassName(targetClass: string) {
 // this onClick event may need to be changed in the future like onMouseOver event
 const handleMarkerClick = (e: LeafletMouseEvent) => {
   /**
-   *  this only works when selecting other marker: not working when clicking map
+   * this only works when selecting other marker: not working when clicking map
    * it may be achieved by setting all desirable events (e.g., map click, preserving highlight, etc.)
    * just stop here and leave detailed events to be handled later
    */
-  //  use a resuable function to remove a class
+  // use a resuable function to remove a class
   removeClassName('highlight-marker');
   // native manner, but not React style? Either way this is arguably the simplest solution
   e.target._icon.classList.add('highlight-marker');
   // here, perhaps we can add additional click event, like opening sidebar when clicking
-  //console.log("I've been clicked")
 };
 
 const defaultMouseMode: MouseMode = 'default';
@@ -191,7 +194,7 @@ export const Windowed: Story<MapVEuMapProps> = (args) => {
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
   const [legendData, setLegendData] = useState<LegendProps['data']>([]);
-  const [viewport] = useState<Viewport>({ center: [13, 16], zoom: 4 });
+  const [viewport] = useState<Viewport>({ center: [2, 16], zoom: 4 });
   const handleViewportChanged = useCallback(
     async (bvp: BoundsViewport) => {
       const markers = await getSpeciesDonuts(
@@ -236,6 +239,139 @@ Windowed.args = {
   width: 700,
   style: {
     marginTop: 100,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
+  showGrid: true,
+  showMouseToolbar: true,
+};
+
+export const Tiny: Story<MapVEuMapProps> = (args) => {
+  const [markerElements, setMarkerElements] = useState<
+    ReactElement<BoundsDriftMarkerProps>[]
+  >([]);
+  const [legendData, setLegendData] = useState<LegendProps['data']>([]);
+  const [viewport] = useState<Viewport>({ center: [8, 10], zoom: 2 });
+  const handleViewportChanged = useCallback(
+    async (bvp: BoundsViewport) => {
+      const markers = await getSpeciesDonuts(
+        bvp,
+        defaultAnimationDuration,
+        setLegendData,
+        handleMarkerClick,
+        0,
+        tinyLeafletZoomLevelToGeohashLevel,
+        20
+      );
+      setMarkerElements(markers);
+    },
+    [setMarkerElements]
+  );
+
+  return (
+    <>
+      <MapVEuMap
+        {...args}
+        viewport={viewport}
+        onBoundsChanged={handleViewportChanged}
+        markers={markerElements}
+        animation={defaultAnimation}
+        zoomLevelToGeohashLevel={tinyLeafletZoomLevelToGeohashLevel}
+      />
+    </>
+  );
+};
+
+Tiny.args = {
+  height: 110,
+  width: 220,
+  style: {
+    marginTop: 100,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
+  showGrid: false,
+  showMouseToolbar: false,
+  showScale: false,
+  showLayerSelector: false,
+  showAttribution: false,
+  showZoomControl: false,
+};
+
+export const ScrollAndZoom: Story<MapVEuMapProps> = (args) => {
+  const [markerElements, setMarkerElements] = useState<
+    ReactElement<BoundsDriftMarkerProps>[]
+  >([]);
+  const [legendData, setLegendData] = useState<LegendProps['data']>([]);
+  const [viewport] = useState<Viewport>({ center: [13, 16], zoom: 4 });
+  const handleViewportChanged = useCallback(
+    async (bvp: BoundsViewport) => {
+      const markers = await getSpeciesDonuts(
+        bvp,
+        defaultAnimationDuration,
+        setLegendData,
+        handleMarkerClick
+      );
+      setMarkerElements(markers);
+    },
+    [setMarkerElements]
+  );
+
+  // add useState for controlling scroll and zoom
+  const [mapScroll, setMapScroll] = useState<boolean>(false);
+  const textSize = '1.0em';
+
+  return (
+    <>
+      <div
+        style={{
+          // height: 500,
+          display: 'flex',
+          flexDirection: 'column',
+          width: 700,
+          marginTop: 100,
+          marginLeft: 'auto',
+          marginRight: 'auto',
+        }}
+      >
+        <label
+          style={{
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            fontSize: textSize,
+            color: '',
+            // add this for general usage (e.g., story)
+            margin: 0,
+          }}
+        >
+          <Checkbox
+            color={'primary'}
+            checked={mapScroll}
+            onChange={() => setMapScroll(!mapScroll)}
+          />
+          Scroll and Zoom
+        </label>
+        <MapVEuMap
+          {...args}
+          viewport={viewport}
+          onBoundsChanged={handleViewportChanged}
+          markers={markerElements}
+          animation={defaultAnimation}
+          zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+          scrollingEnabled={mapScroll}
+        />
+      </div>
+    </>
+  );
+};
+
+ScrollAndZoom.args = {
+  height: 500,
+  width: 700,
+  style: {
+    // marginTop: 100,
     marginLeft: 'auto',
     marginRight: 'auto',
   },
