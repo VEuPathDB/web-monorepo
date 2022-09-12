@@ -169,6 +169,8 @@ export interface MapVEuMapProps {
   showNoDataOverlay?: boolean;
   /** Whether to show the Scale in the map */
   showScale?: boolean;
+  /** Whether to allow any interactive control of map location (default: true) */
+  interactive?: boolean;
 }
 
 function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
@@ -198,6 +200,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     showZoomControl = true,
     mouseMode,
     onMouseModeChange,
+    interactive = true,
   } = props;
 
   // Whether the user is currently dragging the map
@@ -278,6 +281,16 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     return markers;
   }, [markers, isDragging, mouseMode]);
 
+  const disabledInteractiveProps = {
+    dragging: false,
+    keyboard: false,
+    doubleClickZoom: false,
+    scrollWheelZoom: false,
+    tap: false,
+    touchZoom: false,
+    boxZoom: false,
+  };
+
   return (
     <Map
       viewport={viewport}
@@ -294,6 +307,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       ref={mapRef}
       attributionControl={showAttribution}
       zoomControl={showZoomControl}
+      {...(interactive ? {} : disabledInteractiveProps)}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
