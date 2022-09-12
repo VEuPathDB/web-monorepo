@@ -54,7 +54,7 @@ import {
 } from 'lodash';
 // directly use RadioButtonGroup instead of ScatterPlotControls
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-import Switch from '@veupathdb/components/lib/components/widgets/Switch';
+import Toggle from '@veupathdb/coreui/dist/components/widgets/Toggle';
 // import ScatterPlotData
 import {
   ScatterPlotDataSeries,
@@ -1156,10 +1156,10 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
               marginBottom: '0.8em',
             }}
           >
-            <Switch
+            <Toggle
               label="Log scale (will exclude values &le; 0):"
-              state={vizConfig.independentAxisLogScale}
-              onStateChange={(newValue: boolean) => {
+              value={vizConfig.independentAxisLogScale ?? false}
+              onChange={(newValue: boolean) => {
                 setDismissedIndependentAllNegativeWarning(false);
                 onIndependentAxisLogScaleChange(newValue);
                 if (newValue && vizConfig.valueSpecConfig !== 'Raw')
@@ -1263,10 +1263,10 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
               marginBottom: '0.8em',
             }}
           >
-            <Switch
+            <Toggle
               label="Log scale (will exclude values &le; 0):"
-              state={vizConfig.dependentAxisLogScale}
-              onStateChange={(newValue: boolean) => {
+              value={vizConfig.dependentAxisLogScale ?? false}
+              onChange={(newValue: boolean) => {
                 setDismissedDependentAllNegativeWarning(false);
                 onDependentAxisLogScaleChange(newValue);
                 if (newValue && vizConfig.valueSpecConfig !== 'Raw')

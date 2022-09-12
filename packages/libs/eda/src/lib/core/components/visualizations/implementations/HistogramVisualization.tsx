@@ -5,7 +5,7 @@ import FacetedHistogram from '@veupathdb/components/lib/plots/facetedPlots/Facet
 import BinWidthControl from '@veupathdb/components/lib/components/plotControls/BinWidthControl';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-import Switch from '@veupathdb/components/lib/components/widgets/Switch';
+import Toggle from '@veupathdb/coreui/dist/components/widgets/Toggle';
 import {
   NumberOrTimeDelta,
   NumberOrTimeDeltaRange,
@@ -849,12 +849,14 @@ function HistogramViz(props: VisualizationProps<Options>) {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Switch
+            <Toggle
               label="Log scale:"
-              state={histogramProps.dependentAxisLogScale}
-              onStateChange={onDependentAxisLogScaleChange}
-              containerStyles={{
-                minHeight: widgetHeight,
+              value={histogramProps.dependentAxisLogScale ?? false}
+              onChange={onDependentAxisLogScaleChange}
+              styleOverrides={{
+                container: {
+                  minHeight: widgetHeight,
+                },
               }}
             />
           </div>
