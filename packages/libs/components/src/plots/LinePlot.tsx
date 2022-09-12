@@ -10,10 +10,15 @@ import {
   OrientationAddon,
   OrientationDefault,
   AxisTruncationAddon,
+  independentAxisLogScaleAddon,
+  independentAxisLogScaleDefault,
+  DependentAxisLogScaleAddon,
+  DependentAxisLogScaleDefault,
 } from '../types/plots';
 // import truncation util functions
 import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations';
 import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
+import { tickSettings } from '../utils/tick-settings';
 
 // is it possible to have this interface extend ScatterPlotProps?
 // or would we need some abstract layer, w scatter and line both as equal children below it?
@@ -22,6 +27,8 @@ export interface LinePlotProps
   extends PlotProps<LinePlotData>,
     // truncation
     OrientationAddon,
+    independentAxisLogScaleAddon,
+    DependentAxisLogScaleAddon,
     AxisTruncationAddon {
   /** x-axis range: required for confidence interval - not really */
   independentAxisRange?: NumberOrDateRange;
@@ -64,6 +71,8 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
     // add axis range control truncation
     orientation = OrientationDefault,
     axisTruncationConfig,
+    independentAxisLogScale = independentAxisLogScaleDefault,
+    dependentAxisLogScale = DependentAxisLogScaleDefault,
     ...restProps
   } = props;
 
@@ -72,7 +81,9 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
   const extendedIndependentAxisRange = extendAxisRangeForTruncations(
     standardIndependentAxisRange,
     axisTruncationConfig?.independentAxis,
-    independentValueType === 'date' ? 'date' : 'number'
+    independentValueType === 'date' ? 'date' : 'number',
+    true, // addPadding
+    independentAxisLogScale
   );
 
   // truncation
@@ -80,7 +91,9 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
   const extendedDependentAxisRange = extendAxisRangeForTruncations(
     standardDependentAxisRange,
     axisTruncationConfig?.dependentAxis,
-    dependentValueType === 'date' ? 'date' : 'number'
+    dependentValueType === 'date' ? 'date' : 'number',
+    true, // addPadding
+    dependentAxisLogScale
   );
 
   // make rectangular layout shapes for truncated axis/missing data
@@ -115,27 +128,61 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
       title: independentAxisLabel,
       // add axis range control truncation
       range: data.series.length
-        ? [extendedIndependentAxisRange?.min, extendedIndependentAxisRange?.max]
+        ? [
+            extendedIndependentAxisRange?.min,
+            extendedIndependentAxisRange?.max,
+          ].map((val) =>
+            independentAxisLogScale && val != null
+              ? Math.log10(val as number)
+              : val
+          )
         : undefined,
       zeroline: false, // disable line at 0 value
       // make plot border
       mirror: true,
       // date or number type (from variable.type)
-      type: independentValueType === 'date' ? 'date' : undefined,
+      type:
+        independentValueType === 'date'
+          ? 'date'
+          : independentAxisLogScale
+          ? 'log'
+          : undefined,
       tickfont: data.series.length ? {} : { color: 'transparent' },
+      ...tickSettings(
+        independentAxisLogScale,
+        extendedIndependentAxisRange,
+        independentValueType
+      ),
     },
     yaxis: {
       title: dependentAxisLabel,
       // add axis range control
       range: data.series.length
-        ? [extendedDependentAxisRange?.min, extendedDependentAxisRange?.max]
+        ? [
+            extendedDependentAxisRange?.min,
+            extendedDependentAxisRange?.max,
+          ].map((val) =>
+            dependentAxisLogScale && val != null
+              ? Math.log10(val as number)
+              : val
+          )
         : undefined,
       zeroline: false, // disable line at 0 value
       // make plot border
       mirror: true,
       // date or number type (from variable.type)
-      type: dependentValueType === 'date' ? 'date' : undefined,
+      type:
+        dependentValueType === 'date'
+          ? 'date'
+          : dependentAxisLogScale
+          ? 'log'
+          : undefined,
       tickfont: data.series.length ? {} : { color: 'transparent' },
+      ...tickSettings(
+        dependentAxisLogScale,
+        extendedDependentAxisRange,
+        dependentValueType
+      ),
     },
     // axis range control: add truncatedAxisHighlighting for layout.shapes
     shapes: truncatedAxisHighlighting,

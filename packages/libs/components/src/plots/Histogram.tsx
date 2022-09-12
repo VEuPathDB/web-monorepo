@@ -34,6 +34,7 @@ import { Layout, Shape } from 'plotly.js';
 // import truncation util functions
 import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations';
 import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
+import { tickSettings } from '../utils/tick-settings';
 
 // bin middles needed for highlighting
 interface BinSummary {
@@ -375,9 +376,7 @@ const Histogram = makePlotlyPlotComponent(
     const extendedIndependentAxisRange = extendAxisRangeForTruncations(
       standardIndependentAxisRange,
       axisTruncationConfig?.independentAxis,
-      data.binWidthSlider?.valueType,
-      // set plot type not to have padding/margin on the min/max
-      'histogram'
+      data.binWidthSlider?.valueType
     );
 
     const plotlyIndependentAxisRange = [
@@ -417,7 +416,8 @@ const Histogram = makePlotlyPlotComponent(
       axisTruncationConfig?.dependentAxis,
       'number',
       // set plot type not to have padding/margin on the min/max
-      'histogram'
+      false,
+      dependentAxisLogScale
     ) as NumberRange | undefined;
 
     // make rectangular layout shapes for truncated axis/missing data
@@ -450,7 +450,6 @@ const Histogram = makePlotlyPlotComponent(
 
     const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
       type: dependentAxisLogScale ? 'log' : 'linear',
-      tickformat: dependentAxisLogScale ? ',.1r' : undefined, // comma-separated thousands, rounded to 1 significant digit
       hoverformat: dependentAxisLogScale
         ? dataLooksFractional
           ? ',.4f'
@@ -474,11 +473,15 @@ const Histogram = makePlotlyPlotComponent(
               : val
           )
         : [0, 10],
-      dtick: dependentAxisLogScale ? 1 : undefined,
       tickfont: data.series.length ? {} : { color: 'transparent' },
       showline: !axisTruncationConfig?.independentAxis?.min,
       linecolor: '#dddddd',
       zeroline: false,
+      ...tickSettings(
+        dependentAxisLogScale,
+        extendedDependentAxisRange,
+        data?.binWidthSlider?.valueType
+      ),
     };
 
     return {

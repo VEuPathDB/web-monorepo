@@ -5,7 +5,6 @@ import { HistogramData } from '../../types/plots';
 export const defaultContainerStyles: HistogramProps['containerStyles'] = {
   height: 300,
   width: 375,
-  marginLeft: '0.75rem',
   marginBottom: '0.25rem',
   border: '1px solid #dedede',
   boxShadow: '1px 1px 4px #00000066',

@@ -7,6 +7,7 @@ import usePlotControls, {
 } from '../../hooks/usePlotControls';
 import { PiePlotData } from '../../types/plots';
 import { LIGHT_PURPLE } from '../../constants/colors';
+import { mutedPurple } from '@veupathdb/coreui/dist/definitions/colors';
 
 export default {
   title: 'Plot Controls/PieControls',
@@ -44,7 +45,7 @@ export const AdditionalOptions: Story<usePlotControlsParams<PiePlotData>> = (
   return (
     <PieControls
       label="Customizable Pie Plot Panel"
-      accentColor={LIGHT_PURPLE}
+      accentColor={{ hue: mutedPurple, level: 400 }}
       {...controls}
       containerStyles={{ margin: 25 }}
     />

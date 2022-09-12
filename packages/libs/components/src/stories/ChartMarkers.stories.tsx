@@ -19,6 +19,10 @@ import MapVEuLegendSampleList, {
 
 // anim
 import geohashAnimation from '../map/animation_functions/geohash';
+import { MouseMode } from '../map/MouseTools';
+
+import LabelledGroup from '../components/widgets/LabelledGroup';
+import { Toggle } from '@veupathdb/coreui';
 
 export default {
   title: 'Map/Chart Markers',
@@ -45,6 +49,8 @@ const variableProps = {
   quantityLabel: '<b>Record count</b>',
   legendInfoNumberText: 'Collections',
 };
+
+const defaultMouseMode: MouseMode = 'default';
 
 export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
   const [markerElements, setMarkerElements] = useState<
@@ -85,6 +91,9 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
     [setMarkerElements, legendRadioValue]
   );
 
+  // define mouseMode
+  const [mouseMode, setMouseMode] = useState<MouseMode>(defaultMouseMode);
+
   return (
     <>
       <MapVEuMap
@@ -96,6 +105,8 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
         showMouseToolbar={true}
         animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+        mouseMode={mouseMode}
+        onMouseModeChange={setMouseMode}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
@@ -147,6 +158,9 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
   const legendType = 'numeric';
   const duration = defaultAnimationDuration;
 
+  // define mouseMode
+  const [mouseMode, setMouseMode] = useState<MouseMode>(defaultMouseMode);
+
   useEffect(() => {
     // track if effect has been cancelled
     let isCancelled = false;
@@ -189,6 +203,8 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
         showMouseToolbar={true}
         animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+        mouseMode={mouseMode}
+        onMouseModeChange={setMouseMode}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
@@ -206,6 +222,85 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
 TwoRequests.args = {
   height: '100vh',
   width: '100vw',
+  showGrid: true,
+  showMouseToolbar: false, // not yet implemented
+};
+
+// dependent axis log scale story
+export const LogScale: Story<MapVEuMapProps> = (args) => {
+  const [markerElements, setMarkerElements] = useState<
+    ReactElement<BoundsDriftMarkerProps>[]
+  >([]);
+  const [legendData, setLegendData] = useState<LegendProps['data']>([]);
+  const [legendRadioValue, setLegendRadioValue] = useState<string>(
+    'Individual'
+  );
+  const [viewport] = useState<Viewport>({ center: [13, 0], zoom: 6 });
+
+  const legendRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLegendRadioValue(e.target.value);
+  };
+  const [dependentAxisRange, setDependentAxisRange] = useState<number[]>([
+    0,
+    0,
+  ]);
+
+  const legendType = 'numeric';
+
+  const duration = defaultAnimationDuration;
+
+  const [dependentAxisLogScale, setDependentAxisLogScale] = useState(false);
+
+  // send legendRadioValue instead of knob_YAxisRangeMethod: also send setYAxisRangeValue
+  const handleViewportChanged = useCallback(
+    async (bvp: BoundsViewport) => {
+      // anim add duration & scrambleKeys
+      const markers = await getCollectionDateChartMarkers(
+        bvp,
+        duration,
+        setLegendData,
+        handleMarkerClick,
+        legendRadioValue,
+        setDependentAxisRange,
+        0,
+        dependentAxisLogScale
+      );
+      setMarkerElements(markers);
+    },
+    [setMarkerElements, legendRadioValue, dependentAxisLogScale]
+  );
+
+  return (
+    <>
+      <MapVEuMap
+        {...args}
+        viewport={viewport}
+        onBoundsChanged={handleViewportChanged}
+        markers={markerElements}
+        showGrid={true}
+        showMouseToolbar={true}
+        animation={defaultAnimation}
+        zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+      />
+      {/* Y-axis range control */}
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <LabelledGroup label="Y-axis controls">
+          <div style={{ display: 'flex' }}>
+            <Toggle
+              label="Log Scale:"
+              value={dependentAxisLogScale}
+              onChange={setDependentAxisLogScale}
+            />
+          </div>
+        </LabelledGroup>
+      </div>
+    </>
+  );
+};
+
+LogScale.args = {
+  height: '50vh',
+  width: '50vw',
   showGrid: true,
   showMouseToolbar: false, // not yet implemented
 };

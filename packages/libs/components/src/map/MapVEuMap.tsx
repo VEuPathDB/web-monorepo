@@ -24,7 +24,6 @@ import {
   LayersControl,
   ScaleControl,
 } from 'react-leaflet';
-import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
 import SemanticMarkers from './SemanticMarkers';
 import 'leaflet/dist/leaflet.css';
 import '../../dist/css/map_styles.css';
@@ -35,6 +34,8 @@ import { ToImgopts } from 'plotly.js';
 import Spinner from '../components/Spinner';
 import NoDataOverlay from '../components/NoDataOverlay';
 import { LatLngBounds } from 'leaflet';
+
+import domToImage from 'dom-to-image';
 
 const { BaseLayer } = LayersControl;
 
@@ -48,14 +49,10 @@ export const baseLayers = {
   },
   // change config
   Terrain: {
-    url:
-      'https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.{ext}',
+    url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
     attribution:
-      'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    subdomains: 'abcd',
-    minZoom: 0,
-    maxZoom: 18,
-    ext: 'png',
+      'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
+    maxZoom: 17,
   },
   Satellite: {
     url:
@@ -70,27 +67,23 @@ export const baseLayers = {
     noWrap: true,
     maxZoom: 17,
   },
-  // change layer as previous one does not work
-  Light: {
-    url:
-      'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}{r}.{ext}',
-    attribution:
-      'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    subdomains: 'abcd',
-    minZoom: 0,
-    maxZoom: 20,
-    ext: 'png',
-  },
-  Dark: {
-    url:
-      'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}{r}.png',
-    attribution:
-      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-    subdomains: 'abcd',
-    // maxZoom='19'
-  },
+  // Not sure these are needed, and the "Light" layer requires an API key
+  // Light: {
+  //   url: 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png',
+  //   attribution:
+  //     '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
+  //   maxZoom: 20,
+  // },
+  // Dark: {
+  //   url:
+  //     'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}{r}.png',
+  //   attribution:
+  //     '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+  //   subdomains: 'abcd',
+  //   // maxZoom='19'
+  // },
   OSM: {
-    url: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     attribution:
       '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
     // minZoom='2'
@@ -147,6 +140,10 @@ export interface MapVEuMapProps {
    * Should the mouse-mode (regular/magnifying glass) icons be shown and active?
    **/
   showMouseToolbar?: boolean;
+  /** mouseMode control */
+  mouseMode: MouseMode;
+  /** a function for changing mouseMode */
+  onMouseModeChange: (value: MouseMode) => void;
   /**
    * The name of the tile layer to use. If omitted, defaults to Street.
    */
@@ -188,68 +185,23 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     showSpinner,
     showNoDataOverlay,
     showScale = true,
-    scrollingEnabled,
+    scrollingEnabled = true,
+    mouseMode,
+    onMouseModeChange,
   } = props;
 
-  // this is the React Map component's onViewPortChanged handler
-  // we may not need to use it.
-  // onViewportchanged in SemanticMarkers is more relevant
-  // because it can access the map's bounding box (aka bounds)
-  // which is useful for fetching data to show on the map.
-  // The Viewport info (center and zoom) handled here would be useful for saving a
-  // 'bookmarkable' state of the map.
-  const [mouseMode, setMouseMode] = useState<MouseMode>('default');
   // Whether the user is currently dragging the map
   const [isDragging, setIsDragging] = useState<boolean>(false);
 
   const mapRef = useRef<Map>(null);
-  const screenshotter = useMemo(
-    () =>
-      new SimpleMapScreenshoter({
-        hidden: true,
-        hideElementsWithSelectors: [],
-      }),
-    []
-  );
 
-  useEffect(() => {
-    if (mapRef.current?.leafletElement)
-      screenshotter.addTo(mapRef.current.leafletElement);
-  }, [screenshotter, mapRef]);
-
-  useImperativeHandle<PlotRef, PlotRef>(
-    ref,
-    () => ({
-      // Set the ref's toImage function that will be called in web-eda
-      toImage: async (imageOpts: ToImgopts) => {
-        try {
-          // There was a 1000ms sleep/timeout here, but it is better
-          // to let the client caller handle this (and cancel that timeout if needed)
-
-          // Check that map leaflet element still exists
-          if (mapRef.current) {
-            // Call the 3rd party function that actually creates the image
-            const screenshot = await screenshotter.takeScreen('image', {
-              domtoimageOptions: {
-                width: imageOpts.width,
-                height: imageOpts.height,
-              },
-            });
-            // The screenshotter library's types are wrong. TS thinks this next line
-            // will never happen, but takeScreen('image') should in fact return a string
-            if (typeof screenshot === 'string') return screenshot;
-            console.error(
-              'Map screenshot not string type. Value:\n' + screenshot
-            );
-          }
-        } catch (error) {
-          console.error('Could not create image for plot: ', error);
-        }
-        return '';
-      },
-    }),
-    [screenshotter]
-  );
+  useImperativeHandle<PlotRef, PlotRef>(ref, () => ({
+    // Set the ref's toImage function that will be called in web-eda
+    toImage: async (imageOpts: ToImgopts) => {
+      if (!mapRef.current?.container) throw new Error('Map not ready');
+      return await domToImage.toPng(mapRef.current.container, imageOpts);
+    },
+  }));
 
   const markersBounds: MapVEuBounds | null = useMemo(() => {
     if (markers) {
@@ -346,7 +298,10 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       />
 
       {showMouseToolbar && (
-        <MouseTools mouseMode={mouseMode} setMouseMode={setMouseMode} />
+        <MouseTools
+          mouseMode={mouseMode}
+          onMouseModeChange={onMouseModeChange}
+        />
       )}
 
       {showGrid && zoomLevelToGeohashLevel ? (

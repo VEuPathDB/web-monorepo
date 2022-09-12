@@ -7,7 +7,11 @@ import Barplot from '../plots/Barplot';
 // import NumberRange type def
 import { NumberRange } from '../types/general';
 
-interface ChartMarkerProps extends BoundsDriftMarkerProps {
+import { DependentAxisLogScaleAddon } from '../types/plots';
+
+interface ChartMarkerProps
+  extends BoundsDriftMarkerProps,
+    DependentAxisLogScaleAddon {
   borderColor?: string;
   borderWidth?: number;
   data: {
@@ -21,8 +25,6 @@ interface ChartMarkerProps extends BoundsDriftMarkerProps {
   onClick?: (event: L.LeafletMouseEvent) => void | undefined;
   /** x-axis title for marker (defaults to sum of data[].value) */
   markerLabel?: string;
-  /** x-axis title for enlarged mouse-over marker (defaults to "Total: sum(data[].value)") */
-  independentAxisLabel?: string;
 }
 
 /**
@@ -85,11 +87,15 @@ export default function ChartMarker(props: ChartMarkerProps) {
           maximumFractionDigits: 0,
         });
 
-  var maxValues: number = Math.max(...fullStat.map((o) => o.value)); // max of fullStat.value per marker icon
-  // for local max, need to check the case wherer all values are zeros that lead to maxValues equals to 0 -> "divided by 0" can happen
-  if (maxValues == 0) {
-    maxValues = 1; // this doesn't matter as all values are zeros
-  }
+  // determine min/max (one marker)
+  const minMaxPosRange: NumberRange = props.dependentAxisRange
+    ? props.dependentAxisRange
+    : {
+        min: props.dependentAxisLogScale
+          ? Math.min(...fullStat.map((o) => o.value).filter((a) => a > 0))
+          : 0,
+        max: Math.max(...fullStat.map((o) => o.value).filter((a) => a > 0)),
+      };
 
   const roundX = 10; // round corner in pixel: 0 = right angle
   const roundY = 10; // round corner in pixel: 0 = right angle
@@ -126,68 +132,44 @@ export default function ChartMarker(props: ChartMarkerProps) {
     borderWidth +
     '"/>';
 
-  // set globalMaxValue non-zero if props.yAxisRange exists
-  let globalMaxValue: number = 0;
-  // dependentAxisRange is an object with {min,max} (NumberRange)
-  if (props.dependentAxisRange) {
-    globalMaxValue =
-      props.dependentAxisRange.max - props.dependentAxisRange.min;
-  }
-
   // initialize variables for using at following if-else
   let barWidth: number, startingX: number, barHeight: number, startingY: number;
 
-  if (globalMaxValue) {
-    fullStat.forEach(function (
-      el: { color: string; label: string; value: number },
-      index
-    ) {
-      // for the case of y-axis range input: a global approach that take global max = icon height
-      barWidth = (xSize - 2 * marginX) / count; // bar width
-      startingX = marginX + borderWidth + barWidth * index; // x in <react> tag: note that (0,0) is top left of the marker icon
-      barHeight = (el.value / globalMaxValue) * (size - 2 * marginY); // bar height: used 2*marginY to have margins at both top and bottom
-      startingY = size - marginY - barHeight + borderWidth; // y in <react> tag: note that (0,0) is top left of the marker icon
-      // making the last bar, noData
-      svgHTML +=
-        '<rect x=' +
-        startingX +
-        ' y=' +
-        startingY +
-        ' width=' +
-        barWidth +
-        ' height=' +
-        barHeight +
-        ' fill=' +
-        // rgb strings with spaces in them don't work in SVG?
-        el.color.replace(/\s/g, '') +
-        ' />';
-    });
-  } else {
-    fullStat.forEach(function (
-      el: { color: string; label: string; value: number },
-      index
-    ) {
-      // for the case of auto-scale y-axis: a local approach that take local max = icon height
-      barWidth = (xSize - 2 * marginX) / count; // bar width
-      startingX = marginX + borderWidth + barWidth * index; // x in <react> tag: note that (0,0) is top left of the marker icon
-      barHeight = (el.value / maxValues) * (size - 2 * marginY); // bar height: used 2*marginY to have margins at both top and bottom
-      startingY = size - marginY - barHeight + borderWidth; // y in <react> tag: note that (0,0) is top left of the marker icon
-      // making the last bar, noData
-      svgHTML +=
-        '<rect x=' +
-        startingX +
-        ' y=' +
-        startingY +
-        ' width=' +
-        barWidth +
-        ' height=' +
-        barHeight +
-        ' fill=' +
-        // rgb strings with spaces in them don't work in SVG?
-        el.color.replace(/\s/g, '') +
-        ' />';
-    });
-  }
+  // drawing bars per marker
+  fullStat.forEach(function (
+    el: { color: string; label: string; value: number },
+    index
+  ) {
+    // for the case of y-axis range input: a global approach that take global max = icon height
+    barWidth = (xSize - 2 * marginX) / count; // bar width
+    startingX = marginX + borderWidth + barWidth * index; // x in <react> tag: note that (0,0) is top left of the marker icon
+    barHeight = props.dependentAxisLogScale // log scale
+      ? el.value <= 0
+        ? 0
+        : // if dependentAxisRange != null, plot with global max
+          (Math.log10(el.value / minMaxPosRange.min) /
+            Math.log10(minMaxPosRange.max / minMaxPosRange.min)) *
+          (size - 2 * marginY)
+      : ((el.value - minMaxPosRange.min) /
+          (minMaxPosRange.max - minMaxPosRange.min)) *
+        (size - 2 * marginY); // bar height: used 2*marginY to have margins at both top and bottom
+
+    startingY = size - marginY - barHeight + borderWidth; // y in <react> tag: note that (0,0) is top left of the marker icon
+    // making the last bar, noData
+    svgHTML +=
+      '<rect x=' +
+      startingX +
+      ' y=' +
+      startingY +
+      ' width=' +
+      barWidth +
+      ' height=' +
+      barHeight +
+      ' fill=' +
+      // rgb strings with spaces in them don't work in SVG?
+      el.color.replace(/\s/g, '') +
+      ' />';
+  });
 
   // add horizontal line: when using inner border (adjust x1)
   svgHTML +=
@@ -235,7 +217,6 @@ export default function ChartMarker(props: ChartMarkerProps) {
 
   // anim check duration exists or not
   let duration: number = props.duration ? props.duration : 300;
-  // let duration: number = (props.duration) ? 300 : 300
 
   const plotSize = 200;
   const marginSize = 5;
@@ -268,13 +249,12 @@ export default function ChartMarker(props: ChartMarkerProps) {
       displayLibraryControls={false}
       interactive={false}
       dependentAxisLabel=""
-      independentAxisLabel={
-        props.independentAxisLabel ?? `Total: ${sumValuesString}`
-      }
+      independentAxisLabel={`Total: ${sumValuesString}`}
       // dependentAxisRange is an object with {min, max} (NumberRange)
       dependentAxisRange={props.dependentAxisRange ?? undefined}
       showValues={true}
       showIndependentAxisTickLabel={false}
+      dependentAxisLogScale={props.dependentAxisLogScale}
     />
   );
 
