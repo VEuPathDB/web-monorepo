@@ -333,7 +333,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       ) : null}
 
       {showLayerSelector && (
-        <LayersControl position="topright">
+        <LayersControl position="topleft">
           {Object.entries(baseLayers).map(([name, layerProps], i) => (
             <BaseLayer
               name={name}
