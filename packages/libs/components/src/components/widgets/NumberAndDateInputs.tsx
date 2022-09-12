@@ -130,6 +130,14 @@ function BaseInput({
             validity: false,
             message: `Sorry, value can't go above ${maxValue}!`,
           };
+        } else if (
+          (minValue != null && newValue === minValue) ||
+          (maxValue != null && newValue === maxValue)
+        ) {
+          return {
+            validity: false,
+            message: `Sorry, min and max values can't be the same!`,
+          };
         } else {
           return { validity: true, message: '' };
         }

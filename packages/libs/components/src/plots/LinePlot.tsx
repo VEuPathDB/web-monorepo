@@ -18,7 +18,7 @@ import {
 // import truncation util functions
 import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations';
 import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
-import { logScaleDtick } from '../utils/logscale-dtick';
+import { tickSettings } from '../utils/tick-settings';
 
 // is it possible to have this interface extend ScatterPlotProps?
 // or would we need some abstract layer, w scatter and line both as equal children below it?
@@ -148,9 +148,11 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
           ? 'log'
           : undefined,
       tickfont: data.series.length ? {} : { color: 'transparent' },
-      dtick: independentAxisLogScale
-        ? logScaleDtick(extendedIndependentAxisRange)
-        : undefined,
+      ...tickSettings(
+        independentAxisLogScale,
+        extendedIndependentAxisRange,
+        independentValueType
+      ),
     },
     yaxis: {
       title: dependentAxisLabel,
@@ -176,9 +178,11 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
           ? 'log'
           : undefined,
       tickfont: data.series.length ? {} : { color: 'transparent' },
-      dtick: dependentAxisLogScale
-        ? logScaleDtick(extendedDependentAxisRange)
-        : undefined,
+      ...tickSettings(
+        dependentAxisLogScale,
+        extendedDependentAxisRange,
+        dependentValueType
+      ),
     },
     // axis range control: add truncatedAxisHighlighting for layout.shapes
     shapes: truncatedAxisHighlighting,

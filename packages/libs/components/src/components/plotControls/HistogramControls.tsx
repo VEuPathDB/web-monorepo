@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import useDimensions from 'react-cool-dimensions';
 
 // Definitions
-import { LIGHT_BLUE, LIGHT_GRAY } from '../../constants/colors';
 import {
   ErrorManagement,
   NumberOrDateRange,
@@ -24,9 +23,11 @@ import ButtonGroup from '../widgets/ButtonGroup';
 import Notification from '../widgets/Notification';
 import OpacitySlider from '../widgets/OpacitySlider';
 import OrientationToggle from '../widgets/OrientationToggle';
-import Switch from '../widgets/Switch';
+import { Toggle } from '@veupathdb/coreui';
 import { NumberRangeInput } from '../widgets/NumberAndDateRangeInputs';
 import LabelledGroup from '../widgets/LabelledGroup';
+import { ColorDescriptor } from '@veupathdb/coreui/dist/components/theming/types';
+import { blue } from '@veupathdb/coreui/dist/definitions/colors';
 
 /**
  * Props for histogram controls.
@@ -83,9 +84,8 @@ export type HistogramControlsProps = {
   selectedRangeBounds?: NumberOrDateRange; // TO DO: handle DateRange too
   /** Additional styles for controls container. Optional */
   containerStyles?: React.CSSProperties;
-  /** Color to use as an accent in the control panel. Will accept any
-   * valid CSS color definition. Defaults to LIGHT_BLUE */
-  accentColor?: string;
+  /** Color to use as an accent in the control panel. */
+  accentColor?: ColorDescriptor;
   /** Attributes and methdods for error management. */
   errorManagement?: ErrorManagement;
   // add y-axis controls
@@ -158,9 +158,10 @@ export default function HistogramControls({
   // add reset all
   onResetAll,
   containerStyles = {},
-  accentColor = LIGHT_BLUE,
+  accentColor = { hue: blue, level: 400 },
   errorManagement,
 }: HistogramControlsProps) {
+  const accentColorStr = accentColor.hue[accentColor.level];
   const { ref, width } = useDimensions<HTMLDivElement>();
 
   const errorStacks = useMemo(() => {
@@ -241,7 +242,7 @@ export default function HistogramControls({
           <OpacitySlider
             value={opacity}
             onValueChange={onOpacityChange}
-            color={accentColor}
+            color={accentColorStr}
           />
         )}
       </div>
@@ -249,34 +250,40 @@ export default function HistogramControls({
         style={{ display: 'flex', flexWrap: 'wrap', paddingTop: '0.3125em' }}
       >
         {displayLegend != null && toggleDisplayLegend && (
-          <Switch
+          <Toggle
             label="Legend"
-            color={accentColor}
-            state={displayLegend}
-            onStateChange={toggleDisplayLegend}
-            containerStyles={{ paddingRight: '1.5625em' }}
+            value={displayLegend}
+            onChange={toggleDisplayLegend}
+            styleOverrides={{
+              container: { paddingRight: '1.5625em' },
+              mainColor: accentColor,
+            }}
           />
         )}
         {displayLibraryControls != null && toggleLibraryControls && (
-          <Switch
+          <Toggle
             label="Plot.ly Controls"
-            color={accentColor}
-            state={displayLibraryControls}
-            onStateChange={toggleLibraryControls}
+            value={displayLibraryControls}
+            onChange={toggleLibraryControls}
             // add paddingRight
-            containerStyles={{ paddingRight: '1.5625em' }}
+            styleOverrides={{
+              container: { paddingRight: '1.5625em' },
+              mainColor: accentColor,
+            }}
           />
         )}
       </div>
 
       <LabelledGroup label="Y-axis" containerStyles={{}}>
         {toggleDependentAxisLogScale && dependentAxisLogScale != null && (
-          <Switch
+          <Toggle
             label="Log Scale:"
-            color={accentColor}
-            state={dependentAxisLogScale}
-            onStateChange={toggleDependentAxisLogScale}
-            containerStyles={{ paddingBottom: '0.3125em' }}
+            value={dependentAxisLogScale}
+            onChange={toggleDependentAxisLogScale}
+            styleOverrides={{
+              container: { paddingBottom: '0.3125em' },
+              mainColor: accentColor,
+            }}
           />
         )}
         {onDependentAxisRangeChange && (
@@ -372,7 +379,7 @@ export default function HistogramControls({
           title="Error"
           key={index}
           text={error.message}
-          color={accentColor}
+          color={accentColorStr}
           occurences={occurences}
           containerStyles={{ marginTop: '0.625em' }}
           onAcknowledgement={() => errorManagement?.removeError(error)}

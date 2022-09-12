@@ -34,7 +34,7 @@ import { Layout, Shape } from 'plotly.js';
 // import truncation util functions
 import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations';
 import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
-import { logScaleDtick } from '../utils/logscale-dtick';
+import { tickSettings } from '../utils/tick-settings';
 
 // bin middles needed for highlighting
 interface BinSummary {
@@ -450,7 +450,6 @@ const Histogram = makePlotlyPlotComponent(
 
     const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
       type: dependentAxisLogScale ? 'log' : 'linear',
-      tickformat: dependentAxisLogScale ? ',.1r' : undefined, // comma-separated thousands, rounded to 1 significant digit
       hoverformat: dependentAxisLogScale
         ? dataLooksFractional
           ? ',.4f'
@@ -474,13 +473,15 @@ const Histogram = makePlotlyPlotComponent(
               : val
           )
         : [0, 10],
-      dtick: dependentAxisLogScale
-        ? logScaleDtick(extendedDependentAxisRange)
-        : undefined,
       tickfont: data.series.length ? {} : { color: 'transparent' },
       showline: !axisTruncationConfig?.independentAxis?.min,
       linecolor: '#dddddd',
       zeroline: false,
+      ...tickSettings(
+        dependentAxisLogScale,
+        extendedDependentAxisRange,
+        data?.binWidthSlider?.valueType
+      ),
     };
 
     return {

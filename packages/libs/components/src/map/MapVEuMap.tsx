@@ -171,6 +171,8 @@ export interface MapVEuMapProps {
   showScale?: boolean;
   /** Whether to allow any interactive control of map location (default: true) */
   interactive?: boolean;
+  /** is map scroll and zoom allowed? default true; will be overridden by `interactive: false` */
+  scrollingEnabled?: boolean;
 }
 
 function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
@@ -198,6 +200,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     showLayerSelector = true,
     showAttribution = true,
     showZoomControl = true,
+    scrollingEnabled = true,
     mouseMode,
     onMouseModeChange,
     interactive = true,
@@ -307,6 +310,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       ref={mapRef}
       attributionControl={showAttribution}
       zoomControl={showZoomControl}
+      scrollWheelZoom={scrollingEnabled}
       {...(interactive ? {} : disabledInteractiveProps)}
     >
       <TileLayer
