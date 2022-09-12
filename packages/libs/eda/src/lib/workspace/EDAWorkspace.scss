@@ -160,10 +160,10 @@
     overflow-x: auto;
     max-width: 97vw;
     align-items: center;
+    justify-content: space-evenly;
   }
 
   .expanded-diagram {
-    margin: auto;
   }
 
   &-Variables {
