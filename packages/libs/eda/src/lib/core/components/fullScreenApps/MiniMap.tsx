@@ -57,8 +57,7 @@ export function MiniMap(props: TriggerComponentTypes) {
     computationType: 'pass',
     markerType: 'pie',
     miniMarkers: true,
-    invisibleMarkers:
-      filters.length != analysis?.descriptor.subset.descriptor.length,
+    invisibleMarkers: isDefaultView,
   });
 
   const entityDisplayName =
