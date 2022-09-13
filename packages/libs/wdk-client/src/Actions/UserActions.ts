@@ -427,20 +427,25 @@ export function submitProfileForm(formData: UserProfileFormData): SubmitProfileF
   return function run({ wdkService }) {
     let partialUser: Partial<User> = <UserProfileFormData>filterOutProps(formData, ["isGuest", "id", "confirmEmail", "preferences"]);
     let userPromise = wdkService.getCurrentUser().then(user => wdkService.updateCurrentUser({ ...user, ...partialUser }));
-    let prefPromise = wdkService.patchUserPreferences(formData.preferences as UserPreferences); // should never be null by this point
     return [
       profileFormSubmissionStatus('pending', formData),
-      Promise.all([userPromise, prefPromise]).then(([user]) => [
-        // success; update user first, then prefs, then status in ProfileViewStore
-        // NOTE: this prop name should be the same as that used in StaticDataActionCreator for 'user'
-        // NOTE2: not all user props were sent to update but all should remain EXCEPT 'confirmEmail' and 'preferences'
-        userUpdate(user),
-        preferencesUpdate(formData.preferences as UserPreferences),
-        profileFormSubmissionStatus('success', formData)
+      // Need to delay the preferences update until a .then() here rather than request in parallel and
+      // use Promise.all() because updateCurrentUser() has the potential to reset the WDK user cookie.
+      // If we make another request after updateCurrentUser() is called but before it returns, the
+      // second request will log the user out (depending on race condition status).
+      userPromise.then(user => [
+        wdkService.patchUserPreferences(formData.preferences as UserPreferences).then(prefPromise => [
+          // success; update user first, then prefs, then status in ProfileViewStore
+          // NOTE: this prop name should be the same as that used in StaticDataActionCreator for 'user'
+          // NOTE2: not all user props were sent to update but all should remain EXCEPT 'confirmEmail' and 'preferences'
+          userUpdate(user),
+          preferencesUpdate(formData.preferences as UserPreferences),
+          profileFormSubmissionStatus('success', formData)
+        ])
       ])
       .catch((error) => {
-        let message = (error.status >= 500 ? error.response :
-          // happen to know that 400s will have a general validation error message
+        let message = (error.status >= 400 && error.status !== 422 ? error.response :
+          // happen to know that 422s will have a general validation error message
           JSON.parse(error.response).errors.general[0]);
         console.error(message);
         return profileFormSubmissionStatus('error', formData, message);
