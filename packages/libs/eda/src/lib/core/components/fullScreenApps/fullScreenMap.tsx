@@ -186,7 +186,11 @@ function FullScreenMap(props: FullScreenComponentProps) {
 
   const setSelectedVariables = useCallback(
     (selectedVariables: VariablesByInputName) => {
-      setAppState({ overlayVariable: selectedVariables.overlay });
+      setAppState({
+        overlayVariable: selectedVariables.overlay,
+        ...// reset marker type to pie if no overlay var
+        (selectedVariables.overlay == null ? { markerType: 'pie' } : {}),
+      });
     },
     [setAppState]
   );
