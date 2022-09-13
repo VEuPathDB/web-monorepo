@@ -23,7 +23,7 @@
     "@veupathdb/eda": "^3.6.13",
     "@veupathdb/http-utils": "^1.1.0",
     "@veupathdb/study-data-access": "^0.3.3",
-    "@veupathdb/wdk-client": "^0.8.2",
+    "@veupathdb/wdk-client": "^0.9.13",
     "@veupathdb/web-common": "^0.6.11",
     "core-js": "^3.21.1",
     "cytoscape": "^3.15.2",

@@ -2242,10 +2242,10 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/wdk-client@^0.8.2":
-  version "0.8.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.8.2.tgz#3c5231467bf49b07db492f905ed8a058abddcc98"
-  integrity sha512-06DF4SawIJDyoWJDCJM3+wPohbFHjs6Ceez7mFIEX4NNbpKSB81ho+571XvGDy394ZxFzWnSYpcBObTwnjJh7g==
+"@veupathdb/wdk-client@^0.9.13":
+  version "0.9.13"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.13.tgz#126e45bb4604c3b537986f2e72604e1d1a4db1a7"
+  integrity sha512-DrjvMnwOqZQkkRyGJRi3pWinb/3nnpkZZhbXdCkI7HjXnuuDDgM+hU8SOqz9p0VOeOE/DHsbHoAYF3vT7ZQGfQ==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
@@ -2253,10 +2253,8 @@
     localforage "^1.5.0"
     lodash "^4.17.5"
     mansion-ui "2.5"
-    moment "^2.21.0"
     natural-sort "^1.0.0"
     prop-types "^15.7.2"
-    react-autocomplete "^1.8.1"
     react-redux "^7.1.3"
     react-select "^3.0.4"
     react-transition-group "^2.2.1"
@@ -4772,11 +4770,6 @@ dom-helpers@^5.2.0, dom-helpers@^5.2.1:
     "@babel/runtime" "^7.8.7"
     csstype "^3.0.2"
 
-dom-scroll-into-view@1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/dom-scroll-into-view/-/dom-scroll-into-view-1.0.1.tgz#32abb92f0d8feca6215162aef43e4b449ab8d99c"
-  integrity sha1-Mqu5Lw2P7KYhUWKu9D5LRJq42Zw=
-
 dom-serializer@0:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/dom-serializer/-/dom-serializer-0.2.2.tgz#1afb81f533717175d478655debc5e332d9f9bb51"
@@ -7229,11 +7222,6 @@ mkdirp@^0.5.1, mkdirp@^0.5.3, mkdirp@^0.5.5:
   dependencies:
     minimist "^1.2.6"
 
-moment@^2.21.0:
-  version "2.29.1"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
-  integrity sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==
-
 monocle-ts@^2.3.11:
   version "2.3.12"
   resolved "https://registry.yarnpkg.com/monocle-ts/-/monocle-ts-2.3.12.tgz#73e7d59841b3843bf76eb840735a9641fdd3bd93"
@@ -8283,14 +8271,6 @@ react-app-rewired@^2.1.8:
   integrity sha512-uFQWTErXeLDrMzOJHKp0h8P1z0LV9HzPGsJ6adOtGlA/B9WfT6Shh4j2tLTTGlXOfiVx6w6iWpp7SOC5pvk+gA==
   dependencies:
     semver "^5.6.0"
-
-react-autocomplete@^1.8.1:
-  version "1.8.1"
-  resolved "https://registry.yarnpkg.com/react-autocomplete/-/react-autocomplete-1.8.1.tgz#ebbbc400006aa91ad538b2d14727b9e7e5d06310"
-  integrity sha1-67vEAABqqRrVOLLRRye55+XQYxA=
-  dependencies:
-    dom-scroll-into-view "1.0.1"
-    prop-types "^15.5.10"
 
 react-bootstrap@^1.3.0:
   version "1.6.4"
