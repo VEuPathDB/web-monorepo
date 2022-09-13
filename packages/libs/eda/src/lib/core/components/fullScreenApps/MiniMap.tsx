@@ -89,7 +89,7 @@ export function MiniMap(props: TriggerComponentTypes) {
           markers={markers}
           animation={defaultAnimation}
           zoomLevelToGeohashLevel={miniGeoConfig.zoomLevelToAggregationLevel}
-          showSpinner={pending}
+          showSpinner={!isDefaultView && pending}
           showMouseToolbar={false}
           showGrid={false}
           showScale={false}
