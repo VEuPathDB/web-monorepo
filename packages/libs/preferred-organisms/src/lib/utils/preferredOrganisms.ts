@@ -316,6 +316,14 @@ function findNewOrganisms(
   );
 }
 
+/**
+ * @param organismTree
+ * @param preferredOrganisms
+ * @returns A set consisting of all terms for preferred species.
+ *
+ * A species is considered to be "preferred" iff it has a child
+ * which is a preferred organism.
+ */
 function findPreferredSpecies(
   organismTree: TreeBoxVocabNode,
   preferredOrganisms: string[]
@@ -339,6 +347,24 @@ function findPreferredSpecies(
   );
 }
 
+/**
+ * @param questions
+ * @param datasetMetadata
+ * @param preferredOrganisms
+ * @returns A set consisting of all urlSegments for preferred questions.
+ *
+ * A dataset is considered to be "preferred" iff its Version WDK record table:
+ * 1. Has a row with a "preferred" organism attribute OR
+ * 2. Has a row with an organism attribute of "ALL" OR
+ * 3. Doesn't exist (because datasets with no Version table are assumed to apply to ALL organisms)
+ *
+ * A question is considered to be "preferred" iff:
+ * 1. It is associated with a "preferred" dataset OR
+ * 2. It is not associated with ANY dataset (because such questions are assumed to apply to ALL organisms)
+ *
+ * (A question X is said to be "associated with a dataset Y" iff
+ *  Y's References WDK record table has a "linkout" row to the question X)
+ */
 function findPreferredQuestions(
   questions: Question[],
   datasetMetadata: Map<string, DatasetMetadata>,
