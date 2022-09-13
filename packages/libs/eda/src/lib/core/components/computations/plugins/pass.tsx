@@ -12,7 +12,6 @@ import { testVisualization } from '../../visualizations/implementations/TestVisu
 import { ComputationPlugin } from '../Types';
 import { ZeroConfigWithButton } from '../ZeroConfiguration';
 import * as t from 'io-ts';
-import { FloatingLayout } from '../../layouts/FloatingLayout';
 
 export const plugin: ComputationPlugin = {
   configurationComponent: ZeroConfigWithButton,
@@ -30,16 +29,5 @@ export const plugin: ComputationPlugin = {
     // densityplot: scatterplotVisualization,
     barplot: barplotVisualization,
     boxplot: boxplotVisualization,
-    // or...
-    //    boxplot: boxplotVisualization.withOptions({
-    //      hideFacetInputs: true,
-    //      getOverlayVariable(_) {
-    //	      return {
-    //	        "entityId": "PCO_0000024",
-    //	        "variableId": "EUPATH_0015019" // charcoal
-    //	      };
-    //      },
-    //      layoutComponent: FloatingLayout,
-    //    }), /// TEMPORARY ONLY!!! ///
   },
 };
