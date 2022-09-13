@@ -63,40 +63,7 @@ import { useEntityCounts } from '../../hooks/entityCounts';
 import { MiniMap } from './MiniMap';
 import { Tooltip } from '@material-ui/core';
 import { Link } from 'react-router-dom';
-
-function vizWithOptions(visualization: VisualizationPlugin<LayoutOptions>) {
-  return visualization.withOptions({
-    hideFacetInputs: true,
-    layoutComponent: FloatingLayout,
-  });
-}
-
-const plugin: ComputationPlugin = {
-  configurationComponent: ZeroConfigWithButton,
-  isConfigurationValid: t.undefined.is,
-  createDefaultConfiguration: () => undefined,
-  visualizationPlugins: {
-    histogram: vizWithOptions(histogramVisualization),
-    twobytwo: vizWithOptions(twoByTwoVisualization),
-    conttable: vizWithOptions(contTableVisualization),
-    scatterplot: vizWithOptions(scatterplotVisualization),
-    lineplot: vizWithOptions(lineplotVisualization),
-    'map-markers': vizWithOptions(mapVisualization),
-    barplot: vizWithOptions(barplotVisualization),
-    boxplot: vizWithOptions(boxplotVisualization),
-    // or...
-    //    boxplot: boxplotVisualization.withOptions({
-    //      hideFacetInputs: true,
-    //      getOverlayVariable(_) {
-    //	      return {
-    //	        "entityId": "PCO_0000024",
-    //	        "variableId": "EUPATH_0015019" // charcoal
-    //	      };
-    //      },
-    //      layoutComponent: FloatingLayout,
-    //    }), /// TEMPORARY ONLY!!! ///
-  },
-};
+import { OverlayOptions } from '../visualizations/options/types';
 
 const MapState = t.type({
   viewport: t.type({
@@ -143,6 +110,38 @@ function FullScreenMap(props: FullScreenComponentProps) {
     () => defaultMapState,
     props.persistAppState
   );
+
+  // Define plugins inside component so that we can access appState in the getOverlayVariable option.
+  // This is needed to prevent issues where the pass app does not accept a configuration object.
+  // It also allows us to avoid duplicating state in both appState and compute config.
+  const plugin = useMemo((): ComputationPlugin => {
+    function vizWithOptions(
+      visualization: VisualizationPlugin<LayoutOptions & OverlayOptions>
+    ) {
+      return visualization.withOptions({
+        hideFacetInputs: true,
+        layoutComponent: FloatingLayout,
+        getOverlayVariable: (_) => appState.overlayVariable,
+      });
+    }
+
+    return {
+      configurationComponent: ZeroConfigWithButton,
+      isConfigurationValid: t.undefined.is,
+      createDefaultConfiguration: () => undefined,
+      visualizationPlugins: {
+        histogram: vizWithOptions(histogramVisualization),
+        twobytwo: vizWithOptions(twoByTwoVisualization),
+        conttable: vizWithOptions(contTableVisualization),
+        scatterplot: vizWithOptions(scatterplotVisualization),
+        lineplot: vizWithOptions(lineplotVisualization),
+        'map-markers': vizWithOptions(mapVisualization),
+        barplot: vizWithOptions(barplotVisualization),
+        boxplot: vizWithOptions(boxplotVisualization),
+      },
+    };
+  }, [appState.overlayVariable]);
+
   const { viewport, mouseMode } = appState;
 
   const [boundsZoomLevel, setBoundsZoomLevel] = useState<BoundsViewport>();
