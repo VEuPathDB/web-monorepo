@@ -7,10 +7,15 @@ import Barplot from '../plots/Barplot';
 // import NumberRange type def
 import { NumberRange } from '../types/general';
 
-import { DependentAxisLogScaleAddon } from '../types/plots';
+import {
+  DependentAxisLogScaleAddon,
+  MarkerScaleAddon,
+  MarkerScaleDefault,
+} from '../types/plots';
 
 interface ChartMarkerProps
   extends BoundsDriftMarkerProps,
+    MarkerScaleAddon,
     DependentAxisLogScaleAddon {
   borderColor?: string;
   borderWidth?: number;
@@ -60,9 +65,10 @@ export default function ChartMarker(props: ChartMarkerProps) {
   const borderWidth = props.borderWidth || 1;
 
   // construct histogram marker icon
-  const size = 40; // histogram marker icon size: note that popbio/mapveu donut marker icons = 40
-  const xSize = 50; // make the histogram width a bit larger considering the total number space in the bottom of histogram
-  const ySize = 50; // set height differently to host total number at the bottom side
+  const scale = props.markerScale ?? MarkerScaleDefault;
+  const size = 40 * scale; // histogram marker icon size: note that popbio/mapveu donut marker icons = 40
+  const xSize = 50 * scale; // make the histogram width a bit larger considering the total number space in the bottom of histogram
+  const ySize = 50 * scale; // set height differently to host total number at the bottom side
   let svgHTML: string = ''; // divIcon HTML contents
 
   // set drawing area: without shadow, they are (xSize x ySize)
@@ -97,10 +103,10 @@ export default function ChartMarker(props: ChartMarkerProps) {
         max: Math.max(...fullStat.map((o) => o.value).filter((a) => a > 0)),
       };
 
-  const roundX = 10; // round corner in pixel: 0 = right angle
-  const roundY = 10; // round corner in pixel: 0 = right angle
-  const marginX = 5; // margin to start drawing bars in left and right ends of svg marker: plot area = (size - 2*marginX)
-  const marginY = 5; // margin to start drawing bars in Y
+  const roundX = 10 * scale; // round corner in pixel: 0 = right angle
+  const roundY = 10 * scale; // round corner in pixel: 0 = right angle
+  const marginX = 5 * scale; // margin to start drawing bars in left and right ends of svg marker: plot area = (size - 2*marginX)
+  const marginY = 5 * scale; // margin to start drawing bars in Y
 
   // // thin line: drawing outer box with round corners: changed border color (stroke)
   svgHTML +=

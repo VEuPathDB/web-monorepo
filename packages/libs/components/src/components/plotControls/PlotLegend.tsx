@@ -1,6 +1,7 @@
 import React from 'react';
 import { Checkbox } from '@material-ui/core';
 import * as ColorMath from 'color-math';
+import { ContainerStylesAddon } from '../../types/plots';
 
 // define legendItems props
 export interface LegendItemsProps {
@@ -13,7 +14,7 @@ export interface LegendItemsProps {
 }
 
 // set props for custom legend function
-interface PlotLegendProps {
+interface PlotLegendProps extends ContainerStylesAddon {
   legendItems: LegendItemsProps[];
   checkedLegendItems: string[] | undefined;
   legendTitle?: string;
@@ -27,6 +28,7 @@ export default function PlotLegend({
   legendTitle,
   onCheckedLegendItemsChange,
   showOverlayLegend = false,
+  containerStyles,
 }: PlotLegendProps) {
   // change checkbox state by click
   const handleLegendCheckboxClick = (checked: boolean, id: string) => {
@@ -66,6 +68,7 @@ export default function PlotLegend({
             width: 400,
             overflowX: 'hidden',
             overflowY: 'auto',
+            ...containerStyles,
           }}
         >
           <div

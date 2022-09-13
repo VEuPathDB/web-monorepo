@@ -115,6 +115,16 @@ export type AvailableUnitsAddon =
       selectedUnit?: never;
     };
 
+/** Marker scale addon
+ * default value of 1 is regular size
+ */
+export type MarkerScaleAddon = {
+  markerScale?: number;
+};
+// capitalisation ought to be `markerScaleDefault` or `defaultMarkerScale` but
+// here we stick with the convention I (Bob) started a long time ago before I knew better :)
+export const MarkerScaleDefault: number = 1;
+
 /** Color palette addon */
 export type ColorPaletteAddon = {
   colorPalette?: string[];
