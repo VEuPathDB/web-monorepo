@@ -67,9 +67,13 @@ export function MiniMap(props: TriggerComponentTypes) {
   // TO DO: figure out how to make them exactly the same
   return (
     <Tooltip
-      title={`Location of ${
-        filters.length > 0 ? "current subset's " : ''
-      }${entityDisplayName}`}
+      title={
+        <div>
+          Location of {entityDisplayName}
+          {filters.length ? ' in current subset' : ''}.<br />
+          Click the map to enlarge...
+        </div>
+      }
     >
       <div className="MiniMapContainer">
         <MapVEuMap
