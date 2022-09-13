@@ -78,6 +78,8 @@ export interface MapMarkersProps {
   checkedLegendItems?: string[];
   /** mini markers - default = false */
   miniMarkers?: boolean;
+  /** invisible markers (special use case related to minimap fly-to) - default = false */
+  invisibleMarkers?: boolean;
 }
 
 // what this hook returns
@@ -117,6 +119,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
     dependentAxisLogScale = false,
     checkedLegendItems = undefined,
     miniMarkers = false,
+    invisibleMarkers = false,
   } = props;
 
   const dataClient: DataClient = useDataClient();
@@ -522,7 +525,11 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
                   dependentAxisLogScale: dependentAxisLogScale,
                 }
               : {})}
-            {...(miniMarkers ? { markerScale: 0.5 } : {})}
+            {...(miniMarkers && !invisibleMarkers
+              ? { markerScale: 0.5 }
+              : invisibleMarkers
+              ? { markerScale: 0 }
+              : {})}
           />
         );
       }

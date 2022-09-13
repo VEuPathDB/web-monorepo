@@ -43,7 +43,9 @@ export function MiniMap(props: TriggerComponentTypes) {
   // This ensures that the flyTo zoom covers the area of the full, unfiltered dataset.
   const filters = isDefaultView
     ? emptyArray
-    : analysis?.descriptor.subset.descriptor;
+    : analysis?.descriptor.subset.descriptor.length
+    ? analysis?.descriptor.subset.descriptor
+    : emptyArray;
 
   const { markers = [], pending } = useMapMarkers({
     requireOverlay: false,
@@ -55,6 +57,8 @@ export function MiniMap(props: TriggerComponentTypes) {
     computationType: 'pass',
     markerType: 'pie',
     miniMarkers: true,
+    invisibleMarkers:
+      filters.length != analysis?.descriptor.subset.descriptor.length,
   });
 
   const entityDisplayName =
@@ -75,6 +79,7 @@ export function MiniMap(props: TriggerComponentTypes) {
           minZoom={0}
           viewport={viewport}
           flyToMarkers={isDefaultView}
+          flyToMarkersDelay={1000}
           interactive={false}
           onViewportChanged={setViewport}
           onBoundsChanged={setBoundsZoomLevel}
