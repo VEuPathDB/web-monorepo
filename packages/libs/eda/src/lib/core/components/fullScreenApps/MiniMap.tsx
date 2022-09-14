@@ -43,7 +43,9 @@ export function MiniMap(props: TriggerComponentTypes) {
   // This ensures that the flyTo zoom covers the area of the full, unfiltered dataset.
   const filters = isDefaultView
     ? emptyArray
-    : analysis?.descriptor.subset.descriptor;
+    : analysis?.descriptor.subset.descriptor.length
+    ? analysis?.descriptor.subset.descriptor
+    : emptyArray;
 
   const { markers = [], pending } = useMapMarkers({
     requireOverlay: false,
@@ -55,6 +57,7 @@ export function MiniMap(props: TriggerComponentTypes) {
     computationType: 'pass',
     markerType: 'pie',
     miniMarkers: true,
+    invisibleMarkers: isDefaultView,
   });
 
   const entityDisplayName =
@@ -64,9 +67,13 @@ export function MiniMap(props: TriggerComponentTypes) {
   // TO DO: figure out how to make them exactly the same
   return (
     <Tooltip
-      title={`Location of ${
-        filters.length > 0 ? "current subset's " : ''
-      }${entityDisplayName}`}
+      title={
+        <div>
+          Location of {entityDisplayName}
+          {filters.length ? ' in current subset' : ''}.<br />
+          Click the map to enlarge...
+        </div>
+      }
     >
       <div className="MiniMapContainer">
         <MapVEuMap
@@ -75,13 +82,14 @@ export function MiniMap(props: TriggerComponentTypes) {
           minZoom={0}
           viewport={viewport}
           flyToMarkers={isDefaultView}
+          flyToMarkersDelay={1000}
           interactive={false}
           onViewportChanged={setViewport}
           onBoundsChanged={setBoundsZoomLevel}
           markers={markers}
           animation={defaultAnimation}
           zoomLevelToGeohashLevel={miniGeoConfig.zoomLevelToAggregationLevel}
-          showSpinner={pending}
+          showSpinner={!isDefaultView && pending}
           showMouseToolbar={false}
           showGrid={false}
           showScale={false}
