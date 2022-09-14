@@ -15,7 +15,6 @@ import { makeEntityDisplayName } from '../../utils/study-metadata';
 import { useInputStyles } from './inputStyles';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-import { enqueueSnackbar } from '@veupathdb/wdk-client/lib/Actions/NotificationActions';
 import useSnackbar from '@veupathdb/coreui/dist/components/notifications/useSnackbar';
 
 export interface InputSpec {
@@ -333,7 +332,8 @@ export function InputVariables(props: Props) {
                         onSelectedOptionDisabled={(_) => {
                           handleChange(input.name, undefined);
                           enqueueSnackbar(
-                            `The newly chosen ${input.label} variable has been disabled because is not compatible with this visualization as currently configured.`
+                            `The newly chosen ${input.label} variable has been disabled because is not compatible with this visualization as currently configured.`,
+                            { preventDuplicate: true } // nasty hack to workaround double calls to this callback which I tried for more than an hour to fix (and when I did fix it, the radio button was not switched to "none"...)
                           );
                         }}
                       />
