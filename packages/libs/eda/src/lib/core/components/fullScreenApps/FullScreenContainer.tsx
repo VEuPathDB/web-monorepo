@@ -5,7 +5,7 @@ import { fullScreenAppPlugins } from '.';
 import { AnalysisState } from '../../hooks/analysis';
 import { useAnalysisClient } from '../../hooks/workspace';
 import { isSavedAnalysis } from '../../utils/analysis';
-import { Close, FloatingButton } from '@veupathdb/coreui';
+import { Close, FilledButton } from '@veupathdb/coreui';
 
 interface Props {
   analysisState: AnalysisState;
@@ -68,11 +68,11 @@ export default function FullScreenContainer(props: Props) {
               transform: 'scale(1.5)',
             }}
           >
-            <FloatingButton
+            <FilledButton
               onPress={props.onClose}
               text=""
               icon={Close}
-              themeRole="primary"
+              themeRole="secondary"
             />
           </div>
           <div
