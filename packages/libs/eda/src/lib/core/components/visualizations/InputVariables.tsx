@@ -15,6 +15,8 @@ import { makeEntityDisplayName } from '../../utils/study-metadata';
 import { useInputStyles } from './inputStyles';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
+import { enqueueSnackbar } from '@veupathdb/wdk-client/lib/Actions/NotificationActions';
+import useSnackbar from '@veupathdb/coreui/dist/components/notifications/useSnackbar';
 
 export interface InputSpec {
   name: string;
@@ -238,6 +240,8 @@ export function InputVariables(props: Props) {
     ]
   );
 
+  const { enqueueSnackbar } = useSnackbar();
+
   return (
     <div className={classes.inputs}>
       {[undefined, 'axis', 'stratification'].map(
@@ -326,9 +330,12 @@ export function InputVariables(props: Props) {
                               : input.providedOptionalVariable
                           )
                         }
-                        onSelectedOptionDisabled={(_) =>
-                          handleChange(input.name, undefined)
-                        }
+                        onSelectedOptionDisabled={(_) => {
+                          handleChange(input.name, undefined);
+                          enqueueSnackbar(
+                            `The newly chosen ${input.label} variable has been disabled because is not compatible with this visualization as currently configured.`
+                          );
+                        }}
                       />
                     ) : input.readonlyValue ? (
                       <span style={{ height: '32px', lineHeight: '32px' }}>

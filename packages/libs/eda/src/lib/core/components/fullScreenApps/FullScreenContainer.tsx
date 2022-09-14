@@ -6,6 +6,9 @@ import { AnalysisState } from '../../hooks/analysis';
 import { useAnalysisClient } from '../../hooks/workspace';
 import { isSavedAnalysis } from '../../utils/analysis';
 import { Close, FloatingButton } from '@veupathdb/coreui';
+import makeSnackbarProvider from '@veupathdb/coreui/dist/components/notifications/SnackbarProvider';
+
+const SnackbarProvider = makeSnackbarProvider();
 
 interface Props {
   analysisState: AnalysisState;
@@ -36,50 +39,52 @@ export default function FullScreenContainer(props: Props) {
   if (plugin == null) return <div>Unknown plugin</div>;
   return nodeRef
     ? createPortal(
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 1,
-            background: 'white',
-          }}
-        >
+        <SnackbarProvider domRoot={nodeRef} styleProps={{}}>
           <div
             style={{
-              position: 'absolute',
-              zIndex: 2,
-              right: 12,
-              top: 8,
-              transform: 'scale(1.5)',
-            }}
-          >
-            <FloatingButton
-              onPress={props.onClose}
-              text=""
-              icon={Close}
-              themeRole="primary"
-            />
-          </div>
-          <div
-            style={{
-              position: 'absolute',
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
               zIndex: 1,
-              height: '100%',
-              width: '100%',
+              background: 'white',
             }}
           >
-            {loading ? null : (
-              <plugin.fullScreenComponent
-                appState={appState}
-                persistAppState={updateAppState}
-                analysisState={props.analysisState}
+            <div
+              style={{
+                position: 'absolute',
+                zIndex: 2,
+                right: 12,
+                top: 8,
+                transform: 'scale(1.5)',
+              }}
+            >
+              <FloatingButton
+                onPress={props.onClose}
+                text=""
+                icon={Close}
+                themeRole="primary"
               />
-            )}
+            </div>
+            <div
+              style={{
+                position: 'absolute',
+                zIndex: 1,
+                height: '100%',
+                width: '100%',
+              }}
+            >
+              {loading ? null : (
+                <plugin.fullScreenComponent
+                  appState={appState}
+                  persistAppState={updateAppState}
+                  analysisState={props.analysisState}
+                />
+              )}
+            </div>
           </div>
-        </div>,
+        </SnackbarProvider>,
         nodeRef
       )
     : null;
