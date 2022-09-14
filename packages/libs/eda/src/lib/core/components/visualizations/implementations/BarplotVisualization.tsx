@@ -259,6 +259,21 @@ function BarplotViz(props: VisualizationProps<Options>) {
     [options?.getOverlayVariable, computation.descriptor.configuration]
   );
 
+  useEffect(() => {
+    if (
+      vizConfig.overlayVariable == null ||
+      isEqual(providedOverlayVariableDescriptor, vizConfig.overlayVariable)
+    )
+      return;
+    updateVizConfig({
+      overlayVariable: providedOverlayVariableDescriptor,
+    });
+  }, [
+    providedOverlayVariableDescriptor,
+    vizConfig.overlayVariable,
+    updateVizConfig,
+  ]);
+
   const findEntityAndVariable = useFindEntityAndVariable();
   const {
     variable,
@@ -718,9 +733,8 @@ function BarplotViz(props: VisualizationProps<Options>) {
                 options?.getOverlayVariable != null
                   ? providedOverlayVariableDescriptor
                     ? variableDisplayWithUnit(providedOverlayVariable)
-                    : options?.getOverlayVariableHelp?.() ?? 'none'
+                    : 'None. ' + options?.getOverlayVariableHelp?.() ?? ''
                   : undefined,
-              // TO DO: verbiage for 'none'
             },
             ...(options?.hideFacetInputs
               ? []

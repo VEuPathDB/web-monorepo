@@ -123,7 +123,7 @@ function FullScreenMap(props: FullScreenComponentProps) {
         layoutComponent: FloatingLayout,
         getOverlayVariable: (_) => appState.overlayVariable,
         getOverlayVariableHelp: () =>
-          'None. Select an overlay variable in the top-right panel.',
+          'The overlay variable can be selected via the top-right panel.',
       });
     }
 
