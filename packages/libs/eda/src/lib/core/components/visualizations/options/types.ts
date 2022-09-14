@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { VariableDescriptor } from '../../../types/variable';
 
 export interface XAxisOptions {
@@ -8,4 +9,5 @@ export interface OverlayOptions {
   getOverlayVariable?: (
     computeConfig: unknown
   ) => VariableDescriptor | undefined;
+  getOverlayVariableHelp?: () => string;
 }

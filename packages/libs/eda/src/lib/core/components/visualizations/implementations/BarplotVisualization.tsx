@@ -254,34 +254,32 @@ function BarplotViz(props: VisualizationProps<Options>) {
     'checkedLegendItems'
   );
 
-  const providedOverlayVariable = useMemo(
+  const providedOverlayVariableDescriptor = useMemo(
     () => options?.getOverlayVariable?.(computation.descriptor.configuration),
     [options?.getOverlayVariable, computation.descriptor.configuration]
   );
-
-  //  useEffect(() => {
-  //    if (isEqual(vizConfig.overlayVariable, providedOverlayVariable))
-  //      return;
-  //    // TO DO: check constraints here
-  //    updateVizConfig({ overlayVariable: providedOverlayVariable });
-  //  }, [ vizConfig.overlayVariable, providedOverlayVariable, updateVizConfig ])
 
   const findEntityAndVariable = useFindEntityAndVariable();
   const {
     variable,
     entity,
     overlayVariable,
+    providedOverlayVariable,
     overlayEntity,
     facetVariable,
     facetEntity,
   } = useMemo(() => {
     const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
     const overlayVariable = findEntityAndVariable(vizConfig.overlayVariable);
+    const providedOverlayVariable = findEntityAndVariable(
+      providedOverlayVariableDescriptor
+    );
     const facetVariable = findEntityAndVariable(vizConfig.facetVariable);
     return {
       variable: xAxisVariable?.variable,
       entity: xAxisVariable?.entity,
       overlayVariable: overlayVariable?.variable,
+      providedOverlayVariable: providedOverlayVariable?.variable,
       overlayEntity: overlayVariable?.entity,
       facetVariable: facetVariable?.variable,
       facetEntity: facetVariable?.entity,
@@ -291,6 +289,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
     vizConfig.xAxisVariable,
     vizConfig.overlayVariable,
     vizConfig.facetVariable,
+    providedOverlayVariableDescriptor,
   ]);
 
   const data = usePromise(
@@ -714,15 +713,13 @@ function BarplotViz(props: VisualizationProps<Options>) {
               name: 'overlayVariable',
               label: 'Overlay',
               role: 'stratification',
-              providedOptionalVariable: providedOverlayVariable,
-              readonlyValue: options?.getOverlayVariable
-                ? 'none (select one top right)'
-                : undefined,
-              //                options?.getOverlayVariable != null
-              //                  ? providedOverlayVariable
-              //                    ? overlayLabel
-              //                    : 'none'
-              //                  : undefined,
+              providedOptionalVariable: providedOverlayVariableDescriptor,
+              readonlyValue:
+                options?.getOverlayVariable != null
+                  ? providedOverlayVariableDescriptor
+                    ? variableDisplayWithUnit(providedOverlayVariable)
+                    : options?.getOverlayVariableHelp?.() ?? 'none'
+                  : undefined,
               // TO DO: verbiage for 'none'
             },
             ...(options?.hideFacetInputs

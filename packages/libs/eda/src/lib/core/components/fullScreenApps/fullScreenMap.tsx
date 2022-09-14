@@ -122,6 +122,8 @@ function FullScreenMap(props: FullScreenComponentProps) {
         hideFacetInputs: true,
         layoutComponent: FloatingLayout,
         getOverlayVariable: (_) => appState.overlayVariable,
+        getOverlayVariableHelp: () =>
+          'None. Select an overlay variable in the top-right panel.',
       });
     }
 

@@ -25,9 +25,15 @@ export interface InputSpec {
   readonlyValue?: string;
   role?: 'axis' | 'stratification';
   /**
-   * Instead of just providing a string, as above, provide the only
-   * allowed variable for this input (though it can also be cleared with "Clear selection").
-   * However, you can use the `readonlyValue` as a label to display when the provided variable is null
+   * Instead of just providing a string, as above, provide a variable that the
+   * user will be able to choose with a radio button group (the other option is "no variable").
+   *
+   * However, you should additionaly use the `readonlyValue` prop as a label to display
+   * when the provided variable is null.
+   *
+   * The variable will only be selected/selectable if the constraints are met.
+   * (Meaning that if you pass a new provided variable that isn't compatible, the radio button
+   * will switch to "no variable")
    */
   providedOptionalVariable?: VariableDescriptor;
 }
@@ -274,7 +280,11 @@ export function InputVariables(props: Props) {
                         className={classes.label}
                         style={{ cursor: 'default' }}
                       >
-                        {input.label + (input.readonlyValue ? ' (fixed)' : '')}
+                        {input.label +
+                          (input.readonlyValue &&
+                          !input.providedOptionalVariable
+                            ? ' (fixed)'
+                            : '')}
                         {!input.readonlyValue &&
                         flattenedConstraints &&
                         flattenedConstraints[input.name].isRequired ? (
@@ -301,7 +311,10 @@ export function InputVariables(props: Props) {
                             : []
                         }
                         options={['none', 'provided']}
-                        optionLabels={['None', 'Some message here']}
+                        optionLabels={[
+                          'None',
+                          input.readonlyValue ?? 'Provided',
+                        ]}
                         selectedOption={
                           selectedVariables[input.name] ? 'provided' : 'none'
                         }
