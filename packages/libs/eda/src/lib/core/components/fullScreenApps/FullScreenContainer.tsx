@@ -33,8 +33,20 @@ export default function FullScreenContainer(props: Props) {
       : undefined,
     props.appName
   );
+  const isSaved = isSavedAnalysis(props.analysisState.analysis);
+
+  useEffect(() => {
+    if (!isSaved) {
+      props.analysisState.saveAnalysis();
+    }
+    // Use an empty array so that this only runs when the component
+    // first mounts. This avoids multiple save requests, resulting
+    // in the creation of multiple analyses.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   if (plugin == null) return <div>Unknown plugin</div>;
-  return nodeRef
+  return nodeRef && isSaved
     ? createPortal(
         <div
           style={{
