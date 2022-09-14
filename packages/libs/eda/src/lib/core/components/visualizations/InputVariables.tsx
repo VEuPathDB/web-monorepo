@@ -26,7 +26,8 @@ export interface InputSpec {
   role?: 'axis' | 'stratification';
   /**
    * Instead of just providing a string, as above, provide the only
-   * allowed variable for this input (though it can also be cleared with "Clear selection")
+   * allowed variable for this input (though it can also be cleared with "Clear selection").
+   * However, you can use the `readonlyValue` as a label to display when the provided variable is null
    */
   providedOptionalVariable?: VariableDescriptor;
 }
@@ -283,11 +284,7 @@ export function InputVariables(props: Props) {
                         )}
                       </div>
                     </Tooltip>
-                    {input.readonlyValue ? (
-                      <span style={{ height: '32px', lineHeight: '32px' }}>
-                        {input.readonlyValue}
-                      </span>
-                    ) : input.providedOptionalVariable ? (
+                    {input.providedOptionalVariable ? (
                       // render a radio button to choose between provided and nothing
                       // check if provided var is in disabledVariablesByInputName[input.name]
                       // and disable radio input if needed
@@ -316,7 +313,14 @@ export function InputVariables(props: Props) {
                               : input.providedOptionalVariable
                           )
                         }
+                        onSelectedOptionDisabled={(_) =>
+                          handleChange(input.name, undefined)
+                        }
                       />
+                    ) : input.readonlyValue ? (
+                      <span style={{ height: '32px', lineHeight: '32px' }}>
+                        {input.readonlyValue}
+                      </span>
                     ) : (
                       <VariableTreeDropdown
                         scope="variableTree"

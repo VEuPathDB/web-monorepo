@@ -715,7 +715,9 @@ function BarplotViz(props: VisualizationProps<Options>) {
               label: 'Overlay',
               role: 'stratification',
               providedOptionalVariable: providedOverlayVariable,
-              //              readonlyValue:
+              readonlyValue: options?.getOverlayVariable
+                ? 'none (select one top right)'
+                : undefined,
               //                options?.getOverlayVariable != null
               //                  ? providedOverlayVariable
               //                    ? overlayLabel
