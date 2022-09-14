@@ -14,6 +14,7 @@ import Toggle from '@veupathdb/coreui/dist/components/widgets/Toggle';
 import { makeEntityDisplayName } from '../../utils/study-metadata';
 import { useInputStyles } from './inputStyles';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 
 export interface InputSpec {
   name: string;
@@ -23,6 +24,11 @@ export interface InputSpec {
    */
   readonlyValue?: string;
   role?: 'axis' | 'stratification';
+  /**
+   * Instead of just providing a string, as above, provide the only
+   * allowed variable for this input (though it can also be cleared with "Clear selection")
+   */
+  providedOptionalVariable?: VariableDescriptor;
 }
 
 interface SectionSpec {
@@ -277,7 +283,41 @@ export function InputVariables(props: Props) {
                         )}
                       </div>
                     </Tooltip>
-                    {!input.readonlyValue ? (
+                    {input.readonlyValue ? (
+                      <span style={{ height: '32px', lineHeight: '32px' }}>
+                        {input.readonlyValue}
+                      </span>
+                    ) : input.providedOptionalVariable ? (
+                      // render a radio button to choose between provided and nothing
+                      // check if provided var is in disabledVariablesByInputName[input.name]
+                      // and disable radio input if needed
+                      <RadioButtonGroup
+                        disabledList={
+                          disabledVariablesByInputName[input.name].filter(
+                            (variable) =>
+                              variable.entityId ===
+                                input.providedOptionalVariable?.entityId &&
+                              variable.variableId ===
+                                input.providedOptionalVariable?.variableId
+                          ).length
+                            ? ['provided']
+                            : []
+                        }
+                        options={['none', 'provided']}
+                        optionLabels={['None', 'Some message here']}
+                        selectedOption={
+                          selectedVariables[input.name] ? 'provided' : 'none'
+                        }
+                        onOptionSelected={(selection) =>
+                          handleChange(
+                            input.name,
+                            selection === 'none'
+                              ? undefined
+                              : input.providedOptionalVariable
+                          )
+                        }
+                      />
+                    ) : (
                       <VariableTreeDropdown
                         scope="variableTree"
                         showMultiFilterDescendants
@@ -295,10 +335,6 @@ export function InputVariables(props: Props) {
                           handleChange(input.name, variable);
                         }}
                       />
-                    ) : (
-                      <span style={{ height: '32px', lineHeight: '32px' }}>
-                        {input.readonlyValue}
-                      </span>
                     )}
                   </div>
                 ))}

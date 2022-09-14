@@ -55,7 +55,16 @@ import {
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 // use lodash instead of Math.min/max
-import { groupBy, mapValues, size, map, head, values, keys } from 'lodash';
+import {
+  groupBy,
+  mapValues,
+  size,
+  map,
+  head,
+  values,
+  keys,
+  isEqual,
+} from 'lodash';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 // for custom legend
 import PlotLegend, {
@@ -245,9 +254,17 @@ function BarplotViz(props: VisualizationProps<Options>) {
     'checkedLegendItems'
   );
 
-  const providedOverlayVariable = options?.getOverlayVariable?.(
-    computation.descriptor.configuration
+  const providedOverlayVariable = useMemo(
+    () => options?.getOverlayVariable?.(computation.descriptor.configuration),
+    [options?.getOverlayVariable, computation.descriptor.configuration]
   );
+
+  //  useEffect(() => {
+  //    if (isEqual(vizConfig.overlayVariable, providedOverlayVariable))
+  //      return;
+  //    // TO DO: check constraints here
+  //    updateVizConfig({ overlayVariable: providedOverlayVariable });
+  //  }, [ vizConfig.overlayVariable, providedOverlayVariable, updateVizConfig ])
 
   const findEntityAndVariable = useFindEntityAndVariable();
   const {
@@ -259,9 +276,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
     facetEntity,
   } = useMemo(() => {
     const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
-    const overlayVariable = findEntityAndVariable(
-      providedOverlayVariable ?? vizConfig.overlayVariable
-    );
+    const overlayVariable = findEntityAndVariable(vizConfig.overlayVariable);
     const facetVariable = findEntityAndVariable(vizConfig.facetVariable);
     return {
       variable: xAxisVariable?.variable,
@@ -276,7 +291,6 @@ function BarplotViz(props: VisualizationProps<Options>) {
     vizConfig.xAxisVariable,
     vizConfig.overlayVariable,
     vizConfig.facetVariable,
-    providedOverlayVariable,
   ]);
 
   const data = usePromise(
@@ -292,12 +306,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
       if (!variablesAreUnique([variable, overlayVariable, facetVariable]))
         throw new Error(nonUniqueWarning);
 
-      const params = getRequestParams(
-        studyId,
-        filters ?? [],
-        vizConfig,
-        providedOverlayVariable
-      );
+      const params = getRequestParams(studyId, filters ?? [], vizConfig);
 
       const response = await dataClient.getBarplot(
         computation.descriptor.type,
@@ -370,7 +379,6 @@ function BarplotViz(props: VisualizationProps<Options>) {
       facetVariable,
       computation.descriptor.type,
       facetEntity,
-      providedOverlayVariable,
     ])
   );
 
@@ -706,12 +714,13 @@ function BarplotViz(props: VisualizationProps<Options>) {
               name: 'overlayVariable',
               label: 'Overlay',
               role: 'stratification',
-              readonlyValue:
-                options?.getOverlayVariable != null
-                  ? providedOverlayVariable
-                    ? overlayLabel
-                    : 'none'
-                  : undefined,
+              providedOptionalVariable: providedOverlayVariable,
+              //              readonlyValue:
+              //                options?.getOverlayVariable != null
+              //                  ? providedOverlayVariable
+              //                    ? overlayLabel
+              //                    : 'none'
+              //                  : undefined,
               // TO DO: verbiage for 'none'
             },
             ...(options?.hideFacetInputs
@@ -834,8 +843,7 @@ export function barplotResponseToData(
 function getRequestParams(
   studyId: string,
   filters: Filter[],
-  vizConfig: BarplotConfig,
-  providedOverlayVariable: VariableDescriptor | undefined
+  vizConfig: BarplotConfig
 ): BarplotRequestParams {
   return {
     studyId,
@@ -844,7 +852,7 @@ function getRequestParams(
       // is outputEntityId correct?
       outputEntityId: vizConfig.xAxisVariable!.entityId,
       xAxisVariable: vizConfig.xAxisVariable!,
-      overlayVariable: providedOverlayVariable ?? vizConfig.overlayVariable,
+      overlayVariable: vizConfig.overlayVariable,
       facetVariable: vizConfig.facetVariable ? [vizConfig.facetVariable] : [],
       // valueSpec: manually inputted for now
       valueSpec: vizConfig.valueSpec,
