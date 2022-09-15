@@ -2138,10 +2138,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.1.0.tgz#5c7eecc048a91195404411d8729393197af0128c"
   integrity sha512-TQ58MbCy7UZN/h11HZ31CSJfywG17oDNHQzQJysj65Fvv2gAM1w7CjwCvV0bG3sRESKUDORSA7sJrVVv27GHBw==
 
-"@veupathdb/components@^0.16.7":
-  version "0.16.7"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.16.7.tgz#b62b69e85101a73025147ebef387434db3d26cd6"
-  integrity sha512-9bnn8eBQB2RdNGM9c4uulIrriwo3iWv9b2HLFMcwXmEXBqb20i2eY6ZBjysP6gTmXCHr3wrwztxtbGXXvC9+fg==
+"@veupathdb/components@^0.19.1":
+  version "0.19.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.1.tgz#20c03a1156afb9af35af2ecc0a389d47fd95031a"
+  integrity sha512-jlLWjIRgd4wVDtp4/WMeHSrDn598+qI1qlOGm0sYOSaZFj3a3/1GhCgYAAwXJxUgtwth2lQ/eHQaqMUPy4xE5A==
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
@@ -2170,10 +2170,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/coreui@^0.16.4":
-  version "0.16.4"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.16.4.tgz#9027d4cdb68d5249177a231d57fe9f2f6147d4ed"
-  integrity sha512-AjBMLAkQUO5A83IqkVqfWgdqtr+YgQzFGaVdAtsSUQYdvBZELZw8Oaap9hx9XAhNDaJtIF2GsZO1EHdQ0H7a3A==
+"@veupathdb/coreui@^0.18.0":
+  version "0.18.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.0.tgz#b647a0bf43990fe92f843b61dd525bd2caee87f4"
+  integrity sha512-nhX72P1emo3rbVesIZg+KhUCj2RW2YADda2tktmCQNxyQ9EjXPATziGboqmNj8Vy1oM9vMpRLrfGwSAvQkxxzg==
   dependencies:
     "@react-hook/size" "^2.1.2"
     lodash "^4.17.21"
@@ -2181,10 +2181,10 @@
     react-responsive-modal "^6.2.0"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^3.6.13":
-  version "3.6.13"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.6.13.tgz#28106d4ea1dd7cd12fa51fc7a7c3c97dc74a5a58"
-  integrity sha512-DRyg67tIfqZy4XnWhjZ0TGNp7hcodo2nIGqrxc0mZmnKJE72Ax3illIameLotVQmne+x1hqCUvWJogiU6ekzzQ==
+"@veupathdb/eda@^3.8.25":
+  version "3.8.25"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.8.25.tgz#d96ec68ff799d51856165c0f52963461df31dd3a"
+  integrity sha512-guCYVLpdXyTi8QEmomkPg/VjeFVuJB8DLdt08qQ1I2fco+6pYHaeSJjWAcqx9ixiWGnYOTJzpdWLfwiPo6aYpw==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -2194,7 +2194,6 @@
     react-cool-dimensions "^2.0.7"
     react-draggable "^4.4.3"
     react-resizable "^3.0.4"
-    react-table "^7.7.0"
     uuid "^8.3.2"
 
 "@veupathdb/http-utils@^1.1.0":
@@ -2233,10 +2232,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/site-webpack-config/-/site-webpack-config-0.1.0.tgz#b63464c5ce70297102aecd700069f1059f371fe9"
   integrity sha512-J8sPtD8+Zp1ZBhgU+mX7O737zaZ28s7P/9RJjbh5nXYB5IgP6yRm+bvj0ewmW7W9NBAPUHJzeEDxMbYDExb85g==
 
-"@veupathdb/study-data-access@^0.3.3":
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.3.3.tgz#41bfd0b37cdd6200be46f8d14b0eb10d61829e08"
-  integrity sha512-K3jmHICU9kqym56q/Cnl6vKJ1JrDSGB/ONw3VNJA1sROivBdEOgbO41YqXVih6975B3fPFM7TQfl5N5SV6rOrQ==
+"@veupathdb/study-data-access@^0.3.5":
+  version "0.3.5"
+  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.3.5.tgz#753eff861b8ce72238fde30a7d96d7460b5cc0ac"
+  integrity sha512-mtJO3glTHn7AnaL25c2HGoKSpZ0hqWfHX63cp7IfTIGkpzedeXwriJL1PmQwEUEqb5+jZGyQuKAN2S07L5XxQA==
   dependencies:
     fp-ts "^2.11.5"
     io-ts "^2.2.16"
@@ -2265,10 +2264,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.6.11":
-  version "0.6.11"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.6.11.tgz#e69ebc4d76e1ab095e9688c8f1ba28f33eca6d1f"
-  integrity sha512-zB1vcOMFTcGIXZJpcl2KRDyy/F+JAxDxfcWpj6S4NsktEby+8s4nAeCGniTWqyy+5soyJD8awoYQqOFHe+4R0g==
+"@veupathdb/web-common@^0.6.23":
+  version "0.6.23"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.6.23.tgz#7fc8396900bcae6c0aed13de106e78e88462c964"
+  integrity sha512-OoLKdKjkc/snBbqdEKtqT02eqrmjMXApMlJp4E7eaXA8SFnx9+g4I4iVmFPaxzr1yzMGuwGb7LKBu5hK5q8VRg==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
