@@ -8,7 +8,7 @@ import {
 } from '@veupathdb/components/lib/types/plots';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-import Switch from '@veupathdb/components/lib/components/widgets/Switch';
+import { Toggle } from '@veupathdb/coreui';
 
 import * as t from 'io-ts';
 import { useCallback, useMemo, useState, useEffect } from 'react';
@@ -569,10 +569,11 @@ function BarplotViz(props: VisualizationProps) {
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <LabelledGroup label="Y-axis controls">
           <div style={{ display: 'flex' }}>
-            <Switch
+            <Toggle
               label="Log scale:"
-              state={vizConfig.dependentAxisLogScale}
-              onStateChange={onDependentAxisLogScaleChange}
+              value={vizConfig.dependentAxisLogScale}
+              onChange={onDependentAxisLogScaleChange}
+              themeRole="primary"
             />
           </div>
           {/* Y-axis range control */}

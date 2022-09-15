@@ -70,7 +70,8 @@ import { BinSpec, NumberRange } from '../../../types/general';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
-import Switch from '@veupathdb/components/lib/components/widgets/Switch';
+import { Toggle } from '@veupathdb/coreui';
+
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 
 const numContinuousBins = 8;
@@ -743,13 +744,14 @@ function MapViz(props: VisualizationProps) {
       >
         <LabelledGroup label="Y-axis controls">
           <div style={{ display: 'flex' }}>
-            <Switch
+            <Toggle
               label="Log scale:"
-              state={vizConfig.dependentAxisLogScale}
-              onStateChange={onDependentAxisLogScaleChange}
+              value={vizConfig.dependentAxisLogScale ?? false}
+              onChange={onDependentAxisLogScaleChange}
               disabled={
                 vizConfig.markerType == null || vizConfig.markerType === 'pie'
               }
+              themeRole="primary"
             />
           </div>
         </LabelledGroup>
