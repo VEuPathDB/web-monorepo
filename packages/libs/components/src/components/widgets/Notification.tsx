@@ -80,25 +80,25 @@ export default function Notification({
           </div>
         ) : null}
       </div>
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
+      <div
+        style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
+      >
+        {showWarningIcon && (
+          <>
+            <WarningIcon
+              style={{ color: 'yellow', width: '1.25em', height: '1.25em' }}
+            />
+          </>
+        )}
         <span
           style={{
-            paddingRight: 20,
+            padding: '0px 10px',
             color: 'white',
             fontSize: 13,
             flexGrow: 2,
             lineHeight: '1.1em',
           }}
         >
-          {showWarningIcon && (
-            <>
-              <WarningIcon
-                style={{ color: 'yellow', verticalAlign: 'middle' }}
-                fontSize="small"
-              />
-              <span>&nbsp;</span>
-            </>
-          )}
           {text}
         </span>
         <Button
@@ -106,10 +106,6 @@ export default function Notification({
           type="outlined"
           color="#FFFFFF"
           onClick={onAcknowledgement}
-          containerStyles={{
-            paddingTop: 10,
-            alignSelf: 'flex-end',
-          }}
         />
       </div>
     </div>
