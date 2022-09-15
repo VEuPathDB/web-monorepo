@@ -64,6 +64,7 @@ import { MiniMap } from './MiniMap';
 import { Tooltip } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import { OverlayOptions } from '../visualizations/options/types';
+import { useToggleStarredVariable } from '../../hooks/starredVariables';
 
 const MapState = t.type({
   viewport: t.type({
@@ -299,6 +300,8 @@ function FullScreenMap(props: FullScreenComponentProps) {
     appState.checkedLegendItems
   );
 
+  const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
+
   // WIP hook--see checkedLegendItemsStatus.ts
   // const [
   //   checkedLegendItems,
@@ -424,8 +427,10 @@ function FullScreenMap(props: FullScreenComponentProps) {
           entities={studyEntities}
           selectedVariables={selectedVariables}
           onChange={setSelectedVariables}
-          starredVariables={[]}
-          toggleStarredVariable={() => {}}
+          starredVariables={
+            props.analysisState.analysis?.descriptor.starredVariables ?? []
+          }
+          toggleStarredVariable={toggleStarredVariable}
         />
         {legendItems.length > 0 && appState.overlayVariable && (
           <PlotLegend
@@ -513,8 +518,11 @@ function FullScreenMap(props: FullScreenComponentProps) {
                 geoConfigs={[geoConfig]}
                 computationAppOverview={app}
                 filters={filters}
-                starredVariables={[]}
-                toggleStarredVariable={() => {}}
+                starredVariables={
+                  props.analysisState.analysis?.descriptor.starredVariables ??
+                  []
+                }
+                toggleStarredVariable={toggleStarredVariable}
                 totalCounts={totalCounts}
                 filteredCounts={filteredCounts}
                 isSingleAppMode
