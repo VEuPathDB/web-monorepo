@@ -18,9 +18,15 @@ export default function SingleSelect({
     buttonDisplayContent,
 }: SingleSelectProps) {
     const [ isPopoverOpen, setIsPopoverOpen ] = useState<boolean>(false);
-    const [ focusedElement, setFocusedElement ] = useState(
-        items.findIndex(item => value === item.value) !== -1 ? items.findIndex(item => value === item.value) : 0
-    );
+
+    /** 
+     * 1. Find the index of the value prop in the items array to set focused state in the dropdown 
+     * 2. If a value is not found, defaults to the first item in the dropdown
+    */
+    const selectedValueIndex = items.findIndex(item => value === item.value);
+    const defaultOrSelectedValueIndex = selectedValueIndex !== -1 ? selectedValueIndex : 0;
+    const [ indexOfFocusedElement, setIndexOfFocusedElement ] = useState(defaultOrSelectedValueIndex);
+
     const [ key, setKey ] = useState<string>('');
 
     const handleSelection = (newValue: string) => {
@@ -28,19 +34,19 @@ export default function SingleSelect({
         setKey(uniqueId());
     }
 
+    /** Update focused element when index of selected value changes */
     useEffect(() => {
-        setFocusedElement(
-            items.findIndex(item => value === item.value) !== -1 ? items.findIndex(item => value === item.value) : 0
-            )
-    }, [value])
+        setIndexOfFocusedElement(defaultOrSelectedValueIndex)
+    }, [defaultOrSelectedValueIndex])
 
     const onKeyDown = (key: string, newValue: string) => {
+        if (!isPopoverOpen) return;
         if (key === 'Enter') {
             handleSelection(newValue)
         } else if (key === 'ArrowUp') {
-            focusedElement !== 0 ? setFocusedElement(prev => prev - 1) : null;
+            indexOfFocusedElement !== 0 ? setIndexOfFocusedElement(prev => prev - 1) : null;
         } else if (key === 'ArrowDown') {
-            focusedElement !== items.length - 1 ? setFocusedElement(prev => prev + 1) : null;
+            indexOfFocusedElement !== items.length - 1 ? setIndexOfFocusedElement(prev => prev + 1) : null;
         }
     }
 
@@ -67,7 +73,7 @@ export default function SingleSelect({
                         onSelect={handleSelection} 
                         onKeyDown={onKeyDown} 
                         shouldFocus={
-                            index === focusedElement
+                            index === indexOfFocusedElement
                         }
                         isSelected={value === item.value}
                     />
@@ -117,7 +123,7 @@ function Option({
                     color: white;
                 }
             `}
-            tabIndex={0}
+            tabIndex={-1}
             onClick={() => onSelect(item.value)} 
             onKeyDown={(e) => onKeyDown(e.key, item.value)}
         >
