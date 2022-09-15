@@ -1,10 +1,20 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import Select, { ActionMeta, OptionsType, ValueType } from 'react-select';
 
+import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
+
 import { Props as CombinedResultProps } from '../components/CombinedResult';
-import { useDownloadReportCallback } from '../hooks/api';
+import { BlastServiceUrl, useBlastApi } from '../hooks/api';
 import { IoBlastFormat } from '../utils/ServiceTypes';
+import { downloadJobContent } from '../utils/api';
+
+import {
+  ReportPollingState,
+  makeReportPollingPromise,
+} from './BlastWorkspaceResult';
 
 import './ReportSelect.scss';
 
@@ -69,9 +79,22 @@ export function ReportSelect({
   jobId,
   placeholder,
 }: Props) {
+  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
+  const blastServiceUrl = useContext(BlastServiceUrl);
+  const blastApi = useBlastApi();
+
   const [selectedReportOption, setSelectedReportOption] = useState<
     ReportOption | undefined
   >(undefined);
+  const [reportState, setReportState] = useState<ReportPollingState>({
+    status: 'report-pending',
+    jobId,
+  });
+
+  const resetSelectedReport = useCallback(() => {
+    setSelectedReportOption(undefined);
+    setReportState({ status: 'report-pending', jobId });
+  }, [jobId]);
 
   const onChangeReport = useCallback(
     (
@@ -85,40 +108,66 @@ export function ReportSelect({
     []
   );
 
-  const downloadReportCallback = useDownloadReportCallback(jobId);
+  useEffect(() => {
+    if (
+      selectedReportOption == null ||
+      selectedReportOption.value === 'combined-result-table' ||
+      (reportState.status !== 'report-pending' && reportState.jobId === jobId)
+    ) {
+      return;
+    }
+
+    const format = selectedReportOption.value.format;
+
+    return Task.fromPromise(() =>
+      makeReportPollingPromise(blastApi, jobId, format)
+    ).run(setReportState);
+  }, [blastApi, jobId, selectedReportOption, reportState]);
 
   useEffect(() => {
-    let canceled = false;
+    if (
+      selectedReportOption == null ||
+      selectedReportOption.value === 'combined-result-table' ||
+      reportState.status === 'report-pending'
+    ) {
+      return;
+    }
 
-    (async () => {
-      if (downloadReportCallback != null && selectedReportOption != null) {
-        try {
-          if (selectedReportOption.value === 'combined-result-table') {
-            if (combinedResultTableDownloadConfig?.offer) {
-              await combinedResultTableDownloadConfig.onClickDownloadTable();
-            }
-          } else {
-            await downloadReportCallback(
-              jobId,
-              selectedReportOption.value.format,
-              selectedReportOption.value.shouldZip
-            );
-          }
-        } finally {
-          if (!canceled) {
-            setSelectedReportOption(undefined);
-          }
-        }
-      }
-    })();
+    const { format, shouldZip } = selectedReportOption.value;
 
-    return () => {
-      canceled = true;
-    };
+    return Task.fromPromise(async () =>
+      downloadJobContent(
+        blastServiceUrl,
+        await wdkService.getCurrentUser(),
+        reportState,
+        shouldZip,
+        `${jobId}-${format}-report`
+      )
+    ).run(resetSelectedReport, resetSelectedReport);
   }, [
-    combinedResultTableDownloadConfig,
-    downloadReportCallback,
+    blastServiceUrl,
+    wdkService,
+    resetSelectedReport,
+    reportState,
     jobId,
+    selectedReportOption,
+  ]);
+
+  useEffect(() => {
+    if (
+      selectedReportOption?.value !== 'combined-result-table' ||
+      combinedResultTableDownloadConfig?.offer !== true
+    ) {
+      return;
+    }
+
+    return Task.fromPromise(async () =>
+      combinedResultTableDownloadConfig.onClickDownloadTable()
+    ).run(resetSelectedReport, resetSelectedReport);
+  }, [
+    resetSelectedReport,
+    jobId,
+    combinedResultTableDownloadConfig,
     selectedReportOption,
   ]);
 

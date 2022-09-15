@@ -13,13 +13,12 @@ import {
 
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
-import { makeReportPollingPromise } from '../components/BlastWorkspaceResult';
+import { ReportPollingState } from '../components/BlastWorkspaceResult';
 
 import {
   ApiResult,
   ErrorDetails,
   IoBlastConfig,
-  IoBlastFormat,
   ReportConfig,
   createJobResponse,
   createReportResponse,
@@ -244,6 +243,14 @@ export class BlastApi extends FetchClientWithCredentials {
       transformResponse: ioTransformer(string),
     });
   }
+
+  fetchJobQueueError(jobId: string) {
+    return this.taggedFetch({
+      path: `${JOBS_PATH}/${jobId}/error`,
+      method: 'GET',
+      transformResponse: ioTransformer(string),
+    });
+  }
 }
 
 function transformTooLargeError(errorDetails: ErrorDetails): ErrorDetails {
@@ -255,64 +262,55 @@ function transformTooLargeError(errorDetails: ErrorDetails): ErrorDetails {
     : errorDetails;
 }
 
-// FIXME: Update createRequestHandler to accommodate responses
+// FIXME: Update FetchClientWithCredentials to accommodate responses
 // with "attachment" Content-Disposition
-export function createJobContentDownloader(
-  user: User,
-  blastApi: BlastApi,
+export async function downloadJobContent(
   blastServiceUrl: string,
-  jobId: string
-) {
-  return async function downloadJobContent(
-    format: IoBlastFormat,
-    shouldZip: boolean,
-    filename: string
-  ) {
-    const reportResponse = await makeReportPollingPromise(
-      blastApi,
-      jobId,
-      format
+  user: User,
+  reportResponse: ReportPollingState,
+  shouldZip: boolean,
+  filename: string
+): Promise<void> {
+  if (reportResponse.status === 'report-pending') {
+    throw new Error('Tried to download a report which has not yet finished.');
+  }
+
+  if (reportResponse.status === 'queueing-error') {
+    throw new Error('We were unable to queue your report.');
+  }
+
+  if (reportResponse.status === 'request-error') {
+    throw new Error(
+      `An error occurred while trying to create your report: ${JSON.stringify(
+        reportResponse.details
+      )}`
     );
+  }
 
-    if (reportResponse.status === 'queueing-error') {
-      throw new Error('We were unable to queue your report.');
+  const { reportID, files = [] } = reportResponse.report;
+
+  const nonZippedReportFiles = files.filter(
+    (file) => file !== 'meta.json' && !file.endsWith('.zip')
+  );
+
+  const reportFile =
+    shouldZip || nonZippedReportFiles[0] == null
+      ? 'report.zip'
+      : nonZippedReportFiles[0];
+
+  const downloadResponse = await fetch(
+    `${blastServiceUrl}/reports/${reportID}/files/${reportFile}`,
+    {
+      headers: { 'Auth-Key': getAuthKey(user) },
     }
+  );
 
-    if (reportResponse.status === 'request-error') {
-      throw new Error(
-        `An error occurred while trying to create your report: ${JSON.stringify(
-          reportResponse.details
-        )}`
-      );
-    }
+  if (!downloadResponse.ok) {
+    throw new Error('An error occurred while trying to download your report.');
+  }
 
-    const { reportID, files = [] } = reportResponse.report;
-
-    const nonZippedReportFiles = files.filter(
-      (file) => file !== 'meta.json' && !file.endsWith('.zip')
-    );
-
-    const reportFile =
-      shouldZip || nonZippedReportFiles[0] == null
-        ? 'report.zip'
-        : nonZippedReportFiles[0];
-
-    const downloadResponse = await fetch(
-      `${blastServiceUrl}/reports/${reportID}/files/${reportFile}`,
-      {
-        headers: { 'Auth-Key': getAuthKey(user) },
-      }
-    );
-
-    if (!downloadResponse.ok) {
-      throw new Error(
-        'An error occurred while trying to download your report.'
-      );
-    }
-
-    const blob = await downloadResponse.blob();
-    saveAs(blob, filename);
-  };
+  const blob = await downloadResponse.blob();
+  saveAs(blob, filename);
 }
 
 function getAuthKey(user: User) {
