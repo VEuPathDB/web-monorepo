@@ -417,9 +417,12 @@ function HistogramViz(props: VisualizationProps) {
 
   const defaultIndependentRange = useDefaultAxisRange(xAxisVariable);
 
+  // separate minPosMax from dependentMinPosMax
+  const minPosMax = useMemo(() => histogramDefaultDependentAxisMinMax(data), [
+    data,
+  ]);
   const dependentMinPosMax = useMemo(() => {
-    const minPosMax = histogramDefaultDependentAxisMinMax(data);
-    return minPosMax != null
+    return minPosMax != null && minPosMax.min != null && minPosMax.max != null
       ? {
           min: minPosMax.min,
           // override max to be exactly 1 in proportion mode (rounding errors can make it slightly greater than 1)
@@ -649,6 +652,7 @@ function HistogramViz(props: VisualizationProps) {
         setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
         dependentMinPosMax={dependentMinPosMax}
         areRequiredInputsSelected={areRequiredInputsSelected}
+        minPosMax={minPosMax}
       />
     </div>
   );
@@ -695,6 +699,7 @@ type HistogramPlotWithControlsProps = Omit<HistogramProps, 'data'> & {
   outputSize?: number;
   dependentMinPosMax: NumberRange | undefined;
   areRequiredInputsSelected: boolean;
+  minPosMax: NumberRange | undefined;
 } & Partial<CoverageStatistics>;
 
 function HistogramPlotWithControls({
@@ -737,6 +742,7 @@ function HistogramPlotWithControls({
   outputSize,
   dependentMinPosMax,
   areRequiredInputsSelected,
+  minPosMax,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   const displayLibraryControls = false;
@@ -826,8 +832,10 @@ function HistogramPlotWithControls({
       truncationConfig(
         {
           ...defaultUIState, // using annotated range, NOT the actual data
-          ...(dependentMinPosMax != null
-            ? { dependentAxisRange: dependentMinPosMax }
+          ...(minPosMax != null &&
+          minPosMax.min != null &&
+          minPosMax.max != null
+            ? { dependentAxisRange: minPosMax }
             : {}),
         },
         vizConfig,
@@ -836,7 +844,7 @@ function HistogramPlotWithControls({
       ),
     [
       defaultUIState,
-      dependentMinPosMax,
+      minPosMax,
       vizConfig.independentAxisRange,
       vizConfig.dependentAxisRange,
     ]
