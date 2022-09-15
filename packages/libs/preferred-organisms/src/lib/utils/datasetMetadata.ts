@@ -108,26 +108,26 @@ function findDatasetMetadata(
       );
     }
 
-    if (organismsTable == null || wdkReferencesTable == null) {
+    if (wdkReferencesTable == null) {
       throw new Error(
-        `In order to use this feature, each dataset record must have '${ORGANISMS_TABLE}' and '${WDK_REFERENCES_TABLE}' tables.`
+        `In order to use this feature, each dataset record must have a '${WDK_REFERENCES_TABLE}' tables.`
       );
     }
 
-    const organisms = organismsTable.reduce(
-      (memo, { [ORGANISM_ATTRIBUTE]: organism }) => {
-        if (typeof organism !== 'string') {
-          throw new Error(
-            `In order to use this feature, each row of the '${ORGANISMS_TABLE}' table must have a string-valued '${ORGANISM_ATTRIBUTE}' attribute.`
-          );
-        }
+    const organisms =
+      organismsTable == null
+        ? ['ALL']
+        : organismsTable.reduce((memo, { [ORGANISM_ATTRIBUTE]: organism }) => {
+            if (typeof organism !== 'string') {
+              throw new Error(
+                `In order to use this feature, each row of the '${ORGANISMS_TABLE}' table must have a string-valued '${ORGANISM_ATTRIBUTE}' attribute.`
+              );
+            }
 
-        memo.push(organism);
+            memo.push(organism);
 
-        return memo;
-      },
-      [] as string[]
-    );
+            return memo;
+          }, [] as string[]);
 
     const questions = wdkReferencesTable.reduce(
       (
