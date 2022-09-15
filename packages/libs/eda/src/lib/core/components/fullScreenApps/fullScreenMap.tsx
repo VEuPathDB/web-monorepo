@@ -123,6 +123,7 @@ function FullScreenMap(props: FullScreenComponentProps) {
         hideFacetInputs: true,
         layoutComponent: FloatingLayout,
         getOverlayVariable: (_) => appState.overlayVariable,
+        getCheckedLegendItems: (_) => appState.checkedLegendItems,
       });
     }
 
@@ -141,7 +142,7 @@ function FullScreenMap(props: FullScreenComponentProps) {
         boxplot: vizWithOptions(boxplotVisualization),
       },
     };
-  }, [appState.overlayVariable]);
+  }, [appState.checkedLegendItems, appState.overlayVariable]);
 
   const { viewport, mouseMode } = appState;
 

@@ -816,7 +816,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   const checkedLegendItems = useCheckedLegendItemsStatus(
     legendItems,
-    vizConfig.checkedLegendItems
+    options?.getCheckedLegendItems?.(computation.descriptor.configuration) ??
+      vizConfig.checkedLegendItems
   );
 
   const legendTitle = useMemo(() => {

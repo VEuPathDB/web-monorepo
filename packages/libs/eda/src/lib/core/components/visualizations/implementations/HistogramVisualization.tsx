@@ -487,7 +487,8 @@ function HistogramViz(props: VisualizationProps<Options>) {
   // set checkedLegendItems
   const checkedLegendItems = useCheckedLegendItemsStatus(
     legendItems,
-    vizConfig.checkedLegendItems
+    options?.getCheckedLegendItems?.(computation.descriptor.configuration) ??
+      vizConfig.checkedLegendItems
   );
 
   // axis range control

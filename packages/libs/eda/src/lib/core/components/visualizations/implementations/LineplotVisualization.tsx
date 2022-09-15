@@ -705,7 +705,8 @@ function LineplotViz(props: VisualizationProps<Options>) {
   // set checkedLegendItems: not working well with plot options
   const checkedLegendItems = useCheckedLegendItemsStatus(
     legendItems,
-    vizConfig.checkedLegendItems
+    options?.getCheckedLegendItems?.(computation.descriptor.configuration) ??
+      vizConfig.checkedLegendItems
   );
 
   const areRequiredInputsSelected = useMemo(() => {
