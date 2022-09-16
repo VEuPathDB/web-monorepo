@@ -12,7 +12,10 @@ import {
   getScopes,
   getNodeId,
 } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
-import { AnswerJsonFormatConfig } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import {
+  AnswerJsonFormatConfig,
+  RecordInstance,
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 // Definitions
 import {
@@ -65,7 +68,7 @@ export function useWdkStudyRecord(datasetId: string): HookValue | undefined {
         )
         .map(getNodeId)
         .toArray()
-        .concat(['bulk_download_url', 'request_needs_approval']);
+        .concat(['bulk_download_url', 'request_needs_approval', 'is_public']);
       const studyRecord = await wdkService
         .getRecord(
           STUDY_RECORD_CLASS_NAME,
@@ -82,7 +85,7 @@ export function useWdkStudyRecord(datasetId: string): HookValue | undefined {
               Object.assign(attrs, {
                 [name]: '######',
               }),
-            {}
+            { dataset_id: datasetId }
           );
           return {
             displayName: 'Fake Study',
@@ -187,11 +190,34 @@ export function isStubEntity(entity: StudyEntity) {
 export function useStudyMetadata(datasetId: string, client: SubsettingClient) {
   return useWdkServiceWithRefresh(
     async (wdkService) => {
-      const studyRecord = await wdkService.getRecord(
-        STUDY_RECORD_CLASS_NAME,
-        [{ name: 'dataset_id', value: datasetId }],
-        { attributes: ['dataset_id', 'eda_study_id', 'study_access'] }
-      );
+      const attributes = ['dataset_id', 'eda_study_id', 'study_access'];
+      const studyRecord = await wdkService
+        .getRecord(
+          STUDY_RECORD_CLASS_NAME,
+          [{ name: 'dataset_id', value: datasetId }],
+          { attributes }
+        )
+        .catch((error) => {
+          console.warn(
+            'Unable to load study dataset record. See error below. Using stub record.'
+          );
+          console.error(error);
+          const attrs = attributes.reduce(
+            (attrs, name) =>
+              Object.assign(attrs, {
+                [name]: '######',
+              }),
+            {}
+          );
+          return {
+            displayName: 'Fake Study',
+            id: [{ name: 'dataset_id', value: datasetId }],
+            recordClassName: STUDY_RECORD_CLASS_NAME,
+            attributes: attrs,
+            tables: {},
+            tableErrors: [],
+          } as RecordInstance;
+        });
       if (typeof studyRecord.attributes.eda_study_id !== 'string')
         throw new Error(
           'Could not find study with associated dataset id `' + datasetId + '`.'

@@ -87,6 +87,7 @@ interface Props {
   /** API client that will be used in the Download Tab */
   downloadClient: DownloadClient;
   singleAppMode?: string;
+  showUnreleasedData: boolean;
 }
 
 /**
@@ -105,6 +106,7 @@ export function AnalysisPanel({
   showLoginForm,
   downloadClient,
   singleAppMode,
+  showUnreleasedData,
 }: Props) {
   const studyRecord = useStudyRecord();
   const analysisState = useAnalysis(analysisId, singleAppMode);
@@ -187,6 +189,7 @@ export function AnalysisPanel({
     );
   if (analysis == null || approvalStatus === 'loading') return <Loading />;
   if (
+    (studyRecord.attributes.is_public !== 'true' && !showUnreleasedData) ||
     approvalStatus === 'not-approved' ||
     isStubEntity(studyMetadata.rootEntity)
   )
