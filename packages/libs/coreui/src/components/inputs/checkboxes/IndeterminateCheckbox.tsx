@@ -34,10 +34,6 @@ export default function IndeterminateCheckbox<T>({
             value={value}
             checked={checked} 
             onChange={(e) => onChange(e.target.checked)}
-            onKeyDown={(e) => {
-                if (!nodeRef.current) return;
-                e.key === 'Enter' ? onChange(!nodeRef.current.checked) : null
-            }}
         />
     )
 }

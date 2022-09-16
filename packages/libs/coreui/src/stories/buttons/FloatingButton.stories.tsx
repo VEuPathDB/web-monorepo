@@ -2,7 +2,7 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 import { SwissArmyButtonVariantProps } from '../../components/buttons';
 
 import FloatingButton from '../../components/buttons/FloatingButton';
-import { TableDownload, Download } from '../../components/icons';
+import { TableDownload, Download, Undo } from '../../components/icons';
 import UIThemeProvider from '../../components/theming/UIThemeProvider';
 import { green, orange } from '../../definitions/colors';
 
@@ -54,7 +54,7 @@ export const IconOnly = Template.bind({});
 IconOnly.args = {
   ...Default.args,
   text: undefined,
-  icon: TableDownload,
+  icon: Undo,
 } as SwissArmyButtonVariantProps;
 
 export const Tooltip = Template.bind({});

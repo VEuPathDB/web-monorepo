@@ -1,6 +1,5 @@
-import { ReactNode, useState, SetStateAction } from 'react';
+import { ReactNode, useState } from 'react';
 import { Button, Popover, makeStyles } from '@material-ui/core';
-import { ArrowDropDown } from '@material-ui/icons';
 import { useEffect } from 'react';
 
 export interface PopoverButtonProps {
@@ -13,8 +12,8 @@ export interface PopoverButtonProps {
   /** Allows for additional cleanup when popover closes */
   onClose?: () => void;
 
-  /** State setter used in Select component to set focus when popover opens */
-  setIsPopoverOpen?: SetStateAction<any>;
+  /** Used in SingleSelect component to set focus when popover opens */
+  setIsPopoverOpen?: (isOpen: boolean) => void;
 }
 
 const useStyles = makeStyles({
@@ -79,7 +78,7 @@ export default function PopoverButton(props: PopoverButtonProps) {
       onClick={(event) => {
         setAnchorEl(event.currentTarget);
       }}
-      endIcon={<ArrowDropDown style={{height: '1.5em', width: '1.5em'}}/>}
+      endIcon={<i className="fa fa-caret-down" aria-hidden="true" style={{width: '20px'} }/>}
       style={{
         textTransform: 'none',
       }}
