@@ -20,4 +20,5 @@ export { default as Table } from "./Table";
 export { default as TaxaQueryDark } from "./TaxaQueryDark";
 export { default as TaxaQueryLight } from "./TaxaQueryLight";
 export { default as Trash } from "./Trash";
+export { default as Undo } from "./Undo";
 export { default as Warning } from "./Warning";
