@@ -3,6 +3,7 @@ import { StudyEntity } from '../../types/study';
 import { VariableDescriptor } from '../../types/variable';
 import {
   DataElementConstraintRecord,
+  disabledVariablesForInput,
   excludedVariables,
   flattenConstraints,
   VariablesByInputName,
@@ -157,77 +158,13 @@ export function InputVariables(props: Props) {
   > = useMemo(
     () =>
       inputs.reduce((map, input) => {
-        const disabledVariables = excludedVariables(
-          entities[0],
-          flattenedConstraints && flattenedConstraints[input.name]
+        map[input.name] = disabledVariablesForInput(
+          input.name,
+          entities,
+          flattenedConstraints,
+          dataElementDependencyOrder,
+          selectedVariables
         );
-        if (dataElementDependencyOrder == null) {
-          map[input.name] = disabledVariables;
-          return map;
-        }
-        const index = dataElementDependencyOrder.indexOf(input.name);
-        // no change if dependencyOrder is not declared
-        if (index === -1) {
-          map[input.name] = disabledVariables;
-          return map;
-        }
-
-        const prevSelectedVariable = dataElementDependencyOrder
-          .slice(0, index)
-          .map((n) => selectedVariables[n])
-          .reverse()
-          .find((v) => v != null);
-        const nextSelectedVariable = dataElementDependencyOrder
-          .slice(index + 1)
-          .map((n) => selectedVariables[n])
-          .find((v) => v != null);
-
-        // Remove variables for entities which are not part of the ancestor path of, or equal to, `prevSelectedVariable`
-        if (prevSelectedVariable) {
-          const ancestors = entities.reduceRight((ancestors, entity) => {
-            if (
-              entity.id === prevSelectedVariable.entityId ||
-              entity.children?.includes(ancestors[0])
-            ) {
-              ancestors.unshift(entity);
-            }
-            return ancestors;
-          }, [] as StudyEntity[]);
-          const excludedEntities = entities.filter(
-            (entity) => !ancestors.includes(entity)
-          );
-          const excludedVariables = excludedEntities.flatMap((entity) =>
-            entity.variables.map((variable) => ({
-              variableId: variable.id,
-              entityId: entity.id,
-            }))
-          );
-          disabledVariables.push(...excludedVariables);
-        }
-
-        // Remove variables for entities which are not descendants of, or equal to, `nextSelectedVariable`
-        if (nextSelectedVariable) {
-          const entity = entities.find(
-            (entity) => entity.id === nextSelectedVariable.entityId
-          );
-          if (entity == null)
-            throw new Error('Unkonwn entity: ' + nextSelectedVariable.entityId);
-          const descendants = Array.from(
-            preorder(entity, (entity) => entity.children ?? [])
-          );
-          const excludedEntities = entities.filter(
-            (entity) => !descendants.includes(entity)
-          );
-          const excludedVariables = excludedEntities.flatMap((entity) =>
-            entity.variables.map((variable) => ({
-              variableId: variable.id,
-              entityId: entity.id,
-            }))
-          );
-          disabledVariables.push(...excludedVariables);
-        }
-
-        map[input.name] = disabledVariables;
         return map;
       }, {} as Record<string, VariableDescriptor[]>),
     [
