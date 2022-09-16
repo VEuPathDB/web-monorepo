@@ -480,7 +480,8 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   // set checkedLegendItems
   const checkedLegendItems = useCheckedLegendItemsStatus(
     legendItems,
-    vizConfig.checkedLegendItems
+    options?.getCheckedLegendItems?.(computation.descriptor.configuration) ??
+      vizConfig.checkedLegendItems
   );
 
   // alphadiv abundance findEntityAndVariable does not work properly for collection variable

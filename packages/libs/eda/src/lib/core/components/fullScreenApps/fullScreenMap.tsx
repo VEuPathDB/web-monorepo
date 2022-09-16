@@ -1,69 +1,71 @@
 import * as t from 'io-ts';
+import { isEqual } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 
+import { Tooltip } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
+
+import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
 import { MouseMode } from '@veupathdb/components/lib/map/MouseTools';
 import { BoundsViewport, Viewport } from '@veupathdb/components/lib/map/Types';
+import { FilledButton, FloatingButton } from '@veupathdb/coreui';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
-import { useVizConfig } from '../../hooks/visualizations';
-import {
-  FullScreenAppPlugin,
-  FullScreenComponentProps,
-} from '../../types/fullScreenApp';
-import { StudyMetadata } from '../../types/study';
-import { entityToGeoConfig } from '../../utils/geoVariables';
-import {
-  filtersFromBoundingBox,
-  leafletZoomLevelToGeohashLevel,
-} from '../../utils/visualization';
+import { PromiseResult } from '../..';
+import { useCheckedLegendItemsStatus } from '../../hooks/checkedLegendItemsStatus';
+import { useEntityCounts } from '../../hooks/entityCounts';
+import { useGeoConfig } from '../../hooks/geoConfig';
 import { useMapMarkers } from '../../hooks/mapMarkers';
+import { usePromise } from '../../hooks/promise';
+import { useToggleStarredVariable } from '../../hooks/starredVariables';
+import { useVizConfig } from '../../hooks/visualizations';
 import {
   useDataClient,
   useStudyEntities,
   useStudyMetadata,
 } from '../../hooks/workspace';
-import { useGeoConfig } from '../../hooks/geoConfig';
-import { useCheckedLegendItemsStatus } from '../../hooks/checkedLegendItemsStatus';
+import {
+  FullScreenAppPlugin,
+  FullScreenComponentProps,
+} from '../../types/fullScreenApp';
+import { StudyMetadata } from '../../types/study';
+import { VariableDescriptor } from '../../types/variable';
+import { Computation, Visualization } from '../../types/visualization';
+import { VariablesByInputName } from '../../utils/data-element-constraints';
+import { entityToGeoConfig } from '../../utils/geoVariables';
+import {
+  filtersFromBoundingBox,
+  leafletZoomLevelToGeohashLevel,
+} from '../../utils/visualization';
+import { ComputationPlugin } from '../computations/Types';
+import { ZeroConfigWithButton } from '../computations/ZeroConfiguration';
+import { FloatingLayout } from '../layouts/FloatingLayout';
+import { LayoutOptions } from '../layouts/types';
+import { barplotVisualization } from '../visualizations/implementations/BarplotVisualization';
+import { boxplotVisualization } from '../visualizations/implementations/BoxplotVisualization';
+import { histogramVisualization } from '../visualizations/implementations/HistogramVisualization';
+import { lineplotVisualization } from '../visualizations/implementations/LineplotVisualization';
 import {
   defaultAnimation,
   mapVisualization,
 } from '../visualizations/implementations/MapVisualization';
-import { isEqual } from 'lodash';
-import { InputVariables } from '../visualizations/InputVariables';
-import { VariablesByInputName } from '../../utils/data-element-constraints';
-import { VariableDescriptor } from '../../types/variable';
-import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
-import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-import { FilledButton, FloatingButton } from '@veupathdb/coreui';
-import AddIcon from '@material-ui/icons/Add';
-import {
-  FullScreenVisualization,
-  NewVisualizationPickerModal,
-} from '../visualizations/VisualizationsContainer';
-import { usePromise } from '../../hooks/promise';
-import { PromiseResult } from '../..';
-import { Computation, Visualization } from '../../types/visualization';
-import { ComputationPlugin } from '../computations/Types';
-import { ZeroConfigWithButton } from '../computations/ZeroConfiguration';
-import { histogramVisualization } from '../visualizations/implementations/HistogramVisualization';
 import {
   contTableVisualization,
   twoByTwoVisualization,
 } from '../visualizations/implementations/MosaicVisualization';
 import { scatterplotVisualization } from '../visualizations/implementations/ScatterplotVisualization';
-import { lineplotVisualization } from '../visualizations/implementations/LineplotVisualization';
-import { barplotVisualization } from '../visualizations/implementations/BarplotVisualization';
-import { boxplotVisualization } from '../visualizations/implementations/BoxplotVisualization';
-import { FloatingLayout } from '../layouts/FloatingLayout';
-import { VisualizationPlugin } from '../visualizations/VisualizationPlugin';
-import { LayoutOptions } from '../layouts/types';
-import { useEntityCounts } from '../../hooks/entityCounts';
-import { MiniMap } from './MiniMap';
-import { Tooltip } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import { InputVariables } from '../visualizations/InputVariables';
 import { OverlayOptions } from '../visualizations/options/types';
+import { VisualizationPlugin } from '../visualizations/VisualizationPlugin';
+import {
+  FullScreenVisualization,
+  NewVisualizationPickerModal,
+} from '../visualizations/VisualizationsContainer';
+import { MiniMap } from './MiniMap';
 
 const MapState = t.type({
   viewport: t.type({
@@ -124,6 +126,7 @@ function FullScreenMap(props: FullScreenComponentProps) {
         getOverlayVariable: (_) => appState.overlayVariable,
         getOverlayVariableHelp: () =>
           'The overlay variable can be selected via the top-right panel.',
+        getCheckedLegendItems: (_) => appState.checkedLegendItems,
       });
     }
 
@@ -142,7 +145,7 @@ function FullScreenMap(props: FullScreenComponentProps) {
         boxplot: vizWithOptions(boxplotVisualization),
       },
     };
-  }, [appState.overlayVariable]);
+  }, [appState.checkedLegendItems, appState.overlayVariable]);
 
   const { viewport, mouseMode } = appState;
 
@@ -301,6 +304,8 @@ function FullScreenMap(props: FullScreenComponentProps) {
     appState.checkedLegendItems
   );
 
+  const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
+
   // WIP hook--see checkedLegendItemsStatus.ts
   // const [
   //   checkedLegendItems,
@@ -426,8 +431,10 @@ function FullScreenMap(props: FullScreenComponentProps) {
           entities={studyEntities}
           selectedVariables={selectedVariables}
           onChange={setSelectedVariables}
-          starredVariables={[]}
-          toggleStarredVariable={() => {}}
+          starredVariables={
+            props.analysisState.analysis?.descriptor.starredVariables ?? []
+          }
+          toggleStarredVariable={toggleStarredVariable}
         />
         {legendItems.length > 0 && appState.overlayVariable && (
           <PlotLegend
@@ -515,8 +522,11 @@ function FullScreenMap(props: FullScreenComponentProps) {
                 geoConfigs={[geoConfig]}
                 computationAppOverview={app}
                 filters={filters}
-                starredVariables={[]}
-                toggleStarredVariable={() => {}}
+                starredVariables={
+                  props.analysisState.analysis?.descriptor.starredVariables ??
+                  []
+                }
+                toggleStarredVariable={toggleStarredVariable}
                 totalCounts={totalCounts}
                 filteredCounts={filteredCounts}
                 isSingleAppMode

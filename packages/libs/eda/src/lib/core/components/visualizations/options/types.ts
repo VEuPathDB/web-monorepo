@@ -10,4 +10,5 @@ export interface OverlayOptions {
     computeConfig: unknown
   ) => VariableDescriptor | undefined;
   getOverlayVariableHelp?: () => string;
+  getCheckedLegendItems?: (computeConfig: unknown) => string[] | undefined;
 }

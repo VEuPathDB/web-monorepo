@@ -446,7 +446,8 @@ function BarplotViz(props: VisualizationProps<Options>) {
   // set checkedLegendItems
   const checkedLegendItems = useCheckedLegendItemsStatus(
     legendItems,
-    vizConfig.checkedLegendItems
+    options?.getCheckedLegendItems?.(computation.descriptor.configuration) ??
+      vizConfig.checkedLegendItems
   );
 
   const minPos = useMemo(() => barplotDefaultDependentAxisMinPos(data), [data]);
