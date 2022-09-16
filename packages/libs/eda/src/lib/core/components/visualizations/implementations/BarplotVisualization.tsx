@@ -8,7 +8,7 @@ import {
 } from '@veupathdb/components/lib/types/plots';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-import Switch from '@veupathdb/components/lib/components/widgets/Switch';
+import { Toggle } from '@veupathdb/coreui';
 
 import * as t from 'io-ts';
 import { useCallback, useMemo, useState, useEffect } from 'react';
@@ -411,12 +411,24 @@ function BarplotViz(props: VisualizationProps) {
 
   const minPos = useMemo(() => barplotDefaultDependentAxisMinPos(data), [data]);
   const max = useMemo(() => barplotDefaultDependentAxisMax(data), [data]);
+  const minPosMax =
+    minPos != null && max != null ? { min: minPos, max: max } : undefined;
+  const dependentMinPosMax = useMemo(() => {
+    return minPosMax != null && minPosMax.min != null && minPosMax.max != null
+      ? {
+          min: minPosMax.min,
+          // override max to be exactly 1 in proportion mode (rounding errors can make it slightly greater than 1)
+          max: vizConfig.valueSpec === 'proportion' ? 1 : minPosMax.max,
+        }
+      : undefined;
+  }, [data, vizConfig.valueSpec]);
+
   // using custom hook
   const defaultDependentAxisRange = useDefaultAxisRange(
     null,
     0,
-    minPos,
-    max,
+    dependentMinPosMax?.min,
+    dependentMinPosMax?.max,
     vizConfig.dependentAxisLogScale
   ) as NumberRange;
 
@@ -445,17 +457,17 @@ function BarplotViz(props: VisualizationProps) {
       // barplot does not have independent axis range control so send undefined for defaultUIState
       truncationConfig(
         {
-          ...(minPos != null && max != null
-            ? {
-                dependentAxisRange: { min: minPos, max: max },
-              }
+          ...(minPosMax != null &&
+          minPosMax.min != null &&
+          minPosMax.max != null
+            ? { dependentAxisRange: minPosMax }
             : {}),
         },
         vizConfig,
         {}, // no overrides
         true // use inclusive less than equal for the range min
       ),
-    [vizConfig.dependentAxisRange, minPos, max]
+    [vizConfig.dependentAxisRange, minPosMax]
   );
 
   useEffect(() => {
@@ -557,10 +569,11 @@ function BarplotViz(props: VisualizationProps) {
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <LabelledGroup label="Y-axis controls">
           <div style={{ display: 'flex' }}>
-            <Switch
+            <Toggle
               label="Log scale:"
-              state={vizConfig.dependentAxisLogScale}
-              onStateChange={onDependentAxisLogScaleChange}
+              value={vizConfig.dependentAxisLogScale}
+              onChange={onDependentAxisLogScaleChange}
+              themeRole="primary"
             />
           </div>
           {/* Y-axis range control */}

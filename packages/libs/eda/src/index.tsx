@@ -143,7 +143,7 @@ initialize({
           <H3>EDA Links</H3>
           <ul>
             <li>
-              <Link to="/eda">EDA Workspace</Link>
+              <Link to="/eda">My analyses</Link>
             </li>
             <li>
               <Link to="/eda/public">Public analyses</Link>
