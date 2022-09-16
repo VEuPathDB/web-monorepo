@@ -16,7 +16,7 @@ import StudyAccessController from '@veupathdb/study-data-access/lib/study-access
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { showLoginForm as showLoginFormAction } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
 
-import { edaExampleAnalysesAuthor, edaServiceUrl, edaSingleAppMode } from './config';
+import { edaExampleAnalysesAuthor, edaServiceUrl, edaSingleAppMode, showUnreleasedData } from './config';
 
 export const STATIC_ROUTE_PATH = '/static-content';
 
@@ -53,6 +53,7 @@ export const wrapRoutes = wdkRoutes => [
       return (
         <Suspense fallback={<Loading/>}>
           <WorkspaceRouter
+            showUnreleasedData={showUnreleasedData}
             dataServiceUrl={edaServiceUrl}
             subsettingServiceUrl={edaServiceUrl}
             userServiceUrl={edaServiceUrl}
