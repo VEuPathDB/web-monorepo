@@ -10,6 +10,89 @@ import { DataElementConstraint } from '../types/visualization';
 import { findEntityAndVariable } from './study-metadata';
 
 /**
+ * Returns a list of VariableDescriptors that are not compatible with the
+ * current selectedVariables
+ *
+ */
+export function disabledVariablesForInput(
+  inputName: string,
+  entities: StudyEntity[],
+  flattenedConstraints: DataElementConstraintRecord | undefined,
+  dataElementDependencyOrder: string[] | undefined,
+  selectedVariables: VariablesByInputName
+): VariableDescriptor[] {
+  const disabledVariables = excludedVariables(
+    entities[0],
+    flattenedConstraints && flattenedConstraints[inputName]
+  );
+  if (dataElementDependencyOrder == null) {
+    return disabledVariables;
+  }
+  const index = dataElementDependencyOrder.indexOf(inputName);
+  // no change if dependencyOrder is not declared
+  if (index === -1) {
+    return disabledVariables;
+  }
+
+  const prevSelectedVariable = dataElementDependencyOrder
+    .slice(0, index)
+    .map((n) => selectedVariables[n])
+    .reverse()
+    .find((v) => v != null);
+  const nextSelectedVariable = dataElementDependencyOrder
+    .slice(index + 1)
+    .map((n) => selectedVariables[n])
+    .find((v) => v != null);
+
+  // Remove variables for entities which are not part of the ancestor path of, or equal to, `prevSelectedVariable`
+  if (prevSelectedVariable) {
+    const ancestors = entities.reduceRight((ancestors, entity) => {
+      if (
+        entity.id === prevSelectedVariable.entityId ||
+        entity.children?.includes(ancestors[0])
+      ) {
+        ancestors.unshift(entity);
+      }
+      return ancestors;
+    }, [] as StudyEntity[]);
+    const excludedEntities = entities.filter(
+      (entity) => !ancestors.includes(entity)
+    );
+    const excludedVariables = excludedEntities.flatMap((entity) =>
+      entity.variables.map((variable) => ({
+        variableId: variable.id,
+        entityId: entity.id,
+      }))
+    );
+    disabledVariables.push(...excludedVariables);
+  }
+
+  // Remove variables for entities which are not descendants of, or equal to, `nextSelectedVariable`
+  if (nextSelectedVariable) {
+    const entity = entities.find(
+      (entity) => entity.id === nextSelectedVariable.entityId
+    );
+    if (entity == null)
+      throw new Error('Unkonwn entity: ' + nextSelectedVariable.entityId);
+    const descendants = Array.from(
+      preorder(entity, (entity) => entity.children ?? [])
+    );
+    const excludedEntities = entities.filter(
+      (entity) => !descendants.includes(entity)
+    );
+    const excludedVariables = excludedEntities.flatMap((entity) =>
+      entity.variables.map((variable) => ({
+        variableId: variable.id,
+        entityId: entity.id,
+      }))
+    );
+    disabledVariables.push(...excludedVariables);
+  }
+
+  return disabledVariables;
+}
+
+/**
  * Returns a new study entity tree with variables and entities removed that do
  * not satisfy the provided constraint.
  */
