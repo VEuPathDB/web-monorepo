@@ -55,7 +55,7 @@ _The `yarn start` script makes use of environment variables when running in deve
 The following environment variables are used by the `yarn start` script:
 
 | Variable name                         | Description                                                             |
-| ------------------------------------- | ----------------------------------------------------------------------- | -------- |
+| ------------------------------------- | ----------------------------------------------------------------------- |
 | `VEUPATHDB_LOGIN_USER`                | VEuPathDB BRC prerelease user name                                      |
 | `VEUPATHDB_LOGIN_PASS`                | VEuPathDB BRC prerelease user password                                  |
 | `WDK_SERVICE_URL`                     | Full url to a running WDK REST Service                                  |
@@ -66,7 +66,7 @@ The following environment variables are used by the `yarn start` script:
 | `REACT_APP_DISABLE_DATA_RESTRICTIONS` | If present and `true`, disables data restrictions                       |
 | `REACT_APP_EXAMPLE_ANALYSES_AUTHOR`   | The ID of the WDK user who maintains "example strategies" (optional)    |
 | `REACT_APP_SINGLE_APP_MODE`           | Name of one app. If defined, runs the eda with one instance of that app |
-| `REACT_APP_SHOW_UNRELEASED_DATA`      | Indicates if unreleased data should be accessible (optional             | "false") |
+| `REACT_APP_SHOW_UNRELEASED_DATA`      | Indicates if unreleased data should be accessible (optional - "false")  |
 
 ## Learn More
 
