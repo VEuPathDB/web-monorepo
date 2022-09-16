@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from 'react';
+import React from 'react';
 import { isLeaf } from '../../SelectTree/Utils';
 import IndeterminateCheckbox, { IndeterminateCheckboxProps } from '../IndeterminateCheckbox';
 import { ArrowRight, ArrowDropDown } from '@material-ui/icons';
@@ -119,7 +119,7 @@ export default function CheckboxTreeNode<T>({
       node,
       value: nodeId,
     };
-    const checkboxProps: IndeterminateCheckboxProps<T> = {...commonInputProps, indeterminate: !!isIndeterminate, onChange: (e: ChangeEvent<HTMLInputElement>) => toggleSelection(node, e.target.checked) };
+    const checkboxProps: IndeterminateCheckboxProps<T> = {...commonInputProps, indeterminate: !!isIndeterminate, onChange: (isChecked: boolean) => toggleSelection(node, isChecked) };
     const CustomCheckbox = (customCheckboxes && (nodeId in customCheckboxes)) ? customCheckboxes[nodeId] : undefined;
 
     return (
@@ -133,8 +133,9 @@ export default function CheckboxTreeNode<T>({
           {isLeafNode || isActiveSearch ? (
             null
           ) : (
-            isExpanded ? <ArrowDropDown onClick={() => toggleExpansion(node)}/> :
-              <ArrowRight onClick={() => toggleExpansion(node)}/>
+            isExpanded ? 
+              <ArrowDropDown tabIndex={0} onClick={() => toggleExpansion(node)} onKeyDown={(e) => e.key === 'Enter' ? toggleExpansion(node) : null} /> :
+              <ArrowRight tabIndex={0} onClick={() => toggleExpansion(node)} onKeyDown={(e) => e.key === 'Enter' ? toggleExpansion(node) : null} />
           )}
           {!isSelectable || (!isMultiPick && !isLeafNode) ? (
             <div
