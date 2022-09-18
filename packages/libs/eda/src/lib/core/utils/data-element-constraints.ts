@@ -14,8 +14,8 @@ import { findEntityAndVariable } from './study-metadata';
  * current selectedVariables
  *
  */
-export function disabledVariablesForInput(
-  inputName: string,
+export function disabledVariablesForInput<ConfigType>(
+  inputName: keyof ConfigType,
   entities: StudyEntity[],
   flattenedConstraints: DataElementConstraintRecord | undefined,
   dataElementDependencyOrder: string[] | undefined,
@@ -23,12 +23,12 @@ export function disabledVariablesForInput(
 ): VariableDescriptor[] {
   const disabledVariables = excludedVariables(
     entities[0],
-    flattenedConstraints && flattenedConstraints[inputName]
+    flattenedConstraints && flattenedConstraints[inputName as string] // not ideal...
   );
   if (dataElementDependencyOrder == null) {
     return disabledVariables;
   }
-  const index = dataElementDependencyOrder.indexOf(inputName);
+  const index = dataElementDependencyOrder.indexOf(inputName as string); // ditto
   // no change if dependencyOrder is not declared
   if (index === -1) {
     return disabledVariables;

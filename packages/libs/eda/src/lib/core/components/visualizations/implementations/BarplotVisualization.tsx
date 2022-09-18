@@ -53,22 +53,9 @@ import {
   nonUniqueWarning,
   hasIncompleteCases,
 } from '../../../utils/visualization';
-import {
-  disabledVariablesForInput,
-  flattenConstraints,
-  VariablesByInputName,
-} from '../../../utils/data-element-constraints';
+import { VariablesByInputName } from '../../../utils/data-element-constraints';
 // use lodash instead of Math.min/max
-import {
-  groupBy,
-  mapValues,
-  size,
-  map,
-  head,
-  values,
-  keys,
-  isEqual,
-} from 'lodash';
+import { groupBy, mapValues, size, map, head, values, keys } from 'lodash';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 // for custom legend
 import PlotLegend, {
@@ -88,7 +75,11 @@ import { truncationConfig } from '../../../utils/truncation-config-utils';
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 import Button from '@veupathdb/components/lib/components/widgets/Button';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
-import { useVizConfig } from '../../../hooks/visualizations';
+import {
+  useFlattenedConstraints,
+  useProvidedOptionalVariable,
+  useVizConfig,
+} from '../../../hooks/visualizations';
 import {
   barplotDefaultDependentAxisMax,
   barplotDefaultDependentAxisMinPos,
@@ -97,7 +88,6 @@ import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { LayoutOptions } from '../../layouts/types';
 import { OverlayOptions } from '../options/types';
 import { useDeepValue } from '../../../hooks/immutability';
-import useSnackbar from '@veupathdb/coreui/dist/components/notifications/useSnackbar';
 
 // export
 export type BarplotDataWithStatistics = (
@@ -271,51 +261,24 @@ function BarplotViz(props: VisualizationProps<Options>) {
     facetVariable: vizConfig.facetVariable,
   });
 
-  const flattenedConstraints = useMemo(
-    () =>
-      dataElementConstraints &&
-      flattenConstraints(selectedVariables, entities, dataElementConstraints),
-    [dataElementConstraints, selectedVariables, entities]
+  const flattenedConstraints = useFlattenedConstraints(
+    dataElementConstraints,
+    selectedVariables,
+    entities
   );
 
-  const { enqueueSnackbar } = useSnackbar();
-
-  // watch the providedOverlayVariable and update vizConfig.overlayVariable
-  // only if there is currently an overlay variable selected by the user and
-  // if the new variable is compatible with variable constraints
-  useEffect(() => {
-    if (
-      vizConfig.overlayVariable == null ||
-      isEqual(providedOverlayVariableDescriptor, vizConfig.overlayVariable)
-    )
-      return;
-
-    if (
-      disabledVariablesForInput(
-        'overlayVariable',
-        entities,
-        flattenedConstraints,
-        dataElementDependencyOrder,
-        selectedVariables
-      ).find((variable) => isEqual(variable, providedOverlayVariableDescriptor))
-    ) {
-      enqueueSnackbar('Provided variable was BAD - disabling it');
-      updateVizConfig({ overlayVariable: undefined });
-    } else {
-      updateVizConfig({
-        overlayVariable: providedOverlayVariableDescriptor,
-      });
-    }
-  }, [
+  useProvidedOptionalVariable<BarplotConfig>(
+    'overlayVariable',
     providedOverlayVariableDescriptor,
     vizConfig.overlayVariable,
     entities,
     flattenedConstraints,
     dataElementDependencyOrder,
     selectedVariables,
-    enqueueSnackbar,
     updateVizConfig,
-  ]);
+    /** snackbar message */
+    'The new overlay variable is not compatible with this visualization and has been disabled.'
+  );
 
   const findEntityAndVariable = useFindEntityAndVariable();
   const {
