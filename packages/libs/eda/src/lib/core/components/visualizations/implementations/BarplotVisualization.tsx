@@ -53,7 +53,11 @@ import {
   nonUniqueWarning,
   hasIncompleteCases,
 } from '../../../utils/visualization';
-import { VariablesByInputName } from '../../../utils/data-element-constraints';
+import {
+  disabledVariablesForInput,
+  flattenConstraints,
+  VariablesByInputName,
+} from '../../../utils/data-element-constraints';
 // use lodash instead of Math.min/max
 import {
   groupBy,
@@ -92,6 +96,8 @@ import {
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { LayoutOptions } from '../../layouts/types';
 import { OverlayOptions } from '../options/types';
+import { useDeepValue } from '../../../hooks/immutability';
+import useSnackbar from '@veupathdb/coreui/dist/components/notifications/useSnackbar';
 
 // export
 export type BarplotDataWithStatistics = (
@@ -259,18 +265,55 @@ function BarplotViz(props: VisualizationProps<Options>) {
     [options?.getOverlayVariable, computation.descriptor.configuration]
   );
 
+  const selectedVariables = useDeepValue({
+    xAxisVariable: vizConfig.xAxisVariable,
+    overlayVariable: vizConfig.overlayVariable,
+    facetVariable: vizConfig.facetVariable,
+  });
+
+  const flattenedConstraints = useMemo(
+    () =>
+      dataElementConstraints &&
+      flattenConstraints(selectedVariables, entities, dataElementConstraints),
+    [dataElementConstraints, selectedVariables, entities]
+  );
+
+  const { enqueueSnackbar } = useSnackbar();
+
+  // watch the providedOverlayVariable and update vizConfig.overlayVariable
+  // only if there is currently an overlay variable selected by the user and
+  // if the new variable is compatible with variable constraints
   useEffect(() => {
     if (
       vizConfig.overlayVariable == null ||
       isEqual(providedOverlayVariableDescriptor, vizConfig.overlayVariable)
     )
       return;
-    updateVizConfig({
-      overlayVariable: providedOverlayVariableDescriptor,
-    });
+
+    if (
+      disabledVariablesForInput(
+        'overlayVariable',
+        entities,
+        flattenedConstraints,
+        dataElementDependencyOrder,
+        selectedVariables
+      ).find((variable) => isEqual(variable, providedOverlayVariableDescriptor))
+    ) {
+      enqueueSnackbar('Provided variable was BAD - disabling it');
+      updateVizConfig({ overlayVariable: undefined });
+    } else {
+      updateVizConfig({
+        overlayVariable: providedOverlayVariableDescriptor,
+      });
+    }
   }, [
     providedOverlayVariableDescriptor,
     vizConfig.overlayVariable,
+    entities,
+    flattenedConstraints,
+    dataElementDependencyOrder,
+    selectedVariables,
+    enqueueSnackbar,
     updateVizConfig,
   ]);
 
@@ -748,11 +791,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
                 ]),
           ]}
           entities={entities}
-          selectedVariables={{
-            xAxisVariable: vizConfig.xAxisVariable,
-            overlayVariable: vizConfig.overlayVariable,
-            facetVariable: vizConfig.facetVariable,
-          }}
+          selectedVariables={selectedVariables}
           onChange={handleInputVariableChange}
           constraints={dataElementConstraints}
           dataElementDependencyOrder={dataElementDependencyOrder}

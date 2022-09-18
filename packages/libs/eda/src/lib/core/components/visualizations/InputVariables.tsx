@@ -4,19 +4,17 @@ import { VariableDescriptor } from '../../types/variable';
 import {
   DataElementConstraintRecord,
   disabledVariablesForInput,
-  excludedVariables,
   flattenConstraints,
   VariablesByInputName,
 } from '../../utils/data-element-constraints';
 
 import VariableTreeDropdown from '../variableTrees/VariableTreeDropdown';
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import Toggle from '@veupathdb/coreui/dist/components/widgets/Toggle';
 import { makeEntityDisplayName } from '../../utils/study-metadata';
 import { useInputStyles } from './inputStyles';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-import useSnackbar from '@veupathdb/coreui/dist/components/notifications/useSnackbar';
+import { isEqual } from 'lodash';
 
 export interface InputSpec {
   name: string;
@@ -176,8 +174,6 @@ export function InputVariables(props: Props) {
     ]
   );
 
-  const { enqueueSnackbar } = useSnackbar();
-
   return (
     <div className={classes.inputs}>
       {[undefined, 'axis', 'stratification'].map(
@@ -240,13 +236,11 @@ export function InputVariables(props: Props) {
                       // and disable radio input if needed
                       <RadioButtonGroup
                         disabledList={
-                          disabledVariablesByInputName[input.name].filter(
-                            (variable) =>
-                              variable.entityId ===
-                                input.providedOptionalVariable?.entityId &&
-                              variable.variableId ===
-                                input.providedOptionalVariable?.variableId
-                          ).length
+                          disabledVariablesByInputName[
+                            input.name
+                          ].find((variable) =>
+                            isEqual(variable, input.providedOptionalVariable)
+                          )
                             ? ['provided']
                             : []
                         }
@@ -266,13 +260,13 @@ export function InputVariables(props: Props) {
                               : input.providedOptionalVariable
                           )
                         }
-                        onSelectedOptionDisabled={(_) => {
-                          handleChange(input.name, undefined);
-                          enqueueSnackbar(
-                            `The newly chosen ${input.label} variable has been disabled because is not compatible with this visualization as currently configured.`,
-                            { preventDuplicate: true } // nasty hack to workaround double calls to this callback which I tried for more than an hour to fix (and when I did fix it, the radio button was not switched to "none"...)
-                          );
-                        }}
+                        //                        onSelectedOptionDisabled={(_) => {
+                        //                          handleChange(input.name, undefined);
+                        //                          enqueueSnackbar(
+                        //                            `The newly chosen ${input.label} variable has been disabled because is not compatible with this visualization as currently configured.`,
+                        //                            { preventDuplicate: true } // nasty hack to workaround double calls to this callback which I tried for more than an hour to fix (and when I did fix it, the radio button was not switched to "none"...)
+                        //                          );
+                        //                        }}
                       />
                     ) : input.readonlyValue ? (
                       <span style={{ height: '32px', lineHeight: '32px' }}>
