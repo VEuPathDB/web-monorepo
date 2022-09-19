@@ -24,8 +24,7 @@ import { PublicAnalysesRoute } from './PublicAnalysesRoute';
 import { StudyList } from './StudyList';
 import { WorkspaceContainer } from './WorkspaceContainer';
 import { AnalysisPanel } from './AnalysisPanel';
-import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
-import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
+import { StandaloneStudyPage } from './StandaloneStudyPage';
 
 const theme = createTheme(workspaceTheme);
 
@@ -35,6 +34,7 @@ type Props = {
   userServiceUrl: string;
   downloadServiceUrl: string;
   exampleAnalysesAuthor?: number;
+  showUnreleasedData?: boolean;
   /**
    * The base of the URL from which to being sharing links.
    * This is passed down through several component layers. */
@@ -62,6 +62,7 @@ export function WorkspaceRouter({
   sharingUrlPrefix,
   showLoginForm,
   singleAppMode,
+  showUnreleasedData = false,
 }: Props) {
   const { path, url } = useRouteMatch();
 
@@ -203,10 +204,9 @@ export function WorkspaceRouter({
                 userServiceUrl={userServiceUrl}
                 downloadServiceUrl={downloadServiceUrl}
               >
-                <EDAWorkspaceHeading />
-                <RecordController
-                  recordClass="dataset"
-                  primaryKey={props.match.params.studyId}
+                <StandaloneStudyPage
+                  studyId={props.match.params.studyId}
+                  showUnreleasedData={showUnreleasedData}
                 />
               </WorkspaceContainer>
             )}
@@ -228,6 +228,7 @@ export function WorkspaceRouter({
                   hideSavedAnalysisButtons
                   downloadClient={downloadClient}
                   singleAppMode={singleAppMode}
+                  showUnreleasedData={showUnreleasedData}
                 />
               </WorkspaceContainer>
             )}
@@ -293,6 +294,7 @@ export function WorkspaceRouter({
                   showLoginForm={showLoginForm}
                   downloadClient={downloadClient}
                   singleAppMode={singleAppMode}
+                  showUnreleasedData={showUnreleasedData}
                 />
               </WorkspaceContainer>
             )}
