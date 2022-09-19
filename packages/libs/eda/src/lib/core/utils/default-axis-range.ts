@@ -11,48 +11,68 @@ export function numberDateDefaultAxisRange(
   observedMinPos: number | string | undefined,
   observedMax: number | string | undefined,
   /** are we using a log scale */
-  logScale?: boolean
+  logScale?: boolean,
+  axisValueSpec = 'Full'
 ): NumberOrDateRange | undefined {
   if (Variable.is(variable)) {
     if (variable.type === 'number' || variable.type === 'integer') {
       const defaults = variable.distributionDefaults;
       if (logScale && observedMinPos == null) return undefined; // return nothing - there will be no plottable data anyway
-      return defaults.displayRangeMin != null &&
-        defaults.displayRangeMax != null
-        ? {
-            min:
-              logScale &&
-              observedMin != null &&
-              (observedMin <= 0 ||
-                defaults.displayRangeMin <= 0 ||
-                defaults.rangeMin <= 0)
+      // set default range of Custom to be Auto-zoom
+      return axisValueSpec === 'Full'
+        ? defaults.displayRangeMin != null && defaults.displayRangeMax != null
+          ? {
+              min:
+                logScale &&
+                observedMin != null &&
+                (observedMin <= 0 ||
+                  defaults.displayRangeMin <= 0 ||
+                  defaults.rangeMin <= 0)
+                  ? (observedMinPos as number)
+                  : observedMin != null
+                  ? Math.min(
+                      // add zero as an origin
+                      0,
+                      defaults.displayRangeMin,
+                      defaults.rangeMin,
+                      observedMin as number
+                    )
+                  : // add zero as an origin
+                    Math.min(0, defaults.displayRangeMin, defaults.rangeMin),
+              max:
+                observedMax != null
+                  ? Math.max(
+                      defaults.displayRangeMax,
+                      defaults.rangeMax,
+                      observedMax as number
+                    )
+                  : Math.max(defaults.displayRangeMax, defaults.rangeMax),
+            }
+          : {
+              min: logScale
                 ? (observedMinPos as number)
                 : observedMin != null
-                ? Math.min(
-                    defaults.displayRangeMin,
-                    defaults.rangeMin,
-                    observedMin as number
-                  )
-                : Math.min(defaults.displayRangeMin, defaults.rangeMin),
-            max:
-              observedMax != null
-                ? Math.max(
-                    defaults.displayRangeMax,
-                    defaults.rangeMax,
-                    observedMax as number
-                  )
-                : Math.max(defaults.displayRangeMax, defaults.rangeMax),
-          }
+                ? // add zero as an origin
+                  Math.min(0, defaults.rangeMin, observedMin as number)
+                : // add zero as an origin
+                  Math.min(0, defaults.rangeMin),
+              max:
+                observedMax != null
+                  ? Math.max(defaults.rangeMax, observedMax as number)
+                  : defaults.rangeMax,
+            }
         : {
             min: logScale
               ? (observedMinPos as number)
               : observedMin != null
-              ? Math.min(defaults.rangeMin, observedMin as number)
-              : defaults.rangeMin,
+              ? Math.min(0, observedMin as number)
+              : // just leave this or set to be undefined
+                Math.min(0, defaults.rangeMin),
             max:
               observedMax != null
-                ? Math.max(defaults.rangeMax, observedMax as number)
-                : defaults.rangeMax,
+                ? (observedMax as number)
+                : // just leave this or set to be undefined
+                  defaults.rangeMax,
           };
     } else if (variable.type === 'date') {
       const defaults = variable.distributionDefaults;

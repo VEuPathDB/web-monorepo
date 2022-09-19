@@ -20,7 +20,8 @@ export function useDefaultAxisRange(
   minPos?: number | string,
   max?: number | string,
   /** are we using a log scale */
-  logScale?: boolean
+  logScale?: boolean,
+  axisValueSpec = 'Full'
 ): NumberOrDateRange | undefined {
   const defaultAxisRange = useMemo(() => {
     // Check here to make sure number ranges (min, minPos, max) came with number variables
@@ -40,7 +41,8 @@ export function useDefaultAxisRange(
         min,
         minPos,
         max,
-        logScale
+        logScale,
+        axisValueSpec
       );
 
       // 4 significant figures
@@ -77,6 +79,6 @@ export function useDefaultAxisRange(
     } else {
       return undefined;
     }
-  }, [variable, min, minPos, max, logScale]);
+  }, [variable, min, minPos, max, logScale, axisValueSpec]);
   return defaultAxisRange;
 }
