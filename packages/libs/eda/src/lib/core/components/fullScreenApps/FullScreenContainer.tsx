@@ -6,9 +6,9 @@ import { AnalysisState } from '../../hooks/analysis';
 import { useAnalysisClient } from '../../hooks/workspace';
 import { isSavedAnalysis } from '../../utils/analysis';
 import makeSnackbarProvider from '@veupathdb/coreui/dist/components/notifications/SnackbarProvider';
+import { Close, FilledButton } from '@veupathdb/coreui';
 
 const SnackbarProvider = makeSnackbarProvider();
-import { Close, FilledButton } from '@veupathdb/coreui';
 
 interface Props {
   analysisState: AnalysisState;
