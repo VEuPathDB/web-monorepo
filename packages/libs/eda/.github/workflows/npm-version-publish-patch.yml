@@ -3,7 +3,7 @@ name: Node.js Package
 on:
   push:
     branches:
-      - main
+      - '**-patch'
 
 jobs:
   publish:
@@ -20,3 +20,4 @@ jobs:
         with:
           token: ${{ secrets.NPM_TOKEN }}
           access: public
+          tag: ${{ github.ref_name }}
