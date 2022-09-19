@@ -1045,12 +1045,14 @@ function LineplotViz(props: VisualizationProps) {
             {
               title: (
                 <>
-                  Y-axis aggregation{' '}
-                  {vizConfig.yAxisVariable
-                    ? categoricalMode
-                      ? '(categorical Y)'
-                      : '(continuous Y)'
-                    : ''}
+                  <span style={{ marginRight: '0.5em' }}>
+                    Y-axis aggregation{' '}
+                    {vizConfig.yAxisVariable
+                      ? categoricalMode
+                        ? '(categorical Y)'
+                        : '(continuous Y)'
+                      : ''}
+                  </span>
                   <HelpIcon children={aggregationHelp} />
                 </>
               ),
