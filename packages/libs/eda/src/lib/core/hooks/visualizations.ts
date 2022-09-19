@@ -12,6 +12,7 @@ import {
   VariablesByInputName,
 } from '../utils/data-element-constraints';
 import { isEqual } from 'lodash';
+import { ColorPaletteAddon } from '@veupathdb/components/lib/types/plots';
 
 /**
  * Decodes config from back end or uses default config if there's an error (including no config at all)
@@ -134,5 +135,25 @@ export function useFlattenedConstraints(
       dataElementConstraints &&
       flattenConstraints(selectedVariables, entities, dataElementConstraints),
     [dataElementConstraints, selectedVariables, entities]
+  );
+}
+
+/**
+ * Simple hook to create the appropriate PlotlyPlotProps to make the plot markers grey
+ * when there's an externally provided overlay variable that is currently not enabled
+ * as an overlay.
+ */
+
+export function useNeutralPaletteProps(
+  overlayVariableDescriptor: VariableDescriptor | undefined,
+  providedOverlayVariableDescriptor: VariableDescriptor | undefined
+): ColorPaletteAddon {
+  return useMemo(
+    () =>
+      overlayVariableDescriptor == null &&
+      providedOverlayVariableDescriptor != null
+        ? { colorPalette: ['#333'] }
+        : {},
+    [overlayVariableDescriptor, providedOverlayVariableDescriptor]
   );
 }

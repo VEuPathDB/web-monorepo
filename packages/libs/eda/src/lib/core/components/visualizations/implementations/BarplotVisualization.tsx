@@ -77,6 +77,7 @@ import Button from '@veupathdb/components/lib/components/widgets/Button';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 import {
   useFlattenedConstraints,
+  useNeutralPaletteProps,
   useProvidedOptionalVariable,
   useVizConfig,
 } from '../../../hooks/visualizations';
@@ -526,6 +527,10 @@ function BarplotViz(props: VisualizationProps<Options>) {
   );
 
   const overlayLabel = variableDisplayWithUnit(overlayVariable);
+  const neutralPaletteProps = useNeutralPaletteProps(
+    vizConfig.overlayVariable,
+    providedOverlayVariableDescriptor
+  );
 
   // these props are passed to either a single plot
   // or by FacetedPlot to each individual facet plot (where some will be overridden)
@@ -558,6 +563,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
         max: truncationConfigDependentAxisMax,
       },
     },
+    ...neutralPaletteProps,
   };
 
   const plotNode = (
