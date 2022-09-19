@@ -298,6 +298,17 @@ function FullScreenMap(props: FullScreenComponentProps) {
   const totalCounts = useEntityCounts();
   const filteredCounts = useEntityCounts(filters);
 
+  // to avoid double-triggering of the `data = usePromise(...` in visualizations
+  // (first triggered when `filters` changes, then again when `filteredCounts.pending`
+  // goes from true to false)
+  //
+  // only allow `filters` prop for the floating visualization to change
+  // when the `filteredCounts` has gone into pending state
+  const [filtersForViz, setFiltersForViz] = useState(filters);
+  useEffect(() => {
+    if (filteredCounts.pending) setFiltersForViz(filters);
+  }, [filters, filteredCounts.pending]);
+
   // set checkedLegendItems
   const checkedLegendItems = useCheckedLegendItemsStatus(
     legendItems,
@@ -521,7 +532,7 @@ function FullScreenMap(props: FullScreenComponentProps) {
                 visualizationsOverview={app.visualizations!}
                 geoConfigs={[geoConfig]}
                 computationAppOverview={app}
-                filters={filters}
+                filters={filtersForViz}
                 starredVariables={
                   props.analysisState.analysis?.descriptor.starredVariables ??
                   []
