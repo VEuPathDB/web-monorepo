@@ -134,11 +134,20 @@ export default function CheckboxTreeNode<T>({
             null
           ) : (
             isExpanded ? 
-              <ArrowDropDown tabIndex={0} onClick={() => toggleExpansion(node)} onKeyDown={(e) => e.key === 'Enter' ? toggleExpansion(node) : null} /> :
-              <ArrowRight tabIndex={0} onClick={() => toggleExpansion(node)} onKeyDown={(e) => e.key === 'Enter' ? toggleExpansion(node) : null} />
+              <ArrowDropDown 
+                style={{color: '#aaa', lineHeight: '1em'}} 
+                tabIndex={0} 
+                onClick={() => toggleExpansion(node)} onKeyDown={(e) => e.key === 'Enter' ? toggleExpansion(node) : null} 
+              /> :
+              <ArrowRight 
+                style={{color: '#aaa', lineHeight: '1em'}}
+                tabIndex={0} 
+                onClick={() => toggleExpansion(node)} onKeyDown={(e) => e.key === 'Enter' ? toggleExpansion(node) : null} 
+              />
           )}
           {!isSelectable || (!isMultiPick && !isLeafNode) ? (
             <div
+              css={{width: '100%'}}
               onClick={shouldExpandOnClick ? () => toggleExpansion(node) : undefined}
               >
               {nodeElement}

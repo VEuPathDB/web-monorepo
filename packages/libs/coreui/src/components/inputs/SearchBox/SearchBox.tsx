@@ -30,6 +30,7 @@ const defaultStyle = {
   helpIcon: {
     width: '0.7em',
     height: '0.7em',
+    marginLeft: '0.5em',
   },
   searchIcon: {
     width: '0.7em',
@@ -81,10 +82,14 @@ export default function SearchBox({
     <div css={{
       display: 'flex',
       alignItems: 'center',
+      whiteSpace: 'nowrap',
     }}>
       <label>
         <input 
-          css={defaultStyle.searchBox}
+          css={{
+            ...defaultStyle.searchBox, 
+            width: 'calc(100% - 2em)'
+          }}
           type="search"
           autoFocus={autoFocus}
           onChange={handleSearchTermChange}

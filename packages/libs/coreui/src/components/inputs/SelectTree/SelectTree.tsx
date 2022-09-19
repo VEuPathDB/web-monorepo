@@ -5,11 +5,12 @@ import CheckboxTree, { CheckboxTreeProps, LinksPosition } from "../checkboxes/Ch
 export interface SelectTreeProps<T> extends CheckboxTreeProps<T> {
     buttonDisplayContent: ReactNode;
     shouldCloseOnSelection?: boolean;
+    wrapPopover?: (checkboxTree: ReactNode) => ReactNode;
 }
 
 function SelectTree<T>(props: SelectTreeProps<T>) {
     const [ buttonDisplayContent, setButtonDisplayContent] = useState<ReactNode>(props.currentList && props.currentList.length ? props.currentList.join(', ') : props.buttonDisplayContent);
-    const { selectedList, shouldCloseOnSelection } = props;
+    const { selectedList, shouldCloseOnSelection, wrapPopover } = props;
     
     /** Used as a hack to "auto close" the popover when shouldCloseOnSelection is true */
     const [ key, setKey ] = useState('')
@@ -24,46 +25,50 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
         setButtonDisplayContent(selectedList.length ? selectedList.join(', ') : props.buttonDisplayContent);
     }
 
+    const checkboxTree = (
+        <CheckboxTree
+            tree={props.tree}
+            getNodeId={props.getNodeId}
+            getNodeChildren={props.getNodeChildren}
+            onExpansionChange={props.onExpansionChange}
+            shouldExpandDescendantsWithOneChild={props.shouldExpandDescendantsWithOneChild}
+            shouldExpandOnClick={props.shouldExpandOnClick}
+            showRoot={props.showRoot}
+            renderNode={props.renderNode}
+            expandedList={props.expandedList}
+            isSelectable={props.isSelectable}
+            selectedList={selectedList}
+            customCheckboxes={props.customCheckboxes}
+            isMultiPick={props.isMultiPick}
+            name={props.name}
+            onSelectionChange={props.onSelectionChange}
+            currentList={props.currentList}
+            defaultList={props.defaultList}
+            isSearchable={props.isSearchable}
+            autoFocusSearchBox={props.autoFocusSearchBox}
+            showSearchBox={props.showSearchBox}
+            searchBoxPlaceholder={props.searchBoxPlaceholder}
+            searchIconName={props.searchIconName}
+            searchBoxHelp={props.searchBoxHelp}
+            searchTerm={props.searchTerm}
+            onSearchTermChange={props.onSearchTermChange}
+            searchPredicate={props.searchPredicate}
+            renderNoResults={props.renderNoResults}
+            linksPosition={props.linksPosition}
+            additionalActions={props.additionalActions}
+            additionalFilters={props.additionalFilters}
+            isAdditionalFilterApplied={props.isAdditionalFilterApplied}
+            wrapTreeSection={props.wrapTreeSection}
+        />
+    )
+
     return (
         <PopoverButton
             key={shouldCloseOnSelection ? key : ''}
             buttonDisplayContent={buttonDisplayContent}
             onClose={onClose}
         >
-            <CheckboxTree
-                  tree={props.tree}
-                  getNodeId={props.getNodeId}
-                  getNodeChildren={props.getNodeChildren}
-                  onExpansionChange={props.onExpansionChange}
-                  shouldExpandDescendantsWithOneChild={props.shouldExpandDescendantsWithOneChild}
-                  shouldExpandOnClick={props.shouldExpandOnClick}
-                  showRoot={props.showRoot}
-                  renderNode={props.renderNode}
-                  expandedList={props.expandedList}
-                  isSelectable={props.isSelectable}
-                  selectedList={selectedList}
-                  customCheckboxes={props.customCheckboxes}
-                  isMultiPick={props.isMultiPick}
-                  name={props.name}
-                  onSelectionChange={props.onSelectionChange}
-                  currentList={props.currentList}
-                  defaultList={props.defaultList}
-                  isSearchable={props.isSearchable}
-                  autoFocusSearchBox={props.autoFocusSearchBox}
-                  showSearchBox={props.showSearchBox}
-                  searchBoxPlaceholder={props.searchBoxPlaceholder}
-                  searchIconName={props.searchIconName}
-                  searchBoxHelp={props.searchBoxHelp}
-                  searchTerm={props.searchTerm}
-                  onSearchTermChange={props.onSearchTermChange}
-                  searchPredicate={props.searchPredicate}
-                  renderNoResults={props.renderNoResults}
-                  linksPosition={props.linksPosition}
-                  additionalActions={props.additionalActions}
-                  additionalFilters={props.additionalFilters}
-                  isAdditionalFilterApplied={props.isAdditionalFilterApplied}
-                  wrapTreeSection={props.wrapTreeSection}
-            />
+            {wrapPopover ? wrapPopover(checkboxTree) : checkboxTree}
         </PopoverButton>
     )
 }

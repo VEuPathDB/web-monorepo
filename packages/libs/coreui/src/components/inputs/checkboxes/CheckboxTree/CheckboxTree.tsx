@@ -731,7 +731,7 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
     let topLevelNodes = (showRoot ? [ treeState.generated.statefulTree ] :
       getStatefulChildren(treeState.generated.statefulTree));
 
-    let isTreeVisible = treeState.generated ?? getNodeState(treeState.generated).isVisible;
+    let isTreeVisible = treeState.generated && getNodeState(treeState.generated.statefulTree).isVisible;
     let noResultsRenderFunction = renderNoResults || defaultRenderNoResults;
     let noResultsMessage = isTreeVisible ? null : noResultsRenderFunction(searchTerm, tree);
 
@@ -756,7 +756,7 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
     );
 
     let treeSection = (
-      <ul css={{margin: '0.5em 0', padding: 0, alignSelf: 'flex-start'}}>
+      <ul css={{width: '100%', margin: '0.5em 0', padding: '0 1em', alignSelf: 'flex-start'}}>
       {topLevelNodes.map((node, index) => {
         const nodeId = getNodeId(node);
 
@@ -782,10 +782,12 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
     )
 
     return (
-      <div css={{display: 'flex', flexDirection: 'column', alignItems: 'center', width: '400px'}}>
+      <div css={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
         {linksPosition && linksPosition == LinksPosition.Top ? treeLinks : null}
         {!isSearchable || !showSearchBox ? "" : (
-          <div>
+          <div css={{
+            display: 'flex',
+          }}>
             <SearchBox
               autoFocus={autoFocusSearchBox}
               searchTerm={searchTerm}
@@ -808,10 +810,15 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
 
 function defaultRenderNoResults() {
   return (
-    <p>
-      <Warning />
-      The search term you entered did not yield any results.
-    </p>
+    <div css={{
+      display: 'flex',
+      marginTop: '1em',
+    }}>
+      <Warning css={{height: '1.5em', width: '1.5em', paddingRight: '0.25em'}} />
+      <span css={{margin: 'auto 0'}}>
+        The search term you entered did not yield any results.
+      </span>
+    </div>
   );
 }
 
