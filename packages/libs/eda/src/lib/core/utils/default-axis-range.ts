@@ -76,56 +76,68 @@ export function numberDateDefaultAxisRange(
           };
     } else if (variable.type === 'date') {
       const defaults = variable.distributionDefaults;
-      return defaults.displayRangeMin != null &&
-        defaults.displayRangeMax != null
-        ? {
-            min:
-              observedMin != null
-                ? [
-                    defaults.displayRangeMin,
-                    defaults.rangeMin,
-                    observedMin as string,
-                  ].reduce(function (a, b) {
-                    return a < b ? a : b;
-                  }) + 'T00:00:00Z'
-                : [defaults.displayRangeMin, defaults.rangeMin].reduce(
-                    function (a, b) {
+      // considering axis range control option such as Full, Auto-zoom, and Custom for date type
+      return axisValueSpec === 'Full'
+        ? defaults.displayRangeMin != null && defaults.displayRangeMax != null
+          ? {
+              min:
+                observedMin != null
+                  ? [
+                      defaults.displayRangeMin,
+                      defaults.rangeMin,
+                      observedMin as string,
+                    ].reduce(function (a, b) {
                       return a < b ? a : b;
-                    }
-                  ) + 'T00:00:00Z',
-            max:
-              observedMax != null
-                ? [
-                    defaults.displayRangeMax,
-                    defaults.rangeMax,
-                    observedMax as string,
-                  ].reduce(function (a, b) {
-                    return a > b ? a : b;
-                  }) + 'T00:00:00Z'
-                : [defaults.displayRangeMax, defaults.rangeMax].reduce(
-                    function (a, b) {
+                    }) + 'T00:00:00Z'
+                  : [defaults.displayRangeMin, defaults.rangeMin].reduce(
+                      function (a, b) {
+                        return a < b ? a : b;
+                      }
+                    ) + 'T00:00:00Z',
+              max:
+                observedMax != null
+                  ? [
+                      defaults.displayRangeMax,
+                      defaults.rangeMax,
+                      observedMax as string,
+                    ].reduce(function (a, b) {
                       return a > b ? a : b;
-                    }
-                  ) + 'T00:00:00Z',
-          }
-        : {
+                    }) + 'T00:00:00Z'
+                  : [defaults.displayRangeMax, defaults.rangeMax].reduce(
+                      function (a, b) {
+                        return a > b ? a : b;
+                      }
+                    ) + 'T00:00:00Z',
+            }
+          : {
+              min:
+                observedMin != null
+                  ? [defaults.rangeMin, observedMin as string].reduce(function (
+                      a,
+                      b
+                    ) {
+                      return a < b ? a : b;
+                    }) + 'T00:00:00Z'
+                  : defaults.rangeMin + 'T00:00:00Z',
+              max:
+                observedMax != null
+                  ? [defaults.rangeMax, observedMax as string].reduce(function (
+                      a,
+                      b
+                    ) {
+                      return a > b ? a : b;
+                    }) + 'T00:00:00Z'
+                  : defaults.rangeMax + 'T00:00:00Z',
+            }
+        : // for the cases of Auto-zoom and Custom options
+          {
             min:
               observedMin != null
-                ? [defaults.rangeMin, observedMin as string].reduce(function (
-                    a,
-                    b
-                  ) {
-                    return a < b ? a : b;
-                  }) + 'T00:00:00Z'
+                ? observedMin + 'T00:00:00Z'
                 : defaults.rangeMin + 'T00:00:00Z',
             max:
               observedMax != null
-                ? [defaults.rangeMax, observedMax as string].reduce(function (
-                    a,
-                    b
-                  ) {
-                    return a > b ? a : b;
-                  }) + 'T00:00:00Z'
+                ? observedMax + 'T00:00:00Z'
                 : defaults.rangeMax + 'T00:00:00Z',
           };
     }
