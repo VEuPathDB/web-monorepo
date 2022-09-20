@@ -675,45 +675,64 @@ export default function VariableList({
   };
 
   return asDropdown ? (
-    <SelectTree
-      key={dropdownLabel}
-      {...(isMultiPick && {
-        selectedList: selectedFields.map((field) => field.term),
-        isSelectable: true,
-        isMultiPick: true,
-        onSelectionChange: onSelectedFieldsChange,
-      })}
-      linksPosition={CheckboxTree.LinkPlacement.Top}
-      autoFocusSearchBox={autoFocus}
-      tree={tree}
-      expandedList={expandedNodes}
-      getNodeId={getNodeId}
-      getNodeChildren={getNodeChildren}
-      onExpansionChange={setExpandedNodes}
-      isSearchable={true}
-      searchBoxPlaceholder="Find a variable"
-      searchBoxHelp={makeSearchHelpText(
-        'variables by name, description, or values'
-      )}
-      searchTerm={searchTerm}
-      onSearchTermChange={setSearchTerm}
-      searchPredicate={searchPredicate}
-      renderNode={renderNode}
-      customCheckboxes={customCheckboxes}
-      additionalFilters={additionalFilters}
-      isAdditionalFilterApplied={isAdditionalFilterApplied}
-      buttonDisplayContent={dropdownLabel}
-      wrapPopover={(treeSection) => (
-        <>
-          {clearSelectionButton}
-          {renderDisabledFields()}
-          {renderFeaturedFields()}
-          {treeSection}
-        </>
-      )}
-    />
+    <div
+      style={{
+        position: 'relative',
+      }}
+    >
+      <SelectTree
+        key={dropdownLabel}
+        {...(isMultiPick && {
+          selectedList: selectedFields.map((field) => field.term),
+          isSelectable: true,
+          isMultiPick: true,
+          onSelectionChange: onSelectedFieldsChange,
+        })}
+        linksPosition={CheckboxTree.LinkPlacement.Top}
+        autoFocusSearchBox={autoFocus}
+        tree={tree}
+        expandedList={expandedNodes}
+        getNodeId={getNodeId}
+        getNodeChildren={getNodeChildren}
+        onExpansionChange={setExpandedNodes}
+        isSearchable={true}
+        searchBoxPlaceholder="Find a variable"
+        searchBoxHelp={makeSearchHelpText(
+          'variables by name, description, or values'
+        )}
+        searchTerm={searchTerm}
+        onSearchTermChange={setSearchTerm}
+        searchPredicate={searchPredicate}
+        renderNode={renderNode}
+        customCheckboxes={customCheckboxes}
+        additionalFilters={additionalFilters}
+        isAdditionalFilterApplied={isAdditionalFilterApplied}
+        buttonDisplayContent={dropdownLabel}
+        wrapPopover={(treeSection) => (
+          <>
+            {clearSelectionButton}
+            <div
+              style={{
+                position: 'relative',
+                borderRadius: '0.25em',
+                padding: '0.5em 0.5em 0.5em 0',
+                height: '60vh',
+                width: '30em',
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
+              {renderDisabledFields()}
+              {renderFeaturedFields()}
+              {treeSection}
+            </div>
+          </>
+        )}
+      />
+    </div>
   ) : (
-    <div className={cx('-VariableList')}>
+    <div>
       {renderDisabledFields()}
       {renderFeaturedFields()}
 
@@ -785,7 +804,7 @@ const starStyleOff = {
 
 const starStyleOn = {
   color: '#f8cb6a',
-  fontSize: '1.2em',
+  fontSize: '1.1em',
 };
 
 const FieldNode = ({
