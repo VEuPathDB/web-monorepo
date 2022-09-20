@@ -117,6 +117,7 @@ import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 
 import useSnackbar from '@veupathdb/coreui/dist/components/notifications/useSnackbar';
+import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 
 const plotContainerStyles = {
   width: 750,
@@ -180,6 +181,8 @@ function createDefaultConfig(): LineplotConfig {
     showErrorBars: false,
     independentAxisLogScale: false,
     dependentAxisLogScale: false,
+    independentAxisValueSpec: 'Full',
+    dependentAxisValueSpec: 'Full',
   };
 }
 
@@ -207,6 +210,8 @@ export const LineplotConfig = t.intersection([
     dependentAxisRange: NumberOrDateRangeT,
     independentAxisLogScale: t.boolean,
     dependentAxisLogScale: t.boolean,
+    independentAxisValueSpec: t.string,
+    dependentAxisValueSpec: t.string,
   }),
 ]);
 
@@ -330,6 +335,8 @@ function LineplotViz(props: VisualizationProps) {
             }),
         independentAxisLogScale: false,
         dependentAxisLogScale: false,
+        independentAxisValueSpec: 'Full',
+        dependentAxisValueSpec: 'Full',
       });
       // axis range control: close truncation warnings here
       setTruncatedIndependentAxisWarning('');
@@ -396,6 +403,18 @@ function LineplotViz(props: VisualizationProps) {
     // axis range control: resetAxisRange
     true
   );
+
+  const onIndependentAxisValueSpecChange = onChangeHandlerFactory<string>(
+    'independentAxisValueSpec',
+    false,
+    true
+  );
+  const onDependentAxisValueSpecChange = onChangeHandlerFactory<string>(
+    'dependentAxisValueSpec',
+    false,
+    true
+  );
+
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
     'showMissingness',
     true,
@@ -611,7 +630,8 @@ function LineplotViz(props: VisualizationProps) {
     data.value?.xMin,
     data.value?.xMinPos,
     data.value?.xMax,
-    vizConfig.independentAxisLogScale
+    vizConfig.independentAxisLogScale,
+    vizConfig.independentAxisValueSpec
   );
 
   const xMinMaxDataRange = useMemo(
@@ -646,7 +666,8 @@ function LineplotViz(props: VisualizationProps) {
     data.value?.yMin,
     data.value?.yMinPos,
     data.value?.yMax,
-    vizConfig.dependentAxisLogScale
+    vizConfig.dependentAxisLogScale,
+    vizConfig.dependentAxisValueSpec
   );
 
   // custom legend list
@@ -800,6 +821,11 @@ function LineplotViz(props: VisualizationProps) {
       onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
       xMinMaxDataRange={xMinMaxDataRange}
       yMinMaxDataRange={yMinMaxDataRange}
+      axisRangeOptions={['Full', 'Auto-zoom', 'Custom']}
+      independentAxisValueSpec={vizConfig.independentAxisValueSpec}
+      dependentAxisValueSpec={vizConfig.dependentAxisValueSpec}
+      onIndependentAxisValueSpecChange={onIndependentAxisValueSpecChange}
+      onDependentAxisValueSpecChange={onDependentAxisValueSpecChange}
     />
   );
 
@@ -1136,6 +1162,11 @@ type LineplotWithControlsProps = Omit<LinePlotProps, 'data'> & {
   onDependentAxisLogScaleChange: (value: boolean) => void;
   xMinMaxDataRange: NumberOrDateRange | undefined;
   yMinMaxDataRange: NumberOrDateRange | undefined;
+  axisRangeOptions: string[];
+  independentAxisValueSpec: string | undefined;
+  dependentAxisValueSpec: string | undefined;
+  onIndependentAxisValueSpecChange: (newAxisRangeOption: string) => void;
+  onDependentAxisValueSpecChange: (newAxisRangeOption: string) => void;
 };
 
 function LineplotWithControls({
@@ -1167,6 +1198,11 @@ function LineplotWithControls({
   onDependentAxisLogScaleChange,
   xMinMaxDataRange,
   yMinMaxDataRange,
+  axisRangeOptions,
+  independentAxisValueSpec = 'Full',
+  dependentAxisValueSpec = 'Full',
+  onIndependentAxisValueSpecChange,
+  onDependentAxisValueSpecChange,
   ...lineplotProps
 }: LineplotWithControlsProps) {
   const plotRef = useUpdateThumbnailEffect(
@@ -1180,6 +1216,8 @@ function LineplotWithControls({
       vizConfig.dependentAxisRange,
       vizConfig.independentAxisLogScale,
       vizConfig.dependentAxisLogScale,
+      vizConfig.independentAxisValueSpec,
+      vizConfig.dependentAxisValueSpec,
     ]
   );
 
@@ -1220,6 +1258,7 @@ function LineplotWithControls({
     updateVizConfig({
       independentAxisRange: undefined,
       independentAxisLogScale: false,
+      independentAxisValueSpec: 'Full',
     });
     // add reset for truncation message: including dependent axis warning as well
     setTruncatedIndependentAxisWarning('');
@@ -1249,6 +1288,7 @@ function LineplotWithControls({
     updateVizConfig({
       dependentAxisRange: undefined,
       dependentAxisLogScale: false,
+      dependentAxisValueSpec: 'Full',
     });
     // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
@@ -1348,6 +1388,8 @@ function LineplotWithControls({
     },
     independentAxisLogScale: vizConfig.independentAxisLogScale,
     dependentAxisLogScale: vizConfig.dependentAxisLogScale,
+    independentAxisValueSpec: vizConfig.independentAxisValueSpec,
+    dependentAxisValueSpec: vizConfig.dependentAxisValueSpec,
   };
 
   const [
@@ -1401,141 +1443,170 @@ function LineplotWithControls({
 
       {/* add axis range control */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <LabelledGroup
-          label="X-axis controls"
-          containerStyles={{
-            marginRight: '1em',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              marginTop: '0.8em',
-              marginBottom: '0.8em',
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <LabelledGroup
+            label="X-axis controls"
+            containerStyles={{
+              marginRight: '1em',
             }}
           >
+            <div
+              style={{
+                display: 'flex',
+                marginTop: '0.8em',
+                marginBottom: '0.8em',
+              }}
+            >
+              <Toggle
+                label="Log scale (will exclude values &le; 0):"
+                value={vizConfig.independentAxisLogScale ?? false}
+                onChange={(newValue: boolean) => {
+                  setDismissedIndependentAllNegativeWarning(false);
+                  onIndependentAxisLogScaleChange(newValue);
+                  if (newValue && useBinning)
+                    enqueueSnackbar(
+                      'Binning is no longer appropriate and has been disabled'
+                    );
+                }}
+                disabled={independentValueType === 'date'}
+                themeRole="primary"
+              />
+            </div>
+            {independentAllNegative &&
+            !dismissedIndependentAllNegativeWarning ? (
+              <Notification
+                title={''}
+                text={
+                  'Nothing can be plotted with log scale because all values are zero or negative'
+                }
+                color={'#5586BE'}
+                onAcknowledgement={() =>
+                  setDismissedIndependentAllNegativeWarning(true)
+                }
+                showWarningIcon={true}
+                containerStyles={{ maxWidth: '350px' }}
+              />
+            ) : null}
             <Toggle
-              label="Log scale (will exclude values &le; 0):"
-              value={vizConfig.independentAxisLogScale ?? false}
+              label={`Binning ${useBinning ? 'on' : 'off'}`}
+              value={useBinning}
               onChange={(newValue: boolean) => {
-                setDismissedIndependentAllNegativeWarning(false);
-                onIndependentAxisLogScaleChange(newValue);
-                if (newValue && useBinning)
+                onUseBinningChange(newValue);
+                if (newValue && vizConfig.independentAxisLogScale)
                   enqueueSnackbar(
-                    'Binning is no longer appropriate and has been disabled'
+                    'Log scale is no longer appropriate and has been disabled'
                   );
               }}
-              disabled={independentValueType === 'date'}
+              disabled={neverUseBinning}
               themeRole="primary"
             />
-          </div>
-          {independentAllNegative && !dismissedIndependentAllNegativeWarning ? (
-            <Notification
-              title={''}
-              text={
-                'Nothing can be plotted with log scale because all values are zero or negative'
+            <BinWidthControl
+              binWidth={data0?.binWidthSlider?.binWidth}
+              onBinWidthChange={onBinWidthChange}
+              binWidthRange={data0?.binWidthSlider?.binWidthRange}
+              binWidthStep={data0?.binWidthSlider?.binWidthStep}
+              valueType={data0?.binWidthSlider?.valueType}
+              binUnit={
+                data0?.binWidthSlider?.valueType === 'date'
+                  ? (data0?.binWidthSlider?.binWidth as TimeDelta).unit
+                  : undefined
               }
-              color={'#5586BE'}
-              onAcknowledgement={() =>
-                setDismissedIndependentAllNegativeWarning(true)
+              binUnitOptions={
+                data0?.binWidthSlider?.valueType === 'date'
+                  ? ['day', 'week', 'month', 'year']
+                  : undefined
               }
-              showWarningIcon={true}
-              containerStyles={{ maxWidth: '350px' }}
-            />
-          ) : null}
-          <Toggle
-            label={`Binning ${useBinning ? 'on' : 'off'}`}
-            value={useBinning}
-            onChange={(newValue: boolean) => {
-              onUseBinningChange(newValue);
-              if (newValue && vizConfig.independentAxisLogScale)
-                enqueueSnackbar(
-                  'Log scale is no longer appropriate and has been disabled'
-                );
-            }}
-            disabled={neverUseBinning}
-            themeRole="primary"
-          />
-          <BinWidthControl
-            binWidth={data0?.binWidthSlider?.binWidth}
-            onBinWidthChange={onBinWidthChange}
-            binWidthRange={data0?.binWidthSlider?.binWidthRange}
-            binWidthStep={data0?.binWidthSlider?.binWidthStep}
-            valueType={data0?.binWidthSlider?.valueType}
-            binUnit={
-              data0?.binWidthSlider?.valueType === 'date'
-                ? (data0?.binWidthSlider?.binWidth as TimeDelta).unit
-                : undefined
-            }
-            binUnitOptions={
-              data0?.binWidthSlider?.valueType === 'date'
-                ? ['day', 'week', 'month', 'year']
-                : undefined
-            }
-            containerStyles={{
-              minHeight: widgetHeight,
-              // considering axis range control
-              maxWidth: independentValueType === 'date' ? '250px' : '350px',
-            }}
-            disabled={!useBinning || neverUseBinning}
-          />
-          {/* X-Axis range control */}
-          {/* designed to disable X-axis range control for categorical X */}
-          <AxisRangeControl
-            // change label for disabled case
-            label={
-              independentValueType === 'string'
-                ? 'Range (not available)'
-                : 'Range'
-            }
-            range={vizConfig.independentAxisRange ?? defaultIndependentRange}
-            onRangeChange={handleIndependentAxisRangeChange}
-            // will disable for categorical X so this is sufficient
-            valueType={independentValueType === 'date' ? 'date' : 'number'}
-            // set maxWidth
-            containerStyles={{ maxWidth: '350px' }}
-            // input forms are diabled for categorical X
-            disabled={independentValueType === 'string'}
-          />
-          {/* truncation notification */}
-          {truncatedIndependentAxisWarning && !independentAllNegative ? (
-            <Notification
-              title={''}
-              text={truncatedIndependentAxisWarning}
-              // this was defined as LIGHT_BLUE
-              color={'#5586BE'}
-              onAcknowledgement={() => {
-                setTruncatedIndependentAxisWarning('');
-              }}
-              showWarningIcon={true}
-              // set maxWidth per type
               containerStyles={{
-                maxWidth: independentValueType === 'date' ? '350px' : '350px',
+                minHeight: widgetHeight,
+                // considering axis range control
+                maxWidth: independentValueType === 'date' ? '250px' : '350px',
               }}
+              disabled={!useBinning || neverUseBinning}
             />
-          ) : null}
-          <Button
-            type={'outlined'}
-            text={'Reset to defaults'}
-            onClick={handleIndependentAxisSettingsReset}
+          </LabelledGroup>
+          <LabelledGroup
+            label="X-axis range"
             containerStyles={{
-              paddingTop: '1.0em',
-              width: '50%',
-              float: 'right',
-              // to match reset button with date range form
-              marginRight: independentValueType === 'date' ? '-1em' : '',
+              fontSize: '0.9em',
+              // width: '350px',
+              marginTop: '-0.8em',
             }}
-            // reset button is diabled for categorical X
-            disabled={independentValueType === 'string'}
-          />
-        </LabelledGroup>
+          >
+            <RadioButtonGroup
+              options={axisRangeOptions}
+              selectedOption={independentAxisValueSpec}
+              onOptionSelected={(newAxisRangeOption: string) => {
+                onIndependentAxisValueSpecChange(newAxisRangeOption);
+              }}
+              orientation={'horizontal'}
+              labelPlacement={'end'}
+              buttonColor={'primary'}
+              margins={['0em', '0', '0', '0em']}
+              itemMarginRight={25}
+            />
+            {/* X-Axis range control */}
+            {/* designed to disable X-axis range control for categorical X */}
+            <AxisRangeControl
+              // change label for disabled case
+              label={
+                independentValueType === 'string'
+                  ? 'Range (not available)'
+                  : 'Range'
+              }
+              range={vizConfig.independentAxisRange ?? defaultIndependentRange}
+              onRangeChange={handleIndependentAxisRangeChange}
+              // will disable for categorical X so this is sufficient
+              valueType={independentValueType === 'date' ? 'date' : 'number'}
+              // set maxWidth
+              containerStyles={{ maxWidth: '350px' }}
+              // input forms are diabled for categorical X
+              logScale={vizConfig.independentAxisLogScale}
+              disabled={
+                independentValueType === 'string' ||
+                vizConfig.independentAxisValueSpec === 'Full' ||
+                vizConfig.independentAxisValueSpec === 'Auto-zoom'
+              }
+            />
+            {/* truncation notification */}
+            {truncatedIndependentAxisWarning && !independentAllNegative ? (
+              <Notification
+                title={''}
+                text={truncatedIndependentAxisWarning}
+                // this was defined as LIGHT_BLUE
+                color={'#5586BE'}
+                onAcknowledgement={() => {
+                  setTruncatedIndependentAxisWarning('');
+                }}
+                showWarningIcon={true}
+                // set maxWidth per type
+                containerStyles={{
+                  maxWidth: independentValueType === 'date' ? '350px' : '350px',
+                }}
+              />
+            ) : null}
+            <Button
+              type={'outlined'}
+              text={'Reset to defaults'}
+              onClick={handleIndependentAxisSettingsReset}
+              containerStyles={{
+                paddingTop: '1.0em',
+                width: '50%',
+                float: 'right',
+                // to match reset button with date range form
+                marginRight: independentValueType === 'date' ? '-1em' : '',
+              }}
+              // reset button is diabled for categorical X
+              disabled={independentValueType === 'string'}
+            />
+          </LabelledGroup>
+        </div>
 
         {/* add vertical line in btw Y- and X- controls */}
         <div
           style={{
             display: 'inline-flex',
             borderLeft: '2px solid lightgray',
-            height: '19.3em',
+            height: '24.5em',
             position: 'relative',
             marginLeft: '-1px',
             top: '1.5em',
@@ -1543,103 +1614,132 @@ function LineplotWithControls({
         >
           {' '}
         </div>
-        <LabelledGroup
-          label="Y-axis controls"
-          containerStyles={{
-            marginRight: '0em',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              marginTop: '0.8em',
-              marginBottom: '0.8em',
+
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <LabelledGroup
+            label="Y-axis controls"
+            containerStyles={{
+              marginRight: '0em',
+              marginTop: '-0.8em',
             }}
           >
+            <div
+              style={{
+                display: 'flex',
+                marginTop: '0.8em',
+                marginBottom: '0.8em',
+              }}
+            >
+              <Toggle
+                label="Log scale (will exclude values &le; 0):"
+                value={vizConfig.dependentAxisLogScale ?? false}
+                onChange={(newValue: boolean) => {
+                  setDismissedDependentAllNegativeWarning(false);
+                  onDependentAxisLogScaleChange(newValue);
+                  if (newValue && showErrorBars)
+                    enqueueSnackbar(
+                      'Error bars are no longer appropriate and have been disabled'
+                    );
+                }}
+                disabled={dependentValueType === 'date'}
+                themeRole="primary"
+              />
+            </div>
+            {dependentAllNegative && !dismissedDependentAllNegativeWarning ? (
+              <Notification
+                title={''}
+                text={
+                  'Nothing can be plotted with log scale because all values are zero or negative'
+                }
+                color={'#5586BE'}
+                onAcknowledgement={() =>
+                  setDismissedDependentAllNegativeWarning(true)
+                }
+                showWarningIcon={true}
+                containerStyles={{ maxWidth: '350px' }}
+              />
+            ) : null}
             <Toggle
-              label="Log scale (will exclude values &le; 0):"
-              value={vizConfig.dependentAxisLogScale ?? false}
+              label="Show error bars (95% C.I.)"
+              value={showErrorBars}
               onChange={(newValue: boolean) => {
-                setDismissedDependentAllNegativeWarning(false);
-                onDependentAxisLogScaleChange(newValue);
-                if (newValue && showErrorBars)
+                onShowErrorBarsChange(newValue);
+                if (newValue && vizConfig.dependentAxisLogScale)
                   enqueueSnackbar(
-                    'Error bars are no longer appropriate and have been disabled'
+                    'Log scale is no longer appropriate and has been disabled'
                   );
               }}
-              disabled={dependentValueType === 'date'}
+              disabled={neverShowErrorBars}
               themeRole="primary"
             />
-          </div>
-          {dependentAllNegative && !dismissedDependentAllNegativeWarning ? (
-            <Notification
-              title={''}
-              text={
-                'Nothing can be plotted with log scale because all values are zero or negative'
-              }
-              color={'#5586BE'}
-              onAcknowledgement={() =>
-                setDismissedDependentAllNegativeWarning(true)
-              }
-              showWarningIcon={true}
-              containerStyles={{ maxWidth: '350px' }}
-            />
-          ) : null}
-          <Toggle
-            label="Show error bars (95% C.I.)"
-            value={showErrorBars}
-            onChange={(newValue: boolean) => {
-              onShowErrorBarsChange(newValue);
-              if (newValue && vizConfig.dependentAxisLogScale)
-                enqueueSnackbar(
-                  'Log scale is no longer appropriate and has been disabled'
-                );
-            }}
-            disabled={neverShowErrorBars}
-            themeRole="primary"
-          />
+          </LabelledGroup>
           {/* Y-axis range control */}
           {/* make some space to match with X-axis range control */}
           <div style={{ height: '4em' }} />
-          <AxisRangeControl
-            label="Range"
-            range={vizConfig.dependentAxisRange ?? defaultDependentAxisRange}
-            valueType={dependentValueType === 'date' ? 'date' : 'number'}
-            onRangeChange={(newRange?: NumberOrDateRange) => {
-              handleDependentAxisRangeChange(newRange);
-            }}
-            // set maxWidth
-            containerStyles={{ maxWidth: '350px' }}
-          />
-          {/* truncation notification */}
-          {truncatedDependentAxisWarning && !dependentAllNegative ? (
-            <Notification
-              title={''}
-              text={truncatedDependentAxisWarning}
-              // this was defined as LIGHT_BLUE
-              color={'#5586BE'}
-              onAcknowledgement={() => {
-                setTruncatedDependentAxisWarning('');
-              }}
-              showWarningIcon={true}
-              // change maxWidth
-              containerStyles={{ maxWidth: '350px' }}
-            />
-          ) : null}
-          <Button
-            type={'outlined'}
-            // change text
-            text={'Reset to defaults'}
-            onClick={handleDependentAxisSettingsReset}
+          <LabelledGroup
+            label="Y-axis range"
             containerStyles={{
-              paddingTop: '1.0em',
-              width: '50%',
-              float: 'right',
-              // to match reset button with date range form
-              marginRight: dependentValueType === 'date' ? '-1em' : '',
+              fontSize: '0.9em',
+              // width: '350px',
             }}
-          />
-        </LabelledGroup>
+          >
+            <RadioButtonGroup
+              options={axisRangeOptions}
+              selectedOption={dependentAxisValueSpec}
+              onOptionSelected={(newAxisRangeOption: string) => {
+                onDependentAxisValueSpecChange(newAxisRangeOption);
+              }}
+              orientation={'horizontal'}
+              labelPlacement={'end'}
+              buttonColor={'primary'}
+              margins={['0em', '0', '0', '0em']}
+              itemMarginRight={25}
+            />
+            <AxisRangeControl
+              label="Range"
+              range={vizConfig.dependentAxisRange ?? defaultDependentAxisRange}
+              valueType={dependentValueType === 'date' ? 'date' : 'number'}
+              onRangeChange={(newRange?: NumberOrDateRange) => {
+                handleDependentAxisRangeChange(newRange);
+              }}
+              // set maxWidth
+              containerStyles={{ maxWidth: '350px' }}
+              logScale={vizConfig.dependentAxisLogScale}
+              disabled={
+                vizConfig.dependentAxisValueSpec === 'Full' ||
+                vizConfig.dependentAxisValueSpec === 'Auto-zoom'
+              }
+            />
+            {/* truncation notification */}
+            {truncatedDependentAxisWarning && !dependentAllNegative ? (
+              <Notification
+                title={''}
+                text={truncatedDependentAxisWarning}
+                // this was defined as LIGHT_BLUE
+                color={'#5586BE'}
+                onAcknowledgement={() => {
+                  setTruncatedDependentAxisWarning('');
+                }}
+                showWarningIcon={true}
+                // change maxWidth
+                containerStyles={{ maxWidth: '350px' }}
+              />
+            ) : null}
+            <Button
+              type={'outlined'}
+              // change text
+              text={'Reset to defaults'}
+              onClick={handleDependentAxisSettingsReset}
+              containerStyles={{
+                paddingTop: '1.0em',
+                width: '50%',
+                float: 'right',
+                // to match reset button with date range form
+                marginRight: dependentValueType === 'date' ? '-1em' : '',
+              }}
+            />
+          </LabelledGroup>
+        </div>
       </div>
     </>
   );

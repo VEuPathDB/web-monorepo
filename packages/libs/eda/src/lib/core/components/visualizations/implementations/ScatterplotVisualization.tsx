@@ -359,12 +359,12 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   const onIndependentAxisValueSpecChange = onChangeHandlerFactory<string>(
     'independentAxisValueSpec',
-    true,
+    false,
     true
   );
   const onDependentAxisValueSpecChange = onChangeHandlerFactory<string>(
     'dependentAxisValueSpec',
-    true,
+    false,
     true
   );
 
