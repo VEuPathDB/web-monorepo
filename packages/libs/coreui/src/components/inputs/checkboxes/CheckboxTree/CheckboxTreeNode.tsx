@@ -147,7 +147,7 @@ export default function CheckboxTreeNode<T>({
           )}
           {!isSelectable || (!isMultiPick && !isLeafNode) ? (
             <div
-              css={{width: '100%'}}
+              css={{width: '100%', margin: 'auto 0'}}
               onClick={shouldExpandOnClick ? () => toggleExpansion(node) : undefined}
               >
               {nodeElement}

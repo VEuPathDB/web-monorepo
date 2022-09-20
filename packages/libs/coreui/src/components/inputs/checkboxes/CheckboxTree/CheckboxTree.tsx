@@ -216,7 +216,7 @@ function TreeLinks({
   }
 
   return (
-    <div css={{height: defaultStyle.links.containerHeight}}>
+    <div css={{display: 'flex', justifyContent: 'center', margin: '0.25em 0'}}>
 
       { isFiltered && showSelectionLinks &&
         <div>
@@ -756,37 +756,40 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
     );
 
     let treeSection = (
-      <ul css={{width: '100%', margin: '0.5em 0', padding: '0 1em', alignSelf: 'flex-start'}}>
-      {topLevelNodes.map((node, index) => {
-        const nodeId = getNodeId(node);
+      <div css={{flexGrow: 2, overflowY: 'auto'}}>
+        <ul css={{width: '100%', margin: '0.5em 0', padding: '0 1em', alignSelf: 'flex-start'}}>
+          {topLevelNodes.map((node, index) => {
+            const nodeId = getNodeId(node);
 
-        return <CheckboxTreeNode
-          key={"node_" + nodeId}
-          name={name || ''}
-          node={node}
-          path={[index]}
-          getNodeState={getNodeState}
-          isSelectable={!!isSelectable}
-          isMultiPick={!!isMultiPick}
-          isActiveSearch={isActiveSearch(props)}
-          toggleSelection={toggleSelection}
-          toggleExpansion={toggleExpansion}
-          shouldExpandOnClick={shouldExpandOnClick}
-          getNodeId={getNodeId}
-          getNodeChildren={getStatefulChildren}
-          renderNode={renderNode}
-          customCheckboxes={customCheckboxes as unknown as CustomCheckboxes<StatefulNode<T>>} />
-        })
-      }
-    </ul>
+            return <CheckboxTreeNode
+              key={"node_" + nodeId}
+              name={name || ''}
+              node={node}
+              path={[index]}
+              getNodeState={getNodeState}
+              isSelectable={!!isSelectable}
+              isMultiPick={!!isMultiPick}
+              isActiveSearch={isActiveSearch(props)}
+              toggleSelection={toggleSelection}
+              toggleExpansion={toggleExpansion}
+              shouldExpandOnClick={shouldExpandOnClick}
+              getNodeId={getNodeId}
+              getNodeChildren={getStatefulChildren}
+              renderNode={renderNode}
+              customCheckboxes={customCheckboxes as unknown as CustomCheckboxes<StatefulNode<T>>} />
+            })
+          }
+        </ul>
+      </div>
     )
 
     return (
-      <div css={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+      <>
         {linksPosition && linksPosition == LinksPosition.Top ? treeLinks : null}
         {!isSearchable || !showSearchBox ? "" : (
           <div css={{
             display: 'flex',
+            justifyContent: 'center',
           }}>
             <SearchBox
               autoFocus={autoFocusSearchBox}
@@ -804,7 +807,7 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
         {noResultsMessage}
         {wrapTreeSection ? wrapTreeSection(treeSection) : treeSection}
         {linksPosition && linksPosition == LinksPosition.Bottom ? treeLinks : null}
-      </div>
+      </>
     );
 }
 
