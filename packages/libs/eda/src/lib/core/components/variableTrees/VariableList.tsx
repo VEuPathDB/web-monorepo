@@ -390,7 +390,7 @@ export default function VariableList({
       >
         <div>
           <button
-            className={`btn`}
+            className="btn"
             style={{
               display: 'grid',
               padding: '0.5em',
@@ -877,7 +877,12 @@ const FieldNode = ({
     <div
       style={
         field.term.includes('entity')
-          ? { fontWeight: 'bold', fontSize: '1.05em', cursor: 'pointer' }
+          ? {
+              fontWeight: 'bold',
+              fontSize: '1.05em',
+              cursor: 'pointer',
+              marginLeft: '0.5em',
+            }
           : { ...baseFieldNodeLinkStyle }
       }
     >
