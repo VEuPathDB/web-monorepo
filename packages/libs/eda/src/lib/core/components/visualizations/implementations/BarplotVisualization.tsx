@@ -427,10 +427,14 @@ function BarplotViz(props: VisualizationProps) {
       ? {
           min: minPosMax.min,
           // override max to be exactly 1 in proportion mode (rounding errors can make it slightly greater than 1)
-          max: vizConfig.valueSpec === 'proportion' ? 1 : minPosMax.max,
+          max:
+            vizConfig.valueSpec === 'proportion' &&
+            vizConfig.dependentAxisValueSpec === 'Full'
+              ? 1
+              : minPosMax.max,
         }
       : undefined;
-  }, [data, vizConfig.valueSpec]);
+  }, [data, vizConfig.valueSpec, vizConfig.dependentAxisValueSpec]);
 
   // using custom hook
   const defaultDependentAxisRange = useDefaultAxisRange(
