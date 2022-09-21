@@ -22,24 +22,26 @@ export enum LinksPosition {
 }
 
 export type CheckboxTreeStyleSpec = {
-  links: {
+  treeLinks: {
     containerHeight: CSSProperties['height'],
-    fontSize: number,
-    background: CSSProperties['background'],
-    border: CSSProperties['border'],
+    containerPadding: CSSProperties['padding'],
+    fontSize: CSSProperties['fontSize'],
     color: CSSProperties['color'],
     textDecoration: CSSProperties['textDecoration'],
+    background: CSSProperties['background'],
+    border: CSSProperties['border'],
   },
 };
 
 const defaultStyle: CheckboxTreeStyleSpec = {
-  links: {
-    containerHeight: '1.5em',
-    fontSize: 12,
-    background: 0,
-    border: 0,
+  treeLinks: {
+    containerHeight: '2em',
+    containerPadding: '0.5em 0',
+    fontSize: '0.9em',
     color: '#069',
     textDecoration: 'default',
+    background: 0,
+    border: 0,
   },
 };
 
@@ -211,12 +213,17 @@ function TreeLinks({
 }: TreeLinksProps) {
 
   const linkStyles = {
-    ...defaultStyle.links,
+    ...defaultStyle.treeLinks,
     '&:hover': linksHoverDecoration,
   }
 
   return (
-    <div css={{height: defaultStyle.links.containerHeight}}>
+    <div css={{
+        display: 'flex',
+        justifyContent: 'center',
+        height: defaultStyle.treeLinks.containerHeight,
+        padding: defaultStyle.treeLinks.containerPadding,
+      }}>
 
       { isFiltered && showSelectionLinks &&
         <div>
@@ -756,37 +763,41 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
     );
 
     let treeSection = (
-      <ul css={{width: '100%', margin: '0.5em 0', padding: '0 1em', alignSelf: 'flex-start'}}>
-      {topLevelNodes.map((node, index) => {
-        const nodeId = getNodeId(node);
+      <div css={{flexGrow: 2, overflowY: 'auto'}}>
+        <ul css={{width: '100%', margin: '0.5em 0', padding: '0 1em', alignSelf: 'flex-start'}}>
+          {topLevelNodes.map((node, index) => {
+            const nodeId = getNodeId(node);
 
-        return <CheckboxTreeNode
-          key={"node_" + nodeId}
-          name={name || ''}
-          node={node}
-          path={[index]}
-          getNodeState={getNodeState}
-          isSelectable={!!isSelectable}
-          isMultiPick={!!isMultiPick}
-          isActiveSearch={isActiveSearch(props)}
-          toggleSelection={toggleSelection}
-          toggleExpansion={toggleExpansion}
-          shouldExpandOnClick={shouldExpandOnClick}
-          getNodeId={getNodeId}
-          getNodeChildren={getStatefulChildren}
-          renderNode={renderNode}
-          customCheckboxes={customCheckboxes as unknown as CustomCheckboxes<StatefulNode<T>>} />
-        })
-      }
-    </ul>
+            return <CheckboxTreeNode
+              key={"node_" + nodeId}
+              name={name || ''}
+              node={node}
+              path={[index]}
+              getNodeState={getNodeState}
+              isSelectable={!!isSelectable}
+              isMultiPick={!!isMultiPick}
+              isActiveSearch={isActiveSearch(props)}
+              toggleSelection={toggleSelection}
+              toggleExpansion={toggleExpansion}
+              shouldExpandOnClick={shouldExpandOnClick}
+              getNodeId={getNodeId}
+              getNodeChildren={getStatefulChildren}
+              renderNode={renderNode}
+              customCheckboxes={customCheckboxes as unknown as CustomCheckboxes<StatefulNode<T>>} />
+            })
+          }
+        </ul>
+      </div>
     )
 
     return (
-      <div css={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+      <>
         {linksPosition && linksPosition == LinksPosition.Top ? treeLinks : null}
         {!isSearchable || !showSearchBox ? "" : (
           <div css={{
             display: 'flex',
+            justifyContent: 'center',
+            columnGap: '1em',
           }}>
             <SearchBox
               autoFocus={autoFocusSearchBox}
@@ -804,7 +815,7 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
         {noResultsMessage}
         {wrapTreeSection ? wrapTreeSection(treeSection) : treeSection}
         {linksPosition && linksPosition == LinksPosition.Bottom ? treeLinks : null}
-      </div>
+      </>
     );
 }
 

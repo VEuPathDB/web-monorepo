@@ -18,10 +18,6 @@ export default function SelectList({
     defaultButtonDisplayContent,
 }: SelectListProps) {
     const [selected, setSelected] = useState<SelectListProps['value']>(value);
-    /** 
-     * this is essentially how Bob M. is handling this in his ad hoc ValuePicker for proportion controls
-     * if we desire to concat the values, we'll need to add ellipsis at a calculated length/width
-     * */ 
     const [ buttonDisplayContent, setButtonDisplayContent] = useState<ReactNode>(value.length ? value.join(', ') : defaultButtonDisplayContent);
 
     const onClose = () => {
@@ -29,19 +25,36 @@ export default function SelectList({
         setButtonDisplayContent(selected.length ? selected.join(', ') : defaultButtonDisplayContent);
     }
 
+    const buttonLabel = (
+        <span
+        style={{
+            maxWidth: '300px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+        }}
+        >
+        {buttonDisplayContent}
+        </span>
+    );
+
     return (
         <PopoverButton
-            buttonDisplayContent={buttonDisplayContent}
+            buttonDisplayContent={buttonLabel}
             onClose={onClose}
         >
-            <CheckboxList 
-                name={name}
-                items={items}
-                value={selected}
-                onChange={setSelected}
-                linksPosition={linksPosition}
-            />
-            {children}
+            <div css={{
+                margin: '0.5em'
+            }}>
+                <CheckboxList 
+                    name={name}
+                    items={items}
+                    value={selected}
+                    onChange={setSelected}
+                    linksPosition={linksPosition}
+                />
+                {children}
+            </div>
         </PopoverButton>
     )
 }
