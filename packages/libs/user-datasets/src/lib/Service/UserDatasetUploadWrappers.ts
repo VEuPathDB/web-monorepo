@@ -125,7 +125,10 @@ const statusDetailDecoder = Decode.combine(
           Decode.optional(
             Decode.combine(
               Decode.field('general', Decode.arrayOf(Decode.string)),
-              Decode.field('byKey', Decode.objectOf(Decode.string))
+              Decode.field(
+                'byKey',
+                Decode.objectOf(Decode.arrayOf(Decode.string))
+              )
             )
           )
         )
@@ -145,15 +148,13 @@ function getErrorsFromStatusDetails(statusDetails: StatusDetails): string[] {
   let errorLines = [];
 
   if (statusDetails && statusDetails.errors && statusDetails.errors.general) {
-    let line;
-    for (line of statusDetails.errors.general) {
+    for (let line of statusDetails.errors.general) {
       errorLines.push(line);
     }
   }
   if (statusDetails && statusDetails.errors && statusDetails.errors.byKey) {
-    let p;
-    for (p of Object.entries(statusDetails.errors.byKey)) {
-      errorLines.push(p[0] + ': ' + p[1]);
+    for (let p of Object.entries(statusDetails.errors.byKey)) {
+      errorLines.push(p[0] + ': ' + p[1].join('; '));
     }
   }
   return errorLines;
