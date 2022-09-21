@@ -22,24 +22,26 @@ export enum LinksPosition {
 }
 
 export type CheckboxTreeStyleSpec = {
-  links: {
+  treeLinks: {
     containerHeight: CSSProperties['height'],
-    fontSize: number,
-    background: CSSProperties['background'],
-    border: CSSProperties['border'],
+    containerMargin: CSSProperties['margin'],
+    fontSize: CSSProperties['fontSize'],
     color: CSSProperties['color'],
     textDecoration: CSSProperties['textDecoration'],
+    background: CSSProperties['background'],
+    border: CSSProperties['border'],
   },
 };
 
 const defaultStyle: CheckboxTreeStyleSpec = {
-  links: {
+  treeLinks: {
     containerHeight: '1.5em',
-    fontSize: 12,
-    background: 0,
-    border: 0,
+    containerMargin: '0.5em 0',
+    fontSize: '0.9em',
     color: '#069',
     textDecoration: 'default',
+    background: 0,
+    border: 0,
   },
 };
 
@@ -211,12 +213,17 @@ function TreeLinks({
 }: TreeLinksProps) {
 
   const linkStyles = {
-    ...defaultStyle.links,
+    ...defaultStyle.treeLinks,
     '&:hover': linksHoverDecoration,
   }
 
   return (
-    <div css={{display: 'flex', justifyContent: 'center', margin: '0.25em 0'}}>
+    <div css={{
+        display: 'flex',
+        justifyContent: 'center',
+        height: defaultStyle.treeLinks.containerHeight,
+        margin: defaultStyle.treeLinks.containerMargin,
+      }}>
 
       { isFiltered && showSelectionLinks &&
         <div>
@@ -790,6 +797,7 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
           <div css={{
             display: 'flex',
             justifyContent: 'center',
+            columnGap: '1em',
           }}>
             <SearchBox
               autoFocus={autoFocusSearchBox}
