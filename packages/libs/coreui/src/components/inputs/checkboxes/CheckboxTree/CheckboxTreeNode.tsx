@@ -153,14 +153,22 @@ export default function CheckboxTreeNode<T>({
               {nodeElement}
             </div>
           ) : (
-            <label>
+            <label css={{
+              display: 'flex',
+              width: '100%',
+            }}>
               {CustomCheckbox ? <CustomCheckbox {...checkboxProps} /> : isMultiPick
                   ? <IndeterminateCheckbox {...checkboxProps} />
                   : <TreeRadio
                       {...commonInputProps}
                       onChange={toggleSelection}
                     />
-              } {nodeElement}
+              } 
+              <div
+                css={{width: '100%', margin: 'auto 0'}}
+              >
+                {nodeElement}
+              </div>
             </label>
           )}
         </div>
