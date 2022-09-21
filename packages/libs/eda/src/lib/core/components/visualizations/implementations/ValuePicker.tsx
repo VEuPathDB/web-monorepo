@@ -24,22 +24,6 @@ export function ValuePicker({
     [allowedValues]
   );
 
-  // const label = (
-  //   <span
-  //     style={{
-  //       ...(isModified ? { color: '#ccc' } : {}),
-  //       maxWidth: '300px',
-  //       overflow: 'hidden',
-  //       textOverflow: 'ellipsis',
-  //       whiteSpace: 'nowrap',
-  //     }}
-  //   >
-  //     {selectedValues.length > 0
-  //       ? selectedValues.join(', ')
-  //       : 'Choose value(s)'}
-  //   </span>
-  // );
-
   return (
     <SelectList
       defaultButtonDisplayContent={'Choose value(s)'}
