@@ -54,7 +54,7 @@ import {
 } from 'lodash';
 // directly use RadioButtonGroup instead of ScatterPlotControls
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-import Toggle from '@veupathdb/coreui/dist/components/widgets/Toggle';
+import { Toggle } from '@veupathdb/coreui';
 // import ScatterPlotData
 import {
   ScatterPlotDataSeries,
@@ -1170,6 +1170,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
               }}
               // disable log scale for date variable
               disabled={scatterplotProps.independentValueType === 'date'}
+              themeRole="primary"
             />
           </div>
           {independentAllNegative && !dismissedIndependentAllNegativeWarning ? (
@@ -1277,6 +1278,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
               }}
               // disable log scale for date variable
               disabled={scatterplotProps.dependentValueType === 'date'}
+              themeRole="primary"
             />
           </div>
           {dependentAllNegative && !dismissedDependentAllNegativeWarning ? (
@@ -1342,7 +1344,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   const showOverlayLegend =
     (computedOverlayVariableDescriptor != null ||
-      vizConfig.overlayVariable != null) &&
+      vizConfig.overlayVariable != null ||
+      vizConfig.valueSpecConfig !== 'Raw') &&
     legendItems.length > 0;
   const legendNode = !data.pending && data.value != null && (
     <PlotLegend

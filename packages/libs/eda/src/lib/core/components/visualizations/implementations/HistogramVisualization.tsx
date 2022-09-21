@@ -5,7 +5,7 @@ import FacetedHistogram from '@veupathdb/components/lib/plots/facetedPlots/Facet
 import BinWidthControl from '@veupathdb/components/lib/components/plotControls/BinWidthControl';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-import Toggle from '@veupathdb/coreui/dist/components/widgets/Toggle';
+import { Toggle } from '@veupathdb/coreui';
 import {
   NumberOrTimeDelta,
   NumberOrTimeDeltaRange,
@@ -425,9 +425,12 @@ function HistogramViz(props: VisualizationProps<Options>) {
 
   const defaultIndependentRange = useDefaultAxisRange(xAxisVariable);
 
+  // separate minPosMax from dependentMinPosMax
+  const minPosMax = useMemo(() => histogramDefaultDependentAxisMinMax(data), [
+    data,
+  ]);
   const dependentMinPosMax = useMemo(() => {
-    const minPosMax = histogramDefaultDependentAxisMinMax(data);
-    return minPosMax != null
+    return minPosMax != null && minPosMax.min != null && minPosMax.max != null
       ? {
           min: minPosMax.min,
           // override max to be exactly 1 in proportion mode (rounding errors can make it slightly greater than 1)
@@ -569,8 +572,10 @@ function HistogramViz(props: VisualizationProps<Options>) {
       truncationConfig(
         {
           ...defaultUIState, // using annotated range, NOT the actual data
-          ...(dependentMinPosMax != null
-            ? { dependentAxisRange: dependentMinPosMax }
+          ...(minPosMax != null &&
+          minPosMax.min != null &&
+          minPosMax.max != null
+            ? { dependentAxisRange: minPosMax }
             : {}),
         },
         vizConfig,
@@ -859,6 +864,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
                   minHeight: widgetHeight,
                 },
               }}
+              themeRole="primary"
             />
           </div>
           {/* Y-axis range control */}

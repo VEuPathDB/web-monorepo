@@ -10,7 +10,7 @@ import {
 
 import VariableTreeDropdown from '../variableTrees/VariableTreeDropdown';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import Toggle from '@veupathdb/coreui/dist/components/widgets/Toggle';
+import { Toggle } from '@veupathdb/coreui';
 import { makeEntityDisplayName } from '../../utils/study-metadata';
 import { useInputStyles } from './inputStyles';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
@@ -313,10 +313,11 @@ export function InputVariables(props: Props) {
                           ? makeEntityDisplayName(outputEntity, true)
                           : 'points'
                       } with no data for selected stratification variable(s)`}
-                      value={showMissingness}
+                      value={showMissingness ?? false}
                       onChange={onShowMissingnessChange}
                       disabled={!enableShowMissingnessToggle}
                       labelPosition="right"
+                      themeRole="primary"
                     />
                   </div>
                 )
