@@ -43,7 +43,6 @@ import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { VariableDescriptor } from '../../types/variable';
 import { ShowHideVariableContext } from '../../utils/show-hide-variable-context';
 
-import { cx } from '../../../workspace/Utils';
 import { pruneEmptyFields } from '../../utils/wdk-filter-param-adapter';
 
 import { Tooltip as VarTooltip } from '../docs/variable-constraints';
@@ -82,6 +81,7 @@ interface FieldNodeProps {
   starredVariablesLoading: boolean;
   onClickStar: () => void;
   scrollIntoView: boolean;
+  asDropdown?: boolean;
 }
 
 interface getNodeSearchStringType {
@@ -354,6 +354,7 @@ export default function VariableList({
           starredVariablesLoading={starredVariablesLoading}
           onClickStar={() => toggleStarredVariable({ entityId, variableId })}
           scrollIntoView
+          asDropdown={asDropdown}
         />
       );
     },
@@ -620,7 +621,6 @@ export default function VariableList({
                 <li
                   key={field.term}
                   style={{
-                    paddingLeft: '1.5em',
                     lineHeight: '15px',
                   }}
                 >
@@ -663,6 +663,7 @@ export default function VariableList({
                         toggleStarredVariable({ entityId, variableId })
                       }
                       scrollIntoView={false}
+                      asDropdown={asDropdown}
                     />
                   </div>
                 </li>
@@ -781,7 +782,6 @@ const getNodeSearchString = (valuesMap: ValuesMap) => {
 };
 
 const baseFieldNodeLinkStyle = {
-  color: '#2f2f2f',
   padding: '0.25em 0.5em',
   borderRadius: '0.5em',
   display: 'inline-block',
@@ -822,8 +822,11 @@ const FieldNode = ({
   scrollIntoView,
   isMultiFilterDescendant,
   showMultiFilterDescendants,
+  asDropdown,
 }: FieldNodeProps) => {
   const nodeRef = useRef<HTMLAnchorElement>(null);
+
+  const nodeColor = { color: asDropdown ? '#2f2f2f' : '#069' };
 
   useLayoutEffect(() => {
     // hack: Use setTimeout since DOM may not reflect the current state of expanded nodes.
@@ -857,10 +860,18 @@ const FieldNode = ({
         ref={nodeRef}
         style={
           isActive
-            ? { ...baseFieldNodeLinkStyle, ...activeFieldNodeLinkStyle }
+            ? {
+                ...baseFieldNodeLinkStyle,
+                ...activeFieldNodeLinkStyle,
+                ...nodeColor,
+              }
             : isDisabled
-            ? { ...baseFieldNodeLinkStyle, ...disabledFieldNodeLinkStyle }
-            : { ...baseFieldNodeLinkStyle }
+            ? {
+                ...baseFieldNodeLinkStyle,
+                ...disabledFieldNodeLinkStyle,
+                ...nodeColor,
+              }
+            : { ...baseFieldNodeLinkStyle, ...nodeColor }
         }
         href={'#' + field.term}
         onClick={(e) => {
@@ -882,8 +893,9 @@ const FieldNode = ({
               fontSize: '1.05em',
               cursor: 'pointer',
               marginLeft: '0.5em',
+              ...nodeColor,
             }
-          : { ...baseFieldNodeLinkStyle }
+          : { ...baseFieldNodeLinkStyle, ...nodeColor }
       }
     >
       {safeHtml(field.display)}
@@ -896,7 +908,12 @@ const FieldNode = ({
     <div
       style={
         canBeStarred
-          ? { display: 'flex', justifyContent: 'space-between', width: '100%' }
+          ? {
+              display: 'flex',
+              justifyContent: 'space-between',
+              width: '100%',
+              paddingLeft: isMultiPick ? 0 : '1em',
+            }
           : {}
       }
     >
