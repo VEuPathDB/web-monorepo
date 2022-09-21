@@ -24,7 +24,7 @@ export enum LinksPosition {
 export type CheckboxTreeStyleSpec = {
   treeLinks: {
     containerHeight: CSSProperties['height'],
-    containerMargin: CSSProperties['margin'],
+    containerPadding: CSSProperties['padding'],
     fontSize: CSSProperties['fontSize'],
     color: CSSProperties['color'],
     textDecoration: CSSProperties['textDecoration'],
@@ -35,8 +35,8 @@ export type CheckboxTreeStyleSpec = {
 
 const defaultStyle: CheckboxTreeStyleSpec = {
   treeLinks: {
-    containerHeight: '1.5em',
-    containerMargin: '0.5em 0',
+    containerHeight: '2em',
+    containerPadding: '0.5em 0',
     fontSize: '0.9em',
     color: '#069',
     textDecoration: 'default',
@@ -222,7 +222,7 @@ function TreeLinks({
         display: 'flex',
         justifyContent: 'center',
         height: defaultStyle.treeLinks.containerHeight,
-        margin: defaultStyle.treeLinks.containerMargin,
+        padding: defaultStyle.treeLinks.containerPadding,
       }}>
 
       { isFiltered && showSelectionLinks &&

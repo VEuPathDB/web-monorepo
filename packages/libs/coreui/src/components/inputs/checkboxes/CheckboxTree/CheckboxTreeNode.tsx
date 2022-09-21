@@ -10,6 +10,7 @@ export type CheckboxListStyleSpec = {
   },
   children: {
     padding: CSSProperties['padding']
+    margin: CSSProperties['margin']
   },
 };
 
@@ -19,6 +20,7 @@ const defaultStyle = {
   },
   children: {
     padding: '0 0 0 1.5em',
+    margin: 0,
   },
 }
 
@@ -156,6 +158,7 @@ export default function CheckboxTreeNode<T>({
             <label css={{
               display: 'flex',
               width: '100%',
+              marginLeft: isLeafNode ? '1em' : 0,
             }}>
               {CustomCheckbox ? <CustomCheckbox {...checkboxProps} /> : isMultiPick
                   ? <IndeterminateCheckbox {...checkboxProps} />
