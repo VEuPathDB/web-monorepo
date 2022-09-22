@@ -93,6 +93,7 @@ interface Props {
   downloadClient: DownloadClient;
   singleAppMode?: string;
   showUnreleasedData: boolean;
+  enableFullScreenApps: boolean;
 }
 
 /**
@@ -112,6 +113,7 @@ export function AnalysisPanel({
   downloadClient,
   singleAppMode,
   showUnreleasedData,
+  enableFullScreenApps,
 }: Props) {
   const studyRecord = useStudyRecord();
   const analysisState = useAnalysis(analysisId, singleAppMode);
@@ -256,14 +258,15 @@ export function AnalysisPanel({
               }>
             ) => (
               <div className="Entities">
-                {Object.entries(fullScreenAppPlugins).map(
-                  ([key, plugin]) =>
-                    plugin?.isCompatibleWithStudy(studyMetadata) && (
-                      <Link key={key} to={`${routeBase}/fullscreen/${key}`}>
-                        <plugin.triggerComponent analysis={analysis} />
-                      </Link>
-                    )
-                )}
+                {enableFullScreenApps &&
+                  Object.entries(fullScreenAppPlugins).map(
+                    ([key, plugin]) =>
+                      plugin?.isCompatibleWithStudy(studyMetadata) && (
+                        <Link key={key} to={`${routeBase}/fullscreen/${key}`}>
+                          <plugin.triggerComponent analysis={analysis} />
+                        </Link>
+                      )
+                  )}
                 <EntityDiagram
                   expanded
                   orientation="horizontal"
@@ -391,27 +394,29 @@ export function AnalysisPanel({
               </AnalysisTabErrorBoundary>
             )}
           />
-          <Route
-            path={`${routeBase}/fullscreen/:appName`}
-            render={(props) => {
-              const plugin = (fullScreenAppPlugins as Record<
-                string,
-                FullScreenAppPlugin
-              >)[props.match.params.appName];
-              if (plugin == null) return <div>No full screen app found</div>;
-              return (
-                <FullScreenContainer
-                  onClose={() =>
-                    history.length
-                      ? history.goBack()
-                      : history.replace(routeBase)
-                  }
-                  appName={props.match.params.appName}
-                  analysisState={analysisState}
-                />
-              );
-            }}
-          />
+          {enableFullScreenApps && (
+            <Route
+              path={`${routeBase}/fullscreen/:appName`}
+              render={(props) => {
+                const plugin = (fullScreenAppPlugins as Record<
+                  string,
+                  FullScreenAppPlugin
+                >)[props.match.params.appName];
+                if (plugin == null) return <div>No full screen app found</div>;
+                return (
+                  <FullScreenContainer
+                    onClose={() =>
+                      history.length
+                        ? history.goBack()
+                        : history.replace(routeBase)
+                    }
+                    appName={props.match.params.appName}
+                    analysisState={analysisState}
+                  />
+                );
+              }}
+            />
+          )}
         </div>
       </ShowHideVariableContextProvider>
     </RestrictedPage>
