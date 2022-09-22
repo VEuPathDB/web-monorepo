@@ -159,6 +159,7 @@ export default function CheckboxTreeNode<T>({
               display: 'flex',
               width: '100%',
               marginLeft: isLeafNode ? '1em' : 0,
+              alignItems: 'center',
             }}>
               {CustomCheckbox ? <CustomCheckbox {...checkboxProps} /> : isMultiPick
                   ? <IndeterminateCheckbox {...checkboxProps} />

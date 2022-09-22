@@ -764,7 +764,7 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
 
     let treeSection = (
       <div css={{flexGrow: 2, overflowY: 'auto'}}>
-        <ul css={{width: '100%', margin: '0.5em 0', padding: '0 1em', alignSelf: 'flex-start'}}>
+        <ul css={{width: '100%', margin: '0', padding: '0 1em', alignSelf: 'flex-start'}}>
           {topLevelNodes.map((node, index) => {
             const nodeId = getNodeId(node);
 
@@ -798,6 +798,7 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
             display: 'flex',
             justifyContent: 'center',
             columnGap: '1em',
+            margin: '0.5em 0'
           }}>
             <SearchBox
               autoFocus={autoFocusSearchBox}
@@ -823,7 +824,7 @@ function defaultRenderNoResults() {
   return (
     <div css={{
       display: 'flex',
-      marginTop: '1em',
+      margin: '0.5em 1em',
     }}>
       <Warning css={{height: '1.5em', width: '1.5em', paddingRight: '0.25em'}} />
       <span css={{margin: 'auto 0'}}>
