@@ -613,7 +613,6 @@ export default function SubsetDownloadModal({
             )}
           </div>
           <div
-            className="Variables"
             css={{
               width: '100%',
               height: '100%',
@@ -621,27 +620,36 @@ export default function SubsetDownloadModal({
               overflow: 'auto',
               minHeight: 0,
               flex: '0 1 auto',
-              '& .EDAWorkspace-VariableList': {
-                height: 'auto',
-                display: 'block',
-              },
+              fontSize: 12,
             }}
           >
             {!requiredColumns.pending && requiredColumns.value && (
-              <div
-                className="EDAWorkspace-VariableList"
-                style={{ marginBottom: 10 }}
-              >
+              <div style={{ marginBottom: 5, paddingRight: '0.5em' }}>
                 <details
-                  className="FeaturedVariables"
                   open={true}
                   style={{
                     backgroundColor: 'rgb(245,245,245)',
                     height: 'auto',
+                    border: '1px solid #ccc',
+                    padding: '0.5em 1em',
                   }}
                 >
-                  <summary>
-                    <h3>
+                  <summary
+                    css={{
+                      outline: 'none',
+                      cursor: 'pointer',
+                      '&::marker': {
+                        color: '#888',
+                      },
+                    }}
+                  >
+                    <h3
+                      style={{
+                        fontSize: '1.05em',
+                        display: 'inline-block',
+                        padding: '0.25em',
+                      }}
+                    >
                       Required columns{' '}
                       <span css={{ '& i': { verticalAlign: 'bottom' } }}>
                         <HelpIcon>
@@ -651,13 +659,26 @@ export default function SubsetDownloadModal({
                       </span>
                     </h3>
                   </summary>
-                  <ul>
+                  <ul
+                    style={{
+                      listStyle: 'none',
+                      margin: 0,
+                      marginTop: '0.25em',
+                    }}
+                  >
                     {requiredColumns.value.map((column) => (
                       <li
-                        className="wdk-CheckboxTreeItem"
                         key={column.accessor}
+                        style={{
+                          paddingLeft: '1.5em',
+                        }}
                       >
-                        <div className="wdk-CheckboxTreeNodeContent wdk-AttributeFilterFieldItem">
+                        <div
+                          style={{
+                            padding: '0.25em 0.5em',
+                            marginLeft: '1em',
+                          }}
+                        >
                           <i
                             className="fa fa-lock"
                             style={{
