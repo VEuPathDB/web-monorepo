@@ -1,7 +1,7 @@
 import SelectedRangeControl from '@veupathdb/components/lib/components/plotControls/SelectedRangeControl';
 import BinWidthControl from '@veupathdb/components/lib/components/plotControls/BinWidthControl';
 import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
-import Toggle from '@veupathdb/coreui/dist/components/widgets/Toggle';
+import { Toggle } from '@veupathdb/coreui';
 import Button from '@veupathdb/components/lib/components/widgets/Button';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import { NumberRangeInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateRangeInputs';
@@ -740,6 +740,7 @@ function HistogramPlotWithControls({
                 minHeight: widgetHeight,
               },
             }}
+            themeRole="primary"
           />
 
           <NumberRangeInput

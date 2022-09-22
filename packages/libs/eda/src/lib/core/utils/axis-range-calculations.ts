@@ -203,7 +203,10 @@ function findMinMaxOfStackedArray(data: HistogramDataSeries[]) {
     );
 
   return {
-    min: min(Object.values(firstCountByLabel)) as number,
+    // find minPos instead
+    min: min(
+      Object.values(firstCountByLabel).filter((value) => value > 0)
+    ) as number,
     max: max(Object.values(sumsByLabel)) as number,
   };
 }

@@ -1,3 +1,4 @@
+/** @jsxImportSource @emotion/react */
 // load plot component
 import LinePlot, {
   LinePlotProps,
@@ -32,7 +33,7 @@ import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps } from '../VisualizationTypes';
 
-import Toggle from '@veupathdb/coreui/dist/components/widgets/Toggle';
+import { Toggle } from '@veupathdb/coreui';
 import line from './selectorIcons/line.svg';
 
 // use lodash instead of Math.min/max
@@ -48,8 +49,6 @@ import {
   map,
   keys,
 } from 'lodash';
-// directly use RadioButtonGroup instead of LinePlotControls
-import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import BinWidthControl from '@veupathdb/components/lib/components/plotControls/BinWidthControl';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import {
@@ -162,8 +161,9 @@ const valueSpecLookup: Record<
   string,
   LineplotRequestParams['config']['valueSpec']
 > = {
-  Mean: 'mean',
+  'Arithmetic mean': 'mean',
   Median: 'median',
+  'Geometric mean': 'geometricMean',
   Proportion: 'proportion', // used to be 'Ratio or proportion' hence the lookup rather than simple lowercasing
 };
 
@@ -176,7 +176,7 @@ const timeUnitLookup: Record<string, TimeUnit> = {
 
 function createDefaultConfig(): LineplotConfig {
   return {
-    valueSpecConfig: 'Mean',
+    valueSpecConfig: 'Arithmetic mean',
     useBinning: false,
     showErrorBars: false,
     independentAxisLogScale: false,
@@ -828,10 +828,12 @@ function LineplotViz(props: VisualizationProps<Options>) {
       vizConfig.valueSpecConfig === 'Proportion'
         ? 'Proportion'
         : variableDisplayWithUnit(yAxisVariable)
-        ? vizConfig.valueSpecConfig === 'Mean'
-          ? 'Mean: ' + variableDisplayWithUnit(yAxisVariable)
+        ? vizConfig.valueSpecConfig === 'Arithmetic mean'
+          ? 'Arithmetic mean: ' + variableDisplayWithUnit(yAxisVariable)
           : vizConfig.valueSpecConfig === 'Median'
           ? 'Median: ' + variableDisplayWithUnit(yAxisVariable)
+          : vizConfig.valueSpecConfig === 'Geometric mean'
+          ? 'Geometric mean: ' + variableDisplayWithUnit(yAxisVariable)
           : 'Y-axis'
         : 'Y-axis',
     displayLegend: false,
@@ -1349,13 +1351,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
 
   const classes = useInputStyles();
 
-  const disabledValueSpecs =
-    yAxisVariable == null
-      ? ['Mean', 'Median', 'Proportion']
-      : categoricalMode
-      ? ['Mean', 'Median']
-      : ['Proportion'];
-
   const aggregationHelp = (
     <div>
       <p>
@@ -1389,20 +1384,66 @@ function LineplotViz(props: VisualizationProps<Options>) {
     </div>
   );
 
-  const proportionInputs = (
+  const aggregationInputs = (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <RadioButtonGroup
-        options={keys(valueSpecLookup)}
-        selectedOption={vizConfig.valueSpecConfig}
-        onOptionSelected={onValueSpecChange}
-        disabledList={disabledValueSpecs}
-        orientation={'horizontal'}
-        labelPlacement={'end'}
-        buttonColor={'primary'}
-        itemMarginRight={20}
-      />
-
-      {vizConfig.valueSpecConfig === 'Proportion' && (
+      {vizConfig.valueSpecConfig !== 'Proportion' ? (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <div className={classes.label}>
+            Function<sup>*</sup>
+          </div>
+          <select
+            onChange={(e) => onValueSpecChange(e.target.value)}
+            // hacky temporary styling until CoreUI select components are production-ready
+            css={{
+              backgroundColor: '#e0e0e0',
+              cursor: 'pointer',
+              border: 0,
+              padding: '6px 16px',
+              fontSize: '0.8125rem',
+              minWidth: '64px',
+              boxSizing: 'border-box',
+              transition:
+                'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+              fontFamily:
+                'Roboto, "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif',
+              fontWeight: 500,
+              height: '32px',
+              borderRadius: '4px',
+              textTransform: 'none',
+              boxShadow:
+                '0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)',
+              '&:hover': {
+                boxShadow: `0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)`,
+                backgroundColor: `#d5d5d5`,
+              },
+            }}
+          >
+            {keys(valueSpecLookup)
+              .filter((option) => option !== 'Proportion')
+              .map((option) => (
+                <option
+                  value={option}
+                  selected={option === vizConfig.valueSpecConfig}
+                >
+                  {option}
+                </option>
+              ))}
+          </select>
+          <i
+            // hacky temporary styling until CoreUI select components are production-ready
+            className="material-icons MuiIcon-root fa fa-caret-down"
+            style={{
+              position: 'relative',
+              left: '-15px',
+            }}
+          />
+        </div>
+      ) : (
         <div
           style={{
             display: 'grid',
@@ -1434,9 +1475,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
               selectedValues={vizConfig.numeratorValues}
               onSelectedValuesChange={onNumeratorValuesChange}
             />
-            {/*<div className={classes.label} style={valuesOfInterestLabelStyle}>
-              (numerator)
-            </div>*/}
           </div>
           <div style={{ gridColumn: 2, gridRow: 2, marginRight: '2em' }}>
             <hr style={{ marginTop: '0.6em' }} />
@@ -1450,9 +1488,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
               selectedValues={vizConfig.denominatorValues}
               onSelectedValuesChange={onDenominatorValuesChange}
             />
-            {/*<div className={classes.label} style={valuesOfInterestLabelStyle}>
-              (denominator)
-            </div>*/}
           </div>
         </div>
       )}
@@ -1502,14 +1537,23 @@ function LineplotViz(props: VisualizationProps<Options>) {
             {
               title: (
                 <>
-                  <span style={{ marginRight: '0.25em' }}>
-                    Y-axis aggregation
-                  </span>
+                  Y-axis aggregation{' '}
+                  {vizConfig.yAxisVariable
+                    ? categoricalMode
+                      ? '(categorical Y)'
+                      : '(continuous Y)'
+                    : ''}
                   <HelpIcon children={aggregationHelp} />
                 </>
               ),
               order: 75,
-              content: proportionInputs,
+              content: vizConfig.yAxisVariable ? (
+                aggregationInputs
+              ) : (
+                <span style={{ color: '#969696', fontWeight: 500 }}>
+                  First choose a Y-axis variable.
+                </span>
+              ),
             },
           ]}
           entities={entities}

@@ -24,8 +24,7 @@ import { PublicAnalysesRoute } from './PublicAnalysesRoute';
 import { StudyList } from './StudyList';
 import { WorkspaceContainer } from './WorkspaceContainer';
 import { AnalysisPanel } from './AnalysisPanel';
-import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
-import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
+import { StandaloneStudyPage } from './StandaloneStudyPage';
 
 const theme = createTheme(workspaceTheme);
 
@@ -35,6 +34,7 @@ type Props = {
   userServiceUrl: string;
   downloadServiceUrl: string;
   exampleAnalysesAuthor?: number;
+  showUnreleasedData?: boolean;
   /**
    * The base of the URL from which to being sharing links.
    * This is passed down through several component layers. */
@@ -48,6 +48,10 @@ type Props = {
    * or left undefined to use all apps associated with the project.
    * This is passed down through several component layers. */
   singleAppMode?: string;
+  /**
+   * Indicates if full screen apps should be enabled.
+   */
+  enableFullScreenApps?: boolean;
 };
 
 /**
@@ -62,6 +66,8 @@ export function WorkspaceRouter({
   sharingUrlPrefix,
   showLoginForm,
   singleAppMode,
+  showUnreleasedData = false,
+  enableFullScreenApps = false,
 }: Props) {
   const { path, url } = useRouteMatch();
 
@@ -203,10 +209,9 @@ export function WorkspaceRouter({
                 userServiceUrl={userServiceUrl}
                 downloadServiceUrl={downloadServiceUrl}
               >
-                <EDAWorkspaceHeading />
-                <RecordController
-                  recordClass="dataset"
-                  primaryKey={props.match.params.studyId}
+                <StandaloneStudyPage
+                  studyId={props.match.params.studyId}
+                  showUnreleasedData={showUnreleasedData}
                 />
               </WorkspaceContainer>
             )}
@@ -228,6 +233,8 @@ export function WorkspaceRouter({
                   hideSavedAnalysisButtons
                   downloadClient={downloadClient}
                   singleAppMode={singleAppMode}
+                  showUnreleasedData={showUnreleasedData}
+                  enableFullScreenApps={enableFullScreenApps}
                 />
               </WorkspaceContainer>
             )}
@@ -293,6 +300,8 @@ export function WorkspaceRouter({
                   showLoginForm={showLoginForm}
                   downloadClient={downloadClient}
                   singleAppMode={singleAppMode}
+                  showUnreleasedData={showUnreleasedData}
+                  enableFullScreenApps={enableFullScreenApps}
                 />
               </WorkspaceContainer>
             )}

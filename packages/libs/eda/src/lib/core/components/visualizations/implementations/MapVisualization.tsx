@@ -43,7 +43,7 @@ import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
-import Toggle from '@veupathdb/coreui/dist/components/widgets/Toggle';
+import { Toggle } from '@veupathdb/coreui';
 import { LayoutOptions } from '../../layouts/types';
 import { useMapMarkers } from '../../../hooks/mapMarkers';
 
@@ -307,6 +307,7 @@ function MapViz(props: VisualizationProps<Options>) {
               disabled={
                 vizConfig.markerType == null || vizConfig.markerType === 'pie'
               }
+              themeRole="primary"
             />
           </div>
         </LabelledGroup>
