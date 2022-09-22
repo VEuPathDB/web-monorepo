@@ -48,6 +48,10 @@ type Props = {
    * or left undefined to use all apps associated with the project.
    * This is passed down through several component layers. */
   singleAppMode?: string;
+  /**
+   * Indicates if full screen apps should be enabled.
+   */
+  enableFullScreenApps?: boolean;
 };
 
 /**
@@ -63,6 +67,7 @@ export function WorkspaceRouter({
   showLoginForm,
   singleAppMode,
   showUnreleasedData = false,
+  enableFullScreenApps = false,
 }: Props) {
   const { path, url } = useRouteMatch();
 
@@ -229,6 +234,7 @@ export function WorkspaceRouter({
                   downloadClient={downloadClient}
                   singleAppMode={singleAppMode}
                   showUnreleasedData={showUnreleasedData}
+                  enableFullScreenApps={enableFullScreenApps}
                 />
               </WorkspaceContainer>
             )}
@@ -295,6 +301,7 @@ export function WorkspaceRouter({
                   downloadClient={downloadClient}
                   singleAppMode={singleAppMode}
                   showUnreleasedData={showUnreleasedData}
+                  enableFullScreenApps={enableFullScreenApps}
                 />
               </WorkspaceContainer>
             )}

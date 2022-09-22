@@ -1,6 +1,6 @@
 // import MosaicControls from '@veupathdb/components/lib/components/plotControls/MosaicControls';
 import Mosaic, {
-  MosaicPlotProps as MosaicProps,
+  MosaicPlotProps,
 } from '@veupathdb/components/lib/plots/MosaicPlot';
 import {
   FacetedData,
@@ -54,6 +54,7 @@ import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import FacetedMosaicPlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedMosaicPlot';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
+import { LayoutOptions } from '../../layouts/types';
 
 const plotContainerStyles = {
   width: 750,
@@ -120,11 +121,13 @@ export const twoByTwoVisualization = createVisualizationPlugin({
   createDefaultConfig: createDefaultConfig,
 });
 
-function ContTableFullscreenComponent(props: VisualizationProps) {
+interface Options extends LayoutOptions {}
+
+function ContTableFullscreenComponent(props: VisualizationProps<Options>) {
   return <MosaicViz {...props} />;
 }
 
-function TwoByTwoFullscreenComponent(props: VisualizationProps) {
+function TwoByTwoFullscreenComponent(props: VisualizationProps<Options>) {
   return <MosaicViz {...props} isTwoByTwo />;
 }
 
@@ -141,12 +144,13 @@ const MosaicConfig = t.partial({
   showMissingness: t.boolean,
 });
 
-type Props = VisualizationProps & {
+type Props<T> = VisualizationProps<T> & {
   isTwoByTwo?: boolean;
 };
 
-function MosaicViz(props: Props) {
+function MosaicViz(props: Props<Options>) {
   const {
+    options,
     computation,
     visualization,
     updateThumbnail,
@@ -237,7 +241,7 @@ function MosaicViz(props: Props) {
 
   const data = usePromise(
     useCallback(async (): Promise<
-      ContTableDataWithCoverage | TwoByTwoDataWithCoverage | undefined
+      TwoByTwoDataWithCoverage | ContTableDataWithCoverage | undefined
     > => {
       if (
         vizConfig.xAxisVariable == null ||
@@ -369,6 +373,23 @@ function MosaicViz(props: Props) {
     </>
   );
 
+  const plotRef = useUpdateThumbnailEffect(
+    updateThumbnail,
+    plotContainerStyles,
+    [data]
+  );
+
+  const mosaicProps: MosaicPlotProps = {
+    containerStyles: !isFaceted(data.value) ? plotContainerStyles : undefined,
+    spacingOptions: !isFaceted(data.value) ? plotSpacingOptions : undefined,
+    independentAxisLabel: xAxisLabel ?? 'X-axis',
+    dependentAxisLabel: yAxisLabel ?? 'Y-axis',
+    displayLegend: false,
+    interactive: !isFaceted(data.value) ? true : false,
+    showSpinner: data.pending,
+    displayLibraryControls: false,
+  };
+
   const plotNode = (
     <TabbedDisplay
       themeRole="primary"
@@ -382,21 +403,19 @@ function MosaicViz(props: Props) {
           displayName: 'Mosaic',
           content: (
             <div style={{ marginTop: 15 }}>
-              <MosaicPlotWithControls
-                updateThumbnail={updateThumbnail}
-                data={data.value}
-                containerStyles={
-                  !isFaceted(data.value) ? plotContainerStyles : undefined
-                }
-                spacingOptions={
-                  !isFaceted(data.value) ? plotSpacingOptions : undefined
-                }
-                independentAxisLabel={xAxisLabel ?? 'X-axis'}
-                dependentAxisLabel={yAxisLabel ?? 'Y-axis'}
-                displayLegend={false}
-                interactive={!isFaceted(data.value) ? true : false}
-                showSpinner={data.pending}
-              />
+              {isFaceted<ContTableData | TwoByTwoData>(data.value) ? (
+                <FacetedMosaicPlot
+                  facetedPlotRef={plotRef}
+                  data={data.value}
+                  componentProps={mosaicProps}
+                  modalComponentProps={{
+                    ...mosaicProps,
+                    containerStyles: modalPlotContainerStyles,
+                  }}
+                />
+              ) : (
+                <Mosaic {...mosaicProps} ref={plotRef} data={data.value} />
+              )}
             </div>
           ),
         },
@@ -471,6 +490,8 @@ function MosaicViz(props: Props) {
     />
   );
 
+  const controlsNode = <>{/* controls would go here */}</>;
+
   const outputSize =
     facetVariable != null && !vizConfig.showMissingness
       ? data.value?.completeCasesAllVars
@@ -486,6 +507,8 @@ function MosaicViz(props: Props) {
     vizConfig.xAxisVariable,
     vizConfig.yAxisVariable,
   ]);
+
+  const LayoutComponent = options?.layoutComponent ?? PlotLayout;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -537,9 +560,10 @@ function MosaicViz(props: Props) {
 
       <PluginError error={data.error} outputSize={outputSize} />
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
-      <PlotLayout
+      <LayoutComponent
         isFaceted={isFaceted(data.value)}
         plotNode={plotNode}
+        controlsNode={controlsNode}
         tableGroupNode={tableGroupNode}
         showRequiredInputsPrompt={!areRequiredInputsSelected}
         isMosaicPlot={true}
@@ -618,55 +642,6 @@ function ContTableStats(props?: {
       </table>
     </div>
   ) : null;
-}
-
-interface MosaicPlotWithControlsProps extends Omit<MosaicProps, 'data'> {
-  data?:
-    | TwoByTwoDataWithCoverage
-    | TwoByTwoData
-    | ContTableDataWithCoverage
-    | ContTableData;
-  updateThumbnail: (src: string) => void;
-}
-
-function MosaicPlotWithControls({
-  data,
-  updateThumbnail,
-  ...mosaicProps
-}: MosaicPlotWithControlsProps) {
-  const displayLibraryControls = false;
-
-  const plotRef = useUpdateThumbnailEffect(
-    updateThumbnail,
-    plotContainerStyles,
-    [data]
-  );
-
-  return (
-    <>
-      {isFaceted(data) ? (
-        <FacetedMosaicPlot
-          facetedPlotRef={plotRef}
-          data={data}
-          componentProps={mosaicProps}
-          modalComponentProps={{
-            independentAxisLabel: mosaicProps.independentAxisLabel,
-            dependentAxisLabel: mosaicProps.dependentAxisLabel,
-            displayLegend: mosaicProps.displayLegend,
-            containerStyles: modalPlotContainerStyles,
-          }}
-        />
-      ) : (
-        <Mosaic
-          {...mosaicProps}
-          ref={plotRef}
-          data={data}
-          displayLibraryControls={displayLibraryControls}
-        />
-      )}
-      {/* controls go here as needed */}
-    </>
-  );
 }
 
 /**

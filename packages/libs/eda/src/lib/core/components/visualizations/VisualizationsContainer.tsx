@@ -38,6 +38,7 @@ import { plugins } from '../computations/plugins';
 import { AnalysisState } from '../../hooks/analysis';
 import { ComputationAppOverview } from '../../types/visualization';
 import { VisualizationPlugin } from './VisualizationPlugin';
+import { Modal } from '@veupathdb/coreui';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -274,24 +275,48 @@ function ConfiguredVisualizations(props: Props) {
   );
 }
 
-function NewVisualizationPicker(props: Props) {
+type NewVisualizationPickerPropKeys =
+  | 'visualizationPlugins'
+  | 'visualizationsOverview'
+  | 'updateVisualizations'
+  | 'computation'
+  | 'geoConfigs';
+
+interface NewVisualizationPickerProps
+  extends Pick<Props, NewVisualizationPickerPropKeys> {
+  onVisualizationCreated?: (
+    VisualizationId: string,
+    computationId: string
+  ) => void;
+  includeHeader?: boolean;
+}
+
+export function NewVisualizationPicker(props: NewVisualizationPickerProps) {
   const {
     visualizationPlugins,
     visualizationsOverview,
     updateVisualizations,
     computation,
     geoConfigs,
+    onVisualizationCreated = function (visualizationId, computationId) {
+      history.replace(`../${computationId}/${visualizationId}`);
+    },
+    includeHeader = true,
   } = props;
   const history = useHistory();
   const { computationId } = computation;
   return (
     <div className={cx('-PickerContainer')}>
-      <div className={cx('-PickerActions')}>
-        <Link replace to={`../${computationId}`}>
-          <i className="fa fa-close"></i>
-        </Link>
-      </div>
-      <h3>Select a visualization</h3>
+      {includeHeader && (
+        <>
+          <div className={cx('-PickerActions')}>
+            <Link replace to={`../${computationId}`}>
+              <i className="fa fa-close"></i>
+            </Link>
+          </div>
+          <h3>Select a visualization</h3>
+        </>
+      )}
       <Grid>
         {/* orderBy ensures that available visualizations render ahead of those in development */}
         {orderBy(
@@ -331,7 +356,7 @@ function NewVisualizationPicker(props: Props) {
                           },
                         })
                       );
-                      history.replace(`../${computationId}/${visualizationId}`);
+                      onVisualizationCreated(visualizationId, computationId);
                     }}
                   >
                     {vizPlugin ? (
@@ -365,7 +390,54 @@ function NewVisualizationPicker(props: Props) {
   );
 }
 
-function FullScreenVisualization(props: Props & { id: string }) {
+interface NewVisualizationPickerModalProps extends NewVisualizationPickerProps {
+  visible: boolean;
+  onVisibleChange: (visible: boolean) => void;
+}
+
+export function NewVisualizationPickerModal(
+  props: NewVisualizationPickerModalProps
+) {
+  const { visible, onVisibleChange, ...pickerProps } = props;
+  return (
+    <Modal
+      includeCloseButton
+      toggleVisible={onVisibleChange}
+      visible={visible}
+      title="Select a visualization"
+      themeRole="primary"
+    >
+      <div style={{ fontSize: '80%' }}>
+        <NewVisualizationPicker {...pickerProps} includeHeader={false} />
+      </div>
+    </Modal>
+  );
+}
+
+type FullScreenVisualizationPropKeys =
+  | 'analysisState'
+  | 'computationAppOverview'
+  | 'visualizationPlugins'
+  | 'visualizationsOverview'
+  | 'updateVisualizations'
+  | 'computation'
+  | 'filters'
+  | 'starredVariables'
+  | 'toggleStarredVariable'
+  | 'totalCounts'
+  | 'filteredCounts'
+  | 'geoConfigs'
+  | 'baseUrl'
+  | 'isSingleAppMode';
+
+interface FullScreenVisualizationProps
+  extends Pick<Props, FullScreenVisualizationPropKeys> {
+  id: string;
+  /** Optionally override the action icons */
+  actions?: React.ReactNode;
+}
+
+export function FullScreenVisualization(props: FullScreenVisualizationProps) {
   const {
     analysisState,
     computationAppOverview,
@@ -382,6 +454,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
     geoConfigs,
     baseUrl,
     isSingleAppMode,
+    actions,
   } = props;
   const history = useHistory();
   const viz = computation.visualizations.find((v) => v.visualizationId === id);
@@ -453,76 +526,81 @@ function FullScreenVisualization(props: Props & { id: string }) {
   return (
     <div className={cx('-FullScreenContainer')}>
       <div className={cx('-FullScreenActions')}>
-        <div>
-          <Tooltip title="Delete visualization">
-            <button
-              type="button"
-              className="link"
-              onClick={() => {
-                if (viz == null) return;
-                updateVisualizations((visualizations) =>
-                  visualizations.filter((v) => v.visualizationId !== id)
-                );
-                /* 
-                  Here we're deleting the computation in the event we delete
-                  the computation's last remaining visualization.
-                */
-                if (
-                  !isSingleAppMode &&
-                  computation.visualizations.length === 1
-                ) {
-                  deleteComputationWithNoVisualizations(
-                    analysisState,
-                    computationId
-                  );
-                }
-                history.replace(
-                  Path.resolve(
-                    history.location.pathname,
-                    isSingleAppMode ? '..' : '../..'
-                  )
-                );
-              }}
-            >
-              <i className="fa fa-trash"></i>
-            </button>
-          </Tooltip>
-        </div>
-        <div>
-          <Tooltip title="Copy visualization">
-            <button
-              type="button"
-              className="link"
-              onClick={() => {
-                if (viz == null) return;
-                const vizCopyId = uuid();
-                updateVisualizations((visualizations) =>
-                  visualizations.concat({
-                    ...viz,
-                    visualizationId: vizCopyId,
-                    displayName:
-                      'Copy of ' + (viz.displayName || 'unnamed visualization'),
-                  })
-                );
-                history.replace(
-                  Path.resolve(history.location.pathname, '..', vizCopyId)
-                );
-              }}
-            >
-              <i className="fa fa-clone"></i>
-            </button>
-          </Tooltip>
-        </div>
-        <Tooltip title="Minimize visualization">
-          <Link
-            to={{
-              pathname: `../${baseUrl ? '' : computationId}`, // Should go to ../visualizations unless in single app mode
-              state: { scrollToTop: false },
-            }}
-          >
-            <i className="fa fa-window-minimize"></i>
-          </Link>
-        </Tooltip>
+        {actions ?? (
+          <>
+            <div>
+              <Tooltip title="Delete visualization">
+                <button
+                  type="button"
+                  className="link"
+                  onClick={() => {
+                    if (viz == null) return;
+                    updateVisualizations((visualizations) =>
+                      visualizations.filter((v) => v.visualizationId !== id)
+                    );
+                    /* 
+                      Here we're deleting the computation in the event we delete
+                      the computation's last remaining visualization.
+                    */
+                    if (
+                      !isSingleAppMode &&
+                      computation.visualizations.length === 1
+                    ) {
+                      deleteComputationWithNoVisualizations(
+                        analysisState,
+                        computationId
+                      );
+                    }
+                    history.replace(
+                      Path.resolve(
+                        history.location.pathname,
+                        isSingleAppMode ? '..' : '../..'
+                      )
+                    );
+                  }}
+                >
+                  <i className="fa fa-trash"></i>
+                </button>
+              </Tooltip>
+            </div>
+            <div>
+              <Tooltip title="Copy visualization">
+                <button
+                  type="button"
+                  className="link"
+                  onClick={() => {
+                    if (viz == null) return;
+                    const vizCopyId = uuid();
+                    updateVisualizations((visualizations) =>
+                      visualizations.concat({
+                        ...viz,
+                        visualizationId: vizCopyId,
+                        displayName:
+                          'Copy of ' +
+                          (viz.displayName || 'unnamed visualization'),
+                      })
+                    );
+                    history.replace(
+                      Path.resolve(history.location.pathname, '..', vizCopyId)
+                    );
+                  }}
+                >
+                  <i className="fa fa-clone"></i>
+                </button>
+              </Tooltip>
+            </div>
+            <Tooltip title="Minimize visualization">
+              <Link
+                to={{
+                  pathname: `../${baseUrl ? '' : computationId}`, // Should go to ../visualizations unless in single app mode
+                  state: { scrollToTop: false },
+                }}
+              >
+                <i className="fa fa-window-minimize"></i>
+              </Link>
+            </Tooltip>
+          </>
+        )}
       </div>
       {viz == null ? (
         <ContentError>Visualization not found.</ContentError>
