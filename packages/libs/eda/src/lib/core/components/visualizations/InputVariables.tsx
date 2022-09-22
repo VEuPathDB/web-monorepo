@@ -120,7 +120,7 @@ export function InputVariables(props: Props) {
     starredVariables,
     toggleStarredVariable,
     enableShowMissingnessToggle = false,
-    showMissingness,
+    showMissingness = false,
     onShowMissingnessChange,
     outputEntity,
     customSections,
