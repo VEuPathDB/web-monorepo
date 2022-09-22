@@ -152,7 +152,7 @@ export function useNeutralPaletteProps(
     () =>
       overlayVariableDescriptor == null &&
       providedOverlayVariableDescriptor != null
-        ? { colorPalette: ['#333'] }
+        ? { colorPalette: Array(8).fill('#333') }
         : {},
     [overlayVariableDescriptor, providedOverlayVariableDescriptor]
   );
