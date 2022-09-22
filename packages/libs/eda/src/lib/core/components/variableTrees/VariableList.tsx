@@ -41,6 +41,7 @@ import { HtmlTooltip } from '@veupathdb/components/lib/components/widgets/Toolti
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 // import ShowHideVariableContext
 import { VariableDescriptor } from '../../types/variable';
+import { VariableScope } from '../../types/study';
 import { ShowHideVariableContext } from '../../utils/show-hide-variable-context';
 
 import { pruneEmptyFields } from '../../utils/wdk-filter-param-adapter';
@@ -134,6 +135,7 @@ interface VariableListProps {
   asDropdown?: boolean;
   clearSelectionButton?: ReactNode;
   dropdownLabel?: string;
+  scope?: VariableScope;
 }
 
 // TODO: Needs documentation of general component purpose.
@@ -161,6 +163,7 @@ export default function VariableList({
   asDropdown,
   clearSelectionButton,
   dropdownLabel,
+  scope,
 }: VariableListProps) {
   // useContext is used here with ShowHideVariableContext
   const {
@@ -562,9 +565,10 @@ export default function VariableList({
       <div
         style={{
           padding: '0.5em 1em',
-          border: 'none',
           borderTop: '1px solid #ccc',
           borderBottom: '1px solid #ccc',
+          borderLeft: asDropdown ? 'none' : '1px solid #ccc',
+          borderRight: asDropdown ? 'none' : '1px solid #ccc',
         }}
       >
         <details
@@ -733,7 +737,17 @@ export default function VariableList({
       />
     </div>
   ) : (
-    <div>
+    <div
+      style={{
+        position: 'relative',
+        borderRadius: '0.25em',
+        padding: '0.5em 0.5em 0.5em 0',
+        height: scope === 'download' ? 'auto' : '100%',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       {renderDisabledFields()}
       {renderFeaturedFields()}
 

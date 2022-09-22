@@ -97,6 +97,7 @@ export default function MultiSelectVariableTree({
       toggleStarredVariable={toggleStarredVariable}
       customCheckboxes={customCheckboxes}
       startExpanded={startExpanded}
+      scope={scope}
     />
   );
 }
