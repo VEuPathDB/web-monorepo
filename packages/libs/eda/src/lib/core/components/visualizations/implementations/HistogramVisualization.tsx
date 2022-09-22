@@ -686,6 +686,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
   const overlayLabel = variableDisplayWithUnit(overlayVariable);
 
   const histogramProps: HistogramProps = {
+    containerStyles: !isFaceted(data.value) ? plotContainerStyles : undefined,
     dependentAxisLogScale: vizConfig.dependentAxisLogScale,
     independentAxisLabel: variableDisplayWithUnit(xAxisVariable) ?? 'Main',
     dependentAxisLabel:
