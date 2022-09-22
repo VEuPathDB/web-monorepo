@@ -1,3 +1,4 @@
+/** @jsxImportSource @emotion/react */
 import { uniq } from 'lodash';
 import React, {
   useCallback,
@@ -578,8 +579,11 @@ export default function VariableList({
           }}
         >
           <summary
-            style={{
+            css={{
               cursor: 'pointer',
+              '&::marker': {
+                color: '#888',
+              },
             }}
           >
             <h3
@@ -679,6 +683,34 @@ export default function VariableList({
     ) : null;
   };
 
+  const sharedProps = {
+    ...(isMultiPick && {
+      selectedList: selectedFields.map((field) => field.term),
+      isSelectable: true,
+      isMultiPick: true,
+      onSelectionChange: onSelectedFieldsChange,
+    }),
+    linksPosition: CheckboxTree.LinkPlacement.Top,
+    autoFocusSearchBox: autoFocus,
+    tree: tree,
+    expandedList: expandedNodes,
+    getNodeId: getNodeId,
+    getNodeChildren: getNodeChildren,
+    onExpansionChange: setExpandedNodes,
+    isSearchable: true,
+    searchBoxPlaceholder: 'Find a variable',
+    searchBoxHelp: makeSearchHelpText(
+      'variables by name, description, or values'
+    ),
+    searchTerm: searchTerm,
+    onSearchTermChange: setSearchTerm,
+    searchPredicate: searchPredicate,
+    renderNode: renderNode,
+    customCheckboxes: customCheckboxes,
+    additionalFilters: additionalFilters,
+    isAdditionalFilterApplied: isAdditionalFilterApplied,
+  };
+
   return asDropdown ? (
     <div
       style={{
@@ -687,31 +719,7 @@ export default function VariableList({
     >
       <SelectTree
         key={dropdownLabel}
-        {...(isMultiPick && {
-          selectedList: selectedFields.map((field) => field.term),
-          isSelectable: true,
-          isMultiPick: true,
-          onSelectionChange: onSelectedFieldsChange,
-        })}
-        linksPosition={CheckboxTree.LinkPlacement.Top}
-        autoFocusSearchBox={autoFocus}
-        tree={tree}
-        expandedList={expandedNodes}
-        getNodeId={getNodeId}
-        getNodeChildren={getNodeChildren}
-        onExpansionChange={setExpandedNodes}
-        isSearchable={true}
-        searchBoxPlaceholder="Find a variable"
-        searchBoxHelp={makeSearchHelpText(
-          'variables by name, description, or values'
-        )}
-        searchTerm={searchTerm}
-        onSearchTermChange={setSearchTerm}
-        searchPredicate={searchPredicate}
-        renderNode={renderNode}
-        customCheckboxes={customCheckboxes}
-        additionalFilters={additionalFilters}
-        isAdditionalFilterApplied={isAdditionalFilterApplied}
+        {...sharedProps}
         buttonDisplayContent={dropdownLabel}
         wrapPopover={(treeSection) => (
           <>
@@ -751,33 +759,7 @@ export default function VariableList({
       {renderDisabledFields()}
       {renderFeaturedFields()}
 
-      <CheckboxTree
-        {...(isMultiPick && {
-          selectedList: selectedFields.map((field) => field.term),
-          isSelectable: true,
-          isMultiPick: true,
-          onSelectionChange: onSelectedFieldsChange,
-        })}
-        linksPosition={CheckboxTree.LinkPlacement.Top}
-        autoFocusSearchBox={autoFocus}
-        tree={tree}
-        expandedList={expandedNodes}
-        getNodeId={getNodeId}
-        getNodeChildren={getNodeChildren}
-        onExpansionChange={setExpandedNodes}
-        isSearchable={true}
-        searchBoxPlaceholder="Find a variable"
-        searchBoxHelp={makeSearchHelpText(
-          'variables by name, description, or values'
-        )}
-        searchTerm={searchTerm}
-        onSearchTermChange={setSearchTerm}
-        searchPredicate={searchPredicate}
-        renderNode={renderNode}
-        customCheckboxes={customCheckboxes}
-        additionalFilters={additionalFilters}
-        isAdditionalFilterApplied={isAdditionalFilterApplied}
-      />
+      <CheckboxTree {...sharedProps} />
     </div>
   );
 }
