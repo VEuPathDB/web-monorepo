@@ -1,4 +1,3 @@
-import './VariableTree.scss';
 import VariableTree, { VariableTreeProps } from './VariableTree';
 
 export default function VariableTreeDropdown(props: VariableTreeProps) {

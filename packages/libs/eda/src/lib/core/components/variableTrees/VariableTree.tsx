@@ -3,7 +3,6 @@ import { useCallback, useMemo } from 'react';
 import { VariableScope } from '../../types/study';
 import { VariableDescriptor } from '../../types/variable';
 import VariableList from './VariableList';
-import './VariableTree.scss';
 import { useStudyEntities } from '../../hooks/workspace';
 import {
   useValuesMap,
