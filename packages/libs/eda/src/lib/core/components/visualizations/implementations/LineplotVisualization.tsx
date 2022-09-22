@@ -93,7 +93,12 @@ import { isFaceted, isTimeDelta } from '@veupathdb/components/lib/types/guards';
 import FacetedLinePlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedLinePlot';
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
 import { BinSpec, BinWidthSlider, TimeUnit } from '../../../types/general';
-import { useVizConfig } from '../../../hooks/visualizations';
+import {
+  useFlattenedConstraints,
+  useNeutralPaletteProps,
+  useProvidedOptionalVariable,
+  useVizConfig,
+} from '../../../hooks/visualizations';
 import { useInputStyles } from '../inputStyles';
 import { ValuePicker } from './ValuePicker';
 import HelpIcon from '@veupathdb/wdk-client/lib/Components/Icon/HelpIcon';
@@ -113,6 +118,7 @@ import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 import useSnackbar from '@veupathdb/coreui/dist/components/notifications/useSnackbar';
 import { LayoutOptions } from '../../layouts/types';
 import { OverlayOptions } from '../options/types';
+import { useDeepValue } from '../../../hooks/immutability';
 
 const plotContainerStyles = {
   width: 750,
@@ -234,17 +240,49 @@ function LineplotViz(props: VisualizationProps<Options>) {
     updateConfiguration
   );
 
-  const providedOverlayVariable = options?.getOverlayVariable?.(
-    computation.descriptor.configuration
+  const providedOverlayVariableDescriptor = useMemo(
+    () => options?.getOverlayVariable?.(computation.descriptor.configuration),
+    [options?.getOverlayVariable, computation.descriptor.configuration]
   );
 
-  // moved the location of this findEntityAndVariable
+  const selectedVariables = useDeepValue({
+    xAxisVariable: vizConfig.xAxisVariable,
+    yAxisVariable: vizConfig.yAxisVariable,
+    overlayVariable: vizConfig.overlayVariable,
+    facetVariable: vizConfig.facetVariable,
+  });
+
+  const flattenedConstraints = useFlattenedConstraints(
+    dataElementConstraints,
+    selectedVariables,
+    entities
+  );
+
+  useProvidedOptionalVariable<LineplotConfig>(
+    'overlayVariable',
+    providedOverlayVariableDescriptor,
+    vizConfig.overlayVariable,
+    entities,
+    flattenedConstraints,
+    dataElementDependencyOrder,
+    selectedVariables,
+    updateVizConfig,
+    /** snackbar message */
+    'The new overlay variable is not compatible with this visualization and has been disabled.'
+  );
+
+  const neutralPaletteProps = useNeutralPaletteProps(
+    vizConfig.overlayVariable,
+    providedOverlayVariableDescriptor
+  );
+
   const findEntityAndVariable = useFindEntityAndVariable();
 
   const {
     xAxisVariable,
     yAxisVariable,
     overlayVariable,
+    providedOverlayVariable,
     overlayEntity,
     facetVariable,
     facetEntity,
@@ -254,15 +292,16 @@ function LineplotViz(props: VisualizationProps<Options>) {
     const { variable: yAxisVariable } =
       findEntityAndVariable(vizConfig.yAxisVariable) ?? {};
     const { variable: overlayVariable, entity: overlayEntity } =
-      findEntityAndVariable(
-        providedOverlayVariable ?? vizConfig.overlayVariable
-      ) ?? {};
+      findEntityAndVariable(vizConfig.overlayVariable) ?? {};
+    const { variable: providedOverlayVariable } =
+      findEntityAndVariable(providedOverlayVariableDescriptor) ?? {};
     const { variable: facetVariable, entity: facetEntity } =
       findEntityAndVariable(vizConfig.facetVariable) ?? {};
     return {
       xAxisVariable,
       yAxisVariable,
       overlayVariable,
+      providedOverlayVariable,
       overlayEntity,
       facetVariable,
       facetEntity,
@@ -273,7 +312,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     vizConfig.yAxisVariable,
     vizConfig.overlayVariable,
     vizConfig.facetVariable,
-    providedOverlayVariable,
+    providedOverlayVariableDescriptor,
   ]);
 
   const categoricalMode = isSuitableCategoricalVariable(yAxisVariable);
@@ -515,8 +554,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
         vizConfig,
         xAxisVariable,
         yAxisVariable,
-        outputEntity,
-        providedOverlayVariable
+        outputEntity
       );
 
       const response = await dataClient.getLineplot(
@@ -568,7 +606,8 @@ function LineplotViz(props: VisualizationProps<Options>) {
         overlayVariable,
         showMissingFacet,
         facetVocabulary,
-        facetVariable
+        facetVariable,
+        neutralPaletteProps.colorPalette
       );
     }, [
       studyId,
@@ -659,6 +698,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
   // custom legend list
   const legendItems: LegendItemsProps[] = useMemo(() => {
     const allData = data.value?.dataSetProcess;
+    const palette = neutralPaletteProps.colorPalette ?? ColorPaletteDefault;
 
     const legendData = !isFaceted(allData)
       ? allData?.series
@@ -675,9 +715,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
             marker: 'line',
             // set marker colors appropriately
             markerColor:
-              dataItem?.name === 'No data'
-                ? '#E8E8E8'
-                : ColorPaletteDefault[index], // set first color for no overlay variable selected
+              dataItem?.name === 'No data' ? '#E8E8E8' : palette[index], // set first color for no overlay variable selected
             // simplifying the check with the presence of data: be carefule of y:[null] case in Scatter plot
             hasData: !isFaceted(allData)
               ? dataItem.y != null &&
@@ -700,7 +738,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
           };
         })
       : [];
-  }, [data]);
+  }, [data, neutralPaletteProps]);
 
   // set checkedLegendItems: not working well with plot options
   const checkedLegendItems = useCheckedLegendItemsStatus(
@@ -804,6 +842,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
       ? plotSpacingOptions
       : undefined,
     interactive: !isFaceted(data.value?.dataSetProcess) ? true : false,
+    showSpinner: filteredCounts.pending || data.pending,
 
     independentValueType: DateVariable.is(xAxisVariable)
       ? 'date'
@@ -1441,13 +1480,13 @@ function LineplotViz(props: VisualizationProps<Options>) {
               name: 'overlayVariable',
               label: 'Overlay',
               role: 'stratification',
+              providedOptionalVariable: providedOverlayVariableDescriptor,
               readonlyValue:
                 options?.getOverlayVariable != null
-                  ? providedOverlayVariable
-                    ? legendTitle
-                    : 'none'
+                  ? providedOverlayVariableDescriptor
+                    ? variableDisplayWithUnit(providedOverlayVariable)
+                    : 'None. ' + options?.getOverlayVariableHelp?.() ?? ''
                   : undefined,
-              // TO DO: verbiage for 'none'
             },
             ...(options?.hideFacetInputs
               ? []
@@ -1474,12 +1513,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
             },
           ]}
           entities={entities}
-          selectedVariables={{
-            xAxisVariable: vizConfig.xAxisVariable,
-            yAxisVariable: vizConfig.yAxisVariable,
-            overlayVariable: vizConfig.overlayVariable,
-            facetVariable: vizConfig.facetVariable,
-          }}
+          selectedVariables={selectedVariables}
           onChange={handleInputVariableChange}
           constraints={dataElementConstraints}
           dataElementDependencyOrder={dataElementDependencyOrder}
@@ -1533,7 +1567,8 @@ export function lineplotResponseToData(
   overlayVariable?: Variable,
   showMissingFacet: boolean = false,
   facetVocabulary: string[] = [],
-  facetVariable?: Variable
+  facetVariable?: Variable,
+  colorPaletteOverride?: string[]
 ): LinePlotDataWithCoverage {
   const modeValue: LinePlotDataSeries['mode'] = 'lines+markers';
 
@@ -1577,7 +1612,8 @@ export function lineplotResponseToData(
       hasMissingData,
       response.lineplot.config.binSpec,
       response.lineplot.config.binSlider,
-      overlayVariable
+      overlayVariable,
+      colorPaletteOverride
     );
 
     return {
@@ -1725,8 +1761,7 @@ function getRequestParams(
   vizConfig: Omit<LineplotConfig, 'dependentAxisRange' | 'checkedLegendItems'>,
   xAxisVariableMetadata: Variable,
   yAxisVariableMetadata: Variable,
-  outputEntity: StudyEntity,
-  providedOverlayVariable: VariableDescriptor | undefined
+  outputEntity: StudyEntity
 ): LineplotRequestParams {
   const {
     xAxisVariable,
@@ -1787,7 +1822,7 @@ function getRequestParams(
       xAxisVariable: xAxisVariable!, // these will never be undefined because
       yAxisVariable: yAxisVariable!, // data requests are only made when they have been chosen by user
       ...binSpec,
-      overlayVariable: providedOverlayVariable ?? overlayVariable,
+      overlayVariable: overlayVariable,
       facetVariable: facetVariable ? [facetVariable] : [],
       showMissingness: showMissingness ? 'TRUE' : 'FALSE',
       // no error bars for date variables (error bar toggle switch is also disabled)
@@ -1820,7 +1855,8 @@ function processInputData(
   hasMissingData: boolean,
   binSpec?: BinSpec,
   binWidthSlider?: BinWidthSlider,
-  overlayVariable?: Variable
+  overlayVariable?: Variable,
+  colorPaletteOverride?: string[]
 ) {
   // set fillAreaValue for densityplot
   const fillAreaValue: LinePlotDataSeries['fill'] =
@@ -1839,10 +1875,11 @@ function processInputData(
 
   // function to return color or gray where needed if showMissingness == true
   const markerColor = (index: number) => {
+    const palette = colorPaletteOverride ?? ColorPaletteDefault;
     if (showMissingness && index === responseLineplotData.length - 1) {
       return gray;
     } else {
-      return ColorPaletteDefault[index] ?? 'black'; // TO DO: decide on overflow behaviour
+      return palette[index] ?? 'black'; // TO DO: decide on overflow behaviour
     }
   };
 
