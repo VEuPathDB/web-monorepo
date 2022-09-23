@@ -422,6 +422,8 @@ function FullScreenMap(props: FullScreenComponentProps) {
         onBoundsChanged={setBoundsZoomLevel}
         onViewportChanged={onViewportChanged}
         onMouseModeChange={onMouseModeChange}
+        showGrid={geoConfig?.zoomLevelToAggregationLevel != null}
+        zoomLevelToGeohashLevel={geoConfig?.zoomLevelToAggregationLevel}
       />
       {/* </div> */}
       <div
