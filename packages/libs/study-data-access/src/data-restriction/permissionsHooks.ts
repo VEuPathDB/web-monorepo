@@ -25,7 +25,7 @@ export function usePermissions(): AsyncUserPermissions {
 
   const permissions = useWdkService(
     async wdkService => memoizedPermissionsCheck(
-      await wdkService.getCurrentUser(),
+      await wdkService.getCurrentUser({ force: true }),
       studyAccessApi
     ),
     [studyAccessApi]

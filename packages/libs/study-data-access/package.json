@@ -1,15 +1,20 @@
 {
   "name": "@veupathdb/study-data-access",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "Utilities and hooks for controlling end user access to study data",
   "main": "lib/index.js",
   "repository": "git@github.com:VEuPathDB/web-study-data-access.git",
   "author": "Dave Falke <dmfalke@gmail.com>",
   "license": "Apache-2.0",
   "scripts": {
-    "build-npm-modules": "veupathdb-react-scripts prepare src lib"
+    "build-npm-modules": "veupathdb-react-scripts prepare src lib",
+    "build": "veupathdb-react-scripts prepare src lib"
   },
   "typings": "./lib/index.d.ts",
+  "files": [
+    "lib",
+    "src/lib"
+  ],
   "eslintConfig": {
     "extends": [
       "@veupathdb"
