@@ -26,7 +26,7 @@ export function ValuePicker({
 
   return (
     <SelectList
-      defaultButtonDisplayContent={'Choose value(s)'}
+      defaultButtonDisplayContent={'Select value(s)'}
       items={items}
       onChange={onSelectedValuesChange}
       value={selectedValues}
