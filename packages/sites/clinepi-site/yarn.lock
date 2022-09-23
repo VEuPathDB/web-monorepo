@@ -2153,10 +2153,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/coreui@^0.18.4":
-  version "0.18.4"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.4.tgz#7e6f1d2aaf65e5cf31107d594cd00809ebb8f2ca"
-  integrity sha512-4yPTc2kSlm6iIT6m3s239co8gSCyFE60F43fz7gU2p7Zy5JsRJL/TGK6KV7zrWXPq7c0UhhJprw2CGA8jpkFhg==
+"@veupathdb/coreui@^0.18.5":
+  version "0.18.5"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.5.tgz#46dfd920f5ed76a82f1707a9abcae8c7b74f2f3e"
+  integrity sha512-T7/oiRedygEQa1Ge1VG7txhHGqZZZ7X86i4W6nu0yavTbtvq1YWzgzkcL49SKORFvHa91nHwovnAHY2U2vUIKQ==
   dependencies:
     "@react-hook/size" "^2.1.2"
     lodash "^4.17.21"
@@ -2164,10 +2164,10 @@
     react-responsive-modal "^6.2.0"
     react-table "^7.7.0"
 
-"@veupathdb/eda@^3.8.27":
-  version "3.8.27"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.8.27.tgz#f91a622f2ff514ed83591ce9b50ef28f16ffbb81"
-  integrity sha512-ykVvVtVgGnpukxRrGowcE62DuZtU9RbLMYb+ut/Dy6lmUgPVQNiKgHyIjOLXBhH79tFE2bzHM8EMTK77R0EKGQ==
+"@veupathdb/eda@^3.9.1":
+  version "3.9.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.9.1.tgz#2cb6ff655404abee870468a2df8961fa961118d0"
+  integrity sha512-n/Sd0QrBcDiJ5Z+guD7wsX2U27J8iedDwyMOPfSWdG34KQxBeuTqB/l9u8Cduea/CiYUlXjWnUZ9TPPXg4MUUg==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -2215,19 +2215,19 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/site-webpack-config/-/site-webpack-config-0.1.0.tgz#b63464c5ce70297102aecd700069f1059f371fe9"
   integrity sha512-J8sPtD8+Zp1ZBhgU+mX7O737zaZ28s7P/9RJjbh5nXYB5IgP6yRm+bvj0ewmW7W9NBAPUHJzeEDxMbYDExb85g==
 
-"@veupathdb/study-data-access@^0.3.5":
-  version "0.3.5"
-  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.3.5.tgz#753eff861b8ce72238fde30a7d96d7460b5cc0ac"
-  integrity sha512-mtJO3glTHn7AnaL25c2HGoKSpZ0hqWfHX63cp7IfTIGkpzedeXwriJL1PmQwEUEqb5+jZGyQuKAN2S07L5XxQA==
+"@veupathdb/study-data-access@^0.3.6":
+  version "0.3.6"
+  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.3.6.tgz#e9c1bcbe909b5f2ff78b5c76c203c0374158b031"
+  integrity sha512-E9HWKifUoak3gHV4dprUfHnb3r6tYHjG7LFqNAIOCPRD0ZJW8FHtwvT9v9ctEMqrzrLAYtkFPxq4i5MUPbW2qg==
   dependencies:
     fp-ts "^2.11.5"
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/user-datasets@^0.1.11":
-  version "0.1.11"
-  resolved "https://registry.yarnpkg.com/@veupathdb/user-datasets/-/user-datasets-0.1.11.tgz#40975f4c0cb9bf96a50bf000721b956484a35ae1"
-  integrity sha512-D8Cbb/CmmD4i1JLpJIKNMYH3I0ggUFB0DThsm/yiH4++j97+Vud2Soj9EbK+h5QoyEMkS79GbNhLe0w5PE32kQ==
+"@veupathdb/user-datasets@^0.1.12":
+  version "0.1.12"
+  resolved "https://registry.yarnpkg.com/@veupathdb/user-datasets/-/user-datasets-0.1.12.tgz#4b238f1365f6e6aedfafc55d451b5f4709b2be7f"
+  integrity sha512-9Rauia1uHRfCtNJOzbvs6Isna7zaXPRGHNjw0N0v2supTMZX+KuNT8z1+9ZqxLEFQx23eZ0mR4rfMPqdFop+ag==
   dependencies:
     date-fns "^2.29.1"
     lodash "^4.17.21"
