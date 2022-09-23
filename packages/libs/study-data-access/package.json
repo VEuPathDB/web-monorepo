@@ -7,9 +7,14 @@
   "author": "Dave Falke <dmfalke@gmail.com>",
   "license": "Apache-2.0",
   "scripts": {
-    "build-npm-modules": "veupathdb-react-scripts prepare src lib"
+    "build-npm-modules": "veupathdb-react-scripts prepare src lib",
+    "build": "veupathdb-react-scripts prepare src lib"
   },
   "typings": "./lib/index.d.ts",
+  "files": [
+    "lib",
+    "src/lib"
+  ],
   "eslintConfig": {
     "extends": [
       "@veupathdb"
