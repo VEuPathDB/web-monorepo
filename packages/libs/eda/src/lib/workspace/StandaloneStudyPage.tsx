@@ -21,7 +21,7 @@ export function StandaloneStudyPage(props: Props) {
   const approvalStatus: ApprovalStatus = permissionsValue.loading
     ? 'loading'
     : permissionsValue.permissions.perDataset[studyId] == null ||
-      (!showUnreleasedData && studyRecord.attributes.is_public !== 'true')
+      (!showUnreleasedData && studyRecord.attributes.is_public === 'false')
     ? 'study-not-found'
     : permissionsValue.permissions.perDataset[studyId]?.actionAuthorization
         .studyMetadata
