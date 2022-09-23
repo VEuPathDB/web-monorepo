@@ -73,6 +73,7 @@
   },
   "relativeDependencies": {
     "@veupathdb/eda": "../../web-eda",
-    "@veupathdb/web-common": "../../EbrcWebsiteCommon/Client"
+    "@veupathdb/web-common": "../../EbrcWebsiteCommon/Client",
+    "@veupathdb/study-data-access": "../../web-study-data-access"
   }
 }
