@@ -140,7 +140,7 @@ function FullScreenMap(props: FullScreenComponentProps) {
         conttable: vizWithOptions(contTableVisualization),
         scatterplot: vizWithOptions(scatterplotVisualization),
         lineplot: vizWithOptions(lineplotVisualization),
-        'map-markers': vizWithOptions(mapVisualization),
+        // 'map-markers': vizWithOptions(mapVisualization), // disabling because of potential confusion between marker colors
         barplot: vizWithOptions(barplotVisualization),
         boxplot: vizWithOptions(boxplotVisualization),
       },

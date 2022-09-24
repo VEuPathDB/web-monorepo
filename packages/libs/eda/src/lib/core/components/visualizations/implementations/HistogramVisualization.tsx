@@ -519,11 +519,14 @@ function HistogramViz(props: VisualizationProps<Options>) {
       : [];
   }, [data]);
 
-  // set checkedLegendItems
+  // set checkedLegendItems to either the config-stored items, or all items if nothing stored (or if no overlay locally configured)
   const checkedLegendItems = useCheckedLegendItemsStatus(
     legendItems,
-    options?.getCheckedLegendItems?.(computation.descriptor.configuration) ??
-      vizConfig.checkedLegendItems
+    vizConfig.overlayVariable
+      ? options?.getCheckedLegendItems?.(
+          computation.descriptor.configuration
+        ) ?? vizConfig.checkedLegendItems
+      : undefined
   );
 
   // axis range control

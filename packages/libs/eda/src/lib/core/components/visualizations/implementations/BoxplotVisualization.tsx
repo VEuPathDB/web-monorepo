@@ -513,11 +513,14 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       : [];
   }, [data]);
 
-  // set checkedLegendItems
+  // set checkedLegendItems to either the config-stored items, or all items if nothing stored (or if no overlay locally configured)
   const checkedLegendItems = useCheckedLegendItemsStatus(
     legendItems,
-    options?.getCheckedLegendItems?.(computation.descriptor.configuration) ??
-      vizConfig.checkedLegendItems
+    vizConfig.overlayVariable
+      ? options?.getCheckedLegendItems?.(
+          computation.descriptor.configuration
+        ) ?? vizConfig.checkedLegendItems
+      : undefined
   );
 
   // alphadiv abundance findEntityAndVariable does not work properly for collection variable
@@ -699,8 +702,6 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   ]);
 
   const LayoutComponent = options?.layoutComponent ?? PlotLayout;
-
-  console.log('Viz component');
 
   // for handling alphadiv abundance
   return (

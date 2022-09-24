@@ -858,10 +858,14 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     neutralPaletteProps,
   ]);
 
+  // set checkedLegendItems to either the config-stored items, or all items if nothing stored (or if no overlay locally configured)
   const checkedLegendItems = useCheckedLegendItemsStatus(
     legendItems,
-    options?.getCheckedLegendItems?.(computation.descriptor.configuration) ??
-      vizConfig.checkedLegendItems
+    vizConfig.overlayVariable
+      ? options?.getCheckedLegendItems?.(
+          computation.descriptor.configuration
+        ) ?? vizConfig.checkedLegendItems
+      : undefined
   );
 
   const legendTitle = useMemo(() => {
