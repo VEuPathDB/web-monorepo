@@ -238,6 +238,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   );
 
   useProvidedOptionalVariable<BoxplotConfig>(
+    options?.getOverlayVariable,
     'overlayVariable',
     providedOverlayVariableDescriptor,
     vizConfig.overlayVariable,

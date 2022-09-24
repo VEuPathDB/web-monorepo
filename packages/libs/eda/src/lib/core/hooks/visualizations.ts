@@ -69,6 +69,9 @@ export function useVizConfig<ConfigType>(
  * Doesn't return anything!
  */
 export function useProvidedOptionalVariable<ConfigType>(
+  optionGetter:
+    | ((config: unknown) => VariableDescriptor | undefined)
+    | undefined,
   inputName: keyof ConfigType,
   providedVariableDescriptor: VariableDescriptor | undefined,
   /* storedVariableDescriptor is basically vizConfig.overlayVariable */
@@ -88,6 +91,7 @@ export function useProvidedOptionalVariable<ConfigType>(
   // if the new variable is compatible with variable constraints
   useEffect(() => {
     if (
+      optionGetter == null ||
       storedVariableDescriptor == null ||
       isEqual(providedVariableDescriptor, storedVariableDescriptor)
     )

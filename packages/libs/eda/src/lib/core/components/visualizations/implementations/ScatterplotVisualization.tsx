@@ -264,6 +264,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   );
 
   useProvidedOptionalVariable<ScatterplotConfig>(
+    options?.getOverlayVariable,
     'overlayVariable',
     providedOverlayVariableDescriptor,
     vizConfig.overlayVariable,

@@ -269,6 +269,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
   );
 
   useProvidedOptionalVariable<BarplotConfig>(
+    options?.getOverlayVariable,
     'overlayVariable',
     providedOverlayVariableDescriptor,
     vizConfig.overlayVariable,

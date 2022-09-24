@@ -322,6 +322,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
   );
 
   useProvidedOptionalVariable<HistogramConfig>(
+    options?.getOverlayVariable,
     'overlayVariable',
     providedOverlayVariableDescriptor,
     vizConfig.overlayVariable,

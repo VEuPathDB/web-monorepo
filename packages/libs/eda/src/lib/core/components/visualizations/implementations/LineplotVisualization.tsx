@@ -259,6 +259,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
   );
 
   useProvidedOptionalVariable<LineplotConfig>(
+    options?.getOverlayVariable,
     'overlayVariable',
     providedOverlayVariableDescriptor,
     vizConfig.overlayVariable,
