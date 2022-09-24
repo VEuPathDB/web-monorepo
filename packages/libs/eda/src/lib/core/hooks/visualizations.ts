@@ -106,7 +106,8 @@ export function useProvidedOptionalVariable<ConfigType>(
         selectedVariables
       ).find((variable) => isEqual(variable, providedVariableDescriptor))
     ) {
-      if (snackbarMessage) enqueueSnackbar(snackbarMessage);
+      if (snackbarMessage)
+        enqueueSnackbar(snackbarMessage, { preventDuplicate: true });
       updateVizConfig({ [inputName]: undefined });
     } else {
       updateVizConfig({
