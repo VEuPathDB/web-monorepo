@@ -934,7 +934,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     plotContainerStyles,
     [
       data,
-      checkedLegendItems,
+      vizConfig.checkedLegendItems,
       vizConfig.independentAxisRange,
       vizConfig.dependentAxisRange,
       vizConfig.independentAxisLogScale,

@@ -817,7 +817,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     plotContainerStyles,
     [
       data,
-      checkedLegendItems,
+      vizConfig.checkedLegendItems,
       // considering axis range control too
       vizConfig.independentAxisRange,
       vizConfig.dependentAxisRange,

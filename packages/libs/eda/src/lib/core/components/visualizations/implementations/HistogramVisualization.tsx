@@ -713,7 +713,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
     plotContainerStyles,
     [
       data,
-      checkedLegendItems,
+      vizConfig.checkedLegendItems,
       vizConfig.dependentAxisLogScale,
       vizConfig.dependentAxisRange,
     ]

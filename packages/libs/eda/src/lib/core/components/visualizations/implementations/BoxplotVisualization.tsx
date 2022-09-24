@@ -814,7 +814,7 @@ function Plot({
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
     plotContainerStyles,
-    [data, checkedLegendItems, vizConfig.dependentAxisRange]
+    [data, vizConfig.checkedLegendItems, vizConfig.dependentAxisRange]
   );
   // set truncation flags: will see if this is reusable with other application
   const {
