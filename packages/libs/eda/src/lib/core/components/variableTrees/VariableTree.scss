@@ -143,6 +143,8 @@
 
 .EDAWorkspace-VariableTreeDropdown {
   position: relative;
+  display: flex;
+  align-items: center;
 
   &TreeContainer {
     // border: 1px solid;
