@@ -11,6 +11,7 @@ import {
 } from "../../assets/icons";
 import { gray } from "../../definitions/colors";
 import { H5 } from "../../components/typography";
+import { grey } from "@material-ui/core/colors";
 
 export default {
   title: "Typography/Icons",
@@ -47,7 +48,12 @@ const IconDisplay = ({
         <Icon {...args} />
       </div>
       <div
-        style={{ color: args.color, fontSize: 14, fontFamily: "sans-serif" }}
+        style={{
+          color: args.color,
+          fontSize: 14,
+          fontFamily: "sans-serif",
+          fontWeight: "bold",
+        }}
       >
         {name}
       </div>
@@ -58,10 +64,19 @@ const IconDisplay = ({
 export const AllIcons: Story<IconProps> = (args) => {
   return (
     <div>
-      <H5>All Icons</H5>
-      <hr />
-      <br />
-      <div style={{ display: "flex", gap: 20 }}>
+      <H5>Icons</H5>
+      <div
+        style={{
+          display: "flex",
+          // gap: 20,
+          justifyContent: "space-evenly",
+          padding: 20,
+          backgroundColor: grey[200],
+          borderRadius: 10,
+          width: "100%",
+          boxSizing: "border-box",
+        }}
+      >
         <IconDisplay {...args} name="Arrow" component={Arrow} />
         <IconDisplay {...args} name="CaretDown" component={CaretDown} />
         <IconDisplay {...args} name="CaretUp" component={CaretUp} />
