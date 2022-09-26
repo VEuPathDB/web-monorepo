@@ -9,13 +9,10 @@ import {
   SinglePlotLayout,
 } from './SinglePlotLayout';
 
-import { StyleProps } from './types';
+import { StyleProps, LayoutProps } from './types';
 
-interface Props {
+export interface PlotLayoutProps extends LayoutProps {
   isFaceted: boolean;
-  legendNode?: ReactNode;
-  plotNode: ReactNode;
-  tableGroupNode: ReactNode;
   singlePlotStyles?: StyleProps<SinglePlotLayoutProps>;
   facetedPlotStyles?: StyleProps<FacetedPlotLayoutProps>;
   showRequiredInputsPrompt?: boolean;
@@ -31,16 +28,18 @@ export function PlotLayout({
   isFaceted,
   legendNode,
   plotNode,
+  controlsNode,
   tableGroupNode,
   singlePlotStyles,
   facetedPlotStyles,
   showRequiredInputsPrompt,
   isMosaicPlot,
-}: Props) {
+}: PlotLayoutProps) {
   return isFaceted ? (
     <FacetedPlotLayout
       legendNode={legendNode}
       plotNode={plotNode}
+      controlsNode={controlsNode}
       tableGroupNode={tableGroupNode}
       {...facetedPlotStyles}
     />
@@ -48,6 +47,7 @@ export function PlotLayout({
     <SinglePlotLayout
       legendNode={legendNode}
       plotNode={plotNode}
+      controlsNode={controlsNode}
       tableGroupNode={tableGroupNode}
       showRequiredInputsPrompt={showRequiredInputsPrompt}
       isMosaicPlot={isMosaicPlot}

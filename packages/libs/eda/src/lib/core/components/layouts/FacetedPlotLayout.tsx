@@ -34,6 +34,7 @@ export function FacetedPlotLayout({
   legendNode,
   legendStyles,
   plotNode,
+  controlsNode,
   plotStyles,
   tableGroupNode,
   tableGroupStyles,
@@ -53,7 +54,10 @@ export function FacetedPlotLayout({
         )}
         {tableGroupNode}
       </div>
-      <div style={{ ...defaultPlotStyles, ...plotStyles }}>{plotNode}</div>
+      <div style={{ ...defaultPlotStyles, ...plotStyles }}>
+        {plotNode}
+        {controlsNode}
+      </div>
     </div>
   );
 }
