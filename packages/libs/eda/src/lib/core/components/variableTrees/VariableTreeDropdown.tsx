@@ -40,6 +40,7 @@ export default function VariableTreeDropdown(props: VariableTreeProps) {
             border: 'none',
             marginLeft: 8,
             padding: 0,
+            top: 1,
           }}
           disabled={variable === undefined}
         >
