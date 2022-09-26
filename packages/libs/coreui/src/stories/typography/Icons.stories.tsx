@@ -78,10 +78,10 @@ export const AllIcons: Story<IconProps> = (args) => {
         }}
       >
         <IconDisplay {...args} name="Arrow" component={Arrow} />
+        <IconDisplay {...args} name="Cancel" component={Cancel} />
         <IconDisplay {...args} name="CaretDown" component={CaretDown} />
         <IconDisplay {...args} name="CaretUp" component={CaretUp} />
         <IconDisplay {...args} name="DoubleArrow" component={DoubleArrow} />
-        <IconDisplay {...args} name="Cancel" component={Cancel} />
       </div>
     </div>
   );
