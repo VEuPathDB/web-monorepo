@@ -100,7 +100,10 @@ import { UIState } from '../../filter/HistogramFilter';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
-import { histogramDefaultDependentAxisMinMax } from '../../../utils/axis-range-calculations';
+import {
+  histogramDefaultIndependentAxisMinMax,
+  histogramDefaultDependentAxisMinMax,
+} from '../../../utils/axis-range-calculations';
 
 export type HistogramDataWithCoverageStatistics = (
   | HistogramData
@@ -136,6 +139,8 @@ function createDefaultConfig(): HistogramConfig {
   return {
     dependentAxisLogScale: false,
     valueSpec: 'count',
+    independentAxisValueSpec: 'Full',
+    dependentAxisValueSpec: 'Full',
   };
 }
 
@@ -162,6 +167,8 @@ export const HistogramConfig = t.intersection([
     // axis range control
     independentAxisRange: NumberOrDateRange,
     dependentAxisRange: NumberRange,
+    independentAxisValueSpec: t.string,
+    dependentAxisValueSpec: t.string,
   }),
 ]);
 
@@ -222,6 +229,8 @@ function HistogramViz(props: VisualizationProps) {
         independentAxisRange: undefined,
         dependentAxisRange: undefined,
         dependentAxisLogScale: false,
+        independentAxisValueSpec: 'Full',
+        dependentAxisValueSpec: 'Full',
       });
       // close truncation warnings if exists
       setTruncatedIndependentAxisWarning('');
@@ -269,6 +278,17 @@ function HistogramViz(props: VisualizationProps) {
 
   const onValueSpecChange = onChangeHandlerFactory<ValueSpec>(
     'valueSpec',
+    false,
+    true
+  );
+
+  const onIndependentAxisValueSpecChange = onChangeHandlerFactory<string>(
+    'independentAxisValueSpec',
+    false,
+    true
+  );
+  const onDependentAxisValueSpecChange = onChangeHandlerFactory<string>(
+    'dependentAxisValueSpec',
     false,
     true
   );
@@ -415,7 +435,23 @@ function HistogramViz(props: VisualizationProps) {
     ])
   );
 
-  const defaultIndependentRange = useDefaultAxisRange(xAxisVariable);
+  const independentAxisMinMax = useMemo(
+    () => histogramDefaultIndependentAxisMinMax(data),
+    [data]
+  );
+
+  const defaultIndependentRange = useDefaultAxisRange(
+    xAxisVariable,
+    vizConfig.independentAxisValueSpec === 'Full'
+      ? undefined
+      : independentAxisMinMax?.min,
+    undefined,
+    vizConfig.independentAxisValueSpec === 'Full'
+      ? undefined
+      : independentAxisMinMax?.max,
+    undefined,
+    vizConfig.independentAxisValueSpec
+  );
 
   // separate minPosMax from dependentMinPosMax
   const minPosMax = useMemo(() => histogramDefaultDependentAxisMinMax(data), [
@@ -426,17 +462,22 @@ function HistogramViz(props: VisualizationProps) {
       ? {
           min: minPosMax.min,
           // override max to be exactly 1 in proportion mode (rounding errors can make it slightly greater than 1)
-          max: vizConfig.valueSpec === 'proportion' ? 1 : minPosMax.max,
+          max:
+            vizConfig.valueSpec === 'proportion' &&
+            vizConfig.dependentAxisValueSpec === 'Full'
+              ? 1
+              : minPosMax.max,
         }
       : undefined;
-  }, [data, vizConfig.valueSpec]);
+  }, [data, vizConfig.valueSpec, vizConfig.dependentAxisValueSpec]);
 
   const defaultDependentAxisRange = useDefaultAxisRange(
     null,
     0,
     dependentMinPosMax?.min,
     dependentMinPosMax?.max,
-    vizConfig.dependentAxisLogScale
+    vizConfig.dependentAxisLogScale,
+    vizConfig.dependentAxisValueSpec
   ) as NumberRange;
 
   // custom legend items for checkbox
@@ -653,6 +694,11 @@ function HistogramViz(props: VisualizationProps) {
         dependentMinPosMax={dependentMinPosMax}
         areRequiredInputsSelected={areRequiredInputsSelected}
         minPosMax={minPosMax}
+        axisRangeOptions={['Full', 'Auto-zoom', 'Custom']}
+        independentAxisValueSpec={vizConfig.independentAxisValueSpec}
+        dependentAxisValueSpec={vizConfig.dependentAxisValueSpec}
+        onIndependentAxisValueSpecChange={onIndependentAxisValueSpecChange}
+        onDependentAxisValueSpecChange={onDependentAxisValueSpecChange}
       />
     </div>
   );
@@ -700,6 +746,11 @@ type HistogramPlotWithControlsProps = Omit<HistogramProps, 'data'> & {
   dependentMinPosMax: NumberRange | undefined;
   areRequiredInputsSelected: boolean;
   minPosMax: NumberRange | undefined;
+  axisRangeOptions: string[];
+  independentAxisValueSpec: string | undefined;
+  dependentAxisValueSpec: string | undefined;
+  onIndependentAxisValueSpecChange: (newAxisRangeOption: string) => void;
+  onDependentAxisValueSpecChange: (newAxisRangeOption: string) => void;
 } & Partial<CoverageStatistics>;
 
 function HistogramPlotWithControls({
@@ -743,6 +794,11 @@ function HistogramPlotWithControls({
   dependentMinPosMax,
   areRequiredInputsSelected,
   minPosMax,
+  axisRangeOptions,
+  independentAxisValueSpec = 'Full',
+  dependentAxisValueSpec = 'Full',
+  onIndependentAxisValueSpecChange,
+  onDependentAxisValueSpecChange,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   const displayLibraryControls = false;
@@ -756,6 +812,8 @@ function HistogramPlotWithControls({
       checkedLegendItems,
       histogramProps.dependentAxisLogScale,
       vizConfig.dependentAxisRange,
+      vizConfig.independentAxisValueSpec,
+      vizConfig.dependentAxisValueSpec,
     ]
   );
 
@@ -793,6 +851,7 @@ function HistogramPlotWithControls({
       independentAxisRange: undefined,
       binWidth: defaultUIState.binWidth,
       binWidthTimeUnit: defaultUIState.binWidthTimeUnit,
+      independentAxisValueSpec: 'Full',
     });
     // add reset for truncation message: including dependent axis warning as well
     setTruncatedIndependentAxisWarning('');
@@ -816,6 +875,7 @@ function HistogramPlotWithControls({
     updateVizConfig({
       dependentAxisRange: undefined,
       dependentAxisLogScale: false,
+      dependentAxisValueSpec: 'Full',
     });
     // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
@@ -897,6 +957,8 @@ function HistogramPlotWithControls({
         max: truncationConfigDependentAxisMax,
       },
     },
+    independentAxisValueSpec: vizConfig.independentAxisValueSpec,
+    dependentAxisValueSpec: vizConfig.dependentAxisValueSpec,
   };
 
   const plotNode = (
@@ -964,87 +1026,113 @@ function HistogramPlotWithControls({
       />
 
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        {/* make switch and radiobutton single line with space
-                 also marginRight at LabelledGroup is set to 0.5625em: default - 1.5625em*/}
-        <LabelledGroup
-          label="X-axis controls"
-          containerStyles={{
-            marginRight: '1em',
-            // marginRight: valueType === 'date' ? '1em' : '0em',
-          }}
-        >
-          <BinWidthControl
-            binWidth={data0?.binWidthSlider?.binWidth}
-            onBinWidthChange={onBinWidthChange}
-            binWidthRange={data0?.binWidthSlider?.binWidthRange}
-            binWidthStep={data0?.binWidthSlider?.binWidthStep}
-            valueType={data0?.binWidthSlider?.valueType}
-            binUnit={
-              data0?.binWidthSlider?.valueType === 'date'
-                ? (data0?.binWidthSlider?.binWidth as TimeDelta).unit
-                : undefined
-            }
-            binUnitOptions={
-              data0?.binWidthSlider?.valueType === 'date'
-                ? ['day', 'week', 'month', 'year']
-                : undefined
-            }
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {/* make switch and radiobutton single line with space
+                  also marginRight at LabelledGroup is set to 0.5625em: default - 1.5625em*/}
+          <LabelledGroup
+            label="X-axis controls"
             containerStyles={{
-              minHeight: widgetHeight,
-              // set maxWidth
-              maxWidth: valueType === 'date' ? '215px' : '315px',
+              marginRight: '1em',
+              // marginRight: valueType === 'date' ? '1em' : '0em',
             }}
-          />
-
-          {/* X-Axis range control */}
-          <AxisRangeControl
-            label="Range"
-            range={vizConfig.independentAxisRange ?? defaultIndependentRange}
-            onRangeChange={handleIndependentAxisRangeChange}
-            valueType={valueType}
-            // set maxWidth
-            containerStyles={{
-              maxWidth: '350px',
-            }}
-          />
-          {/* truncation notification */}
-          {truncatedIndependentAxisWarning ? (
-            <Notification
-              title={''}
-              text={truncatedIndependentAxisWarning}
-              // this was defined as LIGHT_BLUE
-              color={'#5586BE'}
-              onAcknowledgement={() => {
-                setTruncatedIndependentAxisWarning('');
-              }}
-              showWarningIcon={true}
-              // set maxWidth per type
+          >
+            <BinWidthControl
+              binWidth={data0?.binWidthSlider?.binWidth}
+              onBinWidthChange={onBinWidthChange}
+              binWidthRange={data0?.binWidthSlider?.binWidthRange}
+              binWidthStep={data0?.binWidthSlider?.binWidthStep}
+              valueType={data0?.binWidthSlider?.valueType}
+              binUnit={
+                data0?.binWidthSlider?.valueType === 'date'
+                  ? (data0?.binWidthSlider?.binWidth as TimeDelta).unit
+                  : undefined
+              }
+              binUnitOptions={
+                data0?.binWidthSlider?.valueType === 'date'
+                  ? ['day', 'week', 'month', 'year']
+                  : undefined
+              }
               containerStyles={{
-                // maxWidth: valueType === 'date' ? '362px': '350px',
-                maxWidth: '350px',
+                minHeight: widgetHeight,
+                // set maxWidth
+                maxWidth: valueType === 'date' ? '215px' : '315px',
               }}
             />
-          ) : null}
-          <Button
-            type={'outlined'}
-            text={'Reset to defaults'}
-            onClick={handleIndependentAxisSettingsReset}
+          </LabelledGroup>
+          <LabelledGroup
+            label="X-axis range"
             containerStyles={{
-              paddingTop: '1.0em',
-              width: '50%',
-              float: 'right',
-              // to match reset button with date range form
-              marginRight: valueType === 'date' ? '-1em' : '',
+              fontSize: '0.9em',
+              // width: '350px',
+              marginTop: '-0.8em',
             }}
-          />
-        </LabelledGroup>
+          >
+            <RadioButtonGroup
+              options={axisRangeOptions}
+              selectedOption={independentAxisValueSpec}
+              onOptionSelected={(newAxisRangeOption: string) => {
+                onIndependentAxisValueSpecChange(newAxisRangeOption);
+              }}
+              orientation={'horizontal'}
+              labelPlacement={'end'}
+              buttonColor={'primary'}
+              margins={['0em', '0', '0', '0em']}
+              itemMarginRight={25}
+            />
+            {/* X-Axis range control */}
+            <AxisRangeControl
+              label="Range"
+              range={vizConfig.independentAxisRange ?? defaultIndependentRange}
+              onRangeChange={handleIndependentAxisRangeChange}
+              valueType={valueType}
+              // set maxWidth
+              containerStyles={{
+                maxWidth: '350px',
+              }}
+              disabled={
+                vizConfig.independentAxisValueSpec === 'Full' ||
+                vizConfig.independentAxisValueSpec === 'Auto-zoom'
+              }
+            />
+            {/* truncation notification */}
+            {truncatedIndependentAxisWarning ? (
+              <Notification
+                title={''}
+                text={truncatedIndependentAxisWarning}
+                // this was defined as LIGHT_BLUE
+                color={'#5586BE'}
+                onAcknowledgement={() => {
+                  setTruncatedIndependentAxisWarning('');
+                }}
+                showWarningIcon={true}
+                // set maxWidth per type
+                containerStyles={{
+                  // maxWidth: valueType === 'date' ? '362px': '350px',
+                  maxWidth: '350px',
+                }}
+              />
+            ) : null}
+            <Button
+              type={'outlined'}
+              text={'Reset to defaults'}
+              onClick={handleIndependentAxisSettingsReset}
+              containerStyles={{
+                paddingTop: '1.0em',
+                width: '50%',
+                float: 'right',
+                // to match reset button with date range form
+                marginRight: valueType === 'date' ? '-1em' : '',
+              }}
+            />
+          </LabelledGroup>
+        </div>
 
         {/* add vertical line in btw Y- and X- controls */}
         <div
           style={{
             display: 'inline-flex',
             borderLeft: '2px solid lightgray',
-            height: '14em',
+            height: '20em',
             position: 'relative',
             marginLeft: '-1px',
             top: '1.5em',
@@ -1053,62 +1141,90 @@ function HistogramPlotWithControls({
           {' '}
         </div>
 
-        <LabelledGroup
-          label="Y-axis controls"
-          containerStyles={{
-            marginRight: '0em',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Toggle
-              label="Log scale:"
-              value={histogramProps.dependentAxisLogScale ?? false}
-              onChange={onDependentAxisLogScaleChange}
-              styleOverrides={{
-                container: {
-                  minHeight: widgetHeight,
-                },
-              }}
-              themeRole="primary"
-            />
-          </div>
-          {/* Y-axis range control */}
-          <NumberRangeInput
-            label="Range"
-            range={vizConfig.dependentAxisRange ?? defaultDependentAxisRange}
-            onRangeChange={(newRange?: NumberOrDateRange) => {
-              handleDependentAxisRangeChange(newRange as NumberRange);
-            }}
-            allowPartialRange={false}
-            // set maxWidth
-            containerStyles={{ maxWidth: '350px' }}
-          />
-          {/* truncation notification */}
-          {truncatedDependentAxisWarning ? (
-            <Notification
-              title={''}
-              text={truncatedDependentAxisWarning}
-              // this was defined as LIGHT_BLUE
-              color={'#5586BE'}
-              onAcknowledgement={() => {
-                setTruncatedDependentAxisWarning('');
-              }}
-              showWarningIcon={true}
-              // change maxWidth
-              containerStyles={{ maxWidth: '350px' }}
-            />
-          ) : null}
-          <Button
-            type={'outlined'}
-            text={'Reset to defaults'}
-            onClick={handleDependentAxisSettingsReset}
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <LabelledGroup
+            label="Y-axis controls"
             containerStyles={{
-              paddingTop: '1.0em',
-              width: '50%',
-              float: 'right',
+              marginRight: '0em',
             }}
-          />
-        </LabelledGroup>
+          >
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <Toggle
+                label="Log scale:"
+                value={histogramProps.dependentAxisLogScale ?? false}
+                onChange={onDependentAxisLogScaleChange}
+                styleOverrides={{
+                  container: {
+                    minHeight: widgetHeight,
+                  },
+                }}
+                themeRole="primary"
+              />
+            </div>
+          </LabelledGroup>
+          {/* <div style={{ height: '4em' }} /> */}
+          <LabelledGroup
+            label="Y-axis range"
+            containerStyles={{
+              fontSize: '0.9em',
+              // width: '350px',
+              marginTop: '-0.8em',
+            }}
+          >
+            <RadioButtonGroup
+              options={axisRangeOptions}
+              selectedOption={dependentAxisValueSpec}
+              onOptionSelected={(newAxisRangeOption: string) => {
+                onDependentAxisValueSpecChange(newAxisRangeOption);
+              }}
+              orientation={'horizontal'}
+              labelPlacement={'end'}
+              buttonColor={'primary'}
+              margins={['0em', '0', '0', '0em']}
+              itemMarginRight={25}
+            />
+            {/* Y-axis range control */}
+            <NumberRangeInput
+              label="Range"
+              range={vizConfig.dependentAxisRange ?? defaultDependentAxisRange}
+              onRangeChange={(newRange?: NumberOrDateRange) => {
+                handleDependentAxisRangeChange(newRange as NumberRange);
+              }}
+              allowPartialRange={false}
+              // set maxWidth
+              containerStyles={{ maxWidth: '350px' }}
+              disabled={
+                vizConfig.dependentAxisValueSpec === 'Full' ||
+                vizConfig.dependentAxisValueSpec === 'Auto-zoom'
+              }
+            />
+            {/* truncation notification */}
+            {truncatedDependentAxisWarning ? (
+              <Notification
+                title={''}
+                text={truncatedDependentAxisWarning}
+                // this was defined as LIGHT_BLUE
+                color={'#5586BE'}
+                onAcknowledgement={() => {
+                  setTruncatedDependentAxisWarning('');
+                }}
+                showWarningIcon={true}
+                // change maxWidth
+                containerStyles={{ maxWidth: '350px' }}
+              />
+            ) : null}
+            <Button
+              type={'outlined'}
+              text={'Reset to defaults'}
+              onClick={handleDependentAxisSettingsReset}
+              containerStyles={{
+                paddingTop: '1.0em',
+                width: '50%',
+                float: 'right',
+              }}
+            />
+          </LabelledGroup>
+        </div>
       </div>
     </>
   );
