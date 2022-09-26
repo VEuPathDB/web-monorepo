@@ -22,7 +22,7 @@ export function ClearSelectionButton({
   style,
 }: ClearSelectionButtonProps) {
   const [hovering, setHovering] = useState(false);
-  const clearButtonSize = 20;
+  const size = 20;
 
   return (
     <Tooltip title={disabled ? '' : 'Clear selection'}>
@@ -31,8 +31,8 @@ export function ClearSelectionButton({
         onMouseEnter={() => setHovering(true)}
         onMouseLeave={() => setHovering(false)}
         style={{
-          width: clearButtonSize,
-          height: clearButtonSize,
+          width: size,
+          height: size,
           background: 'none',
           border: 'none',
           padding: 0,
@@ -41,14 +41,14 @@ export function ClearSelectionButton({
         disabled={disabled}
       >
         <Cancel
-          width={clearButtonSize}
-          height={clearButtonSize}
+          width={size}
+          height={size}
           color={disabled ? gray[400] : hovering ? red[700] : gray[800]}
           extraCSS={{
             position: 'absolute',
             top: '50%',
             left: 0,
-            marginTop: -clearButtonSize / 2,
+            marginTop: -size / 2,
           }}
         />
       </button>
