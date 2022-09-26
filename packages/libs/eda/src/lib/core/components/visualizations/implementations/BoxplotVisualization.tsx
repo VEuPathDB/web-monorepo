@@ -900,7 +900,7 @@ function BoxplotWithControls({
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <LabelledGroup label="Y-axis controls"> </LabelledGroup>
           <LabelledGroup
-            label="X-axis range"
+            label="Y-axis range"
             containerStyles={{
               fontSize: '0.9em',
               // width: '350px',
