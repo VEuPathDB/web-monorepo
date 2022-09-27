@@ -18,7 +18,7 @@ import DataClient, {
   LineplotResponse,
 } from '../../../api/DataClient';
 
-import { usePromise } from '../../../hooks/promise';
+import { usePromise, PromiseHookState } from '../../../hooks/promise';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import {
   useDataClient,
@@ -62,6 +62,7 @@ import {
   NumberOrTimeDelta,
   NumberOrTimeDeltaRange,
   TimeDelta,
+  NumberRange,
 } from '@veupathdb/components/lib/types/general';
 import {
   LinePlotDataSeries,
@@ -661,12 +662,12 @@ function LineplotViz(props: VisualizationProps) {
     [data]
   );
 
-  const defaultDependentAxisRange = useDefaultAxisRange(
+  // use a hook to handle default dependent axis range for Lineplot Viz Proportion
+  const defaultDependentAxisRange = useDefaultDependentAxisRangeProportion(
+    data,
     yAxisVariable,
-    data.value?.yMin,
-    data.value?.yMinPos,
-    data.value?.yMax,
     vizConfig.dependentAxisLogScale,
+    vizConfig.valueSpecConfig,
     vizConfig.dependentAxisValueSpec
   );
 
@@ -2328,4 +2329,45 @@ function isSuitableCategoricalVariable(variable?: Variable): boolean {
     variable.vocabulary != null &&
     variable.distinctValuesCount != null
   );
+}
+
+/**
+ *  A hook to handle default dependent axis range for Lineplot Viz Proportion
+ */
+function useDefaultDependentAxisRangeProportion(
+  data: PromiseHookState<LinePlotDataWithCoverage | undefined>,
+  yAxisVariable?: Variable,
+  dependentAxisLogScale?: boolean,
+  valueSpecConfig?: string,
+  dependentAxisValueSpec?: string
+) {
+  let defaultDependentAxisRange = useDefaultAxisRange(
+    yAxisVariable,
+    data.value?.yMin,
+    data.value?.yMinPos,
+    data.value?.yMax,
+    dependentAxisLogScale,
+    dependentAxisValueSpec
+  );
+
+  // include min origin: 0 (linear) or minPos (logscale)
+  if (data.value != null && valueSpecConfig === 'Proportion')
+    if (dependentAxisLogScale)
+      defaultDependentAxisRange = {
+        min: data.value?.yMinPos,
+        // in case data.value.yMinPos === 1, then use 1.0001 for max range for better display
+        max:
+          data.value.yMinPos === 1
+            ? 1.0001
+            : dependentAxisValueSpec === 'Full'
+            ? 1
+            : data.value?.yMax,
+      } as NumberRange;
+    else
+      defaultDependentAxisRange = {
+        min: 0,
+        max: dependentAxisValueSpec === 'Full' ? 1 : data.value?.yMax,
+      } as NumberRange;
+
+  return defaultDependentAxisRange;
 }
